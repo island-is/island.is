@@ -1,6 +1,5 @@
 import { defineMessages } from 'react-intl'
 
-// Strings for the lokeCaseNumber component
 export const policeCaseNumber = defineMessages({
   heading: {
     id: 'judicial.system.core:police_case_number.heading',
@@ -31,5 +30,11 @@ export const policeCaseNumber = defineMessages({
     defaultMessage: 'Eyða númeri {policeCaseNumber}',
     description:
       'Notaður sem aria label á takkana fyrir loke númer á sakbornings skrefi í öllum málstegundum.',
+  },
+  noPoliceCaseNumbersAssignedMessage: {
+    id:
+      'judicial.system.core:police_case_number.no_police_case_numbers_assigned_message',
+    defaultMessage: 'Ekkert LÖKE-málsnúmer hefur verið skráð',
+    description: 'Notaður sem texti þegar ekkert LÖKE-málsnúmer er skráð.',
   },
 })

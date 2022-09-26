@@ -206,13 +206,6 @@ export const notifications = {
       description:
         'Notaður sem titill í pósti til hagaðila vegna undirritunar úrskurðar',
     },
-    rulingAttachment: {
-      id:
-        'judicial.system.backend:notifications.signed_ruling.ruling_attachment',
-      defaultMessage: 'Úrskurður {courtCaseNumber}.pdf',
-      description:
-        'Notaður sem nafn á úrskurðarviðhengi í pósti til hagaðila vegna undirritunar úrskurðar',
-    },
     courtRecordAttachment: {
       id:
         'judicial.system.backend:notifications.signed_ruling.court_record_attachment',
@@ -524,6 +517,21 @@ export const notifications = {
         '{actorInstitution}, {actorName} {actorTitle}, hefur uppfært lengd {caseType, select, ADMISSION_TO_FACILITY {vistunar} other {gæslu}}/einangrunar í máli {courtCaseNumber}. Sjá {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.<br /><br />Lok {caseType, select, ADMISSION_TO_FACILITY {vistunar} other {gæslu}}: {validToDate}.<br /><br />Lok einangrunar: {isolationToDate}.',
       description:
         'Notaður sem texti í tölvupósti vegna breytingar á lengd gæslu/einangrunar/vistunar þar sem úrskurðað var í einangrun.',
+    },
+  }),
+  defenderAssignedEmail: defineMessages({
+    subject: {
+      id:
+        'judicial.system.backend:notifications.defender_assigned_email.subject',
+      defaultMessage: '{court} - aðgangur að málsgögnum',
+      description:
+        'Fyrirsögn í pósti til verjanda þegar hann er skráður á mál.',
+    },
+    body: {
+      id: 'judicial.system.backend:notifications.defender_assigned_email.body',
+      defaultMessage:
+        '{court} hefur skipað þig verjanda í máli {linkStart}{courtCaseNumber}{linkEnd}. Gögn málsins eru aðgengileg í Réttarvörslugátt með rafrænum skilríkjum.',
+      description: 'Texti í pósti til verjanda þegar hann er skráður á mál.',
     },
   }),
 }

@@ -236,11 +236,12 @@ export class NationalRegistryService {
     response: IndividualDto,
   ): NationalRegistryUser {
     const address = response.legalDomicile ?? response.residence
+    const nameParts = response.fullName?.split(' ') ?? []
     return {
       nationalId: response.nationalId,
-      firstName: response.givenName ?? '',
-      middleName: response.middleName ?? '',
-      lastName: response.familyName ?? '',
+      firstName: nameParts[0] ?? '',
+      middleName: nameParts.slice(1, -1).join(' ') ?? '',
+      lastName: nameParts.slice(-1).pop() ?? '',
       gender: this.mapGender(response.genderCode),
       address: address?.streetAddress ?? '',
       postalcode: parseInt(address?.postalCode ?? '0'),

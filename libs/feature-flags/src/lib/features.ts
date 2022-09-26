@@ -25,6 +25,9 @@ export enum Features {
   estateApplication = 'isEstateApplicationEnabled',
   drivingLicenseDuplicate = 'isDrivingLicenseDuplicateEnabled',
 
+  // Application delegation flags
+  noDebtCertificateCompanyDelegations = 'applicationNoDebtCertificateCompanyDelegations',
+
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
 }
