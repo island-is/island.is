@@ -21,17 +21,16 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import { titles, core } from '@island.is/judicial-system-web/messages'
 import { Box } from '@island.is/island-ui/core'
-import {
-  TUploadFile,
-  useFileList,
-} from '@island.is/judicial-system-web/src/utils/hooks'
+import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   CaseFileCategory,
   completedCaseStates,
+  UserRole,
 } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { overview as m } from './Overview.strings'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 
 const Overview = () => {
   const router = useRouter()
@@ -39,12 +38,13 @@ const Overview = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
     FormContext,
   )
+  const { user } = useContext(UserContext)
   const { onOpen } = useFileList({ caseId: workingCase.id })
   const { formatMessage } = useIntl()
 
   const caseIsClosed = completedCaseStates.includes(workingCase.state)
   const isDefender = router.pathname.includes(constants.DEFENDER_ROUTE)
-  console.log(isDefender)
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -71,7 +71,11 @@ const Overview = () => {
             <SectionHeading title={formatMessage(m.caseFilesTitle)} />
             {workingCase.caseFiles
               .filter((f) => {
-                if (caseIsClosed) {
+                if (
+                  caseIsClosed ||
+                  user?.role === UserRole.JUDGE ||
+                  user?.role === UserRole.REGISTRAR
+                ) {
                   return true
                 } else {
                   if (

@@ -1,15 +1,12 @@
-import faker from 'faker'
-
 import { DEFENDER_ROUTE } from '@island.is/judicial-system/consts'
 import {
   Case,
   CaseFileCategory,
-  CaseFileState,
   CaseState,
   CaseType,
 } from '@island.is/judicial-system/types'
 
-import { intercept, mockCase } from '../../../utils'
+import { intercept, makeCaseFile, mockCase } from '../../../utils'
 
 describe('Indictment case overview for defenders', () => {
   const theCase = mockCase(CaseType.MURDER)
@@ -20,39 +17,9 @@ describe('Indictment case overview for defenders', () => {
         ...theCase,
         state: CaseState.ACCEPTED,
         caseFiles: [
-          {
-            created: '2020-09-16T19:51:39.466Z',
-            modified: '2020-09-16T19:51:39.466Z',
-            id: faker.datatype.uuid(),
-            name: faker.random.word(),
-            caseId: faker.datatype.uuid(),
-            type: 'png',
-            state: CaseFileState.STORED_IN_RVG,
-            size: 1,
-            category: CaseFileCategory.COURT_RECORD,
-          },
-          {
-            created: '2020-09-16T19:51:39.466Z',
-            modified: '2020-09-16T19:51:39.466Z',
-            id: faker.datatype.uuid(),
-            name: faker.random.word(),
-            caseId: faker.datatype.uuid(),
-            type: 'png',
-            state: CaseFileState.STORED_IN_RVG,
-            size: 1,
-            category: CaseFileCategory.RULING,
-          },
-          {
-            created: '2020-09-16T19:51:39.466Z',
-            modified: '2020-09-16T19:51:39.466Z',
-            id: faker.datatype.uuid(),
-            name: faker.random.word(),
-            caseId: faker.datatype.uuid(),
-            type: 'png',
-            state: CaseFileState.STORED_IN_RVG,
-            size: 1,
-            category: CaseFileCategory.COST_BREAKDOWN,
-          },
+          makeCaseFile({ category: CaseFileCategory.COURT_RECORD }),
+          makeCaseFile({ category: CaseFileCategory.RULING }),
+          makeCaseFile({ category: CaseFileCategory.COST_BREAKDOWN }),
         ],
       }
 
@@ -72,39 +39,9 @@ describe('Indictment case overview for defenders', () => {
         ...theCase,
         state: CaseState.RECEIVED,
         caseFiles: [
-          {
-            created: '2020-09-16T19:51:39.466Z',
-            modified: '2020-09-16T19:51:39.466Z',
-            id: faker.datatype.uuid(),
-            name: faker.random.word(),
-            caseId: faker.datatype.uuid(),
-            type: 'png',
-            state: CaseFileState.STORED_IN_RVG,
-            size: 1,
-            category: CaseFileCategory.COURT_RECORD,
-          },
-          {
-            created: '2020-09-16T19:51:39.466Z',
-            modified: '2020-09-16T19:51:39.466Z',
-            id: faker.datatype.uuid(),
-            name: faker.random.word(),
-            caseId: faker.datatype.uuid(),
-            type: 'png',
-            state: CaseFileState.STORED_IN_RVG,
-            size: 1,
-            category: CaseFileCategory.RULING,
-          },
-          {
-            created: '2020-09-16T19:51:39.466Z',
-            modified: '2020-09-16T19:51:39.466Z',
-            id: faker.datatype.uuid(),
-            name: faker.random.word(),
-            caseId: faker.datatype.uuid(),
-            type: 'png',
-            state: CaseFileState.STORED_IN_RVG,
-            size: 1,
-            category: CaseFileCategory.COST_BREAKDOWN,
-          },
+          makeCaseFile({ category: CaseFileCategory.COURT_RECORD }),
+          makeCaseFile({ category: CaseFileCategory.RULING }),
+          makeCaseFile({ category: CaseFileCategory.COST_BREAKDOWN }),
         ],
       }
 

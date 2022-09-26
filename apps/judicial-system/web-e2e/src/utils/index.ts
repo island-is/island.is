@@ -117,6 +117,7 @@ export const mockAddress = faker.address.streetAddress()
 
 export const mockCase = (type: CaseType): Case => {
   const caseId = faker.datatype.uuid()
+
   return {
     id: caseId,
     created: '2020-09-16T19:50:08.033Z',
@@ -200,7 +201,7 @@ export const makeCourt = (): Institution => {
   }
 }
 
-export const makeCaseFile = (
+export const makeCaseFile = ({
   caseId = 'test_id',
   name = 'test_file_name',
   type = 'pdf',
@@ -208,7 +209,7 @@ export const makeCaseFile = (
   key = 'test_id',
   size = 100,
   category = CaseFileCategory.CASE_FILE,
-): CaseFile => {
+}): CaseFile => {
   return {
     id: 'test_case_file_id',
     created: '2020-09-16T19:50:08.033Z',
