@@ -16,18 +16,18 @@ export type CreateEmailArgs = Omit<CreateEmailData, 'authenticationToken'>
 export type UploadStreamArgs = UploadFile
 
 export abstract class CourtClientService {
-  abstract createCase(clientId: string, args: CreateCaseArgs): Promise<string>
+  abstract createCase(courtId: string, args: CreateCaseArgs): Promise<string>
   abstract createDocument(
-    clientId: string,
+    courtId: string,
     args: CreateDocumentArgs,
   ): Promise<string>
   abstract createThingbok(
-    clientId: string,
+    courtId: string,
     args: CreateThingbokArgs,
   ): Promise<string>
-  abstract createEmail(clientId: string, args: CreateEmailArgs): Promise<string>
+  abstract createEmail(courtId: string, args: CreateEmailArgs): Promise<string>
   abstract uploadStream(
-    clientId: string,
+    courtId: string,
     args: UploadStreamArgs,
   ): Promise<string>
 }
