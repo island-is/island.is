@@ -8,17 +8,17 @@ import {
   CaseType,
 } from '@island.is/judicial-system/types'
 
+import { createTestingCaseModule } from '../createTestingCaseModule'
 import {
   getCourtRecordPdfAsBuffer,
   getCourtRecordPdfAsString,
 } from '../../../../formatters'
 import { AwsS3Service } from '../../../aws-s3'
-import { CourtService } from '../../../court'
+import { CourtDocumentFolder, CourtService } from '../../../court'
 import { PoliceService } from '../../../police'
 import { CaseFile, FileService } from '../../../file'
 import { Case } from '../../models/case.model'
 import { DeliverResponse } from '../../models/deliver.response'
-import { createTestingCaseModule } from '../createTestingCaseModule'
 
 jest.mock('../../../../formatters/courtRecordPdf')
 
@@ -81,8 +81,8 @@ describe('InternalCaseController - Deliver', () => {
       beforeEach(async () => {
         const mockGetObject = mockAwsS3Service.getObject as jest.Mock
         mockGetObject.mockResolvedValueOnce(pdf)
-        const mockCreateRuling = mockCourtService.createRuling as jest.Mock
-        mockCreateRuling.mockResolvedValueOnce(uuid())
+        const mockCreateDocument = mockCourtService.createDocument as jest.Mock
+        mockCreateDocument.mockResolvedValueOnce(uuid())
 
         then = await givenWhenThen(caseId, theCase)
       })
@@ -94,11 +94,14 @@ describe('InternalCaseController - Deliver', () => {
       })
 
       it('should create a ruling at court', async () => {
-        expect(mockCourtService.createRuling).toHaveBeenCalledWith(
+        expect(mockCourtService.createDocument).toHaveBeenCalledWith(
           caseId,
           courtId,
           courtCaseNumber,
+          CourtDocumentFolder.COURT_DOCUMENTS,
           'test',
+          'test.pdf',
+          'application/pdf',
           pdf,
           undefined,
         )
@@ -120,8 +123,8 @@ describe('InternalCaseController - Deliver', () => {
       beforeEach(async () => {
         const mockGet = getCourtRecordPdfAsBuffer as jest.Mock
         mockGet.mockResolvedValueOnce(pdf)
-        const createCourtRecord = mockCourtService.createCourtRecord as jest.Mock
-        createCourtRecord.mockResolvedValueOnce(uuid())
+        const mockCreateDocument = mockCourtService.createDocument as jest.Mock
+        mockCreateDocument.mockResolvedValueOnce(uuid())
 
         then = await givenWhenThen(caseId, theCase)
       })
@@ -134,11 +137,14 @@ describe('InternalCaseController - Deliver', () => {
       })
 
       it('should create a court record at court', async () => {
-        expect(mockCourtService.createCourtRecord).toHaveBeenCalledWith(
+        expect(mockCourtService.createDocument).toHaveBeenCalledWith(
           caseId,
           courtId,
           courtCaseNumber,
+          CourtDocumentFolder.COURT_DOCUMENTS,
           'test',
+          'test.pdf',
+          'application/pdf',
           pdf,
         )
       })
@@ -383,6 +389,7 @@ describe('InternalCaseController - Deliver', () => {
           caseId,
           courtId,
           courtCaseNumber,
+          CourtDocumentFolder.COURT_DOCUMENTS,
           'test',
           `test.${rulingSuffix}`,
           rulingType,
@@ -416,6 +423,7 @@ describe('InternalCaseController - Deliver', () => {
           caseId,
           courtId,
           courtCaseNumber,
+          CourtDocumentFolder.COURT_DOCUMENTS,
           'test',
           `test.${suffix}`,
           courtRecordType,
