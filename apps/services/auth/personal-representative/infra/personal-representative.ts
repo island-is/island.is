@@ -1,9 +1,9 @@
 import { service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
 import { MissingSetting } from '../../../../../infra/src/dsl/types/input-types'
-export const serviceSetup = (): ServiceBuilder<'services-personal-representative'> => {
-  return service('services-personal-representative')
+export const serviceSetup = (): ServiceBuilder<'services-auth-personal-representative'> => {
+  return service('services-auth-personal-representative')
     .namespace('personal-representative')
-    .image('services-personal-representative')
+    .image('services-auth-personal-representative')
     .postgres({
       username: 'servicesauth',
       name: 'servicesauth',
