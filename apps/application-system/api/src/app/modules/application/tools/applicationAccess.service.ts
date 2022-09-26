@@ -103,7 +103,7 @@ export class ApplicationAccessService {
           return false
         }
         const matchesAtLeastOneDelegation = template.allowedDelegations.some(
-          (d) => userDelegations.includes(d),
+          (d) => userDelegations.includes(d.type),
         )
         if (!matchesAtLeastOneDelegation) {
           return false

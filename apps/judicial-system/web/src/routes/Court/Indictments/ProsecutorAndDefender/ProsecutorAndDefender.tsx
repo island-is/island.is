@@ -1,5 +1,6 @@
 import React, { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
+import { useRouter } from 'next/router'
 
 import {
   CourtCaseInfo,
@@ -24,6 +25,7 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { prosecutorAndDefender as m } from './ProsecutorAndDefender.strings'
 import SelectDefender from './SelectDefender'
 import { isprosecutorAndDefenderStepValid } from '@island.is/judicial-system-web/src/utils/validate'
+import { NotificationType } from '@island.is/judicial-system/types'
 
 const HearingArrangements: React.FC = () => {
   const {
@@ -32,7 +34,12 @@ const HearingArrangements: React.FC = () => {
     isLoadingWorkingCase,
     caseNotFound,
   } = useContext(FormContext)
-  const { setAndSendToServer } = useCase()
+  const router = useRouter()
+  const {
+    setAndSendToServer,
+    sendNotification,
+    isSendingNotification,
+  } = useCase()
   const { formatMessage } = useIntl()
   const handleProsecutorChange = useCallback(
     (prosecutorId: string) => {
@@ -50,6 +57,11 @@ const HearingArrangements: React.FC = () => {
     },
     [workingCase, setWorkingCase, setAndSendToServer],
   )
+
+  const onNextButttonClick = useCallback(async () => {
+    await sendNotification(workingCase.id, NotificationType.DEFENDER_ASSIGNED)
+    router.push(`${constants.INDICTMENTS_COURT_RECORD_ROUTE}/${workingCase.id}`)
+  }, [workingCase.id, sendNotification, router])
 
   return (
     <PageLayout
@@ -74,10 +86,14 @@ const HearingArrangements: React.FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${constants.INDICTMENTS_SUBPOENA_ROUTE}/${workingCase.id}`}
-          nextIsLoading={isLoadingWorkingCase}
+          nextIsLoading={isLoadingWorkingCase || isSendingNotification}
           nextButtonText={formatMessage(core.continue)}
           nextUrl={`${constants.INDICTMENTS_COURT_RECORD_ROUTE}/${workingCase.id}`}
-          nextIsDisabled={!isprosecutorAndDefenderStepValid(workingCase)}
+          nextIsDisabled={
+            isSendingNotification ||
+            !isprosecutorAndDefenderStepValid(workingCase)
+          }
+          onNextButtonClick={onNextButttonClick}
         />
       </FormContentContainer>
     </PageLayout>
