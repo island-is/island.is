@@ -186,3 +186,5 @@ export interface GenericLicenseClient<LicenseType> {
 export const GENERIC_LICENSE_FACTORY = 'generic_license_factory'
 
 export const CONFIG_PROVIDER = 'config_provider'
+
+export const CONFIG_PROVIDER_V2 = 'config_provider_v2'

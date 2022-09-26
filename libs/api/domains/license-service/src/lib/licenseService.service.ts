@@ -18,7 +18,7 @@ import {
   GenericLicenseUserdataExternal,
   PkPassVerification,
   GenericUserLicensePkPassStatus,
-  CONFIG_PROVIDER,
+  CONFIG_PROVIDER_V2,
 } from './licenceService.type'
 import { Locale } from '@island.is/shared/types'
 
@@ -45,7 +45,7 @@ export class LicenseServiceService {
     ) => Promise<GenericLicenseClient<unknown> | null>,
     @Inject(CACHE_MANAGER) private cacheManager: CacheManager,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
-    @Inject(CONFIG_PROVIDER) private config: LicenseServiceConfigV2,
+    @Inject(CONFIG_PROVIDER_V2) private config: LicenseServiceConfigV2,
   ) {}
 
   private async getCachedOrCache(
