@@ -7,6 +7,7 @@ export enum GenericLicenseType {
   MachineLicense = 'MachineLicense',
   FirearmLicense = 'FirearmLicense',
 }
+
 export type GenericLicenseTypeType = keyof typeof GenericLicenseType
 
 export enum GenericLicenseProviderId {
@@ -14,11 +15,8 @@ export enum GenericLicenseProviderId {
   EnvironmentAgency = 'EnvironmentAgency',
   AdministrationOfOccupationalSafetyAndHealth = 'AdministrationOfOccupationalSafetyAndHealth',
 }
-export type GenericLicenseProviderIdType = keyof typeof GenericLicenseProviderId
 
-export const PassTemplates: Record<string, GenericLicenseType> = {
-  'dfb706c1-3a78-4518-bf25-cebbf0a93132': GenericLicenseType.FirearmLicense,
-}
+export type GenericLicenseProviderIdType = keyof typeof GenericLicenseProviderId
 
 export enum GenericUserLicenseStatus {
   Unknown = 'Unknown',

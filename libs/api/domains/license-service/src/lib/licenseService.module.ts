@@ -49,10 +49,15 @@ export interface DriversLicenseConfig {
   }
   pkpass: PkPassConfig
 }
-export interface Config {
+export interface LicenseServiceConfig {
   firearmLicense: PkPassConfig
   driversLicense: DriversLicenseConfig
 }
+
+export type LicenseServiceConfigV2 = Omit<
+  LicenseServiceConfig,
+  'driversLicense'
+>
 
 export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
   {
@@ -95,7 +100,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
 
 @Module({})
 export class LicenseServiceModule {
-  static register(config: Config): DynamicModule {
+  static register(config: LicenseServiceConfig): DynamicModule {
     return {
       module: LicenseServiceModule,
       imports: [
