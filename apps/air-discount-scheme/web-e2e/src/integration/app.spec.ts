@@ -1,4 +1,4 @@
-describe('air-discount-scheme-web', () => {
+xdescribe('air-discount-scheme-web', () => {
   beforeEach(() => cy.visit('/'))
 
   it('should display welcome message', () => {
