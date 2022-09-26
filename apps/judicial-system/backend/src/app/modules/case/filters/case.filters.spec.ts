@@ -743,7 +743,7 @@ describe('getCasesQueryFilter', () => {
       expect(res).toStrictEqual({
         [Op.and]: [
           { isArchived: false },
-          { [Op.not]: { state: [CaseState.DELETED, CaseState.NEW] } },
+          { [Op.not]: { state: [CaseState.NEW, CaseState.DELETED] } },
           {
             [Op.or]: [
               { court_id: { [Op.is]: null } },
@@ -771,11 +771,11 @@ describe('getCasesQueryFilter', () => {
           {
             [Op.not]: {
               state: [
-                CaseState.DELETED,
                 CaseState.NEW,
                 CaseState.DRAFT,
                 CaseState.SUBMITTED,
                 CaseState.RECEIVED,
+                CaseState.DELETED,
               ],
             },
           },
