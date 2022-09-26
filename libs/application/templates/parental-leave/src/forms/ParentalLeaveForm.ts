@@ -41,8 +41,6 @@ import {
   NO_PRIVATE_PENSION_FUND,
   NO_UNION,
   ParentalRelations,
-  PARENTAL_GRANT,
-  PARENTAL_GRANT_STUDENTS,
   PARENTAL_LEAVE,
   StartDateOptions,
   YES,
