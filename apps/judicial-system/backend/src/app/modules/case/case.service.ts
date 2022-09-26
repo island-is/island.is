@@ -993,7 +993,10 @@ export class CaseService {
   }
 
   async addCompletedCaseToQueue(caseId: string): Promise<string> {
-    return this.queueService.add({ type: MessageType.CASE_COMPLETED, caseId })
+    return await this.queueService.add({
+      type: MessageType.CASE_COMPLETED,
+      caseId,
+    })
   }
 
   async getRulingSignatureConfirmation(
