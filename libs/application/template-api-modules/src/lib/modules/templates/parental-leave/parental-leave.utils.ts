@@ -225,6 +225,10 @@ export const transformApplicationToParentalLeaveDTO = (
   const { isSelfEmployed, union, bank } = getApplicationAnswers(
     application.answers,
   )
+  const { applicationFundId } = getApplicationExternalData(
+    application.externalData,
+  )
+
   const { email, phoneNumber } = getApplicantContactInfo(application)
   const selfEmployed = isSelfEmployed === YES
 
@@ -232,6 +236,7 @@ export const transformApplicationToParentalLeaveDTO = (
 
   return {
     applicationId: application.id,
+    applicationFundId: applicationFundId,
     applicant: application.applicant,
     otherParentId: getOtherParentId(application),
     expectedDateOfBirth: selectedChild.expectedDateOfBirth,
