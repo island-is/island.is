@@ -40,7 +40,6 @@ import { nowFactory, uuidFactory } from '../../factories'
 import {
   getRequestPdfAsBuffer,
   getRulingPdfAsString,
-  getCasefilesPdfAsString,
   writeFile,
   getRulingPdfAsBuffer,
   getCustodyNoticePdfAsBuffer,
@@ -325,40 +324,6 @@ export class CaseService {
       })
   }
 
-  private async uploadCaseFilesPdfToCourt(theCase: Case): Promise<void> {
-    try {
-      if (theCase.caseFiles && theCase.caseFiles.length > 0) {
-        const caseFilesPdf = await getCasefilesPdfAsString(
-          theCase,
-          this.formatMessage,
-        )
-
-        if (!this.config.production) {
-          writeFile(`${theCase.id}-case-files.pdf`, caseFilesPdf)
-        }
-
-        const buffer = Buffer.from(caseFilesPdf, 'binary')
-
-        await this.courtService.createDocument(
-          theCase.id,
-          theCase.courtId,
-          theCase.courtCaseNumber,
-          CourtDocumentFolder.CASE_DOCUMENTS,
-          'Rannsóknargögn',
-          'Rannsóknargögn.pdf',
-          'application/pdf',
-          buffer,
-        )
-      }
-    } catch (error) {
-      // Log and ignore this error. The overview is not that critical.
-      this.logger.error(
-        `Failed to upload case files overview pdf to court for case ${theCase.id}`,
-        { error },
-      )
-    }
-  }
-
   private async sendEmailToCourt(
     theCase: Case,
     subject: string,
@@ -528,9 +493,6 @@ export class CaseService {
 
           success = success && uploaded
         }
-
-        theCase.caseFiles = caseFiles
-        await this.uploadCaseFilesPdfToCourt(theCase)
 
         return success
       })
