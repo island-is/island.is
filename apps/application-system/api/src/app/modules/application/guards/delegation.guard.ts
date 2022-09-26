@@ -71,7 +71,7 @@ export class DelegationGuard implements CanActivate {
         const applicationTemplate = await getApplicationTemplateByTypeId(typeId)
         const intersection =
           applicationTemplate.allowedDelegations?.filter((delegation) =>
-            user.delegationType?.includes(delegation),
+            user.delegationType?.includes(delegation.type),
           ) || []
         // returns true if the actors delegation type for the subject is allowed for this type of application
         if (intersection.length > 0) {

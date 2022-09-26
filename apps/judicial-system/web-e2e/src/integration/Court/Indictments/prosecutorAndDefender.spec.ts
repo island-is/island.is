@@ -1,7 +1,14 @@
 import { INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE } from '@island.is/judicial-system/consts'
 import { CaseType } from '@island.is/judicial-system/types'
 
-import { makeCourt, mockCase, makeProsecutor, intercept } from '../../../utils'
+import {
+  makeCourt,
+  mockCase,
+  makeProsecutor,
+  intercept,
+  hasOperationName,
+  Operation,
+} from '../../../utils'
 
 describe(`${INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE}/:id`, () => {
   beforeEach(() => {
@@ -46,5 +53,27 @@ describe(`${INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE}/:id`, () => {
 
     cy.get('#defendantWaivesRightToCounsel').uncheck()
     cy.getByTestid('continueButton').should('be.disabled')
+  })
+
+  it.only('should send notification to defender', () => {
+    cy.getByTestid('select-prosecutor').contains('Áki Ákærandi')
+
+    cy.getByTestid('creatable-select-defenderName')
+      .click()
+      .find('input')
+      .get('.island-select__option')
+      .should('contain', 'Logmadur')
+      .click()
+    cy.getByTestid('defenderEmail').should('have.value', 'logmadur@logmenn.is')
+
+    cy.intercept('POST', '**/api/graphql', (req) => {
+      if (hasOperationName(req, Operation.SendNotificationMutation)) {
+        req.alias = 'sendNotification'
+      }
+    })
+    cy.getByTestid('continueButton').click()
+    cy.wait('@sendNotification')
+      .its('request.body.variables.input.type')
+      .should('eq', 'DEFENDER_ASSIGNED')
   })
 })
