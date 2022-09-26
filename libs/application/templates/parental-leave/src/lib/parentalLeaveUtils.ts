@@ -379,9 +379,16 @@ export function getApplicationExternalData(
     '',
   ) as string
 
+  const applicationFundId = getValueViaPath(
+    externalData,
+    'sendApplication.data.id',
+    '',
+  ) as string
+
   return {
     applicantName,
     applicantGenderCode,
+    applicationFundId,
     dataProvider,
     children,
     existingApplications,

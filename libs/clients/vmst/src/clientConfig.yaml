@@ -328,6 +328,8 @@ components:
         applicationId:
           type: string
           minLength: 1
+        applicationFundId:
+          type: string
         applicant:
           type: string
           minLength: 1
