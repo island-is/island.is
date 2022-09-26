@@ -16,9 +16,10 @@ import {
 import { AdrApi, AdrDto } from '@island.is/clients/adr-and-machine-license'
 import { FetchError } from '@island.is/clients/middlewares'
 import {
-  CreatePkPassDataInput,
+  PassDataInput,
   SmartSolutionsApi,
 } from '@island.is/clients/smartsolutions'
+import { format } from 'kennitala'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'adrlicense-service'
@@ -92,12 +93,14 @@ export class GenericAdrLicenseApi implements GenericLicenseClient<AdrDto> {
     const inputValues = createPkPassDataInput(license)
     if (!inputValues) return null
     //Fetch template from api?
-    const payload: CreatePkPassDataInput = {
-      passTemplateId: '4e49febe-7ca9-49e3-a3be-3be70cb996c2',
+    const payload: PassDataInput = {
       inputFieldValues: inputValues,
     }
 
-    const pass = await this.smartApi.generatePkPassUrl(payload)
+    const pass = await this.smartApi.generatePkPassUrl(
+      payload,
+      format(user.nationalId),
+    )
     return pass ?? null
   }
   async getPkPassQRCode(user: User): Promise<string | null> {
@@ -106,11 +109,14 @@ export class GenericAdrLicenseApi implements GenericLicenseClient<AdrDto> {
 
     if (!inputValues) return null
     //Fetch template from api?
-    const payload: CreatePkPassDataInput = {
-      passTemplateId: '4e49febe-7ca9-49e3-a3be-3be70cb996c2',
+    const payload: PassDataInput = {
       inputFieldValues: inputValues,
     }
-    const pass = await this.smartApi.generatePkPassQrCode(payload)
+    const pass = await this.smartApi.generatePkPassQrCode(
+      payload,
+      format(user.nationalId),
+    )
+
     return pass ?? null
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
