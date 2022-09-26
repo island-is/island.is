@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { defineMessage } from 'react-intl'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
@@ -25,6 +25,8 @@ import {
   getTitleAndLogo,
 } from '../../utils/dataMapper'
 
+import { useFeatureFlagClient } from '@island.is/react/feature-flags'
+import { FeatureFlagClient } from '@island.is/feature-flags'
 const dataFragment = gql`
   fragment genericLicenseDataFieldFragment on GenericLicenseDataField {
     type
@@ -86,16 +88,39 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
   const history = useHistory()
   const { data: userProfile } = useUserProfile()
   const locale = (userProfile?.locale as Locale) ?? 'is'
-  const { data, loading, error } = useQuery<Query>(GenericLicensesQuery, {
-    variables: {
-      locale,
-      input: {
-        includedTypes: [
+
+  /**
+   * Get all licenses is feature flagged
+   * If off, all licenses fetched, if on only drivers license is fetched
+   * Please remove all code when fully released.
+   */
+  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
+  const [licenseTypes, setLicenseTypes] = useState<Array<GenericLicenseType>>([
+    GenericLicenseType.DriversLicense,
+  ])
+  useEffect(() => {
+    const isFlagEnabled = async () => {
+      const ffEnabled = await featureFlagClient.getValue(
+        `servicePortalFetchAllLicenses`,
+        false,
+      )
+      if (ffEnabled) {
+        setLicenseTypes([
           GenericLicenseType.DriversLicense,
           GenericLicenseType.AdrLicense,
           GenericLicenseType.MachineLicense,
           GenericLicenseType.FirearmLicense,
-        ],
+        ])
+      }
+    }
+    isFlagEnabled()
+  }, [])
+
+  const { data, loading, error } = useQuery<Query>(GenericLicensesQuery, {
+    variables: {
+      locale,
+      input: {
+        includedTypes: licenseTypes,
       },
     },
   })
