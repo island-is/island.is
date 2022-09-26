@@ -8,6 +8,7 @@ import { mock } from 'jest-mock-extended'
 import { ConfigModule, ConfigType } from '@island.is/nest/config'
 import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 import { IntlService } from '@island.is/cms-translations'
+import { createTestIntl } from '@island.is/cms-translations/test'
 import { signingModuleConfig, SigningService } from '@island.is/dokobit-signing'
 import { EmailService } from '@island.is/email-service'
 import { MessageService } from '@island.is/judicial-system/message'
@@ -71,7 +72,12 @@ export const createTestingCaseModule = async () => {
       {
         provide: IntlService,
         useValue: {
-          useIntl: async () => ({ formatMessage: () => 'test' }), // mock properly
+          useIntl: async () => ({
+            formatMessage: createTestIntl({
+              onError: jest.fn(),
+              locale: 'is-IS',
+            }).formatMessage,
+          }),
         },
       },
       {

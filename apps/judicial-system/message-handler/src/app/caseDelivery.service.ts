@@ -15,7 +15,7 @@ export class CaseDeliveryService {
   ) {}
 
   async deliverCase(caseId: string): Promise<void> {
-    logger.debug(`Delivering case ${caseId} to court`)
+    logger.debug(`Delivering case ${caseId} to court and police`)
 
     return fetch(
       `${this.config.backendUrl}/api/internal/case/${caseId}/deliver`,
@@ -58,12 +58,12 @@ export class CaseDeliveryService {
           return
         }
 
-        logger.error(`Failed to deliver case ${caseId}`, {
+        logger.error(`Failed to deliver case ${caseId} to court and police`, {
           response,
         })
       })
       .catch((reason) => {
-        logger.error(`Failed to deliver case ${caseId}`, {
+        logger.error(`Failed to deliver case ${caseId} to court and police`, {
           reason,
         })
       })

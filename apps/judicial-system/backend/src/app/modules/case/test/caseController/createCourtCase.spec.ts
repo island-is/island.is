@@ -6,6 +6,7 @@ import {
   CaseType,
   User as TUser,
 } from '@island.is/judicial-system/types'
+import { MessageService, MessageType } from '@island.is/judicial-system/message'
 
 import { randomEnum } from '../../../../test'
 import { createTestingCaseModule } from '../createTestingCaseModule'
@@ -27,16 +28,20 @@ type GivenWhenThen = (
 ) => Promise<Then>
 
 describe('CaseController - Create court case', () => {
+  let mockMessageService: MessageService
   let mockCourtService: CourtService
   let mockCaseModel: typeof Case
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
     const {
+      messageService,
       courtService,
       caseModel,
       caseController,
     } = await createTestingCaseModule()
+
+    mockMessageService = messageService
     mockCourtService = courtService
     mockCaseModel = caseModel
 
@@ -162,7 +167,7 @@ describe('CaseController - Create court case', () => {
     const user = {} as TUser
     const caseId = uuid()
     const theCase = { id: caseId } as Case
-    const returnedCase = {} as Case
+    const returnedCase = { id: caseId } as Case
     let then: Then
 
     beforeEach(async () => {
@@ -176,6 +181,13 @@ describe('CaseController - Create court case', () => {
 
     it('should return the case', () => {
       expect(then.result).toBe(returnedCase)
+    })
+
+    it('should post to queue', () => {
+      expect(mockMessageService.postMessageToQueue).toHaveBeenCalledWith({
+        type: MessageType.CASE_CONNECTED_TO_COURT_CASE,
+        caseId,
+      })
     })
   })
 

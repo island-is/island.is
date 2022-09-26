@@ -20,6 +20,7 @@ import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { Case } from './models/case.model'
 import { ArchiveResponse } from './models/archive.response'
 import { DeliverResponse } from './models/deliver.response'
+import { DeliverProsecutorDocumentsResponse } from './models/deliverProsecutorDocuments.response'
 import { CaseService } from './case.service'
 
 @Controller('api/internal')
@@ -59,14 +60,31 @@ export class InternalCaseController {
   @Post('case/:caseId/deliver')
   @ApiOkResponse({
     type: DeliverResponse,
-    description: 'Delivers a completed case to court',
+    description: 'Delivers a completed case to court and police',
   })
   deliver(
     @Param('caseId') caseId: string,
     @CurrentCase() theCase: Case,
   ): Promise<DeliverResponse> {
-    this.logger.debug(`Delivering case ${caseId}`)
+    this.logger.debug(`Delivering case ${caseId} to court and police`)
 
     return this.caseService.deliver(theCase)
+  }
+
+  @UseGuards(CaseExistsGuard)
+  @Post('case/:caseId/deliverProsecutorDocuments')
+  @ApiOkResponse({
+    type: DeliverProsecutorDocumentsResponse,
+    description: 'Delivers prosecutor documents to court',
+  })
+  deliverProsecutorDocuments(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+  ): Promise<DeliverProsecutorDocumentsResponse> {
+    this.logger.debug(
+      `Delivering prosecutor documents for case ${caseId} to court`,
+    )
+
+    return this.caseService.deliverProsecutorDocuments(theCase)
   }
 }
