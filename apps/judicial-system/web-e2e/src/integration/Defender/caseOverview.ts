@@ -18,6 +18,7 @@ describe('Defender case overview', () => {
       origin: CaseOrigin.RVG,
       type: CaseType.CUSTODY,
       policeCaseNumbers: ['007-2021-202000'],
+      defendantWaivesRightToCounsel: false,
     }
 
     cy.stubAPIResponses()

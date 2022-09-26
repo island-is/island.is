@@ -13,6 +13,7 @@ import {
   CaseOrigin,
   CaseFile,
   CaseFileState,
+  CaseFileCategory,
 } from '@island.is/judicial-system/types'
 
 export enum Operation {
@@ -206,6 +207,7 @@ export const makeCaseFile = (
   state = CaseFileState.STORED_IN_RVG,
   key = 'test_id',
   size = 100,
+  category = CaseFileCategory.CASE_FILE,
 ): CaseFile => {
   return {
     id: 'test_case_file_id',
@@ -217,5 +219,6 @@ export const makeCaseFile = (
     state,
     key,
     size,
+    category,
   }
 }

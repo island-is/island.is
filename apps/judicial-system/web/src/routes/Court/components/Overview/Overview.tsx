@@ -70,7 +70,7 @@ const Overview = () => {
           <Box component="section" marginBottom={10}>
             <SectionHeading title={formatMessage(m.caseFilesTitle)} />
             {workingCase.caseFiles
-              .filter((f: TUploadFile) => {
+              .filter((f) => {
                 if (caseIsClosed) {
                   return true
                 } else {
