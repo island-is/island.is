@@ -1,14 +1,14 @@
 import faker from 'faker'
 
-import { Case, CaseState } from '@island.is/judicial-system/types'
+import { Case, CaseState, CaseType } from '@island.is/judicial-system/types'
 import { INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE } from '@island.is/judicial-system/consts'
 
 import {
-  investigationCaseAccusedAddress,
-  investigationCaseAccusedName,
-  makeInvestigationCase,
+  mockCase,
   makeProsecutor,
   intercept,
+  mockName,
+  mockAddress,
 } from '../../../utils'
 
 describe(`${INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE}/:id`, () => {
@@ -16,11 +16,12 @@ describe(`${INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE}/:id`, () => {
   const defenderName = faker.name.findName()
   const defenderEmail = faker.internet.email()
   const defenderPhoneNumber = faker.phone.phoneNumber()
-  const caseData = makeInvestigationCase()
+  const caseData = mockCase(CaseType.INTERNET_USAGE)
 
   beforeEach(() => {
     const caseDataAddition: Case = {
       ...caseData,
+      defenderNationalId: '0000000000',
       defenderName,
       defenderEmail,
       defenderPhoneNumber,
@@ -47,7 +48,7 @@ describe(`${INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE}/:id`, () => {
 
   it('should display information about the case in an info card', () => {
     cy.getByTestid('infoCard').contains(
-      `${investigationCaseAccusedName}, kt. 000000-0000, ${investigationCaseAccusedAddress}`,
+      `${mockName}, kt. 000000-0000, ${mockAddress}`,
     )
     cy.getByTestid('infoCard').contains(
       `${defenderName}, ${defenderEmail}, s. ${defenderPhoneNumber}`,

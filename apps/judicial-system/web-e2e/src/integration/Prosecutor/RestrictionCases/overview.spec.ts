@@ -1,18 +1,23 @@
 import faker from 'faker'
 
-import { Case, CaseState, Defendant } from '@island.is/judicial-system/types'
+import {
+  Case,
+  CaseState,
+  CaseType,
+  Defendant,
+} from '@island.is/judicial-system/types'
 import { RESTRICTION_CASE_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
 
 import {
-  makeRestrictionCase,
   makeCourt,
   makeProsecutor,
   intercept,
   Operation,
+  mockCase,
 } from '../../../utils'
 
 describe(`${RESTRICTION_CASE_OVERVIEW_ROUTE}/:id`, () => {
-  const caseData = makeRestrictionCase()
+  const caseData = mockCase(CaseType.CUSTODY)
   const defenderName = faker.name.findName()
   const defenderEmail = faker.internet.email()
   const defenderPhoneNumber = faker.phone.phoneNumber()
@@ -33,6 +38,7 @@ describe(`${RESTRICTION_CASE_OVERVIEW_ROUTE}/:id`, () => {
     court: makeCourt(),
     creatingProsecutor: makeProsecutor(),
     prosecutor: makeProsecutor(),
+    defenderNationalId: '0000000000',
     defenderName,
     defenderEmail,
     defenderPhoneNumber,

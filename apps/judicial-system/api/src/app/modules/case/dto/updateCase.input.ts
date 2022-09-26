@@ -12,6 +12,7 @@ import type {
   CaseType,
   SessionArrangements,
   CourtDocument,
+  SubpoenaType,
 } from '@island.is/judicial-system/types'
 
 @InputType()
@@ -271,4 +272,12 @@ export class UpdateCaseInput implements UpdateCase {
   @Allow()
   @Field({ nullable: true })
   readonly seenByDefender?: string
+
+  @Allow()
+  @Field(() => String, { nullable: true })
+  readonly subpoenaType?: SubpoenaType
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly defendantWaivesRightToCounsel?: boolean
 }

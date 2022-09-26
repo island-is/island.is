@@ -5,6 +5,7 @@ export enum GenericLicenseType {
   HuntingLicense = 'HuntingLicense',
   AdrLicense = 'AdrLicense',
   MachineLicense = 'MachineLicense',
+  FirearmLicense = 'FirearmLicense',
 }
 export type GenericLicenseTypeType = keyof typeof GenericLicenseType
 
@@ -14,6 +15,10 @@ export enum GenericLicenseProviderId {
   AdministrationOfOccupationalSafetyAndHealth = 'AdministrationOfOccupationalSafetyAndHealth',
 }
 export type GenericLicenseProviderIdType = keyof typeof GenericLicenseProviderId
+
+export const PassTemplates: Record<string, GenericLicenseType> = {
+  'dfb706c1-3a78-4518-bf25-cebbf0a93132': GenericLicenseType.FirearmLicense,
+}
 
 export enum GenericUserLicenseStatus {
   Unknown = 'Unknown',
@@ -138,10 +143,26 @@ export type PkPassVerificationError = {
   data?: string
 }
 
+export type PkPassVerificationData = {
+  id?: string
+  validFrom?: string
+  expirationDate?: string
+  expirationTime?: string
+  status?: string
+  whenCreated?: string
+  whenModified?: string
+  alreadyPaid?: boolean
+}
+
 export type PkPassVerification = {
   valid: boolean
   data?: string
   error?: PkPassVerificationError
+}
+
+export type PkPassVerificationInputData = {
+  code: string
+  date: string
 }
 
 /**
