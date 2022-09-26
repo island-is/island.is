@@ -76,47 +76,6 @@ export const ParentalLeaveForm: Form = buildForm({
       title: parentalLeaveFormMessages.shared.applicantSection,
       children: [
         buildSubSection({
-          id: 'applicationType',
-          title: parentalLeaveFormMessages.shared.applicationTypeTitle,
-          children: [
-            buildRadioField({
-              id: 'applicationType.option',
-              title: parentalLeaveFormMessages.shared.applicationTypeTitle,
-              description:
-                parentalLeaveFormMessages.shared
-                  .applicationParentalLeaveDescription,
-              options: [
-                {
-                  value: PARENTAL_LEAVE,
-                  label:
-                    parentalLeaveFormMessages.shared
-                      .applicationParentalLeaveTitle,
-                  subLabel: parentalLeaveFormMessages.shared
-                    .applicationParentalLeaveSubTitle.defaultMessage as string,
-                },
-                {
-                  value: PARENTAL_GRANT,
-                  label:
-                    parentalLeaveFormMessages.shared
-                      .applicationParentalGrantUnemployedTitle,
-                  subLabel: parentalLeaveFormMessages.shared
-                    .applicationParentalGrantUnemployedSubTitle
-                    .defaultMessage as string,
-                },
-                {
-                  value: PARENTAL_GRANT_STUDENTS,
-                  label:
-                    parentalLeaveFormMessages.shared
-                      .applicationParentalGrantStudentTitle,
-                  subLabel: parentalLeaveFormMessages.shared
-                    .applicationParentalGrantStudentSubTitle
-                    .defaultMessage as string,
-                },
-              ],
-            }),
-          ],
-        }),
-        buildSubSection({
           id: 'emailAndPhoneNumber',
           title: parentalLeaveFormMessages.applicant.subSection,
           children: [
