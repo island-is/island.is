@@ -239,9 +239,9 @@ export class NationalRegistryService {
     const nameParts = response.fullName?.split(' ') ?? []
     return {
       nationalId: response.nationalId,
-      firstName: response.givenName ?? nameParts[0] ?? '',
-      middleName: response.middleName ?? nameParts.slice(1, -1).join(' ') ?? '',
-      lastName: response.familyName ?? nameParts.slice(-1).pop() ?? '',
+      firstName: nameParts[0] ?? '',
+      middleName: nameParts.slice(1, -1).join(' ') ?? '',
+      lastName: nameParts.slice(-1).pop() ?? '',
       gender: this.mapGender(response.genderCode),
       address: address?.streetAddress ?? '',
       postalcode: parseInt(address?.postalCode ?? '0'),
