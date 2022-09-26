@@ -50,7 +50,7 @@ describe(`${INDICTMENTS_COURT_OVERVIEW_ROUTE}/:id`, () => {
 
     cy.getByTestid('infoCardDataContainer0').contains('16. sept. 2020')
     cy.getByTestid('infoCardDataContainer1').contains(
-      prosecutor!.institution!.name,
+      prosecutor.institution!.name,
     )
     cy.getByTestid('infoCardDataContainer2').contains('007-2022-01')
     cy.getByTestid('infoCardDataContainer2').contains('007-2022-02')

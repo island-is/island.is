@@ -9,6 +9,7 @@ import {
 import {
   intercept,
   makeCaseFile,
+  makeJudge,
   makeProsecutor,
   mockCase,
 } from '../../../utils'
@@ -16,12 +17,16 @@ import {
 describe('Indictment case overview for defenders', () => {
   const theCase = mockCase(CaseType.MURDER)
   const prosecutor = makeProsecutor()
+  const judge = makeJudge()
 
   describe('Closed cases', () => {
     beforeEach(() => {
       const caseDataAddition: Case = {
         ...theCase,
         state: CaseState.ACCEPTED,
+        courtCaseNumber: 'S-202/2020',
+        creatingProsecutor: prosecutor,
+        judge,
         caseFiles: [
           makeCaseFile({ category: CaseFileCategory.COURT_RECORD }),
           makeCaseFile({ category: CaseFileCategory.RULING }),
@@ -36,6 +41,25 @@ describe('Indictment case overview for defenders', () => {
 
     it('should list all case files, including COURT_RECORD and RULING', () => {
       cy.get('[data-testid="PDFButton"]').should('have.length', 3)
+    })
+
+    it.only('should display relevant data', () => {
+      cy.getByTestid('infoCard').contains(
+        `${theCase.defendants![0].name}, kt. ${
+          theCase.defendants![0].nationalId
+        }, ${theCase.defendants![0].address}`,
+      )
+      cy.getByTestid('infoCardDataContainer0').contains(
+        theCase.policeCaseNumbers[0],
+      )
+      cy.getByTestid('infoCardDataContainer1').contains('S-202/2020')
+      cy.getByTestid('infoCardDataContainer2').contains(
+        prosecutor!.institution!.name,
+      )
+      cy.getByTestid('infoCardDataContainer3').contains(theCase.court!.name)
+      cy.getByTestid('infoCardDataContainer4').contains(prosecutor.name)
+      cy.getByTestid('infoCardDataContainer5').contains(judge.name)
+      cy.getByTestid('infoCardDataContainer6').contains('Manndráp')
     })
   })
 
@@ -70,7 +94,7 @@ describe('Indictment case overview for defenders', () => {
 
       cy.getByTestid('infoCardDataContainer0').contains('16. sept. 2020')
       cy.getByTestid('infoCardDataContainer1').contains(
-        prosecutor!.institution!.name,
+        prosecutor.institution!.name,
       )
       cy.getByTestid('infoCardDataContainer2').contains(
         theCase.policeCaseNumbers[0],
