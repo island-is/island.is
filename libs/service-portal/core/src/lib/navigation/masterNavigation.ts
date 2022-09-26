@@ -332,7 +332,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         },
         description: m.accessControlDescription,
       },
-      // Aðgangsstýring
+      // Aðgangsstýring umboð
       {
         name: m.accessControl,
         path: ServicePortalPath.AccessControlDelegations,
@@ -344,6 +344,11 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           {
             name: m.accessControlDelegations,
             path: ServicePortalPath.AccessControlDelegations,
+          },
+          {
+            name: m.accessControlDelegationsToMe,
+            navHide: true,
+            path: ServicePortalPath.AccessControlDelegationsToMe,
           },
         ],
       },

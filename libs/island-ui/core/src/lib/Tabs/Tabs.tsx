@@ -22,6 +22,7 @@ interface TabInterface {
   tabs: TabType[]
   contentBackground?: Colors
   size?: 'xs' | 'sm' | 'md'
+  onClick?(id: string): void
 }
 
 export const Tabs: FC<TabInterface> = ({
@@ -30,6 +31,7 @@ export const Tabs: FC<TabInterface> = ({
   tabs,
   contentBackground = 'purple100',
   size = 'md',
+  onClick: onClickHandler,
 }) => {
   const { loop, wrap, ...tab } = useTabState({
     selectedId: selected,
@@ -94,6 +96,11 @@ export const Tabs: FC<TabInterface> = ({
               className={cn(styles.tab, {
                 [styles.tabSelected]: index.toString() === tab.selectedId,
                 [styles.tabDisabled]: disabled,
+              })}
+              {...(onClickHandler && {
+                onClick: () => {
+                  tab.currentId && onClickHandler?.(tab.currentId)
+                },
               })}
             >
               {label}

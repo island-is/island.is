@@ -16,15 +16,24 @@ export const delegationsModule: ServicePortalModule = {
     const isDelegation = Boolean(userInfo.profile.actor)
     const personDelegation = isDelegation && !isCompany
 
+    const accessControlCommonFields = {
+      name: m.accessControlDelegations,
+      path: ServicePortalPath.AccessControlDelegations,
+      navHide: !userInfo.scopes.includes(AuthScope.writeDelegations),
+      enabled: personDelegation
+        ? false
+        : userInfo.scopes.includes(AuthScope.writeDelegations),
+      render: () => lazy(() => import('./screens/AccessControl')),
+    }
+
     const routes: ServicePortalRoute[] = [
       {
-        name: m.accessControlDelegations,
+        ...accessControlCommonFields,
         path: ServicePortalPath.AccessControlDelegations,
-        navHide: !userInfo.scopes.includes(AuthScope.writeDelegations),
-        enabled: personDelegation
-          ? false
-          : userInfo.scopes.includes(AuthScope.writeDelegations),
-        render: () => lazy(() => import('./screens/AccessControl')),
+      },
+      {
+        ...accessControlCommonFields,
+        path: ServicePortalPath.AccessControlDelegationsToMe,
       },
       {
         name: m.accessControlGrant,

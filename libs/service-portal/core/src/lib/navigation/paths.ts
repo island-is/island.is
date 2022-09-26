@@ -23,6 +23,7 @@ export enum ServicePortalPath {
 
   // Access Control
   AccessControlDelegations = '/adgangsstyring/umbod',
+  AccessControlDelegationsToMe = '/adgangsstyring/umbod-til-min',
   AccessControlDelegationsGrant = '/adgangsstyring/umbod/veita',
   AccessControlDelegationAccess = '/adgangsstyring/umbod/:delegationId',
 

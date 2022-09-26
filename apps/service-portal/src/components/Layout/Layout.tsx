@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react'
+import type { FC } from 'react'
 import Header from '../Header/Header'
 import Sidebar from '../Sidebar/Sidebar'
 import {

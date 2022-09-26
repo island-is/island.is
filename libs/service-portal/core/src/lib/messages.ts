@@ -526,6 +526,10 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:delegations',
     defaultMessage: 'Umboð',
   },
+  accessControlDelegationsToMe: {
+    id: 'sp.access-control-delegations:to-me',
+    defaultMessage: 'Umboð til mín',
+  },
   accessControlDescription: {
     id: 'service.portal:accessControl-description',
     defaultMessage: 'Umboðsveiting og yfirlit yfir umboð sem þú hefur gefið',

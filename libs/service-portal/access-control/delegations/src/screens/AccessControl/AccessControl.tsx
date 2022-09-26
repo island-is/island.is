@@ -2,6 +2,7 @@ import { Box, Text, Tabs } from '@island.is/island-ui/core'
 import {
   AccessDenied,
   IntroHeader,
+  m,
   NoDataScreen,
   ServicePortalModuleComponent,
   ServicePortalPath,
@@ -13,6 +14,7 @@ import { gql, useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
 import { useAuth } from '@island.is/auth/react'
 import { MessageDescriptor } from 'react-intl'
+import { useHistory, useLocation } from 'react-router-dom'
 
 export const AuthDelegationsQuery = gql`
   query AuthDelegationsListQuery {
@@ -29,6 +31,10 @@ const AccessControl: ServicePortalModuleComponent = ({ userInfo, client }) => {
   const { data, loading } = useQuery<Query>(AuthDelegationsQuery)
   const { switchUser } = useAuth()
   const { formatMessage } = useLocale()
+  const history = useHistory()
+  const location = useLocation()
+  const isDelegationToMe =
+    location.pathname === ServicePortalPath.AccessControlDelegationsToMe
 
   if (!loading && data?.authDelegations.length === 0) {
     return (
@@ -96,10 +102,29 @@ const AccessControl: ServicePortalModuleComponent = ({ userInfo, client }) => {
     ),
   })
 
+  const delegationFromMeTabId = '0'
+  const delegationToMeTabId = '1'
+
+  const tabClickHandler = (id: string) => {
+    const url =
+      id === delegationToMeTabId
+        ? ServicePortalPath.AccessControlDelegationsToMe
+        : ServicePortalPath.AccessControlDelegations
+
+    // Make sure not to add to history stack the same route twice in a row
+    if (url !== location.pathname) {
+      history.push(url)
+    }
+  }
+
   return (
     <Box>
       {!loading && data && data?.authDelegations?.length > 0 && (
         <Tabs
+          selected={
+            isDelegationToMe ? delegationToMeTabId : delegationFromMeTabId
+          }
+          onClick={tabClickHandler}
           label="This is used as the aria-label as well"
           tabs={[
             creatTab(
@@ -112,16 +137,10 @@ const AccessControl: ServicePortalModuleComponent = ({ userInfo, client }) => {
                 defaultMessage: 'Umboð sem ég hef veitt',
               },
             ),
-            creatTab(
-              {
-                id: 'sp.access-control-delegations:to-me',
-                defaultMessage: 'Umboð til mín',
-              },
-              {
-                id: 'sp.access-control-delegations:to-me-title',
-                defaultMessage: 'Umboð sem ég hef fengið',
-              },
-            ),
+            creatTab(m.accessControlDelegationsToMe, {
+              id: 'sp.access-control-delegations:to-me-title',
+              defaultMessage: 'Umboð sem ég hef fengið',
+            }),
           ]}
           contentBackground="white"
         />
