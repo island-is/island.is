@@ -61,6 +61,12 @@ export const getApplication = (allowFakeData = false): Form => {
                 title: '',
                 subTitle: '',
               }),
+              buildDataProviderItem({
+                id: 'configProvider',
+                type: 'ConfigProvider',
+                title: '',
+                subTitle: '',
+              }),
             ],
           }),
         ],
