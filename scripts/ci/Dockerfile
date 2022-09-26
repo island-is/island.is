@@ -7,7 +7,7 @@ RUN apk add -U git
 WORKDIR /build
 
 # Adding and installing packages
-ADD package.json yarn.lock .yarn/cache ./
+ADD package.json yarn.lock .yarn/cache/ ./
 RUN yarn set version berry
 RUN CI=true yarn install --immutable
 
