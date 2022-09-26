@@ -9,7 +9,8 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import type { CheckboxState } from '../../types'
 import {
   applyAssetPolicies,
-  applyEntryPolicies,
+  applyEntryEditPolicies,
+  applyEntryGlobalReadPolicies,
   getAllContentTypesInAscendingOrder,
   getAllRoles,
   getContentfulManagementApiClient,
@@ -64,6 +65,22 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const policies: Role['policies'] = []
 
+    const globallyReadableContentTypeIds = new Set<string>()
+
+    // Gather all content types we want the user to be able to read globally
+    for (const contentTypeName in data.readonlyCheckboxState[roleName]) {
+      const contentType = contentTypesMap.get(contentTypeName)
+      if (!contentType) continue
+
+      const checked = data.readonlyCheckboxState[roleName][contentTypeName]
+      if (!checked) continue
+
+      globallyReadableContentTypeIds.add(contentType.sys.id)
+    }
+
+    const scopedEditableContentTypeIds = new Set<string>()
+
+    // Gather all "scoped" (only editable if there's a tag) editable content types
     for (const contentTypeName in data.checkboxState[roleName]) {
       const contentType = contentTypesMap.get(contentTypeName)
       if (!contentType) continue
@@ -71,11 +88,17 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       const checked = data.checkboxState[roleName][contentTypeName]
       if (!checked) continue
 
-      const readOnlyChecked =
-        data.readonlyCheckboxState?.[roleName]?.[contentTypeName]
-
-      applyEntryPolicies(policies, contentType, tagId, readOnlyChecked)
+      scopedEditableContentTypeIds.add(contentType.sys.id)
     }
+
+    applyEntryEditPolicies(
+      policies,
+      scopedEditableContentTypeIds,
+      tagId,
+      globallyReadableContentTypeIds,
+    )
+
+    applyEntryGlobalReadPolicies(policies, globallyReadableContentTypeIds)
 
     applyAssetPolicies(
       policies,

@@ -428,8 +428,10 @@ export const getServerSideProps = async () => {
     getAllTags(),
   ])
 
-  const rolesToShow = roles.filter((role) =>
-    role.name.toLowerCase().startsWith('owner-'),
+  const rolesToShow = roles.filter(
+    (role) =>
+      role.name.toLowerCase().startsWith('owner-') &&
+      role.name.toLowerCase().includes('test'),
   )
 
   const tagsMap = getTagNameToTagIdMap(tags)

@@ -66,11 +66,12 @@ const policiesAreEditable = (
   contentType: ContentTypeProps,
   tagId: string,
 ) => {
-  const policies = []
-  applyEntryPolicies(policies, contentType, tagId, false)
-  return policies.every((p1) =>
-    role.policies.find((p2) => JSON.stringify(p1) === JSON.stringify(p2)),
-  )
+  return false
+  // const policies = []
+  // applyEntryEditPolicies(policies, contentType, tagId, false)
+  // return policies.every((p1) =>
+  //   role.policies.find((p2) => JSON.stringify(p1) === JSON.stringify(p2)),
+  // )
 }
 
 const policiesAreReadOnlyEntries = (
@@ -78,16 +79,17 @@ const policiesAreReadOnlyEntries = (
   contentType: ContentTypeProps,
   tagId: string,
 ) => {
-  const policies = []
-  applyEntryPolicies(policies, contentType, tagId, true)
-  const p1 = policies[1]
+  return false
+  // const policies = []
+  // applyEntryGlobalReadPolicies(policies, contentType)
+  // const p1 = policies[1]
 
-  // TODO: fix the read only indicator on load
-  return (
-    role.policies.find((p2) => {
-      return JSON.stringify(p1) === JSON.stringify(p2)
-    }) !== undefined
-  )
+  // // TODO: fix the read only indicator on load
+  // return (
+  //   role.policies.find((p2) => {
+  //     return JSON.stringify(p1) === JSON.stringify(p2)
+  //   }) !== undefined
+  // )
 }
 
 export const extractInitialCheckboxStateFromRolesAndContentTypes = (
@@ -215,52 +217,89 @@ export const applyAssetPolicies = (
   })
 }
 
-export const applyEntryPolicies = (
+export const applyEntryGlobalReadPolicies = (
   policies: Role['policies'],
-  contentType: ContentTypeProps,
-  tagId: string,
-  canReadAllEntriesOfType?: boolean,
+  contentTypeIds: Set<string>,
 ) => {
-  policies.push({
-    actions: 'all',
-    effect: 'allow',
-    constraint: {
-      and: [
-        { equals: [{ doc: 'sys.type' }, 'Entry'] },
-        { equals: [{ doc: 'sys.contentType.sys.id' }, contentType.sys.id] },
-      ],
-    },
-  })
+  for (const id of contentTypeIds) {
+    policies.push({
+      actions: ['read'],
+      effect: 'allow',
+      constraint: {
+        and: [
+          { equals: [{ doc: 'sys.type' }, 'Entry'] },
+          {
+            equals: [{ doc: 'sys.contentType.sys.id' }, id],
+          },
+        ],
+      },
+    })
+  }
+}
 
-  const actions: ActionType[] = [
-    'update',
-    'delete',
-    'publish',
-    'unpublish',
-    'archive',
-    'unarchive',
-  ]
+export const applyEntryEditPolicies = (
+  policies: Role['policies'],
+  scopedEditableContentTypeIds: Set<string>,
+  tagId: string,
+  globallyReadableContentTypeIds: Set<string>,
+) => {
+  const allContentTypeIds = new Set<string>()
 
-  if (!canReadAllEntriesOfType) {
-    actions.push('read')
+  for (const id of scopedEditableContentTypeIds) {
+    allContentTypeIds.add(id)
+    policies.push({
+      actions: 'all',
+      effect: 'allow',
+      constraint: {
+        and: [
+          { equals: [{ doc: 'sys.type' }, 'Entry'] },
+          {
+            equals: [{ doc: 'sys.contentType.sys.id' }, id],
+          },
+        ],
+      },
+    })
   }
 
-  policies.push({
-    actions: actions,
-    effect: 'deny',
-    constraint: {
-      and: [
-        { equals: [{ doc: 'sys.type' }, 'Entry'] },
-        { equals: [{ doc: 'sys.contentType.sys.id' }, contentType.sys.id] },
-        {
-          not: {
-            or: [
-              { equals: [{ doc: 'sys.createdBy.sys.id' }, 'User.current()'] },
-              { in: [{ doc: 'metadata.tags.sys.id' }, [tagId]] },
-            ],
+  for (const id of globallyReadableContentTypeIds) {
+    allContentTypeIds.add(id)
+  }
+
+  for (const id of allContentTypeIds) {
+    if (!scopedEditableContentTypeIds.has(id)) continue
+
+    const actions: ActionType[] = [
+      'update',
+      'delete',
+      'publish',
+      'unpublish',
+      'archive',
+      'unarchive',
+    ]
+
+    if (!globallyReadableContentTypeIds.has(id)) {
+      actions.push('read')
+    }
+
+    policies.push({
+      actions,
+      effect: 'deny',
+      constraint: {
+        and: [
+          { equals: [{ doc: 'sys.type' }, 'Entry'] },
+          {
+            equals: [{ doc: 'sys.contentType.sys.id' }, id],
           },
-        },
-      ],
-    },
-  })
+          {
+            not: {
+              or: [
+                { equals: [{ doc: 'sys.createdBy.sys.id' }, 'User.current()'] },
+                { in: [{ doc: 'metadata.tags.sys.id' }, [tagId]] },
+              ],
+            },
+          },
+        ],
+      },
+    })
+  }
 }
