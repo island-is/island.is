@@ -62,6 +62,7 @@ export type LicenseServiceConfigV2 = Omit<
   'driversLicense'
 >
 
+//TODO: Translate all strings (Ásdís Erna Guðmundsdóttir /disaerna)
 export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
   {
     type: GenericLicenseType.DriversLicense,
