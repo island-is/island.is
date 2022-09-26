@@ -115,7 +115,7 @@ export const routesTemplate = {
   },
   projectnews: {
     is: '/v/[slug]/frett/[subSlug]',
-    en: '/en/o/[slug]/news/[subSlug]',
+    en: '/en/p/[slug]/news/[subSlug]',
   },
   projectnewsoverview: {
     is: '/v/[slug]/frett',
