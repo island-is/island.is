@@ -6,10 +6,16 @@ import {
   CaseType,
 } from '@island.is/judicial-system/types'
 
-import { intercept, makeCaseFile, mockCase } from '../../../utils'
+import {
+  intercept,
+  makeCaseFile,
+  makeProsecutor,
+  mockCase,
+} from '../../../utils'
 
 describe('Indictment case overview for defenders', () => {
   const theCase = mockCase(CaseType.MURDER)
+  const prosecutor = makeProsecutor()
 
   describe('Closed cases', () => {
     beforeEach(() => {
@@ -38,6 +44,7 @@ describe('Indictment case overview for defenders', () => {
       const caseDataAddition: Case = {
         ...theCase,
         state: CaseState.RECEIVED,
+        creatingProsecutor: prosecutor,
         caseFiles: [
           makeCaseFile({ category: CaseFileCategory.COURT_RECORD }),
           makeCaseFile({ category: CaseFileCategory.RULING }),
@@ -52,6 +59,24 @@ describe('Indictment case overview for defenders', () => {
 
     it('should not list casefiles with category COURT_RECORD or RULING', () => {
       cy.get('[data-testid="PDFButton"]').should('have.length', 1)
+    })
+
+    it('should display relevant data', () => {
+      cy.getByTestid('infoCard').contains(
+        `${theCase.defendants![0].name}, kt. ${
+          theCase.defendants![0].nationalId
+        }, ${theCase.defendants![0].address}`,
+      )
+
+      cy.getByTestid('infoCardDataContainer0').contains('16. sept. 2020')
+      cy.getByTestid('infoCardDataContainer1').contains(
+        prosecutor!.institution!.name,
+      )
+      cy.getByTestid('infoCardDataContainer2').contains(
+        theCase.policeCaseNumbers[0],
+      )
+      cy.getByTestid('infoCardDataContainer3').contains(theCase.court!.name)
+      cy.getByTestid('infoCardDataContainer4').contains('Manndráp')
     })
   })
 })

@@ -25,7 +25,7 @@ describe(`${INDICTMENTS_COURT_OVERVIEW_ROUTE}/:id`, () => {
     const caseDataAddition: Case = {
       ...caseData,
       creatingProsecutor: prosecutor,
-      prosecutor: prosecutor,
+      prosecutor,
       state: CaseState.RECEIVED,
       caseFiles: [
         makeCaseFile({ caseId: caseData.id, name: 'test.pdf' }),
@@ -43,21 +43,18 @@ describe(`${INDICTMENTS_COURT_OVERVIEW_ROUTE}/:id`, () => {
 
   it('should display relevant data', () => {
     cy.getByTestid('infoCard').contains(
-      `${caseData.defendants && caseData.defendants[0].name}, kt. ${
-        caseData.defendants && caseData.defendants[0].nationalId
-      }, ${caseData.defendants && caseData.defendants[0].address}`,
+      `${caseData.defendants![0].name}, kt. ${
+        caseData.defendants![0].nationalId
+      }, ${caseData.defendants![0].address}`,
     )
 
     cy.getByTestid('infoCardDataContainer0').contains('16. sept. 2020')
     cy.getByTestid('infoCardDataContainer1').contains(
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       prosecutor!.institution!.name,
     )
     cy.getByTestid('infoCardDataContainer2').contains('007-2022-01')
     cy.getByTestid('infoCardDataContainer2').contains('007-2022-02')
-    cy.getByTestid('infoCardDataContainer3').contains(
-      caseData.court?.name || '',
-    )
+    cy.getByTestid('infoCardDataContainer3').contains(caseData.court!.name)
     cy.getByTestid('infoCardDataContainer4').contains('Skattalagabrot')
 
     cy.getByTestid('PDFButton').contains('test.pdf')
