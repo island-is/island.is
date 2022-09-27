@@ -197,9 +197,17 @@ export const m = defineMessages({
     id: 'service.portal:real-estate',
     defaultMessage: 'Fasteignir',
   },
+  realEstateDescription: {
+    id: 'service.portal:real-estate-description',
+    defaultMessage: 'Fasteignir þínar og veðbókavottorð',
+  },
   vehicles: {
     id: 'service.portal:vehicles',
     defaultMessage: 'Ökutæki',
+  },
+  vehiclesDescription: {
+    id: 'service.portal:vehicles-description',
+    defaultMessage: 'Allt tengt ökutækjunum þínum á einum stað',
   },
   vehiclesHistory: {
     id: 'service.portal:vehicles-history',
@@ -319,9 +327,17 @@ export const m = defineMessages({
     id: 'service.portal:documents',
     defaultMessage: 'Pósthólf',
   },
+  documentsDescription: {
+    id: 'service.portal:documents-description',
+    defaultMessage: 'Erindi til þín frá opinberum aðilum',
+  },
   applications: {
     id: 'service.portal:applications',
     defaultMessage: 'Umsóknir',
+  },
+  applicationsDescription: {
+    id: 'service.portal:applications-description',
+    defaultMessage: 'Staða umsókna sem þú hefur sótt um í gegnum island.is',
   },
   unfinishedApplications: {
     id: 'service.portal:unfinishedApplications',
@@ -342,6 +358,10 @@ export const m = defineMessages({
   userInfo: {
     id: 'service.portal:user-info',
     defaultMessage: 'Mínar upplýsingar',
+  },
+  userInfoDescription: {
+    id: 'service.portal:user-info-description',
+    defaultMessage: 'Gögn um þig og fjölskylduna þína',
   },
   detailInfo: {
     id: 'service.portal:detail-info',
@@ -384,9 +404,17 @@ export const m = defineMessages({
     id: 'service.portal:educationLicense',
     defaultMessage: 'Starfsleyfi',
   },
+  educationLicenseDescription: {
+    id: 'service.portal:educationLicense-description',
+    defaultMessage: 'Hér munu birtast starfsleyfi sem þú hefur fengið',
+  },
   education: {
     id: 'service.portal:education',
     defaultMessage: 'Menntun',
+  },
+  educationDescription: {
+    id: 'service.portal:education-description',
+    defaultMessage: 'Hér mun birtast námsferill þinn og barnanna þinna',
   },
   documentProvider: {
     id: 'service.portal:document-provider',
@@ -400,9 +428,17 @@ export const m = defineMessages({
     id: 'service.portal:licenses',
     defaultMessage: 'Skírteini',
   },
+  licensesDescription: {
+    id: 'service.portal:licenses-description',
+    defaultMessage: 'Upplýsingar um skírteini og réttindi sem þeim fylgja',
+  },
   finance: {
     id: 'service.portal:finance',
     defaultMessage: 'Fjármál',
+  },
+  financeDescription: {
+    id: 'service.portal:finance-description',
+    defaultMessage: 'Staða þín við ríkissjóð og aðrar aðgerðir því tengdu',
   },
   financeStatus: {
     id: 'service.portal:finance-status',
@@ -465,6 +501,14 @@ export const m = defineMessages({
     id: 'service.portal:drivingLicense',
     defaultMessage: 'Ökuréttindi',
   },
+  adrLicense: {
+    id: 'service.portal:adr-license',
+    defaultMessage: 'Ökuréttindi',
+  },
+  machineLicense: {
+    id: 'service.portal:machine-license',
+    defaultMessage: 'Vinnuvélaréttindi',
+  },
   notFound: {
     id: 'service.portal:not-found',
     defaultMessage: 'Síða finnst ekki',
@@ -485,6 +529,10 @@ export const m = defineMessages({
   accessControl: {
     id: 'service.portal:accessControl',
     defaultMessage: 'Aðgangsstýring',
+  },
+  accessControlDescription: {
+    id: 'service.portal:accessControl-description',
+    defaultMessage: 'Umboðsveiting og yfirlit yfir umboð sem þú hefur gefið',
   },
   accessControlGrant: {
     id: 'service.portal:accessControlGrant',
@@ -707,6 +755,10 @@ export const m = defineMessages({
   companyTitle: {
     id: 'service.portal:company-title',
     defaultMessage: 'Um fyrirtæki',
+  },
+  companyDescription: {
+    id: 'service.portal:company-description',
+    defaultMessage: 'Gögn um fyrirtækið',
   },
   datesLabel: {
     id: 'service.portal:dates-label',
