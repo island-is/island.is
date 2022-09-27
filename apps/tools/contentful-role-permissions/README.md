@@ -9,7 +9,7 @@
 
 ## Why
 
-- This was developed to help us manage users in Contentful since the Contentful UI for managing role policies was limited (at the time of writing this)
+- This was developed to help us manage users in Contentful since the Contentful UI for managing role policies was limited and didn't scale well since we need a lot of rules (at the time of writing this)
 
 ## How to run
 
@@ -25,6 +25,14 @@
 - For organizations the role name is essentially the same as the tag name, that's how we map them together (to be exact the slugified version of the role name must match some tag name)
   - For example, the role name: `Owner-Fiskistofa` and the tag name: `owner-fiskistofa` are connected
   - So each time a user with the role `Owner-Fiskistofa` creates an entry, it'll automatically be tagged with the tag name: `owner-fiskistofa` and other users with the same role can also see that entry
+
+Essentially there are 3 things we can change per role:
+
+- What content types an organization can read all instances of
+- What content types an organization can edit instances of with a given tag
+- We can also change whether or not an organization can see all assets (they still can only edit assets with their tag) or if they can only see and edit assets with a given tag.
+
+And since the entire Contentful user management procedure relies on tags, we implemented a entry tagging bot which’ll tag an entry when it’s created (by looking at the role of the user who created the entry). The code for the entry tagging bot also lives in the Github monorepo: `apps/services/contentful-entry-tagger`
 
 ## Code owners and maintainers
 
