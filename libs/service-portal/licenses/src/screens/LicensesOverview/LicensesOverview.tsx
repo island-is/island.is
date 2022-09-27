@@ -1,109 +1,21 @@
 import React from 'react'
 import { defineMessage } from 'react-intl'
-import { useLocale, useNamespaces } from '@island.is/localization'
+
+import { Box } from '@island.is/island-ui/core'
+import { useNamespaces } from '@island.is/localization'
 import {
   EmptyState,
   IntroHeader,
   ServicePortalModuleComponent,
 } from '@island.is/service-portal/core'
+import LicenseCards from '../../components/LicenseCards/LicenseCards'
 import { LicenseLoader } from '../../components/LicenseLoader/LicenseLoader'
 import { m } from '../../lib/messages'
-import { gql, useQuery } from '@apollo/client'
-import { Locale } from '@island.is/shared/types'
-import {
-  GenericLicenseType,
-  GenericUserLicenseFetchStatus,
-  useUserProfile,
-} from '@island.is/service-portal/graphql'
-import { Query } from '@island.is/api/schema'
-import { Box, ActionCard } from '@island.is/island-ui/core'
-import { useHistory } from 'react-router-dom'
-import { ServicePortalPath } from '@island.is/service-portal/core'
-import {
-  getPathFromProviderId,
-  getPathFromType,
-  getTitleAndLogo,
-} from '../../utils/dataMapper'
-
-const dataFragment = gql`
-  fragment genericLicenseDataFieldFragment on GenericLicenseDataField {
-    type
-    name
-    label
-    value
-    fields {
-      type
-      name
-      label
-      value
-      fields {
-        type
-        name
-        label
-        value
-      }
-    }
-  }
-`
-
-const GenericLicensesQuery = gql`
-  query GenericLicensesQuery($input: GetGenericLicensesInput, $locale: String) {
-    genericLicenses(input: $input, locale: $locale) {
-      nationalId
-      license {
-        type
-        provider {
-          id
-        }
-        pkpass
-        pkpassVerify
-        timeout
-        status
-        pkpassStatus
-      }
-      fetch {
-        status
-        updated
-      }
-      payload {
-        data {
-          ...genericLicenseDataFieldFragment
-        }
-        rawData
-        metadata {
-          licenseNumber
-          expired
-        }
-      }
-    }
-  }
-  ${dataFragment}
-`
+import { useDrivingLicense } from '@island.is/service-portal/graphql'
 
 export const LicensesOverview: ServicePortalModuleComponent = () => {
   useNamespaces('sp.license')
-  const { formatMessage } = useLocale()
-  const history = useHistory()
-  const { data: userProfile } = useUserProfile()
-  const locale = (userProfile?.locale as Locale) ?? 'is'
-  const { data, loading, error } = useQuery<Query>(GenericLicensesQuery, {
-    variables: {
-      locale,
-      input: {
-        includedTypes: [
-          GenericLicenseType.DriversLicense,
-          GenericLicenseType.AdrLicense,
-          GenericLicenseType.MachineLicense,
-          GenericLicenseType.FirearmLicense,
-        ],
-      },
-    },
-  })
-  const { genericLicenses = [] } = data ?? {}
-
-  const isError = genericLicenses?.every(
-    (item) => item.fetch.status === GenericUserLicenseFetchStatus.Error,
-  )
+  const { data, status, loading, error } = useDrivingLicense()
 
   return (
     <>
@@ -114,61 +26,17 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
         />
       </Box>
       {loading && <LicenseLoader />}
-      {data &&
-        genericLicenses
-          .filter((license) => license.license.status === 'HasLicense')
-          .map((license, index) => {
-            return (
-              <Box marginBottom={3} key={index}>
-                <ActionCard
-                  image={{
-                    type: 'image',
-                    url: getTitleAndLogo(license.license.type).logo,
-                  }}
-                  text={
-                    formatMessage(m.licenseNumber) +
-                    ': ' +
-                    license.payload?.metadata?.licenseNumber
-                  }
-                  heading={formatMessage(
-                    getTitleAndLogo(license.license.type).title,
-                  )}
-                  headingVariant="h4"
-                  cta={{
-                    label: formatMessage(m.seeDetails),
-                    onClick: () =>
-                      history.push(
-                        ServicePortalPath.LicensesDetail.replace(
-                          ':provider',
-                          getPathFromProviderId(license.license.provider.id),
-                        ).replace(
-                          ':type',
-                          getPathFromType(license.license.type),
-                        ),
-                      ),
-                    variant: 'text',
-                  }}
-                  tag={
-                    license.payload?.metadata?.expired === true
-                      ? {
-                          label: formatMessage(m.isExpired),
-                          variant: 'red',
-                          outlined: false,
-                        }
-                      : license.payload?.metadata?.expired === false
-                      ? {
-                          label: formatMessage(m.isValid),
-                          variant: 'blue',
-                          outlined: false,
-                        }
-                      : undefined
-                  }
-                />
-              </Box>
-            )
-          })}
+      {data && <LicenseCards data={data} />}
 
-      {(error || isError) && !loading && (
+      {!loading &&
+        !error &&
+        (status === 'Unknown' || status === 'NotAvailable') && (
+          <Box marginTop={8}>
+            <EmptyState />
+          </Box>
+        )}
+
+      {error && (
         <Box>
           <EmptyState description={m.errorFetch} />
         </Box>

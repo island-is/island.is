@@ -1,8 +1,6 @@
 import { logger } from '@island.is/logging'
 import * as Soap from 'soap'
 
-const WSDL_REQUEST_TIMEOUT = 10 * 1000
-
 export class SoapClient {
   static async generateClient(
     baseUrl: string,
@@ -14,9 +12,6 @@ export class SoapClient {
         {
           // eslint-disable-next-line
           wsdl_headers: { Host: host },
-          wsdl_options: {
-            timeout: WSDL_REQUEST_TIMEOUT,
-          },
         },
         (error, client) => {
           if (client) {

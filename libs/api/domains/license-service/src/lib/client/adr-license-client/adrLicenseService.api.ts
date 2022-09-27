@@ -7,8 +7,6 @@ import {
   GenericUserLicensePkPassStatus,
   GenericUserLicenseStatus,
   PkPassVerification,
-  PkPassVerificationError,
-  PkPassVerificationInputData,
 } from '../../licenceService.type'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import {
@@ -18,10 +16,9 @@ import {
 import { AdrApi, AdrDto } from '@island.is/clients/adr-and-machine-license'
 import { FetchError } from '@island.is/clients/middlewares'
 import {
-  PassDataInput,
+  CreatePkPassDataInput,
   SmartSolutionsApi,
 } from '@island.is/clients/smartsolutions'
-import { format } from 'kennitala'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'adrlicense-service'
@@ -95,14 +92,12 @@ export class GenericAdrLicenseApi implements GenericLicenseClient<AdrDto> {
     const inputValues = createPkPassDataInput(license)
     if (!inputValues) return null
     //Fetch template from api?
-    const payload: PassDataInput = {
+    const payload: CreatePkPassDataInput = {
+      passTemplateId: '4e49febe-7ca9-49e3-a3be-3be70cb996c2',
       inputFieldValues: inputValues,
     }
 
-    const pass = await this.smartApi.generatePkPassUrl(
-      payload,
-      format(user.nationalId),
-    )
+    const pass = await this.smartApi.generatePkPassUrl(payload)
     return pass ?? null
   }
   async getPkPassQRCode(user: User): Promise<string | null> {
@@ -111,64 +106,15 @@ export class GenericAdrLicenseApi implements GenericLicenseClient<AdrDto> {
 
     if (!inputValues) return null
     //Fetch template from api?
-    const payload: PassDataInput = {
+    const payload: CreatePkPassDataInput = {
+      passTemplateId: '4e49febe-7ca9-49e3-a3be-3be70cb996c2',
       inputFieldValues: inputValues,
     }
-    const pass = await this.smartApi.generatePkPassQrCode(
-      payload,
-      format(user.nationalId),
-    )
-
+    const pass = await this.smartApi.generatePkPassQrCode(payload)
     return pass ?? null
   }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async verifyPkPass(data: string): Promise<PkPassVerification | null> {
-    const { code, date } = JSON.parse(data) as PkPassVerificationInputData
-    const result = await this.smartApi.verifyPkPass({ code, date })
-
-    if (!result) {
-      this.logger.warn('Missing pkpass verify from client', {
-        category: LOG_CATEGORY,
-      })
-      return null
-    }
-
-    let error: PkPassVerificationError | undefined
-
-    if (result.error) {
-      let data = ''
-
-      try {
-        data = JSON.stringify(result.error.serviceError?.data)
-      } catch {
-        // noop
-      }
-
-      // Is there a status code from the service?
-      const serviceErrorStatus = result.error.serviceError?.status
-
-      // Use status code, or http status code from serivce, or "0" for unknown
-      const status = serviceErrorStatus ?? (result.error.statusCode || 0)
-
-      error = {
-        status: status.toString(),
-        message: result.error.serviceError?.message || 'Unknown error',
-        data,
-      }
-
-      return {
-        valid: false,
-        data: undefined,
-        error,
-      }
-    }
-
-    /*
-      TODO: VERIFICATION!!!!!!!! Máni (thorkellmani @ github)
-    */
-
-    return {
-      valid: result.valid,
-      error,
-    }
+    return null
   }
 }

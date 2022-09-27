@@ -78,18 +78,6 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
   const orderByOptions = useMemo(() => {
     return [
       {
-        label: n('orderByReleaseDateDescending', 'Útgáfudagur (nýtt)'),
-        value: 'order-by-release-date-descending',
-        field: 'releaseDate',
-        order: 'desc',
-      },
-      {
-        label: n('orderByReleaseDateAscending', 'Útgáfudagur (gamalt)'),
-        value: 'order-by-release-date-ascending',
-        field: 'releaseDate',
-        order: 'asc',
-      },
-      {
         label: n('orderByTitleAscending', 'Titill (a-ö)'),
         value: 'order-by-title-ascending',
         field: 'title.sort',
@@ -100,6 +88,18 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
         value: 'order-by-title-descending',
         field: 'title.sort',
         order: 'desc',
+      },
+      {
+        label: n('orderByReleaseDateDescending', 'Útgáfudagur (nýtt)'),
+        value: 'order-by-release-date-descending',
+        field: 'releaseDate',
+        order: 'desc',
+      },
+      {
+        label: n('orderByReleaseDateAscending', 'Útgáfudagur (gamalt)'),
+        value: 'order-by-release-date-ascending',
+        field: 'releaseDate',
+        order: 'asc',
       },
     ]
   }, [])

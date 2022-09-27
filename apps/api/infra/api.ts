@@ -19,7 +19,6 @@ import {
   MunicipalitiesFinancialAid,
   Vehicles,
   AdrAndMachine,
-  Firearm,
 } from '../../../infra/src/dsl/xroad'
 import { settings } from '../../../infra/src/dsl/settings'
 
@@ -180,12 +179,6 @@ export const serviceSetup = (services: {
       PKPASS_SECRET_KEY: '/k8s/api/PKPASS_SECRET_KEY',
       VE_PKPASS_API_KEY: '/k8s/api/VE_PKPASS_API_KEY',
       RLS_PKPASS_API_KEY: '/k8s/api/RLS_PKPASS_API_KEY',
-      SMART_SOLUTIONS_API_URL: '/k8s/api/SMART_SOLUTIONS_API_URL',
-      FIREARM_LICENSE_PASS_TEMPLATE_ID:
-        '/k8s/api/FIREARM_LICENSE_PASS_TEMPLATE_ID',
-      MACHINE_LICENSE_PASS_TEMPLATE_ID:
-        '/k8s/api/MACHINE_LICENSE_PASS_TEMPLATE_ID',
-      ADR_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/ADR_LICENSE_PASS_TEMPLATE_ID',
       ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE',
       ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH',
       IDENTITY_SERVER_CLIENT_SECRET: '/k8s/api/IDENTITY_SERVER_CLIENT_SECRET',
@@ -196,7 +189,6 @@ export const serviceSetup = (services: {
     })
     .xroad(
       AdrAndMachine,
-      Firearm,
       Base,
       Client,
       HealthInsurance,

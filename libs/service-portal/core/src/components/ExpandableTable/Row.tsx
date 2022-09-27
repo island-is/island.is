@@ -81,6 +81,7 @@ const ExpandableLine: FC<Props> = ({
             alignItems: 'flexEnd',
             background: color,
             borderColor: borderColor,
+            printHidden: true,
             position: 'relative',
           }}
           style={tableStyles}

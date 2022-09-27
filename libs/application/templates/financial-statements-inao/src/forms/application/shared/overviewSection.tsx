@@ -1,5 +1,4 @@
 import {
-  buildDescriptionField,
   buildCustomField,
   buildMultiField,
   buildSection,
@@ -7,9 +6,8 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
-import { GREATER, USERTYPE, LESS } from '../../../lib/constants'
+import { GREATER, LESS } from '../../../lib/constants'
 import { m } from '../../../lib/messages'
-import { getCurrentUserType } from '../../../lib/utils/helpers'
 
 export const overviewSection = buildSection({
   id: 'overviewSection',
@@ -17,63 +15,23 @@ export const overviewSection = buildSection({
   children: [
     buildMultiField({
       id: 'overview',
-      title: (application) => {
-        const answers = application.answers
-        const externalData = application.externalData
-        if (getCurrentUserType(answers, externalData) === USERTYPE.INDIVIDUAL) {
-          return getValueViaPath(
-            application.answers,
-            'election.incomeLimit',
-          ) === LESS
-            ? m.statement
-            : m.overviewReview
-        } else {
-          return m.yearlyOverview
-        }
-      },
-      description: (application) => {
-        const answers = application.answers
-        const externalData = application.externalData
-        if (getCurrentUserType(answers, externalData) === USERTYPE.INDIVIDUAL) {
-          return getValueViaPath(
-            application.answers,
-            'election.incomeLimit',
-          ) === GREATER
-            ? m.overviewDescription
-            : `${m.electionStatement.defaultMessage} ${getValueViaPath(
-                application.answers,
-                'election.selectElection',
-              )}`
-        } else {
-          return m.review
-        }
-      },
+
+      title: (application) =>
+        getValueViaPath(application.answers, 'electionInfo.incomeLimit') ===
+        GREATER
+          ? m.overviewTitle
+          : m.statement,
+      description: (application) =>
+        getValueViaPath(application.answers, 'electionInfo.incomeLimit') ===
+        GREATER
+          ? m.overviewDescription
+          : m.electionStatement,
       children: [
         buildCustomField({
-          id: 'overviewCemetryField',
-          title: '',
-          condition: (answers, externalData) => {
-            const userType = getCurrentUserType(answers, externalData)
-            return userType === USERTYPE.CEMETRY
-          },
-          doesNotRequireAnswer: true,
-          component: 'CemetryOverview',
-        }),
-        buildCustomField({
-          id: 'overviewPartyField',
-          title: '',
-          condition: (answers, externalData) => {
-            const userType = getCurrentUserType(answers, externalData)
-            return userType === USERTYPE.PARTY
-          },
-          doesNotRequireAnswer: true,
-          component: 'PartyOverview',
-        }),
-        buildCustomField({
-          id: 'overviewField',
+          id: 'overviewCustomField',
           title: '',
           condition: (answers) =>
-            getValueViaPath(answers, 'election.incomeLimit') === GREATER,
+            getValueViaPath(answers, 'electionInfo.incomeLimit') === GREATER,
           doesNotRequireAnswer: true,
           component: 'Overview',
         }),
@@ -81,20 +39,14 @@ export const overviewSection = buildSection({
           id: 'overviewStatementField',
           title: '',
           condition: (answers) =>
-            getValueViaPath(answers, 'election.incomeLimit') === LESS,
+            getValueViaPath(answers, 'electionInfo.incomeLimit') === LESS,
           doesNotRequireAnswer: true,
           component: 'ElectionStatement',
-        }),
-        buildDescriptionField({
-          id: 'overviewConfirmations',
-          title: m.overview,
-          titleVariant: 'h3',
         }),
         buildSubmitField({
           id: 'submit',
           title: '',
           placement: 'screen',
-          refetchApplicationAfterSubmit: true,
           actions: [
             {
               event: DefaultEvents.SUBMIT,

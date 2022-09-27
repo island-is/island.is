@@ -11,7 +11,6 @@ import {
   Text,
   Box,
   GridContainer,
-  BreadCrumbItem,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
@@ -34,64 +33,23 @@ import { createNavigation } from '@island.is/web/utils/navigation'
 import { useNamespace } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import { useRouter } from 'next/router'
-import { Locale } from 'locale'
-import { useLocalLinkTypeResolver } from '@island.is/web/hooks/useLocalLinkTypeResolver'
 
 interface LifeEventProps {
   lifeEvent: GetLifeEventQuery['getLifeEventPage']
   namespace: GetNamespaceQuery['getNamespace']
-  locale: Locale
 }
 
 export const LifeEvent: Screen<LifeEventProps> = ({
   lifeEvent: { id, image, title, intro, content },
   namespace,
-  locale,
 }) => {
   useContentfulId(id)
-  useLocalLinkTypeResolver()
-
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
-  const router = useRouter()
 
   const navigation = useMemo(() => {
     return createNavigation(content, { title })
   }, [content, title])
-
-  const breadcrumbItems = useMemo(() => {
-    const items: BreadCrumbItem[] = [
-      {
-        title: 'Ísland.is',
-        href: '/',
-        typename: 'homepage',
-      },
-    ]
-
-    const overviewUrl = router.asPath.slice(0, router.asPath.lastIndexOf('/'))
-
-    // If we're viewing the digital iceland services we need to change the breadcrumbs
-    if (
-      linkResolver('digitalicelandservices', [], locale).href === overviewUrl
-    ) {
-      items.push({
-        title: n('digitalIceland', 'Stafrænt Ísland'),
-        href: overviewUrl.slice(0, overviewUrl.lastIndexOf('/')),
-      })
-      items.push({
-        title: n('digitalIcelandServices', 'Þjónusta'),
-        href: overviewUrl,
-      })
-    } else {
-      items.push({
-        title: n('lifeEvents', 'Lífsviðburðir'),
-        href: overviewUrl,
-      })
-    }
-
-    return items
-  }, [])
 
   return (
     <Box paddingBottom={[2, 2, 10]}>
@@ -129,7 +87,17 @@ export const LifeEvent: Screen<LifeEventProps> = ({
               >
                 <Box paddingBottom={[2, 2, 4]}>
                   <Breadcrumbs
-                    items={breadcrumbItems}
+                    items={[
+                      {
+                        title: 'Ísland.is',
+                        href: '/',
+                        typename: 'homepage',
+                      },
+                      {
+                        title: n('lifeEvents', 'Lífsviðburðir'),
+                        href: linkResolver('lifeevents').href,
+                      },
+                    ]}
                     renderLink={(link, { href }) => {
                       return (
                         <NextLink href={href} passHref>
@@ -216,7 +184,7 @@ LifeEvent.getInitialProps = async ({ apolloClient, locale, query }) => {
     throw new CustomNextError(404, 'Life Event not found')
   }
 
-  return { lifeEvent, namespace, locale: locale as Locale }
+  return { lifeEvent, namespace }
 }
 
 export default withMainLayout(LifeEvent)

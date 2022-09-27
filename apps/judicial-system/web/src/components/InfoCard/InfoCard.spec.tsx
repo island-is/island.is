@@ -14,10 +14,8 @@ describe('InfoCard', () => {
         <LocaleProvider locale="is" messages={{}}>
           <InfoCard
             data={[]}
-            defender={{
-              name: 'Joe',
-              sessionArrangement: SessionArrangements.ALL_PRESENT,
-            }}
+            defender={{ name: 'Joe' }}
+            sessionArrangement={SessionArrangements.ALL_PRESENT}
           />
         </LocaleProvider>
       </MockedProvider>,
@@ -34,11 +32,8 @@ describe('InfoCard', () => {
         <LocaleProvider locale="is" messages={{}}>
           <InfoCard
             data={[]}
-            defender={{
-              name: 'Joe',
-              phoneNumber: '555-5555',
-              sessionArrangement: SessionArrangements.ALL_PRESENT,
-            }}
+            defender={{ name: 'Joe', phoneNumber: '555-5555' }}
+            sessionArrangement={SessionArrangements.ALL_PRESENT}
           />
         </LocaleProvider>
       </MockedProvider>,
@@ -59,8 +54,8 @@ describe('InfoCard', () => {
               name: 'Joe',
               email: 'joe@joe.is',
               phoneNumber: '455-5544',
-              sessionArrangement: SessionArrangements.ALL_PRESENT,
             }}
+            sessionArrangement={SessionArrangements.ALL_PRESENT}
           />
         </LocaleProvider>
       </MockedProvider>,
@@ -77,13 +72,7 @@ describe('InfoCard', () => {
         <LocaleProvider locale="is" messages={{}}>
           <InfoCard
             data={[]}
-            defender={{
-              name: '',
-              defenderNationalId: '',
-              email: '',
-              phoneNumber: '',
-              sessionArrangement: SessionArrangements.ALL_PRESENT,
-            }}
+            sessionArrangement={SessionArrangements.ALL_PRESENT}
           />
         </LocaleProvider>
       </MockedProvider>,

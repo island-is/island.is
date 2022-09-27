@@ -36,7 +36,6 @@ if (userMocked) {
       EndorsementsScope.main,
       ApiScope.internal,
       ApiScope.meDetails,
-      ApiScope.fishingLicense,
       MunicipalitiesFinancialAidScope.read,
       MunicipalitiesFinancialAidScope.write,
       MunicipalitiesFinancialAidScope.applicant,

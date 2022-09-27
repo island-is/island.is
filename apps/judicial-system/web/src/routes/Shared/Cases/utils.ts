@@ -8,12 +8,9 @@ import {
   CaseState,
   CaseType,
   isIndictmentCase,
-  isInvestigationCase,
 } from '@island.is/judicial-system/types'
-import { core } from '@island.is/judicial-system-web/messages'
+import { requests, core } from '@island.is/judicial-system-web/messages'
 import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
-
-import { cases as m } from './Cases.strings'
 
 export const displayCaseType = (
   formatMessage: IntlShape['formatMessage'],
@@ -35,39 +32,43 @@ export const mapCaseStateToTagVariant = (
   formatMessage: IntlShape['formatMessage'],
   state: CaseState,
   isCourtRole: boolean,
-  caseType: CaseType,
+  isInvestigationCase?: boolean,
   isValidToDateInThePast?: boolean,
   courtDate?: string,
 ): { color: TagVariant; text: string } => {
   switch (state) {
     case CaseState.NEW:
     case CaseState.DRAFT:
-      return { color: 'red', text: formatMessage(m.tags.draft) }
+      return { color: 'red', text: formatMessage(requests.tags.draft) }
     case CaseState.SUBMITTED:
       return {
         color: 'purple',
-        text: formatMessage(isCourtRole ? m.tags.new : m.tags.sent),
+        text: formatMessage(
+          isCourtRole ? requests.tags.new : requests.tags.sent,
+        ),
       }
     case CaseState.RECEIVED:
       return courtDate
-        ? { color: 'mint', text: formatMessage(m.tags.scheduled) }
-        : { color: 'blueberry', text: formatMessage(m.tags.received) }
+        ? { color: 'mint', text: formatMessage(requests.tags.scheduled) }
+        : { color: 'blueberry', text: formatMessage(requests.tags.received) }
     case CaseState.ACCEPTED:
-      return isIndictmentCase(caseType) || isValidToDateInThePast
-        ? { color: 'darkerBlue', text: formatMessage(m.tags.inactive) }
+      return isValidToDateInThePast
+        ? { color: 'darkerBlue', text: formatMessage(requests.tags.inactive) }
         : {
             color: 'blue',
             text: formatMessage(
-              isInvestigationCase(caseType) ? m.tags.accepted : m.tags.active,
+              isInvestigationCase
+                ? requests.tags.accepted
+                : requests.tags.active,
             ),
           }
 
     case CaseState.REJECTED:
-      return { color: 'rose', text: formatMessage(m.tags.rejected) }
+      return { color: 'rose', text: formatMessage(requests.tags.rejected) }
     case CaseState.DISMISSED:
-      return { color: 'dark', text: formatMessage(m.tags.dismissed) }
+      return { color: 'dark', text: formatMessage(requests.tags.dismissed) }
     default:
-      return { color: 'white', text: formatMessage(m.tags.unknown) }
+      return { color: 'white', text: formatMessage(requests.tags.unknown) }
   }
 }
 

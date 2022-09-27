@@ -287,7 +287,7 @@ export class CourtService {
     return this.courtClientService
       .createCase(courtId, {
         caseType: isIndictment ? 'S - Ákærumál' : 'R - Rannsóknarmál',
-        subtype: subType as string,
+        subtype: subType,
         status: 'Skráð',
         receivalDate: formatISO(nowFactory(), { representation: 'date' }),
         basedOn: isIndictment ? 'Sakamál' : 'Rannsóknarhagsmunir',

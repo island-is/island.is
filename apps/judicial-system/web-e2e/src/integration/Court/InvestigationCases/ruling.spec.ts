@@ -5,14 +5,13 @@ import {
   INVESTIGATION_CASE_RULING_ROUTE,
 } from '@island.is/judicial-system/consts'
 
-import { mockCase, intercept } from '../../../utils'
-import { CaseType } from '@island.is/judicial-system/types'
+import { makeInvestigationCase, intercept } from '../../../utils'
 
 describe(`${INVESTIGATION_CASE_RULING_ROUTE}/:id`, () => {
   const lorem = faker.lorem.sentence()
 
   beforeEach(() => {
-    const caseData = mockCase(CaseType.INTERNET_USAGE)
+    const caseData = makeInvestigationCase()
     const caseDataAddition = {
       ...caseData,
       demands: lorem,

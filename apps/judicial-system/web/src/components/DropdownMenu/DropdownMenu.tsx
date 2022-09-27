@@ -8,7 +8,6 @@ import {
 } from '@island.is/island-ui/core'
 
 import * as styles from './DropdownMenu.css'
-import { TestSupport } from '@island.is/island-ui/utils'
 
 export interface DropdownMenuProps {
   /**
@@ -35,8 +34,7 @@ export const DropdownMenu = ({
   items,
   title,
   icon,
-  dataTestId,
-}: DropdownMenuProps & TestSupport) => {
+}: DropdownMenuProps) => {
   const menu = useMenuState({
     placement: 'bottom-start',
     unstable_offset: [0, 8],
@@ -65,7 +63,7 @@ export const DropdownMenu = ({
 
   return (
     <>
-      <MenuButton as={Button} icon={icon} {...menu} data-testid={dataTestId}>
+      <MenuButton as={Button} icon={icon} {...menu}>
         {title}
       </MenuButton>
       <Menu

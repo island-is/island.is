@@ -29,7 +29,7 @@ export class MunicipalityNationalRegistryResolver {
   @Audit()
   async nationalRegistryPersons(
     @CurrentUser() user: User,
-  ): Promise<Person | null> {
+  ): Promise<Person | undefined> {
     return this.municipalityNationalRegistryService.getNationalRegistryPerson(
       user,
       user.nationalId,
@@ -41,11 +41,14 @@ export class MunicipalityNationalRegistryResolver {
   async resolveSpouse(
     @Context('req') { user }: { user: User },
     @Parent() person: Person,
-  ): Promise<UserSpouse | null> {
+  ): Promise<UserSpouse | undefined> {
     return await this.municipalityNationalRegistryService
       .getSpouse(user, person.nationalId)
+      .then((res) => {
+        return res
+      })
       .catch(() => {
-        return null
+        return undefined
       })
   }
 }

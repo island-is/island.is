@@ -36,23 +36,13 @@ import {
   RulingAccordionItem,
   CommentsAccordionItem,
   CaseFilesAccordionItem,
-  CaseDates,
-  FormContext,
-  MarkdownWrapper,
-  RestrictionTags,
-  SignedDocument,
-  useRequestRulingSignature,
-  SigningModal,
 } from '@island.is/judicial-system-web/src/components'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import {
   useCase,
   useInstitution,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import {
-  ReactSelectOption,
-  Sections,
-} from '@island.is/judicial-system-web/src/types'
+import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import {
   Box,
   Text,
@@ -64,17 +54,25 @@ import {
   Divider,
   AlertMessage,
 } from '@island.is/island-ui/core'
+import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import {
   capitalize,
   formatDate,
   caseTypes,
 } from '@island.is/judicial-system/formatters'
+import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
   core,
   signedVerdictOverview as m,
   titles,
 } from '@island.is/judicial-system-web/messages'
+import { SignedDocument } from '@island.is/judicial-system-web/src/components/SignedDocument/SignedDocument'
+import CaseDates from '@island.is/judicial-system-web/src/components/CaseDates/CaseDates'
+import RestrictionTags from '@island.is/judicial-system-web/src/components/RestrictionTags/RestrictionTags'
+import SigningModal, {
+  useRequestRulingSignature,
+} from '@island.is/judicial-system-web/src/components/SigningModal/SigningModal'
 import * as constants from '@island.is/judicial-system/consts'
 
 import AppealSection from './Components/AppealSection/AppealSection'
@@ -494,7 +492,7 @@ export const SignedVerdictOverview: React.FC = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={Sections.CASE_CLOSED}
+      activeSection={2}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
@@ -578,9 +576,7 @@ export const SignedVerdictOverview: React.FC = () => {
             data={[
               {
                 title: formatMessage(core.policeCaseNumber),
-                value: workingCase.policeCaseNumbers.map((n) => (
-                  <Text key={n}>{n}</Text>
-                )),
+                value: workingCase.policeCaseNumbers.join(', '),
               },
               {
                 title: formatMessage(core.courtCaseNumber),
@@ -620,25 +616,14 @@ export const SignedVerdictOverview: React.FC = () => {
                   ]
                 : []),
             ]}
-            defendants={
-              workingCase.defendants
-                ? {
-                    title: capitalize(
-                      formatMessage(core.defendant, {
-                        suffix: workingCase.defendants.length > 1 ? 'ar' : 'i',
-                      }),
-                    ),
-                    items: workingCase.defendants,
-                  }
-                : undefined
-            }
+            defendants={workingCase.defendants ?? []}
             defender={{
               name: workingCase.defenderName ?? '',
               defenderNationalId: workingCase.defenderNationalId,
-              sessionArrangement: workingCase.sessionArrangements,
               email: workingCase.defenderEmail,
               phoneNumber: workingCase.defenderPhoneNumber,
             }}
+            sessionArrangement={workingCase.sessionArrangements}
           />
         </Box>
         {(workingCase.accusedAppealDecision === CaseAppealDecision.POSTPONE ||
@@ -751,7 +736,7 @@ export const SignedVerdictOverview: React.FC = () => {
                     >
                       {formatMessage(m.signButton)}
                     </Button>
-                  ) : isRestrictionCase(workingCase.type) ? null : (
+                  ) : (
                     <Text>{formatMessage(m.unsignedDocument)}</Text>
                   ))}
               </PdfButton>
@@ -904,7 +889,7 @@ export const SignedVerdictOverview: React.FC = () => {
           primaryButtonText={formatMessage(
             m.sections.shareCaseModal.buttonClose,
           )}
-          onPrimaryButtonClick={() => setSharedCaseModal(undefined)}
+          handlePrimaryButtonClick={() => setSharedCaseModal(undefined)}
         />
       )}
       <AnimatePresence exitBeforeEnter>
@@ -962,7 +947,7 @@ export const SignedVerdictOverview: React.FC = () => {
               ? formatMessage(m.sections.courtRecordSignatureModal.closeButon)
               : ''
           }
-          onPrimaryButtonClick={() => {
+          handlePrimaryButtonClick={() => {
             setRequestCourtRecordSignatureResponse(undefined)
             setCourtRecordSignatureConfirmationResponse(undefined)
           }}

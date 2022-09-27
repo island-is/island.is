@@ -22,7 +22,6 @@ import { S3 } from 'aws-sdk'
 import get from 'lodash/get'
 import set from 'lodash/set'
 import { S3Service } from './attachments/s3.service'
-import { SmsService } from '@island.is/nova-sms'
 const nationalId = '1234564321'
 let id = 0
 
@@ -36,15 +35,6 @@ class MockEmailService {
   }
 
   sendEmail() {
-    return sendMail()
-  }
-}
-class MockSmsService {
-  getTransport() {
-    return { sendMail }
-  }
-
-  sendSms() {
     return sendMail()
   }
 }
@@ -92,10 +82,6 @@ describe('AccidentNotificationService', () => {
         {
           provide: EmailService,
           useClass: MockEmailService,
-        },
-        {
-          provide: SmsService,
-          useClass: MockSmsService,
         },
         {
           provide: S3Service,

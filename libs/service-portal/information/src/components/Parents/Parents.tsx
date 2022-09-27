@@ -22,7 +22,6 @@ interface Props {
   parent1?: Maybe<string>
   parent2?: Maybe<string>
   tooltip?: string
-  className?: string
 }
 
 export const Parents: FC<Props> = ({
@@ -32,19 +31,13 @@ export const Parents: FC<Props> = ({
   parent1,
   parent2,
   tooltip,
-  className,
 }) => {
   const labelColumnSpan: GridColumnProps['span'] = ['8/12', '4/12']
   const valueColumnSpan: GridColumnProps['span'] = ['1/1', '4/12']
   const { formatMessage } = useLocale()
 
   return (
-    <Box
-      position="relative"
-      paddingY={1}
-      paddingRight={4}
-      className={className}
-    >
+    <Box position="relative" paddingY={1} paddingRight={4}>
       {title && (
         <Text variant="eyebrow" color="purple400" paddingBottom={2}>
           {title}

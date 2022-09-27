@@ -5,7 +5,6 @@ import { Message } from '@island.is/email-service'
 import { EmailTemplateGeneratorProps } from '../../../../types'
 import { pathToAsset } from '../parental-leave.utils'
 import { isRunningInProduction } from '../constants'
-import { logger } from '@island.is/logging'
 
 export let assignLinkEmployerSMS = ''
 
@@ -36,8 +35,9 @@ export const generateAssignEmployerApplicationEmail: AssignEmployerEmail = (
 
   return {
     from: {
-      name: email.sender,
-      address: email.address,
+      name: isRunningInProduction && senderName ? senderName : email.sender,
+      address:
+        isRunningInProduction && senderEmail ? senderEmail : email.address,
     },
     to: [
       {

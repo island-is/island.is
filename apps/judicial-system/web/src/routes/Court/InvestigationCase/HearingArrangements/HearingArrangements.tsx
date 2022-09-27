@@ -4,15 +4,11 @@ import router from 'next/router'
 
 import {
   BlueBox,
-  CourtArrangements,
   CourtCaseInfo,
-  DefenderInfo,
   FormContentContainer,
-  FormContext,
   FormFooter,
   Modal,
   PageLayout,
-  useCourtArrangements,
 } from '@island.is/judicial-system-web/src/components'
 import {
   NotificationType,
@@ -24,6 +20,7 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
   titles,
@@ -36,7 +33,11 @@ import {
   Tooltip,
   Text,
 } from '@island.is/island-ui/core'
+import DefenderInfo from '@island.is/judicial-system-web/src/components/DefenderInfo/DefenderInfo'
 import { isCourtHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
+import CourtArrangements, {
+  useCourtArrangements,
+} from '@island.is/judicial-system-web/src/components/CourtArrangements'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import * as constants from '@island.is/judicial-system/consts'
 
@@ -320,7 +321,7 @@ const HearingArrangements = () => {
                   : m.modal.prosecutorPresentText,
                 { courtDateHasChanged },
               )}
-              onPrimaryButtonClick={async () => {
+              handlePrimaryButtonClick={async () => {
                 const notificationSent = await sendNotification(
                   workingCase.id,
                   NotificationType.COURT_DATE,
@@ -332,7 +333,7 @@ const HearingArrangements = () => {
                   )
                 }
               }}
-              onSecondaryButtonClick={() => {
+              handleSecondaryButtonClick={() => {
                 sendNotification(
                   workingCase.id,
                   NotificationType.COURT_DATE,

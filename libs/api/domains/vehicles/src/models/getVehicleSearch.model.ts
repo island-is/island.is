@@ -27,7 +27,7 @@ export class VehiclesVehicleSearch {
   color?: string
 
   @Field({ nullable: true })
-  firstregdate?: string
+  firstRegDate?: string
 
   @Field({ nullable: true })
   latestregistration?: string
@@ -42,13 +42,10 @@ export class VehiclesVehicleSearch {
   currentOwnerAddress?: string
 
   @Field({ nullable: true })
-  currentOwnerIsAnonymous?: boolean
-
-  @Field({ nullable: true })
   useGroup?: string
 
   @Field({ nullable: true })
-  regtype?: string
+  regType?: string
 
   @Field({ nullable: true })
   mass?: number

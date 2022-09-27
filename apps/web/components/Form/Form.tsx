@@ -20,6 +20,7 @@ import slugify from '@sindresorhus/slugify'
 import { isEmailValid } from '@island.is/financial-aid/shared/lib'
 import { useMutation } from '@apollo/client/react'
 import { GENERIC_FORM_MUTATION } from '@island.is/web/screens/queries/Form'
+import { Namespace } from '@island.is/api/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import * as styles from './Form.css'
 
@@ -33,7 +34,7 @@ interface FormFieldProps {
 
 interface FormProps {
   form: FormType
-  namespace: Record<string, string>
+  namespace: Namespace
 }
 
 const FormField = ({ field, slug, value, error, onChange }: FormFieldProps) => {
@@ -212,8 +213,6 @@ export const Form = ({ form, namespace }: FormProps) => {
             error: n('formInvalidName', 'Þennan reit þarf að fylla út.'),
           }
         }
-
-        return null
       })
       .filter((x) => !!x)
 
@@ -235,12 +234,6 @@ export const Form = ({ form, namespace }: FormProps) => {
     )
   }
 
-  /** Returns the value for the form field that decides what email the form will be sent to */
-  const getRecipientFormFieldDeciderValue = (): string | undefined => {
-    if (!form?.recipientFormFieldDecider?.title) return undefined
-    return data[slugify(form.recipientFormFieldDecider.title)]
-  }
-
   const onSubmit = () => {
     const valid = validate()
 
@@ -252,7 +245,6 @@ export const Form = ({ form, namespace }: FormProps) => {
             name: data['name'],
             email: data['email'],
             message: formatBody(),
-            recipientFormFieldDeciderValue: getRecipientFormFieldDeciderValue(),
           },
         },
       })

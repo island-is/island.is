@@ -11,12 +11,13 @@ import {
 } from '@island.is/island-ui/core'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { useNamespace } from '@island.is/web/hooks'
+import { Namespace } from '@island.is/api/schema'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
 
 interface SliceProps {
   slice: FeaturedArticles
-  namespace?: Record<string, string>
+  namespace?: Namespace
 }
 
 export const FeaturedArticlesSlice: React.FC<SliceProps> = ({

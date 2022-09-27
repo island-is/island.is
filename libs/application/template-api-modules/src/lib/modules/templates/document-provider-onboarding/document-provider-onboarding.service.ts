@@ -38,15 +38,10 @@ export class DocumentProviderOnboardingService {
   ) {}
 
   async assignReviewer({ application }: TemplateApiModuleActionProps) {
-    const token = await this.sharedTemplateAPIService.createAssignToken(
-      application,
-      ONE_DAY_IN_SECONDS_EXPIRES,
-    )
-
     await this.sharedTemplateAPIService.assignApplicationThroughEmail(
       generateAssignReviewerEmail,
       application,
-      token,
+      ONE_DAY_IN_SECONDS_EXPIRES,
     )
   }
 

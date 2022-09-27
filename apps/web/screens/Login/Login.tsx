@@ -28,7 +28,7 @@ interface LoginProps {
 const LoginPage: Screen<LoginProps> = ({ namespace }) => {
   const n = useNamespace(namespace)
 
-  const minarsidurLink = '/minarsidur/'
+  const minarsidurLink = '/minarsidur/postholf'
 
   const trackAndNavigateNew = (e) => {
     e.preventDefault()

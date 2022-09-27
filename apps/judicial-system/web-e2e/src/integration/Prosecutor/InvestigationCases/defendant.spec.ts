@@ -12,7 +12,7 @@ describe(CREATE_INVESTIGATION_CASE_ROUTE, () => {
     // Police case number
     cy.get('#policeCaseNumbers').type('0').type('{enter}')
     cy.getByTestid('policeCaseNumbers-list').children().should('have.length', 0)
-    cy.get('#policeCaseNumbers').clear().blur()
+    cy.get('#policeCaseNumbers').blur()
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
     cy.get('#policeCaseNumbers').type('007202201').type('{enter}')
     cy.getByTestid('policeCaseNumbers-list').children().should('have.length', 1)

@@ -235,15 +235,20 @@ export const useS3Upload = (workingCase: Case) => {
     isRetry?: boolean,
     filesCategory?: CaseFileCategory,
   ) => {
-    newFiles.forEach(async (file: TUploadFile) => {
-      file.category = filesCategory
-    })
+    const newUploadFiles = newFiles.map((newFile) => {
+      return {
+        name: newFile.name,
+        size: newFile.size,
+        type: newFile.type,
+        category: filesCategory,
+      }
+    }) as TUploadFile[]
 
     if (!isRetry) {
-      setFilesRefAndState([...newFiles, ...files])
+      setFilesRefAndState([...newUploadFiles, ...files])
     }
 
-    newFiles.forEach(async (file: TUploadFile) => {
+    newUploadFiles.forEach(async (file) => {
       const presignedPost = await createPresignedPost(
         file.name.normalize(),
         file.type ?? '',

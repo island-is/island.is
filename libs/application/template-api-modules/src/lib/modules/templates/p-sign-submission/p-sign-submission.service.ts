@@ -43,11 +43,6 @@ type Photo = {
   }>
 }
 
-type Delivery = {
-  deliveryMethod: string
-  district: string
-}
-
 const YES = 'yes'
 @Injectable()
 export class PSignSubmissionService {
@@ -114,13 +109,12 @@ export class PSignSubmissionService {
 
     const persons: Person[] = [person, ...actors]
 
-    const delivery = application.answers.delivery as Delivery
     const extraData: { [key: string]: string } =
-      delivery.deliveryMethod === 'sendHome'
+      application.answers.deliveryMethod === 'sendHome'
         ? { Afhentingarmati: 'Sent með pósti' }
         : {
             Afhentingarmati: 'Sótt á næsta afgreiðslustað',
-            Starfsstod: delivery.district as string,
+            StarfsstodID: application.answers.district as string,
           }
 
     const uploadDataName = 'pkort1.0'

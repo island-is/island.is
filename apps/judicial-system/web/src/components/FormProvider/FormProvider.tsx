@@ -12,8 +12,8 @@ import {
 import { DEFENDER_ROUTE } from '@island.is/judicial-system/consts'
 
 import { CaseData, LimitedAccessCaseData } from '../../types'
-import LimitedAccessCaseQuery from './limitedAccessCaseGql'
-import CaseQuery from './caseGql'
+import { CaseQuery } from './caseGql'
+import { LimitedAccessCaseQuery } from './limitedAccessCaseGql'
 
 type ProviderState =
   | 'fetch'
@@ -57,7 +57,7 @@ export const FormContext = createContext<FormProvider>({
   refreshCase: () => {},
 })
 
-export const FormProvider = ({ children }: Props) => {
+const FormProvider = ({ children }: Props) => {
   const router = useRouter()
   const limitedAccess = router.pathname.includes(DEFENDER_ROUTE)
   const id = router.query.id
@@ -155,3 +155,5 @@ export const FormProvider = ({ children }: Props) => {
     </FormContext.Provider>
   )
 }
+
+export default FormProvider

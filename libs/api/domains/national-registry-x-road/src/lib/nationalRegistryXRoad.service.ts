@@ -1,6 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
-import { User } from '@island.is/auth-nest-tools'
+import { NationalRegistryClientPerson } from '@island.is/shared/types'
+import { EinstaklingarApi } from '@island.is/clients/national-registry-v2'
+import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import { FetchError } from '@island.is/clients/middlewares'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 
@@ -8,179 +10,175 @@ import { NationalRegistryPerson } from '../models/nationalRegistryPerson.model'
 import { NationalRegistryResidence } from '../models/nationalRegistryResidence.model'
 import { NationalRegistrySpouse } from '../models/nationalRegistrySpouse.model'
 import { NationalRegistryFamilyMemberInfo } from '../models/nationalRegistryFamilyMember.model'
-import { NationalRegistryBirthplace } from '../models/nationalRegistryBirthplace.model'
-import { NationalRegistryCitizenship } from '../models/nationalRegistryCitizenship.model'
 
 @Injectable()
 export class NationalRegistryXRoadService {
   constructor(
-    private nationalRegistryApi: NationalRegistryClientService,
+    private nationalRegistryApi: EinstaklingarApi,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
 
+  nationalRegistryApiWithAuth(auth: Auth) {
+    return this.nationalRegistryApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  private handle404(error: FetchError) {
+    if (error.status === 404) {
+      return undefined
+    }
+    throw error
+  }
+
+  private handle400(error: FetchError) {
+    if (error.status === 400) {
+      return undefined
+    }
+    throw error
+  }
+
   async getNationalRegistryResidenceHistory(
+    user: User,
     nationalId: string,
   ): Promise<NationalRegistryResidence[] | undefined> {
-    const historyList = await this.nationalRegistryApi.getResidenceHistory(
-      nationalId,
-    )
+    const historyList = await this.nationalRegistryApiWithAuth(user)
+      .einstaklingarGetBuseta({ id: nationalId })
+      .catch(this.handle404)
 
-    return historyList.map((entry) => ({
+    return historyList?.map((heimili) => ({
       address: {
-        city: entry.city,
-        postalCode: entry.postalCode,
-        streetName: entry.streetName,
-        municipalityCode: entry.municipalityCode,
+        city: heimili.stadur,
+        postalCode: heimili.postnumer,
+        streetName: heimili.heimilisfang,
+        municipalityCode: heimili.sveitarfelagsnumer,
       },
-      houseIdentificationCode: entry.houseIdentificationCode,
-      realEstateNumber: entry.realEstateNumber,
-      country: entry.country,
-      dateOfChange: entry.dateOfChange,
+      houseIdentificationCode: heimili.huskodi,
+      realEstateNumber: heimili.fasteignanumer,
+      country: heimili.landakodi,
+      dateOfChange: heimili.breytt,
     }))
   }
 
   async getNationalRegistryPerson(
     nationalId: string,
-  ): Promise<NationalRegistryPerson | null> {
-    const person = await this.nationalRegistryApi.getIndividual(nationalId)
+  ): Promise<NationalRegistryPerson | undefined> {
+    const response = await this.nationalRegistryApi
+      .einstaklingarGetEinstaklingurRaw({ id: nationalId })
+      .catch(this.handle404)
+
+    // 2022-03-08: For some reason, the API now returns "204 No Content" when nationalId doesn't exist.
+    // Should remove this after they've fixed their API to return "404 Not Found".
+    const person: NationalRegistryClientPerson | undefined =
+      response === undefined || response.raw.status === 204
+        ? undefined
+        : await response.value()
 
     return (
       person && {
-        nationalId: person.nationalId,
-        fullName: person.name,
-        address: person.legalDomicile && {
-          streetName: person.legalDomicile.streetAddress,
-          postalCode: person.legalDomicile.postalCode,
-          city: person.legalDomicile.locality,
-          municipalityCode: person.legalDomicile.municipalityNumber,
+        nationalId: person.kennitala,
+        fullName: person.nafn,
+        address: person.logheimili && {
+          streetName: person.logheimili.heiti,
+          postalCode: person.logheimili.postnumer,
+          city: person.logheimili.stadur,
+          municipalityCode: person.logheimili.sveitarfelagsnumer,
         },
-        genderCode: person.genderCode,
+        genderCode: person.kynkodi,
       }
     )
   }
 
   async getChildrenCustodyInformation(
-    parentUser: User,
+    user: User,
+    parentNationalId: string,
   ): Promise<NationalRegistryPerson[]> {
-    const childrenNationalIds = await this.nationalRegistryApi.getCustodyChildren(
-      parentUser,
-    )
+    const nationalRegistryApi = this.nationalRegistryApiWithAuth(user)
+    const childrenNationalIds = await nationalRegistryApi
+      .einstaklingarGetForsja({
+        id: parentNationalId,
+      })
+      .catch(this.handle404)
 
-    if (childrenNationalIds.length === 0) {
+    if (!childrenNationalIds) {
       return []
     }
 
-    const parentAFamily = await this.nationalRegistryApi.getFamily(
-      parentUser.nationalId,
-    )
-    const parentAFamilyMembers = parentAFamily?.individuals ?? []
+    const parentAFamily = await nationalRegistryApi.einstaklingarGetFjolskylda({
+      id: parentNationalId,
+    })
 
-    const children: Array<NationalRegistryPerson | null> = await Promise.all(
+    return await Promise.all(
       childrenNationalIds.map(async (childNationalId) => {
-        const child = await this.nationalRegistryApi.getIndividual(
-          childNationalId,
+        const child = await nationalRegistryApi.einstaklingarGetEinstaklingur({
+          id: childNationalId,
+        })
+
+        const parents = await nationalRegistryApi.einstaklingarGetForsjaForeldri(
+          { id: parentNationalId, barn: child.kennitala },
         )
 
-        if (!child) {
-          return null
-        }
-
-        const parents = await this.nationalRegistryApi.getOtherCustodyParents(
-          parentUser,
-          childNationalId,
-        )
-
-        const parentBNationalId = parents.find(
-          (id) => id !== parentUser.nationalId,
-        )
+        const parentBNationalId = parents.find((id) => id !== parentNationalId)
         const parentB = parentBNationalId
           ? await this.getNationalRegistryPerson(parentBNationalId)
           : undefined
 
-        const livesWithApplicant = parentAFamilyMembers.some(
-          (person) => person.nationalId === child?.nationalId,
+        const livesWithApplicant = parentAFamily.einstaklingar?.some(
+          (person) => person.kennitala === child.kennitala,
         )
         const livesWithParentB =
           parentB &&
-          parentAFamilyMembers.some(
-            (person) => person.nationalId === parentB.nationalId,
+          parentAFamily.einstaklingar?.some(
+            (person) => person.kennitala === parentB.nationalId,
           )
 
         return {
-          nationalId: child.nationalId,
-          fullName: child.name,
-          genderCode: child.genderCode,
+          nationalId: child.kennitala,
+          fullName: child.nafn,
+          genderCode: child.kynkodi,
           livesWithApplicant,
-          livesWithBothParents: livesWithParentB ?? livesWithApplicant,
+          livesWithBothParents: livesWithParentB && livesWithApplicant,
           otherParent: parentB,
         }
       }),
     )
-
-    return children.filter(
-      (child): child is NationalRegistryPerson => child != null,
-    )
   }
 
-  async getSpouse(nationalId: string): Promise<NationalRegistrySpouse | null> {
-    const spouse = await this.nationalRegistryApi.getCohabitationInfo(
-      nationalId,
-    )
+  async getSpouse(
+    user: User,
+    nationalId: string,
+  ): Promise<NationalRegistrySpouse | undefined> {
+    const spouse = await this.nationalRegistryApiWithAuth(user)
+      .einstaklingarGetHjuskapur({ id: nationalId })
+      .catch(this.handle400)
+      .catch(this.handle404)
 
     return (
       spouse && {
-        nationalId: spouse.spouseNationalId,
-        name: spouse.spouseName,
-        maritalStatus: spouse.cohabitationCode,
+        nationalId: spouse.kennitalaMaka,
+        name: spouse.nafnMaka,
+        maritalStatus: spouse.hjuskaparkodi,
       }
     )
   }
 
   async getFamily(
+    user: User,
     nationalId: string,
   ): Promise<NationalRegistryFamilyMemberInfo[]> {
-    const family = await this.nationalRegistryApi.getFamily(nationalId)
+    const family = await this.nationalRegistryApiWithAuth(user)
+      .einstaklingarGetFjolskyldumedlimir({ id: nationalId })
+      .catch(this.handle404)
 
-    return (family?.individuals ?? []).map((member) => ({
-      nationalId: member.nationalId,
-      fullName: member.name,
-      genderCode: member.genderCode,
-      address: member.residence && {
-        streetName: member.residence.streetAddress,
-        postalCode: member.residence.postalCode,
-        city: member.residence.locality,
-        municipalityCode: member.residence.municipalityNumber,
+    return (family?.einstaklingar || []).map((member) => ({
+      nationalId: member.kennitala,
+      fullName: member.fulltNafn ?? '',
+      genderCode: member.kynkodi.toString(),
+      address: {
+        streetName: member.adsetur?.heiti ?? '',
+        postalCode: member.adsetur?.postnumer ?? '',
+        city: member.adsetur?.stadur ?? '',
+        municipalityCode: null,
       },
     }))
-  }
-
-  async getBirthplace(
-    nationalId: string,
-  ): Promise<NationalRegistryBirthplace | null> {
-    const birthplace = await this.nationalRegistryApi.getBirthplace(nationalId)
-
-    return (
-      birthplace && {
-        dateOfBirth: birthplace.birthdate,
-        location: birthplace.locality,
-        municipalityCode: birthplace.municipalityNumber,
-      }
-    )
-  }
-
-  async getCitizenship(
-    nationalId: string,
-  ): Promise<NationalRegistryCitizenship | null> {
-    const citizenship = await this.nationalRegistryApi.getCitizenship(
-      nationalId,
-    )
-
-    return (
-      citizenship && {
-        code: citizenship.countryCode,
-        name: citizenship.countryName,
-      }
-    )
   }
 }

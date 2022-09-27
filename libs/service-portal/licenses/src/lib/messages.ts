@@ -10,10 +10,6 @@ export const m = defineMessages({
     defaultMessage:
       'Hér gefur að líta á núverandi skírteini og réttindi þín. Til að byrja með getur þú fundið ökuréttindi þín og kannað stöðu þeirra. Unnið er að því að bæta við fleiri skírteinum og réttindum eins og bólusetningarskírteini, skotvopnaleyfi og vegabréfi.',
   },
-  license: {
-    id: 'sp.license:license',
-    defaultMessage: 'Réttindi',
-  },
   drivingLicense: {
     id: 'sp.license:driving-license',
     defaultMessage: 'Ökuréttindi',
@@ -25,47 +21,7 @@ export const m = defineMessages({
   drivingLicenseDescription: {
     id: 'sp.license:driving-license-description',
     defaultMessage:
-      'Hér birtast upplýsingar um ökuskírteini þitt ásamt þeim ökuréttindum sem þú ert með í gildi á hverjum tíma.',
-  },
-  ADRLicense: {
-    id: 'sp.license:adr-license',
-    defaultMessage: 'ADR réttindi',
-  },
-  yourADRLicense: {
-    id: 'sp.license:your-adr-license',
-    defaultMessage: 'ADR réttindin þín',
-  },
-
-  adrLicenseDescription: {
-    id: 'sp.license:adr-license-description',
-    defaultMessage:
-      'Hér birtast upplýsingar um ADR skírteini þitt ásamt þeim réttindum sem þú ert með í gildi á hverjum tíma.',
-  },
-  firearmLicense: {
-    id: 'sp.license:firearm-license',
-    defaultMessage: 'Skotvopnaleyfi',
-  },
-  yourFirearmLicense: {
-    id: 'sp.license:your-firearm-license',
-    defaultMessage: 'Skotvopnaleyfið þitt',
-  },
-  firearmLicenseDescription: {
-    id: 'sp.license:firearm-license-description',
-    defaultMessage:
-      'Hér birtast upplýsingar um skoptvopnaleyfið þitt ásamt skotvopnum skráð í þinni eigu.',
-  },
-  machineLicense: {
-    id: 'sp.license:machine-license',
-    defaultMessage: 'Vinnuvélaréttindi',
-  },
-  yourMachineLicense: {
-    id: 'sp.license:your-machine-license',
-    defaultMessage: 'Vinnuvélaréttindin þín',
-  },
-  machineLicenseDescription: {
-    id: 'sp.license:machine-license-description',
-    defaultMessage:
-      'Hér birtast upplýsingar um vinnuvélaskírteini þitt ásamt þeim réttindum sem þú ert með í gildi á hverjum tíma.',
+      'Hér birtast upplýsingar um ökuskírteini þitt ásam þeim ökuréttindum sem þú ert með í gildi á hverjum tíma.',
   },
   expiresIn: {
     id: 'sp.license:expires-in',
@@ -87,17 +43,13 @@ export const m = defineMessages({
     id: 'sp.license:driving-license-number',
     defaultMessage: 'Númer ökuskírteinis',
   },
-  licenseNumber: {
-    id: 'sp.license:license-number-overview',
-    defaultMessage: 'Skírteinisnúmer',
-  },
   sendToPhone: {
     id: 'sp.license:send-to-phone',
     defaultMessage: 'Senda í síma',
   },
   sendLicenseToPhone: {
     id: 'sp.license:send-license-to-phone',
-    defaultMessage: 'Senda skírteini í síma',
+    defaultMessage: 'Senda ökuskírteini í síma',
   },
   renewDrivingLicense: {
     id: 'sp.license:renew-license',
@@ -114,7 +66,7 @@ export const m = defineMessages({
   qrCodeText: {
     id: 'sp.license:send-license-to-phone-text',
     defaultMessage:
-      'Skannaðu QR kóðann hér til hliðar til að fá stafrænt skírteini sent í símann þinn.',
+      'Skannaðu QR kóðann hér til hliðar til að fá stafrænt ökuskírteini sent í símann þinn.',
   },
   issueDate: {
     id: 'sp.license:license-issued',
@@ -126,7 +78,7 @@ export const m = defineMessages({
   },
   errorFetchingDrivingLicense: {
     id: 'sp.license:error-fetch-driving-license',
-    defaultMessage: 'Ekki tókst að sækja gögn um skírteini',
+    defaultMessage: 'Ekki tókst að sækja gögn um ökuskírteini',
   },
   errorFetch: {
     id: 'sp.license:error-fetch',

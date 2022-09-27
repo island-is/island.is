@@ -58,10 +58,10 @@ const getDiscountData = (
 }
 
 const getEnvironmentBaseUrl = (authority: string) => {
-  const baseurlPrefix = process.env.BASE_URL_PREFIX ?? Cypress.env('basePrefix')
   const prefix =
-    (baseurlPrefix?.length ?? 0) > 0 && baseurlPrefix !== 'main'
-      ? `${baseurlPrefix}-`
+    (process.env.BASE_URL_PREFIX?.length ?? 0) > 0 &&
+    process.env.BASE_URL_PREFIX !== 'main'
+      ? `${process.env.BASE_URL_PREFIX}-`
       : ''
   return `https://${prefix}${authority}`
 }

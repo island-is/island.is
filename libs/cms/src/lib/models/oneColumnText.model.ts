@@ -22,9 +22,6 @@ export class OneColumnText {
 
   @Field(() => Boolean, { nullable: true })
   dividerOnTop?: boolean
-
-  @Field(() => Boolean, { nullable: true })
-  showTitle?: boolean
 }
 
 export const mapOneColumnText = ({
@@ -39,5 +36,4 @@ export const mapOneColumnText = ({
     ? mapDocument(fields.content, sys.id + ':content')
     : [],
   dividerOnTop: fields.dividerOnTop ?? true,
-  showTitle: fields.showTitle ?? true,
 })

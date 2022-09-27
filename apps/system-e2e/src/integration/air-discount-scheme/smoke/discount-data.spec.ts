@@ -8,7 +8,7 @@ import { FixtureUser, BaseAuthority } from '../../../lib/types'
 
 import fakeUsers from '../../../fixtures/air-discount-scheme/users.json'
 
-describe.skip('Air discount scheme', () => {
+describe('Air discount scheme', () => {
   const testEnvironment = Cypress.env('testEnvironment')
 
   const fakeUser: FixtureUser = getFakeUser(fakeUsers, 'gervimaður afríka')

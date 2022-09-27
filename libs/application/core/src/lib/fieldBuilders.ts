@@ -273,9 +273,8 @@ export function buildFileUploadField(
     uploadDescription,
     uploadButtonLabel,
     uploadMultiple,
-    uploadAccept:
-      uploadAccept ?? '.pdf, .doc, .docx, .rtf, .jpg, .jpeg, .png, .heic',
-    maxSize: maxSize ?? 10000000,
+    uploadAccept,
+    maxSize,
     maxSizeErrorText,
     forImageUpload,
     type: FieldTypes.FILEUPLOAD,

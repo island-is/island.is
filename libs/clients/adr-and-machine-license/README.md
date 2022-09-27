@@ -1,4 +1,4 @@
-# ADR and Machine License
+# Clients ADR and Machine License
 
 This library was generated with [Nx](https://nx.dev).
 

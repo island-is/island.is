@@ -89,11 +89,6 @@ export const m = defineMessages({
     defaultMessage: 'Upplýsingar',
     description: 'Information title',
   },
-  informationActorTitle: {
-    id: 'ps.application:informationActorTitle',
-    defaultMessage: 'Umsækjandi',
-    description: 'Information section title',
-  },
 
   /* Applicant - used in information and overview sections */
   applicantsName: {
@@ -127,12 +122,12 @@ export const m = defineMessages({
     description: 'Phone number label',
   },
   applicantsActorEmail: {
-    id: 'ps.application:applicantsActorEmail',
+    id: 'ps.application:applicantsEmail',
     defaultMessage: 'Netfang forráðamanns',
     description: 'Email label',
   },
   applicantsActorPhoneNumber: {
-    id: 'ps.application:applicantsActorPhoneNumber',
+    id: 'ps.application:applicantsPhoneNumber',
     defaultMessage: 'Símanúmer forráðamanns',
     description: 'Phone number label',
   },

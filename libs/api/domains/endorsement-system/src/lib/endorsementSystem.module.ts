@@ -21,21 +21,23 @@ export class EndorsementSystemModule {
         EndorsementSystemService,
         {
           provide: EndorsementApi,
-          useValue: new EndorsementApi(
-            new Configuration({
-              fetchApi: fetch,
-              basePath: config.baseApiUrl,
-            }),
-          ),
+          useFactory: async () =>
+            new EndorsementApi(
+              new Configuration({
+                fetchApi: fetch,
+                basePath: config.baseApiUrl,
+              }),
+            ),
         },
         {
           provide: EndorsementListApi,
-          useValue: new EndorsementListApi(
-            new Configuration({
-              fetchApi: fetch,
-              basePath: config.baseApiUrl,
-            }),
-          ),
+          useFactory: async () =>
+            new EndorsementListApi(
+              new Configuration({
+                fetchApi: fetch,
+                basePath: config.baseApiUrl,
+              }),
+            ),
         },
       ],
       exports: [],

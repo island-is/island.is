@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { FC, useMemo } from 'react'
+import React, { FC, useMemo } from 'react'
 import {
   Box,
   GridColumn,
@@ -27,28 +27,27 @@ import {
 } from '../queries'
 import { Screen } from '../../types'
 import { useNamespace } from '@island.is/web/hooks'
-import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import {
   getThemeConfig,
-  SliceMachine,
+  OrganizationSlice,
   OrganizationWrapper,
   SliceDropdown,
   Form,
-  OneColumnTextSlice,
 } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
+import { Namespace } from '@island.is/api/schema'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
 import { ParsedUrlQuery } from 'querystring'
 import { useRouter } from 'next/router'
+import { BLOCKS } from '@contentful/rich-text-types'
 import { scrollTo } from '@island.is/web/hooks/useScrollSpy'
-import { Locale } from 'locale'
 
 interface SubPageProps {
   organizationPage: Query['getOrganizationPage']
   subpage: Query['getOrganizationSubpage']
-  namespace: Record<string, string>
-  locale: Locale
+  namespace: Query['getNamespace']
 }
 
 const TOC: FC<{ slices: Slice[]; title: string }> = ({ slices, title }) => {
@@ -83,7 +82,6 @@ const SubPage: Screen<SubPageProps> = ({
   organizationPage,
   subpage,
   namespace,
-  locale,
 }) => {
   const router = useRouter()
 
@@ -120,15 +118,11 @@ const SubPage: Screen<SubPageProps> = ({
       breadcrumbItems={[
         {
           title: 'Ísland.is',
-          href: linkResolver('homepage', [], locale).href,
+          href: linkResolver('homepage').href,
         },
         {
           title: organizationPage.title,
-          href: linkResolver(
-            'organizationpage',
-            [organizationPage.slug],
-            locale,
-          ).href,
+          href: linkResolver('organizationpage', [organizationPage.slug]).href,
         },
       ]}
       navigationData={{
@@ -175,9 +169,6 @@ const SubPage: Screen<SubPageProps> = ({
                         Form: (slice) => (
                           <Form form={slice} namespace={namespace} />
                         ),
-                        OneColumnText: (slice) => (
-                          <OneColumnTextSlice slice={slice} />
-                        ),
                       },
                     })}
                   </GridColumn>
@@ -209,7 +200,6 @@ const SubPage: Screen<SubPageProps> = ({
         subpage.sliceExtraText,
         namespace,
         organizationPage.slug,
-        organizationPage,
       )}
     </OrganizationWrapper>
   )
@@ -219,50 +209,23 @@ const renderSlices = (
   slices: Slice[],
   renderType: string,
   extraText: string,
-  namespace: Record<string, string>,
-  slug: string,
-  organizationPage: Query['getOrganizationPage'],
+  namespace: Namespace,
+  organizationPageSlug: string,
 ) => {
   switch (renderType) {
     case 'SliceDropdown':
       return <SliceDropdown slices={slices} sliceExtraText={extraText} />
     default:
-      return slices.map((slice, index) => {
-        if (slice.__typename === 'LifeEventPageListSlice') {
-          const digitalIcelandDetailPageLinkType: LinkType =
-            'digitalicelandservicesdetailpage'
-          return (
-            <SliceMachine
-              key={slice.id}
-              slice={slice}
-              namespace={namespace}
-              slug={slug}
-              renderedOnOrganizationSubpage={true}
-              marginBottom={index === slices.length - 1 ? 5 : 0}
-              params={{
-                renderLifeEventPagesAsProfileCards: true,
-                anchorPageLinkType:
-                  organizationPage.theme === 'digital_iceland'
-                    ? digitalIcelandDetailPageLinkType
-                    : undefined,
-              }}
-              fullWidth={true}
-            />
-          )
-        }
-
-        return (
-          <SliceMachine
-            key={slice.id}
-            slice={slice}
-            namespace={namespace}
-            slug={slug}
-            renderedOnOrganizationSubpage={true}
-            marginBottom={index === slices.length - 1 ? 5 : 0}
-            params={{ renderLifeEventPagesAsProfileCards: true }}
-          />
-        )
-      })
+      return slices.map((slice, index) => (
+        <OrganizationSlice
+          key={slice.id}
+          slice={slice}
+          namespace={namespace}
+          organizationPageSlug={organizationPageSlug}
+          renderedOnOrganizationSubpage={true}
+          marginBottom={index === slices.length - 1 ? 5 : 0}
+        />
+      ))
   }
 }
 
@@ -317,19 +280,11 @@ SubPage.getInitialProps = async ({ apolloClient, locale, query, pathname }) => {
     throw new CustomNextError(404, 'Organization subpage not found')
   }
 
-  if (!getOrganizationPage) {
-    throw new CustomNextError(
-      404,
-      `Organization page with slug: ${slug} was not found`,
-    )
-  }
-
   return {
     organizationPage: getOrganizationPage,
     subpage: getOrganizationSubpage,
     namespace,
     showSearchInHeader: false,
-    locale: locale as Locale,
     ...getThemeConfig(getOrganizationPage.theme, getOrganizationPage.slug),
   }
 }

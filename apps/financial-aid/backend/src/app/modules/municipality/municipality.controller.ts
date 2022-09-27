@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   Get,
-  Inject,
   NotFoundException,
   Param,
   Post,
@@ -32,18 +31,12 @@ import {
 } from './dto'
 import { CreateStaffDto } from '../staff/dto'
 import { MunicipalitiesFinancialAidScope } from '@island.is/auth/scopes'
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Controller(`${apiBasePath}/municipality`)
 @ApiTags('municipality')
 export class MunicipalityController {
-  constructor(
-    @Inject(LOGGER_PROVIDER)
-    private readonly logger: Logger,
-    private readonly municipalityService: MunicipalityService,
-  ) {}
+  constructor(private readonly municipalityService: MunicipalityService) {}
 
   @UseGuards(ScopesGuard)
   @Scopes(MunicipalitiesFinancialAidScope.read)
@@ -53,22 +46,12 @@ export class MunicipalityController {
     description: 'Gets municipality by id',
   })
   async getById(@Param('id') id: string): Promise<MunicipalityModel> {
-    this.logger.debug('Municipality controller: Getting municipality by id')
-
-    let municipality
-    try {
-      municipality = await this.municipalityService.findByMunicipalityId(id)
-    } catch (e) {
-      this.logger.error(
-        'Municipality controller: Failed getting municipality by id',
-        e,
-      )
-      throw e
-    }
+    const municipality = await this.municipalityService.findByMunicipalityId(id)
 
     if (!municipality) {
       throw new NotFoundException(404, `municipality ${id} not found`)
     }
+
     return municipality
   }
 

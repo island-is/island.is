@@ -6,17 +6,15 @@ import {
   CaseCustodyRestrictions,
   CaseState,
   SessionArrangements,
-  CaseType,
 } from '@island.is/judicial-system/types'
 import {
   RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
   RESTRICTION_CASE_COURT_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
 
-import { makeProsecutor, intercept, mockCase } from '../../../utils'
+import { makeRestrictionCase, makeProsecutor, intercept } from '../../../utils'
 
 describe(`${RESTRICTION_CASE_COURT_OVERVIEW_ROUTE}/:id`, () => {
-  const caseData = mockCase(CaseType.CUSTODY)
   const demands = faker.lorem.paragraph()
   const lawsBroken = faker.lorem.words(5)
   const legalBasis = faker.lorem.words(5)
@@ -25,6 +23,7 @@ describe(`${RESTRICTION_CASE_COURT_OVERVIEW_ROUTE}/:id`, () => {
   const defenderPhoneNumber = faker.phone.phoneNumber()
 
   beforeEach(() => {
+    const caseData = makeRestrictionCase()
     const caseDataAddition: Case = {
       ...caseData,
       creatingProsecutor: makeProsecutor(),
@@ -58,7 +57,7 @@ describe(`${RESTRICTION_CASE_COURT_OVERVIEW_ROUTE}/:id`, () => {
 
   it('should have an overview of the current case', () => {
     cy.getByTestid('infoCard').contains(
-      `${caseData.defendants[0].name}, kt. ${caseData.defendants[0].nationalId}, ${caseData.defendants[0].address}`,
+      'Donald Duck, kt. 000000-0000, Batcave 1337',
     )
 
     cy.getByTestid('infoCard').contains('Talsmaður')

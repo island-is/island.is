@@ -23,7 +23,11 @@ export const VehicleCard: FC<Props> = ({ vehicle }) => {
   if (!vehicle) {
     return null
   }
-  const year = vehicle.modelYear ? '(' + vehicle.modelYear + ')' : ''
+  const year = vehicle.productYear
+    ? '(' + vehicle.productYear + ')'
+    : vehicle.firstRegDate
+    ? '(' + new Date(vehicle.firstRegDate).getFullYear() + ')'
+    : ''
 
   const heading = vehicle.type + ' ' + year
   const plate = vehicle.regno || vehicle.permno || ''

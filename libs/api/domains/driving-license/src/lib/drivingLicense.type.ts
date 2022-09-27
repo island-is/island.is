@@ -92,10 +92,6 @@ export interface QualityPhotoResult {
   hasQualityPhoto: boolean
 }
 
-export interface QualitySignatureResult {
-  hasQualitySignature: boolean
-}
-
 export interface StudentAssessment {
   studentNationalId: string | null
   teacherNationalId: string | null

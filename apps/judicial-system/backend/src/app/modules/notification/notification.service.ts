@@ -15,13 +15,6 @@ import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import { SmsService } from '@island.is/nova-sms'
 import { EmailService } from '@island.is/email-service'
 import {
-  CLOSED_INDICTMENT_OVERVIEW_ROUTE,
-  DEFENDER_ROUTE,
-  INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE,
-  RESTRICTION_CASE_OVERVIEW_ROUTE,
-  SIGNED_VERDICT_OVERVIEW_ROUTE,
-} from '@island.is/judicial-system/consts'
-import {
   CaseCustodyRestrictions,
   CaseDecision,
   CaseType,
@@ -29,10 +22,8 @@ import {
   isRestrictionCase,
   SessionArrangements,
   User,
-  isInvestigationCase,
-  isIndictmentCase,
 } from '@island.is/judicial-system/types'
-import { caseTypes, formatDate } from '@island.is/judicial-system/formatters'
+import { formatDate } from '@island.is/judicial-system/formatters'
 
 import { nowFactory } from '../../factories'
 import {
@@ -56,7 +47,7 @@ import {
   formatDefenderCourtDateLinkEmailNotification,
   formatDefenderResubmittedToCourtEmailNotification,
 } from '../../formatters'
-import { courtUpload, notifications } from '../../messages'
+import { notifications } from '../../messages'
 import { Case } from '../case'
 import { CourtService } from '../court'
 import { AwsS3Service } from '../aws-s3'
@@ -275,10 +266,10 @@ export class NotificationService {
         theCase.id,
         theCase.courtId ?? '',
         theCase.courtCaseNumber ?? '',
-        this.formatMessage(courtUpload.requestFileName, {
-          caseType: caseTypes[theCase.type],
-          date: `-${format(nowFactory(), 'yyyy-MM-dd')}`,
-        }),
+        `Krafa ${theCase.policeCaseNumbers.join(', ')}-${format(
+          nowFactory(),
+          'yyyy-MM-dd-HH:mm',
+        )}`,
         requestPdf,
       )
     } catch (error) {
@@ -363,7 +354,7 @@ export class NotificationService {
       this.formatMessage,
       theCase.type,
       theCase.prosecutor?.name,
-      theCase.prosecutor?.institution?.name,
+      theCase.court?.name,
     )
 
     return this.sendSms(smsText, this.getCourtMobileNumbers(theCase.courtId))
@@ -385,9 +376,8 @@ export class NotificationService {
   ): Promise<Recipient> {
     const { body, subject } = formatDefenderResubmittedToCourtEmailNotification(
       this.formatMessage,
-      theCase.type,
       theCase.policeCaseNumbers,
-      `${this.config.clientUrl}${DEFENDER_ROUTE}/${theCase.id}`,
+      `${this.config.deepLinks.defenderCaseOverviewUrl}${theCase.id}`,
       theCase.court?.name,
     )
 
@@ -406,9 +396,9 @@ export class NotificationService {
 
     const overviewUrl = `${
       isRestrictionCase(theCase.type)
-        ? `${this.config.clientUrl}${RESTRICTION_CASE_OVERVIEW_ROUTE}`
-        : `${this.config.clientUrl}${INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE}`
-    }/${theCase.id}`
+        ? this.config.deepLinks.prosecutorRestrictionCaseOverviewUrl
+        : this.config.deepLinks.prosecutorInvestigationCaseOverviewUrl
+    }${theCase.id}`
 
     const { subject, body } = formatProsecutorReadyForCourtEmailNotification(
       this.formatMessage,
@@ -548,10 +538,10 @@ export class NotificationService {
     theCase: Case,
     user: User,
   ): Promise<Recipient> {
-    const { subject, body } = formatProsecutorCourtDateEmailNotification(
+    const subject = `Fyrirtaka í máli: ${theCase.policeCaseNumbers.join(', ')}`
+    const html = formatProsecutorCourtDateEmailNotification(
       this.formatMessage,
       theCase.type,
-      theCase.courtCaseNumber,
       theCase.court?.name,
       theCase.courtDate,
       theCase.courtRoom,
@@ -564,7 +554,7 @@ export class NotificationService {
 
     return this.sendEmail(
       subject,
-      body,
+      html,
       theCase.prosecutor?.name,
       theCase.prosecutor?.email,
       calendarInvite ? [calendarInvite] : undefined,
@@ -575,7 +565,7 @@ export class NotificationService {
           theCase,
           user,
           subject,
-          body,
+          html,
           theCase.prosecutor?.email,
         )
       }
@@ -644,7 +634,7 @@ export class NotificationService {
     const linkHtml = formatDefenderCourtDateLinkEmailNotification(
       this.formatMessage,
       theCase.defenderNationalId &&
-        `${this.config.clientUrl}${DEFENDER_ROUTE}/${theCase.id}`,
+        `${this.config.deepLinks.defenderCaseOverviewUrl}${theCase.id}`,
       theCase.court?.name,
       theCase.courtCaseNumber,
     )
@@ -708,14 +698,11 @@ export class NotificationService {
     ]
 
     if (
-      theCase.defenderEmail &&
       (isRestrictionCase(theCase.type) ||
-        (isInvestigationCase(theCase.type) &&
-          theCase.sessionArrangements &&
-          [
-            SessionArrangements.ALL_PRESENT,
-            SessionArrangements.ALL_PRESENT_SPOKESPERSON,
-          ].includes(theCase.sessionArrangements)))
+        theCase.sessionArrangements === SessionArrangements.ALL_PRESENT ||
+        theCase.sessionArrangements ===
+          SessionArrangements.ALL_PRESENT_SPOKESPERSON) &&
+      theCase.defenderEmail
     ) {
       promises.push(
         ...this.sendCourtDateEmailNotificationToDefender(theCase, user),
@@ -746,62 +733,41 @@ export class NotificationService {
     theCase: Case,
   ): Promise<Recipient> {
     return this.sendEmail(
-      isIndictmentCase(theCase.type)
-        ? this.formatMessage(notifications.caseCompleted.subject, {
-            courtCaseNumber: theCase.courtCaseNumber,
-          })
-        : this.formatMessage(notifications.signedRuling.subjectV2, {
-            courtCaseNumber: theCase.courtCaseNumber,
-            isModifyingRuling: Boolean(theCase.rulingModifiedHistory),
-          }),
-      isIndictmentCase(theCase.type)
-        ? this.formatMessage(notifications.caseCompleted.prosecutorBody, {
-            courtCaseNumber: theCase.courtCaseNumber,
-            courtName: theCase.court?.name?.replace('dómur', 'dómi'),
-            linkStart: `<a href="${this.config.clientUrl}${CLOSED_INDICTMENT_OVERVIEW_ROUTE}/${theCase.id}">`,
-            linkEnd: '</a>',
-          })
-        : this.formatMessage(notifications.signedRuling.prosecutorBodyS3V2, {
-            courtCaseNumber: theCase.courtCaseNumber,
-            courtName: theCase.court?.name?.replace('dómur', 'dómi'),
-            linkStart: `<a href="${this.config.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${theCase.id}">`,
-            linkEnd: '</a>',
-            isModifyingRuling: Boolean(theCase.rulingModifiedHistory),
-          }),
+      this.formatMessage(notifications.signedRuling.subjectV2, {
+        courtCaseNumber: theCase.courtCaseNumber,
+        isModifyingRuling: Boolean(theCase.rulingModifiedHistory),
+      }),
+      this.formatMessage(notifications.signedRuling.prosecutorBodyS3V2, {
+        courtCaseNumber: theCase.courtCaseNumber,
+        courtName: theCase.court?.name?.replace('dómur', 'dómi'),
+        linkStart: `<a href="${this.config.deepLinks.completedCaseOverviewUrl}${theCase.id}">`,
+        linkEnd: '</a>',
+        isModifyingRuling: Boolean(theCase.rulingModifiedHistory),
+      }),
       theCase.prosecutor?.name,
       theCase.prosecutor?.email,
     )
   }
 
   private async sendRulingEmailNotificationToDefender(theCase: Case) {
+    const rulingUploadedToS3 = await this.awsS3Service.objectExists(
+      `generated/${theCase.id}/ruling.pdf`,
+    )
+
     return this.sendEmail(
-      isIndictmentCase(theCase.type)
-        ? this.formatMessage(notifications.caseCompleted.subject, {
-            courtCaseNumber: theCase.courtCaseNumber,
-          })
-        : this.formatMessage(notifications.signedRuling.subjectV2, {
-            courtCaseNumber: theCase.courtCaseNumber,
-            isModifyingRuling: Boolean(theCase.rulingModifiedHistory),
-          }),
-      isIndictmentCase(theCase.type)
-        ? this.formatMessage(notifications.caseCompleted.defenderBody, {
-            courtCaseNumber: theCase.courtCaseNumber,
-            courtName: theCase.court?.name?.replace('dómur', 'dómi'),
-            defenderHasAccessToRvg: Boolean(theCase.defenderNationalId),
-            linkStart: `<a href="${this.config.clientUrl}${DEFENDER_ROUTE}/${theCase.id}">`,
-            linkEnd: '</a>',
-          })
-        : this.formatMessage(notifications.signedRuling.defenderBodyV2, {
-            isModifyingRuling: Boolean(theCase.rulingModifiedHistory),
-            courtCaseNumber: theCase.courtCaseNumber,
-            courtName: theCase.court?.name?.replace('dómur', 'dómi'),
-            defenderHasAccessToRvg: Boolean(theCase.defenderNationalId),
-            linkStart: `<a href="${this.config.clientUrl}${DEFENDER_ROUTE}/${theCase.id}">`,
-            linkEnd: '</a>',
-            signedVerdictAvailableInS3: await this.awsS3Service.objectExists(
-              `generated/${theCase.id}/ruling.pdf`,
-            ),
-          }),
+      this.formatMessage(notifications.signedRuling.subjectV2, {
+        courtCaseNumber: theCase.courtCaseNumber,
+        isModifyingRuling: Boolean(theCase.rulingModifiedHistory),
+      }),
+      this.formatMessage(notifications.signedRuling.defenderBodyV2, {
+        isModifyingRuling: Boolean(theCase.rulingModifiedHistory),
+        courtCaseNumber: theCase.courtCaseNumber,
+        courtName: theCase.court?.name?.replace('dómur', 'dómi'),
+        defenderHasAccessToRvg: Boolean(theCase.defenderNationalId),
+        linkStart: `<a href="${this.config.deepLinks.defenderCaseOverviewUrl}${theCase.id}">`,
+        linkEnd: '</a>',
+        signedVerdictAvailableInS3: rulingUploadedToS3,
+      }),
       theCase.defenderName ?? '',
       theCase.defenderEmail ?? '',
     )
@@ -862,7 +828,7 @@ export class NotificationService {
       this.formatMessage,
       theCase.courtCaseNumber,
       theCase.court?.name,
-      `${this.config.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${theCase.id}`,
+      `${this.config.deepLinks.completedCaseOverviewUrl}/${theCase.id}`,
     )
 
     return this.sendEmail(
@@ -880,14 +846,10 @@ export class NotificationService {
 
     if (
       theCase.defenderEmail &&
-      (isIndictmentCase(theCase.type) ||
-        isRestrictionCase(theCase.type) ||
-        (isInvestigationCase(theCase.type) &&
-          theCase.sessionArrangements &&
-          [
-            SessionArrangements.ALL_PRESENT,
-            SessionArrangements.ALL_PRESENT_SPOKESPERSON,
-          ].includes(theCase.sessionArrangements)))
+      (isRestrictionCase(theCase.type) ||
+        theCase.sessionArrangements === SessionArrangements.ALL_PRESENT ||
+        theCase.sessionArrangements ===
+          SessionArrangements.ALL_PRESENT_SPOKESPERSON)
     ) {
       this.sendRulingEmailNotificationToDefender(theCase)
     }
@@ -939,7 +901,7 @@ export class NotificationService {
           actorName: user.name,
           actorTitle: user.title,
           courtCaseNumber: theCase.courtCaseNumber,
-          linkStart: `<a href="${this.config.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${theCase.id}">`,
+          linkStart: `<a href="${this.config.deepLinks.completedCaseOverviewUrl}${theCase.id}">`,
           linkEnd: '</a>',
           validToDate: formatDate(theCase.validToDate, 'PPPp'),
           isolationToDate: formatDate(theCase.isolationToDate, 'PPPp'),
@@ -950,7 +912,7 @@ export class NotificationService {
           actorName: user.name,
           actorTitle: user.title,
           courtCaseNumber: theCase.courtCaseNumber,
-          linkStart: `<a href="${this.config.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${theCase.id}">`,
+          linkStart: `<a href="${this.config.deepLinks.completedCaseOverviewUrl}${theCase.id}">`,
           linkEnd: '</a>',
           validToDate: formatDate(theCase.validToDate, 'PPPp'),
         })
@@ -1109,12 +1071,10 @@ export class NotificationService {
   ): Promise<SendNotificationResponse> {
     const promises: Promise<Recipient>[] = []
 
-    const courtWasNotified =
-      !isIndictmentCase(theCase.type) &&
-      (await this.existsRevokableNotification(
-        theCase.id,
-        this.getCourtMobileNumbers(theCase.courtId),
-      ))
+    const courtWasNotified = await this.existsRevokableNotification(
+      theCase.id,
+      this.getCourtMobileNumbers(theCase.courtId),
+    )
 
     if (courtWasNotified) {
       promises.push(this.sendRevokedSmsNotificationToCourt(theCase))
@@ -1132,12 +1092,10 @@ export class NotificationService {
       promises.push(this.sendRevokedEmailNotificationToPrison(theCase))
     }
 
-    const defenderWasNotified =
-      !isIndictmentCase(theCase.type) &&
-      (await this.existsRevokableNotification(
-        theCase.id,
-        theCase.defenderEmail,
-      ))
+    const defenderWasNotified = await this.existsRevokableNotification(
+      theCase.id,
+      theCase.defenderEmail,
+    )
 
     if (defenderWasNotified && theCase.defenderEmail) {
       promises.push(this.sendRevokedEmailNotificationToDefender(theCase))

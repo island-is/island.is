@@ -121,7 +121,23 @@ export class VehiclesService {
           return new Date(b.date).getTime() - new Date(a.date).getTime()
         else return 0
       })[0]
-      let axleMaxWeight = 0
+
+      const axleMaxWeight =
+        (data.techincal?.mass?.massdaxle1
+          ? data.techincal?.mass?.massdaxle1
+          : 0) +
+        (data.techincal?.mass?.massdaxle2
+          ? data.techincal?.mass?.massdaxle2
+          : 0) +
+        (data.techincal?.mass?.massdaxle3
+          ? data.techincal?.mass?.massdaxle3
+          : 0) +
+        (data.techincal?.mass?.massdaxle4
+          ? data.techincal?.mass?.massdaxle4
+          : 0) +
+        (data.techincal?.mass?.massdaxle5
+          ? data.techincal?.mass?.massdaxle5
+          : 0)
 
       const numberOfAxles = data.techincal?.axle?.axleno ?? 0
 
@@ -137,18 +153,19 @@ export class VehiclesService {
           axles.push({
             axleMaxWeight:
               data.techincal.mass[
-                `massmaxle${i}` as keyof BasicVehicleInformationTechnicalMass
+                `massdaxle${i}` as keyof BasicVehicleInformationTechnicalMass
               ],
             wheelAxle: data.techincal.axle[
               `wheelaxle${i}` as keyof BasicVehicleInformationTechnicalAxle
             ]?.toString(),
           })
-          axleMaxWeight +=
-            data.techincal.mass[
-              `massmaxle${i}` as keyof BasicVehicleInformationTechnicalMass
-            ] ?? 0
         }
       }
+
+      const year =
+        data.modelyear ??
+        data.productyear ??
+        (data.firstregdate ? new Date(data?.firstregdate).getFullYear() : null)
 
       const operators = data.operators?.filter((x) => x.current)
       const coOwners = data.owners?.find((x) => x.current)?.coOwners
@@ -173,7 +190,7 @@ export class VehiclesService {
           model: data.make,
           subModel: data.vehcom ?? '' + data.speccom ?? '',
           regno: data.regno,
-          year: data.modelyear,
+          year: year,
           co2: data?.techincal?.co2,
           weightedCo2: data?.techincal?.weightedCo2,
           co2Wltp: data?.techincal?.co2Wltp,
@@ -188,16 +205,16 @@ export class VehiclesService {
           subModel: data.vehcom ?? '' + data.speccom ?? '',
           permno: data.permno,
           verno: data.vin,
-          year: data.modelyear,
+          year: year,
           country: data.country,
-          preregDateYear: data.productyear?.toString(),
+          preregDateYear: data.preregdate?.slice(0, 4), // "2013-09-26" return only year as string
           formerCountry: data.formercountry,
           importStatus: data._import,
         },
         registrationInfo: {
           firstRegistrationDate: data.firstregdate,
           preRegistrationDate: data.preregdate,
-          newRegistrationDate: data.newregdate,
+          newRegistrationDate: data.newregdate ?? data.firstregdate,
           vehicleGroup: data.techincal?.vehgroup,
           color: data.color,
           reggroup: data.plates?.[0]?.reggroup ?? null,

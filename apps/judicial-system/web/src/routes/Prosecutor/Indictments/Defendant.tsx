@@ -6,10 +6,10 @@ import { AnimatePresence, motion } from 'framer-motion'
 
 import {
   FormContentContainer,
-  FormContext,
   FormFooter,
   PageLayout,
 } from '@island.is/judicial-system-web/src/components'
+import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import {
   IndictmentsProsecutorSubsections,
   ReactSelectOption,
@@ -36,11 +36,10 @@ import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDef
 import { isDefendantStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 import * as constants from '@island.is/judicial-system/consts'
 
-import {
-  DefendantInfo,
-  PoliceCaseNumbers,
+import PoliceCaseNumbers, {
   usePoliceCaseNumbers,
-} from '../components'
+} from '../SharedComponents/PoliceCaseNumbers/PoliceCaseNumbers'
+import DefendantInfo from '../SharedComponents/DefendantInfo/DefendantInfo'
 
 const Defendant: React.FC = () => {
   const {
@@ -313,9 +312,9 @@ const Defendant: React.FC = () => {
             )
           }
           nextIsLoading={isCreatingCase}
-          nextButtonText={formatMessage(
-            workingCase.id === '' ? core.createCase : core.continue,
-          )}
+          nextButtonText={
+            workingCase.id === '' ? 'Stofna kröfu' : 'Halda áfram'
+          }
         />
       </FormContentContainer>
     </PageLayout>

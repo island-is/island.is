@@ -203,11 +203,6 @@ export const core = defineMessages({
     defaultMessage: 'Halda áfram',
     description: 'Notað fyrir "Halda áfram" takka í öllum flæðum.',
   },
-  createCase: {
-    id: 'judicial.system.core:create_case',
-    defaultMessage: 'Stofna mál',
-    description: 'Notað fyrir "Stofna mál" takka í öllum flæðum.',
-  },
   linkCopied: {
     id: 'judicial.system.core:link_copied',
     defaultMessage: 'Hlekkur afritaður',
@@ -244,10 +239,5 @@ export const core = defineMessages({
     id: 'judicial.system.core:indictment',
     defaultMessage: 'ákæra',
     description: 'Notaður fyrir orðið Ákæra.',
-  },
-  closeModal: {
-    id: 'judicial.system.core:close_modal',
-    defaultMessage: 'Loka glugga',
-    description: 'Notaður fyrir texta í Loka glugga takka í modölum.',
   },
 })

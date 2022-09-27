@@ -122,9 +122,9 @@ export const parentalLeaveFormMessages: MessageDir = {
     otherParentDescription: {
       id: 'pl.application:otherParent.description',
       defaultMessage:
-        'Skráður maki í þjóðskrá er sjálfgefinn. Þú getur skráð hitt foreldrið eða haldið áfram án skráningar.',
+        'Sjálfgefið er skráður maki. Ef það er ekkert annað foreldri í myndinni að þessu sinni, þá þarf ekki að fylla þetta út',
       description:
-        'Your spouse according to National Registry records is filled in by default. You can register the other parent or continue without registration.',
+        'This person is by default your spouse or partner. If there is no other parent in the picture at this point in time, leave this empty.',
     },
     otherParentTitle: {
       id: 'pl.application:otherParent.title',
@@ -133,7 +133,7 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     otherParentSubTitle: {
       id: 'pl.application:otherParent.sub.title',
-      defaultMessage: 'Hitt foreldrið',
+      defaultMessage: 'Annað foreldri',
       description: 'Other parent',
     },
     otherParentName: {
@@ -649,15 +649,13 @@ export const parentalLeaveFormMessages: MessageDir = {
   selectChild: defineMessages({
     screenTitle: {
       id: 'pl.application:selectChild.screenTitle',
-      defaultMessage: 'Upplýsingar um barn',
-      description: 'Child information',
+      defaultMessage: 'Veldu barn',
+      description: 'Choose a child',
     },
     screenDescription: {
       id: 'pl.application:selectChild.screenDescription',
-      defaultMessage:
-        'Hér má sjá lista yfir börnin þín. Vinsamlegast veldu barn til að sækja um.',
-      description:
-        'Below you can see a list with your children. Please select a child to apply for.',
+      defaultMessage: 'Börn sem þú getur sótt um fæðingarorlof fyrir.',
+      description: 'Children you can apply for parental leave.',
     },
     activeApplications: {
       id: 'pl.application:selectChild.activeApplications',
@@ -851,7 +849,7 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     addAnother: {
       id: 'pl.application:periods.add.another',
-      defaultMessage: 'Tímabil fæðingarorlofs',
+      defaultMessage: 'Bættu við öðru tímabili',
       description: 'Add another period',
     },
     change: {
@@ -888,15 +886,13 @@ export const parentalLeaveFormMessages: MessageDir = {
   firstPeriodStart: defineMessages({
     title: {
       id: 'pl.application:periods.first.period.title',
-      defaultMessage: 'Upphaf fæðingarorlofs',
+      defaultMessage: 'Hvenær viltu hefja fæðingarorlofið?',
       description: 'When do you want to start your parental leave',
     },
     description: {
       id: 'pl.application:periods.first.period.description',
-      defaultMessage:
-        'Þú getur valið um að byrja fæðingarorlof á áætluðum fæðingardegi, frá raunverulegum fæðingardegi eða ákveðinni dagsetningu. Athugaðu að ekki er hægt að nýta réttindi til fæðingarorlofs 24 mánuðum eftir fæðingu barnsins.',
-      description:
-        'Please note, that your rights end 24 months after the date of birth.',
+      defaultMessage: `Athugaðu að ekki er hægt að nýta réttindi til fæðingarorlofs 24 mánuðum eftir fæðingu barnsins.`,
+      description: `Please note, that your rights end 24 months after the date of birth.`,
     },
     estimatedDateOfBirthOption: {
       id: 'pl.application:periods.first.period.estimatedDateOfBirth',
@@ -974,7 +970,7 @@ export const parentalLeaveFormMessages: MessageDir = {
   duration: defineMessages({
     title: {
       id: 'pl.application:duration.title',
-      defaultMessage: 'Lengd fæðingarorlofs',
+      defaultMessage: 'Vinsamlegast staðfestu lengd tímabilsins',
       description: 'Please confirm your leave duration',
     },
     description: {
@@ -1029,7 +1025,7 @@ export const parentalLeaveFormMessages: MessageDir = {
         'Vinnuveitandi þarf að samþykkja tilhögun fæðingarorlofsins (ef þú hefur marga vinnuveitendur skal velja hæsta starfshlutfall). ' +
         'Þegar þú hefur sent umsóknina verður sendur tölvupóstur og sms til vinnuveitanda. ' +
         ' Viðtakandi fær aðgang að umsókninni, en getur einungis séð upplýsingar sem varða tilhögun fæðingarorlofs.' +
-        'Ef vinnuveitandi hafnar tilhögun fæðingarorlofs þarft þú að gera viðeigandi breytingar á henni.',
+        'Ef vinnuveitandi hafnar umsókninni þarft þú að gera viðeigandi breytingar á henni.',
       description:
         'Your employer is required to approve your parental leave arrangement. Once you have submitted your application, an email and sms will be sent to your employer. The recipient will get access to the application, but will only be able to see the timing arrangement. If your employer rejects the timing arrangement, you will need to change your application.',
     },
@@ -1181,13 +1177,7 @@ export const parentalLeaveFormMessages: MessageDir = {
     yesOption: {
       id: 'pl.application:rightOfAccess.yesOption',
       defaultMessage:
-        'Ég veiti forsjárlausa foreldrinu samþykki mitt fyrir umgengni í þessu fæðingarorlofi.',
-      description: 'Add translation',
-    },
-    noOption: {
-      id: 'pl.application:rightOfAccess.noOption',
-      defaultMessage:
-        'Ég veiti ekki forsjárlausa foreldrinu samþykki mitt fyrir umgengni í þessu fæðingarorlofi.',
+        'Ég innsrkáður umsækjandi veiti forsjárlausu foreldri samþykki mitt fyrir umgengni í þessu fæðingarorlofi',
       description: 'Add translation',
     },
   }),
@@ -1200,8 +1190,8 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     titleApproved: {
       id: 'pl.application:review.titleApproved',
-      defaultMessage: 'Umsókn þín er móttekið',
-      description: 'Your application is received',
+      defaultMessage: 'Umsókn þín er samþykkt',
+      description: 'Your application is in approved',
     },
     estimatedBirthDate: {
       id: 'pl.application:review.estimatedBirthDate',
@@ -1303,8 +1293,8 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     deptTitle: {
       id: 'pl.application:review.dept.title',
-      defaultMessage: 'Vinnumálastofnun hefur móttekið umsókn',
-      description: 'Vinnumálastofnun has received your application',
+      defaultMessage: 'Vinnumálastofnun samþykkir umsókn',
+      description: 'Vinnumálastofnun approves application',
     },
     deptDesc: {
       id: 'pl.application:review.dept.description',

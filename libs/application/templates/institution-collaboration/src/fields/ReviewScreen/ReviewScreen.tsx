@@ -1,12 +1,11 @@
-import { Box, Divider, Stack, Text } from '@island.is/island-ui/core'
-
-import { ConsoleLogger } from '@nestjs/common'
-import { FC } from 'react'
-import { FieldBaseProps } from '@island.is/application/types'
+import React, { FC } from 'react'
 import { formatText } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
+import { Box, Stack, Text, Divider } from '@island.is/island-ui/core'
 import { getValueViaPath } from '@island.is/application/core'
-import { institutionApplicationMessages as m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
+import { institutionApplicationMessages as m } from '../../lib/messages'
+import { Attachments } from './attachments'
 
 const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
@@ -28,163 +27,48 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
     secondaryContactPhone,
   ].some((x) => !!x)
 
-  const mailConstraints = getValueViaPath(
+  const technicalConstraints = getValueViaPath(
     application.answers,
-    'constraints.hasMail',
+    'constraints.technical',
   ) as string
-  const loginConstraints = getValueViaPath(
+  const financialConstraints = getValueViaPath(
     application.answers,
-    'constraints.hasLogin',
+    'constraints.financial',
   ) as string
-  const straumurConstraints = getValueViaPath(
+  const timeConstraints = getValueViaPath(
     application.answers,
-    'constraints.hasStraumur',
+    'constraints.time',
   ) as string
-  const websiteConstraints = getValueViaPath(
+  const shoppingConstraints = getValueViaPath(
     application.answers,
-    'constraints.hasWebsite',
+    'constraints.shopping',
   ) as string
-  const applyConstraints = getValueViaPath(
+  const moralConstraints = getValueViaPath(
     application.answers,
-    'constraints.hasApply',
+    'constraints.moral',
   ) as string
-  const myPageConstraints = getValueViaPath(
+  const otherConstraints = getValueViaPath(
     application.answers,
-    'constraints.hasMyPages',
-  ) as string
-  const certConstraint = getValueViaPath(
-    application.answers,
-    'constraints.hasCert',
-  ) as string
-  const consultContraint = getValueViaPath(
-    application.answers,
-    'constraints.hasConsult',
+    'constraints.other',
   ) as string
 
-  const applyConstraintsText = getValueViaPath(
-    application.answers,
-    'constraints.apply',
-  ) as string
-
-  const myPagesConstraintsText = getValueViaPath(
-    application.answers,
-    'constraints.myPages',
-  ) as string
-
-  const certConstraintsText = getValueViaPath(
-    application.answers,
-    'constraints.cert',
-  ) as string
-
-  const consultConstraintsText = getValueViaPath(
-    application.answers,
-    'constraints.consult',
-  ) as string
-
-  //#region Services Text
-  const servicesTextArr: string[] = []
-  mailConstraints &&
-    servicesTextArr.push(
-      formatText(
-        m.constraints.constraintsMailLabel,
-        application,
-        formatMessage,
-      ),
-    )
-  loginConstraints &&
-    servicesTextArr.push(
-      formatText(
-        m.constraints.constraintsLoginLabel,
-        application,
-        formatMessage,
-      ),
-    )
-  straumurConstraints &&
-    servicesTextArr.push(
-      formatText(
-        m.constraints.constraintsStraumurLabel,
-        application,
-        formatMessage,
-      ),
-    )
-  websiteConstraints &&
-    servicesTextArr.push(
-      formatText(
-        m.constraints.constraintsWebsiteLabel,
-        application,
-        formatMessage,
-      ),
-    )
-  applyConstraints &&
-    servicesTextArr.push(
-      formatText(
-        m.constraints.constraintsApplyingLabel,
-        application,
-        formatMessage,
-      ),
-    )
-  myPageConstraints &&
-    servicesTextArr.push(
-      formatText(
-        m.constraints.constraintsmyPagesLabel,
-        application,
-        formatMessage,
-      ),
-    )
-  certConstraint &&
-    servicesTextArr.push(
-      formatText(
-        m.constraints.constraintsCertLabel,
-        application,
-        formatMessage,
-      ),
-    )
-  consultContraint &&
-    servicesTextArr.push(
-      formatText(
-        m.constraints.constraintsConsultLabel,
-        application,
-        formatMessage,
-      ),
-    )
-
-  //#endregion Services Text
-
-  function getServiceDescriptionStack(
-    title: string,
-    serviceName: string,
-    description: string,
-  ) {
-    return (
-      <>
-        <Box>
-          {/* constraints information */}
-          <Text variant="h5">
-            {title} - {serviceName}
-          </Text>
-          <Text>{description}</Text>
-        </Box>
-        <Divider />
-      </>
-    )
-  }
-
-  function getServicesTextOutput(): string {
-    let text = ''
-    for (let i = 0; i < servicesTextArr?.length; i++) {
-      text += servicesTextArr[i]
-      if (i !== servicesTextArr.length - 1) {
-        text += ', '
-      }
-    }
-    return text
-  }
+  const hasConstraints = [
+    technicalConstraints,
+    financialConstraints,
+    timeConstraints,
+    shoppingConstraints,
+    moralConstraints,
+    otherConstraints,
+  ].some((x) => !!x)
 
   return (
     <Box marginTop={4}>
       <Stack space={7}>
         <Stack space={3}>
           {/* contact information */}
+          <Text variant="h2">
+            {formatText(m.applicant.sectionTitle, application, formatMessage)}
+          </Text>
           <Box>
             <Text variant="h5">
               {formatText(
@@ -203,28 +87,17 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
             </Text>
           </Box>
           <Divider />
+          <Text variant="h4">
+            {formatText(
+              m.applicant.contactSubtitle,
+              application,
+              formatMessage,
+            )}
+          </Text>
           <Box>
             <Text variant="h5">
               {formatText(
-                m.applicant.contactInstitutionEmailLabel,
-                application,
-                formatMessage,
-              )}
-            </Text>
-            <Text>
-              {
-                getValueViaPath(
-                  application.answers,
-                  'applicant.institutionEmail',
-                ) as string
-              }
-            </Text>
-          </Box>
-          <Divider />
-          <Box>
-            <Text variant="h5">
-              {formatText(
-                m.review.sectionNameLabel,
+                m.applicant.contactNameLabel,
                 application,
                 formatMessage,
               )}
@@ -237,7 +110,7 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
           <Box>
             <Text variant="h5">
               {formatText(
-                m.review.sectionEmailLabel,
+                m.applicant.contactEmailLabel,
                 application,
                 formatMessage,
               )}
@@ -250,7 +123,7 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
           <Box>
             <Text variant="h5">
               {formatText(
-                m.review.sectionPhoneLabel,
+                m.applicant.contactPhoneLabel,
                 application,
                 formatMessage,
               )}
@@ -264,9 +137,9 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
               }
             </Text>
           </Box>
-          <Divider />
           {hasSecondaryContact && (
             <>
+              <Divider />
               <Text variant="h4">
                 {formatText(
                   m.applicant.secondaryContactSubtitle,
@@ -276,15 +149,16 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
               </Text>
               {secondaryContactName && (
                 <>
-                  <Text variant="h5">
-                    {formatText(
-                      m.review.sectionNameLabel,
-                      application,
-                      formatMessage,
-                    )}
-                  </Text>
-                  <Text>{secondaryContactName}</Text>
-
+                  <Box>
+                    <Text variant="h5">
+                      {formatText(
+                        m.applicant.contactNameLabel,
+                        application,
+                        formatMessage,
+                      )}
+                    </Text>
+                    <Text>{secondaryContactName}</Text>
+                  </Box>
                   <Divider />
                 </>
               )}
@@ -293,7 +167,7 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
                   <Box>
                     <Text variant="h5">
                       {formatText(
-                        m.review.sectionEmailLabel,
+                        m.applicant.contactEmailLabel,
                         application,
                         formatMessage,
                       )}
@@ -308,7 +182,7 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
                   <Box>
                     <Text variant="h5">
                       {formatText(
-                        m.review.sectionPhoneLabel,
+                        m.applicant.contactPhoneLabel,
                         application,
                         formatMessage,
                       )}
@@ -320,97 +194,204 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
               )}
             </>
           )}
-          {servicesTextArr?.length > 0 && (
-            <>
-              <Box>
-                {/* constraints information */}
-                <Text variant="h5">
-                  {formatText(
-                    m.review.sectionServicesLabel,
-                    application,
-                    formatMessage,
-                  )}
-                </Text>
-
-                <Text>{getServicesTextOutput()}</Text>
-              </Box>
-              <Divider />
-            </>
-          )}
-          {applyConstraintsText?.length > 0 &&
-            getServiceDescriptionStack(
-              formatText(
-                m.constraints.constraintsApplyingPlaceholder,
-                application,
-                formatMessage,
-              ),
-              formatText(
-                m.constraints.constraintsApplyingLabel,
-                application,
-                formatMessage,
-              ),
-              applyConstraintsText,
-            )}
-          {myPagesConstraintsText?.length > 0 &&
-            getServiceDescriptionStack(
-              formatText(
-                m.constraints.constraintsmyPagesPlaceholder,
-                application,
-                formatMessage,
-              ),
-              formatText(
-                m.constraints.constraintsmyPagesLabel,
-                application,
-                formatMessage,
-              ),
-              myPagesConstraintsText,
-            )}
-          {certConstraintsText?.length > 0 &&
-            getServiceDescriptionStack(
-              formatText(
-                m.constraints.constraintsCertPlaceholder,
-                application,
-                formatMessage,
-              ),
-              formatText(
-                m.constraints.constraintsCertLabel,
-                application,
-                formatMessage,
-              ),
-              certConstraintsText,
-            )}
-          {consultConstraintsText?.length > 0 &&
-            getServiceDescriptionStack(
-              formatText(
-                m.constraints.constraintsConsultPlaceholder,
-                application,
-                formatMessage,
-              ),
-              formatText(
-                m.constraints.constraintsConsultLabel,
-                application,
-                formatMessage,
-              ),
-              consultConstraintsText,
-            )}
+        </Stack>
+        <Stack space={3}>
+          {/* project information */}
+          <Text variant="h2">
+            {formatText(m.project.sectionTitle, application, formatMessage)}
+          </Text>
           <Box>
-            {/* terms of service*/}
+            <Text variant="h5">
+              {formatText(m.project.nameLabel, application, formatMessage)}
+            </Text>
+            <Text>
+              {getValueViaPath(application.answers, 'project.name') as string}
+            </Text>
+          </Box>
+          <Divider />
+          <Box>
             <Text variant="h5">
               {formatText(
-                m.review.termsOfServiceLabel,
+                m.project.backgroundLabel,
                 application,
                 formatMessage,
               )}
             </Text>
             <Text>
+              {
+                getValueViaPath(
+                  application.answers,
+                  'project.background',
+                ) as string
+              }
+            </Text>
+          </Box>
+          <Divider />
+          <Box>
+            <Text variant="h5">
+              {formatText(m.project.goalsLabel, application, formatMessage)}
+            </Text>
+
+            <Text>
+              {getValueViaPath(application.answers, 'project.goals') as string}
+            </Text>
+          </Box>
+          <Divider />
+          <Box>
+            <Text variant="h5">
+              {formatText(m.project.scopeLabel, application, formatMessage)}
+            </Text>
+            <Text>
+              {getValueViaPath(application.answers, 'project.scope') as string}
+            </Text>
+          </Box>
+          <Divider />
+          <Box>
+            <Text variant="h5">
+              {formatText(m.project.financeLabel, application, formatMessage)}
+            </Text>
+            <Text>
+              {
+                getValueViaPath(
+                  application.answers,
+                  'project.finance',
+                ) as string
+              }
+            </Text>
+          </Box>
+        </Stack>
+        {hasConstraints && (
+          <Stack space={3}>
+            {/* constraints information */}
+            <Text variant="h2">
               {formatText(
-                m.review.termsOfServiceText,
+                m.constraints.sectionTitle,
                 application,
                 formatMessage,
               )}
             </Text>
+            {technicalConstraints && (
+              <>
+                <Box>
+                  <Text variant="h5">
+                    {formatText(
+                      m.constraints.constraintsTechicalLabel,
+                      application,
+                      formatMessage,
+                    )}
+                  </Text>
+                  <Text>{technicalConstraints}</Text>
+                </Box>
+                <Divider />
+              </>
+            )}
+            {financialConstraints && (
+              <>
+                <Box>
+                  <Text variant="h5">
+                    {formatText(
+                      m.constraints.constraintsFinancialLabel,
+                      application,
+                      formatMessage,
+                    )}
+                  </Text>
+                  <Text>{financialConstraints}</Text>
+                </Box>
+                <Divider />
+              </>
+            )}
+            {moralConstraints && (
+              <>
+                <Box>
+                  <Text variant="h5">
+                    {formatText(
+                      m.constraints.constraintsMoralLabel,
+                      application,
+                      formatMessage,
+                    )}
+                  </Text>
+                  <Text>{moralConstraints}</Text>
+                </Box>
+                <Divider />
+              </>
+            )}
+            {timeConstraints && (
+              <>
+                <Box>
+                  <Text variant="h5">
+                    {formatText(
+                      m.constraints.constraintsTimeLabel,
+                      application,
+                      formatMessage,
+                    )}
+                  </Text>
+                  <Text>{timeConstraints}</Text>
+                </Box>
+                <Divider />
+              </>
+            )}
+            {otherConstraints && (
+              <>
+                <Box>
+                  <Text variant="h5">
+                    {formatText(
+                      m.constraints.constraintsOtherLabel,
+                      application,
+                      formatMessage,
+                    )}
+                  </Text>
+                  <Text>{otherConstraints}</Text>
+                </Box>
+                <Divider />
+              </>
+            )}
+          </Stack>
+        )}
+        <Stack space={3}>
+          {/* stakeholders information */}
+          <Text variant="h2">
+            {formatText(
+              m.stakeholders.sectionTitle,
+              application,
+              formatMessage,
+            )}
+          </Text>
+          <Box>
+            <Text variant="h5">
+              {formatText(
+                m.stakeholders.stakeholdersLabel,
+                application,
+                formatMessage,
+              )}
+            </Text>
+            <Text>
+              {getValueViaPath(application.answers, 'stakeholders') as string}
+            </Text>
           </Box>
-          {application?.state === 'approved' && <Box marginBottom={8} />}
+          <Divider />
+          <Box>
+            <Text variant="h5">
+              {formatText(m.stakeholders.roleLabel, application, formatMessage)}
+            </Text>
+            <Text>
+              {getValueViaPath(application.answers, 'role') as string}
+            </Text>
+          </Box>
+          <Divider />
+          <Box>
+            <Text variant="h5">
+              {formatText(
+                m.stakeholders.otherRolesLabel,
+                application,
+                formatMessage,
+              )}
+            </Text>
+            <Text>
+              {getValueViaPath(application.answers, 'otherRoles') as string}
+            </Text>
+          </Box>
+          <Divider />
+          <Attachments application={application} />
         </Stack>
       </Stack>
     </Box>

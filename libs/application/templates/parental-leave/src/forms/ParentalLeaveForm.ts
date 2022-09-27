@@ -178,7 +178,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   value: YES,
                 },
                 {
-                  label: parentalLeaveFormMessages.rightOfAccess.noOption,
+                  label: parentalLeaveFormMessages.shared.noOptionLabel,
                   dataTestId: 'no-option',
                   value: NO,
                 },

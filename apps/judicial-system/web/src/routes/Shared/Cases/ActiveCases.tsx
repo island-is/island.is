@@ -13,7 +13,11 @@ import {
 
 import { theme } from '@island.is/island-ui/theme'
 import { Box, Text, Tag, Icon, Button } from '@island.is/island-ui/core'
-import { CaseState, UserRole } from '@island.is/judicial-system/types'
+import {
+  CaseState,
+  isInvestigationCase,
+  UserRole,
+} from '@island.is/judicial-system/types'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import {
   directionType,
@@ -25,14 +29,13 @@ import {
   displayFirstPlusRemaining,
   formatDOB,
 } from '@island.is/judicial-system/formatters'
-import { core } from '@island.is/judicial-system-web/messages'
+import { core, requests } from '@island.is/judicial-system-web/messages'
 import type { Case } from '@island.is/judicial-system/types'
 import { useViewport } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { displayCaseType, mapCaseStateToTagVariant } from './utils'
 import * as styles from './Cases.css'
 import MobileCase from './MobileCase'
-import { cases as m } from './Cases.strings'
 
 interface Props {
   cases: Case[]
@@ -141,7 +144,7 @@ const ActiveCases: React.FC<Props> = (props) => {
             {theCase.courtDate ? (
               <Text fontWeight={'medium'} variant="small">
                 {`${formatMessage(
-                  m.activeRequests.table.headers.hearing,
+                  requests.sections.activeRequests.table.headers.hearing,
                 )} ${format(parseISO(theCase.courtDate), 'd.M.y')} kl. ${format(
                   parseISO(theCase.courtDate),
                   'kk:mm',
@@ -150,7 +153,7 @@ const ActiveCases: React.FC<Props> = (props) => {
             ) : (
               <Text variant="small" fontWeight={'medium'}>
                 {`${formatMessage(
-                  m.activeRequests.table.headers.created,
+                  requests.sections.activeRequests.table.headers.created,
                 )} ${format(parseISO(theCase.created), 'd.M.y')}`}
               </Text>
             )}
@@ -164,7 +167,9 @@ const ActiveCases: React.FC<Props> = (props) => {
         <tr>
           <th className={styles.th}>
             <Text as="span" fontWeight="regular">
-              {formatMessage(m.activeRequests.table.headers.caseNumber)}
+              {formatMessage(
+                requests.sections.activeRequests.table.headers.caseNumber,
+              )}
             </Text>
           </th>
           <th className={cn(styles.th, styles.largeColumn)}>
@@ -197,12 +202,16 @@ const ActiveCases: React.FC<Props> = (props) => {
           </th>
           <th className={styles.th}>
             <Text as="span" fontWeight="regular">
-              {formatMessage(m.activeRequests.table.headers.type)}
+              {formatMessage(
+                requests.sections.activeRequests.table.headers.type,
+              )}
             </Text>
           </th>
           <th className={styles.th}>
             <Text as="span" fontWeight="regular">
-              {formatMessage(m.activeRequests.table.headers.state)}
+              {formatMessage(
+                requests.sections.activeRequests.table.headers.state,
+              )}
             </Text>
           </th>
           <th className={styles.th}>
@@ -214,7 +223,9 @@ const ActiveCases: React.FC<Props> = (props) => {
               onClick={() => requestSort('createdAt')}
             >
               <Text fontWeight="regular">
-                {formatMessage(m.activeRequests.table.headers.date)}
+                {formatMessage(
+                  requests.sections.activeRequests.table.headers.date,
+                )}
               </Text>
               <Box
                 className={cn(styles.sortIcon, {
@@ -324,7 +335,7 @@ const ActiveCases: React.FC<Props> = (props) => {
                         formatMessage,
                         c.state,
                         isCourtRole,
-                        c.type,
+                        isInvestigationCase(c.type),
                         c.isValidToDateInThePast,
                         c.courtDate,
                       ).color
@@ -337,7 +348,7 @@ const ActiveCases: React.FC<Props> = (props) => {
                         formatMessage,
                         c.state,
                         isCourtRole,
-                        c.type,
+                        isInvestigationCase(c.type),
                         c.isValidToDateInThePast,
                         c.courtDate,
                       ).text

@@ -7,18 +7,14 @@ interface NavLink {
   text: string
 }
 
-interface Navigable {
+interface Navigatable {
   id: string
   title: string
 }
 
-const isNavigable = (slice: Slice) =>
-  typeof slice === 'object' &&
-  slice['id'] &&
-  slice['title'] &&
-  slice.__typename !== 'Image' &&
-  // If there's not a showTitle field on the slice or it's set to true we want to show the title
-  (slice['showTitle'] ?? true)
+const isNavigatable = (slice: any): slice is Navigatable => {
+  return typeof slice === 'object' && slice.id && slice.title
+}
 
 // hide the implementation rather than have everyone import slugify themselfes
 export const makeId = (s: string) => slugify(s)
@@ -59,8 +55,8 @@ const sliceToNavLinks = (slice: Slice, htmlTags: BLOCKS[]): NavLink[] => {
       }))
   }
 
-  if (isNavigable(slice)) {
-    const { id, title: text } = slice as Navigable
+  if (isNavigatable(slice)) {
+    const { id, title: text } = slice
     return [{ id, text }]
   }
 

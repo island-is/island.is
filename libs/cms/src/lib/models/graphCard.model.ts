@@ -1,13 +1,10 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { Field, ObjectType } from '@nestjs/graphql'
 import { SystemMetadata } from 'api-cms-domain'
 import { IGraphCard } from '../generated/contentfulTypes'
 import { Image, mapImage } from './image.model'
 
 @ObjectType()
 export class GraphCard {
-  @Field(() => ID)
-  id!: string
-
   @Field()
   graphTitle!: string
 
@@ -34,12 +31,10 @@ export class GraphCard {
 }
 
 export const mapGraphCard = ({
-  sys,
   fields,
 }: IGraphCard): SystemMetadata<GraphCard> => {
   return {
     typename: 'GraphCard',
-    id: sys?.id ?? '',
     graphTitle: fields?.graphTitle ?? '',
     graphDescription: fields?.graphDescription ?? '',
     organization: fields?.organization ?? '',

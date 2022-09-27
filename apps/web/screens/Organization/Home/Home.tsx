@@ -9,10 +9,10 @@ import {
 } from '@island.is/web/graphql/schema'
 import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_PAGE_QUERY } from '../../queries'
 import { Screen } from '../../../types'
-import { LinkType, useNamespace } from '@island.is/web/hooks'
+import { useNamespace } from '@island.is/web/hooks'
 import {
   getThemeConfig,
-  SliceMachine,
+  OrganizationSlice,
   OrganizationWrapper,
   SearchBox,
 } from '@island.is/web/components'
@@ -64,26 +64,15 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace }) => {
         title: n('navigationTitle', 'Efnisyfirlit'),
         items: navList,
       }}
-      mainContent={organizationPage.slices.map((slice, index) => {
-        const digitalIcelandDetailPageLinkType: LinkType =
-          'digitalicelandservicesdetailpage'
-        return (
-          <SliceMachine
-            key={slice.id}
-            slice={slice}
-            namespace={namespace}
-            slug={organizationPage.slug}
-            marginBottom={index === organizationPage.slices.length - 1 ? 5 : 0}
-            params={{
-              anchorPageLinkType:
-                organizationPage.theme === 'digital_iceland'
-                  ? digitalIcelandDetailPageLinkType
-                  : undefined,
-            }}
-            renderedOnOrganizationSubpage={false}
-          />
-        )
-      })}
+      mainContent={organizationPage.slices.map((slice, index) => (
+        <OrganizationSlice
+          key={slice.id}
+          slice={slice}
+          namespace={namespace}
+          organizationPageSlug={organizationPage.slug}
+          marginBottom={index === organizationPage.slices.length - 1 ? 5 : 0}
+        />
+      ))}
       sidebarContent={
         WITH_SEARCH.includes(organizationPage.slug) && (
           <SearchBox
@@ -103,11 +92,11 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace }) => {
       }
     >
       {organizationPage.bottomSlices.map((slice) => (
-        <SliceMachine
+        <OrganizationSlice
           key={slice.id}
           slice={slice}
           namespace={namespace}
-          slug={organizationPage.slug}
+          organizationPageSlug={organizationPage.slug}
           fullWidth={true}
         />
       ))}

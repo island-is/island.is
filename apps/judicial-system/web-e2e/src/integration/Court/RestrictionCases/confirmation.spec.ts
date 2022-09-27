@@ -1,10 +1,10 @@
-import { Case, CaseDecision, CaseType } from '@island.is/judicial-system/types'
+import { Case, CaseDecision } from '@island.is/judicial-system/types'
 import { RESTRICTION_CASE_CONFIRMATION_ROUTE } from '@island.is/judicial-system/consts'
 
-import { intercept, mockCase } from '../../../utils'
+import { makeRestrictionCase, intercept } from '../../../utils'
 
 describe(`${RESTRICTION_CASE_CONFIRMATION_ROUTE}/:id`, () => {
-  const caseData = mockCase(CaseType.CUSTODY)
+  const caseData = makeRestrictionCase()
   const caseDataAddition: Case = {
     ...caseData,
     conclusion:

@@ -1,20 +1,20 @@
-import { CaseState, CaseType, UserRole } from '@island.is/judicial-system/types'
+import { CaseState, UserRole } from '@island.is/judicial-system/types'
 import {
   RESTRICTION_CASE_COURT_OVERVIEW_ROUTE,
   RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
 } from '@island.is/judicial-system/consts'
 
 import {
+  makeRestrictionCase,
   makeCourt,
   intercept,
   hasOperationName,
   Operation,
   makeJudge,
-  mockCase,
 } from '../../../utils'
 
 describe(`${RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/:id`, () => {
-  const caseData = mockCase(CaseType.CUSTODY)
+  const caseData = makeRestrictionCase()
   const caseDataAddition = {
     ...caseData,
     state: CaseState.RECEIVED,

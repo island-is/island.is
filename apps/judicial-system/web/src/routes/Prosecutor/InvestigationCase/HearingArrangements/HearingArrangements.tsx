@@ -3,12 +3,12 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import {
+  BlueBox,
   ProsecutorCaseInfo,
   FormContentContainer,
   FormFooter,
   Modal,
   PageLayout,
-  FormContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
   RestrictionCaseProsecutorSubsections,
@@ -29,6 +29,7 @@ import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import {
   errors,
   icRequestedHearingArrangements as m,
@@ -40,11 +41,9 @@ import { isHearingArrangementsStepValidIC } from '@island.is/judicial-system-web
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import * as constants from '@island.is/judicial-system/consts'
 
-import {
-  RequestCourtDate,
-  SelectCourt,
-  ProsecutorSectionHeightenedSecurity,
-} from '../../components'
+import RequestCourtDate from '../../SharedComponents/RequestCourtDate/RequestCourtDate'
+import SelectCourt from '../../SharedComponents/SelectCourt/SelectCourt'
+import ProsecutorSectionHeightenedSecurity from '../../SharedComponents/ProsecutorSection/ProsecutorSectionHeightenedSecurity'
 
 const HearingArrangements = () => {
   const router = useRouter()
@@ -221,13 +220,13 @@ const HearingArrangements = () => {
               text={formatMessage(m.modal.text)}
               primaryButtonText={formatMessage(m.modal.primaryButtonText)}
               secondaryButtonText={formatMessage(m.modal.secondaryButtonText)}
-              onClose={() => setIsNotificationModalVisible(false)}
-              onSecondaryButtonClick={() =>
+              handleClose={() => setIsNotificationModalVisible(false)}
+              handleSecondaryButtonClick={() =>
                 router.push(
                   `${constants.INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`,
                 )
               }
-              onPrimaryButtonClick={async () => {
+              handlePrimaryButtonClick={async () => {
                 const notificationSent = await sendNotification(
                   workingCase.id,
                   NotificationType.HEADS_UP,

@@ -28,9 +28,6 @@ export class Form {
 
   @Field()
   questionsHeadingText?: string
-
-  @Field(() => FormField, { nullable: true })
-  recipientFormFieldDecider?: FormField
 }
 
 export const mapForm = ({ sys, fields }: IForm): SystemMetadata<Form> => ({
@@ -43,7 +40,4 @@ export const mapForm = ({ sys, fields }: IForm): SystemMetadata<Form> => ({
   successText: fields.successText ?? '',
   aboutYouHeadingText: fields.aboutYouHeadingText ?? '',
   questionsHeadingText: fields.questionsHeadingText ?? '',
-  recipientFormFieldDecider: fields.recipientFormFieldDecider
-    ? mapFormField(fields.recipientFormFieldDecider)
-    : undefined,
 })

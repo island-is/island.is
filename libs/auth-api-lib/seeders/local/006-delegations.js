@@ -1,6 +1,6 @@
 /* eslint-disable local-rules/disallow-kennitalas */
 'use strict'
-const uuid = require('uuidv4').uuid
+const uuid = require('uuid/v4')
 
 const delegation1 = {
   id: uuid(),

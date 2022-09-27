@@ -6,18 +6,27 @@ import { FishingLicenseEnum } from '../types'
 export const GeneralFishingLicenseSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   externalData: z.object({
-    identityRegistry: z.object({
+    nationalRegistry: z.object({
       data: z.object({
-        date: z.string(),
-        status: z.enum(['success', 'failure']),
-        name: z.string(),
-        nationalId: z.string(),
         address: z.object({
-          streetAddress: z.string(),
           city: z.string(),
-          postalCode: z.string(),
+          code: z.string(),
+          postalCode: z.string().refine((x) => +x >= 100 && +x <= 999, {
+            params: error.invalidValue,
+          }),
+          streetAddress: z.string(),
         }),
+        age: z.number(),
+        citizenship: z.object({
+          code: z.string(),
+          name: z.string(),
+        }),
+        fullName: z.string(),
+        legalResidence: z.string(),
+        nationalId: z.string(),
       }),
+      date: z.string(),
+      status: z.enum(['success', 'failure']),
     }),
     userProfile: z.object({
       data: z.object({
@@ -28,11 +37,7 @@ export const GeneralFishingLicenseSchema = z.object({
   }),
   applicant: z.object({
     name: z.string().refine((x) => x.trim().length > 0),
-    nationalId: z
-      .string()
-      .refine((x) =>
-        x ? kennitala.isPerson(x) || kennitala.isCompany(x) : false,
-      ),
+    nationalId: z.string().refine((x) => (x ? kennitala.isPerson(x) : false)),
     address: z.string().refine((x) => x.trim().length > 0),
     postalCode: z.string().refine((x) => +x >= 100 && +x <= 999, {
       params: error.invalidValue,

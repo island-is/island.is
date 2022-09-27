@@ -1,5 +1,7 @@
-import { DEPRECATED_DefaultStateLifeCycle } from '@island.is/application/core'
-import { FeatureFlagClient } from '@island.is/feature-flags'
+import {
+  DEPRECATED_DefaultStateLifeCycle,
+  EphemeralStateLifeCycle,
+} from '@island.is/application/core'
 import {
   ApplicationTemplate,
   ApplicationTypes,
@@ -10,13 +12,9 @@ import {
   DefaultEvents,
 } from '@island.is/application/types'
 import { m } from './messages'
-import { Events, States, Roles, ApiActions } from './constants'
+import { Events, States, Roles } from './constants'
 import { dataSchema } from './utils/dataSchema'
 import { Features } from '@island.is/feature-flags'
-import {
-  FinancialStatementInaoFeatureFlags,
-  getApplicationFeatureFlags,
-} from './utils/getApplicationFeatureFlags'
 
 const FinancialStatementInaoApplication: ApplicationTemplate<
   ApplicationContext,
@@ -29,55 +27,17 @@ const FinancialStatementInaoApplication: ApplicationTemplate<
   dataSchema,
   featureFlag: Features.financialStatementInao,
   stateMachineConfig: {
-    initial: States.PREREQUISITES,
+    initial: States.DRAFT,
     states: {
-      [States.PREREQUISITES]: {
-        meta: {
-          name: 'prerequisites',
-          progress: 0.2,
-          lifecycle: DEPRECATED_DefaultStateLifeCycle,
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: async ({ featureFlagClient }) => {
-                const featureFlags = await getApplicationFeatureFlags(
-                  featureFlagClient as FeatureFlagClient,
-                )
-                const getForm = await import('../forms/prerequisites/').then(
-                  (val) => {
-                    return val.getForm
-                  },
-                )
-
-                return getForm({
-                  allowFakeData:
-                    featureFlags[FinancialStatementInaoFeatureFlags.ALLOW_FAKE],
-                })
-              },
-              actions: [
-                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
-              ],
-              write: 'all',
-              delete: true,
-            },
-          ],
-        },
-        on: {
-          [DefaultEvents.SUBMIT]: { target: States.DRAFT },
-        },
-      },
       [States.DRAFT]: {
         meta: {
           name: 'Draft',
           actionCard: {
             title: m.applicationTitle,
           },
-          onEntry: {
-            apiModuleAction: ApiActions.getUserType,
-            shouldPersistToExternalData: true,
-          },
           progress: 0.4,
-          lifecycle: DEPRECATED_DefaultStateLifeCycle,
+          lifecycle: EphemeralStateLifeCycle,
+
           roles: [
             {
               id: Roles.APPLICANT,

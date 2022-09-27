@@ -24,59 +24,11 @@ import {
 
 import { VehicleCard } from '../../components/VehicleCard'
 import { messages } from '../../lib/messages'
+import { GET_USERS_VEHICLES } from '../../queries/getUsersVehicles'
 import DropdownExport from '../../components/DropdownExport/DropdownExport'
 import { exportVehicleOwnedDocument } from '../../utils/vehicleOwnedMapper'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
-
-export const GET_USERS_VEHICLES = gql`
-  query GetUsersVehicles {
-    vehiclesList {
-      persidno
-      name
-      address
-      postStation
-      vehicleList {
-        isCurrent
-        permno
-        regno
-        vin
-        type
-        color
-        firstRegDate
-        modelYear
-        productYear
-        registrationType
-        role
-        operatorStartDate
-        operatorEndDate
-        outOfUse
-        otherOwners
-        termination
-        buyerPersidno
-        ownerPersidno
-        vehicleStatus
-        useGroup
-        vehGroup
-        plateStatus
-        nextInspection {
-          nextInspectionDate
-          nextInspectionDateIfPassedInspectionToday
-        }
-        operatorNumber
-        primaryOperator
-        ownerSsid
-        ownerName
-        lastInspectionResult
-        lastInspectionDate
-        lastInspectionType
-        nextInspectionDate
-      }
-      downloadServiceURL
-      createdTimestamp
-    }
-  }
-`
 
 const defaultFilterValues = {
   searchQuery: '',
@@ -174,7 +126,18 @@ export const VehiclesOverview: ServicePortalModuleComponent = ({
         <Box marginBottom={3} display="flex" flexDirection="row">
           {modalFlagEnabled && !loading && ownershipPdf && (
             <Box marginRight={2}>
-              <DropdownExport
+              <Button
+                colorScheme="default"
+                icon="reader"
+                iconType="outline"
+                size="default"
+                type="button"
+                variant="utility"
+                onClick={() => formSubmit(`${ownershipPdf}`)}
+              >
+                {formatMessage(messages.myCarsFiles)}
+              </Button>
+              {/* <DropdownExport
                 onGetPDF={() => formSubmit(`${ownershipPdf}`)}
                 onGetExcel={() =>
                   exportVehicleOwnedDocument(
@@ -184,7 +147,7 @@ export const VehiclesOverview: ServicePortalModuleComponent = ({
                     data?.vehiclesList?.persidno ?? userInfo.profile.nationalId,
                   )
                 }
-              />
+              /> */}
             </Box>
           )}
           <Box>

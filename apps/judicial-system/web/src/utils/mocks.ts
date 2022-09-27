@@ -114,14 +114,14 @@ export const mockProsecutorQuery = [
   },
 ]
 
-export const mockCase = (caseType: CaseType): Case => {
+export const makeRestrictionCase = (): Case => {
   return {
     id: 'test_id',
     created: '2020-09-16T19:50:08.033Z',
     modified: '2020-09-16T19:51:39.466Z',
     state: CaseState.DRAFT,
     origin: CaseOrigin.RVG,
-    type: caseType,
+    type: CaseType.CUSTODY,
     policeCaseNumbers: ['007-2021-202000'],
     defendants: [
       {

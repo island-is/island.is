@@ -13,9 +13,6 @@ export const vehicleOwnedDataHeader = [
   'Staða',
   'Notkunarflokkur',
   'Niðurstaða skoðunar',
-  'Síðast skoðað',
-  'Tegund skoðunar',
-  'Næsta aðalskoðun',
 ]
 
 // Meðeigandi
@@ -33,9 +30,6 @@ export const vehicleCoOwnedDataHeader = [
   'Staða',
   'Notkunarflokkur',
   'Niðurstaða skoðunar',
-  'Síðast skoðað',
-  'Tegund skoðunar',
-  'Næsta aðalskoðun',
 ]
 
 // Umráðamaður
@@ -48,12 +42,9 @@ export const vehicleOperatorDataHeader = [
   'Kt. eiganda',
   'Nafn eiganda',
   'Aðalumr.',
-  'Nr. umráðamanns',
+  'Númer umráðamanns',
   'Innlögn',
   'Staða',
   'Notkunarflokkur',
   'Niðurstaða skoðunar',
-  'Síðast skoðað',
-  'Tegund skoðunar',
-  'Næsta aðalskoðun',
 ]

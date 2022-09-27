@@ -20,22 +20,3 @@ export const dataFragment = gql`
     }
   }
 `
-
-export const licenseFragment = gql`
-  fragment License on GenericLicense {
-    type
-    provider {
-      id
-    }
-    pkpass
-    timeout
-    status
-  }
-`
-
-export const fetchFragment = gql`
-  fragment Fetch on GenericLicenseFetch {
-    status
-    updated
-  }
-`

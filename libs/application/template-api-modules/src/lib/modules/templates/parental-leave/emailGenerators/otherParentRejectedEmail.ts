@@ -32,8 +32,9 @@ export const generateOtherParentRejected: OtherParentRejectedEmail = (
 
   return {
     from: {
-      name: email.sender,
-      address: email.address,
+      name: isRunningInProduction && senderName ? senderName : email.sender,
+      address:
+        isRunningInProduction && senderEmail ? senderEmail : email.address,
     },
     to: [
       {

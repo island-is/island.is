@@ -17,7 +17,10 @@ import { Webreader } from '@island.is/web/components'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
 import { useI18n } from '@island.is/web/i18n'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
-import { Stepper as StepperSchema } from '@island.is/web/graphql/schema'
+import {
+  GetNamespaceQuery,
+  Stepper as StepperSchema,
+} from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
 
 import {
@@ -51,7 +54,7 @@ interface StepperProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   optionsFromNamespace: { slug: string; data: Record<string, any>[] }[]
   scrollUpWhenNextStepAppears?: boolean
-  namespace: Record<string, string>
+  namespace: GetNamespaceQuery['getNamespace']
   showWebReader?: boolean
   webReaderClassName?: string
 }

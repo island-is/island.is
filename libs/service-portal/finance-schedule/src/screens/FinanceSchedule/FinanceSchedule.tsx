@@ -83,11 +83,10 @@ const FinanceSchedule: ServicePortalModuleComponent = ({ userInfo }) => {
           defaultMessage: 'Greiðsluáætlanir',
         })}
         button={{
-          type: 'external',
+          internal: false,
           text: applicationButtonText,
           variant: 'primary',
           link: '/umsoknir/greidsluaaetlun/',
-          icon: { icon: 'receipt', type: 'outline' },
         }}
       >
         <Text>

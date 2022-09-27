@@ -7,13 +7,12 @@ import {
   FormFooter,
   PageLayout,
   ParentCaseFiles,
-  FormContext,
-  MarkdownWrapper,
 } from '@island.is/judicial-system-web/src/components'
 import {
   RestrictionCaseProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
+import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
   titles,
@@ -32,10 +31,13 @@ import {
   Text,
   Tooltip,
 } from '@island.is/island-ui/core'
-import { removeTabsValidateAndSet } from '@island.is/judicial-system-web/src/utils/formHelper'
+import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
 import * as constants from '@island.is/judicial-system/consts'
 
-import { PoliceCaseFileCheck, PoliceCaseFiles } from '../../components'
+import { removeTabsValidateAndSet } from '@island.is/judicial-system-web/src/utils/formHelper'
+import PoliceCaseFiles, {
+  PoliceCaseFileCheck,
+} from '../../SharedComponents/PoliceCaseFiles/PoliceCaseFiles'
 
 export const CaseFiles: React.FC = () => {
   const {

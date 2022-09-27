@@ -11,7 +11,11 @@ import {
   INVESTIGATION_CASE_COURT_RECORD_ROUTE,
 } from '@island.is/judicial-system/consts'
 
-import { mockCase, makeProsecutor, intercept } from '../../../utils'
+import {
+  makeInvestigationCase,
+  makeProsecutor,
+  intercept,
+} from '../../../utils'
 
 describe(`${INVESTIGATION_CASE_COURT_RECORD_ROUTE}/:id`, () => {
   beforeEach(() => {
@@ -19,7 +23,7 @@ describe(`${INVESTIGATION_CASE_COURT_RECORD_ROUTE}/:id`, () => {
   })
 
   it('should autofill court attendees', () => {
-    const caseData = mockCase(CaseType.INTERNET_USAGE)
+    const caseData = makeInvestigationCase()
 
     const caseDataAddition: Case = {
       ...caseData,
@@ -35,7 +39,7 @@ describe(`${INVESTIGATION_CASE_COURT_RECORD_ROUTE}/:id`, () => {
   })
 
   it('should autofill sessionBookings in restraining order cases', () => {
-    const caseData = mockCase(CaseType.INTERNET_USAGE)
+    const caseData = makeInvestigationCase()
 
     const caseDataAddition: Case = {
       ...caseData,
@@ -52,7 +56,7 @@ describe(`${INVESTIGATION_CASE_COURT_RECORD_ROUTE}/:id`, () => {
   })
 
   it('should autofill sessionBookings in expulsion from home cases', () => {
-    const caseData = mockCase(CaseType.INTERNET_USAGE)
+    const caseData = makeInvestigationCase()
 
     const caseDataAddition: Case = {
       ...caseData,
@@ -69,7 +73,7 @@ describe(`${INVESTIGATION_CASE_COURT_RECORD_ROUTE}/:id`, () => {
   })
 
   it('should autofill sessionBookings in autopsy cases', () => {
-    const caseData = mockCase(CaseType.INTERNET_USAGE)
+    const caseData = makeInvestigationCase()
 
     const caseDataAddition: Case = {
       ...caseData,
@@ -86,7 +90,7 @@ describe(`${INVESTIGATION_CASE_COURT_RECORD_ROUTE}/:id`, () => {
   })
 
   it('should autofill sessionBookings when defendant is present in court', () => {
-    const caseData = mockCase(CaseType.INTERNET_USAGE)
+    const caseData = makeInvestigationCase()
 
     const caseDataAddition: Case = {
       ...caseData,
@@ -104,7 +108,7 @@ describe(`${INVESTIGATION_CASE_COURT_RECORD_ROUTE}/:id`, () => {
   })
 
   it('should autofill sessionBookings when a spokesperson is present in court', () => {
-    const caseData = mockCase(CaseType.INTERNET_USAGE)
+    const caseData = makeInvestigationCase()
 
     const caseDataAddition: Case = {
       ...caseData,
@@ -122,7 +126,7 @@ describe(`${INVESTIGATION_CASE_COURT_RECORD_ROUTE}/:id`, () => {
   })
 
   it('should autofill sessionBookings when a prosecutor is present in court', () => {
-    const caseData = mockCase(CaseType.INTERNET_USAGE)
+    const caseData = makeInvestigationCase()
 
     const caseDataAddition: Case = {
       ...caseData,
@@ -140,7 +144,7 @@ describe(`${INVESTIGATION_CASE_COURT_RECORD_ROUTE}/:id`, () => {
   })
 
   it('should not allow users to continue if conclusion is not set', () => {
-    const caseData = mockCase(CaseType.INTERNET_USAGE)
+    const caseData = makeInvestigationCase()
 
     const caseDataAddition: Case = {
       ...caseData,
@@ -162,7 +166,7 @@ describe(`${INVESTIGATION_CASE_COURT_RECORD_ROUTE}/:id`, () => {
   })
 
   it('should not allow users to continue if decision is not set', () => {
-    const caseData = mockCase(CaseType.INTERNET_USAGE)
+    const caseData = makeInvestigationCase()
 
     const caseDataAddition: Case = {
       ...caseData,
@@ -184,7 +188,7 @@ describe(`${INVESTIGATION_CASE_COURT_RECORD_ROUTE}/:id`, () => {
   })
 
   it('should not allow users to continue if ruling is not set', () => {
-    const caseData = mockCase(CaseType.INTERNET_USAGE)
+    const caseData = makeInvestigationCase()
     const caseDataAddition: Case = {
       ...caseData,
       prosecutor: makeProsecutor(),
@@ -204,7 +208,7 @@ describe(`${INVESTIGATION_CASE_COURT_RECORD_ROUTE}/:id`, () => {
   })
 
   it('should navigate to the next step when all input data is valid and the continue button is clicked', () => {
-    const caseData = mockCase(CaseType.INTERNET_USAGE)
+    const caseData = makeInvestigationCase()
 
     const caseDataAddition: Case = {
       ...caseData,

@@ -1,6 +1,6 @@
 import { gql } from '@apollo/client'
 
-const RequestRulingSignatureMutation = gql`
+export const RequestRulingSignatureMutation = gql`
   mutation RequestRulingSignatureMutation($input: RequestSignatureInput!) {
     requestRulingSignature(input: $input) {
       controlCode
@@ -8,5 +8,3 @@ const RequestRulingSignatureMutation = gql`
     }
   }
 `
-
-export default RequestRulingSignatureMutation

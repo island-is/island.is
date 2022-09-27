@@ -119,8 +119,8 @@ const CaseFileList: React.FC<Props> = (props) => {
           <Modal
             title={formatMessage(m.modal.fileNotFound.title)}
             text={formatMessage(m.modal.fileNotFound.text)}
-            onClose={() => dismissFileNotFound()}
-            onPrimaryButtonClick={() => dismissFileNotFound()}
+            handleClose={() => dismissFileNotFound()}
+            handlePrimaryButtonClick={() => dismissFileNotFound()}
             primaryButtonText="Loka glugga"
           />
         )}

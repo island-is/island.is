@@ -5,19 +5,8 @@ import {
   createApplicationTemplate,
   createApplication,
 } from '@island.is/testing/fixtures'
-import * as faker from 'faker'
-import type { User } from '@island.is/auth-nest-tools'
 
 const testApplicationTemplate = createApplicationTemplate()
-
-const createMockUser = (nationalId?: string) => {
-  return {
-    nationalId: nationalId || '111111-3000',
-    scope: [],
-    authorization: faker.random.word(),
-    client: faker.random.word(),
-  }
-}
 
 describe('ApplicationAccesService', () => {
   let applicationAccessService: ApplicationAccessService
@@ -70,7 +59,7 @@ describe('ApplicationAccesService', () => {
 
     const results = await applicationAccessService.shouldShowApplicationOnOverview(
       applicationInDraft,
-      createMockUser(),
+      '111111-3000',
       testApplicationTemplate,
     )
     expect(results).toBe(true)
@@ -84,7 +73,7 @@ describe('ApplicationAccesService', () => {
 
     const results = await applicationAccessService.shouldShowApplicationOnOverview(
       applicationInDraft,
-      createMockUser(),
+      '111111-3001',
       testApplicationTemplate,
     )
     expect(results).toBe(true)
@@ -97,7 +86,7 @@ describe('ApplicationAccesService', () => {
     })
     const results = await applicationAccessService.shouldShowApplicationOnOverview(
       applicationInReview,
-      createMockUser('111111-3001'),
+      '111111-3001',
       testApplicationTemplate,
     )
     expect(results).toBe(false)
@@ -110,7 +99,7 @@ describe('ApplicationAccesService', () => {
     })
     const results = await applicationAccessService.shouldShowApplicationOnOverview(
       applicationInReview,
-      createMockUser(),
+      '111111-3000',
       testApplicationTemplate,
     )
     expect(results).toBe(true)

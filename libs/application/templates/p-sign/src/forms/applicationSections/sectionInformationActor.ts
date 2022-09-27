@@ -16,7 +16,7 @@ export const sectionInformationActor = buildSection({
   children: [
     buildMultiField({
       id: 'list',
-      title: m.informationActorTitle,
+      title: m.informationTitle,
       description: m.informationSubtitle,
       children: [
         buildTextField({

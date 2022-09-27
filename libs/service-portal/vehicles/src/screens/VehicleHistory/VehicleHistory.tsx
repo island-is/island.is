@@ -1,7 +1,8 @@
 import isAfter from 'date-fns/isAfter'
 import isEqual from 'lodash/isEqual'
 import React, { useState } from 'react'
-import { useQuery, gql } from '@apollo/client'
+
+import { useQuery } from '@apollo/client'
 import { Query, VehiclesVehicle } from '@island.is/api/schema'
 import {
   Box,
@@ -23,36 +24,8 @@ import {
 } from '@island.is/service-portal/core'
 
 import { messages } from '../../lib/messages'
+import { GET_USERS_VEHICLES_HISTORY } from '../../queries/getUsersVehicleHistory'
 import TabContent from './TabContent'
-
-export const GET_USERS_VEHICLES_HISTORY = gql`
-  query GetUsersVehicles {
-    vehiclesHistoryList {
-      vehicleList {
-        permno
-        regno
-        type
-        color
-        firstRegDate
-        modelYear
-        productYear
-        role
-        operatorStartDate
-        operatorEndDate
-        outOfUse
-        otherOwners
-        termination
-        vehicleStatus
-        plateStatus
-        nextInspection {
-          nextInspectionDate
-          nextInspectionDateIfPassedInspectionToday
-        }
-        deregistrationDate
-      }
-    }
-  }
-`
 
 const getFilteredVehicles = (
   vehicles: VehiclesVehicle[],

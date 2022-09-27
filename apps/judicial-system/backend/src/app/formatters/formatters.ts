@@ -13,9 +13,7 @@ import {
   CaseCustodyRestrictions,
   CaseLegalProvisions,
   CaseType,
-  isIndictmentCase,
   isInvestigationCase,
-  isRestrictionCase,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 import type { Gender } from '@island.is/judicial-system/types'
@@ -74,11 +72,9 @@ export function formatLegalProvisions(
 const getProsecutorText = (
   formatMessage: FormatMessage,
   prosecutorName?: string,
-  institutionName?: string,
 ): string =>
   formatMessage(notifications.prosecutorText, {
     prosecutorName: prosecutorName || 'NONE',
-    institutionName: institutionName || 'NONE',
   })
 
 export function formatCourtHeadsUpSmsNotification(
@@ -118,19 +114,20 @@ export function formatCourtReadyForCourtSmsNotification(
   formatMessage: FormatMessage,
   type: CaseType,
   prosecutorName?: string,
-  prosecutorInstitution?: string,
+  court?: string,
 ): string {
   const submittedCaseText = formatMessage(
     notifications.courtReadyForCourt.submittedCase,
     { caseType: type, courtTypeName: caseTypes[type] },
   )
-  const prosecutorText = getProsecutorText(
-    formatMessage,
-    prosecutorName,
-    prosecutorInstitution,
-  )
+  const prosecutorText = getProsecutorText(formatMessage, prosecutorName)
+  const courtText = formatMessage(notifications.courtReadyForCourt.courtText, {
+    court: court ?? 'NONE',
+  })
 
-  return [submittedCaseText, prosecutorText].filter(Boolean).join(' ')
+  return [submittedCaseText, prosecutorText, courtText]
+    .filter(Boolean)
+    .join(' ')
 }
 
 export function formatCourtResubmittedToCourtSmsNotification(
@@ -144,7 +141,6 @@ export function formatCourtResubmittedToCourtSmsNotification(
 
 export function formatDefenderResubmittedToCourtEmailNotification(
   formatMessage: FormatMessage,
-  caseType: CaseType,
   policeCaseNumbers: string[],
   overviewUrl: string,
   courtName?: string,
@@ -152,13 +148,12 @@ export function formatDefenderResubmittedToCourtEmailNotification(
   const subject = formatMessage(
     notifications.defenderResubmittedToCourt.subject,
     {
-      caseType: caseTypes[caseType],
+      policeCaseNumber: policeCaseNumbers.join(', '),
     },
   )
 
   const body = formatMessage(notifications.defenderResubmittedToCourt.body, {
-    policeCaseNumbersCount: policeCaseNumbers.length,
-    policeCaseNumbers: policeCaseNumbers.join(', '),
+    policeCaseNumber: policeCaseNumbers.join(', '),
     court: courtName?.replace('dómur', 'dómi') || '',
     linkStart: `<a href="${overviewUrl}">`,
     linkEnd: '</a>',
@@ -170,20 +165,18 @@ export function formatDefenderResubmittedToCourtEmailNotification(
 export function formatProsecutorReadyForCourtEmailNotification(
   formatMessage: FormatMessage,
   policeCaseNumbers: string[],
-  caseType: CaseType,
+  caseType?: CaseType,
   courtName?: string,
   overviewUrl?: string,
 ) {
   const subject = formatMessage(notifications.readyForCourt.subject, {
-    isIndictmentCase: isIndictmentCase(caseType),
-    caseType: caseTypes[caseType],
+    policeCaseNumber: policeCaseNumbers?.join(', ') || '',
   })
 
-  const body = formatMessage(notifications.readyForCourt.prosecutorHtml, {
-    isIndictmentCase: isIndictmentCase(caseType),
+  const body = formatMessage(notifications.readyForCourt.prosecutorHtmlV2, {
+    caseType,
     courtName: courtName?.replace('dómur', 'dóm'),
-    policeCaseNumbersCount: policeCaseNumbers.length,
-    policeCaseNumbers: policeCaseNumbers.join(', ') || '',
+    policeCaseNumber: policeCaseNumbers?.join(', ') || '',
     linkStart: `<a href="${overviewUrl}">`,
     linkEnd: '</a>',
   })
@@ -197,18 +190,17 @@ export function formatProsecutorReceivedByCourtSmsNotification(
   court?: string,
   courtCaseNumber?: string,
 ): string {
-  const caseType = isIndictmentCase(type)
-    ? 'indictmentCase'
-    : isRestrictionCase(type)
-    ? 'restrictionCase'
-    : type === CaseType.OTHER
-    ? 'otherInvestigationCase'
-    : 'investigationCase'
+  let investigationPrefix = 'noPrefix'
+  if (type === CaseType.OTHER) {
+    investigationPrefix = 'onlyPrefix'
+  } else if (isInvestigationCase(type)) {
+    investigationPrefix = 'withPrefix'
+  }
 
   return formatMessage(notifications.prosecutorReceivedByCourt, {
     court,
-    caseType,
-    caseTypeName: caseTypes[type],
+    investigationPrefix,
+    courtTypeName: caseTypes[type],
     courtCaseNumber,
   })
 }
@@ -216,7 +208,6 @@ export function formatProsecutorReceivedByCourtSmsNotification(
 export function formatProsecutorCourtDateEmailNotification(
   formatMessage: FormatMessage,
   type: CaseType,
-  courtCaseNumber?: string,
   court?: string,
   courtDate?: Date,
   courtRoom?: string,
@@ -224,22 +215,19 @@ export function formatProsecutorCourtDateEmailNotification(
   registrarName?: string,
   defenderName?: string,
   sessionArrangements?: SessionArrangements,
-): { subject: string; body: string } {
+): string {
   const cf = notifications.prosecutorCourtDateEmail
-  const scheduledCaseText = isIndictmentCase(type)
-    ? formatMessage(cf.sheduledIndictmentCase, { court, courtCaseNumber })
-    : formatMessage(cf.scheduledCase, {
-        court,
-        investigationPrefix:
-          type === CaseType.OTHER
-            ? 'onlyPrefix'
-            : isInvestigationCase(type)
-            ? 'withPrefix'
-            : 'noPrefix',
-        courtTypeName: caseTypes[type],
-      })
+  const scheduledCaseText = formatMessage(cf.scheduledCase, {
+    court,
+    investigationPrefix:
+      type === CaseType.OTHER
+        ? 'onlyPrefix'
+        : isInvestigationCase(type)
+        ? 'withPrefix'
+        : 'noPrefix',
+    courtTypeName: caseTypes[type],
+  })
   const courtDateText = formatMessage(cf.courtDate, {
-    isIndictment: isIndictmentCase(type),
     courtDate: courtDate
       ? formatDate(courtDate, 'PPPp')?.replace(' kl.', ', kl.')
       : 'NONE',
@@ -258,30 +246,15 @@ export function formatProsecutorCourtDateEmailNotification(
     sessionArrangements,
   })
 
-  const body = isIndictmentCase(type)
-    ? formatMessage(cf.bodyIndictments, {
-        scheduledCaseText,
-        courtDateText,
-        courtRoomText,
-        judgeText,
-        registrarText: registrarText || 'NONE',
-      })
-    : formatMessage(cf.body, {
-        scheduledCaseText,
-        courtDateText,
-        courtRoomText,
-        judgeText,
-        registrarText: registrarText || 'NONE',
-        defenderText,
-        sessionArrangements,
-      })
-
-  const subject = formatMessage(cf.subject, {
-    isIndictment: isIndictmentCase(type),
-    courtCaseNumber: courtCaseNumber || '',
+  return formatMessage(cf.body, {
+    scheduledCaseText,
+    courtDateText,
+    courtRoomText,
+    judgeText,
+    registrarText: registrarText || 'NONE',
+    defenderText,
+    sessionArrangements,
   })
-
-  return { body, subject }
 }
 
 export function formatPrisonCourtDateEmailNotification(

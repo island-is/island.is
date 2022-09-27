@@ -39,8 +39,7 @@
             "skipTemplates": true
           }
         ],
-        "local-rules/disallow-kennitalas": "warn",
-        "local-rules/no-async-module-init": "error"
+        "local-rules/disallow-kennitalas": 1
       }
     },
     {

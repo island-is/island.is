@@ -94,7 +94,8 @@ const client = {
   client_claims_prefix: '@island.is/auth-admin-web_',
   protocol_type: 'oidc',
   consent_lifetime: 3600,
-  supports_custom_delegation: false,
+
+  supports_delegation: false,
   supports_legal_guardians: false,
   supports_procuring_holders: false,
   prompt_delegations: false,

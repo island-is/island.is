@@ -1,6 +1,6 @@
 import { gql } from '@apollo/client'
 
-const CaseQuery = gql`
+export const CaseQuery = gql`
   query CaseQuery($input: CaseQueryInput!) {
     case(input: $input) {
       id
@@ -154,9 +154,6 @@ const CaseQuery = gql`
       caseResentExplanation
       origin
       seenByDefender
-      subpoenaType
     }
   }
 `
-
-export default CaseQuery

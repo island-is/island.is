@@ -1,5 +1,4 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
-import graphqlTypeJson from 'graphql-type-json'
 import { IFormField } from '../generated/contentfulTypes'
 
 @ObjectType()
@@ -21,9 +20,6 @@ export class FormField {
 
   @Field(() => [String])
   options!: Array<string>
-
-  @Field(() => graphqlTypeJson, { nullable: true })
-  emailConfig?: Record<string, string>
 }
 
 export const mapFormField = ({ sys, fields }: IFormField): FormField => ({
@@ -33,5 +29,4 @@ export const mapFormField = ({ sys, fields }: IFormField): FormField => ({
   type: fields.type ?? 'input',
   required: fields.required ?? false,
   options: fields.options ?? [],
-  emailConfig: fields.emailConfig ?? {},
 })

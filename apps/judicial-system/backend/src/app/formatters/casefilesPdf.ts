@@ -1,4 +1,3 @@
-import { FormatMessage } from '@island.is/cms-translations'
 import PDFDocument from 'pdfkit'
 import streamBuffers from 'stream-buffers'
 
@@ -13,11 +12,9 @@ import {
   setTitle,
 } from './pdfHelpers'
 import { writeFile } from './writeFile'
-import { casefilesPdf as m } from '../messages/pdfCasefiles'
 
 function constructCasefilesPdf(
   theCase: Case,
-  formatMessage: FormatMessage,
 ): streamBuffers.WritableStreamBuffer {
   const doc = new PDFDocument({
     size: 'A4',
@@ -32,18 +29,15 @@ function constructCasefilesPdf(
 
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
 
-  setTitle(
-    doc,
-    formatMessage(m.title, { courtCaseNumber: theCase.courtCaseNumber }),
-  )
+  setTitle(doc, `Rannsóknargögn ${theCase.courtCaseNumber}`)
   setLineGap(doc, 8)
-  addHugeHeading(doc, formatMessage(m.heading), 'Helvetica-Bold')
+  addHugeHeading(doc, 'Rannsóknargögn', 'Helvetica-Bold')
   setLineGap(doc, 40)
   addLargeHeading(
     doc,
-    formatMessage(m.courtCaseNumber, {
-      courtCaseNumber: theCase.courtCaseNumber,
-    }),
+    `Mál nr. ${
+      theCase.courtCaseNumber
+    } - LÖKE nr: ${theCase.policeCaseNumbers.join(', ')}`,
     'Helvetica',
   )
   setLineGap(doc, 8)
@@ -55,11 +49,8 @@ function constructCasefilesPdf(
   return stream
 }
 
-export async function getCasefilesPdfAsString(
-  theCase: Case,
-  formatMessage: FormatMessage,
-): Promise<string> {
-  const stream = constructCasefilesPdf(theCase, formatMessage)
+export async function getCasefilesPdfAsString(theCase: Case): Promise<string> {
+  const stream = constructCasefilesPdf(theCase)
 
   // wait for the writing to finish
   const pdf = await new Promise<string>(function (resolve) {
@@ -75,11 +66,8 @@ export async function getCasefilesPdfAsString(
   return pdf
 }
 
-export async function getCasefilesPdfAsBuffer(
-  theCase: Case,
-  formatMessage: FormatMessage,
-): Promise<Buffer> {
-  const stream = constructCasefilesPdf(theCase, formatMessage)
+export async function getCasefilesPdfAsBuffer(theCase: Case): Promise<Buffer> {
+  const stream = constructCasefilesPdf(theCase)
 
   // wait for the writing to finish
   const pdf = await new Promise<Buffer>(function (resolve) {

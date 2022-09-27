@@ -1,11 +1,10 @@
-import { Box, Bullet, BulletList, Stack } from '@island.is/island-ui/core'
 import React, { FC } from 'react'
-
-import { FieldBaseProps } from '@island.is/application/types'
-import InstitutionIllustration from '../../assets/InstitutionIllustration'
 import { formatText } from '@island.is/application/core'
-import { institutionApplicationMessages as m } from '../../lib/messages'
+import { FieldBaseProps } from '@island.is/application/types'
+import { Box, Bullet, BulletList, Stack } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import InstitutionIllustration from '../../assets/InstitutionIllustration'
+import { institutionApplicationMessages as m } from '../../lib/messages'
 
 const ConfirmationScreen: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
@@ -16,21 +15,21 @@ const ConfirmationScreen: FC<FieldBaseProps> = ({ application }) => {
         <BulletList>
           <Bullet>
             {formatText(
-              m.confirmation.sectionConfirmBulletFirst,
+              m.confirmation.sectionInfoBulletFirst,
               application,
               formatMessage,
             )}
           </Bullet>
           <Bullet>
             {formatText(
-              m.confirmation.sectionConfirmBulletSecond,
+              m.confirmation.sectionInfoBulletSecond,
               application,
               formatMessage,
             )}
           </Bullet>
           <Bullet>
             {formatText(
-              m.confirmation.sectionConfirmBulletThird,
+              m.confirmation.sectionInfoBulletThird,
               application,
               formatMessage,
             )}

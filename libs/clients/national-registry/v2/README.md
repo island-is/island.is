@@ -24,40 +24,47 @@ and make sure the environment variables `XROAD_BASE_PATH_WITH_ENV`, `XROAD_TJODS
 
 ### Import into other NestJS modules
 
-Add the service to your module imports and make sure you have the required configuration:
+Add the service to your module imports:
 
 ```typescript
 import { NationalRegistryModule } from '@island.is/clients/national-registry-v2'
 
 @Module({
   imports: [
-    NationalRegistryModule,
-    ConfigModule.forRoot({
-      isGlobal: true,
-      load: [
-        IdsClientConfig, // recommended
-        NationalRegistryClientConfig,
-        XRoadConfig,
-      ]
-    })
+    NationalRegistryModule.register({
+      xRoadPath: createXRoadAPIPath(
+        config.xRoadBasePathWithEnv,
+        XRoadMemberClass.GovernmentInstitution,
+        config.xRoadTjodskraMemberCode,
+        config.xRoadTjodskraApiPath,
+      ),
+      xRoadClient: config.xRoadClientId,
+    }),
   ],
 })
 ```
 
-Then you'll have access to the National Registry Client Service:
+Then you'll have access to Þjóðskrá APIs:
 
 ```typescript
 import {
-  NationalRegistryClientService,
-  IndividualDto,
+  EinstaklingarApi,
+  FasteigniApi,
+  LyklarApi,
 } from '@island.is/clients/tjodskra'
 
 @Injectable()
 export class SomeService {
-  constructor(private nationalRegistryClient: NationalRegistryClientService) {}
+  constructor(private personApi: EinstaklingarApi) {}
 
-  async getPerson(nationalId: string): Promise<IndividualDto> {
-    return this.nationalRegistryClient.getIndividual(nationalId)
+  async getPerson(
+    nationalId: string,
+    xRoadClientId: string,
+  ): Promise<Einstaklingsupplysingar> {
+    return await this.personApi.einstaklingarGetEinstaklingur({
+      id: nationalId,
+      xRoadClient: xRoadClientId,
+    })
   }
 }
 ```

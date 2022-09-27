@@ -6,6 +6,7 @@ import {
   GridContainer,
   GridRow,
 } from '@island.is/island-ui/core'
+import { Namespace } from '@island.is/api/schema'
 import {
   CategorySignupForm,
   MailingListSignup,
@@ -14,7 +15,7 @@ import {
 
 interface SliceProps {
   slice: MailingListSignupSliceSchema
-  namespace?: Record<string, string>
+  namespace?: Namespace
 }
 
 export const MailingListSignupSlice: React.FC<SliceProps> = ({
@@ -55,7 +56,6 @@ export const MailingListSignupSlice: React.FC<SliceProps> = ({
             inputLabel={slice.inputLabel}
             buttonText={slice.buttonText}
             signupID={slice.id}
-            image={slice.image}
           />
         </Box>
       )}

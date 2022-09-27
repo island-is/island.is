@@ -19,6 +19,7 @@ import {
   getAvailablePersonalRightsInDays,
   YES,
   StartDateOptions,
+  getApplicationExternalData,
 } from '@island.is/application/templates/parental-leave'
 
 import { SharedTemplateApiService } from '../../shared'
@@ -33,18 +34,15 @@ import {
   generateEmployerRejected,
   generateApplicationApprovedByEmployerEmail,
   generateApplicationApprovedByEmployerToEmployerEmail,
+  assignLinkEmployerSMS,
+  linkOtherParentSMS,
 } from './emailGenerators'
-import {
-  generateAssignEmployerApplicationSms,
-  generateAssignOtherParentApplicationSms,
-  generateEmployerRejectedApplicationSms,
-  generateOtherParentRejectedApplicationSms,
-} from './smsGenerators'
 import {
   transformApplicationToParentalLeaveDTO,
   getRatio,
 } from './parental-leave.utils'
 import { apiConstants } from './constants'
+import { SmsService } from '@island.is/nova-sms'
 import { ConfigService } from '@nestjs/config'
 import { getConfigValue } from '../../shared/shared.utils'
 
@@ -59,6 +57,8 @@ interface VMSTError {
 export const APPLICATION_ATTACHMENT_BUCKET = 'APPLICATION_ATTACHMENT_BUCKET'
 const SIX_MONTHS_IN_SECONDS_EXPIRES = 6 * 30 * 24 * 60 * 60
 const df = 'yyyy-MM-dd'
+const senderName = 'island.is'
+const senderEmail = 'noreply@island.is'
 
 @Injectable()
 export class ParentalLeaveService {
@@ -70,6 +70,7 @@ export class ParentalLeaveService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     @Inject(APPLICATION_ATTACHMENT_BUCKET)
     private readonly attachmentBucket: string,
+    private readonly smsService: SmsService,
     private readonly configService: ConfigService<BaseTemplateAPIModuleConfig>,
   ) {}
 
@@ -87,16 +88,27 @@ export class ParentalLeaveService {
     const { otherParentPhoneNumber } = getApplicationAnswers(
       application.answers,
     )
+    const { applicantName } = getApplicationExternalData(
+      application.externalData,
+    )
+    const applicantId = application.applicant
 
     await this.sharedTemplateAPIService.sendEmail(
-      generateAssignOtherParentApplicationEmail,
+      (props) =>
+        generateAssignOtherParentApplicationEmail(
+          props,
+          senderName,
+          senderEmail,
+        ),
       application,
     )
 
     if (otherParentPhoneNumber) {
-      await this.sharedTemplateAPIService.sendSms(
-        generateAssignOtherParentApplicationSms,
-        application,
+      await this.smsService.sendSms(
+        otherParentPhoneNumber,
+        `Umsækjandi ${applicantName} kt: ${applicantId} hefur skráð þig sem maka í umsókn sinni um fæðingarorlof og er að óska eftir réttindum frá þér.
+        Ef þú áttir von á þessari beiðni máttu smella á linkinn hér fyrir neðan. Kveðja, Fæðingarorlofssjóður
+        ${linkOtherParentSMS}`,
       )
     }
   }
@@ -107,7 +119,7 @@ export class ParentalLeaveService {
     const { applicantPhoneNumber } = getApplicationAnswers(application.answers)
 
     await this.sharedTemplateAPIService.sendEmail(
-      generateOtherParentRejected,
+      (props) => generateOtherParentRejected(props, senderName, senderEmail),
       application,
     )
 
@@ -119,9 +131,11 @@ export class ParentalLeaveService {
 
       const link = `${clientLocationOrigin}/${ApplicationConfigurations.ParentalLeave.slug}/${application.id}`
 
-      await this.sharedTemplateAPIService.sendSms(
-        () => generateOtherParentRejectedApplicationSms(application, link),
-        application,
+      await this.smsService.sendSms(
+        applicantPhoneNumber,
+        `Hitt foreldrið hefur hafnað beiðni þinni um yfirfærslu á réttindum. Þú þarft því að breyta umsókn þinni.
+        The other parent has denied your request for transfer of rights. You therefore need to modify your application.
+        ${link}`,
       )
     }
   }
@@ -132,7 +146,7 @@ export class ParentalLeaveService {
     const { applicantPhoneNumber } = getApplicationAnswers(application.answers)
 
     await this.sharedTemplateAPIService.sendEmail(
-      generateEmployerRejected,
+      (props) => generateEmployerRejected(props, senderName, senderEmail),
       application,
     )
 
@@ -144,33 +158,41 @@ export class ParentalLeaveService {
 
       const link = `${clientLocationOrigin}/${ApplicationConfigurations.ParentalLeave.slug}/${application.id}`
 
-      await this.sharedTemplateAPIService.sendSms(
-        () => generateEmployerRejectedApplicationSms(application, link),
-        application,
+      await this.smsService.sendSms(
+        applicantPhoneNumber,
+        `Vinnuveitandi hefur hafnað beiðni þinni um samþykki fæðingarorlofs. Þú þarft því að breyta umsókn þinni.
+        Your employer has denied your request. You therefore need to modify your application.
+        ${link}`,
       )
     }
   }
 
   async assignEmployer({ application }: TemplateApiModuleActionProps) {
     const { employerPhoneNumber } = getApplicationAnswers(application.answers)
+    const { applicantName } = getApplicationExternalData(
+      application.externalData,
+    )
+    const applicantId = application.applicant
 
-    const token = await this.sharedTemplateAPIService.createAssignToken(
+    await this.sharedTemplateAPIService.assignApplicationThroughEmail(
+      (props, assignLink) =>
+        generateAssignEmployerApplicationEmail(
+          props,
+          assignLink,
+          senderName,
+          senderEmail,
+        ),
       application,
       SIX_MONTHS_IN_SECONDS_EXPIRES,
     )
 
-    await this.sharedTemplateAPIService.assignApplicationThroughEmail(
-      generateAssignEmployerApplicationEmail,
-      application,
-      token,
-    )
-
     // send confirmation sms to employer
     if (employerPhoneNumber) {
-      await this.sharedTemplateAPIService.assignApplicationThroughSms(
-        generateAssignEmployerApplicationSms,
-        application,
-        token,
+      await this.smsService.sendSms(
+        employerPhoneNumber,
+        `Umsækjandi ${applicantName} kt: ${applicantId} hefur skráð þig sem atvinnuveitanda í umsókn sinni um fæðingarorlof.
+        Ef þú áttir von á þessari beiðni máttu smella á linkinn hér fyrir neðan. Kveðja, Fæðingarorlofssjóður
+        ${assignLinkEmployerSMS}`,
       )
     }
   }
@@ -439,13 +461,23 @@ export class ParentalLeaveService {
         // Only needs to send an email if being approved by employer
         // Self employed applicant was aware of the approval
         await this.sharedTemplateAPIService.sendEmail(
-          generateApplicationApprovedByEmployerEmail,
+          (props) =>
+            generateApplicationApprovedByEmployerEmail(
+              props,
+              senderName,
+              senderEmail,
+            ),
           application,
         )
 
         // Also send confirmation to employer
         await this.sharedTemplateAPIService.sendEmail(
-          generateApplicationApprovedByEmployerToEmployerEmail,
+          (props) =>
+            generateApplicationApprovedByEmployerToEmployerEmail(
+              props,
+              senderName,
+              senderEmail,
+            ),
           application,
         )
       }

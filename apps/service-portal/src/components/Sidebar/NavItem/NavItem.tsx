@@ -8,14 +8,12 @@ import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
 import cn from 'classnames'
 import Chevron from './Chevron'
-import { iconTypeToSVG, iconIdMapper } from '../../../utils/Icons/idMapper'
 
 interface Props {
   path?: ServicePortalPath
   icon?: Pick<IconProps, 'icon' | 'type'>
   active: boolean
   chevron?: boolean
-  hover?: boolean
   enabled?: boolean
   expanded?: boolean
   external?: boolean
@@ -40,8 +38,6 @@ const NavItemContent: FC<Props> = ({
   const isMobile = width < theme.breakpoints.md
   const collapsed = sidebarState === 'closed' && !isMobile
   const showLock = enabled === false
-  const pathName = window.location.pathname
-  const isDashboard = pathName === '/minarsidur/'
 
   const navItemActive: keyof typeof styles.navItemActive = active
     ? collapsed
@@ -53,10 +49,6 @@ const NavItemContent: FC<Props> = ({
 
   const badgeActive: keyof typeof styles.badge = badge ? 'active' : 'inactive'
 
-  const animatedIcon = icon
-    ? `./assets/icons/sidebar/${icon.icon}.svg`
-    : undefined
-
   return (
     <Box
       className={[
@@ -64,19 +56,13 @@ const NavItemContent: FC<Props> = ({
         styles.navItemActive[navItemActive],
         collapsed && 'collapsed',
         'navitem',
-        isDashboard && styles.dashboard,
       ]}
       display="flex"
       alignItems="center"
       justifyContent={collapsed ? 'center' : 'spaceBetween'}
       cursor={showLock ? undefined : 'pointer'}
       position="relative"
-      onClick={() => {
-        const id = icon && iconIdMapper(icon.icon)
-        const a: HTMLElement | null = id ? document.getElementById(id) : null
-        a && a.dispatchEvent(new Event('click'))
-        if (!hasArray && onClick) onClick()
-      }}
+      onClick={showLock ? (hasArray ? undefined : onClick) : onClick}
       paddingY={1}
       paddingLeft={collapsed ? 1 : 3}
       paddingRight={collapsed ? 1 : 2}
@@ -92,11 +78,8 @@ const NavItemContent: FC<Props> = ({
           <Box
             display="flex"
             alignItems="center"
-            justifyContent={
-              collapsed ? 'center' : isDashboard ? 'center' : 'spaceBetween'
-            }
+            justifyContent={collapsed ? 'center' : 'flexStart'}
             marginRight={collapsed ? 0 : 1}
-            className={animatedIcon && styles.animatedIcon}
           >
             <Box
               borderRadius="circle"
@@ -105,24 +88,13 @@ const NavItemContent: FC<Props> = ({
                 collapsed && styles.badgeCollapsed,
               )}
             ></Box>
-
-            {!isDashboard && !isMobile ? (
-              <Box
-                className={styles.animatedIcon}
-                display="flex"
-                justifyContent="center"
-              >
-                {iconTypeToSVG(icon.icon ?? '', 'navid')}
-              </Box>
-            ) : (
-              <Icon
-                type={active ? 'filled' : 'outline'}
-                icon={icon.icon}
-                color={active ? 'blue400' : 'blue600'}
-                size="medium"
-                className={styles.icon}
-              />
-            )}
+            <Icon
+              type={active ? 'filled' : 'outline'}
+              icon={icon.icon}
+              color={active ? 'blue400' : 'blue600'}
+              size="medium"
+              className={styles.icon}
+            />
           </Box>
         ) : null}
         {!collapsed ? <Box className={styles.text}>{children}</Box> : ''}

@@ -1,4 +1,4 @@
-import { Controller, Get, Inject, Param, UseGuards } from '@nestjs/common'
+import { Controller, Get, Param, UseGuards } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import { apiBasePath } from '@island.is/financial-aid/shared/lib'
@@ -15,9 +15,6 @@ import { MunicipalitiesFinancialAidScope } from '@island.is/auth/scopes'
 import { PersonalTaxReturnService } from './personalTaxReturn.service'
 import { DirectTaxPaymentsResponse, PersonalTaxReturnResponse } from './models/'
 
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(
   MunicipalitiesFinancialAidScope.read,
@@ -27,8 +24,6 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 @ApiTags('personalTaxReturn')
 export class PersonalTaxReturnController {
   constructor(
-    @Inject(LOGGER_PROVIDER)
-    private readonly logger: Logger,
     private readonly personalTaxReturnService: PersonalTaxReturnService,
   ) {}
 
@@ -41,21 +36,10 @@ export class PersonalTaxReturnController {
     @Param('id') id: string,
     @CurrentUser() user: User,
   ): Promise<PersonalTaxReturnResponse> {
-    this.logger.debug(
-      'PersonalTaxReturn controller: Getting personal tax return',
+    return await this.personalTaxReturnService.personalTaxReturn(
+      user.nationalId,
+      id,
     )
-    try {
-      return await this.personalTaxReturnService.personalTaxReturn(
-        user.nationalId,
-        id,
-      )
-    } catch (e) {
-      this.logger.error(
-        'PersonalTaxReturn controller: Failed getting personal tax return',
-        e,
-      )
-      throw e
-    }
   }
 
   @Get('directTaxPayments')
@@ -71,19 +55,8 @@ export class PersonalTaxReturnController {
   async municipalitiesDirectTaxPayments(
     @CurrentUser() user: User,
   ): Promise<DirectTaxPaymentsResponse> {
-    this.logger.debug(
-      'PersonalTaxReturn controller: Getting direct tax payments',
+    return await this.personalTaxReturnService.directTaxPayments(
+      user.nationalId,
     )
-    try {
-      return await this.personalTaxReturnService.directTaxPayments(
-        user.nationalId,
-      )
-    } catch (e) {
-      this.logger.error(
-        'PersonalTaxReturn controller: Failed direct tax payments',
-        e,
-      )
-      throw e
-    }
   }
 }

@@ -74,16 +74,11 @@ export class AccidentNotificationService {
 
       // Request representative review when applicable
       if (utils.shouldRequestReview(answers)) {
-        const token = await this.sharedTemplateAPIService.createAssignToken(
-          application,
-          SIX_MONTHS_IN_SECONDS_EXPIRES,
-        )
-
         await this.sharedTemplateAPIService.assignApplicationThroughEmail(
           (props, assignLink) =>
             generateAssignReviewerEmail(props, assignLink, ihiDocumentID),
           application,
-          token,
+          SIX_MONTHS_IN_SECONDS_EXPIRES,
         )
       }
       return {

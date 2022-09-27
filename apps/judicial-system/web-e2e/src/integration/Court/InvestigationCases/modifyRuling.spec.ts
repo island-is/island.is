@@ -1,14 +1,14 @@
-import { Case, CaseDecision, CaseType } from '@island.is/judicial-system/types'
+import { Case, CaseDecision } from '@island.is/judicial-system/types'
 import {
   INVESTIGATION_CASE_MODIFY_RULING_ROUTE,
   SIGNED_VERDICT_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
 
-import { intercept, mockCase } from '../../../utils'
+import { intercept, makeInvestigationCase } from '../../../utils'
 
 describe(`${INVESTIGATION_CASE_MODIFY_RULING_ROUTE}/:id`, () => {
   beforeEach(() => {
-    const caseData = mockCase(CaseType.INTERNET_USAGE)
+    const caseData = makeInvestigationCase()
     const caseDataAddition: Case = {
       ...caseData,
       caseFacts: 'lorem ipsum',

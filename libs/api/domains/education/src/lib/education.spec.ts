@@ -47,11 +47,12 @@ describe('EducationService', () => {
         S3Service,
         {
           provide: NationalRegistryApi,
-          useValue: new NationalRegistryApi({} as Soap.Client, 'xx', 'yy'),
+          useFactory: async () =>
+            new NationalRegistryApi({} as Soap.Client, 'xx', 'yy'),
         },
         {
           provide: MMSApi,
-          useValue: new MMSApi(config.xroad),
+          useFactory: async () => new MMSApi(config.xroad),
         },
         EducationService,
         { provide: 'CONFIG', useValue: config },

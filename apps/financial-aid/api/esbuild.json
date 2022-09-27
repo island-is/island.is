@@ -35,8 +35,7 @@
     "@protobufjs/inquire",
     "@protobufjs/path",
     "@protobufjs/pool",
-    "@protobufjs/utf8",
-    "safer-buffer"
+    "@protobufjs/utf8"
   ],
   "keepNames": true
 }

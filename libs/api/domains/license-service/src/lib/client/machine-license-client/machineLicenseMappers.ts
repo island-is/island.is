@@ -8,74 +8,45 @@ import {
   GenericUserLicensePayload,
 } from '../../licenceService.type'
 
-import format from 'date-fns/format'
-import isAfter from 'date-fns/isAfter'
-import is from 'date-fns/locale/is'
-import enGB from 'date-fns/locale/en-GB'
-import { format as formatSsn } from 'kennitala'
-import { Locale } from 'locale'
-
-const checkLicenseExpirationDate = (license: VinnuvelaDto) => {
-  return license.vinnuvelaRettindi
-    ? license.vinnuvelaRettindi
-        .filter((field) => field.kenna || field.stjorna)
-        .every(
-          (field: VinnuvelaRettindiDto) =>
-            field.kenna &&
-            !isAfter(new Date(field.kenna), new Date()) &&
-            field.stjorna &&
-            !isAfter(new Date(field.stjorna), new Date()),
-        )
-    : null
-}
-
-const formatDateString = (
-  dateTime: string,
-  dateFormat: string,
-  locale?: Locale,
-) => {
-  const dateLocale = locale === ('en' as Locale) ? enGB : is
-  return dateTime
-    ? format(new Date(dateTime), dateFormat, { locale: dateLocale })
-    : ''
-}
-
 export const parseMachineLicensePayload = (
   license: VinnuvelaDto,
 ): GenericUserLicensePayload | null => {
   if (!license) return null
 
-  const expired: boolean | null = checkLicenseExpirationDate(license)
-
   const data: Array<GenericLicenseDataField> = [
     {
       type: GenericLicenseDataFieldType.Value,
-      label: 'Númer skírteinis',
+      label: 'Skírteini nr. ',
       value: license.skirteinisNumer?.toString(),
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: 'Fullt nafn',
+      label: '1. Fullt nafn',
       value: license?.fulltNafn ?? '',
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: 'Útgáfustaður',
+      label: '2. Kennitala',
+      value: license.kennitala ?? '',
+    },
+    {
+      type: GenericLicenseDataFieldType.Value,
+      label: '3. Útgáfustaður',
       value: license.utgafuStadur ?? '',
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: 'Útgáfudagur',
+      label: '4. Útgáfudagur',
       value: license.fyrstiUtgafuDagur?.toString(),
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: 'Gildir til',
+      label: '5. Gildir til.',
       value: 'Sjá réttindi',
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: 'Ökuskírteinisnúmer',
+      label: '6. Ökuskírteini nr',
       value: license.okuskirteinisNumer ?? '',
     },
     {
@@ -87,7 +58,6 @@ export const parseMachineLicensePayload = (
           type: GenericLicenseDataFieldType.Category,
           name: field.flokkur ?? '',
           label: field.fulltHeiti ?? field.stuttHeiti ?? '',
-          description: field.fulltHeiti ?? field.stuttHeiti ?? '',
           fields: parseVvrRights(field),
         })),
     },
@@ -96,10 +66,6 @@ export const parseMachineLicensePayload = (
   return {
     data,
     rawData: JSON.stringify(license),
-    metadata: {
-      licenseNumber: license.skirteinisNumer?.toString() ?? '',
-      expired: expired,
-    },
   }
 }
 
@@ -126,36 +92,26 @@ const parseVvrRights = (
   return fields?.length ? fields : undefined
 }
 
-export const parseRightsForPkpassInput = (
-  rights?: Array<VinnuvelaRettindiDto>,
-  locale?: Locale,
-) => {
-  if (!rights?.length) return 'Engin réttindi'
+export const createPkPassDataBackside = (license: VinnuvelaDto) => {
+  if (!license || !license.vinnuvelaRettindi) return null
 
-  const rightsString = rights
-    .filter((right) => right.stjorna)
-    .map((right) => {
-      let candidateString = `${right.flokkur} - ${
-        right.stuttHeiti
-      }\r\n${formatDateString(right.stjorna ?? '', 'dd.MM.yy', locale)}`
-      if (right.kenna) {
-        candidateString += `\r\nKennsluréttindi til ${formatDateString(
-          right.kenna,
-          'dd.MM.yy',
-          locale,
-        )}`
-      }
-      return candidateString
-    })
-    .join('\r\n\r\n')
-
-  return rightsString
+  let i = -1
+  return license.vinnuvelaRettindi?.map((v) => {
+    i++
+    return {
+      orderIndex: i.toString(),
+      label: `${v.flokkur} ${v.stuttHeiti}`,
+      value: v.kenna
+        ? `${v.stjorna}\nKennsluréttindi til ${v.kenna}`
+        : `${v.stjorna}`,
+      expirationDate: v.stjorna ?? '',
+    }
+  })
 }
 
 export const createPkPassDataInput = (
   license: VinnuvelaDto,
   nationalId: string,
-  locale?: Locale,
 ) => {
   if (!license || !nationalId) return null
 
@@ -170,7 +126,7 @@ export const createPkPassDataInput = (
     },
     {
       identifier: 'kennitala',
-      value: nationalId ? formatSsn(nationalId) : '',
+      value: nationalId ?? '',
     },
     {
       identifier: 'utgafuStadur',
@@ -182,17 +138,11 @@ export const createPkPassDataInput = (
     },
     {
       identifier: 'fyrstiUtgafudagur',
-      value: license.fyrstiUtgafuDagur
-        ? formatDateString(license.fyrstiUtgafuDagur, 'dd. MMMM yyyy', locale)
-        : '',
+      value: license.fyrstiUtgafuDagur ?? '',
     },
     {
       identifier: 'okuskirteinisnumer',
       value: license.okuskirteinisNumer ?? '',
-    },
-    {
-      identifier: 'rettindi',
-      value: parseRightsForPkpassInput(license.vinnuvelaRettindi ?? [], locale),
     },
   ]
 }

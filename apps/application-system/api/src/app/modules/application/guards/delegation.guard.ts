@@ -1,19 +1,14 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common'
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 import { User } from '@island.is/auth-nest-tools'
-import { Reflector } from '@nestjs/core'
 import { ApplicationService } from '@island.is/application/api/core'
 import { verifyToken } from '../utils/tokenUtils'
 import { DecodedAssignmentToken } from '../types'
 import { BadSubject } from '@island.is/nest/problem'
-import { BYPASS_DELEGATION_KEY } from './bypass-delegation.decorator'
 
 @Injectable()
 export class DelegationGuard implements CanActivate {
-  constructor(
-    private readonly applicationService: ApplicationService,
-    private readonly reflector: Reflector,
-  ) {}
+  constructor(private readonly applicationService: ApplicationService) {}
 
   async getTypeIdFromApplicationId(
     id: string,
@@ -45,11 +40,6 @@ export class DelegationGuard implements CanActivate {
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    // we check for metadata set by the bypass delegation decorator
-    const bypassDelegation = this.reflector.getAllAndOverride<boolean>(
-      BYPASS_DELEGATION_KEY,
-      [context.getHandler(), context.getClass()],
-    )
     const request = context.switchToHttp().getRequest()
     const user: User = request.user
     if (!user.actor) {
@@ -82,10 +72,6 @@ export class DelegationGuard implements CanActivate {
           throw new BadSubject()
         }
       } else {
-        // If the bypass delegation exists and is truthy we bypass delegation
-        if (bypassDelegation) {
-          return true
-        }
         // This can happen if the user enters a drafted application and does not have access the getTypeIdFromApplicationId needs to get the application from the user id
         throw new BadSubject()
       }

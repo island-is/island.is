@@ -16,12 +16,13 @@ export class GeneralPetitionModule {
         GeneralPetitionService,
         {
           provide: EndorsementListApi,
-          useValue: new EndorsementListApi(
-            new endorsementConfig({
-              fetchApi: fetch,
-              basePath: config.generalPetition.endorsementsApiBasePath,
-            }),
-          ),
+          useFactory: async () =>
+            new EndorsementListApi(
+              new endorsementConfig({
+                fetchApi: fetch,
+                basePath: config.generalPetition.endorsementsApiBasePath,
+              }),
+            ),
         },
       ],
       exports: [GeneralPetitionService],

@@ -89,18 +89,19 @@ function constructRestrictionRequestPdf(
   setLineGap(doc, 24)
   addLargeHeading(doc, title, 'Times-Roman')
   setLineGap(doc, 8)
-  addMediumPlusHeading(doc, formatDate(theCase.created, 'PPP') ?? '')
+  addMediumPlusHeading(
+    doc,
+    `${formatDate(
+      theCase.created,
+      'PPP',
+    )} - Mál nr: ${theCase.policeCaseNumbers.join(', ')}`,
+  )
   setLineGap(doc, 40)
   addMediumPlusHeading(
     doc,
     `${formatMessage(m.baseInfo.court)} ${theCase.court?.name}`,
   )
   setLineGap(doc, 4)
-  addMediumText(doc, formatMessage(m.policeCaseNumbers), 'Times-Bold')
-  theCase.policeCaseNumbers.forEach((policeCaseNumber) => {
-    addNormalText(doc, policeCaseNumber, 'Times-Roman')
-  })
-  addEmptyLines(doc)
   addMediumText(
     doc,
     capitalize(
@@ -256,18 +257,19 @@ function constructInvestigationRequestPdf(
   setLineGap(doc, 24)
   addHugeHeading(doc, title, 'Times-Roman')
   setLineGap(doc, 8)
-  addMediumPlusHeading(doc, formatDate(theCase.created, 'PPP') ?? '')
+  addMediumPlusHeading(
+    doc,
+    `${formatDate(
+      theCase.created,
+      'PPP',
+    )} - Mál nr: ${theCase.policeCaseNumbers.join(', ')}`,
+  )
   setLineGap(doc, 40)
   addMediumPlusHeading(
     doc,
     `${formatMessage(m.baseInfo.court)} ${theCase.court?.name}`,
   )
   setLineGap(doc, 4)
-  addMediumText(doc, formatMessage(m.policeCaseNumbers), 'Times-Bold')
-  theCase.policeCaseNumbers.forEach((policeCaseNumber) => {
-    addNormalText(doc, policeCaseNumber, 'Times-Roman')
-  })
-  addEmptyLines(doc)
   addMediumText(
     doc,
     capitalize(

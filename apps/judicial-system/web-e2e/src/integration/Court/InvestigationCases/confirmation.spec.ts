@@ -1,16 +1,16 @@
 import faker from 'faker'
 
-import { Case, CaseType, UserRole } from '@island.is/judicial-system/types'
+import { Case, UserRole } from '@island.is/judicial-system/types'
 import { INVESTIGATION_CASE_CONFIRMATION_ROUTE } from '@island.is/judicial-system/consts'
 
-import { mockCase, intercept } from '../../../utils'
+import { makeInvestigationCase, intercept } from '../../../utils'
 
 describe(`${INVESTIGATION_CASE_CONFIRMATION_ROUTE}/:id`, () => {
   const ruling = faker.lorem.sentence()
   const conclusion = faker.lorem.sentence()
 
   it('should display the ruling', () => {
-    const caseData = mockCase(CaseType.INTERNET_USAGE)
+    const caseData = makeInvestigationCase()
     const caseDataAddition: Case = {
       ...caseData,
       conclusion,

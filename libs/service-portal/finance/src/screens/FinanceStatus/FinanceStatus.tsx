@@ -34,7 +34,6 @@ import {
   FinanceStatusDataType,
   FinanceStatusOrganizationType,
 } from './FinanceStatusData.types'
-import * as styles from './Table.css'
 
 const GetFinanceStatusQuery = gql`
   query GetFinanceStatusQuery {
@@ -223,7 +222,7 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
             </Box>
           )}
           {financeStatusData?.organizations?.length > 0 || financeStatusZero ? (
-            <Box className={styles.printStyle} marginTop={2}>
+            <Box marginTop={2}>
               <T.Table>
                 <ExpandHeader
                   data={[

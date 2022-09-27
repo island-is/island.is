@@ -60,7 +60,6 @@ describe('AppController - Greate', () => {
           },
           body: JSON.stringify({
             ...caseToCreate,
-            policeCaseNumber: undefined,
             policeCaseNumbers: ['007-2022-1'],
           }),
         },

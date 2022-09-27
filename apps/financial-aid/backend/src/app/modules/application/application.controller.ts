@@ -87,23 +87,14 @@ export class ApplicationController {
   })
   async getCurrentApplication(@CurrentUser() user: User): Promise<string> {
     this.logger.debug('Application controller: Getting current application')
-
-    let currentApplicationId
-    try {
-      currentApplicationId = await this.applicationService.getCurrentApplicationId(
-        user.nationalId,
-      )
-    } catch (e) {
-      this.logger.error(
-        'Application controller: Failed getting current application',
-        e,
-      )
-      throw e
-    }
+    const currentApplicationId = await this.applicationService.getCurrentApplicationId(
+      user.nationalId,
+    )
 
     if (currentApplicationId === null) {
       throw new NotFoundException(404, 'Current application not found')
     }
+
     return currentApplicationId
   }
 

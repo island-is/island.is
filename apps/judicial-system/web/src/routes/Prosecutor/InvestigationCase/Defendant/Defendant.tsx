@@ -7,9 +7,7 @@ import { uuid } from 'uuidv4'
 
 import {
   BlueBox,
-  DefenderInfo,
   FormContentContainer,
-  FormContext,
   FormFooter,
   PageLayout,
 } from '@island.is/judicial-system-web/src/components'
@@ -20,12 +18,9 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import {
-  titles,
-  core,
-  defendant as m,
-} from '@island.is/judicial-system-web/messages'
+import { titles, defendant as m } from '@island.is/judicial-system-web/messages'
 import {
   Case,
   CaseType,
@@ -34,16 +29,16 @@ import {
 } from '@island.is/judicial-system/types'
 import { Box, Button, Input, Select, Text } from '@island.is/island-ui/core'
 import { isDefendantStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
+import DefenderInfo from '@island.is/judicial-system-web/src/components/DefenderInfo/DefenderInfo'
 import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
 import { theme } from '@island.is/island-ui/theme'
 import { isBusiness } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import * as constants from '@island.is/judicial-system/consts'
 
-import {
-  DefendantInfo,
-  PoliceCaseNumbers,
+import PoliceCaseNumbers, {
   usePoliceCaseNumbers,
-} from '../../components'
+} from '../../SharedComponents/PoliceCaseNumbers/PoliceCaseNumbers'
+import DefendantInfo from '../../SharedComponents/DefendantInfo/DefendantInfo'
 
 const Defendant = () => {
   const router = useRouter()
@@ -420,9 +415,9 @@ const Defendant = () => {
             !isDefendantStepValidIC(workingCase, caseType, clientPoliceNumbers)
           }
           nextIsLoading={isCreatingCase}
-          nextButtonText={formatMessage(
-            workingCase.id === '' ? core.createCase : core.continue,
-          )}
+          nextButtonText={
+            workingCase.id === '' ? 'Stofna kröfu' : 'Halda áfram'
+          }
         />
       </FormContentContainer>
     </PageLayout>

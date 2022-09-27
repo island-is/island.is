@@ -7,8 +7,8 @@ export const serviceSetup = (services: {
     .namespace('judicial-system')
     .env({
       API_URL: {
-        dev: ref((h) => `https://judicial-system.${h.env.domain}`),
-        staging: ref((h) => `https://judicial-system.${h.env.domain}`),
+        dev: 'https://judicial-system.dev01.devland.is',
+        staging: 'https://judicial-system.staging01.devland.is',
         prod: 'https://rettarvorslugatt.island.is',
       },
       INTERNAL_API_URL: ref((h) => `http://${h.svc(services.api)}`),

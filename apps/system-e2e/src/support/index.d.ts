@@ -4,7 +4,6 @@
 
 declare namespace NodeJS {
   interface ProcessEnv {
-    BASE_URL_PREFIX: string
     TEST_ENVIRONMENT: TestEnvironment
     AWS_COGNITO_USERNAME?: string
     AWS_COGNITO_PASSWORD?: string
@@ -21,7 +20,6 @@ declare namespace Cypress {
     }
     env(key: 'authUrl'): AuthUrl
     env(key: 'testEnvironment'): Environment
-    env(key: 'basePrefix'): string
     config(key: 'baseUrl'): BaseUrl
   }
 
@@ -37,7 +35,5 @@ declare namespace Cypress {
       interceptUrl: string,
       method: 'GET' | 'POST' = 'GET',
     ): void
-    pathUuid()
-    bypassApplicationFluff()
   }
 }

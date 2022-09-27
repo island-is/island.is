@@ -355,7 +355,9 @@ describe('Cases', () => {
       )
 
       expect(
-        await waitFor(() => screen.queryByTestId('createCaseDropdown')),
+        await waitFor(() =>
+          screen.queryByRole('button', { name: /Stofna nýja kröfu/i }),
+        ),
       ).not.toBeInTheDocument()
     })
 

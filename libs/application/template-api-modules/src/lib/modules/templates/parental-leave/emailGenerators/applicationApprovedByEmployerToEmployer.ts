@@ -34,8 +34,9 @@ export const generateApplicationApprovedByEmployerToEmployerEmail: EmployerRejec
 
   return {
     from: {
-      name: email.sender,
-      address: email.address,
+      name: isRunningInProduction && senderName ? senderName : email.sender,
+      address:
+        isRunningInProduction && senderEmail ? senderEmail : email.address,
     },
     to: [
       {

@@ -18,6 +18,7 @@ import { FileService } from '../../../file'
 import { Case } from '../../models/case.model'
 import { DeliverResponse } from '../../models/deliver.response'
 import { createTestingCaseModule } from '../createTestingCaseModule'
+import { caseTypes } from '@island.is/judicial-system/formatters'
 
 jest.mock('../../../../formatters/courtRecordPdf')
 

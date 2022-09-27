@@ -47,9 +47,6 @@ export class ProjectPage {
   @Field(() => [SliceUnion])
   slices!: Array<typeof SliceUnion | null>
 
-  @Field(() => [SliceUnion])
-  bottomSlices!: Array<typeof SliceUnion | null>
-
   @Field(() => GenericTag, { nullable: true })
   newsTag!: GenericTag | null
 
@@ -75,19 +72,14 @@ export const mapProjectPage = ({ sys, fields }: IProjectPage): ProjectPage => ({
   slug: fields.slug ?? '',
   theme: fields.theme ?? 'default',
   sidebar: fields.sidebar ?? false,
-  sidebarLinks: (fields.sidebarLinks ?? [])
-    .map(mapLinkGroup)
-    .filter((link) => Boolean(link.primaryLink)),
+  sidebarLinks: (fields.sidebarLinks ?? []).map(mapLinkGroup),
   subtitle: fields.subtitle ?? '',
   intro: fields.intro ?? '',
   content: fields.content
     ? mapDocument(fields.content, sys.id + ':content')
     : [],
   stepper: fields.stepper ? mapStepper(fields.stepper) : null,
-  slices: (fields.slices ?? []).map(safelyMapSliceUnion).filter(Boolean),
-  bottomSlices: (fields.bottomSlices ?? [])
-    .map(safelyMapSliceUnion)
-    .filter(Boolean),
+  slices: (fields.slices ?? []).map(safelyMapSliceUnion),
   newsTag: fields.newsTag ? mapGenericTag(fields.newsTag) : null,
   projectSubpages: (fields.projectSubpages ?? [])
     .filter((p) => p.fields?.title)

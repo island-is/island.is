@@ -23,7 +23,7 @@ export const applicantInformationSection = buildSection({
           disabled: true,
           required: true,
           defaultValue: (application: GeneralFishingLicense) =>
-            application.externalData?.identityRegistry?.data?.name,
+            application.externalData?.nationalRegistry?.data?.fullName,
         }),
         buildTextField({
           id: 'applicant.nationalId',
@@ -34,7 +34,7 @@ export const applicantInformationSection = buildSection({
           disabled: true,
           required: true,
           defaultValue: (application: GeneralFishingLicense) =>
-            application.externalData?.identityRegistry?.data?.nationalId,
+            application.externalData?.nationalRegistry?.data?.nationalId,
         }),
         buildTextField({
           id: 'applicant.address',
@@ -44,7 +44,7 @@ export const applicantInformationSection = buildSection({
           disabled: true,
           required: true,
           defaultValue: (application: GeneralFishingLicense) =>
-            application.externalData?.identityRegistry?.data?.address
+            application.externalData?.nationalRegistry?.data?.address
               ?.streetAddress,
         }),
         buildTextField({
@@ -55,9 +55,12 @@ export const applicantInformationSection = buildSection({
           backgroundColor: 'white',
           disabled: true,
           required: true,
-          defaultValue: (application: GeneralFishingLicense) =>
-            application.externalData?.identityRegistry?.data?.address
-              ?.postalCode,
+          defaultValue: (application: GeneralFishingLicense) => {
+            return (
+              application.externalData?.nationalRegistry?.data?.address
+                ?.postalCode || '105'
+            )
+          },
         }),
         buildTextField({
           id: 'applicant.city',
@@ -67,7 +70,7 @@ export const applicantInformationSection = buildSection({
           disabled: true,
           required: true,
           defaultValue: (application: GeneralFishingLicense) =>
-            application.externalData?.identityRegistry?.data?.address?.city,
+            application.externalData?.nationalRegistry?.data?.address?.city,
         }),
         buildTextField({
           id: 'applicant.email',

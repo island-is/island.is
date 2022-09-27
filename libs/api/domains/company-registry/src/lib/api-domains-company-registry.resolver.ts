@@ -1,12 +1,7 @@
 import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
 import { Inject, UseGuards } from '@nestjs/common'
 import { ApiScope } from '@island.is/auth/scopes'
-import {
-  IdsUserGuard,
-  ScopesGuard,
-  Scopes,
-  CurrentUser,
-} from '@island.is/auth-nest-tools'
+import { IdsUserGuard, ScopesGuard, Scopes } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
 
 import { RskCompany, RskCompanyInfo } from './models/rskCompany.model'
@@ -16,7 +11,6 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { RskCompanySearchItems } from './models/rskCompanySearchItems.model'
 import { RskCompanyInfoSearchInput } from './dto/RskCompanyInfoSearch.input'
-import type { User as AuthUser } from '@island.is/auth-nest-tools'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.internal, ApiScope.company)
@@ -34,14 +28,12 @@ export class CompanyRegistryResolver {
     nullable: true,
   })
   async companyInformation(
-    @Args('input', { nullable: true, type: () => RskCompanyInfoInput })
+    @Args('input', { type: () => RskCompanyInfoInput })
     input: RskCompanyInfoInput,
-    @CurrentUser()
-    user: AuthUser,
   ): Promise<RskCompany | null> {
     this.logger.debug(`Getting company information`)
     const company = await this.rskCompanyInfoService.getCompanyInformationWithExtra(
-      input ? input.nationalId : user.nationalId,
+      input.nationalId,
     )
     this.logger.debug(`Company in resolver ${company}`)
     if (!company) {

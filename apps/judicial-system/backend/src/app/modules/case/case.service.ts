@@ -25,16 +25,13 @@ import {
 import { InjectQueue, QueueService } from '@island.is/message-queue'
 import { MessageType } from '@island.is/judicial-system/message'
 import { EmailService } from '@island.is/email-service'
-import { SIGNED_VERDICT_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
 import {
   CaseFileState,
   CaseOrigin,
   CaseState,
-  isIndictmentCase,
   UserRole,
 } from '@island.is/judicial-system/types'
 import type { User as TUser } from '@island.is/judicial-system/types'
-import { caseTypes } from '@island.is/judicial-system/formatters'
 
 import { nowFactory, uuidFactory } from '../../factories'
 import {
@@ -285,10 +282,7 @@ export class CaseService {
   private async uploadCaseFilesPdfToCourt(theCase: Case): Promise<void> {
     try {
       if (theCase.caseFiles && theCase.caseFiles.length > 0) {
-        const caseFilesPdf = await getCasefilesPdfAsString(
-          theCase,
-          this.formatMessage,
-        )
+        const caseFilesPdf = await getCasefilesPdfAsString(theCase)
 
         if (!this.config.production) {
           writeFile(`${theCase.id}-case-files.pdf`, caseFilesPdf)
@@ -400,7 +394,7 @@ export class CaseService {
         }),
         this.formatMessage(m.signedRuling.courtBody, {
           courtCaseNumber: theCase.courtCaseNumber,
-          linkStart: `<a href="${this.config.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${theCase.id}">`,
+          linkStart: `<a href="${this.config.deepLinks.completedCaseOverviewUrl}${theCase.id}">`,
           linkEnd: '</a>',
         }),
         {
@@ -832,10 +826,6 @@ export class CaseService {
       })
   }
 
-  async addCompletedCaseToQueue(caseId: string): Promise<string> {
-    return this.queueService.add({ type: MessageType.CASE_COMPLETED, caseId })
-  }
-
   async getRulingSignatureConfirmation(
     theCase: Case,
     user: TUser,
@@ -870,7 +860,10 @@ export class CaseService {
           .finally(() => {
             // No need to wait for this to complete
             this.uploadSignedRulingPdf(theCase, user, signedPdf).finally(() => {
-              this.addCompletedCaseToQueue(theCase.id)
+              this.queueService.add({
+                type: MessageType.RULING_SIGNED,
+                caseId: theCase.id,
+              })
             })
           })
       })
@@ -957,17 +950,16 @@ export class CaseService {
 
   async uploadRequestPdfToCourt(theCase: Case, user: TUser): Promise<void> {
     try {
-      const pdf = await this.getRequestPdf(theCase)
+      await this.refreshFormatMessage()
+
+      const pdf = await getRequestPdfAsBuffer(theCase, this.formatMessage)
 
       await this.courtService.createRequest(
         user,
         theCase.id,
         theCase.courtId ?? '',
         theCase.courtCaseNumber ?? '',
-        this.formatMessage(courtUpload.requestFileName, {
-          caseType: caseTypes[theCase.type],
-          date: '',
-        }),
+        `Krafa ${theCase.policeCaseNumbers.join(', ')}`,
         pdf,
       )
     } catch (error) {
@@ -995,10 +987,8 @@ export class CaseService {
       true,
     )) as Case
 
-    if (!isIndictmentCase(theCase.type)) {
-      // No need to wait
-      this.uploadRequestPdfToCourt(updatedCase, user)
-    }
+    // No need to wait
+    this.uploadRequestPdfToCourt(updatedCase, user)
 
     return updatedCase
   }
@@ -1091,15 +1081,6 @@ export class CaseService {
   }
 
   async deliver(theCase: Case): Promise<DeliverResponse> {
-    if (isIndictmentCase(theCase.type)) {
-      return {
-        signedRulingDeliveredToCourt: false,
-        courtRecordDeliveredToCourt: false,
-        caseFilesDeliveredToCourt: false,
-        caseDeliveredToPolice: false,
-      }
-    }
-
     this.refreshFormatMessage()
 
     const signedRulingDeliveredToCourt = await this.deliverSignedRulingToCourt(
@@ -1128,7 +1109,7 @@ export class CaseService {
         }),
         this.formatMessage(m.signedRuling.courtBody, {
           courtCaseNumber: theCase.courtCaseNumber,
-          linkStart: `<a href="${this.config.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${theCase.id}">`,
+          linkStart: `<a href="${this.config.deepLinks.completedCaseOverviewUrl}${theCase.id}">`,
           linkEnd: '</a>',
         }),
       )

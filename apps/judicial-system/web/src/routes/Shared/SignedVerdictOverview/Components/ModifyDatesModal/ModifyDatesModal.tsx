@@ -321,7 +321,7 @@ const ModifyDatesModal: React.FC<Props> = ({
         secondaryButtonText={formatMessage(
           m.sections.modifyDatesModal.secondaryButtonTextSuccess,
         )}
-        onSecondaryButtonClick={() => {
+        handleSecondaryButtonClick={() => {
           setCaseModifiedExplanation(undefined)
           setIsModifyingDates(false)
           setSuccessText(undefined)
@@ -347,12 +347,12 @@ const ModifyDatesModal: React.FC<Props> = ({
           m.sections.modifyDatesModal.primaryButtonText,
         )}
         isPrimaryButtonDisabled={isCaseModificationInvalid()}
-        onPrimaryButtonClick={handleDateModification}
+        handlePrimaryButtonClick={handleDateModification}
         isPrimaryButtonLoading={isSendingNotification || isUpdatingCase}
         secondaryButtonText={formatMessage(
           m.sections.modifyDatesModal.secondaryButtonText,
         )}
-        onSecondaryButtonClick={() => {
+        handleSecondaryButtonClick={() => {
           setCaseModifiedExplanation(undefined)
 
           if (workingCase.validToDate) {

@@ -1,22 +1,17 @@
 import { SIGNED_VERDICT_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
-import {
-  Case,
-  CaseState,
-  CaseType,
-  UserRole,
-} from '@island.is/judicial-system/types'
+import { Case, CaseState, UserRole } from '@island.is/judicial-system/types'
 
 import {
   intercept,
+  makeRestrictionCase,
   makeProsecutor,
   makeCaseFile,
-  mockCase,
 } from '../../../utils'
 
 describe('Signed verdict overview - Prosecutor - Restriction cases', () => {
   const caseFile = makeCaseFile('caseId', 'caseFileName')
   beforeEach(() => {
-    const caseData = mockCase(CaseType.CUSTODY)
+    const caseData = makeRestrictionCase()
     const prosecutor = makeProsecutor()
     const caseDataAddition: Case = {
       ...caseData,
