@@ -209,7 +209,7 @@ export const makeCaseFile = ({
   key = 'test_id',
   size = 100,
   category = CaseFileCategory.CASE_FILE,
-}): CaseFile => {
+} = {}): CaseFile => {
   return {
     id: 'test_case_file_id',
     created: '2020-09-16T19:50:08.033Z',
