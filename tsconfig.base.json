@@ -158,6 +158,9 @@
         "libs/application/api/files/src/index.ts"
       ],
       "@island.is/application/core": ["libs/application/core/src/index.ts"],
+      "@island.is/application/core/messages": [
+        "libs/application/core/src/lib/messages.ts"
+      ],
       "@island.is/application/core/polyfills": [
         "libs/application/core/src/lib/polyfills.ts"
       ],
@@ -206,6 +209,9 @@
       "@island.is/application/templates/driving-license": [
         "libs/application/templates/driving-license/src/index.ts"
       ],
+      "@island.is/application/templates/driving-license-duplicate": [
+        "libs/application/templates/driving-license-duplicate/src/index.ts"
+      ],
       "@island.is/application/templates/driving-school-confirmation": [
         "libs/application/templates/driving-school-confirmation/src/index.ts"
       ],
@@ -238,6 +244,12 @@
       ],
       "@island.is/application/templates/login-service": [
         "libs/application/templates/login-service/src/index.ts"
+      ],
+      "@island.is/application/templates/marriage-conditions": [
+        "libs/application/templates/marriage-conditions/src/index.ts"
+      ],
+      "@island.is/application/templates/marriage-conditions/types": [
+        "libs/application/templates/marriage-conditions/src/types.ts"
       ],
       "@island.is/application/templates/meta-application": [
         "libs/application/templates/meta-application/src/index.ts"
@@ -319,6 +331,9 @@
       "@island.is/clients/finance": ["libs/clients/finance/src/index.ts"],
       "@island.is/clients/financial-statements-inao": [
         "libs/clients/financial-statements-inao/src/index.ts"
+      ],
+      "@island.is/clients/firearm-license": [
+        "libs/clients/firearm-license/src/index.ts"
       ],
       "@island.is/clients/fishing-license": [
         "libs/clients/fishing-license/src/index.ts"

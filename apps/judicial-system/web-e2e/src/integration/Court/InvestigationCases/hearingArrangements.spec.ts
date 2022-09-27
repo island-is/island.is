@@ -1,18 +1,23 @@
 import faker from 'faker'
 
-import { Case, CaseState, UserRole } from '@island.is/judicial-system/types'
+import {
+  Case,
+  CaseState,
+  CaseType,
+  UserRole,
+} from '@island.is/judicial-system/types'
 import {
   INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
   INVESTIGATION_CASE_RULING_ROUTE,
 } from '@island.is/judicial-system/consts'
 
-import { makeInvestigationCase, makeCourt, intercept } from '../../../utils'
+import { mockCase, makeCourt, intercept } from '../../../utils'
 
 describe(`${INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
   const comment = faker.lorem.sentence(1)
 
   beforeEach(() => {
-    const caseData = makeInvestigationCase()
+    const caseData = mockCase(CaseType.INTERNET_USAGE)
     const caseDataAddition: Case = {
       ...caseData,
       comments: comment,

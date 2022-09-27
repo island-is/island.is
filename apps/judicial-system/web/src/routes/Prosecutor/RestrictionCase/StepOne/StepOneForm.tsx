@@ -3,13 +3,13 @@ import { useIntl } from 'react-intl'
 
 import { Text, Input, Box, Tooltip } from '@island.is/island-ui/core'
 import {
+  DefenderInfo,
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/components'
 import { CaseType, UpdateDefendant } from '@island.is/judicial-system/types'
 import { isDefendantStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
-import DefenderInfo from '@island.is/judicial-system-web/src/components/DefenderInfo/DefenderInfo'
-import { accused as m } from '@island.is/judicial-system-web/messages'
+import { accused as m, core } from '@island.is/judicial-system-web/messages'
 import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
 import {
   validateAndSendToServer,
@@ -19,10 +19,11 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import type { Case } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 
-import PoliceCaseNumbers, {
+import {
+  DefendantInfo,
+  PoliceCaseNumbers,
   usePoliceCaseNumbers,
-} from '../../SharedComponents/PoliceCaseNumbers/PoliceCaseNumbers'
-import DefendantInfo from '../../SharedComponents/DefendantInfo/DefendantInfo'
+} from '../../components'
 
 interface Props {
   workingCase: Case
@@ -164,9 +165,9 @@ export const StepOneForm: React.FC<Props> = (props) => {
           nextIsDisabled={
             !isDefendantStepValidRC(workingCase, clientPoliceNumbers)
           }
-          nextButtonText={
-            workingCase.id === '' ? 'Stofna kröfu' : 'Halda áfram'
-          }
+          nextButtonText={formatMessage(
+            workingCase.id === '' ? core.createCase : core.continue,
+          )}
         />
       </FormContentContainer>
     </>

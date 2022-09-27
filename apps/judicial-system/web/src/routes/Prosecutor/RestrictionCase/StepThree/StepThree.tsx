@@ -1,12 +1,14 @@
 import React, { useContext, useEffect } from 'react'
 import { useIntl } from 'react-intl'
 
-import { PageLayout } from '@island.is/judicial-system-web/src/components'
+import {
+  FormContext,
+  PageLayout,
+} from '@island.is/judicial-system-web/src/components'
 import {
   RestrictionCaseProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { rcDemands, titles } from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'

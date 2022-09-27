@@ -5,21 +5,10 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { NationalRegistryUser } from './nationalRegistry.types'
 import { environment } from '../../../environments'
 import {
-  EinstaklingarApi,
-  EinstaklingarGetEinstaklingurRequest,
-  EinstaklingarGetForsjaForeldriRequest,
-  EinstaklingarGetForsjaRequest,
-  Einstaklingsupplysingar,
+  IndividualDto,
+  NationalRegistryClientService,
 } from '@island.is/clients/national-registry-v2'
-import {
-  AuthMiddleware,
-  AuthMiddlewareOptions,
-} from '@island.is/auth-nest-tools'
 import type { User as AuthUser } from '@island.is/auth-nest-tools'
-import { FetchError } from '@island.is/clients/middlewares'
-
-export const ONE_MONTH = 2592000 // seconds
-export const CACHE_KEY = 'nationalRegistry'
 
 const TEST_USERS: NationalRegistryUser[] = [
   {
@@ -228,18 +217,8 @@ export class NationalRegistryService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     @Inject(CACHE_MANAGER) private readonly cacheManager: CacheManager,
-    private nationalRegistryIndividualsApi: EinstaklingarApi,
+    private personApi: NationalRegistryClientService,
   ) {}
-
-  personApiWithAuth(authUser: AuthUser) {
-    return this.nationalRegistryIndividualsApi.withMiddleware(
-      new AuthMiddleware(
-        authUser,
-        environment.nationalRegistry
-          .authMiddlewareOptions as AuthMiddlewareOptions,
-      ),
-    )
-  }
 
   // Þjóðskrá API gender keys
   private mapGender(genderId: string): 'kk' | 'kvk' | 'hvk' | 'óvíst' {
@@ -254,50 +233,35 @@ export class NationalRegistryService {
   }
 
   private createNationalRegistryUser(
-    response: Einstaklingsupplysingar,
+    response: IndividualDto,
   ): NationalRegistryUser {
-    const parts = response.fulltNafn?.split(' ') ?? []
+    const address = response.legalDomicile ?? response.residence
+    const nameParts = response.fullName?.split(' ') ?? []
     return {
-      nationalId: response.kennitala,
-      firstName: parts[0] || '',
-      middleName: parts.slice(1, -1).join(' '),
-      lastName: parts.slice(-1).pop() || '',
-      gender: this.mapGender(response.kynkodi),
-      address: response.logheimili?.heiti ?? response.adsetur?.heiti ?? '',
-      postalcode: parseInt(
-        response.logheimili?.postnumer ?? response.adsetur?.postnumer ?? '0',
-      ),
-      city: response.logheimili?.stadur ?? response.adsetur?.stadur ?? '',
+      nationalId: response.nationalId,
+      firstName: nameParts[0] ?? '',
+      middleName: nameParts.slice(1, -1).join(' ') ?? '',
+      lastName: nameParts.slice(-1).pop() ?? '',
+      gender: this.mapGender(response.genderCode),
+      address: address?.streetAddress ?? '',
+      postalcode: parseInt(address?.postalCode ?? '0'),
+      city: address?.locality ?? '',
     }
   }
 
   async getRelations(authUser: AuthUser): Promise<Array<string>> {
-    const response = await this.personApiWithAuth(authUser)
-      .einstaklingarGetForsja(<EinstaklingarGetForsjaRequest>{
-        id: authUser.nationalId,
-      })
-      .catch(this.handle404)
-
-    if (response === undefined) {
-      return []
-    }
-    return response
+    return this.personApi.getCustodyChildren(authUser)
   }
 
   async getCustodians(
     auth: AuthUser,
     childNationalId: string,
   ): Promise<Array<NationalRegistryUser | null>> {
-    const response = await this.personApiWithAuth(auth)
-      .einstaklingarGetForsjaForeldri(<EinstaklingarGetForsjaForeldriRequest>{
-        id: auth.nationalId,
-        barn: childNationalId,
-      })
-      .catch(this.handle404)
+    const response = await this.personApi.getOtherCustodyParents(
+      auth,
+      childNationalId,
+    )
 
-    if (response === undefined) {
-      return []
-    }
     // Add the callee parent to custodians
     // Custody relation isn't circular/transitive
     response.push(auth.nationalId)
@@ -323,11 +287,7 @@ export class NationalRegistryService {
       }
     }
 
-    const response = await this.personApiWithAuth(auth)
-      .einstaklingarGetEinstaklingur(<EinstaklingarGetEinstaklingurRequest>{
-        id: nationalId,
-      })
-      .catch(this.handle404)
+    const response = await this.personApi.getIndividual(nationalId)
 
     if (!response) {
       return null
@@ -335,12 +295,5 @@ export class NationalRegistryService {
 
     const mappedUser = this.createNationalRegistryUser(response)
     return mappedUser
-  }
-
-  private handle404(error: FetchError) {
-    if (error.status === 404) {
-      return undefined
-    }
-    throw error
   }
 }

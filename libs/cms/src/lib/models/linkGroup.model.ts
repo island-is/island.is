@@ -12,7 +12,7 @@ export class LinkGroup {
   @Field()
   name!: string
 
-  @Field(() => Link)
+  @Field(() => Link, { nullable: true })
   primaryLink!: Link | null
 
   @Field(() => [Link])

@@ -1,4 +1,5 @@
 import { User } from '@island.is/auth-nest-tools'
+import { Locale } from 'locale'
 
 export enum GenericLicenseType {
   DriversLicense = 'DriversLicense',
@@ -7,6 +8,7 @@ export enum GenericLicenseType {
   MachineLicense = 'MachineLicense',
   FirearmLicense = 'FirearmLicense',
 }
+
 export type GenericLicenseTypeType = keyof typeof GenericLicenseType
 
 export enum GenericLicenseProviderId {
@@ -14,6 +16,7 @@ export enum GenericLicenseProviderId {
   EnvironmentAgency = 'EnvironmentAgency',
   AdministrationOfOccupationalSafetyAndHealth = 'AdministrationOfOccupationalSafetyAndHealth',
 }
+
 export type GenericLicenseProviderIdType = keyof typeof GenericLicenseProviderId
 
 export enum GenericUserLicenseStatus {
@@ -139,10 +142,26 @@ export type PkPassVerificationError = {
   data?: string
 }
 
+export type PkPassVerificationData = {
+  id?: string
+  validFrom?: string
+  expirationDate?: string
+  expirationTime?: string
+  status?: string
+  whenCreated?: string
+  whenModified?: string
+  alreadyPaid?: boolean
+}
+
 export type PkPassVerification = {
   valid: boolean
   data?: string
   error?: PkPassVerificationError
+}
+
+export type PkPassVerificationInputData = {
+  code: string
+  date: string
 }
 
 /**
@@ -158,9 +177,17 @@ export interface GenericLicenseClient<LicenseType> {
     user: User,
   ) => Promise<GenericLicenseUserdataExternal | null>
 
-  getPkPassUrl: (user: User, data?: LicenseType) => Promise<string | null>
+  getPkPassUrl: (
+    user: User,
+    data?: LicenseType,
+    locale?: Locale,
+  ) => Promise<string | null>
 
-  getPkPassQRCode: (user: User, data?: LicenseType) => Promise<string | null>
+  getPkPassQRCode: (
+    user: User,
+    data?: LicenseType,
+    locale?: Locale,
+  ) => Promise<string | null>
 
   verifyPkPass: (data: string) => Promise<PkPassVerification | null>
 }
@@ -168,3 +195,5 @@ export interface GenericLicenseClient<LicenseType> {
 export const GENERIC_LICENSE_FACTORY = 'generic_license_factory'
 
 export const CONFIG_PROVIDER = 'config_provider'
+
+export const CONFIG_PROVIDER_V2 = 'config_provider_v2'

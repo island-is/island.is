@@ -19,6 +19,7 @@ import {
   MunicipalitiesFinancialAid,
   Vehicles,
   AdrAndMachine,
+  Firearm,
 } from '../../../infra/src/dsl/xroad'
 import { settings } from '../../../infra/src/dsl/settings'
 
@@ -195,6 +196,7 @@ export const serviceSetup = (services: {
     })
     .xroad(
       AdrAndMachine,
+      Firearm,
       Base,
       Client,
       HealthInsurance,

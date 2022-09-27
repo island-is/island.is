@@ -3,6 +3,7 @@ import faker from 'faker'
 import {
   Case,
   CaseState,
+  CaseType,
   SessionArrangements,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -12,12 +13,12 @@ import {
 } from '@island.is/judicial-system/consts'
 
 import {
-  investigationCaseAccusedAddress,
-  investigationCaseAccusedName,
-  makeInvestigationCase,
+  mockCase,
   makeProsecutor,
   makeCaseFile,
   intercept,
+  mockName,
+  mockAddress,
 } from '../../../utils'
 
 describe(`${INVESTIGATION_CASE_OVERVIEW_ROUTE}/:id`, () => {
@@ -34,7 +35,7 @@ describe(`${INVESTIGATION_CASE_OVERVIEW_ROUTE}/:id`, () => {
 
   beforeEach(() => {
     cy.login(UserRole.JUDGE)
-    const caseData = makeInvestigationCase()
+    const caseData = mockCase(CaseType.INTERNET_USAGE)
     const caseDataAddition: Case = {
       ...caseData,
       demands,
@@ -67,7 +68,7 @@ describe(`${INVESTIGATION_CASE_OVERVIEW_ROUTE}/:id`, () => {
 
   it('should display information about the case in an info card', () => {
     cy.getByTestid('infoCard').contains(
-      `${investigationCaseAccusedName}, kt. 000000-0000, ${investigationCaseAccusedAddress}`,
+      `${mockName}, kt. 000000-0000, ${mockAddress}`,
     )
     cy.getByTestid('infoCard').contains('Verjandi')
     cy.getByTestid('infoCard').contains(

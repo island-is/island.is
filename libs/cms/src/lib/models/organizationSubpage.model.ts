@@ -65,7 +65,7 @@ export const mapOrganizationSubpage = ({
     ? mapDocument(fields.description, sys.id + ':content')
     : [],
   links: (fields.links ?? []).map(mapLink),
-  slices: (fields.slices ?? []).map(safelyMapSliceUnion),
+  slices: (fields.slices ?? []).map(safelyMapSliceUnion).filter(Boolean),
   showTableOfContents: fields.showTableOfContents ?? false,
   sliceCustomRenderer: fields.sliceCustomRenderer ?? '',
   sliceExtraText: fields.sliceExtraText ?? '',

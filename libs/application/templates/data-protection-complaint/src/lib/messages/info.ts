@@ -8,13 +8,9 @@ export const info = {
       description: 'Info page title',
     },
     description: {
-      id: 'dpac.application:section.info.description',
-      defaultMessage: `Hægt er að senda inn kvörtun í eigin nafni eða fyrir aðra
-      einstaklinga sem þú ert með skriflegt umboð frá. Foreldrar og forráðamenn geta
-      líka sent inn kvörtun fyrir hönd barna sem þeir fara með forsjá yfir.<br/><br/>
-      Stofnanir, samtök og félög sem eru virk á sviði persónuverndar geta
-      einnig sent inn kvörtun án umboðs að uppfylltum skilyrðum 80. gr. reglugerðar
-      (ESB) 2016/679 (almennu persónuverndarreglugerðarinnar).`,
+      id: 'dpac.application:section.info.description#markdown',
+      defaultMessage:
+        'Hægt er að senda inn kvörtun í eigin nafni eða fyrir aðra einstaklinga sem þú ert með skriflegt umboð frá. Foreldrar og forráðamenn geta líka sent inn kvörtun fyrir hönd barna sem þeir fara með forsjá yfir.\n \n Stofnanir, samtök og félög sem eru virk á sviði persónuverndar geta einnig sent inn kvörtun án umboðs að uppfylltum skilyrðum 80. gr. reglugerðar (ESB) 2016/679 (almennu persónuverndarreglugerðarinnar).',
       description: 'Info page description',
     },
     applicantPageTitle: {
@@ -23,11 +19,9 @@ export const info = {
       description: 'Applicant page title',
     },
     applicantPageDescription: {
-      id: 'dpac.application:section.info.applicantPageDescription',
-      defaultMessage: `Persónuvernd þarf þessar upplýsingar til þess
-      að hægt sé að hafa samband við þig á meðan málið er til meðferðar
-      og upplýsa þig um niðurstöðu þess, og til þess að tryggja örugga persónugreiningu.<br/><br/>
-      Þær upplýsingar sem eru stjörnumerktar þarf alltaf að gefa upp. Annað er valkvætt.`,
+      id: 'dpac.application:section.info.applicantPageDescription#markdown',
+      defaultMessage:
+        'Persónuvernd þarf þessar upplýsingar til þess að hægt sé að hafa samband við þig á meðan málið er til meðferðar og upplýsa þig um niðurstöðu þess, og til þess að tryggja örugga persónugreiningu.\n \n Þær upplýsingar sem eru stjörnumerktar þarf alltaf að gefa upp. Annað er valkvætt.',
       description: 'Applicant page description',
     },
     organizationOrInstitutionPageTitle: {

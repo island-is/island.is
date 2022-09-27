@@ -61,6 +61,14 @@ export const routesTemplate = {
     is: '/frett',
     en: '/en/news',
   },
+  digitalicelandservices: {
+    is: '/s/stafraent-island/thjonustur',
+    en: '/en/o/digital-iceland/island-services',
+  },
+  digitalicelandservicesdetailpage: {
+    is: '/s/stafraent-island/thjonustur/[slug]',
+    en: '/en/o/digital-iceland/island-services/[slug]',
+  },
   organizationservices: {
     is: '/s/[slug]/thjonusta',
     en: '/en/o/[slug]/services',
@@ -104,6 +112,14 @@ export const routesTemplate = {
   opendatasubpage: {
     is: '/gagnatorg/[slug]',
     en: '/en/gagnatorg/[slug]',
+  },
+  projectnews: {
+    is: '/v/[slug]/frett/[subSlug]',
+    en: '/en/p/[slug]/news/[subSlug]',
+  },
+  projectnewsoverview: {
+    is: '/v/[slug]/frett',
+    en: '/en/p/[slug]/news',
   },
   projectsubpage: {
     is: '/v/[slug]/[subSlug]',

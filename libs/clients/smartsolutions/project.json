@@ -17,6 +17,12 @@
         "jestConfig": "libs/clients/smartsolutions/jest.config.js",
         "passWithNoTests": true
       }
+    },
+    "schemas/external-openapi-generator": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "graphql-codegen --config libs/clients/smartsolutions/codegen.yml"
+      }
     }
   },
   "tags": []

@@ -161,6 +161,7 @@ export const USERS_ROUTE = '/notendur'
 export const CREATE_USER_ROUTE = '/notendur/nyr'
 export const CHANGE_USER_ROUTE = '/notendur/breyta'
 export const SIGNED_VERDICT_OVERVIEW_ROUTE = '/krafa/yfirlit'
+export const CLOSED_INDICTMENT_OVERVIEW_ROUTE = '/krafa/akaera/yfirlit'
 
 export const CREATE_RESTRICTION_CASE_ROUTE = '/krafa/ny/gaesluvardhald'
 export const CREATE_TRAVEL_BAN_ROUTE = '/krafa/ny/farbann'
@@ -191,10 +192,10 @@ export const INVESTIGATION_CASE_CASE_FILES_ROUTE =
 export const INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE =
   '/krafa/rannsoknarheimild/stadfesta'
 
-export const INDICTMENTS_DEFENDANT_ROUTE = '/akaerur/akaerdi'
-export const INDICTMENTS_PROCESSING_ROUTE = '/akaerur/malsmedferd'
-export const INDICTMENTS_CASE_FILES_ROUTE = '/akaerur/domskjol'
-export const INDICTMENTS_OVERVIEW_ROUTE = '/akaerur/stadfesta'
+export const INDICTMENTS_DEFENDANT_ROUTE = '/krafa/akaera/akaerdi'
+export const INDICTMENTS_PROCESSING_ROUTE = '/krafa/akaera/malsmedferd'
+export const INDICTMENTS_CASE_FILES_ROUTE = '/krafa/akaera/domskjol'
+export const INDICTMENTS_OVERVIEW_ROUTE = '/krafa/akaera/stadfesta'
 /* PROSECUTOR ROUTES END */
 
 /* COURT ROUTES START */
@@ -221,6 +222,14 @@ export const INVESTIGATION_CASE_MODIFY_RULING_ROUTE =
   '/domur/rannsoknarheimild/urskurdur/leidretta'
 export const INVESTIGATION_CASE_CONFIRMATION_ROUTE =
   '/domur/rannsoknarheimild/stadfesta'
+
+export const INDICTMENTS_COURT_OVERVIEW_ROUTE = '/domur/akaera/yfirlit'
+export const INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE =
+  '/domur/akaera/mottaka'
+export const INDICTMENTS_SUBPOENA_ROUTE = '/domur/akaera/fyrirkall'
+export const INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE =
+  '/domur/akaera/malflytjendur'
+export const INDICTMENTS_COURT_RECORD_ROUTE = '/domur/akaera/thingbok'
 /* COURT ROUTES END */
 
 // Feedback

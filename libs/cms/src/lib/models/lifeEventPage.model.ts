@@ -21,6 +21,9 @@ export class LifeEventPage {
   @Field({ nullable: true })
   intro?: string
 
+  @Field({ nullable: true })
+  shortIntro?: string
+
   @Field(() => Image, { nullable: true })
   image?: Image | null
 
@@ -35,6 +38,9 @@ export class LifeEventPage {
 
   @Field(() => ArticleCategory, { nullable: true })
   category?: ArticleCategory | null
+
+  @Field({ nullable: true })
+  seeMoreText?: string
 }
 
 export const mapLifeEventPage = ({
@@ -53,4 +59,6 @@ export const mapLifeEventPage = ({
     ? mapDocument(fields.content, sys.id + ':content')
     : [],
   category: fields.category ? mapArticleCategory(fields.category) : null,
+  shortIntro: fields.shortIntro ?? '',
+  seeMoreText: fields.seeMoreText ?? '',
 })

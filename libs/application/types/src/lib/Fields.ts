@@ -216,7 +216,13 @@ export interface FileUploadField extends BaseField {
   readonly uploadDescription?: FormText
   readonly uploadButtonLabel?: FormText
   readonly uploadMultiple?: boolean
+  /**
+   * Defaults to '.pdf, .doc, .docx, .rtf, .jpg, .jpeg, .png, .heic'
+   */
   readonly uploadAccept?: string
+  /**
+   * Defaults to 10MB
+   */
   readonly maxSize?: number
   readonly maxSizeErrorText?: FormText
   readonly forImageUpload?: boolean

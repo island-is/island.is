@@ -1,20 +1,20 @@
 import faker from 'faker'
 import { SIGNED_VERDICT_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
-import { Case, CaseState, UserRole } from '@island.is/judicial-system/types'
-
 import {
-  intercept,
-  makeCourt,
-  makeInvestigationCase,
-  makeCaseFile,
-} from '../../../utils'
+  Case,
+  CaseState,
+  CaseType,
+  UserRole,
+} from '@island.is/judicial-system/types'
+
+import { intercept, makeCourt, mockCase, makeCaseFile } from '../../../utils'
 
 describe('Signed verdict overview - Staff - Investigation case', () => {
   const conclusion = faker.lorem.paragraph(1)
   const caseFile = makeCaseFile('caseId', 'caseFileName')
 
   beforeEach(() => {
-    const caseData = makeInvestigationCase()
+    const caseData = mockCase(CaseType.INTERNET_USAGE)
     const caseDataAddition: Case = {
       ...caseData,
       state: CaseState.ACCEPTED,

@@ -143,19 +143,8 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
         height
       }
       sidebarCards {
-        title
-        content
-        type
-        image {
-          url
-          title
-          width
-          height
-        }
-        link {
-          text
-          url
-        }
+        ...SidebarCardFields
+        ...ConnectedComponentFields
       }
       theme
       themeProperties {

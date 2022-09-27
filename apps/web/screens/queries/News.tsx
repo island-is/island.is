@@ -28,6 +28,37 @@ export const GET_NEWS_QUERY = gql`
   }
 `
 
+export const GET_NEWS_WITH_CONTENT_QUERY = gql`
+  query GetNewsWithContent($input: GetNewsInput!) {
+    getNews(input: $input) {
+      total
+      items {
+        id
+        title
+        subtitle
+        date
+        slug
+        intro
+        content {
+          ...AllSlices
+        }
+        image {
+          url
+          title
+          width
+          height
+        }
+        genericTags {
+          id
+          title
+          slug
+        }
+      }
+    }
+  }
+  ${slices}
+`
+
 export const GET_NEWS_DATES_QUERY = gql`
   query GetNewsDates($input: GetNewsDatesInput!) {
     getNewsDates(input: $input)

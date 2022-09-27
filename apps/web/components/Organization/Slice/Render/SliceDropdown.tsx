@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { Slice } from '@island.is/web/graphql/schema'
-import { OrganizationSlice } from '@island.is/web/components'
+import { SliceMachine } from '@island.is/web/components'
 import {
   GridColumn,
   GridContainer,
@@ -81,7 +81,7 @@ export const SliceDropdown: React.FC<SliceProps> = ({
         </GridRow>
       </GridContainer>
       {!!selectedSlice && (
-        <OrganizationSlice
+        <SliceMachine
           key={selectedSlice.id}
           slice={selectedSlice}
           namespace={null}

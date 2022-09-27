@@ -6,6 +6,7 @@ import {
   CaseState,
   CaseType,
   hasCaseBeenAppealed,
+  indictmentCases,
   InstitutionType,
   investigationCases,
   restrictionCases,
@@ -17,31 +18,49 @@ import { Case } from '../models/case.model'
 
 const hideArchived = { isArchived: false }
 
+function getAllowedStates(
+  role: UserRole,
+  institutionType?: InstitutionType,
+): CaseState[] {
+  if (role === UserRole.PROSECUTOR) {
+    return [
+      CaseState.NEW,
+      CaseState.DRAFT,
+      CaseState.SUBMITTED,
+      CaseState.RECEIVED,
+      CaseState.ACCEPTED,
+      CaseState.REJECTED,
+      CaseState.DISMISSED,
+    ]
+  }
+
+  if (institutionType === InstitutionType.COURT) {
+    return [
+      CaseState.DRAFT,
+      CaseState.SUBMITTED,
+      CaseState.RECEIVED,
+      CaseState.ACCEPTED,
+      CaseState.REJECTED,
+      CaseState.DISMISSED,
+    ]
+  }
+
+  if (institutionType === InstitutionType.HIGH_COURT) {
+    return [CaseState.ACCEPTED, CaseState.REJECTED, CaseState.DISMISSED]
+  }
+
+  return [CaseState.ACCEPTED]
+}
+
 function getBlockedStates(
   role: UserRole,
   institutionType?: InstitutionType,
 ): CaseState[] {
-  const blockedStates = [CaseState.DELETED]
+  const allowedStates = getAllowedStates(role, institutionType)
 
-  if (role === UserRole.PROSECUTOR) {
-    return blockedStates
-  }
-
-  blockedStates.push(CaseState.NEW)
-
-  if (institutionType === InstitutionType.COURT) {
-    return blockedStates
-  }
-
-  blockedStates.push(CaseState.DRAFT, CaseState.SUBMITTED, CaseState.RECEIVED)
-
-  if (institutionType === InstitutionType.HIGH_COURT) {
-    return blockedStates
-  }
-
-  blockedStates.push(CaseState.REJECTED, CaseState.DISMISSED)
-
-  return blockedStates
+  return Object.values(CaseState).filter(
+    (state) => !allowedStates.includes(state as CaseState),
+  )
 }
 
 function prosecutorsOfficeMustMatchUserInstitution(role: UserRole): boolean {
@@ -71,7 +90,7 @@ function getBlockedTypes(
     return blockedTypes
   }
 
-  blockedTypes.push(...investigationCases)
+  blockedTypes.push(...indictmentCases, ...investigationCases)
 
   const isPrisonAdmin = institutionType === InstitutionType.PRISON_ADMIN
 

@@ -1,52 +1,58 @@
-export interface CreatePkPassDataInput {
-  passTemplateId?: string
-  inputFieldValues?: {
-    identifier?: string
-    value?: string
+import { Pass, PassTemplate } from '../../gen/schema'
+
+export interface VerifyPassResult {
+  valid: boolean
+  data?: string
+  name?: string
+  nationalId?: string
+  photo?: string
+  error?: PkPassVerifyError
+}
+
+export interface VerifyPassResponse {
+  valid: boolean
+  data?: {
+    updateStatusOnPassWithDynamicBarcode: Pass
+  }
+  errors?: {
+    message: string
+    path: string
   }[]
-  thumbnail?: {
-    imageBase64String?: string
+}
+
+export interface ListPassesResponse {
+  data?: {
+    passes?: ListPassesDTO
   }
 }
-export interface CreatePkPassDTO {
-  distributionUrl?: string
-  deliveryPageUrl?: string
-  destributionQRCode?: string
+
+export interface PassTemplatesDTO {
+  data: Array<PassTemplate>
 }
 
-export interface PkPassServiceErrorResponse {
+export interface ListPassesDTO {
+  data: Array<Pass>
+}
+
+export interface ListTemplatesResponse {
+  data?: PassTemplate[]
   message?: string
   status?: number
-  data?: unknown
 }
 export interface PassTemplateDTO {
-  id?: string
-  name?: string
-}
-
-export interface PassTemplatesResponse {
-  data?: {
-    passTemplates?: {
-      data?: PassTemplateDTO[]
-    }
+  passTemplate: {
+    id: string
+    name: string
   }
 }
 
 export interface UpsertPkPassResponse {
-  data?: {
-    upsertPass?: {
-      distributionUrl?: string
-      deliveryPageUrl?: string
-      distributionQRCode?: string
-    }
+  data: {
+    upsertPass: Pass
   }
+  message?: string
+  status?: number
 }
-
-export interface VerifyPkPassErrorResponse {
-  message: string
-  path: string[]
-}
-
 export interface PkPassVerifyError {
   /**
    * HTTP status code from the service.
@@ -54,42 +60,23 @@ export interface PkPassVerifyError {
    * error reported by API.
    */
   statusCode: number
-  serviceError?: VerifyPkPassErrorResponse
+  serviceError?: PkPassServiceErrorResponse
 }
 
-export interface VerifyPkPassResponse {
-  valid: boolean
-  error?: VerifyPkPassErrorResponse
-  nationalId?: string
+export interface PkPassServiceErrorResponse {
+  message?: string
+  status?: PkPassServiceVerifyPassStatusCode
+  data?: unknown
 }
 
-export interface PassFieldDTO {
-  id?: string
-  label?: string
-  orderIndex?: number
-  passInputField?: PassInputFieldDTO
-  type?: 'HEADER' | 'PRIMARY' | 'SECONDARY' | 'AUXILIARY' | 'BACK'
-  value?: string
-  textAlignment?: 'LEFT' | 'CENTER' | 'RIGHT'
-}
-
-export interface PassInputFieldDTO {
-  description?: string
-  identifier?: string
-}
-
-export interface VerifyPassDataDTO {
-  id?: string
-  validFrom?: string
-  expirationDate?: string
-  expirationTime?: string
-  status?: string
-  whenCreated?: string
-  whenModified?: string
-  alreadyPaid?: string
-}
-
-export interface VerifyPassDataInputDTO {
-  code?: string
-  date?: string
-}
+export type PkPassServiceVerifyPassStatusCode =
+  /** License OK */
+  | 1
+  /** License expired */
+  | 2
+  /** No license info found */
+  | 3
+  /** Request contains some field errors */
+  | 4
+  /** Unknown error */
+  | 99

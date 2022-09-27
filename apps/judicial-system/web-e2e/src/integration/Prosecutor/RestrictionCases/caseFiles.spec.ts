@@ -1,24 +1,24 @@
-import { Case } from '@island.is/judicial-system/types'
+import { Case, CaseType } from '@island.is/judicial-system/types'
 import { RESTRICTION_CASE_CASE_FILES_ROUTE } from '@island.is/judicial-system/consts'
 
 import {
-  makeRestrictionCase,
   makeCourt,
   makeProsecutor,
   intercept,
   makeCaseFile,
+  mockCase,
 } from '../../../utils'
 
 describe(`${RESTRICTION_CASE_CASE_FILES_ROUTE}/:id`, () => {
   beforeEach(() => {
     const file1 = makeCaseFile('file1', 'file1')
     const file2 = makeCaseFile('file2', 'file2')
-    const caseData = makeRestrictionCase()
+    const caseData = mockCase(CaseType.CUSTODY)
     const caseDataAddition: Case = {
       ...caseData,
       prosecutor: makeProsecutor(),
       court: makeCourt(),
-      parentCase: { ...makeRestrictionCase(), caseFiles: [file1, file2] },
+      parentCase: { ...mockCase(CaseType.CUSTODY), caseFiles: [file1, file2] },
     }
 
     cy.stubAPIResponses()

@@ -111,34 +111,10 @@ export const aliasMutation = (
   }
 }
 
-export const investigationCaseAccusedName = `${faker.name.firstName()} ${faker.name.lastName()}`
-export const investigationCaseAccusedAddress = faker.address.streetAddress()
+export const mockName = `${faker.name.firstName()} ${faker.name.lastName()}`
+export const mockAddress = faker.address.streetAddress()
 
-export const makeRestrictionCase = (): Case => {
-  return {
-    id: 'test_id',
-    created: '2020-09-16T19:50:08.033Z',
-    modified: '2020-09-16T19:51:39.466Z',
-    state: CaseState.DRAFT,
-    origin: CaseOrigin.RVG,
-    type: CaseType.CUSTODY,
-    policeCaseNumbers: ['007-2021-202000'],
-    defendants: [
-      {
-        id: 'test_defendant_id',
-        created: '2020-09-16T19:50:08.033Z',
-        modified: '2020-09-16T19:51:39.466Z',
-        caseId: 'test_id',
-        nationalId: '000000-0000',
-        name: 'Donald Duck',
-        gender: Gender.MALE,
-        address: 'Batcave 1337',
-      },
-    ],
-  }
-}
-
-export const makeInvestigationCase = (): Case => {
+export const mockCase = (type: CaseType): Case => {
   const caseId = faker.datatype.uuid()
   return {
     id: caseId,
@@ -146,28 +122,22 @@ export const makeInvestigationCase = (): Case => {
     modified: '2020-09-16T19:50:08.033Z',
     state: CaseState.DRAFT,
     origin: CaseOrigin.RVG,
-    type: CaseType.INTERNET_USAGE,
-    court: {
-      id: 'd1e6e06f-dcfd-45e0-9a24-2fdabc2cc8bf',
-      created: '2020-09-16T19:50:08.033Z',
-      modified: '2020-09-16T19:50:08.033Z',
-      type: InstitutionType.COURT,
-      name: 'Héraðsdómur Reykjavíkur',
-      active: true,
-    },
+    type,
+    court: makeCourt(),
     policeCaseNumbers: ['007-2021-202000'],
     defendants: [
       {
-        id: 'test_defendant_id',
+        id: faker.datatype.uuid(),
         created: '2020-09-16T19:50:08.033Z',
         modified: '2020-09-16T19:51:39.466Z',
         caseId,
         nationalId: '000000-0000',
-        name: investigationCaseAccusedName,
+        name: mockName,
         gender: Gender.MALE,
-        address: investigationCaseAccusedAddress,
+        address: mockAddress,
       },
     ],
+    defendantWaivesRightToCounsel: false,
   }
 }
 
@@ -195,12 +165,12 @@ export const makeJudge = (): User => {
   }
 }
 
-export const makeProsecutor = (): User => {
+export const makeProsecutor = (name?: string): User => {
   return {
     id: '9c0b4106-4213-43be-a6b2-ff324f4ba0c2',
     created: '2020-09-16T19:50:08.033Z',
     modified: '2020-09-16T19:50:08.033Z',
-    name: 'Áki Ákærandi',
+    name: name ?? 'Áki Ákærandi',
     nationalId: '000000-0000',
     mobileNumber: '000-0000',
     email: 'prosecutor@law.is',

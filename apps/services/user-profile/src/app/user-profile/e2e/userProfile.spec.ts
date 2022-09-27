@@ -458,6 +458,45 @@ describe('User profile API', () => {
         }
       `)
     })
+
+    it('POST /confirmEmail/ returns confirmed: false for non-matching hash', async () => {
+      //Arrange
+      const INCORRECT_HASH = 'incorrect-hash'
+
+      await request(app.getHttpServer())
+        .post('/emailVerification/')
+        .send({
+          nationalId: mockProfile.nationalId,
+          email: mockProfile.email,
+        })
+        .expect(204)
+
+      const verification = await EmailVerification.findOne({
+        where: { nationalId: mockProfile.nationalId, email: mockProfile.email },
+      })
+
+      await request(app.getHttpServer())
+        .post('/userProfile')
+        .send({ ...mockProfileNoEmailNoPhone, emailCode: verification.hash })
+        .expect(201)
+
+      // Act
+      const response = await request(app.getHttpServer())
+        .post(`/confirmEmail/${mockProfile.nationalId}`)
+        .send({
+          hash: INCORRECT_HASH,
+          email: mockProfile.email,
+        })
+        .expect(200)
+
+      // Assert
+      expect(response.body).toMatchInlineSnapshot(`
+        Object {
+          "confirmed": false,
+          "message": "Email verification with hash ${INCORRECT_HASH} does not exist",
+        }
+      `)
+    })
   })
 
   describe('POST /smsVerification', () => {

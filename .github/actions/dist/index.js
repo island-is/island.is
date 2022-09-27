@@ -85447,27 +85447,32 @@ class LocalRunner {
                     const artifactUrls = artifacts.data.artifacts.filter((artifact) => artifact.name === 'pr-event');
                     if (artifactUrls.length === 1) {
                         app(`Found an artifact with PR metadata`);
-                        const artifact = (yield this.octokit.actions.downloadArtifact({
-                            owner: owner,
-                            repo: repo,
-                            artifact_id: artifactUrls[0].id,
-                            archive_format: 'zip',
-                        }));
-                        const dir = yield unzip.Open.buffer(new Uint8Array(artifact.data));
-                        const event = JSON.parse((yield dir.files[0].buffer()).toString('utf-8'));
-                        app(`Got event data from PR ${run.run_number}`);
-                        const headSha = event.head_sha;
-                        const baseSha = event.base_sha;
-                        if (commits.includes(headSha.slice(0, 7)) &&
-                            commits.includes(baseSha.slice(0, 7))) {
-                            return {
-                                head_commit: headSha,
-                                run_nr: run.run_number,
-                                base_commit: baseSha,
-                            };
+                        try {
+                            const artifact = (yield this.octokit.actions.downloadArtifact({
+                                owner: owner,
+                                repo: repo,
+                                artifact_id: artifactUrls[0].id,
+                                archive_format: 'zip',
+                            }));
+                            const dir = yield unzip.Open.buffer(new Uint8Array(artifact.data));
+                            const event = JSON.parse((yield dir.files[0].buffer()).toString('utf-8'));
+                            app(`Got event data from PR ${run.run_number}`);
+                            const headSha = event.head_sha;
+                            const baseSha = event.base_sha;
+                            if (commits.includes(headSha.slice(0, 7)) &&
+                                commits.includes(baseSha.slice(0, 7))) {
+                                return {
+                                    head_commit: headSha,
+                                    run_nr: run.run_number,
+                                    base_commit: baseSha,
+                                };
+                            }
+                            else {
+                                app(`PR base commit ${baseSha} or head commit ${headSha} could not be matched. Most likely PR was rebased`);
+                            }
                         }
-                        else {
-                            app(`PR base commit ${baseSha} or head commit ${headSha} could not be matched. Most likely PR was rebased`);
+                        catch (e) {
+                            app(`Error: failed processing PR metadata artifact: ${e.toString()}`);
                         }
                     }
                     else {
