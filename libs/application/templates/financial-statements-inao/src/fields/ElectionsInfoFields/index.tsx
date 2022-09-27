@@ -58,9 +58,10 @@ export const ElectionsInfoFields = ({
         (elections: FinancialStatementsInaoElection) =>
           elections.electionId === selectedElectionId,
       )
-      const electionYear = new Date(
-        currentElectionInfo?.electionDate,
-      ).getFullYear()
+      const electionYear = currentElectionInfo?.electionDate
+        ? new Date(currentElectionInfo.electionDate).getFullYear()
+        : ''
+
       const electionName = currentElectionInfo?.name
       setValue(ABOUTIDS.electionName, electionName)
       dispatch({
