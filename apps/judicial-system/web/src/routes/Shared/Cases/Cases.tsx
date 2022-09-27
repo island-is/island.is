@@ -179,7 +179,7 @@ export const Cases: React.FC = () => {
         // Route to Indictment Overview section since it always a valid step and
         // would be skipped if we route to the last valid step
         const routeToOpen =
-          getIndictmentsCourtSections(caseToOpen).children[0].href ||
+          getIndictmentsCourtSections(caseToOpen).children[0]?.href ||
           `${constants.INDICTMENTS_COURT_OVERVIEW_ROUTE}/${caseToOpen.id}`
 
         routeTo = routeToOpen
