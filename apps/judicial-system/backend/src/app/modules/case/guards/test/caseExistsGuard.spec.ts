@@ -15,6 +15,7 @@ import { Institution } from '../../../institution'
 import { User } from '../../../user'
 import { Case } from '../../models/case.model'
 import { CaseExistsGuard } from '../caseExists.guard'
+import { CaseFile } from '../../../file'
 
 interface Then {
   result: boolean
@@ -91,6 +92,7 @@ describe('Case Exists Guard', () => {
           },
           { model: Case, as: 'parentCase' },
           { model: Case, as: 'childCase' },
+          { model: CaseFile, as: 'caseFiles' },
         ],
         order: [[{ model: Defendant, as: 'defendants' }, 'created', 'ASC']],
         where: {
