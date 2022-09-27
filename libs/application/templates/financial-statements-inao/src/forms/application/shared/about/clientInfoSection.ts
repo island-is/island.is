@@ -26,7 +26,6 @@ export const clientInfoSection = buildSection({
           title: '',
           condition: (answers, externalData) => {
             const userType = getCurrentUserType(answers, externalData)
-
             return userType === USERTYPE.CEMETRY || userType === USERTYPE.PARTY
           },
           component: 'OperatingYear',

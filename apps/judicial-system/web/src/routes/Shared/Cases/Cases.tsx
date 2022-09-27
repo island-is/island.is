@@ -190,9 +190,12 @@ export const Cases: React.FC = () => {
           getInvestigationCaseProsecutorSection(caseToOpen, user),
         ).href
       } else {
-        routeTo = findLastValidStep(
+        const lastValidStep = findLastValidStep(
           getIndictmentCaseProsecutorSection(caseToOpen),
-        ).href
+        )
+        routeTo =
+          lastValidStep?.href ??
+          `${constants.INDICTMENTS_OVERVIEW_ROUTE}/${caseToOpen.id}`
       }
     }
 
