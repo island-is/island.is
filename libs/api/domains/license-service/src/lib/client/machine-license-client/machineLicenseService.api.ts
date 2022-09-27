@@ -21,7 +21,7 @@ import {
 } from './machineLicenseMappers'
 import { FetchError } from '@island.is/clients/middlewares'
 import {
-  CreatePkPassDataInput,
+  PassDataInput,
   SmartSolutionsApi,
 } from '@island.is/clients/smartsolutions'
 import { format } from 'kennitala'
@@ -103,15 +103,16 @@ export class GenericMachineLicenseApi
   ): Promise<string | null> {
     const license = await this.fetchLicense(user)
     const inputValues = createPkPassDataInput(license, user.nationalId, locale)
-    //const backside = createPkPassDataBackside(license)
     if (!inputValues) return null
     //Fetch template from api?
-    const payload: CreatePkPassDataInput = {
-      passTemplateId: '61012578-c2a0-489e-8dbd-3df5b3e538ea',
+    const payload: PassDataInput = {
       inputFieldValues: inputValues,
     }
 
-    const pass = await this.smartApi.generatePkPassUrl(payload)
+    const pass = await this.smartApi.generatePkPassUrl(
+      payload,
+      format(user.nationalId),
+    )
     return pass ?? null
   }
   async getPkPassQRCode(user: User): Promise<string | null> {
@@ -120,11 +121,13 @@ export class GenericMachineLicenseApi
 
     if (!inputValues) return null
     //Fetch template from api?
-    const payload: CreatePkPassDataInput = {
-      passTemplateId: '61012578-c2a0-489e-8dbd-3df5b3e538ea',
+    const payload: PassDataInput = {
       inputFieldValues: inputValues,
     }
-    const pass = await this.smartApi.generatePkPassQrCode(payload)
+    const pass = await this.smartApi.generatePkPassQrCode(
+      payload,
+      format(user.nationalId),
+    )
     return pass ?? null
   }
   async verifyPkPass(data: string): Promise<PkPassVerification | null> {
