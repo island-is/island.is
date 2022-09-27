@@ -150,8 +150,10 @@ export class FileService {
         subject = file.name
     }
 
+    const fileNameWithoutEnding = /^.+\./
+
     const fileName = file.category
-      ? file.name.replace(/^.+\./, `${subject}.`)
+      ? file.name.replace(fileNameWithoutEnding, `${subject}.`)
       : file.name
 
     return { courtDocumentFolder, subject, fileName }
