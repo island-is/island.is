@@ -29,6 +29,8 @@ import MarkdownWrapper from '../MarkdownWrapper/MarkdownWrapper'
 import { useGetLawyer } from '../../utils/hooks'
 import * as styles from './Header.css'
 
+const supportEmail = getConfig()?.publicRuntimeConfig?.supportEmail ?? ''
+
 const HeaderContainer: React.FC = () => {
   const { formatMessage } = useIntl()
   const { isAuthenticated, user } = useContext(UserContext)
@@ -148,10 +150,7 @@ const HeaderContainer: React.FC = () => {
                                   markdown={formatMessage(
                                     header.headerTipDisclaimer,
                                     {
-                                      linkStart: `<a href="mailto:gudlaug.thorhallsdottir@dmr.is" rel="noopener noreferrer nofollow" target="_blank">${
-                                        getConfig()?.publicRuntimeConfig
-                                          ?.supportEmail ?? ''
-                                      }`,
+                                      linkStart: `<a href="mailto:${supportEmail}" rel="noopener noreferrer nofollow" target="_blank">${supportEmail}`,
                                       linkEnd: '</a>',
                                     },
                                   )}
