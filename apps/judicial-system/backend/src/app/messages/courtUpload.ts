@@ -21,7 +21,7 @@ export const courtUpload = defineMessages({
     defaultMessage: 'Sakavottorð {courtCaseNumber}',
     description: 'Notaður sem nafn á sakavottorði í Auði.',
   },
-  coustBreakdown: {
+  costBreakdown: {
     id: 'judicial.system.backend:court_upload.cost_breakdown',
     defaultMessage: 'Sakarkostnaður {courtCaseNumber}',
     description: 'Notaður sem nafn á sakarkostnaði í Auði.',
