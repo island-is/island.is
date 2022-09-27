@@ -2,6 +2,7 @@ import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 import Link from 'next/link'
+import getConfig from 'next/config'
 
 import {
   Text,
@@ -147,8 +148,10 @@ const HeaderContainer: React.FC = () => {
                                   markdown={formatMessage(
                                     header.headerTipDisclaimer,
                                     {
-                                      linkStart:
-                                        '<a href="mailto:gudlaug.thorhallsdottir@dmr.is" rel="noopener noreferrer nofollow" target="_blank">gudlaug.thorhallsdottir@dmr.is',
+                                      linkStart: `<a href="mailto:gudlaug.thorhallsdottir@dmr.is" rel="noopener noreferrer nofollow" target="_blank">${
+                                        getConfig()?.publicRuntimeConfig
+                                          ?.supportEmail ?? ''
+                                      }`,
                                       linkEnd: '</a>',
                                     },
                                   )}
