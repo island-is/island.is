@@ -234,42 +234,7 @@ ServiceDetails.getInitialProps = async ({ apolloClient, locale, query }) => {
     }),
   ])
 
-  const service: Service = {
-    id: '',
-    owner: '',
-    title: '',
-    summary: '',
-    description: '',
-    pricing: [],
-    data: [],
-    type: [],
-    access: [],
-    environments: [
-      {
-        environment: Environment.Development,
-        details: [
-          {
-            data: [],
-            description: '',
-            links: { responsibleParty: 'asdf' },
-            pricing: [],
-            summary: '',
-            title: '',
-            type: TypeCategory.Rest,
-            version: '1',
-            xroadIdentifier: {
-              instance: '',
-              memberClass: '',
-              memberCode: '',
-              serviceCode: '',
-              subsystemCode: '',
-            },
-          },
-        ],
-      },
-    ],
-  }
-  //data?.getApiServiceById
+  const service = data?.getApiServiceById
 
   if (!service) {
     throw new CustomNextError(404, 'Service not found')
