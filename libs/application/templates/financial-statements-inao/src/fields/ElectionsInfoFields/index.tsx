@@ -1,4 +1,10 @@
-import React, { Fragment, ReactText, useCallback, useReducer } from 'react'
+import React, {
+  Fragment,
+  ReactText,
+  useCallback,
+  useMemo,
+  useReducer,
+} from 'react'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
@@ -14,6 +20,7 @@ import { IncomeLimitFields } from './IncomeLimitField'
 import { ElectionSelect } from './ElectionSelect'
 import { electionReducer, electionInitialState } from './electionReducer'
 import { getCurrentUserType } from '../../lib/utils/helpers'
+import { Options } from '../../lib/utils/types'
 
 export const ElectionsInfoFields = ({
   application,
@@ -30,34 +37,43 @@ export const ElectionsInfoFields = ({
 
   const { formatMessage } = useLocale()
 
-  const financialStatementsInaoElections: FinancialStatementsInaoElection[] =
-    data?.financialStatementsInaoElections
+  const financialStatementsInaoElections: FinancialStatementsInaoElection[] = useMemo(
+    () => data?.financialStatementsInaoElections,
+    [data?.financialStatementsInaoElections],
+  )
 
-  const options = financialStatementsInaoElections?.map((option) => {
-    return { label: option.name, value: option.electionId }
-  })
+  const options: Options = useMemo(
+    () =>
+      financialStatementsInaoElections?.map((option) => {
+        return { label: option.name, value: option.electionId }
+      }),
+    [financialStatementsInaoElections],
+  )
 
   const defaultElections = options?.[0]?.value
 
-  const getElectionInfo = (selectedElectionId: ReactText | undefined) => {
-    const currentElectionInfo = financialStatementsInaoElections?.find(
-      (elections: FinancialStatementsInaoElection) =>
-        elections.electionId === selectedElectionId,
-    )
-    const electionYear = new Date(
-      currentElectionInfo?.electionDate,
-    ).getFullYear()
+  const getElectionInfo = useCallback(
+    (selectedElectionId: ReactText | undefined) => {
+      const currentElectionInfo = financialStatementsInaoElections?.find(
+        (elections: FinancialStatementsInaoElection) =>
+          elections.electionId === selectedElectionId,
+      )
+      const electionYear = new Date(
+        currentElectionInfo?.electionDate,
+      ).getFullYear()
 
-    const electionName = currentElectionInfo?.name
-    setValue(ABOUTIDS.electionName, electionName)
-    dispatch({
-      type: UPDATE_ELECTION_ACTION,
-      payload: {
-        name: electionName,
-        year: electionYear.toString(),
-      },
-    })
-  }
+      const electionName = currentElectionInfo?.name
+      setValue(ABOUTIDS.electionName, electionName)
+      dispatch({
+        type: UPDATE_ELECTION_ACTION,
+        payload: {
+          name: electionName,
+          year: electionYear.toString(),
+        },
+      })
+    },
+    [financialStatementsInaoElections],
+  )
 
   const getDefaultElection = useCallback(() => {
     const selectedElectionId =
@@ -69,7 +85,12 @@ export const ElectionsInfoFields = ({
     getElectionInfo(currentElection?.value)
 
     return currentElection?.label || ''
-  }, [])
+  }, [
+    defaultElections,
+    values?.election?.selectElection,
+    options,
+    getElectionInfo,
+  ])
 
   return (
     <Fragment>

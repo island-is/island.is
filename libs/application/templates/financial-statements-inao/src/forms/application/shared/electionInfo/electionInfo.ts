@@ -4,7 +4,7 @@ import {
   buildCustomField,
 } from '@island.is/application/core'
 import { m } from '../../../../lib/messages'
-import { ABOUTIDS, GREATER, LESS, USERTYPE } from '../../../../lib/constants'
+import { ABOUTIDS, USERTYPE } from '../../../../lib/constants'
 import { getCurrentUserType } from '../../../../lib/utils/helpers'
 
 export const electionInfoSection = buildSection({
