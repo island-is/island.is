@@ -45,7 +45,7 @@ interface Section {
   children: {
     type: string
     name: string
-    href: string | undefined
+    href?: string
   }[]
 }
 
@@ -468,53 +468,57 @@ const useSections = () => {
     activeSubSection?: number,
   ) => {
     const { id } = workingCase
+    const subsections = [
+      {
+        type: 'SUB_SECTION',
+        name: formatMessage(sections.indictmentsCourtSection.overview),
+        href: `${constants.INDICTMENTS_COURT_OVERVIEW_ROUTE}/${id}`,
+      },
+      {
+        type: 'SUB_SECTION',
+        name: formatMessage(
+          sections.indictmentsCourtSection.receptionAndAssignment,
+        ),
+        href: `${constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`,
+      },
+      {
+        type: 'SUB_SECTION',
+        name: formatMessage(sections.indictmentsCourtSection.subpoena),
+        href: isReceptionAndAssignmentStepValid(workingCase)
+          ? `${constants.INDICTMENTS_SUBPOENA_ROUTE}/${workingCase.id}`
+          : undefined,
+      },
+      {
+        type: 'SUB_SECTION',
+        name: formatMessage(
+          sections.indictmentsCourtSection.prosecutorAndDefender,
+        ),
+        href:
+          isReceptionAndAssignmentStepValid(workingCase) &&
+          isSubpoenaStepValid(workingCase)
+            ? `${constants.INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE}/${workingCase.id}`
+            : undefined,
+      },
+      {
+        type: 'SUB_SECTION',
+        name: formatMessage(sections.indictmentsCourtSection.courtRecord),
+        href:
+          isReceptionAndAssignmentStepValid(workingCase) &&
+          isSubpoenaStepValid(workingCase) &&
+          isprosecutorAndDefenderStepValid(workingCase)
+            ? `${constants.INDICTMENTS_COURT_RECORD_ROUTE}/${workingCase.id}`
+            : undefined,
+      },
+    ]
 
     return {
       name: formatMessage(sections.courtSection.title),
-      children: !activeSubSection
-        ? []
-        : [
-            {
-              type: 'SUB_SECTION',
-              name: formatMessage(sections.indictmentsCourtSection.overview),
-              href: `${constants.INDICTMENTS_COURT_OVERVIEW_ROUTE}/${id}`,
-            },
-            {
-              type: 'SUB_SECTION',
-              name: formatMessage(
-                sections.indictmentsCourtSection.receptionAndAssignment,
-              ),
-              href: `${constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`,
-            },
-            {
-              type: 'SUB_SECTION',
-              name: formatMessage(sections.indictmentsCourtSection.subpoena),
-              href: isReceptionAndAssignmentStepValid(workingCase)
-                ? `${constants.INDICTMENTS_SUBPOENA_ROUTE}/${workingCase.id}`
-                : undefined,
-            },
-            {
-              type: 'SUB_SECTION',
-              name: formatMessage(
-                sections.indictmentsCourtSection.prosecutorAndDefender,
-              ),
-              href:
-                isReceptionAndAssignmentStepValid(workingCase) &&
-                isSubpoenaStepValid(workingCase)
-                  ? `${constants.INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE}/${workingCase.id}`
-                  : undefined,
-            },
-            {
-              type: 'SUB_SECTION',
-              name: formatMessage(sections.indictmentsCourtSection.courtRecord),
-              href:
-                isReceptionAndAssignmentStepValid(workingCase) &&
-                isSubpoenaStepValid(workingCase) &&
-                isprosecutorAndDefenderStepValid(workingCase)
-                  ? `${constants.INDICTMENTS_COURT_RECORD_ROUTE}/${workingCase.id}`
-                  : undefined,
-            },
-          ],
+      children:
+        activeSubSection === undefined
+          ? subsections.map((subsection) => {
+              return { name: '', type: '', href: subsection.href }
+            })
+          : subsections,
     }
   }
 
@@ -716,7 +720,10 @@ const useSections = () => {
             user,
             activeSubSection,
           )
-        : getIndictmentsCourtSections(workingCase || ({} as Case)),
+        : getIndictmentsCourtSections(
+            workingCase || ({} as Case),
+            activeSubSection,
+          ),
       {
         name: caseResult(formatMessage, workingCase),
         children: [],
