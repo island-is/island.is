@@ -1,1 +1,0 @@
-export { PaymentInfo } from './PaymentInfo'
