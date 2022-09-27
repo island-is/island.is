@@ -3,7 +3,6 @@ import React from 'react'
 import { gql, useQuery } from '@apollo/client'
 import { PaymentSchedule, Query } from '@island.is/api/schema'
 import {
-  AlertBanner,
   Box,
   Button,
   GridColumn,
@@ -14,9 +13,11 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
+  ErrorScreen,
   IntroHeader,
   NoDataScreen,
   ServicePortalModuleComponent,
+  m as coreMessage,
 } from '@island.is/service-portal/core'
 import { checkDelegation } from '@island.is/shared/utils'
 
@@ -67,8 +68,18 @@ const FinanceSchedule: ServicePortalModuleComponent = ({ userInfo }) => {
     defaultMessage: 'Gera greiðsluáætlun',
   })
 
-  if (paymentSchedulesLoading) {
-    return <SkeletonLoader space={1} height={30} repeat={4} />
+  if (paymentSchedulesError && !paymentSchedulesLoading) {
+    return (
+      <ErrorScreen
+        figure="./assets/images/hourglass.svg"
+        tagVariant="red"
+        tag="500"
+        title={formatMessage(coreMessage.somethingWrong)}
+        children={formatMessage(coreMessage.errorFetchModule, {
+          module: formatMessage(coreMessage.finance).toLowerCase(),
+        })}
+      />
+    )
   }
 
   if (
@@ -140,17 +151,7 @@ const FinanceSchedule: ServicePortalModuleComponent = ({ userInfo }) => {
             </GridColumn>
           </GridRow>
         )}
-
         <Box marginTop={4}>
-          {paymentSchedulesError && (
-            <AlertBanner
-              description={formatMessage({
-                id: 'sp.finance-schedule:could-not-fetch-data',
-                defaultMessage: 'Ekki tókst að sækja gögn',
-              })}
-              variant="error"
-            />
-          )}
           {paymentSchedulesLoading && !paymentSchedulesError && (
             <Box padding={3}>
               <SkeletonLoader space={1} height={40} repeat={5} />

@@ -3,8 +3,10 @@ import { defineMessage } from 'react-intl'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   EmptyState,
+  ErrorScreen,
   IntroHeader,
   ServicePortalModuleComponent,
+  m as coreMessage,
 } from '@island.is/service-portal/core'
 import { LicenseLoader } from '../../components/LicenseLoader/LicenseLoader'
 import { m } from '../../lib/messages'
@@ -130,6 +132,19 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
     (item) => item.fetch.status === GenericUserLicenseFetchStatus.Error,
   )
 
+  if (error && !loading) {
+    return (
+      <ErrorScreen
+        figure="./assets/images/hourglass.svg"
+        tagVariant="red"
+        tag="500"
+        title={formatMessage(coreMessage.somethingWrong)}
+        children={formatMessage(coreMessage.errorFetchModule, {
+          module: formatMessage(coreMessage.licenses).toLowerCase(),
+        })}
+      />
+    )
+  }
   return (
     <>
       <Box marginBottom={[3, 4, 5]}>
