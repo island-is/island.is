@@ -24,7 +24,7 @@ export interface ApplicationTemplate<
   readonly readyForProduction?: boolean
   readonly featureFlag?: Features
   readonly type: ApplicationTypes
-  readonly name: StaticText
+  readonly name: StaticText | ((application: Application) => StaticText)
   readonly institution?: StaticText
   readonly translationNamespaces?: string[]
   readonly allowMultipleApplicationsInDraft?: boolean

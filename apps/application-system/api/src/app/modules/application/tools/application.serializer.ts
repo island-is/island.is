@@ -69,6 +69,13 @@ export class ApplicationSerializer
     const actors =
       application.applicant === nationalId ? application.applicantActors : []
 
+    const getApplicationName = () => {
+      if (typeof template.name === 'function') {
+        return intl.formatMessage(template.name(application))
+      }
+      return intl.formatMessage(template.name)
+    }
+
     const dto = plainToInstance(ApplicationResponseDto, {
       ...application,
       ...helper.getReadableAnswersAndExternalData(userRole),
@@ -88,7 +95,7 @@ export class ApplicationSerializer
         },
         deleteButton: roleInState?.delete,
       },
-      name: intl.formatMessage(template.name),
+      name: getApplicationName(),
       institution: template.institution
         ? intl.formatMessage(template.institution)
         : null,
