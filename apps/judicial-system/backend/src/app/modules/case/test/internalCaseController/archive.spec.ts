@@ -111,7 +111,6 @@ describe('InternalCaseController - Archive', () => {
           { model: Case, as: 'parentCase' },
           { model: Case, as: 'childCase' },
           { model: CaseFile, as: 'caseFiles' },
-          { model: CaseFile, as: 'caseFiles' },
         ],
         order: [
           [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
