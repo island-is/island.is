@@ -17,3 +17,12 @@ export const getFinancialLimit = gql`
     financialStatementsInaoClientFinancialLimit(input: $input)
   }
 `
+
+export const getAuditConfig = gql`
+  query FinancialStatementsInaoConfig {
+    financialStatementsInaoConfig {
+      value
+      key
+    }
+  }
+`

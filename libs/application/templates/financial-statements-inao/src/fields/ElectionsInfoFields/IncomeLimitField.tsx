@@ -27,7 +27,7 @@ export const IncomeLimitFields = ({ clientType, year }: IncomeLimitProps) => {
     }
   }, [year, getLimit])
 
-  if (loading) {
+  if (loading || !year) {
     return (
       <ContentBlock>
         <SkeletonLoader height={100} width="100%" borderRadius="large" />
@@ -37,7 +37,7 @@ export const IncomeLimitFields = ({ clientType, year }: IncomeLimitProps) => {
   }
   const limit = data?.financialStatementsInaoClientFinancialLimit
 
-  if (error || !limit || !year) {
+  if (error || !limit) {
     return (
       <ContentBlock>
         <AlertMessage
