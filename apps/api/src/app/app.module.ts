@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common'
 import { ApolloDriver } from '@nestjs/apollo'
 import { GraphQLModule } from '@nestjs/graphql'
 import { TerminusModule } from '@nestjs/terminus'
-import responseCachePlugin from 'apollo-server-plugin-response-cache'
+//import responseCachePlugin from 'apollo-server-plugin-response-cache'
 import { AuthModule as AuthDomainModule } from '@island.is/api/domains/auth'
 import { ContentSearchModule } from '@island.is/api/domains/content-search'
 import { CmsModule } from '@island.is/cms'
@@ -89,12 +89,14 @@ const autoSchemaFile = environment.production
         fieldMiddleware: [maskOutFieldsMiddleware],
       },
       plugins: [
-        responseCachePlugin({
-          shouldReadFromCache: ({ request: { http } }) => {
-            const bypassCacheKey = http?.headers.get('bypass-cache-key')
-            return bypassCacheKey !== process.env.BYPASS_CACHE_KEY
-          },
-        }),
+        // This was causing problems since graphql upgrade, gives us issues like:
+        // Error: overallCachePolicy.policyIfCacheable is not a function
+        // responseCachePlugin({
+        //   shouldReadFromCache: ({ request: { http } }) => {
+        //     const bypassCacheKey = http?.headers.get('bypass-cache-key')
+        //     return bypassCacheKey !== process.env.BYPASS_CACHE_KEY
+        //   },
+        // }),
       ],
     }),
 
