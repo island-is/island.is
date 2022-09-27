@@ -19,7 +19,6 @@ import {
   Hidden,
   SkeletonLoader,
   Stack,
-  Text,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
@@ -50,8 +49,8 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
   const backInTheDay = sub(new Date(), {
     months: 3,
   })
-  const [fromDate, setFromDate] = useState<Date>()
-  const [toDate, setToDate] = useState<Date>()
+  const [fromDate, setFromDate] = useState<Date | null>()
+  const [toDate, setToDate] = useState<Date | null>()
   const [q, setQ] = useState<string>('')
   const [chargeTypesEmpty, setChargeTypesEmpty] = useState(false)
   const [dropdownSelect, setDropdownSelect] = useState<string[] | undefined>()
@@ -69,6 +68,7 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
       }
     },
   })
+
   const chargeTypeData: CustomerChargeType =
     customerChartypeData?.getCustomerChargeType || {}
 
@@ -95,20 +95,14 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
     setToDate(new Date())
   }, [])
 
-  function getAllChargeTypes() {
-    const allChargeTypeValues = chargeTypeData?.chargeType?.map((ct) => ct.id)
-    return allChargeTypeValues ?? []
-  }
-
   function setAllChargeTypes() {
-    const allChargeTypes = getAllChargeTypes()
-    setDropdownSelect(allChargeTypes)
+    setDropdownSelect([])
   }
 
   function clearAllFilters() {
-    setAllChargeTypes()
-    setFromDate(backInTheDay)
-    setToDate(new Date())
+    setDropdownSelect([])
+    setFromDate(null)
+    setToDate(null)
     setQ('')
   }
 
