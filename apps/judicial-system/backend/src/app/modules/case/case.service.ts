@@ -380,31 +380,43 @@ export class CaseService {
     }
   }
 
-  private async deliverCaseFileToCourt(
+  private async deliverCaseFilesToCourt(
     theCase: Case,
-    caseFileCategory: CaseFileCategory,
+    caseFileCategories?: CaseFileCategory[],
   ): Promise<boolean> {
     return this.fileService
       .getAllCaseFiles(theCase.id)
-      .then((caseFiles) =>
-        caseFiles.find((caseFile) => caseFile.category === caseFileCategory),
-      )
-      .then(async (caseFile) => {
-        if (!caseFile) {
-          throw new Error(
-            `Failed to find ${caseFileCategory} for case ${theCase.id}`,
-          )
+      .then(async (caseFiles) => {
+        let success = true
+
+        for (const caseFile of caseFiles.filter(
+          (caseFile) =>
+            !caseFile.category ||
+            caseFileCategories?.includes(caseFile.category),
+        )) {
+          const uploaded = await this.fileService
+            .uploadCaseFileToCourt(caseFile, theCase)
+            .then((response) => response.success)
+            .catch((reason) => {
+              this.logger.error(
+                `Failed to deliver ${
+                  caseFile.category ?? CaseFileCategory.CASE_FILE
+                } ${caseFile.id} of case ${theCase.id} to court`,
+                { reason },
+              )
+
+              return false
+            })
+
+          success = success && uploaded
         }
 
-        return this.fileService.uploadCaseFileToCourt(caseFile, theCase)
-      })
-      .then((response) => {
-        return response.success
+        return success
       })
       .catch((reason) => {
         // Tolerate failure, but log error
         this.logger.error(
-          `Failed to deliver ${caseFileCategory} for case ${theCase.id} to court`,
+          `Failed to deliver files of case ${theCase.id} to court`,
           { reason },
         )
 
@@ -430,81 +442,28 @@ export class CaseService {
     theCase: Case,
   ): Promise<boolean> {
     return isIndictmentCase(theCase.type)
-      ? (await this.deliverCaseFileToCourt(
-          theCase,
+      ? await this.deliverCaseFilesToCourt(theCase, [
           CaseFileCategory.COVER_LETTER,
-        )) &&
-          (await this.deliverCaseFileToCourt(
-            theCase,
-            CaseFileCategory.INDICTMENT,
-          )) &&
-          (await this.deliverCaseFileToCourt(
-            theCase,
-            CaseFileCategory.CRIMINAL_RECORD,
-          )) &&
-          (await this.deliverCaseFileToCourt(
-            theCase,
-            CaseFileCategory.COST_BREAKDOWN,
-          )) &&
-          (await this.deliverCaseFileToCourt(
-            theCase,
-            CaseFileCategory.CASE_FILE_CONTENTS,
-          )) &&
-          (await this.deliverCaseFileToCourt(
-            theCase,
-            CaseFileCategory.CASE_FILE,
-          ))
+          CaseFileCategory.INDICTMENT,
+          CaseFileCategory.CRIMINAL_RECORD,
+          CaseFileCategory.COST_BREAKDOWN,
+          CaseFileCategory.CASE_FILE_CONTENTS,
+          CaseFileCategory.CASE_FILE,
+        ])
       : await this.upploadRequestPdfToCourt(theCase)
   }
 
   private async deliverRulingToCourt(theCase: Case): Promise<boolean> {
     return isIndictmentCase(theCase.type)
-      ? this.deliverCaseFileToCourt(theCase, CaseFileCategory.RULING)
+      ? this.deliverCaseFilesToCourt(theCase, [CaseFileCategory.RULING])
       : this.deliverSignedRulingToCourt(theCase)
   }
 
   private async deliverCourtRecordToCourt(theCase: Case): Promise<boolean> {
     return isIndictmentCase(theCase.type)
-      ? this.deliverCaseFileToCourt(theCase, CaseFileCategory.COURT_RECORD)
+      ? this.deliverCaseFilesToCourt(theCase, [CaseFileCategory.COURT_RECORD])
       : Boolean(theCase.rulingModifiedHistory) || // court record did not change
           this.uploadCourtRecordPdfToCourt(theCase)
-  }
-
-  private async deliverCaseFilesToCourt(theCase: Case): Promise<boolean> {
-    return this.fileService
-      .getAllCaseFiles(theCase.id)
-      .then(async (caseFiles) => {
-        let success = true
-
-        for (const caseFile of caseFiles.filter(
-          (caseFile) => caseFile.state === CaseFileState.STORED_IN_RVG,
-        )) {
-          const uploaded = await this.fileService
-            .uploadCaseFileToCourt(caseFile, theCase)
-            .then((response) => response.success)
-            .catch((reason) => {
-              this.logger.error(
-                `Failed to deliver file ${caseFile.id} of case ${theCase.id} to court`,
-                { reason },
-              )
-
-              return false
-            })
-
-          success = success && uploaded
-        }
-
-        return success
-      })
-      .catch((reason) => {
-        // Tolerate failure, but log error
-        this.logger.error(
-          `Failed to deliver case files of case ${theCase.id} to court`,
-          { reason },
-        )
-
-        return false
-      })
   }
 
   private async getIndictmentCourtRecordAsString(
