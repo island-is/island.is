@@ -27,7 +27,7 @@ const InfoCardClosedIndictment: React.FC = () => {
         },
         {
           title: formatMessage(core.prosecutor),
-          value: `${workingCase.creatingProsecutor?.institution?.name}`,
+          value: `${workingCase.prosecutor?.institution?.name}`,
         },
         {
           title: formatMessage(core.court),

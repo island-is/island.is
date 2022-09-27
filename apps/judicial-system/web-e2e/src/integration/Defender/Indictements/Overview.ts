@@ -25,7 +25,7 @@ describe('Indictment case overview for defenders', () => {
         ...theCase,
         state: CaseState.ACCEPTED,
         courtCaseNumber: 'S-202/2020',
-        creatingProsecutor: prosecutor,
+        prosecutor,
         judge,
         caseFiles: [
           makeCaseFile({ category: CaseFileCategory.COURT_RECORD }),
@@ -68,7 +68,7 @@ describe('Indictment case overview for defenders', () => {
       const caseDataAddition: Case = {
         ...theCase,
         state: CaseState.RECEIVED,
-        creatingProsecutor: prosecutor,
+        prosecutor,
         caseFiles: [
           makeCaseFile({ category: CaseFileCategory.COURT_RECORD }),
           makeCaseFile({ category: CaseFileCategory.RULING }),
@@ -93,9 +93,7 @@ describe('Indictment case overview for defenders', () => {
       )
 
       cy.getByTestid('infoCardDataContainer0').contains('16. sept. 2020')
-      cy.getByTestid('infoCardDataContainer1').contains(
-        prosecutor.institution!.name,
-      )
+      cy.getByTestid('infoCardDataContainer1').contains(prosecutor.name)
       cy.getByTestid('infoCardDataContainer2').contains(
         theCase.policeCaseNumbers[0],
       )
