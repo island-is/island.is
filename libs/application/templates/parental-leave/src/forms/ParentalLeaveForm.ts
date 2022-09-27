@@ -28,6 +28,7 @@ import {
   allowOtherParent,
   getLastValidPeriodEndDate,
   removeCountryCode,
+  getApplicationExternalData,
 } from '../lib/parentalLeaveUtils'
 import {
   GetPensionFunds,
@@ -867,11 +868,21 @@ export const ParentalLeaveForm: Form = buildForm({
                       event: 'SUBMIT',
                       name: parentalLeaveFormMessages.confirmation.title,
                       type: 'primary',
-                      condition: (answers) =>
-                        getApplicationAnswers(answers).periods.length > 0 &&
-                        new Date(
-                          getApplicationAnswers(answers).periods[0].startDate,
-                        ).getTime() >= currentDateStartTime(),
+                      condition: (answers, externalData) => {
+                        const {
+                          applicationFundId,
+                        } = getApplicationExternalData(externalData)
+                        if (applicationFundId === '') {
+                          const { periods } = getApplicationAnswers(answers)
+                          return (
+                            periods.length > 0 &&
+                            new Date(periods[0].startDate).getTime() >=
+                              currentDateStartTime()
+                          )
+                        }
+
+                        return true
+                      },
                     },
                   ],
                 }),
