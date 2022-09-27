@@ -518,11 +518,11 @@ export const ParentalLeaveForm: Form = buildForm({
                   introduction: '',
                   condition: (answers) => {
                     const isSelfEmployed =
-                  (answers.answers as {
-                    employer: {
-                      isSelfEmployed: string
-                    }
-                  })?.employer?.isSelfEmployed === YES
+                      (answers as {
+                        employer: {
+                          isSelfEmployed: string
+                        }
+                      })?.employer?.isSelfEmployed === YES
                     const hasOldSelfEmployedFile =
                       (answers as {
                         employer: {
@@ -530,7 +530,7 @@ export const ParentalLeaveForm: Form = buildForm({
                             file: unknown[]
                           }
                         }
-                      })?.employer?.selfEmployed?.file?.length > 0
+                      })?.employer?.selfEmployed?.file?.length !== 0
 
                     return isSelfEmployed && hasOldSelfEmployedFile
                   },
@@ -550,20 +550,32 @@ export const ParentalLeaveForm: Form = buildForm({
                   introduction: '',
                   maxSize: FILE_SIZE_LIMIT,
                   condition: (answers) => {
-                    const isSelfEmployed =
-                  (answers.answers as {
-                    employer: {
-                      isSelfEmployed: string
-                    }
-                  })?.employer?.isSelfEmployed === YES
+                    const isNotSelfEmployed =
+                      (answers as {
+                        employer: {
+                          isSelfEmployed: string
+                        }
+                      })?.employer?.isSelfEmployed !== YES
 
-                    return !isSelfEmployed
+                    const doesNotHaveOldSelfEmployedFile =
+                      (answers as {
+                        employer: {
+                          selfEmployed: {
+                            file: unknown[]
+                          }
+                        }
+                      })?.employer?.selfEmployed?.file?.length === 0
+
+                    return (
+                      isNotSelfEmployed ||
+                      (!isNotSelfEmployed && doesNotHaveOldSelfEmployedFile)
+                    )
                   },
                   maxSizeErrorText:
                     parentalLeaveFormMessages.selfEmployed
                       .attachmentMaxSizeError,
                   uploadAccept: '.pdf',
-                  uploadHeader: '',
+                  uploadHeader: 'nope',
                   uploadDescription: '',
                   uploadButtonLabel:
                     parentalLeaveFormMessages.selfEmployed.attachmentButton,
