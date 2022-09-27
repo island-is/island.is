@@ -238,7 +238,7 @@ export class LicenseServiceService {
     )
 
     if (licenseService) {
-      pkpassUrl = await licenseService.getPkPassUrl(user)
+      pkpassUrl = await licenseService.getPkPassUrl(user, licenseType, locale)
     } else {
       throw new Error(`${licenseType} not supported`)
     }
@@ -262,7 +262,11 @@ export class LicenseServiceService {
     )
 
     if (licenseService) {
-      pkpassQRCode = await licenseService.getPkPassQRCode(user)
+      pkpassQRCode = await licenseService.getPkPassQRCode(
+        user,
+        licenseType,
+        locale,
+      )
     } else {
       throw new Error(`${licenseType} not supported`)
     }

@@ -7,6 +7,8 @@ import {
   GenericUserLicensePkPassStatus,
   GenericUserLicenseStatus,
   PkPassVerification,
+  PkPassVerificationError,
+  PkPassVerificationInputData,
 } from '../../licenceService.type'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import {
@@ -119,8 +121,54 @@ export class GenericAdrLicenseApi implements GenericLicenseClient<AdrDto> {
 
     return pass ?? null
   }
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async verifyPkPass(data: string): Promise<PkPassVerification | null> {
-    return null
+    const { code, date } = JSON.parse(data) as PkPassVerificationInputData
+    const result = await this.smartApi.verifyPkPass({ code, date })
+
+    if (!result) {
+      this.logger.warn('Missing pkpass verify from client', {
+        category: LOG_CATEGORY,
+      })
+      return null
+    }
+
+    let error: PkPassVerificationError | undefined
+
+    if (result.error) {
+      let data = ''
+
+      try {
+        data = JSON.stringify(result.error.serviceError?.data)
+      } catch {
+        // noop
+      }
+
+      // Is there a status code from the service?
+      const serviceErrorStatus = result.error.serviceError?.status
+
+      // Use status code, or http status code from serivce, or "0" for unknown
+      const status = serviceErrorStatus ?? (result.error.statusCode || 0)
+
+      error = {
+        status: status.toString(),
+        message: result.error.serviceError?.message || 'Unknown error',
+        data,
+      }
+
+      return {
+        valid: false,
+        data: undefined,
+        error,
+      }
+    }
+
+    /*
+      TODO: VERIFICATION!!!!!!!! Máni (thorkellmani @ github)
+    */
+
+    return {
+      valid: result.valid,
+      error,
+    }
   }
 }

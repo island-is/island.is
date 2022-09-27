@@ -1,4 +1,5 @@
 import { User } from '@island.is/auth-nest-tools'
+import { Locale } from 'locale'
 
 export enum GenericLicenseType {
   DriversLicense = 'DriversLicense',
@@ -176,9 +177,17 @@ export interface GenericLicenseClient<LicenseType> {
     user: User,
   ) => Promise<GenericLicenseUserdataExternal | null>
 
-  getPkPassUrl: (user: User, data?: LicenseType) => Promise<string | null>
+  getPkPassUrl: (
+    user: User,
+    data?: LicenseType,
+    locale?: Locale,
+  ) => Promise<string | null>
 
-  getPkPassQRCode: (user: User, data?: LicenseType) => Promise<string | null>
+  getPkPassQRCode: (
+    user: User,
+    data?: LicenseType,
+    locale?: Locale,
+  ) => Promise<string | null>
 
   verifyPkPass: (data: string) => Promise<PkPassVerification | null>
 }
