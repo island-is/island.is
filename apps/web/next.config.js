@@ -32,6 +32,20 @@ module.exports = withNx(
         },
       ]
     },
+    redirects() {
+      return [
+        {
+          source: '/throun/handbok',
+          destination: '/s/stafraent-island/throunarhandbok',
+          permanent: true,
+        },
+        {
+          source: '/en/developers/handbook',
+          destination: '/en/o/digital-iceland/developer-handbook',
+          permanent: true,
+        },
+      ]
+    },
     webpack: (config, { isServer }) => {
       if (!isServer) {
         config.resolve.alias['@sentry/node'] = '@sentry/browser'
