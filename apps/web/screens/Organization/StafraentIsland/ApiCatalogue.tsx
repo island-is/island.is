@@ -314,7 +314,7 @@ const ApiCatalogue: Screen<HomestayProps> = ({
             {data?.getApiCatalogue?.services.length > 0 && (
               <GridContainer>
                 <ServiceList
-                  baseUrl={linkResolver('webservicespage').href + '/'}
+                  baseUrl={linkResolver('apicataloguepage').href + '/'}
                   services={data?.getApiCatalogue?.services}
                   tagDisplayNames={filterContent}
                 />
