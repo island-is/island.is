@@ -61,7 +61,6 @@ export const ElectionsInfoFields = ({
       const electionYear = new Date(
         currentElectionInfo?.electionDate,
       ).getFullYear()
-
       const electionName = currentElectionInfo?.name
       setValue(ABOUTIDS.electionName, electionName)
       dispatch({
@@ -72,7 +71,7 @@ export const ElectionsInfoFields = ({
         },
       })
     },
-    [financialStatementsInaoElections],
+    [financialStatementsInaoElections, setValue],
   )
 
   const getDefaultElection = useCallback(() => {
