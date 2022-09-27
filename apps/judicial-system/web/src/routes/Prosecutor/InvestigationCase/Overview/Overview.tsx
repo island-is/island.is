@@ -346,7 +346,10 @@ export const Overview: React.FC = () => {
           />
           {workingCase.defenderNationalId && (
             <Box marginTop={3}>
-              <CopyLinkForDefenderButton caseId={workingCase.id}>
+              <CopyLinkForDefenderButton
+                caseId={workingCase.id}
+                type={workingCase.type}
+              >
                 {formatMessage(m.sections.copyLinkForDefenderButton)}
               </CopyLinkForDefenderButton>
             </Box>

@@ -14,6 +14,7 @@ import { Defendant } from '../../../defendant'
 import { User } from '../../../user'
 import { Institution } from '../../../institution'
 import { Case } from '../../models/case.model'
+import { CaseFile } from '../../../file'
 
 interface Then {
   result: Case
@@ -147,6 +148,7 @@ describe('CaseController - Create court case', () => {
           },
           { model: Case, as: 'parentCase' },
           { model: Case, as: 'childCase' },
+          { model: CaseFile, as: 'caseFiles' },
         ],
         order: [[{ model: Defendant, as: 'defendants' }, 'created', 'ASC']],
         where: {
