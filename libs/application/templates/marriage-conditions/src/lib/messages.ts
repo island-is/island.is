@@ -60,7 +60,7 @@ export const m = defineMessages({
   },
   dataCollectionMaritalStatusTitle: {
     id: 'mac.application:dataCollectionMaritalStatusTitle',
-    defaultMessage: 'Hjúskaparvottorð',
+    defaultMessage: 'Hjúskaparstöðuvottorð',
     description: 'Marital Status',
   },
   dataCollectionMaritalStatusDescription: {
@@ -274,7 +274,7 @@ export const m = defineMessages({
   spouseIntroDescription: {
     id: 'mac.application:spouseIntroDescription',
     defaultMessage:
-      '**{applicantsName}** sendi inn umsókn um könnun hjónavígsluskilyrða ykkar þann 13. júní, 2021. Til þess að halda áfram með ferlið þurfa bæði hjónaefni að senda frá sér persónuupplýsingar til samþykktar af Sýslumanni.',
+      '**{applicantsName}** sendi inn umsókn um könnun hjónavígsluskilyrða ykkar þann **{applicationDate}**. Til þess að halda áfram með ferlið þurfa bæði hjónaefni að senda frá sér persónuupplýsingar til samþykktar af Sýslumanni.',
     description: '',
   },
   spouseContinue: {
@@ -395,6 +395,12 @@ export const m = defineMessages({
     defaultMessage: 'Yfirlit umsóknar',
     description: '',
   },
+  overviewFooterText: {
+    id: 'mac.application:overviewFooterText',
+    defaultMessage:
+      'Hjónaefni ábyrgjast hér með undirskrift sinni að upplýsingar gefnar af þeim eru réttar og lýsa yfir að viðlögðum drengskap að þau viti ekki um tálma á fyrirhuguðum hjúskap sínum, sbr. II. og III. kafla laga nr. 31/1993.',
+    description: '',
+  },
 
   /* Next steps for spouse 1 */
   nextStepsTitle: {
@@ -454,6 +460,12 @@ export const m = defineMessages({
   errorDataProvider: {
     id: 'mac.application:error.dataProvider',
     defaultMessage: 'Úps! Eitthvað fór úrskeiðis við að sækja gögnin',
+    description: 'Oops! Something went wrong when fetching your data',
+  },
+  errorDataProviderMaritalStatus: {
+    id: 'mac.application:error.daterrorDataProviderMaritalStatusaProvider',
+    defaultMessage:
+      'Núverandi hjúskaparstaða þín leyfir þér ekki að halda áfram með þessa umsókn.',
     description: 'Oops! Something went wrong when fetching your data',
   },
   actionCardDoneTag: {

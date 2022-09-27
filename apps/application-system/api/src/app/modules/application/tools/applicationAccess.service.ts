@@ -62,14 +62,14 @@ export class ApplicationAccessService {
     return role?.delete ?? false
   }
 
-  private async evaluateIfRoleShouldBeListed(
+  private evaluateIfRoleShouldBeListed = (
     userRole: string | undefined,
     templateHelper: ApplicationTemplateHelper<
       ApplicationContext,
       ApplicationStateSchema<EventObject>,
       EventObject
     >,
-  ) {
+  ) => {
     if (userRole) {
       const roleInState = templateHelper.getRoleInState(userRole)
       // if shouldBeListedForRole isnt defined it should show the application for backwards compatibility
@@ -80,17 +80,39 @@ export class ApplicationAccessService {
     return true
   }
 
-  async shouldShowApplicationOnOverview(
+  shouldShowApplicationOnOverview = (
     application: Application,
-    nationalId: string,
+    user: User,
     template?: ApplicationTemplate<
       ApplicationContext,
       ApplicationStateSchema<EventObject>,
       EventObject
     >,
-  ): Promise<boolean> {
+  ): boolean => {
     if (template === undefined) {
       return false
+    }
+    const nationalId = user.nationalId
+    const isUserActingOnBehalfOfApplicant = !!user.actor
+
+    // if the user is acting on behalf we need to check if it has the allowed delegations for the template
+    if (isUserActingOnBehalfOfApplicant) {
+      const userDelegations = user.delegationType
+      if (template.allowedDelegations) {
+        if (!userDelegations) {
+          return false
+        }
+        const matchesAtLeastOneDelegation = template.allowedDelegations.some(
+          (d) => userDelegations.includes(d.type),
+        )
+        if (!matchesAtLeastOneDelegation) {
+          return false
+        }
+      }
+      // application doesnt allow delegation and user is acting on behalf of applicant
+      else {
+        return false
+      }
     }
 
     const currentUserRole = template.mapUserToRole(nationalId, application)

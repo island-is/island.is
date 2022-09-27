@@ -6,11 +6,6 @@ export const courtUpload = defineMessages({
     defaultMessage: 'Þingbók {courtCaseNumber}',
     description: 'Notaður sem nafn á þingbók í Auði.',
   },
-  ruling: {
-    id: 'judicial.system.backend:court_upload.ruling',
-    defaultMessage: 'Úrskurður {courtCaseNumber}',
-    description: 'Notaður sem nafn á úrskurði í Auði.',
-  },
   rulingV2: {
     id: 'judicial.system.backend:court_upload.ruling_v2',
     defaultMessage:
@@ -21,5 +16,10 @@ export const courtUpload = defineMessages({
     id: 'judicial.system.backend:court_upload.request_file_name_v2',
     defaultMessage: 'Krafa um {caseType}{date}',
     description: 'Notaður sem nafn á kröfuskjali í Auði.',
+  },
+  verdict: {
+    id: 'judicial.system.backend:court_upload.verdict',
+    defaultMessage: 'Dómur {courtCaseNumber}',
+    description: 'Notaður sem nafn á dómi í Auði.',
   },
 })

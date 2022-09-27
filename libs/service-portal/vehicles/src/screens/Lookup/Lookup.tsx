@@ -287,6 +287,18 @@ export const Lookup: ServicePortalModuleComponent = () => {
             title={type ?? ''}
             dataArray={chunk(
               [
+                {
+                  title: formatMessage(messages.owner),
+                  value: currentOwnerIsAnonymous
+                    ? formatMessage(messages.vehicleNameSecret)
+                    : currentOwner ?? '',
+                },
+                {
+                  title: formatMessage(messages.address),
+                  value: currentOwnerIsAnonymous
+                    ? formatMessage(messages.vehicleNameSecret)
+                    : currentOwnerAddress ?? '',
+                },
                 permno && {
                   title: formatMessage(messages.permno),
                   value: permno,
@@ -307,22 +319,12 @@ export const Lookup: ServicePortalModuleComponent = () => {
                   title: formatMessage(messages.regType),
                   value: regtype,
                 },
-                {
-                  title: formatMessage(messages.owner),
-                  value: currentOwnerIsAnonymous
-                    ? formatMessage(messages.vehicleNameSecret)
-                    : currentOwner ?? '',
-                },
+
                 firstregdate && {
                   title: formatMessage(messages.firstReg),
                   value: formatDate(firstregdate),
                 },
-                {
-                  title: formatMessage(messages.address),
-                  value: currentOwnerIsAnonymous
-                    ? formatMessage(messages.vehicleNameSecret)
-                    : currentOwnerAddress ?? '',
-                },
+
                 vehicleStatus && {
                   title: formatMessage(messages.vehicleStatus),
                   value: vehicleStatus,

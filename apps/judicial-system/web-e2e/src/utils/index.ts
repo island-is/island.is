@@ -114,7 +114,7 @@ export const aliasMutation = (
 export const mockName = `${faker.name.firstName()} ${faker.name.lastName()}`
 export const mockAddress = faker.address.streetAddress()
 
-export const mockCase = (type: CaseType) => {
+export const mockCase = (type: CaseType): Case => {
   const caseId = faker.datatype.uuid()
   return {
     id: caseId,
@@ -137,6 +137,7 @@ export const mockCase = (type: CaseType) => {
         address: mockAddress,
       },
     ],
+    defendantWaivesRightToCounsel: false,
   }
 }
 
@@ -164,12 +165,12 @@ export const makeJudge = (): User => {
   }
 }
 
-export const makeProsecutor = (): User => {
+export const makeProsecutor = (name?: string): User => {
   return {
     id: '9c0b4106-4213-43be-a6b2-ff324f4ba0c2',
     created: '2020-09-16T19:50:08.033Z',
     modified: '2020-09-16T19:50:08.033Z',
-    name: 'Áki Ákærandi',
+    name: name ?? 'Áki Ákærandi',
     nationalId: '000000-0000',
     mobileNumber: '000-0000',
     email: 'prosecutor@law.is',

@@ -33,6 +33,7 @@ import {
   isProcessingStepValidIndictments,
   isReceptionAndAssignmentStepValid,
   isSubpoenaStepValid,
+  isprosecutorAndDefenderStepValid,
 } from '../../validate'
 import {
   INVESTIGATION_CASE_MODIFY_RULING_ROUTE,
@@ -239,48 +240,62 @@ const useSections = () => {
   const getIndictmentCaseProsecutorSection = (workingCase: Case): Section => {
     const { id } = workingCase
 
+    const caseHasBeenSentToCourt =
+      workingCase.state !== CaseState.NEW &&
+      workingCase.state !== CaseState.DRAFT
     return {
       name: formatMessage(sections.indictmentCaseProsecutorSection.title),
-      children: [
-        {
-          type: 'SUB_SECTION',
-          name: capitalize(
-            formatMessage(core.indictmentDefendant, { gender: Gender.MALE }),
-          ),
-          href: `${constants.INDICTMENTS_DEFENDANT_ROUTE}/${id}`,
-        },
-        {
-          type: 'SUB_SECTION',
-          name: capitalize(
-            formatMessage(sections.indictmentCaseProsecutorSection.processing),
-          ),
-          href: isDefendantStepValidForSidebarIndictments(workingCase)
-            ? `${constants.INDICTMENTS_PROCESSING_ROUTE}/${id}`
-            : undefined,
-        },
-        {
-          type: 'SUB_SECTION',
-          name: capitalize(
-            formatMessage(sections.indictmentCaseProsecutorSection.caseFiles),
-          ),
-          href:
-            isDefendantStepValidForSidebarIndictments(workingCase) &&
-            isProcessingStepValidIndictments(workingCase)
-              ? `${constants.INDICTMENTS_CASE_FILES_ROUTE}/${id}`
-              : undefined,
-        },
-        {
-          type: 'SUB_SECTION',
-          name: capitalize(
-            formatMessage(sections.indictmentCaseProsecutorSection.overview),
-          ),
-          href:
-            isDefendantStepValidForSidebarIndictments(workingCase) &&
-            isProcessingStepValidIndictments(workingCase)
-              ? `${constants.INDICTMENTS_OVERVIEW_ROUTE}/${id}`
-              : undefined,
-        },
-      ],
+      // Procsecutor can only view the overview when case has been submitted to court
+      children: caseHasBeenSentToCourt
+        ? []
+        : [
+            {
+              type: 'SUB_SECTION',
+              name: capitalize(
+                formatMessage(core.indictmentDefendant, {
+                  gender: Gender.MALE,
+                }),
+              ),
+              href: `${constants.INDICTMENTS_DEFENDANT_ROUTE}/${id}`,
+            },
+            {
+              type: 'SUB_SECTION',
+              name: capitalize(
+                formatMessage(
+                  sections.indictmentCaseProsecutorSection.processing,
+                ),
+              ),
+              href: isDefendantStepValidForSidebarIndictments(workingCase)
+                ? `${constants.INDICTMENTS_PROCESSING_ROUTE}/${id}`
+                : undefined,
+            },
+            {
+              type: 'SUB_SECTION',
+              name: capitalize(
+                formatMessage(
+                  sections.indictmentCaseProsecutorSection.caseFiles,
+                ),
+              ),
+              href:
+                isDefendantStepValidForSidebarIndictments(workingCase) &&
+                isProcessingStepValidIndictments(workingCase)
+                  ? `${constants.INDICTMENTS_CASE_FILES_ROUTE}/${id}`
+                  : undefined,
+            },
+            {
+              type: 'SUB_SECTION',
+              name: capitalize(
+                formatMessage(
+                  sections.indictmentCaseProsecutorSection.overview,
+                ),
+              ),
+              href:
+                isDefendantStepValidForSidebarIndictments(workingCase) &&
+                isProcessingStepValidIndictments(workingCase)
+                  ? `${constants.INDICTMENTS_OVERVIEW_ROUTE}/${id}`
+                  : undefined,
+            },
+          ],
     }
   }
 
@@ -492,10 +507,22 @@ const useSections = () => {
         },
         {
           type: 'SUB_SECTION',
-          name: formatMessage(sections.indictmentsCourtSection.courtRecord),
+          name: formatMessage(
+            sections.indictmentsCourtSection.prosecutorAndDefender,
+          ),
           href:
             isReceptionAndAssignmentStepValid(workingCase) &&
             isSubpoenaStepValid(workingCase)
+              ? `${constants.INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE}/${workingCase.id}`
+              : undefined,
+        },
+        {
+          type: 'SUB_SECTION',
+          name: formatMessage(sections.indictmentsCourtSection.courtRecord),
+          href:
+            isReceptionAndAssignmentStepValid(workingCase) &&
+            isSubpoenaStepValid(workingCase) &&
+            isprosecutorAndDefenderStepValid(workingCase)
               ? `${constants.INDICTMENTS_COURT_RECORD_ROUTE}/${workingCase.id}`
               : undefined,
         },
