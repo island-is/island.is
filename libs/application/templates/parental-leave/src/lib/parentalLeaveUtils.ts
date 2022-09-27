@@ -41,6 +41,7 @@ import {
 } from '../dataProviders/Children/types'
 import { YesOrNo, Period, PersonInformation } from '../types'
 import { FormatMessage } from '@island.is/localization'
+import { currentDateStartTime } from './parentalLeaveTemplateUtils'
 
 export function getExpectedDateOfBirth(
   application: Application,
@@ -65,6 +66,10 @@ export function formatPeriods(
   const { periods, firstPeriodStart } = getApplicationAnswers(
     application.answers,
   )
+  const { applicationFundId } = getApplicationExternalData(
+    application.externalData,
+  )
+
   const timelinePeriods: TimelinePeriod[] = []
 
   periods?.forEach((period, index) => {
@@ -76,6 +81,26 @@ export function formatPeriods(
       period.endDate,
     ).toString()
 
+    const startDateDateTime = new Date(period.startDate)
+    let canDelete = startDateDateTime.getTime() > currentDateStartTime()
+    const today = new Date()
+
+    if (canDelete && applicationFundId !== '' && today.getDate() >= 20) {
+      const startDateBeginOfMonth = addDays(
+        startDateDateTime,
+        startDateDateTime.getDate() * -1,
+      )
+      const currentDateBeginOfMonth = addDays(today, today.getDate() * -1)
+      if (
+        startDateBeginOfMonth.getMonth() ===
+          currentDateBeginOfMonth.getMonth() &&
+        startDateBeginOfMonth.getFullYear() ===
+          currentDateBeginOfMonth.getFullYear()
+      ) {
+        canDelete = false
+      }
+    }
+
     if (isActualDob) {
       timelinePeriods.push({
         actualDob: isActualDob,
@@ -83,7 +108,7 @@ export function formatPeriods(
         endDate: period.endDate,
         ratio: period.ratio,
         duration: calculatedLength,
-        canDelete: true,
+        canDelete: canDelete,
         title: formatMessage(parentalLeaveFormMessages.reviewScreen.period, {
           index: index + 1,
           ratio: period.ratio,
@@ -98,7 +123,7 @@ export function formatPeriods(
         endDate: period.endDate,
         ratio: period.ratio,
         duration: calculatedLength,
-        canDelete: true,
+        canDelete: canDelete,
         title: formatMessage(parentalLeaveFormMessages.reviewScreen.period, {
           index: index + 1,
           ratio: period.ratio,
