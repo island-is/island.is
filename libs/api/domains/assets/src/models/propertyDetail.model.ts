@@ -11,26 +11,16 @@ import {
   MiddlewareContext,
   ObjectType,
 } from '@nestjs/graphql'
-import { GraphQLContext } from '@island.is/auth-nest-tools'
 
-const isLoggedIn = ({ context }: MiddlewareContext): boolean => {
-  const ctx = context as GraphQLContext
-  const user = ctx.req.user
-  if (!user) return false
-  return !!user.nationalId
+const isNotOwner = ({ source }: MiddlewareContext): boolean => {
+  const owners = (source as PropertyDetail).registeredOwners?.registeredOwners
+  if (!owners) return true
+  return owners.some((owner) => owner.ssn == source.nationalId)
 }
 @Extensions({
   filterFields: {
-    condition: isLoggedIn,
-    fields: [
-      'unitsOfUse',
-      'registeredOwners',
-      'appraisal',
-      'defaultAddress',
-      'land',
-      'propertyNumber',
-      'nonexistingField',
-    ],
+    condition: isNotOwner,
+    fields: ['defaultAddress', 'land', 'propertyNumber'],
   },
 })
 @ObjectType()
