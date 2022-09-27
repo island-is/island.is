@@ -513,10 +513,48 @@ export const ParentalLeaveForm: Form = buildForm({
               },
               children: [
                 buildFileUploadField({
+                  id: 'employer.selfEmployed.file',
+                  title: '',
+                  introduction: '',
+                  condition: (answers) => {
+                    const hasOldSelfEmployedFile =
+                      (answers as {
+                        employer: {
+                          selfEmployed: {
+                            file: unknown[]
+                          }
+                        }
+                      })?.employer?.selfEmployed?.file?.length > 0
+
+                    return hasOldSelfEmployedFile
+                  },
+                  maxSize: FILE_SIZE_LIMIT,
+                  maxSizeErrorText:
+                    parentalLeaveFormMessages.selfEmployed
+                      .attachmentMaxSizeError,
+                  uploadAccept: '.pdf',
+                  uploadHeader: '',
+                  uploadDescription: '',
+                  uploadButtonLabel:
+                    parentalLeaveFormMessages.selfEmployed.attachmentButton,
+                }),
+                buildFileUploadField({
                   id: 'fileUpload.file',
                   title: '',
                   introduction: '',
                   maxSize: FILE_SIZE_LIMIT,
+                  condition: (answers) => {
+                    const hasOldSelfEmployedFile =
+                      (answers as {
+                        employer: {
+                          selfEmployed: {
+                            file: unknown[]
+                          }
+                        }
+                      })?.employer?.selfEmployed?.file?.length > 0
+
+                    return !hasOldSelfEmployedFile
+                  },
                   maxSizeErrorText:
                     parentalLeaveFormMessages.selfEmployed
                       .attachmentMaxSizeError,
