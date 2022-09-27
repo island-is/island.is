@@ -19,12 +19,13 @@ import {
 
 describe(`${INDICTMENTS_COURT_OVERVIEW_ROUTE}/:id`, () => {
   const caseData = mockCase(CaseType.TAX_VIOLATION)
-  const prosecutor = makeProsecutor()
+  const prosecutor = makeProsecutor('Assigned Prosecutor')
+  const creatingProsecutor = makeProsecutor('Creating Prosecutor')
 
   beforeEach(() => {
     const caseDataAddition: Case = {
       ...caseData,
-      creatingProsecutor: prosecutor,
+      creatingProsecutor,
       prosecutor,
       state: CaseState.RECEIVED,
       caseFiles: [
@@ -43,18 +44,16 @@ describe(`${INDICTMENTS_COURT_OVERVIEW_ROUTE}/:id`, () => {
 
   it('should display relevant data', () => {
     cy.getByTestid('infoCard').contains(
-      `${caseData.defendants![0].name}, kt. ${
-        caseData.defendants![0].nationalId
-      }, ${caseData.defendants![0].address}`,
+      `${caseData.defendants![0]!.name}, kt. ${
+        caseData.defendants![0]!.nationalId
+      }, ${caseData.defendants![0]!.address}`,
     )
 
     cy.getByTestid('infoCardDataContainer0').contains('16. sept. 2020')
-    cy.getByTestid('infoCardDataContainer1').contains(
-      prosecutor.institution!.name,
-    )
+    cy.getByTestid('infoCardDataContainer1').contains(prosecutor!.name)
     cy.getByTestid('infoCardDataContainer2').contains('007-2022-01')
     cy.getByTestid('infoCardDataContainer2').contains('007-2022-02')
-    cy.getByTestid('infoCardDataContainer3').contains(caseData.court!.name)
+    cy.getByTestid('infoCardDataContainer3').contains(caseData!.court!.name)
     cy.getByTestid('infoCardDataContainer4').contains('Skattalagabrot')
 
     cy.getByTestid('PDFButton').contains('test.pdf')
