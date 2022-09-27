@@ -514,7 +514,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             description:
               statesMessages.employerWaitingToAssignForEditsDescription,
           },
-          lifecycle: DEPRECATED_DefaultStateLifeCycle,
+          lifecycle: DefaultStateLifeCycle,
           progress: 0.4,
           onEntry: {
             apiModuleAction: API_MODULE_ACTIONS.assignEmployer,
