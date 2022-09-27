@@ -87,6 +87,7 @@ const OperatingLicenseTemplate: ApplicationTemplate<
                 { event: DefaultEvents.SUBMIT, name: '', type: 'primary' },
               ],
               write: 'all',
+              delete: true,
             },
           ],
         },

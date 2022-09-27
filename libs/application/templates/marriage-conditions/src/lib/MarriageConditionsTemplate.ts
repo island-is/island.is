@@ -19,6 +19,7 @@ import {
   getApplicationFeatureFlags,
   MarriageCondtionsFeatureFlags,
 } from './getApplicationFeatureFlags'
+import { DefaultStateLifeCycle } from '@island.is/application/core'
 
 const pruneAfter = (time: number) => {
   return {
@@ -73,6 +74,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
                 },
               ],
               write: 'all',
+              delete: true,
             },
           ],
         },
@@ -104,6 +106,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
                 },
               ],
               write: 'all',
+              delete: true,
             },
           ],
         },
@@ -128,6 +131,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
                   Promise.resolve(val.done),
                 ),
               read: 'all',
+              delete: true,
             },
             {
               id: Roles.ASSIGNED_SPOUSE,
