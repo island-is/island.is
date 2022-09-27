@@ -117,7 +117,7 @@ export class FileService {
         break
       case CaseFileCategory.COST_BREAKDOWN:
         courtDocumentFolder = CourtDocumentFolder.INDICTMENT_DOCUMENTS
-        subject = this.formatMessage(courtUpload.coustBreakdown, {
+        subject = this.formatMessage(courtUpload.costBreakdown, {
           courtCaseNumber: theCase.courtCaseNumber,
         })
         break
