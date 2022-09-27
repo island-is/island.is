@@ -1,29 +1,40 @@
-import { style, keyframes } from '@vanilla-extract/css'
-import { theme } from '@island.is/island-ui/theme'
+import { theme, themeUtils } from '@island.is/island-ui/theme'
+import { style } from '@vanilla-extract/css'
 
-export const wrapper = style({
-  transition: 'border-color 200ms',
-  ':hover': {
-    borderColor: theme.color.blue300,
-  },
-})
-
-// The line on text buttons overflows it's element,
-// resulting in uneven alignment
-export const buttonWrapper = style({
-  paddingBottom: 2,
-})
-
-export const isLoadingContainer = style({
-  opacity: 0.85,
-  animationName: keyframes({
-    from: {
-      opacity: 0,
-    },
-    to: {
-      opacity: 0.85,
+export const tag = style({
+  marginBottom: theme.spacing[1],
+  ...themeUtils.responsiveStyle({
+    md: {
+      marginBottom: 'unset',
+      alignSelf: 'flex-start',
     },
   }),
-  animationTimingFunction: 'ease-out',
-  animationDuration: '0.25s',
+})
+
+export const avatar = style({
+  display: 'none',
+  ...themeUtils.responsiveStyle({
+    sm: {
+      display: 'flex',
+      width: 66,
+      height: 66,
+    },
+  }),
+})
+
+export const button = style({
+  ...themeUtils.responsiveStyle({
+    sm: {
+      alignSelf: 'flex-end',
+    },
+  }),
+})
+
+export const logo = style({
+  backgroundSize: 'contain',
+  backgroundRepeat: 'no-repeat',
+})
+
+export const loader = style({
+  minHeight: 200,
 })

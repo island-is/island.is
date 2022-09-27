@@ -1,12 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
-import {
-  Box,
-  Text,
-  Input,
-  ActionCard,
-  Pagination,
-} from '@island.is/island-ui/core'
+import { Box, Input, ActionCard, Pagination } from '@island.is/island-ui/core'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import { OrganisationPreview } from './DocumentProviders'
 import { m } from '../../lib/messages'
