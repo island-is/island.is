@@ -147,7 +147,7 @@ export const ScreenFooter: FC<FooterProps> = ({
                 >
                   {formatMessage({
                     id: 'application.system:button.servicePortal',
-                    defaultMessage: 'Back to Service Portal',
+                    defaultMessage: 'Til baka á Mínar Síður',
                     description: 'Service Portal button text',
                   })}
                 </Button>
