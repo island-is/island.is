@@ -1,4 +1,4 @@
-import { globalStyle, style } from '@vanilla-extract/css'
+import { style } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
 
 export const footerBg = style({
@@ -17,9 +17,4 @@ export const footerItemFirst = style({
       flexBasis: '100%',
     },
   },
-})
-
-globalStyle(`${footerBg} a, ${footerBg} a:hover`, {
-  color: 'white',
-  boxShadow: 'inset 0 -1px 0 0 white',
 })
