@@ -512,6 +512,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   .genericDescription
               },
               children: [
+                // this upload field will only show if there already is a fieluploaded to the old fileupload field
                 buildFileUploadField({
                   id: 'employer.selfEmployed.file',
                   title: '',
@@ -544,6 +545,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   uploadButtonLabel:
                     parentalLeaveFormMessages.selfEmployed.attachmentButton,
                 }),
+                // this upload field will show in all cases, except when there already is a file uploaded in the old fileupload field
                 buildFileUploadField({
                   id: 'fileUpload.file',
                   title: '',
