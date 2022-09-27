@@ -299,6 +299,7 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
           logo={organization.logo?.url}
         />
       )
+      break
   }
 
   return OrganizationFooterComponent
