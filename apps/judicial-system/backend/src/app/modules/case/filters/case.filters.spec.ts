@@ -471,13 +471,13 @@ describe('isCaseBlockedFromUser', () => {
 
   each([...indictmentCases, ...investigationCases]).describe(
     'given an accepted %s case',
-    ({ type }) => {
+    (type) => {
       each`
       institutionType
       ${InstitutionType.PRISON}
       ${InstitutionType.PRISON_ADMIN}
     `.it(
-        'it should block the case from staff at $institution',
+        'it should block the case from staff at $institutionType',
         ({ institutionType }) => {
           // Arrange
           const theCase = {
