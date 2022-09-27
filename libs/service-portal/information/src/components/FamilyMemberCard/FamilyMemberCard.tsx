@@ -1,4 +1,3 @@
-import { ActionCard } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   formatNationalId,
@@ -7,6 +6,7 @@ import {
 } from '@island.is/service-portal/core'
 import React, { FC, useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
+import { ActionCard } from '@island.is/service-portal/core'
 
 interface Props {
   title: string
@@ -87,9 +87,8 @@ export const FamilyMemberCard: FC<Props> = ({
     })
   return (
     <ActionCard
-      avatar
+      image={{ type: 'avatar' }}
       heading={title}
-      headingVariant="h4"
       text={
         nationalId &&
         `${formatMessage(m.natreg)}: ${formatNationalId(nationalId)}`
