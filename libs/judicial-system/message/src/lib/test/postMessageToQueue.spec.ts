@@ -1,4 +1,5 @@
 import { uuid } from 'uuidv4'
+import each from 'jest-each'
 
 import { QueueService } from '@island.is/message-queue'
 
@@ -35,20 +36,23 @@ describe('MessageService - Post message to queue', () => {
     }
   })
 
-  describe('message posted to queue', () => {
-    const message = { type: randomEnum(MessageType), caseId: uuid() }
-    const messageId = uuid()
-    let then: Then
+  each(Object.values(MessageType)).describe(
+    'message posted to queue',
+    (type) => {
+      const message = { type, caseId: uuid() }
+      const messageId = uuid()
+      let then: Then
 
-    beforeEach(async () => {
-      mockQueueService.add = jest.fn().mockResolvedValueOnce(messageId)
+      beforeEach(async () => {
+        mockQueueService.add = jest.fn().mockResolvedValueOnce(messageId)
 
-      then = await givenWhenThen(message)
-    })
+        then = await givenWhenThen(message)
+      })
 
-    it('should post message to queue', () => {
-      expect(mockQueueService.add).toHaveBeenCalledWith(message)
-      expect(then.result).toEqual(messageId)
-    })
-  })
+      it(`should post message ${type} to queue`, () => {
+        expect(mockQueueService.add).toHaveBeenCalledWith(message)
+        expect(then.result).toEqual(messageId)
+      })
+    },
+  )
 })
