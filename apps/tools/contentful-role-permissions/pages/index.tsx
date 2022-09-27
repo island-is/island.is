@@ -129,7 +129,15 @@ const Home = ({
               <Text truncate variant="h4" as="label" marginBottom={0}>
                 {role.name}
               </Text>
-              <Text variant="small">Tag: {slugify(role.name)}</Text>
+              <Inline alignY="center">
+                <Text variant="small">Tag: {slugify(role.name)}</Text>
+                {!tags.find((t) => t.name === slugify(role.name)) && (
+                  <Tooltip
+                    text={`Tag with name ${slugify(role.name)} does not exist`}
+                    color="red400"
+                  />
+                )}
+              </Inline>
             </Box>
 
             <Inline space={5}>
