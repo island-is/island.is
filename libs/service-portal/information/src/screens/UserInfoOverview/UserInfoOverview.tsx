@@ -2,23 +2,23 @@ import React from 'react'
 
 import { useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
-import { AlertMessage, Stack } from '@island.is/island-ui/core'
-import { useLocale, useNamespaces } from '@island.is/localization'
+import { Stack } from '@island.is/island-ui/core'
+import { useNamespaces } from '@island.is/localization'
 import {
+  CardLoader,
+  EmptyState,
   IntroHeader,
   m,
   ServicePortalModuleComponent,
 } from '@island.is/service-portal/core'
 
 import { FamilyMemberCard } from '../../components/FamilyMemberCard/FamilyMemberCard'
-import { FamilyMemberCardLoader } from '../../components/FamilyMemberCard/FamilyMemberCardLoader'
 import { spmm } from '../../lib/messages'
 import { NATIONAL_REGISTRY_CHILDREN } from '../../lib/queries/getNationalChildren'
 import { NATIONAL_REGISTRY_USER } from '../../lib/queries/getNationalRegistryUser'
 
 const UserInfoOverview: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.family')
-  const { formatMessage } = useLocale()
 
   // Current User
   const { data, loading, error, called } = useQuery<Query>(
@@ -33,19 +33,22 @@ const UserInfoOverview: ServicePortalModuleComponent = ({ userInfo }) => {
   const { nationalRegistryChildren } = childrenData || {}
 
   const spouseData = nationalRegistryUser?.spouse
+
   return (
     <>
       <IntroHeader title={m.myInfo} intro={spmm.userInfoDesc} />
+
       <Stack space={2}>
-        {called && !loading && !error && !nationalRegistryUser && (
-          <AlertMessage type="info" title={formatMessage(m.noDataPresent)} />
+        {called && !loading && !error && !nationalRegistryUser ? (
+          <EmptyState description={m.noDataPresent} />
+        ) : (
+          <FamilyMemberCard
+            title={userInfo.profile.name || ''}
+            nationalId={userInfo.profile.nationalId}
+            currentUser
+          />
         )}
-        <FamilyMemberCard
-          title={userInfo.profile.name || ''}
-          nationalId={userInfo.profile.nationalId}
-          currentUser
-        />
-        {loading && <FamilyMemberCardLoader />}
+        {loading && <CardLoader />}
         {spouseData?.nationalId && (
           <FamilyMemberCard
             key={spouseData.nationalId}
@@ -55,9 +58,7 @@ const UserInfoOverview: ServicePortalModuleComponent = ({ userInfo }) => {
           />
         )}
         {childrenLoading &&
-          [...Array(2)].map((_key, index) => (
-            <FamilyMemberCardLoader key={index} />
-          ))}
+          [...Array(2)].map((_key, index) => <CardLoader key={index} />)}
         {nationalRegistryChildren?.map((familyMember) => (
           <FamilyMemberCard
             key={familyMember.nationalId}
