@@ -22,7 +22,7 @@
 ## Important information
 
 - We use roles and tags to manage users in Contenful, meaning that each role has a corresponding tag
-- For organizations the role name is essentially the same tag name, that's how we map them together (to be exact the slugified version of the role name must match some tag name)
+- For organizations the role name is essentially the same as the tag name, that's how we map them together (to be exact the slugified version of the role name must match some tag name)
   - For example, the role name: `Owner-Fiskistofa` and the tag name: `owner-fiskistofa` are connected
   - So each time a user with the role `Owner-Fiskistofa` creates an entry, it'll automatically be tagged with the tag name: `owner-fiskistofa` and other users with the same role can also see that entry
 
