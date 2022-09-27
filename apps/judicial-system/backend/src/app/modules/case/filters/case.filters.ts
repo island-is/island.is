@@ -66,9 +66,12 @@ function getAllowedTypes(
   forUpdate: boolean,
   institutionType?: InstitutionType,
 ): CaseType[] {
+  if (role === UserRole.ADMIN) {
+    return [] // admins should only handle user management
+  }
+
   if (
     [
-      UserRole.ADMIN,
       UserRole.JUDGE,
       UserRole.REGISTRAR,
       UserRole.PROSECUTOR,

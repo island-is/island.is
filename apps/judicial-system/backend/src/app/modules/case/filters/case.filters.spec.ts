@@ -9,6 +9,7 @@ import {
   indictmentCases,
   InstitutionType,
   investigationCases,
+  restrictionCases,
   UserRole,
 } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
@@ -685,6 +686,23 @@ describe('isCaseBlockedFromUser', () => {
     expect(isWriteBlocked).toBe(false)
     expect(isReadBlocked).toBe(false)
   })
+
+  it.each(Object.values(CaseType))(
+    'should block admin from reading or writing %s case',
+    (type) => {
+      // Arrange
+      const theCase = { type, state: CaseState.ACCEPTED } as Case
+      const user = { role: UserRole.ADMIN } as User
+
+      // Act
+      const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
+      const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+
+      // Assert
+      expect(isWriteBlocked).toBe(true)
+      expect(isReadBlocked).toBe(true)
+    },
+  )
 })
 
 describe('getCasesQueryFilter', () => {
