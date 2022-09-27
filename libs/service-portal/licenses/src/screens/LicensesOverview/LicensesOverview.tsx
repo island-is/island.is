@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react'
 import { defineMessage } from 'react-intl'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
-  EmptyState,
   ErrorScreen,
   IntroHeader,
   ServicePortalModuleComponent,
   m as coreMessage,
+  ActionCard,
 } from '@island.is/service-portal/core'
 import { LicenseLoader } from '../../components/LicenseLoader/LicenseLoader'
 import { m } from '../../lib/messages'
@@ -18,7 +18,7 @@ import {
   useUserProfile,
 } from '@island.is/service-portal/graphql'
 import { Query } from '@island.is/api/schema'
-import { Box, ActionCard } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import { useHistory } from 'react-router-dom'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import {
@@ -132,7 +132,7 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
     (item) => item.fetch.status === GenericUserLicenseFetchStatus.Error,
   )
 
-  if (error && !loading) {
+  if ((error || isError) && !loading) {
     return (
       <ErrorScreen
         figure="./assets/images/hourglass.svg"
@@ -161,7 +161,10 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
             return (
               <Box marginBottom={3} key={index}>
                 <ActionCard
-                  logo={getTitleAndLogo(license.license.type).logo}
+                  image={{
+                    type: 'image',
+                    url: getTitleAndLogo(license.license.type).logo,
+                  }}
                   text={
                     formatMessage(m.licenseNumber) +
                     ': ' +
@@ -170,7 +173,6 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
                   heading={formatMessage(
                     getTitleAndLogo(license.license.type).title,
                   )}
-                  headingVariant="h4"
                   cta={{
                     label: formatMessage(m.seeDetails),
                     onClick: () =>
@@ -204,12 +206,6 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
               </Box>
             )
           })}
-
-      {(error || isError) && !loading && (
-        <Box>
-          <EmptyState description={m.errorFetch} />
-        </Box>
-      )}
     </>
   )
 }
