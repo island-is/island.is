@@ -32,40 +32,6 @@ module.exports = withNx(
         },
       ]
     },
-    redirects() {
-      return [
-        {
-          source: '/throun/handbok',
-          destination: '/s/stafraent-island/throunarhandbok',
-          permanent: true,
-        },
-        {
-          source: '/en/developers/handbook',
-          destination: '/en/o/digital-iceland/developer-handbook',
-          permanent: true,
-        },
-        {
-          source: '/throun/vefthjonustur',
-          destination: '/s/stafraent-island/vefthjonustur',
-          permanent: true,
-        },
-        {
-          source: '/en/developers/webservices',
-          destination: '/en/o/digital-iceland/webservices',
-          permanent: true,
-        },
-        {
-          source: '/throun/vefthjonustur/:slug',
-          destination: '/s/stafraent-island/vefthjonustur/:slug',
-          permanent: true,
-        },
-        {
-          source: '/en/developers/webservices/:slug',
-          destination: '/en/o/digital-iceland/webservices/:slug',
-          permanent: true,
-        },
-      ]
-    },
     webpack: (config, { isServer }) => {
       if (!isServer) {
         config.resolve.alias['@sentry/node'] = '@sentry/browser'
