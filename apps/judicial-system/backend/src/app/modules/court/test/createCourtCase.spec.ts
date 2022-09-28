@@ -75,7 +75,7 @@ describe('CourtService - Create court case', () => {
     }
   })
 
-  describe.each([...investigationCases, ...restrictionCases])(
+  describe.each([...investigationCases, CaseType.ADMISSION_TO_FACILITY])(
     'court case created for %s',
     (type) => {
       const user = {} as User
