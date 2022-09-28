@@ -208,6 +208,7 @@ const FinancialAidTemplate: ApplicationTemplate<
                   Promise.resolve(module.ApplicantSubmitted),
                 ),
               read: 'all',
+              delete: true,
             },
           ],
         },

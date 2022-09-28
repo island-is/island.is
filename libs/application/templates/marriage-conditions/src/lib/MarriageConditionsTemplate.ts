@@ -131,7 +131,6 @@ const MarriageConditionsTemplate: ApplicationTemplate<
                   Promise.resolve(val.done),
                 ),
               read: 'all',
-              delete: true,
             },
             {
               id: Roles.ASSIGNED_SPOUSE,

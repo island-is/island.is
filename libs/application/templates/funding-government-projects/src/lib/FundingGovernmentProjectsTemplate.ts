@@ -1,6 +1,5 @@
 import {
   DefaultStateLifeCycle,
-  DEPRECATED_DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
 import {
