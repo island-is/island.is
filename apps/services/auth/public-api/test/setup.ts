@@ -96,6 +96,7 @@ const delegationConfig: ConfigType<typeof DelegationConfig> = {
       onlyForDelegationType: ['LegalGuardian'],
     },
   ],
+  userInfoUrl: 'https://localhost:6001/connect/userinfo',
 }
 
 export const setupWithAuth = async ({

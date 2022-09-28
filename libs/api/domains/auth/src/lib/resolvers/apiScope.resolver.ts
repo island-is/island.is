@@ -26,10 +26,4 @@ export class ApiScopeResolver {
   resolveGroupName(@Parent() apiScope: IApiScope): string | undefined {
     return apiScope.group?.displayName
   }
-
-  @ResolveField('type')
-  resolveType(): string {
-    // TODO: waiting on implementation
-    return 'ApiScope'
-  }
 }

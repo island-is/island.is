@@ -1,26 +1,11 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
-import {
-  IsString,
-  IsDate,
-  IsEnum,
-  IsOptional,
-  IsDateString,
-} from 'class-validator'
-
-export enum ScopeType {
-  ApiScope = 'apiScope',
-  IdentityResource = 'identityResource',
-}
+import { IsString, IsDate, IsOptional, IsDateString } from 'class-validator'
 
 export class UpdateDelegationScopeDTO {
   @IsString()
   @ApiProperty()
   name!: string
-
-  @IsEnum(ScopeType)
-  @ApiProperty({ enum: ScopeType, enumName: 'ScopeType' })
-  type!: ScopeType
 
   @Type(() => Date)
   @IsDate()

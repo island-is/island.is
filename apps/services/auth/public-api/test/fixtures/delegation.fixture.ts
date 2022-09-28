@@ -23,12 +23,7 @@ export interface CreateDelegationOptions {
 
 export type CreateDelegationScope = Pick<
   DelegationScope,
-  | 'id'
-  | 'validFrom'
-  | 'validTo'
-  | 'scopeName'
-  | 'identityResourceName'
-  | 'delegationId'
+  'id' | 'validFrom' | 'validTo' | 'scopeName' | 'delegationId'
 >
 
 export type CreateDelegation = Pick<
