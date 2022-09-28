@@ -2,6 +2,7 @@ import {
   DefaultStateLifeCycle,
   DEPRECATED_DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
+  getValueViaPath,
 } from '@island.is/application/core'
 import {
   ApplicationTemplate,
@@ -80,13 +81,26 @@ const ExampleSchema = z.object({
     .nonempty(),
   dreamJob: z.string().optional(),
 })
+
+const determineMessageFromApplicationAnswers = (application: Application) => {
+  const careerHistory = getValueViaPath(
+    application.answers,
+    'careerHistory',
+    undefined,
+  ) as string | undefined
+  if (careerHistory === 'no') {
+    return m.nameApplicationNeverWorkedBefore
+  }
+  return m.name
+}
+
 const ReferenceApplicationTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<ReferenceTemplateEvent>,
   ReferenceTemplateEvent
 > = {
   type: ApplicationTypes.EXAMPLE,
-  name: m.name,
+  name: determineMessageFromApplicationAnswers,
   institution: m.institutionName,
   translationNamespaces: [ApplicationConfigurations.ExampleForm.translation],
   dataSchema: ExampleSchema,
@@ -130,7 +144,6 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
         meta: {
           name: 'Umsókn um ökunám',
           actionCard: {
-            title: m.draftTitle,
             description: m.draftDescription,
           },
           progress: 0.25,
