@@ -210,4 +210,19 @@ describe('SyslumennService', () => {
       expect(res.exists).toStrictEqual(false)
     })
   })
+
+  describe('getPropertyDetails', () => {
+    it('details has address', async () => {
+      const res = await service.getPropertyDetails('F123456')
+      expect(res.defaultAddress?.display).toStrictEqual('Neverland')
+    })
+
+    it('unitsOfUse is nullish if user is not owner', async () => {
+      // TODO
+    })
+
+    it('not found for invalid propertyNumber', async () => {
+      // TODO
+    })
+  })
 })
