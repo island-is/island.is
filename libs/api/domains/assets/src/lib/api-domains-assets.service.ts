@@ -1,14 +1,123 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { ApolloError } from 'apollo-server-express'
 import { FetchError } from '@island.is/clients/middlewares'
-import { FasteignirApi } from '@island.is/clients/assets'
+import { Fasteign, FasteignirApi } from '@island.is/clients/assets'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { Auth, User } from '@island.is/auth-nest-tools'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { PropertyDetail } from '../models/propertyDetail.model'
 
 const getAssetString = (str: string) =>
   str.charAt(0).toLowerCase() === 'f' ? str.substring(1) : str
+
+function mapSingleRealEstate(realEstate: Fasteign) {
+  return {
+    propertyNumber: realEstate.fasteignanumer ?? undefined,
+    defaultAddress: {
+      displayShort: realEstate.sjalfgefidStadfang?.birtingStutt ?? undefined,
+      display: realEstate.sjalfgefidStadfang?.birting ?? undefined,
+      propertyNumber:
+        realEstate.sjalfgefidStadfang?.landeignarnumer ?? undefined,
+      municipality:
+        realEstate.sjalfgefidStadfang?.sveitarfelagBirting ?? undefined,
+      postNumber: realEstate.sjalfgefidStadfang?.postnumer ?? undefined,
+      locationNumber:
+        realEstate.sjalfgefidStadfang?.stadfanganumer ?? undefined,
+    },
+    appraisal: {
+      activeAppraisal:
+        realEstate?.fasteignamat?.gildandiFasteignamat ?? undefined,
+      plannedAppraisal:
+        realEstate?.fasteignamat?.fyrirhugadFasteignamat ?? undefined,
+      activeStructureAppraisal:
+        realEstate?.fasteignamat?.gildandiMannvirkjamat ?? undefined,
+      plannedStructureAppraisal:
+        realEstate?.fasteignamat?.fyrirhugadFasteignamat ?? undefined,
+      activePlotAssessment:
+        realEstate?.fasteignamat?.gildandiLodarhlutamat ?? undefined,
+      plannedPlotAssessment:
+        realEstate?.fasteignamat?.fyrirhugadLodarhlutamat ?? undefined,
+      activeYear: realEstate?.fasteignamat?.gildandiAr ?? undefined,
+      plannedYear: realEstate?.fasteignamat?.fyrirhugadAr ?? undefined,
+    },
+    registeredOwners: {
+      paging: realEstate.thinglystirEigendur?.paging ?? undefined,
+      registeredOwners: realEstate.thinglystirEigendur?.thinglystirEigendur?.map(
+        (owner) => ({
+          name: owner.nafn ?? undefined,
+          ssn: owner.kennitala ?? undefined,
+          ownership: owner.eignarhlutfall ?? undefined,
+          purchaseDate: owner.kaupdagur ?? undefined,
+          grantDisplay: owner.heimildBirting ?? undefined,
+        }),
+      ),
+    },
+    unitsOfUse: {
+      paging: realEstate.notkunareiningar?.paging ?? undefined,
+      unitsOfUse: realEstate.notkunareiningar?.notkunareiningar?.map(
+        (unit) => ({
+          propertyNumber: unit.fasteignanumer ?? undefined,
+          unitOfUseNumber: unit.notkunareininganumer ?? undefined,
+          address: {
+            // This does not come from the service as the service is set up today. Needs to come from parent as things stand.
+            displayShort:
+              realEstate.sjalfgefidStadfang?.birtingStutt ?? undefined,
+            display: realEstate.sjalfgefidStadfang?.birting ?? undefined,
+            propertyNumber:
+              realEstate.sjalfgefidStadfang?.landeignarnumer ?? undefined,
+            municipality:
+              realEstate.sjalfgefidStadfang?.sveitarfelagBirting ?? undefined,
+            postNumber: realEstate.sjalfgefidStadfang?.postnumer ?? undefined,
+            locationNumber:
+              realEstate.sjalfgefidStadfang?.stadfanganumer ?? undefined,
+          },
+          marking: unit.merking ?? undefined,
+          usageDisplay: unit.notkunBirting ?? undefined,
+          displaySize: unit.birtStaerd ?? undefined,
+          buildYearDisplay: unit.byggingararBirting ?? undefined,
+          fireAssessment: unit.brunabotamat ?? undefined,
+          explanation: unit.skyring ?? undefined,
+          appraisal: {
+            activeAppraisal:
+              unit.fasteignamat?.gildandiFasteignamat ?? undefined,
+            plannedAppraisal:
+              unit.fasteignamat?.fyrirhugadFasteignamat ?? undefined,
+            activeStructureAppraisal:
+              unit.fasteignamat?.gildandiMannvirkjamat ?? undefined,
+            plannedStructureAppraisal:
+              unit.fasteignamat?.fyrirhugadFasteignamat ?? undefined,
+            activePlotAssessment:
+              unit.fasteignamat?.gildandiLodarhlutamat ?? undefined,
+            plannedPlotAssessment:
+              unit.fasteignamat?.fyrirhugadLodarhlutamat ?? undefined,
+            activeYear: unit.fasteignamat?.gildandiAr ?? undefined,
+            plannedYear: unit.fasteignamat?.fyrirhugadAr ?? undefined,
+          },
+        }),
+      ),
+    },
+    land: {
+      landNumber: realEstate.landeign?.landeignarnumer ?? undefined,
+      landAppraisal: realEstate.landeign?.lodamat ?? undefined,
+      useDisplay: realEstate.landeign?.notkunBirting ?? undefined,
+      area: realEstate.landeign?.flatarmal ?? undefined,
+      areaUnit: realEstate.landeign?.flatarmalEining ?? undefined,
+      registeredOwners: {
+        paging: realEstate.landeign?.thinglystirEigendur?.paging ?? undefined,
+        registeredOwners: realEstate.landeign?.thinglystirEigendur?.thinglystirEigendur?.map(
+          (owner) => ({
+            name: owner.nafn ?? undefined,
+            ssn: owner.kennitala ?? undefined,
+            ownership: owner.eignarhlutfall ?? undefined,
+            purchaseDate: owner.kaupdagur ?? undefined,
+            grantDisplay: owner.heimildBirting ?? undefined,
+          }),
+        ),
+      },
+    },
+  }
+}
 
 @Injectable()
 export class AssetsXRoadService {
@@ -74,125 +183,16 @@ export class AssetsXRoadService {
     }
   }
 
-  async getRealEstateDetail(assetId: string, auth: User): Promise<any | null> {
-    try {
-      const singleFasteignResponse = await this.getRealEstatesWithAuth(
-        auth,
-      ).fasteignirGetFasteign({ fasteignanumer: getAssetString(assetId) })
+  async getRealEstateDetail(
+    assetId: string,
+    auth: User,
+  ): Promise<PropertyDetail | null> {
+    const singleFasteignResponse = await this.getRealEstatesWithAuth(auth)
+      .fasteignirGetFasteign({ fasteignanumer: getAssetString(assetId) })
+      .catch((e) => this.handle4xx(e))
 
-      if (singleFasteignResponse) {
-        return {
-          propertyNumber: singleFasteignResponse.fasteignanumer,
-          defaultAddress: {
-            displayShort:
-              singleFasteignResponse.sjalfgefidStadfang?.birtingStutt,
-            display: singleFasteignResponse.sjalfgefidStadfang?.birting,
-            propertyNumber:
-              singleFasteignResponse.sjalfgefidStadfang?.landeignarnumer,
-            municipality:
-              singleFasteignResponse.sjalfgefidStadfang?.sveitarfelagBirting,
-            postNumber: singleFasteignResponse.sjalfgefidStadfang?.postnumer,
-            locationNumber:
-              singleFasteignResponse.sjalfgefidStadfang?.stadfanganumer,
-          },
-          appraisal: {
-            activeAppraisal:
-              singleFasteignResponse?.fasteignamat?.gildandiFasteignamat,
-            plannedAppraisal:
-              singleFasteignResponse?.fasteignamat?.fyrirhugadFasteignamat,
-            activeStructureAppraisal:
-              singleFasteignResponse?.fasteignamat?.gildandiMannvirkjamat,
-            plannedStructureAppraisal:
-              singleFasteignResponse?.fasteignamat?.fyrirhugadFasteignamat,
-            activePlotAssessment:
-              singleFasteignResponse?.fasteignamat?.gildandiLodarhlutamat,
-            plannedPlotAssessment:
-              singleFasteignResponse?.fasteignamat?.fyrirhugadLodarhlutamat,
-            activeYear: singleFasteignResponse?.fasteignamat?.gildandiAr,
-            plannedYear: singleFasteignResponse?.fasteignamat?.fyrirhugadAr,
-          },
-          registeredOwners: {
-            paging: singleFasteignResponse.thinglystirEigendur?.paging,
-            registeredOwners: singleFasteignResponse.thinglystirEigendur?.thinglystirEigendur?.map(
-              (owner) => ({
-                name: owner.nafn,
-                ssn: owner.kennitala,
-                ownership: owner.eignarhlutfall,
-                purchaseDate: owner.kaupdagur,
-                grantDisplay: owner.heimildBirting,
-              }),
-            ),
-          },
-          unitsOfUse: {
-            paging: singleFasteignResponse.notkunareiningar?.paging,
-            unitsOfUse: singleFasteignResponse.notkunareiningar?.notkunareiningar?.map(
-              (unit) => ({
-                propertyNumber: unit.fasteignanumer,
-                unitOfUseNumber: unit.notkunareininganumer,
-                address: {
-                  // This does not come from the service as the service is set up today. Needs to come from parent as things stand.
-                  displayShort:
-                    singleFasteignResponse.sjalfgefidStadfang?.birtingStutt,
-                  display: singleFasteignResponse.sjalfgefidStadfang?.birting,
-                  propertyNumber:
-                    singleFasteignResponse.sjalfgefidStadfang?.landeignarnumer,
-                  municipality:
-                    singleFasteignResponse.sjalfgefidStadfang
-                      ?.sveitarfelagBirting,
-                  postNumber:
-                    singleFasteignResponse.sjalfgefidStadfang?.postnumer,
-                  locationNumber:
-                    singleFasteignResponse.sjalfgefidStadfang?.stadfanganumer,
-                },
-                marking: unit.merking,
-                usageDisplay: unit.notkunBirting,
-                displaySize: unit.birtStaerd,
-                buildYearDisplay: unit.byggingararBirting,
-                fireAssessment: unit.brunabotamat,
-                explanation: unit.skyring,
-                appraisal: {
-                  activeAppraisal: unit.fasteignamat?.gildandiFasteignamat,
-                  plannedAppraisal: unit.fasteignamat?.fyrirhugadFasteignamat,
-                  activeStructureAppraisal:
-                    unit.fasteignamat?.gildandiMannvirkjamat,
-                  plannedStructureAppraisal:
-                    unit.fasteignamat?.fyrirhugadFasteignamat,
-                  activePlotAssessment:
-                    unit.fasteignamat?.gildandiLodarhlutamat,
-                  plannedPlotAssessment:
-                    unit.fasteignamat?.fyrirhugadLodarhlutamat,
-                  activeYear: unit.fasteignamat?.gildandiAr,
-                  plannedYear: unit.fasteignamat?.fyrirhugadAr,
-                },
-              }),
-            ),
-          },
-          land: {
-            landNumber: singleFasteignResponse.landeign?.landeignarnumer,
-            landAppraisal: singleFasteignResponse.landeign?.lodamat,
-            useDisplay: singleFasteignResponse.landeign?.notkunBirting,
-            area: singleFasteignResponse.landeign?.flatarmal,
-            areaUnit: singleFasteignResponse.landeign?.flatarmalEining,
-            registeredOwners: {
-              paging:
-                singleFasteignResponse.landeign?.thinglystirEigendur?.paging,
-              registeredOwners: singleFasteignResponse.landeign?.thinglystirEigendur?.thinglystirEigendur?.map(
-                (owner) => ({
-                  name: owner.nafn,
-                  ssn: owner.kennitala,
-                  ownership: owner.eignarhlutfall,
-                  purchaseDate: owner.kaupdagur,
-                  grantDisplay: owner.heimildBirting,
-                }),
-              ),
-            },
-          },
-        }
-      }
-      return null
-    } catch (e) {
-      this.handle4xx(e)
-    }
+    if (!singleFasteignResponse) return null
+    return mapSingleRealEstate(singleFasteignResponse)
   }
 
   async getPropertyOwners(

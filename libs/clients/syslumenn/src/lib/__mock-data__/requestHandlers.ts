@@ -92,6 +92,8 @@ export const requestHandlers = [
     const body = req.body as VedbandayfirlitSkeyti
     const assetId = body.fastanumer ?? ''
     const response = VEDBANDAYFIRLIT_REGLUVERKI_RESPONSE
+    console.log(`assetId: ${assetId}`)
+    response[0].fastnum = assetId
     switch ((body.tegundAndlags as number) ?? -1) {
       case AssetType.RealEstate: {
         switch (assetId) {

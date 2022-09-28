@@ -184,10 +184,10 @@ export const MOCK_PROPERTY_OWNERS = [
   { name: 'Jane Doe', ssn: '0101302989', ownership: 70 },
   { name: 'John Doe', ssn: '0101303019', ownership: 30 },
 ]
-export const MOCK_PROPERTY_NUMBER_OK = '2003292'
-export const MOCK_PROPERTY_NUMBER_NO_KMARKING = '2038390'
-export const MOCK_PROPERTY_NUMBER_NOT_EXISTS = '12345678'
-export const MOCK_PROPERTY_NUMBER_INVALID = 'abcdefgh'
+export const MOCK_PROPERTY_NUMBER_OK = 'F2003292'
+export const MOCK_PROPERTY_NUMBER_NO_KMARKING = 'F2038390'
+export const MOCK_PROPERTY_NUMBER_NOT_EXISTS = 'F12345678'
+export const MOCK_PROPERTY_NUMBER_INVALID = 'Fabcdefgh'
 export const MOCK_PROPERTY_DETAIL: PropertyDetail = {
   registeredOwners: {
     registeredOwners: MOCK_PROPERTY_OWNERS,

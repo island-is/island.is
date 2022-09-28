@@ -22,8 +22,8 @@ import {
   mapDistrictCommissionersAgenciesResponse,
   mapDataUploadResponse,
   constructUploadDataObject,
-  mapAssetName,
   mapEstateRegistrant,
+  mapProperty,
 } from './syslumennClient.utils'
 import { Injectable, Inject, NotFoundException } from '@nestjs/common'
 import {
@@ -246,14 +246,6 @@ export class SyslumennService {
     return response.map(assetMapper)
   }
 
-  async getRealEstateAddress(realEstateId: string): Promise<Array<AssetName>> {
-    return await this.getAsset(realEstateId, AssetType.RealEstate, mapAssetName)
-  }
-
-  async getVehicleType(vehicleId: string): Promise<Array<AssetName>> {
-    return await this.getAsset(vehicleId, AssetType.Vehicle, mapAssetName)
-  }
-
   async getMortgageCertificate(
     propertyNumber: string,
   ): Promise<MortgageCertificate> {
@@ -312,13 +304,14 @@ export class SyslumennService {
   async getPropertyDetails(propertyNumber: string): Promise<PropertyDetail> {
     const { id, api } = await this.createApi()
 
+    const assetId =
+      propertyNumber[0] == 'F'
+        ? propertyNumber.substring(1, propertyNumber.length)
+        : propertyNumber
     const res = await api.vedbokavottordRegluverkiPost({
       skilabod: {
         audkenni: id,
-        fastanumer:
-          propertyNumber[0] == 'F'
-            ? propertyNumber.substring(1, propertyNumber.length)
-            : propertyNumber,
+        fastanumer: assetId,
         tegundAndlags: TegundAndlags.NUMBER_0, // 0 = Real estate
       },
     })
@@ -326,19 +319,7 @@ export class SyslumennService {
     if (res.length == 0) {
       throw new NotFoundException()
     }
-    return {
-      propertyNumber: propertyNumber,
-      defaultAddress: {
-        display: res[0].heiti,
-      },
-      unitsOfUse: {
-        unitsOfUse: [
-          {
-            explanation: res[0].notkun,
-          },
-        ],
-      },
-    }
+    return mapProperty(res[0])
   }
 
   async getEstateRegistrant(

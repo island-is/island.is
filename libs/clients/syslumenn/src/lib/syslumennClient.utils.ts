@@ -31,6 +31,7 @@ import {
   EstateAsset,
   EstateRegistrant,
 } from './syslumennClient.types'
+import { PropertyDetail } from '@island.is/api/domains/assets'
 const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 
 function mapDistrictCommissionersAgenciesResponse(
@@ -204,6 +205,46 @@ function mapPersonEnum(e: PersonType) {
   }
 }
 
+function mapProperty(res: VedbandayfirlitReguverkiSvarSkeyti): PropertyDetail {
+  /* Response attributes:
+    fastnum?: string;
+    landNr: number;
+    heiti?: string;
+    svfn?: string;
+    svetiarfelag?: string;
+    notkun?: string;
+    eining?: string;
+    byggd?: string;
+    embaetti?: string;
+    embaettiNumer?: string;
+  */
+  const x: PropertyDetail = {
+    appraisal: undefined,
+    defaultAddress: { display: res.heiti, displayShort },
+    land: {},
+    propertyNumber: '',
+    registeredOwners: {},
+    unitsOfUse: {},
+  }
+  const y: PropertyDetail = {
+    propertyNumber: res.fastnum,
+    defaultAddress: {
+      display: res.heiti,
+    },
+    unitsOfUse: {
+      unitsOfUse: [
+        {
+          explanation: res.notkun,
+        },
+      ],
+    },
+    appraisal: {},
+    land: {},
+    registeredOwners: {},
+  }
+  return x
+}
+
 function mapAssetName(response: VedbandayfirlitReguverkiSvarSkeyti): AssetName {
   return { name: response.heiti ?? '' }
 }
@@ -276,17 +317,18 @@ function mapEstateRegistrant(
 }
 
 export {
-  mapDistrictCommissionersAgenciesResponse,
+  assetMapper,
+  estateMemberMapper,
+  mapAssetName,
   mapCertificateInfo,
   mapDataUploadResponse,
-  mapHomestay,
-  mapSyslumennAuction,
-  mapOperatingLicense,
-  mapPaginationInfo,
-  mapPaginatedOperatingLicenses,
-  mapPersonEnum,
-  mapAssetName,
-  estateMemberMapper,
-  assetMapper,
+  mapDistrictCommissionersAgenciesResponse,
   mapEstateRegistrant,
+  mapHomestay,
+  mapOperatingLicense,
+  mapPaginatedOperatingLicenses,
+  mapPaginationInfo,
+  mapPersonEnum,
+  mapProperty,
+  mapSyslumennAuction,
 }
