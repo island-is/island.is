@@ -295,6 +295,16 @@ const Search: Screen<CategoryProps> = ({
     return false
   }
 
+  const getItemLink = (item: SearchType) => {
+    if (
+      item.__typename === 'LifeEventPage' &&
+      item.pageType === 'Digital Iceland Service'
+    ) {
+      return linkResolver('digitalicelandservicesdetailpage', [item.slug])
+    }
+    return linkResolver(item.__typename, item?.url ?? item.slug.split('/'))
+  }
+
   const searchResultsItems = (searchResults.items as Array<SearchType>).map(
     (item) => ({
       typename: item.__typename,
@@ -302,7 +312,7 @@ const Search: Screen<CategoryProps> = ({
       parentTitle: item.parent?.title,
       description:
         item.intro ?? item.description ?? item.parent?.intro ?? item.subtitle,
-      link: linkResolver(item.__typename, item?.url ?? item.slug.split('/')),
+      link: getItemLink(item),
       categorySlug: item.category?.slug ?? item.parent?.category?.slug,
       category: item.category ?? item.parent?.category,
       hasProcessEntry: checkForProcessEntries(item),
