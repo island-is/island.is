@@ -46,12 +46,6 @@ export type ModuleKeys =
   | 'petitions'
   | 'vehicles'
 
-export const featureFlaggedModules: ModuleKeys[] = [
-  'documentProvider',
-  'icelandicNamesRegistry',
-  'petitions',
-]
-
 export const companyModules: ModuleKeys[] = [
   'documents',
   'applications',
@@ -64,8 +58,6 @@ export const companyModules: ModuleKeys[] = [
   // TODO: Next in:
   // 'licenses',
 ]
-
-export const featureFlaggedCompanyModules: ModuleKeys[] = []
 
 export const modules: Record<ModuleKeys, ServicePortalModule> = {
   documentProvider: documentProviderModule,
