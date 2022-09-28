@@ -34,7 +34,7 @@ const template: ApplicationTemplate<
     states: {
       [States.DRAFT]: {
         meta: {
-          name: 'Afskráning meðeiganda á ökutæki',
+          name: 'Breyting meðeiganda á ökutæki',
           actionCard: {
             tag: {
               label: m.actionCardDraft,
