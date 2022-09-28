@@ -155,6 +155,7 @@ const includes: Includeable[] = [
   },
   { model: Case, as: 'parentCase' },
   { model: Case, as: 'childCase' },
+  { model: CaseFile, as: 'caseFiles' },
 ]
 
 const defendantsOrder: OrderItem = [
@@ -1124,7 +1125,7 @@ export class CaseService {
 
   async archive(): Promise<ArchiveResponse> {
     const theCase = await this.caseModel.findOne({
-      include: [...includes, { model: CaseFile, as: 'caseFiles' }],
+      include: includes,
       order: [
         defendantsOrder,
         [{ model: CaseFile, as: 'caseFiles' }, 'created', 'ASC'],

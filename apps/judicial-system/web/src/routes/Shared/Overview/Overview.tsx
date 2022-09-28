@@ -22,10 +22,15 @@ import {
 import { titles, core } from '@island.is/judicial-system-web/messages'
 import { Box } from '@island.is/island-ui/core'
 import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
-import { completedCaseStates } from '@island.is/judicial-system/types'
+import {
+  CaseFileCategory,
+  completedCaseStates,
+  UserRole,
+} from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { overview as m } from './Overview.strings'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 
 const Overview = () => {
   const router = useRouter()
@@ -33,17 +38,19 @@ const Overview = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
     FormContext,
   )
+  const { user } = useContext(UserContext)
   const { onOpen } = useFileList({ caseId: workingCase.id })
   const { formatMessage } = useIntl()
 
   const caseIsClosed = completedCaseStates.includes(workingCase.state)
+  const isDefender = router.pathname.includes(constants.DEFENDER_ROUTE)
 
   return (
     <PageLayout
       workingCase={workingCase}
       activeSection={caseIsClosed ? Sections.CASE_CLOSED : Sections.JUDGE}
       activeSubSection={
-        caseIsClosed ? undefined : IndictmentsCourtSubsections.JUDGE_OVERVIEW
+        isDefender ? undefined : IndictmentsCourtSubsections.JUDGE_OVERVIEW
       }
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
@@ -62,31 +69,54 @@ const Overview = () => {
         {workingCase.caseFiles && (
           <Box component="section" marginBottom={10}>
             <SectionHeading title={formatMessage(m.caseFilesTitle)} />
-            {workingCase.caseFiles.map((file) => (
-              <Box
-                key={file.id}
-                borderColor="blue200"
-                borderBottomWidth={'large'}
-              >
-                <PdfButton
-                  renderAs="row"
-                  caseId={workingCase.id}
-                  title={file.name}
-                  handleClick={() => onOpen(file.id)}
-                />
-              </Box>
-            ))}
+            {workingCase.caseFiles
+              .filter((f) => {
+                if (
+                  caseIsClosed ||
+                  user?.role === UserRole.JUDGE ||
+                  user?.role === UserRole.REGISTRAR
+                ) {
+                  return true
+                } else {
+                  if (
+                    f.category === CaseFileCategory.RULING ||
+                    f.category === CaseFileCategory.COURT_RECORD
+                  ) {
+                    return false
+                  } else {
+                    return true
+                  }
+                }
+              })
+              .map((file) => {
+                return (
+                  <Box
+                    key={file.id}
+                    borderColor="blue200"
+                    borderBottomWidth={'large'}
+                  >
+                    <PdfButton
+                      renderAs="row"
+                      caseId={workingCase.id}
+                      title={file.name}
+                      handleClick={() => onOpen(file.id)}
+                    />
+                  </Box>
+                )
+              })}
           </Box>
         )}
       </FormContentContainer>
-      <FormContentContainer isFooter>
-        <FormFooter
-          previousUrl={`${constants.CASES_ROUTE}`}
-          nextIsLoading={isLoadingWorkingCase}
-          nextUrl={`${constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}/${id}`}
-          nextButtonText={formatMessage(core.continue)}
-        />
-      </FormContentContainer>
+      {!caseIsClosed && !isDefender && (
+        <FormContentContainer isFooter>
+          <FormFooter
+            previousUrl={`${constants.CASES_ROUTE}`}
+            nextIsLoading={isLoadingWorkingCase}
+            nextUrl={`${constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}/${id}`}
+            nextButtonText={formatMessage(core.continue)}
+          />
+        </FormContentContainer>
+      )}
     </PageLayout>
   )
 }
