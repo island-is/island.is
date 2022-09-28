@@ -281,7 +281,7 @@ const devConfig = () => ({
   },
   firearmLicense: {
     firearmLicensePassTemplateId: process.env.FIREARM_LICENSE_PASS_TEMPLATE_ID,
-    pkPassApiKey: process.env.VE_PKPASS_API_KEY,
+    pkPassApiKey: process.env.RLS_PKPASS_API_KEY,
   },
   smartSolutionsApiUrl: process.env.SMART_SOLUTIONS_API_URL,
   audit: {
