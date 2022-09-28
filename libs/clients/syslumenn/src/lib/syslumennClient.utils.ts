@@ -9,7 +9,6 @@ import {
   AdiliTegund,
   VedbandayfirlitReguverkiSvarSkeyti,
   SkraningaradiliDanarbusSkeyti,
-  SvarSkeytiFromJSON,
   TegundAndlags,
   AdiliDanarbus,
 } from '../../gen/fetch'
@@ -34,9 +33,9 @@ import {
 } from './syslumennClient.types'
 const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 
-export const mapDistrictCommissionersAgenciesResponse = (
+function mapDistrictCommissionersAgenciesResponse(
   response: EmbaettiOgStarfsstodvar,
-): DistrictCommissionerAgencies => {
+): DistrictCommissionerAgencies {
   return {
     id: response.starfsstodID ?? '',
     name: response.nafn ?? '',
@@ -45,18 +44,14 @@ export const mapDistrictCommissionersAgenciesResponse = (
   }
 }
 
-export const mapCertificateInfo = (
-  response: VottordSkeyti,
-): CertificateInfoResponse => {
+function mapCertificateInfo(response: VottordSkeyti): CertificateInfoResponse {
   return {
     nationalId: response.kennitala,
     expirationDate: response.gildisTimi,
     releaseDate: response.utgafudagur,
   }
 }
-export const mapDataUploadResponse = (
-  response: Skilabod,
-): DataUploadResponse => {
+function mapDataUploadResponse(response: Skilabod): DataUploadResponse {
   return {
     success: response.skilabod === UPLOAD_DATA_SUCCESS,
     message: response.skilabod,
@@ -65,7 +60,7 @@ export const mapDataUploadResponse = (
   }
 }
 
-export const mapHomestay = (homestay: VirkarHeimagistingar): Homestay => {
+function mapHomestay(homestay: VirkarHeimagistingar): Homestay {
   return {
     registrationNumber: homestay.skraningarnumer ?? '',
     name: homestay.heitiHeimagistingar ?? '',
@@ -80,53 +75,53 @@ export const mapHomestay = (homestay: VirkarHeimagistingar): Homestay => {
   }
 }
 
-export const mapSyslumennAuction = (auction: Uppbod): SyslumennAuction => ({
-  office: auction.embaetti ?? '',
-  location: auction.starfsstod ?? '',
-  auctionType: auction.tegund ?? '',
-  lotType: auction?.andlag?.trim() ?? '',
-  lotName: auction.andlagHeiti ?? '',
-  lotId: auction.fastanumer ?? '',
-  lotItems: auction.lausafjarmunir ?? '',
-  auctionDate: auction.dagsetning ? auction.dagsetning.toLocaleString() : '',
-  auctionTime: auction.klukkan ?? '',
-  petitioners: auction.gerdarbeidendur ?? '',
-  respondent: auction.gerdartholar ?? '',
-  auctionTakesPlaceAt: auction.uppbodStadur ?? '',
-})
+function mapSyslumennAuction(auction: Uppbod): SyslumennAuction {
+  return {
+    office: auction.embaetti ?? '',
+    location: auction.starfsstod ?? '',
+    auctionType: auction.tegund ?? '',
+    lotType: auction?.andlag?.trim() ?? '',
+    lotName: auction.andlagHeiti ?? '',
+    lotId: auction.fastanumer ?? '',
+    lotItems: auction.lausafjarmunir ?? '',
+    auctionDate: auction.dagsetning ? auction.dagsetning.toLocaleString() : '',
+    auctionTime: auction.klukkan ?? '',
+    petitioners: auction.gerdarbeidendur ?? '',
+    respondent: auction.gerdartholar ?? '',
+    auctionTakesPlaceAt: auction.uppbodStadur ?? '',
+  }
+}
 
-export const mapOperatingLicense = (
-  operatingLicense: VirkLeyfi,
-): OperatingLicense => ({
-  id: operatingLicense.rowNum,
-  issuedBy: operatingLicense.utgefidAf,
-  licenseNumber: operatingLicense.leyfisnumer,
-  location: operatingLicense.stadur,
-  name: operatingLicense.kallast,
-  street: operatingLicense.gata,
-  postalCode: operatingLicense.postnumer,
-  type: operatingLicense.tegund,
-  type2: operatingLicense.tegund2,
-  restaurantType: operatingLicense.tegundVeitingastadar,
-  validFrom: operatingLicense.gildirFra,
-  validTo: operatingLicense.gildirTil,
-  licenseHolder: operatingLicense.leyfishafi,
-  licenseResponsible: operatingLicense.abyrgdarmadur,
-  category: operatingLicense.flokkur,
-  outdoorLicense: operatingLicense.leyfiTilUtiveitinga,
-  alcoholWeekdayLicense: operatingLicense.afgrAfgengisVirkirdagar,
-  alcoholWeekendLicense: operatingLicense.afgrAfgengisAdfaranottFridaga,
-  alcoholWeekdayOutdoorLicense:
-    operatingLicense.afgrAfgengisVirkirdagarUtiveitingar,
-  alcoholWeekendOutdoorLicense:
-    operatingLicense.afgrAfgengisAdfaranottFridagaUtiveitingar,
-  maximumNumberOfGuests: operatingLicense.hamarksfjoldiGesta,
-  numberOfDiningGuests: operatingLicense.fjoldiGestaIVeitingum,
-})
+function mapOperatingLicense(operatingLicense: VirkLeyfi): OperatingLicense {
+  return {
+    id: operatingLicense.rowNum,
+    issuedBy: operatingLicense.utgefidAf,
+    licenseNumber: operatingLicense.leyfisnumer,
+    location: operatingLicense.stadur,
+    name: operatingLicense.kallast,
+    street: operatingLicense.gata,
+    postalCode: operatingLicense.postnumer,
+    type: operatingLicense.tegund,
+    type2: operatingLicense.tegund2,
+    restaurantType: operatingLicense.tegundVeitingastadar,
+    validFrom: operatingLicense.gildirFra,
+    validTo: operatingLicense.gildirTil,
+    licenseHolder: operatingLicense.leyfishafi,
+    licenseResponsible: operatingLicense.abyrgdarmadur,
+    category: operatingLicense.flokkur,
+    outdoorLicense: operatingLicense.leyfiTilUtiveitinga,
+    alcoholWeekdayLicense: operatingLicense.afgrAfgengisVirkirdagar,
+    alcoholWeekendLicense: operatingLicense.afgrAfgengisAdfaranottFridaga,
+    alcoholWeekdayOutdoorLicense:
+      operatingLicense.afgrAfgengisVirkirdagarUtiveitingar,
+    alcoholWeekendOutdoorLicense:
+      operatingLicense.afgrAfgengisAdfaranottFridagaUtiveitingar,
+    maximumNumberOfGuests: operatingLicense.hamarksfjoldiGesta,
+    numberOfDiningGuests: operatingLicense.fjoldiGestaIVeitingum,
+  }
+}
 
-export const mapPaginationInfo = (
-  paginationInfoHeaderJSON: string,
-): PaginationInfo => {
+function mapPaginationInfo(paginationInfoHeaderJSON: string): PaginationInfo {
   const paginationInfoFromHeader: SyslumennApiPaginationInfo = JSON.parse(
     paginationInfoHeaderJSON,
   )
@@ -141,15 +136,17 @@ export const mapPaginationInfo = (
   }
 }
 
-export const mapPaginatedOperatingLicenses = (
+function mapPaginatedOperatingLicenses(
   searchQuery: string,
   paginationInfoHeaderJSON: string,
   results: VirkLeyfi[],
-): PaginatedOperatingLicenses => ({
-  paginationInfo: mapPaginationInfo(paginationInfoHeaderJSON),
-  searchQuery: searchQuery,
-  results: (results ?? []).map(mapOperatingLicense),
-})
+): PaginatedOperatingLicenses {
+  return {
+    paginationInfo: mapPaginationInfo(paginationInfoHeaderJSON),
+    searchQuery: searchQuery,
+    results: (results ?? []).map(mapOperatingLicense),
+  }
+}
 
 export function constructUploadDataObject(
   id: string,
@@ -207,13 +204,11 @@ function mapPersonEnum(e: PersonType) {
   }
 }
 
-export const mapAssetName = (
-  response: VedbandayfirlitReguverkiSvarSkeyti,
-): AssetName => {
+function mapAssetName(response: VedbandayfirlitReguverkiSvarSkeyti): AssetName {
   return { name: response.heiti ?? '' }
 }
 
-export const estateMemberMapper = (estateRaw: AdiliDanarbus): EstateMember => {
+function estateMemberMapper(estateRaw: AdiliDanarbus): EstateMember {
   return {
     name: estateRaw.nafn ?? '',
     nationalId: estateRaw.kennitala ?? '',
@@ -221,7 +216,7 @@ export const estateMemberMapper = (estateRaw: AdiliDanarbus): EstateMember => {
   }
 }
 
-export const assetMapper = (assetRaw: any): EstateAsset => {
+function assetMapper(assetRaw: any): EstateAsset {
   return {
     description: assetRaw.lysing ?? '',
     assetNumber: assetRaw.fastanumer ?? '',
@@ -229,9 +224,9 @@ export const assetMapper = (assetRaw: any): EstateAsset => {
   }
 }
 
-export const mapEstateRegistrant = (
+function mapEstateRegistrant(
   syslaData: SkraningaradiliDanarbusSkeyti,
-): EstateRegistrant => {
+): EstateRegistrant {
   return {
     applicantEmail: syslaData.tolvuposturSkreningaradila ?? '',
     applicantPhone: syslaData.simiSkraningaradila ?? '',
@@ -278,4 +273,20 @@ export const mapEstateRegistrant = (
       syslaData.buseturetturVegnaKaupleiguIbuda ?? false,
     bankStockOrShares: syslaData.bankareikningarVerdbrefEdaHlutabref ?? false,
   }
+}
+
+export {
+  mapDistrictCommissionersAgenciesResponse,
+  mapCertificateInfo,
+  mapDataUploadResponse,
+  mapHomestay,
+  mapSyslumennAuction,
+  mapOperatingLicense,
+  mapPaginationInfo,
+  mapPaginatedOperatingLicenses,
+  mapPersonEnum,
+  mapAssetName,
+  estateMemberMapper,
+  assetMapper,
+  mapEstateRegistrant,
 }
