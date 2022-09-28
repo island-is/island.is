@@ -287,11 +287,11 @@
       "@island.is/application/templates/transport-authority/anonymity-in-vehicle-registry": [
         "libs/application/templates/transport-authority/anonymity-in-vehicle-registry/src/index.ts"
       ],
-      "@island.is/application/templates/transport-authority/deregister-co-owner-of-vehicle": [
-        "libs/application/templates/transport-authority/deregister-co-owner-of-vehicle/src/index.ts"
+      "@island.is/application/templates/transport-authority/change-co-owner-of-vehicle": [
+        "libs/application/templates/transport-authority/change-co-owner-of-vehicle/src/index.ts"
       ],
-      "@island.is/application/templates/transport-authority/deregister-operator-of-vehicle": [
-        "libs/application/templates/transport-authority/deregister-operator-of-vehicle/src/index.ts"
+      "@island.is/application/templates/transport-authority/change-operator-of-vehicle": [
+        "libs/application/templates/transport-authority/change-operator-of-vehicle/src/index.ts"
       ],
       "@island.is/application/templates/transport-authority/digital-tachograph-company-card": [
         "libs/application/templates/transport-authority/digital-tachograph-company-card/src/index.ts"
@@ -307,12 +307,6 @@
       ],
       "@island.is/application/templates/transport-authority/order-vehicle-registration-certificate": [
         "libs/application/templates/transport-authority/order-vehicle-registration-certificate/src/index.ts"
-      ],
-      "@island.is/application/templates/transport-authority/register-co-owner-of-vehicle": [
-        "libs/application/templates/transport-authority/register-co-owner-of-vehicle/src/index.ts"
-      ],
-      "@island.is/application/templates/transport-authority/register-operator-of-vehicle": [
-        "libs/application/templates/transport-authority/register-operator-of-vehicle/src/index.ts"
       ],
       "@island.is/application/templates/transport-authority/transfer-of-vehicle-ownership": [
         "libs/application/templates/transport-authority/transfer-of-vehicle-ownership/src/index.ts"

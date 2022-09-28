@@ -65,13 +65,13 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import(
       '@island.is/application/templates/transport-authority/anonymity-in-vehicle-registry'
     ),
-  [ApplicationTypes.DEREGISTER_CO_OWNER_OF_VEHICLE]: () =>
+  [ApplicationTypes.CHANGE_CO_OWNER_OF_VEHICLE]: () =>
     import(
-      '@island.is/application/templates/transport-authority/deregister-co-owner-of-vehicle'
+      '@island.is/application/templates/transport-authority/change-co-owner-of-vehicle'
     ),
-  [ApplicationTypes.DEREGISTER_OPERATOR_OF_VEHICLE]: () =>
+  [ApplicationTypes.CHANGE_OPERATOR_OF_VEHICLE]: () =>
     import(
-      '@island.is/application/templates/transport-authority/deregister-operator-of-vehicle'
+      '@island.is/application/templates/transport-authority/change-operator-of-vehicle'
     ),
   [ApplicationTypes.DIGITAL_TACHOGRAPH_COMPANY_CARD]: () =>
     import(
@@ -92,14 +92,6 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
   [ApplicationTypes.ORDER_VEHICLE_REGISTRATION_CERTIFICATE]: () =>
     import(
       '@island.is/application/templates/transport-authority/order-vehicle-registration-certificate'
-    ),
-  [ApplicationTypes.REGISTER_CO_OWNER_OF_VEHICLE]: () =>
-    import(
-      '@island.is/application/templates/transport-authority/register-co-owner-of-vehicle'
-    ),
-  [ApplicationTypes.REGISTER_OPERATOR_OF_VEHICLE]: () =>
-    import(
-      '@island.is/application/templates/transport-authority/register-operator-of-vehicle'
     ),
   [ApplicationTypes.TRANSFER_OF_VEHICLE_OWNERSHIP]: () =>
     import(

@@ -30,15 +30,13 @@ export enum ApplicationTypes {
   OPERATING_LCENSE = 'OperatingLicense',
   DRIVING_LICENSE_DUPLICATE = 'DrivingLicenseDuplicate',
   ANONYMITY_IN_VEHICLE_REGISTRY = 'AnonymityInVehicleRegistry',
-  DEREGISTER_CO_OWNER_OF_VEHICLE = 'DeregisterCoOwnerOfVehicle',
-  DEREGISTER_OPERATOR_OF_VEHICLE = 'DeregisterOperatorOfVehicle',
+  CHANGE_CO_OWNER_OF_VEHICLE = 'ChangeCoOwnerOfVehicle',
+  CHANGE_OPERATOR_OF_VEHICLE = 'ChangeOperatorOfVehicle',
   DIGITAL_TACHOGRAPH_COMPANY_CARD = 'DigitalTachographCompanyCard',
   DIGITAL_TACHOGRAPH_DRIVERS_CARD = 'DigitalTachographDriversCard',
   DIGITAL_TACHOGRAPH_WORKSHOP_CARD = 'DigitalTachographWorkshopCard',
   ORDER_VEHICLE_LICENSE_PLATE = 'OrderVehicleLicensePlate',
   ORDER_VEHICLE_REGISTRATION_CERTIFICATE = 'OrderVehicleRegistrationCertificate',
-  REGISTER_CO_OWNER_OF_VEHICLE = 'RegisterCoOwnerOfVehicle',
-  REGISTER_OPERATOR_OF_VEHICLE = 'RegisterOperatorOfVehicle',
   TRANSFER_OF_VEHICLE_OWNERSHIP = 'TransferOfVehicleOwnership',
 }
 
@@ -167,13 +165,13 @@ export const ApplicationConfigurations = {
     slug: 'nafnleynd-i-okutaekjaskra',
     translation: 'ta.avr.application',
   },
-  [ApplicationTypes.DEREGISTER_CO_OWNER_OF_VEHICLE]: {
-    slug: 'afskra-medeigandi-okutaekis',
-    translation: 'ta.dcov.application',
+  [ApplicationTypes.CHANGE_CO_OWNER_OF_VEHICLE]: {
+    slug: 'breyta-medeigandi-okutaekis',
+    translation: 'ta.ccov.application',
   },
-  [ApplicationTypes.DEREGISTER_OPERATOR_OF_VEHICLE]: {
-    slug: 'afskra-umradamadur-okutaekis',
-    translation: 'ta.dov.application',
+  [ApplicationTypes.CHANGE_OPERATOR_OF_VEHICLE]: {
+    slug: 'breyta-umradamadur-okutaekis',
+    translation: 'ta.cov.application',
   },
   [ApplicationTypes.DIGITAL_TACHOGRAPH_COMPANY_CARD]: {
     slug: 'okuritakort-fyrirtaekjakort',
@@ -194,14 +192,6 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.ORDER_VEHICLE_REGISTRATION_CERTIFICATE]: {
     slug: 'panta-skraningarskirteini',
     translation: 'ta.ovrc.application',
-  },
-  [ApplicationTypes.REGISTER_CO_OWNER_OF_VEHICLE]: {
-    slug: 'skra-medeigandi-okutaekis',
-    translation: 'ta.rcov.application',
-  },
-  [ApplicationTypes.REGISTER_OPERATOR_OF_VEHICLE]: {
-    slug: 'skra-umradamadur-okutaekis',
-    translation: 'ta.rov.application',
   },
   [ApplicationTypes.TRANSFER_OF_VEHICLE_OWNERSHIP]: {
     slug: 'eigendaskipti-okutaekis',

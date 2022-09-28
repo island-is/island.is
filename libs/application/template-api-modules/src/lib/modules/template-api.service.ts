@@ -106,7 +106,6 @@ export class TemplateAPIService {
       | MarriageConditionsSubmissionService
       | FinancialAidService
       | DrivingSchoolConfirmationService
-      | MortgageCertificateSubmissionService
       | PassportService
       | OperatingLicenseService
       | FinancialStatementsInaoTemplateService
