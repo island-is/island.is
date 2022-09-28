@@ -2,7 +2,7 @@ import { getValueViaPath } from '@island.is/application/core'
 import { ExternalData, FormValue } from '@island.is/application/types'
 import subYears from 'date-fns/subYears'
 import getYear from 'date-fns/getYear'
-import { TOTAL, USERTYPE, YES } from '../constants'
+import { TOTAL, USERTYPE } from '../constants'
 
 export const getTotal = (values: Record<string, string>, key: string) => {
   if (!values[key]) {
@@ -22,10 +22,10 @@ export const formatNumber = (num: number) => num.toLocaleString('de-DE')
 export const formatCurrency = (answer: string) =>
   answer.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
 
-export const possibleOperatingYears = () => {
+export const possibleOperatingYears = (yearLimit: string) => {
   const currentDate = new Date()
-
-  const operationYears = Array(4)
+  const backwardsYearLimit = Number(yearLimit)
+  const operationYears = Array(backwardsYearLimit)
     .fill('')
     .map((_, index) => {
       const dateDiff = subYears(currentDate, index + 1)
@@ -47,6 +47,7 @@ export const getCurrentUserType = (
     externalData,
     'getUserType.data.value',
   )
+
   return fakeUserType ? fakeUserType : currentUserType
 }
 

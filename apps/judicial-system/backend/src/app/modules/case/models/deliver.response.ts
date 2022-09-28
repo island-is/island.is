@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger'
 
 export class DeliverResponse {
   @ApiProperty()
-  signedRulingDeliveredToCourt!: boolean
+  rulingDeliveredToCourt!: boolean
 
   @ApiProperty()
   courtRecordDeliveredToCourt!: boolean

@@ -12,7 +12,7 @@
 # that are developed by others teams, we first list down the team working on the core and
 # further below the other team working on other part of the project.
 /apps/application-system/                                                                           @island-is/sendiradid-applications
-/apps/web*/                                                                                         @island-is/juni
+/apps/web*/                                                                                         @island-is/juni @island-is/stefna
 /libs/application/                                                                                  @island-is/sendiradid-applications
 /libs/contentful-extensions/                                                                        @island-is/juni
 /libs/service-portal/                                                                               @island-is/hugsmidjan
@@ -123,7 +123,7 @@
 /libs/regulations/                                                                                  @island-is/hugsmidjan
 
 /libs/application/templates/data-protection-complaint/                                              @island-is/sendiradid
-/libs/application/templates/institution-collaboration/                                              @island-is/sendiradid
+/libs/application/templates/institution-collaboration/                                              @island-is/sendiradid @island-is/fuglar
 /libs/application/templates/login-service/                                                          @island-is/sendiradid
 /libs/application/template-api-modules/src/lib/modules/templates/login-service/                     @island-is/sendiradid
 /libs/clients/payment-schedule/                                                                     @island-is/sendiradid

@@ -612,10 +612,10 @@ export const m = defineMessages({
     defaultMessage: 'Yfirlit ársreiknings',
     description: 'Yearly overview',
   },
-  success: {
-    id: 'fsn.application:success',
+  received: {
+    id: 'fsn.application:received',
     defaultMessage: 'Ársreikningur mótekinn',
-    description: 'financial statement success',
+    description: 'financial statement received',
   },
   dataCollectionCheckboxLabel: {
     id: 'fsn.application:dataCollectionCheckboxLabel',
@@ -631,14 +631,19 @@ export const m = defineMessages({
   lessThanLimit: {
     id: 'fsn.application:lessThanLimit',
     defaultMessage:
-      'Heildartekjur og heildarkostnað við kosningabaráttuna var minni en 550 þúsund krónum.',
+      'Heildartekjur og heildarkostnað við kosningabaráttuna var minni en',
     description: 'Spending was less than a specific limit',
   },
   moreThanLimit: {
     id: 'fsn.application:moreThanLimit',
     defaultMessage:
-      'Heildartekjur og heildarkostnað við kosningabaráttuna var meira en 550 þúsund krónum.',
+      'Heildartekjur og heildarkostnað við kosningabaráttuna var meira en',
     description: 'Spending was more than a specific limit',
+  },
+  crowns: {
+    id: 'fsn.application:crowns',
+    defaultMessage: 'krónum',
+    description: 'crowns',
   },
   campaignCost: {
     id: 'fsn.application:campaignCost',
@@ -653,17 +658,63 @@ export const m = defineMessages({
   applicationAccept: {
     id: 'fsn.application:applicationAccept',
     defaultMessage: 'Umsókn móttekin',
-    description: 'applicaiton accept',
+    description: 'application accept',
   },
   required: {
     id: 'fsn.application:error.required',
     defaultMessage: 'Reitur má ekki vera tómur',
-    description: 'Error message when a required field has not been filled out',
+    description: 'Error message when a required field has not been filled',
   },
   nationalIdError: {
     id: 'fsn.application:error.nationalIdError',
     defaultMessage: 'Kennitala er ekki á réttu formi',
     description: 'Error message when nationalid is wrong',
+  },
+  returned: {
+    id: 'fsn.application:returned',
+    defaultMessage: 'Skilað',
+    description: 'Returned',
+  },
+  individualReceivedMsgFirst: {
+    id: 'fsn.application:individualReceivedMsgFirst',
+    defaultMessage: 'Uppgjör fyrir persónukjör vegna',
+    description: 'First part of audit received message',
+  },
+  individualReceivedMsgSecond: {
+    id: 'fsn.application:individualReceivedMsgSecond',
+    defaultMessage: 'hefur verið skilað þann',
+    description: 'Second part of audit received message',
+  },
+  operatingYearMsgFirst: {
+    id: 'fsn.application:individualReceivedMsgFirst',
+    defaultMessage: 'Ársreikningi fyrir rekstrarárið',
+    description: 'First part of audit received message',
+  },
+  auditReceivedMsgSecond: {
+    id: 'fsn.application:individualReceivedMsgSecond',
+    defaultMessage: 'hefur verið skilað þann',
+    description: 'Second part of audit received message',
+  },
+  fetchErrorTitle: {
+    id: 'fsn.application:fetchErrorMsg',
+    defaultMessage: 'Eitthvað fór úrskeiðiðs',
+    description: 'Error msg title when fetching data fails',
+  },
+  fetchErrorMsg: {
+    id: 'fsn.application:fetchError',
+    defaultMessage: 'Ekki tókst að sækja gögn, reyndur aftur seinna',
+    description: 'Error msg when fetching data fails',
+  },
+  fetchCemetryLimitErrorMsg: {
+    id: 'fsn.application:fetchCemetryLimitErrorMsg',
+    defaultMessage:
+      'Ef skil falla undir lög um ársreikninga sem þarfnast ekki skila, reynið aftur síðar',
+    description: 'Error msg when fetching data fails',
+  },
+  errorDataProvider: {
+    id: 'fsn.application:error.dataProvider',
+    defaultMessage: 'Reyndu aftur síðar',
+    description: 'Unhandled error in data provider',
   },
 })
 

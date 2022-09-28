@@ -23,54 +23,6 @@ export const accused = {
         description:
           'Notaður sem titill fyrir "upplýsingar um verjanda sakborning" hlutann á sakbornings skrefi í gæsluvarðhalds- og farbannsmálum.',
       }),
-      name: defineMessages({
-        label: {
-          id:
-            'judicial.system.restriction_cases:accused.defender_info.name.label',
-          defaultMessage: 'Nafn verjanda',
-          description:
-            'Notaður sem titill í "nafn verjanda" textaboxi á sakbornings skrefi í gæsluvarðhalds- og farbannsmálum.',
-        },
-        placeholder: {
-          id:
-            'judicial.system.restriction_cases:accused.defender_info.name.placeholder',
-          defaultMessage: 'Fullt nafn',
-          description:
-            'Notaður sem skýritexti í "nafn verjanda" textaboxi á sakbornings skrefi í gæsluvarðhalds- og farbannsmálum.',
-        },
-      }),
-      email: defineMessages({
-        label: {
-          id:
-            'judicial.system.restriction_cases:accused.defender_info.email.label',
-          defaultMessage: 'Netfang verjanda',
-          description:
-            'Notaður sem titill í "netfang verjanda" textaboxi á sakbornings skrefi í gæsluvarðhalds- og farbannsmálum.',
-        },
-        placeholder: {
-          id:
-            'judicial.system.restriction_cases:accused.defender_info.email.placeholder',
-          defaultMessage: 'Netfang',
-          description:
-            'Notaður sem skýritexti í "nafn verjanda" textaboxi á sakbornings skrefi í gæsluvarðhalds- og farbannsmálum.',
-        },
-      }),
-      phoneNumber: defineMessages({
-        label: {
-          id:
-            'judicial.system.restriction_cases:accused.defender_info.phoneNumber.label',
-          defaultMessage: 'Símanúmer verjanda',
-          description:
-            'Notaður sem titill í "símanúmer verjanda" textaboxi á sakbornings skrefi í gæsluvarðhalds- og farbannsmálum.',
-        },
-        placeholder: {
-          id:
-            'judicial.system.restriction_cases:accused.defender_info.phone_number.placeholder',
-          defaultMessage: 'Símanúmer',
-          description:
-            'Notaður sem skýritexti í "símanúmer verjanda" textaboxi á sakbornings skrefi í gæsluvarðhalds- og farbannsmálum.',
-        },
-      }),
       sendRequest: defineMessages({
         label: {
           id:

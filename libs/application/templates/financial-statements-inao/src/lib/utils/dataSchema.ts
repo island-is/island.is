@@ -15,7 +15,8 @@ const FileSchema = z.object({
 })
 
 const election = z.object({
-  selectElection: z.string().refine((x) => !!x, { params: m.required }),
+  selectElection: z.string().optional(),
+  electionName: z.string().optional(),
   incomeLimit: z.string().refine((x) => !!x, { params: m.required }),
 })
 
@@ -79,6 +80,10 @@ const cemetryLiability = z.object({
   longTerm: z.string().refine((x) => !!x, { params: m.required }),
   shortTerm: z.string().refine((x) => !!x, { params: m.required }),
   total: z.string().refine((x) => !!x, { params: m.required }),
+})
+
+const cemetryOperation = z.object({
+  incomeLimit: z.string().optional(),
 })
 
 const cemetryIncome = z.object({
@@ -166,6 +171,7 @@ export const dataSchema = z.object({
   cemetryEquity,
   cemetryLiability,
   cemetryCaretaker,
+  cemetryOperation,
   asset,
   equity,
   liability,

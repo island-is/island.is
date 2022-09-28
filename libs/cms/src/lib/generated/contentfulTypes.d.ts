@@ -1304,6 +1304,9 @@ export interface ILifeEventPageFields {
 
   /** see more text */
   seeMoreText?: string | undefined
+
+  /** Page Type */
+  pageType?: 'Life Event' | 'Digital Iceland Service' | undefined
 }
 
 export interface ILifeEventPage extends Entry<ILifeEventPageFields> {

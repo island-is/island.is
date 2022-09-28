@@ -22,14 +22,16 @@ export const GREATER = 'greater'
 export const LESS = 'less'
 export const TOTAL = 'total'
 export const ELECTIONLIMIT = 550000
-export const CARETAKERLIMIT = 300000
 export const INPUTCHANGEINTERVAL = 300
+export const UPDATE_ELECTION_ACTION = 'updateCurrentElection'
 
 export enum USERTYPE {
   INDIVIDUAL = '150000000',
   PARTY = '150000001',
   CEMETRY = '150000002',
 }
+
+export const BACKYEARSLIMITFALLBACK = '1'
 
 export const INDIVIDUAL = 'individual'
 export const PARTY = 'party'
@@ -73,6 +75,7 @@ export const PARTYOPERATIONIDS = {
 export const CEMETRYOPERATIONIDS = {
   prefixIncome: 'cemetryIncome',
   prefixExpense: 'cemetryExpense',
+  incomeLimit: 'cemetryOperation.incomeLimit',
   applicationType: 'cemetryIncome.applicationType',
   caretaking: 'cemetryIncome.caretaking',
   graveIncome: 'cemetryIncome.graveIncome',
@@ -108,6 +111,9 @@ export const CEMETRYCARETAKER = {
 export const ABOUTIDS = {
   operatingYear: 'conditionalAbout.operatingYear',
   applicationType: 'conditionalAbout.applicationType',
+  selectElection: 'election.selectElection',
+  electionName: 'election.electionName',
+  incomeLimit: 'election.incomeLimit',
 }
 
 export const OPERATINGCOST = {
