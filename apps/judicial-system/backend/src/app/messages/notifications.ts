@@ -519,4 +519,19 @@ export const notifications = {
         'Notaður sem texti í tölvupósti vegna breytingar á lengd gæslu/einangrunar/vistunar þar sem úrskurðað var í einangrun.',
     },
   }),
+  defenderAssignedEmail: defineMessages({
+    subject: {
+      id:
+        'judicial.system.backend:notifications.defender_assigned_email.subject',
+      defaultMessage: '{court} - aðgangur að málsgögnum',
+      description:
+        'Fyrirsögn í pósti til verjanda þegar hann er skráður á mál.',
+    },
+    body: {
+      id: 'judicial.system.backend:notifications.defender_assigned_email.body',
+      defaultMessage:
+        '{court} hefur skipað þig verjanda í máli {linkStart}{courtCaseNumber}{linkEnd}. Gögn málsins eru aðgengileg í Réttarvörslugátt með rafrænum skilríkjum.',
+      description: 'Texti í pósti til verjanda þegar hann er skráður á mál.',
+    },
+  }),
 }
