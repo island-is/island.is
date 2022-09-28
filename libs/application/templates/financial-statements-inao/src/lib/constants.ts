@@ -76,6 +76,7 @@ export const PARTYOPERATIONIDS = {
 export const CEMETRYOPERATIONIDS = {
   prefixIncome: 'cemetryIncome',
   prefixExpense: 'cemetryExpense',
+  incomeLimit: 'cemetryIncome.incomeLimit',
   applicationType: 'cemetryIncome.applicationType',
   caretaking: 'cemetryIncome.caretaking',
   graveIncome: 'cemetryIncome.graveIncome',
