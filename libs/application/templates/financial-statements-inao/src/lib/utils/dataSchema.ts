@@ -82,6 +82,10 @@ const cemetryLiability = z.object({
   total: z.string().refine((x) => !!x, { params: m.required }),
 })
 
+const cemetryOperation = z.object({
+  incomeLimit: z.string().optional(),
+})
+
 const cemetryIncome = z.object({
   caretaking: z.string().refine((x) => !!x, { params: m.required }),
   graveIncome: z.string().refine((x) => !!x, { params: m.required }),
@@ -167,6 +171,7 @@ export const dataSchema = z.object({
   cemetryEquity,
   cemetryLiability,
   cemetryCaretaker,
+  cemetryOperation,
   asset,
   equity,
   liability,
