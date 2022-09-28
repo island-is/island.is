@@ -83,11 +83,11 @@ export const routesTemplate = {
   },
   apicataloguedetailpage: {
     is: '/s/stafraent-island/vefthjonustur/[slug]',
-    en: '',
+    en: '/en/o/digital-iceland/webservices/[slug]',
   },
   apicataloguepage: {
     is: '/s/stafraent-island/vefthjonustur',
-    en: '',
+    en: '/en/o/digital-iceland/webservices',
   },
   organizationnews: {
     is: '/s/[organization]/frett/[slug]',
@@ -157,22 +157,6 @@ export const routesTemplate = {
   login: {
     is: '/innskraning',
     en: '/en/login',
-  },
-  webservicedetailpage: {
-    is: '/throun/vefthjonustur/[slug]',
-    en: '/en/developers/webservices/[slug]',
-  },
-  webservicespage: {
-    is: '/throun/vefthjonustur',
-    en: '/en/developers/webservices',
-  },
-  handbookpage: {
-    is: '/throun/handbok',
-    en: '/en/developers/handbook',
-  },
-  developerspage: {
-    is: '/throun',
-    en: '/en/developers',
   },
   subarticle: {
     is: '/[slug]/[subSlug]',

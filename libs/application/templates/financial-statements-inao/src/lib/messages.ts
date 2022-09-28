@@ -705,6 +705,11 @@ export const m = defineMessages({
     defaultMessage: 'Ekki tókst að sækja gögn, reyndur aftur seinna',
     description: 'Error msg when fetching data fails',
   },
+  errorDataProvider: {
+    id: 'fsn.application:error.dataProvider',
+    defaultMessage: 'Reyndu aftur síðar',
+    description: 'Unhandled error in data provider',
+  },
 })
 
 export default m
