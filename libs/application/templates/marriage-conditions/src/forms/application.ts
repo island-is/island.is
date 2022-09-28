@@ -1,8 +1,6 @@
 import {
   buildForm,
   buildSection,
-  buildExternalDataProvider,
-  buildDataProviderItem,
   buildMultiField,
   buildCustomField,
   buildTextField,
@@ -13,6 +11,7 @@ import {
   buildSelectField,
   getValueViaPath,
   buildDateField,
+  buildExternalDataProvider,
 } from '@island.is/application/core'
 import {
   Form,
@@ -33,6 +32,7 @@ import {
 import { UserProfile } from '../types/schema'
 import { removeCountryCode } from '../lib/utils'
 import { fakeDataSection } from './fakeDataSection'
+import { dataCollection } from './sharedSections/dataCollection'
 
 export const getApplication = ({ allowFakeData = false }): Form => {
   return buildForm({
@@ -70,37 +70,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
             subTitle: m.dataCollectionSubtitle,
             description: m.dataCollectionDescription,
             checkboxLabel: m.dataCollectionCheckboxLabel,
-            dataProviders: [
-              buildDataProviderItem({
-                id: 'nationalRegistry',
-                type: 'NationalRegistryProvider',
-                title: m.dataCollectionNationalRegistryTitle,
-                subTitle: m.dataCollectionNationalRegistrySubtitle,
-              }),
-              buildDataProviderItem({
-                id: 'userProfile',
-                type: 'UserProfileProvider',
-                title: m.dataCollectionUserProfileTitle,
-                subTitle: m.dataCollectionUserProfileSubtitle,
-              }),
-              buildDataProviderItem({
-                id: 'birthCertificate',
-                type: '',
-                title: m.dataCollectionBirthCertificateTitle,
-                subTitle: m.dataCollectionBirthCertificateDescription,
-              }),
-              buildDataProviderItem({
-                id: 'maritalStatus',
-                type: 'NationalRegistryMaritalStatusProvider',
-                title: m.dataCollectionMaritalStatusTitle,
-                subTitle: m.dataCollectionMaritalStatusDescription,
-              }),
-              buildDataProviderItem({
-                id: 'districtCommissioners',
-                type: 'DistrictsProvider',
-                title: '',
-              }),
-            ],
+            dataProviders: dataCollection,
           }),
         ],
       }),
@@ -361,7 +331,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
             ],
           }),
           buildSubSection({
-            id: 'info2',
+            id: 'infoWitnesses',
             title: m.informationWitnessTitle,
             children: [
               buildMultiField({
@@ -395,7 +365,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                   }),
                   buildDescriptionField({
                     id: 'header4',
-                    title: m.informationWitness1,
+                    title: m.informationWitness2,
                     titleVariant: 'h4',
                     space: 'gutter',
                   }),

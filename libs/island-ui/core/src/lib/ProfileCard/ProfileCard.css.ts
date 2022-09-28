@@ -9,8 +9,13 @@ export const image = style({
 })
 
 export const titleAboveContainer = style({
-  display: 'flex',
-  justifyContent: 'center',
+  textAlign: 'center',
   padding: '32px 24px',
   backgroundColor: theme.color.blue100,
+})
+
+export const link = style({
+  position: 'absolute',
+  bottom: '24px',
+  left: '24px',
 })

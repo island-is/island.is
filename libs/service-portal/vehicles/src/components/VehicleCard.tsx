@@ -1,5 +1,4 @@
 import { VehiclesVehicle } from '@island.is/api/schema'
-import { ActionCard } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import React, { FC } from 'react'
@@ -7,6 +6,7 @@ import { useHistory } from 'react-router-dom'
 import { formatDate } from '@island.is/service-portal/core'
 import differenceInMonths from 'date-fns/differenceInMonths'
 import { messages } from '../lib/messages'
+import { ActionCard } from '@island.is/service-portal/core'
 
 interface Props {
   vehicle: VehiclesVehicle
@@ -32,7 +32,6 @@ export const VehicleCard: FC<Props> = ({ vehicle }) => {
   return (
     <ActionCard
       heading={heading}
-      headingVariant="h4"
       text={text}
       tag={
         vehicle?.nextInspection?.nextInspectionDate

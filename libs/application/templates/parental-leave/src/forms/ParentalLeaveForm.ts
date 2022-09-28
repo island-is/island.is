@@ -178,7 +178,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   value: YES,
                 },
                 {
-                  label: parentalLeaveFormMessages.shared.noOptionLabel,
+                  label: parentalLeaveFormMessages.rightOfAccess.noOption,
                   dataTestId: 'no-option',
                   value: NO,
                 },
@@ -309,33 +309,21 @@ export const ParentalLeaveForm: Form = buildForm({
           id: 'personalAllowanceSubSection',
           title: parentalLeaveFormMessages.personalAllowance.title,
           children: [
-            buildRadioField({
-              id: 'usePersonalAllowance',
-              title: parentalLeaveFormMessages.personalAllowance.useYours,
-              width: 'half',
-              options: [
-                {
-                  label: parentalLeaveFormMessages.shared.yesOptionLabel,
-                  dataTestId: 'use-personal-finance',
-                  value: YES,
-                },
-                {
-                  label: parentalLeaveFormMessages.shared.noOptionLabel,
-                  dataTestId: 'dont-use-personal-finance',
-                  value: NO,
-                },
-              ],
-            }),
             buildMultiField({
               id: 'personalAllowance',
-              condition: (answers) => answers.usePersonalAllowance === YES,
               title: parentalLeaveFormMessages.personalAllowance.title,
               description:
                 parentalLeaveFormMessages.personalAllowance.description,
               children: [
                 buildCustomField({
+                  component: 'PersonalAllowance',
+                  id: 'usePersonalAllowance',
+                  title: parentalLeaveFormMessages.personalAllowance.useYours,
+                }),
+                buildCustomField({
                   component: 'PersonalUseAsMuchAsPossible',
                   id: 'personalAllowance.useAsMuchAsPossible',
+                  condition: (answers) => answers.usePersonalAllowance === YES,
                   title:
                     parentalLeaveFormMessages.personalAllowance
                       .useAsMuchAsPossible,
@@ -357,41 +345,35 @@ export const ParentalLeaveForm: Form = buildForm({
                 }),
               ],
             }),
-            buildRadioField({
-              id: 'usePersonalAllowanceFromSpouse',
-              title: parentalLeaveFormMessages.personalAllowance.useFromSpouse,
-              condition: (answers, externalData) => {
-                const selectedChild = getSelectedChild(answers, externalData)
-
-                return (
-                  selectedChild?.parentalRelation ===
-                    ParentalRelations.primary && allowOtherParent(answers)
-                )
-              },
-              width: 'half',
-              options: [
-                {
-                  label: parentalLeaveFormMessages.shared.yesOptionLabel,
-                  value: YES,
-                },
-                {
-                  label: parentalLeaveFormMessages.shared.noOptionLabel,
-                  value: NO,
-                },
-              ],
-            }),
             buildMultiField({
               id: 'personalAllowanceFromSpouse',
-              condition: (answers) =>
-                answers.usePersonalAllowanceFromSpouse === YES &&
-                allowOtherParent(answers),
               title: parentalLeaveFormMessages.personalAllowance.spouseTitle,
               description:
                 parentalLeaveFormMessages.personalAllowance.spouseDescription,
               children: [
                 buildCustomField({
+                  component: 'PersonalAllowance',
+                  id: 'usePersonalAllowanceFromSpouse',
+                  title:
+                    parentalLeaveFormMessages.personalAllowance.useFromSpouse,
+                  condition: (answers, externalData) => {
+                    const selectedChild = getSelectedChild(
+                      answers,
+                      externalData,
+                    )
+
+                    return (
+                      selectedChild?.parentalRelation ===
+                        ParentalRelations.primary && allowOtherParent(answers)
+                    )
+                  },
+                }),
+                buildCustomField({
                   component: 'SpouseUseAsMuchAsPossible',
                   id: 'personalAllowanceFromSpouse.useAsMuchAsPossible',
+                  condition: (answers) =>
+                    answers.usePersonalAllowanceFromSpouse === YES &&
+                    allowOtherParent(answers),
                   title:
                     parentalLeaveFormMessages.personalAllowance
                       .useAsMuchAsPossibleFromSpouse,

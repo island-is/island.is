@@ -177,7 +177,7 @@ export class CaseController {
     ) {
       // The court case number has changed, so the request must be uploaded to the new court case
       // No need to wait
-      this.caseService.uploadRequestPdfToCourt(updatedCase, user)
+      this.caseService.uploadProsecutorDocumentsToCourt(updatedCase, user)
     }
 
     return updatedCase

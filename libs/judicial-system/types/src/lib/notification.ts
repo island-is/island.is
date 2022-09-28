@@ -6,6 +6,7 @@ export enum NotificationType {
   RULING = 'RULING',
   MODIFIED = 'MODIFIED',
   REVOKED = 'REVOKED',
+  DEFENDER_ASSIGNED = 'DEFENDER_ASSIGNED',
 }
 
 export interface Notification {

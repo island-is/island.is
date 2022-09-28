@@ -8,6 +8,7 @@ import {
   Gender,
   CaseType,
   isRestrictionCase,
+  isIndictmentCase,
 } from '@island.is/judicial-system/types'
 
 const getAsDate = (date: Date | string | undefined | null): Date => {
@@ -269,4 +270,14 @@ export const displayFirstPlusRemaining = (
   }
 
   return `${list[0]} +${list.length - 1}`
+}
+
+export const formatDefenderRoute = (
+  baseUrl: string,
+  caseType: CaseType,
+  id: string,
+) => {
+  return `${baseUrl}/verjandi${
+    isIndictmentCase(caseType) ? '/akaera' : ''
+  }/${id}`
 }

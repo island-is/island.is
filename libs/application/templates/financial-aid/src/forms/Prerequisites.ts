@@ -35,18 +35,18 @@ export const Prerequisites: Form = buildForm({
               title: m.externalData.applicant.title,
               subTitle: m.externalData.applicant.subTitle,
             }),
-            // buildDataProviderItem({
-            //   id: 'veita',
-            //   type: DataProviderTypes.Veita,
-            //   title: '',
-            //   subTitle: undefined,
-            // }),
-            // buildDataProviderItem({
-            //   id: 'taxDataFetch',
-            //   type: DataProviderTypes.TaxDataFetch,
-            //   title: m.externalData.taxData.title,
-            //   subTitle: m.externalData.taxData.dataInfo,
-            // }),
+            buildDataProviderItem({
+              id: 'veita',
+              type: DataProviderTypes.Veita,
+              title: '',
+              subTitle: undefined,
+            }),
+            buildDataProviderItem({
+              id: 'taxDataFetch',
+              type: DataProviderTypes.TaxDataFetch,
+              title: m.externalData.taxData.title,
+              subTitle: m.externalData.taxData.dataInfo,
+            }),
             buildDataProviderItem({
               id: 'moreTaxInfo',
               type: undefined,
