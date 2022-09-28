@@ -4,6 +4,7 @@ import {
   LicenseData,
   LicenseInfo,
 } from '@island.is/clients/firearm-license'
+import isAfter from 'date-fns/isAfter'
 import format from 'date-fns/format'
 import { format as formatSsn } from 'kennitala'
 import {
@@ -20,6 +21,10 @@ export const parseFirearmLicensePayload = (
 ): GenericUserLicensePayload | null => {
   const { licenseInfo, properties, categories } = licenseData
 
+  const expired = licenseInfo?.expirationDate
+    ? !isAfter(new Date(licenseInfo.expirationDate), new Date())
+    : false
+  console.log('FIREARM LICENSE', licenseData)
   if (!licenseInfo) return null
 
   const data: Array<GenericLicenseDataField> = [
@@ -87,7 +92,7 @@ export const parseFirearmLicensePayload = (
     rawData: JSON.stringify(licenseData),
     metadata: {
       licenseNumber: licenseData.licenseInfo?.licenseNumber?.toString() ?? '',
-      expired: false,
+      expired,
     },
   }
 }
