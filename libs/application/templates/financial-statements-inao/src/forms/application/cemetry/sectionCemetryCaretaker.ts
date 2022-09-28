@@ -20,11 +20,11 @@ export const sectionCemetryCaretaker = buildSection({
       return false
     }
     const applicationAnswers = answers as FinancialStatementsInao
-    const careTakerLimit = applicationAnswers.cemetryIncome?.incomeLimit ?? '0'
+    const careTakerLimit =
+      applicationAnswers.cemetryOperation?.incomeLimit ?? '0'
     const currentAssets = applicationAnswers.cemetryAsset?.current
     const totalIncome = applicationAnswers.operatingCost?.total
     const longTermDebt = applicationAnswers.cemetryLiability?.longTerm
-    // currently the limit is always 0 using '<=' for testing change to '<'
     const isUnderLimit =
       currencyStringToNumber(totalIncome) <= Number(careTakerLimit)
     return isUnderLimit && currentAssets === '0' && longTermDebt === '0'

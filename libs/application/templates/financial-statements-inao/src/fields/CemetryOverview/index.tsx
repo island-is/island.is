@@ -24,7 +24,7 @@ export const CemetryOverview = ({ application }: FieldBaseProps) => {
 
   const answers = application.answers as FinancialStatementsInao
   const fileName = answers.attachment?.file?.[0]?.name
-  const careTakerLimit = answers.cemetryIncome.incomeLimit ?? '0'
+  const careTakerLimit = answers.cemetryOperation.incomeLimit ?? '0'
 
   return (
     <Box marginBottom={2}>
@@ -254,7 +254,7 @@ export const CemetryOverview = ({ application }: FieldBaseProps) => {
         </GridRow>
       </Box>
       <Divider />
-      {parseInt(answers.cemetryIncome?.total, 10) <= Number(careTakerLimit) &&
+      {parseInt(answers.cemetryIncome?.total, 10) < Number(careTakerLimit) &&
       answers.cemetryCaretaker?.length > 0 ? (
         <Fragment>
           <Box className={starterColumnStyle}>

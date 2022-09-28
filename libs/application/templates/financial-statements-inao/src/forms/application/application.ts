@@ -85,9 +85,8 @@ export const getApplication = (allowFakeData = false): Form => {
             condition: (answers, externalData) => {
               const userType = getCurrentUserType(answers, externalData)
               const applicationAnswers = answers as FinancialStatementsInao
-              // currently the limit is always 0 using '<=' for testing change to '<'
               const careTakerLimit =
-                applicationAnswers.cemetryIncome?.incomeLimit ?? '0'
+                applicationAnswers.cemetryOperation?.incomeLimit ?? '0'
               const currentAssets = applicationAnswers.cemetryAsset?.current
               const isCemetry = userType === USERTYPE.CEMETRY
               const totalIncome = isCemetry
