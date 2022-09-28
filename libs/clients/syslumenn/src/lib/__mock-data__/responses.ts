@@ -1,3 +1,4 @@
+import { PropertyDetail } from '@island.is/api/domains/assets'
 import {
   Uppbod,
   VirkarHeimagistingar,
@@ -106,7 +107,7 @@ export const DATA_UPLOAD: Skilabod = {
   malsnumer: 'string',
 }
 
-export const VEDBANDAYFIRLRIT_REGLUVERKI_RESPONSE: Array<VedbandayfirlitReguverkiSvarSkeyti> = [
+export const VEDBANDAYFIRLIT_REGLUVERKI_RESPONSE: Array<VedbandayfirlitReguverkiSvarSkeyti> = [
   {
     fastnum: 'string',
     landNr: 123456,
@@ -173,9 +174,25 @@ export const MORTGAGE_CERTIFICATE_MESSAGE_NO_KMARKING =
   'Ekki hægt að afgreiða vedbokarvottord'
 
 export const REAL_ESTATE_ADDRESS_NAME = 'Hvergiland'
-
 export const REAL_ESTATE_ADDRESS: Array<AssetName> = [
   {
     name: REAL_ESTATE_ADDRESS_NAME,
   },
 ]
+
+export const MOCK_PROPERTY_OWNERS = [
+  { name: 'Jane Doe', ssn: '0101302989', ownership: 70 },
+  { name: 'John Doe', ssn: '0101303019', ownership: 30 },
+]
+export const MOCK_PROPERTY_NUMBER_OK = '2003292'
+export const MOCK_PROPERTY_NUMBER_NO_KMARKING = '2038390'
+export const MOCK_PROPERTY_NUMBER_NOT_EXISTS = '12345678'
+export const MOCK_PROPERTY_NUMBER_INVALID = 'abcdefgh'
+export const MOCK_PROPERTY_DETAIL: PropertyDetail = {
+  registeredOwners: {
+    registeredOwners: MOCK_PROPERTY_OWNERS,
+  },
+  defaultAddress: { display: REAL_ESTATE_ADDRESS_NAME },
+  propertyNumber: MOCK_PROPERTY_NUMBER_OK,
+  unitsOfUse: { unitsOfUse: [{ unitOfUseNumber: '3' }] },
+}

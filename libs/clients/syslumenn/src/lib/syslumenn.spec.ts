@@ -1,12 +1,7 @@
 import { Test } from '@nestjs/testing'
 import { SyslumennService } from './syslumennClient.service'
 import { startMocking } from '@island.is/shared/mocking'
-import {
-  requestHandlers,
-  MOCK_PROPERTY_NUMBER_OK,
-  MOCK_PROPERTY_NUMBER_NO_KMARKING,
-  MOCK_PROPERTY_NUMBER_NOT_EXISTS,
-} from './__mock-data__/requestHandlers'
+import { requestHandlers } from './__mock-data__/requestHandlers'
 import {
   VHSUCCESS,
   OPERATING_LICENSE,
@@ -15,6 +10,10 @@ import {
   REAL_ESTATE_ADDRESS,
   MORTGAGE_CERTIFICATE_CONTENT_NO_KMARKING,
   ESTATE_REGISTRANT_RESPONSE,
+  MOCK_PROPERTY_DETAIL,
+  MOCK_PROPERTY_NUMBER_OK,
+  MOCK_PROPERTY_NUMBER_NOT_EXISTS,
+  MOCK_PROPERTY_NUMBER_NO_KMARKING,
 } from './__mock-data__/responses'
 import {
   mapHomestay,
@@ -146,12 +145,16 @@ describe('SyslumennService', () => {
 
   describe('getRealEstateAddress', () => {
     it('should return address for valid realEstateId', async () => {
-      const response = await service.getRealEstateAddress('012345')
+      const response = await service.getRealEstateAddress(
+        MOCK_PROPERTY_NUMBER_OK,
+      )
       expect(response).toStrictEqual(REAL_ESTATE_ADDRESS)
     })
 
     it('should return error for invalid realEstateId', async () => {
-      const response = await service.getRealEstateAddress('abcdefg')
+      const response = await service.getRealEstateAddress(
+        MOCK_PROPERTY_NUMBER_NOT_EXISTS,
+      )
       expect(response).toStrictEqual([])
     })
   })
@@ -213,16 +216,30 @@ describe('SyslumennService', () => {
 
   describe('getPropertyDetails', () => {
     it('details has address', async () => {
-      const res = await service.getPropertyDetails('F123456')
-      expect(res.defaultAddress?.display).toStrictEqual('Neverland')
+      const res = await service.getPropertyDetails(MOCK_PROPERTY_NUMBER_OK)
+      expect(res.defaultAddress?.display).toStrictEqual(
+        MOCK_PROPERTY_DETAIL.defaultAddress?.display,
+      )
     })
 
     it('unitsOfUse is nullish if user is not owner', async () => {
-      // TODO
+      const res = await service.getPropertyDetails(MOCK_PROPERTY_NUMBER_OK)
+      const resUnitsOfUse = (res.unitsOfUse?.unitsOfUse ?? [{}])[0]
+        .unitOfUseNumber
+      expect(resUnitsOfUse).toBeUndefined()
+    })
+
+    it('unitsOfUse is valid if user is owner', async () => {
+      const res = await service.getPropertyDetails(MOCK_PROPERTY_NUMBER_OK)
+      const mockUnitsOfUse = MOCK_PROPERTY_DETAIL.unitsOfUse!.unitsOfUse![0]
+        .unitOfUseNumber
+      const resUnitsOfUse = res.unitsOfUse?.unitsOfUse![0].unitOfUseNumber
+      expect(resUnitsOfUse).toStrictEqual(mockUnitsOfUse)
     })
 
     it('not found for invalid propertyNumber', async () => {
-      // TODO
+      const res = service.getPropertyDetails(MOCK_PROPERTY_NUMBER_NOT_EXISTS)
+      await expect(res).rejects.toThrowError()
     })
   })
 })

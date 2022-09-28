@@ -8,17 +8,18 @@ import {
   DATA_UPLOAD,
   OPERATING_LICENSE_SERVICE_RES,
   OPERATING_LICENSE_PAGINATION_INFO_SERVICE_RES,
-  VEDBANDAYFIRLRIT_REGLUVERKI_RESPONSE,
+  VEDBANDAYFIRLIT_REGLUVERKI_RESPONSE,
   MORTGAGE_CERTIFICATE_CONTENT_OK,
   MORTGAGE_CERTIFICATE_CONTENT_NO_KMARKING,
   MORTGAGE_CERTIFICATE_MESSAGE_NO_KMARKING,
   REAL_ESTATE_ADDRESS_NAME,
   ESTATE_REGISTRANT_RESPONSE,
+  MOCK_PROPERTY_NUMBER_NOT_EXISTS,
+  MOCK_PROPERTY_NUMBER_NO_KMARKING,
+  MOCK_PROPERTY_NUMBER_OK,
+  MOCK_PROPERTY_DETAIL,
+  MOCK_PROPERTY_NUMBER_INVALID,
 } from './responses'
-
-export const MOCK_PROPERTY_NUMBER_OK = 'F2003292'
-export const MOCK_PROPERTY_NUMBER_NO_KMARKING = 'F2038390'
-export const MOCK_PROPERTY_NUMBER_NOT_EXISTS = 'F12345678'
 
 const url = (path: string) => {
   return new URL(path, 'http://localhost').toString()
@@ -90,15 +91,24 @@ export const requestHandlers = [
   rest.post(url('/api/VedbokavottordRegluverki'), (req, res, ctx) => {
     const body = req.body as VedbandayfirlitSkeyti
     const assetId = body.fastanumer ?? ''
-    const response = VEDBANDAYFIRLRIT_REGLUVERKI_RESPONSE
+    const response = VEDBANDAYFIRLIT_REGLUVERKI_RESPONSE
     switch ((body.tegundAndlags as number) ?? -1) {
       case AssetType.RealEstate: {
-        if (!/f?\d+/.test(assetId)) return res(ctx.status(404), ctx.json([]))
-        response[0].heiti = REAL_ESTATE_ADDRESS_NAME
-        return res(ctx.status(200), ctx.json(response))
+        switch (assetId) {
+          case MOCK_PROPERTY_NUMBER_OK: {
+            response[0].heiti = REAL_ESTATE_ADDRESS_NAME
+            return res(ctx.status(200), ctx.json(response))
+          }
+          case MOCK_PROPERTY_NUMBER_NOT_EXISTS: {
+            return res(ctx.status(404), ctx.json([]))
+          }
+          default: {
+            return res(ctx.status(500), ctx.json([]))
+          }
+        }
       }
       default: {
-        response[0].heiti = 'INVALIDE'
+        response[0].heiti = 'INVALID'
         return res(ctx.status(200), ctx.json(response))
       }
     }
