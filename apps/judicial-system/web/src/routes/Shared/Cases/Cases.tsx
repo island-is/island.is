@@ -176,9 +176,13 @@ export const Cases: React.FC = () => {
           getInvestigationCaseCourtSections(caseToOpen, user),
         ).href
       } else {
-        // Route to Indictment Overivew section since it always a valid step and
+        // Route to Indictment Overview section since it always a valid step and
         // would be skipped if we route to the last valid step
-        routeTo = getIndictmentsCourtSections(caseToOpen).children[0].href
+        const routeToOpen =
+          getIndictmentsCourtSections(caseToOpen).children[0]?.href ||
+          `${constants.INDICTMENTS_COURT_OVERVIEW_ROUTE}/${caseToOpen.id}`
+
+        routeTo = routeToOpen
       }
     } else {
       if (isRestrictionCase(caseToOpen.type)) {
@@ -190,9 +194,12 @@ export const Cases: React.FC = () => {
           getInvestigationCaseProsecutorSection(caseToOpen, user),
         ).href
       } else {
-        routeTo = findLastValidStep(
+        const lastValidStep = findLastValidStep(
           getIndictmentCaseProsecutorSection(caseToOpen),
-        ).href
+        )
+        routeTo =
+          lastValidStep?.href ??
+          `${constants.INDICTMENTS_OVERVIEW_ROUTE}/${caseToOpen.id}`
       }
     }
 

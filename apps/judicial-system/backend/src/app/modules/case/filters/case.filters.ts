@@ -18,31 +18,49 @@ import { Case } from '../models/case.model'
 
 const hideArchived = { isArchived: false }
 
+function getAllowedStates(
+  role: UserRole,
+  institutionType?: InstitutionType,
+): CaseState[] {
+  if (role === UserRole.PROSECUTOR) {
+    return [
+      CaseState.NEW,
+      CaseState.DRAFT,
+      CaseState.SUBMITTED,
+      CaseState.RECEIVED,
+      CaseState.ACCEPTED,
+      CaseState.REJECTED,
+      CaseState.DISMISSED,
+    ]
+  }
+
+  if (institutionType === InstitutionType.COURT) {
+    return [
+      CaseState.DRAFT,
+      CaseState.SUBMITTED,
+      CaseState.RECEIVED,
+      CaseState.ACCEPTED,
+      CaseState.REJECTED,
+      CaseState.DISMISSED,
+    ]
+  }
+
+  if (institutionType === InstitutionType.HIGH_COURT) {
+    return [CaseState.ACCEPTED, CaseState.REJECTED, CaseState.DISMISSED]
+  }
+
+  return [CaseState.ACCEPTED]
+}
+
 function getBlockedStates(
   role: UserRole,
   institutionType?: InstitutionType,
 ): CaseState[] {
-  const blockedStates = [CaseState.DELETED]
+  const allowedStates = getAllowedStates(role, institutionType)
 
-  if (role === UserRole.PROSECUTOR) {
-    return blockedStates
-  }
-
-  blockedStates.push(CaseState.NEW)
-
-  if (institutionType === InstitutionType.COURT) {
-    return blockedStates
-  }
-
-  blockedStates.push(CaseState.DRAFT, CaseState.SUBMITTED, CaseState.RECEIVED)
-
-  if (institutionType === InstitutionType.HIGH_COURT) {
-    return blockedStates
-  }
-
-  blockedStates.push(CaseState.REJECTED, CaseState.DISMISSED)
-
-  return blockedStates
+  return Object.values(CaseState).filter(
+    (state) => !allowedStates.includes(state as CaseState),
+  )
 }
 
 function prosecutorsOfficeMustMatchUserInstitution(role: UserRole): boolean {
@@ -61,38 +79,35 @@ function isStateHiddenFromRole(
   return getBlockedStates(role, institutionType).includes(state)
 }
 
-function getBlockedTypes(
+function getAllowedTypes(
   role: UserRole,
   forUpdate: boolean,
   institutionType?: InstitutionType,
 ): CaseType[] {
-  const blockedTypes: CaseType[] = []
-
-  if (role !== UserRole.STAFF) {
-    return blockedTypes
+  if (role === UserRole.ADMIN) {
+    return [] // admins should only handle user management
   }
 
-  blockedTypes.push(...indictmentCases, ...investigationCases)
-
-  const isPrisonAdmin = institutionType === InstitutionType.PRISON_ADMIN
-
-  if (forUpdate) {
-    if (isPrisonAdmin) {
-      blockedTypes.push(CaseType.TRAVEL_BAN)
-    } else {
-      blockedTypes.push(...restrictionCases)
-    }
-
-    return blockedTypes
+  if (
+    [
+      UserRole.JUDGE,
+      UserRole.REGISTRAR,
+      UserRole.PROSECUTOR,
+      UserRole.DEFENDER,
+    ].includes(role)
+  ) {
+    return [...indictmentCases, ...investigationCases, ...restrictionCases]
   }
 
-  if (isPrisonAdmin) {
-    return blockedTypes
+  if (institutionType === InstitutionType.PRISON_ADMIN) {
+    return [
+      CaseType.CUSTODY,
+      CaseType.ADMISSION_TO_FACILITY,
+      ...(forUpdate ? [] : [CaseType.TRAVEL_BAN]),
+    ]
   }
 
-  blockedTypes.push(CaseType.TRAVEL_BAN)
-
-  return blockedTypes
+  return forUpdate ? [] : [CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY]
 }
 
 function isTypeHiddenFromRole(
@@ -101,7 +116,7 @@ function isTypeHiddenFromRole(
   forUpdate: boolean,
   institutionType?: InstitutionType,
 ): boolean {
-  return getBlockedTypes(role, forUpdate, institutionType).includes(type)
+  return !getAllowedTypes(role, forUpdate, institutionType).includes(type)
 }
 
 function isDecisionHiddenFromInstitution(

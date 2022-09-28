@@ -1,17 +1,13 @@
 import React from 'react'
 import { gql, useQuery } from '@apollo/client'
 
-import {
-  ActionCard,
-  Box,
-  SkeletonLoader,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, SkeletonLoader, Text } from '@island.is/island-ui/core'
 import { useHistory } from 'react-router-dom'
 import { Query } from '@island.is/api/schema'
 import { ServicePortalPath, EmptyState } from '@island.is/service-portal/core'
 import { defineMessage } from 'react-intl'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import { ActionCard } from '@island.is/service-portal/core'
 
 const EducationExamFamilyOverviewsQuery = gql`
   query EducationExamFamilyOverviewsQuery {
