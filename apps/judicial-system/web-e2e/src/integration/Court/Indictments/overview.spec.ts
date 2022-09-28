@@ -1,5 +1,10 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { Case, CaseState, CaseType } from '@island.is/judicial-system/types'
+import {
+  Case,
+  CaseFileCategory,
+  CaseState,
+  CaseType,
+  UserRole,
+} from '@island.is/judicial-system/types'
 import {
   INDICTMENTS_COURT_OVERVIEW_ROUTE,
   INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE,
@@ -20,15 +25,20 @@ describe(`${INDICTMENTS_COURT_OVERVIEW_ROUTE}/:id`, () => {
   beforeEach(() => {
     const caseDataAddition: Case = {
       ...caseData,
-      creatingProsecutor: creatingProsecutor,
-      prosecutor: prosecutor,
+      creatingProsecutor,
+      prosecutor,
       state: CaseState.RECEIVED,
-      caseFiles: [makeCaseFile(caseData.id, 'test.pdf')],
+      caseFiles: [
+        makeCaseFile({ caseId: caseData.id, name: 'test.pdf' }),
+        makeCaseFile({ category: CaseFileCategory.COURT_RECORD }),
+        makeCaseFile({ category: CaseFileCategory.RULING }),
+      ],
       policeCaseNumbers: ['007-2022-01', '007-2022-02'],
     }
 
     cy.stubAPIResponses()
     intercept(caseDataAddition)
+    cy.login(UserRole.JUDGE)
     cy.visit(`${INDICTMENTS_COURT_OVERVIEW_ROUTE}/test_id_stadfest`)
   })
 
@@ -47,6 +57,10 @@ describe(`${INDICTMENTS_COURT_OVERVIEW_ROUTE}/:id`, () => {
     cy.getByTestid('infoCardDataContainer4').contains('Skattalagabrot')
 
     cy.getByTestid('PDFButton').contains('test.pdf')
+  })
+
+  it('should list all case files, including COURT_RECORD and RULING', () => {
+    cy.get('[data-testid="PDFButton"]').should('have.length', 3)
   })
 
   it('should navigate to the next page when the next button is clicked', () => {

@@ -1,6 +1,5 @@
 import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
-import router from 'next/router'
 import Link from 'next/link'
 import getConfig from 'next/config'
 
@@ -39,7 +38,7 @@ const HeaderContainer: React.FC = () => {
     !user || !isAuthenticated
       ? '/'
       : user.role === UserRole.DEFENDER
-      ? `${constants.DEFENDER_ROUTE}/${router.query.id}`
+      ? '#' // Defenders should never be able to navigate anywhere from the logo
       : user.role === UserRole.ADMIN
       ? constants.USERS_ROUTE
       : constants.CASES_ROUTE
