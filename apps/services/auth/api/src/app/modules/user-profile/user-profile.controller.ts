@@ -1,7 +1,6 @@
 import { Controller, Get, UseGuards } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 
-import { UserProfileDTO, UserProfileService } from '@island.is/auth-api-lib'
 import {
   CurrentUser,
   IdsUserGuard,
@@ -11,6 +10,9 @@ import {
 import type { User } from '@island.is/auth-nest-tools'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { Documentation } from '@island.is/nest/swagger'
+
+import { UserProfileService } from './user-profile.service'
+import { UserProfileDTO } from './dto/user-profile.dto'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('user-profile')

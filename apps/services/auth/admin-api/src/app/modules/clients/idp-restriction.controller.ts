@@ -2,6 +2,7 @@ import {
   ClientsService,
   ClientIdpRestrictions,
   ClientIdpRestrictionDTO,
+  IdpProviderService,
   IdpProvider,
 } from '@island.is/auth-api-lib'
 import {
@@ -35,6 +36,7 @@ const namespace = `${environment.audit.defaultNamespace}/idp-restriction`
 export class IdpRestrictionController {
   constructor(
     private readonly clientsService: ClientsService,
+    private readonly idpProviderService: IdpProviderService,
     private readonly auditService: AuditService,
   ) {}
 
@@ -85,6 +87,6 @@ export class IdpRestrictionController {
     resources: (providers) => providers.map((provider) => provider.name),
   })
   async findAllIdpRestrictions(): Promise<IdpProvider[]> {
-    return this.clientsService.findAllIdpRestrictions()
+    return this.idpProviderService.findAll()
   }
 }
