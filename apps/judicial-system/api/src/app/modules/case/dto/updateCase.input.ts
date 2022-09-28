@@ -276,4 +276,8 @@ export class UpdateCaseInput implements UpdateCase {
   @Allow()
   @Field(() => String, { nullable: true })
   readonly subpoenaType?: SubpoenaType
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly defendantWaivesRightToCounsel?: boolean
 }

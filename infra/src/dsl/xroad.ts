@@ -205,6 +205,16 @@ export const AdrAndMachine = new XroadConf({
   },
 })
 
+export const Firearm = new XroadConf({
+  env: {
+    XROAD_FIREARM_LICENSE_PATH: {
+      dev: 'IS-DEV/GOV/10005/Logreglan-Protected/island-api-v1',
+      staging: 'IS/GOV/5309672079/Logreglan-Protected/island-api-v1',
+      prod: 'IS/GOV/5309672079/Logreglan-Protected/island-api-v1',
+    },
+  },
+})
+
 export const Education = new XroadConf({
   env: {
     XROAD_MMS_LICENSE_SERVICE_ID: {

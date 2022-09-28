@@ -19,7 +19,7 @@ import type { User } from '@island.is/judicial-system/types'
 import { environment } from '../../../environments'
 import { writeFile } from '../../formatters'
 import { AwsS3Service } from '../aws-s3'
-import { CourtService } from '../court'
+import { CourtDocumentFolder, CourtService } from '../court'
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
 import { PresignedPost } from './models/presignedPost.model'
@@ -90,8 +90,9 @@ export class FileService {
 
     return this.courtService.createDocument(
       caseId,
-      courtId ?? '',
-      courtCaseNumber ?? '',
+      courtId,
+      courtCaseNumber,
+      CourtDocumentFolder.CASE_DOCUMENTS,
       file.name,
       file.name,
       file.type,

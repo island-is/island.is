@@ -23,7 +23,7 @@ describe('getDemandsAutofill', () => {
   it('should format custody case', () => {
     const props = {
       caseType: CaseType.CUSTODY,
-      defentant: baseDefendant,
+      defendant: baseDefendant,
       type: CaseType.CUSTODY,
       courtName,
       requestedValidToDate: '2020-01-01',
@@ -39,7 +39,7 @@ describe('getDemandsAutofill', () => {
   it('should format extended custody case', () => {
     const props = {
       caseType: CaseType.CUSTODY,
-      defentant: baseDefendant,
+      defendant: baseDefendant,
       type: CaseType.CUSTODY,
       courtName,
       requestedValidToDate: '2020-01-01',
@@ -56,7 +56,7 @@ describe('getDemandsAutofill', () => {
   it('should format custody case with isolation', () => {
     const props = {
       caseType: CaseType.CUSTODY,
-      defentant: baseDefendant,
+      defendant: baseDefendant,
       type: CaseType.CUSTODY,
       courtName,
       requestedValidToDate: '2020-01-01',
@@ -73,7 +73,7 @@ describe('getDemandsAutofill', () => {
   it('should format travel ban case', () => {
     const props = {
       caseType: CaseType.TRAVEL_BAN,
-      defentant: {
+      defendant: {
         ...baseDefendant,
         noNationalId: true,
         nationalId: '1991-01-01',
@@ -93,7 +93,7 @@ describe('getDemandsAutofill', () => {
   it('should format admission to facility case', () => {
     const props = {
       caseType: CaseType.ADMISSION_TO_FACILITY,
-      defentant: baseDefendant,
+      defendant: baseDefendant,
       type: CaseType.CUSTODY,
       courtName,
       requestedValidToDate: '2020-01-01',

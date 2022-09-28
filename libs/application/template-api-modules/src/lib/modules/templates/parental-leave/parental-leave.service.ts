@@ -433,20 +433,29 @@ export class ParentalLeaveService {
         )
       }
 
-      const selfEmployed = isSelfEmployed === YES
+      // There has been case when island.is got Access Denied from AWS when sending out emails
+      // This try/catch keeps application in correct state
+      try {
+        const selfEmployed = isSelfEmployed === YES
 
-      if (!selfEmployed) {
-        // Only needs to send an email if being approved by employer
-        // Self employed applicant was aware of the approval
-        await this.sharedTemplateAPIService.sendEmail(
-          generateApplicationApprovedByEmployerEmail,
-          application,
-        )
+        if (!selfEmployed) {
+          // Only needs to send an email if being approved by employer
+          // Self employed applicant was aware of the approval
+          await this.sharedTemplateAPIService.sendEmail(
+            generateApplicationApprovedByEmployerEmail,
+            application,
+          )
 
-        // Also send confirmation to employer
-        await this.sharedTemplateAPIService.sendEmail(
-          generateApplicationApprovedByEmployerToEmployerEmail,
-          application,
+          // Also send confirmation to employer
+          await this.sharedTemplateAPIService.sendEmail(
+            generateApplicationApprovedByEmployerToEmployerEmail,
+            application,
+          )
+        }
+      } catch (e) {
+        this.logger.error(
+          'Failed to send confirmation emails to applicant and employer in parental leave application',
+          e,
         )
       }
 

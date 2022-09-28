@@ -18,10 +18,12 @@ import {
   GenericLicenseUserdataExternal,
   PkPassVerification,
   GenericUserLicensePkPassStatus,
+  CONFIG_PROVIDER_V2,
 } from './licenceService.type'
 import { Locale } from '@island.is/shared/types'
 
 import { AVAILABLE_LICENSES } from './licenseService.module'
+import type { LicenseServiceConfigV2 } from './licenseService.module'
 
 const CACHE_KEY = 'licenseService'
 
@@ -41,6 +43,7 @@ export class LicenseServiceService {
     ) => Promise<GenericLicenseClient<unknown> | null>,
     @Inject(CACHE_MANAGER) private cacheManager: CacheManager,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
+    @Inject(CONFIG_PROVIDER_V2) private config: LicenseServiceConfigV2,
   ) {}
 
   private async getCachedOrCache(
@@ -241,9 +244,7 @@ export class LicenseServiceService {
     }
 
     if (!pkpassUrl) {
-      throw new Error(
-        `Unable to get pkpass url for ${licenseType} for nationalId ${user.nationalId}`,
-      )
+      throw new Error(`Unable to get pkpass url for ${licenseType} for user`)
     }
     return { pkpassUrl }
   }
@@ -267,7 +268,7 @@ export class LicenseServiceService {
     }
     if (!pkpassQRCode) {
       throw new Error(
-        `Unable to get pkpass qr code for ${licenseType} for nationalId ${user.nationalId}`,
+        `Unable to get pkpass qr code for ${licenseType} for user`,
       )
     }
 
@@ -277,10 +278,31 @@ export class LicenseServiceService {
   async verifyPkPass(
     user: User,
     locale: Locale,
-    licenseType: GenericLicenseType,
     data: string,
   ): Promise<PkPassVerification> {
     let verification: PkPassVerification | null = null
+
+    if (!data) {
+      throw new Error(`Missing input data`)
+    }
+
+    const { passTemplateId } = JSON.parse(data)
+
+    /*
+     * PkPass barcodes provide a PassTemplateId that we can use to
+     * map barcodes to license types.
+     * Drivers licenses do NOT return a barcode so if the pass template
+     * id is missing, then it's a drivers license.
+     * Otherwise, map the id to its corresponding license type
+     */
+
+    const licenseType = passTemplateId
+      ? this.getTypeFromPassTemplateId(passTemplateId)
+      : GenericLicenseType.DriversLicense
+
+    if (!licenseType) {
+      throw new Error(`Invalid pass template id: ${passTemplateId}`)
+    }
 
     const licenseService = await this.genericLicenseFactory(
       licenseType,
@@ -294,11 +316,29 @@ export class LicenseServiceService {
     }
 
     if (!verification) {
-      throw new Error(
-        `Unable to verify pkpass for ${licenseType} for nationalId ${user.nationalId}`,
-      )
+      throw new Error(`Unable to verify pkpass for ${licenseType} for user`)
     }
-
     return verification
+  }
+
+  private getTypeFromPassTemplateId(
+    passTemplateId: string,
+  ): GenericLicenseType | null {
+    for (const [key, value] of Object.entries(this.config)) {
+      // some license Config id === barcode id
+      if (value.passTemplateId === passTemplateId) {
+        // firearmLicense => FirearmLicense
+        const keyAsEnumKey = key.slice(0, 1).toUpperCase() + key.slice(1)
+
+        const valueFromEnum: GenericLicenseType | undefined =
+          GenericLicenseType[keyAsEnumKey as GenericLicenseTypeType]
+
+        if (!valueFromEnum) {
+          throw new Error(`Invalid license type: ${key}`)
+        }
+        return valueFromEnum
+      }
+    }
+    return null
   }
 }
