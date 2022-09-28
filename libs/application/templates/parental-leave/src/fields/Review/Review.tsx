@@ -136,7 +136,9 @@ export const Review: FC<ReviewScreenProps> = ({
   const otherParentName = getOtherParentName(application)
   const otherParentId = getOtherParentId(application)
 
-  const { applicantName } = getApplicationExternalData(application.externalData)
+  const { applicantName, applicationFundId } = getApplicationExternalData(
+    application.externalData,
+  )
   const selectedChild = getSelectedChild(
     application.answers,
     application.externalData,
@@ -934,11 +936,14 @@ export const Review: FC<ReviewScreenProps> = ({
         isLast={true}
       >
         <SummaryTimeline application={application} />
-        {new Date(periods[0].startDate).getTime() < currentDateStartTime() && (
-          <p style={{ color: '#B30038', fontSize: '14px', fontWeight: '500' }}>
-            {formatMessage(errorMessages.startDateInThePast)}
-          </p>
-        )}
+        {applicationFundId === '' &&
+          new Date(periods[0].startDate).getTime() < currentDateStartTime() && (
+            <p
+              style={{ color: '#B30038', fontSize: '14px', fontWeight: '500' }}
+            >
+              {formatMessage(errorMessages.startDateInThePast)}
+            </p>
+          )}
       </ReviewGroup>
 
       {/**
