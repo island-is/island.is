@@ -4,8 +4,8 @@ import unset from 'lodash/unset'
 import cloneDeep from 'lodash/cloneDeep'
 
 import {
-  DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
+  pruneAfterDays,
 } from '@island.is/application/core'
 import {
   ApplicationContext,
@@ -170,7 +170,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           actionCard: {
             description: statesMessages.otherParentApprovalDescription,
           },
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: pruneAfterDays(365),
           progress: 0.4,
           onEntry: {
             apiModuleAction: API_MODULE_ACTIONS.assignOtherParent,
@@ -233,7 +233,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           actionCard: {
             description: statesMessages.otherParentActionDescription,
           },
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: pruneAfterDays(365),
           progress: 0.4,
           onEntry: {
             apiModuleAction:
@@ -264,7 +264,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           actionCard: {
             description: statesMessages.employerWaitingToAssignDescription,
           },
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: pruneAfterDays(365),
           progress: 0.4,
           onEntry: {
             apiModuleAction: API_MODULE_ACTIONS.assignEmployer,
@@ -296,7 +296,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           actionCard: {
             description: statesMessages.employerApprovalDescription,
           },
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: pruneAfterDays(365),
           progress: 0.5,
           roles: [
             {
@@ -354,7 +354,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           actionCard: {
             description: statesMessages.employerActionDescription,
           },
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: pruneAfterDays(365),
           progress: 0.5,
           onEntry: {
             apiModuleAction:
@@ -386,7 +386,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           actionCard: {
             description: statesMessages.vinnumalastofnunApprovalDescription,
           },
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: pruneAfterDays(970),
           progress: 0.75,
           onEntry: {
             apiModuleAction: API_MODULE_ACTIONS.sendApplication,
@@ -424,7 +424,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           actionCard: {
             description: statesMessages.vinnumalastofnunActionDescription,
           },
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: pruneAfterDays(970),
           progress: 0.5,
           roles: [
             {
@@ -448,7 +448,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           actionCard: {
             description: statesMessages.approvedDescription,
           },
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: pruneAfterDays(970),
           progress: 1,
           roles: [
             {
@@ -475,7 +475,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           actionCard: {
             description: statesMessages.editOrAddPeriodsDescription,
           },
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: pruneAfterDays(370),
           progress: 1,
           roles: [
             {
@@ -514,7 +514,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             description:
               statesMessages.employerWaitingToAssignForEditsDescription,
           },
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: pruneAfterDays(970),
           progress: 0.4,
           onEntry: {
             apiModuleAction: API_MODULE_ACTIONS.assignEmployer,
@@ -544,7 +544,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           actionCard: {
             description: statesMessages.employerApproveEditsDescription,
           },
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: pruneAfterDays(970),
           progress: 0.4,
           roles: [
             {
@@ -574,7 +574,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           actionCard: {
             description: statesMessages.employerEditsActionDescription,
           },
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: pruneAfterDays(970),
           progress: 0.4,
           roles: [
             {
@@ -602,7 +602,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           actionCard: {
             description: statesMessages.vinnumalastofnunApproveEditsDescription,
           },
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: pruneAfterDays(970),
           progress: 0.4,
           roles: [
             {
@@ -630,7 +630,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           actionCard: {
             description: statesMessages.vinnumalastofnunEditsActionDescription,
           },
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: pruneAfterDays(970),
           progress: 0.4,
           roles: [
             {
