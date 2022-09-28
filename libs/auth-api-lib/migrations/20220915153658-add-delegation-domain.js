@@ -12,6 +12,12 @@ module.exports = {
         
         CREATE INDEX delegation__domain_name__index
             ON delegation (domain_name);
+        
+        ALTER TABLE delegation
+          DROP CONSTRAINT IF EXISTS unique_from_to;
+
+        ALTER TABLE delegation ADD CONSTRAINT unique_domain_from_to
+          UNIQUE (domain_name, from_national_id, to_national_id);
 
       COMMIT;
     `)
@@ -25,6 +31,9 @@ module.exports = {
         ALTER TABLE delegation
           DROP CONSTRAINT fk_delegation_domain;
 
+        ALTER TABLE delegation
+          DROP CONSTRAINT unique_domain_from_to;
+        
         ALTER TABLE delegation
           DROP COLUMN domain_name;
 
