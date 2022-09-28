@@ -61,49 +61,49 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/marriage-conditions'),
   [ApplicationTypes.DRIVING_LICENSE_DUPLICATE]: () =>
     import('@island.is/application/templates/driving-license-duplicate'),
-  [ApplicationTypes.DIGITAL_TACHOGRAPH_DRIVERS_CARD]: () =>
-    import(
-      '@island.is/application/templates/transport-authority/digital-tachograph-drivers-card'
-    ),
-  [ApplicationTypes.DIGITAL_TACHOGRAPH_COMPANY_CARD]: () =>
-    import(
-      '@island.is/application/templates/transport-authority/digital-tachograph-company-card'
-    ),
-  [ApplicationTypes.DIGITAL_TACHOGRAPH_WORKSHOP_CARD]: () =>
-    import(
-      '@island.is/application/templates/transport-authority/digital-tachograph-workshop-card'
-    ),
-  [ApplicationTypes.TRANSFER_OF_VEHICLE_OWNERSHIP]: () =>
-    import(
-      '@island.is/application/templates/transport-authority/transfer-of-vehicle-ownership'
-    ),
   [ApplicationTypes.ANONYMITY_IN_VEHICLE_REGISTRY]: () =>
     import(
       '@island.is/application/templates/transport-authority/anonymity-in-vehicle-registry'
-    ),
-  [ApplicationTypes.ORDER_VEHICLE_REGISTRATION_CERTIFICATE]: () =>
-    import(
-      '@island.is/application/templates/transport-authority/order-vehicle-registration-certificate'
-    ),
-  [ApplicationTypes.ORDER_VEHICLE_LICENSE_PLATE]: () =>
-    import(
-      '@island.is/application/templates/transport-authority/order-vehicle-license-plate'
-    ),
-  [ApplicationTypes.REGISTER_CO_OWNER_OF_VEHICLE]: () =>
-    import(
-      '@island.is/application/templates/transport-authority/register-co-owner-of-vehicle'
     ),
   [ApplicationTypes.DEREGISTER_CO_OWNER_OF_VEHICLE]: () =>
     import(
       '@island.is/application/templates/transport-authority/deregister-co-owner-of-vehicle'
     ),
+  [ApplicationTypes.DEREGISTER_OPERATOR_OF_VEHICLE]: () =>
+    import(
+      '@island.is/application/templates/transport-authority/deregister-operator-of-vehicle'
+    ),
+  [ApplicationTypes.DIGITAL_TACHOGRAPH_COMPANY_CARD]: () =>
+    import(
+      '@island.is/application/templates/transport-authority/digital-tachograph-company-card'
+    ),
+  [ApplicationTypes.DIGITAL_TACHOGRAPH_DRIVERS_CARD]: () =>
+    import(
+      '@island.is/application/templates/transport-authority/digital-tachograph-drivers-card'
+    ),
+  [ApplicationTypes.DIGITAL_TACHOGRAPH_WORKSHOP_CARD]: () =>
+    import(
+      '@island.is/application/templates/transport-authority/digital-tachograph-workshop-card'
+    ),
+  [ApplicationTypes.ORDER_VEHICLE_LICENSE_PLATE]: () =>
+    import(
+      '@island.is/application/templates/transport-authority/order-vehicle-license-plate'
+    ),
+  [ApplicationTypes.ORDER_VEHICLE_REGISTRATION_CERTIFICATE]: () =>
+    import(
+      '@island.is/application/templates/transport-authority/order-vehicle-registration-certificate'
+    ),
+  [ApplicationTypes.REGISTER_CO_OWNER_OF_VEHICLE]: () =>
+    import(
+      '@island.is/application/templates/transport-authority/register-co-owner-of-vehicle'
+    ),
   [ApplicationTypes.REGISTER_OPERATOR_OF_VEHICLE]: () =>
     import(
       '@island.is/application/templates/transport-authority/register-operator-of-vehicle'
     ),
-  [ApplicationTypes.DEREGISTER_OPERATOR_OF_VEHICLE]: () =>
+  [ApplicationTypes.TRANSFER_OF_VEHICLE_OWNERSHIP]: () =>
     import(
-      '@island.is/application/templates/transport-authority/deregister-operator-of-vehicle'
+      '@island.is/application/templates/transport-authority/transfer-of-vehicle-ownership'
     ),
 }
 

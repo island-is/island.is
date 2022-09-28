@@ -46,26 +46,26 @@ export const institutionMapper = {
   [ApplicationTypes.MARRIAGE_CONDITIONS]: InstitutionTypes.SYSLUMENN,
   [ApplicationTypes.DRIVING_LICENSE_DUPLICATE]:
     InstitutionTypes.RIKISLOGREGLUSTJORI,
-  [ApplicationTypes.DIGITAL_TACHOGRAPH_DRIVERS_CARD]:
-    InstitutionTypes.SAMGONGUSTOFA,
-  [ApplicationTypes.DIGITAL_TACHOGRAPH_COMPANY_CARD]:
-    InstitutionTypes.SAMGONGUSTOFA,
-  [ApplicationTypes.DIGITAL_TACHOGRAPH_WORKSHOP_CARD]:
-    InstitutionTypes.SAMGONGUSTOFA,
-  [ApplicationTypes.TRANSFER_OF_VEHICLE_OWNERSHIP]:
-    InstitutionTypes.SAMGONGUSTOFA,
   [ApplicationTypes.ANONYMITY_IN_VEHICLE_REGISTRY]:
-    InstitutionTypes.SAMGONGUSTOFA,
-  [ApplicationTypes.ORDER_VEHICLE_REGISTRATION_CERTIFICATE]:
-    InstitutionTypes.SAMGONGUSTOFA,
-  [ApplicationTypes.ORDER_VEHICLE_LICENSE_PLATE]:
-    InstitutionTypes.SAMGONGUSTOFA,
-  [ApplicationTypes.REGISTER_CO_OWNER_OF_VEHICLE]:
     InstitutionTypes.SAMGONGUSTOFA,
   [ApplicationTypes.DEREGISTER_CO_OWNER_OF_VEHICLE]:
     InstitutionTypes.SAMGONGUSTOFA,
+  [ApplicationTypes.DEREGISTER_OPERATOR_OF_VEHICLE]:
+    InstitutionTypes.SAMGONGUSTOFA,
+  [ApplicationTypes.DIGITAL_TACHOGRAPH_COMPANY_CARD]:
+    InstitutionTypes.SAMGONGUSTOFA,
+  [ApplicationTypes.DIGITAL_TACHOGRAPH_DRIVERS_CARD]:
+    InstitutionTypes.SAMGONGUSTOFA,
+  [ApplicationTypes.DIGITAL_TACHOGRAPH_WORKSHOP_CARD]:
+    InstitutionTypes.SAMGONGUSTOFA,
+  [ApplicationTypes.ORDER_VEHICLE_LICENSE_PLATE]:
+    InstitutionTypes.SAMGONGUSTOFA,
+  [ApplicationTypes.ORDER_VEHICLE_REGISTRATION_CERTIFICATE]:
+    InstitutionTypes.SAMGONGUSTOFA,
+  [ApplicationTypes.REGISTER_CO_OWNER_OF_VEHICLE]:
+    InstitutionTypes.SAMGONGUSTOFA,
   [ApplicationTypes.REGISTER_OPERATOR_OF_VEHICLE]:
     InstitutionTypes.SAMGONGUSTOFA,
-  [ApplicationTypes.DEREGISTER_OPERATOR_OF_VEHICLE]:
+  [ApplicationTypes.TRANSFER_OF_VEHICLE_OWNERSHIP]:
     InstitutionTypes.SAMGONGUSTOFA,
 }
