@@ -198,9 +198,39 @@ export class ParentalLeaveService {
     }
   }
 
+  async getPdfs(application: Application) {
+    try {
+      const files = getValueViaPath(
+        application.answers,
+        'fileUpload.file',
+      ) as any[]
+
+      const pdfs: any[] = []
+
+      await files.forEach(async (pdf) => {
+        const Key = `${application.id}/${pdf.key}`
+        const file = await this.s3
+        .getObject({ Bucket: this.attachmentBucket, Key })
+        .promise()
+        const fileContent = file.Body as Buffer
+        pdfs.push(fileContent.toString('base64'))
+      })
+
+      return pdfs
+    } catch (e) {
+      this.logger.error('Cannot get attachments', { e })
+      throw new Error('Failed to get the attachments')
+    }
+  }
+
   async getAttachments(application: Application): Promise<Attachment[]> {
     const attachments: Attachment[] = []
     const { isSelfEmployed } = getApplicationAnswers(application.answers)
+
+    const otherFiles = getValueViaPath(
+      application.answers,
+      'fileUpload.file',
+    ) as unknown[]
 
     if (isSelfEmployed === YES) {
       const pdf = await this.getSelfEmployedPdf(application)
@@ -208,6 +238,17 @@ export class ParentalLeaveService {
       attachments.push({
         attachmentType: apiConstants.attachments.selfEmployed,
         attachmentBytes: pdf,
+      })
+    }
+
+    if (otherFiles && otherFiles.length > 0) {
+      const pdfs = await this.getPdfs(application)
+
+      pdfs.forEach((pdf) => {
+        attachments.push({
+          attachmentType: 'other',
+          attachmentBytes: pdf
+        })
       })
     }
 
