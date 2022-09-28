@@ -110,7 +110,7 @@ USER runner
 
 CMD [ "jest", "main.spec.js" ]
 
-FROM mcr.microsoft.com/playwright:v1.24.0-focal as cypress-base
+FROM mcr.microsoft.com/playwright:v1.25.2-focal as cypress-base
 
 
 
