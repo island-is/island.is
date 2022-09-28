@@ -375,7 +375,7 @@ This would then display as a yellow box warning when the user has fetched the da
 
 ### Dynamic name for application
 
-You can add a dynamic name for the application by supplying a function to the `name` variable instead of a string to the `template` object. This will be used to generate the name of the application in the overview screen and within the application.
+You can add a dynamic name for the application by supplying a function to the `name` variable instead of a translation string to the `template` object. This will be used to generate the name of the application in the overview screen and within the application.
 
 You need to define the function so that it accepts the application object and returns a translation string.
 
