@@ -2,9 +2,7 @@ import React, { useState } from 'react'
 import { Screen } from '@island.is/web/types'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
-  AccessCategory,
   ContentLanguage,
-  Environment,
   GetNamespaceQuery,
   GetOpenApiInput,
   Query,
@@ -13,7 +11,6 @@ import {
   QueryGetOrganizationPageArgs,
   Service,
   ServiceDetail,
-  TypeCategory,
   XroadIdentifier,
 } from '@island.is/web/graphql/schema'
 import {
@@ -35,7 +32,6 @@ import SubpageLayout from '@island.is/web/screens/Layouts/Layouts'
 import { useRouter } from 'next/router'
 import { CustomNextError } from '@island.is/web/units/errors'
 import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
-import useContentfulId from '@island.is/web/hooks/useContentfulId'
 
 interface ServiceDetailsProps {
   organizationPage: Query['getOrganizationPage']
