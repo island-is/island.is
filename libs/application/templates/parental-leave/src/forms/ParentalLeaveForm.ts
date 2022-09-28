@@ -577,7 +577,7 @@ export const ParentalLeaveForm: Form = buildForm({
                     parentalLeaveFormMessages.selfEmployed
                       .attachmentMaxSizeError,
                   uploadAccept: '.pdf',
-                  uploadHeader: 'nope',
+                  uploadHeader: '',
                   uploadDescription: '',
                   uploadButtonLabel:
                     parentalLeaveFormMessages.selfEmployed.attachmentButton,
