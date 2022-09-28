@@ -24,7 +24,6 @@ export const parseFirearmLicensePayload = (
   const expired = licenseInfo?.expirationDate
     ? !isAfter(new Date(licenseInfo.expirationDate), new Date())
     : false
-  console.log('FIREARM LICENSE', licenseData)
   if (!licenseInfo) return null
 
   const data: Array<GenericLicenseDataField> = [
@@ -41,17 +40,17 @@ export const parseFirearmLicensePayload = (
     licenseInfo.issueDate && {
       type: GenericLicenseDataFieldType.Value,
       label: 'Útgáfudagur',
-      value: formatDateString(licenseInfo.issueDate) ?? '',
+      value: licenseInfo.issueDate ?? '',
     },
     licenseInfo.expirationDate && {
       type: GenericLicenseDataFieldType.Value,
       label: 'Gildir til',
-      value: formatDateString(licenseInfo.expirationDate) ?? '',
+      value: licenseInfo.expirationDate ?? '',
     },
     licenseInfo.collectorLicenseExpirationDate && {
       type: GenericLicenseDataFieldType.Value,
       label: 'Safnaraskírteini gildir til',
-      value: formatDateString(licenseInfo.collectorLicenseExpirationDate) ?? '',
+      value: licenseInfo.collectorLicenseExpirationDate ?? '',
     },
 
     licenseInfo.qualifications && {
@@ -127,8 +126,18 @@ const parseProperties = (
     },
     {
       type: GenericLicenseDataFieldType.Value,
+      label: 'Landsnúmer',
+      value: property.landsnumer ?? '',
+    },
+    {
+      type: GenericLicenseDataFieldType.Value,
       label: 'Hlaupvídd',
       value: property.caliber ?? '',
+    },
+    {
+      type: GenericLicenseDataFieldType.Value,
+      label: 'Takmarkanir',
+      value: property.limitation ?? '',
     },
   ]
   return mappedProperty

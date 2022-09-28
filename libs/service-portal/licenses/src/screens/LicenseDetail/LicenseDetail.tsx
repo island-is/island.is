@@ -101,6 +101,7 @@ const GenericLicenseQuery = gql`
 
 const checkLicenseExpired = (date?: string) => {
   if (!date) return false
+
   return isExpired(new Date(), new Date(date))
 }
 const DataFields = ({
@@ -129,7 +130,6 @@ const DataFields = ({
           <React.Fragment key={i}>
             {field.type === 'Value' && (
               <>
-                {}
                 <UserInfoLine
                   title={field.name ?? ''}
                   label={field.label ?? ''}
@@ -141,11 +141,12 @@ const DataFields = ({
                       ? () => (
                           <Box display="flex" alignItems="center">
                             <Text>
-                              {toDate(
-                                new Date(field.value ?? '')
-                                  .getTime()
-                                  .toString(),
-                              )}
+                              {field.value && isJSONDate(field.value)
+                                ? format(
+                                    +new Date(field.value).getTime(),
+                                    dateFormat.is,
+                                  )
+                                : field.value}
                             </Text>
                             <Box
                               marginLeft={2}
