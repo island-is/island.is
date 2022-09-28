@@ -74,3 +74,19 @@ export const transitionCase = (caseId: string, transition: CaseTransition) => {
     fetchPolicy: 'no-cache',
   })
 }
+
+export const mockNationalRegistry = () => {
+  cy.intercept(
+    'GET',
+    '**/api/nationalRegistry/getPersonByNationalId**',
+    (req) => {
+      req.reply({ fixture: 'nationalRegistryPersonResponse' })
+    },
+  ).as('getPersonByNationalId')
+}
+
+export const mockLawyerRegistry = () => {
+  cy.intercept('GET', '**/api/lawyers/getLawyers', (req) => {
+    req.reply({ fixture: 'lawyersResponse' })
+  }).as('getLawyerByNationalId')
+}
