@@ -57,11 +57,9 @@ const ChartMonths: FC<{
               <Box className={styles.chartMonth}>
                 <Text variant="small">
                   {(isFirstDayOfMonth || index === 0) &&
-                    format(day, 'MMM yyyy',
-                    {
+                    format(day, 'MMM yyyy', {
                       locale: currentLocale === 'is' ? is : enGB,
-                    },
-                  )}
+                    })}
                   &nbsp;
                 </Text>
                 {isInitDay && <Box className={styles.highlightDay} />}

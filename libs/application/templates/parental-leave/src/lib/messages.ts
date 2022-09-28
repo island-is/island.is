@@ -1182,13 +1182,15 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:rightOfAccess.yesOption',
       defaultMessage:
         'Ég veiti forsjárlausa foreldrinu samþykki mitt fyrir umgengni í þessu fæðingarorlofi.',
-      description: 'I give my consent that the non-custodial parent is allowed right of access during this parental leave',
+      description:
+        'I give my consent that the non-custodial parent is allowed right of access during this parental leave',
     },
     noOption: {
       id: 'pl.application:rightOfAccess.noOption',
       defaultMessage:
         'Ég veiti ekki forsjárlausa foreldrinu samþykki mitt fyrir umgengni í þessu fæðingarorlofi.',
-      description: 'I do not give my consent that the non-custodial parent is allowed right of access during this parental leave',
+      description:
+        'I do not give my consent that the non-custodial parent is allowed right of access during this parental leave',
     },
   }),
 
