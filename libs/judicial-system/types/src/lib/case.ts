@@ -207,6 +207,7 @@ export interface Case {
   caseResentExplanation?: string
   seenByDefender?: string
   subpoenaType?: SubpoenaType
+  defendantWaivesRightToCounsel: boolean
 }
 
 export type CreateCase = Pick<
@@ -291,6 +292,7 @@ export interface UpdateCase
   sharedWithProsecutorsOfficeId?: string | null
   registrarId?: string | null
   judgeId?: string
+  defendantWaivesRightToCounsel?: boolean
 }
 
 export interface TransitionCase {

@@ -2,9 +2,11 @@ import https, { Agent } from 'https'
 
 import {
   BadGatewayException,
+  BadRequestException,
   Inject,
   Injectable,
   NotFoundException,
+  NotImplementedException,
   UnsupportedMediaTypeException,
 } from '@nestjs/common'
 
@@ -68,7 +70,7 @@ export class CourtClientAvailableService implements CourtClientService {
   private readonly createThingbokApi: CreateThingbokApi
   private readonly createEmailApi: CreateEmailApi
   private readonly uploadStreamApi: UploadStreamApi
-  private readonly options: CourtsCredentials
+  private readonly courtsCredentials: CourtsCredentials
   private readonly authenticationToken: { [key: string]: string } = {}
 
   constructor(
@@ -112,7 +114,7 @@ export class CourtClientAvailableService implements CourtClientService {
     this.createThingbokApi = new CreateThingbokApi(providerConfiguration)
     this.createEmailApi = new CreateEmailApi(providerConfiguration)
     this.uploadStreamApi = new UploadStreamApi(basePath, defaultHeaders, agent)
-    this.options = config.courtsCredentials
+    this.courtsCredentials = config.courtsCredentials
   }
 
   // The service has a 'logged in' state and at most one in progress
@@ -123,20 +125,28 @@ export class CourtClientAvailableService implements CourtClientService {
   // Therefore, relogin is forced after a certain number of consecutive unknown errors from the api.
   private errorCount = 0
 
-  private async login(clientId: string): Promise<void> {
+  private async login(courtId: string): Promise<void> {
     // Login is already in progress
     if (this.loginPromise) {
       return this.loginPromise
     }
 
+    const credentials = this.courtsCredentials[courtId]
+
+    if (!credentials) {
+      throw new NotImplementedException(
+        `Integration with court ${courtId} not implemented`,
+      )
+    }
+
     this.loginPromise = this.authenticateApi
-      .authenticate(this.options[clientId])
+      .authenticate(credentials)
       .then((res) => {
         // Reset the error counter
         this.errorCount = 0
 
         // Strip the quotation marks from the result
-        this.authenticationToken[clientId] = stripResult(res)
+        this.authenticationToken[courtId] = stripResult(res)
       })
       .catch((reason) => {
         if (typeof reason === 'string') {
@@ -193,12 +203,12 @@ export class CourtClientAvailableService implements CourtClientService {
   }
 
   private async authenticatedRequest(
-    clientId: string,
+    courtId: string,
     request: (authenticationToken: string) => Promise<string>,
   ): Promise<string> {
     // Login if there is no authentication token
-    if (!this.authenticationToken[clientId]) {
-      await this.login(clientId)
+    if (!this.authenticationToken[courtId]) {
+      await this.login(courtId)
     }
 
     // Force relogin if there are too many consecutive errors
@@ -207,10 +217,10 @@ export class CourtClientAvailableService implements CourtClientService {
         `Too many consecutive errors (${this.errorCount}) from the court service, relogin forced`,
       )
 
-      await this.login(clientId)
+      await this.login(courtId)
     }
 
-    const currentAuthenticationToken = this.authenticationToken[clientId]
+    const currentAuthenticationToken = this.authenticationToken[courtId]
 
     return request(currentAuthenticationToken)
       .then((res) => {
@@ -230,8 +240,8 @@ export class CourtClientAvailableService implements CourtClientService {
             reason,
           })
 
-          return this.login(clientId).then(() =>
-            request(this.authenticationToken[clientId])
+          return this.login(courtId).then(() =>
+            request(this.authenticationToken[courtId])
               .then((res) => stripResult(res))
               .catch((reason) => {
                 // Throw an appropriate eception
@@ -245,38 +255,58 @@ export class CourtClientAvailableService implements CourtClientService {
       })
   }
 
-  createCase(clientId: string, args: CreateCaseArgs): Promise<string> {
-    return this.authenticatedRequest(clientId, (authenticationToken) =>
+  createCase(courtId: string, args: CreateCaseArgs): Promise<string> {
+    if (!courtId) {
+      throw new BadRequestException('Missing court id')
+    }
+
+    return this.authenticatedRequest(courtId, (authenticationToken) =>
       this.createCaseApi.createCase({
         createCaseData: { ...args, authenticationToken },
       }),
     )
   }
 
-  createDocument(clientId: string, args: CreateDocumentArgs): Promise<string> {
-    return this.authenticatedRequest(clientId, (authenticationToken) =>
+  createDocument(courtId: string, args: CreateDocumentArgs): Promise<string> {
+    if (!courtId) {
+      throw new BadRequestException('Missing court id')
+    }
+
+    return this.authenticatedRequest(courtId, (authenticationToken) =>
       this.createDocumentApi.createDocument({
         createDocumentData: { ...args, authenticationToken },
       }),
     )
   }
 
-  createThingbok(clientId: string, args: CreateThingbokArgs): Promise<string> {
-    return this.authenticatedRequest(clientId, (authenticationToken) =>
+  createThingbok(courtId: string, args: CreateThingbokArgs): Promise<string> {
+    if (!courtId) {
+      throw new BadRequestException('Missing court id')
+    }
+
+    return this.authenticatedRequest(courtId, (authenticationToken) =>
       this.createThingbokApi.createThingbok({ ...args, authenticationToken }),
     )
   }
 
-  createEmail(clientId: string, args: CreateEmailArgs): Promise<string> {
-    return this.authenticatedRequest(clientId, (authenticationToken) =>
+  createEmail(courtId: string, args: CreateEmailArgs): Promise<string> {
+    if (!courtId) {
+      throw new BadRequestException('Missing court id')
+    }
+
+    return this.authenticatedRequest(courtId, (authenticationToken) =>
       this.createEmailApi.createEmail({
         createEmailData: { ...args, authenticationToken },
       }),
     )
   }
 
-  uploadStream(clientId: string, args: UploadStreamArgs): Promise<string> {
-    return this.authenticatedRequest(clientId, (authenticationToken) =>
+  uploadStream(courtId: string, args: UploadStreamArgs): Promise<string> {
+    if (!courtId) {
+      throw new BadRequestException('Missing court id')
+    }
+
+    return this.authenticatedRequest(courtId, (authenticationToken) =>
       this.uploadStreamApi.uploadStream(authenticationToken, args),
     )
   }

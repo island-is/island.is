@@ -54,6 +54,8 @@ import { FiskistofaHeader } from './Themes/FiskistofaTheme/FiskistofaHeader'
 import FiskistofaFooter from './Themes/FiskistofaTheme/FiskistofaFooter'
 import { LandskjorstjornFooter } from './Themes/LandkjorstjornTheme/LandkjorstjornFooter'
 import { LatestNewsCardConnectedComponent } from '../LatestNewsCardConnectedComponent'
+import { RikislogmadurHeader } from './Themes/RikislogmadurTheme/RikislogmadurHeader'
+import { RikislogmadurFooter } from './Themes/RikislogmadurTheme/RikislogmadurFooter'
 import * as styles from './OrganizationWrapper.css'
 
 interface NavigationData {
@@ -107,6 +109,11 @@ export const footerEnabled = [
   'directorate-of-fisheries',
 
   'landskjorstjorn',
+
+  'hsn',
+
+  'rikislogmadur',
+  'office-of-the-attorney-general-civil-affairs',
 ]
 
 export const getThemeConfig = (
@@ -119,7 +126,7 @@ export const getThemeConfig = (
     footerVersion = 'organization'
   }
 
-  if (theme === 'sjukratryggingar')
+  if (theme === 'sjukratryggingar' || theme === 'rikislogmadur')
     return {
       themeConfig: {
         headerButtonColorScheme: 'blueberry',
@@ -160,6 +167,8 @@ const OrganizationHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
       return <LandlaeknirHeader organizationPage={organizationPage} />
     case 'fiskistofa':
       return <FiskistofaHeader organizationPage={organizationPage} />
+    case 'rikislogmadur':
+      return <RikislogmadurHeader organizationPage={organizationPage} />
     default:
       return <DefaultHeader organizationPage={organizationPage} />
   }
@@ -279,6 +288,16 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
     case 'landskjorstjorn':
       OrganizationFooterComponent = (
         <LandskjorstjornFooter footerItems={organization.footerItems} />
+      )
+      break
+    case 'rikislogmadur':
+    case 'office-of-the-attorney-general-civil-affairs':
+      OrganizationFooterComponent = (
+        <RikislogmadurFooter
+          title={organization.title}
+          footerItems={organization.footerItems}
+          logo={organization.logo?.url}
+        />
       )
       break
   }

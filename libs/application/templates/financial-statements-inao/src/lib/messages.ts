@@ -631,14 +631,19 @@ export const m = defineMessages({
   lessThanLimit: {
     id: 'fsn.application:lessThanLimit',
     defaultMessage:
-      'Heildartekjur og heildarkostnað við kosningabaráttuna var minni en 550 þúsund krónum.',
+      'Heildartekjur og heildarkostnað við kosningabaráttuna var minni en',
     description: 'Spending was less than a specific limit',
   },
   moreThanLimit: {
     id: 'fsn.application:moreThanLimit',
     defaultMessage:
-      'Heildartekjur og heildarkostnað við kosningabaráttuna var meira en 550 þúsund krónum.',
+      'Heildartekjur og heildarkostnað við kosningabaráttuna var meira en',
     description: 'Spending was more than a specific limit',
+  },
+  crowns: {
+    id: 'fsn.application:crowns',
+    defaultMessage: 'krónum',
+    description: 'crowns',
   },
   campaignCost: {
     id: 'fsn.application:campaignCost',
@@ -689,6 +694,21 @@ export const m = defineMessages({
     id: 'fsn.application:individualReceivedMsgSecond',
     defaultMessage: 'hefur verið skilað þann',
     description: 'Second part of audit received message',
+  },
+  fetchErrorTitle: {
+    id: 'fsn.application:fetchErrorMsg',
+    defaultMessage: 'Eitthvað fór úrskeiðiðs',
+    description: 'Error msg title when fetching data fails',
+  },
+  fetchErrorMsg: {
+    id: 'fsn.application:fetchError',
+    defaultMessage: 'Ekki tókst að sækja gögn, reyndur aftur seinna',
+    description: 'Error msg when fetching data fails',
+  },
+  errorDataProvider: {
+    id: 'fsn.application:error.dataProvider',
+    defaultMessage: 'Reyndu aftur síðar',
+    description: 'Unhandled error in data provider',
   },
 })
 

@@ -15,7 +15,8 @@ const FileSchema = z.object({
 })
 
 const election = z.object({
-  selectElection: z.string().refine((x) => !!x, { params: m.required }),
+  selectElection: z.string().optional(),
+  electionName: z.string().optional(),
   incomeLimit: z.string().refine((x) => !!x, { params: m.required }),
 })
 
