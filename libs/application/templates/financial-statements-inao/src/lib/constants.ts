@@ -22,7 +22,6 @@ export const GREATER = 'greater'
 export const LESS = 'less'
 export const TOTAL = 'total'
 export const ELECTIONLIMIT = 550000
-export const CARETAKERLIMIT = 300000
 export const INPUTCHANGEINTERVAL = 300
 export const UPDATE_ELECTION_ACTION = 'updateCurrentElection'
 
