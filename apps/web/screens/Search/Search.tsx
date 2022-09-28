@@ -197,9 +197,12 @@ const Search: Screen<CategoryProps> = ({
     const labels = []
 
     switch (item.__typename) {
-      case 'LifeEventPage':
-        labels.push(n('lifeEvent'))
+      case 'LifeEventPage': {
+        if (item.pageType !== 'Digital Iceland Service') {
+          labels.push(n('lifeEvent'))
+        }
         break
+      }
       case 'News':
         labels.push(n('newsTitle'))
         break
@@ -676,6 +679,7 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
   const allTypes = [
     'webArticle' as SearchableContentTypes,
     'webLifeEventPage' as SearchableContentTypes,
+    'webDigitalIcelandService' as SearchableContentTypes,
     'webAdgerdirPage' as SearchableContentTypes,
     'webSubArticle' as SearchableContentTypes,
     'webLink' as SearchableContentTypes,
