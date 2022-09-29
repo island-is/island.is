@@ -99,7 +99,7 @@ const Home = ({
       roles.filter((role) =>
         role.name.toLowerCase().includes(nameSearch.toLowerCase()),
       ),
-    [nameSearch],
+    [nameSearch, roles],
   )
 
   return (
