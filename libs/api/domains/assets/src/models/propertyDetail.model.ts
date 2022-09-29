@@ -5,7 +5,12 @@ import {
 } from './propertyUnitsOfUse.model'
 import { PropertyOwnersModel } from './propertyOwners.model'
 import { LandModel } from './Land.model'
-import { Field, ObjectType } from '@nestjs/graphql'
+import {
+  Extensions,
+  Field,
+  MiddlewareContext,
+  ObjectType,
+} from '@nestjs/graphql'
 
 const isNotOwner = ({ source }: MiddlewareContext): boolean => {
   const owners = (source as PropertyDetail).registeredOwners?.registeredOwners
