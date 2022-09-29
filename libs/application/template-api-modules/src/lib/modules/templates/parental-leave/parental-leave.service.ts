@@ -238,21 +238,17 @@ export class ParentalLeaveService {
         attachmentBytes: pdf,
       })
     } else {
-      const files = getValueViaPath(
-        application.answers,
-        'fileUpload.file',
-      )
+      const files = getValueViaPath(application.answers, 'fileUpload.file')
 
       if ((files as { file: unknown[] })?.file) {
         const pdf = await this.getPdfs(application)
 
         attachments.push({
           attachmentType: 'other',
-          attachmentBytes: pdf
+          attachmentBytes: pdf,
         })
       }
     }
-
 
     return attachments
   }
