@@ -11,6 +11,7 @@ export async function session(
   isAuthNext: boolean,
   idsLoginOn: boolean,
   phoneNumber: string,
+  authUrl?: string,
 ) {
   if (existsSync(storageState)) {
     context = await browser.newContext({ storageState: storageState })
@@ -19,13 +20,14 @@ export async function session(
   }
   const page = await context.newPage()
   const cognitoSessionValidation = await page.request.get(homeUrl)
+  const authUrlPrefix = authUrl ?? urls.authUrl
   if (
     cognitoSessionValidation
       .url()
       .startsWith('https://cognito.shared.devland.is/')
   ) {
     await page.goto(homeUrl)
-    await cognitoLogin(page, getCognitoCredentials(), home, urls.authUrl)
+    await cognitoLogin(page, getCognitoCredentials(), home, authUrlPrefix)
   } else {
     console.log(`Cognito session exists`)
   }
@@ -45,7 +47,7 @@ export async function session(
       }
     } else {
       const idsSessionValidation = await page.request.get(
-        `${urls.authUrl}/connect/sessioninfo`,
+        `${authUrlPrefix}/connect/sessioninfo`,
       )
       const sessionHTML = await idsSessionValidation.text()
       const sessionMatch = sessionHTML.match(/({.*?})/)
