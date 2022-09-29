@@ -14,6 +14,7 @@ import { EventService } from '../event'
 
 export enum CourtDocumentFolder {
   REQUEST_DOCUMENTS = 'Krafa og greinargerð',
+  INDICTMENT_DOCUMENTS = 'Ákæra og greinargerð',
   CASE_DOCUMENTS = 'Gögn málsins',
   COURT_DOCUMENTS = 'Dómar, úrskurðir og Þingbók',
 }
