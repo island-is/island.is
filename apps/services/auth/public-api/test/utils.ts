@@ -44,9 +44,6 @@ export const sortDelegations = (delegations: DelegationDTO[]) => {
 
 export type NameIdTuple = [name: string, id: string]
 
-export const getFakeNationalId = () =>
-  faker.helpers.replaceSymbolWithNumber('##########')
-
 export const getFakeName = () =>
   faker.fake('{{name.firstName}} {{name.lastName}}')
 
