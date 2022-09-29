@@ -17,7 +17,7 @@ export class UpdateDelegationScopeDTO {
 }
 
 export class DelegationScopeDTO {
-  @ApiPropertyOptional({ nullable: true })
+  @ApiPropertyOptional({ nullable: true, type: String })
   id?: string | null
 
   @IsString()
@@ -38,6 +38,6 @@ export class DelegationScopeDTO {
 
   @IsOptional()
   @IsDateString()
-  @ApiPropertyOptional({ nullable: true })
+  @ApiPropertyOptional({ nullable: true, type: Date })
   validTo?: Date | null
 }
