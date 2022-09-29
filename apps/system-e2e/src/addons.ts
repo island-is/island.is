@@ -6,13 +6,18 @@ expect.extend({
   async toHaveCountGreaterThan(
     received: Locator,
     value: number,
-    options?: { timeout: number },
+    options?: { timeoutMs?: number },
   ) {
     let count = 0
-    for (let i = 0; i < 30; i++) {
+    const oneSecondMs = 1000
+    const maxRetries = 60
+    for (let i = 0; i < maxRetries; i++) {
       count = await received.count()
-      if (!(count > value) && i * 1000 < (options?.timeout ?? 10000))
-        await sleep(1000)
+      if (
+        !(count > value) &&
+        i * oneSecondMs < (options?.timeoutMs ?? 10 * oneSecondMs)
+      )
+        await sleep(oneSecondMs)
       else break
     }
     return {
