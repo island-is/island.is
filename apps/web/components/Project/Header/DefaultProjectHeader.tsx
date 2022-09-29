@@ -21,10 +21,12 @@ const getTextBackgroundColor = (projectPage: ProjectPage) => {
 
 interface DefaultProjectHeaderProps {
   projectPage: ProjectPage
+  headerImageObjectFit?: 'cover' | 'contain'
 }
 
 export const DefaultProjectHeader = ({
   projectPage,
+  headerImageObjectFit = 'cover',
 }: DefaultProjectHeaderProps) => {
   const { linkResolver } = useLinkResolver()
 
@@ -86,14 +88,20 @@ export const DefaultProjectHeader = ({
         </GridContainer>
       </Box>
       {defaultImageIsProvided && (
-        <img
-          className={styles.headerImage}
-          style={{
-            maxHeight: !isBelowLarge ? maxImageHeight : undefined,
-          }}
-          src={projectPage.defaultHeaderImage.url}
-          alt="header"
-        ></img>
+        <Box
+          className={styles.headerImageContainer}
+          style={{ backgroundColor: textBackgroundColor }}
+        >
+          <img
+            className={styles.headerImage}
+            style={{
+              maxHeight: !isBelowLarge ? maxImageHeight : undefined,
+              objectFit: headerImageObjectFit,
+            }}
+            src={projectPage.defaultHeaderImage.url}
+            alt="header"
+          />
+        </Box>
       )}
     </Box>
   )

@@ -15,7 +15,7 @@ export const ProjectFooter = ({ projectPage }: ProjectFooterProps) => {
   const footerItems = projectPage.footerItems ?? []
 
   switch (projectPage.theme) {
-    case 'opinber-nyskopun':
+    case 'opinbernyskopun':
       return <OpinberNyskopunFooter footerItems={footerItems} />
     default:
       return null
