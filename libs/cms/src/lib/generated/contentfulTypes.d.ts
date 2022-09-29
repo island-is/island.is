@@ -2120,7 +2120,6 @@ export interface IOrganizationPageFields {
     | 'hsn'
     | 'fiskistofa'
     | 'landlaeknir'
-    | 'landskjorstjorn'
 
   /** Slices */
   slices?:
