@@ -60,6 +60,11 @@ export const APPLICATION_ATTACHMENT_BUCKET = 'APPLICATION_ATTACHMENT_BUCKET'
 const SIX_MONTHS_IN_SECONDS_EXPIRES = 6 * 30 * 24 * 60 * 60
 const df = 'yyyy-MM-dd'
 
+interface File {
+  name: string
+  key: string
+}
+
 @Injectable()
 export class ParentalLeaveService {
   s3 = new S3()
@@ -203,15 +208,15 @@ export class ParentalLeaveService {
       const files = getValueViaPath(
         application.answers,
         'fileUpload.file',
-      ) as any[]
+      ) as File[]
 
-      const pdfs: any[] = []
+      const pdfs: string[] = []
 
-      await files.forEach(async (pdf) => {
+      files.forEach(async (pdf) => {
         const Key = `${application.id}/${pdf.key}`
         const file = await this.s3
-        .getObject({ Bucket: this.attachmentBucket, Key })
-        .promise()
+          .getObject({ Bucket: this.attachmentBucket, Key })
+          .promise()
         const fileContent = file.Body as Buffer
         pdfs.push(fileContent.toString('base64'))
       })
@@ -247,7 +252,7 @@ export class ParentalLeaveService {
       pdfs.forEach((pdf) => {
         attachments.push({
           attachmentType: 'other',
-          attachmentBytes: pdf
+          attachmentBytes: pdf,
         })
       })
     }
