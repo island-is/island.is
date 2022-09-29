@@ -10,7 +10,7 @@ export enum BaseAuthority {
   local = 'localhost:4200',
 }
 
-enum AuthUrl {
+export enum AuthUrl {
   dev = 'https://identity-server.dev01.devland.is',
   staging = 'https://identity-server.staging01.devland.is',
   prod = 'https://innskra.island.is',

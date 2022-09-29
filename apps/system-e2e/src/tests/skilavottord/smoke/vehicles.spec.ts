@@ -1,10 +1,10 @@
 import { BrowserContext, expect, test } from '@playwright/test'
-import { urls } from '../../../support/utils'
+import { AuthUrl, getEnvironmentBaseUrl, urls } from '../../../support/utils'
 import { session } from '../../../support/session'
 
 test.use({ baseURL: urls.islandisBaseUrl })
 
-test.describe.skip('Service portal', () => {
+test.describe('Service portal', () => {
   let context: BrowserContext
   test.beforeAll(async ({ browser }) => {
     context = await session(
@@ -16,6 +16,7 @@ test.describe.skip('Service portal', () => {
       true,
       true,
       '0103019',
+      getEnvironmentBaseUrl(AuthUrl.staging),
     )
   })
   test.afterAll(async () => {
