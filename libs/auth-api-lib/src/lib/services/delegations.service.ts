@@ -204,12 +204,12 @@ export class DelegationsService {
    * Finds a single delegation for a user.
    * @param nationalId Id of the user to find the delegation from.
    * @param id Id of the delegation to find.
-   * @param disableFilter If true then the delegation will not be filtered by the user scope.
+   * @param filterScopesByAuth If true then the delegation will be filtered by the user scope.
    */
   async findById(
     user: User,
     id: string,
-    disableFilter = false,
+    filterScopesByAuth = true,
   ): Promise<DelegationDTO | null> {
     if (!isUuid(id)) {
       throw new BadRequestException('delegationId must be a valid uuid')
@@ -245,7 +245,7 @@ export class DelegationsService {
       ],
     })
 
-    if (delegation && !disableFilter) {
+    if (delegation && filterScopesByAuth) {
       delegation.delegationScopes = delegation.delegationScopes?.filter((s) =>
         this.checkIfScopeAllowed(s, user),
       )
@@ -412,7 +412,7 @@ export class DelegationsService {
     const delegations = await Promise.all(
       // We need to refetch the delegation to make sure we get all delegation.scopes
       deceasedDelegations.map(({ id }) =>
-        id ? this.findById(user, id, true) : undefined,
+        id ? this.findById(user, id, false) : undefined,
       ),
     )
     const delegationsWithAllScopes = delegations.filter(isDefined)
