@@ -54,6 +54,7 @@ import { FiskistofaHeader } from './Themes/FiskistofaTheme/FiskistofaHeader'
 import FiskistofaFooter from './Themes/FiskistofaTheme/FiskistofaFooter'
 import { LandskjorstjornFooter } from './Themes/LandkjorstjornTheme/LandkjorstjornFooter'
 import { LatestNewsCardConnectedComponent } from '../LatestNewsCardConnectedComponent'
+import { LandskjorstjornHeader } from './Themes/LandkjorstjornTheme/LandskjorstjornHeader'
 import * as styles from './OrganizationWrapper.css'
 
 interface NavigationData {
@@ -162,6 +163,8 @@ const OrganizationHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
       return <LandlaeknirHeader organizationPage={organizationPage} />
     case 'fiskistofa':
       return <FiskistofaHeader organizationPage={organizationPage} />
+    case 'landskjorstjorn':
+      return <LandskjorstjornHeader organizationPage={organizationPage} />
     default:
       return <DefaultHeader organizationPage={organizationPage} />
   }
