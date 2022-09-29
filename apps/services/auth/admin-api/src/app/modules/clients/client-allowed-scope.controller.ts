@@ -3,6 +3,7 @@ import {
   ClientAllowedScopeDTO,
   ClientAllowedScope,
   ApiScope,
+  ResourcesService,
 } from '@island.is/auth-api-lib'
 import {
   BadRequestException,
@@ -35,6 +36,7 @@ const namespace = `${environment.audit.defaultNamespace}/client-allowed-scope`
 export class ClientAllowedScopeController {
   constructor(
     private readonly clientsService: ClientsService,
+    private readonly resourcesService: ResourcesService,
     private readonly auditService: AuditService,
   ) {}
 
@@ -44,8 +46,8 @@ export class ClientAllowedScopeController {
   @Audit<ApiScope[]>({
     resources: (scopes) => scopes.map((scope) => scope.name),
   })
-  async findAvailabeScopes(): Promise<ApiScope[]> {
-    return this.clientsService.findAvailabeScopes()
+  async findAvailableScopes(): Promise<ApiScope[]> {
+    return this.resourcesService.findScopesAvailableForClients()
   }
 
   /** Adds new scope to client */

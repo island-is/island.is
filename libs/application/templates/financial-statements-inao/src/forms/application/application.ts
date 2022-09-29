@@ -12,7 +12,7 @@ import { clientInfoSection } from './shared/about/clientInfoSection'
 import { m } from '../../lib/messages'
 import { overviewSection } from './shared/overviewSection'
 import { Logo } from '../../components'
-import { CARETAKERLIMIT, USERTYPE, LESS } from '../../lib/constants'
+import { USERTYPE, LESS } from '../../lib/constants'
 import { cemetryKeyNumbersSection } from './cemetry/cemetryKeyNumbers'
 import { partyKeyNumbersSection } from './party/partyKeyNumbers'
 import { individualKeyNumbersSection } from './individual/individualKeyNumbers'
@@ -85,6 +85,8 @@ export const getApplication = (allowFakeData = false): Form => {
             condition: (answers, externalData) => {
               const userType = getCurrentUserType(answers, externalData)
               const applicationAnswers = answers as FinancialStatementsInao
+              const careTakerLimit =
+                applicationAnswers.cemetryOperation?.incomeLimit ?? '0'
               const currentAssets = applicationAnswers.cemetryAsset?.current
               const isCemetry = userType === USERTYPE.CEMETRY
               const totalIncome = isCemetry
@@ -92,7 +94,7 @@ export const getApplication = (allowFakeData = false): Form => {
                 : '0'
               const longTermDebt = applicationAnswers.cemetryLiability?.longTerm
               const isUnderLimit =
-                currencyStringToNumber(totalIncome) < CARETAKERLIMIT
+                currencyStringToNumber(totalIncome) < careTakerLimit
 
               if (
                 isCemetry &&
