@@ -38,6 +38,7 @@ import {
 } from './parentalLeaveTemplateUtils'
 import {
   getApplicationAnswers,
+  getApplicationExternalData,
   getOtherParentId,
   getSelectedChild,
 } from '../lib/parentalLeaveUtils'
@@ -381,7 +382,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.VINNUMALASTOFNUN_APPROVAL]: {
-        entry: 'assignToVMST',
+        entry: ['assignToVMST', 'setNavId'],
         exit: 'clearAssignees',
         meta: {
           name: States.VINNUMALASTOFNUN_APPROVAL,
@@ -608,7 +609,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               statesMessages.employerWaitingToAssignForEditsDescription,
           },
           lifecycle: DEPRECATED_DefaultStateLifeCycle,
-          progress: 0.4,
+          progress: 0.5,
           onEntry: {
             apiModuleAction: API_MODULE_ACTIONS.assignEmployer,
             throwOnError: true,
@@ -638,7 +639,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             description: statesMessages.employerApproveEditsDescription,
           },
           lifecycle: DEPRECATED_DefaultStateLifeCycle,
-          progress: 0.4,
+          progress: 0.5,
           roles: [
             {
               id: Roles.ASSIGNEE,
@@ -695,7 +696,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             description: statesMessages.employerEditsActionDescription,
           },
           lifecycle: DEPRECATED_DefaultStateLifeCycle,
-          progress: 0.4,
+          progress: 0.5,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -724,7 +725,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             description: statesMessages.vinnumalastofnunApproveEditsDescription,
           },
           lifecycle: DEPRECATED_DefaultStateLifeCycle,
-          progress: 0.4,
+          progress: 0.75,
+          onEntry: {
+            apiModuleAction: API_MODULE_ACTIONS.sendApplication,
+            shouldPersistToExternalData: true,
+            throwOnError: true,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -876,6 +882,19 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           if (application.answers.personalAllowanceFromSpouse) {
             unset(application.answers, 'personalAllowanceFromSpouse')
           }
+        }
+
+        return context
+      }),
+      setNavId: assign((context) => {
+        const { application } = context
+
+        const { applicationFundId } = getApplicationExternalData(
+          application.externalData,
+        )
+
+        if (applicationFundId !== '') {
+          set(application.externalData, 'navId', applicationFundId)
         }
 
         return context

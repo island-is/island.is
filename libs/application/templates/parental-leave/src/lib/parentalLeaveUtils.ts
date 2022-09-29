@@ -404,11 +404,14 @@ export function getApplicationExternalData(
     '',
   ) as string
 
-  const applicationFundId = getValueViaPath(
-    externalData,
-    'sendApplication.data.id',
-    '',
-  ) as string
+  let applicationFundId = getValueViaPath(externalData, 'navId', '') as string
+  if (applicationFundId === '') {
+    applicationFundId = getValueViaPath(
+      externalData,
+      'sendApplication.data.id',
+      '',
+    ) as string
+  }
 
   return {
     applicantName,

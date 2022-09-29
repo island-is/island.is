@@ -40,6 +40,7 @@ import {
 import {
   transformApplicationToParentalLeaveDTO,
   getRatio,
+  getRightsCode,
 } from './parental-leave.utils'
 import { apiConstants } from './constants'
 import { SmsService } from '@island.is/nova-sms'
@@ -309,7 +310,7 @@ export class ParentalLeaveService {
           ),
           approved: false,
           paid: false,
-          rightsCodePeriod: null,
+          rightsCodePeriod: getRightsCode(application),
         })
       } else if (isUsingTransferredRights) {
         // We know all of the period will be using transferred rights
@@ -364,7 +365,7 @@ export class ParentalLeaveService {
           ),
           approved: false,
           paid: false,
-          rightsCodePeriod: null,
+          rightsCodePeriod: getRightsCode(application),
         })
 
         const transferredPeriodStartDate = addDays(
