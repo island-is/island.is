@@ -7,16 +7,13 @@ test.use({ baseURL: urls.islandisBaseUrl })
 test.describe('Service portal', () => {
   let context: BrowserContext
   test.beforeAll(async ({ browser }) => {
-    context = await session(
-      context,
-      browser,
-      'service-portal.json',
-      `${urls.islandisBaseUrl}/minarsidur`,
-      `${urls.islandisBaseUrl}/minarsidur`,
-      false,
-      true,
-      '0103019',
-    )
+    context = await session({
+      browser: browser,
+      storageState: 'service-portal.json',
+      homeUrl: `${urls.islandisBaseUrl}/minarsidur`,
+      phoneNumber: '0103019',
+      idsLoginOn: true,
+    })
   })
   test.afterAll(async () => {
     await context.close()

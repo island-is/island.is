@@ -8,16 +8,17 @@ test.use({ baseURL: urls.adsBaseUrl })
 test.describe('Air discount scheme', () => {
   let context: BrowserContext
   test.beforeAll(async ({ browser }) => {
-    context = await session(
-      context,
-      browser,
-      'loftbru.json',
-      `${urls.adsBaseUrl}/min-rettindi`,
-      urls.adsBaseUrl,
-      false,
-      true,
-      '0103019',
-    )
+    context = await session({
+      browser: browser,
+      storageState: 'loftbru.json',
+      homeUrl: `${urls.adsBaseUrl}/min-rettindi`,
+      idsLoginOn: {
+        authNext: {
+          authNextRoot: urls.adsBaseUrl,
+        },
+      },
+      phoneNumber: '0103019',
+    })
   })
 
   test.afterAll(async () => {

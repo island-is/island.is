@@ -7,16 +7,13 @@ test.use({ baseURL: urls.islandisBaseUrl })
 test.describe('Front page', () => {
   let context: BrowserContext
   test.beforeAll(async ({ browser }) => {
-    context = await session(
-      context,
-      browser,
-      'homepage.json',
-      `${urls.islandisBaseUrl}/`,
-      `${urls.islandisBaseUrl}/`,
-      false,
-      false,
-      '0103019',
-    )
+    context = await session({
+      browser: browser,
+      storageState: 'homepage.json',
+      homeUrl: `${urls.islandisBaseUrl}/`,
+      phoneNumber: '0103019',
+      idsLoginOn: false,
+    })
   })
   test.afterAll(async () => {
     await context.close()

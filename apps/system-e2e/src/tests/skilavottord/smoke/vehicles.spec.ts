@@ -4,20 +4,21 @@ import { session } from '../../../support/session'
 
 test.use({ baseURL: urls.islandisBaseUrl })
 
-test.describe('Service portal', () => {
+test.describe.skip('Service portal', () => {
   let context: BrowserContext
   test.beforeAll(async ({ browser }) => {
-    context = await session(
-      context,
-      browser,
-      'vehicles.json',
-      `${urls.islandisBaseUrl}/app/skilavottord/my-cars`,
-      `${urls.islandisBaseUrl}/app/skilavottord`,
-      true,
-      true,
-      '0103019',
-      getEnvironmentBaseUrl(AuthUrl.staging),
-    )
+    context = await session({
+      browser: browser,
+      storageState: 'vehicles.json',
+      homeUrl: `${urls.islandisBaseUrl}/app/skilavottord/my-cars`,
+      phoneNumber: '0103019',
+      idsLoginOn: {
+        authNext: {
+          authNextRoot: `${urls.islandisBaseUrl}/app/skilavottord`,
+        },
+      },
+      authUrl: getEnvironmentBaseUrl(AuthUrl.staging),
+    })
   })
   test.afterAll(async () => {
     await context.close()

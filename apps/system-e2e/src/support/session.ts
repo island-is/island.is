@@ -1,23 +1,31 @@
-import { Browser, BrowserContext, expect } from '@playwright/test'
+import { Browser, expect } from '@playwright/test'
 import { existsSync } from 'fs'
 import { cognitoLogin, getCognitoCredentials, idsLogin, urls } from './utils'
 
-export async function session(
-  context: BrowserContext,
-  browser: Browser,
-  storageState: string,
-  homeUrl: string,
-  home: string,
-  isAuthNext: boolean,
-  idsLoginOn: boolean,
-  phoneNumber: string,
-  authUrl?: string,
-) {
-  if (existsSync(storageState)) {
-    context = await browser.newContext({ storageState: storageState })
-  } else {
-    context = await browser.newContext()
-  }
+export async function session({
+  browser,
+  storageState,
+  homeUrl,
+  phoneNumber,
+  authUrl,
+  idsLoginOn,
+}: {
+  browser: Browser
+  storageState: string
+  homeUrl: string
+  phoneNumber: string
+  idsLoginOn:
+    | boolean
+    | {
+        authNext?: {
+          authNextRoot: string
+        }
+      }
+  authUrl?: string
+}) {
+  const context = existsSync(storageState)
+    ? await browser.newContext({ storageState: storageState })
+    : await browser.newContext()
   const page = await context.newPage()
   const cognitoSessionValidation = await page.request.get(homeUrl)
   const authUrlPrefix = authUrl ?? urls.authUrl
@@ -27,20 +35,20 @@ export async function session(
       .startsWith('https://cognito.shared.devland.is/')
   ) {
     await page.goto(homeUrl)
-    await cognitoLogin(page, getCognitoCredentials(), home, authUrlPrefix)
+    await cognitoLogin(page, getCognitoCredentials(), homeUrl, authUrlPrefix)
   } else {
     console.log(`Cognito session exists`)
   }
   if (idsLoginOn) {
-    if (isAuthNext) {
+    if (typeof idsLoginOn === 'object' && idsLoginOn.authNext) {
       const idsSessionValidation = await page.request.get(
-        `${home}/api/auth/session`,
+        `${idsLoginOn.authNext.authNextRoot}/api/auth/session`,
       )
       const sessionObject = await idsSessionValidation.json()
       if (!sessionObject.expires) {
         const idsPage = await context.newPage()
         await idsPage.goto(homeUrl)
-        await idsLogin(idsPage, phoneNumber, home)
+        await idsLogin(idsPage, phoneNumber, homeUrl)
         await idsPage.close()
       } else {
         console.log(`IDS(next-auth) session exists`)
@@ -63,7 +71,7 @@ export async function session(
       ) {
         const idsPage = await context.newPage()
         await idsPage.goto(homeUrl)
-        await idsLogin(idsPage, phoneNumber, home)
+        await idsLogin(idsPage, phoneNumber, homeUrl)
         await idsPage.close()
       } else {
         console.log(`IDS session exists`)

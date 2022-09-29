@@ -9,16 +9,13 @@ test.use({ baseURL: urls.islandisBaseUrl })
 test.describe('P-sign', () => {
   let context: BrowserContext
   test.beforeAll(async ({ browser }) => {
-    context = await session(
-      context,
-      browser,
-      'p-sign.json',
-      `${urls.islandisBaseUrl}/umsoknir/p-merki`,
-      `${urls.islandisBaseUrl}/umsoknir/p-merki`,
-      false,
-      true,
-      '0103019',
-    )
+    context = await session({
+      browser: browser,
+      storageState: 'p-sign.json',
+      homeUrl: `${urls.islandisBaseUrl}/umsoknir/p-merki`,
+      phoneNumber: '0103019',
+      idsLoginOn: true,
+    })
   })
   test.afterAll(async () => {
     await context.close()

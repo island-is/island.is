@@ -35,16 +35,13 @@ test.describe('Parental leave', () => {
     employer = await makeEmailAccount('employer')
   })
   test.beforeAll(async ({ browser }) => {
-    context = await session(
-      context,
-      browser,
-      'parental-leave.json',
-      `${urls.islandisBaseUrl}/umsoknir/faedingarorlof`,
-      `${urls.islandisBaseUrl}/umsoknir/faedingarorlof`,
-      false,
-      true,
-      '0103019',
-    )
+    context = await session({
+      browser: browser,
+      storageState: 'parental-leave.json',
+      homeUrl: `${urls.islandisBaseUrl}/umsoknir/faedingarorlof`,
+      phoneNumber: '0103019',
+      idsLoginOn: true,
+    })
   })
   test.afterAll(async () => {
     await context.close()
