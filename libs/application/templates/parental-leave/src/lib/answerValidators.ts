@@ -55,6 +55,11 @@ export const answerValidators: Record<string, AnswerValidator> = {
       'employer.isSelfEmployed',
     )
 
+    const employerEmail = getValueViaPath(
+      application.answers,
+      'employer.email'
+    )
+
     if (obj.isSelfEmployed === '') {
       return buildError(coreErrorMessages.defaultError, 'isSelfEmployed')
     }
@@ -64,11 +69,11 @@ export const answerValidators: Record<string, AnswerValidator> = {
       return undefined
     }
 
-    if (isSelfEmployed === NO && isEmpty(obj?.email)) {
+    if (isSelfEmployed === NO && isEmpty(obj?.email) && !employerEmail) {
       return buildError(errorMessages.employerEmail, 'email')
     }
 
-    if (isSelfEmployed === NO && !isValidEmail(obj.email as string)) {
+    if (isSelfEmployed === NO && !isValidEmail(obj.email as string) && !employerEmail) {
       return buildError(errorMessages.email, 'email')
     }
 
