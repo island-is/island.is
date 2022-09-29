@@ -9,6 +9,10 @@ import {
   DelegationDTO,
   DelegationScope,
   DelegationType,
+  PersonalRepresentative,
+  PersonalRepresentativeRight,
+  PersonalRepresentativeRightType,
+  PersonalRepresentativeType,
 } from '@island.is/auth-api-lib'
 import { AuthScope } from '@island.is/auth/scopes'
 import {
@@ -31,12 +35,6 @@ import {
   getRequestMethod,
   getFakePerson,
 } from '../../../../test/utils'
-import {
-  PersonalRepresentative,
-  PersonalRepresentativeRight,
-  PersonalRepresentativeRightType,
-  PersonalRepresentativeType,
-} from '@island.is/auth-api-lib/personal-representative'
 import { RskProcuringClient } from '@island.is/clients/rsk/procuring'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import { ResponseSimple } from '@island.is/clients/rsk/procuring'

@@ -62,6 +62,7 @@ export interface CaseFile {
   state: CaseFileState
   key?: string
   size: number
+  category?: CaseFileCategory
 }
 
 export interface CreateFile {

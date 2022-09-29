@@ -22,6 +22,7 @@ module.exports = withVanillaExtract({
     // Will be available on both server and client
     apiUrl: apiPath,
     graphqlEndpoint: graphqlPath,
+    supportEmail: process.env.SUPPORT_EMAIL ?? 'ben10@omnitrix.is',
   },
   env: {
     API_MOCKS: process.env.API_MOCKS ?? '',

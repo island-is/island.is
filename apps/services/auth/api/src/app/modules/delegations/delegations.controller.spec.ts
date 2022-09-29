@@ -4,14 +4,12 @@ import {
   DelegationDTO,
   DelegationScope,
   DelegationType,
-} from '@island.is/auth-api-lib'
-import {
   PersonalRepresentative,
   PersonalRepresentativeRight,
   PersonalRepresentativeRightType,
   PersonalRepresentativeScopePermission,
   PersonalRepresentativeType,
-} from '@island.is/auth-api-lib/personal-representative'
+} from '@island.is/auth-api-lib'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import {
   createCurrentUser,
