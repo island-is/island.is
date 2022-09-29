@@ -32,7 +32,6 @@ test.describe('Search feature', () => {
     const testResults = page.locator('[data-testid="search-result"]')
     await expect(testResults).toHaveCountGreaterThan(9)
     const searchUrl = page.url()
-    console.log(`Url: ${searchUrl}`)
     await testResults.nth(0).click()
     await page.waitForLoadState('networkidle')
     await expect(page).not.toHaveURL(searchUrl)
