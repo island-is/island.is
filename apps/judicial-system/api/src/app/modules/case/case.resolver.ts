@@ -18,7 +18,6 @@ import {
 import type {
   User,
   Notification as TNotification,
-  CaseFile as TCaseFile,
 } from '@island.is/judicial-system/types'
 import {
   CurrentGraphQlUser,
@@ -26,7 +25,6 @@ import {
 } from '@island.is/judicial-system/auth'
 
 import { BackendApi } from '../../data-sources'
-import { CaseFile } from '../file'
 import { CaseInterceptor } from './interceptors/case.interceptor'
 import { CasesInterceptor } from './interceptors/cases.interceptor'
 import { CreateCaseInput } from './dto/createCase.input'
@@ -283,15 +281,5 @@ export class CaseResolver {
     return backendApi
       .getCaseNotifications(id)
       .catch(() => [] as TNotification[])
-  }
-
-  @ResolveField(() => [CaseFile])
-  async caseFiles(
-    @Parent() theCase: Case,
-    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
-  ): Promise<CaseFile[]> {
-    const { id } = theCase
-
-    return backendApi.getCaseFiles(id).catch(() => [] as TCaseFile[])
   }
 }

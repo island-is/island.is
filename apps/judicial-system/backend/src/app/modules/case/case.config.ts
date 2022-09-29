@@ -10,12 +10,7 @@ export const caseModuleConfig = defineConfig({
       replyToEmail: env.required('EMAIL_REPLY_TO', 'ben10@omnitrix.is'),
       replyToName: env.required('EMAIL_REPLY_TO_NAME', 'Réttarvörslugátt'),
     },
-    deepLinks: {
-      completedCaseOverviewUrl: env.required(
-        'COMPLETED_CASE_OVERVIEW_URL',
-        'http://localhost:4200/krafa/yfirlit/',
-      ),
-    },
+    clientUrl: env.required('CLIENT_URL', 'http://localhost:4200'),
     archiveEncryptionKey: env.required(
       'ARCHIVE_ENCRYPTION_KEY',
       'secret-archive-encryption-key',

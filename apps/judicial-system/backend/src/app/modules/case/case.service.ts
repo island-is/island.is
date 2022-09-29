@@ -25,7 +25,9 @@ import {
 import { InjectQueue, QueueService } from '@island.is/message-queue'
 import { MessageType } from '@island.is/judicial-system/message'
 import { EmailService } from '@island.is/email-service'
+import { SIGNED_VERDICT_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
 import {
+  CaseFileCategory,
   CaseFileState,
   CaseOrigin,
   CaseState,
@@ -39,7 +41,6 @@ import { nowFactory, uuidFactory } from '../../factories'
 import {
   getRequestPdfAsBuffer,
   getRulingPdfAsString,
-  getCasefilesPdfAsString,
   writeFile,
   getRulingPdfAsBuffer,
   getCustodyNoticePdfAsBuffer,
@@ -55,7 +56,7 @@ import { DefendantService, Defendant } from '../defendant'
 import { Institution } from '../institution'
 import { User, UserService } from '../user'
 import { AwsS3Service } from '../aws-s3'
-import { CourtService } from '../court'
+import { CourtDocumentFolder, CourtService } from '../court'
 import { CaseEvent, EventService } from '../event'
 import { PoliceService } from '../police'
 import { CreateCaseDto } from './dto/createCase.dto'
@@ -154,6 +155,7 @@ const includes: Includeable[] = [
   },
   { model: Case, as: 'parentCase' },
   { model: Case, as: 'childCase' },
+  { model: CaseFile, as: 'caseFiles' },
 ]
 
 const defendantsOrder: OrderItem = [
@@ -226,16 +228,21 @@ export class CaseService {
       writeFile(`${theCase.id}-ruling-signed.pdf`, buffer)
     }
 
+    const fileName = formatCourtUploadRulingTitle(
+      this.formatMessage,
+      theCase.courtCaseNumber,
+      Boolean(theCase.rulingModifiedHistory),
+    )
+
     try {
-      await this.courtService.createRuling(
+      await this.courtService.createDocument(
         theCase.id,
-        theCase.courtId ?? '',
-        theCase.courtCaseNumber ?? '',
-        formatCourtUploadRulingTitle(
-          this.formatMessage,
-          theCase.courtCaseNumber,
-          Boolean(theCase.rulingDate),
-        ),
+        theCase.courtId,
+        theCase.courtCaseNumber,
+        CourtDocumentFolder.COURT_DOCUMENTS,
+        fileName,
+        `${fileName}.pdf`,
+        'application/pdf',
         buffer,
         user,
       )
@@ -259,13 +266,18 @@ export class CaseService {
         writeFile(`${theCase.id}-court-record.pdf`, pdf)
       }
 
-      await this.courtService.createCourtRecord(
+      const fileName = this.formatMessage(courtUpload.courtRecord, {
+        courtCaseNumber: theCase.courtCaseNumber,
+      })
+
+      await this.courtService.createDocument(
         theCase.id,
-        theCase.courtId ?? '',
-        theCase.courtCaseNumber ?? '',
-        this.formatMessage(courtUpload.courtRecord, {
-          courtCaseNumber: theCase.courtCaseNumber,
-        }),
+        theCase.courtId,
+        theCase.courtCaseNumber,
+        CourtDocumentFolder.COURT_DOCUMENTS,
+        fileName,
+        `${fileName}.pdf`,
+        'application/pdf',
         pdf,
       )
 
@@ -278,39 +290,6 @@ export class CaseService {
       )
 
       return false
-    }
-  }
-
-  private async uploadCaseFilesPdfToCourt(theCase: Case): Promise<void> {
-    try {
-      if (theCase.caseFiles && theCase.caseFiles.length > 0) {
-        const caseFilesPdf = await getCasefilesPdfAsString(
-          theCase,
-          this.formatMessage,
-        )
-
-        if (!this.config.production) {
-          writeFile(`${theCase.id}-case-files.pdf`, caseFilesPdf)
-        }
-
-        const buffer = Buffer.from(caseFilesPdf, 'binary')
-
-        await this.courtService.createDocument(
-          theCase.id,
-          theCase.courtId ?? '',
-          theCase.courtCaseNumber ?? '',
-          'Rannsóknargögn',
-          'Rannsóknargögn.pdf',
-          'application/pdf',
-          buffer,
-        )
-      }
-    } catch (error) {
-      // Log and ignore this error. The overview is not that critical.
-      this.logger.error(
-        `Failed to upload case files overview pdf to court for case ${theCase.id}`,
-        { error },
-      )
     }
   }
 
@@ -370,69 +349,139 @@ export class CaseService {
     }
   }
 
-  private async uploadSignedRulingPdf(
+  private async deliverIndictmentRulingToCourt(
     theCase: Case,
-    user: TUser,
-    signedRulingPdf: string,
-  ): Promise<void> {
-    await this.refreshFormatMessage()
-
-    const rulingUploaded = await this.uploadSignedRulingPdfToS3(
-      theCase,
-      signedRulingPdf,
-    ).then((success) => {
-      if (!success) {
-        const buffer = Buffer.from(signedRulingPdf, 'binary')
-
-        return this.uploadSignedRulingPdfToCourt(theCase, buffer, user)
-      }
-
-      return success
-    })
-
-    if (!rulingUploaded) {
-      this.sendEmailToCourt(
-        theCase,
-        this.formatMessage(m.signedRuling.subjectV2, {
-          courtCaseNumber: theCase.courtCaseNumber,
-          isModifyingRuling: Boolean(theCase.rulingDate),
-        }),
-        this.formatMessage(m.signedRuling.courtBody, {
-          courtCaseNumber: theCase.courtCaseNumber,
-          linkStart: `<a href="${this.config.deepLinks.completedCaseOverviewUrl}${theCase.id}">`,
-          linkEnd: '</a>',
-        }),
-        {
-          filename: this.formatMessage(m.signedRuling.rulingAttachment, {
-            courtCaseNumber: theCase.courtCaseNumber,
-          }),
-          content: signedRulingPdf,
-          encoding: 'binary',
-        },
+  ): Promise<boolean> {
+    return this.fileService
+      .getAllCaseFiles(theCase.id)
+      .then((caseFiles) =>
+        caseFiles.find(
+          (caseFile) => caseFile.category === CaseFileCategory.RULING,
+        ),
       )
-    }
+      .then(async (caseFile) => {
+        if (!caseFile) {
+          throw new Error(
+            `Failed to find the ruling for case ${theCase.id} in the database`,
+          )
+        }
+
+        if (!caseFile.key) {
+          throw new Error(
+            `Missing AWS S3 key for the ruling of case ${theCase.id}`,
+          )
+        }
+
+        const title = this.formatMessage(courtUpload.verdict, {
+          courtCaseNumber: theCase.courtCaseNumber,
+        })
+
+        return this.awsS3Service
+          .getObject(caseFile.key)
+          .then((buffer) =>
+            this.courtService.createDocument(
+              theCase.id,
+              theCase.courtId,
+              theCase.courtCaseNumber,
+              CourtDocumentFolder.COURT_DOCUMENTS,
+              title,
+              caseFile.name.replace(/^.+\./, `${title}.`),
+              caseFile.type,
+              buffer,
+            ),
+          )
+          .then(() => true)
+      })
+      .catch((reason) => {
+        // Tolerate failure, but log error
+        this.logger.error(
+          `Failed to deliver the ruling for case ${theCase.id} to court`,
+          { reason },
+        )
+
+        return false
+      })
   }
 
   private async deliverSignedRulingToCourt(theCase: Case): Promise<boolean> {
     return this.awsS3Service
       .getObject(`generated/${theCase.id}/ruling.pdf`)
-      .then((pdf) =>
-        this.uploadSignedRulingPdfToCourt(theCase, pdf).catch(() => false),
-      )
-      .catch(() => {
-        // The signed ruling should have been delivered to the court
-        // either directly to the court system or via email
-        this.logger.info(
-          `The ruling for case ${theCase.id} was not found in AWS S3`,
-          { caseId: theCase.id },
+      .then((pdf) => this.uploadSignedRulingPdfToCourt(theCase, pdf))
+      .catch((reason) => {
+        this.logger.error(
+          `Faild to deliver the ruling for case ${theCase.id} to court`,
+          { reason },
         )
 
-        return true
+        return false
       })
   }
 
-  private deliverCourtRecordToCourt(theCase: Case): Promise<boolean> {
-    return this.uploadCourtRecordPdfToCourt(theCase)
+  private async deliverRulingToCourt(theCase: Case): Promise<boolean> {
+    return isIndictmentCase(theCase.type)
+      ? this.deliverIndictmentRulingToCourt(theCase)
+      : this.deliverSignedRulingToCourt(theCase)
+  }
+
+  private async deliverIndictmentCourtRecortToCourt(
+    theCase: Case,
+  ): Promise<boolean> {
+    return this.fileService
+      .getAllCaseFiles(theCase.id)
+      .then((caseFiles) =>
+        caseFiles.find(
+          (caseFile) => caseFile.category === CaseFileCategory.COURT_RECORD,
+        ),
+      )
+      .then(async (caseFile) => {
+        if (!caseFile) {
+          throw new Error(
+            `Failed to find the court record for case ${theCase.id} in the database`,
+          )
+        }
+
+        if (!caseFile.key) {
+          throw new Error(
+            `Missing AWS S3 key for the court record of case ${theCase.id}`,
+          )
+        }
+
+        const title = this.formatMessage(courtUpload.courtRecord, {
+          courtCaseNumber: theCase.courtCaseNumber,
+        })
+
+        return this.awsS3Service
+          .getObject(caseFile.key)
+          .then((buffer) =>
+            this.courtService.createDocument(
+              theCase.id,
+              theCase.courtId,
+              theCase.courtCaseNumber,
+              CourtDocumentFolder.COURT_DOCUMENTS,
+              title,
+              caseFile.name.replace(/^.+\./, `${title}.`),
+              caseFile.type,
+              buffer,
+            ),
+          )
+          .then(() => true)
+      })
+      .catch((reason) => {
+        // Tolerate failure, but log error
+        this.logger.error(
+          `Failed to deliver the court record for case ${theCase.id} to court`,
+          { reason },
+        )
+
+        return false
+      })
+  }
+
+  private async deliverCourtRecordToCourt(theCase: Case): Promise<boolean> {
+    return isIndictmentCase(theCase.type)
+      ? this.deliverIndictmentCourtRecortToCourt(theCase)
+      : Boolean(theCase.rulingModifiedHistory) || // court record did not change
+          this.uploadCourtRecordPdfToCourt(theCase)
   }
 
   private async deliverCaseFilesToCourt(theCase: Case): Promise<boolean> {
@@ -454,7 +503,7 @@ export class CaseService {
             .then((response) => response.success)
             .catch((reason) => {
               this.logger.error(
-                `Failed to upload file ${caseFile.id} of case ${theCase.id} to court`,
+                `Failed to deliver file ${caseFile.id} of case ${theCase.id} to court`,
                 { reason },
               )
 
@@ -464,14 +513,12 @@ export class CaseService {
           success = success && uploaded
         }
 
-        theCase.caseFiles = caseFiles
-        await this.uploadCaseFilesPdfToCourt(theCase)
-
         return success
       })
       .catch((reason) => {
+        // Tolerate failure, but log error
         this.logger.error(
-          `Failed to upload case files of case ${theCase.id} to court`,
+          `Failed to deliver case files of case ${theCase.id} to court`,
           { reason },
         )
 
@@ -479,25 +526,70 @@ export class CaseService {
       })
   }
 
-  private async deliverCaseToPolice(theCase: Case): Promise<boolean> {
-    const pdf = await getCourtRecordPdfAsString(theCase, this.formatMessage)
-    const defendantNationalIds = theCase.defendants?.reduce<string[]>(
-      (ids, defendant) =>
-        !defendant.noNationalId && defendant.nationalId
-          ? [...ids, defendant.nationalId]
-          : ids,
-      [],
-    )
+  private async getIndictmentCourtRecordAsString(
+    theCase: Case,
+  ): Promise<string> {
+    return this.fileService
+      .getAllCaseFiles(theCase.id)
+      .then((caseFiles) =>
+        caseFiles.find(
+          (caseFile) => caseFile.category === CaseFileCategory.COURT_RECORD,
+        ),
+      )
+      .then(async (caseFile) => {
+        if (!caseFile) {
+          throw new Error(
+            `Failed to find the court record for case ${theCase.id} in the database`,
+          )
+        }
 
-    return this.policeService.updatePoliceCase(
-      theCase.id,
-      theCase.type,
-      theCase.state,
-      pdf,
-      theCase.policeCaseNumbers,
-      defendantNationalIds,
-      theCase.conclusion,
-    )
+        if (!caseFile.key) {
+          throw new Error(
+            `Missing AWS S3 key for the court record of case ${theCase.id}`,
+          )
+        }
+
+        return this.awsS3Service
+          .getObject(caseFile.key)
+          .then((buffer) => buffer.toString('binary'))
+      })
+  }
+
+  private getCourtRecordAsString(theCase: Case) {
+    return isIndictmentCase(theCase.type)
+      ? this.getIndictmentCourtRecordAsString(theCase)
+      : getCourtRecordPdfAsString(theCase, this.formatMessage)
+  }
+
+  private async deliverCaseToPolice(theCase: Case): Promise<boolean> {
+    return this.getCourtRecordAsString(theCase)
+      .then(async (courtRecord) => {
+        const defendantNationalIds = theCase.defendants?.reduce<string[]>(
+          (ids, defendant) =>
+            !defendant.noNationalId && defendant.nationalId
+              ? [...ids, defendant.nationalId]
+              : ids,
+          [],
+        )
+
+        return this.policeService.updatePoliceCase(
+          theCase.id,
+          theCase.type,
+          theCase.state,
+          courtRecord,
+          theCase.policeCaseNumbers,
+          defendantNationalIds,
+          theCase.conclusion,
+        )
+      })
+      .catch((reason) => {
+        // Tolerate failure, but log error
+        this.logger.error(`Failed to deliver case ${theCase.id} to police`, {
+          reason,
+        })
+
+        return false
+      })
   }
 
   private async createCase(
@@ -831,70 +923,73 @@ export class CaseService {
       })
   }
 
+  async addCompletedCaseToQueue(caseId: string): Promise<string> {
+    return this.queueService.add({ type: MessageType.CASE_COMPLETED, caseId })
+  }
+
   async getRulingSignatureConfirmation(
     theCase: Case,
     user: TUser,
     documentToken: string,
   ): Promise<SignatureConfirmationResponse> {
     // This method should be called immediately after requestRulingSignature
+    try {
+      const signedPdf = await this.signingService.waitForSignature(
+        'ruling.pdf',
+        documentToken,
+      )
+      const awsSuccess = await this.uploadSignedRulingPdfToS3(
+        theCase,
+        signedPdf,
+      )
+      if (!awsSuccess) {
+        return { documentSigned: false, message: 'Failed to upload to S3' }
+      }
+      // TODO: UpdateCaseDto does not contain rulingDate - create a new type for CaseService.update
+      const newRulingDate = nowFactory()
+      await this.update(
+        theCase.id,
+        {
+          rulingDate: newRulingDate,
+          ...(!theCase.rulingDate
+            ? {}
+            : {
+                rulingModifiedHistory: formatRulingModifiedHistory(
+                  theCase.rulingModifiedHistory,
+                  newRulingDate,
+                  theCase.judge?.name,
+                  theCase.judge?.title,
+                ),
+              }),
+        } as UpdateCaseDto,
+        false,
+      )
 
-    return this.signingService
-      .waitForSignature('ruling.pdf', documentToken)
-      .then(async (signedPdf) => {
-        // TODO: UpdateCaseDto does not contain rulingDate - create a new type for CaseService.update
-        const newRulingDate = nowFactory()
+      this.addCompletedCaseToQueue(theCase.id)
+      return { documentSigned: true }
+    } catch (error) {
+      this.eventService.postErrorEvent(
+        'Failed to get a ruling signature confirmation',
+        {
+          caseId: theCase.id,
+          policeCaseNumbers: theCase.policeCaseNumbers.join(', '),
+          courtCaseNumber: theCase.courtCaseNumber,
+          actor: user.name,
+          institution: user.institution?.name,
+        },
+        error as Error,
+      )
 
-        return this.update(
-          theCase.id,
-          {
-            rulingDate: newRulingDate,
-            ...(!theCase.rulingDate
-              ? {}
-              : {
-                  rulingModifiedHistory: formatRulingModifiedHistory(
-                    theCase.rulingModifiedHistory,
-                    newRulingDate,
-                    theCase.judge?.name,
-                    theCase.judge?.title,
-                  ),
-                }),
-          } as UpdateCaseDto,
-          false,
-        )
-          .then(() => ({ documentSigned: true }))
-          .finally(() => {
-            // No need to wait for this to complete
-            this.uploadSignedRulingPdf(theCase, user, signedPdf).finally(() => {
-              this.queueService.add({
-                type: MessageType.RULING_SIGNED,
-                caseId: theCase.id,
-              })
-            })
-          })
-      })
-      .catch((error) => {
-        this.eventService.postErrorEvent(
-          'Failed to get a ruling signature confirmation',
-          {
-            caseId: theCase.id,
-            policeCaseNumbers: theCase.policeCaseNumbers.join(', '),
-            courtCaseNumber: theCase.courtCaseNumber,
-            actor: user.name,
-            institution: user.institution?.name,
-          },
-          error as Error,
-        )
-
-        if (error instanceof DokobitError) {
-          return {
-            documentSigned: false,
-            code: error.code,
-            message: error.message,
-          }
+      if (error instanceof DokobitError) {
+        return {
+          documentSigned: false,
+          code: error.code,
+          message: error.message,
         }
+      }
 
-        throw error
-      })
+      throw error
+    }
   }
 
   async extend(theCase: Case, user: TUser): Promise<Case> {
@@ -953,35 +1048,62 @@ export class CaseService {
       .then((caseId) => this.findById(caseId))
   }
 
-  async uploadRequestPdfToCourt(theCase: Case, user: TUser): Promise<void> {
-    try {
-      const pdf = await this.getRequestPdf(theCase)
-
-      await this.courtService.createRequest(
-        user,
-        theCase.id,
-        theCase.courtId ?? '',
-        theCase.courtCaseNumber ?? '',
-        this.formatMessage(courtUpload.requestFileName, {
+  private async upploadRequestPdfToCourt(
+    theCase: Case,
+    user: TUser,
+  ): Promise<void> {
+    return this.getRequestPdf(theCase)
+      .then((pdf) => {
+        const fileName = this.formatMessage(courtUpload.requestFileName, {
           caseType: caseTypes[theCase.type],
           date: '',
-        }),
-        pdf,
-      )
-    } catch (error) {
-      // Tolerate failure, but log error
-      this.logger.error(
-        `Failed to upload request pdf to court for case ${theCase.id}`,
-        { error },
-      )
-    }
+        })
+
+        return this.courtService.createDocument(
+          theCase.id,
+          theCase.courtId,
+          theCase.courtCaseNumber,
+          CourtDocumentFolder.REQUEST_DOCUMENTS,
+          fileName,
+          `${fileName}.pdf`,
+          'application/pdf',
+          pdf,
+          user,
+        )
+      })
+      .then(() => {
+        return
+      })
+      .catch((error) => {
+        // Tolerate failure, but log error
+        this.logger.error(
+          `Failed to upload request pdf to court for case ${theCase.id}`,
+          { error },
+        )
+      })
+  }
+
+  private async uploadIndictmentProsecutorPdfsToCourt(
+    theCase: Case,
+    user: TUser,
+  ): Promise<void> {
+    return
+  }
+
+  async uploadProsecutorDocumentsToCourt(
+    theCase: Case,
+    user: TUser,
+  ): Promise<void> {
+    return isIndictmentCase(theCase.type)
+      ? this.uploadIndictmentProsecutorPdfsToCourt(theCase, user)
+      : this.upploadRequestPdfToCourt(theCase, user)
   }
 
   async createCourtCase(theCase: Case, user: TUser): Promise<Case> {
     const courtCaseNumber = await this.courtService.createCourtCase(
       user,
       theCase.id,
-      theCase.courtId ?? '',
+      theCase.courtId,
       theCase.type,
       theCase.policeCaseNumbers,
       Boolean(theCase.parentCaseId),
@@ -995,7 +1117,7 @@ export class CaseService {
 
     if (!isIndictmentCase(theCase.type)) {
       // No need to wait
-      this.uploadRequestPdfToCourt(updatedCase, user)
+      this.uploadProsecutorDocumentsToCourt(updatedCase, user)
     }
 
     return updatedCase
@@ -1003,7 +1125,7 @@ export class CaseService {
 
   async archive(): Promise<ArchiveResponse> {
     const theCase = await this.caseModel.findOne({
-      include: [...includes, { model: CaseFile, as: 'caseFiles' }],
+      include: includes,
       order: [
         defendantsOrder,
         [{ model: CaseFile, as: 'caseFiles' }, 'created', 'ASC'],
@@ -1089,42 +1211,44 @@ export class CaseService {
   }
 
   async deliver(theCase: Case): Promise<DeliverResponse> {
-    this.refreshFormatMessage()
+    await this.refreshFormatMessage()
 
-    const signedRulingDeliveredToCourt = await this.deliverSignedRulingToCourt(
+    const rulingDeliveredToCourt = await this.deliverRulingToCourt(theCase)
+
+    const courtRecordDeliveredToCourt = await this.deliverCourtRecordToCourt(
       theCase,
     )
 
-    const courtRecordDeliveredToCourt =
-      Boolean(theCase.rulingModifiedHistory) || // court record did not change
-      (await this.deliverCourtRecordToCourt(theCase))
-
     const caseFilesDeliveredToCourt =
-      Boolean(theCase.rulingModifiedHistory) || // case files did not change
-      (await this.deliverCaseFilesToCourt(theCase))
+      !isIndictmentCase(theCase.type) &&
+      (Boolean(theCase.rulingModifiedHistory) || // case files did not change
+        (await this.deliverCaseFilesToCourt(theCase)))
 
     const caseDeliveredToPolice =
-      Boolean(theCase.rulingModifiedHistory) || // no relevant changes
-      (theCase.origin === CaseOrigin.LOKE &&
+      theCase.origin === CaseOrigin.LOKE &&
+      (Boolean(theCase.rulingModifiedHistory) || // no relevant changes
         (await this.deliverCaseToPolice(theCase)))
 
-    if (!signedRulingDeliveredToCourt || !courtRecordDeliveredToCourt) {
+    if (
+      !isIndictmentCase(theCase.type) &&
+      (!rulingDeliveredToCourt || !courtRecordDeliveredToCourt)
+    ) {
       this.sendEmailToCourt(
         theCase,
         this.formatMessage(m.signedRuling.subjectV2, {
           courtCaseNumber: theCase.courtCaseNumber,
-          isModifyingRuling: Boolean(theCase.rulingDate),
+          isModifyingRuling: Boolean(theCase.rulingModifiedHistory),
         }),
         this.formatMessage(m.signedRuling.courtBody, {
           courtCaseNumber: theCase.courtCaseNumber,
-          linkStart: `<a href="${this.config.deepLinks.completedCaseOverviewUrl}${theCase.id}">`,
+          linkStart: `<a href="${this.config.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${theCase.id}">`,
           linkEnd: '</a>',
         }),
       )
     }
 
     return {
-      signedRulingDeliveredToCourt,
+      rulingDeliveredToCourt,
       courtRecordDeliveredToCourt,
       caseFilesDeliveredToCourt,
       caseDeliveredToPolice,

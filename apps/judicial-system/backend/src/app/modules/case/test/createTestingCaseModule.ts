@@ -5,7 +5,11 @@ import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 import { mock } from 'jest-mock-extended'
 
-import { QueueModule } from '@island.is/message-queue'
+import {
+  getQueueServiceToken,
+  QueueModule,
+  QueueService,
+} from '@island.is/message-queue'
 import { ConfigModule, ConfigType } from '@island.is/nest/config'
 import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 import { IntlService } from '@island.is/cms-translations'
@@ -157,6 +161,10 @@ export const createTestingCaseModule = async () => {
     LimitedAccessCaseController,
   )
 
+  const queueService = caseModule.get<QueueService>(
+    getQueueServiceToken(config.sqs.queueName),
+  )
+
   return {
     courtService,
     policeService,
@@ -174,5 +182,6 @@ export const createTestingCaseModule = async () => {
     caseController,
     internalCaseController,
     limitedAccessCaseController,
+    queueService,
   }
 }

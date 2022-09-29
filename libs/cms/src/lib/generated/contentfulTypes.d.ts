@@ -1284,6 +1284,9 @@ export interface ILifeEventPageFields {
   /** intro */
   intro?: string | undefined
 
+  /** short intro */
+  shortIntro?: string | undefined
+
   /** image */
   image?: Asset | undefined
 
@@ -1298,6 +1301,12 @@ export interface ILifeEventPageFields {
 
   /** category */
   category?: IArticleCategory | undefined
+
+  /** see more text */
+  seeMoreText?: string | undefined
+
+  /** Page Type */
+  pageType?: 'Life Event' | 'Digital Iceland Service' | undefined
 }
 
 export interface ILifeEventPage extends Entry<ILifeEventPageFields> {
@@ -1321,7 +1330,7 @@ export interface ILifeEventPageListSliceFields {
   /** Title */
   title?: string | undefined
 
-  /** Life Event Page List */
+  /** List */
   lifeEventPageList?: ILifeEventPage[] | undefined
 }
 
@@ -1586,6 +1595,9 @@ export interface IMailingListSignupFields {
 
   /** Signup URL */
   signupUrl: string
+
+  /** Image */
+  image?: Asset | undefined
 }
 
 export interface IMailingListSignup extends Entry<IMailingListSignupFields> {
@@ -1894,6 +1906,9 @@ export interface IOneColumnTextFields {
 
   /** Divider On Top */
   dividerOnTop?: boolean | undefined
+
+  /** Show Title */
+  showTitle?: boolean | undefined
 }
 
 export interface IOneColumnText extends Entry<IOneColumnTextFields> {
@@ -2216,6 +2231,7 @@ export interface IOrganizationSubpageFields {
   slices?:
     | (
         | IAccordionSlice
+        | ILifeEventPageListSlice
         | IBigBulletList
         | IContactUs
         | IDistricts
@@ -2226,6 +2242,7 @@ export interface IOrganizationSubpageFields {
         | IMultipleStatistics
         | IOneColumnText
         | IOverviewLinks
+        | ISliceConnectedComponent
         | ITabSection
         | ITeamList
         | ITellUsAStory
@@ -2402,7 +2419,12 @@ export interface IProjectPageFields {
   slug?: string | undefined
 
   /** Theme */
-  theme: 'default' | 'traveling-to-iceland' | 'election' | 'ukraine'
+  theme:
+    | 'default'
+    | 'traveling-to-iceland'
+    | 'election'
+    | 'ukraine'
+    | 'opinbernyskopun'
 
   /** Sidebar */
   sidebar: boolean
@@ -2471,6 +2493,9 @@ export interface IProjectPageFields {
         | ITwoColumnText
       )[]
     | undefined
+
+  /** Footer Items */
+  footerItems?: IFooterItem[] | undefined
 }
 
 export interface IProjectPage extends Entry<IProjectPageFields> {
@@ -2793,9 +2818,6 @@ export interface IStepFields {
 
   /** Subtitle */
   subtitle?: Document | undefined
-
-  /** Options */
-  options?: Record<string, any> | undefined
 
   /** Config */
   config?: Record<string, any> | undefined

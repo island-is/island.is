@@ -2047,10 +2047,7 @@
             },
             "nullable": true
           },
-          "createdTimestamp": {
-            "type": "string",
-            "nullable": true
-          }
+          "createdTimestamp": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
@@ -2289,6 +2286,9 @@
           "currentOwnerAddress": {
             "type": "string",
             "nullable": true
+          },
+          "currentOwnerIsAnonymous": {
+            "type": "boolean"
           },
           "useGroup": {
             "type": "string",

@@ -54,7 +54,7 @@ const ExampleApplicationTemplate: ApplicationTemplate<
 > = {
   ...
   // In this example we configure the legal guardian delegation type as an allowed delegation type for the example application
-  allowedDelegations: [DelegationType.LegalGuardian],
+  allowedDelegations: [{ type: DelegationType.LegalGuardian }],
   ...
 }
 

@@ -373,6 +373,37 @@ This would then display as a yellow box warning when the user has fetched the da
 
 ![image](https://user-images.githubusercontent.com/2814693/171011316-c97b0aec-7a8a-40a1-bbc5-64779ca7bc96.png)
 
+### Dynamic name for application
+
+You can add a dynamic name for the application by adding a `name` property to the `template` object. This will be used to generate the name of the application in the overview screen and within the application.
+
+You need to define a function that accepts application as a variable and returns a translation string.
+
+```ts
+const determineMessageFromApplicationAnswers = (application: Application) => {
+  const careerHistory = getValueViaPath(
+    application.answers,
+    'careerHistory',
+    undefined,
+  ) as string | undefined
+  if (careerHistory === 'no') {
+    return m.nameApplicationNeverWorkedBefore
+  }
+  return m.name
+}
+```
+
+```diff
+template: {
+  ...
+- name: m.name
++ name: name: determineMessageFromApplicationAnswers,
+  ...
+}
+```
+
+This will then return the correct name for the application depending on the answers provided.
+
 ## Code owners and maintainers
 
 - [Sendiradid](https://github.com/orgs/island-is/teams/sendiradid-applications/members)

@@ -6,6 +6,7 @@ import partition from 'lodash/partition'
 
 import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import {
+  CaseQuery,
   DropdownMenu,
   Logo,
 } from '@island.is/judicial-system-web/src/components'
@@ -27,7 +28,6 @@ import { CaseData } from '@island.is/judicial-system-web/src/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import useSections from '@island.is/judicial-system-web/src/utils/hooks/useSections'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { CaseQuery } from '@island.is/judicial-system-web/src/components/FormProvider/caseGql'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import type { Case } from '@island.is/judicial-system/types'
@@ -176,9 +176,13 @@ export const Cases: React.FC = () => {
           getInvestigationCaseCourtSections(caseToOpen, user),
         ).href
       } else {
-        // Route to Indictment Overivew section since it always a valid step and
+        // Route to Indictment Overview section since it always a valid step and
         // would be skipped if we route to the last valid step
-        routeTo = getIndictmentsCourtSections(caseToOpen).children[0].href
+        const routeToOpen =
+          getIndictmentsCourtSections(caseToOpen).children[0]?.href ||
+          `${constants.INDICTMENTS_COURT_OVERVIEW_ROUTE}/${caseToOpen.id}`
+
+        routeTo = routeToOpen
       }
     } else {
       if (isRestrictionCase(caseToOpen.type)) {
@@ -190,9 +194,12 @@ export const Cases: React.FC = () => {
           getInvestigationCaseProsecutorSection(caseToOpen, user),
         ).href
       } else {
-        routeTo = findLastValidStep(
+        const lastValidStep = findLastValidStep(
           getIndictmentCaseProsecutorSection(caseToOpen),
-        ).href
+        )
+        routeTo =
+          lastValidStep?.href ??
+          `${constants.INDICTMENTS_OVERVIEW_ROUTE}/${caseToOpen.id}`
       }
     }
 

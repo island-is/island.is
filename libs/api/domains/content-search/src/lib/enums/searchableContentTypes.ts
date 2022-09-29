@@ -4,6 +4,7 @@ export enum SearchableContentTypes {
   webArticle = 'webArticle',
   webSubArticle = 'webSubArticle',
   webLifeEventPage = 'webLifeEventPage',
+  webDigitalIcelandService = 'webDigitalIcelandService',
   webNews = 'webNews',
   webAdgerdirPage = 'webAdgerdirPage',
   webOrganizationSubpage = 'webOrganizationSubpage',
