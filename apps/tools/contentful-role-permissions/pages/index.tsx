@@ -30,7 +30,7 @@ import {
   DEFAULT_READ_ONLY_ENTRY_IDS,
 } from '../constants'
 
-import * as styles from './index.css'
+import * as styles from '../styles/index.css'
 
 const emptyFunction = () => {
   return undefined
