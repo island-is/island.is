@@ -54,6 +54,12 @@ import { FiskistofaHeader } from './Themes/FiskistofaTheme/FiskistofaHeader'
 import FiskistofaFooter from './Themes/FiskistofaTheme/FiskistofaFooter'
 import { LandskjorstjornFooter } from './Themes/LandkjorstjornTheme/LandkjorstjornFooter'
 import { LatestNewsCardConnectedComponent } from '../LatestNewsCardConnectedComponent'
+<<<<<<< HEAD
+=======
+import { RikislogmadurHeader } from './Themes/RikislogmadurTheme/RikislogmadurHeader'
+import { RikislogmadurFooter } from './Themes/RikislogmadurTheme/RikislogmadurFooter'
+import { LandskjorstjornHeader } from './Themes/LandkjorstjornTheme/LandskjorstjornHeader'
+>>>>>>> 6b270945ab (feat(web): Landskjörstjórn header (#8536))
 import * as styles from './OrganizationWrapper.css'
 
 interface NavigationData {
@@ -162,6 +168,10 @@ const OrganizationHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
       return <LandlaeknirHeader organizationPage={organizationPage} />
     case 'fiskistofa':
       return <FiskistofaHeader organizationPage={organizationPage} />
+    case 'rikislogmadur':
+      return <RikislogmadurHeader organizationPage={organizationPage} />
+    case 'landskjorstjorn':
+      return <LandskjorstjornHeader organizationPage={organizationPage} />
     default:
       return <DefaultHeader organizationPage={organizationPage} />
   }
