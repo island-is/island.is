@@ -1,5 +1,6 @@
 import { getModelToken } from '@nestjs/sequelize'
 import request from 'supertest'
+import times from 'lodash/times'
 
 import {
   ApiScope,
@@ -12,6 +13,7 @@ import {
 import { AuthScope } from '@island.is/auth/scopes'
 import {
   createCurrentUser,
+  createNationalId,
   createNationalRegistryUser,
 } from '@island.is/testing/fixtures'
 import { TestApp } from '@island.is/testing/nest'
@@ -28,8 +30,6 @@ import {
   expectMatchingObject,
   getRequestMethod,
   getFakePerson,
-  getFakeNationalId,
-  generateItemFromCnt,
 } from '../../../../test/utils'
 import {
   PersonalRepresentative,
@@ -121,10 +121,10 @@ describe('ActorDelegationsController', () => {
       let nationalRegistryApiSpy: jest.SpyInstance
       const path = '/v1/actor/delegations'
       const query = '?direction=incoming'
-      const deceasedNationalIds = generateItemFromCnt(3, getFakeNationalId)
+      const deceasedNationalIds = times(3, () => createNationalId('person'))
 
       beforeAll(async () => {
-        const persons = generateItemFromCnt(10, getFakePerson)
+        const persons = times(10, getFakePerson)
 
         const nationalRegistryUsers = [
           nationalRegistryUser,

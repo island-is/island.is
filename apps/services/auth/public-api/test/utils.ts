@@ -1,6 +1,7 @@
 import faker from 'faker'
 import request, { CallbackHandler } from 'supertest'
 import { DelegationDTO } from '@island.is/auth-api-lib'
+import { createNationalId } from '@island.is/testing/fixtures'
 
 export const getRequestMethod = (
   server: request.SuperTest<request.Test>,
@@ -51,8 +52,5 @@ export const getFakeName = () =>
 
 export const getFakePerson = (): NameIdTuple => [
   getFakeName(),
-  getFakeNationalId(),
+  createNationalId('person'),
 ]
-
-export const generateItemFromCnt = <T>(cnt: number, objFn: () => T) =>
-  Array.from(Array(cnt).keys()).map(() => objFn())

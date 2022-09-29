@@ -20,6 +20,7 @@ import {
 import { TestApp } from '@island.is/testing/nest'
 import { getModelToken } from '@nestjs/sequelize'
 import subDays from 'date-fns/subDays'
+import times from 'lodash/times'
 import faker from 'faker'
 import request from 'supertest'
 import { setupWithAuth, defaultScopes } from '../../../../test/setup'
@@ -39,9 +40,6 @@ import {
   personalRepresentativeType,
 } from '../../../../test/stubs/personalRepresentativeStubs'
 import { isDefined } from '@island.is/shared/utils'
-
-export const generateItemFromCnt = <T>(cnt: number, objFn: () => T) =>
-  Array.from(Array(cnt).keys()).map(() => objFn())
 
 describe('DelegationsController', () => {
   describe('Given a user is authenticated', () => {
@@ -157,10 +155,7 @@ describe('DelegationsController', () => {
           const validRepresentedPersons: NameIdTuple[] = []
           const outdatedRepresentedPersons: NameIdTuple[] = []
           const unactivatedRepresentedPersons: NameIdTuple[] = []
-          const deceasedNationalIds = generateItemFromCnt(
-            deceased,
-            getFakeNationalId,
-          )
+          const deceasedNationalIds = times(deceased, () => getFakeNationalId())
           const today = new Date('2022-09-20')
 
           beforeAll(async () => {
