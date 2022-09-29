@@ -14,12 +14,10 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
-import { Audit } from '@island.is/nest/audit'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('delegations')
 @Controller('delegations')
-@Audit({ namespace: '@island.is/api/delegations' })
 export class DelegationsController {
   constructor(
     private readonly delegationsService: DelegationsService,

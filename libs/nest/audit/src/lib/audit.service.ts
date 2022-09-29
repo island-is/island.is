@@ -16,9 +16,8 @@ export interface AuditMessage {
   namespace?: string
   resources?: string | string[]
   meta?: Record<string, unknown>
+  system?: boolean
 }
-
-export type AuditSystemMessage = Omit<AuditMessage, 'auth'>
 
 export type AuditTemplate<ResultType> = {
   auth: Auth
@@ -28,6 +27,7 @@ export type AuditTemplate<ResultType> = {
   meta?:
     | Record<string, unknown>
     | ((result: ResultType) => Record<string, unknown>)
+  system?: boolean
 }
 
 @Injectable()
@@ -94,22 +94,19 @@ export class AuditService {
     return clients
   }
 
-  private checkNameSpace(namespace?: string) {
-    if (!namespace) {
-      throw new Error(
-        'Audit namespace is required. Did you configure a defaultNamespace?',
-      )
-    }
-  }
-
   private formatMessage({
     auth,
     namespace = this.defaultNamespace,
     action,
     resources,
     meta,
+    system = false,
   }: AuditMessage) {
-    this.checkNameSpace(namespace)
+    if (!namespace) {
+      throw new Error(
+        'Audit namespace is required. Did you configure a defaultNamespace?',
+      )
+    }
 
     const message = {
       subject: auth.nationalId,
@@ -121,25 +118,7 @@ export class AuditService {
       ip: auth.ip,
       userAgent: auth.userAgent,
       appVersion: process.env.APP_VERSION,
-    }
-
-    return this.useDevLogger ? { message: 'Audit record', ...message } : message
-  }
-
-  private formatSystemMessage({
-    namespace = this.defaultNamespace,
-    action,
-    resources,
-    meta,
-  }: AuditSystemMessage) {
-    this.checkNameSpace(namespace)
-    const namespacePostfix = `${namespace}/system`
-    const message = {
-      namespace: namespacePostfix,
-      action: `${namespacePostfix}#${action}`,
-      resources: isString(resources) ? [resources] : resources,
-      meta,
-      appVersion: process.env.APP_VERSION,
+      system: system ?? false,
     }
 
     return this.useDevLogger ? { message: 'Audit record', ...message } : message
@@ -164,14 +143,11 @@ export class AuditService {
         namespace: template.namespace,
         resources: this.unwrap(template.resources, result),
         meta: this.unwrap(template.meta, result),
+        system: template.system ?? false,
       }
       this.audit(message)
 
       return result
     })
-  }
-
-  auditSystem(message: AuditSystemMessage) {
-    this.auditLog?.info(this.formatSystemMessage(message))
   }
 }

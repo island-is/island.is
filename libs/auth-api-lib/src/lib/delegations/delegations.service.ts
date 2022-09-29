@@ -414,9 +414,11 @@ export class DelegationsService {
 
       await Promise.all(deletePromises)
 
-      this.auditService.auditSystem({
-        action: 'invalidateDelegationsForMissingPeople',
+      this.auditService.audit({
+        auth: user,
+        action: 'deleteDelegationsForMissingPeople',
         resources: deceasedDelegations.map(({ id }) => id).filter(isDefined),
+        system: true,
       })
     }
 
