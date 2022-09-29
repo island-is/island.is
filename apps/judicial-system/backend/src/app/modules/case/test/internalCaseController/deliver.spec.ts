@@ -167,7 +167,9 @@ describe('InternalCaseController - Deliver', () => {
         const mockGetAllCaseFiles = mockFileService.getAllCaseFiles as jest.Mock
         mockGetAllCaseFiles.mockResolvedValue([caseFile1, caseFile2])
         const mockUploadCaseFileToCourt = mockFileService.uploadCaseFileToCourt as jest.Mock
-        mockUploadCaseFileToCourt.mockResolvedValueOnce({ success: true })
+        mockUploadCaseFileToCourt
+          .mockResolvedValueOnce({ success: true })
+          .mockResolvedValueOnce({ success: true })
 
         then = await givenWhenThen(caseId, theCase)
       })
@@ -176,15 +178,12 @@ describe('InternalCaseController - Deliver', () => {
         expect(mockFileService.getAllCaseFiles).toHaveBeenCalledWith(caseId)
       })
 
-      it('should upload the file stored in RVG', () => {
+      it('should upload files', () => {
         expect(mockFileService.uploadCaseFileToCourt).toHaveBeenCalledWith(
           caseFile1,
           theCase,
         )
-      })
-
-      it('should not upload the file stored in court', () => {
-        expect(mockFileService.uploadCaseFileToCourt).not.toHaveBeenCalledWith(
+        expect(mockFileService.uploadCaseFileToCourt).toHaveBeenCalledWith(
           caseFile2,
           theCase,
         )
