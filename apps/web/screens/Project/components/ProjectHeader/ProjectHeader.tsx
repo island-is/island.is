@@ -19,6 +19,13 @@ export const ProjectHeader = ({ projectPage }: ProjectHeaderProps) => {
       return <ElectionProjectHeader projectPage={projectPage} />
     case 'ukraine':
       return <UkraineProjectHeader projectPage={projectPage} />
+    case 'opinbernyskopun':
+      return (
+        <DefaultProjectHeader
+          projectPage={projectPage}
+          headerImageObjectFit="contain"
+        />
+      )
     default:
       return <DefaultProjectHeader projectPage={projectPage} />
   }

@@ -32,6 +32,7 @@ import slugify from '@sindresorhus/slugify'
 import { getThemeConfig } from './utils'
 import { ProjectWrapper } from './components/ProjectWrapper'
 import { Locale } from 'locale'
+import { ProjectFooter } from './components/ProjectFooter'
 
 interface PageProps {
   projectPage: Query['getProjectPage']
@@ -217,6 +218,7 @@ const ProjectPage: Screen<PageProps> = ({
             />
           )
         })}
+      <ProjectFooter projectPage={projectPage} />
     </>
   )
 }
