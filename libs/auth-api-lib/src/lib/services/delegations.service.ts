@@ -391,7 +391,7 @@ export class DelegationsService {
       await this.invalidateDelegations(user, deceasedDelegations)
 
       this.auditService.auditSystem({
-        action: 'deceasedDelegation',
+        action: 'invalidateDelegationsForMissingPeople',
         resources: deceasedDelegations.map(({ id }) => id).filter(isDefined),
       })
     }
