@@ -27,7 +27,7 @@
 /apps/services/endorsements/                                                                        @island-is/juni
 /apps/icelandic-names-registry*/                                                                    @island-is/juni
 /apps/web/screens/PetitionView/                                                                     @island-is/juni
-/libs/cms/                                                                                          @island-is/juni
+/libs/cms/                                                                                          @island-is/juni @island-is/stefna
 /libs/api/domains/endorsement-system                                                                @island-is/juni
 /libs/api/domains/icelandic-names-registry/                                                         @island-is/juni
 /libs/clients/payment/                                                                              @island-is/juni
@@ -156,6 +156,7 @@
 
 /apps/services/search-indexer/                                                                      @island-is/stefna @island-is/juni
 /apps/services/contentful-entry-tagger/                                                             @island-is/stefna
+/apps/tools/contentful-role-permissions/                                                            @island-is/stefna
 /apps/web/screens/Organization/                                                                     @island-is/stefna
 /apps/web/screens/Project/                                                                          @island-is/stefna
 /apps/web/components/Organization/                                                                  @island-is/stefna

@@ -5,15 +5,16 @@ import isSameDay from 'date-fns/isSameDay'
 
 import {
   capitalize,
-  formatAppeal,
   formatDate,
+  formatDefendantAppeal,
+  formatProsecutorAppeal,
   formatRequestCaseType,
 } from '@island.is/judicial-system/formatters'
 import {
   isRestrictionCase,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
-import { closedCourt, core } from '@island.is/judicial-system-web/messages'
+import { closedCourt } from '@island.is/judicial-system-web/messages'
 import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 import type { Case } from '@island.is/judicial-system/types'
 
@@ -27,22 +28,8 @@ interface Props {
 const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
   const { formatMessage } = useIntl()
 
-  const prosecutorAppeal = formatAppeal(
-    workingCase.prosecutorAppealDecision,
-    'Sækjandi',
-  )
-
-  const accusedAppeal = formatAppeal(
-    workingCase.accusedAppealDecision,
-    capitalize(
-      formatMessage(core.defendant, {
-        suffix:
-          workingCase.defendants && workingCase.defendants?.length > 1
-            ? 'ar'
-            : 'i',
-      }),
-    ),
-  )
+  const multipleDefendants =
+    (workingCase.defendants && workingCase.defendants.length > 1) || false
 
   return (
     <AccordionItem
@@ -144,7 +131,9 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
             )}
             <Box marginBottom={2}>
               <Text>
-                {`${prosecutorAppeal}${
+                {`${formatProsecutorAppeal(
+                  workingCase.prosecutorAppealDecision,
+                )}${
                   workingCase.prosecutorAppealAnnouncement
                     ? ` ${workingCase.prosecutorAppealAnnouncement}`
                     : ''
@@ -152,7 +141,12 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
               </Text>
             </Box>
             <Text>
-              {`${accusedAppeal}${
+              {`${formatDefendantAppeal(
+                multipleDefendants,
+                workingCase.accusedAppealDecision,
+                workingCase.type,
+                workingCase.sessionArrangements,
+              )}${
                 workingCase.accusedAppealAnnouncement
                   ? ` ${workingCase.accusedAppealAnnouncement}`
                   : ''

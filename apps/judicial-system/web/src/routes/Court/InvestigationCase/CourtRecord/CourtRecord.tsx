@@ -171,7 +171,9 @@ const CourtRecord = () => {
                 ? autofillAttendees.join('')
                 : undefined,
             sessionBookings:
-              workingCase.type === CaseType.RESTRAINING_ORDER
+              workingCase.type === CaseType.RESTRAINING_ORDER ||
+              workingCase.type ===
+                CaseType.RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME
                 ? formatMessage(
                     m.sections.sessionBookings.autofillRestrainingOrder,
                   )
