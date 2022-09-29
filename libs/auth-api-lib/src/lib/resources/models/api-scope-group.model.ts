@@ -54,6 +54,16 @@ export class ApiScopeGroup extends Model {
   description!: string
 
   @Column({
+    type: DataType.NUMBER,
+    allowNull: false,
+    defaultValue: 0,
+  })
+  @ApiProperty({
+    example: 0,
+  })
+  order!: number
+
+  @Column({
     type: DataType.STRING,
     allowNull: false,
   })

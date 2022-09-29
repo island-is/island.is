@@ -103,6 +103,7 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
   }
 
   const save = async (data: FormOutput) => {
+    data.apiScope.order = +data.apiScope.order
     if (data.apiScope.groupId === 'null') {
       data.apiScope.groupId = null
     }
@@ -325,6 +326,30 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                     apiScopeGroup={new ApiScopeGroup()}
                     handleChanges={getGroups}
                   ></ApiScopeGroupCreateFormModal>
+                </div>
+                <div className="api-scope-form__container__field">
+                  <label
+                    htmlFor="apiScope.order"
+                    className="api-scope-form__label"
+                  >
+                    {localization.fields['order'].label}
+                  </label>
+                  <input
+                    ref={register({ required: true })}
+                    id="apiScope.order"
+                    name="apiScope.order"
+                    type="number"
+                    className="api-scope-form__input"
+                    title={localization.fields['order'].helpText}
+                    defaultValue={props.apiScope.order}
+                  />
+                  <HelpBox helpText={localization.fields['order'].helpText} />
+                  <ErrorMessage
+                    as="span"
+                    errors={errors}
+                    name="apiScope.order"
+                    message={localization.fields['order'].errorMessage}
+                  />
                 </div>
 
                 <div className="api-scope-form__container__checkbox__field">
