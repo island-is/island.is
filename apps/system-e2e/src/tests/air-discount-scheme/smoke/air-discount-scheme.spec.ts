@@ -5,15 +5,13 @@ import { session } from '../../../support/session'
 
 test.use({ baseURL: urls.adsBaseUrl })
 
-const storagePath = 'loftbru.json'
-
 test.describe('Air discount scheme', () => {
   let context: BrowserContext
   test.beforeAll(async ({ browser }) => {
     context = await session(
       context,
       browser,
-      storagePath,
+      'loftbru.json',
       `${urls.adsBaseUrl}/min-rettindi`,
       urls.adsBaseUrl,
       false,

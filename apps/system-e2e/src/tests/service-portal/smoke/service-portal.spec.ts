@@ -17,12 +17,6 @@ test.describe('Service portal', () => {
       true,
       '0103019',
     )
-    // const page = await context.newPage()
-    // await page.goto('/minarsidur')
-    // await cognitoLogin(page)({username: creds.username, password: creds.password}, urls.islandisBaseUrl)
-    // await idsLogin(page, "0103019", urls.islandisBaseUrl)
-    // await page.context().storageState({path: 'service-portal.json'})
-    // await page.close()
   })
   test.afterAll(async () => {
     await context.close()

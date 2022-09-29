@@ -1,4 +1,4 @@
-import { BrowserContext, expect, Locator, Page, test } from '@playwright/test'
+import { BrowserContext, expect, test } from '@playwright/test'
 import {
   BaseAuthority,
   env,
@@ -14,31 +14,10 @@ import {
 } from '@island.is/application/templates/parental-leave/messages'
 import { coreMessages } from '@island.is/application/core/messages'
 import { label } from '../../../support/i18n'
-import { makeEmailAccount } from '../../../support/email-account'
+import { EmailAccount, makeEmailAccount } from '../../../support/email-account'
+import { helpers, locatorByRole } from '../../../support/locator-helpers'
 
 test.use({ baseURL: urls.islandisBaseUrl })
-
-type Roles = 'heading' | 'button' | 'radio'
-const locatorByRole = (
-  role: Roles | string,
-  name: string | { name: string },
-): string =>
-  typeof name === 'string'
-    ? `role=${role}[name="${name}"]`
-    : `role=${role}[name="${name.name}"]`
-const helpers = (page: Page) => {
-  return {
-    findByRole: (
-      role: Roles | string,
-      name: string | { name: string },
-    ): Locator => {
-      return page.locator(locatorByRole(role, name))
-    },
-    findByTestId: (name: string): Locator =>
-      page.locator(`[data-testid="${name}"]`),
-    proceed: async () => await page.locator('[data-testid="proceed"]').click(),
-  }
-}
 
 const applicationSystemApi: { [env in TestEnvironment]: string } = {
   dev: getEnvironmentBaseUrl(BaseAuthority.dev),
@@ -48,26 +27,9 @@ const applicationSystemApi: { [env in TestEnvironment]: string } = {
 }
 test.describe('Parental leave', () => {
   let context: BrowserContext
-  let applicant: {
-    getLastEmail(
-      retries: number,
-    ): Promise<{
-      subject: string | undefined
-      text: string | undefined
-      html: string | false
-    } | null>
-    email: string
-  }
-  let employer: {
-    getLastEmail(
-      retries: number,
-    ): Promise<{
-      subject: string | undefined
-      text: string | undefined
-      html: string | false
-    } | null>
-    email: string
-  }
+  let applicant: EmailAccount
+  let employer: EmailAccount
+
   test.beforeAll(async () => {
     applicant = await makeEmailAccount('applicant')
     employer = await makeEmailAccount('employer')

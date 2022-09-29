@@ -63,7 +63,17 @@ async function registerEmailAddressWithSES(emailAccount: {
   }
 }
 
-const makeEmailAccount = async (name: string) => {
+export type EmailAccount = {
+  getLastEmail(
+    retries: number,
+  ): Promise<{
+    subject: string | undefined
+    text: string | undefined
+    html: string | false
+  } | null>
+  email: string
+}
+const makeEmailAccount = async (name: string): Promise<EmailAccount> => {
   // Generate a new Ethereal email inbox account
   const storage = `${name}-email.json`
   const emailAccountExists = existsSync(storage)
@@ -83,7 +93,7 @@ const makeEmailAccount = async (name: string) => {
   }
   console.log('created new email account %s', testAccount.user)
   console.log('for debugging, the password is %s', testAccount.pass)
-  const userEmail = {
+  const userEmail: EmailAccount = {
     email: testAccount.user as string,
 
     /**
