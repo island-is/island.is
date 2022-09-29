@@ -60,11 +60,6 @@ export const APPLICATION_ATTACHMENT_BUCKET = 'APPLICATION_ATTACHMENT_BUCKET'
 const SIX_MONTHS_IN_SECONDS_EXPIRES = 6 * 30 * 24 * 60 * 60
 const df = 'yyyy-MM-dd'
 
-interface File {
-  name: string
-  key: string
-}
-
 @Injectable()
 export class ParentalLeaveService {
   s3 = new S3()
@@ -186,6 +181,11 @@ export class ParentalLeaveService {
         application.answers,
         'employer.selfEmployed.file[0].key',
       )
+
+      if (!filename) {
+        return this.getPdfs(application)
+      }
+
       const Key = `${application.id}/${filename}`
       const file = await this.s3
         .getObject({ Bucket: this.attachmentBucket, Key })
@@ -205,23 +205,22 @@ export class ParentalLeaveService {
 
   async getPdfs(application: Application) {
     try {
-      const files = getValueViaPath(
+      const filename = getValueViaPath(
         application.answers,
-        'fileUpload.file',
-      ) as File[]
+        `fileUpload.file[0].key`,
+      )
 
-      const pdfs: string[] = []
+      const Key = `${application.id}/${filename}`
+      const file = await this.s3
+        .getObject({ Bucket: this.attachmentBucket, Key })
+        .promise()
+      const fileContent = file.Body as Buffer
 
-      files.forEach(async (pdf) => {
-        const Key = `${application.id}/${pdf.key}`
-        const file = await this.s3
-          .getObject({ Bucket: this.attachmentBucket, Key })
-          .promise()
-        const fileContent = file.Body as Buffer
-        pdfs.push(fileContent.toString('base64'))
-      })
+      if (!fileContent) {
+        throw new Error('File content was undefined')
+      }
 
-      return pdfs
+      return fileContent.toString('base64')
     } catch (e) {
       this.logger.error('Cannot get attachments', { e })
       throw new Error('Failed to get the attachments')
@@ -231,12 +230,6 @@ export class ParentalLeaveService {
   async getAttachments(application: Application): Promise<Attachment[]> {
     const attachments: Attachment[] = []
     const { isSelfEmployed } = getApplicationAnswers(application.answers)
-
-    const otherFiles = getValueViaPath(
-      application.answers,
-      'fileUpload.file',
-    ) as unknown[]
-
     if (isSelfEmployed === YES) {
       const pdf = await this.getSelfEmployedPdf(application)
 
@@ -244,18 +237,22 @@ export class ParentalLeaveService {
         attachmentType: apiConstants.attachments.selfEmployed,
         attachmentBytes: pdf,
       })
-    }
+    } else {
+      const otherFiles = getValueViaPath(
+        application.answers,
+        'fileUpload.file',
+      )
 
-    if (otherFiles && otherFiles.length > 0) {
-      const pdfs = await this.getPdfs(application)
+      if ((otherFiles as { file: unknown[] }).file.length > 0) {
+        const pdf = await this.getPdfs(application)
 
-      pdfs.forEach((pdf) => {
         attachments.push({
           attachmentType: 'other',
-          attachmentBytes: pdf,
+          attachmentBytes: pdf
         })
-      })
+      }
     }
+
 
     return attachments
   }
