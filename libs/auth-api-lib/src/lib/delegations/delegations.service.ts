@@ -415,27 +415,44 @@ export class DelegationsService {
       }
     }
 
-    const delegationsPromises = delegations.map(({ fromNationalId }) =>
-      this.nationalRegistryClient.getIndividual(fromNationalId),
-    )
+    const delegationsPromises = delegations
+      // Filter out companies, since we do not need to make a natinonal registry call for them.
+      .filter(({ fromNationalId }) => !kennitala.isCompany(fromNationalId))
+      .map(({ fromNationalId }) =>
+        this.nationalRegistryClient.getIndividual(fromNationalId),
+      )
 
-    // Check if delegations is linked to a person, i.e. not deceased
-    const persons = await Promise.all(delegationsPromises)
-    const personsValues = persons.filter(isDefined)
+    try {
+      // Check if delegations is linked to a person, i.e. not deceased
+      const persons = await Promise.all(delegationsPromises)
+      const personsValues = persons.filter(isDefined)
 
-    // Divide delegations into alive or deceased delegations.
-    const [aliveDelegations, deceasedDelegations] = partition(
-      delegations,
-      ({ fromNationalId }) =>
-        // All companies will be divided into aliveDelegations
-        kennitala.isCompany(fromNationalId) ||
-        // Make sure we can match the person to the delegation, i.e. not deceased
-        personsValues.find((person) => person?.nationalId === fromNationalId),
-    )
+      // Divide delegations into alive or deceased delegations.
+      const [aliveDelegations, deceasedDelegations] = partition(
+        delegations,
+        ({ fromNationalId }) =>
+          // All companies will be divided into aliveDelegations
+          kennitala.isCompany(fromNationalId) ||
+          // Make sure we can match the person to the delegation, i.e. not deceased
+          personsValues.find((person) => person?.nationalId === fromNationalId),
+      )
 
-    return {
-      aliveDelegations,
-      deceasedDelegations,
+      return {
+        aliveDelegations,
+        deceasedDelegations,
+      }
+    } catch (error) {
+      this.logger.error(
+        `Error getting live status from delegations. Delegations: ${delegations.map(
+          (d) => d.id,
+        )}`,
+        error,
+      )
+
+      return {
+        aliveDelegations: delegations,
+        deceasedDelegations: [],
+      }
     }
   }
 
