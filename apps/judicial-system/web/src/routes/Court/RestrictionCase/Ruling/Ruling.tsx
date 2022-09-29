@@ -78,12 +78,10 @@ export function getConclusionAutofill(
     isolationToDate &&
     new Date(validToDate) > new Date(isolationToDate)
 
-  const accusedSuffix = defendant.gender === Gender.MALE ? 'i' : 'a'
-
   return decision === CaseDecision.DISMISSING
     ? formatMessage(m.sections.conclusion.dismissingAutofillV3, {
-        genderedAccused: formatMessage(core.accused, {
-          suffix: accusedSuffix,
+        genderedAccused: formatMessage(core.defendant, {
+          suffix: 'i',
         }),
         accusedName: defendant.name,
         isExtended:
@@ -93,8 +91,8 @@ export function getConclusionAutofill(
       })
     : decision === CaseDecision.REJECTING
     ? formatMessage(m.sections.conclusion.rejectingAutofillV3, {
-        genderedAccused: formatMessage(core.accused, {
-          suffix: accusedSuffix,
+        genderedAccused: formatMessage(core.defendant, {
+          suffix: 'i',
         }),
         accusedName: defendant.name,
         accusedNationalId: defendant.noNationalId
@@ -107,8 +105,8 @@ export function getConclusionAutofill(
       })
     : formatMessage(m.sections.conclusion.acceptingAutofillV3, {
         genderedAccused: capitalize(
-          formatMessage(core.accused, {
-            suffix: accusedSuffix,
+          formatMessage(core.defendant, {
+            suffix: 'i',
           }),
         ),
         accusedName: defendant.name,
