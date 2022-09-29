@@ -14,7 +14,6 @@ import { format as formatNationalId } from 'kennitala'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
 import { m } from '../../lib/messages'
 import { FileValueLine, ValueLine } from '../Shared'
-import { CARETAKERLIMIT } from '../../lib/constants'
 import {
   columnStyle,
   starterColumnStyle,
@@ -25,6 +24,7 @@ export const CemetryOverview = ({ application }: FieldBaseProps) => {
 
   const answers = application.answers as FinancialStatementsInao
   const fileName = answers.attachment?.file?.[0]?.name
+  const careTakerLimit = answers.cemetryOperation.incomeLimit ?? '0'
 
   return (
     <Box marginBottom={2}>
@@ -254,7 +254,7 @@ export const CemetryOverview = ({ application }: FieldBaseProps) => {
         </GridRow>
       </Box>
       <Divider />
-      {parseInt(answers.cemetryIncome?.total, 10) < CARETAKERLIMIT &&
+      {parseInt(answers.cemetryIncome?.total, 10) < Number(careTakerLimit) &&
       answers.cemetryCaretaker?.length > 0 ? (
         <Fragment>
           <Box className={starterColumnStyle}>

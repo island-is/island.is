@@ -6,6 +6,7 @@ import {
   GridRow,
   Text,
 } from '@island.is/island-ui/core'
+import { Application } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { Total } from '../KeyNumbers'
@@ -13,11 +14,18 @@ import { CemetryIncome } from './cemetryIncome'
 import { CemetryExpenses } from './cemetryExpenses'
 import { CEMETRYOPERATIONIDS, OPERATINGCOST } from '../../lib/constants'
 import { useTotals } from '../../hooks'
+import { getCurrentUserType } from '../../lib/utils/helpers'
+import { CemeteryIncomeLimit } from '../CemetryIncomeLimit'
 
-export const CemetryOperation = () => {
+export const CemetryOperation = ({
+  application,
+}: {
+  application: Application
+}) => {
   const { errors } = useFormContext()
   const { formatMessage } = useLocale()
-
+  const { answers, externalData } = application
+  const currentUserType = getCurrentUserType(answers, externalData)
   const [getTotalIncome, totalIncome] = useTotals(
     CEMETRYOPERATIONIDS.prefixIncome,
   )
@@ -27,6 +35,7 @@ export const CemetryOperation = () => {
 
   return (
     <GridContainer>
+      <CemeteryIncomeLimit currentUserType={currentUserType} />
       <GridRow align="spaceBetween">
         <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
           <Text paddingY={1} as="h2" variant="h4">

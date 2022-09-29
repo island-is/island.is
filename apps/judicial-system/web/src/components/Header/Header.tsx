@@ -1,6 +1,7 @@
 import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import Link from 'next/link'
+import getConfig from 'next/config'
 
 import {
   Text,
@@ -26,6 +27,8 @@ import { UserContext } from '../UserProvider/UserProvider'
 import MarkdownWrapper from '../MarkdownWrapper/MarkdownWrapper'
 import { useGetLawyer } from '../../utils/hooks'
 import * as styles from './Header.css'
+
+const supportEmail = getConfig()?.publicRuntimeConfig?.supportEmail ?? ''
 
 const HeaderContainer: React.FC = () => {
   const { formatMessage } = useIntl()
@@ -146,8 +149,7 @@ const HeaderContainer: React.FC = () => {
                                   markdown={formatMessage(
                                     header.headerTipDisclaimer,
                                     {
-                                      linkStart:
-                                        '<a href="mailto:gudlaug.thorhallsdottir@dmr.is" rel="noopener noreferrer nofollow" target="_blank">gudlaug.thorhallsdottir@dmr.is',
+                                      linkStart: `<a href="mailto:${supportEmail}" rel="noopener noreferrer nofollow" target="_blank">${supportEmail}`,
                                       linkEnd: '</a>',
                                     },
                                   )}
