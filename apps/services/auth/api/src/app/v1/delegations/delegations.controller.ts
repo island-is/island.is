@@ -1,4 +1,10 @@
-import { Controller, Get, Query, UseGuards } from '@nestjs/common'
+import {
+  Controller,
+  Get,
+  Query,
+  UseGuards,
+  VERSION_NEUTRAL,
+} from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import {
@@ -17,7 +23,10 @@ import type { User } from '@island.is/auth-nest-tools'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('delegations')
-@Controller('delegations')
+@Controller({
+  path: 'delegations',
+  version: ['1', VERSION_NEUTRAL],
+})
 export class DelegationsController {
   constructor(
     private readonly delegationsService: DelegationsService,

@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards } from '@nestjs/common'
+import { Controller, Get, UseGuards, VERSION_NEUTRAL } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 
 import {
@@ -16,7 +16,10 @@ import { UserProfileDTO } from './dto/user-profile.dto'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('user-profile')
-@Controller('user-profile')
+@Controller({
+  path: 'user-profile',
+  version: ['1', VERSION_NEUTRAL],
+})
 export class UserProfileController {
   constructor(
     private readonly userProfileService: UserProfileService,

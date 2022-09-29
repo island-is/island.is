@@ -7,12 +7,16 @@ import {
   NotFoundException,
   Param,
   UseGuards,
+  VERSION_NEUTRAL,
 } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @ApiTags('clients')
-@Controller('clients')
+@Controller({
+  path: 'clients',
+  version: ['1', VERSION_NEUTRAL],
+})
 export class ClientsController {
   constructor(private readonly clientsService: ClientsService) {}
 

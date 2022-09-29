@@ -9,12 +9,16 @@ import {
   Get,
   Query,
   UseGuards,
+  VERSION_NEUTRAL,
 } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @ApiTags('clients')
-@Controller('origins')
+@Controller({
+  path: 'origins',
+  version: ['1', VERSION_NEUTRAL],
+})
 export class OriginsController {
   constructor(private readonly clientsService: ClientsService) {}
 
