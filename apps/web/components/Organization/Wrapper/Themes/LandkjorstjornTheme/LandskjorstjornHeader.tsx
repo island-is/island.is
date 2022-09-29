@@ -37,7 +37,7 @@ export const LandskjorstjornHeader: React.FC<HeaderProps> = ({
                   <img
                     src={organizationPage.organization.logo.url}
                     className={styles.headerLogo}
-                    alt=""
+                    alt="organization logo"
                   />
                 </Link>
               )
@@ -55,7 +55,7 @@ export const LandskjorstjornHeader: React.FC<HeaderProps> = ({
                   <img
                     src={organizationPage.organization.logo.url}
                     className={styles.headerLogo}
-                    alt=""
+                    alt="organization logo"
                   />
                 </Link>
               </Hidden>
