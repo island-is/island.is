@@ -149,7 +149,6 @@ export const getThemeConfig = (
 }
 
 const OrganizationHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
-  return <LandskjorstjornHeader organizationPage={organizationPage} />
   switch (organizationPage.theme) {
     case 'syslumenn':
       return <SyslumennHeader organizationPage={organizationPage} />
