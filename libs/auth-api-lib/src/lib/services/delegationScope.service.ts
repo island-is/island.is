@@ -11,6 +11,7 @@ import { Op } from 'sequelize'
 import { ApiScope } from '../entities/models/api-scope.model'
 import { IdentityResource } from '../entities/models/identity-resource.model'
 import startOfDay from 'date-fns/startOfDay'
+import startOfYesterday from 'date-fns/startOfYesterday'
 import {
   PersonalRepresentative,
   PersonalRepresentativeRight,
@@ -19,7 +20,6 @@ import {
 } from '../personal-representative'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { getYesterday } from '@island.is/shared/utils'
 
 @Injectable()
 export class DelegationScopeService {
@@ -82,12 +82,9 @@ export class DelegationScopeService {
   async invalidate(id: string): Promise<void> {
     this.logger.debug(`Invalidating delegationScope ${id}`)
 
-    const startOfDay = new Date()
-    startOfDay.setHours(0, 0, 0, 0)
-
     try {
       await this.delegationScopeModel.update(
-        { validTo: getYesterday(startOfDay) },
+        { validTo: startOfYesterday() },
         { where: { id } },
       )
     } catch (error) {

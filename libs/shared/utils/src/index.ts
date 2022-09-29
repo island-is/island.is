@@ -5,7 +5,6 @@
 export { getStaticEnv } from './lib/getStaticEnv'
 export { sleep } from './lib/sleep'
 export { isDefined } from './lib/isDefined'
-export { getYesterday } from './lib/date'
 export { isRunningOnEnvironment } from './lib/environment'
 export { shouldLinkOpenInNewWindow } from './lib/shouldLinkOpenInNewWindow'
 export { getOrganizationLogoUrl } from './lib/getOrganizationLogoUrl'

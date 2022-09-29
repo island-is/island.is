@@ -1,9 +1,8 @@
 import { FormValue } from '@island.is/application/types'
-import { getYesterday } from '@island.is/shared/utils'
 import { isDateOlderThanAYear } from './isDateOlderThanAYear'
 describe('isDateOlderThanAYear', () => {
-  const today = new Date()
-  const yesterday = getYesterday(today)
+  const yesterday = new Date()
+  yesterday.setDate(yesterday.getDate() - 1)
 
   const twoYearsAgo = new Date()
   twoYearsAgo.setFullYear(twoYearsAgo.getFullYear() - 2)
