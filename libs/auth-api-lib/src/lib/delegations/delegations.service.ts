@@ -458,13 +458,10 @@ export class DelegationsService {
     const [aliveDelegations, deceasedDelegations] = partition(
       delegations,
       ({ fromNationalId }) =>
-        personsValues.find(
-          (person) =>
-            // All companies will be divided into aliveDelegations
-            kennitala.isCompany(fromNationalId) ||
-            // Make sure we can match the person to the delegation, i.e. not deceased
-            person?.nationalId === fromNationalId,
-        ),
+        // All companies will be divided into aliveDelegations
+        kennitala.isCompany(fromNationalId) ||
+        // Make sure we can match the person to the delegation, i.e. not deceased
+        personsValues.find((person) => person?.nationalId === fromNationalId),
     )
 
     return {
