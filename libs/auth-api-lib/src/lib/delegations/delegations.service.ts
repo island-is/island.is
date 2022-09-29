@@ -355,9 +355,6 @@ export class DelegationsService {
   ): Promise<DelegationDTO[]> {
     const client = await this.getClientDelegationInfo(user)
     const delegationPromises = []
-    // Promises that need to be verified before returning the delegations.
-    // If delegation is directly linked to a deceased person, then we do not want to return it.
-    const needVerifyDelegationPromises = []
 
     const hasDelegationTypeFilter =
       delegationTypes && delegationTypes.length > 0
@@ -381,51 +378,21 @@ export class DelegationsService {
       (!hasDelegationTypeFilter ||
         delegationTypes?.includes(DelegationType.Custom))
     ) {
-      needVerifyDelegationPromises.push(this.findAllValidCustomIncoming(user))
+      delegationPromises.push(this.findAllValidCustomIncoming(user))
     }
     if (
       (!client || client.supportsPersonalRepresentatives) &&
       (!hasDelegationTypeFilter ||
         delegationTypes?.includes(DelegationType.PersonalRepresentative))
     ) {
-      needVerifyDelegationPromises.push(
-        this.findAllRepresentedPersonsIncoming(user),
-      )
+      delegationPromises.push(this.findAllRepresentedPersonsIncoming(user))
     }
 
-    const [delegations, needsCheckDelegations] = await Promise.all([
-      Promise.all(delegationPromises),
-      Promise.all(needVerifyDelegationPromises),
-    ])
+    const delegations = await Promise.all(delegationPromises)
 
-    // Only check live status, i.e. dead or alive for needsCheckDelegations
-    const {
-      aliveDelegations,
-      deceasedDelegations,
-    } = await this.getLiveStatusFromDelegations(needsCheckDelegations.flat())
-
-    if (deceasedDelegations.length > 0) {
-      // Invalidate all deceased delegations by deleting them and their scopes.
-      const deletePromises = deceasedDelegations
-        .map(({ id }) =>
-          id ? this.delete(user, id, DelegationDirection.INCOMING) : undefined,
-        )
-        .filter(isDefined)
-
-      await Promise.all(deletePromises)
-
-      this.auditService.audit({
-        auth: user,
-        action: 'deleteDelegationsForMissingPeople',
-        resources: deceasedDelegations.map(({ id }) => id).filter(isDefined),
-        system: true,
-      })
-    }
-
-    return uniqBy(
-      [...delegations.flat(), ...aliveDelegations],
-      'fromNationalId',
-    ).filter((delegation) => delegation.fromNationalId !== user.nationalId)
+    return uniqBy([...delegations.flat()], 'fromNationalId').filter(
+      (delegation) => delegation.fromNationalId !== user.nationalId,
+    )
   }
 
   /**
@@ -626,25 +593,66 @@ export class DelegationsService {
         provider: DelegationProvider.PersonalRepresentativeRegistry,
       })
 
-      const rp = await this.prService.getByPersonalRepresentative(
+      const personalRepresentatives = await this.prService.getByPersonalRepresentative(
         user.nationalId,
         false,
       )
 
-      const resultPromises = rp.map(async (representative) =>
-        this.nationalRegistryClient
-          .getIndividual(representative.nationalIdRepresentedPerson)
-          .then((person) =>
-            toDelegationDTO(person?.name ?? 'Óþekkt nafn', representative),
+      const personPromises = personalRepresentatives.map(
+        ({ nationalIdRepresentedPerson }) =>
+          this.nationalRegistryClient.getIndividual(
+            nationalIdRepresentedPerson,
           ),
       )
 
-      return await Promise.all(resultPromises)
+      const persons = await Promise.all(personPromises)
+
+      // Make sure we can match the person to the nationalId, i.e. not deceased
+      const findPersonByNationalId = (nationalId: string) =>
+        persons.find((person) => person?.nationalId === nationalId)
+
+      // Divide personal representatives into alive or deceased.
+      const [alive, deceased] = partition(
+        personalRepresentatives,
+        ({ nationalIdRepresentedPerson }) =>
+          findPersonByNationalId(nationalIdRepresentedPerson),
+      )
+
+      if (deceased.length > 0) {
+        await this.handleAliveOrDeceasedPersonalRepresentatives(deceased, user)
+      }
+
+      return alive.map((pr) =>
+        toDelegationDTO(
+          findPersonByNationalId(pr.nationalIdRepresentedPerson)?.name ??
+            'Óþekkt nafn',
+          pr,
+        ),
+      )
     } catch (error) {
       this.logger.error('Error in findAllRepresentedPersons', error)
     }
 
     return []
+  }
+
+  private async handleAliveOrDeceasedPersonalRepresentatives(
+    personalRepresentatives: PersonalRepresentativeDTO[],
+    user: User,
+  ) {
+    // Invalidate all deceased delegations by deleting them and their scopes.
+    const deletePromises = personalRepresentatives
+      .map(({ id }) => (id ? this.prService.delete(id) : undefined))
+      .filter(isDefined)
+
+    await Promise.all(deletePromises)
+
+    this.auditService.audit({
+      auth: user,
+      action: 'deletePersonalRepresentativesForMissingPeople',
+      resources: personalRepresentatives.map(({ id }) => id).filter(isDefined),
+      system: true,
+    })
   }
 
   /**
@@ -689,7 +697,7 @@ export class DelegationsService {
 
     const allowedScopes = await this.getClientAllowedScopes(user)
 
-    return delegations
+    const delegationModels = delegations
       .filter((d) =>
         // The requesting client must have access to at least one scope for the delegation to be relevant.
         d.delegationScopes?.some((s) =>
@@ -702,6 +710,32 @@ export class DelegationsService {
         )
         return d.toDTO()
       })
+
+    // Check live status, i.e. dead or alive for delegations
+    const {
+      aliveDelegations,
+      deceasedDelegations,
+    } = await this.getLiveStatusFromDelegations(delegationModels)
+
+    if (deceasedDelegations.length > 0) {
+      // Invalidate all deceased delegations by deleting them and their scopes.
+      const deletePromises = deceasedDelegations
+        .map(({ id }) =>
+          id ? this.delete(user, id, DelegationDirection.INCOMING) : undefined,
+        )
+        .filter(isDefined)
+
+      await Promise.all(deletePromises)
+
+      this.auditService.audit({
+        auth: user,
+        action: 'deleteDelegationsForMissingPeople',
+        resources: deceasedDelegations.map(({ id }) => id).filter(isDefined),
+        system: true,
+      })
+    }
+
+    return aliveDelegations
   }
 
   /**

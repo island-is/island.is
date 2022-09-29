@@ -1,8 +1,6 @@
 import {
   ApiScope,
-  Delegation,
   DelegationDTO,
-  DelegationScope,
   DelegationType,
   PersonalRepresentative,
   PersonalRepresentativeRight,
@@ -17,12 +15,10 @@ import {
 } from '@island.is/testing/fixtures'
 import { TestApp } from '@island.is/testing/nest'
 import { getModelToken } from '@nestjs/sequelize'
-import subDays from 'date-fns/subDays'
 import times from 'lodash/times'
 import faker from 'faker'
 import request from 'supertest'
 import { setupWithAuth, defaultScopes } from '../../../../test/setup'
-import { createDelegation } from '../../../../test/fixtures'
 
 import {
   getFakeName,
@@ -37,7 +33,6 @@ import {
   getScopePermission,
   personalRepresentativeType,
 } from '../../../../test/stubs/personalRepresentativeStubs'
-import { isDefined } from '@island.is/shared/utils'
 
 describe('DelegationsController', () => {
   describe('Given a user is authenticated', () => {
@@ -49,7 +44,6 @@ describe('DelegationsController', () => {
     let prRightsModel: typeof PersonalRepresentativeRight
     let prRightTypeModel: typeof PersonalRepresentativeRightType
     let prTypeModel: typeof PersonalRepresentativeType
-    let delegationModel: typeof Delegation
     let nationalRegistryApi: NationalRegistryClientService
 
     const userKennitala = getFakeNationalId()
@@ -84,7 +78,6 @@ describe('DelegationsController', () => {
       prScopePermission = app.get<typeof PersonalRepresentativeScopePermission>(
         getModelToken(PersonalRepresentativeScopePermission),
       )
-      delegationModel = app.get<typeof Delegation>(getModelToken(Delegation))
       nationalRegistryApi = app.get(NationalRegistryClientService)
     })
 
@@ -154,7 +147,6 @@ describe('DelegationsController', () => {
           const outdatedRepresentedPersons: NameIdTuple[] = []
           const unactivatedRepresentedPersons: NameIdTuple[] = []
           const deceasedNationalIds = times(deceased, () => getFakeNationalId())
-          const today = new Date('2022-09-20')
 
           beforeAll(async () => {
             for (let i = 0; i < valid; i++) {
@@ -218,18 +210,6 @@ describe('DelegationsController', () => {
               await prModel.create(relationship)
               await prRightsModel.create(
                 getPersonalRepresentativeRights('valid1', relationship.id),
-              )
-              // Create a delegation for the deceased person
-              await delegationModel.create(
-                createDelegation({
-                  fromNationalId: deceasedNationalIds[i],
-                  toNationalId: user.nationalId,
-                  scopes: [defaultScopes.testUserHasAccess.name],
-                  today,
-                }),
-                {
-                  include: [{ model: DelegationScope, as: 'delegationScopes' }],
-                },
               )
             }
 
@@ -327,7 +307,7 @@ describe('DelegationsController', () => {
               valid === 1 ? 'person' : 'persons'
             } from nationalRegistryApi`, () => {
               expect(nationalRegistryApiSpy).toHaveBeenCalledTimes(
-                valid * 2 + deceased * 2,
+                valid + deceased,
               )
             })
 
@@ -339,24 +319,22 @@ describe('DelegationsController', () => {
               ).toBeTruthy()
             })
 
-            it('should have deleted delegations for deceased person link', async () => {
-              // Arrange and arrange
-              const delegationsModels = (
-                await delegationModel.findAll({
-                  where: {
-                    id: deceasedNationalIds,
+            it('should have deleted prModels and prRightModels for deceased persons', async () => {
+              // Arrange
+              const expectedModels = await prModel.findAll({
+                where: {
+                  nationalIdRepresentedPerson: deceasedNationalIds,
+                },
+                include: [
+                  {
+                    model: PersonalRepresentativeRight,
+                    required: true,
                   },
-                  include: [
-                    {
-                      model: DelegationScope,
-                      as: 'delegationScopes',
-                    },
-                  ],
-                })
-              ).map((delegation) => delegation.toDTO())
+                ],
+              })
 
               // Assert
-              expect(delegationsModels.length).toEqual(0)
+              expect(expectedModels.length).toEqual(0)
             })
           })
         },
