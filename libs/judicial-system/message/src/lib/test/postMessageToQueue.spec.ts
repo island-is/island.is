@@ -4,7 +4,6 @@ import each from 'jest-each'
 import { QueueService } from '@island.is/message-queue'
 
 import { MessageType, Message } from '../message'
-import { randomEnum } from './random'
 import { createTestingMessageModule } from './createTestingMessageModule'
 
 interface Then {
