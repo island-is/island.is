@@ -1,15 +1,10 @@
 import { Module } from '@nestjs/common'
-import { SequelizeModule } from '@nestjs/sequelize'
-import {
-  TranslationService,
-  Translation,
-  Language,
-} from '@island.is/auth-api-lib'
+import { TranslationModule as AuthTranslationModule } from '@island.is/auth-api-lib'
 import { TranslationController } from './translation.controller'
 
 @Module({
-  imports: [SequelizeModule.forFeature([Translation, Language])],
+  imports: [AuthTranslationModule],
   controllers: [TranslationController],
-  providers: [TranslationService],
+  providers: [],
 })
 export class TranslationModule {}
