@@ -50,7 +50,7 @@ import { DelegationScopeService } from './delegationScope.service'
 import partition from 'lodash/partition'
 import { isDefined } from '@island.is/shared/utils'
 import { ResourcesService } from '../resources/resources.service'
-import { DelegationDirection } from '@island.is/auth-api-lib'
+import { DelegationDirection } from './types/delegationDirection'
 
 type ClientDelegationInfo = Pick<
   Client,
@@ -208,7 +208,7 @@ export class DelegationsService {
 
     const remainingScopes = await this.delegationScopeService.findAll(id)
 
-    // If not remaining scopes then we are save to delete the delegation
+    // If no remaining scopes then we are save to delete the delegation
     if (remainingScopes.length === 0) {
       await this.delegationModel.destroy({
         where: { id },
@@ -390,7 +390,7 @@ export class DelegationsService {
 
     const delegations = await Promise.all(delegationPromises)
 
-    return uniqBy([...delegations.flat()], 'fromNationalId').filter(
+    return uniqBy(delegations.flat(), 'fromNationalId').filter(
       (delegation) => delegation.fromNationalId !== user.nationalId,
     )
   }
@@ -619,16 +619,16 @@ export class DelegationsService {
       )
 
       if (deceased.length > 0) {
-        await this.handleAliveOrDeceasedPersonalRepresentatives(deceased, user)
+        await this.deletePersonalRepresentatives(deceased, user)
       }
 
-      return alive.map((pr) =>
-        toDelegationDTO(
-          findPersonByNationalId(pr.nationalIdRepresentedPerson)?.name ??
-            'Óþekkt nafn',
-          pr,
-        ),
-      )
+      return alive
+        .map((pr) => {
+          const person = findPersonByNationalId(pr.nationalIdRepresentedPerson)
+
+          return person?.name ? toDelegationDTO(person.name, pr) : undefined
+        })
+        .filter(isDefined)
     } catch (error) {
       this.logger.error('Error in findAllRepresentedPersons', error)
     }
@@ -636,11 +636,11 @@ export class DelegationsService {
     return []
   }
 
-  private async handleAliveOrDeceasedPersonalRepresentatives(
+  private async deletePersonalRepresentatives(
     personalRepresentatives: PersonalRepresentativeDTO[],
     user: User,
   ) {
-    // Invalidate all deceased delegations by deleting them and their scopes.
+    // Delete all personal representatives and their rights
     const deletePromises = personalRepresentatives
       .map(({ id }) => (id ? this.prService.delete(id) : undefined))
       .filter(isDefined)
@@ -718,7 +718,7 @@ export class DelegationsService {
     } = await this.getLiveStatusFromDelegations(delegationModels)
 
     if (deceasedDelegations.length > 0) {
-      // Invalidate all deceased delegations by deleting them and their scopes.
+      // Delete all deceased delegations by deleting them and their scopes.
       const deletePromises = deceasedDelegations
         .map(({ id }) =>
           id ? this.delete(user, id, DelegationDirection.INCOMING) : undefined,
