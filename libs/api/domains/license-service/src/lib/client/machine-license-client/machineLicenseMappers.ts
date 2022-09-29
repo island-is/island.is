@@ -48,7 +48,7 @@ export const parseMachineLicensePayload = (
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: 'Útgáfudagur',
+      label: 'Fyrsti útgáfudagur',
       value: license.fyrstiUtgafuDagur?.toString(),
     },
     {
