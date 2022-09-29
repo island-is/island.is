@@ -13,8 +13,8 @@ test.describe.skip('Service portal', () => {
       homeUrl: `${urls.islandisBaseUrl}/app/skilavottord/my-cars`,
       phoneNumber: '0103019',
       idsLoginOn: {
-        authNext: {
-          authNextRoot: `${urls.islandisBaseUrl}/app/skilavottord`,
+        nextAuth: {
+          nextAuthRoot: `${urls.islandisBaseUrl}/app/skilavottord`,
         },
       },
       authUrl: getEnvironmentBaseUrl(AuthUrl.staging),

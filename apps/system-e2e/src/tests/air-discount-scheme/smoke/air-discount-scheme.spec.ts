@@ -13,8 +13,8 @@ test.describe('Air discount scheme', () => {
       storageState: 'loftbru.json',
       homeUrl: `${urls.adsBaseUrl}/min-rettindi`,
       idsLoginOn: {
-        authNext: {
-          authNextRoot: urls.adsBaseUrl,
+        nextAuth: {
+          nextAuthRoot: urls.adsBaseUrl,
         },
       },
       phoneNumber: '0103019',
