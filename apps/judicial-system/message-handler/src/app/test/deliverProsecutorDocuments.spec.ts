@@ -2,12 +2,12 @@ import { uuid } from 'uuidv4'
 import fetch from 'node-fetch'
 
 import { appModuleConfig } from '../app.config'
-import { CaseDeliveryService } from '../caseDelivery.service'
+import { ProsecutorDocumentsDeliveryService } from '../prosecutorDocumentsDelivery.service'
 
 jest.mock('@island.is/logging')
 jest.mock('node-fetch')
 
-describe('CaseDeliveryService - Deliver case', () => {
+describe('ProsecutorDocumentsDeliveryService - Deliver prosecutor documents', () => {
   const config = appModuleConfig()
   const caseId = uuid()
 
@@ -19,13 +19,15 @@ describe('CaseDeliveryService - Deliver case', () => {
       }),
     )
 
-    const caseDeliveryService = new CaseDeliveryService(config)
-    await caseDeliveryService.deliverCase(caseId)
+    const prosecutorDocumentsDeliveryService = new ProsecutorDocumentsDeliveryService(
+      config,
+    )
+    await prosecutorDocumentsDeliveryService.deliverProsecutorDocuments(caseId)
   })
 
-  it('should deliver a case', () => {
+  it('should deliver prosecutor documents', () => {
     expect(fetch).toHaveBeenCalledWith(
-      `${config.backendUrl}/api/internal/case/${caseId}/deliver`,
+      `${config.backendUrl}/api/internal/case/${caseId}/deliverProsecutorDocuments`,
       {
         method: 'POST',
         headers: {

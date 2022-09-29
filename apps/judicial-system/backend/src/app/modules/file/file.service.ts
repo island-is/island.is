@@ -13,13 +13,19 @@ import { InjectModel } from '@nestjs/sequelize'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { CaseFileState } from '@island.is/judicial-system/types'
+import { FormatMessage, IntlService } from '@island.is/cms-translations'
+import {
+  CaseFileCategory,
+  CaseFileState,
+} from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
 import { writeFile } from '../../formatters'
+import { courtUpload } from '../../messages'
 import { AwsS3Service } from '../aws-s3'
 import { CourtDocumentFolder, CourtService } from '../court'
+import { Case } from '../case'
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
 import { PresignedPost } from './models/presignedPost.model'
@@ -41,8 +47,23 @@ export class FileService {
     @InjectModel(CaseFile) private readonly fileModel: typeof CaseFile,
     private readonly courtService: CourtService,
     private readonly awsS3Service: AwsS3Service,
+    private readonly intlService: IntlService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
+
+  private formatMessage: FormatMessage = () => {
+    throw new InternalServerErrorException('Format message not initialized')
+  }
+
+  private refreshFormatMessage: () => Promise<void> = async () =>
+    this.intlService
+      .useIntl(['judicial.system.backend'], 'is')
+      .then((res) => {
+        this.formatMessage = res.formatMessage
+      })
+      .catch((reason) => {
+        this.logger.error('Unable to refresh format messages', { reason })
+      })
 
   private async deleteFileFromDatabase(fileId: string): Promise<boolean> {
     this.logger.debug(`Deleting file ${fileId} from the database`)
@@ -71,11 +92,76 @@ export class FileService {
     })
   }
 
-  private async throttleUploadStream(
+  private getFileProperties(file: CaseFile, theCase: Case) {
+    let courtDocumentFolder: CourtDocumentFolder
+    let subject: string
+
+    switch (file.category) {
+      case CaseFileCategory.COVER_LETTER:
+        courtDocumentFolder = CourtDocumentFolder.INDICTMENT_DOCUMENTS
+        subject = this.formatMessage(courtUpload.coverLetter, {
+          courtCaseNumber: theCase.courtCaseNumber,
+        })
+        break
+      case CaseFileCategory.INDICTMENT:
+        courtDocumentFolder = CourtDocumentFolder.INDICTMENT_DOCUMENTS
+        subject = this.formatMessage(courtUpload.indictment, {
+          courtCaseNumber: theCase.courtCaseNumber,
+        })
+        break
+      case CaseFileCategory.CRIMINAL_RECORD:
+        courtDocumentFolder = CourtDocumentFolder.INDICTMENT_DOCUMENTS
+        subject = this.formatMessage(courtUpload.criminalRecord, {
+          courtCaseNumber: theCase.courtCaseNumber,
+        })
+        break
+      case CaseFileCategory.COST_BREAKDOWN:
+        courtDocumentFolder = CourtDocumentFolder.INDICTMENT_DOCUMENTS
+        subject = this.formatMessage(courtUpload.costBreakdown, {
+          courtCaseNumber: theCase.courtCaseNumber,
+        })
+        break
+      case CaseFileCategory.COURT_RECORD:
+        courtDocumentFolder = CourtDocumentFolder.COURT_DOCUMENTS
+        subject = this.formatMessage(courtUpload.courtRecord, {
+          courtCaseNumber: theCase.courtCaseNumber,
+        })
+        break
+      case CaseFileCategory.RULING:
+        courtDocumentFolder = CourtDocumentFolder.COURT_DOCUMENTS
+        subject = this.formatMessage(courtUpload.verdict, {
+          courtCaseNumber: theCase.courtCaseNumber,
+        })
+        break
+      case CaseFileCategory.CASE_FILE_CONTENTS:
+        courtDocumentFolder = CourtDocumentFolder.CASE_DOCUMENTS
+        subject = this.formatMessage(courtUpload.caseFileContents, {
+          courtCaseNumber: theCase.courtCaseNumber,
+        })
+        break
+      case CaseFileCategory.CASE_FILE:
+        courtDocumentFolder = CourtDocumentFolder.CASE_DOCUMENTS
+        subject = this.formatMessage(courtUpload.caseFile, {
+          courtCaseNumber: theCase.courtCaseNumber,
+        })
+        break
+      default:
+        courtDocumentFolder = CourtDocumentFolder.CASE_DOCUMENTS
+        subject = file.name
+    }
+
+    const fileNameWithoutEnding = /^.+\./
+
+    const fileName = file.category
+      ? file.name.replace(fileNameWithoutEnding, `${subject}.`)
+      : file.name
+
+    return { courtDocumentFolder, subject, fileName }
+  }
+
+  private async throttleUpload(
     file: CaseFile,
-    caseId: string,
-    courtId?: string,
-    courtCaseNumber?: string,
+    theCase: Case,
     user?: User,
   ): Promise<string> {
     await this.throttle.catch((reason) => {
@@ -88,13 +174,18 @@ export class FileService {
       writeFile(`${file.name}`, content)
     }
 
+    const { courtDocumentFolder, subject, fileName } = this.getFileProperties(
+      file,
+      theCase,
+    )
+
     return this.courtService.createDocument(
-      caseId,
-      courtId,
-      courtCaseNumber,
-      CourtDocumentFolder.CASE_DOCUMENTS,
-      file.name,
-      file.name,
+      theCase.id,
+      theCase.courtId,
+      theCase.courtCaseNumber,
+      courtDocumentFolder,
+      subject,
+      fileName,
       file.type,
       content,
       user,
@@ -186,15 +277,13 @@ export class FileService {
 
   async uploadCaseFileToCourt(
     file: CaseFile,
-    caseId: string,
-    courtId?: string,
-    courtCaseNumber?: string,
+    theCase: Case,
     user?: User,
   ): Promise<UploadFileToCourtResponse> {
+    await this.refreshFormatMessage()
+
     if (file.state === CaseFileState.STORED_IN_COURT) {
-      throw new BadRequestException(
-        `File ${file.id} has already been uploaded to court`,
-      )
+      return { success: true }
     }
 
     if (!file.key) {
@@ -210,13 +299,7 @@ export class FileService {
       throw new NotFoundException(`File ${file.id} does not exists in AWS S3`)
     }
 
-    this.throttle = this.throttleUploadStream(
-      file,
-      caseId,
-      courtId,
-      courtCaseNumber,
-      user,
-    )
+    this.throttle = this.throttleUpload(file, theCase, user)
 
     await this.throttle
 
