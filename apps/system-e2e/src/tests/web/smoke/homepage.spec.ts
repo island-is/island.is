@@ -84,7 +84,7 @@ test.describe('Front page', () => {
       lifeEventUrls.map(async (url) => {
         const page = await context.newPage()
         const result = await page.goto(url!)
-        expect(result!.url()).not.toBe('/')
+        expect(result?.url()).not.toBe('/')
         await page.locator('[data-testid="link-back-home"]').click()
         await page.waitForLoadState('networkidle')
         await expect(page).toHaveURL('/')
