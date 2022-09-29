@@ -78,11 +78,11 @@ export const parseAdrLicensePayload = (
 
   if (tankar) data.push(tankar)
 
-  const notTankar = parseRights(
+  const grunn = parseRights(
     'Annað en í tanki',
-    adrRights.filter((field) => !field.tankar),
+    adrRights.filter((field) => field.grunn),
   )
-  if (notTankar) data.push(notTankar)
+  if (grunn) data.push(grunn)
 
   return {
     data,
