@@ -56,6 +56,7 @@ import { LandskjorstjornFooter } from './Themes/LandkjorstjornTheme/Landkjorstjo
 import { LatestNewsCardConnectedComponent } from '../LatestNewsCardConnectedComponent'
 import { RikislogmadurHeader } from './Themes/RikislogmadurTheme/RikislogmadurHeader'
 import { RikislogmadurFooter } from './Themes/RikislogmadurTheme/RikislogmadurFooter'
+import { LandskjorstjornHeader } from './Themes/LandkjorstjornTheme/LandskjorstjornHeader'
 import * as styles from './OrganizationWrapper.css'
 
 interface NavigationData {
@@ -148,6 +149,7 @@ export const getThemeConfig = (
 }
 
 const OrganizationHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
+  return <LandskjorstjornHeader organizationPage={organizationPage} />
   switch (organizationPage.theme) {
     case 'syslumenn':
       return <SyslumennHeader organizationPage={organizationPage} />
@@ -169,6 +171,8 @@ const OrganizationHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
       return <FiskistofaHeader organizationPage={organizationPage} />
     case 'rikislogmadur':
       return <RikislogmadurHeader organizationPage={organizationPage} />
+    case 'landskjorstjorn':
+      return <LandskjorstjornHeader organizationPage={organizationPage} />
     default:
       return <DefaultHeader organizationPage={organizationPage} />
   }
