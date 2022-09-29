@@ -50,6 +50,7 @@ import { DelegationScopeService } from './delegationScope.service'
 import partition from 'lodash/partition'
 import { isDefined } from '@island.is/shared/utils'
 import { ResourcesService } from '../resources/resources.service'
+import { DelegationDirection } from '@island.is/auth-api-lib'
 
 type ClientDelegationInfo = Pick<
   Client,
@@ -180,20 +181,41 @@ export class DelegationsService {
 
   /**
    * Deletes a delegation a user has given.
+   * if direction is incoming is then all delegation scopes will be deleted else only user scopes
    * @param user User object of the authenticated user.
    * @param id Id of the delegation to delete
    * @returns
    */
-  async delete(user: User, id: string): Promise<number> {
+  async delete(
+    user: User,
+    id: string,
+    direction: DelegationDirection = DelegationDirection.OUTGOING,
+  ): Promise<boolean> {
     this.logger.debug(`Deleting delegation ${id}`)
 
     const delegation = await this.delegationModel.findByPk(id)
-    if (!delegation || delegation.fromNationalId !== user.nationalId) {
+    const isOutgoing = direction === DelegationDirection.OUTGOING
+    const nationalId = isOutgoing
+      ? delegation?.fromNationalId
+      : delegation?.toNationalId
+
+    if (!delegation || nationalId !== user.nationalId) {
       this.logger.debug('Delegation does not exists or is not assigned to user')
       throw new NotFoundException()
     }
 
-    return this.delegationScopeService.delete(id, user.scope)
+    await this.delegationScopeService.delete(id, isOutgoing ? user.scope : null)
+
+    const remainingScopes = await this.delegationScopeService.findAll(id)
+
+    // If not remaining scopes then we are save to delete the delegation
+    if (remainingScopes.length === 0) {
+      await this.delegationModel.destroy({
+        where: { id },
+      })
+    }
+
+    return true
   }
 
   /**
@@ -383,8 +405,14 @@ export class DelegationsService {
     } = await this.getLiveStatusFromDelegations(needsCheckDelegations.flat())
 
     if (deceasedDelegations.length > 0) {
-      // Invalidate all deceased delegations
-      await this.invalidateDelegations(user, deceasedDelegations)
+      // Invalidate all deceased delegations by deleting them and their scopes.
+      const deletePromises = deceasedDelegations
+        .map(({ id }) =>
+          id ? this.delete(user, id, DelegationDirection.INCOMING) : undefined,
+        )
+        .filter(isDefined)
+
+      await Promise.all(deletePromises)
 
       this.auditService.auditSystem({
         action: 'invalidateDelegationsForMissingPeople',
@@ -396,40 +424,6 @@ export class DelegationsService {
       [...delegations.flat(), ...aliveDelegations],
       'fromNationalId',
     ).filter((delegation) => delegation.fromNationalId !== user.nationalId)
-  }
-
-  /**
-   * Invalidates delegations by updating delegation.scope[index].validTo date field to start of yesterday.
-   */
-  private async invalidateDelegations(
-    user: User,
-    deceasedDelegations: DelegationDTO[],
-  ) {
-    const delegations = await Promise.all(
-      // We need to refetch the delegation to make sure we get all delegation.scopes
-      deceasedDelegations.map(({ id }) =>
-        id ? this.findById(user, id, false) : undefined,
-      ),
-    )
-    const delegationsWithAllScopes = delegations.filter(isDefined)
-
-    if (delegationsWithAllScopes.length > 0) {
-      // Gather all delegation scope ids that needs to be invalidated
-      const delegationScopeIds = delegationsWithAllScopes
-        .map((delegation) =>
-          delegation.scopes?.map(({ id }) => id).filter(isDefined),
-        )
-        .filter(isDefined)
-        .flat()
-
-      if (delegationScopeIds.length > 0) {
-        await Promise.all(
-          delegationScopeIds.map((id) =>
-            this.delegationScopeService.invalidate(id),
-          ),
-        )
-      }
-    }
   }
 
   /**

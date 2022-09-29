@@ -1,10 +1,8 @@
 import { uuid } from 'uuidv4'
 import { Op } from 'sequelize'
 import startOfDay from 'date-fns/startOfDay'
-import { Inject, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { Logger } from '@island.is/logging'
 
 import { ScopeType, UpdateDelegationScopeDTO } from './dto/delegation-scope.dto'
 import { DelegationScope } from './models/delegation-scope.model'
@@ -15,13 +13,10 @@ import { PersonalRepresentativeScopePermission } from '../personal-representativ
 import { PersonalRepresentativeRightType } from '../personal-representative/models/personal-representative-right-type.model'
 import { PersonalRepresentativeRight } from '../personal-representative/models/personal-representative-right.model'
 import { PersonalRepresentative } from '../personal-representative/models/personal-representative.model'
-import startOfYesterday from 'date-fns/startOfYesterday'
 
 @Injectable()
 export class DelegationScopeService {
   constructor(
-    @Inject(LOGGER_PROVIDER)
-    private logger: Logger,
     @InjectModel(DelegationScope)
     private delegationScopeModel: typeof DelegationScope,
     @InjectModel(ApiScope)
@@ -69,38 +64,24 @@ export class DelegationScopeService {
     )
   }
 
-  /**
-   * Invalidates DelegationScope, i.e. makes it expired.
-   * To make invalid we have to set validTo field to yesterdays date.
-   *
-   * @param id - DelegationScope id
-   */
-  async invalidate(id: string): Promise<void> {
-    this.logger.debug(`Invalidating delegationScope ${id}`)
-
-    try {
-      await this.delegationScopeModel.update(
-        { validTo: startOfYesterday() },
-        { where: { id } },
-      )
-    } catch (error) {
-      // Swallow error if scope is already invalidated
-      this.logger.error(`Error invalidating delegationScope ${id}`, error)
-    }
-  }
-
   async delete(
     delegationId: string,
     scopeNames?: string[] | null,
   ): Promise<number> {
     if (scopeNames) {
       return this.delegationScopeModel.destroy({
-        where: { delegationId: delegationId, scopeName: scopeNames },
+        where: { delegationId, scopeName: scopeNames },
       })
     }
 
     return this.delegationScopeModel.destroy({
-      where: { delegationId: delegationId },
+      where: { delegationId },
+    })
+  }
+
+  async findAll(id: string): Promise<DelegationScope[]> {
+    return this.delegationScopeModel.findAll({
+      where: { delegationId: id },
     })
   }
 

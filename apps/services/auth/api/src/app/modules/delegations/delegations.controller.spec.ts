@@ -263,15 +263,6 @@ describe('DelegationsController', () => {
               })
           })
 
-          afterEach(async () => {
-            await delegationModel.destroy({
-              where: {},
-              cascade: true,
-              truncate: true,
-              force: true,
-            })
-          })
-
           afterAll(async () => {
             jest.clearAllMocks()
             await prRightsModel.destroy({
@@ -348,10 +339,13 @@ describe('DelegationsController', () => {
               ).toBeTruthy()
             })
 
-            it('should have updated delegation scopes field validTo to yesterday for deceased person link', async () => {
-              // Arrange
+            it('should have deleted delegations for deceased person link', async () => {
+              // Arrange and arrange
               const delegationsModels = (
                 await delegationModel.findAll({
+                  where: {
+                    id: deceasedNationalIds,
+                  },
                   include: [
                     {
                       model: DelegationScope,
@@ -361,15 +355,8 @@ describe('DelegationsController', () => {
                 })
               ).map((delegation) => delegation.toDTO())
 
-              const allDelegationsScopes = delegationsModels
-                ?.map((delegation) => delegation?.scopes)
-                .filter(isDefined)
-                .flat()
-
               // Assert
-              allDelegationsScopes?.forEach((scope) => {
-                expect(scope.validTo).toEqual(subDays(today, 1))
-              })
+              expect(delegationsModels.length).toEqual(0)
             })
           })
         },

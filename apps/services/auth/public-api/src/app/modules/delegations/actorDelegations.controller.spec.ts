@@ -38,7 +38,6 @@ import {
 import { RskProcuringClient } from '@island.is/clients/rsk/procuring'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import { ResponseSimple } from '@island.is/clients/rsk/procuring'
-import subDays from 'date-fns/subDays'
 
 const today = new Date('2021-11-12')
 const client = createClient({
@@ -282,7 +281,7 @@ describe('ActorDelegationsController', () => {
         const expectedModifyedModels = (
           await delegationModel.findAll({
             where: {
-              fromNationalId: deceasedNationalIds[0],
+              toNationalId: user.nationalId,
             },
             include: [
               {
@@ -293,9 +292,7 @@ describe('ActorDelegationsController', () => {
           })
         )?.map((delegation) => delegation.toDTO())
 
-        expect(expectedModifyedModels?.[0].scopes?.[0].validTo).toEqual(
-          subDays(today, 1),
-        )
+        expect(expectedModifyedModels.length).toEqual(1)
       })
 
       it('should return delegations when the delegationTypes filter is empty', async () => {
