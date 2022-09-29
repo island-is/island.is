@@ -156,6 +156,7 @@
 
 /apps/services/search-indexer/                                                                      @island-is/stefna @island-is/juni
 /apps/services/contentful-entry-tagger/                                                             @island-is/stefna
+/apps/tools/contentful-role-permissions/                                                            @island-is/stefna
 /apps/web/screens/Organization/                                                                     @island-is/stefna
 /apps/web/screens/Project/                                                                          @island-is/stefna
 /apps/web/components/Organization/                                                                  @island-is/stefna
