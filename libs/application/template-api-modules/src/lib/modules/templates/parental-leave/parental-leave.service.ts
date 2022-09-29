@@ -244,7 +244,7 @@ export class ParentalLeaveService {
         const pdf = await this.getPdfs(application)
 
         attachments.push({
-          attachmentType: 'other',
+          attachmentType: apiConstants.attachments.other,
           attachmentBytes: pdf,
         })
       }
