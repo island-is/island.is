@@ -10,7 +10,6 @@ import {
   User,
 } from '@island.is/judicial-system/types'
 import {
-  capitalize,
   formatDate,
   lowercase,
   formatRequestCaseType,
