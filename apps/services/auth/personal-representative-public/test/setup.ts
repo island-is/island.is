@@ -6,7 +6,7 @@ import {
   useAuth,
 } from '@island.is/testing/nest'
 import { User } from '@island.is/auth-nest-tools'
-import { SequelizeConfigService } from '@island.is/auth-api-lib/personal-representative'
+import { SequelizeConfigService } from '@island.is/auth-api-lib'
 import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 
