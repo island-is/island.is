@@ -25,6 +25,7 @@ import { TranslationModule } from './v1/translation/translation.module'
 import { DelegationsModule } from './v1/delegations/delegations.module'
 import { PermissionsModule } from './v1/permissions/permissions.module'
 import { UserProfileModule } from './v1/user-profile/user-profile.module'
+import { DelegationsModule } from './v2/delegations/delegations.module'
 
 @Module({
   imports: [
