@@ -102,14 +102,9 @@ export const CourtRecord: React.FC = () => {
         if (workingCase.defenderName) {
           autofillAttendees.push(
             `\n${workingCase.defenderName} skipaður verjandi ${formatMessage(
-              core.accused,
+              core.defendant,
               {
-                suffix:
-                  workingCase.defendants &&
-                  workingCase.defendants.length > 0 &&
-                  workingCase.defendants[0].gender === Gender.FEMALE
-                    ? 'u'
-                    : 'a',
+                suffix: 'a',
               },
             )}`,
           )
@@ -121,10 +116,12 @@ export const CourtRecord: React.FC = () => {
 
         if (workingCase.defendants && workingCase.defendants.length > 0) {
           autofillAttendees.push(
-            `\n${workingCase.defendants[0].name} ${formatMessage(core.accused, {
-              suffix:
-                workingCase.defendants[0].gender === Gender.MALE ? 'i' : 'a',
-            })}`,
+            `\n${workingCase.defendants[0].name} ${formatMessage(
+              core.defendant,
+              {
+                suffix: 'i',
+              },
+            )}`,
           )
         }
       }
@@ -159,17 +156,9 @@ export const CourtRecord: React.FC = () => {
       ) {
         autofillSessionBookings.push(
           `\n\n${formatMessage(
-            m.sections.sessionBookings.autofillPresentationsV2,
+            m.sections.sessionBookings.autofillPresentationsV3,
             {
               caseType: workingCase.type,
-              accused: formatMessage(core.accused, {
-                suffix:
-                  workingCase.defendants &&
-                  workingCase.defendants.length > 0 &&
-                  workingCase.defendants[0].gender === Gender.FEMALE
-                    ? 'u'
-                    : 'a',
-              }),
             },
           )}`,
         )
@@ -471,11 +460,9 @@ export const CourtRecord: React.FC = () => {
               <BlueBox>
                 <Box marginBottom={2}>
                   <Text as="h4" variant="h4">
-                    {formatMessage(m.sections.appealDecision.accusedTitle, {
-                      accused: formatMessage(core.defendant, {
-                        suffix: 'a',
-                      }),
-                    })}{' '}
+                    {`${formatMessage(
+                      m.sections.appealDecision.defendantTitle,
+                    )} `}
                     <Text as="span" color="red600" fontWeight="semiBold">
                       *
                     </Text>
@@ -486,14 +473,7 @@ export const CourtRecord: React.FC = () => {
                     name="accused-appeal-decision"
                     id="accused-appeal"
                     label={formatMessage(
-                      m.sections.appealDecision.accusedAppeal,
-                      {
-                        accused: capitalize(
-                          formatMessage(core.defendant, {
-                            suffix: 'i',
-                          }),
-                        ),
-                      },
+                      m.sections.appealDecision.defendantAppeal,
                     )}
                     value={CaseAppealDecision.APPEAL}
                     checked={
@@ -517,14 +497,7 @@ export const CourtRecord: React.FC = () => {
                     name="accused-appeal-decision"
                     id="accused-accept"
                     label={formatMessage(
-                      m.sections.appealDecision.accusedAccept,
-                      {
-                        accused: capitalize(
-                          formatMessage(core.defendant, {
-                            suffix: 'i',
-                          }),
-                        ),
-                      },
+                      m.sections.appealDecision.defendantAccept,
                     )}
                     value={CaseAppealDecision.ACCEPT}
                     checked={
@@ -550,14 +523,7 @@ export const CourtRecord: React.FC = () => {
                     name="accused-appeal-decision"
                     id="accused-postpone"
                     label={formatMessage(
-                      m.sections.appealDecision.accusedPostpone,
-                      {
-                        accused: capitalize(
-                          formatMessage(core.defendant, {
-                            suffix: 'i',
-                          }),
-                        ),
-                      },
+                      m.sections.appealDecision.defendantPostpone,
                     )}
                     value={CaseAppealDecision.POSTPONE}
                     checked={
@@ -608,27 +574,11 @@ export const CourtRecord: React.FC = () => {
                   name="accusedAppealAnnouncement"
                   data-testid="accusedAppealAnnouncement"
                   label={formatMessage(
-                    m.sections.appealDecision.accusedAnnouncementLabel,
-                    {
-                      accused: formatMessage(core.accused, {
-                        suffix:
-                          workingCase.defendants[0].gender === Gender.FEMALE
-                            ? 'u'
-                            : 'a',
-                      }),
-                    },
+                    m.sections.appealDecision.defendantAnnouncementLabel,
                   )}
                   value={workingCase.accusedAppealAnnouncement || ''}
                   placeholder={formatMessage(
-                    m.sections.appealDecision.accusedAnnouncementPlaceholder,
-                    {
-                      accused: formatMessage(core.accused, {
-                        suffix:
-                          workingCase.defendants[0].gender === Gender.MALE
-                            ? 'i'
-                            : 'a',
-                      }),
-                    },
+                    m.sections.appealDecision.defendantAnnouncementPlaceholder,
                   )}
                   onChange={(event) =>
                     removeTabsValidateAndSet(

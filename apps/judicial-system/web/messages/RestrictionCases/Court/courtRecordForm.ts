@@ -91,11 +91,20 @@ export const rcCourtRecord = {
         description:
           'Sjálfgefinn texti í "Afstaða varnaraðila, málflutningur og aðrar bókanir" textaboxi á þingbókar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
+      // TODO: Remove autofillPresentationsV2
       autofillPresentationsV2: {
         id:
           'judicial.system.restriction_cases:court_record.session_bookings.autofill_presentations_v2#markdown',
         defaultMessage:
           'Sækjandi ítrekar kröfu um {caseType, select, ADMISSION_TO_FACILITY {vistun á viðeigandi stofnun} other {gæsluvarðhald}}, reifar og rökstyður kröfuna og leggur málið í úrskurð með venjulegum fyrirvara.\n\nVerjandi {accused} ítrekar mótmæli hans, krefst þess að kröfunni verði hafnað, til vara að {accused} verði gert að sæta farbanni í stað {caseType, select, ADMISSION_TO_FACILITY {vistunar} other {gæsluvarðhalds}}, en til þrautavara að {caseType, select, ADMISSION_TO_FACILITY {vistun} other {gæsluvarðhaldi}} verði markaður skemmri tími en krafist er og að {accused} verði ekki gert að sæta einangrun á meðan á {caseType, select, ADMISSION_TO_FACILITY {vistun} other {gæsluvarðhaldi}} stendur. Verjandinn reifar og rökstyður mótmælin og leggur málið í úrskurð með venjulegum fyrirvara.',
+        description:
+          'Sjálfgefinn texti í "Afstaða varnaraðila, málflutningur og aðrar bókanir" textaboxi á þingbókar skrefi í gæsluvarðhaldsmálum.',
+      },
+      autofillPresentationsV3: {
+        id:
+          'judicial.system.restriction_cases:court_record.session_bookings.autofill_presentations_v3#markdown',
+        defaultMessage:
+          'Sækjandi ítrekar kröfu um {caseType, select, ADMISSION_TO_FACILITY {vistun á viðeigandi stofnun} other {gæsluvarðhald}}, reifar og rökstyður kröfuna og leggur málið í úrskurð með venjulegum fyrirvara.\n\nVerjandi varnaraðila ítrekar mótmæli hans, krefst þess að kröfunni verði hafnað, til vara að varnaraðila verði gert að sæta farbanni í stað {caseType, select, ADMISSION_TO_FACILITY {vistunar} other {gæsluvarðhalds}}, en til þrautavara að {caseType, select, ADMISSION_TO_FACILITY {vistun} other {gæsluvarðhaldi}} verði markaður skemmri tími en krafist er og að varnaraðila verði ekki gert að sæta einangrun á meðan á {caseType, select, ADMISSION_TO_FACILITY {vistun} other {gæsluvarðhaldi}} stendur. Verjandinn reifar og rökstyður mótmælin og leggur málið í úrskurð með venjulegum fyrirvara.',
         description:
           'Sjálfgefinn texti í "Afstaða varnaraðila, málflutningur og aðrar bókanir" textaboxi á þingbókar skrefi í gæsluvarðhaldsmálum.',
       },
@@ -155,6 +164,7 @@ export const rcCourtRecord = {
         description:
           'Notaður sem texti í "Ákvörðun um kæru" hlutanum á þingbókar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
+      // TODO: Remove accusedTitle
       accusedTitle: {
         id:
           'judicial.system.restriction_cases:court_record.appeal_decision.accused_title',
@@ -162,6 +172,14 @@ export const rcCourtRecord = {
         description:
           'Notaður sem titill fyrir "Afstaða kærða til málsins í lok þinghalds" spjald á þingbókar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
+      defendantTitle: {
+        id:
+          'judicial.system.restriction_cases:court_record.appeal_decision.defendant_title',
+        defaultMessage: 'Afstaða varnaraðila til málsins í lok þinghalds',
+        description:
+          'Notaður sem titill fyrir "Afstaða varnaraðila til málsins í lok þinghalds" spjald á þingbókar skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+      // TODO: Remove accusedAppeal
       accusedAppeal: {
         id:
           'judicial.system.restriction_cases:court_record.appeal_decision.accused_appeal',
@@ -169,6 +187,14 @@ export const rcCourtRecord = {
         description:
           'Notaður sem texti við valmöguleika kærða um að kæra úrskurðinn radio takkann á þingbókar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
+      defendantAppeal: {
+        id:
+          'judicial.system.restriction_cases:court_record.appeal_decision.defendant_appeal',
+        defaultMessage: 'Varnaraðili kærir úrskurðinn',
+        description:
+          'Notaður sem texti við valmöguleika varnaraðila um að kæra úrskurðinn radio takkann á þingbókar skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+      // TODO: Remove accusedAccept
       accusedAccept: {
         id:
           'judicial.system.restriction_cases:court_record.appeal_decision.accused_accept',
@@ -176,12 +202,27 @@ export const rcCourtRecord = {
         description:
           'Notaður sem texti við valmöguleika kærða um að una úrskurðinum radio takkann á þingbókar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
+      defendantAccept: {
+        id:
+          'judicial.system.restriction_cases:court_record.appeal_decision.defendant_accept',
+        defaultMessage: 'Varnaraðili unir úrskurðinum',
+        description:
+          'Notaður sem texti við valmöguleika varnaraðila um að una úrskurðinum radio takkann á þingbókar skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+      // TODO: Remove accusedPostpone
       accusedPostpone: {
         id:
           'judicial.system.restriction_cases:court_record.appeal_decision.accused_postpone',
         defaultMessage: '{accused} tekur sér lögboðinn frest',
         description:
           'Notaður sem texti við valmöguleika kærða um lögbundinn frest radio takkann á þingbókar skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+      defendantPostpone: {
+        id:
+          'judicial.system.restriction_cases:court_record.appeal_decision.defendant_postpone',
+        defaultMessage: 'Varnaraðili tekur sér lögboðinn frest',
+        description:
+          'Notaður sem texti við valmöguleika varnaraðila um lögbundinn frest radio takkann á þingbókar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
       accusedNotApplicable: {
         id:
@@ -190,6 +231,7 @@ export const rcCourtRecord = {
         description:
           'Notaður sem texti við valmöguleika kærða um á ekki við radio takkann á þingbókar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
+      // TODO: Remove accusedAnnouncementLabel
       accusedAnnouncementLabel: {
         id:
           'judicial.system.restriction_cases:court_record.appeal_decision.accused_announcement_label',
@@ -197,6 +239,14 @@ export const rcCourtRecord = {
         description:
           'Notaður sem titill á "Yfirlýsing kærða" innsláttarsvæði á þingbókar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
+      defendantAnnouncementLabel: {
+        id:
+          'judicial.system.restriction_cases:court_record.appeal_decision.defendant_announcement_label',
+        defaultMessage: 'Yfirlýsing varnaraðila',
+        description:
+          'Notaður sem titill á "Yfirlýsing varnaraðila" innsláttarsvæði á þingbókar skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+      // TODO: Remove accusedAnnouncementPlaceholder
       accusedAnnouncementPlaceholder: {
         id:
           'judicial.system.restriction_cases:court_record.appeal_decision.accused_announcement_placeholder',
@@ -204,6 +254,14 @@ export const rcCourtRecord = {
           'Hér er hægt að bóka frekar um það sem {accused} vill taka fram ef við á.',
         description:
           'Notaður sem placeholder í "Yfirlýsing kærða" innsláttarsvæði á þingbókar skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+      defendantAnnouncementPlaceholder: {
+        id:
+          'judicial.system.restriction_cases:court_record.appeal_decision.defendant_announcement_placeholder',
+        defaultMessage:
+          'Hér er hægt að bóka frekar um það sem varnaraðili vill taka fram ef við á.',
+        description:
+          'Notaður sem placeholder í "Yfirlýsing varnaraðila" innsláttarsvæði á þingbókar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
       prosecutorTitle: {
         id:
