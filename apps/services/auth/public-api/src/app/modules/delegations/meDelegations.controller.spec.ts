@@ -1265,8 +1265,7 @@ describe('MeDelegationsController', () => {
         const model = await delegationModel.findByPk(id, {
           include: [{ model: DelegationScope, as: 'delegationScopes' }],
         })
-        expect(model).not.toBeNull()
-        expect(model?.delegationScopes?.length).toEqual(0)
+        expect(model).toBeNull()
       })
 
       it('should return 204 No Content when successfully only delete scopes the user has access to', async () => {
