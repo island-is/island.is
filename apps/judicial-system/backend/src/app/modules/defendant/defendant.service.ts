@@ -1,3 +1,4 @@
+import { Op, literal } from 'sequelize'
 import { Transaction } from 'sequelize/types'
 
 import {
@@ -14,6 +15,8 @@ import type { Logger } from '@island.is/logging'
 import { CreateDefendantDto } from './dto/createDefendant.dto'
 import { UpdateDefendantDto } from './dto/updateDefendant.dto'
 import { Defendant } from './models/defendant.model'
+import { Case } from '../case/models/case.model'
+import { CaseState, CaseType } from '@island.is/judicial-system/types'
 
 @Injectable()
 export class DefendantService {
@@ -99,5 +102,32 @@ export class DefendantService {
     }
 
     return true
+  }
+
+  async isDefendantInActiveCustody(defendants?: Defendant[]): Promise<boolean> {
+    if (
+      !defendants ||
+      !defendants[0]?.nationalId ||
+      defendants[0]?.noNationalId
+    ) {
+      return false
+    }
+
+    const defendantsInCustody = await this.defendantModel.findAll({
+      include: [
+        {
+          model: Case,
+          as: 'case',
+          where: {
+            state: CaseState.ACCEPTED,
+            type: CaseType.CUSTODY,
+            valid_to_date: { [Op.lt]: literal('current_date') },
+          },
+        },
+      ],
+      where: { nationalId: defendants[0].nationalId },
+    })
+
+    return defendantsInCustody.some((d) => d.case)
   }
 }

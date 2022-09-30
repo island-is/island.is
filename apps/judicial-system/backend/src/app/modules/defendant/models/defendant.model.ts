@@ -3,12 +3,13 @@ import {
   CreatedAt,
   DataType,
   ForeignKey,
+  HasOne,
   Model,
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
 
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import { Gender } from '@island.is/judicial-system/types'
 
@@ -44,6 +45,10 @@ export class Defendant extends Model {
   })
   @ApiProperty()
   caseId!: string
+
+  @HasOne(() => Case, 'case')
+  @ApiPropertyOptional({ type: Case })
+  case?: Case
 
   @Column({
     type: DataType.BOOLEAN,
