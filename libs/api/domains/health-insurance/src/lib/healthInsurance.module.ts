@@ -18,6 +18,7 @@ import {
   HealthInsuranceV2Options,
 } from '@island.is/clients/health-insurance-v2'
 import { AccidentNotificationService } from './accident-notification.service'
+import { HealthInsuranceRESTAPI } from './rest'
 
 export interface HealthInsuranceOptions {
   soapConfig: HealthInsuranceConfig
@@ -37,6 +38,7 @@ export class HealthInsuranceModule {
         HealthInsuranceService,
         HealthInsuranceResolver,
         HealthInsuranceAPI,
+        HealthInsuranceRESTAPI,
         HealthInsuranceAccidentNotificationResolver,
         AccidentNotificationService,
         {
