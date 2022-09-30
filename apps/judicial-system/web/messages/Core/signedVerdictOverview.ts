@@ -386,7 +386,7 @@ export const signedVerdictOverview = {
         defaultMessage:
           '{genderedAccused} hefur kært úrskurðinn í þinghaldi sem lauk {courtEndTime}',
         description:
-          'Notaður sem upplýsingatexti sem útskýrir að kærði kærði úrskurðinn í þinghaldi á yfirlitsskjá afgreiddra mála.',
+          'Notaður sem upplýsingatexti sem útskýrir að varnaraðili kærði úrskurðinn í þinghaldi á yfirlitsskjá afgreiddra mála.',
       },
       prosecutorAppealed: {
         id:
