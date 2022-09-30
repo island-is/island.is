@@ -233,8 +233,8 @@ export const applicationOverviewTemplate = (
 
   ${
     hasConstraints
-      ? `<h3>${messages.constraints.sectionTitle.defaultMessage}</h3>
-        <p>${getServicesTextOutput()}`
+      ? `<p><b>${messages.constraints.sectionTitle.defaultMessage}</b> </br>
+        ${getServicesTextOutput()}</p>`
       : ''
   }
 

@@ -309,7 +309,7 @@ export const institutionApplicationMessages = {
     },
     sectionTitle: {
       id: 'ia.application:constraints.section.title',
-      defaultMessage: 'Áskoranir, skorður og úrlausnarefni',
+      defaultMessage: 'Þjónustur sem sótt er um',
       description: 'Section title',
     },
 
