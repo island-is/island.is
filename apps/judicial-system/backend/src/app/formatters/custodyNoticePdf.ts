@@ -155,14 +155,6 @@ function constructCustodyNoticePdf(
     )
 
     if (theCase.isCustodyIsolation) {
-      const genderedAccused = formatMessage(core.accused, {
-        suffix:
-          !theCase.defendants ||
-          theCase.defendants.length < 1 ||
-          theCase.defendants[0].gender === Gender.MALE
-            ? 'i'
-            : 'a',
-      })
       const isolationPeriod = formatDate(theCase.isolationToDate, 'PPPPp')
         ?.replace('dagur,', 'dagsins')
         ?.replace(' kl.', ', kl.')
@@ -171,7 +163,6 @@ function constructCustodyNoticePdf(
         doc,
         capitalize(
           formatMessage(custodyNotice.isolationDisclaimer, {
-            genderedAccused,
             isolationPeriod,
           }),
         ),

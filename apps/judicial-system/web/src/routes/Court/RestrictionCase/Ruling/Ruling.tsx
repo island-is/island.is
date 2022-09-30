@@ -653,17 +653,8 @@ export const Ruling: React.FC = () => {
                 <Box marginBottom={3}>
                   <Checkbox
                     name="isCustodyIsolation"
-                    label={capitalize(
-                      formatMessage(m.sections.custodyRestrictions.isolation, {
-                        genderedAccused: formatMessage(core.accused, {
-                          suffix:
-                            workingCase.defendants &&
-                            workingCase.defendants.length > 0 &&
-                            workingCase.defendants[0].gender === Gender.MALE
-                              ? 'i'
-                              : 'a',
-                        }),
-                      }),
+                    label={formatMessage(
+                      m.sections.custodyRestrictions.isolationV1,
                     )}
                     checked={workingCase.isCustodyIsolation}
                     disabled={isModifyingRuling}

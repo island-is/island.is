@@ -60,22 +60,12 @@ const AccusedAppealDatePicker: React.FC<Props> = (props) => {
             disabled={!appealDate}
           >
             {`${capitalize(
-              isRestrictionCase(workingCase.type)
-                ? formatMessage(core.accused, {
-                    suffix:
-                      workingCase.defendants &&
-                      workingCase.defendants.length > 0 &&
-                      workingCase.defendants[0].gender === Gender.MALE
-                        ? 'i'
-                        : 'a',
-                  })
-                : formatMessage(core.defendant, {
-                    suffix:
-                      workingCase.defendants &&
-                      workingCase.defendants.length > 1
-                        ? 'ar'
-                        : 'i',
-                  }),
+              formatMessage(core.defendant, {
+                suffix:
+                  workingCase.defendants && workingCase.defendants.length > 1
+                    ? 'ar'
+                    : 'i',
+              }),
             )} ${
               workingCase.defendants && workingCase.defendants.length > 1
                 ? 'kæra'

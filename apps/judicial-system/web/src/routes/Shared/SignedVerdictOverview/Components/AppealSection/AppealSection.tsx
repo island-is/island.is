@@ -78,26 +78,8 @@ const AppealSection: React.FC<Props> = (props) => {
           <BlueBox>
             <InfoBox
               text={formatMessage(
-                signedVerdictOverview.sections.appeal.accusedAppealed,
+                signedVerdictOverview.sections.appeal.defendantAppealed,
                 {
-                  genderedAccused: capitalize(
-                    isRestrictionCase(workingCase.type)
-                      ? formatMessage(core.accused, {
-                          suffix:
-                            workingCase.defendants &&
-                            workingCase.defendants.length > 0 &&
-                            workingCase.defendants[0].gender === Gender.MALE
-                              ? 'i'
-                              : 'a',
-                        })
-                      : formatMessage(core.defendant, {
-                          suffix:
-                            workingCase.defendants &&
-                            workingCase.defendants?.length > 1
-                              ? 'ar'
-                              : 'i',
-                        }),
-                  ),
                   courtEndTime: `${formatDate(
                     workingCase.rulingDate,
                     'PP',
