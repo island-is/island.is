@@ -175,15 +175,15 @@ export class ParentalLeaveService {
     }
   }
 
-  async getSelfEmployedPdf(application: Application) {
+  async getSelfEmployedPdf(application: Application, index = 0) {
     try {
       const filename = getValueViaPath(
         application.answers,
-        'employer.selfEmployed.file[0].key',
+        `employer.selfEmployed.file[${index}].key`,
       )
 
       if (!filename) {
-        return this.getPdfs(application)
+        return this.getPdfs(application, index)
       }
 
       const Key = `${application.id}/${filename}`
@@ -203,11 +203,11 @@ export class ParentalLeaveService {
     }
   }
 
-  async getPdfs(application: Application) {
+  async getPdfs(application: Application, index = 0) {
     try {
       const filename = getValueViaPath(
         application.answers,
-        `fileUpload.file[0].key`,
+        `fileUpload.file[${index}].key`,
       )
 
       const Key = `${application.id}/${filename}`
@@ -230,17 +230,36 @@ export class ParentalLeaveService {
   async getAttachments(application: Application): Promise<Attachment[]> {
     const attachments: Attachment[] = []
     const { isSelfEmployed } = getApplicationAnswers(application.answers)
+    const otherFiles = await getValueViaPath(application.answers, 'fileUpload.file')
+    const files = (otherFiles as { file: unknown[] })?.file
+    const numberOfFiles = files?.length
     if (isSelfEmployed === YES) {
-      const pdf = await this.getSelfEmployedPdf(application)
+      if (numberOfFiles > 1 && files) {
+        for (let i = 0; i < numberOfFiles - 1; i++) {
+          const pdf = await this.getPdfs(application, i)
+          attachments.push({
+            attachmentType: apiConstants.attachments.other,
+            attachmentBytes: pdf,
+          })
+        }
+      } else {
+        const pdf = await this.getSelfEmployedPdf(application)
 
-      attachments.push({
-        attachmentType: apiConstants.attachments.selfEmployed,
-        attachmentBytes: pdf,
-      })
+        attachments.push({
+          attachmentType: apiConstants.attachments.selfEmployed,
+          attachmentBytes: pdf,
+        })
+      }
     } else {
-      const files = getValueViaPath(application.answers, 'fileUpload.file')
-
-      if ((files as { file: unknown[] })?.file) {
+      if (numberOfFiles > 1 && files) {
+        for (let i = 0; i < numberOfFiles - 1; i++) {
+          const pdf = await this.getPdfs(application, i)
+          attachments.push({
+            attachmentType: apiConstants.attachments.other,
+            attachmentBytes: pdf,
+          })
+        }
+      } else {
         const pdf = await this.getPdfs(application)
 
         attachments.push({
