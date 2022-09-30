@@ -1,3 +1,8 @@
+import { literal, Op } from 'sequelize'
+
+import { CaseState, CaseType } from '@island.is/judicial-system/types'
+
+import { Case } from '../../case/models/case.model'
 import { Defendant } from '../models/defendant.model'
 import { createTestingDefendantModule } from './createTestingDefendantModule'
 
@@ -8,8 +13,7 @@ interface Then {
 
 type GivenWhenThen = (defendants?: Defendant[]) => Promise<Then>
 
-describe('NotificationService - sendRulingNotifications', () => {
-  let then: Then
+describe('DefendantService - isDefendantInActiveCustody', () => {
   let mockDefendantModel: typeof Defendant
   let givenWhenThen: GivenWhenThen
 
@@ -36,9 +40,15 @@ describe('NotificationService - sendRulingNotifications', () => {
     }
   })
 
-  describe('when no defendants', () => {
+  describe.each([
+    undefined,
+    [],
+    [{ noNationalId: true }],
+    [{ noNationalId: false }],
+  ])('when no defendants is missing required nationalId', (defendants) => {
+    let then: Then
     beforeEach(async () => {
-      await givenWhenThen()
+      then = await givenWhenThen(defendants as Defendant[] | undefined)
     })
 
     it('should retrun false', () => {
@@ -46,41 +56,89 @@ describe('NotificationService - sendRulingNotifications', () => {
     })
   })
 
-  describe('when empty list of defendants', () => {
+  describe('when defendant is in active custody', () => {
+    let then: Then
+    let mockFindAll: jest.Mock<Promise<Defendant[]>>
+    const defendants = [
+      { noNationalId: false, nationalId: '0000000000' },
+    ] as Defendant[]
+
     beforeEach(async () => {
-      await givenWhenThen([])
-    })
-
-    it('should retrun false', () => {
-      expect(then.result).toEqual(false)
-    })
-  })
-
-  describe('when defendant has no nationalId', () => {
-    const defendants = [{ noNationalId: true }] as Defendant[]
-    beforeEach(async () => {
-      await givenWhenThen(defendants)
-    })
-
-    it('should retrun false', () => {
-      expect(then.result).toEqual(false)
-    })
-  })
-
-  describe('when defendant has no nationalId', () => {
-    const defendants = [{ noNationalId: false }] as Defendant[]
-    beforeEach(async () => {
-      const mockFindAll = mockDefendantModel.findAll as jest.Mock
+      mockFindAll = mockDefendantModel.findAll as jest.Mock
       mockFindAll.mockResolvedValue([
         {
           case: { id: '123' },
         },
-      ])
-      await givenWhenThen(defendants)
+      ] as Defendant[])
+      then = await givenWhenThen(defendants)
     })
 
     it('should retrun true', () => {
+      expect(mockFindAll).toBeCalledWith({
+        include: [
+          {
+            model: Case,
+            as: 'case',
+            where: {
+              state: CaseState.ACCEPTED,
+              type: CaseType.CUSTODY,
+              valid_to_date: { [Op.lt]: literal('current_date') },
+            },
+          },
+        ],
+        where: { nationalId: defendants[0].nationalId },
+      })
       expect(then.result).toEqual(true)
+    })
+  })
+
+  describe('when defendant is not in any active custody', () => {
+    let then: Then
+    let mockFindAll: jest.Mock<Promise<Defendant[]>>
+    const defendants = [
+      { noNationalId: false, nationalId: '0000000000' },
+    ] as Defendant[]
+
+    beforeEach(async () => {
+      mockFindAll = mockDefendantModel.findAll as jest.Mock
+      mockFindAll.mockResolvedValue([{}, {}, {}] as Defendant[])
+      then = await givenWhenThen(defendants)
+    })
+
+    it('should retrun false', () => {
+      expect(mockFindAll).toBeCalledWith({
+        include: [
+          {
+            model: Case,
+            as: 'case',
+            where: {
+              state: CaseState.ACCEPTED,
+              type: CaseType.CUSTODY,
+              valid_to_date: { [Op.lt]: literal('current_date') },
+            },
+          },
+        ],
+        where: { nationalId: defendants[0].nationalId },
+      })
+      expect(then.result).toEqual(false)
+    })
+  })
+
+  describe('when defendant is not found', () => {
+    let then: Then
+    let mockFindAll: jest.Mock<Promise<Defendant[]>>
+    const defendants = [
+      { noNationalId: false, nationalId: '0000000000' },
+    ] as Defendant[]
+
+    beforeEach(async () => {
+      mockFindAll = mockDefendantModel.findAll as jest.Mock
+      mockFindAll.mockResolvedValue([] as Defendant[])
+      then = await givenWhenThen(defendants)
+    })
+
+    it('should retrun false', () => {
+      expect(then.result).toEqual(false)
     })
   })
 })
