@@ -24,8 +24,10 @@ import { Locale } from '@island.is/shared/types'
 
 import { AVAILABLE_LICENSES } from './licenseService.module'
 import type { LicenseServiceConfigV2 } from './licenseService.module'
+import { FetchError } from '@island.is/clients/middlewares'
 
 const CACHE_KEY = 'licenseService'
+const LOG_CATEGORY = 'license-service'
 
 export type GetGenericLicenseOptions = {
   includedTypes?: Array<GenericLicenseTypeType>
@@ -45,6 +47,28 @@ export class LicenseServiceService {
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     @Inject(CONFIG_PROVIDER_V2) private config: LicenseServiceConfigV2,
   ) {}
+
+  private handleError(
+    licenseType: GenericLicenseType,
+    error: Partial<FetchError>,
+  ): unknown {
+    // Not throwing error if service returns 403 or 404. Log information instead.
+    if (error.status === 403 || error.status === 404) {
+      this.logger.info(`${licenseType} returned ${error.status}`, {
+        exception: error,
+        message: (error as Error)?.message,
+        category: LOG_CATEGORY,
+      })
+      return null
+    }
+    this.logger.warn(`${licenseType} fetch failed`, {
+      exception: error,
+      message: (error as Error)?.message,
+      category: LOG_CATEGORY,
+    })
+
+    return null
+  }
 
   private async getCachedOrCache(
     license: GenericLicenseMetadata,
@@ -74,12 +98,22 @@ export class LicenseServiceService {
       }
     }
 
-    const fetchedData = await fetch()
+    let fetchedData
+    try {
+      fetchedData = await fetch()
 
-    if (!fetchedData) {
-      this.logger.warn('No data for generic license returned', {
-        license,
-      })
+      if (!fetchedData) {
+        return {
+          data: null,
+          fetch: {
+            status: GenericUserLicenseFetchStatus.Fetched,
+            updated: new Date(),
+          },
+          payload: undefined,
+        }
+      }
+    } catch (e) {
+      //this.handleError(license.type, e)
       return {
         data: null,
         fetch: {
@@ -164,9 +198,17 @@ export class LicenseServiceService {
         }
       }
 
+      const isDataFetched =
+        licenseDataFromService?.fetch?.status ===
+        GenericUserLicenseFetchStatus.Fetched
+
       const licenseUserdata = licenseDataFromService?.data ?? {
-        status: GenericUserLicenseStatus.Unknown,
-        pkpassStatus: GenericUserLicensePkPassStatus.Unknown,
+        status: isDataFetched
+          ? GenericUserLicenseStatus.NotAvailable
+          : GenericUserLicenseStatus.Unknown,
+        pkpassStatus: isDataFetched
+          ? GenericUserLicensePkPassStatus.NotAvailable
+          : GenericUserLicensePkPassStatus.Unknown,
       }
 
       const fetch = licenseDataFromService?.fetch ?? {

@@ -16,12 +16,12 @@ import {
   parseAdrLicensePayload,
 } from './adrLicenseMapper'
 import { AdrApi, AdrDto } from '@island.is/clients/adr-and-machine-license'
-import { FetchError } from '@island.is/clients/middlewares'
 import {
   PassDataInput,
   SmartSolutionsApi,
 } from '@island.is/clients/smartsolutions'
 import { format } from 'kennitala'
+import { handle404 } from '@island.is/clients/middlewares'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'adrlicense-service'
@@ -34,51 +34,33 @@ export class GenericAdrLicenseApi implements GenericLicenseClient<AdrDto> {
     private smartApi: SmartSolutionsApi,
   ) {}
 
-  private handleError(error: Partial<FetchError>): unknown {
-    // Not throwing error if service returns 403 or 404. Log information instead.
-    if (error.status === 403 || error.status === 404) {
-      this.logger.info(`ADR license returned ${error.status}`, {
-        exception: error,
-        message: (error as Error)?.message,
-        category: LOG_CATEGORY,
-      })
-      return null
-    }
-    this.logger.error('ADR license fetch failed', {
-      exception: error,
-      message: (error as Error)?.message,
-      category: LOG_CATEGORY,
-    })
-
-    return null
-  }
+  private adrApiWithAuth = (user: User) =>
+    this.adrApi.withMiddleware(new AuthMiddleware(user as Auth))
 
   async fetchLicense(user: User) {
-    let license: unknown
-    try {
-      license = await this.adrApi
-        .withMiddleware(new AuthMiddleware(user as Auth))
-        .getAdr()
-    } catch (e) {
-      this.handleError(e)
-    }
-
-    return license as AdrDto
+    const license = await this.adrApiWithAuth(user).getAdr().catch(handle404)
+    return license
   }
 
   async getLicense(user: User): Promise<GenericLicenseUserdataExternal | null> {
-    const license = await this.fetchLicense(user)
+    const licenseData = await this.fetchLicense(user)
 
-    if (!license) {
-      this.logger.warn('Missing ADR license, null from api', {
-        category: LOG_CATEGORY,
-      })
+    if (!licenseData) {
       return null
     }
-    const payload = parseAdrLicensePayload(license)
+
+    const payload = parseAdrLicensePayload(licenseData)
+
+    if (payload) {
+      return {
+        status: GenericUserLicenseStatus.HasLicense,
+        payload,
+        pkpassStatus: GenericUserLicensePkPassStatus.Available,
+      }
+    }
 
     return {
-      status: GenericUserLicenseStatus.HasLicense,
+      status: GenericUserLicenseStatus.NotAvailable,
       payload,
       pkpassStatus: GenericUserLicensePkPassStatus.NotAvailable,
     }
@@ -90,13 +72,25 @@ export class GenericAdrLicenseApi implements GenericLicenseClient<AdrDto> {
     return this.getLicense(user)
   }
 
-  async getPkPassUrl(user: User): Promise<string | null> {
+  private async createPkPassPayload(user: User): Promise<PassDataInput | null> {
     const license = await this.fetchLicense(user)
+    if (!license) {
+      return null
+    }
+
     const inputValues = createPkPassDataInput(license)
     if (!inputValues) return null
     //Fetch template from api?
-    const payload: PassDataInput = {
+    return {
       inputFieldValues: inputValues,
+    }
+  }
+
+  async getPkPassUrl(user: User): Promise<string | null> {
+    const payload = await this.createPkPassPayload(user)
+
+    if (!payload) {
+      return null
     }
 
     const pass = await this.smartApi.generatePkPassUrl(
@@ -106,13 +100,10 @@ export class GenericAdrLicenseApi implements GenericLicenseClient<AdrDto> {
     return pass ?? null
   }
   async getPkPassQRCode(user: User): Promise<string | null> {
-    const license = await this.fetchLicense(user)
-    const inputValues = createPkPassDataInput(license)
+    const payload = await this.createPkPassPayload(user)
 
-    if (!inputValues) return null
-    //Fetch template from api?
-    const payload: PassDataInput = {
-      inputFieldValues: inputValues,
+    if (!payload) {
+      return null
     }
     const pass = await this.smartApi.generatePkPassQrCode(
       payload,

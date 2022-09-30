@@ -19,7 +19,7 @@ import {
   createPkPassDataInput,
   parseMachineLicensePayload,
 } from './machineLicenseMappers'
-import { FetchError } from '@island.is/clients/middlewares'
+import { handle404 } from '@island.is/clients/middlewares'
 import {
   PassDataInput,
   SmartSolutionsApi,
@@ -39,51 +39,35 @@ export class GenericMachineLicenseApi
     private smartApi: SmartSolutionsApi,
   ) {}
 
-  private handleError(error: Partial<FetchError>): unknown {
-    // Not throwing error if service returns 403 or 404. Log information instead.
-    if (error.status === 403 || error.status === 404) {
-      this.logger.info(`Machine license returned ${error.status}`, {
-        exception: error,
-        message: (error as Error)?.message,
-        category: LOG_CATEGORY,
-      })
-      return null
-    }
-    this.logger.error('Machine license fetch failed', {
-      exception: error,
-      message: (error as Error)?.message,
-      category: LOG_CATEGORY,
-    })
+  private machineApiWithAuth = (user: User) =>
+    this.machineApi.withMiddleware(new AuthMiddleware(user as Auth))
 
-    return null
-  }
   async fetchLicense(user: User) {
-    let license: unknown
-
-    try {
-      license = await this.machineApi
-        .withMiddleware(new AuthMiddleware(user as Auth))
-        .getVinnuvela()
-    } catch (e) {
-      this.handleError(e)
-    }
-    return license as VinnuvelaDto
+    const license = await this.machineApiWithAuth(user)
+      .getVinnuvela()
+      .catch(handle404)
+    return license
   }
 
   async getLicense(user: User): Promise<GenericLicenseUserdataExternal | null> {
-    const license = await this.fetchLicense(user)
+    const licenseData = await this.fetchLicense(user)
 
-    if (!license) {
-      this.logger.warn('Missing machine license, null from api', {
-        category: LOG_CATEGORY,
-      })
+    if (!licenseData) {
       return null
     }
 
-    const payload = parseMachineLicensePayload(license)
+    const payload = parseMachineLicensePayload(licenseData)
+
+    if (payload) {
+      return {
+        status: GenericUserLicenseStatus.HasLicense,
+        payload,
+        pkpassStatus: GenericUserLicensePkPassStatus.Available,
+      }
+    }
 
     return {
-      status: GenericUserLicenseStatus.HasLicense,
+      status: GenericUserLicenseStatus.NotAvailable,
       payload,
       pkpassStatus: GenericUserLicensePkPassStatus.NotAvailable,
     }
@@ -95,18 +79,33 @@ export class GenericMachineLicenseApi
     return this.getLicense(user)
   }
 
-  async getPkPassUrl(
+  private async createPkPassPayload(
     user: User,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    data?: unknown,
-    locale?: Locale,
-  ): Promise<string | null> {
+    locale: Locale,
+  ): Promise<PassDataInput | null> {
     const license = await this.fetchLicense(user)
+    if (!license) {
+      return null
+    }
+
     const inputValues = createPkPassDataInput(license, user.nationalId, locale)
     if (!inputValues) return null
     //Fetch template from api?
-    const payload: PassDataInput = {
+    return {
       inputFieldValues: inputValues,
+    }
+  }
+
+  async getPkPassUrl(
+    user: User,
+    data?: unknown,
+    locale?: Locale,
+  ): Promise<string | null> {
+    //TODO: Better locale handling thank u
+    const payload = await this.createPkPassPayload(user, locale ?? 'is')
+
+    if (!payload) {
+      return null
     }
 
     const pass = await this.smartApi.generatePkPassUrl(
@@ -115,15 +114,17 @@ export class GenericMachineLicenseApi
     )
     return pass ?? null
   }
-  async getPkPassQRCode(user: User): Promise<string | null> {
-    const license = await this.fetchLicense(user)
-    const inputValues = createPkPassDataInput(license, user.nationalId)
+  async getPkPassQRCode(
+    user: User,
+    data?: unknown,
+    locale?: Locale,
+  ): Promise<string | null> {
+    const payload = await this.createPkPassPayload(user, locale ?? 'is')
 
-    if (!inputValues) return null
-    //Fetch template from api?
-    const payload: PassDataInput = {
-      inputFieldValues: inputValues,
+    if (!payload) {
+      return null
     }
+
     const pass = await this.smartApi.generatePkPassQrCode(
       payload,
       format(user.nationalId),

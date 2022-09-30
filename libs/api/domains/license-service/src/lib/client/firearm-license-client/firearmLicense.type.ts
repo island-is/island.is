@@ -1,4 +1,7 @@
-import { FirearmPropertyList, LicenseInfo } from '../../gen/fetch'
+import {
+  FirearmPropertyList,
+  LicenseInfo,
+} from '@island.is/clients/firearm-license'
 
 export interface LicenseData {
   licenseInfo?: LicenseInfo | null

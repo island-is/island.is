@@ -1,7 +1,6 @@
 import {
   FirearmProperty,
   FirearmPropertyList,
-  LicenseData,
   LicenseInfo,
 } from '@island.is/clients/firearm-license'
 import format from 'date-fns/format'
@@ -11,6 +10,7 @@ import {
   GenericLicenseDataFieldType,
   GenericUserLicensePayload,
 } from '../../licenceService.type'
+import { LicenseData } from './firearmLicense.type'
 
 const formatDateString = (dateTime: string) =>
   dateTime ? format(new Date(dateTime), 'dd.MM.yyyy') : ''

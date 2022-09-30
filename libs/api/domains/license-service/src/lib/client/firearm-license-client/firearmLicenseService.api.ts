@@ -15,17 +15,13 @@ import {
   createPkPassDataInput,
   parseFirearmLicensePayload,
 } from './firearmLicenseMapper'
-import { FetchError } from '@island.is/clients/middlewares'
-import {
-  LicenseInfo,
-  FirearmApi,
-  LicenseData,
-} from '@island.is/clients/firearm-license'
+import { LicenseInfo, FirearmApi } from '@island.is/clients/firearm-license'
 import { format } from 'kennitala'
 import {
   PassDataInput,
   SmartSolutionsApi,
 } from '@island.is/clients/smartsolutions'
+import { LicenseData } from './firearmLicense.type'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'firearmlicense-service'
@@ -38,54 +34,44 @@ export class GenericFirearmLicenseApi
     private smartApi: SmartSolutionsApi,
   ) {}
 
-  private handleError(error: Partial<FetchError>): unknown {
-    // Not throwing error if service returns 403 or 404. Log information instead.
-    if (error.status === 403 || error.status === 404) {
-      this.logger.info(`Firearm license returned ${error.status}`, {
-        exception: error,
-        message: (error as Error)?.message,
-        category: LOG_CATEGORY,
-      })
-      return null
-    }
-    this.logger.warn('Firearm license fetch failed', {
-      exception: error,
-      message: (error as Error)?.message,
-      category: LOG_CATEGORY,
-    })
-
-    return null
-  }
-
   async fetchLicenseData(user: User) {
-    let licenseData: unknown
+    const licenseInfo = await this.firearmApi.getLicenseInfo(user)
+    if (!licenseInfo) return null
 
-    try {
-      licenseData = await this.firearmApi.getLicenseData(user)
-    } catch (e) {
-      this.handleError(e)
-      return null
+    const categories = await this.firearmApi.getCategories()
+    if (!categories) return null
+
+    const properties = await this.firearmApi.getPropertyInfo(user)
+
+    const licenseData: LicenseData = {
+      licenseInfo,
+      properties,
+      categories,
     }
-    return licenseData as LicenseData
+
+    return licenseData
   }
 
   async getLicense(user: User): Promise<GenericLicenseUserdataExternal | null> {
     const licenseData = await this.fetchLicenseData(user)
-
     if (!licenseData) {
       return null
     }
 
     const payload = parseFirearmLicensePayload(licenseData)
 
-    const pkpassStatus = payload
-      ? GenericUserLicensePkPassStatus.Available
-      : GenericUserLicensePkPassStatus.NotAvailable
+    if (payload) {
+      return {
+        status: GenericUserLicenseStatus.HasLicense,
+        payload,
+        pkpassStatus: GenericUserLicensePkPassStatus.Available,
+      }
+    }
 
     return {
-      status: GenericUserLicenseStatus.HasLicense,
+      status: GenericUserLicenseStatus.NotAvailable,
       payload,
-      pkpassStatus,
+      pkpassStatus: GenericUserLicensePkPassStatus.NotAvailable,
     }
   }
   async getLicenseDetail(
