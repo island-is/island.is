@@ -1,11 +1,14 @@
 import { TranslationService, Translation } from '@island.is/auth-api-lib'
-import { Controller, Get, UseGuards } from '@nestjs/common'
+import { Controller, Get, UseGuards, VERSION_NEUTRAL } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { IdsAuthGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @ApiTags('translation')
-@Controller('translations')
+@Controller({
+  path: 'translations',
+  version: ['1', VERSION_NEUTRAL],
+})
 export class TranslationController {
   constructor(private readonly translationService: TranslationService) {}
 

@@ -12,12 +12,16 @@ import {
   Put,
   Query,
   UseGuards,
+  VERSION_NEUTRAL,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @ApiTags('grants')
-@Controller('grants')
+@Controller({
+  path: 'grants',
+  version: ['1', VERSION_NEUTRAL],
+})
 export class GrantsController {
   constructor(private readonly grantsService: GrantsService) {}
 
