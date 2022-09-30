@@ -118,6 +118,11 @@ const connectedTypes: Partial<
 const stringToArray = (value: string | string[]) =>
   Array.isArray(value) ? value : value?.length ? [value] : []
 
+enum AnchorPageType {
+  LIFE_EVENT = 'Life Event',
+  DIGITAL_ICELAND_SERVICE = 'Digital Iceland Service',
+}
+
 const Search: Screen<CategoryProps> = ({
   q,
   page,
@@ -198,7 +203,7 @@ const Search: Screen<CategoryProps> = ({
 
     switch (item.__typename) {
       case 'LifeEventPage': {
-        if (item.pageType !== 'Digital Iceland Service') {
+        if (item.pageType !== AnchorPageType.DIGITAL_ICELAND_SERVICE) {
           labels.push(n('lifeEvent'))
         }
         break
@@ -298,11 +303,27 @@ const Search: Screen<CategoryProps> = ({
   const getItemLink = (item: SearchType) => {
     if (
       item.__typename === 'LifeEventPage' &&
-      item.pageType === 'Digital Iceland Service'
+      item.pageType === AnchorPageType.DIGITAL_ICELAND_SERVICE
     ) {
       return linkResolver('digitalicelandservicesdetailpage', [item.slug])
     }
     return linkResolver(item.__typename, item?.url ?? item.slug.split('/'))
+  }
+
+  const getItemImages = (item: SearchType) => {
+    if (
+      item.__typename === 'LifeEventPage' &&
+      item.pageType === AnchorPageType.DIGITAL_ICELAND_SERVICE
+    ) {
+      return {
+        image: undefined,
+        thumbnail: undefined,
+      }
+    }
+    return {
+      ...(item.image && { image: item.image as Image }),
+      ...(item.thumbnail && { thumbnail: item.thumbnail as Image }),
+    }
   }
 
   const searchResultsItems = (searchResults.items as Array<SearchType>).map(
@@ -317,8 +338,7 @@ const Search: Screen<CategoryProps> = ({
       category: item.category ?? item.parent?.category,
       hasProcessEntry: checkForProcessEntries(item),
       group: item.group,
-      ...(item.image && { image: item.image as Image }),
-      ...(item.thumbnail && { thumbnail: item.thumbnail as Image }),
+      ...getItemImages(item),
       labels: getLabels(item),
     }),
   )
