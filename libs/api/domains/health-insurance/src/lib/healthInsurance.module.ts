@@ -1,7 +1,5 @@
 import { DynamicModule } from '@nestjs/common'
 
-import { HealthInsuranceModule as HealthInsuranceMod } from '@island.is/health-insurance'
-
 import {
   HealthInsuranceAccidentNotificationResolver,
   HealthInsuranceResolver,
@@ -9,19 +7,16 @@ import {
 import { BucketService } from './bucket.service'
 import { HealthInsuranceService } from './healthInsurance.service'
 import {
-  HealthInsuranceAPI,
-  HealthInsuranceConfig,
-  HEALTH_INSURANCE_CONFIG,
-} from './soap'
-import {
+  DocumentApi,
   HealthInsuranceV2Client,
   HealthInsuranceV2Options,
+  PersonApi,
+  TestApi,
 } from '@island.is/clients/health-insurance-v2'
 import { AccidentNotificationService } from './accident-notification.service'
 import { HealthInsuranceRESTAPI } from './rest'
 
 export interface HealthInsuranceOptions {
-  soapConfig: HealthInsuranceConfig
   clientV2Config: HealthInsuranceV2Options
 }
 
@@ -29,22 +24,17 @@ export class HealthInsuranceModule {
   static register(options: HealthInsuranceOptions): DynamicModule {
     return {
       module: HealthInsuranceModule,
-      imports: [
-        HealthInsuranceMod.register(options.soapConfig),
-        HealthInsuranceV2Client.register(options.clientV2Config),
-      ],
+      imports: [HealthInsuranceV2Client.register(options.clientV2Config)],
       providers: [
         BucketService,
         HealthInsuranceService,
         HealthInsuranceResolver,
-        HealthInsuranceAPI,
-        HealthInsuranceRESTAPI,
         HealthInsuranceAccidentNotificationResolver,
         AccidentNotificationService,
-        {
-          provide: HEALTH_INSURANCE_CONFIG,
-          useValue: options.soapConfig,
-        },
+        HealthInsuranceRESTAPI,
+        PersonApi,
+        TestApi,
+        DocumentApi,
       ],
       exports: [],
     }

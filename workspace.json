@@ -158,7 +158,6 @@
     "financial-aid-web-osk-e2e": "apps/financial-aid/web-osk-e2e",
     "financial-aid-web-veita": "apps/financial-aid/web-veita",
     "github-actions-cache": "apps/github-actions-cache",
-    "health-insurance": "libs/health-insurance",
     "icelandic-names-registry-backend": "apps/icelandic-names-registry/backend",
     "icelandic-names-registry-types": "libs/icelandic-names-registry/types",
     "infra-express-server": "libs/infra-express-server",

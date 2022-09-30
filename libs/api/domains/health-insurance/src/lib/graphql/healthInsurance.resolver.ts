@@ -25,13 +25,6 @@ export class HealthInsuranceResolver {
     private readonly auditService: AuditService,
   ) {}
 
-  @Query(() => String, {
-    name: 'healthInsuranceGetProfun',
-  })
-  healthInsuranceGetProfun(): Promise<string> {
-    return this.healthInsuranceService.getProfun()
-  }
-
   @Query(() => Boolean, {
     name: 'healthInsuranceIsHealthInsured',
   })
@@ -50,23 +43,6 @@ export class HealthInsuranceResolver {
         user.nationalId,
         input?.date?.getTime(),
       ),
-    )
-  }
-
-  @Query(() => [Number], {
-    name: 'healthInsuranceGetPendingApplication',
-  })
-  healthInsuranceGetPendingApplication(
-    @CurrentUser() user: AuthUser,
-  ): Promise<number[]> {
-    return this.auditService.auditPromise<number[]>(
-      {
-        auth: user,
-        namespace,
-        action: 'healthInsuranceGetPendingApplication',
-        resources: (results) => results.map(String),
-      },
-      this.healthInsuranceService.getPendingApplication(user.nationalId),
     )
   }
 }

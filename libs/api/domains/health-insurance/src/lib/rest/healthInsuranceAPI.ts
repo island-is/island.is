@@ -1,41 +1,25 @@
-import {
-  InternalServerErrorException,
-  Inject,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common'
+import { Injectable, NotFoundException } from '@nestjs/common'
 import { logger } from '@island.is/logging'
-import { format } from 'date-fns' // eslint-disable-line no-restricted-imports
 
 import {
-  GetSjukratryggdurTypeDto,
-  GetFaUmsoknSjukratryggingTypeDto,
-  GetVistaSkjalDtoType,
-  GetVistaSkjalBody,
-  Fylgiskjal,
-  Fylgiskjol,
-} from './dto'
-import { BucketService } from '../bucket.service'
-import { DocumentApi } from '@island.is/clients/health-insurance-v2'
-
-export const HEALTH_INSURANCE_CONFIG = 'HEALTH_INSURANCE_CONFIG'
-
-export interface HealthInsuranceConfig {
-  wsdlUrl: string
-  baseUrl: string
-  username: string
-  password: string
-  clientID: string
-  xroadID: string
-}
+  DocumentApi,
+  PersonApi,
+  TestApi,
+} from '@island.is/clients/health-insurance-v2'
 
 @Injectable()
 export class HealthInsuranceRESTAPI {
   constructor(
     private readonly restApi: DocumentApi,
-    @Inject(BucketService)
-    private bucketService: BucketService,
+    private readonly personApi: PersonApi,
+    private readonly testApi: TestApi,
   ) {}
+
+  public async getProfun(): Promise<string | null> {
+    logger.info(`--- Starting getProfun api call ---`)
+    const res = await this.testApi.testPing({})
+    return res.numberIHI?.toString() ?? null
+  }
 
   // check whether the person is health insured
   public async isHealthInsured(
@@ -45,11 +29,27 @@ export class HealthInsuranceRESTAPI {
     logger.info(`--- Starting isHealthInsured api call ---`)
 
     const args = {
-      sendandi: '',
-      kennitala: nationalId,
-      dagsetning: date,
+      nationalID: nationalId,
+      date: new Date(date),
     }
 
-    return true
+    return await this.personApi
+      .personIsHealthInsured(args)
+      .then((res) => {
+        logger.info(`--- Finished isHealthInsured api call ---`)
+        return res.isHealthInsured === 1
+      })
+      .catch((err) => {
+        logger.error(
+          `Something went totally wrong in 'Sjukratryggdur' call with result: ${JSON.stringify(
+            err,
+            null,
+            2,
+          )}`,
+        )
+        throw new NotFoundException(
+          `Unexpected results: ${JSON.stringify(err)}`,
+        )
+      })
   }
 }

@@ -6,7 +6,7 @@
   "generators": {},
   "targets": {
     "build": {
-      "builder": "@nrwl/node:webpack",
+      "executor": "@nrwl/node:webpack",
       "options": {
         "outputPath": "dist/apps/system-e2e",
         "main": "",
