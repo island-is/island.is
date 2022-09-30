@@ -104,7 +104,7 @@ describe('AuditService against Cloudwatch', () => {
       meta,
       ip: auth.ip,
       userAgent: auth.userAgent,
-      appVersion: appVersion,
+      appVersion,
       system: false,
     })
   })
@@ -153,7 +153,7 @@ describe('AuditService against Cloudwatch', () => {
       action: `${defaultNamespace}#${action}`,
       ip: auth.ip,
       userAgent: auth.userAgent,
-      appVersion: appVersion,
+      appVersion,
       system: false,
     })
   })
@@ -194,7 +194,7 @@ describe('AuditService against Cloudwatch', () => {
       client: [auth.client],
       action: `${defaultNamespace}#${action}`,
       ip: auth.ip,
-      appVersion: appVersion,
+      appVersion,
       system: false,
     })
   })
@@ -229,8 +229,32 @@ describe('AuditService against Cloudwatch', () => {
       meta,
       ip: auth.ip,
       userAgent: auth.userAgent,
-      appVersion: appVersion,
+      appVersion,
       system: false,
+    })
+  })
+
+  it('should be a generic system logger', () => {
+    // Arrange
+    const action = 'systemAction'
+
+    // Act
+    service.audit({
+      auth,
+      action,
+      system: true,
+    })
+
+    // Assert
+    expect(spy).toHaveBeenCalledWith({
+      actor: auth.actor?.nationalId,
+      subject: auth.nationalId,
+      client: [auth.client],
+      action: `${defaultNamespace}#${action}`,
+      ip: auth.ip,
+      userAgent: auth.userAgent,
+      appVersion,
+      system: true,
     })
   })
 })
@@ -287,7 +311,7 @@ describe('AuditService in development', () => {
       meta,
       ip: auth.ip,
       userAgent: auth.userAgent,
-      appVersion: appVersion,
+      appVersion,
       system: false,
     })
   })
