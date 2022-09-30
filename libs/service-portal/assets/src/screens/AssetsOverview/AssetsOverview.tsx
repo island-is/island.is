@@ -10,6 +10,7 @@ import { Box, Button, GridColumn, GridRow } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   EmptyState,
+  ErrorScreen,
   IntroHeader,
   m,
   ServicePortalModuleComponent,
@@ -78,6 +79,20 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
     }
   }
 
+  if (error && !loading) {
+    return (
+      <ErrorScreen
+        figure="./assets/images/hourglass.svg"
+        tagVariant="red"
+        tag="500"
+        title={formatMessage(m.somethingWrong)}
+        children={formatMessage(m.errorFetchModule, {
+          module: formatMessage(m.realEstate).toLowerCase(),
+        })}
+      />
+    )
+  }
+
   return (
     <>
       <IntroHeader
@@ -135,18 +150,6 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
             <EmptyState />
           </Box>
         )}
-
-      {error && (
-        <Box>
-          <EmptyState
-            description={defineMessage({
-              id: 'sp.assets:error-message',
-              defaultMessage:
-                'Ekki tókst að sækja upplýsingar úr fasteignaskrá.',
-            })}
-          />
-        </Box>
-      )}
     </>
   )
 }

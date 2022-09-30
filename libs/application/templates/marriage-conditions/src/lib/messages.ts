@@ -274,7 +274,7 @@ export const m = defineMessages({
   spouseIntroDescription: {
     id: 'mac.application:spouseIntroDescription',
     defaultMessage:
-      '**{applicantsName}** sendi inn umsókn um könnun hjónavígsluskilyrða ykkar þann 13. júní, 2021. Til þess að halda áfram með ferlið þurfa bæði hjónaefni að senda frá sér persónuupplýsingar til samþykktar af Sýslumanni.',
+      '**{applicantsName}** sendi inn umsókn um könnun hjónavígsluskilyrða ykkar þann **{applicationDate}**. Til þess að halda áfram með ferlið þurfa bæði hjónaefni að senda frá sér persónuupplýsingar til samþykktar af Sýslumanni.',
     description: '',
   },
   spouseContinue: {

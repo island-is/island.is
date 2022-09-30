@@ -482,19 +482,140 @@ export const ParentalLeaveForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'fileUpload',
-          title: 'File upload',
+          title: parentalLeaveFormMessages.attachmentScreen.genericTitle,
           children: [
             buildMultiField({
               id: 'fileUpload.attachment',
-              title: parentalLeaveFormMessages.selfEmployed.attachmentTitle,
-              description:
-                parentalLeaveFormMessages.selfEmployed.attachmentDescription,
+              title: (answers) => {
+                const isSelfEmployed =
+                  (answers.answers as {
+                    employer: {
+                      isSelfEmployed: string
+                    }
+                  })?.employer?.isSelfEmployed === YES
+
+                if (isSelfEmployed) {
+                  return parentalLeaveFormMessages.selfEmployed.attachmentTitle
+                }
+
+                // to be added later when we check for student, father without mother and permament fostercare
+                // const isStudent = answers.answers as {}
+
+                // if (isStudent) {
+                //   return parentalLeaveFormMessages.attachmentScreen.studentTitle
+                // }
+
+                // const isFatherWithoutMother = answers.answers as {}
+
+                // if (isFatherWithoutMother) {
+                //   return parentalLeaveFormMessages.attachmentScreen.fatherWithoutMotherTitle
+                // }
+
+                // const isPermanentFosterCare = answers.answers as {}
+
+                // if (isPermanentFosterCare) {
+                //   return parentalLeaveFormMessages.attachmentScreen.permanentFostercareTitle
+                // }
+
+                return parentalLeaveFormMessages.attachmentScreen.genericTitle
+              },
+              description: (answers) => {
+                const isSelfEmployed =
+                  (answers.answers as {
+                    employer: {
+                      isSelfEmployed: string
+                    }
+                  })?.employer?.isSelfEmployed === YES
+
+                if (isSelfEmployed) {
+                  return parentalLeaveFormMessages.selfEmployed
+                    .attachmentDescription
+                }
+
+                // to be added later when we check for student, father without mother and permament fostercare
+                // const isStudent = answers.answers as {}
+
+                // if (isStudent) {
+                // return parentalLeaveFormMessages.attachmentScreen.studentDescription
+                // }
+
+                // const isFatherWithoutMother = answers.answers as {}
+
+                // if (isFatherWithoutMother) {
+                // return parentalLeaveFormMessages.attachmentScreen.fatherWithoutMotherDescription
+                // }
+
+                // const isPermanentFosterCare = answers.answers as {}
+
+                // if (isPermanentFosterCare) {
+                // return parentalLeaveFormMessages.attachmentScreen.permanentFostercareDescription
+                // }
+
+                return parentalLeaveFormMessages.attachmentScreen
+                  .genericDescription
+              },
               children: [
+                // this upload field will only show if there already is a fieluploaded to the old fileupload field
                 buildFileUploadField({
-                  id: 'fileUpload.attachment.file',
+                  id: 'employer.selfEmployed.file',
+                  title: '',
+                  introduction: '',
+                  condition: (answers) => {
+                    const isSelfEmployed =
+                      (answers as {
+                        employer: {
+                          isSelfEmployed: string
+                        }
+                      })?.employer?.isSelfEmployed === YES
+                    const hasOldSelfEmployedFile =
+                      (answers as {
+                        employer: {
+                          selfEmployed: {
+                            file: unknown[]
+                          }
+                        }
+                      })?.employer?.selfEmployed?.file?.length !== 0
+
+                    return isSelfEmployed && hasOldSelfEmployedFile
+                  },
+                  maxSize: FILE_SIZE_LIMIT,
+                  maxSizeErrorText:
+                    parentalLeaveFormMessages.selfEmployed
+                      .attachmentMaxSizeError,
+                  uploadAccept: '.pdf',
+                  uploadHeader: '',
+                  uploadDescription: '',
+                  uploadButtonLabel:
+                    parentalLeaveFormMessages.selfEmployed.attachmentButton,
+                }),
+                // this upload field will show in all cases, except when there already is a file uploaded in the old fileupload field
+                buildFileUploadField({
+                  id: 'fileUpload.file',
                   title: '',
                   introduction: '',
                   maxSize: FILE_SIZE_LIMIT,
+                  condition: (answers) => {
+                    const isNotSelfEmployed =
+                      (answers as {
+                        employer: {
+                          isSelfEmployed: string
+                        }
+                      })?.employer?.isSelfEmployed !== YES
+
+                    const doesNotHaveOldSelfEmployedFile =
+                      (answers as {
+                        employer: {
+                          selfEmployed: {
+                            file: unknown[]
+                          }
+                        }
+                      })?.employer?.selfEmployed?.file?.length === 0
+
+                    return (
+                      isNotSelfEmployed ||
+                      (!isNotSelfEmployed && doesNotHaveOldSelfEmployedFile)
+                    )
+                  },
                   maxSizeErrorText:
                     parentalLeaveFormMessages.selfEmployed
                       .attachmentMaxSizeError,

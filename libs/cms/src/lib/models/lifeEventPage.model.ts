@@ -41,6 +41,9 @@ export class LifeEventPage {
 
   @Field({ nullable: true })
   seeMoreText?: string
+
+  @Field({ nullable: true })
+  pageType?: 'Life Event' | 'Digital Iceland Service'
 }
 
 export const mapLifeEventPage = ({
@@ -61,4 +64,5 @@ export const mapLifeEventPage = ({
   category: fields.category ? mapArticleCategory(fields.category) : null,
   shortIntro: fields.shortIntro ?? '',
   seeMoreText: fields.seeMoreText ?? '',
+  pageType: fields.pageType ?? 'Life Event',
 })

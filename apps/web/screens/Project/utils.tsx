@@ -7,21 +7,36 @@ import { Navigation, NavigationItem } from '@island.is/island-ui/core'
 import { LayoutProps } from '@island.is/web/layouts/main'
 import Link from 'next/link'
 
-const lightThemes = ['traveling-to-iceland', 'election', 'ukraine', 'default']
+const footerEnabled = ['opinbernyskopun']
+
+const lightThemes = [
+  'traveling-to-iceland',
+  'election',
+  'ukraine',
+  'default',
+  'opinbernyskopun',
+]
 
 export const getThemeConfig = (
   theme: string,
 ): { themeConfig: Partial<LayoutProps> } => {
+  let footerVersion: LayoutProps['footerVersion'] = 'default'
+
+  if (footerEnabled.includes(theme)) {
+    footerVersion = 'organization'
+  }
+
   const isLightTheme = lightThemes.includes(theme)
   if (!isLightTheme) {
     return {
       themeConfig: {
         headerButtonColorScheme: 'negative',
         headerColorScheme: 'white',
+        footerVersion,
       },
     }
   }
-  return { themeConfig: {} }
+  return { themeConfig: { footerVersion } }
 }
 
 export const convertLinksToNavigationItem = (links: LinkSchema[]) =>

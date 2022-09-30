@@ -2,7 +2,7 @@ import { AuthScope } from '@island.is/auth/scopes'
 import {
   PersonalRepresentativeService,
   PersonalRepresentativePublicDTO,
-} from '@island.is/auth-api-lib/personal-representative'
+} from '@island.is/auth-api-lib'
 import {
   BadRequestException,
   Controller,

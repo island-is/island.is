@@ -15,12 +15,12 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
-  EmptyState,
   IntroHeader,
   m,
   ServicePortalModuleComponent,
   TableGrid,
   formatDate,
+  ErrorScreen,
 } from '@island.is/service-portal/core'
 
 import { messages } from '../../lib/messages'
@@ -133,11 +133,17 @@ export const Lookup: ServicePortalModuleComponent = () => {
     }
   }, [searchLimitData?.data?.vehiclesSearchLimit])
 
-  if (error) {
+  if (!loading && error) {
     return (
-      <Box>
-        <EmptyState description={m.errorFetch} />
-      </Box>
+      <ErrorScreen
+        figure="./assets/images/hourglass.svg"
+        tagVariant="red"
+        tag="500"
+        title={formatMessage(m.somethingWrong)}
+        children={formatMessage(m.errorFetchModule, {
+          module: formatMessage(messages.title).toLowerCase(),
+        })}
+      />
     )
   }
 
@@ -153,6 +159,7 @@ export const Lookup: ServicePortalModuleComponent = () => {
 
   const limit = searchLimitData?.data?.vehiclesSearchLimit || 0
   const limitExceeded = limit === 0
+
   return (
     <>
       <Box marginBottom={[2, 3, 5]}>

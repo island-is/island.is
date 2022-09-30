@@ -58,6 +58,8 @@ export const answerValidators: Record<string, AnswerValidator> = {
       'employer.isSelfEmployed',
     )
 
+    const employerEmail = getValueViaPath(application.answers, 'employer.email')
+
     if (obj.isSelfEmployed === '') {
       return buildError(coreErrorMessages.defaultError, 'isSelfEmployed')
     }
@@ -67,11 +69,15 @@ export const answerValidators: Record<string, AnswerValidator> = {
       return undefined
     }
 
-    if (isSelfEmployed === NO && isEmpty(obj?.email)) {
+    if (isSelfEmployed === NO && isEmpty(obj?.email) && !employerEmail) {
       return buildError(errorMessages.employerEmail, 'email')
     }
 
-    if (isSelfEmployed === NO && !isValidEmail(obj.email as string)) {
+    if (
+      isSelfEmployed === NO &&
+      !isValidEmail(obj.email as string) &&
+      !employerEmail
+    ) {
       return buildError(errorMessages.email, 'email')
     }
 
@@ -94,9 +100,9 @@ export const answerValidators: Record<string, AnswerValidator> = {
 
     if (
       (isSelfEmployed === YES || applicationType === PARENTAL_GRANT_STUDENTS) &&
-      isEmpty((obj.attachment as { file: unknown[] }).file)
+      isEmpty((obj as { file: unknown[] }).file)
     ) {
-      return buildError(errorMessages.requiredAttachment, 'attachment.file')
+      return buildError(errorMessages.requiredAttachment, 'file')
     }
 
     return undefined
