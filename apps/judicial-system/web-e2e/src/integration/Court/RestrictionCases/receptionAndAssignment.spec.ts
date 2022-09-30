@@ -32,7 +32,6 @@ describe(`${RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/:id`, () => {
     cy.intercept('POST', '**/api/graphql', (req) => {
       if (hasOperationName(req, Operation.UpdateCaseMutation)) {
         const { body } = req
-        console.log('intercepting updatecase', body)
         req.reply({
           data: {
             updateCase: {
@@ -48,8 +47,10 @@ describe(`${RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/:id`, () => {
     // case number validation
     cy.getByTestid('courtCaseNumber').click().blur()
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
-    cy.getByTestid('courtCaseNumber').type('R-X/2021')
-    cy.getByTestid('inputErrorMessage').should('be.visible')
+    cy.getByTestid('courtCaseNumber').type('S-1/2021').blur()
+    cy.getByTestid('inputErrorMessage').contains(
+      `Dæmi: R-1234/${new Date().getFullYear()}`,
+    )
 
     // continue button enabled when form becomes valid
     cy.getByTestid('courtCaseNumber').clear().type('R-1/2021')

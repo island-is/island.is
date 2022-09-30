@@ -388,11 +388,16 @@ export const Overview: React.FC = () => {
             title={formatMessage(core.pdfButtonRequest)}
             pdfType="request"
           />
-          <Box marginTop={3}>
-            <CopyLinkForDefenderButton caseId={workingCase.id}>
-              {formatMessage(m.sections.copyLinkForDefenderButton)}
-            </CopyLinkForDefenderButton>
-          </Box>
+          {workingCase.defenderNationalId && (
+            <Box marginTop={3}>
+              <CopyLinkForDefenderButton
+                caseId={workingCase.id}
+                type={workingCase.type}
+              >
+                {formatMessage(m.sections.copyLinkForDefenderButton)}
+              </CopyLinkForDefenderButton>
+            </Box>
+          )}
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>

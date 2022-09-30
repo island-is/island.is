@@ -135,5 +135,6 @@ export const mockCase = (caseType: CaseType): Case => {
         address: 'Batcave 1337',
       },
     ],
+    defendantWaivesRightToCounsel: false,
   }
 }

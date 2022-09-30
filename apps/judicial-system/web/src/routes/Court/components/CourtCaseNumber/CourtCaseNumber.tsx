@@ -1,7 +1,7 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 
-import { CaseState } from '@island.is/judicial-system/types'
+import { CaseState, isIndictmentCase } from '@island.is/judicial-system/types'
 import type { Case, UpdateCase } from '@island.is/judicial-system/types'
 import { Box, Button, Input, Text } from '@island.is/island-ui/core'
 import { BlueBox } from '@island.is/judicial-system-web/src/components'
@@ -10,9 +10,9 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { courtCaseNumber } from '@island.is/judicial-system-web/messages'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 
+import { courtCaseNumber } from './CourtCaseNumber.strings'
 import * as styles from './CourtCaseNumber.css'
 
 interface Props {
@@ -44,7 +44,15 @@ const CourtCaseNumber: React.FC<Props> = (props) => {
 
   const updateAndReceiveCase = async (id: string, update: UpdateCase) => {
     const isValid = validate([
-      [update.courtCaseNumber, ['empty', 'court-case-number']],
+      [
+        update.courtCaseNumber,
+        [
+          'empty',
+          isIndictmentCase(workingCase.type)
+            ? 'S-case-number'
+            : 'R-case-number',
+        ],
+      ],
     ]).isValid
 
     if (!isValid) {
@@ -87,15 +95,17 @@ const CourtCaseNumber: React.FC<Props> = (props) => {
                 )}
                 fluid
               >
-                Stofna nýtt mál
+                {formatMessage(courtCaseNumber.createCaseButtonText)}
               </Button>
             </div>
             <div className={styles.createCourtCaseInput}>
               <Input
                 data-testid="courtCaseNumber"
                 name="courtCaseNumber"
-                label="Mál nr."
-                placeholder="R-X/ÁÁÁÁ"
+                label={formatMessage(courtCaseNumber.label)}
+                placeholder={formatMessage(courtCaseNumber.placeholder, {
+                  isIndictment: isIndictmentCase(workingCase.type),
+                })}
                 autoComplete="off"
                 size="sm"
                 backgroundColor="white"
@@ -112,7 +122,12 @@ const CourtCaseNumber: React.FC<Props> = (props) => {
                   removeTabsValidateAndSet(
                     'courtCaseNumber',
                     event.target.value,
-                    ['empty', 'court-case-number'],
+                    [
+                      'empty',
+                      isIndictmentCase(workingCase.type)
+                        ? 'S-case-number'
+                        : 'R-case-number',
+                    ],
                     workingCase,
                     setWorkingCase,
                     courtCaseNumberEM,
@@ -123,7 +138,12 @@ const CourtCaseNumber: React.FC<Props> = (props) => {
                   validateAndSendToServer(
                     'courtCaseNumber',
                     event.target.value,
-                    ['empty', 'court-case-number'],
+                    [
+                      'empty',
+                      isIndictmentCase(workingCase.type)
+                        ? 'S-case-number'
+                        : 'R-case-number',
+                    ],
                     workingCase,
                     updateAndReceiveCase,
                     setCourtCaseNumberEM,

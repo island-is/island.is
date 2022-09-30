@@ -39,6 +39,7 @@ interface Props {
   tooltip?: string
   paddingY?: ResponsiveSpace
   paddingBottom?: ResponsiveSpace
+  className?: string
 }
 
 export const UserInfoLine: FC<Props> = ({
@@ -56,6 +57,7 @@ export const UserInfoLine: FC<Props> = ({
   paddingY = 2,
   paddingBottom,
   warning,
+  className,
 }) => {
   const trackExternalLinkClick = () => {
     servicePortalOutboundLink()
@@ -68,6 +70,7 @@ export const UserInfoLine: FC<Props> = ({
       paddingY={paddingY}
       paddingBottom={paddingBottom}
       paddingRight={4}
+      className={className}
     >
       {title && (
         <Text variant="eyebrow" color="purple400" paddingBottom={titlePadding}>
@@ -115,6 +118,7 @@ export const UserInfoLine: FC<Props> = ({
               justifyContent={['flexStart', 'flexEnd']}
               alignItems="center"
               height="full"
+              printHidden
             >
               {editLink.external ? (
                 <a

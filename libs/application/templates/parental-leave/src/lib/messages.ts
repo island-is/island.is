@@ -122,9 +122,9 @@ export const parentalLeaveFormMessages: MessageDir = {
     otherParentDescription: {
       id: 'pl.application:otherParent.description',
       defaultMessage:
-        'Sjálfgefið er skráður maki. Ef það er ekkert annað foreldri í myndinni að þessu sinni, þá þarf ekki að fylla þetta út',
+        'Skráður maki í þjóðskrá er sjálfgefinn. Þú getur skráð hitt foreldrið eða haldið áfram án skráningar.',
       description:
-        'This person is by default your spouse or partner. If there is no other parent in the picture at this point in time, leave this empty.',
+        'Your spouse according to National Registry records is filled in by default. You can register the other parent or continue without registration.',
     },
     otherParentTitle: {
       id: 'pl.application:otherParent.title',
@@ -133,7 +133,7 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     otherParentSubTitle: {
       id: 'pl.application:otherParent.sub.title',
-      defaultMessage: 'Annað foreldri',
+      defaultMessage: 'Hitt foreldrið',
       description: 'Other parent',
     },
     otherParentName: {
@@ -649,13 +649,15 @@ export const parentalLeaveFormMessages: MessageDir = {
   selectChild: defineMessages({
     screenTitle: {
       id: 'pl.application:selectChild.screenTitle',
-      defaultMessage: 'Veldu barn',
-      description: 'Choose a child',
+      defaultMessage: 'Upplýsingar um barn',
+      description: 'Child information',
     },
     screenDescription: {
       id: 'pl.application:selectChild.screenDescription',
-      defaultMessage: 'Börn sem þú getur sótt um fæðingarorlof fyrir.',
-      description: 'Children you can apply for parental leave.',
+      defaultMessage:
+        'Hér má sjá lista yfir börnin þín. Vinsamlegast veldu barn til að sækja um.',
+      description:
+        'Below you can see a list with your children. Please select a child to apply for.',
     },
     activeApplications: {
       id: 'pl.application:selectChild.activeApplications',
@@ -849,8 +851,8 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     addAnother: {
       id: 'pl.application:periods.add.another',
-      defaultMessage: 'Bættu við öðru tímabili',
-      description: 'Add another period',
+      defaultMessage: 'Tímabil fæðingarorlofs',
+      description: 'Leave period',
     },
     change: {
       id: 'pl.application:periods.change',
@@ -886,13 +888,15 @@ export const parentalLeaveFormMessages: MessageDir = {
   firstPeriodStart: defineMessages({
     title: {
       id: 'pl.application:periods.first.period.title',
-      defaultMessage: 'Hvenær viltu hefja fæðingarorlofið?',
+      defaultMessage: 'Upphaf fæðingarorlofs',
       description: 'When do you want to start your parental leave',
     },
     description: {
       id: 'pl.application:periods.first.period.description',
-      defaultMessage: `Athugaðu að ekki er hægt að nýta réttindi til fæðingarorlofs 24 mánuðum eftir fæðingu barnsins.`,
-      description: `Please note, that your rights end 24 months after the date of birth.`,
+      defaultMessage:
+        'Þú getur valið um að byrja fæðingarorlof á áætluðum fæðingardegi, frá raunverulegum fæðingardegi eða ákveðinni dagsetningu. Athugaðu að ekki er hægt að nýta réttindi til fæðingarorlofs 24 mánuðum eftir fæðingu barnsins.',
+      description:
+        'Please note, that your rights end 24 months after the date of birth.',
     },
     estimatedDateOfBirthOption: {
       id: 'pl.application:periods.first.period.estimatedDateOfBirth',
@@ -970,8 +974,8 @@ export const parentalLeaveFormMessages: MessageDir = {
   duration: defineMessages({
     title: {
       id: 'pl.application:duration.title',
-      defaultMessage: 'Vinsamlegast staðfestu lengd tímabilsins',
-      description: 'Please confirm your leave duration',
+      defaultMessage: 'Lengd fæðingarorlofs',
+      description: 'Leave duration',
     },
     description: {
       id: 'pl.application:duration.description',
@@ -1025,7 +1029,7 @@ export const parentalLeaveFormMessages: MessageDir = {
         'Vinnuveitandi þarf að samþykkja tilhögun fæðingarorlofsins (ef þú hefur marga vinnuveitendur skal velja hæsta starfshlutfall). ' +
         'Þegar þú hefur sent umsóknina verður sendur tölvupóstur og sms til vinnuveitanda. ' +
         ' Viðtakandi fær aðgang að umsókninni, en getur einungis séð upplýsingar sem varða tilhögun fæðingarorlofs.' +
-        'Ef vinnuveitandi hafnar umsókninni þarft þú að gera viðeigandi breytingar á henni.',
+        'Ef vinnuveitandi hafnar tilhögun fæðingarorlofs þarft þú að gera viðeigandi breytingar á henni.',
       description:
         'Your employer is required to approve your parental leave arrangement. Once you have submitted your application, an email and sms will be sent to your employer. The recipient will get access to the application, but will only be able to see the timing arrangement. If your employer rejects the timing arrangement, you will need to change your application.',
     },
@@ -1055,7 +1059,7 @@ export const parentalLeaveFormMessages: MessageDir = {
     description: {
       id: 'pl.application:selfEmployed.description',
       defaultMessage:
-        'Sjáflstætt starfandi einstaklingar þurfa að skila staðfestingu á lækkun á reiknuðu endurgjaldi ef við á.',
+        'Sjálfstætt starfandi einstaklingar þurfa að skila staðfestingu á lækkun á reiknuðu endurgjaldi ef við á.',
       description: 'Add translation',
     },
     attachmentTitle: {
@@ -1177,8 +1181,16 @@ export const parentalLeaveFormMessages: MessageDir = {
     yesOption: {
       id: 'pl.application:rightOfAccess.yesOption',
       defaultMessage:
-        'Ég innsrkáður umsækjandi veiti forsjárlausu foreldri samþykki mitt fyrir umgengni í þessu fæðingarorlofi',
-      description: 'Add translation',
+        'Ég veiti forsjárlausa foreldrinu samþykki mitt fyrir umgengni í þessu fæðingarorlofi.',
+      description:
+        'I give my consent that the non-custodial parent is allowed right of access during this parental leave',
+    },
+    noOption: {
+      id: 'pl.application:rightOfAccess.noOption',
+      defaultMessage:
+        'Ég veiti ekki forsjárlausa foreldrinu samþykki mitt fyrir umgengni í þessu fæðingarorlofi.',
+      description:
+        'I do not give my consent that the non-custodial parent is allowed right of access during this parental leave',
     },
   }),
 
@@ -1492,6 +1504,51 @@ export const parentalLeaveFormMessages: MessageDir = {
         'icel-trans: "Parental leave starting date is in the past, please correct this date"',
       description:
         'Parental leave starting date is in the past, please correct this date',
+    },
+  }),
+
+  attachmentScreen: defineMessages({
+    genericTitle: {
+      id: 'pl.application:attachmentscreen.genericTitle',
+      defaultMessage: `Viðbótargögn með umsókn`,
+      description: `generic title`,
+    },
+    genericDescription: {
+      id: 'pl.application:attachmentscreen.genericDescription',
+      defaultMessage: `Hér getur þú sett viðbótargögn til Fæðingarorlofssjóðs. Athugaðu að skjalið þarf að vera á .pdf formi`,
+      description: `generic description`,
+    },
+    studentTitle: {
+      id: 'pl.application:attachmentscreen.studentTitle',
+      defaultMessage: `Staðfesting á námi`,
+      description: `student title`,
+    },
+    studentDescription: {
+      id: 'pl.application:attachmentscreen.studentDescription',
+      defaultMessage: `Námsmenn þurfa að skila inn staðfestingu á námi og námsárangri. Athugaðu að skjalið þarf að vera á .pdf formi`,
+      description: `student description`,
+    },
+    fatherWithoutMotherTitle: {
+      id: 'pl.application:attachmentscreen.fatherWithoutMotherTitle',
+      defaultMessage: 'Vottorð frá heilsugæslu',
+      description: 'father withouy mother title',
+    },
+    fatherWithoutMotherDescription: {
+      id: 'pl.application:attachmentscreen.fatherWithoutMotherDescription',
+      defaultMessage:
+        'Faðir þarf að skila inn fæðingarvottorði frá heilsugæslu sem staðfestir faðerni barns. Athugaðu að skjalið þarf að vera á .pdf formi',
+      description: 'father without mother description',
+    },
+    permanentFostercareTitle: {
+      id: 'pl.application:attachmentscreen.permanentFostercareTitle',
+      defaultMessage: 'Staðfesting frá sveitarfélagi',
+      description: 'permanent forstercare title',
+    },
+    permanentFostercareDescription: {
+      id: 'pl.application:attachmentscreen.permanentFostercareDescription',
+      defaultMessage:
+        'Vegna varanlegs fósturs þarf að skila inn staðfestingu frá sveitarfélagi. Athugaðu að skjalið þarf að vera á .pdf formi',
+      description: 'Permanent forstcare description',
     },
   }),
 }

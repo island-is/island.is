@@ -394,6 +394,7 @@ const Defendant = () => {
           <AnimatePresence>
             {[
               CaseType.RESTRAINING_ORDER,
+              CaseType.RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME,
               CaseType.EXPULSION_FROM_HOME,
               CaseType.PSYCHIATRIC_EXAMINATION,
               CaseType.OTHER,

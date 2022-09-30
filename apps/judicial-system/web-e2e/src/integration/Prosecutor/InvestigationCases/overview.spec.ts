@@ -21,6 +21,7 @@ describe(`${INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE}/:id`, () => {
   beforeEach(() => {
     const caseDataAddition: Case = {
       ...caseData,
+      defenderNationalId: '0000000000',
       defenderName,
       defenderEmail,
       defenderPhoneNumber,
