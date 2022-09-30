@@ -28,6 +28,7 @@ export const parseFirearmLicensePayload = (
 
   const data: Array<GenericLicenseDataField> = [
     licenseInfo.licenseNumber && {
+      name: 'Grunnupplýsingar skotvopnaleyfis',
       type: GenericLicenseDataFieldType.Value,
       label: 'Númer skírteinis',
       value: licenseInfo.licenseNumber,

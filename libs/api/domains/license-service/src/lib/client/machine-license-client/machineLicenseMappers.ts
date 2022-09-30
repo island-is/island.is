@@ -32,6 +32,7 @@ export const parseMachineLicensePayload = (
 
   const data: Array<GenericLicenseDataField> = [
     {
+      name: 'Grunnupplýsingar vinnuvélaskírteinis',
       type: GenericLicenseDataFieldType.Value,
       label: 'Númer skírteinis',
       value: license.skirteinisNumer?.toString(),

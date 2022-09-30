@@ -47,6 +47,7 @@ export const parseAdrLicensePayload = (
 
   const data: Array<GenericLicenseDataField> = [
     {
+      name: 'Grunnupplýsingar ADR skírteinis',
       type: GenericLicenseDataFieldType.Value,
       label: 'Númer skírteinis',
       value: parsedResponse.skirteinisNumer?.toString(),
