@@ -1,5 +1,21 @@
 # Web
 
+## Quickstart
+
+Ensure docker is running, then run the following to for the first time:
+
+```bash
+yarn dev/init web
+```
+
+To start the app:
+
+```bash
+yarn dev web
+```
+
+These commands are just shorthands for the setup described below.
+
 ## About
 
 The web consolidates content from multiple sources and displays it in a user friendly way.
