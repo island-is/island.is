@@ -223,7 +223,6 @@
 - [Regulations](libs/regulations/README.md)
 - [Residence History](libs/residence-history/README.md)
 - [Service Portal](libs/service-portal/README.md)
-    - [Service Portal Access Control Delegations](libs/service-portal/access-control/delegations/README.md)
   - [Core](libs/service-portal/core/README.md)
 - [Shared](libs/shared/README.md)
   - [Babel](libs/shared/babel/README.md)

@@ -27,7 +27,7 @@ import {
 } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 
-import { AuthDelegationsQuery } from '../AccessControl'
+import { AuthDelegationsQuery } from '../../lib/queries'
 import { AccessItem, AccessModal } from '../../components'
 
 import * as styles from './Access.css'

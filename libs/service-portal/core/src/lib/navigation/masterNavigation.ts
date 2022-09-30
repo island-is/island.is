@@ -334,7 +334,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
       },
       // Aðgangsstýring umboð
       {
-        name: m.accessControl,
+        name: m.accessControlV2,
         path: ServicePortalPath.AccessControlDelegations,
         icon: {
           icon: 'lockClosed',

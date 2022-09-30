@@ -26,7 +26,7 @@ import {
 } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 
-import { AuthDelegationsQuery } from '../AccessControl'
+import { AuthDelegationsQuery } from '../../lib/queries'
 import * as styles from './GrantAccess.css'
 
 const CreateAuthDelegationMutation = gql`

@@ -8,13 +8,15 @@ import {
   ServicePortalPath,
 } from '@island.is/service-portal/core'
 
-import { Accesses } from '../../components'
+import { DelegationsFromMe } from '../../components'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { gql, useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
 import { useAuth } from '@island.is/auth/react'
-import { MessageDescriptor } from 'react-intl'
 import { useHistory, useLocation } from 'react-router-dom'
+
+const TAB_DELEGATION_TO_FROM_ID = '0'
+const TAB_DELEGATION_TO_ME_ID = '1'
 
 export const AuthDelegationsQuery = gql`
   query AuthDelegationsListQuery {
@@ -74,7 +76,6 @@ const AccessControl: ServicePortalModuleComponent = ({ userInfo, client }) => {
   }
   const actor = userInfo.profile.actor
   const isDelegation = Boolean(actor)
-
   const isCompany = userInfo.profile.subjectType === 'legalEntity'
   const personDelegation = isDelegation && !isCompany
 
@@ -82,32 +83,9 @@ const AccessControl: ServicePortalModuleComponent = ({ userInfo, client }) => {
     return <AccessDenied userInfo={userInfo} client={client} />
   }
 
-  const creatTab = (
-    label: MessageDescriptor,
-    headerTitle: MessageDescriptor,
-  ) => ({
-    label: formatMessage(label),
-    content: (
-      <Box marginTop={8}>
-        <IntroHeader
-          title={headerTitle}
-          intro={formatMessage({
-            id: 'sp.access-control-delegations:header-intro',
-            defaultMessage:
-              'Hérna kemur listi yfir þau umboð sem þú hefur gefið öðrum. Þú getur eytt umboðum eða bætt við nýjum.',
-          })}
-        />
-        <Accesses />
-      </Box>
-    ),
-  })
-
-  const delegationFromMeTabId = '0'
-  const delegationToMeTabId = '1'
-
-  const tabClickHandler = (id: string) => {
+  const tabChangeHandler = (id: string) => {
     const url =
-      id === delegationToMeTabId
+      id === TAB_DELEGATION_TO_ME_ID
         ? ServicePortalPath.AccessControlDelegationsToMe
         : ServicePortalPath.AccessControlDelegations
 
@@ -119,31 +97,41 @@ const AccessControl: ServicePortalModuleComponent = ({ userInfo, client }) => {
 
   return (
     <Box>
+      <IntroHeader
+        title={formatMessage(m.accessControl)}
+        intro={formatMessage({
+          id: 'sp.access-control-delegations:header-intro',
+          defaultMessage:
+            'Hérna kemur listi yfir þau umboð sem þú hefur gefið öðrum. Þú getur eytt umboðum eða bætt við nýjum.',
+        })}
+      />
       {!loading && data && data?.authDelegations?.length > 0 && (
-        <Tabs
-          selected={
-            isDelegationToMe ? delegationToMeTabId : delegationFromMeTabId
-          }
-          onClick={tabClickHandler}
-          label="This is used as the aria-label as well"
-          tabs={[
-            creatTab(
+        <Box marginTop={9}>
+          <Tabs
+            selected={
+              isDelegationToMe
+                ? TAB_DELEGATION_TO_ME_ID
+                : TAB_DELEGATION_TO_FROM_ID
+            }
+            onChange={tabChangeHandler}
+            label={formatMessage(m.accessControlChooseDelegation)}
+            tabs={[
               {
-                id: 'sp.access-control-delegations:from-me',
-                defaultMessage: 'Umboð frá mér',
+                label: formatMessage(m.accessControlDelegationsFromMe),
+                content: (
+                  <Box marginTop={8}>
+                    <DelegationsFromMe />
+                  </Box>
+                ),
               },
               {
-                id: 'sp.access-control-delegations:from-me-title',
-                defaultMessage: 'Umboð sem ég hef veitt',
+                label: formatMessage(m.accessControlDelegationsToMe),
+                content: null,
               },
-            ),
-            creatTab(m.accessControlDelegationsToMe, {
-              id: 'sp.access-control-delegations:to-me-title',
-              defaultMessage: 'Umboð sem ég hef fengið',
-            }),
-          ]}
-          contentBackground="white"
-        />
+            ]}
+            contentBackground="white"
+          />
+        </Box>
       )}
     </Box>
   )

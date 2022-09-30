@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, useEffect, useState } from 'react'
+import { FC, ReactNode, useEffect, useState } from 'react'
 import cn from 'classnames'
 import { useTabState, Tab, TabList, TabPanel } from 'reakit/Tab'
 import { Box } from '../Box/Box'
@@ -22,7 +22,7 @@ interface TabInterface {
   tabs: TabType[]
   contentBackground?: Colors
   size?: 'xs' | 'sm' | 'md'
-  onClick?(id: string): void
+  onChange?(id: string): void
 }
 
 export const Tabs: FC<TabInterface> = ({
@@ -31,7 +31,7 @@ export const Tabs: FC<TabInterface> = ({
   tabs,
   contentBackground = 'purple100',
   size = 'md',
-  onClick: onClickHandler,
+  onChange: onChangeHandler,
 }) => {
   const { loop, wrap, ...tab } = useTabState({
     selectedId: selected,
@@ -60,6 +60,12 @@ export const Tabs: FC<TabInterface> = ({
     }
     setIsMobile(false)
   }, [width])
+
+  useEffect(() => {
+    if (tab.currentId) {
+      onChangeHandler?.(tab.currentId)
+    }
+  }, [onChangeHandler, tab.currentId])
 
   return (
     <Box position="relative">
@@ -96,11 +102,6 @@ export const Tabs: FC<TabInterface> = ({
               className={cn(styles.tab, {
                 [styles.tabSelected]: index.toString() === tab.selectedId,
                 [styles.tabDisabled]: disabled,
-              })}
-              {...(onClickHandler && {
-                onClick: () => {
-                  tab.currentId && onClickHandler?.(tab.currentId)
-                },
               })}
             >
               {label}
