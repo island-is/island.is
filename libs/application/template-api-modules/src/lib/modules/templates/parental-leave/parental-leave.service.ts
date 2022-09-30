@@ -407,7 +407,7 @@ export class ParentalLeaveService {
   }
 
   async sendApplication({ application }: TemplateApiModuleActionProps) {
-    const { isSelfEmployed } = getApplicationAnswers(application.answers)
+    const { isSelfEmployed, applicationType } = getApplicationAnswers(application.answers)
     const nationalRegistryId = application.applicant
     const attachments = await this.getAttachments(application)
 
@@ -440,7 +440,7 @@ export class ParentalLeaveService {
       // There has been case when island.is got Access Denied from AWS when sending out emails
       // This try/catch keeps application in correct state
       try {
-        const selfEmployed = isSelfEmployed === YES
+        const selfEmployed = applicationType === PARENTAL_LEAVE ? isSelfEmployed === YES : true
 
         if (!selfEmployed) {
           // Only needs to send an email if being approved by employer

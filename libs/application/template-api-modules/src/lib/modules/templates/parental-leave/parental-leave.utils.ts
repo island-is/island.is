@@ -75,18 +75,10 @@ export const getEmployer = (
   } = getApplicationAnswers(application.answers)
 
   return {
-    email:
-      applicationType === PARENTAL_LEAVE
-        ? isSelfEmployed
-          ? applicantEmail
-          : employerEmail
-        : '',
-    nationalRegistryId:
-      applicationType === PARENTAL_LEAVE
-        ? isSelfEmployed
-          ? application.applicant
-          : employerNationalRegistryId
-        : '',
+    email: isSelfEmployed ? applicantEmail : employerEmail,
+    nationalRegistryId: isSelfEmployed
+      ? application.applicant
+      : employerNationalRegistryId,
   }
 }
 
@@ -299,7 +291,10 @@ export const transformApplicationToParentalLeaveDTO = (
       ),
     },
     periods,
-    employers: [getEmployer(application, applicationType, selfEmployed)],
+    employers:
+      applicationType === PARENTAL_LEAVE
+        ? [getEmployer(application, applicationType, selfEmployed)]
+        : [],
     status: 'In Progress',
     rightsCode: getRightsCode(application),
     attachments,
