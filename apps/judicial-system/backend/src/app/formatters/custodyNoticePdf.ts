@@ -7,11 +7,11 @@ import {
   formatDOB,
 } from '@island.is/judicial-system/formatters'
 import { FormatMessage } from '@island.is/cms-translations'
-import { Gender, SessionArrangements } from '@island.is/judicial-system/types'
+import { SessionArrangements } from '@island.is/judicial-system/types'
 
 import { environment } from '../../environments'
 import { Case } from '../modules/case'
-import { core, custodyNotice } from '../messages'
+import { custodyNotice } from '../messages'
 import { formatCustodyRestrictions } from './formatters'
 import {
   addEmptyLines,

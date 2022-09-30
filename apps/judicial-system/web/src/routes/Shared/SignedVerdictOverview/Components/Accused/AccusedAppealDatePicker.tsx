@@ -5,7 +5,6 @@ import { useIntl } from 'react-intl'
 import { Box, Button } from '@island.is/island-ui/core'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { DateTime } from '@island.is/judicial-system-web/src/components'
-import { Gender, isRestrictionCase } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 
 import * as styles from '../AppealSection/AppealSection.css'

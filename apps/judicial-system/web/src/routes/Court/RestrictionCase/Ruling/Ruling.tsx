@@ -34,7 +34,6 @@ import {
   CaseType,
   completedCaseStates,
   Defendant,
-  Gender,
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
 import { isRulingValidRC } from '@island.is/judicial-system-web/src/utils/validate'
