@@ -35,11 +35,28 @@ describe(`${INVESTIGATION_CASE_COURT_RECORD_ROUTE}/:id`, () => {
   })
 
   it('should autofill sessionBookings in restraining order cases', () => {
-    const caseData = mockCase(CaseType.INTERNET_USAGE)
+    const caseData = mockCase(CaseType.RESTRAINING_ORDER)
 
     const caseDataAddition: Case = {
       ...caseData,
-      type: CaseType.RESTRAINING_ORDER,
+      prosecutor: makeProsecutor(),
+    }
+
+    cy.stubAPIResponses()
+    intercept(caseDataAddition)
+
+    cy.visit(`${INVESTIGATION_CASE_COURT_RECORD_ROUTE}/test_id_stadfest`)
+
+    cy.getByTestid('sessionBookings').should('not.match', ':empty')
+  })
+
+  it('should autofill sessionBookings in restraining order and expulsion from home cases', () => {
+    const caseData = mockCase(
+      CaseType.RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME,
+    )
+
+    const caseDataAddition: Case = {
+      ...caseData,
       prosecutor: makeProsecutor(),
     }
 
@@ -52,11 +69,10 @@ describe(`${INVESTIGATION_CASE_COURT_RECORD_ROUTE}/:id`, () => {
   })
 
   it('should autofill sessionBookings in expulsion from home cases', () => {
-    const caseData = mockCase(CaseType.INTERNET_USAGE)
+    const caseData = mockCase(CaseType.EXPULSION_FROM_HOME)
 
     const caseDataAddition: Case = {
       ...caseData,
-      type: CaseType.EXPULSION_FROM_HOME,
       prosecutor: makeProsecutor(),
     }
 
@@ -69,11 +85,10 @@ describe(`${INVESTIGATION_CASE_COURT_RECORD_ROUTE}/:id`, () => {
   })
 
   it('should autofill sessionBookings in autopsy cases', () => {
-    const caseData = mockCase(CaseType.INTERNET_USAGE)
+    const caseData = mockCase(CaseType.AUTOPSY)
 
     const caseDataAddition: Case = {
       ...caseData,
-      type: CaseType.AUTOPSY,
       prosecutor: makeProsecutor(),
     }
 
@@ -86,11 +101,10 @@ describe(`${INVESTIGATION_CASE_COURT_RECORD_ROUTE}/:id`, () => {
   })
 
   it('should autofill sessionBookings when defendant is present in court', () => {
-    const caseData = mockCase(CaseType.INTERNET_USAGE)
+    const caseData = mockCase(CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION)
 
     const caseDataAddition: Case = {
       ...caseData,
-      type: CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION,
       prosecutor: makeProsecutor(),
       sessionArrangements: SessionArrangements.ALL_PRESENT,
     }
@@ -104,11 +118,10 @@ describe(`${INVESTIGATION_CASE_COURT_RECORD_ROUTE}/:id`, () => {
   })
 
   it('should autofill sessionBookings when a spokesperson is present in court', () => {
-    const caseData = mockCase(CaseType.INTERNET_USAGE)
+    const caseData = mockCase(CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION)
 
     const caseDataAddition: Case = {
       ...caseData,
-      type: CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION,
       prosecutor: makeProsecutor(),
       sessionArrangements: SessionArrangements.ALL_PRESENT_SPOKESPERSON,
     }
@@ -122,11 +135,10 @@ describe(`${INVESTIGATION_CASE_COURT_RECORD_ROUTE}/:id`, () => {
   })
 
   it('should autofill sessionBookings when a prosecutor is present in court', () => {
-    const caseData = mockCase(CaseType.INTERNET_USAGE)
+    const caseData = mockCase(CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION)
 
     const caseDataAddition: Case = {
       ...caseData,
-      type: CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION,
       prosecutor: makeProsecutor(),
       sessionArrangements: SessionArrangements.PROSECUTOR_PRESENT,
     }
