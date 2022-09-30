@@ -79,9 +79,6 @@ export function getConclusionAutofill(
 
   return decision === CaseDecision.DISMISSING
     ? formatMessage(m.sections.conclusion.dismissingAutofillV3, {
-        genderedAccused: formatMessage(core.defendant, {
-          suffix: 'i',
-        }),
         accusedName: defendant.name,
         isExtended:
           workingCase.parentCase &&
@@ -90,9 +87,6 @@ export function getConclusionAutofill(
       })
     : decision === CaseDecision.REJECTING
     ? formatMessage(m.sections.conclusion.rejectingAutofillV3, {
-        genderedAccused: formatMessage(core.defendant, {
-          suffix: 'i',
-        }),
         accusedName: defendant.name,
         accusedNationalId: defendant.noNationalId
           ? ', '
@@ -103,11 +97,6 @@ export function getConclusionAutofill(
         caseType: workingCase.type,
       })
     : formatMessage(m.sections.conclusion.acceptingAutofillV3, {
-        genderedAccused: capitalize(
-          formatMessage(core.defendant, {
-            suffix: 'i',
-          }),
-        ),
         accusedName: defendant.name,
         accusedNationalId: defendant.noNationalId
           ? ', '
