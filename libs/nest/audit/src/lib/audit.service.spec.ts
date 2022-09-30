@@ -105,6 +105,7 @@ describe('AuditService against Cloudwatch', () => {
       ip: auth.ip,
       userAgent: auth.userAgent,
       appVersion: appVersion,
+      system: false,
     })
   })
 
@@ -153,6 +154,7 @@ describe('AuditService against Cloudwatch', () => {
       ip: auth.ip,
       userAgent: auth.userAgent,
       appVersion: appVersion,
+      system: false,
     })
   })
 
@@ -193,6 +195,7 @@ describe('AuditService against Cloudwatch', () => {
       action: `${defaultNamespace}#${action}`,
       ip: auth.ip,
       appVersion: appVersion,
+      system: false,
     })
   })
 
@@ -227,6 +230,7 @@ describe('AuditService against Cloudwatch', () => {
       ip: auth.ip,
       userAgent: auth.userAgent,
       appVersion: appVersion,
+      system: false,
     })
   })
 })
@@ -284,6 +288,7 @@ describe('AuditService in development', () => {
       ip: auth.ip,
       userAgent: auth.userAgent,
       appVersion: appVersion,
+      system: false,
     })
   })
 })
