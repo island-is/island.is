@@ -77,6 +77,25 @@
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/form/src/{app,routes,components}/**/*.{js,ts,tsx}'"
       }
     },
+    "dev/init": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "yarn get-secrets application-system-form",
+          "yarn dev/init application-system-api"
+        ],
+        "parallel": false
+      }
+    },
+    "dev": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "yarn dev application-system-api"
+        ],
+        "parallel": true
+      }
+    },
     "docker-static": {}
   },
   "tags": []
