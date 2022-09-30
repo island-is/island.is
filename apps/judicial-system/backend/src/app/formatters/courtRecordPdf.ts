@@ -10,11 +10,11 @@ import {
   User,
 } from '@island.is/judicial-system/types'
 import {
-  capitalize,
   formatDate,
   lowercase,
-  formatAppeal,
   formatRequestCaseType,
+  formatProsecutorAppeal,
+  formatDefendantAppeal,
 } from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../environments'
@@ -212,9 +212,8 @@ function constructRestrictionCourtRecordPdf(
   addEmptyLines(doc)
   addNormalJustifiedText(doc, formatMessage(courtRecord.appealDirections))
 
-  let prosecutorAppeal = formatAppeal(
+  let prosecutorAppeal = formatProsecutorAppeal(
     theCase.prosecutorAppealDecision,
-    capitalize(formatMessage(courtRecord.prosecutor)),
   )
 
   if (prosecutorAppeal) {
@@ -230,14 +229,14 @@ function constructRestrictionCourtRecordPdf(
     addNormalJustifiedText(doc, prosecutorAppeal)
   }
 
-  let accusedAppeal = formatAppeal(
+  const multipleDefendants =
+    (theCase.defendants && theCase.defendants.length > 1) || false
+
+  let accusedAppeal = formatDefendantAppeal(
+    multipleDefendants,
     theCase.accusedAppealDecision,
-    capitalize(
-      formatMessage(courtRecord.defendant, {
-        suffix:
-          theCase.defendants && theCase.defendants?.length > 1 ? 'ar' : 'i',
-      }),
-    ),
+    theCase.type,
+    theCase.sessionArrangements,
   )
 
   if (accusedAppeal) {
@@ -457,9 +456,8 @@ function constructInvestigationCourtRecordPdf(
     addNormalJustifiedText(doc, formatMessage(courtRecord.appealDirections))
   }
 
-  let prosecutorAppeal = formatAppeal(
+  let prosecutorAppeal = formatProsecutorAppeal(
     theCase.prosecutorAppealDecision,
-    capitalize(formatMessage(courtRecord.prosecutor)),
   )
 
   if (prosecutorAppeal) {
@@ -475,14 +473,14 @@ function constructInvestigationCourtRecordPdf(
     addNormalJustifiedText(doc, prosecutorAppeal)
   }
 
-  let accusedAppeal = formatAppeal(
+  const multipleDefendants =
+    (theCase.defendants && theCase.defendants.length > 1) || false
+
+  let accusedAppeal = formatDefendantAppeal(
+    multipleDefendants,
     theCase.accusedAppealDecision,
-    capitalize(
-      formatMessage(courtRecord.defendant, {
-        suffix:
-          theCase.defendants && theCase.defendants?.length > 1 ? 'ar' : 'i',
-      }),
-    ),
+    theCase.type,
+    theCase.sessionArrangements,
   )
 
   if (accusedAppeal) {

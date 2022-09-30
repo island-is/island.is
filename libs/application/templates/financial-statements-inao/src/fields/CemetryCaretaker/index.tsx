@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from 'react'
+import React, { FC, useEffect, useCallback } from 'react'
 import { useFieldArray } from 'react-hook-form'
 import { RecordObject } from '@island.is/application/types'
 import {
@@ -124,12 +124,13 @@ export const CemetryCaretaker: FC<FieldBaseProps<FinancialStatementsInao>> = ({
     name: `${id}.caretakers`,
   })
 
-  const handleAddCaretaker = () =>
+  const handleAddCaretaker = useCallback(() => {
     append({
       nationalId: '',
       name: '',
       role: '',
     })
+  }, [append])
 
   const handleRemoveCaretaker = (index: number) => remove(index)
 

@@ -12,9 +12,9 @@ import {
   PersonalRepresentativeRightType,
   PersonalRepresentativeType,
   PersonalRepresentativeCreateDTO,
-} from '@island.is/auth-api-lib/personal-representative'
-import { PersonalRepresentativeRightTypeService } from '@island.is/auth-api-lib/personal-representative'
-import { PersonalRepresentativeService } from '@island.is/auth-api-lib/personal-representative'
+  PersonalRepresentativeRightTypeService,
+  PersonalRepresentativeService,
+} from '@island.is/auth-api-lib'
 import { AuthScope } from '@island.is/auth/scopes'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 

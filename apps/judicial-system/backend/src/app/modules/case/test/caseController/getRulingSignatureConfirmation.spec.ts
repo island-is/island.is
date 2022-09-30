@@ -3,14 +3,13 @@ import { uuid } from 'uuidv4'
 import { ForbiddenException } from '@nestjs/common'
 
 import { User } from '@island.is/judicial-system/types'
+import { MessageType, MessageService } from '@island.is/judicial-system/message'
 
 import { Case } from '../../models/case.model'
 import { SignatureConfirmationResponse } from '../../models/signatureConfirmation.response'
 import { createTestingCaseModule } from '../createTestingCaseModule'
 import { randomDate } from '../../../../test'
 import { AwsS3Service } from '../../../aws-s3'
-import { QueueService } from '@island.is/message-queue'
-import { MessageType } from '@island.is/judicial-system/message'
 
 interface Then {
   result: SignatureConfirmationResponse
@@ -25,27 +24,27 @@ type GivenWhenThen = (
 ) => Promise<Then>
 
 describe('CaseController - Get ruling signature confirmation', () => {
-  let mockCaseModel: typeof Case
+  let mockMessageService: MessageService
   let mockAwsS3Service: AwsS3Service
-  let mockQueueService: QueueService
+  let mockCaseModel: typeof Case
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
     const {
-      caseModel,
-      queueService,
-      caseController,
+      messageService,
       awsS3Service,
+      caseModel,
+      caseController,
     } = await createTestingCaseModule()
 
     mockCaseModel = caseModel
-    mockQueueService = queueService
+    mockMessageService = messageService
     mockAwsS3Service = awsS3Service
 
-    mockQueueService.add = jest.fn().mockReturnValue(Promise.resolve(''))
-    mockAwsS3Service.putObject = jest
-      .fn()
-      .mockReturnValue(Promise.resolve(true))
+    const mockPostMessageToQueue = mockMessageService.postMessageToQueue as jest.Mock
+    mockPostMessageToQueue.mockResolvedValue(uuid())
+    const mockPutObject = mockAwsS3Service.putObject as jest.Mock
+    mockPutObject.mockResolvedValue(uuid())
 
     givenWhenThen = async (
       caseId: string,
@@ -107,7 +106,7 @@ describe('CaseController - Get ruling signature confirmation', () => {
     it('should return success', () => {
       expect(then.result).toEqual({ documentSigned: true })
       expect(mockAwsS3Service.putObject).toHaveBeenCalled()
-      expect(mockQueueService.add).toHaveBeenCalledWith({
+      expect(mockMessageService.postMessageToQueue).toHaveBeenCalledWith({
         type: MessageType.CASE_COMPLETED,
         caseId,
       })
@@ -213,7 +212,7 @@ describe('CaseController - Get ruling signature confirmation', () => {
       expect(then.result.code).toBeUndefined()
 
       expect(mockCaseModel.update).not.toHaveBeenCalled()
-      expect(mockQueueService.add).not.toHaveBeenCalled()
+      expect(mockMessageService.postMessageToQueue).not.toHaveBeenCalled()
     })
   })
 })

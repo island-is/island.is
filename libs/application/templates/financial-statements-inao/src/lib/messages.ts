@@ -705,6 +705,12 @@ export const m = defineMessages({
     defaultMessage: 'Ekki tókst að sækja gögn, reyndur aftur seinna',
     description: 'Error msg when fetching data fails',
   },
+  fetchCemetryLimitErrorMsg: {
+    id: 'fsn.application:fetchCemetryLimitErrorMsg',
+    defaultMessage:
+      'Ef skil falla undir lög um ársreikninga sem þarfnast ekki skila, reynið aftur síðar',
+    description: 'Error msg when fetching data fails',
+  },
   errorDataProvider: {
     id: 'fsn.application:error.dataProvider',
     defaultMessage: 'Reyndu aftur síðar',

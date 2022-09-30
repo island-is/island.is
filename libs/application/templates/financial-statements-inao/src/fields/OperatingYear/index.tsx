@@ -25,7 +25,7 @@ export const OperatingYear = () => {
   if (loading) {
     return (
       <Box width="half" className={styles.selectSpace}>
-        <SkeletonLoader height={90} />
+        <SkeletonLoader height={70} />
       </Box>
     )
   }
@@ -56,7 +56,7 @@ export const OperatingYear = () => {
         placeholder={formatMessage(m.selectOperatingYear)}
         error={errors && getErrorViaPath(errors, ABOUTIDS.operatingYear)}
         options={operatingYear}
-        defaultValue={operatingYear[0]}
+        defaultValue={operatingYear[0].value}
       />
     </Box>
   )
