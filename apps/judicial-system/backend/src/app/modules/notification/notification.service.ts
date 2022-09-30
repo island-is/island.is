@@ -276,7 +276,7 @@ export class NotificationService {
         this.formatMessage,
       )
 
-      const fileName = this.formatMessage(courtUpload.requestFileName, {
+      const fileName = this.formatMessage(courtUpload.request, {
         caseType: caseTypes[theCase.type],
         date: `-${format(nowFactory(), 'yyyy-MM-dd')}`,
       })
