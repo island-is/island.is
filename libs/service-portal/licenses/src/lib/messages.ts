@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl'
 export const m = defineMessages({
   title: {
     id: 'sp.license:title',
-    defaultMessage: 'Þín skírteini',
+    defaultMessage: 'Skírteinin þín',
   },
   intro: {
     id: 'sp.license:intro',
