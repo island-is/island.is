@@ -12,12 +12,16 @@ import {
   Param,
   Post,
   UseGuards,
+  VERSION_NEUTRAL,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @ApiTags('user-identities')
-@Controller('user-identities')
+@Controller({
+  path: 'user-identities',
+  version: ['1', VERSION_NEUTRAL],
+})
 export class UserIdentitiesController {
   constructor(private readonly userIdentityService: UserIdentitiesService) {}
 

@@ -12,12 +12,15 @@ import {
   ParseArrayPipe,
   Query,
   UseGuards,
+  VERSION_NEUTRAL,
 } from '@nestjs/common'
 import { ApiOkResponse, ApiQuery, ApiTags } from '@nestjs/swagger'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @ApiTags('resources')
-@Controller()
+@Controller({
+  version: ['1', VERSION_NEUTRAL],
+})
 export class ResourcesController {
   constructor(private readonly resourcesService: ResourcesService) {}
 

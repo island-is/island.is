@@ -9,6 +9,7 @@ import {
   ParseArrayPipe,
   Query,
   UseGuards,
+  VERSION_NEUTRAL,
 } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import type { User } from '@island.is/auth-nest-tools'
@@ -21,7 +22,10 @@ import {
 } from '@island.is/auth-nest-tools'
 
 @ApiTags('permissions')
-@Controller('permissions')
+@Controller({
+  path: 'permissions',
+  version: ['1', VERSION_NEUTRAL],
+})
 export class PermissionsController {
   constructor(
     private readonly accessService: ResourceAccessService,

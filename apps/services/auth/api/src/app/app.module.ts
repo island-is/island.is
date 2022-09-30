@@ -15,17 +15,17 @@ import { NationalRegistryClientConfig } from '@island.is/clients/national-regist
 import { CompanyRegistryConfig } from '@island.is/clients/rsk/company-registry'
 import { RskProcuringClientConfig } from '@island.is/clients/rsk/procuring'
 import { UserProfileClientConfig } from '@island.is/clients/user-profile'
-
-import { ClientsModule } from './modules/clients/clients.module'
-import { GrantsModule } from './modules/grants/grants.module'
-import { ResourcesModule } from './modules/resources/resources.module'
-import { UsersModule } from './modules/users/users.module'
-import { environment } from '../environments'
-import { TranslationModule } from './modules/translation/translation.module'
-import { DelegationsModule } from './modules/delegations/delegations.module'
-import { PermissionsModule } from './modules/permissions/permissions.module'
-import { UserProfileModule } from './modules/user-profile/user-profile.module'
 import { AuditModule } from '@island.is/nest/audit'
+
+import { ClientsModule } from './v1/clients/clients.module'
+import { GrantsModule } from './v1/grants/grants.module'
+import { ResourcesModule } from './v1/resources/resources.module'
+import { UsersModule } from './v1/users/users.module'
+import { environment } from '../environments'
+import { TranslationModule } from './v1/translation/translation.module'
+import { DelegationsModule } from './v1/delegations/delegations.module'
+import { PermissionsModule } from './v1/permissions/permissions.module'
+import { UserProfileModule } from './v1/user-profile/user-profile.module'
 
 @Module({
   imports: [
