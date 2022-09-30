@@ -143,6 +143,7 @@
     "content-search-toolkit": "libs/content-search-toolkit",
     "contentful-mideind-extension": "libs/contentful-extensions/mideind-translation",
     "contentful-parent-slug-extension": "libs/contentful-extensions/parent-slug",
+    "contentful-role-permissions": "apps/tools/contentful-role-permissions",
     "contentful-translation-extension": "libs/contentful-extensions/translation",
     "dokobit-signing": "libs/dokobit-signing",
     "download-service": "apps/download-service",

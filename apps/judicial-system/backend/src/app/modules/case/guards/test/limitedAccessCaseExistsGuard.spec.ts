@@ -7,7 +7,7 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 
-import { CaseState } from '@island.is/judicial-system/types'
+import { CaseFileState, CaseState } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../../test/createTestingCaseModule'
 import { Defendant } from '../../../defendant'
@@ -15,6 +15,7 @@ import { Institution } from '../../../institution'
 import { User } from '../../../user'
 import { Case } from '../../models/case.model'
 import { LimitedAccessCaseExistsGuard } from '../limitedAccessCaseExists.guard'
+import { CaseFile } from '../../../file'
 
 interface Then {
   result: boolean
@@ -128,6 +129,14 @@ describe('Restricted Case Exists Guard', () => {
           },
           { model: Case, as: 'parentCase', attributes },
           { model: Case, as: 'childCase', attributes },
+          {
+            model: CaseFile,
+            as: 'caseFiles',
+            where: {
+              state: { [Op.not]: CaseFileState.DELETED },
+              category: { [Op.not]: null },
+            },
+          },
         ],
         order: [[{ model: Defendant, as: 'defendants' }, 'created', 'ASC']],
         where: {

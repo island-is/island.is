@@ -181,6 +181,11 @@ export const m = defineMessages({
     id: 'service.portal:could-not-fetch-data',
     defaultMessage: 'Ekki tókst að sækja gögn',
   },
+  errorFetchModule: {
+    id: 'service.portal:could-not-fetch-data-module',
+    defaultMessage:
+      'Ekki tókst að sækja {module}, samband við vefþjón mistókst.',
+  },
   couldNotFetch: {
     id: 'service.portal:could-not-fetch',
     defaultMessage: 'Tókst ekki að sækja',
