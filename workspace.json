@@ -225,7 +225,6 @@
     "service-portal-eligibility": "libs/service-portal/eligibility",
     "service-portal-endorsements": "libs/service-portal/endorsements",
     "service-portal-finance": "libs/service-portal/finance",
-    "service-portal-finance-schedule": "libs/service-portal/finance-schedule",
     "service-portal-graphql": "libs/service-portal/graphql",
     "service-portal-health": "libs/service-portal/health",
     "service-portal-icelandic-names-registry": "libs/service-portal/icelandic-names-registry",
