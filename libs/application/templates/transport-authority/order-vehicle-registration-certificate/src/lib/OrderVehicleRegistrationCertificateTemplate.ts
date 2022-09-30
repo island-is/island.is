@@ -11,6 +11,7 @@ import {
 import { Events, States, Roles } from './constants'
 import * as z from 'zod'
 import { m } from './messages'
+import { Features } from '@island.is/feature-flags'
 
 const OrderVehicleRegistrationCertificateSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -28,7 +29,7 @@ const template: ApplicationTemplate<
     ApplicationConfigurations.OrderVehicleRegistrationCertificate.translation,
   ],
   dataSchema: OrderVehicleRegistrationCertificateSchema,
-  readyForProduction: false,
+  featureFlag: Features.transportAuthorityOrderVehicleRegistrationCertificate,
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {

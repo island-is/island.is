@@ -11,6 +11,7 @@ import {
 import { Events, States, Roles } from './constants'
 import * as z from 'zod'
 import { m } from './messages'
+import { Features } from '@island.is/feature-flags'
 
 const TransferOfVehicleOwnershipSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -28,7 +29,7 @@ const template: ApplicationTemplate<
     ApplicationConfigurations.TransferOfVehicleOwnership.translation,
   ],
   dataSchema: TransferOfVehicleOwnershipSchema,
-  readyForProduction: false,
+  featureFlag: Features.transportAuthorityTransferOfVehicleOwnership,
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {

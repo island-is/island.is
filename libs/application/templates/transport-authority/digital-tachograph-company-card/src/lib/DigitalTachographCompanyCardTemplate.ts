@@ -11,6 +11,7 @@ import {
 import { Events, States, Roles } from './constants'
 import * as z from 'zod'
 import { m } from './messages'
+import { Features } from '@island.is/feature-flags'
 
 const DigitalTachographCompanyCardSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -28,7 +29,7 @@ const template: ApplicationTemplate<
     ApplicationConfigurations.DigitalTachographCompanyCard.translation,
   ],
   dataSchema: DigitalTachographCompanyCardSchema,
-  readyForProduction: false,
+  featureFlag: Features.transportAuthorityDigitalTachographCompanyCard,
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {
