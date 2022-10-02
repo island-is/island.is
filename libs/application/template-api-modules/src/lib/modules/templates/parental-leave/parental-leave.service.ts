@@ -175,16 +175,12 @@ export class ParentalLeaveService {
     }
   }
 
-  async getSelfEmployedPdf(application: Application, index = 0) {
+  async getSelfEmployedPdf(application: Application) {
     try {
       const filename = getValueViaPath(
         application.answers,
-        `employer.selfEmployed.file[${index}].key`,
+        'employer.selfEmployed.file[0].key',
       )
-
-      if (!filename) {
-        return this.getPdfs(application, index)
-      }
 
       const Key = `${application.id}/${filename}`
       const file = await this.s3
@@ -205,7 +201,7 @@ export class ParentalLeaveService {
 
   async getPdfs(application: Application, index = 0) {
     try {
-      const filename = getValueViaPath(
+      const filename = await getValueViaPath(
         application.answers,
         `fileUpload.file[${index}].key`,
       )
@@ -230,42 +226,25 @@ export class ParentalLeaveService {
   async getAttachments(application: Application): Promise<Attachment[]> {
     const attachments: Attachment[] = []
     const { isSelfEmployed } = getApplicationAnswers(application.answers)
-    const otherFiles = await getValueViaPath(application.answers, 'fileUpload.file')
-    const files = (otherFiles as { file: unknown[] })?.file
-    const numberOfFiles = files?.length
-    if (isSelfEmployed === YES) {
-      if (numberOfFiles > 1 && files) {
-        for (let i = 0; i < numberOfFiles - 1; i++) {
-          const pdf = await this.getPdfs(application, i)
-          attachments.push({
-            attachmentType: apiConstants.attachments.other,
-            attachmentBytes: pdf,
-          })
-        }
-      } else {
-        const pdf = await this.getSelfEmployedPdf(application)
+    const selfEmployedFile = await getValueViaPath(application.answers, 'employer.selfEmployed.file') as unknown[]
+    const otherFiles = await getValueViaPath(application.answers, 'fileUpload.file') as unknown[]
 
-        attachments.push({
-          attachmentType: apiConstants.attachments.selfEmployed,
-          attachmentBytes: pdf,
-        })
-      }
+    if (isSelfEmployed === YES && selfEmployedFile.length) {
+      const pdf = await this.getSelfEmployedPdf(application)
+
+      attachments.push({
+        attachmentType: apiConstants.attachments.selfEmployed,
+        attachmentBytes: pdf,
+      })
     } else {
-      if (numberOfFiles > 1 && files) {
-        for (let i = 0; i < numberOfFiles - 1; i++) {
+      if (otherFiles.length) {
+        for (let i = 0; i <= otherFiles.length - 1; i++) {
           const pdf = await this.getPdfs(application, i)
           attachments.push({
             attachmentType: apiConstants.attachments.other,
             attachmentBytes: pdf,
           })
         }
-      } else {
-        const pdf = await this.getPdfs(application)
-
-        attachments.push({
-          attachmentType: apiConstants.attachments.other,
-          attachmentBytes: pdf,
-        })
       }
     }
 
@@ -456,6 +435,8 @@ export class ParentalLeaveService {
       // Add each period to the total number of days spent when an iteration is finished
       numberOfDaysAlreadySpent += periodLength
     }
+
+    this.logger.debug('create periods dto -----------------------------------------------------')
 
     return periods
   }
