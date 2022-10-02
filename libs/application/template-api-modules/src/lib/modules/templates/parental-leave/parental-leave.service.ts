@@ -241,7 +241,8 @@ export class ParentalLeaveService {
         for (let i = 0; i <= otherFiles.length - 1; i++) {
           const pdf = await this.getPdfs(application, i)
           attachments.push({
-            attachmentType: apiConstants.attachments.other,
+            // does not work with the "other" type needs works with selfEmployed
+            attachmentType: apiConstants.attachments.selfEmployed,
             attachmentBytes: pdf,
           })
         }
@@ -435,8 +436,6 @@ export class ParentalLeaveService {
       // Add each period to the total number of days spent when an iteration is finished
       numberOfDaysAlreadySpent += periodLength
     }
-
-    this.logger.debug('create periods dto -----------------------------------------------------')
 
     return periods
   }
