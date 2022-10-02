@@ -229,7 +229,7 @@ export class ParentalLeaveService {
     const selfEmployedFile = await getValueViaPath(application.answers, 'employer.selfEmployed.file') as unknown[]
     const otherFiles = await getValueViaPath(application.answers, 'fileUpload.file') as unknown[]
 
-    if (isSelfEmployed === YES && selfEmployedFile.length) {
+    if (isSelfEmployed === YES && selfEmployedFile.length > 0) {
       const pdf = await this.getSelfEmployedPdf(application)
 
       attachments.push({
