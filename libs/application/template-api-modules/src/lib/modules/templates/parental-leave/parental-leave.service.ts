@@ -226,8 +226,14 @@ export class ParentalLeaveService {
   async getAttachments(application: Application): Promise<Attachment[]> {
     const attachments: Attachment[] = []
     const { isSelfEmployed } = getApplicationAnswers(application.answers)
-    const selfEmployedFile = await getValueViaPath(application.answers, 'employer.selfEmployed.file') as unknown[]
-    const otherFiles = await getValueViaPath(application.answers, 'fileUpload.file') as unknown[]
+    const selfEmployedFile = (await getValueViaPath(
+      application.answers,
+      'employer.selfEmployed.file',
+    )) as unknown[]
+    const otherFiles = (await getValueViaPath(
+      application.answers,
+      'fileUpload.file',
+    )) as unknown[]
 
     if (isSelfEmployed === YES && selfEmployedFile.length > 0) {
       const pdf = await this.getSelfEmployedPdf(application)
