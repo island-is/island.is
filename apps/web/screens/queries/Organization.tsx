@@ -1,5 +1,5 @@
 import gql from 'graphql-tag'
-import { slices } from './fragments'
+import { nestedOneColumnTextFields, slices } from './fragments'
 
 export const GET_ORGANIZATIONS_QUERY = gql`
   query GetOrganizations($input: GetOrganizationsInput!) {
@@ -170,6 +170,7 @@ export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
       slug
       description {
         ...AllSlices
+        ...NestedOneColumnTextFields
       }
       links {
         text
@@ -177,6 +178,7 @@ export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
       }
       slices {
         ...AllSlices
+        ...NestedOneColumnTextFields
       }
       showTableOfContents
       sliceCustomRenderer
@@ -190,6 +192,7 @@ export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
     }
   }
   ${slices}
+  ${nestedOneColumnTextFields}
 `
 
 export const GET_ORGANIZATION_SERVICES_QUERY = gql`

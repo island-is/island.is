@@ -19,6 +19,7 @@ import {
   Stepper,
   stepperUtils,
   Form,
+  AccordionSlice,
 } from '@island.is/web/components'
 import {
   Box,
@@ -136,6 +137,7 @@ const ProjectPage: Screen<PageProps> = ({
               richText(subpage.content as SliceType[], {
                 renderComponent: {
                   Form: (slice) => <Form form={slice} namespace={namespace} />,
+                  AccordionSlice: (slice) => <AccordionSlice slice={slice} />,
                 },
               })}
           </Box>
