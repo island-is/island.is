@@ -31,6 +31,7 @@ import {
   CaseType,
   Gender,
   isAcceptingCaseDecision,
+  SessionArrangements,
 } from '@island.is/judicial-system/types'
 import {
   RestrictionCaseCourtSubsections,
@@ -509,14 +510,34 @@ export const CourtRecord: React.FC = () => {
                           CaseAppealDecision.APPEAL
                         }
                         onChange={() => {
-                          setWorkingCase({
-                            ...workingCase,
-                            accusedAppealDecision: CaseAppealDecision.APPEAL,
-                          })
-
-                          updateCase(workingCase.id, {
-                            accusedAppealDecision: CaseAppealDecision.APPEAL,
-                          })
+                          setAndSendToServer(
+                            [
+                              {
+                                accusedAppealDecision:
+                                  CaseAppealDecision.APPEAL,
+                                force: true,
+                              },
+                              {
+                                accusedAppealAnnouncement:
+                                  workingCase.sessionArrangements ===
+                                  SessionArrangements.ALL_PRESENT_SPOKESPERSON
+                                    ? formatMessage(
+                                        m.sections.appealDecision
+                                          .defendantAnnouncementAutofillSpokespersonAppeal,
+                                      )
+                                    : formatMessage(
+                                        m.sections.appealDecision
+                                          .defendantAnnouncementAutofillAppeal,
+                                        {
+                                          caseType: workingCase.type,
+                                        },
+                                      ),
+                                force: true,
+                              },
+                            ],
+                            workingCase,
+                            setWorkingCase,
+                          )
                         }}
                         large
                         backgroundColor="white"
@@ -546,14 +567,21 @@ export const CourtRecord: React.FC = () => {
                           CaseAppealDecision.ACCEPT
                         }
                         onChange={() => {
-                          setWorkingCase({
-                            ...workingCase,
-                            accusedAppealDecision: CaseAppealDecision.ACCEPT,
-                          })
-
-                          updateCase(workingCase.id, {
-                            accusedAppealDecision: CaseAppealDecision.ACCEPT,
-                          })
+                          setAndSendToServer(
+                            [
+                              {
+                                accusedAppealDecision:
+                                  CaseAppealDecision.ACCEPT,
+                                force: true,
+                              },
+                              {
+                                accusedAppealAnnouncement: '',
+                                force: true,
+                              },
+                            ],
+                            workingCase,
+                            setWorkingCase,
+                          )
                         }}
                         large
                         backgroundColor="white"
@@ -587,14 +615,21 @@ export const CourtRecord: React.FC = () => {
                           CaseAppealDecision.POSTPONE
                         }
                         onChange={() => {
-                          setWorkingCase({
-                            ...workingCase,
-                            accusedAppealDecision: CaseAppealDecision.POSTPONE,
-                          })
-
-                          updateCase(workingCase.id, {
-                            accusedAppealDecision: CaseAppealDecision.POSTPONE,
-                          })
+                          setAndSendToServer(
+                            [
+                              {
+                                accusedAppealDecision:
+                                  CaseAppealDecision.POSTPONE,
+                                force: true,
+                              },
+                              {
+                                accusedAppealAnnouncement: '',
+                                force: true,
+                              },
+                            ],
+                            workingCase,
+                            setWorkingCase,
+                          )
                         }}
                         large
                         backgroundColor="white"
@@ -613,16 +648,21 @@ export const CourtRecord: React.FC = () => {
                           CaseAppealDecision.NOT_APPLICABLE
                         }
                         onChange={() => {
-                          setWorkingCase({
-                            ...workingCase,
-                            accusedAppealDecision:
-                              CaseAppealDecision.NOT_APPLICABLE,
-                          })
-
-                          updateCase(workingCase.id, {
-                            accusedAppealDecision:
-                              CaseAppealDecision.NOT_APPLICABLE,
-                          })
+                          setAndSendToServer(
+                            [
+                              {
+                                accusedAppealDecision:
+                                  CaseAppealDecision.NOT_APPLICABLE,
+                                force: true,
+                              },
+                              {
+                                accusedAppealAnnouncement: '',
+                                force: true,
+                              },
+                            ],
+                            workingCase,
+                            setWorkingCase,
+                          )
                         }}
                         large
                         backgroundColor="white"
@@ -706,14 +746,24 @@ export const CourtRecord: React.FC = () => {
                         CaseAppealDecision.APPEAL
                       }
                       onChange={() => {
-                        setWorkingCase({
-                          ...workingCase,
-                          prosecutorAppealDecision: CaseAppealDecision.APPEAL,
-                        })
-
-                        updateCase(workingCase.id, {
-                          prosecutorAppealDecision: CaseAppealDecision.APPEAL,
-                        })
+                        setAndSendToServer(
+                          [
+                            {
+                              prosecutorAppealDecision:
+                                CaseAppealDecision.APPEAL,
+                              force: true,
+                            },
+                            {
+                              prosecutorAppealAnnouncement: formatMessage(
+                                m.sections.appealDecision
+                                  .prosecutorAnnoncementAutofillAppeal,
+                              ),
+                              force: true,
+                            },
+                          ],
+                          workingCase,
+                          setWorkingCase,
+                        )
                       }}
                       large
                       backgroundColor="white"
@@ -732,14 +782,21 @@ export const CourtRecord: React.FC = () => {
                         CaseAppealDecision.ACCEPT
                       }
                       onChange={() => {
-                        setWorkingCase({
-                          ...workingCase,
-                          prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
-                        })
-
-                        updateCase(workingCase.id, {
-                          prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
-                        })
+                        setAndSendToServer(
+                          [
+                            {
+                              prosecutorAppealDecision:
+                                CaseAppealDecision.ACCEPT,
+                              force: true,
+                            },
+                            {
+                              prosecutorAppealAnnouncement: '',
+                              force: true,
+                            },
+                          ],
+                          workingCase,
+                          setWorkingCase,
+                        )
                       }}
                       large
                       backgroundColor="white"
@@ -762,14 +819,21 @@ export const CourtRecord: React.FC = () => {
                         CaseAppealDecision.POSTPONE
                       }
                       onChange={() => {
-                        setWorkingCase({
-                          ...workingCase,
-                          prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
-                        })
-
-                        updateCase(workingCase.id, {
-                          prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
-                        })
+                        setAndSendToServer(
+                          [
+                            {
+                              prosecutorAppealDecision:
+                                CaseAppealDecision.POSTPONE,
+                              force: true,
+                            },
+                            {
+                              prosecutorAppealAnnouncement: '',
+                              force: true,
+                            },
+                          ],
+                          workingCase,
+                          setWorkingCase,
+                        )
                       }}
                       large
                       backgroundColor="white"
@@ -788,16 +852,21 @@ export const CourtRecord: React.FC = () => {
                         CaseAppealDecision.NOT_APPLICABLE
                       }
                       onChange={() => {
-                        setWorkingCase({
-                          ...workingCase,
-                          prosecutorAppealDecision:
-                            CaseAppealDecision.NOT_APPLICABLE,
-                        })
-
-                        updateCase(workingCase.id, {
-                          prosecutorAppealDecision:
-                            CaseAppealDecision.NOT_APPLICABLE,
-                        })
+                        setAndSendToServer(
+                          [
+                            {
+                              prosecutorAppealDecision:
+                                CaseAppealDecision.NOT_APPLICABLE,
+                              force: true,
+                            },
+                            {
+                              prosecutorAppealAnnouncement: '',
+                              force: true,
+                            },
+                          ],
+                          workingCase,
+                          setWorkingCase,
+                        )
                       }}
                       large
                       backgroundColor="white"
