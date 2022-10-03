@@ -22,7 +22,6 @@ import {
 import { DriversLicenseConfig } from '../../licenseService.module'
 import { PkPassClient } from './pkpass.client'
 import { PkPassPayload } from './pkpass.type'
-
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'drivinglicense-service'
 
@@ -87,9 +86,12 @@ export class GenericDrivingLicenseApi
       })
 
       if (!res.ok) {
-        throw new Error(
-          `Expected 200 status for Drivers license query, got ${res.status}`,
-        )
+        if (res.status !== 400 && res.status !== 404) {
+          throw new Error(
+            `Expected 200 status for Drivers license query, got ${res.status}`,
+          )
+        }
+        return null
       }
     } catch (e) {
       this.logger.error('Unable to query for drivers licence', {
@@ -225,19 +227,12 @@ export class GenericDrivingLicenseApi
     const licenses = await this.requestFromXroadApi(nationalId)
 
     if (!licenses) {
-      this.logger.warn('Missing licenses, null from x-road', {
-        category: LOG_CATEGORY,
-      })
       return null
     }
 
     const license = licenses[0]
 
     if (!license) {
-      this.logger.warn(
-        'Missing license, unable to generate pkpass for drivers license',
-        { category: LOG_CATEGORY },
-      )
       return null
     }
 
@@ -263,19 +258,12 @@ export class GenericDrivingLicenseApi
     const licenses = await this.requestFromXroadApi(nationalId)
 
     if (!licenses) {
-      this.logger.warn('Missing licenses, null from x-road', {
-        category: LOG_CATEGORY,
-      })
       return null
     }
 
     const license = licenses[0]
 
     if (!license) {
-      this.logger.warn(
-        'Missing license, unable to generate pkpass for drivers license',
-        { category: LOG_CATEGORY },
-      )
       return null
     }
 
@@ -305,9 +293,6 @@ export class GenericDrivingLicenseApi
     const licenses = await this.requestFromXroadApi(user.nationalId)
 
     if (!licenses) {
-      this.logger.warn('Missing licenses, null from x-road', {
-        category: LOG_CATEGORY,
-      })
       return null
     }
 
@@ -384,10 +369,6 @@ export class GenericDrivingLicenseApi
       const licenses = await this.requestFromXroadApi(nationalId)
 
       if (!licenses) {
-        this.logger.warn(
-          'Missing licenses from x-road, unable to return license info for pkpass verify',
-          { category: LOG_CATEGORY },
-        )
         error = {
           status: '0',
           message: 'missing licenses',
