@@ -177,10 +177,18 @@ export class ParentalLeaveService {
 
   async getSelfEmployedPdf(application: Application) {
     try {
-      const filename = getValueViaPath(
+      let filename = getValueViaPath(
         application.answers,
         'employer.selfEmployed.file[0].key',
       )
+
+      if (!filename) {
+        filename = getValueViaPath(
+          application.answers,
+          'fileUpload.selfEmployedFile[0].key',
+        )
+      }
+
       const Key = `${application.id}/${filename}`
       const file = await this.s3
         .getObject({ Bucket: this.attachmentBucket, Key })
@@ -198,6 +206,55 @@ export class ParentalLeaveService {
     }
   }
 
+  // add when we add student confirmation
+  // async getStudentPdf(application: Application) {
+  //   try {
+  //     const filename = getValueViaPath(
+  //       application.answers,
+  //       'fileUpload.studentFile[0].key',
+  //     )
+
+  //     const Key = `${application.id}/${filename}`
+  //     const file = await this.s3
+  //       .getObject({ Bucket: this.attachmentBucket, Key })
+  //       .promise()
+  //     const fileContent = file.Body as Buffer
+
+  //     if (!fileContent) {
+  //       throw new Error('File content was undefined')
+  //     }
+
+  //     return fileContent.toString('base64')
+  //   } catch (e) {
+  //     this.logger.error('Cannot get student attachment', { e })
+  //     throw new Error('Failed to get the student attachment')
+  //   }
+  // }
+
+  async getGenericPdf(application: Application) {
+    try {
+      const filename = getValueViaPath(
+        application.answers,
+        'fileUpload.file[0].key',
+      )
+
+      const Key = `${application.id}/${filename}`
+      const file = await this.s3
+        .getObject({ Bucket: this.attachmentBucket, Key })
+        .promise()
+      const fileContent = file.Body as Buffer
+
+      if (!fileContent) {
+        throw new Error('File content was undefined')
+      }
+
+      return fileContent.toString('base64')
+    } catch (e) {
+      this.logger.error('Cannot get attachment', { e })
+      throw new Error('Failed to get the attachment')
+    }
+  }
+
   async getAttachments(application: Application): Promise<Attachment[]> {
     const attachments: Attachment[] = []
     const { isSelfEmployed } = getApplicationAnswers(application.answers)
@@ -207,6 +264,14 @@ export class ParentalLeaveService {
 
       attachments.push({
         attachmentType: apiConstants.attachments.selfEmployed,
+        attachmentBytes: pdf,
+      })
+    } else {
+      const pdf = await this.getGenericPdf(application)
+
+      attachments.push({
+        // needs to add other types
+        attachmentType: apiConstants.attachments.other,
         attachmentBytes: pdf,
       })
     }
