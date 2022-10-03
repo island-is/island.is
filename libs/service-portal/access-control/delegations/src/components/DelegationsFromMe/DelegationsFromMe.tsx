@@ -5,6 +5,7 @@ import {
   SkeletonLoader,
   GridRow,
   GridColumn,
+  GridContainer,
 } from '@island.is/island-ui/core'
 import { Query, AuthCustomDelegation } from '@island.is/api/schema'
 import { useNamespaces } from '@island.is/localization'
@@ -16,11 +17,11 @@ export const DelegationsFromMe = () => {
   useNamespaces('sp.settings-access-control')
   const { data, loading } = useQuery<Query>(AuthDelegationsQuery)
 
-  const authDelegations = ((data || {}).authDelegations ||
+  const authDelegations = (data?.authDelegations ??
     []) as AuthCustomDelegation[]
 
   return (
-    <Box>
+    <GridContainer>
       <GridRow>
         <GridColumn paddingBottom={4} span="12/12">
           <DelegationsHeader
@@ -37,6 +38,6 @@ export const DelegationsFromMe = () => {
           )}
         </GridColumn>
       </GridRow>
-    </Box>
+    </GridContainer>
   )
 }

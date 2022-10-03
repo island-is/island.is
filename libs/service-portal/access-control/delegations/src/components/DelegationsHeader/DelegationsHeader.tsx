@@ -1,6 +1,7 @@
 import { useHistory } from 'react-router-dom'
 
 import { Box, Button, Select, Option } from '@island.is/island-ui/core'
+import { useBreakpoint } from '@island.is/island-ui/core'
 import { m, ServicePortalPath } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import * as styles from './DelegationsHeader.css'
@@ -16,6 +17,7 @@ export const DelegationsHeader = ({
   useNamespaces('sp.settings-access-control')
   const history = useHistory()
   const { formatMessage } = useLocale()
+  const { sm } = useBreakpoint()
 
   const systemOptions = [
     {
@@ -36,8 +38,13 @@ export const DelegationsHeader = ({
   ]
 
   return (
-    <Box display="flex" justifyContent="spaceBetween" alignItems="flexEnd">
-      <div className={styles.selectContainer}>
+    <Box
+      display="flex"
+      justifyContent="spaceBetween"
+      alignItems="flexEnd"
+      className={styles.container}
+    >
+      <Box className={styles.selectContainer}>
         <Select
           label={formatMessage(m.accessControl)}
           size="xs"
@@ -51,15 +58,14 @@ export const DelegationsHeader = ({
             defaultMessage: 'Veldu kerfi',
           })}
         />
-      </div>
+      </Box>
       <Button
         onClick={() =>
           history.push(ServicePortalPath.AccessControlDelegationsGrant)
         }
         variant="utility"
         size="small"
-        icon="add"
-        iconType="outline"
+        {...(sm && { icon: 'add', iconType: 'outline' })}
       >
         {formatMessage({
           id: 'sp.access-control-delegations:new-delegation',

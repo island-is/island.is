@@ -71,7 +71,13 @@ const AccessCard = ({
         </Inline>
       </Box>
       <Box marginTop={2}>
-        <Box display="flex" justifyContent="spaceBetween" alignItems="flexEnd">
+        <Box
+          display="flex"
+          justifyContent="spaceBetween"
+          alignItems={['flexStart', 'flexEnd']}
+          flexDirection={['column', 'row']}
+          width="full"
+        >
           <Inline alignY="bottom" space={1}>
             {tags.map((tag, index) => (
               <Tag
@@ -83,7 +89,13 @@ const AccessCard = ({
               </Tag>
             ))}
           </Inline>
-          <Box display="flex" alignItems="center">
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent={['spaceBetween', 'flexEnd']}
+            width="full"
+            marginTop={[2, 0]}
+          >
             <Button
               variant="text"
               icon="trash"
