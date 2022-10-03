@@ -37,7 +37,7 @@
         "command": "yarn playwright test apps/system-e2e/src/tests -c apps/system-e2e/src"
       }
     },
-    "docker-cypress": {}
+    "docker-playwright": {}
   },
   "tags": []
 }
