@@ -574,6 +574,10 @@ export const CourtRecord: React.FC = () => {
                                   CaseAppealDecision.ACCEPT,
                                 force: true,
                               },
+                              {
+                                accusedAppealAnnouncement: '',
+                                force: true,
+                              },
                             ],
                             workingCase,
                             setWorkingCase,
@@ -618,6 +622,10 @@ export const CourtRecord: React.FC = () => {
                                   CaseAppealDecision.POSTPONE,
                                 force: true,
                               },
+                              {
+                                accusedAppealAnnouncement: '',
+                                force: true,
+                              },
                             ],
                             workingCase,
                             setWorkingCase,
@@ -645,6 +653,10 @@ export const CourtRecord: React.FC = () => {
                               {
                                 accusedAppealDecision:
                                   CaseAppealDecision.NOT_APPLICABLE,
+                                force: true,
+                              },
+                              {
+                                accusedAppealAnnouncement: '',
                                 force: true,
                               },
                             ],
@@ -777,6 +789,10 @@ export const CourtRecord: React.FC = () => {
                                 CaseAppealDecision.ACCEPT,
                               force: true,
                             },
+                            {
+                              prosecutorAppealAnnouncement: '',
+                              force: true,
+                            },
                           ],
                           workingCase,
                           setWorkingCase,
@@ -810,6 +826,10 @@ export const CourtRecord: React.FC = () => {
                                 CaseAppealDecision.POSTPONE,
                               force: true,
                             },
+                            {
+                              prosecutorAppealAnnouncement: '',
+                              force: true,
+                            },
                           ],
                           workingCase,
                           setWorkingCase,
@@ -837,6 +857,10 @@ export const CourtRecord: React.FC = () => {
                             {
                               prosecutorAppealDecision:
                                 CaseAppealDecision.NOT_APPLICABLE,
+                              force: true,
+                            },
+                            {
+                              prosecutorAppealAnnouncement: '',
                               force: true,
                             },
                           ],
