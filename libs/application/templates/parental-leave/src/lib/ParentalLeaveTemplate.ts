@@ -426,6 +426,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.VINNUMALASTOFNUN_ACTION]: {
+        entry: 'assignToVMST',
         meta: {
           name: States.VINNUMALASTOFNUN_ACTION,
           actionCard: {
@@ -443,6 +444,14 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               read: 'all',
               write: 'all',
             },
+            {
+              id: Roles.ORGINISATION_REVIEWER,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              write: 'all',
+            },
           ],
         },
         on: {
@@ -450,6 +459,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.ADDITIONAL_DOCUMENT_REQUIRED]: {
+        entry: 'assignToVMST',
         meta: {
           name: States.ADDITIONAL_DOCUMENT_REQUIRED,
           actionCard: {
@@ -465,6 +475,14 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   Promise.resolve(val.DraftRequiresAction),
                 ),
               read: 'all',
+              write: 'all',
+            },
+            {
+              id: Roles.ORGINISATION_REVIEWER,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
               write: 'all',
             },
           ],
@@ -562,7 +580,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
       // Edit Flow States
       [States.EDIT_OR_ADD_PERIODS]: {
-        entry: 'createTempPeriods',
+        entry: ['createTempPeriods', 'assignToVMST'],
         exit: 'restorePeriodsFromTemp',
         meta: {
           name: States.EDIT_OR_ADD_PERIODS,
@@ -585,6 +603,14 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               write: 'all',
               read: 'all',
             },
+            {
+              id: Roles.ORGINISATION_REVIEWER,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              write: 'all',
+            },
           ],
         },
         on: {
@@ -605,6 +631,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS]: {
+        entry: 'assignToVMST',
         exit: 'setEmployerReviewerNationalRegistryId',
         meta: {
           name: States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
@@ -628,6 +655,14 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               read: 'all',
               write: 'all',
             },
+            {
+              id: Roles.ORGINISATION_REVIEWER,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              write: 'all',
+            },
           ],
         },
         on: {
@@ -636,6 +671,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.EMPLOYER_APPROVE_EDITS]: {
+        entry: 'assignToVMST',
         exit: 'clearAssignees',
         meta: {
           name: States.EMPLOYER_APPROVE_EDITS,
@@ -681,6 +717,14 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               read: 'all',
               write: 'all',
             },
+            {
+              id: Roles.ORGINISATION_REVIEWER,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              write: 'all',
+            },
           ],
         },
         on: {
@@ -693,6 +737,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.EMPLOYER_EDITS_ACTION]: {
+        entry: 'assignToVMST',
         exit: 'restorePeriodsFromTemp',
         meta: {
           name: States.EMPLOYER_EDITS_ACTION,
@@ -714,6 +759,14 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   Promise.resolve(val.EditsRequireAction),
                 ),
               read: 'all',
+              write: 'all',
+            },
+            {
+              id: Roles.ORGINISATION_REVIEWER,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
               write: 'all',
             },
           ],
@@ -771,6 +824,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.VINNUMALASTOFNUN_EDITS_ACTION]: {
+        entry: 'assignToVMST',
         exit: 'restorePeriodsFromTemp',
         meta: {
           name: States.VINNUMALASTOFNUN_EDITS_ACTION,
@@ -787,6 +841,14 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   Promise.resolve(val.EditsRequireAction),
                 ),
               read: 'all',
+              write: 'all',
+            },
+            {
+              id: Roles.ORGINISATION_REVIEWER,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
               write: 'all',
             },
           ],
