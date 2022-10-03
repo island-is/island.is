@@ -1,5 +1,4 @@
 import { FieldMiddleware, NextFn, MiddlewareContext } from '@nestjs/graphql'
-import { any } from 'zod'
 
 export const maskOutFieldsMiddleware: FieldMiddleware = async (
   ctx: MiddlewareContext,
