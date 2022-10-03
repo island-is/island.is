@@ -18,6 +18,16 @@ const envs = {
     staging: 'cdn.contentful.com',
     prod: 'cdn.contentful.com',
   },
+  CONTENTFUL_ENTRY_FETCH_CHUNK_SIZE: {
+    dev: '40',
+    staging: '40',
+    prod: '40',
+  },
+  LOG_LEVEL: {
+    dev: 'debug',
+    staging: 'debug',
+    prod: 'debug',
+  },
 }
 export const serviceSetup = (): ServiceBuilder<'search-indexer-service'> =>
   service('search-indexer-service')
@@ -38,11 +48,11 @@ export const serviceSetup = (): ServiceBuilder<'search-indexer-service'> =>
           resources: {
             requests: {
               cpu: '100m',
-              memory: '256Mi',
+              memory: '512Mi',
             },
             limits: {
               cpu: '400m',
-              memory: '1024Mi',
+              memory: '2048Mi',
             },
           },
         },
@@ -53,11 +63,11 @@ export const serviceSetup = (): ServiceBuilder<'search-indexer-service'> =>
           resources: {
             requests: {
               cpu: '100m',
-              memory: '256Mi',
+              memory: '512Mi',
             },
             limits: {
               cpu: '400m',
-              memory: '1024Mi',
+              memory: '2048Mi',
             },
           },
         },
@@ -68,11 +78,11 @@ export const serviceSetup = (): ServiceBuilder<'search-indexer-service'> =>
           resources: {
             requests: {
               cpu: '100m',
-              memory: '256Mi',
+              memory: '512Mi',
             },
             limits: {
               cpu: '400m',
-              memory: '1024Mi',
+              memory: '2048Mi',
             },
           },
         },
@@ -92,11 +102,11 @@ export const serviceSetup = (): ServiceBuilder<'search-indexer-service'> =>
     .resources({
       requests: {
         cpu: '100m',
-        memory: '256Mi',
+        memory: '512Mi',
       },
       limits: {
         cpu: '400m',
-        memory: '1024Mi',
+        memory: '2048Mi',
       },
     })
     .ingress({
