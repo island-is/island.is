@@ -103,12 +103,13 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
     mode: 'onChange',
     defaultValues: {
       toNationalId: '',
-      system: domainQueryParam ? getDefaultSystem(domainQueryParam) : '',
+      system: domainQueryParam ? getDefaultSystem(domainQueryParam) : null,
     },
   })
 
   const { handleSubmit, control, errors, watch, reset } = methods
   const watchToNationalId = watch('toNationalId')
+  const systemWatcher = watch('system')
   const loading = queryLoading || mutationLoading
 
   const requestDelegation = (
@@ -187,7 +188,7 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
                 {name && (
                   <Input
                     name="name"
-                    value={name}
+                    defaultValue={name}
                     aria-live="assertive"
                     label={formatMessage({
                       id:
@@ -206,34 +207,31 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
                   <InputController
                     control={control}
                     id="toNationalId"
-                    defaultValue=""
                     icon={name || queryLoading ? undefined : 'search'}
-                    rules={
-                      {
-                        required: {
-                          value: true,
-                          message: formatMessage({
-                            id: 'sp.settings-access-control:grant-required-ssn',
-                            defaultMessage: 'Skylda er að fylla út kennitölu',
-                          }),
+                    rules={{
+                      required: {
+                        value: true,
+                        message: formatMessage({
+                          id: 'sp.settings-access-control:grant-required-ssn',
+                          defaultMessage: 'Skylda er að fylla út kennitölu',
+                        }),
+                      },
+                      validate: {
+                        value: (value: number) => {
+                          if (
+                            value.toString().length === 10 &&
+                            !kennitala.isValid(value)
+                          ) {
+                            return formatMessage({
+                              id:
+                                'sp.settings-access-control:grant-invalid-ssn',
+                              defaultMessage:
+                                'Kennitalan er ekki gild kennitala',
+                            })
+                          }
                         },
-                        validate: {
-                          value: (value: number) => {
-                            if (
-                              value.toString().length === 10 &&
-                              !kennitala.isValid(value)
-                            ) {
-                              return formatMessage({
-                                id:
-                                  'sp.settings-access-control:grant-invalid-ssn',
-                                defaultMessage:
-                                  'Kennitalan er ekki gild kennitala',
-                              })
-                            }
-                          },
-                        },
-                      } as ValidationRules
-                    }
+                      },
+                    }}
                     type="tel"
                     format="######-####"
                     label={formatMessage(sharedMessages.nationalId)}
@@ -273,10 +271,20 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
                   })}
                   error={errors.system?.message}
                   options={systemOptions}
+                  rules={{
+                    required: {
+                      value: true,
+                      message: formatMessage({
+                        id:
+                          'sp.access-control-delegations:grant-required-system',
+                        defaultMessage: 'Skylda er að velja aðgangsstýringu',
+                      }),
+                    },
+                  }}
                 />
               </div>
               <DelegationsFormFooter
-                disabled={!name || loading}
+                disabled={!name || systemWatcher === null || loading}
                 loading={loading}
                 onCancel={() =>
                   history.push(ServicePortalPath.AccessControlDelegations)
