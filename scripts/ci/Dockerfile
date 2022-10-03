@@ -110,11 +110,11 @@ USER runner
 
 CMD [ "jest", "main.spec.js" ]
 
-FROM mcr.microsoft.com/playwright:v1.25.2-focal as cypress-base
+FROM mcr.microsoft.com/playwright:v1.25.2-focal as playwright-base
 
 
 
-FROM cypress-base as output-cypress
+FROM playwright-base as output-playwright
 
 ARG APP_HOME
 ARG APP_DIST_HOME
@@ -137,7 +137,7 @@ COPY --chown=pwuser:pwuser ${APP_HOME}/entrypoint.sh .
 USER pwuser
 ENTRYPOINT ["./entrypoint.sh"]
 
-FROM cypress-base as output-local
+FROM playwright-base as output-local
 ARG APP_HOME
 
 

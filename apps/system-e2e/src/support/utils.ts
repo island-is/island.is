@@ -26,31 +26,35 @@ export const getEnvironmentBaseUrl = (authority: string) => {
   return `https://${prefix}${authority}`
 }
 export const getEnvironmentUrls = (env: TestEnvironment) => {
-  return env === 'dev'
-    ? {
-        authUrl: AuthUrl.dev,
-        islandisBaseUrl: getEnvironmentBaseUrl(BaseAuthority.dev),
-        adsBaseUrl: getEnvironmentBaseUrl(BaseAuthority.ads),
-      }
-    : env === 'prod'
-    ? {
-        authUrl: AuthUrl.prod,
-        islandisBaseUrl: getEnvironmentBaseUrl(BaseAuthority.prod),
-        adsBaseUrl: getEnvironmentBaseUrl('https://loftbru.island.is'),
-      }
-    : env === 'staging'
-    ? {
-        authUrl: AuthUrl.staging,
-        islandisBaseUrl: getEnvironmentBaseUrl(BaseAuthority.staging),
-        adsBaseUrl: getEnvironmentBaseUrl(
-          'https://loftbru.staging01.devland.is',
-        ),
-      }
-    : {
-        authUrl: AuthUrl.local,
-        islandisBaseUrl: `http://${BaseAuthority.local}`,
-        adsBaseUrl: `http://${BaseAuthority.local}`,
-      }
+  const envs: {
+    [envName in TestEnvironment]: {
+      authUrl: string
+      islandisBaseUrl: string
+      adsBaseUrl: string
+    }
+  } = {
+    dev: {
+      authUrl: AuthUrl.dev,
+      islandisBaseUrl: getEnvironmentBaseUrl(BaseAuthority.dev),
+      adsBaseUrl: getEnvironmentBaseUrl(BaseAuthority.ads),
+    },
+    staging: {
+      authUrl: AuthUrl.staging,
+      islandisBaseUrl: getEnvironmentBaseUrl(BaseAuthority.staging),
+      adsBaseUrl: getEnvironmentBaseUrl('https://loftbru.staging01.devland.is'),
+    },
+    prod: {
+      authUrl: AuthUrl.prod,
+      islandisBaseUrl: getEnvironmentBaseUrl(BaseAuthority.prod),
+      adsBaseUrl: getEnvironmentBaseUrl('https://loftbru.island.is'),
+    },
+    local: {
+      authUrl: AuthUrl.local,
+      islandisBaseUrl: `http://${BaseAuthority.local}`,
+      adsBaseUrl: `http://${BaseAuthority.local}`,
+    },
+  }
+  return envs[env]
 }
 export type CognitoCreds = {
   username: string

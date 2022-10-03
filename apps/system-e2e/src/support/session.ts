@@ -1,6 +1,12 @@
 import { Browser, BrowserContext, expect, Page } from '@playwright/test'
-import { existsSync } from 'fs'
+import { existsSync, mkdirSync } from 'fs'
+import { join } from 'path'
 import { cognitoLogin, getCognitoCredentials, idsLogin, urls } from './utils'
+
+const sessionsPath = join(__dirname, 'tmp-sessions')
+if (!existsSync(sessionsPath)) {
+  mkdirSync(sessionsPath)
+}
 
 /**
  * Checks if Cognito authentication is needed (Dev and Staging) and performs the authentication when necessary
@@ -103,8 +109,9 @@ export async function session({
       }
   authUrl?: string
 }) {
-  const context = existsSync(storageState)
-    ? await browser.newContext({ storageState: storageState })
+  const storageStatePath = join(sessionsPath, storageState)
+  const context = existsSync(storageStatePath)
+    ? await browser.newContext({ storageState: storageStatePath })
     : await browser.newContext()
   const page = await context.newPage()
   const authUrlPrefix = authUrl ?? urls.authUrl
@@ -125,7 +132,7 @@ export async function session({
     waitUntil: 'networkidle',
   })
   await expect(sessionValidation!.url()).toMatch(homeUrl)
-  await sessionValidationPage.context().storageState({ path: storageState })
+  await sessionValidationPage.context().storageState({ path: storageStatePath })
   await sessionValidationPage.close()
   return context
 }

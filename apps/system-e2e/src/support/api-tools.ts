@@ -19,7 +19,6 @@ export async function graphqlSpy(page: Page, url: any, operation: string) {
     extractor: (
       fieldExtractor: (op: { request: any; response: any }) => string,
     ) => () => {
-      // await sleep(100)
       const op = data[0]
       return op ? fieldExtractor(op) : ''
     },

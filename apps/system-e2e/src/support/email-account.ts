@@ -3,8 +3,6 @@
 import { createTestAccount } from 'nodemailer'
 // used to check the email inbox
 import { connect } from 'imap-simple'
-// used to parse emails from the inbox
-// const simpleParser = require('mailparser').simpleParser
 import { simpleParser } from 'mailparser'
 import axios from 'axios'
 import { existsSync, readFileSync, writeFileSync } from 'fs'
@@ -15,7 +13,7 @@ import {
 } from '@aws-sdk/client-ses'
 
 /**
- * Register the email address with AWS SES so we can send emails to it
+ * Register the email address with AWS SES, so we can send emails to it
  * @param emailAccount
  */
 async function registerEmailAddressWithSES(emailAccount: {
@@ -114,45 +112,47 @@ const makeEmailAccount = async (name: string): Promise<EmailAccount> => {
       console.log(`connecting to mail server...`)
       const connection = await connect(emailConfig)
       console.log(`connected`)
+      try {
+        // grab up to 50 emails from the inbox
+        console.log(`Opening inbox...`)
+        await connection.openBox('INBOX')
+        console.log(`Opened inbox.`)
+        const searchCriteria = ['UNSEEN']
+        const fetchOptions = {
+          bodies: [''],
+          markSeen: true,
+        }
+        console.log(`Starting search for new messages...`)
+        const messages = await connection.search(searchCriteria, fetchOptions)
+        console.log(`Search finished`)
 
-      // grab up to 50 emails from the inbox
-      console.log(`Opening inbox...`)
-      await connection.openBox('INBOX')
-      console.log(`Opened inbox.`)
-      const searchCriteria = ['UNSEEN']
-      const fetchOptions = {
-        bodies: [''],
-        markSeen: true,
-      }
-      console.log(`Starting search for new messages...`)
-      const messages = await connection.search(searchCriteria, fetchOptions)
-      console.log(`Search finished`)
-      // and close the connection to avoid it hanging
-      connection.end()
-
-      if (!messages.length) {
-        console.log('cannot find any emails')
-        if (retries <= 0) {
-          return null
+        if (!messages.length) {
+          console.log('cannot find any emails')
+          if (retries <= 0) {
+            return null
+          } else {
+            await new Promise((r) => setTimeout(r, 5000))
+            return userEmail.getLastEmail(retries - 1)
+          }
         } else {
-          await new Promise((r) => setTimeout(r, 5000))
-          return userEmail.getLastEmail(retries - 1)
-        }
-      } else {
-        console.log('there are %d messages', messages.length)
-        // grab the last email
-        const mail = await simpleParser(
-          messages[messages.length - 1].parts[0].body,
-        )
-        console.log(mail.subject)
-        console.log(mail.text)
+          console.log('there are %d messages', messages.length)
+          // grab the last email
+          const mail = await simpleParser(
+            messages[messages.length - 1].parts[0].body,
+          )
+          console.log(mail.subject)
+          console.log(mail.text)
 
-        // and returns the main fields
-        return {
-          subject: mail.subject,
-          text: mail.text,
-          html: mail.html,
+          // and returns the main fields
+          return {
+            subject: mail.subject,
+            text: mail.text,
+            html: mail.html,
+          }
         }
+      } finally {
+        // and close the connection to avoid it hanging
+        connection.end()
       }
     },
   }
