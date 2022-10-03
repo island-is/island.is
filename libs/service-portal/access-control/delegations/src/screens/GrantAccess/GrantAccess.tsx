@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from 'react'
 import cn from 'classnames'
 import { gql, useMutation, useLazyQuery } from '@apollo/client'
-import { useForm, ValidationRules } from 'react-hook-form'
+import { FormProvider, useForm, ValidationRules } from 'react-hook-form'
 import { useHistory } from 'react-router-dom'
 import { defineMessage } from 'react-intl'
 import * as kennitala from 'kennitala'
 import { sharedMessages } from '@island.is/shared/translations'
 
-import { Box, Input, Icon, toast, Select } from '@island.is/island-ui/core'
-import { InputController } from '@island.is/shared/form-fields'
+import { Box, Input, Icon, toast } from '@island.is/island-ui/core'
+import {
+  InputController,
+  SelectController,
+} from '@island.is/shared/form-fields'
 import { Mutation, Query } from '@island.is/api/schema'
 import {
   IntroHeader,
@@ -47,6 +50,20 @@ const IdentityQuery = gql`
 const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.settings-access-control')
 
+  const [name, setName] = useState('')
+  const methods = useForm({
+    mode: 'onChange',
+  })
+
+  const { handleSubmit, control, errors, watch, reset } = methods
+
+  const [
+    createAuthDelegation,
+    { loading: mutationLoading },
+  ] = useMutation<Mutation>(CreateAuthDelegationMutation, {
+    refetchQueries: [{ query: AuthDelegationsQuery }],
+  })
+
   const noUserFoundToast = () => {
     toast.error(
       formatMessage({
@@ -55,18 +72,6 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
       }),
     )
   }
-
-  const [name, setName] = useState('')
-  const { handleSubmit, control, errors, watch, reset } = useForm({
-    mode: 'onChange',
-  })
-
-  const [
-    createAuthDelegation,
-    { loading: mutationLoading },
-  ] = useMutation<Mutation>(CreateAuthDelegationMutation, {
-    refetchQueries: [{ query: AuthDelegationsQuery }],
-  })
   const [getIdentity, { data, loading: queryLoading }] = useLazyQuery<Query>(
     IdentityQuery,
     {
@@ -163,123 +168,123 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
         })}
       />
       <Box className={styles.container}>
-        <form onSubmit={onSubmit}>
-          <Box display="flex" flexDirection="column" rowGap={6}>
-            <NoActionCard
-              label={formatMessage({
-                id: 'sp.access-control-delegations:signed-in-user',
-                defaultMessage: 'Innskráður notandi',
-              })}
-              title={userInfo.profile.name}
-              description={formatNationalId(userInfo.profile.nationalId)}
-            />
-            <div className={styles.inputWrapper}>
-              {name && (
-                <Input
-                  name="name"
-                  value={name}
+        <FormProvider {...methods}>
+          <form onSubmit={onSubmit}>
+            <Box display="flex" flexDirection="column" rowGap={6}>
+              <NoActionCard
+                label={formatMessage({
+                  id: 'sp.access-control-delegations:signed-in-user',
+                  defaultMessage: 'Innskráður notandi',
+                })}
+                title={userInfo.profile.name}
+                description={formatNationalId(userInfo.profile.nationalId)}
+              />
+              <div className={styles.inputWrapper}>
+                {name && (
+                  <Input
+                    name="name"
+                    value={name}
+                    aria-live="assertive"
+                    label={formatMessage({
+                      id:
+                        'sp.access-control-delegations:grant-form-access-holder',
+                      defaultMessage: 'Kennitala aðgangshafa',
+                    })}
+                    backgroundColor="blue"
+                    size="md"
+                  />
+                )}
+                <Box
+                  display={name ? 'none' : 'block'}
                   aria-live="assertive"
-                  label={formatMessage({
-                    id:
-                      'sp.access-control-delegations:grant-form-access-holder',
-                    defaultMessage: 'Kennitala aðgangshafa',
-                  })}
-                  backgroundColor="blue"
-                  size="md"
-                />
-              )}
-              <Box
-                display={name ? 'none' : 'block'}
-                aria-live="assertive"
-                marginBottom={[1, 1, 0]}
-              >
-                <InputController
-                  control={control}
-                  id="toNationalId"
-                  defaultValue=""
-                  icon={name || queryLoading ? undefined : 'search'}
-                  rules={
-                    {
-                      required: {
-                        value: true,
-                        message: formatMessage({
-                          id: 'sp.settings-access-control:grant-required-ssn',
-                          defaultMessage: 'Skylda er að fylla út kennitölu',
-                        }),
-                      },
-                      validate: {
-                        value: (value: number) => {
-                          if (
-                            value.toString().length === 10 &&
-                            !kennitala.isValid(value)
-                          ) {
-                            return formatMessage({
-                              id:
-                                'sp.settings-access-control:grant-invalid-ssn',
-                              defaultMessage:
-                                'Kennitalan er ekki gild kennitala',
-                            })
-                          }
+                  marginBottom={[1, 1, 0]}
+                >
+                  <InputController
+                    control={control}
+                    id="toNationalId"
+                    defaultValue=""
+                    icon={name || queryLoading ? undefined : 'search'}
+                    rules={
+                      {
+                        required: {
+                          value: true,
+                          message: formatMessage({
+                            id: 'sp.settings-access-control:grant-required-ssn',
+                            defaultMessage: 'Skylda er að fylla út kennitölu',
+                          }),
                         },
-                      },
-                    } as ValidationRules
-                  }
-                  type="tel"
-                  format="######-####"
-                  label={formatMessage(sharedMessages.nationalId)}
-                  placeholder={'000000-0000'}
-                  error={errors.toNationalId?.message}
-                  onChange={(value) => {
-                    requestDelegation(value)
-                  }}
-                  size="md"
+                        validate: {
+                          value: (value: number) => {
+                            if (
+                              value.toString().length === 10 &&
+                              !kennitala.isValid(value)
+                            ) {
+                              return formatMessage({
+                                id:
+                                  'sp.settings-access-control:grant-invalid-ssn',
+                                defaultMessage:
+                                  'Kennitalan er ekki gild kennitala',
+                              })
+                            }
+                          },
+                        },
+                      } as ValidationRules
+                    }
+                    type="tel"
+                    format="######-####"
+                    label={formatMessage(sharedMessages.nationalId)}
+                    placeholder={'000000-0000'}
+                    error={errors.toNationalId?.message}
+                    onChange={(value) => {
+                      requestDelegation(value)
+                    }}
+                    size="md"
+                  />
+                </Box>
+                {queryLoading ? (
+                  <span
+                    className={cn(styles.icon, styles.loadingIcon)}
+                    aria-label="Loading"
+                  >
+                    <Icon icon="reload" size="large" color="blue400" />
+                  </span>
+                ) : name ? (
+                  <button
+                    disabled={loading}
+                    onClick={clearForm}
+                    className={styles.icon}
+                  >
+                    <Icon icon="close" size="large" color="blue400" />
+                  </button>
+                ) : null}
+              </div>
+              <div>
+                <SelectController
+                  id="system"
+                  name="system"
+                  label={formatMessage(m.accessControl)}
+                  placeholder={formatMessage({
+                    id: 'sp.access-control-delegations:choose-system',
+                    defaultMessage: 'Veldu kerfi',
+                  })}
+                  error={errors.system?.message}
+                  options={systemOptions}
                 />
-              </Box>
-              {queryLoading ? (
-                <span
-                  className={cn(styles.icon, styles.loadingIcon)}
-                  aria-label="Loading"
-                >
-                  <Icon icon="reload" size="large" color="blue400" />
-                </span>
-              ) : name ? (
-                <button
-                  disabled={loading}
-                  onClick={clearForm}
-                  className={styles.icon}
-                >
-                  <Icon icon="close" size="large" color="blue400" />
-                </button>
-              ) : null}
-            </div>
-            <div>
-              <Select
-                label={formatMessage(m.accessControl)}
-                name="system"
-                noOptionsMessage="Enginn valmöguleiki"
-                options={systemOptions}
-                onChange={() => {
-                  // TODO handle system change
-                }}
-                placeholder={formatMessage({
-                  id: 'sp.access-control-delegations:choose-system',
-                  defaultMessage: 'Veldu kerfi',
+              </div>
+              <DelegationsFormFooter
+                disabled={!name || loading}
+                loading={loading}
+                onCancel={() =>
+                  history.push(ServicePortalPath.AccessControlDelegations)
+                }
+                submitLabel={formatMessage({
+                  id: 'sp.access-control-delegations:choose-access-rights',
+                  defaultMessage: 'Velja réttindi',
                 })}
               />
-            </div>
-            <DelegationsFormFooter
-              disabled={!name || loading}
-              loading={loading}
-              onCancel={() =>
-                history.push(ServicePortalPath.AccessControlDelegations)
-              }
-              submitLabel={formatMessage({
-                id: 'sp.access-control-delegations:choose-access-rights',
-                defaultMessage: 'Velja réttindi',
-              })}
-            />
-          </Box>
-        </form>
+            </Box>
+          </form>
+        </FormProvider>
       </Box>
     </>
   )
