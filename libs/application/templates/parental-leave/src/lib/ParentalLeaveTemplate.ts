@@ -571,6 +571,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           lifecycle: DEPRECATED_DefaultStateLifeCycle,
           progress: 0.25,
+          onExit: {
+            apiModuleAction: API_MODULE_ACTIONS.validateApplication,
+            throwOnError: true,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -697,6 +701,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           lifecycle: DEPRECATED_DefaultStateLifeCycle,
           progress: 0.5,
+          onEntry: {
+            apiModuleAction:
+              API_MODULE_ACTIONS.notifyApplicantOfRejectionFromEmployer,
+            throwOnError: true,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
