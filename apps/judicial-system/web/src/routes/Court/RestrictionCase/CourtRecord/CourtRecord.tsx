@@ -24,12 +24,10 @@ import {
   CourtDocuments,
   FormContext,
 } from '@island.is/judicial-system-web/src/components'
-import { capitalize } from '@island.is/judicial-system/formatters'
 import {
   CaseAppealDecision,
   CaseDecision,
   CaseType,
-  Gender,
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
 import {

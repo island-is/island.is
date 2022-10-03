@@ -7,17 +7,12 @@ import { Box, Text } from '@island.is/island-ui/core'
 import { getAppealEndDate } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import {
   CaseAppealDecision,
-  Gender,
   InstitutionType,
-  isRestrictionCase,
 } from '@island.is/judicial-system/types'
 import { BlueBox } from '@island.is/judicial-system-web/src/components'
 import InfoBox from '@island.is/judicial-system-web/src/components/InfoBox/InfoBox'
-import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
-import {
-  core,
-  signedVerdictOverview,
-} from '@island.is/judicial-system-web/messages'
+import { formatDate } from '@island.is/judicial-system/formatters'
+import { signedVerdictOverview } from '@island.is/judicial-system-web/messages'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import type { Case } from '@island.is/judicial-system/types'
 
