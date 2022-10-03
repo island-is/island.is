@@ -53,6 +53,8 @@ export interface DriversLicenseConfig {
 export interface LicenseServiceConfig {
   firearmLicense: PkPassConfig
   driversLicense: DriversLicenseConfig
+  adrLicense: PkPassConfig
+  machineLicense: PkPassConfig
 }
 
 export type LicenseServiceConfigV2 = Omit<
@@ -60,6 +62,7 @@ export type LicenseServiceConfigV2 = Omit<
   'driversLicense'
 >
 
+//TODO: Translate all strings (Ásdís Erna Guðmundsdóttir /disaerna)
 export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
   {
     type: GenericLicenseType.DriversLicense,
@@ -75,8 +78,8 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     provider: {
       id: GenericLicenseProviderId.AdministrationOfOccupationalSafetyAndHealth,
     },
-    pkpass: false,
-    pkpassVerify: false,
+    pkpass: true,
+    pkpassVerify: true,
     timeout: 100,
   },
   {
@@ -85,8 +88,8 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     provider: {
       id: GenericLicenseProviderId.AdministrationOfOccupationalSafetyAndHealth,
     },
-    pkpass: false,
-    pkpassVerify: false,
+    pkpass: true,
+    pkpassVerify: true,
     timeout: 100,
   },
   {
@@ -144,9 +147,17 @@ export class LicenseServiceModule {
                   cacheManager,
                 )
               case GenericLicenseType.AdrLicense:
-                return new GenericAdrLicenseApi(logger, adrApi)
+                return new GenericAdrLicenseApi(
+                  logger,
+                  adrApi,
+                  new SmartSolutionsApi(logger, config.adrLicense),
+                )
               case GenericLicenseType.MachineLicense:
-                return new GenericMachineLicenseApi(logger, machineApi)
+                return new GenericMachineLicenseApi(
+                  logger,
+                  machineApi,
+                  new SmartSolutionsApi(logger, config.machineLicense),
+                )
               case GenericLicenseType.FirearmLicense:
                 return new GenericFirearmLicenseApi(
                   logger,
