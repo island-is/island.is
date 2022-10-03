@@ -18,6 +18,11 @@ const envs = {
     staging: 'cdn.contentful.com',
     prod: 'cdn.contentful.com',
   },
+  CONTENTFUL_ENTRY_FETCH_CHUNK_SIZE: {
+    dev: '40',
+    staging: '40',
+    prod: '40',
+  },
 }
 export const serviceSetup = (): ServiceBuilder<'search-indexer-service'> =>
   service('search-indexer-service')
