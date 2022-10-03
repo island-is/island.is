@@ -688,9 +688,6 @@ export interface IFeaturedArticlesFields {
   /** Link */
   link?: ILink | undefined
 
-  /** Application Label */
-  applicationLabel: string
-
   /** Automatically Fetch Articles */
   automaticallyFetchArticles: boolean
 
@@ -763,7 +760,7 @@ export interface IFooterItem extends Entry<IFooterItemFields> {
 
 export interface IFormFields {
   /** Title */
-  title: string
+  title?: string | undefined
 
   /** Intro */
   intro?: string | undefined
@@ -782,6 +779,9 @@ export interface IFormFields {
 
   /** Questions Heading text */
   questionsHeadingText?: string | undefined
+
+  /** Recipient Form Field Decider */
+  recipientFormFieldDecider?: IFormField | undefined
 }
 
 export interface IForm extends Entry<IFormFields> {
@@ -816,6 +816,9 @@ export interface IFormFieldFields {
 
   /** Options */
   options?: string[] | undefined
+
+  /** Email Config */
+  emailConfig?: Record<string, any> | undefined
 }
 
 export interface IFormField extends Entry<IFormFieldFields> {
@@ -1036,7 +1039,7 @@ export interface IGenericTagFields {
   genericTagGroup?: IGenericTagGroup | undefined
 }
 
-/** A generic uniquely named tag that can be used for tag miscellaneous things. */
+/** A generic uniquely named tag that can be used to tag miscellaneous things. */
 
 export interface IGenericTag extends Entry<IGenericTagFields> {
   sys: {
@@ -1281,6 +1284,9 @@ export interface ILifeEventPageFields {
   /** intro */
   intro?: string | undefined
 
+  /** short intro */
+  shortIntro?: string | undefined
+
   /** image */
   image?: Asset | undefined
 
@@ -1295,6 +1301,12 @@ export interface ILifeEventPageFields {
 
   /** category */
   category?: IArticleCategory | undefined
+
+  /** see more text */
+  seeMoreText?: string | undefined
+
+  /** Page Type */
+  pageType?: 'Life Event' | 'Digital Iceland Service' | undefined
 }
 
 export interface ILifeEventPage extends Entry<ILifeEventPageFields> {
@@ -1307,6 +1319,32 @@ export interface ILifeEventPage extends Entry<ILifeEventPageFields> {
     contentType: {
       sys: {
         id: 'lifeEventPage'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface ILifeEventPageListSliceFields {
+  /** Title */
+  title?: string | undefined
+
+  /** List */
+  lifeEventPageList?: ILifeEventPage[] | undefined
+}
+
+export interface ILifeEventPageListSlice
+  extends Entry<ILifeEventPageListSliceFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'lifeEventPageListSlice'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -1557,6 +1595,9 @@ export interface IMailingListSignupFields {
 
   /** Signup URL */
   signupUrl: string
+
+  /** Image */
+  image?: Asset | undefined
 }
 
 export interface IMailingListSignup extends Entry<IMailingListSignupFields> {
@@ -1865,6 +1906,9 @@ export interface IOneColumnTextFields {
 
   /** Divider On Top */
   dividerOnTop?: boolean | undefined
+
+  /** Show Title */
+  showTitle?: boolean | undefined
 }
 
 export interface IOneColumnText extends Entry<IOneColumnTextFields> {
@@ -2069,7 +2113,6 @@ export interface IOrganizationPageFields {
   /** Theme */
   theme:
     | 'default'
-    | 'default_with_image'
     | 'utlendingastofnun'
     | 'sjukratryggingar'
     | 'syslumenn'
@@ -2088,6 +2131,7 @@ export interface IOrganizationPageFields {
         | IEventSlice
         | IFeaturedArticles
         | ISectionHeading
+        | ILifeEventPageListSlice
         | ILogoListSlice
         | IMultipleStatistics
         | IOneColumnText
@@ -2132,7 +2176,7 @@ export interface IOrganizationPageFields {
   featuredImage?: Asset | undefined
 
   /** Sidebar Cards */
-  sidebarCards?: ISidebarCard[] | undefined
+  sidebarCards?: (ISidebarCard | ISliceConnectedComponent)[] | undefined
 
   /** Footer Items */
   footerItems?: IFooterItem[] | undefined
@@ -2187,6 +2231,7 @@ export interface IOrganizationSubpageFields {
   slices?:
     | (
         | IAccordionSlice
+        | ILifeEventPageListSlice
         | IBigBulletList
         | IContactUs
         | IDistricts
@@ -2197,6 +2242,7 @@ export interface IOrganizationSubpageFields {
         | IMultipleStatistics
         | IOneColumnText
         | IOverviewLinks
+        | ISliceConnectedComponent
         | ITabSection
         | ITeamList
         | ITellUsAStory
@@ -2373,7 +2419,12 @@ export interface IProjectPageFields {
   slug?: string | undefined
 
   /** Theme */
-  theme: 'default' | 'traveling-to-iceland' | 'election' | 'ukraine'
+  theme:
+    | 'default'
+    | 'traveling-to-iceland'
+    | 'election'
+    | 'ukraine'
+    | 'opinbernyskopun'
 
   /** Sidebar */
   sidebar: boolean
@@ -2397,11 +2448,20 @@ export interface IProjectPageFields {
   slices?:
     | (
         | IAccordionSlice
+        | IBigBulletList
+        | IContactUs
         | IMailingListSignup
+        | IEventSlice
+        | IFaqList
         | IFeaturedArticles
         | ISectionHeading
         | ILatestNewsSlice
+        | IMultipleStatistics
         | IOneColumnText
+        | IOverviewLinks
+        | ITabSection
+        | ITeamList
+        | ITwoColumnText
       )[]
     | undefined
 
@@ -2422,6 +2482,20 @@ export interface IProjectPageFields {
 
   /** Featured Description */
   featuredDescription?: string | undefined
+
+  /** Bottom Slices */
+  bottomSlices?:
+    | (
+        | ILatestNewsSlice
+        | ILogoListSlice
+        | IOneColumnText
+        | ITimeline
+        | ITwoColumnText
+      )[]
+    | undefined
+
+  /** Footer Items */
+  footerItems?: IFooterItem[] | undefined
 }
 
 export interface IProjectPage extends Entry<IProjectPageFields> {
@@ -2455,7 +2529,26 @@ export interface IProjectSubpageFields {
   renderSlicesAsTabs?: boolean | undefined
 
   /** Slices */
-  slices?: IOneColumnText[] | undefined
+  slices?:
+    | (
+        | IAccordionSlice
+        | IBigBulletList
+        | IContactUs
+        | IDistricts
+        | IMailingListSignup
+        | IEventSlice
+        | IFaqList
+        | IFeaturedArticles
+        | ILatestNewsSlice
+        | IMultipleStatistics
+        | IOneColumnText
+        | IOverviewLinks
+        | ITabSection
+        | ITeamList
+        | ITellUsAStory
+        | ITwoColumnText
+      )[]
+    | undefined
 }
 
 export interface IProjectSubpage extends Entry<IProjectSubpageFields> {
@@ -2608,6 +2701,7 @@ export interface ISliceConnectedComponentFields {
     | 'Skilavottord/CompanyList'
     | 'Skilavottord/CompanyListConnected'
     | 'Undirskriftalistar/PetitionLists'
+    | 'LatestNewsCard'
     | undefined
 
   /** JSON */
@@ -2724,9 +2818,6 @@ export interface IStepFields {
 
   /** Subtitle */
   subtitle?: Document | undefined
-
-  /** Options */
-  options?: Record<string, any> | undefined
 
   /** Config */
   config?: Record<string, any> | undefined
@@ -3285,6 +3376,9 @@ export interface ITimelineFields {
 
   /** Events */
   events: ITimelineEvent[]
+
+  /** Has Border Above */
+  hasBorderAbove?: boolean | undefined
 }
 
 /** Timeline section with a collection of timeline events */
@@ -3674,6 +3768,7 @@ export type CONTENT_TYPE =
   | 'introLinkImage'
   | 'latestNewsSlice'
   | 'lifeEventPage'
+  | 'lifeEventPageListSlice'
   | 'link'
   | 'linkedPage'
   | 'linkGroup'

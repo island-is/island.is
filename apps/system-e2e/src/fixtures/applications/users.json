@@ -1,13 +1,13 @@
 [
   {
     "name": "Gervimaður Afríka",
-    "mobile": "0103019",
+    "phoneNumber": "0103019",
     "nationalId": "0101303019",
     "role": "user"
   },
   {
     "name": "Gervimaður Ameríku",
-    "mobile": "0102989",
+    "phoneNumber": "0102989",
     "nationalId": "0101302989",
     "role": "user"
   }

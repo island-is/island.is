@@ -8,12 +8,12 @@ import * as styles from './Modal.css'
 
 interface ModalProps {
   title: string
-  text: string | ReactNode
+  text?: string | ReactNode
   primaryButtonText?: string
   secondaryButtonText?: string
-  handleClose?: () => void
-  handleSecondaryButtonClick?: () => void
-  handlePrimaryButtonClick?: () => void
+  onClose?: () => void
+  onSecondaryButtonClick?: () => void
+  onPrimaryButtonClick?: () => void
   isPrimaryButtonLoading?: boolean
   isPrimaryButtonDisabled?: boolean
   errorMessage?: string
@@ -26,9 +26,9 @@ const Modal: React.FC<ModalProps> = ({
   text,
   primaryButtonText,
   secondaryButtonText,
-  handleClose,
-  handleSecondaryButtonClick,
-  handlePrimaryButtonClick,
+  onClose,
+  onSecondaryButtonClick,
+  onPrimaryButtonClick,
   isPrimaryButtonLoading,
   isPrimaryButtonDisabled,
   errorMessage,
@@ -63,9 +63,9 @@ const Modal: React.FC<ModalProps> = ({
         exit="closed"
         variants={modalVariants}
       >
-        {handleClose && (
+        {onClose && (
           <Box position="absolute" top={0} right={0}>
-            <button className={styles.closeButton} onClick={handleClose}>
+            <button className={styles.closeButton} onClick={onClose}>
               <Icon icon="close" type="outline" color="blue400" />
             </button>
           </Box>
@@ -75,12 +75,14 @@ const Modal: React.FC<ModalProps> = ({
             {title}
           </Text>
         </Box>
-        <Box marginBottom={6} className={styles.breakSpaces}>
-          {
-            // Check if text is a string or Element
-            React.isValidElement(text) ? text : <Text>{text}</Text>
-          }
-        </Box>
+        {text && (
+          <Box marginBottom={6} className={styles.breakSpaces}>
+            {
+              // Check if text is a string or Element
+              React.isValidElement(text) ? text : <Text>{text}</Text>
+            }
+          </Box>
+        )}
         {children}
         <Box display="flex">
           {secondaryButtonText && (
@@ -88,7 +90,7 @@ const Modal: React.FC<ModalProps> = ({
               <Button
                 data-testid="modalSecondaryButton"
                 variant={invertButtonColors ? undefined : 'ghost'}
-                onClick={handleSecondaryButtonClick}
+                onClick={onSecondaryButtonClick}
               >
                 {secondaryButtonText}
               </Button>
@@ -98,7 +100,7 @@ const Modal: React.FC<ModalProps> = ({
             <Button
               data-testid="modalPrimaryButton"
               variant={invertButtonColors ? 'ghost' : undefined}
-              onClick={handlePrimaryButtonClick}
+              onClick={onPrimaryButtonClick}
               loading={isPrimaryButtonLoading}
               disabled={isPrimaryButtonDisabled}
             >
@@ -123,9 +125,9 @@ const ModalPortal = ({
   text,
   primaryButtonText,
   secondaryButtonText,
-  handleClose,
-  handleSecondaryButtonClick,
-  handlePrimaryButtonClick,
+  onClose,
+  onSecondaryButtonClick,
+  onPrimaryButtonClick,
   isPrimaryButtonLoading,
   isPrimaryButtonDisabled,
   errorMessage,
@@ -141,9 +143,9 @@ const ModalPortal = ({
       text={text}
       primaryButtonText={primaryButtonText}
       secondaryButtonText={secondaryButtonText}
-      handleClose={handleClose}
-      handleSecondaryButtonClick={handleSecondaryButtonClick}
-      handlePrimaryButtonClick={handlePrimaryButtonClick}
+      onClose={onClose}
+      onSecondaryButtonClick={onSecondaryButtonClick}
+      onPrimaryButtonClick={onPrimaryButtonClick}
       isPrimaryButtonLoading={isPrimaryButtonLoading}
       isPrimaryButtonDisabled={isPrimaryButtonDisabled}
       errorMessage={errorMessage}

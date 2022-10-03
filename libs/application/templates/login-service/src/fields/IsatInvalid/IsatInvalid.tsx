@@ -16,7 +16,7 @@ export const IsatInvalid = ({ application }: FieldBaseProps) => {
   return (
     <GridColumn span="1/1" paddingTop={2}>
       <AlertMessage
-        type="error"
+        type="warning"
         title={formatText(
           errorMessages.invalidIsatMessage,
           application,

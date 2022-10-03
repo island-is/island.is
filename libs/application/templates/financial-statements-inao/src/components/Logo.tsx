@@ -12,7 +12,7 @@ const Logo: FC = () => {
         {formatMessage(m.serviceProvider)}
       </Text>
       <Text variant="h3" as="p" color="purple600">
-        {formatMessage(m.inao)}
+        {formatMessage(m.inao).toUpperCase()}
       </Text>
     </Box>
   )

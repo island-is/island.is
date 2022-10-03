@@ -61,14 +61,12 @@ export const sectionOverview = buildSection({
         buildKeyValueField({
           label: m.applicantsEmail,
           width: 'half',
-          value: ({ externalData: { userProfile } }) =>
-            (userProfile.data as UserProfile).email as string,
+          value: ({ answers: { email } }) => email as string,
         }),
         buildKeyValueField({
           label: m.applicantsPhoneNumber,
           width: 'half',
-          value: ({ externalData: { userProfile } }) =>
-            (userProfile.data as UserProfile).mobilePhoneNumber as string,
+          value: ({ answers: { phone } }) => phone as string,
         }),
         buildDividerField({}),
         buildKeyValueField({

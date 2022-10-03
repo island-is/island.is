@@ -6,6 +6,8 @@ import { generatePdf } from '../pdfGenerator'
 import {
   messages,
   OnBehalf,
+  SubjectOfComplaint,
+  subjectOfComplaintValueLabelMapper,
 } from '@island.is/application/templates/data-protection-complaint'
 import {
   addformFieldAndValue,
@@ -53,6 +55,7 @@ function dpcApplicationPdf(
     'Upplýsingar um fyrirtæki, stofnun eða einstakling sem kvartað er yfir',
     doc,
   )
+
   complaint.targetsOfComplaint.map((c) => {
     addformFieldAndValue('Nafn', c.name, doc, PdfConstants.SMALL_LINE_GAP)
     if (c.nationalId) {
@@ -91,17 +94,24 @@ function dpcApplicationPdf(
 
   if (complaint.complaintCategories.length !== 0) {
     addSubheader('Efni kvörtunar', doc)
-
-    complaint.complaintCategories.map((c, index) => {
-      return addValue(
-        complaint.complaintCategories.length === index + 1
-          ? complaint.somethingElse
-            ? `• ${c}: ${complaint.somethingElse}`
-            : `• ${c}`
-          : `• ${c}`,
-        doc,
+    // Render it in the same order as shown on the application it self
+    for (const [key, value] of Object.entries(
+      subjectOfComplaintValueLabelMapper,
+    )) {
+      // Check if the option was selected by the user
+      const selection = complaint.complaintCategories.find(
+        (x) => x === value.defaultMessage,
       )
-    })
+      if (!selection) continue
+
+      if (key === SubjectOfComplaint.OTHER) {
+        // other "annað" is found, printing the message with it
+        addValue(`• ${selection}: ${complaint.somethingElse}`, doc)
+      } else {
+        addValue(`• ${selection}`, doc)
+      }
+    }
+
     doc.moveDown()
   }
 

@@ -5,11 +5,12 @@ import {
   INVESTIGATION_CASE_POLICE_REPORT_ROUTE,
 } from '@island.is/judicial-system/consts'
 
-import { makeInvestigationCase, intercept } from '../../../utils'
+import { mockCase, intercept } from '../../../utils'
+import { CaseType } from '@island.is/judicial-system/types'
 
 describe(`${INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE}/:id`, () => {
   beforeEach(() => {
-    const caseData = makeInvestigationCase()
+    const caseData = mockCase(CaseType.INTERNET_USAGE)
 
     cy.stubAPIResponses()
     intercept(caseData)

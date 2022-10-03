@@ -8,15 +8,6 @@ export const rcCaseFiles = {
       'Notaður sem titill á rannsóknargagna skrefi í gæsluvarðhalds- og farbannsmálum.',
   }),
   sections: {
-    parentCaseFiles: defineMessages({
-      heading: {
-        id:
-          'judicial.system.restriction_cases:case_files.parent_case_files.heading',
-        defaultMessage: 'Gögn send dómnum í fyrra máli',
-        description:
-          'Notaður sem titill fyrir gögn send dómnum í fyrra mál á rannsóknargagna skrefi í gæsluvarðhalds- og farbannsmálum.',
-      },
-    }),
     description: defineMessages({
       heading: {
         id: 'judicial.system.restriction_cases:case_files.description.heading',
@@ -58,81 +49,6 @@ export const rcCaseFiles = {
         defaultMessage: 'Velja skjöl til að hlaða upp',
         description:
           'Notaður sem titill í "velja gögn til að hlaða upp" takka á rannsóknargagna skrefi í gæsluvarðhalds- og farbannsmálum.',
-      },
-    }),
-    policeCaseFiles: defineMessages({
-      heading: {
-        id:
-          'judicial.system.restriction_cases:case_files.police_case_files.heading',
-        defaultMessage: 'Gögn úr LÖKE-máli {policeCaseNumber}',
-        description:
-          'Notaður sem titill fyrir "LOKE" gagnapakkann á rannsóknargagna skrefi í gæsluvarðhalds- og farbannsmálum.',
-      },
-      introduction: {
-        id:
-          'judicial.system.restriction_cases:case_files.police_case_files.introduction',
-        defaultMessage:
-          'Til að gögn úr þessum lista verði hluti af gagnapakka málsins þarf að velja þau og smella á Hlaða upp.',
-        description:
-          'Notaður sem skýring fyrir "LOKE" gagnapakkann á rannsóknargagna skrefi í gæsluvarðhalds- og farbannsmálum.',
-      },
-      selectAllLabel: {
-        id:
-          'judicial.system.restriction_cases:case_files.police_case_files.select_all_label',
-        defaultMessage: 'Velja allt',
-        description:
-          'Notaður sem texti fyrir "Velja allt" valmöguleikann í LÖKE gagnapakkanum á rannsóknargagna skrefi í gæsluvarðhalds- og farbannsmálum.',
-      },
-      couldNotGetFromLOKEMessage: {
-        id:
-          'judicial.system.restriction_cases:case_files.police_case_files.could_not_get_from_loke_message',
-        defaultMessage:
-          'Ekki tókst að sækja skjalalista í LÖKE. Hægt er að hlaða upp skjölum hér fyrir neðan.',
-        description:
-          'Notaður sem villuskilaboð í LÖKE gagnapakkanum á rannsóknargagna skrefi í gæsluvarðhalds- og farbannsmálum.',
-      },
-      caseNotFoundInLOKEMessage: {
-        id:
-          'judicial.system.restriction_cases:case_files.police_case_files.case_not_found_in_loke_message',
-        defaultMessage: 'Þessi krafa var ekki stofnuð í gegnum LÖKE',
-        description:
-          'Notaður sem villuskilaboð í LÖKE gagnapakkanum á rannsóknargagna skrefi í gæsluvarðhalds- og farbannsmálum.',
-      },
-      noFilesFoundInLOKEMessage: {
-        id:
-          'judicial.system.restriction_cases:case_files.police_case_files.no_files_found_in_loke_message',
-        defaultMessage: 'Engin skjöl fundust fyrir kröfuna í LÖKE',
-        description:
-          'Notaður sem villuskilaboð í LÖKE gagnapakkanum á rannsóknargagna skrefi í gæsluvarðhalds- og farbannsmálum.',
-      },
-      allFilesUploadedMessage: {
-        id:
-          'judicial.system.restriction_cases:case_files.police_case_files.all_files_uploaded',
-        defaultMessage: 'Öllum skjölum hefur verið hlaðið upp',
-        description:
-          'Notaður sem skilaboð þegar öllum skjölum hefur verið hlaðið upp í LÖKE gagnapakkanum á rannsóknargagna skrefi í gæsluvarðhalds- og farbannsmálum.',
-      },
-      uploadButtonLabel: {
-        id:
-          'judicial.system.restriction_cases:case_files.police_case_files.upload_button_label',
-        defaultMessage: 'Hlaða upp',
-        description:
-          'Notaður sem texti í "hlaða upp" takka í LÖKE gagnapakkanum á rannsóknargagna skrefi í gæsluvarðhalds- og farbannsmálum.',
-      },
-      originNotLokeTitle: {
-        id:
-          'judicial.system.restriction_cases:case_files.police_case_files.origin_not_loke_title',
-        defaultMessage: 'Krafa ekki stofnuð í LÖKE',
-        description:
-          'Notaður sem titill í upplýsingaboxi fyrir kröfu sem ekki er stofnuð í LÖKE í LÖKE gagnapakkanum á rannsóknargagna skrefi í gæsluvarðhalds- og farbannsmálum..',
-      },
-      originNotLokeMessage: {
-        id:
-          'judicial.system.restriction_cases:case_files.police_case_files.origin_not_loke_message',
-        defaultMessage:
-          'Til að fá sjálfkrafa yfirlit yfir skjöl úr LÖKE þarf að stofna kröfuna í gegnum LÖKE.',
-        description:
-          'Notaður sem texti í upplýsingaboxi fyrir kröfu sem ekki er stofnuð í LÖKE í LÖKE gagnapakkanum á rannsóknargagna skrefi í gæsluvarðhalds- og farbannsmálum..',
       },
     }),
     comments: defineMessages({

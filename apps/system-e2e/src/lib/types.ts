@@ -6,7 +6,7 @@ import type {
 type TestEnvironment = 'local' | 'dev' | 'staging' | 'prod'
 
 type Mobile = {
-  mobile: string
+  phoneNumber: string
 }
 
 type BaseUser = {

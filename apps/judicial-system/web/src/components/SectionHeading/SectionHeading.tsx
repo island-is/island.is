@@ -6,9 +6,15 @@ interface Props {
   title: string
   required?: boolean
   tooltip?: React.ReactNode
+  description?: React.ReactNode
 }
 
-const SectionHeading: React.FC<Props> = ({ title, required, tooltip }) => (
+const SectionHeading: React.FC<Props> = ({
+  title,
+  required,
+  tooltip,
+  description,
+}) => (
   <Box marginBottom={3}>
     <Text as="h3" variant="h3">
       {title}
@@ -21,6 +27,7 @@ const SectionHeading: React.FC<Props> = ({ title, required, tooltip }) => (
       {tooltip && ' '}
       {tooltip && <Box component="span">{tooltip}</Box>}
     </Text>
+    {description && <Text marginTop={1}>{description}</Text>}
   </Box>
 )
 

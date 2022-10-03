@@ -6,19 +6,8 @@ import {
   NationalRegistryService,
   NationalRegistryUser,
 } from '../nationalRegistry'
-import {
-  AuthMiddleware,
-  AuthMiddlewareOptions,
-} from '@island.is/auth-nest-tools'
 import type { User as AuthUser } from '@island.is/auth-nest-tools'
-import {
-  EinstaklingarApi,
-  EinstaklingarGetForsjaForeldriRequest,
-  EinstaklingarGetForsjaRequest,
-} from '@island.is/clients/national-registry-v2'
-import environment from '../../../environments/environment'
 import { info } from 'kennitala'
-import { FetchError } from '@island.is/clients/middlewares'
 
 const ONE_WEEK = 604800 // seconds
 const CACHE_KEY = 'userService'
@@ -29,7 +18,6 @@ export class UserService {
   constructor(
     private readonly flightService: FlightService,
     private readonly nationalRegistryService: NationalRegistryService,
-    private readonly nationalRegistryIndividualsApi: EinstaklingarApi,
     @Inject(CACHE_MANAGER) private readonly cacheManager: CacheManager,
   ) {}
 
@@ -37,44 +25,8 @@ export class UserService {
     return `${CACHE_KEY}_${nationalId}_${suffix}`
   }
 
-  personApiWithAuth(authUser: AuthUser) {
-    return this.nationalRegistryIndividualsApi.withMiddleware(
-      new AuthMiddleware(
-        authUser,
-        environment.nationalRegistry
-          .authMiddlewareOptions as AuthMiddlewareOptions,
-      ),
-    )
-  }
-
   async getRelations(authUser: AuthUser): Promise<Array<string>> {
-    const response = await this.personApiWithAuth(authUser)
-      .einstaklingarGetForsja(<EinstaklingarGetForsjaRequest>{
-        id: authUser.nationalId,
-      })
-      .catch(this.handle404)
-
-    if (response === undefined) {
-      return []
-    }
-    return response
-  }
-
-  async getCustodians(
-    auth: AuthUser,
-    childNationalId: string,
-  ): Promise<Array<string>> {
-    const response = await this.personApiWithAuth(auth)
-      .einstaklingarGetForsjaForeldri(<EinstaklingarGetForsjaForeldriRequest>{
-        id: auth.nationalId,
-        barn: childNationalId,
-      })
-      .catch(this.handle404)
-
-    if (response === undefined) {
-      return []
-    }
-    return response
+    return this.nationalRegistryService.getRelations(authUser)
   }
 
   private async getFund(
@@ -169,12 +121,5 @@ export class UserService {
     }
 
     return result
-  }
-
-  private handle404(error: FetchError) {
-    if (error.status === 404) {
-      return undefined
-    }
-    throw error
   }
 }

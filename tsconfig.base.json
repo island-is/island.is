@@ -158,6 +158,9 @@
         "libs/application/api/files/src/index.ts"
       ],
       "@island.is/application/core": ["libs/application/core/src/index.ts"],
+      "@island.is/application/core/messages": [
+        "libs/application/core/src/lib/messages.ts"
+      ],
       "@island.is/application/core/polyfills": [
         "libs/application/core/src/lib/polyfills.ts"
       ],
@@ -206,6 +209,9 @@
       "@island.is/application/templates/driving-license": [
         "libs/application/templates/driving-license/src/index.ts"
       ],
+      "@island.is/application/templates/driving-license-duplicate": [
+        "libs/application/templates/driving-license-duplicate/src/index.ts"
+      ],
       "@island.is/application/templates/driving-school-confirmation": [
         "libs/application/templates/driving-school-confirmation/src/index.ts"
       ],
@@ -238,6 +244,12 @@
       ],
       "@island.is/application/templates/login-service": [
         "libs/application/templates/login-service/src/index.ts"
+      ],
+      "@island.is/application/templates/marriage-conditions": [
+        "libs/application/templates/marriage-conditions/src/index.ts"
+      ],
+      "@island.is/application/templates/marriage-conditions/types": [
+        "libs/application/templates/marriage-conditions/src/types.ts"
       ],
       "@island.is/application/templates/meta-application": [
         "libs/application/templates/meta-application/src/index.ts"
@@ -283,9 +295,6 @@
         "libs/application/ui-shell/src/index.ts"
       ],
       "@island.is/auth-api-lib": ["libs/auth-api-lib/src/index.ts"],
-      "@island.is/auth-api-lib/personal-representative": [
-        "libs/auth-api-lib/src/lib/personal-representative/index.ts"
-      ],
       "@island.is/auth-nest-tools": ["libs/auth-nest-tools/src/index.ts"],
       "@island.is/auth/react": ["libs/auth/react/src/index.ts"],
       "@island.is/auth/scopes": ["libs/auth/scopes/src/index.ts"],
@@ -319,6 +328,9 @@
       "@island.is/clients/finance": ["libs/clients/finance/src/index.ts"],
       "@island.is/clients/financial-statements-inao": [
         "libs/clients/financial-statements-inao/src/index.ts"
+      ],
+      "@island.is/clients/firearm-license": [
+        "libs/clients/firearm-license/src/index.ts"
       ],
       "@island.is/clients/fishing-license": [
         "libs/clients/fishing-license/src/index.ts"
@@ -356,6 +368,9 @@
       ],
       "@island.is/clients/rsk/procuring": [
         "libs/clients/rsk/procuring/src/index.ts"
+      ],
+      "@island.is/clients/smartsolutions": [
+        "libs/clients/smartsolutions/src/index.ts"
       ],
       "@island.is/clients/syslumenn": ["libs/clients/syslumenn/src/index.ts"],
       "@island.is/clients/user-profile": [
@@ -507,9 +522,6 @@
       ],
       "@island.is/service-portal/finance": [
         "libs/service-portal/finance/src/index.ts"
-      ],
-      "@island.is/service-portal/finance-schedule": [
-        "libs/service-portal/finance-schedule/src/index.ts"
       ],
       "@island.is/service-portal/graphql": [
         "libs/service-portal/graphql/src/index.ts"

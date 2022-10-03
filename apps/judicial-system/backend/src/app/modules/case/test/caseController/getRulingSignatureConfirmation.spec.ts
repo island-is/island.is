@@ -3,11 +3,13 @@ import { uuid } from 'uuidv4'
 import { ForbiddenException } from '@nestjs/common'
 
 import { User } from '@island.is/judicial-system/types'
+import { MessageType, MessageService } from '@island.is/judicial-system/message'
 
 import { Case } from '../../models/case.model'
 import { SignatureConfirmationResponse } from '../../models/signatureConfirmation.response'
 import { createTestingCaseModule } from '../createTestingCaseModule'
 import { randomDate } from '../../../../test'
+import { AwsS3Service } from '../../../aws-s3'
 
 interface Then {
   result: SignatureConfirmationResponse
@@ -22,13 +24,27 @@ type GivenWhenThen = (
 ) => Promise<Then>
 
 describe('CaseController - Get ruling signature confirmation', () => {
+  let mockMessageService: MessageService
+  let mockAwsS3Service: AwsS3Service
   let mockCaseModel: typeof Case
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { caseModel, caseController } = await createTestingCaseModule()
+    const {
+      messageService,
+      awsS3Service,
+      caseModel,
+      caseController,
+    } = await createTestingCaseModule()
 
     mockCaseModel = caseModel
+    mockMessageService = messageService
+    mockAwsS3Service = awsS3Service
+
+    const mockPostMessageToQueue = mockMessageService.postMessageToQueue as jest.Mock
+    mockPostMessageToQueue.mockResolvedValue(uuid())
+    const mockPutObject = mockAwsS3Service.putObject as jest.Mock
+    mockPutObject.mockResolvedValue(uuid())
 
     givenWhenThen = async (
       caseId: string,
@@ -89,6 +105,11 @@ describe('CaseController - Get ruling signature confirmation', () => {
 
     it('should return success', () => {
       expect(then.result).toEqual({ documentSigned: true })
+      expect(mockAwsS3Service.putObject).toHaveBeenCalled()
+      expect(mockMessageService.postMessageToQueue).toHaveBeenCalledWith({
+        type: MessageType.CASE_COMPLETED,
+        caseId,
+      })
     })
   })
 
@@ -126,7 +147,6 @@ describe('CaseController - Get ruling signature confirmation', () => {
     beforeEach(async () => {
       const mockUpdate = mockCaseModel.update as jest.Mock
       mockUpdate.mockRejectedValueOnce(new Error('Some error'))
-
       then = await givenWhenThen(caseId, user, theCase, documentToken)
     })
 
@@ -164,6 +184,35 @@ describe('CaseController - Get ruling signature confirmation', () => {
         },
         { where: { id: caseId } },
       )
+    })
+  })
+
+  describe('AWS S3 upload failed', () => {
+    const userId = uuid()
+    const user = { id: userId } as User
+    const caseId = uuid()
+    const theCase = {
+      id: caseId,
+      judgeId: userId,
+      policeCaseNumbers: ['007-2022-1'],
+    } as Case
+    const documentToken = uuid()
+    let then: Then
+
+    beforeEach(async () => {
+      const mockPutObject = mockAwsS3Service.putObject as jest.Mock
+      mockPutObject.mockRejectedValueOnce(new Error('Some error'))
+
+      then = await givenWhenThen(caseId, user, theCase, documentToken)
+    })
+
+    it('should fail and return that the document was not signed', () => {
+      expect(then.result.documentSigned).toBe(false)
+      expect(then.result.message).toBeTruthy()
+      expect(then.result.code).toBeUndefined()
+
+      expect(mockCaseModel.update).not.toHaveBeenCalled()
+      expect(mockMessageService.postMessageToQueue).not.toHaveBeenCalled()
     })
   })
 })

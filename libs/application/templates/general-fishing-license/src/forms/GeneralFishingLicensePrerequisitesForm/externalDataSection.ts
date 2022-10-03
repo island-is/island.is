@@ -21,8 +21,8 @@ export const externalDataSection = buildSection({
       checkboxLabel: externalData.dataProvider.checkboxLabel,
       dataProviders: [
         buildDataProviderItem({
-          id: 'nationalRegistry',
-          type: DataProviderTypes.NationalRegistry,
+          id: 'identityRegistry',
+          type: DataProviderTypes.IdentityRegistry,
           title: externalData.nationalRegistry.title,
           subTitle: externalData.nationalRegistry.description,
         }),

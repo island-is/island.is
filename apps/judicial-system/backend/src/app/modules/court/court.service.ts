@@ -12,8 +12,15 @@ import {
 import { nowFactory } from '../../factories'
 import { EventService } from '../event'
 
+export enum CourtDocumentFolder {
+  REQUEST_DOCUMENTS = 'Krafa og greinargerð',
+  INDICTMENT_DOCUMENTS = 'Ákæra og greinargerð',
+  CASE_DOCUMENTS = 'Gögn málsins',
+  COURT_DOCUMENTS = 'Dómar, úrskurðir og Þingbók',
+}
+
 type SubTypes = { [c in CaseType]: string | [string, string] }
-//
+
 // Maps case types to sub types in the court system
 export const subTypes: SubTypes = {
   CHILD_PROTECTION_LAWS: 'Barnaverndarlög',
@@ -55,6 +62,7 @@ export const subTypes: SubTypes = {
   BODY_SEARCH: 'Leit og líkamsrannsókn',
   // 'Lögmæti rannsóknarathafna',
   RESTRAINING_ORDER: 'Nálgunarbann',
+  RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME: 'Nálgunarbann', // this mapping to Nálgunarbann is indented
   EXPULSION_FROM_HOME: 'Nálgunarbann og brottvísun af heimili',
   // 'Réttarstaða afplánunarfanga',
   // 'Réttarstaða gæsluvarðhaldsfanga',
@@ -80,18 +88,6 @@ export class CourtService {
     private readonly eventService: EventService,
   ) {}
 
-  private uploadStream(
-    courtId: string,
-    fileName: string,
-    contentType: string,
-    content: Buffer,
-  ): Promise<string> {
-    return this.courtClientService.uploadStream(courtId ?? '', {
-      value: content,
-      options: { filename: fileName, contentType },
-    })
-  }
-
   private mask(value: string): string {
     const valueIsFileName = value.split('.').pop() !== value
     const fileNameEnding = valueIsFileName ? value.split('.').pop() : ''
@@ -109,149 +105,34 @@ export class CourtService {
     }`
   }
 
-  async createRequest(
-    user: User,
-    caseId: string,
-    courtId: string,
-    courtCaseNumber: string,
-    fileName: string,
-    content: Buffer,
-  ): Promise<string> {
-    return this.uploadStream(
-      courtId,
-      `${fileName}.pdf`,
-      'application/pdf',
-      content,
-    )
-      .then((streamId) =>
-        this.courtClientService.createDocument(courtId, {
-          caseNumber: courtCaseNumber,
-          subject: fileName,
-          fileName: `${fileName}.pdf`,
-          streamID: streamId,
-          caseFolder: 'Krafa og greinargerð',
-        }),
-      )
-      .catch((reason) => {
-        this.eventService.postErrorEvent(
-          'Failed to create a court request',
-          {
-            caseId,
-            actor: user.name,
-            institution: user.institution?.name,
-            courtId,
-            courtCaseNumber,
-          },
-          reason,
-        )
-
-        throw reason
-      })
-  }
-
-  async createCourtRecord(
-    caseId: string,
-    courtId: string,
-    courtCaseNumber: string,
-    fileName: string,
-    content: Buffer,
-  ): Promise<string> {
-    return this.uploadStream(
-      courtId,
-      `${fileName}.pdf`,
-      'application/pdf',
-      content,
-    )
-      .then((streamId) =>
-        this.courtClientService.createThingbok(courtId, {
-          caseNumber: courtCaseNumber,
-          subject: fileName,
-          fileName: `${fileName}.pdf`,
-          streamID: streamId,
-        }),
-      )
-      .catch((reason) => {
-        this.eventService.postErrorEvent(
-          'Failed to create a court record',
-          {
-            caseId,
-            actor: 'RVG',
-            institution: 'RVG',
-            courtId,
-            courtCaseNumber,
-            fileName: this.mask(fileName),
-          },
-          reason,
-        )
-
-        throw reason
-      })
-  }
-
-  async createRuling(
-    caseId: string,
-    courtId: string,
-    courtCaseNumber: string,
-    fileName: string,
-    content: Buffer,
-    user?: User,
-  ): Promise<string> {
-    return this.uploadStream(
-      courtId,
-      `${fileName}.pdf`,
-      'application/pdf',
-      content,
-    )
-      .then((streamId) =>
-        this.courtClientService.createDocument(courtId ?? '', {
-          caseNumber: courtCaseNumber,
-          subject: fileName,
-          fileName: `${fileName}.pdf`,
-          streamID: streamId,
-          caseFolder: 'Dómar, úrskurðir og Þingbók',
-        }),
-      )
-      .catch((reason) => {
-        this.eventService.postErrorEvent(
-          'Failed to create a court ruling',
-          {
-            caseId,
-            actor: user?.name ?? 'RVG',
-            institution: user?.institution?.name ?? 'RVG',
-            courtId,
-            courtCaseNumber,
-            fileName: this.mask(fileName),
-          },
-          reason,
-        )
-
-        throw reason
-      })
-  }
-
   async createDocument(
     caseId: string,
-    courtId: string,
-    courtCaseNumber: string,
+    courtId = '',
+    courtCaseNumber = '',
+    caseFolder: CourtDocumentFolder,
     subject: string,
     fileName: string,
     fileType: string,
     content: Buffer,
     user?: User,
   ): Promise<string> {
-    return this.uploadStream(courtId, fileName, fileType, content)
+    return this.courtClientService
+      .uploadStream(courtId, {
+        value: content,
+        options: { filename: fileName, contentType: fileType },
+      })
       .then((streamId) =>
         this.courtClientService.createDocument(courtId, {
           caseNumber: courtCaseNumber,
           subject,
           fileName,
           streamID: streamId,
-          caseFolder: 'Gögn málsins',
+          caseFolder,
         }),
       )
       .catch((reason) => {
         this.eventService.postErrorEvent(
-          'Failed to create a court document',
+          'Failed to create a document at court',
           {
             caseId,
             actor: user?.name ?? 'RVG',
@@ -261,6 +142,7 @@ export class CourtService {
             subject: this.mask(subject),
             fileName: this.mask(fileName),
             fileType,
+            caseFolder,
           },
           reason,
         )
@@ -272,7 +154,7 @@ export class CourtService {
   async createCourtCase(
     user: User,
     caseId: string,
-    courtId: string,
+    courtId = '',
     type: CaseType,
     policeCaseNumbers: string[],
     isExtension: boolean,
@@ -287,7 +169,7 @@ export class CourtService {
     return this.courtClientService
       .createCase(courtId, {
         caseType: isIndictment ? 'S - Ákærumál' : 'R - Rannsóknarmál',
-        subtype: subType,
+        subtype: subType as string,
         status: 'Skráð',
         receivalDate: formatISO(nowFactory(), { representation: 'date' }),
         basedOn: isIndictment ? 'Sakamál' : 'Rannsóknarhagsmunir',

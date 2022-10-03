@@ -12,7 +12,7 @@ interface Props {
   signingDate?: string
 }
 
-export const SignedDocument = (props: Props) => {
+const SignedDocument = (props: Props) => {
   const { formatMessage } = useIntl()
   const { signatory, signingDate } = props
 
@@ -31,3 +31,5 @@ export const SignedDocument = (props: Props) => {
     </div>
   )
 }
+
+export default SignedDocument

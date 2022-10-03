@@ -63,6 +63,7 @@ export class AppService {
       },
       body: JSON.stringify({
         ...caseToCreate,
+        policeCaseNumber: undefined,
         policeCaseNumbers: [caseToCreate.policeCaseNumber],
       }),
     })

@@ -20,6 +20,16 @@ export const GET_PROJECT_PAGE_QUERY = gql`
           url
         }
       }
+      footerItems {
+        title
+        content {
+          ...HtmlFields
+        }
+        link {
+          text
+          url
+        }
+      }
       subtitle
       intro
       content {
@@ -41,6 +51,9 @@ export const GET_PROJECT_PAGE_QUERY = gql`
         config
       }
       slices {
+        ...AllSlices
+      }
+      bottomSlices {
         ...AllSlices
       }
       newsTag {

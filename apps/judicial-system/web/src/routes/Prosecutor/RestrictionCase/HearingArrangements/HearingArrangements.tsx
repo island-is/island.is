@@ -18,6 +18,7 @@ import {
   FormFooter,
   Modal,
   PageLayout,
+  FormContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
   removeTabsValidateAndSet,
@@ -33,17 +34,17 @@ import {
   rcRequestedHearingArrangements,
   titles,
 } from '@island.is/judicial-system-web/messages'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
-import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { isHearingArrangementsStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
+import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import * as constants from '@island.is/judicial-system/consts'
 
-import SelectCourt from '../../SharedComponents/SelectCourt/SelectCourt'
 import ArrestDate from './ArrestDate'
-import RequestCourtDate from '../../SharedComponents/RequestCourtDate/RequestCourtDate'
-import ProsecutorSectionHeightenedSecurity from '../../SharedComponents/ProsecutorSection/ProsecutorSectionHeightenedSecurity'
-import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import {
+  RequestCourtDate,
+  SelectCourt,
+  ProsecutorSectionHeightenedSecurity,
+} from '../../components'
 
 export const HearingArrangements: React.FC = () => {
   const router = useRouter()
@@ -56,7 +57,6 @@ export const HearingArrangements: React.FC = () => {
   } = useContext(FormContext)
   const [modalVisible, setModalVisible] = useState<boolean>(false)
 
-  const { user } = useContext(UserContext)
   const {
     sendNotification,
     isSendingNotification,
@@ -240,8 +240,8 @@ export const HearingArrangements: React.FC = () => {
               })}
               primaryButtonText="Senda tilkynningu"
               secondaryButtonText="Halda áfram með kröfu"
-              handleClose={() => setModalVisible(false)}
-              handleSecondaryButtonClick={() =>
+              onClose={() => setModalVisible(false)}
+              onSecondaryButtonClick={() =>
                 router.push(
                   `${constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`,
                 )
@@ -251,7 +251,7 @@ export const HearingArrangements: React.FC = () => {
                   ? formatMessage(errors.sendNotification)
                   : undefined
               }
-              handlePrimaryButtonClick={async () => {
+              onPrimaryButtonClick={async () => {
                 const notificationSent = await sendNotification(
                   workingCase.id,
                   NotificationType.HEADS_UP,

@@ -24,9 +24,11 @@ export enum ApplicationTypes {
   EXAMPLE_PAYMENT = 'ExamplePayment',
   DRIVING_SCHOOL_CONFIRMATION = 'DrivingSchoolConfirmation',
   MORTGAGE_CERTIFICATE = 'MortgageCertificate',
+  MARRIAGE_CONDITIONS = 'MarriageConditions',
   NO_DEBT_CERTIFICATE = 'NoDebtCertificate',
   FINANCIAL_STATEMENTS_INAO = 'FinancialStatementsInao',
   OPERATING_LCENSE = 'OperatingLicense',
+  DRIVING_LICENSE_DUPLICATE = 'DrivingLicenseDuplicate',
 }
 
 export const ApplicationConfigurations = {
@@ -130,6 +132,10 @@ export const ApplicationConfigurations = {
     slug: 'vedbokarvottord',
     translation: 'mc.application',
   },
+  [ApplicationTypes.MARRIAGE_CONDITIONS]: {
+    slug: 'hjonavigsla',
+    translation: 'mac.application',
+  },
   [ApplicationTypes.NO_DEBT_CERTIFICATE]: {
     slug: 'skuldleysisvottord',
     translation: 'ndc.application',
@@ -141,5 +147,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.OPERATING_LCENSE]: {
     slug: 'rekstrarleyfi',
     translation: 'ol.application',
+  },
+  [ApplicationTypes.DRIVING_LICENSE_DUPLICATE]: {
+    slug: 'samrit',
+    translation: 'dld.application',
   },
 }

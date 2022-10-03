@@ -228,6 +228,18 @@ export const coreErrorMessages = defineMessages({
     defaultMessage: 'Villa kom upp við að fjarlægja skrána.',
     description: 'Error message when deleting a file fails',
   },
+  fileMaxSizeLimitExceeded: {
+    id: 'application.system:core.error.file.maxSizeLimitExceeded',
+    defaultMessage:
+      'Skráin er of stór. Hægt er að hlaða inn skrám sem eru {maxSizeInMb}MB eða minni.',
+    description: 'Error message when file size exceeds max size limit',
+  },
+  fileInvalidExtension: {
+    id: 'application.system:core.error.file.invalidExtension',
+    defaultMessage:
+      'Skráin er ekki í réttu sniði. Hægt er að hlaða inn skrám með endingunum {accept}.',
+    description: 'Error message when file extension is invalid',
+  },
   isMissingTokenErrorTitle: {
     id: 'application.system:core.missing.token.error.title',
     defaultMessage: 'Úps! Enginn tóki fannst',

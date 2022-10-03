@@ -56,14 +56,16 @@ export const ComplaineeTable: FC<Props> = ({
             operatesWithinEurope === 'yes' ? sharedFields.yes : sharedFields.no,
           )}
         </Text>
-        {countryOfOperation && countryOfOperation.length > 0 && (
-          <>
-            <Text variant="h5">
-              {formatMessage(complaint.labels.complaineeCountryOfOperation)}
-            </Text>
-            <Text>{countryOfOperation}</Text>
-          </>
-        )}
+        {countryOfOperation !== 'temp' &&
+          countryOfOperation &&
+          countryOfOperation.length > 0 && (
+            <>
+              <Text variant="h5">
+                {formatMessage(complaint.labels.complaineeCountryOfOperation)}
+              </Text>
+              <Text>{countryOfOperation}</Text>
+            </>
+          )}
       </Box>
       <Divider />
       {onEdit || onRemove ? (

@@ -6,8 +6,10 @@ import {
   CaseFilesAccordionItem,
   CommentsAccordionItem,
   FormContentContainer,
+  FormContext,
   FormFooter,
   InfoCard,
+  MarkdownWrapper,
   PageLayout,
   PdfButton,
 } from '@island.is/judicial-system-web/src/components'
@@ -15,7 +17,6 @@ import {
   RestrictionCaseCourtSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
@@ -34,7 +35,6 @@ import {
   Button,
   Text,
 } from '@island.is/island-ui/core'
-import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
 import {
   UploadState,
   useCourtUpload,
@@ -47,7 +47,7 @@ import {
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import * as constants from '@island.is/judicial-system/consts'
 
-import DraftConclusionModal from '../../SharedComponents/DraftConclusionModal/DraftConclusionModal'
+import { DraftConclusionModal } from '../../components'
 
 const Overview = () => {
   const {
@@ -146,7 +146,9 @@ const Overview = () => {
             data={[
               {
                 title: formatMessage(core.policeCaseNumber),
-                value: workingCase.policeCaseNumbers.join(', '),
+                value: workingCase.policeCaseNumbers.map((n) => (
+                  <Text key={n}>{n}</Text>
+                )),
               },
               {
                 title: formatMessage(core.prosecutor),
@@ -171,14 +173,25 @@ const Overview = () => {
                 value: capitalize(caseTypes[workingCase.type]),
               },
             ]}
-            defendants={workingCase.defendants ?? []}
+            defendants={
+              workingCase.defendants
+                ? {
+                    title: capitalize(
+                      formatMessage(core.defendant, {
+                        suffix: workingCase.defendants.length > 1 ? 'ar' : 'i',
+                      }),
+                    ),
+                    items: workingCase.defendants,
+                  }
+                : undefined
+            }
             defender={{
               name: workingCase.defenderName ?? '',
               defenderNationalId: workingCase.defenderNationalId,
+              sessionArrangement: workingCase.sessionArrangements,
               email: workingCase.defenderEmail,
               phoneNumber: workingCase.defenderPhoneNumber,
             }}
-            sessionArrangement={workingCase.sessionArrangements}
           />
         </Box>
         <>

@@ -1,5 +1,9 @@
 import { gql } from '@apollo/client'
-import { dataFragment } from '../fragments/license'
+import {
+  dataFragment,
+  licenseFragment,
+  fetchFragment,
+} from '../fragments/license'
 
 export const GET_GENERIC_LICENSES = gql`
   query GenericLicensesQuery(
@@ -9,17 +13,10 @@ export const GET_GENERIC_LICENSES = gql`
     genericLicenses(input: $input, locale: $locale) {
       nationalId
       license {
-        type
-        provider {
-          id
-        }
-        pkpass
-        timeout
-        status
+        ...License
       }
       fetch {
-        status
-        updated
+        ...Fetch
       }
       payload {
         data {
@@ -30,6 +27,8 @@ export const GET_GENERIC_LICENSES = gql`
     }
   }
   ${dataFragment}
+  ${licenseFragment}
+  ${fetchFragment}
 `
 
 export const GET_GENERIC_LICENSE = gql`
@@ -37,17 +36,10 @@ export const GET_GENERIC_LICENSE = gql`
     genericLicense(input: $input, locale: $locale) {
       nationalId
       license {
-        type
-        provider {
-          id
-        }
-        pkpass
-        timeout
-        status
+        ...License
       }
       fetch {
-        status
-        updated
+        ...Fetch
       }
       payload {
         data {
@@ -58,4 +50,6 @@ export const GET_GENERIC_LICENSE = gql`
     }
   }
   ${dataFragment}
+  ${licenseFragment}
+  ${fetchFragment}
 `

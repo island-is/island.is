@@ -36,6 +36,10 @@ export interface QualityPhoto {
   data: string
 }
 
+export interface QualitySignature {
+  data: string
+}
+
 export type CanApplyErrorCodeBTemporary =
   | 'PERSON_NOT_FOUND_IN_NATIONAL_REGISTRY'
   | 'NO_LICENSE_FOUND'

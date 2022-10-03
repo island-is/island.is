@@ -17,7 +17,7 @@ import {
 } from '@island.is/judicial-system/types'
 import { errors } from '@island.is/judicial-system-web/messages'
 
-interface TUploadFile extends UploadFile {
+export interface TUploadFile extends UploadFile {
   category?: CaseFileCategory
 }
 
@@ -235,20 +235,15 @@ export const useS3Upload = (workingCase: Case) => {
     isRetry?: boolean,
     filesCategory?: CaseFileCategory,
   ) => {
-    const newUploadFiles = newFiles.map((newFile) => {
-      return {
-        name: newFile.name,
-        size: newFile.size,
-        type: newFile.type,
-        category: filesCategory,
-      }
-    }) as TUploadFile[]
+    newFiles.forEach(async (file: TUploadFile) => {
+      file.category = filesCategory
+    })
 
     if (!isRetry) {
-      setFilesRefAndState([...newUploadFiles, ...files])
+      setFilesRefAndState([...newFiles, ...files])
     }
 
-    newUploadFiles.forEach(async (file) => {
+    newFiles.forEach(async (file: TUploadFile) => {
       const presignedPost = await createPresignedPost(
         file.name.normalize(),
         file.type ?? '',

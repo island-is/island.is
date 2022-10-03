@@ -11,5 +11,8 @@ export const courtClientModuleConfig = defineConfig({
     courtMemberCode: env.required('XROAD_COURT_MEMBER_CODE', ''),
     courtApiPath: env.required('XROAD_COURT_API_PATH', ''),
     courtsCredentials: env.requiredJSON('XROAD_COURTS_CREDENTIALS', {}),
+    courtApiAvailable: !(env.optional('BLOCKED_API_INTEGRATION') ?? '')
+      .split(',')
+      .includes('COURT'),
   }),
 })

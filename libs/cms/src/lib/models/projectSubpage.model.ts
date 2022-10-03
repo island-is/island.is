@@ -39,5 +39,5 @@ export const mapProjectSubpage = ({
     ? mapDocument(fields.content, sys.id + ':content')
     : [],
   renderSlicesAsTabs: fields.renderSlicesAsTabs ?? false,
-  slices: (fields.slices ?? []).map(safelyMapSliceUnion),
+  slices: (fields.slices ?? []).map(safelyMapSliceUnion).filter(Boolean),
 })

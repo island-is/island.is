@@ -28,12 +28,12 @@ module.exports = {
         .removeColumn('case_file', 'category', {
           transaction: t,
         })
-        .then(() => {
+        .then(() =>
           queryInterface.sequelize.query(
-            'DROP TYPE IF EXISTS "enum_case_file_category";',
+            'DROP TYPE IF EXISTS enum_case_file_category',
             { transaction: t },
-          )
-        }),
+          ),
+        ),
     )
   },
 }

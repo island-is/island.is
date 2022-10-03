@@ -19,6 +19,7 @@ import {
   CaseType,
   SessionArrangements,
   CourtDocument,
+  SubpoenaType,
 } from '@island.is/judicial-system/types'
 
 export class UpdateCaseDto {
@@ -338,4 +339,14 @@ export class UpdateCaseDto {
   @IsString()
   @ApiPropertyOptional()
   readonly seenByDefender?: Date
+
+  @IsOptional()
+  @IsEnum(SubpoenaType)
+  @ApiPropertyOptional({ enum: SubpoenaType })
+  readonly subpoenaType?: SubpoenaType
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional()
+  readonly defendantWaivesRightToCounsel?: boolean
 }

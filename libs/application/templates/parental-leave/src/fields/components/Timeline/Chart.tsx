@@ -8,7 +8,9 @@ import isSameDay from 'date-fns/isSameDay'
 import addMonths from 'date-fns/addMonths'
 import endOfMonth from 'date-fns/endOfMonth'
 import parseISO from 'date-fns/parseISO'
-
+import is from 'date-fns/locale/is'
+import enGB from 'date-fns/locale/en-GB'
+import { useIntl } from 'react-intl'
 import { Box, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 
@@ -23,6 +25,7 @@ const ChartMonths: FC<{
   totalDays: Date[]
   lastDayInTimespan: Date
 }> = ({ initDate, rowWidth, chartColumns, totalDays, lastDayInTimespan }) => {
+  const intl = useIntl()
   return (
     <Box
       className={styles.row}
@@ -43,6 +46,7 @@ const ChartMonths: FC<{
           const isFirstDayOfMonth = totalDays[index].getDate() === 1
           const height = isFirstDayOfMonth || index === 0 ? 14 : 0
           const color = isInitDay ? theme.color.yellow200 : theme.color.dark200
+          const currentLocale = intl.locale
           return (
             <Box
               key={index}
@@ -53,7 +57,9 @@ const ChartMonths: FC<{
               <Box className={styles.chartMonth}>
                 <Text variant="small">
                   {(isFirstDayOfMonth || index === 0) &&
-                    format(day, 'MMM yyyy')}
+                    format(day, 'MMM yyyy', {
+                      locale: currentLocale === 'is' ? is : enGB,
+                    })}
                   &nbsp;
                 </Text>
                 {isInitDay && <Box className={styles.highlightDay} />}

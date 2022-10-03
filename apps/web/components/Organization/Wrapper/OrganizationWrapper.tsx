@@ -52,6 +52,11 @@ import { LandlaeknirHeader } from './Themes/LandlaeknirTheme/LandlaeknirHeader'
 import HeilbrigdisstofnunNordurlandsFooter from './Themes/HeilbrigdisstofnunNordurlandsTheme/HeilbrigdisstofnunNordurlandsFooter'
 import { FiskistofaHeader } from './Themes/FiskistofaTheme/FiskistofaHeader'
 import FiskistofaFooter from './Themes/FiskistofaTheme/FiskistofaFooter'
+import { LandskjorstjornFooter } from './Themes/LandkjorstjornTheme/LandkjorstjornFooter'
+import { LatestNewsCardConnectedComponent } from '../LatestNewsCardConnectedComponent'
+import { RikislogmadurHeader } from './Themes/RikislogmadurTheme/RikislogmadurHeader'
+import { RikislogmadurFooter } from './Themes/RikislogmadurTheme/RikislogmadurFooter'
+import { LandskjorstjornHeader } from './Themes/LandkjorstjornTheme/LandskjorstjornHeader'
 import * as styles from './OrganizationWrapper.css'
 
 interface NavigationData {
@@ -103,6 +108,13 @@ export const footerEnabled = [
 
   'fiskistofa',
   'directorate-of-fisheries',
+
+  'landskjorstjorn',
+
+  'hsn',
+
+  'rikislogmadur',
+  'office-of-the-attorney-general-civil-affairs',
 ]
 
 export const getThemeConfig = (
@@ -115,7 +127,7 @@ export const getThemeConfig = (
     footerVersion = 'organization'
   }
 
-  if (theme === 'sjukratryggingar')
+  if (theme === 'sjukratryggingar' || theme === 'rikislogmadur')
     return {
       themeConfig: {
         headerButtonColorScheme: 'blueberry',
@@ -156,6 +168,10 @@ const OrganizationHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
       return <LandlaeknirHeader organizationPage={organizationPage} />
     case 'fiskistofa':
       return <FiskistofaHeader organizationPage={organizationPage} />
+    case 'rikislogmadur':
+      return <RikislogmadurHeader organizationPage={organizationPage} />
+    case 'landskjorstjorn':
+      return <LandskjorstjornHeader organizationPage={organizationPage} />
     default:
       return <DefaultHeader organizationPage={organizationPage} />
   }
@@ -270,6 +286,21 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
     case 'directorate-of-fisheries':
       OrganizationFooterComponent = (
         <FiskistofaFooter footerItems={organization.footerItems} />
+      )
+      break
+    case 'landskjorstjorn':
+      OrganizationFooterComponent = (
+        <LandskjorstjornFooter footerItems={organization.footerItems} />
+      )
+      break
+    case 'rikislogmadur':
+    case 'office-of-the-attorney-general-civil-affairs':
+      OrganizationFooterComponent = (
+        <RikislogmadurFooter
+          title={organization.title}
+          footerItems={organization.footerItems}
+          logo={organization.logo?.url}
+        />
       )
       break
   }
@@ -434,18 +465,48 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                         items={secondaryNavList}
                       />
                     )}
-                  {organizationPage.sidebarCards.map((card) => (
-                    <ProfileCard
-                      title={card.title}
-                      description={card.content}
-                      link={card.link}
-                      image={
-                        card.image?.url ||
-                        'https://images.ctfassets.net/8k0h54kbe6bj/6jpT5mePCNk02nVrzVLzt2/6adca7c10cc927d25597452d59c2a873/bitmap.png'
+                  <Box
+                    marginY={
+                      organizationPage.secondaryMenu &&
+                      secondaryNavList.length > 0
+                        ? 0
+                        : 3
+                    }
+                    className={styles.sidebarCardContainer}
+                  >
+                    {organizationPage.sidebarCards.map((card) => {
+                      if (card.__typename === 'SidebarCard') {
+                        return (
+                          <ProfileCard
+                            key={card.id}
+                            title={card.title}
+                            description={card.contentString}
+                            link={card.link}
+                            image={
+                              card.image?.url ||
+                              'https://images.ctfassets.net/8k0h54kbe6bj/6jpT5mePCNk02nVrzVLzt2/6adca7c10cc927d25597452d59c2a873/bitmap.png'
+                            }
+                            size="small"
+                          />
+                        )
                       }
-                      size="small"
-                    />
-                  ))}
+
+                      if (
+                        card.__typename === 'ConnectedComponent' &&
+                        (card.type === 'LatestNewsCard' ||
+                          card['componentType'] === 'LatestNewsCard')
+                      ) {
+                        return (
+                          <LatestNewsCardConnectedComponent
+                            key={card.id}
+                            {...card.json}
+                          />
+                        )
+                      }
+
+                      return null
+                    })}
+                  </Box>
                 </>
               )}
               {sidebarContent}
