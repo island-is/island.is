@@ -1506,51 +1506,6 @@ export const parentalLeaveFormMessages: MessageDir = {
         'Parental leave starting date is in the past, please correct this date',
     },
   }),
-
-  attachmentScreen: defineMessages({
-    genericTitle: {
-      id: 'pl.application:attachmentscreen.genericTitle',
-      defaultMessage: `Viðbótargögn með umsókn`,
-      description: `generic title`,
-    },
-    genericDescription: {
-      id: 'pl.application:attachmentscreen.genericDescription',
-      defaultMessage: `Hér getur þú sett viðbótargögn til Fæðingarorlofssjóðs. Athugaðu að skjalið þarf að vera á .pdf formi`,
-      description: `generic description`,
-    },
-    studentTitle: {
-      id: 'pl.application:attachmentscreen.studentTitle',
-      defaultMessage: `Staðfesting á námi`,
-      description: `student title`,
-    },
-    studentDescription: {
-      id: 'pl.application:attachmentscreen.studentDescription',
-      defaultMessage: `Námsmenn þurfa að skila inn staðfestingu á námi og námsárangri. Athugaðu að skjalið þarf að vera á .pdf formi`,
-      description: `student description`,
-    },
-    fatherWithoutMotherTitle: {
-      id: 'pl.application:attachmentscreen.fatherWithoutMotherTitle',
-      defaultMessage: 'Vottorð frá heilsugæslu',
-      description: 'father withouy mother title',
-    },
-    fatherWithoutMotherDescription: {
-      id: 'pl.application:attachmentscreen.fatherWithoutMotherDescription',
-      defaultMessage:
-        'Faðir þarf að skila inn fæðingarvottorði frá heilsugæslu sem staðfestir faðerni barns. Athugaðu að skjalið þarf að vera á .pdf formi',
-      description: 'father without mother description',
-    },
-    permanentFostercareTitle: {
-      id: 'pl.application:attachmentscreen.permanentFostercareTitle',
-      defaultMessage: 'Staðfesting frá sveitarfélagi',
-      description: 'permanent forstercare title',
-    },
-    permanentFostercareDescription: {
-      id: 'pl.application:attachmentscreen.permanentFostercareDescription',
-      defaultMessage:
-        'Vegna varanlegs fósturs þarf að skila inn staðfestingu frá sveitarfélagi. Athugaðu að skjalið þarf að vera á .pdf formi',
-      description: 'Permanent forstcare description',
-    },
-  }),
 }
 
 export const employerFormMessages = defineMessages({
