@@ -410,34 +410,6 @@ export const ParentalLeaveForm: Form = buildForm({
               description: parentalLeaveFormMessages.selfEmployed.description,
             }),
             buildMultiField({
-              id: 'employer.selfEmployed.attachment',
-              title: parentalLeaveFormMessages.selfEmployed.attachmentTitle,
-              description:
-                parentalLeaveFormMessages.selfEmployed.attachmentDescription,
-              condition: (answers) =>
-                (answers as {
-                  employer: {
-                    isSelfEmployed: string
-                  }
-                })?.employer?.isSelfEmployed === YES,
-              children: [
-                buildFileUploadField({
-                  id: 'employer.selfEmployed.file',
-                  title: '',
-                  introduction: '',
-                  maxSize: FILE_SIZE_LIMIT,
-                  maxSizeErrorText:
-                    parentalLeaveFormMessages.selfEmployed
-                      .attachmentMaxSizeError,
-                  uploadAccept: '.pdf',
-                  uploadHeader: '',
-                  uploadDescription: '',
-                  uploadButtonLabel:
-                    parentalLeaveFormMessages.selfEmployed.attachmentButton,
-                }),
-              ],
-            }),
-            buildMultiField({
               id: 'employer.information',
               title: parentalLeaveFormMessages.employer.title,
               description: parentalLeaveFormMessages.employer.description,
@@ -462,6 +434,108 @@ export const ParentalLeaveForm: Form = buildForm({
                   placeholder: '000-0000',
                 }),
               ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'fileUpload',
+          title: parentalLeaveFormMessages.attachmentScreen.genericTitle,
+          children: [
+            buildFileUploadField({
+              id: 'employer.selfEmployed.file',
+              title: parentalLeaveFormMessages.selfEmployed.attachmentTitle,
+              description: parentalLeaveFormMessages.selfEmployed
+              .attachmentDescription,
+              introduction: parentalLeaveFormMessages.selfEmployed
+              .attachmentDescription,
+              condition: (answers) => {
+                const isSelfEmployed =
+                  (answers as {
+                    employer: {
+                      isSelfEmployed: string
+                    }
+                  })?.employer?.isSelfEmployed === YES
+                const hasOldSelfEmployedFile =
+                  (answers as {
+                    employer: {
+                      selfEmployed: {
+                        file: unknown[]
+                      }
+                    }
+                  })?.employer?.selfEmployed?.file?.length > 0
+
+                return isSelfEmployed && hasOldSelfEmployedFile
+              },
+              maxSize: FILE_SIZE_LIMIT,
+              maxSizeErrorText:
+                parentalLeaveFormMessages.selfEmployed
+                  .attachmentMaxSizeError,
+              uploadAccept: '.pdf',
+              uploadHeader: '',
+              uploadDescription: '',
+              uploadButtonLabel:
+                parentalLeaveFormMessages.selfEmployed.attachmentButton,
+            }),
+            buildFileUploadField({
+              id: 'fileUpload.selfEmployedFile',
+              title: parentalLeaveFormMessages.selfEmployed.attachmentTitle,
+              description: parentalLeaveFormMessages.selfEmployed
+              .attachmentDescription,
+              introduction: parentalLeaveFormMessages.selfEmployed
+              .attachmentDescription,
+              condition: (answers) => {
+                const isSelfEmployed =
+                  (answers as {
+                    employer: {
+                      isSelfEmployed: string
+                    }
+                  })?.employer?.isSelfEmployed === YES
+                const hasOldSelfEmployedFile =
+                  (answers as {
+                    employer: {
+                      selfEmployed: {
+                        file: unknown[]
+                      }
+                    }
+                  })?.employer?.selfEmployed?.file?.length > 0
+
+                return isSelfEmployed && !hasOldSelfEmployedFile
+              },
+              maxSize: FILE_SIZE_LIMIT,
+              maxSizeErrorText:
+                parentalLeaveFormMessages.selfEmployed
+                  .attachmentMaxSizeError,
+              uploadAccept: '.pdf',
+              uploadHeader: '',
+              uploadDescription: '',
+              uploadButtonLabel:
+                parentalLeaveFormMessages.selfEmployed.attachmentButton,
+            }),
+            buildFileUploadField({
+              id: 'fileUpload.file',
+              title: parentalLeaveFormMessages.attachmentScreen.genericTitle,
+              introduction: parentalLeaveFormMessages.attachmentScreen
+              .genericDescription,
+              maxSize: FILE_SIZE_LIMIT,
+              condition: (answers) => {
+                const isSelfEmployed =
+                  (answers as {
+                    employer: {
+                      isSelfEmployed: string
+                    }
+                  })?.employer?.isSelfEmployed === YES
+
+
+                return !isSelfEmployed
+              },
+              maxSizeErrorText:
+                parentalLeaveFormMessages.selfEmployed
+                  .attachmentMaxSizeError,
+              uploadAccept: '.pdf',
+              uploadHeader: '',
+              uploadDescription: '',
+              uploadButtonLabel:
+                parentalLeaveFormMessages.selfEmployed.attachmentButton,
             }),
           ],
         }),
