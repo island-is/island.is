@@ -121,7 +121,7 @@ export class DefendantService {
           where: {
             state: CaseState.ACCEPTED,
             type: CaseType.CUSTODY,
-            valid_to_date: { [Op.lt]: literal('current_date') },
+            valid_to_date: { [Op.gte]: literal('current_date') },
           },
         },
       ],

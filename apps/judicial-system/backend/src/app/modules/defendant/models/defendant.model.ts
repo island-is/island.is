@@ -1,9 +1,9 @@
 import {
+  BelongsTo,
   Column,
   CreatedAt,
   DataType,
   ForeignKey,
-  HasOne,
   Model,
   Table,
   UpdatedAt,
@@ -46,7 +46,7 @@ export class Defendant extends Model {
   @ApiProperty()
   caseId!: string
 
-  @HasOne(() => Case, 'case')
+  @BelongsTo(() => Case, 'case_id')
   @ApiPropertyOptional({ type: Case })
   case?: Case
 
