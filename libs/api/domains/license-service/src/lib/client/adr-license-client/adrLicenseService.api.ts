@@ -22,7 +22,7 @@ import {
 } from '@island.is/clients/smartsolutions'
 import { format } from 'kennitala'
 import { handle404 } from '@island.is/clients/middlewares'
-
+import { Locale } from '@island.is/shared/types'
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'adrlicense-service'
 
@@ -42,14 +42,16 @@ export class GenericAdrLicenseApi implements GenericLicenseClient<AdrDto> {
     return license
   }
 
-  async getLicense(user: User): Promise<GenericLicenseUserdataExternal | null> {
+  async getLicense(
+    user: User,
+    locale: Locale,
+  ): Promise<GenericLicenseUserdataExternal | null> {
     const licenseData = await this.fetchLicense(user)
 
     if (!licenseData) {
       return null
     }
-
-    const payload = parseAdrLicensePayload(licenseData)
+    const payload = parseAdrLicensePayload(licenseData, locale)
 
     if (payload) {
       return {
@@ -68,8 +70,9 @@ export class GenericAdrLicenseApi implements GenericLicenseClient<AdrDto> {
 
   async getLicenseDetail(
     user: User,
+    locale: Locale,
   ): Promise<GenericLicenseUserdataExternal | null> {
-    return this.getLicense(user)
+    return this.getLicense(user, locale)
   }
 
   private async createPkPassPayload(user: User): Promise<PassDataInput | null> {

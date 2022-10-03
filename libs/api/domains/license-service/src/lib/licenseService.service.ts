@@ -5,6 +5,7 @@ import compareAsc from 'date-fns/compareAsc'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { User } from '@island.is/auth-nest-tools'
+import { CmsContentfulService } from '@island.is/cms'
 import {
   GenericUserLicense,
   GenericLicenseTypeType,
@@ -18,6 +19,7 @@ import {
   GenericLicenseUserdataExternal,
   PkPassVerification,
   GenericUserLicensePkPassStatus,
+  GenericLicenseOrganizationSlug,
   CONFIG_PROVIDER_V2,
 } from './licenceService.type'
 import { Locale } from '@island.is/shared/types'
@@ -46,6 +48,7 @@ export class LicenseServiceService {
     @Inject(CACHE_MANAGER) private cacheManager: CacheManager,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     @Inject(CONFIG_PROVIDER_V2) private config: LicenseServiceConfigV2,
+    private readonly cmsContentfulService: CmsContentfulService,
   ) {}
 
   private handleError(
@@ -180,7 +183,7 @@ export class LicenseServiceService {
           licenseDataFromService = await this.getCachedOrCache(
             license,
             user,
-            async () => await licenseService.getLicense(user),
+            async () => await licenseService.getLicense(user, locale),
             force ? 0 : license.timeout,
           )
 
@@ -224,6 +227,15 @@ export class LicenseServiceService {
     return licenses
   }
 
+  private async getOrganization(slug: GenericLicenseOrganizationSlug) {
+    const organization = await this.cmsContentfulService.getOrganization(
+      slug,
+      'is-IS',
+    )
+
+    return organization
+  }
+
   async getLicense(
     user: User,
     locale: Locale,
@@ -238,10 +250,14 @@ export class LicenseServiceService {
     )
 
     if (license && licenseService) {
-      licenseUserdata = await licenseService.getLicenseDetail(user)
+      licenseUserdata = await licenseService.getLicenseDetail(user, locale)
     } else {
       throw new Error(`${licenseType} not supported`)
     }
+
+    const orgData = license.orgSlug
+      ? await this.getOrganization(license.orgSlug)
+      : undefined
 
     return {
       nationalId: user.nationalId,
@@ -251,6 +267,8 @@ export class LicenseServiceService {
         pkpassStatus:
           licenseUserdata?.pkpassStatus ??
           GenericUserLicensePkPassStatus.Unknown,
+        title: orgData?.title,
+        logo: orgData?.logo?.url,
       },
       fetch: {
         status: licenseUserdata

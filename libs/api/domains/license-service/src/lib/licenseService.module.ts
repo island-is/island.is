@@ -25,6 +25,7 @@ import {
   GenericLicenseMetadata,
   GenericLicenseProviderId,
   GenericLicenseType,
+  GenericLicenseOrganizationSlug,
   GENERIC_LICENSE_FACTORY,
 } from './licenceService.type'
 import {
@@ -72,6 +73,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     pkpass: true,
     pkpassVerify: true,
     timeout: 100,
+    orgSlug: GenericLicenseOrganizationSlug.DriversLicense,
   },
   {
     type: GenericLicenseType.AdrLicense,
@@ -81,6 +83,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     pkpass: true,
     pkpassVerify: true,
     timeout: 100,
+    orgSlug: GenericLicenseOrganizationSlug.AdrLicense,
   },
   {
     type: GenericLicenseType.MachineLicense,
@@ -91,6 +94,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     pkpass: true,
     pkpassVerify: true,
     timeout: 100,
+    orgSlug: GenericLicenseOrganizationSlug.MachineLicense,
   },
   {
     type: GenericLicenseType.FirearmLicense,
@@ -100,6 +104,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     pkpass: true,
     pkpassVerify: true,
     timeout: 100,
+    orgSlug: GenericLicenseOrganizationSlug.FirearmLicense,
   },
 ]
 

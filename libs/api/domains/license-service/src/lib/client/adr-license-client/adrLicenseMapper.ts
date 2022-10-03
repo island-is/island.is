@@ -11,6 +11,8 @@ import {
   FlattenedAdrDto,
   FlattenedAdrRightsDto,
 } from './genericAdrLicense.type'
+import { Locale } from '@island.is/shared/types'
+import { i18n } from '../../utils/translations'
 
 const parseAdrLicenseResponse = (license: AdrDto) => {
   const { adrRettindi, ...rest } = license
@@ -40,6 +42,7 @@ const parseAdrLicenseResponse = (license: AdrDto) => {
 
 export const parseAdrLicensePayload = (
   license: AdrDto,
+  locale: Locale = 'is',
 ): GenericUserLicensePayload | null => {
   if (!license) return null
 
@@ -51,22 +54,22 @@ export const parseAdrLicensePayload = (
     {
       name: 'Grunnupplýsingar ADR skírteinis',
       type: GenericLicenseDataFieldType.Value,
-      label: 'Númer skírteinis',
+      label: i18n.licenseNumber[locale],
       value: parsedResponse.skirteinisNumer?.toString(),
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: 'Fullt nafn',
+      label: i18n.fullName[locale],
       value: parsedResponse.fulltNafn ?? '',
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: 'Útgefandi',
+      label: i18n.publisher[locale],
       value: 'Vinnueftirlitið',
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: 'Gildir til',
+      label: i18n.validTo[locale],
       value: parsedResponse.gildirTil ?? '',
     },
   ]
@@ -75,14 +78,14 @@ export const parseAdrLicensePayload = (
     (field) => field.grunn,
   )
   const tankar = parseRights(
-    'Tankar',
+    i18n.tanks[locale],
     adrRights.filter((field) => field.tankar),
   )
 
   if (tankar) data.push(tankar)
 
   const grunn = parseRights(
-    'Annað en í tanki',
+    i18n.otherThanTanks[locale],
     adrRights.filter((field) => field.grunn),
   )
   if (grunn) data.push(grunn)

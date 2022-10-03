@@ -10,6 +10,8 @@ import {
 
 import format from 'date-fns/format'
 import isAfter from 'date-fns/isAfter'
+import { Locale } from '@island.is/shared/types'
+import { i18n } from '../../utils/translations'
 import is from 'date-fns/locale/is'
 import enGB from 'date-fns/locale/en-GB'
 import { format as formatSsn } from 'kennitala'
@@ -31,6 +33,7 @@ const checkLicenseExpirationDate = (license: VinnuvelaDto) => {
 
 export const parseMachineLicensePayload = (
   license: VinnuvelaDto,
+  locale: Locale = 'is',
 ): GenericUserLicensePayload | null => {
   if (!license) return null
 
@@ -40,37 +43,37 @@ export const parseMachineLicensePayload = (
     {
       name: 'Grunnupplýsingar vinnuvélaskírteinis',
       type: GenericLicenseDataFieldType.Value,
-      label: 'Númer skírteinis',
+      label: i18n.licenseNumber[locale],
       value: license.skirteinisNumer?.toString(),
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: 'Fullt nafn',
+      label: i18n.fullName[locale],
       value: license?.fulltNafn ?? '',
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: 'Útgáfustaður',
+      label: i18n.placeOfIssue[locale],
       value: license.utgafuStadur ?? '',
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: 'Fyrsti útgáfudagur',
+      label: i18n.firstPublishedDate[locale],
       value: license.fyrstiUtgafuDagur?.toString(),
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: 'Gildir til',
-      value: 'Sjá réttindi',
+      label: i18n.validTo[locale],
+      value: i18n.seeRights[locale],
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: 'Ökuskírteinisnúmer',
+      label: i18n.drivingLicenseNumber[locale],
       value: license.okuskirteinisNumer ?? '',
     },
     {
       type: GenericLicenseDataFieldType.Group,
-      label: 'Réttindaflokkar',
+      label: i18n.classesOfRights[locale],
       fields: (license.vinnuvelaRettindi ?? [])
         .filter((field) => field.kenna || field.stjorna)
         .map((field) => ({
@@ -78,7 +81,7 @@ export const parseMachineLicensePayload = (
           name: field.flokkur ?? '',
           label: field.fulltHeiti ?? field.stuttHeiti ?? '',
           description: field.fulltHeiti ?? field.stuttHeiti ?? '',
-          fields: parseVvrRights(field),
+          fields: parseVvrRights(field, locale),
         })),
     },
   ]
@@ -95,20 +98,21 @@ export const parseMachineLicensePayload = (
 
 const parseVvrRights = (
   rights: VinnuvelaRettindiDto,
+  locale: Locale = 'is',
 ): Array<GenericLicenseDataField> | undefined => {
   const fields = new Array<GenericLicenseDataField>()
 
   if (rights.stjorna) {
     fields.push({
       type: GenericLicenseDataFieldType.Value,
-      label: 'Stjórna',
+      label: i18n.control[locale],
       value: rights.stjorna,
     })
   }
   if (rights.kenna) {
     fields.push({
       type: GenericLicenseDataFieldType.Value,
-      label: 'Kenna',
+      label: i18n.teach[locale],
       value: rights.kenna,
     })
   }

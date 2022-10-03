@@ -99,24 +99,27 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
   const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
   const [licenseTypes, setLicenseTypes] = useState<Array<GenericLicenseType>>([
     GenericLicenseType.DriversLicense,
+    GenericLicenseType.AdrLicense,
+    GenericLicenseType.MachineLicense,
+    GenericLicenseType.FirearmLicense,
   ])
-  useEffect(() => {
-    const isFlagEnabled = async () => {
-      const ffEnabled = await featureFlagClient.getValue(
-        `servicePortalFetchAllLicenses`,
-        false,
-      )
-      if (ffEnabled) {
-        setLicenseTypes([
-          GenericLicenseType.DriversLicense,
-          GenericLicenseType.AdrLicense,
-          GenericLicenseType.MachineLicense,
-          GenericLicenseType.FirearmLicense,
-        ])
-      }
-    }
-    isFlagEnabled()
-  }, [])
+  // useEffect(() => {
+  //   const isFlagEnabled = async () => {
+  //     const ffEnabled = await featureFlagClient.getValue(
+  //       `servicePortalFetchAllLicenses`,
+  //       false,
+  //     )
+  //     if (ffEnabled) {
+  //       setLicenseTypes([
+  //         GenericLicenseType.DriversLicense,
+  //         GenericLicenseType.AdrLicense,
+  //         GenericLicenseType.MachineLicense,
+  //         GenericLicenseType.FirearmLicense,
+  //       ])
+  //     }
+  //   }
+  //   isFlagEnabled()
+  // }, [])
 
   const { data, loading, error } = useQuery<Query>(GenericLicensesQuery, {
     variables: {

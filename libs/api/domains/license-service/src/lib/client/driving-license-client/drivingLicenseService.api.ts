@@ -22,6 +22,7 @@ import {
 import { DriversLicenseConfig } from '../../licenseService.module'
 import { PkPassClient } from './pkpass.client'
 import { PkPassPayload } from './pkpass.type'
+import { Locale } from '@island.is/shared/types'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'drivinglicense-service'
@@ -301,7 +302,10 @@ export class GenericDrivingLicenseApi
    * @param nationalId NationalId to fetch drivers licence for.
    * @return {Promise<GenericLicenseUserdataExternal | null>} Latest driving license or null if an error occured.
    */
-  async getLicense(user: User): Promise<GenericLicenseUserdataExternal | null> {
+  async getLicense(
+    user: User,
+    locale: Locale,
+  ): Promise<GenericLicenseUserdataExternal | null> {
     const licenses = await this.requestFromXroadApi(user.nationalId)
 
     if (!licenses) {
@@ -311,7 +315,7 @@ export class GenericDrivingLicenseApi
       return null
     }
 
-    const payload = parseDrivingLicensePayload(licenses)
+    const payload = parseDrivingLicensePayload(licenses, locale)
 
     let pkpassStatus: GenericUserLicensePkPassStatus =
       GenericUserLicensePkPassStatus.Unknown
@@ -331,8 +335,9 @@ export class GenericDrivingLicenseApi
 
   async getLicenseDetail(
     user: User,
+    locale: Locale,
   ): Promise<GenericLicenseUserdataExternal | null> {
-    return this.getLicense(user)
+    return this.getLicense(user, locale)
   }
 
   async verifyPkPass(data: string): Promise<PkPassVerification | null> {

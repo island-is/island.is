@@ -21,6 +21,7 @@ import {
   PassDataInput,
   SmartSolutionsApi,
 } from '@island.is/clients/smartsolutions'
+import { Locale } from '@island.is/shared/types'
 import { LicenseData } from './firearmLicense.type'
 
 /** Category to attach each log message to */
@@ -52,13 +53,16 @@ export class GenericFirearmLicenseApi
     return licenseData
   }
 
-  async getLicense(user: User): Promise<GenericLicenseUserdataExternal | null> {
+  async getLicense(
+    user: User,
+    locale: Locale,
+  ): Promise<GenericLicenseUserdataExternal | null> {
     const licenseData = await this.fetchLicenseData(user)
     if (!licenseData) {
       return null
     }
 
-    const payload = parseFirearmLicensePayload(licenseData)
+    const payload = parseFirearmLicensePayload(licenseData, locale)
 
     if (payload) {
       return {
@@ -76,8 +80,9 @@ export class GenericFirearmLicenseApi
   }
   async getLicenseDetail(
     user: User,
+    locale: Locale,
   ): Promise<GenericLicenseUserdataExternal | null> {
-    return this.getLicense(user)
+    return this.getLicense(user, locale)
   }
   async getPkPassUrl(user: User): Promise<string | null> {
     const data = await this.fetchLicenseData(user)
