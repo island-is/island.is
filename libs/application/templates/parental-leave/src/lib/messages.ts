@@ -852,7 +852,7 @@ export const parentalLeaveFormMessages: MessageDir = {
     addAnother: {
       id: 'pl.application:periods.add.another',
       defaultMessage: 'Tímabil fæðingarorlofs',
-      description: 'Add another period',
+      description: 'Leave period',
     },
     change: {
       id: 'pl.application:periods.change',
@@ -975,7 +975,7 @@ export const parentalLeaveFormMessages: MessageDir = {
     title: {
       id: 'pl.application:duration.title',
       defaultMessage: 'Lengd fæðingarorlofs',
-      description: 'Please confirm your leave duration',
+      description: 'Leave duration',
     },
     description: {
       id: 'pl.application:duration.description',
@@ -1059,7 +1059,7 @@ export const parentalLeaveFormMessages: MessageDir = {
     description: {
       id: 'pl.application:selfEmployed.description',
       defaultMessage:
-        'Sjáflstætt starfandi einstaklingar þurfa að skila staðfestingu á lækkun á reiknuðu endurgjaldi ef við á.',
+        'Sjálfstætt starfandi einstaklingar þurfa að skila staðfestingu á lækkun á reiknuðu endurgjaldi ef við á.',
       description: 'Add translation',
     },
     attachmentTitle: {
@@ -1182,13 +1182,15 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:rightOfAccess.yesOption',
       defaultMessage:
         'Ég veiti forsjárlausa foreldrinu samþykki mitt fyrir umgengni í þessu fæðingarorlofi.',
-      description: 'Add translation',
+      description:
+        'I give my consent that the non-custodial parent is allowed right of access during this parental leave',
     },
     noOption: {
       id: 'pl.application:rightOfAccess.noOption',
       defaultMessage:
         'Ég veiti ekki forsjárlausa foreldrinu samþykki mitt fyrir umgengni í þessu fæðingarorlofi.',
-      description: 'Add translation',
+      description:
+        'I do not give my consent that the non-custodial parent is allowed right of access during this parental leave',
     },
   }),
 
@@ -1502,6 +1504,51 @@ export const parentalLeaveFormMessages: MessageDir = {
         'icel-trans: "Parental leave starting date is in the past, please correct this date"',
       description:
         'Parental leave starting date is in the past, please correct this date',
+    },
+  }),
+
+  attachmentScreen: defineMessages({
+    genericTitle: {
+      id: 'pl.application:attachmentscreen.genericTitle',
+      defaultMessage: `Viðbótargögn með umsókn`,
+      description: `generic title`,
+    },
+    genericDescription: {
+      id: 'pl.application:attachmentscreen.genericDescription',
+      defaultMessage: `Hér getur þú sett viðbótargögn til Fæðingarorlofssjóðs. Athugaðu að skjalið þarf að vera á .pdf formi`,
+      description: `generic description`,
+    },
+    studentTitle: {
+      id: 'pl.application:attachmentscreen.studentTitle',
+      defaultMessage: `Staðfesting á námi`,
+      description: `student title`,
+    },
+    studentDescription: {
+      id: 'pl.application:attachmentscreen.studentDescription',
+      defaultMessage: `Námsmenn þurfa að skila inn staðfestingu á námi og námsárangri. Athugaðu að skjalið þarf að vera á .pdf formi`,
+      description: `student description`,
+    },
+    fatherWithoutMotherTitle: {
+      id: 'pl.application:attachmentscreen.fatherWithoutMotherTitle',
+      defaultMessage: 'Vottorð frá heilsugæslu',
+      description: 'father withouy mother title',
+    },
+    fatherWithoutMotherDescription: {
+      id: 'pl.application:attachmentscreen.fatherWithoutMotherDescription',
+      defaultMessage:
+        'Faðir þarf að skila inn fæðingarvottorði frá heilsugæslu sem staðfestir faðerni barns. Athugaðu að skjalið þarf að vera á .pdf formi',
+      description: 'father without mother description',
+    },
+    permanentFostercareTitle: {
+      id: 'pl.application:attachmentscreen.permanentFostercareTitle',
+      defaultMessage: 'Staðfesting frá sveitarfélagi',
+      description: 'permanent forstercare title',
+    },
+    permanentFostercareDescription: {
+      id: 'pl.application:attachmentscreen.permanentFostercareDescription',
+      defaultMessage:
+        'Vegna varanlegs fósturs þarf að skila inn staðfestingu frá sveitarfélagi. Athugaðu að skjalið þarf að vera á .pdf formi',
+      description: 'Permanent forstcare description',
     },
   }),
 }

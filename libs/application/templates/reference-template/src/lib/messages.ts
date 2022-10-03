@@ -16,6 +16,11 @@ export const m = defineMessages({
     defaultMessage: 'Umsókn',
     description: `Application's name`,
   },
+  nameApplicationNeverWorkedBefore: {
+    id: 'example.application:name.application.never.worked.before',
+    defaultMessage: 'Umsókn - Aldrei unnið áður',
+    description: `Application's name`,
+  },
   draftTitle: {
     id: 'example.application:draft.title',
     defaultMessage: 'Drög',

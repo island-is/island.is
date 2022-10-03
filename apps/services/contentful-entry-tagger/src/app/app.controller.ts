@@ -1,6 +1,6 @@
 import { Body, Controller, Post } from '@nestjs/common'
+import type { Entry } from 'contentful-management'
 import { AppService } from './app.service'
-import type { Entry } from './types'
 
 @Controller()
 export class AppController {
