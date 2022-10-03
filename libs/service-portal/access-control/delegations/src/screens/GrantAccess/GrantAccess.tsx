@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import cn from 'classnames'
 import { gql, useMutation, useLazyQuery } from '@apollo/client'
-import { FormProvider, useForm, ValidationRules } from 'react-hook-form'
+import { FormProvider, useForm } from 'react-hook-form'
 import { useHistory } from 'react-router-dom'
 import { defineMessage } from 'react-intl'
 import * as kennitala from 'kennitala'
 import { sharedMessages } from '@island.is/shared/translations'
 
-import { Box, Input, Icon, toast } from '@island.is/island-ui/core'
+import { Box, Input, Icon, toast, Text } from '@island.is/island-ui/core'
 import {
   InputController,
   SelectController,
@@ -175,7 +175,7 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
       <Box className={styles.container}>
         <FormProvider {...methods}>
           <form onSubmit={onSubmit}>
-            <Box display="flex" flexDirection="column" rowGap={6}>
+            <Box display="flex" flexDirection="column" rowGap={[5, 6]}>
               <NoActionCard
                 label={formatMessage({
                   id: 'sp.access-control-delegations:signed-in-user',
@@ -283,6 +283,15 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
                   }}
                 />
               </div>
+            </Box>
+            <Box display="flex" flexDirection="column" rowGap={5} marginTop={5}>
+              <Text>
+                {formatMessage({
+                  id: 'sp.access-control-delegations:next-step-description',
+                  defaultMessage:
+                    'Í næsta skrefi velurðu hvaða gögn viðkomandi getur skoðað eða sýslað með.',
+                })}
+              </Text>
               <DelegationsFormFooter
                 disabled={!name || systemWatcher === null || loading}
                 loading={loading}

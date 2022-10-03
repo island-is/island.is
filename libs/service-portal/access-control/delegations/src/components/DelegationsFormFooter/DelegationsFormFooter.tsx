@@ -19,7 +19,15 @@ export const DelegationsFormFooter = ({
   const { formatMessage } = useLocale()
 
   return (
-    <Box display="flex" alignItems="center" justifyContent="spaceBetween">
+    <Box
+      display="flex"
+      alignItems="center"
+      justifyContent="spaceBetween"
+      borderTopWidth="standard"
+      borderColor="blue200"
+      paddingTop={4}
+      paddingBottom={7}
+    >
       <Button size={buttonSize} variant="ghost" onClick={onCancel}>
         {formatMessage(coreMessages.buttonCancel)}
       </Button>
