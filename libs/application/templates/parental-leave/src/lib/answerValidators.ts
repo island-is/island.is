@@ -87,6 +87,18 @@ export const answerValidators: Record<string, AnswerValidator> = {
     const buildError = (message: StaticText, path: string) =>
       buildValidationError(`${FILEUPLOAD}.${path}`)(message)
 
+    const isSelfEmployed = getValueViaPath(
+      application.answers,
+      'employer.isSelfEmployed',
+    )
+
+    if (
+      isSelfEmployed === YES &&
+      isEmpty((obj.selfEmployedFile as { file: unknown[] }).file)
+    ) {
+      return buildError(errorMessages.requiredAttachment, 'selfEmployedFile')
+    }
+
     // add validation for student files object etc
 
     return undefined
