@@ -1,5 +1,9 @@
 import { keyframes, style } from '@vanilla-extract/css'
 
+export const container = style({
+  maxWidth: 546,
+})
+
 export const inputWrapper = style({
   display: 'inline-block',
   position: 'relative',

@@ -5,11 +5,11 @@ import { useEvent } from 'react-use'
 
 const { sm, md, lg, xl } = theme.breakpoints
 
-type DeviceConfig = {
+type Breakpoints = {
   [key in keyof typeof theme.breakpoints]: boolean
 }
 
-const getDeviceConfig = (width: number): DeviceConfig => ({
+const getDeviceBreakpoints = (width: number): Breakpoints => ({
   xs: width < sm,
   sm: width >= sm,
   md: width >= md,
@@ -31,15 +31,15 @@ const getDeviceConfig = (width: number): DeviceConfig => ({
  *  // Is md breakpoint and xs is also true
  * }
  */
-export const useBreakpoint = (): DeviceConfig => {
-  const [breakpoint, setBreakpoint] = useState(() => getDeviceConfig(lg))
+export const useBreakpoint = (): Breakpoints => {
+  const [breakpoint, setBreakpoint] = useState(() => getDeviceBreakpoints(lg))
 
   useEffect(() => {
-    setBreakpoint(getDeviceConfig(window.innerWidth))
+    setBreakpoint(getDeviceBreakpoints(window.innerWidth))
   }, [])
 
   const calcInnerWidth = throttle(
-    () => setBreakpoint(getDeviceConfig(window.innerWidth)),
+    () => setBreakpoint(getDeviceBreakpoints(window.innerWidth)),
     200,
   )
 

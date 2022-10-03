@@ -7,26 +7,20 @@ import { defineMessage } from 'react-intl'
 import * as kennitala from 'kennitala'
 import { sharedMessages } from '@island.is/shared/translations'
 
-import {
-  Box,
-  Input,
-  Button,
-  Icon,
-  Text,
-  GridRow,
-  GridColumn,
-  toast,
-} from '@island.is/island-ui/core'
+import { Box, Input, Icon, toast, Select } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
 import { Mutation, Query } from '@island.is/api/schema'
 import {
   IntroHeader,
   ServicePortalPath,
   ServicePortalModuleComponent,
+  formatNationalId,
+  m,
 } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 
 import { AuthDelegationsQuery } from '../../lib/queries'
+import { DelegationsFormFooter, NoActionCard } from '../../components'
 import * as styles from './GrantAccess.css'
 
 const CreateAuthDelegationMutation = gql`
@@ -66,6 +60,7 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
   const { handleSubmit, control, errors, watch, reset } = useForm({
     mode: 'onChange',
   })
+
   const [
     createAuthDelegation,
     { loading: mutationLoading },
@@ -136,41 +131,48 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
     reset()
   }
 
+  const systemOptions = [
+    {
+      label: formatMessage({
+        id: 'sp.access-control-delegations:all-systems',
+        defaultMessage: 'Öll kerfi',
+      }),
+      value: 'all',
+    },
+    {
+      label: 'Valmöguleiki 1',
+      value: '0',
+    },
+    {
+      label: 'Valmöguleiki 2',
+      value: '1',
+    },
+  ]
+
   return (
-    <Box>
+    <>
       <IntroHeader
-        title={
-          userInfo?.profile?.name
-            ? formatMessage(
-                {
-                  id: 'sp.settings-access-control:grant-intro-title-w-name',
-                  defaultMessage: '{name} veitir umboð',
-                },
-                { name: userInfo.profile.name },
-              )
-            : defineMessage({
-                id: 'sp.settings-access-control:grant-intro-title',
-                defaultMessage: 'Veita aðgang',
-              })
-        }
+        title={formatMessage({
+          id: 'sp.access-control-delegations:grant-title',
+          defaultMessage: 'Veita aðgang',
+        })}
         intro={defineMessage({
-          id: 'sp.settings-access-control:grant-intro',
+          id: 'sp.access-control-delegations:grant-intro',
           defaultMessage:
             'Hér getur þú gefið öðrum aðgang til að sýsla með þín gögn hjá island.is',
         })}
       />
-
-      <form onSubmit={onSubmit}>
-        <GridRow marginBottom={3}>
-          <GridColumn paddingBottom={2} span="12/12">
-            <Text variant="h5" as="span">
-              {formatMessage({
-                id: 'sp.settings-access-control:grant-form-label',
-                defaultMessage: 'Sláðu inn upplýsingar aðgangshafa',
+      <Box className={styles.container}>
+        <form onSubmit={onSubmit}>
+          <Box display="flex" flexDirection="column" rowGap={6}>
+            <NoActionCard
+              label={formatMessage({
+                id: 'sp.access-control-delegations:signed-in-user',
+                defaultMessage: 'Innskráður notandi',
               })}
-            </Text>
-          </GridColumn>
-          <GridColumn span={['12/12', '12/12', '6/12']}>
+              title={userInfo.profile.name}
+              description={formatNationalId(userInfo.profile.nationalId)}
+            />
             <div className={styles.inputWrapper}>
               {name && (
                 <Input
@@ -178,10 +180,11 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
                   value={name}
                   aria-live="assertive"
                   label={formatMessage({
-                    id: 'sp.settings-access-control:grant-form-access-holder',
-                    defaultMessage: 'Aðgangshafi',
+                    id:
+                      'sp.access-control-delegations:grant-form-access-holder',
+                    defaultMessage: 'Kennitala aðgangshafa',
                   })}
-                  disabled
+                  backgroundColor="blue"
                   size="md"
                 />
               )}
@@ -249,25 +252,36 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
                 </button>
               ) : null}
             </div>
-          </GridColumn>
-          <GridColumn span={['12/12', '12/12', '2/12']}>
-            <Button
-              size="large"
-              fluid
-              type="submit"
-              icon="arrowForward"
+            <div>
+              <Select
+                label={formatMessage(m.accessControl)}
+                name="system"
+                noOptionsMessage="Enginn valmöguleiki"
+                options={systemOptions}
+                onChange={() => {
+                  // TODO handle system change
+                }}
+                placeholder={formatMessage({
+                  id: 'sp.access-control-delegations:choose-system',
+                  defaultMessage: 'Veldu kerfi',
+                })}
+              />
+            </div>
+            <DelegationsFormFooter
               disabled={!name || loading}
               loading={loading}
-            >
-              {formatMessage({
-                id: 'sp.settings-access-control:grant-form-submit',
-                defaultMessage: 'Áfram',
+              onCancel={() =>
+                history.push(ServicePortalPath.AccessControlDelegations)
+              }
+              submitLabel={formatMessage({
+                id: 'sp.access-control-delegations:choose-access-rights',
+                defaultMessage: 'Velja réttindi',
               })}
-            </Button>
-          </GridColumn>
-        </GridRow>
-      </form>
-    </Box>
+            />
+          </Box>
+        </form>
+      </Box>
+    </>
   )
 }
 

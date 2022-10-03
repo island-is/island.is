@@ -1,14 +1,15 @@
 import { style, styleVariants } from '@vanilla-extract/css'
 import { Properties } from 'csstype'
-import omit from 'lodash/omit'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 import { mapToStyleProperty } from '../../utils/mapToStyleProperty'
 
+type Breakpoints = keyof typeof theme.breakpoints
+
 const spaceMapToCss = (
   t: typeof theme,
   cssPropertyName: keyof Properties,
-  breakpoint: keyof typeof theme['breakpoints'],
+  breakpoint: Breakpoints,
 ) => {
   const spaceWithKeywords = {
     ...t.spacing,
@@ -390,6 +391,26 @@ export const flexDirectionXl = styleVariants(
       }),
   ),
 )
+
+export const columnGap = styleVariants(spaceMapToCss(theme, 'columnGap', 'xs'))
+export const columnGapSm = styleVariants(
+  spaceMapToCss(theme, 'columnGap', 'sm'),
+)
+export const columnGapMd = styleVariants(
+  spaceMapToCss(theme, 'columnGap', 'md'),
+)
+export const columnGapLg = styleVariants(
+  spaceMapToCss(theme, 'columnGap', 'lg'),
+)
+export const columnGapXl = styleVariants(
+  spaceMapToCss(theme, 'columnGap', 'xl'),
+)
+
+export const rowGap = styleVariants(spaceMapToCss(theme, 'rowGap', 'xs'))
+export const rowGapSm = styleVariants(spaceMapToCss(theme, 'rowGap', 'sm'))
+export const rowGapMd = styleVariants(spaceMapToCss(theme, 'rowGap', 'md'))
+export const rowGapLg = styleVariants(spaceMapToCss(theme, 'rowGap', 'lg'))
+export const rowGapXl = styleVariants(spaceMapToCss(theme, 'rowGap', 'xl'))
 
 const flexWrapRules = {
   wrap: 'wrap',

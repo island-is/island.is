@@ -344,6 +344,13 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           {
             name: m.accessControlDelegations,
             path: ServicePortalPath.AccessControlDelegations,
+            children: [
+              {
+                name: m.accessControlGrant,
+                navHide: true,
+                path: ServicePortalPath.AccessControlDelegationsGrant,
+              },
+            ],
           },
           {
             name: m.accessControlDelegationsToMe,
