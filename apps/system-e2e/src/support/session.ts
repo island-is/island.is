@@ -3,7 +3,7 @@ import { existsSync, mkdirSync } from 'fs'
 import { join } from 'path'
 import { cognitoLogin, getCognitoCredentials, idsLogin, urls } from './utils'
 
-const sessionsPath = join(__dirname, 'tmp-sessions')
+export const sessionsPath = join(__dirname, 'tmp-sessions')
 if (!existsSync(sessionsPath)) {
   mkdirSync(sessionsPath)
 }

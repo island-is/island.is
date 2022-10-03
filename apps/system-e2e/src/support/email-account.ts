@@ -11,6 +11,8 @@ import {
   SESClient,
   VerifyEmailAddressCommand,
 } from '@aws-sdk/client-ses'
+import { join } from 'path'
+import { sessionsPath } from './session'
 
 /**
  * Register the email address with AWS SES, so we can send emails to it
@@ -72,11 +74,10 @@ export type EmailAccount = {
   email: string
 }
 const makeEmailAccount = async (name: string): Promise<EmailAccount> => {
-  // Generate a new Ethereal email inbox account
-  const storage = `${name}-email.json`
-  const emailAccountExists = existsSync(storage)
+  const storagePath = join(sessionsPath, `${name}-email.json`)
+  const emailAccountExists = existsSync(storagePath)
   const testAccount = emailAccountExists
-    ? JSON.parse(readFileSync(storage, { encoding: 'utf-8' }))
+    ? JSON.parse(readFileSync(storagePath, { encoding: 'utf-8' }))
     : await createTestAccount()
 
   const emailConfig = {
@@ -161,7 +162,7 @@ const makeEmailAccount = async (name: string): Promise<EmailAccount> => {
     await registerEmailAddressWithSES(userEmail)
   }
   writeFileSync(
-    storage,
+    storagePath,
     JSON.stringify({ user: testAccount.user, pass: testAccount.pass }),
     { encoding: 'utf-8' },
   )
