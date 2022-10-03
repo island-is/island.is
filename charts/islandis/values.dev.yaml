@@ -1311,6 +1311,7 @@ search-indexer-service:
   enabled: true
   env:
     APPLICATION_URL: 'http://search-indexer-service'
+    CONTENTFUL_ENTRY_FETCH_CHUNK_SIZE: '40'
     CONTENTFUL_ENVIRONMENT: 'master'
     CONTENTFUL_HOST: 'preview.contentful.com'
     CONTENTFUL_SPACE: '8k0h54kbe6bj'
@@ -1388,6 +1389,7 @@ search-indexer-service:
             memory: '256Mi'
     env:
       APPLICATION_URL: 'http://search-indexer-service'
+      CONTENTFUL_ENTRY_FETCH_CHUNK_SIZE: '40'
       CONTENTFUL_ENVIRONMENT: 'master'
       CONTENTFUL_HOST: 'preview.contentful.com'
       CONTENTFUL_SPACE: '8k0h54kbe6bj'
