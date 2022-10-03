@@ -23,6 +23,11 @@ const envs = {
     staging: '40',
     prod: '40',
   },
+  LOG_LEVEL: {
+    dev: 'debug',
+    staging: 'debug',
+    prod: 'debug',
+  },
 }
 export const serviceSetup = (): ServiceBuilder<'search-indexer-service'> =>
   service('search-indexer-service')

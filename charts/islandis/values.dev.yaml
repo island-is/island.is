@@ -1317,7 +1317,8 @@ search-indexer-service:
     CONTENTFUL_SPACE: '8k0h54kbe6bj'
     ELASTIC_INDEX: 'island-is'
     ELASTIC_NODE: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com'
-    NODE_OPTIONS: '--max-old-space-size=976'
+    LOG_LEVEL: 'debug'
+    NODE_OPTIONS: '--max-old-space-size=2000'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
   grantNamespacesEnabled: false
@@ -1359,10 +1360,10 @@ search-indexer-service:
         resources:
           limits:
             cpu: '400m'
-            memory: '1024Mi'
+            memory: '2048Mi'
           requests:
             cpu: '100m'
-            memory: '256Mi'
+            memory: '512Mi'
       - args:
           - '/webapp/migrateElastic.js'
         command:
@@ -1371,10 +1372,10 @@ search-indexer-service:
         resources:
           limits:
             cpu: '400m'
-            memory: '1024Mi'
+            memory: '2048Mi'
           requests:
             cpu: '100m'
-            memory: '256Mi'
+            memory: '512Mi'
       - args:
           - '/webapp/migrateKibana.js'
         command:
@@ -1383,10 +1384,10 @@ search-indexer-service:
         resources:
           limits:
             cpu: '400m'
-            memory: '1024Mi'
+            memory: '2048Mi'
           requests:
             cpu: '100m'
-            memory: '256Mi'
+            memory: '512Mi'
     env:
       APPLICATION_URL: 'http://search-indexer-service'
       CONTENTFUL_ENTRY_FETCH_CHUNK_SIZE: '40'
@@ -1396,6 +1397,7 @@ search-indexer-service:
       ELASTIC_DOMAIN: 'search'
       ELASTIC_INDEX: 'island-is'
       ELASTIC_NODE: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com'
+      LOG_LEVEL: 'debug'
       S3_BUCKET: 'dev-es-custom-packages'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
@@ -1410,10 +1412,10 @@ search-indexer-service:
   resources:
     limits:
       cpu: '400m'
-      memory: '1024Mi'
+      memory: '2048Mi'
     requests:
       cpu: '100m'
-      memory: '256Mi'
+      memory: '512Mi'
   secrets:
     API_CMS_SYNC_TOKEN: '/k8s/search-indexer/API_CMS_SYNC_TOKEN'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
