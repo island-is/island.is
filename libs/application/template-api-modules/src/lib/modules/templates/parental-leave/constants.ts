@@ -13,6 +13,8 @@ export const apiConstants = {
   },
   attachments: {
     selfEmployed: 'selfEmployed',
+    student: 'student',
+    other: 'other',
   },
 }
 
