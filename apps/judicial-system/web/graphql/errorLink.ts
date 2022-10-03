@@ -11,10 +11,10 @@ export default onError(({ graphQLErrors, networkError }: ErrorResponse) => {
     graphQLErrors.forEach(async (err) => {
       switch (err.extensions?.code) {
         case 'UNAUTHENTICATED':
-          await api.logout()
-          window.location.assign(
-            `${api.apiUrl}/api/auth/login?redirectRoute=${window.location.pathname}`,
-          )
+          // await api.logout()
+          // window.location.assign(
+          //   `${api.apiUrl}/api/auth/login?redirectRoute=${window.location.pathname}`,
+          // )
           return
         case 'FORBIDDEN':
           return
