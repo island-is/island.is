@@ -511,6 +511,28 @@ export const ParentalLeaveForm: Form = buildForm({
               uploadButtonLabel:
                 parentalLeaveFormMessages.selfEmployed.attachmentButton,
             }),
+            // add back when we add student confirmation
+            // buildFileUploadField({
+            //   id: 'fileUpload.studentFile',
+            //   title: parentalLeaveFormMessages.attachmentScreen.studentTitle,
+            //   introduction: parentalLeaveFormMessages.attachmentScreen.studentDescription,
+            //   maxSize: FILE_SIZE_LIMIT,
+            //   condition: (answers) => {
+            //     // check for if they are a student student to show this field
+            //     // const isStudent = (answers as {})
+            //     // return isStudent
+
+            //     return false
+            //   },
+            //   maxSizeErrorText:
+            //     parentalLeaveFormMessages.selfEmployed
+            //       .attachmentMaxSizeError,
+            //   uploadAccept: '.pdf',
+            //   uploadHeader: '',
+            //   uploadDescription: '',
+            //   uploadButtonLabel:
+            //     parentalLeaveFormMessages.selfEmployed.attachmentButton,
+            // }),
             buildFileUploadField({
               id: 'fileUpload.file',
               title: parentalLeaveFormMessages.attachmentScreen.genericTitle,
