@@ -27,7 +27,6 @@ import { EmailService } from '@island.is/email-service'
 import { SIGNED_VERDICT_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
 import {
   CaseFileCategory,
-  CaseFileState,
   CaseOrigin,
   CaseState,
   isIndictmentCase,
@@ -864,7 +863,7 @@ export class CaseService {
       })
   }
 
-  async addCaseCompletedMessageToQueue(caseId: string): Promise<string> {
+  addCaseCompletedMessageToQueue(caseId: string): Promise<string> {
     return this.messageService.postMessageToQueue({
       type: MessageType.CASE_COMPLETED,
       caseId,

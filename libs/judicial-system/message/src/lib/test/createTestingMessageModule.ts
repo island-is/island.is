@@ -1,41 +1,42 @@
+import { SQS } from 'aws-sdk'
+import { uuid } from 'uuidv4'
+
 import { Test } from '@nestjs/testing'
 
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import { ConfigModule } from '@island.is/nest/config'
-import {
-  getQueueServiceToken,
-  QueueModule,
-  QueueService,
-} from '@island.is/message-queue'
 
 import { messageModuleConfig } from '../message.config'
 import { MessageService } from '../message.service'
 
-const config = messageModuleConfig()
+const queueUrl = uuid()
+let sqs: SQS
+
+jest.mock('aws-sdk', () => ({
+  SQS: jest.fn().mockImplementation(() => sqs),
+}))
 
 export const createTestingMessageModule = async () => {
-  const messageModule = await Test.createTestingModule({
-    imports: [
-      QueueModule.register({
-        queue: {
-          name: config.queueName,
-          queueName: config.queueName,
-          deadLetterQueue: { queueName: config.deadLetterQueueName },
-        },
-        client: {
-          endpoint: config.endpoint,
-          region: config.region,
-        },
-      }),
-      ConfigModule.forRoot({ load: [messageModuleConfig] }),
-    ],
-    providers: [MessageService],
-  }).compile()
+  sqs = ({
+    getQueueUrl: jest.fn().mockImplementation(() => ({
+      promise: () => Promise.resolve({ QueueUrl: queueUrl }),
+    })),
+    sendMessage: jest.fn(),
+    receiveMessage: jest.fn(),
+    deleteMessage: jest
+      .fn()
+      .mockReturnValue({ promise: () => Promise.resolve() }),
+  } as unknown) as SQS
 
-  const queueService = messageModule.get<QueueService>(
-    getQueueServiceToken(config.queueName),
-  )
+  const messageModule = await Test.createTestingModule({
+    imports: [ConfigModule.forRoot({ load: [messageModuleConfig] })],
+    providers: [
+      { provide: LOGGER_PROVIDER, useValue: { error: jest.fn() } },
+      MessageService,
+    ],
+  }).compile()
 
   const messageService = messageModule.get<MessageService>(MessageService)
 
-  return { queueService, messageService }
+  return { queueUrl, sqs, messageService }
 }
