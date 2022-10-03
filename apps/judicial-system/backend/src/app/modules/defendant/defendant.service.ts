@@ -1,6 +1,5 @@
 import { Op, literal } from 'sequelize'
 import { Transaction } from 'sequelize/types'
-
 import {
   Inject,
   Injectable,
@@ -11,12 +10,12 @@ import { InjectModel } from '@nestjs/sequelize'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { CaseState, CaseType } from '@island.is/judicial-system/types'
 
 import { CreateDefendantDto } from './dto/createDefendant.dto'
 import { UpdateDefendantDto } from './dto/updateDefendant.dto'
 import { Defendant } from './models/defendant.model'
 import { Case } from '../case/models/case.model'
-import { CaseState, CaseType } from '@island.is/judicial-system/types'
 
 @Injectable()
 export class DefendantService {

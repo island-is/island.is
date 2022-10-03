@@ -8,12 +8,10 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import { Gender } from '@island.is/judicial-system/types'
 
-// TODO Find a way to import from case index file
 import { Case } from '../../case/models/case.model'
 
 @Table({

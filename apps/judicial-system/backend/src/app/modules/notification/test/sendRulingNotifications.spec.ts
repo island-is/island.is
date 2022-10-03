@@ -8,6 +8,10 @@ import {
   NotificationType,
   User,
 } from '@island.is/judicial-system/types'
+import {
+  CLOSED_INDICTMENT_OVERVIEW_ROUTE,
+  SIGNED_VERDICT_OVERVIEW_ROUTE,
+} from '@island.is/judicial-system/consts'
 
 import { createTestingNotificationModule } from './createTestingNotificationModule'
 import { Case } from '../../case'
@@ -16,10 +20,6 @@ import { SendNotificationDto } from '../dto/sendNotification.dto'
 import { notificationModuleConfig } from '../notification.config'
 import { Notification } from '../models/notification.model'
 import { Defendant, DefendantService } from '../../defendant'
-import {
-  CLOSED_INDICTMENT_OVERVIEW_ROUTE,
-  SIGNED_VERDICT_OVERVIEW_ROUTE,
-} from '@island.is/judicial-system/consts'
 
 jest.mock('../../../factories')
 
