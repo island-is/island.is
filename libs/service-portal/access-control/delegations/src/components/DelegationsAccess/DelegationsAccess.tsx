@@ -26,7 +26,7 @@ export const DelegationsAccess: ServicePortalModuleComponent = ({
   client,
   children,
 }) => {
-  useNamespaces('sp.settings-access-control')
+  useNamespaces('sp.access-control-delegations')
   const { data, loading } = useQuery<Query>(AuthDelegationsQuery)
   const { switchUser } = useAuth()
   const { formatMessage } = useLocale()

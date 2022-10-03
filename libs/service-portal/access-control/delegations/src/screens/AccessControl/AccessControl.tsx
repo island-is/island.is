@@ -9,7 +9,7 @@ import { DelegationsFromMe, DelegationsAccess } from '../../components'
 import { useLocale, useNamespaces } from '@island.is/localization'
 
 const AccessControl: ServicePortalModuleComponent = ({ userInfo, client }) => {
-  useNamespaces('sp.settings-access-control')
+  useNamespaces('sp.access-control-delegations')
   const { formatMessage } = useLocale()
 
   return (

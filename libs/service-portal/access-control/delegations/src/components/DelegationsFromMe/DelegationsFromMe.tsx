@@ -1,20 +1,17 @@
 import { useQuery } from '@apollo/client'
 
 import {
-  Box,
   SkeletonLoader,
   GridRow,
   GridColumn,
   GridContainer,
 } from '@island.is/island-ui/core'
 import { Query, AuthCustomDelegation } from '@island.is/api/schema'
-import { useNamespaces } from '@island.is/localization'
 import { DelegationsHeader } from '../DelegationsHeader'
 import { AuthDelegationsQuery } from '../../lib/queries'
 import { AccessCards } from '../AccessCards'
 
 export const DelegationsFromMe = () => {
-  useNamespaces('sp.settings-access-control')
   const { data, loading } = useQuery<Query>(AuthDelegationsQuery)
 
   const authDelegations = (data?.authDelegations ??

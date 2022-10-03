@@ -14,7 +14,7 @@ type DelegationsHeaderProps = {
 export const DelegationsHeader = ({
   onSystemChange,
 }: DelegationsHeaderProps) => {
-  useNamespaces('sp.settings-access-control')
+  useNamespaces('sp.access-control-delegations')
   const history = useHistory()
   const { formatMessage } = useLocale()
   const { sm } = useBreakpoint()

@@ -19,6 +19,7 @@ import {
   ServicePortalModuleComponent,
   formatNationalId,
   m,
+  useQueryParam,
 } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 
@@ -48,14 +49,11 @@ const IdentityQuery = gql`
 `
 
 const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
-  useNamespaces('sp.settings-access-control')
-
+  useNamespaces(['sp.settings-access-control', 'sp.access-control-delegations'])
+  const { formatMessage } = useLocale()
   const [name, setName] = useState('')
-  const methods = useForm({
-    mode: 'onChange',
-  })
-
-  const { handleSubmit, control, errors, watch, reset } = methods
+  const history = useHistory()
+  const domainQueryParam = useQueryParam('domain')
 
   const [
     createAuthDelegation,
@@ -72,6 +70,7 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
       }),
     )
   }
+
   const [getIdentity, { data, loading: queryLoading }] = useLazyQuery<Query>(
     IdentityQuery,
     {
@@ -84,8 +83,31 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
     },
   )
   const { identity } = data || {}
-  const { formatMessage } = useLocale()
-  const history = useHistory()
+  const systemOptions = [
+    {
+      label: 'Island.is',
+      value: '0',
+    },
+    {
+      label: 'Landspítalaappið',
+      value: '1',
+    },
+  ]
+
+  const getDefaultSystem = (label: string) =>
+    systemOptions.find(
+      (opt) => opt.label.toLowerCase() === label?.toLowerCase(),
+    )?.value
+
+  const methods = useForm({
+    mode: 'onChange',
+    defaultValues: {
+      toNationalId: '',
+      system: domainQueryParam ? getDefaultSystem(domainQueryParam) : '',
+    },
+  })
+
+  const { handleSubmit, control, errors, watch, reset } = methods
   const watchToNationalId = watch('toNationalId')
   const loading = queryLoading || mutationLoading
 
@@ -135,24 +157,6 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
     setName('')
     reset()
   }
-
-  const systemOptions = [
-    {
-      label: formatMessage({
-        id: 'sp.access-control-delegations:all-systems',
-        defaultMessage: 'Öll kerfi',
-      }),
-      value: 'all',
-    },
-    {
-      label: 'Valmöguleiki 1',
-      value: '0',
-    },
-    {
-      label: 'Valmöguleiki 2',
-      value: '1',
-    },
-  ]
 
   return (
     <>
