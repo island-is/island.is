@@ -13,6 +13,7 @@ import {
   XRoadConfig,
 } from '@island.is/nest/config'
 import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
+import { ProblemModule } from '@island.is/nest/problem'
 import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
 import { RskProcuringClientConfig } from '@island.is/clients/rsk/procuring'
 
@@ -27,6 +28,7 @@ import { ResourcesModule } from './modules/resources/resources.module'
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
     }),
+    ProblemModule,
     DelegationsModule,
     ResourcesModule,
     ConfigModule.forRoot({

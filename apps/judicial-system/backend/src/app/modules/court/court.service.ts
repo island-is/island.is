@@ -14,6 +14,7 @@ import { EventService } from '../event'
 
 export enum CourtDocumentFolder {
   REQUEST_DOCUMENTS = 'Krafa og greinargerð',
+  INDICTMENT_DOCUMENTS = 'Ákæra og greinargerð',
   CASE_DOCUMENTS = 'Gögn málsins',
   COURT_DOCUMENTS = 'Dómar, úrskurðir og Þingbók',
 }
@@ -61,6 +62,7 @@ export const subTypes: SubTypes = {
   BODY_SEARCH: 'Leit og líkamsrannsókn',
   // 'Lögmæti rannsóknarathafna',
   RESTRAINING_ORDER: 'Nálgunarbann',
+  RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME: 'Nálgunarbann', // this mapping to Nálgunarbann is indented
   EXPULSION_FROM_HOME: 'Nálgunarbann og brottvísun af heimili',
   // 'Réttarstaða afplánunarfanga',
   // 'Réttarstaða gæsluvarðhaldsfanga',

@@ -4,10 +4,16 @@ const LimitedAccessCaseQuery = gql`
   query LimitedAccessCaseQuery($input: CaseQueryInput!) {
     limitedAccessCase(input: $input) {
       id
+      created
       origin
       type
       state
       policeCaseNumbers
+      caseFiles {
+        id
+        name
+        category
+      }
       defendants {
         id
         noNationalId

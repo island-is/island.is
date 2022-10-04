@@ -36,7 +36,6 @@ import { AppModule } from '../src/app/app.module'
 import { Institution } from '../src/app/modules/institution'
 import { User } from '../src/app/modules/user'
 import { Case } from '../src/app/modules/case'
-import { caseModuleConfig } from '../src/app/modules'
 import {
   Notification,
   SendNotificationResponse,
@@ -101,9 +100,7 @@ beforeAll(async () => {
               },
             }),
         })
-        .overrideProvider(
-          getQueueServiceToken(caseModuleConfig().sqs.queueName),
-        )
+        .overrideProvider(getQueueServiceToken('message-queue'))
         .useValue({ add: () => uuid() }),
   })
 

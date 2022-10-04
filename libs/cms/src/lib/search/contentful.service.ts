@@ -156,7 +156,9 @@ export class ContentfulService {
     locale: ElasticsearchIndexLocale,
   ): Promise<Entry<any>[]> {
     // contentful has a limit of 1000 entries per request but we get "414 Request URI Too Large" so we do a 500 per request
-    const chunkSize = 100
+    const chunkSize = Number(
+      process.env.CONTENTFUL_ENTRY_FETCH_CHUNK_SIZE ?? 40,
+    )
     const chunkedChanges = []
     let chunkToProcess = entries.splice(-chunkSize, chunkSize)
     do {

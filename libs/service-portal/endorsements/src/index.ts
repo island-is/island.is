@@ -6,9 +6,11 @@ import {
   ServicePortalRoute,
 } from '@island.is/service-portal/core'
 import { EndorsementsScope } from '@island.is/auth/scopes'
+import { Features } from '@island.is/feature-flags'
 
 export const petitionsModule: ServicePortalModule = {
   name: 'Almennir undirskriftalistar',
+  featureFlag: Features.servicePortalPetitionsModule,
   widgets: () => [],
   routes: ({ userInfo }) => {
     const applicationRoutes: ServicePortalRoute[] = [

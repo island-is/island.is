@@ -3,7 +3,7 @@ import {
   PersonalRepresentativeAccessService,
   PaginatedPersonalRepresentativeAccessDto,
   PaginationWithNationalIdsDto,
-} from '@island.is/auth-api-lib/personal-representative'
+} from '@island.is/auth-api-lib'
 import { Controller, UseGuards, Get, Inject, Query } from '@nestjs/common'
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger'
 import { Documentation } from '@island.is/nest/swagger'

@@ -45,4 +45,10 @@ export const overview = {
     defaultMessage: 'Skjöl málsins',
     description: 'Titill á skjöl málsins hluta á Yfirlit ákæru skefi í ákærum.',
   }),
+  caseSendToCourt: defineMessage({
+    id: 'judicial.system.indictments:overview.case_send_to_court',
+    defaultMessage: 'Ákæra hefur verið send dómstól',
+    description:
+      'Texti í info boxi þegar ákæra hefur verið send á Yfirlit ákæru skefi í ákærum.',
+  }),
 }

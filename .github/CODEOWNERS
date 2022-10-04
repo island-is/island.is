@@ -21,13 +21,13 @@
 /.github/                                                                                           @island-is/core
 /handbook/                                                                                          @island-is/core
 /libs/api/domains/identity/                                                                         @island-is/core
-/libs/testing/                                                                                      @island-is/core @island-is/vice-versa
-/libs/nest/swagger/                                                                                 @island-is/core @island-is/vice-versa
+/libs/testing/                                                                                      @island-is/core
+/libs/nest/swagger/                                                                                 @island-is/core
 
 /apps/services/endorsements/                                                                        @island-is/juni
 /apps/icelandic-names-registry*/                                                                    @island-is/juni
 /apps/web/screens/PetitionView/                                                                     @island-is/juni
-/libs/cms/                                                                                          @island-is/juni
+/libs/cms/                                                                                          @island-is/juni @island-is/stefna
 /libs/api/domains/endorsement-system                                                                @island-is/juni
 /libs/api/domains/icelandic-names-registry/                                                         @island-is/juni
 /libs/clients/payment/                                                                              @island-is/juni
@@ -123,7 +123,7 @@
 /libs/regulations/                                                                                  @island-is/hugsmidjan
 
 /libs/application/templates/data-protection-complaint/                                              @island-is/sendiradid
-/libs/application/templates/institution-collaboration/                                              @island-is/sendiradid
+/libs/application/templates/institution-collaboration/                                              @island-is/sendiradid @island-is/fuglar
 /libs/application/templates/login-service/                                                          @island-is/sendiradid
 /libs/application/template-api-modules/src/lib/modules/templates/login-service/                     @island-is/sendiradid
 /libs/clients/payment-schedule/                                                                     @island-is/sendiradid
@@ -156,6 +156,7 @@
 
 /apps/services/search-indexer/                                                                      @island-is/stefna @island-is/juni
 /apps/services/contentful-entry-tagger/                                                             @island-is/stefna
+/apps/tools/contentful-role-permissions/                                                            @island-is/stefna
 /apps/web/screens/Organization/                                                                     @island-is/stefna
 /apps/web/screens/Project/                                                                          @island-is/stefna
 /apps/web/components/Organization/                                                                  @island-is/stefna
