@@ -86,10 +86,27 @@ export class FinancialStatementsInaoTemplateService {
       'election.incomeLimit',
     ) as string
     const noValueStatement = electionIncomeLimit === LESS ? true : false
-    return this.financialStatementsInaoService.submitPersonalElectionFinancialStatement(
-      nationalId,
-      undefined,
-      { electionId, clientName, noValueStatement, values },
-    )
+
+    // actor is undefined until we add the functionality to the frontend
+    const result: any = await this.financialStatementsInaoService
+      .submitPersonalElectionFinancialStatement(nationalId, undefined, {
+        electionId,
+        clientName,
+        noValueStatement,
+        values,
+      })
+      .then(() => {
+        return { success: true }
+      })
+      .catch((e) => {
+        return {
+          success: false,
+          errorMessage: e.message,
+        }
+      })
+    if (!result.success) {
+      throw new Error(`Application submission failed`)
+    }
+    return { success: result.success }
   }
 }
