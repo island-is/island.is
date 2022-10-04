@@ -8,6 +8,7 @@ import {
   Application,
   DefaultEvents,
 } from '@island.is/application/types'
+import { EphemeralStateLifeCycle } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
 import * as z from 'zod'
 import { m } from './messages'
@@ -43,12 +44,7 @@ const template: ApplicationTemplate<
             },
           },
           progress: 0.25,
-          lifecycle: {
-            shouldBeListed: false,
-            shouldBePruned: true,
-            // Applications that stay in this state for 24 hours will be pruned automatically
-            whenToPrune: 24 * 3600 * 1000,
-          },
+          lifecycle: EphemeralStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
