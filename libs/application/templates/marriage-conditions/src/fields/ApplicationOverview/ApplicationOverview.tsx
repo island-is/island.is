@@ -17,6 +17,8 @@ export const ApplicationOverview: FC<FieldBaseProps> = ({ application }) => {
   const { answers } = application
   const applicant = answers.applicant as Individual
   const spouse = answers.spouse as Individual
+  const witness1 = answers.witness1 as Individual
+  const witness2 = answers.witness2 as Individual
 
   const InfoSection: FC<InfoProps> = ({ side }) => {
     return (
@@ -138,6 +140,31 @@ export const ApplicationOverview: FC<FieldBaseProps> = ({ application }) => {
             </Box>
           </Box>
         </Box>
+      </Box>
+      <Box marginTop={5}>
+        <Box paddingBottom={4}>
+          <Divider />
+        </Box>
+      </Box>
+      <Box>
+        <Text variant="h3" marginBottom={3}>
+          {formatMessage(m.informationWitness1)}
+        </Text>
+        <InfoSection side={witness1} />
+      </Box>
+      <Box marginTop={4}>
+        <Text variant="h3" marginBottom={3}>
+          {formatMessage(m.informationWitness2)}
+        </Text>
+        <InfoSection side={witness2} />
+      </Box>
+      <Box marginTop={5}>
+        <Box paddingBottom={4}>
+          <Divider />
+        </Box>
+      </Box>
+      <Box>
+        <Text>{formatMessage(m.overviewFooterText)}</Text>
       </Box>
     </>
   )

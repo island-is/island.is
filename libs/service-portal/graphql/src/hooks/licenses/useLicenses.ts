@@ -20,11 +20,11 @@ interface Props {
   error?: ApolloError | undefined
 }
 
-export const useLicenses = (type?: GenericLicenseType): Props => {
+export const useLicenses = (types?: Array<GenericLicenseType>): Props => {
   const { data: userProfile } = useUserProfile()
   const locale = (userProfile?.locale as Locale) ?? 'is'
 
-  const input = type ? { includedTypes: [type] } : {}
+  const input = types ? { includedTypes: types } : {}
 
   const { data, loading, error } = useQuery<Query>(GET_GENERIC_LICENSES, {
     variables: {

@@ -1,0 +1,29 @@
+{
+  "root": "libs/clients/smartsolutions",
+  "sourceRoot": "libs/clients/smartsolutions/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/clients/smartsolutions/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/clients/smartsolutions"],
+      "options": {
+        "jestConfig": "libs/clients/smartsolutions/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "schemas/external-openapi-generator": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "graphql-codegen --config libs/clients/smartsolutions/codegen.yml"
+      }
+    }
+  },
+  "tags": []
+}

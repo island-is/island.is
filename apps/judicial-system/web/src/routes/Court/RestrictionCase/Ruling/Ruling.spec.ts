@@ -12,7 +12,7 @@ import { getConclusionAutofill } from './Ruling'
 
 describe('getConclusionAutofill', () => {
   const intl = createIntl({ locale: 'is', onError: () => jest.fn() })
-  const defentantBase = {
+  const defendantBase = {
     name: 'Blær',
     gender: Gender.OTHER,
     noNationalId: true,
@@ -21,7 +21,7 @@ describe('getConclusionAutofill', () => {
   const fn = (
     theCase: Case,
     decision: CaseDecision,
-    defendant = defentantBase,
+    defendant = defendantBase,
     validToDate?: string,
     isCustodyIsolation = false,
     isolationToDate?: string,
@@ -41,7 +41,7 @@ describe('getConclusionAutofill', () => {
 
     it('should format custody case, non gender specific', () => {
       const theCase = {
-        defendants: [{ ...defentantBase }],
+        defendants: [{ ...defendantBase }],
         type: CaseType.CUSTODY,
       } as Case
 
@@ -54,7 +54,7 @@ describe('getConclusionAutofill', () => {
 
     it('should format extended travel ban case, female gender', () => {
       const theCase = {
-        defendants: [{ ...defentantBase, gender: Gender.FEMALE }],
+        defendants: [{ ...defendantBase, gender: Gender.FEMALE }],
         type: CaseType.TRAVEL_BAN,
         parentCase: { decision: CaseDecision.ACCEPTING },
       } as Case
@@ -68,7 +68,7 @@ describe('getConclusionAutofill', () => {
 
     it('should format admission to facility case, male gender', () => {
       const defendant = {
-        ...defentantBase,
+        ...defendantBase,
         gender: Gender.MALE,
         noNationalId: false,
         nationalId: '000000000',
@@ -91,7 +91,7 @@ describe('getConclusionAutofill', () => {
 
     it('should format custody case, non gender specific', () => {
       const theCase = {
-        defendants: [{ ...defentantBase }],
+        defendants: [{ ...defendantBase }],
         type: CaseType.CUSTODY,
       } as Case
 
@@ -104,7 +104,7 @@ describe('getConclusionAutofill', () => {
 
     it('should format travel ban case, male with national id', () => {
       const defendant = {
-        ...defentantBase,
+        ...defendantBase,
         gender: Gender.MALE,
         noNationalId: false,
         nationalId: '0000000000',
@@ -122,7 +122,7 @@ describe('getConclusionAutofill', () => {
 
     it('should format extended admission to facility case, male with national id', () => {
       const defendant = {
-        ...defentantBase,
+        ...defendantBase,
         noNationalId: false,
         nationalId: '0000000000',
       }
@@ -148,7 +148,7 @@ describe('getConclusionAutofill', () => {
         type: CaseType.CUSTODY,
       } as Case
 
-      const result = fn(theCase, decision, defentantBase, validToDate)
+      const result = fn(theCase, decision, defendantBase, validToDate)
 
       expect(result).toEqual(
         'Kærða, Blær, skal sæta gæsluvarðhaldi, þó ekki lengur en til miðvikudagsins 1. janúar 2020, kl. 12:31.',
@@ -165,7 +165,7 @@ describe('getConclusionAutofill', () => {
       const result = fn(
         theCase,
         decision,
-        defentantBase,
+        defendantBase,
         validToDate,
         isCustodyIsolation,
         isolationToDate,
@@ -178,7 +178,7 @@ describe('getConclusionAutofill', () => {
 
     it('should format admission to facility case with isolation, male gender', () => {
       const defendant = {
-        ...defentantBase,
+        ...defendantBase,
         gender: Gender.MALE,
       }
       const isCustodyIsolation = true
@@ -203,7 +203,7 @@ describe('getConclusionAutofill', () => {
 
     it('should format travel ban case, female gender with national id', () => {
       const defendant = {
-        ...defentantBase,
+        ...defendantBase,
         gender: Gender.FEMALE,
         noNationalId: false,
         nationalId: '0000000000',
@@ -234,7 +234,7 @@ describe('getConclusionAutofill', () => {
     const validToDate = '2020-01-01T12:31:00Z'
 
     it('should format as non extended travel ban case', () => {
-      const defendant = { ...defentantBase, gender: Gender.MALE }
+      const defendant = { ...defendantBase, gender: Gender.MALE }
       const theCase = {
         type: CaseType.CUSTODY,
         parentCase: { decision: CaseDecision.ACCEPTING } as Case,
@@ -252,7 +252,7 @@ describe('getConclusionAutofill', () => {
         type: CaseType.CUSTODY,
       } as Case
 
-      const result = fn(theCase, decision, defentantBase, validToDate)
+      const result = fn(theCase, decision, defendantBase, validToDate)
 
       expect(result).toEqual(
         'Kærða, Blær, skal sæta farbanni, þó ekki lengur en til miðvikudagsins 1. janúar 2020, kl. 12:31.',

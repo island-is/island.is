@@ -2047,10 +2047,7 @@
             },
             "nullable": true
           },
-          "createdTimestamp": {
-            "type": "string",
-            "nullable": true
-          }
+          "createdTimestamp": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
