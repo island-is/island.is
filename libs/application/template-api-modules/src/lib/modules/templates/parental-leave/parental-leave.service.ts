@@ -175,17 +175,17 @@ export class ParentalLeaveService {
     }
   }
 
-  async getSelfEmployedPdf(application: Application) {
+  async getSelfEmployedPdf(application: Application, index = 0) {
     try {
       let filename = getValueViaPath(
         application.answers,
-        'employer.selfEmployed.file[0].key',
+        `employer.selfEmployed.file[${index}].key`,
       )
 
       if (!filename) {
         filename = getValueViaPath(
           application.answers,
-          'fileUpload.selfEmployedFile[0].key',
+          `fileUpload.selfEmployedFile[${index}].key`,
         )
       }
 
@@ -231,11 +231,11 @@ export class ParentalLeaveService {
   //   }
   // }
 
-  async getGenericPdf(application: Application) {
+  async getGenericPdf(application: Application, index = 0) {
     try {
       const filename = getValueViaPath(
         application.answers,
-        'fileUpload.file[0].key',
+        `fileUpload.file[${index}].key`,
       )
 
       const Key = `${application.id}/${filename}`
@@ -260,20 +260,28 @@ export class ParentalLeaveService {
     const { isSelfEmployed } = getApplicationAnswers(application.answers)
 
     if (isSelfEmployed === YES) {
-      const pdf = await this.getSelfEmployedPdf(application)
+      const selfEmployedPdfs = await getValueViaPath(application.answers, 'fileUpload.selfEmployedFile') as unknown[]
 
-      attachments.push({
-        attachmentType: apiConstants.attachments.selfEmployed,
-        attachmentBytes: pdf,
-      })
+      for (let i = 0; i <= selfEmployedPdfs.length - 1; i++) {
+        const pdf = await this.getSelfEmployedPdf(application, i)
+
+        attachments.push({
+          attachmentType: apiConstants.attachments.selfEmployed,
+          attachmentBytes: pdf,
+        })
+      }
     } else {
-      const pdf = await this.getGenericPdf(application)
+      const genericPdfs = await getValueViaPath(application.answers, 'fileUpload.file') as unknown[]
 
-      attachments.push({
-        // needs to add other types
-        attachmentType: apiConstants.attachments.other,
-        attachmentBytes: pdf,
-      })
+      for (let i = 0; i <= genericPdfs.length - 1; i++) {
+        const pdf = await this.getGenericPdf(application, i)
+
+        attachments.push({
+          // needs to add other types
+          attachmentType: apiConstants.attachments.other,
+          attachmentBytes: pdf,
+        })
+      }
     }
 
     return attachments
