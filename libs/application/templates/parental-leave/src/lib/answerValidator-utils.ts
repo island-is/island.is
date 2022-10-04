@@ -139,10 +139,6 @@ export const validatePeriod = (
   const useLengthIsValid = useLength === YES || useLength === NO
 
   if (hasBeenAnswered(useLength) && !useLengthIsValid) {
-    return buildError('Here', {
-      id: 'fafa',
-      defaultMessage: JSON.stringify(period),
-    })
     return buildError(
       'useLength',
       errorMessages.periodsEndDateDefinitionMissing,
@@ -153,10 +149,10 @@ export const validatePeriod = (
     return buildError('endDate', errorMessages.periodsEndDateRequired)
   } else if (hasBeenAnswered(endDate)) {
     if (!useLengthIsValid) {
-      return buildError('THere', {
-        id: 'thre',
-        defaultMessage: JSON.stringify(period),
-      })
+      // return buildError('THere', {
+      //   id: 'thre',
+      //   defaultMessage: JSON.stringify(period),
+      // })
       return buildError(
         'endDate',
         errorMessages.periodsEndDateDefinitionMissing,
