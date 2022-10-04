@@ -4,6 +4,8 @@ import {
   IsNotEmpty,
   IsOptional,
   IsInt,
+  Min,
+  Max,
 } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 
@@ -36,6 +38,8 @@ export class ApiScopesDTO {
   readonly description!: string
 
   @IsInt()
+  @Min(0)
+  @Max(999)
   @IsOptional()
   @ApiProperty({
     example: 0,

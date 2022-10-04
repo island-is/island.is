@@ -1,4 +1,11 @@
-import { IsString, IsNotEmpty, IsInt, IsOptional } from 'class-validator'
+import {
+  IsString,
+  IsNotEmpty,
+  IsInt,
+  IsOptional,
+  Max,
+  Min,
+} from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 
 export class ApiScopeGroupDTO {
@@ -24,6 +31,8 @@ export class ApiScopeGroupDTO {
   readonly description!: string
 
   @IsInt()
+  @Min(0)
+  @Max(999)
   @IsOptional()
   @ApiProperty({
     example: 0,

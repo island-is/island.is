@@ -221,7 +221,7 @@ const ApiScopeGroupCreateForm: React.FC<Props> = (props: Props) => {
                     {localization.fields['order'].label}
                   </label>
                   <input
-                    ref={register({ required: true })}
+                    ref={register({ required: true, min: 0, max: 999 })}
                     id="order"
                     name="order"
                     type="number"

@@ -335,7 +335,7 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                     {localization.fields['order'].label}
                   </label>
                   <input
-                    ref={register({ required: true })}
+                    ref={register({ required: true, min: 0, max: 999 })}
                     id="apiScope.order"
                     name="apiScope.order"
                     type="number"

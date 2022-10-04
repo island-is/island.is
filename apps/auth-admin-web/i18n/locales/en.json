@@ -846,7 +846,7 @@
         "order": {
           "label": "Order",
           "helpText": "Configure ordering of this group with relation to other scopes and groups within the same domain. Affects delegation and consent screens. Lower numbers appear first.",
-          "errorMessage": "Order is required"
+          "errorMessage": "Order is required and must be between 0 and 999"
         }
       }
     },
@@ -1474,7 +1474,7 @@
         "order": {
           "label": "Order",
           "helpText": "Configure ordering of this scope with relation to other scopes and groups within the same domain. Affects delegation and consent screens. Lower numbers appear first.",
-          "errorMessage": "Order is required"
+          "errorMessage": "Order is required and must be between 0 and 999"
         },
         "enabled": {
           "label": "Enabled",

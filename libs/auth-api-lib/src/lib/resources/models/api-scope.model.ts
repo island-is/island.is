@@ -98,6 +98,10 @@ export class ApiScope extends Model<ModelAttributes, CreationAttributes> {
     type: DataType.NUMBER,
     allowNull: false,
     defaultValue: 0,
+    validate: {
+      min: 0,
+      max: 999,
+    },
   })
   @ApiProperty({
     example: 0,

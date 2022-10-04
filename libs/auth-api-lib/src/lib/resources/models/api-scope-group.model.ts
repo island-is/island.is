@@ -57,6 +57,10 @@ export class ApiScopeGroup extends Model {
     type: DataType.NUMBER,
     allowNull: false,
     defaultValue: 0,
+    validate: {
+      min: 0,
+      max: 999,
+    },
   })
   @ApiProperty({
     example: 0,
