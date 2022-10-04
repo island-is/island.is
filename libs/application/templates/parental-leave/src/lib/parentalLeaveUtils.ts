@@ -783,7 +783,7 @@ export const getLastValidPeriodEndDate = (
     return lastEndDate
   }
 
-  const today = new Date('2022-10-23')
+  const today = new Date()
   const beginningOfMonth = addDays(today, today.getDate() * -1 + 1)
 
   // LastPeriod's endDate is in current month and current date is >= 20 then Applicant could only start from next month
