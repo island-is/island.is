@@ -1,7 +1,7 @@
 import { DefaultEvents } from '@island.is/application/types'
 
-export const YES = 'Já'
-export const NO = 'Nei'
+export const YES = 'Yes'
+export const NO = 'No'
 
 export const States = {
   prerequisites: 'prerequisites',

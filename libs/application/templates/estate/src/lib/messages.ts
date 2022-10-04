@@ -167,6 +167,11 @@ export const m = defineMessages({
     defaultMessage: 'Erfingjar',
     description: '',
   },
+  estateMembersHeaderDescription: {
+    id: 'es.application:estateMembersHeaderDescription',
+    defaultMessage: 'Vantar uppl hér',
+    description: '',
+  },
   willsAndAgreements: {
     id: 'es.application:willsAndAgreements',
     defaultMessage: 'Erfðaskrá og kaupmáli',
@@ -291,5 +296,139 @@ export const m = defineMessages({
     id: 'es.application:error.errorNumberEmpty',
     defaultMessage: 'Númer má ekki vera tómt',
     description: 'Invalid general asset number error message',
+  },
+
+  /* Inheritance step */
+  inheritanceAddMember: {
+    id: 'es.application:inheritanceAddMember',
+    defaultMessage: 'Bæta við erfingja',
+    description: 'Inheritance step add member of estate',
+  },
+  inheritanceRemoveMember: {
+    id: 'es.application:inheritanceRemoveMember',
+    defaultMessage: 'Eyða',
+    description: 'Inheritance step remove member of estate',
+  },
+  inheritanceKtLabel: {
+    id: 'es.application:inheritanceKtLabel',
+    defaultMessage: 'Kennitala',
+    description: 'National id label',
+  },
+  inheritanceRelationLabel: {
+    id: 'es.application:inheritanceRelationLabel',
+    defaultMessage: 'Tengsl',
+    description: 'Relation label',
+  },
+  inheritanceRelationPlaceholder: {
+    id: 'es.application:inheritanceRelationPlaceholder',
+    defaultMessage: 'Veldu tengsl',
+    description: 'Relation placeholder',
+  },
+  inheritanceNameLabel: {
+    id: 'es.application:inheritanceNameLabel',
+    defaultMessage: 'Nafn',
+    description: 'Name label',
+  },
+  inheritanceCustodyLabel: {
+    id: 'es.application:inheritanceCustodyLabel',
+    defaultMessage: 'Forsjáraðili',
+    description: 'Custody label',
+  },
+  inheritanceForeignCitizenshipLabel: {
+    id: 'es.application:inheritanceForeignCitizenshipLabel',
+    defaultMessage: 'Aðili án íslenskrar kennitölu',
+    description: 'No icelandic ssn label',
+  },
+  inheritanceDayOfBirthLabel: {
+    id: 'es.application:inheritanceDayOfBirthLabel',
+    defaultMessage: 'Fæðingardagur',
+    description: 'Day of birth label',
+  },
+
+  /* Properties step */
+  propertiesTitle: {
+    id: 'es.application:propertiesTitle',
+    defaultMessage: 'Eignir',
+    description: 'Properties title',
+  },
+  realEstatesTitle: {
+    id: 'es.application:realEstatesTitle',
+    defaultMessage: 'Fasteignir',
+    description: 'Real estates and lands title',
+  },
+  realEstatesDescription: {
+    id: 'es.application:realEstatesDescription',
+    defaultMessage: 'Til dæmis íbúðarhús, sumarhús, lóðir og jarðir.',
+    description: 'Real estates and lands description',
+  },
+  vehiclesTitle: {
+    id: 'es.application:vehiclesTitle',
+    defaultMessage: 'Faratæki',
+    description: 'Vehicles title',
+  },
+  vehiclesPlaceholder: {
+    id: 'es.application:vehiclesPlaceholder',
+    defaultMessage: 't.d. Toyota Yaris',
+    description: 'Placeholder for vehicles type',
+  },
+  otherPropertiesTitle: {
+    id: 'es.application:otherPropertiesTitle',
+    defaultMessage: 'Aðrar eignir',
+    description: 'Other properties title',
+  },
+  otherPropertiesDescription: {
+    id: 'es.application:otherPropertiesDescription',
+    defaultMessage: 'Merktu við það sem á við eftir bestu vitund.',
+    description: 'Other properties description',
+  },
+  otherPropertiesAccounts: {
+    id: 'es.application:otherPropertiesAccounts',
+    defaultMessage: 'Bankareikningar, verðbréf eða hlutabréf',
+    description: 'Other properties option: Accounts',
+  },
+  otherPropertiesOwnBusiness: {
+    id: 'es.application:otherPropertiesOwnBusiness',
+    defaultMessage: 'Eigin rekstur',
+    description: 'Other properties option: Own business',
+  },
+  otherPropertiesResidence: {
+    id: 'es.application:otherPropertiesResidence',
+    defaultMessage: 'Búseturéttur vegna kaupleigu íbúða',
+    description: 'Other properties option: Residence',
+  },
+  otherPropertiesAssetsAbroad: {
+    id: 'es.application:otherPropertiesAssetsAbroad',
+    defaultMessage: 'Eignir erlendis',
+    description: 'Other properties option: Assets abroad',
+  },
+  propertyNumber: {
+    id: 'es.application:propertyNumber',
+    defaultMessage: 'Fastanúmer',
+    description: 'Property number label',
+  },
+  propertyShare: {
+    id: 'es.application:propertyShare',
+    defaultMessage: 'Eignarhluti',
+    description: 'Property share label',
+  },
+  addProperty: {
+    id: 'es.application:addProperty',
+    defaultMessage: 'Bæta við fasteign eða lóð',
+    description: 'Add property',
+  },
+  addVehicle: {
+    id: 'es.application:addVehicle',
+    defaultMessage: 'Bæta við ökutæki',
+    description: 'Add vehicle',
+  },
+  vehicleNumberLabel: {
+    id: 'es.application:vehicleNumberLabel',
+    defaultMessage: 'Skráninganúmer ökutækis',
+    description: 'Vehicle number label',
+  },
+  vehicleTypeLabel: {
+    id: 'es.application:vehicleTypeLabel',
+    defaultMessage: 'Tegund faratækis',
+    description: 'Vehicle type label',
   },
 })

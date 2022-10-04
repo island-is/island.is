@@ -58,18 +58,22 @@ export const estateSchema = z.object({
   }),
 
   //Estate members info
-  estateMembers: z
-    .object({
-      initial: z.boolean().optional(),
-      name: z.string().nonempty(),
-      relation: customZodError(z.string().nonempty(), m.errorRelation),
-      nationalId: z.string().optional(),
-      custodian: z.string().length(10).optional(),
-      foreignCitizenship: z.string().array().min(0).max(1).optional(),
-      dateOfBirth: z.string().nonempty().optional(),
-    })
-    .array()
-    .optional(),
+  estateMembers: z.object({
+    members: z
+      .object({
+        initial: z.boolean().optional(),
+        name: z.string().nonempty(),
+        relation: customZodError(z.string().nonempty(), m.errorRelation),
+        nationalId: z.string().optional(),
+        custodian: z.string().length(10).optional(),
+        foreignCitizenship: z.string().array().min(0).max(1).optional(),
+        dateOfBirth: z.string().nonempty().optional(),
+        dummy: z.boolean().optional(),
+      })
+      .array()
+      .optional(),
+    encountered: z.boolean().optional(),
+  }),
 
   selectedEstate: z.enum([
     EstateTypes.officialEstate,

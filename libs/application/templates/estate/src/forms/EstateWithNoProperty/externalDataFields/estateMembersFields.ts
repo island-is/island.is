@@ -1,12 +1,12 @@
 import {
   buildCustomField,
   buildDescriptionField,
-  buildKeyValueField,
 } from '@island.is/application/core'
 import { m } from '../../../lib/messages'
 import { Application } from '@island.is/application/types'
 import { format as formatNationalId } from 'kennitala'
 import { EstateMember, EstateRegistrant } from '@island.is/clients/syslumenn'
+import { willsAndAgreements } from '../../sharedSections/willsAndAgreements'
 
 export const estateMembersFields = [
   buildDescriptionField({
@@ -32,30 +32,5 @@ export const estateMembersFields = [
         })),
     },
   ),
-  buildDescriptionField({
-    id: 'willsHeader',
-    title: m.willsAndAgreements,
-    titleVariant: 'h3',
-    marginBottom: 'gutter',
-  }),
-  buildKeyValueField({
-    label: m.willsInCustody,
-    value: 'Já',
-    width: 'half',
-  }),
-  buildKeyValueField({
-    label: m.agreements,
-    value: 'Nei',
-    width: 'half',
-  }),
-  buildDescriptionField({
-    id: 'space',
-    title: '',
-    space: 'gutter',
-  }),
-  buildKeyValueField({
-    label: m.otherWills,
-    value: 'Nei',
-    width: 'half',
-  }),
+  ...willsAndAgreements,
 ]

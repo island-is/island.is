@@ -289,7 +289,10 @@ export const mapEstateInfo = (syslaData: DanarbuUppl): EstateInfo => {
     assets: syslaData.eignir
       ? syslaData.eignir
           .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_0)
-          .filter((a) => a?.tegundAngalgs && /^[fF]{0,1}\d{7}$/.test(a.fastanumer))
+          .filter(
+            (a) =>
+              a?.tegundAngalgs && /^[fF]{0,1}\d{7}$/.test(a.fastanumer ?? ''),
+          )
           .map(assetMapper)
       : [],
     vehicles: syslaData.eignir
