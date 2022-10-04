@@ -1,5 +1,6 @@
 import { AuthScope } from '@island.is/auth/scopes'
 import { lazy } from 'react'
+import { Features } from '@island.is/feature-flags'
 
 import {
   ServicePortalModule,
@@ -10,6 +11,7 @@ import {
 
 export const delegationsModule: ServicePortalModule = {
   name: 'Aðgangsstýring',
+  featureFlag: Features.outgoingDelegationsV2,
   widgets: () => [],
   routes: ({ userInfo }) => {
     const isCompany = userInfo.profile['subjectType'] === 'legalEntity'

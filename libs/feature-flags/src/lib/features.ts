@@ -29,6 +29,13 @@ export enum Features {
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
+
+  // Service portal modules
+  servicePortalDocumentProviderModule = 'isServicePortalDocumentProviderModuleEnabled',
+  servicePortalIcelandicNamesRegistryModule = 'isServicePortalIcelandicNamesRegistryModuleEnabled',
+  servicePortalPetitionsModule = 'isServicePortalPetitionsModuleEnabled',
+
+  outgoingDelegationsV2 = 'outgoingdelegationsv2',
 }
 
 export enum ServerSideFeature {

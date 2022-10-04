@@ -24,7 +24,7 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 
 import { AuthDelegationsQuery } from '../../lib/queries'
-import { DelegationsFormFooter, NoActionCard } from '../../components'
+import { DelegationsFormFooter, IdentityCard } from '../../components'
 import * as styles from './GrantAccess.css'
 
 const CreateAuthDelegationMutation = gql`
@@ -176,7 +176,7 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
         <FormProvider {...methods}>
           <form onSubmit={onSubmit}>
             <Box display="flex" flexDirection="column" rowGap={[5, 6]}>
-              <NoActionCard
+              <IdentityCard
                 label={formatMessage({
                   id: 'sp.access-control-delegations:signed-in-user',
                   defaultMessage: 'Innskráður notandi',

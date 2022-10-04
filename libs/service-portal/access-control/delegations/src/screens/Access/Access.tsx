@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import React, { useState } from 'react'
 import { gql, useQuery, useMutation } from '@apollo/client'
 import { useParams, useHistory } from 'react-router-dom'
 import { useForm, FormProvider } from 'react-hook-form'
@@ -23,12 +23,13 @@ import {
   IntroHeader,
   m as coreMessages,
   NotFound,
+  ServicePortalModuleComponent,
   ServicePortalPath,
 } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 
 import { AuthDelegationsQuery } from '../../lib/queries'
-import { AccessItem, AccessModal } from '../../components'
+import { AccessHeader, AccessItem, AccessModal } from '../../components'
 
 import * as styles from './Access.css'
 import {
@@ -108,7 +109,7 @@ const DeleteAuthDelegationMutation = gql`
   }
 `
 
-const Access: FC = () => {
+const Access: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.settings-access-control')
 
   const { formatMessage, lang } = useLocale()
@@ -124,7 +125,7 @@ const Access: FC = () => {
     UpdateAuthDelegationMutation,
     { refetchQueries: [{ query: AuthDelegationsQuery }], onError },
   )
-  const [deleteDelegation, { loading: deleteLoading }] = useMutation<Mutation>(
+  const [deleteDelegation] = useMutation<Mutation>(
     DeleteAuthDelegationMutation,
     { refetchQueries: [{ query: AuthDelegationsQuery }], onError },
   )
@@ -232,6 +233,7 @@ const Access: FC = () => {
 
   return (
     <Box>
+      <AccessHeader userInfo={userInfo} />
       <IntroHeader
         title={authDelegation?.to?.name || ''}
         intro={defineMessage({
