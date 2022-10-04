@@ -226,17 +226,26 @@ export class LicenseServiceService {
         }
       }
 
+      /*
+      //TODO - Máni
+      //Re-implement when app has updated their GenericUserLicenseStatus logic!!!
       const isDataFetched =
         licenseDataFromService?.fetch?.status ===
         GenericUserLicenseFetchStatus.Fetched
 
-      const licenseUserdata = licenseDataFromService?.data ?? {
+      const licenseUserData = licenseDataFromService?.data ?? {
         status: isDataFetched
           ? GenericUserLicenseStatus.NotAvailable
           : GenericUserLicenseStatus.Unknown,
         pkpassStatus: isDataFetched
           ? GenericUserLicensePkPassStatus.NotAvailable
           : GenericUserLicensePkPassStatus.Unknown,
+      }
+      */
+
+      const licenseUserData = licenseDataFromService?.data ?? {
+        status: GenericUserLicenseStatus.Unknown,
+        pkpassStatus: GenericUserLicensePkPassStatus.Unknown,
       }
 
       const fetch = licenseDataFromService?.fetch ?? {
@@ -247,7 +256,7 @@ export class LicenseServiceService {
         nationalId: user.nationalId,
         license: {
           ...license,
-          ...licenseUserdata,
+          ...licenseUserData,
         },
         fetch,
         payload: licenseDataFromService?.payload ?? undefined,
