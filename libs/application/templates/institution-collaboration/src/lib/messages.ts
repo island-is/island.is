@@ -213,10 +213,11 @@ export const institutionApplicationMessages = {
     },
 
     sectionDescription: {
-      id: 'ia.application:section.description',
-      defaultMessage: `Þú getur nálgast nánar helstu upplýsingar um þjónustur á vef Stafræns Ísland. `,
+      id: 'ia.application:service.section.description#markdown',
+      defaultMessage: `Merktu við þær þjónustur sem stofnunin sækir um og skrifaðu stutta lýsingu. Þú getur nálgast helstu upplýsingar um þjónustur á vef Stafræns Ísland. [Sjá nánar.](https://island.is/s/stafraent-island/thjonustur) `,
       description: 'Section description',
     },
+
     sectionDescriptionLink: {
       id: 'ia.application:section.descriptionlink',
       defaultMessage: `Sjá nánar. `,
