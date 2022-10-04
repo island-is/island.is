@@ -420,6 +420,7 @@ export class ResourcesService {
       order: [
         // Sort results by ApiScopeGroup and ApiScope order.
         // This raw SQL literal depends on internal Sequelize join naming.
+        // It is regression tested in services-auth-public-api/.../scopes.controller.spec.ts
         literal(
           'COALESCE("group"."order", "ApiScope"."order") * 1000 + "ApiScope"."order"',
         ),
