@@ -128,10 +128,6 @@ const SubPage: Screen<SubPageProps> = ({
     },
   ]
 
-  const searchTags = institutionSlugBelongsToMannaudstorg
-    ? [{ key: 'mannaudstorg', type: SearchableTags.Organization }]
-    : undefined
-
   return (
     <ServiceWebWrapper
       pageTitle={pageTitle}
@@ -148,7 +144,6 @@ const SubPage: Screen<SubPageProps> = ({
         'serviceWebSearchPlaceholder',
         'Leitaðu á þjónustuvefnum',
       )}
-      searchTags={searchTags}
     >
       <Box marginY={[3, 3, 10]}>
         <GridContainer>
