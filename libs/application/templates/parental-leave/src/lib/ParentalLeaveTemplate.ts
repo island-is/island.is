@@ -542,6 +542,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   Promise.resolve(val.InReview),
                 ),
               read: 'all',
+              write: 'all',
             },
             {
               id: Roles.ORGINISATION_REVIEWER,
@@ -600,8 +601,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 import('../forms/EditOrAddPeriods').then((val) =>
                   Promise.resolve(val.EditOrAddPeriods),
                 ),
-              write: 'all',
               read: 'all',
+              write: 'all',
             },
             {
               id: Roles.ORGINISATION_REVIEWER,
@@ -668,6 +669,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         on: {
           [DefaultEvents.ASSIGN]: { target: States.EMPLOYER_APPROVE_EDITS },
           [DefaultEvents.REJECT]: { target: States.EMPLOYER_EDITS_ACTION },
+          [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
         },
       },
       [States.EMPLOYER_APPROVE_EDITS]: {
@@ -733,6 +735,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
             },
           ],
+          [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
           [DefaultEvents.REJECT]: { target: States.EMPLOYER_EDITS_ACTION },
         },
       },
@@ -818,6 +821,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ADDITIONALDOCUMENTREQUIRED: {
             target: States.ADDITIONAL_DOCUMENT_REQUIRED,
           },
+          [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
           [DefaultEvents.REJECT]: {
             target: States.VINNUMALASTOFNUN_EDITS_ACTION,
           },
