@@ -697,7 +697,9 @@ export class CmsContentfulService {
       .getLocalizedEntries<types.ISupportCategoryFields>(lang, params)
       .catch(errorHandler('getSupportCategories'))
 
-    return (result.items as types.ISupportCategory[]).map(mapSupportCategory)
+    return (result.items as types.ISupportCategory[])
+      .map(mapSupportCategory)
+      .filter((category) => category?.title && category?.slug)
   }
 
   async getSupportCategoriesInOrganization({
@@ -714,7 +716,9 @@ export class CmsContentfulService {
       .getLocalizedEntries<types.ISupportCategoryFields>(lang, params)
       .catch(errorHandler('getSupportCategoriesInOrganization'))
 
-    return (result.items as types.ISupportCategory[]).map(mapSupportCategory)
+    return (result.items as types.ISupportCategory[])
+      .map(mapSupportCategory)
+      .filter((category) => category?.title && category?.slug)
   }
 
   async getOpenDataPage({ lang }: GetOpenDataPageInput): Promise<OpenDataPage> {

@@ -178,6 +178,14 @@ export const routesTemplate = {
     is: '/adstod/[organizationSlug]/[categorySlug]',
     en: '/en/help/[organizationSlug]/[categorySlug]',
   },
+  servicewebanswer: {
+    is: '/adstod/[organizationSlug]/[categorySlug]/[answerSlug]',
+    en: '/en/help/[organizationSlug]/[categorySlug]/[answerSlug]',
+  },
+  servicewebcontactus: {
+    is: '/adstod/[organizationSlug]/hafa-samband',
+    en: '/en/help/[organizationSlug]/contact-us',
+  },
   servicewebsearch: {
     is: '/adstod/leit',
     en: '/en/help/search',
