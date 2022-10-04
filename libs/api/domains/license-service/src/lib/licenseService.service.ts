@@ -21,9 +21,9 @@ import {
   GenericUserLicensePkPassStatus,
   GenericLicenseOrganizationSlug,
   CONFIG_PROVIDER_V2,
+  GenericLicenseLabels,
 } from './licenceService.type'
 import { Locale } from '@island.is/shared/types'
-
 import { AVAILABLE_LICENSES } from './licenseService.module'
 import type { LicenseServiceConfigV2 } from './licenseService.module'
 import { FetchError } from '@island.is/clients/middlewares'
@@ -147,6 +147,31 @@ export class LicenseServiceService {
     return dataWithFetch
   }
 
+  private async getOrganization(
+    slug: GenericLicenseOrganizationSlug,
+    locale: Locale,
+  ) {
+    const organization = await this.cmsContentfulService.getOrganization(
+      slug,
+      locale,
+    )
+
+    return organization
+  }
+
+  private async getLicenseLabels(locale: Locale) {
+    const licenseLabels = await this.cmsContentfulService.getNamespace(
+      'Licenses',
+      locale,
+    )
+
+    return {
+      labels: licenseLabels?.fields
+        ? JSON.parse(licenseLabels?.fields)
+        : undefined,
+    }
+  }
+
   async getAllLicenses(
     user: User,
     locale: Locale,
@@ -168,6 +193,10 @@ export class LicenseServiceService {
         continue
       }
       let licenseDataFromService: GenericLicenseCached | null = null
+      const licenseLabels: GenericLicenseLabels = await this.getLicenseLabels(
+        locale,
+      )
+
       if (!onlyList) {
         const licenseService = await this.genericLicenseFactory(
           license.type,
@@ -183,7 +212,8 @@ export class LicenseServiceService {
           licenseDataFromService = await this.getCachedOrCache(
             license,
             user,
-            async () => await licenseService.getLicense(user, locale),
+            async () =>
+              await licenseService.getLicense(user, locale, licenseLabels),
             force ? 0 : license.timeout,
           )
 
@@ -227,15 +257,6 @@ export class LicenseServiceService {
     return licenses
   }
 
-  private async getOrganization(slug: GenericLicenseOrganizationSlug) {
-    const organization = await this.cmsContentfulService.getOrganization(
-      slug,
-      'is-IS',
-    )
-
-    return organization
-  }
-
   async getLicense(
     user: User,
     locale: Locale,
@@ -249,14 +270,20 @@ export class LicenseServiceService {
       this.cacheManager,
     )
 
+    const licenseLabels = await this.getLicenseLabels(locale)
+
     if (license && licenseService) {
-      licenseUserdata = await licenseService.getLicenseDetail(user, locale)
+      licenseUserdata = await licenseService.getLicenseDetail(
+        user,
+        locale,
+        licenseLabels,
+      )
     } else {
       throw new Error(`${licenseType} not supported`)
     }
 
     const orgData = license.orgSlug
-      ? await this.getOrganization(license.orgSlug)
+      ? await this.getOrganization(license.orgSlug, locale)
       : undefined
 
     return {

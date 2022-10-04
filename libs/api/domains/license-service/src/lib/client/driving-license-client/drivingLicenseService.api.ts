@@ -13,6 +13,7 @@ import { GenericDrivingLicenseResponse } from './genericDrivingLicense.type'
 import { parseDrivingLicensePayload } from './drivingLicenseMappers'
 import {
   GenericLicenseClient,
+  GenericLicenseLabels,
   GenericLicenseUserdataExternal,
   GenericUserLicensePkPassStatus,
   GenericUserLicenseStatus,
@@ -294,6 +295,7 @@ export class GenericDrivingLicenseApi
   async getLicense(
     user: User,
     locale: Locale,
+    labels: GenericLicenseLabels,
   ): Promise<GenericLicenseUserdataExternal | null> {
     const licenses = await this.requestFromXroadApi(user.nationalId)
 
@@ -301,7 +303,7 @@ export class GenericDrivingLicenseApi
       return null
     }
 
-    const payload = parseDrivingLicensePayload(licenses, locale)
+    const payload = parseDrivingLicensePayload(licenses, locale, labels)
 
     let pkpassStatus: GenericUserLicensePkPassStatus =
       GenericUserLicensePkPassStatus.Unknown
@@ -322,8 +324,9 @@ export class GenericDrivingLicenseApi
   async getLicenseDetail(
     user: User,
     locale: Locale,
+    labels: GenericLicenseLabels,
   ): Promise<GenericLicenseUserdataExternal | null> {
-    return this.getLicense(user, locale)
+    return this.getLicense(user, locale, labels)
   }
 
   async verifyPkPass(data: string): Promise<PkPassVerification | null> {

@@ -5,6 +5,7 @@ import isAfter from 'date-fns/isAfter'
 import {
   GenericLicenseDataField,
   GenericLicenseDataFieldType,
+  GenericLicenseLabels,
   GenericUserLicensePayload,
 } from '../../licenceService.type'
 import {
@@ -43,6 +44,7 @@ const parseAdrLicenseResponse = (license: AdrDto) => {
 export const parseAdrLicensePayload = (
   license: AdrDto,
   locale: Locale = 'is',
+  labels?: GenericLicenseLabels,
 ): GenericUserLicensePayload | null => {
   if (!license) return null
 
@@ -50,26 +52,27 @@ export const parseAdrLicensePayload = (
 
   //TODO: Null check fields and filter!
 
+  const label = labels?.labels
   const data: Array<GenericLicenseDataField> = [
     {
       name: 'Grunnupplýsingar ADR skírteinis',
       type: GenericLicenseDataFieldType.Value,
-      label: i18n.licenseNumber[locale],
+      label: label ? label['licenseNumber'] : i18n.licenseNumber[locale],
       value: parsedResponse.skirteinisNumer?.toString(),
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: i18n.fullName[locale],
+      label: label ? label['fullName'] : i18n.fullName[locale],
       value: parsedResponse.fulltNafn ?? '',
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: i18n.publisher[locale],
+      label: label ? label['publisher'] : i18n.publisher[locale],
       value: 'Vinnueftirlitið',
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: i18n.validTo[locale],
+      label: label ? label['validTo'] : i18n.validTo[locale],
       value: parsedResponse.gildirTil ?? '',
     },
   ]
@@ -78,14 +81,14 @@ export const parseAdrLicensePayload = (
     (field) => field.grunn,
   )
   const tankar = parseRights(
-    i18n.tanks[locale],
+    label ? label['tanks'] : i18n.tanks[locale],
     adrRights.filter((field) => field.tankar),
   )
 
   if (tankar) data.push(tankar)
 
   const grunn = parseRights(
-    i18n.otherThanTanks[locale],
+    label ? label['otherThanTanks'] : i18n.otherThanTanks[locale],
     adrRights.filter((field) => field.grunn),
   )
   if (grunn) data.push(grunn)

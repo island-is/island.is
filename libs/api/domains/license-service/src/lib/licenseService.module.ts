@@ -33,6 +33,7 @@ import {
   VinnuvelaApi,
   AdrAndMachineLicenseClientModule,
 } from '@island.is/clients/adr-and-machine-license'
+import { CmsModule } from '@island.is/cms'
 export interface PkPassConfig {
   apiKey: string
   apiUrl: string
@@ -118,6 +119,7 @@ export class LicenseServiceModule {
         AdrAndMachineLicenseClientModule,
         FirearmLicenseClientModule,
         SmartSolutionsClientModule,
+        CmsModule,
       ],
       providers: [
         MainResolver,

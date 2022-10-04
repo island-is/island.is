@@ -3,6 +3,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import {
   GenericLicenseClient,
+  GenericLicenseLabels,
   GenericLicenseUserdataExternal,
   GenericUserLicensePkPassStatus,
   GenericUserLicenseStatus,
@@ -49,14 +50,18 @@ export class GenericMachineLicenseApi
     return license
   }
 
-  async getLicense(user: User): Promise<GenericLicenseUserdataExternal | null> {
+  async getLicense(
+    user: User,
+    locale: Locale,
+    labels: GenericLicenseLabels,
+  ): Promise<GenericLicenseUserdataExternal | null> {
     const licenseData = await this.fetchLicense(user)
 
     if (!licenseData) {
       return null
     }
 
-    const payload = parseMachineLicensePayload(licenseData)
+    const payload = parseMachineLicensePayload(licenseData, locale, labels)
 
     if (payload) {
       return {
@@ -75,8 +80,10 @@ export class GenericMachineLicenseApi
 
   async getLicenseDetail(
     user: User,
+    locale: Locale,
+    labels: GenericLicenseLabels,
   ): Promise<GenericLicenseUserdataExternal | null> {
-    return this.getLicense(user)
+    return this.getLicense(user, locale, labels)
   }
 
   private async createPkPassPayload(

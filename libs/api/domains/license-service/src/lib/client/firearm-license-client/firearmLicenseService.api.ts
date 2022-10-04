@@ -1,5 +1,6 @@
 import {
   GenericLicenseClient,
+  GenericLicenseLabels,
   GenericLicenseUserdataExternal,
   GenericUserLicensePkPassStatus,
   GenericUserLicenseStatus,
@@ -56,13 +57,14 @@ export class GenericFirearmLicenseApi
   async getLicense(
     user: User,
     locale: Locale,
+    labels: GenericLicenseLabels,
   ): Promise<GenericLicenseUserdataExternal | null> {
     const licenseData = await this.fetchLicenseData(user)
     if (!licenseData) {
       return null
     }
 
-    const payload = parseFirearmLicensePayload(licenseData, locale)
+    const payload = parseFirearmLicensePayload(licenseData, locale, labels)
 
     if (payload) {
       return {
@@ -81,8 +83,9 @@ export class GenericFirearmLicenseApi
   async getLicenseDetail(
     user: User,
     locale: Locale,
+    labels: GenericLicenseLabels,
   ): Promise<GenericLicenseUserdataExternal | null> {
-    return this.getLicense(user, locale)
+    return this.getLicense(user, locale, labels)
   }
   async getPkPassUrl(user: User): Promise<string | null> {
     const data = await this.fetchLicenseData(user)

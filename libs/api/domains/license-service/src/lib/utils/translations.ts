@@ -61,7 +61,7 @@ export const i18n = {
   },
   firearmProperties: {
     is: 'Skotvopn í eigu leyfishafa',
-    en: 'Firearms owned by licence holder',
+    en: 'Firearms owned by license holder',
   },
   firearmStatus: {
     is: 'Staða skotvopns',

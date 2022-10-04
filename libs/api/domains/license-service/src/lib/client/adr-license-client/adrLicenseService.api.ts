@@ -3,6 +3,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import {
   GenericLicenseClient,
+  GenericLicenseLabels,
   GenericLicenseUserdataExternal,
   GenericUserLicensePkPassStatus,
   GenericUserLicenseStatus,
@@ -23,6 +24,7 @@ import {
 import { format } from 'kennitala'
 import { handle404 } from '@island.is/clients/middlewares'
 import { Locale } from '@island.is/shared/types'
+
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'adrlicense-service'
 
@@ -45,13 +47,14 @@ export class GenericAdrLicenseApi implements GenericLicenseClient<AdrDto> {
   async getLicense(
     user: User,
     locale: Locale,
+    labels: GenericLicenseLabels,
   ): Promise<GenericLicenseUserdataExternal | null> {
     const licenseData = await this.fetchLicense(user)
 
     if (!licenseData) {
       return null
     }
-    const payload = parseAdrLicensePayload(licenseData, locale)
+    const payload = parseAdrLicensePayload(licenseData, locale, labels)
 
     if (payload) {
       return {
@@ -71,8 +74,9 @@ export class GenericAdrLicenseApi implements GenericLicenseClient<AdrDto> {
   async getLicenseDetail(
     user: User,
     locale: Locale,
+    labels: GenericLicenseLabels,
   ): Promise<GenericLicenseUserdataExternal | null> {
-    return this.getLicense(user, locale)
+    return this.getLicense(user, locale, labels)
   }
 
   private async createPkPassPayload(user: User): Promise<PassDataInput | null> {

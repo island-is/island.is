@@ -5,6 +5,7 @@ import {
 import {
   GenericLicenseDataField,
   GenericLicenseDataFieldType,
+  GenericLicenseLabels,
   GenericUserLicensePayload,
 } from '../../licenceService.type'
 
@@ -15,7 +16,6 @@ import { i18n } from '../../utils/translations'
 import is from 'date-fns/locale/is'
 import enGB from 'date-fns/locale/en-GB'
 import { format as formatSsn } from 'kennitala'
-import { Locale } from 'locale'
 
 const checkLicenseExpirationDate = (license: VinnuvelaDto) => {
   return license.vinnuvelaRettindi
@@ -34,46 +34,52 @@ const checkLicenseExpirationDate = (license: VinnuvelaDto) => {
 export const parseMachineLicensePayload = (
   license: VinnuvelaDto,
   locale: Locale = 'is',
+  labels: GenericLicenseLabels,
 ): GenericUserLicensePayload | null => {
   if (!license) return null
 
   const expired: boolean | null = checkLicenseExpirationDate(license)
 
+  const label = labels.labels
   const data: Array<GenericLicenseDataField> = [
     {
       name: 'Grunnupplýsingar vinnuvélaskírteinis',
       type: GenericLicenseDataFieldType.Value,
-      label: i18n.licenseNumber[locale],
+      label: label ? label['licenseNumber'] : i18n.licenseNumber[locale],
       value: license.skirteinisNumer?.toString(),
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: i18n.fullName[locale],
+      label: label ? label['fullName'] : i18n.fullName[locale],
       value: license?.fulltNafn ?? '',
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: i18n.placeOfIssue[locale],
+      label: label ? label['placeOfIssue'] : i18n.placeOfIssue[locale],
       value: license.utgafuStadur ?? '',
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: i18n.firstPublishedDate[locale],
+      label: label
+        ? label['firstPublishedDate']
+        : i18n.firstPublishedDate[locale],
       value: license.fyrstiUtgafuDagur?.toString(),
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: i18n.validTo[locale],
-      value: i18n.seeRights[locale],
+      label: label ? label['validTo'] : i18n.validTo[locale],
+      value: label ? label['seeRights'] : i18n.seeRights[locale],
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: i18n.drivingLicenseNumber[locale],
+      label: label
+        ? label['drivingLicenseNumber']
+        : i18n.drivingLicenseNumber[locale],
       value: license.okuskirteinisNumer ?? '',
     },
     {
       type: GenericLicenseDataFieldType.Group,
-      label: i18n.classesOfRights[locale],
+      label: label ? label['classesOfRights'] : i18n.classesOfRights[locale],
       fields: (license.vinnuvelaRettindi ?? [])
         .filter((field) => field.kenna || field.stjorna)
         .map((field) => ({
@@ -81,7 +87,7 @@ export const parseMachineLicensePayload = (
           name: field.flokkur ?? '',
           label: field.fulltHeiti ?? field.stuttHeiti ?? '',
           description: field.fulltHeiti ?? field.stuttHeiti ?? '',
-          fields: parseVvrRights(field, locale),
+          fields: parseVvrRights(field, locale, labels),
         })),
     },
   ]
@@ -99,20 +105,21 @@ export const parseMachineLicensePayload = (
 const parseVvrRights = (
   rights: VinnuvelaRettindiDto,
   locale: Locale = 'is',
+  labels: GenericLicenseLabels,
 ): Array<GenericLicenseDataField> | undefined => {
   const fields = new Array<GenericLicenseDataField>()
-
+  const label = labels.labels
   if (rights.stjorna) {
     fields.push({
       type: GenericLicenseDataFieldType.Value,
-      label: i18n.control[locale],
+      label: label ? label['control'] : i18n.control[locale],
       value: rights.stjorna,
     })
   }
   if (rights.kenna) {
     fields.push({
       type: GenericLicenseDataFieldType.Value,
-      label: i18n.teach[locale],
+      label: label ? label['teach'] : i18n.teach[locale],
       value: rights.kenna,
     })
   }

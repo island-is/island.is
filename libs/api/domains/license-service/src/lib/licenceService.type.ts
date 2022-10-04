@@ -143,11 +143,19 @@ export type GenericLicenseCached = {
   payload?: GenericUserLicensePayload
 }
 
+type LicenseLabelsObject = {
+  [x: string]: string
+}
+export type GenericLicenseLabels = {
+  labels?: LicenseLabelsObject
+}
+
 export type GenericUserLicense = {
   nationalId: string
   license: GenericLicenseMetadata &
     GenericLicenseUserdata &
-    GenericLicenseOrgdata
+    GenericLicenseOrgdata &
+    GenericLicenseLabels
   fetch: GenericLicenseFetch
   payload?: GenericUserLicensePayload
 }
@@ -207,12 +215,14 @@ export interface GenericLicenseClient<LicenseType> {
   getLicense: (
     user: User,
     locale: Locale,
+    labels: GenericLicenseLabels,
   ) => Promise<GenericLicenseUserdataExternal | null>
 
   // This will never be cached
   getLicenseDetail: (
     user: User,
     locale: Locale,
+    labels: GenericLicenseLabels,
   ) => Promise<GenericLicenseUserdataExternal | null>
 
   getPkPassUrl: (
