@@ -242,28 +242,28 @@ export const mapEstateRegistrant = (
     districtCommissionerHasWill: syslaData.erfdaskraIVorsluSyslumanns ?? false,
     assets: syslaData.eignir
       ? syslaData.eignir
-          .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_0)
+          .filter((a) => a.tegundAndlags === TegundAndlags.NUMBER_0)
           .filter((a) => a?.fastanumer && /^[fF]{0,1}\d{7}$/.test(a.fastanumer))
           .map(assetMapper)
       : [],
     vehicles: syslaData.eignir
       ? syslaData.eignir
-          .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_1)
+          .filter((a) => a.tegundAndlags === TegundAndlags.NUMBER_1)
           .map(assetMapper)
       : [],
     ships: syslaData.eignir
       ? syslaData.eignir
-          .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_2)
+          .filter((a) => a.tegundAndlags === TegundAndlags.NUMBER_2)
           .map(assetMapper)
       : [],
     cash: syslaData.eignir
       ? syslaData.eignir
-          .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_3)
+          .filter((a) => a.tegundAndlags === TegundAndlags.NUMBER_3)
           .map(assetMapper)
       : [],
     flyers: syslaData.eignir
       ? syslaData.eignir
-          .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_4)
+          .filter((a) => a.tegundAndlags === TegundAndlags.NUMBER_4)
           .map(assetMapper)
       : [],
     estateMembers: syslaData.adilarDanarbus
