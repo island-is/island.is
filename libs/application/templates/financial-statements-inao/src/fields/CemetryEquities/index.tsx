@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   Box,
   GridColumn,
@@ -29,6 +29,10 @@ export const CemetryEquities = ({
   const answers = application.answers
   const { formatMessage } = useLocale()
   const { clearErrors, errors } = useFormContext()
+
+  // liabilities - equities
+  const [equityTotal, setEquityTotal] = useState(0)
+
   const [getTotalAssets, totalAssets] = useTotals(
     CEMETRYEQUITIESANDLIABILITIESIDS.assetPrefix,
   )
@@ -38,6 +42,11 @@ export const CemetryEquities = ({
   const [getTotalEquity, totalEquity] = useTotals(
     CEMETRYEQUITIESANDLIABILITIESIDS.equityPrefix,
   )
+
+  useEffect(() => {
+    const total = totalEquity - totalLiabilities
+    setEquityTotal(total)
+  }, [totalLiabilities, totalEquity])
 
   return (
     <GridContainer>
@@ -221,7 +230,7 @@ export const CemetryEquities = ({
           </Box>
           <Total
             name={CEMETRYEQUITIESANDLIABILITIESIDS.equityTotal}
-            total={totalEquity - totalLiabilities}
+            total={equityTotal}
             label={formatMessage(m.totalEquity)}
           />
         </GridColumn>

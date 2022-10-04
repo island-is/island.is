@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import debounce from 'lodash/debounce'
 import { useFormContext } from 'react-hook-form'
 import {
@@ -20,6 +20,8 @@ import {
 import { useTotals } from '../../hooks'
 
 export const ElectionEquities = (): JSX.Element => {
+  const [equityTotal, setEquityTotal] = useState(0)
+
   const [getTotalEquity, totalEquity] = useTotals(
     EQUITIESANDLIABILITIESIDS.equityPrefix,
   )
@@ -29,6 +31,11 @@ export const ElectionEquities = (): JSX.Element => {
   const [getTotalLiabilities, totalLiabilities] = useTotals(
     EQUITIESANDLIABILITIESIDS.liabilityPrefix,
   )
+
+  useEffect(() => {
+    const total = totalEquity - totalLiabilities
+    setEquityTotal(total)
+  }, [totalLiabilities, totalEquity])
 
   const { errors, clearErrors } = useFormContext()
   const { formatMessage } = useLocale()
@@ -142,7 +149,7 @@ export const ElectionEquities = (): JSX.Element => {
           </Box>
           <Total
             name={EQUITIESANDLIABILITIESIDS.totalCash}
-            total={totalLiabilities - totalEquity}
+            total={equityTotal}
             label={formatMessage(m.debtsAndCash)}
           />
         </GridColumn>

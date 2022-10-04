@@ -31,10 +31,8 @@ const about = z.object({
       params: m.nationalIdError,
     }),
   fullName: z.string().refine((x) => !!x, { params: m.required }),
-  powerOfAttorneyNationalId: z
-    .string()
-    .refine((x) => !!x, { params: m.required }),
-  powerOfAttorneyName: z.string().refine((x) => !!x, { params: m.required }),
+  powerOfAttorneyNationalId: z.string().optional(),
+  powerOfAttorneyName: z.string().optional(),
   phoneNumber: z.string().refine(
     (p) => {
       const phoneNumber = parsePhoneNumberFromString(p, 'IS')
@@ -175,11 +173,9 @@ export const dataSchema = z.object({
   asset,
   equity,
   liability,
-  attachment: z
-    .object({
-      file: z.array(FileSchema),
-    })
-    .optional(),
+  attachment: z.object({
+    file: z.array(FileSchema).nonempty(),
+  }),
 })
 
 export type FinancialStatementsInao = z.TypeOf<typeof dataSchema>

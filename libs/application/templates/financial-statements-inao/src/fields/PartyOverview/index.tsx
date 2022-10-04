@@ -43,18 +43,22 @@ export const PartyOverview = ({ application }: FieldBaseProps) => {
         </GridColumn>
       </GridRow>
       <GridRow>
-        <GridColumn span={['12/12', '6/12']}>
-          <ValueLine
-            label={m.powerOfAttorneyName}
-            value={answers.about.powerOfAttorneyName}
-          />
-        </GridColumn>
-        <GridColumn span={['12/12', '6/12']}>
-          <ValueLine
-            label={m.powerOfAttorneyNationalId}
-            value={formatNationalId(answers.about.powerOfAttorneyNationalId)}
-          />
-        </GridColumn>
+        {answers.about.powerOfAttorneyName ? (
+          <GridColumn span={['12/12', '6/12']}>
+            <ValueLine
+              label={m.powerOfAttorneyName}
+              value={answers.about.powerOfAttorneyName}
+            />
+          </GridColumn>
+        ) : null}
+        {answers.about.powerOfAttorneyNationalId ? (
+          <GridColumn span={['12/12', '6/12']}>
+            <ValueLine
+              label={m.powerOfAttorneyNationalId}
+              value={formatNationalId(answers.about.powerOfAttorneyNationalId)}
+            />
+          </GridColumn>
+        ) : null}
       </GridRow>
       <GridRow>
         <GridColumn span={['12/12', '6/12']}>

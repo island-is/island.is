@@ -197,7 +197,7 @@ export const m = defineMessages({
   },
   keyNumbersDebt: {
     id: 'fsn.application:keyNumbers.debt',
-    defaultMessage: 'Lykiltölur - Skuldir, eignir og eigið fé',
+    defaultMessage: 'Lykiltölur - Eignir, Skuldir og eigið fé',
     description: 'Statement debts',
   },
   currentAssets: {
@@ -237,7 +237,7 @@ export const m = defineMessages({
   },
   operatingCost: {
     id: 'fsn.application:keyNumbers.operatingCost',
-    defaultMessage: 'Rekstrarniðurstaða',
+    defaultMessage: 'Rekstrarniðurstaða alls',
     description: 'Operating Cost',
   },
   operatingYear: {
@@ -267,7 +267,7 @@ export const m = defineMessages({
   },
   totalCapital: {
     id: 'fsn.application:totalCapital',
-    defaultMessage: 'Fjármagnsgjöld samtals',
+    defaultMessage: 'Fjármagnsliðir samtals',
     description: 'Total capital',
   },
   totalEquity: {

@@ -56,20 +56,23 @@ export const CemetryOverview = ({ application }: FieldBaseProps) => {
           <ValueLine label={m.fullName} value={answers.about.fullName} />
         </GridColumn>
       </GridRow>
-
       <GridRow>
-        <GridColumn span={['12/12', '6/12']}>
-          <ValueLine
-            label={m.powerOfAttorneyName}
-            value={answers.about.powerOfAttorneyName}
-          />
-        </GridColumn>
-        <GridColumn span={['12/12', '6/12']}>
-          <ValueLine
-            label={m.powerOfAttorneyNationalId}
-            value={formatNationalId(answers.about.powerOfAttorneyNationalId)}
-          />
-        </GridColumn>
+        {answers.about.powerOfAttorneyName ? (
+          <GridColumn span={['12/12', '6/12']}>
+            <ValueLine
+              label={m.powerOfAttorneyName}
+              value={answers.about.powerOfAttorneyName}
+            />
+          </GridColumn>
+        ) : null}
+        {answers.about.powerOfAttorneyNationalId ? (
+          <GridColumn span={['12/12', '6/12']}>
+            <ValueLine
+              label={m.powerOfAttorneyNationalId}
+              value={formatNationalId(answers.about.powerOfAttorneyNationalId)}
+            />
+          </GridColumn>
+        ) : null}
       </GridRow>
 
       <GridRow>
@@ -241,6 +244,12 @@ export const CemetryOverview = ({ application }: FieldBaseProps) => {
             <ValueLine
               label={m.reevaluatePrice}
               value={formatCurrency(answers.cemetryEquity?.reevaluatePrice)}
+            />
+          </GridColumn>
+          <GridColumn span={['12/12', '6/12']}>
+            <ValueLine
+              label={m.reevaluateOther}
+              value={formatCurrency(answers.cemetryEquity?.reevaluateOther)}
             />
           </GridColumn>
         </GridRow>
