@@ -764,6 +764,9 @@ export const getLastValidPeriodEndDate = (
   application: Application,
 ): Date | null => {
   const { periods } = getApplicationAnswers(application.answers)
+  const { applicationFundId } = getApplicationExternalData(
+    application.externalData,
+  )
 
   if (periods.length === 0) {
     return null
@@ -775,7 +778,29 @@ export const getLastValidPeriodEndDate = (
     return null
   }
 
-  return new Date(lastPeriodEndDate)
+  const lastEndDate = new Date(lastPeriodEndDate)
+  if (applicationFundId === '') {
+    return lastEndDate
+  }
+
+  const today = new Date('2022-10-23')
+  const beginningOfMonth = addDays(today, today.getDate() * -1 + 1)
+
+  // LastPeriod's endDate is in current month and current date is >= 20 then Applicant could only start from next month
+  if (
+    today.getDate() >= 20 &&
+    lastEndDate.getMonth() === today.getMonth() &&
+    lastEndDate.getFullYear() === today.getFullYear()
+  ) {
+    return addMonths(beginningOfMonth, 1)
+  }
+
+  // LastPeriod's endDate is long in the past then Applicant could only start from beginning of current month
+  if (lastEndDate < today && lastEndDate.getMonth() !== today.getMonth()) {
+    return beginningOfMonth
+  }
+
+  return lastEndDate
 }
 
 export const calculateDaysUsedByPeriods = (periods: Period[]) =>
