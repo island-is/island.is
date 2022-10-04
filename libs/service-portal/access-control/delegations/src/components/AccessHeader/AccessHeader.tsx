@@ -29,7 +29,7 @@ export const AccessHeader = ({ userInfo }: AccessHeaderProps) => {
             defaultMessage: 'Kerfi',
           })}
           title={userInfo.profile.name}
-          imgSrc="/assets/images/identity-card.svg"
+          imgSrc="./assets/images/educationDegree.svg"
         />
       </Box>
     </Box>

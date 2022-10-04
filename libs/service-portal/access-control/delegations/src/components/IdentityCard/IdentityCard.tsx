@@ -55,7 +55,7 @@ export const IdentityCard = ({
     >
       {imgSrc ? (
         <Box display="flex" alignItems="center" columnGap={3}>
-          <img src={imgSrc} alt={label ?? ''} />
+          <img src={imgSrc} alt={label ?? ''} width="48" />
           {renderContent()}
         </Box>
       ) : (

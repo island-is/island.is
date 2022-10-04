@@ -3,6 +3,7 @@ import { useLocale } from '@island.is/localization'
 
 export const DelegationsEmptyState = () => {
   const { formatMessage } = useLocale()
+
   return (
     <Box
       marginTop={[4, 12]}
@@ -19,7 +20,13 @@ export const DelegationsEmptyState = () => {
         })}
       </Text>
       <div>
-        <img src="./assets/images/educationDegree.svg" alt="" />
+        <img
+          src="./assets/images/educationDegree.svg"
+          alt={formatMessage({
+            id: 'sp.access-control-delegations:empty-image-alt',
+            defaultMessage: 'Mynd af handarbandi',
+          })}
+        />
       </div>
     </Box>
   )
