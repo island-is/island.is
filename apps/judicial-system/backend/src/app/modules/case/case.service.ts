@@ -27,6 +27,7 @@ import { EmailService } from '@island.is/email-service'
 import { SIGNED_VERDICT_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
 import {
   CaseFileCategory,
+  CaseFileState,
   CaseOrigin,
   CaseState,
   isIndictmentCase,
