@@ -5,6 +5,7 @@ import { ProblemModule } from '@island.is/nest/problem'
 import { ConfigModule } from '@island.is/nest/config'
 import { signingModuleConfig } from '@island.is/dokobit-signing'
 import { courtClientModuleConfig } from '@island.is/judicial-system/court-client'
+import { messageModuleConfig } from '@island.is/judicial-system/message'
 import { SharedAuthModule } from '@island.is/judicial-system/auth'
 
 import { environment } from '../environments'
@@ -50,6 +51,7 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
       load: [
         signingModuleConfig,
         courtClientModuleConfig,
+        messageModuleConfig,
         caseModuleConfig,
         notificationModuleConfig,
         policeModuleConfig,
