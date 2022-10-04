@@ -9,6 +9,7 @@ import {
   Hash,
   ExtraValues,
   EnvironmentVariableValue,
+  PersistentVolumeClaim,
   PostgresInfo,
   Feature,
   Features,
@@ -141,7 +142,9 @@ export const serializeService: SerializeMethod = (
   }
   result.hpa.scaling.metric.nginxRequestsIrate =
     serviceDef.replicaCount?.scalingMagicNumber || 2
-
+  if (serviceDef.volumes?.length) {
+    result.pvcs = serviceDef.volumes
+  }
   // extra attributes
   if (serviceDef.extraAttributes) {
     const { envs, errors } = serializeExtraVariables(

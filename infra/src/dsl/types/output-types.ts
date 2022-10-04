@@ -1,4 +1,9 @@
-import { Hash, ReplicaCount, Service } from './input-types'
+import {
+  Hash,
+  PersistentVolumeClaim,
+  ReplicaCount,
+  Service,
+} from './input-types'
 import { UberChartType } from './charts'
 import { FeatureNames } from '../features'
 
@@ -28,6 +33,7 @@ export interface ServiceHelm {
     max: number
     default: number
   }
+
   hpa?: {
     scaling: {
       replicas: {
@@ -37,6 +43,7 @@ export interface ServiceHelm {
       metric: { nginxRequestsIrate?: number; cpuAverageUtilization: number }
     }
   }
+
   healthCheck: {
     port?: number
     liveness: {
@@ -99,6 +106,7 @@ export interface ServiceHelm {
       memory: string
     }
   }
+  pvcs?: PersistentVolumeClaim[]
   grantNamespaces: string[]
   grantNamespacesEnabled: boolean
 
