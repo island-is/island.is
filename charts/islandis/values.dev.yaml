@@ -1311,13 +1311,12 @@ search-indexer-service:
   enabled: true
   env:
     APPLICATION_URL: 'http://search-indexer-service'
-    CONTENTFUL_ENTRY_FETCH_CHUNK_SIZE: '40'
+    CONTENTFUL_ENTRY_FETCH_CHUNK_SIZE: '20'
     CONTENTFUL_ENVIRONMENT: 'master'
     CONTENTFUL_HOST: 'preview.contentful.com'
     CONTENTFUL_SPACE: '8k0h54kbe6bj'
     ELASTIC_INDEX: 'island-is'
     ELASTIC_NODE: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com'
-    LOG_LEVEL: 'debug'
     NODE_OPTIONS: '--max-old-space-size=2000'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
@@ -1390,14 +1389,13 @@ search-indexer-service:
             memory: '512Mi'
     env:
       APPLICATION_URL: 'http://search-indexer-service'
-      CONTENTFUL_ENTRY_FETCH_CHUNK_SIZE: '40'
+      CONTENTFUL_ENTRY_FETCH_CHUNK_SIZE: '20'
       CONTENTFUL_ENVIRONMENT: 'master'
       CONTENTFUL_HOST: 'preview.contentful.com'
       CONTENTFUL_SPACE: '8k0h54kbe6bj'
       ELASTIC_DOMAIN: 'search'
       ELASTIC_INDEX: 'island-is'
       ELASTIC_NODE: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com'
-      LOG_LEVEL: 'debug'
       S3_BUCKET: 'dev-es-custom-packages'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
