@@ -5,7 +5,7 @@ import { Message } from '../message'
 import { createTestingMessageModule } from './createTestingMessageModule'
 
 interface Then {
-  result: boolean
+  result: void
   error: Error
 }
 
@@ -43,7 +43,6 @@ describe('MessageService - Receive message from queue', () => {
     const message = { caseId: uuid() } as Message
     const receiptHandle = uuid()
     const callback = jest.fn().mockResolvedValueOnce(true)
-    let then: Then
 
     beforeEach(async () => {
       const mockReceiveMessage = mockSqs.receiveMessage as jest.Mock
@@ -56,20 +55,20 @@ describe('MessageService - Receive message from queue', () => {
           }),
       })
 
-      then = await givenWhenThen(callback)
+      await givenWhenThen(callback)
     })
 
-    it('should receive a message from queue', async () => {
+    it('should handle message', async () => {
       expect(mockSqs.receiveMessage).toHaveBeenCalledWith({
         QueueUrl: mockQueueUrl,
         MaxNumberOfMessages: 1,
+        WaitTimeSeconds: 10,
       })
       expect(callback).toHaveBeenCalledWith(message)
       expect(mockSqs.deleteMessage).toHaveBeenCalledWith({
         QueueUrl: mockQueueUrl,
         ReceiptHandle: receiptHandle,
       })
-      expect(then.result).toEqual(true)
     })
   })
 
@@ -77,7 +76,6 @@ describe('MessageService - Receive message from queue', () => {
     const message = { caseId: uuid() } as Message
     const receiptHandle = uuid()
     const callback = jest.fn().mockResolvedValueOnce(false)
-    let then: Then
 
     beforeEach(async () => {
       const mockReceiveMessage = mockSqs.receiveMessage as jest.Mock
@@ -90,23 +88,22 @@ describe('MessageService - Receive message from queue', () => {
           }),
       })
 
-      then = await givenWhenThen(callback)
+      await givenWhenThen(callback)
     })
 
-    it('should receive a message from queue', async () => {
+    it('should not handle message', async () => {
       expect(mockSqs.receiveMessage).toHaveBeenCalledWith({
         QueueUrl: mockQueueUrl,
         MaxNumberOfMessages: 1,
+        WaitTimeSeconds: 10,
       })
       expect(callback).toHaveBeenCalledWith(message)
       expect(mockSqs.deleteMessage).not.toHaveBeenCalled()
-      expect(then.result).toEqual(true)
     })
   })
 
   describe('message not received from queue', () => {
     const callback = jest.fn()
-    let then: Then
 
     beforeEach(async () => {
       const mockReceiveMessage = mockSqs.receiveMessage as jest.Mock
@@ -117,17 +114,17 @@ describe('MessageService - Receive message from queue', () => {
           }),
       })
 
-      then = await givenWhenThen(callback)
+      await givenWhenThen(callback)
     })
 
-    it('should receive a message from queue', async () => {
+    it('should not receive a message', async () => {
       expect(mockSqs.receiveMessage).toHaveBeenCalledWith({
         QueueUrl: mockQueueUrl,
         MaxNumberOfMessages: 1,
+        WaitTimeSeconds: 10,
       })
       expect(callback).not.toHaveBeenCalledWith()
       expect(mockSqs.deleteMessage).not.toHaveBeenCalled()
-      expect(then.result).toEqual(false)
     })
   })
 })

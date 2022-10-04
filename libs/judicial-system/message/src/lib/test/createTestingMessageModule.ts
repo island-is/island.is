@@ -31,7 +31,10 @@ export const createTestingMessageModule = async () => {
   const messageModule = await Test.createTestingModule({
     imports: [ConfigModule.forRoot({ load: [messageModuleConfig] })],
     providers: [
-      { provide: LOGGER_PROVIDER, useValue: { error: jest.fn() } },
+      {
+        provide: LOGGER_PROVIDER,
+        useValue: { info: jest.fn(), error: jest.fn() },
+      },
       MessageService,
     ],
   }).compile()
