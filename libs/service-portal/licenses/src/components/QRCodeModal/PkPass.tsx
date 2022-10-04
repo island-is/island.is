@@ -13,6 +13,7 @@ import {
   CREATE_PK_PASS_QR_CODE,
   CREATE_PK_PASS,
   useUserProfile,
+  GenericLicenseType,
 } from '@island.is/service-portal/graphql'
 import { m } from '../../lib/messages'
 import QRCodeModal from './QRCodeModal'
@@ -44,6 +45,8 @@ export const PkPass = ({
   const { formatMessage } = useLocale()
   const { width } = useWindowSize()
   const timeFetched = new Date() // Used to compare if license is expired
+
+  const isDriversLicense = licenseType === GenericLicenseType.DriversLicense
 
   const toggleModal = () => {
     setModalOpen(!modalOpen)
@@ -95,7 +98,7 @@ export const PkPass = ({
 
   return (
     <>
-      {!isMobile && (
+      {!isMobile && isDriversLicense && (
         <>
           <Button
             colorScheme="default"
@@ -134,7 +137,7 @@ export const PkPass = ({
         </>
       )}
 
-      {isMobile && (
+      {(isMobile || !isDriversLicense) && (
         <Box>
           <Button
             variant="utility"
