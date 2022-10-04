@@ -5,12 +5,12 @@ export const DelegationsEmptyState = () => {
   const { formatMessage } = useLocale()
   return (
     <Box
-      marginTop={12}
+      marginTop={[4, 12]}
       display="flex"
       justifyContent="center"
       alignItems="center"
       flexDirection="column"
-      rowGap={10}
+      rowGap={[6, 10]}
     >
       <Text>
         {formatMessage({
