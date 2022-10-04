@@ -6,6 +6,11 @@ import { TemplateApiModuleActionProps } from '../../../types'
 import { getValueViaPath } from '@island.is/application/core'
 
 const LESS = 'less'
+
+export interface DataResponse {
+  success: boolean
+  message?: string
+}
 @Injectable()
 export class FinancialStatementsInaoTemplateService {
   constructor(
@@ -88,7 +93,7 @@ export class FinancialStatementsInaoTemplateService {
     const noValueStatement = electionIncomeLimit === LESS ? true : false
 
     // actor is undefined until we add the functionality to the frontend
-    const result: any = await this.financialStatementsInaoService
+    const result: DataResponse = await this.financialStatementsInaoService
       .submitPersonalElectionFinancialStatement(nationalId, undefined, {
         electionId,
         clientName,
