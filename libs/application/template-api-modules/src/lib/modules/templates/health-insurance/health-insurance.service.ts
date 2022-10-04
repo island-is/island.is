@@ -33,15 +33,9 @@ export class HealthInsuranceService {
         this.bucketService,
       )
 
-      console.log(xml)
-
-      await this.documentApi
-        .documentPost({
-          document: { doc: xml, documentType: 570 },
-        })
-        .catch((x) => {
-          console.log('ERRRRORRR ======== : ', x)
-        })
+      await this.documentApi.documentPost({
+        document: { doc: xml, documentType: 570 },
+      })
 
       logger.info(`Finished send Health Insurance application`)
     } catch (error) {

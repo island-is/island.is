@@ -307,7 +307,7 @@ paths:
           description: Date to check whether the person is insured on or not.
           schema:
             type: string
-            format: date-time
+            format: string
           x-position: 3
       responses:
         '201':

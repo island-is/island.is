@@ -1,1 +1,0 @@
-export { HealthInsuranceRESTAPI } from './healthInsuranceAPI'
