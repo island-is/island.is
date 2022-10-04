@@ -12,18 +12,6 @@ export class HealthInsuranceService {
     private logger: Logger,
   ) {}
 
-  formatDate = (date: Date) => {
-    const d = new Date(date)
-    let month = '' + (d.getMonth() + 1)
-    let day = '' + d.getDate()
-    const year = d.getFullYear()
-
-    if (month.length < 2) month = '0' + month
-    if (day.length < 2) day = '0' + day
-
-    return [year, month, day].join('-')
-  }
-
   // return true or false when asked if person is health insured
   async isHealthInsured(nationalId: string, date: Date): Promise<boolean> {
     const formattedDate = format(new Date(date), 'yyyy-MM-dd', {

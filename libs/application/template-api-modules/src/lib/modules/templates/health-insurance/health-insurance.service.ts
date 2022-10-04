@@ -39,40 +39,8 @@ export class HealthInsuranceService {
 
       logger.info(`Finished send Health Insurance application`)
     } catch (error) {
-      console.log('ERRRORRR::', error)
       logger.error(`Send health insurance application failed`)
       throw new Error(`Send health insurance application failed`)
     }
   }
 }
-
-// @Injectable()
-// export class HealthInsuranceService {
-//   constructor(
-//     private healthInsuranceAPI: HealthInsuranceAPI,
-//     private readonly sharedTemplateAPIService: SharedTemplateApiService,
-//   ) {}
-
-//   async sendApplyHealthInsuranceApplication({
-//     application,
-//   }: TemplateApiModuleActionProps) {
-//     try {
-//       logger.info(
-//         `Start send Health Insurance application for ${application.id}`,
-//       )
-//       const applyInputs = transformApplicationToHealthInsuranceDTO(application)
-//       logger.info(`Finished transform Application to Health Insurance DTO`)
-
-//       await this.healthInsuranceAPI.applyInsurance(
-//         570,
-//         applyInputs.attachmentNames,
-//         applyInputs.vistaskjal,
-//       )
-
-//       logger.info(`Finished send Health Insurance application`)
-//     } catch (error) {
-//       logger.error(`Send health insurance application failed`)
-//       throw new Error(`Send health insurance application failed`)
-//     }
-//   }
-// }
