@@ -1,5 +1,5 @@
 export { AccessCard } from './AccessCard'
-export { AccessHeader } from './AccessHeader'
+export { AccessHeaderCards } from './AccessHeaderCards'
 export { AccessModal } from './AccessModal'
 export { AccessItem } from './AccessItem'
 export { DelegationsFromMe } from './DelegationsFromMe'

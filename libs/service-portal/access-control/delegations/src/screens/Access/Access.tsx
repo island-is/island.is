@@ -29,7 +29,7 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 
 import { AuthDelegationsQuery } from '../../lib/queries'
-import { AccessHeader, AccessItem, AccessModal } from '../../components'
+import { AccessHeaderCards, AccessItem, AccessModal } from '../../components'
 
 import * as styles from './Access.css'
 import {
@@ -117,6 +117,7 @@ const Access: ServicePortalModuleComponent = ({ userInfo }) => {
   const history = useHistory()
   const [closeModalOpen, setCloseModalOpen] = useState(false)
   const [saveModalOpen, setSaveModalOpen] = useState(false)
+  const [formError, setFormError] = useState<boolean>(false)
 
   const onError = () => {
     toast.error(formatMessage(coreMessages.somethingWrong))
@@ -129,6 +130,7 @@ const Access: ServicePortalModuleComponent = ({ userInfo }) => {
     DeleteAuthDelegationMutation,
     { refetchQueries: [{ query: AuthDelegationsQuery }], onError },
   )
+
   const { data: apiScopeData, loading: apiScopeLoading } = useQuery<Query>(
     AuthApiScopesQuery,
     {
@@ -150,13 +152,14 @@ const Access: ServicePortalModuleComponent = ({ userInfo }) => {
       },
     },
   )
-  const hookFormData = useForm<AccessForm>()
-  const { handleSubmit, getValues } = hookFormData
+
   const { authApiScopes } = apiScopeData || {}
   const authDelegation = (delegationData || {})
     .authDelegation as AuthCustomDelegation
   const loading = apiScopeLoading || delegationLoading
-  const [formError, setFormError] = useState<boolean>(false)
+
+  const methods = useForm<AccessForm>()
+  const { handleSubmit, getValues } = methods
 
   const onSubmit = handleSubmit(async (model: AccessForm) => {
     formError && setFormError(false)
@@ -233,15 +236,20 @@ const Access: ServicePortalModuleComponent = ({ userInfo }) => {
 
   return (
     <Box>
-      <AccessHeader userInfo={userInfo} />
-      <IntroHeader
-        title={authDelegation?.to?.name || ''}
-        intro={defineMessage({
-          id: 'sp.settings-access-control:access-intro',
-          defaultMessage:
-            'Reyndu að lágmarka þau réttindi sem þú vilt veita viðkomandi eins mikið og mögulegt er.',
-        })}
-      />
+      <Box display="flex" rowGap={6} flexDirection="column">
+        <AccessHeaderCards
+          userInfo={userInfo}
+          systemImgSrc="./assets/images/educationDegree.svg"
+        />
+        <IntroHeader
+          title={authDelegation?.to?.name || ''}
+          intro={defineMessage({
+            id: 'sp.settings-access-control:access-intro',
+            defaultMessage:
+              'Reyndu að lágmarka þau réttindi sem þú vilt veita viðkomandi eins mikið og mögulegt er.',
+          })}
+        />
+      </Box>
       {formError && (
         <Box paddingBottom={3}>
           <AlertBanner
@@ -254,7 +262,7 @@ const Access: ServicePortalModuleComponent = ({ userInfo }) => {
           />
         </Box>
       )}
-      <FormProvider {...hookFormData}>
+      <FormProvider {...methods}>
         <form onSubmit={onSubmit}>
           <Box marginBottom={[3, 3, 4]} display="flex" justifyContent="flexEnd">
             <Inline space={1}>
