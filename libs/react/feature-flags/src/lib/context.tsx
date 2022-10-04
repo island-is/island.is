@@ -34,6 +34,7 @@ export const FeatureFlagProvider: FC<FeatureFlagContextProviderProps> = ({
             id: userInfo.profile.nationalId,
             attributes: {
               nationalId: userInfo.profile.nationalId,
+              subjectType: userInfo.profile.subjectType,
             },
           }
         : undefined
