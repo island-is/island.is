@@ -182,9 +182,15 @@ export const routesTemplate = {
     is: '/adstod/[organizationSlug]/[categorySlug]/[answerSlug]',
     en: '/en/help/[organizationSlug]/[categorySlug]/[answerSlug]',
   },
+<<<<<<< HEAD
   servicewebcontact: {
     is: '/adstod/[organizationSlug]/hafa-samband',
     en: '/en/help/[organizationSlug]/contact',
+=======
+  servicewebcontactus: {
+    is: '/adstod/[organizationSlug]/hafa-samband',
+    en: '/en/help/[organizationSlug]/contact-us',
+>>>>>>> 638874dd57 (Translate home)
   },
   servicewebsearch: {
     is: '/adstod/leit',
