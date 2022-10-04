@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import NextLink from 'next/link'
 import { useMutation } from '@apollo/client'
 
@@ -34,7 +34,6 @@ import {
   SupportCategory,
   Organization,
   QueryGetOrganizationsArgs,
-  SearchableTags,
 } from '@island.is/web/graphql/schema'
 import {
   GET_NAMESPACE_QUERY,
@@ -44,7 +43,6 @@ import {
   SERVICE_WEB_FORMS_MUTATION,
 } from '../../queries'
 import { Screen } from '../../../types'
-import { CustomNextError } from '@island.is/web/units/errors'
 
 interface ServiceWebFormsPageProps {
   syslumenn?: Organizations['items']
@@ -72,6 +70,7 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
     () => JSON.parse(organization?.namespace?.fields ?? '{}'),
     [organization?.namespace],
   )
+  const o = useNamespace(organizationNamespace)
 
   const errorMessage = 'Villa kom upp við að senda fyrirspurn.'
 
@@ -95,7 +94,10 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
     }
   }, [error])
 
-  const headerTitle = n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is')
+  const headerTitle = o(
+    'serviceWebHeaderTitle',
+    n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is'),
+  )
   const organizationTitle = (organization && organization.title) || 'Ísland.is'
   const pageTitle = `${
     institutionSlug && organization && organization.title
@@ -103,22 +105,29 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
       : ''
   }${headerTitle}`
 
-  const breadcrumbItems = [
-    {
-      title: n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is'),
-      typename: 'serviceweb',
-      href: linkResolver('serviceweb').href,
-    },
-    {
+  const breadcrumbItems = useMemo(() => {
+    const items = []
+
+    if (institutionSlug !== 'mannaudstorg') {
+      items.push({
+        title: n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is'),
+        typename: 'serviceweb',
+        href: linkResolver('serviceweb').href,
+      })
+    }
+
+    items.push({
       title: organization.title,
       typename: 'serviceweb',
       href: `${linkResolver('serviceweb').href}/${institutionSlug}`,
-    },
-    {
+    })
+    items.push({
       title: 'Hafðu samband',
       isTag: true,
-    },
-  ]
+    })
+
+    return items
+  }, [institutionSlug, organization.title, linkResolver])
 
   return (
     <ServiceWebWrapper
@@ -289,10 +298,6 @@ ServiceWebFormsPage.getInitialProps = async ({
           : {},
       ),
   ])
-
-  if (slug === 'mannaudstorg') {
-    throw new CustomNextError(404, 'Mannaudstorg does not have a contact page')
-  }
 
   return {
     syslumenn: organizations?.data?.getOrganizations?.items?.filter((x) =>
