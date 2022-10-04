@@ -1,6 +1,5 @@
 # Application System
 
-
 ## Quickstart
 
 Ensure docker is running, then run the following to for the first time:

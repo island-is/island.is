@@ -72,18 +72,14 @@
     "dev/init": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
-        "commands": [
-          "yarn get-secrets api"
-        ],
+        "commands": ["yarn get-secrets api"],
         "parallel": false
       }
     },
     "dev": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
-        "commands": [
-          "yarn start api"
-        ],
+        "commands": ["yarn start api"],
         "parallel": true
       }
     },

@@ -1,6 +1,5 @@
 # API
 
-
 ## Quickstart
 
 Ensure docker is running, then run the following to for the first time:
@@ -16,7 +15,6 @@ yarn dev api
 ```
 
 These commands are just shorthands for the setup described below.
-
 
 ## About
 
