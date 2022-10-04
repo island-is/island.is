@@ -14,6 +14,7 @@ export enum Roles {
 
 export enum ApiActions {
   getUserType = 'getUserType',
+  submitApplication = 'submitApplication',
 }
 
 export const CARETAKER = 'Skoðunarmaður'
@@ -44,9 +45,9 @@ export const CEMETRY = 'cemetery'
 export const INDIVIDUALOPERATIONIDS = {
   incomePrefix: 'individualIncome',
   expensePrefix: 'individualExpense',
-  corporateDonations: 'individualIncome.corporateDonations',
-  individualDonations: 'individualIncome.individualDonations',
-  personalDonations: 'individualIncome.personalDonations',
+  contributionsByLegalEntities: 'individualIncome.contributionsByLegalEntities',
+  individualContributions: 'individualIncome.individualContributions',
+  candidatesOwnContributions: 'individualIncome.candidatesOwnContributions',
   otherIncome: 'individualIncome.otherIncome',
   capitalIncome: 'individualIncome.capitalIncome',
   electionOffice: 'individualExpense.electionOffice',
@@ -126,7 +127,7 @@ export const OPERATINGCOST = {
 export const EQUITIESANDLIABILITIESIDS = {
   assetPrefix: 'asset',
   tangible: 'asset.tangible',
-  current: 'asset.current',
+  fixedAssetsTotal: 'asset.fixedAssetsTotal',
   assetTotal: 'asset.total',
   liabilityPrefix: 'liability',
   longTerm: 'liability.longTerm',

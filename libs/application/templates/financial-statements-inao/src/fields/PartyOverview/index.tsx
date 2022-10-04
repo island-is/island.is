@@ -117,7 +117,7 @@ export const PartyOverview = ({
             value={formatCurrency(answers.partyIncome?.partyDonations)}
           />
           <ValueLine
-            label={m.individualDonations}
+            label={m.individualContributions}
             value={formatCurrency(answers.partyIncome?.individualDonations)}
           />
           <ValueLine
@@ -125,12 +125,12 @@ export const PartyOverview = ({
             value={formatCurrency(answers.partyIncome?.municipalityDonations)}
           />
           <ValueLine
-            label={m.individualDonations}
-            value={formatCurrency(answers.partyIncome?.individualDonations)}
-          />
-          <ValueLine
             label={m.publicDonations}
             value={formatCurrency(answers.partyIncome?.publicDonations)}
+          />
+          <ValueLine
+            label={m.otherIncome}
+            value={formatCurrency(answers.partyIncome?.otherIncome)}
           />
           <ValueLine
             label={m.totalIncome}
@@ -192,8 +192,8 @@ export const PartyOverview = ({
         <GridRow>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
-              label={m.currentAssets}
-              value={formatCurrency(answers.asset?.current)}
+              label={m.fixedAssetsTotal}
+              value={formatCurrency(answers.asset?.fixedAssetsTotal)}
             />
           </GridColumn>
           <GridColumn span={['12/12', '6/12']}>

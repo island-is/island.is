@@ -50,7 +50,7 @@ const about = z.object({
 
 const asset = z.object({
   tangible: z.string().refine((x) => !!x, { params: m.required }),
-  current: z.string().refine((x) => !!x, { params: m.required }),
+  fixedAssetsTotal: z.string().refine((x) => !!x, { params: m.required }),
   total: z.string().refine((x) => !!x, { params: m.required }),
 })
 
@@ -125,9 +125,15 @@ const partyExpense = z.object({
 })
 
 const individualIncome = z.object({
-  corporateDonations: z.string().refine((x) => !!x, { params: m.required }),
-  individualDonations: z.string().refine((x) => !!x, { params: m.required }),
-  personalDonations: z.string().refine((x) => !!x, { params: m.required }),
+  contributionsByLegalEntities: z
+    .string()
+    .refine((x) => !!x, { params: m.required }),
+  candidatesOwnContributions: z
+    .string()
+    .refine((x) => !!x, { params: m.required }),
+  individualContributions: z
+    .string()
+    .refine((x) => !!x, { params: m.required }),
   otherIncome: z.string().refine((x) => !!x, { params: m.required }),
   total: z.string(),
 })

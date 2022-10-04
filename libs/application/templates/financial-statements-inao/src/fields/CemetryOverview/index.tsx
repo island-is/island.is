@@ -226,7 +226,7 @@ export const CemetryOverview = ({
           <GridRow>
             <GridColumn span={['12/12', '6/12']}>
               <ValueLine
-                label={m.currentAssets}
+                label={m.fixedAssetsTotal}
                 value={formatCurrency(answers.cemetryAsset?.current)}
               />
             </GridColumn>

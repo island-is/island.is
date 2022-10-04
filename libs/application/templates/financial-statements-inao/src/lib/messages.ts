@@ -201,10 +201,10 @@ export const m = defineMessages({
     defaultMessage: 'Lykiltölur - Eignir, Skuldir og eigið fé',
     description: 'Statement debts',
   },
-  currentAssets: {
-    id: 'fsn.application:keyNumbers.currentAssets',
+  fixedAssetsTotal: {
+    id: 'fsn.application:keyNumbers.fixedAssetsTotal',
     defaultMessage: 'Fastafjármunir samtals',
-    description: 'Current assets',
+    description: 'Fixed assets',
   },
   tangibleAssets: {
     id: 'fsn.application:keyNumbers.tangibleAssets',
@@ -331,8 +331,8 @@ export const m = defineMessages({
     defaultMessage: 'Framlög lögaðila',
     description: 'Corporate donation',
   },
-  individualDonations: {
-    id: 'fsn.application:income.individualDonations',
+  individualContributions: {
+    id: 'fsn.application:income.individualContributions',
     defaultMessage: 'Framlög einstaklinga',
     description: 'Corporate donation',
   },
@@ -341,8 +341,8 @@ export const m = defineMessages({
     defaultMessage: 'Aðrar tekjur',
     description: 'Other income',
   },
-  personalDonations: {
-    id: 'fsn.application:income.personalDonations',
+  candidatesOwnContributions: {
+    id: 'fsn.application:income.candidatesOwnContributions',
     defaultMessage: 'Eigin framlög frambjóðenda',
     description: 'Candiates own donation',
   },

@@ -69,16 +69,19 @@ export const ElectionEquities = ({
           </Text>
           <Box paddingY={1}>
             <InputController
-              id={EQUITIESANDLIABILITIESIDS.current}
-              name={EQUITIESANDLIABILITIESIDS.current}
+              id={EQUITIESANDLIABILITIESIDS.fixedAssetsTotal}
+              name={EQUITIESANDLIABILITIESIDS.fixedAssetsTotal}
               error={
                 errors &&
-                getErrorViaPath(errors, EQUITIESANDLIABILITIESIDS.current)
+                getErrorViaPath(
+                  errors,
+                  EQUITIESANDLIABILITIESIDS.fixedAssetsTotal,
+                )
               }
-              label={formatMessage(m.currentAssets)}
+              label={formatMessage(m.fixedAssetsTotal)}
               onChange={debounce(() => {
                 getTotalAssets()
-                clearErrors(EQUITIESANDLIABILITIESIDS.current)
+                clearErrors(EQUITIESANDLIABILITIESIDS.fixedAssetsTotal)
               }, INPUTCHANGEINTERVAL)}
               backgroundColor="blue"
               currency

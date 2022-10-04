@@ -71,7 +71,7 @@ export const PartyIncome = ({ errors, getSum }: PropTypes): JSX.Element => {
         <InputController
           id={PARTYOPERATIONIDS.individualDonations}
           name={PARTYOPERATIONIDS.individualDonations}
-          label={formatMessage(m.individualDonations)}
+          label={formatMessage(m.individualContributions)}
           onChange={() => onInputChange(PARTYOPERATIONIDS.individualDonations)}
           backgroundColor="blue"
           currency

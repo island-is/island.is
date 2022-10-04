@@ -120,17 +120,21 @@ export const Overview = ({
       <GridRow>
         <GridColumn span={['12/12', '6/12']}>
           <ValueLine
-            label={m.personalDonations}
-            value={formatCurrency(answers.individualIncome?.personalDonations)}
+            label={m.candidatesOwnContributions}
+            value={formatCurrency(
+              answers.individualIncome?.candidatesOwnContributions,
+            )}
           />
           <ValueLine
             label={m.corporateDonation}
-            value={formatCurrency(answers.individualIncome?.corporateDonations)}
+            value={formatCurrency(
+              answers.individualIncome?.contributionsByLegalEntities,
+            )}
           />
           <ValueLine
-            label={m.individualDonations}
+            label={m.individualContributions}
             value={formatCurrency(
-              answers.individualIncome?.individualDonations,
+              answers.individualIncome?.individualContributions,
             )}
           />
           <ValueLine
@@ -148,7 +152,7 @@ export const Overview = ({
             value={formatCurrency(answers.individualExpense?.advertisements)}
           />
           <ValueLine
-            label={m.expenses}
+            label={m.electionOffice}
             value={formatCurrency(answers.individualExpense?.electionOffice)}
           />
           <ValueLine
@@ -204,8 +208,8 @@ export const Overview = ({
       <GridRow>
         <GridColumn span={['12/12', '6/12']}>
           <ValueLine
-            label={m.currentAssets}
-            value={formatCurrency(answers.asset?.current)}
+            label={m.fixedAssetsTotal}
+            value={formatCurrency(answers.asset?.fixedAssetsTotal)}
           />
         </GridColumn>
         <GridColumn span={['12/12', '6/12']}>

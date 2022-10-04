@@ -182,7 +182,6 @@ export class SharedTemplateApiService {
       this.configService,
       'baseApiUrl',
     ) as string
-
     return fetch(`${baseApiUrl}/api/graphql`, {
       method: 'POST',
       headers: {

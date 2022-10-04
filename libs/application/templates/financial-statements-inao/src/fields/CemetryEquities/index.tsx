@@ -83,7 +83,7 @@ export const CemetryEquities = ({
                 getTotalAssets()
                 clearErrors(CEMETRYEQUITIESANDLIABILITIESIDS.current)
               }, INPUTCHANGEINTERVAL)}
-              label={formatMessage(m.currentAssets)}
+              label={formatMessage(m.fixedAssetsTotal)}
               backgroundColor="blue"
               currency
             />
