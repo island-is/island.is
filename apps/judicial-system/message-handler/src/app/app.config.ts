@@ -8,5 +8,6 @@ export const appModuleConfig = defineConfig({
       'secret-backend-api-token',
     ),
     backendUrl: env.required('BACKEND_URL', 'http://localhost:3344'),
+    waitTimeSeconds: env.optionalJSON('SQS_WAIT_TIME_SECONDS') ?? 10,
   }),
 })

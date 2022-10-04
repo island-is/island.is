@@ -103,8 +103,8 @@ export class MessageService {
     return this.sqs
       .receiveMessage({
         QueueUrl: this.queueUrl,
-        MaxNumberOfMessages: 1,
-        WaitTimeSeconds: 10,
+        MaxNumberOfMessages: this.config.maxNumberOfMessages,
+        WaitTimeSeconds: this.config.waitTimeSeconds,
       })
       .promise()
       .then(async (data) => {
