@@ -286,6 +286,13 @@ export const mapEstateRegistrant = (
 // TODO: get updated types into the client
 export const mapEstateInfo = (syslaData: DanarbuUppl): EstateInfo => {
   return {
+    assets: [],
+    cash: [],
+    flyers: [],
+    ships: [],
+    vehicles: [],
+    // TODO: fix once updated types reach the client
+    /*
     assets: syslaData.eignir
       ? syslaData.eignir
           .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_0)
@@ -315,6 +322,7 @@ export const mapEstateInfo = (syslaData: DanarbuUppl): EstateInfo => {
           .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_4)
           .map(assetMapper)
       : [],
+      */
     estateMembers: syslaData.erfingar
       ? syslaData.erfingar.map(estateMemberMapper)
       : [],
