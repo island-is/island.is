@@ -196,107 +196,107 @@ export const institutionApplicationMessages = {
   }),
   service: defineMessages({
     sectionLabel: {
-      id: 'ia.application:service.section.label',
+      id: 'ia.application.section.label',
       defaultMessage: 'Þjónusta',
       description: 'Section label',
     },
     subSectionLabel: {
-      id: 'ia.application:service.subSection.label',
+      id: 'ia.application.subSection.label',
       defaultMessage: 'Upplýsingar um verkefnið',
       description: 'Sub section label',
     },
 
     sectionTitle: {
-      id: 'ia.application:service.section.title',
+      id: 'ia.application.section.title',
       defaultMessage: 'Þjónustur',
       description: 'Section title',
     },
 
     sectionDescription: {
-      id: 'ia.application:service.section.description',
+      id: 'ia.application.section.description',
       defaultMessage: `Þú getur nálgast nánar helstu upplýsingar um þjónustur á vef Stafræns Ísland. `,
       description: 'Section description',
     },
     sectionDescriptionLink: {
-      id: 'ia.application:service.section.descriptionlink',
+      id: 'ia.application.section.descriptionlink',
       defaultMessage: `Sjá nánar. `,
       description: 'Section description',
     },
     informationSubtitle: {
-      id: 'ia.application:service.information.subTitle',
+      id: 'ia.application.information.subTitle',
       defaultMessage: 'Upplýsingar um verkefnið',
       description: 'Subtitle for project information formfields',
     },
     nameLabel: {
-      id: 'ia.application:service.name.label',
+      id: 'ia.application.name.label',
       defaultMessage: 'Heiti verkefnis',
       description: 'Form label for project name formfield',
     },
     backgroundLabel: {
-      id: 'ia.application:service.background.label',
+      id: 'ia.application.background.label',
       defaultMessage: 'Bakgrunnur verkefnis',
       description: 'Form label for project background formfield',
     },
     backgroundPlaceholder: {
-      id: 'ia.application:service.background.placeholder',
+      id: 'ia.application.background.placeholder',
       defaultMessage: 'Hver er forsaga og umfang verkefnisins í gófum dráttum?',
       description: 'Placeholder for project background formfield',
     },
     goalsLabel: {
-      id: 'ia.application:service.goals.label',
+      id: 'ia.application.goals.label',
       defaultMessage: 'Markmið verkefnis, ávinningur og markhópur',
       description: 'Form label for project goals formfield',
     },
     goalsPlaceholder: {
-      id: 'ia.application:service.goals.placeholder',
+      id: 'ia.application.goals.placeholder',
       defaultMessage:
         'Hvað á að leysa með verkefninu? Hver er ávinningurinn og fyrir hvern? Hér væri gott að nota tölfræði ef hún liggur fyrir.',
       description: 'Placeholder for project goals formfield',
     },
     scopeLabel: {
-      id: 'ia.application:service.scope.label',
+      id: 'ia.application.scope.label',
       defaultMessage: 'Umfang (e. Scope) verkefins',
       description: 'Form label for project scope formfield',
     },
     scopePlaceholder: {
-      id: 'ia.application:service.scope.placeholder',
+      id: 'ia.application.scope.placeholder',
       defaultMessage:
         'Hverjar eru grófar útlínur verkefnisins? Hvað telst hluti af því og hvað ekki?',
       description: 'Placeholder for project scope formfield',
     },
     financeLabel: {
-      id: 'ia.application:service.finance.label',
+      id: 'ia.application.finance.label',
       defaultMessage: 'Fjármögnun',
       description: 'Form label for project finance formfield',
     },
     financePlaceholder: {
-      id: 'ia.application:service.finance.placeholder',
+      id: 'ia.application.finance.placeholder',
       defaultMessage: 'Hvert er framlag stofnunarinnar?',
       description: 'Placeholder for project finance formfield',
     },
     attachmentsSubtitle: {
-      id: 'ia.application:service.attachment.subTitle',
+      id: 'ia.application.attachment.subTitle',
       defaultMessage: 'Fylgiskjöl',
       description: 'Subtitle for project attachment formfields',
     },
     attachmentsDescription: {
-      id: 'ia.application:service.attachment.description',
+      id: 'ia.application.attachment.description',
       defaultMessage:
         'Ef búið er að útbúa þarfagreiningu fyrir verkefnið eða önnur skjöl sem þú vilt koma á framfæri. ',
       description: 'Description for project attachment formfields',
     },
     attachmentsUploadHeader: {
-      id: 'ia.application:service.attachment.uploadHeader',
+      id: 'ia.application.attachment.uploadHeader',
       defaultMessage: 'Dragðu skjöl hingað til að hlaða upp',
       description: 'Upload header for project attachment formfields',
     },
     attachmentsUploadDescription: {
-      id: 'ia.application:service.attachment.uploadDescription',
+      id: 'ia.application.attachment.uploadDescription',
       defaultMessage: 'Tekið er við skjölum með endingu: .pdf, .docx, .rtf',
       description: 'Upload description for project attachment formfields',
     },
     attachmentsUploadButtonLabel: {
-      id: 'ia.application:service.attachment.uploadButtonLabel',
+      id: 'ia.application.attachment.uploadButtonLabel',
       defaultMessage: 'Velja skjöl til að hlaða upp',
       description: 'Button label for uploading project attachment',
     },
