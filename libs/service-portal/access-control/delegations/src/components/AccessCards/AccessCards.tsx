@@ -12,19 +12,20 @@ export const AccessCards = ({ delegations }: AccessCardsProps) => {
 
   return (
     <Stack space={3}>
-      {delegations.map((delegation) =>
-        delegation.to ? (
-          <AccessCard
-            key={delegation.id}
-            title={delegation.to.name}
-            validTo={delegation.validTo}
-            tags={delegation.scopes.map((scope) => scope.displayName)}
-            href={`${pathname}/${delegation.id}`}
-            group="Ísland.is"
-            // TODO add conditional if card is editable
-            editable
-          />
-        ) : undefined,
+      {delegations.map(
+        (delegation) =>
+          delegation.to && (
+            <AccessCard
+              key={delegation.id}
+              title={delegation.to.name}
+              validTo={delegation.validTo}
+              tags={delegation.scopes.map((scope) => scope.displayName)}
+              href={`${pathname}/${delegation.id}`}
+              group="Ísland.is"
+              // TODO add conditional if card is editable
+              editable
+            />
+          ),
       )}
     </Stack>
   )

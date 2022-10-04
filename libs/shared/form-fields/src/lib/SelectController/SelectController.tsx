@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import React, { FC } from 'react'
 import { Controller, useFormContext, ValidationRules } from 'react-hook-form'
 import { Select, Option, InputBackgroundColor } from '@island.is/island-ui/core'
 import { TestSupport } from '@island.is/island-ui/utils'

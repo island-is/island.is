@@ -10,6 +10,7 @@ import { Query, AuthCustomDelegation } from '@island.is/api/schema'
 import { DelegationsHeader } from '../DelegationsHeader'
 import { AuthDelegationsQuery } from '../../lib/queries'
 import { AccessCards } from '../AccessCards'
+import { DelegationsEmptyState } from '../DelegationsEmptyState'
 
 export const DelegationsFromMe = () => {
   const { data, loading } = useQuery<Query>(AuthDelegationsQuery)
@@ -30,6 +31,8 @@ export const DelegationsFromMe = () => {
         <GridColumn paddingBottom={4} span="12/12">
           {loading ? (
             <SkeletonLoader width="100%" height={191} />
+          ) : authDelegations.length === 2 ? (
+            <DelegationsEmptyState />
           ) : (
             <AccessCards delegations={authDelegations} />
           )}

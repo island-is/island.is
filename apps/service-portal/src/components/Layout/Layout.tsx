@@ -1,4 +1,4 @@
-import type { FC } from 'react'
+import React, { FC } from 'react'
 import Header from '../Header/Header'
 import Sidebar from '../Sidebar/Sidebar'
 import {
