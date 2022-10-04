@@ -4,6 +4,8 @@ import { FinancialStatementsInaoService } from '@island.is/api/domains/financial
 import * as kennitala from 'kennitala'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { getValueViaPath } from '@island.is/application/core'
+
+const LESS = 'less'
 @Injectable()
 export class FinancialStatementsInaoTemplateService {
   constructor(
@@ -79,8 +81,11 @@ export class FinancialStatementsInaoTemplateService {
       'election.selectElection',
     ) as string
     const clientName = getValueViaPath(answers, 'about.fullName') as string
-    const noValueStatement = false
-
+    const electionIncomeLimit = getValueViaPath(
+      answers,
+      'election.incomeLimit',
+    ) as string
+    const noValueStatement = electionIncomeLimit === LESS ? true : false
     return this.financialStatementsInaoService.submitPersonalElectionFinancialStatement(
       nationalId,
       undefined,
