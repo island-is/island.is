@@ -12,7 +12,7 @@ export class HealthInsuranceV2Client {
       xRoadClientId,
       xRoadProviderId,
     } = options
-    const basePath = `${xRoadBaseUrl}/r1/IS-DEV/GOV/10007/SJUKRA-Protected/islandis`
+    const basePath = `${xRoadBaseUrl}/r1/${xRoadProviderId}/islandis`
     return {
       module: HealthInsuranceV2Client,
       imports: [],
