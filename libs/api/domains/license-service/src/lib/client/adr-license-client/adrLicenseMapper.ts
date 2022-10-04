@@ -145,7 +145,7 @@ export const createPkPassDataInput = (license: AdrDto) => {
   const parsedLicense = parseAdrLicenseResponse(license)
 
   const tankar = parsedLicense.adrRettindi?.filter((r) => r.tankar) ?? []
-  const notTankar = parsedLicense.adrRettindi?.filter((r) => !r.tankar) ?? []
+  const notTankar = parsedLicense.adrRettindi?.filter((r) => !r.grunn) ?? []
 
   return [
     {
