@@ -223,7 +223,8 @@ const Home: Screen<HomeProps> = ({
 }
 
 Home.getInitialProps = async ({ apolloClient, locale, query }) => {
-  const slug = query.slug ? (query.slug as string) : 'stafraent-island'
+  const defaultSlug = locale === 'en' ? 'digital-iceland' : 'stafraent-island'
+  const slug = query.slug ? (query.slug as string) : defaultSlug
 
   const [organization, namespace, supportCategories] = await Promise.all([
     !!slug &&
