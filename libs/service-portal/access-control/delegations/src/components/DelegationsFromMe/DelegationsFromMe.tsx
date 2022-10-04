@@ -31,7 +31,7 @@ export const DelegationsFromMe = () => {
         <GridColumn paddingBottom={4} span="12/12">
           {loading ? (
             <SkeletonLoader width="100%" height={191} />
-          ) : authDelegations.length === 2 ? (
+          ) : authDelegations.length === 0 ? (
             <DelegationsEmptyState />
           ) : (
             <AccessCards delegations={authDelegations} />
