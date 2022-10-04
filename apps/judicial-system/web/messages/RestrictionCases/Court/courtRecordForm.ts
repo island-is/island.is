@@ -255,6 +255,30 @@ export const rcCourtRecord = {
         description:
           'Notaður sem placeholder í "Yfirlýsing sækjanda" innsláttarsvæði á þingbókar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
+      defendantAnnouncementAutofillAppeal: {
+        id:
+          'judicial.system.restriction_cases:court_record.appeal_decision.defendant_announcement_autofill_appeal',
+        defaultMessage:
+          'Varnaraðili kærir úrskurðinn í því skyni að úrskurðurinn verði felldur úr gildi{caseType, select, CUSTODY {, en til vara að gæsluvarðhaldi verði markaður skemmri tími/ honum verði gert að sæta farbanni í stað gæsluvarðahalds} other {}}.',
+        description:
+          'Notaður sem texti sem segir til um í hvaða skyni er kært þegar varnaraðili kærir úrskurð í þinghaldi.',
+      },
+      defendantAnnouncementAutofillSpokespersonAppeal: {
+        id:
+          'judicial.system.restriction_cases:court_record.appeal_decision.defendant_announcement_autofill_spokesperson_appeal',
+        defaultMessage:
+          'Talsmaður varnaraðila kærir úrskurðinn í því skyni að úrskurðurinn verði felldur úr gildi.',
+        description:
+          'Notaður sem texti sem segir til um í hvaða skyni er kært þegar talsmaður varnaraðila kærir úrskurð í þinghaldi.',
+      },
+      prosecutorAnnoncementAutofillAppeal: {
+        id:
+          'judicial.system.restriction_cases:court_record.appeal_decision.prosecutor_announcement_autofill_appeal',
+        defaultMessage:
+          'Sækjandi kærir úrskurðinn í því skyni að úrskurðurinn verði felldur úr gildi og krafa hans verði tekin til greina.',
+        description:
+          'Notaður sem texti sem segir til um í hvaða skyni er kært þegar sækjandi kærir úrskurð í þinghaldi.',
+      },
     }),
     custodyRestrictions: defineMessages({
       disclaimerV2: {
