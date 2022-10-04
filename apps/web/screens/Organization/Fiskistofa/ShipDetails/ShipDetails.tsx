@@ -131,7 +131,7 @@ const ShipDetails: Screen<ShipDetailsProps> = ({
                   >
                     {n(
                       tab,
-                      selectedTab === 'catchQuota'
+                      tab === 'catchQuota'
                         ? 'Reiknivél aflamarks'
                         : 'Reiknivél deilistofna',
                     )}
