@@ -1,20 +1,20 @@
 import { useHistory } from 'react-router-dom'
 
-import { Box, Button, Select, Option } from '@island.is/island-ui/core'
+import { Box, Button, Select } from '@island.is/island-ui/core'
 import { useBreakpoint } from '@island.is/island-ui/core'
 import { m, ServicePortalPath } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import * as styles from './DelegationsHeader.css'
-import { ValueType } from 'react-select'
+import { useState } from 'react'
 
-type DelegationsHeaderProps = {
-  onDomainChange(id: ValueType<Option>): void
+type DomainOpton = {
+  label: string
+  value: string
 }
 
-export const DelegationsHeader = ({
-  onDomainChange,
-}: DelegationsHeaderProps) => {
+export const DelegationsHeader = () => {
   useNamespaces('sp.access-control-delegations')
+  const [domainName, setDomainName] = useState<string | null>(null)
   const history = useHistory()
   const { formatMessage } = useLocale()
   const { sm } = useBreakpoint()
@@ -37,6 +37,22 @@ export const DelegationsHeader = ({
     },
   ]
 
+  const onClickHandler = () => {
+    const query = new URLSearchParams()
+
+    if (domainName) {
+      query.append('domain', domainName)
+    }
+
+    const queryString = query.toString()
+
+    const url = `${ServicePortalPath.AccessControlDelegationsGrant}${
+      queryString ? `?${queryString}` : ''
+    }`
+
+    history.push(url)
+  }
+
   return (
     <Box
       display="flex"
@@ -53,7 +69,7 @@ export const DelegationsHeader = ({
           noOptionsMessage="Enginn valmöguleiki"
           defaultValue={domainOptions[0]}
           options={domainOptions}
-          onChange={onDomainChange}
+          onChange={(option) => setDomainName((option as DomainOpton)?.label)}
           placeholder={formatMessage({
             id: 'sp.access-control-delegations:choose-domain',
             defaultMessage: 'Veldu kerfi',
@@ -61,9 +77,7 @@ export const DelegationsHeader = ({
         />
       </Box>
       <Button
-        onClick={() =>
-          history.push(ServicePortalPath.AccessControlDelegationsGrant)
-        }
+        onClick={onClickHandler}
         variant="utility"
         size="small"
         {...(sm && { icon: 'add', iconType: 'outline' })}

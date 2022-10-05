@@ -20,11 +20,7 @@ export const DelegationsFromMe = () => {
     <GridContainer>
       <GridRow>
         <GridColumn paddingBottom={4} span="12/12">
-          <DelegationsHeader
-            onDomainChange={() => {
-              // TODO implement domain change
-            }}
-          />
+          <DelegationsHeader />
         </GridColumn>
         <GridColumn paddingBottom={4} span="12/12">
           {loading ? (
