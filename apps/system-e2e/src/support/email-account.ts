@@ -77,7 +77,10 @@ const makeEmailAccount = async (name: string): Promise<EmailAccount> => {
   const storagePath = join(sessionsPath, `${name}-email.json`)
   const emailAccountExists = existsSync(storagePath)
   const testAccount = emailAccountExists
-    ? JSON.parse(readFileSync(storagePath, { encoding: 'utf-8' }))
+    ? (JSON.parse(readFileSync(storagePath, { encoding: 'utf-8' })) as {
+        user: string
+        pass: string
+      })
     : await createTestAccount()
 
   const emailConfig = {
@@ -93,7 +96,7 @@ const makeEmailAccount = async (name: string): Promise<EmailAccount> => {
   console.log('created new email account %s', testAccount.user)
   console.log('for debugging, the password is %s', testAccount.pass)
   const userEmail: EmailAccount = {
-    email: testAccount.user as string,
+    email: testAccount.user,
 
     /**
      * Utility method for getting the last email
