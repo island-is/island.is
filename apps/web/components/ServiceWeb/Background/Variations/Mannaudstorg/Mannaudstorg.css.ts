@@ -1,4 +1,5 @@
 import { style } from '@vanilla-extract/css'
+import { DESKTOP_HEADER_HEIGHT } from '../../../constants'
 
 export const bg = style({
   position: 'absolute',
@@ -15,7 +16,7 @@ export const bg = style({
 
 export const foreground = style({
   position: 'absolute',
-  top: 100,
+  top: DESKTOP_HEADER_HEIGHT,
   left: 0,
   bottom: 0,
   right: 0,

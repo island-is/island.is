@@ -329,11 +329,10 @@ const SubPage: Screen<SubPageProps> = ({
                   </GridColumn>
                 </GridRow>
               </GridContainer>
-              {!institutionSlugBelongsToMannaudstorg && (
-                <Box marginTop={[10, 10, 20]}>
-                  <ContactBanner slug={institutionSlug} />
-                </Box>
-              )}
+
+              <Box marginTop={[10, 10, 20]}>
+                <ContactBanner slug={institutionSlug} />
+              </Box>
             </GridColumn>
           </GridRow>
         </GridContainer>
