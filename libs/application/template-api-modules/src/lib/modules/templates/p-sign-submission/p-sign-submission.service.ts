@@ -64,7 +64,11 @@ export class PSignSubmissionService extends BaseTemplateApiService {
     this.s3 = new S3()
   }
 
-  async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
+  async submitApplication({
+    application,
+    auth,
+    currentUserLocale,
+  }: TemplateApiModuleActionProps) {
     const content: string =
       (application.answers.photo as Photo)?.qualityPhoto === YES &&
       (application.externalData.qualityPhoto as HasQualityPhotoData)?.data
@@ -82,6 +86,7 @@ export class PSignSubmissionService extends BaseTemplateApiService {
         : await this.getAttachments({
             application,
             auth,
+            currentUserLocale,
           })
     const name = this.getName(application)
     const attachments: Attachment[] = [

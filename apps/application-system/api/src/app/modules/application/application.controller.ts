@@ -611,6 +611,7 @@ export class ApplicationController {
       existingApplication as BaseApplication,
       templateApis,
       user,
+      locale,
       intl.formatMessage,
     )
 
@@ -748,6 +749,7 @@ export class ApplicationController {
       application,
       [api],
       auth,
+      locale,
       intl.formatMessage,
     )
 

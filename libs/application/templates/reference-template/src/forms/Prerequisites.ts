@@ -14,7 +14,6 @@ import { m } from '../lib/messages'
 import {
   NationalRegistryUserApi,
   UserProfileApi,
-  NationalRegistryFamilyApi,
 } from '@island.is/application/types'
 import { ReferenceDataApi } from '../dataProviders'
 
@@ -35,11 +34,6 @@ export const Prerequisites: Form = buildForm({
               provider: UserProfileApi,
               title: 'User profile',
               subTitle: 'User profile',
-            }),
-            buildDataProviderItem({
-              provider: NationalRegistryFamilyApi,
-              title: 'Upplýsingar um fjölskyldumeðlimi',
-              subTitle: 'Upplýsingar um fjölskyldumeðlimi upp úr Þjóðskrá.',
             }),
             buildDataProviderItem({
               provider: ReferenceDataApi,
