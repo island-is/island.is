@@ -21,8 +21,8 @@
 /.github/                                                                                           @island-is/core
 /handbook/                                                                                          @island-is/core
 /libs/api/domains/identity/                                                                         @island-is/core
-/libs/testing/                                                                                      @island-is/core @island-is/vice-versa
-/libs/nest/swagger/                                                                                 @island-is/core @island-is/vice-versa
+/libs/testing/                                                                                      @island-is/core
+/libs/nest/swagger/                                                                                 @island-is/core
 
 /apps/services/endorsements/                                                                        @island-is/juni
 /apps/icelandic-names-registry*/                                                                    @island-is/juni

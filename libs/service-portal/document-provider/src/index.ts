@@ -1,4 +1,5 @@
 import { ApiScope } from '@island.is/auth/scopes'
+import { Features } from '@island.is/feature-flags'
 import {
   ServicePortalModule,
   ServicePortalPath,
@@ -8,6 +9,7 @@ import { m } from './lib/messages'
 
 export const documentProviderModule: ServicePortalModule = {
   name: m.rootName,
+  featureFlag: Features.servicePortalDocumentProviderModule,
   widgets: () => [],
   routes: ({ userInfo }) => [
     {
