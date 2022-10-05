@@ -239,27 +239,27 @@ export const rcRuling = {
         description:
           'Notaður sem placeholder fyrir "Úrskurðarorð" innsláttarsvæði á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
-      dismissingAutofillV3: {
+      dismissingAutofill: {
         id:
-          'judicial.system.restriction_cases:ruling.conclusion.dismissing_autofill_v3',
+          'judicial.system.restriction_cases:ruling.conclusion.dismissing_autofill_v4',
         defaultMessage:
           'Kröfu um að varnaraðili, {accusedName}, sæti{isExtended, select, true { áframhaldandi} other {}} {caseType, select, ADMISSION_TO_FACILITY {vistun á viðeigandi stofnun} TRAVEL_BAN {farbanni} other {gæsluvarðhaldi}} er vísað frá.',
         description:
           'Notaður sem sjálfgefinn texti í "Úrskurðarorð" textaboxi þegar kröfu er vísað frá á úrskurðar skrefi í gæsluvarðhalds-, vistunar- og farbannsmálum.',
       },
-      rejectingAutofillV3: {
+      rejectingAutofill: {
         id:
-          'judicial.system.restriction_cases:ruling.conclusion.rejecting_autofill_v3',
+          'judicial.system.restriction_cases:ruling.conclusion.rejecting_autofill_v4',
         defaultMessage:
           'Kröfu um að varnaraðili, {accusedName}{accusedNationalId}sæti{isExtended, select, true { áframhaldandi} other {}} {caseType, select, ADMISSION_TO_FACILITY {vistun á viðeigandi stofnun} TRAVEL_BAN {farbanni} other {gæsluvarðhaldi}} er hafnað.',
         description:
           'Notaður sem sjálfgefinn texti í "Úrskurðarorð" textaboxi þegar kröfu er hafnað á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
-      acceptingAutofillV3: {
+      acceptingAutofill: {
         id:
-          'judicial.system.restriction_cases:ruling.conclusion.accepting_autofill_v3',
+          'judicial.system.restriction_cases:ruling.conclusion.accepting_autofill_v4',
         defaultMessage:
-          'Varnaraðili, {accusedName}{accusedNationalId}skal sæta {isExtended, select, true {áframhaldandi } other {}}{caseType, select, TRAVEL_BAN {farbanni} ADMISSION_TO_FACILITY {vistun á viðeigandi stofnun} other {gæsluvarðhaldi}}, þó ekki lengur en til {validToDate}.{hasIsolation, select, true { {genderedAccused} skal sæta einangrun {isolationEndsBeforeValidToDate, select, true {ekki lengur en til {isolationToDate}} other {á meðan á {caseType, select, ADMISSION_TO_FACILITY {vistunni} other {gæsluvarðhaldinu}} stendur}}.} other {}}',
+          'Varnaraðili, {accusedName}{accusedNationalId}skal sæta {isExtended, select, true {áframhaldandi } other {}}{caseType, select, TRAVEL_BAN {farbanni} ADMISSION_TO_FACILITY {vistun á viðeigandi stofnun} other {gæsluvarðhaldi}}, þó ekki lengur en til {validToDate}.{hasIsolation, select, true { Varnaraðili skal sæta einangrun {isolationEndsBeforeValidToDate, select, true {ekki lengur en til {isolationToDate}} other {á meðan á {caseType, select, ADMISSION_TO_FACILITY {vistunni} other {gæsluvarðhaldinu}} stendur}}.} other {}}',
         description:
           'Notaður sem sjálfgefinn texti í "Úrskurðarorð" textaboxi þegar krafa er samþykkt á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },

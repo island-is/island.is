@@ -5,16 +5,14 @@ import {
   CaseDecision,
   CaseType,
   Defendant,
-  Gender,
 } from '@island.is/judicial-system/types'
 
 import { getConclusionAutofill } from './Ruling'
 
 describe('getConclusionAutofill', () => {
-  const intl = createIntl({ locale: 'is', onError: () => jest.fn() })
+  const intl = createIntl({ locale: 'is', onError: jest.fn })
   const defendantBase = {
     name: 'Blær',
-    gender: Gender.OTHER,
     noNationalId: true,
   } as Defendant
 
@@ -39,7 +37,7 @@ describe('getConclusionAutofill', () => {
   describe('dismissing decision', () => {
     const decision = CaseDecision.DISMISSING
 
-    it('should format custody case, non gender specific', () => {
+    it('should format custody case', () => {
       const theCase = {
         defendants: [{ ...defendantBase }],
         type: CaseType.CUSTODY,
@@ -52,9 +50,9 @@ describe('getConclusionAutofill', () => {
       )
     })
 
-    it('should format extended travel ban case, female gender', () => {
+    it('should format extended travel ban case', () => {
       const theCase = {
-        defendants: [{ ...defendantBase, gender: Gender.FEMALE }],
+        defendants: [{ ...defendantBase }],
         type: CaseType.TRAVEL_BAN,
         parentCase: { decision: CaseDecision.ACCEPTING },
       } as Case
@@ -66,10 +64,9 @@ describe('getConclusionAutofill', () => {
       )
     })
 
-    it('should format admission to facility case, male gender', () => {
+    it('should format admission to facility case', () => {
       const defendant = {
         ...defendantBase,
-        gender: Gender.MALE,
         noNationalId: false,
         nationalId: '000000000',
       }
@@ -89,7 +86,7 @@ describe('getConclusionAutofill', () => {
   describe('rejecting decision', () => {
     const decision = CaseDecision.REJECTING
 
-    it('should format custody case, non gender specific', () => {
+    it('should format custody case', () => {
       const theCase = {
         defendants: [{ ...defendantBase }],
         type: CaseType.CUSTODY,
@@ -102,10 +99,9 @@ describe('getConclusionAutofill', () => {
       )
     })
 
-    it('should format travel ban case, male with national id', () => {
+    it('should format travel ban case, defendant with national id', () => {
       const defendant = {
         ...defendantBase,
-        gender: Gender.MALE,
         noNationalId: false,
         nationalId: '0000000000',
       }
@@ -120,7 +116,7 @@ describe('getConclusionAutofill', () => {
       )
     })
 
-    it('should format extended admission to facility case, male with national id', () => {
+    it('should format extended admission to facility case, defendant with national id', () => {
       const defendant = {
         ...defendantBase,
         noNationalId: false,
@@ -172,14 +168,13 @@ describe('getConclusionAutofill', () => {
       )
 
       expect(result).toEqual(
-        'Varnaraðili, Blær, skal sæta gæsluvarðhaldi, þó ekki lengur en til miðvikudagsins 1. janúar 2020, kl. 12:31. Kærða skal sæta einangrun ekki lengur en til miðvikudagsins 1. janúar 2020, kl. 12:00.',
+        'Varnaraðili, Blær, skal sæta gæsluvarðhaldi, þó ekki lengur en til miðvikudagsins 1. janúar 2020, kl. 12:31. Varnaraðili skal sæta einangrun ekki lengur en til miðvikudagsins 1. janúar 2020, kl. 12:00.',
       )
     })
 
-    it('should format admission to facility case with isolation, male gender', () => {
+    it('should format admission to facility case with isolation', () => {
       const defendant = {
         ...defendantBase,
-        gender: Gender.MALE,
       }
       const isCustodyIsolation = true
       const isolationToDate = '2020-01-01T12:31:00Z'
@@ -197,14 +192,13 @@ describe('getConclusionAutofill', () => {
       )
 
       expect(result).toEqual(
-        'Varnaraðili, Blær, skal sæta vistun á viðeigandi stofnun, þó ekki lengur en til miðvikudagsins 1. janúar 2020, kl. 12:31. Kærði skal sæta einangrun á meðan á vistunni stendur.',
+        'Varnaraðili, Blær, skal sæta vistun á viðeigandi stofnun, þó ekki lengur en til miðvikudagsins 1. janúar 2020, kl. 12:31. Varnaraðili skal sæta einangrun á meðan á vistunni stendur.',
       )
     })
 
-    it('should format travel ban case, female gender with national id', () => {
+    it('should format travel ban case, defendant with national id', () => {
       const defendant = {
         ...defendantBase,
-        gender: Gender.FEMALE,
         noNationalId: false,
         nationalId: '0000000000',
       }
@@ -224,7 +218,7 @@ describe('getConclusionAutofill', () => {
       )
 
       expect(result).toEqual(
-        'Varnaraðili, Blær, kt. 000000-0000, skal sæta vistun á viðeigandi stofnun, þó ekki lengur en til miðvikudagsins 1. janúar 2020, kl. 12:31. Kærða skal sæta einangrun á meðan á vistunni stendur.',
+        'Varnaraðili, Blær, kt. 000000-0000, skal sæta vistun á viðeigandi stofnun, þó ekki lengur en til miðvikudagsins 1. janúar 2020, kl. 12:31. Varnaraðili skal sæta einangrun á meðan á vistunni stendur.',
       )
     })
   })
@@ -234,7 +228,7 @@ describe('getConclusionAutofill', () => {
     const validToDate = '2020-01-01T12:31:00Z'
 
     it('should format as non extended travel ban case', () => {
-      const defendant = { ...defendantBase, gender: Gender.MALE }
+      const defendant = { ...defendantBase }
       const theCase = {
         type: CaseType.CUSTODY,
         parentCase: { decision: CaseDecision.ACCEPTING } as Case,

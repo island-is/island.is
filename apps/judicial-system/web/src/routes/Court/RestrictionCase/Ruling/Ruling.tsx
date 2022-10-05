@@ -78,7 +78,7 @@ export function getConclusionAutofill(
     new Date(validToDate) > new Date(isolationToDate)
 
   return decision === CaseDecision.DISMISSING
-    ? formatMessage(m.sections.conclusion.dismissingAutofillV3, {
+    ? formatMessage(m.sections.conclusion.dismissingAutofill, {
         accusedName: defendant.name,
         isExtended:
           workingCase.parentCase &&
@@ -86,7 +86,7 @@ export function getConclusionAutofill(
         caseType: workingCase.type,
       })
     : decision === CaseDecision.REJECTING
-    ? formatMessage(m.sections.conclusion.rejectingAutofillV3, {
+    ? formatMessage(m.sections.conclusion.rejectingAutofill, {
         accusedName: defendant.name,
         accusedNationalId: defendant.noNationalId
           ? ', '
@@ -96,7 +96,7 @@ export function getConclusionAutofill(
           isAcceptingCaseDecision(workingCase.parentCase.decision),
         caseType: workingCase.type,
       })
-    : formatMessage(m.sections.conclusion.acceptingAutofillV3, {
+    : formatMessage(m.sections.conclusion.acceptingAutofill, {
         accusedName: defendant.name,
         accusedNationalId: defendant.noNationalId
           ? ', '
