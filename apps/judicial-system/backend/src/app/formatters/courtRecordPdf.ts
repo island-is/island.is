@@ -13,8 +13,8 @@ import {
   formatDate,
   lowercase,
   formatRequestCaseType,
-  formatProsecutorAppeal,
-  formatDefendantAppeal,
+  formatAppeal,
+  capitalize,
 } from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../environments'
@@ -212,8 +212,9 @@ function constructRestrictionCourtRecordPdf(
   addEmptyLines(doc)
   addNormalJustifiedText(doc, formatMessage(courtRecord.appealDirections))
 
-  let prosecutorAppeal = formatProsecutorAppeal(
+  let prosecutorAppeal = formatAppeal(
     theCase.prosecutorAppealDecision,
+    capitalize(formatMessage(courtRecord.prosecutor)),
   )
 
   if (prosecutorAppeal) {
@@ -232,11 +233,14 @@ function constructRestrictionCourtRecordPdf(
   const multipleDefendants =
     (theCase.defendants && theCase.defendants.length > 1) || false
 
-  let accusedAppeal = formatDefendantAppeal(
-    multipleDefendants,
+  let accusedAppeal = formatAppeal(
     theCase.accusedAppealDecision,
-    theCase.type,
-    theCase.sessionArrangements,
+    capitalize(
+      formatMessage(courtRecord.defendant, {
+        suffix:
+          theCase.defendants && theCase.defendants?.length > 1 ? 'ar' : 'i',
+      }),
+    ),
   )
 
   if (accusedAppeal) {
@@ -456,8 +460,9 @@ function constructInvestigationCourtRecordPdf(
     addNormalJustifiedText(doc, formatMessage(courtRecord.appealDirections))
   }
 
-  let prosecutorAppeal = formatProsecutorAppeal(
+  let prosecutorAppeal = formatAppeal(
     theCase.prosecutorAppealDecision,
+    capitalize(formatMessage(courtRecord.prosecutor)),
   )
 
   if (prosecutorAppeal) {
@@ -476,11 +481,13 @@ function constructInvestigationCourtRecordPdf(
   const multipleDefendants =
     (theCase.defendants && theCase.defendants.length > 1) || false
 
-  let accusedAppeal = formatDefendantAppeal(
-    multipleDefendants,
+  let accusedAppeal = formatAppeal(
     theCase.accusedAppealDecision,
-    theCase.type,
-    theCase.sessionArrangements,
+    capitalize(
+      formatMessage(courtRecord.defendant, {
+        suffix: multipleDefendants ? 'ar' : 'i',
+      }),
+    ),
   )
 
   if (accusedAppeal) {

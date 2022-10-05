@@ -1,6 +1,6 @@
 import {
   DefaultStateLifeCycle,
-  DEPRECATED_DefaultStateLifeCycle,
+  EphemeralStateLifeCycle,
 } from '@island.is/application/core'
 import {
   ApplicationConfigurations,
@@ -58,7 +58,7 @@ const FundingGovernmentProjectsTemplate: ApplicationTemplate<
             description: application.description,
           },
           progress: 0.5,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: EphemeralStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -71,6 +71,7 @@ const FundingGovernmentProjectsTemplate: ApplicationTemplate<
               actions: [
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
               ],
+              delete: true,
               write: 'all',
             },
           ],
@@ -89,7 +90,7 @@ const FundingGovernmentProjectsTemplate: ApplicationTemplate<
             description: application.description,
           },
           progress: 1,
-          lifecycle: DEPRECATED_DefaultStateLifeCycle,
+          lifecycle: DefaultStateLifeCycle,
           onEntry: {
             apiModuleAction: TEMPLATE_API_ACTIONS.sendApplication,
           },
