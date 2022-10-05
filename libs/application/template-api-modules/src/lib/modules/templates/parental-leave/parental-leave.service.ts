@@ -265,20 +265,40 @@ export class ParentalLeaveService {
         'fileUpload.selfEmployedFile',
       )) as unknown[]
 
-      for (let i = 0; i <= selfEmployedPdfs.length - 1; i++) {
-        const pdf = await this.getSelfEmployedPdf(application, i)
+      if (selfEmployedPdfs?.length) {
+        for (let i = 0; i <= selfEmployedPdfs.length - 1; i++) {
+          const pdf = await this.getSelfEmployedPdf(application, i)
+  
+          attachments.push({
+            attachmentType: apiConstants.attachments.selfEmployed,
+            attachmentBytes: pdf,
+          })
+        }
+      } else {
+        const oldSelfEmployedPdfs = (await getValueViaPath(
+          application.answers,
+          'employer.selfEmployed.file',
+        )) as unknown[]
 
-        attachments.push({
-          attachmentType: apiConstants.attachments.selfEmployed,
-          attachmentBytes: pdf,
-        })
+        if (oldSelfEmployedPdfs?.length) {
+          for (let i = 0; i <= oldSelfEmployedPdfs.length - 1; i++) {
+            const pdf = await this.getSelfEmployedPdf(application, i)
+    
+            attachments.push({
+              attachmentType: apiConstants.attachments.selfEmployed,
+              attachmentBytes: pdf,
+            })
+          }
+        }
       }
-    } else {
-      const genericPdfs = (await getValueViaPath(
-        application.answers,
-        'fileUpload.file',
-      )) as unknown[]
+    }
 
+    const genericPdfs = (await getValueViaPath(
+      application.answers,
+      'fileUpload.file',
+    )) as unknown[]
+
+    if (genericPdfs?.length) {
       for (let i = 0; i <= genericPdfs.length - 1; i++) {
         const pdf = await this.getGenericPdf(application, i)
 
@@ -289,6 +309,7 @@ export class ParentalLeaveService {
         })
       }
     }
+    
 
     return attachments
   }
