@@ -6,23 +6,18 @@
   "generators": {},
   "targets": {
     "build": {
-      "builder": "@nrwl/node:webpack",
+      "executor": "@nrwl/workspace:run-commands",
       "options": {
-        "outputPath": "dist/apps/system-e2e",
-        "main": "",
-        "tsConfig": "apps/system-e2e/tsconfig.json",
-        "webpackConfig": "apps/system-e2e/webpack.config.js",
-        "maxWorkers": 2,
-        "assets": []
+        "commands": [
+          "esbuild --bundle $(find apps/system-e2e -name '*.ts') --outdir=dist/apps/system-e2e --tsconfig=apps/system-e2e/tsconfig.json --platform=node $(jq -r '.dependencies|keys[]|(\"--external:\"+.)' apps/system-e2e/package.json | xargs) --external:../*",
+          "cp apps/system-e2e/package.json dist/apps/system-e2e/"
+        ],
+        "parallel": false,
+        "outputPath": "dist/apps/system-e2e"
       },
       "configurations": {
-        "production": {
-          "optimization": true,
-          "extractLicenses": true,
-          "inspect": false
-        }
-      },
-      "outputs": ["{options.outputPath}"]
+        "production": {}
+      }
     },
     "lint": {
       "executor": "@nrwl/linter:eslint",
@@ -31,22 +26,18 @@
       }
     },
     "smoke": {
-      "executor": "@nrwl/cypress:cypress",
+      "executor": "@nrwl/workspace:run-commands",
       "options": {
-        "cypressConfig": "apps/system-e2e/cypress.config.ts",
-        "tsConfig": "apps/system-e2e/tsconfig.json",
-        "spec": "**/integration/**/smoke/*.spec.{ts,js}"
+        "command": "yarn playwright test apps/system-e2e/src/tests/*/smoke -c apps/system-e2e/src"
       }
     },
     "acceptance": {
-      "executor": "@nrwl/cypress:cypress",
+      "executor": "@nrwl/workspace:run-commands",
       "options": {
-        "cypressConfig": "apps/system-e2e/cypress.config.ts",
-        "tsConfig": "apps/system-e2e/tsconfig.json",
-        "spec": "**/integration/**/acceptance/*.spec.{ts,js}"
+        "command": "yarn playwright test apps/system-e2e/src/tests -c apps/system-e2e/src"
       }
     },
-    "docker-cypress": {}
+    "docker-playwright": {}
   },
   "tags": []
 }
