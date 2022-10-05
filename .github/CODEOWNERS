@@ -129,7 +129,6 @@
 /libs/api/domains/payment-schedule/                                                                 @island-is/sendiradid
 /libs/application/templates/funding-government-projects/                                            @island-is/sendiradid
 /libs/application/template-api-modules/src/lib/modules/templates/funding-government-projects/       @island-is/sendiradid
-/libs/application/template-api-modules/src/lib/modules/templates/institution-collaboration/         @island-is/sendiradid
 /libs/application/templates/public-debt-payment-plan/                                               @island-is/sendiradid
 /libs/application/templates/complaints-to-althingi-ombudsman/                                       @island-is/sendiradid
 /libs/application/template-api-modules/src/lib/modules/templates/complaints-to-althingi-ombudsman/  @island-is/sendiradid
@@ -181,6 +180,7 @@
 /libs/application/template-api-modules/src/lib/modules/templates/parental-leave/                    @island-is/deloitte
 
 /libs/application/templates/institution-collaboration/                                              @island-is/fuglar
+/libs/application/template-api-modules/src/lib/modules/templates/institution-collaboration/         @island-is/fuglar
 
 /apps/services/auth/api/                                                                            @island-is/fuglar @island-is/aranja
 /apps/services/auth/admin-api/                                                                      @island-is/fuglar @island-is/aranja
