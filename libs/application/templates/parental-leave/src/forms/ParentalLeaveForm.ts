@@ -444,10 +444,10 @@ export const ParentalLeaveForm: Form = buildForm({
             buildFileUploadField({
               id: 'employer.selfEmployed.file',
               title: parentalLeaveFormMessages.selfEmployed.attachmentTitle,
-              description: parentalLeaveFormMessages.selfEmployed
-              .attachmentDescription,
-              introduction: parentalLeaveFormMessages.selfEmployed
-              .attachmentDescription,
+              description:
+                parentalLeaveFormMessages.selfEmployed.attachmentDescription,
+              introduction:
+                parentalLeaveFormMessages.selfEmployed.attachmentDescription,
               condition: (answers) => {
                 const isSelfEmployed =
                   (answers as {
@@ -468,8 +468,7 @@ export const ParentalLeaveForm: Form = buildForm({
               },
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
-                parentalLeaveFormMessages.selfEmployed
-                  .attachmentMaxSizeError,
+                parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
               uploadAccept: '.pdf',
               uploadHeader: '',
               uploadDescription: '',
@@ -479,10 +478,10 @@ export const ParentalLeaveForm: Form = buildForm({
             buildFileUploadField({
               id: 'fileUpload.selfEmployedFile',
               title: parentalLeaveFormMessages.selfEmployed.attachmentTitle,
-              description: parentalLeaveFormMessages.selfEmployed
-              .attachmentDescription,
-              introduction: parentalLeaveFormMessages.selfEmployed
-              .attachmentDescription,
+              description:
+                parentalLeaveFormMessages.selfEmployed.attachmentDescription,
+              introduction:
+                parentalLeaveFormMessages.selfEmployed.attachmentDescription,
               condition: (answers) => {
                 const isSelfEmployed =
                   (answers as {
@@ -503,8 +502,7 @@ export const ParentalLeaveForm: Form = buildForm({
               },
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
-                parentalLeaveFormMessages.selfEmployed
-                  .attachmentMaxSizeError,
+                parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
               uploadAccept: '.pdf',
               uploadHeader: '',
               uploadDescription: '',
@@ -536,8 +534,8 @@ export const ParentalLeaveForm: Form = buildForm({
             buildFileUploadField({
               id: 'fileUpload.file',
               title: parentalLeaveFormMessages.attachmentScreen.genericTitle,
-              introduction: parentalLeaveFormMessages.attachmentScreen
-              .genericDescription,
+              introduction:
+                parentalLeaveFormMessages.attachmentScreen.genericDescription,
               maxSize: FILE_SIZE_LIMIT,
               condition: (answers) => {
                 const isSelfEmployed =
@@ -547,12 +545,10 @@ export const ParentalLeaveForm: Form = buildForm({
                     }
                   })?.employer?.isSelfEmployed === YES
 
-
                 return !isSelfEmployed
               },
               maxSizeErrorText:
-                parentalLeaveFormMessages.selfEmployed
-                  .attachmentMaxSizeError,
+                parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
               uploadAccept: '.pdf',
               uploadHeader: '',
               uploadDescription: '',

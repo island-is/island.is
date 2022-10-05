@@ -260,7 +260,10 @@ export class ParentalLeaveService {
     const { isSelfEmployed } = getApplicationAnswers(application.answers)
 
     if (isSelfEmployed === YES) {
-      const selfEmployedPdfs = await getValueViaPath(application.answers, 'fileUpload.selfEmployedFile') as unknown[]
+      const selfEmployedPdfs = (await getValueViaPath(
+        application.answers,
+        'fileUpload.selfEmployedFile',
+      )) as unknown[]
 
       for (let i = 0; i <= selfEmployedPdfs.length - 1; i++) {
         const pdf = await this.getSelfEmployedPdf(application, i)
@@ -271,7 +274,10 @@ export class ParentalLeaveService {
         })
       }
     } else {
-      const genericPdfs = await getValueViaPath(application.answers, 'fileUpload.file') as unknown[]
+      const genericPdfs = (await getValueViaPath(
+        application.answers,
+        'fileUpload.file',
+      )) as unknown[]
 
       for (let i = 0; i <= genericPdfs.length - 1; i++) {
         const pdf = await this.getGenericPdf(application, i)
