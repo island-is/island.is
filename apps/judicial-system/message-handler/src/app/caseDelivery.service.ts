@@ -14,10 +14,10 @@ export class CaseDeliveryService {
     private readonly config: ConfigType<typeof appModuleConfig>,
   ) {}
 
-  async deliverCase(caseId: string): Promise<void> {
+  async deliverCase(caseId: string): Promise<true> {
     logger.debug(`Delivering case ${caseId} to court and police`)
 
-    return fetch(
+    await fetch(
       `${this.config.backendUrl}/api/internal/case/${caseId}/deliver`,
       {
         method: 'POST',
@@ -67,5 +67,7 @@ export class CaseDeliveryService {
           reason,
         })
       })
+
+    return true
   }
 }

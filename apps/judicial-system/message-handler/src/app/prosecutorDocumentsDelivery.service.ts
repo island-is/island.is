@@ -14,10 +14,10 @@ export class ProsecutorDocumentsDeliveryService {
     private readonly config: ConfigType<typeof appModuleConfig>,
   ) {}
 
-  async deliverProsecutorDocuments(caseId: string): Promise<void> {
+  async deliverProsecutorDocuments(caseId: string): Promise<boolean> {
     logger.debug(`Delivering prosecutor documents for case ${caseId} to court`)
 
-    return fetch(
+    await fetch(
       `${this.config.backendUrl}/api/internal/case/${caseId}/deliverProsecutorDocuments`,
       {
         method: 'POST',
@@ -44,12 +44,7 @@ export class ProsecutorDocumentsDeliveryService {
           return
         }
 
-        logger.error(
-          `Failed to deliver prosecutor documents for case ${caseId} to court`,
-          {
-            response,
-          },
-        )
+        throw response
       })
       .catch((reason) => {
         logger.error(
@@ -59,5 +54,7 @@ export class ProsecutorDocumentsDeliveryService {
           },
         )
       })
+
+    return true
   }
 }
