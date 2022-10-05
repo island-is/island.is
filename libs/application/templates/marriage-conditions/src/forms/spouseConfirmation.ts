@@ -9,6 +9,7 @@ import {
   buildTextField,
   buildRadioField,
   buildSubSection,
+  buildExternalDataProvider,
 } from '@island.is/application/core'
 import { YES, MarriageTermination, maritalStatuses } from '../lib/constants'
 import { m } from '../lib/messages'
@@ -24,7 +25,8 @@ import type { User } from '@island.is/api/domains/national-registry'
 import { UserProfile } from '../types/schema'
 import { removeCountryCode } from '../lib/utils'
 import { fakeDataSection } from './fakeDataSection'
-import { dataCollectionSection } from './sharedSections/dataCollectionSection'
+import { dataCollection } from './sharedSections/dataCollection'
+import format from 'date-fns/format'
 
 export const spouseConfirmation = ({ allowFakeData = false }): Form =>
   buildForm({
@@ -46,6 +48,11 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
               values: {
                 applicantsName: (application.answers.applicant as Individual)
                   ?.person.name,
+                // application was created the day spouse1 completed payment
+                applicationDate: format(
+                  new Date(application.externalData.createCharge.date),
+                  'dd. MMMM, yyyy',
+                ).toLocaleLowerCase(),
               },
             }),
             children: [
@@ -62,7 +69,20 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
         ],
       }),
       ...(allowFakeData ? [fakeDataSection] : []),
-      dataCollectionSection,
+      buildSection({
+        id: 'externalData',
+        title: m.dataCollectionTitle,
+        children: [
+          buildExternalDataProvider({
+            id: 'spouseApproveExternalData',
+            title: m.dataCollectionTitle,
+            subTitle: m.dataCollectionSubtitle,
+            description: m.dataCollectionDescription,
+            checkboxLabel: m.dataCollectionCheckboxLabel,
+            dataProviders: dataCollection,
+          }),
+        ],
+      }),
       buildSection({
         id: 'marriageSides',
         title: m.informationSectionTitle,
@@ -236,7 +256,7 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
                     condition: (answers) => {
                       return (
                         (answers.personalInfo as PersonalInfo)
-                          ?.maritalStatus === maritalStatuses['6']
+                          ?.maritalStatus === maritalStatuses['5']
                       )
                     },
                   }),

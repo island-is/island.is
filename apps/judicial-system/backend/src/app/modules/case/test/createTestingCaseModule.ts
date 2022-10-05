@@ -5,12 +5,13 @@ import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 import { mock } from 'jest-mock-extended'
 
-import { QueueModule } from '@island.is/message-queue'
 import { ConfigModule, ConfigType } from '@island.is/nest/config'
 import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 import { IntlService } from '@island.is/cms-translations'
+import { createTestIntl } from '@island.is/cms-translations/test'
 import { signingModuleConfig, SigningService } from '@island.is/dokobit-signing'
 import { EmailService } from '@island.is/email-service'
+import { MessageService } from '@island.is/judicial-system/message'
 import { SharedAuthModule } from '@island.is/judicial-system/auth'
 
 import { environment } from '../../../../environments'
@@ -31,6 +32,7 @@ import { InternalCaseController } from '../internalCase.controller'
 import { LimitedAccessCaseController } from '../limitedAccessCase.controller'
 
 jest.mock('@island.is/email-service')
+jest.mock('@island.is/judicial-system/message')
 jest.mock('../../court/court.service')
 jest.mock('../../police/police.service')
 jest.mock('../../event/event.service')
@@ -39,22 +41,9 @@ jest.mock('../../file/file.service')
 jest.mock('../../aws-s3/awsS3.service')
 jest.mock('../../defendant/defendant.service')
 
-const config = caseModuleConfig()
-
 export const createTestingCaseModule = async () => {
   const caseModule = await Test.createTestingModule({
     imports: [
-      QueueModule.register({
-        queue: {
-          name: config.sqs.queueName,
-          queueName: config.sqs.queueName,
-          deadLetterQueue: { queueName: config.sqs.deadLetterQueueName },
-        },
-        client: {
-          endpoint: config.sqs.endpoint,
-          region: config.sqs.region,
-        },
-      }),
       SharedAuthModule.register({
         jwtSecret: environment.auth.jwtSecret,
         secretToken: environment.auth.secretToken,
@@ -67,6 +56,7 @@ export const createTestingCaseModule = async () => {
       LimitedAccessCaseController,
     ],
     providers: [
+      MessageService,
       CourtService,
       PoliceService,
       UserService,
@@ -82,7 +72,20 @@ export const createTestingCaseModule = async () => {
       {
         provide: IntlService,
         useValue: {
-          useIntl: async () => ({ formatMessage: () => 'test' }), // mock properly
+          useIntl: async () => ({
+            formatMessage: createTestIntl({
+              onError: jest.fn(),
+              locale: 'is-IS',
+            }).formatMessage,
+          }),
+        },
+      },
+      {
+        provide: LOGGER_PROVIDER,
+        useValue: {
+          debug: jest.fn(),
+          info: jest.fn(),
+          error: jest.fn(),
         },
       },
       { provide: Sequelize, useValue: { transaction: jest.fn() } },
@@ -107,13 +110,9 @@ export const createTestingCaseModule = async () => {
         return mock()
       }
     })
-    .overrideProvider(LOGGER_PROVIDER)
-    .useValue({
-      debug: jest.fn(),
-      info: jest.fn(),
-      error: jest.fn(),
-    })
     .compile()
+
+  const messageService = caseModule.get<MessageService>(MessageService)
 
   const courtService = caseModule.get<CourtService>(CourtService)
 
@@ -158,6 +157,7 @@ export const createTestingCaseModule = async () => {
   )
 
   return {
+    messageService,
     courtService,
     policeService,
     userService,

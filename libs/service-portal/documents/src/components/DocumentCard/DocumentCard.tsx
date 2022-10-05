@@ -140,11 +140,10 @@ const DocumentCard: FC<Props> = ({ document }) => {
   return (
     <>
       <ActionCard
-        title={document.subject}
-        date={new Date(document.date)}
-        label={document.senderName}
+        heading={document.subject}
+        date={new Date(document.date).toLocaleDateString()}
+        eyebrow={document.senderName}
         key={document.id}
-        loading={loading}
         cta={{
           externalUrl: getEdgecaseDocument(document)?.url,
           onClick: onClickHandler,
