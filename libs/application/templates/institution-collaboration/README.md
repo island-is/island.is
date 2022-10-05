@@ -26,7 +26,6 @@ To start the application system, follow the instructions in the handbook [here](
 - Recipient email address: `INSTITUTION_APPLICATION_RECIPIENT_EMAIL_ADDRESS=`example@dev.is
 - Application sender email name: `EMAIL_FROM_NAME=`Sender Name
 - Application sender email address: `EMAIL_FROM=`example@dev.is
-- Upload bucket for attachments: `FILE_STORAGE_UPLOAD_BUCKET=`bucket-name
 
 ### Translations from Contentful
 
@@ -37,4 +36,3 @@ Fetch development secrets
 ## Code owners and maintainers
 
 - [Fuglar](https://github.com/orgs/island-is/teams/fuglar)
-- [Sendiráðið](https://github.com/orgs/island-is/teams/sendiradid)

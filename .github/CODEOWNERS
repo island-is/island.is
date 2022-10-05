@@ -123,7 +123,6 @@
 /libs/regulations/                                                                                  @island-is/hugsmidjan
 
 /libs/application/templates/data-protection-complaint/                                              @island-is/sendiradid
-/libs/application/templates/institution-collaboration/                                              @island-is/sendiradid @island-is/fuglar
 /libs/application/templates/login-service/                                                          @island-is/sendiradid
 /libs/application/template-api-modules/src/lib/modules/templates/login-service/                     @island-is/sendiradid
 /libs/clients/payment-schedule/                                                                     @island-is/sendiradid
@@ -180,6 +179,8 @@
 /libs/skilavottord/                                                                                 @island-is/deloitte
 /libs/application/templates/parental-leave/                                                         @island-is/deloitte
 /libs/application/template-api-modules/src/lib/modules/templates/parental-leave/                    @island-is/deloitte
+
+/libs/application/templates/institution-collaboration/                                              @island-is/fuglar
 
 /apps/services/auth/api/                                                                            @island-is/fuglar @island-is/aranja
 /apps/services/auth/admin-api/                                                                      @island-is/fuglar @island-is/aranja
