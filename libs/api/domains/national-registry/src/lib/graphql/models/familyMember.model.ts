@@ -1,6 +1,6 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 
-import { Gender, FamilyRelation } from '../../types'
+import { Gender } from '../../types'
 
 @ObjectType()
 export class NationalRegistryFamilyMember {
@@ -12,7 +12,4 @@ export class NationalRegistryFamilyMember {
 
   @Field(() => Gender, { nullable: true })
   gender?: Gender
-
-  @Field(() => String)
-  familyRelation!: FamilyRelation
 }
