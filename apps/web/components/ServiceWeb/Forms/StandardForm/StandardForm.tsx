@@ -594,7 +594,6 @@ export const StandardForm = ({
                           name="rikisadili"
                           onChange={({ label, value }: Option) => {
                             onChange(label)
-                            setSyslumadurId(value as string)
                           }}
                           hasError={errors.rikisadili}
                           errorMessage={errors.rikisadili?.message}
