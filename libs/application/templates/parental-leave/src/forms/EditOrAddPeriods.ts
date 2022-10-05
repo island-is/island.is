@@ -182,67 +182,6 @@ export const EditOrAddPeriods: Form = buildForm({
             }),
           ],
         }),
-        //   buildSection({
-        //     id: 'editOrAddPeriods',
-        //     title: parentalLeaveFormMessages.leavePlan.title,
-        //     children: [
-        //       buildRepeater({
-        //         id: 'periods',
-        //         title: parentalLeaveFormMessages.leavePlan.title,
-        //         component: 'PeriodsRepeater',
-        //         children: [
-        //           buildDateField({
-        //             id: 'startDate',
-        //             title: parentalLeaveFormMessages.startDate.title,
-        //             description: parentalLeaveFormMessages.startDate.description,
-        //             placeholder: parentalLeaveFormMessages.startDate.placeholder,
-        //             excludeDates: (application) => {
-        //               const { periods } = getApplicationAnswers(application.answers)
-
-        //               return getAllPeriodDates(periods)
-        //             },
-        //           }),
-        //           buildMultiField({
-        //             id: 'endDate',
-        //             title: parentalLeaveFormMessages.endDate.title,
-        //             description: parentalLeaveFormMessages.endDate.description,
-        //             children: [
-        //               buildDateField({
-        //                 id: 'endDate',
-        //                 title: parentalLeaveFormMessages.endDate.label,
-        //                 placeholder: parentalLeaveFormMessages.endDate.placeholder,
-        //                 excludeDates: (application) => {
-        //                   const { periods } = getApplicationAnswers(
-        //                     application.answers,
-        //                   )
-
-        //                   return getAllPeriodDates(periods)
-        //                 },
-        //               }),
-        //             ],
-        //           }),
-        //           buildMultiField({
-        //             id: 'ratio',
-        //             title: parentalLeaveFormMessages.ratio.title,
-        //             description: parentalLeaveFormMessages.ratio.description,
-        //             children: [
-        //               buildSelectField({
-        //                 id: 'ratio',
-        //                 width: 'half',
-        //                 title: parentalLeaveFormMessages.ratio.label,
-        //                 defaultValue: '100',
-        //                 placeholder: parentalLeaveFormMessages.ratio.placeholder,
-        //                 options: [
-        //                   { label: '100%', value: '100' },
-        //                   { label: '75%', value: '75' },
-        //                   { label: '50%', value: '50' },
-        //                   { label: '25%', value: '25' },
-        //                 ],
-        //               }),
-        //             ],
-        //           }),
-        //         ],
-        //       }),
         buildMultiField({
           id: 'confirmation',
           title: parentalLeaveFormMessages.confirmation.title,

@@ -149,10 +149,6 @@ export const validatePeriod = (
     return buildError('endDate', errorMessages.periodsEndDateRequired)
   } else if (hasBeenAnswered(endDate)) {
     if (!useLengthIsValid) {
-      // return buildError('THere', {
-      //   id: 'thre',
-      //   defaultMessage: JSON.stringify(period),
-      // })
       return buildError(
         'endDate',
         errorMessages.periodsEndDateDefinitionMissing,

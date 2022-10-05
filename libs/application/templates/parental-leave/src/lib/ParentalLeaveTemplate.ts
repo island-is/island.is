@@ -6,6 +6,7 @@ import cloneDeep from 'lodash/cloneDeep'
 import {
   EphemeralStateLifeCycle,
   pruneAfterDays,
+  DefaultStateLifeCycle,
 } from '@island.is/application/core'
 import {
   ApplicationContext,
@@ -561,7 +562,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           actionCard: {
             description: statesMessages.closedDescription,
           },
-          lifecycle: pruneAfterDays(970),
+          lifecycle: DefaultStateLifeCycle,
           progress: 0.9,
           roles: [
             {
