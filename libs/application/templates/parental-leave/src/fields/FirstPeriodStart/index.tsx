@@ -19,7 +19,6 @@ import {
 } from '../../lib/parentalLeaveUtils'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { StartDateOptions } from '../../constants'
-import { currentDateStartTime } from '../../lib/parentalLeaveTemplateUtils'
 
 type ValidAnswers = StartDateOptions | undefined
 
@@ -82,8 +81,8 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
               ),
               value: StartDateOptions.ESTIMATED_DATE_OF_BIRTH,
               disabled: expectedDateOfBirth
-                ? new Date(expectedDateOfBirth).getTime() <
-                  currentDateStartTime()
+                ? new Date(expectedDateOfBirth) <
+                  new Date()
                 : false,
             },
             {
@@ -92,8 +91,8 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
               ),
               value: StartDateOptions.ACTUAL_DATE_OF_BIRTH,
               disabled: expectedDateOfBirth
-                ? new Date(expectedDateOfBirth).getTime() <
-                  currentDateStartTime()
+                ? new Date(expectedDateOfBirth) <
+                  new Date()
                 : false,
             },
             {
