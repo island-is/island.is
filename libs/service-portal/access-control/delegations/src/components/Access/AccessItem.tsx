@@ -27,7 +27,7 @@ interface PropTypes {
   authDelegation: AuthCustomDelegation
 }
 
-function AccessItem({ apiScopes, authDelegation }: PropTypes) {
+export const AccessItem = ({ apiScopes, authDelegation }: PropTypes) => {
   useNamespaces('sp.settings-access-control')
   const { lang, formatMessage } = useLocale()
   const { setValue, getValues } = useFormContext()
@@ -210,5 +210,3 @@ function AccessItem({ apiScopes, authDelegation }: PropTypes) {
     </>
   )
 }
-
-export default AccessItem

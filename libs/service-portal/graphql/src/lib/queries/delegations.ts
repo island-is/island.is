@@ -13,6 +13,7 @@ export const AUTH_DELEGATION_QUERY = gql`
         nationalId
       }
       ... on AuthCustomDelegation {
+        validTo
         scopes {
           id
           name

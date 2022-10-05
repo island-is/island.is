@@ -1,7 +1,7 @@
 import { AuthCustomDelegation } from '@island.is/api/schema'
 import { Stack } from '@island.is/island-ui/core'
 import { useLocation } from 'react-router-dom'
-import { AccessCard } from '../AccessCard'
+import { AccessCard } from './AccessCard'
 
 type AccessCardsProps = {
   delegations: AuthCustomDelegation[]

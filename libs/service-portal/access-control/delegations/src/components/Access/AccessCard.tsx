@@ -25,7 +25,7 @@ interface AccessCardProps {
   editable?: boolean
 }
 
-const AccessCard = ({
+export const AccessCard = ({
   title,
   group,
   href,
@@ -141,5 +141,3 @@ const AccessCard = ({
     </Box>
   )
 }
-
-export default AccessCard

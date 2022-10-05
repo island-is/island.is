@@ -27,7 +27,7 @@ interface Props {
   isVisible?: boolean
 }
 
-const AccessModal: FC<Props> = ({
+export const AccessModal: FC<Props> = ({
   onClose,
   onSubmit,
   onCloseButtonText,
@@ -138,5 +138,3 @@ const AccessModal: FC<Props> = ({
     </ModalBase>
   )
 }
-
-export default AccessModal

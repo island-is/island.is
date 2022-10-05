@@ -1,7 +1,4 @@
-export { AccessCard } from './AccessCard'
-export { AccessHeaderCards } from './AccessHeaderCards'
-export { AccessModal } from './AccessModal'
-export { AccessItem } from './AccessItem'
+export * from './Access'
 export { DelegationsFromMe } from './DelegationsFromMe'
 export { DelegationsHeader } from './DelegationsHeader'
 export { DelegationsAccess } from './DelegationsAccess'
