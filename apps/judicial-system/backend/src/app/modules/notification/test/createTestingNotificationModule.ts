@@ -20,6 +20,7 @@ import { notificationModuleConfig } from '../notification.config'
 import { Notification } from '../models/notification.model'
 import { NotificationService } from '../notification.service'
 import { NotificationController } from '../notification.controller'
+import { DefendantService } from '../../defendant'
 
 const formatMessage = createTestIntl({ onError: jest.fn(), locale: 'is-IS' })
   .formatMessage
@@ -70,6 +71,12 @@ export const createTestingNotificationModule = async () => {
         },
       },
       NotificationService,
+      {
+        provide: DefendantService,
+        useValue: {
+          isDefendantInActiveCustody: jest.fn(),
+        },
+      },
     ],
   })
     .useMocker((token) => {
@@ -86,6 +93,9 @@ export const createTestingNotificationModule = async () => {
     .compile()
 
   return {
+    defendantService: notificationModule.get<DefendantService>(
+      DefendantService,
+    ),
     emailService: notificationModule.get<EmailService>(EmailService),
     notificationController: notificationModule.get<NotificationController>(
       NotificationController,
