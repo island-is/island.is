@@ -17,10 +17,10 @@ interface Props {
 
 const OptionsModal = ({ activeState, onClick, isModalVisable }: Props) => {
   return (
-    <>
+    <AnimatePresence>
       {isModalVisable && (
         <motion.div
-          layoutId="modal"
+          layoutId="inputModal"
           data-testid="optionsModal"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -42,7 +42,7 @@ const OptionsModal = ({ activeState, onClick, isModalVisable }: Props) => {
           })}
         </motion.div>
       )}
-    </>
+    </AnimatePresence>
   )
 }
 
