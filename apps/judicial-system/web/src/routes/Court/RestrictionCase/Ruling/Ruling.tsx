@@ -34,7 +34,6 @@ import {
   CaseType,
   completedCaseStates,
   Defendant,
-  Gender,
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
 import { isRulingValidRC } from '@island.is/judicial-system-web/src/utils/validate'
@@ -78,13 +77,8 @@ export function getConclusionAutofill(
     isolationToDate &&
     new Date(validToDate) > new Date(isolationToDate)
 
-  const accusedSuffix = defendant.gender === Gender.MALE ? 'i' : 'a'
-
   return decision === CaseDecision.DISMISSING
-    ? formatMessage(m.sections.conclusion.dismissingAutofillV3, {
-        genderedAccused: formatMessage(core.accused, {
-          suffix: accusedSuffix,
-        }),
+    ? formatMessage(m.sections.conclusion.dismissingAutofill, {
         accusedName: defendant.name,
         isExtended:
           workingCase.parentCase &&
@@ -92,10 +86,7 @@ export function getConclusionAutofill(
         caseType: workingCase.type,
       })
     : decision === CaseDecision.REJECTING
-    ? formatMessage(m.sections.conclusion.rejectingAutofillV3, {
-        genderedAccused: formatMessage(core.accused, {
-          suffix: accusedSuffix,
-        }),
+    ? formatMessage(m.sections.conclusion.rejectingAutofill, {
         accusedName: defendant.name,
         accusedNationalId: defendant.noNationalId
           ? ', '
@@ -105,12 +96,7 @@ export function getConclusionAutofill(
           isAcceptingCaseDecision(workingCase.parentCase.decision),
         caseType: workingCase.type,
       })
-    : formatMessage(m.sections.conclusion.acceptingAutofillV3, {
-        genderedAccused: capitalize(
-          formatMessage(core.accused, {
-            suffix: accusedSuffix,
-          }),
-        ),
+    : formatMessage(m.sections.conclusion.acceptingAutofill, {
         accusedName: defendant.name,
         accusedNationalId: defendant.noNationalId
           ? ', '
@@ -655,17 +641,8 @@ export const Ruling: React.FC = () => {
                 <Box marginBottom={3}>
                   <Checkbox
                     name="isCustodyIsolation"
-                    label={capitalize(
-                      formatMessage(m.sections.custodyRestrictions.isolation, {
-                        genderedAccused: formatMessage(core.accused, {
-                          suffix:
-                            workingCase.defendants &&
-                            workingCase.defendants.length > 0 &&
-                            workingCase.defendants[0].gender === Gender.MALE
-                              ? 'i'
-                              : 'a',
-                        }),
-                      }),
+                    label={formatMessage(
+                      m.sections.custodyRestrictions.isolationV1,
                     )}
                     checked={workingCase.isCustodyIsolation}
                     disabled={isModifyingRuling}

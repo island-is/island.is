@@ -1,6 +1,5 @@
 import {
   DefaultStateLifeCycle,
-  DEPRECATED_DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
   getValueViaPath,
 } from '@island.is/application/core'
@@ -175,7 +174,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
         meta: {
           name: 'Waiting to assign',
           progress: 0.75,
-          lifecycle: DEPRECATED_DefaultStateLifeCycle,
+          lifecycle: DefaultStateLifeCycle,
           onEntry: {
             apiModuleAction: ApiActions.createApplication,
           },
@@ -208,7 +207,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
         meta: {
           name: 'In Review',
           progress: 0.75,
-          lifecycle: DEPRECATED_DefaultStateLifeCycle,
+          lifecycle: DefaultStateLifeCycle,
           onExit: {
             apiModuleAction: ApiActions.completeApplication,
           },
