@@ -50,6 +50,7 @@ interface ServiceWebFormsPageProps {
   supportCategories?: SupportCategory[]
   namespace: Query['getNamespace']
   institutionSlug: string
+  stateEntities: string[]
 }
 
 const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
@@ -58,6 +59,7 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
   institutionSlug,
   organization,
   namespace,
+  stateEntities,
 }) => {
   const { linkResolver } = useLinkResolver()
   const n = useNamespace(namespace)
@@ -105,10 +107,14 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
       : ''
   }${headerTitle}`
 
+  const institutionSlugBelongsToMannaudstorg = institutionSlug.includes(
+    'mannaudstorg',
+  )
+
   const breadcrumbItems = useMemo(() => {
     const items = []
 
-    if (institutionSlug !== 'mannaudstorg') {
+    if (!institutionSlugBelongsToMannaudstorg) {
       items.push({
         title: n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is'),
         typename: 'serviceweb',
@@ -223,6 +229,7 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
                     institutionSlug={institutionSlug}
                     supportCategories={supportCategories}
                     syslumenn={syslumenn}
+                    stateEntities={stateEntities}
                     loading={loading}
                     onSubmit={async (formState) => {
                       await submit({
@@ -255,6 +262,7 @@ ServiceWebFormsPage.getInitialProps = async ({
     organization,
     supportCategories,
     namespace,
+    stateEntities,
   ] = await Promise.all([
     apolloClient.query<Query, QueryGetOrganizationsArgs>({
       query: GET_ORGANIZATIONS_QUERY,
@@ -297,6 +305,21 @@ ServiceWebFormsPage.getInitialProps = async ({
           ? JSON.parse(variables.data.getNamespace.fields)
           : {},
       ),
+    apolloClient
+      .query<Query, QueryGetNamespaceArgs>({
+        query: GET_NAMESPACE_QUERY,
+        variables: {
+          input: {
+            namespace: 'Rikisadili',
+            lang: locale,
+          },
+        },
+      })
+      .then(
+        (variables) =>
+          JSON.parse(variables?.data?.getNamespace?.fields ?? '{}')?.entities ??
+          [],
+      ),
   ])
 
   return {
@@ -308,6 +331,7 @@ ServiceWebFormsPage.getInitialProps = async ({
       supportCategories?.data?.getSupportCategoriesInOrganization,
     institutionSlug: slug,
     namespace,
+    stateEntities,
   }
 }
 

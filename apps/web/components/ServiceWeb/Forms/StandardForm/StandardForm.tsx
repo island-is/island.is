@@ -34,11 +34,13 @@ import {
   GetSupportSearchResultsQuery,
   GetSupportSearchResultsQueryVariables,
   SearchableContentTypes,
+  SearchableTags,
   SupportQna,
 } from '@island.is/web/graphql/schema'
 import { ModifySearchTerms } from '../../SearchInput/SearchInput'
 import orderBy from 'lodash/orderBy'
 import { useNamespace } from '@island.is/web/hooks'
+import slugify from '@sindresorhus/slugify'
 
 type FormState = {
   message: string
@@ -57,6 +59,7 @@ interface StandardFormProps {
   onSubmit: (formState: FormState) => Promise<void>
   institutionSlug: string
   namespace?: Record<string, string>
+  stateEntities: string[]
 }
 
 type CategoryId =
@@ -123,6 +126,7 @@ const labels: Record<string, string> = {
   kennitala_vegna_lausafes: 'Kennitala vegna lausafés',
   erindi: 'Erindi',
   vidfangsefni: 'Viðfangsefni',
+  starfsheiti: 'Starfsheiti',
 }
 
 // these should be skipped in the message itself
@@ -172,6 +176,7 @@ export const StandardForm = ({
   onSubmit,
   institutionSlug,
   namespace,
+  stateEntities,
 }: StandardFormProps) => {
   const useFormMethods = useForm({})
   const n = useNamespace(namespace)
@@ -197,6 +202,12 @@ export const StandardForm = ({
     [categoryId, supportCategories],
   )
 
+  const stateEntityOptions = useMemo(() => {
+    const options = [...stateEntities]
+    options.sort((a, b) => a.localeCompare(b, 'is-IS'))
+    return options.map((option) => ({ label: option, value: slugify(option) }))
+  }, [])
+
   const [fetch, { loading: loadingSuggestions, called, data }] = useLazyQuery<
     GetSupportSearchResultsQuery,
     GetSupportSearchResultsQueryVariables
@@ -206,6 +217,10 @@ export const StandardForm = ({
       updateSuggestions()
     },
   })
+
+  const institutionSlugBelongsToMannaudstorg = institutionSlug.includes(
+    'mannaudstorg',
+  )
 
   useDebounce(
     () => {
@@ -231,6 +246,14 @@ export const StandardForm = ({
                 queryString,
                 size: 10,
                 types: [SearchableContentTypes['WebQna']],
+                tags: institutionSlugBelongsToMannaudstorg
+                  ? [
+                      {
+                        key: 'mannaudstorg',
+                        type: SearchableTags.Organization,
+                      },
+                    ]
+                  : [],
               },
             },
           })
@@ -350,6 +373,14 @@ export const StandardForm = ({
         break
       default:
         break
+    }
+
+    if (institutionSlugBelongsToMannaudstorg) {
+      fields = (
+        <GridColumn span="12/12">
+          <BasicInput name="starfsheiti" />
+        </GridColumn>
+      )
     }
 
     setAddonFields(
@@ -536,7 +567,47 @@ export const StandardForm = ({
         <FormProvider {...useFormMethods}>
           <form onSubmit={handleSubmit(submitWithMessage)}>
             <GridContainer>
-              <GridRow marginTop={8}>
+              {institutionSlugBelongsToMannaudstorg && (
+                <GridRow marginTop={8}>
+                  <GridColumn
+                    paddingBottom={3}
+                    span={['12/12', '12/12', '12/12', '8/12']}
+                  >
+                    <Controller
+                      control={control}
+                      id="rikisadili"
+                      name="rikisadili"
+                      defaultValue=""
+                      rules={{
+                        required: {
+                          value: true,
+                          message: 'Vinsamlegast veldu stofnun',
+                        },
+                      }}
+                      render={({ onChange }) => (
+                        <Select
+                          backgroundColor="blue"
+                          icon="chevronDown"
+                          isSearchable
+                          label="Ríkisaðili"
+                          name="rikisadili"
+                          onChange={({ label, value }: Option) => {
+                            onChange(label)
+                            setSyslumadurId(value as string)
+                          }}
+                          hasError={errors.rikisadili}
+                          errorMessage={errors.rikisadili?.message}
+                          options={stateEntityOptions}
+                          placeholder="Leitaðu að þinni stofnun"
+                          size="md"
+                          required
+                        />
+                      )}
+                    />
+                  </GridColumn>
+                </GridRow>
+              )}
+              <GridRow marginTop={institutionSlugBelongsToMannaudstorg ? 5 : 8}>
                 <GridColumn
                   paddingBottom={3}
                   span={['12/12', '12/12', '12/12', '8/12']}
