@@ -1,2 +1,1 @@
-export { UserProfileProvider } from '@island.is/application/data-providers'
-export { FeeInfoProvider } from './FeeInfoProvider'
+export {PaymentCatalogApi, UserProfileApi} from '@island.is/application/types'

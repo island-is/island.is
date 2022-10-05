@@ -7,6 +7,8 @@ import {
   DefaultEvents,
   ApplicationRole,
   defineTemplateApi,
+  PaymentCatalogApi,
+  UserProfileApi,
 } from '@island.is/application/types'
 import { dataSchema } from './dataSchema'
 import { Roles, States, Events, ApiActions } from './constants'
@@ -59,6 +61,13 @@ const OperatingLicenseTemplate: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
+              api: [
+                PaymentCatalogApi.configure({
+                  params: { orginizationId: '6509142520' },
+                  externalDataId: 'payment'
+                }),
+                UserProfileApi,
+              ],
             },
           ],
         },
