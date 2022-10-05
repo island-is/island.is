@@ -2,6 +2,7 @@ import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import { FC, LazyExoticComponent } from 'react'
 import { MessageDescriptor } from 'react-intl'
 
+import { Features } from '@island.is/feature-flags'
 import { IconProps } from '@island.is/island-ui/core'
 import { User } from '@island.is/shared/types'
 
@@ -171,4 +172,10 @@ export interface ServicePortalModule {
   global?: (
     props: ServicePortalModuleProps,
   ) => Promise<ServicePortalGlobalComponent[]>
+  /**
+   * If this is set, the module is only enabled if the feature flag is true for the authenticated user.
+   * If you want to feature flag a module for companies you can configure the feature flag to be `false`
+   * when the attribute "subjectType" is "legalEntity" and `true` otherwise.
+   */
+  featureFlag?: Features
 }

@@ -210,58 +210,31 @@ export function formatGender(gender?: Gender): string {
   }
 }
 
-export const formatProsecutorAppeal = (appealDecision?: CaseAppealDecision) => {
-  if (!appealDecision) {
-    return
-  }
+export function formatAppeal(
+  appealDecision: CaseAppealDecision | undefined,
+  stakeholder: string,
+): string {
+  const isMultipleDefendants = stakeholder.slice(-2) === 'ar'
 
   switch (appealDecision) {
     case CaseAppealDecision.APPEAL:
-      return 'Sækjandi lýsir því yfir að hann kæri úrskurðinn til Landsréttar. Sækjandi kærir úrskurðinn í því skyni að úrskurðurinn verði felldur úr gildi og krafa hans verði tekin til greina.'
+      return `${stakeholder} ${
+        isMultipleDefendants ? 'lýsa' : 'lýsir'
+      } því yfir að ${
+        isMultipleDefendants ? 'þeir' : 'hann'
+      } kæri úrskurðinn til Landsréttar.`
     case CaseAppealDecision.ACCEPT:
-      return 'Sækjandi unir úrskurðinum.'
-    case CaseAppealDecision.POSTPONE:
-      return 'Sækjandi lýsir því yfir að hann taki sér lögbundinn kærufrest.'
-  }
-}
-
-export const formatDefendantAppeal = (
-  multipleDefendants: boolean,
-  appealDecision?: CaseAppealDecision,
-  caseType?: CaseType,
-  sessionArrangements?: SessionArrangements,
-) => {
-  if (!appealDecision) {
-    return
-  }
-
-  const defendantText = multipleDefendants ? 'Varnaraðilar' : 'Varnaraðili'
-
-  switch (appealDecision) {
-    case CaseAppealDecision.APPEAL:
-      return sessionArrangements ===
-        SessionArrangements.ALL_PRESENT_SPOKESPERSON
-        ? 'Talsmaður varnaraðila kærir úrskurðinn í því skyni að úrskurðurinn verði felldur úr gildi.'
-        : `${defendantText} ${
-            multipleDefendants ? 'kæra' : 'kærir'
-          } úrskurðinn í því skyni að úrskurðurinn verði felldur úr gildi${
-            caseType === CaseType.CUSTODY
-              ? `, en til vara að gæsluvarðhaldi verði markaður skemmri tími/ ${
-                  multipleDefendants ? 'þeim' : 'honum'
-                } verði gert að sæta farbanni í stað gæsluvarðahalds.`
-              : '.'
-          }`
-
-    case CaseAppealDecision.ACCEPT:
-      return `${defendantText} ${
-        multipleDefendants ? 'una' : 'unir'
+      return `${stakeholder} ${
+        isMultipleDefendants ? 'una' : 'unir'
       } úrskurðinum.`
     case CaseAppealDecision.POSTPONE:
-      return `${defendantText} ${
-        multipleDefendants ? 'lýsa' : 'lýsir'
+      return `${stakeholder} ${
+        isMultipleDefendants ? 'lýsa' : 'lýsir'
       } því yfir að ${
-        multipleDefendants ? 'þeir' : 'hann'
+        isMultipleDefendants ? 'þeir' : 'hann'
       } taki sér lögbundinn kærufrest.`
+    default:
+      return ''
   }
 }
 

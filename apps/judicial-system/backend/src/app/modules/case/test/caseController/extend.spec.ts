@@ -4,6 +4,7 @@ import { Transaction } from 'sequelize/types'
 
 import {
   CaseCustodyRestrictions,
+  CaseFileState,
   CaseLegalProvisions,
   CaseOrigin,
   CaseState,
@@ -327,7 +328,14 @@ describe('CaseController - Extend', () => {
           },
           { model: Case, as: 'parentCase' },
           { model: Case, as: 'childCase' },
-          { model: CaseFile, as: 'caseFiles' },
+          {
+            model: CaseFile,
+            as: 'caseFiles',
+            required: false,
+            where: {
+              state: { [Op.not]: CaseFileState.DELETED },
+            },
+          },
         ],
         order: [[{ model: Defendant, as: 'defendants' }, 'created', 'ASC']],
         where: {
