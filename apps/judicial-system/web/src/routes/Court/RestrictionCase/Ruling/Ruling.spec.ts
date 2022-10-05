@@ -48,7 +48,7 @@ describe('getConclusionAutofill', () => {
       const result = fn(theCase, decision)
 
       expect(result).toEqual(
-        'Kröfu um að kærða, Blær, sæti gæsluvarðhaldi er vísað frá.',
+        'Kröfu um að varnaraðili, Blær, sæti gæsluvarðhaldi er vísað frá.',
       )
     })
 
@@ -62,7 +62,7 @@ describe('getConclusionAutofill', () => {
       const result = fn(theCase, decision)
 
       expect(result).toEqual(
-        'Kröfu um að kærða, Blær, sæti áframhaldandi farbanni er vísað frá.',
+        'Kröfu um að varnaraðili, Blær, sæti áframhaldandi farbanni er vísað frá.',
       )
     })
 
@@ -81,7 +81,7 @@ describe('getConclusionAutofill', () => {
       const result = fn(theCase, decision, defendant)
 
       expect(result).toEqual(
-        'Kröfu um að kærði, Blær, sæti vistun á viðeigandi stofnun er vísað frá.',
+        'Kröfu um að varnaraðili, Blær, sæti vistun á viðeigandi stofnun er vísað frá.',
       )
     })
   })
@@ -98,7 +98,7 @@ describe('getConclusionAutofill', () => {
       const result = fn(theCase, decision)
 
       expect(result).toEqual(
-        'Kröfu um að kærða, Blær, sæti gæsluvarðhaldi er hafnað.',
+        'Kröfu um að varnaraðili, Blær, sæti gæsluvarðhaldi er hafnað.',
       )
     })
 
@@ -116,7 +116,7 @@ describe('getConclusionAutofill', () => {
       const result = fn(theCase, decision, defendant)
 
       expect(result).toEqual(
-        'Kröfu um að kærði, Blær, kt. 000000-0000, sæti gæsluvarðhaldi er hafnað.',
+        'Kröfu um að varnaraðili, Blær, kt. 000000-0000, sæti gæsluvarðhaldi er hafnað.',
       )
     })
 
@@ -134,7 +134,7 @@ describe('getConclusionAutofill', () => {
       const result = fn(theCase, decision, defendant)
 
       expect(result).toEqual(
-        'Kröfu um að kærða, Blær, kt. 000000-0000, sæti áframhaldandi vistun á viðeigandi stofnun er hafnað.',
+        'Kröfu um að varnaraðili, Blær, kt. 000000-0000, sæti áframhaldandi vistun á viðeigandi stofnun er hafnað.',
       )
     })
   })
@@ -151,7 +151,7 @@ describe('getConclusionAutofill', () => {
       const result = fn(theCase, decision, defendantBase, validToDate)
 
       expect(result).toEqual(
-        'Kærða, Blær, skal sæta gæsluvarðhaldi, þó ekki lengur en til miðvikudagsins 1. janúar 2020, kl. 12:31.',
+        'Varnaraðili, Blær, skal sæta gæsluvarðhaldi, þó ekki lengur en til miðvikudagsins 1. janúar 2020, kl. 12:31.',
       )
     })
 
@@ -172,7 +172,7 @@ describe('getConclusionAutofill', () => {
       )
 
       expect(result).toEqual(
-        'Kærða, Blær, skal sæta gæsluvarðhaldi, þó ekki lengur en til miðvikudagsins 1. janúar 2020, kl. 12:31. Kærða skal sæta einangrun ekki lengur en til miðvikudagsins 1. janúar 2020, kl. 12:00.',
+        'Varnaraðili, Blær, skal sæta gæsluvarðhaldi, þó ekki lengur en til miðvikudagsins 1. janúar 2020, kl. 12:31. Kærða skal sæta einangrun ekki lengur en til miðvikudagsins 1. janúar 2020, kl. 12:00.',
       )
     })
 
@@ -197,7 +197,7 @@ describe('getConclusionAutofill', () => {
       )
 
       expect(result).toEqual(
-        'Kærði, Blær, skal sæta vistun á viðeigandi stofnun, þó ekki lengur en til miðvikudagsins 1. janúar 2020, kl. 12:31. Kærði skal sæta einangrun á meðan á vistunni stendur.',
+        'Varnaraðili, Blær, skal sæta vistun á viðeigandi stofnun, þó ekki lengur en til miðvikudagsins 1. janúar 2020, kl. 12:31. Kærði skal sæta einangrun á meðan á vistunni stendur.',
       )
     })
 
@@ -224,7 +224,7 @@ describe('getConclusionAutofill', () => {
       )
 
       expect(result).toEqual(
-        'Kærða, Blær, kt. 000000-0000, skal sæta vistun á viðeigandi stofnun, þó ekki lengur en til miðvikudagsins 1. janúar 2020, kl. 12:31. Kærða skal sæta einangrun á meðan á vistunni stendur.',
+        'Varnaraðili, Blær, kt. 000000-0000, skal sæta vistun á viðeigandi stofnun, þó ekki lengur en til miðvikudagsins 1. janúar 2020, kl. 12:31. Kærða skal sæta einangrun á meðan á vistunni stendur.',
       )
     })
   })
@@ -243,7 +243,7 @@ describe('getConclusionAutofill', () => {
       const result = fn(theCase, decision, defendant, validToDate)
 
       expect(result).toEqual(
-        'Kærði, Blær, skal sæta farbanni, þó ekki lengur en til miðvikudagsins 1. janúar 2020, kl. 12:31.',
+        'Varnaraðili, Blær, skal sæta farbanni, þó ekki lengur en til miðvikudagsins 1. janúar 2020, kl. 12:31.',
       )
     })
 
@@ -255,7 +255,7 @@ describe('getConclusionAutofill', () => {
       const result = fn(theCase, decision, defendantBase, validToDate)
 
       expect(result).toEqual(
-        'Kærða, Blær, skal sæta farbanni, þó ekki lengur en til miðvikudagsins 1. janúar 2020, kl. 12:31.',
+        'Varnaraðili, Blær, skal sæta farbanni, þó ekki lengur en til miðvikudagsins 1. janúar 2020, kl. 12:31.',
       )
     })
   })
