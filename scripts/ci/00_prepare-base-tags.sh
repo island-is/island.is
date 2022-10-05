@@ -7,7 +7,7 @@ ROOT="$DIR/../.."
 tempRepo=$(mktemp -d 2>/dev/null || mktemp -d -t 'mytmpdir')
 cp -r "$ROOT/.github/actions/dist/." "$tempRepo"
 
-LAST_GOOD_BUILD=$(DEBUG="*,-simple-git" REPO_ROOT="$ROOT" node $tempRepo/index.js)
+LAST_GOOD_BUILD=$(DEBUG="*,-simple-git" REPO_ROOT="$ROOT" node $tempRepo/main.js)
 LAST_GOOD_BUILD_SHA=$(echo "$LAST_GOOD_BUILD" | jq -r '.sha')
 LAST_GOOD_BUILD_BRANCH=$(echo "$LAST_GOOD_BUILD" | jq -r '.branch')
 LAST_GOOD_BUILD_RUN_NUMBER=$(echo "$LAST_GOOD_BUILD" | jq -r '.run_number')

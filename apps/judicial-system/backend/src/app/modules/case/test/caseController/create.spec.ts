@@ -3,6 +3,7 @@ import { Op } from 'sequelize'
 import { Transaction } from 'sequelize/types'
 
 import {
+  CaseFileState,
   CaseOrigin,
   CaseState,
   CaseType,
@@ -165,7 +166,14 @@ describe('CaseController - Create', () => {
           },
           { model: Case, as: 'parentCase' },
           { model: Case, as: 'childCase' },
-          { model: CaseFile, as: 'caseFiles' },
+          {
+            model: CaseFile,
+            as: 'caseFiles',
+            required: false,
+            where: {
+              state: { [Op.not]: CaseFileState.DELETED },
+            },
+          },
         ],
         order: [[{ model: Defendant, as: 'defendants' }, 'created', 'ASC']],
         where: {

@@ -1,19 +1,10 @@
 import { Module } from '@nestjs/common'
-import { SequelizeModule } from '@nestjs/sequelize'
-import {
-  GrantType,
-  GrantTypeService,
-  AccessService,
-  ApiScopeUserAccess,
-  ApiScopeUser,
-} from '@island.is/auth-api-lib'
+import { GrantTypeModule } from '@island.is/auth-api-lib'
 import { GrantTypeController } from './grant-types.controller'
 
 @Module({
-  imports: [
-    SequelizeModule.forFeature([GrantType, ApiScopeUserAccess, ApiScopeUser]),
-  ],
+  imports: [GrantTypeModule],
   controllers: [GrantTypeController],
-  providers: [GrantTypeService, AccessService],
+  providers: [],
 })
 export class GrantTypesModule {}
