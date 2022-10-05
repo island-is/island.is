@@ -384,25 +384,25 @@ export class ParentalLeaveService {
             `Could not calculate end date of period starting ${period.startDate} and using ${daysLeftOfPersonalRights} days of rights`,
           )
         }
-        
+
         // Add the period using personal rights
-          periods.push({
-            from:
-              isFirstPeriod && isActualDateOfBirth && useLength === 'yes'
-                ? apiConstants.actualDateOfBirthMonths
-                : isFirstPeriod && isActualDateOfBirth
-                ? apiConstants.actualDateOfBirth
-                : period.startDate,
-            to: format(getNormalPeriodEndDate.periodEndDate, df),
-            ratio: getRatio(
-              period.ratio,
-              daysLeftOfPersonalRights.toString(),
-              isUsingNumberOfDays,
-            ),
-            approved: false,
-            paid: false,
-            rightsCodePeriod: null,
-          })     
+        periods.push({
+          from:
+            isFirstPeriod && isActualDateOfBirth && useLength === 'yes'
+              ? apiConstants.actualDateOfBirthMonths
+              : isFirstPeriod && isActualDateOfBirth
+              ? apiConstants.actualDateOfBirth
+              : period.startDate,
+          to: format(getNormalPeriodEndDate.periodEndDate, df),
+          ratio: getRatio(
+            period.ratio,
+            daysLeftOfPersonalRights.toString(),
+            isUsingNumberOfDays,
+          ),
+          approved: false,
+          paid: false,
+          rightsCodePeriod: null,
+        })
 
         const transferredPeriodStartDate = addDays(
           getNormalPeriodEndDate.periodEndDate,
