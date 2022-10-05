@@ -8,31 +8,31 @@ import * as styles from './DelegationsHeader.css'
 import { ValueType } from 'react-select'
 
 type DelegationsHeaderProps = {
-  onSystemChange(id: ValueType<Option>): void
+  onDomainChange(id: ValueType<Option>): void
 }
 
 export const DelegationsHeader = ({
-  onSystemChange,
+  onDomainChange,
 }: DelegationsHeaderProps) => {
   useNamespaces('sp.access-control-delegations')
   const history = useHistory()
   const { formatMessage } = useLocale()
   const { sm } = useBreakpoint()
 
-  const systemOptions = [
+  const domainOptions = [
     {
       label: formatMessage({
-        id: 'sp.access-control-delegations:all-systems',
+        id: 'sp.access-control-delegations:all-domains',
         defaultMessage: 'Öll kerfi',
       }),
       value: 'all',
     },
     {
-      label: 'Valmöguleiki 1',
+      label: 'Island.is',
       value: '0',
     },
     {
-      label: 'Valmöguleiki 2',
+      label: 'Landspítalaappið',
       value: '1',
     },
   ]
@@ -48,13 +48,14 @@ export const DelegationsHeader = ({
         <Select
           label={formatMessage(m.accessControl)}
           size="xs"
-          name="system"
+          name="domain"
+          id="domain"
           noOptionsMessage="Enginn valmöguleiki"
-          defaultValue={systemOptions[0]}
-          options={systemOptions}
-          onChange={onSystemChange}
+          defaultValue={domainOptions[0]}
+          options={domainOptions}
+          onChange={onDomainChange}
           placeholder={formatMessage({
-            id: 'sp.access-control-delegations:choose-system',
+            id: 'sp.access-control-delegations:choose-domain',
             defaultMessage: 'Veldu kerfi',
           })}
         />

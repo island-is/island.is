@@ -7,19 +7,8 @@ import {
 } from '@island.is/service-portal/core'
 
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { gql, useQuery } from '@apollo/client'
-import { Query } from '@island.is/api/schema'
 import { useAuth } from '@island.is/auth/react'
-
-export const AuthDelegationsQuery = gql`
-  query AuthDelegationsListQuery {
-    authDelegations {
-      ... on AuthCustomDelegation {
-        validTo
-      }
-    }
-  }
-`
+import { useAuthDelegationsQuery } from '@island.is/service-portal/graphql'
 
 export const DelegationsAccess: ServicePortalModuleComponent = ({
   userInfo,
@@ -27,7 +16,7 @@ export const DelegationsAccess: ServicePortalModuleComponent = ({
   children,
 }) => {
   useNamespaces('sp.access-control-delegations')
-  const { data, loading } = useQuery<Query>(AuthDelegationsQuery)
+  const { data, loading } = useAuthDelegationsQuery()
   const { switchUser } = useAuth()
   const { formatMessage } = useLocale()
   const actor = userInfo.profile.actor

@@ -6,12 +6,15 @@ import { IdentityCard } from '../IdentityCard'
 
 type AccessHeaderCardsProps = {
   userInfo: User
-  systemImgSrc: string
+  domain: {
+    title: string
+    imgSrc: string
+  }
 }
 
 export const AccessHeaderCards = ({
   userInfo,
-  systemImgSrc,
+  domain,
 }: AccessHeaderCardsProps) => {
   const { formatMessage } = useLocale()
 
@@ -34,11 +37,11 @@ export const AccessHeaderCards = ({
       />
       <IdentityCard
         label={formatMessage({
-          id: 'sp.access-control-delegations:system',
+          id: 'sp.access-control-delegations:domain',
           defaultMessage: 'Kerfi',
         })}
-        title={userInfo.profile.name}
-        imgSrc={systemImgSrc}
+        title={domain.title}
+        imgSrc={domain.imgSrc}
       />
     </Box>
   )

@@ -10,6 +10,8 @@ import {
   ModalBase,
 } from '@island.is/island-ui/core'
 import * as styles from './AccessModal.css'
+import type { ScopeTag } from '../../utils/types'
+
 interface Props {
   onClose: () => void
   onCloseButtonText: string
@@ -21,7 +23,7 @@ interface Props {
   title: string
   text?: string
   img?: string
-  scopes?: { displayName?: string; validTo?: string }[]
+  scopes?: ScopeTag[]
   isVisible?: boolean
 }
 

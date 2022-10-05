@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import cn from 'classnames'
-import { gql, useMutation, useLazyQuery } from '@apollo/client'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useHistory } from 'react-router-dom'
 import { defineMessage } from 'react-intl'
@@ -12,7 +11,6 @@ import {
   InputController,
   SelectController,
 } from '@island.is/shared/form-fields'
-import { Mutation, Query } from '@island.is/api/schema'
 import {
   IntroHeader,
   ServicePortalPath,
@@ -23,30 +21,13 @@ import {
 } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 
-import { AuthDelegationsQuery } from '../../lib/queries'
 import { DelegationsFormFooter, IdentityCard } from '../../components'
 import * as styles from './GrantAccess.css'
-
-const CreateAuthDelegationMutation = gql`
-  mutation CreateAuthDelegationMutation($input: CreateAuthDelegationInput!) {
-    createAuthDelegation(input: $input) {
-      id
-      to {
-        nationalId
-      }
-    }
-  }
-`
-
-const IdentityQuery = gql`
-  query IdentityQuery($input: IdentityInput!) {
-    identity(input: $input) {
-      nationalId
-      type
-      name
-    }
-  }
-`
+import {
+  AuthDelegationsDocument,
+  useCreateAuthDelegationMutation,
+  useIdentityLazyQuery,
+} from '@island.is/service-portal/graphql'
 
 const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces(['sp.settings-access-control', 'sp.access-control-delegations'])
@@ -58,8 +39,8 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
   const [
     createAuthDelegation,
     { loading: mutationLoading },
-  ] = useMutation<Mutation>(CreateAuthDelegationMutation, {
-    refetchQueries: [{ query: AuthDelegationsQuery }],
+  ] = useCreateAuthDelegationMutation({
+    refetchQueries: [{ query: AuthDelegationsDocument }],
   })
 
   const noUserFoundToast = () => {
@@ -71,19 +52,17 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
     )
   }
 
-  const [getIdentity, { data, loading: queryLoading }] = useLazyQuery<Query>(
-    IdentityQuery,
-    {
-      onError: noUserFoundToast,
-      onCompleted: (data) => {
-        if (!data.identity) {
-          noUserFoundToast()
-        }
-      },
+  const [getIdentity, { data, loading: queryLoading }] = useIdentityLazyQuery({
+    onError: noUserFoundToast,
+    onCompleted: (data) => {
+      if (!data.identity) {
+        noUserFoundToast()
+      }
     },
-  )
+  })
+
   const { identity } = data || {}
-  const systemOptions = [
+  const domainOptions = [
     {
       label: 'Island.is',
       value: '0',
@@ -94,8 +73,8 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
     },
   ]
 
-  const getDefaultSystem = (label: string) =>
-    systemOptions.find(
+  const getDefaultDomain = (label: string) =>
+    domainOptions.find(
       (opt) => opt.label.toLowerCase() === label?.toLowerCase(),
     )?.value
 
@@ -103,13 +82,13 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
     mode: 'onChange',
     defaultValues: {
       toNationalId: '',
-      system: domainQueryParam ? getDefaultSystem(domainQueryParam) : null,
+      domain: domainQueryParam ? getDefaultDomain(domainQueryParam) : null,
     },
   })
 
   const { handleSubmit, control, errors, watch, reset } = methods
   const watchToNationalId = watch('toNationalId')
-  const systemWatcher = watch('system')
+  const domainmWatcher = watch('domain')
   const loading = queryLoading || mutationLoading
 
   const requestDelegation = (
@@ -262,21 +241,21 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
               </div>
               <div>
                 <SelectController
-                  id="system"
-                  name="system"
+                  id="domain"
+                  name="domain"
                   label={formatMessage(m.accessControl)}
                   placeholder={formatMessage({
-                    id: 'sp.access-control-delegations:choose-system',
+                    id: 'sp.access-control-delegations:choose-domain',
                     defaultMessage: 'Veldu kerfi',
                   })}
-                  error={errors.system?.message}
-                  options={systemOptions}
+                  error={errors.domain?.message}
+                  options={domainOptions}
                   rules={{
                     required: {
                       value: true,
                       message: formatMessage({
                         id:
-                          'sp.access-control-delegations:grant-required-system',
+                          'sp.access-control-delegations:grant-required-domain',
                         defaultMessage: 'Skylda er að velja aðgangsstýringu',
                       }),
                     },
@@ -293,7 +272,7 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
                 })}
               </Text>
               <DelegationsFormFooter
-                disabled={!name || systemWatcher === null || loading}
+                disabled={!name || domainmWatcher === null || loading}
                 loading={loading}
                 onCancel={() =>
                   history.push(ServicePortalPath.AccessControlDelegations)

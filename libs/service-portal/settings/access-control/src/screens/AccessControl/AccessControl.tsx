@@ -12,9 +12,9 @@ import {
 
 import { Accesses } from '../../components'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { gql, useQuery } from '@apollo/client'
-import { Query } from '@island.is/api/schema'
+import { gql } from '@apollo/client'
 import { useAuth } from '@island.is/auth/react'
+import { useAuthDelegationsQuery } from '@island.is/service-portal/graphql'
 
 export const AuthDelegationsQuery = gql`
   query AuthDelegationsListQuery {
@@ -27,7 +27,7 @@ export const AuthDelegationsQuery = gql`
 `
 const AccessControl: ServicePortalModuleComponent = ({ userInfo, client }) => {
   useNamespaces('sp.settings-access-control')
-  const { data, loading } = useQuery<Query>(AuthDelegationsQuery)
+  const { data, loading } = useAuthDelegationsQuery()
   const { switchUser } = useAuth()
   const { formatMessage } = useLocale()
 

@@ -1,5 +1,5 @@
 import React from 'react'
-import { gql, useQuery } from '@apollo/client'
+import { gql } from '@apollo/client'
 import { useLocation, useHistory } from 'react-router-dom'
 import * as kennitala from 'kennitala'
 
@@ -11,10 +11,11 @@ import {
   Stack,
   Button,
 } from '@island.is/island-ui/core'
-import { Query, AuthCustomDelegation } from '@island.is/api/schema'
+import { AuthCustomDelegation } from '@island.is/api/schema'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { useAuth } from '@island.is/auth/react'
 import { AccessCard } from '../AccessCard'
+import { useAuthDelegationsQuery } from '@island.is/service-portal/graphql'
 
 export const AuthDelegationsQuery = gql`
   query AuthDelegationsQuery {
@@ -41,7 +42,8 @@ export const AuthDelegationsQuery = gql`
 function Accesses(): JSX.Element {
   useNamespaces('sp.settings-access-control')
   const { pathname } = useLocation()
-  const { data, loading } = useQuery<Query>(AuthDelegationsQuery)
+  const { data, loading } = useAuthDelegationsQuery()
+
   const history = useHistory()
   const { formatMessage } = useLocale()
   const { switchUser } = useAuth()

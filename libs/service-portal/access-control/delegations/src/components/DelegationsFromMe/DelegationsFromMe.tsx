@@ -1,19 +1,17 @@
-import { useQuery } from '@apollo/client'
-
 import {
   SkeletonLoader,
   GridRow,
   GridColumn,
   GridContainer,
 } from '@island.is/island-ui/core'
-import { Query, AuthCustomDelegation } from '@island.is/api/schema'
+import { AuthCustomDelegation } from '@island.is/api/schema'
 import { DelegationsHeader } from '../DelegationsHeader'
-import { AuthDelegationsQuery } from '../../lib/queries'
 import { AccessCards } from '../AccessCards'
 import { DelegationsEmptyState } from '../DelegationsEmptyState'
+import { useAuthDelegationsQuery } from '@island.is/service-portal/graphql'
 
 export const DelegationsFromMe = () => {
-  const { data, loading } = useQuery<Query>(AuthDelegationsQuery)
+  const { data, loading } = useAuthDelegationsQuery()
 
   const authDelegations = (data?.authDelegations ??
     []) as AuthCustomDelegation[]
@@ -23,8 +21,8 @@ export const DelegationsFromMe = () => {
       <GridRow>
         <GridColumn paddingBottom={4} span="12/12">
           <DelegationsHeader
-            onSystemChange={() => {
-              // TODO implement system
+            onDomainChange={() => {
+              // TODO implement domain change
             }}
           />
         </GridColumn>

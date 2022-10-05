@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { gql, useQuery, useMutation } from '@apollo/client'
 import { useParams, useHistory } from 'react-router-dom'
 import { useForm, FormProvider } from 'react-hook-form'
 import { defineMessage } from 'react-intl'
@@ -18,7 +17,7 @@ import {
   Hidden,
   AlertBanner,
 } from '@island.is/island-ui/core'
-import { Query, Mutation, AuthCustomDelegation } from '@island.is/api/schema'
+import { AuthCustomDelegation } from '@island.is/api/schema'
 import {
   IntroHeader,
   m as coreMessages,
@@ -28,7 +27,6 @@ import {
 } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 
-import { AuthDelegationsQuery } from '../../lib/queries'
 import { AccessHeaderCards, AccessItem, AccessModal } from '../../components'
 
 import * as styles from './Access.css'
@@ -42,72 +40,15 @@ import {
   SCOPE_PREFIX,
 } from '../../utils/types'
 import { servicePortalSaveAccessControl } from '@island.is/plausible'
-
-const AuthApiScopesQuery = gql`
-  query AuthApiScopesQuery($input: AuthApiScopesInput!) {
-    authApiScopes(input: $input) {
-      name
-      displayName
-      type
-      group {
-        name
-        displayName
-        description
-      }
-      description
-    }
-  }
-`
-
-const AuthDelegationQuery = gql`
-  query AuthDelegationQuery($input: AuthDelegationInput!) {
-    authDelegation(input: $input) {
-      id
-      type
-      to {
-        nationalId
-        name
-      }
-      from {
-        nationalId
-      }
-      ... on AuthCustomDelegation {
-        scopes {
-          id
-          name
-          type
-          validTo
-          displayName
-        }
-      }
-    }
-  }
-`
-
-const UpdateAuthDelegationMutation = gql`
-  mutation UpdateAuthDelegationMutation($input: UpdateAuthDelegationInput!) {
-    updateAuthDelegation(input: $input) {
-      id
-      from {
-        nationalId
-      }
-      ... on AuthCustomDelegation {
-        scopes {
-          id
-          name
-          validTo
-          displayName
-        }
-      }
-    }
-  }
-`
-
-const DeleteAuthDelegationMutation = gql`
-  mutation DeleteAuthDelegationMutation($input: DeleteAuthDelegationInput!) {
-    deleteAuthDelegation(input: $input)
-  }
-`
+import {
+  AuthDelegationScopeType,
+  AuthDelegationsDocument,
+  useAuthApiScopesQuery,
+  useAuthDelegationQuery,
+  useDeleteAuthDelegationMutation,
+  useUpdateAuthDelegationMutation,
+} from '@island.is/service-portal/graphql'
+import { isDefined } from '@island.is/shared/utils'
 
 const Access: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.settings-access-control')
@@ -117,41 +58,45 @@ const Access: ServicePortalModuleComponent = ({ userInfo }) => {
   const history = useHistory()
   const [closeModalOpen, setCloseModalOpen] = useState(false)
   const [saveModalOpen, setSaveModalOpen] = useState(false)
-  const [formError, setFormError] = useState<boolean>(false)
+  const [formError, setFormError] = useState(false)
+  const [enableValidityPeriod, setEnableValidityPeriod] = useState(true)
 
   const onError = () => {
     toast.error(formatMessage(coreMessages.somethingWrong))
   }
-  const [updateDelegation, { loading: updateLoading }] = useMutation<Mutation>(
-    UpdateAuthDelegationMutation,
-    { refetchQueries: [{ query: AuthDelegationsQuery }], onError },
-  )
-  const [deleteDelegation] = useMutation<Mutation>(
-    DeleteAuthDelegationMutation,
-    { refetchQueries: [{ query: AuthDelegationsQuery }], onError },
-  )
+  const [
+    updateDelegation,
+    { loading: updateLoading },
+  ] = useUpdateAuthDelegationMutation({
+    refetchQueries: [{ query: AuthDelegationsDocument }],
+    onError,
+  })
+  const [deleteDelegation] = useDeleteAuthDelegationMutation({
+    refetchQueries: [{ query: AuthDelegationsDocument }],
+    onError,
+  })
 
-  const { data: apiScopeData, loading: apiScopeLoading } = useQuery<Query>(
-    AuthApiScopesQuery,
-    {
-      variables: {
-        input: {
-          lang,
-        },
+  const {
+    data: apiScopeData,
+    loading: apiScopeLoading,
+  } = useAuthApiScopesQuery({
+    variables: {
+      input: {
+        lang,
       },
     },
-  )
-  const { data: delegationData, loading: delegationLoading } = useQuery<Query>(
-    AuthDelegationQuery,
-    {
-      fetchPolicy: 'network-only',
-      variables: {
-        input: {
-          delegationId,
-        },
+  })
+  const {
+    data: delegationData,
+    loading: delegationLoading,
+  } = useAuthDelegationQuery({
+    fetchPolicy: 'network-only',
+    variables: {
+      input: {
+        delegationId,
       },
     },
-  )
+  })
 
   const { authApiScopes } = apiScopeData || {}
   const authDelegation = (delegationData || {})
@@ -163,12 +108,13 @@ const Access: ServicePortalModuleComponent = ({ userInfo }) => {
 
   const onSubmit = handleSubmit(async (model: AccessForm) => {
     formError && setFormError(false)
+
     const scopes = model[SCOPE_PREFIX].filter(
       (scope) => scope.name?.length > 0,
     ).map((scope) => ({
-      ...scope,
+      validTo: scope.validTo as Date,
       type: authApiScopes?.find((apiScope) => apiScope.name === scope.name[0])
-        ?.type,
+        ?.type as AuthDelegationScopeType,
       name: scope.name[0],
       displayName: scope.displayName,
     }))
@@ -184,7 +130,12 @@ const Access: ServicePortalModuleComponent = ({ userInfo }) => {
     }
 
     const { data, errors } = await updateDelegation({
-      variables: { input: { delegationId, scopes } },
+      variables: {
+        input: {
+          delegationId,
+          scopes,
+        },
+      },
     })
     if (data && !errors && !err) {
       history.push(ServicePortalPath.AccessControlDelegations)
@@ -239,7 +190,10 @@ const Access: ServicePortalModuleComponent = ({ userInfo }) => {
       <Box display="flex" rowGap={6} flexDirection="column">
         <AccessHeaderCards
           userInfo={userInfo}
-          systemImgSrc="./assets/images/educationDegree.svg"
+          domain={{
+            title: 'Landsbankaappið',
+            imgSrc: './assets/images/educationDegree.svg',
+          }}
         />
         <IntroHeader
           title={authDelegation?.to?.name || ''}
@@ -295,7 +249,7 @@ const Access: ServicePortalModuleComponent = ({ userInfo }) => {
                         'sp.settings-access-control:will-loose-access-following',
                       defaultMessage: 'mun missa umboð fyrir eftirfarandi:',
                     })}`}
-                    scopes={scopes as ScopeTag[]}
+                    scopes={scopes?.filter(isDefined)}
                     onClose={() => setCloseModalOpen(false)}
                     onCloseButtonText={formatMessage({
                       id:
