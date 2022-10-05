@@ -79,9 +79,9 @@ export class DelegationScopeService {
     })
   }
 
-  async findAll(id: string): Promise<DelegationScope[]> {
+  async findByDelegationId(delegationId: string): Promise<DelegationScope[]> {
     return this.delegationScopeModel.findAll({
-      where: { delegationId: id },
+      where: { delegationId },
     })
   }
 
