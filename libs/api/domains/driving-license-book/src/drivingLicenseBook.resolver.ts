@@ -55,6 +55,12 @@ export class DrivingLicenseBookResolver {
     return this.drivingLicenseBookService.getStudent(input)
   }
 
+  @Query(() => DrivingLicenseBookStudentOverview)
+  drivingLicenseBookUserBook(@CurrentUser() user: User) {
+    return this.drivingLicenseBookService.getStudent({
+      nationalId: user.nationalId,
+    })
+  }
   @UseGuards(DrivingInstructorGuard)
   @Query(() => [PracticalDrivingLesson])
   drivingLicenseBookPracticalDrivingLessons(
