@@ -12,6 +12,7 @@ import {
   CourtModule,
   EventModule,
   AwsS3Module,
+  DefendantModule,
 } from '../index'
 import { Notification } from './models/notification.model'
 import { NotificationService } from './notification.service'
@@ -28,6 +29,7 @@ import { InternalNotificationController } from './internalNotification.controlle
     forwardRef(() => CourtModule),
     forwardRef(() => AwsS3Module),
     forwardRef(() => EventModule),
+    forwardRef(() => DefendantModule),
     SequelizeModule.forFeature([Notification]),
   ],
   controllers: [NotificationController, InternalNotificationController],
