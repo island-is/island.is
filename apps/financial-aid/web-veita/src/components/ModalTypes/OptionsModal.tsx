@@ -20,7 +20,7 @@ const OptionsModal = ({ activeState, onClick, isModalVisable }: Props) => {
     <AnimatePresence>
       {isModalVisable && (
         <motion.div
-          layoutId="inputModal"
+          layoutId="inputmodal"
           data-testid="optionsModal"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
