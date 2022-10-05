@@ -379,7 +379,7 @@ export const StandardForm = ({
     if (institutionSlugBelongsToMannaudstorg) {
       fields = (
         <GridColumn span="12/12">
-          <BasicInput name="starfsheiti" />
+          <BasicInput name="starfsheiti" requiredMessage="Starfsheiti vantar" />
         </GridColumn>
       )
     }
