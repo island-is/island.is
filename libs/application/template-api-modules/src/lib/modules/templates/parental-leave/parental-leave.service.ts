@@ -268,7 +268,7 @@ export class ParentalLeaveService {
       if (selfEmployedPdfs?.length) {
         for (let i = 0; i <= selfEmployedPdfs.length - 1; i++) {
           const pdf = await this.getSelfEmployedPdf(application, i)
-  
+
           attachments.push({
             attachmentType: apiConstants.attachments.selfEmployed,
             attachmentBytes: pdf,
@@ -283,7 +283,7 @@ export class ParentalLeaveService {
         if (oldSelfEmployedPdfs?.length) {
           for (let i = 0; i <= oldSelfEmployedPdfs.length - 1; i++) {
             const pdf = await this.getSelfEmployedPdf(application, i)
-    
+
             attachments.push({
               attachmentType: apiConstants.attachments.selfEmployed,
               attachmentBytes: pdf,
@@ -309,7 +309,6 @@ export class ParentalLeaveService {
         })
       }
     }
-    
 
     return attachments
   }
