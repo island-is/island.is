@@ -11,10 +11,12 @@ export interface Service {
 export type Hash = { [name: string]: Hash | string | number }
 export type ValueSource = string | ((e: Context) => string)
 export type ValueType = MissingSettingType | ValueSource
-
+// See https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes for more info
 export type AccessModes =
-  // See https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes for more info
-  'ReadWriteOnce' | 'ReadWriteMany' | 'ReadWriteOncePod' | 'ReadOnlyMany'
+  | 'ReadWriteOnce'
+  | 'ReadWriteMany'
+  | 'ReadWriteOncePod'
+  | 'ReadOnlyMany'
 
 export type PostgresInfo = {
   host?: {
@@ -96,12 +98,16 @@ export interface Ingress {
   extraAnnotations?: { [name in OpsEnv]: { [idx: string]: string | null } }
 }
 
-export type PersistentVolumeClaim = {
+export interface PersistentVolumeClaim {
   name: string
   storage: string
   accessModes: AccessModes
   mountPath: string
-  storageClass: string
+  /**
+   * Sets the storageClass, leave empty if storageClass means little to you(defaults to efs-csi),
+   * Mostly for internal use by the DevOps team.
+   */
+  storageClass?: string
 }
 
 export type Resources = {

@@ -9,7 +9,6 @@ import {
   Hash,
   ExtraValues,
   EnvironmentVariableValue,
-  PersistentVolumeClaim,
   PostgresInfo,
   Feature,
   Features,
@@ -142,8 +141,16 @@ export const serializeService: SerializeMethod = (
   }
   result.hpa.scaling.metric.nginxRequestsIrate =
     serviceDef.replicaCount?.scalingMagicNumber || 2
-  if (serviceDef.volumes?.length) {
-    result.pvcs = serviceDef.volumes
+
+  if (serviceDef.volumes) {
+    serviceDef.volumes.forEach((volume) => {
+      if (typeof volume.storageClass !== 'undefined') {
+        result.pvcs = serviceDef.volumes
+      } else {
+        volume.storageClass = 'efs-csi'
+        result.pvcs = serviceDef.volumes
+      }
+    })
   }
   // extra attributes
   if (serviceDef.extraAttributes) {

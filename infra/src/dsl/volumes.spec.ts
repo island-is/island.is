@@ -24,14 +24,12 @@ describe('Volume Support', () => {
       storage: '1Gi',
       accessModes: 'ReadWriteOnce',
       mountPath: '/storage_one',
-      storageClass: 'efs-csi',
     })
     .volumes({
       name: 'somethingelse',
       storage: '1Gi',
       accessModes: 'ReadWriteOnce',
       mountPath: '/storage_two',
-      storageClass: 'efs-csi',
     })
   const stagingWithVolumes = serializeService(
     sut,
