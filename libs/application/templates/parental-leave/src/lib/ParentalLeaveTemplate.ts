@@ -964,9 +964,13 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       setNavId: assign((context) => {
         const { application } = context
 
-        const { applicationFundId } = getApplicationExternalData(
+        const { applicationFundId, navId } = getApplicationExternalData(
           application.externalData,
         )
+
+        if (navId !== '') {
+          return context
+        }
 
         if (applicationFundId !== '') {
           set(application.externalData, 'navId', applicationFundId)
