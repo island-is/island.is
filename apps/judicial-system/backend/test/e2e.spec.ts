@@ -36,6 +36,7 @@ import { Institution } from '../src/app/modules/institution'
 import { User } from '../src/app/modules/user'
 import { Case } from '../src/app/modules/case'
 import { Notification } from '../src/app/modules/notification'
+import { MessageService } from '@island.is/judicial-system/message'
 
 interface CUser extends TUser {
   institutionId: string
@@ -83,17 +84,21 @@ beforeAll(async () => {
   app = await testServer({
     appModule: AppModule,
     override: (builder) =>
-      builder.overrideProvider(IntlService).useValue({
-        useIntl: () =>
-          Promise.resolve({
-            formatMessage: (descriptor: MessageDescriptor | string) => {
-              if (typeof descriptor === 'string') {
-                return descriptor
-              }
-              return descriptor.defaultMessage
-            },
-          }),
-      }),
+      builder
+        .overrideProvider(IntlService)
+        .useValue({
+          useIntl: () =>
+            Promise.resolve({
+              formatMessage: (descriptor: MessageDescriptor | string) => {
+                if (typeof descriptor === 'string') {
+                  return descriptor
+                }
+                return descriptor.defaultMessage
+              },
+            }),
+        })
+        .overrideProvider(MessageService)
+        .useValue({ postMessageToQueue: () => uuid() }),
   })
 
   sequelize = await app.resolve(getConnectionToken() as Type<Sequelize>)
@@ -760,14 +765,14 @@ describe('Case', () => {
     await Case.create({
       ...getCaseData(true, true, true),
       origin: CaseOrigin.RVG,
-      state: CaseState.SUBMITTED,
+      state: CaseState.RECEIVED,
     })
       .then((value) => {
         dbCase = caseToCCase(value)
 
         const data = {
           modified: value.modified.toISOString(),
-          transition: CaseTransition.RECEIVE,
+          transition: CaseTransition.ACCEPT,
         }
 
         return request(app.getHttpServer())
@@ -785,7 +790,7 @@ describe('Case', () => {
         expectCasesToMatch(apiCase, {
           ...dbCase,
           modified: apiCase.modified,
-          state: CaseState.RECEIVED,
+          state: CaseState.ACCEPTED,
           court,
           prosecutor,
           sharedWithProsecutorsOffice,
