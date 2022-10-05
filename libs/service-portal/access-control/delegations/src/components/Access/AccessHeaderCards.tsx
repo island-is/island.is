@@ -1,19 +1,21 @@
-import { Box } from '@island.is/island-ui/core'
+import { Box, SkeletonLoader } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { formatNationalId } from '@island.is/service-portal/core'
-import { User } from '@island.is/shared/types'
 import { IdentityCard } from '../IdentityCard'
 
 type AccessHeaderCardsProps = {
-  userInfo: User
+  identity: {
+    name: string | undefined
+    nationalId: string | undefined
+  }
   domain: {
-    title: string
-    imgSrc: string
+    name: string | undefined
+    imgSrc: string | undefined
   }
 }
 
 export const AccessHeaderCards = ({
-  userInfo,
+  identity,
   domain,
 }: AccessHeaderCardsProps) => {
   const { formatMessage } = useLocale()
@@ -22,27 +24,35 @@ export const AccessHeaderCards = ({
     <Box
       width="full"
       display="flex"
-      flexDirection={['column', 'row']}
-      rowGap={[3, 0]}
-      columnGap={[0, 3]}
+      flexDirection={['column', 'column', 'column', 'row']}
+      rowGap={[3, 3, 3, 0]}
+      columnGap={[0, 0, 0, 3]}
     >
-      <IdentityCard
-        label={formatMessage({
-          id: 'sp.access-control-delegations:signed-in-user',
-          defaultMessage: 'Innskráður notandi',
-        })}
-        title={userInfo.profile.name}
-        description={formatNationalId(userInfo.profile.nationalId)}
-        color="purple"
-      />
-      <IdentityCard
-        label={formatMessage({
-          id: 'sp.access-control-delegations:domain',
-          defaultMessage: 'Kerfi',
-        })}
-        title={domain.title}
-        imgSrc={domain.imgSrc}
-      />
+      {identity?.name && identity?.nationalId ? (
+        <IdentityCard
+          label={formatMessage({
+            id: 'sp.access-control-delegations:signed-in-user',
+            defaultMessage: 'Aðgangshafi',
+          })}
+          title={identity.name}
+          description={formatNationalId(identity.nationalId)}
+          color="purple"
+        />
+      ) : (
+        <SkeletonLoader width="100%" height={148} />
+      )}
+      {domain?.name && domain?.imgSrc ? (
+        <IdentityCard
+          label={formatMessage({
+            id: 'sp.access-control-delegations:domain',
+            defaultMessage: 'Kerfi',
+          })}
+          title={domain.name}
+          imgSrc={domain.imgSrc}
+        />
+      ) : (
+        <SkeletonLoader width="100%" height={148} />
+      )}
     </Box>
   )
 }

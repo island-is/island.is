@@ -45,9 +45,10 @@ import * as styles from './AccessForm.css'
 
 type AccessFormProps = {
   delegation: AuthCustomDelegation
+  validityPeriod: Date | null
 }
 
-export const AccessForm = ({ delegation }: AccessFormProps) => {
+export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
   useNamespaces(['sp.settings-access-control', 'sp.access-control-delegations'])
 
   const { formatMessage, lang } = useLocale()
@@ -86,26 +87,28 @@ export const AccessForm = ({ delegation }: AccessFormProps) => {
   })
 
   const { authApiScopes } = apiScopeData || {}
-
   const loading = apiScopeLoading
 
   const methods = useForm<AccessFormState>()
   const { handleSubmit, getValues } = methods
 
   const onSubmit = handleSubmit(async (model) => {
-    formError && setFormError(false)
+    if (formError) {
+      setFormError(false)
+    }
 
     const scopes = model[SCOPE_PREFIX].filter(
       (scope) => scope.name?.length > 0,
     ).map((scope) => ({
-      validTo: scope.validTo as Date,
+      // If validityPeriod exists then all scopes get the same validity period
+      validTo: validityPeriod ?? (scope.validTo as Date),
       type: authApiScopes?.find((apiScope) => apiScope.name === scope.name[0])
         ?.type as AuthDelegationScopeType,
       name: scope.name[0],
       displayName: scope.displayName,
     }))
 
-    const err = getValues()?.[SCOPE_PREFIX]?.find(
+    const err = getValues()?.[SCOPE_PREFIX]?.every(
       (x) => x.name.length > 0 && !x.validTo,
     )
 
@@ -123,6 +126,7 @@ export const AccessForm = ({ delegation }: AccessFormProps) => {
         },
       },
     })
+
     if (data && !errors && !err) {
       history.push(ServicePortalPath.AccessControlDelegations)
       servicePortalSaveAccessControl(
@@ -163,7 +167,7 @@ export const AccessForm = ({ delegation }: AccessFormProps) => {
       return {
         displayName: authApiScopes?.find((x) => x.name === item.name[0])
           ?.displayName,
-        validTo: item.validTo,
+        validTo: validityPeriod ?? item.validTo,
       }
   })
 
@@ -250,7 +254,6 @@ export const AccessForm = ({ delegation }: AccessFormProps) => {
                   id: 'sp.settings-access-control:access-save-modal-content',
                   defaultMessage: 'Ertu viss um að þú viljir veita umboðið?',
                 })}
-                //
                 text={`${delegation?.to?.name} ${formatMessage({
                   id: 'sp.settings-access-control:will-grant-access-following',
                   defaultMessage: 'mun fá umboð fyrir eftirfarandi:',
@@ -326,9 +329,10 @@ export const AccessForm = ({ delegation }: AccessFormProps) => {
 
                   return (
                     <AccessItem
+                      key={index}
                       apiScopes={accessItems}
                       authDelegation={delegation}
-                      key={index}
+                      validityPeriod={validityPeriod}
                     />
                   )
                 })}

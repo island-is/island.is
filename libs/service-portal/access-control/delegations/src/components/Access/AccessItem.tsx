@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useCallback } from 'react'
 import { useFormContext } from 'react-hook-form'
 import cs from 'classnames'
 
@@ -8,6 +8,7 @@ import {
   GridRow,
   GridColumn,
   Divider,
+  useBreakpoint,
 } from '@island.is/island-ui/core'
 import { AuthCustomDelegation } from '@island.is/api/schema'
 import {
@@ -19,25 +20,27 @@ import * as styles from './AccessItem.css'
 import add from 'date-fns/add'
 import format from 'date-fns/format'
 import { Scope } from '../../utils/types'
-import { useWindowSize } from 'react-use'
-import { theme } from '@island.is/island-ui/theme'
 
 interface PropTypes {
   apiScopes: Scope[]
   authDelegation: AuthCustomDelegation
+  validityPeriod: Date | null
 }
 
-export const AccessItem = ({ apiScopes, authDelegation }: PropTypes) => {
+export const AccessItem = ({
+  apiScopes,
+  authDelegation,
+  validityPeriod,
+}: PropTypes) => {
   useNamespaces('sp.settings-access-control')
   const { lang, formatMessage } = useLocale()
   const { setValue, getValues } = useFormContext()
-  const { width } = useWindowSize()
-  const isMobile = width < theme.breakpoints.md
+  const { md } = useBreakpoint()
 
   const isApiScopeGroup = (item: Scope): boolean =>
     item.__typename === 'AuthApiScopeGroup'
 
-  const toggleCheckboxGroup = () => {
+  const toggleCheckboxGroup = useCallback(() => {
     const values = apiScopes
       .filter((apiScope) => !isApiScopeGroup(apiScope))
       .map((apiScope) => getValues(`${apiScope.model}.name`))
@@ -45,22 +48,18 @@ export const AccessItem = ({ apiScopes, authDelegation }: PropTypes) => {
       `${apiScopes[0].model}.name`,
       values.every((value) => value?.length > 0) ? [apiScopes[0].name] : [],
     )
-  }
+  }, [apiScopes, getValues, setValue])
 
-  const toggleDatePickerGroup = () => {
+  const toggleDatePickerGroup = useCallback(() => {
     const values = apiScopes
       .filter((apiScope) => !isApiScopeGroup(apiScope))
       .map((apiScope) => getValues(`${apiScope.model}.validTo`))
+
     setValue(
       `${apiScopes[0].model}.validTo`,
       values.every((value) => value === values[0]) ? values[0] : undefined,
     )
-  }
-
-  useEffect(() => {
-    toggleCheckboxGroup()
-    toggleDatePickerGroup()
-  }, [toggleCheckboxGroup, toggleDatePickerGroup])
+  }, [apiScopes, getValues, setValue])
 
   const onSelect = (item: Scope, value: string[]) => {
     if (isApiScopeGroup(item)) {
@@ -162,44 +161,48 @@ export const AccessItem = ({ apiScopes, authDelegation }: PropTypes) => {
                   </Text>
                 </Box>
               </GridColumn>
-              <GridColumn span={['12/12', '8/12', '5/12', '4/12']}>
-                <div className={cs(isSelected ? undefined : styles.hidden)}>
-                  <Box
-                    paddingBottom={2}
-                    paddingTop={isFirstItem ? 3 : 2}
-                    paddingLeft={isFirstItem ? 0 : [2, 2, 0]}
-                  >
-                    <DatePickerController
-                      id={`${item.model}.validTo`}
-                      size="sm"
-                      label={
-                        isMobile
-                          ? formatMessage({
-                              id:
-                                'sp.settings-access-control:access-item-datepicker-label-mobile',
-                              defaultMessage: 'Í gildi til',
-                            })
-                          : formatMessage({
-                              id:
-                                'sp.settings-access-control:access-item-datepicker-label',
-                              defaultMessage: 'Dagsetning til',
-                            })
-                      }
-                      backgroundColor="blue"
-                      minDate={new Date()}
-                      defaultValue={
-                        existingScope?.name
-                          ? existingScope.validTo
-                          : format(defaultDate, 'yyyy-MM-dd')
-                      }
-                      locale={lang}
-                      placeholder={undefined}
-                      onChange={(value) => onChange(item, value)}
-                      required
-                    />
-                  </Box>
-                </div>
-              </GridColumn>
+              {!validityPeriod && (
+                <GridColumn span={['12/12', '8/12', '5/12', '4/12']}>
+                  <div className={cs(isSelected ? undefined : styles.hidden)}>
+                    <Box
+                      paddingBottom={2}
+                      paddingTop={isFirstItem ? 3 : 2}
+                      paddingLeft={isFirstItem ? 0 : [2, 2, 0]}
+                    >
+                      <DatePickerController
+                        id={`${item.model}.validTo`}
+                        size="sm"
+                        label={
+                          !md
+                            ? formatMessage({
+                                id:
+                                  'sp.settings-access-control:access-item-datepicker-label-mobile',
+                                defaultMessage: 'Í gildi til',
+                              })
+                            : formatMessage({
+                                id:
+                                  'sp.settings-access-control:access-item-datepicker-label',
+                                defaultMessage: 'Dagsetning til',
+                              })
+                        }
+                        backgroundColor="blue"
+                        minDate={new Date()}
+                        defaultValue={
+                          validityPeriod
+                            ? validityPeriod
+                            : existingScope?.name
+                            ? existingScope?.validTo
+                            : format(defaultDate, 'yyyy-MM-dd')
+                        }
+                        locale={lang}
+                        placeholder={undefined}
+                        onChange={(value) => onChange(item, value)}
+                        required
+                      />
+                    </Box>
+                  </div>
+                </GridColumn>
+              )}
             </GridRow>
             <Box paddingY={1} paddingLeft={isFirstItem ? 0 : [3, 3, 0]}>
               <Divider />
