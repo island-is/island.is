@@ -689,7 +689,7 @@ export interface IFeaturedArticlesFields {
   link?: ILink | undefined
 
   /** Automatically Fetch Articles */
-  automaticallyFetchArticles: boolean
+  automaticallyFetchArticles?: boolean | undefined
 
   /** Sort By */
   sortBy?: 'popularity' | 'importance' | undefined
@@ -2120,6 +2120,8 @@ export interface IOrganizationPageFields {
     | 'hsn'
     | 'fiskistofa'
     | 'landlaeknir'
+    | 'rikislogmadur'
+    | 'landskjorstjorn'
 
   /** Slices */
   slices?:
@@ -2361,6 +2363,33 @@ export interface IPageHeader extends Entry<IPageHeaderFields> {
     contentType: {
       sys: {
         id: 'pageHeader'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IPowerBiSliceFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Config */
+  config: Record<string, any>
+}
+
+/** A Slice that embeds a Power BI report */
+
+export interface IPowerBiSlice extends Entry<IPowerBiSliceFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'powerBiSlice'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -2701,11 +2730,18 @@ export interface ISliceConnectedComponentFields {
     | 'Skilavottord/CompanyList'
     | 'Skilavottord/CompanyListConnected'
     | 'Undirskriftalistar/PetitionLists'
+    | 'ElectronicRegistrations/MonthlyStatistics'
     | 'LatestNewsCard'
+    | 'Fiskistofa/ShipSearch'
+    | 'Fiskistofa/ShipSearchSidebarInput'
+    | 'Fasteignasalar/RealEstateAgents'
     | undefined
 
-  /** JSON */
+  /** Localized JSON */
   json?: Record<string, any> | undefined
+
+  /** Config */
+  config?: Record<string, any> | undefined
 }
 
 export interface ISliceConnectedComponent
@@ -3794,6 +3830,7 @@ export type CONTENT_TYPE =
   | 'organizationTag'
   | 'overviewLinks'
   | 'pageHeader'
+  | 'powerBiSlice'
   | 'processEntry'
   | 'projectPage'
   | 'projectSubpage'

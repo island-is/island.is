@@ -22,8 +22,12 @@ import {
   mapDataUploadResponse,
   mapPaginatedOperatingLicenses,
   mapEstateRegistrant,
+  mapRealEstateAgent,
 } from './syslumennClient.utils'
-import { SYSLUMENN_AUCTION } from './__mock-data__/responses'
+import {
+  SYSLUMENN_AUCTION,
+  REAL_ESTATE_AGENTS,
+} from './__mock-data__/responses'
 import { PersonType } from './syslumennClient.types'
 import { SyslumennClientModule } from '../lib/syslumennClient.module'
 
@@ -104,6 +108,15 @@ describe('SyslumennService', () => {
       const response = await service.getSyslumennAuctions()
       expect(response).toStrictEqual(
         (SYSLUMENN_AUCTION ?? []).map(mapSyslumennAuction),
+      )
+    })
+  })
+
+  describe('getRealEstateAgents', () => {
+    it('should return real estate agents', async () => {
+      const response = await service.getRealEstateAgents()
+      expect(response).toStrictEqual(
+        (REAL_ESTATE_AGENTS ?? []).map(mapRealEstateAgent),
       )
     })
   })

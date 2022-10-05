@@ -12,6 +12,7 @@ import {
   SvarSkeytiFromJSON,
   TegundAndlags,
   AdiliDanarbus,
+  Fasteignasalar,
 } from '../../gen/fetch'
 import { uuid } from 'uuidv4'
 import {
@@ -31,6 +32,7 @@ import {
   EstateMember,
   EstateAsset,
   EstateRegistrant,
+  RealEstateAgent,
 } from './syslumennClient.types'
 const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 
@@ -93,6 +95,11 @@ export const mapSyslumennAuction = (auction: Uppbod): SyslumennAuction => ({
   petitioners: auction.gerdarbeidendur ?? '',
   respondent: auction.gerdartholar ?? '',
   auctionTakesPlaceAt: auction.uppbodStadur ?? '',
+})
+
+export const mapRealEstateAgent = (agent: Fasteignasalar): RealEstateAgent => ({
+  name: agent.nafn?.trim() ?? '',
+  location: agent.starfsstod?.trim() ?? '',
 })
 
 export const mapOperatingLicense = (

@@ -13,6 +13,7 @@ import {
   AssetName,
   EstateRegistrant,
   EstateRelations,
+  RealEstateAgent,
 } from './syslumennClient.types'
 import {
   mapSyslumennAuction,
@@ -24,6 +25,7 @@ import {
   constructUploadDataObject,
   mapAssetName,
   mapEstateRegistrant,
+  mapRealEstateAgent,
 } from './syslumennClient.utils'
 import { Injectable, Inject } from '@nestjs/common'
 import {
@@ -33,6 +35,7 @@ import {
   VirkLeyfiGetRequest,
   TegundAndlags,
   VedbandayfirlitReguverkiSvarSkeyti,
+  Fasteignasalar,
 } from '../../gen/fetch'
 import { SyslumennClientConfig } from './syslumennClient.config'
 import type { ConfigType } from '@island.is/nest/config'
@@ -106,6 +109,14 @@ export class SyslumennService {
     })
 
     return (syslumennAuctions ?? []).map(mapSyslumennAuction)
+  }
+
+  async getRealEstateAgents(): Promise<RealEstateAgent[]> {
+    const { id, api } = await this.createApi()
+    const agents = await api.fasteignasalarGet({
+      audkenni: id,
+    })
+    return (agents ?? []).map(mapRealEstateAgent)
   }
 
   async getOperatingLicenses(
