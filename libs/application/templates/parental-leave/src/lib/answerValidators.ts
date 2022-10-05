@@ -92,10 +92,22 @@ export const answerValidators: Record<string, AnswerValidator> = {
       'employer.isSelfEmployed',
     )
 
+    const selfEmployedFiles = getValueViaPath(
+      application.answers,
+      'employer.selfEmployed.file',
+    ) as unknown[]
+
+    const selfFileUploadEmployedFiles = getValueViaPath(
+      application.answers,
+      'fileUpload.selfEmployedFile',
+    ) as unknown[]
+
     if (
       isSelfEmployed === YES &&
       isEmpty((obj as { selfEmployedFile: unknown[] }).selfEmployedFile)
     ) {
+      if (selfFileUploadEmployedFiles?.length || selfEmployedFiles?.length) return undefined
+
       return buildError(errorMessages.requiredAttachment, 'selfEmployedFile')
     }
 
