@@ -1,10 +1,10 @@
-import type { ApiScope } from '@island.is/auth-api-lib'
 import type {
+  ApiScope,
   PersonalRepresentative,
   PersonalRepresentativeRight,
   PersonalRepresentativeRightType,
   PersonalRepresentativeScopePermission,
-} from '@island.is/auth-api-lib/personal-representative'
+} from '@island.is/auth-api-lib'
 import faker from 'faker'
 import { uuid } from 'uuidv4'
 import { getFakeNationalId } from './genericStubs'

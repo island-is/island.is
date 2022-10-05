@@ -3,18 +3,19 @@
 import { createTestAccount } from 'nodemailer'
 // used to check the email inbox
 import { connect } from 'imap-simple'
-// used to parse emails from the inbox
-// const simpleParser = require('mailparser').simpleParser
 import { simpleParser } from 'mailparser'
 import axios from 'axios'
-import { cypressError } from './utils'
+import { existsSync, readFileSync, writeFileSync } from 'fs'
 import {
   GetIdentityVerificationAttributesCommand,
   SESClient,
   VerifyEmailAddressCommand,
 } from '@aws-sdk/client-ses'
+import { join } from 'path'
+import { sessionsPath } from './session'
+
 /**
- * Register the email address with AWS SES so we can send emails to it
+ * Register the email address with AWS SES, so we can send emails to it
  * @param emailAccount
  */
 async function registerEmailAddressWithSES(emailAccount: {
@@ -55,16 +56,32 @@ async function registerEmailAddressWithSES(emailAccount: {
         'VerificationStatus'
       ] !== 'Success'
     ) {
-      cypressError(`Email identity still not validated in AWS SES`)
+      throw new Error('Email identity still not validated in AWS SES')
     }
   } else {
-    cypressError('Verification message not found.')
+    throw new Error('Verification message not found.')
   }
 }
 
-const makeEmailAccount = async () => {
-  // Generate a new Ethereal email inbox account
-  const testAccount = await createTestAccount()
+export type EmailAccount = {
+  getLastEmail(
+    retries: number,
+  ): Promise<{
+    subject: string | undefined
+    text: string | undefined
+    html: string | false
+  } | null>
+  email: string
+}
+const makeEmailAccount = async (name: string): Promise<EmailAccount> => {
+  const storagePath = join(sessionsPath, `${name}-email.json`)
+  const emailAccountExists = existsSync(storagePath)
+  const testAccount = emailAccountExists
+    ? (JSON.parse(readFileSync(storagePath, { encoding: 'utf-8' })) as {
+        user: string
+        pass: string
+      })
+    : await createTestAccount()
 
   const emailConfig = {
     imap: {
@@ -78,8 +95,7 @@ const makeEmailAccount = async () => {
   }
   console.log('created new email account %s', testAccount.user)
   console.log('for debugging, the password is %s', testAccount.pass)
-
-  const userEmail = {
+  const userEmail: EmailAccount = {
     email: testAccount.user,
 
     /**
@@ -97,25 +113,22 @@ const makeEmailAccount = async () => {
       console.log('getting the last email')
       console.log(emailConfig)
 
+      console.log('connecting to mail server...')
+      const connection = await connect(emailConfig)
+      console.log('connected')
       try {
-        console.log(`connecting to mail server...`)
-        const connection = await connect(emailConfig)
-        console.log(`connected`)
-
         // grab up to 50 emails from the inbox
-        console.log(`Opening inbox...`)
+        console.log('Opening inbox...')
         await connection.openBox('INBOX')
-        console.log(`Opened inbox.`)
+        console.log('Opened inbox.')
         const searchCriteria = ['UNSEEN']
         const fetchOptions = {
           bodies: [''],
           markSeen: true,
         }
-        console.log(`Starting search for new messages...`)
+        console.log('Starting search for new messages...')
         const messages = await connection.search(searchCriteria, fetchOptions)
-        console.log(`Search finished`)
-        // and close the connection to avoid it hanging
-        connection.end()
+        console.log('Search finished')
 
         if (!messages.length) {
           console.log('cannot find any emails')
@@ -141,12 +154,21 @@ const makeEmailAccount = async () => {
             html: mail.html,
           }
         }
-      } catch (e) {
-        cypressError(e)
-        return null
+      } finally {
+        // and close the connection to avoid it hanging
+        connection.end()
       }
     },
   }
+
+  if (!emailAccountExists) {
+    await registerEmailAddressWithSES(userEmail)
+  }
+  writeFileSync(
+    storagePath,
+    JSON.stringify({ user: testAccount.user, pass: testAccount.pass }),
+    { encoding: 'utf-8' },
+  )
 
   return userEmail
 }

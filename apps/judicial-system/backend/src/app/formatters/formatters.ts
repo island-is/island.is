@@ -649,7 +649,7 @@ export function formatCourtUploadRulingTitle(
   courtCaseNumber: string | undefined,
   isModifyingRuling: boolean,
 ) {
-  return formatMessage(courtUpload.rulingV2, {
+  return formatMessage(courtUpload.ruling, {
     courtCaseNumber: courtCaseNumber ?? '',
     isModifyingRuling,
   })

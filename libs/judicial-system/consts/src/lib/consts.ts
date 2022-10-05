@@ -54,6 +54,10 @@ export const InvestigationCaseTypes = [
         value: CaseType.RESTRAINING_ORDER,
       },
       {
+        label: 'Nálgunarbann og brottvísun af heimili',
+        value: CaseType.RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME,
+      },
+      {
         label: 'Brottvísun af heimili',
         value: CaseType.EXPULSION_FROM_HOME,
       },

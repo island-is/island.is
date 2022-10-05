@@ -15,7 +15,6 @@ export class FamilyInformationProvider extends BasicDataProvider {
         nationalRegistryFamily {
           nationalId
           fullName
-          familyRelation
         }
       }
     `

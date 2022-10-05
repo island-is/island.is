@@ -6,9 +6,12 @@ import { uuid } from 'uuidv4'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { EmailService } from '@island.is/email-service'
 import { IntlService } from '@island.is/cms-translations'
+import { createTestIntl } from '@island.is/cms-translations/test'
 import { SmsService } from '@island.is/nova-sms'
 import { ConfigModule, ConfigType } from '@island.is/nest/config'
+import { SharedAuthModule } from '@island.is/judicial-system/auth'
 
+import { environment } from '../../../../environments'
 import { CourtService } from '../../court'
 import { AwsS3Service } from '../../aws-s3'
 import { EventService } from '../../event'
@@ -17,9 +20,7 @@ import { notificationModuleConfig } from '../notification.config'
 import { Notification } from '../models/notification.model'
 import { NotificationService } from '../notification.service'
 import { NotificationController } from '../notification.controller'
-import { SharedAuthModule } from '@island.is/judicial-system/auth'
-import { environment } from '../../../../environments'
-import { createTestIntl } from '@island.is/cms-translations/test'
+import { DefendantService } from '../../defendant'
 
 const formatMessage = createTestIntl({ onError: jest.fn(), locale: 'is-IS' })
   .formatMessage
@@ -70,6 +71,12 @@ export const createTestingNotificationModule = async () => {
         },
       },
       NotificationService,
+      {
+        provide: DefendantService,
+        useValue: {
+          isDefendantInActiveCustody: jest.fn(),
+        },
+      },
     ],
   })
     .useMocker((token) => {
@@ -86,6 +93,9 @@ export const createTestingNotificationModule = async () => {
     .compile()
 
   return {
+    defendantService: notificationModule.get<DefendantService>(
+      DefendantService,
+    ),
     emailService: notificationModule.get<EmailService>(EmailService),
     notificationController: notificationModule.get<NotificationController>(
       NotificationController,

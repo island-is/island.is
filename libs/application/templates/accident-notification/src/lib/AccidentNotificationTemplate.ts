@@ -69,6 +69,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
               ],
               write: 'all',
+              delete: true,
             },
           ],
         },
@@ -145,7 +146,6 @@ const AccidentNotificationTemplate: ApplicationTemplate<
             apiModuleAction: ApiActions.addAttachment,
             shouldPersistToExternalData: true,
           },
-
           roles: [
             {
               id: Roles.APPLICANT,
@@ -188,10 +188,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
         meta: {
           name: States.IN_FINAL_REVIEW,
           progress: 1,
-          lifecycle: {
-            shouldBeListed: true,
-            shouldBePruned: false,
-          },
+          lifecycle: DefaultStateLifeCycle,
           onEntry: {
             apiModuleAction: ApiActions.reviewApplication,
           },
