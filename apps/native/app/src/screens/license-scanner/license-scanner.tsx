@@ -120,10 +120,10 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
         return setInvalid(true)
       }
 
-      if (data.includes('expires')) {
+      if (data.includes('expires') || data.includes('date')) {
         try {
-          const { expires } = JSON.parse(data)
-          const startDate = new Date(expires)
+          const { expires, date } = JSON.parse(data)
+          const startDate = new Date(date ?? expires)
           const seconds = (Date.now() - startDate.getTime()) / 1000
           isExpired = seconds > 0
         } catch (error) {

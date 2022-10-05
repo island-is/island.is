@@ -19,6 +19,8 @@ enum ScanResult {
   UNKNOWN,
 }
 
+const FirearmTemplateIds = ['dfb706c1-3a78-4518-bf25-cebbf0a93132','61f74977-0e81-4786-94df-6b8470013f09'];
+
 export const LicenseScanDetailScreen: NavigationFunctionComponent<
   BarCodeEvent & { isExpired: boolean }
 > = ({ data, type, isExpired }) => {
@@ -40,7 +42,7 @@ export const LicenseScanDetailScreen: NavigationFunctionComponent<
         if (parsed?.TGLJZW) {
           setScanResult(ScanResult.DRIVER_LICENSE)
         }
-        if (parsed?.passTemplateId === 'dfb706c1-3a78-4518-bf25-cebbf0a93132') {
+        if (FirearmTemplateIds.includes(parsed?.passTemplateId)) {
           setScanResult(ScanResult.FIREARM_LICENSE)
         }
       }
