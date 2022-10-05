@@ -3,13 +3,18 @@ import { Op } from 'sequelize'
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
-import { CaseState, UserRole } from '@island.is/judicial-system/types'
+import {
+  CaseFileState,
+  CaseState,
+  UserRole,
+} from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
 import { Defendant } from '../defendant'
 import { Institution } from '../institution'
 import { User } from '../user'
 import { Case } from './models/case.model'
+import { CaseFile } from '../file'
 
 const attributes: (keyof Case)[] = [
   'id',
@@ -83,6 +88,15 @@ export class LimitedAccessCaseService {
         },
         { model: Case, as: 'parentCase', attributes },
         { model: Case, as: 'childCase', attributes },
+        {
+          model: CaseFile,
+          as: 'caseFiles',
+          required: false,
+          where: {
+            state: { [Op.not]: CaseFileState.DELETED },
+            category: { [Op.not]: null },
+          },
+        },
       ],
       order: [[{ model: Defendant, as: 'defendants' }, 'created', 'ASC']],
       where: {

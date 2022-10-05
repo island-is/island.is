@@ -6,7 +6,9 @@ import {
   CaseDecision,
   CaseState,
   CaseType,
+  indictmentCases,
   InstitutionType,
+  investigationCases,
   UserRole,
 } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
@@ -51,7 +53,7 @@ describe('isCaseBlockedFromUser', () => {
     'should block $state case from $role at $institutionType',
     ({ state, role, institutionType }) => {
       // Arrange
-      const theCase = { state } as Case
+      const theCase = { state, type: CaseType.CUSTODY } as Case
       const user = {
         role,
         institution: { type: institutionType },
@@ -81,6 +83,7 @@ describe('isCaseBlockedFromUser', () => {
       // Arrange
       const theCase = {
         state,
+        type: CaseType.CUSTODY,
         creatingProsecutor: { institutionId: 'Prosecutors Office' },
       } as Case
       const user = {
@@ -104,6 +107,7 @@ describe('isCaseBlockedFromUser', () => {
       // Arrange
       const theCase = {
         state,
+        type: CaseType.CUSTODY,
         creatingProsecutor: { institutionId: 'Prosecutors Office' },
       } as Case
       const user = {
@@ -127,6 +131,7 @@ describe('isCaseBlockedFromUser', () => {
       // Arrange
       const theCase = {
         state,
+        type: CaseType.CUSTODY,
         creatingProsecutor: { institutionId: 'Prosecutors Office' },
         sharedWithProsecutorsOfficeId: 'Another Prosecutors Office',
       } as Case
@@ -151,6 +156,7 @@ describe('isCaseBlockedFromUser', () => {
       // Arrange
       const theCase = {
         state,
+        type: CaseType.CUSTODY,
         isHeightenedSecurityLevel: true,
         creatingProsecutor: {
           id: 'Creating Prosecutor',
@@ -180,6 +186,7 @@ describe('isCaseBlockedFromUser', () => {
       // Arrange
       const theCase = {
         state,
+        type: CaseType.CUSTODY,
         isHeightenedSecurityLevel: true,
         creatingProsecutor: {
           id: 'Creating Prosecutor',
@@ -209,6 +216,7 @@ describe('isCaseBlockedFromUser', () => {
       // Arrange
       const theCase = {
         state,
+        type: CaseType.CUSTODY,
         isHeightenedSecurityLevel: true,
         creatingProsecutor: {
           id: 'Creating Prosecutor',
@@ -254,6 +262,7 @@ describe('isCaseBlockedFromUser', () => {
       // Arrange
       const theCase = {
         state,
+        type: CaseType.CUSTODY,
         courtId: 'Court',
       } as Case
       const user = {
@@ -274,6 +283,7 @@ describe('isCaseBlockedFromUser', () => {
       // Arrange
       const theCase = {
         state,
+        type: CaseType.CUSTODY,
         courtId: 'Court',
       } as Case
       const user = {
@@ -294,6 +304,7 @@ describe('isCaseBlockedFromUser', () => {
       // Arrange
       const theCase = {
         state,
+        type: CaseType.CUSTODY,
         isHeightenedSecurityLevel: true,
         courtId: 'Court',
         creatingProsecutor: {
@@ -333,6 +344,7 @@ describe('isCaseBlockedFromUser', () => {
         // Arrange
         const theCase = {
           state,
+          type: CaseType.CUSTODY,
           courtId: 'Court',
           accusedAppealDecision: CaseAppealDecision.APPEAL,
         } as Case
@@ -354,6 +366,7 @@ describe('isCaseBlockedFromUser', () => {
         // Arrange
         const theCase = {
           state,
+          type: CaseType.CUSTODY,
           courtId: 'Court',
           prosecutorAppealDecision: CaseAppealDecision.APPEAL,
         } as Case
@@ -375,6 +388,7 @@ describe('isCaseBlockedFromUser', () => {
         // Arrange
         const theCase = {
           state,
+          type: CaseType.CUSTODY,
           courtId: 'Court',
           accusedAppealDecision: CaseAppealDecision.POSTPONE,
           accusedPostponedAppealDate: randomDate(),
@@ -397,6 +411,7 @@ describe('isCaseBlockedFromUser', () => {
         // Arrange
         const theCase = {
           state,
+          type: CaseType.CUSTODY,
           courtId: 'Court',
           prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
           prosecutorPostponedAppealDate: randomDate(),
@@ -432,6 +447,7 @@ describe('isCaseBlockedFromUser', () => {
           // Arrange
           const theCase = {
             state,
+            type: CaseType.CUSTODY,
             courtId: 'Court',
             accusedAppealDecision,
             prosecutorAppealDecision,
@@ -453,51 +469,37 @@ describe('isCaseBlockedFromUser', () => {
     },
   )
 
-  each`
-    type
-    ${CaseType.SEARCH_WARRANT}
-    ${CaseType.BANKING_SECRECY_WAIVER}
-    ${CaseType.PHONE_TAPPING}
-    ${CaseType.TELECOMMUNICATIONS}
-    ${CaseType.TRACKING_EQUIPMENT}
-    ${CaseType.PSYCHIATRIC_EXAMINATION}
-    ${CaseType.SOUND_RECORDING_EQUIPMENT}
-    ${CaseType.AUTOPSY}
-    ${CaseType.BODY_SEARCH}
-    ${CaseType.INTERNET_USAGE}
-    ${CaseType.RESTRAINING_ORDER}
-    ${CaseType.EXPULSION_FROM_HOME}
-    ${CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION}
-    ${CaseType.VIDEO_RECORDING_EQUIPMENT}
-    ${CaseType.OTHER}
-  `.describe('given an accepted $type case', ({ type }) => {
-    each`
+  each([...indictmentCases, ...investigationCases]).describe(
+    'given an accepted %s case',
+    (type) => {
+      each`
       institutionType
       ${InstitutionType.PRISON}
       ${InstitutionType.PRISON_ADMIN}
     `.it(
-      'it should block the case from staff at $institution',
-      ({ institutionType }) => {
-        // Arrange
-        const theCase = {
-          type,
-          state: CaseState.ACCEPTED,
-        } as Case
-        const user = {
-          role: UserRole.STAFF,
-          institution: { type: institutionType },
-        } as User
+        'it should block the case from staff at $institutionType',
+        ({ institutionType }) => {
+          // Arrange
+          const theCase = {
+            type,
+            state: CaseState.ACCEPTED,
+          } as Case
+          const user = {
+            role: UserRole.STAFF,
+            institution: { type: institutionType },
+          } as User
 
-        // Act
-        const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-        const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+          // Act
+          const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
+          const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
 
-        // Assert
-        expect(isWriteBlocked).toBe(true)
-        expect(isReadBlocked).toBe(true)
-      },
-    )
-  })
+          // Assert
+          expect(isWriteBlocked).toBe(true)
+          expect(isReadBlocked).toBe(true)
+        },
+      )
+    },
+  )
 
   it('should block an accepted travel ban case from prison staff', () => {
     // Arrange
@@ -683,6 +685,23 @@ describe('isCaseBlockedFromUser', () => {
     expect(isWriteBlocked).toBe(false)
     expect(isReadBlocked).toBe(false)
   })
+
+  it.each(Object.values(CaseType))(
+    'should block admin from reading or writing %s case',
+    (type) => {
+      // Arrange
+      const theCase = { type, state: CaseState.ACCEPTED } as Case
+      const user = { role: UserRole.ADMIN } as User
+
+      // Act
+      const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
+      const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+
+      // Assert
+      expect(isWriteBlocked).toBe(true)
+      expect(isReadBlocked).toBe(true)
+    },
+  )
 })
 
 describe('getCasesQueryFilter', () => {
@@ -743,7 +762,7 @@ describe('getCasesQueryFilter', () => {
       expect(res).toStrictEqual({
         [Op.and]: [
           { isArchived: false },
-          { [Op.not]: { state: [CaseState.DELETED, CaseState.NEW] } },
+          { [Op.not]: { state: [CaseState.NEW, CaseState.DELETED] } },
           {
             [Op.or]: [
               { court_id: { [Op.is]: null } },
@@ -771,11 +790,11 @@ describe('getCasesQueryFilter', () => {
           {
             [Op.not]: {
               state: [
-                CaseState.DELETED,
                 CaseState.NEW,
                 CaseState.DRAFT,
                 CaseState.SUBMITTED,
                 CaseState.RECEIVED,
+                CaseState.DELETED,
               ],
             },
           },

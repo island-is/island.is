@@ -21,9 +21,19 @@ export enum Features {
   passportApplication = 'isPassportApplicationEnabled',
   financialStatementInao = 'financialStatementInao',
   operatingLicense = 'isApplicationOperatingLicenseEnabled',
+  marriageConditions = 'isMarriageConditionsApplicationEnabled',
+  drivingLicenseDuplicate = 'isDrivingLicenseDuplicateEnabled',
+
+  // Application delegation flags
+  noDebtCertificateCompanyDelegations = 'applicationNoDebtCertificateCompanyDelegations',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
+
+  // Service portal modules
+  servicePortalDocumentProviderModule = 'isServicePortalDocumentProviderModuleEnabled',
+  servicePortalIcelandicNamesRegistryModule = 'isServicePortalIcelandicNamesRegistryModuleEnabled',
+  servicePortalPetitionsModule = 'isServicePortalPetitionsModuleEnabled',
 }
 
 export enum ServerSideFeature {

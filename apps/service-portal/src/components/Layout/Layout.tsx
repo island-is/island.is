@@ -57,7 +57,7 @@ const Layout: FC = ({ children }) => {
         <Box as="main" component="main">
           <GridContainer className={styles.layoutContainer}>
             <GridRow>
-              <GridColumn span={'12/12'} className={styles.layoutGrid}>
+              <GridColumn span={'11/12'} className={styles.layoutGrid}>
                 <Hidden print>
                   <ContentBreadcrumbs />
                 </Hidden>

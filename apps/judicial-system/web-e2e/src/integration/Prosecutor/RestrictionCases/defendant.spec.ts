@@ -8,10 +8,12 @@ describe(CREATE_RESTRICTION_CASE_ROUTE, () => {
 
   it('should require a valid data', () => {
     cy.get('#policeCaseNumbers').type('0').type('{enter}')
-    cy.getByTestid('policeCaseNumbers-list').children().should('have.length', 0)
-    cy.get('#policeCaseNumbers').blur()
+    cy.getByTestid('noPoliceCaseNumbersAssignedMessage').should('exist')
+    cy.getByTestid('policeCaseNumbers-list').should('not.exist')
+    cy.get('#policeCaseNumbers').clear().blur()
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
     cy.get('#policeCaseNumbers').type('007202201').type('{enter}')
+    cy.getByTestid('noPoliceCaseNumbersAssignedMessage').should('not.exist')
     cy.getByTestid('policeCaseNumbers-list').children().should('have.length', 1)
     cy.getByTestid('inputErrorMessage').should('not.exist')
 

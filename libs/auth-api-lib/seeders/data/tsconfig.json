@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "outDir": "../../../../dist/apps/services/auth-api/seeders",
+    "outDir": "../../../../dist/apps/services/auth/api/seeders",
     "importHelpers": false,
     "types": ["node"]
   },

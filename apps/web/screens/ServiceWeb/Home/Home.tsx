@@ -96,10 +96,6 @@ const Home: Screen<HomeProps> = ({
 
   const sortedSupportCategories = sortSupportCategories(supportCategories)
 
-  const searchTags = institutionSlugBelongsToMannaudstorg
-    ? [{ key: 'mannaudstorg', type: SearchableTags.Organization }]
-    : undefined
-
   return (
     <ServiceWebWrapper
       pageTitle={pageTitle}
@@ -114,7 +110,6 @@ const Home: Screen<HomeProps> = ({
         'serviceWebSearchPlaceholder',
         'Leitaðu á þjónustuvefnum',
       )}
-      searchTags={searchTags}
       showLogoTitle={!institutionSlugBelongsToMannaudstorg}
       indexableBySearchEngine={institutionSlugBelongsToMannaudstorg}
     >

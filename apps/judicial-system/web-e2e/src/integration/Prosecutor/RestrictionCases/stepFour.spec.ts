@@ -2,12 +2,13 @@ import {
   RESTRICTION_CASE_CASE_FILES_ROUTE,
   RESTRICTION_CASE_POLICE_REPORT_ROUTE,
 } from '@island.is/judicial-system/consts'
+import { CaseType } from '@island.is/judicial-system/types'
 
-import { makeRestrictionCase, intercept } from '../../../utils'
+import { intercept, mockCase } from '../../../utils'
 
 describe(`${RESTRICTION_CASE_POLICE_REPORT_ROUTE}/:id`, () => {
   beforeEach(() => {
-    const caseData = makeRestrictionCase()
+    const caseData = mockCase(CaseType.CUSTODY)
 
     cy.stubAPIResponses()
     intercept(caseData)

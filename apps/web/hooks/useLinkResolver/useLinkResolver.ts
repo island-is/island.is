@@ -61,6 +61,14 @@ export const routesTemplate = {
     is: '/frett',
     en: '/en/news',
   },
+  digitalicelandservices: {
+    is: '/s/stafraent-island/thjonustur',
+    en: '/en/o/digital-iceland/island-services',
+  },
+  digitalicelandservicesdetailpage: {
+    is: '/s/stafraent-island/thjonustur/[slug]',
+    en: '/en/o/digital-iceland/island-services/[slug]',
+  },
   organizationservices: {
     is: '/s/[slug]/thjonusta',
     en: '/en/o/[slug]/services',
@@ -75,11 +83,11 @@ export const routesTemplate = {
   },
   apicataloguedetailpage: {
     is: '/s/stafraent-island/vefthjonustur/[slug]',
-    en: '',
+    en: '/en/o/digital-iceland/webservices/[slug]',
   },
   apicataloguepage: {
     is: '/s/stafraent-island/vefthjonustur',
-    en: '',
+    en: '/en/o/digital-iceland/webservices',
   },
   organizationnews: {
     is: '/s/[organization]/frett/[slug]',
@@ -104,6 +112,14 @@ export const routesTemplate = {
   opendatasubpage: {
     is: '/gagnatorg/[slug]',
     en: '/en/gagnatorg/[slug]',
+  },
+  projectnews: {
+    is: '/v/[slug]/frett/[subSlug]',
+    en: '/en/p/[slug]/news/[subSlug]',
+  },
+  projectnewsoverview: {
+    is: '/v/[slug]/frett',
+    en: '/en/p/[slug]/news',
   },
   projectsubpage: {
     is: '/v/[slug]/[subSlug]',
@@ -141,22 +157,6 @@ export const routesTemplate = {
   login: {
     is: '/innskraning',
     en: '/en/login',
-  },
-  webservicedetailpage: {
-    is: '/throun/vefthjonustur/[slug]',
-    en: '/en/developers/webservices/[slug]',
-  },
-  webservicespage: {
-    is: '/throun/vefthjonustur',
-    en: '/en/developers/webservices',
-  },
-  handbookpage: {
-    is: '/throun/handbok',
-    en: '/en/developers/handbook',
-  },
-  developerspage: {
-    is: '/throun',
-    en: '/en/developers',
   },
   subarticle: {
     is: '/[slug]/[subSlug]',

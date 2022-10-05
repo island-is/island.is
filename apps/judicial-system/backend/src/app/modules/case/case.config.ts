@@ -10,24 +10,10 @@ export const caseModuleConfig = defineConfig({
       replyToEmail: env.required('EMAIL_REPLY_TO', 'ben10@omnitrix.is'),
       replyToName: env.required('EMAIL_REPLY_TO_NAME', 'Réttarvörslugátt'),
     },
-    deepLinks: {
-      completedCaseOverviewUrl: env.required(
-        'COMPLETED_CASE_OVERVIEW_URL',
-        'http://localhost:4200/krafa/yfirlit/',
-      ),
-    },
+    clientUrl: env.required('CLIENT_URL', 'http://localhost:4200'),
     archiveEncryptionKey: env.required(
       'ARCHIVE_ENCRYPTION_KEY',
       'secret-archive-encryption-key',
     ),
-    sqs: {
-      queueName: env.required('SQS_QUEUE_NAME', 'message-queue'),
-      deadLetterQueueName: env.required(
-        'SQS_DEAD_LETTER_QUEUE_NAME',
-        'dead-letter-queue',
-      ),
-      endpoint: env.optional('SQS_ENDPOINT', 'http://localhost:4566'),
-      region: env.optional('SQS_REGION', 'eu-west-1'),
-    },
   }),
 })

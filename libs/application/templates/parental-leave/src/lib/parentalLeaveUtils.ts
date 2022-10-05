@@ -227,20 +227,6 @@ export const getAvailablePersonalRightsInMonths = (application: Application) =>
 export const getAvailableRightsInMonths = (application: Application) =>
   daysToMonths(getAvailableRightsInDays(application))
 
-export const getSpouseDeprecated = (application: Application) => {
-  const family = getValueViaPath(
-    application.externalData,
-    'family.data',
-    [],
-  ) as FamilyMember[]
-
-  if (!family) {
-    return null
-  }
-
-  return family.find((member) => member.familyRelation === SPOUSE)
-}
-
 export const getSpouse = (
   application: Application,
 ): PersonInformation['spouse'] | null => {
@@ -252,15 +238,6 @@ export const getSpouse = (
 
   if (person?.spouse?.nationalId) {
     return person.spouse
-  }
-
-  const spouse = getSpouseDeprecated(application)
-
-  if (spouse) {
-    return {
-      name: spouse.fullName,
-      nationalId: spouse.nationalId,
-    }
   }
 
   return null

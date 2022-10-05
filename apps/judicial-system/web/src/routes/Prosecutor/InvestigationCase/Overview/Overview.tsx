@@ -26,13 +26,14 @@ import {
   Modal,
   PageLayout,
   PdfButton,
+  CaseResubmitModal,
+  FormContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
   RestrictionCaseProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import {
   core,
   icOverview as m,
@@ -49,10 +50,9 @@ import {
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import CaseResubmitModal from '@island.is/judicial-system-web/src/components/CaseResubmitModal/CaseResubmitModal'
 
 import * as styles from './Overview.css'
-import CopyLinkForDefenderButton from '../../SharedComponents/CopyLinkForDefenderButton/CopyLinkForDefenderButton'
+import { CopyLinkForDefenderButton } from '../../components'
 
 export const Overview: React.FC = () => {
   const router = useRouter()
@@ -161,7 +161,9 @@ export const Overview: React.FC = () => {
             data={[
               {
                 title: formatMessage(core.policeCaseNumber),
-                value: workingCase.policeCaseNumbers.join(', '),
+                value: workingCase.policeCaseNumbers.map((n) => (
+                  <Text key={n}>{n}</Text>
+                )),
               },
               ...(workingCase.courtCaseNumber
                 ? [
@@ -227,14 +229,25 @@ export const Overview: React.FC = () => {
                   ]
                 : []),
             ]}
-            defendants={workingCase.defendants ?? []}
+            defendants={
+              workingCase.defendants
+                ? {
+                    title: capitalize(
+                      formatMessage(core.defendant, {
+                        suffix: workingCase.defendants.length > 1 ? 'ar' : 'i',
+                      }),
+                    ),
+                    items: workingCase.defendants,
+                  }
+                : undefined
+            }
             defender={{
               name: workingCase.defenderName ?? '',
               defenderNationalId: workingCase.defenderNationalId,
+              sessionArrangement: workingCase.sessionArrangements,
               email: workingCase.defenderEmail,
               phoneNumber: workingCase.defenderPhoneNumber,
             }}
-            sessionArrangement={workingCase.sessionArrangements}
           />
         </Box>
         {workingCase.description && (
@@ -331,11 +344,16 @@ export const Overview: React.FC = () => {
             title={formatMessage(core.pdfButtonRequest)}
             pdfType="request"
           />
-          <Box marginTop={3}>
-            <CopyLinkForDefenderButton caseId={workingCase.id}>
-              {formatMessage(m.sections.copyLinkForDefenderButton)}
-            </CopyLinkForDefenderButton>
-          </Box>
+          {workingCase.defenderNationalId && (
+            <Box marginTop={3}>
+              <CopyLinkForDefenderButton
+                caseId={workingCase.id}
+                type={workingCase.type}
+              >
+                {formatMessage(m.sections.copyLinkForDefenderButton)}
+              </CopyLinkForDefenderButton>
+            </Box>
+          )}
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
@@ -375,8 +393,8 @@ export const Overview: React.FC = () => {
           <Modal
             title={formatMessage(m.sections.modal.heading)}
             text={modalText}
-            handleClose={() => router.push(constants.CASES_ROUTE)}
-            handleSecondaryButtonClick={() => {
+            onClose={() => router.push(constants.CASES_ROUTE)}
+            onSecondaryButtonClick={() => {
               router.push(constants.CASES_ROUTE)
             }}
             secondaryButtonText="Loka glugga"

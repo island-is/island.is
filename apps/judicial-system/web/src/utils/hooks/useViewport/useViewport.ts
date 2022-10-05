@@ -1,9 +1,7 @@
 import React from 'react'
 
-import {
-  ViewportContext,
-  Rect,
-} from '@island.is/judicial-system-web/src/components/ViewportProvider/ViewportProvider'
+import { ViewportContext } from '@island.is/judicial-system-web/src/components'
+import type { Rect } from '@island.is/judicial-system-web/src/components'
 
 export const useViewport = (): Rect => React.useContext<Rect>(ViewportContext)
 

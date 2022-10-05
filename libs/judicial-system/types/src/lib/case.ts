@@ -49,6 +49,7 @@ export enum CaseType {
   BODY_SEARCH = 'BODY_SEARCH',
   INTERNET_USAGE = 'INTERNET_USAGE',
   RESTRAINING_ORDER = 'RESTRAINING_ORDER',
+  RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME = 'RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME',
   EXPULSION_FROM_HOME = 'EXPULSION_FROM_HOME',
   ELECTRONIC_DATA_DISCOVERY_INVESTIGATION = 'ELECTRONIC_DATA_DISCOVERY_INVESTIGATION',
   VIDEO_RECORDING_EQUIPMENT = 'VIDEO_RECORDING_EQUIPMENT',
@@ -117,6 +118,11 @@ export enum SessionArrangements {
   ALL_PRESENT = 'ALL_PRESENT',
   ALL_PRESENT_SPOKESPERSON = 'ALL_PRESENT_SPOKESPERSON',
   PROSECUTOR_PRESENT = 'PROSECUTOR_PRESENT',
+}
+
+export enum SubpoenaType {
+  ARREST_SUMMONS = 'ARREST_SUMMONS',
+  ABSENCE_SUMMONS = 'ABSENCE_SUMMONS',
 }
 
 export interface Case {
@@ -201,6 +207,8 @@ export interface Case {
   rulingModifiedHistory?: string
   caseResentExplanation?: string
   seenByDefender?: string
+  subpoenaType?: SubpoenaType
+  defendantWaivesRightToCounsel: boolean
 }
 
 export type CreateCase = Pick<
@@ -275,6 +283,7 @@ export interface UpdateCase
     | 'rulingModifiedHistory'
     | 'caseResentExplanation'
     | 'seenByDefender'
+    | 'subpoenaType'
   > {
   type?: CaseType
   state?: CaseState
@@ -284,6 +293,7 @@ export interface UpdateCase
   sharedWithProsecutorsOfficeId?: string | null
   registrarId?: string | null
   judgeId?: string
+  defendantWaivesRightToCounsel?: boolean
 }
 
 export interface TransitionCase {
@@ -343,6 +353,7 @@ export const investigationCases = [
   CaseType.BODY_SEARCH,
   CaseType.INTERNET_USAGE,
   CaseType.RESTRAINING_ORDER,
+  CaseType.RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME,
   CaseType.EXPULSION_FROM_HOME,
   CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION,
   CaseType.VIDEO_RECORDING_EQUIPMENT,

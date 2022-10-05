@@ -21,6 +21,7 @@ import {
   DateTime,
   FormContentContainer,
   FormFooter,
+  CheckboxList,
 } from '@island.is/judicial-system-web/src/components'
 import {
   removeTabsValidateAndSet,
@@ -33,7 +34,6 @@ import {
   autofillEntry,
   useDeb,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import CheckboxList from '@island.is/judicial-system-web/src/components/CheckboxList/CheckboxList'
 import {
   legalProvisions,
   travelBanProvisions,
@@ -54,7 +54,7 @@ import * as constants from '@island.is/judicial-system/consts'
 import * as styles from './StepThree.css'
 
 export interface DemandsAutofillProps {
-  defentant: Defendant
+  defendant: Defendant
   caseType: CaseType
   requestedValidToDate?: string | Date
   requestedCustodyRestrictions?: CaseCustodyRestrictions[]
@@ -67,10 +67,10 @@ export const getDemandsAutofill = (
   props: DemandsAutofillProps,
 ): string => {
   return formatMessage(rcReportForm.sections.demands.autofillV3, {
-    accusedName: props.defentant.name,
-    accusedNationalId: props.defentant.noNationalId
+    accusedName: props.defendant.name,
+    accusedNationalId: props.defendant.noNationalId
       ? ' '
-      : `, kt. ${formatNationalId(props.defentant.nationalId ?? '')}, `,
+      : `, kt. ${formatNationalId(props.defendant.nationalId ?? '')}, `,
     isExtended:
       props.parentCaseDecision &&
       isAcceptingCaseDecision(props.parentCaseDecision),
@@ -117,7 +117,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
             demands:
               workingCase.defendants && workingCase.defendants.length
                 ? getDemandsAutofill(formatMessage, {
-                    defentant: workingCase.defendants[0],
+                    defendant: workingCase.defendants[0],
                     caseType,
                     requestedValidToDate: requestedValidToDate,
                     parentCaseDecision: workingCase.parentCase?.decision,
@@ -214,7 +214,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
                         force: true,
                       },
                       workingCase.type,
-                      workingCase.requestedCourtDate,
+                      workingCase.requestedValidToDate,
                       nextRequestedCustodyRestrictions,
                     )
                   }}
@@ -245,7 +245,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
                         force: true,
                       },
                       nextCaseType,
-                      workingCase.requestedCourtDate,
+                      workingCase.requestedValidToDate,
                       workingCase.requestedCustodyRestrictions,
                     )
                   }}

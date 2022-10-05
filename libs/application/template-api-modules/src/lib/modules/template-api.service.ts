@@ -22,11 +22,13 @@ import {
   ExamplePaymentActionsService,
   ComplaintsToAlthingiOmbudsmanTemplateService,
   MortgageCertificateSubmissionService,
+  MarriageConditionsSubmissionService,
   FinancialAidService,
   DrivingSchoolConfirmationService,
   PassportService,
   OperatingLicenseService,
   FinancialStatementsInaoTemplateService,
+  DrivingLicenseDuplicateService,
 } from './templates'
 
 interface ApplicationApiAction {
@@ -68,11 +70,13 @@ export class TemplateAPIService {
     private readonly examplePaymentActionsService: ExamplePaymentActionsService,
     private readonly complaintsToAlthingiOmbudsman: ComplaintsToAlthingiOmbudsmanTemplateService,
     private readonly mortgageCertificateSubmissionService: MortgageCertificateSubmissionService,
+    private readonly marriageConditionsSubmissionService: MarriageConditionsSubmissionService,
     private readonly financialAidService: FinancialAidService,
     private readonly drivingSchoolConfirmationService: DrivingSchoolConfirmationService,
     private readonly passportService: PassportService,
     private readonly operatingLicenseService: OperatingLicenseService,
     private readonly financialStatementsInaoService: FinancialStatementsInaoTemplateService,
+    private readonly drivingLicenseDuplicateService: DrivingLicenseDuplicateService,
   ) {}
 
   private async tryRunningActionOnService(
@@ -97,12 +101,14 @@ export class TemplateAPIService {
       | ExamplePaymentActionsService
       | ComplaintsToAlthingiOmbudsmanTemplateService
       | MortgageCertificateSubmissionService
+      | MarriageConditionsSubmissionService
       | FinancialAidService
       | DrivingSchoolConfirmationService
       | MortgageCertificateSubmissionService
       | PassportService
       | OperatingLicenseService
-      | FinancialStatementsInaoTemplateService,
+      | FinancialStatementsInaoTemplateService
+      | DrivingLicenseDuplicateService,
     action: ApplicationApiAction,
   ): Promise<PerformActionResult> {
     // No index signature with a parameter of type 'string' was found on type
@@ -245,6 +251,11 @@ export class TemplateAPIService {
         )
       case ApplicationTypes.PASSPORT:
         return this.tryRunningActionOnService(this.passportService, action)
+      case ApplicationTypes.MARRIAGE_CONDITIONS:
+        return this.tryRunningActionOnService(
+          this.marriageConditionsSubmissionService,
+          action,
+        )
       case ApplicationTypes.OPERATING_LCENSE:
         return this.tryRunningActionOnService(
           this.operatingLicenseService,
@@ -253,6 +264,11 @@ export class TemplateAPIService {
       case ApplicationTypes.FINANCIAL_STATEMENTS_INAO:
         return this.tryRunningActionOnService(
           this.financialStatementsInaoService,
+          action,
+        )
+      case ApplicationTypes.DRIVING_LICENSE_DUPLICATE:
+        return this.tryRunningActionOnService(
+          this.drivingLicenseDuplicateService,
           action,
         )
     }

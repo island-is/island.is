@@ -7,18 +7,20 @@ import {
   CourtCaseInfo,
   Decision,
   FormContentContainer,
+  FormContext,
   FormFooter,
   PageLayout,
   PdfButton,
   PoliceRequestAccordionItem,
   RulingInput,
+  SigningModal,
+  useRequestRulingSignature,
 } from '@island.is/judicial-system-web/src/components'
 import {
   RestrictionCaseCourtSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { useCase, useDeb } from '@island.is/judicial-system-web/src/utils/hooks'
-import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import {
   isAcceptingCaseDecision,
   completedCaseStates,
@@ -47,9 +49,6 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { isRulingValidIC } from '@island.is/judicial-system-web/src/utils/validate'
-import SigningModal, {
-  useRequestRulingSignature,
-} from '@island.is/judicial-system-web/src/components/SigningModal/SigningModal'
 import * as constants from '@island.is/judicial-system/consts'
 
 const Ruling = () => {

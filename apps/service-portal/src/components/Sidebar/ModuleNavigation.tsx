@@ -13,6 +13,8 @@ import { servicePortalOutboundLink } from '@island.is/plausible'
 import { useStore } from '../../store/stateProvider'
 import SubNav from './NavItem/SubNav'
 import * as styles from './Sidebar.css'
+import cn from 'classnames'
+
 interface Props {
   nav: ServicePortalNavigationItem
   badge?: boolean
@@ -51,8 +53,14 @@ const ModuleNavigation: FC<Props> = ({ nav, onItemClick, badge }) => {
   }, [isModuleActive, setExpand])
 
   return (
-    <Box position="relative" className={styles.itemWrapper}>
-      {navArray && nav.enabled !== false && collapsed && (
+    <Box
+      position="relative"
+      className={cn(
+        styles.itemWrapper,
+        isModuleActive && styles.itemWrapperActive,
+      )}
+    >
+      {/* {navArray && nav.enabled !== false && collapsed && (
         <SubNavModal>
           <SubNav
             collapsed
@@ -61,7 +69,7 @@ const ModuleNavigation: FC<Props> = ({ nav, onItemClick, badge }) => {
             pathname={pathname}
           />
         </SubNavModal>
-      )}
+      )} */}
       <NavItem
         path={nav.path}
         icon={nav.icon}

@@ -23,6 +23,7 @@ describe('Appeal section component', () => {
     policeCaseNumbers: ['000'],
     defendants: [{ nationalId: '000000-0000' }] as Defendant[],
     origin: CaseOrigin.UNKNOWN,
+    defendantWaivesRightToCounsel: false,
   }
 
   test('should say when a case is no longer appealable if either the prosecutors or judges appeal decision is to postpone', async () => {
@@ -131,7 +132,7 @@ describe('Appeal section component', () => {
     )
 
     expect(
-      screen.queryByRole('button', { name: 'Kærði kærir úrskurðinn' }),
+      screen.queryByRole('button', { name: 'Varnaraðili kærir úrskurðinn' }),
     ).not.toBeInTheDocument()
   })
 

@@ -7,11 +7,11 @@ import {
   formatDOB,
 } from '@island.is/judicial-system/formatters'
 import { FormatMessage } from '@island.is/cms-translations'
-import { Gender, SessionArrangements } from '@island.is/judicial-system/types'
+import { SessionArrangements } from '@island.is/judicial-system/types'
 
 import { environment } from '../../environments'
 import { Case } from '../modules/case'
-import { core, custodyNotice } from '../messages'
+import { custodyNotice } from '../messages'
 import { formatCustodyRestrictions } from './formatters'
 import {
   addEmptyLines,
@@ -55,10 +55,6 @@ function constructCustodyNoticePdf(
       theCase.courtCaseNumber
     }`,
     'Helvetica',
-  )
-  addLargeHeading(
-    doc,
-    `LÖKE málsnúmer: ${theCase.policeCaseNumbers.join(', ')}`,
   )
   addEmptyLines(doc)
   setLineGap(doc, 8)
@@ -159,14 +155,6 @@ function constructCustodyNoticePdf(
     )
 
     if (theCase.isCustodyIsolation) {
-      const genderedAccused = formatMessage(core.accused, {
-        suffix:
-          !theCase.defendants ||
-          theCase.defendants.length < 1 ||
-          theCase.defendants[0].gender === Gender.MALE
-            ? 'i'
-            : 'a',
-      })
       const isolationPeriod = formatDate(theCase.isolationToDate, 'PPPPp')
         ?.replace('dagur,', 'dagsins')
         ?.replace(' kl.', ', kl.')
@@ -175,7 +163,6 @@ function constructCustodyNoticePdf(
         doc,
         capitalize(
           formatMessage(custodyNotice.isolationDisclaimer, {
-            genderedAccused,
             isolationPeriod,
           }),
         ),

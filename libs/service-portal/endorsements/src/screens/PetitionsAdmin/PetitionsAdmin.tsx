@@ -2,16 +2,10 @@ import format from 'date-fns/format'
 import React from 'react'
 import { Link } from 'react-router-dom'
 
-import {
-  ActionCard,
-  Box,
-  Bullet,
-  BulletList,
-  Stack,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, Bullet, BulletList, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { IntroHeader, ServicePortalPath } from '@island.is/service-portal/core'
+import { ActionCard } from '@island.is/service-portal/core'
 
 import { m } from '../../lib/messages'
 import { PaginatedEndorsementListResponse } from '../../types/schema'

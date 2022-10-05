@@ -53,6 +53,7 @@ const FormFooter: React.FC<Props> = (props: Props) => {
           icon={isMobile ? 'arrowBack' : undefined}
           circle={isMobile}
           aria-label={props.previousButtonText || formatMessage(core.back)}
+          data-testid="previousButton"
         >
           {!isMobile && (props.previousButtonText || formatMessage(core.back))}
         </Button>

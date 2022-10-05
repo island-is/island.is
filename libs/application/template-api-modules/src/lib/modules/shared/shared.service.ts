@@ -12,6 +12,8 @@ import {
   AssignmentEmailTemplateGenerator,
   AttachmentEmailTemplateGenerator,
   BaseTemplateApiApplicationService,
+  AssignmentSmsTemplateGenerator,
+  SmsTemplateGenerator,
 } from '../../types'
 import { getConfigValue } from './shared.utils'
 import {
@@ -22,6 +24,7 @@ import {
 } from './shared.queries'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { SmsService } from '@island.is/nova-sms'
 
 @Injectable()
 export class SharedTemplateApiService {
@@ -30,11 +33,52 @@ export class SharedTemplateApiService {
     private readonly logger: Logger,
     @Inject(EmailService)
     private readonly emailService: EmailService,
+    @Inject(SmsService)
+    private readonly smsService: SmsService,
     @Inject(ConfigService)
     private readonly configService: ConfigService<BaseTemplateAPIModuleConfig>,
     @Inject(BaseTemplateApiApplicationService)
     private readonly applicationService: BaseTemplateApiApplicationService,
   ) {}
+
+  async createAssignToken(application: Application, expiresIn: number) {
+    const token = await this.applicationService.createAssignToken(
+      application,
+      getConfigValue(this.configService, 'jwtSecret'),
+      expiresIn,
+    )
+
+    return token
+  }
+
+  async sendSms(
+    smsTemplateGenerator: SmsTemplateGenerator,
+    application: Application,
+  ) {
+    const { phoneNumber, message } = smsTemplateGenerator(application)
+
+    return this.smsService.sendSms(phoneNumber, message)
+  }
+
+  async assignApplicationThroughSms(
+    smsTemplateGenerator: AssignmentSmsTemplateGenerator,
+    application: Application,
+    token: string,
+  ) {
+    const clientLocationOrigin = getConfigValue(
+      this.configService,
+      'clientLocationOrigin',
+    ) as string
+
+    const assignLink = `${clientLocationOrigin}/tengjast-umsokn?token=${token}`
+
+    const { phoneNumber, message } = smsTemplateGenerator(
+      application,
+      assignLink,
+    )
+
+    return this.smsService.sendSms(phoneNumber, message)
+  }
 
   async sendEmail(
     templateGenerator: EmailTemplateGenerator,
@@ -66,15 +110,9 @@ export class SharedTemplateApiService {
   async assignApplicationThroughEmail(
     templateGenerator: AssignmentEmailTemplateGenerator,
     application: Application,
-    expiresIn: number,
+    token: string,
     locale = 'is',
   ) {
-    const token = await this.applicationService.createAssignToken(
-      application,
-      getConfigValue(this.configService, 'jwtSecret'),
-      expiresIn,
-    )
-
     const clientLocationOrigin = getConfigValue(
       this.configService,
       'clientLocationOrigin',

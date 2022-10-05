@@ -19,6 +19,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           icon: 'reader',
         },
         subscribesTo: 'documents',
+        description: m.documentsDescription,
       },
 
       // Umsoknir
@@ -42,6 +43,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             path: ServicePortalPath.ApplicationCompleteApplications,
           },
         ],
+        description: m.applicationsDescription,
       },
 
       // Company
@@ -51,6 +53,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         icon: {
           icon: 'business',
         },
+        description: m.companyDescription,
       },
 
       // Min Gogn
@@ -88,6 +91,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             path: ServicePortalPath.PetitionsAdminView,
           },
         ],
+        description: m.userInfoDescription,
       },
       // Mín skírteini
       {
@@ -104,6 +108,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             path: ServicePortalPath.LicensesDrivingDetail,
           },
         ],
+        description: m.licensesDescription,
       },
       // Starfsleyfi
       {
@@ -112,6 +117,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         icon: {
           icon: 'receipt',
         },
+        description: m.educationLicenseDescription,
       },
       // Mín réttindi
       {
@@ -134,6 +140,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         icon: {
           icon: 'school',
         },
+        description: m.educationDescription,
       },
       {
         name: m.documentProvider,
@@ -205,6 +212,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             path: ServicePortalPath.AssetsRealEstateDetail,
           },
         ],
+        description: m.realEstateDescription,
       },
 
       // Fjarmal
@@ -240,6 +248,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         icon: {
           icon: 'cellular',
         },
+        description: m.financeDescription,
       },
 
       // Ökutæki
@@ -271,6 +280,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             path: ServicePortalPath.AssetsVehiclesHistory,
           },
         ],
+        description: m.vehiclesDescription,
       },
 
       // Stillingar - hidden from nav
@@ -318,8 +328,9 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         name: m.accessControl,
         path: ServicePortalPath.SettingsAccessControl,
         icon: {
-          icon: 'people',
+          icon: 'lockClosed',
         },
+        description: m.accessControlDescription,
       },
     ],
   },

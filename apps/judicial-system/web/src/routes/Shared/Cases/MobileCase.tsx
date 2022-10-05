@@ -1,7 +1,7 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 
-import { Case, isInvestigationCase } from '@island.is/judicial-system/types'
+import { Case } from '@island.is/judicial-system/types'
 import {
   displayFirstPlusRemaining,
   formatDOB,
@@ -59,7 +59,7 @@ const MobileCase: React.FC<Props> = ({
     formatMessage,
     theCase.state,
     isCourtRole,
-    isInvestigationCase(theCase.type),
+    theCase.type,
     theCase.isValidToDateInThePast,
     theCase.courtDate,
   )
@@ -83,12 +83,10 @@ const MobileCase: React.FC<Props> = ({
           <Text>{theCase.defendants[0].name ?? ''}</Text>
           {theCase.defendants.length === 1 ? (
             <Text>
-              <Text>
-                {formatDOB(
-                  theCase.defendants[0].nationalId,
-                  theCase.defendants[0].noNationalId,
-                )}
-              </Text>
+              {formatDOB(
+                theCase.defendants[0].nationalId,
+                theCase.defendants[0].noNationalId,
+              )}
             </Text>
           ) : (
             <Text>{`+ ${theCase.defendants.length - 1}`}</Text>

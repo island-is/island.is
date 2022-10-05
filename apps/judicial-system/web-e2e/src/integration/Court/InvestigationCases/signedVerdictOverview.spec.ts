@@ -3,12 +3,17 @@ import {
   INVESTIGATION_CASE_MODIFY_RULING_ROUTE,
   SIGNED_VERDICT_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
-import { Case, CaseState, UserRole } from '@island.is/judicial-system/types'
+import {
+  Case,
+  CaseState,
+  CaseType,
+  UserRole,
+} from '@island.is/judicial-system/types'
 
 import {
   intercept,
   makeCourt,
-  makeInvestigationCase,
+  mockCase,
   makeCaseFile,
   makeJudge,
 } from '../../../utils'
@@ -18,7 +23,7 @@ describe('Signed verdict overview - Court - Investigation case', () => {
   const caseFile = makeCaseFile('caseId', 'caseFileName')
 
   beforeEach(() => {
-    const caseData = makeInvestigationCase()
+    const caseData = mockCase(CaseType.INTERNET_USAGE)
     const caseDataAddition: Case = {
       ...caseData,
       state: CaseState.ACCEPTED,
@@ -55,7 +60,7 @@ describe('Signed verdict overview - Court - Investigation case', () => {
 
 describe('Signed verdict overview - Court - Not the assigned judge', () => {
   beforeEach(() => {
-    const caseData = makeInvestigationCase()
+    const caseData = mockCase(CaseType.INTERNET_USAGE)
     const caseDataAddition: Case = {
       ...caseData,
       court: makeCourt(),

@@ -35,7 +35,11 @@ export class LifeEventsPageSyncService
             title: mapped.title,
             content,
             contentWordCount: content.split(/\s+/).length,
-            type: 'webLifeEventPage',
+            type:
+              // We are reusing the life event page look for Digital Iceland Services so we want to distinguish them in the search by having two different types here
+              entry.fields?.pageType === 'Digital Iceland Service'
+                ? 'webDigitalIcelandService'
+                : 'webLifeEventPage',
             termPool: createTerms([mapped.title]),
             response: JSON.stringify({ ...mapped, typename: 'LifeEventPage' }),
             tags: [],
