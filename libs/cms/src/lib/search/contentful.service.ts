@@ -166,7 +166,7 @@ export class ContentfulService {
 
       // the content type filter might remove all ids in that case skip trying to get this chunk
       if (chunkIds) {
-        logger.info('Getting Contentful data', {
+        logger.info(`Getting Contentful data with chunk size: ${chunkSize}`, {
           locale,
           maxChunkSize: chunkSize,
         })

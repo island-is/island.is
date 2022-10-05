@@ -155,7 +155,14 @@ const includes: Includeable[] = [
   },
   { model: Case, as: 'parentCase' },
   { model: Case, as: 'childCase' },
-  { model: CaseFile, as: 'caseFiles' },
+  {
+    model: CaseFile,
+    as: 'caseFiles',
+    required: false,
+    where: {
+      state: { [Op.not]: CaseFileState.DELETED },
+    },
+  },
 ]
 
 const defendantsOrder: OrderItem = [
