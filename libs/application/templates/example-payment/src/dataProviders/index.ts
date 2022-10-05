@@ -1,1 +1,1 @@
-export { FeeInfoProvider } from './FeeInfoProvider'
+export { PaymentCatalogApi } from '@island.is/application/types'
