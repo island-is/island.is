@@ -5,6 +5,16 @@ import {
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 
+import {
+  NationalRegistryUserApi,
+  TeachersApi,
+  UserProfileApi,
+  PaymentCatalogApi,
+  CurrentLicenseApi,
+  DrivingAssessmentApi,
+  JuristictionApi,
+  QualityPhotoApi,
+} from '@island.is/application/types'
 export const sectionExternalData = buildSubSection({
   id: 'externalData',
   title: m.externalDataSection,
@@ -16,47 +26,39 @@ export const sectionExternalData = buildSubSection({
       checkboxLabel: m.externalDataAgreement,
       dataProviders: [
         buildDataProviderItem({
-          id: 'nationalRegistry',
-          type: 'NationalRegistryProvider',
+          provider: NationalRegistryUserApi,
           title: m.nationalRegistryTitle,
           subTitle: m.nationalRegistrySubTitle,
         }),
         buildDataProviderItem({
-          id: 'userProfile',
-          type: 'UserProfileProvider',
+          provider: UserProfileApi,
           title: m.userProfileInformationTitle,
           subTitle: m.userProfileInformationSubTitle,
         }),
         buildDataProviderItem({
-          id: 'currentLicense',
-          type: 'CurrentLicenseProvider',
+          provider: CurrentLicenseApi,
           title: m.infoFromLicenseRegistry,
           subTitle: m.confirmationStatusOfEligability,
         }),
         buildDataProviderItem({
-          id: 'qualityPhoto',
-          type: 'QualityPhotoProvider',
+          provider: QualityPhotoApi,
           title: '',
           subTitle: '',
         }),
         buildDataProviderItem({
-          id: 'studentAssessment',
-          type: 'DrivingAssessmentProvider',
+          provider: DrivingAssessmentApi,
           title: '',
         }),
         buildDataProviderItem({
-          id: 'juristictions',
-          type: 'JuristictionProvider',
+          provider: JuristictionApi,
           title: '',
         }),
         buildDataProviderItem({
-          id: 'payment',
-          type: 'FeeInfoProvider',
+          provider: PaymentCatalogApi,
           title: '',
         }),
         buildDataProviderItem({
-          id: 'teachers',
-          type: 'TeachersProvider',
+          provider: TeachersApi,
           title: '',
         }),
         buildDataProviderItem({

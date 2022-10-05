@@ -6,7 +6,7 @@ import { PaymentCatalogModule } from './payment-catalog/payment-catalog.module'
 import { PaymentCatalogService } from './payment-catalog/payment-catalog.service'
 import { UserProfileModule } from './user-profile/user-profile.module'
 import { UserProfileService } from './user-profile/user-profile.service'
-import { DrivingLicenseModule} from './driving-license/driving-license.module'
+import { DrivingLicenseModule } from './driving-license/driving-license.module'
 import { DrivingLicenseProviderService } from './driving-license/driving-license.service'
 
 export const modules = [
@@ -14,7 +14,7 @@ export const modules = [
   PaymentCatalogModule,
   UserProfileModule,
   IdentityModule,
-  DrivingLicenseModule
+  DrivingLicenseModule,
 ]
 
 export const services = [
@@ -22,5 +22,5 @@ export const services = [
   PaymentCatalogService,
   UserProfileService,
   IdentityService,
-  DrivingLicenseProviderService
+  DrivingLicenseProviderService,
 ]

@@ -98,7 +98,7 @@ export const subSectionSummary = buildSubSection({
           width: 'half',
           value: ({
             externalData: {
-              studentAssessment,
+              drivingAssessment,
               teachers: { data },
             },
             answers,
@@ -110,7 +110,7 @@ export const subSectionSummary = buildSubSection({
               )
               return teacher?.name
             }
-            return (studentAssessment.data as StudentAssessment).teacherName
+            return (drivingAssessment.data as StudentAssessment).teacherName
           },
         }),
         buildDividerField({
@@ -141,7 +141,7 @@ export const subSectionSummary = buildSubSection({
         buildKeyValueField({
           label: m.overviewPaymentCharge,
           value: ({ externalData, answers }) => {
-            const items = externalData.payment.data as {
+            const items = externalData.paymentCatalog.data as {
               priceAmount: number
               chargeItemCode: string
             }[]

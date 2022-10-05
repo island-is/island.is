@@ -10,6 +10,14 @@ import {
   ApplicationStateSchema,
   DefaultEvents,
   defineTemplateApi,
+  JuristictionApi,
+  CurrentLicenseApi,
+  DrivingAssessmentApi,
+  NationalRegistryUserApi,
+  UserProfileApi,
+  PaymentCatalogApi,
+  QualityPhotoApi,
+  TeachersApi,
 } from '@island.is/application/types'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import { ApiActions } from '../shared'
@@ -63,6 +71,18 @@ const template: ApplicationTemplate<
               },
               write: 'all',
               delete: true,
+              api: [
+                NationalRegistryUserApi,
+                TeachersApi,
+                UserProfileApi,
+                PaymentCatalogApi.configure({
+                  params: { orginizationId: '6509142520' },
+                }),
+                CurrentLicenseApi,
+                DrivingAssessmentApi,
+                JuristictionApi,
+                QualityPhotoApi,
+              ],
             },
           ],
         },

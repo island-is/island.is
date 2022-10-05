@@ -57,7 +57,8 @@ const NationalIdWithName: FC<FieldBaseProps> = ({ field, application }) => {
     <Box>
       <Text marginBottom={3}>
         {formatMessage(m.studentInfoSubtitle) +
-          (application.externalData.employee.data as any)?.name +
+          (application.externalData.drivingSchoolForEmployee.data as any)
+            ?.name +
           '.'}
       </Text>
       <GridRow>

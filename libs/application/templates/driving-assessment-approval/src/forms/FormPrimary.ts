@@ -13,7 +13,11 @@ import {
   buildCustomField,
   buildDividerField,
 } from '@island.is/application/core'
-import { Form, FormModes } from '@island.is/application/types'
+import {
+  Form,
+  FormModes,
+  HasTechingRightsApi,
+} from '@island.is/application/types'
 import { m } from '../lib/messages'
 import { format as formatKennitala } from 'kennitala'
 
@@ -33,8 +37,7 @@ export const FormPrimary: Form = buildForm({
           checkboxLabel: m.externalDataAgreement,
           dataProviders: [
             buildDataProviderItem({
-              id: 'teachingRights',
-              type: 'TeachingRightsProvider',
+              provider: HasTechingRightsApi,
               title: m.externalDataTeachingRightsTitle,
               subTitle: m.externalDataTeachingRightsSubtitle,
             }),

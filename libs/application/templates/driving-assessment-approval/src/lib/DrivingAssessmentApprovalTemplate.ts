@@ -5,6 +5,7 @@ import {
   ApplicationContext,
   ApplicationStateSchema,
   DefaultEvents,
+  HasTechingRightsApi,
   defineTemplateApi,
 } from '@island.is/application/types'
 import * as z from 'zod'
@@ -77,6 +78,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
                 { event: 'SUBMIT', name: 'Samþykkja', type: 'primary' },
               ],
               write: 'all',
+              api: [HasTechingRightsApi],
             },
           ],
         },
@@ -96,9 +98,12 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
             // Applications that stay in this state for 24 hours will be pruned automatically
             whenToPrune: 24 * 3600 * 1000,
           },
-          onEntry: defineTemplateApi({
-            action: ApiActions.submitAssessmentConfirmation,
-          }),
+          onEntry:
+            // AssessmentConfirmationApi,
+            defineTemplateApi({
+              action: ApiActions.submitAssessmentConfirmation,
+              namespace: 'DrivingLicense',
+            }),
           roles: [
             {
               id: Roles.TEACHER,

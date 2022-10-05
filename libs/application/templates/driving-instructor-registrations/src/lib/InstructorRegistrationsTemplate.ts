@@ -60,13 +60,7 @@ const InstructorRegistrationsTemplate: ApplicationTemplate<
                   type: 'primary',
                 },
               ],
-              write: {
-                answers: ['approveExternalData'],
-                externalData: [
-                  'DrivingLicense.getHasTeachingRights',
-                  'NationalRegistry.getUser',
-                ],
-              },
+              write: 'all',
               api: [HasTechingRightsApi, NationalRegistryUserApi],
             },
           ],
