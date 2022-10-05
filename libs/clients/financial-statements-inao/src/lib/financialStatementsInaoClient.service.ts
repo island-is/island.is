@@ -225,7 +225,7 @@ export class FinancialStatementsInaoClientService {
     clientName: string,
     values?: PersonalElectionFinancialStatementValues,
   ): Promise<boolean> {
-    let financialValues: LookupType[] = []
+    const financialValues: LookupType[] = []
 
     if (!noValueStatement && values) {
       const financialTypes = await this.getFinancialTypes()
@@ -252,8 +252,8 @@ export class FinancialStatementsInaoClientService {
       list.push({ key: 180, value: values.shortTermLiabilitiesTotal })
       list.push({ key: 190, value: values.equityTotal })
 
-      financialValues = list.map((x) => {
-        return lookup(x.key, x.value, financialTypes)
+      list.forEach((x) => {
+        financialValues.push(lookup(x.key, x.value, financialTypes))
       })
     }
 
