@@ -383,7 +383,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
       [States.VINNUMALASTOFNUN_APPROVAL]: {
         entry: ['assignToVMST', 'setNavId'],
-        exit: 'clearAssignees',
+        exit: ['clearAssignees', 'setNavId'],
         meta: {
           name: States.VINNUMALASTOFNUN_APPROVAL,
           actionCard: {
