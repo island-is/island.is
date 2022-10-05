@@ -91,6 +91,7 @@ export class LimitedAccessCaseService {
         {
           model: CaseFile,
           as: 'caseFiles',
+          required: false,
           where: {
             state: { [Op.not]: CaseFileState.DELETED },
             category: { [Op.not]: null },
