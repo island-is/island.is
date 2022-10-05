@@ -67,8 +67,8 @@ appcenter codepush release -a Stafraent-Island/Island-ios -t 1.0.0 -c ./build-io
 
 #### Android
 ```bash
-yarn nx bundle-android native-app --bundle-output ./build-android-release/main.jsbundle --assets-dest ./build-android-release --dev false
-mv ../../.././build-android-release/main.jsbundle ./build-android-release/main.jsbundle
+yarn nx bundle-android native-app --bundle-output ./build-android-release/index.android.bundle --assets-dest ./build-android-release --dev false
+mv ../../.././build-android-release/index.android.bundle ./build-android-release/index.android.bundle
 appcenter codepush release -a Stafraent-Island/Island-android -t 1.0.0 -c ./build-android-release -d production -x
 ```
 
