@@ -1,5 +1,7 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
+import { ConfigType } from '@nestjs/config'
 import { InjectModel } from '@nestjs/sequelize'
+import addDays from 'date-fns/addDays'
 import startOfDay from 'date-fns/startOfDay'
 import { Op } from 'sequelize'
 import { uuid } from 'uuidv4'
@@ -10,6 +12,7 @@ import { PersonalRepresentativeScopePermission } from '../personal-representativ
 import { PersonalRepresentative } from '../personal-representative/models/personal-representative.model'
 import { ApiScope } from '../resources/models/api-scope.model'
 import { IdentityResource } from '../resources/models/identity-resource.model'
+import { DelegationConfig } from './DelegationConfig'
 import { UpdateDelegationScopeDTO } from './dto/delegation-scope.dto'
 import { DelegationScope } from './models/delegation-scope.model'
 import { Delegation } from './models/delegation.model'
@@ -23,16 +26,19 @@ export class DelegationScopeService {
     private apiScopeModel: typeof ApiScope,
     @InjectModel(IdentityResource)
     private identityResourceModel: typeof IdentityResource,
+    @Inject(DelegationConfig.KEY)
+    private delegationConfig: ConfigType<typeof DelegationConfig>,
   ) {}
 
   async createOrUpdate(
     delegationId: string,
-    allowedScopes: string[],
     scopes?: UpdateDelegationScopeDTO[],
   ): Promise<DelegationScope[]> {
-    await this.delete(delegationId, allowedScopes)
-
     if (scopes && scopes.length > 0) {
+      await this.delete(
+        delegationId,
+        scopes.map((s) => s.name),
+      )
       return this.createMany(delegationId, scopes)
     }
 
@@ -44,10 +50,14 @@ export class DelegationScopeService {
     scopes: UpdateDelegationScopeDTO[],
   ): Promise<DelegationScope[]> {
     const validFrom = startOfDay(new Date())
+    const defaultValidTo = addDays(
+      validFrom,
+      this.delegationConfig.defaultValidityPeriodInDays,
+    )
     const delegationScopes = scopes.map((scope) => ({
       id: uuid(),
       validFrom,
-      validTo: scope.validTo ? startOfDay(scope.validTo) : undefined,
+      validTo: scope.validTo ? startOfDay(scope.validTo) : defaultValidTo,
       scopeName: scope.name,
       delegationId,
     }))

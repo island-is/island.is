@@ -22,10 +22,10 @@ import { ResourcesModule } from './v1/resources/resources.module'
 import { UsersModule } from './v1/users/users.module'
 import { environment } from '../environments'
 import { TranslationModule } from './v1/translation/translation.module'
-import { DelegationsModule } from './v1/delegations/delegations.module'
+import { DelegationsModule as DelegationsV1Module } from './v1/delegations/delegations.module'
 import { PermissionsModule } from './v1/permissions/permissions.module'
 import { UserProfileModule } from './v1/user-profile/user-profile.module'
-import { DelegationsModule } from './v2/delegations/delegations.module'
+import { DelegationsModule as DelegationsV2Module } from './v2/delegations/delegations.module'
 
 @Module({
   imports: [
@@ -38,7 +38,8 @@ import { DelegationsModule } from './v2/delegations/delegations.module'
     ResourcesModule,
     GrantsModule,
     TranslationModule,
-    DelegationsModule,
+    DelegationsV1Module,
+    DelegationsV2Module,
     PermissionsModule,
     UserProfileModule,
     ConfigModule.forRoot({

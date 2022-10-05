@@ -9,7 +9,7 @@ import { ConfigType } from '@nestjs/config'
 import { InjectModel } from '@nestjs/sequelize'
 import startOfDay from 'date-fns/startOfDay'
 import uniqBy from 'lodash/uniqBy'
-import { Op, WhereOptions } from 'sequelize'
+import { Op } from 'sequelize'
 import { isUuid, uuid } from 'uuidv4'
 
 import { AuthDelegationType } from '@island.is/auth-nest-tools'
@@ -46,6 +46,10 @@ import type { PersonalRepresentativeDTO } from '../personal-representative/dto/p
 import { DelegationValidity } from './types/delegationValidity'
 import { DelegationScopeService } from './delegationScope.service'
 import { ResourcesService } from '../resources/resources.service'
+import {
+  getScopeValidityWhereClause,
+  validateScopesPeriod,
+} from './utils/scopes'
 
 type ClientDelegationInfo = Pick<
   Client,
@@ -105,7 +109,7 @@ export class DelegationsService {
       )
     }
 
-    if (!this.validateScopesPeriod(createDelegation.scopes)) {
+    if (!validateScopesPeriod(createDelegation.scopes)) {
       throw new BadRequestException(
         'When scope validTo property is provided it must be in the future',
       )
@@ -131,10 +135,10 @@ export class DelegationsService {
       })
     }
 
-    // If createDelegation.scopes are empty then this will remove all the scopes the user has accesss to
+    await this.delegationScopeService.delete(delegation.id, user.scope)
+
     delegation.delegationScopes = await this.delegationScopeService.createOrUpdate(
       delegation.id,
-      user.scope,
       createDelegation.scopes,
     )
 
@@ -166,7 +170,7 @@ export class DelegationsService {
       )
     }
 
-    if (!this.validateScopesPeriod(input.scopes)) {
+    if (!validateScopesPeriod(input.scopes)) {
       throw new BadRequestException(
         'If scope validTo property is provided it must be in the future',
       )
@@ -174,11 +178,9 @@ export class DelegationsService {
 
     this.logger.debug(`Updating delegation ${delegationId}`)
 
-    await this.delegationScopeService.createOrUpdate(
-      delegationId,
-      user.scope,
-      input.scopes,
-    )
+    await this.delegationScopeService.delete(delegationId, user.scope)
+
+    await this.delegationScopeService.createOrUpdate(delegationId, input.scopes)
 
     return this.findById(user, delegationId)
   }
@@ -226,9 +228,7 @@ export class DelegationsService {
           model: DelegationScope,
           as: 'delegationScopes',
           required: false,
-          where: this.getScopeValidWhereClause(
-            DelegationValidity.INCLUDE_FUTURE,
-          ),
+          where: getScopeValidityWhereClause(DelegationValidity.INCLUDE_FUTURE),
           include: [
             {
               model: ApiScope,
@@ -286,7 +286,7 @@ export class DelegationsService {
             },
           ],
           required: validity !== DelegationValidity.ALL,
-          where: this.getScopeValidWhereClause(validity),
+          where: getScopeValidityWhereClause(validity),
         },
       ],
     })
@@ -586,7 +586,7 @@ export class DelegationsService {
         {
           model: DelegationScope,
           required: true,
-          where: this.getScopeValidWhereClause(DelegationValidity.NOW),
+          where: getScopeValidityWhereClause(DelegationValidity.NOW),
           include: [
             {
               model: ApiScope,
@@ -616,45 +616,6 @@ export class DelegationsService {
         )
         return d.toDTO()
       })
-  }
-
-  /**
-   * Constructs a where clause to use for DelegationScopes to filter
-   * by a validity on the validFrom and validTo properties.
-   * @param validity Controls the validFrom and validTo where clauses
-   * @returns
-   */
-  private getScopeValidWhereClause(
-    validity: DelegationValidity,
-  ): WhereOptions | undefined {
-    let scopesWhere: WhereOptions | undefined
-    const startOfToday = startOfDay(new Date())
-    const futureValidToWhere: WhereOptions = {
-      // validTo > startOfToday OR validTo IS NULL
-      validTo: {
-        [Op.or]: {
-          [Op.gte]: startOfToday,
-          [Op.is]: null,
-        },
-      },
-    }
-
-    if (validity === DelegationValidity.NOW) {
-      scopesWhere = {
-        validFrom: { [Op.lte]: startOfToday },
-        ...futureValidToWhere,
-      }
-    } else if (validity === DelegationValidity.INCLUDE_FUTURE) {
-      scopesWhere = futureValidToWhere
-    } else if (validity === DelegationValidity.PAST) {
-      scopesWhere = {
-        validTo: {
-          [Op.lt]: startOfToday,
-        },
-      }
-    }
-
-    return scopesWhere
   }
 
   private checkIfScopeAllowed(
@@ -753,21 +714,5 @@ export class DelegationsService {
       user,
     )
     return requestedScopes.length === allowedApiScopesCount
-  }
-
-  /**
-   * Validates the valid period of the scopes requested in a delegation.
-   * @param scopes requested scopes on a delegation
-   */
-  private validateScopesPeriod(scopes?: UpdateDelegationScopeDTO[]): boolean {
-    if (!scopes || scopes.length === 0) {
-      return true
-    }
-
-    const startOfToday = startOfDay(new Date())
-    // validTo needs to be the current day or in the future
-    return scopes.every(
-      (scope) => scope.validTo && new Date(scope.validTo) >= startOfToday,
-    )
   }
 }

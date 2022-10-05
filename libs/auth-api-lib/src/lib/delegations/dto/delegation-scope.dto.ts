@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
-import { IsString, IsDate, IsOptional, IsDateString } from 'class-validator'
+import { IsDate, IsDateString, IsOptional, IsString } from 'class-validator'
 
 export class UpdateDelegationScopeDTO {
   @IsString()
@@ -9,11 +9,11 @@ export class UpdateDelegationScopeDTO {
 
   @Type(() => Date)
   @IsDate()
-  @ApiProperty({
+  @ApiPropertyOptional({
     description:
       'A date that the delegation is valid to. Must be in the future.',
   })
-  validTo!: Date
+  validTo?: Date
 }
 
 export class DelegationScopeDTO {

@@ -1,5 +1,5 @@
 import { DelegationScopeDTO } from '../dto/delegation-scope.dto'
-import { compareScopesByName } from './compareScopes'
+import { compareScopesByName } from './scopes'
 
 describe('compareScopesByName', () => {
   it('should return true when scopeName is equal', () => {

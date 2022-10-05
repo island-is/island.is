@@ -17,6 +17,7 @@ export * from './lib/idp-provider/dto/idp-provider.dto'
 // Delegation module
 export * from './lib/delegations/delegations.module'
 export * from './lib/delegations/delegations.service'
+export * from './lib/delegations/outgoingDelegations.service'
 export * from './lib/delegations/delegationScope.service'
 export * from './lib/delegations/types/delegationDirection'
 export * from './lib/delegations/types/delegationValidity'
@@ -26,7 +27,7 @@ export * from './lib/delegations/models/delegation.model'
 export * from './lib/delegations/models/delegation.model'
 export * from './lib/delegations/models/delegation-scope.model'
 export * from './lib/delegations/DelegationConfig'
-export * from './lib/delegations/utils/compareScopes'
+export * from './lib/delegations/utils/scopes'
 
 // Resources module
 export * from './lib/resources/resources.module'
