@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { useRouter } from 'next/router'
 import ContentWrapper from '../../../components/Layout/ContentWrapper'
 import { AdminTab } from './../../../entities/common/AdminTab'
@@ -8,6 +8,11 @@ import { ApiScopeGroup } from './../../../entities/models/api-scope-group.model'
 
 const Index: React.FC = () => {
   const router = useRouter()
+  const initialApiScopeGroup = useMemo(() => {
+    const scopeGroup = new ApiScopeGroup()
+    scopeGroup.order = 0
+    return scopeGroup
+  }, [])
   const handleCancel = () => {
     router.push(`/admin/?tab=${AdminTab.ApiScopeGroups}`)
   }
@@ -25,7 +30,7 @@ const Index: React.FC = () => {
   return (
     <ContentWrapper>
       <ApiScopeGroupCreateForm
-        apiScopeGroup={new ApiScopeGroup()}
+        apiScopeGroup={initialApiScopeGroup}
         handleNext={handleGroupSaved}
         handleBack={handleCancel}
       ></ApiScopeGroupCreateForm>

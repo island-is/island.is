@@ -1,7 +1,6 @@
+import { SQS } from 'aws-sdk'
 import { uuid } from 'uuidv4'
 import each from 'jest-each'
-
-import { QueueService } from '@island.is/message-queue'
 
 import { MessageType, Message } from '../message'
 import { createTestingMessageModule } from './createTestingMessageModule'
@@ -14,13 +13,15 @@ interface Then {
 type GivenWhenThen = (message: Message) => Promise<Then>
 
 describe('MessageService - Post message to queue', () => {
-  let mockQueueService: QueueService
+  let mockQueueUrl: string
+  let mockSqs: SQS
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { queueService, messageService } = await createTestingMessageModule()
+    const { queueUrl, sqs, messageService } = await createTestingMessageModule()
 
-    mockQueueService = queueService
+    mockQueueUrl = queueUrl
+    mockSqs = sqs
 
     givenWhenThen = async (message: Message) => {
       const then = {} as Then
@@ -43,15 +44,40 @@ describe('MessageService - Post message to queue', () => {
       let then: Then
 
       beforeEach(async () => {
-        mockQueueService.add = jest.fn().mockResolvedValueOnce(messageId)
+        const mockSendMessage = mockSqs.sendMessage as jest.Mock
+        mockSendMessage.mockReturnValueOnce({
+          promise: () => Promise.resolve({ MessageId: messageId }),
+        })
 
         then = await givenWhenThen(message)
       })
 
       it(`should post message ${type} to queue`, () => {
-        expect(mockQueueService.add).toHaveBeenCalledWith(message)
+        expect(mockSqs.sendMessage).toHaveBeenCalledWith({
+          QueueUrl: mockQueueUrl,
+          MessageBody: JSON.stringify(message),
+        })
         expect(then.result).toEqual(messageId)
       })
     },
   )
+
+  describe('message not posted to queue', () => {
+    const message = { caseId: uuid() } as Message
+    let then: Then
+
+    beforeEach(async () => {
+      const mockSendMessage = mockSqs.sendMessage as jest.Mock
+      mockSendMessage.mockReturnValueOnce({
+        promise: () => Promise.reject(new Error('Some error')),
+      })
+
+      then = await givenWhenThen(message)
+    })
+
+    it('should throw error', () => {
+      expect(then.error).toBeInstanceOf(Error)
+      expect(then.error.message).toEqual('Some error')
+    })
+  })
 })
