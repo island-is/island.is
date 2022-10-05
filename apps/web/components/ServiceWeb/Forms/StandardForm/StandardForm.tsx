@@ -127,6 +127,7 @@ const labels: Record<string, string> = {
   erindi: 'Erindi',
   vidfangsefni: 'Viðfangsefni',
   starfsheiti: 'Starfsheiti',
+  rikisadili: 'Ríkisaðili',
 }
 
 // these should be skipped in the message itself
@@ -589,7 +590,7 @@ export const StandardForm = ({
                           backgroundColor="blue"
                           icon="chevronDown"
                           isSearchable
-                          label="Ríkisaðili"
+                          label={labels.rikisadili}
                           name="rikisadili"
                           onChange={({ label, value }: Option) => {
                             onChange(label)
