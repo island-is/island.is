@@ -10,6 +10,7 @@ import {
   Application,
   DefaultEvents,
   defineTemplateApi,
+  NationalRegistryUserApi,
 } from '@island.is/application/types'
 import { ApiModuleActions, States, Roles } from '../constants'
 import { GeneralPetitionSchema } from './dataSchema'
@@ -48,6 +49,7 @@ const GeneralPetitionApplicationTemplate: ApplicationTemplate<
                 },
               ],
               write: 'all',
+              api: [NationalRegistryUserApi],
             },
           ],
         },
