@@ -289,6 +289,7 @@ export class ParentalLeaveService {
 
       const startDate = new Date(period.startDate)
       const endDate = new Date(period.endDate)
+      const useLength = period.useLength
 
       let periodLength = 0
 
@@ -328,7 +329,9 @@ export class ParentalLeaveService {
         // We know its a normal period and it will not exceed personal rights
         periods.push({
           from:
-            isFirstPeriod && isActualDateOfBirth
+            isFirstPeriod && isActualDateOfBirth && useLength === 'yes'
+              ? apiConstants.actualDateOfBirthMonths
+              : isFirstPeriod && isActualDateOfBirth
               ? apiConstants.actualDateOfBirth
               : period.startDate,
           to: period.endDate,
@@ -345,7 +348,9 @@ export class ParentalLeaveService {
         // We know all of the period will be using transferred rights
         periods.push({
           from:
-            isFirstPeriod && isActualDateOfBirth
+            isFirstPeriod && isActualDateOfBirth && useLength === 'yes'
+              ? apiConstants.actualDateOfBirthMonths
+              : isFirstPeriod && isActualDateOfBirth
               ? apiConstants.actualDateOfBirth
               : period.startDate,
           to: period.endDate,
@@ -379,23 +384,25 @@ export class ParentalLeaveService {
             `Could not calculate end date of period starting ${period.startDate} and using ${daysLeftOfPersonalRights} days of rights`,
           )
         }
-
+        
         // Add the period using personal rights
-        periods.push({
-          from:
-            isFirstPeriod && isActualDateOfBirth
-              ? apiConstants.actualDateOfBirth
-              : period.startDate,
-          to: format(getNormalPeriodEndDate.periodEndDate, df),
-          ratio: getRatio(
-            period.ratio,
-            daysLeftOfPersonalRights.toString(),
-            isUsingNumberOfDays,
-          ),
-          approved: false,
-          paid: false,
-          rightsCodePeriod: null,
-        })
+          periods.push({
+            from:
+              isFirstPeriod && isActualDateOfBirth && useLength === 'yes'
+                ? apiConstants.actualDateOfBirthMonths
+                : isFirstPeriod && isActualDateOfBirth
+                ? apiConstants.actualDateOfBirth
+                : period.startDate,
+            to: format(getNormalPeriodEndDate.periodEndDate, df),
+            ratio: getRatio(
+              period.ratio,
+              daysLeftOfPersonalRights.toString(),
+              isUsingNumberOfDays,
+            ),
+            approved: false,
+            paid: false,
+            rightsCodePeriod: null,
+          })     
 
         const transferredPeriodStartDate = addDays(
           getNormalPeriodEndDate.periodEndDate,
