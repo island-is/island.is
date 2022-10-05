@@ -2,6 +2,7 @@ import { uuid } from 'uuidv4'
 import { Op } from 'sequelize'
 
 import {
+  CaseFileState,
   CaseState,
   CaseType,
   User as TUser,
@@ -153,7 +154,14 @@ describe('CaseController - Create court case', () => {
           },
           { model: Case, as: 'parentCase' },
           { model: Case, as: 'childCase' },
-          { model: CaseFile, as: 'caseFiles' },
+          {
+            model: CaseFile,
+            as: 'caseFiles',
+            required: false,
+            where: {
+              state: { [Op.not]: CaseFileState.DELETED },
+            },
+          },
         ],
         order: [[{ model: Defendant, as: 'defendants' }, 'created', 'ASC']],
         where: {
