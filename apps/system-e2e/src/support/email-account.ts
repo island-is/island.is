@@ -56,7 +56,7 @@ async function registerEmailAddressWithSES(emailAccount: {
         'VerificationStatus'
       ] !== 'Success'
     ) {
-      throw new Error(`Email identity still not validated in AWS SES`)
+      throw new Error('Email identity still not validated in AWS SES')
     }
   } else {
     throw new Error('Verification message not found.')
@@ -113,22 +113,22 @@ const makeEmailAccount = async (name: string): Promise<EmailAccount> => {
       console.log('getting the last email')
       console.log(emailConfig)
 
-      console.log(`connecting to mail server...`)
+      console.log('connecting to mail server...')
       const connection = await connect(emailConfig)
-      console.log(`connected`)
+      console.log('connected')
       try {
         // grab up to 50 emails from the inbox
-        console.log(`Opening inbox...`)
+        console.log('Opening inbox...')
         await connection.openBox('INBOX')
-        console.log(`Opened inbox.`)
+        console.log('Opened inbox.')
         const searchCriteria = ['UNSEEN']
         const fetchOptions = {
           bodies: [''],
           markSeen: true,
         }
-        console.log(`Starting search for new messages...`)
+        console.log('Starting search for new messages...')
         const messages = await connection.search(searchCriteria, fetchOptions)
-        console.log(`Search finished`)
+        console.log('Search finished')
 
         if (!messages.length) {
           console.log('cannot find any emails')
