@@ -29,6 +29,7 @@ import {
   CaseDecision,
   CaseType,
   isAcceptingCaseDecision,
+  SessionArrangements,
 } from '@island.is/judicial-system/types'
 import {
   RestrictionCaseCourtSubsections,
@@ -53,6 +54,7 @@ import * as constants from '@island.is/judicial-system/consts'
 import { isCourtRecordStepValidRC } from '../../../../utils/validate'
 import { formatCustodyRestrictions } from '../../../../utils/restrictions'
 import * as styles from './CourtRecord.css'
+import { capitalize } from '@island.is/judicial-system/formatters'
 
 export const CourtRecord: React.FC = () => {
   const {
@@ -471,7 +473,14 @@ export const CourtRecord: React.FC = () => {
                     name="accused-appeal-decision"
                     id="accused-appeal"
                     label={formatMessage(
-                      m.sections.appealDecision.defendantAppeal,
+                      m.sections.appealDecision.accusedAppeal,
+                      {
+                        accused: capitalize(
+                          formatMessage(core.defendant, {
+                            suffix: 'i',
+                          }),
+                        ),
+                      },
                     )}
                     value={CaseAppealDecision.APPEAL}
                     checked={
@@ -479,14 +488,33 @@ export const CourtRecord: React.FC = () => {
                       CaseAppealDecision.APPEAL
                     }
                     onChange={() => {
-                      setWorkingCase({
-                        ...workingCase,
-                        accusedAppealDecision: CaseAppealDecision.APPEAL,
-                      })
-
-                      updateCase(workingCase.id, {
-                        accusedAppealDecision: CaseAppealDecision.APPEAL,
-                      })
+                      setAndSendToServer(
+                        [
+                          {
+                            accusedAppealDecision: CaseAppealDecision.APPEAL,
+                            force: true,
+                          },
+                          {
+                            accusedAppealAnnouncement:
+                              workingCase.sessionArrangements ===
+                              SessionArrangements.ALL_PRESENT_SPOKESPERSON
+                                ? formatMessage(
+                                    m.sections.appealDecision
+                                      .defendantAnnouncementAutofillSpokespersonAppeal,
+                                  )
+                                : formatMessage(
+                                    m.sections.appealDecision
+                                      .defendantAnnouncementAutofillAppeal,
+                                    {
+                                      caseType: workingCase.type,
+                                    },
+                                  ),
+                            force: true,
+                          },
+                        ],
+                        workingCase,
+                        setWorkingCase,
+                      )
                     }}
                     large
                     backgroundColor="white"
@@ -495,7 +523,14 @@ export const CourtRecord: React.FC = () => {
                     name="accused-appeal-decision"
                     id="accused-accept"
                     label={formatMessage(
-                      m.sections.appealDecision.defendantAccept,
+                      m.sections.appealDecision.accusedAccept,
+                      {
+                        accused: capitalize(
+                          formatMessage(core.defendant, {
+                            suffix: 'i',
+                          }),
+                        ),
+                      },
                     )}
                     value={CaseAppealDecision.ACCEPT}
                     checked={
@@ -503,14 +538,20 @@ export const CourtRecord: React.FC = () => {
                       CaseAppealDecision.ACCEPT
                     }
                     onChange={() => {
-                      setWorkingCase({
-                        ...workingCase,
-                        accusedAppealDecision: CaseAppealDecision.ACCEPT,
-                      })
-
-                      updateCase(workingCase.id, {
-                        accusedAppealDecision: CaseAppealDecision.ACCEPT,
-                      })
+                      setAndSendToServer(
+                        [
+                          {
+                            accusedAppealDecision: CaseAppealDecision.ACCEPT,
+                            force: true,
+                          },
+                          {
+                            accusedAppealAnnouncement: '',
+                            force: true,
+                          },
+                        ],
+                        workingCase,
+                        setWorkingCase,
+                      )
                     }}
                     large
                     backgroundColor="white"
@@ -521,7 +562,14 @@ export const CourtRecord: React.FC = () => {
                     name="accused-appeal-decision"
                     id="accused-postpone"
                     label={formatMessage(
-                      m.sections.appealDecision.defendantPostpone,
+                      m.sections.appealDecision.accusedPostpone,
+                      {
+                        accused: capitalize(
+                          formatMessage(core.defendant, {
+                            suffix: 'i',
+                          }),
+                        ),
+                      },
                     )}
                     value={CaseAppealDecision.POSTPONE}
                     checked={
@@ -529,14 +577,20 @@ export const CourtRecord: React.FC = () => {
                       CaseAppealDecision.POSTPONE
                     }
                     onChange={() => {
-                      setWorkingCase({
-                        ...workingCase,
-                        accusedAppealDecision: CaseAppealDecision.POSTPONE,
-                      })
-
-                      updateCase(workingCase.id, {
-                        accusedAppealDecision: CaseAppealDecision.POSTPONE,
-                      })
+                      setAndSendToServer(
+                        [
+                          {
+                            accusedAppealDecision: CaseAppealDecision.POSTPONE,
+                            force: true,
+                          },
+                          {
+                            accusedAppealAnnouncement: '',
+                            force: true,
+                          },
+                        ],
+                        workingCase,
+                        setWorkingCase,
+                      )
                     }}
                     large
                     backgroundColor="white"
@@ -553,16 +607,21 @@ export const CourtRecord: React.FC = () => {
                       CaseAppealDecision.NOT_APPLICABLE
                     }
                     onChange={() => {
-                      setWorkingCase({
-                        ...workingCase,
-                        accusedAppealDecision:
-                          CaseAppealDecision.NOT_APPLICABLE,
-                      })
-
-                      updateCase(workingCase.id, {
-                        accusedAppealDecision:
-                          CaseAppealDecision.NOT_APPLICABLE,
-                      })
+                      setAndSendToServer(
+                        [
+                          {
+                            accusedAppealDecision:
+                              CaseAppealDecision.NOT_APPLICABLE,
+                            force: true,
+                          },
+                          {
+                            accusedAppealAnnouncement: '',
+                            force: true,
+                          },
+                        ],
+                        workingCase,
+                        setWorkingCase,
+                      )
                     }}
                     large
                     backgroundColor="white"
@@ -613,110 +672,136 @@ export const CourtRecord: React.FC = () => {
                   </Text>
                 </Text>
               </Box>
-              <Box marginBottom={2}>
-                <div className={styles.gridRowEqual}>
-                  <RadioButton
-                    name="prosecutor-appeal-decision"
-                    id="prosecutor-appeal"
-                    label={formatMessage(
-                      m.sections.appealDecision.prosecutorAppeal,
-                    )}
-                    value={CaseAppealDecision.APPEAL}
-                    checked={
-                      workingCase.prosecutorAppealDecision ===
-                      CaseAppealDecision.APPEAL
-                    }
-                    onChange={() => {
-                      setWorkingCase({
-                        ...workingCase,
-                        prosecutorAppealDecision: CaseAppealDecision.APPEAL,
-                      })
+              <div className={styles.gridRowEqual}>
+                <RadioButton
+                  name="prosecutor-appeal-decision"
+                  id="prosecutor-appeal"
+                  label={formatMessage(
+                    m.sections.appealDecision.prosecutorAppeal,
+                  )}
+                  value={CaseAppealDecision.APPEAL}
+                  checked={
+                    workingCase.prosecutorAppealDecision ===
+                    CaseAppealDecision.APPEAL
+                  }
+                  onChange={() => {
+                    setAndSendToServer(
+                      [
+                        {
+                          prosecutorAppealDecision: CaseAppealDecision.APPEAL,
+                          force: true,
+                        },
+                        {
+                          prosecutorAppealAnnouncement: formatMessage(
+                            m.sections.appealDecision
+                              .prosecutorAnnoncementAutofillAppeal,
+                          ),
+                          force: true,
+                        },
+                      ],
+                      workingCase,
+                      setWorkingCase,
+                    )
+                  }}
+                  large
+                  backgroundColor="white"
+                />
 
-                      updateCase(workingCase.id, {
-                        prosecutorAppealDecision: CaseAppealDecision.APPEAL,
-                      })
-                    }}
-                    large
-                    backgroundColor="white"
-                  />
-                  <RadioButton
-                    name="prosecutor-appeal-decision"
-                    id="prosecutor-accept"
-                    label={formatMessage(
-                      m.sections.appealDecision.prosecutorAccept,
-                    )}
-                    value={CaseAppealDecision.ACCEPT}
-                    checked={
-                      workingCase.prosecutorAppealDecision ===
-                      CaseAppealDecision.ACCEPT
-                    }
-                    onChange={() => {
-                      setWorkingCase({
-                        ...workingCase,
-                        prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
-                      })
+                <RadioButton
+                  name="prosecutor-appeal-decision"
+                  id="prosecutor-accept"
+                  label={formatMessage(
+                    m.sections.appealDecision.prosecutorAccept,
+                  )}
+                  value={CaseAppealDecision.ACCEPT}
+                  checked={
+                    workingCase.prosecutorAppealDecision ===
+                    CaseAppealDecision.ACCEPT
+                  }
+                  onChange={() => {
+                    setAndSendToServer(
+                      [
+                        {
+                          prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
+                          force: true,
+                        },
+                        {
+                          prosecutorAppealAnnouncement: '',
+                          force: true,
+                        },
+                      ],
+                      workingCase,
+                      setWorkingCase,
+                    )
+                  }}
+                  large
+                  backgroundColor="white"
+                />
+              </div>
+              <div className={styles.gridRow2fr1fr}>
+                <RadioButton
+                  name="prosecutor-appeal-decision"
+                  id="prosecutor-postpone"
+                  label={formatMessage(
+                    m.sections.appealDecision.prosecutorPostpone,
+                  )}
+                  value={CaseAppealDecision.POSTPONE}
+                  checked={
+                    workingCase.prosecutorAppealDecision ===
+                    CaseAppealDecision.POSTPONE
+                  }
+                  onChange={() => {
+                    setAndSendToServer(
+                      [
+                        {
+                          prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
+                          force: true,
+                        },
+                        {
+                          prosecutorAppealAnnouncement: '',
+                          force: true,
+                        },
+                      ],
+                      workingCase,
+                      setWorkingCase,
+                    )
+                  }}
+                  large
+                  backgroundColor="white"
+                />
 
-                      updateCase(workingCase.id, {
-                        prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
-                      })
-                    }}
-                    large
-                    backgroundColor="white"
-                  />
-                </div>
-                <div className={styles.gridRow2fr1fr}>
-                  <RadioButton
-                    name="prosecutor-appeal-decision"
-                    id="prosecutor-postpone"
-                    label={formatMessage(
-                      m.sections.appealDecision.prosecutorPostpone,
-                    )}
-                    value={CaseAppealDecision.POSTPONE}
-                    checked={
-                      workingCase.prosecutorAppealDecision ===
-                      CaseAppealDecision.POSTPONE
-                    }
-                    onChange={() => {
-                      setWorkingCase({
-                        ...workingCase,
-                        prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
-                      })
-
-                      updateCase(workingCase.id, {
-                        prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
-                      })
-                    }}
-                    large
-                    backgroundColor="white"
-                  />
-                  <RadioButton
-                    name="prosecutor-appeal-decision"
-                    id="prosecutor-not-applicable"
-                    label={formatMessage(
-                      m.sections.appealDecision.prosecutorNotApplicable,
-                    )}
-                    value={CaseAppealDecision.NOT_APPLICABLE}
-                    checked={
-                      workingCase.prosecutorAppealDecision ===
-                      CaseAppealDecision.NOT_APPLICABLE
-                    }
-                    onChange={() => {
-                      setWorkingCase({
-                        ...workingCase,
-                        prosecutorAppealDecision:
-                          CaseAppealDecision.NOT_APPLICABLE,
-                      })
-
-                      updateCase(workingCase.id, {
-                        prosecutorAppealDecision:
-                          CaseAppealDecision.NOT_APPLICABLE,
-                      })
-                    }}
-                    large
-                    backgroundColor="white"
-                  />
-                </div>
-              </Box>
+                <RadioButton
+                  name="prosecutor-appeal-decision"
+                  id="prosecutor-not-applicable"
+                  label={formatMessage(
+                    m.sections.appealDecision.prosecutorNotApplicable,
+                  )}
+                  value={CaseAppealDecision.NOT_APPLICABLE}
+                  checked={
+                    workingCase.prosecutorAppealDecision ===
+                    CaseAppealDecision.NOT_APPLICABLE
+                  }
+                  onChange={() => {
+                    setAndSendToServer(
+                      [
+                        {
+                          prosecutorAppealDecision:
+                            CaseAppealDecision.NOT_APPLICABLE,
+                          force: true,
+                        },
+                        {
+                          prosecutorAppealAnnouncement: '',
+                          force: true,
+                        },
+                      ],
+                      workingCase,
+                      setWorkingCase,
+                    )
+                  }}
+                  large
+                  backgroundColor="white"
+                />
+              </div>
               <Box>
                 <Input
                   name="prosecutorAppealAnnouncement"

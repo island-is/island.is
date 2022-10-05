@@ -81,6 +81,38 @@ describe(`${RESTRICTION_CASE_COURT_RECORD_ROUTE}/:id`, () => {
           )
         })
 
+        describe('Autofill appeal announcement when defendant appeals in court', () => {
+          it('should autofill appeal announcement when defendant appeals', () => {
+            cy.get('#accused-appeal').check()
+            cy.getByTestid('accusedAppealAnnouncement').should('not.be.empty')
+          })
+
+          it('should clear appeal announcement when something else besides APPEAL option is selected', () => {
+            cy.get('#accused-appeal').check()
+            cy.getByTestid('accusedAppealAnnouncement').should('not.be.empty')
+            cy.get('#accused-postpone').check()
+            cy.getByTestid('accusedAppealAnnouncement').should('be.empty')
+          })
+        })
+
+        describe('Autofill appeal announcement when prosecutor appeals in court', () => {
+          it('should autofill appeal announcement when prosecutor appeals', () => {
+            cy.get('#prosecutor-appeal').check()
+            cy.getByTestid('prosecutorAppealAnnouncement').should(
+              'not.be.empty',
+            )
+          })
+
+          it('should clear appeal announcement when something else besides APPEAL option is selected', () => {
+            cy.get('#prosecutor-appeal').check()
+            cy.getByTestid('prosecutorAppealAnnouncement').should(
+              'not.be.empty',
+            )
+            cy.get('#prosecutor-postpone').check()
+            cy.getByTestid('prosecutorAppealAnnouncement').should('be.empty')
+          })
+        })
+
         describe('Conclusion is empty', () => {
           beforeEach(() => {
             intercept({
