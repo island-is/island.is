@@ -7,13 +7,22 @@ import danger from '../../../../island-ui/src/assets/card/danger.png'
 import success from '../../../../island-ui/src/assets/card/checkmark.png'
 import backgroundPink from '../../../../island-ui/src/assets/card/okuskirteini.png'
 import backgroundBlue from '../../../../island-ui/src/assets/card/skotvopnaleyfi.png'
+import BackgroundDriversLicense from '../../assets/card/okuskirteini.png'
+import BackgroundWeaponLicense from '../../assets/card/skotvopnaleyfi.png'
+import BackgroundADR from '../../assets/card/adr-bg.png'
+import LogoAOSH from '../../assets/card/vinnueftirlitid-logo.png'
+import BackgroundVinnuvelar from '../../assets/card/vinnuvelar-bg.png'
+import LogoCoatOfArms from '../../assets/card/agency-logo.png'
+import CoatOfArms from '../../assets/card/logo-coat-of-arms.png'
 import { useIntl } from 'react-intl'
 import { font } from '../../utils'
+import { LicenseCardType } from '../card/licence-card'
 
-const Host = styled.View`
+const Host = styled.View<{ backgroundColor: string }>`
   border-radius: 16px;
   margin-bottom: 32px;
   overflow: hidden;
+  background-color: ${({backgroundColor}) => backgroundColor};
 `
 
 const Header = styled.View<{ hasNoData?: boolean }>`
@@ -163,15 +172,50 @@ interface ScanResultCardProps {
   valid?: boolean
   isExpired?: boolean
   errorMessage?: string
-  title: string
+  title?: string
   nationalId?: string
   name?: string
   licenseNumber?: string
   photo?: string
   data?: Array<{ key: string; value: any }>
-  backgroundColor?: 'pink' | 'blue'
   hasNoData?: boolean;
+  type: ScanResultCardType;
 }
+
+const ScanResultCardPresets = {
+  DriversLicense: {
+    title: 'Ökuskírteini (IS)',
+    logo: LogoCoatOfArms,
+    backgroundImage: BackgroundDriversLicense,
+    backgroundColor: '#F5E4EC',
+  },
+  AdrLicense: {
+    title: 'ADR skírteini',
+    logo: LogoAOSH,
+    backgroundImage: BackgroundADR,
+    backgroundColor: '#F2FAEC',
+  },
+  MachineLicense: {
+    title: 'Vinnuvélaskírteini',
+    logo: LogoAOSH,
+    backgroundImage: BackgroundVinnuvelar,
+    backgroundColor: '#C5E6AF',
+  },
+  FirearmLicense: {
+    title: 'Skotvopnaskírteini',
+    logo: CoatOfArms,
+    backgroundImage: BackgroundWeaponLicense,
+    backgroundColor: '#EBEBF2',
+  },
+  Unknown: {
+    title: 'Ekki þekkt',
+    logo: LogoCoatOfArms,
+    backgroundImage: BackgroundDriversLicense,
+    backgroundColor: '#F5E4EC',
+  }
+}
+
+export type ScanResultCardType = keyof typeof ScanResultCardPresets
 
 export function ScanResultCard(props: ScanResultCardProps) {
   const {
@@ -185,20 +229,27 @@ export function ScanResultCard(props: ScanResultCardProps) {
     name,
     photo,
     data,
-    backgroundColor = 'pink',
     hasNoData = false,
+    type,
   } = props
   const intl = useIntl()
-  const background =
-    backgroundColor === 'pink' ? backgroundPink : backgroundBlue
+
+  const preset = type
+    ? ScanResultCardPresets[type]
+    : ScanResultCardPresets.DriversLicense
+
+    const cardTitle = title ?? preset?.title;
+    const backgroundImage = preset?.backgroundImage
+    const backgroundColor = preset?.backgroundColor ?? '#F5E4EC'
+    const logo = preset?.logo;
 
   return (
-    <Host>
-      <Background source={background} resizeMode="stretch" />
+    <Host backgroundColor={backgroundColor}>
+      <Background source={backgroundImage} resizeMode="stretch" />
       <Header hasNoData={hasNoData}>
         <Detail>
           <Title>
-            {title}
+            {cardTitle}
           </Title>
           <Subtitle>
             <SubtitleIcon>
@@ -224,7 +275,7 @@ export function ScanResultCard(props: ScanResultCardProps) {
             </SubtitleText>
           </Subtitle>
         </Detail>
-        <Logo source={hasNoData ? coatOfArms : agencyLogo} resizeMode="contain" />
+        <Logo source={logo} resizeMode="contain" />
       </Header>
       {error ? (
         <ErrorContent>

@@ -191,6 +191,8 @@ export const en: TranslatedMessages = {
   'licenseScannerResult.valid': 'Is valid',
   'licenseScannerResult.driverLicenseTitle': 'Driver license (IS)',
   'licenseScannerResult.firarmsLicenseTitle': 'Firearms license (IS)',
+  'licenseScannerResult.adrLicenseTitle': 'ADR licens (IS)',
+  'licenseScannerResult.vvrLicenseTitle': 'Vinnuvélaskírteini (IS)',
   'licenseScannerResult.errorMessage': 'Error message',
   'licenseScannerResult.name': 'Name',
   'licenseScannerResult.nationalId': 'National ID',

@@ -4,7 +4,7 @@ import { useIntl } from 'react-intl'
 import { client } from '../../../graphql/client'
 import { VERIFY_PKPASS_MUTATION } from '../../../graphql/queries/verify-pkpass.mutation'
 
-export const DriverLicenseScanResult = ({ data, onLoad, isExpired, backgroundColor, title, hasNoData }: any) => {
+export const LicenseScanResult = ({ data, onLoad, isExpired, title, hasNoData, type }: any) => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string>()
@@ -90,8 +90,8 @@ export const DriverLicenseScanResult = ({ data, onLoad, isExpired, backgroundCol
       nationalId={nationalId}
       licenseNumber={driverLicenseNumber}
       photo={photo}
-      backgroundColor={backgroundColor}
-      hasNoData={hasNoData}
+      hasNoData={!driverLicenseNumber}
+      type={type}
     />
   )
 }

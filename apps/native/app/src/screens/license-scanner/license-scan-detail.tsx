@@ -1,5 +1,5 @@
 import { BarCodeEvent, Constants } from 'expo-barcode-scanner'
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState } from 'react'
 import { View } from 'react-native'
 import {
   Navigation,
@@ -9,23 +9,26 @@ import { ScanResultCard } from '@island.is/island-ui-native'
 import { useNavigationButtonPress } from 'react-native-navigation-hooks/dist'
 import { StackRegistry } from '../../utils/component-registry'
 import { CovidCertificateScanResult } from './scan-results/covid-certificate-scan-result'
-import { DriverLicenseScanResult } from './scan-results/driver-license-scan-result'
+import { LicenseScanResult } from './scan-results/license-scan-result'
 import { useIntl } from 'react-intl'
 
 enum ScanResult {
-  COVID_CERTIFICATE,
-  DRIVER_LICENSE,
-  FIREARM_LICENSE,
-  UNKNOWN,
+  DRIVER_LICENCE = 'DriversLicense',
+  FIREARM_LICENSE = 'FirearmLicense',
+  ADR_LICENSE = 'AdrLicense',
+  MACHINE_LICENSE = 'MachineLicense',
+  UNKNOWN = 'Unknown',
 }
 
 const FirearmTemplateIds = ['dfb706c1-3a78-4518-bf25-cebbf0a93132','61f74977-0e81-4786-94df-6b8470013f09'];
+const VVRTemplateIds = ['61012578-c2a0-489e-8dbd-3df5b3e538ea', 'd63e4b27-9a0b-45b1-8fe4-a9be0011781f'];
+const ADRTemplaeIds = ['4e49febe-7ca9-49e3-a3be-3be70cb996c2','62a105d5-ef8a-419e-8423-fbbbfb5f1b36']
 
 export const LicenseScanDetailScreen: NavigationFunctionComponent<
   BarCodeEvent & { isExpired: boolean }
 > = ({ data, type, isExpired }) => {
   const [loaded, setLoaded] = useState(false)
-  const [scanResult, setScanResult] = useState<ScanResult>()
+  const [scanResult, setScanResult] = useState<ScanResult>(ScanResult.UNKNOWN)
   const intl = useIntl()
 
   useNavigationButtonPress(({ buttonId }) => {
@@ -40,10 +43,18 @@ export const LicenseScanDetailScreen: NavigationFunctionComponent<
         const parsed = JSON.parse(data)
 
         if (parsed?.TGLJZW) {
-          setScanResult(ScanResult.DRIVER_LICENSE)
+          setScanResult(ScanResult.DRIVER_LICENCE)
         }
         if (FirearmTemplateIds.includes(parsed?.passTemplateId)) {
           setScanResult(ScanResult.FIREARM_LICENSE)
+        }
+
+        if (ADRTemplaeIds.includes(parsed?.passTemplateId)) {
+          setScanResult(ScanResult.ADR_LICENSE)
+        }
+
+        if (VVRTemplateIds.includes(parsed?.passTemplateId)) {
+          setScanResult(ScanResult.MACHINE_LICENSE)
         }
       }
       // else if (type === Constants.BarCodeType.qr) {
@@ -54,13 +65,13 @@ export const LicenseScanDetailScreen: NavigationFunctionComponent<
     } catch (err) {
       console.log('unable to decode barcode', err)
     }
-  }, [data, type])
+  }, [data, type, isExpired])
 
   return (
     <View style={{ flex: 1, padding: 16 }}>
       {isExpired === true ? (
         <ScanResultCard
-          title={intl.formatMessage({ id: 'licenseScannerResult.driverLicenseTitle'})}
+          type={scanResult}
           loading={false}
           isExpired={isExpired}
           error={true}
@@ -70,18 +81,12 @@ export const LicenseScanDetailScreen: NavigationFunctionComponent<
         />
       ) : (
         <>
-          {scanResult === ScanResult.DRIVER_LICENSE && (
-            <DriverLicenseScanResult data={data} onLoad={setLoaded} title={intl.formatMessage({ id: 'licenseScannerResult.driverLicenseTitle'})} />
-          )}
-          {scanResult === ScanResult.FIREARM_LICENSE && (
-            <DriverLicenseScanResult
-              data={data}
-              onLoad={setLoaded}
-              backgroundColor="blue"
-              title={intl.formatMessage({ id: 'licenseScannerResult.firarmsLicenseTitle'})}
-              hasNoData={true}
-            />
-          )}
+          <LicenseScanResult
+            data={data}
+            onLoad={setLoaded}
+            type={scanResult}
+          />
+
           {/* {scanResult === ScanResult.COVID_CERTIFICATE && (
             <CovidCertificateScanResult data={data} onLoad={setLoaded} />
           )} */}

@@ -192,6 +192,8 @@ export const is = {
    'licenseScannerResult.valid': 'Í gildi',
    'licenseScannerResult.driverLicenseTitle': 'Ökuskírteini (IS)',
    'licenseScannerResult.firarmsLicenseTitle': 'Skotvopnaskírteini',
+   'licenseScannerResult.adrLicenseTitle': 'ADR skírteini',
+   'licenseScannerResult.vvrLicenseTitle': 'Vinnuvélaskírteini',
    'licenseScannerResult.errorMessage': 'Villuskilaboð',
    'licenseScannerResult.name': 'Nafn',
    'licenseScannerResult.birthDate': 'Fæðingardagur',
