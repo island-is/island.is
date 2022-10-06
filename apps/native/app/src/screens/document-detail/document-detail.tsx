@@ -75,6 +75,34 @@ const {
   },
 )
 
+const PdfViewer = React.memo(({ url, body, onLoaded }: { url: string, body: string, onLoaded: () => void}) => {
+    return (
+      <Pdf
+        source={{
+          uri: url,
+          headers: {
+            'content-type': 'application/x-www-form-urlencoded',
+          },
+          body,
+          method: 'POST',
+        }}
+        onLoadComplete={onLoaded}
+        style={{
+          flex: 1,
+          backgroundColor: 'transparent',
+        }}
+        activityIndicatorProps={{
+          color: '#0061ff',
+          progressTintColor: '#ccdfff',
+        }}
+      />
+  )}, (prevProps, nextProps) => {
+    if (prevProps.url === nextProps.url && prevProps.body === nextProps.body) {
+      return true;
+    }
+    return false
+  })
+
 export const DocumentDetailScreen: NavigationFunctionComponent<{
   docId: string
 }> = ({ componentId, docId }) => {
@@ -165,6 +193,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     }
   }, [loaded])
 
+
   return (
     <>
       <Host>
@@ -192,28 +221,15 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
           >
             {hasPdf ? (
               <PdfWrapper>
-                <Pdf
-                  source={{
-                    uri: Document.url!,
-                    headers: {
-                      'content-type': 'application/x-www-form-urlencoded',
-                    },
-                    body: `documentId=${Document.id}&__accessToken=${accessToken}`,
-                    method: 'POST',
-                  }}
-                  onLoadComplete={(numberOfPages, filePath) => {
+                <PdfViewer
+                  url={Document.url}
+                  body={`documentId=${Document.id}&__accessToken=${accessToken}`}
+                  onLoaded={(_, filePath) => {
                     setPdfUrl(filePath)
                     setLoaded(true)
                   }}
-                  style={{
-                    flex: 1,
-                    backgroundColor: 'transparent',
-                  }}
-                  activityIndicatorProps={{
-                    color: theme.color.blue400,
-                    progressTintColor: theme.color.blue200,
-                  }}
                 />
+
               </PdfWrapper>
             ) : (
               <WebView
