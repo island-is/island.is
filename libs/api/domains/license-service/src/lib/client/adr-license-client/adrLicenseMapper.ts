@@ -89,7 +89,7 @@ export const parseAdrLicensePayload = (
 
   const grunn = parseRights(
     label ? label['otherThanTanks'] : i18n.otherThanTanks[locale],
-    adrRights.filter((field) => field.grunn),
+    adrRights,
   )
   if (grunn) data.push(grunn)
 
