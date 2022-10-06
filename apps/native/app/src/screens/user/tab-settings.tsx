@@ -468,7 +468,7 @@ export function TabSettings() {
               ? intl.formatMessage({ id: 'settings.about.codePushLoading'})
               : !localPackage
               ? intl.formatMessage({ id: 'settings.about.codePushUpToDate'})
-              : `${localPackage?.label}: ${localPackage.packageHash}`
+              : `${localPackage?.label}`
           }
         />
         {/* <PressableHighlight
