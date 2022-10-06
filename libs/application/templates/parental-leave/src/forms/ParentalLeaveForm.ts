@@ -41,6 +41,7 @@ import {
   NO_PRIVATE_PENSION_FUND,
   NO_UNION,
   ParentalRelations,
+  PARENTAL_GRANT_STUDENTS,
   PARENTAL_LEAVE,
   StartDateOptions,
   YES,
@@ -552,28 +553,26 @@ export const ParentalLeaveForm: Form = buildForm({
               uploadButtonLabel:
                 parentalLeaveFormMessages.selfEmployed.attachmentButton,
             }),
-            // add back when we add student confirmation
-            // buildFileUploadField({
-            //   id: 'fileUpload.studentFile',
-            //   title: parentalLeaveFormMessages.attachmentScreen.studentTitle,
-            //   introduction: parentalLeaveFormMessages.attachmentScreen.studentDescription,
-            //   maxSize: FILE_SIZE_LIMIT,
-            //   condition: (answers) => {
-            //     // check for if they are a student student to show this field
-            //     // const isStudent = (answers as {})
-            //     // return isStudent
-
-            //     return false
-            //   },
-            //   maxSizeErrorText:
-            //     parentalLeaveFormMessages.selfEmployed
-            //       .attachmentMaxSizeError,
-            //   uploadAccept: '.pdf',
-            //   uploadHeader: '',
-            //   uploadDescription: '',
-            //   uploadButtonLabel:
-            //     parentalLeaveFormMessages.selfEmployed.attachmentButton,
-            // }),
+            buildFileUploadField({
+              id: 'fileUpload.studentFile',
+              title: parentalLeaveFormMessages.attachmentScreen.studentTitle,
+              introduction:
+                parentalLeaveFormMessages.attachmentScreen.studentDescription,
+              condition: (answers) =>
+                (answers as {
+                  applicationType: {
+                    option: string
+                  }
+                })?.applicationType?.option === PARENTAL_GRANT_STUDENTS,
+              maxSize: FILE_SIZE_LIMIT,
+              maxSizeErrorText:
+                parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
+              uploadAccept: '.pdf',
+              uploadHeader: '',
+              uploadDescription: '',
+              uploadButtonLabel:
+                parentalLeaveFormMessages.selfEmployed.attachmentButton,
+            }),
             // add back when the "other" type has been added to the VMST api
             // buildFileUploadField({
             //   id: 'fileUpload.file',

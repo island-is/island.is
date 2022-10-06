@@ -110,9 +110,8 @@ export const answerValidators: Record<string, AnswerValidator> = {
     ) as unknown[]
 
     if (
-      isSelfEmployed === YES ||
-      (applicationType === PARENTAL_GRANT_STUDENTS &&
-        isEmpty((obj as { selfEmployedFile: unknown[] }).selfEmployedFile))
+      isSelfEmployed === YES &&
+      isEmpty((obj as { selfEmployedFile: unknown[] }).selfEmployedFile)
     ) {
       if (selfFileUploadEmployedFiles?.length || selfEmployedFiles?.length) {
         return undefined
@@ -120,8 +119,13 @@ export const answerValidators: Record<string, AnswerValidator> = {
 
       return buildError(errorMessages.requiredAttachment, 'selfEmployedFile')
     }
-
-    // add validation for student files object etc
+   
+    if (
+      applicationType === PARENTAL_GRANT_STUDENTS &&
+      isEmpty((obj as { studentFile: unknown[] }).studentFile)
+    ) {
+      return buildError(errorMessages.requiredAttachment, 'studentFile')
+    }
 
     return undefined
   },

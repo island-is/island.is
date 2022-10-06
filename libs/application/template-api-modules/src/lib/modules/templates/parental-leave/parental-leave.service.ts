@@ -20,6 +20,7 @@ import {
   YES,
   StartDateOptions,
   PARENTAL_LEAVE,
+  PARENTAL_GRANT_STUDENTS,
 } from '@island.is/application/templates/parental-leave'
 
 import { SharedTemplateApiService } from '../../shared'
@@ -207,30 +208,29 @@ export class ParentalLeaveService {
     }
   }
 
-  // add when we add student confirmation
-  // async getStudentPdf(application: Application) {
-  //   try {
-  //     const filename = getValueViaPath(
-  //       application.answers,
-  //       'fileUpload.studentFile[0].key',
-  //     )
+  async getStudentPdf(application: Application, index = 0) {
+    try {
+      const filename = getValueViaPath(
+        application.answers,
+        `fileUpload.studentFile[${index}].key`,
+      )
 
-  //     const Key = `${application.id}/${filename}`
-  //     const file = await this.s3
-  //       .getObject({ Bucket: this.attachmentBucket, Key })
-  //       .promise()
-  //     const fileContent = file.Body as Buffer
+      const Key = `${application.id}/${filename}`
+      const file = await this.s3
+        .getObject({ Bucket: this.attachmentBucket, Key })
+        .promise()
+      const fileContent = file.Body as Buffer
 
-  //     if (!fileContent) {
-  //       throw new Error('File content was undefined')
-  //     }
+      if (!fileContent) {
+        throw new Error('File content was undefined')
+      }
 
-  //     return fileContent.toString('base64')
-  //   } catch (e) {
-  //     this.logger.error('Cannot get student attachment', { e })
-  //     throw new Error('Failed to get the student attachment')
-  //   }
-  // }
+      return fileContent.toString('base64')
+    } catch (e) {
+      this.logger.error('Cannot get student attachment', { e })
+      throw new Error('Failed to get the student attachment')
+    }
+  }
 
   async getGenericPdf(application: Application, index = 0) {
     try {
@@ -293,6 +293,22 @@ export class ParentalLeaveService {
               attachmentBytes: pdf,
             })
           }
+        }
+      }
+    } else if (applicationType === PARENTAL_GRANT_STUDENTS) {
+      const stuydentPdfs = (await getValueViaPath(
+        application.answers,
+        'fileUpload.studentFile',
+      )) as unknown[]
+
+      if (stuydentPdfs?.length) {
+        for (let i = 0; i <= stuydentPdfs.length - 1; i++) {
+          const pdf = await this.getStudentPdf(application, i)
+
+          attachments.push({
+            attachmentType: apiConstants.attachments.student,
+            attachmentBytes: pdf,
+          })
         }
       }
     }
@@ -506,7 +522,9 @@ export class ParentalLeaveService {
   }
 
   async sendApplication({ application }: TemplateApiModuleActionProps) {
-    const { isSelfEmployed, applicationType } = getApplicationAnswers(application.answers)
+    const { isSelfEmployed, applicationType } = getApplicationAnswers(
+      application.answers,
+    )
     const nationalRegistryId = application.applicant
     const attachments = await this.getAttachments(application)
 
@@ -539,7 +557,8 @@ export class ParentalLeaveService {
       // There has been case when island.is got Access Denied from AWS when sending out emails
       // This try/catch keeps application in correct state
       try {
-        const selfEmployed = applicationType === PARENTAL_LEAVE ? isSelfEmployed === YES : true
+        const selfEmployed =
+          applicationType === PARENTAL_LEAVE ? isSelfEmployed === YES : true
 
         if (!selfEmployed) {
           // Only needs to send an email if being approved by employer
