@@ -115,6 +115,14 @@ export const parseFirearmLicensePayload = (
     metadata: {
       licenseNumber: licenseData.licenseInfo?.licenseNumber?.toString() ?? '',
       expired,
+      links: [
+        {
+          label: label
+            ? label['renewFirearmLicense']
+            : i18n.renewFirearmLicense[locale],
+          value: 'https://island.is/skotvopnaleyfi',
+        },
+      ],
     },
   }
 }

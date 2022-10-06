@@ -51,6 +51,10 @@ export const i18n = {
     is: 'Endurnýja ökuskírteini',
     en: 'Renew driving license',
   },
+  renewFirearmLicense: {
+    is: 'Endurnýja skotvopnaleyfi',
+    en: 'Renew firearm license',
+  },
   collectorLicenseValidTo: {
     is: 'Safnaraskírteini gildir til',
     en: 'Collector license valid to',
