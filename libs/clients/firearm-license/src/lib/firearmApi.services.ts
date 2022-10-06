@@ -11,11 +11,9 @@ import {
 export class FirearmApi {
   constructor(private readonly api: FirearmApplicationApi) {}
 
-  private firearmApiWithAuth = (user: User) =>
-    this.api.withMiddleware(new AuthMiddleware(user as Auth))
-
   public async getLicenseInfo(user: User): Promise<LicenseInfo | null> {
-    const licenseInfo = await this.firearmApiWithAuth(user)
+    const licenseInfo = await this.api
+      .withMiddleware(new AuthMiddleware(user as Auth))
       .apiFirearmApplicationLicenseInfoGet()
       .catch(handle404)
     return licenseInfo
@@ -30,7 +28,6 @@ export class FirearmApi {
       .catch(handle404)
     return propertyInfo
   }
-
   public async getCategories(user: User): Promise<{ [key: string]: string }> {
     const categories = await this.api
       .withMiddleware(new AuthMiddleware(user as Auth))
