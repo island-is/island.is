@@ -17,9 +17,11 @@ import differenceWith from 'lodash/differenceWith'
 import {
   compareScopesByName,
   CreateDelegationDTO,
+  DEFAULT_DOMAIN,
   DelegationDirection,
   DelegationDTO,
   DelegationsService,
+  DelegationType,
   DelegationValidity,
   UpdateDelegationDTO,
 } from '@island.is/auth-api-lib'
@@ -98,7 +100,11 @@ export class MeDelegationsController {
       )
     }
 
-    return this.delegationsService.findAllOutgoing(user, validity, otherUser)
+    return (
+      await this.delegationsService.findAllOutgoing(user, validity, otherUser)
+    ).filter(
+      (d) => d.type != DelegationType.Custom || d.domainName == DEFAULT_DOMAIN,
+    )
   }
 
   @Scopes(AuthScope.delegations)
@@ -130,7 +136,11 @@ export class MeDelegationsController {
       delegationId,
     )
 
-    if (!delegation) {
+    if (
+      !delegation ||
+      (delegation.type == DelegationType.Custom &&
+        delegation.domainName != DEFAULT_DOMAIN)
+    ) {
       throw new NotFoundException()
     }
 

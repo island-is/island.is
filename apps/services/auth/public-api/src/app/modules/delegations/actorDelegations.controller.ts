@@ -8,6 +8,7 @@ import {
 import { ApiTags } from '@nestjs/swagger'
 
 import {
+  DEFAULT_DOMAIN,
   DelegationDirection,
   DelegationDTO,
   DelegationsService,
@@ -88,6 +89,10 @@ export class ActorDelegationsController {
       )
     }
 
-    return this.delegationsService.findAllIncoming(actor, delegationTypes)
+    return (
+      await this.delegationsService.findAllIncoming(actor, delegationTypes)
+    ).filter(
+      (d) => d.type != DelegationType.Custom || d.domainName == DEFAULT_DOMAIN,
+    )
   }
 }
