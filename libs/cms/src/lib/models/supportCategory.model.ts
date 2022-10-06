@@ -17,8 +17,8 @@ export class SupportCategory {
   @Field(() => Organization, { nullable: true })
   organization?: Organization | null
 
-  @Field()
-  slug!: string
+  @Field({ nullable: true })
+  slug?: string
 
   @Field()
   importance!: number
