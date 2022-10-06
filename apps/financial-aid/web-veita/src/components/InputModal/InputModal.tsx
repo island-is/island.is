@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react'
 import { Box, Button, Text } from '@island.is/island-ui/core'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import cn from 'classnames'
 
 interface Props {
@@ -25,10 +25,9 @@ const InputModal = ({
   errorMessage,
 }: Props) => {
   return (
-    <AnimatePresence>
+    <>
       {isModalVisable && (
         <motion.div
-          layoutId="inputmodal"
           data-testid="modal"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -58,7 +57,7 @@ const InputModal = ({
           </Box>
         </motion.div>
       )}
-    </AnimatePresence>
+    </>
   )
 }
 
