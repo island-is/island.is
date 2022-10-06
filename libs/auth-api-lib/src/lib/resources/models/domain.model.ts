@@ -41,6 +41,24 @@ export class Domain extends Model {
   })
   nationalId!: string
 
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  @ApiProperty({
+    example: 'Mínar síður Ísland.is',
+  })
+  displayName!: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  @ApiProperty({
+    example: 'Stafrænt Ísland',
+  })
+  organisationLogoKey!: string
+
   @CreatedAt
   @ApiProperty()
   readonly created!: Date
