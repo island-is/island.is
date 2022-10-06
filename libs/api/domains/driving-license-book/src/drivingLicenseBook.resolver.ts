@@ -57,7 +57,7 @@ export class DrivingLicenseBookResolver {
 
   @Query(() => DrivingLicenseBookStudentOverview)
   drivingLicenseBookUserBook(@CurrentUser() user: User) {
-    return this.drivingLicenseBookService.getStudent({
+    return this.drivingLicenseBookService.getMostRecentStudentBook({
       nationalId: user.nationalId,
     })
   }

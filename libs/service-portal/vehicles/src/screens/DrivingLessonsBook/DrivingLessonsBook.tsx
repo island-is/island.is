@@ -78,7 +78,7 @@ const DrivingLessonsBook: ServicePortalModuleComponent = () => {
 
   const { data, loading, error } = useQuery<Query>(GET_STUDENT_BOOK)
 
-  const { book } = data?.drivingLicenseBookUserBook || {}
+  const { book, active } = data?.drivingLicenseBookUserBook || {}
 
   if (error && !loading) {
     return (
