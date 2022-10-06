@@ -32,6 +32,7 @@ export * from './lib/delegations/utils/scopes'
 // Resources module
 export * from './lib/resources/resources.module'
 export * from './lib/resources/resources.service'
+export * from './lib/resources/domains.service'
 export * from './lib/resources/resource-access.service'
 export * from './lib/resources/models/api-resource.model'
 export * from './lib/resources/models/api-resource-scope.model'
