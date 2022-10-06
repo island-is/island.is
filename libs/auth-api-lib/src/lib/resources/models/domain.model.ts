@@ -44,6 +44,7 @@ export class Domain extends Model {
   @Column({
     type: DataType.STRING,
     allowNull: false,
+    defaultValue: 'Mínar síður Ísland.is',
   })
   @ApiProperty({
     example: 'Mínar síður Ísland.is',
@@ -53,6 +54,7 @@ export class Domain extends Model {
   @Column({
     type: DataType.STRING,
     allowNull: false,
+    defaultValue: 'Stafrænt Ísland',
   })
   @ApiProperty({
     example: 'Stafrænt Ísland',
