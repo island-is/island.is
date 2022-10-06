@@ -54,7 +54,7 @@ type Delivery = {
 
 const YES = 'yes'
 @Injectable()
-export class PSignSubmissionService extends BaseTemplateApiService {
+export class PSignService extends BaseTemplateApiService {
   s3: S3
   constructor(
     private readonly syslumennService: SyslumennService,

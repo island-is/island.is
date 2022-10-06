@@ -1,6 +1,6 @@
 import { DynamicModule } from '@nestjs/common'
 import { SyslumennClientModule } from '@island.is/clients/syslumenn'
-import { PSignSubmissionService } from './p-sign-submission.service'
+import { PSignService } from './p-sign-submission.service'
 import { SharedTemplateAPIModule } from '../../shared'
 import { BaseTemplateAPIModuleConfig } from '../../../types'
 
@@ -12,8 +12,8 @@ export class PSignSubmissionModule {
         SyslumennClientModule,
         SharedTemplateAPIModule.register(config),
       ],
-      providers: [PSignSubmissionService],
-      exports: [PSignSubmissionService],
+      providers: [PSignService],
+      exports: [PSignService],
     }
   }
 }

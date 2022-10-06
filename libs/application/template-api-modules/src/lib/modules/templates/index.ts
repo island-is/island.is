@@ -38,7 +38,7 @@ import { GeneralPetitionService } from './general-petition/general-petition.serv
 import { CriminalRecordSubmissionService } from './criminal-record-submission/criminal-record-submission.service'
 import { GeneralFishingLicenseService } from './general-fishing-license/general-fishing-license.service'
 import { DataProtectionComplaintService } from './data-protection-complaint/data-protection-complaint.service'
-import { PSignSubmissionService } from './p-sign-submission/p-sign-submission.service'
+import { PSignService } from './p-sign-submission/p-sign-submission.service'
 import { AnnouncementOfDeathService } from './announcement-of-death/announcement-of-death.service'
 import { ExamplePaymentActionsService } from './example-payment-actions/examplePaymentActions.service'
 import { ComplaintsToAlthingiOmbudsmanTemplateService } from './complaints-to-althingi-ombudsman/complaints-to-althingi-ombudsman.service'
@@ -99,7 +99,7 @@ export const services = [
   CriminalRecordSubmissionService,
   GeneralFishingLicenseService,
   DataProtectionComplaintService,
-  PSignSubmissionService,
+  PSignService,
   AnnouncementOfDeathService,
   ExamplePaymentActionsService,
   ComplaintsToAlthingiOmbudsmanTemplateService,
