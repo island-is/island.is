@@ -7,9 +7,16 @@ import type { ConfigType } from '@island.is/nest/config'
 import { Inject, Injectable } from '@nestjs/common'
 
 import { FinancialStatementsInaoClientConfig } from './financialStatementsInao.config'
-import type { Client, Config, Election, FinancialType, KeyValue } from './types'
+import type {
+  Client,
+  Config,
+  Election,
+  FinancialType,
+  KeyValue,
+  PersonalElectionFinancialStatementValues,
+} from './types'
 import { ClientTypes } from './types'
-import { lookup } from './utils/lookup'
+import { lookup, LookupType } from './utils/lookup'
 
 @Injectable()
 export class FinancialStatementsInaoClientService {
@@ -216,18 +223,39 @@ export class FinancialStatementsInaoClientService {
     electionId: string,
     noValueStatement: boolean,
     clientName: string,
-    keyValues: KeyValue[],
+    values?: PersonalElectionFinancialStatementValues,
   ): Promise<boolean> {
-    const financialTypes = await this.getFinancialTypes()
+    const financialValues: LookupType[] = []
 
-    if (!financialTypes) {
-      this.logger.error('Failed to get financial types')
-      return false
+    if (!noValueStatement && values) {
+      const financialTypes = await this.getFinancialTypes()
+
+      if (!financialTypes) {
+        this.logger.error('Failed to get financial types')
+        return false
+      }
+
+      const list: KeyValue[] = []
+      list.push({ key: 100, value: values.contributionsByLegalEntities })
+      list.push({ key: 101, value: values.individualContributions })
+      list.push({ key: 102, value: values.candidatesOwnContributions })
+      list.push({ key: 128, value: values.capitalIncome })
+      list.push({ key: 129, value: values.otherIncome })
+      list.push({ key: 130, value: values.electionOfficeExpenses })
+      list.push({ key: 131, value: values.advertisingAndPromotions })
+      list.push({ key: 132, value: values.meetingsAndTravelExpenses })
+      list.push({ key: 139, value: values.otherExpenses })
+      list.push({ key: 148, value: values.financialExpenses })
+      list.push({ key: 150, value: values.fixedAssetsTotal })
+      list.push({ key: 160, value: values.currentAssets })
+      list.push({ key: 170, value: values.longTermLiabilitiesTotal })
+      list.push({ key: 180, value: values.shortTermLiabilitiesTotal })
+      list.push({ key: 190, value: values.equityTotal })
+
+      list.forEach((x) => {
+        financialValues.push(lookup(x.key, x.value, financialTypes))
+      })
     }
-
-    const values = keyValues.map((x) => {
-      return lookup(x.key, x.value, financialTypes)
-    })
 
     const client = await this.getOrCreateClient(
       clientNationalId,
@@ -240,7 +268,7 @@ export class FinancialStatementsInaoClientService {
       star_representativenationalid: actorNationalId,
       'star_Client@odata.bind': `/star_clients(${client})`,
       star_novaluestatement: noValueStatement,
-      star_financialstatementvalue_belongsto_rel: values,
+      star_financialstatementvalue_belongsto_rel: financialValues,
     }
 
     try {

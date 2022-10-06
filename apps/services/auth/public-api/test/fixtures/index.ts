@@ -1,3 +1,6 @@
 export * from './apiScope.fixture'
 export * from './client.fixture'
 export * from './delegation.fixture'
+export * from './apiScopeGroup.fixture'
+export * from './translation.fixture'
+export * from './domain.fixture'
