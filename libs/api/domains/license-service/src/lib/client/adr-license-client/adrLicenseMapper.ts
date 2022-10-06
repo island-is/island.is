@@ -50,8 +50,6 @@ export const parseAdrLicensePayload = (
 
   const parsedResponse = parseAdrLicenseResponse(license)
 
-  //TODO: Null check fields and filter!
-
   const label = labels?.labels
   const data: Array<GenericLicenseDataField> = [
     {
