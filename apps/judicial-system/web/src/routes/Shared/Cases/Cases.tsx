@@ -227,7 +227,10 @@ export const Cases: React.FC = () => {
                     menuLabel="Tegund kröfu"
                     icon="add"
                     items={
-                      features.includes(Feature.INDICTMENTS)
+                      // TDODO Remove courtId check when indictments are ready
+                      features.includes(Feature.INDICTMENTS) ||
+                      user.institution?.id ===
+                        '1c45b4c5-e5d3-45ba-96f8-219568982268'
                         ? [
                             {
                               href: constants.CREATE_INDICTMENT_ROUTE,
