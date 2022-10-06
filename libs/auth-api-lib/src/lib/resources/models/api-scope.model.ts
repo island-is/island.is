@@ -95,6 +95,20 @@ export class ApiScope extends Model<ModelAttributes, CreationAttributes> {
   description!: string
 
   @Column({
+    type: DataType.NUMBER,
+    allowNull: false,
+    defaultValue: 0,
+    validate: {
+      min: 0,
+      max: 999,
+    },
+  })
+  @ApiProperty({
+    example: 0,
+  })
+  order!: number
+
+  @Column({
     type: DataType.UUID,
     allowNull: true,
   })
@@ -218,6 +232,7 @@ export class ApiScope extends Model<ModelAttributes, CreationAttributes> {
       enabled: this.enabled,
       displayName: this.displayName,
       description: this.description,
+      order: this.order,
       showInDiscoveryDocument: this.showInDiscoveryDocument,
       grantToLegalGuardians: this.grantToLegalGuardians,
       grantToProcuringHolders: this.grantToProcuringHolders,
