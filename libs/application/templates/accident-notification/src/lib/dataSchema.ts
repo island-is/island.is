@@ -63,12 +63,12 @@ export const AccidentNotificationSchema = z.object({
     nationalRegistry: z.object({
       data: z.object({
         address: z.object({
-          city: z.string(),
-          code: z.string(),
+          locality: z.string(),
+          municipalityCode: z.string(),
           postalCode: z.string().refine((x) => +x >= 100 && +x <= 999, {
             params: error.invalidValue,
           }),
-          streetAddress: z.string(),
+          streetName: z.string(),
         }),
         age: z.number(),
         citizenship: z.object({
@@ -76,7 +76,6 @@ export const AccidentNotificationSchema = z.object({
           name: z.string(),
         }),
         fullName: z.string(),
-        legalResidence: z.string(),
         nationalId: z.string(),
       }),
       date: z.string(),

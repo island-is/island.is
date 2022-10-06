@@ -6,9 +6,7 @@ import {
   ApplicantChildCustodyInformation,
   NationalRegistryIndividual,
 } from '@island.is/application/types'
-import { TemplateApiError } from '@island.is/nest/problem'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
-import { coreErrorMessages } from '@island.is/application/core'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 
 @Injectable()
@@ -20,7 +18,6 @@ export class NationalRegistryService extends BaseTemplateApiService {
   }
 
   async nationalRegistry({
-    application,
     auth,
   }: TemplateApiModuleActionProps): Promise<NationalRegistryIndividual | null> {
     return this.getIndividual(auth.nationalId)
@@ -54,7 +51,6 @@ export class NationalRegistryService extends BaseTemplateApiService {
   }
 
   async childrenCustodyInformation({
-    application,
     auth,
   }: TemplateApiModuleActionProps): Promise<
     ApplicantChildCustodyInformation[]
