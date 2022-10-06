@@ -531,30 +531,31 @@ export const ParentalLeaveForm: Form = buildForm({
             //   uploadButtonLabel:
             //     parentalLeaveFormMessages.selfEmployed.attachmentButton,
             // }),
-            buildFileUploadField({
-              id: 'fileUpload.file',
-              title: parentalLeaveFormMessages.attachmentScreen.genericTitle,
-              introduction:
-                parentalLeaveFormMessages.attachmentScreen.genericDescription,
-              maxSize: FILE_SIZE_LIMIT,
-              condition: (answers) => {
-                const isSelfEmployed =
-                  (answers as {
-                    employer: {
-                      isSelfEmployed: string
-                    }
-                  })?.employer?.isSelfEmployed === YES
+            // add back when the "other" type has been added to the VMST api
+            // buildFileUploadField({
+            //   id: 'fileUpload.file',
+            //   title: parentalLeaveFormMessages.attachmentScreen.genericTitle,
+            //   introduction:
+            //     parentalLeaveFormMessages.attachmentScreen.genericDescription,
+            //   maxSize: FILE_SIZE_LIMIT,
+            //   condition: (answers) => {
+            //     const isSelfEmployed =
+            //       (answers as {
+            //         employer: {
+            //           isSelfEmployed: string
+            //         }
+            //       })?.employer?.isSelfEmployed === YES
 
-                return !isSelfEmployed
-              },
-              maxSizeErrorText:
-                parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
-              uploadAccept: '.pdf',
-              uploadHeader: '',
-              uploadDescription: '',
-              uploadButtonLabel:
-                parentalLeaveFormMessages.selfEmployed.attachmentButton,
-            }),
+            //     return !isSelfEmployed
+            //   },
+            //   maxSizeErrorText:
+            //     parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
+            //   uploadAccept: '.pdf',
+            //   uploadHeader: '',
+            //   uploadDescription: '',
+            //   uploadButtonLabel:
+            //     parentalLeaveFormMessages.selfEmployed.attachmentButton,
+            // }),
           ],
         }),
       ],
