@@ -28,10 +28,11 @@ export const CemetryEquities = ({
 }): JSX.Element => {
   const answers = application.answers
   const { formatMessage } = useLocale()
-  const { clearErrors, errors } = useFormContext()
+  const { setValue, clearErrors, errors } = useFormContext()
 
   // liabilities - equities
   const [equityTotal, setEquityTotal] = useState(0)
+  const [totalOperation, setTotalOperation] = useState('')
 
   const [getTotalAssets, totalAssets] = useTotals(
     CEMETRYEQUITIESANDLIABILITIESIDS.assetPrefix,
@@ -47,6 +48,18 @@ export const CemetryEquities = ({
     const total = totalEquity - totalLiabilities
     setEquityTotal(total)
   }, [totalLiabilities, totalEquity])
+
+  useEffect(() => {
+    const operatingCostTotal = getValueViaPath(
+      answers,
+      OPERATINGCOST.total,
+    ) as string
+    console.log({ operatingCostTotal })
+    setValue(
+      CEMETRYEQUITIESANDLIABILITIESIDS.operationResult,
+      operatingCostTotal,
+    )
+  }, [])
 
   return (
     <GridContainer>
@@ -215,7 +228,6 @@ export const CemetryEquities = ({
               id={CEMETRYEQUITIESANDLIABILITIESIDS.operationResult}
               name={CEMETRYEQUITIESANDLIABILITIESIDS.operationResult}
               readOnly
-              defaultValue={getValueViaPath(answers, OPERATINGCOST.total)}
               error={
                 errors &&
                 getErrorViaPath(
