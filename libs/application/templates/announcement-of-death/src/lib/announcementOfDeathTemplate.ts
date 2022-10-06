@@ -9,6 +9,8 @@ import {
   DefaultEvents,
   StateLifeCycle,
   defineTemplateApi,
+  NationalRegistryUserApi,
+  UserProfileApi,
 } from '@island.is/application/types'
 import { Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
@@ -16,7 +18,6 @@ import { m } from '../lib/messages'
 import { ApiActions } from './constants'
 import { Features } from '@island.is/feature-flags'
 import { DeathNoticeApi } from '../dataProviders'
-
 const HalfYearLifeCycle: StateLifeCycle = {
   shouldBeListed: true,
   shouldBePruned: true,
@@ -75,7 +76,7 @@ const AnnouncementOfDeathTemplate: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
-              api: [DeathNoticeApi],
+              api: [DeathNoticeApi, NationalRegistryUserApi, UserProfileApi],
             },
           ],
         },

@@ -11,7 +11,13 @@ import {
   getValueViaPath,
   buildRadioField,
 } from '@island.is/application/core'
-import { Form, FormModes, DefaultEvents } from '@island.is/application/types'
+import {
+  Form,
+  FormModes,
+  DefaultEvents,
+  NationalRegistryUserApi,
+  UserProfileApi,
+} from '@island.is/application/types'
 import { m } from '../../lib/messages'
 import { RoleConfirmationEnum } from '../../types'
 import CoatOfArms from '../../assets/CoatOfArms'
@@ -41,14 +47,12 @@ export const prerequisite = (): Form => {
             checkboxLabel: m.dataCollectionCheckboxLabel,
             dataProviders: [
               buildDataProviderItem({
-                id: 'nationalRegistry',
-                type: 'NationalRegistryProvider',
+                provider: NationalRegistryUserApi,
                 title: m.dataCollectionNationalRegistryTitle,
                 subTitle: m.dataCollectionNationalRegistrySubtitle,
               }),
               buildDataProviderItem({
-                id: 'userProfile',
-                type: 'UserProfileProvider',
+                provider: UserProfileApi,
                 title: m.dataCollectionUserProfileTitle,
                 subTitle: m.dataCollectionUserProfileSubtitle,
               }),
