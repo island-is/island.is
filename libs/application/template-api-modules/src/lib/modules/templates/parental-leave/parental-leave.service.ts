@@ -175,12 +175,20 @@ export class ParentalLeaveService {
     }
   }
 
-  async getSelfEmployedPdf(application: Application) {
+  async getSelfEmployedPdf(application: Application, index = 0) {
     try {
-      const filename = getValueViaPath(
+      let filename = getValueViaPath(
         application.answers,
-        'employer.selfEmployed.file[0].key',
+        `employer.selfEmployed.file[${index}].key`,
       )
+
+      if (!filename) {
+        filename = getValueViaPath(
+          application.answers,
+          `fileUpload.selfEmployedFile[${index}].key`,
+        )
+      }
+
       const Key = `${application.id}/${filename}`
       const file = await this.s3
         .getObject({ Bucket: this.attachmentBucket, Key })
@@ -198,17 +206,108 @@ export class ParentalLeaveService {
     }
   }
 
+  // add when we add student confirmation
+  // async getStudentPdf(application: Application) {
+  //   try {
+  //     const filename = getValueViaPath(
+  //       application.answers,
+  //       'fileUpload.studentFile[0].key',
+  //     )
+
+  //     const Key = `${application.id}/${filename}`
+  //     const file = await this.s3
+  //       .getObject({ Bucket: this.attachmentBucket, Key })
+  //       .promise()
+  //     const fileContent = file.Body as Buffer
+
+  //     if (!fileContent) {
+  //       throw new Error('File content was undefined')
+  //     }
+
+  //     return fileContent.toString('base64')
+  //   } catch (e) {
+  //     this.logger.error('Cannot get student attachment', { e })
+  //     throw new Error('Failed to get the student attachment')
+  //   }
+  // }
+
+  async getGenericPdf(application: Application, index = 0) {
+    try {
+      const filename = getValueViaPath(
+        application.answers,
+        `fileUpload.file[${index}].key`,
+      )
+
+      const Key = `${application.id}/${filename}`
+      const file = await this.s3
+        .getObject({ Bucket: this.attachmentBucket, Key })
+        .promise()
+      const fileContent = file.Body as Buffer
+
+      if (!fileContent) {
+        throw new Error('File content was undefined')
+      }
+
+      return fileContent.toString('base64')
+    } catch (e) {
+      this.logger.error('Cannot get attachment', { e })
+      throw new Error('Failed to get the attachment')
+    }
+  }
+
   async getAttachments(application: Application): Promise<Attachment[]> {
     const attachments: Attachment[] = []
     const { isSelfEmployed } = getApplicationAnswers(application.answers)
 
     if (isSelfEmployed === YES) {
-      const pdf = await this.getSelfEmployedPdf(application)
+      const selfEmployedPdfs = (await getValueViaPath(
+        application.answers,
+        'fileUpload.selfEmployedFile',
+      )) as unknown[]
 
-      attachments.push({
-        attachmentType: apiConstants.attachments.selfEmployed,
-        attachmentBytes: pdf,
-      })
+      if (selfEmployedPdfs?.length) {
+        for (let i = 0; i <= selfEmployedPdfs.length - 1; i++) {
+          const pdf = await this.getSelfEmployedPdf(application, i)
+
+          attachments.push({
+            attachmentType: apiConstants.attachments.selfEmployed,
+            attachmentBytes: pdf,
+          })
+        }
+      } else {
+        const oldSelfEmployedPdfs = (await getValueViaPath(
+          application.answers,
+          'employer.selfEmployed.file',
+        )) as unknown[]
+
+        if (oldSelfEmployedPdfs?.length) {
+          for (let i = 0; i <= oldSelfEmployedPdfs.length - 1; i++) {
+            const pdf = await this.getSelfEmployedPdf(application, i)
+
+            attachments.push({
+              attachmentType: apiConstants.attachments.selfEmployed,
+              attachmentBytes: pdf,
+            })
+          }
+        }
+      }
+    }
+
+    const genericPdfs = (await getValueViaPath(
+      application.answers,
+      'fileUpload.file',
+    )) as unknown[]
+
+    if (genericPdfs?.length) {
+      for (let i = 0; i <= genericPdfs.length - 1; i++) {
+        const pdf = await this.getGenericPdf(application, i)
+
+        attachments.push({
+          // needs to add other types
+          attachmentType: apiConstants.attachments.other,
+          attachmentBytes: pdf,
+        })
+      }
     }
 
     return attachments
@@ -250,7 +349,6 @@ export class ParentalLeaveService {
 
       const startDate = new Date(period.startDate)
       const endDate = new Date(period.endDate)
-      const useLength = period.useLength
 
       let periodLength = 0
 
@@ -290,9 +388,7 @@ export class ParentalLeaveService {
         // We know its a normal period and it will not exceed personal rights
         periods.push({
           from:
-            isFirstPeriod && isActualDateOfBirth && useLength === 'yes'
-              ? apiConstants.actualDateOfBirthMonths
-              : isFirstPeriod && isActualDateOfBirth
+            isFirstPeriod && isActualDateOfBirth
               ? apiConstants.actualDateOfBirth
               : period.startDate,
           to: period.endDate,
@@ -309,9 +405,7 @@ export class ParentalLeaveService {
         // We know all of the period will be using transferred rights
         periods.push({
           from:
-            isFirstPeriod && isActualDateOfBirth && useLength === 'yes'
-              ? apiConstants.actualDateOfBirthMonths
-              : isFirstPeriod && isActualDateOfBirth
+            isFirstPeriod && isActualDateOfBirth
               ? apiConstants.actualDateOfBirth
               : period.startDate,
           to: period.endDate,
@@ -349,9 +443,7 @@ export class ParentalLeaveService {
         // Add the period using personal rights
         periods.push({
           from:
-            isFirstPeriod && isActualDateOfBirth && useLength === 'yes'
-              ? apiConstants.actualDateOfBirthMonths
-              : isFirstPeriod && isActualDateOfBirth
+            isFirstPeriod && isActualDateOfBirth
               ? apiConstants.actualDateOfBirth
               : period.startDate,
           to: format(getNormalPeriodEndDate.periodEndDate, df),
