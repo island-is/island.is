@@ -392,44 +392,42 @@ export class CaseService {
     theCase: Case,
     caseFileCategories?: CaseFileCategory[],
   ): Promise<boolean> {
-    return this.fileService
-      .getAllCaseFiles(theCase.id)
-      .then(async (caseFiles) => {
-        let success = true
+    let success = true
 
-        for (const caseFile of caseFiles.filter(
-          (caseFile) =>
-            !caseFile.category ||
-            caseFileCategories?.includes(caseFile.category),
-        )) {
-          const uploaded = await this.fileService
-            .uploadCaseFileToCourt(caseFile, theCase)
-            .then((response) => response.success)
-            .catch((reason) => {
-              this.logger.error(
-                `Failed to deliver ${
-                  caseFile.category ?? CaseFileCategory.CASE_FILE
-                } ${caseFile.id} of case ${theCase.id} to court`,
-                { reason },
-              )
+    try {
+      const caseFiles = theCase.caseFiles ?? []
 
-              return false
-            })
+      for (const caseFile of caseFiles.filter(
+        (caseFile) =>
+          !caseFile.category || caseFileCategories?.includes(caseFile.category),
+      )) {
+        const uploaded = await this.fileService
+          .uploadCaseFileToCourt(caseFile, theCase)
+          .then((response) => response.success)
+          .catch((reason) => {
+            this.logger.error(
+              `Failed to deliver ${
+                caseFile.category ?? CaseFileCategory.CASE_FILE
+              } ${caseFile.id} of case ${theCase.id} to court`,
+              { reason },
+            )
 
-          success = success && uploaded
-        }
+            return false
+          })
 
-        return success
-      })
-      .catch((reason) => {
-        // Tolerate failure, but log error
-        this.logger.error(
-          `Failed to deliver files of case ${theCase.id} to court`,
-          { reason },
-        )
+        success = success && uploaded
+      }
+    } catch (error) {
+      // Tolerate failure, but log error
+      this.logger.error(
+        `Failed to deliver files of case ${theCase.id} to court`,
+        { error },
+      )
 
-        return false
-      })
+      success = false
+    }
+
+    return success
   }
 
   private async deliverSignedRulingToCourt(theCase: Case): Promise<boolean> {
@@ -461,46 +459,28 @@ export class CaseService {
       : await this.upploadRequestPdfToCourt(theCase)
   }
 
-  private async deliverRulingToCourt(theCase: Case): Promise<boolean> {
-    return isIndictmentCase(theCase.type)
-      ? this.deliverCaseFilesToCourt(theCase, [CaseFileCategory.RULING])
-      : this.deliverSignedRulingToCourt(theCase)
-  }
-
-  private async deliverCourtRecordToCourt(theCase: Case): Promise<boolean> {
-    return isIndictmentCase(theCase.type)
-      ? this.deliverCaseFilesToCourt(theCase, [CaseFileCategory.COURT_RECORD])
-      : Boolean(theCase.rulingModifiedHistory) || // court record did not change
-          this.uploadCourtRecordPdfToCourt(theCase)
-  }
-
   private async getIndictmentCourtRecordAsString(
     theCase: Case,
   ): Promise<string> {
-    return this.fileService
-      .getAllCaseFiles(theCase.id)
-      .then((caseFiles) =>
-        caseFiles.find(
-          (caseFile) => caseFile.category === CaseFileCategory.COURT_RECORD,
-        ),
+    const caseFile = theCase.caseFiles?.find(
+      (caseFile) => caseFile.category === CaseFileCategory.COURT_RECORD,
+    )
+
+    if (!caseFile) {
+      throw new Error(
+        `Failed to find the court record for case ${theCase.id} in the database`,
       )
-      .then(async (caseFile) => {
-        if (!caseFile) {
-          throw new Error(
-            `Failed to find the court record for case ${theCase.id} in the database`,
-          )
-        }
+    }
 
-        if (!caseFile.key) {
-          throw new Error(
-            `Missing AWS S3 key for the court record of case ${theCase.id}`,
-          )
-        }
+    if (!caseFile.key) {
+      throw new Error(
+        `Missing AWS S3 key for the court record of case ${theCase.id}`,
+      )
+    }
 
-        return this.awsS3Service
-          .getObject(caseFile.key)
-          .then((buffer) => buffer.toString('binary'))
-      })
+    return this.awsS3Service
+      .getObject(caseFile.key)
+      .then((buffer) => buffer.toString('binary'))
   }
 
   private getCourtRecordAsString(theCase: Case) {
@@ -573,9 +553,9 @@ export class CaseService {
     let originalAncestor: Case = theCase
 
     while (originalAncestor.parentCaseId) {
-      const parentCase = await this.caseModel.findOne({
-        where: { id: originalAncestor.parentCaseId },
-      })
+      const parentCase = await this.caseModel.findByPk(
+        originalAncestor.parentCaseId,
+      )
 
       if (!parentCase) {
         throw new InternalServerErrorException(
@@ -1122,11 +1102,14 @@ export class CaseService {
   async deliver(theCase: Case): Promise<DeliverResponse> {
     await this.refreshFormatMessage()
 
-    const rulingDeliveredToCourt = await this.deliverRulingToCourt(theCase)
+    const rulingDeliveredToCourt =
+      isIndictmentCase(theCase.type) ||
+      (await this.deliverSignedRulingToCourt(theCase))
 
-    const courtRecordDeliveredToCourt = await this.deliverCourtRecordToCourt(
-      theCase,
-    )
+    const courtRecordDeliveredToCourt =
+      isIndictmentCase(theCase.type) ||
+      Boolean(theCase.rulingModifiedHistory) || // court record did not change
+      (await this.uploadCourtRecordPdfToCourt(theCase))
 
     const caseFilesDeliveredToCourt =
       isIndictmentCase(theCase.type) ||
