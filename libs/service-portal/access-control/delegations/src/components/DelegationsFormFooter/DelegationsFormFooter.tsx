@@ -1,5 +1,5 @@
 import { coreMessages } from '@island.is/application/core'
-import { Box, Button, ButtonProps } from '@island.is/island-ui/core'
+import { Box, Button, ButtonProps, Divider } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import * as styles from './DelegationsFormFooter.css'
 
@@ -22,28 +22,33 @@ export const DelegationsFormFooter = ({
   const { formatMessage } = useLocale()
 
   return (
-    <Box
-      display="flex"
-      alignItems="center"
-      justifyContent="spaceBetween"
-      borderTopWidth="standard"
-      borderColor="blue200"
-      width="full"
-      paddingTop={4}
-      className={styles.container}
-    >
-      <Button size={buttonSize} variant="ghost" onClick={onCancel}>
-        {formatMessage(coreMessages.buttonCancel)}
-      </Button>
-      <Button
-        size={buttonSize}
-        type={onConfirm ? 'button' : 'submit'}
-        icon="arrowForward"
-        {...(onConfirm && { onClick: onConfirm })}
-        {...rest}
+    <>
+      <div className={styles.dividerContainer}>
+        <Divider />
+      </div>
+      <Box
+        display="flex"
+        alignItems="center"
+        justifyContent="spaceBetween"
+        borderTopWidth="standard"
+        borderColor="blue200"
+        width="full"
+        paddingTop={4}
+        className={styles.container}
       >
-        {submitLabel}
-      </Button>
-    </Box>
+        <Button size={buttonSize} variant="ghost" onClick={onCancel}>
+          {formatMessage(coreMessages.buttonCancel)}
+        </Button>
+        <Button
+          size={buttonSize}
+          type={onConfirm ? 'button' : 'submit'}
+          icon="arrowForward"
+          {...(onConfirm && { onClick: onConfirm })}
+          {...rest}
+        >
+          {submitLabel}
+        </Button>
+      </Box>
+    </>
   )
 }

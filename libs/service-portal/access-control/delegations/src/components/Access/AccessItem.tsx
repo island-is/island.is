@@ -1,6 +1,5 @@
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
-import cs from 'classnames'
 
 import {
   Text,
@@ -9,6 +8,7 @@ import {
   GridColumn,
   Divider,
   useBreakpoint,
+  Button,
 } from '@island.is/island-ui/core'
 import { AuthCustomDelegation } from '@island.is/api/schema'
 import {
@@ -20,6 +20,20 @@ import * as styles from './AccessItem.css'
 import add from 'date-fns/add'
 import format from 'date-fns/format'
 import { Scope } from '../../utils/types'
+import classNames from 'classnames'
+import { isDefined } from '@island.is/shared/utils'
+
+const isApiScopeGroup = (item: Scope): boolean =>
+  item.__typename === 'AuthApiScopeGroup'
+
+const DATE_FORMAT = 'dd/MM/yyyy'
+
+const messages = {
+  dateValidTo: {
+    id: 'sp.settings-access-control:access-item-datepicker-label-mobile',
+    defaultMessage: 'Í gildi til',
+  },
+}
 
 interface PropTypes {
   apiScopes: Scope[]
@@ -37,8 +51,9 @@ export const AccessItem = ({
   const { setValue, getValues } = useFormContext()
   const { md } = useBreakpoint()
 
-  const isApiScopeGroup = (item: Scope): boolean =>
-    item.__typename === 'AuthApiScopeGroup'
+  const [datePickerVisibleGroup, setDatePickerVisibleGroup] = useState<
+    boolean[]
+  >(apiScopes.map(() => false))
 
   const toggleCheckboxGroup = useCallback(() => {
     const values = apiScopes
@@ -54,33 +69,38 @@ export const AccessItem = ({
     const values = apiScopes
       .filter((apiScope) => !isApiScopeGroup(apiScope))
       .map((apiScope) => getValues(`${apiScope.model}.validTo`))
-
     setValue(
       `${apiScopes[0].model}.validTo`,
       values.every((value) => value === values[0]) ? values[0] : undefined,
     )
   }, [apiScopes, getValues, setValue])
 
-  const onSelect = (item: Scope, value: string[]) => {
+  const onSelect = (item: Scope, value: string[], index: number) => {
     if (isApiScopeGroup(item)) {
       apiScopes.forEach((apiScope) => {
         setValue(
           `${apiScope.model}.name`,
           value.length > 0 ? [apiScope.name] : [],
         )
+
         if (value.length === 0) {
           setValue(`${apiScope.model}.validTo`, undefined)
         }
       })
     } else {
       toggleCheckboxGroup()
-      if (value.length === 0) {
-        setValue(`${item.model}.validTo`, undefined)
-      }
+    }
+
+    if (value.length === 0) {
+      setDatePickerVisibleGroup((prevState) => {
+        const newState = [...prevState]
+        newState[index] = false
+        return newState
+      })
     }
   }
 
-  const onChange = (item: Scope, value: string) => {
+  const onChange = (item: Scope, value: string, index: number) => {
     if (isApiScopeGroup(item)) {
       apiScopes.forEach((apiScope) => {
         setValue(`${apiScope.model}.validTo`, value)
@@ -88,12 +108,26 @@ export const AccessItem = ({
     } else {
       toggleDatePickerGroup()
     }
+
+    onEditDateHandler(index)
+  }
+
+  /**
+   * Toggles date picker visibility
+   */
+  const onEditDateHandler = (index: number) => {
+    setDatePickerVisibleGroup((prevState) => {
+      const newState = [...prevState]
+      newState[index] = !prevState[index]
+      return newState
+    })
   }
 
   return (
     <>
       {apiScopes.map((item, index) => {
         const isFirstItem = index === 0
+        const defaultDate = add(new Date(), { years: 1 })
 
         const existingScope = isApiScopeGroup(item)
           ? apiScopes
@@ -108,26 +142,42 @@ export const AccessItem = ({
           : authDelegation.scopes.find((scope) => scope.name === item.name)
 
         const checkboxValue = getValues(`${item.model}.name`)
+        const dateValue = getValues(`${item.model}.validTo`)
 
-        const isSelected =
-          checkboxValue === undefined
-            ? Boolean(existingScope?.name)
-            : checkboxValue.length > 0
+        // Either use the existing date value or newly modified date value
+        const formattedDate =
+          dateValue || existingScope?.validTo
+            ? format(new Date(dateValue ?? existingScope?.validTo), DATE_FORMAT)
+            : format(defaultDate, DATE_FORMAT)
 
-        const defaultDate = add(new Date(), { years: 1 })
+        const isSelected = !isDefined(checkboxValue)
+          ? Boolean(existingScope?.name)
+          : checkboxValue.length > 0
+
+        // This scope has not been set yet
+        const hasExisting = isDefined(existingScope)
+        // Current state value for if the date picker is visible or not
+        const stateDateIsActive = datePickerVisibleGroup[index]
+        const settingForFirstTime = isSelected && !hasExisting
+        const showDatePicker =
+          (isSelected && stateDateIsActive) ||
+          (settingForFirstTime && isSelected)
+
         return (
           <div key={index}>
-            <GridRow>
+            <GridRow
+              className={classNames(styles.row, {
+                [styles.rowWithBackground]: settingForFirstTime,
+              })}
+            >
               <GridColumn
                 span={['12/12', '12/12', '3/12']}
                 className={styles.item}
               >
                 <Box
-                  paddingBottom={2}
-                  paddingTop={isFirstItem ? 3 : 2}
                   paddingLeft={isFirstItem ? 0 : [2, 2, 4]}
                   display="flex"
-                  alignItems="center"
+                  alignItems="flexStart"
                 >
                   <CheckboxController
                     id={`${item.model}.name`}
@@ -140,45 +190,56 @@ export const AccessItem = ({
                         value: item.name,
                       },
                     ]}
-                    onSelect={(value) => onSelect(item, value)}
+                    onSelect={(value) => onSelect(item, value, index)}
                   />
                 </Box>
               </GridColumn>
-              <GridColumn
-                span={['12/12', '12/12', '4/12', '5/12']}
-                className={styles.item}
-              >
-                <Box
-                  paddingBottom={2}
-                  paddingTop={isFirstItem ? 3 : 2}
-                  paddingLeft={isFirstItem ? 0 : [2, 2, 0]}
+              {((!md && item.description?.trim()) || md) && (
+                <GridColumn
+                  span={['12/12', '12/12', '4/12', '5/12']}
+                  className={styles.item}
+                  paddingTop={[3, 3, 3, 0]}
                 >
-                  <Text
-                    variant={isFirstItem ? 'default' : 'medium'}
-                    fontWeight="light"
+                  <Box
+                    paddingLeft={isFirstItem ? 0 : [2, 2, 0]}
+                    display="flex"
+                    flexDirection="column"
+                    className={styles.rowGap}
                   >
-                    {item.description}
-                  </Text>
-                </Box>
-              </GridColumn>
-              {!validityPeriod && (
-                <GridColumn span={['12/12', '8/12', '5/12', '4/12']}>
-                  <div className={cs(isSelected ? undefined : styles.hidden)}>
-                    <Box
-                      paddingBottom={2}
-                      paddingTop={isFirstItem ? 3 : 2}
-                      paddingLeft={isFirstItem ? 0 : [2, 2, 0]}
+                    {!md && (
+                      <Text variant="small" fontWeight="semiBold">
+                        {formatMessage({
+                          id: 'sp.access-control-delegation:grant',
+                          defaultMessage: 'Heimild',
+                        })}
+                      </Text>
+                    )}
+                    <Text
+                      variant={isFirstItem ? 'default' : 'medium'}
+                      fontWeight="light"
                     >
+                      {item.description}
+                    </Text>
+                  </Box>
+                </GridColumn>
+              )}
+              {!validityPeriod && !isApiScopeGroup(item) && (
+                <GridColumn
+                  span={['12/12', '8/12', '5/12', '4/12']}
+                  paddingTop={[2, 2, 2, 0]}
+                >
+                  <div
+                    className={classNames({
+                      [styles.hidden]: !showDatePicker,
+                    })}
+                  >
+                    <Box paddingLeft={isFirstItem ? 0 : [2, 2, 0]}>
                       <DatePickerController
                         id={`${item.model}.validTo`}
                         size="sm"
                         label={
                           !md
-                            ? formatMessage({
-                                id:
-                                  'sp.settings-access-control:access-item-datepicker-label-mobile',
-                                defaultMessage: 'Í gildi til',
-                              })
+                            ? formatMessage(messages.dateValidTo)
                             : formatMessage({
                                 id:
                                   'sp.settings-access-control:access-item-datepicker-label',
@@ -190,21 +251,55 @@ export const AccessItem = ({
                         defaultValue={
                           validityPeriod
                             ? validityPeriod
-                            : existingScope?.name
-                            ? existingScope?.validTo
+                            : existingScope?.name && existingScope?.validTo
+                            ? existingScope.validTo
                             : format(defaultDate, 'yyyy-MM-dd')
                         }
                         locale={lang}
                         placeholder={undefined}
-                        onChange={(value) => onChange(item, value)}
+                        onChange={(value) => onChange(item, value, index)}
                         required
                       />
                     </Box>
                   </div>
+                  {((!showDatePicker && isSelected) ||
+                    (!md && isSelected && !showDatePicker)) && (
+                    <Box
+                      display="flex"
+                      alignItems="center"
+                      columnGap={3}
+                      className={styles.rowGap}
+                    >
+                      <Box
+                        display="flex"
+                        flexDirection="column"
+                        className={styles.rowGap}
+                      >
+                        {!md && (
+                          <Text variant="small" fontWeight="semiBold">
+                            {formatMessage(messages.dateValidTo)}
+                          </Text>
+                        )}
+                        <Box display="flex" className={styles.rowGap}>
+                          <Text variant="small">{formattedDate}</Text>
+                        </Box>
+                      </Box>
+                      <Button
+                        colorScheme="light"
+                        circle
+                        size="small"
+                        icon="pencil"
+                        onClick={() => onEditDateHandler(index)}
+                      />
+                    </Box>
+                  )}
                 </GridColumn>
               )}
             </GridRow>
-            <Box paddingY={1} paddingLeft={isFirstItem ? 0 : [3, 3, 0]}>
+            <Box
+              paddingLeft={isFirstItem ? 0 : [3, 3, 0]}
+              className={styles.dividerContainer}
+            >
               <Divider />
             </Box>
           </div>
