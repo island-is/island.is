@@ -9,7 +9,6 @@ import {
   indictmentCases,
   InstitutionType,
   investigationCases,
-  restrictionCases,
   UserRole,
 } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'

@@ -176,15 +176,18 @@ export class ParentalLeaveService {
     }
   }
 
-  async getSelfEmployedPdf(application: Application) {
+  async getSelfEmployedPdf(application: Application, index = 0) {
     try {
-      const filename = getValueViaPath(
+      let filename = getValueViaPath(
         application.answers,
-        'employer.selfEmployed.file[0].key',
+        `employer.selfEmployed.file[${index}].key`,
       )
 
       if (!filename) {
-        return this.getPdfs(application)
+        filename = getValueViaPath(
+          application.answers,
+          `fileUpload.selfEmployedFile[${index}].key`,
+        )
       }
 
       const Key = `${application.id}/${filename}`
@@ -204,11 +207,36 @@ export class ParentalLeaveService {
     }
   }
 
-  async getPdfs(application: Application) {
+  // add when we add student confirmation
+  // async getStudentPdf(application: Application) {
+  //   try {
+  //     const filename = getValueViaPath(
+  //       application.answers,
+  //       'fileUpload.studentFile[0].key',
+  //     )
+
+  //     const Key = `${application.id}/${filename}`
+  //     const file = await this.s3
+  //       .getObject({ Bucket: this.attachmentBucket, Key })
+  //       .promise()
+  //     const fileContent = file.Body as Buffer
+
+  //     if (!fileContent) {
+  //       throw new Error('File content was undefined')
+  //     }
+
+  //     return fileContent.toString('base64')
+  //   } catch (e) {
+  //     this.logger.error('Cannot get student attachment', { e })
+  //     throw new Error('Failed to get the student attachment')
+  //   }
+  // }
+
+  async getGenericPdf(application: Application, index = 0) {
     try {
       const filename = getValueViaPath(
         application.answers,
-        `fileUpload.file[0].key`,
+        `fileUpload.file[${index}].key`,
       )
 
       const Key = `${application.id}/${filename}`
@@ -223,31 +251,63 @@ export class ParentalLeaveService {
 
       return fileContent.toString('base64')
     } catch (e) {
-      this.logger.error('Cannot get attachments', { e })
-      throw new Error('Failed to get the attachments')
+      this.logger.error('Cannot get attachment', { e })
+      throw new Error('Failed to get the attachment')
     }
   }
 
   async getAttachments(application: Application): Promise<Attachment[]> {
     const attachments: Attachment[] = []
+
     const { isSelfEmployed, applicationType } = getApplicationAnswers(
       application.answers,
     )
 
     if (isSelfEmployed === YES && applicationType === PARENTAL_LEAVE) {
-      const pdf = await this.getSelfEmployedPdf(application)
+      const selfEmployedPdfs = (await getValueViaPath(
+        application.answers,
+        'fileUpload.selfEmployedFile',
+      )) as unknown[]
 
-      attachments.push({
-        attachmentType: apiConstants.attachments.selfEmployed,
-        attachmentBytes: pdf,
-      })
-    } else {
-      const files = getValueViaPath(application.answers, 'fileUpload.file')
+      if (selfEmployedPdfs?.length) {
+        for (let i = 0; i <= selfEmployedPdfs.length - 1; i++) {
+          const pdf = await this.getSelfEmployedPdf(application, i)
 
-      if ((files as { file: unknown[] })?.file) {
-        const pdf = await this.getPdfs(application)
+          attachments.push({
+            attachmentType: apiConstants.attachments.selfEmployed,
+            attachmentBytes: pdf,
+          })
+        }
+      } else {
+        const oldSelfEmployedPdfs = (await getValueViaPath(
+          application.answers,
+          'employer.selfEmployed.file',
+        )) as unknown[]
+
+        if (oldSelfEmployedPdfs?.length) {
+          for (let i = 0; i <= oldSelfEmployedPdfs.length - 1; i++) {
+            const pdf = await this.getSelfEmployedPdf(application, i)
+
+            attachments.push({
+              attachmentType: apiConstants.attachments.selfEmployed,
+              attachmentBytes: pdf,
+            })
+          }
+        }
+      }
+    }
+
+    const genericPdfs = (await getValueViaPath(
+      application.answers,
+      'fileUpload.file',
+    )) as unknown[]
+
+    if (genericPdfs?.length) {
+      for (let i = 0; i <= genericPdfs.length - 1; i++) {
+        const pdf = await this.getGenericPdf(application, i)
 
         attachments.push({
+          // needs to add other types
           attachmentType: apiConstants.attachments.other,
           attachmentBytes: pdf,
         })

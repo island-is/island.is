@@ -7,10 +7,7 @@ import {
   ApplicationTypes,
   DefaultEvents,
 } from '@island.is/application/types'
-import {
-  DEPRECATED_DefaultStateLifeCycle,
-  DefaultStateLifeCycle,
-} from '@island.is/application/core'
+import { DefaultStateLifeCycle } from '@island.is/application/core'
 
 import { institutionApplicationMessages as m } from './messages'
 import { dataSchema } from './dataSchema'
@@ -64,6 +61,7 @@ const template: ApplicationTemplate<
                 },
               ],
               write: 'all',
+              delete: true,
             },
           ],
         },
@@ -77,7 +75,7 @@ const template: ApplicationTemplate<
         meta: {
           name: 'Approved',
           progress: 1,
-          lifecycle: DEPRECATED_DefaultStateLifeCycle,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
