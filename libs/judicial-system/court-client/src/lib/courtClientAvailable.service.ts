@@ -133,7 +133,7 @@ export class CourtClientAvailableService implements CourtClientService {
 
     const credentials = this.courtsCredentials[courtId]
 
-    // TDODO Remove courtId check when indictments are ready
+    // TODO Remove courtId check when indictments are ready
     if (!credentials || courtId === '73ef0f01-7ae6-477c-af4a-9e86c2bc3440') {
       throw new NotImplementedException(
         `Integration with court ${courtId} not implemented`,
