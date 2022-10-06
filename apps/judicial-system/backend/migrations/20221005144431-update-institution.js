@@ -14,7 +14,10 @@ module.exports = {
         ),
         queryInterface.bulkUpdate(
           'institution',
-          { default_court_id: 'f350f77a-85b9-4267-a7e9-f3f29873486c', police_case_number_prefix: '319' },
+          {
+            default_court_id: 'f350f77a-85b9-4267-a7e9-f3f29873486c',
+            police_case_number_prefix: '319',
+          },
           { id: ['03e48408-342b-4c25-b556-d82a5d9edfbe'] },
           { transaction: t },
         ),

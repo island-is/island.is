@@ -485,10 +485,7 @@ function getCase(id: string): PromiseLike<Case> {
     where: { id },
     rejectOnEmpty: true,
     include: [
-      {
-        model: Institution,
-        as: 'court',
-      },
+      { model: Institution, as: 'court' },
       {
         model: User,
         as: 'prosecutor',
