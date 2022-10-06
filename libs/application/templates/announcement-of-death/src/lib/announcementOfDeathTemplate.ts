@@ -15,6 +15,7 @@ import { dataSchema } from './dataSchema'
 import { m } from '../lib/messages'
 import { ApiActions } from './constants'
 import { Features } from '@island.is/feature-flags'
+import { DeathNoticeApi } from '../dataProviders'
 
 const HalfYearLifeCycle: StateLifeCycle = {
   shouldBeListed: true,
@@ -74,6 +75,7 @@ const AnnouncementOfDeathTemplate: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
+              api: [DeathNoticeApi],
             },
           ],
         },

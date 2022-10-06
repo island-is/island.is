@@ -64,7 +64,7 @@ const OperatingLicenseTemplate: ApplicationTemplate<
               api: [
                 PaymentCatalogApi.configure({
                   params: { orginizationId: '6509142520' },
-                  externalDataId: 'payment'
+                  externalDataId: 'payment',
                 }),
                 UserProfileApi,
               ],

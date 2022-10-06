@@ -1,1 +1,1 @@
-export {PaymentCatalogApi, UserProfileApi} from '@island.is/application/types'
+export { PaymentCatalogApi, UserProfileApi } from '@island.is/application/types'

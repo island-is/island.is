@@ -19,6 +19,7 @@ import { sectionExistingApplication } from './sectionExistingApplication'
 import kennitala from 'kennitala'
 import format from 'date-fns/format'
 import { EstateRegistrant } from '@island.is/clients/syslumenn'
+import { DeathNoticeApi } from '../../dataProviders'
 
 export const prerequisite = (): Form => {
   return buildForm({
@@ -52,8 +53,7 @@ export const prerequisite = (): Form => {
                 subTitle: m.dataCollectionUserProfileSubtitle,
               }),
               buildDataProviderItem({
-                id: 'deathNotice',
-                type: 'DeathNoticeProvider',
+                provider: DeathNoticeApi,
                 title: m.dataCollectionEstateTitle,
                 subTitle: m.dataCollectionEstateSubtitle,
               }),
