@@ -271,17 +271,19 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
                     'Í næsta skrefi velurðu hvaða gögn viðkomandi getur skoðað eða sýslað með.',
                 })}
               </Text>
-              <DelegationsFormFooter
-                disabled={!name || domainmWatcher === null || loading}
-                loading={loading}
-                onCancel={() =>
-                  history.push(ServicePortalPath.AccessControlDelegations)
-                }
-                submitLabel={formatMessage({
-                  id: 'sp.access-control-delegations:choose-access-rights',
-                  defaultMessage: 'Velja réttindi',
-                })}
-              />
+              <Box marginBottom={7}>
+                <DelegationsFormFooter
+                  disabled={!name || domainmWatcher === null || loading}
+                  loading={loading}
+                  onCancel={() =>
+                    history.push(ServicePortalPath.AccessControlDelegations)
+                  }
+                  submitLabel={formatMessage({
+                    id: 'sp.access-control-delegations:choose-access-rights',
+                    defaultMessage: 'Velja réttindi',
+                  })}
+                />
+              </Box>
             </Box>
           </form>
         </FormProvider>

@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useHistory } from 'react-router-dom'
 
 import { Box, Button, Select } from '@island.is/island-ui/core'
@@ -5,7 +6,6 @@ import { useBreakpoint } from '@island.is/island-ui/core'
 import { m, ServicePortalPath } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import * as styles from './DelegationsHeader.css'
-import { useState } from 'react'
 
 type DomainOpton = {
   label: string

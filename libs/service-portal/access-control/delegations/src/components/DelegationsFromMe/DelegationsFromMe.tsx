@@ -6,7 +6,7 @@ import {
 } from '@island.is/island-ui/core'
 import { AuthCustomDelegation } from '@island.is/api/schema'
 import { DelegationsHeader } from '../DelegationsHeader'
-import { AccessCards } from '../Access'
+import { AccessCards } from '../access'
 import { DelegationsEmptyState } from '../DelegationsEmptyState'
 import { useAuthDelegationsQuery } from '@island.is/service-portal/graphql'
 

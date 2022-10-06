@@ -5,15 +5,15 @@ import {
   ServicePortalModuleComponent,
 } from '@island.is/service-portal/core'
 
-import { DelegationsFromMe, DelegationsAccess } from '../../components'
+import { DelegationsFromMe, DelegationsAccessGuard } from '../../components'
 import { useLocale, useNamespaces } from '@island.is/localization'
 
-const AccessControl: ServicePortalModuleComponent = ({ userInfo, client }) => {
+const AccessControl: ServicePortalModuleComponent = (props) => {
   useNamespaces('sp.access-control-delegations')
   const { formatMessage } = useLocale()
 
   return (
-    <DelegationsAccess userInfo={userInfo} client={client}>
+    <DelegationsAccessGuard {...props}>
       <IntroHeader
         title={formatMessage(m.accessControl)}
         intro={formatMessage({
@@ -25,7 +25,7 @@ const AccessControl: ServicePortalModuleComponent = ({ userInfo, client }) => {
       <Box marginTop={8}>
         <DelegationsFromMe />
       </Box>
-    </DelegationsAccess>
+    </DelegationsAccessGuard>
   )
 }
 

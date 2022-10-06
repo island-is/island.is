@@ -7,7 +7,6 @@ import {
   Inline,
   Text,
   Stack,
-  Button,
   SkeletonLoader,
   Divider,
   toast,
@@ -19,19 +18,22 @@ import {
 import { AuthCustomDelegation } from '@island.is/api/schema'
 import {
   m as coreMessages,
+  m,
   ServicePortalPath,
 } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { AccessItem, AccessModal } from '../../components'
+import {
+  AccessItem,
+  AccessModal,
+  DelegationsFormFooter,
+} from '../../components'
 import { servicePortalSaveAccessControl } from '@island.is/plausible'
 import {
   AuthDelegationScopeType,
   AuthDelegationsDocument,
   useAuthApiScopesQuery,
-  useDeleteAuthDelegationMutation,
   useUpdateAuthDelegationMutation,
 } from '@island.is/service-portal/graphql'
-import { isDefined } from '@island.is/shared/utils'
 import {
   AccessForm as AccessFormState,
   ApiScopeGroup,
@@ -56,21 +58,13 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
     delegationId: string
   }>()
   const history = useHistory()
-  const [closeModalOpen, setCloseModalOpen] = useState(false)
   const [saveModalOpen, setSaveModalOpen] = useState(false)
   const [formError, setFormError] = useState(false)
 
   const onError = () => {
     toast.error(formatMessage(coreMessages.somethingWrong))
   }
-  const [
-    updateDelegation,
-    { loading: updateLoading },
-  ] = useUpdateAuthDelegationMutation({
-    refetchQueries: [{ query: AuthDelegationsDocument }],
-    onError,
-  })
-  const [deleteDelegation] = useDeleteAuthDelegationMutation({
+  const [updateDelegation] = useUpdateAuthDelegationMutation({
     refetchQueries: [{ query: AuthDelegationsDocument }],
     onError,
   })
@@ -135,16 +129,6 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
     }
   })
 
-  const onDelete = async () => {
-    const { data, errors } = await deleteDelegation({
-      variables: { input: { delegationId } },
-    })
-    if (data && !errors) {
-      setCloseModalOpen(false)
-      history.push(ServicePortalPath.AccessControlDelegations)
-    }
-  }
-
   const groupedApiScopes: GroupedApiScopes = (authApiScopes || []).reduce(
     (acc, apiScope, index) => {
       const key = apiScope.group
@@ -189,64 +173,6 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
         <form onSubmit={onSubmit}>
           <Box marginBottom={[3, 3, 4]} display="flex" justifyContent="flexEnd">
             <Inline space={1}>
-              {delegation?.scopes.length > 0 && (
-                <>
-                  <Button
-                    variant="ghost"
-                    colorScheme="destructive"
-                    size="small"
-                    icon="close"
-                    onClick={() => setCloseModalOpen(true)}
-                  >
-                    {formatMessage({
-                      id: 'sp.settings-access-control:access-remove-delegation',
-                      defaultMessage: 'Eyða umboði',
-                    })}
-                  </Button>
-
-                  <AccessModal
-                    id="access-delete-modal"
-                    isVisible={closeModalOpen}
-                    title={formatMessage({
-                      id:
-                        'sp.settings-access-control:access-remove-modal-content',
-                      defaultMessage:
-                        'Ertu viss um að þú viljir eyða þessum aðgangi?',
-                    })}
-                    text={`${delegation?.to?.name} ${formatMessage({
-                      id:
-                        'sp.settings-access-control:will-loose-access-following',
-                      defaultMessage: 'mun missa umboð fyrir eftirfarandi:',
-                    })}`}
-                    scopes={scopes?.filter(isDefined)}
-                    onClose={() => setCloseModalOpen(false)}
-                    onCloseButtonText={formatMessage({
-                      id:
-                        'sp.settings-access-control:access-remove-modal-cancel',
-                      defaultMessage: 'Hætta við',
-                    })}
-                    onSubmitColor="red"
-                    onSubmit={() => onDelete()}
-                    onSubmitButtonText={formatMessage({
-                      id:
-                        'sp.settings-access-control:access-remove-modal-confirm',
-                      defaultMessage: 'Já, ég vil eyða umboði',
-                    })}
-                  />
-                </>
-              )}
-              <Button
-                variant="primary"
-                size="small"
-                loading={updateLoading}
-                onClick={() => setSaveModalOpen(true)}
-                icon="checkmark"
-              >
-                {formatMessage({
-                  id: 'sp.settings-access-control:access-save',
-                  defaultMessage: 'Vista aðgang',
-                })}
-              </Button>
               <AccessModal
                 id="access-save-modal"
                 isVisible={saveModalOpen}
@@ -346,6 +272,15 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
               </Stack>
             </Box>
           )}
+          <Box position="sticky" bottom={0} marginTop={20} paddingBottom={6}>
+            <DelegationsFormFooter
+              onCancel={() =>
+                history.push(ServicePortalPath.AccessControlDelegations)
+              }
+              onConfirm={() => setSaveModalOpen(true)}
+              submitLabel={formatMessage(m.codeConfirmation)}
+            />
+          </Box>
         </form>
       </FormProvider>
     </>

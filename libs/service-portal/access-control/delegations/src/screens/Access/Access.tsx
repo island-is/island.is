@@ -138,11 +138,13 @@ const Access = () => {
           })}
         />
       </Box>
-      {hasDelegationData && (
+      {hasDelegationData ? (
         <AccessForm
           delegation={authDelegation}
           validityPeriod={validityPeriod}
         />
+      ) : (
+        <SkeletonLoader width="100%" height={250} />
       )}
     </>
   )

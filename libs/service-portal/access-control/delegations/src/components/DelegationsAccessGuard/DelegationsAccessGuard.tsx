@@ -10,7 +10,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { useAuth } from '@island.is/auth/react'
 import { useAuthDelegationsQuery } from '@island.is/service-portal/graphql'
 
-export const DelegationsAccess: ServicePortalModuleComponent = ({
+export const DelegationsAccessGuard: ServicePortalModuleComponent = ({
   userInfo,
   client,
   children,
