@@ -1,14 +1,7 @@
 import React from 'react'
 import { useQuery, gql } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
-import {
-  Box,
-  Divider,
-  GridColumn,
-  GridRow,
-  Stack,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, Divider, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   ErrorScreen,
@@ -17,6 +10,7 @@ import {
   UserInfoLine,
   m,
   formatDate,
+  IntroHeader,
 } from '@island.is/service-portal/core'
 
 import { messages } from '../../lib/messages'
@@ -108,16 +102,11 @@ const DrivingLessonsBook: ServicePortalModuleComponent = () => {
   return (
     <>
       <Box marginBottom={6}>
-        <GridRow>
-          <GridColumn span={['12/12', '12/12', '6/8', '6/8']}>
-            <Stack space={2}>
-              <Text variant="h3" as="h1">
-                {formatMessage(messages.vehicleDrivingLessonsTitle)}
-              </Text>
-              <Text>{formatMessage(messages.vehicleDrivingLessonsText)}</Text>
-            </Stack>
-          </GridColumn>
-        </GridRow>
+        <IntroHeader
+          title={formatMessage(messages.vehicleDrivingLessonsTitle)}
+          intro={formatMessage(messages.vehicleDrivingLessonsText)}
+          img="./assets/images/drivingLessons.svg"
+        />
       </Box>
       <Stack space={2}>
         <UserInfoLine
@@ -127,6 +116,7 @@ const DrivingLessonsBook: ServicePortalModuleComponent = () => {
           loading={loading}
         />
         <Divider />
+
         <UserInfoLine
           label={formatMessage(messages.vehicleDrivingLessonsClassOfRight)}
           renderContent={() => (
@@ -135,6 +125,7 @@ const DrivingLessonsBook: ServicePortalModuleComponent = () => {
           loading={loading}
         />
         <Divider />
+
         <UserInfoLine
           label={formatMessage(messages.vehicleDrivingLessonsTeacher)}
           content={book?.teacherName}
@@ -159,12 +150,14 @@ const DrivingLessonsBook: ServicePortalModuleComponent = () => {
           loading={loading}
         />
         <Divider />
+
+        {/* Removed until final decison has been made 
         <UserInfoLine
           label={formatMessage(messages.vehicleDrivingLessonsStatus)}
           content={'?'}
           loading={loading}
         />
-        <Divider />
+        <Divider /> */}
       </Stack>
       <Box marginBottom={5} />
 
