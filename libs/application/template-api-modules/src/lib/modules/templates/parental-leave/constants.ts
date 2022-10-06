@@ -1,5 +1,6 @@
 export const apiConstants = {
   actualDateOfBirth: 'date_of_birth',
+  actualDateOfBirthMonths: 'date_of_birth_months',
   pensionFunds: {
     // Id used when applicant does not wish to pay into a private pension fund
     noPrivatePensionFundId: 'X000',
@@ -13,7 +14,6 @@ export const apiConstants = {
   },
   attachments: {
     selfEmployed: 'selfEmployed',
-    other: 'other',
   },
 }
 

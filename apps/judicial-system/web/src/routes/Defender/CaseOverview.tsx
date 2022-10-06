@@ -22,7 +22,6 @@ import {
   CaseState,
   CaseType,
   completedCaseStates,
-  isIndictmentCase,
   isInvestigationCase,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
@@ -92,7 +91,7 @@ export const CaseOverview: React.FC = () => {
       workingCase={workingCase}
       activeSection={
         completedCaseStates.includes(workingCase.state)
-          ? Sections.CASE_CLOSED
+          ? 2
           : workingCase.parentCase
           ? Sections.JUDGE_EXTENSION
           : Sections.JUDGE
@@ -110,50 +109,51 @@ export const CaseOverview: React.FC = () => {
                   {titleForCase(workingCase)}
                 </Text>
               </Box>
-              {completedCaseStates.includes(workingCase.state) &&
-                !isIndictmentCase(workingCase.type) && (
-                  <>
-                    <Box>
-                      <Text variant="h5">
-                        {formatMessage(m.rulingDate, {
-                          courtEndTime: `${formatDate(
-                            workingCase.courtEndTime,
-                            'PPP',
-                          )} kl. ${formatDate(
-                            workingCase.courtEndTime,
-                            TIME_FORMAT,
-                          )}`,
-                        })}
-                      </Text>
-                    </Box>
-                    <Box display="flex" flexDirection="column">
-                      <RestrictionTags workingCase={workingCase} />
-                    </Box>
-                    {isRestrictionCase(workingCase.type) &&
-                      workingCase.state === CaseState.ACCEPTED && (
-                        <CaseDates workingCase={workingCase} />
-                      )}
-                    {workingCase.caseModifiedExplanation && (
-                      <Box marginBottom={5}>
-                        <AlertMessage
-                          type="info"
-                          title={formatMessage(m.modifiedDatesHeading, {
-                            caseType: workingCase.type,
-                          })}
-                          message={
-                            <MarkdownWrapper
-                              markdown={workingCase.caseModifiedExplanation}
-                              textProps={{ variant: 'small' }}
-                            />
-                          }
-                        />
-                      </Box>
-                    )}
-                  </>
-                )}
+              {completedCaseStates.includes(workingCase.state) && (
+                <Box>
+                  <Text variant="h5">
+                    {formatMessage(m.rulingDate, {
+                      courtEndTime: `${formatDate(
+                        workingCase.courtEndTime,
+                        'PPP',
+                      )} kl. ${formatDate(
+                        workingCase.courtEndTime,
+                        TIME_FORMAT,
+                      )}`,
+                    })}
+                  </Text>
+                </Box>
+              )}
             </Box>
+            {completedCaseStates.includes(workingCase.state) && (
+              <Box display="flex" flexDirection="column">
+                <RestrictionTags workingCase={workingCase} />
+              </Box>
+            )}
           </Box>
+          {completedCaseStates.includes(workingCase.state) &&
+            isRestrictionCase(workingCase.type) &&
+            workingCase.state === CaseState.ACCEPTED && (
+              <CaseDates workingCase={workingCase} />
+            )}
         </Box>
+        {completedCaseStates.includes(workingCase.state) &&
+          workingCase.caseModifiedExplanation && (
+            <Box marginBottom={5}>
+              <AlertMessage
+                type="info"
+                title={formatMessage(m.modifiedDatesHeading, {
+                  caseType: workingCase.type,
+                })}
+                message={
+                  <MarkdownWrapper
+                    markdown={workingCase.caseModifiedExplanation}
+                    textProps={{ variant: 'small' }}
+                  />
+                }
+              />
+            </Box>
+          )}
         <Box marginBottom={6}>
           <InfoCard
             data={[

@@ -80,12 +80,18 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
                   .estimatedDateOfBirthOption,
               ),
               value: StartDateOptions.ESTIMATED_DATE_OF_BIRTH,
+              disabled: expectedDateOfBirth
+                ? new Date(expectedDateOfBirth) < new Date()
+                : false,
             },
             {
               label: formatMessage(
                 parentalLeaveFormMessages.firstPeriodStart.dateOfBirthOption,
               ),
               value: StartDateOptions.ACTUAL_DATE_OF_BIRTH,
+              disabled: expectedDateOfBirth
+                ? new Date(expectedDateOfBirth) < new Date()
+                : false,
             },
             {
               label: formatMessage(

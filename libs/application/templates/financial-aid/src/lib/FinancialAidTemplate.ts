@@ -67,6 +67,7 @@ const FinancialAidTemplate: ApplicationTemplate<
                 answers: ['approveExternalData'],
                 externalData: ['nationalRegistry', 'veita', 'taxDataFetch'],
               },
+              delete: true,
             },
           ],
         },
@@ -101,6 +102,7 @@ const FinancialAidTemplate: ApplicationTemplate<
                   Promise.resolve(module.Application),
                 ),
               read: 'all',
+              delete: true,
               write: {
                 answers: [
                   'spouse',
@@ -159,6 +161,7 @@ const FinancialAidTemplate: ApplicationTemplate<
                   Promise.resolve(module.ApplicantSubmitted),
                 ),
               read: 'all',
+              delete: true,
             },
           ],
         },
@@ -205,6 +208,7 @@ const FinancialAidTemplate: ApplicationTemplate<
                   Promise.resolve(module.ApplicantSubmitted),
                 ),
               read: 'all',
+              delete: true,
             },
           ],
         },
