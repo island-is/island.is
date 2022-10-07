@@ -30,7 +30,7 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
   const hasData = !!(data || passportData)
   const { formatMessage } = useLocale()
 
-  if (error && !loading) {
+  if (hasError && !loading) {
     return (
       <ErrorScreen
         figure="./assets/images/hourglass.svg"
@@ -70,11 +70,6 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
             <EmptyState />
           </Box>
         )}
-      {hasError && (
-        <Box>
-          <EmptyState description={m.errorFetch} />
-        </Box>
-      )}
     </>
   )
 }
