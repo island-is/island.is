@@ -5,12 +5,11 @@ import { Inject, Injectable } from '@nestjs/common'
 import {
   VehicleSearchApi,
   BasicVehicleInformationGetRequest,
-  BasicVehicleInformationTechnicalMass,
-  BasicVehicleInformationTechnicalAxle,
-  PersidnoLookup,
-  VehicleSearch,
   PdfApi,
-  VehicleReportPdfGetRequest,
+  BasicVehicleInformationTechnicalMassDto,
+  BasicVehicleInformationTechnicalAxleDto,
+  VehicleSearchDto,
+  PersidnoLookupDto,
 } from '@island.is/clients/vehicles'
 import { VehiclesAxle, VehiclesDetail } from '../models/getVehicleDetail.model'
 import { ApolloError } from 'apollo-server-express'
@@ -59,7 +58,7 @@ export class VehiclesService {
     auth: User,
     showDeregistered: boolean,
     showHistory: boolean,
-  ): Promise<PersidnoLookup | null | ApolloError> {
+  ): Promise<PersidnoLookupDto | null | ApolloError> {
     try {
       const res = await this.getVehiclesWithAuth(auth).vehicleHistoryGet({
         requestedPersidno: auth.nationalId,
@@ -77,7 +76,7 @@ export class VehiclesService {
   async getVehiclesSearch(
     auth: User,
     search: string,
-  ): Promise<VehicleSearch | null | ApolloError> {
+  ): Promise<VehicleSearchDto | null | ApolloError> {
     try {
       const res = await this.getVehiclesWithAuth(auth).vehicleSearchGet({
         search,
@@ -113,7 +112,7 @@ export class VehiclesService {
         regno: input.regno,
         vin: input.vin,
       })
-      const { data } = res
+      const data = res
 
       if (!data) return null
       const newestInspection = data.inspections?.sort((a, b) => {
@@ -123,29 +122,29 @@ export class VehiclesService {
       })[0]
       let axleMaxWeight = 0
 
-      const numberOfAxles = data.techincal?.axle?.axleno ?? 0
+      const numberOfAxles = data.technical?.axle?.axleno ?? 0
 
       const axles: VehiclesAxle[] = []
 
       if (
         data &&
-        data.techincal &&
-        data.techincal.axle &&
-        data.techincal.mass
+        data.technical &&
+        data.technical.axle &&
+        data.technical.mass
       ) {
         for (let i = 1; i <= numberOfAxles; i++) {
           axles.push({
             axleMaxWeight:
-              data.techincal.mass[
-                `massmaxle${i}` as keyof BasicVehicleInformationTechnicalMass
+              data.technical.mass[
+                `massmaxle${i}` as keyof BasicVehicleInformationTechnicalMassDto
               ],
-            wheelAxle: data.techincal.axle[
-              `wheelaxle${i}` as keyof BasicVehicleInformationTechnicalAxle
+            wheelAxle: data.technical.axle[
+              `wheelaxle${i}` as keyof BasicVehicleInformationTechnicalAxleDto
             ]?.toString(),
           })
           axleMaxWeight +=
-            data.techincal.mass[
-              `massmaxle${i}` as keyof BasicVehicleInformationTechnicalMass
+            data.technical.mass[
+              `massmaxle${i}` as keyof BasicVehicleInformationTechnicalMassDto
             ] ?? 0
         }
       }
@@ -168,24 +167,25 @@ export class VehiclesService {
         return null
       }
 
+      const subModel = [data.vehcom, data.speccom].filter(Boolean).join(' ')
       const response: VehiclesDetail = {
         mainInfo: {
           model: data.make,
-          subModel: data.vehcom ?? '' + data.speccom ?? '',
+          subModel: subModel,
           regno: data.regno,
           year: data.modelyear,
-          co2: data?.techincal?.co2,
-          weightedCo2: data?.techincal?.weightedCo2,
-          co2Wltp: data?.techincal?.co2Wltp,
-          weightedCo2Wltp: data?.techincal?.weightedco2Wltp,
-          cubicCapacity: data.techincal?.capacity,
-          trailerWithBrakesWeight: data.techincal?.tMassoftrbr,
-          trailerWithoutBrakesWeight: data.techincal?.tMassoftrunbr,
+          co2: data?.technical?.co2,
+          weightedCo2: data?.technical?.weightedCo2,
+          co2Wltp: data?.technical?.co2Wltp,
+          weightedCo2Wltp: data?.technical?.weightedco2Wltp,
+          cubicCapacity: data.technical?.capacity,
+          trailerWithBrakesWeight: data.technical?.tMassoftrbr,
+          trailerWithoutBrakesWeight: data.technical?.tMassoftrunbr,
         },
         basicInfo: {
           model: data.make,
           regno: data.regno,
-          subModel: data.vehcom ?? '' + data.speccom ?? '',
+          subModel: subModel,
           permno: data.permno,
           verno: data.vin,
           year: data.modelyear,
@@ -198,14 +198,14 @@ export class VehiclesService {
           firstRegistrationDate: data.firstregdate,
           preRegistrationDate: data.preregdate,
           newRegistrationDate: data.newregdate,
-          vehicleGroup: data.techincal?.vehgroup,
+          vehicleGroup: data.technical?.vehgroup,
           color: data.color,
           reggroup: data.plates?.[0]?.reggroup ?? null,
           reggroupName: data.plates?.[0]?.reggroupname ?? null,
-          passengers: data.techincal?.pass,
+          passengers: data.technical?.pass,
           useGroup: data.usegroup,
-          driversPassengers: data.techincal?.passbydr,
-          standingPassengers: data.techincal?.standingno,
+          driversPassengers: data.technical?.passbydr,
+          standingPassengers: data.technical?.standingno,
           plateLocation: data.platestoragelocation,
           specialName: data.speccom,
           plateStatus: data.platestatus,
@@ -230,27 +230,27 @@ export class VehiclesService {
           inspectionFine: data?.fees?.inspectionfine,
         },
         technicalInfo: {
-          engine: data.techincal?.engine,
-          totalWeight: data.techincal?.mass?.massladen,
-          cubicCapacity: data.techincal?.capacity,
-          capacityWeight: data.techincal?.mass?.massofcomb,
-          length: data.techincal?.size?.length,
-          vehicleWeight: data.techincal?.mass?.massinro,
-          width: data.techincal?.size?.width,
-          trailerWithoutBrakesWeight: data.techincal?.tMassoftrunbr,
-          horsepower: data.techincal?.maxNetPower
-            ? Math.round(data.techincal.maxNetPower * KW_TO_METRIC_HP * 10) / 10
+          engine: data.technical?.engine,
+          totalWeight: data.technical?.mass?.massladen,
+          cubicCapacity: data.technical?.capacity,
+          capacityWeight: data.technical?.mass?.massofcomb,
+          length: data.technical?.size?.length,
+          vehicleWeight: data.technical?.mass?.massinro,
+          width: data.technical?.size?.width,
+          trailerWithoutBrakesWeight: data.technical?.tMassoftrunbr,
+          horsepower: data.technical?.maxNetPower
+            ? Math.round(data.technical.maxNetPower * KW_TO_METRIC_HP * 10) / 10
             : null,
-          trailerWithBrakesWeight: data.techincal?.tMassoftrbr,
-          carryingCapacity: data.techincal?.mass?.masscapacity,
+          trailerWithBrakesWeight: data.technical?.tMassoftrbr,
+          carryingCapacity: data.technical?.mass?.masscapacity,
           axleTotalWeight: axleMaxWeight,
           axles: axles,
           tyres: {
-            axle1: data.techincal?.tyre?.tyreaxle1,
-            axle2: data.techincal?.tyre?.tyreaxle2,
-            axle3: data.techincal?.tyre?.tyreaxle3,
-            axle4: data.techincal?.tyre?.tyreaxle4,
-            axle5: data.techincal?.tyre?.tyreaxle5,
+            axle1: data.technical?.tyre?.tyreaxle1,
+            axle2: data.technical?.tyre?.tyreaxle2,
+            axle3: data.technical?.tyre?.tyreaxle3,
+            axle4: data.technical?.tyre?.tyreaxle4,
+            axle5: data.technical?.tyre?.tyreaxle5,
           },
         },
         ownersInfo:
