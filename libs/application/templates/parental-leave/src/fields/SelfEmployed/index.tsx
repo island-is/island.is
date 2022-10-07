@@ -48,10 +48,12 @@ export const SelfEmployed: FC<FieldBaseProps> = ({ application, field }) => {
           onSelect: (s: string) => {
             if (s === YES) {
               setValue('employer.email', '')
+              setValue('isRecivingUnemploymentBenefits', NO)
             }
             if (s !== YES) {
               setValue('employer.selfEmployed.file', null)
               setValue('fileUpload.selfEmployedFile', null)
+              setValue('isRecivingUnemploymentBenefits', '')
             }
           },
         }}
