@@ -568,7 +568,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     rawPeriods,
     firstPeriodStart,
     isRecivingUnemploymentBenefits,
-    unemploymentBenefits
+    unemploymentBenefits,
   }
 }
 
