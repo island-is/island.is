@@ -87,9 +87,12 @@ export class GenericDrivingLicenseApi
       })
 
       if (!res.ok) {
-        throw new Error(
-          `Expected 200 status for Drivers license query, got ${res.status}`,
-        )
+        if (res.status !== 400 && res.status !== 404) {
+          throw new Error(
+            `Expected 200 status for Drivers license query, got ${res.status}`,
+          )
+        }
+        return null
       }
     } catch (e) {
       this.logger.error('Unable to query for drivers licence', {
