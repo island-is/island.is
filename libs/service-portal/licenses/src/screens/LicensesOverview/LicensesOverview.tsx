@@ -8,15 +8,17 @@ import {
   m as coreMessage,
   ActionCard,
   EmptyState,
+  formatDate,
 } from '@island.is/service-portal/core'
 import { LicenseLoader } from '../../components/LicenseLoader/LicenseLoader'
 import { m } from '../../lib/messages'
 import { gql, useQuery } from '@apollo/client'
 import { Locale } from '@island.is/shared/types'
 import {
-  GenericLicenseType,
   GenericUserLicenseFetchStatus,
+  GenericLicenseType,
   useUserProfile,
+  usePassport,
 } from '@island.is/service-portal/graphql'
 import { Query } from '@island.is/api/schema'
 import { Box } from '@island.is/island-ui/core'
@@ -27,11 +29,12 @@ import {
   getPathFromType,
   getTitleAndLogo,
 } from '../../utils/dataMapper'
-import { usePassport } from '@island.is/service-portal/graphql'
 
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import LicenseCards from '../../components/LicenseCards/LicenseCards'
+import { getExpiresIn } from '../../utils/dateUtils'
+
 const dataFragment = gql`
   fragment genericLicenseDataFieldFragment on GenericLicenseDataField {
     type
@@ -80,6 +83,7 @@ const GenericLicensesQuery = gql`
         metadata {
           licenseNumber
           expired
+          expireDate
         }
       }
     }
@@ -94,6 +98,7 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
   const history = useHistory()
   const { data: userProfile } = useUserProfile()
   const locale = (userProfile?.locale as Locale) ?? 'is'
+  const currentDate = new Date()
 
   /**
    * Get all licenses is feature flagged
@@ -143,6 +148,37 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
 
   const { genericLicenses = [] } = data ?? {}
 
+  const getLabel = (
+    type: GenericLicenseType | 'Passport',
+    isInvalid = false,
+    expireDate: string,
+  ) => {
+    const expiresIn = getExpiresIn(currentDate, new Date(expireDate))
+
+    if (type === 'Passport' && isInvalid) {
+      return formatMessage(m.invalid)
+    }
+    if (expiresIn) {
+      return expiresIn.value <= 0
+        ? formatMessage(m.isExpired)
+        : expiresIn?.key === 'months'
+        ? formatMessage(m.expiresIn) +
+          ' ' +
+          Math.round(expiresIn?.value) +
+          ' ' +
+          formatMessage(m.months)
+        : formatMessage(m.expiresIn) +
+          ' ' +
+          Math.round(expiresIn?.value) +
+          ' ' +
+          formatMessage(m.days)
+    }
+    if (expireDate) {
+      return `${formatMessage(m.validUntil)} ${formatDate(expireDate)}`
+    }
+
+    return formatMessage(m.isValid)
+  }
   const isError = genericLicenses?.every(
     (item) => item.fetch.status === GenericUserLicenseFetchStatus.Error,
   )
@@ -210,7 +246,19 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
                     variant: 'text',
                   }}
                   tag={
-                    license.payload?.metadata?.expired === true
+                    license.payload?.metadata.expireDate
+                      ? {
+                          label: getLabel(
+                            license.license.type,
+                            false,
+                            license.payload?.metadata.expireDate,
+                          ),
+                          variant: license.payload.metadata.expired
+                            ? 'red'
+                            : 'blue',
+                          outlined: false,
+                        }
+                      : license.payload?.metadata?.expired === true
                       ? {
                           label: formatMessage(m.isExpired),
                           variant: 'red',
@@ -234,7 +282,7 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
         </Box>
       )}
       {hasData && <LicenseCards passportData={passportData || undefined} />}
-      {!isLoading && !isEmpty && (
+      {!isLoading && isEmpty && (
         <Box marginTop={8}>
           <EmptyState />
         </Box>

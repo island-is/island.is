@@ -6,6 +6,7 @@ import { ServicePortalPath } from '@island.is/service-portal/core'
 import { m } from '../../lib/messages'
 import { PkPass } from '../QRCodeModal/PkPass'
 import { SingleLicenseCard } from '../SingleLicenseCard/SingleLicenseCard'
+import { GenericLicenseType } from '@island.is/service-portal/graphql'
 
 export const DrivingLicense = ({
   id,
@@ -54,6 +55,7 @@ export const DrivingLicense = ({
       }
       additionalLink={
         <PkPass
+          licenseType={GenericLicenseType.DriversLicense}
           expireDate={toDate(new Date(expireDate).getTime().toString())}
           textButton
         />

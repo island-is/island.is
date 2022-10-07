@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { formatDate, getExpiresIn } from '../../utils/dateUtils'
-import { ServicePortalPath } from '@island.is/service-portal/core'
-import { SingleLicenseCard } from '../SingleLicenseCard/SingleLicenseCard'
+import { ActionCard, ServicePortalPath } from '@island.is/service-portal/core'
 import { m } from '../../lib/messages'
+import { useHistory } from 'react-router-dom'
 
 export const PassportLicense = ({
   id,
@@ -19,6 +19,7 @@ export const PassportLicense = ({
   useNamespaces('sp.license')
   const { formatMessage } = useLocale()
   const [currentDate] = useState(new Date())
+  const history = useHistory()
 
   const expiresIn = getExpiresIn(currentDate, new Date(expireDate))
 
@@ -53,16 +54,27 @@ export const PassportLicense = ({
   }
 
   return (
-    <SingleLicenseCard
-      title={name || formatMessage(m.passportCardTitle)}
-      subtitle={formatMessage(m.passportNumber) + ' - ' + id}
-      link={ServicePortalPath.LicensesPassportDetail.replace(':id', id)}
-      img={
-        'https://images.ctfassets.net/8k0h54kbe6bj/2ETBroMeCKRQptFKNg83rW/2e1799555b5bf0f98b7ed985ce648b99/logo-square-400.png?w=100&h=100&fit=pad&bg=white'
-      }
+    <ActionCard
+      heading={name || formatMessage(m.passportCardTitle)}
+      text={formatMessage(m.passportNumber) + ' - ' + id}
+      cta={{
+        label: formatMessage(m.seeDetails),
+        onClick: () =>
+          history.push(
+            ServicePortalPath.LicensesPassportDetail.replace(':id', id),
+          ),
+
+        variant: 'text',
+      }}
+      image={{
+        type: 'image',
+        url:
+          'https://images.ctfassets.net/8k0h54kbe6bj/2ETBroMeCKRQptFKNg83rW/2e1799555b5bf0f98b7ed985ce648b99/logo-square-400.png?w=100&h=100&fit=pad&bg=white',
+      }}
       tag={{
-        text: getLabel(),
-        color: expiresIn || isInvalid ? 'red' : 'blue',
+        label: getLabel(),
+        variant: expiresIn || isInvalid ? 'red' : 'blue',
+        outlined: false,
       }}
     />
   )
