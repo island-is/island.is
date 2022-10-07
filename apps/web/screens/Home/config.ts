@@ -10,5 +10,12 @@ export const watsonConfig: Record<Locale, WatsonChatPanelProps | null> = {
     carbonTheme: 'g10',
     namespaceKey: 'default',
   },
-  en: null,
+  en: {
+    integrationID: '2e32cba8-7379-44e9-b03e-af1ccdbe5982',
+    region: 'eu-gb',
+    serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+    showLauncher: false,
+    carbonTheme: 'g10',
+    namespaceKey: 'default',
+  },
 }
