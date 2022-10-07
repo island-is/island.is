@@ -5,6 +5,7 @@ export class ApiScopeGroup {
   name!: string
   displayName!: string
   description!: string
+  order!: number
   domainName!: string
   scopes?: ApiScope[]
   created!: Date

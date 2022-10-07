@@ -47,7 +47,6 @@ const AuthApiScopesQuery = gql`
     authApiScopes(input: $input) {
       name
       displayName
-      type
       group {
         name
         displayName
@@ -74,7 +73,6 @@ const AuthDelegationQuery = gql`
         scopes {
           id
           name
-          type
           validTo
           displayName
         }
@@ -163,8 +161,6 @@ const Access: FC = () => {
       (scope) => scope.name?.length > 0,
     ).map((scope) => ({
       ...scope,
-      type: authApiScopes?.find((apiScope) => apiScope.name === scope.name[0])
-        ?.type,
       name: scope.name[0],
       displayName: scope.displayName,
     }))
