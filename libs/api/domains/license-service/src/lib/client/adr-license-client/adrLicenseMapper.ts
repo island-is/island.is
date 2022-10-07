@@ -50,8 +50,6 @@ export const parseAdrLicensePayload = (
 
   const parsedResponse = parseAdrLicenseResponse(license)
 
-  //TODO: Null check fields and filter!
-
   const label = labels?.labels
   const data: Array<GenericLicenseDataField> = [
     {
@@ -89,7 +87,7 @@ export const parseAdrLicensePayload = (
 
   const grunn = parseRights(
     label ? label['otherThanTanks'] : i18n.otherThanTanks[locale],
-    adrRights.filter((field) => field.grunn),
+    adrRights,
   )
   if (grunn) data.push(grunn)
 

@@ -162,6 +162,12 @@ export class GenericAdrLicenseApi implements GenericLicenseClient<AdrDto> {
 
     /*
       TODO: VERIFICATION!!!!!!!! Máni (thorkellmani @ github)
+      Currently Impossible
+      A robust verification needs to both check that the PkPass is valid,
+      and that the user being scanned does indeed have a license!.
+      This method currently checks the validity of the PkPass, but we can't
+      inspect the validity of their actual ADR license. As of now, we can
+      only retrieve the license of a logged in user, not the user being scanned!
     */
 
     return {

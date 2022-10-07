@@ -227,7 +227,7 @@ export class LicenseServiceService {
       }
 
       /*
-      //TODO - Máni
+      //TODO - Máni (thorkellmani @ github)
       //Re-implement when app has updated their GenericUserLicenseStatus logic!!!
       const isDataFetched =
         licenseDataFromService?.fetch?.status ===
