@@ -15,7 +15,8 @@ import {
 } from '../'
 import { GraphQLModule, Query, Resolver } from '@nestjs/graphql'
 
-const testUser = createCurrentUser()
+const testUser = createCurrentUser({ nationalIdType: 'person' })
+const testCompany = createCurrentUser({ nationalIdType: 'company' })
 const testFeature = 'test' as Features
 
 @UseGuards(IdsUserGuard, FeatureFlagGuard)
@@ -60,6 +61,7 @@ export class TestFeatureResolver {
 
 describe('FeatureFlagGuard', () => {
   let app: INestApplication
+  const authGuard = new MockAuthGuard(testUser)
   const featureFlagClient = {
     getValue: jest.fn(),
   }
@@ -77,7 +79,7 @@ describe('FeatureFlagGuard', () => {
       .overrideProvider(FEATURE_FLAG_CLIENT)
       .useValue(featureFlagClient)
       .overrideGuard(IdsUserGuard)
-      .useValue(new MockAuthGuard(testUser))
+      .useValue(authGuard)
       .compile()
 
     app = moduleRef.createNestApplication()
@@ -86,6 +88,7 @@ describe('FeatureFlagGuard', () => {
 
   afterEach(() => {
     jest.clearAllMocks()
+    jest.restoreAllMocks()
   })
 
   it('guards controller if feature is disabled', () => {
@@ -122,6 +125,29 @@ describe('FeatureFlagGuard', () => {
       false,
       {
         id: testUser.nationalId,
+        attributes: {
+          subjectType: 'person',
+        },
+      },
+    )
+  })
+
+  it('passes company details to getValue', async () => {
+    // Arrange
+    jest.spyOn(authGuard, 'getAuth').mockReturnValue(testCompany)
+
+    // Act
+    await request(app.getHttpServer()).get('/rest')
+
+    // Assert
+    expect(featureFlagClient.getValue).toHaveBeenCalledWith(
+      testFeature,
+      false,
+      {
+        id: testCompany.nationalId,
+        attributes: {
+          subjectType: 'legalEntity',
+        },
       },
     )
   })

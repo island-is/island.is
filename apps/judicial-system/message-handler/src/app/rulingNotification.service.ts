@@ -15,10 +15,10 @@ export class RulingNotificationService {
     private readonly config: ConfigType<typeof appModuleConfig>,
   ) {}
 
-  async sendRulingNotification(caseId: string): Promise<void> {
+  async sendRulingNotification(caseId: string): Promise<boolean> {
     logger.debug(`Sending ruling notification for case ${caseId}`)
 
-    return fetch(
+    await fetch(
       `${this.config.backendUrl}/api/internal/case/${caseId}/notification`,
       {
         method: 'POST',
@@ -42,14 +42,14 @@ export class RulingNotificationService {
           return
         }
 
-        logger.error(`Failed to send ruling notification for case ${caseId}`, {
-          response,
-        })
+        throw response
       })
       .catch((reason) => {
         logger.error(`Failed to send ruling notification for case ${caseId}`, {
           reason,
         })
       })
+
+    return true
   }
 }
