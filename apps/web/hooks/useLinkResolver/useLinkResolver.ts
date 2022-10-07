@@ -158,14 +158,6 @@ export const routesTemplate = {
     is: '/innskraning',
     en: '/en/login',
   },
-  subarticle: {
-    is: '/[slug]/[subSlug]',
-    en: '/en/[slug]/[subSlug]',
-  },
-  article: {
-    is: '/[slug]',
-    en: '/en/[slug]',
-  },
   serviceweb: {
     is: '/adstod',
     en: '/en/help',
@@ -189,6 +181,14 @@ export const routesTemplate = {
   servicewebsearch: {
     is: '/adstod/leit',
     en: '/en/help/search',
+  },
+  subarticle: {
+    is: '/[slug]/[subSlug]',
+    en: '/en/[slug]/[subSlug]',
+  },
+  article: {
+    is: '/[slug]',
+    en: '/en/[slug]',
   },
   homepage: {
     is: '/',

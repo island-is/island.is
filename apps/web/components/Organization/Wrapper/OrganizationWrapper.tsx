@@ -224,7 +224,11 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
     ? organizations[0]
     : organizations.find((x) => footerEnabled.includes(x.slug))
 
-  const n = useNamespace(organization?.namespace ?? {})
+  const namespace = useMemo(
+    () => JSON.parse(organization?.namespace?.fields ?? '{}'),
+    [],
+  )
+  const n = useNamespace(namespace)
 
   let OrganizationFooterComponent = null
 

@@ -1,5 +1,4 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React from 'react'
 import NextLink from 'next/link'
 import cn from 'classnames'
 import {
@@ -16,12 +15,12 @@ import {
   getTextStyles,
 } from '@island.is/island-ui/core'
 import {
+  LanguageToggler,
   ServiceWebContext,
   ServiceWebSearchInput,
 } from '@island.is/web/components'
+import { useLinkResolver } from '@island.is/web/hooks'
 import { TextModes } from '../types'
-import { linkResolver } from '@island.is/web/hooks'
-import { Tag } from '@island.is/web/graphql/schema'
 
 import * as styles from './Header.css'
 
@@ -40,6 +39,8 @@ export const Header = ({
   textMode,
   searchPlaceholder,
 }: HeaderProps) => {
+  const { linkResolver } = useLinkResolver()
+
   const dark = textMode === 'dark'
 
   return (
@@ -82,9 +83,13 @@ export const Header = ({
                               })}
                             >
                               <NextLink
-                                href={`${linkResolver('serviceweb').href}${
-                                  institutionSlug ? '/' + institutionSlug : ''
-                                }`}
+                                href={
+                                  institutionSlug
+                                    ? linkResolver('serviceweborganization', [
+                                        institutionSlug,
+                                      ]).href
+                                    : linkResolver('serviceweb').href
+                                }
                               >
                                 <a
                                   className={cn(
@@ -119,6 +124,11 @@ export const Header = ({
                             />
                           </Box>
                         )}
+                        <Box marginLeft={marginLeft}>
+                          <LanguageToggler
+                            buttonColorScheme={dark ? 'default' : 'negative'}
+                          />
+                        </Box>
                       </Box>
                     </Column>
                   </Columns>

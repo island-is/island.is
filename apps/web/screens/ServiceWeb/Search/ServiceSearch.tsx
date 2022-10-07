@@ -300,7 +300,24 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
               span={['12/12', '12/12', '12/12', '10/12']}
             >
               <Box marginTop={[10, 10, 20]}>
-                <ContactBanner />
+                <ContactBanner
+                  slug={institutionSlug}
+                  cantFindWhatYouAreLookingForText={o(
+                    'cantFindWhatYouAreLookingForText',
+                    n(
+                      'cantFindWhatYouAreLookingForText',
+                      'Finnurðu ekki það sem þig vantar?',
+                    ),
+                  )}
+                  contactUsText={o(
+                    'contactUsText',
+                    n('contactUsText', 'Hafa samband'),
+                  )}
+                  howCanWeHelpText={o(
+                    'howCanWeHelpText',
+                    n('howCanWeHelpText', 'Hvernig getum við aðstoðað?'),
+                  )}
+                />
               </Box>
             </GridColumn>
           </GridRow>

@@ -1,8 +1,6 @@
-import React, { FC, useEffect, useState, createContext } from 'react'
-import Head from 'next/head'
+import { FC, useEffect, useState, createContext, useMemo } from 'react'
 import { Box } from '@island.is/island-ui/core'
-
-import { Organization, Tag } from '@island.is/web/graphql/schema'
+import { Organization } from '@island.is/web/graphql/schema'
 import {
   ServiceWebSearchSection,
   ServiceWebHeader,
@@ -73,6 +71,11 @@ export const Wrapper: FC<WrapperProps> = ({
     setTextMode(options.textMode)
   }, [options])
 
+  const namespace = useMemo(
+    () => JSON.parse(organization?.namespace?.fields ?? '{}'),
+    [],
+  )
+
   return (
     <>
       <HeadWithSocialSharing
@@ -118,6 +121,7 @@ export const Wrapper: FC<WrapperProps> = ({
         <ServiceWebDynamicFooter
           institutionSlug={institutionSlug}
           organization={organization}
+          namespace={namespace}
         />
       </ServiceWebContext.Provider>
     </>

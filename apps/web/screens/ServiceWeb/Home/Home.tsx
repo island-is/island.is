@@ -45,6 +45,8 @@ import ContactBanner from '../ContactBanner/ContactBanner'
 import { getSlugPart } from '../utils'
 import sortAlpha from '@island.is/web/utils/sortAlpha'
 import { Locale } from 'locale'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
 
 import * as styles from './Home.css'
 
@@ -71,6 +73,9 @@ const Home: Screen<HomeProps> = ({
   const n = useNamespace(namespace)
   const o = useNamespace(organizationNamespace)
   const { linkResolver } = useLinkResolver()
+
+  useContentfulId(organization.id)
+  useLocalLinkTypeResolver()
 
   const institutionSlug = getSlugPart(Router.asPath, locale === 'is' ? 2 : 3)
 

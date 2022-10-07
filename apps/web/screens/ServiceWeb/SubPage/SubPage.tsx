@@ -1,4 +1,3 @@
-import React from 'react'
 import { useRouter } from 'next/router'
 import NextLink from 'next/link'
 import { withMainLayout } from '@island.is/web/layouts/main'
@@ -9,14 +8,15 @@ import {
   QueryGetNamespaceArgs,
   QueryGetOrganizationArgs,
   QueryGetSingleSupportQnaArgs,
+  QueryGetSupportCategoryArgs,
   QueryGetSupportQnAsInCategoryArgs,
-  SearchableTags,
   SupportQna,
 } from '@island.is/web/graphql/schema'
 import {
   GET_NAMESPACE_QUERY,
   GET_SERVICE_WEB_ORGANIZATION,
   GET_SINGLE_SUPPORT_QNA,
+  GET_SUPPORT_CATEGORY,
   GET_SUPPORT_QNAS_IN_CATEGORY,
 } from '../../queries'
 import { Screen } from '../../../types'
@@ -43,6 +43,8 @@ import ContactBanner from '../ContactBanner/ContactBanner'
 import groupBy from 'lodash/groupBy'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
 import OrganizationContactBanner from '../ContactBanner/OrganizationContactBanner'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
 
 export interface Dictionary<T> {
   [index: string]: T
@@ -55,6 +57,7 @@ interface SubPageProps {
   singleSupportQNA: Query['getSingleSupportQNA']
   questionSlug: string
   organizationNamespace: Record<string, string>
+  singleSupportCategory: Query['getSupportCategory']
 }
 
 const SubPage: Screen<SubPageProps> = ({
@@ -64,11 +67,15 @@ const SubPage: Screen<SubPageProps> = ({
   questionSlug,
   namespace,
   organizationNamespace,
+  singleSupportCategory,
 }) => {
   const Router = useRouter()
   const n = useNamespace(namespace)
   const o = useNamespace(organizationNamespace)
   const { linkResolver } = useLinkResolver()
+  useContentfulId(organization.id, singleSupportCategory?.id)
+  useLocalLinkTypeResolver()
+
   const organizationSlug = organization.slug
   const question = singleSupportQNA
 
@@ -331,7 +338,24 @@ const SubPage: Screen<SubPageProps> = ({
               </GridContainer>
 
               <Box marginTop={[10, 10, 20]}>
-                <ContactBanner slug={institutionSlug} />
+                <ContactBanner
+                  slug={institutionSlug}
+                  cantFindWhatYouAreLookingForText={o(
+                    'cantFindWhatYouAreLookingForText',
+                    n(
+                      'cantFindWhatYouAreLookingForText',
+                      'Finnurðu ekki það sem þig vantar?',
+                    ),
+                  )}
+                  contactUsText={o(
+                    'contactUsText',
+                    n('contactUsText', 'Hafa samband'),
+                  )}
+                  howCanWeHelpText={o(
+                    'howCanWeHelpText',
+                    n('howCanWeHelpText', 'Hvernig getum við aðstoðað?'),
+                  )}
+                />
               </Box>
             </GridColumn>
           </GridRow>
@@ -365,6 +389,7 @@ SubPage.getInitialProps = async ({ apolloClient, locale, query, res }) => {
     namespace,
     supportQNAs,
     singleSupportQNA,
+    singleSupportCategory,
   ] = await Promise.all([
     !!organizationSlug &&
       apolloClient.query<Query, QueryGetOrganizationArgs>({
@@ -411,6 +436,13 @@ SubPage.getInitialProps = async ({ apolloClient, locale, query, res }) => {
           },
         },
       }),
+    !!categorySlug &&
+      apolloClient.query<Query, QueryGetSupportCategoryArgs>({
+        query: GET_SUPPORT_CATEGORY,
+        variables: {
+          input: { slug: categorySlug, lang: locale as ContentLanguage },
+        },
+      }),
   ])
 
   const organizationNamespace = JSON.parse(
@@ -424,6 +456,7 @@ SubPage.getInitialProps = async ({ apolloClient, locale, query, res }) => {
     supportQNAs: supportQNAs?.data?.getSupportQNAsInCategory,
     singleSupportQNA: singleSupportQNA?.data?.getSingleSupportQNA,
     questionSlug,
+    singleSupportCategory: singleSupportCategory?.data?.getSupportCategory,
   }
 }
 
