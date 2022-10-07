@@ -291,7 +291,7 @@ export class ParentalLeaveService {
         // We know its a normal period and it will not exceed personal rights
         periods.push({
           from:
-            isFirstPeriod && isActualDateOfBirth && useLength === 'yes'
+            isFirstPeriod && isActualDateOfBirth && useLength === YES
               ? apiConstants.actualDateOfBirthMonths
               : isFirstPeriod && isActualDateOfBirth
               ? apiConstants.actualDateOfBirth
@@ -310,7 +310,7 @@ export class ParentalLeaveService {
         // We know all of the period will be using transferred rights
         periods.push({
           from:
-            isFirstPeriod && isActualDateOfBirth && useLength === 'yes'
+            isFirstPeriod && isActualDateOfBirth && useLength === YES
               ? apiConstants.actualDateOfBirthMonths
               : isFirstPeriod && isActualDateOfBirth
               ? apiConstants.actualDateOfBirth
@@ -350,7 +350,7 @@ export class ParentalLeaveService {
         // Add the period using personal rights
         periods.push({
           from:
-            isFirstPeriod && isActualDateOfBirth && useLength === 'yes'
+            isFirstPeriod && isActualDateOfBirth && useLength === YES
               ? apiConstants.actualDateOfBirthMonths
               : isFirstPeriod && isActualDateOfBirth
               ? apiConstants.actualDateOfBirth
