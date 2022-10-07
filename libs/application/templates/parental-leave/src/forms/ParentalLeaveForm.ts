@@ -726,7 +726,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   condition: (answers) => {
                     const { rawPeriods } = getApplicationAnswers(answers)
 
-                    return rawPeriods[rawPeriods.length - 1].useLength === YES
+                    return rawPeriods[rawPeriods.length - 1]?.useLength === YES
                   },
                   title: parentalLeaveFormMessages.duration.title,
                   component: 'Duration',
@@ -739,7 +739,7 @@ export const ParentalLeaveForm: Form = buildForm({
                     condition: (answers) => {
                       const { rawPeriods } = getApplicationAnswers(answers)
 
-                      return rawPeriods[rawPeriods.length - 1].useLength === NO
+                      return rawPeriods[rawPeriods.length - 1]?.useLength === NO
                     },
                   },
                   {
@@ -748,7 +748,7 @@ export const ParentalLeaveForm: Form = buildForm({
                         application.answers,
                       )
                       const latestStartDate =
-                        rawPeriods[rawPeriods.length - 1].startDate
+                        rawPeriods[rawPeriods.length - 1]?.startDate
 
                       return addDays(
                         new Date(latestStartDate),
