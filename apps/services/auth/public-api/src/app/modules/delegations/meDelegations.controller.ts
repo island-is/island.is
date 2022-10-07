@@ -38,6 +38,7 @@ import {
   Features,
 } from '@island.is/nest/feature-flags'
 import { Documentation } from '@island.is/nest/swagger'
+import { isDefined } from '@island.is/shared/utils'
 
 const namespace = '@island.is/auth-public-api/delegations'
 
@@ -83,7 +84,7 @@ export class MeDelegationsController {
   })
   @Audit<DelegationDTO[]>({
     resources: (delegations) =>
-      delegations.map((delegation) => delegation?.id ?? ''),
+      delegations.map((delegation) => delegation.id).filter(isDefined),
   })
   async findAll(
     @CurrentUser() user: User,
@@ -118,7 +119,7 @@ export class MeDelegationsController {
     },
   })
   @Audit<DelegationDTO>({
-    resources: (delegation) => delegation?.id ?? '',
+    resources: (delegation) => delegation?.id ?? undefined,
   })
   async findOne(
     @CurrentUser() user: User,
@@ -143,7 +144,7 @@ export class MeDelegationsController {
     response: { status: 201, type: DelegationDTO },
   })
   @Audit<DelegationDTO>({
-    resources: (delegation) => delegation?.id ?? '',
+    resources: (delegation) => delegation?.id ?? undefined,
     meta: (delegation) => ({
       scopes: delegation.scopes?.map((s) => ({
         scopeName: s.scopeName,
@@ -176,27 +177,32 @@ export class MeDelegationsController {
     if (!currentDelegation) {
       throw new NotFoundException()
     }
-    const { scopes: oldScopes } = currentDelegation
+    const { scopes: oldScopes = [] } = currentDelegation
 
     return this.auditService.auditPromise<DelegationDTO | null>(
       {
         auth: user,
         namespace,
         action: 'update',
-        resources: (delegation) => delegation?.id ?? '',
-        meta: ({ scopes: newScopes }) => ({
-          deleted: differenceWith(
-            oldScopes,
-            newScopes,
-            compareScopesByName,
-          ).map((s) => s.scopeName),
-          added: differenceWith(newScopes, oldScopes, compareScopesByName).map(
-            (s) => ({
+        resources: (delegation) => delegation?.id ?? undefined,
+        meta: (delegation) => {
+          const newScopes = delegation?.scopes || []
+          return {
+            deleted: differenceWith(
+              oldScopes,
+              newScopes,
+              compareScopesByName,
+            ).map((s) => s.scopeName),
+            added: differenceWith(
+              newScopes,
+              oldScopes,
+              compareScopesByName,
+            ).map((s) => ({
               scopeName: s.scopeName,
               validTo: s.validTo,
-            }),
-          ),
-        }),
+            })),
+          }
+        },
       },
       this.delegationsService.update(user, delegation, delegationId),
     )
