@@ -7,6 +7,7 @@ import {
   ServicePortalModuleComponent,
   m as coreMessage,
   ActionCard,
+  EmptyState,
 } from '@island.is/service-portal/core'
 import { LicenseLoader } from '../../components/LicenseLoader/LicenseLoader'
 import { m } from '../../lib/messages'
@@ -132,6 +133,8 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
     (item) => item.fetch.status === GenericUserLicenseFetchStatus.Error,
   )
 
+  const isEmpty = genericLicenses.every((item) => item.payload === null)
+
   if ((error || isError) && !loading) {
     return (
       <ErrorScreen
@@ -155,6 +158,7 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
       </Box>
       {loading && <LicenseLoader />}
       {data &&
+        !isEmpty &&
         genericLicenses
           .filter((license) => license.license.status === 'HasLicense')
           .map((license, index) => {
@@ -206,6 +210,12 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
               </Box>
             )
           })}
+
+      {!loading && !error && isEmpty && (
+        <Box marginTop={8}>
+          <EmptyState />
+        </Box>
+      )}
     </>
   )
 }
