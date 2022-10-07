@@ -347,9 +347,8 @@ describe('when constructing a new period', () => {
         ratio: '100',
       }),
     ).toStrictEqual({
-      message: errorMessages.periodsStartMissing,
-      path: 'periods[0].startDate',
-      values: {},
+      message: errorMessages.periodsNotAList,
+      path: 'periods',
     })
 
     expect(
