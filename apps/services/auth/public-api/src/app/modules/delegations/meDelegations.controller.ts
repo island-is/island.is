@@ -38,6 +38,7 @@ import {
   Features,
 } from '@island.is/nest/feature-flags'
 import { Documentation } from '@island.is/nest/swagger'
+import { isDefined } from '@island.is/shared/utils'
 
 const namespace = '@island.is/auth-public-api/delegations'
 
@@ -82,13 +83,8 @@ export class MeDelegationsController {
     },
   })
   @Audit<DelegationDTO[]>({
-    resources: (delegations) => {
-      const filteredIds = delegations
-        .map((delegation) => delegation.id ?? undefined)
-        .filter((id): id is string => Boolean(id))
-
-      return filteredIds.length > 0 ? filteredIds : undefined
-    },
+    resources: (delegations) =>
+      delegations.map((delegation) => delegation.id).filter(isDefined),
   })
   async findAll(
     @CurrentUser() user: User,
