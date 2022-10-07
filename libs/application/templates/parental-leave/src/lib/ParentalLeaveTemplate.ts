@@ -118,6 +118,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           'clearSpouseAllowanceIfUseSpouseAllowanceIsNo',
           'setPersonalUsageToHundredIfUseAsMuchAsPossibleIsYes',
           'setSpouseUsageToHundredIfUseAsMuchAsPossibleIsYes',
+          'removeNullPeriod',
         ],
         meta: {
           name: States.DRAFT,
@@ -290,6 +291,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.EMPLOYER_APPROVAL]: {
+        entry: 'removeNullPeriod',
         exit: 'clearAssignees',
         meta: {
           name: States.EMPLOYER_APPROVAL,
@@ -379,7 +381,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.VINNUMALASTOFNUN_APPROVAL]: {
-        entry: ['assignToVMST', 'setNavId'],
+        entry: ['assignToVMST', 'setNavId', 'removeNullPeriod'],
         exit: ['clearAssignees', 'setNavId'],
         meta: {
           name: States.VINNUMALASTOFNUN_APPROVAL,
@@ -557,6 +559,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.CLOSED]: {
+        entry: 'clearAssignees',
         meta: {
           name: States.CLOSED,
           actionCard: {
@@ -578,8 +581,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
       // Edit Flow States
       [States.EDIT_OR_ADD_PERIODS]: {
-        entry: ['createTempPeriods', 'assignToVMST'],
-        exit: 'restorePeriodsFromTemp',
+        entry: ['createTempPeriods', 'assignToVMST', 'removeNullPeriod'],
+        exit: ['restorePeriodsFromTemp', 'removeNullPeriod'],
         meta: {
           name: States.EDIT_OR_ADD_PERIODS,
           actionCard: {
@@ -670,7 +673,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.EMPLOYER_APPROVE_EDITS]: {
-        entry: 'assignToVMST',
+        entry: ['assignToVMST', 'removeNullPeriod'],
         exit: 'clearAssignees',
         meta: {
           name: States.EMPLOYER_APPROVE_EDITS,
@@ -779,7 +782,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.VINNUMALASTOFNUN_APPROVE_EDITS]: {
-        entry: 'assignToVMST',
+        entry: ['assignToVMST', 'removeNullPeriod'],
         exit: 'clearTemp',
         meta: {
           name: States.VINNUMALASTOFNUN_APPROVE_EDITS,
@@ -958,6 +961,20 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         return context
       }),
+      removeNullPeriod: assign((context) => {
+        const { application } = context
+
+        const answers = getApplicationAnswers(application.answers)
+        const { periods } = getApplicationAnswers(application.answers)
+        const tempPeriods = periods.filter((period) => period?.startDate)
+
+        if (answers.periods.length !== tempPeriods.length) {
+          unset(answers, 'periods')
+          set(answers, 'periods', tempPeriods)
+        }
+
+        return context
+      }),
       setNavId: assign((context) => {
         const { application } = context
 
@@ -1063,7 +1080,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         const { application } = context
         const VMST_ID = process.env.VMST_ID ?? ''
 
-        set(application, 'assignees', [VMST_ID])
+        const assignees = application.assignees
+        if (Array.isArray(assignees) && !assignees.includes(VMST_ID)) {
+          assignees.push(VMST_ID)
+        }
+        set(application, 'assignees', assignees)
 
         return context
       }),

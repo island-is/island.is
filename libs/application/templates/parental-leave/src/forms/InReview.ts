@@ -22,6 +22,8 @@ export const InReview: Form = buildForm({
       title: (application) =>
         application.state === States.VINNUMALASTOFNUN_APPROVAL
           ? parentalLeaveFormMessages.reviewScreen.titleReceived
+          : application.state === States.APPROVED
+          ? parentalLeaveFormMessages.reviewScreen.titleApproved
           : parentalLeaveFormMessages.reviewScreen.titleInReview,
       children: [
         buildCustomField({
@@ -29,6 +31,8 @@ export const InReview: Form = buildForm({
           title: (application) =>
             application.state === States.VINNUMALASTOFNUN_APPROVAL
               ? parentalLeaveFormMessages.reviewScreen.titleReceived
+              : application.state === States.APPROVED
+              ? parentalLeaveFormMessages.reviewScreen.titleApproved
               : parentalLeaveFormMessages.reviewScreen.titleInReview,
           component: 'InReviewSteps',
         }),

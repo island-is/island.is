@@ -85,7 +85,9 @@ export function formatPeriods(
     let canDelete = startDateDateTime.getTime() > currentDateStartTime()
     const today = new Date()
 
-    if (canDelete && applicationFundId !== '' && today.getDate() >= 20) {
+    if (applicationFundId === '') {
+      canDelete = true
+    } else if (canDelete && today.getDate() >= 20) {
       const startDateBeginOfMonth = addDays(
         startDateDateTime,
         startDateDateTime.getDate() * -1,
