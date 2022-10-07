@@ -114,7 +114,7 @@ export const m = defineMessages({
   qrCodeText: {
     id: 'sp.license:send-license-to-phone-text',
     defaultMessage:
-      'Skannaðu QR kóðann hér til hliðar til að fá stafrænt skírteini sent í símann þinn.',
+      'Skannaðu QR kóðann hér til hliðar til að fá stafrænt ökuskírteini sent í símann þinn.',
   },
   issueDate: {
     id: 'sp.license:license-issued',
