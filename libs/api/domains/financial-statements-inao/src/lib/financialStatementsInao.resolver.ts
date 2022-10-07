@@ -14,7 +14,6 @@ import { FinancialStatementsInaoService } from './financialStatementsInao.servic
 import { Election } from './models/election.model'
 import { ClientType } from './models/clientType.model'
 import { InaoClientFinancialLimitInput } from './dto/clientFinancialLimit.input'
-import { InaoPersonalElectionFinancialStatementInput } from './dto/personalElectionFinancialStatement.input'
 import { InaoCemeteryFinancialStatementInput } from './dto/cemeteryFinancialStatement.input'
 import { InaoPoliticalPartyFinancialStatementInput } from './dto/politicalPartyFinancialStatement.input'
 import { Config } from './models/config.model'
@@ -57,18 +56,6 @@ export class FinancialStatementsInaoResolver {
   @Query(() => [Config])
   async financialStatementsInaoConfig() {
     return this.financialStatementsService.getConfig()
-  }
-
-  @Mutation(() => Boolean)
-  async financialStatementsInaoSubmitPersonalElectionFinancialStatement(
-    @CurrentUser() user: User,
-    @Args('input') input: InaoPersonalElectionFinancialStatementInput,
-  ) {
-    return this.financialStatementsService.submitPersonalElectionFinancialStatement(
-      user.nationalId,
-      user.actor?.nationalId,
-      input,
-    )
   }
 
   @Mutation(() => Boolean)

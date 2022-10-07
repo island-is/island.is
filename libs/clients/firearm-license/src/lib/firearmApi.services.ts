@@ -14,7 +14,7 @@ export class FirearmApi {
   public async getLicenseData(user: User): Promise<LicenseData> {
     const licenseInfo = await this.getLicenseInfo(user)
     const properties = await this.getPropertyInfo(user)
-    const categories = await this.getCategories()
+    const categories = await this.getCategories(user)
 
     const licenseData: LicenseData = {
       licenseInfo,
@@ -38,8 +38,10 @@ export class FirearmApi {
       .apiFirearmApplicationPropertyInfoGet({ pageNumber: 1, pageSize: 50 })
     return propertyInfo
   }
-  public async getCategories(): Promise<{ [key: string]: string }> {
-    const categories = await this.api.apiFirearmApplicationCategoriesGet()
+  public async getCategories(user: User): Promise<{ [key: string]: string }> {
+    const categories = await this.api
+      .withMiddleware(new AuthMiddleware(user as Auth))
+      .apiFirearmApplicationCategoriesGet()
     return categories
   }
 }
