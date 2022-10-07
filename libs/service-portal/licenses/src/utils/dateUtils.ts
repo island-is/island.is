@@ -11,6 +11,11 @@ export const toDate = (seconds: string) => {
   return format(t, dateFormat.is)
 }
 
+export const formatDate = (date: Date) => {
+  const t = new Date(date)
+  return format(t, dateFormat.is)
+}
+
 export const getExpiresIn = (currentDate: Date, date: Date) => {
   const years = differenceInYears(date, currentDate)
   if (years < 1) {

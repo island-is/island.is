@@ -27,6 +27,8 @@ import { PassportsClientModule } from '@island.is/clients/passports'
 - Pass in the IdentityDocumentApi
 
 ```
+import { IdentityDocumentApi } from '@island.is/clients/passports'
+
 constructor(
     private passportsApi: IdentityDocumentApi,
 )
@@ -35,8 +37,6 @@ constructor(
 - Use with auth middleware
 
 ```
-import { IdentityDocumentApi } from '@island.is/clients/passports'
-
   private getPassportsWithAuth(auth: Auth) {
     return this.passportsApi.withMiddleware(new AuthMiddleware(auth))
   }

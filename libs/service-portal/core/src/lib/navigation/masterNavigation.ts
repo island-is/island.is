@@ -107,6 +107,11 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             name: m.detailInfo,
             path: ServicePortalPath.LicensesDetail,
           },
+          {
+            navHide: true,
+            name: m.passport,
+            path: ServicePortalPath.LicensesPassportDetail,
+          },
         ],
         description: m.licensesDescription,
       },

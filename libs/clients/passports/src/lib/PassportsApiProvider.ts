@@ -32,6 +32,7 @@ export const PassportsApiProvider: Provider<IdentityDocumentApi> = {
               }
             : undefined,
           timeout: config.fetch.timeout,
+          logErrorResponseBody: true,
         }),
         basePath: `${xroadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
         headers: {

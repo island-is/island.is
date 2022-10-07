@@ -28,5 +28,12 @@ export const licensesModule: ServicePortalModule = {
       enabled: userInfo.scopes.includes(ApiScope.licenses),
       render: () => lazy(() => import('./screens/LicenseDetail/LicenseDetail')),
     },
+    {
+      name: m.passport,
+      path: ServicePortalPath.LicensesPassportDetail,
+      enabled: userInfo.scopes.includes(ApiScope.internal),
+      render: () =>
+        lazy(() => import('./screens/PassportDetail/PassportDetail')),
+    },
   ],
 }

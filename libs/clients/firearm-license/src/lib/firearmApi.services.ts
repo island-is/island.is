@@ -34,6 +34,7 @@ export class FirearmApi {
     const categories = await this.firearmApiWithAuth(
       user,
     ).apiFirearmApplicationCategoriesGet()
+
     return categories
   }
 }

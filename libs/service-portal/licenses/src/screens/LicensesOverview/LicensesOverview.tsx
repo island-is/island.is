@@ -27,9 +27,11 @@ import {
   getPathFromType,
   getTitleAndLogo,
 } from '../../utils/dataMapper'
+import { usePassport } from '@island.is/service-portal/graphql'
 
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 import { FeatureFlagClient } from '@island.is/feature-flags'
+import LicenseCards from '../../components/LicenseCards/LicenseCards'
 const dataFragment = gql`
   fragment genericLicenseDataFieldFragment on GenericLicenseDataField {
     type
@@ -87,6 +89,7 @@ const GenericLicensesQuery = gql`
 
 export const LicensesOverview: ServicePortalModuleComponent = () => {
   useNamespaces('sp.license')
+
   const { formatMessage } = useLocale()
   const history = useHistory()
   const { data: userProfile } = useUserProfile()
@@ -127,6 +130,17 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
       },
     },
   })
+
+  const {
+    data: passportData,
+    loading: passportLoading,
+    error: passportError,
+  } = usePassport()
+
+  const isLoading = loading || passportLoading
+  const hasError = error && passportError
+  const hasData = !!(data || passportData)
+
   const { genericLicenses = [] } = data ?? {}
 
   const isError = genericLicenses?.every(
@@ -135,7 +149,7 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
 
   const isEmpty = genericLicenses.every((item) => item.payload === null)
 
-  if ((error || isError) && !loading) {
+  if ((hasError || isError) && !loading) {
     return (
       <ErrorScreen
         figure="./assets/images/hourglass.svg"
@@ -156,7 +170,11 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
           intro={defineMessage(m.intro)}
         />
       </Box>
-      {loading && <LicenseLoader />}
+      {isLoading && (
+        <Box marginBottom={1}>
+          <LicenseLoader />
+        </Box>
+      )}{' '}
       {data &&
         !isEmpty &&
         genericLicenses
@@ -210,8 +228,13 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
               </Box>
             )
           })}
-
       {!loading && !error && isEmpty && (
+        <Box marginTop={8}>
+          <EmptyState />
+        </Box>
+      )}
+      {hasData && <LicenseCards passportData={passportData || undefined} />}
+      {!isLoading && !isEmpty && (
         <Box marginTop={8}>
           <EmptyState />
         </Box>
