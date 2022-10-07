@@ -1,14 +1,12 @@
 import {
   buildForm,
   buildSection,
-  buildExternalDataProvider,
-  buildDataProviderItem,
   buildCustomField,
   buildSubmitField,
   buildSubSection,
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
-import { m } from '../lib/messages'
+import { m } from '../lib/messagess'
 
 export const TransferOfVehicleOwnershipForm: Form = buildForm({
   id: 'TransferOfVehicleOwnershipFormDraft',
@@ -17,28 +15,8 @@ export const TransferOfVehicleOwnershipForm: Form = buildForm({
   children: [
     buildSection({
       id: 'externalData',
-      title: m.externalDataSection,
+      title: '',
       children: [
-        buildExternalDataProvider({
-          title: m.externalDataTitle,
-          id: 'approveExternalData',
-          subTitle: m.externalDataSubTitle,
-          checkboxLabel: m.externalDataAgreement,
-          dataProviders: [
-            buildDataProviderItem({
-              id: 'nationalRegistry',
-              type: 'NationalRegistryProvider',
-              title: m.nationalRegistryTitle,
-              subTitle: m.nationalRegistrySubTitle,
-            }),
-            buildDataProviderItem({
-              id: 'userProfile',
-              type: 'UserProfileProvider',
-              title: m.userProfileInformationTitle,
-              subTitle: m.userProfileInformationSubTitle,
-            }),
-          ],
-        }),
         buildSubSection({
           id: 'test',
           title: 'Test',

@@ -11,7 +11,7 @@ import {
 import { EphemeralStateLifeCycle } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
 import * as z from 'zod'
-import { m } from './messages'
+import { m } from './messagess'
 import { Features } from '@island.is/feature-flags'
 
 const TransferOfVehicleOwnershipSchema = z.object({
@@ -32,8 +32,36 @@ const template: ApplicationTemplate<
   dataSchema: TransferOfVehicleOwnershipSchema,
   featureFlag: Features.transportAuthorityTransferOfVehicleOwnership,
   stateMachineConfig: {
-    initial: States.DRAFT,
+    initial: States.PREREQUISITES,
     states: {
+      [States.PREREQUISITES]: {
+        meta: {
+          name: 'Skilyrði',
+          progress: 0,
+          lifecycle: EphemeralStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/PrerequisitesForm').then((module) =>
+                  Promise.resolve(module.PrerequisitesForm),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Staðfesta',
+                  type: 'primary',
+                },
+              ],
+              write: 'all',
+              delete: true,
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: { target: States.DRAFT },
+        },
+      },
       [States.DRAFT]: {
         meta: {
           name: 'Tilkynning um eigendaskipti að ökutæki',
