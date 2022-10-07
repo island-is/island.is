@@ -128,7 +128,10 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
       href: `${linkResolver('serviceweb').href}/${institutionSlug}`,
     })
     items.push({
-      title: 'Hafðu samband',
+      title: o(
+        'serviceWebContactUs',
+        n('serviceWebContactUs', 'Hafðu samband'),
+      ),
       isTag: true,
     })
 
@@ -207,19 +210,33 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
                 <GridRow>
                   <GridColumn span="12/12">
                     <Text variant="h1" as="h1">
-                      Hvers efnis er erindið?
+                      {o('serviceWebFormTitle', 'Hvers efnis er erindið?')}
                     </Text>
                     <Text marginTop={2} variant="intro">
-                      Veldu viðeigandi flokk svo að spurningin rati á réttan
-                      stað.
+                      {o(
+                        'serviceWebFormIntro',
+                        n(
+                          'serviceWebFormIntro',
+                          'Veldu viðeigandi flokk svo að spurningin rati á réttan stað.',
+                        ),
+                      )}
                     </Text>
                   </GridColumn>
                 </GridRow>
                 {successfullySent ? (
                   <Box marginTop={6}>
                     <AlertBanner
-                      title="Takk fyrir"
-                      description="Erindi þínu hefur verið komið áleiðis til okkar."
+                      title={o(
+                        'serviceWebFormSuccessTitle',
+                        n('serviceWebFormSuccessTitle', 'Takk fyrir'),
+                      )}
+                      description={o(
+                        'serviceWebFormSuccessDescription',
+                        n(
+                          'serviceWebFormSuccessDescription',
+                          'Erindi þínu hefur verið komið áleiðis til okkar.',
+                        ),
+                      )}
                       variant="success"
                     />
                   </Box>
@@ -255,7 +272,8 @@ ServiceWebFormsPage.getInitialProps = async ({
   locale,
   query,
 }) => {
-  const slug = query.slug ? (query.slug as string) : 'stafraent-island'
+  const defaultSlug = locale === 'is' ? 'stafraent-island' : 'digital-iceland'
+  const slug = query.slug ? (query.slug as string) : defaultSlug
 
   const [
     organizations,
@@ -323,8 +341,10 @@ ServiceWebFormsPage.getInitialProps = async ({
   ])
 
   return {
-    syslumenn: organizations?.data?.getOrganizations?.items?.filter((x) =>
-      x.slug.startsWith('syslumadurinn'),
+    syslumenn: organizations?.data?.getOrganizations?.items?.filter(
+      (x) =>
+        x.slug.startsWith('syslumadurinn') ||
+        x.slug.startsWith('district-commissioner-of'),
     ),
     organization: organization?.data?.getOrganization,
     supportCategories:
