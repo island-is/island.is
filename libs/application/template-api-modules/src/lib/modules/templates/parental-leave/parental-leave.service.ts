@@ -19,7 +19,6 @@ import {
   getAvailablePersonalRightsInDays,
   YES,
   StartDateOptions,
-  getApplicationExternalData,
 } from '@island.is/application/templates/parental-leave'
 
 import { SharedTemplateApiService } from '../../shared'
@@ -34,15 +33,18 @@ import {
   generateEmployerRejected,
   generateApplicationApprovedByEmployerEmail,
   generateApplicationApprovedByEmployerToEmployerEmail,
-  assignLinkEmployerSMS,
-  linkOtherParentSMS,
 } from './emailGenerators'
+import {
+  generateAssignEmployerApplicationSms,
+  generateAssignOtherParentApplicationSms,
+  generateEmployerRejectedApplicationSms,
+  generateOtherParentRejectedApplicationSms,
+} from './smsGenerators'
 import {
   transformApplicationToParentalLeaveDTO,
   getRatio,
 } from './parental-leave.utils'
 import { apiConstants } from './constants'
-import { SmsService } from '@island.is/nova-sms'
 import { ConfigService } from '@nestjs/config'
 import { getConfigValue } from '../../shared/shared.utils'
 
@@ -68,7 +70,6 @@ export class ParentalLeaveService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     @Inject(APPLICATION_ATTACHMENT_BUCKET)
     private readonly attachmentBucket: string,
-    private readonly smsService: SmsService,
     private readonly configService: ConfigService<BaseTemplateAPIModuleConfig>,
   ) {}
 
@@ -86,10 +87,6 @@ export class ParentalLeaveService {
     const { otherParentPhoneNumber } = getApplicationAnswers(
       application.answers,
     )
-    const { applicantName } = getApplicationExternalData(
-      application.externalData,
-    )
-    const applicantId = application.applicant
 
     await this.sharedTemplateAPIService.sendEmail(
       generateAssignOtherParentApplicationEmail,
@@ -97,11 +94,9 @@ export class ParentalLeaveService {
     )
 
     if (otherParentPhoneNumber) {
-      await this.smsService.sendSms(
-        otherParentPhoneNumber,
-        `Umsækjandi ${applicantName} kt: ${applicantId} hefur skráð þig sem maka í umsókn sinni um fæðingarorlof og er að óska eftir réttindum frá þér.
-        Ef þú áttir von á þessari beiðni máttu smella á linkinn hér fyrir neðan. Kveðja, Fæðingarorlofssjóður
-        ${linkOtherParentSMS}`,
+      await this.sharedTemplateAPIService.sendSms(
+        generateAssignOtherParentApplicationSms,
+        application,
       )
     }
   }
@@ -124,11 +119,9 @@ export class ParentalLeaveService {
 
       const link = `${clientLocationOrigin}/${ApplicationConfigurations.ParentalLeave.slug}/${application.id}`
 
-      await this.smsService.sendSms(
-        applicantPhoneNumber,
-        `Hitt foreldrið hefur hafnað beiðni þinni um yfirfærslu á réttindum. Þú þarft því að breyta umsókn þinni.
-        The other parent has denied your request for transfer of rights. You therefore need to modify your application.
-        ${link}`,
+      await this.sharedTemplateAPIService.sendSms(
+        () => generateOtherParentRejectedApplicationSms(application, link),
+        application,
       )
     }
   }
@@ -151,45 +144,51 @@ export class ParentalLeaveService {
 
       const link = `${clientLocationOrigin}/${ApplicationConfigurations.ParentalLeave.slug}/${application.id}`
 
-      await this.smsService.sendSms(
-        applicantPhoneNumber,
-        `Vinnuveitandi hefur hafnað beiðni þinni um samþykki fæðingarorlofs. Þú þarft því að breyta umsókn þinni.
-        Your employer has denied your request. You therefore need to modify your application.
-        ${link}`,
+      await this.sharedTemplateAPIService.sendSms(
+        () => generateEmployerRejectedApplicationSms(application, link),
+        application,
       )
     }
   }
 
   async assignEmployer({ application }: TemplateApiModuleActionProps) {
     const { employerPhoneNumber } = getApplicationAnswers(application.answers)
-    const { applicantName } = getApplicationExternalData(
-      application.externalData,
-    )
-    const applicantId = application.applicant
 
-    await this.sharedTemplateAPIService.assignApplicationThroughEmail(
-      generateAssignEmployerApplicationEmail,
+    const token = await this.sharedTemplateAPIService.createAssignToken(
       application,
       SIX_MONTHS_IN_SECONDS_EXPIRES,
     )
 
+    await this.sharedTemplateAPIService.assignApplicationThroughEmail(
+      generateAssignEmployerApplicationEmail,
+      application,
+      token,
+    )
+
     // send confirmation sms to employer
     if (employerPhoneNumber) {
-      await this.smsService.sendSms(
-        employerPhoneNumber,
-        `Umsækjandi ${applicantName} kt: ${applicantId} hefur skráð þig sem atvinnuveitanda í umsókn sinni um fæðingarorlof.
-        Ef þú áttir von á þessari beiðni máttu smella á linkinn hér fyrir neðan. Kveðja, Fæðingarorlofssjóður
-        ${assignLinkEmployerSMS}`,
+      await this.sharedTemplateAPIService.assignApplicationThroughSms(
+        generateAssignEmployerApplicationSms,
+        application,
+        token,
       )
     }
   }
 
-  async getSelfEmployedPdf(application: Application) {
+  async getSelfEmployedPdf(application: Application, index = 0) {
     try {
-      const filename = getValueViaPath(
+      let filename = getValueViaPath(
         application.answers,
-        'employer.selfEmployed.file[0].key',
+        `employer.selfEmployed.file[${index}].key`,
       )
+
+      if (!filename) {
+        filename = getValueViaPath(
+          application.answers,
+          `fileUpload.selfEmployedFile[${index}].key`,
+        )
+      }
+
       const Key = `${application.id}/${filename}`
       const file = await this.s3
         .getObject({ Bucket: this.attachmentBucket, Key })
@@ -207,17 +206,108 @@ export class ParentalLeaveService {
     }
   }
 
+  // add when we add student confirmation
+  // async getStudentPdf(application: Application) {
+  //   try {
+  //     const filename = getValueViaPath(
+  //       application.answers,
+  //       'fileUpload.studentFile[0].key',
+  //     )
+
+  //     const Key = `${application.id}/${filename}`
+  //     const file = await this.s3
+  //       .getObject({ Bucket: this.attachmentBucket, Key })
+  //       .promise()
+  //     const fileContent = file.Body as Buffer
+
+  //     if (!fileContent) {
+  //       throw new Error('File content was undefined')
+  //     }
+
+  //     return fileContent.toString('base64')
+  //   } catch (e) {
+  //     this.logger.error('Cannot get student attachment', { e })
+  //     throw new Error('Failed to get the student attachment')
+  //   }
+  // }
+
+  async getGenericPdf(application: Application, index = 0) {
+    try {
+      const filename = getValueViaPath(
+        application.answers,
+        `fileUpload.file[${index}].key`,
+      )
+
+      const Key = `${application.id}/${filename}`
+      const file = await this.s3
+        .getObject({ Bucket: this.attachmentBucket, Key })
+        .promise()
+      const fileContent = file.Body as Buffer
+
+      if (!fileContent) {
+        throw new Error('File content was undefined')
+      }
+
+      return fileContent.toString('base64')
+    } catch (e) {
+      this.logger.error('Cannot get attachment', { e })
+      throw new Error('Failed to get the attachment')
+    }
+  }
+
   async getAttachments(application: Application): Promise<Attachment[]> {
     const attachments: Attachment[] = []
     const { isSelfEmployed } = getApplicationAnswers(application.answers)
 
     if (isSelfEmployed === YES) {
-      const pdf = await this.getSelfEmployedPdf(application)
+      const selfEmployedPdfs = (await getValueViaPath(
+        application.answers,
+        'fileUpload.selfEmployedFile',
+      )) as unknown[]
 
-      attachments.push({
-        attachmentType: apiConstants.attachments.selfEmployed,
-        attachmentBytes: pdf,
-      })
+      if (selfEmployedPdfs?.length) {
+        for (let i = 0; i <= selfEmployedPdfs.length - 1; i++) {
+          const pdf = await this.getSelfEmployedPdf(application, i)
+
+          attachments.push({
+            attachmentType: apiConstants.attachments.selfEmployed,
+            attachmentBytes: pdf,
+          })
+        }
+      } else {
+        const oldSelfEmployedPdfs = (await getValueViaPath(
+          application.answers,
+          'employer.selfEmployed.file',
+        )) as unknown[]
+
+        if (oldSelfEmployedPdfs?.length) {
+          for (let i = 0; i <= oldSelfEmployedPdfs.length - 1; i++) {
+            const pdf = await this.getSelfEmployedPdf(application, i)
+
+            attachments.push({
+              attachmentType: apiConstants.attachments.selfEmployed,
+              attachmentBytes: pdf,
+            })
+          }
+        }
+      }
+    }
+
+    const genericPdfs = (await getValueViaPath(
+      application.answers,
+      'fileUpload.file',
+    )) as unknown[]
+
+    if (genericPdfs?.length) {
+      for (let i = 0; i <= genericPdfs.length - 1; i++) {
+        const pdf = await this.getGenericPdf(application, i)
+
+        attachments.push({
+          // needs to add other types
+          attachmentType: apiConstants.attachments.other,
+          attachmentBytes: pdf,
+        })
+      }
     }
 
     return attachments
@@ -442,20 +532,29 @@ export class ParentalLeaveService {
         )
       }
 
-      const selfEmployed = isSelfEmployed === YES
+      // There has been case when island.is got Access Denied from AWS when sending out emails
+      // This try/catch keeps application in correct state
+      try {
+        const selfEmployed = isSelfEmployed === YES
 
-      if (!selfEmployed) {
-        // Only needs to send an email if being approved by employer
-        // Self employed applicant was aware of the approval
-        await this.sharedTemplateAPIService.sendEmail(
-          generateApplicationApprovedByEmployerEmail,
-          application,
-        )
+        if (!selfEmployed) {
+          // Only needs to send an email if being approved by employer
+          // Self employed applicant was aware of the approval
+          await this.sharedTemplateAPIService.sendEmail(
+            generateApplicationApprovedByEmployerEmail,
+            application,
+          )
 
-        // Also send confirmation to employer
-        await this.sharedTemplateAPIService.sendEmail(
-          generateApplicationApprovedByEmployerToEmployerEmail,
-          application,
+          // Also send confirmation to employer
+          await this.sharedTemplateAPIService.sendEmail(
+            generateApplicationApprovedByEmployerToEmployerEmail,
+            application,
+          )
+        }
+      } catch (e) {
+        this.logger.error(
+          'Failed to send confirmation emails to applicant and employer in parental leave application',
+          e,
         )
       }
 

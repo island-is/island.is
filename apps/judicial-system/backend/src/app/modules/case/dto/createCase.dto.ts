@@ -53,6 +53,7 @@ export class CreateCaseDto {
   @IsBoolean()
   @ApiPropertyOptional()
   readonly sendRequestToDefender?: boolean
+
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()

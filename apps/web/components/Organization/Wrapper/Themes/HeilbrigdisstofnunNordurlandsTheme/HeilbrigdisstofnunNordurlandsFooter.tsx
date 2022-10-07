@@ -1,4 +1,3 @@
-import React from 'react'
 import {
   Box,
   GridColumn,
@@ -7,12 +6,13 @@ import {
   Text,
   Hyphen,
   Inline,
+  Link,
 } from '@island.is/island-ui/core'
 import { FooterItem } from '@island.is/web/graphql/schema'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
 import { BLOCKS } from '@contentful/rich-text-types'
-import * as styles from './HeilbrigdisstofnunNordurlandsFooter.css'
 import { SpanType } from '@island.is/island-ui/core/types'
+import * as styles from './HeilbrigdisstofnunNordurlandsFooter.css'
 
 interface HeilbrigdisstofnunNordurlandsFooterProps {
   footerItems: FooterItem[]
@@ -35,9 +35,18 @@ export const HeilbrigdisstofnunNordurlandsFooter = ({
             className={styles.locationBox}
             marginLeft={offset ? [0, 0, 0, 10] : 0}
           >
-            <Text fontWeight="semiBold" color="white" marginBottom={1}>
-              <Hyphen>{item.title}</Hyphen>
-            </Text>
+            {item.link?.url ? (
+              <Link href={item.link.url} color="white">
+                <Text fontWeight="semiBold" color="white" marginBottom={1}>
+                  <Hyphen>{item.title}</Hyphen>
+                </Text>
+              </Link>
+            ) : (
+              <Text fontWeight="semiBold" color="white" marginBottom={1}>
+                <Hyphen>{item.title}</Hyphen>
+              </Text>
+            )}
+
             {richText(item.content as SliceType[], {
               renderNode: {
                 [BLOCKS.PARAGRAPH]: (_node, children) => (

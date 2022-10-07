@@ -25,7 +25,13 @@ import {
   DokobitError,
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
-import { CaseState, CaseType, UserRole } from '@island.is/judicial-system/types'
+import {
+  CaseState,
+  CaseType,
+  completedCaseStates,
+  isIndictmentCase,
+  UserRole,
+} from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 import {
   CurrentHttpUser,
@@ -121,10 +127,9 @@ export class CaseController {
   @ApiOkResponse({ type: Case, description: 'Updates an existing case' })
   async update(
     @Param('caseId') caseId: string,
-    @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @Body() caseToUpdate: UpdateCaseDto,
-  ): Promise<Case | null> {
+  ): Promise<Case> {
     this.logger.debug(`Updating case ${caseId}`)
 
     // Make sure valid users are assigned to the case's roles
@@ -170,8 +175,8 @@ export class CaseController {
       updatedCase.courtCaseNumber !== theCase.courtCaseNumber
     ) {
       // The court case number has changed, so the request must be uploaded to the new court case
-      // No need to wait
-      this.caseService.uploadRequestPdfToCourt(updatedCase, user)
+      // No need to wait for now, but may consider including this in a transaction with the database update later
+      this.caseService.addCaseConnectedToCourtCaseMessageToQueue(updatedCase.id)
     }
 
     return updatedCase
@@ -211,6 +216,13 @@ export class CaseController {
       state !== CaseState.DELETED,
     )
 
+    // Indictment cases are not signed
+    if (isIndictmentCase(theCase.type) && completedCaseStates.includes(state)) {
+      // No need to wait for now, but may consider including this in a transaction with the database update later
+      this.caseService.addCaseCompletedMessageToQueue(caseId)
+    }
+
+    // No need to wait
     this.eventService.postEvent(
       (transition.transition as unknown) as CaseEvent,
       updatedCase ?? theCase,

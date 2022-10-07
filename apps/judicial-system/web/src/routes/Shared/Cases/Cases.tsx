@@ -2,9 +2,11 @@ import React, { useEffect, useState, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useQuery, useLazyQuery } from '@apollo/client'
 import router from 'next/router'
+import partition from 'lodash/partition'
 
 import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import {
+  CaseQuery,
   DropdownMenu,
   Logo,
 } from '@island.is/judicial-system-web/src/components'
@@ -17,19 +19,15 @@ import {
   UserRole,
   Feature,
   isInvestigationCase,
+  isIndictmentCase,
 } from '@island.is/judicial-system/types'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { CaseData } from '@island.is/judicial-system-web/src/types'
-import {
-  core,
-  requests as m,
-  titles,
-} from '@island.is/judicial-system-web/messages'
+import { core, titles } from '@island.is/judicial-system-web/messages'
 import useSections from '@island.is/judicial-system-web/src/utils/hooks/useSections'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { CaseQuery } from '@island.is/judicial-system-web/src/components/FormProvider/caseGql'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import type { Case } from '@island.is/judicial-system/types'
@@ -38,6 +36,7 @@ import * as constants from '@island.is/judicial-system/consts'
 import ActiveCases from './ActiveCases'
 import PastCases from './PastCases'
 import TableSkeleton from './TableSkeleton'
+import { cases as m } from './Cases.strings'
 import * as styles from './Cases.css'
 
 const SectionTitle: React.FC = ({ children }) => {
@@ -108,26 +107,22 @@ export const Cases: React.FC = () => {
 
   useEffect(() => {
     if (resCases && !activeCases) {
-      // Remove deleted cases
       const casesWithoutDeleted = resCases.filter((c: Case) => {
         return c.state !== CaseState.DELETED
       })
 
-      setActiveCases(
-        casesWithoutDeleted.filter((c: Case) => {
-          return isPrisonAdminUser || isPrisonUser
-            ? !c.isValidToDateInThePast && c.rulingDate
-            : !c.rulingDate
-        }),
-      )
+      const [active, past] = partition(casesWithoutDeleted, (c: Case) => {
+        if (isIndictmentCase(c.type) && c.state === CaseState.ACCEPTED) {
+          return false
+        } else if (isPrisonAdminUser || isPrisonUser) {
+          return !c.isValidToDateInThePast && c.rulingDate
+        } else {
+          return !c.rulingDate
+        }
+      })
 
-      setPastCases(
-        casesWithoutDeleted.filter((c: Case) => {
-          return isPrisonAdminUser || isPrisonUser
-            ? c.isValidToDateInThePast && c.rulingDate
-            : c.rulingDate
-        }),
-      )
+      setActiveCases(active)
+      setPastCases(past)
     }
   }, [
     activeCases,
@@ -160,12 +155,17 @@ export const Cases: React.FC = () => {
 
   const openCase = (caseToOpen: Case, role: UserRole) => {
     let routeTo = null
+
     if (
       caseToOpen.state === CaseState.ACCEPTED ||
       caseToOpen.state === CaseState.REJECTED ||
       caseToOpen.state === CaseState.DISMISSED
     ) {
-      routeTo = `${constants.SIGNED_VERDICT_OVERVIEW_ROUTE}/${caseToOpen.id}`
+      if (isIndictmentCase(caseToOpen.type)) {
+        routeTo = `${constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE}/${caseToOpen.id}`
+      } else {
+        routeTo = `${constants.SIGNED_VERDICT_OVERVIEW_ROUTE}/${caseToOpen.id}`
+      }
     } else if (role === UserRole.JUDGE || role === UserRole.REGISTRAR) {
       if (isRestrictionCase(caseToOpen.type)) {
         routeTo = findLastValidStep(
@@ -176,8 +176,13 @@ export const Cases: React.FC = () => {
           getInvestigationCaseCourtSections(caseToOpen, user),
         ).href
       } else {
-        routeTo = findLastValidStep(getIndictmentsCourtSections(caseToOpen))
-          .href
+        // Route to Indictment Overview section since it always a valid step and
+        // would be skipped if we route to the last valid step
+        const routeToOpen =
+          getIndictmentsCourtSections(caseToOpen).children[0]?.href ||
+          `${constants.INDICTMENTS_COURT_OVERVIEW_ROUTE}/${caseToOpen.id}`
+
+        routeTo = routeToOpen
       }
     } else {
       if (isRestrictionCase(caseToOpen.type)) {
@@ -189,9 +194,12 @@ export const Cases: React.FC = () => {
           getInvestigationCaseProsecutorSection(caseToOpen, user),
         ).href
       } else {
-        routeTo = findLastValidStep(
+        const lastValidStep = findLastValidStep(
           getIndictmentCaseProsecutorSection(caseToOpen),
-        ).href
+        )
+        routeTo =
+          lastValidStep?.href ??
+          `${constants.INDICTMENTS_OVERVIEW_ROUTE}/${caseToOpen.id}`
       }
     }
 
@@ -215,10 +223,14 @@ export const Cases: React.FC = () => {
               {isProsecutor && (
                 <Box display={['none', 'none', 'block']}>
                   <DropdownMenu
+                    dataTestId="createCaseDropdown"
                     menuLabel="Tegund kröfu"
                     icon="add"
                     items={
-                      features.includes(Feature.INDICTMENTS)
+                      // TODO Remove courtId check when indictments are ready
+                      features.includes(Feature.INDICTMENTS) ||
+                      user.institution?.id ===
+                        '1c45b4c5-e5d3-45ba-96f8-219568982268'
                         ? [
                             {
                               href: constants.CREATE_INDICTMENT_ROUTE,
@@ -260,7 +272,7 @@ export const Cases: React.FC = () => {
                             },
                           ]
                     }
-                    title="Stofna nýja kröfu"
+                    title={formatMessage(m.createCaseButton)}
                   />
                 </Box>
               )}
@@ -279,11 +291,10 @@ export const Cases: React.FC = () => {
                 <SectionTitle>
                   {formatMessage(
                     isPrisonUser
-                      ? m.sections.activeRequests.prisonStaffUsers.title
+                      ? m.activeRequests.prisonStaffUsers.title
                       : isPrisonAdminUser
-                      ? m.sections.activeRequests.prisonStaffUsers
-                          .prisonAdminTitle
-                      : m.sections.activeRequests.title,
+                      ? m.activeRequests.prisonStaffUsers.prisonAdminTitle
+                      : m.activeRequests.title,
                   )}
                 </SectionTitle>
                 <Box marginBottom={[5, 5, 12]}>
@@ -310,15 +321,15 @@ export const Cases: React.FC = () => {
                       <AlertMessage
                         title={formatMessage(
                           isPrisonUser || isPrisonAdminUser
-                            ? m.sections.activeRequests.prisonStaffUsers
+                            ? m.activeRequests.prisonStaffUsers
                                 .infoContainerTitle
-                            : m.sections.activeRequests.infoContainerTitle,
+                            : m.activeRequests.infoContainerTitle,
                         )}
                         message={formatMessage(
                           isPrisonUser || isPrisonAdminUser
-                            ? m.sections.activeRequests.prisonStaffUsers
+                            ? m.activeRequests.prisonStaffUsers
                                 .infoContainerText
-                            : m.sections.activeRequests.infoContainerText,
+                            : m.activeRequests.infoContainerText,
                         )}
                         type="info"
                       />
@@ -335,12 +346,12 @@ export const Cases: React.FC = () => {
             <SectionTitle>
               {formatMessage(
                 isHighCourtUser
-                  ? m.sections.pastRequests.highCourtUsers.title
+                  ? m.pastRequests.highCourtUsers.title
                   : isPrisonUser
-                  ? m.sections.pastRequests.prisonStaffUsers.title
+                  ? m.pastRequests.prisonStaffUsers.title
                   : isPrisonAdminUser
-                  ? m.sections.pastRequests.prisonStaffUsers.prisonAdminTitle
-                  : m.sections.pastRequests.title,
+                  ? m.pastRequests.prisonStaffUsers.prisonAdminTitle
+                  : m.pastRequests.title,
               )}
             </SectionTitle>
             {pastCases && pastCases.length > 0 ? (
@@ -354,15 +365,13 @@ export const Cases: React.FC = () => {
                 <AlertMessage
                   title={formatMessage(
                     isPrisonAdminUser || isPrisonUser
-                      ? m.sections.activeRequests.prisonStaffUsers
-                          .infoContainerTitle
-                      : m.sections.pastRequests.infoContainerTitle,
+                      ? m.activeRequests.prisonStaffUsers.infoContainerTitle
+                      : m.pastRequests.infoContainerTitle,
                   )}
                   message={formatMessage(
                     isPrisonAdminUser || isPrisonUser
-                      ? m.sections.activeRequests.prisonStaffUsers
-                          .infoContainerText
-                      : m.sections.pastRequests.infoContainerText,
+                      ? m.activeRequests.prisonStaffUsers.infoContainerText
+                      : m.pastRequests.infoContainerText,
                   )}
                   type="info"
                 />

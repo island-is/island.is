@@ -16,6 +16,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
   EmptyState,
+  ErrorScreen,
   formSubmit,
   IntroHeader,
   m,
@@ -24,11 +25,59 @@ import {
 
 import { VehicleCard } from '../../components/VehicleCard'
 import { messages } from '../../lib/messages'
-import { GET_USERS_VEHICLES } from '../../queries/getUsersVehicles'
 import DropdownExport from '../../components/DropdownExport/DropdownExport'
 import { exportVehicleOwnedDocument } from '../../utils/vehicleOwnedMapper'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
+
+export const GET_USERS_VEHICLES = gql`
+  query GetUsersVehicles {
+    vehiclesList {
+      persidno
+      name
+      address
+      postStation
+      vehicleList {
+        isCurrent
+        permno
+        regno
+        vin
+        type
+        color
+        firstRegDate
+        modelYear
+        productYear
+        registrationType
+        role
+        operatorStartDate
+        operatorEndDate
+        outOfUse
+        otherOwners
+        termination
+        buyerPersidno
+        ownerPersidno
+        vehicleStatus
+        useGroup
+        vehGroup
+        plateStatus
+        nextInspection {
+          nextInspectionDate
+          nextInspectionDateIfPassedInspectionToday
+        }
+        operatorNumber
+        primaryOperator
+        ownerSsid
+        ownerName
+        lastInspectionResult
+        lastInspectionDate
+        lastInspectionType
+        nextInspectionDate
+      }
+      downloadServiceURL
+      createdTimestamp
+    }
+  }
+`
 
 const defaultFilterValues = {
   searchQuery: '',
@@ -107,15 +156,23 @@ export const VehiclesOverview: ServicePortalModuleComponent = ({
     isFlagEnabled()
   }, [])
 
+  if (error && !loading) {
+    return (
+      <ErrorScreen
+        figure="./assets/images/hourglass.svg"
+        tagVariant="red"
+        tag="500"
+        title={formatMessage(m.somethingWrong)}
+        children={formatMessage(m.errorFetchModule, {
+          module: formatMessage(m.vehicles).toLowerCase(),
+        })}
+      />
+    )
+  }
   return (
     <>
       <IntroHeader title={messages.title} intro={messages.intro} />
 
-      {error && (
-        <Box>
-          <EmptyState description={m.errorFetch} />
-        </Box>
-      )}
       {!loading && !error && vehicles.length === 0 && (
         <Box marginTop={8}>
           <EmptyState />

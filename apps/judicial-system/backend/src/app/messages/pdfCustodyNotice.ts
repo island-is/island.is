@@ -3,9 +3,8 @@ import { CaseCustodyRestrictions } from '@island.is/judicial-system/types'
 
 export const custodyNotice = {
   isolationDisclaimer: defineMessage({
-    id: 'judicial.system.backend:pdf.custody_notice.isolation_disclaimer',
-    defaultMessage:
-      '{genderedAccused} skal sæta einangrun til {isolationPeriod}.',
+    id: 'judicial.system.backend:pdf.custody_notice.isolation_disclaimerV1',
+    defaultMessage: 'Varnaraðili skal sæta einangrun til {isolationPeriod}.',
     description: 'Notaður sem texti til að segja til um einangrun',
   }),
   rulingTitle: defineMessage({

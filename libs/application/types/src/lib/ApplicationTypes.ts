@@ -28,6 +28,7 @@ export enum ApplicationTypes {
   NO_DEBT_CERTIFICATE = 'NoDebtCertificate',
   FINANCIAL_STATEMENTS_INAO = 'FinancialStatementsInao',
   OPERATING_LCENSE = 'OperatingLicense',
+  DRIVING_LICENSE_DUPLICATE = 'DrivingLicenseDuplicate',
 }
 
 export const ApplicationConfigurations = {
@@ -146,5 +147,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.OPERATING_LCENSE]: {
     slug: 'rekstrarleyfi',
     translation: 'ol.application',
+  },
+  [ApplicationTypes.DRIVING_LICENSE_DUPLICATE]: {
+    slug: 'samrit',
+    translation: 'dld.application',
   },
 }

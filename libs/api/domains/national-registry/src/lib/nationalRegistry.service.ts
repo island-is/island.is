@@ -2,18 +2,8 @@ import * as kennitala from 'kennitala'
 import some from 'lodash/some'
 import { Injectable, ForbiddenException } from '@nestjs/common'
 
-import {
-  FamilyMember,
-  FamilyChild,
-  User,
-  Gender,
-  MaritalStatus,
-  FamilyRelation,
-} from './types'
-import {
-  NationalRegistryApi,
-  ISLFjolskyldan,
-} from '@island.is/clients/national-registry-v1'
+import { FamilyMember, FamilyChild, User, Gender, MaritalStatus } from './types'
+import { NationalRegistryApi } from '@island.is/clients/national-registry-v1'
 import { FamilyCorrectionInput } from './dto/FamilyCorrectionInput.input'
 import { FamilyCorrectionResponse } from './graphql/models/familyCorrection.model'
 
@@ -79,8 +69,6 @@ export class NationalRegistryService {
             fullName: familyMember.Nafn,
             nationalId: familyMember.Kennitala,
             gender: this.formatGender(familyMember.Kyn),
-
-            familyRelation: this.getFamilyRelation(familyMember),
           } as FamilyMember),
       )
       .sort((a, b) => {
@@ -258,25 +246,5 @@ export class NationalRegistryService {
       default:
         return MaritalStatus.UNMARRIED
     }
-  }
-
-  private getFamilyRelation(person: ISLFjolskyldan): FamilyRelation {
-    if (this.isChild(person)) {
-      return FamilyRelation.CHILD
-    }
-    return FamilyRelation.SPOUSE
-  }
-
-  private isParent(person: ISLFjolskyldan): boolean {
-    return ['1', '2'].includes(person.Kyn)
-  }
-
-  private isChild(person: ISLFjolskyldan): boolean {
-    const ADULT_AGE_LIMIT = 18
-
-    return (
-      !this.isParent(person) &&
-      kennitala.info(person.Kennitala).age < ADULT_AGE_LIMIT
-    )
   }
 }

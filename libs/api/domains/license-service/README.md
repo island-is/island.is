@@ -6,7 +6,7 @@
 
 A license has the following parts: ...
 
-Licenses that are currently accepted are Driving, ADR and Machine license.
+Licenses that are currently accepted are Driving, Firearm, ADR and Machine license.
 
 ### Driving license
 
@@ -17,6 +17,10 @@ Uses [SmartSolution API](https://smartsolutions.gitbook.io/smart-solutions-drive
 ### ADR and Machine Licenses
 
 Uses Vinnueftirlitið API via XRoad to fetch both an Adr License and a Machine License. Uses the national id of the currently logged in user to retreive the correct licenses.
+
+### Firearm License
+
+Uses RLS API via xroad to get a firearm license by national id
 
 #### Digital
 

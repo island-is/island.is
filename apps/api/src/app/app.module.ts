@@ -65,6 +65,7 @@ import { VehiclesClientConfig } from '@island.is/clients/vehicles'
 import { FishingLicenseClientConfig } from '@island.is/clients/fishing-license'
 import { FinancialStatementsInaoModule } from '@island.is/api/domains/financial-statements-inao'
 import { AdrAndMachineLicenseClientConfig } from '@island.is/clients/adr-and-machine-license'
+import { FirearmLicenseClientConfig } from '@island.is/clients/firearm-license'
 import { PassportsClientConfig } from '@island.is/clients/passports'
 import { FileStorageConfig } from '@island.is/file-storage'
 
@@ -218,19 +219,27 @@ const autoSchemaFile = environment.production
       arkBaseUrl: environment.paymentDomain.arkBaseUrl!,
     }),
     LicenseServiceModule.register({
-      xroad: {
-        baseUrl: environment.xroad.baseUrl!,
-        clientId: environment.xroad.clientId!,
-        path: environment.drivingLicense.v1.xroadPath!,
-        secret: environment.drivingLicense.secret!,
+      firearmLicense: {
+        apiKey: environment.firearmLicense.pkPassApiKey!,
+        apiUrl: environment.smartSolutionsApiUrl!,
+        passTemplateId: environment.firearmLicense
+          .firearmLicensePassTemplateId!,
       },
-      pkpass: {
-        apiKey: environment.pkpass.apiKey!,
-        apiUrl: environment.pkpass.apiUrl!,
-        secretKey: environment.pkpass.secretKey!,
-        cacheKey: environment.pkpass.cacheKey!,
-        cacheTokenExpiryDelta: environment.pkpass.cacheTokenExpiryDelta!,
-        authRetries: environment.pkpass.authRetries!,
+      driversLicense: {
+        xroad: {
+          baseUrl: environment.xroad.baseUrl!,
+          clientId: environment.xroad.clientId!,
+          path: environment.drivingLicense.v1.xroadPath!,
+          secret: environment.drivingLicense.secret!,
+        },
+        pkpass: {
+          apiKey: environment.pkpass.apiKey!,
+          apiUrl: environment.pkpass.apiUrl!,
+          secretKey: environment.pkpass.secretKey!,
+          cacheKey: environment.pkpass.cacheKey!,
+          cacheTokenExpiryDelta: environment.pkpass.cacheTokenExpiryDelta!,
+          authRetries: environment.pkpass.authRetries!,
+        },
       },
     }),
     PaymentScheduleModule.register({
@@ -256,6 +265,7 @@ const autoSchemaFile = environment.production
       load: [
         AdrAndMachineLicenseClientConfig,
         AssetsClientConfig,
+        FirearmLicenseClientConfig,
         VehiclesClientConfig,
         AuthPublicApiClientConfig,
         DownloadServiceConfig,

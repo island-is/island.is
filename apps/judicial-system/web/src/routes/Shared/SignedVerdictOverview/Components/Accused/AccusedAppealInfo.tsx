@@ -4,9 +4,8 @@ import { useIntl } from 'react-intl'
 
 import InfoBox from '@island.is/judicial-system-web/src/components/InfoBox/InfoBox'
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
-import { Gender, isRestrictionCase } from '@island.is/judicial-system/types'
-import type { Case } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
+import type { Case } from '@island.is/judicial-system/types'
 
 interface Props {
   workingCase: Case
@@ -33,21 +32,12 @@ const AccusedAppealInfo: React.FC<Props> = (props) => {
       <InfoBox
         text={
           `${capitalize(
-            isRestrictionCase(workingCase.type)
-              ? formatMessage(core.accused, {
-                  suffix:
-                    workingCase.defendants &&
-                    workingCase.defendants.length > 0 &&
-                    workingCase.defendants[0].gender === Gender.MALE
-                      ? 'i'
-                      : 'a',
-                })
-              : formatMessage(core.defendant, {
-                  suffix:
-                    workingCase.defendants && workingCase.defendants?.length > 1
-                      ? 'ar'
-                      : 'i',
-                }),
+            formatMessage(core.defendant, {
+              suffix:
+                workingCase.defendants && workingCase.defendants?.length > 1
+                  ? 'ar'
+                  : 'i',
+            }),
           )} hefur kært úrskurðinn ${formatDate(
             workingCase.accusedPostponedAppealDate,
             'PPPp',

@@ -301,19 +301,19 @@ describe('formatReadyForCourtSmsNotification', () => {
     // Arrange
     const type = CaseType.CUSTODY
     const prosecutorName = 'Árni Ákærandi'
-    const court = 'Héraðsdómur Reykjavíkur'
+    const prosecutorInstution = 'Héraðssaksóknari'
 
     // Act
     const res = formatCourtReadyForCourtSmsNotification(
       formatMessage,
       type,
       prosecutorName,
-      court,
+      prosecutorInstution,
     )
 
     // Assert
     expect(res).toBe(
-      'Gæsluvarðhaldskrafa tilbúin til afgreiðslu. Sækjandi: Árni Ákærandi. Dómstóll: Héraðsdómur Reykjavíkur.',
+      'Gæsluvarðhaldskrafa tilbúin til afgreiðslu. Sækjandi: Árni Ákærandi (Héraðssaksóknari).',
     )
   })
 
@@ -331,7 +331,7 @@ describe('formatReadyForCourtSmsNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Gæsluvarðhaldskrafa tilbúin til afgreiðslu. Sækjandi: Ekki skráður. Dómstóll: Ekki skráður.',
+      'Gæsluvarðhaldskrafa tilbúin til afgreiðslu. Sækjandi: Ekki skráður.',
     )
   })
 
@@ -339,19 +339,19 @@ describe('formatReadyForCourtSmsNotification', () => {
     // Arrange
     const type = CaseType.TRAVEL_BAN
     const prosecutorName = 'Árni Ákærandi'
-    const court = 'Héraðsdómur Austurlands'
+    const prosecutorInstution = 'Ríkissaksóknari'
 
     // Act
     const res = formatCourtReadyForCourtSmsNotification(
       formatMessage,
       type,
       prosecutorName,
-      court,
+      prosecutorInstution,
     )
 
     // Assert
     expect(res).toBe(
-      'Farbannskrafa tilbúin til afgreiðslu. Sækjandi: Árni Ákærandi. Dómstóll: Héraðsdómur Austurlands.',
+      'Farbannskrafa tilbúin til afgreiðslu. Sækjandi: Árni Ákærandi (Ríkissaksóknari).',
     )
   })
 
@@ -359,19 +359,19 @@ describe('formatReadyForCourtSmsNotification', () => {
     // Arrange
     const type = CaseType.ADMISSION_TO_FACILITY
     const prosecutorName = 'Árni Ákærandi'
-    const court = 'Héraðsdómur Austurlands'
+    const prosecutorInstution = 'Héraðssaksóknari'
 
     // Act
     const res = formatCourtReadyForCourtSmsNotification(
       formatMessage,
       type,
       prosecutorName,
-      court,
+      prosecutorInstution,
     )
 
     // Assert
     expect(res).toBe(
-      'Krafa um vistun á viðeigandi stofnun tilbúin til afgreiðslu. Sækjandi: Árni Ákærandi. Dómstóll: Héraðsdómur Austurlands.',
+      'Krafa um vistun á viðeigandi stofnun tilbúin til afgreiðslu. Sækjandi: Árni Ákærandi (Héraðssaksóknari).',
     )
   })
 
@@ -379,19 +379,19 @@ describe('formatReadyForCourtSmsNotification', () => {
     // Arrange
     const type = CaseType.INTERNET_USAGE
     const prosecutorName = 'Árni Ákærandi'
-    const court = 'Héraðsdómur Austurlands'
+    const prosecutorInstution = 'Héraðssaksóknari'
 
     // Act
     const res = formatCourtReadyForCourtSmsNotification(
       formatMessage,
       type,
       prosecutorName,
-      court,
+      prosecutorInstution,
     )
 
     // Assert
     expect(res).toBe(
-      'Krafa um rannsóknarheimild (upplýsingar um vefnotkun) tilbúin til afgreiðslu. Sækjandi: Árni Ákærandi. Dómstóll: Héraðsdómur Austurlands.',
+      'Krafa um rannsóknarheimild (upplýsingar um vefnotkun) tilbúin til afgreiðslu. Sækjandi: Árni Ákærandi (Héraðssaksóknari).',
     )
   })
 
@@ -399,19 +399,18 @@ describe('formatReadyForCourtSmsNotification', () => {
     // Arrange
     const type = CaseType.OTHER
     const prosecutorName = 'Árni Ákærandi'
-    const court = 'Héraðsdómur Austurlands'
 
     // Act
     const res = formatCourtReadyForCourtSmsNotification(
       formatMessage,
       type,
       prosecutorName,
-      court,
+      undefined,
     )
 
     // Assert
     expect(res).toBe(
-      'Krafa um rannsóknarheimild tilbúin til afgreiðslu. Sækjandi: Árni Ákærandi. Dómstóll: Héraðsdómur Austurlands.',
+      'Krafa um rannsóknarheimild tilbúin til afgreiðslu. Sækjandi: Árni Ákærandi.',
     )
   })
 })
@@ -604,6 +603,26 @@ describe('formatProsecutorReceivedByCourtSmsNotification', () => {
     // Assert
     expect(res).toBe(
       'Héraðsdómur Reykjavíkur hefur móttekið kröfu um rannsóknarheimild sem þú sendir og úthlutað málsnúmerinu R-898/2021. Sjá nánar á rettarvorslugatt.island.is.',
+    )
+  })
+
+  test('should format received by court notification for an indictment of type MURDER', () => {
+    // Arranged
+    const type = CaseType.MURDER
+    const court = 'Héraðsdómur Reykjavíkur'
+    const courtCaseNumber = 'R-898/2021'
+
+    // Act
+    const res = formatProsecutorReceivedByCourtSmsNotification(
+      formatMessage,
+      type,
+      court,
+      courtCaseNumber,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Héraðsdómur Reykjavíkur hefur móttekið ákæru sem þú sendir og úthlutað málsnúmerinu R-898/2021. Sjá nánar á rettarvorslugatt.island.is.',
     )
   })
 })
@@ -820,6 +839,34 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
     // Assert
     expect(res.body).toBe(
       'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um rannsóknarheimild.<br /><br />Fyrirtaka mun fara fram 24. desember 2021, kl. 10:00.<br /><br />Dómsalur: 999.<br /><br />Dómari: Dóra Dómari.<br /><br />Dómritari: Dalli Dómritari.<br /><br />Verjandi sakbornings: Valdi Verjandi.',
+    )
+  })
+
+  test('should format court date notification for indictments', () => {
+    // Arrange
+    const type = CaseType.MURDER
+    const courtCaseNumber = 'S-898/2021'
+    const court = 'Héraðsdómur Reykjavíkur'
+    const courtDate = new Date('2021-12-24T10:00')
+    const courtRoom = '999'
+    const judgeName = 'Dóra Dómari'
+    const registrarName = 'Dalli Dómritari'
+
+    // Act
+    const res = fn(
+      type,
+      courtCaseNumber,
+      court,
+      courtDate,
+      courtRoom,
+      judgeName,
+      registrarName,
+    )
+
+    // Assert
+    expect(res.subject).toBe('Þingfesting í máli: S-898/2021')
+    expect(res.body).toBe(
+      'Héraðsdómur Reykjavíkur boðar til þingfestingar í máli S-898/2021.<br /><br />Þingfesting mun fara fram 24. desember 2021, kl. 10:00.<br /><br />Dómsalur: 999.<br /><br />Dómari: Dóra Dómari.<br /><br />Dómritari: Dalli Dómritari.',
     )
   })
 
@@ -1909,27 +1956,44 @@ describe('formatDefenderResubmittedToCourtEmailNotification', () => {
     .formatMessage
 
   const fn = (
+    caseType: CaseType,
     policeCaseNumbers: string[],
     overviewUrl: string,
     courtName?: string,
   ) =>
     formatDefenderResubmittedToCourtEmailNotification(
       formatMessage,
+      caseType,
       policeCaseNumbers,
       overviewUrl,
       courtName,
     )
 
   it('should format email', () => {
+    const caseType = CaseType.CUSTODY
     const policeCaseNumbers = ['007-2022-06546']
     const overviewUrl = 'https://rettarvorslugatt.island.is/overviewUrl'
     const courtName = 'Héraðsdómur Reykjavíkur'
 
-    const result = fn(policeCaseNumbers, overviewUrl, courtName)
+    const result = fn(caseType, policeCaseNumbers, overviewUrl, courtName)
 
     expect(result.body).toEqual(
       'Sækjandi í máli 007-2022-06546 hjá Héraðsdómi Reykjavíkur hefur sent kröfuna aftur á dóminn. <a href="https://rettarvorslugatt.island.is/overviewUrl">Uppfærð útgáfa er aðgengileg í Réttarvörslugátt.</a>',
     )
-    expect(result.subject).toEqual('Krafa í máli 007-2022-06546 send aftur')
+    expect(result.subject).toEqual('Krafa um gæsluvarðhald send aftur')
+  })
+
+  it('should format email with multiple policeCaseNumbers', () => {
+    const caseType = CaseType.CUSTODY
+    const policeCaseNumbers = ['007-2022-06546', '007-2022-06547']
+    const overviewUrl = 'https://rettarvorslugatt.island.is/overviewUrl'
+    const courtName = 'Héraðsdómur Reykjavíkur'
+
+    const result = fn(caseType, policeCaseNumbers, overviewUrl, courtName)
+
+    expect(result.body).toEqual(
+      'Sækjandi í málum: 007-2022-06546, 007-2022-06547 hjá Héraðsdómi Reykjavíkur hefur sent kröfuna aftur á dóminn. <a href="https://rettarvorslugatt.island.is/overviewUrl">Uppfærð útgáfa er aðgengileg í Réttarvörslugátt.</a>',
+    )
+    expect(result.subject).toEqual('Krafa um gæsluvarðhald send aftur')
   })
 })

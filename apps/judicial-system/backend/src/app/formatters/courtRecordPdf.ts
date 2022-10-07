@@ -10,11 +10,11 @@ import {
   User,
 } from '@island.is/judicial-system/types'
 import {
-  capitalize,
   formatDate,
   lowercase,
-  formatAppeal,
   formatRequestCaseType,
+  formatAppeal,
+  capitalize,
 } from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../environments'
@@ -229,6 +229,9 @@ function constructRestrictionCourtRecordPdf(
     addEmptyLines(doc)
     addNormalJustifiedText(doc, prosecutorAppeal)
   }
+
+  const multipleDefendants =
+    (theCase.defendants && theCase.defendants.length > 1) || false
 
   let accusedAppeal = formatAppeal(
     theCase.accusedAppealDecision,
@@ -475,12 +478,14 @@ function constructInvestigationCourtRecordPdf(
     addNormalJustifiedText(doc, prosecutorAppeal)
   }
 
+  const multipleDefendants =
+    (theCase.defendants && theCase.defendants.length > 1) || false
+
   let accusedAppeal = formatAppeal(
     theCase.accusedAppealDecision,
     capitalize(
       formatMessage(courtRecord.defendant, {
-        suffix:
-          theCase.defendants && theCase.defendants?.length > 1 ? 'ar' : 'i',
+        suffix: multipleDefendants ? 'ar' : 'i',
       }),
     ),
   )

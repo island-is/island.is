@@ -50,6 +50,7 @@ import { useRouter } from 'next/router'
 import { INLINES } from '@contentful/rich-text-types'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
 
 const LIMIT = 20
 
@@ -75,6 +76,7 @@ const ApiCatalogue: Screen<HomestayProps> = ({
   const fn = useNamespace(filterContent)
   const nn = useNamespace(navigationLinks)
   const { linkResolver } = useLinkResolver()
+  useContentfulId(organizationPage.id, subpage.id)
 
   useEffect(() => {
     if (width < theme.breakpoints.md) {
@@ -312,7 +314,7 @@ const ApiCatalogue: Screen<HomestayProps> = ({
             {data?.getApiCatalogue?.services.length > 0 && (
               <GridContainer>
                 <ServiceList
-                  baseUrl={linkResolver('webservicespage').href + '/'}
+                  baseUrl={linkResolver('apicataloguepage').href + '/'}
                   services={data?.getApiCatalogue?.services}
                   tagDisplayNames={filterContent}
                 />
@@ -333,6 +335,9 @@ const ApiCatalogue: Screen<HomestayProps> = ({
 }
 
 ApiCatalogue.getInitialProps = async ({ apolloClient, locale }) => {
+  const organizationSlug =
+    locale === 'en' ? 'digital-iceland' : 'stafraent-island'
+
   const [
     {
       data: { getOrganizationPage },
@@ -348,7 +353,7 @@ ApiCatalogue.getInitialProps = async ({ apolloClient, locale }) => {
       query: GET_ORGANIZATION_PAGE_QUERY,
       variables: {
         input: {
-          slug: 'stafraent-island',
+          slug: organizationSlug,
           lang: locale as ContentLanguage,
         },
       },
@@ -357,8 +362,8 @@ ApiCatalogue.getInitialProps = async ({ apolloClient, locale }) => {
       query: GET_ORGANIZATION_SUBPAGE_QUERY,
       variables: {
         input: {
-          organizationSlug: 'stafraent-island',
-          slug: 'vefthjonustur',
+          organizationSlug,
+          slug: locale === 'en' ? 'webservices' : 'vefthjonustur',
           lang: locale as ContentLanguage,
         },
       },

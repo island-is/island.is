@@ -31,6 +31,7 @@ import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import SubpageLayout from '@island.is/web/screens/Layouts/Layouts'
 import { useRouter } from 'next/router'
 import { CustomNextError } from '@island.is/web/units/errors'
+import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
 
 interface ServiceDetailsProps {
   organizationPage: Query['getOrganizationPage']
@@ -56,6 +57,8 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
     selectedServiceDetail,
     setselectedServiceDetail,
   ] = useState<ServiceDetail>(service.environments[0].details[0])
+
+  useLocalLinkTypeResolver()
 
   //TODO look into how to initialize
   const xroadIdentifierToOpenApiInput = (xroadIdentifier: XroadIdentifier) => {
@@ -179,7 +182,7 @@ ServiceDetails.getInitialProps = async ({ apolloClient, locale, query }) => {
       query: GET_ORGANIZATION_PAGE_QUERY,
       variables: {
         input: {
-          slug: 'stafraent-island',
+          slug: locale === 'en' ? 'digital-iceland' : 'stafraent-island',
           lang: locale as ContentLanguage,
         },
       },

@@ -11,6 +11,7 @@ import {
   PageLayout,
   PdfButton,
   CourtDocuments,
+  FormContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
   Case,
@@ -29,7 +30,6 @@ import {
   icCourtRecord as m,
   titles,
 } from '@island.is/judicial-system-web/messages'
-import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
   GridRow,
@@ -171,7 +171,9 @@ const CourtRecord = () => {
                 ? autofillAttendees.join('')
                 : undefined,
             sessionBookings:
-              workingCase.type === CaseType.RESTRAINING_ORDER
+              workingCase.type === CaseType.RESTRAINING_ORDER ||
+              workingCase.type ===
+                CaseType.RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME
                 ? formatMessage(
                     m.sections.sessionBookings.autofillRestrainingOrder,
                   )

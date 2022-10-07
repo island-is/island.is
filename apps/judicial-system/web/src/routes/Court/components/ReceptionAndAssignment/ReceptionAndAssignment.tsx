@@ -6,8 +6,10 @@ import { ValueType } from 'react-select'
 
 import {
   FormContentContainer,
+  FormContext,
   FormFooter,
   PageLayout,
+  SelectCourtOfficials,
 } from '@island.is/judicial-system-web/src/components'
 import {
   IndictmentsCourtSubsections,
@@ -16,7 +18,6 @@ import {
   Sections,
   UserData,
 } from '@island.is/judicial-system-web/src/types'
-import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import {
   Case,
   CaseState,
@@ -32,12 +33,11 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import { titles } from '@island.is/judicial-system-web/messages'
-import SelectCourtOfficials from '@island.is/judicial-system-web/src/components/SelectCourtOfficials/SelectCourtOfficials'
 import { isReceptionAndAssignmentStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 import * as constants from '@island.is/judicial-system/consts'
 
-import CourtCaseNumber from '../../SharedComponents/CourtCaseNumber/CourtCaseNumber'
 import { receptionAndAssignment as strings } from './ReceptionAndAssignment.strings'
+import CourtCaseNumber from '../CourtCaseNumber/CourtCaseNumber'
 
 type JudgeSelectOption = ReactSelectOption & { judge: User }
 type RegistrarSelectOption = ReactSelectOption & { registrar: User }
@@ -128,7 +128,7 @@ const ReceptionAndAssignment = () => {
       ? `${constants.RESTRICTION_CASE_COURT_OVERVIEW_ROUTE}/${id}`
       : isInvestigationCase(workingCase.type)
       ? `${constants.INVESTIGATION_CASE_OVERVIEW_ROUTE}/${id}`
-      : `${constants.INDICTMENTS_COURT_OVERVIEW_ROUTE}/${id}`
+      : `${constants.INDICTMENTS_SUBPOENA_ROUTE}/${id}`
   }
 
   const getActiveSubSection = () => {
@@ -190,7 +190,7 @@ const ReceptionAndAssignment = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={constants.CASES_ROUTE}
+          previousUrl={`${constants.INDICTMENTS_COURT_OVERVIEW_ROUTE}/${id}`}
           nextUrl={getNextRoute()}
           nextIsDisabled={!isReceptionAndAssignmentStepValid(workingCase)}
         />

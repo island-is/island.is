@@ -1,5 +1,10 @@
 // TODO: Add tests
-import { Case, CaseType, User } from '@island.is/judicial-system/types'
+import {
+  Case,
+  CaseType,
+  isIndictmentCase,
+  User,
+} from '@island.is/judicial-system/types'
 
 import { isBusiness } from './stepHelper'
 
@@ -12,7 +17,8 @@ export type Validation =
   | 'email-format'
   | 'phonenumber'
   | 'date-format'
-  | 'court-case-number'
+  | 'R-case-number'
+  | 'S-case-number'
 
 type ValidateItem = 'valid' | [string | undefined, Validation[]]
 type IsValid = { isValid: boolean; errorMessage: string }
@@ -63,10 +69,16 @@ const getRegexByValidation = (validation: Validation) => {
         errorMessage: '',
       }
     }
-    case 'court-case-number': {
+    case 'R-case-number': {
       return {
         regex: new RegExp(/^R-[0-9]{1,5}\/[0-9]{4}$/),
         errorMessage: `Dæmi: R-1234/${new Date().getFullYear()}`,
+      }
+    }
+    case 'S-case-number': {
+      return {
+        regex: new RegExp(/^S-[0-9]{1,5}\/[0-9]{4}$/),
+        errorMessage: `Dæmi: S-1234/${new Date().getFullYear()}`,
       }
     }
   }
@@ -280,8 +292,17 @@ export const isPoliceReportStepValidIC = (workingCase: Case) => {
 export const isReceptionAndAssignmentStepValid = (workingCase: Case) => {
   return (
     workingCase.judge &&
-    validate([[workingCase.courtCaseNumber, ['empty', 'court-case-number']]])
-      .isValid
+    validate([
+      [
+        workingCase.courtCaseNumber,
+        [
+          'empty',
+          isIndictmentCase(workingCase.type)
+            ? 'S-case-number'
+            : 'R-case-number',
+        ],
+      ],
+    ]).isValid
   )
 }
 
@@ -359,6 +380,28 @@ export const isCourtRecordStepValidIC = (workingCase: Case) => {
       [workingCase.conclusion, ['empty']],
       [workingCase.ruling, ['empty']],
     ]).isValid
+  )
+}
+
+export const isSubpoenaStepValid = (workingCase: Case, courtDate?: string) => {
+  const date = courtDate || workingCase.courtDate
+
+  return (
+    workingCase.subpoenaType &&
+    validate([[date, ['empty', 'date-format']]]).isValid
+  )
+}
+
+export const isprosecutorAndDefenderStepValid = (workingCase: Case) => {
+  return (
+    workingCase.prosecutor &&
+    (workingCase.defendantWaivesRightToCounsel ||
+      validate([
+        [workingCase.defenderNationalId, ['empty']],
+        [workingCase.defenderName, ['empty']],
+        [workingCase.defenderEmail, ['email-format']],
+        [workingCase.defenderPhoneNumber, ['phonenumber']],
+      ]).isValid)
   )
 }
 

@@ -10,7 +10,7 @@ import { Text } from '@island.is/island-ui/core'
 import { core } from '@island.is/judicial-system-web/messages'
 
 import InfoCard from './InfoCard'
-import { infoCardActiveIndictment as m } from './InfoCardActiveIndictment.strings'
+import { infoCardActiveIndictment as m } from './InfoCard.strings'
 import { FormContext } from '../FormProvider/FormProvider'
 
 const InfoCardActiveIndictment: React.FC = () => {
@@ -25,7 +25,7 @@ const InfoCardActiveIndictment: React.FC = () => {
         },
         {
           title: formatMessage(m.prosecutor),
-          value: `${workingCase.creatingProsecutor?.institution?.name}`,
+          value: `${workingCase.prosecutor?.name}`,
         },
         {
           title: formatMessage(core.policeCaseNumber),

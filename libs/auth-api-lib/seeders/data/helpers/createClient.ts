@@ -69,9 +69,10 @@ const getClientFields = (options: ClientOptions): DbClient => ({
   require_client_secret:
     options.clientType === 'web' || options.clientType === 'machine',
   require_pkce: options.clientType === 'spa' || options.clientType === 'native',
-  supports_delegation: options.supportDelegations ?? false,
+  supports_custom_delegation: options.supportDelegations ?? false,
   supports_legal_guardians: options.supportDelegations ?? false,
   supports_procuring_holders: options.supportDelegations ?? false,
+  // eslint-disable-next-line local-rules/disallow-kennitalas
   national_id: options.contactNationalId ?? '5501692829',
   contact_email: options.contactEmail ?? 'island@island.is',
 

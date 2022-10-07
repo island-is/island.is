@@ -2,14 +2,13 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { ValueType } from 'react-select'
 
-import { Box, Select, Option } from '@island.is/island-ui/core'
+import { Box, Select, Option, Tooltip } from '@island.is/island-ui/core'
 import { Case, User, UserRole } from '@island.is/judicial-system/types'
 
 import { selectCourtOfficials as strings } from './SelectCourtOfficials.strings'
 import { ReactSelectOption } from '../../types'
 import BlueBox from '../BlueBox/BlueBox'
 import SectionHeading from '../SectionHeading/SectionHeading'
-import { string } from 'yargs'
 
 interface Props {
   workingCase: Case
@@ -54,7 +53,9 @@ const SelectCourtOfficials: React.FC<Props> = (props) => {
     <>
       <SectionHeading
         title={formatMessage(strings.title)}
-        tooltip={formatMessage(strings.tooltip)}
+        tooltip={
+          <Tooltip text={formatMessage(strings.tooltip)} placement="right" />
+        }
       />
       <BlueBox>
         <Box marginBottom={2}>

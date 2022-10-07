@@ -14,6 +14,7 @@ import {
   AccessDeniedLegal,
   ServicePortalModuleComponent,
   IntroHeader,
+  EmptyState,
 } from '@island.is/service-portal/core'
 import {
   DocumentCategory,
@@ -39,6 +40,7 @@ import {
   SortType,
 } from '../../utils/types'
 import TableHeading from '../../components/TableHeading/TableHeading'
+import * as styles from './Overview.css'
 
 const GET_DOCUMENT_CATEGORIES = gql`
   query documentCategories {
@@ -80,6 +82,8 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
 
   const { formatMessage } = useLocale()
   const [page, setPage] = useState(1)
+  const [isEmpty, setEmpty] = useState(false)
+
   const [sortState, setSortState] = useState<SortType>({
     direction: 'Descending',
     key: 'Date',
@@ -164,6 +168,12 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   }
 
   const filteredDocuments = data.documents
+
+  useEffect(() => {
+    if (!loading && totalCount === 0 && filterValue === defaultFilterValues) {
+      setEmpty(true)
+    }
+  }, [loading])
 
   const pagedDocuments = {
     from: (page - 1) * pageSize,
@@ -260,91 +270,126 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
     return <AccessDeniedLegal userInfo={userInfo} client={client} />
   }
 
+  if (isEmpty) {
+    return (
+      <Box marginBottom={[4, 4, 6, 10]}>
+        <IntroHeader title={messages.title} intro={messages.intro} />
+        <EmptyState />
+      </Box>
+    )
+  }
   return (
     <Box marginBottom={[4, 4, 6, 10]}>
       <IntroHeader title={messages.title} intro={messages.intro} />
-      <Stack space={3}>
-        <Box marginTop={[1, 1, 2, 2, 6]}>
-          <DocumentsFilter
-            filterValue={filterValue}
-            categories={categoriesAvailable}
-            senders={sendersAvailable}
-            debounceChange={debouncedResults}
-            clearCategories={() =>
-              setFilterValue((oldFilter) => ({
-                ...oldFilter,
-                activeCategories: [],
-              }))
-            }
-            clearSenders={() =>
-              setFilterValue((oldFilter) => ({
-                ...oldFilter,
-                activeSenders: [],
-              }))
-            }
-            handleCategoriesChange={handleCategoriesChange}
-            handleSendersChange={handleSendersChange}
-            handleDateFromChange={handleDateFromInput}
-            handleDateToChange={handleDateToInput}
-            handleShowUnread={handleShowUnread}
-            handleClearFilters={handleClearFilters}
-            documentsLength={totalCount}
-          />
 
-          <Box marginTop={[0, 3]}>
-            <Hidden below="sm">
-              <TableHeading sortState={sortState} setSortState={setSortState} />
-            </Hidden>
-            {loading && (
-              <Box display="flex" justifyContent="center" padding={4}>
-                <LoadingDots large />
-              </Box>
-            )}
-            {!loading && !error && filteredDocuments?.length === 0 && (
-              <Box display="flex" justifyContent="center" margin={[3, 3, 3, 6]}>
-                <Text variant="h3" as="h3">
-                  {formatMessage(messages.notFound)}
-                </Text>
-              </Box>
-            )}
-            {error && (
-              <Box display="flex" justifyContent="center" margin={[3, 3, 3, 6]}>
-                <Text variant="h3" as="h3">
-                  {formatMessage(messages.error)}
-                </Text>
-              </Box>
-            )}
-            <Box marginTop={[2, 0]}>
-              {filteredDocuments.map((doc, index) => (
-                <Box key={doc.id} ref={index === 0 ? scrollToRef : null}>
-                  <DocumentLine
-                    img={getOrganizationLogoUrl(doc.senderName, organizations)}
-                    documentLine={doc}
-                    documentCategories={categoriesAvailable}
-                  />
-                </Box>
-              ))}
-            </Box>
-          </Box>
-
-          {filteredDocuments && (
-            <Box marginTop={4}>
-              <Pagination
-                page={page}
-                totalPages={pagedDocuments.totalPages}
-                renderLink={(page, className, children) => (
-                  <button
-                    className={className}
-                    onClick={handlePageChange.bind(null, page)}
-                  >
-                    {children}
-                  </button>
-                )}
-              />
-            </Box>
-          )}
+      {loading && filterValue === defaultFilterValues ? (
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          width="full"
+          className={styles.loading}
+        >
+          <LoadingDots large />
         </Box>
-      </Stack>
+      ) : (
+        <Stack space={3}>
+          <Box marginTop={[1, 1, 2, 2, 6]}>
+            <DocumentsFilter
+              filterValue={filterValue}
+              categories={categoriesAvailable}
+              senders={sendersAvailable}
+              debounceChange={debouncedResults}
+              clearCategories={() =>
+                setFilterValue((oldFilter) => ({
+                  ...oldFilter,
+                  activeCategories: [],
+                }))
+              }
+              clearSenders={() =>
+                setFilterValue((oldFilter) => ({
+                  ...oldFilter,
+                  activeSenders: [],
+                }))
+              }
+              handleCategoriesChange={handleCategoriesChange}
+              handleSendersChange={handleSendersChange}
+              handleDateFromChange={handleDateFromInput}
+              handleDateToChange={handleDateToInput}
+              handleShowUnread={handleShowUnread}
+              handleClearFilters={handleClearFilters}
+              documentsLength={totalCount}
+            />
+
+            <Box marginTop={[0, 3]}>
+              <Hidden below="sm">
+                <TableHeading
+                  sortState={sortState}
+                  setSortState={setSortState}
+                />
+              </Hidden>
+              {loading && filterValue !== defaultFilterValues && (
+                <Box display="flex" justifyContent="center" padding={4}>
+                  <LoadingDots large />
+                </Box>
+              )}
+              {!loading && !error && filteredDocuments?.length === 0 && (
+                <Box
+                  display="flex"
+                  justifyContent="center"
+                  margin={[3, 3, 3, 6]}
+                >
+                  <Text variant="h3" as="h3">
+                    {formatMessage(messages.notFound)}
+                  </Text>
+                </Box>
+              )}
+              {error && (
+                <Box
+                  display="flex"
+                  justifyContent="center"
+                  margin={[3, 3, 3, 6]}
+                >
+                  <Text variant="h3" as="h3">
+                    {formatMessage(messages.error)}
+                  </Text>
+                </Box>
+              )}
+              <Box marginTop={[2, 0]}>
+                {filteredDocuments.map((doc, index) => (
+                  <Box key={doc.id} ref={index === 0 ? scrollToRef : null}>
+                    <DocumentLine
+                      img={getOrganizationLogoUrl(
+                        doc.senderName,
+                        organizations,
+                      )}
+                      documentLine={doc}
+                      documentCategories={categoriesAvailable}
+                    />
+                  </Box>
+                ))}
+              </Box>
+            </Box>
+
+            {filteredDocuments && (
+              <Box marginTop={4}>
+                <Pagination
+                  page={page}
+                  totalPages={pagedDocuments.totalPages}
+                  renderLink={(page, className, children) => (
+                    <button
+                      className={className}
+                      onClick={handlePageChange.bind(null, page)}
+                    >
+                      {children}
+                    </button>
+                  )}
+                />
+              </Box>
+            )}
+          </Box>
+        </Stack>
+      )}
     </Box>
   )
 }

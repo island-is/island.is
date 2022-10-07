@@ -52,7 +52,7 @@ export class FileController {
   ) {}
 
   @UseGuards(CaseExistsGuard, CaseWriteGuard, CaseNotCompletedGuard)
-  @RolesRules(prosecutorRule)
+  @RolesRules(prosecutorRule, registrarRule, judgeRule)
   @Post('file/url')
   @ApiCreatedResponse({
     type: PresignedPost,
@@ -68,7 +68,7 @@ export class FileController {
   }
 
   @UseGuards(CaseExistsGuard, CaseWriteGuard, CaseNotCompletedGuard)
-  @RolesRules(prosecutorRule)
+  @RolesRules(prosecutorRule, registrarRule, judgeRule)
   @Post('file')
   @ApiCreatedResponse({
     type: CaseFile,
@@ -127,7 +127,7 @@ export class FileController {
     CaseNotCompletedGuard,
     CaseFileExistsGuard,
   )
-  @RolesRules(prosecutorRule)
+  @RolesRules(prosecutorRule, registrarRule, judgeRule)
   @Delete('file/:fileId')
   @ApiOkResponse({
     type: DeleteFileResponse,
@@ -164,12 +164,6 @@ export class FileController {
   ): Promise<UploadFileToCourtResponse> {
     this.logger.debug(`Uploading file ${fileId} of case ${caseId} to court`)
 
-    return this.fileService.uploadCaseFileToCourt(
-      caseFile,
-      caseId,
-      theCase.courtId,
-      theCase.courtCaseNumber,
-      user,
-    )
+    return this.fileService.uploadCaseFileToCourt(caseFile, theCase, user)
   }
 }

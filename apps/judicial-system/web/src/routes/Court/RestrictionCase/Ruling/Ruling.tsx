@@ -24,6 +24,9 @@ import {
   Decision,
   RulingInput,
   PdfButton,
+  FormContext,
+  useRequestRulingSignature,
+  SigningModal,
 } from '@island.is/judicial-system-web/src/components'
 import {
   Case,
@@ -31,7 +34,6 @@ import {
   CaseType,
   completedCaseStates,
   Defendant,
-  Gender,
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
 import { isRulingValidRC } from '@island.is/judicial-system-web/src/utils/validate'
@@ -52,7 +54,6 @@ import {
   titles,
   ruling,
 } from '@island.is/judicial-system-web/messages'
-import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import {
   capitalize,
   formatDate,
@@ -60,9 +61,6 @@ import {
 } from '@island.is/judicial-system/formatters'
 import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import SigningModal, {
-  useRequestRulingSignature,
-} from '@island.is/judicial-system-web/src/components/SigningModal/SigningModal'
 import * as constants from '@island.is/judicial-system/consts'
 
 export function getConclusionAutofill(
@@ -79,13 +77,8 @@ export function getConclusionAutofill(
     isolationToDate &&
     new Date(validToDate) > new Date(isolationToDate)
 
-  const accusedSuffix = defendant.gender === Gender.MALE ? 'i' : 'a'
-
   return decision === CaseDecision.DISMISSING
-    ? formatMessage(m.sections.conclusion.dismissingAutofillV3, {
-        genderedAccused: formatMessage(core.accused, {
-          suffix: accusedSuffix,
-        }),
+    ? formatMessage(m.sections.conclusion.dismissingAutofill, {
         accusedName: defendant.name,
         isExtended:
           workingCase.parentCase &&
@@ -93,10 +86,7 @@ export function getConclusionAutofill(
         caseType: workingCase.type,
       })
     : decision === CaseDecision.REJECTING
-    ? formatMessage(m.sections.conclusion.rejectingAutofillV3, {
-        genderedAccused: formatMessage(core.accused, {
-          suffix: accusedSuffix,
-        }),
+    ? formatMessage(m.sections.conclusion.rejectingAutofill, {
         accusedName: defendant.name,
         accusedNationalId: defendant.noNationalId
           ? ', '
@@ -106,12 +96,7 @@ export function getConclusionAutofill(
           isAcceptingCaseDecision(workingCase.parentCase.decision),
         caseType: workingCase.type,
       })
-    : formatMessage(m.sections.conclusion.acceptingAutofillV3, {
-        genderedAccused: capitalize(
-          formatMessage(core.accused, {
-            suffix: accusedSuffix,
-          }),
-        ),
+    : formatMessage(m.sections.conclusion.acceptingAutofill, {
         accusedName: defendant.name,
         accusedNationalId: defendant.noNationalId
           ? ', '
@@ -656,17 +641,8 @@ export const Ruling: React.FC = () => {
                 <Box marginBottom={3}>
                   <Checkbox
                     name="isCustodyIsolation"
-                    label={capitalize(
-                      formatMessage(m.sections.custodyRestrictions.isolation, {
-                        genderedAccused: formatMessage(core.accused, {
-                          suffix:
-                            workingCase.defendants &&
-                            workingCase.defendants.length > 0 &&
-                            workingCase.defendants[0].gender === Gender.MALE
-                              ? 'i'
-                              : 'a',
-                        }),
-                      }),
+                    label={formatMessage(
+                      m.sections.custodyRestrictions.isolationV1,
                     )}
                     checked={workingCase.isCustodyIsolation}
                     disabled={isModifyingRuling}
