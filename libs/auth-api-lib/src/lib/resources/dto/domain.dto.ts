@@ -34,6 +34,7 @@ export class DomainDTO {
   @IsNotEmpty()
   @ApiProperty({
     example: 'Stafrænt Ísland',
+    description: 'This key is used to look up the organisation in Contentful.',
   })
   readonly organisationLogoKey!: string
 }
