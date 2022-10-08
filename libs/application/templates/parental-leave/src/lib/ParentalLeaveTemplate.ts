@@ -5,6 +5,7 @@ import cloneDeep from 'lodash/cloneDeep'
 
 import {
   EphemeralStateLifeCycle,
+  getValueViaPath,
   pruneAfterDays,
 } from '@island.is/application/core'
 import {
@@ -28,6 +29,8 @@ import {
   SPOUSE,
   NO_PRIVATE_PENSION_FUND,
   NO_UNION,
+  PARENTAL_GRANT,
+  PARENTAL_GRANT_STUDENTS,
 } from '../constants'
 import { dataSchema } from './dataSchema'
 import { answerValidators } from './answerValidators'
@@ -57,13 +60,30 @@ enum Roles {
   ORGINISATION_REVIEWER = 'vmst',
 }
 
+const determineNameFromApplicationAnswers = (application: Application) => {
+  const applicationType = getValueViaPath(
+    application.answers,
+    'applicationType.option',
+    undefined,
+  ) as string | undefined
+  
+  if (
+    applicationType === PARENTAL_GRANT ||
+    applicationType === PARENTAL_GRANT_STUDENTS
+  ) {
+    return parentalLeaveFormMessages.shared.nameGrant
+  }
+
+  return parentalLeaveFormMessages.shared.name
+}
+
 const ParentalLeaveTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
   Events
 > = {
   type: ApplicationTypes.PARENTAL_LEAVE,
-  name: parentalLeaveFormMessages.shared.name,
+  name: determineNameFromApplicationAnswers,
   institution: parentalLeaveFormMessages.shared.institution,
   readyForProduction: true,
   translationNamespaces: [ApplicationConfigurations.ParentalLeave.translation],

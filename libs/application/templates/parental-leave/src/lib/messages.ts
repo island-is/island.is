@@ -15,6 +15,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Umsókn um fæðingarorlof',
       description: 'Application for parental leave',
     },
+    nameGrant: {
+      id: 'pl.application:name.grant',
+      defaultMessage: 'Umsókn um fæðingarstyrk',
+      description: 'Application for parental grant',
+    },
     formTitle: {
       id: 'pl.application:form.title',
       defaultMessage: 'Fæðingarorlof',
