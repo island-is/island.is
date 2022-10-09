@@ -166,6 +166,10 @@ export const routesTemplate = {
     is: '/adstod/[slug]',
     en: '/en/help/[slug]',
   },
+  servicewebcontact: {
+    is: '/adstod/[organizationSlug]/hafa-samband',
+    en: '/en/help/[organizationSlug]/contact',
+  },
   servicewebcategory: {
     is: '/adstod/[organizationSlug]/[categorySlug]',
     en: '/en/help/[organizationSlug]/[categorySlug]',
@@ -173,10 +177,6 @@ export const routesTemplate = {
   servicewebanswer: {
     is: '/adstod/[organizationSlug]/[categorySlug]/[answerSlug]',
     en: '/en/help/[organizationSlug]/[categorySlug]/[answerSlug]',
-  },
-  servicewebcontact: {
-    is: '/adstod/[organizationSlug]/hafa-samband',
-    en: '/en/help/[organizationSlug]/contact',
   },
   servicewebsearch: {
     is: '/adstod/leit',

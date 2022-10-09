@@ -43,6 +43,8 @@ import {
   SERVICE_WEB_FORMS_MUTATION,
 } from '../../queries'
 import { Screen } from '../../../types'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
 
 interface ServiceWebFormsPageProps {
   syslumenn?: Organizations['items']
@@ -51,6 +53,13 @@ interface ServiceWebFormsPageProps {
   namespace: Query['getNamespace']
   institutionSlug: string
   stateEntities: string[]
+  formNamespace: Record<
+    string,
+    Record<
+      'label' | 'requiredMessage' | 'placeholder' | 'patternMessage',
+      string
+    >
+  >
 }
 
 const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
@@ -60,6 +69,7 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
   organization,
   namespace,
   stateEntities,
+  formNamespace,
 }) => {
   const { linkResolver } = useLinkResolver()
   const n = useNamespace(namespace)
@@ -67,6 +77,9 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
     ServiceWebFormsMutation,
     ServiceWebFormsMutationVariables
   >(SERVICE_WEB_FORMS_MUTATION)
+
+  useContentfulId(organization.id)
+  useLocalLinkTypeResolver()
 
   const organizationNamespace = useMemo(
     () => JSON.parse(organization?.namespace?.fields ?? '{}'),
@@ -146,6 +159,10 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
       organization={organization}
       organizationTitle={organizationTitle}
       smallBackground
+      searchPlaceholder={o(
+        'serviceWebSearchPlaceholder',
+        'Leitaðu á þjónustuvefnum',
+      )}
     >
       <Box marginY={[3, 3, 10]} marginBottom={10}>
         <GridContainer>
@@ -210,7 +227,10 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
                 <GridRow>
                   <GridColumn span="12/12">
                     <Text variant="h1" as="h1">
-                      {o('serviceWebFormTitle', 'Hvers efnis er erindið?')}
+                      {o(
+                        'serviceWebFormTitle',
+                        n('serviceWebFormTitle', 'Hvers efnis er erindið?'),
+                      )}
                     </Text>
                     <Text marginTop={2} variant="intro">
                       {o(
@@ -243,6 +263,7 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
                 ) : (
                   <ServiceWebStandardForm
                     namespace={organizationNamespace}
+                    formNamspace={formNamespace}
                     institutionSlug={institutionSlug}
                     supportCategories={supportCategories}
                     syslumenn={syslumenn}
@@ -281,6 +302,7 @@ ServiceWebFormsPage.getInitialProps = async ({
     supportCategories,
     namespace,
     stateEntities,
+    formNamespace,
   ] = await Promise.all([
     apolloClient.query<Query, QueryGetOrganizationsArgs>({
       query: GET_ORGANIZATIONS_QUERY,
@@ -338,6 +360,19 @@ ServiceWebFormsPage.getInitialProps = async ({
           JSON.parse(variables?.data?.getNamespace?.fields ?? '{}')?.entities ??
           [],
       ),
+    apolloClient
+      .query<Query, QueryGetNamespaceArgs>({
+        query: GET_NAMESPACE_QUERY,
+        variables: {
+          input: {
+            namespace: 'Service Web - Forms',
+            lang: locale,
+          },
+        },
+      })
+      .then((variables) =>
+        JSON.parse(variables?.data?.getNamespace?.fields ?? '{}'),
+      ),
   ])
 
   return {
@@ -352,6 +387,7 @@ ServiceWebFormsPage.getInitialProps = async ({
     institutionSlug: slug,
     namespace,
     stateEntities,
+    formNamespace,
   }
 }
 
