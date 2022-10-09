@@ -1,12 +1,17 @@
-import React, { Fragment } from 'react'
-import { FieldBaseProps } from '@island.is/application/types'
+import React, { Fragment, useState } from 'react'
+import { DefaultEvents, FieldBaseProps } from '@island.is/application/types'
 import {
   Box,
+  Button,
   Divider,
   GridColumn,
   GridRow,
+  RadioButton,
   Text,
 } from '@island.is/island-ui/core'
+import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
+import * as Sentry from '@sentry/react'
+import { useMutation } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
 import { formatCurrency } from '../../lib/utils/helpers'
 import { FinancialStatementsInao } from '../../lib/utils/dataSchema'
@@ -19,12 +24,56 @@ import {
   starterColumnStyle,
 } from '../Shared/styles/overviewStyles.css'
 
-export const CemetryOverview = ({ application }: FieldBaseProps) => {
+export const CemetryOverview = ({
+  application,
+  goToScreen,
+  refetch,
+}: FieldBaseProps) => {
   const { formatMessage } = useLocale()
+  const [approveOverview, setApproveOverview] = useState(false)
+  const [submitApplication, { loading: loadingSubmit }] = useMutation(
+    SUBMIT_APPLICATION,
+    {
+      onError: (e) => {
+        return Sentry.captureException(e.message)
+      },
+    },
+  )
 
   const answers = application.answers as FinancialStatementsInao
   const fileName = answers.attachment?.file?.[0]?.name
   const careTakerLimit = answers.cemetryOperation.incomeLimit ?? '0'
+
+  console.log({ application, goToScreen })
+
+  const submitAudit = async () => {
+    const res = await submitApplication({
+      variables: {
+        input: {
+          id: application.id,
+          event: DefaultEvents.SUBMIT,
+          answers,
+        },
+      },
+    })
+
+    if (res?.data) {
+      // Takes them to the next state (which loads the relevant form)
+      refetch?.()
+    }
+  }
+
+  const onBackButtonClick = () => {
+    // check condition for cemetery
+    goToScreen && goToScreen('attachment.file')
+  }
+
+  const onSendButtonClick = () => {
+    if (approveOverview) {
+      // check for approval then send, add error to checkbox field if unchecked
+      goToScreen && goToScreen('attachment.file')
+    }
+  }
 
   return (
     <Box marginBottom={2}>
@@ -306,6 +355,31 @@ export const CemetryOverview = ({ application }: FieldBaseProps) => {
           <Divider />
         </Fragment>
       ) : null}
+      <Box paddingY={3}>
+        <Text variant="h3" as="h3">
+          {formatMessage(m.overview)}
+        </Text>
+      </Box>
+      <Box background="blue100" padding={3}>
+        <RadioButton
+          checked={approveOverview}
+          backgroundColor="blue"
+          label={formatMessage(m.overviewCorrect)}
+          large
+          onChange={() => setApproveOverview(!approveOverview)}
+        />
+      </Box>
+      <Box paddingY={3}>
+        <Divider />
+      </Box>
+      <Box display="flex" justifyContent="spaceBetween" paddingY={5}>
+        <Button variant="ghost" onClick={onBackButtonClick}>
+          {formatMessage(m.goBack)}
+        </Button>
+        <Button icon="checkmark" onClick={() => console.log('submit shit')}>
+          {formatMessage(m.send)}
+        </Button>
+      </Box>
     </Box>
   )
 }

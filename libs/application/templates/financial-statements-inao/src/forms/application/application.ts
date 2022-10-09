@@ -28,8 +28,8 @@ export const getApplication = (allowFakeData = false): Form => {
   return buildForm({
     id: 'FinancialStatementsInao',
     title: '',
-    renderLastScreenButton: true,
-    renderLastScreenBackButton: true,
+    renderLastScreenButton: false,
+    renderLastScreenBackButton: false,
     mode: FormModes.APPLYING,
     logo: Logo,
     children: [

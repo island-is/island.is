@@ -147,7 +147,19 @@ const operatingCost = z.object({
 const cemetryCaretaker = z.array(
   z.object({
     name: z.string().refine((x) => !!x, { params: m.required }),
-    nationalId: z.string().refine((x) => !!x, { params: m.required }),
+    nationalId: z
+      .string()
+      .refine((val) => (val ? kennitala.isPerson(val) : false), {
+        params: m.nationalIdError,
+      })
+      .refine((val) => {
+        return (
+          val ? kennitala.info(val).age < 18 : false,
+          {
+            params: m.nationalIdAgeError,
+          }
+        )
+      }),
     role: z.string().refine((x) => !!x, { params: m.required }),
   }),
 )

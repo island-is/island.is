@@ -60,17 +60,17 @@ const CareTakerRepeaterItem = ({
 
   console.log({ data, loading, error })
 
-  useEffect(() => {
-    if (nationalIdInput.length === 10 && kennitala.isValid(nationalIdInput)) {
-      getIdentity({
-        variables: {
-          input: {
-            nationalId: nationalIdInput,
-          },
-        },
-      })
-    }
-  }, [nationalIdInput])
+  // useEffect(() => {
+  //   if (nationalIdInput.length === 10 && kennitala.isValid(nationalIdInput)) {
+  //     getIdentity({
+  //       variables: {
+  //         input: {
+  //           nationalId: nationalIdInput,
+  //         },
+  //       },
+  //     })
+  //   }
+  // }, [nationalIdInput])
 
   // console.log({ data, loading, error })
   // const fetchName = throttle((nationalId: string) => {
