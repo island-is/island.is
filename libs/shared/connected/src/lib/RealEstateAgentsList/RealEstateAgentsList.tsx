@@ -2,7 +2,7 @@ import { FC, useState } from 'react'
 import { useQuery } from '@apollo/client/react'
 import { GET_REAL_ESTATE_AGENTS_QUERY } from './queries'
 import { ConnectedComponent, Query } from '@island.is/api/schema'
-import { useTranslation } from '../../utils'
+import { useLocalization, sortAlpha } from '../../utils'
 import {
   Box,
   LoadingDots,
@@ -23,14 +23,14 @@ interface RealEstateAgentsListProps {
 
 type ListState = 'loading' | 'loaded' | 'error'
 
-// TODO: Fix icelandic alphabet sorting. https://stackoverflow.com/questions/6909126/javascript-sort-with-unicode
 // TODO: Make sure the UI it's fully responsive.
 // TODO: Review all translation calls / keys
+// TODO: Have page size and minimum height configured in Contentful.
 // TODO: Add Stefna as code owner for the connected component.
 // TODO: The data is not quite optimal: Sometimes the Postal code is missing, typos e.g. 'Trasusti fasteignasala'
 
 const RealEstateAgentsList: FC<RealEstateAgentsListProps> = ({ slice }) => {
-  const t = useTranslation(slice.json)
+  const t = useLocalization(slice.json)
 
   const [listState, setListState] = useState<ListState>('loading')
   const [agents, setAgents] = useState<Query['getRealEstateAgents']>([])
@@ -62,11 +62,7 @@ const RealEstateAgentsList: FC<RealEstateAgentsListProps> = ({ slice }) => {
   useQuery<Query>(GET_REAL_ESTATE_AGENTS_QUERY, {
     onCompleted: (data) => {
       const fetchedAgents = [...(data?.getRealEstateAgents ?? [])]
-      setAgents(
-        fetchedAgents.sort((a, b) =>
-          (a.name ?? '').localeCompare(b.name ?? '', 'is'),
-        ),
-      )
+      setAgents(fetchedAgents.sort(sortAlpha('name')))
       setListState('loaded')
     },
     onError: () => {
