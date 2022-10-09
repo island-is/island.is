@@ -1,8 +1,4 @@
-import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql'
-
-import { ScopeType } from '@island.is/clients/auth-public-api'
-
-registerEnumType(ScopeType, { name: 'AuthDelegationScopeType' })
+import { Field, ObjectType, ID } from '@nestjs/graphql'
 
 @ObjectType('AuthDelegationScope')
 export class DelegationScope {
@@ -11,9 +7,6 @@ export class DelegationScope {
 
   @Field(() => String)
   name!: string
-
-  @Field(() => ScopeType)
-  type!: ScopeType
 
   @Field(() => String)
   displayName!: string

@@ -1,4 +1,5 @@
 import {
+  BelongsTo,
   Column,
   CreatedAt,
   DataType,
@@ -7,12 +8,10 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import { Gender } from '@island.is/judicial-system/types'
 
-// TODO Find a way to import from case index file
 import { Case } from '../../case/models/case.model'
 
 @Table({
@@ -44,6 +43,10 @@ export class Defendant extends Model {
   })
   @ApiProperty()
   caseId!: string
+
+  @BelongsTo(() => Case, 'case_id')
+  @ApiPropertyOptional({ type: Case })
+  case?: Case
 
   @Column({
     type: DataType.BOOLEAN,

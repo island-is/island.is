@@ -13,7 +13,6 @@ import { ApiProperty } from '@nestjs/swagger'
 import { Delegation } from './delegation.model'
 import { DelegationScopeDTO } from '../dto/delegation-scope.dto'
 import { ApiScope } from '../../resources/models/api-scope.model'
-import { IdentityResource } from '../../resources/models/identity-resource.model'
 
 @Table({
   tableName: 'delegation_scope',
@@ -36,38 +35,18 @@ export class DelegationScope extends Model {
   @ApiProperty()
   delegationId!: string
 
+  @BelongsTo(() => Delegation)
+  delegation!: Delegation
+
   @ForeignKey(() => ApiScope)
   @Column({
     type: DataType.STRING,
-    allowNull: true,
-    validate: {
-      ddlConstraint(this: DelegationScope) {
-        this.eitherScopeNameOrIdentityResourceName()
-      },
-    },
+    allowNull: false,
   })
-  scopeName?: string
+  scopeName!: string
 
   @BelongsTo(() => ApiScope)
-  apiScope?: any //ApiScope
-
-  @ForeignKey(() => IdentityResource)
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-    validate: {
-      ddlConstraint(this: DelegationScope) {
-        this.eitherScopeNameOrIdentityResourceName()
-      },
-    },
-  })
-  identityResourceName?: string
-
-  @BelongsTo(() => IdentityResource)
-  identityResource?: any //IdentityResource
-
-  @BelongsTo(() => Delegation)
-  delegation!: Delegation
+  apiScope!: ApiScope
 
   @Column({
     type: DataType.DATE,
@@ -94,25 +73,10 @@ export class DelegationScope extends Model {
     return {
       id: this.id,
       delegationId: this.delegationId,
-      scopeName: this.scopeName ?? this.identityResourceName ?? '',
-      displayName:
-        (this.apiScope as ApiScope)?.displayName ??
-        (this.identityResource as IdentityResource)?.displayName,
+      scopeName: this.scopeName,
+      displayName: this.apiScope.displayName,
       validFrom: this.validFrom,
       validTo: this.validTo,
-    }
-  }
-
-  eitherScopeNameOrIdentityResourceName() {
-    if (!(this.scopeName || this.identityResourceName)) {
-      return new Error(
-        'Either scopeName or identityResourceName must be specified.',
-      )
-    }
-    if (this.scopeName && this.identityResourceName) {
-      return new Error(
-        'ScopeName and identityResourceName can not both be specified.',
-      )
     }
   }
 }

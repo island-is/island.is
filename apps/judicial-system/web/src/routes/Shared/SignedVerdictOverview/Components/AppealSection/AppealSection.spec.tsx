@@ -132,7 +132,7 @@ describe('Appeal section component', () => {
     )
 
     expect(
-      screen.queryByRole('button', { name: 'Kærði kærir úrskurðinn' }),
+      screen.queryByRole('button', { name: 'Varnaraðili kærir úrskurðinn' }),
     ).not.toBeInTheDocument()
   })
 
