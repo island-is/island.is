@@ -23,8 +23,6 @@ interface RealEstateAgentsListProps {
 
 type ListState = 'loading' | 'loaded' | 'error'
 
-// TODO: Add Stefna as code owner for the connected component.
-
 const RealEstateAgentsList: FC<RealEstateAgentsListProps> = ({ slice }) => {
   const t = useLocalization(slice.json)
 
