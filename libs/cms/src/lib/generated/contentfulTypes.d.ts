@@ -2244,6 +2244,7 @@ export interface IOrganizationSubpageFields {
         | IMultipleStatistics
         | IOneColumnText
         | IOverviewLinks
+        | IPowerBiSlice
         | ISliceConnectedComponent
         | ITabSection
         | ITeamList
