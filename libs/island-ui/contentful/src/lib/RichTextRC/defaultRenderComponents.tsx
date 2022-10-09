@@ -4,6 +4,7 @@ import {
   CompanyListConnected,
   GeneralPetitionLists,
   RealEstateAgentsList,
+  LawyersList,
 } from '@island.is/shared/connected'
 import { Image } from '../Image/Image'
 import FaqList from '../FaqList/FaqList'
@@ -37,6 +38,8 @@ const renderConnectedComponent = (slice) => {
       break
     case 'Fasteignasalar/RealEstateAgents':
       return <RealEstateAgentsList slice={slice} />
+    case 'Lögmenn/Lawyers':
+      return <LawyersList slice={slice} />
     default:
       break
   }

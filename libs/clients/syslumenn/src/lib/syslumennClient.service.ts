@@ -14,6 +14,7 @@ import {
   EstateRegistrant,
   EstateRelations,
   RealEstateAgent,
+  Lawyer,
 } from './syslumennClient.types'
 import {
   mapSyslumennAuction,
@@ -26,6 +27,7 @@ import {
   mapAssetName,
   mapEstateRegistrant,
   mapRealEstateAgent,
+  mapLawyer,
 } from './syslumennClient.utils'
 import { Injectable, Inject } from '@nestjs/common'
 import {
@@ -35,7 +37,6 @@ import {
   VirkLeyfiGetRequest,
   TegundAndlags,
   VedbandayfirlitReguverkiSvarSkeyti,
-  Fasteignasalar,
 } from '../../gen/fetch'
 import { SyslumennClientConfig } from './syslumennClient.config'
 import type { ConfigType } from '@island.is/nest/config'
@@ -117,6 +118,14 @@ export class SyslumennService {
       audkenni: id,
     })
     return (agents ?? []).map(mapRealEstateAgent)
+  }
+
+  async getLawyers(): Promise<Lawyer[]> {
+    const { id, api } = await this.createApi()
+    const lawyers = await api.logmannalistiGet({
+      audkenni: id,
+    })
+    return (lawyers ?? []).map(mapLawyer)
   }
 
   async getOperatingLicenses(

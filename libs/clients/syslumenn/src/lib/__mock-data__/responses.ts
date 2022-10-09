@@ -6,6 +6,7 @@ import {
   VedbandayfirlitReguverkiSvarSkeyti,
   SkraningaradiliDanarbusSkeyti,
   Fasteignasalar,
+  Logmenn,
 } from '../../../gen/fetch'
 import { AssetName, SyslumennApiPaginationInfo } from '../syslumennClient.types'
 
@@ -55,6 +56,13 @@ export const REAL_ESTATE_AGENTS = [
     starfsstod: 'string',
   },
 ] as Fasteignasalar[]
+
+export const LAWYERS = [
+  {
+    nafn: 'string',
+    tegundRettinda: 'string',
+  },
+] as Logmenn[]
 
 export const OPERATING_LICENSE = [
   {

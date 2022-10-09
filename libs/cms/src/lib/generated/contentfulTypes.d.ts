@@ -2735,6 +2735,7 @@ export interface ISliceConnectedComponentFields {
     | 'Fiskistofa/ShipSearch'
     | 'Fiskistofa/ShipSearchSidebarInput'
     | 'Fasteignasalar/RealEstateAgents'
+    | 'Lögmenn/Lawyers'
     | undefined
 
   /** Localized JSON */
