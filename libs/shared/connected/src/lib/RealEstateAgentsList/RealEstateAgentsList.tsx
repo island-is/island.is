@@ -23,11 +23,7 @@ interface RealEstateAgentsListProps {
 
 type ListState = 'loading' | 'loaded' | 'error'
 
-// TODO: Make sure the UI it's fully responsive.
-// TODO: Review all translation calls / keys
-// TODO: Have page size and minimum height configured in Contentful.
 // TODO: Add Stefna as code owner for the connected component.
-// TODO: The data is not quite optimal: Sometimes the Postal code is missing, typos e.g. 'Trasusti fasteignasala'
 
 const RealEstateAgentsList: FC<RealEstateAgentsListProps> = ({ slice }) => {
   const t = useLocalization(slice.json)
@@ -97,7 +93,7 @@ const RealEstateAgentsList: FC<RealEstateAgentsListProps> = ({ slice }) => {
         <AlertMessage
           title={t('errorTitle', 'Villa')}
           message={t(
-            'errorDescription',
+            'errorMessage',
             'Ekki tókst að sækja lista yfir fasteignasala.',
           )}
           type="error"
