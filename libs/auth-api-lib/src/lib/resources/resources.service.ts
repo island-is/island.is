@@ -5,7 +5,7 @@ import type { User } from '@island.is/auth-nest-tools'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'
-import { Op, WhereOptions } from 'sequelize'
+import { literal, Op, WhereOptions } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 
 import { DelegationConfig } from '../delegations/DelegationConfig'
@@ -417,6 +417,14 @@ export class ResourcesService {
         },
         allowExplicitDelegationGrant: true,
       },
+      order: [
+        // Sort results by ApiScopeGroup and ApiScope order.
+        // This raw SQL literal depends on internal Sequelize join naming.
+        // It is regression tested in services-auth-public-api/.../scopes.controller.spec.ts
+        literal(
+          'COALESCE("group"."order", "ApiScope"."order") * 1000 + "ApiScope"."order"',
+        ),
+      ],
       include: [ApiScopeGroup],
     })
 

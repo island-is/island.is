@@ -6,6 +6,7 @@ export class ApiScope {
   enabled!: boolean
   displayName!: string
   description!: string
+  order!: number
   groupId?: string
   showInDiscoveryDocument!: boolean
   archived!: Date

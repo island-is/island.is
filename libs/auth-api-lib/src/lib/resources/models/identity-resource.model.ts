@@ -155,9 +155,6 @@ export class IdentityResource extends Model {
   @ApiProperty()
   readonly modified?: Date
 
-  @HasMany(() => DelegationScope)
-  delegationScopes?: DelegationScope[]
-
   toDTO(): IdentityResourcesDTO {
     return {
       name: this.name,

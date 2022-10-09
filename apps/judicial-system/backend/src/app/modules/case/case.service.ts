@@ -959,7 +959,7 @@ export class CaseService {
       })
   }
 
-  async addCaseCompletedMessageToQueue(caseId: string): Promise<string> {
+  addCaseCompletedMessageToQueue(caseId: string): Promise<string> {
     return this.messageService.postMessageToQueue({
       type: MessageType.CASE_COMPLETED,
       caseId,
