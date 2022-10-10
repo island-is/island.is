@@ -20,17 +20,18 @@ import {
   ServiceWebContext,
   ServiceWebSearchInput,
 } from '@island.is/web/components'
-import { useLinkResolver } from '@island.is/web/hooks'
+import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
+import { useI18n } from '@island.is/web/i18n'
 import { TextModes } from '../types'
 
 import * as styles from './Header.css'
-import { useI18n } from '@island.is/web/i18n'
 
 interface HeaderProps {
   title?: string
   hideSearch?: boolean
   textMode?: TextModes
   searchPlaceholder?: string
+  namespace: Record<string, string>
 }
 
 const marginLeft = [1, 1, 1, 2] as ResponsiveSpace
@@ -40,9 +41,12 @@ export const Header = ({
   hideSearch,
   textMode,
   searchPlaceholder,
+  namespace,
 }: HeaderProps) => {
   const { linkResolver } = useLinkResolver()
   const { t } = useI18n()
+
+  const n = useNamespace(namespace)
 
   const dark = textMode === 'dark'
 
@@ -124,6 +128,10 @@ export const Header = ({
                             <ServiceWebSearchInput
                               size="medium"
                               placeholder={searchPlaceholder}
+                              nothingFoundText={n(
+                                'nothingFoundText',
+                                'Ekkert fannst',
+                              )}
                             />
                           </Box>
                         )}

@@ -97,6 +97,7 @@ export const Wrapper: FC<WrapperProps> = ({
           title={headerTitle}
           textMode={textMode}
           searchPlaceholder={searchPlaceholder}
+          namespace={namespace}
         />
         <ServiceWebBackground
           variation={
@@ -114,6 +115,7 @@ export const Wrapper: FC<WrapperProps> = ({
               title={searchTitle}
               textMode={textMode}
               searchPlaceholder={searchPlaceholder}
+              namespace={namespace}
             />
           </Box>
         )}

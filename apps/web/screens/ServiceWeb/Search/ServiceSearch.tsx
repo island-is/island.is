@@ -214,6 +214,7 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
                     'serviceWebSearchPlaceholder',
                     'Leitaðu á þjónustuvefnum',
                   )}
+                  nothingFoundText={n('nothingFoundText', 'Ekkert fannst')}
                 />
 
                 {!!q &&
@@ -395,7 +396,7 @@ ServiceSearch.getInitialProps = async ({ apolloClient, locale, query }) => {
       })
       .then((variables) => {
         // map data here to reduce data processing in component
-        return JSON.parse(variables.data.getNamespace.fields)
+        return JSON.parse(variables?.data?.getNamespace?.fields ?? '{}')
       }),
   ])
 
