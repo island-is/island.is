@@ -1058,8 +1058,8 @@ export const parentalLeaveFormMessages: MessageDir = {
   selfEmployed: defineMessages({
     title: {
       id: 'pl.application:selfEmployed.title',
-      defaultMessage: 'Vinnuveitandi',
-      description: 'Employer',
+      defaultMessage: 'Ertu sjálfstætt starfandi?',
+      description: 'Are you self employed?',
     },
     description: {
       id: 'pl.application:selfEmployed.description',
