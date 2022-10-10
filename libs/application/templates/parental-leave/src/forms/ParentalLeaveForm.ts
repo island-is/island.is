@@ -442,7 +442,8 @@ export const ParentalLeaveForm: Form = buildForm({
                 }),
                 buildSelectField({
                   id: 'unemploymentBenefits',
-                  title: parentalLeaveFormMessages.employer.unemploymentBenefits,
+                  title:
+                    parentalLeaveFormMessages.employer.unemploymentBenefits,
                   options: [
                     {
                       label: unemploymentBenefitTypes.vinnumálastofnun,

@@ -12,7 +12,7 @@ export enum unemploymentBenefitTypes {
   vinnumálastofnun = 'Vinnumálastofnun (atvinnuleysisbætur)',
   stéttarfélagi = 'Stéttarfélagi (dagpeningar/veikindaréttur)',
   sjúkratryggingarÍslands = 'Sjúkratryggingar Íslands (sjúkradagpeningar)',
-  other = 'Annað'
+  other = 'Annað',
 }
 
 export enum ParentalRelations {
