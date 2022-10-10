@@ -892,7 +892,7 @@ export const Review: FC<ReviewScreenProps> = ({
 
       <ReviewGroup
         isEditable={editable}
-        editAction={() => goToScreen?.('employer.isSelfEmployed')}
+        editAction={() => goToScreen?.('employer.isSelfEmployed.benefits')}
       >
         <GridRow>
           <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
