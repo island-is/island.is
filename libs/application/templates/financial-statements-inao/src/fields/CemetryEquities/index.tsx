@@ -30,7 +30,19 @@ export const CemetryEquities = ({
   const { formatMessage } = useLocale()
   const { setValue, clearErrors, errors } = useFormContext()
 
-  // liabilities - equities
+  const operatingCostTotal = getValueViaPath(
+    answers,
+    OPERATINGCOST.total,
+  ) as string
+
+  useEffect(() => {
+    setValue(
+      CEMETRYEQUITIESANDLIABILITIESIDS.operationResult,
+      operatingCostTotal,
+    )
+    setTotalOperatingCost(operatingCostTotal)
+  }, [operatingCostTotal])
+
   const [equityTotal, setEquityTotal] = useState(0)
   const [totalOperatingCost, setTotalOperatingCost] = useState('0')
 
@@ -40,25 +52,9 @@ export const CemetryEquities = ({
   const [getTotalLiabilities, totalLiabilities] = useTotals(
     CEMETRYEQUITIESANDLIABILITIESIDS.liabilityPrefix,
   )
-  const [
-    getTotalEquity,
-    totalEquity,
-  ] = useTotals(CEMETRYEQUITIESANDLIABILITIESIDS.equityPrefix, [
-    totalOperatingCost,
-  ])
-
-  useEffect(() => {
-    const operatingCostTotal = getValueViaPath(
-      answers,
-      OPERATINGCOST.total,
-    ) as string
-
-    setValue(
-      CEMETRYEQUITIESANDLIABILITIESIDS.operationResult,
-      totalOperatingCost,
-    )
-    setTotalOperatingCost(operatingCostTotal)
-  }, [totalOperatingCost])
+  const [getTotalEquity, totalEquity] = useTotals(
+    CEMETRYEQUITIESANDLIABILITIESIDS.equityPrefix,
+  )
 
   useEffect(() => {
     const total = totalEquity - totalLiabilities
