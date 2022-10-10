@@ -127,6 +127,7 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
       },
     },
   })
+
   const { genericLicenses = [] } = data ?? {}
 
   const isError = genericLicenses?.every(
