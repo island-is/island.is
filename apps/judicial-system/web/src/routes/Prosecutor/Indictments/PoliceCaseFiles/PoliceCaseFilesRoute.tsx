@@ -13,7 +13,12 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { titles } from '@island.is/judicial-system-web/messages'
-import { Box, InputFileUpload, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  InputFileUpload,
+  Text,
+  UploadFile,
+} from '@island.is/island-ui/core'
 import { CaseFile, CaseFileCategory } from '@island.is/judicial-system/types'
 import { useS3UploadV2 } from '@island.is/judicial-system-web/src/utils/hooks'
 import * as constants from '@island.is/judicial-system/consts'
@@ -41,7 +46,7 @@ const AssignFilesToPoliceCase: React.FC<{
 }> = ({ caseId, policeCaseNumber, setAllUploaded, caseFiles }) => {
   const allFilesUploaded = false
 
-  const upload = useS3UploadV2(
+  const { upload, remove } = useS3UploadV2(
     caseId,
     CaseFileCategory.CASE_FILE,
     policeCaseNumber,
@@ -87,12 +92,30 @@ const AssignFilesToPoliceCase: React.FC<{
         ...files.map((file, index) => ({
           name: file.name,
           displayId: `${file.name}-${index}`,
+          originalFileObject: file,
         })),
         ...previous,
       ])
       upload(files, setSingleFile)
     },
     [upload, setSingleFile],
+  )
+
+  const onRetry = useCallback(
+    (file: UploadFile) => {
+      onChange([{ name: file.name, type: file.type }] as File[])
+    },
+    [onChange],
+  )
+
+  const onRemove = useCallback(
+    (file: UploadFile) => {
+      remove(file.id)
+      setDisplayFiles((previous) => {
+        return previous.filter((f) => f.id !== file.id)
+      })
+    },
+    [remove, setDisplayFiles],
   )
 
   return (
@@ -106,19 +129,14 @@ const AssignFilesToPoliceCase: React.FC<{
           policeCaseNumber={policeCaseNumber}
         />
       </Box>
-
       <InputFileUpload
         name="fileUpload"
         fileList={displayFiles}
         header={'Dragðu gögn hingað til að hlaða upp'}
         buttonLabel={'Velja gögn til að hlaða upp'}
         onChange={onChange}
-        onRemove={() => {
-          console.log('onRemove')
-        }}
-        onRetry={() => {
-          console.log('onRetry')
-        }}
+        onRemove={onRemove}
+        onRetry={onRetry}
         errorMessage={
           !allFilesUploaded
             ? undefined

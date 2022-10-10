@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback } from 'react'
 import { useMutation } from '@apollo/client'
 
 import { UploadFile } from '@island.is/island-ui/core'
@@ -10,6 +10,9 @@ import {
   CreatePresignedPostMutationDocument,
   CreatePresignedPostMutationMutation,
   CreatePresignedPostMutationMutationVariables,
+  DeleteFileMutationDocument,
+  DeleteFileMutationMutation,
+  DeleteFileMutationMutationVariables,
   PresignedPost,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
@@ -95,6 +98,11 @@ export const useS3UploadV2 = (
     CreateFileMutationMutationVariables
   >(CreateFileMutationDocument)
 
+  const [deleteFileMutation] = useMutation<
+    DeleteFileMutationMutation,
+    DeleteFileMutationMutationVariables
+  >(DeleteFileMutationDocument)
+
   const upload = useCallback(
     (files: File[], updateFile) => {
       files.forEach(async (file, index) => {
@@ -160,7 +168,23 @@ export const useS3UploadV2 = (
     ],
   )
 
-  return upload
+  const remove = useCallback(
+    (fileId) => {
+      deleteFileMutation({
+        variables: {
+          input: {
+            caseId: caseId,
+            id: fileId,
+          },
+        },
+      }).catch(() => {
+        // TODO: Log to Sentry and display an error message.
+      })
+    },
+    [deleteFileMutation, caseId],
+  )
+
+  return { upload, remove }
 }
 
 export default useS3UploadV2
