@@ -1,4 +1,3 @@
-export * from './access'
 export { DelegationsFromMe } from './DelegationsFromMe'
 export { DelegationsHeader } from './DelegationsHeader'
 export { DelegationsAccessGuard } from './DelegationsAccessGuard'

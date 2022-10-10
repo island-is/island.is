@@ -21,12 +21,7 @@ import {
   ServicePortalPath,
 } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import {
-  AccessItemHeader,
-  AccessConfirmModal,
-  AccessItem,
-  DelegationsFormFooter,
-} from '../../components'
+import { DelegationsFormFooter } from '../../components'
 import { servicePortalSaveAccessControl } from '@island.is/plausible'
 import {
   AuthDelegationsDocument,
@@ -42,7 +37,8 @@ import {
   SCOPE_PREFIX,
 } from '../../utils/types'
 import format from 'date-fns/format'
-import { DATE_FORMAT } from './AccessItem'
+import { AccessItem, DATE_FORMAT } from './AccessItem'
+import { AccessConfirmModal, AccessItemHeader } from '../../components/access'
 import * as accessItemStyles from './AccessItem.css'
 
 type AccessFormProps = {
