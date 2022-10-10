@@ -28,7 +28,7 @@ export enum DelegationProvider {
 
 export class DelegationDTO {
   @IsString()
-  @ApiPropertyOptional({ nullable: true })
+  @ApiPropertyOptional({ nullable: true, type: String })
   id?: string | null
 
   @IsString()
@@ -44,12 +44,12 @@ export class DelegationDTO {
   toNationalId!: string
 
   @IsString()
-  @ApiPropertyOptional({ nullable: true })
+  @ApiPropertyOptional({ nullable: true, type: String })
   toName?: string | null
 
   @IsOptional()
   @IsDateString()
-  @ApiPropertyOptional({ nullable: true })
+  @ApiPropertyOptional({ nullable: true, type: Date })
   validTo?: Date | null
 
   @ApiProperty({ enum: DelegationType, enumName: 'DelegationType' })

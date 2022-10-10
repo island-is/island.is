@@ -6,7 +6,7 @@ import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
 import {
   AnimatePresence,
-  AnimateSharedLayout,
+  LayoutGroup,
   motion,
   useAnimation,
 } from 'framer-motion'
@@ -235,7 +235,7 @@ const ActiveCases: React.FC<Props> = (props) => {
           <th></th>
         </tr>
       </thead>
-      <AnimateSharedLayout>
+      <LayoutGroup>
         <tbody>
           <AnimatePresence>
             {cases.map((c, i) => (
@@ -430,7 +430,7 @@ const ActiveCases: React.FC<Props> = (props) => {
             ))}
           </AnimatePresence>
         </tbody>
-      </AnimateSharedLayout>
+      </LayoutGroup>
     </table>
   )
 }
