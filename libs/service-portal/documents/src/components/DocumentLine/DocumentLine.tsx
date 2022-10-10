@@ -7,7 +7,6 @@ import {
   Document,
   DocumentCategory,
   DocumentDetails,
-  Query,
 } from '@island.is/api/schema'
 import { getAccessToken } from '@island.is/auth/react'
 import {
@@ -20,9 +19,9 @@ import {
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { dateFormat } from '@island.is/shared/constants'
-
+import { LoadModal } from '@island.is/service-portal/core'
 import * as styles from './DocumentLine.css'
-import { gql, useQuery } from '@apollo/client'
+import { gql, useLazyQuery } from '@apollo/client'
 
 interface Props {
   documentLine: Document
@@ -41,23 +40,31 @@ const DocumentLine: FC<Props> = ({ documentLine, img, documentCategories }) => {
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.sm
 
-  const { data: getFileByIdData } = useQuery<Query>(GET_DOCUMENT_BY_ID, {
-    variables: {
-      input: {
-        id: documentLine.id,
+  const [getDocument, { data: getFileByIdData, loading }] = useLazyQuery(
+    GET_DOCUMENT_BY_ID,
+    {
+      variables: {
+        input: {
+          id: documentLine.id,
+        },
+      },
+      onCompleted: () => {
+        onClickHandler()
       },
     },
-  })
+  )
 
   const singleDocument = getFileByIdData?.getDocument || ({} as DocumentDetails)
 
   const onClickHandler = async () => {
-    const html =
-      singleDocument.html.length > 0 ? singleDocument.html : undefined
+    let html: string | undefined = undefined
+    if (singleDocument.html) {
+      html = singleDocument.html.length > 0 ? singleDocument.html : undefined
+    }
     if (html) {
       setTimeout(() => {
         const win = window.open('', '_blank')
-        win && win.document.write(html)
+        win && html && win.document.write(html)
         win?.focus()
       }, 250)
     } else {
@@ -115,7 +122,14 @@ const DocumentLine: FC<Props> = ({ documentLine, img, documentCategories }) => {
       className={cn(styles.button, {
         [styles.unopened]: !documentLine.opened,
       })}
-      onClick={onClickHandler}
+      // Check if data is already fetched, if so go straight to download/display
+      onClick={() => {
+        if (getFileByIdData && !loading) {
+          onClickHandler()
+        } else {
+          getDocument({ variables: { input: { id: documentLine.id } } })
+        }
+      }}
     >
       {documentLine.subject}
     </button>
@@ -137,6 +151,10 @@ const DocumentLine: FC<Props> = ({ documentLine, img, documentCategories }) => {
       {documentLine.senderName}
     </Text>
   )
+
+  if (loading) {
+    return <LoadModal />
+  }
   return (
     <Box
       position="relative"
