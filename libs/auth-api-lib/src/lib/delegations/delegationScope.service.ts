@@ -102,7 +102,6 @@ export class DelegationScopeService {
           where: {
             allowExplicitDelegationGrant: true,
           },
-          required: false,
         },
       ],
     })
