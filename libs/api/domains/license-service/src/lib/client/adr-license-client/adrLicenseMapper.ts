@@ -1,78 +1,76 @@
 import { AdrDto } from '@island.is/clients/adr-and-machine-license'
+
+import format from 'date-fns/format'
+import isAfter from 'date-fns/isAfter'
 import {
   GenericLicenseDataField,
   GenericLicenseDataFieldType,
+  GenericLicenseLabels,
   GenericUserLicensePayload,
 } from '../../licenceService.type'
 import {
   FlattenedAdrDto,
   FlattenedAdrRightsDto,
 } from './genericAdrLicense.type'
+import { Locale } from '@island.is/shared/types'
+import { i18n } from '../../utils/translations'
+
+const parseAdrLicenseResponse = (license: AdrDto) => {
+  const { adrRettindi, ...rest } = license
+
+  const flattenedAdr: FlattenedAdrDto = { ...rest, adrRettindi: [] }
+
+  //Flatten the AdrRettindi into a simple array to make it easier to work with
+  adrRettindi?.forEach((field) => {
+    const heiti =
+      field.heiti && field.heiti.length
+        ? field.heiti
+        : field.flokkur?.split(',').map((f) => ({
+            flokkur: f.trim(),
+            heiti: '',
+          }))
+    heiti?.forEach((item) => {
+      flattenedAdr.adrRettindi?.push({
+        flokkur: item.flokkur,
+        grunn: field.grunn,
+        tankar: field.tankar,
+        heiti: item.heiti,
+      })
+    })
+  })
+  return flattenedAdr
+}
 
 export const parseAdrLicensePayload = (
   license: AdrDto,
+  locale: Locale = 'is',
+  labels?: GenericLicenseLabels,
 ): GenericUserLicensePayload | null => {
   if (!license) return null
 
-  const parseAdrLicenseResponse = () => {
-    const { adrRettindi, ...rest } = license
+  const parsedResponse = parseAdrLicenseResponse(license)
 
-    const flattenedAdr: FlattenedAdrDto = { ...rest, adrRettindi: [] }
-
-    //Flatten the AdrRettindi into a simple array to make it easier to work with
-    adrRettindi?.forEach((field) => {
-      const heiti =
-        field.heiti && field.heiti.length
-          ? field.heiti
-          : field.flokkur?.split(',').map((f) => ({
-              flokkur: f.trim(),
-              heiti: '',
-            }))
-      heiti?.forEach((item) => {
-        flattenedAdr.adrRettindi?.push({
-          flokkur: item.flokkur,
-          grunn: field.grunn,
-          tankar: field.tankar,
-          heiti: item.heiti,
-        })
-      })
-    })
-    return flattenedAdr
-  }
-
-  const parsedResponse = parseAdrLicenseResponse()
-
-  //TODO: Null check fields and filter!
-
+  const label = labels?.labels
   const data: Array<GenericLicenseDataField> = [
     {
+      name: 'Grunnupplýsingar ADR skírteinis',
       type: GenericLicenseDataFieldType.Value,
-      label: '1. Númer skírteinis',
+      label: label ? label['licenseNumber'] : i18n.licenseNumber[locale],
       value: parsedResponse.skirteinisNumer?.toString(),
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: '3. 2. Fullt nafn',
+      label: label ? label['fullName'] : i18n.fullName[locale],
       value: parsedResponse.fulltNafn ?? '',
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: '4. Fæðingardagur',
-      value: parsedResponse.faedingarDagur ?? '',
+      label: label ? label['publisher'] : i18n.publisher[locale],
+      value: 'Vinnueftirlitið',
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: '5. Ríkisfang: ',
-      value: parsedResponse.rikisfang ?? '',
-    },
-    {
-      type: GenericLicenseDataFieldType.Value,
-      label: '7. Útgefandi. ',
-      value: 'Vinnueftirliti ríkisins',
-    },
-    {
-      type: GenericLicenseDataFieldType.Value,
-      label: '8. Gildir til/Valid to',
+      label: label ? label['validTo'] : i18n.validTo[locale],
       value: parsedResponse.gildirTil ?? '',
     },
   ]
@@ -81,21 +79,27 @@ export const parseAdrLicensePayload = (
     (field) => field.grunn,
   )
   const tankar = parseRights(
-    '9. Tankar',
+    label ? label['tanks'] : i18n.tanks[locale],
     adrRights.filter((field) => field.tankar),
   )
 
   if (tankar) data.push(tankar)
 
-  const notTankar = parseRights(
-    '10. Annað en í tanki ',
-    adrRights.filter((field) => !field.tankar),
+  const grunn = parseRights(
+    label ? label['otherThanTanks'] : i18n.otherThanTanks[locale],
+    adrRights,
   )
-  if (notTankar) data.push(notTankar)
+  if (grunn) data.push(grunn)
 
   return {
     data,
     rawData: JSON.stringify(license),
+    metadata: {
+      licenseNumber: license.skirteinisNumer?.toString() ?? '',
+      expired: license.gildirTil
+        ? !isAfter(new Date(license.gildirTil), new Date())
+        : null,
+    },
   }
 }
 
@@ -114,6 +118,65 @@ const parseRights = (
       type: GenericLicenseDataFieldType.Category,
       name: field.flokkur ?? '',
       label: field.heiti ?? '',
+      description: field.heiti ?? '',
     })),
   }
+}
+
+const formatDateString = (dateTime: string) =>
+  dateTime ? format(new Date(dateTime), 'dd/MM/yyyy') : ''
+
+const parseRightsForPkPassInput = (rights?: Array<FlattenedAdrRightsDto>) => {
+  if (!rights?.length) return 'Engin réttindi'
+
+  const rightsString = rights
+    .filter((r) => r.grunn)
+    .map((right) => `${right.flokkur}`)
+    .join('\r\n')
+
+  return rightsString
+}
+
+export const createPkPassDataInput = (license: AdrDto) => {
+  if (!license) return null
+
+  const parsedLicense = parseAdrLicenseResponse(license)
+
+  const tankar = parsedLicense.adrRettindi?.filter((r) => r.tankar) ?? []
+  const notTankar = parsedLicense.adrRettindi?.filter((r) => r.grunn) ?? []
+
+  return [
+    {
+      identifier: 'fulltNafn',
+      value: parsedLicense.fulltNafn ?? '',
+    },
+    {
+      identifier: 'skirteinisNumer',
+      value: parsedLicense.skirteinisNumer ?? '',
+    },
+    {
+      identifier: 'faedingardagur',
+      value: parsedLicense.faedingarDagur
+        ? formatDateString(parsedLicense.faedingarDagur)
+        : '',
+    },
+    {
+      identifier: 'rikisfang',
+      value: parsedLicense.rikisfang ?? '',
+    },
+    {
+      identifier: 'gildirTil',
+      value: parsedLicense.gildirTil
+        ? formatDateString(parsedLicense.gildirTil)
+        : '',
+    },
+    {
+      identifier: 'tankar',
+      value: parseRightsForPkPassInput(tankar),
+    },
+    {
+      identifier: 'ekkiTankar',
+      value: parseRightsForPkPassInput(notTankar),
+    },
+  ]
 }

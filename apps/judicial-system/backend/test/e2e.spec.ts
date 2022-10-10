@@ -484,10 +484,7 @@ function getCase(id: string): PromiseLike<Case> {
   return Case.findByPk(id, {
     rejectOnEmpty: true,
     include: [
-      {
-        model: Institution,
-        as: 'court',
-      },
+      { model: Institution, as: 'court' },
       {
         model: User,
         as: 'prosecutor',
@@ -516,7 +513,7 @@ describe('Institution', () => {
       .send()
       .expect(200)
       .then((response) => {
-        expect(response.body.length).toBe(16)
+        expect(response.body.length).toBe(18)
       })
   })
 })

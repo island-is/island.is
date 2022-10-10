@@ -227,7 +227,12 @@ export const Cases: React.FC = () => {
                     menuLabel="Tegund kröfu"
                     icon="add"
                     items={
-                      features.includes(Feature.INDICTMENTS)
+                      // TODO Remove procecutor office id check when indictments are ready
+                      features.includes(Feature.INDICTMENTS) ||
+                      [
+                        '1c45b4c5-e5d3-45ba-96f8-219568982268', // Lögreglustjórinn á Austurlandi
+                        '26136a67-c3d6-4b73-82e2-3265669a36d3', // Lögreglustjórinn á Suðurlandi
+                      ].includes(user.institution?.id ?? '')
                         ? [
                             {
                               href: constants.CREATE_INDICTMENT_ROUTE,
