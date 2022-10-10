@@ -11,14 +11,6 @@ export const animatedContent = style({
   paddingTop: theme.spacing[1],
 })
 
-export const categoryContainer = style({
-  width: 120,
-})
-
-export const content = style({
-  wordBreak: 'break-word',
-})
-
 const listStyle = {
   fontWeight: theme.typography.light,
   listStyle: 'auto',
