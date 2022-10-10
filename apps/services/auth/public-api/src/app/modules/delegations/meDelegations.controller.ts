@@ -52,7 +52,7 @@ export class MeDelegationsController {
     private readonly auditService: AuditService,
   ) {}
 
-  @Scopes(AuthScope.readDelegations)
+  @Scopes(AuthScope.delegations)
   @FeatureFlag(Features.customDelegations)
   @Get()
   @Documentation({
@@ -101,7 +101,7 @@ export class MeDelegationsController {
     return this.delegationsService.findAllOutgoing(user, validity, otherUser)
   }
 
-  @Scopes(AuthScope.readDelegations)
+  @Scopes(AuthScope.delegations)
   @FeatureFlag(Features.customDelegations)
   @Get(':delegationId')
   @Documentation({
@@ -137,7 +137,7 @@ export class MeDelegationsController {
     return delegation
   }
 
-  @Scopes(AuthScope.writeDelegations)
+  @Scopes(AuthScope.delegations)
   @FeatureFlag(Features.customDelegations)
   @Post()
   @Documentation({
@@ -159,7 +159,7 @@ export class MeDelegationsController {
     return this.delegationsService.create(user, delegation)
   }
 
-  @Scopes(AuthScope.writeDelegations)
+  @Scopes(AuthScope.delegations)
   @FeatureFlag(Features.customDelegations)
   @Put(':delegationId')
   @Documentation({
@@ -208,7 +208,7 @@ export class MeDelegationsController {
     )
   }
 
-  @Scopes(AuthScope.writeDelegations)
+  @Scopes(AuthScope.delegations)
   @FeatureFlag(Features.customDelegations)
   @Delete(':delegationId')
   @Documentation({

@@ -103,8 +103,8 @@ export enum ServicePortalPath {
 
   // Licenses service
   LicensesRoot = '/skirteini',
-  LicensesDriving = '/skirteini/okuskirteini',
-  LicensesDrivingDetail = '/skirteini/okuskirteini/:id',
+  LicensesDetail = '/skirteini/:provider/:type',
+
   // DocumentProvider
   // Temporary change to the value of DocumentProviderRoot; skjalaveita -> skjalaveitur. In the first
   // release there will only be a limited number of features and this change creates a better UX in
