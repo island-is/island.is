@@ -13,6 +13,16 @@ export interface SyslumennAuction {
   auctionTakesPlaceAt: string
 }
 
+export interface RealEstateAgent {
+  name: string
+  location: string
+}
+
+export interface Lawyer {
+  name: string
+  licenceType: string
+}
+
 export interface DataUploadResponse {
   success: boolean
   message?: string

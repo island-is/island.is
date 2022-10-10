@@ -13,6 +13,8 @@ import {
   AssetName,
   EstateRegistrant,
   EstateRelations,
+  RealEstateAgent,
+  Lawyer,
 } from './syslumennClient.types'
 import {
   mapSyslumennAuction,
@@ -24,6 +26,8 @@ import {
   constructUploadDataObject,
   mapAssetName,
   mapEstateRegistrant,
+  mapRealEstateAgent,
+  mapLawyer,
 } from './syslumennClient.utils'
 import { Injectable, Inject } from '@nestjs/common'
 import {
@@ -106,6 +110,22 @@ export class SyslumennService {
     })
 
     return (syslumennAuctions ?? []).map(mapSyslumennAuction)
+  }
+
+  async getRealEstateAgents(): Promise<RealEstateAgent[]> {
+    const { id, api } = await this.createApi()
+    const agents = await api.fasteignasalarGet({
+      audkenni: id,
+    })
+    return (agents ?? []).map(mapRealEstateAgent)
+  }
+
+  async getLawyers(): Promise<Lawyer[]> {
+    const { id, api } = await this.createApi()
+    const lawyers = await api.logmannalistiGet({
+      audkenni: id,
+    })
+    return (lawyers ?? []).map(mapLawyer)
   }
 
   async getOperatingLicenses(
