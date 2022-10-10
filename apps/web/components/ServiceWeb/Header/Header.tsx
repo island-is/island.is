@@ -13,6 +13,7 @@ import {
   ResponsiveSpace,
   Link,
   getTextStyles,
+  Button,
 } from '@island.is/island-ui/core'
 import {
   LanguageToggler,
@@ -23,6 +24,7 @@ import { useLinkResolver } from '@island.is/web/hooks'
 import { TextModes } from '../types'
 
 import * as styles from './Header.css'
+import { useI18n } from '@island.is/web/i18n'
 
 interface HeaderProps {
   title?: string
@@ -40,6 +42,7 @@ export const Header = ({
   searchPlaceholder,
 }: HeaderProps) => {
   const { linkResolver } = useLinkResolver()
+  const { t } = useI18n()
 
   const dark = textMode === 'dark'
 
@@ -124,6 +127,21 @@ export const Header = ({
                             />
                           </Box>
                         )}
+
+                        <Hidden below="sm">
+                          <Box marginLeft={marginLeft}>
+                            <Link {...linkResolver('login')} skipTab>
+                              <Button
+                                colorScheme={dark ? 'default' : 'negative'}
+                                variant="utility"
+                                icon="person"
+                                as="span"
+                              >
+                                {t?.login ?? 'Login'}
+                              </Button>
+                            </Link>
+                          </Box>
+                        </Hidden>
                         <Box marginLeft={marginLeft}>
                           <LanguageToggler
                             buttonColorScheme={dark ? 'default' : 'negative'}
