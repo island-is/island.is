@@ -278,7 +278,8 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
                 history.push(ServicePortalPath.AccessControlDelegations)
               }
               onConfirm={() => setSaveModalOpen(true)}
-              submitLabel={formatMessage(m.codeConfirmation)}
+              confirmLabel={formatMessage(m.codeConfirmation)}
+              icon="arrowForward"
             />
           </Box>
         </form>

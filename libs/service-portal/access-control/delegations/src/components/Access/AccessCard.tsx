@@ -1,4 +1,4 @@
-import { useHistory } from 'react-router-dom'
+import { useHistory, useLocation } from 'react-router-dom'
 import format from 'date-fns/format'
 
 import {
@@ -12,30 +12,30 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { coreMessages } from '@island.is/application/core'
+import { AuthCustomDelegation } from '@island.is/api/schema'
 
 interface AccessCardProps {
-  title: string
+  delegation: AuthCustomDelegation
   group: string
-  href: string
-  tags: string[]
-  validTo: string
   /**
    * Whether the card is editable or not, i.e. user can view/edit/renew delegation or only renew
    */
   editable?: boolean
+  onDelete(delegation: AuthCustomDelegation): void
 }
 
 export const AccessCard = ({
-  title,
+  delegation,
   group,
-  href,
-  tags,
-  validTo,
   editable = true,
+  onDelete,
 }: AccessCardProps) => {
-  useNamespaces('sp.settings-access-control')
+  useNamespaces(['sp.settings-access-control', 'sp.access-control-delegations'])
   const { formatMessage } = useLocale()
   const history = useHistory()
+  const { pathname } = useLocation()
+  const tags = delegation.scopes.map((scope) => scope.displayName)
+  const href = `${pathname}/${delegation.id}`
 
   return (
     <Box
@@ -50,7 +50,7 @@ export const AccessCard = ({
             {group}
           </Text>
           <Text variant="h3" as="h3" color={editable ? 'dark400' : 'dark300'}>
-            {title}
+            {delegation?.to?.name}
           </Text>
         </Stack>
         <Inline space="smallGutter">
@@ -61,8 +61,8 @@ export const AccessCard = ({
             type="outline"
           />
           <Text variant="small" color={editable ? 'dark400' : 'dark300'}>
-            {validTo
-              ? format(new Date(validTo), 'dd.MM.yyyy')
+            {delegation.validTo
+              ? format(new Date(delegation.validTo), 'dd.MM.yyyy')
               : formatMessage({
                   id: 'sp.settings-access-control:home-view-varies',
                   defaultMessage: 'Breytilegur',
@@ -102,10 +102,7 @@ export const AccessCard = ({
               iconType="outline"
               size="small"
               colorScheme="destructive"
-              onClick={() => {
-                // TODO delete delegation
-                console.log('TODO delete delegation')
-              }}
+              onClick={() => onDelete(delegation)}
             >
               {formatMessage(coreMessages.buttonDestroy)}
             </Button>

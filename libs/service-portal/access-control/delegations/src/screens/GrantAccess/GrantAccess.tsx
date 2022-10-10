@@ -278,10 +278,11 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
                   onCancel={() =>
                     history.push(ServicePortalPath.AccessControlDelegations)
                   }
-                  submitLabel={formatMessage({
+                  confirmLabel={formatMessage({
                     id: 'sp.access-control-delegations:choose-access-rights',
                     defaultMessage: 'Velja réttindi',
                   })}
+                  icon="arrowForward"
                 />
               </Box>
             </Box>

@@ -1,37 +1,44 @@
 import { coreMessages } from '@island.is/application/core'
 import { Box, Button, ButtonProps, Divider } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import type { IconMapIcon as IconType } from '@island.is/island-ui/core'
 import * as styles from './DelegationsFormFooter.css'
 
 type DelegationsFormFooterProps = {
   loading?: boolean
   disabled?: boolean
-  submitLabel?: string
+  confirmLabel?: string
   onCancel?(): void
   onConfirm?(): void
   buttonSize?: ButtonProps['size']
+  icon?: IconType
+  confirmButtonColorScheme?: 'destructive' | 'default'
+  showDivider?: boolean
 }
 
 export const DelegationsFormFooter = ({
   onCancel,
   onConfirm,
-  submitLabel,
+  confirmLabel,
   buttonSize = 'medium',
+  icon,
+  confirmButtonColorScheme = 'default',
+  showDivider = true,
   ...rest
 }: DelegationsFormFooterProps) => {
   const { formatMessage } = useLocale()
 
   return (
     <>
-      <div className={styles.dividerContainer}>
-        <Divider />
-      </div>
+      {showDivider && (
+        <div className={styles.dividerContainer}>
+          <Divider />
+        </div>
+      )}
       <Box
         display="flex"
         alignItems="center"
         justifyContent="spaceBetween"
-        borderTopWidth="standard"
-        borderColor="blue200"
         width="full"
         paddingTop={4}
         className={styles.container}
@@ -42,11 +49,13 @@ export const DelegationsFormFooter = ({
         <Button
           size={buttonSize}
           type={onConfirm ? 'button' : 'submit'}
-          icon="arrowForward"
+          variant="primary"
+          colorScheme={confirmButtonColorScheme}
+          {...(icon && { icon })}
           {...(onConfirm && { onClick: onConfirm })}
           {...rest}
         >
-          {submitLabel}
+          {confirmLabel}
         </Button>
       </Box>
     </>
