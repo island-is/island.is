@@ -1,4 +1,4 @@
-export { ExistingApplicationProvider } from './ExistingApplicationProvider'
+// export { ExistingApplicationProvider } from './ExistingApplicationProvider'
 
 export {
   NationalRegistryUserApi,
@@ -9,4 +9,5 @@ export {
   DrivingAssessmentApi,
   JuristictionApi,
   QualityPhotoApi,
+  ExistingApplicationApi,
 } from '@island.is/application/types'

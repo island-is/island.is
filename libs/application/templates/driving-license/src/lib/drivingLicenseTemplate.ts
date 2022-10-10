@@ -18,6 +18,7 @@ import {
   PaymentCatalogApi,
   QualityPhotoApi,
   TeachersApi,
+  ExistingApplicationApi,
 } from '@island.is/application/types'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import { ApiActions } from '../shared'
@@ -82,6 +83,9 @@ const template: ApplicationTemplate<
                 DrivingAssessmentApi,
                 JuristictionApi,
                 QualityPhotoApi,
+                ExistingApplicationApi.configure({
+                  params: { states: [States.PAYMENT, States.DRAFT] },
+                }),
               ],
             },
           ],
