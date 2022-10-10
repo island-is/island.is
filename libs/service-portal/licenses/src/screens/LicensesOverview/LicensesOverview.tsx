@@ -15,10 +15,10 @@ import { m } from '../../lib/messages'
 import { gql, useQuery } from '@apollo/client'
 import { Locale } from '@island.is/shared/types'
 import {
-  GenericUserLicenseFetchStatus,
-  GenericLicenseType,
-  useUserProfile,
   usePassport,
+  GenericLicenseType,
+  GenericUserLicenseFetchStatus,
+  useUserProfile,
 } from '@island.is/service-portal/graphql'
 import { Query } from '@island.is/api/schema'
 import { Box } from '@island.is/island-ui/core'
@@ -179,6 +179,7 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
 
     return formatMessage(m.isValid)
   }
+
   const isError = genericLicenses?.every(
     (item) => item.fetch.status === GenericUserLicenseFetchStatus.Error,
   )
