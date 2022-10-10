@@ -8,30 +8,39 @@ import { BaseTemplateApiService } from '../../../base-template-api.service'
 import {
   CustomTemplateFindQuery,
   Application,
-  ExistingApplicatiosnParameters,
+  ExistingApplicationParameters,
 } from '@island.is/application/types'
+import { ApplicationService as ApplicationApiService } from '@island.is/application/api/core'
 
 type ApplicationInfo = Omit<Application, 'externalData'>
 
 @Injectable()
 export class ApplicationService extends BaseTemplateApiService {
-  constructor() {
+  constructor(private readonly applicationApiService: ApplicationApiService) {
     super('Application')
   }
 
-  async existingApplication(
-    {
-      application,
-      params,
-    }: TemplateApiModuleActionProps<ExistingApplicatiosnParameters>,
-    customTemplateFindQuery: CustomTemplateFindQuery,
-  ): Promise<ApplicationInfo[] | undefined> {
+  async existingApplication({
+    application,
+    params,
+  }: TemplateApiModuleActionProps<ExistingApplicationParameters>): Promise<
+    ApplicationInfo[] | undefined
+  > {
+    if (!params) {
+      return undefined
+    }
+    const { states, where } = params
     // Returns only an application with the same active announcment
-    const existingApplications = (
-      await customTemplateFindQuery({
-        applicant: application.applicant,
-      })
-    )
+    const findExistingApplications = this.applicationApiService.customTemplateFindQuery(
+      application.typeId,
+    ) as CustomTemplateFindQuery
+      const applicant = application['applicant']
+    const existingApplications = await findExistingApplications(where)
+    // ({
+    //   applicant: application.applicant,
+    // })
+    console.log('\n\n\nexistingApplications', existingApplications.length)
+    existingApplications
       .map<ApplicationInfo>(
         ({ externalData, ...partialApplication }) => partialApplication,
       )
@@ -42,7 +51,7 @@ export class ApplicationService extends BaseTemplateApiService {
       // The prerequisites states are not listed and will be pruned anyways
       .filter(
         ({ id, state, answers }) =>
-          id !== application.id && params?.states.includes(state), //&&
+          id !== application.id && states.includes(state), //&&
         // answers?.caseNumber === application.answers?.caseNumber,
       )
       .sort(({ created: a }, { created: b }) => b.getTime() - a.getTime())

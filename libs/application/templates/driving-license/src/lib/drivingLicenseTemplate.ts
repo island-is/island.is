@@ -84,7 +84,12 @@ const template: ApplicationTemplate<
                 JuristictionApi,
                 QualityPhotoApi,
                 ExistingApplicationApi.configure({
-                  params: { states: [States.PAYMENT, States.DRAFT] },
+                  params: {
+                    states: [States.PAYMENT, States.DRAFT],
+                    where: {
+                      applicantKey: 'applicant',
+                    },
+                  },
                 }),
               ],
             },

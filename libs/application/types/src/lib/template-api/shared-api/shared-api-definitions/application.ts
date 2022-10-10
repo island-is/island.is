@@ -1,10 +1,11 @@
 import { defineTemplateApi } from '../../TemplateApi'
 
-export interface ExistingApplicatiosnParameters {
+export interface ExistingApplicationParameters {
     states: string[]
+    where: {[key: string]: string}
   }
   
-export const ExistingApplicationApi = defineTemplateApi<ExistingApplicatiosnParameters>({
+export const ExistingApplicationApi = defineTemplateApi<ExistingApplicationParameters>({
     action: 'existingApplication',
     namespace: 'Application'
 })
