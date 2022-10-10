@@ -37,8 +37,7 @@ const client = createClient({ clientId: '@island.is/webapp' })
 const user = createCurrentUser({
   nationalId: '1122334455',
   scope: [
-    AuthScope.readDelegations,
-    AuthScope.writeDelegations,
+    AuthScope.delegations,
     Scopes[0].name,
     Scopes[3].name,
     Scopes[4].name,
