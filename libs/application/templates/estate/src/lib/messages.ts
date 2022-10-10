@@ -273,6 +273,11 @@ export const m = defineMessages({
       'Sýslumaður hefur móttekið yfirlýsingu þína um eignarlaust dánarbú. Hún verður nú yfirfarin og staðfesting á eignarleysi í kjölfar sent í pósthólf þitt á Ísland.is',
     description: '',
   },
+  residencePermitSubtitle: {
+    id: 'es.application:residencePermitSubtitle#markdown',
+    defaultMessage: 'Sýslumaður hefur móttekið beiðni þína um búsetuleyfi. Hún verður nú yfirfarin og staðfesting á búsetuleyfi í kjölfar sent í pósthólf þitt á Ísland.is',
+    description: '',
+  },
 
   // Validation errors
   errorPhoneNumber: {
