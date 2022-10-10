@@ -36,7 +36,11 @@ import {
   Button,
 } from '@island.is/island-ui/core'
 import { ServiceWebWrapper } from '@island.is/web/components'
-import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
+import {
+  linkResolver,
+  useLinkResolver,
+  useNamespace,
+} from '@island.is/web/hooks'
 import { getSlugPart } from '../utils'
 
 import ContactBanner from '../ContactBanner/ContactBanner'
@@ -45,6 +49,7 @@ import { richText, SliceType } from '@island.is/island-ui/contentful'
 import OrganizationContactBanner from '../ContactBanner/OrganizationContactBanner'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
+import { Locale } from 'locale'
 
 export interface Dictionary<T> {
   [index: string]: T
@@ -58,6 +63,7 @@ interface SubPageProps {
   questionSlug: string
   organizationNamespace: Record<string, string>
   singleSupportCategory: Query['getSupportCategory']
+  locale: Locale
 }
 
 const SubPage: Screen<SubPageProps> = ({
@@ -68,19 +74,25 @@ const SubPage: Screen<SubPageProps> = ({
   namespace,
   organizationNamespace,
   singleSupportCategory,
+  locale,
 }) => {
   const Router = useRouter()
   const n = useNamespace(namespace)
   const o = useNamespace(organizationNamespace)
   const { linkResolver } = useLinkResolver()
-  useContentfulId(organization.id, singleSupportCategory?.id)
+  useContentfulId(
+    organization.id,
+    singleSupportCategory?.id,
+    singleSupportQNA?.id,
+  )
   useLocalLinkTypeResolver()
+
+  console.log('singlesupportqna', singleSupportQNA)
 
   const organizationSlug = organization.slug
   const question = singleSupportQNA
 
-  const institutionSlug = getSlugPart(Router.asPath, 2)
-
+  const institutionSlug = getSlugPart(Router.asPath, locale === 'is' ? 2 : 3)
   // Already filtered by category, simply
   const categoryDescription = supportQNAs[0]?.category?.description ?? ''
   const categoryTitle = supportQNAs[0]?.category?.title
@@ -121,16 +133,15 @@ const SubPage: Screen<SubPageProps> = ({
     {
       title: organization.title,
       typename: 'serviceweb',
-      href: `${linkResolver('serviceweb').href}/${organizationSlug}`,
+      href: linkResolver('serviceweborganization', [organizationSlug]).href,
     },
     {
-      title: `${categoryTitle}`,
+      title: categoryTitle,
       typename: 'serviceweb',
       isTag: true,
       ...(questionSlug && {
-        href: `${
-          linkResolver('serviceweb').href
-        }/${organizationSlug}/${categorySlug}`,
+        href: linkResolver('supportcategory', [organizationSlug, categorySlug])
+          .href,
       }),
     },
   ]
@@ -317,7 +328,13 @@ const SubPage: Screen<SubPageProps> = ({
                                         return (
                                           <Box key={index}>
                                             <TopicCard
-                                              href={`/adstod/${organizationSlug}/${categorySlug}/${slug}`}
+                                              href={
+                                                linkResolver('supportqna', [
+                                                  organizationSlug,
+                                                  categorySlug,
+                                                  slug,
+                                                ]).href
+                                              }
                                             >
                                               {title}
                                             </TopicCard>
@@ -376,9 +393,11 @@ SubPage.getInitialProps = async ({ apolloClient, locale, query, res }) => {
   if (single(query.q)) {
     if (res) {
       res.writeHead(302, {
-        Location: `/adstod/${organizationSlug}/${categorySlug}/${single(
-          query.q,
-        )}`,
+        Location: linkResolver(
+          'supportqna',
+          [organizationSlug, categorySlug, single(query.q)],
+          locale as Locale,
+        ).href,
       })
       res.end()
     }
@@ -457,6 +476,7 @@ SubPage.getInitialProps = async ({ apolloClient, locale, query, res }) => {
     singleSupportQNA: singleSupportQNA?.data?.getSingleSupportQNA,
     questionSlug,
     singleSupportCategory: singleSupportCategory?.data?.getSupportCategory,
+    locale: locale as Locale,
   }
 }
 

@@ -46,6 +46,11 @@ import { Screen } from '../../../types'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
 
+type FormNamespace = Record<
+  string,
+  Record<'label' | 'placeholder' | 'requiredMessage' | 'patternMessage', string>
+>
+
 interface ServiceWebFormsPageProps {
   syslumenn?: Organizations['items']
   organization?: Organization
@@ -53,13 +58,7 @@ interface ServiceWebFormsPageProps {
   namespace: Query['getNamespace']
   institutionSlug: string
   stateEntities: string[]
-  formNamespace: Record<
-    string,
-    Record<
-      'label' | 'requiredMessage' | 'placeholder' | 'patternMessage',
-      string
-    >
-  >
+  formNamespace: FormNamespace
 }
 
 const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
@@ -87,7 +86,10 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
   )
   const o = useNamespace(organizationNamespace)
 
-  const errorMessage = 'Villa kom upp við að senda fyrirspurn.'
+  const errorMessage = n(
+    'serviceWebFormErrorMessage',
+    'Villa kom upp við að senda fyrirspurn.',
+  )
 
   const successfullySent = data?.serviceWebForms?.sent
 
@@ -96,7 +98,12 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
 
     if (sent !== undefined) {
       sent
-        ? toast.success('Erindi þínu hefur verið komið áleiðis til okkar.')
+        ? toast.success(
+            n(
+              'serviceWebFormSuccessDescription',
+              'Erindi þínu hefur verið komið áleiðis til okkar.',
+            ),
+          )
         : toast.error(errorMessage)
 
       window.scrollTo(0, 0)
@@ -263,7 +270,7 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
                 ) : (
                   <ServiceWebStandardForm
                     namespace={organizationNamespace}
-                    formNamspace={formNamespace}
+                    formNamespace={formNamespace}
                     institutionSlug={institutionSlug}
                     supportCategories={supportCategories}
                     syslumenn={syslumenn}

@@ -31,6 +31,7 @@ import {
 import { Organizations, SupportCategory } from '@island.is/api/schema'
 import { GET_SUPPORT_SEARCH_RESULTS_QUERY } from '@island.is/web/screens/queries'
 import {
+  ContentLanguage,
   GetSupportSearchResultsQuery,
   GetSupportSearchResultsQueryVariables,
   SearchableContentTypes,
@@ -42,6 +43,7 @@ import orderBy from 'lodash/orderBy'
 import { useNamespace } from '@island.is/web/hooks'
 import slugify from '@sindresorhus/slugify'
 import { FormNamespace } from '../../types'
+import { useI18n } from '@island.is/web/i18n'
 
 type FormState = {
   message: string
@@ -196,6 +198,7 @@ export const StandardForm = ({
   stateEntities,
   formNamespace,
 }: StandardFormProps) => {
+  const { activeLocale } = useI18n()
   const useFormMethods = useForm({})
   const n = useNamespace(namespace)
   const fn = useFormNamespace(formNamespace)
@@ -262,6 +265,7 @@ export const StandardForm = ({
           fetch({
             variables: {
               query: {
+                language: activeLocale as ContentLanguage,
                 queryString,
                 size: 10,
                 types: [SearchableContentTypes['WebQna']],
@@ -613,13 +617,13 @@ export const StandardForm = ({
                       >
                         <Text key={index} variant="small" color="blue600">
                           <a
-                            href={
-                              linkResolver('servicewebanswer', [
+                            href={`${
+                              linkResolver('supportcategory', [
                                 organizationSlug,
                                 categorySlug,
                                 slug,
                               ]).href
-                            }
+                            }?q=${slug}`}
                           >
                             {title}
                           </a>
@@ -681,7 +685,7 @@ export const StandardForm = ({
                           isSearchable
                           label={fn('rikisadili', 'label', 'Ríkisaðili')}
                           name="rikisadili"
-                          onChange={({ label, value }: Option) => {
+                          onChange={({ label }: Option) => {
                             onChange(label)
                           }}
                           hasError={errors.rikisadili}
@@ -763,7 +767,7 @@ export const StandardForm = ({
                             backgroundColor="blue"
                             name={name}
                             onBlur={onBlur}
-                            label={labels.email}
+                            label={fn('email', 'label', 'Tölvupóstfang')}
                             value={value}
                             hasError={errors.email}
                             errorMessage={errors.email?.message}

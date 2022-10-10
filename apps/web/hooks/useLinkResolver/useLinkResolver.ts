@@ -168,15 +168,19 @@ export const routesTemplate = {
   },
   servicewebcontact: {
     is: '/adstod/[organizationSlug]/hafa-samband',
-    en: '/en/help/[organizationSlug]/contact',
+    en: '/en/help/[organizationSlug]/contact-us',
   },
-  servicewebcategory: {
+  supportcategory: {
     is: '/adstod/[organizationSlug]/[categorySlug]',
     en: '/en/help/[organizationSlug]/[categorySlug]',
   },
-  servicewebanswer: {
-    is: '/adstod/[organizationSlug]/[categorySlug]/[answerSlug]',
-    en: '/en/help/[organizationSlug]/[categorySlug]/[answerSlug]',
+  supportqna: {
+    is: '/adstod/[organizationSlug]/[categorySlug]/[questionSlug]',
+    en: '/en/help/[organizationSlug]/[categorySlug]/[questionSlug]',
+  },
+  serviceweborganizationsearch: {
+    is: '/adstod/leit/[organizationSlug]',
+    en: '/en/help/search/[organizationSlug]',
   },
   servicewebsearch: {
     is: '/adstod/leit',

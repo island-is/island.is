@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 import { Screen } from '../../../types'
@@ -87,11 +87,11 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
       parentTitle: item.organization?.title,
       description: item.organization?.description,
       link: {
-        href:
-          linkResolver('servicewebcategory', [
-            item.organization.slug,
-            item.category.slug,
-          ]).href + `/${item.slug}`,
+        href: linkResolver('supportqna', [
+          item.organization.slug,
+          item.category.slug,
+          item.slug,
+        ]).href,
       },
       categorySlug: item.category.slug,
       category: item.category.title,

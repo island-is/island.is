@@ -409,6 +409,7 @@ export class CmsContentfulService {
         slug: Record<string, string>
         title: Record<string, string>
         url: Record<string, string>
+        question?: Record<string, string>
       }>(id, {
         locale: '*',
         include: 1,
@@ -420,13 +421,16 @@ export class CmsContentfulService {
     let urls: TextFieldLocales = { is: '', en: '' }
 
     if (
-      result?.fields?.title &&
+      (result?.fields?.title || result?.fields?.question) &&
       (result?.fields?.slug || result?.fields?.url)
     ) {
       ;({ slugs, titles, urls } = Object.keys(localeMap).reduce(
         (obj, k) => {
           obj.slugs[k] = result?.fields?.slug?.[localeMap[k]] ?? ''
-          obj.titles[k] = result?.fields?.title?.[localeMap[k]] ?? ''
+          obj.titles[k] =
+            (result?.fields?.title ?? result?.fields?.question)?.[
+              localeMap[k]
+            ] ?? ''
           obj.urls[k] = result?.fields?.url?.[localeMap[k]] ?? ''
           return obj
         },
@@ -667,7 +671,9 @@ export class CmsContentfulService {
       .getLocalizedEntries<types.ISupportQnaFields>(lang, params)
       .catch(errorHandler('getSupportQNAsInCategory'))
 
-    return (result.items as types.ISupportQna[]).map(mapSupportQNA)
+    return (result.items as types.ISupportQna[])
+      .map(mapSupportQNA)
+      .filter((qna) => qna?.title && qna?.answer)
   }
 
   async getSupportCategory({

@@ -161,7 +161,7 @@ const Home: Screen<HomeProps> = ({
                           description={description}
                           link={
                             {
-                              href: linkResolver('servicewebcategory', [
+                              href: linkResolver('supportcategory', [
                                 organization.slug,
                                 slug,
                               ]).href,
@@ -198,7 +198,7 @@ const Home: Screen<HomeProps> = ({
                                   <Box key={index}>
                                     <TopicCard
                                       href={
-                                        linkResolver('servicewebanswer', [
+                                        linkResolver('supportqna', [
                                           organization.slug,
                                           category.slug,
                                           slug,

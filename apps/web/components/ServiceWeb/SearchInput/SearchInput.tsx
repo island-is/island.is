@@ -29,6 +29,7 @@ interface SearchInputProps {
   colored?: boolean
   initialInputValue?: string
   placeholder?: string
+  nothingFoundText?: string
 }
 
 const unused = ['.', '?', ':', ',', ';', '!', '-', '_', '#', '~', '|']
@@ -51,6 +52,7 @@ export const SearchInput = ({
   size = 'large',
   initialInputValue = '',
   placeholder = 'Leitaðu á þjónustuvefnum',
+  nothingFoundText = 'Ekkert fannst',
 }: SearchInputProps) => {
   const [searchTerms, setSearchTerms] = useState<string>('')
   const [activeItem, setActiveItem] = useState<SupportQna>()
@@ -122,12 +124,9 @@ export const SearchInput = ({
     const categorySlug = category?.slug ?? ''
 
     if (organizationSlug && categorySlug) {
-      Router.push({
-        pathname: `${
-          linkResolver('serviceweb').href
-        }/${organizationSlug}/${categorySlug}`,
-        query: { q: slug },
-      })
+      Router.push(
+        linkResolver('supportqna', [organizationSlug, categorySlug, slug]).href,
+      )
     }
   }
 
@@ -175,7 +174,7 @@ export const SearchInput = ({
                   disabled
                   onClick={() => null}
                 >
-                  <Text as="span">Ekkert fannst</Text>
+                  <Text as="span">{nothingFoundText}</Text>
                 </Box>
               ),
             },
@@ -210,12 +209,10 @@ export const SearchInput = ({
           return onSelect(activeItem)
         }
 
-        const pathname = `${linkResolver('serviceweb').href}${
-          institutionSlug ? `/${institutionSlug}` : ''
-        }/leit`
-
         Router.push({
-          pathname,
+          pathname: linkResolver('serviceweborganizationsearch', [
+            institutionSlug,
+          ]).href,
           query: { q: value },
         })
       }}
