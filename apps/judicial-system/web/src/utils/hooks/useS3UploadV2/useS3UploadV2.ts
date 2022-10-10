@@ -13,7 +13,7 @@ import {
   PresignedPost,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
-type LocalUploadFile = UploadFile & { displayId: string }
+export type LocalUploadFile = UploadFile & { displayId: string }
 
 const createFormData = (presignedPost: PresignedPost, file: File): FormData => {
   const formData = new FormData()
@@ -95,34 +95,8 @@ export const useS3UploadV2 = (
     CreateFileMutationMutationVariables
   >(CreateFileMutationDocument)
 
-  const [displayFiles, setDisplayFiles] = useState<LocalUploadFile[]>([])
-
-  const setSingleDisplayFile = useCallback(
-    (file: LocalUploadFile) => {
-      setDisplayFiles((prev) => {
-        const index = prev.findIndex((f) => f.displayId === file.displayId)
-        if (index === -1) {
-          return prev
-        }
-        const newFiles = prev.slice(0)
-        newFiles[index] = file
-        return newFiles
-      })
-    },
-    [setDisplayFiles],
-  )
-
-  const onChange = useCallback(
-    (files: File[]) => {
-      console.log('files', files)
-      setDisplayFiles((prev) => [
-        ...prev,
-        ...files.map((file, index) => ({
-          name: file.name,
-          displayId: `${file.name}-${index}`,
-        })),
-      ])
-
+  const upload = useCallback(
+    (files: File[], updateFile) => {
       files.forEach(async (file, index) => {
         try {
           const data = await createPresignedMutation({
@@ -143,7 +117,7 @@ export const useS3UploadV2 = (
           }
 
           const presignedPost = data.data.createPresignedPost
-          await uploadToS3(file, presignedPost, index, setSingleDisplayFile)
+          await uploadToS3(file, presignedPost, index, updateFile)
 
           console.log('addFileToCaseMutation')
 
@@ -165,7 +139,7 @@ export const useS3UploadV2 = (
             return
           }
 
-          setSingleDisplayFile({
+          updateFile({
             displayId: `${file.name}-${index}`,
             name: file.name,
             percent: 100,
@@ -178,19 +152,15 @@ export const useS3UploadV2 = (
       })
     },
     [
+      createPresignedMutation,
       caseId,
+      addFileToCaseMutation,
       category,
       policeCaseNumber,
-      createPresignedMutation,
-      addFileToCaseMutation,
-      setSingleDisplayFile,
     ],
   )
 
-  return {
-    displayFiles,
-    onChange,
-  }
+  return upload
 }
 
 export default useS3UploadV2
