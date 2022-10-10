@@ -19,6 +19,7 @@ import {
   getAvailablePersonalRightsInDays,
   YES,
   StartDateOptions,
+  unemploymentBenefitTypes,
 } from '@island.is/application/templates/parental-leave'
 
 import { SharedTemplateApiService } from '../../shared'
@@ -231,6 +232,62 @@ export class ParentalLeaveService {
   //   }
   // }
 
+  async getUnionConfirmationPdf(application: Application, index = 0) {
+    try {
+      const filename = getValueViaPath(
+        application.answers,
+        `fileUpload.unionConfirmationFile[${index}].key`,
+      )
+
+
+      const Key = `${application.id}/${filename}`
+      const file = await this.s3
+        .getObject({ Bucket: this.attachmentBucket, Key })
+        .promise()
+      const fileContent = file.Body as Buffer
+
+      if (!fileContent) {
+        throw new Error('File content was undefined')
+      }
+
+      return fileContent.toString('base64')
+    } catch (e) {
+      this.logger.error('Cannot get union attachment', { e })
+      throw new Error('Failed to get the union attachment')
+    }
+  }
+
+  async getHealthInsuranceConfirmationPdf(application: Application, index = 0) {
+    try {
+      let filename = getValueViaPath(
+        application.answers,
+        `fileUpload.sjúkratryggingarConfirmationFile[${index}].key`,
+      )
+
+      if (!filename) {
+        filename = getValueViaPath(
+          application.answers,
+          `fileUpload.selfEmployedFile[${index}].key`,
+        )
+      }
+
+      const Key = `${application.id}/${filename}`
+      const file = await this.s3
+        .getObject({ Bucket: this.attachmentBucket, Key })
+        .promise()
+      const fileContent = file.Body as Buffer
+
+      if (!fileContent) {
+        throw new Error('File content was undefined')
+      }
+
+      return fileContent.toString('base64')
+    } catch (e) {
+      this.logger.error('Cannot get health insurance attachment', { e })
+      throw new Error('Failed to get the health insurance attachment')
+    }
+  }
+
   async getGenericPdf(application: Application, index = 0) {
     try {
       const filename = getValueViaPath(
@@ -289,6 +346,44 @@ export class ParentalLeaveService {
               attachmentBytes: pdf,
             })
           }
+        }
+      }
+    }
+
+    const { isRecivingUnemploymentBenefits, unemploymentBenefits } = getApplicationAnswers(application.answers)
+
+    if (isRecivingUnemploymentBenefits === YES && unemploymentBenefits === unemploymentBenefitTypes.stéttarfélagi) {
+      const unionPdfs = (await getValueViaPath(
+        application.answers,
+        'fileUpload.unionConfirmationFile',
+      )) as unknown[]
+      
+      if (unionPdfs?.length) {
+        for (let i = 0; i <= unionPdfs.length - 1; i++) {
+          const pdf = await this.getUnionConfirmationPdf(application, i)
+
+          attachments.push({
+            attachmentType: apiConstants.attachments.unionConfirmation,
+            attachmentBytes: pdf
+          })
+        }
+      }
+    }
+
+    if (isRecivingUnemploymentBenefits === YES && unemploymentBenefits === unemploymentBenefitTypes.sjúkratryggingarÍslands) {
+      const healthInsurancePdfs = (await getValueViaPath(
+        application.answers,
+        'fileUpload.healthInsuranceConfirmationFile'
+      )) as unknown[]
+
+      if (healthInsurancePdfs?.length) {
+        for (let i = 0; i <= healthInsurancePdfs.length - 1; i++) {
+          const pdf = await this.getHealthInsuranceConfirmationPdf(application, i)
+
+          attachments.push({
+            attachmentType: apiConstants.attachments.healthInsuranceConfirmation,
+            attachmentBytes: pdf
+          })
         }
       }
     }
