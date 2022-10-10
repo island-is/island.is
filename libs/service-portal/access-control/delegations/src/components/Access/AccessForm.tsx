@@ -263,8 +263,11 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
               </Box>
             )}
           </Box>
-          <Box marginBottom={12}>
+          <Box marginBottom={[0, 0, 12]}>
             <AccessItemHeader hideValidityPeriod={!!validityPeriod} />
+            <Box className={accessItemStyles.dividerContainer}>
+              <Divider />
+            </Box>
             {scopes?.map(
               (scope, index) =>
                 scope?.name && (
@@ -283,7 +286,6 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
                           paddingTop={[3, 3, 3, 0]}
                         >
                           <Box
-                            paddingLeft={[2, 2, 0]}
                             display="flex"
                             flexDirection="column"
                             className={accessItemStyles.rowGap}
@@ -313,10 +315,7 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
                         </GridColumn>
                       )}
                     </GridRow>
-                    <Box
-                      paddingLeft={index === 0 ? 0 : [3, 3, 0]}
-                      className={accessItemStyles.dividerContainer}
-                    >
+                    <Box className={accessItemStyles.dividerContainer}>
                       <Divider />
                     </Box>
                   </div>
