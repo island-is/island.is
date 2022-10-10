@@ -45,6 +45,7 @@ import {
 import { Screen } from '../../../types'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
+import { Locale } from 'locale'
 
 type FormNamespace = Record<
   string,
@@ -59,6 +60,7 @@ interface ServiceWebFormsPageProps {
   institutionSlug: string
   stateEntities: string[]
   formNamespace: FormNamespace
+  locale: Locale
 }
 
 const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
@@ -69,6 +71,7 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
   namespace,
   stateEntities,
   formNamespace,
+  locale,
 }) => {
   const { linkResolver } = useLinkResolver()
   const n = useNamespace(namespace)
@@ -279,7 +282,7 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
                     onSubmit={async (formState) => {
                       await submit({
                         variables: {
-                          input: formState,
+                          input: { ...formState, lang: locale },
                         },
                       })
                     }}
@@ -395,6 +398,7 @@ ServiceWebFormsPage.getInitialProps = async ({
     namespace,
     stateEntities,
     formNamespace,
+    locale: locale as Locale,
   }
 }
 

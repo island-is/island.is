@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useDebounce } from 'react-use'
 import { useLazyQuery } from '@apollo/client'
@@ -13,6 +13,7 @@ import {
 import { GET_SUPPORT_SEARCH_RESULTS_QUERY } from '@island.is/web/screens/queries'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import {
+  ContentLanguage,
   GetSupportSearchResultsQuery,
   GetSupportSearchResultsQueryVariables,
   SearchableContentTypes,
@@ -20,6 +21,7 @@ import {
   SupportQna,
 } from '@island.is/web/graphql/schema'
 import { getSlugPart } from '@island.is/web/screens/ServiceWeb/utils'
+import { useI18n } from '@island.is/web/i18n'
 
 interface SearchInputProps {
   title?: string
@@ -61,8 +63,12 @@ export const SearchInput = ({
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const { linkResolver } = useLinkResolver()
   const Router = useRouter()
+  const { activeLocale } = useI18n()
 
-  const institutionSlug = getSlugPart(Router.asPath, 2)
+  const institutionSlug = getSlugPart(
+    Router.asPath,
+    activeLocale === 'is' ? 2 : 3,
+  )
 
   const [fetch, { loading, data }] = useLazyQuery<
     GetSupportSearchResultsQuery,
@@ -91,6 +97,7 @@ export const SearchInput = ({
           fetch({
             variables: {
               query: {
+                language: activeLocale as ContentLanguage,
                 queryString,
                 types: [SearchableContentTypes['WebQna']],
                 [institutionSlugBelongsToMannaudstorg

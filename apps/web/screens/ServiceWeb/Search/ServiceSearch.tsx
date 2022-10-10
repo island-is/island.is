@@ -48,6 +48,9 @@ import {
   ServiceWebModifySearchTerms,
 } from '@island.is/web/components'
 import { getSlugPart } from '../utils'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
+import { Locale } from 'locale'
 
 const PERPAGE = 10
 
@@ -57,6 +60,7 @@ interface ServiceSearchProps {
   namespace: GetNamespaceQuery['getNamespace']
   organization?: Organization
   searchResults: GetSupportSearchResultsQuery['searchResults']
+  locale: Locale
 }
 
 const ServiceSearch: Screen<ServiceSearchProps> = ({
@@ -65,6 +69,7 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
   namespace,
   organization,
   searchResults,
+  locale,
 }) => {
   const Router = useRouter()
   const n = useNamespace(namespace)
@@ -79,7 +84,10 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
   )
   const o = useNamespace(organizationNamespace)
 
-  const institutionSlug = getSlugPart(Router.asPath, 2)
+  useContentfulId(organization?.id)
+  useLocalLinkTypeResolver()
+
+  const institutionSlug = getSlugPart(Router.asPath, locale === 'is' ? 2 : 3)
 
   const searchResultsItems = (searchResults.items as Array<SupportQna>).map(
     (item) => ({
@@ -114,7 +122,7 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
       ? {
           title: organization.title,
           typename: 'serviceweb',
-          href: `${linkResolver('serviceweb').href}/${institutionSlug}`,
+          href: linkResolver('serviceweb', [institutionSlug]).href,
         }
       : {
           title: n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is'),
@@ -401,6 +409,7 @@ ServiceSearch.getInitialProps = async ({ apolloClient, locale, query }) => {
     namespace,
     organization: organization?.data?.getOrganization,
     searchResults,
+    locale: locale as Locale,
   }
 }
 

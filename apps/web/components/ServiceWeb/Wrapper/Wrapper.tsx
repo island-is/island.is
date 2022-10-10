@@ -81,10 +81,10 @@ export const Wrapper: FC<WrapperProps> = ({
       <HeadWithSocialSharing
         title={pageTitle}
         description={pageDescription}
-        imageUrl={organization.serviceWebFeaturedImage?.url}
-        imageContentType={organization.serviceWebFeaturedImage?.contentType}
-        imageWidth={organization.serviceWebFeaturedImage?.width?.toString()}
-        imageHeight={organization.serviceWebFeaturedImage?.height?.toString()}
+        imageUrl={organization?.serviceWebFeaturedImage?.url}
+        imageContentType={organization?.serviceWebFeaturedImage?.contentType}
+        imageWidth={organization?.serviceWebFeaturedImage?.width?.toString()}
+        imageHeight={organization?.serviceWebFeaturedImage?.height?.toString()}
       >
         {!indexableBySearchEngine && (
           <meta name="robots" content="noindex, nofollow" />
