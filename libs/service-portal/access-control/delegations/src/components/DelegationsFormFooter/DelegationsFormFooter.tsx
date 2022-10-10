@@ -11,7 +11,7 @@ type DelegationsFormFooterProps = {
   onCancel?(): void
   onConfirm?(): void
   buttonSize?: ButtonProps['size']
-  icon?: IconType
+  confirmIcon?: IconType
   confirmButtonColorScheme?: 'destructive' | 'default'
   showDivider?: boolean
 }
@@ -21,7 +21,7 @@ export const DelegationsFormFooter = ({
   onConfirm,
   confirmLabel,
   buttonSize = 'medium',
-  icon,
+  confirmIcon,
   confirmButtonColorScheme = 'default',
   showDivider = true,
   ...rest
@@ -51,7 +51,7 @@ export const DelegationsFormFooter = ({
           type={onConfirm ? 'button' : 'submit'}
           variant="primary"
           colorScheme={confirmButtonColorScheme}
-          {...(icon && { icon })}
+          {...(confirmIcon && { icon: confirmIcon })}
           {...(onConfirm && { onClick: onConfirm })}
           {...rest}
         >

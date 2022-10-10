@@ -282,7 +282,7 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
                     id: 'sp.access-control-delegations:choose-access-rights',
                     defaultMessage: 'Velja réttindi',
                   })}
-                  icon="arrowForward"
+                  confirmIcon="arrowForward"
                 />
               </Box>
             </Box>

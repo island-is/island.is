@@ -26,7 +26,7 @@ import { isDefined } from '@island.is/shared/utils'
 const isApiScopeGroup = (item: Scope): boolean =>
   item.__typename === 'AuthApiScopeGroup'
 
-const DATE_FORMAT = 'dd/MM/yyyy'
+export const DATE_FORMAT = 'dd.MM.yyyy'
 
 const messages = {
   dateValidTo: {

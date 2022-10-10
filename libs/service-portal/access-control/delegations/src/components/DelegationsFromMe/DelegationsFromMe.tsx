@@ -62,7 +62,7 @@ export const DelegationsFromMe = () => {
         </GridRow>
       </GridContainer>
       <AccessDeleteModal
-        id={`access-control-delegation-delete-modal-${delegation?.id}`}
+        id={`access-delete-modal-${delegation?.id}`}
         onClose={() => {
           setDelegation(null)
         }}

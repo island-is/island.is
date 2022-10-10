@@ -40,6 +40,7 @@ export const Modal = ({
         padding={[3, 3, 6]}
         paddingTop={12}
         borderRadius="standard"
+        width="full"
       >
         <Box position="absolute" top={4} right={4}>
           <button onClick={onClose}>
