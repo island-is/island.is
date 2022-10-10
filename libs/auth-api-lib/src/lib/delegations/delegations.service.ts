@@ -557,6 +557,8 @@ export class DelegationsService {
       return []
     }
 
+    const all = await this.delegationModel.findAll()
+
     const delegations = await this.delegationModel.findAll({
       where: {
         toNationalId: user.nationalId,
@@ -645,15 +647,7 @@ export class DelegationsService {
       this.filterCustomScopeRule(scope, user),
     )
 
-    const hasScope = Boolean(
-      scope.scopeName && allowedScopes.includes(scope.scopeName),
-    )
-    const hasIdentityResource = Boolean(
-      scope.identityResourceName &&
-        allowedScopes.includes(scope.identityResourceName),
-    )
-
-    return hasScope || hasIdentityResource
+    return allowedScopes.includes(scope.scopeName)
   }
 
   private filterCustomScopeRule(scope: string, user: User): boolean {

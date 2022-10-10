@@ -21,7 +21,10 @@ export type AuditTemplate<ResultType> = {
   auth: Auth
   action: string
   namespace?: string
-  resources?: string | string[] | ((result: ResultType) => string | string[])
+  resources?:
+    | string
+    | string[]
+    | ((result: ResultType) => string | string[] | undefined)
   meta?:
     | Record<string, unknown>
     | ((result: ResultType) => Record<string, unknown>)
