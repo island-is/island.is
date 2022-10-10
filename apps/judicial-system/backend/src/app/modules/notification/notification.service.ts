@@ -398,10 +398,9 @@ export class NotificationService {
   ): Promise<Recipient> {
     const { body, subject } = formatDefenderResubmittedToCourtEmailNotification(
       this.formatMessage,
-      theCase.type,
-      theCase.policeCaseNumbers,
       formatDefenderRoute(this.config.clientUrl, theCase.type, theCase.id),
       theCase.court?.name,
+      theCase.courtCaseNumber,
     )
 
     return this.sendEmail(
@@ -439,6 +438,35 @@ export class NotificationService {
     )
   }
 
+  private async defenderCourtDateNotificationSent(theCase: Case) {
+    let exists = false
+
+    try {
+      const notifications = await this.notificationModel.findAll({
+        where: {
+          caseId: theCase.id,
+          type: NotificationType.COURT_DATE,
+        },
+      })
+
+      exists = notifications.some(async (notification) => {
+        JSON.parse(notification.recipients ?? '[]').some(
+          (recipient: Recipient) =>
+            recipient.address === theCase.defenderEmail &&
+            recipient.success === true,
+        )
+      })
+    } catch (error) {
+      // Tolerate failure, but log error
+      this.logger.error(
+        `Error when looking for defender court date notification for case ${theCase.id}`,
+        { error },
+      )
+    }
+
+    return exists
+  }
+
   private async sendReadyForCourtNotifications(
     theCase: Case,
     user?: User,
@@ -450,10 +478,7 @@ export class NotificationService {
     }
 
     const notification = await this.notificationModel.findOne({
-      where: {
-        caseId: theCase.id,
-        type: NotificationType.READY_FOR_COURT,
-      },
+      where: { caseId: theCase.id, type: NotificationType.READY_FOR_COURT },
     })
 
     const promises: Promise<Recipient>[] = [
@@ -471,11 +496,17 @@ export class NotificationService {
         promises.push(
           this.sendResubmittedToCourtSmsNotificationToCourt(theCase),
         )
+
+        const defenderCourtDateNotificationSent = await this.defenderCourtDateNotificationSent(
+          theCase,
+        )
+
         if (
           theCase.courtDate &&
           theCase.sendRequestToDefender &&
           theCase.defenderName &&
-          theCase.defenderEmail
+          theCase.defenderEmail &&
+          defenderCourtDateNotificationSent
         ) {
           promises.push(this.sendResubmittedToCourtEmailToDefender(theCase))
         }
