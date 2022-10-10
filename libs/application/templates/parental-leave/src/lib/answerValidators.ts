@@ -21,6 +21,7 @@ import {
   NO,
   NO_PRIVATE_PENSION_FUND,
   NO_UNION,
+  unemploymentBenefits,
   YES,
 } from '../constants'
 import { isValidEmail } from './isValidEmail'
@@ -56,6 +57,9 @@ export const answerValidators: Record<string, AnswerValidator> = {
     )
 
     if (obj.isSelfEmployed === '' || !obj.isSelfEmployed) {
+      if (isSelfEmployed) {
+        return undefined
+      }
       return buildError(coreErrorMessages.defaultError, 'isSelfEmployed')
     }
 
@@ -111,6 +115,30 @@ export const answerValidators: Record<string, AnswerValidator> = {
       }
 
       return buildError(errorMessages.requiredAttachment, 'selfEmployedFile')
+    }
+
+    const isRecivingUnemploymentBenefits = getValueViaPath(
+      application.answers,
+      'isRecivingUnemploymentBenefits',
+    )
+
+    const unemploymentBenefitsFromUnion = getValueViaPath(
+      application.answers,
+      'unemploymentBenefits',
+    )
+
+    if (isRecivingUnemploymentBenefits) {
+      if (
+        unemploymentBenefitsFromUnion === unemploymentBenefits.stéttarfélagi &&
+        isEmpty(
+          (obj as { unionConfirmationFile: unknown[] }).unionConfirmationFile,
+        )
+      ) {
+        return buildError(
+          errorMessages.requiredAttachment,
+          'unionConfirmationFile',
+        )
+      }
     }
 
     // add validation for student files object etc

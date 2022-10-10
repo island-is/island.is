@@ -42,6 +42,7 @@ import {
   NO_UNION,
   ParentalRelations,
   StartDateOptions,
+  unemploymentBenefits,
   YES,
 } from '../constants'
 import Logo from '../assets/Logo'
@@ -56,6 +57,7 @@ import {
   GetUnionsQuery,
 } from '../types/schema'
 import { currentDateStartTime } from '../lib/parentalLeaveTemplateUtils'
+import { YesOrNo } from '../types'
 
 export const ParentalLeaveForm: Form = buildForm({
   id: 'ParentalLeaveDraft',
@@ -443,16 +445,16 @@ export const ParentalLeaveForm: Form = buildForm({
                   title: 'Hvaðan ertu að þyggja bætur?',
                   options: [
                     {
-                      label: 'Vinnumálastofnun (atvinnuleysisbætur)',
-                      value: 'Vinnumálastofnun (atvinnuleysisbætur)',
+                      label: unemploymentBenefits.vinnumálastofnun,
+                      value: unemploymentBenefits.vinnumálastofnun,
                     },
                     {
-                      label: 'Stéttarfélagi (dagpeningar/veikindaréttur)',
-                      value: 'Stéttarfélagi (dagpeningar/veikindaréttur)',
+                      label: unemploymentBenefits.stéttarfélagi,
+                      value: unemploymentBenefits.stéttarfélagi,
                     },
                     {
-                      label: 'Sjúkratryggingar Íslands (sjúkradagpeningar)',
-                      value: 'Sjúkratryggingar Íslands (sjúkradagpeningar)',
+                      label: unemploymentBenefits.sjúkratryggingaÍslands,
+                      value: unemploymentBenefits.sjúkratryggingaÍslands,
                     },
                   ],
                   condition: (answers) =>
@@ -584,6 +586,35 @@ export const ParentalLeaveForm: Form = buildForm({
             //   uploadButtonLabel:
             //     parentalLeaveFormMessages.selfEmployed.attachmentButton,
             // }),
+            buildFileUploadField({
+              id: 'fileUpload.unionConfirmationFile',
+              title: 'union confirmation',
+              introduction: 'union confirmation',
+              condition: (answers) => {
+                const isRecivingUnemploymentBenefits =
+                  (answers as {
+                    isRecivingUnemploymentBenefits: YesOrNo
+                  })?.isRecivingUnemploymentBenefits === YES
+                const unemploymentBenefitsFromUnion =
+                  (answers as {
+                    unemploymentBenefits: string
+                  })?.unemploymentBenefits ===
+                  unemploymentBenefits.stéttarfélagi
+
+                return (
+                  isRecivingUnemploymentBenefits &&
+                  unemploymentBenefitsFromUnion
+                )
+              },
+              maxSize: FILE_SIZE_LIMIT,
+              maxSizeErrorText:
+                parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
+              uploadAccept: '.pdf',
+              uploadHeader: '',
+              uploadDescription: '',
+              uploadButtonLabel:
+                parentalLeaveFormMessages.selfEmployed.attachmentButton,
+            }),
             // add back when the "other" type has been added to the VMST api
             // buildFileUploadField({
             //   id: 'fileUpload.file',
