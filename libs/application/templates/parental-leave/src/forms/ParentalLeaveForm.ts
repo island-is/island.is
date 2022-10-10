@@ -453,8 +453,8 @@ export const ParentalLeaveForm: Form = buildForm({
                       value: unemploymentBenefits.stéttarfélagi,
                     },
                     {
-                      label: unemploymentBenefits.sjúkratryggingaÍslands,
-                      value: unemploymentBenefits.sjúkratryggingaÍslands,
+                      label: unemploymentBenefits.sjúkratryggingarÍslands,
+                      value: unemploymentBenefits.sjúkratryggingarÍslands,
                     },
                   ],
                   condition: (answers) =>
@@ -604,6 +604,35 @@ export const ParentalLeaveForm: Form = buildForm({
                 return (
                   isRecivingUnemploymentBenefits &&
                   unemploymentBenefitsFromUnion
+                )
+              },
+              maxSize: FILE_SIZE_LIMIT,
+              maxSizeErrorText:
+                parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
+              uploadAccept: '.pdf',
+              uploadHeader: '',
+              uploadDescription: '',
+              uploadButtonLabel:
+                parentalLeaveFormMessages.selfEmployed.attachmentButton,
+            }),
+            buildFileUploadField({
+              id: 'fileUpload.sjúkratryggingarConfirmationFile',
+              title: 'health insurance confirmation',
+              introduction: 'health insurance confirmation',
+              condition: (answers) => {
+                const isRecivingUnemploymentBenefits =
+                  (answers as {
+                    isRecivingUnemploymentBenefits: YesOrNo
+                  })?.isRecivingUnemploymentBenefits === YES
+                const unemploymentBenefitsFromXjúkratryggingar =
+                  (answers as {
+                    unemploymentBenefits: string
+                  })?.unemploymentBenefits ===
+                  unemploymentBenefits.sjúkratryggingarÍslands
+
+                return (
+                  isRecivingUnemploymentBenefits &&
+                  unemploymentBenefitsFromXjúkratryggingar
                 )
               },
               maxSize: FILE_SIZE_LIMIT,

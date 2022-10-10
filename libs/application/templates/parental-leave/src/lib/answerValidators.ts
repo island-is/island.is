@@ -122,14 +122,14 @@ export const answerValidators: Record<string, AnswerValidator> = {
       'isRecivingUnemploymentBenefits',
     )
 
-    const unemploymentBenefitsFromUnion = getValueViaPath(
+    const unemploymentBenefitsSelect = getValueViaPath(
       application.answers,
       'unemploymentBenefits',
     )
 
     if (isRecivingUnemploymentBenefits) {
       if (
-        unemploymentBenefitsFromUnion === unemploymentBenefits.stéttarfélagi &&
+        unemploymentBenefitsSelect === unemploymentBenefits.stéttarfélagi &&
         isEmpty(
           (obj as { unionConfirmationFile: unknown[] }).unionConfirmationFile,
         )
@@ -137,6 +137,19 @@ export const answerValidators: Record<string, AnswerValidator> = {
         return buildError(
           errorMessages.requiredAttachment,
           'unionConfirmationFile',
+        )
+      }
+      if (
+        unemploymentBenefitsSelect ===
+          unemploymentBenefits.sjúkratryggingarÍslands &&
+        isEmpty(
+          (obj as { sjúkratryggingarConfirmationFile: unknown[] })
+            .sjúkratryggingarConfirmationFile,
+        )
+      ) {
+        return buildError(
+          errorMessages.requiredAttachment,
+          'sjúkratryggingarConfirmationFile',
         )
       }
     }
