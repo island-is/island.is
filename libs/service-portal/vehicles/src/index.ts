@@ -39,7 +39,8 @@ export const vehiclesModule: ServicePortalModule = {
     {
       name: m.vehiclesDrivingLessons,
       path: ServicePortalPath.AssetsVehiclesDrivingLessons,
-      enabled: true, // TODO: Skoða hér hvort þetta eigi að vera dynamic route?
+      enabled: userInfo.scopes.includes(ApiScope.vehicles),
+      dynamic: true,
       render: () =>
         lazy(() => import('./screens/DrivingLessonsBook/DrivingLessonsBook')),
     },

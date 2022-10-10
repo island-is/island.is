@@ -1,16 +1,22 @@
 import React from 'react'
 import { useQuery, gql } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
-import { Box, Divider, Stack, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Divider,
+  SkeletonLoader,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   ErrorScreen,
-  NotFound,
   ServicePortalModuleComponent,
   UserInfoLine,
   m,
   formatDate,
   IntroHeader,
+  EmptyState,
 } from '@island.is/service-portal/core'
 
 import { messages } from '../../lib/messages'
@@ -94,11 +100,6 @@ const DrivingLessonsBook: ServicePortalModuleComponent = () => {
     )
   }
 
-  if (!book?.id && !loading) {
-    return <NotFound title={formatMessage(messages.notFound)} />
-  }
-
-  console.log('book', book)
   return (
     <>
       <Box marginBottom={6}>
@@ -108,85 +109,99 @@ const DrivingLessonsBook: ServicePortalModuleComponent = () => {
           img="./assets/images/drivingLessons.svg"
         />
       </Box>
-      <Stack space={2}>
-        <UserInfoLine
-          title={formatMessage(messages.vehicleDrivingLessonsLabel)}
-          label={formatMessage(messages.vehicleDrivingLessonsStartDate)}
-          content={book?.createdOn && formatDate(book?.createdOn)}
-          loading={loading}
-        />
-        <Divider />
+      {loading && (
+        <Box padding={3}>
+          <SkeletonLoader space={1} height={40} repeat={5} />
+        </Box>
+      )}
+      {book?.id && !loading && (
+        <>
+          <Stack space={2}>
+            <UserInfoLine
+              title={formatMessage(messages.vehicleDrivingLessonsLabel)}
+              label={formatMessage(messages.vehicleDrivingLessonsStartDate)}
+              content={book?.createdOn && formatDate(book?.createdOn)}
+              loading={loading}
+            />
+            <Divider />
 
-        <UserInfoLine
-          label={formatMessage(messages.vehicleDrivingLessonsClassOfRight)}
-          renderContent={() => (
-            <Text fontWeight="semiBold">{book?.licenseCategory}</Text>
-          )}
-          loading={loading}
-        />
-        <Divider />
+            <UserInfoLine
+              label={formatMessage(messages.vehicleDrivingLessonsClassOfRight)}
+              renderContent={() => (
+                <Text fontWeight="semiBold">{book?.licenseCategory}</Text>
+              )}
+              loading={loading}
+            />
+            <Divider />
 
-        <UserInfoLine
-          label={formatMessage(messages.vehicleDrivingLessonsTeacher)}
-          content={book?.teacherName}
-          loading={loading}
-        />
-        <Divider />
+            <UserInfoLine
+              label={formatMessage(messages.vehicleDrivingLessonsTeacher)}
+              content={book?.teacherName}
+              loading={loading}
+            />
+            <Divider />
 
-        <UserInfoLine
-          label={formatMessage(messages.vehicleDrivingLessonsCount)}
-          content={book?.totalLessonCount.toString()}
-          loading={loading}
-        />
-        <Divider />
+            <UserInfoLine
+              label={formatMessage(messages.vehicleDrivingLessonsCount)}
+              content={book?.totalLessonCount.toString()}
+              loading={loading}
+            />
+            <Divider />
 
-        <UserInfoLine
-          label={formatMessage(messages.vehicleDrivingLessonsTotalTime)}
-          content={
-            (book?.totalLessonTime ? book?.totalLessonTime.toString() : 0) +
-            ' ' +
-            formatMessage(messages.vehicleDrivingLessonsMin)
-          }
-          loading={loading}
-        />
-        <Divider />
+            <UserInfoLine
+              label={formatMessage(messages.vehicleDrivingLessonsTotalTime)}
+              content={
+                (book?.totalLessonTime ? book?.totalLessonTime.toString() : 0) +
+                ' ' +
+                formatMessage(messages.vehicleDrivingLessonsMin)
+              }
+              loading={loading}
+            />
+            <Divider />
 
-        {/* Removed until final decison has been made 
+            {/* Removed until final decison has been made 
         <UserInfoLine
           label={formatMessage(messages.vehicleDrivingLessonsStatus)}
           content={'?'}
           loading={loading}
         />
         <Divider /> */}
-      </Stack>
-      <Box marginBottom={5} />
+          </Stack>
+          <Box marginBottom={5} />
 
-      {book?.teachersAndLessons && (
-        <PhysicalLessons
-          title={formatMessage(messages.vehicleDrivingLessonsPhysical)}
-          data={book.teachersAndLessons}
-        />
+          {book?.teachersAndLessons && (
+            <PhysicalLessons
+              title={formatMessage(messages.vehicleDrivingLessonsPhysical)}
+              data={book.teachersAndLessons}
+            />
+          )}
+
+          {book?.drivingSchoolExams && (
+            <DrivingLessonsSchools
+              title={formatMessage(messages.vehicleDrivingLessonsSchools)}
+              data={book.drivingSchoolExams}
+            />
+          )}
+
+          {book?.testResults && (
+            <Exams
+              title={formatMessage(messages.vehicleDrivingLessonsExam)}
+              data={book?.testResults}
+            />
+          )}
+
+          <Box paddingTop={4}>
+            <Text variant="small">
+              {formatMessage(messages.vehicleDrivingLessonsInfoNote)}
+            </Text>
+          </Box>
+        </>
       )}
-
-      {book?.drivingSchoolExams && (
-        <DrivingLessonsSchools
-          title={formatMessage(messages.vehicleDrivingLessonsSchools)}
-          data={book.drivingSchoolExams}
-        />
+      {!loading && !error && !book?.id && (
+        <Box marginTop={8}>
+          <EmptyState />
+        </Box>
       )}
-
-      {book?.testResults && (
-        <Exams
-          title={formatMessage(messages.vehicleDrivingLessonsExam)}
-          data={book?.testResults}
-        />
-      )}
-
-      <Box paddingTop={4}>
-        <Text variant="small">
-          {formatMessage(messages.vehicleDrivingLessonsInfoNote)}
-        </Text>
-      </Box>
     </>
   )
 }

@@ -191,7 +191,7 @@ export class DrivingLicenseBookService {
 
   async getMostRecentStudentBook({
     nationalId,
-  }: DrivingLicenseBookStudentInput): Promise<DrivingLicenseBookStudentOverview> {
+  }: DrivingLicenseBookStudentInput): Promise<DrivingLicenseBookStudentOverview | null> {
     const api = await this.apiWithAuth()
     const { data } = await api.apiStudentGetStudentOverviewSsnGet({
       ssn: nationalId,
@@ -203,10 +203,7 @@ export class DrivingLicenseBookService {
 
       return getStudentMapper(data, book)
     }
-
-    throw new NotFoundException(
-      `Student for nationalId ${nationalId} not found`,
-    )
+    return null
   }
 
   async getPracticalDrivingLessons(

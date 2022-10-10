@@ -3,6 +3,7 @@ import { UseGuards } from '@nestjs/common'
 import {
   CurrentUser,
   IdsUserGuard,
+  Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
@@ -25,6 +26,7 @@ import { DrivingLicenceTestResultId } from './models/drivingLicenseTestResult.re
 import { DrivingSchoolType } from './models/drivingLicenseBookSchoolType.response'
 import { DrivingSchoolEmployeeGuard } from './guards/drivingSchoolEmployee.guard'
 import { DrivingInstructorOrEmployeeGuard } from './guards/drivingInstructorOrEmployee.guard'
+import { ApiScope } from '@island.is/auth/scopes'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -55,12 +57,16 @@ export class DrivingLicenseBookResolver {
     return this.drivingLicenseBookService.getStudent(input)
   }
 
-  @Query(() => DrivingLicenseBookStudentOverview)
+  @Scopes(ApiScope.vehicles)
+  @Query(() => DrivingLicenseBookStudentOverview, { nullable: true })
   drivingLicenseBookUserBook(@CurrentUser() user: User) {
-    return this.drivingLicenseBookService.getMostRecentStudentBook({
-      nationalId: user.nationalId,
-    })
+    return (
+      this.drivingLicenseBookService.getMostRecentStudentBook({
+        nationalId: user.nationalId,
+      }) ?? null
+    )
   }
+
   @UseGuards(DrivingInstructorGuard)
   @Query(() => [PracticalDrivingLesson])
   drivingLicenseBookPracticalDrivingLessons(

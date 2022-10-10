@@ -16,6 +16,16 @@ export const GET_TAPS_QUERY = gql`
   }
 `
 
+export const GET_DRIVING_LICENSE_BOOK_QUERY = gql`
+  query GetDrivingLicenseBook {
+    drivingLicenseBookUserBook {
+      book {
+        id
+      }
+    }
+  }
+`
+
 /**
  * Returns an active navigation that matches all defined module routes
  */
@@ -26,12 +36,19 @@ export const useDynamicRoutes = () => {
 
   const { data, loading } = useQuery<Query>(GET_TAPS_QUERY)
 
+  const { data: licenseBook, loading: licenseBookLoading } = useQuery<Query>(
+    GET_DRIVING_LICENSE_BOOK_QUERY,
+  )
+
   useEffect(() => {
     /**
      * service-portal/finance
      * Tabs control for finance routes. Transactions, claims, tax, finance schedule.
      */
     const tabData = data?.getCustomerTapControl
+
+    const licenseBookData = licenseBook?.drivingLicenseBookUserBook
+
     const dynamicPathArray = []
 
     if (tabData?.RecordsTap) {
@@ -47,10 +64,13 @@ export const useDynamicRoutes = () => {
       dynamicPathArray.push(ServicePortalPath.FinanceSchedule)
     }
 
+    if (licenseBookData?.book.id) {
+      dynamicPathArray.push(ServicePortalPath.AssetsVehiclesDrivingLessons)
+    }
     setActiveDynamicRoutes(uniq([...activeDynamicRoutes, ...dynamicPathArray]))
-  }, [data])
+  }, [data, licenseBook])
 
-  return { activeDynamicRoutes, loading }
+  return { activeDynamicRoutes, loading: loading && licenseBookLoading }
 }
 
 export default useDynamicRoutes
