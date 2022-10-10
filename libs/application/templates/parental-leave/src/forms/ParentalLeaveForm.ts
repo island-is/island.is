@@ -593,7 +593,9 @@ export const ParentalLeaveForm: Form = buildForm({
             // }),
             buildFileUploadField({
               id: 'fileUpload.unionConfirmationFile',
-              title: parentalLeaveFormMessages.attachmentScreen.unemploymentBenefitsTitle,
+              title:
+                parentalLeaveFormMessages.attachmentScreen
+                  .unemploymentBenefitsTitle,
               introduction:
                 parentalLeaveFormMessages.attachmentScreen.unionDescription,
               condition: (answers) => {
