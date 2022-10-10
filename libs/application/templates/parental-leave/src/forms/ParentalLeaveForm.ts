@@ -42,7 +42,7 @@ import {
   NO_UNION,
   ParentalRelations,
   StartDateOptions,
-  unemploymentBenefits,
+  unemploymentBenefitTypes,
   YES,
 } from '../constants'
 import Logo from '../assets/Logo'
@@ -442,19 +442,23 @@ export const ParentalLeaveForm: Form = buildForm({
                 }),
                 buildSelectField({
                   id: 'unemploymentBenefits',
-                  title: 'Hvaðan ertu að þyggja bætur?',
+                  title: parentalLeaveFormMessages.employer.unemploymentBenefits,
                   options: [
                     {
-                      label: unemploymentBenefits.vinnumálastofnun,
-                      value: unemploymentBenefits.vinnumálastofnun,
+                      label: unemploymentBenefitTypes.vinnumálastofnun,
+                      value: unemploymentBenefitTypes.vinnumálastofnun,
                     },
                     {
-                      label: unemploymentBenefits.stéttarfélagi,
-                      value: unemploymentBenefits.stéttarfélagi,
+                      label: unemploymentBenefitTypes.stéttarfélagi,
+                      value: unemploymentBenefitTypes.stéttarfélagi,
                     },
                     {
-                      label: unemploymentBenefits.sjúkratryggingarÍslands,
-                      value: unemploymentBenefits.sjúkratryggingarÍslands,
+                      label: unemploymentBenefitTypes.sjúkratryggingarÍslands,
+                      value: unemploymentBenefitTypes.sjúkratryggingarÍslands,
+                    },
+                    {
+                      label: unemploymentBenefitTypes.other,
+                      value: unemploymentBenefitTypes.other,
                     },
                   ],
                   condition: (answers) =>
@@ -601,7 +605,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   (answers as {
                     unemploymentBenefits: string
                   })?.unemploymentBenefits ===
-                  unemploymentBenefits.stéttarfélagi
+                  unemploymentBenefitTypes.stéttarfélagi
 
                 return (
                   isRecivingUnemploymentBenefits &&
@@ -618,7 +622,7 @@ export const ParentalLeaveForm: Form = buildForm({
                 parentalLeaveFormMessages.selfEmployed.attachmentButton,
             }),
             buildFileUploadField({
-              id: 'fileUpload.sjúkratryggingarConfirmationFile',
+              id: 'fileUpload.healthInsuranceConfirmationFile',
               // need copy for this field
               title:
                 parentalLeaveFormMessages.attachementScreen
@@ -635,7 +639,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   (answers as {
                     unemploymentBenefits: string
                   })?.unemploymentBenefits ===
-                  unemploymentBenefits.sjúkratryggingarÍslands
+                  unemploymentBenefitTypes.sjúkratryggingarÍslands
 
                 return (
                   isRecivingUnemploymentBenefits &&

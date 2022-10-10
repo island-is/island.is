@@ -21,7 +21,7 @@ import {
   NO,
   NO_PRIVATE_PENSION_FUND,
   NO_UNION,
-  unemploymentBenefits,
+  unemploymentBenefitTypes,
   YES,
 } from '../constants'
 import { isValidEmail } from './isValidEmail'
@@ -129,7 +129,7 @@ export const answerValidators: Record<string, AnswerValidator> = {
 
     if (isRecivingUnemploymentBenefits) {
       if (
-        unemploymentBenefitsSelect === unemploymentBenefits.stéttarfélagi &&
+        unemploymentBenefitsSelect === unemploymentBenefitTypes.stéttarfélagi &&
         isEmpty(
           (obj as { unionConfirmationFile: unknown[] }).unionConfirmationFile,
         )
@@ -141,7 +141,7 @@ export const answerValidators: Record<string, AnswerValidator> = {
       }
       if (
         unemploymentBenefitsSelect ===
-          unemploymentBenefits.sjúkratryggingarÍslands &&
+        unemploymentBenefitTypes.sjúkratryggingarÍslands &&
         isEmpty(
           (obj as { sjúkratryggingarConfirmationFile: unknown[] })
             .sjúkratryggingarConfirmationFile,
@@ -149,7 +149,7 @@ export const answerValidators: Record<string, AnswerValidator> = {
       ) {
         return buildError(
           errorMessages.requiredAttachment,
-          'sjúkratryggingarConfirmationFile',
+          'healthInsuranceConfirmationFile',
         )
       }
     }
