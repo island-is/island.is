@@ -1,4 +1,12 @@
-import { IsString, IsBoolean, IsNotEmpty, IsOptional } from 'class-validator'
+import {
+  IsString,
+  IsBoolean,
+  IsNotEmpty,
+  IsOptional,
+  IsInt,
+  Min,
+  Max,
+} from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 
 export class ApiScopesDTO {
@@ -28,6 +36,16 @@ export class ApiScopesDTO {
     example: 'set_description',
   })
   readonly description!: string
+
+  @IsInt()
+  @Min(0)
+  @Max(999)
+  @IsOptional()
+  @ApiProperty({
+    example: 0,
+    default: 0,
+  })
+  readonly order?: number
 
   @IsOptional()
   @IsString()
