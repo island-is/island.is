@@ -78,4 +78,6 @@ export class CustomDelegation extends Delegation {
 
   @Field(() => [DelegationScope])
   scopes!: DelegationScope[]
+
+  domainName?: string
 }

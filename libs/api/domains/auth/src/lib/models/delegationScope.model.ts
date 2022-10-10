@@ -13,4 +13,8 @@ export class DelegationScope {
 
   @Field(() => Date, { nullable: true })
   validTo?: Date
+
+  // Attributes returned from APIs.
+  scopeName!: string
+  domainName?: string
 }
