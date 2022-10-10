@@ -54,6 +54,7 @@ export type TapsControlTypes = {
   RecordsTap: boolean
   employeeClaimsTap: boolean
   localTaxTap: boolean
+  schedulesTap: boolean
 }
 
 export type AnnualStatusTypes = {
