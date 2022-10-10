@@ -24,16 +24,10 @@ export const NoDebtCertificateForm: Form = buildForm({
           checkboxLabel: m.externalDataAgreement,
           dataProviders: [
             buildDataProviderItem({
-              id: 'nationalRegistry',
-              type: 'NationalRegistryProvider',
+              id: 'identityRegistry',
+              type: 'IdentityProvider',
               title: m.nationalRegistryTitle,
               subTitle: m.nationalRegistrySubTitle,
-            }),
-            buildDataProviderItem({
-              id: 'userProfile',
-              type: 'UserProfileProvider',
-              title: m.userProfileInformationTitle,
-              subTitle: m.userProfileInformationSubTitle,
             }),
             buildDataProviderItem({
               id: 'noDebtCertificate',

@@ -4,7 +4,6 @@ import { documentsModule } from '@island.is/service-portal/documents'
 import { assetsModule } from '@island.is/service-portal/assets'
 import { informationModule } from '@island.is/service-portal/information'
 import { financeModule } from '@island.is/service-portal/finance'
-import { financeScheduleModule } from '@island.is/service-portal/finance-schedule'
 import { icelandicNamesRegistryModule } from '@island.is/service-portal/icelandic-names-registry'
 import { personalInformationModule } from '@island.is/service-portal/settings/personal-information'
 import { accessControlModule } from '@island.is/service-portal/settings/access-control'
@@ -33,7 +32,6 @@ export type ModuleKeys =
   | 'documents'
   | 'information'
   | 'finance'
-  | 'financeSchedule'
   | 'icelandicNamesRegistry'
   | 'personalInformation'
   | 'education'
@@ -45,12 +43,6 @@ export type ModuleKeys =
   | 'licenses'
   | 'petitions'
   | 'vehicles'
-
-export const featureFlaggedModules: ModuleKeys[] = [
-  'documentProvider',
-  'icelandicNamesRegistry',
-  'petitions',
-]
 
 export const companyModules: ModuleKeys[] = [
   'documents',
@@ -65,14 +57,11 @@ export const companyModules: ModuleKeys[] = [
   // 'licenses',
 ]
 
-export const featureFlaggedCompanyModules: ModuleKeys[] = []
-
 export const modules: Record<ModuleKeys, ServicePortalModule> = {
   documentProvider: documentProviderModule,
   documents: documentsModule,
   information: informationModule,
   finance: financeModule,
-  financeSchedule: financeScheduleModule,
   icelandicNamesRegistry: icelandicNamesRegistryModule,
   personalInformation: personalInformationModule,
   education: educationModule,

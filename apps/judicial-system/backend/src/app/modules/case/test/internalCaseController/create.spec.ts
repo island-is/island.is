@@ -10,6 +10,7 @@ import {
   UserRole,
   CaseOrigin,
   CaseState,
+  CaseFileState,
 } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
@@ -19,6 +20,7 @@ import { DefendantService } from '../../../defendant/defendant.service'
 import { Defendant } from '../../../defendant/models/defendant.model'
 import { InternalCreateCaseDto } from '../../dto/internalCreateCase.dto'
 import { Case } from '../../models/case.model'
+import { CaseFile } from '../../../file'
 
 interface Then {
   result: Case
@@ -241,6 +243,14 @@ describe('InternalCaseController - Internal create', () => {
           },
           { model: Case, as: 'parentCase' },
           { model: Case, as: 'childCase' },
+          {
+            model: CaseFile,
+            as: 'caseFiles',
+            required: false,
+            where: {
+              state: { [Op.not]: CaseFileState.DELETED },
+            },
+          },
         ],
         order: [[{ model: Defendant, as: 'defendants' }, 'created', 'ASC']],
         where: {

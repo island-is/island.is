@@ -2,14 +2,14 @@ import { createIntl } from 'react-intl'
 
 import { CaseType, Defendant, Gender } from '@island.is/judicial-system/types'
 
-import { getDefentantLabel } from './CaseInfo'
+import { getDefendantLabel } from './CaseInfo'
 
 const formatMessage = createIntl({ locale: 'is', onError: jest.fn })
   .formatMessage
 
 describe('getDefendantLabel - Indictment', () => {
   const fn = (defendants: Defendant[]) =>
-    getDefentantLabel(formatMessage, defendants, CaseType.THEFT)
+    getDefendantLabel(formatMessage, defendants, CaseType.THEFT)
 
   test('should render label for female', () => {
     const defendants = [{ gender: Gender.FEMALE }] as Defendant[]
@@ -42,9 +42,9 @@ describe('getDefendantLabel - RestrictionCase/InvestigationCase', () => {
     .formatMessage
 
   const fn = (defendants: Defendant[]) =>
-    getDefentantLabel(formatMessage, defendants, CaseType.CUSTODY)
+    getDefendantLabel(formatMessage, defendants, CaseType.CUSTODY)
 
-  test('should render label for signle defentant', () => {
+  test('should render label for signle defendant', () => {
     const defendants = [{}] as Defendant[]
     expect(fn(defendants)).toBe('varnaraðili')
   })

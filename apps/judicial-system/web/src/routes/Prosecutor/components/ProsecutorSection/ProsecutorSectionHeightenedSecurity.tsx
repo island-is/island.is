@@ -3,18 +3,17 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { Box, Checkbox } from '@island.is/island-ui/core'
-import { User } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import {
   BlueBox,
   FormContext,
   Modal,
+  ProsecutorSelection,
 } from '@island.is/judicial-system-web/src/components'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import ProsecutorSectionHeading from './ProsecutorSectionHeading'
-import ProsecutorSelection from './ProsecutorSelection'
 import { strings } from './ProsecutorSectionHeightenedSecurity.strings'
 
 const ProsecutorSectionHeightenedSecurity: React.FC = () => {
@@ -23,19 +22,19 @@ const ProsecutorSectionHeightenedSecurity: React.FC = () => {
 
   const { workingCase, setWorkingCase } = useContext(FormContext)
   const { user } = useContext(UserContext)
-  const [substituteProsecutor, setSubstituteProsecutor] = useState<User>()
+  const [substituteProsecutorId, setSubstituteProsecutor] = useState<string>()
   const [
     isProsecutorAccessModalVisible,
     setIsProsecutorAccessModalVisible,
   ] = useState<boolean>(false)
   const { setAndSendToServer } = useCase()
 
-  const setProsecutor = async (prosecutor: User) => {
+  const setProsecutor = async (prosecutorId: string) => {
     if (workingCase) {
       return setAndSendToServer(
         [
           {
-            prosecutorId: prosecutor.id,
+            prosecutorId: prosecutorId,
             force: true,
           },
         ],
@@ -45,7 +44,7 @@ const ProsecutorSectionHeightenedSecurity: React.FC = () => {
     }
   }
 
-  const handleProsecutorChange = (prosecutor: User) => {
+  const handleProsecutorChange = (prosecutorId: string) => {
     if (!workingCase) {
       return false
     }
@@ -54,13 +53,13 @@ const ProsecutorSectionHeightenedSecurity: React.FC = () => {
       user?.id !== workingCase.creatingProsecutor?.id
 
     if (workingCase.isHeightenedSecurityLevel && isRemovingCaseAccessFromSelf) {
-      setSubstituteProsecutor(prosecutor)
+      setSubstituteProsecutor(prosecutorId)
       setIsProsecutorAccessModalVisible(true)
 
       return false
     }
 
-    setProsecutor(prosecutor)
+    setProsecutor(prosecutorId)
 
     return true
   }
@@ -108,8 +107,8 @@ const ProsecutorSectionHeightenedSecurity: React.FC = () => {
             strings.accessModalSecondaryButtonText,
           )}
           onPrimaryButtonClick={async () => {
-            if (substituteProsecutor) {
-              await setProsecutor(substituteProsecutor)
+            if (substituteProsecutorId) {
+              await setProsecutor(substituteProsecutorId)
               router.push(constants.CASES_ROUTE)
             }
           }}

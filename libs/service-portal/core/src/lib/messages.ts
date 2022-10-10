@@ -181,6 +181,11 @@ export const m = defineMessages({
     id: 'service.portal:could-not-fetch-data',
     defaultMessage: 'Ekki tókst að sækja gögn',
   },
+  errorFetchModule: {
+    id: 'service.portal:could-not-fetch-data-module',
+    defaultMessage:
+      'Ekki tókst að sækja {module}, samband við vefþjón mistókst.',
+  },
   couldNotFetch: {
     id: 'service.portal:could-not-fetch',
     defaultMessage: 'Tókst ekki að sækja',
@@ -500,6 +505,14 @@ export const m = defineMessages({
   drivingLicense: {
     id: 'service.portal:drivingLicense',
     defaultMessage: 'Ökuréttindi',
+  },
+  adrLicense: {
+    id: 'service.portal:adr-license',
+    defaultMessage: 'Ökuréttindi',
+  },
+  machineLicense: {
+    id: 'service.portal:machine-license',
+    defaultMessage: 'Vinnuvélaréttindi',
   },
   notFound: {
     id: 'service.portal:not-found',

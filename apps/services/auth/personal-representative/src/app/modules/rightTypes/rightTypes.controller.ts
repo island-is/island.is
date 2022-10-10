@@ -1,10 +1,9 @@
 import { AuthScope } from '@island.is/auth/scopes'
 import {
   PaginatedPersonalRepresentativeRightTypeDto,
-  PersonalRepresentativeRightType,
   PersonalRepresentativeRightTypeDTO,
   PersonalRepresentativeRightTypeService,
-} from '@island.is/auth-api-lib/personal-representative'
+} from '@island.is/auth-api-lib'
 import type { Auth } from '@island.is/auth-nest-tools'
 import {
   CurrentAuth,
