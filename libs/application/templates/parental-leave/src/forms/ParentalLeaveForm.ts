@@ -593,10 +593,9 @@ export const ParentalLeaveForm: Form = buildForm({
             // }),
             buildFileUploadField({
               id: 'fileUpload.unionConfirmationFile',
-              // need copy for this field
-              title: parentalLeaveFormMessages.attachmentScreen.unionTitle,
+              title: parentalLeaveFormMessages.attachmentScreen.unemploymentBenefitsTitle,
               introduction:
-                parentalLeaveFormMessages.attachementScreen.unionDescription,
+                parentalLeaveFormMessages.attachmentScreen.unionDescription,
               condition: (answers) => {
                 const isRecivingUnemploymentBenefits =
                   (answers as {
@@ -624,12 +623,11 @@ export const ParentalLeaveForm: Form = buildForm({
             }),
             buildFileUploadField({
               id: 'fileUpload.healthInsuranceConfirmationFile',
-              // need copy for this field
               title:
-                parentalLeaveFormMessages.attachementScreen
-                  .healthInsuranceTitle,
+                parentalLeaveFormMessages.attachmentScreen
+                  .unemploymentBenefitsTitle,
               introduction:
-                parentalLeaveFormMessages.attachementScreen
+                parentalLeaveFormMessages.attachmentScreen
                   .healthInsuranceDescription,
               condition: (answers) => {
                 const isRecivingUnemploymentBenefits =

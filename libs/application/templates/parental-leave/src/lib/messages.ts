@@ -1538,25 +1538,20 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: `Námsmenn þurfa að skila inn staðfestingu á námi og námsárangri. Athugaðu að skjalið þarf að vera á .pdf formi`,
       description: `student description`,
     },
-    unionTitle: {
-      id: 'pl.application:attachmentscreen.unionTitle',
-      defaultMessage: `union title copy here`,
-      description: `union title`,
+    unemploymentBenefitsTitle: {
+      id: 'pl.application:attachmentscreen.unemployedBenefitsTitle',
+      defaultMessage: `Atvinnuleysisbætur`,
+      description: `Unemployment benefits`,
     },
     unionDescription: {
       id: 'pl.application:attachmentscreen.unionDescription',
-      defaultMessage: `union description copy here`,
-      description: `union description`,
-    },
-    healthInsuranceTitle: {
-      id: 'pl.application:attachmentscreen.sjúkratryggingarTitle',
-      defaultMessage: `health insurance title copy here`,
-      description: `health insurance title`,
+      defaultMessage: `Þeir sem þiggja dagpeninga/veikindarétt frá stéttarfélagi þurfa að skila inn skjali því til staðfestingar. Athugaðu að skjalið þarf að vera á .pdf formi`,
+      description: `Those who receive unemployment benefits/sick leave allowance from the Union must submit a document to confirm this. Note that the document needs to be on .pdf format`,
     },
     healthInsuranceDescription: {
       id: 'pl.application:attachmentscreen.sjúkratryggingarDescription',
-      defaultMessage: `health insurance description copy here`,
-      description: `health insurance description`,
+      defaultMessage: `Þeir sem þiggja sjúkradagpeninga frá Sjúkratryggingum Íslands þurfa að skila inn skjali því til staðfestingar. Athugaðu að skjalið þarf að vera á .pdf formi`,
+      description: `Those who receive sick leave allowance from Sjúkratryggingar Íslands must submit a document to confirm this. Note that the document needs to be on .pdf format`,
     },
     fatherWithoutMotherTitle: {
       id: 'pl.application:attachmentscreen.fatherWithoutMotherTitle',
