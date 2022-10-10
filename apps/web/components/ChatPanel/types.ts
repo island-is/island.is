@@ -40,6 +40,9 @@ export type WatsonIntegration =
   // Askur syslumenn
   | '0c96e8fb-d4dc-420e-97db-18b0f8bb4e3f'
 
+  // Askur - english
+  | '2e32cba8-7379-44e9-b03e-af1ccdbe5982'
+
 export type WatsonServiceInstance =
   // Askur
   'bc3d8312-d862-4750-b8bf-529db282050a'
