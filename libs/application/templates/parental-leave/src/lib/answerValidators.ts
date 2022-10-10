@@ -141,10 +141,10 @@ export const answerValidators: Record<string, AnswerValidator> = {
       }
       if (
         unemploymentBenefitsSelect ===
-        unemploymentBenefitTypes.sjúkratryggingarÍslands &&
+          unemploymentBenefitTypes.sjúkratryggingarÍslands &&
         isEmpty(
-          (obj as { sjúkratryggingarConfirmationFile: unknown[] })
-            .sjúkratryggingarConfirmationFile,
+          (obj as { healthInsuranceConfirmationFile: unknown[] })
+            .healthInsuranceConfirmationFile,
         )
       ) {
         return buildError(
