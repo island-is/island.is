@@ -1533,6 +1533,26 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: `Námsmenn þurfa að skila inn staðfestingu á námi og námsárangri. Athugaðu að skjalið þarf að vera á .pdf formi`,
       description: `student description`,
     },
+    unionTitle: {
+      id: 'pl.application:attachmentscreen.unionTitle',
+      defaultMessage: `union title copy here`,
+      description: `union title`,
+    },
+    unionDescription: {
+      id: 'pl.application:attachmentscreen.unionDescription',
+      defaultMessage: `union description copy here`,
+      description: `union description`,
+    },
+    healthInsuranceTitle: {
+      id: 'pl.application:attachmentscreen.sjúkratryggingarTitle',
+      defaultMessage: `health insurance title copy here`,
+      description: `health insurance title`,
+    },
+    healthInsuranceDescription: {
+      id: 'pl.application:attachmentscreen.sjúkratryggingarDescription',
+      defaultMessage: `health insurance description copy here`,
+      description: `health insurance description`,
+    },
     fatherWithoutMotherTitle: {
       id: 'pl.application:attachmentscreen.fatherWithoutMotherTitle',
       defaultMessage: 'Vottorð frá heilsugæslu',
