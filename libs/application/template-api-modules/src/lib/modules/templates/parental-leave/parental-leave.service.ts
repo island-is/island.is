@@ -239,7 +239,6 @@ export class ParentalLeaveService {
         `fileUpload.unionConfirmationFile[${index}].key`,
       )
 
-
       const Key = `${application.id}/${filename}`
       const file = await this.s3
         .getObject({ Bucket: this.attachmentBucket, Key })
@@ -259,17 +258,10 @@ export class ParentalLeaveService {
 
   async getHealthInsuranceConfirmationPdf(application: Application, index = 0) {
     try {
-      let filename = getValueViaPath(
+      const filename = getValueViaPath(
         application.answers,
-        `fileUpload.sjúkratryggingarConfirmationFile[${index}].key`,
+        `fileUpload.healthInsuranceConfirmationFile[${index}].key`,
       )
-
-      if (!filename) {
-        filename = getValueViaPath(
-          application.answers,
-          `fileUpload.selfEmployedFile[${index}].key`,
-        )
-      }
 
       const Key = `${application.id}/${filename}`
       const file = await this.s3
@@ -350,39 +342,52 @@ export class ParentalLeaveService {
       }
     }
 
-    const { isRecivingUnemploymentBenefits, unemploymentBenefits } = getApplicationAnswers(application.answers)
+    const {
+      isRecivingUnemploymentBenefits,
+      unemploymentBenefits,
+    } = getApplicationAnswers(application.answers)
 
-    if (isRecivingUnemploymentBenefits === YES && unemploymentBenefits === unemploymentBenefitTypes.stéttarfélagi) {
+    if (
+      isRecivingUnemploymentBenefits === YES &&
+      unemploymentBenefits === unemploymentBenefitTypes.stéttarfélagi
+    ) {
       const unionPdfs = (await getValueViaPath(
         application.answers,
         'fileUpload.unionConfirmationFile',
       )) as unknown[]
-      
+
       if (unionPdfs?.length) {
         for (let i = 0; i <= unionPdfs.length - 1; i++) {
           const pdf = await this.getUnionConfirmationPdf(application, i)
 
           attachments.push({
             attachmentType: apiConstants.attachments.unionConfirmation,
-            attachmentBytes: pdf
+            attachmentBytes: pdf,
           })
         }
       }
     }
 
-    if (isRecivingUnemploymentBenefits === YES && unemploymentBenefits === unemploymentBenefitTypes.sjúkratryggingarÍslands) {
+    if (
+      isRecivingUnemploymentBenefits === YES &&
+      unemploymentBenefits === unemploymentBenefitTypes.sjúkratryggingarÍslands
+    ) {
       const healthInsurancePdfs = (await getValueViaPath(
         application.answers,
-        'fileUpload.healthInsuranceConfirmationFile'
+        'fileUpload.healthInsuranceConfirmationFile',
       )) as unknown[]
 
       if (healthInsurancePdfs?.length) {
         for (let i = 0; i <= healthInsurancePdfs.length - 1; i++) {
-          const pdf = await this.getHealthInsuranceConfirmationPdf(application, i)
+          const pdf = await this.getHealthInsuranceConfirmationPdf(
+            application,
+            i,
+          )
 
           attachments.push({
-            attachmentType: apiConstants.attachments.healthInsuranceConfirmation,
-            attachmentBytes: pdf
+            attachmentType:
+              apiConstants.attachments.healthInsuranceConfirmation,
+            attachmentBytes: pdf,
           })
         }
       }
