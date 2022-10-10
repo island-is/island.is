@@ -1,5 +1,4 @@
 import { AuthApiScope, AuthApiScopeGroup } from '@island.is/api/schema'
-import { AuthDelegationScopeType } from '@island.is/service-portal/graphql'
 
 export const GROUP_PREFIX = 'group'
 export const SCOPE_PREFIX = 'scope'
@@ -20,7 +19,6 @@ export type AccessForm = {
   [SCOPE_PREFIX]: {
     name: string[]
     validTo?: Date
-    type: AuthDelegationScopeType
     displayName?: string
   }[]
 }

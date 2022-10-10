@@ -5,7 +5,6 @@ export const AUTH_API_SCOPES_QUERY = gql`
     authApiScopes(input: $input) {
       name
       displayName
-      type
       group {
         name
         displayName

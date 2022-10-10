@@ -21,10 +21,10 @@ export const delegationsModule: ServicePortalModule = {
     const accessControlCommonFields = {
       name: m.accessControlDelegations,
       path: ServicePortalPath.AccessControlDelegations,
-      navHide: !userInfo.scopes.includes(AuthScope.writeDelegations),
+      navHide: !userInfo.scopes.includes(AuthScope.delegations),
       enabled: personDelegation
         ? false
-        : userInfo.scopes.includes(AuthScope.writeDelegations),
+        : userInfo.scopes.includes(AuthScope.delegations),
       render: () => lazy(() => import('./screens/AccessControl')),
     }
 
@@ -40,13 +40,13 @@ export const delegationsModule: ServicePortalModule = {
       {
         name: m.accessControlGrant,
         path: ServicePortalPath.AccessControlDelegationsGrant,
-        enabled: userInfo.scopes.includes(AuthScope.writeDelegations),
+        enabled: userInfo.scopes.includes(AuthScope.delegations),
         render: () => lazy(() => import('./screens/GrantAccess')),
       },
       {
         name: m.accessControlAccess,
         path: ServicePortalPath.AccessControlDelegationAccess,
-        enabled: userInfo.scopes.includes(AuthScope.writeDelegations),
+        enabled: userInfo.scopes.includes(AuthScope.delegations),
         render: () => lazy(() => import('./screens/Access')),
       },
     ]

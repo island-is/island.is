@@ -19,6 +19,10 @@ export const Modal = ({
   isVisible,
   children,
 }: ModalProps) => {
+  const handleOnVisibilityChange = (isVisible: boolean) => {
+    !isVisible && onClose && onClose()
+  }
+
   return (
     <ModalBase
       baseId={id}
@@ -28,11 +32,7 @@ export const Modal = ({
       hideOnEsc
       preventBodyScroll
       removeOnClose
-      onVisibilityChange={(visibility: boolean) => {
-        if (visibility !== isVisible) {
-          onClose()
-        }
-      }}
+      onVisibilityChange={handleOnVisibilityChange}
     >
       <Box
         position="relative"

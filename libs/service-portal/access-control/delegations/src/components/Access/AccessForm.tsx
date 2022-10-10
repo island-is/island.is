@@ -29,7 +29,6 @@ import {
 } from '../../components'
 import { servicePortalSaveAccessControl } from '@island.is/plausible'
 import {
-  AuthDelegationScopeType,
   AuthDelegationsDocument,
   useAuthApiScopesQuery,
   useUpdateAuthDelegationMutation,
@@ -94,10 +93,9 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
     const scopes = model[SCOPE_PREFIX].filter(
       (scope) => scope.name?.length > 0,
     ).map((scope) => ({
+      ...scope,
       // If validityPeriod exists then all scopes get the same validity period
       validTo: validityPeriod ?? (scope.validTo as Date),
-      type: authApiScopes?.find((apiScope) => apiScope.name === scope.name[0])
-        ?.type as AuthDelegationScopeType,
       name: scope.name[0],
       displayName: scope.displayName,
     }))

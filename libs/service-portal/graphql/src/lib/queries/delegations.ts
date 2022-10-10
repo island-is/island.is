@@ -17,7 +17,6 @@ export const AUTH_DELEGATION_QUERY = gql`
         scopes {
           id
           name
-          type
           validTo
           displayName
         }
