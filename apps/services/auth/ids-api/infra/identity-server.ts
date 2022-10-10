@@ -4,7 +4,7 @@ import { service, ServiceBuilder, ref } from '../../../../../infra/src/dsl/dsl'
  * This setup is for the Identity Server, which is hosted in a different repository - https://github.com/island-is/identity-server.web
  */
 export const serviceSetup = (services: {
-  authApi: ServiceBuilder<'services-auth-api'>
+  authApi: ServiceBuilder<'services-auth-ids-api'>
 }): ServiceBuilder<'identity-server'> => {
   return service('identity-server')
     .namespace('identity-server')

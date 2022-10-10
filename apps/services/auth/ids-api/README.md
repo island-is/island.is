@@ -21,20 +21,20 @@ The API is used exclusively by the authentication server, but shares services an
 To run the API locally, you first need to start the database container:
 
 ```bash
-yarn dev-services services-auth-api
+yarn dev-services services-auth-ids-api
 ```
 
 Then run the migration and seed scripts:
 
 ```bash
-yarn nx run services-auth-api:migrate
-yarn nx run services-auth-api:seed
+yarn nx run services-auth-ids-api:migrate
+yarn nx run services-auth-ids-api:seed
 ```
 
 Finally, start the service:
 
 ```bash
-yarn start services-auth-api
+yarn start services-auth-ids-api
 ```
 
 ## Code owners and maintainers

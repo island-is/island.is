@@ -1,5 +1,5 @@
 import startOfDay from 'date-fns/startOfDay'
-import { Op, WhereOptions } from 'sequelize/types'
+import { Op, WhereOptions } from 'sequelize'
 
 import {
   DelegationScopeDTO,

@@ -7,10 +7,10 @@ const postgresInfo = {
   name: 'servicesauth',
   passwordSecret: '/k8s/services-auth/api/DB_PASSWORD',
 }
-export const serviceSetup = (): ServiceBuilder<'services-auth-api'> => {
-  return service('services-auth-api')
+export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
+  return service('services-auth-ids-api')
     .namespace('identity-server')
-    .image('services-auth-api')
+    .image('services-auth-ids-api')
     .postgres(postgresInfo)
     .env({
       IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api',

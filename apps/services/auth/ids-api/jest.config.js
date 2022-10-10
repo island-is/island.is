@@ -1,6 +1,6 @@
 module.exports = {
   preset: '../../../../jest.preset.js',
-  coverageDirectory: '../../../../coverage/apps/reference-backend',
+  coverageDirectory: '../../../../coverage/apps/services/auth/ids-api',
   globalSetup: './test/globalSetup.ts',
   globalTeardown: './test/globalTeardown.ts',
   setupFilesAfterEnv: ['./test/setup.ts'],
@@ -8,6 +8,6 @@ module.exports = {
   globals: {
     'ts-jest': { tsconfig: '<rootDir>/tsconfig.spec.json' },
   },
-  displayName: 'services-auth-api',
+  displayName: 'services-auth-ids-api',
   testEnvironment: 'node',
 }

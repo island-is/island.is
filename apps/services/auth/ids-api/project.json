@@ -1,6 +1,6 @@
 {
-  "root": "apps/services/auth/api",
-  "sourceRoot": "apps/services/auth/api/src",
+  "root": "apps/services/auth/ids-api",
+  "sourceRoot": "apps/services/auth/ids-api/src",
   "projectType": "application",
   "prefix": "auth-api",
   "generators": {},
@@ -8,9 +8,9 @@
     "build": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
-        "outputPath": "dist/apps/services/auth/api",
+        "outputPath": "dist/apps/services/auth/ids-api",
         "commands": [
-          "nx esbuild services-auth-api",
+          "nx esbuild services-auth-ids-api",
           "tsc --build libs/auth-api-lib/seeders/data/tsconfig.json"
         ],
         "parallel": false
@@ -18,7 +18,7 @@
       "configurations": {
         "production": {
           "commands": [
-            "nx esbuild services-auth-api --prod",
+            "nx esbuild services-auth-ids-api --prod",
             "tsc --build libs/auth-api-lib/seeders/data/tsconfig.json"
           ]
         }
@@ -27,11 +27,11 @@
     "esbuild": {
       "executor": "./tools/executors/node:build",
       "options": {
-        "outputPath": "dist/apps/services/auth/api",
-        "main": "apps/services/auth/api/src/main.ts",
-        "tsConfig": "apps/services/auth/api/tsconfig.app.json",
+        "outputPath": "dist/apps/services/auth/ids-api",
+        "main": "apps/services/auth/ids-api/src/main.ts",
+        "tsConfig": "apps/services/auth/ids-api/tsconfig.app.json",
         "assets": [
-          "apps/services/auth/api/src/assets",
+          "apps/services/auth/ids-api/src/assets",
           {
             "glob": "*",
             "input": "libs/auth-api-lib/migrations",
@@ -67,36 +67,36 @@
     "serve": {
       "executor": "@nrwl/node:node",
       "options": {
-        "buildTarget": "services-auth-api:esbuild"
+        "buildTarget": "services-auth-ids-api:esbuild"
       }
     },
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "options": {
-        "lintFilePatterns": ["apps/services/auth/api/**/*.{ts,tsx,js,jsx}"]
+        "lintFilePatterns": ["apps/services/auth/ids-api/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
       "executor": "@nrwl/jest:jest",
       "options": {
-        "jestConfig": "apps/services/auth/api/jest.config.js",
+        "jestConfig": "apps/services/auth/ids-api/jest.config.js",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/apps/services/auth/api"]
+      "outputs": ["coverage/apps/services/auth/ids-api"]
     },
     "docker-express": {},
     "dev-services": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "command": "docker-compose up -d",
-        "cwd": "apps/services/auth/api"
+        "cwd": "apps/services/auth/ids-api"
       }
     },
     "schemas/build-openapi": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
-        "outputPath": "apps/services/auth/api/src/openapi.yaml",
-        "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/auth/api/tsconfig.app.json apps/services/auth/api/src/buildOpenApi.ts"
+        "outputPath": "apps/services/auth/ids-api/src/openapi.yaml",
+        "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/auth/ids-api/tsconfig.app.json apps/services/auth/ids-api/src/buildOpenApi.ts"
       }
     },
     "migrate": {

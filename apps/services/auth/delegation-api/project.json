@@ -1,0 +1,52 @@
+{
+  "root": "apps/services/auth/delegation-api",
+  "sourceRoot": "apps/services/auth/delegation-api/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/node:webpack",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/services/auth/delegation-api",
+        "main": "apps/services/auth/delegation-api/src/main.ts",
+        "tsConfig": "apps/services/auth/delegation-api/tsconfig.app.json",
+        "assets": ["apps/services/auth/delegation-api/src/assets"]
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false,
+          "fileReplacements": [
+            {
+              "replace": "apps/services/auth/delegation-api/src/environments/environment.ts",
+              "with": "apps/services/auth/delegation-api/src/environments/environment.prod.ts"
+            }
+          ]
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/node:node",
+      "options": {
+        "buildTarget": "services-auth-delegation-api:build"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/services/auth/delegation-api/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/apps/services/auth/delegation-api"],
+      "options": {
+        "jestConfig": "apps/services/auth/delegation-api/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

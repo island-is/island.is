@@ -4,7 +4,7 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Op } from 'sequelize/types'
+import { Op } from 'sequelize'
 import { uuid } from 'uuidv4'
 
 import { User } from '@island.is/auth-nest-tools'
