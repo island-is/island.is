@@ -22,4 +22,19 @@ export class DomainDTO {
     example: '0123456789',
   })
   readonly nationalId!: string
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({
+    example: 'Mínar síður Ísland.is',
+  })
+  readonly displayName!: string
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({
+    example: 'Stafrænt Ísland',
+    description: 'This key is used to look up the organisation in Contentful.',
+  })
+  readonly organisationLogoKey!: string
 }
