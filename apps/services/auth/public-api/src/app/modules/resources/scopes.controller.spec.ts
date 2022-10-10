@@ -188,7 +188,7 @@ describe('ScopesController', () => {
         user: {
           ...user,
           scope: [
-            AuthScope.readDelegations,
+            AuthScope.delegations,
             ...sortedScopes.map((scope) => scope.name),
           ],
         },
