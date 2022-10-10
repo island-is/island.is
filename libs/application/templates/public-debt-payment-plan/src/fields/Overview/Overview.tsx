@@ -19,10 +19,10 @@ import React, { useEffect, useState } from 'react'
 import { overview } from '../../lib/messages'
 import { formatIsk } from '../../lib/paymentPlanUtils'
 import {
-  NatRegResult,
   PaymentPlan,
   Applicant,
   CorrectedEmployer,
+  IdentityResult,
 } from '../../types'
 import { DistributionTable } from './DistributionTabel'
 import * as styles from './Overview.css'
@@ -57,7 +57,7 @@ export const Overview = ({ application, goToScreen }: FieldBaseProps) => {
   const nationalRegistry = getValueViaPath(
     application.externalData,
     'nationalRegistry',
-  ) as NatRegResult
+  ) as IdentityResult
 
   // Applicant
   const applicant = getValueViaPath(
@@ -141,10 +141,10 @@ export const Overview = ({ application, goToScreen }: FieldBaseProps) => {
       <ReviewGroup isEditable editAction={() => editAction('applicantSection')}>
         <GridRow>
           <GridColumn span={['6/12', '5/12']}>
-            {nationalRegistry?.data?.fullName && (
+            {nationalRegistry?.data?.name && (
               <Box>
                 <Label>{formatMessage(overview.name)}</Label>
-                <Text>{nationalRegistry?.data?.fullName}</Text>
+                <Text>{nationalRegistry?.data?.name}</Text>
               </Box>
             )}
             {applicant?.phoneNumber && (

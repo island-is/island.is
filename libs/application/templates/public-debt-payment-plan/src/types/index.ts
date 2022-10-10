@@ -6,6 +6,7 @@ import {
   PaymentScheduleType,
 } from '@island.is/api/schema'
 import { SuccessfulDataProviderResult } from '@island.is/application/types'
+import { Identity } from '@island.is/clients/identity'
 import * as z from 'zod'
 import {
   PaymentPlanSchema,
@@ -79,29 +80,13 @@ export interface PaymentDistribution {
   scheduleType: PaymentScheduleType
 }
 
-export interface NatRegResult extends SuccessfulDataProviderResult {
-  data: {
-    nationalId: string
-    age: number
-    fullName: string
-    citizenship: {
-      code: string
-      name: string
-    }
-    legalResidence: string
-    address: {
-      code: string
-      postalCode: string
-      city: string
-      streetAddress: string
-      lastUpdated: string
-    }
-  }
+export interface IdentityResult extends SuccessfulDataProviderResult {
+  data: Identity
 }
 
 export type PaymentPlanExternalData = {
   paymentPlanPrerequisites?: PrerequisitesResult
-  nationalRegistry?: NatRegResult
+  identity?: IdentityResult
   userProfile?: UserProfileResult
 }
 

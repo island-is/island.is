@@ -11,6 +11,7 @@ import {
   defineTemplateApi,
   NationalRegistryUserApi,
   UserProfileApi,
+  IdentityApi,
 } from '@island.is/application/types'
 import { PaymentPlanPrerequisitesApi } from '../dataProviders'
 import { PublicDebtPaymentPlanSchema } from './dataSchema'
@@ -75,11 +76,7 @@ const PublicDebtPaymentPlanTemplate: ApplicationTemplate<
                 },
               ],
               write: 'all',
-              api: [
-                NationalRegistryUserApi,
-                UserProfileApi,
-                PaymentPlanPrerequisitesApi,
-              ],
+              api: [IdentityApi, UserProfileApi, PaymentPlanPrerequisitesApi],
             },
           ],
         },
