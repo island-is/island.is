@@ -91,9 +91,14 @@ export class EstateTemplateService {
       nationalIdOfDeceased: '0101301234',
       districtCommissionerHasWill: true,
     }
+
+    const relationOptions = (await this.syslumennService.getEstateRelations())
+      .relations
+
     return {
       success: true,
       estate,
+      relationOptions,
     }
   }
 
