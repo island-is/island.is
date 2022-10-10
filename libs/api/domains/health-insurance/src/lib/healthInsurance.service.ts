@@ -1,6 +1,6 @@
-import { DocumentApi, PersonApi } from '@island.is/clients/health-insurance-v2'
+import { PersonApi } from '@island.is/clients/health-insurance-v2'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { ConsoleLogger, Inject, Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
 import type { Logger } from '@island.is/logging'
