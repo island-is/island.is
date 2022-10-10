@@ -7,6 +7,7 @@ import {
   NestedType,
 } from '@island.is/application/templates/family-matters-core/types'
 import { FieldBaseProps } from '@island.is/application/types'
+import { BOARDMEMEBER, CARETAKER } from '../constants'
 
 const FileSchema = z.object({
   name: z.string(),
@@ -144,25 +145,41 @@ const operatingCost = z.object({
   total: z.string().refine((x) => !!x, { params: m.required }),
 })
 
-const cemetryCaretaker = z.array(
-  z.object({
-    name: z.string().refine((x) => !!x, { params: m.required }),
-    nationalId: z
-      .string()
-      .refine((val) => (val ? kennitala.isPerson(val) : false), {
-        params: m.nationalIdError,
-      })
-      .refine((val) => {
-        return (
-          val ? kennitala.info(val).age < 18 : false,
-          {
-            params: m.nationalIdAgeError,
-          }
-        )
-      }),
-    role: z.string().refine((x) => !!x, { params: m.required }),
-  }),
-)
+const cemetryCaretaker = z
+  .array(
+    z.object({
+      name: z.string().refine((x) => !!x, { params: m.required }),
+      nationalId: z
+        .string()
+        .refine((val) => (val ? kennitala.isPerson(val) : false), {
+          params: m.nationalIdError,
+        })
+        .refine((val) => {
+          return (
+            val ? kennitala.info(val).age < 18 : false,
+            {
+              params: m.nationalIdAgeError,
+            }
+          )
+        }),
+      role: z.string().refine((x) => !!x, { params: m.required }),
+    }),
+  )
+  .refine(
+    (x) => {
+      if (x.length <= 0) {
+        return false
+      }
+      const careTakers = x.filter((member) => member.role === CARETAKER)
+      const boardMembers = x.filter((member) => member.role === BOARDMEMEBER)
+      if (careTakers.length < 1 || boardMembers.length < 1) {
+        return false
+      } else {
+        return true
+      }
+    },
+    { params: m.errorMembersMissing },
+  )
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -186,7 +203,7 @@ export const dataSchema = z.object({
   equity,
   liability,
   attachment: z.object({
-    file: z.array(FileSchema),
+    file: z.array(FileSchema).nonempty(),
   }),
 })
 

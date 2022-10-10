@@ -11,10 +11,11 @@ import {
   GridColumn,
   GridRow,
   GridContainer,
+  InputError,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import { useLazyQuery } from '@apollo/client'
+// import { useLazyQuery } from '@apollo/client'
 import { getValueViaPath, getErrorViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import {
@@ -23,7 +24,8 @@ import {
 } from '@island.is/shared/form-fields'
 import { FinancialStatementsInao } from '../../lib/utils/dataSchema'
 import * as styles from './CemetryCaretaker.css'
-import { IdentityQuery } from '../../graphql'
+// import { IdentityQuery } from '../../graphql'
+import { BOARDMEMEBER, CARETAKER } from '../../lib/constants'
 
 type Props = {
   id: string
@@ -41,24 +43,25 @@ const CareTakerRepeaterItem = ({
   handleRemoveCaretaker,
 }: Props) => {
   const { formatMessage } = useLocale()
-  const [nationalIdInput, setNationalIdInput] = useState('')
-  const { setValue, getValues } = useFormContext()
 
+  const [nationalIdInput, setNationalIdInput] = useState('')
+  // const { getValues, setValue } = useFormContext()
   const fieldIndex = `${id}[${index}]`
   const nameField = `${fieldIndex}.name`
   const nationalIdField = `${fieldIndex}.nationalId`
   const roleField = `${fieldIndex}.role`
 
-  const [getIdentity, { data, loading, error }] = useLazyQuery<
-    Query,
-    { input: IdentityInput }
-  >(IdentityQuery, {
-    onCompleted: (data) => {
-      console.log(data)
-    },
-  })
+  // currently getting a weird errir when trying to fetch name
+  // keeping some code for late use
 
-  console.log({ data, loading, error })
+  // const [getIdentity, { data, loading, error }] = useLazyQuery<
+  //   Query,
+  //   { input: IdentityInput }
+  // >(IdentityQuery, {
+  //   onCompleted: (data) => {
+  //     console.log(data)
+  //   },
+  // })
 
   // useEffect(() => {
   //   if (nationalIdInput.length === 10 && kennitala.isValid(nationalIdInput)) {
@@ -74,7 +77,6 @@ const CareTakerRepeaterItem = ({
 
   // console.log({ data, loading, error })
   // const fetchName = throttle((nationalId: string) => {
-  //   console.log(nationalId)
   //   const isPerson = kennitala.isPerson(nationalId)
   //   if (isPerson) {
   //     getIdentity({
@@ -148,11 +150,11 @@ const CareTakerRepeaterItem = ({
               options={[
                 {
                   label: formatMessage(m.cemeteryInspector),
-                  value: 'Skoðunarmaður',
+                  value: CARETAKER,
                 },
                 {
                   label: formatMessage(m.cemeteryBoardMember),
-                  value: 'Stjórnarmaður',
+                  value: BOARDMEMEBER,
                 },
               ]}
             />

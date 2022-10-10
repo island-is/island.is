@@ -296,6 +296,16 @@ export const m = defineMessages({
     defaultMessage: 'Reitur má ekki vera tómur',
     description: 'empty field error',
   },
+  errorApproval: {
+    id: 'fsn.application:error.errorApproval',
+    defaultMessage: 'Samþykkja þarf yfirlit',
+    description: 'Approval missing',
+  },
+  errorMembersMissing: {
+    id: 'fsn.application:error.errorMembersMissing',
+    defaultMessage: 'Skrá þarf bæði skoðunarmann og stjórnarmann',
+    description: 'Members missing',
+  },
   publicDonations: {
     id: 'fsn.application:income.publicDonations',
     defaultMessage: 'Framlög úr ríkissjóði',

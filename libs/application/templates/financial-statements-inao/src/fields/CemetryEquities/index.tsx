@@ -32,7 +32,7 @@ export const CemetryEquities = ({
 
   // liabilities - equities
   const [equityTotal, setEquityTotal] = useState(0)
-  const [totalOperation, setTotalOperation] = useState('')
+  const [totalOperatingCost, setTotalOperatingCost] = useState('0')
 
   const [getTotalAssets, totalAssets] = useTotals(
     CEMETRYEQUITIESANDLIABILITIESIDS.assetPrefix,
@@ -40,26 +40,30 @@ export const CemetryEquities = ({
   const [getTotalLiabilities, totalLiabilities] = useTotals(
     CEMETRYEQUITIESANDLIABILITIESIDS.liabilityPrefix,
   )
-  const [getTotalEquity, totalEquity] = useTotals(
-    CEMETRYEQUITIESANDLIABILITIESIDS.equityPrefix,
-  )
-
-  useEffect(() => {
-    const total = totalEquity - totalLiabilities
-    setEquityTotal(total)
-  }, [totalLiabilities, totalEquity])
+  const [
+    getTotalEquity,
+    totalEquity,
+  ] = useTotals(CEMETRYEQUITIESANDLIABILITIESIDS.equityPrefix, [
+    totalOperatingCost,
+  ])
 
   useEffect(() => {
     const operatingCostTotal = getValueViaPath(
       answers,
       OPERATINGCOST.total,
     ) as string
-    console.log({ operatingCostTotal })
+
     setValue(
       CEMETRYEQUITIESANDLIABILITIESIDS.operationResult,
-      operatingCostTotal,
+      totalOperatingCost,
     )
-  }, [])
+    setTotalOperatingCost(operatingCostTotal)
+  }, [totalOperatingCost])
+
+  useEffect(() => {
+    const total = totalEquity - totalLiabilities
+    setEquityTotal(total)
+  }, [totalLiabilities, totalEquity, totalOperatingCost])
 
   return (
     <GridContainer>

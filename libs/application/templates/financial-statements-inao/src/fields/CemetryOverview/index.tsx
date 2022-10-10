@@ -1,19 +1,23 @@
 import React, { Fragment, useState } from 'react'
 import { DefaultEvents, FieldBaseProps } from '@island.is/application/types'
+import { getErrorViaPath } from '@island.is/application/core'
+
 import {
   Box,
   Button,
+  Checkbox,
   Divider,
   GridColumn,
   GridRow,
-  RadioButton,
+  InputError,
   Text,
 } from '@island.is/island-ui/core'
+import { Controller, useFormContext } from 'react-hook-form'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 import * as Sentry from '@sentry/react'
 import { useMutation } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
-import { formatCurrency } from '../../lib/utils/helpers'
+import { currencyStringToNumber, formatCurrency } from '../../lib/utils/helpers'
 import { FinancialStatementsInao } from '../../lib/utils/dataSchema'
 import { format as formatNationalId } from 'kennitala'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
@@ -23,12 +27,14 @@ import {
   columnStyle,
   starterColumnStyle,
 } from '../Shared/styles/overviewStyles.css'
+import BottomBar from '../../components/BottomBar'
 
 export const CemetryOverview = ({
   application,
   goToScreen,
   refetch,
 }: FieldBaseProps) => {
+  const { errors, setError, setValue } = useFormContext()
   const { formatMessage } = useLocale()
   const [approveOverview, setApproveOverview] = useState(false)
   const [submitApplication, { loading: loadingSubmit }] = useMutation(
@@ -43,8 +49,6 @@ export const CemetryOverview = ({
   const answers = application.answers as FinancialStatementsInao
   const fileName = answers.attachment?.file?.[0]?.name
   const careTakerLimit = answers.cemetryOperation.incomeLimit ?? '0'
-
-  console.log({ application, goToScreen })
 
   const submitAudit = async () => {
     const res = await submitApplication({
@@ -64,14 +68,27 @@ export const CemetryOverview = ({
   }
 
   const onBackButtonClick = () => {
-    // check condition for cemetery
-    goToScreen && goToScreen('attachment.file')
+    const cemeteryIncome = currencyStringToNumber(answers.cemetryIncome?.total)
+    const currentAssets = answers.cemetryAsset?.current
+    const longTermDebt = answers.cemetryLiability?.longTerm
+    if (
+      cemeteryIncome < Number(careTakerLimit) &&
+      currentAssets === '0' &&
+      longTermDebt === '0'
+    ) {
+      goToScreen && goToScreen('caretakers')
+    } else {
+      goToScreen && goToScreen('attachment.file')
+    }
   }
 
   const onSendButtonClick = () => {
     if (approveOverview) {
-      // check for approval then send, add error to checkbox field if unchecked
-      goToScreen && goToScreen('attachment.file')
+      submitAudit()
+    } else {
+      setError('applicationApprove', {
+        type: 'error',
+      })
     }
   }
 
@@ -361,25 +378,35 @@ export const CemetryOverview = ({
         </Text>
       </Box>
       <Box background="blue100" padding={3}>
-        <RadioButton
-          checked={approveOverview}
-          backgroundColor="blue"
-          label={formatMessage(m.overviewCorrect)}
-          large
-          onChange={() => setApproveOverview(!approveOverview)}
+        <Controller
+          name="applicationApprove"
+          defaultValue={approveOverview}
+          rules={{ required: true }}
+          render={({ value, onChange }) => {
+            return (
+              <Checkbox
+                onChange={(e) => {
+                  onChange(e.target.checked)
+                  setApproveOverview(e.target.checked)
+                  setValue('applicationApprove' as string, e.target.checked)
+                }}
+                checked={value}
+                name="applicationApprove"
+                id="applicationApprove"
+                label={formatMessage(m.overviewCorrect)}
+                large
+              />
+            )
+          }}
         />
       </Box>
-      <Box paddingY={3}>
-        <Divider />
-      </Box>
-      <Box display="flex" justifyContent="spaceBetween" paddingY={5}>
-        <Button variant="ghost" onClick={onBackButtonClick}>
-          {formatMessage(m.goBack)}
-        </Button>
-        <Button icon="checkmark" onClick={() => console.log('submit shit')}>
-          {formatMessage(m.send)}
-        </Button>
-      </Box>
+      {errors && getErrorViaPath(errors, 'applicationApprove') ? (
+        <InputError errorMessage={formatMessage(m.errorApproval)} />
+      ) : null}
+      <BottomBar
+        onSendButtonClick={onSendButtonClick}
+        onBackButtonClick={onBackButtonClick}
+      />
     </Box>
   )
 }
