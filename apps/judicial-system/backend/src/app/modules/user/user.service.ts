@@ -34,8 +34,7 @@ export class UserService {
   }
 
   async findById(userId: string): Promise<User> {
-    const user = await this.userModel.findOne({
-      where: { id: userId },
+    const user = await this.userModel.findByPk(userId, {
       include: [{ model: Institution, as: 'institution' }],
     })
 

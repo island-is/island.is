@@ -96,12 +96,6 @@ describe('InternalCaseController - Deliver prosecutor documents', () => {
     const caseId = uuid()
     const courtId = uuid()
     const courtCaseNumber = uuid()
-    const theCase = {
-      id: caseId,
-      type: CaseType.MAJOR_ASSAULT,
-      courtId,
-      courtCaseNumber,
-    } as Case
     const coverLetter = { category: CaseFileCategory.COVER_LETTER } as CaseFile
     const indictment = { category: CaseFileCategory.INDICTMENT } as CaseFile
     const criminalRecord = {
@@ -114,26 +108,27 @@ describe('InternalCaseController - Deliver prosecutor documents', () => {
       category: CaseFileCategory.CASE_FILE_CONTENTS,
     } as CaseFile
     const caseFile = { category: CaseFileCategory.CASE_FILE } as CaseFile
-    let then: Then
-
-    beforeEach(async () => {
-      const mockGetAllCaseFiles = mockFileService.getAllCaseFiles as jest.Mock
-      mockGetAllCaseFiles.mockResolvedValue([
+    const theCase = {
+      id: caseId,
+      type: CaseType.MAJOR_ASSAULT,
+      courtId,
+      courtCaseNumber,
+      caseFiles: [
         coverLetter,
         indictment,
         criminalRecord,
         coustBreakdown,
         caseFileContents,
         caseFile,
-      ])
+      ],
+    } as Case
+    let then: Then
+
+    beforeEach(async () => {
       const mockUploadCaseFileToCourt = mockFileService.uploadCaseFileToCourt as jest.Mock
       mockUploadCaseFileToCourt.mockResolvedValue({ success: true })
 
       then = await givenWhenThen(caseId, theCase)
-    })
-
-    it('should get all case files', async () => {
-      expect(mockFileService.getAllCaseFiles).toHaveBeenCalledWith(caseId)
     })
 
     it('should upload cover letter to court', async () => {
