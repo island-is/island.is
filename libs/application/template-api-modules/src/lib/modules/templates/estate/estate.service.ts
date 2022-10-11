@@ -44,25 +44,30 @@ export class EstateTemplateService {
     //      2. uncomment the following line
     //      const estate = await this.syslumennService.getEstateInfo(application.applicant)[0];
 
+    // TODO: Steini: gera initial data mapper þegar endapunktur er kominn upp
     const estate: EstateData = {
       assets: [
         {
           assetNumber: 'F2318696',
           description: 'Íbúð í Reykjavík',
+          initial: true,
         },
         {
           assetNumber: 'F2262202',
           description: 'Raðhús á Akureyri',
+          initial: true,
         },
       ],
       vehicles: [
         {
           assetNumber: 'VA334',
           description: 'Nissan Terrano II',
+          initial: true,
         },
         {
           assetNumber: 'YZ927',
           description: 'Subaru Forester',
+          initial: true,
         },
       ],
       knowledgeOfOtherWills: 'yes',
@@ -73,16 +78,19 @@ export class EstateTemplateService {
           name: 'Stúfur Mack',
           relation: 'Sonur',
           nationalId: '2222222229',
+          initial: true,
         },
         {
           name: 'Gervimaður Færeyja',
           relation: 'Maki',
           nationalId: '0101302399',
+          initial: true,
         },
         {
           name: 'Gervimaður Bretland',
           relation: 'Faðir',
           nationalId: '0101304929',
+          initial: true,
         },
       ],
       caseNumber: '011515',

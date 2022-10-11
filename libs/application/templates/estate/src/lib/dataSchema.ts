@@ -13,6 +13,7 @@ const asset = z
   .object({
     assetNumber: customZodError(z.string().nonempty(), m.errorNumberEmpty),
     description: z.string().optional(),
+    initial: z.boolean(),
   })
   .array()
   .optional()
@@ -30,6 +31,7 @@ export const estateSchema = z.object({
         custodian: z.string().length(10).optional(),
         foreignCitizenship: z.string().array().min(0).max(1).optional(),
         dateOfBirth: z.string().nonempty().optional(),
+        initial: z.boolean(),
       })
       .array()
       .optional(),
