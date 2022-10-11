@@ -638,7 +638,7 @@ export class DelegationsService {
       )
 
       if (deceased.length > 0) {
-        await this.deletePersonalRepresentatives(deceased, user)
+        await this.deletePersonalRepresentatives(deceased)
       }
 
       return alive
@@ -657,7 +657,6 @@ export class DelegationsService {
 
   private async deletePersonalRepresentatives(
     personalRepresentatives: PersonalRepresentativeDTO[],
-    user: User,
   ) {
     // Delete all personal representatives and their rights
     const deletePromises = personalRepresentatives
@@ -667,7 +666,6 @@ export class DelegationsService {
     await Promise.all(deletePromises)
 
     this.auditService.audit({
-      auth: user,
       action: 'deletePersonalRepresentativesForMissingPeople',
       resources: personalRepresentatives.map(({ id }) => id).filter(isDefined),
       system: true,

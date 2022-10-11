@@ -33,7 +33,7 @@ import { TestEndpointOptions } from '../../../../test/types'
 import {
   expectMatchingObject,
   getRequestMethod,
-  getFakePerson,
+  getFakeName,
 } from '../../../../test/utils'
 import { RskProcuringClient } from '@island.is/clients/rsk/procuring'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
@@ -121,12 +121,13 @@ describe('ActorDelegationsController', () => {
       const deceasedNationalIds = times(3, () => createNationalId('person'))
 
       beforeAll(async () => {
-        const persons = times(10, getFakePerson)
-
         const nationalRegistryUsers = [
           nationalRegistryUser,
-          ...persons.map(([name, nationalId]) =>
-            createNationalRegistryUser({ name, nationalId }),
+          ...times(10, () =>
+            createNationalRegistryUser({
+              name: getFakeName(),
+              nationalId: createNationalId('person'),
+            }),
           ),
         ]
 

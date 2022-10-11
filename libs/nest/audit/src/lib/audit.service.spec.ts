@@ -240,19 +240,13 @@ describe('AuditService against Cloudwatch', () => {
 
     // Act
     service.audit({
-      auth,
       action,
       system: true,
     })
 
     // Assert
     expect(spy).toHaveBeenCalledWith({
-      actor: auth.actor?.nationalId,
-      subject: auth.nationalId,
-      client: [auth.client],
       action: `${defaultNamespace}#${action}`,
-      ip: auth.ip,
-      userAgent: auth.userAgent,
       appVersion,
       system: true,
     })

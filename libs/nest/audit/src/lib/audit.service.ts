@@ -10,25 +10,50 @@ import type { AuditOptions } from './audit.options'
 import { AUDIT_OPTIONS } from './audit.options'
 import isString from 'lodash/isString'
 
-export interface AuditMessage {
-  auth: Auth
+type CommonMessageFields = {
   action: string
   namespace?: string
   resources?: string | string[]
   meta?: Record<string, unknown>
-  system?: boolean
 }
 
-export type AuditTemplate<ResultType> = {
+type SystemMessageFields = {
+  system: true
+}
+
+type DefaultMessageFields = {
   auth: Auth
+}
+
+type SystemAuditMessage = CommonMessageFields & SystemMessageFields
+type DefaultAuditMessage = CommonMessageFields & DefaultMessageFields
+type AuditMessage = SystemAuditMessage | DefaultAuditMessage
+
+// Template types
+type CommonAuditTemplateFields<ResultType> = {
   action: string
   namespace?: string
   resources?: string | string[] | ((result: ResultType) => string | string[])
   meta?:
     | Record<string, unknown>
     | ((result: ResultType) => Record<string, unknown>)
-  system?: boolean
 }
+
+type SystemAuditTemplate<T> = CommonAuditTemplateFields<T> & SystemMessageFields
+type DefaultAuditTemplate<T> = CommonAuditTemplateFields<T> &
+  DefaultMessageFields
+
+export type AuditTemplate<T> = SystemAuditTemplate<T> | DefaultAuditTemplate<T>
+
+const isDefaultAuditMessage = (
+  obj: SystemAuditMessage | DefaultAuditMessage,
+): obj is DefaultAuditMessage =>
+  Object.prototype.hasOwnProperty.call(obj, 'auth')
+
+const isDefaultAuditTemplate = <T>(
+  obj: SystemAuditTemplate<T> | DefaultAuditTemplate<T>,
+): obj is DefaultAuditTemplate<T> =>
+  Object.prototype.hasOwnProperty.call(obj, 'auth')
 
 @Injectable()
 export class AuditService {
@@ -94,34 +119,45 @@ export class AuditService {
     return clients
   }
 
-  private formatMessage({
-    auth,
-    namespace = this.defaultNamespace,
-    action,
-    resources,
-    meta,
-    system = false,
-  }: AuditMessage) {
+  private formatMessage(message: AuditMessage) {
+    const {
+      namespace = this.defaultNamespace,
+      action,
+      resources,
+      meta,
+    } = message
+
     if (!namespace) {
       throw new Error(
         'Audit namespace is required. Did you configure a defaultNamespace?',
       )
     }
 
-    const message = {
-      subject: auth.nationalId,
-      actor: auth.actor ? auth.actor.nationalId : auth.nationalId,
-      client: this.getClients(auth),
+    const commonFields = {
       action: `${namespace}#${action}`,
       resources: isString(resources) ? [resources] : resources,
       meta,
-      ip: auth.ip,
-      userAgent: auth.userAgent,
       appVersion: process.env.APP_VERSION,
-      system: system ?? false,
+      ...(this.useDevLogger && { message: 'Audit record' }),
     }
 
-    return this.useDevLogger ? { message: 'Audit record', ...message } : message
+    if (isDefaultAuditMessage(message)) {
+      const { auth } = message
+
+      return {
+        ...commonFields,
+        subject: auth.nationalId,
+        actor: auth.actor ? auth.actor.nationalId : auth.nationalId,
+        client: this.getClients(auth),
+        ip: auth.ip,
+        userAgent: auth.userAgent,
+      }
+    }
+
+    return {
+      ...commonFields,
+      system: message.system,
+    }
   }
 
   private unwrap<PropType, ResultType>(prop: PropType, result: ResultType) {
@@ -132,20 +168,26 @@ export class AuditService {
     this.auditLog?.info(this.formatMessage(message))
   }
 
-  auditPromise<ResultType>(
-    template: AuditTemplate<ResultType>,
-    promise: Promise<ResultType>,
-  ): Promise<ResultType> {
+  auditPromise<T>(template: AuditTemplate<T>, promise: Promise<T>): Promise<T> {
     return promise.then((result) => {
-      const message: AuditMessage = {
-        auth: template.auth,
+      const commonFields = {
         action: template.action,
         namespace: template.namespace,
         resources: this.unwrap(template.resources, result),
         meta: this.unwrap(template.meta, result),
-        system: template.system ?? false,
       }
-      this.audit(message)
+
+      if (isDefaultAuditTemplate(template)) {
+        this.audit({
+          ...commonFields,
+          auth: template.auth,
+        })
+      } else {
+        this.audit({
+          ...commonFields,
+          system: template.system,
+        })
+      }
 
       return result
     })
