@@ -184,6 +184,10 @@
           "landsnumer": {
             "type": "string",
             "nullable": true
+          },
+          "limitation": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false

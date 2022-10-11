@@ -173,6 +173,7 @@
 /libs/api/domains/syslumenn/                                                                        @island-is/stefna
 /libs/api/domains/mailchimp/                                                                        @island-is/stefna
 /libs/clients/syslumenn/                                                                            @island-is/stefna @island-is/juni
+/libs/shared/connected/                                                                             @island-is/stefna
 
 /libs/island-ui/                                                                                    @island-is/island-ui
 
@@ -208,6 +209,10 @@
 /libs/application/templates/no-debt-certificate/                                                    @island-is/origo
 
 /libs/clients/charge-fjs-v2/                                                                        @island-is/origo
+
+/libs/application/templates/transport-authority/                                                    @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/transport-authority/               @island-is/origo
+
 
 # Temporary assignment while the QA bootstrap project is in progress
 /apps/system-e2e/                                                                                   @island-is/qa

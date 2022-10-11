@@ -7,6 +7,7 @@ import {
   GridRow,
   Hidden,
   Hyphen,
+  Link,
   Text,
 } from '@island.is/island-ui/core'
 import { FooterItem } from '@island.is/web/graphql/schema'
@@ -70,9 +71,19 @@ export const LandskjorstjornFooter = ({
           {footerItems.slice(1).map((item, index) => (
             <GridColumn key={index}>
               <Box marginLeft={index === 0 ? [2, 0] : 2} marginRight={8}>
-                <Text fontWeight="semiBold" color="white" marginBottom={2}>
-                  {item.title}
-                </Text>
+                <Box marginBottom={2}>
+                  {item.link?.url ? (
+                    <Link href={item.link.url} color="white">
+                      <Text fontWeight="semiBold" color="white">
+                        <Hyphen>{item.title}</Hyphen>
+                      </Text>
+                    </Link>
+                  ) : (
+                    <Text fontWeight="semiBold" color="white">
+                      <Hyphen>{item.title}</Hyphen>
+                    </Text>
+                  )}
+                </Box>
                 {richText(item.content as SliceType[], {
                   renderNode: {
                     [BLOCKS.PARAGRAPH]: (_node, children) => (
