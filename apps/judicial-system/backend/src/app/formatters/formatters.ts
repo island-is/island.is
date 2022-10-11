@@ -150,7 +150,7 @@ export function formatCourtResubmittedToCourtSmsNotification(
 
 export function formatDefenderResubmittedToCourtEmailNotification(
   formatMessage: FormatMessage,
-  overviewUrl: string,
+  overviewUrl?: string,
   court?: string,
   courtCaseNumber?: string,
 ): SubjectAndBody {

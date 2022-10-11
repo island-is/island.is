@@ -122,16 +122,16 @@ export const notifications = {
   defenderResubmittedToCourt: defineMessages({
     subject: {
       id:
-        'judicial.system.backend:notifications.defender_resubmitted_to_court.subject',
+        'judicial.system.backend:notifications.defender_resubmitted_to_court.subject_v3',
       defaultMessage: 'Gögn í máli {courtCaseNumber}',
       description:
         'Notaður sem titil í pósti til verjanda þegar sækjandi breytir kröfunni og sendir aftur á héraðsdómstól',
     },
     body: {
       id:
-        'judicial.system.backend:notifications.defender_resubmitted_to_court.body',
+        'judicial.system.backend:notifications.defender_resubmitted_to_court.body_v3',
       defaultMessage:
-        'Sækjandi í máli {courtCaseNumber} hjá {courtName} hefur sent kröfuna aftur á dóminn.',
+        'Sækjandi í máli {courtCaseNumber} hjá {courtName} hefur breytt kröfunni og sent hana aftur á dóminn.',
       description:
         'Notaður sem texti í pósti til verjanda þegar sækjandi breytir kröfunni og sendir aftur á héraðsdómstól',
     },
