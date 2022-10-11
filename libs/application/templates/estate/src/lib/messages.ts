@@ -199,8 +199,7 @@ export const m = defineMessages({
   },
   propertiesDescription: {
     id: 'es.application:propertiesDescription',
-    defaultMessage:
-      'Vinsamlegast farðu yfir upplýsingarnar og gakktu úr skugga um að þær séu réttar.',
+    defaultMessage: 'Tilgreina skal allar hjúskapareignir beggja hjóna.',
     description: '',
   },
   realEstateAndLand: {
@@ -211,6 +210,46 @@ export const m = defineMessages({
   realEstateAndLandDescription: {
     id: 'es.application:realEstateAndLandDescription',
     defaultMessage: 'Til dæmis íbúðarhús, sumarhús, lóðir og jarðir',
+    description: '',
+  },
+  estateContents: {
+    id: 'es.application:estateContents',
+    defaultMessage: 'Innbú',
+    description: '',
+  },
+  estateContentsDescription: {
+    id: 'es.application:estateContentsDescription',
+    defaultMessage: 'Til dæmis bækur og málverk',
+    description: '',
+  },
+  contentsTextField: {
+    id: 'es.application:contentsTextField',
+    defaultMessage: 'Upplýsingar um innbú',
+    description: '',
+  },
+  contentsWorth: {
+    id: 'es.application:contentsWorth',
+    defaultMessage: 'Matsverð samtals',
+    description: '',
+  },
+  contentsTextFieldPlaceholder: {
+    id: 'es.application:contentsTextFieldPlaceholder',
+    defaultMessage: 'Skráðu inn upplýsingar um innbú hér',
+    description: '',
+  },
+  estateBankInfo: {
+    id: 'es.application:estateBankInfo',
+    defaultMessage: 'Innistæður í bönkum',
+    description: '',
+  },
+  estateBankInfoDescription: {
+    id: 'es.application:estateBankInfoDescription',
+    defaultMessage: 'Bæði í innlendum og erlendum bönkum og sparisjóður',
+    description: '',
+  },
+  bankAccount: {
+    id: 'es.application:bankAccount',
+    defaultMessage: 'Bankareikningur',
     description: '',
   },
   vehicles: {
@@ -275,7 +314,8 @@ export const m = defineMessages({
   },
   residencePermitSubtitle: {
     id: 'es.application:residencePermitSubtitle#markdown',
-    defaultMessage: 'Sýslumaður hefur móttekið beiðni þína um búsetuleyfi. Hún verður nú yfirfarin og staðfesting á búsetuleyfi í kjölfar sent í pósthólf þitt á Ísland.is',
+    defaultMessage:
+      'Sýslumaður hefur móttekið beiðni þína um búsetuleyfi. Hún verður nú yfirfarin og staðfesting á búsetuleyfi í kjölfar sent í pósthólf þitt á Ísland.is',
     description: '',
   },
 
