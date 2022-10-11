@@ -4,15 +4,11 @@ import { useForm, FormProvider } from 'react-hook-form'
 
 import {
   Box,
-  Text,
   Stack,
   SkeletonLoader,
   Divider,
   toast,
   AlertBanner,
-  GridRow,
-  GridColumn,
-  useBreakpoint,
 } from '@island.is/island-ui/core'
 import { AuthCustomDelegation } from '@island.is/api/schema'
 import {
@@ -36,10 +32,15 @@ import {
   Scope,
   SCOPE_PREFIX,
 } from '../../utils/types'
-import format from 'date-fns/format'
-import { AccessItem, DATE_FORMAT } from './AccessItem'
+import { AccessItem } from './AccessItem'
 import { AccessConfirmModal, AccessItemHeader } from '../../components/access'
-import * as accessItemStyles from './AccessItem.css'
+import { isDefined } from '@island.is/shared/utils'
+
+export type MappedScope = {
+  name?: string
+  description?: string
+  validTo?: Date
+}
 
 type AccessFormProps = {
   delegation: AuthCustomDelegation
@@ -50,7 +51,7 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
   useNamespaces(['sp.settings-access-control', 'sp.access-control-delegations'])
   const [openConfirmModal, setOpenConfirmModal] = useState(false)
   const { formatMessage, lang } = useLocale()
-  const { md } = useBreakpoint()
+
   const { delegationId } = useParams<{
     delegationId: string
   }>()
@@ -140,19 +141,21 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
     },
     {} as GroupedApiScopes,
   )
-  const scopes = getValues()?.[SCOPE_PREFIX]?.map((item) => {
-    if (item.name && (item.validTo || validityPeriod)) {
-      const authApiScope = authApiScopes?.find(
-        (apiScope) => apiScope.name === item.name[0],
-      )
+  const scopes = getValues()
+    ?.[SCOPE_PREFIX]?.map((item) => {
+      if (item.name && (item.validTo || validityPeriod)) {
+        const authApiScope = authApiScopes?.find(
+          (apiScope) => apiScope.name === item.name[0],
+        )
 
-      return {
-        name: authApiScope?.displayName,
-        description: authApiScope?.description,
-        validTo: validityPeriod ?? item.validTo,
+        return {
+          name: authApiScope?.displayName,
+          description: authApiScope?.description,
+          validTo: validityPeriod ?? item.validTo,
+        } as MappedScope
       }
-    }
-  })
+    })
+    .filter(isDefined)
 
   return (
     <>
@@ -230,96 +233,14 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
           defaultMessage: 'Þú ert að veita aðgang',
         })}
         isVisible={openConfirmModal}
-        delegation={delegation as AuthCustomDelegation}
+        delegation={delegation}
         domain={{
           name: 'Landsbankaappið',
           imgSrc: './assets/images/educationDegree.svg',
         }}
-      >
-        <Box display="flex" flexDirection="column" rowGap={3} marginTop={6}>
-          <Box display="flex" alignItems="center" justifyContent="spaceBetween">
-            <Text variant="h4" as="h4">
-              {formatMessage({
-                id: 'sp.access-control-delegations:access-title',
-                defaultMessage: 'Réttindi',
-              })}
-            </Text>
-            {validityPeriod && (
-              <Box display="flex" flexDirection="column" alignItems="flexEnd">
-                <Text variant="small">
-                  {formatMessage({
-                    id:
-                      'sp.settings-access-control:access-item-datepicker-label-mobile',
-                    defaultMessage: 'Í gildi til',
-                  })}
-                </Text>
-                <Text fontWeight="semiBold">
-                  {format(validityPeriod, DATE_FORMAT)}
-                </Text>
-              </Box>
-            )}
-          </Box>
-          <Box marginBottom={[0, 0, 12]}>
-            <AccessItemHeader hideValidityPeriod={!!validityPeriod} />
-            <Box className={accessItemStyles.dividerContainer}>
-              <Divider />
-            </Box>
-            {scopes?.map(
-              (scope, index) =>
-                scope?.name && (
-                  <div key={index}>
-                    <GridRow className={accessItemStyles.row} key={index}>
-                      <GridColumn
-                        span={['12/12', '12/12', '3/12']}
-                        className={accessItemStyles.item}
-                      >
-                        <Text fontWeight="light">{scope?.name}</Text>
-                      </GridColumn>
-                      {((!md && scope?.description?.trim()) || md) && (
-                        <GridColumn
-                          span={['12/12', '12/12', '4/12', '5/12']}
-                          className={accessItemStyles.item}
-                          paddingTop={[3, 3, 3, 0]}
-                        >
-                          <Box
-                            display="flex"
-                            flexDirection="column"
-                            className={accessItemStyles.rowGap}
-                          >
-                            {!md && (
-                              <Text variant="small" fontWeight="semiBold">
-                                {formatMessage({
-                                  id: 'sp.access-control-delegation:grant',
-                                  defaultMessage: 'Heimild',
-                                })}
-                              </Text>
-                            )}
-                            <Text variant="small" fontWeight="light">
-                              {scope?.description}
-                            </Text>
-                          </Box>
-                        </GridColumn>
-                      )}
-                      {!validityPeriod && scope?.validTo && (
-                        <GridColumn
-                          span={['12/12', '8/12', '5/12', '4/12']}
-                          paddingTop={[2, 2, 2, 0]}
-                        >
-                          <Text variant="small">
-                            {format(new Date(scope?.validTo), DATE_FORMAT)}
-                          </Text>
-                        </GridColumn>
-                      )}
-                    </GridRow>
-                    <Box className={accessItemStyles.dividerContainer}>
-                      <Divider />
-                    </Box>
-                  </div>
-                ),
-            )}
-          </Box>
-        </Box>
-      </AccessConfirmModal>
+        scopes={scopes}
+        validityPeriod={validityPeriod}
+      />
     </>
   )
 }
