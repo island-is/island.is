@@ -122,7 +122,7 @@ const ChildView: FC<Props> = ({
               flexDirection={['column', 'row']}
             >
               <Inline space={2}>
-                {!loading && !isChild && !modalFlagEnabled && (
+                {!loading && !isChild && modalFlagEnabled && (
                   <>
                     <ChildRegistrationModal
                       data={{
