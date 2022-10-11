@@ -27,6 +27,7 @@ import { removeCountryCode } from '../lib/utils'
 import { fakeDataSection } from './fakeDataSection'
 import { dataCollection } from './sharedSections/dataCollection'
 import format from 'date-fns/format'
+import is from 'date-fns/locale/is'
 
 export const spouseConfirmation = ({ allowFakeData = false }): Form =>
   buildForm({
@@ -52,7 +53,8 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
                 applicationDate: format(
                   new Date(application.externalData.createCharge.date),
                   'dd. MMMM, yyyy',
-                ).toLocaleLowerCase(),
+                  { locale: is },
+                ).toLowerCase(),
               },
             }),
             children: [

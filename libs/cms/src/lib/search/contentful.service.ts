@@ -166,7 +166,7 @@ export class ContentfulService {
 
       // the content type filter might remove all ids in that case skip trying to get this chunk
       if (chunkIds) {
-        logger.info('Getting Contentful data', {
+        logger.info(`Getting Contentful data with chunk size: ${chunkSize}`, {
           locale,
           maxChunkSize: chunkSize,
         })
@@ -217,53 +217,13 @@ export class ContentfulService {
       deletedEntries,
     } = await this.getSyncData(typeOfSync)
 
-    let nestedEntries = entries
-      .filter((entry) =>
-        environment.nestedContentTypes.includes(entry.sys.contentType.sys.id),
-      )
-      .map((entry) => entry.sys.id)
-
     logger.info('Sync found entries', {
       entries: entries.length,
       deletedEntries: deletedEntries.length,
-      nestedEntries: nestedEntries.length,
     })
 
     // get all sync entries from Contentful endpoints for this locale, we could parse the sync response into locales but we are opting for this for simplicity
     const items = await this.getAllEntriesFromContentful(entries, locale)
-
-    // In case of delta updates, we need to resolve embedded entries to their root model
-    if (syncType !== 'full' && nestedEntries) {
-      logger.info('Finding root entries from nestedEntries')
-
-      // For now we will look for linked entries up to depth 2
-      for (let i = 1; i <= 3; i++) {
-        const linkedEntries = []
-        for (const entryId of nestedEntries) {
-          // Due to the limitation of Contentful Sync API, we need to query every entry one at a time
-          // with regular sync, triggered by a webhook, these calls 1 - 2 at most
-          linkedEntries.push(
-            ...(
-              await this.limiter.schedule(() => {
-                return this.linksToEntry(entryId, locale)
-              })
-            ).filter(
-              (entry) => !items.some((item) => item.sys.id === entry.sys.id),
-            ),
-          )
-        }
-        items.push(
-          ...linkedEntries.filter((entry) =>
-            environment.indexableTypes.includes(entry.sys.contentType.sys.id),
-          ),
-        )
-        // Next round of the loop will only find linked entries to these entries
-        nestedEntries = linkedEntries.map((entry) => entry.sys.id)
-        logger.info(
-          `Found ${linkedEntries.length} nested entries at depth ${i}`,
-        )
-      }
-    }
 
     // extract ids from deletedEntries
     const deletedItems = deletedEntries.map((entry) => entry.sys.id)

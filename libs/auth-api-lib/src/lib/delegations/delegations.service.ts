@@ -98,7 +98,10 @@ export class DelegationsService {
     user: User,
     createDelegation: CreateDelegationDTO,
   ): Promise<DelegationDTO | null> {
-    if (createDelegation.toNationalId === user.nationalId) {
+    if (
+      createDelegation.toNationalId === user.nationalId ||
+      this.isDelegationToActor(user, createDelegation)
+    ) {
       throw new BadRequestException(`Can not create delegation to self.`)
     }
 
@@ -156,6 +159,13 @@ export class DelegationsService {
     input: UpdateDelegationDTO,
     delegationId: string,
   ): Promise<DelegationDTO | null> {
+    const delegation = await this.delegationModel.findByPk(delegationId)
+    if (!delegation) {
+      throw new NotFoundException()
+    }
+    if (this.isDelegationToActor(user, delegation)) {
+      throw new BadRequestException('Can not update delegation to self.')
+    }
     if (!(await this.validateScopesAccess(user, input.scopes))) {
       throw new BadRequestException(
         'User does not have access to the requested scopes.',
@@ -327,9 +337,11 @@ export class DelegationsService {
     }
 
     return delegations
-      .filter((d) =>
-        // The user must have access to at least one scope in the delegation
-        d.delegationScopes?.some((s) => this.checkIfScopeAllowed(s, user)),
+      .filter(
+        (d) =>
+          // The user must have access to at least one scope in the delegation
+          d.delegationScopes?.some((s) => this.checkIfScopeAllowed(s, user)) &&
+          !this.isDelegationToActor(user, d),
       )
       .map((d) => {
         // Filter out scopes the user does not have access to
@@ -338,6 +350,13 @@ export class DelegationsService {
         )
         return d.toDTO()
       })
+  }
+
+  private isDelegationToActor(
+    user: User,
+    delegation: { toNationalId: string },
+  ): boolean {
+    return user.actor?.nationalId === delegation.toNationalId
   }
 
   /***** Incoming Delegations *****/
@@ -689,6 +708,8 @@ export class DelegationsService {
       return []
     }
 
+    const all = await this.delegationModel.findAll()
+
     const delegations = await this.delegationModel.findAll({
       where: {
         toNationalId: user.nationalId,
@@ -803,15 +824,7 @@ export class DelegationsService {
       this.filterCustomScopeRule(scope, user),
     )
 
-    const hasScope = Boolean(
-      scope.scopeName && allowedScopes.includes(scope.scopeName),
-    )
-    const hasIdentityResource = Boolean(
-      scope.identityResourceName &&
-        allowedScopes.includes(scope.identityResourceName),
-    )
-
-    return hasScope || hasIdentityResource
+    return allowedScopes.includes(scope.scopeName)
   }
 
   private filterCustomScopeRule(scope: string, user: User): boolean {

@@ -793,6 +793,18 @@
           "placeholder": "Island.is SPA client",
           "helpText": "The description of this domain",
           "errorMessage": "The description is required and can not include invalid characters"
+        },
+        "displayName": {
+          "label": "Display Name",
+          "placeholder": "Display name for this domain",
+          "helpText": "The display name for this domain",
+          "errorMessage": "The display name is required and can not include invalid characters"
+        },
+        "organisationLogoKey": {
+          "label": "Logo Key",
+          "placeholder": "Logo key for this domain",
+          "helpText": "The logo key for this domain",
+          "errorMessage": "The logo key is required and can not include invalid characters"
         }
       }
     },
@@ -842,6 +854,11 @@
           "placeholder": "Description of the group",
           "helpText": "The default description of the group which the end user sees",
           "errorMessage": "The group description is required and can not include invalid characters"
+        },
+        "order": {
+          "label": "Order",
+          "helpText": "Configure ordering of this group with relation to other scopes and groups within the same domain. Affects delegation and consent screens. Lower numbers appear first.",
+          "errorMessage": "Order is required and must be between 0 and 999"
         }
       }
     },
@@ -1465,6 +1482,11 @@
           "label": "Group",
           "helpText": "Assign this Api Scope to a group",
           "selectAnItem": "Select a group if needed"
+        },
+        "order": {
+          "label": "Order",
+          "helpText": "Configure ordering of this scope with relation to other scopes and groups within the same domain. Affects delegation and consent screens. Lower numbers appear first.",
+          "errorMessage": "Order is required and must be between 0 and 999"
         },
         "enabled": {
           "label": "Enabled",

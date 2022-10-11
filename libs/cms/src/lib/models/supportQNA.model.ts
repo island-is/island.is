@@ -63,13 +63,13 @@ export const mapSupportQNA = ({ fields, sys }: ISupportQna): SupportQNA => ({
           return mapLink(link as ILink)
         }
         const supportQnA = link as ISupportQna
-        return mapLink(convertSupportQnAToLink(supportQnA))
+        return mapLink(convertSupportQnAToLink(supportQnA, sys.locale))
       })
     : [],
   contactLink: fields.contactLink ?? '',
 })
 
-const convertSupportQnAToLink = (supportQnA: ISupportQna) => {
+const convertSupportQnAToLink = (supportQnA: ISupportQna, locale = 'is-IS') => {
   return {
     sys: {
       ...supportQnA.sys,
@@ -83,9 +83,11 @@ const convertSupportQnAToLink = (supportQnA: ISupportQna) => {
     },
     fields: {
       text: supportQnA.fields.question,
-      url: `/adstod/${supportQnA.fields.organization?.fields?.slug ?? ''}/${
-        supportQnA.fields.category?.fields?.slug ?? ''
-      }?q=${supportQnA.fields?.slug ?? ''}`,
+      url: `/${locale === 'is-IS' ? 'adstod' : `${locale}/help`}/${
+        supportQnA.fields.organization?.fields?.slug ?? ''
+      }/${supportQnA.fields.category?.fields?.slug ?? ''}${
+        supportQnA.fields?.slug ?? ''
+      }`,
     },
   } as ILink
 }
