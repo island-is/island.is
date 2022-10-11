@@ -3,6 +3,8 @@ import { GetHomestaysInput } from './dto/getHomestays.input'
 import { GetOperatingLicensesInput } from './dto/getOperatingLicenses.input'
 import { Homestay } from './models/homestay'
 import { SyslumennAuction } from './models/syslumennAuction'
+import { RealEstateAgent } from './models/realEstateAgent'
+import { Lawyer } from './models/lawyer'
 import { SyslumennService } from '@island.is/clients/syslumenn'
 import { PaginatedOperatingLicenses } from './models/paginatedOperatingLicenses'
 import { CertificateInfoResponse } from './models/certificateInfo'
@@ -42,6 +44,20 @@ export class SyslumennResolver {
   @BypassAuth()
   getSyslumennAuctions(): Promise<SyslumennAuction[]> {
     return this.syslumennService.getSyslumennAuctions()
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => [RealEstateAgent])
+  @BypassAuth()
+  getRealEstateAgents(): Promise<RealEstateAgent[]> {
+    return this.syslumennService.getRealEstateAgents()
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => [Lawyer])
+  @BypassAuth()
+  getLawyers(): Promise<Lawyer[]> {
+    return this.syslumennService.getLawyers()
   }
 
   @Directive(cacheControlDirective())

@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client'
-import React, { useMemo, useEffect, useRef, useState } from 'react'
+import { useMemo, useEffect, useRef, useState } from 'react'
 import { ChatBubble } from '../ChatBubble'
 import { Query, QueryGetNamespaceArgs } from '@island.is/api/schema'
 import { GET_NAMESPACE_QUERY } from '@island.is/web/screens/queries'
@@ -84,10 +84,7 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [namespace])
 
-  // Hide the chat bubble for other than 'is' locales for now since the translations have not been set up yet
-  const shouldShowChatBubble = activeLocale === 'is'
-
-  if (showLauncher || !shouldShowChatBubble) return null
+  if (showLauncher) return null
 
   return (
     <ChatBubble

@@ -7,6 +7,7 @@ import { Ceremony, Individual, PersonalInfo } from '../../types'
 import { format as formatNationalId } from 'kennitala'
 import format from 'date-fns/format'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
+import { States } from '../../lib/constants'
 
 type InfoProps = {
   side: Individual
@@ -77,11 +78,19 @@ export const ApplicationOverview: FC<FieldBaseProps> = ({ application }) => {
           <Box display="flex" marginBottom={3}>
             <Box width="half">
               <Text variant="h4">{formatMessage(m.address)}</Text>
-              <Text>{(answers.personalInfo as PersonalInfo).address}</Text>
+              <Text>
+                {application.state === States.SPOUSE_CONFIRM
+                  ? (answers.spousePersonalInfo as PersonalInfo).address
+                  : (answers.personalInfo as PersonalInfo).address}
+              </Text>
             </Box>
             <Box width="half">
               <Text variant="h4">{formatMessage(m.citizenship)}</Text>
-              <Text>{(answers.personalInfo as PersonalInfo).citizenship}</Text>
+              <Text>
+                {application.state === States.SPOUSE_CONFIRM
+                  ? (answers.spousePersonalInfo as PersonalInfo).citizenship
+                  : (answers.personalInfo as PersonalInfo).citizenship}
+              </Text>
             </Box>
           </Box>
           <Box display="flex">
