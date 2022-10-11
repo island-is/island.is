@@ -1,4 +1,4 @@
-import { DEPRECATED_DefaultStateLifeCycle } from '@island.is/application/core'
+import { DefaultStateLifeCycle } from '@island.is/application/core'
 import {
   ApplicationTemplate,
   ApplicationContext,
@@ -59,6 +59,7 @@ const PSignTemplate: ApplicationTemplate<
                 },
               ],
               write: 'all',
+              delete: true,
             },
             {
               id: Roles.ACTOR,
@@ -74,6 +75,7 @@ const PSignTemplate: ApplicationTemplate<
                 },
               ],
               write: 'all',
+              delete: true,
             },
           ],
         },
@@ -85,7 +87,7 @@ const PSignTemplate: ApplicationTemplate<
         meta: {
           name: 'Done',
           progress: 1,
-          lifecycle: DEPRECATED_DefaultStateLifeCycle,
+          lifecycle: DefaultStateLifeCycle,
 
           roles: [
             {

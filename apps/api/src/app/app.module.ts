@@ -220,8 +220,17 @@ const autoSchemaFile = environment.production
       firearmLicense: {
         apiKey: environment.firearmLicense.pkPassApiKey!,
         apiUrl: environment.smartSolutionsApiUrl!,
-        passTemplateId: environment.firearmLicense
-          .firearmLicensePassTemplateId!,
+        passTemplateId: environment.firearmLicense.passTemplateId!,
+      },
+      machineLicense: {
+        apiKey: environment.machineLicense.pkPassApiKey!,
+        apiUrl: environment.smartSolutionsApiUrl!,
+        passTemplateId: environment.machineLicense.passTemplateId!,
+      },
+      adrLicense: {
+        apiKey: environment.adrLicense.pkPassApiKey!,
+        apiUrl: environment.smartSolutionsApiUrl!,
+        passTemplateId: environment.adrLicense.passTemplateId!,
       },
       driversLicense: {
         xroad: {

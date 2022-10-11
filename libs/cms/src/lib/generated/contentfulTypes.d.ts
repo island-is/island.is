@@ -689,7 +689,7 @@ export interface IFeaturedArticlesFields {
   link?: ILink | undefined
 
   /** Automatically Fetch Articles */
-  automaticallyFetchArticles: boolean
+  automaticallyFetchArticles?: boolean | undefined
 
   /** Sort By */
   sortBy?: 'popularity' | 'importance' | undefined
@@ -2120,6 +2120,8 @@ export interface IOrganizationPageFields {
     | 'hsn'
     | 'fiskistofa'
     | 'landlaeknir'
+    | 'rikislogmadur'
+    | 'landskjorstjorn'
 
   /** Slices */
   slices?:
@@ -2368,6 +2370,33 @@ export interface IPageHeader extends Entry<IPageHeaderFields> {
   }
 }
 
+export interface IPowerBiSliceFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Config */
+  config: Record<string, any>
+}
+
+/** A Slice that embeds a Power BI report */
+
+export interface IPowerBiSlice extends Entry<IPowerBiSliceFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'powerBiSlice'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IProcessEntryFields {
   /** Type */
   type:
@@ -2419,7 +2448,12 @@ export interface IProjectPageFields {
   slug?: string | undefined
 
   /** Theme */
-  theme: 'default' | 'traveling-to-iceland' | 'election' | 'ukraine'
+  theme:
+    | 'default'
+    | 'traveling-to-iceland'
+    | 'election'
+    | 'ukraine'
+    | 'opinbernyskopun'
 
   /** Sidebar */
   sidebar: boolean
@@ -2488,6 +2522,9 @@ export interface IProjectPageFields {
         | ITwoColumnText
       )[]
     | undefined
+
+  /** Footer Items */
+  footerItems?: IFooterItem[] | undefined
 }
 
 export interface IProjectPage extends Entry<IProjectPageFields> {
@@ -2693,11 +2730,19 @@ export interface ISliceConnectedComponentFields {
     | 'Skilavottord/CompanyList'
     | 'Skilavottord/CompanyListConnected'
     | 'Undirskriftalistar/PetitionLists'
+    | 'ElectronicRegistrations/MonthlyStatistics'
     | 'LatestNewsCard'
+    | 'Fiskistofa/ShipSearch'
+    | 'Fiskistofa/ShipSearchSidebarInput'
+    | 'Fasteignasalar/RealEstateAgents'
+    | 'Lögmenn/Lawyers'
     | undefined
 
-  /** JSON */
+  /** Localized JSON */
   json?: Record<string, any> | undefined
+
+  /** Config */
+  config?: Record<string, any> | undefined
 }
 
 export interface ISliceConnectedComponent
@@ -3786,6 +3831,7 @@ export type CONTENT_TYPE =
   | 'organizationTag'
   | 'overviewLinks'
   | 'pageHeader'
+  | 'powerBiSlice'
   | 'processEntry'
   | 'projectPage'
   | 'projectSubpage'

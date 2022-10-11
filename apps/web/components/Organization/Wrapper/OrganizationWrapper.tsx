@@ -56,6 +56,8 @@ import { LandskjorstjornFooter } from './Themes/LandkjorstjornTheme/Landkjorstjo
 import { LatestNewsCardConnectedComponent } from '../LatestNewsCardConnectedComponent'
 import { RikislogmadurHeader } from './Themes/RikislogmadurTheme/RikislogmadurHeader'
 import { RikislogmadurFooter } from './Themes/RikislogmadurTheme/RikislogmadurFooter'
+import { LandskjorstjornHeader } from './Themes/LandkjorstjornTheme/LandskjorstjornHeader'
+import { useI18n } from '@island.is/web/i18n'
 import * as styles from './OrganizationWrapper.css'
 
 interface NavigationData {
@@ -169,6 +171,8 @@ const OrganizationHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
       return <FiskistofaHeader organizationPage={organizationPage} />
     case 'rikislogmadur':
       return <RikislogmadurHeader organizationPage={organizationPage} />
+    case 'landskjorstjorn':
+      return <LandskjorstjornHeader organizationPage={organizationPage} />
     default:
       return <DefaultHeader organizationPage={organizationPage} />
   }
@@ -311,6 +315,8 @@ export const OrganizationChatPanel = ({
   organizationIds: string[]
   pushUp?: boolean
 }) => {
+  const { activeLocale } = useI18n()
+
   const organizationIdWithLiveChat = organizationIds.find((id) => {
     return id in liveChatIncConfig
   })
@@ -324,11 +330,15 @@ export const OrganizationChatPanel = ({
   }
 
   const organizationIdWithWatson = organizationIds.find((id) => {
-    return id in watsonConfig
+    return id in watsonConfig[activeLocale]
   })
 
   if (organizationIdWithWatson) {
-    return <WatsonChatPanel {...watsonConfig[organizationIdWithWatson]} />
+    return (
+      <WatsonChatPanel
+        {...watsonConfig[activeLocale][organizationIdWithWatson]}
+      />
+    )
   }
 
   return null

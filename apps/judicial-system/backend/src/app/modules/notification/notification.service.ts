@@ -71,6 +71,7 @@ import { SendNotificationDto } from './dto/sendNotification.dto'
 import { Notification } from './models/notification.model'
 import { SendNotificationResponse } from './models/sendNotification.resopnse'
 import { notificationModuleConfig } from './notification.config'
+import { DefendantService } from '../defendant'
 
 interface Recipient {
   address?: string
@@ -96,6 +97,7 @@ export class NotificationService {
     private readonly emailService: EmailService,
     private readonly eventService: EventService,
     private readonly intlService: IntlService,
+    private readonly defendantService: DefendantService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -276,7 +278,7 @@ export class NotificationService {
         this.formatMessage,
       )
 
-      const fileName = this.formatMessage(courtUpload.requestFileName, {
+      const fileName = this.formatMessage(courtUpload.request, {
         caseType: caseTypes[theCase.type],
         date: `-${format(nowFactory(), 'yyyy-MM-dd')}`,
       })
@@ -912,14 +914,28 @@ export class NotificationService {
       promises.push(
         this.sendRulingEmailNotificationToPrisonAdministration(theCase),
       )
+    }
 
-      if (
-        (theCase.type === CaseType.CUSTODY ||
-          theCase.type === CaseType.ADMISSION_TO_FACILITY) &&
-        (theCase.decision === CaseDecision.ACCEPTING ||
-          theCase.decision === CaseDecision.ACCEPTING_PARTIALLY)
-      ) {
+    if (
+      CaseDecision.ACCEPTING === theCase.decision ||
+      CaseDecision.ACCEPTING_PARTIALLY === theCase.decision
+    ) {
+      if (theCase.type === CaseType.CUSTODY) {
         promises.push(this.sendRulingEmailNotificationToPrison(theCase))
+      } else if (theCase.type === CaseType.ADMISSION_TO_FACILITY) {
+        try {
+          const inCustody = await this.defendantService.isDefendantInActiveCustody(
+            theCase.defendants,
+          )
+          if (
+            inCustody ||
+            (theCase.defendants && theCase.defendants[0]?.noNationalId === true)
+          ) {
+            promises.push(this.sendRulingEmailNotificationToPrison(theCase))
+          }
+        } catch (_error) {
+          promises.push(this.sendRulingEmailNotificationToPrison(theCase))
+        }
       }
     }
 

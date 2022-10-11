@@ -177,23 +177,6 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
     },
   })
 
-  /**
-   * The PDF functionality module is feature flagged
-   * Please remove all code when fully released.
-   */
-  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
-  const [modalFlagEnabled, setModalFlagEnabled] = useState<boolean>(false)
-  useEffect(() => {
-    const isFlagEnabled = async () => {
-      const ffEnabled = await featureFlagClient.getValue(
-        `isServicePortalVehiclesPdfEnabled`,
-        false,
-      )
-      setModalFlagEnabled(ffEnabled as boolean)
-    }
-    isFlagEnabled()
-  }, [])
-
   const {
     mainInfo,
     basicInfo,
@@ -238,6 +221,7 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
     registrationInfo && registrationInfoArray(registrationInfo, formatMessage)
   const technicalArr =
     technicalInfo && technicalInfoArray(technicalInfo, formatMessage)
+
   return (
     <>
       <Box marginBottom={6}>
@@ -266,7 +250,7 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
             ) : null}
           </GridColumn>
         </GridRow>
-        {modalFlagEnabled && !loading && downloadServiceURL && (
+        {!loading && downloadServiceURL && (
           <GridRow marginTop={6}>
             <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
               <Box display="flex" justifyContent="flexStart" printHidden>
