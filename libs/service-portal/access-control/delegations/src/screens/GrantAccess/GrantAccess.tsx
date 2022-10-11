@@ -162,6 +162,7 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
                 })}
                 title={userInfo.profile.name}
                 description={formatNationalId(userInfo.profile.nationalId)}
+                color="blue"
               />
               <div className={styles.inputWrapper}>
                 {name && (
