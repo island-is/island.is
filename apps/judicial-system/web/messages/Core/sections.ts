@@ -220,6 +220,11 @@ export const sections = {
     },
   }),
   indictmentsCourtSection: defineMessages({
+    title: {
+      id: 'judicial.system.core:sections.indictments_court_section.title',
+      defaultMessage: 'Málsmeðferð Héraðsdóms',
+      description: 'Notaður sem titill í hliðarstiku í ákærum hjá héraðsdómum',
+    },
     overview: {
       id: 'judicial.system.core:sections.indictments_court_section.overview',
       defaultMessage: 'Yfirlit',

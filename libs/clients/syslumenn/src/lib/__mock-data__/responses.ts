@@ -5,6 +5,8 @@ import {
   Skilabod,
   VedbandayfirlitReguverkiSvarSkeyti,
   SkraningaradiliDanarbusSkeyti,
+  Fasteignasalar,
+  Logmenn,
 } from '../../../gen/fetch'
 import { AssetName, SyslumennApiPaginationInfo } from '../syslumennClient.types'
 
@@ -47,6 +49,20 @@ export const SYSLUMENN_AUCTION = [
     lausafjarmunir: 'string',
   },
 ] as Uppbod[]
+
+export const REAL_ESTATE_AGENTS = [
+  {
+    nafn: 'string',
+    starfsstod: 'string',
+  },
+] as Fasteignasalar[]
+
+export const LAWYERS = [
+  {
+    nafn: 'string',
+    tegundRettinda: 'string',
+  },
+] as Logmenn[]
 
 export const OPERATING_LICENSE = [
   {
