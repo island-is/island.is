@@ -11,6 +11,7 @@ import {
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { information, externalData, forPayment } from '../lib/messages'
 import { m } from '../lib/messagess'
+import { TransferOfVehicleOwnership } from '../lib/dataSchema'
 
 export const TransferOfVehicleOwnershipForm: Form = buildForm({
   id: 'TransferOfVehicleOwnershipFormDraft',
@@ -36,9 +37,10 @@ export const TransferOfVehicleOwnershipForm: Form = buildForm({
               title: information.labels.pickVehicle.title,
               titleVariant: 'h5',
             }),
-            buildTextField({
+            buildCustomField({
               id: 'pickVehicle.plate',
-              title: 'Temp ökutæki',
+              component: 'VehicleSelectField',
+              title: '',
             }),
             buildDescriptionField({
               id: 'vehicle.title',
@@ -52,6 +54,7 @@ export const TransferOfVehicleOwnershipForm: Form = buildForm({
               backgroundColor: 'white',
               width: 'half',
               disabled: true,
+              required: true,
             }),
             buildTextField({
               id: 'vehicle.type',
@@ -59,6 +62,7 @@ export const TransferOfVehicleOwnershipForm: Form = buildForm({
               backgroundColor: 'white',
               width: 'half',
               disabled: true,
+              required: true,
             }),
             buildTextField({
               id: 'vehicle.salePrice',
@@ -69,12 +73,13 @@ export const TransferOfVehicleOwnershipForm: Form = buildForm({
               id: 'vehicle.date',
               title: information.labels.vehicle.date,
               width: 'half',
-              minDate: (application: Application) => {
-                // Maybe have option if buyer to have sellers date.
+              minDate: () => {
                 const today = new Date()
+                // Maybe have option if buyer to have sellers date.
                 return today
               },
             }),
+            // Seller
             buildDescriptionField({
               id: 'seller.title',
               title: information.labels.seller.title,
@@ -88,6 +93,9 @@ export const TransferOfVehicleOwnershipForm: Form = buildForm({
               width: 'half',
               disabled: true,
               format: '######-####',
+              required: true,
+              defaultValue: (application: TransferOfVehicleOwnership) =>
+                application.externalData?.nationalRegistry?.data?.nationalId,
             }),
             buildTextField({
               id: 'seller.name',
@@ -95,6 +103,9 @@ export const TransferOfVehicleOwnershipForm: Form = buildForm({
               backgroundColor: 'white',
               width: 'half',
               disabled: true,
+              required: true,
+              defaultValue: (application: TransferOfVehicleOwnership) =>
+                application.externalData?.nationalRegistry?.data?.fullName,
             }),
             buildTextField({
               id: 'seller.phone',
@@ -102,12 +113,18 @@ export const TransferOfVehicleOwnershipForm: Form = buildForm({
               width: 'half',
               variant: 'tel',
               format: '###-####',
+              required: true,
+              defaultValue: (application: TransferOfVehicleOwnership) =>
+                application.externalData?.userProfile?.data?.mobilePhoneNumber,
             }),
             buildTextField({
               id: 'seller.email',
               title: information.labels.seller.email,
               width: 'half',
               variant: 'email',
+              required: true,
+              defaultValue: (application: TransferOfVehicleOwnership) =>
+                application.externalData?.userProfile?.data?.email,
             }),
             // Co-owner only visible if there is a coowner.
             buildDescriptionField({
@@ -123,6 +140,7 @@ export const TransferOfVehicleOwnershipForm: Form = buildForm({
               width: 'half',
               disabled: true,
               format: '######-####',
+              required: true,
             }),
             buildTextField({
               id: 'coOwner.name',
@@ -130,6 +148,7 @@ export const TransferOfVehicleOwnershipForm: Form = buildForm({
               backgroundColor: 'white',
               width: 'half',
               disabled: true,
+              required: true,
             }),
             buildTextField({
               id: 'coOwner.phone',
@@ -137,12 +156,14 @@ export const TransferOfVehicleOwnershipForm: Form = buildForm({
               width: 'half',
               variant: 'tel',
               format: '###-####',
+              required: true,
             }),
             buildTextField({
               id: 'coOwner.email',
               title: information.labels.coOwner.email,
               width: 'half',
               variant: 'email',
+              required: true,
             }),
             // Buyer
             buildDescriptionField({
@@ -151,18 +172,11 @@ export const TransferOfVehicleOwnershipForm: Form = buildForm({
               titleVariant: 'h5',
               space: 3,
             }),
-            buildTextField({
-              id: 'buyer.nationalId',
-              title: information.labels.buyer.nationalId,
-              width: 'half',
-              format: '######-####',
-            }),
-            buildTextField({
-              id: 'buyer.name',
-              title: information.labels.buyer.name,
-              backgroundColor: 'white',
-              width: 'half',
-              disabled: true,
+            // Buyer name and nationalId
+            buildCustomField({
+              id: 'buyer',
+              component: 'NationalIdWithName',
+              title: '',
             }),
             buildTextField({
               id: 'buyer.phone',
@@ -170,12 +184,14 @@ export const TransferOfVehicleOwnershipForm: Form = buildForm({
               width: 'half',
               variant: 'tel',
               format: '###-####',
+              required: true,
             }),
             buildTextField({
               id: 'buyer.email',
               title: information.labels.buyer.email,
               width: 'half',
               variant: 'email',
+              required: true,
             }),
           ],
         }),

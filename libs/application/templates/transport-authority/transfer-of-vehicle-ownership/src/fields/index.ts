@@ -1,3 +1,5 @@
 export { ConfirmationField } from './ConfirmationField'
 export { Temp } from './temp'
 export { ForPayment } from './ForPayment'
+export { NationalIdWithName } from './NationalIdWithName'
+export { VehicleSelectField } from './VehicleSelectField'
