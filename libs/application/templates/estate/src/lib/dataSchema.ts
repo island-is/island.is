@@ -14,6 +14,7 @@ const asset = z
     assetNumber: customZodError(z.string().nonempty(), m.errorNumberEmpty),
     description: z.string().optional(),
     initial: z.boolean(),
+    enabled: z.boolean(),
   })
   .array()
   .optional()
@@ -32,6 +33,7 @@ export const estateSchema = z.object({
         foreignCitizenship: z.string().array().min(0).max(1).optional(),
         dateOfBirth: z.string().nonempty().optional(),
         initial: z.boolean(),
+        enabled: z.boolean(),
       })
       .array()
       .optional(),
@@ -71,6 +73,7 @@ export const estateSchema = z.object({
         foreignCitizenship: z.string().array().min(0).max(1).optional(),
         dateOfBirth: z.string().nonempty().optional(),
         dummy: z.boolean().optional(),
+        enabled: z.boolean(),
       })
       .array()
       .optional(),
