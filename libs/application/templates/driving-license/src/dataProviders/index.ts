@@ -1,5 +1,3 @@
-// export { ExistingApplicationProvider } from './ExistingApplicationProvider'
-
 export {
   NationalRegistryUserApi,
   HasTechingRightsApi,

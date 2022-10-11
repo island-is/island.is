@@ -50,4 +50,8 @@ export class ApplicationService extends BaseTemplateApiService {
       .sort(({ created: a }, { created: b }) => b.getTime() - a.getTime())
     return e
   }
+
+  async mockProvider({ params }: TemplateApiModuleActionProps): Promise<any> {
+    return params
+  }
 }

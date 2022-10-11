@@ -11,3 +11,8 @@ export const ExistingApplicationApi = defineTemplateApi<ExistingApplicationParam
     namespace: 'Application',
   },
 )
+
+export const MockProviderApi = defineTemplateApi({
+  action: 'mockProvider',
+  namespace: 'Application',
+})
