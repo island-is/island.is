@@ -1,7 +1,7 @@
 'use strict'
 
 module.exports = {
-  up: (queryInterface) => {
+  up: (queryInterface, Sequelize) => {
     return queryInterface.sequelize.transaction((transaction) =>
       Promise.all([
         queryInterface.addColumn(
