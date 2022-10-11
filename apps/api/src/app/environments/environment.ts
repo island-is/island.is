@@ -118,8 +118,16 @@ const prodConfig = () => ({
     authRetries: process.env.PKPASS_AUTH_RETRIES ?? '1',
   },
   firearmLicense: {
-    firearmLicensePassTemplateId: process.env.FIREARM_LICENSE_PASS_TEMPLATE_ID,
+    passTemplateId: process.env.FIREARM_LICENSE_PASS_TEMPLATE_ID,
     pkPassApiKey: process.env.RLS_PKPASS_API_KEY,
+  },
+  machineLicense: {
+    passTemplateId: process.env.MACHINE_LICENSE_PASS_TEMPLATE_ID,
+    pkPassApiKey: process.env.VE_PKPASS_API_KEY,
+  },
+  adrLicense: {
+    passTemplateId: process.env.ADR_LICENSE_PASS_TEMPLATE_ID,
+    pkPassApiKey: process.env.VE_PKPASS_API_KEY,
   },
   smartSolutionsApiUrl: process.env.SMART_SOLUTIONS_API_URL,
   audit: {
@@ -280,7 +288,15 @@ const devConfig = () => ({
     authRetries: process.env.PKPASS_AUTH_RETRIES ?? '1',
   },
   firearmLicense: {
-    firearmLicensePassTemplateId: process.env.FIREARM_LICENSE_PASS_TEMPLATE_ID,
+    passTemplateId: process.env.FIREARM_LICENSE_PASS_TEMPLATE_ID,
+    pkPassApiKey: process.env.VE_PKPASS_API_KEY,
+  },
+  machineLicense: {
+    passTemplateId: process.env.MACHINE_LICENSE_PASS_TEMPLATE_ID,
+    pkPassApiKey: process.env.VE_PKPASS_API_KEY,
+  },
+  adrLicense: {
+    passTemplateId: process.env.ADR_LICENSE_PASS_TEMPLATE_ID,
     pkPassApiKey: process.env.VE_PKPASS_API_KEY,
   },
   smartSolutionsApiUrl: process.env.SMART_SOLUTIONS_API_URL,

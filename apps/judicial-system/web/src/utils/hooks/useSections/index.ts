@@ -484,7 +484,7 @@ const useSections = () => {
     const { id } = workingCase
 
     return {
-      name: formatMessage(sections.courtSection.title),
+      name: formatMessage(sections.indictmentsCourtSection.title),
       children:
         activeSubSection === undefined
           ? []

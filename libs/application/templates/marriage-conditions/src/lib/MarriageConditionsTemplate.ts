@@ -19,7 +19,6 @@ import {
   getApplicationFeatureFlags,
   MarriageCondtionsFeatureFlags,
 } from './getApplicationFeatureFlags'
-import { DefaultStateLifeCycle } from '@island.is/application/core'
 
 const pruneAfter = (time: number) => {
   return {
