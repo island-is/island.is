@@ -211,6 +211,10 @@
 
 /libs/clients/charge-fjs-v2/                                                                        @island-is/origo
 
+/libs/application/templates/transport-authority/                                                    @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/transport-authority/               @island-is/origo
+
+
 # Temporary assignment while the QA bootstrap project is in progress
 /apps/system-e2e/                                                                                   @island-is/qa
 

@@ -1,6 +1,6 @@
-import React from 'react'
 import { Box, Text, Hidden } from '@island.is/island-ui/core'
 import { ServiceWebSearchInput } from '@island.is/web/components'
+import { useNamespace } from '@island.is/web/hooks'
 import { TextModes } from '../types'
 
 import * as styles from './SearchSection.css'
@@ -11,6 +11,7 @@ interface SearchSectionProps {
   logoUrl?: string
   textMode?: TextModes
   searchPlaceholder?: string
+  namespace: Record<string, string>
 }
 
 export const SearchSection = ({
@@ -19,8 +20,10 @@ export const SearchSection = ({
   logoUrl,
   textMode,
   searchPlaceholder,
+  namespace,
 }: SearchSectionProps) => {
   const dark = textMode === 'dark'
+  const n = useNamespace(namespace)
 
   return (
     <Box
@@ -60,7 +63,10 @@ export const SearchSection = ({
           </Box>
         </>
       )}
-      <ServiceWebSearchInput placeholder={searchPlaceholder} />
+      <ServiceWebSearchInput
+        placeholder={searchPlaceholder}
+        nothingFoundText={n('nothingFoundText', 'Ekkert fannst')}
+      />
     </Box>
   )
 }
