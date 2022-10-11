@@ -48,8 +48,6 @@ export const DelegationsFromMe = () => {
                         key={delegation.id}
                         delegation={delegation}
                         group="Ísland.is"
-                        // TODO add conditional if card is editable
-                        editable
                         onDelete={(delegation) => {
                           setDelegation(delegation)
                         }}

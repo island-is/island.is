@@ -13,21 +13,20 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { coreMessages } from '@island.is/application/core'
 import { AuthCustomDelegation } from '@island.is/api/schema'
+import compareAsc from 'date-fns/compareAsc'
+import { useMemo } from 'react'
+
+const isDateValid = (date: Date) => compareAsc(date, new Date()) === 1
 
 interface AccessCardProps {
   delegation: AuthCustomDelegation
   group: string
-  /**
-   * Whether the card is editable or not, i.e. user can view/edit/renew delegation or only renew
-   */
-  editable?: boolean
   onDelete(delegation: AuthCustomDelegation): void
 }
 
 export const AccessCard = ({
   delegation,
   group,
-  editable = true,
   onDelete,
 }: AccessCardProps) => {
   useNamespaces(['sp.settings-access-control', 'sp.access-control-delegations'])
@@ -37,11 +36,21 @@ export const AccessCard = ({
   const tags = delegation.scopes.map((scope) => scope.displayName)
   const href = `${pathname}/${delegation.id}`
 
+  const isExpired = useMemo(() => {
+    if (delegation.validTo) {
+      return isDateValid(new Date(delegation.validTo))
+    }
+
+    return delegation.scopes.every((scope) =>
+      isDateValid(new Date(scope.validTo)),
+    )
+  }, [delegation])
+
   return (
     <Box
       paddingY={[2, 3, 4]}
       paddingX={[2, 3, 4]}
-      border={editable ? 'standard' : 'disabled'}
+      border={isExpired ? 'standard' : 'disabled'}
       borderRadius="large"
     >
       <Box display="flex" justifyContent="spaceBetween" alignItems="flexStart">
@@ -49,7 +58,7 @@ export const AccessCard = ({
           <Text variant="eyebrow" color="purple400">
             {group}
           </Text>
-          <Text variant="h3" as="h3" color={editable ? 'dark400' : 'dark300'}>
+          <Text variant="h3" as="h3" color={isExpired ? 'dark400' : 'dark300'}>
             {delegation?.to?.name}
           </Text>
         </Stack>
@@ -57,10 +66,10 @@ export const AccessCard = ({
           <Icon
             size="small"
             icon="time"
-            color={editable ? 'blue400' : 'dark300'}
+            color={isExpired ? 'blue400' : 'dark300'}
             type="outline"
           />
-          <Text variant="small" color={editable ? 'dark400' : 'dark300'}>
+          <Text variant="small" color={isExpired ? 'dark400' : 'dark300'}>
             {delegation.validTo
               ? format(new Date(delegation.validTo), 'dd.MM.yyyy')
               : formatMessage({
@@ -78,17 +87,19 @@ export const AccessCard = ({
           flexDirection={['column', 'row']}
           width="full"
         >
-          <Inline alignY="bottom" space={1}>
-            {tags.map((tag, index) => (
-              <Tag
-                disabled
-                key={index}
-                variant={editable ? 'blue' : 'disabled'}
-              >
-                {tag}
-              </Tag>
-            ))}
-          </Inline>
+          <Box width="full">
+            <Inline alignY="bottom" space={1}>
+              {tags.map((tag, index) => (
+                <Tag
+                  disabled
+                  key={index}
+                  variant={isExpired ? 'blue' : 'disabled'}
+                >
+                  {tag}
+                </Tag>
+              ))}
+            </Inline>
+          </Box>
           <Box
             display="flex"
             alignItems="center"
@@ -107,7 +118,7 @@ export const AccessCard = ({
               {formatMessage(coreMessages.buttonDestroy)}
             </Button>
             <Box marginLeft={3}>
-              {editable ? (
+              {isExpired ? (
                 <Button
                   icon="pencil"
                   iconType="outline"
@@ -123,10 +134,7 @@ export const AccessCard = ({
                   iconType="outline"
                   size="small"
                   variant="utility"
-                  onClick={() => {
-                    // TODO handle delegation renewal
-                    console.log('TODO handle delegation renewal')
-                  }}
+                  onClick={() => history.push(href)}
                 >
                   {formatMessage(coreMessages.buttonRenew)}
                 </Button>
