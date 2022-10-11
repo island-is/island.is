@@ -1,4 +1,5 @@
 import {
+  AccessModes,
   Service,
   EnvironmentVariables,
   Ingress,
@@ -12,16 +13,19 @@ import {
   PostgresInfo,
   Feature,
   Features,
+  PersistentVolumeClaim,
 } from './types/input-types'
 import {
   ContainerEnvironmentVariables,
   ContainerRunHelm,
   ContainerSecrets,
+  OutputPersistentVolumeClaim,
   SerializeMethod,
   ServiceHelm,
 } from './types/output-types'
 import { EnvironmentConfig, UberChartType } from './types/charts'
 import { FeatureNames } from './features'
+import { serialize } from 'v8'
 
 /**
  * Transforms our definition of a service to a Helm values object
@@ -142,16 +146,6 @@ export const serializeService: SerializeMethod = (
   result.hpa.scaling.metric.nginxRequestsIrate =
     serviceDef.replicaCount?.scalingMagicNumber || 2
 
-  if (serviceDef.volumes) {
-    serviceDef.volumes.forEach((volume) => {
-      if (typeof volume.storageClass !== 'undefined') {
-        result.pvcs = serviceDef.volumes
-      } else {
-        volume.storageClass = 'efs-csi'
-        result.pvcs = serviceDef.volumes
-      }
-    })
-  }
   // extra attributes
   if (serviceDef.extraAttributes) {
     const { envs, errors } = serializeExtraVariables(
@@ -320,6 +314,10 @@ export const serializeService: SerializeMethod = (
     addToErrors(errors)
   }
 
+  // Volumes
+  if (Object.keys(serviceDef.volumes.length > 0)) {
+    result.pvcs = serializeVolumes(service, serviceDef.volumes)
+  }
   checkCollisions(result.secrets, result.env)
 
   return allErrors.length === 0
@@ -458,6 +456,42 @@ function serializeIngress(
       paths: ingressConf.paths,
     })),
   }
+}
+
+function serializeVolumes(
+  service: Service,
+  volumes: {
+    name?: string
+    storage: string
+    accessModes: AccessModes
+    mountPath: string
+    storageClass?: string
+  }[],
+) {
+  const errors: string[] = []
+  const mapping: {
+    [mode in AccessModes]: OutputPersistentVolumeClaim['accessModes']
+  } = {
+    ReadOnly: 'ReadOnlyMany',
+    ReadWrite: 'ReadWriteMany',
+  }
+
+  return volumes.map((volume) => {
+    let result: OutputPersistentVolumeClaim = {
+      name: volume.name,
+      storage: volume.storage,
+      mountPath: volume.mountPath,
+      storageClass: 'efs-csi',
+      accessModes: mapping[volume.accessModes],
+    }
+    if (typeof volume.name === 'undefined') {
+      if (volumes.length > 1) {
+        throw new Error('Must set volume name if more than one')
+      }
+      result.name = `${service.serviceDef.name}`
+    }
+    return result
+  })
 }
 
 function serializeContainerRuns(

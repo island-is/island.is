@@ -12,11 +12,7 @@ export type Hash = { [name: string]: Hash | string | number }
 export type ValueSource = string | ((e: Context) => string)
 export type ValueType = MissingSettingType | ValueSource
 // See https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes for more info
-export type AccessModes =
-  | 'ReadWriteOnce'
-  | 'ReadWriteMany'
-  | 'ReadWriteOncePod'
-  | 'ReadOnlyMany'
+export type AccessModes = 'ReadWrite' | 'ReadOnly'
 
 export type PostgresInfo = {
   host?: {
@@ -98,8 +94,8 @@ export interface Ingress {
   extraAnnotations?: { [name in OpsEnv]: { [idx: string]: string | null } }
 }
 
-export interface PersistentVolumeClaim {
-  name: string
+export type PersistentVolumeClaim = {
+  name?: string
   storage: string
   accessModes: AccessModes
   mountPath: string

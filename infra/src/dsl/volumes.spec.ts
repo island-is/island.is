@@ -18,19 +18,21 @@ const Staging: EnvironmentConfig = {
   global: {},
 }
 describe('Volume Support', () => {
-  const sut: ServiceBuilder<'api'> = service('api')
-    .volumes({
+  const sut: ServiceBuilder<'api'> = service('api').volumes(
+    {
       name: 'something',
       storage: '1Gi',
-      accessModes: 'ReadWriteOnce',
+      accessModes: 'ReadOnly',
       mountPath: '/storage_one',
-    })
-    .volumes({
+    },
+    {
       name: 'somethingelse',
       storage: '1Gi',
-      accessModes: 'ReadWriteOnce',
+      accessModes: 'ReadWrite',
       mountPath: '/storage_two',
-    })
+    },
+  )
+
   const stagingWithVolumes = serializeService(
     sut,
     new UberChart(Staging),
@@ -40,16 +42,34 @@ describe('Volume Support', () => {
     expect(stagingWithVolumes.serviceDef.pvcs![0]).toEqual({
       name: 'something',
       storage: '1Gi',
-      accessModes: 'ReadWriteOnce',
+      accessModes: 'ReadOnlyMany',
       mountPath: '/storage_one',
       storageClass: 'efs-csi',
     }),
       expect(stagingWithVolumes.serviceDef.pvcs![1]).toEqual({
         name: 'somethingelse',
         storage: '1Gi',
-        accessModes: 'ReadWriteOnce',
+        accessModes: 'ReadWriteMany',
         mountPath: '/storage_two',
         storageClass: 'efs-csi',
       })
+  })
+  it('Support default name for volumes', () => {
+    const sut: ServiceBuilder<'api'> = service('api').volumes({
+      storage: '1Gi',
+      accessModes: 'ReadOnly',
+      mountPath: '/storage_one',
+    })
+    const stagingWithDefaultVolume = serializeService(
+      sut,
+      new UberChart(Staging),
+    ) as SerializeSuccess
+    expect(stagingWithDefaultVolume.serviceDef.pvcs![0]).toEqual({
+      name: 'api',
+      storage: '1Gi',
+      accessModes: 'ReadOnlyMany',
+      mountPath: '/storage_one',
+      storageClass: 'efs-csi',
+    })
   })
 })

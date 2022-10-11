@@ -23,7 +23,18 @@ export type ContainerRunHelm = {
     }
   }
 }
-
+export type OutputAccessModes = 'ReadWriteMany' | 'ReadOnlyMany'
+export type OutputPersistentVolumeClaim = {
+  name?: string
+  storage: string
+  accessModes: OutputAccessModes
+  mountPath: string
+  /**
+   * Sets the storageClass, leave empty if storageClass means little to you(defaults to efs-csi),
+   * Mostly for internal use by the DevOps team.
+   */
+  storageClass: 'efs-csi'
+}
 export type ContainerEnvironmentVariables = { [name: string]: string }
 export type ContainerSecrets = { [name: string]: string }
 
@@ -106,7 +117,7 @@ export interface ServiceHelm {
       memory: string
     }
   }
-  pvcs?: PersistentVolumeClaim[]
+  pvcs?: OutputPersistentVolumeClaim[]
   grantNamespaces: string[]
   grantNamespacesEnabled: boolean
 
