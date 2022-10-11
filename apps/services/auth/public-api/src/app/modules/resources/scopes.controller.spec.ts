@@ -26,7 +26,7 @@ import { createTranslations } from '../../../../test/fixtures'
 const user = createCurrentUser({
   nationalId: '1122334455',
   scope: [
-    AuthScope.readDelegations,
+    AuthScope.delegations,
     Scopes[0].name,
     Scopes[3].name,
     Scopes[6].name,
@@ -135,7 +135,7 @@ describe('ScopesController', () => {
       const app = await setupWithAuth({
         user: {
           ...user,
-          scope: [AuthScope.readDelegations],
+          scope: [AuthScope.delegations],
         },
         userName,
         nationalRegistryUser,
@@ -188,7 +188,7 @@ describe('ScopesController', () => {
         user: {
           ...user,
           scope: [
-            AuthScope.readDelegations,
+            AuthScope.delegations,
             ...sortedScopes.map((scope) => scope.name),
           ],
         },
