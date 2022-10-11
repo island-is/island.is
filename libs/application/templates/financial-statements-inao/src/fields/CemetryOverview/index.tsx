@@ -4,7 +4,6 @@ import { getErrorViaPath } from '@island.is/application/core'
 
 import {
   Box,
-  Button,
   Checkbox,
   Divider,
   GridColumn,

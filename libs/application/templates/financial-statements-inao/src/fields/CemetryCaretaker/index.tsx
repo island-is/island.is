@@ -1,8 +1,8 @@
 import React, { FC, useState, useEffect, useCallback } from 'react'
-import { useFieldArray, useFormContext } from 'react-hook-form'
-import { IdentityInput, Query } from '@island.is/api/schema'
-import * as kennitala from 'kennitala'
-import throttle from 'lodash/throttle'
+import { useFieldArray } from 'react-hook-form'
+// import { IdentityInput, Query } from '@island.is/api/schema'
+// import * as kennitala from 'kennitala'
+// import throttle from 'lodash/throttle'
 
 import { RecordObject } from '@island.is/application/types'
 import {
@@ -11,7 +11,7 @@ import {
   GridColumn,
   GridRow,
   GridContainer,
-  InputError,
+  // InputError,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
