@@ -25,7 +25,6 @@ import {
 } from './types/output-types'
 import { EnvironmentConfig, UberChartType } from './types/charts'
 import { FeatureNames } from './features'
-import { serialize } from 'v8'
 
 /**
  * Transforms our definition of a service to a Helm values object
@@ -316,7 +315,9 @@ export const serializeService: SerializeMethod = (
 
   // Volumes
   if (Object.keys(serviceDef.volumes.length > 0)) {
-    result.pvcs = serializeVolumes(service, serviceDef.volumes)
+    const { errors, volumes } = serializeVolumes(service, serviceDef.volumes)
+    addToErrors(errors)
+    result.pvcs = volumes
   }
   checkCollisions(result.secrets, result.env)
 
@@ -475,23 +476,19 @@ function serializeVolumes(
     ReadOnly: 'ReadOnlyMany',
     ReadWrite: 'ReadWriteMany',
   }
+  if (volumes.some(v => typeof v.name === undefined) && volumes.length > 1) {
+    return ({ errors: ['Must set volume name if more than one'], volumes: [] })
+  }
 
-  return volumes.map((volume) => {
-    let result: OutputPersistentVolumeClaim = {
-      name: volume.name,
+  const results: OutputPersistentVolumeClaim[] = volumes.map((volume) => ({
+      name: volume.name ?? `${service.serviceDef.name}`,
       storage: volume.storage,
       mountPath: volume.mountPath,
       storageClass: 'efs-csi',
       accessModes: mapping[volume.accessModes],
-    }
-    if (typeof volume.name === 'undefined') {
-      if (volumes.length > 1) {
-        throw new Error('Must set volume name if more than one')
-      }
-      result.name = `${service.serviceDef.name}`
-    }
-    return result
-  })
+    }))
+
+  return ({errors, volumes:results})
 }
 
 function serializeContainerRuns(
