@@ -1,6 +1,6 @@
 import { AuthCustomDelegation } from '@island.is/api/schema'
 import { useAuth } from '@island.is/auth/react'
-import { AlertBanner, Box } from '@island.is/island-ui/core'
+import { AlertMessage, Box, toast } from '@island.is/island-ui/core'
 import { useNamespaces, useLocale } from '@island.is/localization'
 import { formatNationalId } from '@island.is/service-portal/core'
 import { useDeleteAuthDelegationMutation } from '@island.is/service-portal/graphql'
@@ -50,6 +50,13 @@ export const AccessDeleteModal = ({
       }
 
       onDelete()
+
+      toast.success(
+        formatMessage({
+          id: 'sp.access-control-delegations:delete-success',
+          defaultMessage: 'Aðgangi eytt',
+        }),
+      )
     } catch (error) {
       setError(true)
     }
@@ -62,16 +69,22 @@ export const AccessDeleteModal = ({
 
   return (
     <Modal {...rest} onClose={onClose}>
-      <Box marginY={[4, 4, 8]} display="flex" flexDirection="column" rowGap={3}>
+      <Box
+        marginTop={[2, 2, 8]}
+        marginBottom={[2, 2, 5]}
+        display="flex"
+        flexDirection="column"
+        rowGap={3}
+      >
         {error && (
           <Box paddingBottom={3}>
-            <AlertBanner
-              description={formatMessage({
+            <AlertMessage
+              message={formatMessage({
                 id: 'sp.access-control-delegations:delete-error',
                 defaultMessage:
                   'Ekki tókst að eyða umboði. Vinsamlegast reyndu aftur',
               })}
-              variant="error"
+              type="error"
             />
           </Box>
         )}
@@ -115,6 +128,14 @@ export const AccessDeleteModal = ({
             imgSrc={domain.imgSrc}
           />
         )}
+        <AlertMessage
+          message={formatMessage({
+            id: 'sp.access-control-delegations:delete-warning',
+            defaultMessage:
+              '[Ath. að öll réttindi aðgangshafa í þessu kerfi detta út/öll réttindi sem fylgja þessu umboði detta út.]',
+          })}
+          type="warning"
+        />
       </Box>
       <DelegationsFormFooter
         loading={loading}

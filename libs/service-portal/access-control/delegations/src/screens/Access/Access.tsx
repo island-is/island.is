@@ -46,6 +46,7 @@ const Access = () => {
    */
   const [enableValidityPeriod, setEnableValidityPeriod] = useState(false)
   const defaultDate = add(new Date(), { years: 1 })
+
   const [validityPeriod, setValidityPeriod] = useState(
     authDelegation?.validTo ? new Date(authDelegation?.validTo) : null,
   )
@@ -58,11 +59,14 @@ const Access = () => {
   }
 
   useEffect(() => {
-    if (authDelegation?.validTo) {
+    if (authDelegation?.validTo && authDelegation.scopes.length > 0) {
       setEnableValidityPeriod(!!authDelegation.validTo)
       setValidityPeriod(new Date(authDelegation.validTo))
+    } else {
+      setEnableValidityPeriod(true)
+      setValidityPeriod(defaultDate)
     }
-  }, [authDelegation?.validTo])
+  }, [authDelegation])
 
   if (!loading && !delegationData?.authDelegation) {
     return <NotFound />
