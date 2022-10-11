@@ -1,0 +1,110 @@
+openapi: 3.0.0
+info:
+  title: Öryrki
+  description: Upplýsingar um öryrkja frá Tryggingastofnun
+  version: 1.0.0
+servers:
+  - url: https://xroad-dev.xxxxx.is/r1/IS-DEV/GOV/10008/TR-Protected/oryrki-v1
+    description: Optional server description, XROAD-DEV
+paths:
+  /erOryrki:
+    post:
+      summary: Sækir hvort einstaklingur sé öryrki, þ.e. hafi gilt 75% örorkumat
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                kennitala:
+                  type: string
+                  default:
+                  description: kennitala greiðsluþega
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/er_oryrki'
+
+        '400':
+          description: bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+        '500':
+          description: internal Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+  /faskirteini:
+    post:
+      summary: Skilar upplýsingum um örorkuskíteini, ef einstaklingur er með gilt 75% mat
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                kennitala:
+                  type: string
+                  default:
+                  description: kennitala greiðsluþega
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ororku_skirteini'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    er_oryrki:
+      properties:
+        erOryrki:
+          type: string
+          example: 'J'
+          description: J=Já eða N=Nei, Nei felur ekki í sér upplýsignar um hvort einstaklingurinn sé viðskiptavinur TR
+      required:
+        - erOryrki
+    ororku_skirteini:
+      properties:
+        nafn:
+          type: string
+          example: nafn greiðsluþega
+        kennitala:
+          type: string
+          example: 0101302479
+        gildir_til:
+          type: string
+          example: 2023-10-07
+    errors:
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/error'
+    error:
+      type: object
+      properties:
+        message:
+          type: string
+        status:
+          type: integer
+        code:
+          type: integer
+          required:
+            - message
+            - status
+            - code
+security:
+  - bearerAuth: []
