@@ -1972,7 +1972,7 @@ describe('formatDefenderResubmittedToCourtEmailNotification', () => {
     )
 
     expect(result.body).toEqual(
-      'Sækjandi í máli R-2022/999 hjá Héraðsdómi Reykjavíkur hefur sent kröfuna aftur á dóminn.<br /><br />Þú getur nálgast gögn málsins í <a href="https://rettarvorslugatt.island.is/overviewUrl">Réttarvörslugátt</a> með rafrænum skilríkjum.',
+      'Sækjandi í máli R-2022/999 hjá Héraðsdómi Reykjavíkur hefur breytt kröfunni og sent hana aftur á dóminn.<br /><br />Þú getur nálgast gögn málsins í <a href="https://rettarvorslugatt.island.is/overviewUrl">Réttarvörslugátt</a> með rafrænum skilríkjum.',
     )
     expect(result.subject).toEqual('Gögn í máli R-2022/999')
   })

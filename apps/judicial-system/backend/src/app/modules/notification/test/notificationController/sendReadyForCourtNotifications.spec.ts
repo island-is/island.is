@@ -52,6 +52,7 @@ describe('NotificationController - Send ready for court notifications', () => {
     court: { name: 'Héraðsdómur Reykjavíkur' },
     courtCaseNumber,
     courtDate: randomDate(),
+    defenderNationalId: uuid(),
     defenderName: 'Saul Goodman',
     defenderEmail: 'saul@dummy.is',
     sendRequestToDefender: true,
@@ -224,7 +225,7 @@ describe('NotificationController - Send ready for court notifications', () => {
           replyTo: { name: 'Réttarvörslugátt', address: 'ben10@omnitrix.is' },
           to: [{ name: 'Saul Goodman', address: 'saul@dummy.is' }],
           subject: `Gögn í máli ${courtCaseNumber}`,
-          html: `Sækjandi í máli ${courtCaseNumber} hjá Héraðsdómi Reykjavíkur hefur sent kröfuna aftur á dóminn.<br /><br />Þú getur nálgast gögn málsins í <a href="http://localhost:4200/verjandi/${caseId}">Réttarvörslugátt</a> með rafrænum skilríkjum.`,
+          html: `Sækjandi í máli ${courtCaseNumber} hjá Héraðsdómi Reykjavíkur hefur breytt kröfunni og sent hana aftur á dóminn.<br /><br />Þú getur nálgast gögn málsins í <a href="http://localhost:4200/verjandi/${caseId}">Réttarvörslugátt</a> með rafrænum skilríkjum.`,
           attachments: undefined,
         }),
       )

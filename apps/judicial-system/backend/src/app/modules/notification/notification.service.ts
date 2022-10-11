@@ -450,13 +450,13 @@ export class NotificationService {
         },
       })
 
-      exists = notifications.some(async (notification) => {
+      exists = notifications.some(async (notification) =>
         JSON.parse(notification.recipients ?? '[]').some(
           (recipient: Recipient) =>
             recipient.address === theCase.defenderEmail &&
             recipient.success === true,
-        )
-      })
+        ),
+      )
     } catch (error) {
       // Tolerate failure, but log error
       this.logger.error(
