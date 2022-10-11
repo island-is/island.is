@@ -28,15 +28,19 @@ export const ElectionEquities = ({
 }): JSX.Element => {
   const answers = application.answers
 
-  const [totalOperatingCost, setTotalOperatingCost] = useState(0)
-  const [equityTotal, setEquityTotal] = useState(0)
+  const { formatMessage } = useLocale()
+
+  const { errors, clearErrors, setValue } = useFormContext()
 
   const operatingCostTotal = getValueViaPath(
     answers,
     OPERATINGCOST.total,
   ) as string
 
-  const { errors, clearErrors, setValue } = useFormContext()
+  useEffect(() => {
+    setValue(EQUITIESANDLIABILITIESIDS.operationResult, operatingCostTotal)
+    setTotalOperatingCost(Number(operatingCostTotal))
+  }, [operatingCostTotal])
 
   const [getTotalEquity, totalEquity] = useTotals(
     EQUITIESANDLIABILITIESIDS.equityPrefix,
@@ -48,17 +52,13 @@ export const ElectionEquities = ({
     EQUITIESANDLIABILITIESIDS.liabilityPrefix,
   )
 
-  useEffect(() => {
-    setValue(EQUITIESANDLIABILITIESIDS.operationResult, operatingCostTotal)
-    setTotalOperatingCost(Number(operatingCostTotal))
-  }, [operatingCostTotal, totalEquity])
+  const [totalOperatingCost, setTotalOperatingCost] = useState(0)
+  const [equityTotal, setEquityTotal] = useState(0)
 
   useEffect(() => {
     const total = totalEquity - totalLiabilities
     setEquityTotal(total)
   }, [totalLiabilities, totalEquity, totalOperatingCost])
-
-  const { formatMessage } = useLocale()
 
   return (
     <GridContainer>
