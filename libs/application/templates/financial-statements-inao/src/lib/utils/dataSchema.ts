@@ -25,6 +25,10 @@ const conditionalAbout = z.object({
   operatingYear: z.string().refine((x) => !!x, { params: m.required }),
 })
 
+const operatingCost = z.object({
+  total: z.string().refine((x) => !!x, { params: m.required }),
+})
+
 const about = z.object({
   nationalId: z
     .string()
@@ -52,6 +56,7 @@ const asset = z.object({
 
 const equity = z.object({
   totalEquity: z.string().refine((x) => !!x, { params: m.required }),
+  operationResult: z.string(),
   total: z.string().refine((x) => !!x, { params: m.required }),
 })
 
@@ -139,10 +144,6 @@ const capitalNumbers = z.object({
   capitalIncome: z.string().refine((x) => !!x, { params: m.required }),
   capitalCost: z.string().refine((x) => !!x, { params: m.required }),
   total: z.string(),
-})
-
-const operatingCost = z.object({
-  total: z.string().refine((x) => !!x, { params: m.required }),
 })
 
 const cemetryCaretaker = z

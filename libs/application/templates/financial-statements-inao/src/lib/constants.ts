@@ -133,6 +133,7 @@ export const EQUITIESANDLIABILITIESIDS = {
   shortTerm: 'liability.shortTerm',
   asset: 'liability.asset',
   totalLiability: 'liability.total',
+  operationResult: 'equity.operationResult',
   equityPrefix: 'equity',
   totalEquity: 'equity.totalEquity',
   totalCash: 'equity.total',

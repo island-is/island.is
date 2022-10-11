@@ -301,6 +301,11 @@ export const m = defineMessages({
     defaultMessage: 'Samþykkja þarf yfirlit',
     description: 'Approval missing',
   },
+  errorSignature: {
+    id: 'fsn.application:error.errorApproval',
+    defaultMessage: 'Samþykkja þarf yfirlit með rafrænni undirritun',
+    description: 'Signature missing',
+  },
   errorMembersMissing: {
     id: 'fsn.application:error.errorMembersMissing',
     defaultMessage: 'Skrá þarf bæði skoðunarmann og stjórnarmann',

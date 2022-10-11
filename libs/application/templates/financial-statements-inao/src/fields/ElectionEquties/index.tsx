@@ -10,17 +10,33 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
-import { getErrorViaPath } from '@island.is/application/core'
+import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
 import { m } from '../../lib/messages'
 import { Total } from '../KeyNumbers'
 import {
   INPUTCHANGEINTERVAL,
   EQUITIESANDLIABILITIESIDS,
+  OPERATINGCOST,
 } from '../../lib/constants'
 import { useTotals } from '../../hooks'
 
-export const ElectionEquities = (): JSX.Element => {
+export const ElectionEquities = ({
+  application,
+}: {
+  application: Application
+}): JSX.Element => {
+  const answers = application.answers
+
+  const [totalOperatingCost, setTotalOperatingCost] = useState(0)
   const [equityTotal, setEquityTotal] = useState(0)
+
+  const operatingCostTotal = getValueViaPath(
+    answers,
+    OPERATINGCOST.total,
+  ) as string
+
+  const { errors, clearErrors, setValue } = useFormContext()
 
   const [getTotalEquity, totalEquity] = useTotals(
     EQUITIESANDLIABILITIESIDS.equityPrefix,
@@ -33,11 +49,15 @@ export const ElectionEquities = (): JSX.Element => {
   )
 
   useEffect(() => {
+    setValue(EQUITIESANDLIABILITIESIDS.operationResult, operatingCostTotal)
+    setTotalOperatingCost(Number(operatingCostTotal))
+  }, [operatingCostTotal, totalEquity])
+
+  useEffect(() => {
     const total = totalEquity - totalLiabilities
     setEquityTotal(total)
-  }, [totalLiabilities, totalEquity])
+  }, [totalLiabilities, totalEquity, totalOperatingCost])
 
-  const { errors, clearErrors } = useFormContext()
   const { formatMessage } = useLocale()
 
   return (
@@ -143,6 +163,23 @@ export const ElectionEquities = (): JSX.Element => {
                 getErrorViaPath(errors, EQUITIESANDLIABILITIESIDS.totalEquity)
               }
               label={formatMessage(m.equity)}
+              backgroundColor="blue"
+              currency
+            />
+          </Box>
+          <Box paddingY={1}>
+            <InputController
+              id={EQUITIESANDLIABILITIESIDS.operationResult}
+              name={EQUITIESANDLIABILITIESIDS.operationResult}
+              readOnly
+              error={
+                errors &&
+                getErrorViaPath(
+                  errors,
+                  EQUITIESANDLIABILITIESIDS.operationResult,
+                )
+              }
+              label={formatMessage(m.operationResult)}
               backgroundColor="blue"
               currency
             />

@@ -114,7 +114,7 @@ export const getApplication = (allowFakeData = false): Form => {
             uploadButtonLabel: m.uploadButtonLabel,
             uploadMultiple: false,
             forImageUpload: false,
-            doesNotRequireAnswer: false,
+            // doesNotRequireAnswer: false,
           }),
         ],
       }),
