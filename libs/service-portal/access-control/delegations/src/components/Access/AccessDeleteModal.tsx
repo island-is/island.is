@@ -7,7 +7,8 @@ import { useDeleteAuthDelegationMutation } from '@island.is/service-portal/graph
 import { useState } from 'react'
 import { DelegationsFormFooter } from '../DelegationsFormFooter'
 import { IdentityCard } from '../IdentityCard'
-import { Modal, ModalProps } from '../Modal'
+import { Modal } from '../Modal'
+import type { ModalProps } from '../Modal/Modal'
 
 type AccessDeleteModalProps = ModalProps & {
   delegation: AuthCustomDelegation
