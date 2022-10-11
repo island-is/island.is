@@ -13,10 +13,9 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { coreMessages } from '@island.is/application/core'
 import { AuthCustomDelegation } from '@island.is/api/schema'
-import compareAsc from 'date-fns/compareAsc'
 import { useMemo } from 'react'
 
-const isDateValid = (date: Date) => compareAsc(date, new Date()) === 1
+const isDateExpired = (date: string) => new Date(date) < new Date()
 
 interface AccessCardProps {
   delegation: AuthCustomDelegation
@@ -33,24 +32,41 @@ export const AccessCard = ({
   const { formatMessage } = useLocale()
   const history = useHistory()
   const { pathname } = useLocation()
-  const tags = delegation.scopes.map((scope) => scope.displayName)
+  const tags = delegation.scopes.map((scope) => ({
+    name: scope.displayName,
+    isExpired: isDateExpired(scope.validTo),
+  }))
   const href = `${pathname}/${delegation.id}`
 
   const isExpired = useMemo(() => {
     if (delegation.validTo) {
-      return isDateValid(new Date(delegation.validTo))
+      return isDateExpired(delegation.validTo)
     }
 
-    return delegation.scopes.every((scope) =>
-      isDateValid(new Date(scope.validTo)),
-    )
+    return delegation.scopes.every((scope) => isDateExpired(scope.validTo))
   }, [delegation])
+
+  const getRightLabel = () => {
+    if (isExpired) {
+      return formatMessage({
+        id: 'sp.access-control-delegations:expired',
+        defaultMessage: 'Útrunnið',
+      })
+    }
+
+    return delegation.validTo
+      ? format(new Date(delegation.validTo), 'dd.MM.yyyy')
+      : formatMessage({
+          id: 'sp.settings-access-control:home-view-varies',
+          defaultMessage: 'Breytilegur',
+        })
+  }
 
   return (
     <Box
       paddingY={[2, 3, 4]}
       paddingX={[2, 3, 4]}
-      border={isExpired ? 'standard' : 'disabled'}
+      border={isExpired ? 'disabled' : 'standard'}
       borderRadius="large"
     >
       <Box display="flex" justifyContent="spaceBetween" alignItems="flexStart">
@@ -58,7 +74,7 @@ export const AccessCard = ({
           <Text variant="eyebrow" color="purple400">
             {group}
           </Text>
-          <Text variant="h3" as="h3" color={isExpired ? 'dark400' : 'dark300'}>
+          <Text variant="h3" as="h3" color={isExpired ? 'dark300' : 'dark400'}>
             {delegation?.to?.name}
           </Text>
         </Stack>
@@ -66,16 +82,11 @@ export const AccessCard = ({
           <Icon
             size="small"
             icon="time"
-            color={isExpired ? 'blue400' : 'dark300'}
+            color={isExpired ? 'dark300' : 'blue400'}
             type="outline"
           />
-          <Text variant="small" color={isExpired ? 'dark400' : 'dark300'}>
-            {delegation.validTo
-              ? format(new Date(delegation.validTo), 'dd.MM.yyyy')
-              : formatMessage({
-                  id: 'sp.settings-access-control:home-view-varies',
-                  defaultMessage: 'Breytilegur',
-                })}
+          <Text variant="small" color={isExpired ? 'dark300' : 'dark400'}>
+            {getRightLabel()}
           </Text>
         </Inline>
       </Box>
@@ -93,9 +104,9 @@ export const AccessCard = ({
                 <Tag
                   disabled
                   key={index}
-                  variant={isExpired ? 'blue' : 'disabled'}
+                  variant={tag.isExpired ? 'disabled' : 'blue'}
                 >
-                  {tag}
+                  {tag.name}
                 </Tag>
               ))}
             </Inline>
@@ -118,7 +129,7 @@ export const AccessCard = ({
               {formatMessage(coreMessages.buttonDestroy)}
             </Button>
             <Box marginLeft={3}>
-              {isExpired ? (
+              {!isExpired ? (
                 <Button
                   icon="pencil"
                   iconType="outline"
