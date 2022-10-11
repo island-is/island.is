@@ -8,6 +8,7 @@ import {
   forwardRef,
   UseGuards,
   BadRequestException,
+  Body,
 } from '@nestjs/common'
 import {
   ApiBearerAuth,
@@ -19,6 +20,7 @@ import {
 import { Discount } from './discount.model'
 import {
   CreateDiscountCodeParams,
+  CreateExplicitDiscountCodeParams,
   GetCurrentDiscountByNationalIdParams,
 } from './dto'
 import { DiscountService } from './discount.service'
@@ -33,7 +35,8 @@ import type { User as AuthUser } from '@island.is/auth-nest-tools'
 import { UserService } from '../user/user.service'
 import { AuthGuard } from '../common'
 import { GetUserByDiscountCodeParams } from '../user/dto'
-import { AirlineUser } from '../user/user.model'
+import { AirlineUser, User } from '../user/user.model'
+import { NationalRegistryUser } from '../nationalRegistry'
 
 @ApiTags('Users')
 @Controller('api/public')
@@ -107,5 +110,50 @@ export class PrivateDiscountController {
       params.nationalId,
       unConnectedFlights,
     )
+  }
+
+  @ApiExcludeEndpoint()
+  @Post('users/createExplicitDiscountCode')
+  async createExplicitDiscountCode(
+    @Body() body: CreateExplicitDiscountCodeParams,
+  ): Promise<Discount> {
+    const nationalRegistryUser: NationalRegistryUser = {
+      ...body,
+      middleName: body.middleName ?? '',
+    }
+
+    const {
+      used,
+      unused,
+      total,
+    } = await this.flightService.countThisYearsFlightLegsByNationalId(
+      body.nationalId,
+    )
+
+    if (!this.flightService.isADSPostalCode(body.postalcode)) {
+      throw new Error(
+        `EXPLICIT CODE CREATION: postal code ${body.postalcode} is not ADS postal code`,
+      )
+    }
+
+    const fund = {
+      credit: unused,
+      used,
+      total,
+    }
+
+    const unConnectedFlights = await this.flightService.findThisYearsConnectableFlightsByNationalId(
+      body.nationalId,
+    )
+
+    const user = new User(nationalRegistryUser, fund)
+
+    const discount = await this.discountService.createDiscountCode(
+      user,
+      body.nationalId,
+      unConnectedFlights,
+    )
+
+    return discount
   }
 }

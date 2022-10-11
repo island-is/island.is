@@ -71,7 +71,7 @@ function Benefits({ misc }: PropTypes) {
     copySuccess,
     connectionFlightInfo,
   } = JSON.parse(misc)
-  const benefits = discounts.filter(({ user }) => user.meetsADSRequirements)
+  const benefits = discounts
   const hasBenefits = benefits.length > 0
   const connections = discounts.filter(
     ({ connectionDiscountCodes }) => connectionDiscountCodes.length > 0,
