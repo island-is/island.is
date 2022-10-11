@@ -1,8 +1,13 @@
 import format from 'date-fns/format'
 import { uuid } from 'uuidv4'
 
+import { ConfigType } from '@island.is/nest/config'
 import { EmailService } from '@island.is/email-service'
 import { SmsService } from '@island.is/nova-sms'
+import {
+  DEFENDER_ROUTE,
+  RESTRICTION_CASE_OVERVIEW_ROUTE,
+} from '@island.is/judicial-system/consts'
 import {
   User,
   NotificationType,
@@ -17,6 +22,7 @@ import { Case } from '../../../case/models/case.model'
 import { SendNotificationDto } from '../../dto/sendNotification.dto'
 import { SendNotificationResponse } from '../../models/sendNotification.resopnse'
 import { Notification } from '../../models/notification.model'
+import { notificationModuleConfig } from '../../notification.config'
 import { createTestingNotificationModule } from '../createTestingNotificationModule'
 
 jest.mock('../../../../factories/date.factory')
@@ -64,6 +70,7 @@ describe('NotificationController - Send ready for court notifications', () => {
   let mockEmailService: EmailService
   let mockSmsService: SmsService
   let mockCourtService: CourtService
+  let mockNotificationConfig: ConfigType<typeof notificationModuleConfig>
   let mockNotificationModel: typeof Notification
   let givenWhenThen: GivenWhenThen
 
@@ -77,6 +84,7 @@ describe('NotificationController - Send ready for court notifications', () => {
       emailService,
       smsService,
       courtService,
+      notificationConfig,
       notificationModel,
       notificationController,
     } = await createTestingNotificationModule()
@@ -84,6 +92,7 @@ describe('NotificationController - Send ready for court notifications', () => {
     mockEmailService = emailService
     mockSmsService = smsService
     mockCourtService = courtService
+    mockNotificationConfig = notificationConfig
     mockNotificationModel = notificationModel
 
     givenWhenThen = async (caseId, user, theCase, notification) => {
@@ -113,12 +122,18 @@ describe('NotificationController - Send ready for court notifications', () => {
 
     it('should send ready for court email notification to prosecutor', () => {
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith({
-        from: { name: 'Réttarvörslugátt', address: 'ben10@omnitrix.is' },
-        replyTo: { name: 'Réttarvörslugátt', address: 'ben10@omnitrix.is' },
+        from: {
+          name: mockNotificationConfig.email.fromName,
+          address: mockNotificationConfig.email.fromEmail,
+        },
+        replyTo: {
+          name: mockNotificationConfig.email.replyToName,
+          address: mockNotificationConfig.email.replyToEmail,
+        },
         to: [{ name: 'Derrick', address: 'derrick@dummy.is' }],
         subject: 'Krafa um gæsluvarðhald send',
         text: `Þú hefur sent kröfu á Héraðsdóm Reykjavíkur vegna LÖKE máls ${policeCaseNumber}. Skjalið er aðgengilegt undir málinu í Réttarvörslugátt.`,
-        html: `Þú hefur sent kröfu á Héraðsdóm Reykjavíkur vegna LÖKE máls ${policeCaseNumber}. Skjalið er aðgengilegt undir <a href="http://localhost:4200/krafa/stadfesta/${caseId}">málinu í Réttarvörslugátt</a>.`,
+        html: `Þú hefur sent kröfu á Héraðsdóm Reykjavíkur vegna LÖKE máls ${policeCaseNumber}. Skjalið er aðgengilegt undir <a href="${mockNotificationConfig.clientUrl}${RESTRICTION_CASE_OVERVIEW_ROUTE}/${caseId}">málinu í Réttarvörslugátt</a>.`,
         attachments: undefined,
       })
     })
@@ -159,12 +174,18 @@ describe('NotificationController - Send ready for court notifications', () => {
 
     it('should send ready for court email notification to prosecutor', () => {
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith({
-        from: { name: 'Réttarvörslugátt', address: 'ben10@omnitrix.is' },
-        replyTo: { name: 'Réttarvörslugátt', address: 'ben10@omnitrix.is' },
+        from: {
+          name: mockNotificationConfig.email.fromName,
+          address: mockNotificationConfig.email.fromEmail,
+        },
+        replyTo: {
+          name: mockNotificationConfig.email.replyToName,
+          address: mockNotificationConfig.email.replyToEmail,
+        },
         to: [{ name: 'Derrick', address: 'derrick@dummy.is' }],
         subject: 'Krafa um gæsluvarðhald send',
         text: `Þú hefur sent kröfu á Héraðsdóm Reykjavíkur vegna LÖKE máls ${policeCaseNumber}. Skjalið er aðgengilegt undir málinu í Réttarvörslugátt.`,
-        html: `Þú hefur sent kröfu á Héraðsdóm Reykjavíkur vegna LÖKE máls ${policeCaseNumber}. Skjalið er aðgengilegt undir <a href="http://localhost:4200/krafa/stadfesta/${caseId}">málinu í Réttarvörslugátt</a>.`,
+        html: `Þú hefur sent kröfu á Héraðsdóm Reykjavíkur vegna LÖKE máls ${policeCaseNumber}. Skjalið er aðgengilegt undir <a href="${mockNotificationConfig.clientUrl}${RESTRICTION_CASE_OVERVIEW_ROUTE}/${caseId}">málinu í Réttarvörslugátt</a>.`,
         attachments: undefined,
       })
     })
@@ -221,11 +242,17 @@ describe('NotificationController - Send ready for court notifications', () => {
       expect(mockEmailService.sendEmail).toHaveBeenNthCalledWith(
         2,
         expect.objectContaining({
-          from: { name: 'Réttarvörslugátt', address: 'ben10@omnitrix.is' },
-          replyTo: { name: 'Réttarvörslugátt', address: 'ben10@omnitrix.is' },
+          from: {
+            name: mockNotificationConfig.email.fromName,
+            address: mockNotificationConfig.email.fromEmail,
+          },
+          replyTo: {
+            name: mockNotificationConfig.email.replyToName,
+            address: mockNotificationConfig.email.replyToEmail,
+          },
           to: [{ name: 'Saul Goodman', address: 'saul@dummy.is' }],
           subject: `Gögn í máli ${courtCaseNumber}`,
-          html: `Sækjandi í máli ${courtCaseNumber} hjá Héraðsdómi Reykjavíkur hefur breytt kröfunni og sent hana aftur á dóminn.<br /><br />Þú getur nálgast gögn málsins í <a href="http://localhost:4200/verjandi/${caseId}">Réttarvörslugátt</a> með rafrænum skilríkjum.`,
+          html: `Sækjandi í máli ${courtCaseNumber} hjá Héraðsdómi Reykjavíkur hefur breytt kröfunni og sent hana aftur á dóminn.<br /><br />Þú getur nálgast gögn málsins í <a href="${mockNotificationConfig.clientUrl}${DEFENDER_ROUTE}/${caseId}">Réttarvörslugátt</a> með rafrænum skilríkjum.`,
           attachments: undefined,
         }),
       )
