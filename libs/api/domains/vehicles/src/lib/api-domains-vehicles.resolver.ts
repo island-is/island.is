@@ -31,6 +31,20 @@ export class VehiclesResolver {
     >,
   ) {}
 
+  /* @Query(() => VehiclesList, { name: 'vehicles', nullable: true })
+  @Audit()
+  async getVehicles(@CurrentUser() user: User): Promise<VehiclesList> {
+    const data = await this.vehiclesService.getVehiclesForUser(
+      user,
+      false,
+      false,
+    )
+
+    const downloadServiceURL = `${this.downloadServiceConfig.baseUrl}/download/v1/vehicles/ownership/${user.nationalId}`
+
+    return { ...data }
+  } */
+
   @Query(() => VehiclesList, { name: 'vehiclesList', nullable: true })
   @Audit()
   async getVehicleList(@CurrentUser() user: User) {

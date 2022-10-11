@@ -1,11 +1,15 @@
+import { Application } from '@island.is/application/types'
 import {
   buildForm,
   buildSection,
   buildCustomField,
-  buildSubmitField,
-  buildSubSection,
+  buildMultiField,
+  buildDescriptionField,
+  buildTextField,
+  buildDateField,
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
+import { information, externalData, forPayment } from '../lib/messages'
 import { m } from '../lib/messagess'
 
 export const TransferOfVehicleOwnershipForm: Form = buildForm({
@@ -15,9 +19,167 @@ export const TransferOfVehicleOwnershipForm: Form = buildForm({
   children: [
     buildSection({
       id: 'externalData',
-      title: '',
+      title: externalData.dataProvider.sectionTitle,
+      children: [],
+    }),
+    buildSection({
+      id: 'informationSection',
+      title: information.general.sectionTitle,
       children: [
-        buildSubSection({
+        buildMultiField({
+          id: 'informationMultiField',
+          title: information.general.pageTitle,
+          description: information.general.description,
+          children: [
+            buildDescriptionField({
+              id: 'pickVehicle.title',
+              title: information.labels.pickVehicle.title,
+              titleVariant: 'h5',
+            }),
+            buildTextField({
+              id: 'pickVehicle.plate',
+              title: 'Temp ökutæki',
+            }),
+            buildDescriptionField({
+              id: 'vehicle.title',
+              title: information.labels.vehicle.title,
+              titleVariant: 'h5',
+              space: 3,
+            }),
+            buildTextField({
+              id: 'vehicle.plate',
+              title: information.labels.vehicle.plate,
+              backgroundColor: 'white',
+              width: 'half',
+              disabled: true,
+            }),
+            buildTextField({
+              id: 'vehicle.type',
+              title: information.labels.vehicle.type,
+              backgroundColor: 'white',
+              width: 'half',
+              disabled: true,
+            }),
+            buildTextField({
+              id: 'vehicle.salePrice',
+              title: information.labels.vehicle.salePrice,
+              width: 'half',
+            }),
+            buildDateField({
+              id: 'vehicle.date',
+              title: information.labels.vehicle.date,
+              width: 'half',
+              minDate: (application: Application) => {
+                // Maybe have option if buyer to have sellers date.
+                const today = new Date()
+                return today
+              },
+            }),
+            buildDescriptionField({
+              id: 'seller.title',
+              title: information.labels.seller.title,
+              titleVariant: 'h5',
+              space: 3,
+            }),
+            buildTextField({
+              id: 'seller.nationalId',
+              title: information.labels.seller.nationalId,
+              backgroundColor: 'white',
+              width: 'half',
+              disabled: true,
+              format: '######-####',
+            }),
+            buildTextField({
+              id: 'seller.name',
+              title: information.labels.seller.name,
+              backgroundColor: 'white',
+              width: 'half',
+              disabled: true,
+            }),
+            buildTextField({
+              id: 'seller.phone',
+              title: information.labels.seller.phone,
+              width: 'half',
+              variant: 'tel',
+              format: '###-####',
+            }),
+            buildTextField({
+              id: 'seller.email',
+              title: information.labels.seller.email,
+              width: 'half',
+              variant: 'email',
+            }),
+            // Co-owner only visible if there is a coowner.
+            buildDescriptionField({
+              id: 'coOwner.title',
+              title: information.labels.coOwner.title,
+              titleVariant: 'h5',
+              space: 3,
+            }),
+            buildTextField({
+              id: 'coOwner.nationalId',
+              title: information.labels.coOwner.nationalId,
+              backgroundColor: 'white',
+              width: 'half',
+              disabled: true,
+              format: '######-####',
+            }),
+            buildTextField({
+              id: 'coOwner.name',
+              title: information.labels.coOwner.name,
+              backgroundColor: 'white',
+              width: 'half',
+              disabled: true,
+            }),
+            buildTextField({
+              id: 'coOwner.phone',
+              title: information.labels.coOwner.phone,
+              width: 'half',
+              variant: 'tel',
+              format: '###-####',
+            }),
+            buildTextField({
+              id: 'coOwner.email',
+              title: information.labels.coOwner.email,
+              width: 'half',
+              variant: 'email',
+            }),
+            // Buyer
+            buildDescriptionField({
+              id: 'buyer.title',
+              title: information.labels.buyer.title,
+              titleVariant: 'h5',
+              space: 3,
+            }),
+            buildTextField({
+              id: 'buyer.nationalId',
+              title: information.labels.buyer.nationalId,
+              width: 'half',
+              format: '######-####',
+            }),
+            buildTextField({
+              id: 'buyer.name',
+              title: information.labels.buyer.name,
+              backgroundColor: 'white',
+              width: 'half',
+              disabled: true,
+            }),
+            buildTextField({
+              id: 'buyer.phone',
+              title: information.labels.buyer.phone,
+              width: 'half',
+              variant: 'tel',
+              format: '###-####',
+            }),
+            buildTextField({
+              id: 'buyer.email',
+              title: information.labels.buyer.email,
+              width: 'half',
+              variant: 'email',
+            }),
+          ],
+        }),
+        /* buildSubSection({
           id: 'test',
           title: 'Test',
           children: [
@@ -33,6 +195,24 @@ export const TransferOfVehicleOwnershipForm: Form = buildForm({
                   type: 'primary',
                 },
               ],
+            }),
+          ],
+        }), */
+      ],
+    }),
+    buildSection({
+      id: 'payment',
+      title: forPayment.general.sectionTitle,
+      children: [
+        buildMultiField({
+          id: 'paymentMultiField',
+          title: forPayment.general.pageTitle,
+          children: [
+            buildCustomField({
+              component: 'ForPayment',
+              id: 'ForPayment',
+              title: '',
+              description: '',
             }),
           ],
         }),

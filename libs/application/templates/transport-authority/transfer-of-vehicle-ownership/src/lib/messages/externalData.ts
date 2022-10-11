@@ -5,7 +5,7 @@ export const externalData = {
     sectionTitle: {
       id: 'ta.tvo.application:externalData.dataProvider.sectionTitle',
       defaultMessage: 'Gagnaöflun',
-      description: 'Some description',
+      description: 'Title of external data section',
     },
     pageTitle: {
       id: 'ta.tvo.application:externalData.dataProvider.pageTitle',

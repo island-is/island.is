@@ -6,6 +6,7 @@ import {
   buildSubmitField,
   buildMultiField,
   buildDescriptionField,
+  buildCustomField,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { externalData } from '../lib/messages'
@@ -37,6 +38,12 @@ export const PrerequisitesForm: Form = buildForm({
               title: externalData.userProfile.title,
               subTitle: externalData.userProfile.subTitle,
             }),
+            /* buildDataProviderItem({
+              id: 'vehicleList',
+              type: 'VehicleListProvider',
+              title: 'Vehicle list',
+              subTitle: '',
+            }), */
           ],
         }),
         buildMultiField({
@@ -44,6 +51,12 @@ export const PrerequisitesForm: Form = buildForm({
           title: externalData.dataProvider.getDataSuccess,
           description: externalData.dataProvider.getDataSuccessDescription,
           children: [
+            buildCustomField({
+              id: 'temp',
+              component: 'Temp',
+              title: '',
+              description: '',
+            }),
             buildDescriptionField({
               id: 'getDataSuccess.nationalRegistry',
               title: externalData.nationalRegistry.title,
