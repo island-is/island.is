@@ -17,7 +17,7 @@ export const modules = [
   UserProfileModule,
   IdentityModule,
   DrivingLicenseModule,
-  ApplicationModule
+  ApplicationModule,
 ]
 
 export const services = [
@@ -26,5 +26,5 @@ export const services = [
   UserProfileService,
   IdentityService,
   DrivingLicenseProviderService,
-  ApplicationService
+  ApplicationService,
 ]

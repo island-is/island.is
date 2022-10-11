@@ -166,6 +166,7 @@ export const LinkExistingApplication: FC<FieldBaseProps> = ({
         app.externalData,
         'syslumennOnEntry.data.estate.caseNumber',
       )?.toString() ?? ''
+    console.log(name, app.externalData.syslumennOnEntry)
     return {
       ...app,
       name: `${formatText(

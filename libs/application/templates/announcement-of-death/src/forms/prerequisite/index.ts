@@ -17,6 +17,7 @@ import {
   DefaultEvents,
   NationalRegistryUserApi,
   UserProfileApi,
+  ExistingApplicationApi,
 } from '@island.is/application/types'
 import { m } from '../../lib/messages'
 import { RoleConfirmationEnum } from '../../types'
@@ -62,8 +63,7 @@ export const prerequisite = (): Form => {
                 subTitle: m.dataCollectionEstateSubtitle,
               }),
               buildDataProviderItem({
-                id: 'existingApplication',
-                type: 'ExistingApplicationProvider',
+                provider: ExistingApplicationApi,
                 title: '',
               }),
             ],

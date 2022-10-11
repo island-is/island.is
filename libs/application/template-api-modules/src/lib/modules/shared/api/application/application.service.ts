@@ -34,28 +34,20 @@ export class ApplicationService extends BaseTemplateApiService {
     const findExistingApplications = this.applicationApiService.customTemplateFindQuery(
       application.typeId,
     ) as CustomTemplateFindQuery
-      const applicant = application['applicant']
-    const existingApplications = await findExistingApplications(where)
-    // ({
-    //   applicant: application.applicant,
-    // })
-    console.log('\n\n\nexistingApplications', existingApplications.length)
-    existingApplications
+
+    // TODO: Id is used in parental leave should add id or find a more dynamic way to get info from the application
+    const existingApplications = await findExistingApplications({
+      [where.applicant]: application['applicant'],
+    })
+
+    const e: ApplicationInfo[] = existingApplications
       .map<ApplicationInfo>(
         ({ externalData, ...partialApplication }) => partialApplication,
       )
-      // The casenumber is mapped to answers on application entry in the initial state (see service.syslumennOnEntry)
-      // It is therefore the case that a correctly formed application will have the casenumber
-      // in the answers. A malformed application will not be considered.
-
-      // The prerequisites states are not listed and will be pruned anyways
       .filter(
-        ({ id, state, answers }) =>
-          id !== application.id && states.includes(state), //&&
-        // answers?.caseNumber === application.answers?.caseNumber,
+        ({ id, state }) => id !== application.id && states.includes(state),
       )
       .sort(({ created: a }, { created: b }) => b.getTime() - a.getTime())
-
-    return existingApplications
+    return e
   }
 }
