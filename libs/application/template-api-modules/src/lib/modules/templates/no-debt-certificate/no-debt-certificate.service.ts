@@ -8,10 +8,6 @@ import { TemplateApiError } from '@island.is/nest/problem'
 import { coreErrorMessages } from '@island.is/application/core/messages'
 import { m as ndcMessages } from '@island.is/application/templates/no-debt-certificate'
 
-interface NoDebtCertificateApiParameters {
-  language: string
-}
-
 @Injectable()
 export class NoDebtCertificateService extends BaseTemplateApiService {
   constructor(
@@ -23,9 +19,9 @@ export class NoDebtCertificateService extends BaseTemplateApiService {
 
   async getDebtLessCertificate({
     auth,
-    params,
-  }: TemplateApiModuleActionProps<NoDebtCertificateApiParameters>) {
-    const lang = params?.language || 'IS'
+    currentUserLocale,
+  }: TemplateApiModuleActionProps) {
+    const lang = currentUserLocale === 'is' ? 'IS' : 'EN'
 
     const response = await this.financeService.getDebtLessCertificate(
       auth.nationalId,
