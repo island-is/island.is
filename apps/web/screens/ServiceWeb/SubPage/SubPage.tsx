@@ -87,8 +87,6 @@ const SubPage: Screen<SubPageProps> = ({
   )
   useLocalLinkTypeResolver()
 
-  console.log('singlesupportqna', singleSupportQNA)
-
   const organizationSlug = organization.slug
   const question = singleSupportQNA
 
