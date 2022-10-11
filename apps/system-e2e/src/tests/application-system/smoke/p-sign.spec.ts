@@ -23,7 +23,7 @@ test.describe('P-sign', () => {
 
   test('should be able to create application', async () => {
     const page = await context.newPage()
-    await page.goto('/umsoknir/p-merki')
+    await page.goto('/umsoknir/p-merki?delegationChecked=true')
 
     await mockApi(page, '/api/graphql?op=ActorDelegations', {
       data: { authActorDelegations: [] },
