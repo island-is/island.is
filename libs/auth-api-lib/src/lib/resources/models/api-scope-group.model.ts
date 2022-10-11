@@ -7,12 +7,9 @@ import {
   UpdatedAt,
   PrimaryKey,
   HasMany,
-  BelongsTo,
-  ForeignKey,
 } from 'sequelize-typescript'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { ApiScope } from './api-scope.model'
-import { Domain } from './domain.model'
 
 @Table({
   tableName: 'api_scope_group',
@@ -67,16 +64,6 @@ export class ApiScopeGroup extends Model {
   })
   order!: number
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  @ApiProperty({
-    example: '@island.is',
-  })
-  @ForeignKey(() => Domain)
-  domainName!: string
-
   @CreatedAt
   @ApiProperty()
   readonly created!: Date
@@ -88,8 +75,4 @@ export class ApiScopeGroup extends Model {
   @HasMany(() => ApiScope)
   @ApiPropertyOptional()
   scopes?: ApiScope[]
-
-  @BelongsTo(() => Domain)
-  @ApiPropertyOptional()
-  domain?: Domain
 }

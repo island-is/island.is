@@ -3,5 +3,4 @@ export class ApiScopeGroupDTO {
   displayName!: string
   description!: string
   order!: number
-  domainName!: string
 }

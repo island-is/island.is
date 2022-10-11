@@ -966,7 +966,7 @@ export class ResourcesService {
           offset: offset,
           where: { name: { [Op.iLike]: `%${searchString}%` } },
           order: [['name', 'asc']],
-          include: [ApiScopeGroup],
+          include: [ApiScope],
         })
       }
     }

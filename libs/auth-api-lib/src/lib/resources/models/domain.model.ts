@@ -9,7 +9,7 @@ import {
   HasMany,
 } from 'sequelize-typescript'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { ApiScopeGroup } from './api-scope-group.model'
+import { ApiScope } from './api-scope.model'
 
 @Table({
   tableName: 'domain',
@@ -70,7 +70,7 @@ export class Domain extends Model {
   @ApiProperty()
   readonly modified?: Date
 
-  @HasMany(() => ApiScopeGroup)
+  @HasMany(() => ApiScope)
   @ApiPropertyOptional()
-  groups?: ApiScopeGroup[]
+  scopes?: ApiScope[]
 }
