@@ -39,9 +39,7 @@ export const createTestingNotificationModule = async () => {
       {
         provide: CourtService,
         useValue: {
-          createDocument: jest.fn(async () => {
-            return
-          }),
+          createDocument: jest.fn(),
         },
       },
       AwsS3Service,
