@@ -29,6 +29,15 @@ import {
   OperatingLicenseService,
   FinancialStatementsInaoTemplateService,
   DrivingLicenseDuplicateService,
+  AnonymityInVehicleRegistryService,
+  ChangeCoOwnerOfVehicleService,
+  ChangeOperatorOfVehicleService,
+  DigitalTachographCompanyCardService,
+  DigitalTachographDriversCardService,
+  DigitalTachographWorkshopCardService,
+  OrderVehicleRegistrationCertificateService,
+  OrderVehicleLicensePlateService,
+  TransferOfVehicleOwnershipService,
 } from './templates'
 
 interface ApplicationApiAction {
@@ -77,6 +86,15 @@ export class TemplateAPIService {
     private readonly operatingLicenseService: OperatingLicenseService,
     private readonly financialStatementsInaoService: FinancialStatementsInaoTemplateService,
     private readonly drivingLicenseDuplicateService: DrivingLicenseDuplicateService,
+    private readonly anonymityInVehicleRegistryService: AnonymityInVehicleRegistryService,
+    private readonly changeCoOwnerOfVehicleService: ChangeCoOwnerOfVehicleService,
+    private readonly changeOperatorOfVehicleService: ChangeOperatorOfVehicleService,
+    private readonly digitalTachographCompanyCardService: DigitalTachographCompanyCardService,
+    private readonly digitalTachographDriversCardService: DigitalTachographDriversCardService,
+    private readonly digitalTachographWorkshopCardService: DigitalTachographWorkshopCardService,
+    private readonly orderVehicleRegistrationCertificateService: OrderVehicleRegistrationCertificateService,
+    private readonly orderVehicleLicensePlateService: OrderVehicleLicensePlateService,
+    private readonly transferOfVehicleOwnershipService: TransferOfVehicleOwnershipService,
   ) {}
 
   private async tryRunningActionOnService(
@@ -104,11 +122,19 @@ export class TemplateAPIService {
       | MarriageConditionsSubmissionService
       | FinancialAidService
       | DrivingSchoolConfirmationService
-      | MortgageCertificateSubmissionService
       | PassportService
       | OperatingLicenseService
       | FinancialStatementsInaoTemplateService
-      | DrivingLicenseDuplicateService,
+      | DrivingLicenseDuplicateService
+      | AnonymityInVehicleRegistryService
+      | ChangeCoOwnerOfVehicleService
+      | ChangeOperatorOfVehicleService
+      | DigitalTachographCompanyCardService
+      | DigitalTachographDriversCardService
+      | DigitalTachographWorkshopCardService
+      | OrderVehicleRegistrationCertificateService
+      | OrderVehicleLicensePlateService
+      | TransferOfVehicleOwnershipService,
     action: ApplicationApiAction,
   ): Promise<PerformActionResult> {
     // No index signature with a parameter of type 'string' was found on type
@@ -269,6 +295,51 @@ export class TemplateAPIService {
       case ApplicationTypes.DRIVING_LICENSE_DUPLICATE:
         return this.tryRunningActionOnService(
           this.drivingLicenseDuplicateService,
+          action,
+        )
+      case ApplicationTypes.ANONYMITY_IN_VEHICLE_REGISTRY:
+        return this.tryRunningActionOnService(
+          this.anonymityInVehicleRegistryService,
+          action,
+        )
+      case ApplicationTypes.CHANGE_CO_OWNER_OF_VEHICLE:
+        return this.tryRunningActionOnService(
+          this.changeCoOwnerOfVehicleService,
+          action,
+        )
+      case ApplicationTypes.CHANGE_OPERATOR_OF_VEHICLE:
+        return this.tryRunningActionOnService(
+          this.changeOperatorOfVehicleService,
+          action,
+        )
+      case ApplicationTypes.DIGITAL_TACHOGRAPH_COMPANY_CARD:
+        return this.tryRunningActionOnService(
+          this.digitalTachographCompanyCardService,
+          action,
+        )
+      case ApplicationTypes.DIGITAL_TACHOGRAPH_DRIVERS_CARD:
+        return this.tryRunningActionOnService(
+          this.digitalTachographDriversCardService,
+          action,
+        )
+      case ApplicationTypes.DIGITAL_TACHOGRAPH_WORKSHOP_CARD:
+        return this.tryRunningActionOnService(
+          this.digitalTachographWorkshopCardService,
+          action,
+        )
+      case ApplicationTypes.ORDER_VEHICLE_LICENSE_PLATE:
+        return this.tryRunningActionOnService(
+          this.orderVehicleRegistrationCertificateService,
+          action,
+        )
+      case ApplicationTypes.ORDER_VEHICLE_REGISTRATION_CERTIFICATE:
+        return this.tryRunningActionOnService(
+          this.orderVehicleLicensePlateService,
+          action,
+        )
+      case ApplicationTypes.TRANSFER_OF_VEHICLE_OWNERSHIP:
+        return this.tryRunningActionOnService(
+          this.transferOfVehicleOwnershipService,
           action,
         )
     }

@@ -14,6 +14,8 @@ import {
   MORTGAGE_CERTIFICATE_MESSAGE_NO_KMARKING,
   REAL_ESTATE_ADDRESS_NAME,
   ESTATE_REGISTRANT_RESPONSE,
+  REAL_ESTATE_AGENTS,
+  LAWYERS,
 } from './responses'
 
 export const MOCK_PROPERTY_NUMBER_OK = 'F2003292'
@@ -51,6 +53,22 @@ export const requestHandlers = [
     const success = req.params.id ? true : false
     if (success) {
       return res(ctx.status(200), ctx.json(SYSLUMENN_AUCTION))
+    } else {
+      return res(ctx.status(401), ctx.json(VHFAIL))
+    }
+  }),
+  rest.get(url('/api/Fasteignasalar/'), (req, res, ctx) => {
+    const success = req.url.searchParams.get('audkenni') ? true : false
+    if (success) {
+      return res(ctx.status(200), ctx.json(REAL_ESTATE_AGENTS))
+    } else {
+      return res(ctx.status(401), ctx.json(VHFAIL))
+    }
+  }),
+  rest.get(url('/api/Logmannalisti/'), (req, res, ctx) => {
+    const success = req.url.searchParams.get('audkenni') ? true : false
+    if (success) {
+      return res(ctx.status(200), ctx.json(LAWYERS))
     } else {
       return res(ctx.status(401), ctx.json(VHFAIL))
     }
