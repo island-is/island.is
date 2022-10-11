@@ -19,6 +19,7 @@ import {
   NationalRegistryUserApi,
   PaymentCatalogApi,
   UserProfileApi,
+  DistrictsApi,
 } from '@island.is/application/types'
 import {
   DistrictCommissionerAgencies,
@@ -88,8 +89,7 @@ export const Draft: Form = buildForm({
               title: '',
             }),
             buildDataProviderItem({
-              id: 'districtCommissioners',
-              type: 'DistrictsProvider',
+              provider: DistrictsApi,
               title: '',
             }),
           ],

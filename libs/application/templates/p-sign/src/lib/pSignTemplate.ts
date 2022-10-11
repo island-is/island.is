@@ -8,6 +8,10 @@ import {
   Application,
   DefaultEvents,
   defineTemplateApi,
+  NationalRegistryUserApi,
+  UserProfileApi,
+  DistrictsApi,
+  QualityPhotoApi,
 } from '@island.is/application/types'
 import { Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
@@ -75,6 +79,12 @@ const PSignTemplate: ApplicationTemplate<
                 },
               ],
               write: 'all',
+              api: [
+                NationalRegistryUserApi,
+                UserProfileApi,
+                DistrictsApi,
+                QualityPhotoApi,
+              ],
             },
           ],
         },

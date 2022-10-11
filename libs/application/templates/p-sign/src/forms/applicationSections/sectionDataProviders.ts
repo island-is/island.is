@@ -3,6 +3,12 @@ import {
   buildDataProviderItem,
   buildSection,
 } from '@island.is/application/core'
+import {
+  NationalRegistryUserApi,
+  UserProfileApi,
+  DistrictsApi,
+  QualityPhotoApi,
+} from '@island.is/application/types'
 import { m } from '../../lib/messages'
 
 export const sectionDataProviders = buildSection({
@@ -23,26 +29,22 @@ export const sectionDataProviders = buildSection({
           subTitle: m.dataCollectionDoctorsNoteSubtitle,
         }),
         buildDataProviderItem({
-          id: 'nationalRegistry',
-          type: 'NationalRegistryProvider',
+          provider: NationalRegistryUserApi,
           title: m.dataCollectionNationalRegistryTitle,
           subTitle: m.dataCollectionNationalRegistrySubtitle,
         }),
         buildDataProviderItem({
-          id: 'qualityPhoto',
-          type: 'QualityPhotoProvider',
+          provider: QualityPhotoApi,
           title: m.dataCollectionQualityPhotoTitle,
           subTitle: m.dataCollectionQualityPhotoSubtitle,
         }),
         buildDataProviderItem({
-          id: 'userProfile',
-          type: 'UserProfileProvider',
+          provider: UserProfileApi,
           title: m.dataCollectionUserProfileTitle,
           subTitle: m.dataCollectionUserProfileSubtitle,
         }),
         buildDataProviderItem({
-          id: 'districts',
-          type: 'DistrictsProvider',
+          provider: DistrictsApi,
           title: '',
           subTitle: '',
         }),

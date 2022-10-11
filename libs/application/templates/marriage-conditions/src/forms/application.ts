@@ -19,6 +19,9 @@ import {
   FormModes,
   Application,
   DefaultEvents,
+  NationalRegistryUserApi,
+  UserProfileApi,
+  DistrictsApi,
 } from '@island.is/application/types'
 import type { User } from '@island.is/api/domains/national-registry'
 import { format as formatNationalId } from 'kennitala'
@@ -72,14 +75,12 @@ export const getApplication = ({ allowFakeData = false }): Form => {
             checkboxLabel: m.dataCollectionCheckboxLabel,
             dataProviders: [
               buildDataProviderItem({
-                id: 'nationalRegistry',
-                type: 'NationalRegistryProvider',
+                provider: NationalRegistryUserApi,
                 title: m.dataCollectionNationalRegistryTitle,
                 subTitle: m.dataCollectionNationalRegistrySubtitle,
               }),
               buildDataProviderItem({
-                id: 'userProfile',
-                type: 'UserProfileProvider',
+                provider: UserProfileApi,
                 title: m.dataCollectionUserProfileTitle,
                 subTitle: m.dataCollectionUserProfileSubtitle,
               }),
@@ -96,8 +97,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                 subTitle: m.dataCollectionMaritalStatusDescription,
               }),
               buildDataProviderItem({
-                id: 'districtCommissioners',
-                type: 'DistrictsProvider',
+                provider: DistrictsApi,
                 title: '',
               }),
             ],

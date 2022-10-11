@@ -11,6 +11,7 @@ import {
   NationalRegistryUserApi,
   PaymentCatalogApi,
   UserProfileApi,
+  DistrictsApi,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 import { assign } from 'xstate'
@@ -87,6 +88,7 @@ const PassportTemplate: ApplicationTemplate<
                   externalDataId: 'identityDocument',
                   params: IdentityDocumentProviderMock,
                 }),
+                DistrictsApi,
               ],
             },
           ],
@@ -169,6 +171,7 @@ const PassportTemplate: ApplicationTemplate<
                   externalDataId: 'identityDocument',
                   params: IdentityDocumentProviderMock,
                 }),
+                DistrictsApi,
               ],
             },
           ],

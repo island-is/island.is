@@ -10,6 +10,8 @@ import { DrivingLicenseModule } from './driving-license/driving-license.module'
 import { DrivingLicenseProviderService } from './driving-license/driving-license.service'
 import { ApplicationModule } from './application/application.module'
 import { ApplicationService } from './application/application.service'
+import { SyslumennModule } from './syslumenn/syslumenn.module'
+import { SyslumennService } from './syslumenn/syslumenn.service'
 
 export const modules = [
   NationalRegistryModule,
@@ -18,6 +20,7 @@ export const modules = [
   IdentityModule,
   DrivingLicenseModule,
   ApplicationModule,
+  SyslumennModule,
 ]
 
 export const services = [
@@ -27,4 +30,5 @@ export const services = [
   IdentityService,
   DrivingLicenseProviderService,
   ApplicationService,
+  SyslumennService,
 ]

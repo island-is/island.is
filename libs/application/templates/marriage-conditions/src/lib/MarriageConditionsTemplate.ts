@@ -11,6 +11,9 @@ import {
   Application,
   DefaultEvents,
   defineTemplateApi,
+  NationalRegistryUserApi,
+  UserProfileApi,
+  DistrictsApi,
 } from '@island.is/application/types'
 import { assign } from 'xstate'
 import { Features } from '@island.is/feature-flags'
@@ -74,6 +77,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
                 },
               ],
               write: 'all',
+              api: [NationalRegistryUserApi, UserProfileApi, DistrictsApi],
             },
           ],
         },
@@ -149,6 +153,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
                 { event: DefaultEvents.SUBMIT, name: '', type: 'primary' },
               ],
               write: 'all',
+              api: [NationalRegistryUserApi, UserProfileApi, DistrictsApi],
             },
           ],
         },
