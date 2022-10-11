@@ -4,6 +4,15 @@
 
 This service manages endorsement lists within island.is.
 
+## Quickstart
+
+Simply run these two commands:
+
+```
+yarn dev/init services-user-profile
+yarn dev services-user-profile
+```
+
 ## Initial setup
 
 ### Prerequisites
