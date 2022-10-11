@@ -269,7 +269,7 @@ export const Overview = ({
         <Text variant="h3" as="h3">
           {formatMessage(m.overview)}
         </Text>
-      </Box>{' '}
+      </Box>
       <Box background="blue100" padding={3}>
         <Controller
           name="applicationApprove"
@@ -294,7 +294,7 @@ export const Overview = ({
         />
       </Box>
       {errors && getErrorViaPath(errors, 'applicationApprove') ? (
-        <InputError errorMessage={formatMessage(m.errorSignature)} />
+        <InputError errorMessage={formatMessage(m.errorApproval)} />
       ) : null}
       <BottomBar
         onSendButtonClick={onSendButtonClick}
