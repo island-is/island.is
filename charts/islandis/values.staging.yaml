@@ -43,6 +43,7 @@ air-discount-scheme-api:
   namespace: 'air-discount-scheme'
   podSecurityContext:
     fsGroup: 65534
+  pvcs: []
   replicaCount:
     default: 2
     max: 3
@@ -148,6 +149,7 @@ air-discount-scheme-backend:
     secrets:
       DB_PASS: '/k8s/air-discount-scheme/backend/DB_PASSWORD'
   namespace: 'air-discount-scheme'
+  pvcs: []
   replicaCount:
     default: 2
     max: 3
@@ -217,6 +219,7 @@ air-discount-scheme-web:
           paths:
             - '/'
   namespace: 'air-discount-scheme'
+  pvcs: []
   replicaCount:
     default: 2
     max: 3
@@ -347,6 +350,7 @@ api:
   namespace: 'islandis'
   podSecurityContext:
     fsGroup: 65534
+  pvcs: []
   replicaCount:
     default: 10
     max: 50
@@ -537,6 +541,7 @@ application-system-api:
   namespace: 'application-system'
   podSecurityContext:
     fsGroup: 65534
+  pvcs: []
   replicaCount:
     default: 10
     max: 60
@@ -645,6 +650,7 @@ application-system-api-worker:
   namespace: 'application-system'
   podSecurityContext:
     fsGroup: 65534
+  pvcs: []
   replicaCount:
     default: 2
     max: 3
@@ -720,6 +726,7 @@ application-system-form:
           paths:
             - '/umsoknir'
   namespace: 'application-system'
+  pvcs: []
   replicaCount:
     default: 2
     max: 3
@@ -777,6 +784,7 @@ contentful-translation-extension:
           paths:
             - '/'
   namespace: 'contentful-translation-extension'
+  pvcs: []
   replicaCount:
     default: 2
     max: 3
@@ -840,6 +848,7 @@ download-service:
           paths:
             - '/download'
   namespace: 'download-service'
+  pvcs: []
   replicaCount:
     default: 2
     max: 3
@@ -928,6 +937,7 @@ endorsement-system-api:
   namespace: 'endorsement-system'
   podSecurityContext:
     fsGroup: 65534
+  pvcs: []
   replicaCount:
     default: 2
     max: 3
@@ -1034,6 +1044,7 @@ icelandic-names-registry-backend:
     secrets:
       DB_PASS: '/k8s/icelandic-names-registry-backend/DB_PASSWORD'
   namespace: 'icelandic-names-registry'
+  pvcs: []
   replicaCount:
     default: 2
     max: 3
@@ -1089,6 +1100,7 @@ island-ui-storybook:
           paths:
             - '/'
   namespace: 'storybook'
+  pvcs: []
   replicaCount:
     default: 2
     max: 3
@@ -1220,6 +1232,7 @@ search-indexer-service:
   namespace: 'search-indexer'
   podSecurityContext:
     fsGroup: 65534
+  pvcs: []
   replicaCount:
     default: 1
     max: 1
@@ -1288,6 +1301,7 @@ service-portal:
           paths:
             - '/minarsidur'
   namespace: 'service-portal'
+  pvcs: []
   replicaCount:
     default: 5
     max: 30
@@ -1377,6 +1391,7 @@ service-portal-api:
   namespace: 'service-portal'
   podSecurityContext:
     fsGroup: 65534
+  pvcs: []
   replicaCount:
     default: 2
     max: 30
@@ -1462,6 +1477,7 @@ services-documents:
     secrets:
       DB_PASS: '/k8s/services-documents/DB_PASSWORD'
   namespace: 'services-documents'
+  pvcs: []
   replicaCount:
     default: 2
     max: 3
@@ -1519,6 +1535,7 @@ skilavottord-web:
           paths:
             - '/app/skilavottord/'
   namespace: 'skilavottord'
+  pvcs: []
   replicaCount:
     default: 2
     max: 3
@@ -1604,6 +1621,7 @@ skilavottord-ws:
     secrets:
       DB_PASS: '/k8s/skilavottord/DB_PASSWORD'
   namespace: 'skilavottord'
+  pvcs: []
   replicaCount:
     default: 2
     max: 3
@@ -1677,6 +1695,7 @@ user-notification:
   namespace: 'user-notification'
   podSecurityContext:
     fsGroup: 65534
+  pvcs: []
   replicaCount:
     default: 2
     max: 3
@@ -1740,6 +1759,7 @@ user-notification-worker:
   namespace: 'user-notification'
   podSecurityContext:
     fsGroup: 65534
+  pvcs: []
   replicaCount:
     default: 2
     max: 3
@@ -1812,6 +1832,7 @@ web:
           paths:
             - '/'
   namespace: 'islandis'
+  pvcs: []
   replicaCount:
     default: 10
     max: 50
@@ -1871,6 +1892,7 @@ xroad-collector:
   namespace: 'xroad-collector'
   podSecurityContext:
     fsGroup: 65534
+  pvcs: []
   replicaCount:
     default: 2
     max: 3
