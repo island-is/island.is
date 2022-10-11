@@ -119,6 +119,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           'setPersonalUsageToHundredIfUseAsMuchAsPossibleIsYes',
           'setSpouseUsageToHundredIfUseAsMuchAsPossibleIsYes',
           'removeNullPeriod',
+          'setNavId',
         ],
         meta: {
           name: States.DRAFT,
