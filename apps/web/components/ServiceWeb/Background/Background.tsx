@@ -34,9 +34,11 @@ export const Background = ({ variation, small }: BackgroundProps) => {
   useEffect(() => {
     switch (variation) {
       case 'syslumenn':
+      case 'district-commissioner':
         setComponent(<Syslumenn small={small} />)
         break
       case 'stafraent-island':
+      case 'digital-iceland':
         setComponent(<StafraentIsland small={small} />)
         break
       case 'mannaudstorg':
