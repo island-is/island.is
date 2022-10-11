@@ -47,7 +47,7 @@ export class VehiclesVehicle {
   role?: string
 
   @Field({ nullable: true })
-  operatorStartDate?: string
+  operatorStartDate?: Date
 
   @Field({ nullable: true })
   operatorEndDate?: string
