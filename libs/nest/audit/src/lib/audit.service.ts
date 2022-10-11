@@ -9,6 +9,7 @@ import type { Auth } from '@island.is/auth-nest-tools'
 import type { AuditOptions } from './audit.options'
 import { AUDIT_OPTIONS } from './audit.options'
 import isString from 'lodash/isString'
+import isFunction from 'lodash/isFunction'
 
 type CommonMessageFields = {
   action: string
@@ -162,7 +163,7 @@ export class AuditService {
   }
 
   private unwrap<PropType, ResultType>(prop: PropType, result: ResultType) {
-    return typeof prop === 'function' ? prop(result) : prop
+    return isFunction(prop) ? prop(result) : prop
   }
 
   audit(message: AuditMessage) {
