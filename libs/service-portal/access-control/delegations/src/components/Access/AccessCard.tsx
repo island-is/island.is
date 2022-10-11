@@ -116,7 +116,7 @@ export const AccessCard = ({
             alignItems="center"
             justifyContent={['spaceBetween', 'flexEnd']}
             width="full"
-            marginTop={[2, 0]}
+            marginTop={[3, 0]}
           >
             <Button
               variant="text"

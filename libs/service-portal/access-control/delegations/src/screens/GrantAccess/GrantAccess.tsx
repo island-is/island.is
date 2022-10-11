@@ -264,7 +264,12 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
                 />
               </div>
             </Box>
-            <Box display="flex" flexDirection="column" rowGap={5} marginTop={5}>
+            <Box
+              display="flex"
+              flexDirection="column"
+              rowGap={5}
+              marginTop={[9, 9, 5]}
+            >
               <Text>
                 {formatMessage({
                   id: 'sp.access-control-delegations:next-step-description',

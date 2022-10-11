@@ -1,7 +1,12 @@
+import { themeUtils } from '@island.is/island-ui/theme'
 import { keyframes, style } from '@vanilla-extract/css'
 
 export const container = style({
-  maxWidth: 546,
+  ...themeUtils.responsiveStyle({
+    md: {
+      maxWidth: 546,
+    },
+  }),
 })
 
 export const inputWrapper = style({
