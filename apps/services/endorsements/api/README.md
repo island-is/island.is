@@ -22,7 +22,7 @@ To run the API locally make sure you:
 ### Initialize the application
 
 ```bash
-yarn nx run services-endorsements-api:dev/init
+yarn dev/init services-endorsements-api
 ```
 
 ## Run locally
@@ -36,7 +36,7 @@ aws sso login
 Then run application using this command
 
 ```bash
-yarn nx run services-endorsements-api:dev
+yarn dev services-endorsements-api
 ```
 
 And go to localhost once project is ready and started
@@ -48,7 +48,7 @@ http://localhost:4246/
 After making changes to the module code, re-initalize app to autogenerate code for swagger, openapi, fetch client etc.
 
 ```bash
-yarn nx run services-endorsements-api:dev/init
+yarn dev/init services-endorsements-api
 ```
 
 ## Run tests
