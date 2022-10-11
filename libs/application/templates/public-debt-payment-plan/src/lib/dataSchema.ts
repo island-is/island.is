@@ -16,13 +16,15 @@ export const PaymentPlanSchema = z
   })
   .optional()
 
+// optional fields to prevent error if data is missing from data fetching
+// Also it helps testing the application with fake users.
 export const ApplicantSchema = z.object({
-  address: z.string(),
-  city: z.string(),
+  address: z.string().optional(),
+  city: z.string().optional(),
   email: z.string(),
-  name: z.string(),
-  nationalId: z.string(),
-  phoneNumber: z.string(),
+  name: z.string().optional(),
+  nationalId: z.string().optional(),
+  phoneNumber: z.string().optional(),
   postalCode: z.string(),
 })
 
