@@ -32,7 +32,7 @@ export class VehiclesVehicle {
   color?: string
 
   @Field({ nullable: true })
-  firstRegDate?: string
+  firstRegDate?: Date
 
   @Field({ nullable: true })
   modelYear?: string
@@ -101,13 +101,13 @@ export class VehiclesVehicle {
   lastInspectionResult?: string
 
   @Field({ nullable: true, defaultValue: null })
-  lastInspectionDate?: string
+  lastInspectionDate?: Date
 
   @Field({ nullable: true, defaultValue: null })
   lastInspectionType?: string
 
   @Field({ nullable: true, defaultValue: null })
-  nextInspectionDate?: string
+  nextInspectionDate?: Date
 }
 
 @ObjectType()

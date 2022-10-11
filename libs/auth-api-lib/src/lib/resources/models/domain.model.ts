@@ -41,6 +41,27 @@ export class Domain extends Model {
   })
   nationalId!: string
 
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    defaultValue: 'Mínar síður Ísland.is',
+  })
+  @ApiProperty({
+    example: 'Mínar síður Ísland.is',
+  })
+  displayName!: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    defaultValue: 'Stafrænt Ísland',
+  })
+  @ApiProperty({
+    example: 'Stafrænt Ísland',
+    description: 'This key is used to look up the organisation in Contentful.',
+  })
+  organisationLogoKey!: string
+
   @CreatedAt
   @ApiProperty()
   readonly created!: Date

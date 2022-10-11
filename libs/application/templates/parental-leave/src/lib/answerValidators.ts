@@ -55,8 +55,6 @@ export const answerValidators: Record<string, AnswerValidator> = {
       'employer.isSelfEmployed',
     )
 
-    const employerEmail = getValueViaPath(application.answers, 'employer.email')
-
     if (obj.isSelfEmployed === '') {
       return buildError(coreErrorMessages.defaultError, 'isSelfEmployed')
     }
@@ -66,15 +64,18 @@ export const answerValidators: Record<string, AnswerValidator> = {
       return undefined
     }
 
-    if (isSelfEmployed === NO && isEmpty(obj?.email) && !employerEmail) {
+    if (
+      isSelfEmployed === YES &&
+      isEmpty((obj.selfEmployed as { file: unknown[] }).file)
+    ) {
+      return buildError(errorMessages.requiredAttachment, 'selfEmployed.file')
+    }
+
+    if (isSelfEmployed === NO && isEmpty(obj?.email)) {
       return buildError(errorMessages.employerEmail, 'email')
     }
 
-    if (
-      isSelfEmployed === NO &&
-      !isValidEmail(obj.email as string) &&
-      !employerEmail
-    ) {
+    if (isSelfEmployed === NO && !isValidEmail(obj.email as string)) {
       return buildError(errorMessages.email, 'email')
     }
 
@@ -91,9 +92,28 @@ export const answerValidators: Record<string, AnswerValidator> = {
       'employer.isSelfEmployed',
     )
 
-    if (isSelfEmployed === YES && isEmpty((obj as { file: unknown[] }).file)) {
-      return buildError(errorMessages.requiredAttachment, 'file')
+    const selfEmployedFiles = getValueViaPath(
+      application.answers,
+      'employer.selfEmployed.file',
+    ) as unknown[]
+
+    const selfFileUploadEmployedFiles = getValueViaPath(
+      application.answers,
+      'fileUpload.selfEmployedFile',
+    ) as unknown[]
+
+    if (
+      isSelfEmployed === YES &&
+      isEmpty((obj as { selfEmployedFile: unknown[] }).selfEmployedFile)
+    ) {
+      if (selfFileUploadEmployedFiles?.length || selfEmployedFiles?.length) {
+        return undefined
+      }
+
+      return buildError(errorMessages.requiredAttachment, 'selfEmployedFile')
     }
+
+    // add validation for student files object etc
 
     return undefined
   },
