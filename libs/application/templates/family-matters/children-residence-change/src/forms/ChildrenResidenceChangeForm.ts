@@ -10,13 +10,17 @@ import {
 } from '@island.is/application/core'
 import { Form, FormModes, DefaultEvents } from '@island.is/application/types'
 import Logo from '@island.is/application/templates/family-matters-core/assets/Logo'
-import { DataProviderTypes } from '../types'
 import { selectDurationInputs } from '../fields/Duration'
 import { confirmContractIds } from '../fields/Overview'
 import { contactInfoIds } from '../fields/ContactInfo'
 import * as m from '../lib/messages'
 import { ExternalData } from '@island.is/application/templates/family-matters-core/types'
 import { hasChildren } from '../lib/utils'
+import {
+  ChildrenCustodyInformationApi,
+  NationalRegistryUserApi,
+  UserProfileApi,
+} from '../dataProviders'
 
 const soleCustodyField = () => {
   return buildCustomField({
@@ -24,7 +28,7 @@ const soleCustodyField = () => {
     component: 'SoleCustodyModal',
     title: '',
     condition: (_, externalData) => {
-      return ((externalData as unknown) as ExternalData)?.nationalRegistry?.data?.children?.every(
+      return ((externalData as unknown) as ExternalData)?.childrenCustodyInformation?.data?.every(
         (child) => !child.otherParent,
       )
     },
@@ -144,22 +148,23 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
               checkboxLabel: m.externalData.general.checkboxLabel,
               dataProviders: [
                 buildDataProviderItem({
-                  id: 'nationalRegistry',
-                  type: DataProviderTypes.NationalRegistry,
+                  provider: ChildrenCustodyInformationApi,
                   title: m.externalData.applicant.title,
                   subTitle: m.externalData.applicant.subTitle,
                 }),
                 buildDataProviderItem({
-                  id: '',
-                  type: '',
+                  provider: NationalRegistryUserApi,
+                  title: m.externalData.applicant.title,
+                  subTitle: m.externalData.applicant.subTitle,
+                }),
+                buildDataProviderItem({
                   title: m.externalData.children.title,
                   subTitle: m.externalData.children.subTitle,
                 }),
                 buildDataProviderItem({
-                  id: 'userProfile',
-                  type: DataProviderTypes.UserProfile,
-                  title: '',
-                  subTitle: '',
+                  provider: UserProfileApi,
+                  title: 'user',
+                  subTitle: 'profile',
                 }),
               ],
             }),

@@ -779,6 +779,9 @@ export interface IFormFields {
 
   /** Questions Heading text */
   questionsHeadingText?: string | undefined
+
+  /** Recipient Form Field Decider */
+  recipientFormFieldDecider?: IFormField | undefined
 }
 
 export interface IForm extends Entry<IFormFields> {
@@ -813,6 +816,9 @@ export interface IFormFieldFields {
 
   /** Options */
   options?: string[] | undefined
+
+  /** Email Config */
+  emailConfig?: Record<string, any> | undefined
 }
 
 export interface IFormField extends Entry<IFormFieldFields> {

@@ -8,6 +8,7 @@ import {
   FormFooter,
   Modal,
   PageLayout,
+  FormContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
   RestrictionCaseProsecutorSubsections,
@@ -28,7 +29,6 @@ import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import {
   errors,
   icRequestedHearingArrangements as m,
@@ -40,9 +40,11 @@ import { isHearingArrangementsStepValidIC } from '@island.is/judicial-system-web
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import * as constants from '@island.is/judicial-system/consts'
 
-import RequestCourtDate from '../../SharedComponents/RequestCourtDate/RequestCourtDate'
-import SelectCourt from '../../SharedComponents/SelectCourt/SelectCourt'
-import ProsecutorSectionHeightenedSecurity from '../../SharedComponents/ProsecutorSection/ProsecutorSectionHeightenedSecurity'
+import {
+  RequestCourtDate,
+  SelectCourt,
+  ProsecutorSectionHeightenedSecurity,
+} from '../../components'
 
 const HearingArrangements = () => {
   const router = useRouter()

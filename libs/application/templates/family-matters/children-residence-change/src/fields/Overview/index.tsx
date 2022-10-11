@@ -55,7 +55,7 @@ const Overview = ({
   )
   const applicant = externalData.nationalRegistry.data
   const children = getSelectedChildrenFromExternalData(
-    applicant.children,
+    externalData.childrenCustodyInformation.data,
     answers.selectedChildren,
   )
   const parentB = children[0].otherParent
@@ -144,7 +144,7 @@ const Overview = ({
           <DescriptionText
             text={m.contract.general.description}
             format={{
-              otherParent: parentB.fullName,
+              otherParent: parentB?.fullName ?? '',
             }}
           />
         ) : (

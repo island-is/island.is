@@ -1,0 +1,22 @@
+{
+  "root": "libs/clients/identity",
+  "sourceRoot": "libs/clients/identity/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["libs/clients/identity/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/clients/identity"],
+      "options": {
+        "jestConfig": "libs/clients/identity/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

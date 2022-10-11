@@ -239,6 +239,13 @@ export const sections = {
       description:
         'Notaður sem texti fyrir Fyrirkall skref í hliðarstiku í ákærum hjá héraðsdómum',
     },
+    courtRecord: {
+      id:
+        'judicial.system.core:sections.indictments_court_section.court_record',
+      defaultMessage: 'Þingbók og dómur',
+      description:
+        'Notaður sem texti fyrir Þingbók og dómur skref í hliðarstiku í ákærum hjá héraðsdómum',
+    },
   }),
   extensionSection: defineMessages({
     title: {
@@ -349,14 +356,6 @@ export const sections = {
       defaultMessage: 'Niðurstaða',
       description: 'Notaður sem titill í hliðarstiku í niðurstöðum',
     },
-    // TODO: Remove rejected
-    rejected: {
-      id: 'judicial.system.core:sections.case_results.rejected',
-      defaultMessage:
-        'Kröfu {isInvestigationCase, select, yes {um rannsóknarheimild } other {}}hafnað',
-      description:
-        'Notaður sem texti í skrefum á hliðarstiku þegar kröfu er hafnað',
-    },
     rejectedV2: {
       id: 'judicial.system.core:sections.case_results.rejected_v2',
       defaultMessage:
@@ -369,6 +368,12 @@ export const sections = {
       defaultMessage: 'Krafa um rannsóknarheimild samþykkt',
       description:
         'Notaður sem texti í skrefum á hliðarstiku þegar kröfu er samþykkt',
+    },
+    indictmentClosed: {
+      id: 'judicial.system.core:sections.case_results.indictment_closed',
+      defaultMessage: 'Máli lokið',
+      description:
+        'Notaður sem texti í skrefum á hliðarstiku þegar máli er lokið',
     },
   }),
 }

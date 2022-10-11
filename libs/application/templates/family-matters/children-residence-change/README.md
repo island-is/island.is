@@ -33,6 +33,10 @@ Prerequisites
 - Run `kubectl port-forward svc/socat-soffia 8443:443 -n socat`
 - Keep this process running while running the project
 
+### Test user
+
+For testing on local, dev and staging use the Gervimaður Evrópa login: 0102719
+
 ## Code owners and maintainers
 
 - [Kolibri](https://github.com/orgs/island-is/teams/kolibri-modern-family)

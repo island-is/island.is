@@ -25,7 +25,13 @@ import {
   DokobitError,
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
-import { CaseState, CaseType, UserRole } from '@island.is/judicial-system/types'
+import {
+  CaseState,
+  CaseType,
+  completedCaseStates,
+  isIndictmentCase,
+  UserRole,
+} from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 import {
   CurrentHttpUser,
@@ -210,6 +216,12 @@ export class CaseController {
       update as UpdateCaseDto,
       state !== CaseState.DELETED,
     )
+
+    // Indictment cases are not signed
+    if (isIndictmentCase(theCase.type) && completedCaseStates.includes(state)) {
+      // No need to wait for this to complete
+      this.caseService.addCompletedCaseToQueue(caseId)
+    }
 
     this.eventService.postEvent(
       (transition.transition as unknown) as CaseEvent,

@@ -268,7 +268,7 @@ export class NationalRegistryService {
   }
 
   private isParent(person: ISLFjolskyldan): boolean {
-    return ['1', '2'].includes(person.Kyn)
+    return ['1', '2', '7'].includes(person.Kyn)
   }
 
   private isChild(person: ISLFjolskyldan): boolean {

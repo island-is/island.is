@@ -1,7 +1,10 @@
 import React from 'react'
 import { defineMessage } from 'react-intl'
-
 import { gql, useQuery } from '@apollo/client'
+import {
+  pagingFragment,
+  addressFragment,
+} from '@island.is/service-portal/graphql'
 import { Query } from '@island.is/api/schema'
 import { Box, Button, GridColumn, GridRow } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
@@ -22,25 +25,16 @@ const GetRealEstateQuery = gql`
       properties {
         propertyNumber
         defaultAddress {
-          locationNumber
-          postNumber
-          municipality
-          propertyNumber
-          display
-          displayShort
+          ...Address
         }
       }
       paging {
-        page
-        pageSize
-        totalPages
-        offset
-        total
-        hasPreviousPage
-        hasNextPage
+        ...Paging
       }
     }
   }
+  ${pagingFragment}
+  ${addressFragment}
 `
 
 export const AssetsOverview: ServicePortalModuleComponent = () => {

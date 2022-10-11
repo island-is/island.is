@@ -14,7 +14,6 @@ import {
   DefaultEvents,
   NationalRegistryUserApi,
   UserProfileApi,
-  NationalRegistryFamilyApi,
   defineTemplateApi,
 } from '@island.is/application/types'
 import * as z from 'zod'
@@ -135,7 +134,6 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
                   },
                 }),
                 UserProfileApi,
-                NationalRegistryFamilyApi,
               ],
               delete: true,
             },

@@ -11,8 +11,8 @@ import {
 import { NationalRegistryUser } from '@island.is/api/domains/national-registry'
 import type { GraphQLContext } from '@island.is/auth-nest-tools'
 
-import { IdentityType } from '../identity.type'
 import { Address } from './address.model'
+import { IdentityType } from '@island.is/clients/identity'
 
 registerEnumType(IdentityType, { name: 'IdentityType' })
 

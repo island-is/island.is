@@ -1,4 +1,5 @@
-export * from './national-registry-family'
 export * from './national-registry-user'
 export * from './payment-catalog'
 export * from './user-profile-api'
+export * from './identity'
+export * from './national-registry-custody-information'

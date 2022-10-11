@@ -6,4 +6,6 @@ export const getFields = () => import('./fields/')
 
 export * from './types'
 
+export { noChildren } from './lib/messages'
+
 export default ChildrenResidenceChangeTemplate

@@ -99,7 +99,7 @@ export const PaymentPlanForm: Form = buildForm({
               disabled: true,
               defaultValue: (application: Application) => {
                 return (application.externalData as PaymentPlanExternalData)
-                  ?.nationalRegistry?.data?.fullName
+                  ?.identity?.data?.name
               },
             }),
             buildTextField({
@@ -111,8 +111,8 @@ export const PaymentPlanForm: Form = buildForm({
               required: true,
               disabled: true,
               defaultValue: (application: Application) =>
-                (application.externalData as PaymentPlanExternalData)
-                  ?.nationalRegistry?.data?.nationalId,
+                (application.externalData as PaymentPlanExternalData)?.identity
+                  ?.data?.nationalId,
             }),
             buildTextField({
               id: 'applicant.address',
@@ -122,8 +122,8 @@ export const PaymentPlanForm: Form = buildForm({
               required: true,
               disabled: true,
               defaultValue: (application: Application) =>
-                (application.externalData as PaymentPlanExternalData)
-                  ?.nationalRegistry?.data?.address?.streetAddress,
+                (application.externalData as PaymentPlanExternalData)?.identity
+                  ?.data?.address?.streetAddress,
             }),
             buildTextField({
               id: 'applicant.postalCode',
@@ -133,8 +133,8 @@ export const PaymentPlanForm: Form = buildForm({
               required: true,
               disabled: true,
               defaultValue: (application: Application) =>
-                (application.externalData as PaymentPlanExternalData)
-                  ?.nationalRegistry?.data?.address?.postalCode,
+                (application.externalData as PaymentPlanExternalData)?.identity
+                  ?.data?.address?.postalCode,
             }),
             buildTextField({
               id: 'applicant.city',
@@ -144,8 +144,8 @@ export const PaymentPlanForm: Form = buildForm({
               required: true,
               disabled: true,
               defaultValue: (application: Application) =>
-                (application.externalData as PaymentPlanExternalData)
-                  ?.nationalRegistry?.data?.address?.city,
+                (application.externalData as PaymentPlanExternalData)?.identity
+                  ?.data?.address?.city,
             }),
             buildTextField({
               id: 'applicant.email',

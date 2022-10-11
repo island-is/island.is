@@ -1,31 +1,10 @@
 import React, { useState } from 'react'
 import { gql, useMutation, useQuery } from '@apollo/client'
 import { Locale } from '@island.is/shared/types'
-import { useUserProfile } from '@island.is/service-portal/graphql'
+import { useUserProfile, dataFragment } from '@island.is/service-portal/graphql'
 
 import { GenericLicenseDataField, Query } from '@island.is/api/schema'
 import { Box, SkeletonLoader, Button } from '@island.is/island-ui/core'
-
-const dataFragment = gql`
-  fragment genericLicenseDataFieldFragment on GenericLicenseDataField {
-    type
-    name
-    label
-    value
-    fields {
-      type
-      name
-      label
-      value
-      fields {
-        type
-        name
-        label
-        value
-      }
-    }
-  }
-`
 
 const GenericLicensesQuery = gql`
   query GenericLicensesQuery($input: GetGenericLicensesInput, $locale: String) {

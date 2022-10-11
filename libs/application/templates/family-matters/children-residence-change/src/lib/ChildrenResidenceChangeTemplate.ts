@@ -14,6 +14,11 @@ import { dataSchema } from './dataSchema'
 import { CRCApplication } from '../types'
 import { Roles, ApplicationStates } from './constants'
 import { application, stateDescriptions, stateLabels } from './messages'
+import {
+  ChildrenCustodyInformationApi,
+  NationalRegistryUserApi,
+  UserProfileApi,
+} from '../dataProviders'
 
 type Events =
   | { type: DefaultEvents.ASSIGN }
@@ -74,6 +79,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
                   type: 'primary',
                 },
               ],
+              delete: true,
               read: 'all',
               write: {
                 answers: [
@@ -87,8 +93,17 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
                   'residenceChangeReason',
                   'approveChildSupportTerms',
                 ],
-                externalData: ['userProfile', 'nationalRegistry'],
+                externalData: [
+                  'UserProfile.userProfile',
+                  'NationalRegistry.nationalRegistry',
+                  'NationalRegistry.childrenCustodyInformation',
+                ],
               },
+              api: [
+                ChildrenCustodyInformationApi,
+                NationalRegistryUserApi,
+                UserProfileApi,
+              ],
             },
           ],
         },
@@ -297,9 +312,9 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
           externalData,
           answers,
         } = (context.application as unknown) as CRCApplication
-        const applicant = externalData.nationalRegistry.data
+        const children = externalData.childrenCustodyInformation.data
         const selectedChildren = getSelectedChildrenFromExternalData(
-          applicant.children,
+          children,
           answers.selectedChildren,
         )
         const otherParent = selectedChildren[0].otherParent
@@ -308,7 +323,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
           ...context,
           application: {
             ...context.application,
-            assignees: [otherParent.nationalId],
+            assignees: [otherParent?.nationalId ?? ''],
           },
         }
       }),

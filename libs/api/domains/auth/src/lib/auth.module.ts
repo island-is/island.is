@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common'
 
-import { IdentityModule } from '@island.is/api/domains/identity'
+import { IdentityClientModule } from '@island.is/clients/identity'
 import { AuthPublicApiClientModule } from '@island.is/clients/auth-public-api'
 
 import { ActorDelegationsService } from './actorDelegations.service'
@@ -21,6 +21,6 @@ import {
     ActorDelegationsService,
     ApiScopeService,
   ],
-  imports: [AuthPublicApiClientModule, IdentityModule],
+  imports: [AuthPublicApiClientModule, IdentityClientModule],
 })
 export class AuthModule {}

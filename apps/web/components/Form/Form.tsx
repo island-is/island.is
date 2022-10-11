@@ -212,6 +212,8 @@ export const Form = ({ form, namespace }: FormProps) => {
             error: n('formInvalidName', 'Þennan reit þarf að fylla út.'),
           }
         }
+
+        return null
       })
       .filter((x) => !!x)
 
@@ -233,6 +235,12 @@ export const Form = ({ form, namespace }: FormProps) => {
     )
   }
 
+  /** Returns the value for the form field that decides what email the form will be sent to */
+  const getRecipientFormFieldDeciderValue = (): string | undefined => {
+    if (!form?.recipientFormFieldDecider?.title) return undefined
+    return data[slugify(form.recipientFormFieldDecider.title)]
+  }
+
   const onSubmit = () => {
     const valid = validate()
 
@@ -244,6 +252,7 @@ export const Form = ({ form, namespace }: FormProps) => {
             name: data['name'],
             email: data['email'],
             message: formatBody(),
+            recipientFormFieldDeciderValue: getRecipientFormFieldDeciderValue(),
           },
         },
       })

@@ -80,7 +80,7 @@ const MockParents = ({ application, field }: CRCFieldBaseProps) => {
                 name={`${id}[${index}].address.streetName`}
                 label="Heimilisfang"
                 defaultValue={
-                  parents?.[index]?.address.streetName ||
+                  parents?.[index]?.address?.streetName ||
                   parentBDefaults.address
                 }
               />
@@ -91,7 +91,7 @@ const MockParents = ({ application, field }: CRCFieldBaseProps) => {
                 name={`${id}[${index}].address.postalCode`}
                 label="Póstnúmer"
                 defaultValue={
-                  parents?.[index]?.address.postalCode ||
+                  parents?.[index]?.address?.postalCode ||
                   parentBDefaults.postalCode
                 }
               />
@@ -102,7 +102,7 @@ const MockParents = ({ application, field }: CRCFieldBaseProps) => {
                 name={`${id}[${index}].address.city`}
                 label="Borg"
                 defaultValue={
-                  parents?.[index]?.address.city || parentBDefaults.city
+                  parents?.[index]?.address?.locality || parentBDefaults.city
                 }
               />
             </Box>

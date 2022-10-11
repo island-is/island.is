@@ -83,22 +83,21 @@ export class NationalRegistryProvider extends BasicDataProvider {
 
   async provide(): Promise<{
     applicant: Applicant
-    municipality: Municipality
   }> {
     const applicant = await this.runQuery<Applicant>(
       nationalRegistryQuery,
       'nationalRegistryUserV2',
     )
 
-    const municipality = await this.runQuery<Municipality>(
-      municipalityQuery,
-      'municipalitiesFinancialAidMunicipality',
-      {
-        input: { id: applicant.address.municipalityCode },
-      },
-    )
+    // const municipality = await this.runQuery<Municipality>(
+    //   municipalityQuery,
+    //   'municipalitiesFinancialAidMunicipality',
+    //   {
+    //     input: { id: applicant.address.municipalityCode },
+    //   },
+    // )
 
-    return { applicant, municipality }
+    return { applicant }
   }
   handleError(error: Error | unknown) {
     console.error('Provider.FinancialAid.NationalRegistry:', error)

@@ -501,4 +501,8 @@ export const messages = defineMessages({
     id: 'sp.vehicles:vehicle-history-report',
     defaultMessage: 'Ferilskýrsla',
   },
+  vehicleNameSecret: {
+    id: 'sp.vehicles:vehicle-name-secret',
+    defaultMessage: 'Nafnleynd í ökutækjaskrá',
+  },
 })

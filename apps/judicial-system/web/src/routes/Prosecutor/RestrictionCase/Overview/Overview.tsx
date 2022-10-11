@@ -27,6 +27,8 @@ import {
   CaseFileList,
   ProsecutorCaseInfo,
   AccordionListItem,
+  CaseResubmitModal,
+  FormContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
   RestrictionCaseProsecutorSubsections,
@@ -43,17 +45,15 @@ import {
   titles,
   errors,
 } from '@island.is/judicial-system-web/messages'
-import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import CommentsAccordionItem from '@island.is/judicial-system-web/src/components/AccordionItems/CommentsAccordionItem/CommentsAccordionItem'
 import { createCaseResentExplanation } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
 import type { CaseLegalProvisions } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
-import CaseResubmitModal from '@island.is/judicial-system-web/src/components/CaseResubmitModal/CaseResubmitModal'
 
 import * as styles from './Overview.css'
-import CopyLinkForDefenderButton from '../../SharedComponents/CopyLinkForDefenderButton/CopyLinkForDefenderButton'
+import { CopyLinkForDefenderButton } from '../../components'
 
 export const Overview: React.FC = () => {
   const [modal, setModal] = useState<

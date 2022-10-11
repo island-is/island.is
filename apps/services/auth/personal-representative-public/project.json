@@ -1,0 +1,58 @@
+{
+  "root": "apps/services/auth/personal-representative-public",
+  "sourceRoot": "apps/services/auth/personal-representative-public/src",
+  "projectType": "application",
+  "prefix": "personal-representative-public",
+  "targets": {
+    "build": {
+      "executor": "./tools/executors/node:build",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/services/auth/personal-representative-public",
+        "main": "apps/services/auth/personal-representative-public/src/main.ts",
+        "tsConfig": "apps/services/auth/personal-representative-public/tsconfig.app.json",
+        "assets": [
+          "apps/services/auth/personal-representative-public/src/assets"
+        ]
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/node:node",
+      "options": {
+        "buildTarget": "services-auth-personal-representative-public:build"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "apps/services/auth/personal-representative-public/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/apps/services/auth/personal-representative-public"],
+      "options": {
+        "jestConfig": "apps/services/auth/personal-representative-public/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "schemas/build-openapi": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "outputPath": "apps/services/auth/personal-representative-public/src/openapi.yaml",
+        "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/auth/personal-representative-public/tsconfig.app.json apps/services/auth/personal-representative-public/src/buildOpenApi.ts"
+      }
+    },
+    "docker-express": {}
+  },
+  "tags": []
+}

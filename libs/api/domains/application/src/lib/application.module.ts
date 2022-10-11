@@ -18,28 +18,26 @@ export class ApplicationModule {
         ApplicationService,
         {
           provide: ApplicationsApi,
-          useFactory: async () =>
-            new ApplicationsApi(
-              new Configuration({
-                fetchApi: createEnhancedFetch({
-                  name: 'ApplicationModule.applicationsApi',
-                  timeout: 60000,
-                }),
-                basePath: config.baseApiUrl,
+          useValue: new ApplicationsApi(
+            new Configuration({
+              fetchApi: createEnhancedFetch({
+                name: 'ApplicationModule.applicationsApi',
+                timeout: 60000,
               }),
-            ),
+              basePath: config.baseApiUrl,
+            }),
+          ),
         },
         {
           provide: PaymentsApi,
-          useFactory: async () =>
-            new PaymentsApi(
-              new Configuration({
-                fetchApi: createEnhancedFetch({
-                  name: 'ApplicationModule.paymentsApi',
-                }),
-                basePath: config.baseApiUrl,
+          useValue: new PaymentsApi(
+            new Configuration({
+              fetchApi: createEnhancedFetch({
+                name: 'ApplicationModule.paymentsApi',
               }),
-            ),
+              basePath: config.baseApiUrl,
+            }),
+          ),
         },
       ],
       exports: [],

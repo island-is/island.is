@@ -1,5 +1,5 @@
 export enum MessageType {
-  RULING_SIGNED = 'RULING_SIGNED',
+  CASE_COMPLETED = 'CASE_COMPLETED',
 }
 
 export type Message = {

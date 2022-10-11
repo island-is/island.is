@@ -21,6 +21,7 @@ import {
   DateTime,
   FormContentContainer,
   FormFooter,
+  CheckboxList,
 } from '@island.is/judicial-system-web/src/components'
 import {
   removeTabsValidateAndSet,
@@ -33,7 +34,6 @@ import {
   autofillEntry,
   useDeb,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import CheckboxList from '@island.is/judicial-system-web/src/components/CheckboxList/CheckboxList'
 import {
   legalProvisions,
   travelBanProvisions,

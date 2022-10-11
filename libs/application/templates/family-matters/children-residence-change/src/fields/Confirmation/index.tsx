@@ -24,7 +24,7 @@ const Confirmation = ({ application }: CRCFieldBaseProps) => {
   const { pdfUrl } = useGeneratePdfUrl(application.id, pdfType)
   const { formatMessage } = useIntl()
   const { answers, externalData } = application
-  const children = externalData.nationalRegistry.data.children
+  const children = externalData.childrenCustodyInformation.data
   const otherParent = getOtherParentInformation(
     children,
     answers.selectedChildren,

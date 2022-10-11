@@ -5,37 +5,44 @@ import enGB from 'date-fns/locale/en-GB'
 import sortBy from 'lodash/sortBy'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import kennitala from 'kennitala'
-import { Address, Child, NationalRegistry, Person } from '../types'
+import {} from '../types'
+import {
+  Address,
+  ApplicantChildCustodyInformation,
+  NationalRegistryIndividual,
+} from '@island.is/application/types'
 
 export const formatSsn = (ssn: string) => {
   return ssn.replace(/(\d{6})(\d+)/, '$1-$2')
 }
 
-export const formatAddress = (address: Address) => {
+export const formatAddress = (address: Address | null | undefined) => {
   if (!address) {
     return null
   }
-  return `${address.streetName}, ${address.postalCode} ${address.city}`
+  return `${address.streetName}, ${address.postalCode} ${address.locality}`
 }
 
 export const getSelectedChildrenFromExternalData = (
-  children: Child[],
+  children: ApplicantChildCustodyInformation[],
   selectedChildren: string[],
-): Child[] => {
+): ApplicantChildCustodyInformation[] => {
   return children.filter((child) => selectedChildren.includes(child.nationalId))
 }
 
 interface ChildrenResidenceInfo {
   parentName: string
-  address: Address
+  address: Address | null
   nationalId: string
 }
 
-const extractParentInfo = ({
-  address,
-  fullName,
-  nationalId,
-}: NationalRegistry | Person): ChildrenResidenceInfo => {
+const extractParentInfo = (
+  individual: NationalRegistryIndividual | null | undefined,
+): ChildrenResidenceInfo | null => {
+  if (!individual) {
+    return null
+  }
+  const { nationalId, fullName, address } = individual
   return {
     nationalId,
     address,
@@ -44,17 +51,18 @@ const extractParentInfo = ({
 }
 
 export const childrenResidenceInfo = (
-  applicant: NationalRegistry,
+  applicant: NationalRegistryIndividual,
+  children: ApplicantChildCustodyInformation[],
   selectedChildren: string[],
 ): {
-  current: ChildrenResidenceInfo
-  future: ChildrenResidenceInfo
+  current: ChildrenResidenceInfo | null
+  future: ChildrenResidenceInfo | null
 } => {
-  const children = getSelectedChildrenFromExternalData(
-    applicant.children,
+  const selectedExternalDataChildren = getSelectedChildrenFromExternalData(
+    children,
     selectedChildren,
   )
-  const parentB = children[0].otherParent
+  const parentB = selectedExternalDataChildren[0].otherParent
   const childrenLiveWithApplicant = children.some(
     (child) => child.livesWithApplicant,
   )
@@ -88,14 +96,14 @@ export const formatDate = ({
 }
 
 export const getOtherParentInformation = (
-  children: Child[],
+  children: ApplicantChildCustodyInformation[],
   selectedChildren: string[],
-): Person => {
+): NationalRegistryIndividual => {
   const selected = getSelectedChildrenFromExternalData(
     children,
     selectedChildren,
   )
-  return selected?.[0]?.otherParent
+  return selected?.[0]?.otherParent ?? ({} as NationalRegistryIndividual)
 }
 
 export const formatPhoneNumber = (phoneNumber: string): string => {
@@ -103,7 +111,9 @@ export const formatPhoneNumber = (phoneNumber: string): string => {
   return phone?.formatNational() || phoneNumber
 }
 
-export const sortChildrenByAge = (children: Child[]): Child[] => {
+export const sortChildrenByAge = (
+  children: ApplicantChildCustodyInformation[],
+): ApplicantChildCustodyInformation[] => {
   return sortBy(children, (child) => {
     return kennitala.info(child.nationalId)?.birthday
   })

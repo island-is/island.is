@@ -37,6 +37,11 @@ export interface ProfileCardProps {
     url: string
     text: string
   }
+
+  /**
+   *
+   */
+  variant?: 'default' | 'title-above'
 }
 
 export const ProfileCard: FC<ProfileCardProps> = ({
@@ -46,6 +51,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
   heightFull,
   size = 'default',
   link,
+  variant = 'default',
 }) => {
   const conditionalProps: { height?: 'full' } = {}
   if (heightFull) {
@@ -63,6 +69,13 @@ export const ProfileCard: FC<ProfileCardProps> = ({
       borderColor="blue200"
       {...conditionalProps}
     >
+      {title && variant === 'title-above' && (
+        <Box className={styles.titleAboveContainer}>
+          <Text color="blue400" variant="h3" marginBottom={1}>
+            {title}
+          </Text>
+        </Box>
+      )}
       {image && (
         <Box
           className={styles.image}
@@ -70,7 +83,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
         />
       )}
       <Box padding={3}>
-        {title && (
+        {title && variant === 'default' && (
           <Text variant="h4" marginBottom={1}>
             {title}
           </Text>

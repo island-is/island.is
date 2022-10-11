@@ -38,27 +38,6 @@ if (process.env.NODE_ENV === 'production') {
   if (!process.env.BACKEND_ACCESS_TOKEN) {
     throw new Error('Missing BACKEND_ACCESS_TOKEN environment.')
   }
-  if (!process.env.COURTS_MOBILE_NUMBERS) {
-    throw new Error('Missing COURTS_MOBILE_NUMBERS environment.')
-  }
-  if (!process.env.PRISON_EMAIL) {
-    throw new Error('Missing PRISON_EMAIL environment.')
-  }
-  if (!process.env.PRISON_ADMIN_EMAIL) {
-    throw new Error('Missing PRISON_ADMIN_EMAIL environment.')
-  }
-  if (!process.env.EMAIL_FROM) {
-    throw new Error('Missing EMAIL_FROM environment.')
-  }
-  if (!process.env.EMAIL_FROM_NAME) {
-    throw new Error('Missing EMAIL_FROM_NAME environment.')
-  }
-  if (!process.env.EMAIL_REPLY_TO) {
-    throw new Error('Missing EMAIL_REPLY_TO environment.')
-  }
-  if (!process.env.EMAIL_REPLY_TO_NAME) {
-    throw new Error('Missing EMAIL_REPLY_TO_NAME environment.')
-  }
   if (!process.env.NOVA_URL) {
     throw new Error('Missing NOVA_URL environment.')
   }
@@ -85,40 +64,6 @@ if (process.env.NODE_ENV === 'production') {
   }
   if (!process.env.S3_TIME_TO_LIVE_GET) {
     throw new Error('Missing S3_TIME_TO_LIVE_GET environment.')
-  }
-  if (!process.env.XROAD_TLS_BASE_PATH_WITH_ENV) {
-    throw new Error('Missing XROAD_TLS_BASE_PATH_WITH_ENV environment.')
-  }
-  if (!process.env.XROAD_CLIENT_ID) {
-    throw new Error('Missing XROAD_CLIENT_ID environment.')
-  }
-  if (!process.env.XROAD_CLIENT_CERT) {
-    throw new Error('Missing XROAD_CLIENT_CERT environment.')
-  }
-  if (!process.env.XROAD_CLIENT_KEY) {
-    throw new Error('Missing XROAD_CLIENT_KEY environment.')
-  }
-  if (!process.env.XROAD_CLIENT_PEM) {
-    throw new Error('Missing XROAD_CLIENT_PEM environment.')
-  }
-  if (!process.env.XROAD_POLICE_API_PATH) {
-    throw new Error('Missing XROAD_POLICE_API_PATH environment.')
-  }
-  if (!process.env.XROAD_POLICE_MEMBER_CODE) {
-    throw new Error('Missing XROAD_POLICE_MEMBER_CODE environment.')
-  }
-  if (!process.env.COMPLETED_CASE_OVERVIEW_URL) {
-    throw new Error('Missing COMPLETED_CASE_OVERVIEW_URL environment.')
-  }
-  if (!process.env.PROSECUTOR_RESTRICTION_CASE_OVERVIEW_URL) {
-    throw new Error(
-      'Missing PROSECUTOR_RESTRICTION_CASE_OVERVIEW_URL environment.',
-    )
-  }
-  if (!process.env.PROSECUTOR_INVESTIGATION_CASE_OVERVIEW_URL) {
-    throw new Error(
-      'Missing PROSECUTOR_INVESTIGATION_CASE_OVERVIEW_URL environment.',
-    )
   }
 }
 

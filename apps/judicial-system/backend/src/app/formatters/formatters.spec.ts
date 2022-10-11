@@ -605,6 +605,26 @@ describe('formatProsecutorReceivedByCourtSmsNotification', () => {
       'Héraðsdómur Reykjavíkur hefur móttekið kröfu um rannsóknarheimild sem þú sendir og úthlutað málsnúmerinu R-898/2021. Sjá nánar á rettarvorslugatt.island.is.',
     )
   })
+
+  test('should format received by court notification for an indictment of type MURDER', () => {
+    // Arranged
+    const type = CaseType.MURDER
+    const court = 'Héraðsdómur Reykjavíkur'
+    const courtCaseNumber = 'R-898/2021'
+
+    // Act
+    const res = formatProsecutorReceivedByCourtSmsNotification(
+      formatMessage,
+      type,
+      court,
+      courtCaseNumber,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Héraðsdómur Reykjavíkur hefur móttekið ákæru sem þú sendir og úthlutað málsnúmerinu R-898/2021. Sjá nánar á rettarvorslugatt.island.is.',
+    )
+  })
 })
 
 describe('formatProsecutorCourtDateEmailNotification', () => {
@@ -819,6 +839,34 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
     // Assert
     expect(res.body).toBe(
       'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um rannsóknarheimild.<br /><br />Fyrirtaka mun fara fram 24. desember 2021, kl. 10:00.<br /><br />Dómsalur: 999.<br /><br />Dómari: Dóra Dómari.<br /><br />Dómritari: Dalli Dómritari.<br /><br />Verjandi sakbornings: Valdi Verjandi.',
+    )
+  })
+
+  test('should format court date notification for indictments', () => {
+    // Arrange
+    const type = CaseType.MURDER
+    const courtCaseNumber = 'S-898/2021'
+    const court = 'Héraðsdómur Reykjavíkur'
+    const courtDate = new Date('2021-12-24T10:00')
+    const courtRoom = '999'
+    const judgeName = 'Dóra Dómari'
+    const registrarName = 'Dalli Dómritari'
+
+    // Act
+    const res = fn(
+      type,
+      courtCaseNumber,
+      court,
+      courtDate,
+      courtRoom,
+      judgeName,
+      registrarName,
+    )
+
+    // Assert
+    expect(res.subject).toBe('Þingfesting í máli: S-898/2021')
+    expect(res.body).toBe(
+      'Héraðsdómur Reykjavíkur boðar til þingfestingar í máli S-898/2021.<br /><br />Þingfesting mun fara fram 24. desember 2021, kl. 10:00.<br /><br />Dómsalur: 999.<br /><br />Dómari: Dóra Dómari.<br /><br />Dómritari: Dalli Dómritari.',
     )
   })
 

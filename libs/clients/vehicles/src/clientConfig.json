@@ -2290,6 +2290,9 @@
             "type": "string",
             "nullable": true
           },
+          "currentOwnerIsAnonymous": {
+            "type": "boolean"
+          },
           "useGroup": {
             "type": "string",
             "nullable": true

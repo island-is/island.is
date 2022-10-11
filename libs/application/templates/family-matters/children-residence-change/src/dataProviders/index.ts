@@ -1,3 +1,5 @@
-export { UserProfileProvider } from '@island.is/application/data-providers'
-export { MockNationalRegistryProvider } from './MockNationalRegistryProvider'
-export { NationalRegistryProvider } from './NationalRegistryProvider'
+export {
+  NationalRegistryUserApi,
+  ChildrenCustodyInformationApi,
+  UserProfileApi,
+} from '@island.is/application/types'

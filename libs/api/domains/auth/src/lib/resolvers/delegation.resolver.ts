@@ -11,11 +11,10 @@ import * as kennitala from 'kennitala'
 
 import type { User } from '@island.is/auth-nest-tools'
 import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
-import {
-  Identity,
-  IdentityService,
-  IdentityType,
-} from '@island.is/api/domains/identity'
+
+import { Identity } from '@island.is/api/domains/identity'
+import { IdentityClientService } from '@island.is/clients/identity'
+
 import type { DelegationDTO } from '@island.is/clients/auth-public-api'
 
 import {
@@ -35,7 +34,7 @@ export class DelegationResolver {
   constructor(
     private meDelegationsService: MeDelegationsService,
     private actorDelegationsService: ActorDelegationsService,
-    private identityService: IdentityService,
+    private identityService: IdentityClientService,
   ) {}
 
   @Query(() => [Delegation], { name: 'authActorDelegations' })

@@ -5,7 +5,7 @@ export interface NationalRegistryParameters {
 }
 export const NationalRegistryUserApi = defineTemplateApi<NationalRegistryParameters>(
   {
-    action: 'getUser',
+    action: 'nationalRegistry',
     namespace: 'NationalRegistry',
     externalDataId: 'nationalRegistry',
   },

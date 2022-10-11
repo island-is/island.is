@@ -260,7 +260,7 @@
     "slate-hyperscript": "0.67.0",
     "slate-react": "0.70.0",
     "smoothscroll-polyfill": "0.4.4",
-    "soap": "0.33.0",
+    "soap": "0.45.0",
     "sqs-consumer": "5.4.0",
     "stream-buffers": "3.0.2",
     "styled-components": "5.3.5",

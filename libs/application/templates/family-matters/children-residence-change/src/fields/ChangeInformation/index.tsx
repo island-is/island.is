@@ -15,6 +15,7 @@ const ChangeInformation = ({ application }: CRCFieldBaseProps) => {
   const applicant = externalData.nationalRegistry.data
   const childResidenceInfo = childrenResidenceInfo(
     applicant,
+    externalData.childrenCustodyInformation.data,
     answers.selectedChildren,
   )
   return (
@@ -27,10 +28,10 @@ const ChangeInformation = ({ application }: CRCFieldBaseProps) => {
           {formatMessage(newResidence.information.currentResidenceLabel)}
         </Text>
         <Text variant="h4" color="blue400">
-          {childResidenceInfo.current.parentName}
+          {childResidenceInfo?.current?.parentName}
         </Text>
         <Text fontWeight="light">
-          {formatAddress(childResidenceInfo.current.address)}
+          {formatAddress(childResidenceInfo?.current?.address)}
         </Text>
       </Box>
       <Box marginBottom={5}>
@@ -38,10 +39,10 @@ const ChangeInformation = ({ application }: CRCFieldBaseProps) => {
           {formatMessage(newResidence.information.newResidenceLabel)}
         </Text>
         <Text variant="h4" color="blue400">
-          {childResidenceInfo.future.parentName}
+          {childResidenceInfo?.future?.parentName}
         </Text>
         <Text fontWeight="light">
-          {formatAddress(childResidenceInfo.future.address)}
+          {formatAddress(childResidenceInfo?.future?.address)}
         </Text>
       </Box>
     </>
