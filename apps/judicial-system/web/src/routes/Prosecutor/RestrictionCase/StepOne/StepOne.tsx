@@ -1,9 +1,12 @@
-import React, { useCallback, useContext } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import {
+  DefenderInfo,
+  FormContentContainer,
   FormContext,
+  FormFooter,
   PageLayout,
 } from '@island.is/judicial-system-web/src/components'
 import {
@@ -16,14 +19,36 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { titles } from '@island.is/judicial-system-web/messages'
-import type { Case, UpdateDefendant } from '@island.is/judicial-system/types'
+import {
+  accused as m,
+  core,
+  titles,
+} from '@island.is/judicial-system-web/messages'
+import { isDefendantStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
+import { Box, Input, Text, Tooltip } from '@island.is/island-ui/core'
+import {
+  validateAndSendToServer,
+  validateAndSet,
+} from '@island.is/judicial-system-web/src/utils/formHelper'
+import {
+  Case,
+  CaseType,
+  UpdateDefendant,
+} from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 
-import { StepOneForm } from './StepOneForm'
+import {
+  DefendantInfo,
+  PoliceCaseNumbers,
+  usePoliceCaseNumbers,
+} from '../../components'
 
 export const StepOne: React.FC = () => {
   const router = useRouter()
+  const [
+    leadInvestigatorErrorMessage,
+    setLeadInvestigatorErrorMessage,
+  ] = useState<string>('')
 
   const {
     workingCase,
@@ -31,10 +56,13 @@ export const StepOne: React.FC = () => {
     isLoadingWorkingCase,
     caseNotFound,
   } = useContext(FormContext)
-  const { createCase, isCreatingCase } = useCase()
+  const { createCase, isCreatingCase, updateCase } = useCase()
   const { updateDefendant } = useDefendants()
   const { loading: institutionLoading } = useInstitution()
   const { formatMessage } = useIntl()
+  const { clientPoliceNumbers, setClientPoliceNumbers } = usePoliceCaseNumbers(
+    workingCase,
+  )
 
   const handleNextButtonClick = async (theCase: Case) => {
     if (!theCase.id) {
@@ -90,6 +118,17 @@ export const StepOne: React.FC = () => {
     [setWorkingCase],
   )
 
+  const handleUpdateDefendant = useCallback(
+    async (defendantId: string, updatedDefendant: UpdateDefendant) => {
+      updateDefendantState(defendantId, updatedDefendant)
+
+      if (defendantId) {
+        updateDefendant(workingCase.id, defendantId, updatedDefendant)
+      }
+    },
+    [workingCase.id, updateDefendantState, updateDefendant],
+  )
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -105,13 +144,110 @@ export const StepOne: React.FC = () => {
         title={formatMessage(titles.prosecutor.restrictionCases.defendant)}
       />
       {!institutionLoading && (
-        <StepOneForm
-          workingCase={workingCase}
-          setWorkingCase={setWorkingCase}
-          loading={isCreatingCase}
-          handleNextButtonClick={handleNextButtonClick}
-          updateDefendantState={updateDefendantState}
-        />
+        <>
+          <FormContentContainer>
+            <Box marginBottom={7}>
+              <Text as="h1" variant="h1">
+                {formatMessage(m.heading)}
+              </Text>
+            </Box>
+            <Box component="section" marginBottom={5}>
+              <PoliceCaseNumbers
+                workingCase={workingCase}
+                setWorkingCase={setWorkingCase}
+                clientPoliceNumbers={clientPoliceNumbers}
+                setClientPoliceNumbers={setClientPoliceNumbers}
+              />
+            </Box>
+            {workingCase.defendants && (
+              <Box component="section" marginBottom={5}>
+                <Box marginBottom={2}>
+                  <Text as="h3" variant="h3">
+                    {formatMessage(m.sections.accusedInfo.heading)}
+                  </Text>
+                </Box>
+                <DefendantInfo
+                  defendant={workingCase.defendants[0]}
+                  workingCase={workingCase}
+                  onChange={handleUpdateDefendant}
+                  updateDefendantState={updateDefendantState}
+                />
+              </Box>
+            )}
+            <Box component="section" marginBottom={7}>
+              <DefenderInfo
+                workingCase={workingCase}
+                setWorkingCase={setWorkingCase}
+              />
+            </Box>
+            {workingCase.type !== CaseType.TRAVEL_BAN && (
+              <Box component="section" marginBottom={10}>
+                <Box
+                  display="flex"
+                  justifyContent="spaceBetween"
+                  alignItems="baseline"
+                  marginBottom={2}
+                >
+                  <Text as="h3" variant="h3">
+                    {formatMessage(m.sections.leadInvestigator.heading)}{' '}
+                    <Tooltip
+                      text={formatMessage(m.sections.leadInvestigator.tooltip)}
+                    />
+                  </Text>
+                </Box>
+                <Box marginBottom={2}>
+                  <Input
+                    data-testid="leadInvestigator"
+                    name="leadInvestigator"
+                    autoComplete="off"
+                    label={formatMessage(m.sections.leadInvestigator.label)}
+                    placeholder={formatMessage(
+                      m.sections.leadInvestigator.placeholder,
+                    )}
+                    value={workingCase.leadInvestigator || ''}
+                    errorMessage={leadInvestigatorErrorMessage}
+                    hasError={leadInvestigatorErrorMessage !== ''}
+                    onChange={(evt) => {
+                      validateAndSet(
+                        'leadInvestigator',
+                        evt.target.value,
+                        ['empty'],
+                        workingCase,
+                        setWorkingCase,
+                        leadInvestigatorErrorMessage,
+                        setLeadInvestigatorErrorMessage,
+                      )
+                    }}
+                    onBlur={(evt) =>
+                      validateAndSendToServer(
+                        'leadInvestigator',
+                        evt.target.value,
+                        ['empty'],
+                        workingCase,
+                        updateCase,
+                        setLeadInvestigatorErrorMessage,
+                      )
+                    }
+                    required
+                  />
+                </Box>
+              </Box>
+            )}
+          </FormContentContainer>
+          <FormContentContainer isFooter>
+            <FormFooter
+              previousUrl={constants.CASES_ROUTE}
+              onNextButtonClick={() => handleNextButtonClick(workingCase)}
+              nextIsLoading={isCreatingCase}
+              nextIsDisabled={
+                !isDefendantStepValidRC(workingCase, clientPoliceNumbers)
+              }
+              nextButtonText={formatMessage(
+                workingCase.id === '' ? core.createCase : core.continue,
+              )}
+            />
+          </FormContentContainer>
+        </>
       )}
     </PageLayout>
   )
