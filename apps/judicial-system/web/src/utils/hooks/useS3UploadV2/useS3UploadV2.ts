@@ -116,18 +116,12 @@ export const useS3UploadV2 = (
               },
             },
           })
-          if (
-            data.errors ||
-            !data.data ||
-            !data.data?.createPresignedPost.fields?.key
-          ) {
-            return
+          if (!data.data?.createPresignedPost.fields?.key) {
+            throw Error('failed to get presigned post')
           }
 
           const presignedPost = data.data.createPresignedPost
           await uploadToS3(file, presignedPost, index, updateFile)
-
-          console.log('addFileToCaseMutation')
 
           const data2 = await addFileToCaseMutation({
             variables: {
@@ -141,10 +135,8 @@ export const useS3UploadV2 = (
               },
             },
           })
-          console.log('addFileToCaseMutation', data2)
-
-          if (data2.errors || !data2.data || !data2.data.createFile.id) {
-            return
+          if (!data2.data?.createFile.id) {
+            throw Error('failed to add file to case')
           }
 
           updateFile({
@@ -154,8 +146,13 @@ export const useS3UploadV2 = (
             status: 'done',
             id: data2.data.createFile.id,
           })
-        } catch (_e) {
-          return
+        } catch (e) {
+          updateFile({
+            displayId: `${file.name}-${index}`,
+            name: file.name,
+            percent: 0,
+            status: 'error',
+          })
         }
       })
     },

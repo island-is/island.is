@@ -1,4 +1,10 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { useIntl } from 'react-intl'
 
 import {
@@ -12,7 +18,10 @@ import {
   IndictmentsProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import { titles } from '@island.is/judicial-system-web/messages'
+import {
+  titles,
+  errors as errorMessages,
+} from '@island.is/judicial-system-web/messages'
 import {
   Box,
   InputFileUpload,
@@ -20,12 +29,13 @@ import {
   UploadFile,
 } from '@island.is/island-ui/core'
 import { CaseFile, CaseFileCategory } from '@island.is/judicial-system/types'
-import { useS3UploadV2 } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  useS3UploadV2,
+  LocalUploadFile,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { policeCaseFiles as m } from './PoliceCaseFilesRoute.strings'
-import { PoliceCaseFileCheck, PoliceCaseFiles } from '../../components'
-import { LocalUploadFile } from '@island.is/judicial-system-web/src/utils/hooks/useS3UploadV2/useS3UploadV2'
 
 const mapCaseFileToUploadFile = (file: CaseFile): LocalUploadFile => ({
   displayId: file.id,
@@ -38,14 +48,13 @@ const mapCaseFileToUploadFile = (file: CaseFile): LocalUploadFile => ({
   size: file.size,
 })
 
-const AssignFilesToPoliceCase: React.FC<{
+const UploadFilesToPoliceCase: React.FC<{
   caseId: string
   policeCaseNumber: string
   setAllUploaded: (allUploaded: boolean) => void
   caseFiles: CaseFile[]
 }> = ({ caseId, policeCaseNumber, setAllUploaded, caseFiles }) => {
-  const allFilesUploaded = false
-
+  const { formatMessage } = useIntl()
   const { upload, remove } = useS3UploadV2(
     caseId,
     CaseFileCategory.CASE_FILE,
@@ -56,18 +65,22 @@ const AssignFilesToPoliceCase: React.FC<{
     caseFiles.map(mapCaseFileToUploadFile),
   )
 
+  const errorMessage = useMemo(() => {
+    if (displayFiles.some((file) => file.status === 'error')) {
+      return formatMessage(errorMessages.general)
+    } else {
+      return undefined
+    }
+  }, [displayFiles, formatMessage])
+
   useEffect(() => {
     setDisplayFiles(caseFiles.map(mapCaseFileToUploadFile))
   }, [caseFiles, setDisplayFiles])
 
-  const [policeCaseFileList, setPoliceCaseFileList] = useState<
-    PoliceCaseFileCheck[]
-  >([])
-
-  useEffect(() => setAllUploaded(allFilesUploaded), [
-    allFilesUploaded,
-    setAllUploaded,
-  ])
+  useEffect(() => {
+    const isUploading = displayFiles.some((file) => file.status === 'uploading')
+    setAllUploaded(isUploading)
+  }, [setAllUploaded, displayFiles])
 
   const setSingleFile = useCallback(
     (displayFile) => {
@@ -119,39 +132,42 @@ const AssignFilesToPoliceCase: React.FC<{
   )
 
   return (
-    <>
-      <Box marginBottom={5}>
-        <PoliceCaseFiles
-          isUploading={false}
-          setIsUploading={() => false}
-          policeCaseFileList={policeCaseFileList}
-          setPoliceCaseFileList={setPoliceCaseFileList}
-          policeCaseNumber={policeCaseNumber}
-        />
-      </Box>
-      <InputFileUpload
-        name="fileUpload"
-        fileList={displayFiles}
-        header={'Dragðu gögn hingað til að hlaða upp'}
-        buttonLabel={'Velja gögn til að hlaða upp'}
-        onChange={onChange}
-        onRemove={onRemove}
-        onRetry={onRetry}
-        errorMessage={
-          !allFilesUploaded
-            ? undefined
-            : 'Villa kom upp við að hlaða upp gögnum'
-        }
-        showFileSize
-      />
-    </>
+    <InputFileUpload
+      name="fileUpload"
+      fileList={displayFiles}
+      header={'Dragðu gögn hingað til að hlaða upp'}
+      buttonLabel={'Velja gögn til að hlaða upp'}
+      onChange={onChange}
+      onRemove={onRemove}
+      onRetry={onRetry}
+      errorMessage={errorMessage}
+      showFileSize
+    />
   )
+}
+
+type allUploadedState = {
+  [policeCaseNumber: string]: boolean
 }
 
 const PoliceCaseFilesRoute = () => {
   const { formatMessage } = useIntl()
   const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
     FormContext,
+  )
+
+  const [allUploaded, setAllUploaded] = useState<allUploadedState>(
+    workingCase.policeCaseNumbers.reduce(
+      (acc, policeCaseNumber) => ({ ...acc, [policeCaseNumber]: true }),
+      {},
+    ),
+  )
+
+  const setAllUploadedForPoliceCaseNumber = useCallback(
+    (number: string) => (value: boolean) => {
+      setAllUploaded((previous) => ({ ...previous, [number]: value }))
+    },
+    [setAllUploaded],
   )
 
   return (
@@ -173,7 +189,7 @@ const PoliceCaseFilesRoute = () => {
         </Box>
         {workingCase.policeCaseNumbers.map((policeCaseNumber, index) => (
           <Box key={index} marginBottom={6}>
-            <AssignFilesToPoliceCase
+            <UploadFilesToPoliceCase
               caseId={workingCase.id}
               caseFiles={
                 index === 0
@@ -187,9 +203,9 @@ const PoliceCaseFilesRoute = () => {
                   : []
               }
               policeCaseNumber={policeCaseNumber}
-              setAllUploaded={(policeCaseNumber) =>
-                console.log('allUploaded', policeCaseNumber)
-              }
+              setAllUploaded={setAllUploadedForPoliceCaseNumber(
+                policeCaseNumber,
+              )}
             />
           </Box>
         ))}
@@ -198,7 +214,7 @@ const PoliceCaseFilesRoute = () => {
         <FormFooter
           previousUrl={`${constants.INDICTMENTS_CASE_FILES_ROUTE}/${workingCase.id}`}
           nextUrl={`${constants.INDICTMENTS_OVERVIEW_ROUTE}/${workingCase.id}`}
-          nextIsDisabled={false}
+          nextIsDisabled={Object.values(allUploaded).some((v) => !v)}
           nextIsLoading={isLoadingWorkingCase}
         />
       </FormContentContainer>
