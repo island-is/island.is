@@ -216,7 +216,9 @@ export class DelegationsService {
 
     await this.delegationScopeService.delete(id, isOutgoing ? user.scope : null)
 
-    const remainingScopes = await this.delegationScopeService.findAll(id)
+    const remainingScopes = await this.delegationScopeService.findByDelegationId(
+      id,
+    )
 
     // If no remaining scopes then we are save to delete the delegation
     if (remainingScopes.length === 0) {
@@ -232,13 +234,8 @@ export class DelegationsService {
    * Finds a single delegation for a user.
    * @param nationalId Id of the user to find the delegation from.
    * @param id Id of the delegation to find.
-   * @param filterScopesByAuth If true then the delegation will be filtered by the user scope.
    */
-  async findById(
-    user: User,
-    id: string,
-    filterScopesByAuth = true,
-  ): Promise<DelegationDTO | null> {
+  async findById(user: User, id: string): Promise<DelegationDTO | null> {
     if (!isUuid(id)) {
       throw new BadRequestException('delegationId must be a valid uuid')
     }
@@ -273,7 +270,7 @@ export class DelegationsService {
       ],
     })
 
-    if (delegation && filterScopesByAuth) {
+    if (delegation) {
       delegation.delegationScopes = delegation.delegationScopes?.filter((s) =>
         this.checkIfScopeAllowed(s, user),
       )

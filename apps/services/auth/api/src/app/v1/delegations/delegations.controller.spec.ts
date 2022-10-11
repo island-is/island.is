@@ -227,9 +227,9 @@ describe('DelegationsController', () => {
 
             nationalRegistryApiSpy = jest
               .spyOn(nationalRegistryApi, 'getIndividual')
-              .mockImplementation((id) => {
+              .mockImplementation(async (id) => {
                 if (deceasedNationalIds.includes(id)) {
-                  return Promise.resolve(null)
+                  return null
                 }
 
                 const user = nationalRegistryUsers.find(
@@ -239,7 +239,7 @@ describe('DelegationsController', () => {
                     !deceasedNationalIds.includes(u?.nationalId),
                 )
 
-                return user ? Promise.resolve(user) : Promise.reject(null)
+                return user ?? null
               })
           })
 
