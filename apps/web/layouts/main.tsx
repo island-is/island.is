@@ -172,11 +172,6 @@ const Layout: NextComponentType<
   const { route, pathname, query, asPath } = useRouter()
   const fullUrl = `${respOrigin}${asPath}`
 
-  const { value: isWebFooterLinkingToSupportPage } = useFeatureFlag(
-    'iswebfooterlinkingtosupportpage',
-    false,
-  )
-
   Sentry.configureScope((scope) => {
     scope.setExtra('lang', activeLocale)
 
@@ -407,13 +402,7 @@ const Layout: NextComponentType<
                 )}
                 <Footer
                   topLinks={footerUpperInfo}
-                  {...(activeLocale === 'is'
-                    ? {
-                        linkToHelpWeb: isWebFooterLinkingToSupportPage
-                          ? linkResolver('serviceweb').href
-                          : '',
-                      }
-                    : { topLinksContact: footerUpperContact })}
+                  topLinksContact={footerUpperContact}
                   bottomLinks={footerLowerMenu}
                   middleLinks={footerMiddleMenu}
                   bottomLinksTitle={t.siteExternalTitle}

@@ -494,7 +494,7 @@ function serializeValueType(
       ? value
       : value({
           env: uberChart.env,
-          featureName: uberChart.env.feature,
+          featureDeploymentName: uberChart.env.feature,
           svc: (dep) => uberChart.ref(service, dep),
         })
   return { type: 'success', value: result }
