@@ -2,7 +2,6 @@ import { FinancialStatementsInaoClientService } from '@island.is/clients/financi
 import { Injectable } from '@nestjs/common'
 import * as kennitala from 'kennitala'
 import { InaoCemeteryFinancialStatementInput } from './dto/cemeteryFinancialStatement.input'
-import { InaoPersonalElectionFinancialStatementInput } from './dto/personalElectionFinancialStatement.input'
 import { InaoPoliticalPartyFinancialStatementInput } from './dto/politicalPartyFinancialStatement.input'
 
 interface KeyValue {
@@ -36,43 +35,6 @@ export class FinancialStatementsInaoService {
 
   async getConfig() {
     return this.dataverseClient.getConfig()
-  }
-
-  async submitPersonalElectionFinancialStatement(
-    nationalId: string,
-    actorNationalId: string | undefined,
-    input: InaoPersonalElectionFinancialStatementInput,
-  ): Promise<boolean> {
-    if (!input.noValueStatement && !input.values) {
-      throw Error('Financial statement values missing.')
-    }
-    const list: KeyValue[] = []
-    if (!input.noValueStatement && input.values) {
-      list.push({ key: 100, value: input.values.contributionsByLegalEntities })
-      list.push({ key: 101, value: input.values.individualContributions })
-      list.push({ key: 102, value: input.values.candidatesOwnContributions })
-      list.push({ key: 128, value: input.values.capitalIncome })
-      list.push({ key: 129, value: input.values.otherIncome })
-      list.push({ key: 130, value: input.values.electionOfficeExpenses })
-      list.push({ key: 131, value: input.values.advertisingAndPromotions })
-      list.push({ key: 132, value: input.values.meetingsAndTravelExpenses })
-      list.push({ key: 139, value: input.values.otherExpenses })
-      list.push({ key: 148, value: input.values.financialExpenses })
-      list.push({ key: 150, value: input.values.fixedAssetsTotal })
-      list.push({ key: 160, value: input.values.currentAssets })
-      list.push({ key: 170, value: input.values.longTermLiabilitiesTotal })
-      list.push({ key: 180, value: input.values.shortTermLiabilitiesTotal })
-      list.push({ key: 190, value: input.values.equityTotal })
-    }
-
-    return this.dataverseClient.postFinancialStatementForPersonalElection(
-      nationalId,
-      actorNationalId,
-      input.electionId,
-      input.noValueStatement,
-      input.clientName,
-      list,
-    )
   }
 
   async submitPoliticalPartyFinancialStatement(

@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common'
 import { FinancialStatementsInaoClientService } from '@island.is/clients/financial-statements-inao'
-import { FinancialStatementsInaoService } from '@island.is/api/domains/financial-statements-inao'
 import * as kennitala from 'kennitala'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { getValueViaPath } from '@island.is/application/core'
@@ -15,7 +14,6 @@ export interface DataResponse {
 export class FinancialStatementsInaoTemplateService {
   constructor(
     private financialStatementsClientService: FinancialStatementsInaoClientService,
-    private financialStatementsInaoService: FinancialStatementsInaoService,
   ) {}
 
   async getUserType({ auth }: TemplateApiModuleActionProps) {
@@ -92,14 +90,22 @@ export class FinancialStatementsInaoTemplateService {
     ) as string
     const noValueStatement = electionIncomeLimit === LESS ? true : false
 
+    // clientNationalId: string,
+    // actorNationalId: string | undefined,
+    // electionId: string,
+    // noValueStatement: boolean,
+    // clientName: string,
+
     // actor is undefined until we add the functionality to the frontend
-    const result: DataResponse = await this.financialStatementsInaoService
-      .submitPersonalElectionFinancialStatement(nationalId, undefined, {
+    const result: DataResponse = await this.financialStatementsClientService
+      .postFinancialStatementForPersonalElection(
+        nationalId,
+        undefined,
         electionId,
-        clientName,
         noValueStatement,
+        clientName,
         values,
-      })
+      )
       .then(() => {
         return { success: true }
       })
@@ -109,6 +115,7 @@ export class FinancialStatementsInaoTemplateService {
           errorMessage: e.message,
         }
       })
+    console.log('dataverse', result)
     if (!result.success) {
       throw new Error(`Application submission failed`)
     }
