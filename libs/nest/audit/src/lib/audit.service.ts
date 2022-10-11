@@ -45,13 +45,11 @@ type DefaultAuditTemplate<T> = CommonAuditTemplateFields<T> &
 
 export type AuditTemplate<T> = SystemAuditTemplate<T> | DefaultAuditTemplate<T>
 
-const isDefaultAuditMessage = (
-  obj: SystemAuditMessage | DefaultAuditMessage,
-): obj is DefaultAuditMessage =>
+const isDefaultAuditMessage = (obj: AuditMessage): obj is DefaultAuditMessage =>
   Object.prototype.hasOwnProperty.call(obj, 'auth')
 
 const isDefaultAuditTemplate = <T>(
-  obj: SystemAuditTemplate<T> | DefaultAuditTemplate<T>,
+  obj: AuditTemplate<T>,
 ): obj is DefaultAuditTemplate<T> =>
   Object.prototype.hasOwnProperty.call(obj, 'auth')
 
