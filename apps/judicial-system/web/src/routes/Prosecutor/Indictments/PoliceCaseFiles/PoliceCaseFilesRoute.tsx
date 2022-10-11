@@ -1,4 +1,5 @@
 import React, {
+  memo,
   useCallback,
   useContext,
   useEffect,
@@ -11,8 +12,11 @@ import {
   FormContentContainer,
   FormContext,
   FormFooter,
+  InfoBox,
   PageHeader,
   PageLayout,
+  ProsecutorCaseInfo,
+  SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import {
   IndictmentsProsecutorSubsections,
@@ -150,6 +154,34 @@ type allUploadedState = {
   [policeCaseNumber: string]: boolean
 }
 
+/* We need to make sure this list is not rerenderd unless the props are changing.
+ * Since we passing `setAllUploaded` to the children and they are calling it within a useEffect
+ */
+const PoliceUploadListMemo: React.FC<{
+  caseId: string
+  policeCaseNumbers: string[]
+  caseFiles?: CaseFile[]
+  setAllUploaded: (policeCaseNumber: string) => (value: boolean) => void
+}> = memo(({ caseId, policeCaseNumbers, caseFiles, setAllUploaded }) => (
+  <Box paddingBottom={4}>
+    {policeCaseNumbers.map((policeCaseNumber, index) => (
+      <Box key={index} marginBottom={6}>
+        <SectionHeading title={`Gögn úr LÖKE-máli ${policeCaseNumber}`} />
+        <UploadFilesToPoliceCase
+          caseId={caseId}
+          caseFiles={
+            caseFiles?.filter(
+              (file) => file.policeCaseNumber === policeCaseNumber,
+            ) ?? []
+          }
+          policeCaseNumber={policeCaseNumber}
+          setAllUploaded={setAllUploaded(policeCaseNumber)}
+        />
+      </Box>
+    ))}
+  </Box>
+))
+
 const PoliceCaseFilesRoute = () => {
   const { formatMessage } = useIntl()
   const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
@@ -187,34 +219,24 @@ const PoliceCaseFilesRoute = () => {
             {formatMessage(m.heading)}
           </Text>
         </Box>
-        {workingCase.policeCaseNumbers.map((policeCaseNumber, index) => (
-          <Box key={index} marginBottom={6}>
-            <UploadFilesToPoliceCase
-              caseId={workingCase.id}
-              caseFiles={
-                index === 0
-                  ? workingCase.caseFiles?.filter((f) =>
-                      f.name.endsWith('pdf'),
-                    ) ?? []
-                  : index === 1
-                  ? workingCase.caseFiles?.filter((f) =>
-                      f.name.toLocaleLowerCase().endsWith('png'),
-                    ) ?? []
-                  : []
-              }
-              policeCaseNumber={policeCaseNumber}
-              setAllUploaded={setAllUploadedForPoliceCaseNumber(
-                policeCaseNumber,
-              )}
-            />
-          </Box>
-        ))}
+        <ProsecutorCaseInfo workingCase={workingCase} />
+        <Box marginBottom={5}>
+          <InfoBox
+            text={`Gögn sem er hlaðið upp hér fyrir neðan verða sameinuð í eitt PDF skjal og efnisyfirlit sjálfkrafa búið til.`}
+          ></InfoBox>
+        </Box>
+        <PoliceUploadListMemo
+          caseId={workingCase.id}
+          caseFiles={workingCase.caseFiles}
+          setAllUploaded={setAllUploadedForPoliceCaseNumber}
+          policeCaseNumbers={workingCase.policeCaseNumbers}
+        />
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${constants.INDICTMENTS_CASE_FILES_ROUTE}/${workingCase.id}`}
           nextUrl={`${constants.INDICTMENTS_OVERVIEW_ROUTE}/${workingCase.id}`}
-          nextIsDisabled={Object.values(allUploaded).some((v) => !v)}
+          nextIsDisabled={Object.values(allUploaded).some((v) => v)}
           nextIsLoading={isLoadingWorkingCase}
         />
       </FormContentContainer>

@@ -63,9 +63,7 @@ const uploadToS3 = (
     })
 
     request.addEventListener('load', () => {
-      console.log('load', request.status, request)
       if (request.status >= 200 && request.status < 300) {
-        console.log('onLoad', 'success')
         resolve(file)
       } else {
         setFileState({
