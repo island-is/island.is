@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useDebounce } from 'react-use'
 import { useLazyQuery } from '@apollo/client'
@@ -13,6 +13,7 @@ import {
 import { GET_SUPPORT_SEARCH_RESULTS_QUERY } from '@island.is/web/screens/queries'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import {
+  ContentLanguage,
   GetSupportSearchResultsQuery,
   GetSupportSearchResultsQueryVariables,
   SearchableContentTypes,
@@ -20,6 +21,7 @@ import {
   SupportQna,
 } from '@island.is/web/graphql/schema'
 import { getSlugPart } from '@island.is/web/screens/ServiceWeb/utils'
+import { useI18n } from '@island.is/web/i18n'
 
 interface SearchInputProps {
   title?: string
@@ -29,6 +31,7 @@ interface SearchInputProps {
   colored?: boolean
   initialInputValue?: string
   placeholder?: string
+  nothingFoundText?: string
 }
 
 const unused = ['.', '?', ':', ',', ';', '!', '-', '_', '#', '~', '|']
@@ -51,6 +54,7 @@ export const SearchInput = ({
   size = 'large',
   initialInputValue = '',
   placeholder = 'Leitaðu á þjónustuvefnum',
+  nothingFoundText = 'Ekkert fannst',
 }: SearchInputProps) => {
   const [searchTerms, setSearchTerms] = useState<string>('')
   const [activeItem, setActiveItem] = useState<SupportQna>()
@@ -59,8 +63,12 @@ export const SearchInput = ({
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const { linkResolver } = useLinkResolver()
   const Router = useRouter()
+  const { activeLocale } = useI18n()
 
-  const institutionSlug = getSlugPart(Router.asPath, 2)
+  const institutionSlug = getSlugPart(
+    Router.asPath,
+    activeLocale === 'is' ? 2 : 3,
+  )
 
   const [fetch, { loading, data }] = useLazyQuery<
     GetSupportSearchResultsQuery,
@@ -89,6 +97,7 @@ export const SearchInput = ({
           fetch({
             variables: {
               query: {
+                language: activeLocale as ContentLanguage,
                 queryString,
                 types: [SearchableContentTypes['WebQna']],
                 [institutionSlugBelongsToMannaudstorg
@@ -122,12 +131,9 @@ export const SearchInput = ({
     const categorySlug = category?.slug ?? ''
 
     if (organizationSlug && categorySlug) {
-      Router.push({
-        pathname: `${
-          linkResolver('serviceweb').href
-        }/${organizationSlug}/${categorySlug}`,
-        query: { q: slug },
-      })
+      Router.push(
+        linkResolver('supportqna', [organizationSlug, categorySlug, slug]).href,
+      )
     }
   }
 
@@ -175,7 +181,7 @@ export const SearchInput = ({
                   disabled
                   onClick={() => null}
                 >
-                  <Text as="span">Ekkert fannst</Text>
+                  <Text as="span">{nothingFoundText}</Text>
                 </Box>
               ),
             },
@@ -210,12 +216,21 @@ export const SearchInput = ({
           return onSelect(activeItem)
         }
 
-        const pathname = `${linkResolver('serviceweb').href}${
-          institutionSlug ? `/${institutionSlug}` : ''
-        }/leit`
+        const defaultInstitutionSlug =
+          activeLocale === 'en' ? 'digital-iceland' : 'stafraent-island'
+
+        let slug = institutionSlug
+
+        if (
+          institutionSlug === 'leit' ||
+          institutionSlug === 'search' ||
+          !institutionSlug
+        ) {
+          slug = defaultInstitutionSlug
+        }
 
         Router.push({
-          pathname,
+          pathname: linkResolver('serviceweborganizationsearch', [slug]).href,
           query: { q: value },
         })
       }}

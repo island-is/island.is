@@ -805,4 +805,8 @@ export const m = defineMessages({
     id: 'service.portal:passport',
     defaultMessage: 'Vegabréf',
   },
+  errorTitle: {
+    id: 'service.portal:error-screen-title',
+    defaultMessage: 'Villa',
+  },
 })

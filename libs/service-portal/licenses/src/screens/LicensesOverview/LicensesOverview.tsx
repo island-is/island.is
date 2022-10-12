@@ -191,7 +191,7 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
       <ErrorScreen
         figure="./assets/images/hourglass.svg"
         tagVariant="red"
-        tag="500"
+        tag={formatMessage(coreMessage.errorTitle)}
         title={formatMessage(coreMessage.somethingWrong)}
         children={formatMessage(coreMessage.errorFetchModule, {
           module: formatMessage(coreMessage.licenses).toLowerCase(),
