@@ -533,7 +533,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             description: statesMessages.approvedDescription,
           },
           lifecycle: pruneAfterDays(970),
-          progress: 0.9,
+          progress: 1,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -567,7 +567,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             description: statesMessages.closedDescription,
           },
           lifecycle: DefaultStateLifeCycle,
-          progress: 0.9,
+          progress: 1,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -579,6 +579,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             },
           ],
         },
+        type: 'final' as const,
       },
       // Edit Flow States
       [States.EDIT_OR_ADD_PERIODS]: {
