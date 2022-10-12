@@ -52,7 +52,7 @@ module.exports = {
     )
   },
 
-  down: (queryInterface, Sequelize) => {
+  down: (queryInterface) => {
     return queryInterface.sequelize.transaction((transaction) =>
       Promise.all([
         queryInterface.removeColumn('case_file', 'police_case_number', {
