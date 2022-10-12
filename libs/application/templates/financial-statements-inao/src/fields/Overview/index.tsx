@@ -37,7 +37,7 @@ export const Overview = ({
   const answers = application.answers as FinancialStatementsInao
   const fileName = answers.attachment?.file?.[0]?.name
 
-  const [submitApplication, { error: submitError }] = useSubmitApplication({
+  const [submitApplication] = useSubmitApplication({
     application,
     refetch,
     event: DefaultEvents.SUBMIT,

@@ -40,7 +40,7 @@ export const ElectionEquities = ({
   useEffect(() => {
     setValue(EQUITIESANDLIABILITIESIDS.operationResult, operatingCostTotal)
     setTotalOperatingCost(Number(operatingCostTotal))
-  }, [operatingCostTotal])
+  }, [operatingCostTotal, setValue])
 
   const [getTotalEquity, totalEquity] = useTotals(
     EQUITIESANDLIABILITIESIDS.equityPrefix,

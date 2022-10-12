@@ -22,7 +22,7 @@ export const ElectionStatement = ({
   const { errors, setError } = useFormContext()
   const answers = application.answers as FinancialStatementsInao
 
-  const [submitApplication, { error: submitError }] = useSubmitApplication({
+  const [submitApplication] = useSubmitApplication({
     application,
     refetch,
     event: DefaultEvents.SUBMIT,

@@ -41,7 +41,7 @@ export const CemetryEquities = ({
       operatingCostTotal,
     )
     setTotalOperatingCost(operatingCostTotal)
-  }, [operatingCostTotal])
+  }, [operatingCostTotal, setValue])
 
   const [totalOperatingCost, setTotalOperatingCost] = useState('0')
   const [equityTotal, setEquityTotal] = useState(0)

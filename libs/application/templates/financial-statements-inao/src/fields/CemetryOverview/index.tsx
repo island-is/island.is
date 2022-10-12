@@ -12,9 +12,6 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { Controller, useFormContext } from 'react-hook-form'
-import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
-import * as Sentry from '@sentry/react'
-import { useMutation } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
 import { currencyStringToNumber, formatCurrency } from '../../lib/utils/helpers'
 import { FinancialStatementsInao } from '../../lib/utils/dataSchema'
@@ -38,7 +35,7 @@ export const CemetryOverview = ({
   const { formatMessage } = useLocale()
   const [approveOverview, setApproveOverview] = useState(false)
 
-  const [submitApplication, { error: submitError }] = useSubmitApplication({
+  const [submitApplication] = useSubmitApplication({
     application,
     refetch,
     event: DefaultEvents.SUBMIT,
