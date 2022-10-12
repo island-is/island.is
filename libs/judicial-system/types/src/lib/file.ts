@@ -70,7 +70,6 @@ export interface CaseFile {
 }
 
 export interface CreateFile {
-  caseId: string
   type: string
   category?: CaseFileCategory
   key: string
