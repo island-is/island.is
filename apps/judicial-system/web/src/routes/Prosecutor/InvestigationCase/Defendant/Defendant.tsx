@@ -326,7 +326,7 @@ const Defendant = () => {
                   setAndSendToServer(
                     [
                       {
-                        description: evt.target.value,
+                        description: evt.target.value.trim(),
                         force: true,
                       },
                     ],
