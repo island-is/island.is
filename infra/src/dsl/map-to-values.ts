@@ -476,19 +476,19 @@ function serializeVolumes(
     ReadOnly: 'ReadOnlyMany',
     ReadWrite: 'ReadWriteMany',
   }
-  if (volumes.some(v => typeof v.name === undefined) && volumes.length > 1) {
-    return ({ errors: ['Must set volume name if more than one'], volumes: [] })
+  if (volumes.some((v) => typeof v.name === undefined) && volumes.length > 1) {
+    return { errors: ['Must set volume name if more than one'], volumes: [] }
   }
 
   const results: OutputPersistentVolumeClaim[] = volumes.map((volume) => ({
-      name: volume.name ?? `${service.serviceDef.name}`,
-      storage: volume.storage,
-      mountPath: volume.mountPath,
-      storageClass: 'efs-csi',
-      accessModes: mapping[volume.accessModes],
-    }))
+    name: volume.name ?? `${service.serviceDef.name}`,
+    storage: volume.storage,
+    mountPath: volume.mountPath,
+    storageClass: 'efs-csi',
+    accessModes: mapping[volume.accessModes],
+  }))
 
-  return ({errors, volumes:results})
+  return { errors, volumes: results }
 }
 
 function serializeContainerRuns(
