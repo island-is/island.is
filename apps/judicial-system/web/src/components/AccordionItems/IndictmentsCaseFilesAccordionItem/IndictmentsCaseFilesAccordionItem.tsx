@@ -124,16 +124,14 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
               </Box>
               <Text>{formatMessage(m.unorderedFilesExplanation)}</Text>
             </Box>
-            {items
-              .filter((i) => i.id)
-              .map((item, index) => (
-                <Box
-                  key={item.id}
-                  marginBottom={index === caseFiles.length - 1 ? 0 : 2}
-                >
-                  <CaseFile caseFile={item} />
-                </Box>
-              ))}
+            {items.map((item, index) => (
+              <Box
+                key={item.id}
+                marginBottom={index === caseFiles.length - 1 ? 0 : 2}
+              >
+                <CaseFile caseFile={item} />
+              </Box>
+            ))}
           </Reorder.Group>
         </>
       )}
