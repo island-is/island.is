@@ -218,6 +218,9 @@ export class ContentfulService {
   }
 
   async getSyncEntries(options: SyncOptions): Promise<SyncerResult> {
+    // TODO: add scope to sync api call
+    // TODO: run re-sync if there was no previous sync token
+
     const {
       syncType,
       locale,
