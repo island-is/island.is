@@ -89,8 +89,11 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
 
   const institutionSlug = getSlugPart(Router.asPath, locale === 'is' ? 2 : 3)
 
-  const searchResultsItems = (searchResults.items as Array<SupportQna>).map(
-    (item) => ({
+  const searchResultsItems = (searchResults.items as Array<SupportQna>)
+    .filter(
+      (item) => item.organization?.slug && item.category?.slug && item.slug,
+    )
+    .map((item) => ({
       title: item.title,
       parentTitle: item.organization?.title,
       description: item.organization?.description,
@@ -104,8 +107,7 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
       categorySlug: item.category.slug,
       category: item.category.title,
       labels: [item.category.title],
-    }),
-  )
+    }))
 
   const headerTitle = n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is')
   const totalSearchResults = searchResults.total
