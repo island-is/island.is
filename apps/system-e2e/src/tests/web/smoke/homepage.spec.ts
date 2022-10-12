@@ -18,7 +18,7 @@ test.describe('Front page', () => {
   test.afterAll(async () => {
     await context.close()
   })
-  test('has expected sections', async () => {
+  test('has expected sections @lang:is', async () => {
     const page = await context.newPage()
     await page.goto('/')
     await expect(
@@ -29,8 +29,11 @@ test.describe('Front page', () => {
     await expect(page.locator('data-testid=home-news')).toBeVisible()
   })
 
-  for (const home of ['/', '/en']) {
-    test(`should have life events at ${home}`, async () => {
+  for (const { lang, home } of [
+    { lang: 'is', home: '/' },
+    { lang: 'en', home: '/en' },
+  ]) {
+    test(`should have life event @lang:${lang}`, async () => {
       const page = await context.newPage()
       await page.goto(home)
       const lifeEventsCards = page.locator('[data-testid="lifeevent-card"]')
@@ -40,16 +43,14 @@ test.describe('Front page', () => {
       const lifeEventUrls = await Promise.all(
         lifeEventHandles.map((item) => item.getAttribute('href')),
       )
-      await Promise.all(
-        lifeEventUrls.map(async (url) => {
-          const page = await context.newPage()
-          const result = await page.goto(url!)
-          expect(result!.status()).toBe(200)
-          await page.close()
-        }),
-      )
+      for (const url of lifeEventUrls) {
+        const page = await context.newPage()
+        const result = await page.goto(url!, { waitUntil: 'networkidle' })
+        expect(result!.status()).toBe(200)
+        await page.close()
+      }
     })
-    test(`should navigate to featured link at ${home}`, async () => {
+    test(`should navigate to featured link @lang:${lang}`, async () => {
       const page = await context.newPage()
       await page.goto(home)
       const featuredLinks = page.locator('[data-testid="featured-link"]')
@@ -58,17 +59,18 @@ test.describe('Front page', () => {
       const featuresLinksUrls = await Promise.all(
         featuredLinksHandles.map((item) => item.getAttribute('href')),
       )
-      await Promise.all(
-        featuresLinksUrls.map(async (url) => {
-          const page = await context.newPage()
-          const result = await page.goto(url!, { timeout: 10000 })
-          expect(result!.status()).toBe(200)
-          await page.close()
-        }),
-      )
+      for (const url of featuresLinksUrls) {
+        const page = await context.newPage()
+        const result = await page.goto(url!, {
+          timeout: 10000,
+          waitUntil: 'networkidle',
+        })
+        expect(result!.status()).toBe(200)
+        await page.close()
+      }
     })
 
-    test(`should have link on life events pages to navigate back to the main page at ${home}`, async ({
+    test(`should have link on life events pages to navigate back to the main page @lang:${lang}`, async ({
       baseURL,
     }) => {
       const page = await context.newPage()
@@ -78,21 +80,19 @@ test.describe('Front page', () => {
       const lifeEventUrls = await Promise.all(
         lifeEventHandles.map((item) => item.getAttribute('href')),
       )
-      await Promise.all(
-        lifeEventUrls.map(async (url) => {
-          const page = await context.newPage()
-          const result = await page.goto(url!)
-          expect(result?.url()).not.toBe(home)
-          await page.locator('[data-testid="link-back-home"]').click()
-          await page.waitForLoadState('networkidle')
-          await expect(page).toHaveURL(home)
-          await page.close()
-        }),
-      )
+      for (const url of lifeEventUrls) {
+        const page = await context.newPage()
+        const result = await page.goto(url!)
+        expect(result?.url()).not.toBe(home)
+        await page.locator('[data-testid="link-back-home"]').click()
+        await page.waitForLoadState('networkidle')
+        await expect(page).toHaveURL(home)
+        await page.close()
+      }
     })
   }
 
-  test('should change welcome message on language toggle', async () => {
+  test('should change welcome message on language toggle @lang:is', async () => {
     const page = await context.newPage()
     await page.goto('/')
     const homeHeading = page.locator('h1[data-testid="home-heading"]')
@@ -103,7 +103,7 @@ test.describe('Front page', () => {
     await expect(homeHeading).not.toHaveText(icelandicHeading!)
   })
 
-  test('should toggle mega-menu', async () => {
+  test('should toggle mega-menu @lang:is', async () => {
     const page = await context.newPage()
     await page.goto('/')
     await page
