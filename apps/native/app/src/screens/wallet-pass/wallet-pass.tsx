@@ -293,7 +293,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
           type={data?.license.type as LicenseCardType}
           date={new Date(Number(data?.fetch.updated))}
           status={
-            data.license.status === GenericUserLicenseStatus.HasLicense
+            !data.payload.metadata?.expired
               ? LicenseStatus.VALID
               : LicenseStatus.NOT_VALID
           }
