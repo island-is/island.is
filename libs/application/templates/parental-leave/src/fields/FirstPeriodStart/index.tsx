@@ -60,7 +60,7 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
   }, [renderHiddenStartDateInput, startDateFieldId, unregister, setValue])
 
   return (
-    <Box marginY={3} key={field.id}>
+    <Box marginY={0} key={field.id}>
       <FieldDescription
         description={formatMessage(
           parentalLeaveFormMessages.firstPeriodStart.description,

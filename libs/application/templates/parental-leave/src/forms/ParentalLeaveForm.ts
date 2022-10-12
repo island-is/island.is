@@ -16,7 +16,7 @@ import {
   buildTextField,
   NO_ANSWER,
 } from '@island.is/application/core'
-import { Application, Form, FormModes } from '@island.is/application/types'
+import { Application, Form, FormModes, FormValue } from '@island.is/application/types'
 
 import { parentalLeaveFormMessages } from '../lib/messages'
 import {
@@ -739,12 +739,20 @@ export const ParentalLeaveForm: Form = buildForm({
               component: 'PeriodsRepeater',
               children: [
                 buildMultiField({
-                  id: 'test',
-                  title: parentalLeaveFormMessages.firstPeriodStart.title,
+                  id: 'periods.firstPeriodAndStartDate',
+                  title: (answers) => {
+                    const { periods } = getApplicationAnswers(answers.answers)
+
+                    if (periods.length >= 1) {
+                      return parentalLeaveFormMessages.startDate.title
+                    }
+
+                    return parentalLeaveFormMessages.firstPeriodStart.title
+                  },
                   children: [
                     buildCustomField({
                       id: 'firstPeriodStart',
-                      title: parentalLeaveFormMessages.firstPeriodStart.title,
+                      title: '',
                       condition: (answers) => {
                         const { periods } = getApplicationAnswers(answers)
 
