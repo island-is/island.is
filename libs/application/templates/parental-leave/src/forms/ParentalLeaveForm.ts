@@ -853,7 +853,7 @@ export const ParentalLeaveForm: Form = buildForm({
 
                       return addDays(
                         new Date(latestStartDate),
-                        minPeriodDays + 1,
+                        minPeriodDays - 1,
                       )
                     },
                     excludeDates: (application: Application) => {
