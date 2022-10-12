@@ -34,11 +34,14 @@ import {
 } from '../../../../test/utils'
 
 const client = createClient({ clientId: '@island.is/webapp' })
+const actorNationalId = createNationalId('person')
 const user = createCurrentUser({
-  nationalId: '1122334455',
+  nationalId: createNationalId(),
+  actor: {
+    nationalId: actorNationalId,
+  },
   scope: [
-    AuthScope.readDelegations,
-    AuthScope.writeDelegations,
+    AuthScope.delegations,
     Scopes[0].name,
     Scopes[3].name,
     Scopes[4].name,
@@ -132,6 +135,14 @@ const mockDelegations = {
     fromNationalId: user.nationalId,
     toNationalId: createNationalId('person'),
     scopes: [Scopes[5].name],
+    today,
+  }),
+  // Valid outgoing delegation to actor
+  validOutgoingToActor: createDelegation({
+    fromNationalId: user.nationalId,
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    toNationalId: actorNationalId,
+    scopes: [Scopes[0].name],
     today,
   }),
 }
@@ -349,6 +360,21 @@ describe('MeDelegationsController', () => {
         const res = await server.get(
           `${path}?direction=outgoing&otherUser=${mockDelegations.outgoingOnlyOtherDomain.toNationalId}`,
         )
+
+        // Assert
+        expect(res.status).toEqual(200)
+        expect(res.body).toHaveLength(0)
+        expectMatchingObject(res.body, [])
+      })
+
+      it('should not return delegation to the actor', async () => {
+        // Arrange
+        await createDelegationModels(delegationModel, [
+          mockDelegations.validOutgoingToActor,
+        ])
+
+        // Act
+        const res = await server.get(`${path}?direction=outgoing`)
 
         // Assert
         expect(res.status).toEqual(200)
@@ -630,6 +656,30 @@ describe('MeDelegationsController', () => {
         })
       })
 
+      it('should return 400 Bad Request when creating delegation to actor', async () => {
+        // Arrange
+        const model = {
+          toNationalId: actorNationalId,
+          scopes: [
+            {
+              name: Scopes[0].name,
+              validTo: addDays(today, 1),
+            },
+          ],
+        }
+        // Act
+        const res = await server.post(path).send(model)
+
+        // Assert
+        expect(res.status).toEqual(400)
+        expect(res.body).toMatchObject({
+          status: 400,
+          type: 'https://httpstatuses.org/400',
+          title: 'Bad Request',
+          detail: 'Can not create delegation to self.',
+        })
+      })
+
       it('should return 400 Bad Request when user does not have access to all the requested scopes', async () => {
         // Arrange
         const model = {
@@ -863,6 +913,38 @@ describe('MeDelegationsController', () => {
           type: 'https://httpstatuses.org/400',
           title: 'Bad Request',
           detail: 'User does not have access to the requested scopes.',
+        })
+      })
+
+      it('should return 400 Bad Request when updating delegation to actor', async () => {
+        // Arrange
+        const { id } = await delegationModel.create(
+          createDelegation({
+            fromNationalId: user.nationalId,
+            toNationalId: actorNationalId,
+            scopes: [],
+            today,
+          }),
+        )
+        const model = {
+          scopes: [
+            {
+              name: Scopes[0].name,
+              validTo: addDays(today, 2),
+            },
+          ],
+        }
+
+        // Act
+        const res = await server.put(`${path}/${id}`).send(model)
+
+        // Assert
+        expect(res.status).toEqual(400)
+        expect(res.body).toMatchObject({
+          status: 400,
+          type: 'https://httpstatuses.org/400',
+          title: 'Bad Request',
+          detail: 'Can not update delegation to self.',
         })
       })
 

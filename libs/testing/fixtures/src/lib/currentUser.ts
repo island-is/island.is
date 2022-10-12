@@ -11,6 +11,9 @@ interface UserOptions {
   authorization?: string
   client?: string
   nationalIdType?: NationalIdType
+  actor?: {
+    nationalId: string
+  }
 }
 
 export const createCurrentUser = (user: UserOptions = {}): User => {
@@ -19,5 +22,9 @@ export const createCurrentUser = (user: UserOptions = {}): User => {
     scope: user.scope ?? [],
     authorization: user.authorization ?? faker.random.word(),
     client: user.client ?? faker.random.word(),
+    actor: user.actor && {
+      nationalId: user.actor.nationalId,
+      scope: [],
+    },
   }
 }
