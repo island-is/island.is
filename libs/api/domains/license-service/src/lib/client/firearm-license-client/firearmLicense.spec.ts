@@ -31,5 +31,15 @@ describe('license-service/client/firearm-license', () => {
       )
       expect(result).toBe(GenericUserLicensePkPassStatus.NotAvailable)
     })
+
+    it('shouldnt be available for a license with a invalid expiration date', async () => {
+      const licenseInfo: LicenseInfo = {
+        expirationDate: 'abcc',
+      }
+      const result = GenericFirearmLicenseApi.licenseIsValidForPkpass(
+        licenseInfo,
+      )
+      expect(result).toBe(GenericUserLicensePkPassStatus.NotAvailable)
+    })
   })
 })
