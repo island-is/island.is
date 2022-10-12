@@ -157,6 +157,7 @@ type allUploadedState = {
 
 /* We need to make sure this list is not rerenderd unless the props are changing.
  * Since we passing `setAllUploaded` to the children and they are calling it within a useEffect
+ * causing a endless rendering loop.
  */
 const PoliceUploadListMemo: React.FC<{
   caseId: string
