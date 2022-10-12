@@ -55,8 +55,8 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
   const [openCal, setOpenCal] = useState<{ top: boolean; lower: boolean }>(
     defaultCalState,
   )
-  const [fromDate, setFromDate] = useState<Date | null>()
-  const [toDate, setToDate] = useState<Date | null>()
+  const [fromDate, setFromDate] = useState<Date>()
+  const [toDate, setToDate] = useState<Date>()
   const [q, setQ] = useState<string>('')
   const [chargeTypesEmpty, setChargeTypesEmpty] = useState(false)
   const [dropdownSelect, setDropdownSelect] = useState<string[] | undefined>()
@@ -101,14 +101,20 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
     setToDate(new Date())
   }, [])
 
+  function getAllChargeTypes() {
+    const allChargeTypeValues = chargeTypeData?.chargeType?.map((ct) => ct.id)
+    return allChargeTypeValues ?? []
+  }
+
   function setAllChargeTypes() {
-    setDropdownSelect([])
+    const allChargeTypes = getAllChargeTypes()
+    setDropdownSelect(allChargeTypes)
   }
 
   function clearAllFilters() {
-    setDropdownSelect([])
-    setFromDate(null)
-    setToDate(null)
+    setAllChargeTypes()
+    setFromDate(backInTheDay)
+    setToDate(new Date())
     setQ('')
   }
 
