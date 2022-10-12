@@ -43,10 +43,13 @@ export const GenericUserLicenseFragment = gql`
         ...GenericLicenseDataFieldFragment
       }
       rawData
+      metadata {
+        licenseNumber
+        expired
+      }
     }
   }
 `;
-
 
 export interface IGenericLicenseDataField {
   type: string;
@@ -56,7 +59,16 @@ export interface IGenericLicenseDataField {
   fields: IGenericLicenseDataField[];
 }
 
+export type GenericUserLicenseMetaLinks = {
+  label?: string
+  value?: string
+}
 
+export interface GenericUserLicenseMetadata {
+  links?: GenericUserLicenseMetaLinks[];
+  licenseNumber: string;
+  expired: boolean | null;
+}
 
 export enum GenericUserLicenseStatus {
   Unknown = 'Unknown',
@@ -78,6 +90,7 @@ export enum GenericUserLicenseFetchStatus {
   Stale = 'Stale',
 }
 
+
 export interface IGenericUserLicense {
   nationalId: string;
   license: {
@@ -97,5 +110,6 @@ export interface IGenericUserLicense {
   payload: {
     data: IGenericLicenseDataField;
     rawData: string;
+    metadata?: GenericUserLicenseMetadata;
   }
 }

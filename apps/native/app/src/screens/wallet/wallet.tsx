@@ -93,6 +93,7 @@ const {
 
 const WalletItem = React.memo(({ item }: { item: IGenericUserLicense }) => {
   let cardHeight = 140
+
   return (
     <View
       style={{ paddingHorizontal: 16 }}
@@ -117,7 +118,7 @@ const WalletItem = React.memo(({ item }: { item: IGenericUserLicense }) => {
             type={item.license.type as LicenseCardType}
             date={new Date(Number(item.fetch.updated))}
             status={
-              item.license.status === GenericUserLicenseStatus.HasLicense
+              !item?.payload?.metadata?.expired
                 ? LicenseStatus.VALID
                 : LicenseStatus.NOT_VALID
             }
