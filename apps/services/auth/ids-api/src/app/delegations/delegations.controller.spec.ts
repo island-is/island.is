@@ -16,12 +16,12 @@ import {
 import { TestApp } from '@island.is/testing/nest'
 import faker from 'faker'
 import request from 'supertest'
-import { setupWithAuth } from '../../../../test/setup'
+import { setupWithAuth } from '../../../test/setup'
 import {
   getFakeName,
   getFakeNationalId,
   NameIdTuple,
-} from '../../../../test/stubs/genericStubs'
+} from '../../../test/stubs/genericStubs'
 import {
   getPersonalRepresentativeRelationship,
   getPersonalRepresentativeRights,
@@ -29,7 +29,7 @@ import {
   getPRenabledApiScope,
   getScopePermission,
   personalRepresentativeType,
-} from '../../../../test/stubs/personalRepresentativeStubs'
+} from '../../../test/stubs/personalRepresentativeStubs'
 
 describe('DelegationsController', () => {
   describe('Given a user is authenticated', () => {

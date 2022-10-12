@@ -88,11 +88,9 @@ export class PatchDelegationDTO {
     description: 'List of scopes to be removed from a delegation.',
     type: [UpdateDelegationScopeDTO],
   })
-  @Type(() => UpdateDelegationScopeDTO)
-  @ValidateNested({ each: true })
   @IsOptional()
   @IsArray()
-  deleteScopes?: UpdateDelegationScopeDTO[]
+  deleteScopes?: string[]
 }
 
 export class CreateDelegationDTO {

@@ -43,6 +43,9 @@ export enum Features {
   servicePortalDocumentProviderModule = 'isServicePortalDocumentProviderModuleEnabled',
   servicePortalIcelandicNamesRegistryModule = 'isServicePortalIcelandicNamesRegistryModuleEnabled',
   servicePortalPetitionsModule = 'isServicePortalPetitionsModuleEnabled',
+
+  // Delegation System
+  outgoingDelegationsV2 = 'outgoingDelegationsV2',
 }
 
 export enum ServerSideFeature {

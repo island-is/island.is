@@ -1,7 +1,7 @@
 import { InjectModel } from '@nestjs/sequelize'
 import { Domain } from './models/domain.model'
 
-export class DomainsService {
+export class DelegationDomainsService {
   constructor(
     @InjectModel(Domain)
     private domainModel: typeof Domain,
@@ -13,9 +13,5 @@ export class DomainsService {
 
   async findOne(id: string): Promise<Domain | null> {
     return this.domainModel.findByPk(id)
-  }
-
-  async findScopeTree(): Promise<Domain[]> {
-    return []
   }
 }

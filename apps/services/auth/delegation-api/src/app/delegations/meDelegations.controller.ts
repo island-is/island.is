@@ -29,17 +29,22 @@ import {
 import type { User } from '@island.is/auth-nest-tools'
 import { AuthScope } from '@island.is/auth/scopes'
 import { Audit, AuditService } from '@island.is/nest/audit'
-import { FeatureFlag, FeatureFlagGuard } from '@island.is/nest/feature-flags'
+import {
+  FeatureFlag,
+  FeatureFlagGuard,
+  Features,
+} from '@island.is/nest/feature-flags'
 import { Documentation } from '@island.is/nest/swagger'
+import { isDefined } from '@island.is/shared/utils'
 
-const namespace = '@island.is/auth-api/v2/me/delegations'
+const namespace = '@island.is/auth/delegation-api/me/delegations'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
-//@FeatureFlag()
+@FeatureFlag(Features.outgoingDelegationsV2)
 @ApiTags('meDelegations')
 @Controller({
   path: 'me/delegations',
-  version: ['2'],
+  version: ['1'],
 })
 @Audit({ namespace })
 export class MeDelegationsController {
@@ -49,7 +54,7 @@ export class MeDelegationsController {
   ) {}
 
   @Get()
-  @Scopes(AuthScope.readDelegations)
+  @Scopes(AuthScope.delegations)
   @Documentation({
     response: { status: 200, type: [DelegationDTO] },
     request: {
@@ -80,8 +85,7 @@ export class MeDelegationsController {
   })
   @Audit<DelegationDTO[]>({
     resources: (delegations) =>
-      // TODO: change empty string to undefined when my prev PR is merged.
-      delegations.map((delegation) => delegation?.id ?? ''),
+      delegations.map((delegation) => delegation?.id).filter(isDefined),
   })
   async findAll(
     @CurrentUser() user: User,
@@ -99,7 +103,7 @@ export class MeDelegationsController {
   }
 
   @Get(':delegationId')
-  @Scopes(AuthScope.readDelegations)
+  @Scopes(AuthScope.delegations)
   @Documentation({
     response: { status: 200, type: DelegationDTO },
     request: {
@@ -113,7 +117,7 @@ export class MeDelegationsController {
     },
   })
   @Audit<DelegationDTO>({
-    resources: (delegation) => delegation?.id ?? '',
+    resources: (delegation) => delegation?.id ?? undefined,
   })
   async findOne(
     @CurrentUser() user: User,
@@ -123,12 +127,12 @@ export class MeDelegationsController {
   }
 
   @Post()
-  @Scopes(AuthScope.writeDelegations)
+  @Scopes(AuthScope.delegations)
   @Documentation({
     response: { status: 201, type: DelegationDTO },
   })
   @Audit<DelegationDTO>({
-    resources: (delegation) => delegation?.id ?? '',
+    resources: (delegation) => delegation?.id ?? undefined,
     meta: (delegation) => ({
       scopes: delegation.scopes?.map((s) => ({
         scopeName: s.scopeName,
@@ -144,12 +148,12 @@ export class MeDelegationsController {
   }
 
   @Patch(':delegationId')
-  @Scopes(AuthScope.writeDelegations)
+  @Scopes(AuthScope.delegations)
   @Documentation({
     response: { status: 200, type: DelegationDTO },
   })
   @Audit<DelegationDTO>({
-    resources: (delegation) => delegation?.id ?? '',
+    resources: (delegation) => delegation?.id ?? undefined,
   })
   async patch(
     @CurrentUser() user: User,
@@ -169,21 +173,19 @@ export class MeDelegationsController {
         auth: user,
         namespace,
         action: 'update',
-        resources: (delegation) => delegation?.id ?? '',
-        meta: (delegation) => {
-          return {
-            updateScopes: patchDelegation.updateScopes?.map((s) => s.name),
-            deleteScopes: patchDelegation.deleteScopes?.map((s) => s.name),
-            scopes: delegation?.scopes?.map((s) => s.scopeName),
-          }
-        },
+        resources: (delegation) => delegation?.id ?? undefined,
+        meta: (delegation) => ({
+          updateScopes: patchDelegation.updateScopes?.map((s) => s.name),
+          deleteScopes: patchDelegation.deleteScopes,
+          scopes: delegation?.scopes?.map((s) => s.scopeName),
+        }),
       },
       this.delegationsService.patch(user, delegationId, patchDelegation),
     )
   }
 
   @Delete(':delegationId')
-  @Scopes(AuthScope.writeDelegations)
+  @Scopes(AuthScope.delegations)
   @Documentation({
     response: { status: 204 },
   })

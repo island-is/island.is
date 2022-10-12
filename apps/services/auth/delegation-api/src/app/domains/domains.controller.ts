@@ -7,15 +7,19 @@ import {
   DomainsService,
 } from '@island.is/auth-api-lib'
 import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
-import { Audit } from '@island.is/nest/audit'
-import { FeatureFlagGuard } from '@island.is/nest/feature-flags'
 import { AuthScope } from '@island.is/auth/scopes'
+import { Audit } from '@island.is/nest/audit'
+import {
+  FeatureFlag,
+  FeatureFlagGuard,
+  Features,
+} from '@island.is/nest/feature-flags'
 import { Documentation } from '@island.is/nest/swagger'
 
 const namespace = '@island.is/auth-api/v2/domains'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
-//@FeatureFlag()
+@FeatureFlag(Features.outgoingDelegationsV2)
 @ApiTags('domains')
 @Controller({
   path: 'domains',
@@ -29,14 +33,14 @@ export class DomainsController {
   ) {}
 
   @Get()
-  @Scopes(AuthScope.readDelegations)
+  @Scopes(AuthScope.delegations)
   @Documentation({})
   async findAll(): Promise<DomainDTO[]> {
     return this.domainsService.findAll()
   }
 
   @Get(':domainId')
-  @Scopes(AuthScope.readDelegations)
+  @Scopes(AuthScope.delegations)
   @Documentation({})
   async findOne(
     @Param('domainId') domainId: string,
@@ -45,9 +49,9 @@ export class DomainsController {
   }
 
   @Get(':domainId/scope-tree')
-  @Scopes(AuthScope.readDelegations)
+  @Scopes(AuthScope.delegations)
   @Documentation({})
   async find(): Promise<DomainDTO[]> {
-    return this.domainsService.findScopeTree()
+    return this.delegationScopeService.findScopeTree()
   }
 }

@@ -9,11 +9,11 @@ export class UpdateDelegationScopeDTO {
 
   @Type(() => Date)
   @IsDate()
-  @ApiPropertyOptional({
+  @ApiProperty({
     description:
       'A date that the delegation is valid to. Must be in the future.',
   })
-  validTo?: Date
+  validTo!: Date
 }
 
 export class DelegationScopeDTO {
