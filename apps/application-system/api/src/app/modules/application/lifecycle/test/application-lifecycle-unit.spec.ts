@@ -140,8 +140,6 @@ describe('ApplicationLifecycleService Unit tests', () => {
     expect(deleteObjectSpy).toHaveBeenCalledTimes(2)
 
     expect(result[0].application.attachments).toEqual({})
-    expect(result[0].application.answers).toEqual({})
-    expect(result[0].application.externalData).toEqual({})
     expect(result[0].pruned).toEqual(true)
   })
 
@@ -165,9 +163,6 @@ describe('ApplicationLifecycleService Unit tests', () => {
     expect(result[0].application.attachments).toEqual({
       key: 's3://example-bucket/path/to/object',
     })
-
-    expect(result[0].application.answers).toEqual({})
-    expect(result[0].application.externalData).toEqual({})
     expect(result[0].pruned).toEqual(false)
   })
 
@@ -192,8 +187,6 @@ describe('ApplicationLifecycleService Unit tests', () => {
       anotherkey: 's3://example-bucket/path/to/object1',
     })
 
-    expect(result[0].application.answers).toEqual({})
-    expect(result[0].application.externalData).toEqual({})
     expect(result[0].pruned).toEqual(false)
   })
 })
