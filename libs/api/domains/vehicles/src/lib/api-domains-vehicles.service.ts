@@ -8,6 +8,7 @@ import {
   PdfApi,
   VehicleSearchDto,
   PersidnoLookupDto,
+  VehicleMiniDto,
 } from '@island.is/clients/vehicles'
 import { VehiclesDetail } from '../models/getVehicleDetail.model'
 import { ApolloError } from 'apollo-server-express'
@@ -114,6 +115,29 @@ export class VehiclesService {
       return basicVehicleInformationMapper(res, auth.nationalId)
     } catch (e) {
       return this.handle4xx(e, 'Failed to get vehicle details')
+    }
+  }
+
+  async getCurrentVehicles(
+    auth: User,
+    showOwned: boolean,
+    showCoowned: boolean,
+    showOperated: boolean,
+  ): Promise<VehicleMiniDto[] | null | ApolloError> {
+    console.log('HER!')
+    try {
+      const res = await this.getVehiclesWithAuth(auth).currentVehiclesGet({
+        persidNo: auth.nationalId,
+        showOwned: showOwned,
+        showCoowned: showCoowned,
+        showOperated: showOperated,
+      })
+
+      if (!res) return []
+
+      return res
+    } catch (e) {
+      return this.handle4xx(e, 'Failed to get current vehicles')
     }
   }
 }

@@ -38,12 +38,12 @@ export const PrerequisitesForm: Form = buildForm({
               title: externalData.userProfile.title,
               subTitle: externalData.userProfile.subTitle,
             }),
-            /* buildDataProviderItem({
+            buildDataProviderItem({
               id: 'vehicleList',
               type: 'VehicleListProvider',
               title: 'Vehicle list',
               subTitle: '',
-            }), */
+            }),
           ],
         }),
         buildMultiField({

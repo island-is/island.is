@@ -4,51 +4,54 @@ import {
   StaticText,
   SuccessfulDataProviderResult,
 } from '@island.is/application/types'
-import { VehiclesList } from '@island.is/api/schema'
-import { queryVehicleList } from '../graphql/queries'
+import { VehiclesCurrentVehicle } from '@island.is/api/schema'
+import { GET_CURRENT_VEHICLES } from '../graphql/queries'
 import * as Sentry from '@sentry/react'
-
-interface VehicleListProps {
-  vehiclesList: VehiclesList
-}
-
 export class VehicleListProvider extends BasicDataProvider {
-  override type = 'VehicleListProvider'
+  type = 'VehicleListProvider'
 
-  async queryVehicleList(): Promise<VehiclesList> {
-    return this.useGraphqlGateway(queryVehicleList)
+  async queryVehicleList(): Promise<VehiclesCurrentVehicle[]> {
+    return this.useGraphqlGateway(GET_CURRENT_VEHICLES, {
+      input: {
+        showOwned: true,
+        showCoowned: false,
+        showOperated: false,
+      },
+    })
       .then(async (res: Response) => {
         const response = await res.json()
         if (response.errors) {
           return this.handleError(response.errors)
         }
-        return Promise.resolve(response.data.vehiclesList)
+        return Promise.resolve(response.data.currentVehicles)
       })
       .catch((error) => this.handleError(error))
   }
 
-  async provide(): Promise<VehicleListProps> {
-    const vehiclesList = await this.queryVehicleList()
+  async provide(): Promise<VehiclesCurrentVehicle[]> {
+    const result = await this.queryVehicleList()
+
     // Maybe we should have an error if use does not have any vehicles.
-    if (!vehiclesList) {
+    if (!result) {
       return Promise.reject({
         reason: 'Error message',
       })
     }
-    return {
-      vehiclesList,
-    }
+
+    return result
   }
 
-  override onProvideSuccess(vehiclesList: VehiclesList): SuccessfulDataProviderResult {
+  onProvideSuccess(
+    vehicleList: VehiclesCurrentVehicle[],
+  ): SuccessfulDataProviderResult {
     return {
       date: new Date(),
-      data: vehiclesList,
+      data: vehicleList,
       status: 'success',
     }
   }
 
-  override onProvideError(error: { reason: StaticText }): FailedDataProviderResult {
+  onProvideError(error: { reason: StaticText }): FailedDataProviderResult {
     return {
       date: new Date(),
       data: {},

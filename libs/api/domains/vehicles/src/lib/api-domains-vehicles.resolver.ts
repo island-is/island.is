@@ -14,7 +14,9 @@ import {
 import { GetVehicleDetailInput } from '../dto/getVehicleDetailInput'
 import { VehiclesDetail } from '../models/getVehicleDetail.model'
 import { VehiclesVehicleSearch } from '../models/getVehicleSearch.model'
+import { VehiclesCurrentVehicle } from '../models/getCurrentVehicles.model'
 import { GetVehicleSearchInput } from '../dto/getVehicleSearchInput'
+import { GetCurrentVehiclesInput } from '../dto/getCurrentVehiclesInput'
 import { DownloadServiceConfig } from '@island.is/nest/config'
 import type { ConfigType } from '@island.is/nest/config'
 
@@ -30,20 +32,6 @@ export class VehiclesResolver {
       typeof DownloadServiceConfig
     >,
   ) {}
-
-  /* @Query(() => VehiclesList, { name: 'vehicles', nullable: true })
-  @Audit()
-  async getVehicles(@CurrentUser() user: User): Promise<VehiclesList> {
-    const data = await this.vehiclesService.getVehiclesForUser(
-      user,
-      false,
-      false,
-    )
-
-    const downloadServiceURL = `${this.downloadServiceConfig.baseUrl}/download/v1/vehicles/ownership/${user.nationalId}`
-
-    return { ...data }
-  } */
 
   @Query(() => VehiclesList, { name: 'vehiclesList', nullable: true })
   @Audit()
@@ -99,5 +87,23 @@ export class VehiclesResolver {
     @CurrentUser() user: User,
   ) {
     return await this.vehiclesService.getVehiclesSearch(user, input.search)
+  }
+
+  @Scopes(ApiScope.internal)
+  @Query(() => [VehiclesCurrentVehicle], {
+    name: 'currentVehicles',
+    nullable: true,
+  })
+  @Audit()
+  async getCurrentVehicles(
+    @Args('input') input: GetCurrentVehiclesInput,
+    @CurrentUser() user: User,
+  ) {
+    return await this.vehiclesService.getCurrentVehicles(
+      user,
+      input.showOwned,
+      input.showCoowned,
+      input.showOperated,
+    )
   }
 }
