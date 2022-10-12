@@ -90,13 +90,7 @@ export class FinancialStatementsInaoTemplateService {
     ) as string
     const noValueStatement = electionIncomeLimit === LESS ? true : false
 
-    // clientNationalId: string,
-    // actorNationalId: string | undefined,
-    // electionId: string,
-    // noValueStatement: boolean,
-    // clientName: string,
-
-    // actor is undefined until we add the functionality to the frontend
+    // actor is undefined until we add the delegate functionality to the frontend
     const result: DataResponse = await this.financialStatementsClientService
       .postFinancialStatementForPersonalElection(
         nationalId,
