@@ -20,6 +20,7 @@ import { currencyStringToNumber, formatCurrency } from '../../lib/utils/helpers'
 import { FinancialStatementsInao } from '../../lib/utils/dataSchema'
 import { format as formatNationalId } from 'kennitala'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
+import { useSubmitApplication } from '../../hooks/useSubmitApplication'
 import { m } from '../../lib/messages'
 import { FileValueLine, ValueLine } from '../Shared'
 import {
@@ -36,35 +37,16 @@ export const CemetryOverview = ({
   const { errors, setError, setValue } = useFormContext()
   const { formatMessage } = useLocale()
   const [approveOverview, setApproveOverview] = useState(false)
-  const [submitApplication, { loading: loadingSubmit }] = useMutation(
-    SUBMIT_APPLICATION,
-    {
-      onError: (e) => {
-        return Sentry.captureException(e.message)
-      },
-    },
-  )
+
+  const [submitApplication, { error: submitError }] = useSubmitApplication({
+    application,
+    refetch,
+    event: DefaultEvents.SUBMIT,
+  })
 
   const answers = application.answers as FinancialStatementsInao
   const fileName = answers.attachment?.file?.[0]?.name
   const careTakerLimit = answers.cemetryOperation.incomeLimit ?? '0'
-
-  const submitAudit = async () => {
-    const res = await submitApplication({
-      variables: {
-        input: {
-          id: application.id,
-          event: DefaultEvents.SUBMIT,
-          answers,
-        },
-      },
-    })
-
-    if (res?.data) {
-      // Takes them to the next state (which loads the relevant form)
-      refetch?.()
-    }
-  }
 
   const onBackButtonClick = () => {
     const cemeteryIncome = currencyStringToNumber(answers.cemetryIncome?.total)
@@ -83,7 +65,7 @@ export const CemetryOverview = ({
 
   const onSendButtonClick = () => {
     if (approveOverview) {
-      submitAudit()
+      submitApplication()
     } else {
       setError('applicationApprove', {
         type: 'error',

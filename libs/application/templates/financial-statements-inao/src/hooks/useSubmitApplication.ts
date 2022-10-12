@@ -27,7 +27,6 @@ export const useSubmitApplication: UseSubmitApplication = ({
 }) => {
   return useMutation(SUBMIT_APPLICATION, {
     onError: (e) => {
-      console.error(e.message)
       return Sentry.captureException(e.message)
     },
     onCompleted: () => {
