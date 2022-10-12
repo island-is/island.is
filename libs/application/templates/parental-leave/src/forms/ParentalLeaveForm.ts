@@ -738,72 +738,80 @@ export const ParentalLeaveForm: Form = buildForm({
               title: parentalLeaveFormMessages.leavePlan.title,
               component: 'PeriodsRepeater',
               children: [
-                buildCustomField({
-                  id: 'firstPeriodStart',
+                buildMultiField({
+                  id: 'test',
                   title: parentalLeaveFormMessages.firstPeriodStart.title,
-                  condition: (answers) => {
-                    const { periods } = getApplicationAnswers(answers)
+                  children: [
+                    buildCustomField({
+                      id: 'firstPeriodStart',
+                      title: parentalLeaveFormMessages.firstPeriodStart.title,
+                      condition: (answers) => {
+                        const { periods } = getApplicationAnswers(answers)
 
-                    return periods.length === 0
-                  },
-                  component: 'FirstPeriodStart',
-                }),
-                buildDateField({
-                  id: 'startDate',
-                  title: parentalLeaveFormMessages.startDate.title,
-                  description: parentalLeaveFormMessages.startDate.description,
-                  placeholder: parentalLeaveFormMessages.startDate.placeholder,
-                  defaultValue: NO_ANSWER,
-                  condition: (answers) => {
-                    const { periods, rawPeriods } = getApplicationAnswers(
-                      answers,
-                    )
-                    const currentPeriod = rawPeriods[rawPeriods.length - 1]
-                    const firstPeriodRequestingSpecificStartDate =
-                      currentPeriod?.firstPeriodStart ===
-                      StartDateOptions.SPECIFIC_DATE
+                        return periods.length === 0
+                      },
+                      component: 'FirstPeriodStart',
+                    }),
+                    buildDateField({
+                      id: 'startDate',
+                      title: parentalLeaveFormMessages.startDate.title,
+                      description:
+                        parentalLeaveFormMessages.startDate.description,
+                      placeholder:
+                        parentalLeaveFormMessages.startDate.placeholder,
+                      defaultValue: NO_ANSWER,
+                      condition: (answers) => {
+                        const { periods, rawPeriods } = getApplicationAnswers(
+                          answers,
+                        )
+                        const currentPeriod = rawPeriods[rawPeriods.length - 1]
+                        const firstPeriodRequestingSpecificStartDate =
+                          currentPeriod?.firstPeriodStart ===
+                          StartDateOptions.SPECIFIC_DATE
 
-                    return (
-                      firstPeriodRequestingSpecificStartDate ||
-                      periods.length !== 0
-                    )
-                  },
-                  minDate: (application: Application) => {
-                    const expectedDateOfBirth = getExpectedDateOfBirth(
-                      application,
-                    )
+                        return (
+                          firstPeriodRequestingSpecificStartDate ||
+                          periods.length !== 0
+                        )
+                      },
+                      minDate: (application: Application) => {
+                        const expectedDateOfBirth = getExpectedDateOfBirth(
+                          application,
+                        )
 
-                    const lastPeriodEndDate = getLastValidPeriodEndDate(
-                      application,
-                    )
+                        const lastPeriodEndDate = getLastValidPeriodEndDate(
+                          application,
+                        )
 
-                    const today = new Date()
-                    if (lastPeriodEndDate) {
-                      return lastPeriodEndDate
-                    } else if (
-                      expectedDateOfBirth &&
-                      new Date(expectedDateOfBirth) > today
-                    ) {
-                      const leastStartDate = addDays(
-                        new Date(expectedDateOfBirth),
-                        -minimumPeriodStartBeforeExpectedDateOfBirth,
-                      )
-                      if (leastStartDate < today) {
+                        const today = new Date()
+                        if (lastPeriodEndDate) {
+                          return lastPeriodEndDate
+                        } else if (
+                          expectedDateOfBirth &&
+                          new Date(expectedDateOfBirth) > today
+                        ) {
+                          const leastStartDate = addDays(
+                            new Date(expectedDateOfBirth),
+                            -minimumPeriodStartBeforeExpectedDateOfBirth,
+                          )
+                          if (leastStartDate < today) {
+                            return today
+                          }
+
+                          return leastStartDate
+                        }
+
                         return today
-                      }
+                      },
+                      excludeDates: (application) => {
+                        const { periods } = getApplicationAnswers(
+                          application.answers,
+                        )
 
-                      return leastStartDate
-                    }
-
-                    return today
-                  },
-                  excludeDates: (application) => {
-                    const { periods } = getApplicationAnswers(
-                      application.answers,
-                    )
-
-                    return getAllPeriodDates(periods)
-                  },
+                        return getAllPeriodDates(periods)
+                      },
+                    }),
+                  ],
                 }),
                 buildRadioField({
                   id: 'useLength',
