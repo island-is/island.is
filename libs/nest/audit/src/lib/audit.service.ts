@@ -10,52 +10,12 @@ import type { AuditOptions } from './audit.options'
 import { AUDIT_OPTIONS } from './audit.options'
 import isString from 'lodash/isString'
 import isFunction from 'lodash/isFunction'
-
-type CommonMessageFields = {
-  action: string
-  namespace?: string
-  resources?: string | string[]
-  meta?: Record<string, unknown>
-}
-
-type SystemMessageFields = {
-  system: true
-}
-
-type DefaultMessageFields = {
-  auth: Auth
-}
-
-type SystemAuditMessage = CommonMessageFields & SystemMessageFields
-type DefaultAuditMessage = CommonMessageFields & DefaultMessageFields
-type AuditMessage = SystemAuditMessage | DefaultAuditMessage
-
-// Template types
-type CommonAuditTemplateFields<ResultType> = {
-  action: string
-  namespace?: string
-  resources?:
-    | string
-    | string[]
-    | ((result: ResultType) => string | string[] | undefined)
-  meta?:
-    | Record<string, unknown>
-    | ((result: ResultType) => Record<string, unknown>)
-}
-
-type SystemAuditTemplate<T> = CommonAuditTemplateFields<T> & SystemMessageFields
-type DefaultAuditTemplate<T> = CommonAuditTemplateFields<T> &
-  DefaultMessageFields
-
-export type AuditTemplate<T> = SystemAuditTemplate<T> | DefaultAuditTemplate<T>
-
-const isDefaultAuditMessage = (obj: AuditMessage): obj is DefaultAuditMessage =>
-  Object.prototype.hasOwnProperty.call(obj, 'auth')
-
-const isDefaultAuditTemplate = <T>(
-  obj: AuditTemplate<T>,
-): obj is DefaultAuditTemplate<T> =>
-  Object.prototype.hasOwnProperty.call(obj, 'auth')
+import {
+  AuditMessage,
+  isDefaultAuditMessage,
+  AuditTemplate,
+  isDefaultAuditTemplate,
+} from './audit.types'
 
 @Injectable()
 export class AuditService {

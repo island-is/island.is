@@ -2,6 +2,7 @@ import {
   ApiScope,
   DelegationDTO,
   DelegationType,
+  InactiveReason,
   PersonalRepresentative,
   PersonalRepresentativeRight,
   PersonalRepresentativeRightType,
@@ -46,10 +47,10 @@ describe('DelegationsController', () => {
     let prTypeModel: typeof PersonalRepresentativeType
     let nationalRegistryApi: NationalRegistryClientService
 
-    const userKennitala = getFakeNationalId()
+    const userNationalId = getFakeNationalId()
 
     const user = createCurrentUser({
-      nationalId: userKennitala,
+      nationalId: userNationalId,
       scope: [defaultScopes.testUserHasAccess.name],
     })
 
@@ -155,7 +156,7 @@ describe('DelegationsController', () => {
                 getFakeNationalId(),
               ]
               const relationship = getPersonalRepresentativeRelationship(
-                userKennitala,
+                userNationalId,
                 representedPerson[1],
               )
               validRepresentedPersons.push(representedPerson)
@@ -171,7 +172,7 @@ describe('DelegationsController', () => {
                 getFakeNationalId(),
               ]
               const relationship = getPersonalRepresentativeRelationship(
-                userKennitala,
+                userNationalId,
                 representedPerson[1],
               )
               outdatedRepresentedPersons.push(representedPerson)
@@ -187,7 +188,7 @@ describe('DelegationsController', () => {
                 getFakeNationalId(),
               ]
               const relationship = getPersonalRepresentativeRelationship(
-                userKennitala,
+                userNationalId,
                 representedPerson[1],
               )
               unactivatedRepresentedPersons.push(representedPerson)
@@ -203,7 +204,7 @@ describe('DelegationsController', () => {
                 deceasedNationalIds[i],
               ]
               const relationship = getPersonalRepresentativeRelationship(
-                userKennitala,
+                userNationalId,
                 representedPerson[1],
               )
 
@@ -281,7 +282,7 @@ describe('DelegationsController', () => {
 
             it('should have the nationalId of the user as the representer', () => {
               expect(
-                body.every((d) => d.toNationalId === userKennitala),
+                body.every((d) => d.toNationalId === userNationalId),
               ).toBeTruthy()
             })
 
@@ -319,22 +320,24 @@ describe('DelegationsController', () => {
               ).toBeTruthy()
             })
 
-            it('should have deleted prModels and prRightModels for deceased persons', async () => {
+            it('should have made prModels inactive for deceased persons', async () => {
               // Arrange
               const expectedModels = await prModel.findAll({
                 where: {
                   nationalIdRepresentedPerson: deceasedNationalIds,
+                  inactive: true,
+                  inactiveReason: InactiveReason.DECEASED_PARTY,
                 },
-                include: [
-                  {
-                    model: PersonalRepresentativeRight,
-                    required: true,
-                  },
-                ],
               })
 
+              console.log(expectedModels)
+
               // Assert
-              expect(expectedModels.length).toEqual(0)
+              expect(expectedModels.length).toEqual(deceased)
+              // expect(expectedModels.inactive).toEqual(true)
+              // expect(expectedModels.inactiveReason).toEqual(
+              //   InactiveReason.DECEASED_PARTY,
+              // )
             })
           })
         },
@@ -392,12 +395,12 @@ describe('DelegationsController', () => {
         ])(
           'and given user is representing persons with rights %p',
           (rights, expected) => {
-            const representeeKennitala = getFakeNationalId()
+            const representeeNationalId = getFakeNationalId()
 
             beforeAll(async () => {
               const relationship = getPersonalRepresentativeRelationship(
-                userKennitala,
-                representeeKennitala,
+                userNationalId,
+                representeeNationalId,
               )
 
               await prModel.create(relationship)
@@ -430,7 +433,7 @@ describe('DelegationsController', () => {
 
               beforeAll(async () => {
                 response = await server.get(`${path}`).query({
-                  fromNationalId: representeeKennitala,
+                  fromNationalId: representeeNationalId,
                   delegationType: DelegationType.PersonalRepresentative,
                 })
                 body = response.body

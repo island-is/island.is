@@ -654,7 +654,7 @@ export class DelegationsService {
       )
 
       if (deceased.length > 0) {
-        await this.deletePersonalRepresentatives(deceased)
+        await this.makePersonalRepresentativesInactive(deceased)
       }
 
       return alive
@@ -671,18 +671,18 @@ export class DelegationsService {
     return []
   }
 
-  private async deletePersonalRepresentatives(
+  private async makePersonalRepresentativesInactive(
     personalRepresentatives: PersonalRepresentativeDTO[],
   ) {
     // Delete all personal representatives and their rights
-    const deletePromises = personalRepresentatives
-      .map(({ id }) => (id ? this.prService.delete(id) : undefined))
+    const inactivePromises = personalRepresentatives
+      .map(({ id }) => (id ? this.prService.makeInactive(id) : undefined))
       .filter(isDefined)
 
-    await Promise.all(deletePromises)
+    await Promise.all(inactivePromises)
 
     this.auditService.audit({
-      action: 'deletePersonalRepresentativesForMissingPeople',
+      action: 'makePersonalRepresentativesInactiveForMissingPeople',
       resources: personalRepresentatives.map(({ id }) => id).filter(isDefined),
       system: true,
     })
@@ -704,8 +704,6 @@ export class DelegationsService {
     if (!feature) {
       return []
     }
-
-    const all = await this.delegationModel.findAll()
 
     const delegations = await this.delegationModel.findAll({
       where: {
