@@ -122,6 +122,13 @@ export const sections = {
       description:
         'Notaður sem texti fyrir Dómskjöl skref í hliðarstiku í ákærum hjá sækjendum',
     },
+    caseFile: {
+      id:
+        'judicial.system.core:sections.indictment_case_prosecutor_section.case_file',
+      defaultMessage: 'Skjalaskrá',
+      description:
+        'Notaður sem texti fyrir Skjalaskrá skref í hliðarstiku í ákærum hjá sækjendum',
+    },
     overview: {
       id:
         'judicial.system.core:sections.indictment_case_prosecutor_section.overview',

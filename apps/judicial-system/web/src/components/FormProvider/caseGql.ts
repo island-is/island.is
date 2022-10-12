@@ -143,6 +143,7 @@ const CaseQuery = gql`
         name
         size
         created
+        modified
         state
         key
         category

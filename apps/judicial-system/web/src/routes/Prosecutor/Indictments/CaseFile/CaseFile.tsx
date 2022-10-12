@@ -12,7 +12,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { Accordion, AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import {
-  RestrictionCaseProsecutorSubsections,
+  IndictmentsProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { titles } from '@island.is/judicial-system-web/messages'
@@ -29,10 +29,8 @@ const CaseFile = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={
-        workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
-      }
-      activeSubSection={RestrictionCaseProsecutorSubsections.STEP_FIVE}
+      activeSection={Sections.PROSECUTOR}
+      activeSubSection={IndictmentsProsecutorSubsections.CASE_FILE}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >

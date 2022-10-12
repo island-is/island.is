@@ -286,6 +286,19 @@ const useSections = () => {
               type: 'SUB_SECTION',
               name: capitalize(
                 formatMessage(
+                  sections.indictmentCaseProsecutorSection.caseFile,
+                ),
+              ),
+              href:
+                isDefendantStepValidForSidebarIndictments(workingCase) &&
+                isProcessingStepValidIndictments(workingCase)
+                  ? `${constants.INDICTMENTS_CASE_FILE_ROUTE}/${id}`
+                  : undefined,
+            },
+            {
+              type: 'SUB_SECTION',
+              name: capitalize(
+                formatMessage(
                   sections.indictmentCaseProsecutorSection.overview,
                 ),
               ),

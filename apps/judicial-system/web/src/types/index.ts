@@ -35,7 +35,8 @@ export enum IndictmentsProsecutorSubsections {
   DEFENDANT = 0,
   PROCESSING = 1,
   CASE_FILES = 2,
-  OVERVIEW = 3,
+  CASE_FILE = 3,
+  OVERVIEW = 4,
 }
 
 export enum IndictmentsCourtSubsections {
