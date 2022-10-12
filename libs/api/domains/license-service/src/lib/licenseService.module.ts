@@ -25,6 +25,7 @@ import {
   GenericLicenseMetadata,
   GenericLicenseProviderId,
   GenericLicenseType,
+  GenericLicenseOrganizationSlug,
   GENERIC_LICENSE_FACTORY,
 } from './licenceService.type'
 import {
@@ -32,6 +33,7 @@ import {
   VinnuvelaApi,
   AdrAndMachineLicenseClientModule,
 } from '@island.is/clients/adr-and-machine-license'
+import { CmsModule } from '@island.is/cms'
 export interface PkPassConfig {
   apiKey: string
   apiUrl: string
@@ -53,6 +55,8 @@ export interface DriversLicenseConfig {
 export interface LicenseServiceConfig {
   firearmLicense: PkPassConfig
   driversLicense: DriversLicenseConfig
+  adrLicense: PkPassConfig
+  machineLicense: PkPassConfig
 }
 
 export type LicenseServiceConfigV2 = Omit<
@@ -69,24 +73,28 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     pkpass: true,
     pkpassVerify: true,
     timeout: 100,
+    orgSlug: GenericLicenseOrganizationSlug.DriversLicense,
   },
   {
     type: GenericLicenseType.AdrLicense,
     provider: {
       id: GenericLicenseProviderId.AdministrationOfOccupationalSafetyAndHealth,
     },
-    pkpass: false,
-    pkpassVerify: false,
+    pkpass: true,
+    pkpassVerify: true,
     timeout: 100,
+    orgSlug: GenericLicenseOrganizationSlug.AdrLicense,
   },
   {
     type: GenericLicenseType.MachineLicense,
+
     provider: {
       id: GenericLicenseProviderId.AdministrationOfOccupationalSafetyAndHealth,
     },
-    pkpass: false,
-    pkpassVerify: false,
+    pkpass: true,
+    pkpassVerify: true,
     timeout: 100,
+    orgSlug: GenericLicenseOrganizationSlug.MachineLicense,
   },
   {
     type: GenericLicenseType.FirearmLicense,
@@ -96,6 +104,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     pkpass: true,
     pkpassVerify: true,
     timeout: 100,
+    orgSlug: GenericLicenseOrganizationSlug.FirearmLicense,
   },
 ]
 
@@ -109,6 +118,7 @@ export class LicenseServiceModule {
         AdrAndMachineLicenseClientModule,
         FirearmLicenseClientModule,
         SmartSolutionsClientModule,
+        CmsModule,
       ],
       providers: [
         MainResolver,
@@ -143,9 +153,17 @@ export class LicenseServiceModule {
                   cacheManager,
                 )
               case GenericLicenseType.AdrLicense:
-                return new GenericAdrLicenseApi(logger, adrApi)
+                return new GenericAdrLicenseApi(
+                  logger,
+                  adrApi,
+                  new SmartSolutionsApi(logger, config.adrLicense),
+                )
               case GenericLicenseType.MachineLicense:
-                return new GenericMachineLicenseApi(logger, machineApi)
+                return new GenericMachineLicenseApi(
+                  logger,
+                  machineApi,
+                  new SmartSolutionsApi(logger, config.machineLicense),
+                )
               case GenericLicenseType.FirearmLicense:
                 return new GenericFirearmLicenseApi(
                   logger,

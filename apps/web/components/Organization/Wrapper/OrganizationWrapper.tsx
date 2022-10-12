@@ -57,6 +57,7 @@ import { LatestNewsCardConnectedComponent } from '../LatestNewsCardConnectedComp
 import { RikislogmadurHeader } from './Themes/RikislogmadurTheme/RikislogmadurHeader'
 import { RikislogmadurFooter } from './Themes/RikislogmadurTheme/RikislogmadurFooter'
 import { LandskjorstjornHeader } from './Themes/LandkjorstjornTheme/LandskjorstjornHeader'
+import { useI18n } from '@island.is/web/i18n'
 import * as styles from './OrganizationWrapper.css'
 
 interface NavigationData {
@@ -224,7 +225,11 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
     ? organizations[0]
     : organizations.find((x) => footerEnabled.includes(x.slug))
 
-  const n = useNamespace(organization?.namespace ?? {})
+  const namespace = useMemo(
+    () => JSON.parse(organization?.namespace?.fields ?? '{}'),
+    [],
+  )
+  const n = useNamespace(namespace)
 
   let OrganizationFooterComponent = null
 
@@ -314,6 +319,8 @@ export const OrganizationChatPanel = ({
   organizationIds: string[]
   pushUp?: boolean
 }) => {
+  const { activeLocale } = useI18n()
+
   const organizationIdWithLiveChat = organizationIds.find((id) => {
     return id in liveChatIncConfig
   })
@@ -327,11 +334,15 @@ export const OrganizationChatPanel = ({
   }
 
   const organizationIdWithWatson = organizationIds.find((id) => {
-    return id in watsonConfig
+    return id in watsonConfig[activeLocale]
   })
 
   if (organizationIdWithWatson) {
-    return <WatsonChatPanel {...watsonConfig[organizationIdWithWatson]} />
+    return (
+      <WatsonChatPanel
+        {...watsonConfig[activeLocale][organizationIdWithWatson]}
+      />
+    )
   }
 
   return null

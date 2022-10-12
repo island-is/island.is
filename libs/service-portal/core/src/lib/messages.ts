@@ -506,6 +506,14 @@ export const m = defineMessages({
     id: 'service.portal:drivingLicense',
     defaultMessage: 'Ökuréttindi',
   },
+  adrLicense: {
+    id: 'service.portal:adr-license',
+    defaultMessage: 'Ökuréttindi',
+  },
+  machineLicense: {
+    id: 'service.portal:machine-license',
+    defaultMessage: 'Vinnuvélaréttindi',
+  },
   notFound: {
     id: 'service.portal:not-found',
     defaultMessage: 'Síða finnst ekki',
@@ -792,5 +800,9 @@ export const m = defineMessages({
   clearSelected: {
     id: 'service.portal:clear-selected',
     defaultMessage: 'Hreinsa val',
+  },
+  errorTitle: {
+    id: 'service.portal:error-screen-title',
+    defaultMessage: 'Villa',
   },
 })

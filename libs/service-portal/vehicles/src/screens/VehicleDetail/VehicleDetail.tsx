@@ -199,7 +199,7 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
       <ErrorScreen
         figure="./assets/images/hourglass.svg"
         tagVariant="red"
-        tag="500"
+        tag={formatMessage(m.errorTitle)}
         title={formatMessage(m.somethingWrong)}
         children={formatMessage(m.errorFetchModule, {
           module: formatMessage(m.vehicles).toLowerCase(),
@@ -221,6 +221,7 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
     registrationInfo && registrationInfoArray(registrationInfo, formatMessage)
   const technicalArr =
     technicalInfo && technicalInfoArray(technicalInfo, formatMessage)
+
   return (
     <>
       <Box marginBottom={6}>
