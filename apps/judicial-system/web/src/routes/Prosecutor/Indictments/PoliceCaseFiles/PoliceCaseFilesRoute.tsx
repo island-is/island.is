@@ -7,6 +7,7 @@ import React, {
   useState,
 } from 'react'
 import { useIntl } from 'react-intl'
+import { uuid } from 'uuidv4'
 
 import {
   FormContentContainer,
@@ -29,16 +30,12 @@ import {
 } from '@island.is/judicial-system-web/messages'
 import { Box, InputFileUpload, UploadFile } from '@island.is/island-ui/core'
 import { CaseFile, CaseFileCategory } from '@island.is/judicial-system/types'
-import {
-  useS3UploadV2,
-  LocalUploadFile,
-} from '@island.is/judicial-system-web/src/utils/hooks'
+import { useS3UploadV2 } from '@island.is/judicial-system-web/src/utils/hooks'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { policeCaseFiles as m } from './PoliceCaseFilesRoute.strings'
 
-const mapCaseFileToUploadFile = (file: CaseFile): LocalUploadFile => ({
-  displayId: file.id,
+const mapCaseFileToUploadFile = (file: CaseFile): UploadFile => ({
   name: file.name,
   type: file.type,
   id: file.id,
@@ -61,7 +58,7 @@ const UploadFilesToPoliceCase: React.FC<{
     policeCaseNumber,
   )
 
-  const [displayFiles, setDisplayFiles] = useState<LocalUploadFile[]>(
+  const [displayFiles, setDisplayFiles] = useState<UploadFile[]>(
     caseFiles.map(mapCaseFileToUploadFile),
   )
 
@@ -85,9 +82,7 @@ const UploadFilesToPoliceCase: React.FC<{
   const setSingleFile = useCallback(
     (displayFile) => {
       setDisplayFiles((previous) => {
-        const index = previous.findIndex(
-          (f) => f.displayId === displayFile.displayId,
-        )
+        const index = previous.findIndex((f) => f.id === displayFile.id)
         if (index === -1) {
           return previous
         }
@@ -101,24 +96,50 @@ const UploadFilesToPoliceCase: React.FC<{
 
   const onChange = useCallback(
     (files: File[]) => {
+      // We generate an id for each file so that we find the file again when
+      // updating the file's progress and onRetry.
+      // Also we cannot spread File since it contains read-only properties.
+      const filesWithId: Array<[File, string]> = files.map((file) => [
+        file,
+        `${file.name}-${uuid()}`,
+      ])
       setDisplayFiles((previous) => [
-        ...files.map((file, index) => ({
-          name: file.name,
-          displayId: `${file.name}-${index}`,
-          originalFileObject: file,
-        })),
+        ...filesWithId.map(
+          ([file, id]): UploadFile => ({
+            status: 'uploading',
+            percent: 1,
+            name: file.name,
+            id: id,
+            type: file.type,
+          }),
+        ),
         ...previous,
       ])
-      upload(files, setSingleFile)
+      upload(filesWithId, setSingleFile)
     },
     [upload, setSingleFile],
   )
 
   const onRetry = useCallback(
     (file: UploadFile) => {
-      onChange([{ name: file.name, type: file.type }] as File[])
+      setSingleFile({
+        name: file.name,
+        id: file.id,
+        percent: 1,
+        status: 'uploading',
+        type: file.type,
+      })
+      upload(
+        [
+          [
+            { name: file.name, type: file.type ?? '' } as File,
+            file.id ?? file.name,
+          ],
+        ],
+        setSingleFile,
+      )
     },
-    [onChange],
+    [upload, setSingleFile],
   )
 
   const onRemove = useCallback(

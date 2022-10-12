@@ -16,8 +16,6 @@ import {
   PresignedPost,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
-export type LocalUploadFile = UploadFile & { displayId: string }
-
 const createFormData = (presignedPost: PresignedPost, file: File): FormData => {
   const formData = new FormData()
   Object.keys(presignedPost.fields).forEach((key) =>
@@ -30,9 +28,9 @@ const createFormData = (presignedPost: PresignedPost, file: File): FormData => {
 
 const uploadToS3 = (
   file: File,
+  id: string,
   presignedPost: PresignedPost,
-  index: number,
-  setFileState: (uploadFile: LocalUploadFile) => void,
+  updateFile: (uploadFile: UploadFile) => void,
 ) => {
   const promise = new Promise((resolve, reject) => {
     const request = new XMLHttpRequest()
@@ -41,8 +39,8 @@ const uploadToS3 = (
 
     request.upload.addEventListener('progress', (event) => {
       if (event.lengthComputable) {
-        setFileState({
-          displayId: `${file.name}-${index}`,
+        updateFile({
+          id,
           name: file.name,
           percent: (event.loaded / event.total) * 100,
           status: 'uploading',
@@ -52,10 +50,9 @@ const uploadToS3 = (
 
     request.upload.addEventListener('error', (event) => {
       if (event.lengthComputable) {
-        setFileState({
-          displayId: `${file.name}-${index}`,
+        updateFile({
+          id,
           name: file.name,
-          percent: 0,
           status: 'error',
         })
         reject()
@@ -66,10 +63,9 @@ const uploadToS3 = (
       if (request.status >= 200 && request.status < 300) {
         resolve(file)
       } else {
-        setFileState({
-          displayId: `${file.name}-${index}`,
+        updateFile({
+          id,
           name: file.name,
-          percent: 0,
           status: 'error',
         })
         reject()
@@ -102,8 +98,8 @@ export const useS3UploadV2 = (
   >(DeleteFileMutationDocument)
 
   const upload = useCallback(
-    (files: File[], updateFile) => {
-      files.forEach(async (file, index) => {
+    (files: Array<[File, string]>, updateFile) => {
+      files.forEach(async ([file, id]) => {
         try {
           const data = await createPresignedMutation({
             variables: {
@@ -119,7 +115,7 @@ export const useS3UploadV2 = (
           }
 
           const presignedPost = data.data.createPresignedPost
-          await uploadToS3(file, presignedPost, index, updateFile)
+          await uploadToS3(file, id, presignedPost, updateFile)
 
           const data2 = await addFileToCaseMutation({
             variables: {
@@ -138,17 +134,16 @@ export const useS3UploadV2 = (
           }
 
           updateFile({
-            displayId: `${file.name}-${index}`,
             name: file.name,
             percent: 100,
             status: 'done',
+            // We need to set the id so we are able to delete the file later
             id: data2.data.createFile.id,
           })
         } catch (e) {
           updateFile({
-            displayId: `${file.name}-${index}`,
+            id: id,
             name: file.name,
-            percent: 0,
             status: 'error',
           })
         }
