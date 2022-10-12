@@ -29,7 +29,6 @@ import {
   PaymentScheduleDetailModel,
   PaymentScheduleModel,
 } from './models/paymentSchedule.model'
-import { DebtLessCertificateModel } from './models/debtLessCertificate.model'
 import { DebtStatusModel } from './models/debtStatus.model'
 import { GetFinancePaymentScheduleInput } from './dto/getFinancePaymentSchedule.input'
 
