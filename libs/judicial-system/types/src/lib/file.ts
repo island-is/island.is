@@ -63,6 +63,10 @@ export interface CaseFile {
   key?: string
   size: number
   category?: CaseFileCategory
+  policeCaseNumber?: string
+  userGeneratedFilename?: string
+  chapter?: number
+  orderWithinChapter?: number
 }
 
 export interface CreateFile {
