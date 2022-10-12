@@ -152,22 +152,70 @@ const DocumentLine: FC<Props> = ({ documentLine, img, documentCategories }) => {
     </Text>
   )
 
-  if (loading) {
-    return <LoadModal />
-  }
   return (
-    <Box
-      position="relative"
-      className={cn(styles.line, {
-        [styles.unopenedWrapper]: !documentLine.opened && !isLink,
-        [styles.linkWrapper]: isLink,
-      })}
-      paddingY={2}
-    >
-      {isMobile ? (
-        <GridRow alignItems="flexStart" align="flexStart">
-          {img && (
-            <GridColumn span="2/12">
+    <>
+      {loading && <LoadModal />}
+      <Box
+        position="relative"
+        className={cn(styles.line, {
+          [styles.unopenedWrapper]: !documentLine.opened && !isLink,
+          [styles.linkWrapper]: isLink,
+        })}
+        paddingY={2}
+      >
+        {isMobile ? (
+          <GridRow alignItems="flexStart" align="flexStart">
+            {img && (
+              <GridColumn span="2/12">
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  height="full"
+                  paddingX={[0, 2]}
+                  paddingBottom={[1, 0]}
+                >
+                  {image}
+                </Box>
+              </GridColumn>
+            )}
+            <GridColumn span="7/12">
+              <Box
+                display="flex"
+                alignItems="center"
+                paddingX={[0, 2]}
+                className={styles.sender}
+              >
+                {sender('eyebrow')}
+              </Box>
+              <Box display="flex" alignItems="center" paddingX={[0, 2]}>
+                {subject}
+              </Box>
+            </GridColumn>
+            <GridColumn span="3/12">
+              <Box
+                display="flex"
+                alignItems="center"
+                justifyContent="flexEnd"
+                height="full"
+                paddingX={[0, 2]}
+              >
+                {date('small')}
+              </Box>
+            </GridColumn>
+          </GridRow>
+        ) : (
+          <GridRow>
+            <GridColumn span={['1/1', '2/12']}>
+              <Box
+                display="flex"
+                alignItems="center"
+                height="full"
+                paddingX={[0, 2]}
+              >
+                {date('medium')}
+              </Box>
+            </GridColumn>
+            <GridColumn span={['1/1', '4/12']}>
               <Box
                 display="flex"
                 alignItems="center"
@@ -175,84 +223,36 @@ const DocumentLine: FC<Props> = ({ documentLine, img, documentCategories }) => {
                 paddingX={[0, 2]}
                 paddingBottom={[1, 0]}
               >
-                {image}
+                {img && image}
+                {subject}
               </Box>
             </GridColumn>
-          )}
-          <GridColumn span="7/12">
-            <Box
-              display="flex"
-              alignItems="center"
-              paddingX={[0, 2]}
-              className={styles.sender}
-            >
-              {sender('eyebrow')}
-            </Box>
-            <Box display="flex" alignItems="center" paddingX={[0, 2]}>
-              {subject}
-            </Box>
-          </GridColumn>
-          <GridColumn span="3/12">
-            <Box
-              display="flex"
-              alignItems="center"
-              justifyContent="flexEnd"
-              height="full"
-              paddingX={[0, 2]}
-            >
-              {date('small')}
-            </Box>
-          </GridColumn>
-        </GridRow>
-      ) : (
-        <GridRow>
-          <GridColumn span={['1/1', '2/12']}>
-            <Box
-              display="flex"
-              alignItems="center"
-              height="full"
-              paddingX={[0, 2]}
-            >
-              {date('medium')}
-            </Box>
-          </GridColumn>
-          <GridColumn span={['1/1', '4/12']}>
-            <Box
-              display="flex"
-              alignItems="center"
-              height="full"
-              paddingX={[0, 2]}
-              paddingBottom={[1, 0]}
-            >
-              {img && image}
-              {subject}
-            </Box>
-          </GridColumn>
-          <GridColumn span={['1/1', '3/12']}>
-            <Box
-              display="flex"
-              alignItems="center"
-              height="full"
-              paddingX={[0, 2]}
-              className={styles.sender}
-            >
-              {group('medium')}
-            </Box>
-          </GridColumn>
-          <GridColumn span={['1/1', '3/12']}>
-            <Box
-              display="flex"
-              alignItems="center"
-              height="full"
-              paddingX={[0, 2]}
-              className={styles.sender}
-            >
-              {sender('medium')}
-            </Box>
-          </GridColumn>
-        </GridRow>
-      )}
-    </Box>
+            <GridColumn span={['1/1', '3/12']}>
+              <Box
+                display="flex"
+                alignItems="center"
+                height="full"
+                paddingX={[0, 2]}
+                className={styles.sender}
+              >
+                {group('medium')}
+              </Box>
+            </GridColumn>
+            <GridColumn span={['1/1', '3/12']}>
+              <Box
+                display="flex"
+                alignItems="center"
+                height="full"
+                paddingX={[0, 2]}
+                className={styles.sender}
+              >
+                {sender('medium')}
+              </Box>
+            </GridColumn>
+          </GridRow>
+        )}
+      </Box>
+    </>
   )
 }
 

@@ -269,7 +269,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
               setAccusedNameErrorMessage,
             )
 
-            onChange(defendant.id, { name: evt.target.value })
+            onChange(defendant.id, { name: evt.target.value.trim() })
           }}
           required
         />
@@ -306,7 +306,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
               setAccusedAddressErrorMessage,
             )
 
-            onChange(defendant.id, { address: evt.target.value })
+            onChange(defendant.id, { address: evt.target.value.trim() })
           }}
           required
         />
@@ -346,7 +346,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
                 })
               }}
               onBlur={(evt) => {
-                onChange(defendant.id, { citizenship: evt.target.value })
+                onChange(defendant.id, { citizenship: evt.target.value.trim() })
               }}
               disabled={isGenderAndCitizenshipDisabled}
             />
