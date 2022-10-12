@@ -109,7 +109,6 @@ export class FinancialStatementsInaoTemplateService {
           errorMessage: e.message,
         }
       })
-    console.log('dataverse', result)
     if (!result.success) {
       throw new Error(`Application submission failed`)
     }
