@@ -25,6 +25,7 @@ import {
 import {
   titles,
   errors as errorMessages,
+  core,
 } from '@island.is/judicial-system-web/messages'
 import {
   Box,
@@ -139,8 +140,8 @@ const UploadFilesToPoliceCase: React.FC<{
     <InputFileUpload
       name="fileUpload"
       fileList={displayFiles}
-      header={'Dragðu gögn hingað til að hlaða upp'}
-      buttonLabel={'Velja gögn til að hlaða upp'}
+      header={formatMessage(m.inputFileUpload.header)}
+      buttonLabel={formatMessage(m.inputFileUpload.buttonLabel)}
       onChange={onChange}
       onRemove={onRemove}
       onRetry={onRetry}
@@ -162,25 +163,32 @@ const PoliceUploadListMemo: React.FC<{
   policeCaseNumbers: string[]
   caseFiles?: CaseFile[]
   setAllUploaded: (policeCaseNumber: string) => (value: boolean) => void
-}> = memo(({ caseId, policeCaseNumbers, caseFiles, setAllUploaded }) => (
-  <Box paddingBottom={4}>
-    {policeCaseNumbers.map((policeCaseNumber, index) => (
-      <Box key={index} marginBottom={6}>
-        <SectionHeading title={`Gögn úr LÖKE-máli ${policeCaseNumber}`} />
-        <UploadFilesToPoliceCase
-          caseId={caseId}
-          caseFiles={
-            caseFiles?.filter(
-              (file) => file.policeCaseNumber === policeCaseNumber,
-            ) ?? []
-          }
-          policeCaseNumber={policeCaseNumber}
-          setAllUploaded={setAllUploaded(policeCaseNumber)}
-        />
-      </Box>
-    ))}
-  </Box>
-))
+}> = memo(({ caseId, policeCaseNumbers, caseFiles, setAllUploaded }) => {
+  const { formatMessage } = useIntl()
+  return (
+    <Box paddingBottom={4}>
+      {policeCaseNumbers.map((policeCaseNumber, index) => (
+        <Box key={index} marginBottom={6}>
+          <SectionHeading
+            title={formatMessage(m.policeCaseNumberSectionHeading, {
+              policeCaseNumber,
+            })}
+          />
+          <UploadFilesToPoliceCase
+            caseId={caseId}
+            caseFiles={
+              caseFiles?.filter(
+                (file) => file.policeCaseNumber === policeCaseNumber,
+              ) ?? []
+            }
+            policeCaseNumber={policeCaseNumber}
+            setAllUploaded={setAllUploaded(policeCaseNumber)}
+          />
+        </Box>
+      ))}
+    </Box>
+  )
+})
 
 const PoliceCaseFilesRoute = () => {
   const { formatMessage } = useIntl()
@@ -221,9 +229,7 @@ const PoliceCaseFilesRoute = () => {
         </Box>
         <ProsecutorCaseInfo workingCase={workingCase} />
         <Box marginBottom={5}>
-          <InfoBox
-            text={`Gögn sem er hlaðið upp hér fyrir neðan verða sameinuð í eitt PDF skjal og efnisyfirlit sjálfkrafa búið til.`}
-          ></InfoBox>
+          <InfoBox text={formatMessage(m.infoBox)}></InfoBox>
         </Box>
         <PoliceUploadListMemo
           caseId={workingCase.id}
