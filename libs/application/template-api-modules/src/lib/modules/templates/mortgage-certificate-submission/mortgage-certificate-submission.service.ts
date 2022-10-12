@@ -20,7 +20,6 @@ import {
 } from './types'
 import { ChargeItemCode } from '@island.is/shared/constants'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-import { AssetsXRoadService } from '@island.is/api/domains/assets'
 
 @Injectable()
 export class MortgageCertificateSubmissionService extends BaseTemplateApiService {
@@ -28,7 +27,6 @@ export class MortgageCertificateSubmissionService extends BaseTemplateApiService
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly mortgageCertificateService: MortgageCertificateService,
     private readonly syslumennService: SyslumennService,
-    private readonly assetsXRoadService: AssetsXRoadService,
   ) {
     super(ApplicationTypes.MORTGAGE_CERTIFICATE)
   }
@@ -222,9 +220,5 @@ export class MortgageCertificateSubmissionService extends BaseTemplateApiService
     return {
       hasSentRequest: true,
     }
-  }
-
-  async getMyRealEstates({ auth }: TemplateApiModuleActionProps) {
-    return await this.assetsXRoadService.getRealEstatesWithDetail(auth, '1')
   }
 }

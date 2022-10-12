@@ -8,11 +8,13 @@ import {
 } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
+import { AssetsXRoadService } from '@island.is/api/domains/assets'
 
 @Injectable()
 export class NationalRegistryService extends BaseTemplateApiService {
   constructor(
     private readonly nationalRegistryApi: NationalRegistryClientService,
+    private readonly assetsXRoadService: AssetsXRoadService,
   ) {
     super('NationalRegistry')
   }
@@ -112,5 +114,9 @@ export class NationalRegistryService extends BaseTemplateApiService {
     return children.filter(
       (child): child is ApplicantChildCustodyInformation => child != null,
     )
+  }
+
+  async getMyRealEstates({ auth }: TemplateApiModuleActionProps) {
+    return await this.assetsXRoadService.getRealEstatesWithDetail(auth, '1')
   }
 }
