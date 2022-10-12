@@ -210,7 +210,7 @@ export const HearingArrangements: React.FC = () => {
                 onBlur={(event) =>
                   validateAndSendToServer(
                     'translator',
-                    event.target.value,
+                    event.target.value.trim(),
                     [],
                     workingCase,
                     updateCase,
