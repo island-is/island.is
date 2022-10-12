@@ -1,7 +1,7 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 
-import { AccordionItem, Text } from '@island.is/island-ui/core'
+import { AccordionItem, Text, Box } from '@island.is/island-ui/core'
 import { CaseFile } from '@island.is/judicial-system/types'
 
 import { indictmentsCaseFilesAccordionItem as m } from './IndictmentsCaseFilesAccordionItem.strings'
@@ -25,7 +25,14 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
       {caseFiles.length === 0 ? (
         <Text>{formatMessage(m.noCaseFiles)}</Text>
       ) : (
-        caseFiles.map((caseFile) => <div key={caseFile.id}></div>)
+        <>
+          <Box marginBottom={3}>
+            <Text>{formatMessage(m.explanation)}</Text>
+          </Box>
+          {caseFiles.map((caseFile) => (
+            <div key={caseFile.id}></div>
+          ))}
+        </>
       )}
     </AccordionItem>
   )

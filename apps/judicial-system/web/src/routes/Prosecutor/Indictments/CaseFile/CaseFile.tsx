@@ -56,7 +56,7 @@ const CaseFile = () => {
             {workingCase.policeCaseNumbers.map((policeCaseNumber) => (
               <IndictmentsCaseFilesAccordionItem
                 policeCaseNumber={policeCaseNumber}
-                caseFiles={[]}
+                caseFiles={workingCase.caseFiles || []}
               />
             ))}
           </Accordion>
