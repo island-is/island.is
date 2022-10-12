@@ -138,7 +138,7 @@ export const Lookup: ServicePortalModuleComponent = () => {
       <ErrorScreen
         figure="./assets/images/hourglass.svg"
         tagVariant="red"
-        tag="500"
+        tag={formatMessage(m.errorTitle)}
         title={formatMessage(m.somethingWrong)}
         children={formatMessage(m.errorFetchModule, {
           module: formatMessage(messages.title).toLowerCase(),
