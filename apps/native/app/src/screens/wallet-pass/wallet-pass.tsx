@@ -257,9 +257,8 @@ export const WalletPassScreen: NavigationFunctionComponent<{
   }
 
   const fields = data?.payload?.data ?? []
-  const hasPkpass = data?.license?.pkpass || false
-  const hasValidPkpass = data?.license?.pkpassStatus === GenericUserLicensePkPassStatus.Available
-    || data?.license?.pkpassStatus === GenericUserLicensePkPassStatus.Unknown;
+  const hasPkpass = data?.license?.pkpass
+  const hasValidPkpass = data?.license?.pkpassStatus === GenericUserLicensePkPassStatus.Available;
 
   return (
     <View style={{ flex: 1 }}>
