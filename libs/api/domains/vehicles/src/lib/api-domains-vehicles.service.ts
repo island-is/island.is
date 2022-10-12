@@ -124,7 +124,6 @@ export class VehiclesService {
     showCoowned: boolean,
     showOperated: boolean,
   ): Promise<VehicleMiniDto[] | null | ApolloError> {
-    console.log('HER!')
     try {
       const res = await this.getVehiclesWithAuth(auth).currentVehiclesGet({
         persidNo: auth.nationalId,
