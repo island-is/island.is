@@ -16,6 +16,7 @@ import {
   ElasticsearchIndexLocale,
   getElasticsearchIndex,
 } from '@island.is/content-search-index-manager'
+import { Locale } from 'locale'
 
 interface SyncerResult {
   items: Entry<unknown>[]
@@ -217,17 +218,14 @@ export class ContentfulService {
     return items
   }
 
-  async getSyncEntries(options: SyncOptions): Promise<SyncerResult> {
-    // TODO: add scope to sync api call
-    // TODO: run re-sync if there was no previous sync token
-
-    const {
-      syncType,
-      locale,
-      elasticIndex = getElasticsearchIndex(options.locale),
-    } = options
-    const typeOfSync = await this.getTypeOfSync({ syncType, elasticIndex })
-
+  /**
+   * Gets entries from the Sync API, fetches nested content from Contentful and returns the result
+   */
+  private async getPopulatedSyncEntries(
+    typeOfSync: typeOfSync,
+    locale: Locale,
+    chunkSize: number,
+  ) {
     // gets all changes in all locales
     const {
       entries,
@@ -235,7 +233,7 @@ export class ContentfulService {
       deletedEntries,
     } = await this.getSyncData(typeOfSync)
 
-    let nestedEntries = entries
+    const nestedEntries = entries
       .filter((entry) =>
         environment.nestedContentTypes.includes(entry.sys.contentType.sys.id),
       )
@@ -247,11 +245,6 @@ export class ContentfulService {
       nestedEntries: nestedEntries.length,
     })
 
-    // Contentful only allows a maximum of 7MB response size, so this chunkSize variable allows us to tune down how many entries we fetch in one request
-    const chunkSize = Number(
-      process.env.CONTENTFUL_ENTRY_FETCH_CHUNK_SIZE ?? 40,
-    )
-
     // get all sync entries from Contentful endpoints for this locale, we could parse the sync response into locales but we are opting for this for simplicity
     const items = await this.getAllEntriesFromContentful(
       entries,
@@ -261,6 +254,38 @@ export class ContentfulService {
 
     // extract ids from deletedEntries
     const deletedItems = deletedEntries.map((entry) => entry.sys.id)
+
+    return {
+      items,
+      nestedEntries,
+      newNextSyncToken,
+      deletedItems,
+    }
+  }
+
+  async getSyncEntries(options: SyncOptions): Promise<SyncerResult> {
+    // TODO: run re-sync if there was no previous sync token
+
+    const {
+      syncType,
+      locale,
+      elasticIndex = getElasticsearchIndex(options.locale),
+    } = options
+    const typeOfSync = await this.getTypeOfSync({ syncType, elasticIndex })
+
+    // Contentful only allows a maximum of 7MB response size, so this chunkSize variable allows us to tune down how many entries we fetch in one request
+    const chunkSize = Number(
+      process.env.CONTENTFUL_ENTRY_FETCH_CHUNK_SIZE ?? 40,
+    )
+
+    const populatedSyncEntriesResult = await this.getPopulatedSyncEntries(
+      typeOfSync,
+      locale,
+      chunkSize,
+    )
+
+    const { items, newNextSyncToken, deletedItems } = populatedSyncEntriesResult
+    let { nestedEntries } = populatedSyncEntriesResult
 
     // In case of delta updates, we need to resolve embedded entries to their root model
     if (syncType !== 'full' && nestedEntries) {
