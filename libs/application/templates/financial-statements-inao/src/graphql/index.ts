@@ -26,3 +26,12 @@ export const getAuditConfig = gql`
     }
   }
 `
+
+export const IdentityQuery = gql`
+  query IdentityQuery($input: IdentityInput!) {
+    identity(input: $input) {
+      name
+      nationalId
+    }
+  }
+`
