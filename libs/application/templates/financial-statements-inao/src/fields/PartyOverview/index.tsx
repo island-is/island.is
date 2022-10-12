@@ -1,29 +1,62 @@
-import React, { Fragment } from 'react'
-import { FieldBaseProps } from '@island.is/application/types'
+import React, { Fragment, useState } from 'react'
+import { DefaultEvents, FieldBaseProps } from '@island.is/application/types'
 import {
   Box,
+  Checkbox,
   Divider,
   GridColumn,
   GridRow,
+  InputError,
   Text,
 } from '@island.is/island-ui/core'
+import { formatPhoneNumber } from '@island.is/application/ui-components'
+import { getErrorViaPath } from '@island.is/application/core'
+import { Controller, useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { formatCurrency } from '../../lib/utils/helpers'
 import { FinancialStatementsInao } from '../../lib/utils/dataSchema'
 import { format as formatNationalId } from 'kennitala'
-import { formatPhoneNumber } from '@island.is/application/ui-components'
 import { m } from '../../lib/messages'
 import { FileValueLine, ValueLine } from '../Shared'
+import { useSubmitApplication } from '../../hooks/useSubmitApplication'
+import BottomBar from '../../components/BottomBar'
 import {
   columnStyle,
   starterColumnStyle,
 } from '../Shared/styles/overviewStyles.css'
 
-export const PartyOverview = ({ application }: FieldBaseProps) => {
+export const PartyOverview = ({
+  application,
+  goToScreen,
+  refetch,
+}: FieldBaseProps) => {
   const { formatMessage } = useLocale()
+  const [approveOverview, setApproveOverview] = useState(false)
+  const { errors, setError, setValue } = useFormContext()
 
   const answers = application.answers as FinancialStatementsInao
   const fileName = answers.attachment?.file?.[0]?.name
+
+  const [submitApplication] = useSubmitApplication({
+    application,
+    refetch,
+    event: DefaultEvents.SUBMIT,
+  })
+
+  const onBackButtonClick = () => {
+    goToScreen && goToScreen('attachment.file')
+  }
+
+  const onSendButtonClick = () => {
+    if (approveOverview) {
+      submitApplication()
+    } else {
+      setError('applicationApprove', {
+        type: 'error',
+      })
+    }
+  }
+
   return (
     <Box marginBottom={2}>
       <Divider />
@@ -43,18 +76,22 @@ export const PartyOverview = ({ application }: FieldBaseProps) => {
         </GridColumn>
       </GridRow>
       <GridRow>
-        <GridColumn span={['12/12', '6/12']}>
-          <ValueLine
-            label={m.powerOfAttorneyName}
-            value={answers.about.powerOfAttorneyName}
-          />
-        </GridColumn>
-        <GridColumn span={['12/12', '6/12']}>
-          <ValueLine
-            label={m.powerOfAttorneyNationalId}
-            value={formatNationalId(answers.about.powerOfAttorneyNationalId)}
-          />
-        </GridColumn>
+        {answers.about.powerOfAttorneyName ? (
+          <GridColumn span={['12/12', '6/12']}>
+            <ValueLine
+              label={m.powerOfAttorneyName}
+              value={answers.about.powerOfAttorneyName}
+            />
+          </GridColumn>
+        ) : null}
+        {answers.about.powerOfAttorneyNationalId ? (
+          <GridColumn span={['12/12', '6/12']}>
+            <ValueLine
+              label={m.powerOfAttorneyNationalId}
+              value={formatNationalId(answers.about.powerOfAttorneyNationalId)}
+            />
+          </GridColumn>
+        ) : null}
       </GridRow>
       <GridRow>
         <GridColumn span={['12/12', '6/12']}>
@@ -226,6 +263,41 @@ export const PartyOverview = ({ application }: FieldBaseProps) => {
           <Divider />
         </Fragment>
       ) : null}
+      <Box paddingY={3}>
+        <Text variant="h3" as="h3">
+          {formatMessage(m.overview)}
+        </Text>
+      </Box>
+      <Box background="blue100" padding={3}>
+        <Controller
+          name="applicationApprove"
+          defaultValue={approveOverview}
+          rules={{ required: true }}
+          render={({ value, onChange }) => {
+            return (
+              <Checkbox
+                onChange={(e) => {
+                  onChange(e.target.checked)
+                  setApproveOverview(e.target.checked)
+                  setValue('applicationApprove' as string, e.target.checked)
+                }}
+                checked={value}
+                name="applicationApprove"
+                id="applicationApprove"
+                label={formatMessage(m.overviewCorrect)}
+                large
+              />
+            )
+          }}
+        />
+      </Box>
+      {errors && getErrorViaPath(errors, 'applicationApprove') ? (
+        <InputError errorMessage={formatMessage(m.errorApproval)} />
+      ) : null}
+      <BottomBar
+        onSendButtonClick={onSendButtonClick}
+        onBackButtonClick={onBackButtonClick}
+      />
     </Box>
   )
 }

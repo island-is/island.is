@@ -16,6 +16,9 @@ export enum ApiActions {
   getUserType = 'getUserType',
 }
 
+export const CARETAKER = 'Skoðunarmaður'
+export const BOARDMEMEBER = 'Stjórnarmaður'
+
 export const YES = 'yes'
 export const NO = 'no'
 export const GREATER = 'greater'
@@ -130,6 +133,7 @@ export const EQUITIESANDLIABILITIESIDS = {
   shortTerm: 'liability.shortTerm',
   asset: 'liability.asset',
   totalLiability: 'liability.total',
+  operationResult: 'equity.operationResult',
   equityPrefix: 'equity',
   totalEquity: 'equity.totalEquity',
   totalCash: 'equity.total',
