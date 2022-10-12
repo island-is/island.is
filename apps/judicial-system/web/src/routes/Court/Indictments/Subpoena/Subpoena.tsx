@@ -100,7 +100,7 @@ const Subpoena: React.FC = () => {
     >
       <PageHeader title={formatMessage(titles.court.indictments.subpoena)} />
       <FormContentContainer>
-        <PageTitle title={formatMessage(strings.title)} />
+        <PageTitle>{formatMessage(strings.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={5}>
           <SectionHeading

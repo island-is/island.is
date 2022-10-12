@@ -15,6 +15,7 @@ import {
   InfoBox,
   PageHeader,
   PageLayout,
+  PageTitle,
   ProsecutorCaseInfo,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
@@ -25,14 +26,8 @@ import {
 import {
   titles,
   errors as errorMessages,
-  core,
 } from '@island.is/judicial-system-web/messages'
-import {
-  Box,
-  InputFileUpload,
-  Text,
-  UploadFile,
-} from '@island.is/island-ui/core'
+import { Box, InputFileUpload, UploadFile } from '@island.is/island-ui/core'
 import { CaseFile, CaseFileCategory } from '@island.is/judicial-system/types'
 import {
   useS3UploadV2,
@@ -223,11 +218,7 @@ const PoliceCaseFilesRoute = () => {
         title={formatMessage(titles.prosecutor.indictments.policeCaseFiles)}
       />
       <FormContentContainer>
-        <Box marginBottom={7}>
-          <Text as="h1" variant="h1">
-            {formatMessage(m.heading)}
-          </Text>
-        </Box>
+        <PageTitle>{formatMessage(m.heading)}</PageTitle>
         <ProsecutorCaseInfo workingCase={workingCase} />
         <Box marginBottom={5}>
           <InfoBox text={formatMessage(m.infoBox)}></InfoBox>
