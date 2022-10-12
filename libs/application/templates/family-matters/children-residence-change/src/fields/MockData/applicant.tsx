@@ -42,7 +42,7 @@ const MockApplicant = ({ application, field }: CRCFieldBaseProps) => {
             id={`${id}.address.streetName`}
             name={`${id}.address.streetName`}
             label="Heimilisfang"
-            defaultValue={applicant.address?.streetName || ''}
+            defaultValue={applicant.address?.streetAddress || ''}
           />
         </Box>
         <Box marginTop={2}>

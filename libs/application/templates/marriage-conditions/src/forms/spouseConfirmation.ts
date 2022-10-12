@@ -28,6 +28,7 @@ import type { User } from '@island.is/api/domains/national-registry'
 import { UserProfile } from '../types/schema'
 import { removeCountryCode } from '../lib/utils'
 import { fakeDataSection } from './fakeDataSection'
+import { MaritalStatusApi } from '../dataProviders'
 
 export const spouseConfirmation = ({ allowFakeData = false }): Form =>
   buildForm({
@@ -93,8 +94,7 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
                 subTitle: m.dataCollectionBirthCertificateDescription,
               }),
               buildDataProviderItem({
-                id: 'maritalStatus',
-                type: 'NationalRegistryMaritalStatusProvider',
+                provider: MaritalStatusApi,
                 title: m.dataCollectionMaritalStatusTitle,
                 subTitle: m.dataCollectionMaritalStatusDescription,
               }),

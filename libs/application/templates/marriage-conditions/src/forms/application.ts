@@ -36,6 +36,7 @@ import {
 import { UserProfile } from '../types/schema'
 import { removeCountryCode } from '../lib/utils'
 import { fakeDataSection } from './fakeDataSection'
+import { MaritalStatusApi } from '../dataProviders'
 
 export const getApplication = ({ allowFakeData = false }): Form => {
   return buildForm({
@@ -91,8 +92,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                 subTitle: m.dataCollectionBirthCertificateDescription,
               }),
               buildDataProviderItem({
-                id: 'maritalStatus',
-                type: 'NationalRegistryMaritalStatusProvider',
+                provider: MaritalStatusApi,
                 title: m.dataCollectionMaritalStatusTitle,
                 subTitle: m.dataCollectionMaritalStatusDescription,
               }),
@@ -227,7 +227,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     defaultValue: (application: Application) => {
                       const nationalRegistry = application.externalData
                         .nationalRegistry.data as User
-                      return nationalRegistry.address.streetAddress
+                      return nationalRegistry.address?.streetAddress
                     },
                   }),
                   buildTextField({
