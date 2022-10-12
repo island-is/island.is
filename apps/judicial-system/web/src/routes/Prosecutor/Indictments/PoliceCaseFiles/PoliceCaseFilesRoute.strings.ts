@@ -15,7 +15,7 @@ export const policeCaseFiles = {
   policeCaseNumberSectionHeading: defineMessage({
     id:
       'judicial.system.core:police_case_files_route.police_case_number_section_heading',
-    defineMessage: 'Gögn úr LÖKE-máli {policeCaseNumber}',
+    defaultMessage: 'Gögn úr LÖKE-máli {policeCaseNumber}',
     description:
       'Notaður sem fyrirsögn fyrir hvert Löke númer á Málsgögn skrefi í ákærum.',
   }),
