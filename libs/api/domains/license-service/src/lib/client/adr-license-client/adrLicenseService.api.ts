@@ -24,6 +24,7 @@ import {
 import { format } from 'kennitala'
 import { handle404 } from '@island.is/clients/middlewares'
 import { Locale } from '@island.is/shared/types'
+import compareAsc from 'date-fns/compareAsc'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'adrlicense-service'
@@ -56,18 +57,16 @@ export class GenericAdrLicenseApi implements GenericLicenseClient<AdrDto> {
     }
     const payload = parseAdrLicensePayload(licenseData, locale, labels)
 
+    let pkpassStatus = GenericUserLicensePkPassStatus.Unknown
+
     if (payload) {
-      return {
-        status: GenericUserLicenseStatus.HasLicense,
-        payload,
-        pkpassStatus: GenericUserLicensePkPassStatus.Available,
-      }
+      pkpassStatus = GenericAdrLicenseApi.licenseIsValidForPkpass(licenseData)
     }
 
     return {
-      status: GenericUserLicenseStatus.NotAvailable,
+      status: GenericUserLicenseStatus.HasLicense,
       payload,
-      pkpassStatus: GenericUserLicensePkPassStatus.NotAvailable,
+      pkpassStatus,
     }
   }
 
@@ -91,6 +90,23 @@ export class GenericAdrLicenseApi implements GenericLicenseClient<AdrDto> {
     return {
       inputFieldValues: inputValues,
     }
+  }
+
+  static licenseIsValidForPkpass(
+    licenseInfo: AdrDto | null | undefined,
+  ): GenericUserLicensePkPassStatus {
+    if (!licenseInfo || !licenseInfo.gildirTil) {
+      return GenericUserLicensePkPassStatus.Unknown
+    }
+
+    const expired = new Date(licenseInfo.gildirTil)
+    const comparison = compareAsc(expired, new Date())
+
+    if (isNaN(comparison) || comparison < 0) {
+      return GenericUserLicensePkPassStatus.NotAvailable
+    }
+
+    return GenericUserLicensePkPassStatus.Available
   }
 
   async getPkPassUrl(user: User): Promise<string | null> {
