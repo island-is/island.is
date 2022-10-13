@@ -11,7 +11,7 @@ import { APP_INTERCEPTOR, ModuleRef, ContextIdFactory } from '@nestjs/core'
 import { GqlExecutionContext } from '@nestjs/graphql'
 import DataLoader from 'dataloader'
 import { Observable } from 'rxjs'
-import { GraphQLContext } from '@island.is/auth-nest-tools'
+import type { GraphQLContext } from '@island.is/auth-nest-tools'
 
 export { GraphQLContext }
 

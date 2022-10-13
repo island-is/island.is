@@ -11,7 +11,8 @@ import { Loader } from '@island.is/nest/dataloader'
 
 import { CustomDelegation, Domain } from '../models'
 import { ISLAND_DOMAIN } from '../services-v1/constants'
-import { DomainDataLoader, DomainLoader } from '../loaders/domain.loader'
+import { DomainLoader } from '../loaders/domain.loader'
+import type { DomainDataLoader } from '../loaders/domain.loader'
 
 @UseGuards(IdsUserGuard, FeatureFlagGuard)
 @Resolver(() => CustomDelegation)

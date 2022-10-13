@@ -4,7 +4,8 @@ import type { DelegationScopeDTO } from '@island.is/clients/auth-public-api'
 
 import { ApiScope, DelegationScope } from '../models'
 import { Loader } from '@island.is/nest/dataloader'
-import { ApiScopeDataLoader, ApiScopeLoader } from '../loaders/apiScope.loader'
+import { ApiScopeLoader } from '../loaders/apiScope.loader'
+import type { ApiScopeDataLoader } from '../loaders/apiScope.loader'
 
 @Resolver(() => DelegationScope)
 export class DelegationScopeResolver {
