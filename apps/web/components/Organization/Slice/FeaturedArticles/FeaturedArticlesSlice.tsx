@@ -2,6 +2,7 @@ import React from 'react'
 import { FeaturedArticles } from '@island.is/web/graphql/schema'
 import {
   Box,
+  BoxProps,
   Button,
   FocusableBox,
   Link,
@@ -42,15 +43,19 @@ export const FeaturedArticlesSlice: React.FC<SliceProps> = ({
           )
       : slice.resolvedArticles
 
+  const borderProps: BoxProps = slice.hasBorderAbove
+    ? {
+        borderTopWidth: 'standard',
+        borderColor: 'standard',
+        paddingTop: [8, 6, 8],
+        paddingBottom: [8, 6, 6],
+      }
+    : {}
+
   return (
     (!!slice.articles.length || !!slice.resolvedArticles.length) && (
       <section key={slice.id} id={slice.id} aria-labelledby={labelId}>
-        <Box
-          borderTopWidth="standard"
-          borderColor="standard"
-          paddingTop={[8, 6, 8]}
-          paddingBottom={[8, 6, 6]}
-        >
+        <Box {...borderProps}>
           <Text as="h2" variant="h3" paddingBottom={6} id={labelId}>
             {slice.title}
           </Text>

@@ -18,7 +18,7 @@ export const Total = ({ name, total, label, title }: PropTypes) => {
       <Input
         id={name}
         name={name}
-        value={formatNumber(total)}
+        value={total}
         label={label}
         readOnly
         ref={register}
