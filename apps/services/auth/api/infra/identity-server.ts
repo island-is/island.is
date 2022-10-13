@@ -110,12 +110,6 @@ export const serviceSetup = (services: {
         },
       },
     })
-    .volumes({
-      name: 'storage-test',
-      storage: '1Gi',
-      accessModes: 'ReadWrite',
-      mountPath: '/storage-test',
-    })
     .files({
       filename: 'ids-signing.pfx',
       env: 'IdentityServer__SigningCertificate__Path',
