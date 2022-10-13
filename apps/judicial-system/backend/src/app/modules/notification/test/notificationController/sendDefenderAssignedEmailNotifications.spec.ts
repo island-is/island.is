@@ -1,15 +1,16 @@
-import { NotificationType, User } from '@island.is/judicial-system/types'
-
-import { createTestingNotificationModule } from './createTestingNotificationModule'
-import { Case } from '../../case'
-import { SendNotificationResponse } from '../models/sendNotification.resopnse'
-import { SendNotificationDto } from '../dto/sendNotification.dto'
-import { EmailService } from '@island.is/email-service'
 import { uuid } from 'uuidv4'
-import { notificationModuleConfig } from '../notification.config'
+
 import { ConfigType } from '@island.is/nest/config'
+import { EmailService } from '@island.is/email-service'
+import { NotificationType, User } from '@island.is/judicial-system/types'
 import { DEFENDER_ROUTE } from '@island.is/judicial-system/consts'
-import { Notification } from '../models/notification.model'
+
+import { createTestingNotificationModule } from '../createTestingNotificationModule'
+import { Case } from '../../../case'
+import { SendNotificationResponse } from '../../models/sendNotification.resopnse'
+import { SendNotificationDto } from '../../dto/sendNotification.dto'
+import { notificationModuleConfig } from '../../notification.config'
+import { Notification } from '../../models/notification.model'
 
 jest.mock('../../../factories')
 
@@ -25,7 +26,7 @@ type GivenWhenThen = (
   notification: SendNotificationDto,
 ) => Promise<Then>
 
-describe('NotificationService - sendDefenderAssignedNotifications', () => {
+describe('NotificationController - Send defender assigned notifications', () => {
   let mockEmailService: EmailService
   let mockConfig: ConfigType<typeof notificationModuleConfig>
   let mockNotificationModel: typeof Notification
