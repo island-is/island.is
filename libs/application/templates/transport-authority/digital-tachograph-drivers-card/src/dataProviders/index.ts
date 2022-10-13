@@ -1,3 +1,6 @@
 export { NationalRegistryProvider } from '@island.is/application/data-providers'
 export { UserProfileProvider } from '@island.is/application/data-providers'
 export { LicenseCategoryProvider } from './LicenseCategoryProvider'
+export { QualityPhotoProvider } from './QualityPhotoProvider'
+export { QualitySignatureProvider } from './QualitySignatureProvider'
+export { NationalRegistryBirthplaceProvider } from './NationalRegistryBirthplaceProvider'
