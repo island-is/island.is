@@ -73,6 +73,7 @@ const GenericLicenseQuery = gql`
           id
         }
         pkpass
+        pkpassStatus
         timeout
         status
       }
@@ -346,6 +347,10 @@ const LicenseDetail: ServicePortalModuleComponent = () => {
   }
 
   const expired = genericLicense?.payload?.metadata.expired
+  console.log('expired', expired)
+  console.log('pkpass status', genericLicense?.license.pkpassStatus)
+  console.log('license status', genericLicense?.license.status)
+  console.log('licenseType', licenseType)
   return (
     <>
       <Box marginBottom={5}>
