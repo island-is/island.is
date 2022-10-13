@@ -184,7 +184,7 @@
     - [Procuring](libs/clients/rsk/procuring/README.md)
   - [Smart Solutions](libs/clients/smartsolutions/README.md)
   - [Syslumenn](libs/clients/syslumenn/README.md)
-  - [Taktikal Client](libs/clients/taktikal/README.md)
+  - [Taktikal](libs/clients/taktikal/README.md)
   - [User Profile](libs/clients/user-profile/README.md)
   - [Driving License](libs/clients/vehicles/README.md)
   - [VMST](libs/clients/vmst/README.md)

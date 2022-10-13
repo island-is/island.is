@@ -1,4 +1,4 @@
-# Taktikal Client
+# Taktikal
 
 ## About
 
