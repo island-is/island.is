@@ -17,7 +17,7 @@ import { SendNotificationDto } from './dto/sendNotification.dto'
 import { SendNotificationResponse } from './models/sendNotification.resopnse'
 import { NotificationService } from './notification.service'
 
-@UseGuards(TokenGuard)
+@UseGuards(TokenGuard, CaseExistsGuard)
 @Controller('api/internal/case/:caseId')
 @ApiTags('internal notifications')
 export class InternalNotificationController {
@@ -26,7 +26,6 @@ export class InternalNotificationController {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @UseGuards(CaseExistsGuard)
   @Post('notification')
   @ApiCreatedResponse({
     type: SendNotificationResponse,
