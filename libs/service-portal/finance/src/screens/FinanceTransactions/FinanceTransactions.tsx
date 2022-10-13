@@ -1,6 +1,7 @@
 import format from 'date-fns/format'
 import sub from 'date-fns/sub'
 import React, { useEffect, useState } from 'react'
+import cn from 'classnames'
 
 import { useLazyQuery, useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
@@ -42,6 +43,8 @@ import {
   CustomerRecords,
 } from './FinanceTransactionsData.types'
 
+const defaultCalState = { top: false, lower: false }
+
 const FinanceTransactions: ServicePortalModuleComponent = () => {
   useNamespaces('sp.finance-transactions')
   const { formatMessage } = useLocale()
@@ -49,8 +52,11 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
   const backInTheDay = sub(new Date(), {
     months: 3,
   })
-  const [fromDate, setFromDate] = useState<Date | null>()
-  const [toDate, setToDate] = useState<Date | null>()
+  const [openCal, setOpenCal] = useState<{ top: boolean; lower: boolean }>(
+    defaultCalState,
+  )
+  const [fromDate, setFromDate] = useState<Date>()
+  const [toDate, setToDate] = useState<Date>()
   const [q, setQ] = useState<string>('')
   const [chargeTypesEmpty, setChargeTypesEmpty] = useState(false)
   const [dropdownSelect, setDropdownSelect] = useState<string[] | undefined>()
@@ -95,14 +101,20 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
     setToDate(new Date())
   }, [])
 
+  function getAllChargeTypes() {
+    const allChargeTypeValues = chargeTypeData?.chargeType?.map((ct) => ct.id)
+    return allChargeTypeValues ?? []
+  }
+
   function setAllChargeTypes() {
-    setDropdownSelect([])
+    const allChargeTypes = getAllChargeTypes()
+    setDropdownSelect(allChargeTypes)
   }
 
   function clearAllFilters() {
-    setDropdownSelect([])
-    setFromDate(null)
-    setToDate(null)
+    setAllChargeTypes()
+    setFromDate(backInTheDay)
+    setToDate(new Date())
     setQ('')
   }
 
@@ -170,10 +182,11 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
                 labelClearAll={formatMessage(m.clearAllFilters)}
                 labelOpen={formatMessage(m.openFilter)}
                 labelClose={formatMessage(m.closeFilter)}
+                popoverFlip={false}
                 filterInput={
                   <FilterInput
                     placeholder={formatMessage(m.searchPlaceholder)}
-                    name="rafraen-skjol-input"
+                    name="finance-transaction-input"
                     value={q}
                     onChange={(e) => setQ(e)}
                     backgroundColor="blue"
@@ -223,7 +236,10 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
                         iconVariant="small"
                       >
                         <Box
-                          className={styles.accordionBox}
+                          className={cn(styles.accordionBox, {
+                            [styles.openCal]: openCal?.top,
+                            [styles.openLowerCal]: openCal?.lower,
+                          })}
                           display="flex"
                           flexDirection="column"
                         >
@@ -234,12 +250,24 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
                             backgroundColor="blue"
                             size="xs"
                             handleChange={(d) => setFromDate(d)}
+                            handleOpenCalendar={() =>
+                              setOpenCal({ top: true, lower: false })
+                            }
+                            handleCloseCalendar={() =>
+                              setOpenCal(defaultCalState)
+                            }
                             selected={fromDate}
                           />
                           <Box marginTop={3}>
                             <DatePicker
                               label={formatMessage(m.datepickerToLabel)}
                               placeholderText={formatMessage(m.datepickLabel)}
+                              handleOpenCalendar={() =>
+                                setOpenCal({ top: false, lower: true })
+                              }
+                              handleCloseCalendar={() =>
+                                setOpenCal(defaultCalState)
+                              }
                               locale="is"
                               backgroundColor="blue"
                               size="xs"

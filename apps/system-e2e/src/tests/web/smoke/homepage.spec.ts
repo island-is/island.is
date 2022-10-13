@@ -18,7 +18,7 @@ test.describe('Front page', () => {
   test.afterAll(async () => {
     await context.close()
   })
-  test('has expected sections', async () => {
+  test('has expected sections @lang:is', async () => {
     const page = await context.newPage()
     await page.goto('/')
     await expect(
@@ -29,68 +29,70 @@ test.describe('Front page', () => {
     await expect(page.locator('data-testid=home-news')).toBeVisible()
   })
 
-  test('should have life events', async () => {
-    const page = await context.newPage()
-    await page.goto('/')
-    const lifeEventsCards = page.locator('[data-testid="lifeevent-card"]')
+  for (const { lang, home } of [
+    { lang: 'is', home: '/' },
+    { lang: 'en', home: '/en' },
+  ]) {
+    test(`should have life event @lang:${lang}`, async () => {
+      const page = await context.newPage()
+      await page.goto(home)
+      const lifeEventsCards = page.locator('[data-testid="lifeevent-card"]')
 
-    await expect(lifeEventsCards).toHaveCountGreaterThan(3)
-    const lifeEventHandles = await lifeEventsCards.elementHandles()
-    const lifeEventUrls = await Promise.all(
-      lifeEventHandles.map((item) => item.getAttribute('href')),
-    )
-    await Promise.all(
-      lifeEventUrls.map(async (url) => {
+      await expect(lifeEventsCards).toHaveCountGreaterThan(3)
+      const lifeEventHandles = await lifeEventsCards.elementHandles()
+      const lifeEventUrls = await Promise.all(
+        lifeEventHandles.map((item) => item.getAttribute('href')),
+      )
+      for (const url of lifeEventUrls) {
         const page = await context.newPage()
-        const result = await page.goto(url!)
+        const result = await page.goto(url!, { waitUntil: 'networkidle' })
         expect(result!.status()).toBe(200)
         await page.close()
-      }),
-    )
-  })
-  test('should navigate to featured link', async () => {
-    const page = await context.newPage()
-    await page.goto('/')
-    const featuredLinks = page.locator('[data-testid="featured-link"]')
-    await expect(featuredLinks).toHaveCountGreaterThan(3)
-    const featuredLinksHandles = await featuredLinks.elementHandles()
-    const featuresLinksUrls = await Promise.all(
-      featuredLinksHandles.map((item) => item.getAttribute('href')),
-    )
-    await Promise.all(
-      featuresLinksUrls.map(async (url) => {
+      }
+    })
+    test(`should navigate to featured link @lang:${lang}`, async () => {
+      const page = await context.newPage()
+      await page.goto(home)
+      const featuredLinks = page.locator('[data-testid="featured-link"]')
+      await expect(featuredLinks).toHaveCountGreaterThan(3)
+      const featuredLinksHandles = await featuredLinks.elementHandles()
+      const featuresLinksUrls = await Promise.all(
+        featuredLinksHandles.map((item) => item.getAttribute('href')),
+      )
+      for (const url of featuresLinksUrls) {
         const page = await context.newPage()
-        const result = await page.goto(url!)
+        const result = await page.goto(url!, {
+          timeout: 10000,
+          waitUntil: 'networkidle',
+        })
         expect(result!.status()).toBe(200)
         await page.close()
-      }),
-    )
-  })
+      }
+    })
 
-  test('should have link on life events pages to navigate back to the main page', async ({
-    baseURL,
-  }) => {
-    const page = await context.newPage()
-    await page.goto('/')
-    const lifeEventsCards = page.locator('[data-testid="lifeevent-card"]')
-    const lifeEventHandles = await lifeEventsCards.elementHandles()
-    const lifeEventUrls = await Promise.all(
-      lifeEventHandles.map((item) => item.getAttribute('href')),
-    )
-    await Promise.all(
-      lifeEventUrls.map(async (url) => {
+    test(`should have link on life events pages to navigate back to the main page @lang:${lang}`, async ({
+      baseURL,
+    }) => {
+      const page = await context.newPage()
+      await page.goto(home)
+      const lifeEventsCards = page.locator('[data-testid="lifeevent-card"]')
+      const lifeEventHandles = await lifeEventsCards.elementHandles()
+      const lifeEventUrls = await Promise.all(
+        lifeEventHandles.map((item) => item.getAttribute('href')),
+      )
+      for (const url of lifeEventUrls) {
         const page = await context.newPage()
         const result = await page.goto(url!)
-        expect(result?.url()).not.toBe('/')
+        expect(result?.url()).not.toBe(home)
         await page.locator('[data-testid="link-back-home"]').click()
         await page.waitForLoadState('networkidle')
-        await expect(page).toHaveURL('/')
+        await expect(page).toHaveURL(home)
         await page.close()
-      }),
-    )
-  })
+      }
+    })
+  }
 
-  test('should change welcome message on language toggle', async () => {
+  test('should change welcome message on language toggle @lang:is', async () => {
     const page = await context.newPage()
     await page.goto('/')
     const homeHeading = page.locator('h1[data-testid="home-heading"]')
@@ -101,7 +103,7 @@ test.describe('Front page', () => {
     await expect(homeHeading).not.toHaveText(icelandicHeading!)
   })
 
-  test('should toggle mega-menu', async () => {
+  test('should toggle mega-menu @lang:is', async () => {
     const page = await context.newPage()
     await page.goto('/')
     await page

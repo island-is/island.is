@@ -98,14 +98,14 @@ export class VehiclesBasicInfo {
 
 @ObjectType()
 export class VehiclesRegistrationInfo {
-  @Field(() => String, { nullable: true })
-  firstRegistrationDate?: string | null
+  @Field(() => Date, { nullable: true })
+  firstRegistrationDate?: Date | null
 
-  @Field(() => String, { nullable: true })
-  preRegistrationDate?: string | null
+  @Field(() => Date, { nullable: true })
+  preRegistrationDate?: Date | null
 
-  @Field(() => String, { nullable: true })
-  newRegistrationDate?: string | null
+  @Field(() => Date, { nullable: true })
+  newRegistrationDate?: Date | null
 
   @Field(() => String, { nullable: true })
   specialName?: string | null
@@ -158,8 +158,8 @@ export class VehiclesCurrentOwnerInfo {
   @Field(() => String, { nullable: true })
   city?: string | null
 
-  @Field(() => String, { nullable: true })
-  dateOfPurchase?: string | null
+  @Field(() => Date, { nullable: true })
+  dateOfPurchase?: Date | null
 }
 
 @ObjectType()
@@ -167,17 +167,17 @@ export class VehiclesInspectionInfo {
   @Field(() => String, { nullable: true })
   type?: string | null
 
-  @Field(() => String, { nullable: true })
-  date?: string | null
+  @Field(() => Date, { nullable: true })
+  date?: Date | null
 
   @Field(() => String, { nullable: true })
   result?: string | null
 
-  @Field(() => String, { nullable: true })
-  nextInspectionDate?: string | null
+  @Field(() => Date, { nullable: true })
+  nextInspectionDate?: Date | null
 
-  @Field(() => String, { nullable: true })
-  lastInspectionDate?: string | null
+  @Field(() => Date, { nullable: true })
+  lastInspectionDate?: Date | null
 
   @Field(() => Boolean, { nullable: true })
   insuranceStatus?: boolean | null
@@ -248,8 +248,8 @@ export class VehiclesOwners {
   @Field(() => String, { nullable: true })
   address?: string | null
 
-  @Field(() => String, { nullable: true })
-  dateOfPurchase?: string | null
+  @Field(() => Date)
+  dateOfPurchase?: Date
 }
 
 @ObjectType()
@@ -268,11 +268,11 @@ export class VehiclesOperator {
   @Field(() => String, { nullable: true })
   city?: string | null
 
-  @Field(() => String, { nullable: true })
-  startDate?: string | null
+  @Field(() => Date, { nullable: true })
+  startDate?: Date | null
 
-  @Field(() => String, { nullable: true })
-  endDate?: string | null
+  @Field(() => Date, { nullable: true })
+  endDate?: Date | null
 }
 
 @ObjectType()
