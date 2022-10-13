@@ -1,4 +1,8 @@
-import { ApiHideProperty, ApiProperty } from '@nestjs/swagger'
+import {
+  ApiHideProperty,
+  ApiProperty,
+  ApiPropertyOptional,
+} from '@nestjs/swagger'
 
 import { ApiScopeGroup } from '../models/api-scope-group.model'
 import { ApiScope } from '../models/api-scope.model'
@@ -31,9 +35,9 @@ export class ApiScopeTreeDTO {
   @ApiHideProperty()
   order!: number
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description:
-      'List of scopes belonging to the group. When children are empty it represents a scope.',
+      'List of scopes belonging to the group. When children is undefined it represents a scope instead of a group.',
     isArray: true,
     type: ApiScopeTreeDTO,
     example: [
@@ -42,27 +46,24 @@ export class ApiScopeTreeDTO {
         displayName: 'Greiðsluáætlun',
         description: 'Aðgangur að greiðsluáætlunum.',
         domainName: '@island.is',
-        children: [],
       },
       {
         name: '@island.is/finances/overview',
         displayName: 'Yfirlit',
         description: 'Aðgangur að fjármála yfirliti.',
         domainName: '@island.is',
-        children: [],
       },
     ],
   })
-  children!: ApiScopeTreeDTO[]
+  children?: ApiScopeTreeDTO[]
 
-  static fromModel(model: ApiScope | ApiScopeGroup) {
+  static fromModel(model: ApiScope | ApiScopeGroup): ApiScopeTreeDTO {
     return {
       name: model.name,
       displayName: model.displayName,
       description: model.description,
       domainName: '', //model.domainName,
       order: model.order,
-      children: [],
     }
   }
 }

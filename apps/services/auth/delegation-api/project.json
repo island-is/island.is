@@ -46,7 +46,15 @@
         "jestConfig": "apps/services/auth/delegation-api/jest.config.js",
         "passWithNoTests": true
       }
-    }
+    },
+    "schemas/build-openapi": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "outputPath": "apps/services/auth/delegation-api/src/openapi.yaml",
+        "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/auth/delegation-api/tsconfig.app.json apps/services/auth/delegation-api/src/buildOpenApi.ts"
+      }
+    },
+    "docker-express": {}
   },
   "tags": []
 }

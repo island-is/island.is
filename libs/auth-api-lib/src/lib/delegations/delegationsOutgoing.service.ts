@@ -25,7 +25,7 @@ import {
 } from './utils/scopes'
 
 @Injectable()
-export class OutgoingDelegationsService {
+export class DelegationsOutgoingService {
   constructor(
     @InjectModel(Delegation)
     private delegationModel: typeof Delegation,
@@ -41,8 +41,8 @@ export class OutgoingDelegationsService {
     const delegations = await this.delegationModel.findAll({
       where: {
         fromNationalId: user.nationalId,
-        toNationalId: otherUser ? otherUser : undefined,
-        domain: domain ? domain : undefined,
+        ...(otherUser ? { toNationalId: otherUser } : {}),
+        //domain,
       },
       include: [
         {
@@ -182,9 +182,9 @@ export class OutgoingDelegationsService {
       patchedDelegation.deleteScopes &&
       patchedDelegation.deleteScopes.length > 0
     ) {
-      this.delegationScopeService.delete(
+      await this.delegationScopeService.delete(
         delegationId,
-        patchedDelegation.deleteScopes?.map((s) => s.name),
+        patchedDelegation.deleteScopes,
       )
     }
 
@@ -192,7 +192,7 @@ export class OutgoingDelegationsService {
       patchedDelegation.updateScopes &&
       patchedDelegation.updateScopes.length > 0
     ) {
-      this.delegationScopeService.createOrUpdate(
+      await this.delegationScopeService.createOrUpdate(
         delegationId,
         patchedDelegation.updateScopes,
       )

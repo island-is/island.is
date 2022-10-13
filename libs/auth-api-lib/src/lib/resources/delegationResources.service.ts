@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { ApiScopeTreeDTO } from './dto/api-scope-tree.dto'
 
+import { ApiScopeTreeDTO } from './dto/api-scope-tree.dto'
 import { ApiScopeGroup } from './models/api-scope-group.model'
 import { ApiScope } from './models/api-scope.model'
 
 @Injectable()
-export class DelegationResources {
+export class DelegationResourcesService {
   constructor(
     @InjectModel(ApiScope)
     private apiScopeModel: typeof ApiScope,
@@ -30,14 +30,17 @@ export class DelegationResources {
     for (const scope of scopes) {
       if (scope.group) {
         if (!scopeTree[scope.group.name]) {
-          scopeTree[scope.group.name] = ApiScopeTreeDTO.fromModel(scope.group)
-
-          scopeTree[scope.group.name].children.push(
-            ApiScopeTreeDTO.fromModel(scope),
-          )
-        } else {
-          scopeTree[scope.name] = ApiScopeTreeDTO.fromModel(scope)
+          scopeTree[scope.group.name] = {
+            ...ApiScopeTreeDTO.fromModel(scope.group),
+            children: [],
+          }
         }
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        scopeTree[scope.group.name].children!.push(
+          ApiScopeTreeDTO.fromModel(scope),
+        )
+      } else {
+        scopeTree[scope.name] = ApiScopeTreeDTO.fromModel(scope)
       }
     }
 

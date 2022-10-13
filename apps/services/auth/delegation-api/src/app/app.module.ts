@@ -6,10 +6,17 @@ import {
   SequelizeConfigService,
 } from '@island.is/auth-api-lib'
 import { AuthModule } from '@island.is/auth-nest-tools'
+import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
+import { RskProcuringClientConfig } from '@island.is/clients/rsk/procuring'
 import { AuditModule } from '@island.is/nest/audit'
-import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
+import {
+  ConfigModule,
+  IdsClientConfig,
+  XRoadConfig,
+} from '@island.is/nest/config'
 import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 
+import { environment } from '../environments'
 import { DelegationsModule } from './delegations/delegations.module'
 import { DomainsModule } from './domains/domains.module'
 
@@ -20,12 +27,12 @@ import { DomainsModule } from './domains/domains.module'
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
     }),
+
     DelegationsModule,
     DomainsModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
-        CompanyRegistryConfig,
         DelegationConfig,
         FeatureFlagConfig,
         IdsClientConfig,

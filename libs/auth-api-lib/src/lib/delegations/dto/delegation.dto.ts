@@ -86,7 +86,6 @@ export class PatchDelegationDTO {
 
   @ApiPropertyOptional({
     description: 'List of scopes to be removed from a delegation.',
-    type: [UpdateDelegationScopeDTO],
   })
   @IsOptional()
   @IsArray()

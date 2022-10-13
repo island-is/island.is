@@ -1,6 +1,8 @@
+import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Domain } from './models/domain.model'
 
+@Injectable()
 export class DelegationDomainsService {
   constructor(
     @InjectModel(Domain)

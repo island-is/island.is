@@ -15,7 +15,7 @@ import { DelegationsService } from './delegations.service'
 import { DelegationScopeService } from './delegationScope.service'
 import { DelegationScope } from './models/delegation-scope.model'
 import { Delegation } from './models/delegation.model'
-import { OutgoingDelegationsService } from './outgoingDelegations.service'
+import { DelegationsOutgoingService } from './delegationsOutgoing.service'
 
 @Module({
   imports: [
@@ -35,12 +35,12 @@ import { OutgoingDelegationsService } from './outgoingDelegations.service'
   ],
   providers: [
     DelegationsService,
-    OutgoingDelegationsService,
+    DelegationsOutgoingService,
     DelegationScopeService,
   ],
   exports: [
     DelegationsService,
-    OutgoingDelegationsService,
+    DelegationsOutgoingService,
     DelegationScopeService,
   ],
 })

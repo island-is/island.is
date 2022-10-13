@@ -22,6 +22,7 @@ export const buildOpenApi = async ({
     const app = await NestFactory.create(InfraModule.forRoot({ appModule }), {
       logger: LoggingModule.createLogger(),
     })
+    app.enableVersioning()
     const document = SwaggerModule.createDocument(app, openApi)
 
     writeFileSync(path, yaml.dump(document, { noRefs: true }))

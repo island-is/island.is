@@ -22,6 +22,8 @@ import { PersonalRepresentativeScopePermission } from '../personal-representativ
 import { PersonalRepresentative } from '../personal-representative/models/personal-representative.model'
 import { PersonalRepresentativeRight } from '../personal-representative/models/personal-representative-right.model'
 import { PersonalRepresentativeRightType } from '../personal-representative/models/personal-representative-right-type.model'
+import { DelegationResourcesService } from './delegationResources.service'
+import { DelegationDomainsService } from './delegationDomains.service'
 
 @Module({
   imports: [
@@ -47,7 +49,17 @@ import { PersonalRepresentativeRightType } from '../personal-representative/mode
       PersonalRepresentative,
     ]),
   ],
-  providers: [ResourcesService, ResourceAccessService],
-  exports: [ResourcesService, ResourceAccessService],
+  providers: [
+    ResourcesService,
+    ResourceAccessService,
+    DelegationResourcesService,
+    DelegationDomainsService,
+  ],
+  exports: [
+    ResourcesService,
+    ResourceAccessService,
+    DelegationResourcesService,
+    DelegationDomainsService,
+  ],
 })
 export class ResourcesModule {}

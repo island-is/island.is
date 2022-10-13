@@ -17,7 +17,7 @@ import {
   DelegationDirection,
   DelegationDTO,
   DelegationValidity,
-  OutgoingDelegationsService,
+  DelegationsOutgoingService,
   PatchDelegationDTO,
 } from '@island.is/auth-api-lib'
 import {
@@ -40,8 +40,7 @@ import { isDefined } from '@island.is/shared/utils'
 const namespace = '@island.is/auth/delegation-api/me/delegations'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
-@FeatureFlag(Features.outgoingDelegationsV2)
-@ApiTags('meDelegations')
+@ApiTags('me/delegations')
 @Controller({
   path: 'me/delegations',
   version: ['1'],
@@ -49,12 +48,13 @@ const namespace = '@island.is/auth/delegation-api/me/delegations'
 @Audit({ namespace })
 export class MeDelegationsController {
   constructor(
-    private readonly delegationsService: OutgoingDelegationsService,
+    private readonly delegationsOutgoingService: DelegationsOutgoingService,
     private readonly auditService: AuditService,
   ) {}
 
   @Get()
   @Scopes(AuthScope.delegations)
+  @FeatureFlag(Features.outgoingDelegationsV2)
   @Documentation({
     response: { status: 200, type: [DelegationDTO] },
     request: {
@@ -65,8 +65,9 @@ export class MeDelegationsController {
           type: 'string',
         },
         direction: {
-          description: 'The direction of the delegation.',
-          required: true,
+          description:
+            'The direction of the delegation. Defaults to outgoing if not provided.',
+          required: false,
           schema: {
             enum: [DelegationDirection.OUTGOING, DelegationDirection.INCOMING],
             default: DelegationDirection.OUTGOING,
@@ -80,6 +81,15 @@ export class MeDelegationsController {
             default: DelegationValidity.ALL,
           },
         },
+        otherUser: {
+          description:
+            'The identifier of the other user in the delegation. If the direction=outgoing, this is the user the delegation is to. If the direction=incoming, this is the user the delegation is from.',
+          required: false,
+          schema: {
+            type: 'string',
+            pattern: '^d{12}$',
+          },
+        },
       },
     },
   })
@@ -90,7 +100,8 @@ export class MeDelegationsController {
   async findAll(
     @CurrentUser() user: User,
     @Query('domain') domain: string,
-    @Query('direction') direction: DelegationDirection,
+    @Query('direction')
+    direction: DelegationDirection = DelegationDirection.OUTGOING,
     @Query('validity') validity: DelegationValidity = DelegationValidity.ALL,
     @Query('otherUser') otherUser: string,
   ): Promise<DelegationDTO[]> {
@@ -99,18 +110,25 @@ export class MeDelegationsController {
         'direction=outgoing is currently the only supported value',
       )
     }
-    return this.delegationsService.findAll(user, validity, domain, otherUser)
+    return this.delegationsOutgoingService.findAll(
+      user,
+      validity,
+      domain,
+      otherUser,
+    )
   }
 
   @Get(':delegationId')
   @Scopes(AuthScope.delegations)
+  @FeatureFlag(Features.outgoingDelegationsV2)
   @Documentation({
     response: { status: 200, type: DelegationDTO },
     request: {
       params: {
-        id: {
+        delegationId: {
           required: true,
           type: 'string',
+          format: 'uuid',
           description: 'The id of the delegation.',
         },
       },
@@ -123,11 +141,12 @@ export class MeDelegationsController {
     @CurrentUser() user: User,
     @Param('delegationId') delegationId: string,
   ): Promise<DelegationDTO | null> {
-    return this.delegationsService.findById(user, delegationId)
+    return this.delegationsOutgoingService.findById(user, delegationId)
   }
 
   @Post()
   @Scopes(AuthScope.delegations)
+  @FeatureFlag(Features.outgoingDelegationsV2)
   @Documentation({
     response: { status: 201, type: DelegationDTO },
   })
@@ -144,11 +163,12 @@ export class MeDelegationsController {
     @CurrentUser() user: User,
     @Body() createDelegation: CreateDelegationDTO,
   ): Promise<DelegationDTO> {
-    return this.delegationsService.create(user, createDelegation)
+    return this.delegationsOutgoingService.create(user, createDelegation)
   }
 
   @Patch(':delegationId')
   @Scopes(AuthScope.delegations)
+  @FeatureFlag(Features.outgoingDelegationsV2)
   @Documentation({
     response: { status: 200, type: DelegationDTO },
   })
@@ -160,7 +180,7 @@ export class MeDelegationsController {
     @Param('delegationId') delegationId: string,
     @Body() patchDelegation: PatchDelegationDTO,
   ): Promise<DelegationDTO | null> {
-    const currentDelegation = await this.delegationsService.findById(
+    const currentDelegation = await this.delegationsOutgoingService.findById(
       user,
       delegationId,
     )
@@ -180,12 +200,17 @@ export class MeDelegationsController {
           scopes: delegation?.scopes?.map((s) => s.scopeName),
         }),
       },
-      this.delegationsService.patch(user, delegationId, patchDelegation),
+      this.delegationsOutgoingService.patch(
+        user,
+        delegationId,
+        patchDelegation,
+      ),
     )
   }
 
   @Delete(':delegationId')
   @Scopes(AuthScope.delegations)
+  @FeatureFlag(Features.outgoingDelegationsV2)
   @Documentation({
     response: { status: 204 },
   })
@@ -203,7 +228,7 @@ export class MeDelegationsController {
           deleted,
         }),
       },
-      this.delegationsService.delete(user, delegationId),
+      this.delegationsOutgoingService.delete(user, delegationId),
     )
   }
 }
