@@ -1,22 +1,15 @@
-import { NationalRegistryPerson } from '../types/schema'
+import { NationalRegistryUser } from '../types/schema'
 import {
   BasicDataProvider,
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
-  Application,
 } from '@island.is/application/types'
-import { m } from '../lib/messages'
 import { GET_BIRTHPLACE } from '../graphql/queries'
-
-export interface BirthplaceProvider {
-  location: string | null | undefined
-  municipalityCode: string | null | undefined
-}
 
 export class NationalRegistryBirthplaceProvider extends BasicDataProvider {
   type = 'NationalRegistryBirthplaceProvider'
 
-  async provide(): Promise<BirthplaceProvider> {
+  async provide(): Promise<NationalRegistryUser> {
     return this.useGraphqlGateway(GET_BIRTHPLACE)
       .then(async (res: Response) => {
         const response = await res.json()
@@ -30,13 +23,7 @@ export class NationalRegistryBirthplaceProvider extends BasicDataProvider {
           })
         }
 
-        const nationalRegistryUser: NationalRegistryPerson =
-          response.data.nationalRegistryUserV2
-
-        return Promise.resolve({
-          location: nationalRegistryUser?.birthplace?.location,
-          municipalityCode: nationalRegistryUser?.birthplace?.municipalityCode,
-        })
+        return Promise.resolve(response.data.nationalRegistryUser)
       })
       .catch(() => {
         return Promise.reject({})

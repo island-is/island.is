@@ -10,12 +10,8 @@ export const GET_LICENSE_CATEGORIES = `
 
 export const GET_BIRTHPLACE = `
   query NationalRegistryUserQuery {
-    nationalRegistryUserV2 {
-      birthplace {
-        location
-        municipalityCode
-        dateOfBirth
-      }
+    nationalRegistryUser {
+      birthPlace
     }
   }
 `
