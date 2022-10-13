@@ -1,5 +1,5 @@
 import gql from 'graphql-tag'
-import { slices } from './fragments'
+import { nestedAccordionAndFaqListFields, slices } from './fragments'
 
 export const GET_ARTICLE_QUERY = gql`
   query GetSingleArticle($input: GetSingleArticleInput!) {
@@ -27,6 +27,7 @@ export const GET_ARTICLE_QUERY = gql`
       }
       body {
         ...AllSlices
+        ${nestedAccordionAndFaqListFields}
       }
       stepper {
         id
@@ -120,6 +121,7 @@ export const GET_ARTICLE_QUERY = gql`
         slug
         body {
           ...AllSlices
+          ${nestedAccordionAndFaqListFields}
         }
         showTableOfContents
       }
