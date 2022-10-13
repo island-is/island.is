@@ -1,6 +1,12 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useIntl } from 'react-intl'
-import { Reorder, useDragControls, useMotionValue } from 'framer-motion'
+import {
+  animate,
+  MotionValue,
+  Reorder,
+  useDragControls,
+  useMotionValue,
+} from 'framer-motion'
 
 import { AccordionItem, Text, Box, Icon } from '@island.is/island-ui/core'
 import { CaseFile as TCaseFile } from '@island.is/judicial-system/types'
@@ -18,16 +24,45 @@ interface CaseFileProps {
   caseFile: [string, boolean, boolean]
 }
 
+const inactiveShadow = '0px 0px 0px rgba(0,0,0,0.8)'
+
+export function useRaisedShadow(value: MotionValue<number>) {
+  const boxShadow = useMotionValue(inactiveShadow)
+
+  useEffect(() => {
+    let isActive = false
+    value.onChange((latest) => {
+      const wasActive = isActive
+      if (latest !== 0) {
+        isActive = true
+        if (isActive !== wasActive) {
+          animate(boxShadow, '5px 5px 10px rgba(0,0,0,0.3)')
+        }
+      } else {
+        isActive = false
+        if (isActive !== wasActive) {
+          animate(boxShadow, inactiveShadow)
+        }
+      }
+    })
+  }, [value, boxShadow])
+
+  return boxShadow
+}
+
 const CaseFile: React.FC<CaseFileProps> = (props) => {
   const { caseFile } = props
   const y = useMotionValue(0)
+  const boxShadow = useRaisedShadow(y)
   const controls = useDragControls()
+  const [isDragging, setIsDragging] = useState(false)
 
   return (
     <Reorder.Item
       value={caseFile}
       id={caseFile[0]}
-      style={{ y }}
+      style={{ y, boxShadow, userSelect: isDragging ? 'none' : 'auto' }}
+      className={styles.reorderItem}
       dragListener={false}
       dragControls={controls}
     >
@@ -39,7 +74,7 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
           <Text variant="h4">{caseFile[0]}</Text>
         </Box>
       ) : caseFile[2] === true ? (
-        <Box marginBottom={2} style={{ zIndex: 100 }}>
+        <Box marginBottom={2}>
           <Box marginBottom={1}>
             <Text variant="h4">{caseFile[0].split('|')[0]}</Text>
           </Box>
@@ -52,13 +87,15 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
           alignItems="center"
           background="blue100"
           padding={2}
-          borderRadius="large"
         >
           <Box display="flex" alignItems="center">
             <Box
               display="flex"
               marginRight={3}
-              onPointerDown={(e) => controls.start(e)}
+              onPointerDown={(e) => {
+                setIsDragging(true)
+                controls.start(e)
+              }}
             >
               <Icon icon="menu" color="blue400" />
             </Box>
@@ -101,8 +138,6 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
     }),
   ])
 
-  console.log(items)
-
   return (
     <AccordionItem
       id="IndictmentsCaseFilesAccordionItem"
@@ -119,7 +154,12 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
           <Box marginBottom={3}>
             <Text>{formatMessage(m.explanation)}</Text>
           </Box>
-          <Reorder.Group axis="y" values={items} onReorder={setItems}>
+          <Reorder.Group
+            axis="y"
+            values={items}
+            onReorder={setItems}
+            className={styles.reorderGroup}
+          >
             {items.map((item, index) => (
               <Box
                 key={`${item[0]}-${policeCaseNumber}`}
@@ -128,12 +168,6 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
                 <CaseFile caseFile={item} />
               </Box>
             ))}
-            {/* <Box marginBottom={2}>
-              <Box marginBottom={1}>
-                <Text variant="h4">{formatMessage(m.unorderedFilesTitle)}</Text>
-              </Box>
-              <Text>{formatMessage(m.unorderedFilesExplanation)}</Text>
-            </Box> */}
           </Reorder.Group>
         </>
       )}
