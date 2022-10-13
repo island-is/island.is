@@ -422,6 +422,7 @@ export const slices = gql`
     content {
       ...HtmlFields
       ...AssetFields
+      ...ImageFields
     }
     dividerOnTop
     showTitle
@@ -438,6 +439,7 @@ export const slices = gql`
       content {
         ...HtmlFields
         ...AssetFields
+        ...ImageFields
       }
       link {
         url
