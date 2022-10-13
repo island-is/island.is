@@ -94,7 +94,17 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
     })
   }
 
-  const [items, setItems] = useState<TCaseFile[]>(caseFiles)
+  const [items, setItems] = useState<[string, boolean][]>([
+    [formatMessage(m.chapterIndictmentAndAccompanyingDocuments), true],
+    [formatMessage(m.chapterInvesitgationProcess), true],
+    [formatMessage(m.chapterWitnesses), true],
+    [formatMessage(m.chapterDefendant), true],
+    [formatMessage(m.chapterCaseFiles), true],
+    [formatMessage(m.chapterElectronicDocuments), true],
+    // caseFiles.map((caseFile) => caseFile.name)),
+  ])
+
+  console.log(items)
 
   return (
     <AccordionItem
@@ -118,12 +128,6 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
             onReorder={setItems}
           >
             {renderChapters()}
-            <Box marginBottom={2}>
-              <Box marginBottom={1}>
-                <Text variant="h4">{formatMessage(m.unorderedFilesTitle)}</Text>
-              </Box>
-              <Text>{formatMessage(m.unorderedFilesExplanation)}</Text>
-            </Box>
             {items.map((item, index) => (
               <Box
                 key={item.id}
@@ -133,6 +137,12 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
               </Box>
             ))}
           </Reorder.Group>
+          <Box marginBottom={2}>
+            <Box marginBottom={1}>
+              <Text variant="h4">{formatMessage(m.unorderedFilesTitle)}</Text>
+            </Box>
+            <Text>{formatMessage(m.unorderedFilesExplanation)}</Text>
+          </Box>
         </>
       )}
     </AccordionItem>
