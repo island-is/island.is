@@ -1,5 +1,4 @@
 import { Op } from 'sequelize'
-import CryptoJS from 'crypto-js'
 import { Includeable, OrderItem, Transaction } from 'sequelize/types'
 import { Sequelize } from 'sequelize-typescript'
 import { Attachment } from 'nodemailer/lib/mailer'
@@ -35,7 +34,7 @@ import {
 import type { User as TUser } from '@island.is/judicial-system/types'
 import { caseTypes } from '@island.is/judicial-system/formatters'
 
-import { nowFactory, uuidFactory } from '../../factories'
+import { nowFactory } from '../../factories'
 import {
   getRequestPdfAsBuffer,
   getRulingPdfAsString,
@@ -55,72 +54,16 @@ import { Institution } from '../institution'
 import { User } from '../user'
 import { AwsS3Service } from '../aws-s3'
 import { CourtDocumentFolder, CourtService } from '../court'
-import { CaseEvent, EventService } from '../event'
+import { EventService } from '../event'
 import { PoliceService } from '../police'
 import { CreateCaseDto } from './dto/createCase.dto'
 import { UpdateCaseDto } from './dto/updateCase.dto'
-import { getCasesQueryFilter, oldFilter } from './filters/case.filters'
+import { getCasesQueryFilter } from './filters/case.filters'
 import { Case } from './models/case.model'
-import { CaseArchive } from './models/caseArchive.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
-import { ArchiveResponse } from './models/archive.response'
 import { DeliverResponse } from './models/deliver.response'
 import { DeliverProsecutorDocumentsResponse } from './models/deliverProsecutorDocuments.response'
 import { caseModuleConfig } from './case.config'
-
-const caseEncryptionProperties: (keyof Case)[] = [
-  'description',
-  'demands',
-  'lawsBroken',
-  'legalBasis',
-  'requestedOtherRestrictions',
-  'caseFacts',
-  'legalArguments',
-  'prosecutorOnlySessionRequest',
-  'comments',
-  'caseFilesComments',
-  'courtAttendees',
-  'prosecutorDemands',
-  'courtDocuments',
-  'sessionBookings',
-  'courtCaseFacts',
-  'introduction',
-  'courtLegalArguments',
-  'ruling',
-  'conclusion',
-  'endOfSessionBookings',
-  'accusedAppealAnnouncement',
-  'prosecutorAppealAnnouncement',
-  'caseModifiedExplanation',
-  'caseResentExplanation',
-]
-
-const defendantEncryptionProperties: (keyof Defendant)[] = [
-  'nationalId',
-  'name',
-  'address',
-]
-
-const caseFileEncryptionProperties: (keyof CaseFile)[] = ['name', 'key']
-
-function collectEncryptionProperties(
-  properties: string[],
-  unknownSource: unknown,
-): [{ [key: string]: string | null }, { [key: string]: unknown }] {
-  const source = unknownSource as { [key: string]: unknown }
-  return properties.reduce<
-    [{ [key: string]: string | null }, { [key: string]: unknown }]
-  >(
-    (data, property) => [
-      {
-        ...data[0],
-        [property]: typeof source[property] === 'string' ? '' : null,
-      },
-      { ...data[1], [property]: source[property] },
-    ],
-    [{}, {}],
-  )
-}
 
 const includes: Includeable[] = [
   { model: Defendant, as: 'defendants' },
@@ -174,8 +117,6 @@ export class CaseService {
   constructor(
     @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(Case) private readonly caseModel: typeof Case,
-    @InjectModel(CaseArchive)
-    private readonly caseArchiveModel: typeof CaseArchive,
     @Inject(caseModuleConfig.KEY)
     private readonly config: ConfigType<typeof caseModuleConfig>,
     private readonly defendantService: DefendantService,
@@ -1044,93 +985,6 @@ export class CaseService {
     this.addCaseConnectedToCourtCaseMessageToQueue(updatedCase.id)
 
     return updatedCase
-  }
-
-  async archive(): Promise<ArchiveResponse> {
-    const theCase = await this.caseModel.findOne({
-      include: includes,
-      order: [
-        defendantsOrder,
-        [{ model: CaseFile, as: 'caseFiles' }, 'created', 'ASC'],
-      ],
-      where: {
-        isArchived: false,
-        [Op.or]: [{ state: CaseState.DELETED }, oldFilter],
-      },
-    })
-
-    if (!theCase) {
-      return { caseArchived: false }
-    }
-
-    await this.sequelize.transaction(async (transaction) => {
-      const [clearedCaseProperties, caseArchive] = collectEncryptionProperties(
-        caseEncryptionProperties,
-        theCase,
-      )
-
-      const defendantsArchive = []
-      for (const defendant of theCase.defendants ?? []) {
-        const [
-          clearedDefendantProperties,
-          defendantArchive,
-        ] = collectEncryptionProperties(
-          defendantEncryptionProperties,
-          defendant,
-        )
-        defendantsArchive.push(defendantArchive)
-
-        await this.defendantService.update(
-          theCase.id,
-          defendant.id,
-          clearedDefendantProperties,
-          transaction,
-        )
-      }
-
-      const caseFilesArchive = []
-      for (const caseFile of theCase.caseFiles ?? []) {
-        const [
-          clearedCaseFileProperties,
-          caseFileArchive,
-        ] = collectEncryptionProperties(caseFileEncryptionProperties, caseFile)
-        caseFilesArchive.push(caseFileArchive)
-
-        await this.fileService.updateCaseFile(
-          theCase.id,
-          caseFile.id,
-          clearedCaseFileProperties,
-          transaction,
-        )
-      }
-
-      await this.caseArchiveModel.create(
-        {
-          caseId: theCase.id,
-          archive: CryptoJS.AES.encrypt(
-            JSON.stringify({
-              ...caseArchive,
-              defendants: defendantsArchive,
-              caseFiles: caseFilesArchive,
-            }),
-            this.config.archiveEncryptionKey,
-            { iv: CryptoJS.enc.Hex.parse(uuidFactory()) },
-          ).toString(),
-        },
-        { transaction },
-      )
-
-      await this.update(
-        theCase.id,
-        { ...clearedCaseProperties, isArchived: true } as UpdateCaseDto,
-        false,
-        transaction,
-      )
-    })
-
-    this.eventService.postEvent(CaseEvent.ARCHIVE, theCase)
-
-    return { caseArchived: true }
   }
 
   async deliver(theCase: Case): Promise<DeliverResponse> {

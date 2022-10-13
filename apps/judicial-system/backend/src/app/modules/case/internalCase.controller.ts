@@ -55,7 +55,7 @@ export class InternalCaseController {
   archive(): Promise<ArchiveResponse> {
     this.logger.debug('Archiving a case')
 
-    return this.caseService.archive()
+    return this.internalCaseService.archive()
   }
 
   @UseGuards(CaseExistsGuard, CaseCompletedGuard)
