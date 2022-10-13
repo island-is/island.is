@@ -92,18 +92,18 @@ export const m = defineMessages({
     defaultMessage: ' ',
     description: '',
   },
-  licenseCategoryProviderTitle: {
-    id: 'ta.dtdc.application:infoFromLicenseRegistryTitle',
+  drivingLicenseProviderTitle: {
+    id: 'ta.dtdc.application:drivingLicenseProviderTitle',
     defaultMessage: 'Upplýsingar úr ökuskírteinaskrá',
     description: 'Information from driving license registry',
   },
-  licenseCategoryProviderSubTitle: {
-    id: 'ta.dtdc.application:infoFromLicenseRegistrySubTitle',
+  drivingLicenseProviderSubTitle: {
+    id: 'ta.dtdc.application:drivingLicenseProviderSubTitle',
     defaultMessage: 'Sóttar eru almennar upplýsingar um núverandi réttindi.',
     description: 'General information about current licenses.',
   },
-  licenseCategoryProviderErrorMissing: {
-    id: 'ta.dtdc.application:licenseCategoryErrorMissing',
+  drivingLicenseProviderErrorMissing: {
+    id: 'ta.dtdc.application:drivingLicenseErrorMissing',
     defaultMessage:
       'Þú ert ekki með nauðsynleg réttindi til að sækja um blabla',
     description: 'You do not have enough permission to apply blabla',

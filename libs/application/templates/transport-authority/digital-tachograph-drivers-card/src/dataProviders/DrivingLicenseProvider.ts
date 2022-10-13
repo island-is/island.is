@@ -5,15 +5,15 @@ import {
   StaticText,
 } from '@island.is/application/types'
 import { DrivingLicense } from '../types/schema'
-import { GET_LICENSE_CATEGORIES } from '../graphql/queries'
+import { GET_DRIVING_LICENSE } from '../graphql/queries'
 import * as Sentry from '@sentry/react'
 import { m } from '../lib/messages'
 
-export class LicenseCategoryProvider extends BasicDataProvider {
-  type = 'LicenseCategoryProvider'
+export class DrivingLicenseProvider extends BasicDataProvider {
+  type = 'DrivingLicenseProvider'
 
-  async provide(): Promise<string[] | undefined> {
-    return this.useGraphqlGateway(GET_LICENSE_CATEGORIES).then(
+  async provide(): Promise<DrivingLicense | null> {
+    return this.useGraphqlGateway(GET_DRIVING_LICENSE).then(
       async (res: Response) => {
         const response = await res.json()
 
@@ -25,17 +25,22 @@ export class LicenseCategoryProvider extends BasicDataProvider {
           drivingLicense: DrivingLicense | null
         }
 
-        const result = data?.drivingLicense?.categories?.map((x) => x.name)
+        const licenseCategories = data?.drivingLicense?.categories?.map(
+          (x) => x.name,
+        )
 
         // Validate that user has the necessary categories
-        const validCategories = ['C', 'C1', 'D', 'D1']
-        if (!result || !result.some((x) => validCategories.includes(x))) {
+        const validCategories = ['C', 'C1', 'D', 'D1', 'B'] //TODOx remove B
+        if (
+          !licenseCategories ||
+          !licenseCategories.some((x) => validCategories.includes(x))
+        ) {
           return Promise.reject({
-            reason: m.licenseCategoryProviderErrorMissing.defaultMessage,
+            reason: m.drivingLicenseProviderErrorMissing.defaultMessage,
           })
         }
 
-        return Promise.resolve(result)
+        return Promise.resolve(data?.drivingLicense)
       },
     )
     // .catch((error) => {

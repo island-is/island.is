@@ -77,6 +77,7 @@ export class DrivingLicenseApi {
           expires: rettindi.gildirTil ?? null,
           comments: rettindi.aths ?? '',
         })) ?? [],
+      birthCountry: skirteini.faedingarStadurHeiti,
     }
   }
 
