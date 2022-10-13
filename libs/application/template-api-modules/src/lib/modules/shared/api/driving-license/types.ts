@@ -17,3 +17,8 @@ export interface DrivingLicenseFakeData {
   currentLicense?: FakeCurrentLicense
   healthRemarks?: YesOrNo
 }
+
+export type DrivingLicense = {
+  currentLicense: string | null
+  healthRemarks?: string[]
+}

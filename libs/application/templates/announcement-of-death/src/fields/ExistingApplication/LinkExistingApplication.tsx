@@ -8,6 +8,7 @@ import {
   Application,
   ApplicationStatus,
   ApplicationTypes,
+  ExistingApplicationApi,
 } from '@island.is/application/types'
 import { ApplicationList } from '@island.is/application/ui-components'
 import { m } from '../../lib/messages'
@@ -57,7 +58,12 @@ export const LinkExistingApplication: FC<FieldBaseProps> = ({
             id: application.id,
             answers: {
               ...application.answers,
-              ...estate,
+              ...{
+                ...estate,
+                assets: { assets: estate.assets },
+                estateMembers: { members: estate.estateMembers },
+                vehicles: { vehicles: estate.vehicles },
+              },
             },
           },
           locale,
@@ -99,8 +105,8 @@ export const LinkExistingApplication: FC<FieldBaseProps> = ({
                     id: navigationApplicationId,
                     dataProviders: [
                       {
-                        id: 'existingApplication',
-                        type: 'ExistingApplicationProvider',
+                        actionId: 'Application.existingApplication',
+                        order: 0,
                       },
                     ],
                   },
@@ -115,8 +121,10 @@ export const LinkExistingApplication: FC<FieldBaseProps> = ({
             break
           case ACTION.NEW:
             {
+              console.log(continueConf)
               // get estate from casenumber in url
               const estate = getNewEstateFromUrl(continueConf.url)
+              console.log(estate)
               // update answers with estate
               await assignEstateToAnswers(estate)
               // continue to next screen
@@ -166,7 +174,6 @@ export const LinkExistingApplication: FC<FieldBaseProps> = ({
         app.externalData,
         'syslumennOnEntry.data.estate.caseNumber',
       )?.toString() ?? ''
-    console.log(name, app.externalData.syslumennOnEntry)
     return {
       ...app,
       name: `${formatText(

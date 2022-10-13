@@ -4,49 +4,35 @@ import { TemplateApiError } from '@island.is/nest/problem'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
 import {
-  DrivingLicenseService,
-  TeachingRightsStatus,
-  Juristiction,
-} from '@island.is/api/domains/driving-license'
-import {
   StudentAssessment,
   Teacher,
   DrivingLicenseBookSchool,
 } from '@island.is/api/schema'
-import { FetchError } from '@island.is/clients/middlewares'
-import { DrivingLicenseFakeData, HasQualityPhoto, YES } from './types'
+import {
+  DrivingLicenseFakeData,
+  HasQualityPhoto,
+  YES,
+  DrivingLicense,
+} from './types'
 import { TemplateApiModuleActionProps } from '@island.is/application/template-api-modules'
-import { CurrentLicenseProviderResult } from '../../../../../../../templates/driving-license/src/dataProviders/CurrentLicenseProvider'
 import { DrivingLicenseBookService } from '@island.is/api/domains/driving-license-book'
+import {
+  DrivingLicenseApi,
+  Juristiction,
+} from '@island.is/clients/driving-license'
+import sortTeachers from './sortTeachers'
 
 @Injectable()
 export class DrivingLicenseProviderService extends BaseTemplateApiService {
   constructor(
-    private readonly drivingLicenseService: DrivingLicenseService,
+    private readonly drivingLicenseService: DrivingLicenseApi,
     private readonly drivingLicenseBookService: DrivingLicenseBookService,
   ) {
     super('DrivingLicenseShared')
   }
 
   private async hasTeachingRights(nationalId: string): Promise<Boolean> {
-    const data = await this.drivingLicenseService.getTeachingRights(nationalId)
-    return data.hasTeachingRights
-  }
-
-  private handleError(e: unknown) {
-    if (e instanceof Error && e.name === 'FetchError') {
-      const err = (e as unknown) as FetchError
-      throw new TemplateApiError(
-        {
-          title:
-            err.problem?.title || coreErrorMessages.failedDataProviderSubmit,
-          summary: err.problem?.detail || '',
-        },
-        400,
-      )
-    }
-
-    throw e
+    return await this.drivingLicenseService.getIsTeacher({ nationalId })
   }
 
   // Teaching Rights
@@ -94,7 +80,7 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
   async teachers(): Promise<Teacher[]> {
     const teachers = await this.drivingLicenseService.getTeachers()
     if (teachers) {
-      return teachers
+      return teachers.sort(sortTeachers)
     } else {
       throw new TemplateApiError(
         {
@@ -110,7 +96,7 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
   async currentLicense({
     auth,
     application,
-  }: TemplateApiModuleActionProps): Promise<CurrentLicenseProviderResult> {
+  }: TemplateApiModuleActionProps): Promise<DrivingLicense> {
     const fakeData = getValueViaPath<DrivingLicenseFakeData>(
       application.answers,
       'fakeData',
@@ -124,9 +110,9 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
             : undefined,
       }
     }
-    const drivingLicense = await this.drivingLicenseService.getDrivingLicense(
-      auth.nationalId,
-    )
+    const drivingLicense = await this.drivingLicenseService.getCurrentLicense({
+      nationalId: auth.nationalId,
+    })
     const categoryB = (drivingLicense?.categories ?? []).find(
       (cat) => cat.name === 'B',
     )
@@ -155,7 +141,12 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
       )
       return { hasQualityPhoto: hasQualityPhoto === 'yes' }
     }
-    return await this.drivingLicenseService.getQualityPhoto(auth.nationalId)
+    const hasQualityPhoto = await this.drivingLicenseService.getHasQualityPhoto(
+      { nationalId: auth.nationalId },
+    )
+    return {
+      hasQualityPhoto,
+    }
   }
 
   // Has Quality Signature
@@ -186,6 +177,36 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
     return await this.drivingLicenseService.getListOfJuristictions()
   }
 
+  private async getDrivingAssessment(
+    nationalId: string,
+  ): Promise<StudentAssessment | null> {
+    const assessment = await this.drivingLicenseService.getDrivingAssessment({
+      nationalId,
+    })
+
+    if (!assessment) {
+      return null
+    }
+
+    let teacherName: string | null
+    if (assessment.nationalIdTeacher) {
+      const teacherLicense = await this.drivingLicenseService.getCurrentLicense(
+        {
+          nationalId: assessment.nationalIdTeacher,
+        },
+      )
+      teacherName = teacherLicense?.name || null
+    } else {
+      teacherName = null
+    }
+
+    return {
+      studentNationalId: assessment.nationalIdStudent,
+      teacherNationalId: assessment.nationalIdTeacher,
+      teacherName,
+    }
+  }
+
   // Driving Assesment
   async drivingAssessment({
     auth,
@@ -203,8 +224,6 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
       }
     }
 
-    return await this.drivingLicenseService.getDrivingAssessment(
-      auth.nationalId,
-    )
+    return await this.getDrivingAssessment(auth.nationalId)
   }
 }

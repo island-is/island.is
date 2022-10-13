@@ -127,6 +127,17 @@ const AnnouncementOfDeathTemplate: ApplicationTemplate<
                 },
               ],
               write: 'all',
+              delete: true,
+              api: [
+                ExistingApplicationApi.configure({
+                  params: {
+                    states: [States.DRAFT],
+                    where: {
+                      applicant: 'applicant',
+                    },
+                  },
+                }),
+              ],
             },
           ],
         },
