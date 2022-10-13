@@ -12,6 +12,9 @@ export interface IAccordionSliceFields {
 
   /** Accordion Items */
   accordionItems?: IOneColumnText[] | undefined
+
+  /** Has Border Above */
+  hasBorderAbove?: boolean | undefined
 }
 
 /** A slice with accordions */
@@ -2370,33 +2373,6 @@ export interface IPageHeader extends Entry<IPageHeaderFields> {
   }
 }
 
-export interface IPowerBiSliceFields {
-  /** Title */
-  title?: string | undefined
-
-  /** Config */
-  config: Record<string, any>
-}
-
-/** A Slice that embeds a Power BI report */
-
-export interface IPowerBiSlice extends Entry<IPowerBiSliceFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'powerBiSlice'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
 export interface IProcessEntryFields {
   /** Type */
   type:
@@ -3831,7 +3807,6 @@ export type CONTENT_TYPE =
   | 'organizationTag'
   | 'overviewLinks'
   | 'pageHeader'
-  | 'powerBiSlice'
   | 'processEntry'
   | 'projectPage'
   | 'projectSubpage'

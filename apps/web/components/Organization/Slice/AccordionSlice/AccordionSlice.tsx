@@ -5,6 +5,7 @@ import {
   AccordionItem,
   ActionCard,
   Box,
+  BoxProps,
   Text,
 } from '@island.is/island-ui/core'
 import {
@@ -21,14 +22,21 @@ interface SliceProps {
 export const AccordionSlice: React.FC<SliceProps> = ({ slice }) => {
   const labelId = 'sliceTitle-' + slice.id
 
+  const borderProps: BoxProps = slice.hasBorderAbove
+    ? {
+        borderTopWidth: 'standard',
+        borderColor: 'standard',
+        paddingTop: [4, 4, 6],
+        paddingBottom: [4, 4, 6],
+      }
+    : {
+        paddingTop: 3,
+        paddingBottom: 3,
+      }
+
   return (
     <section key={slice.id} id={slice.id} aria-labelledby={labelId}>
-      <Box
-        borderTopWidth="standard"
-        borderColor="standard"
-        paddingTop={[4, 4, 6]}
-        paddingBottom={[4, 4, 6]}
-      >
+      <Box {...borderProps}>
         <Text variant="h2" as="h2" marginBottom={2} id={labelId}>
           {slice.title}
         </Text>
