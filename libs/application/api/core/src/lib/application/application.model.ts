@@ -2,6 +2,7 @@ import {
   Column,
   CreatedAt,
   DataType,
+  HasMany,
   HasOne,
   Model,
   Table,
@@ -136,6 +137,6 @@ export class Application extends Model {
   @ApiProperty()
   assignNonces!: string[]
 
-  @HasOne(() => Payment)
+  @HasMany(() => Payment)
   payment!: Payment | null
 }
