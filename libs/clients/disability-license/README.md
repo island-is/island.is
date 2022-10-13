@@ -1,4 +1,4 @@
-# Clients Disability License
+# Disability License
 
 This library was generated with [Nx](https://nx.dev).
 
