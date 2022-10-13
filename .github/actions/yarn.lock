@@ -881,16 +881,16 @@
     "@types/yargs" "^16.0.0"
     chalk "^4.0.0"
 
-"@octokit/action@^4.0.8":
-  version "4.0.8"
-  resolved "https://registry.yarnpkg.com/@octokit/action/-/action-4.0.8.tgz#3b0d2f5661470aa1c961c74f52eee536dfa847e5"
-  integrity sha512-PWGZgY+QVLpFjjzTPpIk/z9hYAF6y9XlEqOXTESgGTPUF2Egw73yEcC9cQqTZmOpyUuFu94NP4iflOBTdc1jUg==
+"@octokit/action@^4.0.9":
+  version "4.0.9"
+  resolved "https://registry.yarnpkg.com/@octokit/action/-/action-4.0.9.tgz#8117739f4d0612348bb6c6dcb70ebac47b00d57d"
+  integrity sha512-xXvc0arYMLpYB2qb+5xzVAGwPdL8qiYmjdp8c2CFH4jYRPuTiELvGQUSbVE7o75xfza4I2gQILrIvJvmDgThVQ==
   dependencies:
     "@octokit/auth-action" "^2.0.0"
     "@octokit/core" "^4.0.0"
     "@octokit/plugin-paginate-rest" "^4.0.0"
     "@octokit/plugin-rest-endpoint-methods" "^6.0.0"
-    "@octokit/types" "^7.0.0"
+    "@octokit/types" "^8.0.0"
     https-proxy-agent "^5.0.1"
 
 "@octokit/auth-action@^2.0.0":
@@ -986,6 +986,11 @@
   version "13.1.0"
   resolved "https://registry.yarnpkg.com/@octokit/openapi-types/-/openapi-types-13.1.0.tgz#30459b45e6dd388d48d72de166f2f08ee8ece5b6"
   integrity sha512-Z7vzLqfTkoVQyoy/2iQla1N2I4Vav2wi4JbZK8QxIYAfBimhuflosFxmsqw5LTH7DkdNW46ZYpAcqJf0XaS8SQ==
+
+"@octokit/openapi-types@^14.0.0":
+  version "14.0.0"
+  resolved "https://registry.yarnpkg.com/@octokit/openapi-types/-/openapi-types-14.0.0.tgz#949c5019028c93f189abbc2fb42f333290f7134a"
+  integrity sha512-HNWisMYlR8VCnNurDU6os2ikx0s0VyEjDYHNS/h4cgb8DeOxQ0n72HyinUtdDVxJhFy3FWLGl0DJhfEWk3P5Iw==
 
 "@octokit/plugin-paginate-rest@^4.0.0":
   version "4.0.0"
@@ -1091,6 +1096,13 @@
   integrity sha512-+ClA0jRc9zGFj5mfQeQNfgTlelzhpAexbAueQG1t2Xn8yhgnsjkF8bgLcUUpwrpqkv296uXyiGwkqXRSU7KYzQ==
   dependencies:
     "@octokit/openapi-types" "^13.1.0"
+
+"@octokit/types@^8.0.0":
+  version "8.0.0"
+  resolved "https://registry.yarnpkg.com/@octokit/types/-/types-8.0.0.tgz#93f0b865786c4153f0f6924da067fe0bb7426a9f"
+  integrity sha512-65/TPpOJP1i3K4lBJMnWqPUJ6zuOtzhtagDvydAWbEXpbFYA0oMKKyLb95NFZZP0lSh/4b6K+DQlzvYQJQQePg==
+  dependencies:
+    "@octokit/openapi-types" "^14.0.0"
 
 "@sinonjs/commons@^1.7.0":
   version "1.8.0"
