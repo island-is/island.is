@@ -15,7 +15,7 @@ interface Props {
 }
 
 interface CaseFileProps {
-  caseFile: [string, boolean]
+  caseFile: [string, boolean, boolean]
 }
 
 const CaseFile: React.FC<CaseFileProps> = (props) => {
@@ -37,6 +37,13 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
             <Text variant="h4">{`${1}.`}</Text>
           </Box>
           <Text variant="h4">{caseFile[0]}</Text>
+        </Box>
+      ) : caseFile[2] === true ? (
+        <Box marginBottom={2} style={{ zIndex: 100 }}>
+          <Box marginBottom={1}>
+            <Text variant="h4">{caseFile[0].split('|')[0]}</Text>
+          </Box>
+          <Text>{caseFile[0].split('|')[1]}</Text>
         </Box>
       ) : (
         <Box
@@ -75,15 +82,22 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
   const { policeCaseNumber, caseFiles } = props
   const { formatMessage } = useIntl()
 
-  const [items, setItems] = useState<[string, boolean][]>([
-    [formatMessage(m.chapterIndictmentAndAccompanyingDocuments), true],
-    [formatMessage(m.chapterInvesitgationProcess), true],
-    [formatMessage(m.chapterWitnesses), true],
-    [formatMessage(m.chapterDefendant), true],
-    [formatMessage(m.chapterCaseFiles), true],
-    [formatMessage(m.chapterElectronicDocuments), true],
+  const [items, setItems] = useState<[string, boolean, boolean][]>([
+    [formatMessage(m.chapterIndictmentAndAccompanyingDocuments), true, false],
+    [formatMessage(m.chapterInvesitgationProcess), true, false],
+    [formatMessage(m.chapterWitnesses), true, false],
+    [formatMessage(m.chapterDefendant), true, false],
+    [formatMessage(m.chapterCaseFiles), true, false],
+    [formatMessage(m.chapterElectronicDocuments), true, false],
+    [
+      `${formatMessage(m.unorderedFilesTitle)}|${formatMessage(
+        m.unorderedFilesExplanation,
+      )}`,
+      false,
+      true,
+    ],
     ...caseFiles.map((caseFile) => {
-      return [caseFile.id, false] as [string, boolean]
+      return [caseFile.id, false, false] as [string, boolean, boolean]
     }),
   ])
 
@@ -114,13 +128,13 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
                 <CaseFile caseFile={item} />
               </Box>
             ))}
+            {/* <Box marginBottom={2}>
+              <Box marginBottom={1}>
+                <Text variant="h4">{formatMessage(m.unorderedFilesTitle)}</Text>
+              </Box>
+              <Text>{formatMessage(m.unorderedFilesExplanation)}</Text>
+            </Box> */}
           </Reorder.Group>
-          <Box marginBottom={2}>
-            <Box marginBottom={1}>
-              <Text variant="h4">{formatMessage(m.unorderedFilesTitle)}</Text>
-            </Box>
-            <Text>{formatMessage(m.unorderedFilesExplanation)}</Text>
-          </Box>
         </>
       )}
     </AccordionItem>
