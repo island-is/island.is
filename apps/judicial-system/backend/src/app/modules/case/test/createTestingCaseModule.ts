@@ -95,6 +95,7 @@ export const createTestingCaseModule = async () => {
         useValue: {
           create: jest.fn(),
           findOne: jest.fn(),
+          findByPk: jest.fn(),
           update: jest.fn(),
         },
       },

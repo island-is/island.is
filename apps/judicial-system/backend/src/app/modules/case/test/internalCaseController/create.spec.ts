@@ -211,9 +211,8 @@ describe('InternalCaseController - Create', () => {
     })
 
     it('should lookup the newly created case', () => {
-      expect(mockCaseModel.findOne).toHaveBeenCalledWith({
+      expect(mockCaseModel.findByPk).toHaveBeenCalledWith(caseId, {
         include: [
-          { model: Defendant, as: 'defendants' },
           { model: Institution, as: 'court' },
           {
             model: User,
@@ -225,39 +224,8 @@ describe('InternalCaseController - Create', () => {
             as: 'prosecutor',
             include: [{ model: Institution, as: 'institution' }],
           },
-          { model: Institution, as: 'sharedWithProsecutorsOffice' },
-          {
-            model: User,
-            as: 'judge',
-            include: [{ model: Institution, as: 'institution' }],
-          },
-          {
-            model: User,
-            as: 'registrar',
-            include: [{ model: Institution, as: 'institution' }],
-          },
-          {
-            model: User,
-            as: 'courtRecordSignatory',
-            include: [{ model: Institution, as: 'institution' }],
-          },
-          { model: Case, as: 'parentCase' },
-          { model: Case, as: 'childCase' },
-          {
-            model: CaseFile,
-            as: 'caseFiles',
-            required: false,
-            where: {
-              state: { [Op.not]: CaseFileState.DELETED },
-            },
-          },
         ],
-        order: [[{ model: Defendant, as: 'defendants' }, 'created', 'ASC']],
-        where: {
-          id: caseId,
-          isArchived: false,
-          state: { [Op.not]: CaseState.DELETED },
-        },
+        transaction,
       })
     })
   })
@@ -271,8 +239,8 @@ describe('InternalCaseController - Create', () => {
     beforeEach(async () => {
       const mockCreate = mockCaseModel.create as jest.Mock
       mockCreate.mockResolvedValueOnce(createdCase)
-      const mockFindOne = mockCaseModel.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce(returnedCase)
+      const mockFindByPk = mockCaseModel.findByPk as jest.Mock
+      mockFindByPk.mockResolvedValueOnce(returnedCase)
 
       then = await givenWhenThen(caseToCreate)
     })
@@ -368,8 +336,8 @@ describe('InternalCaseController - Create', () => {
     beforeEach(async () => {
       const mockCreate = mockCaseModel.create as jest.Mock
       mockCreate.mockResolvedValueOnce(createdCase)
-      const mockFindOne = mockCaseModel.findOne as jest.Mock
-      mockFindOne.mockRejectedValueOnce(new Error('Some error'))
+      const mockFindByPk = mockCaseModel.findByPk as jest.Mock
+      mockFindByPk.mockRejectedValueOnce(new Error('Some error'))
 
       then = await givenWhenThen(caseToCreate)
     })

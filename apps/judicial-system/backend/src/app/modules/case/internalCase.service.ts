@@ -7,11 +7,11 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { CaseOrigin, UserRole } from '@island.is/judicial-system/types'
 
-import { UserService } from '../user'
+import { User, UserService } from '../user'
 import { DefendantService } from '../defendant'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { Case } from './models/case.model'
-import { CaseService } from './case.service'
+import { Institution } from '../institution'
 
 @Injectable()
 export class InternalCaseService {
@@ -20,7 +20,6 @@ export class InternalCaseService {
     @InjectModel(Case) private readonly caseModel: typeof Case,
     private readonly userService: UserService,
     private readonly defendantService: DefendantService,
-    private readonly caseService: CaseService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -68,7 +67,22 @@ export class InternalCaseService {
         transaction,
       )
 
-      return this.caseService.findById(theCase.id)
+      return this.caseModel.findByPk(theCase.id, {
+        include: [
+          { model: Institution, as: 'court' },
+          {
+            model: User,
+            as: 'creatingProsecutor',
+            include: [{ model: Institution, as: 'institution' }],
+          },
+          {
+            model: User,
+            as: 'prosecutor',
+            include: [{ model: Institution, as: 'institution' }],
+          },
+        ],
+        transaction,
+      }) as Promise<Case>
     })
   }
 }
