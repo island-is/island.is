@@ -21,6 +21,7 @@ export const m = defineMessages({
     defaultMessage: 'Áfram',
     description: 'continue',
   },
+
   institutionName: {
     id: 'fsn.application:institution',
     defaultMessage: 'Ríkisendurskoðun',
@@ -197,7 +198,7 @@ export const m = defineMessages({
   },
   keyNumbersDebt: {
     id: 'fsn.application:keyNumbers.debt',
-    defaultMessage: 'Lykiltölur - Skuldir, eignir og eigið fé',
+    defaultMessage: 'Lykiltölur - Eignir, Skuldir og eigið fé',
     description: 'Statement debts',
   },
   currentAssets: {
@@ -237,7 +238,7 @@ export const m = defineMessages({
   },
   operatingCost: {
     id: 'fsn.application:keyNumbers.operatingCost',
-    defaultMessage: 'Rekstrarniðurstaða',
+    defaultMessage: 'Rekstrarniðurstaða alls',
     description: 'Operating Cost',
   },
   operatingYear: {
@@ -267,7 +268,7 @@ export const m = defineMessages({
   },
   totalCapital: {
     id: 'fsn.application:totalCapital',
-    defaultMessage: 'Fjármagnsgjöld samtals',
+    defaultMessage: 'Fjármagnsliðir samtals',
     description: 'Total capital',
   },
   totalEquity: {
@@ -294,6 +295,21 @@ export const m = defineMessages({
     id: 'fsn.application:error.empty',
     defaultMessage: 'Reitur má ekki vera tómur',
     description: 'empty field error',
+  },
+  errorApproval: {
+    id: 'fsn.application:error.errorApproval',
+    defaultMessage: 'Samþykkja þarf yfirlit',
+    description: 'Approval missing',
+  },
+  errorSignature: {
+    id: 'fsn.application:error.errorApproval',
+    defaultMessage: 'Samþykkja þarf yfirlit með rafrænni undirritun',
+    description: 'Signature missing',
+  },
+  errorMembersMissing: {
+    id: 'fsn.application:error.errorMembersMissing',
+    defaultMessage: 'Skrá þarf bæði skoðunarmann og stjórnarmann',
+    description: 'Members missing',
   },
   publicDonations: {
     id: 'fsn.application:income.publicDonations',
@@ -640,6 +656,12 @@ export const m = defineMessages({
       'Heildartekjur og heildarkostnað við kosningabaráttuna var meira en',
     description: 'Spending was more than a specific limit',
   },
+  goBack: {
+    id: 'fsn.application:overview.goBack',
+    defaultMessage: 'Til Baka',
+    description: 'Go back btn text',
+  },
+
   crowns: {
     id: 'fsn.application:crowns',
     defaultMessage: 'krónum',
@@ -669,6 +691,12 @@ export const m = defineMessages({
     id: 'fsn.application:error.nationalIdError',
     defaultMessage: 'Kennitala er ekki á réttu formi',
     description: 'Error message when nationalid is wrong',
+  },
+  nationalIdAgeError: {
+    id: 'fsn.application:error.nationalIdAgeError',
+    defaultMessage: 'Skoðunar- og Stjórnunarmenn þurfa að vera eldri en 18 ára',
+    description:
+      'Error message when attempting to register younger then 18 caretaker',
   },
   returned: {
     id: 'fsn.application:returned',

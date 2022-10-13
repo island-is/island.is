@@ -1,4 +1,4 @@
-import { DEPRECATED_DefaultStateLifeCycle } from '@island.is/application/core'
+import { DefaultStateLifeCycle } from '@island.is/application/core'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import {
   ApplicationTemplate,
@@ -35,7 +35,7 @@ const FinancialStatementInaoApplication: ApplicationTemplate<
         meta: {
           name: 'prerequisites',
           progress: 0.2,
-          lifecycle: DEPRECATED_DefaultStateLifeCycle,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -77,7 +77,7 @@ const FinancialStatementInaoApplication: ApplicationTemplate<
             shouldPersistToExternalData: true,
           },
           progress: 0.4,
-          lifecycle: DEPRECATED_DefaultStateLifeCycle,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -89,6 +89,7 @@ const FinancialStatementInaoApplication: ApplicationTemplate<
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
               ],
               write: 'all',
+              delete: true,
             },
           ],
         },
@@ -100,7 +101,7 @@ const FinancialStatementInaoApplication: ApplicationTemplate<
         meta: {
           name: 'Done',
           progress: 1,
-          lifecycle: DEPRECATED_DefaultStateLifeCycle,
+          lifecycle: DefaultStateLifeCycle,
 
           roles: [
             {

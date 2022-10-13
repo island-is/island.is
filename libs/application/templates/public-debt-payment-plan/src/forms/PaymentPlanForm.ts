@@ -95,11 +95,12 @@ export const PaymentPlanForm: Form = buildForm({
               id: 'applicant.name',
               title: info.labels.name,
               backgroundColor: 'white',
-              required: true,
               disabled: true,
               defaultValue: (application: Application) => {
-                return (application.externalData as PaymentPlanExternalData)
-                  ?.nationalRegistry?.data?.fullName
+                return (
+                  (application.externalData as PaymentPlanExternalData)
+                    ?.nationalRegistry?.data?.fullName ?? ''
+                )
               },
             }),
             buildTextField({
@@ -108,44 +109,40 @@ export const PaymentPlanForm: Form = buildForm({
               format: '######-####',
               width: 'half',
               backgroundColor: 'white',
-              required: true,
               disabled: true,
               defaultValue: (application: Application) =>
                 (application.externalData as PaymentPlanExternalData)
-                  ?.nationalRegistry?.data?.nationalId,
+                  ?.nationalRegistry?.data?.nationalId ?? '',
             }),
             buildTextField({
               id: 'applicant.address',
               title: info.labels.address,
               width: 'half',
               backgroundColor: 'white',
-              required: true,
               disabled: true,
               defaultValue: (application: Application) =>
                 (application.externalData as PaymentPlanExternalData)
-                  ?.nationalRegistry?.data?.address?.streetAddress,
+                  ?.nationalRegistry?.data?.address?.streetAddress ?? '',
             }),
             buildTextField({
               id: 'applicant.postalCode',
               title: info.labels.postalCode,
               width: 'half',
               backgroundColor: 'white',
-              required: true,
               disabled: true,
               defaultValue: (application: Application) =>
                 (application.externalData as PaymentPlanExternalData)
-                  ?.nationalRegistry?.data?.address?.postalCode,
+                  ?.nationalRegistry?.data?.address?.postalCode ?? '',
             }),
             buildTextField({
               id: 'applicant.city',
               title: info.labels.city,
               width: 'half',
               backgroundColor: 'white',
-              required: true,
               disabled: true,
               defaultValue: (application: Application) =>
                 (application.externalData as PaymentPlanExternalData)
-                  ?.nationalRegistry?.data?.address?.city,
+                  ?.nationalRegistry?.data?.address?.city ?? '',
             }),
             buildTextField({
               id: 'applicant.email',

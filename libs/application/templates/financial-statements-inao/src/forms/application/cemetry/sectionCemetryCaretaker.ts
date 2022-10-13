@@ -23,7 +23,7 @@ export const sectionCemetryCaretaker = buildSection({
     const careTakerLimit =
       applicationAnswers.cemetryOperation?.incomeLimit ?? '0'
     const currentAssets = applicationAnswers.cemetryAsset?.current
-    const totalIncome = applicationAnswers.operatingCost?.total
+    const totalIncome = applicationAnswers.cemetryIncome?.total
     const longTermDebt = applicationAnswers.cemetryLiability?.longTerm
     const isUnderLimit =
       currencyStringToNumber(totalIncome) <= Number(careTakerLimit)

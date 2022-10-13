@@ -142,7 +142,7 @@ export type InitContainers = {
 }
 
 export interface Context {
-  featureName?: string
+  featureDeploymentName?: string
   svc(dep: Service): string
   env: EnvironmentConfig
 }

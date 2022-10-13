@@ -1,4 +1,3 @@
-import { DEPRECATED_DefaultStateLifeCycle } from '@island.is/application/core'
 import {
   ApplicationTemplate,
   ApplicationContext,

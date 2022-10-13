@@ -57,6 +57,7 @@ const InstructorRegistrationsTemplate: ApplicationTemplate<
                   type: 'primary',
                 },
               ],
+              delete: true,
               write: {
                 answers: ['approveExternalData'],
                 externalData: ['teachingRights', 'nationalRegistry'],

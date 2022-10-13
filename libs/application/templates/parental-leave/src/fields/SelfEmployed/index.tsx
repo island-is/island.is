@@ -46,6 +46,7 @@ export const SelfEmployed: FC<FieldBaseProps> = ({ application, field }) => {
             }
             if (s !== YES) {
               setValue('employer.selfEmployed.file', null)
+              setValue('fileUpload.selfEmployedFile', null)
             }
           },
         }}
