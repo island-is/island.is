@@ -147,7 +147,7 @@ describe('DelegationsController', () => {
           const validRepresentedPersons: NameIdTuple[] = []
           const outdatedRepresentedPersons: NameIdTuple[] = []
           const unactivatedRepresentedPersons: NameIdTuple[] = []
-          const deceasedNationalIds = times(deceased, () => getFakeNationalId())
+          const deceasedNationalIds = times(deceased, getFakeNationalId)
 
           beforeAll(async () => {
             for (let i = 0; i < valid; i++) {
@@ -322,6 +322,7 @@ describe('DelegationsController', () => {
 
             it('should have made prModels inactive for deceased persons', async () => {
               // Arrange
+
               const expectedModels = await prModel.findAll({
                 where: {
                   nationalIdRepresentedPerson: deceasedNationalIds,
@@ -330,14 +331,15 @@ describe('DelegationsController', () => {
                 },
               })
 
-              console.log(expectedModels)
-
               // Assert
               expect(expectedModels.length).toEqual(deceased)
-              // expect(expectedModels.inactive).toEqual(true)
-              // expect(expectedModels.inactiveReason).toEqual(
-              //   InactiveReason.DECEASED_PARTY,
-              // )
+
+              expectedModels.forEach((model) => {
+                expect(model.inactive).toEqual(true)
+                expect(model.inactiveReason).toEqual(
+                  InactiveReason.DECEASED_PARTY,
+                )
+              })
             })
           })
         },

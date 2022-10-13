@@ -93,7 +93,7 @@ export class PersonalRepresentativeDTO {
   @IsOptional()
   @IsEnum(InactiveReason)
   @ApiPropertyOptional({
-    example: 'DECEASED_PARTY',
+    example: InactiveReason.DECEASED_PARTY,
     description: 'Reason for personal representative to be inactive',
   })
   inactiveReason?: InactiveReason

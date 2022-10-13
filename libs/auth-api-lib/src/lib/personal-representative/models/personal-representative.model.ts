@@ -9,7 +9,7 @@ import {
   ForeignKey,
   HasMany,
 } from 'sequelize-typescript'
-import { IsEnum, IsOptional } from 'class-validator'
+import { IsEnum, IsNotEmpty, ValidateIf } from 'class-validator'
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { PersonalRepresentativeType } from './personal-representative-type.model'
@@ -24,13 +24,6 @@ export enum InactiveReason {
 }
 
 @Table({
-  validate: {
-    myCustomValidator(model: PersonalRepresentative) {
-      if (model.inactive && !model.inactiveReason) {
-        throw new Error('You must set inactiveReason when inactive is true')
-      }
-    },
-  },
   tableName: 'personal_representative',
   indexes: [
     {
@@ -104,20 +97,25 @@ export class PersonalRepresentative extends Model {
 
   @ApiProperty({ type: () => [PersonalRepresentativeRight] })
   @HasMany(() => PersonalRepresentativeRight)
-  @ApiProperty()
   rights!: PersonalRepresentativeRight[]
 
   @ApiProperty({ type: () => PersonalRepresentativeType })
-  @ApiProperty()
   type!: PersonalRepresentativeType
 
   @IsBoolean()
   @ApiProperty({ type: DataType.BOOLEAN, default: false })
+  @Column({ type: DataType.BOOLEAN, defaultValue: false })
   inactive!: boolean
 
-  @IsOptional()
+  @ValidateIf((model: PersonalRepresentative) => model.inactive)
+  @IsNotEmpty()
   @IsEnum(InactiveReason)
   @ApiProperty({ type: InactiveReason, nullable: true })
+  @Column({
+    type: DataType.ENUM(...Object.values(InactiveReason)),
+    defaultValue: null,
+    allowNull: true,
+  })
   inactiveReason?: InactiveReason
 
   toDTO(): PersonalRepresentativeDTO {
