@@ -180,14 +180,14 @@ describe('ActorDelegationsController', () => {
 
         nationalRegistryApiSpy = jest
           .spyOn(nationalRegistryApi, 'getIndividual')
-          .mockImplementation((id) => {
+          .mockImplementation(async (id) => {
             if (deceasedNationalIds.includes(id)) {
-              return Promise.resolve(null)
+              return null
             }
 
             const user = nationalRegistryUsers.find((u) => u?.nationalId === id)
 
-            return Promise.resolve(user ?? null)
+            return user ?? null
           })
       })
 

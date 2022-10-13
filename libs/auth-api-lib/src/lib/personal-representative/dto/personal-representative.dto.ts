@@ -86,7 +86,7 @@ export class PersonalRepresentativeDTO {
   @IsBoolean()
   @ApiProperty({
     description:
-      'Setting model as inactive. If set as true then inactiveReason must be set',
+      'Setting model as inactive, i.e. deceased. If set as true then inactiveReason property must be set',
   })
   inactive!: boolean
 
