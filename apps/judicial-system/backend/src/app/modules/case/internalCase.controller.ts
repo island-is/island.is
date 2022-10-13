@@ -22,6 +22,7 @@ import { ArchiveResponse } from './models/archive.response'
 import { DeliverResponse } from './models/deliver.response'
 import { DeliverProsecutorDocumentsResponse } from './models/deliverProsecutorDocuments.response'
 import { CaseService } from './case.service'
+import { InternalCaseService } from './internalCase.service'
 
 @Controller('api/internal')
 @ApiTags('internal cases')
@@ -29,6 +30,7 @@ import { CaseService } from './case.service'
 export class InternalCaseController {
   constructor(
     private readonly caseService: CaseService,
+    private readonly internalCaseService: InternalCaseService,
     private readonly eventService: EventService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
@@ -38,7 +40,7 @@ export class InternalCaseController {
   async create(@Body() caseToCreate: InternalCreateCaseDto): Promise<Case> {
     this.logger.debug('Creating a new case')
 
-    const createdCase = await this.caseService.internalCreate(caseToCreate)
+    const createdCase = await this.internalCaseService.create(caseToCreate)
 
     this.eventService.postEvent(CaseEvent.CREATE_XRD, createdCase as Case)
 

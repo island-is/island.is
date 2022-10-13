@@ -26,6 +26,7 @@ import { Case } from '../models/case.model'
 import { CaseArchive } from '../models/caseArchive.model'
 import { caseModuleConfig } from '../case.config'
 import { CaseService } from '../case.service'
+import { InternalCaseService } from '../internalCase.service'
 import { LimitedAccessCaseService } from '../limitedAccessCase.service'
 import { CaseController } from '../case.controller'
 import { InternalCaseController } from '../internalCase.controller'
@@ -102,6 +103,7 @@ export const createTestingCaseModule = async () => {
         useValue: { create: jest.fn() },
       },
       CaseService,
+      InternalCaseService,
       LimitedAccessCaseService,
     ],
   })

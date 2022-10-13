@@ -29,7 +29,7 @@ interface Then {
 
 type GivenWhenThen = (caseToCreate: InternalCreateCaseDto) => Promise<Then>
 
-describe('InternalCaseController - Internal create', () => {
+describe('InternalCaseController - Create', () => {
   let mockUserService: UserService
   let mockDefendantService: DefendantService
   let mockCaseModel: typeof Case

@@ -6,7 +6,6 @@ import { Attachment } from 'nodemailer/lib/mailer'
 import { PDFDocument, PDFName, PDFRef, StandardFonts } from 'pdf-lib'
 
 import {
-  BadRequestException,
   Inject,
   Injectable,
   InternalServerErrorException,
@@ -32,7 +31,6 @@ import {
   CaseOrigin,
   CaseState,
   isIndictmentCase,
-  UserRole,
 } from '@island.is/judicial-system/types'
 import type { User as TUser } from '@island.is/judicial-system/types'
 import { caseTypes } from '@island.is/judicial-system/formatters'
@@ -54,13 +52,12 @@ import { courtUpload, notifications as m } from '../../messages'
 import { CaseFile, FileService } from '../file'
 import { DefendantService, Defendant } from '../defendant'
 import { Institution } from '../institution'
-import { User, UserService } from '../user'
+import { User } from '../user'
 import { AwsS3Service } from '../aws-s3'
 import { CourtDocumentFolder, CourtService } from '../court'
 import { CaseEvent, EventService } from '../event'
 import { PoliceService } from '../police'
 import { CreateCaseDto } from './dto/createCase.dto'
-import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { UpdateCaseDto } from './dto/updateCase.dto'
 import { getCasesQueryFilter, oldFilter } from './filters/case.filters'
 import { Case } from './models/case.model'
@@ -182,7 +179,6 @@ export class CaseService {
     @Inject(caseModuleConfig.KEY)
     private readonly config: ConfigType<typeof caseModuleConfig>,
     private readonly defendantService: DefendantService,
-    private readonly userService: UserService,
     private readonly fileService: FileService,
     private readonly awsS3Service: AwsS3Service,
     private readonly courtService: CourtService,
@@ -521,7 +517,7 @@ export class CaseService {
       })
   }
 
-  private async createCase(
+  async createCase(
     caseToCreate: CreateCaseDto,
     transaction?: Transaction,
   ): Promise<string> {
@@ -576,56 +572,6 @@ export class CaseService {
       order: [defendantsOrder],
       where: getCasesQueryFilter(user),
     })
-  }
-
-  async internalCreate(caseToCreate: InternalCreateCaseDto): Promise<Case> {
-    let prosecutorId: string | undefined
-    let courtId: string | undefined
-
-    if (caseToCreate.prosecutorNationalId) {
-      const prosecutor = await this.userService.findByNationalId(
-        caseToCreate.prosecutorNationalId,
-      )
-
-      if (!prosecutor || prosecutor.role !== UserRole.PROSECUTOR) {
-        throw new BadRequestException(
-          `User ${
-            prosecutor?.id ?? 'unknown'
-          } is not registered as a prosecutor`,
-        )
-      }
-
-      prosecutorId = prosecutor.id
-      courtId = prosecutor.institution?.defaultCourtId
-    }
-
-    return this.sequelize
-      .transaction(async (transaction) => {
-        const caseId = await this.createCase(
-          {
-            ...caseToCreate,
-            origin: CaseOrigin.LOKE,
-            creatingProsecutorId: prosecutorId,
-            prosecutorId,
-            courtId,
-          } as InternalCreateCaseDto,
-          transaction,
-        )
-
-        await this.defendantService.create(
-          caseId,
-          {
-            nationalId: caseToCreate.accusedNationalId,
-            name: caseToCreate.accusedName,
-            gender: caseToCreate.accusedGender,
-            address: caseToCreate.accusedAddress,
-          },
-          transaction,
-        )
-
-        return caseId
-      })
-      .then((caseId) => this.findById(caseId))
   }
 
   async create(caseToCreate: CreateCaseDto, prosecutor: TUser): Promise<Case> {
