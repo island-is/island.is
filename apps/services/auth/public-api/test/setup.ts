@@ -105,7 +105,6 @@ export const Scopes: ScopeSetupOptions[] = [
 
 const delegationConfig: ConfigType<typeof DelegationConfig> = {
   isConfigured: true,
-  userInfoUrl: '',
   customScopeRules: [
     {
       scopeName: '@island.is/scope3',
@@ -116,6 +115,7 @@ const delegationConfig: ConfigType<typeof DelegationConfig> = {
       onlyForDelegationType: ['LegalGuardian'],
     },
   ],
+  userInfoUrl: 'https://localhost:6001/connect/userinfo',
 }
 
 export const setupWithAuth = async ({

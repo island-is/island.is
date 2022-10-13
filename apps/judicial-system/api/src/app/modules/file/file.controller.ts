@@ -53,6 +53,26 @@ export class FileController {
     )
   }
 
+  @Get('caseFiles')
+  @Header('Content-Type', 'application/pdf')
+  async getCaseFilesPdf(
+    @Param('id') id: string,
+    @CurrentHttpUser() user: User,
+    @Req() req: Request,
+    @Res() res: Response,
+  ): Promise<Response> {
+    this.logger.debug(`Getting the case files for case ${id} as a pdf document`)
+
+    return this.fileService.tryGetPdf(
+      user.id,
+      AuditedAction.GET_REQUEST_PDF,
+      id,
+      'caseFiles',
+      req,
+      res,
+    )
+  }
+
   @Get('courtRecord')
   @Header('Content-Type', 'application/pdf')
   async getCourtRecordPdf(

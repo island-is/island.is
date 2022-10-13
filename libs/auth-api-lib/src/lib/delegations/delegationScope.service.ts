@@ -1,18 +1,18 @@
-import { uuid } from 'uuidv4'
-import { Op } from 'sequelize'
-import startOfDay from 'date-fns/startOfDay'
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import startOfDay from 'date-fns/startOfDay'
+import { Op } from 'sequelize'
+import { uuid } from 'uuidv4'
 
-import { ScopeType, UpdateDelegationScopeDTO } from './dto/delegation-scope.dto'
-import { DelegationScope } from './models/delegation-scope.model'
-import { Delegation } from './models/delegation.model'
-import { ApiScope } from '../resources/models/api-scope.model'
-import { IdentityResource } from '../resources/models/identity-resource.model'
-import { PersonalRepresentativeScopePermission } from '../personal-representative/models/personal-representative-scope-permission.model'
 import { PersonalRepresentativeRightType } from '../personal-representative/models/personal-representative-right-type.model'
 import { PersonalRepresentativeRight } from '../personal-representative/models/personal-representative-right.model'
+import { PersonalRepresentativeScopePermission } from '../personal-representative/models/personal-representative-scope-permission.model'
 import { PersonalRepresentative } from '../personal-representative/models/personal-representative.model'
+import { ApiScope } from '../resources/models/api-scope.model'
+import { IdentityResource } from '../resources/models/identity-resource.model'
+import { UpdateDelegationScopeDTO } from './dto/delegation-scope.dto'
+import { DelegationScope } from './models/delegation-scope.model'
+import { Delegation } from './models/delegation.model'
 
 @Injectable()
 export class DelegationScopeService {
@@ -44,24 +44,21 @@ export class DelegationScopeService {
     scopes: UpdateDelegationScopeDTO[],
   ): Promise<DelegationScope[]> {
     const validFrom = startOfDay(new Date())
-    return this.delegationScopeModel.bulkCreate(
-      scopes.map((delegationScope) => ({
-        id: uuid(),
-        validFrom,
-        validTo: delegationScope.validTo
-          ? startOfDay(delegationScope.validTo)
-          : undefined,
-        scopeName:
-          delegationScope.type === ScopeType.ApiScope
-            ? delegationScope.name
-            : undefined,
-        identityResourceName:
-          delegationScope.type === ScopeType.IdentityResource
-            ? delegationScope.name
-            : undefined,
-        delegationId,
-      })),
-    )
+    const delegationScopes = scopes.map((scope) => ({
+      id: uuid(),
+      validFrom,
+      validTo: scope.validTo ? startOfDay(scope.validTo) : undefined,
+      scopeName: scope.name,
+      delegationId,
+    }))
+
+    await this.delegationScopeModel.bulkCreate(delegationScopes)
+    return this.delegationScopeModel.findAll({
+      where: {
+        id: delegationScopes.map((s) => s.id),
+      },
+      include: [ApiScope],
+    })
   }
 
   async delete(
@@ -105,14 +102,6 @@ export class DelegationScopeService {
           where: {
             allowExplicitDelegationGrant: true,
           },
-          required: false,
-        },
-        {
-          model: IdentityResource,
-          where: {
-            allowExplicitDelegationGrant: true,
-          },
-          required: false,
         },
       ],
     })
@@ -127,18 +116,7 @@ export class DelegationScopeService {
       },
     })
 
-    const identityResources = await this.identityResourceModel.findAll({
-      attributes: ['name'],
-      where: {
-        grantToProcuringHolders: true,
-        alsoForDelegatedUser: false,
-      },
-    })
-
-    return [
-      ...apiScopes.map((s) => s.name),
-      ...identityResources.map((s) => s.name),
-    ]
+    return apiScopes.map((s) => s.name)
   }
 
   async findAllLegalGuardianScopes(): Promise<string[]> {
@@ -150,18 +128,7 @@ export class DelegationScopeService {
       },
     })
 
-    const identityResources = await this.identityResourceModel.findAll({
-      attributes: ['name'],
-      where: {
-        grantToLegalGuardians: true,
-        alsoForDelegatedUser: false,
-      },
-    })
-
-    return [
-      ...apiScopes.map((s) => s.name),
-      ...identityResources.map((s) => s.name),
-    ]
+    return apiScopes.map((s) => s.name)
   }
 
   async findPersonalRepresentativeScopes(
