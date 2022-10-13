@@ -3,6 +3,7 @@ import {
   createClient,
   CreateClientParams,
   Entry,
+  EntryCollection,
   SyncCollection,
 } from 'contentful'
 import Bottleneck from 'bottleneck'
@@ -72,15 +73,47 @@ export class ContentfulService {
   }
 
   private async getContentfulData(
-    chunkIds: string[],
-    locale: ElasticsearchIndexLocale,
+    chunkSize: number,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    query?: any,
   ) {
-    const response = await this.contentfulClient.getEntries({
-      include: this.defaultIncludeDepth,
-      'sys.id[in]': chunkIds.join(','),
-      locale: this.contentfulLocaleMap[locale],
-    })
-    return response.items
+    const items: Entry<unknown>[] = []
+    let response: EntryCollection<unknown> | null = null
+
+    while (
+      chunkSize > 0 &&
+      (response === null || items.length < response.total)
+    ) {
+      try {
+        response = await this.contentfulClient.getEntries({
+          ...query,
+          limit: chunkSize,
+          skip: items.length,
+        })
+        for (const item of response.items) {
+          items.push(item)
+        }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (error: any) {
+        if (
+          (error?.message as string)
+            ?.toLowerCase()
+            ?.includes('response size too big')
+        ) {
+          logger.info(
+            `Chunk size too large, dividing it by 2: ${chunkSize} -> ${Math.floor(
+              chunkSize / 2,
+            )}`,
+          )
+          chunkSize = Math.floor(chunkSize / 2)
+        } else {
+          logger.error(error.message)
+          return items
+        }
+      }
+    }
+
+    return items
   }
 
   /**
@@ -161,13 +194,13 @@ export class ContentfulService {
 
       // the content type filter might remove all ids in that case skip trying to get this chunk
       if (chunkIds.length) {
-        logger.info(`Getting Contentful data with chunk size: ${chunkSize}`, {
-          locale,
-          maxChunkSize: chunkSize,
-        })
         const items = await this.limiter.schedule(() => {
           // gets the changes for current locale
-          return this.getContentfulData(chunkIds, locale)
+          return this.getContentfulData(chunkSize, {
+            include: this.defaultIncludeDepth,
+            'sys.id[in]': chunkIds.join(','),
+            locale: this.contentfulLocaleMap[locale],
+          })
         })
         chunkedChanges.push(items)
       }
@@ -175,47 +208,6 @@ export class ContentfulService {
     } while (chunkToProcess.length)
 
     return flatten(chunkedChanges)
-  }
-
-  /**
-   * Search for entries which have a field linking to a specific entry.
-   * Useful to finding root/parent of an entry
-   *
-   * @param linkId
-   * @param locale
-   * @private
-   */
-  private async linksToEntry(
-    linkId: string,
-    locale: ElasticsearchIndexLocale,
-    chunkSize: number,
-  ): Promise<Entry<unknown>[]> {
-    let response = await this.contentfulClient.getEntries({
-      include: this.defaultIncludeDepth,
-      links_to_entry: linkId,
-      locale: this.contentfulLocaleMap[locale],
-      limit: chunkSize,
-    })
-
-    if (response.total <= response.items.length) return response.items
-
-    const items = response.items
-
-    // We keep fetching more entries until we have them all
-    while (items.length < response.total) {
-      response = await this.contentfulClient.getEntries({
-        include: this.defaultIncludeDepth,
-        links_to_entry: linkId,
-        locale: this.contentfulLocaleMap[locale],
-        limit: chunkSize,
-        skip: items.length,
-      })
-      for (const item of response.items) {
-        items.push(item)
-      }
-    }
-
-    return items
   }
 
   /**
@@ -264,8 +256,6 @@ export class ContentfulService {
   }
 
   async getSyncEntries(options: SyncOptions): Promise<SyncerResult> {
-    // TODO: run re-sync if there was no previous sync token
-
     const {
       syncType,
       locale,
@@ -277,6 +267,8 @@ export class ContentfulService {
     const chunkSize = Number(
       process.env.CONTENTFUL_ENTRY_FETCH_CHUNK_SIZE ?? 40,
     )
+
+    logger.info(`Sync chunk size is: ${chunkSize}`)
 
     const populatedSyncEntriesResult = await this.getPopulatedSyncEntries(
       typeOfSync,
@@ -294,12 +286,15 @@ export class ContentfulService {
       for (let i = 0; i < this.defaultIncludeDepth; i += 1) {
         const linkedEntries = []
         for (const entryId of nestedEntries) {
-          // Due to the limitation of Contentful Sync API, we need to query every entry one at a time
-          // with regular sync, triggered by a webhook, these calls 1 - 2 at most
+          // We fetch the entries that are linking to our nested entries
           linkedEntries.push(
             ...(
               await this.limiter.schedule(() => {
-                return this.linksToEntry(entryId, locale, chunkSize)
+                return this.getContentfulData(chunkSize, {
+                  include: this.defaultIncludeDepth,
+                  links_to_entry: entryId,
+                  locale: this.contentfulLocaleMap[locale],
+                })
               })
             ).filter(
               (entry) => !items.some((item) => item.sys.id === entry.sys.id),
