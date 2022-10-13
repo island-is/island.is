@@ -1,5 +1,9 @@
 import { dump, load } from 'js-yaml'
-import { postgresIdentifier, serializeService } from './map-to-values'
+import {
+  postgresIdentifier,
+  serializeService,
+  serviceMockDef,
+} from './map-to-values'
 import { PostgresInfo, Service } from './types/input-types'
 import { UberChart } from './uber-chart'
 import { ValueFile, FeatureKubeJob, Services } from './types/output-types'
@@ -12,7 +16,7 @@ const dumpOpts = {
   forceQuotes: true,
 }
 
-const renderValueFile = (
+export const renderValueFile = (
   uberChart: UberChart,
   ...services: Service[]
 ): ValueFile => {
@@ -30,6 +34,22 @@ const renderValueFile = (
         }
     }
   }, uberChart.env.global)
+  const servicesAndMocks = Object.entries(uberChart.deps).reduce(
+    (acc, [name, svcs]) => {
+      if (name.indexOf('.') > -1) {
+        return {
+          ...acc,
+          [`mock-${name}`]: serviceMockDef({
+            namespace: svcs.values().next().value.namespace,
+          }),
+        }
+      }
+      return {
+        ...acc,
+      }
+    },
+    helmServices,
+  )
   Object.values(helmServices)
     .filter((s) => s.grantNamespacesEnabled)
     .forEach(({ namespace, grantNamespaces }) =>
@@ -51,7 +71,7 @@ const renderValueFile = (
         .reduce((prev, cur) => prev.add(cur), new Set<string>())
         .values(),
     ),
-    services: helmServices,
+    services: servicesAndMocks,
   }
 }
 

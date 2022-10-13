@@ -609,3 +609,36 @@ function resolveVariable(
     ? serializeValueType(value[uberChart.env.type], uberChart, service)
     : serializeValueType(value, uberChart, service)
 }
+
+export const serviceMockDef = (options: { namespace: string }) => {
+  const result: ServiceHelm = {
+    enabled: true,
+    grantNamespaces: [],
+    grantNamespacesEnabled: false,
+    namespace: options.namespace,
+    image: {
+      repository: `wiremock`,
+    },
+    env: {},
+    command: ['mock'],
+    secrets: {},
+    healthCheck: {
+      port: 8000,
+      liveness: {
+        path: '/',
+        initialDelaySeconds: 5,
+        timeoutSeconds: 5,
+      },
+      readiness: {
+        path: '/',
+        initialDelaySeconds: 5,
+        timeoutSeconds: 5,
+      },
+    },
+    securityContext: {
+      privileged: false,
+      allowPrivilegeEscalation: false,
+    },
+  }
+  return result
+}

@@ -4,7 +4,7 @@ import { OpsEnv, Service } from './input-types'
 export interface UberChartType {
   env: EnvironmentConfig
 
-  ref(from: Service, to: Service): string
+  ref(from: Service, to: Service | string): string
 }
 
 export interface EnvironmentConfig {

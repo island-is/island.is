@@ -1,5 +1,5 @@
 import { EnvironmentVariables, Secrets, XroadConfig } from './types/input-types'
-import { json } from './dsl'
+import { json, ref } from './dsl'
 
 type XroadSectionConfig = {
   secrets?: Secrets
@@ -23,7 +23,7 @@ export class XroadConf implements XroadConfig {
 export const Base = new XroadConf({
   env: {
     XROAD_BASE_PATH: {
-      dev: 'http://securityserver.dev01.devland.is',
+      dev: ref(() => 'http://securityserver.dev01.devland.is'),
       staging: 'http://securityserver.staging01.devland.is',
       prod: 'http://securityserver.island.is',
     },
