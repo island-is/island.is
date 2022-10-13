@@ -21,7 +21,6 @@ import { Case } from './models/case.model'
 import { ArchiveResponse } from './models/archive.response'
 import { DeliverResponse } from './models/deliver.response'
 import { DeliverProsecutorDocumentsResponse } from './models/deliverProsecutorDocuments.response'
-import { CaseService } from './case.service'
 import { InternalCaseService } from './internalCase.service'
 
 @Controller('api/internal')
@@ -29,7 +28,6 @@ import { InternalCaseService } from './internalCase.service'
 @UseGuards(TokenGuard)
 export class InternalCaseController {
   constructor(
-    private readonly caseService: CaseService,
     private readonly internalCaseService: InternalCaseService,
     private readonly eventService: EventService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
@@ -70,7 +68,7 @@ export class InternalCaseController {
   ): Promise<DeliverResponse> {
     this.logger.debug(`Delivering case ${caseId} to court and police`)
 
-    return this.caseService.deliver(theCase)
+    return this.internalCaseService.deliver(theCase)
   }
 
   @UseGuards(CaseExistsGuard)
@@ -87,6 +85,6 @@ export class InternalCaseController {
       `Delivering prosecutor documents for case ${caseId} to court`,
     )
 
-    return this.caseService.deliverProsecutorDocuments(theCase)
+    return this.internalCaseService.deliverProsecutorDocuments(theCase)
   }
 }

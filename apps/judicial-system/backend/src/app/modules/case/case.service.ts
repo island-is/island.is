@@ -1,7 +1,6 @@
 import { Op } from 'sequelize'
 import { Includeable, OrderItem, Transaction } from 'sequelize/types'
 import { Sequelize } from 'sequelize-typescript'
-import { Attachment } from 'nodemailer/lib/mailer'
 import { PDFDocument, PDFName, PDFRef, StandardFonts } from 'pdf-lib'
 
 import {
@@ -12,7 +11,6 @@ import {
 } from '@nestjs/common'
 import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 
-import type { ConfigType } from '@island.is/nest/config'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { FormatMessage, IntlService } from '@island.is/cms-translations'
@@ -22,48 +20,36 @@ import {
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
-import { EmailService } from '@island.is/email-service'
-import { SIGNED_VERDICT_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
 import {
   CaseFileCategory,
   CaseFileState,
   CaseOrigin,
   CaseState,
-  isIndictmentCase,
 } from '@island.is/judicial-system/types'
 import type { User as TUser } from '@island.is/judicial-system/types'
-import { caseTypes } from '@island.is/judicial-system/formatters'
 
 import { nowFactory } from '../../factories'
 import {
   getRequestPdfAsBuffer,
   getRulingPdfAsString,
-  writeFile,
   getRulingPdfAsBuffer,
   getCustodyNoticePdfAsBuffer,
-  stripHtmlTags,
   getCourtRecordPdfAsBuffer,
   getCourtRecordPdfAsString,
-  formatCourtUploadRulingTitle,
   formatRulingModifiedHistory,
 } from '../../formatters'
-import { courtUpload, notifications as m } from '../../messages'
-import { CaseFile, FileService } from '../file'
+import { CaseFile } from '../file'
 import { DefendantService, Defendant } from '../defendant'
 import { Institution } from '../institution'
 import { User } from '../user'
 import { AwsS3Service } from '../aws-s3'
-import { CourtDocumentFolder, CourtService } from '../court'
+import { CourtService } from '../court'
 import { EventService } from '../event'
-import { PoliceService } from '../police'
 import { CreateCaseDto } from './dto/createCase.dto'
 import { UpdateCaseDto } from './dto/updateCase.dto'
 import { getCasesQueryFilter } from './filters/case.filters'
 import { Case } from './models/case.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
-import { DeliverResponse } from './models/deliver.response'
-import { DeliverProsecutorDocumentsResponse } from './models/deliverProsecutorDocuments.response'
-import { caseModuleConfig } from './case.config'
 
 const includes: Includeable[] = [
   { model: Defendant, as: 'defendants' },
@@ -117,17 +103,12 @@ export class CaseService {
   constructor(
     @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(Case) private readonly caseModel: typeof Case,
-    @Inject(caseModuleConfig.KEY)
-    private readonly config: ConfigType<typeof caseModuleConfig>,
     private readonly defendantService: DefendantService,
-    private readonly fileService: FileService,
     private readonly awsS3Service: AwsS3Service,
     private readonly courtService: CourtService,
     private readonly signingService: SigningService,
-    private readonly emailService: EmailService,
     private readonly intlService: IntlService,
     private readonly eventService: EventService,
-    private readonly policeService: PoliceService,
     private readonly messageService: MessageService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
@@ -158,301 +139,6 @@ export class CaseService {
           `Failed to upload signed ruling pdf to AWS S3 for case ${theCase.id}`,
           { reason },
         )
-
-        return false
-      })
-  }
-
-  private async uploadSignedRulingPdfToCourt(
-    theCase: Case,
-    buffer: Buffer,
-    user?: TUser,
-  ): Promise<boolean> {
-    if (!this.config.production) {
-      writeFile(`${theCase.id}-ruling-signed.pdf`, buffer)
-    }
-
-    const fileName = formatCourtUploadRulingTitle(
-      this.formatMessage,
-      theCase.courtCaseNumber,
-      Boolean(theCase.rulingModifiedHistory),
-    )
-
-    try {
-      await this.courtService.createDocument(
-        theCase.id,
-        theCase.courtId,
-        theCase.courtCaseNumber,
-        CourtDocumentFolder.COURT_DOCUMENTS,
-        fileName,
-        `${fileName}.pdf`,
-        'application/pdf',
-        buffer,
-        user,
-      )
-
-      return true
-    } catch (error) {
-      this.logger.error(
-        `Failed to upload signed ruling pdf to court for case ${theCase.id}`,
-        { error },
-      )
-
-      return false
-    }
-  }
-
-  private async uploadCourtRecordPdfToCourt(theCase: Case): Promise<boolean> {
-    try {
-      const pdf = await getCourtRecordPdfAsBuffer(theCase, this.formatMessage)
-
-      if (!this.config.production) {
-        writeFile(`${theCase.id}-court-record.pdf`, pdf)
-      }
-
-      const fileName = this.formatMessage(courtUpload.courtRecord, {
-        courtCaseNumber: theCase.courtCaseNumber,
-      })
-
-      await this.courtService.createDocument(
-        theCase.id,
-        theCase.courtId,
-        theCase.courtCaseNumber,
-        CourtDocumentFolder.COURT_DOCUMENTS,
-        fileName,
-        `${fileName}.pdf`,
-        'application/pdf',
-        pdf,
-      )
-
-      return true
-    } catch (error) {
-      // Log and ignore this error. The court record can be uploaded manually.
-      this.logger.error(
-        `Failed to upload court record pdf to court for case ${theCase.id}`,
-        { error },
-      )
-
-      return false
-    }
-  }
-
-  private async upploadRequestPdfToCourt(theCase: Case): Promise<boolean> {
-    return this.getRequestPdf(theCase)
-      .then((pdf) => {
-        const fileName = this.formatMessage(courtUpload.request, {
-          caseType: caseTypes[theCase.type],
-          date: '',
-        })
-
-        return this.courtService.createDocument(
-          theCase.id,
-          theCase.courtId,
-          theCase.courtCaseNumber,
-          CourtDocumentFolder.REQUEST_DOCUMENTS,
-          fileName,
-          `${fileName}.pdf`,
-          'application/pdf',
-          pdf,
-        )
-      })
-      .then(() => {
-        return true
-      })
-      .catch((error) => {
-        // Tolerate failure, but log error
-        this.logger.error(
-          `Failed to upload request pdf to court for case ${theCase.id}`,
-          { error },
-        )
-
-        return false
-      })
-  }
-
-  private async sendEmailToCourt(
-    theCase: Case,
-    subject: string,
-    body: string,
-    attachment?: Attachment,
-  ) {
-    const to = [
-      {
-        name: theCase.judge?.name ?? '',
-        address: theCase.judge?.email ?? '',
-      },
-    ]
-    if (theCase.registrar) {
-      to.push({
-        name: theCase.registrar?.name ?? '',
-        address: theCase.registrar?.email ?? '',
-      })
-    }
-
-    try {
-      await this.emailService.sendEmail({
-        from: {
-          name: this.config.email.fromName,
-          address: this.config.email.fromEmail,
-        },
-        replyTo: {
-          name: this.config.email.replyToName,
-          address: this.config.email.replyToEmail,
-        },
-        to: to,
-        subject,
-        text: stripHtmlTags(body),
-        html: body,
-        attachments: attachment ? [attachment] : [],
-      })
-    } catch (error) {
-      this.logger.error('Failed to send email', { error })
-
-      this.eventService.postErrorEvent(
-        'Failed to send email',
-        {
-          subject,
-          to: to.reduce(
-            (acc, recipient, index) =>
-              index > 0
-                ? `${acc}, ${recipient.name} (${recipient.address})`
-                : `${recipient.name} (${recipient.address})`,
-            '',
-          ),
-          attachments: attachment && `${attachment.filename}`,
-        },
-        error as Error,
-      )
-    }
-  }
-
-  private async deliverCaseFilesToCourt(
-    theCase: Case,
-    caseFileCategories?: CaseFileCategory[],
-  ): Promise<boolean> {
-    let success = true
-
-    try {
-      const caseFiles = theCase.caseFiles ?? []
-
-      for (const caseFile of caseFiles.filter(
-        (caseFile) =>
-          !caseFile.category || caseFileCategories?.includes(caseFile.category),
-      )) {
-        const uploaded = await this.fileService
-          .uploadCaseFileToCourt(caseFile, theCase)
-          .then((response) => response.success)
-          .catch((reason) => {
-            this.logger.error(
-              `Failed to deliver ${
-                caseFile.category ?? CaseFileCategory.CASE_FILE
-              } ${caseFile.id} of case ${theCase.id} to court`,
-              { reason },
-            )
-
-            return false
-          })
-
-        success = success && uploaded
-      }
-    } catch (error) {
-      // Tolerate failure, but log error
-      this.logger.error(
-        `Failed to deliver files of case ${theCase.id} to court`,
-        { error },
-      )
-
-      success = false
-    }
-
-    return success
-  }
-
-  private async deliverSignedRulingToCourt(theCase: Case): Promise<boolean> {
-    return this.awsS3Service
-      .getObject(`generated/${theCase.id}/ruling.pdf`)
-      .then((pdf) => this.uploadSignedRulingPdfToCourt(theCase, pdf))
-      .catch((reason) => {
-        this.logger.error(
-          `Faild to deliver the ruling for case ${theCase.id} to court`,
-          { reason },
-        )
-
-        return false
-      })
-  }
-
-  private async deliverProsecutorDocumentsToCourt(
-    theCase: Case,
-  ): Promise<boolean> {
-    return isIndictmentCase(theCase.type)
-      ? await this.deliverCaseFilesToCourt(theCase, [
-          CaseFileCategory.COVER_LETTER,
-          CaseFileCategory.INDICTMENT,
-          CaseFileCategory.CRIMINAL_RECORD,
-          CaseFileCategory.COST_BREAKDOWN,
-          CaseFileCategory.CASE_FILE_CONTENTS,
-          CaseFileCategory.CASE_FILE,
-        ])
-      : await this.upploadRequestPdfToCourt(theCase)
-  }
-
-  private async getIndictmentCourtRecordAsString(
-    theCase: Case,
-  ): Promise<string> {
-    const caseFile = theCase.caseFiles?.find(
-      (caseFile) => caseFile.category === CaseFileCategory.COURT_RECORD,
-    )
-
-    if (!caseFile) {
-      throw new Error(
-        `Failed to find the court record for case ${theCase.id} in the database`,
-      )
-    }
-
-    if (!caseFile.key) {
-      throw new Error(
-        `Missing AWS S3 key for the court record of case ${theCase.id}`,
-      )
-    }
-
-    return this.awsS3Service
-      .getObject(caseFile.key)
-      .then((buffer) => buffer.toString('binary'))
-  }
-
-  private getCourtRecordAsString(theCase: Case) {
-    return isIndictmentCase(theCase.type)
-      ? this.getIndictmentCourtRecordAsString(theCase)
-      : getCourtRecordPdfAsString(theCase, this.formatMessage)
-  }
-
-  private async deliverCaseToPolice(theCase: Case): Promise<boolean> {
-    return this.getCourtRecordAsString(theCase)
-      .then(async (courtRecord) => {
-        const defendantNationalIds = theCase.defendants?.reduce<string[]>(
-          (ids, defendant) =>
-            !defendant.noNationalId && defendant.nationalId
-              ? [...ids, defendant.nationalId]
-              : ids,
-          [],
-        )
-
-        return this.policeService.updatePoliceCase(
-          theCase.id,
-          theCase.type,
-          theCase.state,
-          courtRecord,
-          theCase.policeCaseNumbers,
-          defendantNationalIds,
-          theCase.conclusion,
-        )
-      })
-      .catch((reason) => {
-        // Tolerate failure, but log error
-        this.logger.error(`Failed to deliver case ${theCase.id} to police`, {
-          reason,
-        })
 
         return false
       })
@@ -985,65 +671,5 @@ export class CaseService {
     this.addCaseConnectedToCourtCaseMessageToQueue(updatedCase.id)
 
     return updatedCase
-  }
-
-  async deliver(theCase: Case): Promise<DeliverResponse> {
-    await this.refreshFormatMessage()
-
-    const rulingDeliveredToCourt =
-      isIndictmentCase(theCase.type) ||
-      (await this.deliverSignedRulingToCourt(theCase))
-
-    const courtRecordDeliveredToCourt =
-      isIndictmentCase(theCase.type) ||
-      Boolean(theCase.rulingModifiedHistory) || // court record did not change
-      (await this.uploadCourtRecordPdfToCourt(theCase))
-
-    const caseFilesDeliveredToCourt =
-      isIndictmentCase(theCase.type) ||
-      Boolean(theCase.rulingModifiedHistory) || // case files did not change
-      (await this.deliverCaseFilesToCourt(theCase))
-
-    const caseDeliveredToPolice =
-      theCase.origin === CaseOrigin.LOKE &&
-      (Boolean(theCase.rulingModifiedHistory) || // no relevant changes
-        (await this.deliverCaseToPolice(theCase)))
-
-    if (
-      !isIndictmentCase(theCase.type) &&
-      (!rulingDeliveredToCourt || !courtRecordDeliveredToCourt)
-    ) {
-      this.sendEmailToCourt(
-        theCase,
-        this.formatMessage(m.signedRuling.subjectV2, {
-          courtCaseNumber: theCase.courtCaseNumber,
-          isModifyingRuling: Boolean(theCase.rulingModifiedHistory),
-        }),
-        this.formatMessage(m.signedRuling.courtBody, {
-          courtCaseNumber: theCase.courtCaseNumber,
-          linkStart: `<a href="${this.config.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${theCase.id}">`,
-          linkEnd: '</a>',
-        }),
-      )
-    }
-
-    return {
-      rulingDeliveredToCourt,
-      courtRecordDeliveredToCourt,
-      caseFilesDeliveredToCourt,
-      caseDeliveredToPolice,
-    }
-  }
-
-  async deliverProsecutorDocuments(
-    theCase: Case,
-  ): Promise<DeliverProsecutorDocumentsResponse> {
-    const requestDeliveredToCourt = await this.deliverProsecutorDocumentsToCourt(
-      theCase,
-    )
-
-    return {
-      requestDeliveredToCourt,
-    }
   }
 }
