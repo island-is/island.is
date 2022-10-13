@@ -25,7 +25,7 @@ import { TaktikalModule, TaktikalService } from '@island.is/clients/taktikal'
 })
 ```
 
-Each organisation must have their own access credentials and they can be accessed in the [Taktikal Portal](https://app-dev.taktikal.is/settings/access-keys).
+Each organisation must have their own credentials and they can be accessed in the [Taktikal Portal](https://app-dev.taktikal.is/settings/access-keys).
 
 ## Useful links
 
