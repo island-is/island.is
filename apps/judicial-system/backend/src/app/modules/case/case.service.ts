@@ -193,7 +193,7 @@ export class CaseService {
     return originalAncestor
   }
 
-  async getAll(user: TUser): Promise<Case[]> {
+  getAll(user: TUser): Promise<Case[]> {
     return this.caseModel.findAll({
       include: includes,
       order: [defendantsOrder],
@@ -251,6 +251,20 @@ export class CaseService {
     if (returnUpdatedCase) {
       return this.findById(caseId)
     }
+  }
+
+  addCaseCompletedMessageToQueue(caseId: string): Promise<string> {
+    return this.messageService.postMessageToQueue({
+      type: MessageType.CASE_COMPLETED,
+      caseId,
+    })
+  }
+
+  addCaseConnectedToCourtCaseMessageToQueue(caseId: string): Promise<string> {
+    return this.messageService.postMessageToQueue({
+      type: MessageType.CASE_CONNECTED_TO_COURT_CASE,
+      caseId,
+    })
   }
 
   async getRequestPdf(theCase: Case): Promise<Buffer> {
@@ -510,20 +524,6 @@ export class CaseService {
 
         throw error
       })
-  }
-
-  addCaseCompletedMessageToQueue(caseId: string): Promise<string> {
-    return this.messageService.postMessageToQueue({
-      type: MessageType.CASE_COMPLETED,
-      caseId,
-    })
-  }
-
-  addCaseConnectedToCourtCaseMessageToQueue(caseId: string): Promise<string> {
-    return this.messageService.postMessageToQueue({
-      type: MessageType.CASE_CONNECTED_TO_COURT_CASE,
-      caseId,
-    })
   }
 
   async getRulingSignatureConfirmation(
