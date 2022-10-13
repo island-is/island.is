@@ -167,6 +167,10 @@ export const basicVehicleInformationMapper = (
           endDate: operator.enddate,
         }
       }) || undefined,
+    isStolen: data.stolens ? data.stolens.length > 0 : false,
+    fees: {
+      hasEncumbrances: data.fees?.hasEncumbrances === 1,
+    },
   }
 
   return response

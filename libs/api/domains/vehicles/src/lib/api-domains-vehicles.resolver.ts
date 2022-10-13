@@ -52,6 +52,7 @@ export class VehiclesResolver {
     return await this.vehiclesService.getVehiclesForUser(user, true, true)
   }
 
+  @Scopes(ApiScope.internal)
   @Query(() => VehiclesDetail, { name: 'vehiclesDetail', nullable: true })
   @Audit()
   async getVehicleDetail(

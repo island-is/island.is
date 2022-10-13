@@ -276,6 +276,12 @@ export class VehiclesOperator {
 }
 
 @ObjectType()
+export class VehiclesFees {
+  @Field(() => Boolean, { nullable: true })
+  hasEncumbrances?: boolean
+}
+
+@ObjectType()
 export class VehiclesDetail {
   @Field(() => VehiclesMainInfo, { nullable: true })
   mainInfo?: VehiclesMainInfo
@@ -306,4 +312,10 @@ export class VehiclesDetail {
 
   @Field(() => String, { nullable: true })
   downloadServiceURL?: string
+
+  @Field(() => Boolean, { nullable: true })
+  isStolen?: boolean
+
+  @Field(() => VehiclesFees, { nullable: true })
+  fees?: VehiclesFees
 }
