@@ -178,7 +178,6 @@ export class ApplicationService {
         attributes: ['id'],
       },
     })
-    const res = result.find((x) => x.payment !== null)
 
     return result.map((application) => ({
       id: application.id,

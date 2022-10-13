@@ -66,9 +66,8 @@ export class PaymentService {
       this.paymentConfig.callbackAdditionUrl +
       payment.id
 
-    const parsedDefinition = JSON.parse(
-      (payment.definition as unknown) as string,
-    )
+    const parsedDefinition = JSON.parse(JSON.stringify(payment.definition))
+
     const charge: Charge = {
       // TODO: this needs to be unique, but can only handle 22 or 23 chars
       // should probably be an id or token from the DB charge once implemented
