@@ -18,7 +18,7 @@ import { AuthCustomDelegation } from '@island.is/api/schema'
 import { IntroHeader, NotFound } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { useAuthDelegationQuery } from '@island.is/service-portal/graphql'
-import { AccessForm, AccessHeaderCards } from '../../components/access'
+import { AccessForm, AccessHeaderCards } from '../../components/Access'
 
 const Access = () => {
   useNamespaces(['sp.settings-access-control', 'sp.access-control-delegations'])
