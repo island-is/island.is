@@ -58,6 +58,7 @@ const user = createCurrentUser({
 })
 const userName = 'Tester Tests'
 const nationalRegistryUser = createNationalRegistryUser()
+
 const mockDelegations = {
   incoming: createDelegation({
     fromNationalId: nationalRegistryUser.nationalId,
@@ -164,6 +165,11 @@ describe('ActorDelegationsController', () => {
       beforeAll(async () => {
         const nationalRegistryUsers = [
           nationalRegistryUser,
+          ...Object.values(mockDelegations).map((delegation) =>
+            createNationalRegistryUser({
+              nationalId: delegation.fromNationalId,
+            }),
+          ),
           ...times(10, () =>
             createNationalRegistryUser({
               name: getFakeName(),
@@ -254,34 +260,28 @@ describe('ActorDelegationsController', () => {
 
       it('should return custom delegations and not deceased delegations, when the delegationTypes filter is custom type', async () => {
         // Arrange
-        const models = await delegationModel.bulkCreate(
-          [
-            createDelegation({
-              fromNationalId: nationalRegistryUser.nationalId,
-              toNationalId: user.nationalId,
-              scopes: [Scopes[0].name],
-              today,
-            }),
-            createDelegation({
-              fromNationalId: deceasedNationalIds[0],
-              toNationalId: user.nationalId,
-              scopes: [Scopes[0].name],
-              today,
-            }),
-            createDelegation({
-              fromNationalId: deceasedNationalIds[1],
-              toNationalId: user.nationalId,
-              scopes: [Scopes[0].name],
-              today,
-            }),
-          ],
-          {
-            include: [{ model: DelegationScope, as: 'delegationScopes' }],
-          },
-        )
+        await createDelegationModels(delegationModel, [
+          mockDelegations.incoming,
+          createDelegation({
+            fromNationalId: deceasedNationalIds[0],
+            toNationalId: user.nationalId,
+            scopes: [Scopes[0].name],
+            today,
+          }),
+          createDelegation({
+            fromNationalId: deceasedNationalIds[1],
+            toNationalId: user.nationalId,
+            scopes: [Scopes[0].name],
+            today,
+          }),
+        ])
 
         // We expect the first model to be returned, but not the second or third since they are tied to a deceased person
-        const expectedModel = models[0].toDTO()
+        const expectedModel = await findExpectedDelegationModels(
+          delegationModel,
+          mockDelegations.incoming.id,
+          [Scopes[0].name],
+        )
 
         // Act
         const res = await server.get(
@@ -294,19 +294,17 @@ describe('ActorDelegationsController', () => {
         expectMatchingObject(res.body[0], expectedModel)
 
         // Verify
-        const expectedModifyedModels = (
-          await delegationModel.findAll({
-            where: {
-              toNationalId: user.nationalId,
+        const expectedModifyedModels = await delegationModel.findAll({
+          where: {
+            toNationalId: user.nationalId,
+          },
+          include: [
+            {
+              model: DelegationScope,
+              as: 'delegationScopes',
             },
-            include: [
-              {
-                model: DelegationScope,
-                as: 'delegationScopes',
-              },
-            ],
-          })
-        )?.map((delegation) => delegation.toDTO())
+          ],
+        })
 
         expect(expectedModifyedModels.length).toEqual(1)
       })
