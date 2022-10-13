@@ -746,9 +746,6 @@ export const getLastValidPeriodEndDate = (
   application: Application,
 ): Date | null => {
   const { periods } = getApplicationAnswers(application.answers)
-  const { applicationFundId } = getApplicationExternalData(
-    application.externalData,
-  )
 
   if (periods.length === 0) {
     return null
@@ -761,19 +758,20 @@ export const getLastValidPeriodEndDate = (
   }
 
   const lastEndDate = new Date(lastPeriodEndDate)
-  if (applicationFundId === '') {
-    return lastEndDate
-  }
 
   const today = new Date()
   const beginningOfMonth = addDays(today, today.getDate() * -1 + 1)
 
-  // LastPeriod's endDate is in current month and current date is >= 20 then Applicant could only start from next month
+  // LastPeriod's endDate is in current month then Applicant could only start from next month
   if (
-    today.getDate() >= 20 &&
     lastEndDate.getMonth() === today.getMonth() &&
     lastEndDate.getFullYear() === today.getFullYear()
   ) {
+    return addMonths(beginningOfMonth, 1)
+  }
+
+  // Current Date is >= 20 and lastEndDate is in the past then Applicant could only start from next month
+  if (today.getDate() >= 20 && lastEndDate < today) {
     return addMonths(beginningOfMonth, 1)
   }
 

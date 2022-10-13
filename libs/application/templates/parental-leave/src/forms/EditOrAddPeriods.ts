@@ -93,16 +93,25 @@ export const EditOrAddPeriods: Form = buildForm({
                       application,
                     )
 
+                    const today = new Date()
                     if (lastPeriodEndDate) {
                       return lastPeriodEndDate
-                    } else if (expectedDateOfBirth) {
-                      return addDays(
+                    } else if (
+                      expectedDateOfBirth &&
+                      new Date(expectedDateOfBirth) > today
+                    ) {
+                      const leastStartDate = addDays(
                         new Date(expectedDateOfBirth),
                         -minimumPeriodStartBeforeExpectedDateOfBirth,
                       )
+                      if (leastStartDate < today) {
+                        return today
+                      }
+
+                      return leastStartDate
                     }
 
-                    return new Date()
+                    return today
                   },
                   excludeDates: (application) => {
                     const { periods } = getApplicationAnswers(
