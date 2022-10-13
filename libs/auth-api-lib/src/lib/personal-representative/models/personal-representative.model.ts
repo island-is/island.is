@@ -9,7 +9,7 @@ import {
   ForeignKey,
   HasMany,
 } from 'sequelize-typescript'
-import { IsEnum, IsNotEmpty, ValidateIf } from 'class-validator'
+import { IsEnum, IsOptional } from 'class-validator'
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { PersonalRepresentativeType } from './personal-representative-type.model'
@@ -107,14 +107,20 @@ export class PersonalRepresentative extends Model {
   @Column({ type: DataType.BOOLEAN, defaultValue: false })
   inactive!: boolean
 
-  @ValidateIf((model: PersonalRepresentative) => model.inactive)
-  @IsNotEmpty()
+  @IsOptional()
   @IsEnum(InactiveReason)
   @ApiProperty({ type: InactiveReason, nullable: true })
   @Column({
     type: DataType.ENUM(...Object.values(InactiveReason)),
     defaultValue: null,
     allowNull: true,
+    validate: {
+      ddlConstraint(this: PersonalRepresentative) {
+        if (this.inactive && !this.inactiveReason) {
+          throw new Error('inactive is required')
+        }
+      },
+    },
   })
   inactiveReason?: InactiveReason
 
