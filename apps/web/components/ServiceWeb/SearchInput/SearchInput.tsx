@@ -138,34 +138,36 @@ export const SearchInput = ({
   }
 
   const updateOptions = () => {
-    const options = (
-      (data?.searchResults?.items as Array<SupportQna>) || []
-    ).map((item, index) => ({
-      label: item.title,
-      value: item.slug,
-      component: ({ active }) => {
-        if (active) {
-          setActiveItem(item)
-        }
+    const options = ((data?.searchResults?.items as Array<SupportQna>) || [])
+      .filter(
+        (item) => item.category?.slug && item.organization?.slug && item.slug,
+      )
+      .map((item, index) => ({
+        label: item.title,
+        value: item.slug,
+        component: ({ active }) => {
+          if (active) {
+            setActiveItem(item)
+          }
 
-        return (
-          <Box
-            key={index}
-            cursor="pointer"
-            outline="none"
-            padding={2}
-            role="button"
-            background={active ? 'white' : 'blue100'}
-            onClick={() => {
-              setOptions([])
-              onSelect(item)
-            }}
-          >
-            <Text as="span">{item.title}</Text>
-          </Box>
-        )
-      },
-    }))
+          return (
+            <Box
+              key={index}
+              cursor="pointer"
+              outline="none"
+              padding={2}
+              role="button"
+              background={active ? 'white' : 'blue100'}
+              onClick={() => {
+                setOptions([])
+                onSelect(item)
+              }}
+            >
+              <Text as="span">{item.title}</Text>
+            </Box>
+          )
+        },
+      }))
 
     setOptions(
       options.length
@@ -216,10 +218,21 @@ export const SearchInput = ({
           return onSelect(activeItem)
         }
 
+        const defaultInstitutionSlug =
+          activeLocale === 'en' ? 'digital-iceland' : 'stafraent-island'
+
+        let slug = institutionSlug
+
+        if (
+          institutionSlug === 'leit' ||
+          institutionSlug === 'search' ||
+          !institutionSlug
+        ) {
+          slug = defaultInstitutionSlug
+        }
+
         Router.push({
-          pathname: linkResolver('serviceweborganizationsearch', [
-            institutionSlug,
-          ]).href,
+          pathname: linkResolver('serviceweborganizationsearch', [slug]).href,
           query: { q: value },
         })
       }}

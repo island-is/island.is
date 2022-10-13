@@ -2,10 +2,10 @@ import {
   prosecutorNotificationRule,
   judgeNotificationRule,
   registrarNotificationRule,
-} from '../guards/rolesRules'
-import { NotificationController } from '../notification.controller'
+} from '../../guards/rolesRules'
+import { NotificationController } from '../../notification.controller'
 
-describe('CaseController - Update rules', () => {
+describe('NotificationController - Send case notification rules', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let rules: any[]
 

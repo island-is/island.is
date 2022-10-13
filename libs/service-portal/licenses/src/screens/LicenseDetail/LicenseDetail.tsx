@@ -18,6 +18,7 @@ import {
 import {
   ServicePortalModuleComponent,
   UserInfoLine,
+  CardLoader,
 } from '@island.is/service-portal/core'
 import ExpandableLine from './ExpandableLine'
 import { m } from '../../lib/messages'
@@ -27,7 +28,6 @@ import format from 'date-fns/format'
 import { dateFormat } from '@island.is/shared/constants'
 import { GenericLicenseDataField, Query } from '@island.is/api/schema'
 import { PkPass } from '../../components/QRCodeModal/PkPass'
-import { LicenseLoader } from '../../components/LicenseLoader/LicenseLoader'
 import {
   getLicenseDetailHeading,
   getTypeFromPath,
@@ -362,7 +362,7 @@ const LicenseDetail: ServicePortalModuleComponent = () => {
           </GridColumn>
         </GridRow>
       </Box>
-      {queryLoading && <LicenseLoader />}
+      {queryLoading && <CardLoader />}
 
       {!error && !queryLoading && (
         <>

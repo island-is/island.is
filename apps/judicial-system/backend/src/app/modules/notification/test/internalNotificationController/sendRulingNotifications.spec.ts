@@ -6,20 +6,19 @@ import {
   CaseDecision,
   CaseType,
   NotificationType,
-  User,
 } from '@island.is/judicial-system/types'
 import {
   CLOSED_INDICTMENT_OVERVIEW_ROUTE,
   SIGNED_VERDICT_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
 
-import { createTestingNotificationModule } from './createTestingNotificationModule'
-import { Case } from '../../case'
-import { SendNotificationResponse } from '../models/sendNotification.resopnse'
-import { SendNotificationDto } from '../dto/sendNotification.dto'
-import { notificationModuleConfig } from '../notification.config'
-import { Notification } from '../models/notification.model'
-import { Defendant, DefendantService } from '../../defendant'
+import { createTestingNotificationModule } from '../createTestingNotificationModule'
+import { Case } from '../../../case'
+import { Defendant, DefendantService } from '../../../defendant'
+import { SendNotificationResponse } from '../../models/sendNotification.resopnse'
+import { SendNotificationDto } from '../../dto/sendNotification.dto'
+import { notificationModuleConfig } from '../../notification.config'
+import { Notification } from '../../models/notification.model'
 
 jest.mock('../../../factories')
 
@@ -30,12 +29,11 @@ interface Then {
 
 type GivenWhenThen = (
   caseId: string,
-  user: User,
   theCase: Case,
   notification: SendNotificationDto,
 ) => Promise<Then>
 
-describe('NotificationService - sendRulingNotifications', () => {
+describe('InternalNotificationController - Send ruling notifications', () => {
   const notification: SendNotificationDto = { type: NotificationType.RULING }
 
   let mockEmailService: EmailService
@@ -48,10 +46,10 @@ describe('NotificationService - sendRulingNotifications', () => {
     process.env.PRISON_EMAIL = 'prisonEmail@email.com'
     const {
       emailService,
-      notificationController,
       notificationConfig,
       notificationModel,
       defendantService,
+      internalNotificationController,
     } = await createTestingNotificationModule()
 
     mockEmailService = emailService
@@ -62,13 +60,12 @@ describe('NotificationService - sendRulingNotifications', () => {
     const mockFindAll = mockNotificationModel.findAll as jest.Mock
     mockFindAll.mockResolvedValue([])
 
-    givenWhenThen = async (caseId: string, user: User, theCase: Case) => {
+    givenWhenThen = async (caseId: string, theCase: Case) => {
       const then = {} as Then
 
       try {
-        then.result = await notificationController.sendCaseNotification(
+        then.result = await internalNotificationController.sendCaseNotification(
           caseId,
-          user,
           theCase,
           notification,
         )
@@ -90,10 +87,9 @@ describe('NotificationService - sendRulingNotifications', () => {
       court: { name: 'Héraðsdómur Reykjavíkur' },
       prosecutor,
     } as Case
-    const user = {} as User
 
     beforeEach(async () => {
-      await givenWhenThen(caseId, user, theCase, notification)
+      await givenWhenThen(caseId, theCase, notification)
     })
 
     it('should send email to prosecutor', () => {
@@ -119,10 +115,9 @@ describe('NotificationService - sendRulingNotifications', () => {
       court: { name: 'Héraðsdómur Reykjavíkur' },
       prosecutor,
     } as Case
-    const user = {} as User
 
     beforeEach(async () => {
-      await givenWhenThen(caseId, user, theCase, notification)
+      await givenWhenThen(caseId, theCase, notification)
     })
 
     it('should send email to prosecutor', () => {
@@ -150,10 +145,9 @@ describe('NotificationService - sendRulingNotifications', () => {
       rulingModifiedHistory: 'Some modified ruling',
       prosecutor,
     } as Case
-    const user = {} as User
 
     beforeEach(async () => {
-      await givenWhenThen(caseId, user, theCase, notification)
+      await givenWhenThen(caseId, theCase, notification)
     })
 
     it('should send email to prosecutor', () => {
@@ -182,10 +176,9 @@ describe('NotificationService - sendRulingNotifications', () => {
         rulingDate: new Date('2021-07-01'),
         defendants: [{ noNationalId: true }] as Defendant[],
       } as Case
-      const user = {} as User
 
       beforeEach(async () => {
-        await givenWhenThen(caseId, user, theCase, notification)
+        await givenWhenThen(caseId, theCase, notification)
       })
 
       it('should send email to prison', () => {
@@ -202,12 +195,12 @@ describe('NotificationService - sendRulingNotifications', () => {
             attachments: [
               {
                 filename: 'Vistunarseðill 007-2022-07.pdf',
-                content: '',
+                content: expect.any(String),
                 encoding: 'binary',
               },
               {
                 filename: 'Þingbók 007-2022-07.pdf',
-                content: '',
+                content: expect.any(String),
                 encoding: 'binary',
               },
             ],
@@ -233,14 +226,13 @@ describe('NotificationService - sendRulingNotifications', () => {
       rulingDate: new Date('2021-07-01'),
       defendants: [{ noNationalId: true }] as Defendant[],
     } as Case
-    const user = {} as User
 
     beforeEach(async () => {
       const mockGetDefendantsActiveCases = mockDefendantService.isDefendantInActiveCustody as jest.MockedFunction<
         typeof mockDefendantService.isDefendantInActiveCustody
       >
       mockGetDefendantsActiveCases.mockResolvedValueOnce(false)
-      await givenWhenThen(caseId, user, theCase, notification)
+      await givenWhenThen(caseId, theCase, notification)
     })
 
     it('should not send email to prison', () => {
@@ -258,14 +250,13 @@ describe('NotificationService - sendRulingNotifications', () => {
       rulingDate: new Date('2021-07-01'),
       defendants: [{ nationalId: '0000000000' }],
     } as Case
-    const user = {} as User
 
     beforeEach(async () => {
       const mockGetDefendantsActiveCases = mockDefendantService.isDefendantInActiveCustody as jest.MockedFunction<
         typeof mockDefendantService.isDefendantInActiveCustody
       >
       mockGetDefendantsActiveCases.mockResolvedValueOnce(false)
-      await givenWhenThen(caseId, user, theCase, notification)
+      await givenWhenThen(caseId, theCase, notification)
     })
 
     it('should not send email to prison', () => {
@@ -283,14 +274,13 @@ describe('NotificationService - sendRulingNotifications', () => {
       rulingDate: new Date('2021-07-01'),
       defendants: [{ nationalId: '0000000000' }],
     } as Case
-    const user = {} as User
 
     beforeEach(async () => {
       const mockGetDefendantsActiveCases = mockDefendantService.isDefendantInActiveCustody as jest.MockedFunction<
         typeof mockDefendantService.isDefendantInActiveCustody
       >
       mockGetDefendantsActiveCases.mockResolvedValueOnce(true)
-      await givenWhenThen(caseId, user, theCase, notification)
+      await givenWhenThen(caseId, theCase, notification)
     })
 
     it('should send email to prison', () => {
@@ -307,12 +297,12 @@ describe('NotificationService - sendRulingNotifications', () => {
           attachments: [
             {
               filename: 'Vistunarseðill 007-2022-07.pdf',
-              content: '',
+              content: expect.any(String),
               encoding: 'binary',
             },
             {
               filename: 'Þingbók 007-2022-07.pdf',
-              content: '',
+              content: expect.any(String),
               encoding: 'binary',
             },
           ],
@@ -333,14 +323,13 @@ describe('NotificationService - sendRulingNotifications', () => {
       rulingDate: new Date('2021-07-01'),
       defendants: [{ noNationalId: true }] as Defendant[],
     } as Case
-    const user = {} as User
 
     beforeEach(async () => {
       const mockGetDefendantsActiveCases = mockDefendantService.isDefendantInActiveCustody as jest.MockedFunction<
         typeof mockDefendantService.isDefendantInActiveCustody
       >
       mockGetDefendantsActiveCases.mockResolvedValueOnce(false)
-      await givenWhenThen(caseId, user, theCase, notification)
+      await givenWhenThen(caseId, theCase, notification)
     })
 
     it('should send email to prison', () => {
@@ -357,12 +346,12 @@ describe('NotificationService - sendRulingNotifications', () => {
           attachments: [
             {
               filename: 'Vistunarseðill 007-2022-07.pdf',
-              content: '',
+              content: expect.any(String),
               encoding: 'binary',
             },
             {
               filename: 'Þingbók 007-2022-07.pdf',
-              content: '',
+              content: expect.any(String),
               encoding: 'binary',
             },
           ],
@@ -383,14 +372,13 @@ describe('NotificationService - sendRulingNotifications', () => {
       rulingDate: new Date('2021-07-01'),
       defendants: [{ nationalId: '0000000000' }] as Defendant[],
     } as Case
-    const user = {} as User
 
     beforeEach(async () => {
       const mockGetDefendantsActiveCases = mockDefendantService.isDefendantInActiveCustody as jest.MockedFunction<
         typeof mockDefendantService.isDefendantInActiveCustody
       >
       mockGetDefendantsActiveCases.mockRejectedValue(new Error('Error'))
-      await givenWhenThen(caseId, user, theCase, notification)
+      await givenWhenThen(caseId, theCase, notification)
     })
 
     it('should send email to prison', () => {
@@ -407,12 +395,12 @@ describe('NotificationService - sendRulingNotifications', () => {
           attachments: [
             {
               filename: 'Vistunarseðill 007-2022-07.pdf',
-              content: '',
+              content: expect.any(String),
               encoding: 'binary',
             },
             {
               filename: 'Þingbók 007-2022-07.pdf',
-              content: '',
+              content: expect.any(String),
               encoding: 'binary',
             },
           ],
