@@ -18,6 +18,7 @@ import { dataSchema } from './dataSchema'
 import { m } from '../lib/messages'
 import { ApiActions } from './constants'
 import { AuthDelegationType } from '../types/schema'
+import { DoctorsNoteApi } from '../dataProviders'
 
 const PSignTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -64,6 +65,13 @@ const PSignTemplate: ApplicationTemplate<
                 },
               ],
               write: 'all',
+              api: [
+                NationalRegistryUserApi,
+                UserProfileApi,
+                DistrictsApi,
+                QualityPhotoApi,
+                DoctorsNoteApi,
+              ],
             },
             {
               id: Roles.ACTOR,
@@ -84,6 +92,7 @@ const PSignTemplate: ApplicationTemplate<
                 UserProfileApi,
                 DistrictsApi,
                 QualityPhotoApi,
+                DoctorsNoteApi,
               ],
             },
           ],

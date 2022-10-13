@@ -9,6 +9,7 @@ import {
   DistrictsApi,
   QualityPhotoApi,
 } from '@island.is/application/types'
+import { DoctorsNoteApi } from '../../dataProviders'
 import { m } from '../../lib/messages'
 
 export const sectionDataProviders = buildSection({
@@ -23,8 +24,7 @@ export const sectionDataProviders = buildSection({
       checkboxLabel: m.dataCollectionCheckboxLabel,
       dataProviders: [
         buildDataProviderItem({
-          id: 'doctorsNote',
-          type: 'DoctorsNoteProvider',
+          provider: DoctorsNoteApi,
           title: m.dataCollectionDoctorsNoteTitle,
           subTitle: m.dataCollectionDoctorsNoteSubtitle,
         }),
