@@ -1,11 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import {
-  IsNumber,
-  IsOptional,
-  IsPositive,
-  IsString,
-  ValidateIf,
-} from 'class-validator'
+import { IsNumber, IsOptional, IsString, Min } from 'class-validator'
 
 export class UpdateFileDto {
   @IsString()
@@ -17,15 +11,15 @@ export class UpdateFileDto {
   @ApiPropertyOptional()
   readonly userGeneratedFilename?: string | null
 
-  @ValidateIf((file) => typeof file.orderWithinChapter === 'number')
+  @IsOptional()
   @IsNumber()
-  @IsPositive()
+  @Min(0)
   @ApiPropertyOptional()
   readonly chapter?: number | null
 
-  @ValidateIf((file) => typeof file.chapter === 'number')
+  @IsOptional()
   @IsNumber()
-  @IsPositive()
+  @Min(0)
   @ApiPropertyOptional()
   readonly orderWithinChapter?: number | null
 }

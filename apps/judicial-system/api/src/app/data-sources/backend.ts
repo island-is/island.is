@@ -95,6 +95,14 @@ export class BackendApi extends DataSource<{ req: Request }> {
     })
   }
 
+  private patch<TBody, TResult>(route: string, body: TBody): Promise<TResult> {
+    return this.callBackend<TResult>(route, {
+      method: 'PATCH',
+      body: JSON.stringify(body),
+      headers: this.headers,
+    })
+  }
+
   getInstitutions(): Promise<Institution[]> {
     return this.get('institutions')
   }
@@ -214,7 +222,7 @@ export class BackendApi extends DataSource<{ req: Request }> {
     caseId: string,
     updates: UpdateFile[],
   ): Promise<UpdateFilesResponse> {
-    const caseFiles: CaseFile[] = await this.post<UpdateFile[], CaseFile[]>(
+    const caseFiles: CaseFile[] = await this.patch<UpdateFile[], CaseFile[]>(
       `case/${caseId}/files`,
       updates,
     )
