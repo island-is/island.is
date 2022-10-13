@@ -144,7 +144,7 @@ export class CaseService {
       })
   }
 
-  async createCase(
+  private async createCase(
     caseToCreate: CreateCaseDto,
     transaction?: Transaction,
   ): Promise<string> {
