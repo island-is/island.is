@@ -25,11 +25,7 @@ import { gql, useQuery } from '@apollo/client'
 import { useParams } from 'react-router-dom'
 import format from 'date-fns/format'
 import { dateFormat } from '@island.is/shared/constants'
-import {
-  GenericLicenseDataField,
-  GenericUserLicensePkPassStatus,
-  Query,
-} from '@island.is/api/schema'
+import { GenericLicenseDataField, Query } from '@island.is/api/schema'
 import { PkPass } from '../../components/QRCodeModal/PkPass'
 import { LicenseLoader } from '../../components/LicenseLoader/LicenseLoader'
 import {
@@ -378,8 +374,7 @@ const LicenseDetail: ServicePortalModuleComponent = () => {
           >
             {!expired &&
               genericLicense?.license.pkpass &&
-              genericLicense?.license.pkpassStatus ===
-                GenericUserLicensePkPassStatus.Available &&
+              genericLicense?.license.pkpassStatus === 'Available' &&
               licenseType && (
                 <>
                   <PkPass licenseType={licenseType} />
