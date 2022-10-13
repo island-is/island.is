@@ -433,6 +433,7 @@ export const slices = gql`
     id
     title
     type
+    hasBorderAbove
     accordionItems {
       id
       title
@@ -638,6 +639,30 @@ export const nestedOneColumnTextFields = gql`
     ...OneColumnTextFields
     content {
       ...AllSlices
+    }
+  }
+`
+
+export const nestedAccordionAndFaqListFields = `
+  ... on AccordionSlice {
+    ...AccordionSliceFields
+    accordionItems {
+      ... on OneColumnText {
+        ...OneColumnTextFields
+        content {
+          ...AllSlices
+        }
+      }
+    }
+  }
+  ... on FaqList {
+    ...FaqListFields
+    questions {
+      id
+      question
+      answer {
+        ...AllSlices
+      }
     }
   }
 `
