@@ -1,5 +1,4 @@
 import { uuid } from 'uuidv4'
-import { Op } from 'sequelize'
 import { Transaction } from 'sequelize/types'
 
 import { BadRequestException } from '@nestjs/common'
@@ -9,8 +8,6 @@ import {
   CaseType,
   UserRole,
   CaseOrigin,
-  CaseState,
-  CaseFileState,
 } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
@@ -20,7 +17,6 @@ import { DefendantService } from '../../../defendant/defendant.service'
 import { Defendant } from '../../../defendant/models/defendant.model'
 import { InternalCreateCaseDto } from '../../dto/internalCreateCase.dto'
 import { Case } from '../../models/case.model'
-import { CaseFile } from '../../../file'
 
 interface Then {
   result: Case
@@ -48,6 +44,9 @@ describe('InternalCaseController - Create', () => {
     mockUserService = userService
     mockDefendantService = defendantService
     mockCaseModel = caseModel
+
+    const mockDefendantCreate = mockDefendantService.create as jest.Mock
+    mockDefendantCreate.mockResolvedValue({} as Defendant)
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction

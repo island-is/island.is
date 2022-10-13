@@ -56,33 +56,36 @@ export class InternalCaseService {
         { transaction },
       )
 
-      await this.defendantService.create(
-        theCase.id,
-        {
-          nationalId: caseToCreate.accusedNationalId,
-          name: caseToCreate.accusedName,
-          gender: caseToCreate.accusedGender,
-          address: caseToCreate.accusedAddress,
-        },
-        transaction,
-      )
-
-      return this.caseModel.findByPk(theCase.id, {
-        include: [
-          { model: Institution, as: 'court' },
+      return this.defendantService
+        .create(
+          theCase.id,
           {
-            model: User,
-            as: 'creatingProsecutor',
-            include: [{ model: Institution, as: 'institution' }],
+            nationalId: caseToCreate.accusedNationalId,
+            name: caseToCreate.accusedName,
+            gender: caseToCreate.accusedGender,
+            address: caseToCreate.accusedAddress,
           },
-          {
-            model: User,
-            as: 'prosecutor',
-            include: [{ model: Institution, as: 'institution' }],
-          },
-        ],
-        transaction,
-      }) as Promise<Case>
+          transaction,
+        )
+        .then(
+          () =>
+            this.caseModel.findByPk(theCase.id, {
+              include: [
+                { model: Institution, as: 'court' },
+                {
+                  model: User,
+                  as: 'creatingProsecutor',
+                  include: [{ model: Institution, as: 'institution' }],
+                },
+                {
+                  model: User,
+                  as: 'prosecutor',
+                  include: [{ model: Institution, as: 'institution' }],
+                },
+              ],
+              transaction,
+            }) as Promise<Case>,
+        )
     })
   }
 }
