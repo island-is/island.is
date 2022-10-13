@@ -26,6 +26,7 @@ interface Then {
 type GivenWhenThen = (caseToCreate: InternalCreateCaseDto) => Promise<Then>
 
 describe('InternalCaseController - Create', () => {
+  const caseId = uuid()
   let mockUserService: UserService
   let mockDefendantService: DefendantService
   let mockCaseModel: typeof Case
@@ -46,7 +47,7 @@ describe('InternalCaseController - Create', () => {
     mockCaseModel = caseModel
 
     const mockDefendantCreate = mockDefendantService.create as jest.Mock
-    mockDefendantCreate.mockResolvedValue({} as Defendant)
+    mockDefendantCreate.mockResolvedValue({ caseId } as Defendant)
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
@@ -173,7 +174,6 @@ describe('InternalCaseController - Create', () => {
       accusedAddress,
       accusedGender,
     } as InternalCreateCaseDto
-    const caseId = uuid()
     const createdCase = { id: caseId } as Case
 
     beforeEach(async () => {
@@ -199,7 +199,6 @@ describe('InternalCaseController - Create', () => {
 
   describe('case lookup', () => {
     const caseToCreate = {} as InternalCreateCaseDto
-    const caseId = uuid()
     const createdCase = { id: caseId } as Case
 
     beforeEach(async () => {
@@ -231,8 +230,8 @@ describe('InternalCaseController - Create', () => {
 
   describe('case returned', () => {
     const caseToCreate = {} as InternalCreateCaseDto
-    const createdCase = {} as Case
-    const returnedCase = {} as Case
+    const createdCase = { id: caseId } as Case
+    const returnedCase = { id: caseId } as Case
     let then: Then
 
     beforeEach(async () => {
@@ -308,7 +307,6 @@ describe('InternalCaseController - Create', () => {
 
   describe('defendant creation fails', () => {
     const caseToCreate = {} as InternalCreateCaseDto
-    const caseId = uuid()
     const createdCase = { id: caseId } as Case
     let then: Then
 

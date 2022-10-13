@@ -45,31 +45,32 @@ export class InternalCaseService {
     }
 
     return this.sequelize.transaction(async (transaction) => {
-      const theCase = await this.caseModel.create(
-        {
-          ...caseToCreate,
-          origin: CaseOrigin.LOKE,
-          creatingProsecutorId: prosecutorId,
-          prosecutorId,
-          courtId,
-        },
-        { transaction },
-      )
-
-      return this.defendantService
+      return this.caseModel
         .create(
-          theCase.id,
           {
-            nationalId: caseToCreate.accusedNationalId,
-            name: caseToCreate.accusedName,
-            gender: caseToCreate.accusedGender,
-            address: caseToCreate.accusedAddress,
+            ...caseToCreate,
+            origin: CaseOrigin.LOKE,
+            creatingProsecutorId: prosecutorId,
+            prosecutorId,
+            courtId,
           },
-          transaction,
+          { transaction },
+        )
+        .then((theCase) =>
+          this.defendantService.create(
+            theCase.id,
+            {
+              nationalId: caseToCreate.accusedNationalId,
+              name: caseToCreate.accusedName,
+              gender: caseToCreate.accusedGender,
+              address: caseToCreate.accusedAddress,
+            },
+            transaction,
+          ),
         )
         .then(
-          () =>
-            this.caseModel.findByPk(theCase.id, {
+          (defendant) =>
+            this.caseModel.findByPk(defendant.caseId, {
               include: [
                 { model: Institution, as: 'court' },
                 {
