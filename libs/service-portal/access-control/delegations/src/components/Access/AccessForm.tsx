@@ -33,7 +33,7 @@ import {
   SCOPE_PREFIX,
 } from '../../utils/types'
 import { AccessItem } from './AccessItem'
-import { AccessConfirmModal, AccessItemHeader } from '../../components/access'
+import { AccessConfirmModal, AccessItemHeader } from '../../components/Access'
 import { isDefined } from '@island.is/shared/utils'
 
 export type MappedScope = {
