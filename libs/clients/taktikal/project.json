@@ -1,0 +1,41 @@
+{
+  "root": "libs/clients/taktikal",
+  "sourceRoot": "libs/clients/taktikal/src",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/clients/taktikal/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/clients/taktikal"],
+      "options": {
+        "jestConfig": "libs/clients/taktikal/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "update-openapi-document": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "curl https://onboardingdev.taktikal.is/api/openapi -H 'Accept: application/json' > src/clientConfig.json",
+          "prettier --write src/clientConfig.json"
+        ],
+        "parallel": false,
+        "cwd": "libs/clients/taktikal"
+      }
+    },
+    "schemas/external-openapi-generator": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "yarn openapi-generator -o libs/clients/taktikal/gen/fetch -i libs/clients/taktikal/src/clientConfig.json"
+        ]
+      }
+    }
+  },
+  "tags": []
+}

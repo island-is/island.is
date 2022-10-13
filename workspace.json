@@ -130,6 +130,7 @@
     "clients-rsk-procuring": "libs/clients/rsk/procuring",
     "clients-smartsolutions": "libs/clients/smartsolutions",
     "clients-syslumenn": "libs/clients/syslumenn",
+    "clients-taktikal": "libs/clients/taktikal",
     "clients-user-profile": "libs/clients/user-profile",
     "clients-vehicles": "libs/clients/vehicles",
     "clients-vmst": "libs/clients/vmst",

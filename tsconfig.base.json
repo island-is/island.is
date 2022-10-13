@@ -373,6 +373,7 @@
         "libs/clients/smartsolutions/src/index.ts"
       ],
       "@island.is/clients/syslumenn": ["libs/clients/syslumenn/src/index.ts"],
+      "@island.is/clients/taktikal": ["libs/clients/taktikal/src/index.ts"],
       "@island.is/clients/user-profile": [
         "libs/clients/user-profile/src/index.ts"
       ],
