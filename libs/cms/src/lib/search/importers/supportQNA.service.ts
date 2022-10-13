@@ -30,7 +30,7 @@ export class SupportQNASyncService implements CmsSyncProvider<ISupportQna> {
     return entries.reduce(
       (processedEntries: ISupportQna[], entry: Entry<any>) => {
         if (this.validateArticle(entry)) {
-          if (!isCircular(entry)) {
+          if (!isCircular({ ...entry, relatedLinks: [] })) {
             processedEntries.push(entry)
           } else {
             logger.warn('Circular reference found in question', {
