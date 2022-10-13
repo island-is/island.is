@@ -346,6 +346,7 @@ const Layout: NextComponentType<
         />
         {alertBanners.map((banner) => (
           <AlertBanner
+            data-test-id={'alert-banner'}
             key={banner.bannerId}
             title={banner.title}
             description={banner.description}

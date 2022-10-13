@@ -42,6 +42,7 @@ export const MobileAppBanner = ({ namespace }: MobileAppBannerProps) => {
       display="flex"
       className={style.container}
       alignItems={'center'}
+      data-test-id={'mobile-app-banner'}
     >
       <button
         className={style.closeBtn}
