@@ -30,8 +30,8 @@ export const AccordionSlice: React.FC<SliceProps> = ({ slice }) => {
         paddingBottom: [4, 4, 6],
       }
     : {
-        paddingTop: 3,
-        paddingBottom: 3,
+        paddingTop: 2,
+        paddingBottom: 2,
       }
 
   return (
