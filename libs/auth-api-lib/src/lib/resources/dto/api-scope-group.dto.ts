@@ -39,4 +39,11 @@ export class ApiScopeGroupDTO {
     default: 0,
   })
   readonly order?: number
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({
+    example: '@island.is',
+  })
+  readonly domainName!: string
 }

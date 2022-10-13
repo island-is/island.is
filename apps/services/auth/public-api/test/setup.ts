@@ -156,6 +156,7 @@ export const setupWithAuth = async ({
   await apiScopeGroupModel.bulkCreate(
     scopeGroups.map((scopeGroup) =>
       createApiScopeGroup({
+        domainName: domain.name,
         ...scopeGroup,
       }),
     ),

@@ -32,6 +32,7 @@ import { Domain } from './models/domain.model'
 import { PagedRowsDto } from '../core/types/paged-rows.dto'
 import { DomainDTO } from './dto/domain.dto'
 import { TranslationService } from '../translation/translation.service'
+import { UUIDVersion } from 'class-validator'
 
 @Injectable()
 export class ResourcesService {
@@ -45,7 +46,7 @@ export class ResourcesService {
     @InjectModel(ApiResource)
     private apiResourceModel: typeof ApiResource,
     @InjectModel(ApiScopeGroup)
-    private apiScopeGroup: typeof ApiScopeGroup,
+    private apiScopeGroupModel: typeof ApiScopeGroup,
     @InjectModel(ApiResourceScope)
     private apiResourceScopeModel: typeof ApiResourceScope,
     @InjectModel(IdentityResourceUserClaim)
@@ -569,6 +570,15 @@ export class ResourcesService {
   async createApiScope(apiScope: ApiScopesDTO): Promise<ApiScope> {
     this.logger.debug('Creating a new api scope')
 
+    if (apiScope.groupId) {
+      const scopeGroup = await this.apiScopeGroupModel.findByPk(
+        apiScope.groupId,
+      )
+      if (await this.isDomainDifferentFromGroup(apiScope)) {
+        throw new BadRequestException('Scope domain must match group domain.')
+      }
+    }
+
     return await this.apiScopeModel.create({ ...apiScope })
   }
 
@@ -581,6 +591,10 @@ export class ResourcesService {
 
     if (!name) {
       throw new BadRequestException('Name must be provided')
+    }
+
+    if (await this.isDomainDifferentFromGroup(apiScope)) {
+      throw new BadRequestException('Scope domain must match group domain.')
     }
 
     await this.apiScopeModel.update({ ...apiScope }, { where: { name: name } })
@@ -879,7 +893,7 @@ export class ResourcesService {
   /** Creates a new Api Scope Group */
   async createApiScopeGroup(group: ApiScopeGroupDTO): Promise<ApiScopeGroup> {
     const id = uuid()
-    return this.apiScopeGroup.create({ id: id, ...group })
+    return this.apiScopeGroupModel.create({ id: id, ...group })
   }
 
   /** Updates an existing ApiScopeGroup */
@@ -887,7 +901,11 @@ export class ResourcesService {
     group: ApiScopeGroupDTO,
     id: string,
   ): Promise<[number, ApiScopeGroup[]]> {
-    return this.apiScopeGroup.update(
+    if (await this.isDomainDifferentFromScopes(id, group)) {
+      throw new BadRequestException('Group domain must match scopes domain.')
+    }
+
+    return this.apiScopeGroupModel.update(
       { ...group },
       { where: { id: id }, returning: true },
     )
@@ -895,12 +913,12 @@ export class ResourcesService {
 
   /** Delete ApiScopeGroup */
   async deleteApiScopeGroup(id: string): Promise<number> {
-    return this.apiScopeGroup.destroy({ where: { id: id } })
+    return this.apiScopeGroupModel.destroy({ where: { id: id } })
   }
 
   /** Returns all ApiScopeGroups */
   async findAllApiScopeGroups(): Promise<ApiScopeGroup[]> {
-    return this.apiScopeGroup.findAll({
+    return this.apiScopeGroupModel.findAll({
       include: [ApiScope],
     })
   }
@@ -919,7 +937,7 @@ export class ResourcesService {
     if (!searchString || searchString.length === 0) {
       searchString = '%'
     }
-    return this.apiScopeGroup.findAndCountAll({
+    return this.apiScopeGroupModel.findAndCountAll({
       limit: count,
       offset: offset,
       where: { name: { [Op.iLike]: `%${searchString}%` } },
@@ -930,7 +948,7 @@ export class ResourcesService {
 
   /** Finds Api SCope Group by Id */
   async findApiScopeGroupByPk(id: string): Promise<ApiScopeGroup | null> {
-    return this.apiScopeGroup.findByPk(id, { include: [ApiScope] })
+    return this.apiScopeGroupModel.findByPk(id, { include: [ApiScope] })
   }
   // #endregion ApiScopeGroup
 
@@ -966,7 +984,6 @@ export class ResourcesService {
           offset: offset,
           where: { name: { [Op.iLike]: `%${searchString}%` } },
           order: [['name', 'asc']],
-          include: [ApiScope],
         })
       }
     }
@@ -1044,5 +1061,32 @@ export class ResourcesService {
         translationMap.get(group.id)?.get('description') ?? group.description
     }
     return groups
+  }
+
+  private async isDomainDifferentFromGroup(
+    apiScope: ApiScopesDTO,
+  ): Promise<boolean> {
+    if (apiScope.groupId) {
+      const scopeGroup = await this.apiScopeGroupModel.findByPk(
+        apiScope.groupId,
+      )
+      if (apiScope && apiScope.domainName !== scopeGroup?.domain?.name)
+        return true
+    }
+
+    return false
+  }
+
+  private async isDomainDifferentFromScopes(
+    id: string,
+    group: ApiScopeGroupDTO,
+  ): Promise<boolean> {
+    const apiScope = await this.apiScopeModel.findOne({
+      where: { groupId: id },
+    })
+
+    if (apiScope && apiScope.domainName !== group.domainName) return true
+
+    return false
   }
 }
