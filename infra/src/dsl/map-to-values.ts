@@ -463,7 +463,7 @@ function serializeVolumes(
   service: Service,
   volumes: {
     name?: string
-    storage: string
+    size: string
     accessModes: AccessModes
     mountPath: string
     storageClass?: string
@@ -482,7 +482,7 @@ function serializeVolumes(
 
   const results: OutputPersistentVolumeClaim[] = volumes.map((volume) => ({
     name: volume.name ?? `${service.serviceDef.name}`,
-    storage: volume.storage,
+    size: volume.size,
     mountPath: volume.mountPath,
     storageClass: 'efs-csi',
     accessModes: mapping[volume.accessModes],

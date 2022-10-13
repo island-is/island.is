@@ -26,7 +26,7 @@ export type ContainerRunHelm = {
 export type OutputAccessModes = 'ReadWriteMany' | 'ReadOnlyMany'
 export type OutputPersistentVolumeClaim = {
   name?: string
-  storage: string
+  size: string
   accessModes: OutputAccessModes
   mountPath: string
   /**

@@ -21,13 +21,13 @@ describe('Volume Support', () => {
   const sut: ServiceBuilder<'api'> = service('api').volumes(
     {
       name: 'something',
-      storage: '1Gi',
+      size: '1Gi',
       accessModes: 'ReadOnly',
       mountPath: '/storage_one',
     },
     {
       name: 'somethingelse',
-      storage: '1Gi',
+      size: '1Gi',
       accessModes: 'ReadWrite',
       mountPath: '/storage_two',
     },
@@ -41,14 +41,14 @@ describe('Volume Support', () => {
   it('Support multi volume definitions', () => {
     expect(stagingWithVolumes.serviceDef.pvcs![0]).toEqual({
       name: 'something',
-      storage: '1Gi',
+      size: '1Gi',
       accessModes: 'ReadOnlyMany',
       mountPath: '/storage_one',
       storageClass: 'efs-csi',
     }),
       expect(stagingWithVolumes.serviceDef.pvcs![1]).toEqual({
         name: 'somethingelse',
-        storage: '1Gi',
+        size: '1Gi',
         accessModes: 'ReadWriteMany',
         mountPath: '/storage_two',
         storageClass: 'efs-csi',
@@ -56,7 +56,7 @@ describe('Volume Support', () => {
   })
   it('Support default name for volumes', () => {
     const sut: ServiceBuilder<'api'> = service('api').volumes({
-      storage: '1Gi',
+      size: '1Gi',
       accessModes: 'ReadOnly',
       mountPath: '/storage_one',
     })
@@ -66,7 +66,7 @@ describe('Volume Support', () => {
     ) as SerializeSuccess
     expect(stagingWithDefaultVolume.serviceDef.pvcs![0]).toEqual({
       name: 'api',
-      storage: '1Gi',
+      size: '1Gi',
       accessModes: 'ReadOnlyMany',
       mountPath: '/storage_one',
       storageClass: 'efs-csi',

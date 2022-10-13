@@ -96,7 +96,7 @@ export interface Ingress {
 
 export type PersistentVolumeClaim = {
   name?: string
-  storage: string
+  size: string
   accessModes: AccessModes
   mountPath: string
   /**
