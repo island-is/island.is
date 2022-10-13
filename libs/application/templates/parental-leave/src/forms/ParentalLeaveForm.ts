@@ -16,7 +16,7 @@ import {
   buildTextField,
   NO_ANSWER,
 } from '@island.is/application/core'
-import { Application, Form, FormModes, FormValue } from '@island.is/application/types'
+import { Application, Form, FormModes } from '@island.is/application/types'
 
 import { parentalLeaveFormMessages } from '../lib/messages'
 import {
