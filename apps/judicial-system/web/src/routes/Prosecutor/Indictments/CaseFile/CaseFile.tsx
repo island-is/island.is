@@ -51,8 +51,9 @@ const CaseFile = () => {
         </Box>
         <Box marginBottom={7}>
           <Accordion>
-            {workingCase.policeCaseNumbers.map((policeCaseNumber) => (
+            {workingCase.policeCaseNumbers.map((policeCaseNumber, index) => (
               <IndictmentsCaseFilesAccordionItem
+                key={index}
                 policeCaseNumber={policeCaseNumber}
                 caseFiles={workingCase.caseFiles || []}
               />

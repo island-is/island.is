@@ -14,23 +14,9 @@ interface Props {
   caseFiles: TCaseFile[]
 }
 
-interface ChapterProps {
-  name: string
-  index: number
-}
-
 interface CaseFileProps {
-  caseFile: TCaseFile
+  caseFile: [string, boolean]
 }
-
-const Chapter: React.FC<ChapterProps> = (props) => (
-  <li className={styles.chapterContainer}>
-    <Box marginRight={3}>
-      <Text variant="h4">{`${props.index + 1}.`}</Text>
-    </Box>
-    <Text variant="h4">{props.name}</Text>
-  </li>
-)
 
 const CaseFile: React.FC<CaseFileProps> = (props) => {
   const { caseFile } = props
@@ -39,40 +25,48 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
 
   return (
     <Reorder.Item
-      key={caseFile.id}
       value={caseFile}
-      id={caseFile.id}
+      id={caseFile[0]}
       style={{ y }}
       dragListener={false}
       dragControls={controls}
     >
-      <Box
-        display="flex"
-        justifyContent="spaceBetween"
-        alignItems="center"
-        background="blue100"
-        padding={2}
-        borderRadius="large"
-      >
-        <Box display="flex" alignItems="center">
-          <Box
-            display="flex"
-            marginRight={3}
-            onPointerDown={(e) => controls.start(e)}
-          >
-            <Icon icon="menu" color="blue400" />
+      {caseFile[1] === true ? (
+        <Box className={styles.chapterContainer}>
+          <Box marginRight={3}>
+            <Text variant="h4">{`${1}.`}</Text>
           </Box>
-          <Text variant="h5">{caseFile.name}</Text>
+          <Text variant="h4">{caseFile[0]}</Text>
         </Box>
-        <Box display="flex" alignItems="center">
-          <Box display="flex" marginRight={3}>
-            <Text variant="small">{formatDate(caseFile.modified, 'P')}</Text>
+      ) : (
+        <Box
+          display="flex"
+          justifyContent="spaceBetween"
+          alignItems="center"
+          background="blue100"
+          padding={2}
+          borderRadius="large"
+        >
+          <Box display="flex" alignItems="center">
+            <Box
+              display="flex"
+              marginRight={3}
+              onPointerDown={(e) => controls.start(e)}
+            >
+              <Icon icon="menu" color="blue400" />
+            </Box>
+            <Text variant="h5">{caseFile[0]}</Text>
           </Box>
-          <button onClick={() => alert('not implemented')}>
-            <Icon icon="pencil" color="blue400" />
-          </button>
+          <Box display="flex" alignItems="center">
+            <Box display="flex" marginRight={3}>
+              <Text variant="small">{formatDate(new Date(), 'P')}</Text>
+            </Box>
+            <button onClick={() => alert('not implemented')}>
+              <Icon icon="pencil" color="blue400" />
+            </button>
+          </Box>
         </Box>
-      </Box>
+      )}
     </Reorder.Item>
   )
 }
@@ -81,19 +75,6 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
   const { policeCaseNumber, caseFiles } = props
   const { formatMessage } = useIntl()
 
-  const renderChapters = () => {
-    return [
-      formatMessage(m.chapterIndictmentAndAccompanyingDocuments),
-      formatMessage(m.chapterInvesitgationProcess),
-      formatMessage(m.chapterWitnesses),
-      formatMessage(m.chapterDefendant),
-      formatMessage(m.chapterCaseFiles),
-      formatMessage(m.chapterElectronicDocuments),
-    ].map((chapter, index) => {
-      return <Chapter key={index} name={chapter} index={index} />
-    })
-  }
-
   const [items, setItems] = useState<[string, boolean][]>([
     [formatMessage(m.chapterIndictmentAndAccompanyingDocuments), true],
     [formatMessage(m.chapterInvesitgationProcess), true],
@@ -101,7 +82,9 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
     [formatMessage(m.chapterDefendant), true],
     [formatMessage(m.chapterCaseFiles), true],
     [formatMessage(m.chapterElectronicDocuments), true],
-    // caseFiles.map((caseFile) => caseFile.name)),
+    ...caseFiles.map((caseFile) => {
+      return [caseFile.id, false] as [string, boolean]
+    }),
   ])
 
   console.log(items)
@@ -122,15 +105,10 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
           <Box marginBottom={3}>
             <Text>{formatMessage(m.explanation)}</Text>
           </Box>
-          <Reorder.Group
-            axis="y"
-            values={[...renderChapters(), ...items]}
-            onReorder={setItems}
-          >
-            {renderChapters()}
+          <Reorder.Group axis="y" values={items} onReorder={setItems}>
             {items.map((item, index) => (
               <Box
-                key={item.id}
+                key={`${item[0]}-${policeCaseNumber}`}
                 marginBottom={index === caseFiles.length - 1 ? 0 : 2}
               >
                 <CaseFile caseFile={item} />
