@@ -11,6 +11,7 @@ import { HealthInsuranceV2Options } from '@island.is/clients/health-insurance-v2
 import { DataProtectionComplaintClientConfig } from '@island.is/clients/data-protection-complaint'
 import { Injectable, Type } from '@nestjs/common'
 import { IslykillApiModuleConfig } from '@island.is/clients/islykill'
+import type { Locale } from '@island.is/shared/types'
 
 export interface BaseTemplateAPIModuleConfig {
   xRoadBasePathWithEnv: string
@@ -59,6 +60,7 @@ export interface BaseTemplateAPIModuleConfig {
 export interface TemplateApiModuleActionProps<Params = unknown> {
   application: ApplicationWithAttachments
   auth: User
+  currentUserLocale: Locale
   params?: Params
 }
 

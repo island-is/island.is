@@ -14,6 +14,7 @@ import {
   getErrorReasonIfPresent,
   isTranslationObject,
 } from '@island.is/application/core'
+import type { Locale } from '@island.is/shared/types'
 
 @Injectable()
 export class TemplateApiActionRunner {
@@ -22,6 +23,7 @@ export class TemplateApiActionRunner {
   private oldExternalData: ExternalData = {}
   private newExternalData: ExternalData = {}
   private formatMessage!: FormatMessage
+  private currentUserLocale!: Locale
 
   constructor(
     private readonly applicationService: ApplicationService,
@@ -44,12 +46,14 @@ export class TemplateApiActionRunner {
     application: ApplicationWithAttachments,
     actions: TemplateApi[],
     auth: User,
+    currentUserLocale: Locale,
     formatMessage: FormatMessage,
   ): Promise<ApplicationWithAttachments> {
     this.application = application
     this.auth = auth
     this.oldExternalData = application.externalData
     this.formatMessage = formatMessage
+    this.currentUserLocale = currentUserLocale
     const groupedActions = this.groupByOrder(this.sortActions(actions))
     await this.runActions(groupedActions)
 
@@ -114,6 +118,7 @@ export class TemplateApiActionRunner {
       props: {
         application: this.application,
         auth: this.auth,
+        currentUserLocale: this.currentUserLocale,
         params,
       },
     })
