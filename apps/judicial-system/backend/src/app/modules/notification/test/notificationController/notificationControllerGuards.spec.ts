@@ -2,10 +2,10 @@ import { CanActivate } from '@nestjs/common'
 
 import { JwtAuthGuard, RolesGuard } from '@island.is/judicial-system/auth'
 
-import { CaseExistsGuard } from '../../case'
-import { NotificationController } from '../notification.controller'
+import { CaseExistsGuard } from '../../../case'
+import { NotificationController } from '../../notification.controller'
 
-describe('FileController - guards', () => {
+describe('NotificationController - guards', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let guards: any[]
 
@@ -13,7 +13,7 @@ describe('FileController - guards', () => {
     guards = Reflect.getMetadata('__guards__', NotificationController)
   })
 
-  it('should have two guards', () => {
+  it('should have three guards', () => {
     expect(guards).toHaveLength(3)
   })
 
