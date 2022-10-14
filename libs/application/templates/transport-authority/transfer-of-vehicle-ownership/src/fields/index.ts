@@ -1,5 +1,7 @@
 export { ConfirmationField } from './ConfirmationField'
 export { Temp } from './temp'
-export { ForPayment } from './ForPayment'
 export { NationalIdWithName } from './NationalIdWithName'
 export { VehicleSelectField } from './VehicleSelectField'
+export { PaymentChargeOverview } from './Payment/PaymentChargeOverview'
+export { PaymentPending } from './Payment/PaymentPending'
+export { PaymentUrlNotFound } from './Payment/PaymentUrlNotFound'

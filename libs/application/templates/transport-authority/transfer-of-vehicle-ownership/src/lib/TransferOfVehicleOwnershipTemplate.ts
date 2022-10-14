@@ -14,6 +14,7 @@ import {
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
 import * as z from 'zod'
+import { ApiActions } from '../shared'
 import { m } from './messagess'
 import { Features } from '@island.is/feature-flags'
 
@@ -101,11 +102,47 @@ const template: ApplicationTemplate<
           [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
         },
       },
+      [States.PAYMENT]: {
+        meta: {
+          name: 'Greiðsla',
+          actionCard: {
+            tag: {
+              label: m.actionCardPayment,
+              variant: 'red',
+            },
+          },
+          progress: 0.8,
+          lifecycle: pruneAfterDays(1 / 24),
+          onEntry: {
+            apiModuleAction: ApiActions.createCharge,
+          },
+          onExit: {
+            apiModuleAction: ApiActions.submitApplication,
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/Payment').then((val) => val.Payment),
+              actions: [
+                { event: DefaultEvents.SUBMIT, name: 'Áfram', type: 'primary' },
+              ],
+              write: 'all',
+              delete: true,
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
+          [DefaultEvents.ABORT]: { target: States.DRAFT },
+        },
+      },
       [States.COMPLETED]: {
         meta: {
           name: 'Completed',
           progress: 1,
           lifecycle: pruneAfterDays(3 * 30),
+          // onEntry: TODOx
           actionCard: {
             tag: {
               label: m.actionCardDone,

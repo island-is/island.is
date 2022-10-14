@@ -7,9 +7,10 @@ import {
   buildDescriptionField,
   buildTextField,
   buildDateField,
+  buildSubmitField,
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
-import { information, externalData, forPayment } from '../lib/messages'
+import { information, externalData, payment } from '../lib/messages'
 import { m } from '../lib/messagess'
 import { TransferOfVehicleOwnership } from '../lib/dataSchema'
 
@@ -195,10 +196,22 @@ export const TransferOfVehicleOwnershipForm: Form = buildForm({
             }),
           ],
         }),
-        /* buildSubSection({
-          id: 'test',
-          title: 'Test',
+      ],
+    }),
+    buildSection({
+      id: 'payment',
+      title: payment.general.sectionTitle,
+      children: [
+        buildMultiField({
+          id: 'paymentMultiField',
+          title: payment.general.pageTitle,
+          space: 1,
           children: [
+            buildCustomField({
+              id: 'PaymentChargeOverview',
+              title: '',
+              component: 'PaymentChargeOverview',
+            }),
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
@@ -210,25 +223,8 @@ export const TransferOfVehicleOwnershipForm: Form = buildForm({
                   name: m.confirm,
                   type: 'primary',
                 },
+                //TODOx bæta við submit sem fer beint í completed
               ],
-            }),
-          ],
-        }), */
-      ],
-    }),
-    buildSection({
-      id: 'payment',
-      title: forPayment.general.sectionTitle,
-      children: [
-        buildMultiField({
-          id: 'paymentMultiField',
-          title: forPayment.general.pageTitle,
-          children: [
-            buildCustomField({
-              component: 'ForPayment',
-              id: 'ForPayment',
-              title: '',
-              description: '',
             }),
           ],
         }),
