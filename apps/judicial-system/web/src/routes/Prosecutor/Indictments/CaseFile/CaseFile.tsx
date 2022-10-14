@@ -19,6 +19,7 @@ import { titles } from '@island.is/judicial-system-web/messages'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { caseFile as m } from './CaseFile.strings'
+import { LayoutGroup } from 'framer-motion'
 
 const CaseFile = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
@@ -50,15 +51,22 @@ const CaseFile = () => {
           <AlertMessage type="info" message={formatMessage(m.infoPanel)} />
         </Box>
         <Box marginBottom={7}>
-          <Accordion>
-            {workingCase.policeCaseNumbers.map((policeCaseNumber, index) => (
-              <IndictmentsCaseFilesAccordionItem
-                key={index}
-                policeCaseNumber={policeCaseNumber}
-                caseFiles={workingCase.caseFiles || []}
-              />
-            ))}
-          </Accordion>
+          <LayoutGroup>
+            <Accordion>
+              {workingCase.policeCaseNumbers.map((policeCaseNumber, index) => (
+                <IndictmentsCaseFilesAccordionItem
+                  key={index}
+                  policeCaseNumber={policeCaseNumber}
+                  caseFiles={
+                    workingCase.caseFiles?.filter(
+                      (caseFile) =>
+                        caseFile.policeCaseNumber === policeCaseNumber,
+                    ) || []
+                  }
+                />
+              ))}
+            </Accordion>
+          </LayoutGroup>
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>

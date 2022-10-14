@@ -2,13 +2,21 @@ import React, { useState, useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import {
   animate,
+  AnimatePresence,
+  motion,
   MotionValue,
   Reorder,
   useDragControls,
   useMotionValue,
 } from 'framer-motion'
 
-import { AccordionItem, Text, Box, Icon } from '@island.is/island-ui/core'
+import {
+  AccordionItem,
+  Text,
+  Box,
+  Icon,
+  AlertMessage,
+} from '@island.is/island-ui/core'
 import { CaseFile as TCaseFile } from '@island.is/judicial-system/types'
 import { formatDate } from '@island.is/judicial-system/formatters'
 
@@ -21,13 +29,18 @@ interface Props {
 }
 
 interface CaseFileProps {
-  caseFile: ReorderItemProps
+  caseFile: ReorderableItem
   index: number
 }
-
-const inactiveShadow = '0px 0px 0px rgba(0,0,0,0.8)'
+interface ReorderableItem {
+  displayText: string
+  isChapter: boolean
+  isDivider: boolean
+  created?: string
+}
 
 export function useRaisedShadow(value: MotionValue<number>) {
+  const inactiveShadow = '0px 0px 0px rgba(0,0,0,0.8)'
   const boxShadow = useMotionValue(inactiveShadow)
 
   useEffect(() => {
@@ -67,14 +80,14 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
       dragListener={false}
       dragControls={controls}
     >
-      {caseFile.isChapter === true ? (
+      {caseFile.isChapter ? (
         <Box className={styles.chapterContainer}>
           <Box marginRight={3} as="span">
             <Text variant="h4">{`${index + 1}.`}</Text>
           </Box>
           <Text variant="h4">{caseFile.displayText}</Text>
         </Box>
-      ) : caseFile.isDivider === true ? (
+      ) : caseFile.isDivider ? (
         <Box marginBottom={2}>
           <Box marginBottom={1}>
             <Text variant="h4">{caseFile.displayText.split('|')[0]}</Text>
@@ -116,18 +129,11 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
   )
 }
 
-interface ReorderItemProps {
-  displayText: string
-  isChapter: boolean
-  isDivider: boolean
-  created?: string
-}
-
 const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
   const { policeCaseNumber, caseFiles } = props
   const { formatMessage } = useIntl()
 
-  const [items, setItems] = useState<ReorderItemProps[]>([
+  const [items, setItems] = useState<ReorderableItem[]>([
     {
       displayText: formatMessage(m.chapterIndictmentAndAccompanyingDocuments),
       isChapter: true,
@@ -184,30 +190,35 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
       labelVariant="h3"
       startExpanded
     >
-      {caseFiles.length === 0 ? (
-        <Text>{formatMessage(m.noCaseFiles)}</Text>
-      ) : (
-        <>
-          <Box marginBottom={3}>
-            <Text>{formatMessage(m.explanation)}</Text>
+      <Box marginBottom={3}>
+        <Text>{formatMessage(m.explanation)}</Text>
+      </Box>
+      <Reorder.Group
+        axis="y"
+        values={items}
+        onReorder={setItems}
+        className={styles.reorderGroup}
+      >
+        {items.map((item, index) => (
+          <Box key={`${item.displayText}-${policeCaseNumber}`} marginBottom={2}>
+            <CaseFile caseFile={item} index={index} />
           </Box>
-          <Reorder.Group
-            axis="y"
-            values={items}
-            onReorder={setItems}
-            className={styles.reorderGroup}
+        ))}
+      </Reorder.Group>
+      <AnimatePresence>
+        {items[items.length - 1].isDivider && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
           >
-            {items.map((item, index) => (
-              <Box
-                key={`${item.displayText}-${policeCaseNumber}`}
-                marginBottom={index === caseFiles.length - 1 ? 0 : 2}
-              >
-                <CaseFile caseFile={item} index={index} />
-              </Box>
-            ))}
-          </Reorder.Group>
-        </>
-      )}
+            <AlertMessage
+              type="success"
+              message={formatMessage(m.noCaseFiles)}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </AccordionItem>
   )
 }

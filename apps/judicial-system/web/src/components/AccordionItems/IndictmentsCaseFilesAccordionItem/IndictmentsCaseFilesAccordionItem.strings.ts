@@ -32,7 +32,7 @@ export const indictmentsCaseFilesAccordionItem = {
   noCaseFiles: defineMessage({
     id:
       'judicial.system.core:indictments_case_files_accordion_item.no_case_files',
-    defaultMessage: 'Engin skjöl fundust',
+    defaultMessage: 'Engin óflokkuð gögn',
     description:
       'Notaður sem texti í fellilista í skjalaskrá skrefi í ákærum þegar engin skjöl eru hengd við LÖKE númer.',
   }),

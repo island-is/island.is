@@ -147,6 +147,7 @@ const CaseQuery = gql`
         state
         key
         category
+        policeCaseNumber
       }
       isAppealDeadlineExpired
       isAppealGracePeriodExpired

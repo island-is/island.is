@@ -8,7 +8,6 @@ export const chapterContainer = style({
   border: `1px solid ${theme.color.blue400}`,
   borderRadius: theme.border.radius.large,
   padding: `${theme.spacing[2]}px ${theme.spacing[3]}px`,
-  marginBottom: `${theme.spacing[2]}px`,
 })
 
 export const reorderGroup = style({

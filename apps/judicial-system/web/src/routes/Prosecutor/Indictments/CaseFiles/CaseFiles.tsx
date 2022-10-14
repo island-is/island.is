@@ -69,7 +69,12 @@ const CaseFiles: React.FC = () => {
             buttonLabel={formatMessage(strings.caseFiles.sections.buttonLabel)}
             multiple={false}
             onChange={(files) =>
-              handleS3Upload(files, false, CaseFileCategory.COVER_LETTER)
+              handleS3Upload(
+                files,
+                false,
+                CaseFileCategory.COVER_LETTER,
+                workingCase.policeCaseNumbers[0],
+              )
             }
             onRemove={handleRemoveFromS3}
             onRetry={handleRetry}
@@ -93,7 +98,12 @@ const CaseFiles: React.FC = () => {
             buttonLabel={formatMessage(strings.caseFiles.sections.buttonLabel)}
             multiple={false}
             onChange={(files) =>
-              handleS3Upload(files, false, CaseFileCategory.INDICTMENT)
+              handleS3Upload(
+                files,
+                false,
+                CaseFileCategory.INDICTMENT,
+                workingCase.policeCaseNumbers[0],
+              )
             }
             onRemove={handleRemoveFromS3}
             onRetry={handleRetry}
@@ -116,7 +126,12 @@ const CaseFiles: React.FC = () => {
             header={formatMessage(strings.caseFiles.sections.inputFieldLabel)}
             buttonLabel={formatMessage(strings.caseFiles.sections.buttonLabel)}
             onChange={(files) =>
-              handleS3Upload(files, false, CaseFileCategory.CRIMINAL_RECORD)
+              handleS3Upload(
+                files,
+                false,
+                CaseFileCategory.CRIMINAL_RECORD,
+                workingCase.policeCaseNumbers[0],
+              )
             }
             onRemove={handleRemoveFromS3}
             onRetry={handleRetry}
@@ -139,7 +154,12 @@ const CaseFiles: React.FC = () => {
             header={formatMessage(strings.caseFiles.sections.inputFieldLabel)}
             buttonLabel={formatMessage(strings.caseFiles.sections.buttonLabel)}
             onChange={(files) =>
-              handleS3Upload(files, false, CaseFileCategory.COST_BREAKDOWN)
+              handleS3Upload(
+                files,
+                false,
+                CaseFileCategory.COST_BREAKDOWN,
+                workingCase.policeCaseNumbers[0],
+              )
             }
             onRemove={handleRemoveFromS3}
             onRetry={handleRetry}
@@ -162,7 +182,12 @@ const CaseFiles: React.FC = () => {
             header={formatMessage(strings.caseFiles.sections.inputFieldLabel)}
             buttonLabel={formatMessage(strings.caseFiles.sections.buttonLabel)}
             onChange={(files) =>
-              handleS3Upload(files, false, CaseFileCategory.CASE_FILE_CONTENTS)
+              handleS3Upload(
+                files,
+                false,
+                CaseFileCategory.CASE_FILE_CONTENTS,
+                workingCase.policeCaseNumbers[0],
+              )
             }
             onRemove={handleRemoveFromS3}
             onRetry={handleRetry}
@@ -185,7 +210,12 @@ const CaseFiles: React.FC = () => {
             header={formatMessage(strings.caseFiles.sections.inputFieldLabel)}
             buttonLabel={formatMessage(strings.caseFiles.sections.buttonLabel)}
             onChange={(files) =>
-              handleS3Upload(files, false, CaseFileCategory.CASE_FILE)
+              handleS3Upload(
+                files,
+                false,
+                CaseFileCategory.CASE_FILE,
+                workingCase.policeCaseNumbers[0],
+              )
             }
             onRemove={handleRemoveFromS3}
             onRetry={handleRetry}
