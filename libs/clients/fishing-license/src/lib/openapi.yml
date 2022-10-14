@@ -1,0 +1,631 @@
+openapi: 3.0.1
+info:
+  title: Veiðileyfi API
+  description: Skjölun á veiðileyfavefþjónustu Fiskistofu.
+  contact:
+    name: Ólafur Pálmi Guðnason
+    email: olafur.palmi.gudnason@fiskistofa.is
+  version: '1.0'
+paths:
+  /v1/skip/{skipaskrarnumer}/veidileyfi:
+    get:
+      tags:
+        - Skip
+      summary: Sækir lista af veiðileyfum sem viðkomandi skip getur sótt um.
+      parameters:
+        - name: skipaskrarnumer
+          in: path
+          description: Skipaskrárnúmer
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/VeidileyfiListi'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VeidileyfiListi'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/VeidileyfiListi'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '500':
+          description: Server Error
+  /v1/umsoknir/{umsoknid}:
+    get:
+      tags:
+        - Umsoknir
+      summary: Sækir veiðileyfaumsókn.
+      parameters:
+        - name: umsoknid
+          in: path
+          description: Umsóknarauðkenni
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/Umsokn'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Umsokn'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/Umsokn'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Server Error
+  /v1/umsoknir:
+    post:
+      tags:
+        - Umsoknir
+      summary: Býr til umsókn fyrir veiðileyfi.
+      requestBody:
+        description: Veiðileyfi umsókn.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Umsokn'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/Umsokn'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/Umsokn'
+      responses:
+        '201':
+          description: Created
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/UmsoknResponse'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UmsoknResponse'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/UmsoknResponse'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '500':
+          description: Server Error
+  /v1/utgerdir/{kennitala}/skip:
+    get:
+      tags:
+        - Utgerdir
+      summary: Sækir lista af skipum eftir kennitölu útgerðaraðila.
+      parameters:
+        - name: kennitala
+          in: path
+          description: Kennitala útgerðaraðila.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/SkipaListi'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SkipaListi'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/SkipaListi'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '500':
+          description: Server Error
+components:
+  schemas:
+    Astaeda:
+      required:
+        - leidbeining
+        - lysing
+      type: object
+      properties:
+        lysing:
+          type: string
+          description: Lýsing á ástæðum höfnunar.
+        leidbeining:
+          type: string
+          description: Leiðbeining á hvað hægt er að gera vegna höfnunar.
+      additionalProperties: false
+    DagsetningarTakmorkun:
+      type: object
+      properties:
+        dagsetningFra:
+          type: string
+          description: Restriction á dagsetningu sem hægt er að velja frá.
+          format: date-time
+          nullable: true
+        dagsetningTil:
+          type: string
+          description: Restriction á dagsetningu sem hægt er að velja til.
+          format: date-time
+          nullable: true
+      additionalProperties: false
+    Forsendur:
+      type: object
+      properties:
+        veidileyfi:
+          $ref: '#/components/schemas/Veidileyfi'
+      additionalProperties: false
+      description: >-
+        Forsendur veiðileyfis. Þau veiðileyfi sem skip þarf að hafa til að geta
+        sótt um viðkomandi veiðileyfi.
+    Haffaeri:
+      type: object
+      properties:
+        gildistimi:
+          type: string
+          description: Gildistími haffæris.
+          format: date
+          nullable: true
+      additionalProperties: false
+      description: Hvort haffæri skips sé í gildi eða ekki.
+    Logheimili:
+      type: object
+      properties:
+        heiti:
+          type: string
+          description: 'Heiti á heimilisfangi. Dæmi: Öskubakki 15.'
+          nullable: true
+        postnumer:
+          type: integer
+          description: Póstnúmer, dæmi 600.
+          format: int32
+        stadur:
+          type: string
+          description: Staður, bær, borg.
+          nullable: true
+      additionalProperties: false
+    SerhaefSpurningDate:
+      type: object
+      properties:
+        takmorkunVillulysing:
+          type: string
+          description: Villuskilaboð ef user input brýtur / er út fyrir takmörkunValue.
+          nullable: true
+        dagsetningarTakmorkun:
+          $ref: '#/components/schemas/DagsetningarTakmorkun'
+        lykillSpurningu:
+          type: string
+          description: Lykill á spurningunni.
+          nullable: true
+        titillSpurningu:
+          type: string
+          description: Textalýsing aukaspurningu.
+          nullable: true
+        upplysingarSpurningu:
+          type: string
+          description: Textalýsing á upplýsingum um spurninguna (info icon).
+          nullable: true
+        requiredField:
+          type: boolean
+          description: Er þessi field required/nauðsynlegur.
+      additionalProperties: false
+    SerhaefSpurningFile:
+      type: object
+      properties:
+        lykillSpurningu:
+          type: string
+          description: Lykill á spurningunni.
+          nullable: true
+        titillSpurningu:
+          type: string
+          description: Textalýsing aukaspurningu.
+          nullable: true
+        upplysingarSpurningu:
+          type: string
+          description: Textalýsing á upplýsingum um spurninguna (info icon).
+          nullable: true
+        requiredField:
+          type: boolean
+          description: Er þessi field required/nauðsynlegur.
+      additionalProperties: false
+    SerhaefSpurningNumber:
+      type: object
+      properties:
+        tolugildiTakmorkun:
+          type: integer
+          description: Tölugildi um takmörkun spurningu, t.d. hámarksgildi.
+          format: int32
+          nullable: true
+        takmorkunVillulysing:
+          type: string
+          description: Villuskilaboð ef user input brýtur / er út fyrir takmörkunValue.
+          nullable: true
+        lykillSpurningu:
+          type: string
+          description: Lykill á spurningunni.
+          nullable: true
+        titillSpurningu:
+          type: string
+          description: Textalýsing aukaspurningu.
+          nullable: true
+        upplysingarSpurningu:
+          type: string
+          description: Textalýsing á upplýsingum um spurninguna (info icon).
+          nullable: true
+        requiredField:
+          type: boolean
+          description: Er þessi field required/nauðsynlegur.
+      additionalProperties: false
+    SerhaefSpurningSelect:
+      type: object
+      properties:
+        listaValmoguleikar:
+          type: array
+          items:
+            $ref: '#/components/schemas/Valmoguleiki'
+          description: Listi af dropdown valmöguleikum.
+          nullable: true
+        lykillSpurningu:
+          type: string
+          description: Lykill á spurningunni.
+          nullable: true
+        titillSpurningu:
+          type: string
+          description: Textalýsing aukaspurningu.
+          nullable: true
+        upplysingarSpurningu:
+          type: string
+          description: Textalýsing á upplýsingum um spurninguna (info icon).
+          nullable: true
+        requiredField:
+          type: boolean
+          description: Er þessi field required/nauðsynlegur.
+      additionalProperties: false
+    SerhaefSpurningString:
+      type: object
+      properties:
+        lykillSpurningu:
+          type: string
+          description: Lykill á spurningunni.
+          nullable: true
+        titillSpurningu:
+          type: string
+          description: Textalýsing aukaspurningu.
+          nullable: true
+        upplysingarSpurningu:
+          type: string
+          description: Textalýsing á upplýsingum um spurninguna (info icon).
+          nullable: true
+        requiredField:
+          type: boolean
+          description: Er þessi field required/nauðsynlegur.
+      additionalProperties: false
+    Skip:
+      required:
+        - einkenni
+        - heimahofn
+        - skipanafn
+        - sviptingar
+      type: object
+      properties:
+        skipanafn:
+          type: string
+          description: Nafn skipsins.
+        skipaskrarnumer:
+          type: integer
+          description: Skipaskrárnúmer.
+          format: int32
+        einkenni:
+          type: string
+          description: Einkennisstafir og einkennisnúmer skips með bandstriki á milli.
+        bruttotonn:
+          type: number
+          description: Brúttótonn skips.
+          format: double
+          nullable: true
+        lengd:
+          type: number
+          description: Lengd skips.
+          format: double
+        heimahofn:
+          type: string
+          description: Heimahöfn skips.
+        haffaeri:
+          $ref: '#/components/schemas/Haffaeri'
+        sviptingar:
+          type: array
+          items:
+            $ref: '#/components/schemas/Svipting'
+          description: Listi af sviptingum.
+        veidileyfi:
+          type: array
+          items:
+            $ref: '#/components/schemas/Veidileyfi'
+          description: Listi af veiðileyfum.
+          nullable: true
+      additionalProperties: false
+    SkipaListi:
+      type: object
+      properties:
+        skip:
+          type: array
+          items:
+            $ref: '#/components/schemas/Skip'
+          description: Listi af skipum.
+          nullable: true
+      additionalProperties: false
+    SpurningaListi:
+      type: object
+      properties:
+        toluDalkar:
+          type: array
+          items:
+            $ref: '#/components/schemas/SerhaefSpurningNumber'
+          description: Listi af tölugildis spurningum.
+          nullable: true
+        textaDalkar:
+          type: array
+          items:
+            $ref: '#/components/schemas/SerhaefSpurningString'
+          description: Listi af texta spurningum.
+          nullable: true
+        dagsetningarDalkar:
+          type: array
+          items:
+            $ref: '#/components/schemas/SerhaefSpurningDate'
+          description: Listi af dagsetningar inputs.
+          nullable: true
+        skraarDalkar:
+          type: array
+          items:
+            $ref: '#/components/schemas/SerhaefSpurningFile'
+          description: Listi af file input spurningum.
+          nullable: true
+        listaDalkar:
+          type: array
+          items:
+            $ref: '#/components/schemas/SerhaefSpurningSelect'
+          description: Listi af select listum.
+          nullable: true
+      additionalProperties: false
+    Svipting:
+      required:
+        - skyring
+      type: object
+      properties:
+        iGildi:
+          type: string
+          description: Dagsetning sem að svipting tók gildi.
+          format: date-time
+        urGildi:
+          type: string
+          description: Dagsetning sem að svipting mun renna út.
+          format: date-time
+          nullable: true
+        skyring:
+          type: string
+          description: Ástæða sviptingar.
+      additionalProperties: false
+    TengdurAdili:
+      type: object
+      properties:
+        kennitala:
+          type: string
+          description: Kennitala (fyrirtæki, einstaklingur).
+          nullable: true
+        nafn:
+          type: string
+          description: Nafn (fyrirtæki, einstaklingur).
+          nullable: true
+        logheimili:
+          $ref: '#/components/schemas/Logheimili'
+      additionalProperties: false
+    Umsokn:
+      required:
+        - skipaskrarnumer
+        - umsaekjandiKennitala
+        - utgerdKennitala
+        - veidileyfiKodi
+      type: object
+      properties:
+        umsaekjandiKennitala:
+          pattern: ^\d{10}$
+          type: string
+          description: Kennitala umsækjanda.
+        simanumer:
+          type: string
+          description: Símanúmer umsækjanda.
+          nullable: true
+        email:
+          type: string
+          description: Netfang umsækjanda.
+          nullable: true
+        utgerdKennitala:
+          pattern: ^\d{10}$
+          type: string
+          description: Kennitala útgerðaraðila.
+        skipaskrarnumer:
+          type: integer
+          description: Skipaskrárnúmer.
+          format: int32
+        umbedinGildistaka:
+          type: string
+          description: Hvenær óskað er eftir að veiðileyfi taki gildi.
+          format: date-time
+          nullable: true
+        veidileyfiKodi:
+          type: string
+          description: Auðkenning veiðileyfis sem sótt er um.
+        veidisvaediLykill:
+          type: string
+          description: Lykill á því veiðisvæði sem notandi valdi ('A', 'B', etc.).
+          nullable: true
+        fjoldiNeta:
+          type: integer
+          description: Tölugildi á fjöldi neta.
+          format: int32
+          nullable: true
+        teinalengd:
+          type: integer
+          description: Tölugildi á teinalengd neta grásleppuveiða.
+          format: int32
+          nullable: true
+        skraarVidhengi:
+          type: array
+          items:
+            $ref: '#/components/schemas/Vidhengi'
+          description: Listi af skrám sem notandi sendir með umsókn.
+          nullable: true
+        strandveidiTengdirAdilar:
+          type: array
+          items:
+            $ref: '#/components/schemas/TengdurAdili'
+          description: >-
+            Aðili (einstaklingur eða fyrirtæki) sem er tengdur eignarhaldi
+            skips/útgerðar.
+          nullable: true
+        fjarsyslaFaersluNumer:
+          type: string
+          description: Vörunúmer frá fjársýslunni fyrir veiðileyfið.
+          nullable: true
+      additionalProperties: false
+    UmsoknResponse:
+      type: object
+      properties:
+        umsoknId:
+          type: integer
+          description: Umsóknarauðkenni.
+          format: int32
+      additionalProperties: false
+    UmsoknarTimabil:
+      type: object
+      properties:
+        opidFra:
+          type: string
+          description: Dagsetning sem tilgreinir hvenær umsóknartímabil opnast.
+          format: date-time
+          nullable: true
+        opidTil:
+          type: string
+          description: Dagsetning sem tilgreinir hvenær umsóknartímabil lokast.
+          format: date-time
+          nullable: true
+      additionalProperties: false
+      description: Timabil sem tilgreinir hvenær veiðileyfi er opið til umsóknar.
+    Valmoguleiki:
+      type: object
+      properties:
+        lykill:
+          type: string
+          description: Lykill dropdown valmöguleika.
+          nullable: true
+        lysing:
+          type: string
+          description: Lýsing á selection sem birtist notanda.
+          nullable: true
+        dagsetningarTakmorkun:
+          $ref: '#/components/schemas/DagsetningarTakmorkun'
+        ovirkt:
+          type: boolean
+          description: Er select fieldinn disabled?
+        ogildurValkostur:
+          type: boolean
+          description: Ef true, þá hleypir UI notanda ekki áfram með umsókn.
+      additionalProperties: false
+    Veidileyfi:
+      type: object
+      properties:
+        kodi:
+          type: string
+          description: Auðkenni veiðileyfis.
+          nullable: true
+        nafn:
+          type: string
+          description: Nafn veiðileyfis.
+          nullable: true
+        vorunumerfjs:
+          type: string
+          description: Vörunúmer veiðileyfis frá fjársýslu.
+          nullable: true
+        umsoknarTimabil:
+          $ref: '#/components/schemas/UmsoknarTimabil'
+      additionalProperties: false
+    VeidileyfiIBodi:
+      required:
+        - astaedur
+      type: object
+      properties:
+        veidileyfi:
+          $ref: '#/components/schemas/Veidileyfi'
+        svar:
+          type: boolean
+          description: "Hvort notandi geti sótt um veiðileyfi eða ekki.\r\nDefault er að hann getur það."
+        serhaefarSpurningar:
+          $ref: '#/components/schemas/SpurningaListi'
+        astaedur:
+          type: array
+          items:
+            $ref: '#/components/schemas/Astaeda'
+          description: Listi af ástæðum af hverju skip getur ekki fengið veiðileyfi.
+        forsendur:
+          $ref: '#/components/schemas/Forsendur'
+      additionalProperties: false
+    VeidileyfiListi:
+      required:
+        - veidileyfiIBodi
+      type: object
+      properties:
+        veidileyfiIBodi:
+          type: array
+          items:
+            $ref: '#/components/schemas/VeidileyfiIBodi'
+          description: Listi af veiðileyfum.
+      additionalProperties: false
+    Vidhengi:
+      type: object
+      properties:
+        vidhengiNafn:
+          type: string
+          description: Original file name sem notandi uploadaði.
+          nullable: true
+        vidhengiTypa:
+          type: string
+          description: File extension ('pdf', 'doc' etc).
+          nullable: true
+        vidhengiBase64:
+          type: string
+          description: Base64 strengur sem inniheldur skránna sem var uploaduð.
+          nullable: true
+      additionalProperties: false
+  securitySchemes:
+    Bearer:
+      type: http
+      description: |-
+        Sláðu inn JWT bearer token, einungis það og ekkert á undan.
+        Enter the JWT bearer token, only that, with nothing in front.
+      scheme: bearer
+      bearerFormat: JWT
+security:
+  - Bearer: []
