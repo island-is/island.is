@@ -64,7 +64,7 @@
           }
         ],
         "webpackConfig": "apps/application-system/api/webpack.config.js",
-        "maxWorkers": 2
+        "maxWorkers": 1
       },
       "configurations": {
         "production": {
@@ -100,7 +100,8 @@
       "executor": "@nrwl/node:node",
       "options": {
         "buildTarget": "application-system-api:build",
-        "args": ["--job", "worker"]
+        "args": ["--job", "worker", "--memoryLimit=256"],
+        "inspect": "inspect"
       }
     },
     "dev-services": {
@@ -151,6 +152,13 @@
           "yarn dev/init services-user-profile"
         ],
         "parallel": false
+      }
+    },
+    "seed": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "../../../node_modules/.bin/sequelize-cli db:seed:all",
+        "cwd": "apps/application-system/api"
       }
     },
     "dev": {
