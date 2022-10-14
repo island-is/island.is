@@ -89,10 +89,6 @@ export class ActorDelegationsController {
       )
     }
 
-    return (
-      await this.delegationsService.findAllIncoming(actor, delegationTypes)
-    ).filter(
-      (d) => d.type != DelegationType.Custom || d.domainName == DEFAULT_DOMAIN,
-    )
+    return await this.delegationsService.findAllIncoming(actor, delegationTypes)
   }
 }

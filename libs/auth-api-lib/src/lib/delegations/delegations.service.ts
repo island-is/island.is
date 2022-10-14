@@ -385,7 +385,7 @@ export class DelegationsService {
 
     return uniqBy(
       ([] as DelegationDTO[]).concat(...delegationSets),
-      (delegation) => [delegation.domainName, delegation.fromNationalId].join(),
+      'fromNationalId',
     ).filter((delegation) => delegation.fromNationalId !== user.nationalId)
   }
 
@@ -621,6 +621,7 @@ export class DelegationsService {
         )
         return d.toDTO()
       })
+      .filter((d) => d.domainName === DEFAULT_DOMAIN)
   }
 
   /**
