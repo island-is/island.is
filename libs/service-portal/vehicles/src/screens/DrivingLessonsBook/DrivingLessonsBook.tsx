@@ -138,6 +138,11 @@ const DrivingLessonsBook: ServicePortalModuleComponent = () => {
               label={formatMessage(messages.vehicleDrivingLessonsTeacher)}
               content={book?.teacherName}
               loading={loading}
+              editLink={{
+                url: '',
+                external: true,
+                title: messages.vehicleDrivingLessonsChangeTeacher,
+              }}
             />
             <Divider />
 
