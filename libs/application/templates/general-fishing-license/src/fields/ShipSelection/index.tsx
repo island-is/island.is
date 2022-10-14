@@ -56,7 +56,6 @@ export const ShipSelection: FC<FieldBaseProps> = ({
   ) as Ship[]
 
   const shipOptions = (ships: Ship[]) => {
-    console.log(ships)
     const options = [] as Option[]
     for (const [index, ship] of ships.entries()) {
       // Maður á að geta sótt um fleiri en eitt veiðileyfi núna
@@ -65,7 +64,7 @@ export const ShipSelection: FC<FieldBaseProps> = ({
       // }
 
       const handleShowAlertModal = () => {
-        setUnfulfilledLicenses([]) // TODO
+        setUnfulfilledLicenses([]) // TODO fetch from API
         setVisibility(true)
       }
 

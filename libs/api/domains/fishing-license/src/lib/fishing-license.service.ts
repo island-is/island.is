@@ -31,7 +31,6 @@ export class FishingLicenseService {
       const ships = await this.utgerdirApi
         .withMiddleware(new AuthMiddleware(user, { forwardUserInfo: false }))
         .v1UtgerdirKennitalaSkipGet({ kennitala: nationalId })
-      console.log(ships)
       return (
         ships.skip?.map((ship) => ({
           name: ship.skipanafn ?? '',
@@ -66,14 +65,11 @@ export class FishingLicenseService {
   }
   async getFishingLicenses(shipRegistationNumber: number, user: User) {
     try {
-      console.log('getting licenses')
       const licenses = await this.shipApi
         .withMiddleware(new AuthMiddleware(user, { forwardUserInfo: false }))
         .v1SkipSkipaskrarnumerVeidileyfiGet({
           skipaskrarnumer: shipRegistationNumber,
         })
-        console.log('got licenses')
-        console.log(licenses)
 
       return (
         licenses.veidileyfiIBodi?.map((l) => ({
