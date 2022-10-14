@@ -43,7 +43,7 @@ describe('FileController - Update case file order', () => {
 
       try {
         then.result = await fileController
-          .updateFiles(caseId, fileUpdates)
+          .updateFiles(caseId, { files: fileUpdates })
           .then((result) => (then.result = result))
           .catch((error) => (then.error = error))
       } catch (error) {
