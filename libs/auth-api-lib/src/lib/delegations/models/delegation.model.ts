@@ -61,7 +61,7 @@ export class Delegation extends Model {
     defaultValue: DEFAULT_DOMAIN,
   })
   @ForeignKey(() => Domain)
-  domainName?: string
+  domainName!: string
 
   get validTo(): Date | null | undefined {
     // 1. Find a value with null as validTo. Null means that delegation scope set valid not to a specific time period
