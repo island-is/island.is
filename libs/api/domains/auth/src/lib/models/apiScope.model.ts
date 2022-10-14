@@ -1,4 +1,4 @@
-import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { Field, ID, ObjectType } from '@nestjs/graphql'
 
 import { ApiScopeGroup } from './apiScopeGroup.model'
 
@@ -11,8 +11,12 @@ export class ApiScope {
   displayName!: string
 
   @Field(() => ApiScopeGroup, { nullable: true })
-  group?: typeof ApiScopeGroup
+  group?: ApiScopeGroup
 
   @Field(() => String, { nullable: true })
   description?: string
+
+  constructor(apiScope: ApiScope) {
+    Object.assign(this, apiScope)
+  }
 }
