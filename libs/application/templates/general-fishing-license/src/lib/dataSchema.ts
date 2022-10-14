@@ -51,7 +51,21 @@ export const GeneralFishingLicenseSchema = z.object({
   }),
   fishingLicense: z.object({
     license: z
-      .enum([FishingLicenseEnum.HOOKCATCHLIMIT, FishingLicenseEnum.CATCHLIMIT])
+      .enum([
+        FishingLicenseEnum.HOOKCATCHLIMIT,
+        FishingLicenseEnum.DRAGNOTEFISHING,
+        FishingLicenseEnum.GREYSLEPP,
+        FishingLicenseEnum.NORTHICEOCEANCOD,
+        FishingLicenseEnum.CATCHLIMIT,
+        FishingLicenseEnum.REDTUMMY,
+        FishingLicenseEnum.BEACHFISHING,
+        FishingLicenseEnum.FREETIME,
+        FishingLicenseEnum.FREETIMEHOOK,
+        FishingLicenseEnum.FREETIMEHOOKMED,
+        FishingLicenseEnum.BAITKINGFISHING,
+        FishingLicenseEnum.COWFISH,
+        FishingLicenseEnum.CRABFISHING,
+      ])
       .refine((x) => x, {
         params: error.requiredRadioField,
       }),
