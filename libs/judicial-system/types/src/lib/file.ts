@@ -76,3 +76,10 @@ export interface CreateFile {
   size: number
   policeCaseNumber?: string
 }
+
+export interface UpdateFile {
+  id: string
+  userGeneratedFilename?: string | null
+  chapter?: number | null
+  orderWithinChapter?: number | null
+}
