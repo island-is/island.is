@@ -1,4 +1,9 @@
-import { Hash, ReplicaCount, Service } from './input-types'
+import {
+  Hash,
+  PersistentVolumeClaim,
+  ReplicaCount,
+  Service,
+} from './input-types'
 import { UberChartType } from './charts'
 import { FeatureNames } from '../features'
 
@@ -18,7 +23,18 @@ export type ContainerRunHelm = {
     }
   }
 }
-
+export type OutputAccessModes = 'ReadWriteMany' | 'ReadOnlyMany'
+export type OutputPersistentVolumeClaim = {
+  name?: string
+  size: string
+  accessModes: OutputAccessModes
+  mountPath: string
+  /**
+   * Sets the storageClass, leave empty if storageClass means little to you(defaults to efs-csi),
+   * Mostly for internal use by the DevOps team.
+   */
+  storageClass: 'efs-csi'
+}
 export type ContainerEnvironmentVariables = { [name: string]: string }
 export type ContainerSecrets = { [name: string]: string }
 
@@ -28,6 +44,7 @@ export interface ServiceHelm {
     max: number
     default: number
   }
+
   hpa?: {
     scaling: {
       replicas: {
@@ -37,6 +54,7 @@ export interface ServiceHelm {
       metric: { nginxRequestsIrate?: number; cpuAverageUtilization: number }
     }
   }
+
   healthCheck: {
     port?: number
     liveness: {
@@ -99,6 +117,7 @@ export interface ServiceHelm {
       memory: string
     }
   }
+  pvcs?: OutputPersistentVolumeClaim[]
   grantNamespaces: string[]
   grantNamespacesEnabled: boolean
 
