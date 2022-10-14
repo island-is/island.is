@@ -62,7 +62,6 @@ test.describe('Front page', () => {
       for (const url of featuresLinksUrls) {
         const page = await context.newPage()
         const result = await page.goto(url!, {
-          timeout: 10000,
           waitUntil: 'networkidle',
         })
         expect(result!.status()).toBe(200)
@@ -70,9 +69,7 @@ test.describe('Front page', () => {
       }
     })
 
-    test(`should have link on life events pages to navigate back to the main page @lang:${lang}`, async ({
-      baseURL,
-    }) => {
+    test(`should have link on life events pages to navigate back to the main page @lang:${lang}`, async () => {
       const page = await context.newPage()
       await page.goto(home)
       const lifeEventsCards = page.locator('[data-testid="lifeevent-card"]')
