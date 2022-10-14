@@ -122,7 +122,7 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
             shouldBeListed: true,
             shouldBePruned: true,
             // Applications that stay in this state for 24 hours will be pruned automatically
-            whenToPrune: 10, // FOR TESTING
+            whenToPrune: 24 * 3600 * 1000,
           },
           onEntry: {
             apiModuleAction: ApiActions.createCharge,
