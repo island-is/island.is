@@ -694,9 +694,6 @@ export interface IFeaturedArticlesFields {
   /** Link */
   link?: ILink | undefined
 
-  /** Application Label */
-  applicationLabel: string
-
   /** Automatically Fetch Articles */
   automaticallyFetchArticles?: boolean | undefined
 
@@ -2259,6 +2256,7 @@ export interface IOrganizationSubpageFields {
         | IMultipleStatistics
         | IOneColumnText
         | IOverviewLinks
+        | IPowerBiSlice
         | ISliceConnectedComponent
         | ITabSection
         | ITeamList

@@ -1,6 +1,7 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { IPowerBiSlice } from '../generated/contentfulTypes'
+import graphqlTypeJson from 'graphql-type-json'
 import { SystemMetadata } from '@island.is/shared/types'
+import { IPowerBiSlice } from '../generated/contentfulTypes'
 
 @ObjectType()
 export class PowerBiSlice {
@@ -10,8 +11,8 @@ export class PowerBiSlice {
   @Field()
   title?: string
 
-  @Field()
-  powerBiEmbedProps!: string
+  @Field(() => graphqlTypeJson, { nullable: true })
+  powerBiEmbedProps?: Record<string, unknown>
 }
 
 export const mapPowerBiSlice = ({
@@ -22,6 +23,6 @@ export const mapPowerBiSlice = ({
     typename: 'PowerBiSlice',
     id: sys.id,
     title: fields.title ?? '',
-    powerBiEmbedProps: fields.config ? JSON.stringify(fields.config) : '{}',
+    powerBiEmbedProps: fields.config ?? null,
   }
 }

@@ -110,7 +110,7 @@ const SubPage: Screen<SubPageProps> = ({
       })),
     }),
   )
-  console.log(subpage.description)
+
   return (
     <OrganizationWrapper
       pageTitle={subpage.title}
@@ -181,9 +181,7 @@ const SubPage: Screen<SubPageProps> = ({
                           <OneColumnTextSlice slice={slice} />
                         ),
                         PowerBiSlice: (slice: PowerBiSliceSchema) => (
-                          <PowerBiSlice
-                            embedPropsString={slice.powerBiEmbedProps}
-                          />
+                          <PowerBiSlice slice={slice} />
                         ),
                       },
                     })}

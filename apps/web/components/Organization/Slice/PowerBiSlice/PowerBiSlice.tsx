@@ -1,17 +1,13 @@
 import { PowerBIEmbed } from 'powerbi-client-react'
+import { PowerBiSlice as PowerBiSliceSchema } from '@island.is/web/graphql/schema'
 
 interface PowerBiSliceProps {
-  embedPropsString: string
+  slice: PowerBiSliceSchema
 }
 
-export const PowerBiSlice = ({ embedPropsString }: PowerBiSliceProps) => {
-  try {
-    const embedProps = JSON.parse(embedPropsString)
-    return <PowerBIEmbed embedConfig={{ type: 'report', ...embedProps }} />
-  } catch (err) {
-    console.error(err)
-    return null
-  }
+export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
+  const embedProps = slice?.powerBiEmbedProps ?? {}
+  return <PowerBIEmbed embedConfig={{ type: 'report', ...embedProps }} />
 }
 
 export default PowerBiSlice
