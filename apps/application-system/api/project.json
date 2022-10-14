@@ -64,7 +64,7 @@
           }
         ],
         "webpackConfig": "apps/application-system/api/webpack.config.js",
-        "maxWorkers": 1
+        "maxWorkers": 2
       },
       "configurations": {
         "production": {
