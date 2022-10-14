@@ -138,7 +138,12 @@ identity-server:
   namespace: 'identity-server'
   podSecurityContext:
     fsGroup: 65534
-  pvcs: []
+  pvcs:
+    - accessModes: 'ReadWriteMany'
+      mountPath: '/keys'
+      name: 'identity-server'
+      size: '1Gi'
+      storageClass: 'efs-csi'
   replicaCount:
     default: 2
     max: 3
