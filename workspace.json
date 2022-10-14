@@ -260,6 +260,8 @@
     "skilavottord-web-e2e": "apps/skilavottord/web-e2e",
     "skilavottord-ws": "apps/skilavottord/ws",
     "system-e2e": "apps/system-e2e",
+    "test-app": "apps/test-app",
+    "test-app-e2e": "apps/test-app-e2e",
     "testing-containers": "libs/testing/containers",
     "testing-fixtures": "libs/testing/fixtures",
     "testing-nest": "libs/testing/nest",
