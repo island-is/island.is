@@ -100,8 +100,7 @@
       "executor": "@nrwl/node:node",
       "options": {
         "buildTarget": "application-system-api:build",
-        "args": ["--job", "worker", "--memoryLimit=256"],
-        "inspect": "inspect"
+        "args": ["--job", "worker"]
       }
     },
     "dev-services": {
