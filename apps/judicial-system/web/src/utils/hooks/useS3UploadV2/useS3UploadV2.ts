@@ -160,15 +160,16 @@ export const useS3UploadV2 = (
 
   const remove = useCallback(
     (fileId) => {
-      deleteFileMutation({
+      return deleteFileMutation({
         variables: {
           input: {
             caseId: caseId,
             id: fileId,
           },
         },
-      }).catch(() => {
-        // TODO: Log to Sentry and display an error message.
+        optimisticResponse: {
+          deleteFile: { success: true, __typename: 'DeleteFileResponse' },
+        },
       })
     },
     [deleteFileMutation, caseId],

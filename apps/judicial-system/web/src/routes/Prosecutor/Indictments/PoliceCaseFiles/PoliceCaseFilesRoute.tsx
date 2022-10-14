@@ -28,7 +28,12 @@ import {
   titles,
   errors as errorMessages,
 } from '@island.is/judicial-system-web/messages'
-import { Box, InputFileUpload, UploadFile } from '@island.is/island-ui/core'
+import {
+  Box,
+  InputFileUpload,
+  toast,
+  UploadFile,
+} from '@island.is/island-ui/core'
 import { CaseFile, CaseFileCategory } from '@island.is/judicial-system/types'
 import { useS3UploadV2 } from '@island.is/judicial-system-web/src/utils/hooks'
 import * as constants from '@island.is/judicial-system/consts'
@@ -143,13 +148,21 @@ const UploadFilesToPoliceCase: React.FC<{
   )
 
   const onRemove = useCallback(
-    (file: UploadFile) => {
-      remove(file.id)
-      setDisplayFiles((previous) => {
-        return previous.filter((f) => f.id !== file.id)
-      })
+    async (file: UploadFile) => {
+      try {
+        const response = await remove(file.id)
+        if (!response.data?.deleteFile.success) {
+          throw new Error(`Failed to delete file: ${file.id}`)
+        }
+
+        setDisplayFiles((previous) => {
+          return previous.filter((f) => f.id !== file.id)
+        })
+      } catch (e) {
+        toast.error(formatMessage(errorMessages.failedDeleteFile))
+      }
     },
-    [remove, setDisplayFiles],
+    [remove, setDisplayFiles, formatMessage],
   )
 
   return (
