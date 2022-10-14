@@ -31,7 +31,7 @@ export const App = () => {
   const [feature, setFeature] = useState(false)
 
   const client = createClient({
-    sdkKey: '',
+    sdkKey: 'xxxxxxxxxxxxxxxxxxxxx',
   })
   useEffect(() => {
     client
