@@ -8,7 +8,10 @@ import {
   Application,
   DefaultEvents,
 } from '@island.is/application/types'
-import { EphemeralStateLifeCycle } from '@island.is/application/core'
+import {
+  EphemeralStateLifeCycle,
+  pruneAfterDays,
+} from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
 import * as z from 'zod'
 import { m } from './messages'
@@ -74,12 +77,7 @@ const template: ApplicationTemplate<
         meta: {
           name: 'Completed',
           progress: 1,
-          lifecycle: {
-            shouldBeListed: true,
-            shouldBePruned: true,
-            // Applications that stay in this state for 3x30 days (approx. 3 months) will be pruned automatically
-            whenToPrune: 3 * 30 * 24 * 3600 * 1000,
-          },
+          lifecycle: pruneAfterDays(3 * 30),
           actionCard: {
             tag: {
               label: m.actionCardDone,
