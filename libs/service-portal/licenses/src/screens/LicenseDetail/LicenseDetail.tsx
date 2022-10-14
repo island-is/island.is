@@ -73,6 +73,7 @@ const GenericLicenseQuery = gql`
           id
         }
         pkpass
+        pkpassStatus
         timeout
         status
       }
@@ -372,12 +373,15 @@ const LicenseDetail: ServicePortalModuleComponent = () => {
             alignItems={['flexStart', 'center']}
             marginBottom={2}
           >
-            {!expired && genericLicense?.license.pkpass && licenseType && (
-              <>
-                <PkPass licenseType={licenseType} />
-                <Box marginX={[0, 1]} marginY={[1, 0]} />
-              </>
-            )}
+            {!expired &&
+              genericLicense?.license.pkpass &&
+              genericLicense?.license.pkpassStatus === 'Available' &&
+              licenseType && (
+                <>
+                  <PkPass licenseType={licenseType} />
+                  <Box marginX={[0, 1]} marginY={[1, 0]} />
+                </>
+              )}
             {genericLicense?.payload?.metadata?.links?.map((link, index) => {
               return (
                 <a
