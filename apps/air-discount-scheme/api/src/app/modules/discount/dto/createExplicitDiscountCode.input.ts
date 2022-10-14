@@ -15,7 +15,7 @@ export class CreateExplicitDiscountCodeInput {
   lastName: string
 
   @Field((_) => String)
-  gender: 'kk' | 'hvk' | 'kvk'
+  gender: 'kk' | 'kvk' | 'hvk'
 
   @Field((_) => String)
   address: string

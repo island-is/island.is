@@ -29,6 +29,7 @@ export type Flight = {
   created: Date
   modified: Date
   connectable: boolean
+  explicitBy: string
 }
 
 export type Travel = {

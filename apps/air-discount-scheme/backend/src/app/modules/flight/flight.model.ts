@@ -225,4 +225,11 @@ export class Flight
     type: DataType.BOOLEAN,
   })
   readonly connectable!: boolean
+
+  @ApiProperty()
+  @Column({
+    type: DataType.STRING,
+    allowNull: true
+  })
+  readonly explicitBy!: string
 }

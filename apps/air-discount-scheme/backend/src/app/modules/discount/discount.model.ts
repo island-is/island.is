@@ -13,12 +13,14 @@ export class Discount implements TDiscount {
     connectionDiscountCodes: ConnectionDiscountCode[],
     nationalId: string,
     ttl: number,
+    explicitBy = ''
   ) {
     this.user = user
     this.discountCode = discountCode
     this.connectionDiscountCodes = connectionDiscountCodes
     this.nationalId = nationalId
     this.expiresIn = ttl
+    this.explicitBy = explicitBy
   }
   @ApiProperty()
   user: User
@@ -33,4 +35,7 @@ export class Discount implements TDiscount {
 
   @ApiProperty()
   expiresIn: number
+
+  @ApiProperty()
+  explicitBy: string
 }

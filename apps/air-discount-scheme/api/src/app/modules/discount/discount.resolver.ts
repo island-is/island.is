@@ -42,7 +42,8 @@ export class DiscountResolver {
   ): Promise<DiscountWithTUser[]> {
     let relations: TUser[] = await backendApi.getUserRelations(user.nationalId)
 
-    // Check for hand generated discount from ADMINS
+    // Check for explicit discount. If a discount exists but a person is ineligible
+    // it means that an admin has created it explicitly and we report it back.
     const explicitDiscount = await backendApi.getDiscount(user.nationalId)
     const explicitDiscountWithUser = [
       {

@@ -15,6 +15,7 @@ interface CachedDiscount {
   discountCode: string
   connectionDiscountCodes: ConnectionDiscountCode[]
   nationalId: string
+  explicitBy?: string
 }
 
 export const DISCOUNT_CODE_LENGTH = 8
@@ -77,6 +78,7 @@ export class DiscountService {
     user: User,
     nationalId: string,
     connectableFlights: Flight[],
+    explicitBy = ''
   ): Promise<Discount> {
     const discountCode = this.generateDiscountCode()
     const cacheId = CACHE_KEYS.discount(uuid())
@@ -127,11 +129,14 @@ export class DiscountService {
           cacheId,
         )
 
+        const explicitBy = flight.explicitBy
+
         connectionDiscountCodes.push({
           code: connectionDiscountCode,
           flightId,
           flightDesc,
           validUntil: validUntil.toISOString(),
+          explicitBy
         })
       }
     }
@@ -149,6 +154,7 @@ export class DiscountService {
       nationalId,
       discountCode,
       connectionDiscountCodes,
+      explicitBy
     })
     await this.setCache<string>(CACHE_KEYS.discountCode(discountCode), cacheId)
     await this.setCache<string>(CACHE_KEYS.user(nationalId), cacheId)
@@ -159,6 +165,7 @@ export class DiscountService {
       connectionDiscountCodes,
       nationalId,
       ONE_DAY,
+      explicitBy
     )
   }
 
@@ -186,6 +193,7 @@ export class DiscountService {
       cacheValue.connectionDiscountCodes ?? [],
       nationalId,
       ttl,
+      cacheValue.explicitBy ?? ''
     )
   }
 
@@ -206,6 +214,7 @@ export class DiscountService {
       cacheValue.connectionDiscountCodes ?? [],
       cacheValue.nationalId,
       ttl,
+      cacheValue.explicitBy ?? ''
     )
   }
 
