@@ -3,6 +3,7 @@ import { DefaultEvents, FieldBaseProps } from '@island.is/application/types'
 import { getErrorViaPath } from '@island.is/application/core'
 
 import {
+  AlertBanner,
   Box,
   Checkbox,
   Divider,
@@ -35,7 +36,10 @@ export const CemetryOverview = ({
   const { formatMessage } = useLocale()
   const [approveOverview, setApproveOverview] = useState(false)
 
-  const [submitApplication] = useSubmitApplication({
+  const [
+    submitApplication,
+    { error: submitError, loading },
+  ] = useSubmitApplication({
     application,
     refetch,
     event: DefaultEvents.SUBMIT,
@@ -47,7 +51,7 @@ export const CemetryOverview = ({
 
   const onBackButtonClick = () => {
     const cemeteryIncome = currencyStringToNumber(answers.cemetryIncome?.total)
-    const currentAssets = answers.cemetryAsset?.current
+    const currentAssets = answers.cemetryAsset?.currentAssets
     const longTermDebt = answers.cemetryLiability?.longTerm
     if (
       cemeteryIncome < Number(careTakerLimit) &&
@@ -143,16 +147,18 @@ export const CemetryOverview = ({
             value={formatCurrency(answers.cemetryIncome?.otherIncome)}
           />
           <ValueLine
-            label={m.caretaking}
-            value={formatCurrency(answers.cemetryIncome?.caretaking)}
+            label={m.careIncome}
+            value={formatCurrency(answers.cemetryIncome?.careIncome)}
           />
           <ValueLine
-            label={m.cemetryFundDonations}
-            value={formatCurrency(answers.cemetryIncome?.cemetryFundDonations)}
+            label={m.grantFromTheCemeteryFund}
+            value={formatCurrency(
+              answers.cemetryIncome?.grantFromTheCemeteryFund,
+            )}
           />
           <ValueLine
-            label={m.graveIncome}
-            value={formatCurrency(answers.cemetryIncome?.graveIncome)}
+            label={m.burialRevenue}
+            value={formatCurrency(answers.cemetryIncome?.burialRevenue)}
           />
           <ValueLine
             label={m.totalIncome}
@@ -181,8 +187,8 @@ export const CemetryOverview = ({
             value={formatCurrency(answers.cemetryExpense?.payroll)}
           />
           <ValueLine
-            label={m.writtenOffExpense}
-            value={formatCurrency(answers.cemetryExpense?.writtenOffExpense)}
+            label={m.depreciation}
+            value={formatCurrency(answers.cemetryExpense?.depreciation)}
           />
           <ValueLine
             label={m.totalExpenses}
@@ -227,13 +233,13 @@ export const CemetryOverview = ({
             <GridColumn span={['12/12', '6/12']}>
               <ValueLine
                 label={m.fixedAssetsTotal}
-                value={formatCurrency(answers.cemetryAsset?.current)}
+                value={formatCurrency(answers.cemetryAsset?.fixedAssetsTotal)}
               />
             </GridColumn>
             <GridColumn span={['12/12', '6/12']}>
               <ValueLine
-                label={m.tangibleAssets}
-                value={formatCurrency(answers.cemetryAsset?.tangible)}
+                label={m.currentAssets}
+                value={formatCurrency(answers.cemetryAsset?.currentAssets)}
               />
             </GridColumn>
           </GridRow>
@@ -271,8 +277,10 @@ export const CemetryOverview = ({
           <GridRow>
             <GridColumn span={['12/12', '6/12']}>
               <ValueLine
-                label={m.newYearequity}
-                value={formatCurrency(answers.cemetryEquity?.newYearEquity)}
+                label={m.equityAtTheBeginningOfTheYear}
+                value={formatCurrency(
+                  answers.cemetryEquity?.equityAtTheBeginningOfTheYear,
+                )}
               />
             </GridColumn>
             <GridColumn span={['12/12', '6/12']}>
@@ -286,8 +294,10 @@ export const CemetryOverview = ({
         <GridRow>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
-              label={m.reevaluatePrice}
-              value={formatCurrency(answers.cemetryEquity?.reevaluatePrice)}
+              label={m.revaluationDueToPriceChanges}
+              value={formatCurrency(
+                answers.cemetryEquity?.revaluationDueToPriceChanges,
+              )}
             />
           </GridColumn>
           <GridColumn span={['12/12', '6/12']}>
@@ -380,6 +390,16 @@ export const CemetryOverview = ({
       </Box>
       {errors && getErrorViaPath(errors, 'applicationApprove') ? (
         <InputError errorMessage={formatMessage(m.errorApproval)} />
+      ) : null}
+      {submitError ? (
+        <Box paddingY={2}>
+          <AlertBanner
+            title={formatMessage(m.submitErrorTitle)}
+            description={formatMessage(m.submitErrorMessage)}
+            variant="error"
+            dismissable
+          />
+        </Box>
       ) : null}
       <BottomBar
         onSendButtonClick={onSendButtonClick}

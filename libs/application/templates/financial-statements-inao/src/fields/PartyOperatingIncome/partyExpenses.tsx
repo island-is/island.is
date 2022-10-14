@@ -41,7 +41,7 @@ export const PartyExpenses = ({ errors, getSum }: PropTypes): JSX.Element => {
         <InputController
           id={PARTYOPERATIONIDS.otherCost}
           name={PARTYOPERATIONIDS.otherCost}
-          label={formatMessage(m.otherCost)}
+          label={formatMessage(m.otherOperationalCost)}
           onChange={() => onInputChange(PARTYOPERATIONIDS.otherCost)}
           error={errors && getErrorViaPath(errors, PARTYOPERATIONIDS.otherCost)}
           backgroundColor="blue"

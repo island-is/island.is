@@ -1,10 +1,30 @@
 import { Injectable } from '@nestjs/common'
-import { FinancialStatementsInaoClientService } from '@island.is/clients/financial-statements-inao'
+import {
+  CemeteryFinancialStatementValues,
+  FinancialStatementsInaoClientService,
+  PersonalElectionFinancialStatementValues,
+  PoliticalPartyFinancialStatementValues,
+} from '@island.is/clients/financial-statements-inao'
 import * as kennitala from 'kennitala'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { getValueViaPath } from '@island.is/application/core'
+import {
+  mapValuesToIndividualtype,
+  mapValuesToPartytype,
+  mapValuesToCemeterytype,
+} from './mappers/mapValuesToUsertype'
+import { USERTYPE } from './types'
 
 const LESS = 'less'
+
+export const getCurrentUserType = (answers: any, externalData: any) => {
+  const fakeUserType: any = getValueViaPath(answers, 'fakeData.options')
+  const currentUserType: any = getValueViaPath(
+    externalData,
+    'getUserType.data.value',
+  )
+  return fakeUserType ? fakeUserType : currentUserType
+}
 
 export interface DataResponse {
   success: boolean
@@ -31,87 +51,128 @@ export class FinancialStatementsInaoTemplateService {
   async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
     const { nationalId } = auth
     const answers = application.answers
+    const externalData = application.externalData
+    const currentUserType = getCurrentUserType(answers, externalData)
 
-    const values = {
-      contributionsByLegalEntities: Number(
-        getValueViaPath(
-          answers,
-          'individualIncome.contributionsByLegalEntities',
-        ),
-      ),
-      candidatesOwnContributions: Number(
-        getValueViaPath(answers, 'individualIncome.candidatesOwnContributions'),
-      ),
-      individualContributions: Number(
-        getValueViaPath(answers, 'individualIncome.individualContributions'),
-      ),
-      otherIncome: Number(
-        getValueViaPath(answers, 'individualIncome.otherIncome'),
-      ),
-      electionOfficeExpenses: Number(
-        getValueViaPath(answers, 'individualExpense.electionOffice'),
-      ),
-      advertisingAndPromotions: Number(
-        getValueViaPath(answers, 'individualExpense.advertisements'),
-      ),
-      meetingsAndTravelExpenses: Number(
-        getValueViaPath(answers, 'individualExpense.travelCost'),
-      ),
-      otherExpenses: Number(
-        getValueViaPath(answers, 'individualExpense.otherCost'),
-      ),
-      capitalIncome: Number(
-        getValueViaPath(answers, 'capitalNumbers.capitalIncome'),
-      ),
-      financialExpenses: Number(
-        getValueViaPath(answers, 'capitalNumbers.capitalCost'),
-      ),
-      fixedAssetsTotal: Number(
-        getValueViaPath(answers, 'asset.fixedAssetsTotal'),
-      ),
-      currentAssets: Number(getValueViaPath(answers, 'asset.tangible')),
-      longTermLiabilitiesTotal: Number(
-        getValueViaPath(answers, 'liability.longTerm'),
-      ),
-      shortTermLiabilitiesTotal: Number(
-        getValueViaPath(answers, 'liability.shortTerm'),
-      ),
-      equityTotal: Number(getValueViaPath(answers, 'equity.totalEquity')),
-    }
-
-    const electionId = getValueViaPath(
-      answers,
-      'election.selectElection',
-    ) as string
-    const clientName = getValueViaPath(answers, 'about.fullName') as string
-    const electionIncomeLimit = getValueViaPath(
-      answers,
-      'election.incomeLimit',
-    ) as string
-    const noValueStatement = electionIncomeLimit === LESS ? true : false
-
-    // actor is undefined until we add the delegate functionality to the frontend
-    const result: DataResponse = await this.financialStatementsClientService
-      .postFinancialStatementForPersonalElection(
-        nationalId,
-        undefined,
-        electionId,
-        noValueStatement,
-        clientName,
-        values,
+    if (currentUserType === USERTYPE.INDIVIDUAL) {
+      const values: PersonalElectionFinancialStatementValues = mapValuesToIndividualtype(
+        answers,
       )
-      .then(() => {
-        return { success: true }
-      })
-      .catch((e) => {
-        return {
-          success: false,
-          errorMessage: e.message,
-        }
-      })
-    if (!result.success) {
-      throw new Error(`Application submission failed`)
+
+      const electionId = getValueViaPath(
+        answers,
+        'election.selectElection',
+      ) as string
+      const clientName = getValueViaPath(answers, 'about.fullName') as string
+      const electionIncomeLimit = getValueViaPath(
+        answers,
+        'election.incomeLimit',
+      ) as string
+
+      const noValueStatement = electionIncomeLimit === LESS ? true : false
+
+      // actor is undefined until we add the delegate functionality to the frontend
+      const result: DataResponse = await this.financialStatementsClientService
+        .postFinancialStatementForPersonalElection(
+          nationalId,
+          undefined,
+          electionId,
+          noValueStatement,
+          clientName,
+          values,
+        )
+        .then((data) => {
+          if (data === true) {
+            return { success: true }
+          } else {
+            return { success: false }
+          }
+        })
+        .catch((e) => {
+          console.error('dataverse error', e)
+          return {
+            success: false,
+            errorMessage: e.message,
+          }
+        })
+      if (!result.success) {
+        throw new Error(`Application submission failed`)
+      }
+      return { success: result.success }
+    } else if (currentUserType === USERTYPE.PARTY) {
+      const values: PoliticalPartyFinancialStatementValues = mapValuesToPartytype(
+        answers,
+      )
+      const year = getValueViaPath(
+        answers,
+        'conditionalAbout.operatingYear',
+      ) as string
+
+      // default to comment to empty string, currently there's no comment field
+      const comment = ''
+
+      const result: DataResponse = await this.financialStatementsClientService
+        .postFinancialStatementForPoliticalParty(
+          nationalId,
+          undefined,
+          year,
+          comment,
+          values,
+        )
+        .then((data) => {
+          if (data === true) {
+            return { success: true }
+          } else {
+            return { success: false }
+          }
+        })
+        .catch((e) => {
+          return {
+            success: false,
+            errorMessage: e.message,
+          }
+        })
+      if (!result.success) {
+        throw new Error(`Application submission failed`)
+      }
+      return { success: result.success }
+    } else if (currentUserType === USERTYPE.CEMETRY) {
+      const values: CemeteryFinancialStatementValues = mapValuesToCemeterytype(
+        answers,
+      )
+      const year = getValueViaPath(
+        answers,
+        'conditionalAbout.operatingYear',
+      ) as string
+
+      // default to comment to empty string, currently there's no comment field
+      const comment = ''
+
+      const result: DataResponse = await this.financialStatementsClientService
+        .postFinancialStatementForCemetery(
+          nationalId,
+          undefined,
+          year,
+          comment,
+          values,
+        )
+        .then((data) => {
+          if (data === true) {
+            return { success: true }
+          } else {
+            return { success: false }
+          }
+        })
+        .catch((e) => {
+          return {
+            success: false,
+            errorMessage: e.message,
+          }
+        })
+      if (!result.success) {
+        throw new Error(`Application submission failed`)
+      }
+      return { success: result.success }
     }
-    return { success: result.success }
   }
 }

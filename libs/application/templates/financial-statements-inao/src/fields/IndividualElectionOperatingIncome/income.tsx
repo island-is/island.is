@@ -36,7 +36,7 @@ export const Income = ({ getSum }: PropTypes): JSX.Element => {
               INDIVIDUALOPERATIONIDS.contributionsByLegalEntities,
             )
           }
-          label={formatMessage(m.corporateDonation)}
+          label={formatMessage(m.contributionsFromLegalEntities)}
           onChange={() =>
             onInputChange(INDIVIDUALOPERATIONIDS.contributionsByLegalEntities)
           }
@@ -55,7 +55,7 @@ export const Income = ({ getSum }: PropTypes): JSX.Element => {
               INDIVIDUALOPERATIONIDS.individualContributions,
             )
           }
-          label={formatMessage(m.individualContributions)}
+          label={formatMessage(m.contributionsFromIndividuals)}
           onChange={() =>
             onInputChange(INDIVIDUALOPERATIONIDS.individualContributions)
           }

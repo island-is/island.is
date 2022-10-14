@@ -87,7 +87,8 @@ export const getApplication = (allowFakeData = false): Form => {
               const applicationAnswers = answers as FinancialStatementsInao
               const careTakerLimit =
                 applicationAnswers.cemetryOperation?.incomeLimit ?? '0'
-              const currentAssets = applicationAnswers.cemetryAsset?.current
+              const currentAssets =
+                applicationAnswers.cemetryAsset?.fixedAssetsTotal
               const isCemetry = userType === USERTYPE.CEMETRY
               const totalIncome = isCemetry
                 ? applicationAnswers.operatingCost?.total
