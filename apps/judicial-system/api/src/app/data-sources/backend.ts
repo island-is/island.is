@@ -222,10 +222,10 @@ export class BackendApi extends DataSource<{ req: Request }> {
     caseId: string,
     updates: UpdateFile[],
   ): Promise<UpdateFilesResponse> {
-    const caseFiles: CaseFile[] = await this.patch<UpdateFile[], CaseFile[]>(
-      `case/${caseId}/files`,
-      updates,
-    )
+    const caseFiles: CaseFile[] = await this.patch<
+      { files: UpdateFile[] },
+      CaseFile[]
+    >(`case/${caseId}/files`, { files: updates })
     return { caseFiles: caseFiles }
   }
 

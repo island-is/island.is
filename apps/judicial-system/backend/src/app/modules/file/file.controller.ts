@@ -42,7 +42,7 @@ import { DeleteFileResponse } from './models/deleteFile.response'
 import { SignedUrl } from './models/signedUrl.model'
 import { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
 import { FileService } from './file.service'
-import { UpdateFileDto } from './dto/updateFile.dto'
+import { UpdateFileDto, UpdateFilesDto } from './dto/updateFile.dto'
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('api/case/:caseId')
@@ -178,10 +178,10 @@ export class FileController {
   })
   updateFiles(
     @Param('caseId') caseId: string,
-    @Body() fileUpdates: UpdateFileDto[],
+    @Body() updateFiles: UpdateFilesDto,
   ): Promise<CaseFile[]> {
     this.logger.debug(`Updating files of case ${caseId}`)
 
-    return this.fileService.updateFiles(caseId, fileUpdates)
+    return this.fileService.updateFiles(caseId, updateFiles.files)
   }
 }
