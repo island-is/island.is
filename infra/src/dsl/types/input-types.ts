@@ -11,6 +11,8 @@ export interface Service {
 export type Hash = { [name: string]: Hash | string | number }
 export type ValueSource = string | ((e: Context) => string)
 export type ValueType = MissingSettingType | ValueSource
+// See https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes for more info
+export type AccessModes = 'ReadWrite' | 'ReadOnly'
 
 export type PostgresInfo = {
   host?: {
@@ -80,6 +82,7 @@ export type ServiceDefinition = {
   }
   xroadConfig: XroadConfig[]
   files: MountedFile[]
+  volumes: PersistentVolumeClaim[]
 }
 
 export interface Ingress {
@@ -90,6 +93,19 @@ export interface Ingress {
   public?: boolean
   extraAnnotations?: { [name in OpsEnv]: { [idx: string]: string | null } }
 }
+
+export type PersistentVolumeClaim = {
+  name?: string
+  size: string
+  accessModes: AccessModes
+  mountPath: string
+  /**
+   * Sets the storageClass, leave empty if storageClass means little to you(defaults to efs-csi),
+   * Mostly for internal use by the DevOps team.
+   */
+  storageClass?: string
+}
+
 export type Resources = {
   limits: {
     cpu: string
@@ -126,7 +142,7 @@ export type InitContainers = {
 }
 
 export interface Context {
-  featureName?: string
+  featureDeploymentName?: string
   svc(dep: Service): string
   env: EnvironmentConfig
 }

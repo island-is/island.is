@@ -26,7 +26,10 @@ describe('Feature-deployment support', () => {
   const apiService: ServiceBuilder<'graphql'> = service('graphql')
     .env({
       A: ref((h) => `${h.svc(dependencyA)}`),
-      B: ref((h) => `${h.featureName ? 'feature-' : ''}${h.svc(dependencyB)}`),
+      B: ref(
+        (h) =>
+          `${h.featureDeploymentName ? 'feature-' : ''}${h.svc(dependencyB)}`,
+      ),
     })
     .initContainer({
       containers: [
