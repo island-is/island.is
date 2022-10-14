@@ -6,9 +6,11 @@ import {
   buildCustomField,
   buildSubmitField,
   buildSubSection,
+  buildMultiField,
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
-import { m } from '../lib/messages'
+import { m } from '../lib/messagesx'
+import { payment } from '../lib/messages'
 
 export const ChangeOperatorOfVehicleForm: Form = buildForm({
   id: 'ChangeOperatorOfVehicleFormDraft',
@@ -39,10 +41,22 @@ export const ChangeOperatorOfVehicleForm: Form = buildForm({
             }),
           ],
         }),
-        buildSubSection({
-          id: 'test',
-          title: 'Test',
+      ],
+    }),
+    buildSection({
+      id: 'payment',
+      title: payment.general.sectionTitle,
+      children: [
+        buildMultiField({
+          id: 'paymentMultiField',
+          title: payment.general.pageTitle,
+          space: 1,
           children: [
+            buildCustomField({
+              id: 'PaymentChargeOverview',
+              title: '',
+              component: 'PaymentChargeOverview',
+            }),
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
@@ -54,6 +68,7 @@ export const ChangeOperatorOfVehicleForm: Form = buildForm({
                   name: m.confirm,
                   type: 'primary',
                 },
+                //TODOx bæta við submit sem fer beint í completed
               ],
             }),
           ],

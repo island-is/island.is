@@ -7,7 +7,7 @@ import {
 import { DrivingLicense } from '../types/schema'
 import { GET_DRIVING_LICENSE } from '../graphql/queries'
 import * as Sentry from '@sentry/react'
-import { m } from '../lib/messages'
+import { m } from '../lib/messagesx'
 
 export class DrivingLicenseProvider extends BasicDataProvider {
   type = 'DrivingLicenseProvider'

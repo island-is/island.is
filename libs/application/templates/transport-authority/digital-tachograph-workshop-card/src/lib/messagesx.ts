@@ -2,73 +2,73 @@ import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
   name: {
-    id: 'ta.dtcc.application:name',
-    defaultMessage: 'Fyrirtækjakort',
+    id: 'ta.dtwc.application:name',
+    defaultMessage: 'Verkstæðiskort',
     description: `Application's name`,
   },
   institutionName: {
-    id: 'ta.dtcc.application:institution',
+    id: 'ta.dtwc.application:institution',
     defaultMessage: 'Samgöngustofa',
     description: `Institution's name`,
   },
   externalDataSection: {
-    id: 'ta.dtcc.application:externalData.section',
+    id: 'ta.dtwc.application:externalData.section',
     defaultMessage: 'Gagnaöflun',
     description: 'Some description',
   },
   externalDataTitle: {
-    id: 'ta.dtcc.application:application.title',
-    defaultMessage: 'Fyrirtækjakort',
+    id: 'ta.dtwc.application:application.title',
+    defaultMessage: 'Verkstæðiskort',
     description: `Application's name`,
   },
   externalDataSubTitle: {
-    id: 'ta.dtcc.application:externalData.title',
+    id: 'ta.dtwc.application:externalData.title',
     defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt',
     description: 'he following data will be retrieved electronically',
   },
   externalDataAgreement: {
-    id: 'ta.dtcc.application:externalData.agreement',
+    id: 'ta.dtwc.application:externalData.agreement',
     defaultMessage: 'Ég hef kynnt mér ofangreint',
     description: 'I understand',
   },
   nationalRegistryTitle: {
-    id: 'ta.dtcc.application:nationalRegistry.title',
+    id: 'ta.dtwc.application:nationalRegistry.title',
     defaultMessage: 'Persónuupplýsingar úr Þjóðskrá',
     description: 'Personal information from the National Registry',
   },
   nationalRegistrySubTitle: {
-    id: 'ta.dtcc.application:nationalRegistry.subTitle',
+    id: 'ta.dtwc.application:nationalRegistry.subTitle',
     defaultMessage:
       'Til þess að auðvelda fyrir sækjum við persónuupplýsingar úr Þjóðskrá til þess að fylla út umsóknina',
     description:
       'Information from the National Registry will be used to prefill the data in the application',
   },
   userProfileInformationTitle: {
-    id: 'ta.dtcc.application:userprofile.title',
+    id: 'ta.dtwc.application:userprofile.title',
     defaultMessage: 'Netfang og símanúmer úr þínum stillingum',
     description: 'Your user profile information',
   },
   userProfileInformationSubTitle: {
-    id: 'ta.dtcc.application:userprofile.subTitle',
+    id: 'ta.dtwc.application:userprofile.subTitle',
     defaultMessage:
       'Til þess að auðvelda umsóknarferlið er gott að hafa fyllt út netfang og símanúmer á mínum síðum',
     description:
       'In order to apply for this application we need your email and phone number',
   },
   actionCardDraft: {
-    id: 'ta.dtcc.application:actionCardDraft',
+    id: 'ta.dtwc.application:actionCardDraft',
     defaultMessage: 'Í vinnslu',
     description:
       'Description of application state/status when the application is in progress',
   },
   actionCardDone: {
-    id: 'ta.dtcc.application:actionCardDone',
+    id: 'ta.dtwc.application:actionCardDone',
     defaultMessage: 'Afgreidd',
     description:
       'Description of application state/status when application is processed',
   },
   confirmation: {
-    id: 'ta.dtcc.application:confirmation',
+    id: 'ta.dtwc.application:confirmation',
     defaultMessage: 'Staðfesting',
     description: 'confirmation',
   },
@@ -78,18 +78,24 @@ export const m = defineMessages({
     description: 'confirm',
   },
   openMySites: {
-    id: 'ta.dtcc.application:openMySites',
+    id: 'ta.dtwc.application:openMySites',
     defaultMessage: 'Opna mínar síður',
     description: 'Open my sites',
   },
   successTitle: {
-    id: 'ta.dtcc.application:successTitle',
-    defaultMessage: 'Beiðni þín um fyrirtækjakort hefur verið staðfest',
+    id: 'ta.dtwc.application:successTitle',
+    defaultMessage: 'Beiðni þín um verkstæðiskort hefur verið staðfest',
     description: '',
   },
   successDescription: {
-    id: 'ta.dtcc.application:successDescription',
+    id: 'ta.dtwc.application:successDescription',
     defaultMessage: ' ',
     description: '',
+  },
+  actionCardPayment: {
+    id: 'cr.application:actionCardPayment',
+    defaultMessage: 'Greiðslu vantar',
+    description:
+      'Description of application state/status when payment is pending',
   },
 })

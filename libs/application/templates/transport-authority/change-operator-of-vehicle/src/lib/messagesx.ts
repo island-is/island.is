@@ -93,4 +93,10 @@ export const m = defineMessages({
     defaultMessage: ' ',
     description: '',
   },
+  actionCardPayment: {
+    id: 'cr.application:actionCardPayment',
+    defaultMessage: 'Greiðslu vantar',
+    description:
+      'Description of application state/status when payment is pending',
+  },
 })
