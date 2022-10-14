@@ -58,10 +58,6 @@ export const ShipSelection: FC<FieldBaseProps> = ({
   const shipOptions = (ships: Ship[]) => {
     const options = [] as Option[]
     for (const [index, ship] of ships.entries()) {
-      // Maður á að geta sótt um fleiri en eitt veiðileyfi núna
-      // if (ship.fishingLicenses.length !== 0) {
-      //   continue
-      // }
 
       const handleShowAlertModal = () => {
         setUnfulfilledLicenses([]) // TODO fetch from API
