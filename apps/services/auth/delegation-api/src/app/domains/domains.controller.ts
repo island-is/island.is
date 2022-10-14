@@ -1,4 +1,4 @@
-import { Controller, Get, Param, UseGuards } from '@nestjs/common'
+import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 
 import {
@@ -24,6 +24,12 @@ const domainName = {
   description: 'The domain name to the scope tree belongs to.',
 }
 
+const lang = {
+  description: 'The language to return display strings in.',
+  required: false,
+  type: 'string',
+}
+
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @FeatureFlag(Features.outgoingDelegationsV2)
 @ApiTags('domains')
@@ -43,10 +49,15 @@ export class DomainsController {
   @FeatureFlag(Features.outgoingDelegationsV2)
   @Documentation({
     description: 'Get all domains supporting delegations.',
+    request: {
+      query: {
+        lang,
+      },
+    },
     response: { status: 200, type: [DomainDTO] },
   })
-  async findAll(): Promise<DomainDTO[]> {
-    return this.domainsService.findAll()
+  async findAll(@Query('lang') language?: string): Promise<DomainDTO[]> {
+    return this.domainsService.findAll(language)
   }
 
   @Get(':domainName')
@@ -58,6 +69,9 @@ export class DomainsController {
       params: {
         domainName,
       },
+      query: {
+        lang,
+      },
     },
     response: {
       status: 200,
@@ -66,8 +80,9 @@ export class DomainsController {
   })
   async findOne(
     @Param('domainName') domainName: string,
+    @Query('lang') language?: string,
   ): Promise<DomainDTO | null> {
-    return this.domainsService.findOne(domainName)
+    return this.domainsService.findOne(domainName, language)
   }
 
   @Get(':domainName/scope-tree')
@@ -79,12 +94,16 @@ export class DomainsController {
       params: {
         domainName,
       },
+      query: {
+        lang,
+      },
     },
     response: { status: 200, type: [ApiScopeTreeDTO] },
   })
   async findScopeTree(
     @Param('domainName') domainName: string,
+    @Query('lang') language?: string,
   ): Promise<ApiScopeTreeDTO[]> {
-    return this.resourceService.findScopeTree(domainName)
+    return this.resourceService.findScopeTree(domainName, language)
   }
 }

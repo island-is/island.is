@@ -22,8 +22,9 @@ import { PersonalRepresentativeScopePermission } from '../personal-representativ
 import { PersonalRepresentative } from '../personal-representative/models/personal-representative.model'
 import { PersonalRepresentativeRight } from '../personal-representative/models/personal-representative-right.model'
 import { PersonalRepresentativeRightType } from '../personal-representative/models/personal-representative-right-type.model'
-import { DelegationResourcesService } from './delegationResources.service'
-import { DelegationDomainsService } from './delegationDomains.service'
+import { DelegationResourcesService } from './delegation-resources.service'
+import { DelegationDomainsService } from './delegation-domains.service'
+import { ResourceTranslationService } from './resource-translation.service'
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { DelegationDomainsService } from './delegationDomains.service'
   providers: [
     ResourcesService,
     ResourceAccessService,
+    ResourceTranslationService,
     DelegationResourcesService,
     DelegationDomainsService,
   ],

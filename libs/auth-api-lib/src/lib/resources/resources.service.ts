@@ -31,7 +31,7 @@ import { uuid } from 'uuidv4'
 import { Domain } from './models/domain.model'
 import { PagedRowsDto } from '../core/types/paged-rows.dto'
 import { DomainDTO } from './dto/domain.dto'
-import { TranslationService } from '../translation/translation.service'
+import { ResourceTranslationService } from './resource-translation.service'
 
 @Injectable()
 export class ResourcesService {
@@ -62,7 +62,7 @@ export class ResourcesService {
     private delegationConfig: ConfigType<typeof DelegationConfig>,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-    private translationService: TranslationService,
+    private resourceTranslationService: ResourceTranslationService,
   ) {}
 
   /** Get's all identity resources and total count of rows */
@@ -429,7 +429,7 @@ export class ResourcesService {
     })
 
     if (language) {
-      await this.translateApiScopes(scopes, language)
+      await this.resourceTranslationService.translateApiScopes(scopes, language)
     }
     return scopes
   }
@@ -1000,49 +1000,4 @@ export class ResourcesService {
   }
 
   // #endregion Domain
-
-  private async translateApiScopes(
-    scopes: Array<ApiScope>,
-    language: string,
-  ): Promise<Array<ApiScope>> {
-    const translationMap = await this.translationService.findTranslationMap(
-      'apiscope',
-      scopes.map((scope) => scope.name),
-      language,
-    )
-
-    const groups: ApiScopeGroup[] = []
-    for (const scope of scopes) {
-      scope.displayName =
-        translationMap.get(scope.name)?.get('displayName') ?? scope.displayName
-      scope.description =
-        translationMap.get(scope.name)?.get('description') ?? scope.description
-
-      if (scope.group) {
-        groups.push(scope.group)
-      }
-    }
-
-    await this.translateApiScopeGroups(groups, language)
-    return scopes
-  }
-
-  private async translateApiScopeGroups(
-    groups: Array<ApiScopeGroup>,
-    language: string,
-  ): Promise<Array<ApiScopeGroup>> {
-    const translationMap = await this.translationService.findTranslationMap(
-      'apiscopegroup',
-      groups.map((group) => group.id),
-      language,
-    )
-
-    for (const group of groups) {
-      group.displayName =
-        translationMap.get(group.id)?.get('displayName') ?? group.displayName
-      group.description =
-        translationMap.get(group.id)?.get('description') ?? group.description
-    }
-    return groups
-  }
 }
