@@ -79,10 +79,9 @@ export class ApplicationLifeCycleService {
     )) {
       try {
         await this.applicationChargeService.deleteCharge(prune.application)
-        console.log(
-          'delete charge from application Id : ',
-          prune.application.id,
-        )
+        this.logger.info(`
+          deleted charge from application Id : ${prune.application.id} , chargeId: ${prune.application.paymentId}          
+        `)
       } catch (error) {
         const chargeId = prune.application.paymentId
         if (chargeId) {
