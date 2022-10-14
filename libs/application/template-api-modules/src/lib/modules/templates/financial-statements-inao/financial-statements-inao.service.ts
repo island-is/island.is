@@ -49,7 +49,7 @@ export class FinancialStatementsInaoTemplateService {
   }
 
   async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
-    const { nationalId } = auth
+    const { nationalId, actor } = auth
     const answers = application.answers
     const externalData = application.externalData
     const currentUserType = getCurrentUserType(answers, externalData)
@@ -71,11 +71,10 @@ export class FinancialStatementsInaoTemplateService {
 
       const noValueStatement = electionIncomeLimit === LESS ? true : false
 
-      // actor is undefined until we add the delegate functionality to the frontend
       const result: DataResponse = await this.financialStatementsClientService
         .postFinancialStatementForPersonalElection(
           nationalId,
-          undefined,
+          actor?.nationalId,
           electionId,
           noValueStatement,
           clientName,
@@ -113,7 +112,7 @@ export class FinancialStatementsInaoTemplateService {
       const result: DataResponse = await this.financialStatementsClientService
         .postFinancialStatementForPoliticalParty(
           nationalId,
-          undefined,
+          actor?.nationalId,
           year,
           comment,
           values,
@@ -150,7 +149,7 @@ export class FinancialStatementsInaoTemplateService {
       const result: DataResponse = await this.financialStatementsClientService
         .postFinancialStatementForCemetery(
           nationalId,
-          undefined,
+          actor?.nationalId,
           year,
           comment,
           values,
