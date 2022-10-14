@@ -1,8 +1,4 @@
 import { Injectable } from '@nestjs/common'
-import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
-import { IslyklarApi } from '@island.is/clients/islykill'
-import { UserProfileApi } from '@island.is/clients/user-profile'
-
 import { TemplateApiModuleActionProps } from '@island.is/application/template-api-modules'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import {

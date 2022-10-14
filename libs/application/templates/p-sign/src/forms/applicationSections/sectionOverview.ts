@@ -103,16 +103,10 @@ export const sectionOverview = buildSection({
         buildDividerField({}),
         buildKeyValueField({
           label: m.deliveryMethodTitle,
-          value: ({
-            externalData: {
-              districts: { data },
-            },
-            answers,
-          }) => {
-            const district = (data as DistrictCommissionerAgencies[]).find(
-              (d) => d.id === (answers.delivery as Delivery)?.district,
-            )
-            return `Þú hefur valið að sækja stæðiskortið sjálf/ur/t hjá: ${district?.name}, ${district?.place}`
+          value: ({ answers }) => {
+            return `Þú hefur valið að sækja stæðiskortið sjálf/ur/t hjá: ${
+              (answers.delivery as Delivery)?.district
+            }`
           },
           condition: (answers) =>
             (answers.delivery as Delivery)?.deliveryMethod === PICK_UP,

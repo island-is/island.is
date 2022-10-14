@@ -373,7 +373,7 @@ export const coreDelegationsMessages = defineMessages({
   delegationScreenTitleForOngoingApplication: {
     id:
       'application.system:core.delegations.delegationScreenTitleForOngoingApplication',
-    defaultMessage: 'Umsókn um stæðiskort',
+    defaultMessage: 'Umsókn',
     description: 'Delegations screen title for ongoing application',
   },
   delegationScreenSubtitleForOngoingApplication: {
