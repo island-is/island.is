@@ -8,7 +8,7 @@ import {
 import {
   Form,
   FormModes,
-  HasTechingRightsApi,
+  HasTeachingRightsApi,
   NationalRegistryUserApi,
 } from '@island.is/application/types'
 import { m } from '../lib/messages'
@@ -31,7 +31,7 @@ export const getInstructorRegistrations = (): Form => {
             checkboxLabel: m.dataCollectionCheckboxLabel,
             dataProviders: [
               buildDataProviderItem({
-                provider: HasTechingRightsApi,
+                provider: HasTeachingRightsApi,
                 title: m.dataCollectionTeachersRightsTitle,
                 subTitle: m.dataCollectionTeachersRightsSubtitle,
               }),

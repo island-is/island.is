@@ -2,7 +2,7 @@ import { defineTemplateApi } from '../../TemplateApi'
 
 const namespace = 'DrivingLicenseShared'
 
-export const HasTechingRightsApi = defineTemplateApi({
+export const HasTeachingRightsApi = defineTemplateApi({
   action: 'getHasTeachingRights',
   namespace,
 })

@@ -1,1 +1,1 @@
-export { HasTechingRightsApi } from '@island.is/application/types'
+export { HasTeachingRightsApi } from '@island.is/application/types'

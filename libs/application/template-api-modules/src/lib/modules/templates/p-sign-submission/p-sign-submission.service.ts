@@ -69,7 +69,6 @@ export class PSignSubmissionService extends BaseTemplateApiService {
   async doctorsNote({
     auth,
   }: TemplateApiModuleActionProps): Promise<CertificateInfoResponse> {
-    console.log('HELLO')
     const note = await this.syslumennService.getCertificateInfo(auth.nationalId)
     if (!note) {
       throw new TemplateApiError(

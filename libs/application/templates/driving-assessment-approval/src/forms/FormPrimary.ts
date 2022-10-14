@@ -16,7 +16,7 @@ import {
 import {
   Form,
   FormModes,
-  HasTechingRightsApi,
+  HasTeachingRightsApi,
 } from '@island.is/application/types'
 import { m } from '../lib/messages'
 import { format as formatKennitala } from 'kennitala'
@@ -37,7 +37,7 @@ export const FormPrimary: Form = buildForm({
           checkboxLabel: m.externalDataAgreement,
           dataProviders: [
             buildDataProviderItem({
-              provider: HasTechingRightsApi,
+              provider: HasTeachingRightsApi,
               title: m.externalDataTeachingRightsTitle,
               subTitle: m.externalDataTeachingRightsSubtitle,
             }),

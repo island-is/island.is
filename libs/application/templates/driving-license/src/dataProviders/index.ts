@@ -1,6 +1,6 @@
 export {
   NationalRegistryUserApi,
-  HasTechingRightsApi,
+  HasTeachingRightsApi,
   UserProfileApi,
   PaymentCatalogApi,
   CurrentLicenseApi,

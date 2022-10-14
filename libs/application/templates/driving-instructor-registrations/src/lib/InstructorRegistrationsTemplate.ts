@@ -7,7 +7,7 @@ import {
   Application,
   DefaultEvents,
   defineTemplateApi,
-  HasTechingRightsApi,
+  HasTeachingRightsApi,
   NationalRegistryUserApi,
 } from '@island.is/application/types'
 import { Events, States, Roles } from './constants'
@@ -61,7 +61,7 @@ const InstructorRegistrationsTemplate: ApplicationTemplate<
                 },
               ],
               write: 'all',
-              api: [HasTechingRightsApi, NationalRegistryUserApi],
+              api: [HasTeachingRightsApi, NationalRegistryUserApi],
             },
           ],
         },

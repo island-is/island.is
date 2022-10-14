@@ -121,10 +121,8 @@ export const LinkExistingApplication: FC<FieldBaseProps> = ({
             break
           case ACTION.NEW:
             {
-              console.log(continueConf)
               // get estate from casenumber in url
               const estate = getNewEstateFromUrl(continueConf.url)
-              console.log(estate)
               // update answers with estate
               await assignEstateToAnswers(estate)
               // continue to next screen

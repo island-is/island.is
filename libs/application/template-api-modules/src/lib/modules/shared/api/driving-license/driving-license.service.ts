@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common'
-
 import { TemplateApiError } from '@island.is/nest/problem'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
@@ -35,7 +34,6 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
     return await this.drivingLicenseService.getIsTeacher({ nationalId })
   }
 
-  // Teaching Rights
   async getHasTeachingRights({
     auth,
   }: TemplateApiModuleActionProps): Promise<Boolean> {
@@ -76,7 +74,6 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
     }
   }
 
-  // Teachers
   async teachers(): Promise<Teacher[]> {
     const teachers = await this.drivingLicenseService.getTeachers()
     if (teachers) {
@@ -92,7 +89,6 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
     }
   }
 
-  // Current License
   async currentLicense({
     auth,
     application,
@@ -122,8 +118,6 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
     }
   }
 
-  // Quality Photo
-
   async qualityPhoto({
     auth,
     application,
@@ -133,7 +127,7 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
       application.answers,
       'fakeData.useFakeData',
     )
-    // To use fake data for the quality photo provider take a look at the implementation in libs/application/templates/driving-license/src/forms/application.ts
+
     if (useFakeData === 'yes') {
       const hasQualityPhoto = getValueViaPath<'yes' | 'no'>(
         application.answers,
@@ -149,30 +143,6 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
     }
   }
 
-  // Has Quality Signature
-  // TODO: Application that will use this function is still in the works so this is just prepp work
-
-  // async hasQualitySignature({
-  //   auth,
-  //   application,
-  // }: TemplateApiModuleActionProps): Promise<HasQualitySignature> {
-  //   // If running locally or on dev allow for fake data
-  //   const useFakeData = getValueViaPath<'yes' | 'no'>(
-  //     application.answers,
-  //     'fakeData.useFakeData',
-  //   )
-  //   // To use fake data for the quality Signature provider take a look at the implementation in libs/application/templates/driving-license/src/forms/application.ts
-  //   if (useFakeData === 'yes') {
-  //     const hasQualitySignature = getValueViaPath<'yes' | 'no'>(
-  //       application.answers,
-  //       'fakeData.qualitySignature',
-  //     )
-  //     return{ hasQualitySignature: hasQualitySignature === 'yes'}
-  //   }
-  //  return await this.drivingLicenseService.getQualitySignature(auth.nationalId)
-  // }
-
-  // Juristiction
   async juristictions(): Promise<Juristiction[]> {
     return await this.drivingLicenseService.getListOfJuristictions()
   }
@@ -207,7 +177,6 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
     }
   }
 
-  // Driving Assesment
   async drivingAssessment({
     auth,
     application,

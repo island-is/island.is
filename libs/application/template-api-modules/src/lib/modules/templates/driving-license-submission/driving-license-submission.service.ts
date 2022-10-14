@@ -170,6 +170,9 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
           generateDrivingAssessmentApprovalEmail,
           application,
         )
+        return {
+          success: result.success,
+        }
       } else {
         throw new Error(
           `Unexpected error (creating driver's license): '${result.errorMessage}'`,
@@ -187,9 +190,6 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
           400,
         )
       }
-    }
-    return {
-      success: false,
     }
   }
 }
