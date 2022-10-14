@@ -12,7 +12,7 @@ import { DelegationsEmptyState } from '../DelegationsEmptyState'
 import { useAuthDelegationsQuery } from '@island.is/service-portal/graphql'
 import { useNamespaces, useLocale } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
-import { AccessDeleteModal, AccessCard } from '../Access'
+import { AccessDeleteModal, AccessCard } from '../access'
 import { isDefined } from '@island.is/shared/utils'
 
 export const DelegationsFromMe = () => {
