@@ -10,10 +10,32 @@ import { PaymentAPI } from '@island.is/clients/payment'
 import { CreateChargeInput } from '../dto/createChargeInput.dto'
 import { AppModule } from '../../../app.module'
 import { ApplicationTypes } from '@island.is/application/types'
+import { ContentfulRepository } from '@island.is/cms'
 
 let app: INestApplication
 
 const TARGET_CHARGE_ITEM_CODE = 'asdf'
+
+class MockContentfulRepository {
+  async getLocalizedEntries() {
+    return {
+      items: [
+        {
+          fields: [
+            {
+              fields: {
+                strings: {
+                  en: {},
+                  'is-IS': {},
+                },
+              },
+            },
+          ],
+        },
+      ],
+    }
+  }
+}
 
 class MockPaymentApi {
   async createCharge() {
@@ -43,6 +65,8 @@ beforeAll(async () => {
   app = await setup(AppModule, {
     override: (builder) =>
       builder
+        .overrideProvider(ContentfulRepository)
+        .useClass(MockContentfulRepository)
         .overrideProvider(PaymentAPI)
         .useClass(MockPaymentApi)
         .overrideGuard(IdsUserGuard)
