@@ -42,7 +42,7 @@ import { DeleteFileResponse } from './models/deleteFile.response'
 import { SignedUrl } from './models/signedUrl.model'
 import { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
 import { FileService } from './file.service'
-import { UpdateFileDto, UpdateFilesDto } from './dto/updateFile.dto'
+import { UpdateFilesDto } from './dto/updateFile.dto'
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('api/case/:caseId')
