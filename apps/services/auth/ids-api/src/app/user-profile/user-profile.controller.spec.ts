@@ -22,7 +22,7 @@ import {
   createNationalRegistryUser,
 } from '@island.is/testing/fixtures'
 
-import { setupWithAuth } from '../../../../test/setup'
+import { setupWithAuth } from '../../../test/setup'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
