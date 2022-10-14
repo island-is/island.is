@@ -281,7 +281,9 @@ export const AccessItem = ({
                           </Text>
                         )}
                         <Box display="flex" className={styles.rowGap}>
-                          <Text variant="small">{formattedDate}</Text>
+                          <Text variant={md ? 'medium' : 'small'}>
+                            {formattedDate}
+                          </Text>
                         </Box>
                       </Box>
                       <Button
