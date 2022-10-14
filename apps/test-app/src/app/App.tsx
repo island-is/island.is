@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/accessible-emoji */
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import {
   SafeAreaView,
   StyleSheet,
@@ -23,10 +23,24 @@ import NxCloud from './icons/nx-cloud.svg'
 import GitHub from './icons/github.svg'
 import Terminal from './icons/terminal.svg'
 import Heart from './icons/heart.svg'
+import { createClient } from '@island.is/feature-flags'
 
 export const App = () => {
   const [whatsNextYCoord, setWhatsNextYCoord] = useState<number>(0)
   const scrollViewRef = useRef<null | ScrollView>(null)
+  const [feature, setFeature] = useState(false)
+
+  const client = createClient({
+    sdkKey: '',
+  })
+  useEffect(() => {
+    client
+      .getValue('applicationTemplateDrivingLicenseAllowFakeData', false)
+      .then((value) => {
+        setFeature(value)
+      })
+      .catch((e) => console.error(e))
+  }, [])
 
   return (
     <>
@@ -40,7 +54,9 @@ export const App = () => {
           style={styles.scrollView}
         >
           <View style={styles.section}>
-            <Text style={styles.textLg}>Hello there,</Text>
+            <Text style={feature ? styles.textXL : styles.textLg}>
+              Hello there,
+            </Text>
             <Text style={[styles.textXL, styles.appTitleText]} testID="heading">
               Welcome TestApp 👋
             </Text>

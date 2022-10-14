@@ -16049,6 +16049,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"async-limiter@npm:~1.0.0":
+  version: 1.0.1
+  resolution: "async-limiter@npm:1.0.1"
+  checksum: 2b849695b465d93ad44c116220dee29a5aeb63adac16c1088983c339b0de57d76e82533e8e364a93a9f997f28bbfc6a92948cefc120652bd07f3b59f8d75cf2b
+  languageName: node
+  linkType: hard
+
 "async-retry@npm:^1.2.1, async-retry@npm:^1.3.1, async-retry@npm:^1.3.3":
   version: 1.3.3
   resolution: "async-retry@npm:1.3.3"
@@ -35693,6 +35700,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"options@npm:>=0.0.5":
+  version: 0.0.6
+  resolution: "options@npm:0.0.6"
+  checksum: 8601fdc0a3e14987b7f2509676e5e5d8afe601c64600d9bad3a0aad7e8ed8631ad47e2fa155c63e4043832122d6f6e3251d276307a032d0bb50cc252980e3712
+  languageName: node
+  linkType: hard
+
 "ora@npm:5.4.1, ora@npm:^5.4.1":
   version: 5.4.1
   resolution: "ora@npm:5.4.1"
@@ -45085,6 +45099,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ultron@npm:1.0.x":
+  version: 1.0.2
+  resolution: "ultron@npm:1.0.2"
+  checksum: f98993b128c774b4769aeeb86030158efb9c2440d3ad91d722af05e7418ddbee6d6fd974c257702b997e5e8fe417ca349c40d16c8cebc8de4b4a2fd40e872309
+  languageName: node
+  linkType: hard
+
 "umzug@npm:^2.3.0":
   version: 2.3.0
   resolution: "umzug@npm:2.3.0"
@@ -47033,9 +47054,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ws@npm:8.8.0":
-  version: 8.8.0
-  resolution: "ws@npm:8.8.0"
+"ws@npm:8.8.1":
+  version: 8.8.1
+  resolution: "ws@npm:8.8.1"
   peerDependencies:
     bufferutil: ^4.0.1
     utf-8-validate: ^5.0.2
@@ -47044,7 +47065,65 @@ __metadata:
       optional: true
     utf-8-validate:
       optional: true
-  checksum: 6ceed1ca1cb800ef60c7fc8346c7d5d73d73be754228eb958765abf5d714519338efa20ffe674167039486eb3a813aae5a497f8d319e16b4d96216a31df5bd95
+  checksum: 2152cf862cae0693f3775bc688a6afb2e989d19d626d215e70f5fcd8eb55b1c3b0d3a6a4052905ec320e2d7734e20aeedbf9744496d62f15a26ad79cf4cf7dae
+  languageName: node
+  linkType: hard
+
+"ws@npm:^1.1.0, ws@npm:^1.1.5":
+  version: 1.1.5
+  resolution: "ws@npm:1.1.5"
+  dependencies:
+    options: ">=0.0.5"
+    ultron: 1.0.x
+  checksum: d2dfb74fe4f9bfa3f6e9e1d583210ce3d0b29fe376cfd93491e80844494842527ca3e68209205c1d6bc85849a7f379f9cc34150dc9e4b08a82cb031f4fbabc7b
+  languageName: node
+  linkType: hard
+
+"ws@npm:^5.1.1":
+  version: 5.2.3
+  resolution: "ws@npm:5.2.3"
+  dependencies:
+    async-limiter: ~1.0.0
+  checksum: bdb2223a40c2c68cf91b25a6c9b8c67d5275378ec6187f343314d3df7530e55b77cb9fe79fb1c6a9758389ac5aefc569d24236924b5c65c5dbbaff409ef739fc
+  languageName: node
+  linkType: hard
+
+"ws@npm:^5.2.0 || ^6.0.0 || ^7.0.0, ws@npm:^7, ws@npm:^7.0.0, ws@npm:^7.3.1, ws@npm:^7.4.6, ws@npm:^7.5.1":
+  version: 7.5.9
+  resolution: "ws@npm:7.5.9"
+  peerDependencies:
+    bufferutil: ^4.0.1
+    utf-8-validate: ^5.0.2
+  peerDependenciesMeta:
+    bufferutil:
+      optional: true
+    utf-8-validate:
+      optional: true
+  checksum: c3c100a181b731f40b7f2fddf004aa023f79d64f489706a28bc23ff88e87f6a64b3c6651fbec3a84a53960b75159574d7a7385709847a62ddb7ad6af76f49138
+  languageName: node
+  linkType: hard
+
+"ws@npm:^6.1.2, ws@npm:^6.1.4":
+  version: 6.2.2
+  resolution: "ws@npm:6.2.2"
+  dependencies:
+    async-limiter: ~1.0.0
+  checksum: aec3154ec51477c094ac2cb5946a156e17561a581fa27005cbf22c53ac57f8d4e5f791dd4bbba6a488602cb28778c8ab7df06251d590507c3c550fd8ebeee949
+  languageName: node
+  linkType: hard
+
+"ws@npm:^8.2.3, ws@npm:^8.3.0, ws@npm:^8.4.2":
+  version: 8.9.0
+  resolution: "ws@npm:8.9.0"
+  peerDependencies:
+    bufferutil: ^4.0.1
+    utf-8-validate: ^5.0.2
+  peerDependenciesMeta:
+    bufferutil:
+      optional: true
+    utf-8-validate:
+      optional: true
+  checksum: 23aa0f021b2eb65c108ec4c3e08c0d81ba01f82b500432dfe327fd6be36079c1d81fdb0eac6464d2a0eb49904d34a9ab8c59619d673fa07b8346f83aeb0cbf12
   languageName: node
   linkType: hard
 

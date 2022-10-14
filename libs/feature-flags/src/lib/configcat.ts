@@ -36,11 +36,11 @@ export class Client implements FeatureFlagClient {
     this.configcat.dispose()
   }
 
-  async getValue(
+  async getValue<T extends boolean | string>(
     key: string,
-    defaultValue: boolean | string,
-    user: FeatureFlagUser,
-  ) {
+    defaultValue: T,
+    user?: FeatureFlagUser,
+  ): Promise<T> {
     return await this.configcat.getValueAsync(
       key,
       defaultValue,

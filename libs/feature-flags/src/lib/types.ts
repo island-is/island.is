@@ -6,11 +6,11 @@ export interface FeatureFlagUser {
 }
 
 export interface FeatureFlagClient {
-  getValue(
+  getValue<T extends boolean | string>(
     key: string,
-    defaultValue: boolean | string,
+    defaultValue: T,
     user?: FeatureFlagUser,
-  ): Promise<boolean | string>
+  ): Promise<T>
 
   dispose(): void
 }
