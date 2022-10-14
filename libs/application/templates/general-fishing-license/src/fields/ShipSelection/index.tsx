@@ -56,17 +56,19 @@ export const ShipSelection: FC<FieldBaseProps> = ({
   ) as Ship[]
 
   const shipOptions = (ships: Ship[]) => {
+    console.log(ships)
     const options = [] as Option[]
     for (const [index, ship] of ships.entries()) {
-      if (ship.fishingLicenses.length !== 0) {
-        continue
-      }
+      // Maður á að geta sótt um fleiri en eitt veiðileyfi núna
+      // if (ship.fishingLicenses.length !== 0) {
+      //   continue
+      // }
 
       const handleShowAlertModal = () => {
-        setUnfulfilledLicenses(ship.unfulfilledLicenses)
+        setUnfulfilledLicenses([]) // TODO
         setVisibility(true)
       }
-      const isDisabled = ship.doesNotFulfillFishingLicenses
+
       const isExpired = new Date(ship.seaworthiness.validTo) < new Date()
       const seaworthinessDate = format(
         parseISO(ship.seaworthiness.validTo),
@@ -84,7 +86,6 @@ export const ShipSelection: FC<FieldBaseProps> = ({
                 ship={ship}
                 seaworthinessHasColor
                 isExpired={isExpired}
-                isDisabled={isDisabled}
               />
               <Box
                 display="flex"
@@ -93,13 +94,14 @@ export const ShipSelection: FC<FieldBaseProps> = ({
                 alignItems="flexEnd"
               >
                 <Tag
-                  variant={isExpired || isDisabled ? 'disabled' : 'purple'}
+                  variant={isExpired ? 'disabled' : 'purple'}
                   disabled
                 >
                   {formatMessage(shipSelection.tags.noFishingLicensesFound)}
                 </Tag>
 
-                {ship.unfulfilledLicenses.length > 0 && (
+                {/* TODO */}
+                {/* {ship.unfulfilledLicenses.length > 0 && (
                   <Box>
                     <Button variant="text" onClick={handleShowAlertModal}>
                       {formatMessage(
@@ -107,7 +109,7 @@ export const ShipSelection: FC<FieldBaseProps> = ({
                       )}
                     </Button>
                   </Box>
-                )}
+                )} */}
               </Box>
             </Box>
             {isExpired && (
@@ -123,7 +125,7 @@ export const ShipSelection: FC<FieldBaseProps> = ({
             )}
           </>
         ),
-        disabled: isDisabled || isExpired,
+        disabled: isExpired,
       })
     }
     return options

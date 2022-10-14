@@ -17,12 +17,21 @@ export class FishingLicenseService {
     private logger: Logger,
   ) {}
 
+
+  // Returns enum value equivalent to the given fishing type
+  getLicenseCode = (licenseCode?: string | null) => {
+    if (licenseCode && Object.values(FishingLicenseCodeType).includes(licenseCode as FishingLicenseCodeType)) {
+      return licenseCode as FishingLicenseCodeType
+    }
+    return FishingLicenseCodeType.unknown
+  }
+
   async getShips(nationalId: string, user: User) {
     try {
       const ships = await this.utgerdirApi
         .withMiddleware(new AuthMiddleware(user, { forwardUserInfo: false }))
         .v1UtgerdirKennitalaSkipGet({ kennitala: nationalId })
-
+      console.log(ships)
       return (
         ships.skip?.map((ship) => ({
           name: ship.skipanafn ?? '',
@@ -42,37 +51,10 @@ export class FishingLicenseService {
             : { validTo: new Date() },
           fishingLicenses:
             ship.veidileyfi?.map((v) => ({
-              code:
-                v.kodi === '1'
-                  ? FishingLicenseCodeType.catchMark
-                  : v.kodi === '32'
-                  ? FishingLicenseCodeType.hookCatchLimit
-                  : FishingLicenseCodeType.unknown,
+              code: this.getLicenseCode(v.kodi),
               name: v.nafn ?? '',
               chargeType: v.vorunumerfjs ?? '',
             })) ?? [],
-          doesNotFulfillFishingLicenses:
-            ship.uppfyllirEkkertVeidileyfi ?? false,
-          unfulfilledLicenses:
-            ship.ouppfylltSkilyrdiVeidileyfa
-              ?.filter((o) => o.astaedur && o.astaedur?.length > 0)
-              ?.map((o) => ({
-                fishingLicense: {
-                  code:
-                    o.veidileyfi?.kodi === '1'
-                      ? FishingLicenseCodeType.catchMark
-                      : o.veidileyfi?.kodi === '32'
-                      ? FishingLicenseCodeType.hookCatchLimit
-                      : FishingLicenseCodeType.unknown,
-                  name: o.veidileyfi?.nafn || '',
-                  chargeType: o.veidileyfi?.vorunumerfjs ?? '',
-                },
-                reasons:
-                  o.astaedur?.map((x) => ({
-                    description: x.lysing ?? '',
-                    directions: x.leidbeining ?? '',
-                  })) ?? [],
-              })) ?? [],
         })) ?? []
       )
     } catch (error) {
@@ -82,24 +64,21 @@ export class FishingLicenseService {
       )
     }
   }
-
   async getFishingLicenses(shipRegistationNumber: number, user: User) {
     try {
+      console.log('getting licenses')
       const licenses = await this.shipApi
         .withMiddleware(new AuthMiddleware(user, { forwardUserInfo: false }))
         .v1SkipSkipaskrarnumerVeidileyfiGet({
           skipaskrarnumer: shipRegistationNumber,
         })
+        console.log('got licenses')
+        console.log(licenses)
 
       return (
         licenses.veidileyfiIBodi?.map((l) => ({
           fishingLicenseInfo: {
-            code:
-              l.veidileyfi?.kodi === '1'
-                ? FishingLicenseCodeType.catchMark
-                : l.veidileyfi?.kodi === '32'
-                ? FishingLicenseCodeType.hookCatchLimit
-                : FishingLicenseCodeType.unknown,
+            code: this.getLicenseCode(l.veidileyfi?.kodi),
             name: l.veidileyfi?.nafn ?? '',
             chargeType: l.veidileyfi?.vorunumerfjs ?? '',
           },

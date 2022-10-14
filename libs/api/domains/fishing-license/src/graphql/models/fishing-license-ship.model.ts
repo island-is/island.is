@@ -24,8 +24,4 @@ export class FishingLicenseShip {
   deprivations!: FishingLicenseDeprivation[]
   @Field(() => [FishingLicenseInfo])
   fishingLicenses!: FishingLicenseInfo[]
-  @Field(() => Boolean)
-  doesNotFulfillFishingLicenses!: boolean
-  @Field(() => [FishingLicenseUnfulfilledLicense])
-  unfulfilledLicenses!: FishingLicenseUnfulfilledLicense[]
 }
