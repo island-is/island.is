@@ -138,11 +138,12 @@ const DrivingLessonsBook: ServicePortalModuleComponent = () => {
               label={formatMessage(messages.vehicleDrivingLessonsTeacher)}
               content={book?.teacherName}
               loading={loading}
-              editLink={{
-                url: '',
-                external: true,
-                title: messages.vehicleDrivingLessonsChangeTeacher,
-              }}
+              // Removed until application is ready
+              // editLink={{
+              //   url: '',
+              //   external: true,
+              //   title: messages.vehicleDrivingLessonsChangeTeacher,
+              // }}
             />
             <Divider />
 
@@ -164,7 +165,7 @@ const DrivingLessonsBook: ServicePortalModuleComponent = () => {
             />
             <Divider />
 
-            {/* Removed until final decison has been made 
+            {/* Removed until service can return status
         <UserInfoLine
           label={formatMessage(messages.vehicleDrivingLessonsStatus)}
           content={'?'}
