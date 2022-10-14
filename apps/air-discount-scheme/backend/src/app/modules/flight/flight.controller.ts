@@ -269,7 +269,7 @@ export class PublicFlightController {
       request.airline,
       isConnectable,
       connectingId,
-      discount.explicitBy ?? ''
+      discount.explicitBy ?? '',
     )
     await this.discountService.useDiscount(
       params.discountCode,

@@ -117,7 +117,7 @@ export class PrivateDiscountController {
   @Post('users/createExplicitDiscountCode')
   async createExplicitDiscountCode(
     @Body() body: CreateExplicitDiscountCodeParams,
-    @CurrentUser() auth: AuthUser
+    @CurrentUser() auth: AuthUser,
   ): Promise<Discount> {
     const nationalRegistryUser: NationalRegistryUser = {
       ...body,
@@ -154,7 +154,7 @@ export class PrivateDiscountController {
       user,
       body.nationalId,
       unConnectedFlights,
-      auth.nationalId // For tracing who creates explicit codes
+      auth.nationalId, // For tracing who creates explicit codes
     )
 
     return discount

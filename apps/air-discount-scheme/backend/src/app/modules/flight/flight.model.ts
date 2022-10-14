@@ -229,7 +229,7 @@ export class Flight
   @ApiProperty()
   @Column({
     type: DataType.STRING,
-    allowNull: true
+    allowNull: true,
   })
   readonly explicitBy!: string
 }

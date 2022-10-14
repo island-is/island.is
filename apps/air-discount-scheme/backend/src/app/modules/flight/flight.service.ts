@@ -324,7 +324,7 @@ export class FlightService {
     airline: ValueOf<typeof Airlines>,
     isConnectable: boolean,
     connectingId?: string,
-    explicitBy?: string
+    explicitBy?: string,
   ): Promise<Flight> {
     const nationalId = user.nationalId
 
@@ -354,7 +354,7 @@ export class FlightService {
           postalCode: user.postalcode,
         },
         connectable: isConnectable,
-        explicitBy: explicitBy ?? ''
+        explicitBy: explicitBy ?? '',
       },
       { include: [this.flightLegModel] },
     )

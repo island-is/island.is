@@ -78,7 +78,7 @@ export class DiscountService {
     user: User,
     nationalId: string,
     connectableFlights: Flight[],
-    explicitBy = ''
+    explicitBy = '',
   ): Promise<Discount> {
     const discountCode = this.generateDiscountCode()
     const cacheId = CACHE_KEYS.discount(uuid())
@@ -136,7 +136,7 @@ export class DiscountService {
           flightId,
           flightDesc,
           validUntil: validUntil.toISOString(),
-          explicitBy
+          explicitBy,
         })
       }
     }
@@ -154,7 +154,7 @@ export class DiscountService {
       nationalId,
       discountCode,
       connectionDiscountCodes,
-      explicitBy
+      explicitBy,
     })
     await this.setCache<string>(CACHE_KEYS.discountCode(discountCode), cacheId)
     await this.setCache<string>(CACHE_KEYS.user(nationalId), cacheId)
@@ -165,7 +165,7 @@ export class DiscountService {
       connectionDiscountCodes,
       nationalId,
       ONE_DAY,
-      explicitBy
+      explicitBy,
     )
   }
 
@@ -193,7 +193,7 @@ export class DiscountService {
       cacheValue.connectionDiscountCodes ?? [],
       nationalId,
       ttl,
-      cacheValue.explicitBy ?? ''
+      cacheValue.explicitBy ?? '',
     )
   }
 
@@ -214,7 +214,7 @@ export class DiscountService {
       cacheValue.connectionDiscountCodes ?? [],
       cacheValue.nationalId,
       ttl,
-      cacheValue.explicitBy ?? ''
+      cacheValue.explicitBy ?? '',
     )
   }
 

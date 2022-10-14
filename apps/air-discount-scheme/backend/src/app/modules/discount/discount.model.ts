@@ -13,7 +13,7 @@ export class Discount implements TDiscount {
     connectionDiscountCodes: ConnectionDiscountCode[],
     nationalId: string,
     ttl: number,
-    explicitBy = ''
+    explicitBy = '',
   ) {
     this.user = user
     this.discountCode = discountCode
