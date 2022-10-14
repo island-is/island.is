@@ -316,6 +316,7 @@
     "@nrwl/next": "13.10.5",
     "@nrwl/node": "13.10.5",
     "@nrwl/react": "13.10.5",
+    "@nrwl/react-native": "13.10.5",
     "@nrwl/storybook": "13.10.5",
     "@nrwl/web": "13.10.5",
     "@nrwl/workspace": "13.10.5",

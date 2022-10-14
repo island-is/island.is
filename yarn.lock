@@ -8006,6 +8006,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@nrwl/detox@npm:13.10.5":
+  version: 13.10.5
+  resolution: "@nrwl/detox@npm:13.10.5"
+  dependencies:
+    "@nrwl/devkit": 13.10.5
+    "@nrwl/jest": 13.10.5
+    "@nrwl/linter": 13.10.5
+    "@nrwl/react": 13.10.5
+    "@nrwl/workspace": 13.10.5
+    chalk: ^4.1.0
+  peerDependencies:
+    detox: ^19.5.7
+  checksum: 4bcbfe74d0efaf005ef79de6bc28ea2db44ec0336a181476bc6e44566d2e6ba6d6ddd6829d22a6a7e508e16a394a28c3f7e4333cf67674c0c96b4a4e993690f4
+  languageName: node
+  linkType: hard
+
 "@nrwl/devkit@npm:12.10.1, @nrwl/devkit@npm:^12.9.0":
   version: 12.10.1
   resolution: "@nrwl/devkit@npm:12.10.1"
@@ -8230,6 +8246,30 @@ __metadata:
     webpack-merge: ^5.8.0
     webpack-node-externals: ^3.0.0
   checksum: 09f80f629e08e1e69eee427c69b5fe6c11221f48eef3e6ea36007973617f2a117320ac4048891061637f47daa13bd67aa787cd1474b6602c8debd3ae8c99880f
+  languageName: node
+  linkType: hard
+
+"@nrwl/react-native@npm:13.10.5":
+  version: 13.10.5
+  resolution: "@nrwl/react-native@npm:13.10.5"
+  dependencies:
+    "@nrwl/detox": 13.10.5
+    "@nrwl/devkit": 13.10.5
+    "@nrwl/jest": 13.10.5
+    "@nrwl/linter": 13.10.5
+    "@nrwl/react": 13.10.5
+    "@nrwl/storybook": 13.10.5
+    "@nrwl/workspace": 13.10.5
+    chalk: ^4.1.0
+    enhanced-resolve: ^5.8.3
+    fs-extra: ^9.1.0
+    ignore: ^5.0.4
+    metro-resolver: ^0.69.1
+    node-fetch: ^2.6.7
+    tsconfig-paths: ^3.9.0
+  peerDependencies:
+    react-native: ^0.67.3
+  checksum: 519b7410ac7b5c429269dada879289d932cd736091ec9fb9a103eba6b9be8e3addfd89e83605ec7e0644d95d440de00f66a9a4aad203ae4ea320da55848cd90e
   languageName: node
   linkType: hard
 
@@ -13558,6 +13598,13 @@ __metadata:
   dependencies:
     event-target-shim: ^5.0.0
   checksum: 170bdba9b47b7e65906a28c8ce4f38a7a369d78e2271706f020849c1bfe0ee2067d4261df8bbb66eb84f79208fd5b710df759d64191db58cfba7ce8ef9c54b75
+  languageName: node
+  linkType: hard
+
+"absolute-path@npm:^0.0.0":
+  version: 0.0.0
+  resolution: "absolute-path@npm:0.0.0"
+  checksum: f707356265b46adb3a2f2c6505b0058f7786d3d2f6edc2aacfb8af6ba66d8d86166a281ed45081559579df2bb9977b2fe9df0925548a2f1b4d0d4d2b3eb062d2
   languageName: node
   linkType: hard
 
@@ -26757,6 +26804,7 @@ __metadata:
     "@nrwl/next": 13.10.5
     "@nrwl/node": 13.10.5
     "@nrwl/react": 13.10.5
+    "@nrwl/react-native": 13.10.5
     "@nrwl/storybook": 13.10.5
     "@nrwl/web": 13.10.5
     "@nrwl/workspace": 13.10.5
@@ -31031,6 +31079,15 @@ __metadata:
   version: 1.1.2
   resolution: "methods@npm:1.1.2"
   checksum: 0917ff4041fa8e2f2fda5425a955fe16ca411591fbd123c0d722fcf02b73971ed6f764d85f0a6f547ce49ee0221ce2c19a5fa692157931cecb422984f1dcd13a
+  languageName: node
+  linkType: hard
+
+"metro-resolver@npm:^0.69.1":
+  version: 0.69.1
+  resolution: "metro-resolver@npm:0.69.1"
+  dependencies:
+    absolute-path: ^0.0.0
+  checksum: d0970c83361efdcc32f41a529ed305a2539339584d37f26e59560848515c3b7fb5e6daafe27763f3fe860c4730e5cf1fe6a0eed481fb2acc41b481c5c13be3f6
   languageName: node
   linkType: hard
 
