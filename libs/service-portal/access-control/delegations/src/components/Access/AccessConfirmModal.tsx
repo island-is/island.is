@@ -9,6 +9,7 @@ import {
   useBreakpoint,
   Divider,
 } from '@island.is/island-ui/core'
+import { m } from '@island.is/service-portal/core'
 import { useNamespaces, useLocale } from '@island.is/localization'
 import { formatNationalId } from '@island.is/service-portal/core'
 import { useUpdateAuthDelegationMutation } from '@island.is/service-portal/graphql'
@@ -223,10 +224,7 @@ export const AccessConfirmModal = ({
         showDivider={false}
         onCancel={onClose}
         onConfirm={onConfirmHandler}
-        confirmLabel={formatMessage({
-          id: 'sp.settings-access-control:empty-new-access',
-          defaultMessage: 'Veita aðgang',
-        })}
+        confirmLabel={formatMessage(m.codeConfirmation)}
         confirmIcon="checkmark"
       />
     </Modal>

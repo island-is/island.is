@@ -213,7 +213,10 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
                 history.push(ServicePortalPath.AccessControlDelegations)
               }
               onConfirm={() => setOpenConfirmModal(true)}
-              confirmLabel={formatMessage(m.codeConfirmation)}
+              confirmLabel={formatMessage({
+                id: 'sp.settings-access-control:empty-new-access',
+                defaultMessage: 'Veita aðgang',
+              })}
               confirmIcon="arrowForward"
             />
           </Box>
