@@ -542,9 +542,7 @@ describe('MeDelegationsController', () => {
         )
 
         // Act
-        const res = await server.get(
-          `${path}/${mockDelegations.otherDomain.id}`,
-        )
+        const res = await server.get(`${path}/${mockDelegations.otherUsers.id}`)
 
         // Assert
         expect(res.status).toEqual(404)
