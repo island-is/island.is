@@ -27,19 +27,13 @@ export const UnfulfilledLicenseReasons: FC<UnfulfilledLicenseReasonsProps> = ({
     <Box paddingTop={2}>
       <AlertMessage
         type="warning"
-        title={formatMessage(
-          fishingLicense.warningMessageTitle[
-            unfulfilledLicense.fishingLicense.code
-          ],
-        )}
+        title={`${formatMessage(
+          fishingLicense.warningMessageTitle.licenseForbidden,
+        )}`}
         message={
           <Box paddingBottom={1}>
             <Text variant="small" paddingBottom={1}>
-              {formatMessage(
-                fishingLicense.warningMessageDescription[
-                  unfulfilledLicense.fishingLicense.code
-                ],
-              )}
+            {`${formatMessage(fishingLicense.warningMessageDescription.licenseForbidden)}`} 
             </Text>
             <AnimateHeight duration={400} height={isExpanded ? 'auto' : 0}>
               <Box paddingBottom={4} paddingTop={3}>

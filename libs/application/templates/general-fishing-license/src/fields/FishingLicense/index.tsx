@@ -129,19 +129,14 @@ export const FishingLicense: FC<FieldBaseProps> = ({
                   fishingLicenseInfo.code === 'unknown'
                 )
                   return null
+                const warningTitle = formatMessage(fishingLicense.warningMessageTitle.licenseForbidden)
+                const warningText = formatMessage(fishingLicense.warningMessageDescription.licenseForbidden)
+                const licenseName = formatMessage(fishingLicense.labels[fishingLicenseInfo.code]) || ''
                 return (
                   <Box marginBottom={2} key={fishingLicenseInfo.code}>
                     <FishingLicenseAlertMessage
-                      title={formatMessage(
-                        fishingLicense.warningMessageTitle[
-                          fishingLicenseInfo.code
-                        ],
-                      )}
-                      description={formatMessage(
-                        fishingLicense.warningMessageDescription[
-                          fishingLicenseInfo.code
-                        ],
-                      )}
+                      title={`${warningTitle} ${licenseName}`}
+                      description={`${warningText} ${licenseName}`}
                       reasons={reasons}
                     />
                   </Box>

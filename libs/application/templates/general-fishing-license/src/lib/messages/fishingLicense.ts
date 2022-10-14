@@ -25,15 +25,86 @@ export const fishingLicense = {
       defaultMessage: 'Veiðileyfi í boði',
       description: 'Fishing license radio button title',
     },
+    noFishingLicensesFound: {
+      id: 'gfl.application:shipSelection.labels.noFishingLicensesFound',
+      defaultMessage: 'Engin gild veiðileyfi fundust',
+      description: 'No fishing license found tag',
+    },
     hookCatchLimit: {
-      id: 'gfl.application:fishingLicense.labels.hookCatchLimit',
-      defaultMessage: 'Veiðileyfi með krókaaflamarki',
-      description: 'Fishing license radio button with hook catch limit',
+      id: 'gfl.application:shipSelection.labels.hookCatchLimit',
+      defaultMessage: 'Almennt veiðileyfi með krókaafla',
+      description: 'Hook catch limit tag',
+    },
+    // TODO!!!!
+    dragNoteFishing: {
+      id: 'gfl.application:shipSelection.labels.dragNoteFishing', // TODO
+      defaultMessage: 'Dragnótaveiðileyfi',
+      description: 'Dragnótaveiðileyfi', // TODO
+    },
+    // TODO!!!!
+    greyslepp: {
+      id: 'gfl.application:shipSelection.labels.greyslepp', // TODO
+      defaultMessage: 'Grásleppuveiðileyfi',
+      description: 'Grásleppuveiðileyfi', // TODO
+    },
+    // TODO!!!!
+    northIceOceanCod: {
+      id: 'gfl.application:shipSelection.labels.northIceOceanCod', // TODO
+      defaultMessage: 'Norðuríshafsþorskveiðileyfi í norskri lögsögu',
+      description: 'Norðuríshafsþorskveiðileyfi í norskri lögsögu', // TODO
     },
     catchMark: {
-      id: 'gfl.application:fishingLicense.labels.catchMark',
-      defaultMessage: 'Veiðileyfi með aflamarki',
-      description: 'Fishing license radio button with catch mark',
+      id: 'gfl.application:shipSelection.labels.catchMark',
+      defaultMessage: 'Almennt veiðileyfi með aflamarki',
+      description: 'Catch mark tag',
+    },
+    // TODO!!!!
+    redTummy: {
+      id: 'gfl.application:shipSelection.labels.redTummy', // TODO
+      defaultMessage: 'Rauðmagaveiðileyfi',
+      description: 'Rauðmagaveiðileyfi', // TODO
+    },
+    // TODO!!!!
+    beachFishing: {
+      id: 'gfl.application:shipSelection.labels.beachFishing', // TODO
+      defaultMessage: 'Strandveiðileyfi',
+      description: 'Strandveiðileyfi', // TODO
+    },
+    // TODO!!!!
+    freetime: {
+      id: 'gfl.application:shipSelection.labels.freetime', // TODO
+      defaultMessage: 'Frístundaveiðar án aflaheimilda',
+      description: 'Frístundaveiðar án aflaheimilda', // TODO
+    },
+    // TODO!!!!
+    freetimeHook: {
+      id: 'gfl.application:shipSelection.labels.freetimeHook', // TODO
+      defaultMessage: 'Frístundaveiðar með aflamarki',
+      description: 'Frístundaveiðar með aflamarki', // TODO
+    },
+    // TODO!!!!
+    freetimeHookMed: {
+      id: 'gfl.application:shipSelection.labels.freetimeHookMed', // TODO
+      defaultMessage: 'Frístundaveiðar með aflamarki',
+      description: 'Frístundaveiðar með aflamarki', // TODO
+    },
+    // TODO!!!!
+    baitKingFishing: {
+      id: 'gfl.application:shipSelection.labels.baitKingFishing', // TODO
+      defaultMessage: 'Beitukóngsveiðileyfi',
+      description: 'Beitukóngsveiðileyfi', // TODO
+    },
+    // TODO!!!!
+    cowfish: {
+      id: 'gfl.application:shipSelection.labels.cowfish', // TODO
+      defaultMessage: 'Kúfiskveiðileyfi',
+      description: 'Kúfiskveiðileyfi', // TODO
+    },
+    // TODO!!!!
+    crabFishing: {
+      id: 'gfl.application:shipSelection.labels.crabFishing', // TODO
+      defaultMessage: 'Krabbaveiðileyfi',
+      description: 'Krabbaveiðileyfi', // TODO
     },
   }),
   tooltips: defineMessages({
@@ -50,31 +121,20 @@ export const fishingLicense = {
     },
   }),
   warningMessageTitle: defineMessages({
-    hookCatchLimit: {
-      id: 'gfl.application:fishingLicense.warningMessageTitle.hookCatchLimit',
-      defaultMessage: 'Ekki hægt að sækja um veiðileyfi með krókaaflamarki',
-      description: 'Fishing license warning message title for hook catch limit',
-    },
-    catchMark: {
-      id: 'gfl.application:fishingLicense.warningMessageTitle.catchMark',
-      defaultMessage: 'Ekki hægt að sækja um veiðileyfi með aflamarki',
-      description: 'Fishing license warning message title for catch mark',
+    licenseForbidden: {
+      id: 'gfl.application:fishingLicense.warningMessageTitle.licenseForbidden',
+      defaultMessage: 'Ekki hægt að sækja um',
+      description: 'Fishing license warning message title for forbidden licenses',
     },
   }),
   warningMessageDescription: defineMessages({
-    hookCatchLimit: {
+    licenseForbidden: {
       id:
-        'gfl.application:fishingLicense.warningMessageDescription.hookCatchLimit',
+        'gfl.application:fishingLicense.warningMessageDescription.licenseForbidden',
       defaultMessage:
-        'Sjáðu ástæður fyrir því að ekki er hægt að sækja um veiðileyfi með krókaaflamarki',
+        'Sjáðu ástæður fyrir því að ekki er hægt að sækja um',
       description:
-        'Fishing license warning message description for hook catch limit',
-    },
-    catchMark: {
-      id: 'gfl.application:fishingLicense.warningMessageDescription.catchMark',
-      defaultMessage:
-        'Sjáðu ástæður fyrir því að ekki er hægt að sækja um veiðileyfi með aflamarki',
-      description: 'Fishing license warning message description for catch mark',
+        'Fishing license warning message description for forbidden licenses',
     },
   }),
 }
