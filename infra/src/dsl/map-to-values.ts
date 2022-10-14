@@ -610,7 +610,10 @@ function resolveVariable(
     : serializeValueType(value, uberChart, service)
 }
 
-export const serviceMockDef = (options: { namespace: string }) => {
+export const serviceMockDef = (options: {
+  namespace: string
+  target: string
+}) => {
   const result: ServiceHelm = {
     enabled: true,
     grantNamespaces: [],

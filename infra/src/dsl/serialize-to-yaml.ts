@@ -40,7 +40,8 @@ export const renderValueFile = (
         return {
           ...acc,
           [`mock-${name}`]: serviceMockDef({
-            namespace: svcs.values().next().value.namespace,
+            namespace: svcs.values().next().value.serviceDef.namespace,
+            target: name,
           }),
         }
       }
@@ -50,10 +51,10 @@ export const renderValueFile = (
     },
     helmServices,
   )
-  Object.values(helmServices)
+  Object.values(servicesAndMocks)
     .filter((s) => s.grantNamespacesEnabled)
     .forEach(({ namespace, grantNamespaces }) =>
-      Object.values(helmServices)
+      Object.values(servicesAndMocks)
         .filter((s) => !s.grantNamespacesEnabled && s.namespace === namespace)
         .forEach((s) => {
           // Not cool but we need to change it after we've rendered all the services.
@@ -65,7 +66,7 @@ export const renderValueFile = (
     )
   return {
     namespaces: Array.from(
-      Object.values(helmServices)
+      Object.values(servicesAndMocks)
         .map((s) => s.namespace)
         .filter((n) => n)
         .reduce((prev, cur) => prev.add(cur), new Set<string>())
@@ -101,6 +102,7 @@ export const dumpJobYaml = (job: FeatureKubeJob) => dump(job, dumpOpts)
 const findDependencies = (
   uberChart: UberChart,
   svc: Service,
+  svcs: Service[],
   level: number = 0,
 ): Service[] => {
   const deps = uberChart.deps[svc.serviceDef.name]
@@ -108,10 +110,19 @@ const findDependencies = (
     throw new Error(
       `Too deep level of dependencies - ${MAX_LEVEL_DEPENDENCIES}. Some kind of circular dependency or you fellas have gone off the deep end ;)`,
     )
-  if (deps) {
-    const serviceDependencies = Array.from(deps)
+  const mocks = Object.entries(uberChart.deps)
+    .filter(([s, entry]) => s.startsWith('http'))
+    .filter(([s, entry]) => entry.has(svc))
+    .map(([s, entry]) => svcs.find((ss) => ss.serviceDef.name === s)!)
+  const currentDeps = Array.from(deps ?? new Set<Service>()).concat(
+    Array.from(mocks),
+  )
+  if (currentDeps) {
+    const serviceDependencies = currentDeps
     return serviceDependencies
-      .map((dependency) => findDependencies(uberChart, dependency, level + 1))
+      .map((dependency) =>
+        findDependencies(uberChart, dependency, svcs, level + 1),
+      )
       .flatMap((x) => x)
       .concat(serviceDependencies)
   } else {
@@ -126,7 +137,7 @@ export const getDependantServices = (
 ): Service[] => {
   renderValueFile(uberChart, ...habitat) // doing this so we find out the dependencies
   const dependantServices = services
-    .map((s) => findDependencies(uberChart, s))
+    .map((s) => findDependencies(uberChart, s, habitat))
     .flatMap((x) => x)
   return services
     .concat(dependantServices)

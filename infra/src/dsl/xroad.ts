@@ -23,7 +23,7 @@ export class XroadConf implements XroadConfig {
 export const Base = new XroadConf({
   env: {
     XROAD_BASE_PATH: {
-      dev: ref(() => 'http://securityserver.dev01.devland.is'),
+      dev: ref((h) => h.svc('http://securityserver.dev01.devland.is')),
       staging: 'http://securityserver.staging01.devland.is',
       prod: 'http://securityserver.island.is',
     },
