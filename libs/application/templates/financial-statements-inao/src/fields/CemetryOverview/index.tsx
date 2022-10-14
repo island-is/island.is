@@ -402,6 +402,7 @@ export const CemetryOverview = ({
         </Box>
       ) : null}
       <BottomBar
+        loading={loading}
         onSendButtonClick={onSendButtonClick}
         onBackButtonClick={onBackButtonClick}
       />

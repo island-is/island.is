@@ -89,7 +89,6 @@ export class FinancialStatementsInaoTemplateService {
           }
         })
         .catch((e) => {
-          console.error('dataverse error', e)
           return {
             success: false,
             errorMessage: e.message,
