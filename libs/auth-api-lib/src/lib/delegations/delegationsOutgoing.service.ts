@@ -24,6 +24,10 @@ import {
   validateScopesPeriod,
 } from './utils/scopes'
 
+/**
+ * Service class for outgoing delegations.
+ * This class supports domain based delegations.
+ */
 @Injectable()
 export class DelegationsOutgoingService {
   constructor(
@@ -35,14 +39,14 @@ export class DelegationsOutgoingService {
   async findAll(
     user: User,
     validity: DelegationValidity,
-    domain?: string,
+    domainName?: string,
     otherUser?: string,
   ): Promise<DelegationDTO[]> {
     const delegations = await this.delegationModel.findAll({
       where: {
         fromNationalId: user.nationalId,
         ...(otherUser ? { toNationalId: otherUser } : {}),
-        //domain,
+        domainName,
       },
       include: [
         {
@@ -52,6 +56,7 @@ export class DelegationsOutgoingService {
               model: ApiScope,
               as: 'apiScope',
               where: {
+                enabled: true,
                 allowExplicitDelegationGrant: true,
               },
             },
@@ -89,6 +94,7 @@ export class DelegationsOutgoingService {
               model: ApiScope,
               as: 'apiScope',
               where: {
+                enabled: true,
                 allowExplicitDelegationGrant: true,
               },
             },
@@ -126,17 +132,11 @@ export class DelegationsOutgoingService {
       where: {
         fromNationalId: user.nationalId,
         toNationalId: createDelegation.toNationalId,
-        //domainName: createDelegation.domainName,
+        domainName: createDelegation.domainName,
       },
     })
 
     if (!delegation) {
-      // We want to stop storing the names on the delegation
-      // const [fromDisplayName, toName] = await Promise.all([
-      //   this.getUserName(user),
-      //   this.getPersonName(createDelegation.toNationalId),
-      // ])
-
       delegation = await this.delegationModel.create({
         id: uuid(),
         fromNationalId: user.nationalId,
@@ -144,7 +144,7 @@ export class DelegationsOutgoingService {
       })
     }
 
-    // TODO: In next cycle we will add user authorization on the scopes
+    // TODO: User authorization on the scopes
 
     await this.delegationScopeService.createOrUpdate(
       delegation.id,
@@ -210,12 +210,15 @@ export class DelegationsOutgoingService {
     // TODO: Scope authorization and delete only scopes the user has access to.
     await this.delegationScopeService.delete(delegationId)
 
-    // TODO: Delete the delegation if there are no scopes left.
-    await this.delegationModel.destroy({
-      where: {
-        id: delegationId,
-      },
-    })
+    // If no scopes are left delete the delegation.
+    const scopes = await this.delegationScopeService.findAll(delegationId)
+    if (scopes.length === 0) {
+      await this.delegationModel.destroy({
+        where: {
+          id: delegationId,
+        },
+      })
+    }
   }
 
   private isConnectedToDelegation(user: User, delegation: Delegation): boolean {

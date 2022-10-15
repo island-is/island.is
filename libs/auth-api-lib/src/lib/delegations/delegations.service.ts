@@ -85,6 +85,9 @@ export class DelegationsService {
     this.authFetch = createEnhancedFetch({ name: 'delegation-auth-client' })
   }
 
+  /**
+   * Deprecated: Use DelegationsOutgoingService instead for outgoing delegations.
+   */
   /***** Outgoing Delegations *****/
 
   /**

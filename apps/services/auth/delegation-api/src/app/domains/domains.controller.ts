@@ -32,6 +32,7 @@ const lang = {
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @FeatureFlag(Features.outgoingDelegationsV2)
+@Scopes(AuthScope.delegations)
 @ApiTags('domains')
 @Controller({
   path: 'domains',
@@ -45,8 +46,6 @@ export class DomainsController {
   ) {}
 
   @Get()
-  @Scopes(AuthScope.delegations)
-  @FeatureFlag(Features.outgoingDelegationsV2)
   @Documentation({
     description: 'Get all domains supporting delegations.',
     request: {
@@ -61,8 +60,6 @@ export class DomainsController {
   }
 
   @Get(':domainName')
-  @Scopes(AuthScope.delegations)
-  @FeatureFlag(Features.outgoingDelegationsV2)
   @Documentation({
     description: 'Returns a single domain by name.',
     request: {
@@ -86,8 +83,6 @@ export class DomainsController {
   }
 
   @Get(':domainName/scope-tree')
-  @Scopes(AuthScope.delegations)
-  @FeatureFlag(Features.outgoingDelegationsV2)
   @Documentation({
     description: 'Returns a sorted scope tree for the given domain.',
     request: {

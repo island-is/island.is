@@ -86,6 +86,21 @@ export class DelegationScopeService {
     })
   }
 
+  async findAll(delegationId: string): Promise<DelegationScope[]> {
+    return this.delegationScopeModel.findAll({
+      where: { delegationId },
+      include: [
+        {
+          model: ApiScope,
+          where: {
+            enabled: true,
+            allowExplicitDelegationGrant: true,
+          },
+        },
+      ],
+    })
+  }
+
   async findAllValidCustomScopesTo(
     toNationalId: string,
     fromNationalId: string,

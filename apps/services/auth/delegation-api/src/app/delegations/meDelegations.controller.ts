@@ -40,6 +40,8 @@ import { isDefined } from '@island.is/shared/utils'
 const namespace = '@island.is/auth/delegation-api/me/delegations'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
+@FeatureFlag(Features.outgoingDelegationsV2)
+@Scopes(AuthScope.delegations)
 @ApiTags('me/delegations')
 @Controller({
   path: 'me/delegations',
@@ -53,14 +55,12 @@ export class MeDelegationsController {
   ) {}
 
   @Get()
-  @Scopes(AuthScope.delegations)
-  @FeatureFlag(Features.outgoingDelegationsV2)
   @Documentation({
     response: { status: 200, type: [DelegationDTO] },
     request: {
       query: {
         domain: {
-          description: 'The domain identifier the delegation is defined in.',
+          description: 'The domain name the delegation is defined in.',
           required: false,
           type: 'string',
         },
@@ -99,7 +99,7 @@ export class MeDelegationsController {
   })
   async findAll(
     @CurrentUser() user: User,
-    @Query('domain') domain: string,
+    @Query('domain') domainName: string,
     @Query('direction')
     direction: DelegationDirection = DelegationDirection.OUTGOING,
     @Query('validity') validity: DelegationValidity = DelegationValidity.ALL,
@@ -113,14 +113,12 @@ export class MeDelegationsController {
     return this.delegationsOutgoingService.findAll(
       user,
       validity,
-      domain,
+      domainName,
       otherUser,
     )
   }
 
   @Get(':delegationId')
-  @Scopes(AuthScope.delegations)
-  @FeatureFlag(Features.outgoingDelegationsV2)
   @Documentation({
     response: { status: 200, type: DelegationDTO },
     request: {
@@ -145,8 +143,6 @@ export class MeDelegationsController {
   }
 
   @Post()
-  @Scopes(AuthScope.delegations)
-  @FeatureFlag(Features.outgoingDelegationsV2)
   @Documentation({
     response: { status: 201, type: DelegationDTO },
   })
@@ -167,8 +163,6 @@ export class MeDelegationsController {
   }
 
   @Patch(':delegationId')
-  @Scopes(AuthScope.delegations)
-  @FeatureFlag(Features.outgoingDelegationsV2)
   @Documentation({
     response: { status: 200, type: DelegationDTO },
   })
@@ -209,8 +203,6 @@ export class MeDelegationsController {
   }
 
   @Delete(':delegationId')
-  @Scopes(AuthScope.delegations)
-  @FeatureFlag(Features.outgoingDelegationsV2)
   @Documentation({
     response: { status: 204 },
   })
