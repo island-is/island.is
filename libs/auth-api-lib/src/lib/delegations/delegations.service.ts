@@ -27,7 +27,15 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 
+import { ClientAllowedScope } from '../clients/models/client-allowed-scope.model'
+import { Client } from '../clients/models/client.model'
+import type { PersonalRepresentativeDTO } from '../personal-representative/dto/personal-representative.dto'
+import { PersonalRepresentativeService } from '../personal-representative/services/personalRepresentative.service'
+import { ApiScope } from '../resources/models/api-scope.model'
+import { ResourcesService } from '../resources/resources.service'
+import { DEFAULT_DOMAIN } from '../types/defaultDomain'
 import { DelegationConfig } from './DelegationConfig'
+import { DelegationScopeService } from './delegationScope.service'
 import { UpdateDelegationScopeDTO } from './dto/delegation-scope.dto'
 import {
   CreateDelegationDTO,
@@ -36,16 +44,9 @@ import {
   DelegationType,
   UpdateDelegationDTO,
 } from './dto/delegation.dto'
-import { ApiScope } from '../resources/models/api-scope.model'
-import { ClientAllowedScope } from '../clients/models/client-allowed-scope.model'
-import { Client } from '../clients/models/client.model'
 import { DelegationScope } from './models/delegation-scope.model'
 import { Delegation } from './models/delegation.model'
-import { PersonalRepresentativeService } from '../personal-representative/services/personalRepresentative.service'
-import type { PersonalRepresentativeDTO } from '../personal-representative/dto/personal-representative.dto'
 import { DelegationValidity } from './types/delegationValidity'
-import { DelegationScopeService } from './delegationScope.service'
-import { ResourcesService } from '../resources/resources.service'
 import {
   getScopeValidityWhereClause,
   validateScopesPeriod,
@@ -292,13 +293,17 @@ export class DelegationsService {
     })
 
     // Make sure when using the otherUser filter that we only find one delegation
-    if (otherUser && delegations && delegations.length > 1) {
+    if (
+      otherUser &&
+      delegations &&
+      delegations.filter((d) => d.domainName == DEFAULT_DOMAIN).length > 1
+    ) {
       this.logger.error(
         `Invalid state of delegation. Found ${
-          delegations.length
-        } delegations for otherUser. Delegations: ${delegations.map(
-          (d) => d.id,
-        )}`,
+          delegations.filter((d) => d.domainName == DEFAULT_DOMAIN).length
+        } delegations for otherUser. Delegations: ${delegations
+          .filter((d) => d.domainName == DEFAULT_DOMAIN)
+          .map((d) => d.id)}`,
       )
       throw new InternalServerErrorException(
         'Invalid state of delegation. User has two or more delegations with an other user.',
@@ -616,6 +621,7 @@ export class DelegationsService {
         )
         return d.toDTO()
       })
+      .filter((d) => d.domainName === DEFAULT_DOMAIN)
   }
 
   private checkIfScopeAllowed(

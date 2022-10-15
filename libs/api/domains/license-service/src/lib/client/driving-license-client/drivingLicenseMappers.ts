@@ -23,7 +23,7 @@ export const parseDrivingLicensePayload = (
   const license = licenses[0]
   const expired = license.gildirTil
     ? !isAfter(new Date(license.gildirTil), new Date())
-    : false
+    : null
 
   const label = labels?.labels
   // Parse license data into the fields as they're displayed on the physical drivers license

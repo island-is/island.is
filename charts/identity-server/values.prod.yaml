@@ -40,6 +40,7 @@ auth-admin-web:
             - '/admin'
   namespace: 'identity-server-admin'
   progressDeadlineSeconds: 1200
+  pvcs: []
   replicaCount:
     default: 2
     max: 10
@@ -136,6 +137,12 @@ identity-server:
   namespace: 'identity-server'
   podSecurityContext:
     fsGroup: 65534
+  pvcs:
+    - accessModes: 'ReadWriteMany'
+      mountPath: '/keys'
+      name: 'identity-server'
+      size: '1Gi'
+      storageClass: 'efs-csi'
   replicaCount:
     default: 3
     max: 10
@@ -213,6 +220,7 @@ services-auth-admin-api:
           paths:
             - '/backend'
   namespace: 'identity-server-admin'
+  pvcs: []
   replicaCount:
     default: 2
     max: 10
@@ -314,6 +322,7 @@ services-auth-ids-api:
     secrets:
       DB_PASS: '/k8s/services-auth/api/DB_PASSWORD'
   namespace: 'identity-server'
+  pvcs: []
   replicaCount:
     default: 2
     max: 15
@@ -374,6 +383,7 @@ services-auth-personal-representative:
           paths:
             - '/'
   namespace: 'personal-representative'
+  pvcs: []
   replicaCount:
     default: 2
     max: 10
@@ -438,6 +448,7 @@ services-auth-personal-representative-public:
           paths:
             - '/'
   namespace: 'personal-representative'
+  pvcs: []
   replicaCount:
     default: 2
     max: 10
@@ -513,6 +524,7 @@ services-auth-public-api:
           paths:
             - '/api(/|$)(.*)'
   namespace: 'identity-server-admin'
+  pvcs: []
   replicaCount:
     default: 2
     max: 10
