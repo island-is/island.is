@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common'
 
 import { IdentityModule } from '@island.is/api/domains/identity'
-import { AuthPublicApiClientModule } from '@island.is/clients/auth-public-api'
+import { AuthPublicApiClientModule } from '@island.is/clients/auth/public-api'
 import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 
 import { ActorDelegationsService } from './services/actorDelegations.service'

@@ -10,7 +10,7 @@ import {
   MeDelegationsApi,
   MeDelegationsControllerFindAllDirectionEnum,
   MeDelegationsControllerFindAllValidityEnum,
-} from '@island.is/clients/auth-public-api'
+} from '@island.is/clients/auth/public-api'
 
 import {
   CreateDelegationInput,
