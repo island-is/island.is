@@ -19,6 +19,7 @@ import {
   Stepper,
   stepperUtils,
   Form,
+  PowerBiSlice,
 } from '@island.is/web/components'
 import {
   Box,
@@ -74,8 +75,13 @@ const ProjectPage: Screen<PageProps> = ({
   >(undefined)
 
   let content: SliceType[] = []
-  if (!!subpage && renderSlicesAsTabs)
-    content = selectedSliceTab?.content as SliceType[]
+  if (subpage) {
+    if (renderSlicesAsTabs) {
+      content = selectedSliceTab?.content as SliceType[]
+    } else {
+      content = subpage?.content as SliceType[]
+    }
+  }
   if (!subpage) content = projectPage?.content as SliceType[]
 
   useEffect(() => {
@@ -168,7 +174,12 @@ const ProjectPage: Screen<PageProps> = ({
             {selectedSliceTab.title}
           </Text>
         )}
-        {content && richText(content)}
+        {content &&
+          richText(content, {
+            renderComponent: {
+              PowerBiSlice: (slice) => <PowerBiSlice slice={slice} />,
+            },
+          })}
         {!subpage && projectPage.stepper && (
           <Box marginTop={6}>
             <Stepper
