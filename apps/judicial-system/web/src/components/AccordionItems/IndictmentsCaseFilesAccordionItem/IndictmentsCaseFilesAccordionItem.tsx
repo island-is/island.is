@@ -88,16 +88,18 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
     <Reorder.Item
       value={caseFile}
       id={caseFile.displayText}
-      style={{ y, boxShadow, userSelect: isDragging ? 'none' : 'auto' }}
+      style={{
+        y,
+        boxShadow,
+        userSelect: isDragging ? 'none' : 'auto',
+        display: index === 0 ? 'none' : 'block',
+      }}
       className={styles.reorderItem}
       dragListener={false}
       dragControls={controls}
     >
       {caseFile.isChapter ? (
         <Box className={styles.chapterContainer}>
-          <Box marginRight={3} as="span">
-            <Text variant="h4">{`${index + 1}.`}</Text>
-          </Box>
           <Text variant="h4">{caseFile.displayText}</Text>
         </Box>
       ) : caseFile.isDivider ? (
@@ -166,32 +168,34 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
 
   const [items, setItems] = useState<ReorderableItem[]>([
     {
-      displayText: formatMessage(m.chapterIndictmentAndAccompanyingDocuments),
+      displayText: `1. ${formatMessage(
+        m.chapterIndictmentAndAccompanyingDocuments,
+      )}`,
       isChapter: true,
       isDivider: false,
     },
     {
-      displayText: formatMessage(m.chapterInvesitgationProcess),
+      displayText: `2. ${formatMessage(m.chapterInvesitgationProcess)}`,
       isChapter: true,
       isDivider: false,
     },
     {
-      displayText: formatMessage(m.chapterWitnesses),
+      displayText: `3. ${formatMessage(m.chapterWitnesses)}`,
       isChapter: true,
       isDivider: false,
     },
     {
-      displayText: formatMessage(m.chapterDefendant),
+      displayText: `4. ${formatMessage(m.chapterDefendant)}`,
       isChapter: true,
       isDivider: false,
     },
     {
-      displayText: formatMessage(m.chapterCaseFiles),
+      displayText: `5. ${formatMessage(m.chapterCaseFiles)}`,
       isChapter: true,
       isDivider: false,
     },
     {
-      displayText: formatMessage(m.chapterElectronicDocuments),
+      displayText: `6. ${formatMessage(m.chapterElectronicDocuments)}`,
       isChapter: true,
       isDivider: false,
     },
@@ -247,22 +251,30 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
       <Box marginBottom={3}>
         <Text>{formatMessage(m.explanation)}</Text>
       </Box>
+      <Box className={styles.chapterContainer} marginBottom={2}>
+        <Text variant="h4">{items[0].displayText}</Text>
+      </Box>
       <Reorder.Group
         axis="y"
         values={items}
         onReorder={setItems}
         className={styles.reorderGroup}
       >
-        {items.map((item, index) => (
-          <Box key={`${item.displayText}-${policeCaseNumber}`} marginBottom={2}>
-            <CaseFile
-              caseFile={item}
-              index={index}
-              caseId={caseId}
-              onReorder={handleReorder}
-            />
-          </Box>
-        ))}
+        {items.map((item, index) => {
+          return (
+            <Box
+              key={`${item.displayText}-${policeCaseNumber}`}
+              marginBottom={2}
+            >
+              <CaseFile
+                caseFile={item}
+                index={index}
+                caseId={caseId}
+                onReorder={handleReorder}
+              />
+            </Box>
+          )
+        })}
       </Reorder.Group>
       <AnimatePresence>
         {items[items.length - 1].isDivider && (
