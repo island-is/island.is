@@ -9,6 +9,7 @@ import {
   useDragControls,
   useMotionValue,
 } from 'framer-motion'
+import { useMutation } from '@apollo/client'
 
 import {
   AccordionItem,
@@ -22,21 +23,30 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 
 import { indictmentsCaseFilesAccordionItem as m } from './IndictmentsCaseFilesAccordionItem.strings'
 import * as styles from './Chapter.css'
+import { UpdateFileMutation } from './IndictmentsCaseFilesAccordionItem.gql'
 
 interface Props {
   policeCaseNumber: string
   caseFiles: TCaseFile[]
+  caseId: string
 }
 
 interface CaseFileProps {
   caseFile: ReorderableItem
   index: number
+  caseId: string
+  onReorder: (id?: string) => void
 }
 interface ReorderableItem {
   displayText: string
   isChapter: boolean
   isDivider: boolean
+  id?: string
   created?: string
+}
+
+interface UpdateFilesMutationResponse {
+  caseFiles: TCaseFile[]
 }
 
 export function useRaisedShadow(value: MotionValue<number>) {
@@ -65,11 +75,14 @@ export function useRaisedShadow(value: MotionValue<number>) {
 }
 
 const CaseFile: React.FC<CaseFileProps> = (props) => {
-  const { caseFile, index } = props
+  const { caseFile, index, caseId, onReorder } = props
   const y = useMotionValue(0)
   const boxShadow = useRaisedShadow(y)
   const controls = useDragControls()
   const [isDragging, setIsDragging] = useState(false)
+  const [updateFilesMutation] = useMutation<UpdateFilesMutationResponse>(
+    UpdateFileMutation,
+  )
 
   return (
     <Reorder.Item
@@ -110,6 +123,24 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
                 setIsDragging(true)
                 controls.start(e)
               }}
+              onPointerUp={() => {
+                setIsDragging(false)
+                onReorder(caseFile.id)
+                // updateFilesMutation({
+                //   variables: {
+                //     input: {
+                //       caseId,
+                //       files: [
+                //         {
+                //           id: 'ba8859ec-88f4-463a-9a6c-9781a477dff3',
+                //           chapter: 1,
+                //           orderWithinChapter: 1,
+                //         },
+                //       ],
+                //     },
+                //   },
+                // })
+              }}
             >
               <Icon icon="menu" color="blue400" />
             </Box>
@@ -130,7 +161,7 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
 }
 
 const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
-  const { policeCaseNumber, caseFiles } = props
+  const { policeCaseNumber, caseFiles, caseId } = props
   const { formatMessage } = useIntl()
 
   const [items, setItems] = useState<ReorderableItem[]>([
@@ -173,13 +204,36 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
     },
     ...caseFiles.map((caseFile) => {
       return {
-        displayText: caseFile.id,
+        displayText: caseFile.name,
         isChapter: false,
         isDivider: false,
         created: caseFile.created,
+        id: caseFile.id,
       }
     }),
   ])
+
+  const handleReorder = (fileId?: string) => {
+    if (!fileId) {
+      return
+    }
+
+    const chapters = (item: ReorderableItem) => {
+      let counter = -1 // -1 because we don't want to count current document
+
+      while (!item.isChapter) {
+        counter++
+        item = items[items.indexOf(item) - 1]
+        chapters(item)
+      }
+
+      return [items.indexOf(item), counter]
+    }
+
+    const a = chapters(items[items.findIndex((item) => item.id === fileId)])
+
+    console.log('reorder', a)
+  }
 
   return (
     <AccordionItem
@@ -201,7 +255,12 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
       >
         {items.map((item, index) => (
           <Box key={`${item.displayText}-${policeCaseNumber}`} marginBottom={2}>
-            <CaseFile caseFile={item} index={index} />
+            <CaseFile
+              caseFile={item}
+              index={index}
+              caseId={caseId}
+              onReorder={handleReorder}
+            />
           </Box>
         ))}
       </Reorder.Group>

@@ -23,7 +23,7 @@ export class CaseReceivedGuard implements CanActivate {
     }
 
     if (![CaseState.RECEIVED, ...completedCaseStates].includes(theCase.state)) {
-      throw new ForbiddenException('Forbidden for uncompleted cases')
+      throw new ForbiddenException('Forbidden for unrecived cases')
     }
 
     return true

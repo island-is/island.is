@@ -1,5 +1,6 @@
 import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
+import { LayoutGroup } from 'framer-motion'
 
 import {
   FormContentContainer,
@@ -19,7 +20,6 @@ import { titles } from '@island.is/judicial-system-web/messages'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { caseFile as m } from './CaseFile.strings'
-import { LayoutGroup } from 'framer-motion'
 
 const CaseFile = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
@@ -56,6 +56,7 @@ const CaseFile = () => {
               {workingCase.policeCaseNumbers.map((policeCaseNumber, index) => (
                 <IndictmentsCaseFilesAccordionItem
                   key={index}
+                  caseId={workingCase.id}
                   policeCaseNumber={policeCaseNumber}
                   caseFiles={
                     workingCase.caseFiles?.filter(

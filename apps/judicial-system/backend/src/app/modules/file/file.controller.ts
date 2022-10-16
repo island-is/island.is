@@ -169,7 +169,7 @@ export class FileController {
     return this.fileService.uploadCaseFileToCourt(caseFile, theCase, user)
   }
 
-  @UseGuards(CaseExistsGuard, CaseWriteGuard, CaseReceivedGuard)
+  @UseGuards(CaseExistsGuard, CaseWriteGuard, CaseNotCompletedGuard)
   @RolesRules(prosecutorRule)
   @Patch('files')
   @ApiOkResponse({
