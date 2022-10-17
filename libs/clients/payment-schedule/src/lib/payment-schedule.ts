@@ -17,6 +17,7 @@ import {
   PaymentDistributionResponse,
   ConditionsResponse,
 } from './types'
+import { EmployerIsValidResponse } from './types/employer.type'
 
 export class PaymentScheduleAPI extends RESTDataSource {
   constructor(
@@ -91,5 +92,15 @@ export class PaymentScheduleAPI extends RESTDataSource {
       queryParams.toString(),
     )
     return response.paymentDistribution
+  }
+
+  async getEmployerIsValid(
+    personNationalId: string,
+    companyNationalId: string,
+  ): Promise<boolean> {
+    const response = await this.get<EmployerIsValidResponse>(
+      `employerValid/${personNationalId}/${companyNationalId}`,
+    )
+    return response.isEmployerValid === 'TRUE'
   }
 }

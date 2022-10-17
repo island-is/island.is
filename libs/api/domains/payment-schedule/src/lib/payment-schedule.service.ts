@@ -86,6 +86,25 @@ export class PaymentScheduleService {
     }
   }
 
+  async isEmployerValid(user: User, nationalId: string): Promise<boolean> {
+    const { employerValid, error } = await this.paymentScheduleApiWithAuth(
+      user,
+    ).employerValidnationalIdemployerNationalIdGET7({
+      nationalId: user.nationalId,
+      employerNationalId: nationalId,
+    })
+    if (error) {
+      this.logger.error('Error employer information for nationalId', error)
+      throw new Error('Error employer information for nationalId')
+    }
+
+    if (!employerValid) {
+      return false
+    }
+
+    return employerValid.isEmployerValid === 'TRUE'
+  }
+
   async getInitalSchedule(
     user: User,
     input: GetInitialScheduleInput,

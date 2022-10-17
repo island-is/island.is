@@ -35,6 +35,8 @@ export const CorrectedEmployerSchema = z.object({
       params: error.nationalId,
     }),
   label: z.string().min(1),
+  isat: z.string().optional(),
+  value: z.string().optional(),
 })
 
 export const PaymentPlansSchema = z.object({

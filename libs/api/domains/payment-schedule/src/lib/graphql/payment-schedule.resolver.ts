@@ -20,9 +20,10 @@ import type { User } from '@island.is/auth-nest-tools'
 import { PaymentScheduleService } from '../payment-schedule.service'
 import { UpdateCurrentEmployerInput } from './dto/updateCurrentEmployerInput'
 import { UpdateCurrentEmployerResponse } from './models/updateCurrentEmployer.model'
+import { GetIsEmployerValidInput } from './dto/isEmployerValidInput'
 
-@UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(ApiScope.internal)
+// @UseGuards(IdsUserGuard, ScopesGuard)
+// @Scopes(ApiScope.internal)
 @Resolver()
 export class PaymentScheduleResolver {
   constructor(private paymentScheduleService: PaymentScheduleService) {}
@@ -80,6 +81,21 @@ export class PaymentScheduleResolver {
     input: GetScheduleDistributionInput,
   ): Promise<PaymentScheduleDistribution> {
     return await this.paymentScheduleService.getPaymentDistribution(user, input)
+  }
+
+  @Query(() => Boolean, {
+    name: 'isEmmployerValid',
+  })
+  @Audit()
+  async employerIsValid(
+    @CurrentUser() user: User,
+    @Args('input', { type: () => GetIsEmployerValidInput })
+    input: GetIsEmployerValidInput,
+  ): Promise<boolean> {
+    return await this.paymentScheduleService.isEmployerValid(
+      user,
+      input.companyId,
+    )
   }
 
   @Mutation(() => UpdateCurrentEmployerResponse, {
