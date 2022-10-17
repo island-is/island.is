@@ -6,18 +6,16 @@ import {
   Text,
   Stack,
   Tag,
-  Button,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React, { FC, useState } from 'react'
-import { ShipInformation, ShipSelectionAlertModal } from '../components'
+import { ShipInformation } from '../components'
 import { RadioController } from '@island.is/shared/form-fields'
 import format from 'date-fns/format'
 import { shipSelection } from '../../lib/messages'
 import is from 'date-fns/locale/is'
 import {
   FishingLicenseShip as Ship,
-  FishingLicenseUnfulfilledLicense,
 } from '@island.is/api/schema'
 import parseISO from 'date-fns/parseISO'
 import { useFormContext } from 'react-hook-form'
@@ -36,10 +34,6 @@ export const ShipSelection: FC<FieldBaseProps> = ({
   const { formatMessage } = useLocale()
   const { register } = useFormContext()
   const [showTitle, setShowTitle] = useState<boolean>(false)
-  const [visibility, setVisibility] = useState<boolean>(false)
-  const [unfulfilledLicenses, setUnfulfilledLicenses] = useState<
-    FishingLicenseUnfulfilledLicense[] | null
-  >(null)
 
   const registrationNumberValue = getValueViaPath(
     application.answers,
@@ -59,11 +53,6 @@ export const ShipSelection: FC<FieldBaseProps> = ({
     const options = [] as Option[]
     for (const [index, ship] of ships.entries()) {
 
-      const handleShowAlertModal = () => {
-        setUnfulfilledLicenses([]) // TODO fetch from API
-        setVisibility(true)
-      }
-
       const isExpired = new Date(ship.seaworthiness.validTo) < new Date()
       const seaworthinessDate = format(
         parseISO(ship.seaworthiness.validTo),
@@ -82,30 +71,6 @@ export const ShipSelection: FC<FieldBaseProps> = ({
                 seaworthinessHasColor
                 isExpired={isExpired}
               />
-              <Box
-                display="flex"
-                flexDirection="column"
-                justifyContent="spaceBetween"
-                alignItems="flexEnd"
-              >
-                <Tag
-                  variant={isExpired ? 'disabled' : 'purple'}
-                  disabled
-                >
-                  {formatMessage(shipSelection.tags.noFishingLicensesFound)}
-                </Tag>
-
-                {/* TODO */}
-                {/* {ship.unfulfilledLicenses.length > 0 && (
-                  <Box>
-                    <Button variant="text" onClick={handleShowAlertModal}>
-                      {formatMessage(
-                        shipSelection.labels.unfulfilledLicensesButton,
-                      )}
-                    </Button>
-                  </Box>
-                )} */}
-              </Box>
             </Box>
             {isExpired && (
               <Box marginTop={2}>
@@ -185,11 +150,6 @@ export const ShipSelection: FC<FieldBaseProps> = ({
         value={registrationNumber}
         ref={register({ required: true })}
         name={`${field.id}.registrationNumber`}
-      />
-      <ShipSelectionAlertModal
-        visibility={visibility}
-        setVisibility={setVisibility}
-        unfulfilledLicenses={unfulfilledLicenses}
       />
     </Box>
   )

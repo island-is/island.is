@@ -68,14 +68,6 @@ export const FishingLicense: FC<FieldBaseProps> = ({
           justifyContent="spaceBetween"
         >
           <ShipInformation ship={ship} seaworthinessHasColor />
-          <Box>
-            <Tag
-              variant={isExpired || hasDeprivations ? 'disabled' : 'purple'}
-              disabled
-            >
-              {formatMessage(shipSelection.tags.noFishingLicensesFound)}
-            </Tag>
-          </Box>
         </Box>
       </Box>
       <Box>
