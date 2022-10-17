@@ -684,7 +684,7 @@ export const nestedOneColumnTextFields = gql`
   }
 `
 
-export const nestedAccordionAndFaqListFields = `
+export const nestedFields = `
   ... on AccordionSlice {
     ...AccordionSliceFields
     accordionItems {
@@ -705,6 +705,12 @@ export const nestedAccordionAndFaqListFields = `
         ...AllSlices
       }
       publishDate
+    }
+  }
+  ... on TabSection {
+    ...TabSectionFields 
+    body {
+      ...AllSlices
     }
   }
 `

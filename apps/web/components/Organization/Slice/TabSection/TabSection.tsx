@@ -1,18 +1,33 @@
 import React from 'react'
 import { useRouter } from 'next/router'
 import { TabSection } from '@island.is/web/graphql/schema'
-import { Box, GridColumn, GridRow, Tabs, Text } from '@island.is/island-ui/core'
-import * as styles from '@island.is/web/screens/Organization/Organization.css'
+import {
+  Box,
+  GridColumn,
+  GridColumnProps,
+  GridRow,
+  Tabs,
+  Text,
+} from '@island.is/island-ui/core'
 import {
   renderSlices,
   Slice as SliceType,
 } from '@island.is/island-ui/contentful'
 
+import * as styles from '@island.is/web/screens/Organization/Organization.css'
+
 interface SliceProps {
   slice: TabSection
+  contentColumnProps?: GridColumnProps
 }
 
-export const TabSectionSlice: React.FC<SliceProps> = ({ slice }) => {
+export const TabSectionSlice: React.FC<SliceProps> = ({
+  slice,
+  contentColumnProps = {
+    span: ['9/9', '9/9', '9/9', '7/9'],
+    offset: [null, null, null, '1/9'],
+  },
+}) => {
   const router = useRouter()
 
   return (
@@ -39,10 +54,7 @@ export const TabSectionSlice: React.FC<SliceProps> = ({ slice }) => {
             label: tab.tabTitle,
             content: (
               <GridRow>
-                <GridColumn
-                  span={['9/9', '9/9', '9/9', '7/9']}
-                  offset={[null, null, null, '1/9']}
-                >
+                <GridColumn {...contentColumnProps}>
                   <Box paddingTop={[0, 4, 9]} paddingBottom={[8, 0, 9]}>
                     <img
                       src={tab.image.url}
