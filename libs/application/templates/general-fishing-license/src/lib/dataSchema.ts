@@ -71,6 +71,11 @@ export const GeneralFishingLicenseSchema = z.object({
       }),
     chargeType: z.string().min(1),
   }),
+  fishingLicenseFurtherInformation: z.object({
+    date: z.string().refine((x) => x.trim().length > 0),
+    date1: z.string().refine((x) => x.trim().length > 0),
+    date2: z.string().refine((x) => x.trim().length > 0),
+  }),
 })
 
 export type GeneralFishingLicense = z.TypeOf<typeof GeneralFishingLicenseSchema>
