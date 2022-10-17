@@ -16,6 +16,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { useAuth } from '@island.is/auth/react'
 import { AccessCard } from '../AccessCard'
 import { useAuthDelegationsQuery } from '@island.is/service-portal/graphql'
+import { ISLAND_DOMAIN } from '../../constants'
 
 export const AuthDelegationsQuery = gql`
   query AuthDelegationsQuery {
@@ -42,7 +43,13 @@ export const AuthDelegationsQuery = gql`
 function Accesses(): JSX.Element {
   useNamespaces('sp.settings-access-control')
   const { pathname } = useLocation()
-  const { data, loading } = useAuthDelegationsQuery()
+  const { data, loading } = useAuthDelegationsQuery({
+    variables: {
+      input: {
+        domain: ISLAND_DOMAIN,
+      },
+    },
+  })
 
   const history = useHistory()
   const { formatMessage } = useLocale()

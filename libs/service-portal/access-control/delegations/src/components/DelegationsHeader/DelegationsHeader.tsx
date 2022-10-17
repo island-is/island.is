@@ -1,41 +1,31 @@
-import { useState } from 'react'
 import { useHistory } from 'react-router-dom'
 
-import { Box, Button, Select } from '@island.is/island-ui/core'
+import { Box, Button, Select, SkeletonLoader } from '@island.is/island-ui/core'
 import { useBreakpoint } from '@island.is/island-ui/core'
 import { m, ServicePortalPath } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import * as styles from './DelegationsHeader.css'
+import { useDomains } from '../../hooks/useDomains'
 
-type DomainOpton = {
+export type DomainOption = {
   label: string
   value: string
 }
 
-export const DelegationsHeader = () => {
-  useNamespaces('sp.access-control-delegations')
-  const [domainName, setDomainName] = useState<string | null>(null)
-  const history = useHistory()
-  const { formatMessage } = useLocale()
-  const { sm } = useBreakpoint()
+interface DelegationsHeaderProps {
+  domainName?: string | null
+  onDomainChange(domainOption: DomainOption): void
+}
 
-  const domainOptions = [
-    {
-      label: formatMessage({
-        id: 'sp.access-control-delegations:all-domains',
-        defaultMessage: 'Öll kerfi',
-      }),
-      value: 'all',
-    },
-    {
-      label: 'Island.is',
-      value: '0',
-    },
-    {
-      label: 'Landspítalaappið',
-      value: '1',
-    },
-  ]
+export const DelegationsHeader = ({
+  domainName,
+  onDomainChange,
+}: DelegationsHeaderProps) => {
+  useNamespaces('sp.access-control-delegations')
+  const { formatMessage } = useLocale()
+  const history = useHistory()
+  const { sm } = useBreakpoint()
+  const { domainOptions, defaultDomainOption, loading } = useDomains(domainName)
 
   const onClickHandler = () => {
     const query = new URLSearchParams()
@@ -61,20 +51,30 @@ export const DelegationsHeader = () => {
       className={styles.container}
     >
       <Box className={styles.selectContainer}>
-        <Select
-          label={formatMessage(m.accessControl)}
-          size="xs"
-          name="domain"
-          id="domain"
-          noOptionsMessage="Enginn valmöguleiki"
-          defaultValue={domainOptions[0]}
-          options={domainOptions}
-          onChange={(option) => setDomainName((option as DomainOpton)?.label)}
-          placeholder={formatMessage({
-            id: 'sp.access-control-delegations:choose-domain',
-            defaultMessage: 'Veldu kerfi',
-          })}
-        />
+        {loading ? (
+          <SkeletonLoader height={71} />
+        ) : (
+          <Select
+            label={formatMessage(m.accessControl)}
+            size="xs"
+            name="domain"
+            id="domain"
+            noOptionsMessage="Enginn valmöguleiki"
+            defaultValue={defaultDomainOption}
+            options={domainOptions}
+            onChange={(option) => {
+              const opt = option as DomainOption
+
+              if (opt) {
+                onDomainChange(opt)
+              }
+            }}
+            placeholder={formatMessage({
+              id: 'sp.access-control-delegations:choose-domain',
+              defaultMessage: 'Veldu kerfi',
+            })}
+          />
+        )}
       </Box>
       <Button
         onClick={onClickHandler}

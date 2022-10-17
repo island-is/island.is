@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import cn from 'classnames'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useHistory } from 'react-router-dom'
@@ -6,7 +6,15 @@ import { defineMessage } from 'react-intl'
 import * as kennitala from 'kennitala'
 import { sharedMessages } from '@island.is/shared/translations'
 
-import { Box, Input, Icon, toast, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Input,
+  Icon,
+  toast,
+  Text,
+  SkeletonLoader,
+  useBreakpoint,
+} from '@island.is/island-ui/core'
 import {
   InputController,
   SelectController,
@@ -28,13 +36,20 @@ import {
   useCreateAuthDelegationMutation,
   useIdentityLazyQuery,
 } from '@island.is/service-portal/graphql'
+import { useDomains } from '../../hooks/useDomains'
 
 const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces(['sp.settings-access-control', 'sp.access-control-delegations'])
   const { formatMessage } = useLocale()
   const [name, setName] = useState('')
   const history = useHistory()
+  const { md } = useBreakpoint()
   const domainQueryParam = useQueryParam('domain')
+  const {
+    domainOptions,
+    defaultDomainOption,
+    loading: domainLoading,
+  } = useDomains(domainQueryParam)
 
   const [
     createAuthDelegation,
@@ -62,29 +77,24 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
   })
 
   const { identity } = data || {}
-  const domainOptions = [
-    {
-      label: 'Island.is',
-      value: '0',
-    },
-    {
-      label: 'Landspítalaappið',
-      value: '1',
-    },
-  ]
 
-  const getDefaultDomain = (label: string) =>
-    domainOptions.find(
-      (opt) => opt.label.toLowerCase() === label?.toLowerCase(),
-    )?.value
+  const defaultValues = useMemo(
+    () => ({
+      toNationalId: '',
+      domainName: defaultDomainOption.value ?? null,
+    }),
+    [defaultDomainOption.value],
+  )
 
   const methods = useForm({
     mode: 'onChange',
-    defaultValues: {
-      toNationalId: '',
-      domain: domainQueryParam ? getDefaultDomain(domainQueryParam) : null,
-    },
+    defaultValues,
   })
+
+  useEffect(() => {
+    methods.reset(defaultValues)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [defaultDomainOption.value, defaultValues])
 
   const { handleSubmit, control, errors, watch, reset } = methods
   const watchToNationalId = watch('toNationalId')
@@ -112,10 +122,10 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
     }
   }, [identity, setName, watchToNationalId])
 
-  const onSubmit = handleSubmit(async ({ toNationalId }) => {
+  const onSubmit = handleSubmit(async ({ toNationalId, domainName }) => {
     try {
       const { data } = await createAuthDelegation({
-        variables: { input: { toNationalId } },
+        variables: { input: { toNationalId, domainName } },
       })
       if (data) {
         history.push(
@@ -241,27 +251,31 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
                 ) : null}
               </div>
               <div>
-                <SelectController
-                  id="domain"
-                  name="domain"
-                  label={formatMessage(m.accessControl)}
-                  placeholder={formatMessage({
-                    id: 'sp.access-control-delegations:choose-domain',
-                    defaultMessage: 'Veldu kerfi',
-                  })}
-                  error={errors.domain?.message}
-                  options={domainOptions}
-                  rules={{
-                    required: {
-                      value: true,
-                      message: formatMessage({
-                        id:
-                          'sp.access-control-delegations:grant-required-domain',
-                        defaultMessage: 'Skylda er að velja aðgangsstýringu',
-                      }),
-                    },
-                  }}
-                />
+                {domainLoading ? (
+                  <SkeletonLoader height={md ? 77 : 72} />
+                ) : (
+                  <SelectController
+                    id="domainName"
+                    name="domainName"
+                    label={formatMessage(m.accessControl)}
+                    placeholder={formatMessage({
+                      id: 'sp.access-control-delegations:choose-domain',
+                      defaultMessage: 'Veldu kerfi',
+                    })}
+                    error={errors.domainName?.message}
+                    options={domainOptions}
+                    rules={{
+                      required: {
+                        value: true,
+                        message: formatMessage({
+                          id:
+                            'sp.access-control-delegations:grant-required-domain',
+                          defaultMessage: 'Skylda er að velja aðgangsstýringu',
+                        }),
+                      },
+                    }}
+                  />
+                )}
               </div>
             </Box>
             <Box

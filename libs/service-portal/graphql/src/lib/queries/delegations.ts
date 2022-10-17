@@ -26,8 +26,8 @@ export const AUTH_DELEGATION_QUERY = gql`
 `
 
 export const AUTH_DELEGATIONS_QUERY = gql`
-  query AuthDelegations {
-    authDelegations {
+  query AuthDelegations($input: AuthDelegationsInput!) {
+    authDelegations(input: $input) {
       id
       type
       to {

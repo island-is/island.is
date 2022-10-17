@@ -9,6 +9,7 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { useAuth } from '@island.is/auth/react'
 import { useAuthDelegationsQuery } from '@island.is/service-portal/graphql'
+import { ISLAND_DOMAIN } from '../../constants'
 
 export const DelegationsAccessGuard: ServicePortalModuleComponent = ({
   userInfo,
@@ -16,7 +17,13 @@ export const DelegationsAccessGuard: ServicePortalModuleComponent = ({
   children,
 }) => {
   useNamespaces('sp.access-control-delegations')
-  const { data, loading } = useAuthDelegationsQuery()
+  const { data, loading } = useAuthDelegationsQuery({
+    variables: {
+      input: {
+        domain: ISLAND_DOMAIN,
+      },
+    },
+  })
   const { switchUser } = useAuth()
   const { formatMessage } = useLocale()
   const actor = userInfo.profile.actor

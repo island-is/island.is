@@ -1,1 +1,1 @@
-export { DelegationsHeader } from './DelegationsHeader'
+export { DelegationsHeader, DomainOption } from './DelegationsHeader'
