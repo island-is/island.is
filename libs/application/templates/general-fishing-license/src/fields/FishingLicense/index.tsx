@@ -60,6 +60,23 @@ export const FishingLicense: FC<FieldBaseProps> = ({
     if (selectedLicense)
       setChargeType(selectedLicense.fishingLicenseInfo.chargeType)
   }
+
+  // If a charge type is present in the answer but it
+  // is invalid/illegal for the currently chosen ship,
+  // remove that charge type from the answer once we've 
+  // established all legal charge types for current ship
+  useEffect(() => {
+    if(!chargeType) return
+    const type = data?.fishingLicenses?.find(
+      ({ fishingLicenseInfo }: FishingLicenseSchema) =>
+        fishingLicenseInfo.code === chargeType,
+    ) as FishingLicenseSchema
+    if(!type.answer) {
+      // TODO: remove the charge type from answer
+      // as it doesn't match the boat that's selected
+    }
+  }, [data])
+
   return (
     <>
       <Box marginBottom={3}>
