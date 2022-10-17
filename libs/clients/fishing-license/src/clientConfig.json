@@ -12,9 +12,7 @@
   "paths": {
     "/v1/skip/{skipaskrarnumer}/veidileyfi": {
       "get": {
-        "tags": [
-          "Skip"
-        ],
+        "tags": ["Skip"],
         "summary": "Sækir lista af veiðileyfum sem viðkomandi skip getur sótt um.",
         "parameters": [
           {
@@ -22,10 +20,7 @@
             "in": "path",
             "description": "Skipaskrárnúmer",
             "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
+            "schema": { "type": "integer", "format": "int32" }
           }
         ],
         "responses": {
@@ -33,39 +28,25 @@
             "description": "Success",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/VeidileyfiListi"
-                }
+                "schema": { "$ref": "#/components/schemas/VeidileyfiListi" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/VeidileyfiListi"
-                }
+                "schema": { "$ref": "#/components/schemas/VeidileyfiListi" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/VeidileyfiListi"
-                }
+                "schema": { "$ref": "#/components/schemas/VeidileyfiListi" }
               }
             }
           },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "500": {
-            "description": "Server Error"
-          }
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden" },
+          "500": { "description": "Server Error" }
         }
       }
     },
     "/v1/umsoknir/{umsoknid}": {
       "get": {
-        "tags": [
-          "Umsoknir"
-        ],
+        "tags": ["Umsoknir"],
         "summary": "Sækir veiðileyfaumsókn.",
         "parameters": [
           {
@@ -73,10 +54,7 @@
             "in": "path",
             "description": "Umsóknarauðkenni",
             "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
+            "schema": { "type": "integer", "format": "int32" }
           }
         ],
         "responses": {
@@ -84,60 +62,38 @@
             "description": "Success",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Umsokn"
-                }
+                "schema": { "$ref": "#/components/schemas/Umsokn" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Umsokn"
-                }
+                "schema": { "$ref": "#/components/schemas/Umsokn" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Umsokn"
-                }
+                "schema": { "$ref": "#/components/schemas/Umsokn" }
               }
             }
           },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Server Error"
-          }
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden" },
+          "404": { "description": "Not Found" },
+          "500": { "description": "Server Error" }
         }
       }
     },
     "/v1/umsoknir": {
       "post": {
-        "tags": [
-          "Umsoknir"
-        ],
+        "tags": ["Umsoknir"],
         "summary": "Býr til umsókn fyrir veiðileyfi.",
         "requestBody": {
           "description": "Veiðileyfi umsókn.",
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Umsokn"
-              }
+              "schema": { "$ref": "#/components/schemas/Umsokn" }
             },
             "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Umsokn"
-              }
+              "schema": { "$ref": "#/components/schemas/Umsokn" }
             },
             "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/Umsokn"
-              }
+              "schema": { "$ref": "#/components/schemas/Umsokn" }
             }
           }
         },
@@ -146,42 +102,26 @@
             "description": "Created",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/UmsoknResponse"
-                }
+                "schema": { "$ref": "#/components/schemas/UmsoknResponse" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UmsoknResponse"
-                }
+                "schema": { "$ref": "#/components/schemas/UmsoknResponse" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UmsoknResponse"
-                }
+                "schema": { "$ref": "#/components/schemas/UmsoknResponse" }
               }
             }
           },
-          "400": {
-            "description": "Bad Request"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "500": {
-            "description": "Server Error"
-          }
+          "400": { "description": "Bad Request" },
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden" },
+          "500": { "description": "Server Error" }
         }
       }
     },
     "/v1/utgerdir/{kennitala}/skip": {
       "get": {
-        "tags": [
-          "Utgerdir"
-        ],
+        "tags": ["Utgerdir"],
         "summary": "Sækir lista af skipum eftir kennitölu útgerðaraðila.",
         "parameters": [
           {
@@ -189,9 +129,7 @@
             "in": "path",
             "description": "Kennitala útgerðaraðila.",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -199,31 +137,19 @@
             "description": "Success",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/SkipaListi"
-                }
+                "schema": { "$ref": "#/components/schemas/SkipaListi" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SkipaListi"
-                }
+                "schema": { "$ref": "#/components/schemas/SkipaListi" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SkipaListi"
-                }
+                "schema": { "$ref": "#/components/schemas/SkipaListi" }
               }
             }
           },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "500": {
-            "description": "Server Error"
-          }
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden" },
+          "500": { "description": "Server Error" }
         }
       }
     }
@@ -231,10 +157,7 @@
   "components": {
     "schemas": {
       "Astaeda": {
-        "required": [
-          "leidbeining",
-          "lysing"
-        ],
+        "required": ["leidbeining", "lysing"],
         "type": "object",
         "properties": {
           "lysing": {
@@ -269,9 +192,7 @@
       "Forsendur": {
         "type": "object",
         "properties": {
-          "veidileyfi": {
-            "$ref": "#/components/schemas/Veidileyfi"
-          }
+          "veidileyfi": { "$ref": "#/components/schemas/Veidileyfi" }
         },
         "additionalProperties": false,
         "description": "Forsendur veiðileyfis. Þau veiðileyfi sem skip þarf að hafa til að geta sótt um viðkomandi veiðileyfi."
@@ -409,9 +330,7 @@
         "properties": {
           "listaValmoguleikar": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Valmoguleiki"
-            },
+            "items": { "$ref": "#/components/schemas/Valmoguleiki" },
             "description": "Listi af dropdown valmöguleikum.",
             "nullable": true
           },
@@ -463,18 +382,10 @@
         "additionalProperties": false
       },
       "Skip": {
-        "required": [
-          "einkenni",
-          "heimahofn",
-          "skipanafn",
-          "sviptingar"
-        ],
+        "required": ["einkenni", "heimahofn", "skipanafn", "sviptingar"],
         "type": "object",
         "properties": {
-          "skipanafn": {
-            "type": "string",
-            "description": "Nafn skipsins."
-          },
+          "skipanafn": { "type": "string", "description": "Nafn skipsins." },
           "skipaskrarnumer": {
             "type": "integer",
             "description": "Skipaskrárnúmer.",
@@ -495,25 +406,16 @@
             "description": "Lengd skips.",
             "format": "double"
           },
-          "heimahofn": {
-            "type": "string",
-            "description": "Heimahöfn skips."
-          },
-          "haffaeri": {
-            "$ref": "#/components/schemas/Haffaeri"
-          },
+          "heimahofn": { "type": "string", "description": "Heimahöfn skips." },
+          "haffaeri": { "$ref": "#/components/schemas/Haffaeri" },
           "sviptingar": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Svipting"
-            },
+            "items": { "$ref": "#/components/schemas/Svipting" },
             "description": "Listi af sviptingum."
           },
           "veidileyfi": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Veidileyfi"
-            },
+            "items": { "$ref": "#/components/schemas/Veidileyfi" },
             "description": "Listi af veiðileyfum.",
             "nullable": true
           }
@@ -525,9 +427,7 @@
         "properties": {
           "skip": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Skip"
-            },
+            "items": { "$ref": "#/components/schemas/Skip" },
             "description": "Listi af skipum.",
             "nullable": true
           }
@@ -539,41 +439,31 @@
         "properties": {
           "toluDalkar": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/SerhaefSpurningNumber"
-            },
+            "items": { "$ref": "#/components/schemas/SerhaefSpurningNumber" },
             "description": "Listi af tölugildis spurningum.",
             "nullable": true
           },
           "textaDalkar": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/SerhaefSpurningString"
-            },
+            "items": { "$ref": "#/components/schemas/SerhaefSpurningString" },
             "description": "Listi af texta spurningum.",
             "nullable": true
           },
           "dagsetningarDalkar": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/SerhaefSpurningDate"
-            },
+            "items": { "$ref": "#/components/schemas/SerhaefSpurningDate" },
             "description": "Listi af dagsetningar inputs.",
             "nullable": true
           },
           "skraarDalkar": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/SerhaefSpurningFile"
-            },
+            "items": { "$ref": "#/components/schemas/SerhaefSpurningFile" },
             "description": "Listi af file input spurningum.",
             "nullable": true
           },
           "listaDalkar": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/SerhaefSpurningSelect"
-            },
+            "items": { "$ref": "#/components/schemas/SerhaefSpurningSelect" },
             "description": "Listi af select listum.",
             "nullable": true
           }
@@ -581,9 +471,7 @@
         "additionalProperties": false
       },
       "Svipting": {
-        "required": [
-          "skyring"
-        ],
+        "required": ["skyring"],
         "type": "object",
         "properties": {
           "iGildi": {
@@ -597,10 +485,7 @@
             "format": "date-time",
             "nullable": true
           },
-          "skyring": {
-            "type": "string",
-            "description": "Ástæða sviptingar."
-          }
+          "skyring": { "type": "string", "description": "Ástæða sviptingar." }
         },
         "additionalProperties": false
       },
@@ -617,9 +502,7 @@
             "description": "Nafn (fyrirtæki, einstaklingur).",
             "nullable": true
           },
-          "logheimili": {
-            "$ref": "#/components/schemas/Logheimili"
-          }
+          "logheimili": { "$ref": "#/components/schemas/Logheimili" }
         },
         "additionalProperties": false
       },
@@ -686,17 +569,13 @@
           },
           "skraarVidhengi": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Vidhengi"
-            },
+            "items": { "$ref": "#/components/schemas/Vidhengi" },
             "description": "Listi af skrám sem notandi sendir með umsókn.",
             "nullable": true
           },
           "strandveidiTengdirAdilar": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/TengdurAdili"
-            },
+            "items": { "$ref": "#/components/schemas/TengdurAdili" },
             "description": "Aðili (einstaklingur eða fyrirtæki) sem er tengdur eignarhaldi skips/útgerðar.",
             "nullable": true
           },
@@ -783,21 +662,15 @@
             "description": "Vörunúmer veiðileyfis frá fjársýslu.",
             "nullable": true
           },
-          "umsoknarTimabil": {
-            "$ref": "#/components/schemas/UmsoknarTimabil"
-          }
+          "umsoknarTimabil": { "$ref": "#/components/schemas/UmsoknarTimabil" }
         },
         "additionalProperties": false
       },
       "VeidileyfiIBodi": {
-        "required": [
-          "astaedur"
-        ],
+        "required": ["astaedur"],
         "type": "object",
         "properties": {
-          "veidileyfi": {
-            "$ref": "#/components/schemas/Veidileyfi"
-          },
+          "veidileyfi": { "$ref": "#/components/schemas/Veidileyfi" },
           "svar": {
             "type": "boolean",
             "description": "Hvort notandi geti sótt um veiðileyfi eða ekki.\r\nDefault er að hann getur það."
@@ -807,28 +680,20 @@
           },
           "astaedur": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Astaeda"
-            },
+            "items": { "$ref": "#/components/schemas/Astaeda" },
             "description": "Listi af ástæðum af hverju skip getur ekki fengið veiðileyfi."
           },
-          "forsendur": {
-            "$ref": "#/components/schemas/Forsendur"
-          }
+          "forsendur": { "$ref": "#/components/schemas/Forsendur" }
         },
         "additionalProperties": false
       },
       "VeidileyfiListi": {
-        "required": [
-          "veidileyfiIBodi"
-        ],
+        "required": ["veidileyfiIBodi"],
         "type": "object",
         "properties": {
           "veidileyfiIBodi": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/VeidileyfiIBodi"
-            },
+            "items": { "$ref": "#/components/schemas/VeidileyfiIBodi" },
             "description": "Listi af veiðileyfum."
           }
         },
@@ -854,7 +719,8 @@
           }
         },
         "additionalProperties": false
-      }
+      },
+      "ProblemDetails": { "additionalProperties": false }
     },
     "securitySchemes": {
       "Bearer": {
@@ -865,9 +731,5 @@
       }
     }
   },
-  "security": [
-    {
-      "Bearer": []
-    }
-  ]
+  "security": [{ "Bearer": [] }]
 }
