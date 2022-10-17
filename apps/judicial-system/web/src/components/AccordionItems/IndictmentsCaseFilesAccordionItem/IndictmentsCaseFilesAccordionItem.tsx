@@ -272,6 +272,12 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
       let counter = 0
 
       for (let i = items.indexOf(item); items[i].chapter === undefined; i--) {
+        if (items[i - 1].isDivider) {
+          chapter = -1
+          orderWithinChapter = -1
+          break
+        }
+
         if (items[i - 1].chapter !== undefined) {
           chapter = items[i - 1].chapter || 0 // The "|| 0" part of this line is to silence a TS error
         }
@@ -282,7 +288,11 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
       return [chapter, orderWithinChapter]
     }
 
-    const updateRestOfFilesInChapter = (item: ReorderableItem) => {
+    const updateRestOfFilesInChapter = (item?: ReorderableItem) => {
+      if (!item) {
+        return
+      }
+
       for (let i = items.indexOf(item); i < items.length; i++) {
         if (items[i].chapter !== undefined || items[i].isDivider) {
           break
@@ -298,6 +308,11 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
     updateRestOfFilesInChapter(
       items[items.findIndex((item) => item.id === fileId) + 1],
     )
+
+    // Do not update the order of files if the file is not in a chapter
+    if (chapter === -1 || orderWithinChapter === -1) {
+      return
+    }
 
     updateFilesMutation({
       variables: {
