@@ -1,4 +1,5 @@
 import React from 'react'
+import { useRouter } from 'next/router'
 import { TabSection } from '@island.is/web/graphql/schema'
 import { Box, GridColumn, GridRow, Tabs, Text } from '@island.is/island-ui/core'
 import * as styles from '@island.is/web/screens/Organization/Organization.css'
@@ -12,6 +13,8 @@ interface SliceProps {
 }
 
 export const TabSectionSlice: React.FC<SliceProps> = ({ slice }) => {
+  const router = useRouter()
+
   return (
     <section
       key={slice.id}
@@ -20,6 +23,17 @@ export const TabSectionSlice: React.FC<SliceProps> = ({ slice }) => {
     >
       <Box paddingTop={2} paddingBottom={[0, 4, 4]}>
         <Tabs
+          selected={router.query?.selectedTab as string}
+          onChange={(id) => {
+            router.push(
+              {
+                pathname: router.asPath.split('#')[0].split('?')[0],
+                query: { selectedTab: id },
+              },
+              undefined,
+              { shallow: true },
+            )
+          }}
           label={slice?.title}
           tabs={slice?.tabs.map((tab) => ({
             label: tab.tabTitle,
