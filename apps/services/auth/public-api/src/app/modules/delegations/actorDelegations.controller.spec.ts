@@ -4,6 +4,7 @@ import times from 'lodash/times'
 
 import {
   Client,
+  DEFAULT_DOMAIN,
   Delegation,
   DelegationDTO,
   DelegationScope,
@@ -732,6 +733,40 @@ describe('ActorDelegationsController', () => {
             force: true,
           })
         })
+      })
+
+      it('should only return delegations in the default domain', async () => {
+        // Arrange
+        const delegations = [
+          createDelegation({
+            fromNationalId: nationalRegistryUser.nationalId,
+            toNationalId: user.nationalId,
+            scopes: [Scopes[0].name],
+            today,
+            domainName: 'someotherdomain',
+          }),
+          createDelegation({
+            fromNationalId: nationalRegistryUser.nationalId,
+            toNationalId: user.nationalId,
+            scopes: [Scopes[0].name],
+            today,
+            domainName: DEFAULT_DOMAIN,
+          }),
+        ]
+        await createDelegationModels(delegationModel, delegations)
+
+        const models = await findExpectedDelegationModels(delegationModel, [
+          delegations[1].id,
+        ])
+        const expectedModel = models[0]
+
+        // Act
+        const res = await server.get(`${path}${query}`)
+
+        // Assert
+        expect(res.status).toEqual(200)
+        expect(res.body).toHaveLength(1)
+        expectMatchingObject(res.body[0], expectedModel)
       })
     })
   })

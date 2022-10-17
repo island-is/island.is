@@ -51,6 +51,7 @@ import { isDefined } from '@island.is/shared/utils'
 import { ResourcesService } from '../resources/resources.service'
 import { DelegationDirection } from './types/delegationDirection'
 import { partitionWithIndex } from './utils/partitionWithIndex'
+import { DEFAULT_DOMAIN } from '../types/defaultDomain'
 
 type ClientDelegationInfo = Pick<
   Client,
@@ -320,13 +321,17 @@ export class DelegationsService {
     })
 
     // Make sure when using the otherUser filter that we only find one delegation
-    if (otherUser && delegations && delegations.length > 1) {
+    if (
+      otherUser &&
+      delegations &&
+      delegations.filter((d) => d.domainName == DEFAULT_DOMAIN).length > 1
+    ) {
       this.logger.error(
         `Invalid state of delegation. Found ${
-          delegations.length
-        } delegations for otherUser. Delegations: ${delegations.map(
-          (d) => d.id,
-        )}`,
+          delegations.filter((d) => d.domainName == DEFAULT_DOMAIN).length
+        } delegations for otherUser. Delegations: ${delegations
+          .filter((d) => d.domainName == DEFAULT_DOMAIN)
+          .map((d) => d.id)}`,
       )
       throw new InternalServerErrorException(
         'Invalid state of delegation. User has two or more delegations with an other user.',
@@ -818,7 +823,7 @@ export class DelegationsService {
       })
     }
 
-    return aliveDelegations
+    return aliveDelegations.filter((d) => d.domainName === DEFAULT_DOMAIN)
   }
 
   /**

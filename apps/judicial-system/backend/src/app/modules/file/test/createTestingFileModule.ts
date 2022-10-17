@@ -14,6 +14,7 @@ import { CaseService } from '../../case'
 import { CaseFile } from '../models/file.model'
 import { FileService } from '../file.service'
 import { FileController } from '../file.controller'
+import { Sequelize } from 'sequelize-typescript'
 
 jest.mock('../../aws-s3/awsS3.service.ts')
 jest.mock('../../court/court.service.ts')
@@ -61,6 +62,7 @@ export const createTestingFileModule = async () => {
         },
       },
       FileService,
+      { provide: Sequelize, useValue: { transaction: jest.fn() } },
     ],
   })
     .useMocker((token) => {
@@ -82,11 +84,14 @@ export const createTestingFileModule = async () => {
 
   const fileController = fileModule.get<FileController>(FileController)
 
+  const sequelize = fileModule.get<Sequelize>(Sequelize)
+
   return {
     awsS3Service,
     courtService,
     fileModel,
     fileService,
     fileController,
+    sequelize,
   }
 }
