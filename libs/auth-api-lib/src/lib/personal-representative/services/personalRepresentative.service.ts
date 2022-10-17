@@ -88,10 +88,15 @@ export class PersonalRepresentativeService {
   }
 
   /** Get's all personal repreasentative connections for personal representative  */
-  async getByPersonalRepresentative(
-    nationalIdPersonalRepresentative: string,
-    includeInvalid: boolean,
-  ): Promise<PersonalRepresentativeDTO[]> {
+  async getByPersonalRepresentative({
+    nationalIdPersonalRepresentative,
+    includeInvalid = false,
+    skipInactive = true,
+  }: {
+    nationalIdPersonalRepresentative: string
+    includeInvalid?: boolean
+    skipInactive?: boolean
+  }): Promise<PersonalRepresentativeDTO[]> {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const validToClause: any = {
       [Op.or]: { [Op.eq]: null, [Op.gt]: new Date() },
@@ -102,13 +107,16 @@ export class PersonalRepresentativeService {
     }
     const whereClause: WhereOptions = {
       nationalIdPersonalRepresentative: nationalIdPersonalRepresentative,
+      ...(skipInactive && { inactive: false }),
     }
     const whereClauseRights: WhereOptions = {}
+
     if (!includeInvalid) {
       whereClause['validTo'] = validToClause
       whereClauseRights['validFrom'] = validFromClause
       whereClauseRights['validTo'] = validToClause
     }
+
     const personalRepresentatives = await this.personalRepresentativeModel.findAll(
       {
         where: whereClause,
@@ -127,6 +135,7 @@ export class PersonalRepresentativeService {
         ],
       },
     )
+
     return personalRepresentatives.map((pr) => pr.toDTO())
   }
 

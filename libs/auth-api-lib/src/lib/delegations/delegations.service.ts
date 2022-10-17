@@ -629,8 +629,9 @@ export class DelegationsService {
       })
 
       const personalRepresentatives = await this.prService.getByPersonalRepresentative(
-        user.nationalId,
-        false,
+        {
+          nationalIdPersonalRepresentative: user.nationalId,
+        },
       )
 
       const personPromises = personalRepresentatives.map(
