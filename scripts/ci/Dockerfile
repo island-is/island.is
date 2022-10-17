@@ -66,7 +66,7 @@ ENTRYPOINT []
 CMD [ "node", "main.js" ]
 
 FROM output-base-with-pg as output-next
-ENV NODE_OPTIONS="--max-old-space-size=8192"
+
 ENV PORT=4200
 
 # TODO: smallify
