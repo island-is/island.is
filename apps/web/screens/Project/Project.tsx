@@ -75,12 +75,8 @@ const ProjectPage: Screen<PageProps> = ({
   >(undefined)
 
   let content: SliceType[] = []
-  if (subpage) {
-    if (renderSlicesAsTabs) {
-      content = selectedSliceTab?.content as SliceType[]
-    } else {
-      content = subpage?.content as SliceType[]
-    }
+  if (!!subpage && renderSlicesAsTabs) {
+    content = selectedSliceTab?.content as SliceType[]
   }
   if (!subpage) content = projectPage?.content as SliceType[]
 
@@ -142,6 +138,7 @@ const ProjectPage: Screen<PageProps> = ({
               richText(subpage.content as SliceType[], {
                 renderComponent: {
                   Form: (slice) => <Form form={slice} namespace={namespace} />,
+                  PowerBiSlice: (slice) => <PowerBiSlice slice={slice} />,
                 },
               })}
           </Box>
