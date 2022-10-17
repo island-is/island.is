@@ -8,8 +8,8 @@ import {
   m as coreMessage,
   ActionCard,
   EmptyState,
+  CardLoader,
 } from '@island.is/service-portal/core'
-import { LicenseLoader } from '../../components/LicenseLoader/LicenseLoader'
 import { m } from '../../lib/messages'
 import { gql, useQuery } from '@apollo/client'
 import { Locale } from '@island.is/shared/types'
@@ -156,7 +156,7 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
           intro={defineMessage(m.intro)}
         />
       </Box>
-      {loading && <LicenseLoader />}
+      {loading && <CardLoader />}
       {data &&
         !isEmpty &&
         genericLicenses
