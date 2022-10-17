@@ -96,7 +96,7 @@ export class PaymentService {
       returnUrl: callbackUrl,
       requestID: payment.id,
     }
-    console.log({ charge })
+
     const result = await this.paymentApi.createCharge(charge)
 
     return {
