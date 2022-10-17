@@ -72,8 +72,7 @@ const CaseFile = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          // TODO: Add previous step when ready
-          // previousUrl={`${constants.INVESTIGATION_CASE_POLICE_REPORT_ROUTE}/${workingCase.id}`}
+          previousUrl={`${constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE}/${workingCase.id}`}
           nextUrl={`${constants.INDICTMENTS_OVERVIEW_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoadingWorkingCase}
         />
