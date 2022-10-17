@@ -20,7 +20,17 @@ module.exports = {
       )
 
       await queryInterface.sequelize.query(
-        `UPDATE api_scope SET domain_name = '@island.is' where domain_name IS NULL;`,
+        `INSERT INTO domain
+          (name, description, national_id, display_name, organisation_logo_key)
+          SELECT domain_segment, domain_segment, '', domain_segment, domain_segment
+          FROM (SELECT DISTINCT split_part(name, '/', 1) AS domain_segment FROM api_scope WHERE domain_name IS null) t
+          WHERE NOT EXISTS (SELECT 0 FROM domain WHERE name = t.domain_segment);`,
+        { transaction },
+      )
+
+      await queryInterface.sequelize.query(
+        `UPDATE api_scope SET domain_name = split_part(name, '/', 1)
+        WHERE domain_name IS null;`,
         { transaction },
       )
 
@@ -30,7 +40,6 @@ module.exports = {
         {
           type: Sequelize.STRING,
           allowNull: false,
-          defaultValue: '@island.is',
         },
         { transaction },
       )

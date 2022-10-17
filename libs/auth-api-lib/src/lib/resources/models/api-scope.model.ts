@@ -99,7 +99,6 @@ export class ApiScope extends Model<ModelAttributes, CreationAttributes> {
   @Column({
     type: DataType.STRING,
     allowNull: false,
-    defaultValue: '@island.is',
   })
   @ApiProperty({ example: '@island.is' })
   @ForeignKey(() => Domain)
