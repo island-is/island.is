@@ -151,7 +151,8 @@ const PoliceCaseFiles: React.FC<Props> = ({
         files: policeData ? policeData.policeCaseFiles : [],
         isLoading: false,
         hasError: true,
-        errorCode: policeDataError?.graphQLErrors[0]?.extensions?.code as string,
+        errorCode: policeDataError?.graphQLErrors[0]?.extensions
+          ?.code as string,
       })
     }
   }, [
