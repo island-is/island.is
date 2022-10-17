@@ -262,25 +262,24 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
       return
     }
 
-    const restOfChapters: ReorderableItem[] = []
-
-    const getFilePlacement = (file: ReorderableItem) => {
+    const getFilePlacement = (fileId: string, files: ReorderableItem[]) => {
       let [chapter, orderWithinChapter] = [0, 0]
       let counter = 0
+      const fileInFiles = files[files.findIndex((item) => item.id === fileId)]
 
       for (
-        let i = reorderableItems.indexOf(file);
-        reorderableItems[i].chapter === undefined;
+        let i = files.indexOf(fileInFiles);
+        files[i].chapter === undefined;
         i--
       ) {
-        if (reorderableItems[i - 1].isDivider) {
+        if (files[i - 1].isDivider) {
           chapter = -1
           orderWithinChapter = -1
           break
         }
 
-        if (reorderableItems[i - 1].chapter !== undefined) {
-          chapter = reorderableItems[i - 1].chapter || 0 // The "|| 0" part of this line is to silence a TS error
+        if (files[i - 1].chapter !== undefined) {
+          chapter = files[i - 1].chapter || 0 // The "|| 0" part of this line is to silence a TS error
         }
 
         orderWithinChapter = counter++
@@ -289,37 +288,29 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
       return [chapter, orderWithinChapter]
     }
 
-    const updateRestOfFilesInChapter = (item?: ReorderableItem) => {
-      if (!item) {
-        return
-      }
+    const getFilesBelowInChapter = (
+      fileId: string,
+      files: ReorderableItem[],
+    ) => {
+      const filesBelowInChapter: ReorderableItem[] = []
+      const fileInFiles = files[files.findIndex((item) => item.id === fileId)]
 
-      for (
-        let i = reorderableItems.indexOf(item);
-        i < reorderableItems.length;
-        i++
-      ) {
-        if (
-          reorderableItems[i].chapter !== undefined ||
-          reorderableItems[i].isDivider
-        ) {
+      for (let i = files.indexOf(fileInFiles) + 1; i < files.length; i++) {
+        if (files[i].chapter !== undefined || files[i].isDivider) {
           break
         }
 
-        restOfChapters.push(reorderableItems[i])
+        filesBelowInChapter.push(files[i])
       }
+
+      return filesBelowInChapter
     }
 
     const [chapter, orderWithinChapter] = getFilePlacement(
-      reorderableItems[
-        reorderableItems.findIndex((item) => item.id === fileId)
-      ],
+      fileId,
+      reorderableItems,
     )
-    updateRestOfFilesInChapter(
-      reorderableItems[
-        reorderableItems.findIndex((item) => item.id === fileId) + 1
-      ],
-    )
+    const filesBelowInChapter = getFilesBelowInChapter(fileId, reorderableItems)
 
     // Do not update the order of files if the file is not in a chapter
     if (chapter === -1 || orderWithinChapter === -1) {
@@ -336,7 +327,7 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
               chapter,
               orderWithinChapter,
             },
-            ...restOfChapters.map((item, index) => {
+            ...(filesBelowInChapter || []).map((item, index) => {
               return {
                 id: item.id,
                 chapter,
