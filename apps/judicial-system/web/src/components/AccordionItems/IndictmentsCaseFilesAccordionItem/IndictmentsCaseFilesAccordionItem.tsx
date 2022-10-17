@@ -201,7 +201,7 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
       })
   }
 
-  const [items, setItems] = useState<ReorderableItem[]>([
+  const [reorderableItems, setReorderableItems] = useState<ReorderableItem[]>([
     {
       displayText: formatMessage(m.chapterIndictmentAndAccompanyingDocuments),
       chapter: 0,
@@ -264,19 +264,23 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
 
     const restOfChapters: ReorderableItem[] = []
 
-    const chapters = (item: ReorderableItem) => {
+    const getFilePlacement = (file: ReorderableItem) => {
       let [chapter, orderWithinChapter] = [0, 0]
       let counter = 0
 
-      for (let i = items.indexOf(item); items[i].chapter === undefined; i--) {
-        if (items[i - 1].isDivider) {
+      for (
+        let i = reorderableItems.indexOf(file);
+        reorderableItems[i].chapter === undefined;
+        i--
+      ) {
+        if (reorderableItems[i - 1].isDivider) {
           chapter = -1
           orderWithinChapter = -1
           break
         }
 
-        if (items[i - 1].chapter !== undefined) {
-          chapter = items[i - 1].chapter || 0 // The "|| 0" part of this line is to silence a TS error
+        if (reorderableItems[i - 1].chapter !== undefined) {
+          chapter = reorderableItems[i - 1].chapter || 0 // The "|| 0" part of this line is to silence a TS error
         }
 
         orderWithinChapter = counter++
@@ -290,20 +294,31 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
         return
       }
 
-      for (let i = items.indexOf(item); i < items.length; i++) {
-        if (items[i].chapter !== undefined || items[i].isDivider) {
+      for (
+        let i = reorderableItems.indexOf(item);
+        i < reorderableItems.length;
+        i++
+      ) {
+        if (
+          reorderableItems[i].chapter !== undefined ||
+          reorderableItems[i].isDivider
+        ) {
           break
         }
 
-        restOfChapters.push(items[i])
+        restOfChapters.push(reorderableItems[i])
       }
     }
 
-    const [chapter, orderWithinChapter] = chapters(
-      items[items.findIndex((item) => item.id === fileId)],
+    const [chapter, orderWithinChapter] = getFilePlacement(
+      reorderableItems[
+        reorderableItems.findIndex((item) => item.id === fileId)
+      ],
     )
     updateRestOfFilesInChapter(
-      items[items.findIndex((item) => item.id === fileId) + 1],
+      reorderableItems[
+        reorderableItems.findIndex((item) => item.id === fileId) + 1
+      ],
     )
 
     // Do not update the order of files if the file is not in a chapter
@@ -352,11 +367,11 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
       )}
       <Reorder.Group
         axis="y"
-        values={items}
-        onReorder={setItems}
+        values={reorderableItems}
+        onReorder={setReorderableItems}
         className={styles.reorderGroup}
       >
-        {items.map((item, index) => {
+        {reorderableItems.map((item, index) => {
           return (
             <Box
               key={`${item.displayText}-${policeCaseNumber}`}
@@ -373,7 +388,7 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
         })}
       </Reorder.Group>
       <AnimatePresence>
-        {items[items.length - 1].isDivider && (
+        {reorderableItems[reorderableItems.length - 1].isDivider && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
