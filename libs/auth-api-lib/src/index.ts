@@ -27,6 +27,7 @@ export * from './lib/delegations/models/delegation.model'
 export * from './lib/delegations/models/delegation-scope.model'
 export * from './lib/delegations/DelegationConfig'
 export * from './lib/delegations/utils/compareScopes'
+export * from './lib/types/defaultDomain'
 
 // Resources module
 export * from './lib/resources/resources.module'
