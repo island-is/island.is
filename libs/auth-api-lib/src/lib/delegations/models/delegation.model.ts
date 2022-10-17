@@ -2,18 +2,21 @@ import {
   Column,
   CreatedAt,
   DataType,
+  ForeignKey,
   HasMany,
   Model,
   PrimaryKey,
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
+import { DEFAULT_DOMAIN } from '../../types/defaultDomain'
 import {
   DelegationDTO,
   DelegationProvider,
   DelegationType,
 } from '../dto/delegation.dto'
 import { DelegationScope } from './delegation-scope.model'
+import { Domain } from '../../resources/models/domain.model'
 
 @Table({
   tableName: 'delegation',
@@ -51,6 +54,14 @@ export class Delegation extends Model {
     allowNull: false,
   })
   toName!: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    defaultValue: DEFAULT_DOMAIN,
+  })
+  @ForeignKey(() => Domain)
+  domainName!: string
 
   get validTo(): Date | null | undefined {
     // 1. Find a value with null as validTo. Null means that delegation scope set valid not to a specific time period
@@ -95,6 +106,7 @@ export class Delegation extends Model {
         : [],
       provider: DelegationProvider.Custom,
       type: DelegationType.Custom,
+      domainName: this.domainName,
     }
   }
 }

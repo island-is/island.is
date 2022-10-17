@@ -22,7 +22,7 @@ export const sectionCemetryCaretaker = buildSection({
     const applicationAnswers = answers as FinancialStatementsInao
     const careTakerLimit =
       applicationAnswers.cemetryOperation?.incomeLimit ?? '0'
-    const currentAssets = applicationAnswers.cemetryAsset?.current
+    const currentAssets = applicationAnswers.cemetryAsset?.fixedAssetsTotal
     const totalIncome = applicationAnswers.cemetryIncome?.total
     const longTermDebt = applicationAnswers.cemetryLiability?.longTerm
     const isUnderLimit =
