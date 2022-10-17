@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common'
 import {
   ApplicationService,
-  Application,
+  ApplicationWithPaymentId as ApplicationMetaData,
 } from '@island.is/application/api/core'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
@@ -10,10 +10,7 @@ import { FileService } from '@island.is/application/api/files'
 
 export interface ApplicationPruning {
   pruned: boolean
-  application: Pick<
-    Application,
-    'id' | 'attachments' | 'answers' | 'externalData'
-  >
+  application: ApplicationMetaData
   failedAttachments: object
   failedExternalData: object
 }
@@ -47,10 +44,7 @@ export class ApplicationLifeCycleService {
   }
 
   private async fetchApplicationsToBePruned() {
-    const applications = (await this.applicationService.findAllDueToBePruned()) as Pick<
-      Application,
-      'id' | 'attachments' | 'answers' | 'externalData'
-    >[]
+    const applications = (await this.applicationService.findAllDueToBePruned()) as ApplicationMetaData[]
 
     this.logger.info(`Found ${applications.length} applications to be pruned.`)
 
@@ -80,13 +74,16 @@ export class ApplicationLifeCycleService {
   }
 
   private async pruneApplicationCharge() {
-    for (const prune of this.processingApplications) {
+    for (const prune of this.processingApplications.filter(
+      (application) => !!application.application.paymentId,
+    )) {
       try {
         await this.applicationChargeService.deleteCharge(prune.application)
+        this.logger.info(`
+          deleted charge from application Id : ${prune.application.id} , chargeId: ${prune.application.paymentId}          
+        `)
       } catch (error) {
-        const chargeId = this.applicationChargeService.getChargeId(
-          prune.application,
-        )
+        const chargeId = prune.application.paymentId
         if (chargeId) {
           prune.failedExternalData = {
             createCharge: {

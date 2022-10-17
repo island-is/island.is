@@ -66,22 +66,24 @@ export class PaymentService {
       this.paymentConfig.callbackAdditionUrl +
       payment.id
 
-    const parsedDefinition = JSON.parse(
-      (payment.definition as unknown) as string,
-    )
+    const parsedDefinition =
+      typeof payment.definition === 'string' // this is a hack to get around the fact that the definition is stored as a string in the database but as an object in during testing
+        ? JSON.parse((payment.definition as unknown) as string)
+        : JSON.parse(JSON.stringify(payment.definition))
+
     const charge: Charge = {
       // TODO: this needs to be unique, but can only handle 22 or 23 chars
       // should probably be an id or token from the DB charge once implemented
       chargeItemSubject: payment.id.substring(0, 22),
       systemID: 'ISL',
       // The OR values can be removed later when the system will be more robust.
-      performingOrgID: parsedDefinition.performingOrganiationID,
+      performingOrgID: parsedDefinition['performingOrganiationID'],
       payeeNationalID: user.nationalId,
-      chargeType: parsedDefinition.chargeType,
+      chargeType: parsedDefinition['chargeType'],
       performerNationalID: user.nationalId,
       charges: [
         {
-          chargeItemCode: parsedDefinition.chargeItemCode,
+          chargeItemCode: parsedDefinition['chargeItemCode'],
           quantity: 1,
           priceAmount: payment.amount,
           amount: payment.amount,

@@ -9,6 +9,13 @@ import {
   ApplicationLifecycle,
 } from '@island.is/application/types'
 import { Application } from './application.model'
+import { Payment } from './payment.model'
+
+export interface ApplicationWithPaymentId {
+  id: string
+  attachments?: object
+  paymentId?: string
+}
 
 const applicationIsNotSetToBePruned = () => ({
   [Op.or]: [
@@ -42,6 +49,8 @@ export class ApplicationService {
   constructor(
     @InjectModel(Application)
     private applicationModel: typeof Application,
+    @InjectModel(Payment)
+    private paymentModel: typeof Payment,
     private sequelize: Sequelize,
   ) {}
 
@@ -148,11 +157,9 @@ export class ApplicationService {
     })
   }
 
-  async findAllDueToBePruned(): Promise<
-    Pick<Application, 'id' | 'attachments' | 'externalData'>[]
-  > {
-    return this.applicationModel.findAll({
-      attributes: ['id', 'attachments', 'externalData'],
+  async findAllDueToBePruned(): Promise<ApplicationWithPaymentId[]> {
+    const result = await this.applicationModel.findAll({
+      attributes: ['id', 'attachments'],
       where: {
         [Op.and]: {
           pruneAt: {
@@ -166,7 +173,17 @@ export class ApplicationService {
           },
         },
       },
+      include: {
+        model: this.paymentModel,
+        attributes: ['id'],
+      },
     })
+
+    return result.map((application) => ({
+      id: application.id,
+      attachments: application.attachments,
+      paymentId: application.payment?.id,
+    }))
   }
 
   /**

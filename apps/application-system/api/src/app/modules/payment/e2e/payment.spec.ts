@@ -8,12 +8,34 @@ import { createCurrentUser } from '@island.is/testing/fixtures'
 import { setup } from '../../../../../test/setup'
 import { PaymentAPI } from '@island.is/clients/payment'
 import { CreateChargeInput } from '../dto/createChargeInput.dto'
-import { PaymentService } from '../payment.service'
 import { AppModule } from '../../../app.module'
+import { ApplicationTypes } from '@island.is/application/types'
+import { ContentfulRepository } from '@island.is/cms'
 
 let app: INestApplication
 
 const TARGET_CHARGE_ITEM_CODE = 'asdf'
+
+class MockContentfulRepository {
+  async getLocalizedEntries() {
+    return {
+      items: [
+        {
+          fields: [
+            {
+              fields: {
+                strings: {
+                  en: {},
+                  'is-IS': {},
+                },
+              },
+            },
+          ],
+        },
+      ],
+    }
+  }
+}
 
 class MockPaymentApi {
   async createCharge() {
@@ -36,44 +58,6 @@ class MockPaymentApi {
   }
 }
 
-// TODO: mock the client instead - we are essentially not testing the service
-class MockPaymentService {
-  async findApplicationById() {
-    return {
-      typeId: 'DrivingLicense',
-    }
-  }
-
-  async findChargeItem() {
-    return {
-      performingOrgID: faker.datatype.number(),
-      chargeType: faker.random.word(),
-      chargeItemCode: TARGET_CHARGE_ITEM_CODE,
-      chargeItemName: faker.random.word(),
-      priceAmount: faker.datatype.number(),
-    }
-  }
-
-  async createCharge() {
-    return {
-      user4: 'amazing-user4-code-for-url',
-      receptionID: '96b5333b-6666-9999-1111-e8feb01d3dcd',
-      paymentUrl: 'www.nice-url.island.is',
-    }
-  }
-
-  makePaymentUrl() {
-    return 'asdf'
-  }
-
-  async findPaymentByApplicationId() {
-    return {
-      fulfilled: true,
-      user4: 'amazing-user4-code-for-url',
-    }
-  }
-}
-
 let server: request.SuperTest<request.Test>
 const nationalId = createCurrentUser().nationalId
 
@@ -81,6 +65,8 @@ beforeAll(async () => {
   app = await setup(AppModule, {
     override: (builder) =>
       builder
+        .overrideProvider(ContentfulRepository)
+        .useClass(MockContentfulRepository)
         .overrideProvider(PaymentAPI)
         .useClass(MockPaymentApi)
         .overrideGuard(IdsUserGuard)
@@ -89,9 +75,7 @@ beforeAll(async () => {
             nationalId,
             scope: [ApplicationScope.read, ApplicationScope.write],
           }),
-        )
-        .overrideProvider(PaymentService)
-        .useClass(MockPaymentService),
+        ),
   })
 
   server = request(app.getHttpServer())
@@ -99,10 +83,18 @@ beforeAll(async () => {
 
 describe('Application system payments API', () => {
   // Creating a new application
-  it(`POST /application/96b5237b-6896-4154-898d-e8feb01d3dcd/payment should create a payment object`, async () => {
+  it(`POST /application/{id}/payment should create a payment object and get fulfilled status`, async () => {
     // Act
+
+    const applicationResponse = await server
+      .post('/applications')
+      .send({
+        typeId: ApplicationTypes.DRIVING_LICENSE,
+      })
+      .expect(201)
+
     const response = await server
-      .post('/applications/96b5237b-6896-4154-898d-d8feb01d3dcd/payment')
+      .post(`/applications/${applicationResponse.body.id}/payment`)
       .send({
         chargeItemCode: TARGET_CHARGE_ITEM_CODE,
       } as CreateChargeInput)
@@ -110,6 +102,13 @@ describe('Application system payments API', () => {
 
     // Assert
     expect(response.body.paymentUrl).toBeTruthy()
+
+    await server
+      .get(`/applications/${applicationResponse.body.id}/payment-status`)
+      .send({
+        applicationId: applicationResponse.body.id,
+      })
+      .expect(200)
   })
 
   // Should fail creating payment due to bad application ID.
@@ -130,15 +129,5 @@ describe('Application system payments API', () => {
       .expect(400)
 
     expect(response.body.fulfilled).toBeFalsy
-  })
-
-  // Getting the payment status
-  it(`GET /application/96b5237b-6896-4154-898d-d8feb01d3dcd/payment-status should get payment fulfilled status`, async () => {
-    await server
-      .get('/applications/96b5237b-6896-4154-898d-d8feb01d3dcd/payment-status')
-      .send({
-        applicationId: '96b5237b-6896-4154-898d-d8feb01d3dcd',
-      })
-      .expect(200)
   })
 })

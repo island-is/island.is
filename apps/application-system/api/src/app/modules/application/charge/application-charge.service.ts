@@ -1,5 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { Application } from '@island.is/application/api/core'
+import {
+  Application,
+  ApplicationWithPaymentId,
+} from '@island.is/application/api/core'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { ChargeFjsV2ClientService } from '@island.is/clients/charge-fjs-v2'
@@ -17,7 +20,7 @@ export class ApplicationChargeService {
     this.logger = logger.child({ context: 'ApplicationChargeService' })
   }
 
-  async deleteCharge(application: Pick<Application, 'id' | 'externalData'>) {
+  async deleteCharge(application: ApplicationWithPaymentId) {
     try {
       const payment = await this.paymentService.findPaymentByApplicationId(
         application.id,
@@ -29,13 +32,13 @@ export class ApplicationChargeService {
       }
 
       // Delete the charge, using the ID we got from FJS
-      const chargeId = this.getChargeId(application)
+      const chargeId = application.paymentId
       if (chargeId) {
         await this.chargeFjsV2ClientService.deleteCharge(chargeId)
       }
     } catch (error) {
       this.logger.error(
-        `Application charge delete error on id ${application.id}`,
+        `Application charge delete error on application id ${application.id}`,
         error,
       )
 

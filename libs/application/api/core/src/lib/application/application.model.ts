@@ -2,6 +2,8 @@ import {
   Column,
   CreatedAt,
   DataType,
+  HasMany,
+  HasOne,
   Model,
   Table,
   UpdatedAt,
@@ -11,6 +13,7 @@ import {
   ApplicationTypes,
   ApplicationStatus,
 } from '@island.is/application/types'
+import { Payment } from './payment.model'
 
 @Table({
   tableName: 'application',
@@ -133,4 +136,7 @@ export class Application extends Model {
   })
   @ApiProperty()
   assignNonces!: string[]
+
+  @HasMany(() => Payment)
+  payment!: Payment | null
 }

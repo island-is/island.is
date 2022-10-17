@@ -153,6 +153,13 @@
         "parallel": false
       }
     },
+    "seed": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "../../../node_modules/.bin/sequelize-cli db:seed:all",
+        "cwd": "apps/application-system/api"
+      }
+    },
     "dev": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
