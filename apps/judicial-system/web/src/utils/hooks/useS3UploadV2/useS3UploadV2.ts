@@ -28,9 +28,8 @@ const createFormData = (presignedPost: PresignedPost, file: File): FormData => {
 
 const uploadToS3 = (
   file: File,
-  id: string,
   presignedPost: PresignedPost,
-  updateFile: (uploadFile: UploadFile) => void,
+  onProgress: (percent: number) => void,
 ) => {
   const promise = new Promise((resolve, reject) => {
     const request = new XMLHttpRequest()
@@ -39,22 +38,12 @@ const uploadToS3 = (
 
     request.upload.addEventListener('progress', (event) => {
       if (event.lengthComputable) {
-        updateFile({
-          id,
-          name: file.name,
-          percent: (event.loaded / event.total) * 100,
-          status: 'uploading',
-        })
+        onProgress((event.loaded / event.total) * 100)
       }
     })
 
     request.upload.addEventListener('error', (event) => {
       if (event.lengthComputable) {
-        updateFile({
-          id,
-          name: file.name,
-          status: 'error',
-        })
         reject()
       }
     })
@@ -63,11 +52,6 @@ const uploadToS3 = (
       if (request.status >= 200 && request.status < 300) {
         resolve(file)
       } else {
-        updateFile({
-          id,
-          name: file.name,
-          status: 'error',
-        })
         reject()
       }
     })
@@ -98,7 +82,7 @@ export const useS3UploadV2 = (
   >(DeleteFileMutationDocument)
 
   const upload = useCallback(
-    (files: Array<[File, string]>, updateFile) => {
+    (files: Array<[File, string]>, updateFile: (file: UploadFile) => void) => {
       files.forEach(async ([file, id]) => {
         try {
           const data = await createPresignedMutation({
@@ -115,7 +99,14 @@ export const useS3UploadV2 = (
           }
 
           const presignedPost = data.data.createPresignedPost
-          await uploadToS3(file, id, presignedPost, updateFile)
+          await uploadToS3(file, presignedPost, (percent) => {
+            updateFile({
+              id,
+              name: file.name,
+              percent,
+              status: 'uploading',
+            })
+          })
 
           const data2 = await addFileToCaseMutation({
             variables: {
