@@ -9,10 +9,12 @@ interface BaseMessage {
 
 interface SystemAuditMessage extends BaseMessage {
   system: true
+  auth?: never
 }
 
 interface DefaultAuditMessage extends BaseMessage {
   auth: Auth
+  system?: never
 }
 
 export type AuditMessage = SystemAuditMessage | DefaultAuditMessage

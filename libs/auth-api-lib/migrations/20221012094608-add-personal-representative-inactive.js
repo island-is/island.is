@@ -2,18 +2,21 @@
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    return Promise.all([
-      queryInterface.addColumn('personal_representative', 'inactive', {
-        type: Sequelize.BOOLEAN,
-        allowNull: false,
-        defaultValue: false,
-      }),
-      queryInterface.addColumn('personal_representative', 'inactiveReason', {
+    await queryInterface.addColumn('personal_representative', 'inactive', {
+      type: Sequelize.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    })
+
+    await queryInterface.addColumn(
+      'personal_representative',
+      'inactiveReason',
+      {
         type: Sequelize.ENUM('DECEASED_PARTY'),
         defaultValue: null,
         allowNull: true,
-      }),
-    ])
+      },
+    )
   },
 
   async down(queryInterface) {
