@@ -74,13 +74,13 @@ export class PaymentService {
       chargeItemSubject: payment.id.substring(0, 22),
       systemID: 'ISL',
       // The OR values can be removed later when the system will be more robust.
-      performingOrgID: parsedDefinition.performingOrganiationID,
+      performingOrgID: parsedDefinition['performingOrganiationID'],
       payeeNationalID: user.nationalId,
-      chargeType: parsedDefinition.chargeType,
+      chargeType: parsedDefinition['chargeType'],
       performerNationalID: user.nationalId,
       charges: [
         {
-          chargeItemCode: parsedDefinition.chargeItemCode,
+          chargeItemCode: parsedDefinition['chargeItemCode'],
           quantity: 1,
           priceAmount: payment.amount,
           amount: payment.amount,
