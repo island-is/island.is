@@ -190,17 +190,14 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
         }
       })
       .sort((a, b) => {
-        if (!a.orderWithinChapter || !b.orderWithinChapter) {
+        if (
+          a.orderWithinChapter === undefined ||
+          b.orderWithinChapter === undefined
+        ) {
           return 0
         }
 
-        if (a.orderWithinChapter < b.orderWithinChapter) {
-          return 1
-        } else if (a.orderWithinChapter > b.orderWithinChapter) {
-          return -1
-        } else {
-          return 0
-        }
+        return a.orderWithinChapter - b.orderWithinChapter
       })
   }
 
