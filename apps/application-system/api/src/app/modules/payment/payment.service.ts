@@ -13,8 +13,6 @@ import { CreateChargeResult } from './payment.type'
 import { logger } from '@island.is/logging'
 import { ApolloError } from 'apollo-server-express'
 import { Application as ApplicationModel } from '@island.is/application/api/core'
-import { unknown } from 'zod'
-import { classNames } from 'react-select/src/utils'
 
 const handleError = async (error: any) => {
   logger.error(JSON.stringify(error))
