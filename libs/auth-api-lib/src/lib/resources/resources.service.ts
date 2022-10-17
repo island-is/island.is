@@ -570,14 +570,7 @@ export class ResourcesService {
   async createApiScope(apiScope: ApiScopesDTO): Promise<ApiScope> {
     this.logger.debug('Creating a new api scope')
 
-    if (apiScope.groupId) {
-      const scopeGroup = await this.apiScopeGroupModel.findByPk(
-        apiScope.groupId,
-      )
-      if (await this.isDomainDifferentFromGroup(apiScope)) {
-        throw new BadRequestException('Scope domain must match group domain.')
-      }
-    }
+    await this.assertSameAsGroup(apiScope)
 
     return await this.apiScopeModel.create({ ...apiScope })
   }
@@ -593,9 +586,7 @@ export class ResourcesService {
       throw new BadRequestException('Name must be provided')
     }
 
-    if (await this.isDomainDifferentFromGroup(apiScope)) {
-      throw new BadRequestException('Scope domain must match group domain.')
-    }
+    await this.assertSameAsGroup(apiScope)
 
     await this.apiScopeModel.update({ ...apiScope }, { where: { name: name } })
 
@@ -901,9 +892,7 @@ export class ResourcesService {
     group: ApiScopeGroupDTO,
     id: string,
   ): Promise<[number, ApiScopeGroup[]]> {
-    if (await this.isDomainDifferentFromScopes(id, group)) {
-      throw new BadRequestException('Group domain must match scopes domain.')
-    }
+    await this.assertSameAsScopes(id, group)
 
     return this.apiScopeGroupModel.update(
       { ...group },
@@ -1063,30 +1052,22 @@ export class ResourcesService {
     return groups
   }
 
-  private async isDomainDifferentFromGroup(
-    apiScope: ApiScopesDTO,
-  ): Promise<boolean> {
+  private async assertSameAsGroup(apiScope: ApiScopesDTO) {
     if (apiScope.groupId) {
       const scopeGroup = await this.apiScopeGroupModel.findByPk(
         apiScope.groupId,
       )
       if (apiScope && apiScope.domainName !== scopeGroup?.domain?.name)
-        return true
+        throw new BadRequestException('Scope domain must match group domain.')
     }
-
-    return false
   }
 
-  private async isDomainDifferentFromScopes(
-    id: string,
-    group: ApiScopeGroupDTO,
-  ): Promise<boolean> {
+  private async assertSameAsScopes(id: string, group: ApiScopeGroupDTO) {
     const apiScope = await this.apiScopeModel.findOne({
       where: { groupId: id },
     })
 
-    if (apiScope && apiScope.domainName !== group.domainName) return true
-
-    return false
+    if (apiScope && apiScope.domainName !== group.domainName)
+      throw new BadRequestException('Group domain must match scopes domain.')
   }
 }
