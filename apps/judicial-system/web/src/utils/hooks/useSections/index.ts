@@ -286,13 +286,13 @@ const useSections = () => {
               type: 'SUB_SECTION',
               name: capitalize(
                 formatMessage(
-                  sections.indictmentCaseProsecutorSection.caseFile,
+                  sections.indictmentCaseProsecutorSection.policeCaseFiles,
                 ),
               ),
               href:
                 isDefendantStepValidForSidebarIndictments(workingCase) &&
                 isProcessingStepValidIndictments(workingCase)
-                  ? `${constants.INDICTMENTS_CASE_FILE_ROUTE}/${id}`
+                  ? `${constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE}/${id}`
                   : undefined,
             },
             {

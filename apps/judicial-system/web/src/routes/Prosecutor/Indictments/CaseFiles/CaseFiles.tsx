@@ -137,7 +137,7 @@ const CaseFiles: React.FC = () => {
             onRetry={handleRetry}
           />
         </Box>
-        <Box component="section" marginBottom={5}>
+        <Box component="section" marginBottom={7}>
           <Box marginBottom={3} display="inlineFlex">
             <Text variant="h3" as="h3">
               {formatMessage(strings.caseFiles.sections.costBreakdown)}
@@ -165,67 +165,11 @@ const CaseFiles: React.FC = () => {
             onRetry={handleRetry}
           />
         </Box>
-        <Box component="section" marginBottom={5}>
-          <Box marginBottom={3} display="inlineFlex">
-            <Text variant="h3" as="h3">
-              {formatMessage(strings.caseFiles.sections.caseFileContents)}
-            </Text>
-          </Box>
-          <Text color="red400" as="span" variant="h3">
-            {` *`}
-          </Text>
-
-          <InputFileUpload
-            fileList={files.filter(
-              (file) => file.category === CaseFileCategory.CASE_FILE_CONTENTS,
-            )}
-            header={formatMessage(strings.caseFiles.sections.inputFieldLabel)}
-            buttonLabel={formatMessage(strings.caseFiles.sections.buttonLabel)}
-            onChange={(files) =>
-              handleS3Upload(
-                files,
-                false,
-                CaseFileCategory.CASE_FILE_CONTENTS,
-                workingCase.policeCaseNumbers[0],
-              )
-            }
-            onRemove={handleRemoveFromS3}
-            onRetry={handleRetry}
-          />
-        </Box>
-        <Box component="section" marginBottom={10}>
-          <Box marginBottom={3} display="inlineFlex">
-            <Text variant="h3" as="h3">
-              {formatMessage(strings.caseFiles.sections.caseFile)}
-            </Text>
-          </Box>
-          <Text color="red400" as="span" variant="h3">
-            {` *`}
-          </Text>
-
-          <InputFileUpload
-            fileList={files.filter(
-              (file) => file.category === CaseFileCategory.CASE_FILE,
-            )}
-            header={formatMessage(strings.caseFiles.sections.inputFieldLabel)}
-            buttonLabel={formatMessage(strings.caseFiles.sections.buttonLabel)}
-            onChange={(files) =>
-              handleS3Upload(
-                files,
-                false,
-                CaseFileCategory.CASE_FILE,
-                workingCase.policeCaseNumbers[0],
-              )
-            }
-            onRemove={handleRemoveFromS3}
-            onRetry={handleRetry}
-          />
-        </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${constants.INDICTMENTS_PROCESSING_ROUTE}/${workingCase.id}`}
-          nextUrl={`${constants.INDICTMENTS_CASE_FILE_ROUTE}/${workingCase.id}`}
+          nextUrl={`${constants.INDICTMENTS_CASE_FILES_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!allFilesUploaded}
           nextIsLoading={isLoadingWorkingCase}
         />
