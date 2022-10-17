@@ -284,6 +284,33 @@
       "@island.is/application/templates/reference-template": [
         "libs/application/templates/reference-template/src/index.ts"
       ],
+      "@island.is/application/templates/transport-authority/anonymity-in-vehicle-registry": [
+        "libs/application/templates/transport-authority/anonymity-in-vehicle-registry/src/index.ts"
+      ],
+      "@island.is/application/templates/transport-authority/change-co-owner-of-vehicle": [
+        "libs/application/templates/transport-authority/change-co-owner-of-vehicle/src/index.ts"
+      ],
+      "@island.is/application/templates/transport-authority/change-operator-of-vehicle": [
+        "libs/application/templates/transport-authority/change-operator-of-vehicle/src/index.ts"
+      ],
+      "@island.is/application/templates/transport-authority/digital-tachograph-company-card": [
+        "libs/application/templates/transport-authority/digital-tachograph-company-card/src/index.ts"
+      ],
+      "@island.is/application/templates/transport-authority/digital-tachograph-drivers-card": [
+        "libs/application/templates/transport-authority/digital-tachograph-drivers-card/src/index.ts"
+      ],
+      "@island.is/application/templates/transport-authority/digital-tachograph-workshop-card": [
+        "libs/application/templates/transport-authority/digital-tachograph-workshop-card/src/index.ts"
+      ],
+      "@island.is/application/templates/transport-authority/order-vehicle-license-plate": [
+        "libs/application/templates/transport-authority/order-vehicle-license-plate/src/index.ts"
+      ],
+      "@island.is/application/templates/transport-authority/order-vehicle-registration-certificate": [
+        "libs/application/templates/transport-authority/order-vehicle-registration-certificate/src/index.ts"
+      ],
+      "@island.is/application/templates/transport-authority/transfer-of-vehicle-ownership": [
+        "libs/application/templates/transport-authority/transfer-of-vehicle-ownership/src/index.ts"
+      ],
       "@island.is/application/types": ["libs/application/types/src/index.ts"],
       "@island.is/application/ui-components": [
         "libs/application/ui-components/src/index.ts"
@@ -466,6 +493,7 @@
       "@island.is/nest/audit": ["libs/nest/audit/src/index.ts"],
       "@island.is/nest/aws": ["libs/nest/aws/src/index.ts"],
       "@island.is/nest/config": ["libs/nest/config/src/index.ts"],
+      "@island.is/nest/dataloader": ["libs/nest/dataloader/src/index.ts"],
       "@island.is/nest/feature-flags": ["libs/nest/feature-flags/src/index.ts"],
       "@island.is/nest/pagination": ["libs/nest/pagination/src/index.ts"],
       "@island.is/nest/problem": ["libs/nest/problem/src/index.ts"],

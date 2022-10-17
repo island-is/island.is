@@ -75,7 +75,7 @@ const HearingArrangements: React.FC = () => {
         title={formatMessage(titles.court.indictments.prosecutorAndDefender)}
       />
       <FormContentContainer>
-        <PageTitle title={formatMessage(m.title)} />
+        <PageTitle>{formatMessage(m.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={5}>
           <SectionHeading title={formatMessage(m.selectProsecutorHeading)} />

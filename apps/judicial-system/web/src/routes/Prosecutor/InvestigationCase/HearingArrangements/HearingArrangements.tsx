@@ -198,7 +198,7 @@ const HearingArrangements = () => {
                 onBlur={(event) =>
                   validateAndSendToServer(
                     'translator',
-                    event.target.value,
+                    event.target.value.trim(),
                     [],
                     workingCase,
                     updateCase,

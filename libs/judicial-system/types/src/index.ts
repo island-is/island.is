@@ -30,6 +30,7 @@ export type {
   UploadFileToCourt,
   UploadFileToCourtResponse,
   CaseFile,
+  UpdateFile,
   CreateFile,
 } from './lib/file'
 

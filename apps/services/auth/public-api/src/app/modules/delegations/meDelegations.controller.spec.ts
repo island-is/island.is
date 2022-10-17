@@ -34,8 +34,12 @@ import {
 } from '../../../../test/utils'
 
 const client = createClient({ clientId: '@island.is/webapp' })
+const actorNationalId = createNationalId('person')
 const user = createCurrentUser({
-  nationalId: '1122334455',
+  nationalId: createNationalId(),
+  actor: {
+    nationalId: actorNationalId,
+  },
   scope: [
     AuthScope.delegations,
     Scopes[0].name,
@@ -133,6 +137,22 @@ const mockDelegations = {
     scopes: [Scopes[5].name],
     today,
   }),
+  // Valid outgoing delegation to actor
+  validOutgoingToActor: createDelegation({
+    fromNationalId: user.nationalId,
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    toNationalId: actorNationalId,
+    scopes: [Scopes[0].name],
+    today,
+  }),
+  // Valid outgoing delegation on other domain
+  otherDomain: createDelegation({
+    fromNationalId: user.nationalId,
+    toNationalId: '1234567890',
+    scopes: [Scopes[0].name],
+    today,
+    domainName: 'otherdomain',
+  }),
 }
 
 beforeAll(() => {
@@ -178,7 +198,7 @@ describe('MeDelegationsController', () => {
     })
 
     describe('GET /me/delegations', () => {
-      it('should return all delegations with direction=outgoing', async () => {
+      it('should return all delegations on default domain with direction=outgoing', async () => {
         // Arrange
         await createDelegationModels(
           delegationModel,
@@ -348,6 +368,21 @@ describe('MeDelegationsController', () => {
         const res = await server.get(
           `${path}?direction=outgoing&otherUser=${mockDelegations.outgoingOnlyOtherDomain.toNationalId}`,
         )
+
+        // Assert
+        expect(res.status).toEqual(200)
+        expect(res.body).toHaveLength(0)
+        expectMatchingObject(res.body, [])
+      })
+
+      it('should not return delegation to the actor', async () => {
+        // Arrange
+        await createDelegationModels(delegationModel, [
+          mockDelegations.validOutgoingToActor,
+        ])
+
+        // Act
+        const res = await server.get(`${path}?direction=outgoing`)
 
         // Assert
         expect(res.status).toEqual(200)
@@ -547,6 +582,33 @@ describe('MeDelegationsController', () => {
         `)
       })
 
+      it('should return 404 not found if delegation is not on default domain', async () => {
+        // Arrange
+        await delegationModel.bulkCreate(Object.values(mockDelegations), {
+          include: [
+            {
+              model: DelegationScope,
+              as: 'delegationScopes',
+            },
+          ],
+        })
+
+        // Act
+        const res = await server.get(
+          `${path}/${mockDelegations.otherDomain.id}`,
+        )
+
+        // Assert
+        expect(res.status).toEqual(404)
+        expect(res.body).toMatchInlineSnapshot(`
+          Object {
+            "status": 404,
+            "title": "Not Found",
+            "type": "https://httpstatuses.org/404",
+          }
+        `)
+      })
+
       it('should return 400 Bad Request if delegationId is not valid uuid', async () => {
         // Arrange
         await createDelegationModels(
@@ -626,6 +688,30 @@ describe('MeDelegationsController', () => {
           type: 'https://httpstatuses.org/400',
           title: 'Bad Request',
           detail: 'User does not have access to the requested scopes.',
+        })
+      })
+
+      it('should return 400 Bad Request when creating delegation to actor', async () => {
+        // Arrange
+        const model = {
+          toNationalId: actorNationalId,
+          scopes: [
+            {
+              name: Scopes[0].name,
+              validTo: addDays(today, 1),
+            },
+          ],
+        }
+        // Act
+        const res = await server.post(path).send(model)
+
+        // Assert
+        expect(res.status).toEqual(400)
+        expect(res.body).toMatchObject({
+          status: 400,
+          type: 'https://httpstatuses.org/400',
+          title: 'Bad Request',
+          detail: 'Can not create delegation to self.',
         })
       })
 
@@ -862,6 +948,38 @@ describe('MeDelegationsController', () => {
           type: 'https://httpstatuses.org/400',
           title: 'Bad Request',
           detail: 'User does not have access to the requested scopes.',
+        })
+      })
+
+      it('should return 400 Bad Request when updating delegation to actor', async () => {
+        // Arrange
+        const { id } = await delegationModel.create(
+          createDelegation({
+            fromNationalId: user.nationalId,
+            toNationalId: actorNationalId,
+            scopes: [],
+            today,
+          }),
+        )
+        const model = {
+          scopes: [
+            {
+              name: Scopes[0].name,
+              validTo: addDays(today, 2),
+            },
+          ],
+        }
+
+        // Act
+        const res = await server.put(`${path}/${id}`).send(model)
+
+        // Assert
+        expect(res.status).toEqual(400)
+        expect(res.body).toMatchObject({
+          status: 400,
+          type: 'https://httpstatuses.org/400',
+          title: 'Bad Request',
+          detail: 'Can not update delegation to self.',
         })
       })
 
