@@ -35,7 +35,6 @@ import {
   VirkLeyfiGetRequest,
   TegundAndlags,
   VedbandayfirlitReguverkiSvarSkeyti,
-  UpplysingarUrDanarbuiSkeyti,
 } from '../../gen/fetch'
 import { SyslumennClientConfig } from './syslumennClient.config'
 import type { ConfigType } from '@island.is/nest/config'

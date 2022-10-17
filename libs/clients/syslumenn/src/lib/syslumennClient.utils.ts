@@ -9,11 +9,10 @@ import {
   AdiliTegund,
   VedbandayfirlitReguverkiSvarSkeyti,
   SkraningaradiliDanarbusSkeyti,
-  SvarSkeytiFromJSON,
   TegundAndlags,
   AdiliDanarbus,
-  UpplysingarUrDanarbuiSkeyti,
   DanarbuUppl,
+  EignirDanarbus,
 } from '../../gen/fetch'
 import { uuid } from 'uuidv4'
 import {
@@ -224,7 +223,7 @@ export const estateMemberMapper = (estateRaw: AdiliDanarbus): EstateMember => {
   }
 }
 
-export const assetMapper = (assetRaw: any): EstateAsset => {
+export const assetMapper = (assetRaw: EignirDanarbus): EstateAsset => {
   return {
     description: assetRaw.lysing ?? '',
     assetNumber: assetRaw.fastanumer ?? '',
@@ -242,28 +241,28 @@ export const mapEstateRegistrant = (
     districtCommissionerHasWill: syslaData.erfdaskraIVorsluSyslumanns ?? false,
     assets: syslaData.eignir
       ? syslaData.eignir
-          .filter((a) => a.tegundAndlags === TegundAndlags.NUMBER_0)
+          .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_0)
           .filter((a) => a?.fastanumer && /^[fF]{0,1}\d{7}$/.test(a.fastanumer))
           .map(assetMapper)
       : [],
     vehicles: syslaData.eignir
       ? syslaData.eignir
-          .filter((a) => a.tegundAndlags === TegundAndlags.NUMBER_1)
+          .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_1)
           .map(assetMapper)
       : [],
     ships: syslaData.eignir
       ? syslaData.eignir
-          .filter((a) => a.tegundAndlags === TegundAndlags.NUMBER_2)
+          .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_2)
           .map(assetMapper)
       : [],
     cash: syslaData.eignir
       ? syslaData.eignir
-          .filter((a) => a.tegundAndlags === TegundAndlags.NUMBER_3)
+          .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_3)
           .map(assetMapper)
       : [],
     flyers: syslaData.eignir
       ? syslaData.eignir
-          .filter((a) => a.tegundAndlags === TegundAndlags.NUMBER_4)
+          .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_4)
           .map(assetMapper)
       : [],
     estateMembers: syslaData.adilarDanarbus
@@ -286,13 +285,6 @@ export const mapEstateRegistrant = (
 // TODO: get updated types into the client
 export const mapEstateInfo = (syslaData: DanarbuUppl): EstateInfo => {
   return {
-    assets: [],
-    cash: [],
-    flyers: [],
-    ships: [],
-    vehicles: [],
-    // TODO: fix once updated types reach the client
-    /*
     assets: syslaData.eignir
       ? syslaData.eignir
           .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_0)
@@ -322,7 +314,6 @@ export const mapEstateInfo = (syslaData: DanarbuUppl): EstateInfo => {
           .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_4)
           .map(assetMapper)
       : [],
-      */
     estateMembers: syslaData.erfingar
       ? syslaData.erfingar.map(estateMemberMapper)
       : [],

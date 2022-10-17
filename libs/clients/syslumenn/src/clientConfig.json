@@ -1775,6 +1775,9 @@
         "lausafjarmunir": {
           "type": "string"
         },
+        "auglysingatexti": {
+          "type": "string"
+        },
         "uppbodStadur": {
           "type": "string"
         }
@@ -2156,9 +2159,9 @@
     },
     "EignirDanarbus": {
       "type": "object",
-      "required": ["tegundAndlags", "eignarhlutfall"],
+      "required": ["tegundAngalgs", "eignarhlutfall"],
       "properties": {
-        "tegundAndlags": {
+        "tegundAngalgs": {
           "$ref": "#/definitions/TegundAndlags"
         },
         "fastanumer": {
@@ -2241,7 +2244,7 @@
         "eignir": {
           "type": "array",
           "items": {
-            "type": "string"
+            "$ref": "#/definitions/EignirDanarbus"
           }
         }
       }
