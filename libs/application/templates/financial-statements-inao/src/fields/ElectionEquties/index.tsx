@@ -69,16 +69,19 @@ export const ElectionEquities = ({
           </Text>
           <Box paddingY={1}>
             <InputController
-              id={EQUITIESANDLIABILITIESIDS.current}
-              name={EQUITIESANDLIABILITIESIDS.current}
+              id={EQUITIESANDLIABILITIESIDS.fixedAssetsTotal}
+              name={EQUITIESANDLIABILITIESIDS.fixedAssetsTotal}
               error={
                 errors &&
-                getErrorViaPath(errors, EQUITIESANDLIABILITIESIDS.current)
+                getErrorViaPath(
+                  errors,
+                  EQUITIESANDLIABILITIESIDS.fixedAssetsTotal,
+                )
               }
-              label={formatMessage(m.currentAssets)}
+              label={formatMessage(m.fixedAssetsTotal)}
               onChange={debounce(() => {
                 getTotalAssets()
-                clearErrors(EQUITIESANDLIABILITIESIDS.current)
+                clearErrors(EQUITIESANDLIABILITIESIDS.fixedAssetsTotal)
               }, INPUTCHANGEINTERVAL)}
               backgroundColor="blue"
               currency
@@ -86,17 +89,17 @@ export const ElectionEquities = ({
           </Box>
           <Box paddingY={1}>
             <InputController
-              id={EQUITIESANDLIABILITIESIDS.tangible}
-              name={EQUITIESANDLIABILITIESIDS.tangible}
+              id={EQUITIESANDLIABILITIESIDS.currentAssets}
+              name={EQUITIESANDLIABILITIESIDS.currentAssets}
               error={
                 errors &&
-                getErrorViaPath(errors, EQUITIESANDLIABILITIESIDS.tangible)
+                getErrorViaPath(errors, EQUITIESANDLIABILITIESIDS.currentAssets)
               }
               onChange={debounce(() => {
                 getTotalAssets()
-                clearErrors(EQUITIESANDLIABILITIESIDS.tangible)
+                clearErrors(EQUITIESANDLIABILITIESIDS.currentAssets)
               }, INPUTCHANGEINTERVAL)}
-              label={formatMessage(m.tangibleAssets)}
+              label={formatMessage(m.currentAssets)}
               backgroundColor="blue"
               currency
             />
