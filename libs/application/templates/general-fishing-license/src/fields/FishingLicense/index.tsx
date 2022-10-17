@@ -7,19 +7,20 @@ import {
   FishingLicenseLicense as FishingLicenseSchema,
   FishingLicenseShip as Ship,
 } from '@island.is/api/schema'
-import { useQuery } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client'
 import { queryFishingLicense } from '../../graphql/queries'
 import { RadioController } from '@island.is/shared/form-fields'
 import { fishingLicense } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { useFormContext } from 'react-hook-form'
+import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 
 export const FishingLicense: FC<FieldBaseProps> = ({
   application,
   field,
   errors,
 }) => {
-  const { formatMessage } = useLocale()
+  const { formatMessage, locale } = useLocale()
   const { register } = useFormContext()
   const selectedChargeType = getValueViaPath(
     application.answers,
@@ -27,6 +28,7 @@ export const FishingLicense: FC<FieldBaseProps> = ({
     ''
   ) as string
   const [chargeType, setChargeType] = useState<string>(selectedChargeType || '')
+  const [updateApplication] = useMutation(UPDATE_APPLICATION)
   const ships = getValueViaPath(
     application.externalData,
     'directoryOfFisheries.data.ships',
@@ -48,8 +50,6 @@ export const FishingLicense: FC<FieldBaseProps> = ({
   })
 
   const ship = ships[parseInt(shipIndex)]
-  const isExpired = new Date(ship.seaworthiness.validTo) < new Date()
-  const hasDeprivations = ship.deprivations.length > 0
 
   const handleOnSelect = (value: string) => {
     const selectedLicense = data?.fishingLicenses?.find(
@@ -61,21 +61,39 @@ export const FishingLicense: FC<FieldBaseProps> = ({
       setChargeType(selectedLicense.fishingLicenseInfo.chargeType)
   }
 
-  // If a charge type is present in the answer but it
-  // is invalid/illegal for the currently chosen ship,
-  // remove that charge type from the answer once we've 
-  // established all legal charge types for current ship
+  // clears charge type in answers
+  // TODO: DOES NOT WORK
+  const clearChargeType = async () => {
+    if(!application) return
+    const { fishingLicense, ...filteredAnswers } = application.answers
+    console.log(filteredAnswers)
+    await updateApplication({
+      variables: {
+        input: {
+          id: application.id,
+          answers: {
+            ...filteredAnswers,
+          },
+        },
+        locale,
+      },
+    })
+  }
+
+  // If a charge type is present in the answer but is invalid/illegal
+  // for the currently chosen ship, remove that charge type from the
+  // answer once we've  established all legal charge types for current ship
   useEffect(() => {
-    if(!chargeType) return
+    if(!data?.fishingLicenses || !chargeType) return
     const type = data?.fishingLicenses?.find(
       ({ fishingLicenseInfo }: FishingLicenseSchema) =>
         fishingLicenseInfo.code === chargeType,
     ) as FishingLicenseSchema
-    if(!type.answer) {
-      // TODO: remove the charge type from answer
-      // as it doesn't match the boat that's selected
+    if(!type || !type?.answer) {
+      clearChargeType()
     }
   }, [data])
+
 
   return (
     <>
