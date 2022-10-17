@@ -85,14 +85,14 @@ const UploadFilesToPoliceCase: React.FC<{
   }, [setAllUploaded, displayFiles])
 
   const setSingleFile = useCallback(
-    (displayFile) => {
+    (displayFile: UploadFile, newId?: string) => {
       setDisplayFiles((previous) => {
         const index = previous.findIndex((f) => f.id === displayFile.id)
         if (index === -1) {
           return previous
         }
         const next = [...previous]
-        next[index] = displayFile
+        next[index] = { ...displayFile, id: newId ?? displayFile.id }
         return next
       })
     },

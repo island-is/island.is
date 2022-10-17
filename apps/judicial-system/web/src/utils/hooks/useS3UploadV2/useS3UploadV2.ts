@@ -82,7 +82,10 @@ export const useS3UploadV2 = (
   >(DeleteFileMutationDocument)
 
   const upload = useCallback(
-    (files: Array<[File, string]>, updateFile: (file: UploadFile) => void) => {
+    (
+      files: Array<[File, string]>,
+      updateFile: (file: UploadFile, newId?: string) => void,
+    ) => {
       files.forEach(async ([file, id]) => {
         try {
           const data = await createPresignedMutation({
@@ -124,13 +127,16 @@ export const useS3UploadV2 = (
             throw Error('failed to add file to case')
           }
 
-          updateFile({
-            name: file.name,
-            percent: 100,
-            status: 'done',
-            // We need to set the id so we are able to delete the file later
-            id: data2.data.createFile.id,
-          })
+          updateFile(
+            {
+              id: id,
+              name: file.name,
+              percent: 100,
+              status: 'done',
+              // We need to set the id so we are able to delete the file later
+            },
+            data2.data.createFile.id,
+          )
         } catch (e) {
           updateFile({
             id: id,
