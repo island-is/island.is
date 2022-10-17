@@ -26,6 +26,7 @@ import {
   GET_ORGANIZATION_PAGE_QUERY,
   GET_ORGANIZATION_SUBPAGE_QUERY,
   GET_OPERATING_LICENSES_QUERY,
+  GET_OPERATING_LICENSES_CSV_QUERY,
 } from '../../queries'
 import { Screen } from '../../../types'
 import { useNamespace } from '@island.is/web/hooks'
@@ -235,6 +236,7 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
   const Router = useRouter()
   const { format } = useDateUtils()
   const DATE_FORMAT = n('operatingLicenseDateFormat', 'd. MMMM yyyy')
+  const client = useApolloClient()
 
   useContentfulId(organizationPage.id, subpage.id)
 
@@ -316,6 +318,31 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
     return address
   }
 
+  const exportCSV = () => {
+    client
+      .query<Query>({
+        query: GET_OPERATING_LICENSES_CSV_QUERY,
+      })
+      .then(({ data: { getOperatingLicensesCSV } }) => {
+        // TODO: Add some loading animation, as the Syslumenn API can take a moment to repond.
+        // TODO: Fix string encoding, e.g. newlines and escaped quotes.
+        console.log('CSV', getOperatingLicensesCSV)
+
+        // const encodedUri = encodeURI('data:text/csv;charset=utf-8,' + getOperatingLicensesCSV)
+        // const a = document.createElement('a')
+        // a.setAttribute('href', encodedUri)
+        // a.setAttribute('target', '_blank')
+        // a.setAttribute('download', `${n('operatingLicensesCSVFileTitlePrefix', 'Rekstrarleyfi')}_${(new Date()).toISOString().split('.')[0]}.csv`)
+        // document.body.appendChild(a)
+        // a.click()
+        // document.body.removeChild(a)
+      })
+      .catch((error) => {
+        // TODO: Implement UI feedback.
+        console.error(error)
+      })
+  }
+
   return (
     <OrganizationWrapper
       pageTitle={subpage.title}
@@ -352,6 +379,23 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
           iconType="outline"
           onChange={(event) => onSearch(event.target.value)}
         />
+        <Box textAlign="right" marginRight={1} marginTop={1}>
+          <Button
+            colorScheme="default"
+            preTextIcon="download"
+            iconType="filled"
+            onClick={exportCSV}
+            preTextIconType="filled"
+            size="small"
+            type="button"
+            variant="text"
+          >
+            {n(
+              'operatingLicensesCSVButtonLabel',
+              'Sækja öll rekstrarleyfi á CSV formi',
+            )}
+          </Button>
+        </Box>
         <Box
           paddingTop={1}
           textAlign="center"

@@ -2,6 +2,7 @@ import {
   SyslumennAuction,
   Homestay,
   PaginatedOperatingLicenses,
+  OperatingLicensesCSV,
   CertificateInfoResponse,
   DistrictCommissionerAgencies,
   DataUploadResponse,
@@ -20,6 +21,7 @@ import {
   mapSyslumennAuction,
   mapHomestay,
   mapPaginatedOperatingLicenses,
+  mapOperatingLicensesCSV,
   mapCertificateInfo,
   mapDistrictCommissionersAgenciesResponse,
   mapDataUploadResponse,
@@ -171,6 +173,14 @@ export class SyslumennService {
       paginationInfo,
       await virkLeyfiApiResponse.value(),
     )
+  }
+
+  async getOperatingLicensesCSV(): Promise<OperatingLicensesCSV> {
+    const { id, api } = await this.createApi()
+    const csv = await api.virkLeyfiCsvGet({
+      audkenni: id,
+    })
+    return mapOperatingLicensesCSV(csv)
   }
 
   async sealDocument(document: string): Promise<SvarSkeyti> {
