@@ -1,6 +1,6 @@
 #!/bin/bash
 set -euxo pipefail
-export NODE_OPTIONS="--max-old-space-size=8192"
+
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 # shellcheck disable=SC1091
