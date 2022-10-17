@@ -1,7 +1,7 @@
 import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
-import { Box, SkeletonLoader, Tag, Text } from '@island.is/island-ui/core'
-import React, { FC, useState } from 'react'
+import { Box, SkeletonLoader, Text } from '@island.is/island-ui/core'
+import React, { FC, useEffect, useState } from 'react'
 import { FishingLicenseAlertMessage, ShipInformation } from '../components'
 import {
   FishingLicenseLicense as FishingLicenseSchema,
@@ -10,7 +10,7 @@ import {
 import { useQuery } from '@apollo/client'
 import { queryFishingLicense } from '../../graphql/queries'
 import { RadioController } from '@island.is/shared/form-fields'
-import { fishingLicense, shipSelection } from '../../lib/messages'
+import { fishingLicense } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { useFormContext } from 'react-hook-form'
 
@@ -21,8 +21,12 @@ export const FishingLicense: FC<FieldBaseProps> = ({
 }) => {
   const { formatMessage } = useLocale()
   const { register } = useFormContext()
-  const [chargeType, setChargeType] = useState<string>('')
-
+  const selectedChargeType = getValueViaPath(
+    application.answers,
+    'fishingLicense.license',
+    ''
+  ) as string
+  const [chargeType, setChargeType] = useState<string>(selectedChargeType || '')
   const ships = getValueViaPath(
     application.externalData,
     'directoryOfFisheries.data.ships',
