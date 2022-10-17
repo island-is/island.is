@@ -35,11 +35,10 @@ export const fishingLicense = {
       defaultMessage: 'Almennt veiðileyfi með krókaafla',
       description: 'Hook catch limit tag',
     },
-    // TODO!!!!
-    dragNoteFishing: {
-      id: 'gfl.application:shipSelection.labels.dragNoteFishing', // TODO
+    fishWithDanishSeine: {
+      id: 'gfl.application:shipSelection.labels.fishWithDanishSeine',
       defaultMessage: 'Dragnótaveiðileyfi',
-      description: 'Dragnótaveiðileyfi', // TODO
+      description: 'Fishing with Danish seine',
     },
     // TODO!!!!
     greyslepp: {
@@ -58,17 +57,15 @@ export const fishingLicense = {
       defaultMessage: 'Almennt veiðileyfi með aflamarki',
       description: 'Catch mark tag',
     },
-    // TODO!!!!
-    redTummy: {
-      id: 'gfl.application:shipSelection.labels.redTummy', // TODO
+    lumpfish: {
+      id: 'gfl.application:shipSelection.labels.lumpfish',
       defaultMessage: 'Rauðmagaveiðileyfi',
-      description: 'Rauðmagaveiðileyfi', // TODO
+      description: 'Lumpfish',
     },
-    // TODO!!!!
-    beachFishing: {
-      id: 'gfl.application:shipSelection.labels.beachFishing', // TODO
+    costalFisheries: {
+      id: 'gfl.application:shipSelection.labels.costalFisheries',
       defaultMessage: 'Strandveiðileyfi',
-      description: 'Strandveiðileyfi', // TODO
+      description: 'Costal fisheries',
     },
     // TODO!!!!
     freetime: {
@@ -88,23 +85,20 @@ export const fishingLicense = {
       defaultMessage: 'Frístundaveiðar með aflamarki',
       description: 'Frístundaveiðar með aflamarki', // TODO
     },
-    // TODO!!!!
-    baitKingFishing: {
-      id: 'gfl.application:shipSelection.labels.baitKingFishing', // TODO
+    commonWhelk: {
+      id: 'gfl.application:shipSelection.labels.commonWhelk',
       defaultMessage: 'Beitukóngsveiðileyfi',
-      description: 'Beitukóngsveiðileyfi', // TODO
+      description: 'Common whelk',
     },
-    // TODO!!!!
-    cowfish: {
-      id: 'gfl.application:shipSelection.labels.cowfish', // TODO
+    oceanQuahogin: {
+      id: 'gfl.application:shipSelection.labels.oceanQuahogin',
       defaultMessage: 'Kúfiskveiðileyfi',
-      description: 'Kúfiskveiðileyfi', // TODO
+      description: 'Ocean quahogin',
     },
-    // TODO!!!!
-    crabFishing: {
-      id: 'gfl.application:shipSelection.labels.crabFishing', // TODO
+    crustaceans: {
+      id: 'gfl.application:shipSelection.labels.crustaceans',
       defaultMessage: 'Krabbaveiðileyfi',
-      description: 'Krabbaveiðileyfi', // TODO
+      description: 'Crustaceans',
     },
   }),
   tooltips: defineMessages({

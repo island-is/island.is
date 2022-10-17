@@ -41,17 +41,21 @@ export type FishingLicenseInfo = {
 
 export enum FishingLicenseCodeType {
   hookCatchLimit = '1', // Almennt aflamarksveiðileyfi
-  dragNoteFishing = '8', //TODO naming - Dragnótaveiðileyfi
+  fishWithDanishSeine = '8', // Dragnótaveiðileyfi
+  
   greyslepp = '11', // TODO naming -  Grásleppuveiðileyfi
   northIceOceanCod = '25', // TODO naming - Norðuríshafsþorskveiðileyfi í norskri lögsögu
+
   catchMark = '32', // Almennt krókaflamarksveiðileyfi
-  redTummy = '36', // TODO naming - Rauðmagaveiðileyfi
-  beachFishing = '37', // TODO naming - Strandveiðileyfi
+  lumpfish = '36', // Rauðmagaveiðileyfi
+  costalFisheries = '37', // Strandveiðileyfi
+
   freetime = '38', // TODO naming - Frístundaveiðar án aflaheimilda
-  freetimeHook = '42', // TODO naming Frístundaveiðar með aflamarki
-  freetimeHookMed = 'MED', // Frístundaveiðileyfi með aflaheimild
-  baitKingFishing = '50', // TODO naming- Beitukóngsveiðileyfi
-  cowfish = '52', // TODO naming - Kúfiskveiðileyfi
-  crabFishing = '54', // TODO naming - Krabbaveiðileyfi
+  freetimeHook = '42', // TODO naming - Frístundaveiðar með aflamarki
+  freetimeHookMed = 'MED', // TODO naming - Frístundaveiðileyfi með aflaheimild
+
+  commonWhelk = '50', // Beitukóngsveiðileyfi
+  oceanQuahogin = '52', // Kúfiskveiðileyfi
+  crustaceans = '54', // Krabbaveiðileyfi
   unknown = '0',
 }
