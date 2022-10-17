@@ -34,7 +34,6 @@ interface Props {
 interface CaseFileProps {
   caseFile: ReorderableItem
   index: number
-  caseId: string
   onReorder: (id?: string) => void
 }
 interface ReorderableItem {
@@ -75,14 +74,11 @@ export function useRaisedShadow(value: MotionValue<number>) {
 }
 
 const CaseFile: React.FC<CaseFileProps> = (props) => {
-  const { caseFile, index, caseId, onReorder } = props
+  const { caseFile, index, onReorder } = props
   const y = useMotionValue(0)
   const boxShadow = useRaisedShadow(y)
   const controls = useDragControls()
   const [isDragging, setIsDragging] = useState(false)
-  const [updateFilesMutation] = useMutation<UpdateFilesMutationResponse>(
-    UpdateFileMutation,
-  )
 
   return (
     <Reorder.Item
@@ -116,6 +112,10 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
           alignItems="center"
           background="blue100"
           padding={2}
+          onPointerUp={() => {
+            setIsDragging(false)
+            onReorder(caseFile.id)
+          }}
         >
           <Box display="flex" alignItems="center">
             <Box
@@ -125,28 +125,10 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
                 setIsDragging(true)
                 controls.start(e)
               }}
-              onPointerUp={() => {
-                setIsDragging(false)
-                onReorder(caseFile.id)
-                // updateFilesMutation({
-                //   variables: {
-                //     input: {
-                //       caseId,
-                //       files: [
-                //         {
-                //           id: 'ba8859ec-88f4-463a-9a6c-9781a477dff3',
-                //           chapter: 1,
-                //           orderWithinChapter: 1,
-                //         },
-                //       ],
-                //     },
-                //   },
-                // })
-              }}
             >
               <Icon icon="menu" color="blue400" />
             </Box>
-            <Text variant="h5">{caseFile.displayText}</Text>
+            <Text variant="h5">{caseFile.id}</Text>
           </Box>
           <Box display="flex" alignItems="center">
             <Box display="flex" marginRight={3}>
@@ -165,6 +147,9 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
 const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
   const { policeCaseNumber, caseFiles, caseId } = props
   const { formatMessage } = useIntl()
+  const [updateFilesMutation] = useMutation<UpdateFilesMutationResponse>(
+    UpdateFileMutation,
+  )
 
   const [items, setItems] = useState<ReorderableItem[]>([
     {
@@ -222,21 +207,74 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
       return
     }
 
-    const chapters = (item: ReorderableItem) => {
-      let counter = -1 // -1 because we don't want to count current document
+    const restOfChapters: ReorderableItem[] = []
 
-      while (!item.isChapter) {
-        counter++
-        item = items[items.indexOf(item) - 1]
-        chapters(item)
+    // const chapters = (item: ReorderableItem) => {
+    //   let counter = -1 // -1 because we don't want to count current document
+
+    //   while (!item.isChapter) {
+    //     counter++
+    //     item = items[items.indexOf(item) - 1]
+    //     chapters(item)
+    //   }
+
+    //   return [items.indexOf(item), counter]
+    // }
+
+    const chapters = (item: ReorderableItem) => {
+      let [chapter, orderWithinChapter] = [0, 0]
+      let counter = 0
+
+      for (let i = items.indexOf(item); !items[i].isChapter; i--) {
+        console.log(items[i])
+        if (items[i - 1].isChapter) {
+          chapter = Number(items[i - 1].displayText.split('.')[0]) - 1
+        }
+
+        orderWithinChapter = counter++
       }
 
-      return [items.indexOf(item), counter]
+      return [chapter, orderWithinChapter]
     }
 
-    const a = chapters(items[items.findIndex((item) => item.id === fileId)])
+    const updateRestOfFilesInChapter = (item: ReorderableItem) => {
+      for (let i = items.indexOf(item); i < items.length; i++) {
+        if (items[i].isChapter || items[i].isDivider) {
+          break
+        }
 
-    console.log('reorder', a)
+        restOfChapters.push(items[i])
+      }
+    }
+
+    const [chapter, orderWithinChapter] = chapters(
+      items[items.findIndex((item) => item.id === fileId)],
+    )
+    updateRestOfFilesInChapter(
+      items[items.findIndex((item) => item.id === fileId) + 1],
+    )
+
+    updateFilesMutation({
+      variables: {
+        input: {
+          caseId,
+          files: [
+            {
+              id: fileId,
+              chapter,
+              orderWithinChapter,
+            },
+            ...restOfChapters.map((item, index) => {
+              return {
+                id: item.id,
+                chapter,
+                orderWithinChapter: orderWithinChapter + index + 1,
+              }
+            }),
+          ],
+        },
+      },
+    })
   }
 
   return (
@@ -269,7 +307,6 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
               <CaseFile
                 caseFile={item}
                 index={index}
-                caseId={caseId}
                 onReorder={handleReorder}
               />
             </Box>
