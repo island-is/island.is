@@ -47,10 +47,10 @@ import { PersonalRepresentativeService } from '../personal-representative/servic
 import type { PersonalRepresentativeDTO } from '../personal-representative/dto/personal-representative.dto'
 import { DelegationValidity } from './types/delegationValidity'
 import { DelegationScopeService } from './delegationScope.service'
-import partition from 'lodash/partition'
 import { isDefined } from '@island.is/shared/utils'
 import { ResourcesService } from '../resources/resources.service'
 import { DelegationDirection } from './types/delegationDirection'
+import { partitionWithIndex } from './utils/partitionWithIndex'
 
 type ClientDelegationInfo = Pick<
   Client,
@@ -411,6 +411,27 @@ export class DelegationsService {
     )
   }
 
+  private async handlerGetIndividualError(error: null | Error) {
+    return error
+  }
+
+  /**
+   * Finds person by nationalId.
+   */
+  private getPersonByNationalId(
+    persons: Array<IndividualDto | null>,
+    nationalId: string,
+  ) {
+    return persons.find((person) => person?.nationalId === nationalId)
+  }
+
+  /**
+   * Checks if item is not an instance of Error
+   */
+  private isNotError<T>(item: T | Error): item is T {
+    return item instanceof Error === false
+  }
+
   /**
    * Divides delegations into alive and deceased delegations
    * - Makes calls for every delegation to NationalRegistry to check if the person exists.
@@ -435,26 +456,49 @@ export class DelegationsService {
       // Filter out companies, since we do not need to make a national registry call for them.
       .filter(({ fromNationalId }) => !kennitala.isCompany(fromNationalId))
       .map(({ fromNationalId }) =>
-        this.nationalRegistryClient.getIndividual(fromNationalId),
+        this.nationalRegistryClient
+          .getIndividual(fromNationalId)
+          .catch(this.handlerGetIndividualError),
       )
 
     try {
       // Check if delegations is linked to a person, i.e. not deceased
       const persons = await Promise.all(delegationsPromises)
-      const personsValues = persons.filter(isDefined)
+      const personsValuesNoError = persons
+        .filter(this.isNotError)
+        .filter(isDefined)
 
       // Divide delegations into alive or deceased delegations.
-      const [aliveDelegations, deceasedDelegations] = partition(
+      const [aliveDelegations, deceasedDelegations] = partitionWithIndex(
         delegations,
-        ({ fromNationalId }) =>
+        ({ fromNationalId }, index) =>
           // All companies will be divided into aliveDelegations
           kennitala.isCompany(fromNationalId) ||
+          // Pass persons that are of Error instance, since we want do return the delegation.
+          persons[index] instanceof Error ||
           // Make sure we can match the person to the delegation, i.e. not deceased
-          personsValues.find((person) => person?.nationalId === fromNationalId),
+          personsValuesNoError.some(
+            (person) => person?.nationalId === fromNationalId,
+          ),
       )
 
+      // If Þjóðskrá throws and error for some fromNationalId, then we still want to return the delegation.
+      // however we change the delegation.fromName to unknown name.
+      const modifiedAliveDelegations = aliveDelegations
+        .map((aliveDelegation) => {
+          const person = this.getPersonByNationalId(
+            personsValuesNoError,
+            aliveDelegation.fromNationalId,
+          )
+
+          aliveDelegation.fromName = person?.name ?? 'Óþekkt nafn'
+
+          return aliveDelegation
+        })
+        .filter(isDefined)
+
       return {
-        aliveDelegations,
+        aliveDelegations: modifiedAliveDelegations,
         deceasedDelegations,
       }
     } catch (error) {
@@ -636,22 +680,25 @@ export class DelegationsService {
 
       const personPromises = personalRepresentatives.map(
         ({ nationalIdRepresentedPerson }) =>
-          this.nationalRegistryClient.getIndividual(
-            nationalIdRepresentedPerson,
-          ),
+          this.nationalRegistryClient
+            .getIndividual(nationalIdRepresentedPerson)
+            .catch(this.handlerGetIndividualError),
       )
 
       const persons = await Promise.all(personPromises)
-
-      // Make sure we can match the person to the nationalId, i.e. not deceased
-      const findPersonByNationalId = (nationalId: string) =>
-        persons.find((person) => person?.nationalId === nationalId)
+      const personsValues = persons.filter((person) => person !== undefined)
+      const personsValuesNoError = personsValues.filter(this.isNotError)
 
       // Divide personal representatives into alive or deceased.
-      const [alive, deceased] = partition(
+      const [alive, deceased] = partitionWithIndex(
         personalRepresentatives,
-        ({ nationalIdRepresentedPerson }) =>
-          findPersonByNationalId(nationalIdRepresentedPerson),
+        ({ nationalIdRepresentedPerson }, index) =>
+          // Pass persons that are of Error instance, since we want do return the personal representative.
+          persons[index] instanceof Error ||
+          // Make sure we can match the person to the personal representatives, i.e. not deceased
+          personsValuesNoError.some(
+            (person) => person?.nationalId === nationalIdRepresentedPerson,
+          ),
       )
 
       if (deceased.length > 0) {
@@ -660,9 +707,12 @@ export class DelegationsService {
 
       return alive
         .map((pr) => {
-          const person = findPersonByNationalId(pr.nationalIdRepresentedPerson)
+          const person = this.getPersonByNationalId(
+            personsValuesNoError,
+            pr.nationalIdRepresentedPerson,
+          )
 
-          return person?.name ? toDelegationDTO(person.name, pr) : undefined
+          return toDelegationDTO(person?.name ?? 'Óþekkt nafn', pr)
         })
         .filter(isDefined)
     } catch (error) {
