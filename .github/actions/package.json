@@ -6,11 +6,11 @@
   "author": "DevOps team",
   "license": "MIT",
   "scripts": {
-    "build": "./node_modules/.bin/ncc build ./main.ts -o ./dist",
+    "build": "yarn run esbuild main.ts --outdir=./dist --platform=node --bundle",
     "test": "./node_modules/.bin/jest"
   },
   "dependencies": {
-    "@octokit/action": "^3.18.1",
+    "@octokit/action": "^4.0.8",
     "@octokit/core": "^3.5.1",
     "tslib": "^2.4.0"
   },
@@ -19,8 +19,8 @@
     "@octokit/rest": "19.0.4",
     "@types/debug": "4.1.7",
     "@types/jest": "^27.4.1",
-    "@vercel/ncc": "^0.33.4",
     "debug": "4.3.4",
+    "esbuild": "0.15.10",
     "esbuild-runner": "2.2.1",
     "jest": "27.5.1",
     "ts-jest": "27.1.3",

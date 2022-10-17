@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/client'
-import { AnimatePresence, AnimateSharedLayout, motion } from 'framer-motion'
+import { AnimatePresence, LayoutGroup, motion } from 'framer-motion'
 import cn from 'classnames'
 
 import { PoliceCaseFilesQuery } from '@island.is/judicial-system-web/graphql'
@@ -258,7 +258,7 @@ const PoliceCaseFiles: React.FC<Props> = ({
       />
       <Box marginBottom={5}>
         {workingCase.origin === CaseOrigin.LOKE && (
-          <AnimateSharedLayout>
+          <LayoutGroup>
             <motion.div layout className={styles.policeCaseFilesContainer}>
               <motion.ul layout>
                 <motion.li
@@ -330,7 +330,7 @@ const PoliceCaseFiles: React.FC<Props> = ({
                 {formatMessage(m.uploadButtonLabel)}
               </Button>
             </motion.div>
-          </AnimateSharedLayout>
+          </LayoutGroup>
         )}
         {workingCase.origin !== CaseOrigin.LOKE && (
           <AlertMessage

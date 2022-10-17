@@ -1,12 +1,9 @@
 import request from 'supertest'
 import { getModelToken } from '@nestjs/sequelize'
+import { uuid } from 'uuidv4'
+import shuffle from 'lodash/shuffle'
 
-import {
-  ApiScope,
-  ApiScopeGroup,
-  Domain,
-  Translation,
-} from '@island.is/auth-api-lib'
+import { ApiScope, ApiScopeGroup, Translation } from '@island.is/auth-api-lib'
 import { AuthScope } from '@island.is/auth/scopes'
 import {
   createCurrentUser,
@@ -15,31 +12,28 @@ import {
 import { TestApp } from '@island.is/testing/nest'
 
 import {
+  ScopeGroupSetupOptions,
   Scopes,
+  ScopeSetupOptions,
   setupWithAuth,
   setupWithoutAuth,
   setupWithoutPermission,
 } from '../../../../test/setup'
 import { TestEndpointOptions } from '../../../../test/types'
 import { getRequestMethod } from '../../../../test/utils'
-import {
-  createApiScopeGroup,
-  createTranslations,
-} from '../../../../test/fixtures'
+import { createTranslations } from '../../../../test/fixtures'
 
 const user = createCurrentUser({
   nationalId: '1122334455',
   scope: [
-    AuthScope.readDelegations,
+    AuthScope.delegations,
     Scopes[0].name,
     Scopes[3].name,
     Scopes[6].name,
   ],
 })
 const userName = 'Tester Tests'
-const nationalRegistryUser = createNationalRegistryUser({
-  kennitala: '6677889900',
-})
+const nationalRegistryUser = createNationalRegistryUser()
 
 describe('ScopesController', () => {
   describe('withAuth', () => {
@@ -95,37 +89,25 @@ describe('ScopesController', () => {
       beforeAll(async () => {
         const scope = await apiScopeModel.findOne({
           where: { name: Scopes[0].name },
+          include: {
+            model: apiScopeGroupModel,
+            required: true,
+          },
         })
-        if (!scope) {
+        if (!scope || !scope.group) {
           throw new Error('Scope not found')
         }
-
-        const group = await apiScopeGroupModel.create(
-          createApiScopeGroup({
-            displayName: 'Untranslated',
-            description: 'Untranslated',
-          }),
-          { include: [Domain] },
-        )
-        await scope.update({ groupId: group.id })
 
         await translationModel.bulkCreate([
           ...createTranslations(scope, 'en', {
             displayName: 'Translated scope display name',
             description: 'Translated scope description',
           }),
-          ...createTranslations(group, 'en', {
+          ...createTranslations(scope.group, 'en', {
             displayName: 'Translated group display name',
             description: 'Translated group description',
           }),
         ])
-      })
-
-      afterAll(() => {
-        return apiScopeModel.update(
-          { groupId: null },
-          { where: { name: Scopes[0].name } },
-        )
       })
 
       it('should return translated scopes and groups', async () => {
@@ -153,7 +135,7 @@ describe('ScopesController', () => {
       const app = await setupWithAuth({
         user: {
           ...user,
-          scope: [AuthScope.readDelegations],
+          scope: [AuthScope.delegations],
         },
         userName,
         nationalRegistryUser,
@@ -165,6 +147,63 @@ describe('ScopesController', () => {
       // Assert
       expect(res.status).toEqual(200)
       expect(res.body).toHaveLength(0)
+    })
+
+    it.only('should return a sorted list of scopes and groups', async () => {
+      // Arrange
+      const group2: ScopeGroupSetupOptions = {
+        id: uuid(),
+        order: 2,
+      }
+      const group4: ScopeGroupSetupOptions = {
+        id: uuid(),
+        order: 4,
+      }
+      const sortedScopes: ScopeSetupOptions[] = [
+        {
+          name: 'Test 1',
+          order: 1,
+        },
+        {
+          name: 'Test 2-2',
+          order: 2,
+          groupId: group2.id,
+        },
+        {
+          name: 'Test 2-5',
+          order: 5,
+          groupId: group2.id,
+        },
+        {
+          name: 'Test 3',
+          order: 3,
+        },
+        {
+          name: 'Test 4-1',
+          order: 1,
+          groupId: group4.id,
+        },
+      ]
+      const app = await setupWithAuth({
+        user: {
+          ...user,
+          scope: [
+            AuthScope.delegations,
+            ...sortedScopes.map((scope) => scope.name),
+          ],
+        },
+        scopeGroups: shuffle([group2, group4]),
+        scopes: shuffle(sortedScopes),
+        userName,
+        nationalRegistryUser,
+      })
+
+      // Act
+      const res = await request(app.getHttpServer()).get('/v1/scopes')
+
+      // Assert
+      expect(res.status).toEqual(200)
+      expect(res.body).toMatchObject(sortedScopes)
     })
   })
 

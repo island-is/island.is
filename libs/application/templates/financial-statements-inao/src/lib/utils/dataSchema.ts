@@ -7,6 +7,7 @@ import {
   NestedType,
 } from '@island.is/application/templates/family-matters-core/types'
 import { FieldBaseProps } from '@island.is/application/types'
+import { BOARDMEMEBER, CARETAKER } from '../constants'
 
 const FileSchema = z.object({
   name: z.string(),
@@ -15,12 +16,17 @@ const FileSchema = z.object({
 })
 
 const election = z.object({
-  selectElection: z.string().refine((x) => !!x, { params: m.required }),
+  selectElection: z.string().optional(),
+  electionName: z.string().optional(),
   incomeLimit: z.string().refine((x) => !!x, { params: m.required }),
 })
 
 const conditionalAbout = z.object({
   operatingYear: z.string().refine((x) => !!x, { params: m.required }),
+})
+
+const operatingCost = z.object({
+  total: z.string().refine((x) => !!x, { params: m.required }),
 })
 
 const about = z.object({
@@ -30,10 +36,8 @@ const about = z.object({
       params: m.nationalIdError,
     }),
   fullName: z.string().refine((x) => !!x, { params: m.required }),
-  powerOfAttorneyNationalId: z
-    .string()
-    .refine((x) => !!x, { params: m.required }),
-  powerOfAttorneyName: z.string().refine((x) => !!x, { params: m.required }),
+  powerOfAttorneyNationalId: z.string().optional(),
+  powerOfAttorneyName: z.string().optional(),
   phoneNumber: z.string().refine(
     (p) => {
       const phoneNumber = parsePhoneNumberFromString(p, 'IS')
@@ -52,6 +56,7 @@ const asset = z.object({
 
 const equity = z.object({
   totalEquity: z.string().refine((x) => !!x, { params: m.required }),
+  operationResult: z.string(),
   total: z.string().refine((x) => !!x, { params: m.required }),
 })
 
@@ -79,6 +84,10 @@ const cemetryLiability = z.object({
   longTerm: z.string().refine((x) => !!x, { params: m.required }),
   shortTerm: z.string().refine((x) => !!x, { params: m.required }),
   total: z.string().refine((x) => !!x, { params: m.required }),
+})
+
+const cemetryOperation = z.object({
+  incomeLimit: z.string().optional(),
 })
 
 const cemetryIncome = z.object({
@@ -137,17 +146,41 @@ const capitalNumbers = z.object({
   total: z.string(),
 })
 
-const operatingCost = z.object({
-  total: z.string().refine((x) => !!x, { params: m.required }),
-})
-
-const cemetryCaretaker = z.array(
-  z.object({
-    name: z.string().refine((x) => !!x, { params: m.required }),
-    nationalId: z.string().refine((x) => !!x, { params: m.required }),
-    role: z.string().refine((x) => !!x, { params: m.required }),
-  }),
-)
+const cemetryCaretaker = z
+  .array(
+    z.object({
+      name: z.string().refine((x) => !!x, { params: m.required }),
+      nationalId: z
+        .string()
+        .refine((val) => (val ? kennitala.isPerson(val) : false), {
+          params: m.nationalIdError,
+        })
+        .refine((val) => {
+          return (
+            val ? kennitala.info(val).age < 18 : false,
+            {
+              params: m.nationalIdAgeError,
+            }
+          )
+        }),
+      role: z.string().refine((x) => !!x, { params: m.required }),
+    }),
+  )
+  .refine(
+    (x) => {
+      if (x.length <= 0) {
+        return false
+      }
+      const careTakers = x.filter((member) => member.role === CARETAKER)
+      const boardMembers = x.filter((member) => member.role === BOARDMEMEBER)
+      if (careTakers.length < 1 || boardMembers.length < 1) {
+        return false
+      } else {
+        return true
+      }
+    },
+    { params: m.errorMembersMissing },
+  )
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -166,14 +199,13 @@ export const dataSchema = z.object({
   cemetryEquity,
   cemetryLiability,
   cemetryCaretaker,
+  cemetryOperation,
   asset,
   equity,
   liability,
-  attachment: z
-    .object({
-      file: z.array(FileSchema),
-    })
-    .optional(),
+  attachment: z.object({
+    file: z.array(FileSchema).nonempty(),
+  }),
 })
 
 export type FinancialStatementsInao = z.TypeOf<typeof dataSchema>

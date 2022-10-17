@@ -83,11 +83,11 @@ export const routesTemplate = {
   },
   apicataloguedetailpage: {
     is: '/s/stafraent-island/vefthjonustur/[slug]',
-    en: '',
+    en: '/en/o/digital-iceland/webservices/[slug]',
   },
   apicataloguepage: {
     is: '/s/stafraent-island/vefthjonustur',
-    en: '',
+    en: '/en/o/digital-iceland/webservices',
   },
   organizationnews: {
     is: '/s/[organization]/frett/[slug]',
@@ -115,7 +115,7 @@ export const routesTemplate = {
   },
   projectnews: {
     is: '/v/[slug]/frett/[subSlug]',
-    en: '/en/o/[slug]/news/[subSlug]',
+    en: '/en/p/[slug]/news/[subSlug]',
   },
   projectnewsoverview: {
     is: '/v/[slug]/frett',
@@ -158,21 +158,33 @@ export const routesTemplate = {
     is: '/innskraning',
     en: '/en/login',
   },
-  webservicedetailpage: {
-    is: '/throun/vefthjonustur/[slug]',
-    en: '/en/developers/webservices/[slug]',
+  serviceweb: {
+    is: '/adstod',
+    en: '/en/help',
   },
-  webservicespage: {
-    is: '/throun/vefthjonustur',
-    en: '/en/developers/webservices',
+  servicewebsearch: {
+    is: '/adstod/leit',
+    en: '/en/help/search',
   },
-  handbookpage: {
-    is: '/throun/handbok',
-    en: '/en/developers/handbook',
+  serviceweborganization: {
+    is: '/adstod/[slug]',
+    en: '/en/help/[slug]',
   },
-  developerspage: {
-    is: '/throun',
-    en: '/en/developers',
+  servicewebcontact: {
+    is: '/adstod/[organizationSlug]/hafa-samband',
+    en: '/en/help/[organizationSlug]/contact-us',
+  },
+  serviceweborganizationsearch: {
+    is: '/adstod/[organizationSlug]/leit',
+    en: '/en/help/[organizationSlug]/search',
+  },
+  supportcategory: {
+    is: '/adstod/[organizationSlug]/[categorySlug]',
+    en: '/en/help/[organizationSlug]/[categorySlug]',
+  },
+  supportqna: {
+    is: '/adstod/[organizationSlug]/[categorySlug]/[questionSlug]',
+    en: '/en/help/[organizationSlug]/[categorySlug]/[questionSlug]',
   },
   subarticle: {
     is: '/[slug]/[subSlug]',
@@ -181,22 +193,6 @@ export const routesTemplate = {
   article: {
     is: '/[slug]',
     en: '/en/[slug]',
-  },
-  serviceweb: {
-    is: '/adstod',
-    en: '/en/help',
-  },
-  serviceweborganization: {
-    is: '/adstod/[slug]',
-    en: '/en/help/[slug]',
-  },
-  servicewebcategory: {
-    is: '/adstod/[organizationSlug]/[categorySlug]',
-    en: '/en/help/[organizationSlug]/[categorySlug]',
-  },
-  servicewebsearch: {
-    is: '/adstod/leit',
-    en: '/en/help/search',
   },
   homepage: {
     is: '/',

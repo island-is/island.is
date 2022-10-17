@@ -18,7 +18,7 @@ import {
   PersonalRepresentativeRightType,
   PaginatedPersonalRepresentativeDto,
   PersonalRepresentativeType,
-} from '@island.is/auth-api-lib/personal-representative'
+} from '@island.is/auth-api-lib'
 import { AuthScope } from '@island.is/auth/scopes'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 

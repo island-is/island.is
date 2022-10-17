@@ -13,6 +13,7 @@ import { GeneralFishingLicenseSchema } from './dataSchema'
 import { application } from './messages'
 import { ApiActions } from '../shared'
 import { AuthDelegationType } from '../types/schema'
+import { DefaultStateLifeCycle } from '@island.is/application/core'
 
 const pruneAtMidnight = () => {
   const date = new Date()
@@ -40,7 +41,7 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
     ApplicationConfigurations.GeneralFishingLicense.translation,
   ],
   dataSchema: GeneralFishingLicenseSchema,
-  allowedDelegations: [AuthDelegationType.ProcurationHolder],
+  allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -70,6 +71,7 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
                 },
               ],
               write: 'all',
+              delete: true,
             },
           ],
         },
@@ -141,6 +143,7 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
                 },
               ],
               write: 'all',
+              delete: true,
             },
           ],
         },
@@ -153,10 +156,7 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
         meta: {
           name: application.general.name.defaultMessage,
           progress: 1,
-          lifecycle: {
-            shouldBeListed: true,
-            shouldBePruned: false,
-          },
+          lifecycle: DefaultStateLifeCycle,
           onEntry: {
             apiModuleAction: ApiActions.submitApplication,
           },
@@ -178,10 +178,7 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
         meta: {
           name: 'Declined',
           progress: 1,
-          lifecycle: {
-            shouldBeListed: true,
-            shouldBePruned: false,
-          },
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,

@@ -18,3 +18,8 @@ export type TextModes = 'light' | 'dark'
 export type Options = {
   textMode: TextModes
 }
+
+export type FormNamespace = Record<
+  string,
+  Record<'label' | 'placeholder' | 'requiredMessage' | 'patternMessage', string>
+>

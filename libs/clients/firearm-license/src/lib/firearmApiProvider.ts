@@ -1,6 +1,7 @@
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import {
   ConfigType,
+  IdsClientConfig,
   LazyDuringDevScope,
   XRoadConfig,
 } from '@island.is/nest/config'
@@ -15,12 +16,22 @@ export const FirearmLicenseApiProvider: Provider<FirearmApi> = {
   useFactory: (
     xroadConfig: ConfigType<typeof XRoadConfig>,
     config: ConfigType<typeof FirearmLicenseClientConfig>,
+    idsClientConfig: ConfigType<typeof IdsClientConfig>,
   ) => {
     const api = new FirearmApplicationApi(
       new Configuration({
         fetchApi: createEnhancedFetch({
           name: 'clients-firearm-license',
           logErrorResponseBody: true,
+          autoAuth: idsClientConfig.isConfigured
+            ? {
+                mode: 'tokenExchange',
+                issuer: idsClientConfig.issuer,
+                clientId: idsClientConfig.clientId,
+                clientSecret: idsClientConfig.clientSecret,
+                scope: config.fetch.scope,
+              }
+            : undefined,
         }),
         basePath: `${xroadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
         headers: {
@@ -32,5 +43,9 @@ export const FirearmLicenseApiProvider: Provider<FirearmApi> = {
 
     return new FirearmApi(api)
   },
-  inject: [XRoadConfig.KEY, FirearmLicenseClientConfig.KEY],
+  inject: [
+    XRoadConfig.KEY,
+    FirearmLicenseClientConfig.KEY,
+    IdsClientConfig.KEY,
+  ],
 }

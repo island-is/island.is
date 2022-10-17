@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
-import router from 'next/router'
 import Link from 'next/link'
+import getConfig from 'next/config'
 
 import {
   Text,
@@ -28,6 +28,8 @@ import MarkdownWrapper from '../MarkdownWrapper/MarkdownWrapper'
 import { useGetLawyer } from '../../utils/hooks'
 import * as styles from './Header.css'
 
+const supportEmail = getConfig()?.publicRuntimeConfig?.supportEmail ?? ''
+
 const HeaderContainer: React.FC = () => {
   const { formatMessage } = useIntl()
   const { isAuthenticated, user } = useContext(UserContext)
@@ -36,7 +38,7 @@ const HeaderContainer: React.FC = () => {
     !user || !isAuthenticated
       ? '/'
       : user.role === UserRole.DEFENDER
-      ? `${constants.DEFENDER_ROUTE}/${router.query.id}`
+      ? '#' // Defenders should never be able to navigate anywhere from the logo
       : user.role === UserRole.ADMIN
       ? constants.USERS_ROUTE
       : constants.CASES_ROUTE
@@ -147,8 +149,7 @@ const HeaderContainer: React.FC = () => {
                                   markdown={formatMessage(
                                     header.headerTipDisclaimer,
                                     {
-                                      linkStart:
-                                        '<a href="mailto:gudlaug.thorhallsdottir@dmr.is" rel="noopener noreferrer nofollow" target="_blank">gudlaug.thorhallsdottir@dmr.is',
+                                      linkStart: `<a href="mailto:${supportEmail}" rel="noopener noreferrer nofollow" target="_blank">${supportEmail}`,
                                       linkEnd: '</a>',
                                     },
                                   )}

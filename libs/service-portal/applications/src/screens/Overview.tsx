@@ -19,6 +19,7 @@ import * as Sentry from '@sentry/react'
 import { useLocation } from 'react-router-dom'
 import { useGetOrganizationsQuery } from '../../../graphql/src/schema'
 import { m } from '../lib/messages'
+import { m as coreMessage } from '@island.is/service-portal/core'
 import { ValueType } from 'react-select'
 import {
   getFilteredApplicationsByStatus,
@@ -28,6 +29,7 @@ import {
 import { ApplicationOverViewStatus, FilterValues } from '../shared/types'
 import { ApplicationGroup } from '../components/ApplicationGroup'
 import { Application } from '@island.is/application/types'
+import { ErrorScreen } from '@island.is/service-portal/core'
 
 const defaultInstitution = { label: 'Allar stofnanir', value: '' }
 
@@ -68,7 +70,17 @@ const Overview: ServicePortalModuleComponent = () => {
   }
 
   if (error || (!loading && !applications)) {
-    return <EmptyState description={m.error} />
+    return (
+      <ErrorScreen
+        figure="./assets/images/hourglass.svg"
+        tagVariant="red"
+        tag={formatMessage(coreMessage.errorTitle)}
+        title={formatMessage(coreMessage.somethingWrong)}
+        children={formatMessage(coreMessage.errorFetchModule, {
+          module: formatMessage(coreMessage.applications).toLowerCase(),
+        })}
+      />
+    )
   }
 
   const organizations = orgData?.getOrganizations?.items || []
@@ -115,8 +127,6 @@ const Overview: ServicePortalModuleComponent = () => {
       />
 
       {(loading || loadingOrg || !orgData) && <ActionCardLoader repeat={3} />}
-
-      {error && <EmptyState description={m.error} />}
 
       {!error && !loading && applications.length === 0 && (
         <EmptyState description={m.noApplicationsAvailable} />

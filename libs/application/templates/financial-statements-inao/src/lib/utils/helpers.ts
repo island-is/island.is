@@ -22,10 +22,10 @@ export const formatNumber = (num: number) => num.toLocaleString('de-DE')
 export const formatCurrency = (answer: string) =>
   answer.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
 
-export const possibleOperatingYears = () => {
+export const possibleOperatingYears = (yearLimit: string) => {
   const currentDate = new Date()
-
-  const operationYears = Array(4)
+  const backwardsYearLimit = Number(yearLimit)
+  const operationYears = Array(backwardsYearLimit)
     .fill('')
     .map((_, index) => {
       const dateDiff = subYears(currentDate, index + 1)
@@ -47,6 +47,7 @@ export const getCurrentUserType = (
     externalData,
     'getUserType.data.value',
   )
+
   return fakeUserType ? fakeUserType : currentUserType
 }
 

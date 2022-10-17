@@ -26,7 +26,6 @@ export const clientInfoSection = buildSection({
           title: '',
           condition: (answers, externalData) => {
             const userType = getCurrentUserType(answers, externalData)
-
             return userType === USERTYPE.CEMETRY || userType === USERTYPE.PARTY
           },
           component: 'OperatingYear',
@@ -42,6 +41,7 @@ export const clientInfoSection = buildSection({
               : m.clientNationalId
           },
           width: 'half',
+          readOnly: true,
           format: '######-####',
           defaultValue: (application: Application) => application.applicant,
         }),
@@ -56,6 +56,7 @@ export const clientInfoSection = buildSection({
               : m.clientName
           },
           width: 'half',
+          readOnly: true,
           defaultValue: (application: Application) => {
             const nationalRegistry = application.externalData.nationalRegistry
               .data as User
@@ -67,11 +68,13 @@ export const clientInfoSection = buildSection({
           title: m.powerOfAttorneyNationalId,
           format: '######-####',
           width: 'half',
+          readOnly: true,
         }),
         buildTextField({
           id: 'about.powerOfAttorneyName',
           title: m.powerOfAttorneyName,
           width: 'half',
+          readOnly: true,
         }),
         buildTextField({
           id: 'about.email',

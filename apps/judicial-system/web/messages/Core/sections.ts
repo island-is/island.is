@@ -220,6 +220,11 @@ export const sections = {
     },
   }),
   indictmentsCourtSection: defineMessages({
+    title: {
+      id: 'judicial.system.core:sections.indictments_court_section.title',
+      defaultMessage: 'Málsmeðferð Héraðsdóms',
+      description: 'Notaður sem titill í hliðarstiku í ákærum hjá héraðsdómum',
+    },
     overview: {
       id: 'judicial.system.core:sections.indictments_court_section.overview',
       defaultMessage: 'Yfirlit',
@@ -238,6 +243,13 @@ export const sections = {
       defaultMessage: 'Fyrirkall',
       description:
         'Notaður sem texti fyrir Fyrirkall skref í hliðarstiku í ákærum hjá héraðsdómum',
+    },
+    prosecutorAndDefender: {
+      id:
+        'judicial.system.core:sections.indictments_court_section.prosecutor_and_defender',
+      defaultMessage: 'Málflytjendur',
+      description:
+        'Notaður sem texti fyrir Málflytjendur skref í hliðarstiku í ákærum hjá héraðsdómum',
     },
     courtRecord: {
       id:

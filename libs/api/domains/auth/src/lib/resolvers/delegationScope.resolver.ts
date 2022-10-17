@@ -1,9 +1,11 @@
-import { Parent, Resolver, ResolveField } from '@nestjs/graphql'
+import { Parent, Resolver, ResolveField, Args } from '@nestjs/graphql'
 
 import type { DelegationScopeDTO } from '@island.is/clients/auth-public-api'
-import { ScopeType } from '@island.is/clients/auth-public-api'
 
-import { DelegationScope } from '../models'
+import { ApiScope, DelegationScope } from '../models'
+import { Loader } from '@island.is/nest/dataloader'
+import { ApiScopeLoader } from '../loaders/apiScope.loader'
+import type { ApiScopeDataLoader } from '../loaders/apiScope.loader'
 
 @Resolver(() => DelegationScope)
 export class DelegationScopeResolver {
@@ -17,10 +19,17 @@ export class DelegationScopeResolver {
     return delegationScope.scopeName
   }
 
-  @ResolveField('type')
-  resolveType(): string {
-    // We are only granting delegations for ApiScope.
-    // If or when we allow IdentityResources we need to udpate this
-    return ScopeType.ApiScope
+  @ResolveField('apiScope', () => ApiScope, { nullable: true })
+  resolveApiScope(
+    @Loader(ApiScopeLoader) apiScopeLoader: ApiScopeDataLoader,
+    @Parent() delegationScope: DelegationScope,
+    @Args('lang', { type: () => String, nullable: true, defaultValue: 'is' })
+    lang: string,
+  ): Promise<ApiScope | null> {
+    return apiScopeLoader.load({
+      lang,
+      domain: delegationScope.domainName,
+      name: delegationScope.scopeName,
+    })
   }
 }

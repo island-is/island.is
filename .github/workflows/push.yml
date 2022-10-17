@@ -390,7 +390,7 @@ jobs:
       - name: Prepare docker build targets
         id: build_map
         run: |
-          CHUNKS=$(./scripts/ci/generate-build-chunks.sh docker-express docker-next docker-static docker-cypress docker-jest)
+          CHUNKS=$(./scripts/ci/generate-build-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)
           echo "CHUNKS: '$CHUNKS'"
           if [[ $CHUNKS != "[]" ]]; then
             echo "::set-output name=BUILD_CHUNKS::$CHUNKS"
@@ -399,7 +399,7 @@ jobs:
       - name: Gather unaffected docker images
         id: unaffected
         run: |
-          UNAFFECTED=$(./scripts/ci/list-unaffected.sh docker-next docker-express docker-static docker-cypress docker-jest)
+          UNAFFECTED=$(./scripts/ci/list-unaffected.sh docker-next docker-express docker-static docker-playwright docker-jest)
           echo "::set-output name=UNAFFECTED::$UNAFFECTED"
 
       - name: check pre-release
@@ -412,7 +412,7 @@ jobs:
         if: needs.pre-checks.outputs.PRE_CHECK != 'push'
         run: |
           export BASE=$(git merge-base HEAD $GITHUB_BASE_REF)
-          CHUNKS=$(./scripts/ci/generate-build-chunks.sh docker-express docker-next docker-static docker-cypress docker-jest)
+          CHUNKS=$(./scripts/ci/generate-build-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)
           echo "CHUNKS: '$CHUNKS'"
           if [[ $CHUNKS != "[]" ]]; then
             echo "::set-output name=IMAGES::$(echo $CHUNKS | jq '.[] | fromjson | .projects' -r | tr '\n' ',')"

@@ -11,6 +11,7 @@ import {
   buildSelectField,
   getValueViaPath,
   buildDateField,
+  buildExternalDataProvider,
 } from '@island.is/application/core'
 import {
   Form,
@@ -31,7 +32,7 @@ import {
 import { UserProfile } from '../types/schema'
 import { removeCountryCode } from '../lib/utils'
 import { fakeDataSection } from './fakeDataSection'
-import { dataCollectionSection } from './sharedSections/dataCollectionSection'
+import { dataCollection } from './sharedSections/dataCollection'
 
 export const getApplication = ({ allowFakeData = false }): Form => {
   return buildForm({
@@ -59,7 +60,20 @@ export const getApplication = ({ allowFakeData = false }): Form => {
           }),
         ],
       }),
-      dataCollectionSection,
+      buildSection({
+        id: 'externalData',
+        title: m.dataCollectionTitle,
+        children: [
+          buildExternalDataProvider({
+            id: 'approveExternalData',
+            title: m.dataCollectionTitle,
+            subTitle: m.dataCollectionSubtitle,
+            description: m.dataCollectionDescription,
+            checkboxLabel: m.dataCollectionCheckboxLabel,
+            dataProviders: dataCollection,
+          }),
+        ],
+      }),
       buildSection({
         id: 'marriageSides',
         title: m.informationSectionTitle,

@@ -127,10 +127,9 @@ export class CaseController {
   @ApiOkResponse({ type: Case, description: 'Updates an existing case' })
   async update(
     @Param('caseId') caseId: string,
-    @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @Body() caseToUpdate: UpdateCaseDto,
-  ): Promise<Case | null> {
+  ): Promise<Case> {
     this.logger.debug(`Updating case ${caseId}`)
 
     // Make sure valid users are assigned to the case's roles
@@ -176,8 +175,8 @@ export class CaseController {
       updatedCase.courtCaseNumber !== theCase.courtCaseNumber
     ) {
       // The court case number has changed, so the request must be uploaded to the new court case
-      // No need to wait
-      this.caseService.uploadProsecutorDocumentsToCourt(updatedCase, user)
+      // No need to wait for now, but may consider including this in a transaction with the database update later
+      this.caseService.addCaseConnectedToCourtCaseMessageToQueue(updatedCase.id)
     }
 
     return updatedCase
@@ -219,10 +218,11 @@ export class CaseController {
 
     // Indictment cases are not signed
     if (isIndictmentCase(theCase.type) && completedCaseStates.includes(state)) {
-      // No need to wait for this to complete
-      this.caseService.addCompletedCaseToQueue(caseId)
+      // No need to wait for now, but may consider including this in a transaction with the database update later
+      this.caseService.addCaseCompletedMessageToQueue(caseId)
     }
 
+    // No need to wait
     this.eventService.postEvent(
       (transition.transition as unknown) as CaseEvent,
       updatedCase ?? theCase,
@@ -273,6 +273,27 @@ export class CaseController {
     )
 
     const pdf = await this.caseService.getRequestPdf(theCase)
+
+    res.end(pdf)
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseReadGuard)
+  @RolesRules(prosecutorRule, judgeRule, registrarRule)
+  @Get('case/:caseId/caseFiles')
+  @ApiOkResponse({
+    content: { 'application/pdf': {} },
+    description: 'Gets the case files for an existing case as a pdf document',
+  })
+  async getCaseFilesPdf(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+    @Res() res: Response,
+  ): Promise<void> {
+    this.logger.debug(
+      `Getting the case files for case ${caseId} as a pdf document`,
+    )
+
+    const pdf = await this.caseService.getCaseFilesPdf(theCase)
 
     res.end(pdf)
   }

@@ -1,5 +1,9 @@
-import React, { FC, useEffect } from 'react'
+import React, { FC, useState, useEffect, useCallback } from 'react'
 import { useFieldArray } from 'react-hook-form'
+// import { IdentityInput, Query } from '@island.is/api/schema'
+// import * as kennitala from 'kennitala'
+// import throttle from 'lodash/throttle'
+
 import { RecordObject } from '@island.is/application/types'
 import {
   Box,
@@ -7,9 +11,11 @@ import {
   GridColumn,
   GridRow,
   GridContainer,
+  // InputError,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
+// import { useLazyQuery } from '@apollo/client'
 import { getValueViaPath, getErrorViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import {
@@ -18,6 +24,8 @@ import {
 } from '@island.is/shared/form-fields'
 import { FinancialStatementsInao } from '../../lib/utils/dataSchema'
 import * as styles from './CemetryCaretaker.css'
+// import { IdentityQuery } from '../../graphql'
+import { BOARDMEMEBER, CARETAKER } from '../../lib/constants'
 
 type Props = {
   id: string
@@ -36,10 +44,52 @@ const CareTakerRepeaterItem = ({
 }: Props) => {
   const { formatMessage } = useLocale()
 
+  const [nationalIdInput, setNationalIdInput] = useState('')
+  // const { getValues, setValue } = useFormContext()
   const fieldIndex = `${id}[${index}]`
   const nameField = `${fieldIndex}.name`
   const nationalIdField = `${fieldIndex}.nationalId`
   const roleField = `${fieldIndex}.role`
+
+  // currently getting a weird errir when trying to fetch name
+  // keeping some code for late use
+
+  // const [getIdentity, { data, loading, error }] = useLazyQuery<
+  //   Query,
+  //   { input: IdentityInput }
+  // >(IdentityQuery, {
+  //   onCompleted: (data) => {
+  //     console.log(data)
+  //   },
+  // })
+
+  // useEffect(() => {
+  //   if (nationalIdInput.length === 10 && kennitala.isValid(nationalIdInput)) {
+  //     getIdentity({
+  //       variables: {
+  //         input: {
+  //           nationalId: nationalIdInput,
+  //         },
+  //       },
+  //     })
+  //   }
+  // }, [nationalIdInput])
+
+  // console.log({ data, loading, error })
+  // const fetchName = throttle((nationalId: string) => {
+  //   const isPerson = kennitala.isPerson(nationalId)
+  //   if (isPerson) {
+  //     getIdentity({
+  //       variables: {
+  //         input: {
+  //           nationalId,
+  //         },
+  //       },
+  //     })
+  //   } else {
+  //     console.log('not a person')
+  //   }
+  // }, 1000)
 
   return (
     <GridContainer>
@@ -47,11 +97,18 @@ const CareTakerRepeaterItem = ({
         <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
           <Box position="relative" paddingTop={3} paddingRight={1}>
             <InputController
-              id={nameField}
-              name={nameField}
-              label={formatMessage(m.fullName)}
+              id={nationalIdField}
+              name={nationalIdField}
+              label={formatMessage(m.nationalId)}
               backgroundColor="blue"
-              error={errors && getErrorViaPath(errors, nameField)}
+              format="######-####"
+              onChange={(v) =>
+                setNationalIdInput(v.target.value.replace(/\W/g, ''))
+              }
+              error={errors && getErrorViaPath(errors, nationalIdField)}
+              defaultValue={
+                getValueViaPath(answers, nationalIdField, '') as string
+              }
             />
           </Box>
         </GridColumn>
@@ -71,15 +128,11 @@ const CareTakerRepeaterItem = ({
               </Box>
             )}
             <InputController
-              id={nationalIdField}
-              name={nationalIdField}
-              label={formatMessage(m.nationalId)}
-              format="######-####"
+              id={nameField}
+              name={nameField}
+              label={formatMessage(m.fullName)}
               backgroundColor="blue"
-              error={errors && getErrorViaPath(errors, nationalIdField)}
-              defaultValue={
-                getValueViaPath(answers, nationalIdField, '') as string
-              }
+              error={errors && getErrorViaPath(errors, nameField)}
             />
           </Box>
         </GridColumn>
@@ -97,11 +150,11 @@ const CareTakerRepeaterItem = ({
               options={[
                 {
                   label: formatMessage(m.cemeteryInspector),
-                  value: 'Skoðunarmaður',
+                  value: CARETAKER,
                 },
                 {
                   label: formatMessage(m.cemeteryBoardMember),
-                  value: 'Stjórnarmaður',
+                  value: BOARDMEMEBER,
                 },
               ]}
             />
@@ -124,12 +177,13 @@ export const CemetryCaretaker: FC<FieldBaseProps<FinancialStatementsInao>> = ({
     name: `${id}.caretakers`,
   })
 
-  const handleAddCaretaker = () =>
+  const handleAddCaretaker = useCallback(() => {
     append({
       nationalId: '',
       name: '',
       role: '',
     })
+  }, [append])
 
   const handleRemoveCaretaker = (index: number) => remove(index)
 

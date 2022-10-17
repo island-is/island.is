@@ -5,6 +5,7 @@ import {
   Get,
   Inject,
   Param,
+  Patch,
   Post,
   UseGuards,
 } from '@nestjs/common'
@@ -41,6 +42,7 @@ import { DeleteFileResponse } from './models/deleteFile.response'
 import { SignedUrl } from './models/signedUrl.model'
 import { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
 import { FileService } from './file.service'
+import { UpdateFilesDto } from './dto/updateFile.dto'
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('api/case/:caseId')
@@ -164,12 +166,22 @@ export class FileController {
   ): Promise<UploadFileToCourtResponse> {
     this.logger.debug(`Uploading file ${fileId} of case ${caseId} to court`)
 
-    return this.fileService.uploadCaseFileToCourt(
-      caseFile,
-      caseId,
-      theCase.courtId,
-      theCase.courtCaseNumber,
-      user,
-    )
+    return this.fileService.uploadCaseFileToCourt(caseFile, theCase, user)
+  }
+
+  @UseGuards(CaseExistsGuard, CaseWriteGuard, CaseReceivedGuard)
+  @RolesRules(prosecutorRule)
+  @Patch('files')
+  @ApiOkResponse({
+    type: Boolean,
+    description: 'Updates mulitple files of the case',
+  })
+  updateFiles(
+    @Param('caseId') caseId: string,
+    @Body() updateFiles: UpdateFilesDto,
+  ): Promise<CaseFile[]> {
+    this.logger.debug(`Updating files of case ${caseId}`)
+
+    return this.fileService.updateFiles(caseId, updateFiles.files)
   }
 }
