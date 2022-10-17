@@ -430,11 +430,15 @@ export class DelegationsService {
     return persons.find((person) => person?.nationalId === nationalId)
   }
 
+  private isError<T>(item: T | null | Error): item is Error {
+    return item instanceof Error
+  }
+
   /**
    * Checks if item is not an instance of Error
    */
   private isNotError<T>(item: T | Error): item is T {
-    return item instanceof Error === false
+    return !this.isError(item)
   }
 
   /**
@@ -479,8 +483,8 @@ export class DelegationsService {
         ({ fromNationalId }, index) =>
           // All companies will be divided into aliveDelegations
           kennitala.isCompany(fromNationalId) ||
-          // Pass persons that are of Error instance, since we want do return the delegation.
-          persons[index] instanceof Error ||
+          // Pass through altough Þjóðskrá API throws an error since it is not required to view the delegation.
+          this.isError(persons[index]) ||
           // Make sure we can match the person to the delegation, i.e. not deceased
           personsValuesNoError.some(
             (person) => person?.nationalId === fromNationalId,
@@ -698,8 +702,8 @@ export class DelegationsService {
       const [alive, deceased] = partitionWithIndex(
         personalRepresentatives,
         ({ nationalIdRepresentedPerson }, index) =>
-          // Pass persons that are of Error instance, since we want do return the personal representative.
-          persons[index] instanceof Error ||
+          // Pass through altough Þjóðskrá API throws an error since it is not required to view the personal representative.
+          this.isError(persons[index]) ||
           // Make sure we can match the person to the personal representatives, i.e. not deceased
           personsValuesNoError.some(
             (person) => person?.nationalId === nationalIdRepresentedPerson,

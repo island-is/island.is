@@ -321,8 +321,7 @@ describe('DelegationsController', () => {
               ).toBeTruthy()
             })
 
-            it('should only have the nationalId of the valid representees/unknown name ', () => {
-              console.log(body)
+            it('should only have the nationalId of the valid representees', () => {
               expect(body.map((d) => d.fromNationalId).sort()).toEqual([
                 ...validRepresentedPersons.map(([_, id]) => id).sort(),
                 ...errorNationalIdsRepresentedPersons
@@ -333,7 +332,7 @@ describe('DelegationsController', () => {
 
             it(`should only have ${
               valid + nationalRegistryErrors === 1 ? 'name' : 'names'
-            } of the valid represented/unknown name ${
+            } of the valid represented ${
               valid + nationalRegistryErrors === 1 ? 'person' : 'persons'
             }`, () => {
               expect(body.map((d) => d.fromName).sort()).toEqual([
@@ -383,7 +382,7 @@ describe('DelegationsController', () => {
               })
             })
 
-            it('should return delegation if national registry api getIndividual throws and error', async () => {
+            it('should return delegation if national registry api getIndividual throws an error', async () => {
               // Arrange
               const expectedModels = await prModel.findAll({
                 where: {
