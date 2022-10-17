@@ -1,6 +1,4 @@
-import { ZodSuberror } from 'zod/lib/src/ZodError'
-import { ZodUnion } from 'zod/lib/src/types/union'
-import { ZodTypeAny } from 'zod/lib/src/types/base'
+import { ZodIssue } from 'zod/lib/ZodError'
 import isNumber from 'lodash/isNumber'
 import has from 'lodash/has'
 import set from 'lodash/set'
@@ -12,7 +10,6 @@ import {
   StaticTextObject,
   ValidationRecord,
   FormatMessage,
-  Answer,
   FormValue,
   RecordObject,
 } from '@island.is/application/types'
@@ -21,18 +18,17 @@ import { AnswerValidationError } from './AnswerValidator'
 
 function populateError(
   currentError: ValidationRecord = {},
-  newError: ZodSuberror[],
+  newError: ZodIssue[],
   pathToError: string | undefined,
   formatMessage: FormatMessage,
 ) {
   let errorObject = {}
-  const defaultZodError = newError[0].message === 'Invalid value.'
+  const defaultZodError = newError[0].message === 'Invalid input'
 
   newError.forEach((element) => {
     const path = pathToError || element.path
     let message = formatMessage(coreErrorMessages.defaultError)
-
-    if (element.code === 'custom_error') {
+    if (element.code === 'custom') {
       const namespaceRegex = /^\w*\.\w*:.*/g
       const includeNamespace = element?.params?.id?.match(namespaceRegex)?.[0]
 
@@ -65,19 +61,19 @@ function partialSchemaValidation(
   sendConstructedPath: boolean,
   formatMessage: FormatMessage,
 ): ValidationRecord | undefined {
-  Object.keys(answers).forEach((key) => {
+  Object.keys(answers ?? {}).forEach((key) => {
     const constructedErrorPath = constructPath(currentPath, key)
     const answer = answers[key]
 
     // ZodUnions do not have .pick method
-    const trimmedSchema = originalSchema.pick
+    const trimmedSchema = originalSchema?.pick
       ? originalSchema.pick({ [key]: true })
       : originalSchema
 
     try {
       trimmedSchema.parse({ [key]: answer })
     } catch (e) {
-      const zodErrors: ZodSuberror[] = e.errors
+      const zodErrors: ZodIssue[] = e.errors
 
       if (!has(error, constructedErrorPath)) {
         error = populateError(
@@ -87,49 +83,8 @@ function partialSchemaValidation(
           formatMessage,
         )
       }
-
-      if (Array.isArray(answer)) {
-        const arrayElements = answer as Answer[]
-
-        arrayElements.forEach((el, index) => {
-          try {
-            trimmedSchema.parse({ [key]: [el] })
-          } catch (e) {
-            let schemaShape = trimmedSchema?.shape[key]?._def?.type
-
-            // z.array().optional(), f.x, is a union type rather than a simple array type
-            if (!schemaShape && trimmedSchema?.shape[key]?._def?.options) {
-              const arrayOption = (trimmedSchema.shape[key] as ZodUnion<
-                [ZodTypeAny, ZodTypeAny]
-              >)._def.options.find((opt) => opt?._def?.t === 'array')
-              schemaShape = arrayOption?._def?.type
-            }
-
-            if (el !== null && typeof el === 'object') {
-              partialSchemaValidation(
-                el as FormValue,
-                schemaShape,
-                error,
-                `${constructedErrorPath}[${index}]`,
-                true,
-                formatMessage,
-              )
-            }
-          }
-        })
-      } else if (typeof answer === 'object') {
-        partialSchemaValidation(
-          answer as FormValue,
-          originalSchema.shape[key],
-          error,
-          constructedErrorPath,
-          false,
-          formatMessage,
-        )
-      }
     }
   })
-
   return error
 }
 

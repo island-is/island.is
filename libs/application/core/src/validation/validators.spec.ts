@@ -11,7 +11,7 @@ const dataSchema = z.object({
       }
       return asNumber > 0
     }),
-    name: z.string().nonempty().max(256),
+    name: z.string().min(1).max(256),
     minString: z.string().min(7).optional(),
     email: z.string().email().optional(),
   }),
@@ -81,7 +81,7 @@ describe('validateAnswers', () => {
           }
           return asNumber > 15
         }),
-        name: z.string().nonempty().max(256),
+        name: z.string().min(1).max(256),
         nationalId: z.string().refine((x) => x === 'the only string'),
         phoneNumber: z.string().min(7),
         email: z.string().email(),
@@ -116,7 +116,7 @@ describe('validateAnswers', () => {
     const veryNestedSchema = z.object({
       requiredString: z.string(),
       nested: z.object({
-        name: z.string().nonempty().optional(),
+        name: z.string().min(1).optional(),
         deep: z.object({
           age: z.number().positive().optional(),
           soDeep: z.object({
@@ -267,12 +267,12 @@ describe('validateAnswers', () => {
                   return asNumber > 15
                 })
                 .optional(),
-              name: z.string().nonempty().max(256),
+              name: z.string().min(1).max(256),
             }),
           )
           .max(5)
           .nonempty(),
-        requiredString: z.string().nonempty(),
+        requiredString: z.string().min(1),
       })
       const okFormValue = {
         requiredString: 'yes',
@@ -414,7 +414,20 @@ describe('validateAnswers', () => {
         formatMessage,
       })
       expect(secondError).toEqual({
-        person: defaultError,
+        person: [
+          {
+            name: defaultError,
+            age: defaultError,
+          },
+          {
+            name: defaultError,
+            age: defaultError,
+          },
+          {
+            name: defaultError,
+            age: defaultError,
+          },
+        ],
       })
     })
     it('should skip null elements in the array if the validation is not strict', () => {
@@ -440,7 +453,7 @@ describe('validateAnswers', () => {
           )
           .max(5)
           .nonempty(),
-        requiredString: z.string().nonempty(),
+        requiredString: z.string().min(1),
       })
 
       const okFormValue = {
