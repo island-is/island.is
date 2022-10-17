@@ -24,7 +24,7 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 import { indictmentsCaseFilesAccordionItem as m } from './IndictmentsCaseFilesAccordionItem.strings'
 import * as styles from './Chapter.css'
 import { UpdateFileMutation } from './IndictmentsCaseFilesAccordionItem.gql'
-import e from 'express'
+import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
 
 interface Props {
   policeCaseNumber: string
@@ -36,7 +36,9 @@ interface CaseFileProps {
   caseFile: ReorderableItem
   index: number
   onReorder: (id?: string) => void
+  onOpen: (id: string) => void
 }
+
 interface ReorderableItem {
   displayText: string
   chapter?: number
@@ -84,7 +86,7 @@ const renderChapter = (chapter: number, name: string) => (
 )
 
 const CaseFile: React.FC<CaseFileProps> = (props) => {
-  const { caseFile, index, onReorder } = props
+  const { caseFile, index, onReorder, onOpen } = props
   const y = useMotionValue(0)
   const boxShadow = useRaisedShadow(y)
   const controls = useDragControls()
@@ -129,6 +131,7 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
             <Box
               display="flex"
               marginRight={3}
+              style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
               onPointerDown={(e) => {
                 setIsDragging(true)
                 controls.start(e)
@@ -136,7 +139,21 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
             >
               <Icon icon="menu" color="blue400" />
             </Box>
-            <Text variant="h5">{caseFile.id}</Text>
+            <Box
+              display="flex"
+              alignItems="center"
+              component="button"
+              onClick={() => {
+                if (caseFile.id) {
+                  onOpen(caseFile.id)
+                }
+              }}
+            >
+              <Text variant="h5">{caseFile.displayText}</Text>
+              <Box marginLeft={1}>
+                <Icon icon="open" type="outline" size="small" />
+              </Box>
+            </Box>
           </Box>
           <Box display="flex" alignItems="center">
             <Box display="flex" marginRight={3}>
@@ -158,6 +175,7 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
   const [updateFilesMutation] = useMutation<UpdateFilesMutationResponse>(
     UpdateFileMutation,
   )
+  const { onOpen } = useFileList({ caseId })
 
   const filesInChapter = (chapter: number) => {
     return caseFiles
@@ -336,6 +354,7 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
                 caseFile={item}
                 index={index}
                 onReorder={handleReorder}
+                onOpen={onOpen}
               />
             </Box>
           )
