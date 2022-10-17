@@ -54,7 +54,18 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
   async getisEmployee({
     auth,
   }: TemplateApiModuleActionProps): Promise<Boolean> {
-    return await this.drivingLicenseBookService.isSchoolStaff(auth)
+    const isEmployee = await this.drivingLicenseBookService.isSchoolStaff(auth)
+    if (isEmployee) {
+      return isEmployee
+    } else {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.drivingLicenseNotEmployeeTitle,
+          summary: coreErrorMessages.drivingLicenseNotEmployeeSummary,
+        },
+        400,
+      )
+    }
   }
 
   async drivingSchoolForEmployee({

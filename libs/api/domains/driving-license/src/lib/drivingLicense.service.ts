@@ -152,6 +152,7 @@ export class DrivingLicenseService {
     const residenceHistory = await this.nationalRegistryXRoadService.getNationalRegistryResidenceHistory(
       nationalId,
     )
+
     const localRecidencyHistory = hasResidenceHistory(residenceHistory)
     const localRecidency = hasLocalResidence(residenceHistory)
 

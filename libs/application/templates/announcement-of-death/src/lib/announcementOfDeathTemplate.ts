@@ -20,6 +20,7 @@ import { ApiActions } from './constants'
 import { Features } from '@island.is/feature-flags'
 import { DeathNoticeApi } from '../dataProviders'
 import { determineMessageFromApplicationAnswers } from './utils'
+
 const HalfYearLifeCycle: StateLifeCycle = {
   shouldBeListed: true,
   shouldBePruned: true,

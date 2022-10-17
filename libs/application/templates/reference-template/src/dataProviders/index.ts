@@ -1,5 +1,5 @@
 import { defineTemplateApi } from '@island.is/application/types'
-
+export { MockProviderApi } from '@island.is/application/types'
 export interface MyParameterType {
   id: number
 }

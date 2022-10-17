@@ -26,14 +26,13 @@ export class ApplicationService extends BaseTemplateApiService {
       return undefined
     }
     const { states, where } = params
-    // Returns only an application with the same active announcment
+
     const findExistingApplications = this.applicationApiService.customTemplateFindQuery(
       application.typeId,
     ) as CustomTemplateFindQuery
 
-    // TODO: Id is used in parental leave should add id or find a more dynamic way to get info from the application
     const existingApplications = await findExistingApplications({
-      [where.applicant]: application['applicant'],
+      [where.applicant]: application.applicant,
     })
 
     const e: ApplicationInfo[] = existingApplications
