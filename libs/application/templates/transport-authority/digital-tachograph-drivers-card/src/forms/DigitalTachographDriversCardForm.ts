@@ -97,12 +97,6 @@ export const DigitalTachographDriversCardForm: Form = buildForm({
                   name: m.confirm,
                   type: 'primary',
                 },
-                //TODOx remove:
-                {
-                  event: DefaultEvents.ABORT,
-                  name: 'Staðfesta án greiðslu',
-                  type: 'primary',
-                },
               ],
             }),
           ],

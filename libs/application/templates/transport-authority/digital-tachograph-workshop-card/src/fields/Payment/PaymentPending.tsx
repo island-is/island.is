@@ -52,9 +52,10 @@ export const PaymentPending: FC<Props> = ({ error, application, refetch }) => {
 
   // automatically go to done state if payment has been fulfilled
   useEffect(() => {
-    if (!paymentStatus.fulfilled) {
-      return
-    }
+    // TODOx payment step disabled
+    // if (!paymentStatus.fulfilled) {
+    //   return
+    // }
 
     setContinuePolling(false)
 
