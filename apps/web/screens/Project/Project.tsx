@@ -174,6 +174,7 @@ const ProjectPage: Screen<PageProps> = ({
         {content &&
           richText(content, {
             renderComponent: {
+              Form: (slice) => <Form form={slice} namespace={namespace} />,
               PowerBiSlice: (slice) => <PowerBiSlice slice={slice} />,
             },
           })}
