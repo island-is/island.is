@@ -24,6 +24,7 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 import { indictmentsCaseFilesAccordionItem as m } from './IndictmentsCaseFilesAccordionItem.strings'
 import * as styles from './Chapter.css'
 import { UpdateFileMutation } from './IndictmentsCaseFilesAccordionItem.gql'
+import e from 'express'
 
 interface Props {
   policeCaseNumber: string
@@ -38,7 +39,7 @@ interface CaseFileProps {
 }
 interface ReorderableItem {
   displayText: string
-  isChapter: boolean
+  chapter?: number
   isDivider: boolean
   id?: string
   created?: string
@@ -73,6 +74,15 @@ export function useRaisedShadow(value: MotionValue<number>) {
   return boxShadow
 }
 
+const renderChapter = (chapter: number, name: string) => (
+  <Box className={styles.chapterContainer}>
+    <Box marginRight={3}>
+      <Text variant="h4">{`${chapter + 1}.`}</Text>
+    </Box>
+    <Text variant="h4">{name}</Text>
+  </Box>
+)
+
 const CaseFile: React.FC<CaseFileProps> = (props) => {
   const { caseFile, index, onReorder } = props
   const y = useMotionValue(0)
@@ -94,10 +104,8 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
       dragListener={false}
       dragControls={controls}
     >
-      {caseFile.isChapter ? (
-        <Box className={styles.chapterContainer}>
-          <Text variant="h4">{caseFile.displayText}</Text>
-        </Box>
+      {caseFile.chapter !== undefined ? (
+        renderChapter(caseFile.chapter, caseFile.displayText)
       ) : caseFile.isDivider ? (
         <Box marginBottom={2}>
           <Box marginBottom={1}>
@@ -151,55 +159,87 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
     UpdateFileMutation,
   )
 
+  const filesInChapter = (chapter: number) => {
+    return caseFiles
+      .filter((file) => file.chapter === chapter)
+      .map((file) => {
+        return {
+          displayText: file.name,
+          isDivider: false,
+          created: file.created,
+          id: file.id,
+          orderWithinChapter: file.orderWithinChapter,
+        }
+      })
+      .sort((a, b) => {
+        if (!a.orderWithinChapter || !b.orderWithinChapter) {
+          return 0
+        }
+
+        if (a.orderWithinChapter < b.orderWithinChapter) {
+          return 1
+        } else if (a.orderWithinChapter > b.orderWithinChapter) {
+          return -1
+        } else {
+          return 0
+        }
+      })
+  }
+
   const [items, setItems] = useState<ReorderableItem[]>([
     {
-      displayText: `1. ${formatMessage(
-        m.chapterIndictmentAndAccompanyingDocuments,
-      )}`,
-      isChapter: true,
+      displayText: formatMessage(m.chapterIndictmentAndAccompanyingDocuments),
+      chapter: 0,
       isDivider: false,
     },
+    ...filesInChapter(0),
     {
-      displayText: `2. ${formatMessage(m.chapterInvesitgationProcess)}`,
-      isChapter: true,
+      displayText: formatMessage(m.chapterInvesitgationProcess),
+      chapter: 1,
       isDivider: false,
     },
+    ...filesInChapter(1),
     {
-      displayText: `3. ${formatMessage(m.chapterWitnesses)}`,
-      isChapter: true,
+      displayText: formatMessage(m.chapterWitnesses),
+      chapter: 2,
       isDivider: false,
     },
+    ...filesInChapter(2),
     {
-      displayText: `4. ${formatMessage(m.chapterDefendant)}`,
-      isChapter: true,
+      displayText: formatMessage(m.chapterDefendant),
+      chapter: 3,
       isDivider: false,
     },
+    ...filesInChapter(3),
+
     {
-      displayText: `5. ${formatMessage(m.chapterCaseFiles)}`,
-      isChapter: true,
+      displayText: formatMessage(m.chapterCaseFiles),
+      chapter: 4,
       isDivider: false,
     },
+    ...filesInChapter(4),
     {
-      displayText: `6. ${formatMessage(m.chapterElectronicDocuments)}`,
-      isChapter: true,
+      displayText: formatMessage(m.chapterElectronicDocuments),
+      chapter: 5,
       isDivider: false,
     },
+    ...filesInChapter(5),
     {
       displayText: `${formatMessage(m.unorderedFilesTitle)}|${formatMessage(
         m.unorderedFilesExplanation,
       )}`,
-      isChapter: false,
       isDivider: true,
     },
-    ...caseFiles.map((caseFile) => {
-      return {
-        displayText: caseFile.name,
-        isChapter: false,
-        isDivider: false,
-        created: caseFile.created,
-        id: caseFile.id,
-      }
-    }),
+    ...caseFiles
+      .filter((caseFile) => caseFile.chapter === null)
+      .map((caseFile) => {
+        return {
+          displayText: caseFile.name,
+          isDivider: false,
+          created: caseFile.created,
+          id: caseFile.id,
+        }
+      }),
   ])
 
   const handleReorder = (fileId?: string) => {
@@ -209,26 +249,13 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
 
     const restOfChapters: ReorderableItem[] = []
 
-    // const chapters = (item: ReorderableItem) => {
-    //   let counter = -1 // -1 because we don't want to count current document
-
-    //   while (!item.isChapter) {
-    //     counter++
-    //     item = items[items.indexOf(item) - 1]
-    //     chapters(item)
-    //   }
-
-    //   return [items.indexOf(item), counter]
-    // }
-
     const chapters = (item: ReorderableItem) => {
       let [chapter, orderWithinChapter] = [0, 0]
       let counter = 0
 
-      for (let i = items.indexOf(item); !items[i].isChapter; i--) {
-        console.log(items[i])
-        if (items[i - 1].isChapter) {
-          chapter = Number(items[i - 1].displayText.split('.')[0]) - 1
+      for (let i = items.indexOf(item); items[i].chapter === undefined; i--) {
+        if (items[i - 1].chapter !== undefined) {
+          chapter = items[i - 1].chapter || 0 // The "|| 0" part of this line is to silence a TS error
         }
 
         orderWithinChapter = counter++
@@ -239,7 +266,7 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
 
     const updateRestOfFilesInChapter = (item: ReorderableItem) => {
       for (let i = items.indexOf(item); i < items.length; i++) {
-        if (items[i].isChapter || items[i].isDivider) {
+        if (items[i].chapter !== undefined || items[i].isDivider) {
           break
         }
 
@@ -289,9 +316,10 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
       <Box marginBottom={3}>
         <Text>{formatMessage(m.explanation)}</Text>
       </Box>
-      <Box className={styles.chapterContainer} marginBottom={2}>
-        <Text variant="h4">{items[0].displayText}</Text>
-      </Box>
+      {renderChapter(
+        0,
+        formatMessage(m.chapterIndictmentAndAccompanyingDocuments),
+      )}
       <Reorder.Group
         axis="y"
         values={items}
