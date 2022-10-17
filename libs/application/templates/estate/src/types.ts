@@ -71,6 +71,7 @@ export interface EstateMember {
   custodian?: string
   foreignCitizenship?: ('yes' | 'no')[]
   dummy: boolean
+  enabled?: boolean
 }
 
 export interface Property {

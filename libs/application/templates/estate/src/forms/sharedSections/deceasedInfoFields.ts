@@ -6,7 +6,6 @@ import { m } from '../../lib/messages'
 import format from 'date-fns/format'
 import { isEstateRegistrant } from '../../lib/utils/isEstateRegistrant'
 import { format as formatKennitala } from 'kennitala'
-
 export const deceasedInfoFields = [
   buildKeyValueField({
     label: m.nameOfTheDeceased,
