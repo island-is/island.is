@@ -85,11 +85,13 @@ export class ContentfulService {
       (response === null || items.length < response.total)
     ) {
       try {
-        response = await this.contentfulClient.getEntries({
-          ...query,
-          limit: chunkSize,
-          skip: items.length,
-        })
+        response = await this.limiter.schedule(() =>
+          this.contentfulClient.getEntries({
+            ...query,
+            limit: chunkSize,
+            skip: items.length,
+          }),
+        )
         for (const item of response.items) {
           items.push(item)
         }
@@ -194,14 +196,13 @@ export class ContentfulService {
 
       // the content type filter might remove all ids in that case skip trying to get this chunk
       if (chunkIds.length) {
-        const items = await this.limiter.schedule(() => {
-          // gets the changes for current locale
-          return this.getContentfulData(chunkSize, {
-            include: this.defaultIncludeDepth,
-            'sys.id[in]': chunkIds.join(','),
-            locale: this.contentfulLocaleMap[locale],
-          })
+        // gets the changes for current locale
+        const items = await this.getContentfulData(chunkSize, {
+          include: this.defaultIncludeDepth,
+          'sys.id[in]': chunkIds.join(','),
+          locale: this.contentfulLocaleMap[locale],
         })
+
         chunkedChanges.push(items)
       }
       chunkToProcess = entries.splice(-chunkSize, chunkSize)
@@ -289,12 +290,10 @@ export class ContentfulService {
           // We fetch the entries that are linking to our nested entries
           linkedEntries.push(
             ...(
-              await this.limiter.schedule(() => {
-                return this.getContentfulData(chunkSize, {
-                  include: this.defaultIncludeDepth,
-                  links_to_entry: entryId,
-                  locale: this.contentfulLocaleMap[locale],
-                })
+              await this.getContentfulData(chunkSize, {
+                include: this.defaultIncludeDepth,
+                links_to_entry: entryId,
+                locale: this.contentfulLocaleMap[locale],
               })
             ).filter(
               (entry) => !items.some((item) => item.sys.id === entry.sys.id),
