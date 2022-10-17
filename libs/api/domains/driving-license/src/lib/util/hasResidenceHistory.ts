@@ -71,7 +71,7 @@ export const hasLocalResidence = (
       ({ dateOfChange: a }, { dateOfChange: b }) =>
         compareDesc(new Date(a), new Date(b)),
     )
-    return sorted[0].country === 'IS'
+    return sorted[0]?.country === 'IS' || false
   }
   return false
 }
