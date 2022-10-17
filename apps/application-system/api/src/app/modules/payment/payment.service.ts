@@ -13,6 +13,8 @@ import { CreateChargeResult } from './payment.type'
 import { logger } from '@island.is/logging'
 import { ApolloError } from 'apollo-server-express'
 import { Application as ApplicationModel } from '@island.is/application/api/core'
+import { unknown } from 'zod'
+import { classNames } from 'react-select/src/utils'
 
 const handleError = async (error: any) => {
   logger.error(JSON.stringify(error))
@@ -66,7 +68,10 @@ export class PaymentService {
       this.paymentConfig.callbackAdditionUrl +
       payment.id
 
-    const parsedDefinition = JSON.parse(JSON.stringify(payment.definition))
+    const parsedDefinition =
+      typeof payment.definition === 'string' // this is a hack to get around the fact that the definition is stored as a string in the database but as an object in during testing
+        ? JSON.parse((payment.definition as unknown) as string)
+        : JSON.parse(JSON.stringify(payment.definition))
 
     const charge: Charge = {
       // TODO: this needs to be unique, but can only handle 22 or 23 chars
@@ -91,7 +96,7 @@ export class PaymentService {
       returnUrl: callbackUrl,
       requestID: payment.id,
     }
-
+    console.log({ charge })
     const result = await this.paymentApi.createCharge(charge)
 
     return {
