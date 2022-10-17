@@ -98,4 +98,9 @@ export const m = defineMessages({
     description:
       'Description of application state/status when payment is pending',
   },
+  errorDataProvider: {
+    id: 'cr.application:error.dataProvider',
+    defaultMessage: 'Reyndu aftur síðar',
+    description: 'Unhandled error in data provider',
+  },
 })

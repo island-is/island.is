@@ -29,6 +29,11 @@ export const m = defineMessages({
     description:
       'Description of application state/status when application is processed',
   },
+  errorDataProvider: {
+    id: 'cr.application:error.dataProvider',
+    defaultMessage: 'Reyndu aftur síðar',
+    description: 'Unhandled error in data provider',
+  },
   confirmation: {
     id: 'ta.tvo.application:confirmation',
     defaultMessage: 'Staðfesting',

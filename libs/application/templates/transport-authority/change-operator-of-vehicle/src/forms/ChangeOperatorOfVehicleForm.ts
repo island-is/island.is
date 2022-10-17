@@ -39,6 +39,11 @@ export const ChangeOperatorOfVehicleForm: Form = buildForm({
               title: m.userProfileInformationTitle,
               subTitle: m.userProfileInformationSubTitle,
             }),
+            buildDataProviderItem({
+              id: 'payment',
+              type: 'PaymentChargeInfoProvider',
+              title: '',
+            }),
           ],
         }),
       ],
@@ -68,7 +73,12 @@ export const ChangeOperatorOfVehicleForm: Form = buildForm({
                   name: m.confirm,
                   type: 'primary',
                 },
-                //TODOx bæta við submit sem fer beint í completed
+                //TODOx remove:
+                {
+                  event: DefaultEvents.ABORT,
+                  name: 'Staðfesta án greiðslu',
+                  type: 'primary',
+                },
               ],
             }),
           ],

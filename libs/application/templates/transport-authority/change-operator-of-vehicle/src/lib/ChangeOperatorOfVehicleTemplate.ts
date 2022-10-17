@@ -69,7 +69,8 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
+          [DefaultEvents.SUBMIT]: { target: States.PAYMENT },
+          [DefaultEvents.ABORT]: { target: States.COMPLETED }, //TODOX remove
         },
       },
       [States.PAYMENT]: {

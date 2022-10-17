@@ -37,11 +37,6 @@ export const PaymentChargeOverview: FC<FieldBaseProps> = ({ application }) => {
           {formatIsk(price)}
         </Text>
       </Box>
-      <AlertMessage
-        type="info"
-        title={formatMessage(payment.paymentChargeOverview.alertTitle)}
-        message={formatMessage(payment.paymentChargeOverview.alertMessage)}
-      />
     </Box>
   )
 }

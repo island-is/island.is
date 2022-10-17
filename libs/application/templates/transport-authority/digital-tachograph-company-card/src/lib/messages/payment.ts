@@ -34,17 +34,6 @@ export const payment = {
       defaultMessage: 'Samtals',
       description: 'Total amount label',
     },
-    alertTitle: {
-      id: 'ta.tvo.application:payment.paymentChargeOverview.alertTitle',
-      defaultMessage: 'Til athugunar!',
-      description: 'Alert title',
-    },
-    alertMessage: {
-      id: 'ta.tvo.application:payment.paymentChargeOverview.alertMessage',
-      defaultMessage:
-        'Ef ekki verður komið samþykki frá nýjum eiganda innan 7 daga verður greiðslan endurgreidd og salan gerð óvirk.',
-      description: 'Alert message',
-    },
   }),
   paymentPending: defineMessages({
     examplePaymentPendingFieldError: {

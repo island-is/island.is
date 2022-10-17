@@ -223,7 +223,12 @@ export const TransferOfVehicleOwnershipForm: Form = buildForm({
                   name: m.confirm,
                   type: 'primary',
                 },
-                //TODOx bæta við submit sem fer beint í completed
+                //TODOx remove:
+                {
+                  event: DefaultEvents.ABORT,
+                  name: 'Staðfesta án greiðslu',
+                  type: 'primary',
+                },
               ],
             }),
           ],

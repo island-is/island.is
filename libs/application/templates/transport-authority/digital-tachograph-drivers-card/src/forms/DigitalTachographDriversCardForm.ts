@@ -40,6 +40,11 @@ export const DigitalTachographDriversCardForm: Form = buildForm({
               subTitle: m.userProfileInformationSubTitle,
             }),
             buildDataProviderItem({
+              id: 'payment',
+              type: 'PaymentChargeInfoProvider',
+              title: '',
+            }),
+            buildDataProviderItem({
               id: 'drivingLicense',
               type: 'DrivingLicenseProvider',
               title: m.drivingLicenseProviderTitle,
@@ -92,7 +97,12 @@ export const DigitalTachographDriversCardForm: Form = buildForm({
                   name: m.confirm,
                   type: 'primary',
                 },
-                //TODOx bæta við submit sem fer beint í completed
+                //TODOx remove:
+                {
+                  event: DefaultEvents.ABORT,
+                  name: 'Staðfesta án greiðslu',
+                  type: 'primary',
+                },
               ],
             }),
           ],
