@@ -13,14 +13,10 @@ import {
   pruneAfterDays,
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
-import * as z from 'zod'
 import { ApiActions } from '../shared'
 import { m } from './messagess'
 import { Features } from '@island.is/feature-flags'
-
-const TransferOfVehicleOwnershipSchema = z.object({
-  approveExternalData: z.boolean().refine((v) => v),
-})
+import { TransferOfVehicleOwnershipSchema } from './dataSchema'
 
 const template: ApplicationTemplate<
   ApplicationContext,
