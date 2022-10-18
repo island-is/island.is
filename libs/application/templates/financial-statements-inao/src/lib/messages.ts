@@ -376,6 +376,11 @@ export const m = defineMessages({
     defaultMessage: 'Fjármagnsliðir',
     description: 'capital numbers',
   },
+  capitalNumbersSectionTitle: {
+    id: 'fsn.application:income.capitalNumbersSectionTitle',
+    defaultMessage: 'Lykiltölur Fjármagnsliðir',
+    description: 'capital numbers',
+  },
   electionOffice: {
     id: 'fsn.application:income.electionOffice',
     defaultMessage: 'Kosningaskrifstofa',
