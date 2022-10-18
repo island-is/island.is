@@ -111,7 +111,7 @@ export const createCaseFilesRecord = async (
     buffer && (await pdfDocument.mergeDocument(buffer))
   }
 
-  pdfDocument.addPageNumbers()
+  pdfDocument.addPageNumbers().addPage(0)
   createTableOfContents()
 
   return pdfDocument.getContents()
@@ -119,7 +119,7 @@ export const createCaseFilesRecord = async (
   /***** Helpers ******/
 
   function createTableOfContents() {
-    const currentPage = rawDocument.insertPage(0)
+    const currentPage = rawDocument.getPage(0)
 
     let yOffset = 0
 

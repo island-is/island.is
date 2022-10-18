@@ -2,6 +2,7 @@ import { PDFDocument, PDFFont, PDFPage, StandardFonts } from 'pdf-lib'
 
 export interface PdfDocument {
   rawDocument: PDFDocument
+  addPage: (position: number) => PdfDocument
   addPageNumbers: () => PdfDocument
   getContents: () => Promise<Buffer>
   mergeDocument: (buffer: Buffer) => Promise<PdfDocument>
@@ -31,6 +32,12 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
 
   const pdfDocument = {
     rawDocument: rawDocument,
+
+    addPage: (position: number) => {
+      rawDocument.insertPage(position)
+
+      return pdfDocument
+    },
 
     addPageNumbers: () => {
       const pageNumberRightMargin = 10
