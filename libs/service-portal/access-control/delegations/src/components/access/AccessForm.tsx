@@ -23,6 +23,7 @@ import {
   AuthDelegationsDocument,
   useAuthApiScopesQuery,
   useUpdateAuthDelegationMutation,
+  useAuthScopeTreeQuery,
 } from '@island.is/service-portal/graphql'
 import {
   AccessForm as AccessFormState,
@@ -35,6 +36,7 @@ import {
 import { AccessItem } from './AccessItem'
 import { AccessConfirmModal, AccessItemHeader } from '../../components/access'
 import { isDefined } from '@island.is/shared/utils'
+import { ISLAND_DOMAIN } from '../../constants'
 
 export type MappedScope = {
   name?: string
@@ -77,8 +79,17 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
     },
   })
 
+  const { data: scopeTree, loading: scopeTreeLoading } = useAuthScopeTreeQuery({
+    variables: {
+      input: {
+        // TODO use domain from delegation
+        domain: ISLAND_DOMAIN,
+      },
+    },
+  })
+
   const { authApiScopes } = apiScopeData || {}
-  const loading = apiScopeLoading
+  const loading = apiScopeLoading || scopeTreeLoading
 
   const methods = useForm<AccessFormState>()
   const { handleSubmit, getValues } = methods
@@ -176,6 +187,39 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
           <AccessItemHeader hideValidityPeriod={!!validityPeriod} />
           <Box>
             {!loading &&
+              scopeTree?.authScopeTree.map((authScope, index) => {
+                const model = `${GROUP_PREFIX}.${index}`
+
+                const apiScopes: Scope[] =
+                  authScope.__typename === 'AuthApiScopeGroup'
+                    ? [
+                        {
+                          ...authScope,
+                          model,
+                        },
+                        ...(authScope.children?.map((scope) => ({
+                          ...scope,
+                          model,
+                        })) || []),
+                      ]
+                    : [
+                        {
+                          ...authScope,
+                          model,
+                        },
+                      ]
+
+                return (
+                  <AccessItem
+                    key={index}
+                    apiScopes={apiScopes}
+                    authDelegation={delegation}
+                    validityPeriod={validityPeriod}
+                  />
+                )
+              })}
+            <Box marginTop={20} />
+            {!loading &&
               Object.keys(groupedApiScopes).map((key, index) => {
                 const apiScopes = groupedApiScopes[key]
                 const accessItems: Scope[] = key.startsWith(GROUP_PREFIX)
@@ -198,7 +242,6 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
                 )
               })}
           </Box>
-
           {loading && (
             <Box marginTop={3}>
               <Stack space={3}>

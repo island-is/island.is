@@ -3,8 +3,11 @@ import { AuthApiScope, AuthApiScopeGroup } from '@island.is/api/schema'
 export const GROUP_PREFIX = 'group'
 export const SCOPE_PREFIX = 'scope'
 
-type ApiScope = AuthApiScope & { model: string }
-export type ApiScopeGroup = AuthApiScopeGroup & { model: string }
+type ScopeCustomFields = {
+  model: string
+}
+type ApiScope = AuthApiScope & ScopeCustomFields
+export type ApiScopeGroup = AuthApiScopeGroup & ScopeCustomFields
 export type ScopeTag = {
   displayName?: string
   validTo: Date
