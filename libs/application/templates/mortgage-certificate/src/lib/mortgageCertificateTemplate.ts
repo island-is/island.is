@@ -17,6 +17,12 @@ import {
   existsAndKMarking,
   exists,
 } from '../util/mortgageCertificateValidation'
+import {
+  NationalRegistryUserApi,
+  NationalRegistryRealEstateApi,
+  UserProfileApi,
+  SyslumadurPaymentCatalogApi,
+} from '../dataProviders'
 
 const MortgageCertificateSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -78,6 +84,12 @@ const template: ApplicationTemplate<
                 },
               ],
               write: 'all',
+              api: [
+                NationalRegistryUserApi,
+                NationalRegistryRealEstateApi,
+                UserProfileApi,
+                SyslumadurPaymentCatalogApi,
+              ],
             },
           ],
         },
