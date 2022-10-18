@@ -112,11 +112,12 @@ export const Card = ({
           <Box display="flex" flexDirection="row" alignItems="center">
             <Box display="inlineFlex" flexGrow={1}>
               <Text as="h3" variant="h3" color={titleColor}>
-                <Hyphen>{title}</Hyphen>
+                <span dangerouslySetInnerHTML={{__html: title}}></span>
               </Text>
             </Box>
           </Box>
-          {description && <Text>{description}</Text>}
+          <p dangerouslySetInnerHTML={{__html: description}}></p>
+         
           {visibleTags.length > 0 && (
             <Box paddingTop={3} flexGrow={0} position="relative">
               <Inline space={1}>

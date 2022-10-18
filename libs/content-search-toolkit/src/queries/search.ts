@@ -140,13 +140,13 @@ export const searchQuery = (
       number_of_fragments : 3,
       fragment_size : 150,
       fields : {
-        title : {},
-        content : {}
+        title : { pre_tags : ["<em style='text-decoration: underline;font-weight: 900;'>"],post_tags : ["</em>"] },
+        content :{ pre_tags : ["<b>"],post_tags : ["</b>"] }
       }
     },
     size,
     from: (page - 1) * size, // if we have a page number add it as offset for pagination
   }
-  console.log(esQuery)
+  // console.log(esQuery)
   return esQuery
 }

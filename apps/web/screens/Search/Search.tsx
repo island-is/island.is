@@ -107,6 +107,7 @@ const connectedTypes: Partial<
     'WebArticle',
     'WebSubArticle',
     'WebOrganizationSubpage',
+    'webOrganizationPage',
     'WebProjectPage',
   ],
   webAdgerdirPage: ['WebAdgerdirPage'],
@@ -705,17 +706,17 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
   const types: SearchableContentTypes[] = stringToArray(type).map(
     (x: SearchableContentTypes) => x,
   )
-
-  const allTypes = [
-    'webArticle' as SearchableContentTypes,
-    'webLifeEventPage' as SearchableContentTypes,
-    'webDigitalIcelandService' as SearchableContentTypes,
-    'webAdgerdirPage' as SearchableContentTypes,
-    'webSubArticle' as SearchableContentTypes,
-    'webLink' as SearchableContentTypes,
-    'webNews' as SearchableContentTypes,
-    'webOrganizationSubpage' as SearchableContentTypes,
-    'webProjectPage' as SearchableContentTypes,
+  const allTypes:`${SearchableContentTypes}`[] = [
+    'webArticle',
+    'webLifeEventPage',
+    'webDigitalIcelandService',
+    'webAdgerdirPage',
+    'webSubArticle',
+    'webLink',
+    'webNews',
+    'webOrganizationSubpage',
+    'webOrganizationPage',
+    'webProjectPage',
   ]
 
   const [
