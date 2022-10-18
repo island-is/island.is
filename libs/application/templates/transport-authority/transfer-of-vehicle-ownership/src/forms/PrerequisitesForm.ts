@@ -9,12 +9,14 @@ import {
   buildCustomField,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
-import { externalData } from '../lib/messages'
+import { information, externalData, payment } from '../lib/messages'
+import { m } from '../lib/messagess'
 
 export const PrerequisitesForm: Form = buildForm({
   id: 'PrerequisitesForm',
   title: '',
   mode: FormModes.APPLYING,
+  renderLastScreenButton: true,
   children: [
     buildSection({
       id: 'externalData',
@@ -37,6 +39,11 @@ export const PrerequisitesForm: Form = buildForm({
               type: 'UserProfileProvider',
               title: externalData.userProfile.title,
               subTitle: externalData.userProfile.subTitle,
+            }),
+            buildDataProviderItem({
+              id: 'payment',
+              type: 'PaymentChargeInfoProvider',
+              title: '',
             }),
             buildDataProviderItem({
               id: 'currentVehicleList',
@@ -87,12 +94,20 @@ export const PrerequisitesForm: Form = buildForm({
         }),
       ],
     }),
-    // Has to be here so that the submit button appears (does not appear if no screen is left).
-    // Tackle that as AS task.
-    buildDescriptionField({
-      id: 'unused',
-      title: '',
-      description: '',
+    buildSection({
+      id: 'informationSection',
+      title: information.general.sectionTitle,
+      children: [],
+    }),
+    buildSection({
+      id: 'payment',
+      title: payment.general.sectionTitle,
+      children: [],
+    }),
+    buildSection({
+      id: 'confirmation',
+      title: m.confirmation,
+      children: [],
     }),
   ],
 })

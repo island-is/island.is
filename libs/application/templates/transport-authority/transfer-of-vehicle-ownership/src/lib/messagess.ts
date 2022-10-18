@@ -17,11 +17,22 @@ export const m = defineMessages({
     description:
       'Description of application state/status when the application is in progress',
   },
+  actionCardPayment: {
+    id: 'cr.application:actionCardPayment',
+    defaultMessage: 'Greiðslu vantar',
+    description:
+      'Description of application state/status when payment is pending',
+  },
   actionCardDone: {
     id: 'ta.tvo.application:actionCardDone',
     defaultMessage: 'Afgreidd',
     description:
       'Description of application state/status when application is processed',
+  },
+  errorDataProvider: {
+    id: 'cr.application:error.dataProvider',
+    defaultMessage: 'Reyndu aftur síðar',
+    description: 'Unhandled error in data provider',
   },
   confirmation: {
     id: 'ta.tvo.application:confirmation',

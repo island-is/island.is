@@ -6,9 +6,11 @@ import {
   buildCustomField,
   buildSubmitField,
   buildSubSection,
+  buildMultiField,
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
-import { m } from '../lib/messages'
+import { m } from '../lib/messagesx'
+import { payment } from '../lib/messages'
 
 export const AnonymityInVehicleRegistryForm: Form = buildForm({
   id: 'AnonymityInVehicleRegistryFormDraft',
@@ -37,12 +39,29 @@ export const AnonymityInVehicleRegistryForm: Form = buildForm({
               title: m.userProfileInformationTitle,
               subTitle: m.userProfileInformationSubTitle,
             }),
+            buildDataProviderItem({
+              id: 'payment',
+              type: 'PaymentChargeInfoProvider',
+              title: '',
+            }),
           ],
         }),
-        buildSubSection({
-          id: 'test',
-          title: 'Test',
+      ],
+    }),
+    buildSection({
+      id: 'payment',
+      title: payment.general.sectionTitle,
+      children: [
+        buildMultiField({
+          id: 'paymentMultiField',
+          title: payment.general.pageTitle,
+          space: 1,
           children: [
+            buildCustomField({
+              id: 'PaymentChargeOverview',
+              title: '',
+              component: 'PaymentChargeOverview',
+            }),
             buildSubmitField({
               id: 'submit',
               placement: 'footer',

@@ -1,5 +1,6 @@
 export { NationalRegistryProvider } from '@island.is/application/data-providers'
 export { UserProfileProvider } from '@island.is/application/data-providers'
+export { PaymentChargeInfoProvider } from './PaymentChargeInfoProvider'
 export { DrivingLicenseProvider } from './DrivingLicenseProvider'
 export { QualityPhotoProvider } from './QualityPhotoProvider'
 export { QualitySignatureProvider } from './QualitySignatureProvider'

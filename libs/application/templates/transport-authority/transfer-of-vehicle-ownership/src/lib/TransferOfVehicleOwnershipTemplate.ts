@@ -8,8 +8,12 @@ import {
   Application,
   DefaultEvents,
 } from '@island.is/application/types'
-import { EphemeralStateLifeCycle } from '@island.is/application/core'
+import {
+  EphemeralStateLifeCycle,
+  pruneAfterDays,
+} from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
+import { ApiActions } from '../shared'
 import { m } from './messagess'
 import { Features } from '@island.is/feature-flags'
 import { TransferOfVehicleOwnershipSchema } from './dataSchema'
@@ -91,19 +95,50 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
+          [DefaultEvents.SUBMIT]: { target: States.PAYMENT },
+        },
+      },
+      [States.PAYMENT]: {
+        meta: {
+          name: 'Greiðsla',
+          actionCard: {
+            tag: {
+              label: m.actionCardPayment,
+              variant: 'red',
+            },
+          },
+          progress: 0.8,
+          lifecycle: pruneAfterDays(1 / 24),
+          onEntry: {
+            apiModuleAction: ApiActions.createCharge,
+          },
+          onExit: {
+            apiModuleAction: ApiActions.submitApplication,
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/Payment').then((val) => val.Payment),
+              actions: [
+                { event: DefaultEvents.SUBMIT, name: 'Áfram', type: 'primary' },
+              ],
+              write: 'all',
+              delete: true,
+            },
+          ],
+        },
+        on: {
           [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
+          [DefaultEvents.ABORT]: { target: States.DRAFT },
         },
       },
       [States.COMPLETED]: {
         meta: {
           name: 'Completed',
           progress: 1,
-          lifecycle: {
-            shouldBeListed: true,
-            shouldBePruned: true,
-            // Applications that stay in this state for 3x30 days (approx. 3 months) will be pruned automatically
-            whenToPrune: 3 * 30 * 24 * 3600 * 1000,
-          },
+          lifecycle: pruneAfterDays(3 * 30),
+          // onEntry: TODOx
           actionCard: {
             tag: {
               label: m.actionCardDone,

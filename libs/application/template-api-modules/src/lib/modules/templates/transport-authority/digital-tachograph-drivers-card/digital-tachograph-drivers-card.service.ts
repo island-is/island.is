@@ -42,14 +42,15 @@ export class DigitalTachographDriversCardService {
       application.id,
     )
 
-    if (isPayment?.fulfilled) {
-      return {
-        success: true,
-      }
-    } else {
-      throw new Error(
-        'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
-      )
+    if (!isPayment?.fulfilled) {
+      // TODOx payment step disabled
+      // throw new Error(
+      //   'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
+      // )
+    }
+
+    return {
+      success: true,
     }
   }
 }

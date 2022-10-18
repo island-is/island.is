@@ -6,9 +6,11 @@ import {
   buildCustomField,
   buildSubmitField,
   buildSubSection,
+  buildMultiField,
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
-import { m } from '../lib/messages'
+import { m } from '../lib/messagesx'
+import { payment } from '../lib/messages'
 
 export const DigitalTachographDriversCardForm: Form = buildForm({
   id: 'DigitalTachographDriversCardFormDraft',
@@ -38,6 +40,11 @@ export const DigitalTachographDriversCardForm: Form = buildForm({
               subTitle: m.userProfileInformationSubTitle,
             }),
             buildDataProviderItem({
+              id: 'payment',
+              type: 'PaymentChargeInfoProvider',
+              title: '',
+            }),
+            buildDataProviderItem({
               id: 'drivingLicense',
               type: 'DrivingLicenseProvider',
               title: m.drivingLicenseProviderTitle,
@@ -63,10 +70,22 @@ export const DigitalTachographDriversCardForm: Form = buildForm({
             }),
           ],
         }),
-        buildSubSection({
-          id: 'test',
-          title: 'Test',
+      ],
+    }),
+    buildSection({
+      id: 'payment',
+      title: payment.general.sectionTitle,
+      children: [
+        buildMultiField({
+          id: 'paymentMultiField',
+          title: payment.general.pageTitle,
+          space: 1,
           children: [
+            buildCustomField({
+              id: 'PaymentChargeOverview',
+              title: '',
+              component: 'PaymentChargeOverview',
+            }),
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
