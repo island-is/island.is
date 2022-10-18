@@ -3,6 +3,12 @@ import { defineMessages } from '@formatjs/intl'
 export const caseFilesRecord = defineMessages({
   title: {
     id: 'judicial.system.backend:case_files_record.title',
+    defaultMessage: 'Málsgögn - {policeCaseNumber}',
+    description:
+      'Notaður sem innri titill á PDF skjalaskrá, birtist í fllipa í vafra',
+  },
+  heading: {
+    id: 'judicial.system.backend:case_files_record.heading',
     defaultMessage: 'SKJALASKRÁ',
     description: 'Notaður sem titill á PDF skjalaskrá',
   },

@@ -1,6 +1,5 @@
 import {
   layoutMultilineText,
-  PDFDocument,
   PDFFont,
   PDFPage,
   StandardFonts,
@@ -88,77 +87,41 @@ export const createCaseFilesRecord = async (
 
   const pageMargin = 70
   const headerMargin = 35
-  const pageNumberRightMargin = 10
-  const pageNumberBottomMargin = 15
 
   const headerFontSize = 8
   const titleFontSize = 16
   const subtitleFontSize = 14
   const textFontSize = 12
-  const pageNumberFontSize = 20
 
-  const pdfDocument = await PdfDocument()
-  pdfDocument.setTitle(`Málsgögn - ${policeCaseNumber}`)
-  const normalFont = await pdfDocument.embedFont(StandardFonts.TimesRoman)
-  const boldFont = await pdfDocument.embedFont(StandardFonts.TimesRomanBold)
+  const pdfDocument = await PdfDocument(
+    formatMessage(caseFilesRecord.title, { policeCaseNumber }),
+  )
 
-  let pageNumber = 0
+  // TODO: Remove block
+  const { rawDocument } = pdfDocument
+  const normalFont = await rawDocument.embedFont(StandardFonts.TimesRoman)
+  const boldFont = await rawDocument.embedFont(StandardFonts.TimesRomanBold)
 
   /***** Content ******/
 
-  await addCaseFilesToDocument()
+  for (const caseFile of caseFiles) {
+    const buffer = await caseFile()
 
+    // TODO: Add error message to PDF
+    buffer && (await pdfDocument.mergeDocument(buffer))
+  }
+
+  pdfDocument.addPageNumbers()
   createTableOfContents()
 
-  const pdf = await pdfDocument.save()
+  const pdf = await rawDocument.save()
 
   return Buffer.from(pdf)
 
   /***** Helpers ******/
 
-  async function addPageToPdfDocument(page: PDFPage) {
-    const pageNumberText = `${++pageNumber}`
-    const pageNumberTextWidth = boldFont.widthOfTextAtSize(
-      pageNumberText,
-      pageNumberFontSize,
-    )
-
-    drawTextAbsolute(
-      page,
-      pageNumberText,
-      page.getWidth() - pageNumberRightMargin - pageNumberTextWidth,
-      pageNumberBottomMargin,
-      boldFont,
-      pageNumberFontSize,
-    )
-
-    pdfDocument.addPage(page)
-  }
-
-  async function addCaseFileToPdfDocument(buffer: void | Buffer) {
-    if (!buffer) {
-      // TODO: Add error message to PDF
-      return
-    }
-
-    const filePdfDoc = await PDFDocument.load(buffer)
-
-    const pages = await pdfDocument.copyPages(
-      filePdfDoc,
-      filePdfDoc.getPageIndices(),
-    )
-
-    pages.forEach((page) => addPageToPdfDocument(page))
-  }
-
-  async function addCaseFilesToDocument() {
-    for (const caseFile of caseFiles) {
-      await addCaseFileToPdfDocument(await caseFile())
-    }
-  }
-
   function createTableOfContents() {
-    const currentPage = pdfDocument.insertPage(0)
+    const currentPage = rawDocument.insertPage(0)
 
     let yOffset = 0
 
@@ -173,7 +136,7 @@ export const createCaseFilesRecord = async (
 
     drawCenteredText(
       currentPage,
-      formatMessage(caseFilesRecord.title),
+      formatMessage(caseFilesRecord.heading),
       (yOffset += pageMargin),
       boldFont,
       titleFontSize,
