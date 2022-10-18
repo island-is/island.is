@@ -5,7 +5,12 @@ import {
   buildDataProviderItem,
   buildCustomField,
 } from '@island.is/application/core'
-import { Form, FormModes } from '@island.is/application/types'
+import {
+  Form,
+  FormModes,
+  HasTeachingRightsApi,
+  NationalRegistryUserApi,
+} from '@island.is/application/types'
 import { m } from '../lib/messages'
 
 export const getInstructorRegistrations = (): Form => {
@@ -26,14 +31,12 @@ export const getInstructorRegistrations = (): Form => {
             checkboxLabel: m.dataCollectionCheckboxLabel,
             dataProviders: [
               buildDataProviderItem({
-                id: 'teachingRights',
-                type: 'TeachingRightsProvider',
+                provider: HasTeachingRightsApi,
                 title: m.dataCollectionTeachersRightsTitle,
                 subTitle: m.dataCollectionTeachersRightsSubtitle,
               }),
               buildDataProviderItem({
-                id: 'nationalRegistry',
-                type: 'NationalRegistryProvider',
+                provider: NationalRegistryUserApi,
                 title: '',
                 subTitle: '',
               }),

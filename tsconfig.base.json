@@ -299,7 +299,6 @@
       "@island.is/auth/react": ["libs/auth/react/src/index.ts"],
       "@island.is/auth/scopes": ["libs/auth/scopes/src/index.ts"],
       "@island.is/cache": ["libs/cache/src/index.ts"],
-      "@island.is/clients/identity": ["libs/clients/identity/src/index.ts"],
       "@island.is/clients/adr-and-machine-license": [
         "libs/clients/adr-and-machine-license/src/index.ts"
       ],
@@ -336,6 +335,7 @@
       "@island.is/clients/health-insurance-v2": [
         "libs/clients/health-insurance-v2/src/index.ts"
       ],
+      "@island.is/clients/identity": ["libs/clients/identity/src/index.ts"],
       "@island.is/clients/islykill": ["libs/clients/islykill/src/index.ts"],
       "@island.is/clients/middlewares": [
         "libs/clients/middlewares/src/index.ts"

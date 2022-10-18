@@ -25,7 +25,7 @@ const formatPrice = (price: number) => `kr. ${price.toLocaleString('de-DE')}`
 
 export const chargeItemCodeRadioOptions = ({
   externalData: {
-    feeInfo: { data },
+    paymentCatalog: { data },
   },
 }: Application) => {
   return (data as PaymentCatalogItem[]).map(

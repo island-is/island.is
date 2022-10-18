@@ -24,6 +24,8 @@ import {
 import { isPerson } from 'kennitala'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
+import { coreErrorMessages } from '@island.is/application/core'
+import { TemplateApiError } from '@island.is/nest/problem'
 
 @Injectable()
 export class AnnouncementOfDeathService extends BaseTemplateApiService {
@@ -32,6 +34,26 @@ export class AnnouncementOfDeathService extends BaseTemplateApiService {
     private readonly syslumennService: SyslumennService,
   ) {
     super(ApplicationTypes.ANNOUNCEMENT_OF_DEATH)
+  }
+
+  async deathNotice({
+    application,
+  }: TemplateApiModuleActionProps): Promise<Boolean> {
+    const applicationData: any =
+      application.externalData?.syslumennOnEntry?.data
+    if (
+      !applicationData?.estate?.caseNumber?.length ||
+      applicationData.estate?.caseNumber.length === 0
+    ) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.failedDataProviderSubmit,
+          summary: coreErrorMessages.drivingLicenseNoTeachingRightsSummary,
+        },
+        400,
+      )
+    }
+    return true
   }
 
   async syslumennOnEntry({ application, auth }: TemplateApiModuleActionProps) {

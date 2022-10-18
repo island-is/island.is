@@ -32,6 +32,8 @@ export enum ApiActions {
 export const YES = 'yes'
 export const NO = 'no'
 
+export const SYSLUMADUR_NATIONAL_ID = '6509142520'
+
 export type Service = {
   type: Services
   dropLocation: string
@@ -77,3 +79,19 @@ export type IdentityDocument = {
 
 export const twoDays = 24 * 3600 * 1000 * 2
 export const sixtyDays = 24 * 3600 * 1000 * 60
+
+export const IdentityDocumentProviderMock = {
+  productionRequestID: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+  number: 'A1234567',
+  type: 'P',
+  verboseType: 'Vegabréf: Almennt',
+  subType: 'A',
+  status: 'ISSUED',
+  issuingDate: new Date('2012-10-02'),
+  expirationDate: new Date('2022-10-02'),
+  displayFirstName: 'Gervimaður',
+  displayLastName: 'Mock',
+  mrzFirstName: 'GERVIMAÐUR',
+  mrzLastName: 'MOCK',
+  sex: 'X',
+}

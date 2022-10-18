@@ -15,6 +15,7 @@ import {
   NationalRegistryUserApi,
   UserProfileApi,
   defineTemplateApi,
+  MockProviderApi,
 } from '@island.is/application/types'
 import * as z from 'zod'
 import * as kennitala from 'kennitala'
@@ -134,6 +135,19 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
                   },
                 }),
                 UserProfileApi,
+                MockProviderApi.configure({
+                  externalDataId: 'referenceMock',
+                  params: {
+                    mocked: true,
+                    mockObject: {
+                      mockString: 'This is a mocked string',
+                      mockArray: [
+                        'Need to mock providers?',
+                        'Use this handy templateApi',
+                      ],
+                    },
+                  },
+                }),
               ],
               delete: true,
             },

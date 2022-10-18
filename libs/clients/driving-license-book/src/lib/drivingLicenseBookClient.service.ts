@@ -41,7 +41,9 @@ export class DrivingLicenseBookClientApiFactory {
     if (token) {
       return api.withMiddleware(new AuthHeaderMiddleware(`Bearer ${token}`))
     } else {
-      throw new Error('Syslumenn client configuration and login went wrong')
+      throw new Error(
+        'Driving license book client configuration and login went wrong',
+      )
     }
   }
 }

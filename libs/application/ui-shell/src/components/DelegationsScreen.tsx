@@ -68,6 +68,7 @@ export const DelegationsScreen = ({
           setScreenData((prev) => ({
             ...prev,
             allowedDelegations: template.allowedDelegations,
+            templateName: template.name,
           }))
         } else {
           if (user?.profile.actor) {
@@ -166,7 +167,8 @@ export const DelegationsScreen = ({
   const screenTexts = {
     title: formatMessage(
       screenData.screenType === ScreenType.ONGOING
-        ? coreDelegationsMessages.delegationScreenTitleForOngoingApplication
+        ? screenData.templateName ||
+            coreDelegationsMessages.delegationScreenTitleForOngoingApplication
         : screenData.screenType === ScreenType.NEW
         ? coreDelegationsMessages.delegationScreenTitle
         : coreDelegationsMessages.delegationScreenTitleApplicationNoDelegationSupport,

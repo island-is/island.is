@@ -19,6 +19,7 @@ import { ExamplePaymentActionsModule } from './example-payment-actions/examplePa
 import { ComplaintsToAlthingiOmbudsmanTemplateModule } from './complaints-to-althingi-ombudsman/complaints-to-althingi-ombudsman.module'
 import { MortgageCertificateSubmissionModule } from './mortgage-certificate-submission/mortgage-certificate-submission.module'
 import { MarriageConditionsSubmissionModule } from './marriage-conditions-submission/marriage-conditions-submission.module'
+import { MarriageConditionsSubmissionService } from './marriage-conditions-submission/marriage-conditions-submission.service'
 import { FinancialAidModule } from './financial-aid/financial-aid.module'
 import { DrivingSchoolConfirmationModule } from './driving-school-confirmation/driving-school-confirmation.module'
 import { PassportModule } from './passport/passport.module'
@@ -109,4 +110,5 @@ export const services = [
   PassportService,
   OperatingLicenseService,
   FinancialStatementsInaoTemplateService,
+  MarriageConditionsSubmissionService,
 ]

@@ -14,6 +14,7 @@ import { ApiActions } from '../shared'
 import { Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
 import { m } from './messages'
+import { PaymentCatalogApi } from '@island.is/application/types'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -46,6 +47,7 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
+              api: [PaymentCatalogApi],
             },
           ],
         },

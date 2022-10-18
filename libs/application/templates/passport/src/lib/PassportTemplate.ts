@@ -7,6 +7,11 @@ import {
   ApplicationTypes,
   DefaultEvents,
   defineTemplateApi,
+  MockProviderApi,
+  NationalRegistryUserApi,
+  PaymentCatalogApi,
+  UserProfileApi,
+  DistrictsApi,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 import { assign } from 'xstate'
@@ -14,9 +19,11 @@ import { m } from '../lib/messages'
 import {
   ApiActions,
   Events,
+  IdentityDocumentProviderMock,
   Roles,
   sixtyDays,
   States,
+  SYSLUMADUR_NATIONAL_ID,
   twoDays,
 } from './constants'
 import { dataSchema } from './dataSchema'
@@ -70,6 +77,19 @@ const PassportTemplate: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
+              api: [
+                NationalRegistryUserApi,
+                UserProfileApi,
+                PaymentCatalogApi.configure({
+                  externalDataId: 'payment',
+                  params: { orginizationId: SYSLUMADUR_NATIONAL_ID },
+                }),
+                MockProviderApi.configure({
+                  externalDataId: 'identityDocument',
+                  params: IdentityDocumentProviderMock,
+                }),
+                DistrictsApi,
+              ],
             },
           ],
         },
@@ -140,6 +160,19 @@ const PassportTemplate: ApplicationTemplate<
                 { event: DefaultEvents.SUBMIT, name: '', type: 'primary' },
               ],
               write: 'all',
+              api: [
+                NationalRegistryUserApi,
+                UserProfileApi,
+                PaymentCatalogApi.configure({
+                  externalDataId: 'payment',
+                  params: { orginizationId: SYSLUMADUR_NATIONAL_ID },
+                }),
+                MockProviderApi.configure({
+                  externalDataId: 'identityDocument',
+                  params: IdentityDocumentProviderMock,
+                }),
+                DistrictsApi,
+              ],
             },
           ],
         },

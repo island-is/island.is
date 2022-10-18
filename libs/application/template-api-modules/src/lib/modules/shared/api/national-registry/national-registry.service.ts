@@ -40,7 +40,7 @@ export class NationalRegistryService extends BaseTemplateApiService {
           name: citizenship.countryName,
         },
         address: person.legalDomicile && {
-          streetName: person.legalDomicile.streetAddress,
+          streetAddress: person.legalDomicile.streetAddress,
           postalCode: person.legalDomicile.postalCode,
           locality: person.legalDomicile.locality,
           municipalityCode: person.legalDomicile.municipalityNumber,

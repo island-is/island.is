@@ -8,7 +8,12 @@ import {
   buildExternalDataProvider,
   buildDataProviderItem,
 } from '@island.is/application/core'
-import { Application, Form, FormModes } from '@island.is/application/types'
+import {
+  Application,
+  Form,
+  FormModes,
+  MockProviderApi,
+} from '@island.is/application/types'
 import { m } from '../lib/messages'
 
 import {
@@ -45,6 +50,11 @@ export const Prerequisites: Form = buildForm({
               title: 'Þjóðskrá',
               subTitle: 'Upplýsingar um þig í Þjóðskrá.',
             }),
+            buildDataProviderItem({
+              provider: MockProviderApi,
+              title: 'Mock Data',
+              subTitle: 'Returns data for mocking',
+            }),
           ],
         }),
         buildMultiField({
@@ -58,6 +68,16 @@ export const Prerequisites: Form = buildForm({
                 `Gildið frá data provider: ${get(
                   application.externalData,
                   'getReferenceData.data.referenceData.numbers',
+                  'fannst ekki',
+                )}`,
+            }),
+            buildDescriptionField({
+              id: 'externalDataSuccessDescription.mock',
+              title: '',
+              description: (application: Application) =>
+                `Gildið frá mock data provider: ${get(
+                  application.externalData,
+                  'referenceMock.data.mockObject.mockString',
                   'fannst ekki',
                 )}`,
             }),

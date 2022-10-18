@@ -20,7 +20,7 @@ export const formatAddress = (address: Address | null | undefined) => {
   if (!address) {
     return null
   }
-  return `${address.streetName}, ${address.postalCode} ${address.locality}`
+  return `${address.streetAddress}, ${address.postalCode} ${address.locality}`
 }
 
 export const getSelectedChildrenFromExternalData = (

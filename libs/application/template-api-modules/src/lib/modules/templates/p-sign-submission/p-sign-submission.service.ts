@@ -6,9 +6,10 @@ import {
   Attachment,
   PersonType,
   DataUploadResponse,
+  CertificateInfoResponse,
 } from '@island.is/clients/syslumenn'
 import { NationalRegistry } from './types'
-import { getValueViaPath } from '@island.is/application/core'
+import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
 import {
   ApplicationTypes,
   ApplicationWithAttachments as Application,
@@ -18,6 +19,7 @@ import AmazonS3URI from 'amazon-s3-uri'
 import { S3 } from 'aws-sdk'
 import { SharedTemplateApiService } from '../../shared'
 import { BaseTemplateApiService } from '../../base-template-api.service'
+import { TemplateApiError } from '@island.is/nest/problem'
 
 export const QUALITY_PHOTO = `
 query HasQualityPhoto {
@@ -62,6 +64,23 @@ export class PSignSubmissionService extends BaseTemplateApiService {
   ) {
     super(ApplicationTypes.P_SIGN)
     this.s3 = new S3()
+  }
+
+  async doctorsNote({
+    auth,
+  }: TemplateApiModuleActionProps): Promise<CertificateInfoResponse> {
+    const note = await this.syslumennService.getCertificateInfo(auth.nationalId)
+    if (!note) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.failedDataProvider,
+          summary: coreErrorMessages.errorDataProvider,
+        },
+        400,
+      )
+    } else {
+      return note
+    }
   }
 
   async submitApplication({

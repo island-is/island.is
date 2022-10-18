@@ -1,18 +1,17 @@
-import React, { FC, useEffect } from 'react'
-
+import { FC, useEffect } from 'react'
 import { Box, AlertMessage } from '@island.is/island-ui/core'
 import { formatText, getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { m } from '../lib/messages'
 import { useLocale } from '@island.is/localization'
-import { CurrentLicenseProviderResult } from '../dataProviders/CurrentLicenseProvider'
 import { useFormContext } from 'react-hook-form'
 import { YES, NO } from '../lib/constants'
+import { DrivingLicense } from '../lib/types'
 
 const HealthRemarks: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
   const remarks: string[] =
-    getValueViaPath<CurrentLicenseProviderResult>(
+    getValueViaPath<DrivingLicense>(
       application.externalData,
       'currentLicense.data',
     )?.healthRemarks || []

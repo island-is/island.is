@@ -7,7 +7,13 @@ import {
   buildCustomField,
   buildSubmitField,
 } from '@island.is/application/core'
-import { Form, FormModes, DefaultEvents } from '@island.is/application/types'
+import {
+  Form,
+  FormModes,
+  DefaultEvents,
+  EmployeeApi,
+  NationalRegistryUserApi,
+} from '@island.is/application/types'
 import { m } from '../lib/messages'
 
 export const getDrivingSchoolConfirmation = (): Form => {
@@ -29,14 +35,12 @@ export const getDrivingSchoolConfirmation = (): Form => {
             checkboxLabel: m.dataCollectionCheckboxLabel,
             dataProviders: [
               buildDataProviderItem({
-                id: 'nationalRegistry',
-                type: 'NationalRegistryProvider',
+                provider: NationalRegistryUserApi,
                 title: '',
                 subTitle: '',
               }),
               buildDataProviderItem({
-                id: 'employee',
-                type: 'EmployeeProvider',
+                provider: EmployeeApi,
                 title: m.dataCollectionConfirmationRightsTitle,
                 subTitle: m.dataCollectionConfirmationRightsSubtitle,
               }),

@@ -5,6 +5,7 @@ import {
   ApplicationContext,
   ApplicationStateSchema,
   DefaultEvents,
+  HasTeachingRightsApi,
   defineTemplateApi,
 } from '@island.is/application/types'
 import * as z from 'zod'
@@ -77,6 +78,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
                 { event: 'SUBMIT', name: 'Samþykkja', type: 'primary' },
               ],
               write: 'all',
+              api: [HasTeachingRightsApi],
             },
           ],
         },
@@ -98,6 +100,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           },
           onEntry: defineTemplateApi({
             action: ApiActions.submitAssessmentConfirmation,
+            namespace: 'DrivingLicense',
           }),
           roles: [
             {

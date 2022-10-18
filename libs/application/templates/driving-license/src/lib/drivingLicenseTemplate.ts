@@ -10,10 +10,20 @@ import {
   ApplicationStateSchema,
   DefaultEvents,
   defineTemplateApi,
+  JuristictionApi,
+  CurrentLicenseApi,
+  DrivingAssessmentApi,
+  NationalRegistryUserApi,
+  UserProfileApi,
+  PaymentCatalogApi,
+  QualityPhotoApi,
+  TeachersApi,
+  ExistingApplicationApi,
+  Answer,
 } from '@island.is/application/types'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import { ApiActions } from '../shared'
-import { Events, States, Roles } from './constants'
+import { Events, States, Roles, SYSLUMADUR_NATIONAL_ID } from './constants'
 import { dataSchema } from './dataSchema'
 import {
   getApplicationFeatureFlags,
@@ -63,6 +73,26 @@ const template: ApplicationTemplate<
               },
               write: 'all',
               delete: true,
+              api: [
+                NationalRegistryUserApi,
+                TeachersApi,
+                UserProfileApi,
+                PaymentCatalogApi.configure({
+                  params: { orginizationId: SYSLUMADUR_NATIONAL_ID },
+                }),
+                CurrentLicenseApi,
+                DrivingAssessmentApi,
+                JuristictionApi,
+                QualityPhotoApi,
+                ExistingApplicationApi.configure({
+                  params: {
+                    states: [States.PAYMENT, States.DRAFT],
+                    where: {
+                      applicant: 'applicant',
+                    },
+                  },
+                }),
+              ],
             },
           ],
         },

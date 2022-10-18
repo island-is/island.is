@@ -80,7 +80,7 @@ const MockParents = ({ application, field }: CRCFieldBaseProps) => {
                 name={`${id}[${index}].address.streetName`}
                 label="Heimilisfang"
                 defaultValue={
-                  parents?.[index]?.address?.streetName ||
+                  parents?.[index]?.address?.streetAddress ||
                   parentBDefaults.address
                 }
               />

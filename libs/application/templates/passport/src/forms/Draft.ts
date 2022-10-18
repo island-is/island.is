@@ -15,6 +15,11 @@ import {
   DefaultEvents,
   Form,
   FormModes,
+  MockProviderApi,
+  NationalRegistryUserApi,
+  PaymentCatalogApi,
+  UserProfileApi,
+  DistrictsApi,
 } from '@island.is/application/types'
 import {
   DistrictCommissionerAgencies,
@@ -65,31 +70,26 @@ export const Draft: Form = buildForm({
           checkboxLabel: m.dataCollectionCheckboxLabel,
           dataProviders: [
             buildDataProviderItem({
-              id: 'nationalRegistry',
-              type: 'NationalRegistryProvider',
+              provider: NationalRegistryUserApi,
               title: m.dataCollectionNationalRegistryTitle,
               subTitle: m.dataCollectionNationalRegistrySubtitle,
             }),
             buildDataProviderItem({
-              id: 'userProfile',
-              type: 'UserProfileProvider',
+              provider: UserProfileApi,
               title: m.dataCollectionUserProfileTitle,
               subTitle: m.dataCollectionUserProfileSubtitle,
             }),
             buildDataProviderItem({
-              id: 'identityDocument',
-              type: 'IdentityDocumentProvider',
+              provider: MockProviderApi,
               title: m.dataCollectionIdentityDocumentTitle,
               subTitle: m.dataCollectionIdentityDocumentSubtitle,
             }),
             buildDataProviderItem({
-              id: 'payment',
-              type: 'FeeInfoProvider',
+              provider: PaymentCatalogApi,
               title: '',
             }),
             buildDataProviderItem({
-              id: 'districtCommissioners',
-              type: 'DistrictsProvider',
+              provider: DistrictsApi,
               title: '',
             }),
           ],

@@ -19,6 +19,8 @@ import {
   FormModes,
   DefaultEvents,
   Application,
+  NationalRegistryUserApi,
+  UserProfileApi,
 } from '@island.is/application/types'
 import { Individual, PersonalInfo } from '../types'
 import { format as formatNationalId } from 'kennitala'
@@ -26,6 +28,7 @@ import type { User } from '@island.is/api/domains/national-registry'
 import { UserProfile } from '../types/schema'
 import { removeCountryCode } from '../lib/utils'
 import { fakeDataSection } from './fakeDataSection'
+import { MaritalStatusApi } from '../dataProviders'
 
 export const spouseConfirmation = ({ allowFakeData = false }): Form =>
   buildForm({
@@ -75,14 +78,12 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
             checkboxLabel: m.dataCollectionCheckboxLabel,
             dataProviders: [
               buildDataProviderItem({
-                id: 'nationalRegistry',
-                type: 'NationalRegistryProvider',
+                provider: NationalRegistryUserApi,
                 title: m.dataCollectionNationalRegistryTitle,
                 subTitle: m.dataCollectionNationalRegistrySubtitle,
               }),
               buildDataProviderItem({
-                id: 'userProfile',
-                type: 'UserProfileProvider',
+                provider: UserProfileApi,
                 title: m.dataCollectionUserProfileTitle,
                 subTitle: m.dataCollectionUserProfileSubtitle,
               }),
@@ -93,8 +94,7 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
                 subTitle: m.dataCollectionBirthCertificateDescription,
               }),
               buildDataProviderItem({
-                id: 'maritalStatus',
-                type: 'NationalRegistryMaritalStatusProvider',
+                provider: MaritalStatusApi,
                 title: m.dataCollectionMaritalStatusTitle,
                 subTitle: m.dataCollectionMaritalStatusDescription,
               }),
