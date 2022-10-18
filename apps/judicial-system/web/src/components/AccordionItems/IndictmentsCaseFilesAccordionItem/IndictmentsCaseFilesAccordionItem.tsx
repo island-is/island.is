@@ -19,12 +19,12 @@ import {
   AlertMessage,
 } from '@island.is/island-ui/core'
 import { CaseFile as TCaseFile } from '@island.is/judicial-system/types'
+import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
 import { formatDate } from '@island.is/judicial-system/formatters'
 
 import { indictmentsCaseFilesAccordionItem as m } from './IndictmentsCaseFilesAccordionItem.strings'
-import * as styles from './Chapter.css'
+import * as styles from './IndictmentsCaseFilesAccordionItem.css'
 import { UpdateFileMutation } from './IndictmentsCaseFilesAccordionItem.gql'
-import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
 
 interface Props {
   policeCaseNumber: string
@@ -39,7 +39,7 @@ interface CaseFileProps {
   onOpen: (id: string) => void
 }
 
-interface ReorderableItem {
+export interface ReorderableItem {
   displayText: string
   chapter?: number
   isDivider: boolean
@@ -51,7 +51,7 @@ interface UpdateFilesMutationResponse {
   caseFiles: TCaseFile[]
 }
 
-export function useRaisedShadow(value: MotionValue<number>) {
+const useRaisedShadow = (value: MotionValue<number>) => {
   const inactiveShadow = '0px 0px 0px rgba(0,0,0,0.8)'
   const boxShadow = useMotionValue(inactiveShadow)
 
@@ -74,6 +74,53 @@ export function useRaisedShadow(value: MotionValue<number>) {
   }, [value, boxShadow])
 
   return boxShadow
+}
+
+export const getFilePlacement = (fileId: string, files: ReorderableItem[]) => {
+  let [chapter, orderWithinChapter]: [number | null, number | null] = [0, 0]
+  let counter = 0
+  const fileInFiles = files[files.findIndex((item) => item.id === fileId)]
+
+  if (files.indexOf(fileInFiles) === -1) {
+    return [null, null]
+  }
+
+  for (
+    let i = files.indexOf(fileInFiles);
+    files[i].chapter === undefined;
+    i--
+  ) {
+    if (files[i - 1].isDivider) {
+      chapter = null
+      orderWithinChapter = null
+      break
+    }
+
+    if (files[i - 1].chapter !== undefined) {
+      chapter = files[i - 1].chapter || 0 // The "|| 0" part of this line is to silence a TS error
+    }
+
+    orderWithinChapter = counter++
+  }
+
+  return [chapter, orderWithinChapter]
+}
+
+export const getFilesBelowInChapter = (
+  fileId: string,
+  files: ReorderableItem[],
+) => {
+  const filesBelowInChapter: ReorderableItem[] = []
+  const fileInFiles = files[files.findIndex((item) => item.id === fileId)]
+  for (let i = files.indexOf(fileInFiles) + 1; i < files.length; i++) {
+    if (files[i].chapter !== undefined || files[i].isDivider) {
+      break
+    }
+
+    filesBelowInChapter.push(files[i])
+  }
+
+  return filesBelowInChapter
 }
 
 const renderChapter = (chapter: number, name: string) => (
@@ -262,50 +309,6 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
       return
     }
 
-    const getFilePlacement = (fileId: string, files: ReorderableItem[]) => {
-      let [chapter, orderWithinChapter] = [0, 0]
-      let counter = 0
-      const fileInFiles = files[files.findIndex((item) => item.id === fileId)]
-
-      for (
-        let i = files.indexOf(fileInFiles);
-        files[i].chapter === undefined;
-        i--
-      ) {
-        if (files[i - 1].isDivider) {
-          chapter = -1
-          orderWithinChapter = -1
-          break
-        }
-
-        if (files[i - 1].chapter !== undefined) {
-          chapter = files[i - 1].chapter || 0 // The "|| 0" part of this line is to silence a TS error
-        }
-
-        orderWithinChapter = counter++
-      }
-
-      return [chapter, orderWithinChapter]
-    }
-
-    const getFilesBelowInChapter = (
-      fileId: string,
-      files: ReorderableItem[],
-    ) => {
-      const filesBelowInChapter: ReorderableItem[] = []
-      const fileInFiles = files[files.findIndex((item) => item.id === fileId)]
-
-      for (let i = files.indexOf(fileInFiles) + 1; i < files.length; i++) {
-        if (files[i].chapter !== undefined || files[i].isDivider) {
-          break
-        }
-
-        filesBelowInChapter.push(files[i])
-      }
-
-      return filesBelowInChapter
-    }
-
     const [chapter, orderWithinChapter] = getFilePlacement(
       fileId,
       reorderableItems,
@@ -313,7 +316,7 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
     const filesBelowInChapter = getFilesBelowInChapter(fileId, reorderableItems)
 
     // Do not update the order of files if the file is not in a chapter
-    if (chapter === -1 || orderWithinChapter === -1) {
+    if (chapter === null || orderWithinChapter === null) {
       return
     }
 
