@@ -14,6 +14,7 @@ import {
   mapValuesToCemeterytype,
 } from './mappers/mapValuesToUsertype'
 import { USERTYPE } from './types'
+import { PdfFileProvider } from './pdfFileProvider'
 
 const LESS = 'less'
 
@@ -34,6 +35,7 @@ export interface DataResponse {
 export class FinancialStatementsInaoTemplateService {
   constructor(
     private financialStatementsClientService: FinancialStatementsInaoClientService,
+    private readonly pdfFileProvider: PdfFileProvider,
   ) {}
 
   async getUserType({ auth }: TemplateApiModuleActionProps) {
@@ -46,6 +48,15 @@ export class FinancialStatementsInaoTemplateService {
     } else {
       return this.financialStatementsClientService.getUserClientType(nationalId)
     }
+  }
+
+  async generateStatementPdf({ application }: TemplateApiModuleActionProps) {
+    const statementPdf = await this.pdfFileProvider.getApplicationPdf(
+      application,
+      'kvörtun',
+    )
+    console.log(statementPdf)
+    return statementPdf
   }
 
   async submitApplication({ application, auth }: TemplateApiModuleActionProps) {

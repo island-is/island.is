@@ -18,7 +18,8 @@ export const ElectionStatement = ({
   refetch,
 }: FieldBaseProps) => {
   const { formatMessage } = useLocale()
-  const [approveOverview, setApproveOverview] = useState(false)
+  console.log(application)
+  const [approveOverview, setApproveOverview] = useState(true)
   const { errors, setError } = useFormContext()
   const answers = application.answers as FinancialStatementsInao
 

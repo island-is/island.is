@@ -34,11 +34,14 @@ export class NationalRegistryClientService {
   constructor(private individualApi: EinstaklingarApi) {}
 
   async getIndividual(nationalId: string): Promise<IndividualDto | null> {
+    console.log('individual:', nationalId)
     const individual = await this.handleModernMissingData(
       this.individualApi.einstaklingarGetEinstaklingurRaw({
         id: nationalId,
       }),
     )
+
+    console.log('individual', individual)
 
     return formatIndividualDto(individual)
   }

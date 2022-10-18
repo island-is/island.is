@@ -43,7 +43,9 @@ export class NationalRegistryXRoadService {
   async getNationalRegistryPerson(
     nationalId: string,
   ): Promise<NationalRegistryPerson | null> {
+    console.log({ nationalId })
     const person = await this.nationalRegistryApi.getIndividual(nationalId)
+    console.log({ person })
 
     return (
       person && {

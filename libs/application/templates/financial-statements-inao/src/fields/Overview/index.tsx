@@ -25,12 +25,15 @@ import { starterColumnStyle } from '../Shared/styles/overviewStyles.css'
 import { useSubmitApplication } from '../../hooks/useSubmitApplication'
 import BottomBar from '../../components/BottomBar'
 import { GREATER } from '../../lib/constants'
+import { useGeneratePdfUrl } from '../../hooks'
 
 export const Overview = ({
   application,
   goToScreen,
   refetch,
 }: FieldBaseProps) => {
+  const pdfType = 'financialStatementInao'
+
   const { formatMessage } = useLocale()
   const { errors, setError, setValue } = useFormContext()
   const [approveOverview, setApproveOverview] = useState(false)
