@@ -5,10 +5,10 @@ import {
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Op } from 'sequelize'
-import {isUuid, uuid } from 'uuidv4'
+import { isUuid, uuid } from 'uuidv4'
 
 import { User } from '@island.is/auth-nest-tools'
-import { NoContentException } from "@island.is/nest/problem"
+import { NoContentException } from '@island.is/nest/problem'
 
 import { ApiScope } from '../resources/models/api-scope.model'
 import { DelegationScopeService } from './delegationScope.service'
@@ -47,7 +47,7 @@ export class DelegationsOutgoingService {
       where: {
         fromNationalId: user.nationalId,
         ...(otherUser ? { toNationalId: otherUser } : {}),
-        domainName,
+        ...(domainName ? { domainName } : {}),
       },
       include: [
         {
@@ -72,10 +72,7 @@ export class DelegationsOutgoingService {
     return delegations.map((d) => d.toDTO())
   }
 
-  async findById(
-    user: User,
-    delegationId: string,
-  ): Promise<DelegationDTO> {
+  async findById(user: User, delegationId: string): Promise<DelegationDTO> {
     if (!isUuid(delegationId)) {
       throw new BadRequestException('delegationId must be a valid uuid')
     }

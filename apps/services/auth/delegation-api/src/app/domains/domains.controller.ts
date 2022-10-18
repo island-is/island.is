@@ -1,5 +1,5 @@
 import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common'
-import { ApiTags } from '@nestjs/swagger'
+import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 
 import {
   ApiScopeTreeDTO,
@@ -33,6 +33,7 @@ const lang = {
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @FeatureFlag(Features.outgoingDelegationsV2)
 @Scopes(AuthScope.delegations)
+@ApiSecurity('ias')
 @ApiTags('domains')
 @Controller({
   path: 'domains',

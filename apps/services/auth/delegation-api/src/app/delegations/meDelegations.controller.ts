@@ -4,13 +4,14 @@ import {
   Controller,
   Delete,
   Get,
+  Headers,
   Param,
   Patch,
   Post,
   Query,
   UseGuards,
 } from '@nestjs/common'
-import { ApiTags } from '@nestjs/swagger'
+import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 
 import {
   CreateDelegationDTO,
@@ -49,6 +50,7 @@ const delegationId = {
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @FeatureFlag(Features.outgoingDelegationsV2)
 @Scopes(AuthScope.delegations)
+@ApiSecurity('ias', [AuthScope.delegations])
 @ApiTags('me/delegations')
 @Controller({
   path: 'me/delegations',
@@ -73,7 +75,7 @@ export class MeDelegationsController {
         },
         direction: {
           description:
-          'The direction of the delegation. Defaults to outgoing if not provided.',
+            'The direction of the delegation. Defaults to outgoing if not provided.',
           required: false,
           schema: {
             enum: [DelegationDirection.OUTGOING, DelegationDirection.INCOMING],
@@ -88,13 +90,15 @@ export class MeDelegationsController {
             default: DelegationValidity.ALL,
           },
         },
-        otherUser: {
+      },
+      header: {
+        'X-QUERY-OTHERUSER': {
           description:
             'The identifier of the other user in the delegation. If the direction=outgoing, this is the user the delegation is to. If the direction=incoming, this is the user the delegation is from.',
           required: false,
           schema: {
             type: 'string',
-            pattern: '^d{12}$',
+            pattern: '^\\d{10}$',
           },
         },
       },
@@ -110,7 +114,7 @@ export class MeDelegationsController {
     @Query('direction')
     direction: DelegationDirection = DelegationDirection.OUTGOING,
     @Query('validity') validity: DelegationValidity = DelegationValidity.ALL,
-    @Query('otherUser') otherUser: string,
+    @Headers('X-QUERY-OTHERUSER') otherUser: string,
   ): Promise<DelegationDTO[]> {
     if (direction !== DelegationDirection.OUTGOING) {
       throw new BadRequestException(
@@ -131,7 +135,7 @@ export class MeDelegationsController {
     response: { status: 200, type: DelegationDTO },
     request: {
       params: {
-        delegationId
+        delegationId,
       },
     },
   })
@@ -171,9 +175,9 @@ export class MeDelegationsController {
     response: { status: 200, type: DelegationDTO },
     request: {
       params: {
-        delegationId
-      }
-    }
+        delegationId,
+      },
+    },
   })
   @Audit<DelegationDTO>({
     resources: (delegation) => delegation?.id ?? undefined,
@@ -208,9 +212,9 @@ export class MeDelegationsController {
     response: { status: 204 },
     request: {
       params: {
-        delegationId
-      }
-    }
+        delegationId,
+      },
+    },
   })
   async delete(
     @CurrentUser() user: User,

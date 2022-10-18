@@ -1,6 +1,6 @@
 import { HttpStatus } from '@nestjs/common'
 
-import {NoContentException} from '@island.is/nest/problem'
+import { NoContentException } from '@island.is/nest/problem'
 
 import { CreateRequest, setup } from './test/setup'
 

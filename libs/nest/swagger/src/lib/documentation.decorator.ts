@@ -4,6 +4,8 @@ import {
   ApiConflictResponse,
   ApiCreatedResponse,
   ApiForbiddenResponse,
+  ApiHeader,
+  ApiHeaderOptions,
   ApiInternalServerErrorResponse,
   ApiNoContentResponse,
   ApiNotFoundResponse,
@@ -27,6 +29,7 @@ export interface Options {
   request?: {
     params?: Record<string, ExtendedOmit<ApiParamOptions, 'name'>>
     query?: Record<string, ExtendedOmit<ApiQueryOptions, 'name'>>
+    header?: Record<string, ExtendedOmit<ApiHeaderOptions, 'name'>>
   }
   response?: {
     status?: 200 | 201 | 204
@@ -40,9 +43,9 @@ export interface Options {
   includeNoContentResponse?: boolean
 }
 
-const getResponseDecorators = (
-  {response}: Options = {}
-): MethodDecorator[] => {
+const getResponseDecorators = ({
+  response,
+}: Options = {}): MethodDecorator[] => {
   switch (response?.status ?? 200) {
     case 200:
       return [ApiOkResponse(response)]
@@ -59,30 +62,32 @@ const getResponseDecorators = (
 }
 
 const getRequestDecorators = ({
-  request: {
-    query = {},
-    params = {}
-  } = {},
-  includeNoContentResponse = false
+  request: { query = {}, params = {}, header = {} } = {},
+  includeNoContentResponse = false,
 }: Options = {}): MethodDecorator[] => {
   const queryKeys = Object.keys(query)
   const queryDecorators = queryKeys.map((name) =>
-  ApiQuery({ name, ...query[name] }),
+    ApiQuery({ name, ...query[name] }),
   )
 
   const paramsKeys = Object.keys(params)
   const defaultValue: MethodDecorator[] =
-  paramsKeys.length > 0
-    ? includeNoContentResponse
-      ? [ApiNoContentResponse()]
-      : [ApiNotFoundResponse({ type: HttpProblemResponse })]
-    : []
+    paramsKeys.length > 0
+      ? includeNoContentResponse
+        ? [ApiNoContentResponse()]
+        : [ApiNotFoundResponse({ type: HttpProblemResponse })]
+      : []
   const paramsDecorators = paramsKeys.reduce(
     (acc, name) => [...acc, ApiParam({ name, ...params[name] })],
     defaultValue,
   )
 
-  return [...queryDecorators, ...paramsDecorators]
+  const headerKeys = Object.keys(header)
+  const headerDecorators = headerKeys.map((name) =>
+    ApiHeader({ name, ...header[name] }),
+  )
+
+  return [...queryDecorators, ...paramsDecorators, ...headerDecorators]
 }
 
 const getExtraDecorators = ({
