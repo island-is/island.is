@@ -53,6 +53,8 @@ import { DelegationDirection } from './types/delegationDirection'
 import { partitionWithIndex } from './utils/partitionWithIndex'
 import { DEFAULT_DOMAIN } from '../types/defaultDomain'
 
+export const UNKNOWN_NAME = 'Óþekkt nafn'
+
 type ClientDelegationInfo = Pick<
   Client,
   | 'supportsCustomDelegation'
@@ -487,8 +489,21 @@ export class DelegationsService {
           ),
       )
 
+      const modifiedAliveDelegations = aliveDelegations
+        .map((aliveDelegation) => {
+          const person = this.getPersonByNationalId(
+            personsValuesNoError,
+            aliveDelegation.fromNationalId,
+          )
+
+          aliveDelegation.fromName =
+            person?.name ?? aliveDelegation.fromName ?? UNKNOWN_NAME
+          return aliveDelegation
+        })
+        .filter(isDefined)
+
       return {
-        aliveDelegations,
+        aliveDelegations: modifiedAliveDelegations,
         deceasedDelegations,
       }
     } catch (error) {
@@ -702,7 +717,7 @@ export class DelegationsService {
             pr.nationalIdRepresentedPerson,
           )
 
-          return toDelegationDTO(person?.name ?? 'Óþekkt nafn', pr)
+          return toDelegationDTO(person?.name ?? UNKNOWN_NAME, pr)
         })
         .filter(isDefined)
     } catch (error) {

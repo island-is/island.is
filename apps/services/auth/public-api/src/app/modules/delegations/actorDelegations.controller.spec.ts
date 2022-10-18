@@ -4,6 +4,7 @@ import times from 'lodash/times'
 
 import {
   Client,
+  createDelegation,
   DEFAULT_DOMAIN,
   Delegation,
   DelegationDTO,
@@ -26,8 +27,9 @@ import {
   createNationalRegistryUser,
 } from '@island.is/testing/fixtures'
 import { TestApp } from '@island.is/testing/nest'
+import { NationalRegistryClientPerson } from '@island.is/shared/types'
 
-import { createClient, createDelegation } from '../../../../test/fixtures'
+import { createClient } from '../../../../test/fixtures'
 import {
   Scopes,
   setupWithAuth,
@@ -42,6 +44,30 @@ import {
   createDelegationModels,
   findExpectedDelegationModels,
 } from '../../../../test/utils'
+
+const swapNames = (
+  nationalRegistryUsers: NationalRegistryClientPerson[],
+  fromNationalId: string,
+) =>
+  nationalRegistryUsers.find((nru) => nru.nationalId === fromNationalId)
+    ?.name ?? ''
+
+function updateDelegationFromNameToPersonName(
+  delegations: DelegationDTO[] | DelegationDTO,
+  nationalRegistryUsers: NationalRegistryClientPerson[],
+) {
+  if (Array.isArray(delegations)) {
+    return delegations.map((delegation) => ({
+      ...delegation,
+      fromName: swapNames(nationalRegistryUsers, delegation.fromNationalId),
+    }))
+  }
+
+  return {
+    ...delegations,
+    fromName: swapNames(nationalRegistryUsers, delegations.fromNationalId),
+  }
+}
 
 const today = new Date('2021-11-12')
 const client = createClient({
@@ -162,23 +188,22 @@ describe('ActorDelegationsController', () => {
       const path = '/v1/actor/delegations'
       const query = '?direction=incoming'
       const deceasedNationalIds = times(3, () => createNationalId('person'))
+      const nationalRegistryUsers = [
+        nationalRegistryUser,
+        ...Object.values(mockDelegations).map((delegation) =>
+          createNationalRegistryUser({
+            nationalId: delegation.fromNationalId,
+          }),
+        ),
+        ...times(10, () =>
+          createNationalRegistryUser({
+            name: getFakeName(),
+            nationalId: createNationalId('person'),
+          }),
+        ),
+      ]
 
       beforeAll(async () => {
-        const nationalRegistryUsers = [
-          nationalRegistryUser,
-          ...Object.values(mockDelegations).map((delegation) =>
-            createNationalRegistryUser({
-              nationalId: delegation.fromNationalId,
-            }),
-          ),
-          ...times(10, () =>
-            createNationalRegistryUser({
-              name: getFakeName(),
-              nationalId: createNationalId('person'),
-            }),
-          ),
-        ]
-
         nationalRegistryApiSpy = jest
           .spyOn(nationalRegistryApi, 'getIndividual')
           .mockImplementation(async (id) => {
@@ -214,7 +239,13 @@ describe('ActorDelegationsController', () => {
         // Assert
         expect(res.status).toEqual(200)
         expect(res.body).toHaveLength(3)
-        expectMatchingObject(res.body, expectedModels)
+        expectMatchingObject(
+          res.body,
+          updateDelegationFromNameToPersonName(
+            expectedModels,
+            nationalRegistryUsers,
+          ),
+        )
       })
 
       it('should return only delegations with scopes the client has access to', async () => {
@@ -234,7 +265,13 @@ describe('ActorDelegationsController', () => {
         // Assert
         expect(res.status).toEqual(200)
         expect(res.body).toHaveLength(1)
-        expectMatchingObject(res.body[0], expectedModel)
+        expectMatchingObject(
+          res.body[0],
+          updateDelegationFromNameToPersonName(
+            expectedModel,
+            nationalRegistryUsers,
+          ),
+        )
       })
 
       it('should return custom delegations when the delegationTypes filter has custom type', async () => {
@@ -256,7 +293,13 @@ describe('ActorDelegationsController', () => {
         // Assert
         expect(res.status).toEqual(200)
         expect(res.body).toHaveLength(1)
-        expectMatchingObject(res.body[0], expectedModel)
+        expectMatchingObject(
+          res.body[0],
+          updateDelegationFromNameToPersonName(
+            expectedModel,
+            nationalRegistryUsers,
+          ),
+        )
       })
 
       it('should return custom delegations and not deceased delegations, when the delegationTypes filter is custom type', async () => {
@@ -292,7 +335,13 @@ describe('ActorDelegationsController', () => {
         // Assert
         expect(res.status).toEqual(200)
         expect(res.body).toHaveLength(1)
-        expectMatchingObject(res.body[0], expectedModel)
+        expectMatchingObject(
+          res.body[0],
+          updateDelegationFromNameToPersonName(
+            expectedModel,
+            nationalRegistryUsers,
+          ),
+        )
 
         // Verify
         const expectedModifyedModels = await delegationModel.findAll({
@@ -327,7 +376,13 @@ describe('ActorDelegationsController', () => {
         // Assert
         expect(res.status).toEqual(200)
         expect(res.body).toHaveLength(1)
-        expectMatchingObject(res.body[0], expectedModel)
+        expectMatchingObject(
+          res.body[0],
+          updateDelegationFromNameToPersonName(
+            expectedModel,
+            nationalRegistryUsers,
+          ),
+        )
       })
 
       it('should not return custom delegations when the delegationTypes filter does not include custom type', async () => {
@@ -388,7 +443,13 @@ describe('ActorDelegationsController', () => {
         // Assert
         expect(res.status).toEqual(200)
         expect(res.body).toHaveLength(0)
-        expectMatchingObject(res.body, expectedModels)
+        expectMatchingObject(
+          res.body,
+          updateDelegationFromNameToPersonName(
+            expectedModels,
+            nationalRegistryUsers,
+          ),
+        )
       })
 
       it('should not return delegation when client does not support custom delegations', async () => {
@@ -408,7 +469,13 @@ describe('ActorDelegationsController', () => {
         // Assert
         expect(res.status).toEqual(200)
         expect(res.body).toHaveLength(0)
-        expectMatchingObject(res.body, expectedModels)
+        expectMatchingObject(
+          res.body,
+          updateDelegationFromNameToPersonName(
+            expectedModels,
+            nationalRegistryUsers,
+          ),
+        )
       })
 
       it('should not return scopes in delegation that are no longer allowed for delegation', async () => {
@@ -428,7 +495,13 @@ describe('ActorDelegationsController', () => {
         // Assert
         expect(res.status).toEqual(200)
         expect(res.body).toHaveLength(1)
-        expectMatchingObject(res.body, expectedModels)
+        expectMatchingObject(
+          res.body,
+          updateDelegationFromNameToPersonName(
+            expectedModels,
+            nationalRegistryUsers,
+          ),
+        )
       })
 
       describe('with legal guardian delegations', () => {
@@ -766,7 +839,13 @@ describe('ActorDelegationsController', () => {
         // Assert
         expect(res.status).toEqual(200)
         expect(res.body).toHaveLength(1)
-        expectMatchingObject(res.body[0], expectedModel)
+        expectMatchingObject(
+          res.body[0],
+          updateDelegationFromNameToPersonName(
+            expectedModel,
+            nationalRegistryUsers,
+          ),
+        )
       })
     })
   })

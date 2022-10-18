@@ -9,6 +9,8 @@ import {
   PersonalRepresentativeRightType,
   PersonalRepresentativeScopePermission,
   PersonalRepresentativeType,
+  createDomain,
+  UNKNOWN_NAME,
 } from '@island.is/auth-api-lib'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import {
@@ -35,9 +37,6 @@ import {
   getScopePermission,
   personalRepresentativeType,
 } from '../../../../test/stubs/personalRepresentativeStubs'
-import { createDomain } from '../../../../test/stubs/domain.fixture'
-
-const UNKNOWN_NAME = 'Óþekkt nafn'
 
 describe('DelegationsController', () => {
   describe('Given a user is authenticated', () => {

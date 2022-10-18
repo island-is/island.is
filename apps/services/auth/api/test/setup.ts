@@ -1,4 +1,10 @@
-import { ApiScope, SequelizeConfigService } from '@island.is/auth-api-lib'
+import {
+  ApiScope,
+  createApiScope,
+  createDomain,
+  Domain,
+  SequelizeConfigService,
+} from '@island.is/auth-api-lib'
 import { IdsUserGuard, MockAuthGuard, User } from '@island.is/auth-nest-tools'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import { RskProcuringClient } from '@island.is/clients/rsk/procuring'
@@ -15,7 +21,6 @@ import {
 import { TestingModuleBuilder } from '@nestjs/testing'
 import { AppModule } from '../src/app/app.module'
 import { getModelToken } from '@nestjs/sequelize'
-import { createApiScope } from './fixtures'
 
 type Scopes = {
   [key: string]: {
@@ -82,12 +87,19 @@ export const setupWithAuth = async ({
     ],
   })
 
+  // Create domain
+  const domainModel = app.get<typeof Domain>(getModelToken(Domain))
+  const domain = await domainModel.create(createDomain())
+
   const apiScopeModel = app.get<typeof ApiScope>(getModelToken(ApiScope))
 
   await apiScopeModel.bulkCreate(
     Object.values(scopes)
       .map((scope) => scope)
-      .map((scope) => createApiScope(scope)),
+      .map((scope) => ({
+        ...createApiScope(scope),
+        domainName: domain.name,
+      })),
   )
 
   return app
