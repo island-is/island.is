@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useIntl } from 'react-intl'
+import { uuid } from 'uuidv4'
 import {
   animate,
   AnimatePresence,
@@ -40,10 +41,10 @@ interface CaseFileProps {
 }
 
 export interface ReorderableItem {
-  id?: string
-  created?: string
+  id: string
   displayText: string
   isDivider: boolean
+  created?: string
   chapter?: number
   orderWithinChapter?: number
 }
@@ -132,10 +133,10 @@ export const sortedFilesInChapter = (
     .filter((file) => file.chapter === chapter)
     .map((file) => {
       return {
+        id: file.id,
         displayText: file.name,
         isDivider: false,
         created: file.created,
-        id: file.id,
         orderWithinChapter: file.orderWithinChapter,
       }
     })
@@ -174,7 +175,9 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
       style={{
         y,
         boxShadow,
+        // Prevents text selection when dragging
         userSelect: isDragging ? 'none' : 'auto',
+        // Hide the first item because we are rendering it outside the Reorder component
         display: index === 0 ? 'none' : 'block',
       }}
       className={styles.reorderItem}
@@ -254,43 +257,49 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
 
   const [reorderableItems, setReorderableItems] = useState<ReorderableItem[]>([
     {
+      id: uuid(),
       displayText: formatMessage(m.chapterIndictmentAndAccompanyingDocuments),
       chapter: 0,
       isDivider: false,
     },
     ...sortedFilesInChapter(0, caseFiles),
     {
+      id: uuid(),
       displayText: formatMessage(m.chapterInvesitgationProcess),
       chapter: 1,
       isDivider: false,
     },
     ...sortedFilesInChapter(1, caseFiles),
     {
+      id: uuid(),
       displayText: formatMessage(m.chapterWitnesses),
       chapter: 2,
       isDivider: false,
     },
     ...sortedFilesInChapter(2, caseFiles),
     {
+      id: uuid(),
       displayText: formatMessage(m.chapterDefendant),
       chapter: 3,
       isDivider: false,
     },
     ...sortedFilesInChapter(3, caseFiles),
-
     {
+      id: uuid(),
       displayText: formatMessage(m.chapterCaseFiles),
       chapter: 4,
       isDivider: false,
     },
     ...sortedFilesInChapter(4, caseFiles),
     {
+      id: uuid(),
       displayText: formatMessage(m.chapterElectronicDocuments),
       chapter: 5,
       isDivider: false,
     },
     ...sortedFilesInChapter(5, caseFiles),
     {
+      id: uuid(),
       displayText: `${formatMessage(m.unorderedFilesTitle)}|${formatMessage(
         m.unorderedFilesExplanation,
       )}`,
@@ -334,9 +343,9 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
               chapter,
               orderWithinChapter,
             },
-            ...(filesBelowInChapter || []).map((item, index) => {
+            ...filesBelowInChapter.map((file, index) => {
               return {
-                id: item.id,
+                id: file.id,
                 chapter,
                 orderWithinChapter: orderWithinChapter + index + 1,
               }
@@ -359,6 +368,10 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
       <Box marginBottom={3}>
         <Text>{formatMessage(m.explanation)}</Text>
       </Box>
+      {/* 
+      Render the first chapter here, outside the reorder group because 
+      you should not be able to put a file above the first chapter.
+       */}
       {renderChapter(
         0,
         formatMessage(m.chapterIndictmentAndAccompanyingDocuments),
@@ -371,10 +384,7 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
       >
         {reorderableItems.map((item, index) => {
           return (
-            <Box
-              key={`${item.displayText}-${policeCaseNumber}`}
-              marginBottom={2}
-            >
+            <Box key={item.id} marginBottom={2}>
               <CaseFile
                 caseFile={item}
                 index={index}

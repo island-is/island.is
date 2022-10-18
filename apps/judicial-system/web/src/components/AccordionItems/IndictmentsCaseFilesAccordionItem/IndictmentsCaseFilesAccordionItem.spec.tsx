@@ -10,43 +10,46 @@ import {
 
 const items: ReorderableItem[] = [
   {
+    id: faker.datatype.uuid(),
     displayText: faker.lorem.words(2),
     isDivider: false,
     chapter: 0,
   },
   {
+    id: faker.datatype.uuid(),
     displayText: faker.lorem.words(2),
     isDivider: false,
-    id: faker.datatype.uuid(),
   },
   {
+    id: faker.datatype.uuid(),
     displayText: faker.lorem.words(2),
     isDivider: false,
-    id: faker.datatype.uuid(),
   },
   {
+    id: faker.datatype.uuid(),
     displayText: faker.lorem.words(2),
     isDivider: false,
     chapter: 1,
   },
   {
+    id: faker.datatype.uuid(),
     displayText: faker.lorem.words(2),
     isDivider: false,
-    id: faker.datatype.uuid(),
   },
   {
+    id: faker.datatype.uuid(),
     displayText: faker.lorem.words(2),
     isDivider: true,
   },
   {
+    id: faker.datatype.uuid(),
     displayText: faker.lorem.words(2),
     isDivider: false,
-    id: faker.datatype.uuid(),
   },
   {
+    id: faker.datatype.uuid(),
     displayText: faker.lorem.words(2),
     isDivider: false,
-    id: faker.datatype.uuid(),
   },
 ]
 
