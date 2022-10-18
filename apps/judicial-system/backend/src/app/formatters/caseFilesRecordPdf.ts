@@ -114,9 +114,7 @@ export const createCaseFilesRecord = async (
   pdfDocument.addPageNumbers()
   createTableOfContents()
 
-  const pdf = await rawDocument.save()
-
-  return Buffer.from(pdf)
+  return pdfDocument.getContents()
 
   /***** Helpers ******/
 

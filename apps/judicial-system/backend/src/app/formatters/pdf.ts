@@ -4,6 +4,7 @@ export interface PdfDocument {
   rawDocument: PDFDocument
   mergeDocument: (buffer: Buffer) => Promise<PdfDocument>
   addPageNumbers: () => PdfDocument
+  getContents: () => Promise<Buffer>
 }
 
 export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
@@ -69,6 +70,12 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
       })
 
       return pdfDocument
+    },
+
+    getContents: async () => {
+      const bytes = await rawDocument.save()
+
+      return Buffer.from(bytes)
     },
   }
 
