@@ -99,6 +99,7 @@ export const GET_FEATURED_SUPPORT_QNAS = gql`
 export const GET_SUPPORT_CATEGORY = gql`
   query GET_SUPPORT_CATEGORY($input: GetSupportCategoryInput!) {
     getSupportCategory(input: $input) {
+      id
       title
       description
     }
@@ -178,6 +179,7 @@ export const GET_SERVICE_WEB_ORGANIZATION = gql`
   }
   query GetServiceWebOrganization($input: GetOrganizationInput!) {
     getOrganization(input: $input) {
+      id
       title
       shortTitle
       slug

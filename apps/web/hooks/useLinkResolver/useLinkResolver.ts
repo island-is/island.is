@@ -158,6 +158,34 @@ export const routesTemplate = {
     is: '/innskraning',
     en: '/en/login',
   },
+  serviceweb: {
+    is: '/adstod',
+    en: '/en/help',
+  },
+  servicewebsearch: {
+    is: '/adstod/leit',
+    en: '/en/help/search',
+  },
+  serviceweborganization: {
+    is: '/adstod/[slug]',
+    en: '/en/help/[slug]',
+  },
+  servicewebcontact: {
+    is: '/adstod/[organizationSlug]/hafa-samband',
+    en: '/en/help/[organizationSlug]/contact-us',
+  },
+  serviceweborganizationsearch: {
+    is: '/adstod/[organizationSlug]/leit',
+    en: '/en/help/[organizationSlug]/search',
+  },
+  supportcategory: {
+    is: '/adstod/[organizationSlug]/[categorySlug]',
+    en: '/en/help/[organizationSlug]/[categorySlug]',
+  },
+  supportqna: {
+    is: '/adstod/[organizationSlug]/[categorySlug]/[questionSlug]',
+    en: '/en/help/[organizationSlug]/[categorySlug]/[questionSlug]',
+  },
   subarticle: {
     is: '/[slug]/[subSlug]',
     en: '/en/[slug]/[subSlug]',
@@ -165,22 +193,6 @@ export const routesTemplate = {
   article: {
     is: '/[slug]',
     en: '/en/[slug]',
-  },
-  serviceweb: {
-    is: '/adstod',
-    en: '/en/help',
-  },
-  serviceweborganization: {
-    is: '/adstod/[slug]',
-    en: '/en/help/[slug]',
-  },
-  servicewebcategory: {
-    is: '/adstod/[organizationSlug]/[categorySlug]',
-    en: '/en/help/[organizationSlug]/[categorySlug]',
-  },
-  servicewebsearch: {
-    is: '/adstod/leit',
-    en: '/en/help/search',
   },
   homepage: {
     is: '/',

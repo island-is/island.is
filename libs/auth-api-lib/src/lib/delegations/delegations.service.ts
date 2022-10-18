@@ -46,6 +46,7 @@ import type { PersonalRepresentativeDTO } from '../personal-representative/dto/p
 import { DelegationValidity } from './types/delegationValidity'
 import { DelegationScopeService } from './delegationScope.service'
 import { ResourcesService } from '../resources/resources.service'
+import { DEFAULT_DOMAIN } from '../types/defaultDomain'
 
 type ClientDelegationInfo = Pick<
   Client,
@@ -92,7 +93,10 @@ export class DelegationsService {
     user: User,
     createDelegation: CreateDelegationDTO,
   ): Promise<DelegationDTO | null> {
-    if (createDelegation.toNationalId === user.nationalId) {
+    if (
+      createDelegation.toNationalId === user.nationalId ||
+      this.isDelegationToActor(user, createDelegation)
+    ) {
       throw new BadRequestException(`Can not create delegation to self.`)
     }
 
@@ -150,6 +154,13 @@ export class DelegationsService {
     input: UpdateDelegationDTO,
     delegationId: string,
   ): Promise<DelegationDTO | null> {
+    const delegation = await this.delegationModel.findByPk(delegationId)
+    if (!delegation) {
+      throw new NotFoundException()
+    }
+    if (this.isDelegationToActor(user, delegation)) {
+      throw new BadRequestException('Can not update delegation to self.')
+    }
     if (!(await this.validateScopesAccess(user, input.scopes))) {
       throw new BadRequestException(
         'User does not have access to the requested scopes.',
@@ -282,13 +293,17 @@ export class DelegationsService {
     })
 
     // Make sure when using the otherUser filter that we only find one delegation
-    if (otherUser && delegations && delegations.length > 1) {
+    if (
+      otherUser &&
+      delegations &&
+      delegations.filter((d) => d.domainName == DEFAULT_DOMAIN).length > 1
+    ) {
       this.logger.error(
         `Invalid state of delegation. Found ${
-          delegations.length
-        } delegations for otherUser. Delegations: ${delegations.map(
-          (d) => d.id,
-        )}`,
+          delegations.filter((d) => d.domainName == DEFAULT_DOMAIN).length
+        } delegations for otherUser. Delegations: ${delegations
+          .filter((d) => d.domainName == DEFAULT_DOMAIN)
+          .map((d) => d.id)}`,
       )
       throw new InternalServerErrorException(
         'Invalid state of delegation. User has two or more delegations with an other user.',
@@ -296,9 +311,11 @@ export class DelegationsService {
     }
 
     return delegations
-      .filter((d) =>
-        // The user must have access to at least one scope in the delegation
-        d.delegationScopes?.some((s) => this.checkIfScopeAllowed(s, user)),
+      .filter(
+        (d) =>
+          // The user must have access to at least one scope in the delegation
+          d.delegationScopes?.some((s) => this.checkIfScopeAllowed(s, user)) &&
+          !this.isDelegationToActor(user, d),
       )
       .map((d) => {
         // Filter out scopes the user does not have access to
@@ -307,6 +324,13 @@ export class DelegationsService {
         )
         return d.toDTO()
       })
+  }
+
+  private isDelegationToActor(
+    user: User,
+    delegation: { toNationalId: string },
+  ): boolean {
+    return user.actor?.nationalId === delegation.toNationalId
   }
 
   /***** Incoming Delegations *****/
@@ -597,6 +621,7 @@ export class DelegationsService {
         )
         return d.toDTO()
       })
+      .filter((d) => d.domainName === DEFAULT_DOMAIN)
   }
 
   /**

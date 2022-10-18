@@ -5,23 +5,13 @@ import { Query } from '@island.is/api/schema'
 import { ServicePortalPath } from '../../lib/navigation/paths'
 import uniq from 'lodash/uniq'
 
-const GET_DEBT_STATUS = gql`
-  query FinanceGetDebtStatus {
-    getDebtStatus {
-      myDebtStatus {
-        approvedSchedule
-        possibleToSchedule
-      }
-    }
-  }
-`
-
 export const GET_TAPS_QUERY = gql`
   query GetTapsQuery {
     getCustomerTapControl {
       RecordsTap
       employeeClaimsTap
       localTaxTap
+      schedulesTap
     }
   }
 `
@@ -35,14 +25,11 @@ export const useDynamicRoutes = () => {
   >([])
 
   const { data, loading } = useQuery<Query>(GET_TAPS_QUERY)
-  const { data: debtData, loading: debtLoading } = useQuery<Query>(
-    GET_DEBT_STATUS,
-  )
 
   useEffect(() => {
     /**
      * service-portal/finance
-     * Tabs control for finance routes. Transactions, claims, tax.
+     * Tabs control for finance routes. Transactions, claims, tax, finance schedule.
      */
     const tabData = data?.getCustomerTapControl
     const dynamicPathArray = []
@@ -56,26 +43,14 @@ export const useDynamicRoutes = () => {
     if (tabData?.localTaxTap) {
       dynamicPathArray.push(ServicePortalPath.FinanceLocalTax)
     }
-
-    /**
-     * service-portal/finance
-     * Finance schedule route
-     */
-    const debtStatus = debtData?.getDebtStatus?.myDebtStatus || []
-
-    if (
-      debtStatus &&
-      debtStatus.length > 0 &&
-      (debtStatus[0].approvedSchedule > 0 ||
-        debtStatus[0].possibleToSchedule > 0)
-    ) {
+    if (tabData?.schedulesTap) {
       dynamicPathArray.push(ServicePortalPath.FinanceSchedule)
     }
 
     setActiveDynamicRoutes(uniq([...activeDynamicRoutes, ...dynamicPathArray]))
-  }, [data, debtData])
+  }, [data])
 
-  return { activeDynamicRoutes, loading: loading || debtLoading }
+  return { activeDynamicRoutes, loading }
 }
 
 export default useDynamicRoutes

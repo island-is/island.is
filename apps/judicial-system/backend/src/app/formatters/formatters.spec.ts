@@ -1952,48 +1952,28 @@ describe('formatPrisonAdministrationRulingNotification', () => {
 })
 
 describe('formatDefenderResubmittedToCourtEmailNotification', () => {
-  const formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
-    .formatMessage
+  let formatMessage: FormatMessage
 
-  const fn = (
-    caseType: CaseType,
-    policeCaseNumbers: string[],
-    overviewUrl: string,
-    courtName?: string,
-  ) =>
-    formatDefenderResubmittedToCourtEmailNotification(
-      formatMessage,
-      caseType,
-      policeCaseNumbers,
-      overviewUrl,
-      courtName,
-    )
-
-  it('should format email', () => {
-    const caseType = CaseType.CUSTODY
-    const policeCaseNumbers = ['007-2022-06546']
-    const overviewUrl = 'https://rettarvorslugatt.island.is/overviewUrl'
-    const courtName = 'Héraðsdómur Reykjavíkur'
-
-    const result = fn(caseType, policeCaseNumbers, overviewUrl, courtName)
-
-    expect(result.body).toEqual(
-      'Sækjandi í máli 007-2022-06546 hjá Héraðsdómi Reykjavíkur hefur sent kröfuna aftur á dóminn. <a href="https://rettarvorslugatt.island.is/overviewUrl">Uppfærð útgáfa er aðgengileg í Réttarvörslugátt.</a>',
-    )
-    expect(result.subject).toEqual('Krafa um gæsluvarðhald send aftur')
+  beforeAll(() => {
+    formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
+      .formatMessage
   })
 
-  it('should format email with multiple policeCaseNumbers', () => {
-    const caseType = CaseType.CUSTODY
-    const policeCaseNumbers = ['007-2022-06546', '007-2022-06547']
+  it('should format email', () => {
     const overviewUrl = 'https://rettarvorslugatt.island.is/overviewUrl'
-    const courtName = 'Héraðsdómur Reykjavíkur'
+    const court = 'Héraðsdómur Reykjavíkur'
+    const courtCaseNumber = 'R-2022/999'
 
-    const result = fn(caseType, policeCaseNumbers, overviewUrl, courtName)
+    const result = formatDefenderResubmittedToCourtEmailNotification(
+      formatMessage,
+      overviewUrl,
+      court,
+      courtCaseNumber,
+    )
 
     expect(result.body).toEqual(
-      'Sækjandi í málum: 007-2022-06546, 007-2022-06547 hjá Héraðsdómi Reykjavíkur hefur sent kröfuna aftur á dóminn. <a href="https://rettarvorslugatt.island.is/overviewUrl">Uppfærð útgáfa er aðgengileg í Réttarvörslugátt.</a>',
+      'Sækjandi í máli R-2022/999 hjá Héraðsdómi Reykjavíkur hefur breytt kröfunni og sent hana aftur á dóminn.<br /><br />Þú getur nálgast gögn málsins í <a href="https://rettarvorslugatt.island.is/overviewUrl">Réttarvörslugátt</a> með rafrænum skilríkjum.',
     )
-    expect(result.subject).toEqual('Krafa um gæsluvarðhald send aftur')
+    expect(result.subject).toEqual('Gögn í máli R-2022/999')
   })
 })

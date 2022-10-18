@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   Box,
   GridColumn,
@@ -28,7 +28,24 @@ export const CemetryEquities = ({
 }): JSX.Element => {
   const answers = application.answers
   const { formatMessage } = useLocale()
-  const { clearErrors, errors } = useFormContext()
+  const { setValue, clearErrors, errors } = useFormContext()
+
+  const operatingCostTotal = getValueViaPath(
+    answers,
+    OPERATINGCOST.total,
+  ) as string
+
+  useEffect(() => {
+    setValue(
+      CEMETRYEQUITIESANDLIABILITIESIDS.operationResult,
+      operatingCostTotal,
+    )
+    setTotalOperatingCost(operatingCostTotal)
+  }, [operatingCostTotal, setValue])
+
+  const [totalOperatingCost, setTotalOperatingCost] = useState('0')
+  const [equityTotal, setEquityTotal] = useState(0)
+
   const [getTotalAssets, totalAssets] = useTotals(
     CEMETRYEQUITIESANDLIABILITIESIDS.assetPrefix,
   )
@@ -39,6 +56,11 @@ export const CemetryEquities = ({
     CEMETRYEQUITIESANDLIABILITIESIDS.equityPrefix,
   )
 
+  useEffect(() => {
+    const total = totalEquity - totalLiabilities
+    setEquityTotal(total)
+  }, [totalLiabilities, totalEquity, totalOperatingCost])
+
   return (
     <GridContainer>
       <GridRow align="spaceBetween">
@@ -48,38 +70,38 @@ export const CemetryEquities = ({
           </Text>
           <Box paddingY={1}>
             <InputController
-              id={CEMETRYEQUITIESANDLIABILITIESIDS.current}
-              name={CEMETRYEQUITIESANDLIABILITIESIDS.current}
+              id={CEMETRYEQUITIESANDLIABILITIESIDS.fixedAssetsTotal}
+              name={CEMETRYEQUITIESANDLIABILITIESIDS.fixedAssetsTotal}
               error={
                 errors &&
                 getErrorViaPath(
                   errors,
-                  CEMETRYEQUITIESANDLIABILITIESIDS.current,
+                  CEMETRYEQUITIESANDLIABILITIESIDS.fixedAssetsTotal,
                 )
               }
               onChange={debounce(() => {
                 getTotalAssets()
-                clearErrors(CEMETRYEQUITIESANDLIABILITIESIDS.current)
+                clearErrors(CEMETRYEQUITIESANDLIABILITIESIDS.fixedAssetsTotal)
               }, INPUTCHANGEINTERVAL)}
-              label={formatMessage(m.currentAssets)}
+              label={formatMessage(m.fixedAssetsTotal)}
               backgroundColor="blue"
               currency
             />
           </Box>
           <Box paddingY={1}>
             <InputController
-              id={CEMETRYEQUITIESANDLIABILITIESIDS.tangible}
-              name={CEMETRYEQUITIESANDLIABILITIESIDS.tangible}
+              id={CEMETRYEQUITIESANDLIABILITIESIDS.currentAssets}
+              name={CEMETRYEQUITIESANDLIABILITIESIDS.currentAssets}
               onChange={debounce(() => {
                 getTotalAssets()
-                clearErrors(CEMETRYEQUITIESANDLIABILITIESIDS.tangible)
+                clearErrors(CEMETRYEQUITIESANDLIABILITIESIDS.currentAssets)
               }, INPUTCHANGEINTERVAL)}
-              label={formatMessage(m.tangibleAssets)}
+              label={formatMessage(m.currentAssets)}
               error={
                 errors &&
                 getErrorViaPath(
                   errors,
-                  CEMETRYEQUITIESANDLIABILITIESIDS.tangible,
+                  CEMETRYEQUITIESANDLIABILITIESIDS.currentAssets,
                 )
               }
               backgroundColor="blue"
@@ -143,40 +165,50 @@ export const CemetryEquities = ({
           />
           <Box paddingY={1}>
             <InputController
-              id={CEMETRYEQUITIESANDLIABILITIESIDS.newYearEquity}
-              name={CEMETRYEQUITIESANDLIABILITIESIDS.newYearEquity}
+              id={
+                CEMETRYEQUITIESANDLIABILITIESIDS.equityAtTheBeginningOfTheYear
+              }
+              name={
+                CEMETRYEQUITIESANDLIABILITIESIDS.equityAtTheBeginningOfTheYear
+              }
               onChange={debounce(() => {
                 getTotalEquity()
-                clearErrors(CEMETRYEQUITIESANDLIABILITIESIDS.newYearEquity)
+                clearErrors(
+                  CEMETRYEQUITIESANDLIABILITIESIDS.equityAtTheBeginningOfTheYear,
+                )
               }, INPUTCHANGEINTERVAL)}
               error={
                 errors &&
                 getErrorViaPath(
                   errors,
-                  CEMETRYEQUITIESANDLIABILITIESIDS.newYearEquity,
+                  CEMETRYEQUITIESANDLIABILITIESIDS.equityAtTheBeginningOfTheYear,
                 )
               }
-              label={formatMessage(m.newYearequity)}
+              label={formatMessage(m.equityAtTheBeginningOfTheYear)}
               backgroundColor="blue"
               currency
             />
           </Box>
           <Box paddingY={1}>
             <InputController
-              id={CEMETRYEQUITIESANDLIABILITIESIDS.reevaluatePrice}
-              name={CEMETRYEQUITIESANDLIABILITIESIDS.reevaluatePrice}
+              id={CEMETRYEQUITIESANDLIABILITIESIDS.revaluationDueToPriceChanges}
+              name={
+                CEMETRYEQUITIESANDLIABILITIESIDS.revaluationDueToPriceChanges
+              }
               onChange={debounce(() => {
                 getTotalEquity()
-                clearErrors(CEMETRYEQUITIESANDLIABILITIESIDS.reevaluatePrice)
+                clearErrors(
+                  CEMETRYEQUITIESANDLIABILITIESIDS.revaluationDueToPriceChanges,
+                )
               }, INPUTCHANGEINTERVAL)}
               error={
                 errors &&
                 getErrorViaPath(
                   errors,
-                  CEMETRYEQUITIESANDLIABILITIESIDS.reevaluatePrice,
+                  CEMETRYEQUITIESANDLIABILITIESIDS.revaluationDueToPriceChanges,
                 )
               }
-              label={formatMessage(m.reevaluatePrice)}
+              label={formatMessage(m.revaluationDueToPriceChanges)}
               backgroundColor="blue"
               currency
             />
@@ -206,7 +238,6 @@ export const CemetryEquities = ({
               id={CEMETRYEQUITIESANDLIABILITIESIDS.operationResult}
               name={CEMETRYEQUITIESANDLIABILITIESIDS.operationResult}
               readOnly
-              defaultValue={getValueViaPath(answers, OPERATINGCOST.total)}
               error={
                 errors &&
                 getErrorViaPath(
@@ -221,7 +252,7 @@ export const CemetryEquities = ({
           </Box>
           <Total
             name={CEMETRYEQUITIESANDLIABILITIESIDS.equityTotal}
-            total={totalEquity - totalLiabilities}
+            total={equityTotal}
             label={formatMessage(m.totalEquity)}
           />
         </GridColumn>

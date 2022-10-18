@@ -57,7 +57,7 @@ const Overview = () => {
     >
       <PageHeader title={formatMessage(titles.court.indictments.overview)} />
       <FormContentContainer>
-        <PageTitle title={formatMessage(m.title)} />
+        <PageTitle>{formatMessage(m.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={5}>
           {caseIsClosed ? (

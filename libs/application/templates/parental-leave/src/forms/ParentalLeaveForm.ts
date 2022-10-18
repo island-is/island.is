@@ -352,23 +352,20 @@ export const ParentalLeaveForm: Form = buildForm({
               title: parentalLeaveFormMessages.personalAllowance.spouseTitle,
               description:
                 parentalLeaveFormMessages.personalAllowance.spouseDescription,
+              condition: (answers, externalData) => {
+                const selectedChild = getSelectedChild(answers, externalData)
+
+                return (
+                  selectedChild?.parentalRelation ===
+                    ParentalRelations.primary && allowOtherParent(answers)
+                )
+              },
               children: [
                 buildCustomField({
                   component: 'PersonalAllowance',
                   id: 'usePersonalAllowanceFromSpouse',
                   title:
                     parentalLeaveFormMessages.personalAllowance.useFromSpouse,
-                  condition: (answers, externalData) => {
-                    const selectedChild = getSelectedChild(
-                      answers,
-                      externalData,
-                    )
-
-                    return (
-                      selectedChild?.parentalRelation ===
-                        ParentalRelations.primary && allowOtherParent(answers)
-                    )
-                  },
                 }),
                 buildCustomField({
                   component: 'SpouseUseAsMuchAsPossible',
@@ -392,7 +389,10 @@ export const ParentalLeaveForm: Form = buildForm({
                       personalAllowanceFromSpouse: {
                         useAsMuchAsPossible: string
                       }
-                    })?.personalAllowanceFromSpouse?.useAsMuchAsPossible === NO,
+                    })?.personalAllowanceFromSpouse?.useAsMuchAsPossible ===
+                      NO &&
+                    getApplicationAnswers(answers)
+                      .usePersonalAllowanceFromSpouse === YES,
                   placeholder: '0%',
                   variant: 'number',
                   width: 'half',
@@ -974,7 +974,7 @@ export const ParentalLeaveForm: Form = buildForm({
 
                       return addDays(
                         new Date(latestStartDate),
-                        minPeriodDays + 1,
+                        minPeriodDays - 1,
                       )
                     },
                     excludeDates: (application: Application) => {

@@ -17,6 +17,9 @@ export class AccordionSlice {
 
   @Field(() => [OneColumnText], { nullable: true })
   accordionItems?: Array<OneColumnText>
+
+  @Field(() => Boolean, { nullable: true })
+  hasBorderAbove?: boolean
 }
 
 export const mapAccordionSlice = ({
@@ -28,4 +31,5 @@ export const mapAccordionSlice = ({
   title: fields.title ?? '',
   type: fields.type ?? '',
   accordionItems: (fields.accordionItems ?? []).map(mapOneColumnText),
+  hasBorderAbove: fields.hasBorderAbove ?? true,
 })

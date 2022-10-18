@@ -102,7 +102,13 @@ const ApiScopeGroupCreateForm: React.FC<Props> = (props: Props) => {
                   >
                     {domains.map((domain: Domain) => {
                       return (
-                        <option value={domain.name} key={domain.name}>
+                        <option
+                          value={domain.name}
+                          key={domain.name}
+                          selected={
+                            props.apiScopeGroup.domainName === domain.name
+                          }
+                        >
                           {domain.name}
                         </option>
                       )

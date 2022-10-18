@@ -481,8 +481,7 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
 }
 
 function getCase(id: string): PromiseLike<Case> {
-  return Case.findOne({
-    where: { id },
+  return Case.findByPk(id, {
     rejectOnEmpty: true,
     include: [
       { model: Institution, as: 'court' },
@@ -557,7 +556,7 @@ describe('User', () => {
         })
 
         // Check the data in the database
-        return User.findOne({ where: { id: apiUser.id } })
+        return User.findByPk(apiUser.id)
       })
       .then((value) => {
         expectUsersToMatch(userToCUser(value?.toJSON() as User), apiUser)

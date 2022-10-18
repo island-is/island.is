@@ -1,5 +1,5 @@
 import gql from 'graphql-tag'
-import { slices } from './fragments'
+import { slices, nestedAccordionAndFaqListFields } from './fragments'
 
 export const GET_ORGANIZATIONS_QUERY = gql`
   query GetOrganizations($input: GetOrganizationsInput!) {
@@ -170,6 +170,7 @@ export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
       slug
       description {
         ...AllSlices
+        ${nestedAccordionAndFaqListFields}
       }
       links {
         text
@@ -177,6 +178,7 @@ export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
       }
       slices {
         ...AllSlices
+        ${nestedAccordionAndFaqListFields}
       }
       showTableOfContents
       sliceCustomRenderer
