@@ -1,6 +1,5 @@
 import { Module, DynamicModule } from '@nestjs/common'
 
-import { MainResolver } from './graphql'
 import { CriminalRecordService } from './criminalRecord.service'
 import {
   CriminalRecordApiModule,
@@ -16,7 +15,7 @@ export class CriminalRecordModule {
   static register(config: Config): DynamicModule {
     return {
       module: CriminalRecordModule,
-      providers: [MainResolver, CriminalRecordService],
+      providers: [CriminalRecordService],
       imports: [CriminalRecordApiModule.register(config.clientConfig)],
       exports: [CriminalRecordService],
     }

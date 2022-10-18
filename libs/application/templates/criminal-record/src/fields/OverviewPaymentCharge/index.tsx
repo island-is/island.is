@@ -2,13 +2,20 @@ import { Column, Columns, Divider, Text } from '@island.is/island-ui/core'
 import React, { FC } from 'react'
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
+import { ChargeItemCode } from '@island.is/shared/constants'
 
 export const OverviewPaymentCharge: FC<FieldBaseProps> = ({ application }) => {
   const { externalData } = application
-  const item = externalData.payment.data as {
+  const items = externalData.payment.data as {
     priceAmount: number
+    chargeItemCode: string
     chargeItemName: string
-  }
+  }[]
+
+  const item = items?.find(
+    ({ chargeItemCode }) => chargeItemCode === ChargeItemCode.CRIMINAL_RECORD,
+  )
+
   return (
     <Box paddingTop="smallGutter">
       <Columns alignY="bottom" space="gutter">

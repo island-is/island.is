@@ -20,12 +20,3 @@ export class PropertyOverview {
   @Field({ nullable: true })
   paging?: PagingData
 }
-
-@ObjectType()
-export class PropertyOverviewWithDetail {
-  @Field(() => [PropertyDetail], { nullable: true })
-  properties?: PropertyDetail[]
-
-  @Field({ nullable: true })
-  paging?: PagingData
-}
