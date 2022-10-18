@@ -2,12 +2,10 @@ import * as faker from 'faker'
 import addDays from 'date-fns/addDays'
 import startOfDay from 'date-fns/startOfDay'
 
-import {
-  DEFAULT_DOMAIN,
-  Delegation,
-  DelegationScope,
-} from '@island.is/auth-api-lib'
 import { createNationalId } from '@island.is/testing/fixtures'
+import { Delegation } from '../../lib/delegations/models/delegation.model'
+import { DEFAULT_DOMAIN } from '../../lib/types/defaultDomain'
+import { DelegationScope } from '../../lib/delegations/models/delegation-scope.model'
 
 export interface CreateDelegationOptions {
   fromNationalId: string

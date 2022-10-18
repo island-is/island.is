@@ -1,5 +1,5 @@
 import * as faker from 'faker'
-import { ApiScopesDTO } from '@island.is/auth-api-lib'
+import { ApiScopesDTO } from '../../lib/resources/dto/api-scopes.dto'
 
 /**
  * Private helper to create ApiScope with random values.
