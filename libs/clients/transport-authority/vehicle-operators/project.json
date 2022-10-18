@@ -1,0 +1,35 @@
+{
+  "root": "libs/clients/transport-authority/vehicle-operators",
+  "sourceRoot": "libs/clients/transport-authority/vehicle-operators/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/clients/transport-authority/vehicle-operators/**/*.ts"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": [
+        "coverage/libs/clients/transport-authority/vehicle-operators"
+      ],
+      "options": {
+        "jestConfig": "libs/clients/transport-authority/vehicle-operators/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "schemas/external-openapi-generator": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "yarn openapi-generator -o libs/clients/transport-authority/vehicle-operators/gen/fetch -i libs/clients/transport-authority/vehicle-operators/src/clientConfig.json"
+        ]
+      }
+    }
+  },
+  "tags": []
+}

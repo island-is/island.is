@@ -9,11 +9,22 @@ export const GET_DRIVING_LICENSE = `
   }
 `
 
-//TODOx ekki nota, frekar LicenseQuery
 export const GET_BIRTHPLACE = `
   query NationalRegistryUserQuery {
     nationalRegistryUser {
       birthPlace
+    }
+  }
+`
+
+export const GET_BIRTHPLACEx = `
+  query NationalRegistryUserQuery {
+    nationalRegistryUserV2 {
+      birthplace {
+        location
+        municipalityCode
+        dateOfBirth
+      }
     }
   }
 `

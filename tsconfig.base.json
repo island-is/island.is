@@ -400,6 +400,18 @@
         "libs/clients/smartsolutions/src/index.ts"
       ],
       "@island.is/clients/syslumenn": ["libs/clients/syslumenn/src/index.ts"],
+      "@island.is/clients/transport-authority/vehicle-co-owner": [
+        "libs/clients/transport-authority/vehicle-co-owner/src/index.ts"
+      ],
+      "@island.is/clients/transport-authority/vehicle-codetables": [
+        "libs/clients/transport-authority/vehicle-codetables/src/index.ts"
+      ],
+      "@island.is/clients/transport-authority/vehicle-operators": [
+        "libs/clients/transport-authority/vehicle-operators/src/index.ts"
+      ],
+      "@island.is/clients/transport-authority/vehicle-owner-change": [
+        "libs/clients/transport-authority/vehicle-owner-change/src/index.ts"
+      ],
       "@island.is/clients/user-profile": [
         "libs/clients/user-profile/src/index.ts"
       ],

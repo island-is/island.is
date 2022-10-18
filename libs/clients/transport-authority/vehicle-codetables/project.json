@@ -1,0 +1,35 @@
+{
+  "root": "libs/clients/transport-authority/vehicle-codetables",
+  "sourceRoot": "libs/clients/transport-authority/vehicle-codetables/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/clients/transport-authority/vehicle-codetables/**/*.ts"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": [
+        "coverage/libs/clients/transport-authority/vehicle-codetables"
+      ],
+      "options": {
+        "jestConfig": "libs/clients/transport-authority/vehicle-codetables/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "schemas/external-openapi-generator": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "yarn openapi-generator -o libs/clients/transport-authority/vehicle-codetables/gen/fetch -i libs/clients/transport-authority/vehicle-codetables/src/clientConfig.json"
+        ]
+      }
+    }
+  },
+  "tags": []
+}
