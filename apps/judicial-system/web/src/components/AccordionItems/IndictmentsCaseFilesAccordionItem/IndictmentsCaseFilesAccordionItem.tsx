@@ -154,7 +154,7 @@ export const sortedFilesInChapter = (
 }
 
 const renderChapter = (chapter: number, name: string) => (
-  <Box className={styles.chapterContainer}>
+  <Box className={styles.chapterContainer} data-testid="chapter">
     <Box marginRight={3}>
       <Text variant="h4">{`${chapter + 1}.`}</Text>
     </Box>
@@ -208,6 +208,7 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
         >
           <Box display="flex" alignItems="center">
             <Box
+              data-testid="caseFileDragHandle"
               display="flex"
               marginRight={3}
               style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
@@ -307,7 +308,10 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
       isDivider: true,
     },
     ...caseFiles
-      .filter((caseFile) => caseFile.chapter === null)
+      .filter(
+        (caseFile) =>
+          caseFile.chapter === null || caseFile.chapter === undefined,
+      )
       .map((caseFile) => {
         return {
           displayText: caseFile.name,
