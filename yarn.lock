@@ -11289,10 +11289,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/aws4@npm:1.5.1":
-  version: 1.5.1
-  resolution: "@types/aws4@npm:1.5.1"
-  checksum: 51248a5cf12d9b8cdcc7404da059d9639d8a473184447b46e8ebef929849c95c70445cd8bfa0cb841ccb1293fdb6d2412219d61e90bd5b2ef5f693649ec85b63
+"@types/aws4@npm:1.11.2":
+  version: 1.11.2
+  resolution: "@types/aws4@npm:1.11.2"
+  dependencies:
+    "@types/node": "*"
+  checksum: dd2c33b59e91af171f211458fb128e296ff25d8be43a67c2110253d52c583f63d32c0216eb813cb74c0423a0587ce069a15576223d63860978c235669023f92c
   languageName: node
   linkType: hard
 
@@ -26965,7 +26967,7 @@ __metadata:
     "@testing-library/react-hooks": 7.0.2
     "@testing-library/user-event": 12.1.5
     "@types/aws-sdk": 2.7.0
-    "@types/aws4": 1.5.1
+    "@types/aws4": 1.11.2
     "@types/bull": 3.14.2
     "@types/cache-manager": 3.4.0
     "@types/cache-manager-ioredis": 2.0.1

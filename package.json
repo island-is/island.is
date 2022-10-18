@@ -340,7 +340,7 @@
     "@testing-library/react-hooks": "7.0.2",
     "@testing-library/user-event": "12.1.5",
     "@types/aws-sdk": "2.7.0",
-    "@types/aws4": "1.5.1",
+    "@types/aws4": "1.11.2",
     "@types/bull": "3.14.2",
     "@types/cache-manager": "3.4.0",
     "@types/cache-manager-ioredis": "2.0.1",
