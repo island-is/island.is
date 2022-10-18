@@ -17,6 +17,7 @@ import {
 import { caseFilesRecord } from '../messages'
 import { Defendant } from '../modules/defendant'
 import { Case } from '../modules/case'
+import { PdfDocument } from './pdf'
 
 function drawTextAbsolute(
   page: PDFPage,
@@ -96,7 +97,7 @@ export const createCaseFilesRecord = async (
   const textFontSize = 12
   const pageNumberFontSize = 20
 
-  const pdfDocument = await PDFDocument.create()
+  const pdfDocument = await PdfDocument()
   pdfDocument.setTitle(`Málsgögn - ${policeCaseNumber}`)
   const normalFont = await pdfDocument.embedFont(StandardFonts.TimesRoman)
   const boldFont = await pdfDocument.embedFont(StandardFonts.TimesRomanBold)
