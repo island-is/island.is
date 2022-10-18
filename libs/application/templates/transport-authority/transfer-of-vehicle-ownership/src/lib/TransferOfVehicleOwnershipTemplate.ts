@@ -10,13 +10,9 @@ import {
 } from '@island.is/application/types'
 import { EphemeralStateLifeCycle } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
-import * as z from 'zod'
 import { m } from './messagess'
 import { Features } from '@island.is/feature-flags'
-
-const TransferOfVehicleOwnershipSchema = z.object({
-  approveExternalData: z.boolean().refine((v) => v),
-})
+import { TransferOfVehicleOwnershipSchema } from './dataSchema'
 
 const template: ApplicationTemplate<
   ApplicationContext,
