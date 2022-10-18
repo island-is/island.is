@@ -42,7 +42,7 @@ export class EstateTemplateService {
     // TODO: hook up to client once API endpoint is ready
     //      1. Delete const estate
     //      2. uncomment the following line
-    //      const estate = await this.syslumennService.getEstateInfo(application.applicant)[0];
+    //      const estate = (await this.syslumennService.getEstateInfo(application.applicant))[0];
 
     // TODO: Steini: gera initial data mapper þegar endapunktur er kominn upp
     const estate: EstateData = {
