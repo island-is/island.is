@@ -24,7 +24,7 @@
     "source-map-resolve",
     "atob",
     "logform",
-    "p-cancellable",
+    "p-cancelable",
     "pg-native",
     "form-data",
     "bull",
