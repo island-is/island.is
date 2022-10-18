@@ -2,9 +2,9 @@ import { PDFDocument, PDFFont, PDFPage, StandardFonts } from 'pdf-lib'
 
 export interface PdfDocument {
   rawDocument: PDFDocument
-  mergeDocument: (buffer: Buffer) => Promise<PdfDocument>
   addPageNumbers: () => PdfDocument
   getContents: () => Promise<Buffer>
+  mergeDocument: (buffer: Buffer) => Promise<PdfDocument>
 }
 
 export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
@@ -31,19 +31,6 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
 
   const pdfDocument = {
     rawDocument: rawDocument,
-
-    mergeDocument: async (buffer: Buffer) => {
-      const filePdfDoc = await PDFDocument.load(buffer)
-
-      const pages = await rawDocument.copyPages(
-        filePdfDoc,
-        filePdfDoc.getPageIndices(),
-      )
-
-      pages.forEach((page) => rawDocument.addPage(page))
-
-      return pdfDocument
-    },
 
     addPageNumbers: () => {
       const pageNumberRightMargin = 10
@@ -76,6 +63,19 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
       const bytes = await rawDocument.save()
 
       return Buffer.from(bytes)
+    },
+
+    mergeDocument: async (buffer: Buffer) => {
+      const filePdfDoc = await PDFDocument.load(buffer)
+
+      const pages = await rawDocument.copyPages(
+        filePdfDoc,
+        filePdfDoc.getPageIndices(),
+      )
+
+      pages.forEach((page) => rawDocument.addPage(page))
+
+      return pdfDocument
     },
   }
 
