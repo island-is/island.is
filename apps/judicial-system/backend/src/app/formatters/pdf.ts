@@ -4,15 +4,35 @@ export interface PdfDocument {
   rawDocument: PDFDocument
   addPage: (position: number) => PdfDocument
   addPageNumbers: () => PdfDocument
+  addTextBold: (
+    text: string,
+    fontSize: number,
+    position?: { x?: number; y?: number },
+  ) => PdfDocument
   getContents: () => Promise<Buffer>
   mergeDocument: (buffer: Buffer) => Promise<PdfDocument>
+  setMargins: (
+    top: number,
+    right: number,
+    bottom: number,
+    left: number,
+  ) => PdfDocument
 }
 
 export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
   const rawDocument = await PDFDocument.create()
-  title && rawDocument.setTitle(title)
+  if (title) {
+    rawDocument.setTitle(title)
+  }
+
   const normalFont = await rawDocument.embedFont(StandardFonts.TimesRoman)
   const boldFont = await rawDocument.embedFont(StandardFonts.TimesRomanBold)
+
+  const margins = { top: 0, right: 0, bottom: 0, left: 0 }
+  const spacing = { line: 2, paragraph: 4 }
+
+  let currentPage = -1
+  let currentYPosition = -1
 
   const drawTextAbsolute = (
     page: PDFPage,
@@ -30,11 +50,27 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
     })
   }
 
+  const drawText = (
+    page: PDFPage,
+    text: string,
+    s: number,
+    y: number,
+    font: PDFFont,
+    fontSize: number,
+    spaceBelow?: number,
+  ) => {
+    drawTextAbsolute(page, text, s, page.getHeight() - y, font, fontSize)
+    currentYPosition = y + fontSize + (spaceBelow ?? spacing.paragraph)
+  }
+
   const pdfDocument = {
     rawDocument: rawDocument,
 
     addPage: (position: number) => {
       rawDocument.insertPage(position)
+
+      currentPage = position
+      currentYPosition = margins.top
 
       return pdfDocument
     },
@@ -66,6 +102,23 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
       return pdfDocument
     },
 
+    addTextBold: (
+      text: string,
+      fontSize: number,
+      position?: { x?: number; y?: number },
+    ) => {
+      drawText(
+        rawDocument.getPage(currentPage),
+        text,
+        position?.x ?? margins.left,
+        position?.y ?? currentYPosition,
+        boldFont,
+        fontSize,
+      )
+
+      return pdfDocument
+    },
+
     getContents: async () => {
       const bytes = await rawDocument.save()
 
@@ -81,6 +134,15 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
       )
 
       pages.forEach((page) => rawDocument.addPage(page))
+
+      return pdfDocument
+    },
+
+    setMargins: (top: number, right: number, bottom: number, left: number) => {
+      margins.top = top
+      margins.right = right
+      margins.bottom = bottom
+      margins.left = left
 
       return pdfDocument
     },

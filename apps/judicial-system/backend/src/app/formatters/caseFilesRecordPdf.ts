@@ -97,6 +97,8 @@ export const createCaseFilesRecord = async (
     formatMessage(caseFilesRecord.title, { policeCaseNumber }),
   )
 
+  pdfDocument.setMargins(70, 70, 70, 70)
+
   // TODO: Remove block
   const { rawDocument } = pdfDocument
   const normalFont = await rawDocument.embedFont(StandardFonts.TimesRoman)
@@ -111,7 +113,15 @@ export const createCaseFilesRecord = async (
     buffer && (await pdfDocument.mergeDocument(buffer))
   }
 
-  pdfDocument.addPageNumbers().addPage(0)
+  pdfDocument
+    .addPageNumbers()
+    .addPage(0)
+    .addTextBold(
+      `${theCase.creatingProsecutor?.institution?.name.toUpperCase()}`,
+      headerFontSize,
+      { y: headerMargin },
+    )
+
   createTableOfContents()
 
   return pdfDocument.getContents()
@@ -121,16 +131,7 @@ export const createCaseFilesRecord = async (
   function createTableOfContents() {
     const currentPage = rawDocument.getPage(0)
 
-    let yOffset = 0
-
-    drawText(
-      currentPage,
-      `${theCase.creatingProsecutor?.institution?.name.toUpperCase()}`,
-      pageMargin,
-      (yOffset += headerMargin),
-      boldFont,
-      headerFontSize,
-    )
+    let yOffset = headerMargin
 
     drawCenteredText(
       currentPage,
