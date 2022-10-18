@@ -335,7 +335,6 @@ export class CaseService {
   }
 
   async xgetCaseFilesPdf(theCase: Case): Promise<Buffer> {
-    const PAGE_WIDTH = 500
     const PAGE_HEIGHT = 750
 
     const createPageLinkAnnotation = (pdfDoc: PDFDocument, pageRef: PDFRef) =>

@@ -17,7 +17,6 @@ import {
 import { caseFilesRecord } from '../messages'
 import { Defendant } from '../modules/defendant'
 import { Case } from '../modules/case'
-import { page } from 'pdfkit'
 
 function drawTextAbsolute(
   page: PDFPage,
