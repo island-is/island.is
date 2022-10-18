@@ -63,15 +63,15 @@ export const CemetryExpenses = ({ errors, getSum }: PropTypes): JSX.Element => {
       </Box>
       <Box paddingY={1}>
         <InputController
-          id={CEMETRYOPERATIONIDS.cemeteryFundExpense}
-          name={CEMETRYOPERATIONIDS.cemeteryFundExpense}
-          label={formatMessage(m.cemeteryFundExpense)}
+          id={CEMETRYOPERATIONIDS.donationsToCemeteryFund}
+          name={CEMETRYOPERATIONIDS.donationsToCemeteryFund}
+          label={formatMessage(m.donationsToCemeteryFund)}
           onChange={() =>
-            onInputChange(CEMETRYOPERATIONIDS.cemeteryFundExpense)
+            onInputChange(CEMETRYOPERATIONIDS.donationsToCemeteryFund)
           }
           error={
             errors &&
-            getErrorViaPath(errors, CEMETRYOPERATIONIDS.cemeteryFundExpense)
+            getErrorViaPath(errors, CEMETRYOPERATIONIDS.donationsToCemeteryFund)
           }
           backgroundColor="blue"
           currency
@@ -107,13 +107,12 @@ export const CemetryExpenses = ({ errors, getSum }: PropTypes): JSX.Element => {
       </Box>
       <Box paddingY={1}>
         <InputController
-          id={CEMETRYOPERATIONIDS.writtenOffExpense}
-          name={CEMETRYOPERATIONIDS.writtenOffExpense}
-          label={formatMessage(m.writtenOffExpense)}
-          onChange={() => onInputChange(CEMETRYOPERATIONIDS.writtenOffExpense)}
+          id={CEMETRYOPERATIONIDS.depreciation}
+          name={CEMETRYOPERATIONIDS.depreciation}
+          label={formatMessage(m.depreciation)}
+          onChange={() => onInputChange(CEMETRYOPERATIONIDS.depreciation)}
           error={
-            errors &&
-            getErrorViaPath(errors, CEMETRYOPERATIONIDS.writtenOffExpense)
+            errors && getErrorViaPath(errors, CEMETRYOPERATIONIDS.depreciation)
           }
           backgroundColor="blue"
           currency
