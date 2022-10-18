@@ -67,7 +67,7 @@ export const get24HFormatTime = (value: string) => {
   }
   const { hours, minutes } = getHoursMinutes(value)
 
-  return `${hours}:${minutes}`
+  return `${hours}:${minutes > 10 ? minutes : '0' + minutes}`
 }
 
 const vskNrRegex = /([0-9]){6}/
