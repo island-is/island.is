@@ -31,6 +31,7 @@ interface Props {
   policeCaseNumber: string
   caseFiles: TCaseFile[]
   caseId: string
+  shouldStartExpanded: boolean
 }
 
 interface CaseFileProps {
@@ -248,7 +249,7 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
 }
 
 const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
-  const { policeCaseNumber, caseFiles, caseId } = props
+  const { policeCaseNumber, caseFiles, caseId, shouldStartExpanded } = props
   const { formatMessage } = useIntl()
   const [updateFilesMutation] = useMutation<UpdateFilesMutationResponse>(
     UpdateFileMutation,
@@ -363,7 +364,7 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
         policeCaseNumber,
       })}
       labelVariant="h3"
-      startExpanded
+      startExpanded={shouldStartExpanded}
     >
       <Box marginBottom={3}>
         <Text>{formatMessage(m.explanation)}</Text>

@@ -52,12 +52,13 @@ const CaseFile = () => {
         </Box>
         <Box marginBottom={7}>
           <LayoutGroup>
-            <Accordion>
+            <Accordion singleExpand>
               {workingCase.policeCaseNumbers.map((policeCaseNumber, index) => (
                 <IndictmentsCaseFilesAccordionItem
                   key={index}
                   caseId={workingCase.id}
                   policeCaseNumber={policeCaseNumber}
+                  shouldStartExpanded={index === 0}
                   caseFiles={
                     workingCase.caseFiles?.filter(
                       (caseFile) =>
