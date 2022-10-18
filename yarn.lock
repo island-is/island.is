@@ -5871,19 +5871,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-codegen/typescript-resolvers@npm:2.7.3":
-  version: 2.7.3
-  resolution: "@graphql-codegen/typescript-resolvers@npm:2.7.3"
+"@graphql-codegen/typescript-resolvers@npm:2.7.4":
+  version: 2.7.4
+  resolution: "@graphql-codegen/typescript-resolvers@npm:2.7.4"
   dependencies:
     "@graphql-codegen/plugin-helpers": ^2.6.2
-    "@graphql-codegen/typescript": ^2.7.3
-    "@graphql-codegen/visitor-plugin-common": 2.12.1
+    "@graphql-codegen/typescript": ^2.7.4
+    "@graphql-codegen/visitor-plugin-common": 2.12.2
     "@graphql-tools/utils": ^8.8.0
     auto-bind: ~4.0.0
     tslib: ~2.4.0
   peerDependencies:
     graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
-  checksum: 28672b86e62ad7d0bcf244eebce7a4ee3b4dcd0055570d872a135167880030f27434c512e6bcd9d9144e5a6e4cd757268677dd61c7fb43aea2981290a5de9b2e
+  checksum: e54e96cbcc78ae8c8311b781cd33f4bacec15b34fff831870bae1f482d59fd55790f2c1f92c7b7f251c2b13aaad25e21fa7e7904fc67f0ed5c13abaa47b20c27
   languageName: node
   linkType: hard
 
@@ -5902,7 +5902,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-codegen/typescript@npm:^2.7.3":
+"@graphql-codegen/typescript@npm:^2.7.3, @graphql-codegen/typescript@npm:^2.7.4":
   version: 2.7.4
   resolution: "@graphql-codegen/typescript@npm:2.7.4"
   dependencies:
@@ -26905,7 +26905,7 @@ __metadata:
     "@graphql-codegen/typescript": 2.7.3
     "@graphql-codegen/typescript-operations": 2.5.3
     "@graphql-codegen/typescript-react-apollo": 3.3.3
-    "@graphql-codegen/typescript-resolvers": 2.7.3
+    "@graphql-codegen/typescript-resolvers": 2.7.4
     "@hookform/error-message": 0.0.5
     "@island.is/login": 1.2.1
     "@island.is/regulations-tools": 0.7.8
