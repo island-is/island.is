@@ -34,6 +34,11 @@ import {
   AdrAndMachineLicenseClientModule,
 } from '@island.is/clients/adr-and-machine-license'
 import { CmsModule } from '@island.is/cms'
+import {
+  DefaultApi as DisabilityApi,
+  DisabilityLicenseClientModule,
+} from '@island.is/clients/disability-license'
+import { GenericDisabilityLicenseApi } from './client/disability-license-client'
 export interface PkPassConfig {
   apiKey: string
   apiUrl: string
@@ -57,6 +62,7 @@ export interface LicenseServiceConfig {
   driversLicense: DriversLicenseConfig
   adrLicense: PkPassConfig
   machineLicense: PkPassConfig
+  disabilityLicense: PkPassConfig
 }
 
 export type LicenseServiceConfigV2 = Omit<
@@ -106,6 +112,16 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     timeout: 100,
     orgSlug: GenericLicenseOrganizationSlug.FirearmLicense,
   },
+  {
+    type: GenericLicenseType.DisabilityLicense,
+    provider: {
+      id: GenericLicenseProviderId.SocialInsuranceAdministration,
+    },
+    pkpass: false,
+    pkpassVerify: false,
+    timeout: 100,
+    orgSlug: GenericLicenseOrganizationSlug.DisabilityLicense,
+  },
 ]
 
 @Module({})
@@ -117,6 +133,7 @@ export class LicenseServiceModule {
         CacheModule.register(),
         AdrAndMachineLicenseClientModule,
         FirearmLicenseClientModule,
+        DisabilityLicenseClientModule,
         SmartSolutionsClientModule,
         CmsModule,
       ],
@@ -141,6 +158,7 @@ export class LicenseServiceModule {
             adrApi: AdrApi,
             machineApi: VinnuvelaApi,
             firearmApi: FirearmApi,
+            disabilityApi: DisabilityApi,
           ) => async (
             type: GenericLicenseType,
             cacheManager: CacheManager,
@@ -170,11 +188,17 @@ export class LicenseServiceModule {
                   firearmApi,
                   new SmartSolutionsApi(logger, config.firearmLicense),
                 )
+              case GenericLicenseType.DisabilityLicense:
+                return new GenericDisabilityLicenseApi(
+                  logger,
+                  disabilityApi,
+                  new SmartSolutionsApi(logger, config.disabilityLicense),
+                )
               default:
                 return null
             }
           },
-          inject: [AdrApi, VinnuvelaApi, FirearmApi],
+          inject: [AdrApi, VinnuvelaApi, FirearmApi, DisabilityApi],
         },
       ],
       exports: [LicenseServiceService],

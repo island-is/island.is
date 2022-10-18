@@ -67,6 +67,7 @@ import { AdrAndMachineLicenseClientConfig } from '@island.is/clients/adr-and-mac
 import { FirearmLicenseClientConfig } from '@island.is/clients/firearm-license'
 import { PassportsClientConfig } from '@island.is/clients/passports'
 import { FileStorageConfig } from '@island.is/file-storage'
+import { DisabilityLicenseClientConfig } from '@island.is/clients/disability-license'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -232,6 +233,12 @@ const autoSchemaFile = environment.production
         apiUrl: environment.smartSolutionsApiUrl!,
         passTemplateId: environment.adrLicense.passTemplateId!,
       },
+      //TODO: CHANGE FOR CORRECT VARIABLES!
+      disabilityLicense: {
+        apiKey: environment.adrLicense.pkPassApiKey!,
+        apiUrl: environment.smartSolutionsApiUrl!,
+        passTemplateId: environment.adrLicense.passTemplateId!,
+      },
       driversLicense: {
         xroad: {
           baseUrl: environment.xroad.baseUrl!,
@@ -273,6 +280,7 @@ const autoSchemaFile = environment.production
         AdrAndMachineLicenseClientConfig,
         AssetsClientConfig,
         FirearmLicenseClientConfig,
+        DisabilityLicenseClientConfig,
         VehiclesClientConfig,
         AuthPublicApiClientConfig,
         DownloadServiceConfig,

@@ -113,6 +113,7 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
           GenericLicenseType.AdrLicense,
           GenericLicenseType.MachineLicense,
           GenericLicenseType.FirearmLicense,
+          GenericLicenseType.DisabilityLicense,
         ])
       }
     }
