@@ -41,12 +41,9 @@ export const form: Form = buildForm({
             }),
             buildCustomField({
               title: '',
-              id: 'estateMembers',
+              id: 'estate.estateMembers',
               component: 'EstateMemberRepeater',
-              childInputIds: [
-                'estateMembers.encountered',
-                'estateMembers.members',
-              ],
+              childInputIds: ['estate.estateMembers'],
             }),
             ...willsAndAgreements,
           ],

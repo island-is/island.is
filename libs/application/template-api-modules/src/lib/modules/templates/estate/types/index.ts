@@ -62,7 +62,7 @@ export interface UploadData {
     | Debt[]
     | 'yes'
     | 'no'
-  caseNumber: string
+  //caseNumber: string
   notifier: Notifier
   estateMembers: EstateMember[]
   assets: AssetFrame[]

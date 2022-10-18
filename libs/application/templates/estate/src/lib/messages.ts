@@ -349,10 +349,15 @@ export const m = defineMessages({
     defaultMessage: 'Bæta við erfingja',
     description: 'Inheritance step add member of estate',
   },
-  inheritanceRemoveMember: {
-    id: 'es.application:inheritanceRemoveMember',
-    defaultMessage: 'Eyða',
-    description: 'Inheritance step remove member of estate',
+  inheritanceDisableMember: {
+    id: 'es.application:inheritanceDisableMember',
+    defaultMessage: 'Afvirkja',
+    description: 'Inheritance step disable member of estate',
+  },
+  inheritanceEnableMember: {
+    id: 'es.application:inheritanceEnableMember',
+    defaultMessage: 'Virkja',
+    description: 'Inheritance step enable member of estate',
   },
   inheritanceKtLabel: {
     id: 'es.application:inheritanceKtLabel',

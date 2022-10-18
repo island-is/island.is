@@ -34,6 +34,7 @@ export const estateSchema = z.object({
         dateOfBirth: z.string().nonempty().optional(),
         initial: z.boolean(),
         enabled: z.boolean(),
+        dummy: z.boolean().optional(),
       })
       .array()
       .optional(),
@@ -42,12 +43,12 @@ export const estateSchema = z.object({
     flyers: asset,
     vehicles: asset,
     ships: asset,
-    knowledgeOfOtherWills: z.enum(['yes', 'no']),
-    caseNumber: z.string().nonempty(),
-    dateOfDeath: z.date(),
-    nameOfDeceased: z.string().nonempty(),
-    nationalIdOfDeceased: z.string().length(10),
-    districtCommissionerHasWill: z.boolean(),
+    knowledgeOfOtherWills: z.enum(['yes', 'no']).optional(),
+    //caseNumber: z.string().nonempty(),
+    dateOfDeath: z.date().optional(),
+    nameOfDeceased: z.string().nonempty().optional(),
+    nationalIdOfDeceased: z.string().length(10).optional(),
+    districtCommissionerHasWill: z.boolean().optional(),
   }),
 
   //Applicant's info
@@ -59,25 +60,6 @@ export const estateSchema = z.object({
     }),
     email: customZodError(z.string().email(), m.errorEmail),
     address: z.string(),
-  }),
-
-  //Estate members info
-  estateMembers: z.object({
-    members: z
-      .object({
-        initial: z.boolean().optional(),
-        name: z.string().nonempty(),
-        relation: customZodError(z.string().nonempty(), m.errorRelation),
-        nationalId: z.string().optional(),
-        custodian: z.string().length(10).optional(),
-        foreignCitizenship: z.string().array().min(0).max(1).optional(),
-        dateOfBirth: z.string().nonempty().optional(),
-        dummy: z.boolean().optional(),
-        enabled: z.boolean(),
-      })
-      .array()
-      .optional(),
-    encountered: z.boolean().optional(),
   }),
 
   selectedEstate: z.enum([

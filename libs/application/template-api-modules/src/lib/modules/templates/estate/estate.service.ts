@@ -100,7 +100,7 @@ export class EstateTemplateService {
           enabled: true,
         },
       ],
-      caseNumber: '011515',
+      //caseNumber: '011515',
       dateOfDeath: new Date(Date.now() - 1000 * 3600 * 24 * 100),
       nameOfDeceased: 'Lizzy B. Gone',
       nationalIdOfDeceased: '0101301234',
@@ -141,7 +141,7 @@ export class EstateTemplateService {
 
     // TODO: hook up fields to answers when ready
     const uploadData: UploadData = {
-      caseNumber: estateData.caseNumber,
+      //caseNumber: estateData.caseNumber,
       applicantHasLegalCustodyOverEstate: 'no',
       assets: [],
       bankAccounts: [],
