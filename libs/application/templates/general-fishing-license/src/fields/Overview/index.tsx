@@ -10,14 +10,17 @@ import { GeneralFishingLicense } from '../../lib/dataSchema'
 import {
   applicantInformation,
   fishingLicense,
+  fishingLicenseFurtherInformation,
   overview,
 } from '../../lib/messages'
 import { formatIsk, formatPhonenumber } from '../../utils'
 import { FishingLicenseShip } from '@island.is/api/schema'
+import { useLocale } from '@island.is/localization'
 
 export const Overview: FC<FieldBaseProps> = ({ application, goToScreen }) => {
   const answers = application.answers as GeneralFishingLicense
   const [fishingLicensePrice, setFishingLicensePrice] = useState<number>(0)
+  const { formatMessage } = useLocale()
 
   // Ships
   const ships = getValueViaPath(
@@ -115,8 +118,7 @@ export const Overview: FC<FieldBaseProps> = ({ application, goToScreen }) => {
           )}
         </GridRow>
       </ReviewGroup>
-
-      <ReviewGroup isLast>
+      <ReviewGroup>
         <Box
           border="standard"
           borderRadius="large"
@@ -124,17 +126,30 @@ export const Overview: FC<FieldBaseProps> = ({ application, goToScreen }) => {
           width="full"
           display="flex"
           justifyContent="spaceBetween"
-          marginBottom={5}
+          marginBottom={2}
         >
           <ShipInformation ship={ship} seaworthinessHasColor />
         </Box>
+      </ReviewGroup>
+      <ReviewGroup
+        isLast 
+        editAction={() => changeScreens('fishingLicenseFurtherInformation')}
+      >
         <GridRow>
-          <GridColumn span={['9/12', '9/12', '9/12', '5/12']}>
+          <GridColumn span={['9/12', '9/12', '9/12', '5/12']} paddingBottom={3}>
             <ValueLine
               label={fishingLicense.general.title}
               value={fishingLicense.labels[answers.fishingLicense.license]}
             />
           </GridColumn>
+          {answers.fishingLicenseFurtherInformation.date && (
+            <GridColumn paddingBottom={3} span={['9/12', '9/12', '9/12', '5/12']}>
+              <ValueLine
+                label={fishingLicenseFurtherInformation.labels.date}
+                value={answers.fishingLicenseFurtherInformation.date}
+              />
+            </GridColumn>
+          )}
         </GridRow>
       </ReviewGroup>
       {!!fishingLicensePrice && (

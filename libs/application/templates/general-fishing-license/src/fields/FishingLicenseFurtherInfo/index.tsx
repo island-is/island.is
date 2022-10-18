@@ -64,28 +64,6 @@ export const FishingLicenseFurtherInfo: FC<FieldBaseProps> = ({
             minDate={new Date()}
           />
         </Box>
-        <Box>
-          <DatePickerController
-            id={`${field.id}.date1`}
-            error={errors && getErrorViaPath(errors, `${field.id}.date1`)}
-            backgroundColor="blue"
-            locale={lang}
-            label={formatMessage(fishingLicenseFurtherInformation.labels.date)}
-            placeholder={formatMessage(fishingLicenseFurtherInformation.placeholders.date)}
-            minDate={new Date()}
-          />
-        </Box>
-        <Box>
-          <DatePickerController
-            id={`${field.id}.date2`}
-            error={errors && getErrorViaPath(errors, `${field.id}.date2`)}
-            backgroundColor="blue"
-            locale={lang}
-            label={formatMessage(fishingLicenseFurtherInformation.labels.date)}
-            placeholder={formatMessage(fishingLicenseFurtherInformation.placeholders.date)}
-            minDate={new Date()}
-          />
-        </Box>
       </Box>
     </>
   )

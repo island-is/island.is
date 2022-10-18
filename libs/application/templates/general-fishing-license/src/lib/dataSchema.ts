@@ -73,8 +73,6 @@ export const GeneralFishingLicenseSchema = z.object({
   }),
   fishingLicenseFurtherInformation: z.object({
     date: z.string().refine((x) => x.trim().length > 0),
-    date1: z.string().refine((x) => x.trim().length > 0),
-    date2: z.string().refine((x) => x.trim().length > 0),
   }),
 })
 
