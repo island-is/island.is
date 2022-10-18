@@ -56,8 +56,8 @@ const caseFiles = [
     created: faker.date.past().toISOString(),
     modified: faker.date.past().toISOString(),
     caseId: faker.datatype.uuid(),
-    name: 'a',
-    type: faker.lorem.words(1),
+    name: faker.lorem.word(),
+    type: faker.lorem.word(),
     state: CaseFileState.STORED_IN_RVG,
     size: 1,
     chapter: 0,
@@ -68,8 +68,8 @@ const caseFiles = [
     created: faker.date.past().toISOString(),
     modified: faker.date.past().toISOString(),
     caseId: faker.datatype.uuid(),
-    name: 'b',
-    type: faker.lorem.words(1),
+    name: faker.lorem.word(),
+    type: faker.lorem.word(),
     state: CaseFileState.STORED_IN_RVG,
     size: 1,
     chapter: 0,
@@ -80,12 +80,24 @@ const caseFiles = [
     created: faker.date.past().toISOString(),
     modified: faker.date.past().toISOString(),
     caseId: faker.datatype.uuid(),
-    name: 'c',
-    type: faker.lorem.words(1),
+    name: faker.lorem.word(),
+    type: faker.lorem.word(),
     state: CaseFileState.STORED_IN_RVG,
     size: 1,
     chapter: 0,
     orderWithinChapter: 2,
+  },
+  {
+    id: faker.datatype.uuid(),
+    created: faker.date.past().toISOString(),
+    modified: faker.date.past().toISOString(),
+    caseId: faker.datatype.uuid(),
+    name: faker.lorem.word(),
+    type: faker.lorem.word(),
+    state: CaseFileState.STORED_IN_RVG,
+    size: 1,
+    chapter: 1,
+    orderWithinChapter: 0,
   },
 ]
 
@@ -147,5 +159,9 @@ describe('sortedFilesInChapter', () => {
         orderWithinChapter: caseFiles[2].orderWithinChapter,
       },
     ] as ReorderableItem[])
+  })
+
+  it('should only return an array of files in a given chapter', () => {
+    expect(sortedFilesInChapter(0, caseFiles).length).toEqual(3)
   })
 })
