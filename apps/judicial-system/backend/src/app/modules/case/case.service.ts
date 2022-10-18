@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common'
 import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 
+import type { ConfigType } from '@island.is/nest/config'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { FormatMessage, IntlService } from '@island.is/cms-translations'
@@ -37,6 +38,8 @@ import {
   getCourtRecordPdfAsBuffer,
   getCourtRecordPdfAsString,
   formatRulingModifiedHistory,
+  writeFile,
+  createCaseFilesRecord,
 } from '../../formatters'
 import { CaseFile } from '../file'
 import { DefendantService, Defendant } from '../defendant'
@@ -50,6 +53,7 @@ import { UpdateCaseDto } from './dto/updateCase.dto'
 import { getCasesQueryFilter } from './filters/case.filters'
 import { Case } from './models/case.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
+import { caseModuleConfig } from './case.config'
 
 const includes: Includeable[] = [
   { model: Defendant, as: 'defendants' },
@@ -103,6 +107,8 @@ export class CaseService {
   constructor(
     @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(Case) private readonly caseModel: typeof Case,
+    @Inject(caseModuleConfig.KEY)
+    private readonly config: ConfigType<typeof caseModuleConfig>,
     private readonly defendantService: DefendantService,
     private readonly awsS3Service: AwsS3Service,
     private readonly courtService: CourtService,
@@ -290,7 +296,45 @@ export class CaseService {
     return getCourtRecordPdfAsBuffer(theCase, this.formatMessage, user)
   }
 
-  async getCaseFilesPdf(theCase: Case): Promise<Buffer> {
+  async getCaseFilesPdf(
+    theCase: Case,
+    policeCaseNumber: string,
+  ): Promise<Buffer> {
+    await this.refreshFormatMessage()
+
+    const caseFiles = theCase.caseFiles
+      ?.filter(
+        (file) =>
+          file.policeCaseNumber === policeCaseNumber &&
+          file.category === CaseFileCategory.CASE_FILE &&
+          file.type === 'application/pdf' &&
+          file.key,
+      )
+      ?.map((caseFile) => () =>
+        this.awsS3Service.getObject(caseFile.key ?? '').catch((reason) => {
+          // Tolerate failure, but log error
+          this.logger.error(
+            `Unable to get file ${caseFile.id} of case ${theCase.id} from AWS S3`,
+            { reason },
+          )
+        }),
+      )
+
+    const pdf = await createCaseFilesRecord(
+      theCase,
+      policeCaseNumber,
+      caseFiles ?? [],
+      this.formatMessage,
+    )
+
+    if (!this.config.production) {
+      writeFile(`${theCase.id}-case-files.pdf`, pdf)
+    }
+
+    return pdf
+  }
+
+  async xgetCaseFilesPdf(theCase: Case): Promise<Buffer> {
     const PAGE_WIDTH = 500
     const PAGE_HEIGHT = 750
 
@@ -318,7 +362,7 @@ export class CaseService {
     const pdfDoc = await PDFDocument.create()
     let pageNumber = 0
     const pageNumberFont = await pdfDoc.embedFont(StandardFonts.TimesRoman)
-    const coverPage = pdfDoc.addPage([PAGE_WIDTH, PAGE_HEIGHT])
+    const coverPage = pdfDoc.addPage()
     const files =
       theCase.caseFiles?.filter(
         (file) =>
@@ -373,8 +417,13 @@ export class CaseService {
     })
 
     const pdf = await pdfDoc.save()
+    const buffer = Buffer.from(pdf)
 
-    return Buffer.from(pdf)
+    if (!this.config.production) {
+      writeFile(`${theCase.id}-case-files.pdf`, buffer)
+    }
+
+    return buffer
   }
 
   async getRulingPdf(theCase: Case, useSigned = true): Promise<Buffer> {

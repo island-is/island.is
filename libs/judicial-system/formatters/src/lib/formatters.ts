@@ -9,7 +9,6 @@ import {
   CaseType,
   isRestrictionCase,
   isIndictmentCase,
-  SessionArrangements,
 } from '@island.is/judicial-system/types'
 
 const getAsDate = (date: Date | string | undefined | null): Date => {
