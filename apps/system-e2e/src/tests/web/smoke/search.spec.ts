@@ -7,7 +7,6 @@ test.use({ baseURL: urls.islandisBaseUrl })
 test.describe('Search feature', () => {
   let context: BrowserContext
   test.beforeAll(async ({ browser }) => {
-    test.setTimeout(60000)
     context = await session({
       browser: browser,
       storageState: 'homepage.json',

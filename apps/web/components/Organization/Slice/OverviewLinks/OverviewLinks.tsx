@@ -8,6 +8,7 @@ import {
   Stack,
   Text,
   Link,
+  BoxProps,
 } from '@island.is/island-ui/core'
 import { OverviewLinks } from '@island.is/web/graphql/schema'
 import { Image, richText, SliceType } from '@island.is/island-ui/contentful'
@@ -20,6 +21,16 @@ interface SliceProps {
 export const OverviewLinksSlice: React.FC<SliceProps> = ({ slice }) => {
   const { linkResolver } = useLinkResolver()
 
+  const boxProps: BoxProps = slice.hasBorderAbove
+    ? {
+        borderTopWidth: 'standard',
+        borderColor: 'standard',
+        paddingTop: 4,
+      }
+    : {
+        paddingTop: 2,
+      }
+
   return (
     <section
       key={slice.id}
@@ -27,7 +38,7 @@ export const OverviewLinksSlice: React.FC<SliceProps> = ({ slice }) => {
       aria-labelledby={'sliceTitle-' + slice.id}
     >
       <GridContainer>
-        <Box borderTopWidth="standard" borderColor="standard" paddingTop={4}>
+        <Box {...boxProps}>
           <Stack space={6}>
             {slice.overviewLinks.map(
               (
