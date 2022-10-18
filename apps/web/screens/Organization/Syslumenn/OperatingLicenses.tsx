@@ -238,7 +238,6 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
   const Router = useRouter()
   const { format } = useDateUtils()
   const DATE_FORMAT = n('operatingLicenseDateFormat', 'd. MMMM yyyy')
-  const client = useApolloClient()
 
   useContentfulId(organizationPage.id, subpage.id)
 
