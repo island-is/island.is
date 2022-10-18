@@ -267,7 +267,7 @@ const PoliceCaseFilesRoute = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${constants.INDICTMENTS_CASE_FILES_ROUTE}/${workingCase.id}`}
-          nextUrl={`${constants.INDICTMENTS_OVERVIEW_ROUTE}/${workingCase.id}`}
+          nextUrl={`${constants.INDICTMENTS_CASE_FILE_ROUTE}/${workingCase.id}`}
           nextIsDisabled={Object.values(allUploaded).some((v) => v)}
           nextIsLoading={isLoadingWorkingCase}
         />
