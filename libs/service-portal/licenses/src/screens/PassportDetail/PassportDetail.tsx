@@ -27,13 +27,7 @@ import { Gender, GenderType } from '../../types/passport.type'
 
 const NotifyLostLink = (text: string) => (
   <Link href="https://www.skra.is/umsoknir/eydublod-umsoknir-og-vottord/stok-vara/?productid=7a8b6878-757d-11e9-9452-005056851dd2">
-    <Button
-      variant="text"
-      size="small"
-      icon="open"
-      iconType="outline"
-      colorScheme="destructive"
-    >
+    <Button variant="utility" size="small" icon="open" iconType="outline">
       {text}
     </Button>
   </Link>
@@ -51,7 +45,7 @@ const PassportDetail: ServicePortalModuleComponent = ({ userInfo }) => {
     X: formatMessage(m.otherGender),
   }
 
-  const data = passportData?.find((x) => x.number === id) || null
+  const data = passportData?.find((x) => x.numberWithType === id) || null
 
   const licenseExpired = data?.expiryStatus === 'EXPIRED'
   const licenseLost = data?.expiryStatus === 'LOST'
@@ -104,9 +98,12 @@ const PassportDetail: ServicePortalModuleComponent = ({ userInfo }) => {
                 </Box>
 
                 <Box display="flex" flexDirection="row" alignItems="center">
-                  <Link href="https://www.skra.is/folk/vegabref-og-onnur-skilriki/vegabref/">
+                  <Link
+                    className={styles.renew}
+                    href="https://www.skra.is/folk/vegabref-og-onnur-skilriki/vegabref/"
+                  >
                     <Button
-                      variant="text"
+                      variant="utility"
                       size="small"
                       icon="open"
                       iconType="outline"
@@ -114,7 +111,6 @@ const PassportDetail: ServicePortalModuleComponent = ({ userInfo }) => {
                       {formatMessage(m.passportRenew)}
                     </Button>
                   </Link>
-                  <div className={styles.line} />
                   {NotifyLostLink(formatMessage(m.passportNotifyLost))}
                 </Box>
               </GridColumn>
@@ -140,7 +136,7 @@ const PassportDetail: ServicePortalModuleComponent = ({ userInfo }) => {
           <Divider />
           <UserInfoLine
             label={m.passportNumberShort}
-            content={data?.number || ''}
+            content={data?.numberWithType || ''}
             loading={loading}
             paddingBottom={1}
             labelColumnSpan={['1/1', '6/12']}

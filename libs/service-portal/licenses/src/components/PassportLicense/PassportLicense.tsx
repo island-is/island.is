@@ -12,7 +12,7 @@ export const PassportLicense = ({
   isInvalid,
 }: {
   expireDate: Date
-  id?: string
+  id?: string | null
   name?: string
   isInvalid?: boolean
 }) => {

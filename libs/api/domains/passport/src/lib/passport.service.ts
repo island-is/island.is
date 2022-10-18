@@ -85,8 +85,17 @@ export class PassportService {
             7
         }
 
+        /**
+         * Passportnumber as displayed on icelandic passports.
+         * With subtype in front.
+         */
+        const numberWithType = `${passport.subType ?? ''}${
+          passport.number ?? ''
+        }`
+
         return {
           ...passport,
+          numberWithType,
           expiryStatus: expiryStatus,
           expiresWithinNoticeTime: expiresWithinNoticeTime,
         }

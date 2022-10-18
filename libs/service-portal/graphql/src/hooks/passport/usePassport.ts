@@ -16,6 +16,7 @@ const GetIdentityDocumentQuery = gql`
       mrzFirstName
       mrzLastName
       sex
+      numberWithType
       expiryStatus
       expiresWithinNoticeTime
     }

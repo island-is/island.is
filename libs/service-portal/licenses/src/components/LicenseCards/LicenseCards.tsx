@@ -24,16 +24,15 @@ const LicenseCards: FC<Props> = ({ drivingLicenseData, passportData }) => {
               expireDate={drivingLicenseData.gildirTil.toString()}
             />
           )}
-          {passportData &&
-            passportData.map((item) => (
-              <PassportLicense
-                key={item.number}
-                id={item.number}
-                expireDate={item.expirationDate}
-                isInvalid={item.status === 'INVALID'}
-                name={item.verboseType}
-              />
-            ))}
+          {passportData?.map((item) => (
+            <PassportLicense
+              key={item.number}
+              id={item.numberWithType}
+              expireDate={item.expirationDate}
+              isInvalid={item.status === 'INVALID'}
+              name={item.verboseType}
+            />
+          ))}
         </Stack>
       </GridColumn>
     </GridRow>

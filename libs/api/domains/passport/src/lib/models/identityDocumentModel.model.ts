@@ -41,6 +41,9 @@ export class IdentityDocumentModel {
   sex?: Gender
 
   @Field(() => String, { nullable: true })
+  numberWithType?: string
+
+  @Field(() => String, { nullable: true })
   expiryStatus?: string
 
   @Field(() => Boolean, { nullable: true })
