@@ -28903,11 +28903,11 @@ __metadata:
   linkType: hard
 
 "jose@npm:^1.27.2":
-  version: 1.28.1
-  resolution: "jose@npm:1.28.1"
+  version: 1.28.2
+  resolution: "jose@npm:1.28.2"
   dependencies:
     "@panva/asn1.js": ^1.0.0
-  checksum: b91458949df7df08810b7a896a10751f25d3108dfcc41af138dc01e8e5bf7f90ea510cdb3d6bc37e3a293ec7d5cc26fb587de7ce15785a8109892c412e5c0416
+  checksum: d601afdc79b28ec1fc49bf089921943ac69b73312840c0e1d1dacb6fc3e9cf40d879a333652507177cc7f1cea0af1d36b2ca79f57e166297951e87abd2a96bac
   languageName: node
   linkType: hard
 
