@@ -40,11 +40,12 @@ interface CaseFileProps {
 }
 
 export interface ReorderableItem {
-  displayText: string
-  chapter?: number
-  isDivider: boolean
   id?: string
   created?: string
+  displayText: string
+  isDivider: boolean
+  chapter?: number
+  orderWithinChapter?: number
 }
 
 interface UpdateFilesMutationResponse {
@@ -123,6 +124,33 @@ export const getFilesBelowInChapter = (
   return filesBelowInChapter
 }
 
+export const sortedFilesInChapter = (
+  chapter: number,
+  files: TCaseFile[],
+): ReorderableItem[] => {
+  return files
+    .filter((file) => file.chapter === chapter)
+    .map((file) => {
+      return {
+        displayText: file.name,
+        isDivider: false,
+        created: file.created,
+        id: file.id,
+        orderWithinChapter: file.orderWithinChapter,
+      }
+    })
+    .sort((a, b) => {
+      if (
+        a.orderWithinChapter === undefined ||
+        b.orderWithinChapter === undefined
+      ) {
+        return 0
+      }
+
+      return a.orderWithinChapter - b.orderWithinChapter
+    })
+}
+
 const renderChapter = (chapter: number, name: string) => (
   <Box className={styles.chapterContainer}>
     <Box marginRight={3}>
@@ -142,7 +170,7 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
   return (
     <Reorder.Item
       value={caseFile}
-      id={caseFile.displayText}
+      id={caseFile.id}
       style={{
         y,
         boxShadow,
@@ -224,68 +252,44 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
   )
   const { onOpen } = useFileList({ caseId })
 
-  const filesInChapter = (chapter: number) => {
-    return caseFiles
-      .filter((file) => file.chapter === chapter)
-      .map((file) => {
-        return {
-          displayText: file.name,
-          isDivider: false,
-          created: file.created,
-          id: file.id,
-          orderWithinChapter: file.orderWithinChapter,
-        }
-      })
-      .sort((a, b) => {
-        if (
-          a.orderWithinChapter === undefined ||
-          b.orderWithinChapter === undefined
-        ) {
-          return 0
-        }
-
-        return a.orderWithinChapter - b.orderWithinChapter
-      })
-  }
-
   const [reorderableItems, setReorderableItems] = useState<ReorderableItem[]>([
     {
       displayText: formatMessage(m.chapterIndictmentAndAccompanyingDocuments),
       chapter: 0,
       isDivider: false,
     },
-    ...filesInChapter(0),
+    ...sortedFilesInChapter(0, caseFiles),
     {
       displayText: formatMessage(m.chapterInvesitgationProcess),
       chapter: 1,
       isDivider: false,
     },
-    ...filesInChapter(1),
+    ...sortedFilesInChapter(1, caseFiles),
     {
       displayText: formatMessage(m.chapterWitnesses),
       chapter: 2,
       isDivider: false,
     },
-    ...filesInChapter(2),
+    ...sortedFilesInChapter(2, caseFiles),
     {
       displayText: formatMessage(m.chapterDefendant),
       chapter: 3,
       isDivider: false,
     },
-    ...filesInChapter(3),
+    ...sortedFilesInChapter(3, caseFiles),
 
     {
       displayText: formatMessage(m.chapterCaseFiles),
       chapter: 4,
       isDivider: false,
     },
-    ...filesInChapter(4),
+    ...sortedFilesInChapter(4, caseFiles),
     {
       displayText: formatMessage(m.chapterElectronicDocuments),
       chapter: 5,
       isDivider: false,
     },
-    ...filesInChapter(5),
+    ...sortedFilesInChapter(5, caseFiles),
     {
       displayText: `${formatMessage(m.unorderedFilesTitle)}|${formatMessage(
         m.unorderedFilesExplanation,
