@@ -44,7 +44,8 @@
     "@protobufjs/utf8",
     "safer-buffer",
     "ts-morph",
-    "ioredis"
+    "ioredis",
+    "duplexer3"
   ],
   "keepNames": true
 }
