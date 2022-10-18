@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { defineMessage } from 'react-intl'
 import add from 'date-fns/add'
 
 import {
@@ -15,10 +14,11 @@ import {
 } from '@island.is/island-ui/core'
 import { m } from '@island.is/service-portal/core'
 import { AuthCustomDelegation } from '@island.is/api/schema'
-import { IntroHeader, NotFound } from '@island.is/service-portal/core'
+import { NotFound } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { useAuthDelegationQuery } from '@island.is/service-portal/graphql'
-import { AccessForm, AccessHeaderCards } from '../../components/access'
+import { AccessForm } from '../../components/access'
+import * as styles from './Access.css'
 
 const Access = () => {
   useNamespaces(['sp.settings-access-control', 'sp.access-control-delegations'])
@@ -72,29 +72,56 @@ const Access = () => {
     return <NotFound />
   }
 
+  const labelHeaderText = `${authDelegation?.to?.name} • Landsbankaappið`
+
   return (
-    <>
-      <Box display="flex" rowGap={6} flexDirection="column">
-        <AccessHeaderCards
-          identity={{
-            name: authDelegation?.to?.name,
-            nationalId: authDelegation?.to?.nationalId,
-          }}
-          domain={{
-            name: 'Landsbankaappið',
-            imgSrc: './assets/images/educationDegree.svg',
-          }}
-        />
-        {hasDelegationData ? (
-          <div>
+    <Box
+      marginTop={[3, 3, 3, 4]}
+      display="flex"
+      rowGap={5}
+      flexDirection="column"
+    >
+      <GridRow
+        alignItems={['flexStart', 'flexStart', 'flexStart', 'flexEnd']}
+        className={styles.row}
+      >
+        <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+          <Box display="flex" flexDirection="column" rowGap={md ? 1 : 2}>
             <Text variant="h3">
               {formatMessage({
-                id: 'sp.access-control-delegations:validity-period',
-                defaultMessage: 'Gildistími',
+                id: 'sp.access-control-delegations:access-title',
+                defaultMessage: 'Réttindi',
               })}
             </Text>
-            <GridRow alignItems="flexEnd" marginTop={[3, 3, 3, 4]}>
-              <GridColumn span={['12/12', '12/12', '12/12', '8/12']}>
+            {hasDelegationData ? (
+              <Text variant="eyebrow">{labelHeaderText}</Text>
+            ) : (
+              <SkeletonLoader width="60%" height={21} />
+            )}
+            <Text variant="default">
+              {formatMessage({
+                id: 'sp.settings-access-control:access-intro',
+                defaultMessage:
+                  'Reyndu að lágmarka þau réttindi sem þú vilt veita viðkomandi eins mikið og mögulegt er.',
+              })}
+            </Text>
+          </Box>
+        </GridColumn>
+        <GridColumn
+          span={['12/12', '12/12', '12/12', '5/12', '4/12']}
+          className={styles.checkboxColumn}
+        >
+          <Box display="flex" flexDirection="column" rowGap={3}>
+            {!md && (
+              <Text variant="h3">
+                {formatMessage({
+                  id: 'sp.access-control-delegations:validity-period',
+                  defaultMessage: 'Gildistími',
+                })}
+              </Text>
+            )}
+            {hasDelegationData ? (
+              <>
                 <Checkbox
                   name="validityPeriodCheck"
                   id="validityPeriodCheck"
@@ -102,19 +129,14 @@ const Access = () => {
                     id: 'sp.access-control-delegations:same-validity-period',
                     defaultMessage: 'Sami gildistími fyrir öll réttindi',
                   })}
-                  large
+                  large={!validityPeriod || !md ? true : false}
                   checked={enableValidityPeriod}
                   onChange={onValidityPeriodCheck}
                 />
-              </GridColumn>
-              {enableValidityPeriod && (
-                <GridColumn
-                  span={['12/12', '12/12', '12/12', '4/12']}
-                  paddingTop={2}
-                >
+                {enableValidityPeriod && (
                   <DatePicker
                     id="validityPeriod"
-                    size={md ? 'md' : 'sm'}
+                    size="sm"
                     label={formatMessage(m.date)}
                     backgroundColor="blue"
                     minDate={new Date()}
@@ -123,25 +145,17 @@ const Access = () => {
                     handleChange={setValidityPeriod}
                     placeholderText="Veldu dagsetningu"
                   />
-                </GridColumn>
-              )}
-            </GridRow>
-          </div>
-        ) : (
-          <SkeletonLoader width="100%" height={91} />
-        )}
-        <IntroHeader
-          title={defineMessage({
-            id: 'sp.access-control-delegations:access-title',
-            defaultMessage: 'Réttindi',
-          })}
-          intro={defineMessage({
-            id: 'sp.settings-access-control:access-intro',
-            defaultMessage:
-              'Reyndu að lágmarka þau réttindi sem þú vilt veita viðkomandi eins mikið og mögulegt er.',
-          })}
-        />
-      </Box>
+                )}
+              </>
+            ) : (
+              <SkeletonLoader
+                width="100%"
+                height={enableValidityPeriod ? (md ? 115 : 167) : md ? 91 : 72}
+              />
+            )}
+          </Box>
+        </GridColumn>
+      </GridRow>
       {hasDelegationData ? (
         <AccessForm
           delegation={authDelegation}
@@ -150,7 +164,7 @@ const Access = () => {
       ) : (
         <SkeletonLoader width="100%" height={250} />
       )}
-    </>
+    </Box>
   )
 }
 
