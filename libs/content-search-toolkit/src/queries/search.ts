@@ -136,6 +136,14 @@ export const searchQuery = (
       }
     },
     ...(Object.keys(aggregation.aggs).length ? aggregation : {}), // spread aggregations if we have any
+    highlight : {
+      number_of_fragments : 3,
+      fragment_size : 150,
+      fields : {
+        title : {},
+        content : {}
+      }
+    },
     size,
     from: (page - 1) * size, // if we have a page number add it as offset for pagination
   }
