@@ -17,6 +17,7 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { titles } from '@island.is/judicial-system-web/messages'
+import { CaseFileCategory } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { caseFile as m } from './CaseFile.strings'
@@ -62,7 +63,8 @@ const CaseFile = () => {
                   caseFiles={
                     workingCase.caseFiles?.filter(
                       (caseFile) =>
-                        caseFile.policeCaseNumber === policeCaseNumber,
+                        caseFile.policeCaseNumber === policeCaseNumber &&
+                        caseFile.category === CaseFileCategory.CASE_FILE,
                     ) || []
                   }
                 />
