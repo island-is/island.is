@@ -9,6 +9,7 @@ import {
   HasMany,
 } from 'sequelize-typescript'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { ApiScope } from './api-scope.model'
 import { ApiScopeGroup } from './api-scope-group.model'
 
 @Table({
@@ -73,4 +74,8 @@ export class Domain extends Model {
   @HasMany(() => ApiScopeGroup)
   @ApiPropertyOptional()
   groups?: ApiScopeGroup[]
+
+  @HasMany(() => ApiScope)
+  @ApiPropertyOptional()
+  scopes?: ApiScope[]
 }

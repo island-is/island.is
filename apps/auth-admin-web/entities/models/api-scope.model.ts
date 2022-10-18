@@ -23,4 +23,5 @@ export class ApiScope {
   readonly created!: Date
   readonly modified?: Date
   group?: ApiScopeGroup
+  domainName!: string
 }
