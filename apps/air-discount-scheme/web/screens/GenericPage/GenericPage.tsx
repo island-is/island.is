@@ -72,7 +72,7 @@ const GetGenericPageQuery = gql`
 interface InitialProps {
   apolloClient: ApolloClient<NormalizedCacheObject>
   locale: string
-  route: string
+  route?: string
 }
 
 GenericPage.getInitialProps = async ({

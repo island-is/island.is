@@ -1,6 +1,7 @@
 {
   "platform": "node",
   "external": [
+    "@apollo/subgraph",
     "fsevents",
     "@nestjs/microservices",
     "class-transformer",
@@ -41,6 +42,7 @@
     "@protobufjs/pool",
     "@protobufjs/utf8",
     "safer-buffer",
+    "ts-morph",
     "ioredis"
   ],
   "keepNames": true
