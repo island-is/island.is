@@ -36,10 +36,12 @@ export interface Options {
   description?: string
   summary?: string
   deprecated?: boolean
+  /** Uses 204 No Content response instead of 404 Not Found for get requests with resource IDs **/
+  includeNoContentResponse?: boolean
 }
 
 const getResponseDecorators = (
-  response: Options['response'],
+  {response}: Options = {}
 ): MethodDecorator[] => {
   switch (response?.status ?? 200) {
     case 200:
@@ -57,19 +59,24 @@ const getResponseDecorators = (
 }
 
 const getRequestDecorators = ({
-  query = {},
-  params = {},
-}: Options['request'] = {}): MethodDecorator[] => {
+  request: {
+    query = {},
+    params = {}
+  } = {},
+  includeNoContentResponse = false
+}: Options = {}): MethodDecorator[] => {
   const queryKeys = Object.keys(query)
   const queryDecorators = queryKeys.map((name) =>
-    ApiQuery({ name, ...query[name] }),
+  ApiQuery({ name, ...query[name] }),
   )
 
   const paramsKeys = Object.keys(params)
   const defaultValue: MethodDecorator[] =
-    paramsKeys.length > 0
-      ? [ApiNotFoundResponse({ type: HttpProblemResponse })]
-      : []
+  paramsKeys.length > 0
+    ? includeNoContentResponse
+      ? [ApiNoContentResponse()]
+      : [ApiNotFoundResponse({ type: HttpProblemResponse })]
+    : []
   const paramsDecorators = paramsKeys.reduce(
     (acc, name) => [...acc, ApiParam({ name, ...params[name] })],
     defaultValue,
@@ -83,7 +90,7 @@ const getExtraDecorators = ({
   description,
   summary,
   deprecated,
-}: Omit<Options, 'response' | 'request'>): MethodDecorator[] => {
+}: Options): MethodDecorator[] => {
   let decorators: MethodDecorator[] = []
   if (isAuthorized) {
     decorators = [
@@ -103,19 +110,15 @@ const getExtraDecorators = ({
   return decorators
 }
 
-export const Documentation = ({
-  response,
-  request,
-  ...extra
-}: Options): MethodDecorator =>
+export const Documentation = (options: Options): MethodDecorator =>
   applyDecorators(
     /* BEGIN DEFAULT DECORATORS */
-    HttpCode(response?.status ?? 200),
+    HttpCode(options?.response?.status ?? 200),
     ApiInternalServerErrorResponse({ type: HttpProblemResponse }),
     ApiBadRequestResponse({ type: HttpProblemResponse }),
     /* END DEFAULT DECORATORS */
 
-    ...getResponseDecorators(response),
-    ...getRequestDecorators(request),
-    ...getExtraDecorators(extra),
+    ...getResponseDecorators(options),
+    ...getRequestDecorators(options),
+    ...getExtraDecorators(options),
   )

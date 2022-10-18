@@ -5,9 +5,10 @@ import {
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Op } from 'sequelize'
-import { uuid } from 'uuidv4'
+import {isUuid, uuid } from 'uuidv4'
 
 import { User } from '@island.is/auth-nest-tools'
+import { NoContentException } from "@island.is/nest/problem"
 
 import { ApiScope } from '../resources/models/api-scope.model'
 import { DelegationScopeService } from './delegationScope.service'
@@ -74,7 +75,11 @@ export class DelegationsOutgoingService {
   async findById(
     user: User,
     delegationId: string,
-  ): Promise<DelegationDTO | null> {
+  ): Promise<DelegationDTO> {
+    if (!isUuid(delegationId)) {
+      throw new BadRequestException('delegationId must be a valid uuid')
+    }
+
     const delegation = await this.delegationModel.findOne({
       where: {
         id: delegationId,
@@ -103,9 +108,13 @@ export class DelegationsOutgoingService {
       ],
     })
 
+    if (!delegation) {
+      throw new NoContentException()
+    }
+
     // TODO: Validate user scope access to the delegation scopes.
 
-    return delegation?.toDTO() ?? null
+    return delegation.toDTO()
   }
 
   async create(
@@ -166,10 +175,10 @@ export class DelegationsOutgoingService {
     user: User,
     delegationId: string,
     patchedDelegation: PatchDelegationDTO,
-  ): Promise<DelegationDTO | null> {
+  ): Promise<DelegationDTO> {
     const currentDelegation = await this.findById(user, delegationId)
     if (!currentDelegation) {
-      return null
+      throw new NoContentException()
     }
 
     if (!validateScopesPeriod(patchedDelegation.updateScopes)) {

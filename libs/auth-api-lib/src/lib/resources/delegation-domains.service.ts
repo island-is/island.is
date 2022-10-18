@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+
+import { NoContentException } from '@island.is/nest/problem'
+
 import { Domain } from './models/domain.model'
 import { ResourceTranslationService } from './resource-translation.service'
 
@@ -21,10 +24,14 @@ export class DelegationDomainsService {
     return domains
   }
 
-  async findOne(id: string, language?: string): Promise<Domain | null> {
+  async findOne(id: string, language?: string): Promise<Domain> {
     const domain = await this.domainModel.findByPk(id)
 
-    if (domain && language) {
+    if (!domain) {
+      throw new NoContentException()
+    }
+
+    if (language) {
       return this.resourceTranslationService.translateDomain(domain, language)
     }
 

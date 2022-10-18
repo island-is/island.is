@@ -62,6 +62,7 @@ export class DomainsController {
   @Get(':domainName')
   @Documentation({
     description: 'Returns a single domain by name.',
+    includeNoContentResponse: true,
     request: {
       params: {
         domainName,
@@ -78,7 +79,7 @@ export class DomainsController {
   async findOne(
     @Param('domainName') domainName: string,
     @Query('lang') language?: string,
-  ): Promise<DomainDTO | null> {
+  ): Promise<DomainDTO> {
     return this.domainsService.findOne(domainName, language)
   }
 

@@ -39,6 +39,13 @@ import { isDefined } from '@island.is/shared/utils'
 
 const namespace = '@island.is/auth/delegation-api/me/delegations'
 
+const delegationId = {
+  required: true,
+  type: 'string',
+  format: 'uuid',
+  description: 'The id of the delegation.',
+}
+
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @FeatureFlag(Features.outgoingDelegationsV2)
 @Scopes(AuthScope.delegations)
@@ -66,7 +73,7 @@ export class MeDelegationsController {
         },
         direction: {
           description:
-            'The direction of the delegation. Defaults to outgoing if not provided.',
+          'The direction of the delegation. Defaults to outgoing if not provided.',
           required: false,
           schema: {
             enum: [DelegationDirection.OUTGOING, DelegationDirection.INCOMING],
@@ -120,15 +127,11 @@ export class MeDelegationsController {
 
   @Get(':delegationId')
   @Documentation({
+    includeNoContentResponse: true,
     response: { status: 200, type: DelegationDTO },
     request: {
       params: {
-        delegationId: {
-          required: true,
-          type: 'string',
-          format: 'uuid',
-          description: 'The id of the delegation.',
-        },
+        delegationId
       },
     },
   })
@@ -138,7 +141,7 @@ export class MeDelegationsController {
   async findOne(
     @CurrentUser() user: User,
     @Param('delegationId') delegationId: string,
-  ): Promise<DelegationDTO | null> {
+  ): Promise<DelegationDTO> {
     return this.delegationsOutgoingService.findById(user, delegationId)
   }
 
@@ -164,7 +167,13 @@ export class MeDelegationsController {
 
   @Patch(':delegationId')
   @Documentation({
+    includeNoContentResponse: true,
     response: { status: 200, type: DelegationDTO },
+    request: {
+      params: {
+        delegationId
+      }
+    }
   })
   @Audit<DelegationDTO>({
     resources: (delegation) => delegation?.id ?? undefined,
@@ -173,16 +182,8 @@ export class MeDelegationsController {
     @CurrentUser() user: User,
     @Param('delegationId') delegationId: string,
     @Body() patchDelegation: PatchDelegationDTO,
-  ): Promise<DelegationDTO | null> {
-    const currentDelegation = await this.delegationsOutgoingService.findById(
-      user,
-      delegationId,
-    )
-    if (!currentDelegation) {
-      return null
-    }
-
-    return this.auditService.auditPromise<DelegationDTO | null>(
+  ): Promise<DelegationDTO> {
+    return this.auditService.auditPromise<DelegationDTO>(
       {
         auth: user,
         namespace,
@@ -205,6 +206,11 @@ export class MeDelegationsController {
   @Delete(':delegationId')
   @Documentation({
     response: { status: 204 },
+    request: {
+      params: {
+        delegationId
+      }
+    }
   })
   async delete(
     @CurrentUser() user: User,
