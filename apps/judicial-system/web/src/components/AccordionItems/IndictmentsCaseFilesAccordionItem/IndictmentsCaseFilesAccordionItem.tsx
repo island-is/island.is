@@ -25,7 +25,7 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 
 import { indictmentsCaseFilesAccordionItem as m } from './IndictmentsCaseFilesAccordionItem.strings'
 import * as styles from './IndictmentsCaseFilesAccordionItem.css'
-import { UpdateFileMutation } from './IndictmentsCaseFilesAccordionItem.gql'
+import { UpdateFileMutation } from './UpdateFiles.gql'
 
 interface Props {
   policeCaseNumber: string
