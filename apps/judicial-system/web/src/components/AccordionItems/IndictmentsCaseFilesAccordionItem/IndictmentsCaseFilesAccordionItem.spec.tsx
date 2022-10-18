@@ -54,7 +54,10 @@ describe('getFilePlacement', () => {
   })
 
   it('should return [null, null] if a file is reordered but not put under a chapter', () => {
-    expect(getFilePlacement(items[1].id || '', items)).toEqual([, null])
+    expect(getFilePlacement(items[items.length - 1].id || '', items)).toEqual([
+      null,
+      null,
+    ])
   })
 
   it('should return the correct chapter and orderWithinChapter if a file is reordered under a chapter', () => {
