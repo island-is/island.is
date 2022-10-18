@@ -76,8 +76,8 @@ const MockParents = ({ application, field }: CRCFieldBaseProps) => {
             </Box>
             <Box marginTop={2}>
               <InputController
-                id={`${id}[${index}].address.streetName`}
-                name={`${id}[${index}].address.streetName`}
+                id={`${id}[${index}].address.streetAddress`}
+                name={`${id}[${index}].address.streetAddress`}
                 label="Heimilisfang"
                 defaultValue={
                   parents?.[index]?.address?.streetAddress ||

@@ -45,7 +45,7 @@ export const applicantInformationSection = buildSection({
           required: true,
           defaultValue: (application: AccidentNotification) =>
             application.externalData?.nationalRegistry?.data?.address
-              ?.streetName,
+              ?.streetAddress,
         }),
         buildTextField({
           id: 'applicant.postalCode',

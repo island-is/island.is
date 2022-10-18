@@ -68,7 +68,7 @@ export const AccidentNotificationSchema = z.object({
           postalCode: z.string().refine((x) => +x >= 100 && +x <= 999, {
             params: error.invalidValue,
           }),
-          streetName: z.string(),
+          streetAddress: z.string(),
         }),
         age: z.number(),
         citizenship: z.object({

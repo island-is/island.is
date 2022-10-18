@@ -338,7 +338,7 @@ export const ComplaintForm: Form = buildForm({
                   required: true,
                   defaultValue: (application: DataProtectionComplaint) =>
                     application.externalData?.nationalRegistry?.data?.address
-                      ?.streetName,
+                      ?.streetAddress,
                 }),
                 buildTextField({
                   id: 'applicant.postalCode',

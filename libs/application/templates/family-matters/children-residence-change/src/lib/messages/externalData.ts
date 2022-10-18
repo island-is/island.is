@@ -68,4 +68,19 @@ export const externalData = {
         'Subtitle: External Info about applicants children from the National Registry',
     },
   }),
+  userProfile: defineMessages({
+    title: {
+      id:
+        'crc.application:section.backgroundInformation.externalData.userProfile.title',
+      defaultMessage: 'Upplýsingar úr prófílgrunni á island.is',
+      description: 'User Profile Title',
+    },
+    subTitle: {
+      id:
+        'crc.application:section.backgroundInformation.externalData.userProfile.subTitle',
+      defaultMessage:
+        'Símanúmer, netfang. Upplýsingar um símanúmer eða netfang er hægt að uppfæra á vefsíðu island.is ef þess þarf.',
+      description: 'User Profile Subtitle',
+    },
+  }),
 }

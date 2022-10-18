@@ -33,7 +33,7 @@ export const DataProtectionComplaintSchema = z.object({
           locality: z.string(),
           municipalityCode: z.string(),
           postalCode: z.string(),
-          streetName: z.string(),
+          streetAddress: z.string(),
         }),
         age: z.number(),
         citizenship: z.object({

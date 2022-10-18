@@ -149,8 +149,8 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
               dataProviders: [
                 buildDataProviderItem({
                   provider: ChildrenCustodyInformationApi,
-                  title: m.externalData.applicant.title,
-                  subTitle: m.externalData.applicant.subTitle,
+                  title: m.externalData.children.title,
+                  subTitle: m.externalData.children.subTitle,
                 }),
                 buildDataProviderItem({
                   provider: NationalRegistryUserApi,
@@ -158,13 +158,9 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
                   subTitle: m.externalData.applicant.subTitle,
                 }),
                 buildDataProviderItem({
-                  title: m.externalData.children.title,
-                  subTitle: m.externalData.children.subTitle,
-                }),
-                buildDataProviderItem({
                   provider: UserProfileApi,
-                  title: 'user',
-                  subTitle: 'profile',
+                  title: m.externalData.userProfile.title,
+                  subTitle: m.externalData.userProfile.subTitle,
                 }),
               ],
             }),
@@ -172,43 +168,6 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
             soleCustodyField(),
           ],
         }),
-        // buildSubSection({
-        //   id: 'externalData',
-        //   title: m.externalData.general.sectionTitle,
-        //   condition: (answers) =>
-        //     shouldUseMocks((answers as unknown) as Answers),
-        //   children: [
-        //     buildExternalDataProvider({
-        //       title: m.externalData.general.pageTitle,
-        //       id: 'approveExternalData',
-        //       subTitle: m.externalData.general.subTitle,
-        //       description: m.externalData.general.description,
-        //       checkboxLabel: m.externalData.general.checkboxLabel,
-        //       dataProviders: [
-        //         buildDataProviderItem({
-        //           id: 'nationalRegistry',
-        //           type: DataProviderTypes.MockNationalRegistry,
-        //           title: m.externalData.applicant.title,
-        //           subTitle: m.externalData.applicant.subTitle,
-        //         }),
-        //         buildDataProviderItem({
-        //           id: '',
-        //           type: '',
-        //           title: m.externalData.children.title,
-        //           subTitle: m.externalData.children.subTitle,
-        //         }),
-        //         buildDataProviderItem({
-        //           id: 'userProfile',
-        //           type: DataProviderTypes.UserProfile,
-        //           title: '',
-        //           subTitle: '',
-        //         }),
-        //       ],
-        //     }),
-        //     noChildrenFoundField(),
-        //     soleCustodyField(),
-        //   ],
-        // }),
         buildSubSection({
           id: 'selectChildInCustody',
           title: m.selectChildren.general.sectionTitle,

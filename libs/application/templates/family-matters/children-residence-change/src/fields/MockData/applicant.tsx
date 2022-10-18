@@ -6,7 +6,7 @@ import { CRCFieldBaseProps } from '../../types'
 const applicantDefault = {
   fullName: 'Applicant Mockname',
   address: {
-    streetName: 'Borgartún 26',
+    streetAddress: 'Borgartún 26',
     postalCode: '105',
     city: 'Reykjavík',
   },
@@ -39,8 +39,8 @@ const MockApplicant = ({ application, field }: CRCFieldBaseProps) => {
         </Box>
         <Box marginTop={2}>
           <InputController
-            id={`${id}.address.streetName`}
-            name={`${id}.address.streetName`}
+            id={`${id}.address.streetAddress`}
+            name={`${id}.address.streetAddress`}
             label="Heimilisfang"
             defaultValue={applicant.address?.streetAddress || ''}
           />
