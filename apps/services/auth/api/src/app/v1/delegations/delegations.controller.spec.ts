@@ -3,6 +3,7 @@ import {
   DelegationDTO,
   DelegationType,
   InactiveReason,
+  Domain,
   PersonalRepresentative,
   PersonalRepresentativeRight,
   PersonalRepresentativeRightType,
@@ -34,6 +35,7 @@ import {
   getScopePermission,
   personalRepresentativeType,
 } from '../../../../test/stubs/personalRepresentativeStubs'
+import { createDomain } from '../../../../test/stubs/domain.fixture'
 
 const UNKNOWN_NAME = 'Óþekkt nafn'
 
@@ -409,9 +411,12 @@ describe('DelegationsController', () => {
         ]
 
         beforeAll(async () => {
+          const domainModel = app.get<typeof Domain>(getModelToken(Domain))
+          const domain = await domainModel.create(createDomain())
+
           await apiScopeModel.bulkCreate(
             scopes.map(([name, enabled, _]) =>
-              getPRenabledApiScope(enabled, name),
+              getPRenabledApiScope(domain.name, enabled, name),
             ),
           )
           await prScopePermission.bulkCreate(

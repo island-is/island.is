@@ -11,6 +11,7 @@ const createRandomApiScope = (): ApiScopesDTO => {
     name: faker.random.word(),
     displayName: faker.random.word(),
     description: faker.random.word(),
+    domainName: faker.random.word(),
     showInDiscoveryDocument: true,
     required: false,
     emphasize: false,

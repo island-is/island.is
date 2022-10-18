@@ -1,11 +1,13 @@
 import * as faker from 'faker'
 import addDays from 'date-fns/addDays'
 import startOfDay from 'date-fns/startOfDay'
-import { Model } from 'sequelize'
 
-import { Delegation, DelegationScope } from '@island.is/auth-api-lib'
+import {
+  DEFAULT_DOMAIN,
+  Delegation,
+  DelegationScope,
+} from '@island.is/auth-api-lib'
 import { createNationalId } from '@island.is/testing/fixtures'
-import { createApiScope } from './apiScope.fixture'
 
 export interface CreateDelegationOptions {
   fromNationalId: string
@@ -63,6 +65,7 @@ const createRandomDelegation = (): CreateDelegation => {
     toNationalId: createNationalId(),
     toName: faker.random.word(),
     delegationScopes: [createRandomDelegationScope(id)],
+    domainName: faker.random.word(),
   }
 }
 
@@ -107,7 +110,7 @@ export const createDelegation = ({
   today = new Date(),
   expired = false,
   future = false,
-  domainName,
+  domainName = DEFAULT_DOMAIN,
 }: CreateDelegationOptions): CreateDelegation => {
   const delegation = createRandomDelegation()
   return {
@@ -117,6 +120,6 @@ export const createDelegation = ({
     delegationScopes: scopes.map((scope) =>
       createDelegationScope(delegation.id, scope, today, expired, future),
     ),
-    domainName,
+    domainName: domainName ?? delegation.domainName,
   }
 }

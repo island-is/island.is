@@ -430,15 +430,11 @@ export class DelegationsService {
     return persons.find((person) => person?.nationalId === nationalId)
   }
 
-  private isError<T>(item: T | null | Error): item is Error {
-    return item instanceof Error
-  }
-
   /**
    * Checks if item is not an instance of Error
    */
   private isNotError<T>(item: T | Error): item is T {
-    return !this.isError(item)
+    return item instanceof Error === false
   }
 
   /**
@@ -484,30 +480,15 @@ export class DelegationsService {
           // All companies will be divided into aliveDelegations
           kennitala.isCompany(fromNationalId) ||
           // Pass through altough Þjóðskrá API throws an error since it is not required to view the delegation.
-          this.isError(persons[index]) ||
+          persons[index] instanceof Error ||
           // Make sure we can match the person to the delegation, i.e. not deceased
           personsValuesNoError.some(
             (person) => person?.nationalId === fromNationalId,
           ),
       )
 
-      // If Þjóðskrá throws and error for some fromNationalId, then we still want to return the delegation.
-      // however we change the delegation.fromName to unknown name.
-      const modifiedAliveDelegations = aliveDelegations
-        .map((aliveDelegation) => {
-          const person = this.getPersonByNationalId(
-            personsValuesNoError,
-            aliveDelegation.fromNationalId,
-          )
-
-          aliveDelegation.fromName = person?.name ?? 'Óþekkt nafn'
-
-          return aliveDelegation
-        })
-        .filter(isDefined)
-
       return {
-        aliveDelegations: modifiedAliveDelegations,
+        aliveDelegations,
         deceasedDelegations,
       }
     } catch (error) {
@@ -703,7 +684,7 @@ export class DelegationsService {
         personalRepresentatives,
         ({ nationalIdRepresentedPerson }, index) =>
           // Pass through altough Þjóðskrá API throws an error since it is not required to view the personal representative.
-          this.isError(persons[index]) ||
+          persons[index] instanceof Error ||
           // Make sure we can match the person to the personal representatives, i.e. not deceased
           personsValuesNoError.some(
             (person) => person?.nationalId === nationalIdRepresentedPerson,
