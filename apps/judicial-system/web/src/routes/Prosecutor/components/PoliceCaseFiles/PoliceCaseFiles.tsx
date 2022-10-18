@@ -103,9 +103,11 @@ interface Props {
   setPoliceCaseFileList: React.Dispatch<
     React.SetStateAction<PoliceCaseFileCheck[]>
   >
+  policeCaseNumber?: string
 }
 
 const PoliceCaseFiles: React.FC<Props> = ({
+  policeCaseNumber,
   isUploading,
   setIsUploading,
   policeCaseFileList,
@@ -254,7 +256,7 @@ const PoliceCaseFiles: React.FC<Props> = ({
   return (
     <>
       <SectionHeading
-        title={formatMessage(m.heading)}
+        title={formatMessage(m.heading, { policeCaseNumber })}
         description={formatMessage(m.introduction)}
       />
       <Box marginBottom={5}>
