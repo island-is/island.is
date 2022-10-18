@@ -115,11 +115,7 @@ const CareTakerRepeaterItem = ({
               backgroundColor="blue"
               loading={loading}
               readOnly
-              error={
-                queryError
-                  ? formatMessage(m.errorNationalIdIncorrect)
-                  : undefined
-              }
+              error={errors && getErrorViaPath(errors, nameField)}
             />
           </Box>
         </GridColumn>
