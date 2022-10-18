@@ -69,7 +69,7 @@ export const dataSchema = z.object({
     )
     .optional(),
   isRecivingUnemploymentBenefits: z.enum([YES, NO]),
-  unemploymentBenefits: z.string(),
+  unemploymentBenefits: z.string().nonempty(),
   requestRights: z.object({
     isRequestingRights: z.enum([YES, NO]),
     requestDays: z

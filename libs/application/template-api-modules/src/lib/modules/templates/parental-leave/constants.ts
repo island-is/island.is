@@ -14,9 +14,8 @@ export const apiConstants = {
   attachments: {
     selfEmployed: 'selfEmployed',
     student: 'Student',
-    unionConfirmation: 'union',
-    healthInsuranceConfirmation: 'healthInsurance',
-    other: 'other',
+    unEmploymentBenefits: 'UnemploymentBenefits',
+    other: 'Other',
   },
 }
 

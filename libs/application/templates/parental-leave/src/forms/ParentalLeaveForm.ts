@@ -416,23 +416,11 @@ export const ParentalLeaveForm: Form = buildForm({
                   description:
                     parentalLeaveFormMessages.selfEmployed.description,
                 }),
-                buildRadioField({
+                buildCustomField({
+                  component: 'UnEmploymentBenefits',
                   id: 'isRecivingUnemploymentBenefits',
-                  title:
-                    parentalLeaveFormMessages.employer
-                      .isRecivingUnemploymentBenefitsTitle,
+                  title: parentalLeaveFormMessages.employer.isRecivingUnemploymentBenefitsTitle,
                   description: '',
-                  width: 'half',
-                  options: [
-                    {
-                      label: parentalLeaveFormMessages.shared.yesOptionLabel,
-                      value: YES,
-                    },
-                    {
-                      label: parentalLeaveFormMessages.shared.noOptionLabel,
-                      value: NO,
-                    },
-                  ],
                   condition: (answers) =>
                     (answers as {
                       employer: {
@@ -473,12 +461,20 @@ export const ParentalLeaveForm: Form = buildForm({
               id: 'employer.information',
               title: parentalLeaveFormMessages.employer.title,
               description: parentalLeaveFormMessages.employer.description,
-              condition: (answers) =>
-                (answers as {
-                  employer: {
-                    isSelfEmployed: string
-                  }
-                })?.employer?.isSelfEmployed !== YES,
+              condition: (answers) => {
+                const isRecivingUnemploymentBenefits =
+                  (answers as {
+                    isRecivingUnemploymentBenefits: YesOrNo
+                  })?.isRecivingUnemploymentBenefits === NO
+                const isNotSelfEmployed =
+                  (answers as {
+                    employer: {
+                      isSelfEmployed: string
+                    }
+                  })?.employer?.isSelfEmployed !== YES
+
+                return isRecivingUnemploymentBenefits && isNotSelfEmployed
+              },
               children: [
                 buildTextField({
                   title: parentalLeaveFormMessages.employer.email,

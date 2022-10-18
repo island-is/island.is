@@ -1050,8 +1050,8 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     isRecivingUnemploymentBenefitsTitle: {
       id: 'pl.application:employer.isRecivingUnemploymentBenefits',
-      defaultMessage: 'Ertu á atvinnuleysisbótum?',
-      description: 'Are you receiving unemployment benefits?',
+      defaultMessage: 'Ertu að þiggja bætur?',
+      description: 'Are you receiving benefits?',
     },
     unemploymentBenefits: {
       id: 'pl.application:employer.unemploymentBenefits',

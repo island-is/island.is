@@ -222,11 +222,15 @@ export const transformApplicationToParentalLeaveDTO = (
     throw new Error('Missing selected child')
   }
 
-  const { isSelfEmployed, union, bank } = getApplicationAnswers(
-    application.answers,
-  )
+  const {
+    isSelfEmployed,
+    isRecivingUnemploymentBenefits,
+    union,
+    bank,
+  } = getApplicationAnswers(application.answers)
   const { email, phoneNumber } = getApplicantContactInfo(application)
   const selfEmployed = isSelfEmployed === YES
+  const recivingUnemploymentBenefits = isRecivingUnemploymentBenefits === YES
 
   const testData: string = onlyValidate!.toString()
 
@@ -254,7 +258,9 @@ export const transformApplicationToParentalLeaveDTO = (
       privatePensionFundRatio: getPrivatePensionFundRatio(application),
     },
     periods,
-    employers: [getEmployer(application, selfEmployed)],
+    employers: recivingUnemploymentBenefits
+      ? []
+      : [getEmployer(application, selfEmployed)],
     status: 'In Progress',
     rightsCode: getRightsCode(application),
     attachments,

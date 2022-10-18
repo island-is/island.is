@@ -361,7 +361,7 @@ export class ParentalLeaveService {
           const pdf = await this.getUnionConfirmationPdf(application, i)
 
           attachments.push({
-            attachmentType: apiConstants.attachments.unionConfirmation,
+            attachmentType: apiConstants.attachments.unEmploymentBenefits,
             attachmentBytes: pdf,
           })
         }
@@ -386,7 +386,7 @@ export class ParentalLeaveService {
 
           attachments.push({
             attachmentType:
-              apiConstants.attachments.healthInsuranceConfirmation,
+              apiConstants.attachments.unEmploymentBenefits,
             attachmentBytes: pdf,
           })
         }
@@ -602,7 +602,7 @@ export class ParentalLeaveService {
   }
 
   async sendApplication({ application }: TemplateApiModuleActionProps) {
-    const { isSelfEmployed } = getApplicationAnswers(application.answers)
+    const { isSelfEmployed, isRecivingUnemploymentBenefits } = getApplicationAnswers(application.answers)
     const nationalRegistryId = application.applicant
     const attachments = await this.getAttachments(application)
 
@@ -636,8 +636,9 @@ export class ParentalLeaveService {
       // This try/catch keeps application in correct state
       try {
         const selfEmployed = isSelfEmployed === YES
+        const recivingUnemploymentBenefits = isRecivingUnemploymentBenefits === YES
 
-        if (!selfEmployed) {
+        if (!selfEmployed && !recivingUnemploymentBenefits)  {
           // Only needs to send an email if being approved by employer
           // Self employed applicant was aware of the approval
           await this.sharedTemplateAPIService.sendEmail(
