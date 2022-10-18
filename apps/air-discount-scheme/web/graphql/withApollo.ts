@@ -1,6 +1,6 @@
 import { NextComponentType } from 'next'
 import initApollo from './client'
-import { BaseContext, NextPageContext } from 'next/dist/next-server/lib/utils'
+import { BaseContext, NextPageContext } from 'next/dist/shared/lib/utils'
 
 export const withApollo = <
   C extends BaseContext = NextPageContext,

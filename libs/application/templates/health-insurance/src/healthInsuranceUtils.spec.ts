@@ -117,7 +117,7 @@ describe('Health insurance utils', () => {
       // assert
       const currentApplicationId = faker.datatype.uuid()
 
-      const clock = jest.useFakeTimers('modern')
+      const clock = jest.useFakeTimers()
       clock.setSystemTime(new Date('2020-06-14T12:00-00:00').getTime())
 
       const otherApplications = {
