@@ -177,9 +177,18 @@ export class SyslumennService {
 
   async getOperatingLicensesCSV(): Promise<OperatingLicensesCSV> {
     const { id, api } = await this.createApi()
-    const csv = await api.virkLeyfiCsvGet({
-      audkenni: id,
-    })
+    const csv = await api
+      .withMiddleware({
+        pre: async (context) => {
+          context.init.headers = Object.assign({}, context.init.headers, {
+            Accept: 'text/plain',
+            'Content-Type': 'text/plain',
+          })
+        },
+      })
+      .virkLeyfiCsvGet({
+        audkenni: id,
+      })
     return mapOperatingLicensesCSV(csv)
   }
 
