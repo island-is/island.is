@@ -22,8 +22,8 @@ import { UpdateCurrentEmployerInput } from './dto/updateCurrentEmployerInput'
 import { UpdateCurrentEmployerResponse } from './models/updateCurrentEmployer.model'
 import { GetIsEmployerValidInput } from './dto/isEmployerValidInput'
 
-// @UseGuards(IdsUserGuard, ScopesGuard)
-// @Scopes(ApiScope.internal)
+@UseGuards(IdsUserGuard, ScopesGuard)
+@Scopes(ApiScope.internal)
 @Resolver()
 export class PaymentScheduleResolver {
   constructor(private paymentScheduleService: PaymentScheduleService) {}
@@ -84,7 +84,7 @@ export class PaymentScheduleResolver {
   }
 
   @Query(() => Boolean, {
-    name: 'isEmmployerValid',
+    name: 'isEmployerValid',
   })
   @Audit()
   async employerIsValid(
