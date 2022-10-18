@@ -37,6 +37,12 @@ export class ApiScopesDTO {
   })
   readonly description!: string
 
+  @IsString()
+  @ApiProperty({
+    example: '@island.is',
+  })
+  readonly domainName!: string
+
   @IsInt()
   @Min(0)
   @Max(999)
