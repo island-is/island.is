@@ -1,13 +1,35 @@
-import { PDFDocument, PDFFont, PDFPage, StandardFonts } from 'pdf-lib'
+import {
+  layoutMultilineText,
+  PDFDocument,
+  PDFFont,
+  PDFPage,
+  StandardFonts,
+  TextAlignment,
+} from 'pdf-lib'
 
 export interface PdfDocument {
-  rawDocument: PDFDocument
   addPage: (position: number) => PdfDocument
   addPageNumbers: () => PdfDocument
+  addParagraph: (text: string, fontSize: number, x?: number) => PdfDocument
+  addText: (
+    text: string,
+    fontSize: number,
+    position?: { x?: number; y?: number },
+    marginTop?: number,
+    newLine?: boolean,
+  ) => PdfDocument
   addTextBold: (
     text: string,
     fontSize: number,
     position?: { x?: number; y?: number },
+    marginTop?: number,
+    newLine?: boolean,
+  ) => PdfDocument
+  addTextBoldCentered: (
+    text: string,
+    fontSize: number,
+    y?: number,
+    marginTop?: number,
   ) => PdfDocument
   getContents: () => Promise<Buffer>
   mergeDocument: (buffer: Buffer) => Promise<PdfDocument>
@@ -29,7 +51,7 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
   const boldFont = await rawDocument.embedFont(StandardFonts.TimesRomanBold)
 
   const margins = { top: 0, right: 0, bottom: 0, left: 0 }
-  const spacing = { line: 2, paragraph: 4 }
+  const spacing = { line: 4, paragraph: 2 }
 
   let currentPage = -1
   let currentYPosition = -1
@@ -37,17 +59,12 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
   const drawTextAbsolute = (
     page: PDFPage,
     text: string,
-    s: number,
+    x: number,
     y: number,
     font: PDFFont,
     fontSize: number,
   ) => {
-    page.drawText(text, {
-      x: s,
-      y: y,
-      font: font,
-      size: fontSize,
-    })
+    page.drawText(text, { x, y, font, size: fontSize })
   }
 
   const drawText = (
@@ -56,7 +73,9 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
     fontSize: number,
     x?: number,
     y?: number,
+    spaceAbove?: number,
     spaceBelow?: number,
+    newLine = true,
   ) => {
     const page = rawDocument.getPage(currentPage)
 
@@ -67,6 +86,8 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
       page.getHeight() - margins.bottom
     ) {
       pdfDocument.addPage(currentPage + 1)
+    } else {
+      currentYPosition += (spaceAbove ?? 0) * spacing.line
     }
 
     drawTextAbsolute(
@@ -77,12 +98,32 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
       font,
       fontSize,
     )
-    currentYPosition += fontSize + (spaceBelow ?? spacing.paragraph)
+
+    if (newLine) {
+      currentYPosition += fontSize + (spaceBelow ?? spacing.line)
+    }
+  }
+
+  const drawCenteredText = (
+    text: string,
+    font: PDFFont,
+    fontSize: number,
+    y?: number,
+    spaceAbove?: number,
+  ) => {
+    drawText(
+      text,
+      font,
+      fontSize,
+      (rawDocument.getPage(currentPage).getWidth() -
+        font.widthOfTextAtSize(text, fontSize)) /
+        2,
+      y,
+      spaceAbove,
+    )
   }
 
   const pdfDocument = {
-    rawDocument: rawDocument,
-
     addPage: (position: number) => {
       rawDocument.insertPage(position)
 
@@ -119,12 +160,87 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
       return pdfDocument
     },
 
+    addParagraph: (text: string, fontSize: number, x = margins.left) => {
+      const page = rawDocument.getPage(currentPage)
+
+      const multilineTextLayout = layoutMultilineText(text, {
+        alignment: TextAlignment.Left,
+        bounds: {
+          x: 0,
+          y: 0,
+          width: page.getWidth() - x - margins.right,
+          height: page.getHeight(),
+        },
+        font: normalFont,
+        fontSize,
+      })
+
+      const indexOfLastLine = multilineTextLayout.lines.length - 1
+
+      multilineTextLayout.lines.forEach((line, index) => {
+        drawText(
+          line.text,
+          normalFont,
+          fontSize,
+          x,
+          undefined,
+          undefined,
+          index < indexOfLastLine ? spacing.paragraph : undefined,
+        )
+      })
+
+      return pdfDocument
+    },
+
+    addText: (
+      text: string,
+      fontSize: number,
+      position?: { x?: number; y?: number },
+      marginTop?: number,
+      newLine = true,
+    ) => {
+      drawText(
+        text,
+        normalFont,
+        fontSize,
+        position?.x,
+        position?.y,
+        marginTop,
+        undefined,
+        newLine,
+      )
+
+      return pdfDocument
+    },
+
     addTextBold: (
       text: string,
       fontSize: number,
       position?: { x?: number; y?: number },
+      marginTop?: number,
+      newLine = true,
     ) => {
-      drawText(text, boldFont, fontSize, position?.x, position?.y)
+      drawText(
+        text,
+        boldFont,
+        fontSize,
+        position?.x,
+        position?.y,
+        marginTop,
+        undefined,
+        newLine,
+      )
+
+      return pdfDocument
+    },
+
+    addTextBoldCentered: (
+      text: string,
+      fontSize: number,
+      y?: number,
+      marginTop?: number,
+    ) => {
+      drawCenteredText(text, boldFont, fontSize, y, marginTop)
 
       return pdfDocument
     },
