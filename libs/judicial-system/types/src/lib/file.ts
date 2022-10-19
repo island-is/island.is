@@ -67,6 +67,7 @@ export interface CaseFile {
   userGeneratedFilename?: string
   chapter?: number
   orderWithinChapter?: number
+  displayDate?: string
 }
 
 export interface CreateFile {
@@ -82,4 +83,5 @@ export interface UpdateFile {
   userGeneratedFilename?: string | null
   chapter?: number | null
   orderWithinChapter?: number | null
+  displayDate?: string | null
 }
