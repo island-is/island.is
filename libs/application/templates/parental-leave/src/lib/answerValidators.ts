@@ -23,6 +23,7 @@ import {
   NO_UNION,
   PARENTAL_GRANT_STUDENTS,
   PARENTAL_LEAVE,
+  unemploymentBenefitTypes,
   YES,
 } from '../constants'
 import { isValidEmail } from './isValidEmail'
@@ -50,7 +51,6 @@ export const VALIDATE_LATEST_PERIOD = 'periods'
 export const answerValidators: Record<string, AnswerValidator> = {
   [EMPLOYER]: (newAnswer: unknown, application: Application) => {
     const obj = newAnswer as Record<string, Answer>
-    console.log('obj', obj)
     const buildError = (message: StaticText, path: string) =>
       buildValidationError(`${EMPLOYER}.${path}`)(message)
     const isSelfEmployed = getValueViaPath(
@@ -58,7 +58,10 @@ export const answerValidators: Record<string, AnswerValidator> = {
       'employer.isSelfEmployed',
     )
 
-    if (obj.isSelfEmployed === '') {
+    if (obj.isSelfEmployed === '' || !obj.isSelfEmployed) {
+      if (isSelfEmployed) {
+        return undefined
+      }
       return buildError(coreErrorMessages.defaultError, 'isSelfEmployed')
     }
 
@@ -109,22 +112,59 @@ export const answerValidators: Record<string, AnswerValidator> = {
       'fileUpload.selfEmployedFile',
     ) as unknown[]
 
+    const isRecivingUnemploymentBenefits = getValueViaPath(
+      application.answers,
+      'isRecivingUnemploymentBenefits',
+    )
+
+    const unemploymentBenefitsSelect = getValueViaPath(
+      application.answers,
+      'unemploymentBenefits',
+    )
+
+    console.log('Benefits: ', unemploymentBenefitsSelect)
+    console.log('Employer: ', isSelfEmployed)
+    console.log('OBJ: ', obj)
+
     if (
       isSelfEmployed === YES &&
       isEmpty((obj as { selfEmployedFile: unknown[] }).selfEmployedFile)
     ) {
-      if (selfFileUploadEmployedFiles?.length || selfEmployedFiles?.length) {
-        return undefined
-      }
-
       return buildError(errorMessages.requiredAttachment, 'selfEmployedFile')
     }
-   
+
     if (
       applicationType === PARENTAL_GRANT_STUDENTS &&
       isEmpty((obj as { studentFile: unknown[] }).studentFile)
     ) {
       return buildError(errorMessages.requiredAttachment, 'studentFile')
+    }
+
+    if (isRecivingUnemploymentBenefits) {
+      if (
+        unemploymentBenefitsSelect === unemploymentBenefitTypes.stéttarfélagi &&
+        isEmpty(
+          (obj as { unionConfirmationFile: unknown[] }).unionConfirmationFile,
+        )
+      ) {
+        return buildError(
+          errorMessages.requiredAttachment,
+          'unionConfirmationFile',
+        )
+      }
+      if (
+        unemploymentBenefitsSelect ===
+          unemploymentBenefitTypes.sjúkratryggingarÍslands &&
+        isEmpty(
+          (obj as { healthInsuranceConfirmationFile: unknown[] })
+            .healthInsuranceConfirmationFile,
+        )
+      ) {
+        return buildError(
+          errorMessages.requiredAttachment,
+          'healthInsuranceConfirmationFile',
+        )
+      }
     }
 
     return undefined

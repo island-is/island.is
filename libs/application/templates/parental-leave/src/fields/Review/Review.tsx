@@ -116,6 +116,8 @@ export const Review: FC<ReviewScreenProps> = ({
       spouseUsage,
       employerEmail,
       employerPhoneNumber,
+      isRecivingUnemploymentBenefits,
+      unemploymentBenefits,
     },
     setStateful,
   ] = useStatefulAnswers(application)
@@ -906,7 +908,7 @@ export const Review: FC<ReviewScreenProps> = ({
       {applicationType === PARENTAL_LEAVE && (
         <ReviewGroup
           isEditable={editable}
-          editAction={() => goToScreen?.('employer.isSelfEmployed')}
+          editAction={() => goToScreen?.('employer.isSelfEmployed.benefits')}
         >
           <GridRow>
             <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
@@ -939,13 +941,36 @@ export const Review: FC<ReviewScreenProps> = ({
               )}
             </GridColumn>
           </GridRow>
+          {isSelfEmployed === NO && ( // only show benefits in review if user had to answer that question
+            <GridRow>
+              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                <RadioValue
+                  label={formatMessage(
+                    parentalLeaveFormMessages.employer
+                      .isRecivingUnemploymentBenefitsTitle,
+                  )}
+                  value={isRecivingUnemploymentBenefits}
+                />
+              </GridColumn>
+
+              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                {isRecivingUnemploymentBenefits === YES && (
+                  <DataValue
+                    label={formatMessage(
+                      parentalLeaveFormMessages.employer.unemploymentBenefits,
+                    )}
+                    value={unemploymentBenefits}
+                  />
+                )}
+              </GridColumn>
+            </GridRow>
+          )}
         </ReviewGroup>
       )}
 
       <ReviewGroup>
         <SummaryRights application={application} />
       </ReviewGroup>
-
       <ReviewGroup
         isEditable={editable}
         editAction={() => goToScreen?.('periods')}

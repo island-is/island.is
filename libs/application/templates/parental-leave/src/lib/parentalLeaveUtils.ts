@@ -28,6 +28,8 @@ import {
   StartDateOptions,
   ParentalRelations,
   TransferRightsOption,
+  unemploymentBenefitTypes,
+  PARENTAL_GRANT_STUDENTS,
 } from '../constants'
 import { SchemaFormValues } from '../lib/dataSchema'
 import { PregnancyStatusAndRightsResults } from '../dataProviders/Children/Children'
@@ -410,6 +412,16 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'employer.isSelfEmployed',
   ) as YesOrNo
 
+  const isRecivingUnemploymentBenefits = getValueViaPath(
+    answers,
+    'isRecivingUnemploymentBenefits',
+  ) as YesOrNo
+
+  const unemploymentBenefits = getValueViaPath(
+    answers,
+    'unemploymentBenefits',
+  ) as string
+
   const otherParentName = (getValueViaPath(
     answers,
     'otherParentObj.otherParentName',
@@ -563,6 +575,8 @@ export function getApplicationAnswers(answers: Application['answers']) {
     periods,
     rawPeriods,
     firstPeriodStart,
+    isRecivingUnemploymentBenefits,
+    unemploymentBenefits,
   }
 }
 
@@ -811,4 +825,26 @@ export const removeCountryCode = (application: Application) => {
     : getMobilePhoneNumber(application)?.startsWith('00354')
     ? getMobilePhoneNumber(application)?.slice(5)
     : getMobilePhoneNumber(application)
+}
+
+export const showGenericFileUpload = (answers: Application['answers']) => {
+  const {
+    isSelfEmployed,
+    isRecivingUnemploymentBenefits,
+    unemploymentBenefits,
+    applicationType,
+  } = getApplicationAnswers(answers)
+  // we don't want to show generic file upload atm if we are showing another file upload
+  // isSelfEmployed, students, benefits (union & health insurance)
+
+  if (isSelfEmployed === YES) return false
+  else if (
+    (isRecivingUnemploymentBenefits &&
+      unemploymentBenefits === unemploymentBenefitTypes.stéttarfélagi) ||
+    unemploymentBenefits === unemploymentBenefitTypes.sjúkratryggingarÍslands
+  )
+    return false
+  else if (applicationType === PARENTAL_GRANT_STUDENTS) return false
+
+  return true
 }

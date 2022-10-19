@@ -6,11 +6,12 @@ import { requiresOtherParentApproval } from '../lib/parentalLeaveUtils'
 export function hasEmployer(context: ApplicationContext) {
 
   const currentApplicationAnswers = context.application.answers as {
+    isRecivingUnemploymentBenefits: typeof YES | typeof NO
     applicationType: { option: typeof PARENTAL_LEAVE | typeof PARENTAL_GRANT | typeof PARENTAL_GRANT_STUDENTS }
     employer: { isSelfEmployed: typeof YES | typeof NO }
   }
 
-  return currentApplicationAnswers.applicationType.option == PARENTAL_LEAVE ? currentApplicationAnswers.employer.isSelfEmployed === NO : false
+  return currentApplicationAnswers.applicationType.option == PARENTAL_LEAVE ? currentApplicationAnswers.employer.isSelfEmployed === NO && currentApplicationAnswers.isRecivingUnemploymentBenefits === NO : false
 }
 
 export function needsOtherParentApproval(context: ApplicationContext) {

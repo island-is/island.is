@@ -1099,6 +1099,16 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Staðfestu netfang vinnuveitanda',
       description: 'Confirm employer email',
     },
+    isRecivingUnemploymentBenefitsTitle: {
+      id: 'pl.application:employer.isRecivingUnemploymentBenefits',
+      defaultMessage: 'Ertu að þiggja bætur?',
+      description: 'Are you receiving benefits?',
+    },
+    unemploymentBenefits: {
+      id: 'pl.application:employer.unemploymentBenefits',
+      defaultMessage: `Hvaðan ertu að þiggja bætur?`,
+      description: 'Where are you receiving benefits from?',
+    },
   }),
 
   selfEmployed: defineMessages({
@@ -1578,6 +1588,21 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:attachmentscreen.studentDescription',
       defaultMessage: `Námsmenn þurfa að skila inn staðfestingu á námi og námsárangri. Athugaðu að skjalið þarf að vera á .pdf formi`,
       description: `student description`,
+    },
+    unemploymentBenefitsTitle: {
+      id: 'pl.application:attachmentscreen.unemployedBenefitsTitle',
+      defaultMessage: `Bætur`,
+      description: `Benefits`,
+    },
+    unionDescription: {
+      id: 'pl.application:attachmentscreen.unionDescription',
+      defaultMessage: `Þeir sem þiggja dagpeninga/veikindarétt frá stéttarfélagi þurfa að skila inn skjali því til staðfestingar. Athugaðu að skjalið þarf að vera á .pdf formi`,
+      description: `Those who receive unemployment benefits/sick leave allowance from the Union must submit a document to confirm this. Note that the document needs to be on .pdf format`,
+    },
+    healthInsuranceDescription: {
+      id: 'pl.application:attachmentscreen.sjúkratryggingarDescription',
+      defaultMessage: `Þeir sem þiggja sjúkradagpeninga frá Sjúkratryggingum Íslands þurfa að skila inn skjali því til staðfestingar. Athugaðu að skjalið þarf að vera á .pdf formi`,
+      description: `Those who receive sick leave allowance from Sjúkratryggingar Íslands must submit a document to confirm this. Note that the document needs to be on .pdf format`,
     },
     fatherWithoutMotherTitle: {
       id: 'pl.application:attachmentscreen.fatherWithoutMotherTitle',

@@ -9,6 +9,7 @@ import {
   getSelectedChild,
   NO,
   ParentalRelations,
+  PARENTAL_LEAVE,
   YES,
 } from '@island.is/application/templates/parental-leave'
 
@@ -173,6 +174,7 @@ describe('getPensionFund', () => {
     const expectedId = '123'
 
     set(application.answers, 'payments.pensionFund', expectedId)
+    set(application.answers, 'applicationType.option', PARENTAL_LEAVE)
 
     expect(getPensionFund(application)).toEqual({
       id: expectedId,

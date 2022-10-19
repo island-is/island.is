@@ -10,6 +10,14 @@ export const FILE_SIZE_LIMIT = 10000000 // 10MB
 
 export const NO_UNION = 'F000'
 export const NO_PRIVATE_PENSION_FUND = 'X000'
+export const NO_UNEMPLOYED_BENEFITS = 'B000'
+
+export enum unemploymentBenefitTypes {
+  vinnumálastofnun = 'Vinnumálastofnun (atvinnuleysisbætur)',
+  stéttarfélagi = 'Stéttarfélagi (dagpeningar/veikindaréttur)',
+  sjúkratryggingarÍslands = 'Sjúkratryggingar Íslands (sjúkradagpeningar)',
+  other = 'Annað',
+}
 
 export enum ParentalRelations {
   primary = 'primary',

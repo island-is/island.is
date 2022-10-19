@@ -11,7 +11,7 @@ import {
   FormValue,
 } from '@island.is/application/types'
 
-import { NO, MANUAL, ParentalRelations, YES } from '../constants'
+import { NO, MANUAL, ParentalRelations, YES, PARENTAL_GRANT } from '../constants'
 import { ChildInformation } from '../dataProviders/Children/types'
 import {
   formatIsk,
@@ -31,6 +31,7 @@ import {
   getPeriodIndex,
   getApplicationExternalData,
   requiresOtherParentApproval,
+  showGenericFileUpload,
 } from './parentalLeaveUtils'
 import { PersonInformation } from '../types'
 
@@ -688,5 +689,19 @@ describe('removeCountryCode', () => {
     const application = buildApplication()
     set(application.externalData, 'userProfile', null)
     expect(removeCountryCode(application)).toEqual(undefined)
+  })
+})
+
+describe('showGenericFileUpload', () => {
+  it('should return true if application type is "PARENTAL_GRANT"', () => {
+    const application = buildApplication({
+      answers: {
+        applicationType: {
+          option: PARENTAL_GRANT
+        },
+      },
+    })
+
+    expect(showGenericFileUpload(application.answers)).toBe(true)
   })
 })

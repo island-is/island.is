@@ -19,6 +19,7 @@ import {
   getAvailablePersonalRightsInDays,
   YES,
   StartDateOptions,
+  unemploymentBenefitTypes,
   PARENTAL_LEAVE,
   PARENTAL_GRANT_STUDENTS,
 } from '@island.is/application/templates/parental-leave'
@@ -238,6 +239,54 @@ export class ParentalLeaveService {
     }
   }
 
+  async getUnionConfirmationPdf(application: Application, index = 0) {
+    try {
+      const filename = getValueViaPath(
+        application.answers,
+        `fileUpload.unionConfirmationFile[${index}].key`,
+      )
+
+      const Key = `${application.id}/${filename}`
+      const file = await this.s3
+        .getObject({ Bucket: this.attachmentBucket, Key })
+        .promise()
+      const fileContent = file.Body as Buffer
+
+      if (!fileContent) {
+        throw new Error('File content was undefined')
+      }
+
+      return fileContent.toString('base64')
+    } catch (e) {
+      this.logger.error('Cannot get union attachment', { e })
+      throw new Error('Failed to get the union attachment')
+    }
+  }
+
+  async getHealthInsuranceConfirmationPdf(application: Application, index = 0) {
+    try {
+      const filename = getValueViaPath(
+        application.answers,
+        `fileUpload.healthInsuranceConfirmationFile[${index}].key`,
+      )
+
+      const Key = `${application.id}/${filename}`
+      const file = await this.s3
+        .getObject({ Bucket: this.attachmentBucket, Key })
+        .promise()
+      const fileContent = file.Body as Buffer
+
+      if (!fileContent) {
+        throw new Error('File content was undefined')
+      }
+
+      return fileContent.toString('base64')
+    } catch (e) {
+      this.logger.error('Cannot get health insurance attachment', { e })
+      throw new Error('Failed to get the health insurance attachment')
+    }
+  }
+
   async getGenericPdf(application: Application, index = 0) {
     try {
       const filename = getValueViaPath(
@@ -264,7 +313,6 @@ export class ParentalLeaveService {
 
   async getAttachments(application: Application): Promise<Attachment[]> {
     const attachments: Attachment[] = []
-
     const { isSelfEmployed, applicationType } = getApplicationAnswers(
       application.answers,
     )
@@ -319,6 +367,56 @@ export class ParentalLeaveService {
       }
     }
 
+    const {
+      isRecivingUnemploymentBenefits,
+      unemploymentBenefits,
+    } = getApplicationAnswers(application.answers)
+
+    if (
+      isRecivingUnemploymentBenefits === YES &&
+      unemploymentBenefits === unemploymentBenefitTypes.stéttarfélagi
+    ) {
+      const unionPdfs = (await getValueViaPath(
+        application.answers,
+        'fileUpload.unionConfirmationFile',
+      )) as unknown[]
+
+      if (unionPdfs?.length) {
+        for (let i = 0; i <= unionPdfs.length - 1; i++) {
+          const pdf = await this.getUnionConfirmationPdf(application, i)
+
+          attachments.push({
+            attachmentType: apiConstants.attachments.unEmploymentBenefits,
+            attachmentBytes: pdf,
+          })
+        }
+      }
+    }
+
+    if (
+      isRecivingUnemploymentBenefits === YES &&
+      unemploymentBenefits === unemploymentBenefitTypes.sjúkratryggingarÍslands
+    ) {
+      const healthInsurancePdfs = (await getValueViaPath(
+        application.answers,
+        'fileUpload.healthInsuranceConfirmationFile',
+      )) as unknown[]
+
+      if (healthInsurancePdfs?.length) {
+        for (let i = 0; i <= healthInsurancePdfs.length - 1; i++) {
+          const pdf = await this.getHealthInsuranceConfirmationPdf(
+            application,
+            i,
+          )
+
+          attachments.push({
+            attachmentType: apiConstants.attachments.unEmploymentBenefits,
+            attachmentBytes: pdf,
+          })
+        }
+      }
+    }
+
     const genericPdfs = (await getValueViaPath(
       application.answers,
       'fileUpload.file',
@@ -329,7 +427,6 @@ export class ParentalLeaveService {
         const pdf = await this.getGenericPdf(application, i)
 
         attachments.push({
-          // needs to add other types
           attachmentType: apiConstants.attachments.other,
           attachmentBytes: pdf,
         })
@@ -528,9 +625,11 @@ export class ParentalLeaveService {
   }
 
   async sendApplication({ application }: TemplateApiModuleActionProps) {
-    const { isSelfEmployed, applicationType } = getApplicationAnswers(
-      application.answers,
-    )
+    const {
+      isSelfEmployed,
+      isRecivingUnemploymentBenefits,
+      applicationType,
+    } = getApplicationAnswers(application.answers)
     const nationalRegistryId = application.applicant
     const attachments = await this.getAttachments(application)
 
@@ -565,8 +664,10 @@ export class ParentalLeaveService {
       try {
         const selfEmployed =
           applicationType === PARENTAL_LEAVE ? isSelfEmployed === YES : true
+        const recivingUnemploymentBenefits =
+          isRecivingUnemploymentBenefits === YES
 
-        if (!selfEmployed) {
+        if (!selfEmployed && !recivingUnemploymentBenefits) {
           // Only needs to send an email if being approved by employer
           // Self employed applicant was aware of the approval
           await this.sharedTemplateAPIService.sendEmail(

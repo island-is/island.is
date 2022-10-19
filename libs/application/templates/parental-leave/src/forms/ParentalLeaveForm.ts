@@ -28,6 +28,7 @@ import {
   allowOtherParent,
   getLastValidPeriodEndDate,
   removeCountryCode,
+  showGenericFileUpload,
 } from '../lib/parentalLeaveUtils'
 import {
   GetPensionFunds,
@@ -44,6 +45,7 @@ import {
   PARENTAL_GRANT_STUDENTS,
   PARENTAL_LEAVE,
   StartDateOptions,
+  unemploymentBenefitTypes,
   YES,
 } from '../constants'
 import Logo from '../assets/Logo'
@@ -58,6 +60,7 @@ import {
   GetUnionsQuery,
 } from '../types/schema'
 import { currentDateStartTime } from '../lib/parentalLeaveTemplateUtils'
+import { YesOrNo } from '../types'
 
 export const ParentalLeaveForm: Form = buildForm({
   id: 'ParentalLeaveDraft',
@@ -447,22 +450,78 @@ export const ParentalLeaveForm: Form = buildForm({
           id: 'employer',
           title: parentalLeaveFormMessages.employer.subSection,
           children: [
-            buildCustomField({
-              component: 'SelfEmployed',
-              id: 'employer.isSelfEmployed',
-              title: parentalLeaveFormMessages.selfEmployed.title,
-              description: parentalLeaveFormMessages.selfEmployed.description,
+            buildMultiField({
+              id: 'employer.isSelfEmployed.benefits',
+              title: '',
+              children: [
+                buildCustomField({
+                  component: 'SelfEmployed',
+                  id: 'employer.isSelfEmployed',
+                  title: parentalLeaveFormMessages.selfEmployed.title,
+                  description:
+                    parentalLeaveFormMessages.selfEmployed.description,
+                }),
+                buildCustomField({
+                  component: 'UnEmploymentBenefits',
+                  id: 'isRecivingUnemploymentBenefits',
+                  title:
+                    parentalLeaveFormMessages.employer
+                      .isRecivingUnemploymentBenefitsTitle,
+                  description: '',
+                  condition: (answers) =>
+                    (answers as {
+                      employer: {
+                        isSelfEmployed: string
+                      }
+                    })?.employer?.isSelfEmployed === NO,
+                }),
+                buildSelectField({
+                  id: 'unemploymentBenefits',
+                  title:
+                    parentalLeaveFormMessages.employer.unemploymentBenefits,
+                  options: [
+                    {
+                      label: unemploymentBenefitTypes.vinnumálastofnun,
+                      value: unemploymentBenefitTypes.vinnumálastofnun,
+                    },
+                    {
+                      label: unemploymentBenefitTypes.stéttarfélagi,
+                      value: unemploymentBenefitTypes.stéttarfélagi,
+                    },
+                    {
+                      label: unemploymentBenefitTypes.sjúkratryggingarÍslands,
+                      value: unemploymentBenefitTypes.sjúkratryggingarÍslands,
+                    },
+                    {
+                      label: unemploymentBenefitTypes.other,
+                      value: unemploymentBenefitTypes.other,
+                    },
+                  ],
+                  condition: (answers) =>
+                    (answers as {
+                      isRecivingUnemploymentBenefits: string
+                    })?.isRecivingUnemploymentBenefits === YES,
+                }),
+              ],
             }),
             buildMultiField({
               id: 'employer.information',
               title: parentalLeaveFormMessages.employer.title,
               description: parentalLeaveFormMessages.employer.description,
-              condition: (answers) =>
-                (answers as {
-                  employer: {
-                    isSelfEmployed: string
-                  }
-                })?.employer?.isSelfEmployed !== YES,
+              condition: (answers) => {
+                const isRecivingUnemploymentBenefits =
+                  (answers as {
+                    isRecivingUnemploymentBenefits: YesOrNo
+                  })?.isRecivingUnemploymentBenefits === NO
+                const isNotSelfEmployed =
+                  (answers as {
+                    employer: {
+                      isSelfEmployed: string
+                    }
+                  })?.employer?.isSelfEmployed !== YES
+
+                return isRecivingUnemploymentBenefits && isNotSelfEmployed
+              },
               children: [
                 buildTextField({
                   title: parentalLeaveFormMessages.employer.email,
@@ -564,6 +623,37 @@ export const ParentalLeaveForm: Form = buildForm({
                     option: string
                   }
                 })?.applicationType?.option === PARENTAL_GRANT_STUDENTS,
+              maxSizeErrorText:
+                parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
+              uploadAccept: '.pdf',
+              uploadHeader: '',
+              uploadDescription: '',
+              uploadButtonLabel:
+                parentalLeaveFormMessages.selfEmployed.attachmentButton,
+            }),
+            buildFileUploadField({
+              id: 'fileUpload.unionConfirmationFile',
+              title:
+                parentalLeaveFormMessages.attachmentScreen
+                  .unemploymentBenefitsTitle,
+              introduction:
+                parentalLeaveFormMessages.attachmentScreen.unionDescription,
+              condition: (answers) => {
+                const isRecivingUnemploymentBenefits =
+                  (answers as {
+                    isRecivingUnemploymentBenefits: YesOrNo
+                  })?.isRecivingUnemploymentBenefits === YES
+                const unemploymentBenefitsFromUnion =
+                  (answers as {
+                    unemploymentBenefits: string
+                  })?.unemploymentBenefits ===
+                  unemploymentBenefitTypes.stéttarfélagi
+
+                return (
+                  isRecivingUnemploymentBenefits &&
+                  unemploymentBenefitsFromUnion
+                )
+              },
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
                 parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
@@ -573,31 +663,54 @@ export const ParentalLeaveForm: Form = buildForm({
               uploadButtonLabel:
                 parentalLeaveFormMessages.selfEmployed.attachmentButton,
             }),
-            // add back when the "other" type has been added to the VMST api
-            // buildFileUploadField({
-            //   id: 'fileUpload.file',
-            //   title: parentalLeaveFormMessages.attachmentScreen.genericTitle,
-            //   introduction:
-            //     parentalLeaveFormMessages.attachmentScreen.genericDescription,
-            //   maxSize: FILE_SIZE_LIMIT,
-            //   condition: (answers) => {
-            //     const isSelfEmployed =
-            //       (answers as {
-            //         employer: {
-            //           isSelfEmployed: string
-            //         }
-            //       })?.employer?.isSelfEmployed === YES
+            buildFileUploadField({
+              id: 'fileUpload.healthInsuranceConfirmationFile',
+              title:
+                parentalLeaveFormMessages.attachmentScreen
+                  .unemploymentBenefitsTitle,
+              introduction:
+                parentalLeaveFormMessages.attachmentScreen
+                  .healthInsuranceDescription,
+              condition: (answers) => {
+                const isRecivingUnemploymentBenefits =
+                  (answers as {
+                    isRecivingUnemploymentBenefits: YesOrNo
+                  })?.isRecivingUnemploymentBenefits === YES
+                const unemploymentBenefitsFromXjúkratryggingar =
+                  (answers as {
+                    unemploymentBenefits: string
+                  })?.unemploymentBenefits ===
+                  unemploymentBenefitTypes.sjúkratryggingarÍslands
 
-            //     return !isSelfEmployed
-            //   },
-            //   maxSizeErrorText:
-            //     parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
-            //   uploadAccept: '.pdf',
-            //   uploadHeader: '',
-            //   uploadDescription: '',
-            //   uploadButtonLabel:
-            //     parentalLeaveFormMessages.selfEmployed.attachmentButton,
-            // }),
+                return (
+                  isRecivingUnemploymentBenefits &&
+                  unemploymentBenefitsFromXjúkratryggingar
+                )
+              },
+              maxSize: FILE_SIZE_LIMIT,
+              maxSizeErrorText:
+                parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
+              uploadAccept: '.pdf',
+              uploadHeader: '',
+              uploadDescription: '',
+              uploadButtonLabel:
+                parentalLeaveFormMessages.selfEmployed.attachmentButton,
+            }),
+            buildFileUploadField({
+              id: 'fileUpload.file',
+              title: parentalLeaveFormMessages.attachmentScreen.genericTitle,
+              introduction:
+                parentalLeaveFormMessages.attachmentScreen.genericDescription,
+              maxSize: FILE_SIZE_LIMIT,
+              condition: (answers) => showGenericFileUpload(answers),
+              maxSizeErrorText:
+                parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
+              uploadAccept: '.pdf',
+              uploadHeader: '',
+              uploadDescription: '',
+              uploadButtonLabel:
+                parentalLeaveFormMessages.selfEmployed.attachmentButton,
+            }),
           ],
         }),
       ],

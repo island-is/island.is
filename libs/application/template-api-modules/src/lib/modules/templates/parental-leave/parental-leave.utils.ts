@@ -71,7 +71,6 @@ export const getPersonalAllowance = (
 
 export const getEmployer = (
   application: Application,
-  applicationType: string,
   isSelfEmployed = false,
 ): Employer => {
   const {
@@ -90,12 +89,15 @@ export const getEmployer = (
 
 export const getPensionFund = (
   application: Application,
-  applicationType: string,
   isPrivate = false,
 ): PensionFund => {
   const getter = isPrivate
     ? 'payments.privatePensionFund'
     : 'payments.pensionFund'
+
+    const { applicationType } = getApplicationAnswers(
+      application.answers,
+    )
 
   const value =
     applicationType === PARENTAL_LEAVE
@@ -128,9 +130,8 @@ export const getPensionFund = (
 
 export const getPrivatePensionFundRatio = (
   application: Application,
-  applicationType: string,
 ) => {
-  const { privatePensionFundPercentage } = getApplicationAnswers(
+  const { privatePensionFundPercentage, applicationType } = getApplicationAnswers(
     application.answers,
   )
   const privatePensionFundRatio: number =
@@ -261,9 +262,11 @@ export const transformApplicationToParentalLeaveDTO = (
     union,
     bank,
     applicationType,
+    isRecivingUnemploymentBenefits,
   } = getApplicationAnswers(application.answers)
   const { email, phoneNumber } = getApplicantContactInfo(application)
   const selfEmployed = isSelfEmployed === YES
+  const recivingUnemploymentBenefits = isRecivingUnemploymentBenefits === YES
 
   const testData: string = onlyValidate!.toString()
 
@@ -289,17 +292,16 @@ export const transformApplicationToParentalLeaveDTO = (
             : apiConstants.unions.noUnion,
         name: '',
       } as Union,
-      pensionFund: getPensionFund(application, applicationType),
-      privatePensionFund: getPensionFund(application, applicationType, true),
+      pensionFund: getPensionFund(application),
+      privatePensionFund: getPensionFund(application, true),
       privatePensionFundRatio: getPrivatePensionFundRatio(
         application,
-        applicationType,
       ),
     },
     periods,
     employers:
-      applicationType === PARENTAL_LEAVE
-        ? [getEmployer(application, applicationType, selfEmployed)]
+      applicationType === PARENTAL_LEAVE && !recivingUnemploymentBenefits
+        ? [getEmployer(application, selfEmployed)]
         : [],
     status: 'In Progress',
     rightsCode: getRightsCode(application),
