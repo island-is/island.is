@@ -96,8 +96,14 @@ export class ParentalLeaveService {
     )
 
     if (otherParentPhoneNumber) {
+      const clientLocationOrigin = getConfigValue(
+        this.configService,
+        'clientLocationOrigin',
+      ) as string
+      const link = `${clientLocationOrigin}/${ApplicationConfigurations.ParentalLeave.slug}/${application.id}`
+
       await this.sharedTemplateAPIService.sendSms(
-        generateAssignOtherParentApplicationSms,
+        () => generateAssignOtherParentApplicationSms(application, link),
         application,
       )
     }

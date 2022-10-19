@@ -2,11 +2,17 @@ import {
   getApplicationAnswers,
   getApplicationExternalData,
 } from '@island.is/application/templates/parental-leave'
-import { SmsTemplateGenerator } from '../../../../types'
-import { linkOtherParentSMS } from '../emailGenerators'
+import { SmsMessage } from '../../../../types'
+import { Application } from '@island.is/application/types'
 
-export const generateAssignOtherParentApplicationSms: SmsTemplateGenerator = (
+export type AssingOtherParentGenerator = (
+  application: Application,
+  link: string,
+) => SmsMessage
+
+export const generateAssignOtherParentApplicationSms: AssingOtherParentGenerator = (
   application,
+  link,
 ) => {
   const { otherParentPhoneNumber } = getApplicationAnswers(application.answers)
   const { applicantName } = getApplicationExternalData(application.externalData)
@@ -16,6 +22,6 @@ export const generateAssignOtherParentApplicationSms: SmsTemplateGenerator = (
     phoneNumber: otherParentPhoneNumber,
     message: `Umsækjandi ${applicantName} kt: ${applicantId} hefur skráð þig sem maka í umsókn sinni um fæðingarorlof og er að óska eftir réttindum frá þér.
       Ef þú áttir von á þessari beiðni máttu smella á linkinn hér fyrir neðan. Kveðja, Fæðingarorlofssjóður
-      ${linkOtherParentSMS}`,
+      ${link}`,
   }
 }

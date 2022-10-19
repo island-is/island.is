@@ -22,6 +22,7 @@ import {
   getOtherParentId,
   applicantIsMale,
   PARENTAL_LEAVE,
+  NO,
 } from '@island.is/application/templates/parental-leave'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
@@ -38,6 +39,7 @@ export const getPersonalAllowance = (
     personalUseAsMuchAsPossible,
     personalUsage,
     spouseUsage,
+    otherParent,
   } = getApplicationAnswers(application.answers)
 
   const usePersonalAllowanceGetter = fromSpouse
@@ -51,6 +53,10 @@ export const getPersonalAllowance = (
   const willUsePersonalAllowance = usePersonalAllowanceGetter === YES
 
   if (!willUsePersonalAllowance) {
+    return 0
+  }
+
+  if (fromSpouse && otherParent === NO) {
     return 0
   }
 

@@ -36,7 +36,12 @@ export const createTestingNotificationModule = async () => {
     ],
     controllers: [NotificationController, InternalNotificationController],
     providers: [
-      CourtService,
+      {
+        provide: CourtService,
+        useValue: {
+          createDocument: jest.fn(),
+        },
+      },
       AwsS3Service,
       {
         provide: SmsService,
@@ -97,14 +102,19 @@ export const createTestingNotificationModule = async () => {
       DefendantService,
     ),
     emailService: notificationModule.get<EmailService>(EmailService),
-    notificationController: notificationModule.get<NotificationController>(
-      NotificationController,
-    ),
+    smsService: notificationModule.get<SmsService>(SmsService),
+    courtService: notificationModule.get<CourtService>(CourtService),
     notificationConfig: notificationModule.get<
       ConfigType<typeof notificationModuleConfig>
     >(notificationModuleConfig.KEY),
     notificationModel: notificationModule.get<typeof Notification>(
       getModelToken(Notification),
+    ),
+    notificationController: notificationModule.get<NotificationController>(
+      NotificationController,
+    ),
+    internalNotificationController: notificationModule.get<InternalNotificationController>(
+      InternalNotificationController,
     ),
   }
 }

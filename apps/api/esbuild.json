@@ -1,6 +1,7 @@
 {
   "platform": "node",
   "external": [
+    "@apollo/subgraph",
     "fsevents",
     "@nestjs/microservices",
     "class-transformer",
@@ -23,6 +24,7 @@
     "source-map-resolve",
     "atob",
     "logform",
+    "p-cancelable",
     "pg-native",
     "form-data",
     "bull",
@@ -41,7 +43,10 @@
     "@protobufjs/pool",
     "@protobufjs/utf8",
     "safer-buffer",
-    "ioredis"
+    "ts-morph",
+    "ioredis",
+    "duplexer3",
+    "normalize-url"
   ],
   "keepNames": true
 }

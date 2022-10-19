@@ -41,12 +41,12 @@ export const getEnvironmentUrls = (env: TestEnvironment) => {
     staging: {
       authUrl: AuthUrl.staging,
       islandisBaseUrl: getEnvironmentBaseUrl(BaseAuthority.staging),
-      adsBaseUrl: getEnvironmentBaseUrl('https://loftbru.staging01.devland.is'),
+      adsBaseUrl: getEnvironmentBaseUrl('loftbru.staging01.devland.is'),
     },
     prod: {
       authUrl: AuthUrl.prod,
       islandisBaseUrl: getEnvironmentBaseUrl(BaseAuthority.prod),
-      adsBaseUrl: getEnvironmentBaseUrl('https://loftbru.island.is'),
+      adsBaseUrl: getEnvironmentBaseUrl('loftbru.island.is'),
     },
     local: {
       authUrl: AuthUrl.local,

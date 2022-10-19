@@ -1,5 +1,9 @@
 import gql from 'graphql-tag'
-import { nestedOneColumnTextFields, slices } from './fragments'
+import {
+  nestedAccordionAndFaqListFields,
+  nestedOneColumnTextFields,
+  slices,
+} from './fragments'
 
 export const GET_PROJECT_PAGE_QUERY = gql`
   query GetProjectPage($input: GetProjectPageInput!) {
@@ -52,9 +56,11 @@ export const GET_PROJECT_PAGE_QUERY = gql`
       }
       slices {
         ...AllSlices
+        ${nestedAccordionAndFaqListFields}
       }
       bottomSlices {
         ...AllSlices
+        ${nestedAccordionAndFaqListFields}
       }
       newsTag {
         id
@@ -71,6 +77,7 @@ export const GET_PROJECT_PAGE_QUERY = gql`
         slices {
           ...AllSlices
           ...NestedOneColumnTextFields
+          ${nestedAccordionAndFaqListFields}
         }
       }
       featuredImage {

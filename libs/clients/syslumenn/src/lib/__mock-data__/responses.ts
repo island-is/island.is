@@ -5,6 +5,8 @@ import {
   Skilabod,
   VedbandayfirlitReguverkiSvarSkeyti,
   SkraningaradiliDanarbusSkeyti,
+  Fasteignasalar,
+  Logmenn,
 } from '../../../gen/fetch'
 import { AssetName, SyslumennApiPaginationInfo } from '../syslumennClient.types'
 
@@ -48,6 +50,20 @@ export const SYSLUMENN_AUCTION = [
   },
 ] as Uppbod[]
 
+export const REAL_ESTATE_AGENTS = [
+  {
+    nafn: 'string',
+    starfsstod: 'string',
+  },
+] as Fasteignasalar[]
+
+export const LAWYERS = [
+  {
+    nafn: 'string',
+    tegundRettinda: 'string',
+  },
+] as Logmenn[]
+
 export const OPERATING_LICENSE = [
   {
     rowNum: 0,
@@ -68,6 +84,8 @@ export const OPERATING_LICENSE = [
     afgrAfgengisAdfaranottFridagaUtiveitingar: 'string',
   },
 ] as VirkLeyfi[]
+
+export const OPERATING_LICENSES_CSV = 'a,b\r\nx,y\r\nz,i'
 
 export const OPERATING_LICENSE_PAGINATION_INFO_SERVICE_RES = {
   PageSize: 10,

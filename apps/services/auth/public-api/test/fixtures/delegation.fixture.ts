@@ -4,6 +4,7 @@ import startOfDay from 'date-fns/startOfDay'
 
 import { Delegation, DelegationScope } from '@island.is/auth-api-lib'
 import { createNationalId } from '@island.is/testing/fixtures'
+import { createApiScope } from './apiScope.fixture'
 
 export interface CreateDelegationOptions {
   fromNationalId: string
@@ -12,21 +13,22 @@ export interface CreateDelegationOptions {
   today?: Date
   expired?: boolean
   future?: boolean
+  domainName?: string
 }
 
 export type CreateDelegationScope = Pick<
   DelegationScope,
-  | 'id'
-  | 'validFrom'
-  | 'validTo'
-  | 'scopeName'
-  | 'identityResourceName'
-  | 'delegationId'
+  'id' | 'validFrom' | 'validTo' | 'scopeName' | 'delegationId'
 >
 
 export type CreateDelegation = Pick<
   Delegation,
-  'id' | 'fromNationalId' | 'fromDisplayName' | 'toNationalId' | 'toName'
+  | 'id'
+  | 'fromNationalId'
+  | 'fromDisplayName'
+  | 'toNationalId'
+  | 'toName'
+  | 'domainName'
 > & { delegationScopes: CreateDelegationScope[] }
 
 /**
@@ -104,6 +106,7 @@ export const createDelegation = ({
   today = new Date(),
   expired = false,
   future = false,
+  domainName,
 }: CreateDelegationOptions): CreateDelegation => {
   const delegation = createRandomDelegation()
   return {
@@ -113,5 +116,6 @@ export const createDelegation = ({
     delegationScopes: scopes.map((scope) =>
       createDelegationScope(delegation.id, scope, today, expired, future),
     ),
+    domainName,
   }
 }

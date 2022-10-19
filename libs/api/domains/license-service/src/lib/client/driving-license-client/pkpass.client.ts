@@ -40,7 +40,7 @@ function strToPositiveNum(s: string): number | undefined {
 /**
  * Client for PkPass generation and verification via SmartSolution API.
  *
- * TODO: Move this to an actual client.
+ * TODO: Move this to an actual client. This will be done in drivers license V2 which is coming up soon.
  */
 export class PkPassClient {
   private readonly pkpassApiKey: string
