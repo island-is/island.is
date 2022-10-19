@@ -113,7 +113,7 @@ const Overview: React.FC = () => {
           previousUrl={
             caseHasBeenSentToCourt
               ? constants.CASES_ROUTE
-              : `${constants.INDICTMENTS_CASE_FILES_ROUTE}/${workingCase.id}`
+              : `${constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE}/${workingCase.id}`
           }
           nextButtonText={formatMessage(strings.overview.nextButtonText, {
             isNewIndictment,

@@ -2,6 +2,7 @@ import {
   ApiScope,
   DelegationDTO,
   DelegationType,
+  Domain,
   PersonalRepresentative,
   PersonalRepresentativeRight,
   PersonalRepresentativeRightType,
@@ -14,6 +15,7 @@ import {
   createNationalRegistryUser,
 } from '@island.is/testing/fixtures'
 import { TestApp } from '@island.is/testing/nest'
+import { getModelToken } from '@nestjs/sequelize'
 import faker from 'faker'
 import request from 'supertest'
 import { setupWithAuth } from '../../../../test/setup'
@@ -30,6 +32,7 @@ import {
   getScopePermission,
   personalRepresentativeType,
 } from '../../../../test/stubs/personalRepresentativeStubs'
+import { createDomain } from '../../../../test/stubs/domain.fixture'
 
 describe('DelegationsController', () => {
   describe('Given a user is authenticated', () => {
@@ -300,9 +303,12 @@ describe('DelegationsController', () => {
         ]
 
         beforeAll(async () => {
+          const domainModel = app.get<typeof Domain>(getModelToken(Domain))
+          const domain = await domainModel.create(createDomain())
+
           await apiScopeModel.bulkCreate(
             scopes.map(([name, enabled, _]) =>
-              getPRenabledApiScope(enabled, name),
+              getPRenabledApiScope(domain.name, enabled, name),
             ),
           )
           await prScopePermission.bulkCreate(

@@ -21,6 +21,7 @@ const createRandomApiScope = (): ApiScopesDTO => {
     automaticDelegationGrant: false,
     alsoForDelegatedUser: false,
     grantToPersonalRepresentatives: false,
+    domainName: faker.random.word(),
   }
 }
 

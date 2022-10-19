@@ -105,7 +105,6 @@ export const Scopes: ScopeSetupOptions[] = [
 
 const delegationConfig: ConfigType<typeof DelegationConfig> = {
   isConfigured: true,
-  userInfoUrl: '',
   customScopeRules: [
     {
       scopeName: '@island.is/scope3',
@@ -165,7 +164,12 @@ export const setupWithAuth = async ({
 
   // Add scopes in the "system" to use for delegation setup
   const apiScopeModel = app.get<typeof ApiScope>(getModelToken(ApiScope))
-  await apiScopeModel.bulkCreate(scopes.map((scope) => createApiScope(scope)))
+  await apiScopeModel.bulkCreate(
+    scopes.map((scope) => ({
+      ...createApiScope(scope),
+      domainName: domain.name,
+    })),
+  )
 
   // Add language for translations.
   const languageModel = app.get<typeof Language>(getModelToken(Language))

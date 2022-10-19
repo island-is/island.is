@@ -1,5 +1,6 @@
 import {
   GenericLicenseClient,
+  GenericLicenseLabels,
   GenericLicenseUserdataExternal,
   GenericUserLicensePkPassStatus,
   GenericUserLicenseStatus,
@@ -15,17 +16,15 @@ import {
   createPkPassDataInput,
   parseFirearmLicensePayload,
 } from './firearmLicenseMapper'
-import { FetchError } from '@island.is/clients/middlewares'
-import {
-  LicenseInfo,
-  FirearmApi,
-  LicenseData,
-} from '@island.is/clients/firearm-license'
+import { LicenseInfo, FirearmApi } from '@island.is/clients/firearm-license'
 import { format } from 'kennitala'
 import {
   PassDataInput,
   SmartSolutionsApi,
 } from '@island.is/clients/smartsolutions'
+import { Locale } from '@island.is/shared/types'
+import { LicenseData } from './firearmLicense.type'
+import compareAsc from 'date-fns/compareAsc'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'firearmlicense-service'
@@ -38,49 +37,43 @@ export class GenericFirearmLicenseApi
     private smartApi: SmartSolutionsApi,
   ) {}
 
-  private handleError(error: Partial<FetchError>): unknown {
-    // Not throwing error if service returns 403 or 404. Log information instead.
-    if (error.status === 403 || error.status === 404) {
-      this.logger.info(`Firearm license returned ${error.status}`, {
-        exception: error,
-        message: (error as Error)?.message,
-        category: LOG_CATEGORY,
-      })
-      return null
-    }
-    this.logger.warn('Firearm license fetch failed', {
-      exception: error,
-      message: (error as Error)?.message,
-      category: LOG_CATEGORY,
-    })
-
-    return null
-  }
-
   async fetchLicenseData(user: User) {
-    let licenseData: unknown
+    const licenseInfo = await this.firearmApi.getLicenseInfo(user)
+    if (!licenseInfo) return null
 
-    try {
-      licenseData = await this.firearmApi.getLicenseData(user)
-    } catch (e) {
-      this.handleError(e)
-      return null
+    const categories = await this.firearmApi.getCategories(user)
+    if (!categories) return null
+
+    const properties = await this.firearmApi.getPropertyInfo(user)
+
+    const licenseData: LicenseData = {
+      licenseInfo,
+      properties,
+      categories,
     }
-    return licenseData as LicenseData
+
+    return licenseData
   }
 
-  async getLicense(user: User): Promise<GenericLicenseUserdataExternal | null> {
+  async getLicense(
+    user: User,
+    locale: Locale,
+    labels: GenericLicenseLabels,
+  ): Promise<GenericLicenseUserdataExternal | null> {
     const licenseData = await this.fetchLicenseData(user)
-
     if (!licenseData) {
       return null
     }
 
-    const payload = parseFirearmLicensePayload(licenseData)
+    const payload = parseFirearmLicensePayload(licenseData, locale, labels)
 
-    const pkpassStatus = payload
-      ? GenericUserLicensePkPassStatus.Available
-      : GenericUserLicensePkPassStatus.NotAvailable
+    let pkpassStatus = GenericUserLicensePkPassStatus.Unknown
+
+    if (payload) {
+      pkpassStatus = GenericFirearmLicenseApi.licenseIsValidForPkpass(
+        licenseData.licenseInfo,
+      )
+    }
 
     return {
       status: GenericUserLicenseStatus.HasLicense,
@@ -88,11 +81,32 @@ export class GenericFirearmLicenseApi
       pkpassStatus,
     }
   }
+
   async getLicenseDetail(
     user: User,
+    locale: Locale,
+    labels: GenericLicenseLabels,
   ): Promise<GenericLicenseUserdataExternal | null> {
-    return this.getLicense(user)
+    return this.getLicense(user, locale, labels)
   }
+
+  static licenseIsValidForPkpass(
+    licenseInfo: LicenseInfo | null | undefined,
+  ): GenericUserLicensePkPassStatus {
+    if (!licenseInfo || !licenseInfo.expirationDate) {
+      return GenericUserLicensePkPassStatus.Unknown
+    }
+
+    const expired = new Date(licenseInfo.expirationDate)
+    const comparison = compareAsc(expired, new Date())
+
+    if (isNaN(comparison) || comparison < 0) {
+      return GenericUserLicensePkPassStatus.NotAvailable
+    }
+
+    return GenericUserLicensePkPassStatus.Available
+  }
+
   async getPkPassUrl(user: User): Promise<string | null> {
     const data = await this.fetchLicenseData(user)
 

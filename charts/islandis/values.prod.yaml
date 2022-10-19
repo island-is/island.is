@@ -41,6 +41,7 @@ air-discount-scheme-api:
   namespace: 'air-discount-scheme'
   podSecurityContext:
     fsGroup: 65534
+  pvcs: []
   replicaCount:
     default: 3
     max: 10
@@ -142,6 +143,7 @@ air-discount-scheme-backend:
     secrets:
       DB_PASS: '/k8s/air-discount-scheme/backend/DB_PASSWORD'
   namespace: 'air-discount-scheme'
+  pvcs: []
   replicaCount:
     default: 3
     max: 10
@@ -209,6 +211,7 @@ air-discount-scheme-web:
           paths:
             - '/'
   namespace: 'air-discount-scheme'
+  pvcs: []
   replicaCount:
     default: 3
     max: 10
@@ -264,7 +267,7 @@ api:
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SERVICE_DOCUMENTS_BASEPATH: 'http://web-services-documents.services-documents.svc.cluster.local'
     SERVICE_USER_PROFILE_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
-    SYSLUMENN_TIMEOUT: '30000'
+    SYSLUMENN_TIMEOUT: '40000'
     TELL_US_A_STORY_EMAIL: 'sogur@island.is'
     XROAD_ADR_MACHINE_LICENSE_PATH: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/rettindi-token-v1'
     XROAD_BASE_PATH: 'http://securityserver.island.is'
@@ -341,6 +344,7 @@ api:
   namespace: 'islandis'
   podSecurityContext:
     fsGroup: 65534
+  pvcs: []
   replicaCount:
     default: 10
     max: 50
@@ -353,6 +357,7 @@ api:
       cpu: '200m'
       memory: '1024Mi'
   secrets:
+    ADR_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/ADR_LICENSE_PASS_TEMPLATE_ID'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_ACCESS_TOKEN: '/k8s/api/CONTENTFUL_ACCESS_TOKEN'
     DOCUMENT_PROVIDER_ADMINS: '/k8s/documentprovider/DOCUMENT_PROVIDER_ADMINS'
@@ -373,6 +378,7 @@ api:
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/api/IDENTITY_SERVER_CLIENT_SECRET'
     ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH'
     ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE'
+    MACHINE_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/MACHINE_LICENSE_PASS_TEMPLATE_ID'
     PAYMENT_SCHEDULE_PASSWORD: '/k8s/api/PAYMENT_SCHEDULE_PASSWORD'
     PAYMENT_SCHEDULE_USER: '/k8s/api/PAYMENT_SCHEDULE_USER'
     PKPASS_API_KEY: '/k8s/api/PKPASS_API_KEY'
@@ -531,6 +537,7 @@ application-system-api:
   namespace: 'application-system'
   podSecurityContext:
     fsGroup: 65534
+  pvcs: []
   replicaCount:
     default: 10
     max: 60
@@ -639,6 +646,7 @@ application-system-api-worker:
   namespace: 'application-system'
   podSecurityContext:
     fsGroup: 65534
+  pvcs: []
   replicaCount:
     default: 3
     max: 10
@@ -716,6 +724,7 @@ application-system-form:
           paths:
             - '/umsoknir'
   namespace: 'application-system'
+  pvcs: []
   replicaCount:
     default: 3
     max: 10
@@ -772,6 +781,7 @@ contentful-translation-extension:
           paths:
             - '/'
   namespace: 'contentful-translation-extension'
+  pvcs: []
   replicaCount:
     default: 3
     max: 10
@@ -834,6 +844,7 @@ download-service:
           paths:
             - '/download'
   namespace: 'download-service'
+  pvcs: []
   replicaCount:
     default: 3
     max: 10
@@ -922,6 +933,7 @@ endorsement-system-api:
   namespace: 'endorsement-system'
   podSecurityContext:
     fsGroup: 65534
+  pvcs: []
   replicaCount:
     default: 3
     max: 10
@@ -1028,6 +1040,7 @@ icelandic-names-registry-backend:
     secrets:
       DB_PASS: '/k8s/icelandic-names-registry-backend/DB_PASSWORD'
   namespace: 'icelandic-names-registry'
+  pvcs: []
   replicaCount:
     default: 3
     max: 10
@@ -1082,6 +1095,7 @@ island-ui-storybook:
           paths:
             - '/'
   namespace: 'storybook'
+  pvcs: []
   replicaCount:
     default: 3
     max: 10
@@ -1211,6 +1225,7 @@ search-indexer-service:
   namespace: 'search-indexer'
   podSecurityContext:
     fsGroup: 65534
+  pvcs: []
   replicaCount:
     default: 1
     max: 1
@@ -1281,6 +1296,7 @@ service-portal:
           paths:
             - '/minarsidur'
   namespace: 'service-portal'
+  pvcs: []
   replicaCount:
     default: 5
     max: 30
@@ -1370,6 +1386,7 @@ service-portal-api:
   namespace: 'service-portal'
   podSecurityContext:
     fsGroup: 65534
+  pvcs: []
   replicaCount:
     default: 2
     max: 30
@@ -1455,6 +1472,7 @@ services-documents:
     secrets:
       DB_PASS: '/k8s/services-documents/DB_PASSWORD'
   namespace: 'services-documents'
+  pvcs: []
   replicaCount:
     default: 3
     max: 10
@@ -1515,6 +1533,7 @@ skilavottord-web:
           paths:
             - '/app/skilavottord/'
   namespace: 'skilavottord'
+  pvcs: []
   replicaCount:
     default: 3
     max: 10
@@ -1603,6 +1622,7 @@ skilavottord-ws:
     secrets:
       DB_PASS: '/k8s/skilavottord/DB_PASSWORD'
   namespace: 'skilavottord'
+  pvcs: []
   replicaCount:
     default: 3
     max: 10
@@ -1676,6 +1696,7 @@ user-notification:
   namespace: 'user-notification'
   podSecurityContext:
     fsGroup: 65534
+  pvcs: []
   replicaCount:
     default: 3
     max: 10
@@ -1739,6 +1760,7 @@ user-notification-worker:
   namespace: 'user-notification'
   podSecurityContext:
     fsGroup: 65534
+  pvcs: []
   replicaCount:
     default: 3
     max: 10
@@ -1814,6 +1836,7 @@ web:
           paths:
             - '/'
   namespace: 'islandis'
+  pvcs: []
   replicaCount:
     default: 10
     max: 50
@@ -1873,6 +1896,7 @@ xroad-collector:
   namespace: 'xroad-collector'
   podSecurityContext:
     fsGroup: 65534
+  pvcs: []
   replicaCount:
     default: 3
     max: 10

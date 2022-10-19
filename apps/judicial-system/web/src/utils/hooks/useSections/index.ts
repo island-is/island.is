@@ -286,6 +286,19 @@ const useSections = () => {
               type: 'SUB_SECTION',
               name: capitalize(
                 formatMessage(
+                  sections.indictmentCaseProsecutorSection.policeCaseFiles,
+                ),
+              ),
+              href:
+                isDefendantStepValidForSidebarIndictments(workingCase) &&
+                isProcessingStepValidIndictments(workingCase)
+                  ? `${constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE}/${id}`
+                  : undefined,
+            },
+            {
+              type: 'SUB_SECTION',
+              name: capitalize(
+                formatMessage(
                   sections.indictmentCaseProsecutorSection.overview,
                 ),
               ),
@@ -484,7 +497,7 @@ const useSections = () => {
     const { id } = workingCase
 
     return {
-      name: formatMessage(sections.courtSection.title),
+      name: formatMessage(sections.indictmentsCourtSection.title),
       children:
         activeSubSection === undefined
           ? []
