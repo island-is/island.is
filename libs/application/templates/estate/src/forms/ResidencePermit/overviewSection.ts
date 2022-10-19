@@ -2,6 +2,7 @@ import {
   buildCustomField,
   buildDescriptionField,
   buildDividerField,
+  buildKeyValueField,
   buildMultiField,
   buildSection,
   buildSubmitField,
@@ -166,6 +167,18 @@ export const overview = buildSection({
           title: m.estateBankInfo,
           description: m.estateBankInfoDescription,
           titleVariant: 'h3',
+          marginBottom: 'gutter',
+        }),
+        buildKeyValueField({
+          label: m.bankAccount,
+          value: ({ answers }) =>
+            (answers.bankAccounts as any)[0].accountNumber,
+          width: 'half',
+        }),
+        buildKeyValueField({
+          label: m.bankAccountBalance,
+          value: ({ answers }) => (answers.bankAccounts as any)[0].balance,
+          width: 'half',
         }),
         buildSubmitField({
           id: 'residencePermit.submit',
