@@ -103,9 +103,11 @@ interface Props {
   setPoliceCaseFileList: React.Dispatch<
     React.SetStateAction<PoliceCaseFileCheck[]>
   >
+  policeCaseNumber?: string
 }
 
 const PoliceCaseFiles: React.FC<Props> = ({
+  policeCaseNumber,
   isUploading,
   setIsUploading,
   policeCaseFileList,
@@ -151,7 +153,8 @@ const PoliceCaseFiles: React.FC<Props> = ({
         files: policeData ? policeData.policeCaseFiles : [],
         isLoading: false,
         hasError: true,
-        errorCode: policeDataError?.graphQLErrors[0].extensions?.code,
+        errorCode: policeDataError?.graphQLErrors[0]?.extensions
+          ?.code as string,
       })
     }
   }, [
@@ -253,7 +256,7 @@ const PoliceCaseFiles: React.FC<Props> = ({
   return (
     <>
       <SectionHeading
-        title={formatMessage(m.heading)}
+        title={formatMessage(m.heading, { policeCaseNumber })}
         description={formatMessage(m.introduction)}
       />
       <Box marginBottom={5}>

@@ -110,6 +110,11 @@ export const serviceSetup = (services: {
         },
       },
     })
+    .volumes({
+      mountPath: '/keys',
+      size: '1Gi',
+      accessModes: 'ReadWrite',
+    })
     .files({
       filename: 'ids-signing.pfx',
       env: 'IdentityServer__SigningCertificate__Path',

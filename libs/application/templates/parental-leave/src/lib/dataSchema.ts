@@ -109,7 +109,7 @@ export const dataSchema = z.object({
     .refine((n) => !n || (kennitala.isValid(n) && kennitala.isPerson(n)), {
       params: errorMessages.otherParentId,
     }),
-  otherParentRightOfAccess: z.enum([YES, NO]).optional(),
+  otherParentRightOfAccess: z.enum([YES, NO]),
   otherParentEmail: z.string().email(),
   otherParentPhoneNumber: z
     .string()

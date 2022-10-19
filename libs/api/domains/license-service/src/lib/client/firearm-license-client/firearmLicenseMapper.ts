@@ -28,7 +28,7 @@ export const parseFirearmLicensePayload = (
 
   const expired = licenseInfo?.expirationDate
     ? !isAfter(new Date(licenseInfo.expirationDate), new Date())
-    : false
+    : null
   if (!licenseInfo) return null
 
   const label = labels.labels

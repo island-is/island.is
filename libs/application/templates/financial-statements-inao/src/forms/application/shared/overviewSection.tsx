@@ -85,24 +85,6 @@ export const overviewSection = buildSection({
           doesNotRequireAnswer: true,
           component: 'ElectionStatement',
         }),
-        buildDescriptionField({
-          id: 'overviewConfirmations',
-          title: m.overview,
-          titleVariant: 'h3',
-        }),
-        buildSubmitField({
-          id: 'submit',
-          title: '',
-          placement: 'screen',
-          refetchApplicationAfterSubmit: true,
-          actions: [
-            {
-              event: DefaultEvents.SUBMIT,
-              name: m.overviewCorrect,
-              type: 'primary',
-            },
-          ],
-        }),
       ],
     }),
   ],

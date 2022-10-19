@@ -20,4 +20,9 @@ export class CreateFileDto {
   @IsNumber()
   @ApiProperty()
   readonly size!: number
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  readonly policeCaseNumber?: string
 }
