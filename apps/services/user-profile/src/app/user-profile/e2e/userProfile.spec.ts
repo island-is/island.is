@@ -10,7 +10,7 @@ import { UserProfileScope } from '@island.is/auth/scopes'
 import { SMS_VERIFICATION_MAX_TRIES } from '../verification.service'
 import { DataStatus } from '../types/dataStatusTypes'
 
-jest.useFakeTimers('modern')
+jest.useFakeTimers()
 
 let app: INestApplication
 let emailService: EmailService

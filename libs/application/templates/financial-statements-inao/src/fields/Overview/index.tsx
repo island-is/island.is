@@ -2,6 +2,7 @@ import React, { Fragment, useState } from 'react'
 import { DefaultEvents, FieldBaseProps } from '@island.is/application/types'
 
 import {
+  AlertBanner,
   Box,
   Checkbox,
   Divider,
@@ -19,7 +20,7 @@ import { FinancialStatementsInao } from '../../lib/utils/dataSchema'
 import { format as formatNationalId } from 'kennitala'
 import { m } from '../../lib/messages'
 import { FileValueLine, ValueLine } from '../Shared'
-import { currencyStringToNumber, formatCurrency } from '../../lib/utils/helpers'
+import { formatCurrency } from '../../lib/utils/helpers'
 import { starterColumnStyle } from '../Shared/styles/overviewStyles.css'
 import { useSubmitApplication } from '../../hooks/useSubmitApplication'
 import BottomBar from '../../components/BottomBar'
@@ -37,14 +38,16 @@ export const Overview = ({
   const answers = application.answers as FinancialStatementsInao
   const fileName = answers.attachment?.file?.[0]?.name
 
-  const [submitApplication] = useSubmitApplication({
+  const [
+    submitApplication,
+    { error: submitError, loading },
+  ] = useSubmitApplication({
     application,
     refetch,
     event: DefaultEvents.SUBMIT,
   })
 
   const onBackButtonClick = () => {
-    const income = currencyStringToNumber(answers.individualIncome?.total)
     const incomeLimit = getValueViaPath(answers, 'election.incomeLimit')
 
     if (incomeLimit === GREATER) {
@@ -120,17 +123,21 @@ export const Overview = ({
       <GridRow>
         <GridColumn span={['12/12', '6/12']}>
           <ValueLine
-            label={m.personalDonations}
-            value={formatCurrency(answers.individualIncome?.personalDonations)}
-          />
-          <ValueLine
-            label={m.corporateDonation}
-            value={formatCurrency(answers.individualIncome?.corporateDonations)}
-          />
-          <ValueLine
-            label={m.individualDonations}
+            label={m.candidatesOwnContributions}
             value={formatCurrency(
-              answers.individualIncome?.individualDonations,
+              answers.individualIncome?.candidatesOwnContributions,
+            )}
+          />
+          <ValueLine
+            label={m.contributionsFromLegalEntities}
+            value={formatCurrency(
+              answers.individualIncome?.contributionsByLegalEntities,
+            )}
+          />
+          <ValueLine
+            label={m.contributionsFromIndividuals}
+            value={formatCurrency(
+              answers.individualIncome?.individualContributions,
             )}
           />
           <ValueLine
@@ -148,7 +155,7 @@ export const Overview = ({
             value={formatCurrency(answers.individualExpense?.advertisements)}
           />
           <ValueLine
-            label={m.expenses}
+            label={m.electionOffice}
             value={formatCurrency(answers.individualExpense?.electionOffice)}
           />
           <ValueLine
@@ -204,14 +211,14 @@ export const Overview = ({
       <GridRow>
         <GridColumn span={['12/12', '6/12']}>
           <ValueLine
-            label={m.currentAssets}
-            value={formatCurrency(answers.asset?.current)}
+            label={m.fixedAssetsTotal}
+            value={formatCurrency(answers.asset?.fixedAssetsTotal)}
           />
         </GridColumn>
         <GridColumn span={['12/12', '6/12']}>
           <ValueLine
-            label={m.tangibleAssets}
-            value={formatCurrency(answers.asset?.tangible)}
+            label={m.currentAssets}
+            value={formatCurrency(answers.asset?.currentAssets)}
           />
         </GridColumn>
       </GridRow>
@@ -296,7 +303,18 @@ export const Overview = ({
       {errors && getErrorViaPath(errors, 'applicationApprove') ? (
         <InputError errorMessage={formatMessage(m.errorApproval)} />
       ) : null}
+      {submitError ? (
+        <Box paddingY={2}>
+          <AlertBanner
+            title={formatMessage(m.submitErrorTitle)}
+            description={formatMessage(m.submitErrorMessage)}
+            variant="error"
+            dismissable
+          />
+        </Box>
+      ) : null}
       <BottomBar
+        loading={loading}
         onSendButtonClick={onSendButtonClick}
         onBackButtonClick={onBackButtonClick}
       />

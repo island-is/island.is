@@ -27,43 +27,46 @@ export const CemetryIncome = ({ errors, getSum }: PropTypes): JSX.Element => {
     <Fragment>
       <Box paddingY={1}>
         <InputController
-          id={CEMETRYOPERATIONIDS.caretaking}
-          name={CEMETRYOPERATIONIDS.caretaking}
-          label={formatMessage(m.caretaking)}
-          onChange={() => onInputChange(CEMETRYOPERATIONIDS.caretaking)}
+          id={CEMETRYOPERATIONIDS.careIncome}
+          name={CEMETRYOPERATIONIDS.careIncome}
+          label={formatMessage(m.careIncome)}
+          onChange={() => onInputChange(CEMETRYOPERATIONIDS.careIncome)}
           backgroundColor="blue"
           currency
           error={
-            errors && getErrorViaPath(errors, CEMETRYOPERATIONIDS.caretaking)
+            errors && getErrorViaPath(errors, CEMETRYOPERATIONIDS.careIncome)
           }
         />
       </Box>
       <Box paddingY={1}>
         <InputController
-          id={CEMETRYOPERATIONIDS.graveIncome}
-          name={CEMETRYOPERATIONIDS.graveIncome}
-          label={formatMessage(m.graveIncome)}
-          onChange={() => onInputChange(CEMETRYOPERATIONIDS.graveIncome)}
+          id={CEMETRYOPERATIONIDS.burialRevenue}
+          name={CEMETRYOPERATIONIDS.burialRevenue}
+          label={formatMessage(m.burialRevenue)}
+          onChange={() => onInputChange(CEMETRYOPERATIONIDS.burialRevenue)}
           backgroundColor="blue"
           currency
           error={
-            errors && getErrorViaPath(errors, CEMETRYOPERATIONIDS.graveIncome)
+            errors && getErrorViaPath(errors, CEMETRYOPERATIONIDS.burialRevenue)
           }
         />
       </Box>
       <Box paddingY={1}>
         <InputController
-          id={CEMETRYOPERATIONIDS.cemetryFundDonations}
-          name={CEMETRYOPERATIONIDS.cemetryFundDonations}
-          label={formatMessage(m.cemetryFundDonations)}
+          id={CEMETRYOPERATIONIDS.grantFromTheCemeteryFund}
+          name={CEMETRYOPERATIONIDS.grantFromTheCemeteryFund}
+          label={formatMessage(m.grantFromTheCemeteryFund)}
           onChange={() =>
-            onInputChange(CEMETRYOPERATIONIDS.cemetryFundDonations)
+            onInputChange(CEMETRYOPERATIONIDS.grantFromTheCemeteryFund)
           }
           backgroundColor="blue"
           currency
           error={
             errors &&
-            getErrorViaPath(errors, CEMETRYOPERATIONIDS.cemetryFundDonations)
+            getErrorViaPath(
+              errors,
+              CEMETRYOPERATIONIDS.grantFromTheCemeteryFund,
+            )
           }
         />
       </Box>

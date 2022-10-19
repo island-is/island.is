@@ -40,7 +40,7 @@ import {
   DefendantInfo,
   PoliceCaseNumbers,
   usePoliceCaseNumbers,
-} from '../components'
+} from '../../components'
 
 const Defendant: React.FC = () => {
   const {
