@@ -47,7 +47,8 @@
     "ioredis",
     "duplexer3",
     "normalize-url",
-    "get-stream"
+    "get-stream",
+    "http-cache-semantics"
   ],
   "keepNames": true
 }
