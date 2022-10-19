@@ -24,7 +24,7 @@
     "source-map-resolve",
     "atob",
     "logform",
-    "p-cancellable",
+    "p-cancelable",
     "pg-native",
     "form-data",
     "bull",
@@ -44,7 +44,9 @@
     "@protobufjs/utf8",
     "safer-buffer",
     "ts-morph",
-    "ioredis"
+    "ioredis",
+    "duplexer3",
+    "normalize-url"
   ],
   "keepNames": true
 }

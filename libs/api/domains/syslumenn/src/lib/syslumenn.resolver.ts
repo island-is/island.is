@@ -2,6 +2,7 @@ import { Args, Directive, Query, Resolver } from '@nestjs/graphql'
 import { GetHomestaysInput } from './dto/getHomestays.input'
 import { GetOperatingLicensesInput } from './dto/getOperatingLicenses.input'
 import { Homestay } from './models/homestay'
+import { OperatingLicensesCSV } from './models/operatingLicensesCSV'
 import { SyslumennAuction } from './models/syslumennAuction'
 import { RealEstateAgent } from './models/realEstateAgent'
 import { Lawyer } from './models/lawyer'
@@ -71,6 +72,13 @@ export class SyslumennResolver {
       input.pageNumber,
       input.pageSize,
     )
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => OperatingLicensesCSV)
+  @BypassAuth()
+  getOperatingLicensesCSV(): Promise<OperatingLicensesCSV> {
+    return this.syslumennService.getOperatingLicensesCSV()
   }
 
   @Query(() => CertificateInfoResponse)
