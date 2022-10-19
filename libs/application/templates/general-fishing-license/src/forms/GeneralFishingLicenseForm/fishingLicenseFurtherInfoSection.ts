@@ -11,7 +11,7 @@ export const fishingLicenseFurtherInfoSection = buildSection({
   children: [
     buildMultiField({
       id: 'fishingLicenseFurtherInformation',
-      title: fishingLicenseFurtherInformation.general.title,
+      title: '',
       description: '',
       children: [
         buildCustomField({

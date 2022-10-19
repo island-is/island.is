@@ -12,32 +12,44 @@ export const fishingLicenseFurtherInformation = {
       defaultMessage: 'Umsókn um veiðileyfi',
       description: 'Fishing license further information title',
     },
-    applicationPrefix: {
-      id: 'gfl.application:fishingLicenseFurtherInformation.general.applicationPrefix',
-      defaultMessage: 'Sótt er um',
-      description: 'Applying for',
+    subtitle: {
+      id: 'gfl.application:fishingLicenseFurtherInformation.general.subtitle',
+      defaultMessage: 'Vinsamlegast farið yfir eftirfarandi skráningu til að tryggja að allar upplýsingar séu réttar.  ',
+      description: 'Please review the following listing to ensure all information is correct.',
     },
-    applicationPostfix: {
-      id: 'gfl.application:fishingLicenseFurtherInformation.general.applicationPostfix',
-      defaultMessage: 'fyrir eftirfarandi skip',
-      description: 'for the following ship',
-    }
   }),
   labels: defineMessages({
     date: {
       id: 'gfl.application:fishingLicenseFurtherInformation.labels.date',
+      defaultMessage: 'Dagsetning veiðileyfis',
+      description: 'Date of validity',
+    },
+    attachments: {
+      id: 'gfl.application:fishingLicenseFurtherInformation.labels.attachments',
+      defaultMessage: 'Fylgiskjöl',
+      description: 'Attachments',
+    },
+    area: {
+      id: 'gfl.application:fishingLicenseFurtherInformation.labels.attachments',
+      defaultMessage: 'Veiðisvæði',
+      description: 'Area', // TODO
+    },
+  }),
+  fieldInformation: defineMessages({
+    date: {
+      id: 'gfl.application:fishingLicenseFurtherInformation.fieldInformation.date',
       defaultMessage: 'Umbeðin gildistaka',
       description: 'Date of validity',
     },
-    date1: {
-      id: 'gfl.application:fishingLicenseFurtherInformation.labels.date',
-      defaultMessage: 'Umbeðin gildistaka NR 1',
-      description: 'Date of validity',
+    attachments: {
+      id: 'gfl.application:fishingLicenseFurtherInformation.fieldInformation.attachments',
+      defaultMessage: 'Vinsamlegast settu hér inn leyfi frá ferðamálastofu- ferðaskipuleggjendaleyfi',
+      description: 'Please add a valid government-issued license as attachment', // TODO
     },
-    date2: {
-      id: 'gfl.application:fishingLicenseFurtherInformation.labels.date',
-      defaultMessage: 'Umbeðin gildistaka NR 2',
-      description: 'Date of validity',
+    area: {
+      id: 'gfl.application:fishingLicenseFurtherInformation.fieldInformation.area',
+      defaultMessage: '',
+      description: '',
     },
   }),
   placeholders: defineMessages({
@@ -45,6 +57,28 @@ export const fishingLicenseFurtherInformation = {
       id: 'gfl.application:fishingLicenseFurtherInformation.placeholders.date',
       defaultMessage: 'Veldu dagsetningu',
       description: 'Choose a date',
+    },
+    area: {
+      id: 'gfl.application:fishingLicenseFurtherInformation.placeholders.area',
+      defaultMessage: 'Veldu veiðisvæði',
+      description: 'Choose area',
+    },
+  }),
+  attachmentInfo: defineMessages({
+    title: {
+      id: 'gfl.application:fishingLicenseFurtherInformation.attachmentInfo.title',
+      defaultMessage: 'Dragðu skjöl hingað til að hlaða upp',
+      description: 'Drag files to upload',
+    },
+    subtitle: {
+      id: 'gfl.application:fishingLicenseFurtherInformation.attachmentInfo.subtitle',
+      defaultMessage: 'Tekið er við skjölum með endingunum: .pdf, .docx, .rtf, .jpg, png. ',
+      description: 'Approved file formats: .pdf, .docx, .rtf, .jpg, png. ',
+    },
+    buttonLabel: {
+      id: 'gfl.application:fishingLicenseFurtherInformation.attachmentInfo.buttonLabel',
+      defaultMessage: 'Velja skjöl til að hlaða upp',
+      description: 'Choose documents to upload',
     },
   }),
 }
