@@ -15,7 +15,7 @@ import { EstateRegistrant } from '@island.is/clients/syslumenn'
 import { Answers, EstateMember } from '../../types'
 import { AdditionalEstateMember } from './AdditionalEstateMember'
 
-export const EstateMemberRepeater: FC<FieldBaseProps<Answers>> = ({
+export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
   application,
   field,
   errors,

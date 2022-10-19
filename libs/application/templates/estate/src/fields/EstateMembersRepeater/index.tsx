@@ -1,2 +1,2 @@
-export { EstateMemberRepeater } from './EstateMemberRepeater'
+export { EstateMembersRepeater } from './EstateMembersRepeater'
 export { AdditionalEstateMember } from './AdditionalEstateMember'

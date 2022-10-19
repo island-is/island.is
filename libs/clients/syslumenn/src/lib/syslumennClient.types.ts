@@ -162,6 +162,7 @@ export type EstateAsset = {
   description: string
   assetNumber: string
   share: number
+  enabled?: boolean
 }
 
 export interface EstateRegistrant extends EstateCommon {

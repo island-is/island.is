@@ -1,6 +1,7 @@
 import {
   buildCustomField,
   buildDescriptionField,
+  buildDividerField,
   buildForm,
   buildMultiField,
   buildSection,
@@ -10,9 +11,9 @@ import {
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { m } from '../../lib/messages'
-import { propertiesFields } from '../EstateWithNoProperty/externalDataFields/propertiesFields'
 import { announcerInfo } from '../sharedSections/announcerInfo'
 import { dataCollection } from '../sharedSections/dataCollection'
+import { deceasedInfoFields } from '../sharedSections/deceasedInfoFields'
 import { willsAndAgreements } from '../sharedSections/willsAndAgreements'
 
 export const form: Form = buildForm({
@@ -42,7 +43,7 @@ export const form: Form = buildForm({
             buildCustomField({
               title: '',
               id: 'estate.estateMembers',
-              component: 'EstateMemberRepeater',
+              component: 'EstateMembersRepeater',
               childInputIds: ['estate.estateMembers'],
             }),
             ...willsAndAgreements,
@@ -62,7 +63,21 @@ export const form: Form = buildForm({
               id: 'realEstateAndLand',
               title: m.properties,
               description: m.propertiesDescription,
-              children: [...propertiesFields],
+              children: [
+                //...propertiesFields,
+                buildDescriptionField({
+                  id: 'realEstateAndLandsTitle',
+                  title: m.realEstateAndLand,
+                  description: m.realEstateAndLandDescription,
+                  titleVariant: 'h3',
+                }),
+                buildCustomField({
+                  title: '',
+                  id: 'estate.assets',
+                  component: 'RealEstateAndLandsRepeater',
+                  childInputIds: ['estate.assets'],
+                }),
+              ],
             }),
           ],
         }),
@@ -105,7 +120,20 @@ export const form: Form = buildForm({
               id: 'realEstateAndLand',
               title: m.vehicles,
               description: m.propertiesDescription,
-              children: [...propertiesFields],
+              children: [
+                buildDescriptionField({
+                  id: 'vehiclesTitle',
+                  title: m.vehicles,
+                  description: m.vehiclesDescription,
+                  titleVariant: 'h3',
+                }),
+                buildCustomField({
+                  title: '',
+                  id: 'estate.vehicles',
+                  component: 'VehiclesRepeater',
+                  childInputIds: ['estate.vehicles'],
+                }),
+              ],
             }),
           ],
         }),
@@ -124,11 +152,11 @@ export const form: Form = buildForm({
                   description: m.estateBankInfoDescription,
                   titleVariant: 'h3',
                 }),
-                buildTextField({
-                  id: 'bankAccount',
-                  title: m.bankAccount,
-                  placeholder: 'XXXX - XX - XXXXXX',
-                  width: 'half',
+                buildCustomField({
+                  title: '',
+                  id: 'bankAccounts',
+                  component: 'BankAccountsRepeater',
+                  childInputIds: ['bankAccounts'],
                 }),
               ],
             }),
@@ -278,8 +306,17 @@ export const form: Form = buildForm({
         buildMultiField({
           id: 'overview',
           title: m.overviewTitle,
-          description: 'Þú hefur valið að sækja um búsetuleyfi.',
+          description:
+            'Þú hefur valið að sækja um búsetuleyfi. Með því að staðfesta þessar upplýsingar staðfestir umsækjandi að hann hafi í lifandi lífi eignarráð á fjármunum búsins og beri ábyrgð á skuldum hins látna sem um hans eigin skuldir væri að ræða, skv. 12. gr. efðalaga nr. 8/1962.',
           children: [
+            buildDividerField({}),
+            buildDescriptionField({
+              id: 'overviewDeceasedHeader',
+              title: m.theDeceased,
+              titleVariant: 'h3',
+              marginBottom: 'gutter',
+            }),
+            ...deceasedInfoFields,
             buildSubmitField({
               id: 'residencePermit.submit',
               title: '',
@@ -291,6 +328,13 @@ export const form: Form = buildForm({
                   type: 'primary',
                 },
               ],
+            }),
+            buildDividerField({}),
+            buildDescriptionField({
+              id: 'overviewEstateMembersHeader',
+              title: m.estateMembers,
+              titleVariant: 'h3',
+              marginBottom: 'gutter',
             }),
           ],
         }),

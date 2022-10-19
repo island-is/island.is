@@ -1,3 +1,6 @@
 export { default as Cards } from './Cards'
 export { default as DoneImage } from './DoneImage'
-export { EstateMemberRepeater } from './EstateMemberRepeater'
+export { EstateMembersRepeater } from './EstateMembersRepeater'
+export { RealEstateAndLandsRepeater } from './RealEstateAndLandsRepeater'
+export { VehiclesRepeater } from './VehiclesRepeater'
+export { BankAccountsRepeater } from './BankAccountsRepeater'

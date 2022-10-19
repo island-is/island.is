@@ -15,6 +15,7 @@ const asset = z
     description: z.string().optional(),
     initial: z.boolean(),
     enabled: z.boolean(),
+    dummy: z.boolean().optional(),
   })
   .array()
   .optional()

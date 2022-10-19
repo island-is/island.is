@@ -252,6 +252,21 @@ export const m = defineMessages({
     defaultMessage: 'Bankareikningur',
     description: '',
   },
+  bankAccountBalance: {
+    id: 'es.application:bankAccountBalance',
+    defaultMessage: 'Innistæða með vöxtum á dánardegi',
+    description: '',
+  },
+  bankAccountPlaceholder: {
+    id: 'es.application:bankAccountPlaceholder',
+    defaultMessage: 'xxxx - xx - xxxxxx',
+    description: '',
+  },
+  addBankAccount: {
+    id: 'es.application:addBankAccount',
+    defaultMessage: 'Bæta við bankareikning',
+    description: '',
+  },
   vehicles: {
     id: 'es.application:vehicles',
     defaultMessage: 'Farartæki',
