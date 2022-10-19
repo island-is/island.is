@@ -107,6 +107,7 @@
 - [Services](apps/services/README.md)
   - [Auth](apps/services/auth/README.md)
     - [Admin API](apps/services/auth/admin-api/README.md)
+    - [Delegation API](apps/services/auth/delegation-api/README.md)
     - [IDS API](apps/services/auth/ids-api/README.md)
     - [Personal Representative](apps/services/auth/personal-representative/README.md)
     - [Personal Representative Public](apps/services/auth/personal-representative-public/README.md)
