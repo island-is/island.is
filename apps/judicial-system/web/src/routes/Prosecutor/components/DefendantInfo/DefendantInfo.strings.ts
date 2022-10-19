@@ -9,4 +9,10 @@ export const defendantInfo = {
     description:
       'Notaður sem texti sem notaður er til að segja að einstaklingur er ekki með íslenska kennitölu',
   }),
+  delete: defineMessage({
+    id: 'judicial.system.core:defendant_info.delete',
+    defaultMessage: 'Eyða',
+    description:
+      'Notaður sem texti á Eyða hnappinn í "upplýsingar um varnaraðila" hlutanum á varnaraðila skrefi í öllum málategundum',
+  }),
 }
