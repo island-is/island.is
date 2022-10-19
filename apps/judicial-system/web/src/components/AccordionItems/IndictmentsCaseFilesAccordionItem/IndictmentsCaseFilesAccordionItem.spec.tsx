@@ -100,7 +100,7 @@ const caseFiles = [
     type: faker.lorem.word(),
     state: CaseFileState.STORED_IN_RVG,
     size: 1,
-    chapter: 1,
+    chapter: 2,
     orderWithinChapter: 0,
   },
 ]
