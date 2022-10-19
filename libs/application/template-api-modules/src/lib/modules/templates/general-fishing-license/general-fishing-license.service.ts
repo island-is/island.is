@@ -4,7 +4,7 @@ import { SharedTemplateApiService } from '../../shared'
 import { GeneralFishingLicenseAnswers } from '@island.is/application/templates/general-fishing-license'
 import { getValueViaPath } from '@island.is/application/core'
 import {
-  FishingLicenseCodeType,
+  mapFishingLiscenseToCode,
   UmsoknirApi,
 } from '@island.is/clients/fishing-license'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -94,12 +94,7 @@ export class GeneralFishingLicenseService {
             utgerdKennitala: applicantNationalId,
             skipaskrarnumer: parseInt(registrationNumber, 10),
             umbedinGildistaka: null,
-            veidileyfiKodi:
-              fishingLicense === 'catchMark'
-                ? FishingLicenseCodeType.catchMark
-                : fishingLicense === 'hookCatchLimit'
-                ? FishingLicenseCodeType.hookCatchLimit
-                : '0',
+            veidileyfiKodi: mapFishingLiscenseToCode(fishingLicense)
           },
         })
       return { success: true }

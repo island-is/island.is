@@ -59,3 +59,38 @@ export enum FishingLicenseCodeType {
   crustaceans = '54', // Krabbaveiðileyfi
   unknown = '0',
 }
+
+
+// Maps lexical liscense name to liscense code
+export const mapFishingLiscenseToCode = (liscense: string) => {
+  switch(liscense) {
+    case 'hookCatchLimit':
+      return FishingLicenseCodeType.hookCatchLimit;
+    case 'fishWithDanishSeine':
+      return FishingLicenseCodeType.fishWithDanishSeine;
+    case 'greyslepp':
+      return FishingLicenseCodeType.greyslepp;
+    case 'northIceOceanCod':
+      return FishingLicenseCodeType.northIceOceanCod;
+    case 'catchMark':
+      return FishingLicenseCodeType.catchMark;
+    case 'lumpfish':
+      return FishingLicenseCodeType.lumpfish;
+    case 'costalFisheries':
+      return FishingLicenseCodeType.costalFisheries;
+    case 'freetime':
+      return FishingLicenseCodeType.freetime;
+    case 'freetimeHook':
+      return FishingLicenseCodeType.freetimeHook;
+    case 'freetimeHookMed':
+      return FishingLicenseCodeType.freetimeHookMed;
+    case 'commonWhelk':
+      return FishingLicenseCodeType.commonWhelk;
+    case 'oceanQuahogin':
+      return FishingLicenseCodeType.oceanQuahogin;
+    case 'crustaceans':
+      return FishingLicenseCodeType.crustaceans;
+    default:
+      return FishingLicenseCodeType.unknown;
+  }
+}
