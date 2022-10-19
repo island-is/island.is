@@ -7,10 +7,18 @@ import {
   TextAlignment,
 } from 'pdf-lib'
 
+export enum Alignment {
+  Left,
+  Center,
+  Right,
+}
+
 export interface PdfTextOptions {
-  position?: { x?: number; y?: number }
+  alignment?: Alignment
+  bold?: boolean
   marginTop?: number
   newLine?: boolean
+  position?: { x?: number; y?: number }
 }
 
 export interface PdfDocument {
@@ -21,19 +29,6 @@ export interface PdfDocument {
     text: string,
     fontSize: number,
     options?: PdfTextOptions,
-  ) => PdfDocument
-  addTextBold: (
-    text: string,
-    fontSize: number,
-    position?: { x?: number; y?: number },
-    marginTop?: number,
-    newLine?: boolean,
-  ) => PdfDocument
-  addTextBoldCentered: (
-    text: string,
-    fontSize: number,
-    y?: number,
-    marginTop?: number,
   ) => PdfDocument
   getContents: () => Promise<Buffer>
   mergeDocument: (buffer: Buffer) => Promise<PdfDocument>
@@ -196,53 +191,41 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
       return pdfDocument
     },
 
-    addText: (
-      text: string,
-      fontSize: number,
-      options: PdfTextOptions = { newLine: true },
-    ) => {
-      drawText(
-        text,
-        normalFont,
-        fontSize,
-        options.position?.x,
-        options.position?.y,
-        options.marginTop,
-        undefined,
-        options.newLine,
-      )
-
-      return pdfDocument
-    },
-
-    addTextBold: (
-      text: string,
-      fontSize: number,
-      position?: { x?: number; y?: number },
-      marginTop?: number,
-      newLine = true,
-    ) => {
-      drawText(
-        text,
-        boldFont,
-        fontSize,
-        position?.x,
-        position?.y,
+    addText: (text: string, fontSize: number, options?: PdfTextOptions) => {
+      const {
+        alignment = Alignment.Left,
+        bold = false,
         marginTop,
-        undefined,
-        newLine,
-      )
+        newLine = true,
+        position,
+      } = options ?? {}
+      const { x, y } = position ?? {}
 
-      return pdfDocument
-    },
-
-    addTextBoldCentered: (
-      text: string,
-      fontSize: number,
-      y?: number,
-      marginTop?: number,
-    ) => {
-      drawCenteredText(text, boldFont, fontSize, y, marginTop)
+      switch (alignment) {
+        case Alignment.Left:
+          drawText(
+            text,
+            bold ? boldFont : normalFont,
+            fontSize,
+            x,
+            y,
+            marginTop,
+            undefined,
+            newLine,
+          )
+          break
+        case Alignment.Center:
+          drawCenteredText(
+            text,
+            bold ? boldFont : normalFont,
+            fontSize,
+            y,
+            marginTop,
+          )
+          break
+        case Alignment.Right:
+        // TODO: Implement
+      }
 
       return pdfDocument
     },

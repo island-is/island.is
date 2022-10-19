@@ -8,7 +8,7 @@ import {
 import { caseFilesRecord } from '../messages'
 import { Defendant } from '../modules/defendant'
 import { Case } from '../modules/case'
-import { PdfDocument } from './pdf'
+import { Alignment, PdfDocument } from './pdf'
 
 function formatDefendant(defendant: Defendant) {
   let nationalId = ''
@@ -51,44 +51,45 @@ export const createCaseFilesRecord = async (
   for (const caseFile of caseFiles) {
     const { name, chapter, order, buffer } = await caseFile()
 
-    // TODO: Add error message to PDF
     if (buffer) {
       await pdfDocument.mergeDocument(buffer)
     } else {
       pdfDocument
         .addPage()
-        .addTextBoldCentered(
-          formatMessage(caseFilesRecord.missingFile),
-          titleFontSize,
-        )
-        .addTextBoldCentered(name, subtitleFontSize)
+        .addText(formatMessage(caseFilesRecord.missingFile), titleFontSize, {
+          alignment: Alignment.Center,
+          bold: true,
+        })
+        .addText(name, subtitleFontSize, {
+          alignment: Alignment.Center,
+          bold: true,
+        })
     }
   }
 
   pdfDocument
     .addPageNumbers()
     .addPage(0)
-    .addTextBold(
+    .addText(
       `${theCase.creatingProsecutor?.institution?.name.toUpperCase()}`,
       headerFontSize,
-      { y: headerMargin },
+      { bold: true, position: { y: headerMargin } },
     )
-    .addTextBoldCentered(
-      formatMessage(caseFilesRecord.heading),
-      titleFontSize,
-      headerMargin + pageMargin,
-    )
-    .addTextBoldCentered(
+    .addText(formatMessage(caseFilesRecord.heading), titleFontSize, {
+      alignment: Alignment.Center,
+      bold: true,
+      position: { y: headerMargin + pageMargin },
+    })
+    .addText(
       formatMessage(caseFilesRecord.policeCaseNumber, { policeCaseNumber }),
       titleFontSize,
+      { alignment: Alignment.Center, bold: true },
     )
-    .addTextBold(
-      formatMessage(caseFilesRecord.accused),
-      textFontSize,
-      undefined,
-      7,
-      false,
-    )
+    .addText(formatMessage(caseFilesRecord.accused), textFontSize, {
+      bold: true,
+      marginTop: 7,
+      newLine: false,
+    })
 
   for (const defendant of theCase.defendants ?? []) {
     pdfDocument.addParagraph(
@@ -99,21 +100,18 @@ export const createCaseFilesRecord = async (
   }
 
   pdfDocument
-    .addTextBold(
-      formatMessage(caseFilesRecord.accusedOf),
-      textFontSize,
-      undefined,
-      1,
-      false,
-    )
+    .addText(formatMessage(caseFilesRecord.accusedOf), textFontSize, {
+      bold: true,
+      marginTop: 1,
+      newLine: false,
+    })
     .addText(capitalize(caseTypes[theCase.type]), textFontSize, {
       position: { x: 2.5 * pageMargin },
     })
-    .addTextBoldCentered(
+    .addText(
       formatMessage(caseFilesRecord.tableOfContentsHeading),
       subtitleFontSize,
-      undefined,
-      9,
+      { alignment: Alignment.Center, bold: true, marginTop: 9 },
     )
 
   return pdfDocument.getContents()
