@@ -1,3 +1,16 @@
+import { Locale } from 'locale'
+import { LicenseLabelsObject } from '../licenceService.type'
+
+export const getLabel = (
+  labelKey: string,
+  locale: Locale,
+  label?: LicenseLabelsObject,
+) => {
+  return label
+    ? label[`${labelKey}`]
+    : Object.entries(i18n).find((x) => x[0] === `${labelKey}`)?.[1][locale]
+}
+
 export const i18n = {
   licenseNumber: {
     is: 'Númer skírteinis',
@@ -110,5 +123,9 @@ export const i18n = {
   teach: {
     is: 'Kenna',
     en: 'Teach',
+  },
+  basicInfoLicense: {
+    is: 'Grunnupplýsingar skírteinis',
+    en: 'Basic license information',
   },
 }
