@@ -97,6 +97,7 @@ export const mapSyslumennAuction = (auction: Uppbod): SyslumennAuction => ({
   auctionTime: auction.klukkan ?? '',
   petitioners: auction.gerdarbeidendur ?? '',
   respondent: auction.gerdartholar ?? '',
+  publishText: auction.auglysingatexti ?? '',
   auctionTakesPlaceAt: auction.uppbodStadur ?? '',
 })
 
