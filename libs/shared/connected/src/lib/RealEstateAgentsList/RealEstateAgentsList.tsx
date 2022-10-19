@@ -1,4 +1,4 @@
-import { FC, useState } from 'react'
+import { CSSProperties, FC, useState } from 'react'
 import { useQuery } from '@apollo/client/react'
 import { GET_REAL_ESTATE_AGENTS_QUERY } from './queries'
 import { ConnectedComponent, Query } from '@island.is/api/schema'
@@ -15,7 +15,8 @@ import {
 
 import * as styles from './RealEstateAgentsList.css'
 
-const PAGE_SIZE = 5
+// TODO: Read Page size from slice config.
+const PAGE_SIZE = 10
 
 interface RealEstateAgentsListProps {
   slice: ConnectedComponent
@@ -73,7 +74,19 @@ const RealEstateAgentsList: FC<RealEstateAgentsListProps> = ({ slice }) => {
   })
 
   const totalPages = Math.ceil(filteredAgents.length / PAGE_SIZE)
-  const forceTableMinimumHeight = totalPages > 1
+
+  // TODO: Do the same in LawyersList connected component.
+  // TODO: Read min height from slice.config
+  const minHeightFromConfig = "700px"
+  const tableContainerStyles: CSSProperties = {}
+  if (totalPages > 1) {
+    /**
+     * Force a minimum height of the table, so that the pagination elements stay in the same
+     * location. E.g. when the last page has fewer items, then this will prevent the
+     * pagination elements from moving.
+    */
+    tableContainerStyles.minHeight = minHeightFromConfig ?? '800px'
+  }
 
   return (
     <Box>
@@ -119,7 +132,7 @@ const RealEstateAgentsList: FC<RealEstateAgentsListProps> = ({ slice }) => {
       )}
       {listState === 'loaded' && filteredAgents.length > 0 && (
         <Box>
-          <Box className={forceTableMinimumHeight && styles.tableMinimumHeight}>
+          <Box style={tableContainerStyles}>
             <T.Table>
               <T.Head>
                 <T.Row>
