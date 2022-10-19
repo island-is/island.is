@@ -212,28 +212,28 @@ export const m = defineMessages({
     defaultMessage: 'Til dæmis íbúðarhús, sumarhús, lóðir og jarðir',
     description: '',
   },
-  estateContents: {
-    id: 'es.application:estateContents',
+  inventoryTitle: {
+    id: 'es.application:inventoryTitle',
     defaultMessage: 'Innbú',
     description: '',
   },
-  estateContentsDescription: {
-    id: 'es.application:estateContentsDescription',
+  inventoryDescription: {
+    id: 'es.application:inventoryDescription',
     defaultMessage: 'Til dæmis bækur og málverk',
     description: '',
   },
-  contentsTextField: {
-    id: 'es.application:contentsTextField',
+  inventoryTextField: {
+    id: 'es.application:inventoryTextField',
     defaultMessage: 'Upplýsingar um innbú',
     description: '',
   },
-  contentsWorth: {
-    id: 'es.application:contentsWorth',
+  inventoryValueTitle: {
+    id: 'es.application:inventoryValueTitle',
     defaultMessage: 'Matsverð samtals',
     description: '',
   },
-  contentsTextFieldPlaceholder: {
-    id: 'es.application:contentsTextFieldPlaceholder',
+  inventoryTextFieldPlaceholder: {
+    id: 'es.application:inventoryTextFieldPlaceholder',
     defaultMessage: 'Skráðu inn upplýsingar um innbú hér',
     description: '',
   },
@@ -330,6 +330,12 @@ export const m = defineMessages({
     id: 'es.application:overviewSubtitleOfficialEstate',
     defaultMessage:
       'Þú hefur valið að tilkynna um opinber skipti. Vinsamlega lesið yfir neðangreindar upplýsingar, uppfærið og staðfestið eftir því sem við á.',
+    description: '',
+  },
+  overviewSubtitleResidencePermit: {
+    id: 'es.application:overviewSubtitleResidencePermit',
+    defaultMessage:
+      'Þú hefur valið að sækja um búsetuleyfi. Með því að staðfesta þessar upplýsingar staðfestir umsækjandi að hann hafi í lifandi lífi eignarráð á fjármunum búsins og beri ábyrgð á skuldum hins látna sem um hans eigin skuldir væri að ræða, skv. 12. gr. efðalaga nr. 8/1962.',
     description: '',
   },
 

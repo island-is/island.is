@@ -3,18 +3,26 @@ import {
   buildDescriptionField,
   buildDividerField,
   buildForm,
+  buildKeyValueField,
   buildMultiField,
   buildSection,
   buildSubmitField,
   buildSubSection,
   buildTextField,
 } from '@island.is/application/core'
-import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
+import {
+  Application,
+  DefaultEvents,
+  Form,
+  FormModes,
+} from '@island.is/application/types'
+import { EstateAsset, EstateMember } from '@island.is/clients/syslumenn'
 import { m } from '../../lib/messages'
 import { announcerInfo } from '../sharedSections/announcerInfo'
 import { dataCollection } from '../sharedSections/dataCollection'
 import { deceasedInfoFields } from '../sharedSections/deceasedInfoFields'
 import { willsAndAgreements } from '../sharedSections/willsAndAgreements'
+import { format as formatNationalId } from 'kennitala'
 
 export const form: Form = buildForm({
   id: 'residencePermitForm',
@@ -79,30 +87,30 @@ export const form: Form = buildForm({
           ],
         }),
         buildSubSection({
-          id: 'estateContents',
-          title: m.estateContents,
+          id: 'inventory',
+          title: m.inventoryTitle,
           children: [
             buildMultiField({
-              id: 'estateContents',
+              id: 'inventory',
               title: m.properties,
               description: m.propertiesDescription,
               children: [
                 buildDescriptionField({
                   id: 'membersOfEstateTitle',
-                  title: m.estateContents,
-                  description: m.estateContentsDescription,
+                  title: m.inventoryTitle,
+                  description: m.inventoryDescription,
                   titleVariant: 'h3',
                 }),
                 buildTextField({
-                  id: 'contentsTextarea',
-                  title: m.contentsTextField,
-                  placeholder: m.contentsTextFieldPlaceholder,
+                  id: 'inventory',
+                  title: m.inventoryTextField,
+                  placeholder: m.inventoryTextFieldPlaceholder,
                   variant: 'textarea',
                   rows: 7,
                 }),
                 buildTextField({
-                  id: 'contentsWorth',
-                  title: m.contentsWorth,
+                  id: 'inventoryValue',
+                  title: m.inventoryValueTitle,
                   width: 'half',
                 }),
               ],
@@ -301,8 +309,7 @@ export const form: Form = buildForm({
         buildMultiField({
           id: 'overview',
           title: m.overviewTitle,
-          description:
-            'Þú hefur valið að sækja um búsetuleyfi. Með því að staðfesta þessar upplýsingar staðfestir umsækjandi að hann hafi í lifandi lífi eignarráð á fjármunum búsins og beri ábyrgð á skuldum hins látna sem um hans eigin skuldir væri að ræða, skv. 12. gr. efðalaga nr. 8/1962.',
+          description: m.overviewSubtitleResidencePermit,
           children: [
             buildDividerField({}),
             buildDescriptionField({
@@ -310,8 +317,145 @@ export const form: Form = buildForm({
               title: m.theDeceased,
               titleVariant: 'h3',
               marginBottom: 'gutter',
+              space: 'gutter',
             }),
             ...deceasedInfoFields,
+            buildDescriptionField({
+              id: 'space',
+              title: '',
+              marginBottom: 'gutter',
+              space: 'gutter',
+            }),
+            buildDividerField({}),
+            buildDescriptionField({
+              id: 'overviewEstateMembersHeader',
+              title: m.estateMembers,
+              titleVariant: 'h3',
+              space: 'gutter',
+            }),
+            buildCustomField(
+              {
+                title: '',
+                id: 'estateMembersCards',
+                component: 'Cards',
+                doesNotRequireAnswer: true,
+              },
+              {
+                cards: ({ answers }: Application) =>
+                  ((answers.estate as any).estateMembers ?? []).map(
+                    (member: EstateMember) => ({
+                      title: member.name,
+                      description: [
+                        formatNationalId(member.nationalId),
+                        member.relation,
+                      ],
+                    }),
+                  ),
+              },
+            ),
+            ...willsAndAgreements,
+            buildDescriptionField({
+              id: 'space1',
+              title: '',
+              marginBottom: 'gutter',
+              space: 'gutter',
+            }),
+            buildDividerField({}),
+            buildDescriptionField({
+              id: 'overviewEstateAndLandsHeader',
+              title: m.realEstateAndLand,
+              description: m.realEstateAndLandDescription,
+              titleVariant: 'h3',
+              space: 'gutter',
+            }),
+            buildCustomField(
+              {
+                title: '',
+                id: 'estateAssetsCards',
+                component: 'Cards',
+                doesNotRequireAnswer: true,
+              },
+              {
+                cards: ({ answers }: Application) =>
+                  ((answers.estate as any).assets ?? []).map(
+                    (asset: EstateAsset) => ({
+                      title: asset.description,
+                      description: [asset.assetNumber],
+                    }),
+                  ),
+              },
+            ),
+            buildDescriptionField({
+              id: 'space2',
+              title: '',
+              space: 'gutter',
+            }),
+            buildDividerField({}),
+            buildDescriptionField({
+              id: 'overviewInventoryHeader',
+              title: m.inventoryTitle,
+              description: m.inventoryDescription,
+              titleVariant: 'h3',
+              space: 'gutter',
+            }),
+            buildDescriptionField({
+              id: 'overviewInventory',
+              title: m.inventoryTextField,
+              description: (application: Application) =>
+                application.answers.inventory as string,
+              titleVariant: 'h4',
+              space: 'gutter',
+            }),
+            buildDescriptionField({
+              id: 'overviewInventoryValue',
+              title: m.inventoryValueTitle,
+              description: (application: Application) =>
+                application.answers.inventoryValue as string,
+              titleVariant: 'h4',
+              marginBottom: 'gutter',
+              space: 'gutter',
+            }),
+            buildDividerField({}),
+            buildDescriptionField({
+              id: 'space3',
+              title: '',
+              space: 'gutter',
+            }),
+            buildDescriptionField({
+              id: 'overviewVehicles',
+              title: m.vehicles,
+              description: m.vehiclesDescription,
+              titleVariant: 'h3',
+            }),
+            buildCustomField(
+              {
+                title: '',
+                id: 'estateVehicleCards',
+                component: 'Cards',
+                doesNotRequireAnswer: true,
+              },
+              {
+                cards: ({ answers }: Application) =>
+                  ((answers.estate as any)?.vehicles ?? []).map(
+                    (vehicle: EstateAsset) => ({
+                      title: vehicle.description,
+                      description: [vehicle.assetNumber],
+                    }),
+                  ),
+              },
+            ),
+            buildDividerField({}),
+            buildDescriptionField({
+              id: 'space4',
+              title: '',
+              space: 'gutter',
+            }),
+            buildDescriptionField({
+              id: 'overviewEstateBankInfoTitle',
+              title: m.estateBankInfo,
+              description: m.estateBankInfoDescription,
+              titleVariant: 'h3',
+            }),
             buildSubmitField({
               id: 'residencePermit.submit',
               title: '',
@@ -323,13 +467,6 @@ export const form: Form = buildForm({
                   type: 'primary',
                 },
               ],
-            }),
-            buildDividerField({}),
-            buildDescriptionField({
-              id: 'overviewEstateMembersHeader',
-              title: m.estateMembers,
-              titleVariant: 'h3',
-              marginBottom: 'gutter',
             }),
           ],
         }),
