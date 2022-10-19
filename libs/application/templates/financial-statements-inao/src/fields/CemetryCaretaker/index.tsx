@@ -69,7 +69,7 @@ const CareTakerRepeaterItem = ({
         },
       })
     }
-  }, [nationalIdInput])
+  }, [nationalIdInput, getIdentity])
 
   return (
     <GridContainer>
