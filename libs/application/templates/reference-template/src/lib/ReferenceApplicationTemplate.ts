@@ -42,6 +42,17 @@ enum Roles {
   APPLICANT = 'applicant',
   ASSIGNEE = 'assignee',
 }
+
+const careerHistoryCompaniesValidation = (data: any) => {
+  // Applicant selected other but didnt supply the reason so we dont allow it
+  if (
+    data.careerHistoryCompanies?.includes('other') &&
+    !data.careerHistoryOther
+  ) {
+    return false
+  }
+  return true
+}
 const ExampleSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   person: z.object({
@@ -73,12 +84,24 @@ const ExampleSchema = z.object({
     email: z.string().email(),
   }),
   careerHistory: z.enum(['yes', 'no']).optional(),
-  careerHistoryCompanies: z
-    .array(
-      // TODO checkbox answers are [undefined, 'aranja', undefined] and we need to do something about it...
-      z.union([z.enum(['government', 'aranja', 'advania']), z.undefined()]),
-    )
-    .nonempty(),
+  careerHistoryDetails: z
+    .object({
+      careerHistoryCompanies: z
+        .array(
+          // TODO checkbox answers are [undefined, 'aranja', undefined] and we need to do something about it...
+          z.union([
+            z.enum(['government', 'aranja', 'advania', 'other']),
+            z.undefined(),
+          ]),
+        )
+        .nonempty(),
+      careerHistoryOther: z.string(),
+    })
+    .partial()
+    .refine((data) => careerHistoryCompaniesValidation(data), {
+      params: m.careerHistoryOtherError,
+      path: ['careerHistoryOther'],
+    }),
   dreamJob: z.string().optional(),
 })
 

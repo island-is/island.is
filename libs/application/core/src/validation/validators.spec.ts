@@ -509,6 +509,51 @@ describe('validateAnswers', () => {
       })
     })
 
+    it('should validate optional value given another value is defined', () => {
+      const schemaEitherOfTwo = z
+        .object({
+          first: z.string().optional(),
+          second: z.string(),
+          age: z.number().min(18),
+        })
+        .partial()
+        .refine(
+          (data) =>
+            (data.first && data.second) || (!data.first && !data.second),
+          {
+            message: 'Second should be filled in if first is filled in.',
+            path: ['second'],
+          },
+        )
+
+      const secondNotSpecified = {
+        first: 'true',
+      } as FormValue
+
+      const secondNotSpecifiedError = validateAnswers({
+        dataSchema: schemaEitherOfTwo,
+        answers: secondNotSpecified,
+        formatMessage,
+      })
+
+      expect(secondNotSpecifiedError).toEqual({
+        second: 'Second should be filled in if first is filled in.',
+      })
+
+      const secondAndFirstSpecified = {
+        first: 'true',
+        second: 'something',
+      } as FormValue
+
+      const bothSpecified = validateAnswers({
+        dataSchema: schemaEitherOfTwo,
+        answers: secondAndFirstSpecified,
+        formatMessage,
+      })
+
+      expect(bothSpecified).toBeUndefined()
+    })
+
     it('should return default error message for invalid value', () => {
       const schema = z.object({ value: z.boolean().refine((v) => v) })
 

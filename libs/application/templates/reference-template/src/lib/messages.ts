@@ -148,4 +148,15 @@ export const m = defineMessages({
     defaultMessage: 'Kennitala þarf að vera gild.',
     description: 'Error message when the kennitala is invalid.',
   },
+  careerHistoryOther: {
+    id: 'example.application:careerHistory.other',
+    defaultMessage: 'Hvern hefur þú unnið fyrir áður?',
+    description: 'Some description',
+  },
+  careerHistoryOtherError: {
+    id: 'example.application:careerHistory.othertError',
+    defaultMessage:
+      'Vinsamlegast tilgreindu fyrir hvern þú hefur unnið fyrir áður?',
+    description: 'Some description',
+  },
 })

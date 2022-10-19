@@ -110,13 +110,24 @@ export const ExampleForm: Form = buildForm({
                 )
               },
             }),
-            buildCheckboxField({
-              id: 'careerHistoryCompanies',
-              title: m.careerHistoryCompanies,
-              options: [
-                { value: 'government', label: m.governmentOptionLabel },
-                { value: 'aranja', label: 'Aranja' },
-                { value: 'advania', label: 'Advania' },
+            buildMultiField({
+              id: 'careerHistoryDetails',
+              title: '',
+              children: [
+                buildCheckboxField({
+                  id: 'careerHistoryDetails.careerHistoryCompanies',
+                  title: m.careerHistoryCompanies,
+                  options: [
+                    { value: 'government', label: m.governmentOptionLabel },
+                    { value: 'aranja', label: 'Aranja' },
+                    { value: 'advania', label: 'Advania' },
+                    { value: 'other', label: 'Annað' },
+                  ],
+                }),
+                buildTextField({
+                  id: 'careerHistoryDetails.careerHistoryOther',
+                  title: m.careerHistoryOther,
+                }),
               ],
             }),
           ],

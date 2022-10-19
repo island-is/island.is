@@ -1,8 +1,7 @@
-import { ZodIssue } from 'zod/lib/ZodError'
 import isNumber from 'lodash/isNumber'
-import has from 'lodash/has'
 import set from 'lodash/set'
-import merge from 'lodash/merge'
+import { ZodIssue } from 'zod/lib/ZodError'
+import { ZodEffects } from 'zod'
 
 import {
   Schema,
@@ -17,15 +16,13 @@ import { coreErrorMessages } from '../lib/messages'
 import { AnswerValidationError } from './AnswerValidator'
 
 function populateError(
-  currentError: ValidationRecord = {},
-  newError: ZodIssue[],
+  error: ZodIssue[],
   pathToError: string | undefined,
   formatMessage: FormatMessage,
 ) {
   let errorObject = {}
-  const defaultZodError = newError[0].message === 'Invalid input'
-
-  newError.forEach((element) => {
+  error.forEach((element) => {
+    const defaultZodError = element.message === 'Invalid input'
     const path = pathToError || element.path
     let message = formatMessage(coreErrorMessages.defaultError)
     if (element.code === 'custom') {
@@ -38,85 +35,33 @@ function populateError(
         message = element.message
       }
     }
-
     errorObject = set(errorObject, path, message)
   })
-
-  return merge(currentError, errorObject)
-}
-
-function constructPath(currentPath: string, newKey: string) {
-  if (currentPath === '') {
-    return newKey
-  }
-
-  return `${currentPath}.${newKey}`
-}
-
-function partialSchemaValidation(
-  answers: FormValue,
-  originalSchema: Schema,
-  error: ValidationRecord | undefined,
-  currentPath = '',
-  sendConstructedPath: boolean,
-  formatMessage: FormatMessage,
-): ValidationRecord | undefined {
-  Object.keys(answers ?? {}).forEach((key) => {
-    const constructedErrorPath = constructPath(currentPath, key)
-    const answer = answers[key]
-
-    // ZodUnions do not have .pick method
-    const trimmedSchema = originalSchema?.pick
-      ? originalSchema.pick({ [key]: true })
-      : originalSchema
-
-    try {
-      trimmedSchema.parse({ [key]: answer })
-    } catch (e) {
-      const zodErrors: ZodIssue[] = e.errors
-
-      if (!has(error, constructedErrorPath)) {
-        error = populateError(
-          error,
-          zodErrors,
-          sendConstructedPath ? constructedErrorPath : undefined,
-          formatMessage,
-        )
-      }
-    }
-  })
-  return error
+  return errorObject
 }
 
 export function validateAnswers({
   dataSchema,
   answers,
-  isFullSchemaValidation,
   formatMessage,
 }: {
-  dataSchema: Schema
+  dataSchema: Schema | ZodEffects<any, any, any>
   answers: FormValue
   isFullSchemaValidation?: boolean
   formatMessage: FormatMessage
 }): ValidationRecord | undefined {
-  if (!isFullSchemaValidation) {
-    return partialSchemaValidation(
-      answers,
-      dataSchema,
-      undefined,
-      '',
-      false,
-      formatMessage,
-    )
-  }
-
-  // This returns FieldsErrors<FormValue> the correct return type from the resolver
   try {
-    dataSchema.parse(answers)
+    if (dataSchema instanceof ZodEffects) {
+      // cases where zod schema has a refinement on the schema object, needs to be defined partial
+      dataSchema.parse(answers)
+    } else {
+      // all schemas set as partials as we dont validate until a value is entered
+      dataSchema.partial().parse(answers)
+    }
   } catch (e) {
-    return e
+    const zodErrors: ZodIssue[] = e.errors
+    return populateError(zodErrors, e.path, formatMessage)
   }
-
   return undefined
 }
 
