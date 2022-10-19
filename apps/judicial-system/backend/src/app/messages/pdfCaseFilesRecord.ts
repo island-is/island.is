@@ -32,4 +32,10 @@ export const caseFilesRecord = defineMessages({
     defaultMessage: 'Rannsóknargögn',
     description: 'Notaður sem titill á innihaldsskrá í PDF skjalaskrá',
   },
+  missingFile: {
+    id: 'judicial.system.backend:case_files_record.missing_file',
+    defaultMessage: 'Vantar Skjal',
+    description:
+      'Notaður sem titill á síðu þegar skjal vantar í PDF skjalaskrá',
+  },
 })

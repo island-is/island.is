@@ -26,7 +26,12 @@ function formatDefendant(defendant: Defendant) {
 export const createCaseFilesRecord = async (
   theCase: Case,
   policeCaseNumber: string,
-  caseFiles: (() => Promise<void | Buffer>)[],
+  caseFiles: (() => Promise<{
+    name: string
+    chapter: number
+    order: number
+    buffer?: Buffer
+  }>)[],
   formatMessage: FormatMessage,
 ): Promise<Buffer> => {
   const pageMargin = 70
@@ -44,10 +49,20 @@ export const createCaseFilesRecord = async (
   pdfDocument.setMargins(pageMargin, pageMargin, pageMargin, pageMargin)
 
   for (const caseFile of caseFiles) {
-    const buffer = await caseFile()
+    const { name, chapter, order, buffer } = await caseFile()
 
     // TODO: Add error message to PDF
-    buffer && (await pdfDocument.mergeDocument(buffer))
+    if (buffer) {
+      await pdfDocument.mergeDocument(buffer)
+    } else {
+      pdfDocument
+        .addPage()
+        .addTextBoldCentered(
+          formatMessage(caseFilesRecord.missingFile),
+          titleFontSize,
+        )
+        .addTextBoldCentered(name, subtitleFontSize)
+    }
   }
 
   pdfDocument

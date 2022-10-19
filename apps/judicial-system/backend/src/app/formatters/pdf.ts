@@ -8,7 +8,7 @@ import {
 } from 'pdf-lib'
 
 export interface PdfDocument {
-  addPage: (position: number) => PdfDocument
+  addPage: (position?: number) => PdfDocument
   addPageNumbers: () => PdfDocument
   addParagraph: (text: string, fontSize: number, x?: number) => PdfDocument
   addText: (
@@ -124,7 +124,7 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
   }
 
   const pdfDocument = {
-    addPage: (position: number) => {
+    addPage: (position = rawDocument.getPageCount()) => {
       rawDocument.insertPage(position)
 
       currentPage = position

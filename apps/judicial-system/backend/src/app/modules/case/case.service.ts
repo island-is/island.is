@@ -304,21 +304,38 @@ export class CaseService {
 
     const caseFiles = theCase.caseFiles
       ?.filter(
-        (file) =>
-          file.policeCaseNumber === policeCaseNumber &&
-          file.category === CaseFileCategory.CASE_FILE &&
-          file.type === 'application/pdf' &&
-          file.key,
+        (caseFile) =>
+          caseFile.policeCaseNumber === policeCaseNumber &&
+          caseFile.category === CaseFileCategory.CASE_FILE &&
+          caseFile.type === 'application/pdf' &&
+          caseFile.key &&
+          caseFile.chapter !== undefined &&
+          caseFile.orderWithinChapter !== undefined,
       )
-      ?.map((caseFile) => () =>
-        this.awsS3Service.getObject(caseFile.key ?? '').catch((reason) => {
-          // Tolerate failure, but log error
-          this.logger.error(
-            `Unable to get file ${caseFile.id} of case ${theCase.id} from AWS S3`,
-            { reason },
-          )
-        }),
+      ?.sort(
+        (caseFile1, caseFile2) =>
+          (caseFile1.chapter ?? 0) - (caseFile2.chapter ?? 0) ||
+          (caseFile1.orderWithinChapter ?? 0) -
+            (caseFile2.orderWithinChapter ?? 0),
       )
+      ?.map((caseFile) => async () => {
+        const buffer = await this.awsS3Service
+          .getObject(caseFile.key ?? '')
+          .catch((reason) => {
+            // Tolerate failure, but log error
+            this.logger.error(
+              `Unable to get file ${caseFile.id} of case ${theCase.id} from AWS S3`,
+              { reason },
+            )
+          })
+
+        return {
+          name: caseFile.userGeneratedFilename ?? caseFile.name,
+          chapter: caseFile.chapter as number,
+          order: caseFile.orderWithinChapter as number,
+          buffer: buffer ?? undefined,
+        }
+      })
 
     const pdf = await createCaseFilesRecord(
       theCase,
