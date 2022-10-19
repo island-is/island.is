@@ -20,6 +20,7 @@ export const EstateMemberRepeater: FC<FieldBaseProps<Answers>> = ({
   field,
   errors,
 }) => {
+  console.log(errors)
   const { id } = field
   const { formatMessage } = useLocale()
   const { fields, append, remove } = useFieldArray<EstateMember>({
@@ -57,7 +58,10 @@ export const EstateMemberRepeater: FC<FieldBaseProps<Answers>> = ({
       <GridRow>
         {fields.reduce((acc, member, index) => {
           if (member.nationalId === application.applicant) {
-            if (application.answers.applicantRelation !== member.relation) {
+            if (
+              application.answers?.applicantRelation &&
+              application.answers.applicantRelation !== member.relation
+            ) {
               member.relation = application.answers.applicantRelation
             }
           }

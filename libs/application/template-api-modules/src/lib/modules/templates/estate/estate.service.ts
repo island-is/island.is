@@ -5,6 +5,7 @@ import { TemplateApiModuleActionProps } from '../../../types'
 import { NationalRegistry, UploadData } from './types'
 import {
   DataUploadResponse,
+  EstateInfo,
   Person,
   PersonType,
   SyslumennService,
@@ -12,6 +13,7 @@ import {
 import { infer as zinfer } from 'zod'
 import { estateSchema } from '@island.is/application/templates/estate'
 import cloneDeep from 'lodash/cloneDeep'
+import { estateTransformer } from './utils'
 
 type EstateSchema = zinfer<typeof estateSchema>
 type EstateData = EstateSchema['estate']
@@ -42,36 +44,34 @@ export class EstateTemplateService {
     // TODO: hook up to client once API endpoint is ready
     //      1. Delete const estate
     //      2. uncomment the following line
-    //      const estate = (await this.syslumennService.getEstateInfo(application.applicant))[0];
+    //      const estateResponse = (await this.syslumennService.getEstateInfo(application.applicant))[0];
 
-    // TODO: Steini: gera initial data mapper þegar endapunktur er kominn upp
-    const estate: EstateData = {
+    const estateResponse: EstateInfo = {
+      addressOfDeceased: 'Gerviheimili 123, 600 Feneyjar',
+      cash: [],
+      marriageSettlement: false,
       assets: [
         {
           assetNumber: 'F2318696',
           description: 'Íbúð í Reykjavík',
-          initial: true,
-          enabled: true,
+          share: 1,
         },
         {
           assetNumber: 'F2262202',
           description: 'Raðhús á Akureyri',
-          initial: true,
-          enabled: true,
+          share: 1,
         },
       ],
       vehicles: [
         {
           assetNumber: 'VA334',
           description: 'Nissan Terrano II',
-          initial: true,
-          enabled: true,
+          share: 1,
         },
         {
           assetNumber: 'YZ927',
           description: 'Subaru Forester',
-          initial: true,
-          enabled: true,
+          share: 1,
         },
       ],
       knowledgeOfOtherWills: 'yes',
@@ -82,33 +82,33 @@ export class EstateTemplateService {
           name: 'Stúfur Mack',
           relation: 'Sonur',
           nationalId: '2222222229',
-          initial: true,
-          enabled: true,
         },
         {
           name: 'Gervimaður Færeyja',
           relation: 'Maki',
           nationalId: '0101302399',
-          initial: true,
-          enabled: true,
         },
         {
           name: 'Gervimaður Bretland',
           relation: 'Faðir',
           nationalId: '0101304929',
-          initial: true,
-          enabled: true,
         },
       ],
-      //caseNumber: '011515',
+      caseNumber: '011515',
       dateOfDeath: new Date(Date.now() - 1000 * 3600 * 24 * 100),
       nameOfDeceased: 'Lizzy B. Gone',
       nationalIdOfDeceased: '0101301234',
       districtCommissionerHasWill: true,
     }
 
+    const estate = estateTransformer(estateResponse)
+
     const relationOptions = (await this.syslumennService.getEstateRelations())
       .relations
+
+    console.log(relationOptions)
+
+    console.log(JSON.stringify(estate))
 
     return {
       success: true,
