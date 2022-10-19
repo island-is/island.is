@@ -68,6 +68,10 @@ export interface OperatingLicense {
   numberOfDiningGuests?: number
 }
 
+export interface OperatingLicensesCSV {
+  value: string
+}
+
 /**
  * The Syslumenn API provides pagination information in a custom header as a
  * JSON string. The OpenAPI specification currently does not define this object,
