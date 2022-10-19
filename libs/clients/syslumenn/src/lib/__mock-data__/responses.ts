@@ -46,6 +46,7 @@ export const SYSLUMENN_AUCTION = [
     andlagHeiti: 'string',
     gerdarbeidendur: 'string',
     gerdartholar: 'string',
+    auglysingatexti: 'string',
     lausafjarmunir: 'string',
   },
 ] as Uppbod[]
