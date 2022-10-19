@@ -46,9 +46,7 @@ const AdminCreateDiscount: Screen = () => {
 
   const [showModal, setShowModal] = useState(false)
 
-  if (!user) {
-    return null
-  } else if (!['admin', 'developer'].includes(user?.role)) {
+  if (!user || !['admin', 'developer'].includes(user?.role)) {
     return <NotFound />
   }
 
