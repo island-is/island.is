@@ -63,6 +63,11 @@ export const serviceSetup = (services: {
         staging: 'true',
         prod: 'false',
       },
+      IdentityServer__KeyManagement__Enabled: {
+        dev: 'true',
+        staging: 'false',
+        prod: 'false',
+      },
       PersistenceSettings__BaseAddress: ref(
         (h) => `http://${h.svc(services.authApi)}`,
       ),
