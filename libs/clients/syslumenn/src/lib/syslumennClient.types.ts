@@ -10,6 +10,7 @@ export interface SyslumennAuction {
   auctionTime: string
   petitioners: string
   respondent: string
+  publishText: string
   auctionTakesPlaceAt: string
 }
 
