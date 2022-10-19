@@ -46,7 +46,8 @@
     "ts-morph",
     "ioredis",
     "duplexer3",
-    "normalize-url"
+    "normalize-url",
+    "get-stream"
   ],
   "keepNames": true
 }
