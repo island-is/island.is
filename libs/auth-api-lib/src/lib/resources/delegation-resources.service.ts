@@ -20,7 +20,7 @@ export class DelegationResourcesService {
   ): Promise<ApiScopeTreeDTO[]> {
     const scopes = await this.apiScopeModel.findAll({
       where: {
-        //domainName,
+        domainName,
         allowExplicitDelegationGrant: true,
         enabled: true,
       },

@@ -18,7 +18,28 @@ The API is used exclusively by the authentication server, but shares services an
 
 ## Getting started
 
-To run the API locally, you first need to start the database container:
+To run the API you can either connect to the AWS dev database or run a database container locally.
+
+{% hint style="danger" %}
+When working on database migrations you must use the local database container.
+{% endhint %}
+
+### with local database
+
+{% hint style="warning" %}
+The `sequelize.config.js` uses environment variables to overwrite the username, password, database name and port.
+For local connection either set clear the environment variables or set the values to:
+
+```
+export DB_USER=dev_db
+export DB_PASS=dev_db
+export DB_NAME=dev_db
+export DB_PORT=5433
+```
+
+{% endhint %}
+
+Then start the container:
 
 ```bash
 yarn dev-services services-auth-ids-api
@@ -31,6 +52,27 @@ yarn nx run services-auth-ids-api:migrate
 yarn nx run services-auth-ids-api:seed
 ```
 
+### with DEV database
+
+We can use the `scripts/run-db-proxy.sh` to connect to the AWS DEV database.
+
+Before running the script make sure you have configured the necessary environment variables:
+
+```
+export DB_USER=servicesauth
+export DB_PASS=<Is found in AWS Param Store under the key '/k8s/services-auth/api/DB_PASSWORD'>
+export DB_NAME=servicesauth
+export DB_PORT=5432
+```
+
+the start the proxy:
+
+```bash
+./scripts/run-db-proxy.sh
+```
+
+### run the API
+
 Finally, start the service:
 
 ```bash
@@ -39,4 +81,5 @@ yarn start services-auth-ids-api
 
 ## Code owners and maintainers
 
+- [Aranja](https://github.com/orgs/island-is/teams/aranja/members)
 - [Fuglar](https://github.com/orgs/island-is/teams/fuglar/members)

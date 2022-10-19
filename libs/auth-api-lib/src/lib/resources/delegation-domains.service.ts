@@ -24,8 +24,8 @@ export class DelegationDomainsService {
     return domains
   }
 
-  async findOne(id: string, language?: string): Promise<Domain> {
-    const domain = await this.domainModel.findByPk(id)
+  async findOne(domainName: string, language?: string): Promise<Domain> {
+    const domain = await this.domainModel.findByPk(domainName)
 
     if (!domain) {
       throw new NoContentException()

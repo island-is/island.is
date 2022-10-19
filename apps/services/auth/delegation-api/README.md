@@ -1,8 +1,8 @@
-# Public API
+# Delegation API
 
 ## About
 
-A service for external clients which allows them to query the list of available delegations.
+This is an internal api for delegation management for the Delegation System in the Service Portal.
 
 ## Getting started
 
@@ -12,7 +12,7 @@ For further instructions on how to start the database please see [Getting starte
 When the database is running then start the service:
 
 ```bash
-yarn start services-auth-public-api
+yarn start services-auth-ids-api
 ```
 
 ## Code owners and maintainers

@@ -11,7 +11,7 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common'
-import { ApiSecurity, ApiTags } from '@nestjs/swagger'
+import {ApiSecurity, ApiTags } from '@nestjs/swagger'
 
 import {
   CreateDelegationDTO,
@@ -36,11 +36,12 @@ import {
   Features,
 } from '@island.is/nest/feature-flags'
 import { Documentation } from '@island.is/nest/swagger'
+import type { DocumentationParamOptions } from '@island.is/nest/swagger'
 import { isDefined } from '@island.is/shared/utils'
 
 const namespace = '@island.is/auth/delegation-api/me/delegations'
 
-const delegationId = {
+const delegationId: DocumentationParamOptions = {
   required: true,
   type: 'string',
   format: 'uuid',
@@ -108,7 +109,7 @@ export class MeDelegationsController {
     resources: (delegations) =>
       delegations.map((delegation) => delegation?.id).filter(isDefined),
   })
-  async findAll(
+  findAll(
     @CurrentUser() user: User,
     @Query('domain') domainName: string,
     @Query('direction')
@@ -142,7 +143,7 @@ export class MeDelegationsController {
   @Audit<DelegationDTO>({
     resources: (delegation) => delegation?.id ?? undefined,
   })
-  async findOne(
+  findOne(
     @CurrentUser() user: User,
     @Param('delegationId') delegationId: string,
   ): Promise<DelegationDTO> {
@@ -162,7 +163,7 @@ export class MeDelegationsController {
       })),
     }),
   })
-  async create(
+  create(
     @CurrentUser() user: User,
     @Body() createDelegation: CreateDelegationDTO,
   ): Promise<DelegationDTO> {
@@ -182,7 +183,7 @@ export class MeDelegationsController {
   @Audit<DelegationDTO>({
     resources: (delegation) => delegation?.id ?? undefined,
   })
-  async patch(
+  patch(
     @CurrentUser() user: User,
     @Param('delegationId') delegationId: string,
     @Body() patchDelegation: PatchDelegationDTO,
@@ -216,11 +217,11 @@ export class MeDelegationsController {
       },
     },
   })
-  async delete(
+  delete(
     @CurrentUser() user: User,
-    @Param('delegationId') delegationId: string,
+    @Param('delegationId', ) delegationId: string,
   ): Promise<void> {
-    await this.auditService.auditPromise(
+    return this.auditService.auditPromise(
       {
         auth: user,
         namespace,

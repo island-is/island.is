@@ -25,11 +25,15 @@ type ExtendedOmit<T, K extends keyof any> = {
   [P in keyof T as Exclude<P, K>]: T[P]
 }
 
+export type DocumentationParamOptions = ExtendedOmit<ApiParamOptions, 'name'>
+export type DocumentationQueryOptions = ExtendedOmit<ApiQueryOptions, 'name'>
+export type DocumentationHeaderOptions = ExtendedOmit<ApiHeaderOptions, 'name'>
+
 export interface Options {
   request?: {
-    params?: Record<string, ExtendedOmit<ApiParamOptions, 'name'>>
-    query?: Record<string, ExtendedOmit<ApiQueryOptions, 'name'>>
-    header?: Record<string, ExtendedOmit<ApiHeaderOptions, 'name'>>
+    params?: Record<string, DocumentationParamOptions>
+    query?: Record<string, DocumentationQueryOptions>
+    header?: Record<string, DocumentationHeaderOptions>
   }
   response?: {
     status?: 200 | 201 | 204

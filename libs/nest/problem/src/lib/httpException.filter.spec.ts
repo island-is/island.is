@@ -2,6 +2,7 @@ import { CreateRequest, setup } from './test/setup'
 import { ForbiddenException } from '@nestjs/common'
 import { expectGraphqlProblem } from './test/expectGraphqlProblem'
 import { ProblemType } from '@island.is/shared/problem'
+import { NoContentException } from './NoContentException'
 
 describe('HttpExceptionFilter', () => {
   let request: CreateRequest
@@ -65,5 +66,19 @@ describe('HttpExceptionFilter', () => {
       title: 'Forbidden',
       type: ProblemType.HTTP_FORBIDDEN,
     })
+  })
+
+  it('returns 204 and empty body for NoContentException', async () => {
+    // Arrange
+    handler.mockImplementationOnce(() => {
+      throw new NoContentException()
+    })
+
+    // Act
+    const response = await request()
+
+    // Assert
+    expect(response.status).toBe(204)
+    expect(response.body).toStrictEqual({})
   })
 })

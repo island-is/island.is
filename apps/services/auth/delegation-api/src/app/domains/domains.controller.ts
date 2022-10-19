@@ -16,15 +16,16 @@ import {
   Features,
 } from '@island.is/nest/feature-flags'
 import { Documentation } from '@island.is/nest/swagger'
+import type { DocumentationParamOptions, DocumentationQueryOptions } from '@island.is/nest/swagger'
 
 const namespace = '@island.is/auth-api/v2/domains'
 
-const domainName = {
+const domainName: DocumentationParamOptions = {
   type: 'string',
   description: 'The domain name to the scope tree belongs to.',
 }
 
-const lang = {
+const lang: DocumentationQueryOptions = {
   description: 'The language to return display strings in.',
   required: false,
   type: 'string',
@@ -56,7 +57,7 @@ export class DomainsController {
     },
     response: { status: 200, type: [DomainDTO] },
   })
-  async findAll(@Query('lang') language?: string): Promise<DomainDTO[]> {
+  findAll(@Query('lang') language?: string): Promise<DomainDTO[]> {
     return this.domainsService.findAll(language)
   }
 
@@ -77,7 +78,7 @@ export class DomainsController {
       type: DomainDTO,
     },
   })
-  async findOne(
+  findOne(
     @Param('domainName') domainName: string,
     @Query('lang') language?: string,
   ): Promise<DomainDTO> {
@@ -97,7 +98,7 @@ export class DomainsController {
     },
     response: { status: 200, type: [ApiScopeTreeDTO] },
   })
-  async findScopeTree(
+  findScopeTree(
     @Param('domainName') domainName: string,
     @Query('lang') language?: string,
   ): Promise<ApiScopeTreeDTO[]> {
