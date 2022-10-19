@@ -50,7 +50,8 @@
     "get-stream",
     "http-cache-semantics",
     "clone-response",
-    "to-readable-stream"
+    "to-readable-stream",
+    "url-parse-lax"
   ],
   "keepNames": true
 }
