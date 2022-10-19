@@ -140,7 +140,7 @@ export const FishingLicense: FC<FieldBaseProps> = ({
                             fishingLicense.labels[fishingLicenseInfo.code],
                           ),
                     tooltip:
-                      fishingLicenseInfo.code === 'unknown'
+                      fishingLicenseInfo.code !== 'hookCatchLimit' && fishingLicenseInfo.code !== 'catchMark'
                         ? ''
                         : formatMessage(
                             fishingLicense.tooltips[fishingLicenseInfo.code],
