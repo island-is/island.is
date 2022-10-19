@@ -856,6 +856,11 @@ const Auctions: Screen<AuctionsProps> = ({
                   {/* Auction extra info */}
                   {renderWhereAuctionTakesPlaceAndExtraInfo(auction)}
 
+                  {/* Publish Text - Auglysingatexti */}
+                  {auction.publishText && (
+                    <Text paddingBottom={1}>{auction.publishText}</Text>
+                  )}
+
                   {/* Respondents */}
                   {renderRespondents(auction, auctionRespondents)}
 

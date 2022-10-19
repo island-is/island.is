@@ -291,6 +291,11 @@ export const m = defineMessages({
     defaultMessage: 'Framlög lögaðila',
     description: 'Donations',
   },
+  errorNationalIdIncorrect: {
+    id: 'fsn.application:error.nationalIdIncorrect',
+    defaultMessage: 'Þessi kennitala virðist ekki vera rétt',
+    description: 'National id is invalid',
+  },
   errorEmpty: {
     id: 'fsn.application:error.empty',
     defaultMessage: 'Reitur má ekki vera tómur',
@@ -302,7 +307,7 @@ export const m = defineMessages({
     description: 'Approval missing',
   },
   errorSignature: {
-    id: 'fsn.application:error.errorApproval',
+    id: 'fsn.application:error.errorSignature',
     defaultMessage: 'Samþykkja þarf yfirlit með rafrænni undirritun',
     description: 'Signature missing',
   },
@@ -369,6 +374,11 @@ export const m = defineMessages({
   capitalNumbers: {
     id: 'fsn.application:income.capitalNumbers',
     defaultMessage: 'Fjármagnsliðir',
+    description: 'capital numbers',
+  },
+  capitalNumbersSectionTitle: {
+    id: 'fsn.application:income.capitalNumbersSectionTitle',
+    defaultMessage: 'Lykiltölur Fjármagnsliðir',
     description: 'capital numbers',
   },
   electionOffice: {
@@ -724,7 +734,7 @@ export const m = defineMessages({
     description: 'Second part of audit received message',
   },
   operatingYearMsgFirst: {
-    id: 'fsn.application:individualReceivedMsgFirst',
+    id: 'fsn.application:operatingYearMsgFirst',
     defaultMessage: 'Ársreikningi fyrir rekstrarárið',
     description: 'First part of audit received message',
   },
