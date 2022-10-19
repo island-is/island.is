@@ -16,7 +16,10 @@ import {
   Features,
 } from '@island.is/nest/feature-flags'
 import { Documentation } from '@island.is/nest/swagger'
-import type { DocumentationParamOptions, DocumentationQueryOptions } from '@island.is/nest/swagger'
+import type {
+  DocumentationParamOptions,
+  DocumentationQueryOptions,
+} from '@island.is/nest/swagger'
 
 const namespace = '@island.is/auth-api/v2/domains'
 

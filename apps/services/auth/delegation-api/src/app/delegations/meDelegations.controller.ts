@@ -11,7 +11,7 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common'
-import {ApiSecurity, ApiTags } from '@nestjs/swagger'
+import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 
 import {
   CreateDelegationDTO,
@@ -219,7 +219,7 @@ export class MeDelegationsController {
   })
   delete(
     @CurrentUser() user: User,
-    @Param('delegationId', ) delegationId: string,
+    @Param('delegationId') delegationId: string,
   ): Promise<void> {
     return this.auditService.auditPromise(
       {
