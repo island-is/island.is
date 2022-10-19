@@ -57,9 +57,9 @@ export const CemetryEquities = ({
   )
 
   useEffect(() => {
-    const total = totalEquity - totalLiabilities
+    const total = totalEquity
     setEquityTotal(total)
-  }, [totalLiabilities, totalEquity, totalOperatingCost])
+  }, [totalEquity, totalOperatingCost])
 
   return (
     <GridContainer>
