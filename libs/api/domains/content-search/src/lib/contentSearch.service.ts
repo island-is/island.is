@@ -79,6 +79,13 @@ export class ContentSearchService {
     let items = body.hits.hits.map((item) =>
       JSON.parse(item._source.response ?? '[]'),
     )
+
+    
+    // // MYSTERY
+    // items = items.map(item=>({...item, title:item.title+" XXX",intro:item.intro+" ***"}));
+
+
+
     // mix and match highlights
     for (let i = 0; i < body.hits.hits.length; i++) {
       if (body.hits.hits[i]?.highlight?.title){
@@ -88,6 +95,8 @@ export class ContentSearchService {
         items[i].intro = body.hits.hits[i]?.highlight?.content[0]
       }
     }
+
+
     // console.log(body.hits.hits)
     return {
       total: body.hits.total.value,

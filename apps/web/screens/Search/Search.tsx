@@ -719,6 +719,8 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
     'webProjectPage',
   ]
 
+  const ensureContentTypeExists = (types: string[]): types is SearchableContentTypes[] => !!types.length && allTypes.every(type => allTypes.includes(type)) 
+ 
   const [
     {
       data: { searchResults },
@@ -734,7 +736,7 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
         query: {
           language: locale as ContentLanguage,
           queryString,
-          types: types.length ? types : allTypes,
+          types: types.length ? types : ensureContentTypeExists(allTypes) ? allTypes : [],
           ...(tags.length && { tags }),
           ...countTag,
           countTypes: true,
@@ -754,7 +756,7 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
             'organization' as SearchableTags,
             'processentry' as SearchableTags,
           ],
-          types: allTypes,
+          types: ensureContentTypeExists(allTypes) ? allTypes : [],
           countTypes: true,
           countProcessEntry: true,
         },
