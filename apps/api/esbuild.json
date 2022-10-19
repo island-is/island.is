@@ -48,7 +48,8 @@
     "duplexer3",
     "normalize-url",
     "get-stream",
-    "http-cache-semantics"
+    "http-cache-semantics",
+    "clone-response"
   ],
   "keepNames": true
 }
