@@ -107,7 +107,7 @@ export const createCaseFilesRecord = async (
       false,
     )
     .addText(capitalize(caseTypes[theCase.type]), textFontSize, {
-      x: 2.5 * pageMargin,
+      position: { x: 2.5 * pageMargin },
     })
     .addTextBoldCentered(
       formatMessage(caseFilesRecord.tableOfContentsHeading),

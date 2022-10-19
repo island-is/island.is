@@ -7,6 +7,12 @@ import {
   TextAlignment,
 } from 'pdf-lib'
 
+export interface PdfTextOptions {
+  position?: { x?: number; y?: number }
+  marginTop?: number
+  newLine?: boolean
+}
+
 export interface PdfDocument {
   addPage: (position?: number) => PdfDocument
   addPageNumbers: () => PdfDocument
@@ -14,9 +20,7 @@ export interface PdfDocument {
   addText: (
     text: string,
     fontSize: number,
-    position?: { x?: number; y?: number },
-    marginTop?: number,
-    newLine?: boolean,
+    options?: PdfTextOptions,
   ) => PdfDocument
   addTextBold: (
     text: string,
@@ -195,19 +199,17 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
     addText: (
       text: string,
       fontSize: number,
-      position?: { x?: number; y?: number },
-      marginTop?: number,
-      newLine = true,
+      options: PdfTextOptions = { newLine: true },
     ) => {
       drawText(
         text,
         normalFont,
         fontSize,
-        position?.x,
-        position?.y,
-        marginTop,
+        options.position?.x,
+        options.position?.y,
+        options.marginTop,
         undefined,
-        newLine,
+        options.newLine,
       )
 
       return pdfDocument
