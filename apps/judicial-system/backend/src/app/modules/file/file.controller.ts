@@ -174,7 +174,7 @@ export class FileController {
   @Patch('files')
   @ApiOkResponse({
     type: Boolean,
-    description: 'Updates mulitple files of the case',
+    description: 'Updates multiple files of the case',
   })
   updateFiles(
     @Param('caseId') caseId: string,
