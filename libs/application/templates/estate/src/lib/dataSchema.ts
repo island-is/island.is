@@ -74,8 +74,8 @@ export const estateSchema = z.object({
 
   bankAccounts: z
     .object({
-      accountNumber: z.string().nonempty(),
-      balance: z.string().nonempty(),
+      accountNumber: z.string().optional(),
+      balance: z.string().optional(),
     })
     .array()
     .optional(),

@@ -47,13 +47,15 @@ export const BankAccountsRepeater: FC<FieldBaseProps<Answers>> = ({
             hidden={field.initial || field?.dummy}
           >
             <Box position="absolute" className={styles.removeFieldButton}>
-              <Button
-                variant="ghost"
-                size="small"
-                circle
-                icon="remove"
-                onClick={() => remove(index)}
-              />
+              {index > 0 && (
+                <Button
+                  variant="ghost"
+                  size="small"
+                  circle
+                  icon="remove"
+                  onClick={() => remove(index)}
+                />
+              )}
             </Box>
             <GridRow>
               <GridColumn span={['1/1', '1/2']} paddingBottom={2}>

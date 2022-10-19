@@ -44,7 +44,6 @@ export const form: Form = buildForm({
               title: '',
               id: 'estate.estateMembers',
               component: 'EstateMembersRepeater',
-              childInputIds: ['estate.estateMembers'],
             }),
             ...willsAndAgreements,
           ],
@@ -74,7 +73,6 @@ export const form: Form = buildForm({
                   title: '',
                   id: 'estate.assets',
                   component: 'RealEstateAndLandsRepeater',
-                  childInputIds: ['estate.assets'],
                 }),
               ],
             }),
@@ -130,7 +128,6 @@ export const form: Form = buildForm({
                   title: '',
                   id: 'estate.vehicles',
                   component: 'VehiclesRepeater',
-                  childInputIds: ['estate.vehicles'],
                 }),
               ],
             }),
@@ -160,7 +157,7 @@ export const form: Form = buildForm({
             }),
           ],
         }),
-        buildSubSection({
+        /*buildSubSection({
           id: 'claims',
           title: m.claimsTitle,
           children: [
@@ -266,10 +263,10 @@ export const form: Form = buildForm({
               ],
             }),
           ],
-        }),
+        }),*/
       ],
     }),
-    buildSection({
+    /*buildSection({
       id: 'debts',
       title: 'Skuldir',
       children: [
@@ -296,7 +293,7 @@ export const form: Form = buildForm({
           ],
         }),
       ],
-    }),
+    }),*/
     buildSection({
       id: 'overview',
       title: m.overviewTitle,
