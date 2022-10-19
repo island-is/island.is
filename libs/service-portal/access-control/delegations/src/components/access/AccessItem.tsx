@@ -19,12 +19,10 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import * as styles from './AccessItem.css'
 import add from 'date-fns/add'
 import format from 'date-fns/format'
-import { Scope } from '../../utils/types'
+import { Scope } from './access.types'
 import classNames from 'classnames'
 import { isDefined } from '@island.is/shared/utils'
-
-const isApiScopeGroup = (item: Scope): boolean =>
-  item.__typename === 'AuthApiScopeGroup'
+import { isApiScopeGroup } from './access.utils'
 
 export const DATE_FORMAT = 'dd.MM.yyyy'
 
@@ -59,6 +57,7 @@ export const AccessItem = ({
     const values = apiScopes
       .filter((apiScope) => !isApiScopeGroup(apiScope))
       .map((apiScope) => getValues(`${apiScope.model}.name`))
+
     setValue(
       `${apiScopes[0].model}.name`,
       values.every((value) => value?.length > 0) ? [apiScopes[0].name] : [],
@@ -69,6 +68,7 @@ export const AccessItem = ({
     const values = apiScopes
       .filter((apiScope) => !isApiScopeGroup(apiScope))
       .map((apiScope) => getValues(`${apiScope.model}.validTo`))
+
     setValue(
       `${apiScopes[0].model}.validTo`,
       values.every((value) => value === values[0]) ? values[0] : undefined,

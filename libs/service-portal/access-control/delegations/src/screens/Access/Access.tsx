@@ -59,12 +59,17 @@ const Access = () => {
   }
 
   useEffect(() => {
-    if (authDelegation?.validTo && authDelegation.scopes.length > 0) {
-      setEnableValidityPeriod(!!authDelegation.validTo)
-      setValidityPeriod(new Date(authDelegation.validTo))
-    } else {
-      setEnableValidityPeriod(true)
-      setValidityPeriod(defaultDate)
+    const scopesCnt = authDelegation?.scopes ? authDelegation.scopes.length : 0
+
+    if (authDelegation) {
+      if (authDelegation?.validTo && scopesCnt > 0) {
+        setEnableValidityPeriod(!!authDelegation.validTo)
+        setValidityPeriod(new Date(authDelegation.validTo))
+      } else if (scopesCnt === 0) {
+        // We do not wan't to set validity period to default date if there are scopes already set
+        setEnableValidityPeriod(true)
+        setValidityPeriod(defaultDate)
+      }
     }
   }, [authDelegation])
 

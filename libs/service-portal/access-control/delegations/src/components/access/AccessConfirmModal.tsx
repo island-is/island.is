@@ -20,9 +20,9 @@ import { Modal } from '../Modal'
 import type { ModalProps } from '../Modal/Modal'
 import format from 'date-fns/format'
 import { DATE_FORMAT } from './AccessItem'
-import { MappedScope } from './AccessForm'
 import { AccessItemHeader } from './AccessItemHeader'
 import * as accessItemStyles from './AccessItem.css'
+import type { MappedScope } from './access.types'
 
 type AccessConfirmModalProps = ModalProps & {
   delegation: AuthCustomDelegation

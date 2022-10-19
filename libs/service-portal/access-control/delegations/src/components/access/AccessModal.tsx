@@ -10,7 +10,7 @@ import {
   ModalBase,
 } from '@island.is/island-ui/core'
 import * as styles from './AccessModal.css'
-import type { ScopeTag } from '../../utils/types'
+import type { ScopeTag } from './access.types'
 
 interface Props {
   onClose: () => void

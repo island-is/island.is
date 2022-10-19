@@ -21,28 +21,23 @@ import { DelegationsFormFooter } from '../../components'
 import { servicePortalSaveAccessControl } from '@island.is/plausible'
 import {
   AuthDelegationsDocument,
-  useAuthApiScopesQuery,
   useUpdateAuthDelegationMutation,
   useAuthScopeTreeQuery,
 } from '@island.is/service-portal/graphql'
 import {
-  AccessForm as AccessFormState,
-  ApiScopeGroup,
-  GroupedApiScopes,
-  GROUP_PREFIX,
-  Scope,
+  AccessFormFields,
+  AuthScopeTree,
   SCOPE_PREFIX,
-} from '../../utils/types'
+  AUTH_API_SCOPE_GROUP_TYPE,
+} from './access.types'
+import {
+  flattenAndExtendApiScopeGroup,
+  extendApiScope,
+  formatScopeTreeToScope,
+} from './access.utils'
 import { AccessItem } from './AccessItem'
 import { AccessConfirmModal, AccessItemHeader } from '../../components/access'
-import { isDefined } from '@island.is/shared/utils'
 import { ISLAND_DOMAIN } from '../../constants'
-
-export type MappedScope = {
-  name?: string
-  description?: string
-  validTo?: Date
-}
 
 type AccessFormProps = {
   delegation: AuthCustomDelegation
@@ -68,30 +63,22 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
     onError,
   })
 
-  const {
-    data: apiScopeData,
-    loading: apiScopeLoading,
-  } = useAuthApiScopesQuery({
+  const { data: scopeTreeData, loading } = useAuthScopeTreeQuery({
     variables: {
       input: {
+        // TODO use domain from delegation
+        domain: ISLAND_DOMAIN,
         lang,
       },
     },
   })
 
-  const { data: scopeTree, loading: scopeTreeLoading } = useAuthScopeTreeQuery({
-    variables: {
-      input: {
-        // TODO use domain from delegation
-        domain: ISLAND_DOMAIN,
-      },
-    },
-  })
+  const { authScopeTree } = scopeTreeData || {}
 
-  const { authApiScopes } = apiScopeData || {}
-  const loading = apiScopeLoading || scopeTreeLoading
-
-  const methods = useForm<AccessFormState>()
+  const methods = useForm<{
+    [SCOPE_PREFIX]: AccessFormFields[]
+    validityPeriod: Date | null
+  }>()
   const { handleSubmit, getValues } = methods
 
   const onSubmit = handleSubmit(async (model) => {
@@ -136,37 +123,35 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
     }
   })
 
-  const groupedApiScopes: GroupedApiScopes = (authApiScopes || []).reduce(
-    (acc, apiScope, index) => {
-      const key = apiScope.group
-        ? `${GROUP_PREFIX}:${apiScope.group.name}`
-        : `${SCOPE_PREFIX}:${apiScope.name}`
-
-      return {
-        ...acc,
-        [key]: [
-          ...(acc[key] || []),
-          { ...apiScope, model: `${SCOPE_PREFIX}.${index}` },
-        ],
-      }
-    },
-    {} as GroupedApiScopes,
-  )
   const scopes = getValues()
-    ?.[SCOPE_PREFIX]?.map((item) => {
-      if (item.name && (item.validTo || validityPeriod)) {
-        const authApiScope = authApiScopes?.find(
-          (apiScope) => apiScope.name === item.name[0],
-        )
+    ?.[SCOPE_PREFIX]?.filter(
+      // Filter out scopes with no name or validTo except if name exist and validitPeriod is set
+      ({ name, validTo }) => name && (validTo || validityPeriod),
+    )
+    // Map and flatten scopes to be used in the confirm modal
+    .map((item) =>
+      formatScopeTreeToScope({ item, authScopeTree, validityPeriod }),
+    )
 
-        return {
-          name: authApiScope?.displayName,
-          description: authApiScope?.description,
-          validTo: validityPeriod ?? item.validTo,
-        } as MappedScope
-      }
-    })
-    .filter(isDefined)
+  const renderAccessItem = (
+    authScope: AuthScopeTree[0],
+    index: number,
+    authScopes: AuthScopeTree,
+  ) => {
+    const apiScopes =
+      authScope.__typename === AUTH_API_SCOPE_GROUP_TYPE
+        ? flattenAndExtendApiScopeGroup(authScope, index)
+        : [extendApiScope(authScope, index, authScopes)]
+
+    return (
+      <AccessItem
+        key={index}
+        apiScopes={apiScopes}
+        authDelegation={delegation}
+        validityPeriod={validityPeriod}
+      />
+    )
+  }
 
   return (
     <>
@@ -185,70 +170,15 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
       <FormProvider {...methods}>
         <form onSubmit={onSubmit}>
           <AccessItemHeader hideValidityPeriod={!!validityPeriod} />
-          <Box>
-            {!loading &&
-              scopeTree?.authScopeTree.map((authScope, index) => {
-                const model = `${GROUP_PREFIX}.${index}`
-
-                const apiScopes: Scope[] =
-                  authScope.__typename === 'AuthApiScopeGroup'
-                    ? [
-                        {
-                          ...authScope,
-                          model,
-                        },
-                        ...(authScope.children?.map((scope) => ({
-                          ...scope,
-                          model,
-                        })) || []),
-                      ]
-                    : [
-                        {
-                          ...authScope,
-                          model,
-                        },
-                      ]
-
-                return (
-                  <AccessItem
-                    key={index}
-                    apiScopes={apiScopes}
-                    authDelegation={delegation}
-                    validityPeriod={validityPeriod}
-                  />
-                )
-              })}
-            <Box marginTop={20} />
-            {!loading &&
-              Object.keys(groupedApiScopes).map((key, index) => {
-                const apiScopes = groupedApiScopes[key]
-                const accessItems: Scope[] = key.startsWith(GROUP_PREFIX)
-                  ? [
-                      {
-                        ...apiScopes[0].group,
-                        model: `${GROUP_PREFIX}.${index}`,
-                      } as ApiScopeGroup,
-                      ...apiScopes,
-                    ]
-                  : apiScopes
-
-                return (
-                  <AccessItem
-                    key={index}
-                    apiScopes={accessItems}
-                    authDelegation={delegation}
-                    validityPeriod={validityPeriod}
-                  />
-                )
-              })}
-          </Box>
-          {loading && (
+          {loading ? (
             <Box marginTop={3}>
               <Stack space={3}>
                 <SkeletonLoader width="100%" height={80} />
                 <Divider />
               </Stack>
             </Box>
+          ) : (
+            authScopeTree?.map(renderAccessItem)
           )}
           <Box position="sticky" bottom={0} marginTop={20} paddingBottom={6}>
             <DelegationsFormFooter
