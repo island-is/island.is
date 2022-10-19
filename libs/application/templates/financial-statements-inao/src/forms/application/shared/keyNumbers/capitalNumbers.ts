@@ -8,11 +8,11 @@ import { m } from '../../../../lib/messages'
 
 export const capitalNumberSection = buildSubSection({
   id: 'capitalNumbers',
-  title: m.capitalNumbersSectionTitle,
+  title: m.capitalNumbers,
   children: [
     buildMultiField({
       id: 'capitalNumber',
-      title: m.capitalNumbers,
+      title: m.capitalNumbersSectionTitle,
       description: m.fillOutAppopriate,
       children: [
         buildCustomField({
