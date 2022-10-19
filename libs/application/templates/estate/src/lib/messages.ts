@@ -237,6 +237,22 @@ export const m = defineMessages({
     defaultMessage: 'Skráðu inn upplýsingar um innbú hér',
     description: '',
   },
+  vehicles: {
+    id: 'es.application:vehicles',
+    defaultMessage: 'Farartæki',
+    description: '',
+  },
+  vehiclesDescription: {
+    id: 'es.application:vehiclesDescription',
+    defaultMessage: 'Til dæmis bifreiðar, flugvélar og bátar',
+    description: '',
+  },
+  acceptDebtsLabel: {
+    id: 'es.application:acceptDebtsLabel',
+    defaultMessage:
+      'Ég samþykki að taka yfir áhvílandi skuldir á þessu farartæki sem vitneskja er um',
+    description: '',
+  },
   estateBankInfo: {
     id: 'es.application:estateBankInfo',
     defaultMessage: 'Innistæður í bönkum',
@@ -267,20 +283,34 @@ export const m = defineMessages({
     defaultMessage: 'Bæta við bankareikning',
     description: '',
   },
-  vehicles: {
-    id: 'es.application:vehicles',
-    defaultMessage: 'Farartæki',
+  claimsTitle: {
+    id: 'es.application:claimsTitle',
+    defaultMessage: 'Verðbréf og kröfur',
     description: '',
   },
-  vehiclesDescription: {
-    id: 'es.application:vehiclesDescription',
-    defaultMessage: 'Til dæmis bifreiðar, flugvélar og bátar',
+  claimsDescription: {
+    id: 'es.application:claimsDescription',
+    defaultMessage: 'Útgefandi og fjárhæð með vöxtum',
     description: '',
   },
-  acceptDebtsLabel: {
-    id: 'es.application:acceptDebtsLabel',
-    defaultMessage:
-      'Ég samþykki að taka yfir áhvílandi skuldir á þessu farartæki sem vitneskja er um',
+  claimsPublisher: {
+    id: 'es.application:claimsPublisher',
+    defaultMessage: 'Útgefandi',
+    description: '',
+  },
+  claimsAmount: {
+    id: 'es.application:claimsAmount',
+    defaultMessage: 'Fjárhæð með vöxtum á dánardegi',
+    description: '',
+  },
+  sharesTitle: {
+    id: 'es.application:sharesTitle',
+    defaultMessage: 'Hlutabréf',
+    description: '',
+  },
+  sharesDescription: {
+    id: 'es.application:sharesDescription',
+    defaultMessage: 'Nafn og kennitala ef um einstakling er að ræða',
     description: '',
   },
 

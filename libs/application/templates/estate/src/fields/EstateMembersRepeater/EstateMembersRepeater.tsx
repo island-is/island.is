@@ -20,7 +20,6 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
   field,
   errors,
 }) => {
-  console.log(errors)
   const { id } = field
   const { formatMessage } = useLocale()
   const { fields, append, remove } = useFieldArray<EstateMember>({

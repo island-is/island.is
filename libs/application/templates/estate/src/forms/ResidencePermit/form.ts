@@ -64,7 +64,6 @@ export const form: Form = buildForm({
               title: m.properties,
               description: m.propertiesDescription,
               children: [
-                //...propertiesFields,
                 buildDescriptionField({
                   id: 'realEstateAndLandsTitle',
                   title: m.realEstateAndLand,
@@ -156,7 +155,6 @@ export const form: Form = buildForm({
                   title: '',
                   id: 'bankAccounts',
                   component: 'BankAccountsRepeater',
-                  childInputIds: ['bankAccounts'],
                 }),
               ],
             }),
@@ -164,7 +162,7 @@ export const form: Form = buildForm({
         }),
         buildSubSection({
           id: 'claims',
-          title: 'Verðbréf og kröfur',
+          title: m.claimsTitle,
           children: [
             buildMultiField({
               id: 'claims',
@@ -173,18 +171,18 @@ export const form: Form = buildForm({
               children: [
                 buildDescriptionField({
                   id: 'claimsTitle',
-                  title: 'Verðbréf og kröfur',
-                  description: 'Útgefandi og fjárhæð með vöxtum',
+                  title: m.claimsTitle,
+                  description: m.claimsDescription,
                   titleVariant: 'h3',
                 }),
                 buildTextField({
-                  id: 'publisher',
-                  title: 'útgefandi',
+                  id: 'claimsPublisher',
+                  title: m.claimsPublisher,
                   width: 'half',
                 }),
                 buildTextField({
-                  id: 'amount',
-                  title: 'Fjárhæð með vöxtum á dánardegi',
+                  id: 'claimsAmount',
+                  title: m.claimsAmount,
                   width: 'half',
                 }),
               ],
@@ -193,7 +191,7 @@ export const form: Form = buildForm({
         }),
         buildSubSection({
           id: 'shares',
-          title: 'Hlutabréf',
+          title: m.sharesTitle,
           children: [
             buildMultiField({
               id: 'shares',
@@ -202,8 +200,8 @@ export const form: Form = buildForm({
               children: [
                 buildDescriptionField({
                   id: 'sharesTitle',
-                  title: 'Hlutabréf',
-                  description: 'Nafn og kennitala ef um einstakling er að ræða',
+                  title: m.sharesTitle,
+                  description: m.sharesDescription,
                   titleVariant: 'h3',
                 }),
                 buildTextField({
