@@ -45,7 +45,7 @@ export const estateSchema = z.object({
     vehicles: asset,
     ships: asset,
     knowledgeOfOtherWills: z.enum(['yes', 'no']).optional(),
-    //caseNumber: z.string().nonempty(),
+    caseNumber: z.string().nonempty().optional(),
     dateOfDeath: z.date().optional(),
     nameOfDeceased: z.string().nonempty().optional(),
     nationalIdOfDeceased: z.string().length(10).optional(),
