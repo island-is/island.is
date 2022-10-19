@@ -85,6 +85,8 @@ export const OPERATING_LICENSE = [
   },
 ] as VirkLeyfi[]
 
+export const OPERATING_LICENSES_CSV = 'a,b\r\nx,y\r\nz,i'
+
 export const OPERATING_LICENSE_PAGINATION_INFO_SERVICE_RES = {
   PageSize: 10,
   PageNumber: 1,
