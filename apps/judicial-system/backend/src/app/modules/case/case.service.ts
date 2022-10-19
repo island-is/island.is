@@ -332,7 +332,6 @@ export class CaseService {
         return {
           name: caseFile.userGeneratedFilename ?? caseFile.name,
           chapter: caseFile.chapter as number,
-          order: caseFile.orderWithinChapter as number,
           buffer: buffer ?? undefined,
         }
       })

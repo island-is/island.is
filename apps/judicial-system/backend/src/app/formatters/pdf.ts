@@ -31,6 +31,7 @@ export interface PdfDocument {
     options?: PdfTextOptions,
   ) => PdfDocument
   getContents: () => Promise<Buffer>
+  getPageCount: () => number
   mergeDocument: (buffer: Buffer) => Promise<PdfDocument>
   setMargins: (
     top: number,
@@ -241,6 +242,8 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
 
       return Buffer.from(bytes)
     },
+
+    getPageCount: () => rawDocument.getPageCount(),
 
     mergeDocument: async (buffer: Buffer) => {
       const filePdfDoc = await PDFDocument.load(buffer)

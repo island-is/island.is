@@ -29,7 +29,6 @@ export const createCaseFilesRecord = async (
   caseFiles: (() => Promise<{
     name: string
     chapter: number
-    order: number
     buffer?: Buffer
   }>)[],
   formatMessage: FormatMessage,
@@ -42,6 +41,12 @@ export const createCaseFilesRecord = async (
   const subtitleFontSize = 14
   const textFontSize = 12
 
+  const pageReferences: {
+    chapter: number
+    name: string
+    pageNumber: number
+  }[] = []
+
   const pdfDocument = await PdfDocument(
     formatMessage(caseFilesRecord.title, { policeCaseNumber }),
   )
@@ -49,7 +54,13 @@ export const createCaseFilesRecord = async (
   pdfDocument.setMargins(pageMargin, pageMargin, pageMargin, pageMargin)
 
   for (const caseFile of caseFiles) {
-    const { name, chapter, order, buffer } = await caseFile()
+    const { name, chapter, buffer } = await caseFile()
+
+    pageReferences.push({
+      chapter,
+      name,
+      pageNumber: pdfDocument.getPageCount() + 1,
+    })
 
     if (buffer) {
       await pdfDocument.mergeDocument(buffer)
