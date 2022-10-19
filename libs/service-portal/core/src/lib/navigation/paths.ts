@@ -97,7 +97,7 @@ export enum ServicePortalPath {
 
   // Licenses service
   LicensesRoot = '/skirteini',
-  LicensesPassportDetail = '/skirteini/vegabref/:id',
+  LicensesPassportDetail = '/skirteini/tjodskra/vegabref/:id',
   LicensesDetail = '/skirteini/:provider/:type',
 
   // DocumentProvider

@@ -96,6 +96,7 @@ export const parseDrivingLicensePayload = (
     metadata: {
       licenseNumber: license.id?.toString() ?? '',
       expired,
+      expireDate: license.gildirTil ?? undefined,
       links: [
         {
           label: label
