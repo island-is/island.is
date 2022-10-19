@@ -9,6 +9,11 @@ export type Election = {
   electionDate: Date
 }
 
+export type ElectionInfo = {
+  electionType: number
+  electionDate: string
+}
+
 export type FinancialType = {
   numericValue: number
   financialTypeId: string
