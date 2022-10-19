@@ -51,7 +51,13 @@
     "http-cache-semantics",
     "clone-response",
     "to-readable-stream",
-    "url-parse-lax"
+    "url-parse-lax",
+    "@sindresorhus/is",
+    "@szmarczak/http-timer",
+    "cacheable-request",
+    "decompress-response",
+    "lowercase-keys",
+    "mimic-response"
   ],
   "keepNames": true
 }
