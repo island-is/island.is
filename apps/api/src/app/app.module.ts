@@ -68,6 +68,7 @@ import { AdrAndMachineLicenseClientConfig } from '@island.is/clients/adr-and-mac
 import { FirearmLicenseClientConfig } from '@island.is/clients/firearm-license'
 import { PassportsClientConfig } from '@island.is/clients/passports'
 import { FileStorageConfig } from '@island.is/file-storage'
+import { AuthDelegationApiClientConfig } from '@island.is/clients/auth/delegation-api'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -280,6 +281,7 @@ const autoSchemaFile = environment.production
         FirearmLicenseClientConfig,
         VehiclesClientConfig,
         AuthPublicApiClientConfig,
+        AuthDelegationApiClientConfig,
         DownloadServiceConfig,
         FeatureFlagConfig,
         FinanceClientConfig,

@@ -5,12 +5,12 @@ import { ScopesApi } from '@island.is/clients/auth/public-api'
 import { ApiScope } from '../models/apiScope.model'
 import { ApiScopeGroup } from '../models/apiScopeGroup.model'
 import { ScopeTreeNode } from '../models/scopeTreeNode.model'
-import { ApiScopeServiceI } from '../services/types'
+import { ApiScopeServiceInterface } from '../services/types'
 import { ApiScopesInput } from '../dto/apiScopes.input'
 import { ISLAND_DOMAIN } from './constants'
 
 @Injectable()
-export class ApiScopeServiceV1 implements ApiScopeServiceI {
+export class ApiScopeServiceV1 implements ApiScopeServiceInterface {
   constructor(private scopesApi: ScopesApi) {}
 
   private scopesApiWithAuth(auth: Auth) {

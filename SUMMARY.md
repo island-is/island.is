@@ -157,6 +157,7 @@
   - [ADR and Machine License](libs/clients/adr-and-machine-license/README.md)
   - [Assets](libs/clients/assets/README.md)
   - [Auth](libs/clients/auth/README.md)
+    - [Delegation API](libs/clients/auth/delegation-api/README.md)
     - [Public API](libs/clients/auth/public-api/README.md)
   - [Charge Fjs V2](libs/clients/charge-fjs-v2/README.md)
   - [Criminal Record](libs/clients/criminal-record/README.md)

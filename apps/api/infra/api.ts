@@ -22,6 +22,7 @@ import {
   Firearm,
 } from '../../../infra/src/dsl/xroad'
 import { settings } from '../../../infra/src/dsl/settings'
+import { MissingSetting } from '../../../infra/src/dsl/types/input-types'
 
 export const serviceSetup = (services: {
   appSystemApi: ServiceBuilder<'application-system-api'>
@@ -216,6 +217,20 @@ export const serviceSetup = (services: {
       Vehicles,
       Passports,
     )
+    .features({
+      'delegation-api': {
+        env: {
+          AUTH_DELEGATION_API_URL: {
+            dev:
+              'http://web-services-auth-delegation-api.identity-server.svc.cluster.local',
+            staging:
+              'http://web-services-auth-delegation-api.identity-server.svc.cluster.local',
+            prod: MissingSetting, // this allows us to specify that we still do not know that the value is
+          },
+        },
+        secrets: {},
+      },
+    })
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({
       primary: {
