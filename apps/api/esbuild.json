@@ -45,7 +45,8 @@
     "safer-buffer",
     "ts-morph",
     "ioredis",
-    "duplexer3"
+    "duplexer3",
+    "normalize-url"
   ],
   "keepNames": true
 }
