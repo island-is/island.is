@@ -10,7 +10,6 @@ import {
 } from '../../lib/messages'
 import { FishingLicenseEnum } from '../../types'
 import * as styles from './FishingLicenseFurtherInfo.css'
-import { FileUploadController } from '@island.is/shared/form-fields'
 
 export const FishingLicenseFurtherInfo: FC<FieldBaseProps> = ({
   application,
@@ -53,32 +52,6 @@ export const FishingLicenseFurtherInfo: FC<FieldBaseProps> = ({
           )}
           minDate={new Date()}
         />
-      </Box>
-      {/* Attatchments TODO */}
-      <Box marginBottom={6}>
-        <Text fontWeight="semiBold" marginBottom={2}>
-          {formatMessage(fishingLicenseFurtherInformation.labels.attachments)}
-        </Text>
-        <Text marginBottom={2}>
-          {formatMessage(
-            fishingLicenseFurtherInformation.fieldInformation.attachments,
-          )}
-        </Text>
-        {/* <FileUploadController
-          id={`${field.id}.attachments`}
-          application={application}
-          error={errors && getErrorViaPath(errors, `${field.id}.attachments`)}
-          maxSize={1000000000}
-          header={formatMessage(
-            fishingLicenseFurtherInformation.attachmentInfo.title,
-          )}
-          description={formatMessage(
-            fishingLicenseFurtherInformation.attachmentInfo.subtitle,
-          )}
-          buttonLabel={formatMessage(
-            fishingLicenseFurtherInformation.attachmentInfo.buttonLabel,
-          )}
-        /> */}
       </Box>
     </>
   )

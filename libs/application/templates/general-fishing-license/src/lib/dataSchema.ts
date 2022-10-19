@@ -3,6 +3,12 @@ import { error } from './messages'
 import * as kennitala from 'kennitala'
 import { FishingLicenseEnum } from '../types'
 
+const FileSchema = z.object({
+  name: z.string(),
+  key: z.string(),
+  url: z.string().optional(),
+})
+
 export const GeneralFishingLicenseSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   externalData: z.object({
@@ -73,6 +79,7 @@ export const GeneralFishingLicenseSchema = z.object({
   }),
   fishingLicenseFurtherInformation: z.object({
     date: z.string().refine((x) => x.trim().length > 0),
+    attachments: z.array(FileSchema).optional(), // TODO: make only optional for those licenses that shouldn't have attatchments
   }),
 })
 
