@@ -8,7 +8,8 @@ export const getLabel = (
 ) => {
   return label
     ? label[`${labelKey}`]
-    : Object.entries(i18n).find((x) => x[0] === `${labelKey}`)?.[1][locale]
+    : Object.entries(i18n).find((x) => x[0] === `${labelKey}`)?.[1][locale] ||
+        ''
 }
 
 export const i18n = {
