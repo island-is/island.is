@@ -278,6 +278,27 @@ export class CaseController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseReadGuard)
+  @RolesRules(prosecutorRule, judgeRule, registrarRule)
+  @Get('case/:caseId/caseFiles')
+  @ApiOkResponse({
+    content: { 'application/pdf': {} },
+    description: 'Gets the case files for an existing case as a pdf document',
+  })
+  async getCaseFilesPdf(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+    @Res() res: Response,
+  ): Promise<void> {
+    this.logger.debug(
+      `Getting the case files for case ${caseId} as a pdf document`,
+    )
+
+    const pdf = await this.caseService.getCaseFilesPdf(theCase)
+
+    res.end(pdf)
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseReadGuard)
   @RolesRules(prosecutorRule, judgeRule, registrarRule, staffRule)
   @Get('case/:caseId/courtRecord')
   @Header('Content-Type', 'application/pdf')

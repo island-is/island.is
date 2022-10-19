@@ -12,6 +12,8 @@ import {
   SvarSkeytiFromJSON,
   TegundAndlags,
   AdiliDanarbus,
+  Fasteignasalar,
+  Logmenn,
 } from '../../gen/fetch'
 import { uuid } from 'uuidv4'
 import {
@@ -31,6 +33,9 @@ import {
   EstateMember,
   EstateAsset,
   EstateRegistrant,
+  RealEstateAgent,
+  Lawyer,
+  OperatingLicensesCSV,
 } from './syslumennClient.types'
 const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 
@@ -92,7 +97,18 @@ export const mapSyslumennAuction = (auction: Uppbod): SyslumennAuction => ({
   auctionTime: auction.klukkan ?? '',
   petitioners: auction.gerdarbeidendur ?? '',
   respondent: auction.gerdartholar ?? '',
+  publishText: auction.auglysingatexti ?? '',
   auctionTakesPlaceAt: auction.uppbodStadur ?? '',
+})
+
+export const mapRealEstateAgent = (agent: Fasteignasalar): RealEstateAgent => ({
+  name: agent.nafn?.trim() ?? '',
+  location: agent.starfsstod?.trim() ?? '',
+})
+
+export const mapLawyer = (lawyer: Logmenn): Lawyer => ({
+  name: lawyer.nafn?.trim() ?? '',
+  licenceType: lawyer.tegundRettinda?.trim() ?? '',
 })
 
 export const mapOperatingLicense = (
@@ -149,6 +165,12 @@ export const mapPaginatedOperatingLicenses = (
   paginationInfo: mapPaginationInfo(paginationInfoHeaderJSON),
   searchQuery: searchQuery,
   results: (results ?? []).map(mapOperatingLicense),
+})
+
+export const mapOperatingLicensesCSV = (
+  responseStringCSV: string,
+): OperatingLicensesCSV => ({
+  value: responseStringCSV,
 })
 
 export function constructUploadDataObject(

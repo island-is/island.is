@@ -21,6 +21,7 @@ export const m = defineMessages({
     defaultMessage: 'Áfram',
     description: 'continue',
   },
+
   institutionName: {
     id: 'fsn.application:institution',
     defaultMessage: 'Ríkisendurskoðun',
@@ -197,18 +198,18 @@ export const m = defineMessages({
   },
   keyNumbersDebt: {
     id: 'fsn.application:keyNumbers.debt',
-    defaultMessage: 'Lykiltölur - Skuldir, eignir og eigið fé',
+    defaultMessage: 'Lykiltölur - Eignir, Skuldir og eigið fé',
     description: 'Statement debts',
+  },
+  fixedAssetsTotal: {
+    id: 'fsn.application:keyNumbers.fixedAssetsTotal',
+    defaultMessage: 'Fastafjármunir samtals',
+    description: 'Fixed assets',
   },
   currentAssets: {
     id: 'fsn.application:keyNumbers.currentAssets',
-    defaultMessage: 'Fastafjármunir samtals',
-    description: 'Current assets',
-  },
-  tangibleAssets: {
-    id: 'fsn.application:keyNumbers.tangibleAssets',
     defaultMessage: 'Veltufjármunir samtals',
-    description: 'Fixed tangible assets',
+    description: 'Current assets',
   },
   longTerm: {
     id: 'fsn.application:keyNumbers.longTermdebt',
@@ -237,7 +238,7 @@ export const m = defineMessages({
   },
   operatingCost: {
     id: 'fsn.application:keyNumbers.operatingCost',
-    defaultMessage: 'Rekstrarniðurstaða',
+    defaultMessage: 'Rekstrarniðurstaða alls',
     description: 'Operating Cost',
   },
   operatingYear: {
@@ -267,7 +268,7 @@ export const m = defineMessages({
   },
   totalCapital: {
     id: 'fsn.application:totalCapital',
-    defaultMessage: 'Fjármagnsgjöld samtals',
+    defaultMessage: 'Fjármagnsliðir samtals',
     description: 'Total capital',
   },
   totalEquity: {
@@ -290,43 +291,68 @@ export const m = defineMessages({
     defaultMessage: 'Framlög lögaðila',
     description: 'Donations',
   },
+  errorNationalIdIncorrect: {
+    id: 'fsn.application:error.nationalIdIncorrect',
+    defaultMessage: 'Þessi kennitala virðist ekki vera rétt',
+    description: 'National id is invalid',
+  },
   errorEmpty: {
     id: 'fsn.application:error.empty',
     defaultMessage: 'Reitur má ekki vera tómur',
     description: 'empty field error',
   },
-  publicDonations: {
-    id: 'fsn.application:income.publicDonations',
+  errorApproval: {
+    id: 'fsn.application:error.errorApproval',
+    defaultMessage: 'Samþykkja þarf yfirlit',
+    description: 'Approval missing',
+  },
+  errorSignature: {
+    id: 'fsn.application:error.errorSignature',
+    defaultMessage: 'Samþykkja þarf yfirlit með rafrænni undirritun',
+    description: 'Signature missing',
+  },
+  errorMembersMissing: {
+    id: 'fsn.application:error.errorMembersMissing',
+    defaultMessage: 'Skrá þarf bæði skoðunarmann og stjórnarmann',
+    description: 'Members missing',
+  },
+  contributionsFromTheTreasury: {
+    id: 'fsn.application:income.contributionsFromTheTreasury',
     defaultMessage: 'Framlög úr ríkissjóði',
     description: 'public donations',
   },
-  partyDonations: {
-    id: 'fsn.application:income.partyDonations',
+  parliamentaryPartySupport: {
+    id: 'fsn.application:income.parliamentaryPartySupport',
     defaultMessage: 'Þingflokksstyrkur',
     description: 'Party donations',
   },
-  municipalityDonations: {
-    id: 'fsn.application:income.municipalityDonations',
+  municipalContributions: {
+    id: 'fsn.application:income.municipalContributions',
     defaultMessage: 'Framlög sveitarfélaga',
     description: 'Municipality Donations',
   },
-  corporateDonation: {
-    id: 'fsn.application:income.corporateDonation',
+  contributionsFromLegalEntities: {
+    id: 'fsn.application:income.contributionsFromLegalEntities',
     defaultMessage: 'Framlög lögaðila',
-    description: 'Corporate donation',
+    description: 'Contributions From Legal Entities',
   },
-  individualDonations: {
-    id: 'fsn.application:income.individualDonations',
+  contributionsFromIndividuals: {
+    id: 'fsn.application:income.contributionsFromIndividuals',
     defaultMessage: 'Framlög einstaklinga',
-    description: 'Corporate donation',
+    description: 'Contributions From Individuals',
+  },
+  generalMembershipFees: {
+    id: 'fsn.application:income.generalMembershipFees',
+    defaultMessage: 'Almenn félagsgjöld',
+    description: 'General membership fees',
   },
   otherIncome: {
     id: 'fsn.application:income.other',
     defaultMessage: 'Aðrar tekjur',
     description: 'Other income',
   },
-  personalDonations: {
-    id: 'fsn.application:income.personalDonations',
+  candidatesOwnContributions: {
+    id: 'fsn.application:income.candidatesOwnContributions',
     defaultMessage: 'Eigin framlög frambjóðenda',
     description: 'Candiates own donation',
   },
@@ -350,6 +376,11 @@ export const m = defineMessages({
     defaultMessage: 'Fjármagnsliðir',
     description: 'capital numbers',
   },
+  capitalNumbersSectionTitle: {
+    id: 'fsn.application:income.capitalNumbersSectionTitle',
+    defaultMessage: 'Lykiltölur Fjármagnsliðir',
+    description: 'capital numbers',
+  },
   electionOffice: {
     id: 'fsn.application:income.electionOffice',
     defaultMessage: 'Kosningaskrifstofa',
@@ -370,30 +401,35 @@ export const m = defineMessages({
     defaultMessage: 'Annar kostnaður',
     description: 'Other costs',
   },
+  otherOperationalCost: {
+    id: 'fsn.application:income.otherOperationalCost',
+    defaultMessage: 'Annar rekstrarkostnaður',
+    description: 'Other costs',
+  },
   capitalCost: {
     id: 'fsn.application:income.capitalCost',
     defaultMessage: 'Fjármagnsgjöld',
     description: 'capital costs',
   },
-  caretaking: {
-    id: 'fsn.application:income.caretaking',
+  careIncome: {
+    id: 'fsn.application:income.careIncome',
     defaultMessage: 'Umhirðutekjur',
     description: 'caretaking income',
   },
-  graveIncome: {
-    id: 'fsn.application:income.graveIncome',
+  burialRevenue: {
+    id: 'fsn.application:income.burialRevenue',
     defaultMessage: 'Grafartekjur',
-    description: 'graveIncome income',
+    description: 'burial revenue',
   },
-  cemetryFundDonations: {
-    id: 'fsn.application:income.cemetryFundDonations',
+  grantFromTheCemeteryFund: {
+    id: 'fsn.application:income.grantFromTheCemeteryFund',
     defaultMessage: 'Styrkur frá kirkjugarðasjóði',
     description: 'Income from cemetry fund',
   },
-  cemeteryFundExpense: {
-    id: 'fsn.application:income.cemetryFundDonations',
+  donationsToCemeteryFund: {
+    id: 'fsn.application:income.donationsToCemeteryFund',
     defaultMessage: 'Styrkur frá kirkjugarðasjóði',
-    description: 'Income from cemetry fund',
+    description: 'donations from cemetry fund',
   },
   cemeteryCaretakers: {
     id: 'fsn.application:cemeteryCaretakers',
@@ -461,10 +497,10 @@ export const m = defineMessages({
     defaultMessage: 'Annar rekstrarkostnaður',
     description: 'other operations cost',
   },
-  writtenOffExpense: {
-    id: 'fsn.application:income.writtenOffExpense',
+  depreciation: {
+    id: 'fsn.application:income.depreciation',
     defaultMessage: 'Afskriftir',
-    description: 'Written off expense',
+    description: 'Depreciation',
   },
   totalIncome: {
     id: 'fsn.application:income.totalIncome',
@@ -491,12 +527,12 @@ export const m = defineMessages({
     defaultMessage: 'Eigið fé samtals',
     description: 'total equity',
   },
-  newYearequity: {
-    id: 'fsn.application:keyNumbers.newYearequity',
+  equityAtTheBeginningOfTheYear: {
+    id: 'fsn.application:keyNumbers.equityAtTheBeginningOfTheYear',
     defaultMessage: 'Eigið fé 1. Janúar',
     description: 'equity january first',
   },
-  reevaluatePrice: {
+  revaluationDueToPriceChanges: {
     id: 'fsn.application:keyNumbers.reevaluatePrice',
     defaultMessage: 'Endurmat vegna verðbreytinga',
     description: 'Revaluation because of price change',
@@ -640,6 +676,12 @@ export const m = defineMessages({
       'Heildartekjur og heildarkostnað við kosningabaráttuna var meira en',
     description: 'Spending was more than a specific limit',
   },
+  goBack: {
+    id: 'fsn.application:overview.goBack',
+    defaultMessage: 'Til Baka',
+    description: 'Go back btn text',
+  },
+
   crowns: {
     id: 'fsn.application:crowns',
     defaultMessage: 'krónum',
@@ -670,6 +712,12 @@ export const m = defineMessages({
     defaultMessage: 'Kennitala er ekki á réttu formi',
     description: 'Error message when nationalid is wrong',
   },
+  nationalIdAgeError: {
+    id: 'fsn.application:error.nationalIdAgeError',
+    defaultMessage: 'Skoðunar- og Stjórnunarmenn þurfa að vera eldri en 18 ára',
+    description:
+      'Error message when attempting to register younger then 18 caretaker',
+  },
   returned: {
     id: 'fsn.application:returned',
     defaultMessage: 'Skilað',
@@ -686,7 +734,7 @@ export const m = defineMessages({
     description: 'Second part of audit received message',
   },
   operatingYearMsgFirst: {
-    id: 'fsn.application:individualReceivedMsgFirst',
+    id: 'fsn.application:operatingYearMsgFirst',
     defaultMessage: 'Ársreikningi fyrir rekstrarárið',
     description: 'First part of audit received message',
   },
@@ -715,6 +763,19 @@ export const m = defineMessages({
     id: 'fsn.application:error.dataProvider',
     defaultMessage: 'Reyndu aftur síðar',
     description: 'Unhandled error in data provider',
+  },
+  submitErrorTitle: {
+    id: 'fsn.application:submitErrorTitle',
+    defaultMessage: 'Móttaka ársreiknings tókst ekki',
+    description:
+      'Title that shows up when an error occurs while submitting the application',
+  },
+  submitErrorMessage: {
+    id: 'fsn.application:submitErrorMessage',
+    defaultMessage:
+      'Eitthvað fór úrskeiðis við að senda inn ársreikning. Reyndu aftur síðar.',
+    description:
+      'Text that shows up when an error occurs while submitting the application',
   },
 })
 

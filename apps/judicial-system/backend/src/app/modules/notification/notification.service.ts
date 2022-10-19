@@ -71,6 +71,7 @@ import { SendNotificationDto } from './dto/sendNotification.dto'
 import { Notification } from './models/notification.model'
 import { SendNotificationResponse } from './models/sendNotification.resopnse'
 import { notificationModuleConfig } from './notification.config'
+import { DefendantService } from '../defendant'
 
 interface Recipient {
   address?: string
@@ -96,6 +97,7 @@ export class NotificationService {
     private readonly emailService: EmailService,
     private readonly eventService: EventService,
     private readonly intlService: IntlService,
+    private readonly defendantService: DefendantService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -396,10 +398,10 @@ export class NotificationService {
   ): Promise<Recipient> {
     const { body, subject } = formatDefenderResubmittedToCourtEmailNotification(
       this.formatMessage,
-      theCase.type,
-      theCase.policeCaseNumbers,
-      formatDefenderRoute(this.config.clientUrl, theCase.type, theCase.id),
+      theCase.defenderNationalId &&
+        formatDefenderRoute(this.config.clientUrl, theCase.type, theCase.id),
       theCase.court?.name,
+      theCase.courtCaseNumber,
     )
 
     return this.sendEmail(
@@ -437,6 +439,35 @@ export class NotificationService {
     )
   }
 
+  private async defenderCourtDateNotificationSent(theCase: Case) {
+    let exists = false
+
+    try {
+      const notifications = await this.notificationModel.findAll({
+        where: {
+          caseId: theCase.id,
+          type: NotificationType.COURT_DATE,
+        },
+      })
+
+      exists = notifications.some(async (notification) =>
+        JSON.parse(notification.recipients ?? '[]').some(
+          (recipient: Recipient) =>
+            recipient.address === theCase.defenderEmail &&
+            recipient.success === true,
+        ),
+      )
+    } catch (error) {
+      // Tolerate failure, but log error
+      this.logger.error(
+        `Error when looking for defender court date notification for case ${theCase.id}`,
+        { error },
+      )
+    }
+
+    return exists
+  }
+
   private async sendReadyForCourtNotifications(
     theCase: Case,
     user?: User,
@@ -448,10 +479,7 @@ export class NotificationService {
     }
 
     const notification = await this.notificationModel.findOne({
-      where: {
-        caseId: theCase.id,
-        type: NotificationType.READY_FOR_COURT,
-      },
+      where: { caseId: theCase.id, type: NotificationType.READY_FOR_COURT },
     })
 
     const promises: Promise<Recipient>[] = [
@@ -469,11 +497,17 @@ export class NotificationService {
         promises.push(
           this.sendResubmittedToCourtSmsNotificationToCourt(theCase),
         )
+
+        const defenderCourtDateNotificationSent = await this.defenderCourtDateNotificationSent(
+          theCase,
+        )
+
         if (
           theCase.courtDate &&
           theCase.sendRequestToDefender &&
           theCase.defenderName &&
-          theCase.defenderEmail
+          theCase.defenderEmail &&
+          defenderCourtDateNotificationSent
         ) {
           promises.push(this.sendResubmittedToCourtEmailToDefender(theCase))
         }
@@ -912,14 +946,28 @@ export class NotificationService {
       promises.push(
         this.sendRulingEmailNotificationToPrisonAdministration(theCase),
       )
+    }
 
-      if (
-        (theCase.type === CaseType.CUSTODY ||
-          theCase.type === CaseType.ADMISSION_TO_FACILITY) &&
-        (theCase.decision === CaseDecision.ACCEPTING ||
-          theCase.decision === CaseDecision.ACCEPTING_PARTIALLY)
-      ) {
+    if (
+      CaseDecision.ACCEPTING === theCase.decision ||
+      CaseDecision.ACCEPTING_PARTIALLY === theCase.decision
+    ) {
+      if (theCase.type === CaseType.CUSTODY) {
         promises.push(this.sendRulingEmailNotificationToPrison(theCase))
+      } else if (theCase.type === CaseType.ADMISSION_TO_FACILITY) {
+        try {
+          const inCustody = await this.defendantService.isDefendantInActiveCustody(
+            theCase.defendants,
+          )
+          if (
+            inCustody ||
+            (theCase.defendants && theCase.defendants[0]?.noNationalId === true)
+          ) {
+            promises.push(this.sendRulingEmailNotificationToPrison(theCase))
+          }
+        } catch (_error) {
+          promises.push(this.sendRulingEmailNotificationToPrison(theCase))
+        }
       }
     }
 

@@ -41,7 +41,7 @@ export const DelegationConfig = defineConfig<z.infer<typeof schema>>({
   load: (env) => ({
     customScopeRules: env.optionalJSON('DELEGATION_CUSTOM_SCOPE_RULES') ?? [
       {
-        scopeName: AuthScope.writeDelegations,
+        scopeName: AuthScope.delegations,
         onlyForDelegationType: ['ProcurationHolder'],
       },
       {

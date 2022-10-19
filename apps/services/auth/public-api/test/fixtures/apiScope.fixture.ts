@@ -11,6 +11,7 @@ const createRandomApiScope = (): ApiScopesDTO => {
     name: faker.random.word(),
     displayName: faker.random.word(),
     description: faker.random.word(),
+    order: 0,
     showInDiscoveryDocument: true,
     required: false,
     emphasize: false,
@@ -20,6 +21,7 @@ const createRandomApiScope = (): ApiScopesDTO => {
     automaticDelegationGrant: false,
     alsoForDelegatedUser: false,
     grantToPersonalRepresentatives: false,
+    domainName: faker.random.word(),
   }
 }
 

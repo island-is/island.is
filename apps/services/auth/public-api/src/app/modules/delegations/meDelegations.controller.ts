@@ -17,9 +17,11 @@ import differenceWith from 'lodash/differenceWith'
 import {
   compareScopesByName,
   CreateDelegationDTO,
+  DEFAULT_DOMAIN,
   DelegationDirection,
   DelegationDTO,
   DelegationsService,
+  DelegationType,
   DelegationValidity,
   UpdateDelegationDTO,
 } from '@island.is/auth-api-lib'
@@ -38,6 +40,7 @@ import {
   Features,
 } from '@island.is/nest/feature-flags'
 import { Documentation } from '@island.is/nest/swagger'
+import { isDefined } from '@island.is/shared/utils'
 
 const namespace = '@island.is/auth-public-api/delegations'
 
@@ -51,7 +54,7 @@ export class MeDelegationsController {
     private readonly auditService: AuditService,
   ) {}
 
-  @Scopes(AuthScope.readDelegations)
+  @Scopes(AuthScope.delegations)
   @FeatureFlag(Features.customDelegations)
   @Get()
   @Documentation({
@@ -83,7 +86,7 @@ export class MeDelegationsController {
   })
   @Audit<DelegationDTO[]>({
     resources: (delegations) =>
-      delegations.map((delegation) => delegation?.id ?? ''),
+      delegations.map((delegation) => delegation.id).filter(isDefined),
   })
   async findAll(
     @CurrentUser() user: User,
@@ -97,10 +100,12 @@ export class MeDelegationsController {
       )
     }
 
-    return this.delegationsService.findAllOutgoing(user, validity, otherUser)
+    return (
+      await this.delegationsService.findAllOutgoing(user, validity, otherUser)
+    ).filter((d) => d.domainName == DEFAULT_DOMAIN)
   }
 
-  @Scopes(AuthScope.readDelegations)
+  @Scopes(AuthScope.delegations)
   @FeatureFlag(Features.customDelegations)
   @Get(':delegationId')
   @Documentation({
@@ -118,7 +123,7 @@ export class MeDelegationsController {
     },
   })
   @Audit<DelegationDTO>({
-    resources: (delegation) => delegation?.id ?? '',
+    resources: (delegation) => delegation?.id ?? undefined,
   })
   async findOne(
     @CurrentUser() user: User,
@@ -129,21 +134,21 @@ export class MeDelegationsController {
       delegationId,
     )
 
-    if (!delegation) {
+    if (!delegation || delegation.domainName != DEFAULT_DOMAIN) {
       throw new NotFoundException()
     }
 
     return delegation
   }
 
-  @Scopes(AuthScope.writeDelegations)
+  @Scopes(AuthScope.delegations)
   @FeatureFlag(Features.customDelegations)
   @Post()
   @Documentation({
     response: { status: 201, type: DelegationDTO },
   })
   @Audit<DelegationDTO>({
-    resources: (delegation) => delegation?.id ?? '',
+    resources: (delegation) => delegation?.id ?? undefined,
     meta: (delegation) => ({
       scopes: delegation.scopes?.map((s) => ({
         scopeName: s.scopeName,
@@ -158,7 +163,7 @@ export class MeDelegationsController {
     return this.delegationsService.create(user, delegation)
   }
 
-  @Scopes(AuthScope.writeDelegations)
+  @Scopes(AuthScope.delegations)
   @FeatureFlag(Features.customDelegations)
   @Put(':delegationId')
   @Documentation({
@@ -176,33 +181,38 @@ export class MeDelegationsController {
     if (!currentDelegation) {
       throw new NotFoundException()
     }
-    const { scopes: oldScopes } = currentDelegation
+    const { scopes: oldScopes = [] } = currentDelegation
 
     return this.auditService.auditPromise<DelegationDTO | null>(
       {
         auth: user,
         namespace,
         action: 'update',
-        resources: (delegation) => delegation?.id ?? '',
-        meta: ({ scopes: newScopes }) => ({
-          deleted: differenceWith(
-            oldScopes,
-            newScopes,
-            compareScopesByName,
-          ).map((s) => s.scopeName),
-          added: differenceWith(newScopes, oldScopes, compareScopesByName).map(
-            (s) => ({
+        resources: (delegation) => delegation?.id ?? undefined,
+        meta: (delegation) => {
+          const newScopes = delegation?.scopes || []
+          return {
+            deleted: differenceWith(
+              oldScopes,
+              newScopes,
+              compareScopesByName,
+            ).map((s) => s.scopeName),
+            added: differenceWith(
+              newScopes,
+              oldScopes,
+              compareScopesByName,
+            ).map((s) => ({
               scopeName: s.scopeName,
               validTo: s.validTo,
-            }),
-          ),
-        }),
+            })),
+          }
+        },
       },
       this.delegationsService.update(user, delegation, delegationId),
     )
   }
 
-  @Scopes(AuthScope.writeDelegations)
+  @Scopes(AuthScope.delegations)
   @FeatureFlag(Features.customDelegations)
   @Delete(':delegationId')
   @Documentation({

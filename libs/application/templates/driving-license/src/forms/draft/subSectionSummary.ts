@@ -17,6 +17,7 @@ import { YES } from '../../lib/constants'
 import { B_TEMP } from '../../shared/constants'
 import {
   hasNoDrivingLicenseInOtherCountry,
+  isApplicationForCondition,
   needsHealthCertificateCondition,
 } from '../../lib/utils'
 
@@ -46,7 +47,10 @@ export const subSectionSummary = buildSubSection({
         }),
         buildKeyValueField({
           label: m.overviewSubType,
-          value: ({ answers: { subType } }) => subType as string[],
+          value: ({ answers: { applicationFor } }) =>
+            applicationFor === B_TEMP
+              ? m.applicationForTempLicenseTitle
+              : m.applicationForFullLicenseTitle,
         }),
         buildDividerField({}),
         buildKeyValueField({
@@ -54,18 +58,6 @@ export const subSectionSummary = buildSubSection({
           width: 'half',
           value: ({ externalData: { nationalRegistry } }) =>
             (nationalRegistry.data as NationalRegistryUser).fullName,
-        }),
-        buildKeyValueField({
-          label: m.overviewPhoneNumber,
-          width: 'half',
-          value: ({ answers: { phone } }) => phone as string,
-        }),
-        buildKeyValueField({
-          label: m.overviewStreetAddress,
-          width: 'half',
-          value: ({ externalData: { nationalRegistry } }) =>
-            (nationalRegistry.data as NationalRegistryUser).address
-              ?.streetAddress,
         }),
         buildKeyValueField({
           label: m.overviewNationalId,
@@ -76,15 +68,29 @@ export const subSectionSummary = buildSubSection({
             ),
         }),
         buildKeyValueField({
-          label: m.overviewPostalCode,
+          label: m.overviewPhoneNumber,
           width: 'half',
-          value: ({ externalData: { nationalRegistry } }) =>
-            (nationalRegistry.data as NationalRegistryUser).address?.postalCode,
+          condition: (answers) => !!answers?.phone,
+          value: ({ answers: { phone } }) => phone as string,
         }),
         buildKeyValueField({
           label: m.overviewEmail,
           width: 'half',
+          condition: (answers) => !!answers?.email,
           value: ({ answers: { email } }) => email as string,
+        }),
+        buildKeyValueField({
+          label: m.overviewStreetAddress,
+          width: 'half',
+          value: ({ externalData: { nationalRegistry } }) =>
+            (nationalRegistry.data as NationalRegistryUser).address
+              ?.streetAddress,
+        }),
+        buildKeyValueField({
+          label: m.overviewPostalCode,
+          width: 'half',
+          value: ({ externalData: { nationalRegistry } }) =>
+            (nationalRegistry.data as NationalRegistryUser).address?.postalCode,
         }),
         buildKeyValueField({
           label: m.overviewCity,
@@ -92,25 +98,24 @@ export const subSectionSummary = buildSubSection({
           value: ({ externalData: { nationalRegistry } }) =>
             (nationalRegistry.data as NationalRegistryUser).address?.city,
         }),
-        buildDividerField({}),
+        buildDividerField({
+          condition: isApplicationForCondition(B_TEMP),
+        }),
         buildKeyValueField({
           label: m.overviewTeacher,
           width: 'half',
+          condition: isApplicationForCondition(B_TEMP),
           value: ({
             externalData: {
-              studentAssessment,
               teachers: { data },
             },
             answers,
           }) => {
-            if (answers.applicationFor === B_TEMP) {
-              const teacher = (data as Teacher[]).find(
-                ({ nationalId }) =>
-                  getValueViaPath(answers, 'drivingInstructor') === nationalId,
-              )
-              return teacher?.name
-            }
-            return (studentAssessment.data as StudentAssessment).teacherName
+            const teacher = (data as Teacher[]).find(
+              ({ nationalId }) =>
+                getValueViaPath(answers, 'drivingInstructor') === nationalId,
+            )
+            return teacher?.name
           },
         }),
         buildDividerField({

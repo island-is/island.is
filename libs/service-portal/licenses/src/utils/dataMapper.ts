@@ -1,3 +1,5 @@
+import { m } from '../lib/messages'
+
 interface Category {
   id:
     | 'A'
@@ -428,5 +430,143 @@ export const mapCategory = (id: string): Category => {
         text: undefined,
         icon: undefined,
       }
+  }
+}
+
+enum LicenseType {
+  DriversLicense = 'DriversLicense',
+  HuntingLicense = 'HuntingLicense',
+  AdrLicense = 'AdrLicense',
+  MachineLicense = 'MachineLicense',
+  FirearmLicense = 'FirearmLicense',
+}
+enum LicenseProviderId {
+  NationalPoliceCommissioner = 'NationalPoliceCommissioner',
+  EnvironmentAgency = 'EnvironmentAgency',
+  AdministrationOfOccupationalSafetyAndHealth = 'AdministrationOfOccupationalSafetyAndHealth',
+}
+enum LicenseProviderPath {
+  vinnueftirlitid = 'vinnueftirlitid',
+  umhverfisstofnun = 'umhverfisstofnun',
+  rikislogreglustjori = 'rikislogreglustjori',
+}
+
+export const getLicenseDetailHeading = (type: string) => {
+  switch (type) {
+    case LicenseType.DriversLicense:
+      return {
+        title: m.yourDrivingLicense,
+        text: m.drivingLicenseDescription,
+      }
+      break
+    case LicenseType.AdrLicense:
+      return { title: m.yourADRLicense, text: m.adrLicenseDescription }
+      break
+    case LicenseType.MachineLicense:
+      return {
+        title: m.yourMachineLicense,
+        text: m.machineLicenseDescription,
+      }
+      break
+    case LicenseType.FirearmLicense:
+      return {
+        title: m.yourFirearmLicense,
+        text: m.firearmLicenseDescription,
+      }
+      break
+    default:
+      return {
+        title: m.license,
+        text: '',
+      }
+      break
+  }
+}
+export const getTitleAndLogo = (type: string) => {
+  switch (type) {
+    case LicenseType.DriversLicense:
+      return { title: m.drivingLicense, logo: './assets/images/rls.svg' }
+    case LicenseType.AdrLicense:
+      return {
+        title: m.ADRLicense,
+        logo: './assets/images/adr_machine.svg',
+      }
+    case LicenseType.MachineLicense:
+      return {
+        title: m.machineLicense,
+        logo: './assets/images/adr_machine.svg',
+      }
+
+    case LicenseType.FirearmLicense:
+      return {
+        title: m.firearmLicense,
+        logo: './assets/images/rls.svg',
+      }
+    default:
+      return { title: m.license, logo: './assets/images/island.svg' }
+  }
+}
+
+enum LicenseTypePath {
+  okurettindi = 'okurettindi',
+  skotvopnaleyfi = 'skotvopnaleyfi',
+  adrrettindi = 'adrrettindi',
+  vinnuvelarettindi = 'vinnuvelarettindi',
+}
+
+export const getPathFromType = (type: string) => {
+  switch (type) {
+    case LicenseType.AdrLicense:
+      return LicenseTypePath.adrrettindi
+      break
+    case LicenseType.DriversLicense:
+      return LicenseTypePath.okurettindi
+      break
+    case LicenseType.FirearmLicense:
+      return LicenseTypePath.skotvopnaleyfi
+      break
+    case LicenseType.MachineLicense:
+      return LicenseTypePath.vinnuvelarettindi
+      break
+    default:
+      return ''
+      break
+  }
+}
+
+export const getTypeFromPath = (path: string) => {
+  switch (path) {
+    case LicenseTypePath.adrrettindi:
+      return LicenseType.AdrLicense
+      break
+    case LicenseTypePath.okurettindi:
+      return LicenseType.DriversLicense
+      break
+    case LicenseTypePath.skotvopnaleyfi:
+      return LicenseType.FirearmLicense
+      break
+    case LicenseTypePath.vinnuvelarettindi:
+      return LicenseType.MachineLicense
+      break
+    default:
+      return undefined
+      break
+  }
+}
+
+export const getPathFromProviderId = (id: string) => {
+  switch (id) {
+    case LicenseProviderId.AdministrationOfOccupationalSafetyAndHealth:
+      return LicenseProviderPath.vinnueftirlitid
+      break
+    case LicenseProviderId.EnvironmentAgency:
+      return LicenseProviderPath.umhverfisstofnun
+      break
+    case LicenseProviderId.NationalPoliceCommissioner:
+      return LicenseProviderPath.rikislogreglustjori
+      break
+    default:
+      return ''
+      break
   }
 }
