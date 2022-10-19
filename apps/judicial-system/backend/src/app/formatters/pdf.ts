@@ -109,6 +109,8 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
     fontSize: number,
     y?: number,
     spaceAbove?: number,
+    spaceBelow?: number,
+    newLine = true,
   ) => {
     drawText(
       text,
@@ -119,6 +121,8 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
         2,
       y,
       spaceAbove,
+      spaceBelow,
+      newLine,
     )
   }
 
@@ -221,6 +225,8 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
             fontSize,
             y,
             marginTop,
+            undefined,
+            newLine,
           )
           break
         case Alignment.Right:
