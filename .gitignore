@@ -21,6 +21,7 @@ node_modules/
 !.yarn/plugins
 !.yarn/sdks
 !.yarn/versions
+infra/.yarn
 
 # IDEs and editors
 /.idea

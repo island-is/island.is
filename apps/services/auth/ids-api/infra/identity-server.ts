@@ -4,7 +4,7 @@ import { service, ServiceBuilder, ref } from '../../../../../infra/src/dsl/dsl'
  * This setup is for the Identity Server, which is hosted in a different repository - https://github.com/island-is/identity-server.web
  */
 export const serviceSetup = (services: {
-  authApi: ServiceBuilder<'services-auth-ids-api'>
+  authIdsApi: ServiceBuilder<'services-auth-ids-api'>
 }): ServiceBuilder<'identity-server'> => {
   return service('identity-server')
     .namespace('identity-server')
@@ -64,7 +64,7 @@ export const serviceSetup = (services: {
         prod: 'false',
       },
       PersistenceSettings__BaseAddress: ref(
-        (h) => `http://${h.svc(services.authApi)}`,
+        (h) => `http://${h.svc(services.authIdsApi)}`,
       ),
       PersistenceSettings__UserProfileBaseAddress:
         'http://web-service-portal-api.service-portal.svc.cluster.local',
