@@ -24,6 +24,7 @@ import {
   NO,
   Period,
   calculatePeriodLength,
+  PARENTAL_LEAVE,
 } from '@island.is/application/templates/parental-leave'
 import { EmailService } from '@island.is/email-service'
 
@@ -333,6 +334,8 @@ describe('ParentalLeaveService', () => {
     it('should send an email if applicant is employed by an employer', async () => {
       const application = createApplication()
       set(application.answers, 'employer.isSelfEmployed', NO)
+      set(application.answers, 'applicationType.option', PARENTAL_LEAVE)
+      set(application.answers, 'isRecivingUnemploymentBenefits', NO)
       const mockedSendEmail = jest.fn()
 
       jest.spyOn(sharedService, 'sendEmail').mockImplementation(mockedSendEmail)

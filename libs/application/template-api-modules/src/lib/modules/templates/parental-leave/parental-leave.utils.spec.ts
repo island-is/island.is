@@ -183,6 +183,8 @@ describe('getPensionFund', () => {
   })
 
   it('should throw an error if required pension fund is not provided', () => {
+    set(application.answers, 'applicationType.option', PARENTAL_LEAVE)
+    
     expect(() => {
       getPensionFund(application)
     }).toThrowError()
@@ -201,6 +203,7 @@ describe('getPensionFund', () => {
     const expectedId = 'asdf'
 
     set(application.answers, 'payments.privatePensionFund', expectedId)
+    set(application.answers, 'applicationType.option', PARENTAL_LEAVE)
 
     expect(getPensionFund(application, true)).toEqual({
       id: expectedId,
@@ -221,6 +224,7 @@ describe('getPrivatePensionFundRatio', () => {
       'payments.privatePensionFundPercentage',
       expectedValue.toString(),
     )
+    set(application.answers, 'applicationType.option', PARENTAL_LEAVE)
 
     expect(getPrivatePensionFundRatio(application)).toBe(expectedValue)
   })
