@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import React, { FC, useState, useEffect } from 'react'
 import {
+  AlertBanner,
   Box,
   GridColumn,
   GridContainer,
@@ -7,28 +8,35 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import debounce from 'lodash/debounce'
-import { Application } from '@island.is/application/types'
 import { useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
+import { FieldBaseProps } from '@island.is/application/types'
 import { InputController } from '@island.is/shared/form-fields'
 import { m } from '../../lib/messages'
 import { Total } from '../KeyNumbers'
 import {
+  VALIDATOR,
   CEMETRYEQUITIESANDLIABILITIESIDS,
   INPUTCHANGEINTERVAL,
   OPERATINGCOST,
 } from '../../lib/constants'
 import { useTotals } from '../../hooks'
 import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
+import { getTotal } from '../../lib/utils/helpers'
 
-export const CemetryEquities = ({
+export const CemetryEquities: FC<FieldBaseProps> = ({
   application,
-}: {
-  application: Application
+  setBeforeSubmitCallback,
 }): JSX.Element => {
   const answers = application.answers
   const { formatMessage } = useLocale()
-  const { setValue, clearErrors, errors } = useFormContext()
+  const {
+    clearErrors,
+    errors,
+    setValue,
+    getValues,
+    setError,
+  } = useFormContext()
 
   const operatingCostTotal = getValueViaPath(
     answers,
@@ -57,9 +65,30 @@ export const CemetryEquities = ({
   )
 
   useEffect(() => {
-    const total = totalEquity
-    setEquityTotal(total)
+    clearErrors(VALIDATOR)
+    setEquityTotal(totalEquity)
   }, [totalEquity, totalOperatingCost])
+
+  // we need to validate some info before allowing submission of the current screen data
+  // since we're comparing values from different objects, doing it via zod is not an option
+  setBeforeSubmitCallback &&
+    setBeforeSubmitCallback(async () => {
+      const values = getValues()
+      const assets = getTotal(values, 'cemetryAsset')
+      const liabilties = getTotal(values, 'cemetryLiability')
+      const equities = getTotal(values, 'cemetryEquity')
+
+      // assets should equal liabilties + equities
+      const isValid = liabilties + equities === assets
+      if (!isValid) {
+        setError(VALIDATOR, {
+          type: 'custom',
+          message: formatMessage(m.equityDebtsAssetsValidatorError),
+        })
+        return [false, formatMessage(m.equityDebtsAssetsValidatorError)]
+      }
+      return [true, null]
+    })
 
   return (
     <GridContainer>
@@ -257,6 +286,15 @@ export const CemetryEquities = ({
           />
         </GridColumn>
       </GridRow>
+      {errors && errors.validator ? (
+        <Box paddingY={2}>
+          <AlertBanner
+            title={formatMessage(m.genericError)}
+            description={formatMessage(m.equityDebtsAssetsValidatorError)}
+            variant="error"
+          />
+        </Box>
+      ) : null}
     </GridContainer>
   )
 }
