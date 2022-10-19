@@ -43,7 +43,6 @@ const CareTakerRepeaterItem = ({
 }: Props) => {
   const { formatMessage } = useLocale()
 
-  console.log(errors)
   const [nationalIdInput, setNationalIdInput] = useState('')
   const { setValue } = useFormContext()
   const fieldIndex = `${id}[${index}]`
@@ -51,7 +50,7 @@ const CareTakerRepeaterItem = ({
   const nationalIdField = `${fieldIndex}.nationalId`
   const roleField = `${fieldIndex}.role`
 
-  const [getIdentity, { data, loading, error: queryError }] = useLazyQuery<
+  const [getIdentity, { loading, error: queryError }] = useLazyQuery<
     Query,
     { input: IdentityInput }
   >(IdentityQuery, {
@@ -115,7 +114,11 @@ const CareTakerRepeaterItem = ({
               backgroundColor="blue"
               loading={loading}
               readOnly
-              error={errors && getErrorViaPath(errors, nameField)}
+              error={
+                queryError
+                  ? formatMessage(m.errorNationalIdIncorrect)
+                  : undefined
+              }
             />
           </Box>
         </GridColumn>

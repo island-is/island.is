@@ -8,7 +8,7 @@ import { m } from '../../../../lib/messages'
 
 export const capitalNumberSection = buildSubSection({
   id: 'capitalNumbers',
-  title: m.capitalNumbers,
+  title: m.capitalNumbersSectionTitle,
   children: [
     buildMultiField({
       id: 'capitalNumber',
