@@ -23,7 +23,6 @@ import { PersonalRepresentative } from '../personal-representative/models/person
 import { PersonalRepresentativeRight } from '../personal-representative/models/personal-representative-right.model'
 import { PersonalRepresentativeRightType } from '../personal-representative/models/personal-representative-right-type.model'
 import { DelegationResourcesService } from './delegation-resources.service'
-import { DelegationDomainsService } from './delegation-domains.service'
 import { ResourceTranslationService } from './resource-translation.service'
 
 @Module({
@@ -55,13 +54,11 @@ import { ResourceTranslationService } from './resource-translation.service'
     ResourceAccessService,
     ResourceTranslationService,
     DelegationResourcesService,
-    DelegationDomainsService,
   ],
   exports: [
     ResourcesService,
     ResourceAccessService,
     DelegationResourcesService,
-    DelegationDomainsService,
   ],
 })
 export class ResourcesModule {}

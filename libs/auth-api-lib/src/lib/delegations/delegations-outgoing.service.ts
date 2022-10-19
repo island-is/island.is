@@ -11,7 +11,7 @@ import { User } from '@island.is/auth-nest-tools'
 import { NoContentException } from '@island.is/nest/problem'
 
 import { ApiScope } from '../resources/models/api-scope.model'
-import { DelegationScopeService } from './delegationScope.service'
+import { DelegationScopeService } from './delegation-scope.service'
 import {
   CreateDelegationDTO,
   DelegationDTO,

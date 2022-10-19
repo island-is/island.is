@@ -3,7 +3,6 @@ import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 
 import {
   ApiScopeTreeDTO,
-  DelegationDomainsService,
   DelegationResourcesService,
   DomainDTO,
 } from '@island.is/auth-api-lib'
@@ -21,7 +20,7 @@ import type {
   DocumentationQueryOptions,
 } from '@island.is/nest/swagger'
 
-const namespace = '@island.is/auth-api/v2/domains'
+const namespace = '@island.is/auth/delegation-api/domains'
 
 const domainName: DocumentationParamOptions = {
   type: 'string',
@@ -45,10 +44,7 @@ const lang: DocumentationQueryOptions = {
 })
 @Audit({ namespace })
 export class DomainsController {
-  constructor(
-    private readonly domainsService: DelegationDomainsService,
-    private readonly resourceService: DelegationResourcesService,
-  ) {}
+  constructor(private readonly resourceService: DelegationResourcesService) {}
 
   @Get()
   @Documentation({
@@ -60,8 +56,11 @@ export class DomainsController {
     },
     response: { status: 200, type: [DomainDTO] },
   })
+  @Audit<DomainDTO[]>({
+    resources: (domains) => domains.map((domain) => domain.name),
+  })
   findAll(@Query('lang') language?: string): Promise<DomainDTO[]> {
-    return this.domainsService.findAll(language)
+    return this.resourceService.findAllDomains(language)
   }
 
   @Get(':domainName')
@@ -81,11 +80,14 @@ export class DomainsController {
       type: DomainDTO,
     },
   })
+  @Audit<DomainDTO>({
+    resources: (domain) => domain.name,
+  })
   findOne(
     @Param('domainName') domainName: string,
     @Query('lang') language?: string,
   ): Promise<DomainDTO> {
-    return this.domainsService.findOne(domainName, language)
+    return this.resourceService.findOneDomain(domainName, language)
   }
 
   @Get(':domainName/scope-tree')
@@ -100,6 +102,9 @@ export class DomainsController {
       },
     },
     response: { status: 200, type: [ApiScopeTreeDTO] },
+  })
+  @Audit<ApiScopeTreeDTO[]>({
+    resources: (scopeTree) => scopeTree.map((node) => node.name),
   })
   findScopeTree(
     @Param('domainName') domainName: string,

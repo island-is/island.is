@@ -35,7 +35,7 @@ import { ApiScope } from '../resources/models/api-scope.model'
 import { ResourcesService } from '../resources/resources.service'
 import { DEFAULT_DOMAIN } from '../types/defaultDomain'
 import { DelegationConfig } from './DelegationConfig'
-import { DelegationScopeService } from './delegationScope.service'
+import { DelegationScopeService } from './delegation-scope.service'
 import { UpdateDelegationScopeDTO } from './dto/delegation-scope.dto'
 import {
   CreateDelegationDTO,
@@ -183,7 +183,6 @@ export class DelegationsService {
     this.logger.debug(`Updating delegation ${delegationId}`)
 
     await this.delegationScopeService.delete(delegationId, user.scope)
-
     await this.delegationScopeService.createOrUpdate(delegationId, input.scopes)
 
     return this.findById(user, delegationId)

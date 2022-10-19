@@ -27,7 +27,6 @@ import { DomainsModule } from './domains/domains.module'
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
     }),
-
     DelegationsModule,
     DomainsModule,
     ConfigModule.forRoot({

@@ -12,10 +12,10 @@ import { ApiScope } from '../resources/models/api-scope.model'
 import { IdentityResource } from '../resources/models/identity-resource.model'
 import { ResourcesModule } from '../resources/resources.module'
 import { DelegationsService } from './delegations.service'
-import { DelegationScopeService } from './delegationScope.service'
+import { DelegationScopeService } from './delegation-scope.service'
 import { DelegationScope } from './models/delegation-scope.model'
 import { Delegation } from './models/delegation.model'
-import { DelegationsOutgoingService } from './delegationsOutgoing.service'
+import { DelegationsOutgoingService } from './delegations-outgoing.service'
 
 @Module({
   imports: [
