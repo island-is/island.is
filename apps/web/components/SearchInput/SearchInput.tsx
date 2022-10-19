@@ -454,7 +454,7 @@ const Results = ({
                 >
                   <Text color={i === highlightedIndex ? 'blue400' : 'dark400'}>
                     {`${search.prefix} ${startOfString}`}
-                    <strong>{endOfString}</strong>
+                    <strong>{endOfString}</strong> ***
                   </Text>
                 </div>
               )
@@ -503,7 +503,7 @@ const Results = ({
                       }
                       skipTab
                     >
-                      {item.title}
+                      <span dangerouslySetInnerHTML={{__html: item.title}}></span>
                     </Link>
                   )
                 })}
