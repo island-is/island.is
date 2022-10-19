@@ -49,7 +49,8 @@
     "normalize-url",
     "get-stream",
     "http-cache-semantics",
-    "clone-response"
+    "clone-response",
+    "to-readable-stream"
   ],
   "keepNames": true
 }
