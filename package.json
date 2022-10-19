@@ -287,7 +287,6 @@
     "xml2js": "0.4.23",
     "xstate": "4.20.0",
     "yargs": "15.4.1",
-    "yup": "0.29.0",
     "zod": "3.19.1"
   },
   "devDependencies": {
