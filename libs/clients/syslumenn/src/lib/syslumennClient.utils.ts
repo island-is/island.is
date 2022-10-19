@@ -35,6 +35,7 @@ import {
   EstateRegistrant,
   RealEstateAgent,
   Lawyer,
+  OperatingLicensesCSV,
 } from './syslumennClient.types'
 const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 
@@ -163,6 +164,12 @@ export const mapPaginatedOperatingLicenses = (
   paginationInfo: mapPaginationInfo(paginationInfoHeaderJSON),
   searchQuery: searchQuery,
   results: (results ?? []).map(mapOperatingLicense),
+})
+
+export const mapOperatingLicensesCSV = (
+  responseStringCSV: string,
+): OperatingLicensesCSV => ({
+  value: responseStringCSV,
 })
 
 export function constructUploadDataObject(
