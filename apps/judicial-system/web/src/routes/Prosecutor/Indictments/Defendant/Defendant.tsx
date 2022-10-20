@@ -51,7 +51,7 @@ const Defendant: React.FC = () => {
   } = useContext(FormContext)
   const { formatMessage } = useIntl()
   const { createCase, isCreatingCase, setAndSendToServer } = useCase()
-  const { createDefendant, updateDefendant } = useDefendants()
+  const { createDefendant, updateDefendant, deleteDefendant } = useDefendants()
   const router = useRouter()
 
   // This state is needed because type is initially set to OHTER on the
@@ -145,6 +145,36 @@ const Defendant: React.FC = () => {
       }
     } else {
       router.push(`${constants.INDICTMENTS_PROCESSING_ROUTE}/${theCase.id}`)
+    }
+  }
+
+  const handleDeleteDefendant = async (defendant: TDefendant) => {
+    if (workingCase.defendants && workingCase.defendants.length > 1) {
+      if (workingCase.id) {
+        const defendantDeleted = await deleteDefendant(
+          workingCase.id,
+          defendant.id,
+        )
+
+        if (defendantDeleted && workingCase.defendants) {
+          removeDefendantFromState(defendant)
+        } else {
+          // TODO: handle error
+        }
+      } else {
+        removeDefendantFromState(defendant)
+      }
+    }
+  }
+
+  const removeDefendantFromState = (defendant: TDefendant) => {
+    if (workingCase.defendants && workingCase.defendants?.length > 1) {
+      setWorkingCase({
+        ...workingCase,
+        defendants: [...workingCase.defendants].filter(
+          (d) => d.id !== defendant.id,
+        ),
+      })
     }
   }
 
@@ -276,6 +306,12 @@ const Defendant: React.FC = () => {
                   <DefendantInfo
                     defendant={defendant}
                     workingCase={workingCase}
+                    onDelete={
+                      workingCase.defendants &&
+                      workingCase.defendants.length > 1
+                        ? handleDeleteDefendant
+                        : undefined
+                    }
                     onChange={handleUpdateDefendant}
                     updateDefendantState={updateDefendantState}
                   />

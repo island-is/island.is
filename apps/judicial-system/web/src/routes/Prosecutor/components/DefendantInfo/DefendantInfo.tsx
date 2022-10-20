@@ -152,7 +152,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
             size="small"
             data-testid="deleteDefendantButton"
           >
-            {formatMessage(defendantMessages.sections.defendantInfo.delete)}
+            {formatMessage(strings.defendantInfo.delete)}
           </Button>
         )}
       </Box>
