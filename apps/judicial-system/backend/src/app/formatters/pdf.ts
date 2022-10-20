@@ -109,7 +109,7 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
     pageLink?: PageLink,
     newLine = true,
   ) => {
-    const page = rawDocument.getPage(currentPage)
+    let page = rawDocument.getPage(currentPage)
 
     if (y !== undefined) {
       currentYPosition = y
@@ -118,6 +118,7 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
       page.getHeight() - margins.bottom
     ) {
       pdfDocument.addPage(currentPage + 1)
+      page = rawDocument.getPage(currentPage)
     } else {
       currentYPosition += (spaceAbove ?? 0) * spacing.line
     }
