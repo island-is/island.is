@@ -4,7 +4,7 @@
 /dist
 /tmp
 /out-tsc
-
+**/tsconfig.tsbuildinfo
 # Contentful extensions
 libs/contentful-extensions/translation/build
 libs/contentful-extensions/translation/.cache
@@ -15,6 +15,12 @@ libs/contentful-extensions/parent-slug/.cache
 
 # dependencies
 node_modules/
+.yarn/*
+!.yarn/patches
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
 
 # IDEs and editors
 /.idea

@@ -72,6 +72,7 @@ export const getPersonalRepresentativeRights = (
 })
 
 export const getPRenabledApiScope = (
+  domainName: string,
   enabled = true,
   name = faker.random.word(),
 ): CreationAttributes<ApiScope> => ({
@@ -79,6 +80,7 @@ export const getPRenabledApiScope = (
   name,
   displayName: name,
   description: faker.random.words(),
+  domainName: domainName,
   grantToPersonalRepresentatives: true,
   grantToLegalGuardians: false,
   grantToProcuringHolders: false,
