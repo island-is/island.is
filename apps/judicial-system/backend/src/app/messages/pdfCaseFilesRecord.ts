@@ -38,4 +38,10 @@ export const caseFilesRecord = defineMessages({
     description:
       'Notaður sem titill á síðu þegar skjal vantar í PDF skjalaskrá',
   },
+  chapter: {
+    id: 'judicial.system.backend:case_files_record.chapter',
+    defaultMessage:
+      '{chapter, select, 0 {Kæra og fylgiskjöl} 1 {Rannsóknartilvik} 2 {Vitni} 3 {Sakborningur} 4 {Réttarfarsgögn} 5 {Rafræn gögn}}',
+    description: 'Notaður sem kaflaheiti í PDF skjalaskrá',
+  },
 })

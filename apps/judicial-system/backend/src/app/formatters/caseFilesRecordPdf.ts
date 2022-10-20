@@ -41,6 +41,9 @@ export const createCaseFilesRecord = async (
   const subtitleFontSize = 14
   const textFontSize = 12
 
+  const defendantIndent = 2.5 * pageMargin
+  const pageReferenceIndent = pageMargin + 20
+
   const pageReferences: {
     chapter: number
     name: string
@@ -117,13 +120,31 @@ export const createCaseFilesRecord = async (
       newLine: false,
     })
     .addText(capitalize(caseTypes[theCase.type]), textFontSize, {
-      position: { x: 2.5 * pageMargin },
+      position: { x: defendantIndent },
     })
     .addText(
       formatMessage(caseFilesRecord.tableOfContentsHeading),
       subtitleFontSize,
       { alignment: Alignment.Center, bold: true, marginTop: 9 },
     )
+
+  for (const chapter of [0, 1, 2, 3, 4, 5]) {
+    pdfDocument.addText(
+      formatMessage(caseFilesRecord.chapter, { chapter }),
+      textFontSize,
+      { bold: true, marginTop: chapter > 0 ? 1 : 2 },
+    )
+
+    for (const pageReference of pageReferences.filter(
+      (pageReference) => pageReference.chapter === chapter,
+    )) {
+      pdfDocument.addText(
+        `${pageReference.name} ${pageReference.pageNumber}`,
+        textFontSize,
+        { position: { x: pageReferenceIndent } },
+      )
+    }
+  }
 
   return pdfDocument.getContents()
 }
