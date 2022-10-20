@@ -783,13 +783,13 @@ export const ParentalLeaveForm: Form = buildForm({
                       return lastPeriodEndDate
                     } else if (
                       expectedDateOfBirth &&
-                      new Date(expectedDateOfBirth) > today
+                      new Date(expectedDateOfBirth).getTime() > today.getTime()
                     ) {
                       const leastStartDate = addDays(
                         new Date(expectedDateOfBirth),
                         -minimumPeriodStartBeforeExpectedDateOfBirth,
                       )
-                      if (leastStartDate < today) {
+                      if (leastStartDate.getTime() < today.getTime()) {
                         return today
                       }
 
