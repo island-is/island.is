@@ -145,10 +145,18 @@ const mockDelegations = {
     scopes: [Scopes[0].name],
     today,
   }),
+  // Valid outgoing delegation on other domain
+  otherDomain: createDelegation({
+    fromNationalId: user.nationalId,
+    toNationalId: '1234567890',
+    scopes: [Scopes[0].name],
+    today,
+    domainName: 'otherdomain',
+  }),
 }
 
 beforeAll(() => {
-  jest.useFakeTimers('modern').setSystemTime(today.getTime())
+  jest.useFakeTimers().setSystemTime(today.getTime())
 })
 
 describe('MeDelegationsController', () => {
@@ -190,7 +198,7 @@ describe('MeDelegationsController', () => {
     })
 
     describe('GET /me/delegations', () => {
-      it('should return all delegations with direction=outgoing', async () => {
+      it('should return all delegations on default domain with direction=outgoing', async () => {
         // Arrange
         await createDelegationModels(
           delegationModel,
@@ -562,6 +570,33 @@ describe('MeDelegationsController', () => {
 
         // Act
         const res = await server.get(`${path}/${mockDelegations.otherUsers.id}`)
+
+        // Assert
+        expect(res.status).toEqual(404)
+        expect(res.body).toMatchInlineSnapshot(`
+          Object {
+            "status": 404,
+            "title": "Not Found",
+            "type": "https://httpstatuses.org/404",
+          }
+        `)
+      })
+
+      it('should return 404 not found if delegation is not on default domain', async () => {
+        // Arrange
+        await delegationModel.bulkCreate(Object.values(mockDelegations), {
+          include: [
+            {
+              model: DelegationScope,
+              as: 'delegationScopes',
+            },
+          ],
+        })
+
+        // Act
+        const res = await server.get(
+          `${path}/${mockDelegations.otherDomain.id}`,
+        )
 
         // Assert
         expect(res.status).toEqual(404)

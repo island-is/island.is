@@ -24,6 +24,7 @@ import {
 } from '@island.is/clients/smartsolutions'
 import { Locale } from '@island.is/shared/types'
 import { LicenseData } from './firearmLicense.type'
+import compareAsc from 'date-fns/compareAsc'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'firearmlicense-service'
@@ -66,20 +67,21 @@ export class GenericFirearmLicenseApi
 
     const payload = parseFirearmLicensePayload(licenseData, locale, labels)
 
+    let pkpassStatus = GenericUserLicensePkPassStatus.Unknown
+
     if (payload) {
-      return {
-        status: GenericUserLicenseStatus.HasLicense,
-        payload,
-        pkpassStatus: GenericUserLicensePkPassStatus.Available,
-      }
+      pkpassStatus = GenericFirearmLicenseApi.licenseIsValidForPkpass(
+        licenseData.licenseInfo,
+      )
     }
 
     return {
-      status: GenericUserLicenseStatus.NotAvailable,
+      status: GenericUserLicenseStatus.HasLicense,
       payload,
-      pkpassStatus: GenericUserLicensePkPassStatus.NotAvailable,
+      pkpassStatus,
     }
   }
+
   async getLicenseDetail(
     user: User,
     locale: Locale,
@@ -87,6 +89,24 @@ export class GenericFirearmLicenseApi
   ): Promise<GenericLicenseUserdataExternal | null> {
     return this.getLicense(user, locale, labels)
   }
+
+  static licenseIsValidForPkpass(
+    licenseInfo: LicenseInfo | null | undefined,
+  ): GenericUserLicensePkPassStatus {
+    if (!licenseInfo || !licenseInfo.expirationDate) {
+      return GenericUserLicensePkPassStatus.Unknown
+    }
+
+    const expired = new Date(licenseInfo.expirationDate)
+    const comparison = compareAsc(expired, new Date())
+
+    if (isNaN(comparison) || comparison < 0) {
+      return GenericUserLicensePkPassStatus.NotAvailable
+    }
+
+    return GenericUserLicensePkPassStatus.Available
+  }
+
   async getPkPassUrl(user: User): Promise<string | null> {
     const data = await this.fetchLicenseData(user)
 

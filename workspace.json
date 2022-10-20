@@ -204,6 +204,7 @@
     "nest-audit": "libs/nest/audit",
     "nest-aws": "libs/nest/aws",
     "nest-config": "libs/nest/config",
+    "nest-dataloader": "libs/nest/dataloader",
     "nest-feature-flags": "libs/nest/feature-flags",
     "nest-pagination": "libs/nest/pagination",
     "nest-problem": "libs/nest/problem",

@@ -29,6 +29,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 
 import { AuthDelegationsQuery } from '../AccessControl'
 import * as styles from './GrantAccess.css'
+import { ISLAND_DOMAIN } from '../../constants'
 
 const CreateAuthDelegationMutation = gql`
   mutation CreateAuthDelegationMutation($input: CreateAuthDelegationInput!) {
@@ -114,7 +115,7 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
   const onSubmit = handleSubmit(async ({ toNationalId }) => {
     try {
       const { data } = await createAuthDelegation({
-        variables: { input: { toNationalId } },
+        variables: { input: { toNationalId, domainName: ISLAND_DOMAIN } },
       })
       if (data) {
         history.push(
