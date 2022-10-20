@@ -14,7 +14,7 @@ import { Answers, Asset } from '../../types'
 
 import { EstateAsset } from '@island.is/clients/syslumenn'
 
-import * as styles from './VehiclesRepeater.css'
+import * as styles from '../styles.css'
 import { m } from '../../lib/messages'
 
 export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({

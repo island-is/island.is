@@ -4,7 +4,7 @@ import { InputController } from '@island.is/shared/form-fields'
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box, GridColumn, GridRow, Button } from '@island.is/island-ui/core'
 import { Answers } from '../../types'
-import * as styles from './TextFieldsRepeater.css'
+import * as styles from '../styles.css'
 
 type Props = {
   field: {
