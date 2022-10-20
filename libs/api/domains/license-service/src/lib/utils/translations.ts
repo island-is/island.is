@@ -7,9 +7,8 @@ export const getLabel = (
   label?: LicenseLabelsObject,
 ) => {
   return label
-    ? label[`${labelKey}`]
-    : Object.entries(i18n).find((x) => x[0] === `${labelKey}`)?.[1][locale] ||
-        ''
+    ? label[labelKey]
+    : Object.entries(i18n).find((x) => x[0] === labelKey)?.[1][locale] || ''
 }
 
 export const i18n = {
