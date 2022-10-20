@@ -141,7 +141,10 @@ export const createCaseFilesRecord = async (
       pdfDocument.addText(
         `${pageReference.name} ${pageReference.pageNumber}`,
         textFontSize,
-        { position: { x: pageReferenceIndent } },
+        {
+          pageLink: pageReference.pageNumber,
+          position: { x: pageReferenceIndent },
+        },
       )
     }
   }

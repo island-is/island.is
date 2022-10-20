@@ -2,6 +2,7 @@ import {
   layoutMultilineText,
   PDFDocument,
   PDFFont,
+  PDFName,
   PDFPage,
   StandardFonts,
   TextAlignment,
@@ -16,6 +17,7 @@ export enum Alignment {
 export interface PdfTextOptions {
   alignment?: Alignment
   bold?: boolean
+  pageLink?: number
   marginTop?: number
   newLine?: boolean
   position?: { x?: number; y?: number }
@@ -63,8 +65,33 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
     y: number,
     font: PDFFont,
     fontSize: number,
+    pageLink?: number,
   ) => {
     page.drawText(text, { x, y, font, size: fontSize })
+
+    if (pageLink) {
+      const annot = rawDocument.context.register(
+        rawDocument.context.obj({
+          Type: 'Annot',
+          Subtype: 'Link',
+          Rect: [
+            x,
+            y,
+            x + font.widthOfTextAtSize(text, fontSize),
+            y + fontSize,
+          ],
+          Dest: [rawDocument.getPage(pageLink).ref, 'XYZ', null, null, null],
+        }),
+      )
+
+      const annots = page.node.Annots()
+
+      if (annots) {
+        annots.push(annot)
+      } else {
+        page.node.set(PDFName.of('Annots'), rawDocument.context.obj([annot]))
+      }
+    }
   }
 
   const drawText = (
@@ -75,6 +102,7 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
     y?: number,
     spaceAbove?: number,
     spaceBelow?: number,
+    pageLink?: number,
     newLine = true,
   ) => {
     const page = rawDocument.getPage(currentPage)
@@ -97,6 +125,7 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
       page.getHeight() - currentYPosition,
       font,
       fontSize,
+      pageLink,
     )
 
     if (newLine) {
@@ -111,6 +140,7 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
     y?: number,
     spaceAbove?: number,
     spaceBelow?: number,
+    pageLink?: number,
     newLine = true,
   ) => {
     drawText(
@@ -123,6 +153,7 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
       y,
       spaceAbove,
       spaceBelow,
+      pageLink,
       newLine,
     )
   }
@@ -200,6 +231,7 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
       const {
         alignment = Alignment.Left,
         bold = false,
+        pageLink,
         marginTop,
         newLine = true,
         position,
@@ -216,6 +248,7 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
             y,
             marginTop,
             undefined,
+            pageLink,
             newLine,
           )
           break
@@ -227,6 +260,7 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
             y,
             marginTop,
             undefined,
+            pageLink,
             newLine,
           )
           break
