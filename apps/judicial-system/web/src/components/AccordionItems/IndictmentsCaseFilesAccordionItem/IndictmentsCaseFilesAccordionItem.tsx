@@ -4,6 +4,7 @@ import { uuid } from 'uuidv4'
 import {
   animate,
   AnimatePresence,
+  LayoutGroup,
   motion,
   MotionValue,
   Reorder,
@@ -167,7 +168,8 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
   const y = useMotionValue(0)
   const boxShadow = useRaisedShadow(y)
   const controls = useDragControls()
-  const [isDragging, setIsDragging] = useState(false)
+  const [isDragging, setIsDragging] = useState<boolean>(false)
+  const [editFileId, setEditFileId] = useState<string>()
 
   return (
     <Reorder.Item
@@ -197,7 +199,6 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
       ) : (
         <Box
           display="flex"
-          justifyContent="spaceBetween"
           alignItems="center"
           background="blue100"
           padding={2}
@@ -206,43 +207,51 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
             onReorder(caseFile.id)
           }}
         >
-          <Box display="flex" alignItems="center">
-            <Box
-              data-testid="caseFileDragHandle"
-              display="flex"
-              marginRight={3}
-              style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
-              onPointerDown={(e) => {
-                setIsDragging(true)
-                controls.start(e)
-              }}
-            >
-              <Icon icon="menu" color="blue400" />
-            </Box>
-            <Box
-              display="flex"
-              alignItems="center"
-              component="button"
-              onClick={() => {
-                if (caseFile.id) {
-                  onOpen(caseFile.id)
-                }
-              }}
-            >
-              <Text variant="h5">{caseFile.displayText}</Text>
-              <Box marginLeft={1}>
-                <Icon icon="open" type="outline" size="small" />
-              </Box>
-            </Box>
+          <Box
+            data-testid="caseFileDragHandle"
+            display="flex"
+            marginRight={3}
+            style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
+            onPointerDown={(e) => {
+              setIsDragging(true)
+              controls.start(e)
+            }}
+          >
+            <Icon icon="menu" color="blue400" />
           </Box>
-          <Box display="flex" alignItems="center">
-            <Box display="flex" marginRight={3}>
-              <Text variant="small">{formatDate(caseFile.created, 'P')}</Text>
-            </Box>
-            <button onClick={() => alert('not implemented')}>
-              <Icon icon="pencil" color="blue400" />
-            </button>
-          </Box>
+          <AnimatePresence>
+            {editFileId === caseFile.id ? (
+              <motion.div initial={{ y: -20 }} animate={{ y: 0 }} key="123">
+                asd
+              </motion.div>
+            ) : (
+              <motion.div initial={false} exit={{ y: -20 }} key="123123">
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  component="button"
+                  onClick={() => {
+                    if (caseFile.id) {
+                      onOpen(caseFile.id)
+                    }
+                  }}
+                >
+                  <Text variant="h5">{caseFile.displayText}</Text>
+                  <Box marginLeft={1}>
+                    <Icon icon="open" type="outline" size="small" />
+                  </Box>
+                </Box>
+                <Box marginRight={3} marginLeft="auto">
+                  <Text variant="small">
+                    {formatDate(caseFile.created, 'P')}
+                  </Text>
+                </Box>
+              </motion.div>
+            )}
+          </AnimatePresence>
+          <button onClick={() => setEditFileId(caseFile.id)}>
+            <Icon icon="pencil" color="blue400" />
+          </button>
         </Box>
       )}
     </Reorder.Item>
