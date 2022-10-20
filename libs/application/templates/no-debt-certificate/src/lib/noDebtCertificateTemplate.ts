@@ -16,7 +16,7 @@ import {
   UserProfileApi,
   NoDebtCertificateApi,
 } from '../dataProviders'
-import { AuthDelegationType } from '../types/schema'
+//import { AuthDelegationType } from '../types/schema'
 import { Features } from '@island.is/feature-flags'
 
 const NoDebtCertificateSchema = z.object({
@@ -38,7 +38,7 @@ const template: ApplicationTemplate<
   readyForProduction: true,
   allowedDelegations: [
     {
-      type: AuthDelegationType.ProcurationHolder,
+      type: 'ProcurationHolder',
       featureFlag: Features.noDebtCertificateCompanyDelegations,
     },
   ],
