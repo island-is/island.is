@@ -150,6 +150,15 @@ export class DelegationsService {
     input: UpdateDelegationDTO,
     delegationId: string,
   ): Promise<DelegationDTO | null> {
+    const delegation = await this.delegationModel.findOne({
+      where: {
+        id: delegationId,
+        fromNationalId: user.nationalId,
+      },
+    })
+    if (!delegation) {
+      throw new NotFoundException()
+    }
     if (!(await this.validateScopesAccess(user, input.scopes))) {
       throw new BadRequestException(
         'User does not have access to the requested scopes.',
