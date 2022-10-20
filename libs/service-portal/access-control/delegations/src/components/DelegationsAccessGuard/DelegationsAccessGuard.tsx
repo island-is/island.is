@@ -3,27 +3,28 @@ import {
   AccessDenied,
   NoDataScreen,
   ServicePortalPath,
-  ServicePortalModuleComponent,
+  ServicePortalModuleProps,
 } from '@island.is/service-portal/core'
 
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { useAuth } from '@island.is/auth/react'
-import { useAuthDelegationsQuery } from '@island.is/service-portal/graphql'
-import { ISLAND_DOMAIN } from '../../constants'
+import { AuthDelegationsQuery } from '@island.is/service-portal/graphql'
 
-export const DelegationsAccessGuard: ServicePortalModuleComponent = ({
+type DelegationsAccessGuardProps = ServicePortalModuleProps & {
+  children: React.ReactNode
+  delegations?: AuthDelegationsQuery['authDelegations']
+  delegationsLoading?: boolean
+}
+
+export const DelegationsAccessGuard = ({
   userInfo,
   client,
   children,
-}) => {
+  delegations,
+  delegationsLoading,
+}: DelegationsAccessGuardProps) => {
   useNamespaces('sp.access-control-delegations')
-  const { data, loading } = useAuthDelegationsQuery({
-    variables: {
-      input: {
-        domain: ISLAND_DOMAIN,
-      },
-    },
-  })
+
   const { switchUser } = useAuth()
   const { formatMessage } = useLocale()
   const actor = userInfo.profile.actor
@@ -35,7 +36,7 @@ export const DelegationsAccessGuard: ServicePortalModuleComponent = ({
     return <AccessDenied userInfo={userInfo} client={client} />
   }
 
-  if (!loading && data?.authDelegations.length === 0) {
+  if (!delegationsLoading && delegations && delegations.length === 0) {
     return (
       <NoDataScreen
         title={formatMessage({
