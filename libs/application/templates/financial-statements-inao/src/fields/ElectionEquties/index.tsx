@@ -56,9 +56,9 @@ export const ElectionEquities = ({
   const [equityTotal, setEquityTotal] = useState(0)
 
   useEffect(() => {
-    const total = totalEquity - totalLiabilities
+    const total = totalEquity
     setEquityTotal(total)
-  }, [totalLiabilities, totalEquity, totalOperatingCost])
+  }, [totalEquity, totalOperatingCost])
 
   return (
     <GridContainer>

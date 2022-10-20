@@ -81,7 +81,9 @@ const CourtDocuments: FC<Props> = (props) => {
 
   const ValueContainer = (props: ValueContainerProps<ReactSelectOption>) => (
     <components.ValueContainer {...props}>
-      <Text fontWeight="light">{props.children}</Text>
+      <Text as="span" fontWeight="light">
+        {props.children}
+      </Text>
     </components.ValueContainer>
   )
 

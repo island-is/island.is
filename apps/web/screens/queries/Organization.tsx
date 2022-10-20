@@ -256,6 +256,7 @@ export const GET_SYSLUMENN_AUCTIONS_QUERY = gql`
       auctionTime
       petitioners
       respondent
+      publishText
       auctionTakesPlaceAt
     }
   }
@@ -298,6 +299,14 @@ export const GET_OPERATING_LICENSES_QUERY = gql`
         maximumNumberOfGuests
         numberOfDiningGuests
       }
+    }
+  }
+`
+
+export const GET_OPERATING_LICENSES_CSV_QUERY = gql`
+  query GetOperatingLicensesCSV {
+    getOperatingLicensesCSV {
+      value
     }
   }
 `
