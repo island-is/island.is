@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { useRouter } from 'next/router'
+import slugify from '@sindresorhus/slugify'
 import { TabSection } from '@island.is/web/graphql/schema'
 import {
   Box,
@@ -28,6 +29,17 @@ export const TabSectionSlice: React.FC<SliceProps> = ({
 }) => {
   const router = useRouter()
 
+  const selected = useMemo(() => {
+    const index = slice.tabs?.findIndex(
+      (tab) =>
+        tab?.tabTitle && slugify(tab.tabTitle) === router?.query?.selectedTab,
+    )
+    if (index >= 0) {
+      return String(index)
+    }
+    return undefined
+  }, [router.query?.selectedTab, slice.tabs])
+
   return (
     <section
       key={slice.id}
@@ -36,12 +48,16 @@ export const TabSectionSlice: React.FC<SliceProps> = ({
     >
       <Box paddingTop={2} paddingBottom={[0, 4, 4]}>
         <Tabs
-          selected={router.query?.selectedTab as string}
+          selected={selected}
           onChange={(id) => {
+            const index = Number(id)
+            const tab = slice.tabs[index]
+            if (!tab?.tabTitle) return
+
             router.push(
               {
                 pathname: router.asPath.split('#')[0].split('?')[0],
-                query: { selectedTab: id },
+                query: { selectedTab: slugify(tab.tabTitle) },
               },
               undefined,
               { shallow: true },

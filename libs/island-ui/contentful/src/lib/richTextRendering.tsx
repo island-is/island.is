@@ -12,12 +12,7 @@ import {
   documentToReactComponents,
   RenderMark,
 } from '@contentful/rich-text-react-renderer'
-import {
-  CompanyList,
-  CompanyListConnected,
-  ShipSearch,
-  SidebarShipSearchInput,
-} from '@island.is/shared/connected'
+import { CompanyList, CompanyListConnected } from '@island.is/shared/connected'
 import { Image, ImageProps } from './Image/Image'
 import FaqList, { FaqListProps } from './FaqList/FaqList'
 import { Statistics, StatisticsProps } from './Statistics/Statistics'
@@ -159,10 +154,6 @@ const renderConnectedComponent = (slice) => {
         return <CompanyListConnected graphqlLink={graphqlLink} />
       }
       break
-    case 'Fiskistofa/ShipSearch':
-      return <ShipSearch {...data} />
-    case 'Fiskistofa/ShipSearchSidebarInput':
-      return <SidebarShipSearchInput {...data} />
     default:
       break
   }

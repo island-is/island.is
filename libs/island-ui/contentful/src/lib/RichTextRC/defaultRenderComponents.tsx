@@ -44,6 +44,11 @@ const renderConnectedComponent = (slice) => {
       return <ShipSearch {...data} />
     case 'Fiskistofa/ShipSearchSidebarInput':
       return <SidebarShipSearchInput {...data} />
+    // TODO: add components
+    case 'Fiskistofa/StraddlingStockCalculator':
+      return null
+    case 'Fiskistofa/CatchQuotaCalculator':
+      return null
     default:
       break
   }
