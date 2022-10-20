@@ -15,8 +15,8 @@ import {
 
 import * as styles from './RealEstateAgentsList.css'
 
-// TODO: Read Page size from slice config.
-const PAGE_SIZE = 10
+const DEFAULT_PAGE_SIZE = 10
+const DEFAULT_TABLE_MIN_HEIGHT = '800px'
 
 interface RealEstateAgentsListProps {
   slice: ConnectedComponent
@@ -73,19 +73,20 @@ const RealEstateAgentsList: FC<RealEstateAgentsListProps> = ({ slice }) => {
     )
   })
 
-  const totalPages = Math.ceil(filteredAgents.length / PAGE_SIZE)
+  const pageSize = slice?.configJson?.pageSize ?? DEFAULT_PAGE_SIZE
 
-  // TODO: Do the same in LawyersList connected component.
-  // TODO: Read min height from slice.config
-  const minHeightFromConfig = "700px"
+  const totalPages = Math.ceil(filteredAgents.length / pageSize)
+
+  const minHeightFromConfig = slice?.configJson?.minHeight
   const tableContainerStyles: CSSProperties = {}
   if (totalPages > 1) {
     /**
      * Force a minimum height of the table, so that the pagination elements stay in the same
      * location. E.g. when the last page has fewer items, then this will prevent the
      * pagination elements from moving.
-    */
-    tableContainerStyles.minHeight = minHeightFromConfig ?? '800px'
+     */
+    tableContainerStyles.minHeight =
+      minHeightFromConfig ?? DEFAULT_TABLE_MIN_HEIGHT
   }
 
   return (
@@ -143,8 +144,8 @@ const RealEstateAgentsList: FC<RealEstateAgentsListProps> = ({ slice }) => {
               <T.Body>
                 {filteredAgents
                   .slice(
-                    (currentPageNumber - 1) * PAGE_SIZE,
-                    currentPageNumber * PAGE_SIZE,
+                    (currentPageNumber - 1) * pageSize,
+                    currentPageNumber * pageSize,
                   )
                   .map((agent, index) => {
                     return (
