@@ -1,7 +1,11 @@
 //todo
 import { CanActivate } from '@nestjs/common'
 
-import { CaseExistsGuard, CaseReceivedGuard, CaseWriteGuard } from '../../case'
+import {
+  CaseExistsGuard,
+  CaseNotCompletedGuard,
+  CaseWriteGuard,
+} from '../../case'
 import { FileController } from '../file.controller'
 
 describe('FileController - Upload case file to court guards', () => {
@@ -50,8 +54,8 @@ describe('FileController - Upload case file to court guards', () => {
       guard = new guards[2]()
     })
 
-    it('should have CaseReceivedGuard as quard 3', () => {
-      expect(guard).toBeInstanceOf(CaseReceivedGuard)
+    it('should have CaseNotCompletedGuard as quard 3', () => {
+      expect(guard).toBeInstanceOf(CaseNotCompletedGuard)
     })
   })
 })
