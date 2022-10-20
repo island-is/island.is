@@ -1,0 +1,612 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Ökuritakort",
+    "version": "0.3.0",
+    "contact": {
+      "email": "samgongustofa@samgongustofa.is",
+      "name": "Samgöngustofa",
+      "url": "https://samgongustofa.is"
+    },
+    "description": "Vefþjónustur fyrir umsókn um ökuritakort hjá island.is",
+    "license": {
+      "name": "Samgöngustofa 2022",
+      "url": "https://spdx.org/licenses/Unlicense.html"
+    },
+    "x-category": "official",
+    "x-pricing": "free",
+    "x-links": "https://samgongustofa.ia"
+  },
+  "tags": [
+    {
+      "name": "TachoNet",
+      "description": "Methods related to driver cards in TachoNet member states"
+    },
+    {
+      "name": "DriverCards",
+      "description": "Methods related to Icelandic driver cards"
+    }
+  ],
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Non-working url for prototype"
+    }
+  ],
+  "paths": {
+    "/drivercards/{persidno}/newest": {
+      "get": {
+        "summary": "Your GET endpoint",
+        "tags": ["DriverCards"],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewestIcelandicDriverCardResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "operationId": "get-newesticelandicdrivercard",
+        "description": "Returns the newest driver card for a person with icelandic persidno"
+      },
+      "parameters": [
+        {
+          "schema": {
+            "type": "string",
+            "pattern": "[0-9]+",
+            "minLength": 10,
+            "maxLength": 10
+          },
+          "name": "persidno",
+          "in": "path",
+          "required": true,
+          "description": "Person id number"
+        }
+      ]
+    },
+    "/drivercards/tachonetcheck": {
+      "post": {
+        "summary": "Check TachoNet for issued cards",
+        "operationId": "post-tachonetcheck",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TachonetCheckResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TachonetCheckRequest"
+              }
+            }
+          }
+        },
+        "description": "Returns info on driver cards in TachoNet member states",
+        "tags": ["TachoNet"]
+      },
+      "parameters": []
+    },
+    "/drivercards": {
+      "post": {
+        "summary": "Creates a new driver card application",
+        "tags": ["DriverCards"],
+        "operationId": "post-drivercards",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DriverCardApplicationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DriverCardApplicationRequest"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/DriverCardApplicationRequest"
+              }
+            }
+          },
+          "description": ""
+        },
+        "description": "Registers a new driver card application"
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "NewestIcelandicDriverCardResponse": {
+        "title": "IcelandicDriverCardResponse",
+        "type": "object",
+        "properties": {
+          "person_id_number": {
+            "type": "string",
+            "pattern": "[0-9]+",
+            "minLength": 10,
+            "maxLength": 10
+          },
+          "datetime_of_application": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "card_number": {
+            "type": "string"
+          },
+          "card_type": {
+            "type": "string",
+            "enum": ["DriverCard"]
+          },
+          "card_valid_from_datetime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "card_valid_to_datetime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "is_valid": {
+            "type": "string",
+            "enum": ["Yes", "No"]
+          }
+        },
+        "example": [
+          {
+            "person_id_number": "1908763659",
+            "datetime_of_application": "2022-09-24T14:15:22Z",
+            "card_number": "IS10004528562000",
+            "card_type": "DriverCard",
+            "card_valid_from_datetime": "2022-09-24T14:15:22Z",
+            "card_valid_to_datetime": "2027-09-24T14:15:22Z",
+            "is_valid": "Yes"
+          }
+        ],
+        "description": ""
+      },
+      "TachonetCheckRequest": {
+        "title": "TachonetCheckRequest",
+        "type": "object",
+        "example": [
+          {
+            "first_name": "Eggert Bjarni",
+            "last_name": "Sævarsson",
+            "birth_date": "1976-08-19",
+            "birth_place": "Hvammstangi",
+            "driving_licence_number": "8811224",
+            "driving_licence_issuing_country": "Ísland"
+          }
+        ],
+        "properties": {
+          "first_name": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "last_name": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "birth_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "birth_place": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "driving_licence_number": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "driving_licence_issuing_country": {
+            "type": "string"
+          }
+        },
+        "required": ["last_name", "birth_date"],
+        "description": "Info on the individual to lookup on TachoNet"
+      },
+      "TachonetCheckResponse": {
+        "type": "object",
+        "title": "TachonetCheckResponse",
+        "example": [
+          {
+            "first_name": "Eggert Bjarni",
+            "last_name": "Sævarsson",
+            "birth_date": "1976-08-19",
+            "birth_place": "Hvammstangi",
+            "driving_licence_number": "8811224",
+            "driving_licence_issuing_country": "Ísland",
+            "cards": [
+              {
+                "country_name": "Ísland",
+                "card_number": "IS10004528562000",
+                "card_valid_from_datetime": "2019-08-24T00:00:01Z",
+                "card_valid_to_datetime": "2024-08-24T23:59:59Z",
+                "issuing_authority": "Samgöngustofa",
+                "is_temporary": "No",
+                "is_active": "Yes"
+              }
+            ]
+          }
+        ],
+        "description": "List of card regiestered to the ",
+        "properties": {
+          "first_name": {
+            "type": "string"
+          },
+          "last_name": {
+            "type": "string"
+          },
+          "birth_date": {
+            "type": "string"
+          },
+          "birth_place": {
+            "type": "string"
+          },
+          "driving_licence_number": {
+            "type": "string"
+          },
+          "driving_licence_issuing_country": {
+            "type": "string"
+          },
+          "cards": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "country_name": {
+                  "type": "string"
+                },
+                "card_number": {
+                  "type": "string"
+                },
+                "card_valid_from_datetime": {
+                  "type": "string"
+                },
+                "card_valid_to_datetime": {
+                  "type": "string"
+                },
+                "issuing_authority": {
+                  "type": "string"
+                },
+                "is_temporary": {
+                  "type": "string",
+                  "enum": ["Yes", "No"]
+                },
+                "is_active": {
+                  "type": "string",
+                  "enum": ["Yes"]
+                }
+              }
+            }
+          }
+        }
+      },
+      "DriverCardApplicationRequest": {
+        "title": "DriverCardApplicationRequest",
+        "type": "object",
+        "example": [
+          {
+            "person_id_number": "1908763659",
+            "full_name": "Eggert Bjarni Sævarsson",
+            "address": "Ármúla 2",
+            "postal_code": "108",
+            "place": "Reykjavík",
+            "birth_country": "Ísland",
+            "birth_place": "Hvammstangi",
+            "email_address": "bjarni@ebs.is",
+            "phone_number": "6980432",
+            "delivery_method": "Send",
+            "payment_datetime": "2022-09-24T14:15:22Z",
+            "photo": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAABhWlDQ1BJQ0MgcHJvZmlsZQAAKJF9kTtIw1AUhv+mig8qDnYQFclQnSyIFnGUKhbBQmkrtOpgctMXNGlIUlwcBdeCg4/FqoOLs64OroIg+ABxdHJSdJESz00KLWK8cLgf/73/z7nnAkK9zFSzYxJQNctIxqJiJrsqdr2iB6NUEQxLzNTjqcU0PNfXPXx8vwvzLO97f64+JWcywCcSzzHdsIg3iGc2LZ3zPnGQFSWF+Jx4wqAGiR+5Lrv8xrngsMAzg0Y6OU8cJBYLbSy3MSsaKnGEOKSoGuULGZcVzluc1XKVNfvkLwzktJUU16lGEMMS4khAhIwqSijDQph2jRQTSTqPeviHHH+CXDK5SmDkWEAFKiTHD/4Hv2dr5qen3KRAFOh8se2PMaBrF2jUbPv72LYbJ4D/GbjSWv5KHZj9JL3W0kJHQP82cHHd0uQ94HIHGHzSJUNyJD+VkM8D72f0TVlg4BboXXPn1jzH6QOQplkt3wAHh8B4gbLXPd7d3T63f+805/cDzMlyy60BZTwAAAAJcEhZcwAALiMAAC4jAXilP3YAAAAHdElNRQfmCR4JNC+uNeXDAAAAGXRFWHRDb21tZW50AENyZWF0ZWQgd2l0aCBHSU1QV4EOFwAAAAxJREFUCNdj+P//PwAF/gL+3MxZ5wAAAABJRU5ErkJggg==",
+            "signature": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAABhWlDQ1BJQ0MgcHJvZmlsZQAAKJF9kTtIw1AUhv+mig8qDnYQFclQnSyIFnGUKhbBQmkrtOpgctMXNGlIUlwcBdeCg4/FqoOLs64OroIg+ABxdHJSdJESz00KLWK8cLgf/73/z7nnAkK9zFSzYxJQNctIxqJiJrsqdr2iB6NUEQxLzNTjqcU0PNfXPXx8vwvzLO97f64+JWcywCcSzzHdsIg3iGc2LZ3zPnGQFSWF+Jx4wqAGiR+5Lrv8xrngsMAzg0Y6OU8cJBYLbSy3MSsaKnGEOKSoGuULGZcVzluc1XKVNfvkLwzktJUU16lGEMMS4khAhIwqSijDQph2jRQTSTqPeviHHH+CXDK5SmDkWEAFKiTHD/4Hv2dr5qen3KRAFOh8se2PMaBrF2jUbPv72LYbJ4D/GbjSWv5KHZj9JL3W0kJHQP82cHHd0uQ94HIHGHzSJUNyJD+VkM8D72f0TVlg4BboXXPn1jzH6QOQplkt3wAHh8B4gbLXPd7d3T63f+805/cDzMlyy60BZTwAAAAJcEhZcwAALiMAAC4jAXilP3YAAAAHdElNRQfmCR4JNC+uNeXDAAAAGXRFWHRDb21tZW50AENyZWF0ZWQgd2l0aCBHSU1QV4EOFwAAAAxJREFUCNdj+P//PwAF/gL+3MxZ5wAAAABJRU5ErkJggg=="
+          }
+        ],
+        "properties": {
+          "person_id_number": {
+            "type": "string",
+            "pattern": "^[0-9]+",
+            "minLength": 10,
+            "maxLength": 10
+          },
+          "full_name": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "address": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "postal_code": {
+            "type": "string",
+            "maxLength": 16
+          },
+          "place": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "birth_country": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "birth_place": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "email_address": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "phone_number": {
+            "type": "string",
+            "maxLength": 32
+          },
+          "delivery_method": {
+            "type": "string",
+            "enum": ["Send", "PickUp"]
+          },
+          "payment_datetime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "photo": {
+            "type": "string",
+            "pattern": "^data:image\\/(png|jpg|jpeg);base64,[a-zA-Z0-9+\\r\\n]+={0,2}$"
+          },
+          "signature": {
+            "type": "string",
+            "pattern": "^data:image\\/(png|jpg|jpeg);base64,[a-zA-Z0-9+\\r\\n]+={0,2}$"
+          }
+        },
+        "required": [
+          "person_id_number",
+          "full_name",
+          "address",
+          "postal_code",
+          "place",
+          "birth_country",
+          "birth_place",
+          "delivery_method",
+          "payment_datetime",
+          "photo",
+          "signature"
+        ]
+      },
+      "DriverCardApplicationResponse": {
+        "title": "DriverCardApplicationResponse",
+        "type": "object",
+        "example": [
+          {
+            "person_id_number": "1908763659",
+            "application_datetime": "2022-09-24T14:16:22Z",
+            "card_number": "IS10004548562000",
+            "card_type": "DriverCard",
+            "card_valid_from_datetime": "2022-09-24T14:16:22Z",
+            "card_valid_to_datetime": "2027-09-24T14:16:22Z",
+            "delivery_method": "Send",
+            "delivery_if_send": {
+              "recipient_name": "Eggert Bjarni Sævarsson",
+              "address": "Ármúli 2",
+              "postal_code": "108",
+              "place": "Reykjavík",
+              "country": "Ísland"
+            }
+          }
+        ],
+        "properties": {
+          "person_id_number": {
+            "type": "string"
+          },
+          "application_datetime": {
+            "type": "string"
+          },
+          "card_number": {
+            "type": "string"
+          },
+          "card_type": {
+            "type": "string"
+          },
+          "card_valid_from_datetime": {
+            "type": "string"
+          },
+          "card_valid_to_datetime": {
+            "type": "string"
+          },
+          "delivery_method": {
+            "type": "string",
+            "enum": ["PickUp", "send"]
+          },
+          "delivery_if_send": {
+            "type": "object",
+            "properties": {
+              "recipient_name": {
+                "type": "string"
+              },
+              "address": {
+                "type": "string"
+              },
+              "postal_code": {
+                "type": "string"
+              },
+              "place": {
+                "type": "string"
+              },
+              "country": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "title": "ErrorResponse",
+        "type": "object",
+        "example": [
+          {
+            "code": 400,
+            "message": "Bad request",
+            "errors": [
+              {
+                "tracking_id": "d0431b33-fe77-470b-9d9c-dc289e854336",
+                "message": "birth_place parameter is required",
+                "param": "birth_place"
+              }
+            ]
+          }
+        ],
+        "description": "Error object",
+        "properties": {
+          "code": {
+            "type": "integer"
+          },
+          "message": {
+            "type": "string"
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ErrorDetail"
+            }
+          }
+        }
+      },
+      "ErrorDetail": {
+        "title": "ErrorDetail",
+        "type": "object",
+        "properties": {
+          "tracking_id": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "param": {
+            "type": "string"
+          }
+        },
+        "example": [
+          {
+            "tracking_id": "d0431b33-fe77-470b-9d9c-dc289e854336",
+            "message": "birth_place parameter is required",
+            "param": "birth_place"
+          }
+        ]
+      }
+    },
+    "requestBodies": {},
+    "responses": {
+      "BadRequest": {
+        "description": "Bad request",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          },
+          "application/xml": {
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "multipart/form-data": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          },
+          "text/plain": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "Unauthorized": {
+        "description": "Unauthorized",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        },
+        "headers": {}
+      },
+      "NotFound": {
+        "description": "Not found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "InternalServerError": {
+        "description": "Server error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -22,7 +22,7 @@ export const VehicleOperatorsClientConfig = defineConfig<
       ),
       secret: env.required('XROAD_VEHICLE_OPERATORS_SECRET', ''), //TODOx munum við nota secret?
       xroadPath: env.required(
-        'XROAD_VEHICLE_OPERATORS_LICENSE_PATH',
+        'XROAD_VEHICLE_OPERATORS_PATH',
         'r1/IS-DEV/GOV/12345/Samgongustofa-Protected/<TODOX_SERVICE_NAME>',
       ),
     }

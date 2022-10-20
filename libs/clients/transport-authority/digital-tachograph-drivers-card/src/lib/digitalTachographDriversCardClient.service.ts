@@ -1,0 +1,121 @@
+import { Injectable } from '@nestjs/common'
+import { map } from 'rxjs'
+import {
+  DriverCardApplicationRequestDeliveryMethodEnum,
+  DriverCardApplicationResponseDeliveryMethodEnum,
+  NewestIcelandicDriverCardResponseIsValidEnum,
+  TachonetCheckResponseCardsIsActiveEnum,
+  TachonetCheckResponseCardsIsTemporaryEnum,
+} from '../../gen/fetch'
+import { TachoNetApi, DriverCardsApi } from '../../gen/fetch/apis'
+import {
+  DriverCardApplicationResponse,
+  DriversCard,
+  DriversCardApplicationRequest,
+  TachoNetCheckRequest,
+  TachoNetCheckResponse,
+} from './digitalTachographDriversCardClient.types'
+
+@Injectable()
+export class DigitalTachographDriversCardClient {
+  constructor(
+    private readonly tachoNetApi: TachoNetApi,
+    private readonly driversCardApi: DriverCardsApi,
+  ) {}
+
+  public async checkTachoNet(
+    request: TachoNetCheckRequest,
+  ): Promise<TachoNetCheckResponse> {
+    const result = await this.tachoNetApi.postTachonetcheck({
+      tachonetCheckRequest: {
+        firstName: request.firstName,
+        lastName: request.lastName,
+        birthDate: request.birthDate,
+        birthPlace: request.birthPlace,
+        drivingLicenceNumber: request.drivingLicenceNumber,
+        drivingLicenceIssuingCountry: request.drivingLicenceIssuingCountry,
+      },
+    })
+
+    return {
+      firstName: result.firstName,
+      lastName: result.lastName,
+      birthDate: result.birthDate,
+      birthPlace: result.birthPlace,
+      drivingLicenceNumber: result.drivingLicenceNumber,
+      drivingLicenceIssuingCountry: result.drivingLicenceIssuingCountry,
+      cards: result.cards?.map((card) => ({
+        countryName: card.countryName,
+        cardNumber: card.cardNumber,
+        cardValidFrom: card.cardValidFromDatetime,
+        cardValidTo: card.cardValidToDatetime,
+        issuingAuthority: card.issuingAuthority,
+        isTemporary:
+          card.isTemporary === TachonetCheckResponseCardsIsTemporaryEnum.Yes,
+        isActive: card.isActive === TachonetCheckResponseCardsIsActiveEnum.Yes,
+      })),
+    }
+  }
+
+  public async getDriversCard(ssn: string): Promise<DriversCard> {
+    const result = await this.driversCardApi.getNewesticelandicdrivercard({
+      persidno: ssn,
+    })
+
+    return {
+      ssn: result?.personIdNumber,
+      applicationCreatedAt: result?.datetimeOfApplication,
+      cardNumber: result?.cardNumber,
+      cardValidFrom: result?.cardValidFromDatetime,
+      cardValidTo: result?.cardValidToDatetime,
+      isValid:
+        result?.isValid === NewestIcelandicDriverCardResponseIsValidEnum.Yes,
+    }
+  }
+
+  public async saveDriversCard(
+    request: DriversCardApplicationRequest,
+  ): Promise<DriverCardApplicationResponse> {
+    const result = await this.driversCardApi.postDrivercards({
+      driverCardApplicationRequest: {
+        personIdNumber: request.ssn,
+        fullName: request.fullName,
+        address: request.address,
+        postalCode: request.postalCode,
+        place: request.place,
+        birthCountry: request.birthCountry,
+        birthPlace: request.birthPlace,
+        emailAddress: request.emailAddress,
+        phoneNumber: request.phoneNumber,
+        deliveryMethod: request.deliveryMethodIsSend
+          ? DriverCardApplicationRequestDeliveryMethodEnum.Send
+          : DriverCardApplicationRequestDeliveryMethodEnum.PickUp,
+        paymentDatetime: request.paymentReceivedAt,
+        photo: request.photo,
+        signature: request.signature,
+      },
+    })
+
+    return {
+      ssn: result?.personIdNumber,
+      applicationCreatedAt: result?.applicationDatetime,
+      cardNumber: result?.cardNumber,
+      cardValidFrom: result?.cardValidFromDatetime,
+      cardValidTo: result?.cardValidToDatetime,
+      deliveryMethodIsSend:
+        result?.deliveryMethod ===
+        DriverCardApplicationResponseDeliveryMethodEnum.Send,
+      deliveryAddressIfSend:
+        result?.deliveryMethod ===
+        DriverCardApplicationResponseDeliveryMethodEnum.Send
+          ? {
+              recipientName: result?.deliveryIfSend?.recipientName,
+              address: result?.deliveryIfSend?.address,
+              postalCode: result?.deliveryIfSend?.postalCode,
+              place: result?.deliveryIfSend?.place,
+              country: result?.deliveryIfSend?.country,
+            }
+          : undefined,
+    }
+  }
+}

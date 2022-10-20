@@ -8,8 +8,10 @@ const schema = z.object({
   xroadPath: z.string(),
 })
 
-export const VehicleCoOwnerClientConfig = defineConfig<z.infer<typeof schema>>({
-  name: 'VehicleCoOwnerClient',
+export const DigitalTachographDriversCardClientConfig = defineConfig<
+  z.infer<typeof schema>
+>({
+  name: 'DigitalTachographDriversCardClient',
   schema,
   load(env) {
     return {
@@ -18,9 +20,9 @@ export const VehicleCoOwnerClientConfig = defineConfig<z.infer<typeof schema>>({
         'XROAD_CLIENT_ID',
         'IS-DEV/GOV/10000/island-is-client',
       ),
-      secret: env.required('XROAD_VEHICLE_CO_OWNER_SECRET', ''), //TODOx munum við nota secret?
+      secret: env.required('XROAD_DIGITAL_TACHOGRAPH_DRIVERS_CARD_SECRET', ''), //TODOx munum við nota secret?
       xroadPath: env.required(
-        'XROAD_VEHICLE_CO_OWNER_PATH',
+        'XROAD_DIGITAL_TACHOGRAPH_DRIVERS_CARD_PATH',
         'r1/IS-DEV/GOV/12345/Samgongustofa-Protected/<TODOX_SERVICE_NAME>',
       ),
     }

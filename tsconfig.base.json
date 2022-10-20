@@ -400,6 +400,9 @@
         "libs/clients/smartsolutions/src/index.ts"
       ],
       "@island.is/clients/syslumenn": ["libs/clients/syslumenn/src/index.ts"],
+      "@island.is/clients/transport-authority/digital-tachograph-drivers-card": [
+        "libs/clients/transport-authority/digital-tachograph-drivers-card/src/index.ts"
+      ],
       "@island.is/clients/transport-authority/vehicle-co-owner": [
         "libs/clients/transport-authority/vehicle-co-owner/src/index.ts"
       ],
