@@ -7,6 +7,8 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
+  NationalRegistryUserApi,
+  UserProfileApi,
 } from '@island.is/application/types'
 import { EphemeralStateLifeCycle } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
@@ -61,6 +63,7 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
+              api: [NationalRegistryUserApi, UserProfileApi],
             },
           ],
         },
