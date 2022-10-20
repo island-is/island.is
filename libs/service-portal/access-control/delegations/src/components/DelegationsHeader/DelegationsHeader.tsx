@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom'
 import { Box, Button, Select, SkeletonLoader } from '@island.is/island-ui/core'
 import { useBreakpoint } from '@island.is/island-ui/core'
 import { m, ServicePortalPath } from '@island.is/service-portal/core'
-import { useLocale, useNamespaces } from '@island.is/localization'
+import { useLocale } from '@island.is/localization'
 import * as styles from './DelegationsHeader.css'
 import { useDomains } from '../../hooks/useDomains'
 
@@ -21,7 +21,6 @@ export const DelegationsHeader = ({
   domainName,
   onDomainChange,
 }: DelegationsHeaderProps) => {
-  useNamespaces('sp.access-control-delegations')
   const { formatMessage } = useLocale()
   const history = useHistory()
   const { sm } = useBreakpoint()

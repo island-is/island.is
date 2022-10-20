@@ -6,7 +6,7 @@ import {
   ServicePortalModuleProps,
 } from '@island.is/service-portal/core'
 
-import { useLocale, useNamespaces } from '@island.is/localization'
+import { useLocale } from '@island.is/localization'
 import { useAuth } from '@island.is/auth/react'
 import { AuthDelegationsQuery } from '@island.is/service-portal/graphql'
 
@@ -23,8 +23,6 @@ export const DelegationsAccessGuard = ({
   delegations,
   delegationsLoading,
 }: DelegationsAccessGuardProps) => {
-  useNamespaces('sp.access-control-delegations')
-
   const { switchUser } = useAuth()
   const { formatMessage } = useLocale()
   const actor = userInfo.profile.actor

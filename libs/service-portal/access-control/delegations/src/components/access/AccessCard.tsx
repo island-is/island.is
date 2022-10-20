@@ -10,7 +10,7 @@ import {
   Icon,
   Button,
 } from '@island.is/island-ui/core'
-import { useLocale, useNamespaces } from '@island.is/localization'
+import { useLocale } from '@island.is/localization'
 import { coreMessages } from '@island.is/application/core'
 import { AuthCustomDelegation } from '@island.is/api/schema'
 import { useMemo } from 'react'
@@ -28,7 +28,6 @@ export const AccessCard = ({
   group,
   onDelete,
 }: AccessCardProps) => {
-  useNamespaces(['sp.settings-access-control', 'sp.access-control-delegations'])
   const { formatMessage } = useLocale()
   const history = useHistory()
   const { pathname } = useLocation()

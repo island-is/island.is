@@ -10,7 +10,7 @@ import {
   Divider,
 } from '@island.is/island-ui/core'
 import { m } from '@island.is/service-portal/core'
-import { useNamespaces, useLocale } from '@island.is/localization'
+import { useLocale } from '@island.is/localization'
 import { formatNationalId } from '@island.is/service-portal/core'
 import { useUpdateAuthDelegationMutation } from '@island.is/service-portal/graphql'
 import { useState } from 'react'
@@ -44,7 +44,6 @@ export const AccessConfirmModal = ({
   validityPeriod,
   ...rest
 }: AccessConfirmModalProps) => {
-  useNamespaces(['sp.settings-access-control', 'sp.access-control-delegations'])
   const { formatMessage } = useLocale()
   const { userInfo } = useAuth()
   const [error, setError] = useState(false)

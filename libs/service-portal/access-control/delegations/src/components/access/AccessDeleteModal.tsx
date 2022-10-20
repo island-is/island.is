@@ -1,7 +1,7 @@
 import { AuthCustomDelegation } from '@island.is/api/schema'
 import { useAuth } from '@island.is/auth/react'
 import { AlertMessage, Box, toast } from '@island.is/island-ui/core'
-import { useNamespaces, useLocale } from '@island.is/localization'
+import { useLocale } from '@island.is/localization'
 import { formatNationalId } from '@island.is/service-portal/core'
 import { useDeleteAuthDelegationMutation } from '@island.is/service-portal/graphql'
 import { useState } from 'react'
@@ -26,7 +26,6 @@ export const AccessDeleteModal = ({
   onDelete,
   ...rest
 }: AccessDeleteModalProps) => {
-  useNamespaces('sp.access-control-delegations')
   const { formatMessage } = useLocale()
   const { userInfo } = useAuth()
   const [error, setError] = useState(false)

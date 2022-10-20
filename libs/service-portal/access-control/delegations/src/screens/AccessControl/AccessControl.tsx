@@ -15,7 +15,7 @@ import {
 import { useDomains } from '../../hooks/useDomains'
 
 const AccessControl: ServicePortalModuleComponent = (props) => {
-  useNamespaces('sp.access-control-delegations')
+  useNamespaces(['sp.settings-access-control', 'sp.access-control-delegations'])
   const { formatMessage } = useLocale()
 
   const [domainName, setDomainName] = useSessionStorage<string | null>(

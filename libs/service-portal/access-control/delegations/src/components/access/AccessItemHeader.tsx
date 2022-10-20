@@ -1,4 +1,4 @@
-import { useLocale, useNamespaces } from '@island.is/localization'
+import { useLocale } from '@island.is/localization'
 import { Text, GridRow, GridColumn, Hidden } from '@island.is/island-ui/core'
 
 import * as styles from './AccessItemHeader.css'
@@ -10,7 +10,6 @@ type AccessItemHeaderProps = {
 export const AccessItemHeader = ({
   hideValidityPeriod = false,
 }: AccessItemHeaderProps) => {
-  useNamespaces('sp.settings-access-control')
   const { formatMessage } = useLocale()
 
   return (

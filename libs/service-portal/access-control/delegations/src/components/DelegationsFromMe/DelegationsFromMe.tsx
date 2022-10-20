@@ -9,7 +9,7 @@ import {
 import { AuthCustomDelegation } from '@island.is/api/schema'
 import { DelegationsHeader, DomainOption } from '../DelegationsHeader'
 import { DelegationsEmptyState } from '../DelegationsEmptyState'
-import { useNamespaces, useLocale } from '@island.is/localization'
+import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
 import { AccessDeleteModal, AccessCard } from '../access'
 import { isDefined } from '@island.is/shared/utils'
@@ -30,7 +30,6 @@ export const DelegationsFromMe = ({
   delegationsLoading,
   refetchDelegations,
 }: DelegationsFromMeProps) => {
-  useNamespaces(['sp.settings-access-control', 'sp.access-control-delegations'])
   const { formatMessage } = useLocale()
   const [delegation, setDelegation] = useState<AuthCustomDelegation | null>(
     null,

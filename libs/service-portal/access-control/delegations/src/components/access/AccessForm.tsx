@@ -16,7 +16,7 @@ import {
   m,
   ServicePortalPath,
 } from '@island.is/service-portal/core'
-import { useLocale, useNamespaces } from '@island.is/localization'
+import { useLocale } from '@island.is/localization'
 import { DelegationsFormFooter } from '../../components'
 import { servicePortalSaveAccessControl } from '@island.is/plausible'
 import {
@@ -45,7 +45,6 @@ type AccessFormProps = {
 }
 
 export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
-  useNamespaces(['sp.settings-access-control', 'sp.access-control-delegations'])
   const [openConfirmModal, setOpenConfirmModal] = useState(false)
   const { formatMessage, lang } = useLocale()
 
