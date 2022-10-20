@@ -216,53 +216,38 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
         newLine = true,
         position,
       } = options ?? {}
-      const { x, y } = position ?? {}
+      let { x } = position ?? {}
+      const { y } = position ?? {}
       const font = bold ? boldFont : normalFont
 
       switch (alignment) {
         case Alignment.Left:
-          drawText(
-            text,
-            font,
-            fontSize,
-            x ?? margins.left,
-            y,
-            marginTop,
-            undefined,
-            pageLink,
-            newLine,
-          )
+          x = x ?? margins.left
           break
         case Alignment.Center:
-          drawText(
-            text,
-            font,
-            fontSize,
+          x =
             (rawDocument.getPage(currentPage).getWidth() -
               font.widthOfTextAtSize(text, fontSize)) /
-              2,
-            y,
-            marginTop,
-            undefined,
-            pageLink,
-            newLine,
-          )
+            2
           break
         case Alignment.Right:
-          drawText(
-            text,
-            font,
-            fontSize,
+          x =
             rawDocument.getPage(currentPage).getWidth() -
-              (x ?? margins.right) -
-              font.widthOfTextAtSize(text, fontSize),
-            y,
-            marginTop,
-            undefined,
-            pageLink,
-            newLine,
-          )
+            (x ?? margins.right) -
+            font.widthOfTextAtSize(text, fontSize)
       }
+
+      drawText(
+        text,
+        font,
+        fontSize,
+        x,
+        y,
+        marginTop,
+        undefined,
+        pageLink,
+        newLine,
+      )
 
       return pdfDocument
     },
