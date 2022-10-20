@@ -100,6 +100,7 @@ import { ApplicationChargeService } from './charge/application-charge.service'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { TemplateApiError } from '@island.is/nest/problem'
+import { BypassDelegation } from './guards/bypass-delegation.decorator'
 
 @UseGuards(IdsUserGuard, ScopesGuard, DelegationGuard)
 @ApiTags('applications')
@@ -154,6 +155,7 @@ export class ApplicationController {
 
   @Scopes(ApplicationScope.read)
   @Get('users/:nationalId/applications')
+  @BypassDelegation()
   @ApiParam({
     name: 'nationalId',
     type: String,
@@ -195,6 +197,7 @@ export class ApplicationController {
       nationalId,
       typeId,
       status,
+      user.actor?.nationalId,
     )
 
     // keep all templates that have been fetched in order to avoid fetching them again
@@ -216,11 +219,11 @@ export class ApplicationController {
       if (
         templateTypeToIsReady[application.typeId] &&
         templates[application.typeId] !== undefined &&
-        (await this.applicationAccessService.shouldShowApplicationOnOverview(
+        this.applicationAccessService.shouldShowApplicationOnOverview(
           application as BaseApplication,
-          nationalId,
+          user,
           templates[application.typeId],
-        ))
+        )
       ) {
         filteredApplications.push(application)
         continue
@@ -242,11 +245,11 @@ export class ApplicationController {
           user,
           applicationTemplate,
         )) &&
-        (await this.applicationAccessService.shouldShowApplicationOnOverview(
+        this.applicationAccessService.shouldShowApplicationOnOverview(
           application as BaseApplication,
-          nationalId,
+          user,
           applicationTemplate,
-        ))
+        )
       ) {
         templateTypeToIsReady[application.typeId] = true
         filteredApplications.push(application)

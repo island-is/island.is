@@ -60,8 +60,12 @@ const InstructorRegistrationsTemplate: ApplicationTemplate<
                   type: 'primary',
                 },
               ],
-              write: 'all',
               api: [HasTeachingRightsApi, NationalRegistryUserApi],
+              delete: true,
+              write: {
+                answers: ['approveExternalData'],
+                externalData: ['teachingRights', 'nationalRegistry'],
+              },
             },
           ],
         },

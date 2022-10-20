@@ -106,7 +106,6 @@ export const PrerequisitesForm: Form = buildForm({
               id: 'applicant.name',
               title: info.labels.name,
               backgroundColor: 'white',
-              required: true,
               disabled: true,
               defaultValue: (application: Application) => {
                 return (application.externalData as PaymentPlanExternalData)
@@ -119,7 +118,6 @@ export const PrerequisitesForm: Form = buildForm({
               format: '######-####',
               width: 'half',
               backgroundColor: 'white',
-              required: true,
               disabled: true,
               defaultValue: (application: Application) =>
                 (application.externalData as PaymentPlanExternalData)?.identity
@@ -130,7 +128,6 @@ export const PrerequisitesForm: Form = buildForm({
               title: info.labels.address,
               width: 'half',
               backgroundColor: 'white',
-              required: true,
               disabled: true,
               defaultValue: (application: Application) =>
                 (application.externalData as PaymentPlanExternalData)?.identity
@@ -141,7 +138,6 @@ export const PrerequisitesForm: Form = buildForm({
               title: info.labels.postalCode,
               width: 'half',
               backgroundColor: 'white',
-              required: true,
               disabled: true,
               defaultValue: (application: Application) =>
                 (application.externalData as PaymentPlanExternalData)?.identity
@@ -152,7 +148,6 @@ export const PrerequisitesForm: Form = buildForm({
               title: info.labels.city,
               width: 'half',
               backgroundColor: 'white',
-              required: true,
               disabled: true,
               defaultValue: (application: Application) =>
                 (application.externalData as PaymentPlanExternalData)?.identity

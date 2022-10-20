@@ -1,8 +1,6 @@
 import {
   buildForm,
   buildSection,
-  buildExternalDataProvider,
-  buildDataProviderItem,
   buildMultiField,
   buildCustomField,
   buildTextField,
@@ -13,6 +11,8 @@ import {
   buildSelectField,
   getValueViaPath,
   buildDateField,
+  buildExternalDataProvider,
+  buildDataProviderItem,
 } from '@island.is/application/core'
 import {
   Form,
@@ -361,7 +361,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
             ],
           }),
           buildSubSection({
-            id: 'info2',
+            id: 'infoWitnesses',
             title: m.informationWitnessTitle,
             children: [
               buildMultiField({
@@ -395,7 +395,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                   }),
                   buildDescriptionField({
                     id: 'header4',
-                    title: m.informationWitness1,
+                    title: m.informationWitness2,
                     titleVariant: 'h4',
                     space: 'gutter',
                   }),

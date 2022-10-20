@@ -21,6 +21,12 @@ import {
 import type { Gender } from '@island.is/judicial-system/types'
 
 import { notifications, custodyNotice, courtUpload } from '../messages'
+import { Case } from '../modules/case'
+
+type SubjectAndBody = {
+  subject: string
+  body: string
+}
 
 function legalProvisionsOrder(p: CaseLegalProvisions) {
   switch (p) {
@@ -144,27 +150,24 @@ export function formatCourtResubmittedToCourtSmsNotification(
 
 export function formatDefenderResubmittedToCourtEmailNotification(
   formatMessage: FormatMessage,
-  caseType: CaseType,
-  policeCaseNumbers: string[],
-  overviewUrl: string,
-  courtName?: string,
-) {
-  const subject = formatMessage(
-    notifications.defenderResubmittedToCourt.subject,
-    {
-      caseType: caseTypes[caseType],
-    },
-  )
-
-  const body = formatMessage(notifications.defenderResubmittedToCourt.body, {
-    policeCaseNumbersCount: policeCaseNumbers.length,
-    policeCaseNumbers: policeCaseNumbers.join(', '),
-    court: courtName?.replace('dómur', 'dómi') || '',
+  overviewUrl?: string,
+  court?: string,
+  courtCaseNumber?: string,
+): SubjectAndBody {
+  const cf = notifications.defenderResubmittedToCourt
+  const subject = formatMessage(cf.subject, { courtCaseNumber })
+  const body = formatMessage(cf.body, {
+    courtCaseNumber,
+    courtName: court?.replace('dómur', 'dómi'),
+  })
+  const link = formatMessage(cf.link, {
+    defenderHasAccessToRvg: Boolean(overviewUrl),
+    courtName: court?.replace('dómur', 'dómi'),
     linkStart: `<a href="${overviewUrl}">`,
     linkEnd: '</a>',
   })
 
-  return { body, subject }
+  return { body: `${body}${link}`, subject }
 }
 
 export function formatProsecutorReadyForCourtEmailNotification(
@@ -173,7 +176,7 @@ export function formatProsecutorReadyForCourtEmailNotification(
   caseType: CaseType,
   courtName?: string,
   overviewUrl?: string,
-) {
+): SubjectAndBody {
   const subject = formatMessage(notifications.readyForCourt.subject, {
     isIndictmentCase: isIndictmentCase(caseType),
     caseType: caseTypes[caseType],
@@ -224,7 +227,7 @@ export function formatProsecutorCourtDateEmailNotification(
   registrarName?: string,
   defenderName?: string,
   sessionArrangements?: SessionArrangements,
-): { subject: string; body: string } {
+): SubjectAndBody {
   const cf = notifications.prosecutorCourtDateEmail
   const scheduledCaseText = isIndictmentCase(type)
     ? formatMessage(cf.sheduledIndictmentCase, { court, courtCaseNumber })
@@ -422,7 +425,6 @@ export function formatDefenderCourtDateLinkEmailNotification(
   const body = formatMessage(cf.linkBody, {
     courtCaseNumber,
   })
-
   const link = formatMessage(cf.link, {
     defenderHasAccessToRvg: Boolean(overviewUrl),
     courtName: court?.replace('dómur', 'dómi'),
@@ -451,7 +453,7 @@ export function formatPrisonAdministrationRulingNotification(
   courtCaseNumber: string | undefined,
   courtName: string | undefined,
   overviewUrl: string,
-) {
+): SubjectAndBody {
   const subject = formatMessage(notifications.signedRuling.subject, {
     courtCaseNumber,
   })
@@ -643,8 +645,27 @@ export function formatCourtUploadRulingTitle(
   courtCaseNumber: string | undefined,
   isModifyingRuling: boolean,
 ) {
-  return formatMessage(courtUpload.rulingV2, {
+  return formatMessage(courtUpload.ruling, {
     courtCaseNumber: courtCaseNumber ?? '',
     isModifyingRuling,
   })
+}
+
+export function formatDefenderAssignedEmailNotification(
+  formatMessage: FormatMessage,
+  theCase: Case,
+  overviewUrl: string,
+): SubjectAndBody {
+  const subject = formatMessage(notifications.defenderAssignedEmail.subject, {
+    court: capitalize(theCase.court?.name ?? ''),
+  })
+
+  const body = formatMessage(notifications.defenderAssignedEmail.body, {
+    courtCaseNumber: capitalize(theCase.courtCaseNumber ?? ''),
+    court: theCase.court?.name ?? '',
+    linkStart: `<a href="${overviewUrl}">`,
+    linkEnd: '</a>',
+  })
+
+  return { body, subject }
 }

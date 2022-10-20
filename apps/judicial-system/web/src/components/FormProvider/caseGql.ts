@@ -146,6 +146,7 @@ const CaseQuery = gql`
         state
         key
         category
+        policeCaseNumber
       }
       isAppealDeadlineExpired
       isAppealGracePeriodExpired
@@ -155,6 +156,7 @@ const CaseQuery = gql`
       origin
       seenByDefender
       subpoenaType
+      defendantWaivesRightToCounsel
     }
   }
 `

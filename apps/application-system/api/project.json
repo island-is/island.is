@@ -56,6 +56,11 @@
             "glob": "*",
             "input": "libs/application/template-api-modules/src/lib/modules/templates/passport/emailGenerators/assets",
             "output": "./passport-assets"
+          },
+          {
+            "glob": "*",
+            "input": "libs/application/template-api-modules/src/lib/modules/templates/marriage-conditions-submission/emailGenerators/assets",
+            "output": "./marriage-conditions-assets"
           }
         ],
         "webpackConfig": "apps/application-system/api/webpack.config.js",

@@ -19,6 +19,7 @@ import {
   NationalRegistryUserApi,
   UserProfileApi,
 } from '../dataProviders'
+import { pruneAfterDays } from '@island.is/application/core'
 
 type Events =
   | { type: DefaultEvents.ASSIGN }
@@ -34,17 +35,6 @@ enum TemplateApiActions {
 }
 
 const applicationName = 'Umsókn um breytt lögheimili barns'
-
-const oneYear = 24 * 3600 * 1000 * 365
-const twentyEightDays = 24 * 3600 * 1000 * 28
-
-const pruneAfter = (time: number) => {
-  return {
-    shouldBeListed: true,
-    shouldBePruned: true,
-    whenToPrune: time,
-  }
-}
 
 const ChildrenResidenceChangeTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -64,7 +54,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
           actionCard: {
             description: stateDescriptions.draft,
           },
-          lifecycle: pruneAfter(oneYear),
+          lifecycle: pruneAfterDays(365),
           roles: [
             {
               id: Roles.ParentA,
@@ -79,8 +69,8 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
                   type: 'primary',
                 },
               ],
-              delete: true,
               read: 'all',
+              delete: true,
               write: {
                 answers: [
                   'reason',
@@ -120,7 +110,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
           actionCard: {
             description: stateDescriptions.inReview,
           },
-          lifecycle: pruneAfter(twentyEightDays),
+          lifecycle: pruneAfterDays(28),
           onEntry: defineTemplateApi({
             action: TemplateApiActions.sendNotificationToCounterParty,
           }),
@@ -181,7 +171,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
             description: stateDescriptions.submitted,
             tag: { label: stateLabels.submitted },
           },
-          lifecycle: pruneAfter(oneYear),
+          lifecycle: pruneAfterDays(365),
           onEntry: defineTemplateApi({
             action: TemplateApiActions.submitApplication,
           }),
@@ -217,7 +207,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
               label: stateLabels.rejected,
             },
           },
-          lifecycle: pruneAfter(oneYear),
+          lifecycle: pruneAfterDays(365),
           onEntry: defineTemplateApi({
             action: TemplateApiActions.rejectApplication,
           }),
@@ -247,7 +237,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
             description: stateDescriptions.rejected,
             tag: { label: stateLabels.rejected, variant: 'red' },
           },
-          lifecycle: pruneAfter(oneYear),
+          lifecycle: pruneAfterDays(365),
           onEntry: defineTemplateApi({
             action: TemplateApiActions.rejectedApplication,
           }),
@@ -278,7 +268,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
             description: stateDescriptions.approved,
             tag: { label: stateLabels.approved, variant: 'blueberry' },
           },
-          lifecycle: pruneAfter(oneYear),
+          lifecycle: pruneAfterDays(365),
           onEntry: defineTemplateApi({
             action: TemplateApiActions.approveApplication,
           }),

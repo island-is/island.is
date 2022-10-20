@@ -28,15 +28,17 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import { GlobalContext } from '@island.is/web/context'
 import { QueryGetNewsArgs } from '@island.is/api/schema'
 import { FRONTPAGE_NEWS_TAG_ID } from '@island.is/web/constants'
+import { Locale } from 'locale'
 import { watsonConfig } from './config'
 
 interface HomeProps {
   categories: GetArticleCategoriesQuery['getArticleCategories']
   news: GetNewsQuery['getNews']['items']
   page: GetFrontpageQuery['getFrontpage']
+  locale: Locale
 }
 
-const Home: Screen<HomeProps> = ({ categories, news, page }) => {
+const Home: Screen<HomeProps> = ({ categories, news, page, locale }) => {
   const namespace = JSON.parse(page.namespace.fields)
   const { activeLocale } = useI18n()
   const { globalNamespace } = useContext(GlobalContext)
@@ -128,7 +130,7 @@ const Home: Screen<HomeProps> = ({ categories, news, page }) => {
           />
         </GridContainer>
       </Box>
-      <WatsonChatPanel {...watsonConfig} />
+      {watsonConfig[locale] && <WatsonChatPanel {...watsonConfig[locale]} />}
     </Box>
   )
 }
@@ -184,6 +186,7 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
     categories: getArticleCategories,
     page: getFrontpage,
     showSearchInHeader: false,
+    locale: locale as Locale,
   }
 }
 

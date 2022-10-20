@@ -72,6 +72,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
               ],
               write: 'all',
               api: [NationalRegistryUserApi],
+              delete: true,
             },
           ],
         },
@@ -190,10 +191,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
         meta: {
           name: States.IN_FINAL_REVIEW,
           progress: 1,
-          lifecycle: {
-            shouldBeListed: true,
-            shouldBePruned: false,
-          },
+          lifecycle: DefaultStateLifeCycle,
           onEntry: defineTemplateApi({
             action: ApiActions.reviewApplication,
           }),

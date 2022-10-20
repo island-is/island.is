@@ -41,7 +41,7 @@ const OperatingLicenseTemplate: ApplicationTemplate<
   type: ApplicationTypes.OPERATING_LCENSE,
   name: m.formName.defaultMessage,
   featureFlag: Features.operatingLicense,
-  allowedDelegations: [AuthDelegationType.ProcurationHolder],
+  allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
   dataSchema,
   stateMachineConfig: {
     initial: States.DRAFT,
@@ -103,6 +103,7 @@ const OperatingLicenseTemplate: ApplicationTemplate<
                 { event: DefaultEvents.SUBMIT, name: '', type: 'primary' },
               ],
               write: 'all',
+              delete: true,
             },
           ],
         },

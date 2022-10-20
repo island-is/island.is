@@ -64,11 +64,24 @@ export const DelegationsScreen = ({
           Features.applicationSystemDelegations,
           false,
         )
-        if (template.allowedDelegations && featureFlagEnabled) {
+
+        const allowedDelegations: string[] = []
+        if (template.allowedDelegations) {
+          for (let i = 0; i < template.allowedDelegations.length; i++) {
+            const d = template.allowedDelegations[i]
+            if (
+              !d.featureFlag ||
+              (await featureFlagClient.getValue(d.featureFlag, false))
+            ) {
+              allowedDelegations.push(d.type)
+            }
+          }
+        }
+
+        if (allowedDelegations.length > 0 && featureFlagEnabled) {
           setScreenData((prev) => ({
             ...prev,
-            allowedDelegations: template.allowedDelegations,
-            templateName: template.name,
+            allowedDelegations: allowedDelegations,
           }))
         } else {
           if (user?.profile.actor) {

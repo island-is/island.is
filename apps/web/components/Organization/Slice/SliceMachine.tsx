@@ -141,7 +141,13 @@ const renderSlice = (
     case 'MailingListSignupSlice':
       return <MailingListSignupSlice slice={slice} namespace={namespace} />
     case 'LifeEventPageListSlice':
-      return <LifeEventPageListSlice slice={slice} />
+      return (
+        <LifeEventPageListSlice
+          slice={slice}
+          namespace={namespace}
+          {...params}
+        />
+      )
     default:
       return <RichText body={[slice]} />
   }
@@ -162,14 +168,12 @@ export const SliceMachine = ({
         <GridColumn
           paddingTop={6}
           span={
-            fullWidthSlices.includes(slice.__typename) || fullWidth
+            fullWidthSlices.includes(slice.__typename)
               ? '9/9'
               : ['9/9', '9/9', '7/9']
           }
           offset={
-            fullWidthSlices.includes(slice.__typename) || fullWidth
-              ? '0'
-              : ['0', '0', '1/9']
+            fullWidthSlices.includes(slice.__typename) ? '0' : ['0', '0', '1/9']
           }
         >
           {renderSlice(

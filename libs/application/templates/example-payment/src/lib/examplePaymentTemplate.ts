@@ -1,5 +1,5 @@
 import {
-  DEPRECATED_DefaultStateLifeCycle,
+  DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
 import {
@@ -48,6 +48,7 @@ const template: ApplicationTemplate<
               write: 'all',
               read: 'all',
               api: [PaymentCatalogApi],
+              delete: true,
             },
           ],
         },
@@ -92,7 +93,7 @@ const template: ApplicationTemplate<
         meta: {
           name: 'Done',
           progress: 1,
-          lifecycle: DEPRECATED_DefaultStateLifeCycle,
+          lifecycle: DefaultStateLifeCycle,
           onEntry: defineTemplateApi({
             action: ApiActions.submitApplication,
           }),

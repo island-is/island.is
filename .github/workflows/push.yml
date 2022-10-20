@@ -160,7 +160,7 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-node@v3
         with:
-          node-version: '14'
+          node-version: '18'
 
       - name: Setup yarn
         run: npm install -g yarn
@@ -390,7 +390,7 @@ jobs:
       - name: Prepare docker build targets
         id: build_map
         run: |
-          CHUNKS=$(./scripts/ci/generate-build-chunks.sh docker-express docker-next docker-static docker-cypress docker-jest)
+          CHUNKS=$(./scripts/ci/generate-build-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)
           echo "CHUNKS: '$CHUNKS'"
           if [[ $CHUNKS != "[]" ]]; then
             echo "::set-output name=BUILD_CHUNKS::$CHUNKS"
@@ -399,7 +399,7 @@ jobs:
       - name: Gather unaffected docker images
         id: unaffected
         run: |
-          UNAFFECTED=$(./scripts/ci/list-unaffected.sh docker-next docker-express docker-static docker-cypress docker-jest)
+          UNAFFECTED=$(./scripts/ci/list-unaffected.sh docker-next docker-express docker-static docker-playwright docker-jest)
           echo "::set-output name=UNAFFECTED::$UNAFFECTED"
 
       - name: check pre-release
@@ -412,7 +412,7 @@ jobs:
         if: needs.pre-checks.outputs.PRE_CHECK != 'push'
         run: |
           export BASE=$(git merge-base HEAD $GITHUB_BASE_REF)
-          CHUNKS=$(./scripts/ci/generate-build-chunks.sh docker-express docker-next docker-static docker-cypress docker-jest)
+          CHUNKS=$(./scripts/ci/generate-build-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)
           echo "CHUNKS: '$CHUNKS'"
           if [[ $CHUNKS != "[]" ]]; then
             echo "::set-output name=IMAGES::$(echo $CHUNKS | jq '.[] | fromjson | .projects' -r | tr '\n' ',')"
@@ -439,7 +439,7 @@ jobs:
 
       - uses: actions/setup-node@v3
         with:
-          node-version: '14'
+          node-version: '18'
 
       - name: Setup yarn
         run: npm install -g yarn
@@ -505,12 +505,12 @@ jobs:
         continue-on-error: true
       - uses: actions/setup-node@v3
         with:
-          node-version: '14'
+          node-version: '18'
         if: steps.gather.outcome == 'success'
 
       - uses: actions/setup-node@v3
         with:
-          node-version: '14'
+          node-version: '18'
         if: steps.gather.outcome == 'success'
 
       - name: Setup yarn

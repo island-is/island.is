@@ -56,13 +56,20 @@ const Overview: React.FC = () => {
     setModal('caseSubmittedModal')
   }
 
+  const caseHasBeenSentToCourt =
+    workingCase.state !== CaseState.NEW && workingCase.state !== CaseState.DRAFT
+
   return (
     <PageLayout
       workingCase={workingCase}
       activeSection={
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
-      activeSubSection={IndictmentsProsecutorSubsections.OVERVIEW}
+      activeSubSection={
+        caseHasBeenSentToCourt
+          ? undefined
+          : IndictmentsProsecutorSubsections.OVERVIEW
+      }
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
@@ -103,10 +110,20 @@ const Overview: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={constants.INDICTMENTS_CASE_FILES_ROUTE}
+          previousUrl={
+            caseHasBeenSentToCourt
+              ? constants.CASES_ROUTE
+              : `${constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE}/${workingCase.id}`
+          }
           nextButtonText={formatMessage(strings.overview.nextButtonText, {
             isNewIndictment,
           })}
+          hideNextButton={caseHasBeenSentToCourt}
+          infoBoxText={
+            caseHasBeenSentToCourt
+              ? formatMessage(strings.overview.caseSendToCourt)
+              : undefined
+          }
           onNextButtonClick={handleNextButtonClick}
         />
       </FormContentContainer>

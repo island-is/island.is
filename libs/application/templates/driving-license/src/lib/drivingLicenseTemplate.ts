@@ -1,6 +1,5 @@
 import {
   DefaultStateLifeCycle,
-  DEPRECATED_DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
 import {
@@ -147,7 +146,7 @@ const template: ApplicationTemplate<
             description: m.actionCardPayment,
           },
           progress: 0.9,
-          lifecycle: DEPRECATED_DefaultStateLifeCycle,
+          lifecycle: DefaultStateLifeCycle,
           onEntry: defineTemplateApi({
             action: ApiActions.createCharge,
           }),
@@ -165,6 +164,7 @@ const template: ApplicationTemplate<
                 },
               ],
               write: 'all',
+              delete: true,
             },
           ],
         },
@@ -177,7 +177,7 @@ const template: ApplicationTemplate<
         meta: {
           name: 'Done',
           progress: 1,
-          lifecycle: DEPRECATED_DefaultStateLifeCycle,
+          lifecycle: DefaultStateLifeCycle,
           onEntry: defineTemplateApi({
             action: ApiActions.submitApplication,
           }),
@@ -195,7 +195,7 @@ const template: ApplicationTemplate<
         meta: {
           name: 'Declined',
           progress: 1,
-          lifecycle: DEPRECATED_DefaultStateLifeCycle,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,

@@ -56,6 +56,9 @@ export const slices = gql`
     categories
     buttonText
     signupUrl
+    image {
+      ...ImageFields
+    }
   }
 
   fragment StoryFields on StorySlice {
@@ -419,8 +422,10 @@ export const slices = gql`
     content {
       ...HtmlFields
       ...AssetFields
+      ...ImageFields
     }
     dividerOnTop
+    showTitle
   }
 
   fragment AccordionSliceFields on AccordionSlice {
@@ -428,12 +433,14 @@ export const slices = gql`
     id
     title
     type
+    hasBorderAbove
     accordionItems {
       id
       title
       content {
         ...HtmlFields
         ...AssetFields
+        ...ImageFields
       }
       link {
         url
@@ -561,6 +568,11 @@ export const slices = gql`
         url
         title
       }
+      thumbnail {
+        url
+        title
+      }
+      intro
     }
   }
 
@@ -578,6 +590,13 @@ export const slices = gql`
       text
       url
     }
+  }
+
+  fragment PowerBiSliceFields on PowerBiSlice {
+    __typename
+    id
+    title
+    powerBiEmbedProps
   }
 
   fragment BaseSlices on Slice {
@@ -614,6 +633,7 @@ export const slices = gql`
     ...GraphCardFields
     ...LifeEventPageListSliceFields
     ...SidebarCardFields
+    ...PowerBiSliceFields
   }
 
   fragment AllSlices on Slice {
@@ -627,6 +647,30 @@ export const nestedOneColumnTextFields = gql`
     ...OneColumnTextFields
     content {
       ...AllSlices
+    }
+  }
+`
+
+export const nestedAccordionAndFaqListFields = `
+  ... on AccordionSlice {
+    ...AccordionSliceFields
+    accordionItems {
+      ... on OneColumnText {
+        ...OneColumnTextFields
+        content {
+          ...AllSlices
+        }
+      }
+    }
+  }
+  ... on FaqList {
+    ...FaqListFields
+    questions {
+      id
+      question
+      answer {
+        ...AllSlices
+      }
     }
   }
 `

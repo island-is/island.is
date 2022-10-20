@@ -3,6 +3,8 @@ import { Test } from '@nestjs/testing'
 import { mock } from 'jest-mock-extended'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { IntlService } from '@island.is/cms-translations'
+import { createTestIntl } from '@island.is/cms-translations/test'
 import { SharedAuthModule } from '@island.is/judicial-system/auth'
 
 import { environment } from '../../../../environments'
@@ -12,6 +14,7 @@ import { CaseService } from '../../case'
 import { CaseFile } from '../models/file.model'
 import { FileService } from '../file.service'
 import { FileController } from '../file.controller'
+import { Sequelize } from 'sequelize-typescript'
 
 jest.mock('../../aws-s3/awsS3.service.ts')
 jest.mock('../../court/court.service.ts')
@@ -31,6 +34,17 @@ export const createTestingFileModule = async () => {
       CourtService,
       AwsS3Service,
       {
+        provide: IntlService,
+        useValue: {
+          useIntl: async () => ({
+            formatMessage: createTestIntl({
+              onError: jest.fn(),
+              locale: 'is-IS',
+            }).formatMessage,
+          }),
+        },
+      },
+      {
         provide: LOGGER_PROVIDER,
         useValue: {
           debug: jest.fn(),
@@ -48,6 +62,7 @@ export const createTestingFileModule = async () => {
         },
       },
       FileService,
+      { provide: Sequelize, useValue: { transaction: jest.fn() } },
     ],
   })
     .useMocker((token) => {
@@ -69,11 +84,14 @@ export const createTestingFileModule = async () => {
 
   const fileController = fileModule.get<FileController>(FileController)
 
+  const sequelize = fileModule.get<Sequelize>(Sequelize)
+
   return {
     awsS3Service,
     courtService,
     fileModel,
     fileService,
     fileController,
+    sequelize,
   }
 }

@@ -1,6 +1,7 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "useUnknownInCatchVariables": false,
     "rootDir": ".",
     "sourceMap": true,
     "declaration": false,
@@ -11,7 +12,7 @@
     "target": "es2015",
     "module": "esnext",
     "typeRoots": ["node_modules/@types"],
-    "lib": ["es2017", "dom"],
+    "lib": ["es2019", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "allowSyntheticDefaultImports": true,
@@ -209,6 +210,9 @@
       "@island.is/application/templates/driving-license": [
         "libs/application/templates/driving-license/src/index.ts"
       ],
+      "@island.is/application/templates/driving-license-duplicate": [
+        "libs/application/templates/driving-license-duplicate/src/index.ts"
+      ],
       "@island.is/application/templates/driving-school-confirmation": [
         "libs/application/templates/driving-school-confirmation/src/index.ts"
       ],
@@ -281,6 +285,33 @@
       "@island.is/application/templates/reference-template": [
         "libs/application/templates/reference-template/src/index.ts"
       ],
+      "@island.is/application/templates/transport-authority/anonymity-in-vehicle-registry": [
+        "libs/application/templates/transport-authority/anonymity-in-vehicle-registry/src/index.ts"
+      ],
+      "@island.is/application/templates/transport-authority/change-co-owner-of-vehicle": [
+        "libs/application/templates/transport-authority/change-co-owner-of-vehicle/src/index.ts"
+      ],
+      "@island.is/application/templates/transport-authority/change-operator-of-vehicle": [
+        "libs/application/templates/transport-authority/change-operator-of-vehicle/src/index.ts"
+      ],
+      "@island.is/application/templates/transport-authority/digital-tachograph-company-card": [
+        "libs/application/templates/transport-authority/digital-tachograph-company-card/src/index.ts"
+      ],
+      "@island.is/application/templates/transport-authority/digital-tachograph-drivers-card": [
+        "libs/application/templates/transport-authority/digital-tachograph-drivers-card/src/index.ts"
+      ],
+      "@island.is/application/templates/transport-authority/digital-tachograph-workshop-card": [
+        "libs/application/templates/transport-authority/digital-tachograph-workshop-card/src/index.ts"
+      ],
+      "@island.is/application/templates/transport-authority/order-vehicle-license-plate": [
+        "libs/application/templates/transport-authority/order-vehicle-license-plate/src/index.ts"
+      ],
+      "@island.is/application/templates/transport-authority/order-vehicle-registration-certificate": [
+        "libs/application/templates/transport-authority/order-vehicle-registration-certificate/src/index.ts"
+      ],
+      "@island.is/application/templates/transport-authority/transfer-of-vehicle-ownership": [
+        "libs/application/templates/transport-authority/transfer-of-vehicle-ownership/src/index.ts"
+      ],
       "@island.is/application/types": ["libs/application/types/src/index.ts"],
       "@island.is/application/ui-components": [
         "libs/application/ui-components/src/index.ts"
@@ -292,9 +323,6 @@
         "libs/application/ui-shell/src/index.ts"
       ],
       "@island.is/auth-api-lib": ["libs/auth-api-lib/src/index.ts"],
-      "@island.is/auth-api-lib/personal-representative": [
-        "libs/auth-api-lib/src/lib/personal-representative/index.ts"
-      ],
       "@island.is/auth-nest-tools": ["libs/auth-nest-tools/src/index.ts"],
       "@island.is/auth/react": ["libs/auth/react/src/index.ts"],
       "@island.is/auth/scopes": ["libs/auth/scopes/src/index.ts"],
@@ -328,6 +356,9 @@
       "@island.is/clients/finance": ["libs/clients/finance/src/index.ts"],
       "@island.is/clients/financial-statements-inao": [
         "libs/clients/financial-statements-inao/src/index.ts"
+      ],
+      "@island.is/clients/firearm-license": [
+        "libs/clients/firearm-license/src/index.ts"
       ],
       "@island.is/clients/fishing-license": [
         "libs/clients/fishing-license/src/index.ts"
@@ -366,6 +397,9 @@
       ],
       "@island.is/clients/rsk/procuring": [
         "libs/clients/rsk/procuring/src/index.ts"
+      ],
+      "@island.is/clients/smartsolutions": [
+        "libs/clients/smartsolutions/src/index.ts"
       ],
       "@island.is/clients/syslumenn": ["libs/clients/syslumenn/src/index.ts"],
       "@island.is/clients/user-profile": [
@@ -461,6 +495,7 @@
       "@island.is/nest/audit": ["libs/nest/audit/src/index.ts"],
       "@island.is/nest/aws": ["libs/nest/aws/src/index.ts"],
       "@island.is/nest/config": ["libs/nest/config/src/index.ts"],
+      "@island.is/nest/dataloader": ["libs/nest/dataloader/src/index.ts"],
       "@island.is/nest/feature-flags": ["libs/nest/feature-flags/src/index.ts"],
       "@island.is/nest/pagination": ["libs/nest/pagination/src/index.ts"],
       "@island.is/nest/problem": ["libs/nest/problem/src/index.ts"],
@@ -517,9 +552,6 @@
       ],
       "@island.is/service-portal/finance": [
         "libs/service-portal/finance/src/index.ts"
-      ],
-      "@island.is/service-portal/finance-schedule": [
-        "libs/service-portal/finance-schedule/src/index.ts"
       ],
       "@island.is/service-portal/graphql": [
         "libs/service-portal/graphql/src/index.ts"

@@ -71,6 +71,7 @@ judicial-system-api:
   namespace: 'judicial-system'
   podSecurityContext:
     fsGroup: 65534
+  pvcs: []
   replicaCount:
     default: 3
     max: 10
@@ -176,6 +177,7 @@ judicial-system-backend:
   namespace: 'judicial-system'
   podSecurityContext:
     fsGroup: 65534
+  pvcs: []
   replicaCount:
     default: 4
     max: 10
@@ -258,6 +260,7 @@ judicial-system-message-handler:
   namespace: 'judicial-system'
   podSecurityContext:
     fsGroup: 65534
+  pvcs: []
   replicaCount:
     default: 3
     max: 10
@@ -314,6 +317,7 @@ judicial-system-scheduler:
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-scheduler'
   namespace: 'judicial-system'
+  pvcs: []
   replicaCount:
     default: 1
     max: 1
@@ -372,6 +376,7 @@ judicial-system-web:
           paths:
             - '/'
   namespace: 'judicial-system'
+  pvcs: []
   replicaCount:
     default: 3
     max: 10
@@ -387,6 +392,7 @@ judicial-system-web:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     LAWYERS_ICELAND_API_KEY: '/k8s/judicial-system/LAWYERS_ICELAND_API_KEY'
     NATIONAL_REGISTRY_API_KEY: '/k8s/judicial-system/NATIONAL_REGISTRY_API_KEY'
+    SUPPORT_EMAIL: '/k8s/judicial-system/SUPPORT_EMAIL'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -432,6 +438,7 @@ judicial-system-xrd-api:
   namespace: 'judicial-system'
   podSecurityContext:
     fsGroup: 65534
+  pvcs: []
   replicaCount:
     default: 3
     max: 10

@@ -12,7 +12,7 @@
 # that are developed by others teams, we first list down the team working on the core and
 # further below the other team working on other part of the project.
 /apps/application-system/                                                                           @island-is/sendiradid-applications
-/apps/web*/                                                                                         @island-is/juni
+/apps/web*/                                                                                         @island-is/juni @island-is/stefna
 /libs/application/                                                                                  @island-is/sendiradid-applications
 /libs/contentful-extensions/                                                                        @island-is/juni
 /libs/service-portal/                                                                               @island-is/hugsmidjan
@@ -21,13 +21,13 @@
 /.github/                                                                                           @island-is/core
 /handbook/                                                                                          @island-is/core
 /libs/api/domains/identity/                                                                         @island-is/core
-/libs/testing/                                                                                      @island-is/core @island-is/vice-versa
-/libs/nest/swagger/                                                                                 @island-is/core @island-is/vice-versa
+/libs/testing/                                                                                      @island-is/core
+/libs/nest/swagger/                                                                                 @island-is/core
 
 /apps/services/endorsements/                                                                        @island-is/juni
 /apps/icelandic-names-registry*/                                                                    @island-is/juni
 /apps/web/screens/PetitionView/                                                                     @island-is/juni
-/libs/cms/                                                                                          @island-is/juni
+/libs/cms/                                                                                          @island-is/juni @island-is/stefna
 /libs/api/domains/endorsement-system                                                                @island-is/juni
 /libs/api/domains/icelandic-names-registry/                                                         @island-is/juni
 /libs/clients/payment/                                                                              @island-is/juni
@@ -53,7 +53,7 @@
 /libs/api/domains/education/                                                                        @island-is/juni
 /libs/application/templates/general-petition/                                                       @island-is/juni
 /libs/shared/connected/src/lib/generalPetition/GeneralPetitionLists                                 @island-is/juni
-/libs/api/domains/communications/                                                                   @island-is/juni
+/libs/api/domains/communications/                                                                   @island-is/juni @island-is/stefna
 /apps/services/user-notification/                                                                   @island-is/juni
 /apps/air-discount-scheme/                                                                          @island-is/juni
 /libs/air-discount-scheme/                                                                          @island-is/juni
@@ -73,6 +73,8 @@
 /libs/application/template-api-modules/src/lib/modules/templates/driving-school-confirmation/       @island-is/juni
 /libs/application/templates/operating-license/                                                      @island-is/juni
 /libs/application/template-api-modules/src/lib/modules/templates/operating-license/                 @island-is/juni
+/libs/application/templates/driving-license-duplicate/                                              @island-is/juni
+/libs/application/template-api-modules/src/lib/modules/templates/driving-license-duplicate/         @island-is/juni
 
 /libs/clients/auth-public-api/                                                                      @island-is/aranja
 /libs/clients/middlewares/                                                                          @island-is/aranja
@@ -110,6 +112,8 @@
 /libs/clients/documents/                                                                            @island-is/hugsmidjan
 /libs/clients/finance/                                                                              @island-is/hugsmidjan
 /libs/clients/adr-and-machine-license/                                                              @island-is/hugsmidjan
+/libs/clients/firearm-license/                                                                      @island-is/hugsmidjan
+/libs/clients/smartsolutions/                                                                       @island-is/hugsmidjan
 /libs/clients/islykill/                                                                             @island-is/hugsmidjan
 /libs/clients/national-registry/v1/                                                                 @island-is/hugsmidjan
 /libs/clients/regulations/                                                                          @island-is/hugsmidjan
@@ -119,7 +123,7 @@
 /libs/regulations/                                                                                  @island-is/hugsmidjan
 
 /libs/application/templates/data-protection-complaint/                                              @island-is/sendiradid
-/libs/application/templates/institution-collaboration/                                              @island-is/sendiradid
+/libs/application/templates/institution-collaboration/                                              @island-is/sendiradid @island-is/fuglar
 /libs/application/templates/login-service/                                                          @island-is/sendiradid
 /libs/application/template-api-modules/src/lib/modules/templates/login-service/                     @island-is/sendiradid
 /libs/clients/payment-schedule/                                                                     @island-is/sendiradid
@@ -152,6 +156,7 @@
 
 /apps/services/search-indexer/                                                                      @island-is/stefna @island-is/juni
 /apps/services/contentful-entry-tagger/                                                             @island-is/stefna
+/apps/tools/contentful-role-permissions/                                                            @island-is/stefna
 /apps/web/screens/Organization/                                                                     @island-is/stefna
 /apps/web/screens/Project/                                                                          @island-is/stefna
 /apps/web/components/Organization/                                                                  @island-is/stefna
@@ -168,6 +173,7 @@
 /libs/api/domains/syslumenn/                                                                        @island-is/stefna
 /libs/api/domains/mailchimp/                                                                        @island-is/stefna
 /libs/clients/syslumenn/                                                                            @island-is/stefna @island-is/juni
+/libs/shared/connected/                                                                             @island-is/stefna
 
 /libs/island-ui/                                                                                    @island-is/island-ui
 
@@ -203,6 +209,10 @@
 /libs/application/templates/no-debt-certificate/                                                    @island-is/origo
 
 /libs/clients/charge-fjs-v2/                                                                        @island-is/origo
+
+/libs/application/templates/transport-authority/                                                    @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/transport-authority/               @island-is/origo
+
 
 # Temporary assignment while the QA bootstrap project is in progress
 /apps/system-e2e/                                                                                   @island-is/qa

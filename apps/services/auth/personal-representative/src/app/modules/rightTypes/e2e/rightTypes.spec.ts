@@ -10,7 +10,7 @@ import {
 import { TestEndpointOptions } from '../../../../../test/types'
 import request from 'supertest'
 import { TestApp } from '@island.is/testing/nest'
-import { PersonalRepresentativeRightType } from '@island.is/auth-api-lib/personal-representative'
+import { PersonalRepresentativeRightType } from '@island.is/auth-api-lib'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 import { AuthScope } from '@island.is/auth/scopes'
 

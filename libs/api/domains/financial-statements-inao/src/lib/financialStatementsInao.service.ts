@@ -25,4 +25,8 @@ export class FinancialStatementsInaoService {
   async getClientFinancialLimit(clientType: string, year: string) {
     return this.dataverseClient.getClientFinancialLimit(clientType, year)
   }
+
+  async getConfig() {
+    return this.dataverseClient.getConfig()
+  }
 }

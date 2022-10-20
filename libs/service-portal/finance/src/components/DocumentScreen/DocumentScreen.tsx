@@ -2,6 +2,7 @@ import format from 'date-fns/format'
 import sub from 'date-fns/sub'
 import sortBy from 'lodash/sortBy'
 import React, { FC, useEffect, useState } from 'react'
+import cn from 'classnames'
 
 import { gql, useLazyQuery } from '@apollo/client'
 import {
@@ -25,6 +26,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import {
   amountFormat,
+  ErrorScreen,
   formSubmit,
   IntroHeader,
   m,
@@ -39,6 +41,8 @@ import DropdownExport from '../DropdownExport/DropdownExport'
 import { exportGeneralDocuments } from '../../utils/filesGeneral'
 
 const ITEMS_ON_PAGE = 20
+
+const defaultCalState = { top: false, lower: false }
 
 interface Props {
   title: string
@@ -75,6 +79,9 @@ const DocumentScreen: FC<Props> = ({
   const [page, setPage] = useState(1)
   const [fromDate, setFromDate] = useState<Date>()
   const [toDate, setToDate] = useState<Date>()
+  const [openCal, setOpenCal] = useState<{ top: boolean; lower: boolean }>(
+    defaultCalState,
+  )
   const [q, setQ] = useState<string>('')
   const backInTheDay = sub(new Date(), {
     months: defaultDateRangeMonths,
@@ -119,6 +126,20 @@ const DocumentScreen: FC<Props> = ({
     setToDate(new Date())
   }, [])
 
+  if (error && !loading) {
+    return (
+      <ErrorScreen
+        figure="./assets/images/hourglass.svg"
+        tagVariant="red"
+        tag={formatMessage(m.errorTitle)}
+        title={formatMessage(m.somethingWrong)}
+        children={formatMessage(m.errorFetchModule, {
+          module: formatMessage(m.documents).toLowerCase(),
+        })}
+      />
+    )
+  }
+
   return (
     <Box marginBottom={[6, 6, 10]}>
       <IntroHeader title={title} intro={intro} />
@@ -162,10 +183,11 @@ const DocumentScreen: FC<Props> = ({
               labelClearAll={formatMessage(m.clearAllFilters)}
               labelOpen={formatMessage(m.openFilter)}
               labelClose={formatMessage(m.closeFilter)}
+              popoverFlip={false}
               filterInput={
                 <FilterInput
                   placeholder={formatMessage(m.searchPlaceholder)}
-                  name="rafraen-skjol-input"
+                  name="finance-document-input"
                   value={q}
                   onChange={(e) => setQ(e)}
                   backgroundColor="blue"
@@ -191,7 +213,10 @@ const DocumentScreen: FC<Props> = ({
                       iconVariant="small"
                     >
                       <Box
-                        className={styles.accordionBoxSingle}
+                        className={cn(styles.accordionBoxSingle, {
+                          [styles.openCal]: openCal?.top,
+                          [styles.openLowerCal]: openCal?.lower,
+                        })}
                         display="flex"
                         flexDirection="column"
                       >
@@ -202,6 +227,12 @@ const DocumentScreen: FC<Props> = ({
                           backgroundColor="blue"
                           size="xs"
                           handleChange={(d) => setFromDate(d)}
+                          handleOpenCalendar={() =>
+                            setOpenCal({ top: true, lower: false })
+                          }
+                          handleCloseCalendar={() =>
+                            setOpenCal(defaultCalState)
+                          }
                           selected={fromDate}
                         />
                         <Box marginTop={3}>
@@ -212,6 +243,12 @@ const DocumentScreen: FC<Props> = ({
                             backgroundColor="blue"
                             size="xs"
                             handleChange={(d) => setToDate(d)}
+                            handleOpenCalendar={() =>
+                              setOpenCal({ top: false, lower: true })
+                            }
+                            handleCloseCalendar={() =>
+                              setOpenCal(defaultCalState)
+                            }
                             selected={toDate}
                           />
                         </Box>
@@ -224,12 +261,6 @@ const DocumentScreen: FC<Props> = ({
           </Box>
         </Hidden>
         <Box marginTop={2}>
-          {error && (
-            <AlertBanner
-              description={formatMessage(m.errorFetch)}
-              variant="error"
-            />
-          )}
           {!called && !loading && (
             <AlertBanner
               description={formatMessage(m.datesForResults)}

@@ -90,6 +90,7 @@ const template: ApplicationTemplate<
                 UserProfileApi,
                 SyslumadurPaymentCatalogApi,
               ],
+              delete: true,
             },
           ],
         },

@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common'
+import { ApolloDriver } from '@nestjs/apollo'
 import { GraphQLModule } from '@nestjs/graphql'
 import { TerminusModule } from '@nestjs/terminus'
-import responseCachePlugin from 'apollo-server-plugin-response-cache'
+//import responseCachePlugin from 'apollo-server-plugin-response-cache'
 import { AuthModule as AuthDomainModule } from '@island.is/api/domains/auth'
 import { ContentSearchModule } from '@island.is/api/domains/content-search'
 import { CmsModule } from '@island.is/cms'
@@ -64,6 +65,7 @@ import { VehiclesClientConfig } from '@island.is/clients/vehicles'
 import { FishingLicenseClientConfig } from '@island.is/clients/fishing-license'
 import { FinancialStatementsInaoModule } from '@island.is/api/domains/financial-statements-inao'
 import { AdrAndMachineLicenseClientConfig } from '@island.is/clients/adr-and-machine-license'
+import { FirearmLicenseClientConfig } from '@island.is/clients/firearm-license'
 import { PassportsClientConfig } from '@island.is/clients/passports'
 import { FileStorageConfig } from '@island.is/file-storage'
 
@@ -78,6 +80,7 @@ const autoSchemaFile = environment.production
   controllers: [HealthController],
   imports: [
     GraphQLModule.forRoot({
+      driver: ApolloDriver,
       debug,
       playground,
       autoSchemaFile,
@@ -86,14 +89,17 @@ const autoSchemaFile = environment.production
         fieldMiddleware: [maskOutFieldsMiddleware],
       },
       plugins: [
-        responseCachePlugin({
-          shouldReadFromCache: ({ request: { http } }) => {
-            const bypassCacheKey = http?.headers.get('bypass-cache-key')
-            return bypassCacheKey !== process.env.BYPASS_CACHE_KEY
-          },
-        }),
+        // This was causing problems since graphql upgrade, gives us issues like:
+        // Error: overallCachePolicy.policyIfCacheable is not a function
+        // responseCachePlugin({
+        //   shouldReadFromCache: ({ request: { http } }) => {
+        //     const bypassCacheKey = http?.headers.get('bypass-cache-key')
+        //     return bypassCacheKey !== process.env.BYPASS_CACHE_KEY
+        //   },
+        // }),
       ],
     }),
+
     AuthDomainModule,
     AuditModule.forRoot(environment.audit),
     ContentSearchModule,
@@ -216,19 +222,36 @@ const autoSchemaFile = environment.production
       arkBaseUrl: environment.paymentDomain.arkBaseUrl!,
     }),
     LicenseServiceModule.register({
-      xroad: {
-        baseUrl: environment.xroad.baseUrl!,
-        clientId: environment.xroad.clientId!,
-        path: environment.drivingLicense.v1.xroadPath!,
-        secret: environment.drivingLicense.secret!,
+      firearmLicense: {
+        apiKey: environment.firearmLicense.pkPassApiKey!,
+        apiUrl: environment.smartSolutionsApiUrl!,
+        passTemplateId: environment.firearmLicense.passTemplateId!,
       },
-      pkpass: {
-        apiKey: environment.pkpass.apiKey!,
-        apiUrl: environment.pkpass.apiUrl!,
-        secretKey: environment.pkpass.secretKey!,
-        cacheKey: environment.pkpass.cacheKey!,
-        cacheTokenExpiryDelta: environment.pkpass.cacheTokenExpiryDelta!,
-        authRetries: environment.pkpass.authRetries!,
+      machineLicense: {
+        apiKey: environment.machineLicense.pkPassApiKey!,
+        apiUrl: environment.smartSolutionsApiUrl!,
+        passTemplateId: environment.machineLicense.passTemplateId!,
+      },
+      adrLicense: {
+        apiKey: environment.adrLicense.pkPassApiKey!,
+        apiUrl: environment.smartSolutionsApiUrl!,
+        passTemplateId: environment.adrLicense.passTemplateId!,
+      },
+      driversLicense: {
+        xroad: {
+          baseUrl: environment.xroad.baseUrl!,
+          clientId: environment.xroad.clientId!,
+          path: environment.drivingLicense.v1.xroadPath!,
+          secret: environment.drivingLicense.secret!,
+        },
+        pkpass: {
+          apiKey: environment.pkpass.apiKey!,
+          apiUrl: environment.pkpass.apiUrl!,
+          secretKey: environment.pkpass.secretKey!,
+          cacheKey: environment.pkpass.cacheKey!,
+          cacheTokenExpiryDelta: environment.pkpass.cacheTokenExpiryDelta!,
+          authRetries: environment.pkpass.authRetries!,
+        },
       },
     }),
     PaymentScheduleModule.register({
@@ -254,6 +277,7 @@ const autoSchemaFile = environment.production
       load: [
         AdrAndMachineLicenseClientConfig,
         AssetsClientConfig,
+        FirearmLicenseClientConfig,
         VehiclesClientConfig,
         AuthPublicApiClientConfig,
         DownloadServiceConfig,

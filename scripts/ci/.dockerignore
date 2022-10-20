@@ -1,0 +1,4 @@
+node_modules/
+dist/
+scripts/ci/
+/cache*

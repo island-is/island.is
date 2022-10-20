@@ -14,6 +14,7 @@ import { FinancialStatementsInaoService } from './financialStatementsInao.servic
 import { Election } from './models/election.model'
 import { ClientType } from './models/clientType.model'
 import { InaoClientFinancialLimitInput } from './dto/clientFinancialLimit.input'
+import { Config } from './models/config.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.internal)
@@ -48,5 +49,10 @@ export class FinancialStatementsInaoResolver {
       input.clientType,
       input.year,
     )
+  }
+
+  @Query(() => [Config])
+  async financialStatementsInaoConfig() {
+    return this.financialStatementsService.getConfig()
   }
 }

@@ -14,10 +14,10 @@ export class CaseDeliveryService {
     private readonly config: ConfigType<typeof appModuleConfig>,
   ) {}
 
-  async deliverCase(caseId: string): Promise<void> {
-    logger.debug(`Uploading files of case ${caseId} to court`)
+  async deliverCase(caseId: string): Promise<true> {
+    logger.debug(`Delivering case ${caseId} to court and police`)
 
-    return fetch(
+    await fetch(
       `${this.config.backendUrl}/api/internal/case/${caseId}/deliver`,
       {
         method: 'POST',
@@ -31,11 +31,11 @@ export class CaseDeliveryService {
         const response = await res.json()
 
         if (res.ok) {
-          logger.debug(`Delivered case ${caseId}`)
+          logger.debug(`Delivered case ${caseId} to court`)
 
-          if (!response.signedRulingDeliveredToCourt) {
+          if (!response.rulingDeliveredToCourt) {
             logger.error(
-              `Failed to deliver the signed ruling for case ${caseId} to court`,
+              `Failed to deliver the ruling for case ${caseId} to court`,
             )
           }
 
@@ -58,14 +58,16 @@ export class CaseDeliveryService {
           return
         }
 
-        logger.error(`Failed to deliver case ${caseId}`, {
+        logger.error(`Failed to deliver case ${caseId} to court and police`, {
           response,
         })
       })
       .catch((reason) => {
-        logger.error(`Failed to deliver case ${caseId}`, {
+        logger.error(`Failed to deliver case ${caseId} to court and police`, {
           reason,
         })
       })
+
+    return true
   }
 }

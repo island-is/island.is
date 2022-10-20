@@ -1,7 +1,4 @@
-import {
-  DefaultStateLifeCycle,
-  DEPRECATED_DefaultStateLifeCycle,
-} from '@island.is/application/core'
+import { DefaultStateLifeCycle } from '@island.is/application/core'
 import {
   ApplicationTemplate,
   ApplicationTypes,
@@ -50,6 +47,7 @@ const GeneralPetitionApplicationTemplate: ApplicationTemplate<
               ],
               write: 'all',
               api: [NationalRegistryUserApi],
+              delete: true,
             },
           ],
         },
@@ -63,7 +61,7 @@ const GeneralPetitionApplicationTemplate: ApplicationTemplate<
         meta: {
           name: 'Approved',
           progress: 1,
-          lifecycle: DEPRECATED_DefaultStateLifeCycle,
+          lifecycle: DefaultStateLifeCycle,
           onEntry: defineTemplateApi({
             action: ApiModuleActions.CreateEndorsementList,
             shouldPersistToExternalData: true,

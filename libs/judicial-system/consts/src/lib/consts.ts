@@ -54,6 +54,10 @@ export const InvestigationCaseTypes = [
         value: CaseType.RESTRAINING_ORDER,
       },
       {
+        label: 'Nálgunarbann og brottvísun af heimili',
+        value: CaseType.RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME,
+      },
+      {
         label: 'Brottvísun af heimili',
         value: CaseType.EXPULSION_FROM_HOME,
       },
@@ -195,6 +199,7 @@ export const INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE =
 export const INDICTMENTS_DEFENDANT_ROUTE = '/krafa/akaera/akaerdi'
 export const INDICTMENTS_PROCESSING_ROUTE = '/krafa/akaera/malsmedferd'
 export const INDICTMENTS_CASE_FILES_ROUTE = '/krafa/akaera/domskjol'
+export const INDICTMENTS_POLICE_CASE_FILES_ROUTE = '/krafa/akaera/malsgogn'
 export const INDICTMENTS_OVERVIEW_ROUTE = '/krafa/akaera/stadfesta'
 /* PROSECUTOR ROUTES END */
 
@@ -227,6 +232,8 @@ export const INDICTMENTS_COURT_OVERVIEW_ROUTE = '/domur/akaera/yfirlit'
 export const INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE =
   '/domur/akaera/mottaka'
 export const INDICTMENTS_SUBPOENA_ROUTE = '/domur/akaera/fyrirkall'
+export const INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE =
+  '/domur/akaera/malflytjendur'
 export const INDICTMENTS_COURT_RECORD_ROUTE = '/domur/akaera/thingbok'
 /* COURT ROUTES END */
 

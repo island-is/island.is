@@ -16,6 +16,8 @@ import {
   UserProfileApi,
   NoDebtCertificateApi,
 } from '../dataProviders'
+import { AuthDelegationType } from '../types/schema'
+import { Features } from '@island.is/feature-flags'
 
 const NoDebtCertificateSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -34,6 +36,12 @@ const template: ApplicationTemplate<
   ],
   dataSchema: NoDebtCertificateSchema,
   readyForProduction: true,
+  allowedDelegations: [
+    {
+      type: AuthDelegationType.ProcurationHolder,
+      featureFlag: Features.noDebtCertificateCompanyDelegations,
+    },
+  ],
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {

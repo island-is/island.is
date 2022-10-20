@@ -1,6 +1,6 @@
 import { CaseState, CaseType, UserRole } from '@island.is/judicial-system/types'
 import {
-  INDICTMENTS_COURT_RECORD_ROUTE,
+  INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE,
   INDICTMENTS_SUBPOENA_ROUTE,
 } from '@island.is/judicial-system/consts'
 
@@ -31,7 +31,7 @@ describe(`${INDICTMENTS_SUBPOENA_ROUTE}/:id`, () => {
     cy.getByTestid('modalPrimaryButton').click()
     cy.url().should(
       'include',
-      `${INDICTMENTS_COURT_RECORD_ROUTE}/${caseData.id}`,
+      `${INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE}/${caseData.id}`,
     )
   })
 })
