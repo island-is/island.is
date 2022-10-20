@@ -15,13 +15,12 @@ libs/contentful-extensions/parent-slug/.cache
 
 # dependencies
 node_modules/
-.yarn/*
-!.yarn/patches
-!.yarn/releases
-!.yarn/plugins
-!.yarn/sdks
-!.yarn/versions
-infra/.yarn
+**/.yarn/*
+!**/.yarn/patches
+!**/.yarn/releases
+!**/.yarn/plugins
+!**/.yarn/sdks
+!**/.yarn/versions
 
 # IDEs and editors
 /.idea
