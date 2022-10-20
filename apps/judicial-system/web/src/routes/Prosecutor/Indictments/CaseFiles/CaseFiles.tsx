@@ -84,7 +84,6 @@ const CaseFiles: React.FC = () => {
           <Text color="red400" as="span" variant="h3">
             {` *`}
           </Text>
-
           <InputFileUpload
             fileList={files.filter(
               (file) => file.category === CaseFileCategory.INDICTMENT,

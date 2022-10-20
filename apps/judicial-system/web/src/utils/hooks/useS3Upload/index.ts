@@ -236,11 +236,9 @@ export const useS3Upload = (workingCase: Case) => {
     newFiles: File[],
     isRetry?: boolean,
     filesCategory?: CaseFileCategory,
-    policeCaseNumber?: string,
   ) => {
     newFiles.forEach(async (file: TUploadFile) => {
       file.category = filesCategory
-      file.policeCaseNumber = policeCaseNumber
     })
 
     if (!isRetry) {
