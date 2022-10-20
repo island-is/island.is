@@ -69,10 +69,6 @@ const EstateTemplate: ApplicationTemplate<
       [States.draft]: {
         meta: {
           name: '',
-          actionCard: {
-            title: '', //TODO
-            description: '', //TODO
-          },
           progress: 0.25,
           lifecycle: DefaultStateLifeCycle,
           roles: [
