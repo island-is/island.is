@@ -25,7 +25,7 @@ import { InternalCaseService } from './internalCase.service'
 
 @Controller('api/internal')
 @ApiTags('internal cases')
-@UseGuards(TokenGuard)
+// @UseGuards(TokenGuard)
 export class InternalCaseController {
   constructor(
     private readonly internalCaseService: InternalCaseService,
