@@ -132,23 +132,37 @@ export const createCaseFilesRecord = async (
     )
 
   for (const chapter of [0, 1, 2, 3, 4, 5]) {
+    if (chapter === 0) {
+      pdfDocument.addText(
+        formatMessage(caseFilesRecord.pageNumberHeading),
+        textFontSize,
+        {
+          alignment: Alignment.Right,
+          newLine: false,
+          marginTop: chapter > 0 ? 1 : 2,
+        },
+      )
+    }
+
     pdfDocument.addText(
-      formatMessage(caseFilesRecord.chapter, { chapter }),
+      formatMessage(caseFilesRecord.chapterName, { chapter }),
       textFontSize,
-      { bold: true, marginTop: chapter > 0 ? 1 : 2 },
+      { bold: true },
     )
 
     for (const pageReference of pageReferences.filter(
       (pageReference) => pageReference.chapter === chapter,
     )) {
-      pdfDocument.addText(
-        `${pageReference.name} ${pageReference.pageNumber}`,
-        textFontSize,
-        {
+      pdfDocument
+        .addText(`${pageReference.pageNumber}`, textFontSize, {
+          alignment: Alignment.Right,
+          pageLink: pageReference.pageLink,
+          newLine: false,
+        })
+        .addText(`${pageReference.name}`, textFontSize, {
           pageLink: pageReference.pageLink,
           position: { x: pageReferenceIndent },
-        },
-      )
+        })
     }
   }
 
