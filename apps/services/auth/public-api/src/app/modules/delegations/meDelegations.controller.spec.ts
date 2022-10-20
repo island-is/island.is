@@ -1048,20 +1048,52 @@ describe('MeDelegationsController', () => {
         })
       })
 
-      it('should return 404 Not Found when user tries to update delegation that he did not give', async () => {
+      it('should return 404 Not Found when user tries to update a delegation that he is not part of', async () => {
         // Arrange
+        await createDelegationModels(delegationModel, [
+          mockDelegations.otherUsers,
+        ])
         const model = {
           scopes: [
             {
-              name: Scopes[0].name,
+              name: Scopes[4].name,
               validTo: addDays(today, 1),
             },
           ],
         }
-        const delegationId = '709158e8-1f86-4e3d-8576-5b13533bc42a'
 
         // Act
-        const res = await server.put(`${path}/${delegationId}`).send(model)
+        const res = await server
+          .put(`${path}/${mockDelegations.otherUsers.id}`)
+          .send(model)
+
+        // Assert
+        expect(res.status).toEqual(404)
+        expect(res.body).toMatchObject({
+          status: 404,
+          type: 'https://httpstatuses.org/404',
+          title: 'Not Found',
+        })
+      })
+
+      it('should return 404 Not Found when user tries to update delegation that he recevied from other user', async () => {
+        // Arrange
+        await createDelegationModels(delegationModel, [
+          mockDelegations.validIncoming,
+        ])
+        const model = {
+          scopes: [
+            {
+              name: Scopes[4].name,
+              validTo: addDays(today, 1),
+            },
+          ],
+        }
+
+        // Act
+        const res = await server
+          .put(`${path}/${mockDelegations.validIncoming.id}`)
+          .send(model)
 
         // Assert
         expect(res.status).toEqual(404)
