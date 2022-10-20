@@ -32,6 +32,11 @@ export class UpdateFileDto {
   @Min(0)
   @ApiPropertyOptional()
   readonly orderWithinChapter?: number | null
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly displayDate?: string | null
 }
 
 export class UpdateFilesDto {
