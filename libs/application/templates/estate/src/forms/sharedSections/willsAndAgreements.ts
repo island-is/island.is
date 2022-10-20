@@ -22,7 +22,7 @@ export const willsAndAgreements = [
     width: 'half',
   }),
   buildDescriptionField({
-    id: 'space',
+    id: 'spaceW',
     title: '',
     space: 'gutter',
   }),

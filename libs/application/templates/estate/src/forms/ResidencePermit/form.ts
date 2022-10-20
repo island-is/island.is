@@ -146,16 +146,34 @@ export const form: Form = buildForm({
                   description: m.estateBankInfoDescription,
                   titleVariant: 'h3',
                 }),
-                buildCustomField({
-                  title: '',
-                  id: 'bankAccounts',
-                  component: 'BankAccountsRepeater',
-                }),
+                buildCustomField(
+                  {
+                    title: '',
+                    id: 'bankAccounts',
+                    component: 'TextFieldsRepeater',
+                  },
+                  {
+                    fields: [
+                      {
+                        title: m.bankAccount.defaultMessage,
+                        id: 'accountNumber',
+                        placeholder: m.bankAccountPlaceholder.defaultMessage,
+                        format: '#### - ## - ######',
+                      },
+                      {
+                        title: m.bankAccountBalance.defaultMessage,
+                        id: 'balance',
+                      },
+                    ],
+                    repeaterButtonText:
+                      m.bankAccountRepeaterButton.defaultMessage,
+                  },
+                ),
               ],
             }),
           ],
         }),
-        /*buildSubSection({
+        buildSubSection({
           id: 'claims',
           title: m.claimsTitle,
           children: [
@@ -170,128 +188,171 @@ export const form: Form = buildForm({
                   description: m.claimsDescription,
                   titleVariant: 'h3',
                 }),
-                buildTextField({
-                  id: 'claimsPublisher',
-                  title: m.claimsPublisher,
-                  width: 'half',
-                }),
-                buildTextField({
-                  id: 'claimsAmount',
-                  title: m.claimsAmount,
-                  width: 'half',
-                }),
+                buildCustomField(
+                  {
+                    title: '',
+                    id: 'claims',
+                    component: 'TextFieldsRepeater',
+                  },
+                  {
+                    fields: [
+                      {
+                        title: m.claimsPublisher.defaultMessage,
+                        id: 'publisher',
+                      },
+                      { title: m.claimsAmount.defaultMessage, id: 'value' },
+                    ],
+                    repeaterButtonText: m.claimsRepeaterButton.defaultMessage,
+                  },
+                ),
               ],
             }),
           ],
         }),
         buildSubSection({
-          id: 'shares',
-          title: m.sharesTitle,
+          id: 'stocks',
+          title: m.stocksTitle,
           children: [
             buildMultiField({
-              id: 'shares',
+              id: 'stocks',
               title: m.properties,
               description: m.propertiesDescription,
               children: [
                 buildDescriptionField({
-                  id: 'sharesTitle',
-                  title: m.sharesTitle,
-                  description: m.sharesDescription,
+                  id: 'stocksTitle',
+                  title: m.stocksTitle,
+                  description: m.stocksDescription,
                   titleVariant: 'h3',
                 }),
-                buildTextField({
-                  id: 'temp',
-                  title: 'Text',
-                  width: 'half',
-                }),
+                buildCustomField(
+                  {
+                    title: '',
+                    id: 'stocks',
+                    component: 'TextFieldsRepeater',
+                  },
+                  {
+                    fields: [
+                      {
+                        title: m.stocksOrganization.defaultMessage,
+                        id: 'organization',
+                      },
+                      { title: m.stocksSsn.defaultMessage, id: 'ssn' },
+                      {
+                        title: m.stocksFaceValue.defaultMessage,
+                        id: 'faceValue',
+                      },
+                      {
+                        title: m.stocksRateOfChange.defaultMessage,
+                        id: 'rateOfExchange',
+                      },
+                      {
+                        title: m.stocksValue.defaultMessage,
+                        id: 'value',
+                        color: 'white',
+                      },
+                    ],
+                    repeaterButtonText: m.stocksRepeaterButton.defaultMessage,
+                  },
+                ),
               ],
             }),
           ],
         }),
         buildSubSection({
-          id: 'bankVaults',
-          title: 'Peningar og bankahólf',
+          id: 'moneyAndDedosit',
+          title: m.moneyAndDepositTitle,
           children: [
             buildMultiField({
-              id: 'bankVaults',
+              id: 'moneyAndDedosit',
               title: m.properties,
               description: m.propertiesDescription,
               children: [
                 buildDescriptionField({
-                  id: 'bankValutsTitle',
-                  title: 'Peningar og bankahólf',
-                  description: 'Nafn og kennitala ef um einstakling er að ræða',
+                  id: 'moneyAndDedositTitle',
+                  title: m.moneyAndDepositTitle,
+                  description: m.moneyAndDepositDescription,
                   titleVariant: 'h3',
                 }),
                 buildTextField({
-                  id: 'temp',
-                  title: 'Text',
-                  width: 'half',
-                }),
-              ],
-            }),
-          ],
-        }),
-        buildSubSection({
-          id: 'otherEstates',
-          title: 'Aðrar eignir',
-          children: [
-            buildMultiField({
-              id: 'otherEstates',
-              title: m.properties,
-              description: m.propertiesDescription,
-              children: [
-                buildDescriptionField({
-                  id: 'otherEstatesTitle',
-                  title: 'Aðrar eignir',
-                  description: 'Til dæmis hugverkaréttindi, búseturéttur o.fl.',
-                  titleVariant: 'h3',
-                }),
-                buildTextField({
-                  id: 'otherEstatesTextarea',
-                  title: 'Upplýsingar um aðrar eignir',
+                  id: 'moneyAndDepositBoxesInfo',
+                  title: m.moneyAndDepositText,
+                  placeholder: m.moneyAndDepositPlaceholder,
                   variant: 'textarea',
                   rows: 7,
                 }),
                 buildTextField({
-                  id: 'otherEstatesWorth',
-                  title: 'Fjárhæð á dánardegi',
+                  id: 'moneyAndDepositBoxesValue',
+                  title: m.moneyAndDepositValue,
                   width: 'half',
                 }),
               ],
             }),
           ],
-        }),*/
-      ],
-    }),
-    /*buildSection({
-      id: 'debts',
-      title: 'Skuldir',
-      children: [
-        buildMultiField({
-          id: 'debts',
-          title: 'Skuldir',
-          description: 'Innlendar og erlendar skuldir',
+        }),
+        buildSubSection({
+          id: 'otherAssets',
+          title: m.otherAssetsTitle,
           children: [
-            buildTextField({
-              id: 'temp',
-              title: 'Text',
-              width: 'half',
-            }),
-            buildTextField({
-              id: 'temp',
-              title: 'Text',
-              width: 'half',
-            }),
-            buildTextField({
-              id: 'temp',
-              title: 'Text',
-              width: 'half',
+            buildMultiField({
+              id: 'otherAssets',
+              title: m.properties,
+              description: m.propertiesDescription,
+              children: [
+                buildDescriptionField({
+                  id: 'otherAssetsTitle',
+                  title: m.otherAssetsTitle,
+                  description: m.otherAssetsDescription,
+                  titleVariant: 'h3',
+                }),
+                buildTextField({
+                  id: 'otherAssets',
+                  title: m.otherAssetsText,
+                  placeholder: m.otherAssetsPlaceholder,
+                  variant: 'textarea',
+                  rows: 7,
+                }),
+                buildTextField({
+                  id: 'otherAssetsValue',
+                  title: m.otherAssetsValue,
+                  width: 'half',
+                }),
+              ],
             }),
           ],
         }),
       ],
-    }),*/
+    }),
+    buildSection({
+      id: 'debts',
+      title: m.debtsTitle,
+      children: [
+        buildMultiField({
+          id: 'debts',
+          title: m.debtsTitle,
+          description: m.debtsDescription,
+          children: [
+            buildCustomField(
+              {
+                title: '',
+                id: 'debts',
+                component: 'TextFieldsRepeater',
+              },
+              {
+                fields: [
+                  {
+                    title: m.debtsCreditorName.defaultMessage,
+                    id: 'creditorName',
+                  },
+                  { title: m.debtsSsn.defaultMessage, id: 'ssn' },
+                  { title: m.debtsBalance.defaultMessage, id: 'balance' },
+                ],
+                repeaterButtonText: m.debtsRepeaterButton.defaultMessage,
+              },
+            ),
+          ],
+        }),
+      ],
+    }),
     overview,
   ],
 })

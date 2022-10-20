@@ -15,11 +15,11 @@ import { willsAndAgreements } from '../sharedSections/willsAndAgreements'
 import { format as formatNationalId } from 'kennitala'
 
 export const overview = buildSection({
-  id: 'overview',
+  id: 'overviewResidencePermit',
   title: m.overviewTitle,
   children: [
     buildMultiField({
-      id: 'overview',
+      id: 'overviewResidencePermit',
       title: m.overviewTitle,
       description: m.overviewSubtitleResidencePermit,
       children: [
@@ -33,7 +33,7 @@ export const overview = buildSection({
         }),
         ...deceasedInfoFields,
         buildDescriptionField({
-          id: 'space',
+          id: 'spaceRP',
           title: '',
           marginBottom: 'gutter',
           space: 'gutter',
@@ -178,6 +178,145 @@ export const overview = buildSection({
         buildKeyValueField({
           label: m.bankAccountBalance,
           value: ({ answers }) => (answers.bankAccounts as any)[0].balance,
+          width: 'half',
+        }),
+        buildDividerField({}),
+        buildDescriptionField({
+          id: 'space5',
+          title: '',
+          space: 'gutter',
+        }),
+        buildDescriptionField({
+          id: 'overviewClaimsInfoTitle',
+          title: m.claimsTitle,
+          description: m.claimsDescription,
+          titleVariant: 'h3',
+          marginBottom: 'gutter',
+        }),
+        buildKeyValueField({
+          label: m.claimsTitle,
+          value: ({ answers }) => (answers.claims as any)[0].publisher,
+          width: 'half',
+        }),
+        buildKeyValueField({
+          label: m.claimsAmount,
+          value: ({ answers }) => (answers.claims as any)[0].value,
+          width: 'half',
+        }),
+        buildDividerField({}),
+        buildDescriptionField({
+          id: 'space6',
+          title: '',
+          space: 'gutter',
+        }),
+        buildDescriptionField({
+          id: 'overviewStocksTitle',
+          title: m.stocksTitle,
+          description: m.stocksDescription,
+          titleVariant: 'h3',
+          marginBottom: 'gutter',
+        }),
+        buildKeyValueField({
+          label: m.stocksOrganization,
+          value: ({ answers }) => (answers.stocks as any)[0].organization,
+          width: 'half',
+        }),
+        buildKeyValueField({
+          label: m.stocksSsn,
+          value: ({ answers }) => (answers.stocks as any)[0].ssn,
+          width: 'half',
+        }),
+        buildKeyValueField({
+          label: m.stocksFaceValue,
+          value: ({ answers }) => (answers.stocks as any)[0].faceValue,
+          width: 'half',
+        }),
+        buildKeyValueField({
+          label: m.stocksRateOfChange,
+          value: ({ answers }) => (answers.stocks as any)[0].rateOfExchange,
+          width: 'half',
+        }),
+        buildKeyValueField({
+          label: m.stocksValue,
+          value: ({ answers }) => (answers.stocks as any)[0].value,
+          width: 'half',
+        }),
+        buildDividerField({}),
+        buildDescriptionField({
+          id: 'overviewOtherAssetsHeader',
+          title: m.otherAssetsTitle,
+          description: m.otherAssetsDescription,
+          titleVariant: 'h3',
+          space: 'gutter',
+        }),
+        buildDescriptionField({
+          id: 'overviewOtherAssets',
+          title: m.moneyAndDepositText,
+          description: (application: Application) =>
+            application.answers.otherAssets as string,
+          titleVariant: 'h4',
+          space: 'gutter',
+        }),
+        buildDescriptionField({
+          id: 'overviewMOtherAssetsValue',
+          title: m.otherAssetsValue,
+          description: (application: Application) =>
+            application.answers.otherAssetsValue as string,
+          titleVariant: 'h4',
+          marginBottom: 'gutter',
+          space: 'gutter',
+        }),
+        buildDividerField({}),
+        buildDescriptionField({
+          id: 'overviewMoneyAndDepositHeader',
+          title: m.moneyAndDepositTitle,
+          description: m.moneyAndDepositDescription,
+          titleVariant: 'h3',
+          space: 'gutter',
+        }),
+        buildDescriptionField({
+          id: 'overviewMoneyAndDeposit',
+          title: m.moneyAndDepositText,
+          description: (application: Application) =>
+            application.answers.moneyAndDepositBoxesInfo as string,
+          titleVariant: 'h4',
+          space: 'gutter',
+        }),
+        buildDescriptionField({
+          id: 'overviewMoneyAndDepositValue',
+          title: m.moneyAndDepositValue,
+          description: (application: Application) =>
+            application.answers.moneyAndDepositBoxesValue as string,
+          titleVariant: 'h4',
+          marginBottom: 'gutter',
+          space: 'gutter',
+        }),
+        buildDividerField({}),
+        buildDescriptionField({
+          id: 'space7',
+          title: '',
+          space: 'gutter',
+        }),
+        buildDescriptionField({
+          id: 'overviewDebtsTitle',
+          title: m.debtsTitle,
+          description: m.debtsDescription,
+          titleVariant: 'h3',
+          marginBottom: 'gutter',
+        }),
+        buildKeyValueField({
+          label: m.debtsCreditorName,
+          value: ({ answers }) => (answers.debts as any)[0].creditorName,
+          width: 'half',
+        }),
+        buildKeyValueField({
+          label: m.debtsSsn,
+          value: ({ answers }) => (answers.debts as any)[0].ssn,
+          width: 'half',
+        }),
+        buildKeyValueField({
+          label: m.debtsBalance,
+          value: ({ answers }) => (answers.debts as any)[0].balance,
           width: 'half',
         }),
         buildSubmitField({

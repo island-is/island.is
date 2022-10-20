@@ -23,7 +23,24 @@ const asset = z
 export const estateSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
 
-  // Initial estate info
+  // Applicant
+  applicant: z.object({
+    name: z.string(),
+    nationalId: z.string(),
+    phone: z.string().refine((v) => isValidPhoneNumber(v), {
+      params: m.errorPhoneNumber,
+    }),
+    email: customZodError(z.string().email(), m.errorEmail),
+    address: z.string(),
+  }),
+
+  selectedEstate: z.enum([
+    EstateTypes.officialEstate,
+    EstateTypes.noPropertyEstate,
+    EstateTypes.residencePermit,
+  ]),
+
+  // Eignir
   estate: z.object({
     estateMembers: z
       .object({
@@ -40,11 +57,11 @@ export const estateSchema = z.object({
       .array()
       .optional(),
 
-    assets: asset, // is: fasteignir
+    assets: asset,
     flyers: asset,
     vehicles: asset,
     ships: asset,
-    knowledgeOfOtherWills: z.enum(['yes', 'no']).optional(),
+    knowledgeOfOtherWills: z.enum([YES, NO]).optional(),
     caseNumber: z.string().nonempty().optional(),
     dateOfDeath: z.date().optional(),
     nameOfDeceased: z.string().nonempty().optional(),
@@ -52,26 +69,11 @@ export const estateSchema = z.object({
     districtCommissionerHasWill: z.boolean().optional(),
   }),
 
-  //Applicant's info
-  applicant: z.object({
-    name: z.string(),
-    nationalId: z.string(),
-    phone: z.string().refine((v) => isValidPhoneNumber(v), {
-      params: m.errorPhoneNumber,
-    }),
-    email: customZodError(z.string().email(), m.errorEmail),
-    address: z.string(),
-  }),
-
-  selectedEstate: z.enum([
-    EstateTypes.officialEstate,
-    EstateTypes.noPropertyEstate,
-    EstateTypes.residencePermit,
-  ]),
-  // is: innbú
+  // is: Innbú
   inventory: z.string().optional(),
   inventoryValue: z.string().optional(),
 
+  // is: Innistæður í bönkum
   bankAccounts: z
     .object({
       accountNumber: z.string().optional(),
@@ -80,13 +82,23 @@ export const estateSchema = z.object({
     .array()
     .optional(),
 
+  // is: Verðbréf og kröfur
+  claims: z
+    .object({
+      publisher: z.string().optional(),
+      value: z.string().optional(),
+    })
+    .array()
+    .optional(),
+
+  // is: Hlutabréf
   stocks: z
     .object({
-      organization: z.string().nonempty(),
-      ssn: z.string().length(10),
-      faceValue: z.string().nonempty(), // is: nafnverð
-      rateOfExchange: z.string().nonempty(), // is: gengi
-      value: z.string().nonempty(),
+      organization: z.string().optional(),
+      ssn: z.string().length(10).optional(),
+      faceValue: z.string().optional(),
+      rateOfExchange: z.string().optional(),
+      value: z.string().optional(),
     })
     .array()
     .optional(),
@@ -95,14 +107,16 @@ export const estateSchema = z.object({
   moneyAndDepositBoxesInfo: z.string().optional(),
   moneyAndDepositBoxesValue: z.string().optional(),
 
+  // is: Aðrar eignir
   otherAssets: z.string().optional(),
   otherAssetsValue: z.string().optional(),
 
+  // is: Skuldir
   debts: z
     .object({
-      creditorName: z.string().nonempty(), // is: kröfuhafi
-      ssn: z.string().length(10),
-      balance: z.string().nonempty(),
+      creditorName: z.string().optional(),
+      ssn: z.string().length(10).optional(),
+      balance: z.string().optional(),
     })
     .array()
     .optional(),

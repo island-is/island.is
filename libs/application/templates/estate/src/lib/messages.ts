@@ -247,12 +247,8 @@ export const m = defineMessages({
     defaultMessage: 'Til dæmis bifreiðar, flugvélar og bátar',
     description: '',
   },
-  acceptDebtsLabel: {
-    id: 'es.application:acceptDebtsLabel',
-    defaultMessage:
-      'Ég samþykki að taka yfir áhvílandi skuldir á þessu farartæki sem vitneskja er um',
-    description: '',
-  },
+
+  // Bank Info
   estateBankInfo: {
     id: 'es.application:estateBankInfo',
     defaultMessage: 'Innistæður í bönkum',
@@ -278,11 +274,13 @@ export const m = defineMessages({
     defaultMessage: 'xxxx - xx - xxxxxx',
     description: '',
   },
-  addBankAccount: {
-    id: 'es.application:addBankAccount',
+  bankAccountRepeaterButton: {
+    id: 'es.application:bankAccountRepeaterButton',
     defaultMessage: 'Bæta við bankareikning',
     description: '',
   },
+
+  // Claims
   claimsTitle: {
     id: 'es.application:claimsTitle',
     defaultMessage: 'Verðbréf og kröfur',
@@ -303,14 +301,143 @@ export const m = defineMessages({
     defaultMessage: 'Fjárhæð með vöxtum á dánardegi',
     description: '',
   },
-  sharesTitle: {
-    id: 'es.application:sharesTitle',
+  claimsRepeaterButton: {
+    id: 'es.application:claimsRepeaterButton',
+    defaultMessage: 'Bæta við verðbréfum',
+    description: '',
+  },
+
+  // Stocks
+  stocksTitle: {
+    id: 'es.application:stocksTitle',
     defaultMessage: 'Hlutabréf',
     description: '',
   },
-  sharesDescription: {
-    id: 'es.application:sharesDescription',
+  stocksDescription: {
+    id: 'es.application:stocksDescription',
     defaultMessage: 'Nafn og kennitala ef um einstakling er að ræða',
+    description: '',
+  },
+  stocksOrganization: {
+    id: 'es.application:stocksOrganization',
+    defaultMessage: 'Útgefandi',
+    description: '',
+  },
+  stocksSsn: {
+    id: 'es.application:stocksSsn',
+    defaultMessage: 'Kennitala',
+    description: '',
+  },
+  stocksFaceValue: {
+    id: 'es.application:stocksFaceValue',
+    defaultMessage: 'Nafnverð',
+    description: '',
+  },
+  stocksRateOfChange: {
+    id: 'es.application:stocksRateOfChange',
+    defaultMessage: 'Gengi',
+    description: '',
+  },
+  stocksValue: {
+    id: 'es.application:stocksValue',
+    defaultMessage: 'Verðmæti á dánardegi',
+    description: '',
+  },
+  stocksRepeaterButton: {
+    id: 'es.application:stocksRepeaterButton',
+    defaultMessage: 'Verðmæti á dánardegi',
+    description: '',
+  },
+
+  // Money & deposit
+  moneyAndDepositTitle: {
+    id: 'es.application:moneyAndDepositTitle',
+    defaultMessage: 'Peningar og bankahólf',
+    description: '',
+  },
+  moneyAndDepositDescription: {
+    id: 'es.application:moneyAndDepositDescription',
+    defaultMessage: 'Nafn og kennitala ef um einstakling er að ræða',
+    description: '',
+  },
+  moneyAndDepositText: {
+    id: 'es.application:moneyAndDepositText',
+    defaultMessage: 'Upplýsingar um peninga eða bankahólf',
+    description: '',
+  },
+  moneyAndDepositPlaceholder: {
+    id: 'es.application:moneyAndDepositPlaceholder',
+    defaultMessage: 'Skráðu inn upplýsingar hér',
+    description: '',
+  },
+  moneyAndDepositValue: {
+    id: 'es.application:moneyAndDepositValue',
+    defaultMessage: 'Fjárhæð á dánardegi',
+    description: '',
+  },
+
+  // Other assets
+  otherAssetsTitle: {
+    id: 'es.application:otherAssetsTitle',
+    defaultMessage: 'Aðrar eignir',
+    description: '',
+  },
+  otherAssetsDescription: {
+    id: 'es.application:otherAssetsDescription',
+    defaultMessage: 'Til dæmis hugverkaréttindi, búseturéttur o.fl.',
+    description: '',
+  },
+  otherAssetsText: {
+    id: 'es.application:otherAssetsText',
+    defaultMessage: 'Upplýsingar um aðrar eignir',
+    description: '',
+  },
+  otherAssetsPlaceholder: {
+    id: 'es.application:otherAssetsPlaceholder',
+    defaultMessage: 'Skráðu inn upplýsingar hér',
+    description: '',
+  },
+  otherAssetsValue: {
+    id: 'es.application:otherAssetsValue',
+    defaultMessage: 'Fjárhæð á dánardegi',
+    description: '',
+  },
+
+  // Debts
+  acceptDebtsLabel: {
+    id: 'es.application:acceptDebtsLabel',
+    defaultMessage:
+      'Ég samþykki að taka yfir áhvílandi skuldir á þessu farartæki sem vitneskja er um',
+    description: '',
+  },
+  debtsTitle: {
+    id: 'es.application:debtsTitle',
+    defaultMessage: 'Skuldir',
+    description: '',
+  },
+  debtsDescription: {
+    id: 'es.application:debtsDescription',
+    defaultMessage: 'Innlendar og erlendar skuldir',
+    description: '',
+  },
+  debtsCreditorName: {
+    id: 'es.application:debtsCreditorName',
+    defaultMessage: 'Nafn kröfuhafa',
+    description: '',
+  },
+  debtsSsn: {
+    id: 'es.application:debtsSsn',
+    defaultMessage: 'Kennitala',
+    description: '',
+  },
+  debtsBalance: {
+    id: 'es.application:debtsBalance',
+    defaultMessage: 'Eftirstöðvar á dánardegi',
+    description: '',
+  },
+  debtsRepeaterButton: {
+    id: 'es.application:debtsRepeaterButton',
+    defaultMessage: 'Bæta við kröfuhafa',
     description: '',
   },
 
@@ -394,7 +521,7 @@ export const m = defineMessages({
     description: 'Invalid general asset number error message',
   },
 
-  /* Inheritance step */
+  // Inheritance step
   inheritanceAddMember: {
     id: 'es.application:inheritanceAddMember',
     defaultMessage: 'Bæta við erfingja',
@@ -446,7 +573,7 @@ export const m = defineMessages({
     description: 'Day of birth label',
   },
 
-  /* Properties step */
+  // Properties
   propertiesTitle: {
     id: 'es.application:propertiesTitle',
     defaultMessage: 'Eignir',

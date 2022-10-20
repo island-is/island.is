@@ -22,11 +22,11 @@ export const form: Form = buildForm({
     dataCollection,
     announcerInfo,
     buildSection({
-      id: 'overview',
+      id: 'overviewOfficialExchange',
       title: m.overviewTitle,
       children: [
         buildMultiField({
-          id: 'overview',
+          id: 'overviewOfficialExchange',
           title: m.overviewTitle,
           description: m.overviewSubtitleOfficialEstate,
           children: [
@@ -37,7 +37,7 @@ export const form: Form = buildForm({
               titleVariant: 'h3',
             }),
             buildDescriptionField({
-              id: 'space',
+              id: 'spaceOE',
               title: '',
               space: 'gutter',
             }),
