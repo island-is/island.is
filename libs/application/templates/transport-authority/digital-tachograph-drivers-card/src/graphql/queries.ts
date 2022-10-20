@@ -9,22 +9,13 @@ export const GET_DRIVING_LICENSE = `
   }
 `
 
-export const GET_BIRTHPLACE = `
+export const GET_BIRTHPLACE_AND_DOMICILE = `
   query NationalRegistryUserQuery {
     nationalRegistryUser {
-      birthPlace
-    }
-  }
-`
-
-export const GET_BIRTHPLACEx = `
-  query NationalRegistryUserQuery {
-    nationalRegistryUserV2 {
-      birthplace {
-        location
-        municipalityCode
-        dateOfBirth
+      address {
+        code
       }
+      birthPlace
     }
   }
 `
