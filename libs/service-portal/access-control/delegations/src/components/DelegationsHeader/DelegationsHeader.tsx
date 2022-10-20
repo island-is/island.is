@@ -75,12 +75,7 @@ export const DelegationsHeader = ({
           />
         )}
       </Box>
-      <Button
-        onClick={onClickHandler}
-        variant="utility"
-        size="small"
-        {...(sm && { icon: 'add', iconType: 'outline' })}
-      >
+      <Button onClick={onClickHandler} size="small">
         {formatMessage({
           id: 'sp.access-control-delegations:new-delegation',
           defaultMessage: 'Nýtt umboð',
