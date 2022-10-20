@@ -361,18 +361,11 @@ export class FileService {
   ): Promise<CaseFile[]> {
     return this.sequelize.transaction((transaction) => {
       const updates = caseFileUpdates.map(async (update) => {
-        const [affectedNumber, file] = await this.fileModel.update(
-          {
-            orderWithinChapter: update.orderWithinChapter,
-            chapter: update.chapter,
-            userGeneratedFilename: update.userGeneratedFilename,
-          },
-          {
-            where: { caseId, id: update.id },
-            returning: true,
-            transaction,
-          },
-        )
+        const [affectedNumber, file] = await this.fileModel.update(update, {
+          where: { caseId, id: update.id },
+          returning: true,
+          transaction,
+        })
         if (affectedNumber !== 1 || !file[0]) {
           throw new InternalServerErrorException(
             `Could not update file ${update.id} of case ${caseId}`,

@@ -10,6 +10,7 @@ export interface SyslumennAuction {
   auctionTime: string
   petitioners: string
   respondent: string
+  publishText: string
   auctionTakesPlaceAt: string
 }
 
@@ -66,6 +67,10 @@ export interface OperatingLicense {
   alcoholWeekendOutdoorLicense?: string
   maximumNumberOfGuests?: number
   numberOfDiningGuests?: number
+}
+
+export interface OperatingLicensesCSV {
+  value: string
 }
 
 /**

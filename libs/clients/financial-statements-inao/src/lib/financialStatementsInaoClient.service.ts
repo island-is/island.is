@@ -12,12 +12,18 @@ import type {
   Client,
   Config,
   Election,
+  ElectionInfo,
   FinancialType,
   KeyValue,
   PersonalElectionFinancialStatementValues,
   PoliticalPartyFinancialStatementValues,
 } from './types'
 import { ClientTypes } from './types'
+import {
+  getCemeteryFileName,
+  getPersonalElectionFileName,
+  getPoliticalPartyFileName,
+} from './utils/filenames'
 import { lookup, LookupType } from './utils/lookup'
 
 @Injectable()
@@ -179,6 +185,20 @@ export class FinancialStatementsInaoClientService {
     return elections
   }
 
+  async getElectionInfo(electionId: string): Promise<ElectionInfo | null> {
+    const select = '$select=star_electiontype, star_electiondate'
+    const url = `${this.basePath}/star_elections(${electionId})?${select}`
+    const response = await this.fetch(url)
+    const data = await response.json()
+
+    if (!data) return null
+
+    return {
+      electionType: data.star_electiontype,
+      electionDate: data.star_electiondate,
+    } as ElectionInfo
+  }
+
   async getClientFinancialLimit(
     clientType: string,
     year: string,
@@ -226,6 +246,7 @@ export class FinancialStatementsInaoClientService {
     noValueStatement: boolean,
     clientName: string,
     values?: PersonalElectionFinancialStatementValues,
+    file?: string,
   ): Promise<boolean> {
     const financialValues: LookupType[] = []
 
@@ -273,19 +294,26 @@ export class FinancialStatementsInaoClientService {
       star_financialstatementvalue_belongsto_rel: financialValues,
     }
 
-    try {
-      const url = `${this.basePath}/star_financialstatements`
-      await this.fetch(url, {
-        method: 'POST',
-        body: JSON.stringify(body),
-        headers: { 'Content-Type': 'application/json' },
-      })
-      return true
-    } catch (error) {
-      this.logger.info('body', body)
-      this.logger.error('Failed to upload financial statement.', error)
+    const financialStatementId = await this.postFinancialStatement(body)
+
+    if (!financialStatementId) {
+      throw new Error('FinancialStatementId can not be null')
     }
-    return false
+
+    if (file) {
+      const electionInfo = await this.getElectionInfo(electionId)
+
+      const fileName = getPersonalElectionFileName(
+        clientNationalId,
+        electionInfo?.electionType,
+        electionInfo?.electionDate,
+        noValueStatement,
+      )
+
+      this.sendFile(financialStatementId, fileName, file)
+    }
+
+    return true
   }
 
   async postFinancialStatementForPoliticalParty(
@@ -294,6 +322,7 @@ export class FinancialStatementsInaoClientService {
     year: string,
     comment: string,
     values: PoliticalPartyFinancialStatementValues,
+    file?: string,
   ): Promise<boolean> {
     const financialTypes = await this.getFinancialTypes()
 
@@ -335,19 +364,18 @@ export class FinancialStatementsInaoClientService {
       star_financialstatementvalue_belongsto_rel: financialValues,
     }
 
-    try {
-      const url = `${this.basePath}/star_financialstatements`
-      await this.fetch(url, {
-        method: 'POST',
-        body: JSON.stringify(body),
-        headers: { 'Content-Type': 'application/json' },
-      })
-      return true
-    } catch (error) {
-      this.logger.info('body', body)
-      this.logger.error('Failed to upload financial statement.', error)
+    const financialStatementId = await this.postFinancialStatement(body)
+
+    if (!financialStatementId) {
+      throw new Error('FinancialStatementId can not be null')
     }
-    return false
+
+    if (file) {
+      const fileName = getPoliticalPartyFileName(nationalId, year)
+      await this.sendFile(financialStatementId, fileName, file)
+    }
+
+    return true
   }
 
   async postFinancialStatementForCemetery(
@@ -356,6 +384,7 @@ export class FinancialStatementsInaoClientService {
     year: string,
     comment: string,
     values: CemeteryFinancialStatementValues,
+    file?: string,
   ): Promise<boolean> {
     const financialTypes = await this.getFinancialTypes()
 
@@ -401,19 +430,17 @@ export class FinancialStatementsInaoClientService {
       star_financialstatementvalue_belongsto_rel: financialValues,
     }
 
-    try {
-      const url = `${this.basePath}/star_financialstatements`
-      await this.fetch(url, {
-        method: 'POST',
-        body: JSON.stringify(body),
-        headers: { 'Content-Type': 'application/json' },
-      })
-      return true
-    } catch (error) {
-      this.logger.info('body', body)
-      this.logger.error('Failed to upload financial statement.', error)
+    const financialStatementId = await this.postFinancialStatement(body)
+
+    if (!financialStatementId) {
+      throw new Error('FinancialStatementId can not be null')
     }
-    return false
+
+    if (file) {
+      const fileName = getCemeteryFileName(clientNationalId, year)
+      await this.sendFile(financialStatementId, fileName, file)
+    }
+    return true
   }
 
   async getConfig(): Promise<Config[]> {
@@ -432,5 +459,50 @@ export class FinancialStatementsInaoClientService {
     })
 
     return config
+  }
+
+  private async postFinancialStatement(body: any): Promise<string | undefined> {
+    try {
+      const url = `${this.basePath}/star_financialstatements`
+      const res = await this.fetch(url, {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers: {
+          'Content-Type': 'application/json',
+          Prefer: 'return=representation',
+        },
+      })
+
+      const resJson = await res.json()
+      const financialStatementId = resJson.star_financialstatementid
+
+      return financialStatementId
+    } catch (error) {
+      this.logger.info('body', body)
+      this.logger.error('Failed to upload financial statement.', error)
+    }
+  }
+
+  private async sendFile(
+    financialStatementId: string,
+    fileName: string,
+    fileContent: string,
+  ) {
+    const buffer = Buffer.from(fileContent, 'base64')
+
+    try {
+      const url = `${this.basePath}/star_financialstatements(${financialStatementId})/star_file`
+      await this.fetch(url, {
+        method: 'PATCH',
+        body: buffer,
+        headers: {
+          'Content-Type': 'application/octet-stream',
+          'x-ms-file-name': fileName,
+        },
+      })
+    } catch (error) {
+      this.logger.info('file', fileName, fileContent)
+      this.logger.error('Failed to upload financial statement file.', error)
+    }
   }
 }
