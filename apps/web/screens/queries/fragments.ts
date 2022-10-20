@@ -182,6 +182,7 @@ export const slices = gql`
     id
     title
     json
+    configJson
     componentType: type
   }
 
