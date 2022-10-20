@@ -123,9 +123,9 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
     }
   })
 
+  // Map format and flatten scopes to be used in the confirm modal
   const scopes = getValues()
     ?.[SCOPE_PREFIX]?.map((item) =>
-      // Map and flatten scopes to be used in the confirm modal
       formatScopeTreeToScope({ item, authScopeTree, validityPeriod }),
     )
     .filter(isDefined)

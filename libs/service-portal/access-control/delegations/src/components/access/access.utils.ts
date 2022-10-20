@@ -92,8 +92,9 @@ export const formatScopeTreeToScope = ({
   const authApiScope = flattenScopes?.find(
     (apiScope) => apiScope.name === item.name[0],
   )
+  const validTo = validityPeriod ?? item.validTo
 
-  if (!authApiScope || !validityPeriod || !item.validTo) {
+  if (!authApiScope || !validTo) {
     return null
   }
 
@@ -101,7 +102,7 @@ export const formatScopeTreeToScope = ({
     name: authApiScope.name,
     displayName: authApiScope.displayName,
     // validityPeriod has priority over item.validTo
-    validTo: validityPeriod ?? item.validTo,
+    validTo,
     description: authApiScope?.description,
   }
 }

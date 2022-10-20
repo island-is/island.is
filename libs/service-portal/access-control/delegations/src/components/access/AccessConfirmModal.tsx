@@ -30,7 +30,7 @@ type AccessConfirmModalProps = ModalProps & {
     name: string | undefined
     imgSrc: string | undefined
   }
-  scopes: MappedScope[]
+  scopes?: MappedScope[]
   onConfirm(): void
   validityPeriod: Date | null
 }
@@ -51,7 +51,7 @@ export const AccessConfirmModal = ({
   const [updateAuthDelegationn, { loading }] = useUpdateAuthDelegationMutation()
 
   const onConfirmHandler = async () => {
-    if (!delegation.id) {
+    if (!delegation.id || !scopes) {
       setError(true)
       return
     }
@@ -61,7 +61,7 @@ export const AccessConfirmModal = ({
         variables: {
           input: {
             delegationId: delegation.id,
-            scopes,
+            scopes: scopes.map(({ name, validTo }) => ({ name, validTo })),
           },
         },
       })
