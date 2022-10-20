@@ -8,7 +8,7 @@ import {
 import { caseFilesRecord } from '../messages'
 import { Defendant } from '../modules/defendant'
 import { Case } from '../modules/case'
-import { Alignment, PdfDocument } from './pdf'
+import { Alignment, PageLink, PdfDocument } from './pdf'
 
 function formatDefendant(defendant: Defendant) {
   let nationalId = ''
@@ -48,6 +48,7 @@ export const createCaseFilesRecord = async (
     chapter: number
     name: string
     pageNumber: number
+    pageLink: PageLink
   }[] = []
 
   const pdfDocument = await PdfDocument(
@@ -58,12 +59,7 @@ export const createCaseFilesRecord = async (
 
   for (const caseFile of caseFiles) {
     const { name, chapter, buffer } = await caseFile()
-
-    pageReferences.push({
-      chapter,
-      name,
-      pageNumber: pdfDocument.getPageCount() + 1,
-    })
+    const pageNumber = pdfDocument.getPageCount()
 
     if (buffer) {
       await pdfDocument.mergeDocument(buffer)
@@ -79,6 +75,13 @@ export const createCaseFilesRecord = async (
           bold: true,
         })
     }
+
+    pageReferences.push({
+      chapter,
+      name,
+      pageNumber: pageNumber + 1,
+      pageLink: pdfDocument.getPageLink(pageNumber),
+    })
   }
 
   pdfDocument
@@ -142,7 +145,7 @@ export const createCaseFilesRecord = async (
         `${pageReference.name} ${pageReference.pageNumber}`,
         textFontSize,
         {
-          pageLink: pageReference.pageNumber,
+          pageLink: pageReference.pageLink,
           position: { x: pageReferenceIndent },
         },
       )

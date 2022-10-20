@@ -4,6 +4,7 @@ import {
   PDFFont,
   PDFName,
   PDFPage,
+  PDFRef,
   StandardFonts,
   TextAlignment,
 } from 'pdf-lib'
@@ -14,10 +15,12 @@ export enum Alignment {
   Right,
 }
 
+export type PageLink = PDFRef
+
 export interface PdfTextOptions {
   alignment?: Alignment
   bold?: boolean
-  pageLink?: number
+  pageLink?: PageLink
   marginTop?: number
   newLine?: boolean
   position?: { x?: number; y?: number }
@@ -34,6 +37,7 @@ export interface PdfDocument {
   ) => PdfDocument
   getContents: () => Promise<Buffer>
   getPageCount: () => number
+  getPageLink: (pageNumber: number) => PageLink
   mergeDocument: (buffer: Buffer) => Promise<PdfDocument>
   setMargins: (
     top: number,
@@ -65,7 +69,7 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
     y: number,
     font: PDFFont,
     fontSize: number,
-    pageLink?: number,
+    pageLink?: PageLink,
   ) => {
     page.drawText(text, { x, y, font, size: fontSize })
 
@@ -80,7 +84,7 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
             x + font.widthOfTextAtSize(text, fontSize),
             y + fontSize,
           ],
-          Dest: [rawDocument.getPage(pageLink).ref, 'XYZ', null, null, null],
+          Dest: [pageLink, 'XYZ', null, null, null],
         }),
       )
 
@@ -102,7 +106,7 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
     y?: number,
     spaceAbove?: number,
     spaceBelow?: number,
-    pageLink?: number,
+    pageLink?: PageLink,
     newLine = true,
   ) => {
     const page = rawDocument.getPage(currentPage)
@@ -140,7 +144,7 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
     y?: number,
     spaceAbove?: number,
     spaceBelow?: number,
-    pageLink?: number,
+    pageLink?: PageLink,
     newLine = true,
   ) => {
     drawText(
@@ -278,6 +282,8 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
     },
 
     getPageCount: () => rawDocument.getPageCount(),
+
+    getPageLink: (pageNumber: number) => rawDocument.getPage(pageNumber).ref,
 
     mergeDocument: async (buffer: Buffer) => {
       const filePdfDoc = await PDFDocument.load(buffer)
