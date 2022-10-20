@@ -173,7 +173,12 @@ export class DelegationsOutgoingService {
     delegationId: string,
     patchedDelegation: PatchDelegationDTO,
   ): Promise<DelegationDTO> {
-    const currentDelegation = await this.findById(user, delegationId)
+    const currentDelegation = await this.delegationModel.findOne({
+      where: {
+        id: delegationId,
+        fromNationalId: user.nationalId,
+      },
+    })
     if (!currentDelegation) {
       throw new NoContentException()
     }
