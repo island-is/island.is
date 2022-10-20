@@ -1,7 +1,6 @@
 import { Op } from 'sequelize'
 import { Includeable, OrderItem, Transaction } from 'sequelize/types'
 import { Sequelize } from 'sequelize-typescript'
-import { PDFDocument, PDFName, PDFRef, StandardFonts } from 'pdf-lib'
 
 import {
   Inject,
@@ -21,6 +20,7 @@ import {
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   CaseFileCategory,
   CaseFileState,
@@ -330,8 +330,12 @@ export class CaseService {
           })
 
         return {
-          name: caseFile.userGeneratedFilename ?? caseFile.name,
           chapter: caseFile.chapter as number,
+          date: formatDate(
+            caseFile.displayDate ?? caseFile.created,
+            'dd.MM.yyyy',
+          ) as string,
+          name: caseFile.userGeneratedFilename ?? caseFile.name,
           buffer: buffer ?? undefined,
         }
       })
@@ -348,97 +352,6 @@ export class CaseService {
     }
 
     return pdf
-  }
-
-  async xgetCaseFilesPdf(theCase: Case): Promise<Buffer> {
-    const PAGE_HEIGHT = 750
-
-    const createPageLinkAnnotation = (pdfDoc: PDFDocument, pageRef: PDFRef) =>
-      pdfDoc.context.register(
-        pdfDoc.context.obj({
-          Type: 'Annot',
-          Subtype: 'Link',
-          /* Bounds of the link on the page */
-          Rect: [
-            145, // lower left x coord
-            PAGE_HEIGHT - 200 - 10, // lower left y coord
-            358, // upper right x coord
-            PAGE_HEIGHT - 200 + 25, // upper right y coord
-          ],
-          /* Give the link a 2-unit-wide border, with sharp corners */
-          Border: [0, 0, 2],
-          /* Make the border color blue: rgb(0, 0, 1) */
-          C: [0, 0, 1],
-          /* Page to be visited when the link is clicked */
-          Dest: [pageRef, 'XYZ', null, null, null],
-        }),
-      )
-
-    const pdfDoc = await PDFDocument.create()
-    let pageNumber = 0
-    const pageNumberFont = await pdfDoc.embedFont(StandardFonts.TimesRoman)
-    const coverPage = pdfDoc.addPage()
-    const files =
-      theCase.caseFiles?.filter(
-        (file) =>
-          file.category === CaseFileCategory.CASE_FILE &&
-          file.type === 'application/pdf' &&
-          file.key,
-      ) ?? []
-    for (let i = 0; i < files.length; i++) {
-      await this.awsS3Service
-        .getObject(files[i].key ?? '')
-        .then(async (next) => {
-          const nextPdf = await PDFDocument.load(next)
-          const pages = await pdfDoc.copyPages(
-            nextPdf,
-            nextPdf.getPageIndices(),
-          )
-          for (let j = 0; j < pages.length; j++) {
-            const page = pages[j]
-            if (i === 0 && j === 0) {
-              const link1 = createPageLinkAnnotation(pdfDoc, page.ref)
-              coverPage.node.set(
-                PDFName.of('Annots'),
-                pdfDoc.context.obj([link1]),
-              )
-            }
-            const pageNumberText = `${++pageNumber}`
-            const pageNumberTextWidth = pageNumberFont.widthOfTextAtSize(
-              pageNumberText,
-              20,
-            )
-            page.drawText(pageNumberText, {
-              x: page.getWidth() - 10 - pageNumberTextWidth,
-              y: 10,
-              size: 20,
-              font: pageNumberFont,
-            })
-            pdfDoc.addPage(page)
-          }
-        })
-        .catch((err) => {
-          this.logger.error(
-            `Could not get file ${files[i].id} of case ${theCase.id} from AWS S3`,
-            { err },
-          )
-        })
-    }
-    coverPage.drawText('Skjalaskrá', { size: 50, x: 175, y: PAGE_HEIGHT - 100 })
-    coverPage.drawText('Skjal 1', {
-      size: 24,
-      x: 175,
-      y: PAGE_HEIGHT - 200,
-    })
-
-    const pdf = await pdfDoc.save()
-    const buffer = Buffer.from(pdf)
-
-    if (!this.config.production) {
-      writeFile(`${theCase.id}-case-files.pdf`, buffer)
-    }
-
-    return buffer
   }
 
   async getRulingPdf(theCase: Case, useSigned = true): Promise<Buffer> {

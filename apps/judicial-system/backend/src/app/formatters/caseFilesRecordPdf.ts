@@ -27,6 +27,7 @@ export const createCaseFilesRecord = async (
   theCase: Case,
   policeCaseNumber: string,
   caseFiles: (() => Promise<{
+    date: string
     name: string
     chapter: number
     buffer?: Buffer
@@ -46,6 +47,7 @@ export const createCaseFilesRecord = async (
 
   const pageReferences: {
     chapter: number
+    date: string
     name: string
     pageNumber: number
     pageLink: PageLink
@@ -58,7 +60,7 @@ export const createCaseFilesRecord = async (
   pdfDocument.setMargins(pageMargin, pageMargin, pageMargin, pageMargin)
 
   for (const caseFile of caseFiles) {
-    const { name, chapter, buffer } = await caseFile()
+    const { date, name, chapter, buffer } = await caseFile()
     const pageNumber = pdfDocument.getPageCount()
 
     if (buffer) {
@@ -78,6 +80,7 @@ export const createCaseFilesRecord = async (
 
     pageReferences.push({
       chapter,
+      date,
       name,
       pageNumber: pageNumber + 1,
       pageLink: pdfDocument.getPageLink(pageNumber),
@@ -159,10 +162,14 @@ export const createCaseFilesRecord = async (
           pageLink: pageReference.pageLink,
           newLine: false,
         })
-        .addText(`${pageReference.name}`, textFontSize, {
-          pageLink: pageReference.pageLink,
-          position: { x: pageReferenceIndent },
-        })
+        .addText(
+          `${pageReference.date} - ${pageReference.name}`,
+          textFontSize,
+          {
+            pageLink: pageReference.pageLink,
+            position: { x: pageReferenceIndent },
+          },
+        )
     }
   }
 
