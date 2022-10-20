@@ -1,30 +1,78 @@
-import React, { Fragment } from 'react'
-import { FieldBaseProps } from '@island.is/application/types'
+import React, { Fragment, useState } from 'react'
+import { DefaultEvents, FieldBaseProps } from '@island.is/application/types'
+import { getErrorViaPath } from '@island.is/application/core'
+
 import {
+  AlertBanner,
   Box,
+  Checkbox,
   Divider,
   GridColumn,
   GridRow,
+  InputError,
   Text,
 } from '@island.is/island-ui/core'
+import { Controller, useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
-import { formatCurrency } from '../../lib/utils/helpers'
+import { currencyStringToNumber, formatCurrency } from '../../lib/utils/helpers'
 import { FinancialStatementsInao } from '../../lib/utils/dataSchema'
 import { format as formatNationalId } from 'kennitala'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
+import { useSubmitApplication } from '../../hooks/useSubmitApplication'
 import { m } from '../../lib/messages'
 import { FileValueLine, ValueLine } from '../Shared'
-import { CARETAKERLIMIT } from '../../lib/constants'
 import {
   columnStyle,
   starterColumnStyle,
 } from '../Shared/styles/overviewStyles.css'
+import BottomBar from '../../components/BottomBar'
 
-export const CemetryOverview = ({ application }: FieldBaseProps) => {
+export const CemetryOverview = ({
+  application,
+  goToScreen,
+  refetch,
+}: FieldBaseProps) => {
+  const { errors, setError, setValue } = useFormContext()
   const { formatMessage } = useLocale()
+  const [approveOverview, setApproveOverview] = useState(false)
+
+  const [
+    submitApplication,
+    { error: submitError, loading },
+  ] = useSubmitApplication({
+    application,
+    refetch,
+    event: DefaultEvents.SUBMIT,
+  })
 
   const answers = application.answers as FinancialStatementsInao
   const fileName = answers.attachment?.file?.[0]?.name
+  const careTakerLimit = answers.cemetryOperation.incomeLimit ?? '0'
+
+  const onBackButtonClick = () => {
+    const cemeteryIncome = currencyStringToNumber(answers.cemetryIncome?.total)
+    const currentAssets = answers.cemetryAsset?.currentAssets
+    const longTermDebt = answers.cemetryLiability?.longTerm
+    if (
+      cemeteryIncome < Number(careTakerLimit) &&
+      currentAssets === '0' &&
+      longTermDebt === '0'
+    ) {
+      goToScreen && goToScreen('caretakers')
+    } else {
+      goToScreen && goToScreen('attachment.file')
+    }
+  }
+
+  const onSendButtonClick = () => {
+    if (approveOverview) {
+      submitApplication()
+    } else {
+      setError('applicationApprove', {
+        type: 'error',
+      })
+    }
+  }
 
   return (
     <Box marginBottom={2}>
@@ -56,20 +104,23 @@ export const CemetryOverview = ({ application }: FieldBaseProps) => {
           <ValueLine label={m.fullName} value={answers.about.fullName} />
         </GridColumn>
       </GridRow>
-
       <GridRow>
-        <GridColumn span={['12/12', '6/12']}>
-          <ValueLine
-            label={m.powerOfAttorneyName}
-            value={answers.about.powerOfAttorneyName}
-          />
-        </GridColumn>
-        <GridColumn span={['12/12', '6/12']}>
-          <ValueLine
-            label={m.powerOfAttorneyNationalId}
-            value={formatNationalId(answers.about.powerOfAttorneyNationalId)}
-          />
-        </GridColumn>
+        {answers.about.powerOfAttorneyName ? (
+          <GridColumn span={['12/12', '6/12']}>
+            <ValueLine
+              label={m.powerOfAttorneyName}
+              value={answers.about.powerOfAttorneyName}
+            />
+          </GridColumn>
+        ) : null}
+        {answers.about.powerOfAttorneyNationalId ? (
+          <GridColumn span={['12/12', '6/12']}>
+            <ValueLine
+              label={m.powerOfAttorneyNationalId}
+              value={formatNationalId(answers.about.powerOfAttorneyNationalId)}
+            />
+          </GridColumn>
+        ) : null}
       </GridRow>
 
       <GridRow>
@@ -96,16 +147,18 @@ export const CemetryOverview = ({ application }: FieldBaseProps) => {
             value={formatCurrency(answers.cemetryIncome?.otherIncome)}
           />
           <ValueLine
-            label={m.caretaking}
-            value={formatCurrency(answers.cemetryIncome?.caretaking)}
+            label={m.careIncome}
+            value={formatCurrency(answers.cemetryIncome?.careIncome)}
           />
           <ValueLine
-            label={m.cemetryFundDonations}
-            value={formatCurrency(answers.cemetryIncome?.cemetryFundDonations)}
+            label={m.grantFromTheCemeteryFund}
+            value={formatCurrency(
+              answers.cemetryIncome?.grantFromTheCemeteryFund,
+            )}
           />
           <ValueLine
-            label={m.graveIncome}
-            value={formatCurrency(answers.cemetryIncome?.graveIncome)}
+            label={m.burialRevenue}
+            value={formatCurrency(answers.cemetryIncome?.burialRevenue)}
           />
           <ValueLine
             label={m.totalIncome}
@@ -134,8 +187,8 @@ export const CemetryOverview = ({ application }: FieldBaseProps) => {
             value={formatCurrency(answers.cemetryExpense?.payroll)}
           />
           <ValueLine
-            label={m.writtenOffExpense}
-            value={formatCurrency(answers.cemetryExpense?.writtenOffExpense)}
+            label={m.depreciation}
+            value={formatCurrency(answers.cemetryExpense?.depreciation)}
           />
           <ValueLine
             label={m.totalExpenses}
@@ -179,14 +232,14 @@ export const CemetryOverview = ({ application }: FieldBaseProps) => {
           <GridRow>
             <GridColumn span={['12/12', '6/12']}>
               <ValueLine
-                label={m.currentAssets}
-                value={formatCurrency(answers.cemetryAsset?.current)}
+                label={m.fixedAssetsTotal}
+                value={formatCurrency(answers.cemetryAsset?.fixedAssetsTotal)}
               />
             </GridColumn>
             <GridColumn span={['12/12', '6/12']}>
               <ValueLine
-                label={m.tangibleAssets}
-                value={formatCurrency(answers.cemetryAsset?.tangible)}
+                label={m.currentAssets}
+                value={formatCurrency(answers.cemetryAsset?.currentAssets)}
               />
             </GridColumn>
           </GridRow>
@@ -224,8 +277,10 @@ export const CemetryOverview = ({ application }: FieldBaseProps) => {
           <GridRow>
             <GridColumn span={['12/12', '6/12']}>
               <ValueLine
-                label={m.newYearequity}
-                value={formatCurrency(answers.cemetryEquity?.newYearEquity)}
+                label={m.equityAtTheBeginningOfTheYear}
+                value={formatCurrency(
+                  answers.cemetryEquity?.equityAtTheBeginningOfTheYear,
+                )}
               />
             </GridColumn>
             <GridColumn span={['12/12', '6/12']}>
@@ -239,8 +294,16 @@ export const CemetryOverview = ({ application }: FieldBaseProps) => {
         <GridRow>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
-              label={m.reevaluatePrice}
-              value={formatCurrency(answers.cemetryEquity?.reevaluatePrice)}
+              label={m.revaluationDueToPriceChanges}
+              value={formatCurrency(
+                answers.cemetryEquity?.revaluationDueToPriceChanges,
+              )}
+            />
+          </GridColumn>
+          <GridColumn span={['12/12', '6/12']}>
+            <ValueLine
+              label={m.reevaluateOther}
+              value={formatCurrency(answers.cemetryEquity?.reevaluateOther)}
             />
           </GridColumn>
         </GridRow>
@@ -254,7 +317,7 @@ export const CemetryOverview = ({ application }: FieldBaseProps) => {
         </GridRow>
       </Box>
       <Divider />
-      {parseInt(answers.cemetryIncome?.total, 10) < CARETAKERLIMIT &&
+      {parseInt(answers.cemetryIncome?.total, 10) < Number(careTakerLimit) &&
       answers.cemetryCaretaker?.length > 0 ? (
         <Fragment>
           <Box className={starterColumnStyle}>
@@ -297,6 +360,52 @@ export const CemetryOverview = ({ application }: FieldBaseProps) => {
           <Divider />
         </Fragment>
       ) : null}
+      <Box paddingY={3}>
+        <Text variant="h3" as="h3">
+          {formatMessage(m.overview)}
+        </Text>
+      </Box>
+      <Box background="blue100" padding={3}>
+        <Controller
+          name="applicationApprove"
+          defaultValue={approveOverview}
+          rules={{ required: true }}
+          render={({ value, onChange }) => {
+            return (
+              <Checkbox
+                onChange={(e) => {
+                  onChange(e.target.checked)
+                  setApproveOverview(e.target.checked)
+                  setValue('applicationApprove' as string, e.target.checked)
+                }}
+                checked={value}
+                name="applicationApprove"
+                id="applicationApprove"
+                label={formatMessage(m.overviewCorrect)}
+                large
+              />
+            )
+          }}
+        />
+      </Box>
+      {errors && getErrorViaPath(errors, 'applicationApprove') ? (
+        <InputError errorMessage={formatMessage(m.errorApproval)} />
+      ) : null}
+      {submitError ? (
+        <Box paddingY={2}>
+          <AlertBanner
+            title={formatMessage(m.submitErrorTitle)}
+            description={formatMessage(m.submitErrorMessage)}
+            variant="error"
+            dismissable
+          />
+        </Box>
+      ) : null}
+      <BottomBar
+        loading={loading}
+        onSendButtonClick={onSendButtonClick}
+        onBackButtonClick={onBackButtonClick}
+      />
     </Box>
   )
 }

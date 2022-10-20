@@ -66,8 +66,6 @@ describe('InternalCaseController - Deliver', () => {
     beforeEach(() => {
       const mockGetObject = mockAwsS3Service.getObject as jest.Mock
       mockGetObject.mockRejectedValue(new Error('Some error'))
-      const mockGetAllCaseFiles = mockFileService.getAllCaseFiles as jest.Mock
-      mockGetAllCaseFiles.mockRejectedValue(new Error('Some error'))
     })
 
     describe('deliver signed ruling to court', () => {
@@ -99,8 +97,8 @@ describe('InternalCaseController - Deliver', () => {
           courtId,
           courtCaseNumber,
           CourtDocumentFolder.COURT_DOCUMENTS,
-          'test',
-          'test.pdf',
+          `Úrskurður ${courtCaseNumber}`,
+          `Úrskurður ${courtCaseNumber}.pdf`,
           'application/pdf',
           pdf,
           undefined,
@@ -129,7 +127,7 @@ describe('InternalCaseController - Deliver', () => {
         then = await givenWhenThen(caseId, theCase)
       })
 
-      it('should generate the court buffer record', async () => {
+      it('should generate the court record', async () => {
         expect(getCourtRecordPdfAsBuffer).toHaveBeenCalledWith(
           theCase,
           expect.any(Function),
@@ -142,8 +140,8 @@ describe('InternalCaseController - Deliver', () => {
           courtId,
           courtCaseNumber,
           CourtDocumentFolder.COURT_DOCUMENTS,
-          'test',
-          'test.pdf',
+          `Þingbók ${courtCaseNumber}`,
+          `Þingbók ${courtCaseNumber}.pdf`,
           'application/pdf',
           pdf,
         )
@@ -158,39 +156,33 @@ describe('InternalCaseController - Deliver', () => {
       const caseId = uuid()
       const courtId = uuid()
       const courtCaseNumber = uuid()
-      const theCase = { id: caseId, courtId, courtCaseNumber } as Case
       const caseFile1 = { id: uuid(), state: CaseFileState.STORED_IN_RVG }
       const caseFile2 = { id: uuid(), state: CaseFileState.STORED_IN_COURT }
+      const theCase = {
+        id: caseId,
+        courtId,
+        courtCaseNumber,
+        caseFiles: [caseFile1, caseFile2],
+      } as Case
       let then: Then
 
       beforeEach(async () => {
-        const mockGetAllCaseFiles = mockFileService.getAllCaseFiles as jest.Mock
-        mockGetAllCaseFiles.mockResolvedValue([caseFile1, caseFile2])
         const mockUploadCaseFileToCourt = mockFileService.uploadCaseFileToCourt as jest.Mock
-        mockUploadCaseFileToCourt.mockResolvedValueOnce({ success: true })
+        mockUploadCaseFileToCourt
+          .mockResolvedValueOnce({ success: true })
+          .mockResolvedValueOnce({ success: true })
 
         then = await givenWhenThen(caseId, theCase)
       })
 
-      it('should get all case files', () => {
-        expect(mockFileService.getAllCaseFiles).toHaveBeenCalledWith(caseId)
-      })
-
-      it('should upload the file stored in RVG', () => {
+      it('should upload files', () => {
         expect(mockFileService.uploadCaseFileToCourt).toHaveBeenCalledWith(
           caseFile1,
-          caseId,
-          courtId,
-          courtCaseNumber,
+          theCase,
         )
-      })
-
-      it('should not upload the file stored in court', () => {
-        expect(mockFileService.uploadCaseFileToCourt).not.toHaveBeenCalledWith(
+        expect(mockFileService.uploadCaseFileToCourt).toHaveBeenCalledWith(
           caseFile2,
-          caseId,
-          courtId,
-          courtCaseNumber,
+          theCase,
         )
       })
 
@@ -201,14 +193,13 @@ describe('InternalCaseController - Deliver', () => {
 
     describe('some case file is not uploaded to court', () => {
       const caseId = uuid()
-      const theCase = { id: caseId } as Case
+      const theCase = {
+        id: caseId,
+        caseFiles: [{ id: uuid(), state: CaseFileState.STORED_IN_RVG }],
+      } as Case
       let then: Then
 
       beforeEach(async () => {
-        const mockGetAllCaseFiles = mockFileService.getAllCaseFiles as jest.Mock
-        mockGetAllCaseFiles.mockResolvedValue([
-          { id: uuid(), state: CaseFileState.STORED_IN_RVG },
-        ])
         const mockUploadCaseFileToCourt = mockFileService.uploadCaseFileToCourt as jest.Mock
         mockUploadCaseFileToCourt.mockResolvedValueOnce({ success: false })
 
@@ -220,33 +211,17 @@ describe('InternalCaseController - Deliver', () => {
       })
     })
 
-    describe('getting case files fails', () => {
-      const caseId = uuid()
-      const theCase = { id: caseId } as Case
-      let then: Then
-
-      beforeEach(async () => {
-        then = await givenWhenThen(caseId, theCase)
-      })
-
-      it('should return a failure response', () => {
-        expect(then.result.caseFilesDeliveredToCourt).toBe(false)
-      })
-    })
-
     describe('uploading case files fails', () => {
       const caseId = uuid()
-      const theCase = { id: caseId } as Case
+      const theCase = {
+        id: caseId,
+        caseFiles: [{ id: uuid(), state: CaseFileState.STORED_IN_RVG }],
+      } as Case
       let then: Then
 
       beforeEach(async () => {
         const mockGetObject = mockAwsS3Service.getObject as jest.Mock
         mockGetObject.mockResolvedValueOnce(Buffer.from('test ruling'))
-
-        const mockGetAllCaseFiles = mockFileService.getAllCaseFiles as jest.Mock
-        mockGetAllCaseFiles.mockResolvedValue([
-          { id: uuid(), state: CaseFileState.STORED_IN_RVG },
-        ])
         const mockUploadCaseFileToCourt = mockFileService.uploadCaseFileToCourt as jest.Mock
         mockUploadCaseFileToCourt.mockRejectedValue(new Error('Some error'))
 
@@ -320,6 +295,15 @@ describe('InternalCaseController - Deliver', () => {
     const courtId = uuid()
     const courtCaseNumber = uuid()
     const caseConclusion = 'test conclusion'
+    const ruling = {
+      category: CaseFileCategory.RULING,
+    } as CaseFile
+    const courtRecordKey = uuid()
+    const courtRecord = {
+      category: CaseFileCategory.COURT_RECORD,
+      key: courtRecordKey,
+    } as CaseFile
+    const courtRecordPdf = Buffer.from('test court record')
     const theCase = {
       id: caseId,
       origin: CaseOrigin.LOKE,
@@ -330,129 +314,43 @@ describe('InternalCaseController - Deliver', () => {
       policeCaseNumbers,
       defendants: [{ nationalId: defendantNationalId }],
       conclusion: caseConclusion,
+      caseFiles: [ruling, courtRecord],
     } as Case
-    const rulingType = uuid()
-    const rulingKey = uuid()
-    const rulingSuffix = uuid()
-    const rulingName = `${uuid()}.${rulingSuffix}`
-    const ruling = {
-      type: rulingType,
-      category: CaseFileCategory.RULING,
-      key: rulingKey,
-      name: rulingName,
-    } as CaseFile
-    const courtRecordType = uuid()
-    const courtRecordKey = uuid()
-    const suffix = uuid()
-    const courtRecordName = `${uuid()}.${suffix}`
-    const courtRecord = {
-      type: courtRecordType,
-      category: CaseFileCategory.COURT_RECORD,
-      key: courtRecordKey,
-      name: courtRecordName,
-    } as CaseFile
-    const rulingPdf = Buffer.from('test ruling')
-    const courtRecordPdf = Buffer.from('test court record')
     let then: Then
 
     beforeEach(async () => {
-      const mockGetAllCaseFiles = mockFileService.getAllCaseFiles as jest.Mock
-      mockGetAllCaseFiles.mockResolvedValue([ruling, courtRecord])
       const mockGetObject = mockAwsS3Service.getObject as jest.Mock
-      mockGetObject
-        .mockResolvedValueOnce(rulingPdf)
-        .mockResolvedValueOnce(courtRecordPdf)
-        .mockResolvedValueOnce(courtRecordPdf)
-      const mockCreateDocument = mockCourtService.createDocument as jest.Mock
-      mockCreateDocument.mockResolvedValue(uuid())
+      mockGetObject.mockResolvedValueOnce(courtRecordPdf)
+      const mockUploadCaseFileToCourt = mockFileService.uploadCaseFileToCourt as jest.Mock
+      mockUploadCaseFileToCourt.mockResolvedValue({ success: true })
       const mockUpdatePoliceCase = mockPoliceService.updatePoliceCase as jest.Mock
       mockUpdatePoliceCase.mockResolvedValueOnce(true)
 
       then = await givenWhenThen(caseId, theCase)
     })
 
-    describe('deliver ruling to court', () => {
-      it('should get all case files', async () => {
-        expect(mockFileService.getAllCaseFiles).toHaveBeenNthCalledWith(
-          1,
-          caseId,
-        )
-      })
-
-      it('should get the ruling from S3', async () => {
-        expect(mockAwsS3Service.getObject).toHaveBeenNthCalledWith(1, rulingKey)
-      })
-
-      it('should create a ruling at court for indictment', async () => {
-        expect(mockCourtService.createDocument).toHaveBeenNthCalledWith(
-          1,
-          caseId,
-          courtId,
-          courtCaseNumber,
-          CourtDocumentFolder.COURT_DOCUMENTS,
-          'test',
-          `test.${rulingSuffix}`,
-          rulingType,
-          rulingPdf,
-        )
-      })
-
+    describe('no ruling delivered to court', () => {
       it('should return a success response', async () => {
         expect(then.result.rulingDeliveredToCourt).toEqual(true)
       })
     })
 
-    describe('deliver court recort to court', () => {
-      it('should get all case files', async () => {
-        expect(mockFileService.getAllCaseFiles).toHaveBeenNthCalledWith(
-          2,
-          caseId,
-        )
-      })
-
-      it('should get the court record from S3', async () => {
-        expect(mockAwsS3Service.getObject).toHaveBeenNthCalledWith(
-          2,
-          courtRecordKey,
-        )
-      })
-
-      it('should create a court record at court for indictment', async () => {
-        expect(mockCourtService.createDocument).toHaveBeenNthCalledWith(
-          2,
-          caseId,
-          courtId,
-          courtCaseNumber,
-          CourtDocumentFolder.COURT_DOCUMENTS,
-          'test',
-          `test.${suffix}`,
-          courtRecordType,
-          courtRecordPdf,
-        )
-      })
-
+    describe('no court recort delivered to court', () => {
       it('should return a success response', async () => {
         expect(then.result.courtRecordDeliveredToCourt).toEqual(true)
       })
     })
 
-    describe('no case files delivered', () => {
-      it('should return a failure response', async () => {
-        expect(then.result.caseFilesDeliveredToCourt).toEqual(false)
+    describe('no case files delivered but returns true', () => {
+      it('should return a success response', async () => {
+        expect(then.result.caseFilesDeliveredToCourt).toEqual(true)
       })
     })
 
     describe('deliver case to police', () => {
-      it('should get all case files', async () => {
-        expect(mockFileService.getAllCaseFiles).toHaveBeenNthCalledWith(
-          3,
-          caseId,
-        )
-      })
-
       it('should get the court record from S3', async () => {
         expect(mockAwsS3Service.getObject).toHaveBeenNthCalledWith(
-          3,
+          1,
           courtRecordKey,
         )
       })

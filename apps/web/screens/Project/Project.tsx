@@ -19,6 +19,7 @@ import {
   Stepper,
   stepperUtils,
   Form,
+  PowerBiSlice,
 } from '@island.is/web/components'
 import {
   Box,
@@ -32,6 +33,7 @@ import slugify from '@sindresorhus/slugify'
 import { getThemeConfig } from './utils'
 import { ProjectWrapper } from './components/ProjectWrapper'
 import { Locale } from 'locale'
+import { ProjectFooter } from './components/ProjectFooter'
 
 interface PageProps {
   projectPage: Query['getProjectPage']
@@ -73,8 +75,9 @@ const ProjectPage: Screen<PageProps> = ({
   >(undefined)
 
   let content: SliceType[] = []
-  if (!!subpage && renderSlicesAsTabs)
+  if (!!subpage && renderSlicesAsTabs) {
     content = selectedSliceTab?.content as SliceType[]
+  }
   if (!subpage) content = projectPage?.content as SliceType[]
 
   useEffect(() => {
@@ -135,6 +138,7 @@ const ProjectPage: Screen<PageProps> = ({
               richText(subpage.content as SliceType[], {
                 renderComponent: {
                   Form: (slice) => <Form form={slice} namespace={namespace} />,
+                  PowerBiSlice: (slice) => <PowerBiSlice slice={slice} />,
                 },
               })}
           </Box>
@@ -167,7 +171,13 @@ const ProjectPage: Screen<PageProps> = ({
             {selectedSliceTab.title}
           </Text>
         )}
-        {content && richText(content)}
+        {content &&
+          richText(content, {
+            renderComponent: {
+              Form: (slice) => <Form form={slice} namespace={namespace} />,
+              PowerBiSlice: (slice) => <PowerBiSlice slice={slice} />,
+            },
+          })}
         {!subpage && projectPage.stepper && (
           <Box marginTop={6}>
             <Stepper
@@ -217,6 +227,7 @@ const ProjectPage: Screen<PageProps> = ({
             />
           )
         })}
+      <ProjectFooter projectPage={projectPage} />
     </>
   )
 }

@@ -4,7 +4,7 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import { SigningModule } from '@island.is/dokobit-signing'
 import { EmailModule } from '@island.is/email-service'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
-import { QueueModule } from '@island.is/message-queue'
+import { MessageModule } from '@island.is/judicial-system/message'
 
 import { environment } from '../../../environments'
 import {
@@ -22,27 +22,15 @@ import { CaseController } from './case.controller'
 import { InternalCaseController } from './internalCase.controller'
 import { LimitedAccessCaseController } from './limitedAccessCase.controller'
 import { CaseService } from './case.service'
+import { InternalCaseService } from './internalCase.service'
 import { LimitedAccessCaseService } from './limitedAccessCase.service'
-import { caseModuleConfig } from './case.config'
-
-const config = caseModuleConfig()
 
 @Module({
   imports: [
     SigningModule,
     EmailModule.register(environment.emailOptions),
     CmsTranslationsModule,
-    QueueModule.register({
-      queue: {
-        name: config.sqs.queueName,
-        queueName: config.sqs.queueName,
-        deadLetterQueue: { queueName: config.sqs.deadLetterQueueName },
-      },
-      client: {
-        endpoint: config.sqs.endpoint,
-        region: config.sqs.region,
-      },
-    }),
+    MessageModule,
     forwardRef(() => DefendantModule),
     forwardRef(() => UserModule),
     forwardRef(() => FileModule),
@@ -52,7 +40,7 @@ const config = caseModuleConfig()
     forwardRef(() => PoliceModule),
     SequelizeModule.forFeature([Case, CaseArchive]),
   ],
-  providers: [CaseService, LimitedAccessCaseService],
+  providers: [CaseService, InternalCaseService, LimitedAccessCaseService],
   controllers: [
     CaseController,
     InternalCaseController,

@@ -76,7 +76,7 @@ const CourtRecord: React.FC = () => {
     >
       <PageHeader title={formatMessage(titles.court.indictments.courtRecord)} />
       <FormContentContainer>
-        <PageTitle title={formatMessage(m.title)} />
+        <PageTitle>{formatMessage(m.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={5}>
           <AlertMessage

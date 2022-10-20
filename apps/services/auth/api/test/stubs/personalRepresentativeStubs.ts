@@ -1,10 +1,10 @@
-import type { ApiScope } from '@island.is/auth-api-lib'
 import type {
+  ApiScope,
   PersonalRepresentative,
   PersonalRepresentativeRight,
   PersonalRepresentativeRightType,
   PersonalRepresentativeScopePermission,
-} from '@island.is/auth-api-lib/personal-representative'
+} from '@island.is/auth-api-lib'
 import faker from 'faker'
 import { uuid } from 'uuidv4'
 import { getFakeNationalId } from './genericStubs'
@@ -72,6 +72,7 @@ export const getPersonalRepresentativeRights = (
 })
 
 export const getPRenabledApiScope = (
+  domainName: string,
   enabled = true,
   name = faker.random.word(),
 ): CreationAttributes<ApiScope> => ({
@@ -79,6 +80,7 @@ export const getPRenabledApiScope = (
   name,
   displayName: name,
   description: faker.random.words(),
+  domainName: domainName,
   grantToPersonalRepresentatives: true,
   grantToLegalGuardians: false,
   grantToProcuringHolders: false,

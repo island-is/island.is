@@ -74,7 +74,7 @@ export class EstateTemplateService {
           share: 1,
         },
       ],
-      knowledgeOfOtherWills: 'yes',
+      knowledgeOfOtherWills: 'Yes',
       ships: [],
       flyers: [],
       estateMembers: [

@@ -21,11 +21,13 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   amountFormat,
+  ErrorScreen,
   formSubmit,
   NotFound,
   ServicePortalModuleComponent,
   TableGrid,
   UserInfoLine,
+  m,
 } from '@island.is/service-portal/core'
 
 import OwnersTable from '../../components/DetailTable/OwnersTable'
@@ -175,23 +177,6 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
     },
   })
 
-  /**
-   * The PDF functionality module is feature flagged
-   * Please remove all code when fully released.
-   */
-  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
-  const [modalFlagEnabled, setModalFlagEnabled] = useState<boolean>(false)
-  useEffect(() => {
-    const isFlagEnabled = async () => {
-      const ffEnabled = await featureFlagClient.getValue(
-        `isServicePortalVehiclesPdfEnabled`,
-        false,
-      )
-      setModalFlagEnabled(ffEnabled as boolean)
-    }
-    isFlagEnabled()
-  }, [])
-
   const {
     mainInfo,
     basicInfo,
@@ -209,7 +194,20 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
   const color = registrationInfo?.color ? `- ${registrationInfo.color}` : ''
   const noInfo = data?.vehiclesDetail === null
 
-  if ((error || noInfo) && !loading) {
+  if (error && !loading) {
+    return (
+      <ErrorScreen
+        figure="./assets/images/hourglass.svg"
+        tagVariant="red"
+        tag={formatMessage(m.errorTitle)}
+        title={formatMessage(m.somethingWrong)}
+        children={formatMessage(m.errorFetchModule, {
+          module: formatMessage(m.vehicles).toLowerCase(),
+        })}
+      />
+    )
+  }
+  if (noInfo && !loading) {
     return <NotFound title={formatMessage(messages.notFound)} />
   }
 
@@ -223,6 +221,7 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
     registrationInfo && registrationInfoArray(registrationInfo, formatMessage)
   const technicalArr =
     technicalInfo && technicalInfoArray(technicalInfo, formatMessage)
+
   return (
     <>
       <Box marginBottom={6}>
@@ -251,7 +250,7 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
             ) : null}
           </GridColumn>
         </GridRow>
-        {modalFlagEnabled && !loading && downloadServiceURL && (
+        {!loading && downloadServiceURL && (
           <GridRow marginTop={6}>
             <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
               <Box display="flex" justifyContent="flexStart" printHidden>

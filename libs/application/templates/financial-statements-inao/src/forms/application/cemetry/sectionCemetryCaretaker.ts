@@ -3,11 +3,7 @@ import {
   buildSection,
   buildMultiField,
 } from '@island.is/application/core'
-import {
-  CARETAKERLIMIT,
-  CEMETRYCARETAKER,
-  USERTYPE,
-} from '../../../lib/constants'
+import { CEMETRYCARETAKER, USERTYPE } from '../../../lib/constants'
 import { m } from '../../../lib/messages'
 import { FinancialStatementsInao } from '../../../lib/utils/dataSchema'
 import {
@@ -24,10 +20,13 @@ export const sectionCemetryCaretaker = buildSection({
       return false
     }
     const applicationAnswers = answers as FinancialStatementsInao
-    const currentAssets = applicationAnswers.cemetryAsset?.current
-    const totalIncome = applicationAnswers.operatingCost?.total
+    const careTakerLimit =
+      applicationAnswers.cemetryOperation?.incomeLimit ?? '0'
+    const currentAssets = applicationAnswers.cemetryAsset?.fixedAssetsTotal
+    const totalIncome = applicationAnswers.cemetryIncome?.total
     const longTermDebt = applicationAnswers.cemetryLiability?.longTerm
-    const isUnderLimit = currencyStringToNumber(totalIncome) < CARETAKERLIMIT
+    const isUnderLimit =
+      currencyStringToNumber(totalIncome) <= Number(careTakerLimit)
     return isUnderLimit && currentAssets === '0' && longTermDebt === '0'
   },
   children: [

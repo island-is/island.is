@@ -1,4 +1,5 @@
 import { User } from '@island.is/auth-nest-tools'
+import { Locale } from '@island.is/shared/types'
 
 export enum GenericLicenseType {
   DriversLicense = 'DriversLicense',
@@ -7,6 +8,18 @@ export enum GenericLicenseType {
   MachineLicense = 'MachineLicense',
   FirearmLicense = 'FirearmLicense',
 }
+
+/**
+ * Get organization slug from the CMS.
+ * https://app.contentful.com/spaces/8k0h54kbe6bj/entries?id=kc7049zAeHdJezwG&contentTypeId=organization
+ * */
+export enum GenericLicenseOrganizationSlug {
+  DriversLicense = 'rikislogreglustjori',
+  FirearmLicense = 'rikislogreglustjori',
+  HuntingLicense = 'umhverfisstofnun',
+  AdrLicense = 'vinnueftirlitid',
+  MachineLicense = 'vinnueftirlitid',
+}
 export type GenericLicenseTypeType = keyof typeof GenericLicenseType
 
 export enum GenericLicenseProviderId {
@@ -14,11 +27,8 @@ export enum GenericLicenseProviderId {
   EnvironmentAgency = 'EnvironmentAgency',
   AdministrationOfOccupationalSafetyAndHealth = 'AdministrationOfOccupationalSafetyAndHealth',
 }
-export type GenericLicenseProviderIdType = keyof typeof GenericLicenseProviderId
 
-export const PassTemplates: Record<string, GenericLicenseType> = {
-  'dfb706c1-3a78-4518-bf25-cebbf0a93132': GenericLicenseType.FirearmLicense,
-}
+export type GenericLicenseProviderIdType = keyof typeof GenericLicenseProviderId
 
 export enum GenericUserLicenseStatus {
   Unknown = 'Unknown',
@@ -38,6 +48,7 @@ export enum GenericLicenseDataFieldType {
   Group = 'Group',
   Category = 'Category',
   Value = 'Value',
+  Table = 'Table',
 }
 
 export enum GenericUserLicensePkPassStatus {
@@ -63,6 +74,7 @@ export type GenericLicenseMetadata = {
   pkpass: boolean
   pkpassVerify: boolean
   timeout: number
+  orgSlug?: GenericLicenseOrganizationSlug
 
   // TODO(osk) should these be here? or be resolved by client via contentful?
   // Commented out until talked about, to limit scope of v1
@@ -75,17 +87,36 @@ export type GenericLicenseMetadata = {
   */
 }
 
+export type GenericLicenseOrgdata = {
+  title?: string
+  logo?: string
+}
+
 export type GenericLicenseDataField = {
   type: GenericLicenseDataFieldType
   name?: string
   label?: string
   value?: string
+  description?: string
+  hideFromServicePortal?: boolean
   fields?: Array<GenericLicenseDataField>
+}
+
+export type GenericUserLicenseMetaLinks = {
+  label?: string
+  value?: string
+}
+
+export type GenericUserLicenseMetadata = {
+  links?: GenericUserLicenseMetaLinks[]
+  licenseNumber: string
+  expired: boolean | null
 }
 
 export type GenericUserLicensePayload = {
   data: Array<GenericLicenseDataField>
   rawData: unknown
+  metadata?: GenericUserLicenseMetadata
 }
 
 export type GenericLicenseUserdata = {
@@ -112,9 +143,19 @@ export type GenericLicenseCached = {
   payload?: GenericUserLicensePayload
 }
 
+type LicenseLabelsObject = {
+  [x: string]: string
+}
+export type GenericLicenseLabels = {
+  labels?: LicenseLabelsObject
+}
+
 export type GenericUserLicense = {
   nationalId: string
-  license: GenericLicenseMetadata & GenericLicenseUserdata
+  license: GenericLicenseMetadata &
+    GenericLicenseUserdata &
+    GenericLicenseOrgdata &
+    GenericLicenseLabels
   fetch: GenericLicenseFetch
   payload?: GenericUserLicensePayload
 }
@@ -171,20 +212,39 @@ export type PkPassVerificationInputData = {
  */
 export interface GenericLicenseClient<LicenseType> {
   // This might be cached
-  getLicense: (user: User) => Promise<GenericLicenseUserdataExternal | null>
+  getLicense: (
+    user: User,
+    locale: Locale,
+    labels: GenericLicenseLabels,
+  ) => Promise<GenericLicenseUserdataExternal | null>
 
   // This will never be cached
   getLicenseDetail: (
     user: User,
+    locale: Locale,
+    labels: GenericLicenseLabels,
   ) => Promise<GenericLicenseUserdataExternal | null>
 
-  getPkPassUrl: (user: User, data?: LicenseType) => Promise<string | null>
+  getPkPassUrl: (
+    user: User,
+    data?: LicenseType,
+    locale?: Locale,
+  ) => Promise<string | null>
 
-  getPkPassQRCode: (user: User, data?: LicenseType) => Promise<string | null>
+  getPkPassQRCode: (
+    user: User,
+    data?: LicenseType,
+    locale?: Locale,
+  ) => Promise<string | null>
 
-  verifyPkPass: (data: string) => Promise<PkPassVerification | null>
+  verifyPkPass: (
+    data: string,
+    passTemplateId: string,
+  ) => Promise<PkPassVerification | null>
 }
 
 export const GENERIC_LICENSE_FACTORY = 'generic_license_factory'
 
 export const CONFIG_PROVIDER = 'config_provider'
+
+export const CONFIG_PROVIDER_V2 = 'config_provider_v2'

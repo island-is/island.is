@@ -12,7 +12,7 @@ import { clientInfoSection } from './shared/about/clientInfoSection'
 import { m } from '../../lib/messages'
 import { overviewSection } from './shared/overviewSection'
 import { Logo } from '../../components'
-import { CARETAKERLIMIT, USERTYPE, LESS } from '../../lib/constants'
+import { USERTYPE, LESS } from '../../lib/constants'
 import { cemetryKeyNumbersSection } from './cemetry/cemetryKeyNumbers'
 import { partyKeyNumbersSection } from './party/partyKeyNumbers'
 import { individualKeyNumbersSection } from './individual/individualKeyNumbers'
@@ -28,8 +28,8 @@ export const getApplication = (allowFakeData = false): Form => {
   return buildForm({
     id: 'FinancialStatementsInao',
     title: '',
-    renderLastScreenButton: true,
-    renderLastScreenBackButton: true,
+    renderLastScreenButton: false,
+    renderLastScreenBackButton: false,
     mode: FormModes.APPLYING,
     logo: Logo,
     children: [
@@ -85,14 +85,17 @@ export const getApplication = (allowFakeData = false): Form => {
             condition: (answers, externalData) => {
               const userType = getCurrentUserType(answers, externalData)
               const applicationAnswers = answers as FinancialStatementsInao
-              const currentAssets = applicationAnswers.cemetryAsset?.current
+              const careTakerLimit =
+                applicationAnswers.cemetryOperation?.incomeLimit ?? '0'
+              const currentAssets =
+                applicationAnswers.cemetryAsset?.fixedAssetsTotal
               const isCemetry = userType === USERTYPE.CEMETRY
               const totalIncome = isCemetry
                 ? applicationAnswers.operatingCost?.total
                 : '0'
               const longTermDebt = applicationAnswers.cemetryLiability?.longTerm
               const isUnderLimit =
-                currencyStringToNumber(totalIncome) < CARETAKERLIMIT
+                currencyStringToNumber(totalIncome) < careTakerLimit
 
               if (
                 isCemetry &&
@@ -112,7 +115,6 @@ export const getApplication = (allowFakeData = false): Form => {
             uploadButtonLabel: m.uploadButtonLabel,
             uploadMultiple: false,
             forImageUpload: false,
-            doesNotRequireAnswer: true,
           }),
         ],
       }),

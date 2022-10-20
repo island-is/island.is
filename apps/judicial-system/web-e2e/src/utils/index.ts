@@ -13,6 +13,7 @@ import {
   CaseOrigin,
   CaseFile,
   CaseFileState,
+  CaseFileCategory,
 } from '@island.is/judicial-system/types'
 
 export enum Operation {
@@ -116,6 +117,7 @@ export const mockAddress = faker.address.streetAddress()
 
 export const mockCase = (type: CaseType): Case => {
   const caseId = faker.datatype.uuid()
+
   return {
     id: caseId,
     created: '2020-09-16T19:50:08.033Z',
@@ -165,12 +167,12 @@ export const makeJudge = (): User => {
   }
 }
 
-export const makeProsecutor = (): User => {
+export const makeProsecutor = (name?: string): User => {
   return {
     id: '9c0b4106-4213-43be-a6b2-ff324f4ba0c2',
     created: '2020-09-16T19:50:08.033Z',
     modified: '2020-09-16T19:50:08.033Z',
-    name: 'Áki Ákærandi',
+    name: name ?? 'Áki Ákærandi',
     nationalId: '000000-0000',
     mobileNumber: '000-0000',
     email: 'prosecutor@law.is',
@@ -199,16 +201,20 @@ export const makeCourt = (): Institution => {
   }
 }
 
-export const makeCaseFile = (
+export const makeCaseFile = ({
   caseId = 'test_id',
   name = 'test_file_name',
   type = 'pdf',
   state = CaseFileState.STORED_IN_RVG,
   key = 'test_id',
   size = 100,
-): CaseFile => {
+  category = CaseFileCategory.CASE_FILE,
+  policeCaseNumber = undefined as string | undefined,
+  chapter = undefined as number | undefined,
+  orderWithinChapter = undefined as number | undefined,
+} = {}): CaseFile => {
   return {
-    id: 'test_case_file_id',
+    id: faker.datatype.uuid(),
     created: '2020-09-16T19:50:08.033Z',
     modified: '2020-09-16T19:50:08.033Z',
     caseId,
@@ -217,5 +223,9 @@ export const makeCaseFile = (
     state,
     key,
     size,
+    category,
+    policeCaseNumber,
+    chapter,
+    orderWithinChapter,
   }
 }

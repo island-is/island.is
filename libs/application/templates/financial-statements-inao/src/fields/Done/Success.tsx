@@ -16,14 +16,13 @@ export const Success = ({ application }: PropTypes): JSX.Element => {
   const { answers, externalData } = application
   const applicationAnswers = application.answers as FinancialStatementsInao
   const userType = getCurrentUserType(answers, externalData)
-
   const { formatMessage } = useLocale()
 
   const getDescriptionText = () => {
     const currentDate = format(new Date(), "dd.MM.yyyy 'kl.' kk:mm")
     if (userType === USERTYPE.INDIVIDUAL) {
       return `${formatMessage(m.individualReceivedMsgFirst)} ${
-        applicationAnswers.election.selectElection
+        applicationAnswers.election.electionName
       }
       ${formatMessage(m.individualReceivedMsgSecond)} ${currentDate}`
     } else {

@@ -13,6 +13,8 @@ import {
   AdiliDanarbus,
   DanarbuUppl,
   EignirDanarbus,
+  Fasteignasalar,
+  Logmenn,
 } from '../../gen/fetch'
 import { uuid } from 'uuidv4'
 import {
@@ -33,6 +35,9 @@ import {
   EstateAsset,
   EstateRegistrant,
   EstateInfo,
+  RealEstateAgent,
+  Lawyer,
+  OperatingLicensesCSV,
 } from './syslumennClient.types'
 const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 
@@ -94,7 +99,18 @@ export const mapSyslumennAuction = (auction: Uppbod): SyslumennAuction => ({
   auctionTime: auction.klukkan ?? '',
   petitioners: auction.gerdarbeidendur ?? '',
   respondent: auction.gerdartholar ?? '',
+  publishText: auction.auglysingatexti ?? '',
   auctionTakesPlaceAt: auction.uppbodStadur ?? '',
+})
+
+export const mapRealEstateAgent = (agent: Fasteignasalar): RealEstateAgent => ({
+  name: agent.nafn?.trim() ?? '',
+  location: agent.starfsstod?.trim() ?? '',
+})
+
+export const mapLawyer = (lawyer: Logmenn): Lawyer => ({
+  name: lawyer.nafn?.trim() ?? '',
+  licenceType: lawyer.tegundRettinda?.trim() ?? '',
 })
 
 export const mapOperatingLicense = (
@@ -151,6 +167,12 @@ export const mapPaginatedOperatingLicenses = (
   paginationInfo: mapPaginationInfo(paginationInfoHeaderJSON),
   searchQuery: searchQuery,
   results: (results ?? []).map(mapOperatingLicense),
+})
+
+export const mapOperatingLicensesCSV = (
+  responseStringCSV: string,
+): OperatingLicensesCSV => ({
+  value: responseStringCSV,
 })
 
 export function constructUploadDataObject(
@@ -237,7 +259,7 @@ export const mapEstateRegistrant = (
   return {
     applicantEmail: syslaData.tolvuposturSkreningaradila ?? '',
     applicantPhone: syslaData.simiSkraningaradila ?? '',
-    knowledgeOfOtherWills: syslaData.vitneskjaUmAdraErfdaskra ? 'yes' : 'no',
+    knowledgeOfOtherWills: syslaData.vitneskjaUmAdraErfdaskra ? 'Yes' : 'No',
     districtCommissionerHasWill: syslaData.erfdaskraIVorsluSyslumanns ?? false,
     assets: syslaData.eignir
       ? syslaData.eignir
@@ -323,7 +345,7 @@ export const mapEstateInfo = (syslaData: DanarbuUppl): EstateInfo => {
       ? new Date(syslaData.danardagur)
       : new Date(),
     districtCommissionerHasWill: Boolean(syslaData?.erfdaskra),
-    knowledgeOfOtherWills: syslaData.erfdakraVitneskja ? 'yes' : 'no',
+    knowledgeOfOtherWills: syslaData.erfdakraVitneskja ? 'Yes' : 'No',
     marriageSettlement: syslaData.kaupmali,
     nameOfDeceased: syslaData?.nafn ?? '',
     nationalIdOfDeceased: syslaData?.kennitala ?? '',

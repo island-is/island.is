@@ -12,6 +12,9 @@ export interface IAccordionSliceFields {
 
   /** Accordion Items */
   accordionItems?: IOneColumnText[] | undefined
+
+  /** Has Border Above */
+  hasBorderAbove?: boolean | undefined
 }
 
 /** A slice with accordions */
@@ -466,6 +469,9 @@ export interface IDistrictsFields {
 
   /** Links */
   links?: ILink[] | undefined
+
+  /** Has Border Above */
+  hasBorderAbove?: boolean | undefined
 }
 
 export interface IDistricts extends Entry<IDistrictsFields> {
@@ -689,7 +695,7 @@ export interface IFeaturedArticlesFields {
   link?: ILink | undefined
 
   /** Automatically Fetch Articles */
-  automaticallyFetchArticles: boolean
+  automaticallyFetchArticles?: boolean | undefined
 
   /** Sort By */
   sortBy?: 'popularity' | 'importance' | undefined
@@ -708,6 +714,9 @@ export interface IFeaturedArticlesFields {
 
   /** Article Count */
   articleCount?: number | undefined
+
+  /** Has Border Above */
+  hasBorderAbove?: boolean | undefined
 }
 
 export interface IFeaturedArticles extends Entry<IFeaturedArticlesFields> {
@@ -1304,6 +1313,9 @@ export interface ILifeEventPageFields {
 
   /** see more text */
   seeMoreText?: string | undefined
+
+  /** Page Type */
+  pageType?: 'Life Event' | 'Digital Iceland Service' | undefined
 }
 
 export interface ILifeEventPage extends Entry<ILifeEventPageFields> {
@@ -1733,6 +1745,9 @@ export interface IMultipleStatisticsFields {
 
   /** Link */
   link?: ILink | undefined
+
+  /** Has Border Above */
+  hasBorderAbove?: boolean | undefined
 }
 
 export interface IMultipleStatistics extends Entry<IMultipleStatisticsFields> {
@@ -2117,6 +2132,8 @@ export interface IOrganizationPageFields {
     | 'hsn'
     | 'fiskistofa'
     | 'landlaeknir'
+    | 'rikislogmadur'
+    | 'landskjorstjorn'
 
   /** Slices */
   slices?:
@@ -2239,6 +2256,7 @@ export interface IOrganizationSubpageFields {
         | IMultipleStatistics
         | IOneColumnText
         | IOverviewLinks
+        | IPowerBiSlice
         | ISliceConnectedComponent
         | ITabSection
         | ITeamList
@@ -2312,6 +2330,9 @@ export interface IOverviewLinksFields {
 
   /** Link */
   link?: ILink | undefined
+
+  /** Has Border Above */
+  hasBorderAbove?: boolean | undefined
 }
 
 export interface IOverviewLinks extends Entry<IOverviewLinksFields> {
@@ -2358,6 +2379,33 @@ export interface IPageHeader extends Entry<IPageHeaderFields> {
     contentType: {
       sys: {
         id: 'pageHeader'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IPowerBiSliceFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Config */
+  config: Record<string, any>
+}
+
+/** A Slice that embeds a Power BI report */
+
+export interface IPowerBiSlice extends Entry<IPowerBiSliceFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'powerBiSlice'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -2416,7 +2464,12 @@ export interface IProjectPageFields {
   slug?: string | undefined
 
   /** Theme */
-  theme: 'default' | 'traveling-to-iceland' | 'election' | 'ukraine'
+  theme:
+    | 'default'
+    | 'traveling-to-iceland'
+    | 'election'
+    | 'ukraine'
+    | 'opinbernyskopun'
 
   /** Sidebar */
   sidebar: boolean
@@ -2485,6 +2538,9 @@ export interface IProjectPageFields {
         | ITwoColumnText
       )[]
     | undefined
+
+  /** Footer Items */
+  footerItems?: IFooterItem[] | undefined
 }
 
 export interface IProjectPage extends Entry<IProjectPageFields> {
@@ -2690,11 +2746,19 @@ export interface ISliceConnectedComponentFields {
     | 'Skilavottord/CompanyList'
     | 'Skilavottord/CompanyListConnected'
     | 'Undirskriftalistar/PetitionLists'
+    | 'ElectronicRegistrations/MonthlyStatistics'
     | 'LatestNewsCard'
+    | 'Fiskistofa/ShipSearch'
+    | 'Fiskistofa/ShipSearchSidebarInput'
+    | 'Fasteignasalar/RealEstateAgents'
+    | 'Lögmenn/Lawyers'
     | undefined
 
-  /** JSON */
+  /** Localized JSON */
   json?: Record<string, any> | undefined
+
+  /** Config */
+  config?: Record<string, any> | undefined
 }
 
 export interface ISliceConnectedComponent
@@ -3783,6 +3847,7 @@ export type CONTENT_TYPE =
   | 'organizationTag'
   | 'overviewLinks'
   | 'pageHeader'
+  | 'powerBiSlice'
   | 'processEntry'
   | 'projectPage'
   | 'projectSubpage'
