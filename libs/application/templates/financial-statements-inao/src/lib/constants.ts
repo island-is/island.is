@@ -42,6 +42,8 @@ export const PARTY = 'party'
 export const CEMETRY = 'cemetery'
 
 // input ids
+export const VALIDATOR = 'validator'
+
 export const INDIVIDUALOPERATIONIDS = {
   incomePrefix: 'individualIncome',
   expensePrefix: 'individualExpense',
