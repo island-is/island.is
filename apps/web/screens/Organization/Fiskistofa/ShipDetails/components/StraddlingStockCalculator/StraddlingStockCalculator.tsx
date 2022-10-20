@@ -13,7 +13,7 @@ import {
 import { useNamespace } from '@island.is/web/hooks'
 import { machine } from './machine'
 import { getYearOptions, YearOption } from '../../utils'
-import { CatchQuotaCategory } from '@island.is/web/graphql/schema'
+import { FiskistofaCatchQuotaCategory as CatchQuotaCategory } from '@island.is/web/graphql/schema'
 import { numberFormatter } from '../../utils'
 
 import * as styles from './StraddlingStockCalculator.css'
@@ -56,10 +56,6 @@ export const StraddlingStockCalculator = ({
 
   const [state, send] = useMachine(machine)
 
-  useEffect(() => {
-    reset()
-  }, [shipNumber, selectedYear.value])
-
   const reset = () => {
     send({
       type: 'GET_DATA',
@@ -73,6 +69,10 @@ export const StraddlingStockCalculator = ({
     setChanges({})
     setChangeErrors({})
   }
+
+  useEffect(() => {
+    reset()
+  }, [shipNumber, selectedYear.value])
 
   const validateChanges = () => {
     let valid = true

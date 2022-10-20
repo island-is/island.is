@@ -14,7 +14,7 @@ import {
   Query,
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
-  QueryGetSingleShipArgs,
+  QueryFiskistofaGetSingleShipArgs as QueryGetSingleShipArgs,
 } from '@island.is/web/graphql/schema'
 import { linkResolver, useNamespace } from '@island.is/web/hooks'
 import { withMainLayout } from '@island.is/web/layouts/main'
@@ -33,7 +33,6 @@ import {
 } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { GET_SINGLE_SHIP } from './queries'
-import { SidebarShipSearchInput } from '@island.is/shared/connected'
 
 import * as styles from './ShipDetails.css'
 
@@ -43,7 +42,7 @@ interface ShipDetailsProps {
   locale: Locale
   namespace: Record<string, string>
   organizationPage: Query['getOrganizationPage']
-  ship: Query['getSingleShip']
+  ship: Query['fiskistofaGetSingleShip']
 }
 
 const ShipDetails: Screen<ShipDetailsProps> = ({
@@ -106,7 +105,7 @@ const ShipDetails: Screen<ShipDetailsProps> = ({
         )}
 
         <Box className={styles.searchBox} marginBottom={4}>
-          <SidebarShipSearchInput {...namespace} label="" />
+          {/* <SidebarShipSearchInput {...namespace} label="" /> */}
         </Box>
 
         {ship?.shipNumber && (

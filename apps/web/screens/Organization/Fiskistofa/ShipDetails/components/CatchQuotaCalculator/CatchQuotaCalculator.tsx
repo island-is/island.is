@@ -10,7 +10,7 @@ import {
   Tag,
   Text,
 } from '@island.is/island-ui/core'
-import { ExtendedCatchQuotaCategory } from '@island.is/web/graphql/schema'
+import { FiskistofaExtendedCatchQuotaCategory as ExtendedCatchQuotaCategory } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import {
   formattedNumberStringToNumber,
