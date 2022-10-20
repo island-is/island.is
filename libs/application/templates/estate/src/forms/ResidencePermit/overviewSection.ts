@@ -33,7 +33,7 @@ export const overview = buildSection({
         }),
         ...deceasedInfoFields,
         buildDescriptionField({
-          id: 'spaceRP',
+          id: 'space0',
           title: '',
           marginBottom: 'gutter',
           space: 'gutter',
@@ -69,7 +69,6 @@ export const overview = buildSection({
         buildDescriptionField({
           id: 'space1',
           title: '',
-          marginBottom: 'gutter',
           space: 'gutter',
         }),
         buildDividerField({}),
@@ -97,11 +96,6 @@ export const overview = buildSection({
               ),
           },
         ),
-        buildDescriptionField({
-          id: 'space2',
-          title: '',
-          space: 'gutter',
-        }),
         buildDividerField({}),
         buildDescriptionField({
           id: 'overviewInventoryHeader',
@@ -129,15 +123,11 @@ export const overview = buildSection({
         }),
         buildDividerField({}),
         buildDescriptionField({
-          id: 'space3',
-          title: '',
-          space: 'gutter',
-        }),
-        buildDescriptionField({
           id: 'overviewVehicles',
           title: m.vehicles,
           description: m.vehiclesDescription,
           titleVariant: 'h3',
+          space: 'gutter',
         }),
         buildCustomField(
           {
@@ -158,16 +148,12 @@ export const overview = buildSection({
         ),
         buildDividerField({}),
         buildDescriptionField({
-          id: 'space4',
-          title: '',
-          space: 'gutter',
-        }),
-        buildDescriptionField({
           id: 'overviewEstateBankInfoTitle',
           title: m.estateBankInfo,
           description: m.estateBankInfoDescription,
           titleVariant: 'h3',
           marginBottom: 'gutter',
+          space: 'gutter',
         }),
         buildKeyValueField({
           label: m.bankAccount,
@@ -182,16 +168,12 @@ export const overview = buildSection({
         }),
         buildDividerField({}),
         buildDescriptionField({
-          id: 'space5',
-          title: '',
-          space: 'gutter',
-        }),
-        buildDescriptionField({
           id: 'overviewClaimsInfoTitle',
           title: m.claimsTitle,
           description: m.claimsDescription,
           titleVariant: 'h3',
           marginBottom: 'gutter',
+          space: 'gutter',
         }),
         buildKeyValueField({
           label: m.claimsTitle,
@@ -205,16 +187,12 @@ export const overview = buildSection({
         }),
         buildDividerField({}),
         buildDescriptionField({
-          id: 'space6',
-          title: '',
-          space: 'gutter',
-        }),
-        buildDescriptionField({
           id: 'overviewStocksTitle',
           title: m.stocksTitle,
           description: m.stocksDescription,
           titleVariant: 'h3',
           marginBottom: 'gutter',
+          space: 'gutter',
         }),
         buildKeyValueField({
           label: m.stocksOrganization,
@@ -293,7 +271,7 @@ export const overview = buildSection({
         }),
         buildDividerField({}),
         buildDescriptionField({
-          id: 'space7',
+          id: 'space2',
           title: '',
           space: 'gutter',
         }),

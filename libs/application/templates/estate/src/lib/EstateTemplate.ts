@@ -69,6 +69,10 @@ const EstateTemplate: ApplicationTemplate<
       [States.draft]: {
         meta: {
           name: '',
+          actionCard: {
+            title: '', //TBD
+            description: '', //TBD
+          },
           progress: 0.25,
           lifecycle: DefaultStateLifeCycle,
           roles: [
