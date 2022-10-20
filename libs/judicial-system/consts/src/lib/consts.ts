@@ -95,7 +95,7 @@ export const IndictmentTypes = [
     value: CaseType.EMBEZZLEMENT,
   },
   {
-    label: 'Fjárdráttur',
+    label: 'Fjársvik',
     value: CaseType.FRAUD,
   },
   {
