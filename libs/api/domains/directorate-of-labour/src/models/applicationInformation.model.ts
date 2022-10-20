@@ -1,6 +1,7 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 import { ApplicationInformationChildren } from './applicationInformationChildren.model'
 import { ApplicationInformationEmployer } from './applicationInformationEmployer.model'
+import { ApplicationInformationPeriod } from './applicationInformationPeriod.model'
 import { ApplicationRights } from './applicationRights.model'
 
 import { ParentalLeavePaymentInfo } from './parentalLeavePaymentInfo.model'
@@ -50,8 +51,8 @@ export class ApplicationInformation {
   @Field(() => String)
   status!: string
 
-  @Field(() => [ParentalLeavePeriod])
-  periods!: ParentalLeavePeriod[]
+  @Field(() => [ApplicationInformationPeriod])
+  periods!: ApplicationInformationPeriod[]
 
   @Field(() => [ApplicationRights])
   applicationRights!: ApplicationRights[]

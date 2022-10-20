@@ -14,12 +14,14 @@ import ReviewSection, { ReviewSectionState } from './ReviewSection'
 import { Review } from '../Review/Review'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import {
+  getApplicationAnswers,
   getExpectedDateOfBirth,
   otherParentApprovalDescription,
   requiresOtherParentApproval,
 } from '../../lib/parentalLeaveUtils'
 import { NO, States as ApplicationStates } from '../../constants'
 import { useApplicationAnswers } from '../../hooks/useApplicationAnswers'
+import { useRemainingRights } from '../../hooks/useRemainingRights'
 
 type StateMapEntry = { [key: string]: ReviewSectionState }
 
@@ -143,6 +145,12 @@ const InReviewSteps: FC<FieldBaseProps> = ({
     application.state === ApplicationStates.EMPLOYER_APPROVE_EDITS ||
     application.state === ApplicationStates.VINNUMALASTOFNUN_APPROVE_EDITS
 
+  const { periods } = getApplicationAnswers(application.answers)
+  const lastEndDate = new Date(periods[periods.length - 1].endDate)
+  const isUsedAllRights =
+    useRemainingRights(application) > 0 ||
+    lastEndDate.getTime() > new Date().getTime()
+
   return (
     <Box marginBottom={10}>
       <Box
@@ -187,7 +195,7 @@ const InReviewSteps: FC<FieldBaseProps> = ({
                 )}
             </Button>
           </Box>
-          {canBeEdited && (
+          {canBeEdited && isUsedAllRights && (
             <Box display="inlineBlock">
               <Button
                 colorScheme="default"

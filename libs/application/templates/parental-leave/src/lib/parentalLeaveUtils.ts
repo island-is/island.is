@@ -771,12 +771,15 @@ export const getLastValidPeriodEndDate = (
   }
 
   // Current Date is >= 20 and lastEndDate is in the past then Applicant could only start from next month
-  if (today.getDate() >= 20 && lastEndDate < today) {
+  if (today.getDate() >= 20 && lastEndDate.getTime() < today.getTime()) {
     return addMonths(beginningOfMonth, 1)
   }
 
   // LastPeriod's endDate is long in the past then Applicant could only start from beginning of current month
-  if (lastEndDate < today && lastEndDate.getMonth() !== today.getMonth()) {
+  if (
+    lastEndDate.getTime() < today.getTime() &&
+    lastEndDate.getMonth() !== today.getMonth()
+  ) {
     return beginningOfMonth
   }
 

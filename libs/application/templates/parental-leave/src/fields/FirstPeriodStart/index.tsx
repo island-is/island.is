@@ -81,7 +81,7 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
               ),
               value: StartDateOptions.ESTIMATED_DATE_OF_BIRTH,
               disabled: expectedDateOfBirth
-                ? new Date(expectedDateOfBirth) < new Date()
+                ? new Date(expectedDateOfBirth).getTime() < new Date().getTime()
                 : false,
             },
             {
@@ -90,7 +90,7 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
               ),
               value: StartDateOptions.ACTUAL_DATE_OF_BIRTH,
               disabled: expectedDateOfBirth
-                ? new Date(expectedDateOfBirth) < new Date()
+                ? new Date(expectedDateOfBirth).getTime() < new Date().getTime()
                 : false,
             },
             {
