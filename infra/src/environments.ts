@@ -1,7 +1,6 @@
 import { EnvironmentConfig, EnvironmentConfigs } from './dsl/types/charts'
 import { merge } from 'lodash'
 import { FeatureNames } from './dsl/features'
-import { ServerSideFeature } from '../../libs/feature-flags/src'
 
 const dev01: EnvironmentConfig = {
   auroraHost: 'postgres-applications.internal',
@@ -9,7 +8,7 @@ const dev01: EnvironmentConfig = {
     'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com',
   domain: 'dev01.devland.is',
   type: 'dev',
-  featuresOn: [ServerSideFeature.delegationApi],
+  featuresOn: [FeatureNames.delegationApi],
   defaultMaxReplicas: 3,
   defaultMinReplicas: 2,
   releaseName: 'web',
@@ -38,7 +37,7 @@ const staging01: EnvironmentConfig = {
   auroraHost: 'postgres-applications.internal',
   domain: 'staging01.devland.is',
   type: 'staging',
-  featuresOn: [ServerSideFeature.delegationApi],
+  featuresOn: [FeatureNames.delegationApi],
   defaultMaxReplicas: 3,
   defaultMinReplicas: 2,
   releaseName: 'web',
