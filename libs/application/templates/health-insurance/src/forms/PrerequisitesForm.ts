@@ -12,6 +12,8 @@ import {
   FormModes,
   FormValue,
   ExternalData,
+  NationalRegistryUserApi,
+  UserProfileApi,
 } from '@island.is/application/types'
 import { m } from './messages'
 import Logo from '../assets/Logo'
@@ -34,8 +36,7 @@ export const PrerequisitesForm: Form = buildForm({
           checkboxLabel: m.externalDataCheckbox,
           dataProviders: [
             buildDataProviderItem({
-              id: 'nationalRegistry',
-              type: 'NationalRegistryProvider',
+              provider: NationalRegistryUserApi,
               title: m.nationalRegistryTitle,
               subTitle: m.nationalRegistrySubTitle,
             }),
@@ -64,10 +65,9 @@ export const PrerequisitesForm: Form = buildForm({
               subTitle: m.dataProvidersMoreInfo,
             }),
             buildDataProviderItem({
-              id: 'userProfile',
-              type: 'UserProfileProvider',
-              title: '',
-              subTitle: '',
+              provider: UserProfileApi,
+              title: 'userProfile',
+              subTitle: 'userProfile',
             }),
             buildDataProviderItem({
               id: 'applications',

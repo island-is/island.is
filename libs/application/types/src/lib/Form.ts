@@ -132,7 +132,7 @@ export interface DataProviderItem {
 
 export interface DataProviderBuilderItem {
   id?: string
-  type?: string
+  type?: string //TODO REMOVE THIS
   title: StaticText
   subTitle?: StaticText
   source?: string

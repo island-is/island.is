@@ -8,6 +8,7 @@ import {
   Application,
   DefaultEvents,
   defineTemplateApi,
+  NationalRegistryUserApi,
 } from '@island.is/application/types'
 import { API_MODULE } from '../shared'
 import { answerValidators } from './answerValidators'
@@ -66,6 +67,7 @@ const HealthInsuranceTemplate: ApplicationTemplate<
               ],
               delete: true,
               write: 'all',
+              api: [NationalRegistryUserApi],
             },
           ],
         },
