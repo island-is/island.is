@@ -140,7 +140,6 @@
     "clients-smartsolutions": "libs/clients/smartsolutions",
     "clients-syslumenn": "libs/clients/syslumenn",
     "clients-transport-authority-digital-tachograph-drivers-card": "libs/clients/transport-authority/digital-tachograph-drivers-card",
-    "clients-transport-authority-vehicle-co-owner": "libs/clients/transport-authority/vehicle-co-owner",
     "clients-transport-authority-vehicle-codetables": "libs/clients/transport-authority/vehicle-codetables",
     "clients-transport-authority-vehicle-operators": "libs/clients/transport-authority/vehicle-operators",
     "clients-transport-authority-vehicle-owner-change": "libs/clients/transport-authority/vehicle-owner-change",
