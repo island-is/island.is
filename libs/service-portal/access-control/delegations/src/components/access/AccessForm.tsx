@@ -25,7 +25,7 @@ import {
   useAuthScopeTreeQuery,
 } from '@island.is/service-portal/graphql'
 import {
-  AccessFormFields,
+  AccessFormScope,
   AuthScopeTree,
   SCOPE_PREFIX,
   AUTH_API_SCOPE_GROUP_TYPE,
@@ -38,6 +38,7 @@ import {
 import { AccessItem } from './AccessItem'
 import { AccessConfirmModal, AccessItemHeader } from '../../components/access'
 import { ISLAND_DOMAIN } from '../../constants'
+import { isDefined } from '@island.is/shared/utils'
 
 type AccessFormProps = {
   delegation: AuthCustomDelegation
@@ -75,7 +76,7 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
   const { authScopeTree } = scopeTreeData || {}
 
   const methods = useForm<{
-    [SCOPE_PREFIX]: AccessFormFields[]
+    [SCOPE_PREFIX]: AccessFormScope[]
     validityPeriod: Date | null
   }>()
   const { handleSubmit, getValues } = methods
@@ -123,14 +124,11 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
   })
 
   const scopes = getValues()
-    ?.[SCOPE_PREFIX]?.filter(
-      // Filter out scopes with no name or validTo except if name exist and validitPeriod is set
-      ({ name, validTo }) => name && (validTo || validityPeriod),
-    )
-    // Map and flatten scopes to be used in the confirm modal
-    .map((item) =>
+    ?.[SCOPE_PREFIX]?.map((item) =>
+      // Map and flatten scopes to be used in the confirm modal
       formatScopeTreeToScope({ item, authScopeTree, validityPeriod }),
     )
+    .filter(isDefined)
 
   const renderAccessItem = (
     authScope: AuthScopeTree[0],

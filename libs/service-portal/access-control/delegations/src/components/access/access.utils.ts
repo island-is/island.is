@@ -6,7 +6,7 @@ import {
   AuthScopeTree,
   AUTH_API_SCOPE_GROUP_TYPE,
   ScopeGroup,
-  AccessFormFields,
+  AccessFormScope,
   MappedScope,
 } from './access.types'
 
@@ -66,7 +66,7 @@ export const extendApiScope = (
 }
 
 type MapScopeTreeToScope = {
-  item: AccessFormFields
+  item: AccessFormScope
   authScopeTree?: AuthScopeTree
   validityPeriod: Date | null
 }
@@ -78,7 +78,7 @@ export const formatScopeTreeToScope = ({
   item,
   authScopeTree,
   validityPeriod,
-}: MapScopeTreeToScope): MappedScope => {
+}: MapScopeTreeToScope): MappedScope | null => {
   const flattenScopes = authScopeTree
     ?.map((apiScope) => {
       if (apiScope.__typename === AUTH_API_SCOPE_GROUP_TYPE) {
@@ -93,9 +93,15 @@ export const formatScopeTreeToScope = ({
     (apiScope) => apiScope.name === item.name[0],
   )
 
+  if (!authApiScope || !validityPeriod || !item.validTo) {
+    return null
+  }
+
   return {
-    name: authApiScope?.displayName,
-    description: authApiScope?.description,
+    name: authApiScope.name,
+    displayName: authApiScope.displayName,
+    // validityPeriod has priority over item.validTo
     validTo: validityPeriod ?? item.validTo,
+    description: authApiScope?.description,
   }
 }

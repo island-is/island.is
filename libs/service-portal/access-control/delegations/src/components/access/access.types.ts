@@ -19,12 +19,13 @@ export type Scope = (AuthApiScope & ScopeCustomFields) | ScopeGroup
 export type AuthScopeTree = AuthScopeTreeQuery['authScopeTree']
 
 export type MappedScope = {
-  name?: string
-  validTo?: Date
+  name: string
+  displayName: string
+  validTo: Date
   description?: string | null
 }
 
-export type AccessFormFields = {
+export type AccessFormScope = {
   name: string
   validTo?: Date
   displayName?: string

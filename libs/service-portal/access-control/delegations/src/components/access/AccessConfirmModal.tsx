@@ -51,14 +51,17 @@ export const AccessConfirmModal = ({
   const [updateAuthDelegationn, { loading }] = useUpdateAuthDelegationMutation()
 
   const onConfirmHandler = async () => {
-    if (!delegation.id) return
+    if (!delegation.id) {
+      setError(true)
+      return
+    }
 
     try {
       const { errors } = await updateAuthDelegationn({
         variables: {
           input: {
             delegationId: delegation.id,
-            scopes: [],
+            scopes,
           },
         },
       })
@@ -165,14 +168,14 @@ export const AccessConfirmModal = ({
           </Box>
           {scopes?.map(
             (scope, index) =>
-              scope?.name && (
+              scope?.displayName && (
                 <div key={index}>
                   <GridRow className={accessItemStyles.row} key={index}>
                     <GridColumn
                       span={['12/12', '12/12', '3/12']}
                       className={accessItemStyles.item}
                     >
-                      <Text fontWeight="light">{scope?.name}</Text>
+                      <Text fontWeight="light">{scope?.displayName}</Text>
                     </GridColumn>
                     {((!md && scope?.description?.trim()) || md) && (
                       <GridColumn
