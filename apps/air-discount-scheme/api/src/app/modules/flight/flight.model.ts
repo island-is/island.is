@@ -32,4 +32,7 @@ export class Flight {
 
   @Field((_1) => UserInfo)
   userInfo: UserInfo
+
+  @Field()
+  explicitBy: string
 }

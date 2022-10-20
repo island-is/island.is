@@ -41,6 +41,7 @@ function Panel({ flightLegs }: PropTypes) {
             <HeadData>Staða</HeadData>
             <HeadData alignRight>Verð (kr.)</HeadData>
             <HeadData alignRight>Afsláttur (kr.)</HeadData>
+            <HeadData>Handvirkur</HeadData>
           </Row>
         </Head>
         <Body>
@@ -104,6 +105,13 @@ function Panel({ flightLegs }: PropTypes) {
                     flightLeg.originalPrice - flightLeg.discountPrice
                   ).toLocaleString('de-DE')}
                   .-
+                </Typography>
+              </Data>
+              <Data alignRight>
+                <Typography color="blue400" variant="h4">
+                  {flightLeg.flight.explicitBy
+                    ? flightLeg.flight.explicitBy
+                    : '---'}
                 </Typography>
               </Data>
             </Row>
