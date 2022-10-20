@@ -9,6 +9,7 @@ import {
   Application,
   DefaultEvents,
 } from '@island.is/application/types'
+import { AuthDelegationType } from '../types/schema'
 import { m } from './messages'
 import { Events, States, Roles, ApiActions } from './constants'
 import { dataSchema } from './utils/dataSchema'
@@ -28,44 +29,45 @@ const FinancialStatementInaoApplication: ApplicationTemplate<
   institution: m.institutionName,
   dataSchema,
   featureFlag: Features.financialStatementInao,
+  allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
   stateMachineConfig: {
-    initial: States.PREREQUISITES,
+    initial: States.DRAFT,
     states: {
-      [States.PREREQUISITES]: {
-        meta: {
-          name: 'prerequisites',
-          progress: 0.2,
-          lifecycle: DefaultStateLifeCycle,
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: async ({ featureFlagClient }) => {
-                const featureFlags = await getApplicationFeatureFlags(
-                  featureFlagClient as FeatureFlagClient,
-                )
-                const getForm = await import('../forms/prerequisites/').then(
-                  (val) => {
-                    return val.getForm
-                  },
-                )
+      // [States.PREREQUISITES]: {
+      //   meta: {
+      //     name: 'prerequisites',
+      //     progress: 0.2,
+      //     lifecycle: DefaultStateLifeCycle,
+      //     roles: [
+      //       {
+      //         id: Roles.APPLICANT,
+      //         formLoader: async ({ featureFlagClient }) => {
+      //           const featureFlags = await getApplicationFeatureFlags(
+      //             featureFlagClient as FeatureFlagClient,
+      //           )
+      //           const getForm = await import('../forms/prerequisites/').then(
+      //             (val) => {
+      //               return val.getForm
+      //             },
+      //           )
 
-                return getForm({
-                  allowFakeData:
-                    featureFlags[FinancialStatementInaoFeatureFlags.ALLOW_FAKE],
-                })
-              },
-              actions: [
-                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
-              ],
-              write: 'all',
-              delete: true,
-            },
-          ],
-        },
-        on: {
-          [DefaultEvents.SUBMIT]: { target: States.DRAFT },
-        },
-      },
+      //           return getForm({
+      //             allowFakeData:
+      //               featureFlags[FinancialStatementInaoFeatureFlags.ALLOW_FAKE],
+      //           })
+      //         },
+      //         actions: [
+      //           { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
+      //         ],
+      //         write: 'all',
+      //         delete: true,
+      //       },
+      //     ],
+      //   },
+      //   on: {
+      //     [DefaultEvents.SUBMIT]: { target: States.DRAFT },
+      //   },
+      // },
       [States.DRAFT]: {
         meta: {
           name: 'Draft',
