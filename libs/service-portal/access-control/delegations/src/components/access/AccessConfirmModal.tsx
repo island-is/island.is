@@ -21,8 +21,9 @@ import type { ModalProps } from '../Modal/Modal'
 import format from 'date-fns/format'
 import { DATE_FORMAT } from './AccessItem'
 import { AccessItemHeader } from './AccessItemHeader'
-import * as accessItemStyles from './AccessItem.css'
 import type { MappedScope } from './access.types'
+import * as accessItemStyles from './AccessItem.css'
+import * as commonAccessStyles from './access.css'
 
 type AccessConfirmModalProps = ModalProps & {
   delegation: AuthCustomDelegation
@@ -161,7 +162,10 @@ export const AccessConfirmModal = ({
             </Box>
           )}
         </Box>
-        <Box marginBottom={[0, 0, 12]}>
+        <Box
+          marginBottom={[0, 0, 12]}
+          className={commonAccessStyles.resetMarginGutter}
+        >
           <AccessItemHeader hideValidityPeriod={!!validityPeriod} />
           <Box className={accessItemStyles.dividerContainer}>
             <Divider />
@@ -221,14 +225,15 @@ export const AccessConfirmModal = ({
           )}
         </Box>
       </Box>
-      <DelegationsFormFooter
-        loading={loading}
-        showDivider={false}
-        onCancel={onClose}
-        onConfirm={onConfirmHandler}
-        confirmLabel={formatMessage(m.codeConfirmation)}
-        confirmIcon="checkmark"
-      />
+      <Box position="sticky" bottom={0}>
+        <DelegationsFormFooter
+          loading={loading}
+          onCancel={onClose}
+          onConfirm={onConfirmHandler}
+          confirmLabel={formatMessage(m.codeConfirmation)}
+          confirmIcon="checkmark"
+        />
+      </Box>
     </Modal>
   )
 }

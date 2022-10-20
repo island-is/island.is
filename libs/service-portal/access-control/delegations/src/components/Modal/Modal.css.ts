@@ -19,3 +19,11 @@ export const modal = style({
     },
   }),
 })
+
+export const modalInner = style({
+  ...themeUtils.responsiveStyle({
+    md: {
+      maxHeight: 888,
+    },
+  }),
+})

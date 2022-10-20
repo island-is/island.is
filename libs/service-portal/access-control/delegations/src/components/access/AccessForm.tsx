@@ -39,6 +39,7 @@ import { AccessItem } from './AccessItem'
 import { AccessConfirmModal, AccessItemHeader } from '../../components/access'
 import { ISLAND_DOMAIN } from '../../constants'
 import { isDefined } from '@island.is/shared/utils'
+import * as commonAccessStyles from './access.css'
 
 type AccessFormProps = {
   delegation: AuthCustomDelegation
@@ -166,29 +167,31 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
       )}
       <FormProvider {...methods}>
         <form onSubmit={onSubmit}>
-          <AccessItemHeader hideValidityPeriod={!!validityPeriod} />
-          {loading ? (
-            <Box marginTop={3}>
-              <Stack space={3}>
-                <SkeletonLoader width="100%" height={80} />
-                <Divider />
-              </Stack>
+          <Box className={commonAccessStyles.resetMarginGutter}>
+            <AccessItemHeader hideValidityPeriod={!!validityPeriod} />
+            {loading ? (
+              <Box marginTop={3}>
+                <Stack space={3}>
+                  <SkeletonLoader width="100%" height={80} />
+                  <Divider />
+                </Stack>
+              </Box>
+            ) : (
+              authScopeTree?.map(renderAccessItem)
+            )}
+            <Box position="sticky" bottom={0} marginTop={20} paddingBottom={6}>
+              <DelegationsFormFooter
+                onCancel={() =>
+                  history.push(ServicePortalPath.AccessControlDelegations)
+                }
+                onConfirm={() => setOpenConfirmModal(true)}
+                confirmLabel={formatMessage({
+                  id: 'sp.settings-access-control:empty-new-access',
+                  defaultMessage: 'Veita aðgang',
+                })}
+                confirmIcon="arrowForward"
+              />
             </Box>
-          ) : (
-            authScopeTree?.map(renderAccessItem)
-          )}
-          <Box position="sticky" bottom={0} marginTop={20} paddingBottom={6}>
-            <DelegationsFormFooter
-              onCancel={() =>
-                history.push(ServicePortalPath.AccessControlDelegations)
-              }
-              onConfirm={() => setOpenConfirmModal(true)}
-              confirmLabel={formatMessage({
-                id: 'sp.settings-access-control:empty-new-access',
-                defaultMessage: 'Veita aðgang',
-              })}
-              confirmIcon="arrowForward"
-            />
           </Box>
         </form>
       </FormProvider>

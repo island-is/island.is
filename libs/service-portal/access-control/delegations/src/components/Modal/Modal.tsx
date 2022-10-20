@@ -41,6 +41,8 @@ export const Modal = ({
         paddingTop={12}
         borderRadius="standard"
         width="full"
+        overflow="auto"
+        className={styles.modalInner}
       >
         <Box position="absolute" top={4} right={4}>
           <button onClick={onClose}>
