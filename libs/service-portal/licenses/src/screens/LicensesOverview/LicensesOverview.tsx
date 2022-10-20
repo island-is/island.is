@@ -208,9 +208,6 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
           <CardLoader />
         </Box>
       )}
-      {passportData && (
-        <LicenseCards passportData={passportData || undefined} />
-      )}
       {data &&
         !isGenericLicenseEmpty &&
         genericLicenses
@@ -276,6 +273,9 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
               </Box>
             )
           })}
+      {passportData && (
+        <LicenseCards passportData={passportData || undefined} />
+      )}
 
       {!isLoading && !hasError && !hasData && (
         <Box marginTop={8}>

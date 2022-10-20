@@ -32,6 +32,12 @@ paths:
             type: string
             nullable: true
           x-position: 1
+        - name: X-Road-Client
+          in: header
+          required: true
+          description: Information about the x-road client
+          schema:
+            type: string
       responses:
         '200':
           description: ''
