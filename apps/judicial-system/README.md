@@ -279,7 +279,9 @@ Then add the featre in `availableFeatures` in `apps/judicial-system/web/src/comp
 const availableFeatures: Feature[] = [Feature.SECRET_FEATURE]
 ```
 
-Then you need to update the Helm charts. This is done via a script
+Then you need to update the Helm charts. Add `SECRET_FEATURE` to `HIDDEN_FEATURES` in `./apps/judicial-system/api/infra/judicial-system-api.ts`.
+
+Then run the script
 
 ```
 ./infra/scripts/generate-chart-values.sh judicial-system
