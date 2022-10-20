@@ -231,7 +231,7 @@ export const TransferOfVehicleOwnershipForm: Form = buildForm({
     }),
     buildSection({
       id: 'applicationStatus',
-      title: forPayment.general.sectionTitle,
+      title: payment.general.sectionTitle,
       children: [
         buildCustomField({
           component: 'ApplicationStatus',
