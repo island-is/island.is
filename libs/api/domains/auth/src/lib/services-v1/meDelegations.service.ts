@@ -164,7 +164,7 @@ export class MeDelegationsServiceV1 implements MeDelegationsServiceInterface {
     })
   }
 
-  private checkDomain(domain?: string) {
+  private checkDomain(domain?: string | null) {
     if ((domain ?? ISLAND_DOMAIN) !== ISLAND_DOMAIN) {
       throw new BadRequestException(`Can only specify ${ISLAND_DOMAIN} domain`)
     }

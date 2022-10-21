@@ -93,7 +93,7 @@ export class MeDelegationsController {
         },
       },
       header: {
-        'X-QUERY-OTHERUSER': {
+        'X-Query-OtherUser': {
           description:
             'The identifier of the other user in the delegation. If the direction=outgoing, this is the user the delegation is to. If the direction=incoming, this is the user the delegation is from.',
           required: false,
@@ -115,7 +115,7 @@ export class MeDelegationsController {
     @Query('direction')
     direction: DelegationDirection = DelegationDirection.OUTGOING,
     @Query('validity') validity: DelegationValidity = DelegationValidity.ALL,
-    @Headers('X-QUERY-OTHERUSER') otherUser: string,
+    @Headers('X-Query-OtherUser') otherUser: string,
   ): Promise<DelegationDTO[]> {
     if (direction !== DelegationDirection.OUTGOING) {
       throw new BadRequestException(

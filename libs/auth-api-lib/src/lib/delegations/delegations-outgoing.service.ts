@@ -22,6 +22,7 @@ import { Delegation } from './models/delegation.model'
 import { DelegationValidity } from './types/delegationValidity'
 import { validateScopesPeriod } from './utils/scopes'
 import { NamesService } from './names.service'
+import { getDelegationNoActorWhereClause } from './utils/delegations'
 
 /**
  * Service class for outgoing delegations.
@@ -44,9 +45,14 @@ export class DelegationsOutgoingService {
   ): Promise<DelegationDTO[]> {
     const delegations = await this.delegationModel.findAll({
       where: {
-        fromNationalId: user.nationalId,
-        ...(otherUser ? { toNationalId: otherUser } : {}),
-        ...(domainName ? { domainName } : {}),
+        [Op.and]: [
+          {
+            fromNationalId: user.nationalId,
+          },
+          otherUser ? { toNationalId: otherUser } : {},
+          domainName ? { domainName } : {},
+          getDelegationNoActorWhereClause(user),
+        ],
       },
       include: [
         {
@@ -155,6 +161,7 @@ export class DelegationsOutgoingService {
         id: uuid(),
         fromNationalId: user.nationalId,
         toNationalId: createDelegation.toNationalId,
+        domainName: createDelegation.domainName,
         fromDisplayName,
         toName,
       })
@@ -185,11 +192,13 @@ export class DelegationsOutgoingService {
   ): Promise<DelegationDTO> {
     const currentDelegation = await this.delegationModel.findOne({
       where: {
-        id: delegationId,
-        fromNationalId: user.nationalId,
-        toNationalId: {
-          [Op.ne]: user.actor?.nationalId,
-        },
+        [Op.and]: [
+          {
+            id: delegationId,
+            fromNationalId: user.nationalId,
+          },
+          getDelegationNoActorWhereClause(user),
+        ],
       },
     })
     if (!currentDelegation) {

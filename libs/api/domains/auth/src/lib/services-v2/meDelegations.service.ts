@@ -32,7 +32,7 @@ export class MeDelegationsServiceV2 implements MeDelegationsServiceInterface {
     input: DelegationsInput,
   ): Promise<DelegationDTO[]> {
     return this.delegationsApiWithAuth(user).meDelegationsControllerFindAll({
-      domain: input.domain,
+      domain: input.domain ?? undefined,
       direction: MeDelegationsControllerFindAllDirectionEnum.Outgoing,
       validity: MeDelegationsControllerFindAllValidityEnum.IncludeFuture,
     })
@@ -55,8 +55,8 @@ export class MeDelegationsServiceV2 implements MeDelegationsServiceInterface {
       user,
     ).meDelegationsControllerFindAll({
       direction: MeDelegationsControllerFindAllDirectionEnum.Outgoing,
-      xQUERYOTHERUSER: toNationalId,
-      domain,
+      xQueryOtherUser: toNationalId,
+      domain: domain ?? undefined,
     })
 
     return delegations[0] ?? null
@@ -105,6 +105,8 @@ export class MeDelegationsServiceV2 implements MeDelegationsServiceInterface {
     return true
   }
 
+  // This function is here for backwards compatibility.
+  // TODO: Remove when delegation-v1 code is removed.
   async updateDelegation(
     user: User,
     { delegationId, scopes: newScopes = [] }: UpdateDelegationInput,

@@ -1,4 +1,4 @@
 export class DelegationByOtherUserInput {
   toNationalId!: string
-  domain?: string
+  domain?: string | null
 }
