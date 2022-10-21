@@ -221,8 +221,16 @@ export const answerValidators: Record<string, AnswerValidator> = {
     return undefined
   },
   [VALIDATE_LATEST_PERIOD]: (newAnswer: unknown, application: Application) => {
-    const periods = newAnswer as Period[]
-
+    let periods = newAnswer as Period[] | undefined
+    // If added new a period, sometime the old periods in newAnswer are 'null'
+    // If that happen, take the periods in application and use them
+    const filterPeriods = periods?.filter(
+      (period) => period?.startDate || period?.firstPeriodStart,
+    )
+    if (filterPeriods?.length !== periods?.length) {
+      periods = getValueViaPath(application.answers, 'periods')
+      periods = periods?.filter((period) => period?.startDate)
+    }
     if (!isArray(periods)) {
       return {
         path: 'periods',
@@ -236,7 +244,6 @@ export const answerValidators: Record<string, AnswerValidator> = {
     }
 
     let daysUsedByPeriods, rights
-
     try {
       daysUsedByPeriods = calculateDaysUsedByPeriods(periods)
       rights = getAvailableRightsInDays(application)
@@ -307,7 +314,6 @@ export const answerValidators: Record<string, AnswerValidator> = {
     if (validatedField !== undefined) {
       return validatedField
     }
-
     return undefined
   },
   [VALIDATE_PERIODS]: (newAnswer: unknown, application: Application) => {

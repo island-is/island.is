@@ -29,7 +29,10 @@ import {
 
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { calculateRemainingNumberOfDays } from '../../lib/directorateOfLabour.utils'
-import { getSelectedChild } from '../../lib/parentalLeaveUtils'
+import {
+  getApplicationExternalData,
+  getSelectedChild,
+} from '../../lib/parentalLeaveUtils'
 import { YesOrNo } from '../../types'
 
 export interface PregnancyStatusAndRightsResults {
@@ -149,6 +152,9 @@ export class Children extends BasicDataProvider {
     const applicationsWhereOtherParentHasApplied = getAppsWhereOtherParentHasApplied.filter(
       (application) => {
         const { state } = application
+        const { applicationFundId } = getApplicationExternalData(
+          application.externalData,
+        )
 
         const isInProgress =
           state === States.PREREQUISITES ||
@@ -159,7 +165,7 @@ export class Children extends BasicDataProvider {
           state === States.EMPLOYER_APPROVAL ||
           state === States.EMPLOYER_ACTION
 
-        if (isInProgress) {
+        if (isInProgress && applicationFundId === '') {
           // The application of the primary parent has to be completed
           return false
         }
