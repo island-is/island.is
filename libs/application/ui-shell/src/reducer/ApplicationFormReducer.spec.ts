@@ -14,7 +14,7 @@ import {
   FormItemTypes,
   ApplicationStatus,
 } from '@island.is/application/types'
-import * as z from 'zod'
+import { z } from 'zod'
 import { ApplicationReducer, initializeReducer } from './ApplicationFormReducer'
 import { ActionTypes, ApplicationUIState } from './ReducerTypes'
 

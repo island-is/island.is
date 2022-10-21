@@ -1,5 +1,5 @@
 import * as kennitala from 'kennitala'
-import * as z from 'zod'
+import { z } from 'zod'
 import { NO, YES } from '../shared'
 import { error } from './messages/error'
 

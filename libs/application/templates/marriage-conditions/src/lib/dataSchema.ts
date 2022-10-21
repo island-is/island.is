@@ -1,4 +1,4 @@
-import * as z from 'zod'
+import { z } from 'zod'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import * as kennitala from 'kennitala'
 import { YES, NO, MarriageTermination } from './constants'

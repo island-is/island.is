@@ -1,4 +1,4 @@
-import * as z from 'zod'
+import { z } from 'zod'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { error } from './error'
 import { Services } from './constants'

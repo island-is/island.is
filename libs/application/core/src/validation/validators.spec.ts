@@ -1,4 +1,4 @@
-import * as z from 'zod'
+import { z } from 'zod'
 import { buildValidationError, validateAnswers } from './validators'
 import { FormValue, StaticText } from '@island.is/application/types'
 

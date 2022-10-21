@@ -1,4 +1,4 @@
-import * as z from 'zod'
+import { z } from 'zod'
 import set from 'lodash/set'
 import { ApplicationTemplateHelper } from './ApplicationTemplateHelper'
 import {

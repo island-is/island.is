@@ -1,4 +1,4 @@
-import * as z from 'zod'
+import { z } from 'zod'
 import { error } from './error'
 import { APPLICATION_TYPES, NO, OPERATION_CATEGORY, YES } from './constants'
 import {

@@ -1,4 +1,4 @@
-import * as z from 'zod'
+import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import { m } from './messages'
 

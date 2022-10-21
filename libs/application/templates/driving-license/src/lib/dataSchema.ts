@@ -1,4 +1,4 @@
-import * as z from 'zod'
+import { z } from 'zod'
 import { YES, NO } from './constants'
 import { B_FULL, B_TEMP } from '../shared/constants'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'

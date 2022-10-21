@@ -1,5 +1,5 @@
 import * as kennitala from 'kennitala'
-import * as z from 'zod'
+import { z } from 'zod'
 import {
   ComplainedForTypes,
   ComplaineeTypes,

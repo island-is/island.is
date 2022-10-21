@@ -1,4 +1,4 @@
-import * as z from 'zod'
+import { z } from 'zod'
 import { isValid } from 'kennitala'
 import { YES } from '../shared/constants'
 import { errorMessages } from './messages'
