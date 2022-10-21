@@ -127,3 +127,5 @@ export const AdditionalRealEstateOrLand = ({
     </Box>
   )
 }
+
+export default AdditionalRealEstateOrLand

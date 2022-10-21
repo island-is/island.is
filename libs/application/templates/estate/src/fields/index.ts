@@ -1,5 +1,5 @@
-export { default as Cards } from './Cards'
-export { default as DoneImage } from './DoneImage'
+export { Cards } from './Cards'
+export { DoneImage } from './DoneImage'
 export { EstateMembersRepeater } from './EstateMembersRepeater'
 export { RealEstateAndLandsRepeater } from './RealEstateAndLandsRepeater'
 export { VehiclesRepeater } from './VehiclesRepeater'

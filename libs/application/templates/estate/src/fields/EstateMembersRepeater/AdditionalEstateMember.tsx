@@ -213,3 +213,5 @@ export const AdditionalEstateMember = ({
     </Box>
   )
 }
+
+export default AdditionalEstateMember
