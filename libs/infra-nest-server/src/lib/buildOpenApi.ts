@@ -11,12 +11,12 @@ export const buildOpenApi = async ({
   appModule,
   openApi,
   path,
-  enableVersioning = false,
+  enableVersioning,
 }: {
   appModule: Type<any>
   openApi: Omit<OpenAPIObject, 'paths'>
   path: string
-  enableVersioning: boolean
+  enableVersioning?: boolean
 }) => {
   try {
     logger.info('Creating openapi.yaml file ...', { path })
