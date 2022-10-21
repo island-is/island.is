@@ -120,7 +120,8 @@ export const DelegationsFromMe = ({
         isVisible={isDefined(delegation)}
         delegation={delegation as AuthCustomDelegation}
         domain={{
-          name: 'Landsbankaappið',
+          name: delegation?.domain.displayName,
+          // TODO use organisation name when available
           imgSrc: './assets/images/educationDegree.svg',
         }}
       />
