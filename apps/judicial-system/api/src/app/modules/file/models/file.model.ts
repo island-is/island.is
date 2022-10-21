@@ -49,4 +49,7 @@ export class CaseFile implements TCaseFile {
 
   @Field({ nullable: true })
   readonly orderWithinChapter?: number
+
+  @Field({ nullable: true })
+  readonly displayDate?: string
 }

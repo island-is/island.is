@@ -46,6 +46,12 @@ export class UpdateFile implements TUpdateFile {
   @IsOptional()
   @IsString()
   readonly userGeneratedFilename?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  readonly displayDate?: string
 }
 
 @InputType()
