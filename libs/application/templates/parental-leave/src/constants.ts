@@ -12,10 +12,10 @@ export const NO_UNION = 'F000'
 export const NO_PRIVATE_PENSION_FUND = 'X000'
 export const NO_UNEMPLOYED_BENEFITS = 'B000'
 
-export enum unemploymentBenefitTypes {
-  vinnumálastofnun = 'Vinnumálastofnun (atvinnuleysisbætur)',
-  stéttarfélagi = 'Stéttarfélagi (dagpeningar/veikindaréttur)',
-  sjúkratryggingarÍslands = 'Sjúkratryggingar Íslands (sjúkradagpeningar)',
+export enum UnEmployedBenefitTypes {
+  vmst = 'Vinnumálastofnun (atvinnuleysisbætur)',
+  union = 'Stéttarfélagi (dagpeningar/veikindaréttur)',
+  healthInsurance = 'Sjúkratryggingar Íslands (sjúkradagpeningar)',
   other = 'Annað',
 }
 
@@ -24,7 +24,7 @@ export enum ParentalRelations {
   secondary = 'secondary',
 }
 
-export enum API_MODULE_ACTIONS {
+export enum ApiModuleActions {
   assignOtherParent = 'assignOtherParent',
   assignEmployer = 'assignEmployer',
   sendApplication = 'sendApplication',
@@ -61,7 +61,9 @@ export enum States {
   VINNUMALASTOFNUN_APPROVAL = 'vinnumalastofnunApproval',
   VINNUMALASTOFNUN_ACTION = 'vinnumalastofnunRequiresAction',
 
+  ADDITIONAL_DOCUMENT_REQUIRED = 'additionalDocumentRequired',
   APPROVED = 'approved',
+  CLOSED = 'closed',
 
   // Edit Flow
   EDIT_OR_ADD_PERIODS = 'editOrAddPeriods',

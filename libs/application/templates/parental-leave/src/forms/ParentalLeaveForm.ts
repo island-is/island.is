@@ -29,6 +29,7 @@ import {
   getLastValidPeriodEndDate,
   removeCountryCode,
   showGenericFileUpload,
+  getApplicationExternalData,
 } from '../lib/parentalLeaveUtils'
 import {
   GetPensionFunds,
@@ -45,7 +46,7 @@ import {
   PARENTAL_GRANT_STUDENTS,
   PARENTAL_LEAVE,
   StartDateOptions,
-  unemploymentBenefitTypes,
+  UnEmployedBenefitTypes,
   YES,
 } from '../constants'
 import Logo from '../assets/Logo'
@@ -481,20 +482,20 @@ export const ParentalLeaveForm: Form = buildForm({
                     parentalLeaveFormMessages.employer.unemploymentBenefits,
                   options: [
                     {
-                      label: unemploymentBenefitTypes.vinnumálastofnun,
-                      value: unemploymentBenefitTypes.vinnumálastofnun,
+                      label: UnEmployedBenefitTypes.vmst,
+                      value: UnEmployedBenefitTypes.vmst,
                     },
                     {
-                      label: unemploymentBenefitTypes.stéttarfélagi,
-                      value: unemploymentBenefitTypes.stéttarfélagi,
+                      label: UnEmployedBenefitTypes.union,
+                      value: UnEmployedBenefitTypes.union,
                     },
                     {
-                      label: unemploymentBenefitTypes.sjúkratryggingarÍslands,
-                      value: unemploymentBenefitTypes.sjúkratryggingarÍslands,
+                      label: UnEmployedBenefitTypes.healthInsurance,
+                      value: UnEmployedBenefitTypes.healthInsurance,
                     },
                     {
-                      label: unemploymentBenefitTypes.other,
-                      value: unemploymentBenefitTypes.other,
+                      label: UnEmployedBenefitTypes.other,
+                      value: UnEmployedBenefitTypes.other,
                     },
                   ],
                   condition: (answers) =>
@@ -646,8 +647,7 @@ export const ParentalLeaveForm: Form = buildForm({
                 const unemploymentBenefitsFromUnion =
                   (answers as {
                     unemploymentBenefits: string
-                  })?.unemploymentBenefits ===
-                  unemploymentBenefitTypes.stéttarfélagi
+                  })?.unemploymentBenefits === UnEmployedBenefitTypes.union
 
                 return (
                   isRecivingUnemploymentBenefits &&
@@ -680,7 +680,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   (answers as {
                     unemploymentBenefits: string
                   })?.unemploymentBenefits ===
-                  unemploymentBenefitTypes.sjúkratryggingarÍslands
+                  UnEmployedBenefitTypes.healthInsurance
 
                 return (
                   isRecivingUnemploymentBenefits &&
@@ -937,13 +937,13 @@ export const ParentalLeaveForm: Form = buildForm({
                       return lastPeriodEndDate
                     } else if (
                       expectedDateOfBirth &&
-                      new Date(expectedDateOfBirth) > today
+                      new Date(expectedDateOfBirth).getTime() > today.getTime()
                     ) {
                       const leastStartDate = addDays(
                         new Date(expectedDateOfBirth),
                         -minimumPeriodStartBeforeExpectedDateOfBirth,
                       )
-                      if (leastStartDate < today) {
+                      if (leastStartDate.getTime() < today.getTime()) {
                         return today
                       }
 
@@ -982,7 +982,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   condition: (answers) => {
                     const { rawPeriods } = getApplicationAnswers(answers)
 
-                    return rawPeriods[rawPeriods.length - 1].useLength === YES
+                    return rawPeriods[rawPeriods.length - 1]?.useLength === YES
                   },
                   title: parentalLeaveFormMessages.duration.title,
                   component: 'Duration',
@@ -995,7 +995,7 @@ export const ParentalLeaveForm: Form = buildForm({
                     condition: (answers) => {
                       const { rawPeriods } = getApplicationAnswers(answers)
 
-                      return rawPeriods[rawPeriods.length - 1].useLength === NO
+                      return rawPeriods[rawPeriods.length - 1]?.useLength === NO
                     },
                   },
                   {
@@ -1004,7 +1004,7 @@ export const ParentalLeaveForm: Form = buildForm({
                         application.answers,
                       )
                       const latestStartDate =
-                        rawPeriods[rawPeriods.length - 1].startDate
+                        rawPeriods[rawPeriods.length - 1]?.startDate
 
                       return addDays(
                         new Date(latestStartDate),
@@ -1106,11 +1106,21 @@ export const ParentalLeaveForm: Form = buildForm({
                       event: 'SUBMIT',
                       name: parentalLeaveFormMessages.confirmation.title,
                       type: 'primary',
-                      condition: (answers) =>
-                        getApplicationAnswers(answers).periods.length > 0 &&
-                        new Date(
-                          getApplicationAnswers(answers).periods[0].startDate,
-                        ).getTime() >= currentDateStartTime(),
+                      condition: (answers, externalData) => {
+                        const {
+                          applicationFundId,
+                        } = getApplicationExternalData(externalData)
+                        if (applicationFundId === '') {
+                          const { periods } = getApplicationAnswers(answers)
+                          return (
+                            periods.length > 0 &&
+                            new Date(periods[0].startDate).getTime() >=
+                              currentDateStartTime()
+                          )
+                        }
+
+                        return true
+                      },
                     },
                   ],
                 }),

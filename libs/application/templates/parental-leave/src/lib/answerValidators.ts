@@ -23,7 +23,7 @@ import {
   NO_UNION,
   PARENTAL_GRANT_STUDENTS,
   PARENTAL_LEAVE,
-  unemploymentBenefitTypes,
+  UnEmployedBenefitTypes,
   YES,
 } from '../constants'
 import { isValidEmail } from './isValidEmail'
@@ -102,16 +102,6 @@ export const answerValidators: Record<string, AnswerValidator> = {
       'applicationType.option',
     )
 
-    const selfEmployedFiles = getValueViaPath(
-      application.answers,
-      'employer.selfEmployed.file',
-    ) as unknown[]
-
-    const selfFileUploadEmployedFiles = getValueViaPath(
-      application.answers,
-      'fileUpload.selfEmployedFile',
-    ) as unknown[]
-
     const isRecivingUnemploymentBenefits = getValueViaPath(
       application.answers,
       'isRecivingUnemploymentBenefits',
@@ -121,10 +111,6 @@ export const answerValidators: Record<string, AnswerValidator> = {
       application.answers,
       'unemploymentBenefits',
     )
-
-    console.log('Benefits: ', unemploymentBenefitsSelect)
-    console.log('Employer: ', isSelfEmployed)
-    console.log('OBJ: ', obj)
 
     if (
       isSelfEmployed === YES &&
@@ -142,7 +128,7 @@ export const answerValidators: Record<string, AnswerValidator> = {
 
     if (isRecivingUnemploymentBenefits) {
       if (
-        unemploymentBenefitsSelect === unemploymentBenefitTypes.stéttarfélagi &&
+        unemploymentBenefitsSelect === UnEmployedBenefitTypes.union &&
         isEmpty(
           (obj as { unionConfirmationFile: unknown[] }).unionConfirmationFile,
         )
@@ -153,8 +139,7 @@ export const answerValidators: Record<string, AnswerValidator> = {
         )
       }
       if (
-        unemploymentBenefitsSelect ===
-          unemploymentBenefitTypes.sjúkratryggingarÍslands &&
+        unemploymentBenefitsSelect === UnEmployedBenefitTypes.healthInsurance &&
         isEmpty(
           (obj as { healthInsuranceConfirmationFile: unknown[] })
             .healthInsuranceConfirmationFile,
@@ -286,8 +271,16 @@ export const answerValidators: Record<string, AnswerValidator> = {
     return undefined
   },
   [VALIDATE_LATEST_PERIOD]: (newAnswer: unknown, application: Application) => {
-    const periods = newAnswer as Period[]
-
+    let periods = newAnswer as Period[] | undefined
+    // If added new a period, sometime the old periods in newAnswer are 'null'
+    // If that happen, take the periods in application and use them
+    const filterPeriods = periods?.filter(
+      (period) => period?.startDate || period?.firstPeriodStart,
+    )
+    if (filterPeriods?.length !== periods?.length) {
+      periods = getValueViaPath(application.answers, 'periods')
+      periods = periods?.filter((period) => period?.startDate)
+    }
     if (!isArray(periods)) {
       return {
         path: 'periods',
@@ -301,7 +294,6 @@ export const answerValidators: Record<string, AnswerValidator> = {
     }
 
     let daysUsedByPeriods, rights
-
     try {
       daysUsedByPeriods = calculateDaysUsedByPeriods(periods)
       rights = getAvailableRightsInDays(application)
@@ -372,7 +364,6 @@ export const answerValidators: Record<string, AnswerValidator> = {
     if (validatedField !== undefined) {
       return validatedField
     }
-
     return undefined
   },
   [VALIDATE_PERIODS]: (newAnswer: unknown, application: Application) => {

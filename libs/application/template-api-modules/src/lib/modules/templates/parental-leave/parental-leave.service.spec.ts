@@ -241,7 +241,7 @@ describe('ParentalLeaveService', () => {
           ratio: '100',
           approved: false,
           paid: false,
-          rightsCodePeriod: null,
+          rightsCodePeriod: 'M-L-GR',
         },
         {
           from: '2021-11-17',
@@ -276,7 +276,7 @@ describe('ParentalLeaveService', () => {
           ratio: '100',
           approved: false,
           paid: false,
-          rightsCodePeriod: null,
+          rightsCodePeriod: 'M-L-GR',
         },
         {
           from: '2021-11-17',
@@ -319,7 +319,7 @@ describe('ParentalLeaveService', () => {
           to: originalPeriods[0].endDate,
           paid: false,
           ratio: `D${originalPeriods[0].daysToUse}`,
-          rightsCodePeriod: null,
+          rightsCodePeriod: 'M-L-GR',
         },
       ]
       const res = await parentalLeaveService.createPeriodsDTO(

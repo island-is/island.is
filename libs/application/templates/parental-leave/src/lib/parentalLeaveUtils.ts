@@ -16,7 +16,6 @@ import {
   FormValue,
   Option,
 } from '@island.is/application/types'
-import type { FamilyMember } from '@island.is/api/domains/national-registry'
 
 import { parentalLeaveFormMessages } from '../lib/messages'
 import { TimelinePeriod } from '../fields/components/Timeline/Timeline'
@@ -28,7 +27,7 @@ import {
   StartDateOptions,
   ParentalRelations,
   TransferRightsOption,
-  unemploymentBenefitTypes,
+  UnEmployedBenefitTypes,
   PARENTAL_GRANT_STUDENTS,
 } from '../constants'
 import { SchemaFormValues } from '../lib/dataSchema'
@@ -43,6 +42,7 @@ import {
 } from '../dataProviders/Children/types'
 import { YesOrNo, Period, PersonInformation } from '../types'
 import { FormatMessage } from '@island.is/localization'
+import { currentDateStartTime } from './parentalLeaveTemplateUtils'
 
 export function getExpectedDateOfBirth(
   application: Application,
@@ -67,6 +67,10 @@ export function formatPeriods(
   const { periods, firstPeriodStart } = getApplicationAnswers(
     application.answers,
   )
+  const { applicationFundId } = getApplicationExternalData(
+    application.externalData,
+  )
+
   const timelinePeriods: TimelinePeriod[] = []
 
   periods?.forEach((period, index) => {
@@ -78,6 +82,28 @@ export function formatPeriods(
       period.endDate,
     ).toString()
 
+    const startDateDateTime = new Date(period.startDate)
+    let canDelete = startDateDateTime.getTime() > currentDateStartTime()
+    const today = new Date()
+
+    if (applicationFundId === '') {
+      canDelete = true
+    } else if (canDelete && today.getDate() >= 20) {
+      const startDateBeginOfMonth = addDays(
+        startDateDateTime,
+        startDateDateTime.getDate() * -1,
+      )
+      const currentDateBeginOfMonth = addDays(today, today.getDate() * -1)
+      if (
+        startDateBeginOfMonth.getMonth() ===
+          currentDateBeginOfMonth.getMonth() &&
+        startDateBeginOfMonth.getFullYear() ===
+          currentDateBeginOfMonth.getFullYear()
+      ) {
+        canDelete = false
+      }
+    }
+
     if (isActualDob) {
       timelinePeriods.push({
         actualDob: isActualDob,
@@ -85,7 +111,7 @@ export function formatPeriods(
         endDate: period.endDate,
         ratio: period.ratio,
         duration: calculatedLength,
-        canDelete: true,
+        canDelete: canDelete,
         title: formatMessage(parentalLeaveFormMessages.reviewScreen.period, {
           index: index + 1,
           ratio: period.ratio,
@@ -100,7 +126,7 @@ export function formatPeriods(
         endDate: period.endDate,
         ratio: period.ratio,
         duration: calculatedLength,
-        canDelete: true,
+        canDelete: canDelete,
         title: formatMessage(parentalLeaveFormMessages.reviewScreen.period, {
           index: index + 1,
           ratio: period.ratio,
@@ -358,12 +384,25 @@ export function getApplicationExternalData(
     '',
   ) as string
 
+  const navId = getValueViaPath(externalData, 'navId', '') as string
+
+  let applicationFundId = navId
+  if (applicationFundId === '') {
+    applicationFundId = getValueViaPath(
+      externalData,
+      'sendApplication.data.id',
+      '',
+    ) as string
+  }
+
   return {
     applicantName,
     applicantGenderCode,
+    applicationFundId,
     dataProvider,
     children,
     existingApplications,
+    navId,
     userEmail,
     userPhoneNumber,
   }
@@ -737,7 +776,33 @@ export const getLastValidPeriodEndDate = (
     return null
   }
 
-  return new Date(lastPeriodEndDate)
+  const lastEndDate = new Date(lastPeriodEndDate)
+
+  const today = new Date()
+  const beginningOfMonth = addDays(today, today.getDate() * -1 + 1)
+
+  // LastPeriod's endDate is in current month then Applicant could only start from next month
+  if (
+    lastEndDate.getMonth() === today.getMonth() &&
+    lastEndDate.getFullYear() === today.getFullYear()
+  ) {
+    return addMonths(beginningOfMonth, 1)
+  }
+
+  // Current Date is >= 20 and lastEndDate is in the past then Applicant could only start from next month
+  if (today.getDate() >= 20 && lastEndDate.getTime() < today.getTime()) {
+    return addMonths(beginningOfMonth, 1)
+  }
+
+  // LastPeriod's endDate is long in the past then Applicant could only start from beginning of current month
+  if (
+    lastEndDate.getTime() < today.getTime() &&
+    lastEndDate.getMonth() !== today.getMonth()
+  ) {
+    return beginningOfMonth
+  }
+
+  return lastEndDate
 }
 
 export const calculateDaysUsedByPeriods = (periods: Period[]) =>
@@ -836,12 +901,11 @@ export const showGenericFileUpload = (answers: Application['answers']) => {
   } = getApplicationAnswers(answers)
   // we don't want to show generic file upload atm if we are showing another file upload
   // isSelfEmployed, students, benefits (union & health insurance)
-
   if (isSelfEmployed === YES) return false
   else if (
     (isRecivingUnemploymentBenefits &&
-      unemploymentBenefits === unemploymentBenefitTypes.stéttarfélagi) ||
-    unemploymentBenefits === unemploymentBenefitTypes.sjúkratryggingarÍslands
+      unemploymentBenefits === UnEmployedBenefitTypes.union) ||
+    unemploymentBenefits === UnEmployedBenefitTypes.healthInsurance
   )
     return false
   else if (applicationType === PARENTAL_GRANT_STUDENTS) return false

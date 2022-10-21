@@ -95,9 +95,7 @@ export const getPensionFund = (
     ? 'payments.privatePensionFund'
     : 'payments.pensionFund'
 
-    const { applicationType } = getApplicationAnswers(
-      application.answers,
-    )
+  const { applicationType } = getApplicationAnswers(application.answers)
 
   const value =
     applicationType === PARENTAL_LEAVE
@@ -128,12 +126,11 @@ export const getPensionFund = (
   }
 }
 
-export const getPrivatePensionFundRatio = (
-  application: Application,
-) => {
-  const { privatePensionFundPercentage, applicationType } = getApplicationAnswers(
-    application.answers,
-  )
+export const getPrivatePensionFundRatio = (application: Application) => {
+  const {
+    privatePensionFundPercentage,
+    applicationType,
+  } = getApplicationAnswers(application.answers)
   const privatePensionFundRatio: number =
     applicationType === PARENTAL_LEAVE
       ? Number(privatePensionFundPercentage) || 0
@@ -264,6 +261,11 @@ export const transformApplicationToParentalLeaveDTO = (
     applicationType,
     isRecivingUnemploymentBenefits,
   } = getApplicationAnswers(application.answers)
+
+  const { applicationFundId } = getApplicationExternalData(
+    application.externalData,
+  )
+
   const { email, phoneNumber } = getApplicantContactInfo(application)
   const selfEmployed = isSelfEmployed === YES
   const recivingUnemploymentBenefits = isRecivingUnemploymentBenefits === YES
@@ -272,6 +274,7 @@ export const transformApplicationToParentalLeaveDTO = (
 
   return {
     applicationId: application.id,
+    applicationFundId: applicationFundId,
     applicant: application.applicant,
     otherParentId: getOtherParentId(application),
     expectedDateOfBirth: selectedChild.expectedDateOfBirth,
@@ -294,9 +297,7 @@ export const transformApplicationToParentalLeaveDTO = (
       } as Union,
       pensionFund: getPensionFund(application),
       privatePensionFund: getPensionFund(application, true),
-      privatePensionFundRatio: getPrivatePensionFundRatio(
-        application,
-      ),
+      privatePensionFundRatio: getPrivatePensionFundRatio(application),
     },
     periods,
     employers:

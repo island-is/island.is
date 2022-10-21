@@ -186,7 +186,7 @@ describe('getPensionFund', () => {
 
   it('should throw an error if required pension fund is not provided', () => {
     set(application.answers, 'applicationType.option', PARENTAL_LEAVE)
-    
+
     expect(() => {
       getPensionFund(application)
     }).toThrowError()
@@ -212,7 +212,7 @@ describe('getPensionFund', () => {
       name: '',
     })
   })
-  
+
   it('should return constant pension fund id for grant application', () => {
     const expectedId = apiConstants.pensionFunds.noPensionFundId
     set(application.answers, 'applicationType.option', PARENTAL_GRANT)
