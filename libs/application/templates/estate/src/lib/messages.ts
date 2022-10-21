@@ -401,8 +401,7 @@ export const m = defineMessages({
   // Debts
   acceptDebtsLabel: {
     id: 'es.application:acceptDebtsLabel#markdown',
-    defaultMessage:
-      'Ég lýsi því yfir, að eftir minni bestu vitund nema eignir búsins ekki meira en kostnaði af útför og að eignirnar séu tæmandi taldar hér að ofan',
+    defaultMessage: `* Ég lýsi því yfir, að eftir minni bestu vitund nema eignir búsins ekki meira en kostnaði af útför og að eignirnar séu tæmandi taldar hér að ofan. \\n\\n`,
     description: '',
   },
   debtsTitle: {

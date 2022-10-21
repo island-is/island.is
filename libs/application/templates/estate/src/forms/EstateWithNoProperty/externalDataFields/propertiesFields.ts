@@ -32,7 +32,7 @@ export const propertiesFields = [
     },
   ),
   buildDescriptionField({
-    id: 'propertiesHeader',
+    id: 'vehiclesHeader',
     title: m.vehicles,
     titleVariant: 'h3',
     description: m.vehiclesDescription,
