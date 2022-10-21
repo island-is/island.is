@@ -195,6 +195,7 @@ export class DrivingLicenseBookService {
     const api = await this.apiWithAuth()
     const { data } = await api.apiStudentGetStudentOverviewSsnGet({
       ssn: nationalId,
+      showInactiveBooks: true,
     })
     if (data?.books) {
       const book = data.books.reduce((a, b) =>

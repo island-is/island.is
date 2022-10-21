@@ -714,6 +714,15 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "showInactiveBooks",
+            "in": "query",
+            "description": "If true, show digital books which are inactive",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
           }
         ],
         "responses": {
