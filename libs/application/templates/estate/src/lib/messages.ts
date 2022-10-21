@@ -22,13 +22,13 @@ export const m = defineMessages({
   // Prereqs title
   prerequisitesTitle: {
     id: 'es.application:prerequisitesTitle',
-    defaultMessage: 'Ákvörðun um skipti bús',
+    defaultMessage: 'Ákvörðun um skipti dánarbús',
     description: '',
   },
   prerequisitesSubtitle: {
-    id: 'es.application:prerequisitesSubtitle',
+    id: 'es.application:prerequisitesSubtitle#markdown',
     defaultMessage:
-      'Hægt er að fara fjórar leiðir við skipti á búi. Vinsamlega veldu þá leið sem þú og aðrir erfingjar viljið fara.',
+      'Við skipti á dánarbúi er hægt að fara fjórar leiðir. Velja þarf eina leið samanbér eftirfarandi:',
     description: '',
   },
   institution: {
@@ -66,7 +66,7 @@ export const m = defineMessages({
   deceasedInfoProviderSubtitle: {
     id: 'es.application:deceasedInfoProviderSubtitle',
     defaultMessage:
-      'Upplýsingar frá sýslumanni um fæðingar- og dánardag, lögheimili, erfðir, eignir og hvort arfleifandi hafi skilað inn erfðaskrá eða gert kaupmála.',
+      'Upplýsingar frá sýslumanni um kennitölu, dánardag, lögheimili, erfðingja, eignir og hvort arfleifandi hafi skilað inn erfðaskrá eða gert kaupmála.',
     description: '',
   },
   personalInfoProviderTitle: {
@@ -86,7 +86,7 @@ export const m = defineMessages({
   },
   settingsInfoProviderSubtitle: {
     id: 'es.application:settingsInfoProviderSubtitle',
-    defaultMessage: 'Persónustillingar þínar frá Ísland.is.',
+    defaultMessage: 'Persónustillingar (sími og netfang) þínar frá Ísland.is.',
     description: '',
   },
 
@@ -115,13 +115,13 @@ export const m = defineMessages({
   // Applicant
   announcer: {
     id: 'es.application:announcer',
-    defaultMessage: 'Tilkynnandi',
+    defaultMessage: 'Yfirlýsandi eignaleysis',
     description: '',
   },
   applicantsInfoSubtitle: {
     id: 'es.application:applicantsInfoSubtitle',
     defaultMessage:
-      'Vinsamlegast farðu yfir upplýsingarnar og gakktu úr skugga um að þær séu réttar.',
+      'Vinsamlegast farðu yfir upplýsingarnar og athugaðu hvort þær séu réttar.',
     description: '',
   },
   name: {
@@ -159,7 +159,7 @@ export const m = defineMessages({
   estateMembersSubtitle: {
     id: 'es.application:estateMembersSubtitle',
     defaultMessage:
-      'Vinsamlegast farðu yfir upplýsingarnar og gakktu úr skugga um að þær séu réttar.',
+      'Vinsamlegast farðu yfir upplýsingarnar og athugaðu hvort þær séu réttar.',
     description: '',
   },
   estateMembers: {
@@ -199,7 +199,7 @@ export const m = defineMessages({
   },
   realEstateAndLand: {
     id: 'es.application:realEstateAndLand',
-    defaultMessage: 'Fasteignir og lóðir',
+    defaultMessage: 'Fasteignir',
     description: '',
   },
   realEstateAndLandDescription: {
@@ -400,9 +400,9 @@ export const m = defineMessages({
 
   // Debts
   acceptDebtsLabel: {
-    id: 'es.application:acceptDebtsLabel',
+    id: 'es.application:acceptDebtsLabel#markdown',
     defaultMessage:
-      'Ég samþykki að taka yfir áhvílandi skuldir á þessu farartæki sem vitneskja er um',
+      'Ég lýsi því yfir, að eftir minni bestu vitund nema eignir búsins ekki meira en kostnaði af útför og að eignirnar séu tæmandi taldar hér að ofan',
     description: '',
   },
   debtsTitle: {
@@ -444,8 +444,7 @@ export const m = defineMessages({
   },
   overviewSubtitleWithNoProperty: {
     id: 'es.application:overviewSubtitle',
-    defaultMessage:
-      'Þú hefur valið að tilkynna um eignarlaust bú. Vinsamlega lesið yfir neðangreindar upplýsingar, uppfærið og staðfestið eftir því sem við á.',
+    defaultMessage: 'Þú hefur valið lýst yfir eignarleysi dánarbús.',
     description: '',
   },
   overviewSubtitleOfficialEstate: {
@@ -482,7 +481,7 @@ export const m = defineMessages({
   estateWithNoPropertySubtitle: {
     id: 'es.application:estateWithNoPropertySubtitle#markdown',
     defaultMessage:
-      'Sýslumaður hefur móttekið yfirlýsingu þína um eignarlaust dánarbú. Hún verður nú yfirfarin og staðfesting á eignarleysi í kjölfar sent í pósthólf þitt á Ísland.is',
+      'Sýslumaður hefur móttekið yfirlýsingu þína um eignaleysi dánarbús. Hún verður yfirfarin af sýslumanni og afgreiðsla sýslumanns í kjölfarið sent í pósthólf þitt á Ísland.is.',
     description: '',
   },
   residencePermitSubtitle: {
