@@ -32,7 +32,6 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { DelegationsFormFooter, IdentityCard } from '../../components'
 import * as styles from './GrantAccess.css'
 import {
-  AuthDelegationsDocument,
   useCreateAuthDelegationMutation,
   useIdentityLazyQuery,
 } from '@island.is/service-portal/graphql'
@@ -54,9 +53,7 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
   const [
     createAuthDelegation,
     { loading: mutationLoading },
-  ] = useCreateAuthDelegationMutation({
-    refetchQueries: [{ query: AuthDelegationsDocument }],
-  })
+  ] = useCreateAuthDelegationMutation()
 
   const noUserFoundToast = () => {
     toast.error(
