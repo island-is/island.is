@@ -5,7 +5,6 @@ import { ApplicationInformationPeriod } from './applicationInformationPeriod.mod
 import { ApplicationRights } from './applicationRights.model'
 
 import { ParentalLeavePaymentInfo } from './parentalLeavePaymentInfo.model'
-import { ParentalLeavePeriod } from './parentalLeavePeriod.model'
 
 @ObjectType()
 export class ApplicationInformation {
