@@ -106,10 +106,6 @@ export class EstateTemplateService {
     const relationOptions = (await this.syslumennService.getEstateRelations())
       .relations
 
-    console.log(relationOptions)
-
-    console.log(JSON.stringify(estate))
-
     return {
       success: true,
       estate,
