@@ -1451,8 +1451,10 @@
         }
       },
       "fields": {
-        "domain": {
-          "selectAnItem": "Select a Domain"
+        "domainName": {
+          "label": "Domain",
+          "helpText": "The domain associated with this Api Scope",
+          "errorMessage": "Domain is required "
         },
         "name": {
           "label": "Name",

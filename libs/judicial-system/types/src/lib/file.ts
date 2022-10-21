@@ -67,6 +67,7 @@ export interface CaseFile {
   userGeneratedFilename?: string
   chapter?: number
   orderWithinChapter?: number
+  displayDate?: string
 }
 
 export interface CreateFile {
@@ -75,4 +76,12 @@ export interface CreateFile {
   key: string
   size: number
   policeCaseNumber?: string
+}
+
+export interface UpdateFile {
+  id: string
+  userGeneratedFilename?: string | null
+  chapter?: number | null
+  orderWithinChapter?: number | null
+  displayDate?: string | null
 }

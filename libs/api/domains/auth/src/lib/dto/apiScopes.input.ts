@@ -4,4 +4,7 @@ import { Field, InputType } from '@nestjs/graphql'
 export class ApiScopesInput {
   @Field(() => String)
   lang = 'is'
+
+  @Field(() => String, { nullable: true })
+  domain?: string
 }

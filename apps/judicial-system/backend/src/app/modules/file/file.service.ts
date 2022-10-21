@@ -1,5 +1,5 @@
 import { uuid } from 'uuidv4'
-import { Op } from 'sequelize'
+import { Op, Sequelize } from 'sequelize'
 import { Transaction } from 'sequelize/types'
 
 import {
@@ -9,7 +9,7 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
+import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
@@ -33,6 +33,7 @@ import { CaseFile } from './models/file.model'
 import { DeleteFileResponse } from './models/deleteFile.response'
 import { SignedUrl } from './models/signedUrl.model'
 import { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
+import { UpdateFileDto } from './dto/updateFile.dto'
 
 // Files are stored in AWS S3 under a key which has the following format:
 // uploads/<uuid>/<uuid>/<filename>
@@ -44,6 +45,7 @@ export class FileService {
   private throttle = Promise.resolve('')
 
   constructor(
+    @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(CaseFile) private readonly fileModel: typeof CaseFile,
     private readonly courtService: CourtService,
     private readonly awsS3Service: AwsS3Service,
@@ -351,5 +353,28 @@ export class FileService {
     }
 
     return updatedCaseFiles[0]
+  }
+
+  async updateFiles(
+    caseId: string,
+    caseFileUpdates: UpdateFileDto[],
+  ): Promise<CaseFile[]> {
+    return this.sequelize.transaction((transaction) => {
+      const updates = caseFileUpdates.map(async (update) => {
+        const [affectedNumber, file] = await this.fileModel.update(update, {
+          where: { caseId, id: update.id },
+          returning: true,
+          transaction,
+        })
+        if (affectedNumber !== 1 || !file[0]) {
+          throw new InternalServerErrorException(
+            `Could not update file ${update.id} of case ${caseId}`,
+          )
+        }
+        return file[0]
+      })
+
+      return Promise.all(updates)
+    })
   }
 }

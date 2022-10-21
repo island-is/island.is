@@ -78,4 +78,7 @@ export class CustomDelegation extends Delegation {
 
   @Field(() => [DelegationScope])
   scopes!: DelegationScope[]
+
+  // Internal attributes, used in field resolvers.
+  domainName?: string
 }

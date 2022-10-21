@@ -34,6 +34,7 @@ import {
   IGraphCard,
   ILifeEventPageListSlice,
   ISidebarCard,
+  IPowerBiSlice,
 } from '../generated/contentfulTypes'
 import { Image, mapImage } from '../models/image.model'
 import { Asset, mapAsset } from '../models/asset.model'
@@ -96,6 +97,7 @@ import {
   mapLifeEventPageListSlice,
 } from '../models/lifeEventPageListSlice.model'
 import { mapSidebarCard, SidebarCard } from '../models/sidebarCard.model'
+import { PowerBiSlice, mapPowerBiSlice } from '../models/powerBiSlice.model'
 
 type SliceTypes =
   | ITimeline
@@ -129,6 +131,7 @@ type SliceTypes =
   | IGraphCard
   | ILifeEventPageListSlice
   | ISidebarCard
+  | IPowerBiSlice
 
 export const SliceUnion = createUnionType({
   name: 'Slice',
@@ -167,6 +170,7 @@ export const SliceUnion = createUnionType({
     GraphCard,
     LifeEventPageListSlice,
     SidebarCard,
+    PowerBiSlice,
   ],
   resolveType: (document) => document.typename, // typename is appended to request on indexing
 })
@@ -236,6 +240,8 @@ export const mapSliceUnion = (slice: SliceTypes): typeof SliceUnion => {
       return mapLifeEventPageListSlice(slice as ILifeEventPageListSlice)
     case 'sidebarCard':
       return mapSidebarCard(slice as ISidebarCard)
+    case 'powerBiSlice':
+      return mapPowerBiSlice(slice as IPowerBiSlice)
     default:
       throw new ApolloError(`Can not convert to slice: ${contentType}`)
   }

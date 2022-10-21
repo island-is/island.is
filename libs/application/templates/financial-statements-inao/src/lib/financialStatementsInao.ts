@@ -76,6 +76,7 @@ const FinancialStatementInaoApplication: ApplicationTemplate<
             apiModuleAction: ApiActions.getUserType,
             shouldPersistToExternalData: true,
           },
+
           progress: 0.4,
           lifecycle: DefaultStateLifeCycle,
           roles: [
@@ -102,7 +103,10 @@ const FinancialStatementInaoApplication: ApplicationTemplate<
           name: 'Done',
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
-
+          onEntry: {
+            apiModuleAction: ApiActions.submitApplication,
+            throwOnError: true,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
