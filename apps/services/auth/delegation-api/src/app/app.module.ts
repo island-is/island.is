@@ -15,6 +15,7 @@ import {
   XRoadConfig,
 } from '@island.is/nest/config'
 import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
+import { ProblemModule } from '@island.is/nest/problem'
 
 import { environment } from '../environments'
 import { DelegationsModule } from './delegations/delegations.module'
@@ -29,6 +30,7 @@ import { DomainsModule } from './domains/domains.module'
     }),
     DelegationsModule,
     DomainsModule,
+    ProblemModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [

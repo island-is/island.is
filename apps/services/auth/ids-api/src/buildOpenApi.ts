@@ -7,4 +7,5 @@ buildOpenApi({
   path: 'apps/services/auth/ids-api/src/openapi.yaml',
   appModule: AppModule,
   openApi,
+  enableVersioning: true,
 })

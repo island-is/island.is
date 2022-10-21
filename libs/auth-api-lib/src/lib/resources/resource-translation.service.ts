@@ -10,9 +10,9 @@ export class ResourceTranslationService {
   constructor(private readonly translationService: TranslationService) {}
 
   async translateApiScopes(
-    scopes: Array<ApiScope>,
+    scopes: ApiScope[],
     language: string,
-  ): Promise<Array<ApiScope>> {
+  ): Promise<ApiScope[]> {
     const translationMap = await this.translationService.findTranslationMap(
       'apiscope',
       scopes.map((scope) => scope.name),
@@ -36,9 +36,9 @@ export class ResourceTranslationService {
   }
 
   async translateApiScopeGroups(
-    groups: Array<ApiScopeGroup>,
+    groups: ApiScopeGroup[],
     language: string,
-  ): Promise<Array<ApiScopeGroup>> {
+  ): Promise<ApiScopeGroup[]> {
     const translationMap = await this.translationService.findTranslationMap(
       'apiscopegroup',
       groups.map((group) => group.id),
@@ -55,9 +55,9 @@ export class ResourceTranslationService {
   }
 
   async translateDomains(
-    domains: Array<Domain>,
+    domains: Domain[],
     language: string,
-  ): Promise<Array<Domain>> {
+  ): Promise<Domain[]> {
     const translationMap = await this.translationService.findTranslationMap(
       'domain',
       domains.map((domain) => domain.name),
@@ -76,17 +76,6 @@ export class ResourceTranslationService {
   }
 
   async translateDomain(domain: Domain, language: string): Promise<Domain> {
-    const translationMap = await this.translationService.findTranslationMap(
-      'domain',
-      [domain.name],
-      language,
-    )
-
-    domain.displayName =
-      translationMap.get(domain.name)?.get('displayName') ?? domain.displayName
-    domain.description =
-      translationMap.get(domain.name)?.get('description') ?? domain.description
-
-    return domain
+    return (await this.translateDomains([domain], language))[0]
   }
 }

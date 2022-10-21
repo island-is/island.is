@@ -1,8 +1,10 @@
-import { CreateRequest, setup } from './test/setup'
 import { ForbiddenException } from '@nestjs/common'
-import { expectGraphqlProblem } from './test/expectGraphqlProblem'
+
 import { ProblemType } from '@island.is/shared/problem'
+
 import { NoContentException } from './NoContentException'
+import { expectGraphqlProblem } from './test/expectGraphqlProblem'
+import { CreateRequest, setup } from './test/setup'
 
 describe('HttpExceptionFilter', () => {
   let request: CreateRequest

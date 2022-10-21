@@ -64,7 +64,7 @@ We are using the same service library and database as auth-api and therefore thi
 First, make sure you have docker, then run:
 
 ```bash
-yarn dev-services services-aut-ids-api
+yarn dev-services services-auth-ids-api
 ```
 
 Then run the migrations:

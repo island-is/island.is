@@ -8,7 +8,7 @@ export class ApiScopeTreeDTO {
     this.name = model.name
     this.displayName = model.displayName
     this.description = model.description
-    this.domainName = '' //model.domainName
+    this.domainName = model.domainName
 
     if (model instanceof ApiScopeGroup) {
       this.children = []

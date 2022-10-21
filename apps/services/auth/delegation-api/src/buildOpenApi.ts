@@ -7,4 +7,5 @@ buildOpenApi({
   path: 'apps/services/auth/delegation-api/src/openapi.yaml',
   appModule: AppModule,
   openApi,
+  enableVersioning: true,
 })

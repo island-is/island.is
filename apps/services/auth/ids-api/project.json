@@ -2,7 +2,7 @@
   "root": "apps/services/auth/ids-api",
   "sourceRoot": "apps/services/auth/ids-api/src",
   "projectType": "application",
-  "prefix": "auth-api",
+  "prefix": "ids-api",
   "generators": {},
   "targets": {
     "build": {

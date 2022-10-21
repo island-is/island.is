@@ -9,4 +9,5 @@ bootstrap({
   name: 'auth-delegation-api',
   openApi,
   port: environment.port,
+  enableVersioning: true,
 })

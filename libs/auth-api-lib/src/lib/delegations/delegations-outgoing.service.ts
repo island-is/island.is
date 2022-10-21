@@ -90,7 +90,6 @@ export class DelegationsOutgoingService {
           model: DelegationScope,
           as: 'delegationScopes',
           required: false,
-          where: getScopeValidityWhereClause(DelegationValidity.INCLUDE_FUTURE),
           include: [
             {
               model: ApiScope,
@@ -118,8 +117,13 @@ export class DelegationsOutgoingService {
     user: User,
     createDelegation: CreateDelegationDTO,
   ): Promise<DelegationDTO> {
-    if (createDelegation.toNationalId === user.nationalId) {
-      throw new BadRequestException(`Cannot create delegation to self.`)
+    if (
+      createDelegation.toNationalId === user.nationalId ||
+      createDelegation.toNationalId === user.actor?.nationalId
+    ) {
+      throw new BadRequestException(
+        `Cannot create delegation to self or actor.`,
+      )
     }
 
     if (!createDelegation.domainName) {
@@ -177,6 +181,9 @@ export class DelegationsOutgoingService {
       where: {
         id: delegationId,
         fromNationalId: user.nationalId,
+        toNationalId: {
+          [Op.ne]: user.actor?.nationalId,
+        },
       },
     })
     if (!currentDelegation) {
@@ -191,7 +198,7 @@ export class DelegationsOutgoingService {
 
     if (
       patchedDelegation.deleteScopes &&
-      patchedDelegation.deleteScopes.length > 0
+      patchedDelegation.deleteScopes?.length > 0
     ) {
       await this.delegationScopeService.delete(
         delegationId,
