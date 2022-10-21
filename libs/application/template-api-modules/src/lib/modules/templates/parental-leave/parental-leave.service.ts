@@ -43,6 +43,7 @@ import {
 import {
   transformApplicationToParentalLeaveDTO,
   getRatio,
+  getRightsCode,
 } from './parental-leave.utils'
 import { apiConstants } from './constants'
 import { ConfigService } from '@nestjs/config'
@@ -355,6 +356,7 @@ export class ParentalLeaveService {
 
       const startDate = new Date(period.startDate)
       const endDate = new Date(period.endDate)
+      const useLength = period.useLength
 
       let periodLength = 0
 
@@ -394,7 +396,9 @@ export class ParentalLeaveService {
         // We know its a normal period and it will not exceed personal rights
         periods.push({
           from:
-            isFirstPeriod && isActualDateOfBirth
+            isFirstPeriod && isActualDateOfBirth && useLength === YES
+              ? apiConstants.actualDateOfBirthMonths
+              : isFirstPeriod && isActualDateOfBirth
               ? apiConstants.actualDateOfBirth
               : period.startDate,
           to: period.endDate,
@@ -405,13 +409,15 @@ export class ParentalLeaveService {
           ),
           approved: false,
           paid: false,
-          rightsCodePeriod: null,
+          rightsCodePeriod: getRightsCode(application),
         })
       } else if (isUsingTransferredRights) {
         // We know all of the period will be using transferred rights
         periods.push({
           from:
-            isFirstPeriod && isActualDateOfBirth
+            isFirstPeriod && isActualDateOfBirth && useLength === YES
+              ? apiConstants.actualDateOfBirthMonths
+              : isFirstPeriod && isActualDateOfBirth
               ? apiConstants.actualDateOfBirth
               : period.startDate,
           to: period.endDate,
@@ -449,7 +455,9 @@ export class ParentalLeaveService {
         // Add the period using personal rights
         periods.push({
           from:
-            isFirstPeriod && isActualDateOfBirth
+            isFirstPeriod && isActualDateOfBirth && useLength === YES
+              ? apiConstants.actualDateOfBirthMonths
+              : isFirstPeriod && isActualDateOfBirth
               ? apiConstants.actualDateOfBirth
               : period.startDate,
           to: format(getNormalPeriodEndDate.periodEndDate, df),
@@ -460,7 +468,7 @@ export class ParentalLeaveService {
           ),
           approved: false,
           paid: false,
-          rightsCodePeriod: null,
+          rightsCodePeriod: getRightsCode(application),
         })
 
         const transferredPeriodStartDate = addDays(

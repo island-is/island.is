@@ -507,6 +507,7 @@ describe('Parental Leave Application Template', () => {
         ParentalLeaveTemplate,
       )
 
+      const VMST_ID = process.env.VMST_ID
       const [hasChanged, newState, newApplication] = helper.changeState({
         type: DefaultEvents.SUBMIT,
       })
@@ -514,7 +515,7 @@ describe('Parental Leave Application Template', () => {
       expect(newState).toBe(
         ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
       )
-      expect(newApplication.assignees).toEqual([])
+      expect(newApplication.assignees).toEqual([VMST_ID])
     })
   })
 
