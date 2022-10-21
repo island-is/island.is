@@ -28,6 +28,7 @@ import {
   allowOtherParent,
   getLastValidPeriodEndDate,
   removeCountryCode,
+  getApplicationExternalData,
 } from '../lib/parentalLeaveUtils'
 import {
   GetPensionFunds,
@@ -782,13 +783,13 @@ export const ParentalLeaveForm: Form = buildForm({
                       return lastPeriodEndDate
                     } else if (
                       expectedDateOfBirth &&
-                      new Date(expectedDateOfBirth) > today
+                      new Date(expectedDateOfBirth).getTime() > today.getTime()
                     ) {
                       const leastStartDate = addDays(
                         new Date(expectedDateOfBirth),
                         -minimumPeriodStartBeforeExpectedDateOfBirth,
                       )
-                      if (leastStartDate < today) {
+                      if (leastStartDate.getTime() < today.getTime()) {
                         return today
                       }
 
@@ -827,7 +828,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   condition: (answers) => {
                     const { rawPeriods } = getApplicationAnswers(answers)
 
-                    return rawPeriods[rawPeriods.length - 1].useLength === YES
+                    return rawPeriods[rawPeriods.length - 1]?.useLength === YES
                   },
                   title: parentalLeaveFormMessages.duration.title,
                   component: 'Duration',
@@ -840,7 +841,7 @@ export const ParentalLeaveForm: Form = buildForm({
                     condition: (answers) => {
                       const { rawPeriods } = getApplicationAnswers(answers)
 
-                      return rawPeriods[rawPeriods.length - 1].useLength === NO
+                      return rawPeriods[rawPeriods.length - 1]?.useLength === NO
                     },
                   },
                   {
@@ -849,7 +850,7 @@ export const ParentalLeaveForm: Form = buildForm({
                         application.answers,
                       )
                       const latestStartDate =
-                        rawPeriods[rawPeriods.length - 1].startDate
+                        rawPeriods[rawPeriods.length - 1]?.startDate
 
                       return addDays(
                         new Date(latestStartDate),
@@ -951,11 +952,21 @@ export const ParentalLeaveForm: Form = buildForm({
                       event: 'SUBMIT',
                       name: parentalLeaveFormMessages.confirmation.title,
                       type: 'primary',
-                      condition: (answers) =>
-                        getApplicationAnswers(answers).periods.length > 0 &&
-                        new Date(
-                          getApplicationAnswers(answers).periods[0].startDate,
-                        ).getTime() >= currentDateStartTime(),
+                      condition: (answers, externalData) => {
+                        const {
+                          applicationFundId,
+                        } = getApplicationExternalData(externalData)
+                        if (applicationFundId === '') {
+                          const { periods } = getApplicationAnswers(answers)
+                          return (
+                            periods.length > 0 &&
+                            new Date(periods[0].startDate).getTime() >=
+                              currentDateStartTime()
+                          )
+                        }
+
+                        return true
+                      },
                     },
                   ],
                 }),
