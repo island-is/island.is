@@ -2,18 +2,29 @@ export const YES = 'yes'
 export const NO = 'no'
 export const MANUAL = 'manual'
 export const SPOUSE = 'spouse'
+export const PARENTAL_LEAVE = 'parentalLeave'
+export const PARENTAL_GRANT = 'parentalGrant'
+export const PARENTAL_GRANT_STUDENTS = 'parentalGrantStudents'
 
 export const FILE_SIZE_LIMIT = 10000000 // 10MB
 
 export const NO_UNION = 'F000'
 export const NO_PRIVATE_PENSION_FUND = 'X000'
+export const NO_UNEMPLOYED_BENEFITS = 'B000'
+
+export enum UnEmployedBenefitTypes {
+  vmst = 'Vinnumálastofnun (atvinnuleysisbætur)',
+  union = 'Stéttarfélagi (dagpeningar/veikindaréttur)',
+  healthInsurance = 'Sjúkratryggingar Íslands (sjúkradagpeningar)',
+  other = 'Annað',
+}
 
 export enum ParentalRelations {
   primary = 'primary',
   secondary = 'secondary',
 }
 
-export enum API_MODULE_ACTIONS {
+export enum ApiModuleActions {
   assignOtherParent = 'assignOtherParent',
   assignEmployer = 'assignEmployer',
   sendApplication = 'sendApplication',

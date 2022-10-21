@@ -24,6 +24,8 @@ import {
   NO,
   Period,
   calculatePeriodLength,
+  PARENTAL_LEAVE,
+  PARENTAL_GRANT,
 } from '@island.is/application/templates/parental-leave'
 import { EmailService } from '@island.is/email-service'
 
@@ -330,9 +332,11 @@ describe('ParentalLeaveService', () => {
   })
 
   describe('sendApplication', () => {
-    it('should send an email if applicant is employed by an employer', async () => {
+    it('should send an email if applicant is employed by an employer and is not reciving benefits', async () => {
       const application = createApplication()
       set(application.answers, 'employer.isSelfEmployed', NO)
+      set(application.answers, 'applicationType.option', PARENTAL_LEAVE)
+      set(application.answers, 'isRecivingUnemploymentBenefits', NO)
       const mockedSendEmail = jest.fn()
 
       jest.spyOn(sharedService, 'sendEmail').mockImplementation(mockedSendEmail)
@@ -350,9 +354,57 @@ describe('ParentalLeaveService', () => {
       expect(mockedSendEmail.mock.calls.length).toBe(2)
     })
 
+    it('should not send an email if applicant is reciving benefits', async () => {
+      const application = createApplication()
+      set(application.answers, 'employer.isSelfEmployed', NO)
+      set(application.answers, 'applicationType.option', PARENTAL_LEAVE)
+      set(application.answers, 'isRecivingUnemploymentBenefits', YES)
+      const mockedSendEmail = jest.fn()
+
+      jest.spyOn(sharedService, 'sendEmail').mockImplementation(mockedSendEmail)
+
+      const auth: TemplateApiModuleActionProps['auth'] = {
+        authorization: '',
+        client: '',
+        nationalId,
+        scope: [''],
+      }
+
+      await parentalLeaveService.sendApplication({ application, auth })
+
+      // One email to the applicant and one to the employer
+      expect(mockedSendEmail.mock.calls.length).toBe(0)
+    })
+
     it('should not send an email if applicant is self employed', async () => {
       const application = createApplication()
       set(application.answers, 'employer.isSelfEmployed', YES)
+
+      const mockedSendEmail = jest.fn()
+
+      jest.spyOn(sharedService, 'sendEmail').mockImplementation(mockedSendEmail)
+
+      // Also need to mock the pdf here
+      jest
+        .spyOn(parentalLeaveService, 'getSelfEmployedPdf')
+        .mockImplementation(jest.fn())
+
+      const auth: TemplateApiModuleActionProps['auth'] = {
+        authorization: '',
+        client: '',
+        nationalId,
+        scope: [''],
+      }
+
+      await parentalLeaveService.sendApplication({ application, auth })
+
+      // No email should be sent since applicant is aware of their own approval
+      expect(mockedSendEmail.mock.calls.length).toBe(0)
+    })
+
+    it('should not send an email if application is grant', async () => {
+      const application = createApplication()
+      set(application.answers, 'applicationType.option', PARENTAL_GRANT)
 
       const mockedSendEmail = jest.fn()
 
