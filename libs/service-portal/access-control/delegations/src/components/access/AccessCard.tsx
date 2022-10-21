@@ -19,15 +19,10 @@ const isDateExpired = (date: string) => new Date(date) < new Date()
 
 interface AccessCardProps {
   delegation: AuthCustomDelegation
-  group: string
   onDelete(delegation: AuthCustomDelegation): void
 }
 
-export const AccessCard = ({
-  delegation,
-  group,
-  onDelete,
-}: AccessCardProps) => {
+export const AccessCard = ({ delegation, onDelete }: AccessCardProps) => {
   const { formatMessage } = useLocale()
   const history = useHistory()
   const { pathname } = useLocation()
@@ -71,7 +66,7 @@ export const AccessCard = ({
       <Box display="flex" justifyContent="spaceBetween" alignItems="flexStart">
         <Stack space="smallGutter">
           <Text variant="eyebrow" color="purple400">
-            {group}
+            {delegation.domain.displayName}
           </Text>
           <Text variant="h3" as="h3" color={isExpired ? 'dark300' : 'dark400'}>
             {delegation?.to?.name}

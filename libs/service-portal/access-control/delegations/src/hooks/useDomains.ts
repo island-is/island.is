@@ -1,10 +1,9 @@
 import { useMemo } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { useAuthDomainsQuery } from '@island.is/service-portal/graphql'
+import { ALL_DOMAINS } from '../constants'
 
-export const ALL_DOMAINS = 'all-domains'
-
-type DomainOption = {
+export type DomainOption = {
   label: string
   value: string
 }

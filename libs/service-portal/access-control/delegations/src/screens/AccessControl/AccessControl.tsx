@@ -13,6 +13,7 @@ import {
   useAuthDelegationsQuery,
 } from '@island.is/service-portal/graphql'
 import { useDomains } from '../../hooks/useDomains'
+import { ISLAND_DOMAIN } from '../../constants/domain'
 
 const AccessControl: ServicePortalModuleComponent = (props) => {
   useNamespaces(['sp.settings-access-control', 'sp.access-control-delegations'])
@@ -20,11 +21,12 @@ const AccessControl: ServicePortalModuleComponent = (props) => {
 
   const [domainName, setDomainName] = useSessionStorage<string | null>(
     'domain',
-    null,
+    // Always default to island.is
+    ISLAND_DOMAIN,
   )
   useDomains(domainName)
 
-  const { data, loading, refetch } = useAuthDelegationsQuery({
+  const { data, loading, refetch, error } = useAuthDelegationsQuery({
     variables: {
       input: {
         domain: domainName,
@@ -35,11 +37,7 @@ const AccessControl: ServicePortalModuleComponent = (props) => {
   })
 
   return (
-    <DelegationsAccessGuard
-      {...props}
-      delegations={data?.authDelegations}
-      delegationsLoading={loading}
-    >
+    <DelegationsAccessGuard {...props}>
       <IntroHeader
         title={formatMessage(m.accessControl)}
         intro={formatMessage({
@@ -50,12 +48,17 @@ const AccessControl: ServicePortalModuleComponent = (props) => {
       />
       <Box marginTop={8}>
         <DelegationsFromMe
-          setDomainName={setDomainName}
-          domainName={domainName}
-          delegations={(data?.authDelegations as AuthCustomDelegation[]) ?? []}
-          delegationsLoading={loading}
-          refetchDelegations={(variables) => {
-            refetch(variables)
+          domain={{
+            setDomainName,
+            domainName,
+          }}
+          delegations={{
+            list: (data?.authDelegations as AuthCustomDelegation[]) ?? [],
+            error,
+            loading,
+            refetch: (variables) => {
+              refetch(variables)
+            },
           }}
         />
       </Box>

@@ -1,6 +1,6 @@
 import { gql } from '@apollo/client'
 
-export const AUTH_API_SCOPE_FRAGMENT = gql`
+export const authApiScopeFragment = gql`
   fragment AuthApiScopeFragment on AuthApiScope {
     name
     displayName

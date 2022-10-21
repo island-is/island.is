@@ -1,4 +1,5 @@
 import gql from 'graphql-tag'
+import { authCustomDelegationFragment } from '../fragments/customDelegation'
 
 export const AUTH_DELEGATION_QUERY = gql`
   query AuthDelegation($input: AuthDelegationInput!) {
@@ -13,16 +14,11 @@ export const AUTH_DELEGATION_QUERY = gql`
         nationalId
       }
       ... on AuthCustomDelegation {
-        validTo
-        scopes {
-          id
-          name
-          validTo
-          displayName
-        }
+        ...AuthCustomDelegationFragment
       }
     }
   }
+  ${authCustomDelegationFragment}
 `
 
 export const AUTH_DELEGATIONS_QUERY = gql`
@@ -35,13 +31,7 @@ export const AUTH_DELEGATIONS_QUERY = gql`
         name
       }
       ... on AuthCustomDelegation {
-        validTo
-        scopes {
-          id
-          name
-          displayName
-          validTo
-        }
+        ...AuthCustomDelegationFragment
       }
     }
   }

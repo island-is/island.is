@@ -1,16 +1,10 @@
 import { useHistory } from 'react-router-dom'
 
 import { Box, Button, Select, SkeletonLoader } from '@island.is/island-ui/core'
-import { useBreakpoint } from '@island.is/island-ui/core'
 import { m, ServicePortalPath } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 import * as styles from './DelegationsHeader.css'
-import { useDomains } from '../../hooks/useDomains'
-
-export type DomainOption = {
-  label: string
-  value: string
-}
+import { useDomains, DomainOption } from '../../hooks/useDomains'
 
 interface DelegationsHeaderProps {
   domainName?: string | null
@@ -23,7 +17,6 @@ export const DelegationsHeader = ({
 }: DelegationsHeaderProps) => {
   const { formatMessage } = useLocale()
   const history = useHistory()
-  const { sm } = useBreakpoint()
   const { domainOptions, defaultDomainOption, loading } = useDomains(domainName)
 
   const onClickHandler = () => {

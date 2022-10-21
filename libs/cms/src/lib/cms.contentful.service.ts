@@ -53,6 +53,7 @@ import { mapFrontpage, Frontpage } from './models/frontpage.model'
 import { GetFrontpageInput } from './dto/getFrontpage.input'
 import { OpenDataPage, mapOpenDataPage } from './models/openDataPage.model'
 import { GetOpenDataPageInput } from './dto/getOpenDataPage.input'
+import { GetOrganizationsInput } from './dto/getOrganizations.input'
 import {
   OpenDataSubpage,
   mapOpenDataSubpage,
@@ -137,11 +138,17 @@ export class CmsContentfulService {
     }
   }
 
-  async getOrganizations(lang = 'is-IS'): Promise<Organizations> {
+  async getOrganizations({
+    lang = 'is-IS',
+    organizationTitles,
+  }: GetOrganizationsInput): Promise<Organizations> {
     const params = {
       ['content_type']: 'organization',
       include: 10,
       limit: 1000,
+      ...(organizationTitles && {
+        'fields.title[in]': organizationTitles.join(','),
+      }),
     }
 
     const result = await this.contentfulRepository

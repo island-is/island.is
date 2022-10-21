@@ -1,0 +1,1 @@
+export { DelegationsNoData } from './DelegationsNoData'

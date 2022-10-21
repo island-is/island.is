@@ -20,7 +20,6 @@ import { useLocale } from '@island.is/localization'
 import { DelegationsFormFooter } from '../../components'
 import { servicePortalSaveAccessControl } from '@island.is/plausible'
 import {
-  AuthDelegationsDocument,
   useUpdateAuthDelegationMutation,
   useAuthScopeTreeQuery,
 } from '@island.is/service-portal/graphql'
@@ -37,7 +36,6 @@ import {
 } from './access.utils'
 import { AccessItem } from './AccessItem'
 import { AccessConfirmModal, AccessItemHeader } from '../../components/access'
-import { ISLAND_DOMAIN } from '../../constants'
 import { isDefined } from '@island.is/shared/utils'
 import * as commonAccessStyles from './access.css'
 
@@ -49,7 +47,6 @@ type AccessFormProps = {
 export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
   const [openConfirmModal, setOpenConfirmModal] = useState(false)
   const { formatMessage, lang } = useLocale()
-
   const { delegationId } = useParams<{
     delegationId: string
   }>()
@@ -59,16 +56,17 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
   const onError = () => {
     toast.error(formatMessage(coreMessages.somethingWrong))
   }
-  const [updateDelegation] = useUpdateAuthDelegationMutation({
-    refetchQueries: [{ query: AuthDelegationsDocument }],
+  const [
+    updateDelegation,
+    { loading: updateDelegationLoading },
+  ] = useUpdateAuthDelegationMutation({
     onError,
   })
 
   const { data: scopeTreeData, loading } = useAuthScopeTreeQuery({
     variables: {
       input: {
-        // TODO use domain from delegation
-        domain: ISLAND_DOMAIN,
+        domain: delegation.domain.name,
         lang,
       },
     },
@@ -200,7 +198,7 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
         onClose={() => {
           setOpenConfirmModal(false)
         }}
-        onConfirm={async () => {
+        onConfirm={() => {
           onSubmit()
         }}
         label={formatMessage(m.accessControl)}
@@ -211,11 +209,13 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
         isVisible={openConfirmModal}
         delegation={delegation}
         domain={{
-          name: 'Landsbankaappið',
+          name: delegation?.domain?.displayName,
+          // TODO use organisation name when available
           imgSrc: './assets/images/educationDegree.svg',
         }}
         scopes={scopes}
         validityPeriod={validityPeriod}
+        loading={updateDelegationLoading}
       />
     </>
   )

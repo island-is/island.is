@@ -1,34 +1,46 @@
 import { useState } from 'react'
+import { ApolloError } from 'apollo-client'
 import {
   SkeletonLoader,
   GridRow,
   GridColumn,
   GridContainer,
   Stack,
+  AlertBanner,
 } from '@island.is/island-ui/core'
 import { AuthCustomDelegation } from '@island.is/api/schema'
-import { DelegationsHeader, DomainOption } from '../DelegationsHeader'
+import { DelegationsHeader } from '../DelegationsHeader'
 import { DelegationsEmptyState } from '../DelegationsEmptyState'
 import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
 import { AccessDeleteModal, AccessCard } from '../access'
 import { isDefined } from '@island.is/shared/utils'
 import type { AuthDelegationsQueryVariables } from '@island.is/service-portal/graphql'
+import { DomainOption } from '../../hooks/useDomains'
+import { ALL_DOMAINS } from '../../constants'
 
 type DelegationsFromMeProps = {
-  domainName: string | null
-  setDomainName(value: string | null): void
-  refetchDelegations(variables: AuthDelegationsQueryVariables): void
-  delegations: AuthCustomDelegation[]
-  delegationsLoading: boolean
+  domain: {
+    domainName: string | null
+    setDomainName(value: string | null): void
+  }
+
+  delegations: {
+    list: AuthCustomDelegation[]
+    loading: boolean
+    error?: ApolloError
+    refetch(variables: AuthDelegationsQueryVariables): void
+  }
 }
 
 export const DelegationsFromMe = ({
-  domainName,
-  setDomainName,
-  delegations,
-  delegationsLoading,
-  refetchDelegations,
+  domain: { domainName, setDomainName },
+  delegations: {
+    list: delegations,
+    loading: delegationsLoading,
+    error: delegationsError,
+    refetch: refetchDelegations,
+  },
 }: DelegationsFromMeProps) => {
   const { formatMessage } = useLocale()
   const [delegation, setDelegation] = useState<AuthCustomDelegation | null>(
@@ -36,7 +48,10 @@ export const DelegationsFromMe = ({
   )
 
   const onDomainChange = (option: DomainOption) => {
-    const domainName = option.value
+    // Select components only supports string or number values, there for we use
+    // the string all-domains as a value for the all domains option.
+    // The service takes null as a value for all domains.
+    const domainName = option.value === ALL_DOMAINS ? null : option.value
     setDomainName(domainName)
     refetchDelegations({
       input: {
@@ -58,6 +73,11 @@ export const DelegationsFromMe = ({
           <GridColumn paddingBottom={4} span="12/12">
             {delegationsLoading ? (
               <SkeletonLoader width="100%" height={191} />
+            ) : delegationsError ? (
+              <AlertBanner
+                description={formatMessage(m.errorFetch)}
+                variant="error"
+              />
             ) : delegations.length === 0 ? (
               <DelegationsEmptyState />
             ) : (
@@ -68,7 +88,6 @@ export const DelegationsFromMe = ({
                       <AccessCard
                         key={delegation.id}
                         delegation={delegation}
-                        group="Ísland.is"
                         onDelete={(delegation) => {
                           setDelegation(delegation)
                         }}

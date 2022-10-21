@@ -8,7 +8,7 @@ const MOCK_DATA: Domain[] = [
     name: '@island.is',
     displayName: 'Ísland.is',
     description: 'Island.is',
-    organisationLogoKey: 'Island.is',
+    organisationLogoKey: 'Stafrænt Ísland',
     nationalId: '...',
   },
   {

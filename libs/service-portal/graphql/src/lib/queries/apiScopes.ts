@@ -1,5 +1,5 @@
 import { gql } from '@apollo/client'
-import { AUTH_API_SCOPE_FRAGMENT } from '../fragments/scope'
+import { authApiScopeFragment } from '../fragments/scope'
 
 export const AUTH_API_SCOPES_QUERY = gql`
   query AuthApiScopes($input: AuthApiScopesInput!) {
@@ -43,5 +43,5 @@ export const AUTH_SCOPE_TREE_QUERY = gql`
       }
     }
   }
-  ${AUTH_API_SCOPE_FRAGMENT}
+  ${authApiScopeFragment}
 `

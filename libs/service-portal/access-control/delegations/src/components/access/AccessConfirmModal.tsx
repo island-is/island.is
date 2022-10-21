@@ -12,7 +12,6 @@ import {
 import { m } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 import { formatNationalId } from '@island.is/service-portal/core'
-import { useUpdateAuthDelegationMutation } from '@island.is/service-portal/graphql'
 import { useState } from 'react'
 import { DelegationsFormFooter } from '../DelegationsFormFooter'
 import { IdentityCard } from '../IdentityCard'
@@ -34,6 +33,7 @@ type AccessConfirmModalProps = ModalProps & {
   scopes?: MappedScope[]
   onConfirm(): void
   validityPeriod: Date | null
+  loading: boolean
 }
 
 export const AccessConfirmModal = ({
@@ -43,13 +43,13 @@ export const AccessConfirmModal = ({
   onConfirm,
   scopes,
   validityPeriod,
+  loading,
   ...rest
 }: AccessConfirmModalProps) => {
   const { formatMessage } = useLocale()
   const { userInfo } = useAuth()
   const [error, setError] = useState(false)
   const { md } = useBreakpoint()
-  const [updateAuthDelegationn, { loading }] = useUpdateAuthDelegationMutation()
 
   const onConfirmHandler = async () => {
     if (!delegation.id || !scopes) {
@@ -57,25 +57,7 @@ export const AccessConfirmModal = ({
       return
     }
 
-    try {
-      const { errors } = await updateAuthDelegationn({
-        variables: {
-          input: {
-            delegationId: delegation.id,
-            scopes: scopes.map(({ name, validTo }) => ({ name, validTo })),
-          },
-        },
-      })
-
-      if (errors) {
-        setError(true)
-        return
-      }
-
-      onConfirm()
-    } catch (error) {
-      setError(true)
-    }
+    onConfirm()
   }
 
   const toName = delegation?.to?.name
