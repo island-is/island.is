@@ -112,9 +112,9 @@ const template: ApplicationTemplate<
           onEntry: {
             apiModuleAction: ApiActions.createCharge,
           },
-          onExit: {
-            apiModuleAction: ApiActions.submitApplication,
-          },
+          // onExit: {
+          //   apiModuleAction: ApiActions.initReview,
+          // },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -144,7 +144,14 @@ const template: ApplicationTemplate<
             },
           },
           progress: 0.25,
-          lifecycle: EphemeralStateLifeCycle,
+          lifecycle: pruneAfterDays(7),
+          // onEntry: {
+          //   apiModuleAction: ApiActions.addReview,
+          //   shouldPersistToExternalData: true,
+          // },
+          // onExit: {
+          //   apiModuleAction: ApiActions.submitApplication,
+          // },
           roles: [
             {
               id: Roles.APPLICANT,
