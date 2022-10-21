@@ -22,7 +22,10 @@ const EstateTemplate: ApplicationTemplate<
   EstateEvent
 > = {
   type: ApplicationTypes.ESTATE,
-  name: m.prerequisitesTitle,
+  name: ({ answers }) =>
+    answers.selectedEstate
+      ? m.prerequisitesTitle.defaultMessage + ' - ' + answers.selectedEstate
+      : m.prerequisitesTitle.defaultMessage,
   institution: m.institution,
   dataSchema: estateSchema,
   featureFlag: Features.estateApplication,
@@ -67,8 +70,8 @@ const EstateTemplate: ApplicationTemplate<
         meta: {
           name: '',
           actionCard: {
-            title: '', //TODO
-            description: '', //TODO
+            title: '', //TBD
+            description: '', //TBD
           },
           progress: 0.25,
           lifecycle: DefaultStateLifeCycle,

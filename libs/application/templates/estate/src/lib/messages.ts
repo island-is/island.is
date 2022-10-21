@@ -172,11 +172,6 @@ export const m = defineMessages({
     defaultMessage: 'Vantar uppl hér',
     description: '',
   },
-  willsAndAgreements: {
-    id: 'es.application:willsAndAgreements',
-    defaultMessage: 'Erfðaskrá og kaupmáli',
-    description: '',
-  },
   willsInCustody: {
     id: 'es.application:willsInCustody',
     defaultMessage: 'Erfðaskrá í vörslu sýslumanns',

@@ -19,7 +19,7 @@ type Props = {
   }
 }
 
-const Cards: FC<FieldBaseProps & Props> = ({ application, field }) => {
+export const Cards: FC<FieldBaseProps & Props> = ({ application, field }) => {
   const { formatMessage } = useLocale()
   return (
     <GridRow marginBottom={3}>

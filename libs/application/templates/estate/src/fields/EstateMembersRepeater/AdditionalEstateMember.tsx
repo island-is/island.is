@@ -13,7 +13,7 @@ import {
   SelectController,
 } from '@island.is/shared/form-fields'
 import { Box, GridColumn, GridRow, Button } from '@island.is/island-ui/core'
-import * as styles from './EstateMembersRepeater.css'
+import * as styles from '../styles.css'
 import { useLazyQuery } from '@apollo/client'
 import { IdentityInput, Query } from '@island.is/api/schema'
 import * as kennitala from 'kennitala'
@@ -213,3 +213,5 @@ export const AdditionalEstateMember = ({
     </Box>
   )
 }
+
+export default AdditionalEstateMember

@@ -37,7 +37,7 @@ export const form: Form = buildForm({
               titleVariant: 'h3',
             }),
             buildDescriptionField({
-              id: 'spaceOE',
+              id: 'space0',
               title: '',
               space: 'gutter',
             }),

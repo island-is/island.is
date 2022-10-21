@@ -1202,6 +1202,11 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     titleApproved: {
       id: 'pl.application:review.titleApproved',
+      defaultMessage: 'Umsókn þín er samþykkt',
+      description: 'Your application is approved',
+    },
+    titleReceived: {
+      id: 'pl.application:review.titleReceived',
       defaultMessage: 'Umsókn þín er móttekið',
       description: 'Your application is received',
     },
@@ -1303,6 +1308,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       description:
         'Your employer will confirm the dates of your parental leave.',
     },
+    receivedTitle: {
+      id: 'pl.application:review.received.title',
+      defaultMessage: 'Vinnumálastofnun hefur móttekið umsókn',
+      description: 'Vinnumálastofnun has received your application',
+    },
     deptTitle: {
       id: 'pl.application:review.dept.title',
       defaultMessage: 'Vinnumálastofnun hefur móttekið umsókn',
@@ -1378,6 +1388,12 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:draftFlow.requiresAction.VMLSTDesc',
       defaultMessage: 'Vinnumalastofnun did not approve your application.',
       description: 'Vinnumalastofnun did not approve your application.',
+    },
+    draftAdditionalDocumentRequiredDesc: {
+      id: 'pl.application:draftFlow.requiresAction.additionalDocument',
+      defaultMessage:
+        'Vinnumalastofnun vantar frekari gögn vegna umsóknarinnar',
+      description: 'Additional document required',
     },
     modifyDraftDesc: {
       id: 'pl.application:draftFlow.modifyDesc',
@@ -2009,12 +2025,12 @@ export const statesMessages = defineMessages({
 
   vinnumalastofnunApprovalTitle: {
     id: 'pl.application:vinnumalastofnunApproval.title',
-    defaultMessage: 'Vinnumálastofnun samþykkti',
+    defaultMessage: 'Umsókn er móttekin',
     description: 'Title of the state - vinnumalastofnunApproval',
   },
   vinnumalastofnunApprovalDescription: {
     id: 'pl.application:vinnumalastofnunApproval.description',
-    defaultMessage: 'Vinnumálastofnun samþykkti umsóknarinnar.',
+    defaultMessage: 'Vinnumálastofnun hefur móttekið umsókn.',
     description: 'Description of the state - vinnumalastofnunApproval',
   },
 
@@ -2027,6 +2043,12 @@ export const statesMessages = defineMessages({
     id: 'pl.application:vinnumalastofnunAction.description',
     defaultMessage: 'Vinnumálastofnun krefst aðgerðar vegna umsóknarinnar.',
     description: 'Description of the state - vinnumalastofnunAction',
+  },
+
+  additionalDocumentRequiredDescription: {
+    id: 'pl.application:additionalDocumentRequired.description',
+    defaultMessage: 'Vinnumálastofnun vantar frekari gögn vegna umsóknarinnar.',
+    description: 'Description of the state - additionalDocumentRequired',
   },
 
   approvedTitle: {
@@ -2084,6 +2106,23 @@ export const statesMessages = defineMessages({
     id: 'pl.application:employerEditsAction.description',
     defaultMessage: 'Vinnuveitandi þinn hafnaði tímabreytingum þínum.',
     description: 'Description of the state - employerEditsAction',
+  },
+
+  closedDescription: {
+    id: 'pl.application:closed.description',
+    defaultMessage: 'Umsóknin hefur verið afgreidd',
+    description: 'Description of the state - closed',
+  },
+
+  receivedTitle: {
+    id: 'pl.application:received.title',
+    defaultMessage: 'Móttekið',
+    description: 'Title of the state - received',
+  },
+  receivedDescription: {
+    id: 'pl.application:received.description',
+    defaultMessage: 'Umsóknin hefur verið móttekið',
+    description: 'Description of the state - received',
   },
 
   vinnumalastofnunApproveEditsTitle: {
