@@ -65,7 +65,7 @@ export const estateSchema = z.object({
     caseNumber: z.string().nonempty().optional(),
     dateOfDeath: z.date().optional(),
     nameOfDeceased: z.string().nonempty().optional(),
-    nationalIdOfDeceased: z.string().length(10).optional(),
+    nationalIdOfDeceased: z.string().optional(),
     districtCommissionerHasWill: z.boolean().optional(),
   }),
 
@@ -95,7 +95,7 @@ export const estateSchema = z.object({
   stocks: z
     .object({
       organization: z.string().optional(),
-      ssn: z.string().length(10).optional(),
+      ssn: z.string().optional(),
       faceValue: z.string().optional(),
       rateOfExchange: z.string().optional(),
       value: z.string().optional(),
@@ -115,7 +115,7 @@ export const estateSchema = z.object({
   debts: z
     .object({
       creditorName: z.string().optional(),
-      ssn: z.string().length(10).optional(),
+      ssn: z.string().optional(),
       balance: z.string().optional(),
     })
     .array()

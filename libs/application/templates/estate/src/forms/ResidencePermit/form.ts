@@ -236,7 +236,11 @@ export const form: Form = buildForm({
                         title: m.stocksOrganization.defaultMessage,
                         id: 'organization',
                       },
-                      { title: m.stocksSsn.defaultMessage, id: 'ssn' },
+                      {
+                        title: m.stocksSsn.defaultMessage,
+                        id: 'ssn',
+                        format: '######-####',
+                      },
                       {
                         title: m.stocksFaceValue.defaultMessage,
                         id: 'faceValue',
@@ -343,7 +347,11 @@ export const form: Form = buildForm({
                     title: m.debtsCreditorName.defaultMessage,
                     id: 'creditorName',
                   },
-                  { title: m.debtsSsn.defaultMessage, id: 'ssn' },
+                  {
+                    title: m.debtsSsn.defaultMessage,
+                    id: 'ssn',
+                    format: '######-####',
+                  },
                   { title: m.debtsBalance.defaultMessage, id: 'balance' },
                 ],
                 repeaterButtonText: m.debtsRepeaterButton.defaultMessage,
