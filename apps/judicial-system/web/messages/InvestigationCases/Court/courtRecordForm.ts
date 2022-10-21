@@ -171,6 +171,7 @@ export const icCourtRecord = {
       description:
         'Notaður sem titill fyrir "Úrskurðarorð" hlutann á þingbókar skrefi í rannsóknarheimildum.',
     },
+    // TODO: Remove appealDecision section
     appealDecision: defineMessages({
       title: {
         id:
