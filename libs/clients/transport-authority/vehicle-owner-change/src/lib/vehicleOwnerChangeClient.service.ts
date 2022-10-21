@@ -10,18 +10,22 @@ export class VehicleOwnerChangeClient {
     currentUserSsn: string,
     ownerChange: OwnerChange,
   ): Promise<void> {
+    // TODOx disabled untill this API goes on xroad
+    return
+
     const result = await this.ownerchangeApi.rootPost({
       postOwnerChange: {
         permno: ownerChange.permno,
-        sellerPersonIdNumber: ownerChange.sellerSsn,
-        sellerEmail: ownerChange.sellerEmail,
-        buyerPersonIdNumber: ownerChange.buyerSsn,
-        buyerEmail: ownerChange.buyerEmail,
+        sellerPersonIdNumber: ownerChange.seller.ssn,
+        sellerEmail: ownerChange.seller.email,
+        buyerPersonIdNumber: ownerChange.buyer.ssn,
+        buyerEmail: ownerChange.buyer.email,
         dateOfPurchase: ownerChange.dateOfPurchase,
         saleAmount: ownerChange.saleAmount,
         insuranceCompanyCode: ownerChange.insuranceCompanyCode,
-        useGroup: ownerChange.useGroup,
-        //operatorEmail: xx, //TODOx afhverju þarf þetta, ætti ekki að vera inní operators array, eða á bara við um main?
+        useGroup: '000',
+        operatorEmail: ownerChange.operators?.find((x) => x.isMainOperator)
+          ?.email,
         operators: ownerChange.operators?.map((operator) => ({
           personIdNumber: operator.ssn,
           mainOperator: operator.isMainOperator ? 1 : 0,

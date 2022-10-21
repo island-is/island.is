@@ -44,6 +44,7 @@
     "api-domains-payment-schedule": "libs/api/domains/payment-schedule",
     "api-domains-regulations": "libs/api/domains/regulations",
     "api-domains-syslumenn": "libs/api/domains/syslumenn",
+    "api-domains-transport-authority-vehicle-owner-change": "libs/api/domains/transport-authority/vehicle-owner-change",
     "api-domains-user-profile": "libs/api/domains/user-profile",
     "api-domains-vehicles": "libs/api/domains/vehicles",
     "api-mocks": "libs/api/mocks",

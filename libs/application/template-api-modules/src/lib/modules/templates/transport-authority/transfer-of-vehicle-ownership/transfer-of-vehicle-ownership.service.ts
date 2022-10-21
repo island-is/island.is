@@ -2,11 +2,14 @@ import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { ChargeItemCode } from '@island.is/shared/constants'
+import { VehicleOwnerChangeService } from '@island.is/api/domains/transport-authority/vehicle-owner-change'
+import { TransferOfVehicleOwnershipAnswers } from '@island.is/application/templates/transport-authority/transfer-of-vehicle-ownership'
 
 @Injectable()
 export class TransferOfVehicleOwnershipService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
+    private readonly vehicleOwnerChangeService: VehicleOwnerChangeService,
   ) {}
 
   async createCharge({
@@ -49,6 +52,40 @@ export class TransferOfVehicleOwnershipService {
       // )
     }
 
+    const answers = application.answers as TransferOfVehicleOwnershipAnswers
+
+    // Submit the application
+    await this.vehicleOwnerChangeService.saveOwnerChange(auth.nationalId, {
+      permno: answers?.vehicle?.plate,
+      seller: {
+        ssn: answers?.seller?.nationalId,
+        email: answers?.seller?.email,
+      },
+      buyer: {
+        ssn: answers?.buyer?.nationalId,
+        email: answers?.buyer?.email,
+      },
+      dateOfPurchase: new Date(answers?.vehicle?.date || Date.now()),
+      saleAmount: Number(answers?.vehicle?.salePrice) || 0,
+      insuranceCompanyCode: 'TODOx vantar',
+      operators: [
+        //TODOx vantar
+        // {
+        //   ssn: '',
+        //   email: '',
+        //   isMainOperator: false,
+        // },
+      ],
+      coOwners: [
+        //TODOx vantar
+        // {
+        //   ssn: '',
+        //   email: '',
+        // },
+      ],
+    })
+
+    // If no error is thrown, submit was successful
     return {
       success: true,
     }

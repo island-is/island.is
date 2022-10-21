@@ -107,96 +107,6 @@
         }
       }
     },
-    "/withcontract": {
-      "post": {
-        "tags": ["OwnerChange"],
-        "summary": "Post owner change",
-        "parameters": [
-          {
-            "name": "json",
-            "in": "query",
-            "description": "Owner change model",
-            "schema": {
-              "$ref": "#/components/schemas/PostOwnerChangeWithContract"
-            }
-          },
-          {
-            "name": "api-version",
-            "in": "query",
-            "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Success"
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/financialcompanies": {
       "post": {
         "tags": ["OwnerChange"],
@@ -1042,111 +952,6 @@
         "additionalProperties": false,
         "description": "Model to post owner change for financial companies"
       },
-      "PostOwnerChangeWithContract": {
-        "required": [
-          "buyerPersonIdNumber",
-          "contract",
-          "dateOfPurchase",
-          "insuranceCompanyCode",
-          "permno",
-          "reportingPersonIdNumber",
-          "saleAmount",
-          "sellerPersonIdNumber"
-        ],
-        "type": "object",
-        "properties": {
-          "permno": {
-            "maxLength": 5,
-            "minLength": 5,
-            "type": "string",
-            "description": "Vehicle permanent number"
-          },
-          "buyerPersonIdNumber": {
-            "maxLength": 10,
-            "minLength": 10,
-            "pattern": "^[0-9]{1,10}$",
-            "type": "string",
-            "description": "Buyer's social security number"
-          },
-          "sellerPersonIdNumber": {
-            "maxLength": 10,
-            "minLength": 10,
-            "pattern": "^[0-9]{1,10}$",
-            "type": "string",
-            "description": "Seller's social security number"
-          },
-          "dateOfPurchase": {
-            "type": "string",
-            "description": "Date when vehicle was purchased",
-            "format": "date-time"
-          },
-          "insuranceCompanyCode": {
-            "maxLength": 4,
-            "minLength": 4,
-            "type": "string",
-            "description": "Code for insurance company, see REST GET endpoint /vehicle/codetables/insurancecompanies"
-          },
-          "useGroup": {
-            "maxLength": 3,
-            "minLength": 3,
-            "type": "string",
-            "description": "Use group for vehicle, see REST GET endpoint /vehicle/codetables/usegroups",
-            "nullable": true
-          },
-          "saleAmount": {
-            "type": "integer",
-            "description": "Amount in purchase",
-            "format": "int32"
-          },
-          "sellerEmail": {
-            "type": "string",
-            "description": "Email for seller",
-            "format": "email",
-            "nullable": true
-          },
-          "buyerEmail": {
-            "type": "string",
-            "description": "Email for buyer",
-            "format": "email",
-            "nullable": true
-          },
-          "operatorEmail": {
-            "type": "string",
-            "description": "Email of operator",
-            "format": "email",
-            "nullable": true
-          },
-          "operators": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/PostOperator"
-            },
-            "description": "List of vehicle operators",
-            "nullable": true
-          },
-          "coOwners": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/PostCoOwner"
-            },
-            "description": "List of vehicle co owners",
-            "nullable": true
-          },
-          "reportingPersonIdNumber": {
-            "maxLength": 10,
-            "minLength": 10,
-            "type": "string",
-            "description": "Reporting person's social security number (car sale)"
-          },
-          "contract": {
-            "type": "string",
-            "description": "Contract of owner change",
-            "format": "binary"
-          }
-        },
-        "additionalProperties": false,
-        "description": "Post owner change with contract in pdf format"
-      },
       "PostPersonOwnerChange": {
         "required": [
           "currentOwnerPersonIdNumber",
@@ -1293,7 +1098,7 @@
             "nullable": true
           }
         },
-        "additionalProperties": {}
+        "additionalProperties": false
       }
     },
     "securitySchemes": {

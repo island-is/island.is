@@ -116,7 +116,6 @@ const template: ApplicationTemplate<
           name: 'Completed',
           progress: 1,
           lifecycle: pruneAfterDays(3 * 30),
-          // onEntry: TODOx
           actionCard: {
             tag: {
               label: m.actionCardDone,

@@ -1,5 +1,5 @@
 export enum ChargeItemCode {
   CRIMINAL_RECORD = 'AY101',
   MORTGAGE_CERTIFICATE = 'AY102',
-  TRANSPORT_AUTHORITY_XXX = 'AY101', //TODOx
+  TRANSPORT_AUTHORITY_XXX = 'AY101', //TODOx get correct charge item code
 }
