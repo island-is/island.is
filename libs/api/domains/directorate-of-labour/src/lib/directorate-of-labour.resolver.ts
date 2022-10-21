@@ -14,6 +14,7 @@ import { Union } from '../models/union.model'
 import { PensionFund } from '../models/pensionFund.model'
 import { ParentalLeaveEntitlement } from '../models/parentalLeaveEntitlement.model'
 import { ParentalLeavePaymentPlan } from '../models/parentalLeavePaymentPlan.model'
+import { ApplicationInformation } from '../models/applicationInformation.model'
 import { PregnancyStatus } from '../models/pregnancyStatus.model'
 import { ParentalLeave } from '../models/parentalLeave.model'
 import { ParentalLeavePeriodEndDate } from '../models/parentalLeavePeriodEndDate.model'
@@ -30,6 +31,20 @@ import { DirectorateOfLabourService } from './directorate-of-labour.service'
 @Resolver()
 export class DirectorateOfLabourResolver {
   constructor(private directorateOfLabourService: DirectorateOfLabourService) {}
+
+  @Query(() => ApplicationInformation)
+  async getApplicationInformation(
+    @Args('applicationId') applicationId: string,
+    @Args('nationalId') nationalId: string,
+    @CurrentUser() user: User,
+  ): Promise<ApplicationInformation | null> {
+    if (nationalId !== user.nationalId) {
+      throw new Error(
+        `Access Denied: Applicant may not view another's application information`,
+      )
+    }
+    return this.directorateOfLabourService.getApplicationInfo(applicationId)
+  }
 
   @Query(() => ParentalLeaveEntitlement, { nullable: true })
   async getParentalLeavesEntitlements(
