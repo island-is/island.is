@@ -11,7 +11,6 @@ import { Application, DefaultEvents } from '@island.is/application/types'
 import { EstateAsset, EstateMember } from '@island.is/clients/syslumenn'
 import { m } from '../../lib/messages'
 import { deceasedInfoFields } from '../sharedSections/deceasedInfoFields'
-import { willsAndAgreements } from '../sharedSections/willsAndAgreements'
 import { format as formatNationalId } from 'kennitala'
 
 export const overview = buildSection({
@@ -65,7 +64,6 @@ export const overview = buildSection({
               ),
           },
         ),
-        ...willsAndAgreements,
         buildDescriptionField({
           id: 'space1',
           title: '',

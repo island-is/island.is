@@ -6,7 +6,6 @@ import { m } from '../../../lib/messages'
 import { Application } from '@island.is/application/types'
 import { format as formatNationalId } from 'kennitala'
 import { EstateMember, EstateRegistrant } from '@island.is/clients/syslumenn'
-import { willsAndAgreements } from '../../sharedSections/willsAndAgreements'
 
 export const estateMembersFields = [
   buildDescriptionField({
@@ -32,5 +31,4 @@ export const estateMembersFields = [
         })),
     },
   ),
-  ...willsAndAgreements,
 ]

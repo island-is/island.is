@@ -11,7 +11,6 @@ import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../../lib/messages'
 import { announcerInfo } from '../sharedSections/announcerInfo'
 import { dataCollection } from '../sharedSections/dataCollection'
-import { willsAndAgreements } from '../sharedSections/willsAndAgreements'
 import { overview } from './overviewSection'
 
 export const form: Form = buildForm({
@@ -43,7 +42,6 @@ export const form: Form = buildForm({
               id: 'estate.estateMembers',
               component: 'EstateMembersRepeater',
             }),
-            ...willsAndAgreements,
           ],
         }),
       ],
