@@ -31,7 +31,7 @@ interface ShipSearchProps {
 }
 
 export const ShipSearch = ({
-  shipDetailsHref = '/s/fiskistofa/skip',
+  shipDetailsHref = '/v/maelabord-fiskistofu?selectedTab=skip',
   searchStringIsTooShort = 'Leitarstrengur þarf að vera a.m.k. 2 stafir',
   resultsFound = 'Fjöldi skipa:',
   search = 'Leita',
@@ -51,7 +51,7 @@ export const ShipSearch = ({
   const router = useRouter()
 
   const getShipDetailsHref = (id: number) => {
-    return `${shipDetailsHref}?nr=${id}`
+    return `${shipDetailsHref}&nr=${id}`
   }
 
   const [loadShips, { data, error, loading, called }] = useLazyQuery<

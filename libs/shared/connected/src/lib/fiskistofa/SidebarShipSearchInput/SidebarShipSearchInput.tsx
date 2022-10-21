@@ -9,9 +9,11 @@ interface SidebarShipSearchInputProps {
   label?: string
 }
 
+// TODO: add suggestions to search
+
 export const SidebarShipSearchInput = ({
-  shipDetailsHref = '/s/fiskistofa/skip',
-  shipSearchHref = '/s/fiskistofa/skipaleit',
+  shipDetailsHref = '/v/maelabord-fiskistofu?selectedTab=skip&nr=3000',
+  shipSearchHref = '/v/maelabord-fiskistofu?selectedTab=skipaleit',
   placeholder = 'Skipaskrárnúmer eða nafn',
   label = 'Skoða skip',
 }: SidebarShipSearchInputProps) => {
