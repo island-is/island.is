@@ -4,7 +4,6 @@ import { uuid } from 'uuidv4'
 import {
   animate,
   AnimatePresence,
-  LayoutGroup,
   motion,
   MotionValue,
   Reorder,
@@ -40,6 +39,10 @@ interface CaseFileProps {
   index: number
   onReorder: (id?: string) => void
   onOpen: (id: string) => void
+}
+
+interface SimpleInputProps {
+  placeholder: string
 }
 
 export interface ReorderableItem {
@@ -163,8 +166,21 @@ const renderChapter = (chapter: number, name: string) => (
   </Box>
 )
 
+const SimpleInput: React.FC<SimpleInputProps> = (props) => {
+  const { placeholder } = props
+
+  return (
+    <input
+      type="text"
+      className={styles.simpleInput}
+      placeholder={placeholder}
+    />
+  )
+}
+
 const CaseFile: React.FC<CaseFileProps> = (props) => {
   const { caseFile, index, onReorder, onOpen } = props
+  const { formatMessage } = useIntl()
   const y = useMotionValue(0)
   const boxShadow = useRaisedShadow(y)
   const controls = useDragControls()
@@ -225,21 +241,21 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
                 <motion.div
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
-                  transition={{ duration: 4, delay: 5 }}
+                  transition={{ duration: 1, delay: 2 }}
                   key={`${caseFile.id}-edit`}
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                  }}
                 >
-                  <Box>asd</Box>
+                  <Box>
+                    <SimpleInput
+                      placeholder={formatMessage(m.simpleInputPlaceholder)}
+                    />
+                  </Box>
                 </motion.div>
               ) : (
                 <motion.div
                   initial={false}
                   exit={{ y: -20, opacity: 0 }}
                   key={`${caseFile.id}-view`}
-                  transition={{ duration: 4 }}
+                  transition={{ duration: 1 }}
                   style={{
                     display: 'flex',
                     justifyContent: 'space-between',
@@ -260,7 +276,7 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
                       <Icon icon="open" type="outline" size="small" />
                     </Box>
                   </Box>
-                  <Box display="flex">
+                  <Box display="flex" alignItems="center">
                     <Box marginRight={1}>
                       <Text variant="small">
                         {formatDate(caseFile.created, 'P')}

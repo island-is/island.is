@@ -22,6 +22,12 @@ export const reorderItem = style({
 
 export const reorderItemAnimationWrapper = style({
   width: '100%',
-  height: '56px',
-  paddingTop: `${theme.spacing[2]}px`,
+  height: `${theme.spacing[7]}px`,
+  lineHeight: `${theme.spacing[7]}px`,
+})
+
+export const simpleInput = style({
+  height: `${theme.spacing[6]}px`,
+  borderRadius: theme.border.radius.large,
+  border: `1px solid ${theme.color.blue200}`,
 })
