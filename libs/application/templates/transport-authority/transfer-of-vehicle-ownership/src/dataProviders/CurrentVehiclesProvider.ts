@@ -28,12 +28,12 @@ export class CurrentVehiclesProvider extends BasicDataProvider {
 
       const result = response.data.currentVehicles
 
-      // // Validate that user has at least 1 vehicle he can transfer
-      // if (!result || !result.length) {
-      //   return Promise.reject({
-      //     reason: externalData.currentVehicles.empty.defaultMessage,
-      //   })
-      // }
+      // Validate that user has at least 1 vehicle he can transfer
+      if (!result || !result.length) {
+        return Promise.reject({
+          reason: externalData.currentVehicles.empty.defaultMessage,
+        })
+      }
 
       return Promise.resolve(result)
     })

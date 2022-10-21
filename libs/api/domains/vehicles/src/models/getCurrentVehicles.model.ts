@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+import { VehiclesFees } from './getVehicleDetail.model'
 
 @ObjectType()
 export class VehiclesCurrentVehicle {
@@ -13,4 +14,13 @@ export class VehiclesCurrentVehicle {
 
   @Field({ nullable: true })
   role?: string
+
+  @Field(() => Boolean, { nullable: true })
+  isStolen?: boolean
+}
+
+@ObjectType()
+export class VehiclesCurrentVehicleWithFees extends VehiclesCurrentVehicle {
+  @Field(() => VehiclesFees, { nullable: true })
+  fees?: VehiclesFees
 }
