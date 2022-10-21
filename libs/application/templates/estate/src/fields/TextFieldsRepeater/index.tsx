@@ -76,7 +76,7 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
                     <InputController
                       id={`${fieldIndex}.${field.id}`}
                       name={`${fieldIndex}.${field.id}`}
-                      defaultValue=''
+                      defaultValue=""
                       format={field.format}
                       label={field.title}
                       placeholder={field.placeholder}
