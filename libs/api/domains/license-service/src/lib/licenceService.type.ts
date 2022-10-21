@@ -146,7 +146,7 @@ export type GenericLicenseCached = {
   payload?: GenericUserLicensePayload
 }
 
-type LicenseLabelsObject = {
+export type LicenseLabelsObject = {
   [x: string]: string
 }
 export type GenericLicenseLabels = {
