@@ -53,7 +53,7 @@ describe('FileController - Update case file order', () => {
     }
   })
 
-  describe('when called with empty list of file ordering', () => {
+  describe('when called with empty list of updates', () => {
     const caseId = uuid()
     const fileUpdates: UpdateFileDto[] = []
 
