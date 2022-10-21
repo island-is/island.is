@@ -63,8 +63,8 @@ export const DigitalTachographDriversCardForm: Form = buildForm({
               subTitle: '',
             }),
             buildDataProviderItem({
-              id: 'nationalRegistryBirthplace',
-              type: 'NationalRegistryBirthplaceProvider',
+              id: 'nationalRegistryCustom',
+              type: 'NationalRegistryCustomProvider',
               title: '',
               subTitle: '',
             }),

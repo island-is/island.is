@@ -119,4 +119,9 @@ export const m = defineMessages({
     defaultMessage: 'Reyndu aftur síðar',
     description: 'Unhandled error in data provider',
   },
+  nationalRegistryDomicileProviderErrorMissing: {
+    id: 'ta.dtdc.application:drivingLicenseErrorMissing',
+    defaultMessage: 'Þú ert ekki með lögheimili á Íslandi blabla',
+    description: 'You do not have a domicile in Iceland blabla',
+  },
 })
