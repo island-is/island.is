@@ -20,10 +20,8 @@ import {
 import { DelegationScope } from './models/delegation-scope.model'
 import { Delegation } from './models/delegation.model'
 import { DelegationValidity } from './types/delegationValidity'
-import {
-  getScopeValidityWhereClause,
-  validateScopesPeriod,
-} from './utils/scopes'
+import { validateScopesPeriod } from './utils/scopes'
+import { NamesService } from './names.service'
 
 /**
  * Service class for outgoing delegations.
@@ -35,6 +33,7 @@ export class DelegationsOutgoingService {
     @InjectModel(Delegation)
     private delegationModel: typeof Delegation,
     private delegationScopeService: DelegationScopeService,
+    private namesService: NamesService,
   ) {}
 
   async findAll(
@@ -147,10 +146,17 @@ export class DelegationsOutgoingService {
     })
 
     if (!delegation) {
+      const [fromDisplayName, toName] = await Promise.all([
+        this.namesService.getUserName(user),
+        this.namesService.getPersonName(createDelegation.toNationalId),
+      ])
+
       delegation = await this.delegationModel.create({
         id: uuid(),
         fromNationalId: user.nationalId,
         toNationalId: createDelegation.toNationalId,
+        fromDisplayName,
+        toName,
       })
     }
 

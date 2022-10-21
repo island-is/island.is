@@ -38,7 +38,6 @@ import { DomainsModule } from './domains/domains.module'
         FeatureFlagConfig,
         IdsClientConfig,
         NationalRegistryClientConfig,
-        RskProcuringClientConfig,
         XRoadConfig,
       ],
     }),

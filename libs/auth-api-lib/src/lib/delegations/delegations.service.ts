@@ -15,10 +15,6 @@ import { isUuid, uuid } from 'uuidv4'
 import { AuthDelegationType } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
 import {
-  createEnhancedFetch,
-  EnhancedFetchAPI,
-} from '@island.is/clients/middlewares'
-import {
   IndividualDto,
   NationalRegistryClientService,
 } from '@island.is/clients/national-registry-v2'
@@ -46,6 +42,7 @@ import {
 } from './dto/delegation.dto'
 import { DelegationScope } from './models/delegation-scope.model'
 import { Delegation } from './models/delegation.model'
+import { NamesService } from './names.service'
 import { DelegationValidity } from './types/delegationValidity'
 import {
   getScopeValidityWhereClause,
@@ -62,8 +59,6 @@ type ClientDelegationInfo = Pick<
 
 @Injectable()
 export class DelegationsService {
-  private readonly authFetch: EnhancedFetchAPI
-
   constructor(
     @InjectModel(Delegation)
     private delegationModel: typeof Delegation,
@@ -81,9 +76,8 @@ export class DelegationsService {
     private featureFlagService: FeatureFlagService,
     private prService: PersonalRepresentativeService,
     private resourcesService: ResourcesService,
-  ) {
-    this.authFetch = createEnhancedFetch({ name: 'delegation-auth-client' })
-  }
+    private namesService: NamesService,
+  ) {}
 
   /**
    * Deprecated: Use DelegationsOutgoingService instead for outgoing delegations.
@@ -126,8 +120,8 @@ export class DelegationsService {
 
     if (!delegation) {
       const [fromDisplayName, toName] = await Promise.all([
-        this.getUserName(user),
-        this.getPersonName(createDelegation.toNationalId),
+        this.namesService.getUserName(user),
+        this.namesService.getPersonName(createDelegation.toNationalId),
       ])
 
       delegation = await this.delegationModel.create({
@@ -677,26 +671,6 @@ export class DelegationsService {
         },
       })
     ).map((s) => s.scopeName)
-  }
-
-  private async getUserName(user: User) {
-    const response = await this.authFetch(this.delegationConfig.userInfoUrl, {
-      headers: {
-        Authorization: user.authorization,
-      },
-    })
-    const userinfo = (await response.json()) as { name: string }
-    return userinfo.name
-  }
-
-  private async getPersonName(nationalId: string) {
-    const person = await this.nationalRegistryClient.getIndividual(nationalId)
-    if (!person) {
-      throw new BadRequestException(
-        `A person with nationalId<${nationalId}> could not be found`,
-      )
-    }
-    return person.fullName ?? person.name
   }
 
   /**

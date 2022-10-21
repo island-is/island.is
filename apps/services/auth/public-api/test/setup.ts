@@ -22,6 +22,7 @@ import {
   DelegationsService,
   Domain,
   Language,
+  NamesService,
   SequelizeConfigService,
 } from '@island.is/auth-api-lib'
 
@@ -200,7 +201,7 @@ export const setupWithAuth = async ({
   jest
     .spyOn(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      app.get<DelegationsService>(DelegationsService) as any,
+      app.get<NamesService>(NamesService) as any,
       'getUserName',
     )
     .mockImplementation(() => userName)
