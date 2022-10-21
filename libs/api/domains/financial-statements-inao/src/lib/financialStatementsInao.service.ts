@@ -29,4 +29,8 @@ export class FinancialStatementsInaoService {
   async getConfig() {
     return this.dataverseClient.getConfig()
   }
+
+  async getTaxInformation(nationalId: string, year: string) {
+    return this.dataverseClient.getTaxInformationValues(nationalId, year)
+  }
 }
