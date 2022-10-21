@@ -1102,7 +1102,7 @@ github-actions-cache:
   healthCheck:
     liveness:
       initialDelaySeconds: 3
-      path: '/liveness'
+      path: '/'
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
