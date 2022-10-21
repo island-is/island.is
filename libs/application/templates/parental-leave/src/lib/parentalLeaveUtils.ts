@@ -16,7 +16,6 @@ import {
   FormValue,
   Option,
 } from '@island.is/application/types'
-import type { FamilyMember } from '@island.is/api/domains/national-registry'
 
 import { parentalLeaveFormMessages } from '../lib/messages'
 import { TimelinePeriod } from '../fields/components/Timeline/Timeline'
@@ -28,6 +27,8 @@ import {
   StartDateOptions,
   ParentalRelations,
   TransferRightsOption,
+  UnEmployedBenefitTypes,
+  PARENTAL_GRANT_STUDENTS,
 } from '../constants'
 import { SchemaFormValues } from '../lib/dataSchema'
 import { PregnancyStatusAndRightsResults } from '../dataProviders/Children/Children'
@@ -408,6 +409,11 @@ export function getApplicationExternalData(
 }
 
 export function getApplicationAnswers(answers: Application['answers']) {
+  const applicationType = getValueViaPath(
+    answers,
+    'applicationType.option',
+  ) as string
+
   const otherParent = (getValueViaPath(
     answers,
     'otherParentObj.chooseOtherParent',
@@ -444,6 +450,16 @@ export function getApplicationAnswers(answers: Application['answers']) {
     answers,
     'employer.isSelfEmployed',
   ) as YesOrNo
+
+  const isRecivingUnemploymentBenefits = getValueViaPath(
+    answers,
+    'isRecivingUnemploymentBenefits',
+  ) as YesOrNo
+
+  const unemploymentBenefits = getValueViaPath(
+    answers,
+    'unemploymentBenefits',
+  ) as string
 
   const otherParentName = (getValueViaPath(
     answers,
@@ -562,6 +578,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     periods.length > 0 ? periods[0].firstPeriodStart : undefined
 
   return {
+    applicationType,
     otherParent,
     otherParentRightOfAccess,
     pensionFund,
@@ -597,6 +614,8 @@ export function getApplicationAnswers(answers: Application['answers']) {
     periods,
     rawPeriods,
     firstPeriodStart,
+    isRecivingUnemploymentBenefits,
+    unemploymentBenefits,
   }
 }
 
@@ -871,4 +890,25 @@ export const removeCountryCode = (application: Application) => {
     : getMobilePhoneNumber(application)?.startsWith('00354')
     ? getMobilePhoneNumber(application)?.slice(5)
     : getMobilePhoneNumber(application)
+}
+
+export const showGenericFileUpload = (answers: Application['answers']) => {
+  const {
+    isSelfEmployed,
+    isRecivingUnemploymentBenefits,
+    unemploymentBenefits,
+    applicationType,
+  } = getApplicationAnswers(answers)
+  // we don't want to show generic file upload atm if we are showing another file upload
+  // isSelfEmployed, students, benefits (union & health insurance)
+  if (isSelfEmployed === YES) return false
+  else if (
+    (isRecivingUnemploymentBenefits &&
+      unemploymentBenefits === UnEmployedBenefitTypes.union) ||
+    unemploymentBenefits === UnEmployedBenefitTypes.healthInsurance
+  )
+    return false
+  else if (applicationType === PARENTAL_GRANT_STUDENTS) return false
+
+  return true
 }

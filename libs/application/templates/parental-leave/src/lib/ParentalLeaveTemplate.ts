@@ -5,6 +5,7 @@ import cloneDeep from 'lodash/cloneDeep'
 
 import {
   EphemeralStateLifeCycle,
+  getValueViaPath,
   pruneAfterDays,
   DefaultStateLifeCycle,
 } from '@island.is/application/core'
@@ -21,7 +22,7 @@ import {
 
 import {
   YES,
-  API_MODULE_ACTIONS,
+  ApiModuleActions,
   States,
   ParentalRelations,
   NO,
@@ -29,6 +30,8 @@ import {
   SPOUSE,
   NO_PRIVATE_PENSION_FUND,
   NO_UNION,
+  PARENTAL_GRANT,
+  PARENTAL_GRANT_STUDENTS,
 } from '../constants'
 import { dataSchema } from './dataSchema'
 import { answerValidators } from './answerValidators'
@@ -61,13 +64,30 @@ enum Roles {
   ORGINISATION_REVIEWER = 'vmst',
 }
 
+const determineNameFromApplicationAnswers = (application: Application) => {
+  const applicationType = getValueViaPath(
+    application.answers,
+    'applicationType.option',
+    undefined,
+  ) as string | undefined
+
+  if (
+    applicationType === PARENTAL_GRANT ||
+    applicationType === PARENTAL_GRANT_STUDENTS
+  ) {
+    return parentalLeaveFormMessages.shared.nameGrant
+  }
+
+  return parentalLeaveFormMessages.shared.name
+}
+
 const ParentalLeaveTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
   Events
 > = {
   type: ApplicationTypes.PARENTAL_LEAVE,
-  name: parentalLeaveFormMessages.shared.name,
+  name: determineNameFromApplicationAnswers,
   institution: parentalLeaveFormMessages.shared.institution,
   readyForProduction: true,
   translationNamespaces: [ApplicationConfigurations.ParentalLeave.translation],
@@ -129,7 +149,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           lifecycle: pruneAfterDays(365),
           progress: 0.25,
           onExit: {
-            apiModuleAction: API_MODULE_ACTIONS.validateApplication,
+            apiModuleAction: ApiModuleActions.validateApplication,
             throwOnError: true,
           },
           roles: [
@@ -175,7 +195,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           lifecycle: pruneAfterDays(365),
           progress: 0.4,
           onEntry: {
-            apiModuleAction: API_MODULE_ACTIONS.assignOtherParent,
+            apiModuleAction: ApiModuleActions.assignOtherParent,
             throwOnError: true,
           },
           roles: [
@@ -239,7 +259,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           progress: 0.4,
           onEntry: {
             apiModuleAction:
-              API_MODULE_ACTIONS.notifyApplicantOfRejectionFromOtherParent,
+              ApiModuleActions.notifyApplicantOfRejectionFromOtherParent,
             throwOnError: true,
           },
           roles: [
@@ -269,7 +289,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           lifecycle: pruneAfterDays(365),
           progress: 0.4,
           onEntry: {
-            apiModuleAction: API_MODULE_ACTIONS.assignEmployer,
+            apiModuleAction: ApiModuleActions.assignEmployer,
             throwOnError: true,
           },
           roles: [
@@ -361,7 +381,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           progress: 0.5,
           onEntry: {
             apiModuleAction:
-              API_MODULE_ACTIONS.notifyApplicantOfRejectionFromEmployer,
+              ApiModuleActions.notifyApplicantOfRejectionFromEmployer,
             throwOnError: true,
           },
           roles: [
@@ -392,7 +412,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           lifecycle: pruneAfterDays(970),
           progress: 0.75,
           onEntry: {
-            apiModuleAction: API_MODULE_ACTIONS.sendApplication,
+            apiModuleAction: ApiModuleActions.sendApplication,
             shouldPersistToExternalData: true,
             throwOnError: true,
           },
@@ -593,7 +613,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           lifecycle: pruneAfterDays(970),
           progress: 0.25,
           onExit: {
-            apiModuleAction: API_MODULE_ACTIONS.validateApplication,
+            apiModuleAction: ApiModuleActions.validateApplication,
             throwOnError: true,
           },
           roles: [
@@ -645,7 +665,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           lifecycle: pruneAfterDays(970),
           progress: 0.5,
           onEntry: {
-            apiModuleAction: API_MODULE_ACTIONS.assignEmployer,
+            apiModuleAction: ApiModuleActions.assignEmployer,
             throwOnError: true,
           },
           roles: [
@@ -753,7 +773,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           progress: 0.5,
           onEntry: {
             apiModuleAction:
-              API_MODULE_ACTIONS.notifyApplicantOfRejectionFromEmployer,
+              ApiModuleActions.notifyApplicantOfRejectionFromEmployer,
             throwOnError: true,
           },
           roles: [
@@ -794,7 +814,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           lifecycle: pruneAfterDays(970),
           progress: 0.75,
           onEntry: {
-            apiModuleAction: API_MODULE_ACTIONS.sendApplication,
+            apiModuleAction: ApiModuleActions.sendApplication,
             shouldPersistToExternalData: true,
             throwOnError: true,
           },
