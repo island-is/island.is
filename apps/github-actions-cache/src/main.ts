@@ -5,7 +5,7 @@ import {
   retrieveCache,
   uploadChunk,
 } from './app/handlers'
-import { healthCheck, livenessCheck } from './app/health'
+import { healthCheck } from './app/health'
 import { authMiddleware } from './app/auth'
 import { monkeyPatchServerLogging } from '@island.is/logging'
 
@@ -16,7 +16,6 @@ const app = express.default()
 app.use(express.json() as express.RequestHandler)
 
 app.get('/health', healthCheck)
-app.get('/liveness', livenessCheck)
 
 app.use(authMiddleware)
 
