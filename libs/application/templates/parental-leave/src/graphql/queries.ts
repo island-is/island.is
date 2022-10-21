@@ -26,3 +26,23 @@ export const GetPrivatePensionFunds = gql`
     }
   }
 `
+
+export const GetApplicationInformation = gql`
+  query GetApplicationInformation(
+    $applicationId: String!
+    $nationalId: String!
+  ) {
+    getApplicationInformation(
+      applicationId: $applicationId
+      nationalId: $nationalId
+    ) {
+      periods {
+        from
+        to
+        ratio
+        paid
+        firstPeriodStart
+      }
+    }
+  }
+`
