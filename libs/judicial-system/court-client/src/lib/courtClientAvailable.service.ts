@@ -165,6 +165,8 @@ export class CourtClientAvailableService implements CourtClientService {
           '&password=xxxxx ',
         )
 
+        this.logger.error(reason)
+        this.logger.error(maskedDetail)
         throw new BadGatewayException({
           ...reason,
           message: 'Unable to log into the court service',
