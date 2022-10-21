@@ -78,7 +78,7 @@ const template: ApplicationTemplate<
               id: Roles.APPLICANT,
               formLoader: () =>
                 import(
-                  '../forms/TransferOfVehicleOwnershipForm'
+                  '../forms/TransferOfVehicleOwnershipForm/index'
                 ).then((module) =>
                   Promise.resolve(module.TransferOfVehicleOwnershipForm),
                 ),
@@ -131,6 +131,43 @@ const template: ApplicationTemplate<
         on: {
           [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
           [DefaultEvents.ABORT]: { target: States.DRAFT },
+        },
+      },
+      [States.REVIEW]: {
+        // TODO
+        meta: {
+          name: 'Tilkynning um eigendaskipti að ökutæki',
+          actionCard: {
+            tag: {
+              label: m.actionCardDraft,
+              variant: 'blue',
+            },
+          },
+          progress: 0.25,
+          lifecycle: EphemeralStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import(
+                  '../forms/TransferOfVehicleOwnershipForm/index'
+                ).then((module) =>
+                  Promise.resolve(module.TransferOfVehicleOwnershipForm),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Staðfesta',
+                  type: 'primary',
+                },
+              ],
+              write: 'all',
+              delete: true,
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: { target: States.PAYMENT },
         },
       },
       [States.COMPLETED]: {
