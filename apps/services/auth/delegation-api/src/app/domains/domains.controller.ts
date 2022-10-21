@@ -2,6 +2,7 @@ import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common'
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 
 import {
+  ApiScope,
   ApiScopeTreeDTO,
   DelegationResourcesService,
   DomainDTO,
@@ -111,5 +112,25 @@ export class DomainsController {
     @Query('lang') language?: string,
   ): Promise<ApiScopeTreeDTO[]> {
     return this.resourceService.findScopeTree(domainName, language)
+  }
+
+  @Get(':domainName/scopes')
+  @Documentation({
+    description: 'Returns the list of scopes for the given domain.',
+    request: {
+      params: {
+        domainName,
+      },
+      query: {
+        lang,
+      },
+    },
+    response: { status: 200, type: [ApiScope] },
+  })
+  async findScopes(
+    @Param('domainName') domainName: string,
+    @Query('lang') language?: string,
+  ): Promise<ApiScope[]> {
+    return this.resourceService.findScopes(domainName, language)
   }
 }

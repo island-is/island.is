@@ -1,38 +1,26 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common'
-import uniqBy from 'lodash/uniqBy'
+import { Injectable, NotFoundException } from '@nestjs/common'
+import differenceWith from 'lodash/differenceWith'
 
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import {
   MeDelegationsApi,
   MeDelegationsControllerFindAllDirectionEnum,
   MeDelegationsControllerFindAllValidityEnum,
-} from '@island.is/clients/auth/public-api'
+} from '@island.is/clients/auth/delegation-api'
 
 import {
   CreateDelegationInput,
   DelegationInput,
-  DeleteDelegationInput,
-  UpdateDelegationInput,
-  PatchDelegationInput,
   DelegationsInput,
+  DeleteDelegationInput,
+  PatchDelegationInput,
+  UpdateDelegationInput,
 } from '../dto'
 import { DelegationByOtherUserInput } from '../dto/delegationByOtherUser.input'
-import { DelegationScopeInput } from '../dto/delegationScope.input'
-import { MeDelegationsServiceInterface, DelegationDTO } from '../services/types'
-import { ISLAND_DOMAIN } from './constants'
-
-const ignore404 = (e: Response) => {
-  if (e.status !== 404) {
-    throw e
-  }
-}
+import { DelegationDTO, MeDelegationsServiceInterface } from '../services/types'
 
 @Injectable()
-export class MeDelegationsServiceV1 implements MeDelegationsServiceInterface {
+export class MeDelegationsServiceV2 implements MeDelegationsServiceInterface {
   constructor(private delegationsApi: MeDelegationsApi) {}
 
   private delegationsApiWithAuth(auth: Auth) {
@@ -43,38 +31,32 @@ export class MeDelegationsServiceV1 implements MeDelegationsServiceInterface {
     user: User,
     input: DelegationsInput,
   ): Promise<DelegationDTO[]> {
-    this.checkDomain(input.domain)
-
     return this.delegationsApiWithAuth(user).meDelegationsControllerFindAll({
+      domain: input.domain,
       direction: MeDelegationsControllerFindAllDirectionEnum.Outgoing,
       validity: MeDelegationsControllerFindAllValidityEnum.IncludeFuture,
     })
   }
 
-  async getDelegationById(
+  getDelegationById(
     user: User,
     { delegationId }: DelegationInput,
   ): Promise<DelegationDTO | null> {
-    const delegation = await this.delegationsApiWithAuth(user)
-      .meDelegationsControllerFindOne({ delegationId })
-      .catch(ignore404)
-
-    if (!delegation) {
-      return null
-    }
-
-    return delegation
+    return this.delegationsApiWithAuth(user).meDelegationsControllerFindOne({
+      delegationId,
+    })
   }
 
   async getDelegationByOtherUser(
     user: User,
-    { toNationalId }: DelegationByOtherUserInput,
+    { toNationalId, domain }: DelegationByOtherUserInput,
   ): Promise<DelegationDTO | null> {
     const delegations = await this.delegationsApiWithAuth(
       user,
     ).meDelegationsControllerFindAll({
       direction: MeDelegationsControllerFindAllDirectionEnum.Outgoing,
-      otherUser: toNationalId,
+      xQUERYOTHERUSER: toNationalId,
+      domain,
     })
 
     return delegations[0] ?? null
@@ -84,7 +66,10 @@ export class MeDelegationsServiceV1 implements MeDelegationsServiceInterface {
     user: User,
     input: CreateDelegationInput,
   ): Promise<DelegationDTO> {
-    let delegation = await this.getDelegationByOtherUser(user, input)
+    let delegation = await this.getDelegationByOtherUser(user, {
+      toNationalId: input.toNationalId,
+      domain: input.domainName,
+    })
     if (!delegation) {
       delegation = await this.createDelegation(user, input)
     } else if (input.scopes && delegation.id) {
@@ -99,12 +84,14 @@ export class MeDelegationsServiceV1 implements MeDelegationsServiceInterface {
 
   createDelegation(
     user: User,
-    { toNationalId, scopes, domainName }: CreateDelegationInput,
+    { toNationalId, domainName, scopes }: CreateDelegationInput,
   ): Promise<DelegationDTO> {
-    this.checkDomain(domainName)
-
     return this.delegationsApiWithAuth(user).meDelegationsControllerCreate({
-      createDelegationDTO: { toNationalId, scopes },
+      createDelegationDTO: {
+        toNationalId,
+        domainName,
+        scopes,
+      },
     })
   }
 
@@ -118,19 +105,39 @@ export class MeDelegationsServiceV1 implements MeDelegationsServiceInterface {
     return true
   }
 
-  updateDelegation(
+  async updateDelegation(
     user: User,
-    { delegationId, scopes }: UpdateDelegationInput,
+    { delegationId, scopes: newScopes = [] }: UpdateDelegationInput,
   ): Promise<DelegationDTO> {
-    return this.delegationsApiWithAuth(user).meDelegationsControllerUpdate({
+    const delegation = await this.getDelegationById(user, { delegationId })
+    if (!delegation) {
+      throw new NotFoundException()
+    }
+    const oldScopes =
+      delegation.scopes?.map((scope) => ({
+        name: scope.scopeName,
+        validTo: scope.validTo,
+      })) ?? []
+
+    const updateScopes = differenceWith(
+      newScopes,
+      oldScopes,
+      this.compareScopesByNameAndValidity,
+    )
+    const deleteScopes = differenceWith(
+      oldScopes,
+      newScopes,
+      this.compareScopesByName,
+    ).map((s) => s.name)
+
+    return this.patchDelegation(user, {
       delegationId,
-      updateDelegationDTO: {
-        scopes,
-      },
+      updateScopes,
+      deleteScopes,
     })
   }
 
-  async patchDelegation(
+  patchDelegation(
     user: User,
     {
       delegationId,
@@ -138,35 +145,26 @@ export class MeDelegationsServiceV1 implements MeDelegationsServiceInterface {
       deleteScopes = [],
     }: PatchDelegationInput,
   ): Promise<DelegationDTO> {
-    const delegation = await this.getDelegationById(user, { delegationId })
-    if (!delegation) {
-      throw new NotFoundException()
-    }
-    const existingScopes = delegation.scopes ?? []
-
-    // Map existing scopes to DTO.
-    let scopes = existingScopes
-      .map((scope) => ({
-        name: scope.scopeName,
-        validTo: scope.validTo,
-      }))
-      .filter((scope): scope is DelegationScopeInput => Boolean(scope.validTo))
-
-    // Override scopes (first occurrence wins).
-    scopes = uniqBy([...updateScopes, ...scopes], 'name')
-
-    // Remove deleted scopes.
-    scopes = scopes.filter((scope) => deleteScopes.includes(scope.name))
-
-    return this.updateDelegation(user, {
+    return this.delegationsApiWithAuth(user).meDelegationsControllerPatch({
       delegationId,
-      scopes,
+      patchDelegationDTO: {
+        deleteScopes,
+        updateScopes,
+      },
     })
   }
 
-  private checkDomain(domain?: string) {
-    if ((domain ?? ISLAND_DOMAIN) !== ISLAND_DOMAIN) {
-      throw new BadRequestException(`Can only specify ${ISLAND_DOMAIN} domain`)
-    }
+  private compareScopesByName(
+    scopeA: { name: string },
+    scopeB: { name: string },
+  ): boolean {
+    return scopeA.name === scopeB.name
+  }
+
+  private compareScopesByNameAndValidity(
+    scopeA: { name: string; validTo: Date },
+    scopeB: { name: string; validTo?: Date | null },
+  ): boolean {
+    return scopeA.name === scopeB.name && scopeA.validTo === scopeB.validTo
   }
 }

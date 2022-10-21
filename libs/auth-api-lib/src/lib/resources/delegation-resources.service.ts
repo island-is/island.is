@@ -43,10 +43,7 @@ export class DelegationResourcesService {
     return domain
   }
 
-  async findScopeTree(
-    domainName: string,
-    language?: string,
-  ): Promise<ApiScopeTreeDTO[]> {
+  async findScopes(domainName: string, language?: string): Promise<ApiScope[]> {
     const scopes = await this.apiScopeModel.findAll({
       where: {
         domainName,
@@ -63,6 +60,15 @@ export class DelegationResourcesService {
     if (language) {
       await this.resourceTranslationService.translateApiScopes(scopes, language)
     }
+
+    return scopes
+  }
+
+  async findScopeTree(
+    domainName: string,
+    language?: string,
+  ): Promise<ApiScopeTreeDTO[]> {
+    const scopes = await this.findScopes(domainName, language)
 
     const groupChildren = new Map<string, ApiScopeTreeDTO[]>()
     const scopeTree: Array<ApiScope | ApiScopeGroup> = []

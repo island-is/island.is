@@ -1,4 +1,4 @@
-<!-- gitbook-navigation: "Auth Public API" -->
+<!-- gitbook-navigation: "Public API" -->
 
 # Auth Public API Client
 
@@ -14,7 +14,7 @@ This library implements a client to use the public auth API.
 Add the service to your module imports:
 
 ```typescript
-import { AuthPublicApiClientModule } from '@island.is/clients/auth-public-api'
+import { AuthPublicApiClientModule } from '@island.is/clients/auth/public-api'
 
 @Module({
   imports: [

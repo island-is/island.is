@@ -582,8 +582,6 @@ export class DelegationsService {
       return []
     }
 
-    const all = await this.delegationModel.findAll()
-
     const delegations = await this.delegationModel.findAll({
       where: {
         toNationalId: user.nationalId,

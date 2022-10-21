@@ -76,7 +76,7 @@
 /libs/application/templates/driving-license-duplicate/                                              @island-is/juni
 /libs/application/template-api-modules/src/lib/modules/templates/driving-license-duplicate/         @island-is/juni
 
-/libs/clients/auth-public-api/                                                                      @island-is/aranja
+/libs/clients/auth/                                                                                 @island-is/aranja
 /libs/clients/middlewares/                                                                          @island-is/aranja
 /libs/service-portal/settings/access-control                                                        @island-is/aranja
 /libs/clients/vmst/                                                                                 @island-is/aranja
