@@ -81,8 +81,8 @@ const PeriodsRepeater: FC<ScreenProps> = ({
     }
 
     // If periods is not sync with VMST periods, sync it
-    let newPeriods: Period[] = []
-    let temptVMSTPeriods: Period[] = []
+    const newPeriods: Period[] = []
+    const temptVMSTPeriods: Period[] = []
     const VMSTPeriods: VMSTPeriod[] = data?.getApplicationInformation?.periods
     VMSTPeriods?.forEach((period, index) => {
       const obj = {
