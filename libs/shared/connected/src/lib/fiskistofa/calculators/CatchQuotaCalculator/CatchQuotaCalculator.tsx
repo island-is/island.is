@@ -10,7 +10,7 @@ import {
   Tag,
   Text,
 } from '@island.is/island-ui/core'
-import { FiskistofaExtendedCatchQuotaCategory as ExtendedCatchQuotaCategory } from '@island.is/web/graphql/schema'
+import { FiskistofaExtendedCatchQuotaCategory as ExtendedCatchQuotaCategory } from '@island.is/api/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import {
   formattedNumberStringToNumber,
@@ -18,7 +18,7 @@ import {
   sevenFractionDigitNumberFormatter,
   TimePeriodOption,
   numberFormatter,
-} from '../../utils'
+} from '../utils'
 import { machine } from './machine'
 
 import * as styles from './CatchQuotaCalculator.css'

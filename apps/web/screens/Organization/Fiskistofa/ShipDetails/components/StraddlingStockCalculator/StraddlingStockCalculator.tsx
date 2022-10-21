@@ -10,11 +10,9 @@ import {
   Tag,
   Text,
 } from '@island.is/island-ui/core'
-import { useNamespace } from '@island.is/web/hooks'
 import { machine } from './machine'
-import { getYearOptions, YearOption } from '../../utils'
+import { getYearOptions, YearOption, numberFormatter } from '../../utils'
 import { FiskistofaCatchQuotaCategory as CatchQuotaCategory } from '@island.is/web/graphql/schema'
-import { numberFormatter } from '../../utils'
 
 import * as styles from './StraddlingStockCalculator.css'
 

@@ -6,6 +6,8 @@ import {
   LawyersList,
   ShipSearch,
   SidebarShipSearchInput,
+  StraddlingStockCalculator,
+  CatchQuotaCalculator,
 } from '@island.is/shared/connected'
 import { Image } from '../Image/Image'
 import FaqList from '../FaqList/FaqList'
@@ -44,11 +46,10 @@ const renderConnectedComponent = (slice) => {
       return <ShipSearch {...data} />
     case 'Fiskistofa/ShipSearchSidebarInput':
       return <SidebarShipSearchInput {...data} />
-    // TODO: add components
     case 'Fiskistofa/StraddlingStockCalculator':
-      return null
+      return <StraddlingStockCalculator namespace={{}} shipNumber={1281} />
     case 'Fiskistofa/CatchQuotaCalculator':
-      return null
+      return <CatchQuotaCalculator namespace={{}} shipNumber={1281} />
     default:
       break
   }
