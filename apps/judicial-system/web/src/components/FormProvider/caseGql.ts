@@ -143,10 +143,13 @@ const CaseQuery = gql`
         name
         size
         created
+        modified
         state
         key
         category
         policeCaseNumber
+        chapter
+        orderWithinChapter
       }
       isAppealDeadlineExpired
       isAppealGracePeriodExpired

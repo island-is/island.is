@@ -1,4 +1,4 @@
-import { FC, useState } from 'react'
+import { CSSProperties, FC, useState } from 'react'
 import { useQuery } from '@apollo/client/react'
 import { GET_REAL_ESTATE_AGENTS_QUERY } from './queries'
 import { ConnectedComponent, Query } from '@island.is/api/schema'
@@ -15,7 +15,8 @@ import {
 
 import * as styles from './RealEstateAgentsList.css'
 
-const PAGE_SIZE = 5
+const DEFAULT_PAGE_SIZE = 10
+const DEFAULT_TABLE_MIN_HEIGHT = '800px'
 
 interface RealEstateAgentsListProps {
   slice: ConnectedComponent
@@ -72,8 +73,21 @@ const RealEstateAgentsList: FC<RealEstateAgentsListProps> = ({ slice }) => {
     )
   })
 
-  const totalPages = Math.ceil(filteredAgents.length / PAGE_SIZE)
-  const forceTableMinimumHeight = totalPages > 1
+  const pageSize = slice?.configJson?.pageSize ?? DEFAULT_PAGE_SIZE
+
+  const totalPages = Math.ceil(filteredAgents.length / pageSize)
+
+  const minHeightFromConfig = slice?.configJson?.minHeight
+  const tableContainerStyles: CSSProperties = {}
+  if (totalPages > 1) {
+    /**
+     * Force a minimum height of the table, so that the pagination elements stay in the same
+     * location. E.g. when the last page has fewer items, then this will prevent the
+     * pagination elements from moving.
+     */
+    tableContainerStyles.minHeight =
+      minHeightFromConfig ?? DEFAULT_TABLE_MIN_HEIGHT
+  }
 
   return (
     <Box>
@@ -119,7 +133,7 @@ const RealEstateAgentsList: FC<RealEstateAgentsListProps> = ({ slice }) => {
       )}
       {listState === 'loaded' && filteredAgents.length > 0 && (
         <Box>
-          <Box className={forceTableMinimumHeight && styles.tableMinimumHeight}>
+          <Box style={tableContainerStyles}>
             <T.Table>
               <T.Head>
                 <T.Row>
@@ -130,8 +144,8 @@ const RealEstateAgentsList: FC<RealEstateAgentsListProps> = ({ slice }) => {
               <T.Body>
                 {filteredAgents
                   .slice(
-                    (currentPageNumber - 1) * PAGE_SIZE,
-                    currentPageNumber * PAGE_SIZE,
+                    (currentPageNumber - 1) * pageSize,
+                    currentPageNumber * pageSize,
                   )
                   .map((agent, index) => {
                     return (
