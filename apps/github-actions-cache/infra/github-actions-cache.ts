@@ -1,5 +1,4 @@
 import { service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
-import { settings } from '../../../infra/src/dsl/settings'
 
 export const serviceSetup = (): ServiceBuilder<'github-actions-cache'> => {
   return service('github-actions-cache')
@@ -31,7 +30,6 @@ export const serviceSetup = (): ServiceBuilder<'github-actions-cache'> => {
       },
     })
     .readiness('/health')
-    .liveness('/liveness')
     .replicaCount({
       min: 3,
       max: 8,

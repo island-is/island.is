@@ -161,7 +161,12 @@ export class DelegationsService {
     input: UpdateDelegationDTO,
     delegationId: string,
   ): Promise<DelegationDTO | null> {
-    const delegation = await this.delegationModel.findByPk(delegationId)
+    const delegation = await this.delegationModel.findOne({
+      where: {
+        id: delegationId,
+        fromNationalId: user.nationalId,
+      },
+    })
     if (!delegation) {
       throw new NotFoundException()
     }
