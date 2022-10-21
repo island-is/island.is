@@ -201,7 +201,7 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
           display="flex"
           alignItems="center"
           background="blue100"
-          padding={2}
+          paddingX={2}
           onPointerUp={() => {
             setIsDragging(false)
             onReorder(caseFile.id)
@@ -219,39 +219,61 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
           >
             <Icon icon="menu" color="blue400" />
           </Box>
-          <AnimatePresence>
-            {editFileId === caseFile.id ? (
-              <motion.div initial={{ y: -20 }} animate={{ y: 0 }} key="123">
-                asd
-              </motion.div>
-            ) : (
-              <motion.div initial={false} exit={{ y: -20 }} key="123123">
-                <Box
-                  display="flex"
-                  alignItems="center"
-                  component="button"
-                  onClick={() => {
-                    if (caseFile.id) {
-                      onOpen(caseFile.id)
-                    }
+          <div className={styles.reorderItemAnimationWrapper}>
+            <AnimatePresence>
+              {editFileId === caseFile.id ? (
+                <motion.div
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ duration: 4, delay: 5 }}
+                  key={`${caseFile.id}-edit`}
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
                   }}
                 >
-                  <Text variant="h5">{caseFile.displayText}</Text>
-                  <Box marginLeft={1}>
-                    <Icon icon="open" type="outline" size="small" />
+                  <Box>asd</Box>
+                </motion.div>
+              ) : (
+                <motion.div
+                  initial={false}
+                  exit={{ y: -20, opacity: 0 }}
+                  key={`${caseFile.id}-view`}
+                  transition={{ duration: 4 }}
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    component="button"
+                    onClick={() => {
+                      if (caseFile.id) {
+                        onOpen(caseFile.id)
+                      }
+                    }}
+                  >
+                    <Text variant="h5">{caseFile.displayText}</Text>
+                    <Box marginLeft={1}>
+                      <Icon icon="open" type="outline" size="small" />
+                    </Box>
                   </Box>
-                </Box>
-                <Box marginRight={3} marginLeft="auto">
-                  <Text variant="small">
-                    {formatDate(caseFile.created, 'P')}
-                  </Text>
-                </Box>
-              </motion.div>
-            )}
-          </AnimatePresence>
-          <button onClick={() => setEditFileId(caseFile.id)}>
-            <Icon icon="pencil" color="blue400" />
-          </button>
+                  <Box display="flex">
+                    <Box marginRight={1}>
+                      <Text variant="small">
+                        {formatDate(caseFile.created, 'P')}
+                      </Text>
+                    </Box>
+                    <button onClick={() => setEditFileId(caseFile.id)}>
+                      <Icon icon="pencil" color="blue400" />
+                    </button>
+                  </Box>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </Box>
       )}
     </Reorder.Item>

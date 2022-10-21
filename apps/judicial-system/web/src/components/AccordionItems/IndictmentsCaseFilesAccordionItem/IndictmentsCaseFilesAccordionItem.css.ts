@@ -19,3 +19,9 @@ export const reorderItem = style({
   borderRadius: theme.border.radius.large,
   overflow: 'hidden',
 })
+
+export const reorderItemAnimationWrapper = style({
+  width: '100%',
+  height: '56px',
+  paddingTop: `${theme.spacing[2]}px`,
+})
