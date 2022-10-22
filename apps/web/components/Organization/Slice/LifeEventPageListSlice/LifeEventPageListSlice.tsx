@@ -1,4 +1,4 @@
-import { Box, ProfileCard } from '@island.is/island-ui/core'
+import { Box, Link, ProfileCard } from '@island.is/island-ui/core'
 import { IconTitleCard } from '@island.is/web/components'
 import type { LifeEventPageListSlice as LifeEventPageListSliceSchema } from '@island.is/web/graphql/schema'
 import { linkResolver, LinkType, useNamespace } from '@island.is/web/hooks'
@@ -26,23 +26,27 @@ export const LifeEventPageListSlice: React.FC<LifeEventPageListSliceProps> = ({
     return (
       <Box className={styles.profileCardContainer} marginLeft={[0, 0, 0, 0, 6]}>
         {slice.lifeEventPageList?.map((page) => {
+          const href = linkResolver(
+            'digitalicelandservicesdetailpage',
+            [page.slug],
+            activeLocale,
+          ).href
           return (
-            <ProfileCard
-              key={page.id}
-              variant="title-above"
-              size="small"
-              title={page.shortTitle || page.title}
-              description={page.shortIntro || page.intro}
-              link={{
-                text: page.seeMoreText || n('profileCardSeeMore', 'Sjá nánar'),
-                url: linkResolver(
-                  'digitalicelandservicesdetailpage',
-                  [page.slug],
-                  activeLocale,
-                ).href,
-              }}
-              image={page.thumbnail?.url}
-            />
+            <Link href={href} skipTab={true}>
+              <ProfileCard
+                key={page.id}
+                variant="title-above"
+                size="small"
+                title={page.shortTitle || page.title}
+                description={page.shortIntro || page.intro}
+                link={{
+                  text:
+                    page.seeMoreText || n('profileCardSeeMore', 'Sjá nánar'),
+                  url: href,
+                }}
+                image={page.thumbnail?.url}
+              />
+            </Link>
           )
         })}
       </Box>
