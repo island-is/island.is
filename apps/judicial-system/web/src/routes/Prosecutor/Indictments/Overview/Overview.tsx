@@ -74,8 +74,6 @@ const Overview: React.FC = () => {
       activeSubSection={
         caseHasBeenSentToCourt
           ? undefined
-          : features.includes(Feature.CASE_FILE_ROUTE)
-          ? IndictmentsProsecutorSubsections.CASE_FILE
           : IndictmentsProsecutorSubsections.OVERVIEW
       }
       isLoading={isLoadingWorkingCase}
