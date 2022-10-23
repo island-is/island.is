@@ -19,7 +19,12 @@ import {
   otherParentApprovalDescription,
   requiresOtherParentApproval,
 } from '../../lib/parentalLeaveUtils'
-import { NO, States as ApplicationStates } from '../../constants'
+import {
+  NO,
+  PARENTAL_LEAVE,
+  States as ApplicationStates,
+  YES,
+} from '../../constants'
 import { useApplicationAnswers } from '../../hooks/useApplicationAnswers'
 import { useRemainingRights } from '../../hooks/useRemainingRights'
 
@@ -83,7 +88,17 @@ const InReviewSteps: FC<FieldBaseProps> = ({
   refetch,
   errors,
 }) => {
-  const { isSelfEmployed } = useApplicationAnswers(application)
+  const {
+    isSelfEmployed,
+    applicationType,
+    isRecivingUnemploymentBenefits,
+  } = useApplicationAnswers(application)
+  const oldApplication = applicationType === undefined // Added this check for applications that is in the db already
+  const isBeneficiaries = !oldApplication
+    ? applicationType === PARENTAL_LEAVE
+      ? isRecivingUnemploymentBenefits === YES
+      : false
+    : false
   const [submitApplication, { loading: loadingSubmit }] = useMutation(
     SUBMIT_APPLICATION,
     {
@@ -106,7 +121,7 @@ const InReviewSteps: FC<FieldBaseProps> = ({
     },
   ]
 
-  if (isSelfEmployed === NO) {
+  if (isSelfEmployed === NO && !isBeneficiaries) {
     steps.unshift({
       state: statesMap['employer'][application.state],
       title: formatMessage(
