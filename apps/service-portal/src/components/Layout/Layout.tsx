@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC } from 'react'
 import Header from '../Header/Header'
 import Sidebar from '../Sidebar/Sidebar'
 import {
@@ -21,6 +21,7 @@ import { useNamespaces } from '@island.is/localization'
 import { useStore } from '../../store/stateProvider'
 import { RemoveScroll } from 'react-remove-scroll'
 import cn from 'classnames'
+import { AlertBannerSection } from '../AlertBannerSection/AlertBannerSection'
 
 const Layout: FC = ({ children }) => {
   useRoutes()
@@ -54,6 +55,8 @@ const Layout: FC = ({ children }) => {
         )}
         paddingBottom={7}
       >
+        {/* TODO: move AlertBannerSection to the top */}
+        <AlertBannerSection />
         <Box as="main" component="main">
           <GridContainer className={styles.layoutContainer}>
             <GridRow>

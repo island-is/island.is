@@ -77,6 +77,7 @@ import {
 import { GetMailingListSignupSliceInput } from './dto/getMailingListSignupSlice'
 import { Form, mapForm } from './models/form.model'
 import { GetFormInput } from './dto/getForm.input'
+import { GetServicePortalAlertBannersInput } from './dto/getServicePortalAlertBanners.input'
 
 const errorHandler = (name: string) => {
   return (error: Error) => {
@@ -565,6 +566,21 @@ export class CmsContentfulService {
       .catch(errorHandler('getAlertBanner'))
 
     return (result.items as types.IAlertBanner[]).map(mapAlertBanner)[0] ?? null
+  }
+
+  async getServicePortalAlertBanners({
+    lang,
+  }: GetServicePortalAlertBannersInput): Promise<AlertBanner[]> {
+    const params = {
+      ['content_type']: 'alertBanner',
+      'fields.servicePortalPaths[exists]': 'true',
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IAlertBannerFields>(lang, params)
+      .catch(errorHandler('getAlertBanner'))
+
+    return (result.items as types.IAlertBanner[]).map(mapAlertBanner)
   }
 
   async getUrl(slug: string, lang: string): Promise<Url | null> {
