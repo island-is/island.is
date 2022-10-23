@@ -11,7 +11,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { FiskistofaExtendedCatchQuotaCategory as ExtendedCatchQuotaCategory } from '@island.is/api/schema'
-import { useNamespace } from '@island.is/web/hooks'
+import { useLocalization } from '../../../../utils'
 import {
   formattedNumberStringToNumber,
   generateTimePeriodOptions,
@@ -89,7 +89,7 @@ export const CatchQuotaCalculator = ({
   namespace,
 }: CatchQuotaCalculatorProps) => {
   const timePeriodOptions = useMemo(() => generateTimePeriodOptions(), [])
-  const n = useNamespace(namespace)
+  const n = useLocalization(namespace)
   const [selectedTimePeriod, setSelectedTimePeriod] = useState(
     timePeriodOptions[0],
   )

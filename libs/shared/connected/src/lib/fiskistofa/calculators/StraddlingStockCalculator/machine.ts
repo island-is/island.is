@@ -1,5 +1,4 @@
 import { ApolloClient } from '@apollo/client'
-import initApollo from '@island.is/web/graphql/client'
 import {
   FiskistofaCatchQuotaCategory as CatchQuotaCategory,
   QueryFiskistofaUpdateShipStatusForCalendarYearArgs as QueryUpdateShipStatusForCalendarYearArgs,
@@ -8,6 +7,7 @@ import {
   FiskistofaShip as Ship,
   FiskistofaShipStatusInformation as ShipStatusInformation,
 } from '@island.is/api/schema'
+import initApollo from '../../../../utils/apolloClient'
 import { createMachine, assign } from 'xstate'
 import {
   GET_QUOTA_TYPES_FOR_CALENDAR_YEAR,
