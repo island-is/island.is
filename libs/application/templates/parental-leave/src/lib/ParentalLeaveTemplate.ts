@@ -586,7 +586,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           actionCard: {
             description: statesMessages.closedDescription,
           },
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: pruneAfterDays(730),
           progress: 1,
           roles: [
             {
