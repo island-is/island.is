@@ -580,7 +580,16 @@ export class CmsContentfulService {
       .getLocalizedEntries<types.IAlertBannerFields>(lang, params)
       .catch(errorHandler('getAlertBanner'))
 
-    return (result.items as types.IAlertBanner[]).map(mapAlertBanner)
+    const items = (result.items as types.IAlertBanner[]).map(mapAlertBanner)
+
+    // Make sure that the globlal alert banner is first in the list
+    items.sort((a, b) => {
+      if (a.servicePortalPaths?.includes('*')) return -1
+      if (b.servicePortalPaths?.includes('*')) return 1
+      return 0
+    })
+
+    return items
   }
 
   async getUrl(slug: string, lang: string): Promise<Url | null> {
