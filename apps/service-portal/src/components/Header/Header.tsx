@@ -17,7 +17,6 @@ import { ActionType } from '../../store/actions'
 import { m } from '@island.is/service-portal/core'
 import { Link } from 'react-router-dom'
 import { useAuth } from '@island.is/auth/react'
-import { AlertBannerSection } from '../AlertBannerSection/AlertBannerSection'
 
 export const Header: FC<{}> = () => {
   const { formatMessage } = useLocale()
@@ -53,7 +52,6 @@ export const Header: FC<{}> = () => {
   }
   return (
     <>
-      <AlertBannerSection />
       <div className={styles.placeholder} />
       <header className={styles.header}>
         <Box width="full">
