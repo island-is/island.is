@@ -5,7 +5,6 @@ import {
   UseGuards,
   Inject,
   Param,
-  forwardRef,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
@@ -29,7 +28,6 @@ import { InternalCaseService } from './internalCase.service'
 @UseGuards(TokenGuard)
 export class InternalCaseController {
   constructor(
-    @Inject(forwardRef(() => InternalCaseService))
     private readonly internalCaseService: InternalCaseService,
     private readonly eventService: EventService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
