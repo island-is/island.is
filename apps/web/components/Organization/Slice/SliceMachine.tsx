@@ -116,7 +116,7 @@ const renderSlice = (
     case 'AccordionSlice':
       return <AccordionSlice slice={slice} />
     case 'TimelineSlice':
-      return <TimelineSlice slice={slice} />
+      return <TimelineSlice slice={slice} namespace={namespace} />
     case 'LogoListSlice':
       return <LogoListSlice slice={slice} />
     case 'TabSection':
