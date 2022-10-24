@@ -20,7 +20,11 @@ const DEFAULT_DOB_DATE = new Date(DEFAULT_DOB)
 const formatDate = (date: Date) => format(date, dateFormat)
 
 const createBaseApplication = (): Application => ({
-  answers: { someAnswer: 'someValue', selectedChild: '0' },
+  answers: {
+    someAnswer: 'someValue',
+    selectedChild: '0',
+    applicationType: { option: 'parentalLeave' },
+  },
   assignees: [],
   applicant: '',
   attachments: {},

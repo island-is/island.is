@@ -10,11 +10,14 @@ import {
 } from '@island.is/application/types'
 import { RadioFormField } from '@island.is/application/ui-fields'
 
-import { NO, YES } from '../../constants'
+import { NO, NO_UNEMPLOYED_BENEFITS, YES } from '../../constants'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 
-export const SelfEmployed: FC<FieldBaseProps> = ({ application, field }) => {
+export const UnEmploymentBenefits: FC<FieldBaseProps> = ({
+  application,
+  field,
+}) => {
   const { errors, setValue } = useFormContext()
   const { formatMessage } = useLocale()
   const { id, title, description } = field
@@ -29,7 +32,7 @@ export const SelfEmployed: FC<FieldBaseProps> = ({ application, field }) => {
         application={application}
         field={{
           id: id,
-          title: '',
+          title: title,
           description,
           type: FieldTypes.RADIO,
           component: FieldComponents.RADIO,
@@ -46,14 +49,12 @@ export const SelfEmployed: FC<FieldBaseProps> = ({ application, field }) => {
             },
           ],
           onSelect: (s: string) => {
-            if (s === YES) {
-              setValue('employer.email', '')
-              setValue('isRecivingUnemploymentBenefits', NO)
-            }
             if (s !== YES) {
-              setValue('employer.selfEmployed.file', null)
-              setValue('fileUpload.selfEmployedFile', null)
-              setValue('isRecivingUnemploymentBenefits', '')
+              setValue('unemploymentBenefits', NO_UNEMPLOYED_BENEFITS)
+            }
+            if (s === YES) {
+              setValue('unemploymentBenefits', '')
+              setValue('employer.email', '')
             }
           },
         }}
