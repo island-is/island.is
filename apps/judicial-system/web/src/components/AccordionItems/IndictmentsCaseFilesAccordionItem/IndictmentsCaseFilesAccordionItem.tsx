@@ -10,7 +10,7 @@ import {
   useDragControls,
   useMotionValue,
 } from 'framer-motion'
-import { useMutation } from '@apollo/client'
+import { FetchResult, useMutation } from '@apollo/client'
 
 import {
   AccordionItem,
@@ -18,6 +18,7 @@ import {
   Box,
   Icon,
   AlertMessage,
+  Input,
 } from '@island.is/island-ui/core'
 import { CaseFile as TCaseFile } from '@island.is/judicial-system/types'
 import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -39,10 +40,16 @@ interface CaseFileProps {
   index: number
   onReorder: (id?: string) => void
   onOpen: (id: string) => void
-}
-
-interface SimpleInputProps {
-  placeholder: string
+  onRename: (
+    id: string,
+    name: string,
+  ) => Promise<
+    FetchResult<
+      UpdateFilesMutationResponse,
+      Record<string, any>,
+      Record<string, any>
+    >
+  >
 }
 
 export interface ReorderableItem {
@@ -52,10 +59,16 @@ export interface ReorderableItem {
   created?: string
   chapter?: number
   orderWithinChapter?: number
+  userGeneratedFilename?: string
 }
 
 interface UpdateFilesMutationResponse {
   caseFiles: TCaseFile[]
+}
+
+interface EditedFileName {
+  id: string
+  editedName: string
 }
 
 const useRaisedShadow = (value: MotionValue<number>) => {
@@ -143,6 +156,7 @@ export const sortedFilesInChapter = (
         isDivider: false,
         created: file.created,
         orderWithinChapter: file.orderWithinChapter,
+        userGeneratedFilename: file.userGeneratedFilename,
       }
     })
     .sort((a, b) => {
@@ -166,26 +180,15 @@ const renderChapter = (chapter: number, name: string) => (
   </Box>
 )
 
-const SimpleInput: React.FC<SimpleInputProps> = (props) => {
-  const { placeholder } = props
-
-  return (
-    <input
-      type="text"
-      className={styles.simpleInput}
-      placeholder={placeholder}
-    />
-  )
-}
-
 const CaseFile: React.FC<CaseFileProps> = (props) => {
-  const { caseFile, index, onReorder, onOpen } = props
+  const { caseFile, index, onReorder, onOpen, onRename } = props
   const { formatMessage } = useIntl()
   const y = useMotionValue(0)
   const boxShadow = useRaisedShadow(y)
   const controls = useDragControls()
   const [isDragging, setIsDragging] = useState<boolean>(false)
   const [editFileId, setEditFileId] = useState<string>()
+  const [editedFilenames, setEditedFilenames] = useState<EditedFileName[]>([])
 
   return (
     <Reorder.Item
@@ -213,11 +216,8 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
           <Text>{caseFile.displayText.split('|')[1]}</Text>
         </Box>
       ) : (
-        <Box
-          display="flex"
-          alignItems="center"
-          background="blue100"
-          paddingX={2}
+        <div
+          className={styles.caseFileWrapper}
           onPointerUp={() => {
             setIsDragging(false)
             onReorder(caseFile.id)
@@ -226,7 +226,8 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
           <Box
             data-testid="caseFileDragHandle"
             display="flex"
-            marginRight={3}
+            paddingX={3}
+            paddingY={2}
             style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
             onPointerDown={(e) => {
               setIsDragging(true)
@@ -235,19 +236,76 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
           >
             <Icon icon="menu" color="blue400" />
           </Box>
-          <div className={styles.reorderItemAnimationWrapper}>
-            <AnimatePresence>
+          <Box width="full">
+            <AnimatePresence exitBeforeEnter>
               {editFileId === caseFile.id ? (
                 <motion.div
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
-                  transition={{ duration: 1, delay: 2 }}
                   key={`${caseFile.id}-edit`}
                 >
-                  <Box>
-                    <SimpleInput
-                      placeholder={formatMessage(m.simpleInputPlaceholder)}
-                    />
+                  <Box display="flex">
+                    <Box flexGrow={1} marginRight={2}>
+                      <Input
+                        name="fileName"
+                        size="xs"
+                        placeholder={formatMessage(m.simpleInputPlaceholder)}
+                        defaultValue={
+                          editedFilenames.findIndex(
+                            (item) => item.id === caseFile.id,
+                          ) > -1
+                            ? editedFilenames[
+                                editedFilenames.findIndex(
+                                  (item) => item.id === caseFile.id,
+                                )
+                              ].editedName
+                            : caseFile.userGeneratedFilename
+                            ? caseFile.userGeneratedFilename
+                            : caseFile.displayText
+                        }
+                        onChange={(evt) => {
+                          const found = editedFilenames.findIndex(
+                            (item) => item.id === caseFile.id,
+                          )
+                          if (found > -1) {
+                            setEditedFilenames([
+                              ...editedFilenames.slice(0, found),
+                              {
+                                id: caseFile.id,
+                                editedName: evt.target.value,
+                              },
+                              ...editedFilenames.slice(found + 1),
+                            ])
+                          } else
+                            setEditedFilenames([
+                              ...editedFilenames,
+                              {
+                                id: caseFile.id,
+                                editedName: evt.target.value,
+                              },
+                            ])
+                        }}
+                      />
+                    </Box>
+                    <Box display="flex" alignItems="center">
+                      <button
+                        onClick={async () => {
+                          await onRename(
+                            caseFile.id,
+                            editedFilenames[
+                              editedFilenames.findIndex(
+                                (i) => i.id === caseFile.id,
+                              )
+                            ].editedName,
+                          )
+
+                          setEditFileId(undefined)
+                        }}
+                        className={styles.editCaseFileButton}
+                      >
+                        <Icon icon="checkmark" color="blue400" />
+                      </button>
+                    </Box>
                   </Box>
                 </motion.div>
               ) : (
@@ -255,7 +313,6 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
                   initial={false}
                   exit={{ y: -20, opacity: 0 }}
                   key={`${caseFile.id}-view`}
-                  transition={{ duration: 1 }}
                   style={{
                     display: 'flex',
                     justifyContent: 'space-between',
@@ -271,8 +328,20 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
                       }
                     }}
                   >
-                    <Text variant="h5">{caseFile.displayText}</Text>
-                    <Box marginLeft={1}>
+                    <Text variant="h5">
+                      {editedFilenames.findIndex(
+                        (item) => item.id === caseFile.id,
+                      ) > -1
+                        ? editedFilenames[
+                            editedFilenames.findIndex(
+                              (item) => item.id === caseFile.id,
+                            )
+                          ].editedName
+                        : caseFile.userGeneratedFilename
+                        ? caseFile.userGeneratedFilename
+                        : caseFile.displayText}
+                    </Text>
+                    <Box marginLeft={2}>
                       <Icon icon="open" type="outline" size="small" />
                     </Box>
                   </Box>
@@ -282,15 +351,18 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
                         {formatDate(caseFile.created, 'P')}
                       </Text>
                     </Box>
-                    <button onClick={() => setEditFileId(caseFile.id)}>
+                    <button
+                      onClick={() => setEditFileId(caseFile.id)}
+                      className={styles.editCaseFileButton}
+                    >
                       <Icon icon="pencil" color="blue400" />
                     </button>
                   </Box>
                 </motion.div>
               )}
             </AnimatePresence>
-          </div>
-        </Box>
+          </Box>
+        </div>
       )}
     </Reorder.Item>
   )
@@ -302,6 +374,7 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
   const [updateFilesMutation] = useMutation<UpdateFilesMutationResponse>(
     UpdateFileMutation,
   )
+
   const { onOpen } = useFileList({ caseId })
 
   const [reorderableItems, setReorderableItems] = useState<ReorderableItem[]>([
@@ -361,10 +434,11 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
       )
       .map((caseFile) => {
         return {
-          displayText: caseFile.name,
-          isDivider: false,
-          created: caseFile.created,
           id: caseFile.id,
+          created: caseFile.created,
+          displayText: caseFile.name,
+          userGeneratedFilename: caseFile.userGeneratedFilename,
+          isDivider: false,
         }
       }),
   ])
@@ -408,6 +482,32 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
     })
   }
 
+  const handleRename = (fileId: string, newName: string) => {
+    const [chapter] = getFilePlacement(fileId, reorderableItems)
+    const newFiles = reorderableItems
+      .filter((item) => !item.isDivider && item.chapter === undefined)
+      .map((file) => {
+        if (file.id === fileId) {
+          return {
+            id: file.id,
+            chapter,
+            orderWithinChapter: file.orderWithinChapter,
+            displayDate: file.created,
+            userGeneratedFilename: newName,
+          }
+        }
+      })
+
+    return updateFilesMutation({
+      variables: {
+        input: {
+          caseId,
+          files: newFiles,
+        },
+      },
+    })
+  }
+
   return (
     <AccordionItem
       id="IndictmentsCaseFilesAccordionItem"
@@ -442,6 +542,7 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
                 index={index}
                 onReorder={handleReorder}
                 onOpen={onOpen}
+                onRename={handleRename}
               />
             </Box>
           )
