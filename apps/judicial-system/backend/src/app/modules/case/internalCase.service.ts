@@ -642,6 +642,22 @@ export class InternalCaseService {
   async deliverProsecutorDocuments(
     theCase: Case,
   ): Promise<DeliverProsecutorDocumentsResponse> {
+    this.logger.error('Service status', {
+      havesequelize: Boolean(this.sequelize),
+      havecaseModel: Boolean(this.caseModel),
+      havecaseArchiveModel: Boolean(this.caseArchiveModel),
+      haveconfig: Boolean(this.config),
+      haveintlService: Boolean(this.intlService),
+      haveemailService: Boolean(this.emailService),
+      haveeventService: Boolean(this.eventService),
+      haveawsS3Service: Boolean(this.awsS3Service),
+      havecourtService: Boolean(this.courtService),
+      havepoliceService: Boolean(this.policeService),
+      haveuserService: Boolean(this.userService),
+      havefileService: Boolean(this.fileService),
+      havedefendantService: Boolean(this.defendantService),
+    })
+
     await this.refreshFormatMessage()
 
     const requestDeliveredToCourt = await this.deliverProsecutorDocumentsToCourt(
