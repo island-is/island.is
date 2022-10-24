@@ -42,7 +42,8 @@
     "serve": {
       "executor": "@nrwl/node:node",
       "options": {
-        "buildTarget": "judicial-system-backend:build"
+        "buildTarget": "judicial-system-backend:build",
+        "runtimeArgs": ["--no-experimental-fetch"]
       }
     },
     "lint": {
