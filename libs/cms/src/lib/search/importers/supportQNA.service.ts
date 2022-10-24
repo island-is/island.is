@@ -2,9 +2,7 @@ import { MappedData } from '@island.is/content-search-indexer/types'
 import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
 import { Entry } from 'contentful'
-import { writeFileSync } from 'fs'
 import isCircular from 'is-circular'
-import { inspect } from 'util'
 import { ISupportQna } from '../../generated/contentfulTypes'
 import { mapSupportQNA, SupportQNA } from '../../models/supportQNA.model'
 import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
@@ -32,14 +30,6 @@ export class SupportQNASyncService implements CmsSyncProvider<ISupportQna> {
     return entries.reduce(
       (processedEntries: ISupportQna[], entry: Entry<any>) => {
         if (this.validateArticle(entry)) {
-          writeFileSync(
-            `${entry.sys.id}.js`,
-            inspect(
-              { ...entry, fields: { ...entry.fields, relatedLinks: [] } },
-              true,
-              100,
-            ),
-          )
           // We know that relatedLinks can contain circular references and that is dealt with during the mapping so we ignore it during the circularity check here
           if (
             !isCircular({
