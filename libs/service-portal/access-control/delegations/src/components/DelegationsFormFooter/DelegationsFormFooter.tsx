@@ -52,7 +52,12 @@ export const DelegationsFormFooter = ({
         paddingBottom={containerPaddingBottom}
         className={styles.container}
       >
-        <Button size={buttonSize} variant="ghost" onClick={onCancel}>
+        <Button
+          size={buttonSize}
+          variant="ghost"
+          onClick={onCancel}
+          className={styles.cancelButton}
+        >
           {formatMessage(coreMessages.buttonCancel)}
         </Button>
         <Button

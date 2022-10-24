@@ -70,6 +70,7 @@ export interface ButtonProps {
   inline?: boolean
   as?: As
   truncate?: boolean
+  className?: string
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
@@ -93,6 +94,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
       as,
       truncate,
       unfocusable,
+      className,
       ...buttonProps
     },
     ref,
@@ -125,6 +127,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
             [styles.isEmpty]: !children,
             [styles.loading]: loading,
           },
+          className,
         )}
         display={variant === 'text' ? 'inline' : inline ? 'inlineFlex' : 'flex'}
         disabled={disabled || loading}

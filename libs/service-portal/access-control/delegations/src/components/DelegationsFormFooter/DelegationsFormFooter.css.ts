@@ -17,3 +17,7 @@ export const dividerContainer = style({
     },
   }),
 })
+
+export const cancelButton = style({
+  background: theme.color.white,
+})
