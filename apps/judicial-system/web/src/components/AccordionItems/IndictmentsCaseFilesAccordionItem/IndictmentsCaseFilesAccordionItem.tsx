@@ -219,8 +219,10 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
         <div
           className={styles.caseFileWrapper}
           onPointerUp={() => {
+            if (isDragging) {
+              onReorder(caseFile.id)
+            }
             setIsDragging(false)
-            onReorder(caseFile.id)
           }}
         >
           <Box
@@ -240,8 +242,9 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
             <AnimatePresence exitBeforeEnter>
               {editFileId === caseFile.id ? (
                 <motion.div
-                  initial={{ y: 20, opacity: 0 }}
+                  initial={{ y: 10, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: 10, opacity: 0 }}
                   key={`${caseFile.id}-edit`}
                 >
                   <Box display="flex">
@@ -311,7 +314,8 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
               ) : (
                 <motion.div
                   initial={false}
-                  exit={{ y: -20, opacity: 0 }}
+                  exit={{ y: -10, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
                   key={`${caseFile.id}-view`}
                   style={{
                     display: 'flex',
