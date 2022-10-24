@@ -78,4 +78,11 @@ export const indictmentsCaseFilesAccordionItem = defineMessages({
     description:
       'Notaður sem titill á kafla í fellilista í skjalaskrá skrefi í ákærum.',
   },
+  simpleInputPlaceholder: {
+    id:
+      'judicial.system.core:indictments_case_files_accordion_item.simple_input_placeholder',
+    defaultMessage: 'Skráðu inn heiti á skjali',
+    description:
+      'Notaður sem skýritexti í textasvæði reit til að breyta heiti skjals.',
+  },
 })

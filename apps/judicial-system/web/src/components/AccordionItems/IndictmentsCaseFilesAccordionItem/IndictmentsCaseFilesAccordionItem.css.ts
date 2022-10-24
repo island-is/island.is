@@ -19,3 +19,15 @@ export const reorderItem = style({
   borderRadius: theme.border.radius.large,
   overflow: 'hidden',
 })
+
+export const reorderItemAnimationWrapper = style({
+  width: '100%',
+  height: `${theme.spacing[7]}px`,
+  lineHeight: `${theme.spacing[7]}px`,
+})
+
+export const simpleInput = style({
+  height: `${theme.spacing[6]}px`,
+  borderRadius: theme.border.radius.large,
+  border: `1px solid ${theme.color.blue200}`,
+})
