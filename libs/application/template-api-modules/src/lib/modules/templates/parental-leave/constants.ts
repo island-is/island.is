@@ -4,6 +4,7 @@ export const apiConstants = {
   pensionFunds: {
     // Id used when applicant does not wish to pay into a private pension fund
     noPrivatePensionFundId: 'X000',
+    noPensionFundId: 'L000',
   },
   unions: {
     noUnion: 'F000',
@@ -15,7 +16,8 @@ export const apiConstants = {
   attachments: {
     selfEmployed: 'selfEmployed',
     student: 'Student',
-    other: 'other',
+    unEmploymentBenefits: 'UnemploymentBenefits',
+    other: 'Other',
   },
 }
 
