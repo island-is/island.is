@@ -10,7 +10,7 @@ import { Defendant } from '../modules/defendant'
 import { Case } from '../modules/case'
 import { Alignment, PageLink, PdfDocument } from './pdf'
 
-function formatDefendant(defendant: Defendant) {
+export function formatDefendant(defendant: Defendant) {
   let nationalId = ''
   if (defendant.noNationalId) {
     if (defendant.nationalId) {
