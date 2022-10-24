@@ -18,11 +18,8 @@ export const licenseHasAreaSelection = (license: FishingLicenseEnum) => {
 }
 
 // Determines whether fishing license has field to input number of roe nets (fjöldi hrognkelsaneta)
-export const licenseHasRoeNetField = (license: FishingLicenseEnum) => {
-  return license === FishingLicenseEnum.GREYSLEPP
-}
-
-// Determines whether fishing license has field to input length of rail net (teinanetslengd)
-export const licenseHasRailNetLengthField = (license: FishingLicenseEnum) => {
+export const licenseHasRailNetAndRoeNetField = (
+  license: FishingLicenseEnum,
+) => {
   return license === FishingLicenseEnum.GREYSLEPP
 }

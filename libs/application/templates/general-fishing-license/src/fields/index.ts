@@ -1,6 +1,6 @@
 export { ShipSelection } from './ShipSelection'
 export { FishingLicense } from './FishingLicense'
-export { FishingLicenseFurtherInfo } from './FishingLicenseFurtherInfo'
 export { Overview } from './Overview'
 export { Conclusion } from './Conclusion'
 export { PaymentPendingScreen } from './PaymentPending'
+export { FishingLicenseFurtherInfoTitleSection } from './FishingLicenseFurtherInfoTitleSection'
