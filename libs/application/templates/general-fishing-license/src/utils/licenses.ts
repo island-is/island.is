@@ -23,3 +23,19 @@ export const licenseHasRailNetAndRoeNetField = (
 ) => {
   return license === FishingLicenseEnum.GREYSLEPP
 }
+
+export const MAXIMUM_TOTAL_RAIL_NET_LENGTH = 7500
+
+// Calculates the total sum of rails depending on the number of roe nets
+// To show the calculated result in front end or to check input for validation
+// Takes in a string to support text input
+export const calculateTotalRailNet = (roenet?: string, railnet?: string) => {
+  if (!roenet || !railnet) return 0
+  try {
+    const roenetInt = parseInt(roenet.trim(), 10)
+    const railnetInt = parseInt(railnet.split('m').join('').trim(), 10)
+    return !isNaN(roenetInt) && !isNaN(railnetInt) ? roenetInt * railnetInt : 0
+  } catch (e) {
+    return 0
+  }
+}
