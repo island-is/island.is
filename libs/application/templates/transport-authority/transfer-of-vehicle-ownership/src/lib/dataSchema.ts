@@ -2,20 +2,6 @@ import * as z from 'zod'
 
 export const TransferOfVehicleOwnershipSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
-  externalData: z.object({
-    nationalRegistry: z.object({
-      data: z.object({
-        fullName: z.string(),
-        nationalId: z.string(),
-      }),
-    }),
-    userProfile: z.object({
-      data: z.object({
-        email: z.string(),
-        mobilePhoneNumber: z.string(),
-      }),
-    }),
-  }),
   pickVehicle: z.object({
     plate: z.string(),
   }),

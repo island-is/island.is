@@ -11,7 +11,7 @@ import {
 import { User } from '@island.is/auth-nest-tools'
 
 @Injectable()
-export class VehicleOwnerChangeService {
+export class TransferOfVehicleOwnershipApi {
   constructor(
     private readonly vehicleOwnerChangeClient: VehicleOwnerChangeClient,
   ) {}

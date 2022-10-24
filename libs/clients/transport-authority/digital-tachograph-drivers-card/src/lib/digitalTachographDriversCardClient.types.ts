@@ -69,3 +69,9 @@ export interface DriverCardApplicationResponseDeliveryAddress {
   place?: string
   country?: string
 }
+
+export interface PhotoAndSignatureResponse {
+  ssn?: string
+  photo?: string
+  signature?: string
+}

@@ -2,7 +2,7 @@ import { DynamicModule } from '@nestjs/common'
 import { SharedTemplateAPIModule } from '../../../shared'
 import { BaseTemplateAPIModuleConfig } from '../../../../types'
 import { TransferOfVehicleOwnershipService } from './transfer-of-vehicle-ownership.service'
-import { VehicleOwnerChangeModule } from '@island.is/api/domains/transport-authority/vehicle-owner-change'
+import { TransferOfVehicleOwnershipApiModule } from '@island.is/api/domains/transport-authority/transfer-of-vehicle-ownership'
 
 export class TransferOfVehicleOwnershipModule {
   static register(baseConfig: BaseTemplateAPIModuleConfig): DynamicModule {
@@ -10,7 +10,7 @@ export class TransferOfVehicleOwnershipModule {
       module: TransferOfVehicleOwnershipModule,
       imports: [
         SharedTemplateAPIModule.register(baseConfig),
-        VehicleOwnerChangeModule,
+        TransferOfVehicleOwnershipApiModule,
       ],
       providers: [TransferOfVehicleOwnershipService],
       exports: [TransferOfVehicleOwnershipService],

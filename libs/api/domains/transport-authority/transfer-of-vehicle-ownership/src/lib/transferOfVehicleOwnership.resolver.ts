@@ -9,6 +9,6 @@ import type { User } from '@island.is/auth-nest-tools'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
-export class VehicleOwnerChangeResolver {
+export class TransferOfVehicleOwnershipApiResolver {
   constructor() {}
 }

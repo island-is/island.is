@@ -7,11 +7,16 @@ import {
   TachonetCheckResponseCardsIsActiveEnum,
   TachonetCheckResponseCardsIsTemporaryEnum,
 } from '../../gen/fetch'
-import { TachoNetApi, DriverCardsApi } from '../../gen/fetch/apis'
+import {
+  TachoNetApi,
+  DriverCardsApi,
+  IndividualApi,
+} from '../../gen/fetch/apis'
 import {
   DriverCardApplicationResponse,
   DriversCard,
   DriversCardApplicationRequest,
+  PhotoAndSignatureResponse,
   TachoNetCheckRequest,
   TachoNetCheckResponse,
 } from './digitalTachographDriversCardClient.types'
@@ -21,6 +26,7 @@ export class DigitalTachographDriversCardClient {
   constructor(
     private readonly tachoNetApi: TachoNetApi,
     private readonly driversCardApi: DriverCardsApi,
+    private readonly individualApi: IndividualApi,
   ) {}
 
   public async checkTachoNet(
@@ -75,7 +81,12 @@ export class DigitalTachographDriversCardClient {
 
   public async saveDriversCard(
     request: DriversCardApplicationRequest,
-  ): Promise<DriverCardApplicationResponse> {
+  ): Promise<DriverCardApplicationResponse | null> {
+    // TODOx disabled untill this API goes on xroad
+    console.log(JSON.stringify(request))
+    throw Error('Not implemented')
+    return null
+
     const result = await this.driversCardApi.postDrivercards({
       driverCardApplicationRequest: {
         personIdNumber: request.ssn,
@@ -116,6 +127,22 @@ export class DigitalTachographDriversCardClient {
               country: result?.deliveryIfSend?.country,
             }
           : undefined,
+    }
+  }
+
+  public async getPhotoAndSignature(
+    ssn: string,
+  ): Promise<PhotoAndSignatureResponse> {
+    const result = await this.individualApi.getIndividualPersidnoPhotoandsignature(
+      {
+        persidno: ssn,
+      },
+    )
+
+    return {
+      ssn: result.personIdNumber,
+      photo: result.photo,
+      signature: result.signature,
     }
   }
 }

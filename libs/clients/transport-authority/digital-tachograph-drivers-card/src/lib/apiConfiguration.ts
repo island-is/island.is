@@ -1,6 +1,11 @@
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { ConfigType } from '@nestjs/config'
-import { TachoNetApi, DriverCardsApi, Configuration } from '../../gen/fetch'
+import {
+  TachoNetApi,
+  DriverCardsApi,
+  Configuration,
+  IndividualApi,
+} from '../../gen/fetch'
 import { DigitalTachographDriversCardClientConfig } from './digitalTachographDriversCardClient.config'
 
 const configFactory = (
@@ -39,6 +44,19 @@ export const exportedApis = [
       config: ConfigType<typeof DigitalTachographDriversCardClientConfig>,
     ) => {
       return new DriverCardsApi(
+        new Configuration(
+          configFactory(config, `${config.xroadBaseUrl}/${config.xroadPath}`),
+        ),
+      )
+    },
+    inject: [DigitalTachographDriversCardClientConfig.KEY],
+  },
+  {
+    provide: IndividualApi,
+    useFactory: (
+      config: ConfigType<typeof DigitalTachographDriversCardClientConfig>,
+    ) => {
+      return new IndividualApi(
         new Configuration(
           configFactory(config, `${config.xroadBaseUrl}/${config.xroadPath}`),
         ),

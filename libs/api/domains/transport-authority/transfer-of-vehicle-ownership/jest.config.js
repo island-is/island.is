@@ -1,5 +1,5 @@
 module.exports = {
-  displayName: 'api-domains-transport-authority-vehicle-owner-change',
+  displayName: 'api-domains-transport-authority-transfer-of-vehicle-ownership',
   preset: '../../../../../jest.preset.js',
   globals: {
     'ts-jest': {
@@ -12,5 +12,5 @@ module.exports = {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory:
-    '../../../../../coverage/libs/api/domains/transport-authority/vehicle-owner-change',
+    '../../../../../coverage/libs/api/domains/transport-authority/transfer-of-vehicle-ownership',
 }

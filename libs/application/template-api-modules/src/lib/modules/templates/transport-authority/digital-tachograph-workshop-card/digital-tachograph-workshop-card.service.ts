@@ -43,10 +43,9 @@ export class DigitalTachographWorkshopCardService {
     )
 
     if (!isPayment?.fulfilled) {
-      // TODOx payment step disabled
-      // throw new Error(
-      //   'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
-      // )
+      throw new Error(
+        'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
+      )
     }
 
     return {

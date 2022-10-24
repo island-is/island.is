@@ -11,6 +11,7 @@ export class VehicleOwnerChangeClient {
     ownerChange: OwnerChange,
   ): Promise<void> {
     // TODOx disabled untill this API goes on xroad
+    throw Error('Not implemented')
     return
 
     const result = await this.ownerchangeApi.rootPost({

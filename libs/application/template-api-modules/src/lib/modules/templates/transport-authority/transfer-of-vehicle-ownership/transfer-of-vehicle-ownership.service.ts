@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { ChargeItemCode } from '@island.is/shared/constants'
-import { VehicleOwnerChangeService } from '@island.is/api/domains/transport-authority/vehicle-owner-change'
+import { TransferOfVehicleOwnershipApi } from '@island.is/api/domains/transport-authority/transfer-of-vehicle-ownership'
 import { TransferOfVehicleOwnershipAnswers } from '@island.is/application/templates/transport-authority/transfer-of-vehicle-ownership'
 import {
   generateAssignReviewerEmail,
@@ -18,7 +18,7 @@ interface EmailRecipient {
 export class TransferOfVehicleOwnershipService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
-    private readonly vehicleOwnerChangeService: VehicleOwnerChangeService,
+    private readonly transferOfVehicleOwnershipApi: TransferOfVehicleOwnershipApi,
   ) {}
 
   async createCharge({
@@ -65,10 +65,9 @@ export class TransferOfVehicleOwnershipService {
       application.id,
     )
     if (!isPayment?.fulfilled) {
-      // TODOx payment step disabled
-      // throw new Error(
-      //   'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
-      // )
+      throw new Error(
+        'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
+      )
     }
 
     // Send emails about review to users that have been added (and have not approved yet):
@@ -202,7 +201,7 @@ export class TransferOfVehicleOwnershipService {
     const answers = application.answers as TransferOfVehicleOwnershipAnswers
 
     // Submit the application
-    await this.vehicleOwnerChangeService.saveOwnerChange(auth.nationalId, {
+    await this.transferOfVehicleOwnershipApi.saveOwnerChange(auth.nationalId, {
       permno: answers?.vehicle?.plate,
       seller: {
         ssn: answers?.seller?.nationalId,
@@ -281,7 +280,7 @@ export class TransferOfVehicleOwnershipService {
     //   }
     // }
 
-    // Send email individually to each recipient
+    // Send email individually to each recipient about success of submitting application
     for (var i = 0; i < recipientList.length; i++) {
       await this.sharedTemplateAPIService.sendEmail(
         (props) =>

@@ -4,8 +4,8 @@ import {
   VehicleOwnerChangeClientModule,
   VehicleOwnerChangeClientConfig,
 } from '@island.is/clients/transport-authority/vehicle-owner-change'
-import { VehicleOwnerChangeResolver } from './vehicleOwnerChange.resolver'
-import { VehicleOwnerChangeService } from './vehicleOwnerChange.service'
+import { TransferOfVehicleOwnershipApiResolver } from './transferOfVehicleOwnership.resolver'
+import { TransferOfVehicleOwnershipApi } from './transferOfVehicleOwnership.service'
 
 @Module({
   imports: [
@@ -15,7 +15,10 @@ import { VehicleOwnerChangeService } from './vehicleOwnerChange.service'
       load: [VehicleOwnerChangeClientConfig],
     }),
   ],
-  providers: [VehicleOwnerChangeResolver, VehicleOwnerChangeService],
-  exports: [VehicleOwnerChangeService],
+  providers: [
+    TransferOfVehicleOwnershipApiResolver,
+    TransferOfVehicleOwnershipApi,
+  ],
+  exports: [TransferOfVehicleOwnershipApi],
 })
-export class VehicleOwnerChangeModule {}
+export class TransferOfVehicleOwnershipApiModule {}
