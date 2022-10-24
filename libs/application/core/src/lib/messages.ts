@@ -11,21 +11,6 @@ export const coreMessages = defineMessages({
     defaultMessage: 'Til baka',
     description: 'Back',
   },
-  buttonCancel: {
-    id: 'application.system:button.cancel',
-    defaultMessage: 'Hætta við',
-    description: 'Cancel',
-  },
-  buttonDestroy: {
-    id: 'application.system:button.delete',
-    defaultMessage: 'Eyða',
-    description: 'Delete',
-  },
-  buttonRenew: {
-    id: 'application.system:button.renew',
-    defaultMessage: 'Endurnýja',
-    description: 'Renew',
-  },
   buttonSubmit: {
     id: 'application.system:button.submit',
     defaultMessage: 'Senda',

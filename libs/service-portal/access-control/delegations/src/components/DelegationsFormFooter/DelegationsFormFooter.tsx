@@ -1,4 +1,3 @@
-import { coreMessages } from '@island.is/application/core'
 import {
   Box,
   Button,
@@ -9,6 +8,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import type { IconMapIcon as IconType } from '@island.is/island-ui/core'
 import * as styles from './DelegationsFormFooter.css'
+import { m } from '@island.is/service-portal/core'
 
 type DelegationsFormFooterProps = {
   loading?: boolean
@@ -53,7 +53,7 @@ export const DelegationsFormFooter = ({
         className={styles.container}
       >
         <Button size={buttonSize} variant="ghost" onClick={onCancel}>
-          {formatMessage(coreMessages.buttonCancel)}
+          {formatMessage(m.buttonCancel)}
         </Button>
         <Button
           size={buttonSize}

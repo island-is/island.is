@@ -821,4 +821,19 @@ export const m = defineMessages({
     id: 'service.portal:error-screen-title',
     defaultMessage: 'Villa',
   },
+  buttonCancel: {
+    id: 'application.system:button.cancel',
+    defaultMessage: 'Hætta við',
+    description: 'Cancel',
+  },
+  buttonDestroy: {
+    id: 'application.system:button.delete',
+    defaultMessage: 'Eyða',
+    description: 'Delete',
+  },
+  buttonRenew: {
+    id: 'application.system:button.renew',
+    defaultMessage: 'Endurnýja',
+    description: 'Renew',
+  },
 })
