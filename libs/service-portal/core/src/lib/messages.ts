@@ -543,10 +543,6 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:delegations',
     defaultMessage: 'Umboð',
   },
-  accessControlChooseDelegation: {
-    id: 'sp.access-control-delegations:choose-delegation',
-    defaultMessage: 'Veldu umboð',
-  },
   accessControlDelegationsToMe: {
     id: 'sp.access-control-delegations:to-me',
     defaultMessage: 'Umboð til mín',
