@@ -489,7 +489,7 @@ export class DelegationsService {
           // Pass through altough Þjóðskrá API throws an error since it is not required to view the delegation.
           persons[index] instanceof Error ||
           // Make sure we can match the person to the delegation, i.e. not deceased
-          persons[index]?.nationalId === fromNationalId,
+          (persons[index] as IndividualDto)?.nationalId === fromNationalId,
       )
 
       const modifiedAliveDelegations = aliveDelegations.map(
@@ -705,7 +705,8 @@ export class DelegationsService {
           // Pass through altough Þjóðskrá API throws an error since it is not required to view the personal representative.
           persons[index] instanceof Error ||
           // Make sure we can match the person to the personal representatives, i.e. not deceased
-          persons[index].nationalId === nationalIdRepresentedPerson,
+          (persons[index] as IndividualDto)?.nationalId ===
+            nationalIdRepresentedPerson,
       )
 
       if (deceased.length > 0) {
