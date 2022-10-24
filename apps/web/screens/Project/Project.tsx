@@ -20,6 +20,7 @@ import {
   stepperUtils,
   Form,
   PowerBiSlice,
+  AccordionSlice,
 } from '@island.is/web/components'
 import {
   Box,
@@ -139,6 +140,7 @@ const ProjectPage: Screen<PageProps> = ({
                 renderComponent: {
                   Form: (slice) => <Form form={slice} namespace={namespace} />,
                   PowerBiSlice: (slice) => <PowerBiSlice slice={slice} />,
+                  AccordionSlice: (slice) => <AccordionSlice slice={slice} />,
                 },
               })}
           </Box>
@@ -176,6 +178,7 @@ const ProjectPage: Screen<PageProps> = ({
             renderComponent: {
               Form: (slice) => <Form form={slice} namespace={namespace} />,
               PowerBiSlice: (slice) => <PowerBiSlice slice={slice} />,
+              AccordionSlice: (slice) => <AccordionSlice slice={slice} />,
             },
           })}
         {!subpage && projectPage.stepper && (
