@@ -191,8 +191,6 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
             })}
             confirmIcon="arrowForward"
           />
-          {/* Empty div helper to make content below footer button not transparent */}
-          <Box paddingBottom={6} background="white" />
         </Box>
       </FormProvider>
       <AccessConfirmModal

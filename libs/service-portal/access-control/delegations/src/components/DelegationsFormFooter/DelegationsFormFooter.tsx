@@ -1,5 +1,11 @@
 import { coreMessages } from '@island.is/application/core'
-import { Box, Button, ButtonProps, Divider } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  ButtonProps,
+  Divider,
+  ResponsiveSpace,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import type { IconMapIcon as IconType } from '@island.is/island-ui/core'
 import * as styles from './DelegationsFormFooter.css'
@@ -14,6 +20,7 @@ type DelegationsFormFooterProps = {
   confirmIcon?: IconType
   confirmButtonColorScheme?: 'destructive' | 'default'
   showDivider?: boolean
+  containerPaddingBottom?: ResponsiveSpace
 }
 
 export const DelegationsFormFooter = ({
@@ -24,6 +31,7 @@ export const DelegationsFormFooter = ({
   confirmIcon,
   confirmButtonColorScheme = 'default',
   showDivider = true,
+  containerPaddingBottom = 6,
   ...rest
 }: DelegationsFormFooterProps) => {
   const { formatMessage } = useLocale()
@@ -41,6 +49,7 @@ export const DelegationsFormFooter = ({
         justifyContent="spaceBetween"
         width="full"
         paddingTop={4}
+        paddingBottom={containerPaddingBottom}
         className={styles.container}
       >
         <Button size={buttonSize} variant="ghost" onClick={onCancel}>

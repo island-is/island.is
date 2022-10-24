@@ -214,9 +214,8 @@ export const AccessConfirmModal = ({
           onConfirm={onConfirmHandler}
           confirmLabel={formatMessage(m.codeConfirmation)}
           confirmIcon="checkmark"
+          containerPaddingBottom={[3, 3, 6]}
         />
-        {/* Empty div helper to make content below footer button not transparent */}
-        <Box paddingBottom={[3, 3, 6]} background="white" />
       </Box>
     </Modal>
   )
