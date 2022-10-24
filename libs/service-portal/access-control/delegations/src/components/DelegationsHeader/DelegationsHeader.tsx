@@ -20,14 +20,14 @@ export const DelegationsHeader = ({
     domainOptions,
     defaultDomainOption,
     loading,
-    domainDisplayName,
+    domainName,
   } = useDomains()
 
   const onClickHandler = () => {
     const query = new URLSearchParams()
 
-    if (domainDisplayName) {
-      query.append('domain', domainDisplayName)
+    if (domainName) {
+      query.append('domain', domainName)
     }
 
     const queryString = query.toString()

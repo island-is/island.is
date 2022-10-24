@@ -1,9 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useLocale } from '@island.is/localization'
 import { useAuthDomainsQuery } from '@island.is/service-portal/graphql'
-import { ALL_DOMAINS, ALL_DOMAINS_LABEL, ISLAND_DOMAIN } from '../constants'
+import { ALL_DOMAINS, ISLAND_DOMAIN } from '../constants'
 import { useQueryParam } from '@island.is/service-portal/core'
-import { useSessionStorage } from 'react-use'
 import { useLocation, useHistory } from 'react-router-dom'
 
 export type DomainOption = {
@@ -30,14 +29,14 @@ export const useDomains = () => {
 
   const defaultLabel = formatMessage({
     id: 'sp.access-control-delegations:all-domains',
-    defaultMessage: ALL_DOMAINS_LABEL,
+    defaultMessage: 'Öll kerfi',
   })
   const allDomainsOption = {
     label: defaultLabel,
     value: ALL_DOMAINS,
   }
 
-  const { data, loading, refetch } = useAuthDomainsQuery({
+  const { data, loading } = useAuthDomainsQuery({
     variables: {
       input: {
         lang,
@@ -57,12 +56,13 @@ export const useDomains = () => {
     [data?.authDomains],
   )
 
-  const getOptionByLabel = (labelName?: string | null) =>
-    domainOptions.find(({ label }) => labelName === label)
-
   const getOptionByName = (name?: string | null) =>
     domainOptions.find(({ value }) => value === name)
 
+  /**
+   * Updates the domain name in state, session storage and query string.
+   * If no domain exist in query string then we skip it.
+   */
   const updateDomainName = (value: string | null) => {
     const option = getOptionByName(value) ?? allDomainsOption
 
@@ -71,8 +71,11 @@ export const useDomains = () => {
     sessionStorage.setItem('domain', newDomainName)
 
     const query = new URLSearchParams(location.search)
-    query.set('domain', option.label)
-    history.push(`${location.pathname}?${query.toString()}`)
+
+    if (query.get('domain')) {
+      query.set('domain', option.value)
+      history.push(`${location.pathname}?${query.toString()}`)
+    }
   }
 
   useEffect(() => {
@@ -82,7 +85,7 @@ export const useDomains = () => {
       if (sessionDomainName) {
         setDomainName(sessionDomainName)
       } else if (displayNameQueryParam) {
-        const option = getOptionByLabel(displayNameQueryParam)
+        const option = getOptionByName(displayNameQueryParam)
 
         if (option) {
           const newDomainName = option.value ?? null
@@ -92,19 +95,14 @@ export const useDomains = () => {
         updateDomainName(ISLAND_DOMAIN)
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data?.authDomains])
-
-  const defaultDomainOption = domainName
-    ? getOptionByName(domainName)
-    : getOptionByLabel(displayNameQueryParam)
 
   return {
     domainName: domainName === ALL_DOMAINS ? null : domainName,
     updateDomainName,
-    domainDisplayName: defaultDomainOption?.label ?? defaultLabel,
     domainOptions: domainOptions,
-    defaultDomainOption: defaultDomainOption ?? allDomainsOption,
+    defaultDomainOption: getOptionByName(domainName) ?? allDomainsOption,
     loading,
-    refetch,
   }
 }

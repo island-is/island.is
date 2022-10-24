@@ -2,4 +2,3 @@
 // hard-coding the domain it should manage.
 export const ISLAND_DOMAIN = '@island.is'
 export const ALL_DOMAINS = '*'
-export const ALL_DOMAINS_LABEL = 'Öll kerfi'
