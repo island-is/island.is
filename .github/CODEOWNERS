@@ -79,8 +79,6 @@
 /libs/clients/auth-public-api/                                                                      @island-is/aranja
 /libs/clients/middlewares/                                                                          @island-is/aranja
 /libs/service-portal/settings/access-control                                                        @island-is/aranja
-/libs/clients/vmst/                                                                                 @island-is/aranja
-/libs/api/domains/directorate-of-labour/                                                            @island-is/aranja
 /libs/service-portal/access-control/delegations                                                     @island-is/aranja
 
 /apps/judicial-system/                                                                              @island-is/kolibri-justice-league
@@ -182,6 +180,8 @@
 /libs/skilavottord/                                                                                 @island-is/deloitte
 /libs/application/templates/parental-leave/                                                         @island-is/deloitte
 /libs/application/template-api-modules/src/lib/modules/templates/parental-leave/                    @island-is/deloitte
+/libs/clients/vmst/                                                                                 @island-is/deloitte
+/libs/api/domains/directorate-of-labour/                                                            @island-is/deloitte
 
 /apps/services/auth/api/                                                                            @island-is/fuglar @island-is/aranja
 /apps/services/auth/admin-api/                                                                      @island-is/fuglar @island-is/aranja
