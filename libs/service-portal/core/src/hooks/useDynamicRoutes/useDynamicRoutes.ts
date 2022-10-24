@@ -4,7 +4,8 @@ import { useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
 import { ServicePortalPath } from '../../lib/navigation/paths'
 import uniq from 'lodash/uniq'
-
+import { useFeatureFlagClient } from '@island.is/react/feature-flags'
+import { FeatureFlagClient, Features } from '@island.is/feature-flags'
 export const GET_TAPS_QUERY = gql`
   query GetTapsQuery {
     getCustomerTapControl {
@@ -33,6 +34,22 @@ export const useDynamicRoutes = () => {
   const [activeDynamicRoutes, setActiveDynamicRoutes] = useState<
     ServicePortalPath[]
   >([])
+  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
+  const [
+    drivingLessonsFlagEnabled,
+    setDrivingLessonsFlagEnabled,
+  ] = useState<boolean>(false)
+
+  useEffect(() => {
+    const isFlagEnabled = async () => {
+      const ffEnabled = await featureFlagClient.getValue(
+        Features.servicePortalDrivingLessonsBookModule,
+        false,
+      )
+      setDrivingLessonsFlagEnabled(ffEnabled as boolean)
+    }
+    isFlagEnabled()
+  }, [])
 
   const { data, loading } = useQuery<Query>(GET_TAPS_QUERY)
 
@@ -64,7 +81,7 @@ export const useDynamicRoutes = () => {
       dynamicPathArray.push(ServicePortalPath.FinanceSchedule)
     }
 
-    if (licenseBookData?.book.id) {
+    if (drivingLessonsFlagEnabled && licenseBookData?.book?.id) {
       dynamicPathArray.push(ServicePortalPath.AssetsVehiclesDrivingLessons)
     }
     setActiveDynamicRoutes(uniq([...activeDynamicRoutes, ...dynamicPathArray]))

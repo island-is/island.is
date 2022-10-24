@@ -36,6 +36,7 @@ export const GET_STUDENT_BOOK = gql`
         schoolNationalId
         schoolName
         isDigital
+        statusName
         totalLessonTime
         totalLessonCount
         teachersAndLessons {
@@ -84,7 +85,7 @@ const DrivingLessonsBook: ServicePortalModuleComponent = () => {
 
   const { data, loading, error } = useQuery<Query>(GET_STUDENT_BOOK)
 
-  const { book, active } = data?.drivingLicenseBookUserBook || {}
+  const { book } = data?.drivingLicenseBookUserBook || {}
 
   if (error && !loading) {
     return (
@@ -124,7 +125,6 @@ const DrivingLessonsBook: ServicePortalModuleComponent = () => {
               loading={loading}
             />
             <Divider />
-
             <UserInfoLine
               label={formatMessage(messages.vehicleDrivingLessonsClassOfRight)}
               renderContent={() => (
@@ -133,7 +133,6 @@ const DrivingLessonsBook: ServicePortalModuleComponent = () => {
               loading={loading}
             />
             <Divider />
-
             <UserInfoLine
               label={formatMessage(messages.vehicleDrivingLessonsTeacher)}
               content={book?.teacherName}
@@ -146,14 +145,12 @@ const DrivingLessonsBook: ServicePortalModuleComponent = () => {
               // }}
             />
             <Divider />
-
             <UserInfoLine
               label={formatMessage(messages.vehicleDrivingLessonsCount)}
               content={book?.totalLessonCount.toString()}
               loading={loading}
             />
             <Divider />
-
             <UserInfoLine
               label={formatMessage(messages.vehicleDrivingLessonsTotalTime)}
               content={
@@ -164,14 +161,12 @@ const DrivingLessonsBook: ServicePortalModuleComponent = () => {
               loading={loading}
             />
             <Divider />
-
-            {/* Removed until service can return status
-        <UserInfoLine
-          label={formatMessage(messages.vehicleDrivingLessonsStatus)}
-          content={'?'}
-          loading={loading}
-        />
-        <Divider /> */}
+            <UserInfoLine
+              label={formatMessage(messages.vehicleDrivingLessonsStatus)}
+              content={book.statusName}
+              loading={loading}
+            />
+            <Divider />
           </Stack>
           <Box marginBottom={5} />
 
