@@ -12112,10 +12112,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:18.7.18":
-  version: 18.7.18
-  resolution: "@types/node@npm:18.7.18"
-  checksum: 8aec61f0f96e2a69ce51f1f40f949ca578bbb4fe05d7c0b8ce3aeeb848e90f755837f17f6ac132ca404d974fe9b2974150ad3b4984fc9dc7c3ceddb10bae0167
+"@types/node@npm:18.11.4":
+  version: 18.11.4
+  resolution: "@types/node@npm:18.11.4"
+  checksum: 1de782b4eef4a5115396ae62137f248390ee5d1d9e9eeb49599714554cce1328af43da31bc28e7bab5a0ef859538a584a907b26163a59b42bc87b8317dc00bb8
   languageName: node
   linkType: hard
 
@@ -26990,7 +26990,7 @@ __metadata:
     "@types/lodash": 4.14.160
     "@types/mailparser": 3.4.0
     "@types/memoizee": 0.4.5
-    "@types/node": 18.7.18
+    "@types/node": 18.11.4
     "@types/nodemailer": 6.4.1
     "@types/opossum": 4.1.1
     "@types/passport-jwt": 3.0.3
