@@ -12,18 +12,22 @@ interface DelegationsHeaderProps {
 }
 
 export const DelegationsHeader = ({
-  domainName,
   onDomainChange,
 }: DelegationsHeaderProps) => {
   const { formatMessage } = useLocale()
   const history = useHistory()
-  const { domainOptions, defaultDomainOption, loading } = useDomains(domainName)
+  const {
+    domainOptions,
+    defaultDomainOption,
+    loading,
+    domainDisplayName,
+  } = useDomains()
 
   const onClickHandler = () => {
     const query = new URLSearchParams()
 
-    if (domainName) {
-      query.append('domain', domainName)
+    if (domainDisplayName) {
+      query.append('domain', domainDisplayName)
     }
 
     const queryString = query.toString()
@@ -52,8 +56,8 @@ export const DelegationsHeader = ({
             name="domain"
             id="domain"
             noOptionsMessage="Enginn valmöguleiki"
-            defaultValue={defaultDomainOption}
             options={domainOptions}
+            value={defaultDomainOption}
             onChange={(option) => {
               const opt = option as DomainOption
 

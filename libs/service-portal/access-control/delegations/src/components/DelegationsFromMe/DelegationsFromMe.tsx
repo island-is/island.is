@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { ApolloError } from 'apollo-client'
 import {
   SkeletonLoader,
   GridRow,
@@ -15,45 +14,37 @@ import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
 import { AccessDeleteModal, AccessCard } from '../access'
 import { isDefined } from '@island.is/shared/utils'
-import type { AuthDelegationsQueryVariables } from '@island.is/service-portal/graphql'
-import { DomainOption } from '../../hooks/useDomains'
+import { useAuthDelegationsQuery } from '@island.is/service-portal/graphql'
+import { DomainOption, useDomains } from '../../hooks/useDomains'
 import { ALL_DOMAINS } from '../../constants'
 
-type DelegationsFromMeProps = {
-  domain: {
-    domainName: string | null
-    setDomainName(value: string | null): void
-  }
-
-  delegations: {
-    list: AuthCustomDelegation[]
-    loading: boolean
-    error?: ApolloError
-    refetch(variables: AuthDelegationsQueryVariables): void
-  }
-}
-
-export const DelegationsFromMe = ({
-  domain: { domainName, setDomainName },
-  delegations: {
-    list: delegations,
-    loading: delegationsLoading,
-    error: delegationsError,
-    refetch: refetchDelegations,
-  },
-}: DelegationsFromMeProps) => {
+export const DelegationsFromMe = () => {
   const { formatMessage } = useLocale()
   const [delegation, setDelegation] = useState<AuthCustomDelegation | null>(
     null,
   )
+  const { domainName, updateDomainName } = useDomains()
+
+  const { data, loading, refetch, error } = useAuthDelegationsQuery({
+    variables: {
+      input: {
+        domain: domainName,
+      },
+    },
+    // Make sure that loading state is shown when refetching
+    notifyOnNetworkStatusChange: true,
+  })
+
+  const delegations = (data?.authDelegations as AuthCustomDelegation[]) ?? []
 
   const onDomainChange = (option: DomainOption) => {
     // Select components only supports string or number values, there for we use
     // the string all-domains as a value for the all domains option.
     // The service takes null as a value for all domains.
     const domainName = option.value === ALL_DOMAINS ? null : option.value
-    setDomainName(domainName)
-    refetchDelegations({
+
+    updateDomainName(domainName)
+    refetch({
       input: {
         domain: domainName,
       },
@@ -71,9 +62,9 @@ export const DelegationsFromMe = ({
             />
           </GridColumn>
           <GridColumn paddingBottom={4} span="12/12">
-            {delegationsLoading ? (
+            {loading ? (
               <SkeletonLoader width="100%" height={191} />
-            ) : delegationsError ? (
+            ) : error ? (
               <AlertBanner
                 description={formatMessage(m.errorFetch)}
                 variant="error"
@@ -106,7 +97,7 @@ export const DelegationsFromMe = ({
         }}
         onDelete={() => {
           setDelegation(null)
-          refetchDelegations({
+          refetch({
             input: {
               domain: domainName,
             },

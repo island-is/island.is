@@ -2,7 +2,8 @@ import { themeUtils, theme } from '@island.is/island-ui/theme'
 import { style } from '@vanilla-extract/css'
 
 export const container = style({
-  background: 'rgba(255, 255, 255, 0.7)',
+  background:
+    'linear-gradient(to bottom, rgba(255,255,255,0), white 80%, white)',
 })
 
 export const dividerContainer = style({
@@ -16,8 +17,4 @@ export const dividerContainer = style({
       marginRight: 0,
     },
   }),
-})
-
-export const cancelButton = style({
-  background: theme.color.white,
 })

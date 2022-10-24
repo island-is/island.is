@@ -7,34 +7,10 @@ import {
 
 import { DelegationsFromMe, DelegationsAccessGuard } from '../../components'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { useSessionStorage } from 'react-use'
-import {
-  AuthCustomDelegation,
-  useAuthDelegationsQuery,
-} from '@island.is/service-portal/graphql'
-import { useDomains } from '../../hooks/useDomains'
-import { ISLAND_DOMAIN } from '../../constants/domain'
 
 const AccessControl: ServicePortalModuleComponent = (props) => {
   useNamespaces(['sp.settings-access-control', 'sp.access-control-delegations'])
   const { formatMessage } = useLocale()
-
-  const [domainName, setDomainName] = useSessionStorage<string | null>(
-    'domain',
-    // Always default to island.is
-    ISLAND_DOMAIN,
-  )
-  useDomains(domainName)
-
-  const { data, loading, refetch, error } = useAuthDelegationsQuery({
-    variables: {
-      input: {
-        domain: domainName,
-      },
-    },
-    // Make sure that loading state is shown when refetching
-    notifyOnNetworkStatusChange: true,
-  })
 
   return (
     <DelegationsAccessGuard {...props}>
@@ -47,20 +23,7 @@ const AccessControl: ServicePortalModuleComponent = (props) => {
         })}
       />
       <Box marginTop={8}>
-        <DelegationsFromMe
-          domain={{
-            setDomainName,
-            domainName,
-          }}
-          delegations={{
-            list: (data?.authDelegations as AuthCustomDelegation[]) ?? [],
-            error,
-            loading,
-            refetch: (variables) => {
-              refetch(variables)
-            },
-          }}
-        />
+        <DelegationsFromMe />
       </Box>
     </DelegationsAccessGuard>
   )

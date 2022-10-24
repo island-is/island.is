@@ -25,7 +25,6 @@ import {
   ServicePortalModuleComponent,
   formatNationalId,
   m,
-  useQueryParam,
 } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 
@@ -43,12 +42,11 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
   const [name, setName] = useState('')
   const history = useHistory()
   const { md } = useBreakpoint()
-  const domainQueryParam = useQueryParam('domain')
   const {
     domainOptions,
     defaultDomainOption,
     loading: domainLoading,
-  } = useDomains(domainQueryParam)
+  } = useDomains()
 
   const [
     createAuthDelegation,
