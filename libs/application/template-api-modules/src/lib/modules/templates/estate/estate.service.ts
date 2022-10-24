@@ -41,64 +41,69 @@ export class EstateTemplateService {
   }
 
   async syslumennOnEntry({ application, auth }: TemplateApiModuleActionProps) {
-    // TODO: hook up to client once API endpoint is ready
-    //      1. Delete const estate
-    //      2. uncomment the following line
-    //      const estateResponse = (await this.syslumennService.getEstateInfo(application.applicant))[0];
-
-    const estateResponse: EstateInfo = {
-      addressOfDeceased: 'Gerviheimili 123, 600 Feneyjar',
-      cash: [],
-      marriageSettlement: false,
-      assets: [
-        {
-          assetNumber: 'F2318696',
-          description: 'Íbúð í Reykjavík',
-          share: 1,
-        },
-        {
-          assetNumber: 'F2262202',
-          description: 'Raðhús á Akureyri',
-          share: 1,
-        },
-      ],
-      vehicles: [
-        {
-          assetNumber: 'VA334',
-          description: 'Nissan Terrano II',
-          share: 1,
-        },
-        {
-          assetNumber: 'YZ927',
-          description: 'Subaru Forester',
-          share: 1,
-        },
-      ],
-      knowledgeOfOtherWills: 'Yes',
-      ships: [],
-      flyers: [],
-      estateMembers: [
-        {
-          name: 'Stúfur Mack',
-          relation: 'Sonur',
-          nationalId: '2222222229',
-        },
-        {
-          name: 'Gervimaður Færeyja',
-          relation: 'Maki',
-          nationalId: '0101302399',
-        },
-        {
-          name: 'Gervimaður Bretland',
-          relation: 'Faðir',
-          nationalId: '0101304929',
-        },
-      ],
-      caseNumber: '011515',
-      dateOfDeath: new Date(Date.now() - 1000 * 3600 * 24 * 100),
-      nameOfDeceased: 'Lizzy B. Gone',
-      nationalIdOfDeceased: '0101301234',
-      districtCommissionerHasWill: true,
+    let estateResponse: EstateInfo
+    if (
+      application.applicant.startsWith('010130') &&
+      application.applicant.endsWith('2399')
+    ) {
+      estateResponse = {
+        addressOfDeceased: 'Gerviheimili 123, 600 Feneyjar',
+        cash: [],
+        marriageSettlement: false,
+        assets: [
+          {
+            assetNumber: 'F2318696',
+            description: 'Íbúð í Reykjavík',
+            share: 1,
+          },
+          {
+            assetNumber: 'F2262202',
+            description: 'Raðhús á Akureyri',
+            share: 1,
+          },
+        ],
+        vehicles: [
+          {
+            assetNumber: 'VA334',
+            description: 'Nissan Terrano II',
+            share: 1,
+          },
+          {
+            assetNumber: 'YZ927',
+            description: 'Subaru Forester',
+            share: 1,
+          },
+        ],
+        knowledgeOfOtherWills: 'Yes',
+        ships: [],
+        flyers: [],
+        estateMembers: [
+          {
+            name: 'Stúfur Mack',
+            relation: 'Sonur',
+            nationalId: '2222222229',
+          },
+          {
+            name: 'Gervimaður Færeyja',
+            relation: 'Maki',
+            nationalId: '0101302399',
+          },
+          {
+            name: 'Gervimaður Bretland',
+            relation: 'Faðir',
+            nationalId: '0101304929',
+          },
+        ],
+        caseNumber: '011515',
+        dateOfDeath: new Date(Date.now() - 1000 * 3600 * 24 * 100),
+        nameOfDeceased: 'Lizzy B. Gone',
+        nationalIdOfDeceased: '0101301234',
+        districtCommissionerHasWill: true,
+      }
+    } else {
+      estateResponse = (
+        await this.syslumennService.getEstateInfo(application.applicant)
+      )[0]
     }
 
     const estate = estateTransformer(estateResponse)

@@ -183,7 +183,6 @@ export type EstateAsset = {
 export interface EstateRegistrant extends EstateCommon {
   applicantEmail: string
   applicantPhone: string
-  knowledgeOfOtherWills: 'Yes' | 'No'
   office: string
   ownBusinessManagement: boolean
   assetsAbroad: boolean
