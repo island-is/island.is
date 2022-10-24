@@ -74,8 +74,6 @@ const Overview: React.FC = () => {
       activeSubSection={
         caseHasBeenSentToCourt
           ? undefined
-          : features.includes(Feature.CASE_FILE_ROUTE)
-          ? 4
           : IndictmentsProsecutorSubsections.OVERVIEW
       }
       isLoading={isLoadingWorkingCase}
@@ -121,6 +119,8 @@ const Overview: React.FC = () => {
           previousUrl={
             caseHasBeenSentToCourt
               ? constants.CASES_ROUTE
+              : features.includes(Feature.CASE_FILE_ROUTE)
+              ? `${constants.INDICTMENTS_CASE_FILE_ROUTE}/${workingCase.id}`
               : `${constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE}/${workingCase.id}`
           }
           nextButtonText={formatMessage(strings.overview.nextButtonText, {
