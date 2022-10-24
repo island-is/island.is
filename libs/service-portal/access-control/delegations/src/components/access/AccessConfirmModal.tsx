@@ -66,7 +66,7 @@ export const AccessConfirmModal = ({
   const fromNationalId = userInfo?.profile.nationalId
 
   return (
-    <Modal {...rest} onClose={onClose}>
+    <Modal {...rest} onClose={onClose} noPaddingBottom>
       <Box marginY={[4, 4, 8]} display="flex" flexDirection="column" rowGap={3}>
         {error && (
           <Box paddingBottom={3}>
@@ -215,6 +215,8 @@ export const AccessConfirmModal = ({
           confirmLabel={formatMessage(m.codeConfirmation)}
           confirmIcon="checkmark"
         />
+        {/* Empty div helper to make content below footer button not transparent */}
+        <Box paddingBottom={[3, 3, 6]} background="white" />
       </Box>
     </Modal>
   )

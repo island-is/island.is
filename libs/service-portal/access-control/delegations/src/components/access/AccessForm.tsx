@@ -177,21 +177,23 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
             ) : (
               authScopeTree?.map(renderAccessItem)
             )}
-            <Box position="sticky" bottom={0} marginTop={20} paddingBottom={6}>
-              <DelegationsFormFooter
-                onCancel={() =>
-                  history.push(ServicePortalPath.AccessControlDelegations)
-                }
-                onConfirm={() => setOpenConfirmModal(true)}
-                confirmLabel={formatMessage({
-                  id: 'sp.settings-access-control:empty-new-access',
-                  defaultMessage: 'Veita aðgang',
-                })}
-                confirmIcon="arrowForward"
-              />
-            </Box>
           </Box>
         </form>
+        <Box position="sticky" bottom={0} marginTop={20}>
+          <DelegationsFormFooter
+            onCancel={() =>
+              history.push(ServicePortalPath.AccessControlDelegations)
+            }
+            onConfirm={() => setOpenConfirmModal(true)}
+            confirmLabel={formatMessage({
+              id: 'sp.settings-access-control:empty-new-access',
+              defaultMessage: 'Veita aðgang',
+            })}
+            confirmIcon="arrowForward"
+          />
+          {/* Empty div helper to make content below footer button not transparent */}
+          <Box paddingBottom={6} background="white" />
+        </Box>
       </FormProvider>
       <AccessConfirmModal
         id={`access-confirm-modal-${delegation?.id}`}

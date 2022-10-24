@@ -9,6 +9,7 @@ export interface ModalProps {
   title?: string
   children?: React.ReactNode
   isVisible: boolean
+  noPaddingBottom?: boolean
 }
 
 export const Modal = ({
@@ -18,6 +19,7 @@ export const Modal = ({
   onClose,
   isVisible,
   children,
+  noPaddingBottom,
 }: ModalProps) => {
   const handleOnVisibilityChange = (isVisible: boolean) => {
     !isVisible && onClose && onClose()
@@ -37,7 +39,8 @@ export const Modal = ({
       <Box
         position="relative"
         background="white"
-        padding={[3, 3, 6]}
+        paddingX={[3, 3, 6]}
+        paddingBottom={noPaddingBottom ? 0 : [3, 3, 6]}
         paddingTop={12}
         borderRadius="standard"
         width="full"
