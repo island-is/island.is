@@ -98,10 +98,10 @@ export const LifeEvent: Screen<LifeEventProps> = ({
       <HeadWithSocialSharing
         title={`${title} | Ísland.is`}
         description={intro}
-        imageUrl={image.url}
-        imageContentType={image.contentType}
-        imageWidth={image.width.toString()}
-        imageHeight={image.height.toString()}
+        imageUrl={image?.url}
+        imageContentType={image?.contentType}
+        imageWidth={image?.width?.toString()}
+        imageHeight={image?.height?.toString()}
       />
 
       <GridContainer id="main-content">
@@ -112,12 +112,14 @@ export const LifeEvent: Screen<LifeEventProps> = ({
             width="full"
             printHidden
           >
-            <BackgroundImage
-              ratio="12:4"
-              background="transparent"
-              boxProps={{ background: 'white' }}
-              image={image}
-            />
+            {image && (
+              <BackgroundImage
+                ratio="12:4"
+                background="transparent"
+                boxProps={{ background: 'white' }}
+                image={image}
+              />
+            )}
           </Box>
         </GridRow>
         <GridRow>
