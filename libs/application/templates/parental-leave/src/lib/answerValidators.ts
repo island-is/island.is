@@ -229,7 +229,10 @@ export const answerValidators: Record<string, AnswerValidator> = {
         }
       }
 
-      if (payments.privatePensionFund === '') {
+      if (
+        payments.privatePensionFund === '' ||
+        payments.privatePensionFund === NO_PRIVATE_PENSION_FUND
+      ) {
         return buildError(coreErrorMessages.defaultError, 'privatePensionFund')
       }
 
