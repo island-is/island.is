@@ -4,11 +4,15 @@ import { TagQuery, tagQuery } from './tagQuery'
 import { typeAggregationQuery } from './typeAggregation'
 import { processAggregationQuery } from './processAggregation'
 
+
+// TODO is this really necessary any more ?
 const getBoostForType = (type: string, defaultBoost: string | number = 1) => {
   if (type === 'webArticle') {
     // The number 55 was chosen since it was the threshold between the highest scoring news and the highest scoring article in search results
     // The test that determined this boost was to type in "Umsókn um fæðingarorlof" and compare the news and article scores
-    return 55
+    return 1
+  } else if (type === 'webNews') {
+    return 0.5
   }
   return defaultBoost
 }
@@ -34,12 +38,19 @@ export const searchQuery = (
   let minimumShouldMatch = 1
 
   should.push({
-    simple_query_string: {
+    multi_match: {
+      fields:  [ 
+          "title^6", // note boosting
+          "title.stemmed^2", // note boosting
+          "title.compound",
+          "content",
+          "content.stemmed"
+      ],
       query: queryString,
-      fields: ['title.stemmed^15', 'title.compound', 'content.stemmed^5'],
-      analyze_wildcard: true,
-      default_operator: 'and',
-    },
+      fuzziness: "AUTO",
+      operator: "and",
+      type: "best_fields"
+      }
   })
 
   // if we have types restrict the query to those types
@@ -102,15 +113,31 @@ export const searchQuery = (
 
   return {
     query: {
-      bool: {
-        should,
-        must,
-        must_not: mustNot,
-        minimum_should_match: minimumShouldMatch,
-      },
+      function_score:{
+        query:{
+          bool: {
+            should,
+            must,
+            must_not: mustNot,
+            minimum_should_match: minimumShouldMatch,
+          },
+        },
+        functions:[
+          {
+          field_value_factor: {
+            field: "popularityScore",
+            factor: 1.2,
+            modifier: "log1p",
+            missing: 1
+            }
+          },
+          {filter: { range: { processEntryCount: { gte: 1 } } }, weight: 2},
+        ],
+      }
     },
-    ...(Object.keys(aggregation.aggs).length ? aggregation : {}), // spread aggregations if we have any
+    ...(Object.keys(aggregation.aggs).length ? aggregation : {}), // spread aggregations if we have any,
     size,
     from: (page - 1) * size, // if we have a page number add it as offset for pagination
   }
+
 }
