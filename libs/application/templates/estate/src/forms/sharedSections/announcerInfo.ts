@@ -6,7 +6,7 @@ import {
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { format as formatKennitala } from 'kennitala'
-import { removeCountryCode } from '../../lib/utils/removeCountryCode'
+import { removeCountryCode } from '@island.is/application/ui-components'
 
 export const announcerInfo = buildSection({
   id: 'information',
