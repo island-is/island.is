@@ -51,24 +51,24 @@ export const form: Form = buildForm({
       title: m.properties,
       children: [
         buildSubSection({
-          id: 'realEstateAndLand',
-          title: m.realEstateAndLand,
+          id: 'realEstate',
+          title: m.realEstate,
           children: [
             buildMultiField({
-              id: 'realEstateAndLand',
+              id: 'realEstate',
               title: m.properties,
               description: m.propertiesDescription,
               children: [
                 buildDescriptionField({
-                  id: 'realEstateAndLandsTitle',
-                  title: m.realEstateAndLand,
-                  description: m.realEstateAndLandDescription,
+                  id: 'realEstateTitle',
+                  title: m.realEstate,
+                  description: m.realEstateDescription,
                   titleVariant: 'h3',
                 }),
                 buildCustomField({
                   title: '',
                   id: 'estate.assets',
-                  component: 'RealEstateAndLandsRepeater',
+                  component: 'RealEstateRepeater',
                 }),
               ],
             }),
@@ -110,7 +110,7 @@ export const form: Form = buildForm({
           title: m.vehicles,
           children: [
             buildMultiField({
-              id: 'realEstateAndLand',
+              id: 'realEstate',
               title: m.vehicles,
               description: m.propertiesDescription,
               children: [

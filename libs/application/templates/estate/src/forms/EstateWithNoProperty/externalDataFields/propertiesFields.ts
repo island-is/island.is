@@ -9,9 +9,9 @@ import { EstateAsset, EstateRegistrant } from '@island.is/clients/syslumenn'
 export const propertiesFields = [
   buildDescriptionField({
     id: 'propertiesHeader',
-    title: m.realEstateAndLand,
+    title: m.realEstate,
     titleVariant: 'h3',
-    description: m.realEstateAndLandDescription,
+    description: m.realEstateDescription,
   }),
   buildCustomField(
     {

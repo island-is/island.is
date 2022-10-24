@@ -15,7 +15,7 @@ import { useLazyQuery } from '@apollo/client'
 import { SEARCH_FOR_PROPERTY_QUERY } from '../../graphql'
 import { Query, SearchForPropertyInput } from '@island.is/api/schema'
 
-export const AdditionalRealEstateOrLand = ({
+export const AdditionalRealEstate = ({
   field,
   index,
   remove,
@@ -128,4 +128,4 @@ export const AdditionalRealEstateOrLand = ({
   )
 }
 
-export default AdditionalRealEstateOrLand
+export default AdditionalRealEstate

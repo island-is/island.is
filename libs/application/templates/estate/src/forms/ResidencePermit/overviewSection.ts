@@ -71,9 +71,9 @@ export const overview = buildSection({
         }),
         buildDividerField({}),
         buildDescriptionField({
-          id: 'overviewEstateAndLandsHeader',
-          title: m.realEstateAndLand,
-          description: m.realEstateAndLandDescription,
+          id: 'overviewEstateHeader',
+          title: m.realEstate,
+          description: m.realEstateDescription,
           titleVariant: 'h3',
           space: 'gutter',
         }),

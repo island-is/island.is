@@ -13,9 +13,9 @@ import { Answers, Asset } from '../../types'
 
 import { m } from '../../lib/messages'
 import { EstateAsset } from '@island.is/clients/syslumenn'
-import { AdditionalRealEstateOrLand } from './AdditionalRealEstateOrLand'
+import { AdditionalRealEstate } from './AdditionalRealEstate'
 
-export const RealEstateAndLandsRepeater: FC<FieldBaseProps<Answers>> = ({
+export const RealEstateRepeater: FC<FieldBaseProps<Answers>> = ({
   application,
   field,
   errors,
@@ -95,7 +95,7 @@ export const RealEstateAndLandsRepeater: FC<FieldBaseProps<Answers>> = ({
       </GridRow>
       {fields.map((field, index) => (
         <Box key={field.id} hidden={field.initial || field?.dummy}>
-          <AdditionalRealEstateOrLand
+          <AdditionalRealEstate
             field={field}
             fieldName={id}
             remove={handleRemoveProperty}
@@ -119,4 +119,4 @@ export const RealEstateAndLandsRepeater: FC<FieldBaseProps<Answers>> = ({
   )
 }
 
-export default RealEstateAndLandsRepeater
+export default RealEstateRepeater

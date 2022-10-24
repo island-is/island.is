@@ -197,13 +197,13 @@ export const m = defineMessages({
     defaultMessage: 'Tilgreina skal allar hjúskapareignir beggja hjóna.',
     description: '',
   },
-  realEstateAndLand: {
-    id: 'es.application:realEstateAndLand',
+  realEstate: {
+    id: 'es.application:realEstate',
     defaultMessage: 'Fasteignir',
     description: '',
   },
-  realEstateAndLandDescription: {
-    id: 'es.application:realEstateAndLandDescription',
+  realEstateDescription: {
+    id: 'es.application:realEstateDescription',
     defaultMessage: 'Til dæmis íbúðarhús, sumarhús, lóðir og jarðir',
     description: '',
   },
