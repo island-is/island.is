@@ -35,8 +35,8 @@ export const serviceSetup = (services: {
       },
       HIDDEN_FEATURES: {
         dev: '',
-        staging: 'INDICTMENTS',
-        prod: 'INDICTMENTS',
+        staging: 'INDICTMENTS, CASE_FILE_ROUTE',
+        prod: 'INDICTMENTS, CASE_FILE_ROUTE',
       },
     })
     .xroad(Base, JudicialSystem)
