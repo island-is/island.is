@@ -379,7 +379,7 @@ export const CatchQuotaCalculator = ({
                   JSON.stringify(prevChangesRef.current)
               }
             >
-              {n('calculate', 'Reikna')}
+              {loading ? <LoadingDots /> : n('calculate', 'Reikna')}
             </Button>
           </Inline>
         </Box>
@@ -422,8 +422,7 @@ export const CatchQuotaCalculator = ({
         </Inline>
       </Box>
 
-      <Box className={styles.minHeightBox} width="full" textAlign="center">
-        {loading && <LoadingDots />}
+      <Box width="full" textAlign="center">
         {state.matches('error') && (
           <Text>{n('aflamarkError', 'Villa kom upp við að sækja gögn')}</Text>
         )}

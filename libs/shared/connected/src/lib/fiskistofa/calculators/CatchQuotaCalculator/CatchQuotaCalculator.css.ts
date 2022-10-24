@@ -24,10 +24,6 @@ export const visualSeparationLine = style({
   borderTop: '1px solid #CCDFFF',
 })
 
-export const minHeightBox = style({
-  minHeight: '30px',
-})
-
 export const tableBox = style({
   overflow: 'scroll',
   minWidth: '100%',

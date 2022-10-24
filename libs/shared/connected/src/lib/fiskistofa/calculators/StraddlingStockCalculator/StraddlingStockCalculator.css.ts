@@ -20,10 +20,6 @@ export const tagContainer = style({
   marginTop: '16px',
 })
 
-export const minHeightBox = style({
-  minHeight: '30px',
-})
-
 export const tableBox = style({
   overflow: 'scroll',
   minWidth: '100%',
