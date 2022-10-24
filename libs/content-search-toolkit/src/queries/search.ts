@@ -36,8 +36,8 @@ export const searchQuery = (
   should.push({
     multi_match: {
       fields: [
-        'title^6', // note boosting
-        'title.stemmed^2', // note boosting
+        'title^6', // note boosting ..
+        'title.stemmed^2', // note boosting ..
         'title.compound',
         'content',
         'content.stemmed',
