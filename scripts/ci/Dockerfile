@@ -63,7 +63,7 @@ FROM output-base-with-pg as output-express
 COPY --from=builder /build/${APP_DIST_HOME} /webapp/
 
 ENTRYPOINT []
-CMD [ "node", "main.js" ]
+CMD [ "node", "--no-experimental-fetch", "main.js" ]
 
 FROM output-base-with-pg as output-next
 
@@ -73,7 +73,7 @@ ENV PORT=4200
 COPY --from=deps /build/node_modules /webapp/node_modules
 COPY --from=builder /build/${APP_DIST_HOME} /webapp/
 
-ENTRYPOINT [ "node", "main.js" ]
+ENTRYPOINT [ "node", "--no-experimental-fetch", "main.js" ]
 
 FROM $DOCKER_IMAGE_REGISTRY/nginx/nginx:1.21-alpine as output-static
 
