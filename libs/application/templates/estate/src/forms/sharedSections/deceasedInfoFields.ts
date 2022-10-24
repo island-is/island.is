@@ -4,7 +4,7 @@ import {
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import format from 'date-fns/format'
-import { isEstateRegistrant } from '../../lib/utils/isEstateRegistrant'
+import { isEstateInfo } from '../../lib/utils/isEstateInfo'
 import { format as formatKennitala } from 'kennitala'
 export const deceasedInfoFields = [
   buildKeyValueField({
@@ -13,7 +13,7 @@ export const deceasedInfoFields = [
       externalData: {
         syslumennOnEntry: { data },
       },
-    }) => (isEstateRegistrant(data) ? data.estate.nameOfDeceased : ''),
+    }) => (isEstateInfo(data) ? data.estate.nameOfDeceased : ''),
     width: 'half',
   }),
   buildKeyValueField({
@@ -23,7 +23,7 @@ export const deceasedInfoFields = [
         syslumennOnEntry: { data },
       },
     }) =>
-      isEstateRegistrant(data)
+      isEstateInfo(data)
         ? formatKennitala(data.estate.nationalIdOfDeceased)
         : '',
     width: 'half',
@@ -35,7 +35,11 @@ export const deceasedInfoFields = [
   }),
   buildKeyValueField({
     label: m.address,
-    value: 'La la Land 123', // TODO: address this with API about getting lögheimili
+    value: ({
+      externalData: {
+        syslumennOnEntry: { data },
+      },
+    }) => (isEstateInfo(data) ? data.estate.addressOfDeceased : ''),
     width: 'half',
   }),
   buildKeyValueField({
@@ -45,7 +49,7 @@ export const deceasedInfoFields = [
         syslumennOnEntry: { data },
       },
     }) =>
-      isEstateRegistrant(data)
+      isEstateInfo(data)
         ? format(new Date(data.estate.dateOfDeath), 'dd/MM/yyyy')
         : m.deathDateNotRegistered,
     width: 'half',
