@@ -159,4 +159,10 @@ export const m = defineMessages({
       'Vinsamlegast tilgreindu fyrir hvern þú hefur unnið fyrir áður?',
     description: 'Some description',
   },
+  approvedByReviewerError: {
+    id: 'example.application:approvedByReviewerError',
+    defaultMessage:
+      'Vinsamlegast tilgreindu hvort umsóknin sé samþykkt eða ekki',
+    description: 'Some description',
+  },
 })

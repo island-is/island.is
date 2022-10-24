@@ -1,7 +1,6 @@
 import isNumber from 'lodash/isNumber'
 import set from 'lodash/set'
-import { ZodIssue } from 'zod/lib/ZodError'
-import { ZodEffects } from 'zod'
+import { ZodEffects, ZodIssueCode, ZodIssue } from 'zod'
 
 import {
   Schema,
@@ -25,7 +24,7 @@ function populateError(
     const defaultZodError = element.message === 'Invalid input'
     const path = pathToError || element.path
     let message = formatMessage(coreErrorMessages.defaultError)
-    if (element.code === 'custom') {
+    if (element.code === ZodIssueCode.custom) {
       const namespaceRegex = /^\w*\.\w*:.*/g
       const includeNamespace = element?.params?.id?.match(namespaceRegex)?.[0]
 

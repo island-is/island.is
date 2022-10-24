@@ -13,7 +13,7 @@ import {
   Application,
   DefaultEvents,
 } from '@island.is/application/types'
-import * as z from 'zod'
+import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { Features } from '@island.is/feature-flags'
@@ -55,7 +55,7 @@ const careerHistoryCompaniesValidation = (data: any) => {
 const ExampleSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   person: z.object({
-    name: z.string().nonempty().max(256),
+    name: z.string().min(1).max(256),
     age: z.string().refine((x) => {
       const asNumber = parseInt(x)
       if (isNaN(asNumber)) {
@@ -86,13 +86,7 @@ const ExampleSchema = z.object({
   careerHistoryDetails: z
     .object({
       careerHistoryCompanies: z
-        .array(
-          // TODO checkbox answers are [undefined, 'aranja', undefined] and we need to do something about it...
-          z.union([
-            z.enum(['government', 'aranja', 'advania', 'other']),
-            z.undefined(),
-          ]),
-        )
+        .array(z.enum(['government', 'aranja', 'advania', 'other']))
         .nonempty(),
       careerHistoryOther: z.string(),
     })
@@ -102,6 +96,8 @@ const ExampleSchema = z.object({
       path: ['careerHistoryOther'],
     }),
   dreamJob: z.string().optional(),
+  assigneeEmail: z.string().email(),
+  approvedByReviewer: z.enum(['APPROVE', 'REJECT']),
 })
 
 const determineMessageFromApplicationAnswers = (application: Application) => {
