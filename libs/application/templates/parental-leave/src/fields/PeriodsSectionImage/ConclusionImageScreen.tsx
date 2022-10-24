@@ -17,19 +17,23 @@ import * as styles from './ConclusionImageScreen.css'
 
 const ConclusionSectionImage: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
-  const { isSelfEmployed, applicationType, isRecivingUnemploymentBenefits } = useApplicationAnswers(application)
+  const {
+    isSelfEmployed,
+    applicationType,
+    isRecivingUnemploymentBenefits,
+  } = useApplicationAnswers(application)
   const history = useHistory()
   const steps = [formatMessage(parentalLeaveFormMessages.finalScreen.step3)]
 
-   // Added this check for applications that is in the db already
-   const oldApplication = applicationType === undefined 
-   const isBeneficiaries = !oldApplication
-     ? applicationType === PARENTAL_LEAVE
-       ? isRecivingUnemploymentBenefits === YES
-       : false
-     : false
- 
-   if (isSelfEmployed === NO && !isBeneficiaries) {
+  // Added this check for applications that is in the db already
+  const oldApplication = applicationType === undefined
+  const isBeneficiaries = !oldApplication
+    ? applicationType === PARENTAL_LEAVE
+      ? isRecivingUnemploymentBenefits === YES
+      : false
+    : false
+
+  if (isSelfEmployed === NO && !isBeneficiaries) {
     steps.unshift(
       formatMessage(parentalLeaveFormMessages.reviewScreen.employerDesc),
     )
