@@ -91,6 +91,13 @@ export const fishingLicenseFurtherInfoSection = buildSection({
           title: fishingLicenseFurtherInformation.labels.attachments,
           condition: hasFileUpload,
         }),
+        // Roe net and rail net information fields - only for selected license(s)
+        buildCustomField({
+          id: 'fishingLicenseFurtherInformation',
+          title: '',
+          doesNotRequireAnswer: true,
+          component: 'RailNetAndRoeNetCalculations',
+          condition: hasRailNetAndRoeNetField,
         }),
       ],
     }),
