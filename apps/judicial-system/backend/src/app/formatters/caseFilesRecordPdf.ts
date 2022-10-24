@@ -45,6 +45,7 @@ export const createCaseFilesRecord = async (
   const defendantIndent = 2.5 * pageMargin
   const pageReferenceIndent = pageMargin + 20
 
+  const chapters = [0, 1, 2, 3, 4, 5]
   const pageReferences: {
     chapter: number
     date: string
@@ -134,7 +135,7 @@ export const createCaseFilesRecord = async (
       { alignment: Alignment.Center, bold: true, marginTop: 9 },
     )
 
-  for (const chapter of [0, 1, 2, 3, 4, 5]) {
+  for (const chapter of chapters) {
     if (chapter === 0) {
       pdfDocument.addText(
         formatMessage(caseFilesRecord.pageNumberHeading),
