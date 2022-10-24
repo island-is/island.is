@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import Cookies from 'js-cookie'
 import { useQuery } from '@apollo/client'
-import { AlertBanner as AlertBannerSchema } from '@island.is/service-portal/graphql'
+import { AlertBanner as AlertBannerSchema } from '@island.is/api/schema'
 import { GET_SERVICE_PORTAL_ALERT_BANNERS_QUERY } from './queries'
 
 type AlertBannerType = AlertBannerSchema & { bannerId: string }
@@ -38,8 +38,7 @@ export const useAlertBanners = () => {
         .filter((banner: AlertBannerType) => {
           let alertBannerBelongsToCurrentPage = false
 
-          // TODO: figure out a way to generate schema types
-          for (const path of (banner as any)?.servicePortalPaths ?? []) {
+          for (const path of banner?.servicePortalPaths ?? []) {
             if (path === '*' || window.location.href.includes(path)) {
               alertBannerBelongsToCurrentPage = true
               break
