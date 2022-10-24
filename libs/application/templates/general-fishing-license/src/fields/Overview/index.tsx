@@ -132,7 +132,7 @@ export const Overview: FC<FieldBaseProps> = ({ application, goToScreen }) => {
         </Box>
       </ReviewGroup>
       <ReviewGroup
-        isLast 
+        isLast
         editAction={() => changeScreens('fishingLicenseFurtherInformation')}
       >
         <GridRow>
@@ -142,14 +142,47 @@ export const Overview: FC<FieldBaseProps> = ({ application, goToScreen }) => {
               value={fishingLicense.labels[answers.fishingLicense.license]}
             />
           </GridColumn>
-          {answers.fishingLicenseFurtherInformation.date && (
-            <GridColumn paddingBottom={3} span={['9/12', '9/12', '9/12', '5/12']}>
+          {answers?.fishingLicenseFurtherInformation?.date && (
+            <GridColumn
+              paddingBottom={3}
+              span={['9/12', '9/12', '9/12', '5/12']}
+            >
               <ValueLine
                 label={fishingLicenseFurtherInformation.labels.date}
                 value={answers.fishingLicenseFurtherInformation.date}
               />
             </GridColumn>
           )}
+          {answers?.fishingLicenseFurtherInformation?.railAndRoeNet?.railnet &&
+            answers?.fishingLicenseFurtherInformation?.railAndRoeNet
+              ?.roenet && (
+              <>
+                <GridColumn
+                  paddingBottom={3}
+                  span={['9/12', '9/12', '9/12', '5/12']}
+                >
+                  <ValueLine
+                    label={fishingLicenseFurtherInformation.labels.roenet}
+                    value={
+                      answers.fishingLicenseFurtherInformation.railAndRoeNet
+                        ?.roenet
+                    }
+                  />
+                </GridColumn>
+                <GridColumn
+                  paddingBottom={3}
+                  span={['9/12', '9/12', '9/12', '5/12']}
+                >
+                  <ValueLine
+                    label={fishingLicenseFurtherInformation.labels.railnet}
+                    value={
+                      answers.fishingLicenseFurtherInformation.railAndRoeNet
+                        ?.railnet
+                    }
+                  />
+                </GridColumn>
+              </>
+            )}
         </GridRow>
       </ReviewGroup>
       {!!fishingLicensePrice && (
