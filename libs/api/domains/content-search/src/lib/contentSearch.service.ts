@@ -80,12 +80,6 @@ export class ContentSearchService {
       JSON.parse(item._source.response ?? '[]'),
     )
 
-    
-    // // MYSTERY
-    // items = items.map(item=>({...item, title:item.title+" XXX",intro:item.intro+" ***"}));
-
-
-
     // mix and match highlights
     for (let i = 0; i < body.hits.hits.length; i++) {
       if (body.hits.hits[i]?.highlight?.title){
@@ -95,7 +89,9 @@ export class ContentSearchService {
         items[i].intro = body.hits.hits[i]?.highlight?.content[0]
       }
     }
-
+    
+    // // MYSTERY
+    // items = items.map(item=>({...item, title:item.title+" <XXX>",intro:item.intro+" ***"}));
 
     // console.log(body.hits.hits)
     return {
@@ -130,15 +126,34 @@ export class ContentSearchService {
         singleTerm: input.singleTerm.trim(),
       },
     )
+    searchSuggester.forEach(element => {
+      element.options.forEach(item => {
+          console.log(item.text,"***")
+      })
+    });
+    const completions = await this.elasticService.findByQuery(
+      this.getIndex(input.language),
+      { _source: { include: [ "title", "content" ] },query: { bool: { should: [ { match: { content: "Fyrsta ökuskírteinið er" } }, { prefix: { content: "bráð" } } ] } } },
+    )
+    console.log("COMPLETIONS")
+    console.log(completions)
+  //   completions.body.hits.hits.forEach(item => {
+  //     console.log(item.text,"***")
+  //   })
+  //   for(const val of completions.body.hits.hits) {
+  //     console.log(val)
+  // }
 
     // we always handle just one terms at a time so we return results for first term
     const firstWordSuggestions = searchSuggester[0].options
 
-    return {
+    const ret = {
       total: firstWordSuggestions.length,
       completions: firstWordSuggestions.map(
         (suggestionObjects) => suggestionObjects.text,
       ),
     }
+    console.log(ret)
+    return ret
   }
 }

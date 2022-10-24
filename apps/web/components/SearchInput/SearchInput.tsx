@@ -454,7 +454,7 @@ const Results = ({
                 >
                   <Text color={i === highlightedIndex ? 'blue400' : 'dark400'}>
                     {`${search.prefix} ${startOfString}`}
-                    <strong>{endOfString}</strong> ***
+                    <strong>{endOfString}</strong>
                   </Text>
                 </div>
               )
@@ -485,6 +485,7 @@ const Results = ({
                     },
                   })
                   return (
+                    // TODO track search and click for plausble on these links
                     <Link
                       key={item.id}
                       {...itemProps}

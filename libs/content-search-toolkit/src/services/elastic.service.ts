@@ -302,7 +302,7 @@ export class ElasticService {
   ): Promise<AutocompleteTermResponse> {
     const { singleTerm, size } = input
     const requestBody = autocompleteTermQuery({ singleTerm, size })
-
+    console.log(requestBody)
     const data = await this.findByQuery<
       AutocompleteTermResponse,
       typeof requestBody
@@ -310,6 +310,8 @@ export class ElasticService {
 
     return data.body
   }
+
+  
 
   async deleteByIds(index: string, ids: Array<string>) {
     // In case we get an empty list, ES will match that to all records... which we don't want to delete
