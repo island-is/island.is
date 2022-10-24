@@ -275,8 +275,8 @@ const PoliceCaseFilesRoute = () => {
           previousUrl={`${constants.INDICTMENTS_CASE_FILES_ROUTE}/${workingCase.id}`}
           nextUrl={`${
             features.includes(Feature.CASE_FILE_ROUTE)
-              ? constants.INDICTMENTS_OVERVIEW_ROUTE
-              : constants.INDICTMENTS_CASE_FILE_ROUTE
+              ? constants.INDICTMENTS_CASE_FILE_ROUTE
+              : constants.INDICTMENTS_OVERVIEW_ROUTE
           }/${workingCase.id}`}
           nextIsDisabled={Object.values(allUploaded).some((v) => v)}
           nextIsLoading={isLoadingWorkingCase}
