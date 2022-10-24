@@ -69,31 +69,32 @@ export const fishingLicenseFurtherInfoSection = buildSection({
           id: 'date-title',
           title: fishingLicenseFurtherInformation.labels.date,
           titleVariant: 'h5',
+          doesNotRequireAnswer: true,
         }),
         buildDateField({
-          id: 'date',
+          id: 'fishingLicenseFurtherInformation.date',
           title: fishingLicenseFurtherInformation.labels.date,
           minDate: new Date(),
           placeholder: fishingLicenseFurtherInformation.placeholders.date,
         }),
         // File upload field is visible for a subset of licenses
-        buildDescriptionField({
-          id: 'attachments-title',
-          space: 6,
-          titleVariant: 'h5',
-          title: fishingLicenseFurtherInformation.labels.attachments,
-          description:
-            fishingLicenseFurtherInformation.fieldInformation.attachments,
-          condition: hasFileUpload,
-        }),
-        buildFileUploadField({
-          id: 'attachments',
-          title: fishingLicenseFurtherInformation.labels.attachments,
-          condition: hasFileUpload,
-        }),
+        // buildDescriptionField({
+        //   id: 'attachments-title',
+        //   space: 6,
+        //   titleVariant: 'h5',
+        //   title: fishingLicenseFurtherInformation.labels.attachments,
+        //   description:
+        //     fishingLicenseFurtherInformation.fieldInformation.attachments,
+        //   condition: hasFileUpload,
+        // }),
+        // buildFileUploadField({
+        //   id: 'attachments',
+        //   title: fishingLicenseFurtherInformation.labels.attachments,
+        //   condition: hasFileUpload,
+        // }),
         // Roe net and rail net information fields - only for selected license(s)
         buildCustomField({
-          id: 'fishingLicenseFurtherInformation',
+          id: 'fishingLicenseFurtherInformation.railAndRoeNet',
           title: '',
           doesNotRequireAnswer: true,
           component: 'RailNetAndRoeNetCalculations',
