@@ -21,8 +21,15 @@ import { m } from '../../lib/messages'
 import { YES } from '../../lib/constants'
 import { IDENTITY_QUERY } from '../../graphql'
 import { hasYes } from '../../lib/utils'
+import { TextFormField } from '@island.is/application/ui-fields'
+import {
+  Application,
+  FieldComponents,
+  FieldTypes,
+} from '@island.is/application/types'
 
 export const AdditionalEstateMember = ({
+  application,
   field,
   index,
   remove,
@@ -30,6 +37,7 @@ export const AdditionalEstateMember = ({
   relationOptions,
   error,
 }: {
+  application: Application
   field: Partial<ArrayField<any, 'id'>>
   index: number
   remove: (index?: number | number[] | undefined) => void
@@ -114,13 +122,13 @@ export const AdditionalEstateMember = ({
       <GridRow>
         {foreignCitizenship[0] !== YES ? (
           <>
-            <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+            <GridColumn span={['1/1', '1/2']} paddingBottom={2} paddingTop={2}>
               <InputController
                 key={nationalIdField}
                 id={nationalIdField}
                 name={nationalIdField}
                 label={formatMessage(m.inheritanceKtLabel)}
-                defaultValue={field.nationalId}
+                defaultValue={field.nationalId || ''}
                 format="######-####"
                 required
                 backgroundColor="blue"
@@ -129,14 +137,22 @@ export const AdditionalEstateMember = ({
               />
             </GridColumn>
             <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-              <InputController
-                key={nameField}
-                id={nameField}
-                name={nameField}
-                defaultValue={field.name}
-                label={formatMessage(m.inheritanceNameLabel)}
+              <TextFormField
+                application={application}
                 error={error?.name ?? undefined}
-                readOnly
+                showFieldName={true}
+                field={{
+                  ...field,
+                  id: nameField,
+                  title: formatMessage(m.inheritanceNameLabel),
+                  placeholder: '',
+                  defaultValue: field.name || '',
+                  type: FieldTypes.TEXT,
+                  component: FieldComponents.TEXT,
+                  children: undefined,
+                  backgroundColor: 'blue',
+                  readOnly: true,
+                }}
               />
             </GridColumn>
             <GridColumn span={['1/1', '1/2']} paddingBottom={2}>

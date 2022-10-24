@@ -104,6 +104,7 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
       {fields.map((member, index) => (
         <Box key={member.id} hidden={member.initial || member?.dummy}>
           <AdditionalEstateMember
+            application={application}
             field={member}
             fieldName={id}
             index={index}
