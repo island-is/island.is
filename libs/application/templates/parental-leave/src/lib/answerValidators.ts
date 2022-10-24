@@ -21,6 +21,9 @@ import {
   NO,
   NO_PRIVATE_PENSION_FUND,
   NO_UNION,
+  PARENTAL_GRANT_STUDENTS,
+  PARENTAL_LEAVE,
+  UnEmployedBenefitTypes,
   YES,
 } from '../constants'
 import { isValidEmail } from './isValidEmail'
@@ -55,7 +58,10 @@ export const answerValidators: Record<string, AnswerValidator> = {
       'employer.isSelfEmployed',
     )
 
-    if (obj.isSelfEmployed === '') {
+    if (obj.isSelfEmployed === '' || !obj.isSelfEmployed) {
+      if (isSelfEmployed) {
+        return undefined
+      }
       return buildError(coreErrorMessages.defaultError, 'isSelfEmployed')
     }
 
@@ -91,34 +97,65 @@ export const answerValidators: Record<string, AnswerValidator> = {
       application.answers,
       'employer.isSelfEmployed',
     )
-
-    const selfEmployedFiles = getValueViaPath(
+    const applicationType = getValueViaPath(
       application.answers,
-      'employer.selfEmployed.file',
-    ) as unknown[]
+      'applicationType.option',
+    )
 
-    const selfFileUploadEmployedFiles = getValueViaPath(
+    const isRecivingUnemploymentBenefits = getValueViaPath(
       application.answers,
-      'fileUpload.selfEmployedFile',
-    ) as unknown[]
+      'isRecivingUnemploymentBenefits',
+    )
+
+    const unemploymentBenefitsSelect = getValueViaPath(
+      application.answers,
+      'unemploymentBenefits',
+    )
 
     if (
       isSelfEmployed === YES &&
       isEmpty((obj as { selfEmployedFile: unknown[] }).selfEmployedFile)
     ) {
-      if (selfFileUploadEmployedFiles?.length || selfEmployedFiles?.length) {
-        return undefined
-      }
-
       return buildError(errorMessages.requiredAttachment, 'selfEmployedFile')
     }
 
-    // add validation for student files object etc
+    if (
+      applicationType === PARENTAL_GRANT_STUDENTS &&
+      isEmpty((obj as { studentFile: unknown[] }).studentFile)
+    ) {
+      return buildError(errorMessages.requiredAttachment, 'studentFile')
+    }
+
+    if (isRecivingUnemploymentBenefits) {
+      if (
+        unemploymentBenefitsSelect === UnEmployedBenefitTypes.union &&
+        isEmpty(
+          (obj as { unionConfirmationFile: unknown[] }).unionConfirmationFile,
+        )
+      ) {
+        return buildError(
+          errorMessages.requiredAttachment,
+          'unionConfirmationFile',
+        )
+      }
+      if (
+        unemploymentBenefitsSelect === UnEmployedBenefitTypes.healthInsurance &&
+        isEmpty(
+          (obj as { healthInsuranceConfirmationFile: unknown[] })
+            .healthInsuranceConfirmationFile,
+        )
+      ) {
+        return buildError(
+          errorMessages.requiredAttachment,
+          'healthInsuranceConfirmationFile',
+        )
+      }
+    }
 
     return undefined
   },
   // TODO: should we add validation for otherParent's email?
-  [OTHER_PARENT]: (newAnswer: unknown, application: Application) => {
+  [OTHER_PARENT]: (newAnswer: unknown) => {
     const otherParentObj = newAnswer as OtherParentObj
 
     const buildError = (message: StaticText, path: string) =>
@@ -135,87 +172,101 @@ export const answerValidators: Record<string, AnswerValidator> = {
   [PAYMENTS]: (newAnswer: unknown, application: Application) => {
     const payments = newAnswer as Payments
 
-    const privatePensionFund = getValueViaPath(
+    const applicationType = getValueViaPath(
       application.answers,
-      'payments.privatePensionFund',
+      'applicationType.option',
     )
 
-    const privatePensionFundPercentage = getValueViaPath(
-      application.answers,
-      'payments.privatePensionFundPercentage',
-    )
+    if (applicationType === PARENTAL_LEAVE) {
+      const privatePensionFund = getValueViaPath(
+        application.answers,
+        'payments.privatePensionFund',
+      )
 
-    const usePrivatePensionFund = getValueViaPath(
-      application.answers,
-      'usePrivatePensionFund',
-    )
+      const privatePensionFundPercentage = getValueViaPath(
+        application.answers,
+        'payments.privatePensionFundPercentage',
+      )
+      const usePrivatePensionFund = getValueViaPath(
+        application.answers,
+        'usePrivatePensionFund',
+      )
 
-    const buildError = (message: StaticText, path: string) =>
-      buildValidationError(`${PAYMENTS}.${path}`)(message)
+      const buildError = (message: StaticText, path: string) =>
+        buildValidationError(`${PAYMENTS}.${path}`)(message)
 
-    if (payments.union !== NO_UNION) {
-      if (payments.union === '') {
-        return buildError(coreErrorMessages.defaultError, 'union')
+      if (!payments.pensionFund) {
+        return buildError(coreErrorMessages.defaultError, 'pensionFund')
       }
-    }
 
-    // if privatePensionFund is NO_PRIVATE_PENSION_FUND and privatePensionFundPercentage is an empty string, allow the user to continue.
-    // this will only happen when the usePrivatePensionFund field is set to NO
-    if (
-      payments.privatePensionFund === NO_PRIVATE_PENSION_FUND &&
-      payments.privatePensionFundPercentage === '0'
-    )
-      return undefined
+      if (payments.union !== NO_UNION) {
+        if (payments.union === '') {
+          return buildError(coreErrorMessages.defaultError, 'union')
+        }
+      }
 
-    if (usePrivatePensionFund === NO || usePrivatePensionFund === YES) {
-      if (payments.privatePensionFund === '') {
+      // if privatePensionFund is NO_PRIVATE_PENSION_FUND and privatePensionFundPercentage is an empty string, allow the user to continue.
+      // this will only happen when the usePrivatePensionFund field is set to NO
+      if (
+        payments.privatePensionFund === NO_PRIVATE_PENSION_FUND &&
+        (payments.privatePensionFundPercentage === '0' ||
+          payments.privatePensionFundPercentage === undefined)
+      )
+        return undefined
+
+      if (usePrivatePensionFund === NO || usePrivatePensionFund === YES) {
+        if (payments.privatePensionFund === '') {
+          return buildError(
+            coreErrorMessages.defaultError,
+            'privatePensionFund',
+          )
+        }
+        if (payments.privatePensionFundPercentage === '') {
+          return buildError(
+            coreErrorMessages.defaultError,
+            'privatePensionFundPercentage',
+          )
+        }
+      }
+
+      if (
+        payments.privatePensionFund === '' ||
+        payments.privatePensionFund === NO_PRIVATE_PENSION_FUND
+      ) {
         return buildError(coreErrorMessages.defaultError, 'privatePensionFund')
       }
-      if (payments.privatePensionFundPercentage === '') {
+
+      // This case will only happen if the users has first selected NO
+      // and then goes back and changes to YES without filling in data for pritvatePensionFundPercentage
+      if (
+        privatePensionFund === NO_PRIVATE_PENSION_FUND &&
+        privatePensionFundPercentage === '0' &&
+        payments.privatePensionFundPercentage === ''
+      ) {
         return buildError(
           coreErrorMessages.defaultError,
           'privatePensionFundPercentage',
         )
       }
-    }
 
-    if (
-      payments.privatePensionFund === '' ||
-      payments.privatePensionFund === NO_PRIVATE_PENSION_FUND
-    ) {
-      return buildError(coreErrorMessages.defaultError, 'privatePensionFund')
-    }
+      if (
+        payments.privatePensionFundPercentage !== '2' &&
+        payments.privatePensionFundPercentage !== '4'
+      ) {
+        if (usePrivatePensionFund === NO) return undefined
+        return buildError(
+          coreErrorMessages.defaultError,
+          'privatePensionFundPercentage',
+        )
+      }
 
-    // This case will only happen if the users has first selected NO
-    // and then goes back and changes to YES without filling in data for pritvatePensionFundPercentage
-    if (
-      privatePensionFund === NO_PRIVATE_PENSION_FUND &&
-      privatePensionFundPercentage === '0' &&
-      payments.privatePensionFundPercentage === ''
-    ) {
-      return buildError(
-        coreErrorMessages.defaultError,
-        'privatePensionFundPercentage',
-      )
-    }
-
-    if (
-      payments.privatePensionFundPercentage !== '2' &&
-      payments.privatePensionFundPercentage !== '4'
-    ) {
-      if (usePrivatePensionFund === NO) return undefined
-      return buildError(
-        coreErrorMessages.defaultError,
-        'privatePensionFundPercentage',
-      )
-    }
-
-    // validate that the privatePensionFundPercentage is either 2 or 4 percent
-    if (
-      payments.privatePensionFundPercentage === '2' ||
-      payments.privatePensionFundPercentage === '4'
-    ) {
-      return undefined
+      // validate that the privatePensionFundPercentage is either 2 or 4 percent
+      if (
+        payments.privatePensionFundPercentage === '2' ||
+        payments.privatePensionFundPercentage === '4'
+      ) {
+        return undefined
+      }
     }
 
     return undefined

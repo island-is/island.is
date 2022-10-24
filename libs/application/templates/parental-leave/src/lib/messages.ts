@@ -15,6 +15,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Umsókn um fæðingarorlof',
       description: 'Application for parental leave',
     },
+    nameGrant: {
+      id: 'pl.application:name.grant',
+      defaultMessage: 'Umsókn um fæðingarstyrk',
+      description: 'Application for parental grant',
+    },
     formTitle: {
       id: 'pl.application:form.title',
       defaultMessage: 'Fæðingarorlof',
@@ -113,6 +118,52 @@ export const parentalLeaveFormMessages: MessageDir = {
         'Þessar umsóknir gætu verið fyrir önnur börnin þín, eða útistandandi fæðingarorlofsumsókn sem hitt foreldrið hefur gert fyrir ófætt barn ykkar.',
       description:
         'These applications could be for already born children, or an application made by you or the other parent for parental leave for your unborn child.',
+    },
+    applicationTypeTitle: {
+      id: 'pl.application:applicationType.title',
+      defaultMessage: 'Tegund umsóknar',
+      description: 'Type of application',
+    },
+    applicationParentalLeaveDescription: {
+      id: 'pl.application:applicationParentalLeave.description',
+      defaultMessage: 'Vinsamlegast veldu tegund umsóknar',
+      description: 'Vinsamlegast veldu tegund umsóknar',
+    },
+    applicationParentalLeaveTitle: {
+      id: 'pl.application:applicationParentalLeave.title',
+      defaultMessage: 'Fæðingarorlof - almenn umsókn',
+      description: 'Parental Leave - general application',
+    },
+    applicationParentalLeaveSubTitle: {
+      id: 'pl.application:applicationParentalLeave.subtitle',
+      defaultMessage:
+        'Fæðingarorlof er fyrir foreldra á innlendum vinnumarkaði sem eru starfsmenn og/eða sjálfstætt starfandi.',
+      description:
+        'Fæðingarorlof er fyrir foreldra á innlendum vinnumarkaði sem eru starfsmenn og/eða sjálfstætt starfandi.',
+    },
+    applicationParentalGrantUnemployedTitle: {
+      id: 'pl.application:applicationParentalGrantUnemployed.title',
+      defaultMessage: 'Fæðingarstyrkur - utan vinnumarkaðar',
+      description: 'Parental Leave - general application',
+    },
+    applicationParentalGrantUnemployedSubTitle: {
+      id: 'pl.application:applicationParentalGrantUnemployed.subtitle',
+      defaultMessage:
+        'Foreldri sem er utan vinnumarkaðar eða í minna en 25% starfi öðlast rétt til fæðingarstyrks',
+      description:
+        'Foreldri sem er utan vinnumarkaðar eða í minna en 25% starfi öðlast rétt til fæðingarstyrks',
+    },
+    applicationParentalGrantStudentTitle: {
+      id: 'pl.application:applicationParentalGrantStudent.title',
+      defaultMessage: 'Fæðingarstyrkur – námsmenn',
+      description: 'Parental Grant - students',
+    },
+    applicationParentalGrantStudentSubTitle: {
+      id: 'pl.application:applicationParentalGrantStudent.subtitle',
+      defaultMessage:
+        'Foreldri sem uppfyllir skilyrði um fullt nám öðlast rétt til fæðingarstyrks',
+      description:
+        'Foreldri sem uppfyllir skilyrði um fullt nám öðlast rétt til fæðingarstyrks',
     },
     otherParentSubSection: {
       id: 'pl.application:otherParent.subSection',
@@ -1048,6 +1099,16 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Staðfestu netfang vinnuveitanda',
       description: 'Confirm employer email',
     },
+    isRecivingUnemploymentBenefitsTitle: {
+      id: 'pl.application:employer.isRecivingUnemploymentBenefits',
+      defaultMessage: 'Ertu að þiggja bætur?',
+      description: 'Are you receiving benefits?',
+    },
+    unemploymentBenefits: {
+      id: 'pl.application:employer.unemploymentBenefits',
+      defaultMessage: `Hvaðan ertu að þiggja bætur?`,
+      description: 'Where are you receiving benefits from?',
+    },
   }),
 
   selfEmployed: defineMessages({
@@ -1543,6 +1604,21 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:attachmentscreen.studentDescription',
       defaultMessage: `Námsmenn þurfa að skila inn staðfestingu á námi og námsárangri. Athugaðu að skjalið þarf að vera á .pdf formi`,
       description: `student description`,
+    },
+    unemploymentBenefitsTitle: {
+      id: 'pl.application:attachmentscreen.unemployedBenefitsTitle',
+      defaultMessage: `Bætur`,
+      description: `Benefits`,
+    },
+    unionDescription: {
+      id: 'pl.application:attachmentscreen.unionDescription',
+      defaultMessage: `Þeir sem þiggja dagpeninga/veikindarétt frá stéttarfélagi þurfa að skila inn skjali því til staðfestingar. Athugaðu að skjalið þarf að vera á .pdf formi`,
+      description: `Those who receive unemployment benefits/sick leave allowance from the Union must submit a document to confirm this. Note that the document needs to be on .pdf format`,
+    },
+    healthInsuranceDescription: {
+      id: 'pl.application:attachmentscreen.sjúkratryggingarDescription',
+      defaultMessage: `Þeir sem þiggja sjúkradagpeninga frá Sjúkratryggingum Íslands þurfa að skila inn skjali því til staðfestingar. Athugaðu að skjalið þarf að vera á .pdf formi`,
+      description: `Those who receive sick leave allowance from Sjúkratryggingar Íslands must submit a document to confirm this. Note that the document needs to be on .pdf format`,
     },
     fatherWithoutMotherTitle: {
       id: 'pl.application:attachmentscreen.fatherWithoutMotherTitle',
