@@ -37,6 +37,7 @@ import {
   Form,
   OneColumnTextSlice,
   PowerBiSlice,
+  AccordionSlice,
 } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
@@ -182,6 +183,9 @@ const SubPage: Screen<SubPageProps> = ({
                         ),
                         PowerBiSlice: (slice: PowerBiSliceSchema) => (
                           <PowerBiSlice slice={slice} />
+                        ),
+                        AccordionSlice: (slice) => (
+                          <AccordionSlice slice={slice} />
                         ),
                       },
                     })}

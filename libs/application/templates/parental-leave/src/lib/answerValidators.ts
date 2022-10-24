@@ -209,7 +209,8 @@ export const answerValidators: Record<string, AnswerValidator> = {
       // this will only happen when the usePrivatePensionFund field is set to NO
       if (
         payments.privatePensionFund === NO_PRIVATE_PENSION_FUND &&
-        payments.privatePensionFundPercentage === '0'
+        (payments.privatePensionFundPercentage === '0' ||
+          payments.privatePensionFundPercentage === undefined)
       )
         return undefined
 
