@@ -58,6 +58,13 @@ export const m = defineMessages({
     defaultMessage: 'Ég skil að ofangreindra gagna verður aflað',
     description: '',
   },
+  dataCollectionNoEstatesError: {
+    id: 'es.application:dataCollectionNoEstatesError',
+    defaultMessage:
+      'Þú ert ekki skráð/ur fyrir dánarbúi hjá sýslumanni. Ef þú telur svo vera skaltu hafa samband við sýslumann.',
+    description:
+      'User not eligible for estate or no estates found bound to their national id',
+  },
   deceasedInfoProviderTitle: {
     id: 'es.application:deceasedInfoProviderTitle',
     defaultMessage: 'Upplýsingar um hinn látna',

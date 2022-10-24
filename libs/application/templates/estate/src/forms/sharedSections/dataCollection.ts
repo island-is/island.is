@@ -16,8 +16,8 @@ export const dataCollection = buildSection({
       checkboxLabel: m.dataCollectionCheckbox,
       dataProviders: [
         buildDataProviderItem({
-          id: '',
-          type: '',
+          id: 'estateNoticeProvider',
+          type: 'EstateNoticeProvider',
           title: m.deceasedInfoProviderTitle,
           subTitle: m.deceasedInfoProviderSubtitle,
         }),
