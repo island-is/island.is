@@ -1,7 +1,11 @@
 import * as z from 'zod'
-import { error } from './messages'
+import { error, fishingLicenseFurtherInformation } from './messages'
 import * as kennitala from 'kennitala'
 import { FishingLicenseEnum } from '../types'
+import {
+  calculateTotalRailNet,
+  MAXIMUM_TOTAL_RAIL_NET_LENGTH,
+} from '../utils/licenses'
 
 const FileSchema = z.object({
   name: z.string(),
@@ -80,6 +84,21 @@ export const GeneralFishingLicenseSchema = z.object({
   fishingLicenseFurtherInformation: z.object({
     date: z.string().refine((x) => x.trim().length > 0),
     attachments: z.array(FileSchema).optional(), // TODO: make only optional for those licenses that shouldn't have attatchments
+    railAndRoeNet: z
+      .object({
+        railnet: z.string().optional(), // TODO: make only optional for those licenses that shouldn't have roe and rail nets
+        roenet: z.string().optional(), // TODO: make only optional for those licenses that shouldn't have roe and rail nets
+      })
+      .refine(
+        ({ railnet, roenet }) =>
+          calculateTotalRailNet(railnet, roenet) <=
+          MAXIMUM_TOTAL_RAIL_NET_LENGTH,
+        {
+          message: fishingLicenseFurtherInformation.errorMessages
+            .railNetTooLarge.defaultMessage as string,
+          path: ['railnet', 'roenet'],
+        },
+      ),
   }),
 })
 

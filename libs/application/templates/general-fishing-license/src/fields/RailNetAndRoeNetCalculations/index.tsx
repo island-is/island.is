@@ -6,8 +6,10 @@ import { fishingLicenseFurtherInformation } from '../../lib/messages'
 import { InputController } from '@island.is/shared/form-fields'
 import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
 import { motion } from 'framer-motion'
-
-const MAXIMUM_TOTAL_RAIL_NET_LENGTH = 7500
+import {
+  calculateTotalRailNet,
+  MAXIMUM_TOTAL_RAIL_NET_LENGTH,
+} from '../../utils/licenses'
 
 export const RailNetAndRoeNetCalculations: FC<FieldBaseProps> = ({
   application,
@@ -27,19 +29,6 @@ export const RailNetAndRoeNetCalculations: FC<FieldBaseProps> = ({
   ) as string
   const [numRoeNets, setNumRoeNets] = useState(initialRoeNet || '')
   const [lengthRailNet, setLengthRailNet] = useState(initialRailNet || '')
-
-  // Calculates the total sum of rails depending on the number of roe nets
-  // To show the calculated result in front end
-  const calculateTotalRailNet = () => {
-    try {
-      const roenet = parseInt(numRoeNets.trim(), 10)
-      const railnet = parseInt(lengthRailNet.split('m').join('').trim(), 10)
-      return !isNaN(roenet) && !isNaN(railnet) ? roenet * railnet : 0
-    } catch (e) {
-      return 0
-    }
-  }
-
   return (
     <Box marginTop={6}>
       <Box>
@@ -53,13 +42,13 @@ export const RailNetAndRoeNetCalculations: FC<FieldBaseProps> = ({
       <Box display="flex" justifyContent="spaceBetween">
         <Box width="half">
           <InputController
-            id={`${field}.roenet`}
-            name="roenet"
+            id={`${field.id}.roenet`}
+            name={`${field.id}.roenet`}
             format="####"
             label={formatMessage(
               fishingLicenseFurtherInformation.labels.roenet,
             )}
-            error={errors && getErrorViaPath(errors, `${field}.roenet`)}
+            error={errors && getErrorViaPath(errors, `${field.id}`)}
             backgroundColor="blue"
             onChange={(e) => setNumRoeNets(e.target.value)}
             defaultValue={numRoeNets}
@@ -67,13 +56,13 @@ export const RailNetAndRoeNetCalculations: FC<FieldBaseProps> = ({
         </Box>
         <Box width="half">
           <InputController
-            id={`${field}.railnet`}
-            name="railnet"
+            id={`${field.id}.railnet`}
+            name={`${field.id}.railnet`}
             format="####m"
             label={formatMessage(
               fishingLicenseFurtherInformation.labels.railnet,
             )}
-            error={errors && getErrorViaPath(errors, `${field}.railnet`)}
+            error={errors && getErrorViaPath(errors, `${field.id}`)}
             backgroundColor="blue"
             onChange={(e) => setLengthRailNet(e.target.value)}
             defaultValue={lengthRailNet}
@@ -89,7 +78,7 @@ export const RailNetAndRoeNetCalculations: FC<FieldBaseProps> = ({
       >
         <Text fontWeight="medium">
           {formatMessage(fishingLicenseFurtherInformation.general.total)}{' '}
-          {calculateTotalRailNet()
+          {calculateTotalRailNet(numRoeNets, lengthRailNet)
             .toString()
             .replace(/\B(?=(\d{3})+(?!\d))/g, '.')}{' '}
           m
@@ -99,7 +88,10 @@ export const RailNetAndRoeNetCalculations: FC<FieldBaseProps> = ({
           initial={{ scale: 0, x: 5 }}
           animate={{
             scale:
-              calculateTotalRailNet() > MAXIMUM_TOTAL_RAIL_NET_LENGTH ? 1.2 : 0,
+              calculateTotalRailNet(numRoeNets, lengthRailNet) >
+              MAXIMUM_TOTAL_RAIL_NET_LENGTH
+                ? 1.2
+                : 0,
             x: 5,
           }}
         >
