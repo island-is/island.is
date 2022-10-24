@@ -6,6 +6,7 @@ import {
   buildMultiField,
   buildSection,
   buildSubmitField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { Application, DefaultEvents } from '@island.is/application/types'
 import { EstateAsset, EstateMember } from '@island.is/clients/syslumenn'
@@ -106,7 +107,7 @@ export const overview = buildSection({
           id: 'overviewInventory',
           title: m.inventoryTextField,
           description: (application: Application) =>
-            application.answers.inventory as string,
+            getValueViaPath<string>(application.answers, 'inventory'),
           titleVariant: 'h4',
           space: 'gutter',
         }),
@@ -114,7 +115,7 @@ export const overview = buildSection({
           id: 'overviewInventoryValue',
           title: m.inventoryValueTitle,
           description: (application: Application) =>
-            application.answers.inventoryValue as string,
+            getValueViaPath<string>(application.answers, 'inventoryValue'),
           titleVariant: 'h4',
           marginBottom: 'gutter',
           space: 'gutter',
@@ -229,7 +230,7 @@ export const overview = buildSection({
           id: 'overviewOtherAssets',
           title: m.moneyAndDepositText,
           description: (application: Application) =>
-            application.answers.otherAssets as string,
+            getValueViaPath<string>(application.answers, 'otherAssets'),
           titleVariant: 'h4',
           space: 'gutter',
         }),
@@ -237,7 +238,7 @@ export const overview = buildSection({
           id: 'overviewMOtherAssetsValue',
           title: m.otherAssetsValue,
           description: (application: Application) =>
-            application.answers.otherAssetsValue as string,
+            getValueViaPath<string>(application.answers, 'otherAssetsValue'),
           titleVariant: 'h4',
           marginBottom: 'gutter',
           space: 'gutter',
@@ -254,7 +255,10 @@ export const overview = buildSection({
           id: 'overviewMoneyAndDeposit',
           title: m.moneyAndDepositText,
           description: (application: Application) =>
-            application.answers.moneyAndDepositBoxesInfo as string,
+            getValueViaPath<string>(
+              application.answers,
+              'moneyAndDepositBoxesInfo',
+            ),
           titleVariant: 'h4',
           space: 'gutter',
         }),
@@ -262,7 +266,10 @@ export const overview = buildSection({
           id: 'overviewMoneyAndDepositValue',
           title: m.moneyAndDepositValue,
           description: (application: Application) =>
-            application.answers.moneyAndDepositBoxesValue as string,
+            getValueViaPath<string>(
+              application.answers,
+              'moneyAndDepositBoxesValue',
+            ),
           titleVariant: 'h4',
           marginBottom: 'gutter',
           space: 'gutter',

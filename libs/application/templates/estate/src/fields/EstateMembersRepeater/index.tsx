@@ -1,7 +1,7 @@
 import { FC, useEffect } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
-import { FieldBaseProps } from '@island.is/application/types'
+import { Application, FieldBaseProps } from '@island.is/application/types'
 import {
   Box,
   GridColumn,
@@ -14,6 +14,7 @@ import { m } from '../../lib/messages'
 import { EstateRegistrant } from '@island.is/clients/syslumenn'
 import { Answers, EstateMember } from '../../types'
 import { AdditionalEstateMember } from './AdditionalEstateMember'
+import { getValueViaPath } from '@island.is/application/core'
 
 export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
   application,
@@ -57,11 +58,12 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
       <GridRow>
         {fields.reduce((acc, member, index) => {
           if (member.nationalId === application.applicant) {
-            if (
-              application.answers?.applicantRelation &&
-              application.answers.applicantRelation !== member.relation
-            ) {
-              member.relation = application.answers.applicantRelation
+            const relation = getValueViaPath<string>(
+              application.answers,
+              'applicantRelation',
+            )
+            if (relation && relation !== member.relation) {
+              member.relation = relation
             }
           }
           if (!member.initial) {

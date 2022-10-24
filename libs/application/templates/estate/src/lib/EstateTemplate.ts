@@ -1,6 +1,7 @@
 import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
+  getValueViaPath,
 } from '@island.is/application/core'
 import {
   ApplicationTemplate,
@@ -157,15 +158,15 @@ const EstateTemplate: ApplicationTemplate<
     application: Application,
   ): ApplicationRole | undefined {
     if (application.applicant === nationalId) {
-      if (application.answers.selectedEstate === EstateTypes.officialEstate) {
+      const selectedEstate = getValueViaPath<string>(
+        application.answers,
+        'selectedEstate',
+      )
+      if (selectedEstate === EstateTypes.officialEstate) {
         return Roles.APPLICANT_OFFICIAL_ESTATE
-      } else if (
-        application.answers.selectedEstate === EstateTypes.noPropertyEstate
-      ) {
+      } else if (selectedEstate === EstateTypes.noPropertyEstate) {
         return Roles.APPLICANT_NO_PROPERTY
-      } else if (
-        application.answers.selectedEstate === EstateTypes.residencePermit
-      ) {
+      } else if (selectedEstate === EstateTypes.residencePermit) {
         return Roles.APPLICANT_RESIDENCE_PERMIT
       } else return Roles.APPLICANT
     }
