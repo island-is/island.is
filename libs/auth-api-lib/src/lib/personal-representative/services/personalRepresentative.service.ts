@@ -90,11 +90,11 @@ export class PersonalRepresentativeService {
   /** Get's all personal repreasentative connections for personal representative  */
   async getByPersonalRepresentative({
     nationalIdPersonalRepresentative,
-    includeInvalid = false,
+    includeInactive = false,
     skipInactive = true,
   }: {
     nationalIdPersonalRepresentative: string
-    includeInvalid?: boolean
+    includeInactive?: boolean
     skipInactive?: boolean
   }): Promise<PersonalRepresentativeDTO[]> {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -111,7 +111,7 @@ export class PersonalRepresentativeService {
     }
     const whereClauseRights: WhereOptions = {}
 
-    if (!includeInvalid) {
+    if (!includeInactive) {
       whereClause['validTo'] = validToClause
       whereClauseRights['validFrom'] = validFromClause
       whereClauseRights['validTo'] = validToClause

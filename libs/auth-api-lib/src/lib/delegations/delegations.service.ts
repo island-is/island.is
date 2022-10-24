@@ -423,7 +423,7 @@ export class DelegationsService {
     )
   }
 
-  private async handlerGetIndividualError(error: null | Error) {
+  private handlerGetIndividualError(error: null | Error) {
     return error
   }
 
@@ -489,23 +489,22 @@ export class DelegationsService {
           // Pass through altough Þjóðskrá API throws an error since it is not required to view the delegation.
           persons[index] instanceof Error ||
           // Make sure we can match the person to the delegation, i.e. not deceased
-          personsValuesNoError.some(
-            (person) => person?.nationalId === fromNationalId,
-          ),
+          persons[index]?.nationalId === fromNationalId,
       )
 
-      const modifiedAliveDelegations = aliveDelegations
-        .map((aliveDelegation) => {
+      const modifiedAliveDelegations = aliveDelegations.map(
+        (aliveDelegation) => {
           const person = this.getPersonByNationalId(
             personsValuesNoError,
             aliveDelegation.fromNationalId,
           )
 
-          aliveDelegation.fromName =
-            person?.name ?? aliveDelegation.fromName ?? UNKNOWN_NAME
-          return aliveDelegation
-        })
-        .filter(isDefined)
+          return {
+            ...aliveDelegation,
+            fromName: person?.name ?? aliveDelegation.fromName ?? UNKNOWN_NAME,
+          }
+        },
+      )
 
       return {
         aliveDelegations: modifiedAliveDelegations,
@@ -706,9 +705,7 @@ export class DelegationsService {
           // Pass through altough Þjóðskrá API throws an error since it is not required to view the personal representative.
           persons[index] instanceof Error ||
           // Make sure we can match the person to the personal representatives, i.e. not deceased
-          personsValuesNoError.some(
-            (person) => person?.nationalId === nationalIdRepresentedPerson,
-          ),
+          persons[index].nationalId === nationalIdRepresentedPerson,
       )
 
       if (deceased.length > 0) {
