@@ -294,7 +294,8 @@ export const overview = buildSection({
         }),
         buildKeyValueField({
           label: m.debtsSsn,
-          value: ({ answers }) => (answers.debts as any)[0].ssn,
+          value: ({ answers }) =>
+            formatNationalId((answers.debts as any)[0].ssn),
           width: 'half',
         }),
         buildKeyValueField({

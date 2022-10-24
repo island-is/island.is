@@ -5,7 +5,7 @@ import {
   buildTextField,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import { format as formatKennitala } from 'kennitala'
+import { format as formatNationalId } from 'kennitala'
 import { removeCountryCode } from '@island.is/application/ui-components'
 
 export const announcerInfo = buildSection({
@@ -32,7 +32,7 @@ export const announcerInfo = buildSection({
           readOnly: true,
           width: 'half',
           defaultValue: ({ externalData }: Application) => {
-            return formatKennitala(
+            return formatNationalId(
               externalData.nationalRegistry?.data.nationalId,
             )
           },

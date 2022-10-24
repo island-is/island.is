@@ -1,7 +1,7 @@
 import { FC, useEffect } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
-import { Application, FieldBaseProps } from '@island.is/application/types'
+import { FieldBaseProps } from '@island.is/application/types'
 import {
   Box,
   GridColumn,
