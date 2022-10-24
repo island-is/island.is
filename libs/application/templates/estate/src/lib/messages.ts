@@ -28,7 +28,7 @@ export const m = defineMessages({
   prerequisitesSubtitle: {
     id: 'es.application:prerequisitesSubtitle#markdown',
     defaultMessage:
-      'Við skipti á dánarbúi er hægt að fara fjórar leiðir. Velja þarf eina leið samanbér eftirfarandi:',
+      'Við skipti á dánarbúi er hægt að fara fjórar leiðir. Velja þarf eina leið samanber eftirfarandi:',
     description: '',
   },
   institution: {
@@ -66,7 +66,7 @@ export const m = defineMessages({
   deceasedInfoProviderSubtitle: {
     id: 'es.application:deceasedInfoProviderSubtitle',
     defaultMessage:
-      'Upplýsingar frá sýslumanni um kennitölu, dánardag, lögheimili, erfðingja, eignir og hvort arfleifandi hafi skilað inn erfðaskrá eða gert kaupmála.',
+      'Upplýsingar frá sýslumanni um kennitölu, dánardag, lögheimili, erfingja, eignir og hvort arfleifandi hafi skilað inn erfðaskrá eða gert kaupmála.',
     description: '',
   },
   personalInfoProviderTitle: {
@@ -443,7 +443,7 @@ export const m = defineMessages({
   },
   overviewSubtitleWithNoProperty: {
     id: 'es.application:overviewSubtitle',
-    defaultMessage: 'Þú hefur valið lýst yfir eignarleysi dánarbús.',
+    defaultMessage: 'Þú hefur lýst yfir eignarleysi dánarbús.',
     description: '',
   },
   overviewSubtitleOfficialEstate: {
@@ -480,7 +480,7 @@ export const m = defineMessages({
   estateWithNoPropertySubtitle: {
     id: 'es.application:estateWithNoPropertySubtitle#markdown',
     defaultMessage:
-      'Sýslumaður hefur móttekið yfirlýsingu þína um eignaleysi dánarbús. Hún verður yfirfarin af sýslumanni og afgreiðsla sýslumanns í kjölfarið sent í pósthólf þitt á Ísland.is.',
+      'Sýslumaður hefur móttekið yfirlýsingu þína um eignaleysi dánarbús. Hún verður yfirfarin af sýslumanni og afgreiðsla sýslumanns í kjölfarið send í pósthólf þitt á Ísland.is.',
     description: '',
   },
   residencePermitSubtitle: {

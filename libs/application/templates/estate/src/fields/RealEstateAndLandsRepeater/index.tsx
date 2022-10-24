@@ -34,12 +34,7 @@ export const RealEstateAndLandsRepeater: FC<FieldBaseProps<Answers>> = ({
   }
 
   useEffect(() => {
-    if (
-      fields.length === 0 &&
-      (!application.answers.assets ||
-        !application.answers.assets?.encountered) &&
-      externalData.estate.assets
-    ) {
+    if (fields.length === 0 && externalData.estate.assets) {
       append(externalData.estate.assets)
     }
   }, [])
