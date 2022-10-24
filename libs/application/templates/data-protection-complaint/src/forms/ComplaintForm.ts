@@ -1,4 +1,5 @@
 import {
+  buildCheckboxField,
   buildCustomField,
   buildDataProviderItem,
   buildExternalDataProvider,
@@ -10,6 +11,7 @@ import {
   buildSubmitField,
   buildSubSection,
   buildTextField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import {
   DefaultEvents,
@@ -29,7 +31,7 @@ import {
   sharedFields,
 } from '../lib/messages'
 import { externalData } from '../lib/messages/externalData'
-import { FILE_SIZE_LIMIT, NO, YES } from '../shared'
+import { FILE_SIZE_LIMIT, NO, YES, SubjectOfComplaint } from '../shared'
 
 const yesOption = { value: YES, label: sharedFields.yes }
 const noOption = { value: NO, label: sharedFields.no }
@@ -540,11 +542,83 @@ export const ComplaintForm: Form = buildForm({
               description: complaint.general.subjectOfComplaintPageDescription,
               space: 3,
               children: [
-                buildCustomField({
-                  component: 'ReasonsForComplaint',
-                  id: 'subjectOfComplaint',
-                  doesNotRequireAnswer: true,
+                buildCheckboxField({
+                  id: 'subjectOfComplaint.values',
                   title: '',
+                  options: [
+                    {
+                      label:
+                        complaint.labels[SubjectOfComplaint.WITH_AUTHORITIES],
+                      value: SubjectOfComplaint.WITH_AUTHORITIES,
+                    },
+                    {
+                      label:
+                        complaint.labels[SubjectOfComplaint.LACK_OF_EDUCATION],
+                      value: SubjectOfComplaint.LACK_OF_EDUCATION,
+                    },
+                    {
+                      label: complaint.labels[SubjectOfComplaint.SOCIAL_MEDIA],
+                      value: SubjectOfComplaint.SOCIAL_MEDIA,
+                    },
+                    {
+                      label:
+                        complaint.labels[SubjectOfComplaint.REQUEST_FOR_ACCESS],
+                      value: SubjectOfComplaint.REQUEST_FOR_ACCESS,
+                    },
+                    {
+                      label:
+                        complaint.labels[
+                          SubjectOfComplaint.RIGHTS_OF_OBJECTION
+                        ],
+                      value: SubjectOfComplaint.RIGHTS_OF_OBJECTION,
+                    },
+                    {
+                      label: complaint.labels[SubjectOfComplaint.EMAIL],
+                      value: SubjectOfComplaint.EMAIL,
+                    },
+                    {
+                      label: complaint.labels[SubjectOfComplaint.NATIONAL_ID],
+                      value: SubjectOfComplaint.NATIONAL_ID,
+                    },
+                    {
+                      label:
+                        complaint.labels[SubjectOfComplaint.EMAIL_IN_WORKPLACE],
+                      value: SubjectOfComplaint.EMAIL_IN_WORKPLACE,
+                    },
+                    {
+                      label:
+                        complaint.labels[
+                          SubjectOfComplaint.UNAUTHORIZED_PUBLICATION
+                        ],
+                      value: SubjectOfComplaint.UNAUTHORIZED_PUBLICATION,
+                    },
+                    {
+                      label: complaint.labels[SubjectOfComplaint.VANSKILASKRA],
+                      value: SubjectOfComplaint.VANSKILASKRA,
+                    },
+                    {
+                      label:
+                        complaint.labels[SubjectOfComplaint.VIDEO_RECORDINGS],
+                      value: SubjectOfComplaint.VIDEO_RECORDINGS,
+                    },
+                    {
+                      label: complaint.labels[SubjectOfComplaint.OTHER],
+                      value: SubjectOfComplaint.OTHER,
+                    },
+                  ],
+                }),
+                buildTextField({
+                  id: 'subjectOfComplaint.somethingElse',
+                  title: complaint.labels.subjectSomethingElse,
+                  placeholder: complaint.labels.subjectSomethingElsePlaceholder,
+                  required: true,
+                  condition: (formValue) => {
+                    const value = getValueViaPath(
+                      formValue,
+                      'subjectOfComplaint.values',
+                    ) as SubjectOfComplaint[]
+                    return value.includes(SubjectOfComplaint.OTHER)
+                  },
                 }),
               ],
             }),

@@ -25,6 +25,13 @@ const Bullet = z.object({
 // Validation on optional field: https://github.com/colinhacks/zod/issues/310
 const optionalEmail = z.string().email().optional().or(z.literal(''))
 
+const validateSomethingElse = (data: any) => {
+  if (data.values?.includes('other') && !data.somethingElse) {
+    return false
+  }
+  return true
+}
+
 export const DataProtectionComplaintSchema = z.object({
   externalData: z.object({
     nationalRegistry: z.object({
@@ -126,13 +133,16 @@ export const DataProtectionComplaintSchema = z.object({
         .refine((x) => !!x, { params: error.required }),
     }),
   ),
-  subjectOfComplaint: z.object({
-    values: z.array(z.string()).optional(),
-    somethingElse: z.string().optional(),
-    somethingElseValue: z.string().refine((x) => x.trim().length > 0, {
+  subjectOfComplaint: z
+    .object({
+      values: z.array(z.string()).optional(),
+      somethingElse: z.string(),
+    })
+    .partial()
+    .refine((x) => validateSomethingElse(x), {
       params: error.required,
+      path: ['somethingElse'],
     }),
-  }),
   complaint: z.object({
     description: z
       .string()
