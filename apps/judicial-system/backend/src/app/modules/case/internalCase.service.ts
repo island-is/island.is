@@ -4,6 +4,7 @@ import { Sequelize } from 'sequelize-typescript'
 
 import {
   BadRequestException,
+  forwardRef,
   Inject,
   Injectable,
   InternalServerErrorException,
@@ -117,14 +118,23 @@ export class InternalCaseService {
     private readonly caseArchiveModel: typeof CaseArchive,
     @Inject(caseModuleConfig.KEY)
     private readonly config: ConfigType<typeof caseModuleConfig>,
+    @Inject(forwardRef(() => IntlService))
     private readonly intlService: IntlService,
+    @Inject(forwardRef(() => EmailService))
     private readonly emailService: EmailService,
+    @Inject(forwardRef(() => EventService))
     private readonly eventService: EventService,
+    @Inject(forwardRef(() => AwsS3Service))
     private readonly awsS3Service: AwsS3Service,
+    @Inject(forwardRef(() => CourtService))
     private readonly courtService: CourtService,
+    @Inject(forwardRef(() => PoliceService))
     private readonly policeService: PoliceService,
+    @Inject(forwardRef(() => UserService))
     private readonly userService: UserService,
+    @Inject(forwardRef(() => FileService))
     private readonly fileService: FileService,
+    @Inject(forwardRef(() => DefendantService))
     private readonly defendantService: DefendantService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
@@ -133,8 +143,8 @@ export class InternalCaseService {
     throw new InternalServerErrorException('Format message not initialized')
   }
 
-  private refreshFormatMessage: () => Promise<void> = async () =>
-    this.intlService
+  private async refreshFormatMessage(): Promise<void> {
+    return this.intlService
       .useIntl(['judicial.system.backend'], 'is')
       .then((res) => {
         this.formatMessage = res.formatMessage
@@ -142,6 +152,7 @@ export class InternalCaseService {
       .catch((reason) => {
         this.logger.error('Unable to refresh format messages', { reason })
       })
+  }
 
   private async uploadSignedRulingPdfToCourt(
     theCase: Case,

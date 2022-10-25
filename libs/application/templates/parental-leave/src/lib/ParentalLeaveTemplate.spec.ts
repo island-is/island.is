@@ -12,6 +12,7 @@ import {
   NO,
   NO_PRIVATE_PENSION_FUND,
   NO_UNION,
+  PARENTAL_LEAVE,
   SPOUSE,
   States as ApplicationStates,
   YES,
@@ -100,6 +101,10 @@ describe('Parental Leave Application Template', () => {
             employer: {
               isSelfEmployed: 'no',
             },
+            isRecivingUnemploymentBenefits: 'no',
+            applicationType: {
+              option: PARENTAL_LEAVE,
+            },
           },
         }),
         ParentalLeaveTemplate,
@@ -128,6 +133,10 @@ describe('Parental Leave Application Template', () => {
               isSelfEmployed: 'no',
             },
             selectedChild: '0',
+            isRecivingUnemploymentBenefits: 'no',
+            applicationType: {
+              option: PARENTAL_LEAVE,
+            },
           },
         }),
         ParentalLeaveTemplate,
@@ -171,6 +180,10 @@ describe('Parental Leave Application Template', () => {
               isSelfEmployed: 'yes',
             },
             selectedChild: '0',
+            isRecivingUnemploymentBenefits: 'no',
+            applicationType: {
+              option: PARENTAL_LEAVE,
+            },
           },
         }),
         ParentalLeaveTemplate,
@@ -226,6 +239,10 @@ describe('Parental Leave Application Template', () => {
                   email: 'selfemployed@test.test',
                   isSelfEmployed: YES,
                 },
+                isRecivingUnemploymentBenefits: 'no',
+                applicationType: {
+                  option: PARENTAL_LEAVE,
+                },
               },
             }),
             ParentalLeaveTemplate,
@@ -255,6 +272,10 @@ describe('Parental Leave Application Template', () => {
               employer: {
                 isSelfEmployed: 'no',
               },
+              isRecivingUnemploymentBenefits: 'no',
+              applicationType: {
+                option: PARENTAL_LEAVE,
+              },
             },
           }),
           ParentalLeaveTemplate,
@@ -280,6 +301,10 @@ describe('Parental Leave Application Template', () => {
               employer: {
                 isSelfEmployed: 'no',
               },
+              isRecivingUnemploymentBenefits: 'no',
+              applicationType: {
+                option: PARENTAL_LEAVE,
+              },
             },
           }),
           ParentalLeaveTemplate,
@@ -302,6 +327,10 @@ describe('Parental Leave Application Template', () => {
               },
               employer: {
                 isSelfEmployed: 'no',
+              },
+              isRecivingUnemploymentBenefits: 'no',
+              applicationType: {
+                option: PARENTAL_LEAVE,
               },
             },
           }),
@@ -370,6 +399,10 @@ describe('Parental Leave Application Template', () => {
               employer: {
                 isSelfEmployed: 'no',
               },
+              isRecivingUnemploymentBenefits: 'no',
+              applicationType: {
+                option: PARENTAL_LEAVE,
+              },
             },
           }),
           ParentalLeaveTemplate,
@@ -407,6 +440,10 @@ describe('Parental Leave Application Template', () => {
               useUnion: NO,
               employer: {
                 isSelfEmployed: 'no',
+              },
+              isRecivingUnemploymentBenefits: 'no',
+              applicationType: {
+                option: PARENTAL_LEAVE,
               },
             },
           }),
@@ -501,12 +538,17 @@ describe('Parental Leave Application Template', () => {
             employer: {
               isSelfEmployed: 'no',
             },
+            isRecivingUnemploymentBenefits: 'no',
+            applicationType: {
+              option: PARENTAL_LEAVE,
+            },
           },
           state: ApplicationStates.EDIT_OR_ADD_PERIODS,
         }),
         ParentalLeaveTemplate,
       )
 
+      const VMST_ID = process.env.VMST_ID
       const [hasChanged, newState, newApplication] = helper.changeState({
         type: DefaultEvents.SUBMIT,
       })
@@ -514,7 +556,7 @@ describe('Parental Leave Application Template', () => {
       expect(newState).toBe(
         ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
       )
-      expect(newApplication.assignees).toEqual([])
+      expect(newApplication.assignees).toEqual([VMST_ID])
     })
   })
 
