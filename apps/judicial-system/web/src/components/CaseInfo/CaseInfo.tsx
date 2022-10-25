@@ -85,7 +85,9 @@ export const ProsecutorCaseInfo: React.FC<Props & { hideCourt?: boolean }> = ({
 
   return (
     <Box component="section" marginBottom={5}>
-      <PoliceCaseNumbersTags policeCaseNumbers={policeCaseNumbers} />
+      <Box marginBottom={2}>
+        <PoliceCaseNumbersTags policeCaseNumbers={policeCaseNumbers} />
+      </Box>
       {!hideCourt && court?.name && (
         <Entry label={formatMessage(core.court)} value={court?.name} />
       )}

@@ -62,6 +62,10 @@ export class DelegationDTO {
   @ApiPropertyOptional({ type: [DelegationScopeDTO] })
   @IsArray()
   scopes?: DelegationScopeDTO[]
+
+  @IsString()
+  @ApiPropertyOptional({ nullable: true })
+  domainName?: string | null
 }
 
 export class UpdateDelegationDTO {

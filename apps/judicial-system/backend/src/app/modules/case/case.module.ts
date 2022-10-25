@@ -22,6 +22,7 @@ import { CaseController } from './case.controller'
 import { InternalCaseController } from './internalCase.controller'
 import { LimitedAccessCaseController } from './limitedAccessCase.controller'
 import { CaseService } from './case.service'
+import { InternalCaseService } from './internalCase.service'
 import { LimitedAccessCaseService } from './limitedAccessCase.service'
 
 @Module({
@@ -39,10 +40,10 @@ import { LimitedAccessCaseService } from './limitedAccessCase.service'
     forwardRef(() => PoliceModule),
     SequelizeModule.forFeature([Case, CaseArchive]),
   ],
-  providers: [CaseService, LimitedAccessCaseService],
+  providers: [InternalCaseService, CaseService, LimitedAccessCaseService],
   controllers: [
-    CaseController,
     InternalCaseController,
+    CaseController,
     LimitedAccessCaseController,
   ],
   exports: [CaseService],

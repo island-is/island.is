@@ -100,7 +100,7 @@ const Subpoena: React.FC = () => {
     >
       <PageHeader title={formatMessage(titles.court.indictments.subpoena)} />
       <FormContentContainer>
-        <PageTitle title={formatMessage(strings.title)} />
+        <PageTitle>{formatMessage(strings.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={5}>
           <SectionHeading
@@ -125,7 +125,7 @@ const Subpoena: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}`}
+          previousUrl={`${constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoadingWorkingCase}
           onNextButtonClick={handleNextButtonClick}
           nextButtonText={formatMessage(strings.nextButtonText)}

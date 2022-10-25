@@ -34,4 +34,5 @@ export class ApiScopeDTO {
   alsoForDelegatedUser: boolean
   isAccessControlled: boolean
   groupId?: string
+  domainName!: string
 }

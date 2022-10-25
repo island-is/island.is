@@ -28,8 +28,8 @@ export const getApplication = (allowFakeData = false): Form => {
   return buildForm({
     id: 'FinancialStatementsInao',
     title: '',
-    renderLastScreenButton: true,
-    renderLastScreenBackButton: true,
+    renderLastScreenButton: false,
+    renderLastScreenBackButton: false,
     mode: FormModes.APPLYING,
     logo: Logo,
     children: [
@@ -87,7 +87,8 @@ export const getApplication = (allowFakeData = false): Form => {
               const applicationAnswers = answers as FinancialStatementsInao
               const careTakerLimit =
                 applicationAnswers.cemetryOperation?.incomeLimit ?? '0'
-              const currentAssets = applicationAnswers.cemetryAsset?.current
+              const currentAssets =
+                applicationAnswers.cemetryAsset?.fixedAssetsTotal
               const isCemetry = userType === USERTYPE.CEMETRY
               const totalIncome = isCemetry
                 ? applicationAnswers.operatingCost?.total
@@ -114,7 +115,6 @@ export const getApplication = (allowFakeData = false): Form => {
             uploadButtonLabel: m.uploadButtonLabel,
             uploadMultiple: false,
             forImageUpload: false,
-            doesNotRequireAnswer: true,
           }),
         ],
       }),

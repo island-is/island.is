@@ -15,6 +15,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Umsókn um fæðingarorlof',
       description: 'Application for parental leave',
     },
+    nameGrant: {
+      id: 'pl.application:name.grant',
+      defaultMessage: 'Umsókn um fæðingarstyrk',
+      description: 'Application for parental grant',
+    },
     formTitle: {
       id: 'pl.application:form.title',
       defaultMessage: 'Fæðingarorlof',
@@ -113,6 +118,52 @@ export const parentalLeaveFormMessages: MessageDir = {
         'Þessar umsóknir gætu verið fyrir önnur börnin þín, eða útistandandi fæðingarorlofsumsókn sem hitt foreldrið hefur gert fyrir ófætt barn ykkar.',
       description:
         'These applications could be for already born children, or an application made by you or the other parent for parental leave for your unborn child.',
+    },
+    applicationTypeTitle: {
+      id: 'pl.application:applicationType.title',
+      defaultMessage: 'Tegund umsóknar',
+      description: 'Type of application',
+    },
+    applicationParentalLeaveDescription: {
+      id: 'pl.application:applicationParentalLeave.description',
+      defaultMessage: 'Vinsamlegast veldu tegund umsóknar',
+      description: 'Vinsamlegast veldu tegund umsóknar',
+    },
+    applicationParentalLeaveTitle: {
+      id: 'pl.application:applicationParentalLeave.title',
+      defaultMessage: 'Fæðingarorlof - almenn umsókn',
+      description: 'Parental Leave - general application',
+    },
+    applicationParentalLeaveSubTitle: {
+      id: 'pl.application:applicationParentalLeave.subtitle',
+      defaultMessage:
+        'Fæðingarorlof er fyrir foreldra á innlendum vinnumarkaði sem eru starfsmenn og/eða sjálfstætt starfandi.',
+      description:
+        'Fæðingarorlof er fyrir foreldra á innlendum vinnumarkaði sem eru starfsmenn og/eða sjálfstætt starfandi.',
+    },
+    applicationParentalGrantUnemployedTitle: {
+      id: 'pl.application:applicationParentalGrantUnemployed.title',
+      defaultMessage: 'Fæðingarstyrkur - utan vinnumarkaðar',
+      description: 'Parental Leave - general application',
+    },
+    applicationParentalGrantUnemployedSubTitle: {
+      id: 'pl.application:applicationParentalGrantUnemployed.subtitle',
+      defaultMessage:
+        'Foreldri sem er utan vinnumarkaðar eða í minna en 25% starfi öðlast rétt til fæðingarstyrks',
+      description:
+        'Foreldri sem er utan vinnumarkaðar eða í minna en 25% starfi öðlast rétt til fæðingarstyrks',
+    },
+    applicationParentalGrantStudentTitle: {
+      id: 'pl.application:applicationParentalGrantStudent.title',
+      defaultMessage: 'Fæðingarstyrkur – námsmenn',
+      description: 'Parental Grant - students',
+    },
+    applicationParentalGrantStudentSubTitle: {
+      id: 'pl.application:applicationParentalGrantStudent.subtitle',
+      defaultMessage:
+        'Foreldri sem uppfyllir skilyrði um fullt nám öðlast rétt til fæðingarstyrks',
+      description:
+        'Foreldri sem uppfyllir skilyrði um fullt nám öðlast rétt til fæðingarstyrks',
     },
     otherParentSubSection: {
       id: 'pl.application:otherParent.subSection',
@@ -1048,6 +1099,16 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Staðfestu netfang vinnuveitanda',
       description: 'Confirm employer email',
     },
+    isRecivingUnemploymentBenefitsTitle: {
+      id: 'pl.application:employer.isRecivingUnemploymentBenefits',
+      defaultMessage: 'Ertu að þiggja bætur?',
+      description: 'Are you receiving benefits?',
+    },
+    unemploymentBenefits: {
+      id: 'pl.application:employer.unemploymentBenefits',
+      defaultMessage: `Hvaðan ertu að þiggja bætur?`,
+      description: 'Where are you receiving benefits from?',
+    },
   }),
 
   selfEmployed: defineMessages({
@@ -1202,6 +1263,11 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     titleApproved: {
       id: 'pl.application:review.titleApproved',
+      defaultMessage: 'Umsókn þín er samþykkt',
+      description: 'Your application is approved',
+    },
+    titleReceived: {
+      id: 'pl.application:review.titleReceived',
       defaultMessage: 'Umsókn þín er móttekið',
       description: 'Your application is received',
     },
@@ -1303,6 +1369,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       description:
         'Your employer will confirm the dates of your parental leave.',
     },
+    receivedTitle: {
+      id: 'pl.application:review.received.title',
+      defaultMessage: 'Vinnumálastofnun hefur móttekið umsókn',
+      description: 'Vinnumálastofnun has received your application',
+    },
     deptTitle: {
       id: 'pl.application:review.dept.title',
       defaultMessage: 'Vinnumálastofnun hefur móttekið umsókn',
@@ -1378,6 +1449,12 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:draftFlow.requiresAction.VMLSTDesc',
       defaultMessage: 'Vinnumalastofnun did not approve your application.',
       description: 'Vinnumalastofnun did not approve your application.',
+    },
+    draftAdditionalDocumentRequiredDesc: {
+      id: 'pl.application:draftFlow.requiresAction.additionalDocument',
+      defaultMessage:
+        'Vinnumalastofnun vantar frekari gögn vegna umsóknarinnar',
+      description: 'Additional document required',
     },
     modifyDraftDesc: {
       id: 'pl.application:draftFlow.modifyDesc',
@@ -1527,6 +1604,21 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:attachmentscreen.studentDescription',
       defaultMessage: `Námsmenn þurfa að skila inn staðfestingu á námi og námsárangri. Athugaðu að skjalið þarf að vera á .pdf formi`,
       description: `student description`,
+    },
+    unemploymentBenefitsTitle: {
+      id: 'pl.application:attachmentscreen.unemployedBenefitsTitle',
+      defaultMessage: `Bætur`,
+      description: `Benefits`,
+    },
+    unionDescription: {
+      id: 'pl.application:attachmentscreen.unionDescription',
+      defaultMessage: `Þeir sem þiggja dagpeninga/veikindarétt frá stéttarfélagi þurfa að skila inn skjali því til staðfestingar. Athugaðu að skjalið þarf að vera á .pdf formi`,
+      description: `Those who receive unemployment benefits/sick leave allowance from the Union must submit a document to confirm this. Note that the document needs to be on .pdf format`,
+    },
+    healthInsuranceDescription: {
+      id: 'pl.application:attachmentscreen.sjúkratryggingarDescription',
+      defaultMessage: `Þeir sem þiggja sjúkradagpeninga frá Sjúkratryggingum Íslands þurfa að skila inn skjali því til staðfestingar. Athugaðu að skjalið þarf að vera á .pdf formi`,
+      description: `Those who receive sick leave allowance from Sjúkratryggingar Íslands must submit a document to confirm this. Note that the document needs to be on .pdf format`,
     },
     fatherWithoutMotherTitle: {
       id: 'pl.application:attachmentscreen.fatherWithoutMotherTitle',
@@ -2009,12 +2101,12 @@ export const statesMessages = defineMessages({
 
   vinnumalastofnunApprovalTitle: {
     id: 'pl.application:vinnumalastofnunApproval.title',
-    defaultMessage: 'Vinnumálastofnun samþykkti',
+    defaultMessage: 'Umsókn er móttekin',
     description: 'Title of the state - vinnumalastofnunApproval',
   },
   vinnumalastofnunApprovalDescription: {
     id: 'pl.application:vinnumalastofnunApproval.description',
-    defaultMessage: 'Vinnumálastofnun samþykkti umsóknarinnar.',
+    defaultMessage: 'Vinnumálastofnun hefur móttekið umsókn.',
     description: 'Description of the state - vinnumalastofnunApproval',
   },
 
@@ -2027,6 +2119,12 @@ export const statesMessages = defineMessages({
     id: 'pl.application:vinnumalastofnunAction.description',
     defaultMessage: 'Vinnumálastofnun krefst aðgerðar vegna umsóknarinnar.',
     description: 'Description of the state - vinnumalastofnunAction',
+  },
+
+  additionalDocumentRequiredDescription: {
+    id: 'pl.application:additionalDocumentRequired.description',
+    defaultMessage: 'Vinnumálastofnun vantar frekari gögn vegna umsóknarinnar.',
+    description: 'Description of the state - additionalDocumentRequired',
   },
 
   approvedTitle: {
@@ -2084,6 +2182,23 @@ export const statesMessages = defineMessages({
     id: 'pl.application:employerEditsAction.description',
     defaultMessage: 'Vinnuveitandi þinn hafnaði tímabreytingum þínum.',
     description: 'Description of the state - employerEditsAction',
+  },
+
+  closedDescription: {
+    id: 'pl.application:closed.description',
+    defaultMessage: 'Umsóknin hefur verið afgreidd',
+    description: 'Description of the state - closed',
+  },
+
+  receivedTitle: {
+    id: 'pl.application:received.title',
+    defaultMessage: 'Móttekið',
+    description: 'Title of the state - received',
+  },
+  receivedDescription: {
+    id: 'pl.application:received.description',
+    defaultMessage: 'Umsóknin hefur verið móttekið',
+    description: 'Description of the state - received',
   },
 
   vinnumalastofnunApproveEditsTitle: {

@@ -12,7 +12,7 @@ import {
 import format from 'date-fns/format'
 import isAfter from 'date-fns/isAfter'
 import { Locale } from '@island.is/shared/types'
-import { i18n } from '../../utils/translations'
+import { getLabel } from '../../utils/translations'
 import is from 'date-fns/locale/is'
 import enGB from 'date-fns/locale/en-GB'
 import { format as formatSsn } from 'kennitala'
@@ -43,43 +43,39 @@ export const parseMachineLicensePayload = (
   const label = labels.labels
   const data: Array<GenericLicenseDataField> = [
     {
-      name: 'Grunnupplýsingar vinnuvélaskírteinis',
+      name: getLabel('basicInfoLicense', locale, label),
       type: GenericLicenseDataFieldType.Value,
-      label: label ? label['licenseNumber'] : i18n.licenseNumber[locale],
+      label: getLabel('licenseNumber', locale, label),
       value: license.skirteinisNumer?.toString(),
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: label ? label['fullName'] : i18n.fullName[locale],
+      label: getLabel('fullName', locale, label),
       value: license?.fulltNafn ?? '',
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: label ? label['placeOfIssue'] : i18n.placeOfIssue[locale],
+      label: getLabel('placeOfIssue', locale, label),
       value: license.utgafuStadur ?? '',
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: label
-        ? label['firstPublishedDate']
-        : i18n.firstPublishedDate[locale],
+      label: getLabel('firstPublishedDate', locale, label),
       value: license.fyrstiUtgafuDagur?.toString(),
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: label ? label['validTo'] : i18n.validTo[locale],
-      value: label ? label['seeRights'] : i18n.seeRights[locale],
+      label: getLabel('validTo', locale, label),
+      value: getLabel('seeRights', locale, label),
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: label
-        ? label['drivingLicenseNumber']
-        : i18n.drivingLicenseNumber[locale],
+      label: getLabel('drivingLicenseNumber', locale, label),
       value: license.okuskirteinisNumer ?? '',
     },
     {
       type: GenericLicenseDataFieldType.Group,
-      label: label ? label['classesOfRights'] : i18n.classesOfRights[locale],
+      label: getLabel('classesOfRights', locale, label),
       fields: (license.vinnuvelaRettindi ?? [])
         .filter((field) => field.kenna || field.stjorna)
         .map((field) => ({
@@ -112,14 +108,14 @@ const parseVvrRights = (
   if (rights.stjorna) {
     fields.push({
       type: GenericLicenseDataFieldType.Value,
-      label: label ? label['control'] : i18n.control[locale],
+      label: getLabel('control', locale, label),
       value: rights.stjorna,
     })
   }
   if (rights.kenna) {
     fields.push({
       type: GenericLicenseDataFieldType.Value,
-      label: label ? label['teach'] : i18n.teach[locale],
+      label: getLabel('teach', locale, label),
       value: rights.kenna,
     })
   }

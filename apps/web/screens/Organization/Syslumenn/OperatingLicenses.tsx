@@ -30,7 +30,10 @@ import {
 import { Screen } from '../../../types'
 import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import { OrganizationWrapper } from '@island.is/web/components'
+import {
+  OrganizationWrapper,
+  OperatingLicensesCsvExport,
+} from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { useRouter } from 'next/router'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
@@ -352,6 +355,9 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
           iconType="outline"
           onChange={(event) => onSearch(event.target.value)}
         />
+        <Box textAlign="right" marginRight={1} marginTop={1}>
+          <OperatingLicensesCsvExport namespace={namespace} />
+        </Box>
         <Box
           paddingTop={1}
           textAlign="center"

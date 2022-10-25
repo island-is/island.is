@@ -22,7 +22,17 @@ export enum Features {
   financialStatementInao = 'financialStatementInao',
   operatingLicense = 'isApplicationOperatingLicenseEnabled',
   marriageConditions = 'isMarriageConditionsApplicationEnabled',
+  estateApplication = 'isEstateApplicationEnabled',
   drivingLicenseDuplicate = 'isDrivingLicenseDuplicateEnabled',
+  transportAuthorityAnonymityInVehicleRegistry = 'isTransportAuthorityAnonymityInVehicleRegistryEnabled',
+  transportAuthorityChangeCoOwnerOfVehicle = 'isTransportAuthorityChangeCoOwnerOfVehicleEnabled',
+  transportAuthorityChangeOperatorOfVehicle = 'isTransportAuthorityChangeOperatorOfVehicleEnabled',
+  transportAuthorityDigitalTachographCompanyCard = 'isTransportAuthorityDigitalTachographCompanyCardEnabled',
+  transportAuthorityDigitalTachographDriversCard = 'isTransportAuthorityDigitalTachographDriversCardEnabled',
+  transportAuthorityDigitalTachographWorkshopCard = 'isTransportAuthorityDigitalTachographWorkshopCardEnabled',
+  transportAuthorityOrderVehicleLicensePlate = 'isTransportAuthorityOrderVehicleLicensePlateEnabled',
+  transportAuthorityOrderVehicleRegistrationCertificate = 'isTransportAuthorityOrderVehicleRegistrationCertificateEnabled',
+  transportAuthorityTransferOfVehicleOwnership = 'isTransportAuthorityTransferOfVehicleOwnershipEnabled',
 
   // Application delegation flags
   noDebtCertificateCompanyDelegations = 'applicationNoDebtCertificateCompanyDelegations',
@@ -34,6 +44,8 @@ export enum Features {
   servicePortalDocumentProviderModule = 'isServicePortalDocumentProviderModuleEnabled',
   servicePortalIcelandicNamesRegistryModule = 'isServicePortalIcelandicNamesRegistryModuleEnabled',
   servicePortalPetitionsModule = 'isServicePortalPetitionsModuleEnabled',
+
+  outgoingDelegationsV2 = 'outgoingdelegationsv2',
 }
 
 export enum ServerSideFeature {
