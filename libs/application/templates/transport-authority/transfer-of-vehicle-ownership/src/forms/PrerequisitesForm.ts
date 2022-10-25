@@ -39,16 +39,21 @@ export const PrerequisitesForm: Form = buildForm({
               title: externalData.userProfile.title,
               subTitle: externalData.userProfile.subTitle,
             }),
-            /* buildDataProviderItem({
-              id: 'payment',
-              type: 'PaymentChargeInfoProvider',
-              title: '',
-            }), */
             buildDataProviderItem({
               id: 'currentVehicleList',
               type: 'CurrentVehiclesProvider',
               title: externalData.currentVehicles.title,
               subTitle: externalData.currentVehicles.subTitle,
+            }),
+            buildDataProviderItem({
+              id: 'insuranceCompanyList',
+              type: 'InsuranceCompaniesProvider',
+              title: '',
+            }),
+            buildDataProviderItem({
+              id: 'payment',
+              type: 'PaymentChargeInfoProvider',
+              title: '',
             }),
           ],
         }),

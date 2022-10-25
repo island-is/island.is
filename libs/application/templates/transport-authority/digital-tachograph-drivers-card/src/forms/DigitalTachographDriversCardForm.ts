@@ -40,11 +40,6 @@ export const DigitalTachographDriversCardForm: Form = buildForm({
               subTitle: m.userProfileInformationSubTitle,
             }),
             buildDataProviderItem({
-              id: 'payment',
-              type: 'PaymentChargeInfoProvider',
-              title: '',
-            }),
-            buildDataProviderItem({
               id: 'drivingLicense',
               type: 'DrivingLicenseProvider',
               title: m.drivingLicenseProviderTitle,
@@ -54,13 +49,16 @@ export const DigitalTachographDriversCardForm: Form = buildForm({
               id: 'qualityPhotoAndSignature',
               type: 'QualityPhotoAndSignatureProvider',
               title: '',
-              subTitle: '',
             }),
             buildDataProviderItem({
               id: 'nationalRegistryCustom',
               type: 'NationalRegistryCustomProvider',
               title: '',
-              subTitle: '',
+            }),
+            buildDataProviderItem({
+              id: 'payment',
+              type: 'PaymentChargeInfoProvider',
+              title: '',
             }),
           ],
         }),

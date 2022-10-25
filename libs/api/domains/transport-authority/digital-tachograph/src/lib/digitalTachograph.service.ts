@@ -27,13 +27,13 @@ export class DigitalTachographApi {
   async checkTachoNet(
     driversCardRequest: TachoNetCheckRequest,
   ): Promise<TachoNetCheckResponse> {
-    return this.digitalTachographDriversCardClient.checkTachoNet(
+    return await this.digitalTachographDriversCardClient.checkTachoNet(
       driversCardRequest,
     )
   }
 
   async getDriversCard(currentUserSsn: string): Promise<DriversCard> {
-    return this.digitalTachographDriversCardClient.getDriversCard(
+    return await this.digitalTachographDriversCardClient.getDriversCard(
       currentUserSsn,
     )
   }
@@ -41,7 +41,7 @@ export class DigitalTachographApi {
   async saveDriversCard(
     driversCardRequest: DriversCardApplicationRequest,
   ): Promise<DriverCardApplicationResponse | null> {
-    return this.digitalTachographDriversCardClient.saveDriversCard(
+    return await this.digitalTachographDriversCardClient.saveDriversCard(
       driversCardRequest,
     )
   }

@@ -4,15 +4,20 @@ import {
   VehicleOwnerChangeClientModule,
   VehicleOwnerChangeClientConfig,
 } from '@island.is/clients/transport-authority/vehicle-owner-change'
+import {
+  VehicleCodetablesClientModule,
+  VehicleCodetablesClientConfig,
+} from '@island.is/clients/transport-authority/vehicle-codetables'
 import { TransferOfVehicleOwnershipApiResolver } from './graphql/transferOfVehicleOwnership.resolver'
 import { TransferOfVehicleOwnershipApi } from './transferOfVehicleOwnership.service'
 
 @Module({
   imports: [
     VehicleOwnerChangeClientModule,
+    VehicleCodetablesClientModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [VehicleOwnerChangeClientConfig],
+      load: [VehicleOwnerChangeClientConfig, VehicleCodetablesClientConfig],
     }),
   ],
   providers: [

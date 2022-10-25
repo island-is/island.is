@@ -83,7 +83,6 @@ export class DigitalTachographDriversCardClient {
     request: DriversCardApplicationRequest,
   ): Promise<DriverCardApplicationResponse | null> {
     // TODOx disabled untill this API goes on xroad
-    console.log(JSON.stringify(request))
     throw Error('Not implemented')
     return null
 
