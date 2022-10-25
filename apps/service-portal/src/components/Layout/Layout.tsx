@@ -21,7 +21,8 @@ import { useNamespaces } from '@island.is/localization'
 import { useStore } from '../../store/stateProvider'
 import { RemoveScroll } from 'react-remove-scroll'
 import cn from 'classnames'
-import { AlertBannerSection } from '../AlertBannerSection/AlertBannerSection'
+import { GlobalAlertBannerSection } from '../AlertBanners/GlobalAlertBannerSection'
+import { ModuleAlertBannerSection } from '../AlertBanners/ModuleAlertMessageSection'
 
 const Layout: FC = ({ children }) => {
   useRoutes()
@@ -55,8 +56,9 @@ const Layout: FC = ({ children }) => {
         )}
         paddingBottom={7}
       >
-        {/* TODO: move AlertBannerSection to the top */}
-        <AlertBannerSection />
+        {/* TODO: move GlobalAlertBannerSection to the top */}
+        <GlobalAlertBannerSection />
+        <ModuleAlertBannerSection />
         <Box as="main" component="main">
           <GridContainer className={styles.layoutContainer}>
             <GridRow>

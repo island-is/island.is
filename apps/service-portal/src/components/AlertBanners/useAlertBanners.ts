@@ -8,7 +8,7 @@ import { useLocale } from '@island.is/localization'
 type AlertBannerType = AlertBannerSchema & { bannerId: string }
 
 // Taken from here: https://stackoverflow.com/a/7616484
-export const stringHash = (str: string): number => {
+const stringHash = (str: string): number => {
   let hash = 0,
     i,
     chr
@@ -37,22 +37,10 @@ export const useAlertBanners = () => {
             bannerId,
           } as AlertBannerType
         })
-        .filter((banner: AlertBannerType) => {
-          let alertBannerBelongsToCurrentPage = false
-
-          for (const path of banner.servicePortalPaths ?? []) {
-            if (path === '*' || window.location.href.includes(path)) {
-              alertBannerBelongsToCurrentPage = true
-              break
-            }
-          }
-
-          return (
-            !Cookies.get(banner.bannerId) &&
-            banner?.showAlertBanner &&
-            alertBannerBelongsToCurrentPage
-          )
-        }),
+        .filter(
+          (banner: AlertBannerType) =>
+            !Cookies.get(banner.bannerId) && banner?.showAlertBanner,
+        ),
     )
   }
 
