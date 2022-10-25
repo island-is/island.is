@@ -66,9 +66,18 @@ export const AccessCard = ({ delegation, onDelete }: AccessCardProps) => {
     >
       <Box display="flex" justifyContent="spaceBetween" alignItems="flexStart">
         <Stack space="smallGutter">
-          <Text variant="eyebrow" color="purple400">
-            {delegation.domain.displayName}
-          </Text>
+          <Box display="flex" columnGap={1} alignItems="center">
+            {delegation.domain.organisationLogoUrl && (
+              <img
+                src={delegation.domain.organisationLogoUrl}
+                alt={`Mynd af ${delegation.domain.displayName}`}
+                width="16"
+              />
+            )}
+            <Text variant="eyebrow" color="purple400">
+              {delegation.domain.displayName}
+            </Text>
+          </Box>
           <Text variant="h3" as="h3" color={isExpired ? 'dark300' : 'dark400'}>
             {delegation?.to?.name}
           </Text>

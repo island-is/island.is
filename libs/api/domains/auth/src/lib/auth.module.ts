@@ -21,6 +21,7 @@ import { DataLoaderInterceptor } from '@island.is/nest/dataloader'
 import { DomainLoader } from './loaders/domain.loader'
 import { ApiScopeLoader } from './loaders/apiScope.loader'
 import { DomainResolver } from './resolvers/domain.resolver'
+import { CmsModule } from '@island.is/cms'
 
 @Module({
   providers: [
@@ -37,6 +38,7 @@ import { DomainResolver } from './resolvers/domain.resolver'
     ApiScopeLoader,
     DomainLoader,
     DomainResolver,
+    CmsModule,
     {
       provide: APP_INTERCEPTOR,
       useClass: DataLoaderInterceptor,

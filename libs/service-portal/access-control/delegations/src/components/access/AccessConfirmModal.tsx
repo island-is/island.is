@@ -28,7 +28,7 @@ type AccessConfirmModalProps = ModalProps & {
   delegation: AuthCustomDelegation
   domain: {
     name: string | undefined
-    imgSrc: string | undefined
+    imgSrc?: string | null
   }
   scopes?: MappedScope[]
   onConfirm(): void
@@ -110,14 +110,14 @@ export const AccessConfirmModal = ({
             />
           )}
         </Box>
-        {domain?.name && domain?.imgSrc && (
+        {domain?.name && (
           <IdentityCard
             label={formatMessage({
               id: 'sp.access-control-delegations:domain',
               defaultMessage: 'Kerfi',
             })}
             title={domain.name}
-            imgSrc={domain.imgSrc}
+            imgSrc={domain?.imgSrc}
           />
         )}
       </Box>

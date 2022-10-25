@@ -78,6 +78,7 @@ import {
 import { GetMailingListSignupSliceInput } from './dto/getMailingListSignupSlice'
 import { Form, mapForm } from './models/form.model'
 import { GetFormInput } from './dto/getForm.input'
+import { mapImage } from './models/image.model'
 
 const errorHandler = (name: string) => {
   return (error: Error) => {
@@ -160,6 +161,40 @@ export class CmsContentfulService {
         .map(mapOrganization)
         .filter((organization) => organization.title && organization.slug),
     }
+  }
+
+  async getOrganizationsLogo({
+    lang = 'is-IS',
+    organizationTitles,
+  }: {
+    lang?: string
+    organizationTitles: string[]
+  }): Promise<Array<string | null>> {
+    const params = {
+      ['content_type']: 'organization',
+      select: 'fields.logo,fields.title',
+      'fields.title[in]': organizationTitles.join(','),
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IOrganizationFields>(lang, params)
+      .catch(errorHandler('getOrganizationsLogo'))
+
+    return organizationTitles.map((title) => {
+      if (!result.items) {
+        return null
+      } else {
+        const organization = result.items.find(
+          (item) => item.fields.title === title,
+        )
+
+        const image = organization?.fields.logo
+          ? mapImage(organization?.fields.logo)
+          : null
+
+        return image?.url ? image.url : null
+      }
+    })
   }
 
   async getAdgerdirTags(lang = 'is-IS'): Promise<AdgerdirTags> {

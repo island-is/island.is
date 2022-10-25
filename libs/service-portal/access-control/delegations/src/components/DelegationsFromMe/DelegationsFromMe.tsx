@@ -112,8 +112,7 @@ export const DelegationsFromMe = () => {
         delegation={delegation as AuthCustomDelegation}
         domain={{
           name: delegation?.domain.displayName,
-          // TODO use organisation name when available
-          imgSrc: './assets/images/educationDegree.svg',
+          imgSrc: delegation?.domain.organisationLogoUrl,
         }}
       />
     </>

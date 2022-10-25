@@ -209,9 +209,8 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
         isVisible={openConfirmModal}
         delegation={delegation}
         domain={{
-          name: delegation?.domain?.displayName,
-          // TODO use organisation name when available
-          imgSrc: './assets/images/educationDegree.svg',
+          name: delegation.domain.displayName,
+          imgSrc: delegation.domain.organisationLogoUrl,
         }}
         scopes={scopes}
         validityPeriod={validityPeriod}

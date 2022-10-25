@@ -13,6 +13,7 @@ export const authCustomDelegationFragment = gql`
       name
       displayName
       organisationLogoKey
+      organisationLogoUrl
     }
   }
 `

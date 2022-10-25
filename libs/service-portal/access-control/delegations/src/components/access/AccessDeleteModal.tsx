@@ -14,7 +14,7 @@ type AccessDeleteModalProps = ModalProps & {
   delegation: AuthCustomDelegation
   domain: {
     name: string | undefined
-    imgSrc: string | undefined
+    imgSrc?: string | null
   }
   onDelete(): void
 }
@@ -117,14 +117,14 @@ export const AccessDeleteModal = ({
             />
           )}
         </Box>
-        {domain?.name && domain?.imgSrc && (
+        {domain?.name && (
           <IdentityCard
             label={formatMessage({
               id: 'sp.access-control-delegations:domain',
               defaultMessage: 'Kerfi',
             })}
             title={domain.name}
-            imgSrc={domain.imgSrc}
+            imgSrc={domain?.imgSrc}
           />
         )}
         <AlertMessage

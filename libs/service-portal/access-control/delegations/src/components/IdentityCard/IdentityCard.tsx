@@ -5,10 +5,7 @@ type IdentityCardProps = {
   description?: string
   label?: string
   color?: 'blue' | 'purple'
-  /**
-   * Image src
-   */
-  imgSrc?: string
+  imgSrc?: string | null
 }
 
 export const IdentityCard = ({

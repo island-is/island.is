@@ -35,6 +35,7 @@ import {
   useIdentityLazyQuery,
 } from '@island.is/service-portal/graphql'
 import { useDomains } from '../../hooks/useDomains'
+import { ALL_DOMAINS } from '../../constants'
 
 const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces(['sp.settings-access-control', 'sp.access-control-delegations'])
@@ -120,7 +121,12 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
   const onSubmit = handleSubmit(async ({ toNationalId, domainName }) => {
     try {
       const { data } = await createAuthDelegation({
-        variables: { input: { toNationalId, domainName } },
+        variables: {
+          input: {
+            toNationalId,
+            domainName: domainName === ALL_DOMAINS ? null : domainName,
+          },
+        },
       })
       if (data) {
         history.push(
