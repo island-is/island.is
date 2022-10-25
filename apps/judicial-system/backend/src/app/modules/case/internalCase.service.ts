@@ -143,8 +143,8 @@ export class InternalCaseService {
     throw new InternalServerErrorException('Format message not initialized')
   }
 
-  private refreshFormatMessage: () => Promise<void> = async () =>
-    this.intlService
+  private async refreshFormatMessage(): Promise<void> {
+    return this.intlService
       .useIntl(['judicial.system.backend'], 'is')
       .then((res) => {
         this.formatMessage = res.formatMessage
@@ -152,6 +152,7 @@ export class InternalCaseService {
       .catch((reason) => {
         this.logger.error('Unable to refresh format messages', { reason })
       })
+  }
 
   private async uploadSignedRulingPdfToCourt(
     theCase: Case,
@@ -652,22 +653,6 @@ export class InternalCaseService {
   async deliverProsecutorDocuments(
     theCase: Case,
   ): Promise<DeliverProsecutorDocumentsResponse> {
-    this.logger.error('Service status', {
-      havesequelize: Boolean(this.sequelize),
-      havecaseModel: Boolean(this.caseModel),
-      havecaseArchiveModel: Boolean(this.caseArchiveModel),
-      haveconfig: Boolean(this.config),
-      haveintlService: Boolean(this.intlService),
-      haveemailService: Boolean(this.emailService),
-      haveeventService: Boolean(this.eventService),
-      haveawsS3Service: Boolean(this.awsS3Service),
-      havecourtService: Boolean(this.courtService),
-      havepoliceService: Boolean(this.policeService),
-      haveuserService: Boolean(this.userService),
-      havefileService: Boolean(this.fileService),
-      havedefendantService: Boolean(this.defendantService),
-    })
-
     await this.refreshFormatMessage()
 
     const requestDeliveredToCourt = await this.deliverProsecutorDocumentsToCourt(
