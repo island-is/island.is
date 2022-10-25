@@ -94,9 +94,8 @@ export const GeneralFishingLicenseSchema = z.object({
           calculateTotalRailNet(railnet, roenet) <=
           MAXIMUM_TOTAL_RAIL_NET_LENGTH,
         {
-          message: fishingLicenseFurtherInformation.errorMessages
-            .railNetTooLarge.defaultMessage as string,
-          path: ['railnet', 'roenet'],
+          params:
+            fishingLicenseFurtherInformation.errorMessages.railNetTooLarge,
         },
       ),
   }),

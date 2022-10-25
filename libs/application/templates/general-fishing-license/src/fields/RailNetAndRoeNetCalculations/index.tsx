@@ -59,10 +59,10 @@ export const RailNetAndRoeNetCalculations: FC<FieldBaseProps> = ({
             id={`${field.id}.railnet`}
             name={`${field.id}.railnet`}
             format="####m"
+            error={errors && getErrorViaPath(errors, `${field.id}`)}
             label={formatMessage(
               fishingLicenseFurtherInformation.labels.railnet,
             )}
-            error={errors && getErrorViaPath(errors, `${field.id}`)}
             backgroundColor="blue"
             onChange={(e) => setLengthRailNet(e.target.value)}
             defaultValue={lengthRailNet}
