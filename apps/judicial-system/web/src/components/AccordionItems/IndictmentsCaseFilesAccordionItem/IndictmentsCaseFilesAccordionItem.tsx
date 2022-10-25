@@ -189,16 +189,15 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
   const [isDragging, setIsDragging] = useState<boolean>(false)
   const [editFileId, setEditFileId] = useState<string>()
   const [editedFilenames, setEditedFilenames] = useState<EditedFileName[]>([])
-  const displayName =
-    editedFilenames.findIndex((item) => item.id === caseFile.id) > -1
-      ? editedFilenames[
-          editedFilenames.findIndex((item) => item.id === caseFile.id)
-        ].editedName
-      : caseFile.userGeneratedFilename
-      ? caseFile.userGeneratedFilename
-      : caseFile.displayText
-  const editFileButtonDisabled =
-    editedFilenames.findIndex((i) => i.id === caseFile.id) === -1
+  const nameHasBeenEdited =
+    editedFilenames.findIndex((i) => i.id === caseFile.id) > -1
+  const displayName = nameHasBeenEdited
+    ? editedFilenames[
+        editedFilenames.findIndex((item) => item.id === caseFile.id)
+      ].editedName
+    : caseFile.userGeneratedFilename
+    ? caseFile.userGeneratedFilename
+    : caseFile.displayText
 
   return (
     <Reorder.Item
@@ -303,12 +302,12 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
 
                           setEditFileId(undefined)
                         }}
-                        disabled={editFileButtonDisabled}
+                        disabled={!nameHasBeenEdited}
                         className={styles.editCaseFileButton}
                       >
                         <Icon
                           icon="checkmark"
-                          color={editFileButtonDisabled ? 'dark200' : 'blue400'}
+                          color={nameHasBeenEdited ? 'blue400' : 'dark200'}
                         />
                       </button>
                     </Box>
