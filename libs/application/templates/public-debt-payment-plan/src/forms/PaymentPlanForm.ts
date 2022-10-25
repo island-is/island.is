@@ -31,7 +31,6 @@ import {
   PaymentPlanBuildIndex,
   PaymentPlanExternalData,
   paymentPlanIndexKeyMapper,
-  PublicDebtPaymentPlan,
 } from '../types'
 
 // Builds a payment plan step that exists of two custom fields:
@@ -233,12 +232,7 @@ export const PaymentPlanForm: Form = buildForm({
               id: 'correctedEmployer',
               title: employer.labels.searchCompany,
               placeholder: employer.labels.searchCompanyPlaceholer,
-            }),
-            buildCustomField({
-              id: 'isEmployerValid',
-              title: '',
-              component: 'IsEmployerValid',
-              doesNotRequireAnswer: true,
+              validateEmployer: true,
             }),
           ],
         }),

@@ -19,6 +19,7 @@ export const CompanySearchFormField: FC<Props> = ({ application, field }) => {
     placeholder,
     setLabelToDataSchema = true,
     shouldIncludeIsatNumber,
+    validateEmployer,
   } = field
   const { formatMessage } = useLocale()
 
@@ -38,6 +39,7 @@ export const CompanySearchFormField: FC<Props> = ({ application, field }) => {
   return (
     <Box marginTop={[2, 4]}>
       <CompanySearchController
+        validateEmployer={validateEmployer}
         shouldIncludeIsatNumber={shouldIncludeIsatNumber}
         id={id}
         defaultValue={initialValue}

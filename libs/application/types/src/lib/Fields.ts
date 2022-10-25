@@ -12,6 +12,7 @@ import { CallToAction } from './StateMachine'
 import { Application } from './Application'
 import { FormatInputValueFunction } from 'react-number-format'
 import { TestSupport } from '@island.is/island-ui/utils'
+import { MessageDescriptor } from 'react-intl'
 
 export type RecordObject<T = unknown> = Record<string, T>
 export type MaybeWithApplicationAndField<T> =
@@ -177,6 +178,7 @@ export interface CompanySearchField extends BaseField {
   placeholder?: FormText
   setLabelToDataSchema?: boolean
   shouldIncludeIsatNumber?: boolean
+  validateEmployer?: boolean
 }
 
 export interface AsyncSelectField extends BaseField {
