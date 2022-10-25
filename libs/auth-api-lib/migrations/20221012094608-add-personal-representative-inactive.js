@@ -2,21 +2,29 @@
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.addColumn('personal_representative', 'inactive', {
-      type: Sequelize.BOOLEAN,
-      allowNull: false,
-      defaultValue: false,
-    })
+    return queryInterface.sequelize.transaction(async (transaction) => {
+      await queryInterface.addColumn(
+        'personal_representative',
+        'inactive',
+        {
+          type: Sequelize.BOOLEAN,
+          allowNull: false,
+          defaultValue: false,
+        },
+        { transaction },
+      )
 
-    await queryInterface.addColumn(
-      'personal_representative',
-      'inactiveReason',
-      {
-        type: Sequelize.ENUM('DECEASED_PARTY'),
-        defaultValue: null,
-        allowNull: true,
-      },
-    )
+      await queryInterface.addColumn(
+        'personal_representative',
+        'inactiveReason',
+        {
+          type: Sequelize.ENUM('DECEASED_PARTY'),
+          defaultValue: null,
+          allowNull: true,
+        },
+        { transaction },
+      )
+    })
   },
 
   async down(queryInterface) {
