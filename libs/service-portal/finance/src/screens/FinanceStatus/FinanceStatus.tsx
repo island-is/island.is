@@ -131,7 +131,7 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
       />
       <Stack space={2}>
         <GridRow>
-          <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+          <GridColumn span={['12/12', '12/12', '12/12', '8/12']}>
             {financeStatusData.organizations?.length > 0 ||
             financeStatusZero ? (
               <Box display="flex" justifyContent="flexStart" printHidden>
