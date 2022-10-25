@@ -1,4 +1,12 @@
-import { SQS } from 'aws-sdk'
+import {
+  SQSClient,
+  Message as SqsMessage,
+  GetQueueUrlCommand,
+  CreateQueueCommand,
+  SendMessageCommand,
+  ReceiveMessageCommand,
+  DeleteMessageCommand,
+} from '@aws-sdk/client-sqs'
 
 import { Inject, Injectable, ServiceUnavailableException } from '@nestjs/common'
 
@@ -11,7 +19,7 @@ import { Message } from './message'
 
 @Injectable()
 export class MessageService {
-  private readonly sqs: SQS
+  private readonly sqs: SQSClient
   private _queueUrl: string | undefined
 
   constructor(
@@ -19,10 +27,12 @@ export class MessageService {
     private readonly config: ConfigType<typeof messageModuleConfig>,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {
-    this.sqs = new SQS({ endpoint: config.endpoint, region: config.region })
+    this.sqs = new SQSClient({
+      endpoint: config.endpoint,
+      region: config.region,
+    })
     this.sqs
-      .getQueueUrl({ QueueName: this.config.queueName })
-      .promise()
+      .send(new GetQueueUrlCommand({ QueueName: this.config.queueName }))
       .then((data) => {
         this.logger.info('Message queue is ready')
 
@@ -34,8 +44,7 @@ export class MessageService {
         }
 
         this.sqs
-          .createQueue({ QueueName: this.config.queueName })
-          .promise()
+          .send(new CreateQueueCommand({ QueueName: this.config.queueName }))
           .then((data) => {
             this.logger.info('Message queue is ready')
 
@@ -56,17 +65,13 @@ export class MessageService {
   }
 
   private async deleteMessageFromQueue(receiptHandle?: string): Promise<void> {
-    return this.sqs
-      .deleteMessage({
-        QueueUrl: this.queueUrl,
-        ReceiptHandle: receiptHandle ?? '',
-      })
-      .promise()
-      .then((data) => {
-        if (data?.$response?.error) {
-          throw data.$response.error
-        }
-      })
+    this.sqs
+      .send(
+        new DeleteMessageCommand({
+          QueueUrl: this.queueUrl,
+          ReceiptHandle: receiptHandle,
+        }),
+      )
       .catch((err) => {
         this.logger.error('Failed to delete message from queue', err)
       })
@@ -74,7 +79,7 @@ export class MessageService {
 
   private async handleMessage(
     callback: (message: Message) => Promise<boolean>,
-    sqsMessage: SQS.Message,
+    sqsMessage: SqsMessage,
   ): Promise<void> {
     return callback(JSON.parse(sqsMessage.Body ?? ''))
       .then((handled) => {
@@ -89,11 +94,12 @@ export class MessageService {
 
   async postMessageToQueue(message: Message): Promise<string> {
     return this.sqs
-      .sendMessage({
-        QueueUrl: this.queueUrl,
-        MessageBody: JSON.stringify(message),
-      })
-      .promise()
+      .send(
+        new SendMessageCommand({
+          QueueUrl: this.queueUrl,
+          MessageBody: JSON.stringify(message),
+        }),
+      )
       .then((data) => data.MessageId ?? '')
   }
 
@@ -101,15 +107,18 @@ export class MessageService {
     callback: (message: Message) => Promise<boolean>,
   ): Promise<void> {
     return this.sqs
-      .receiveMessage({
-        QueueUrl: this.queueUrl,
-        MaxNumberOfMessages: this.config.maxNumberOfMessages,
-        WaitTimeSeconds: this.config.waitTimeSeconds,
-      })
-      .promise()
+      .send(
+        new ReceiveMessageCommand({
+          QueueUrl: this.queueUrl,
+          MaxNumberOfMessages: this.config.maxNumberOfMessages,
+          WaitTimeSeconds: this.config.waitTimeSeconds,
+        }),
+      )
       .then(async (data) => {
         if (data.Messages && data.Messages.length > 0) {
-          return this.handleMessage(callback, data.Messages[0])
+          for (const message of data.Messages) {
+            return this.handleMessage(callback, message)
+          }
         }
       })
   }
