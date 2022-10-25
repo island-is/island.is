@@ -5,17 +5,11 @@ import {
   buildKeyValueField,
   buildCheckboxField,
   buildDescriptionField,
+  hasYes,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import {
-  APPLICATION_TYPES,
-  NO,
-  OpeningHours,
-  Operation,
-  OPERATION_CATEGORY,
-  YES,
-} from '../../lib/constants'
-import { displayOpeningHours, hasYes } from '../../lib/utils'
+import { NO, OpeningHours, YES } from '../../lib/constants'
+import { displayOpeningHours } from '../../lib/utils'
 
 export const subSectionOpeningHours = buildSubSection({
   id: 'openingHours',
