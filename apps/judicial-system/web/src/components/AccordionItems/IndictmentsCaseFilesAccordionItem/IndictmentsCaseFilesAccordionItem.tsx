@@ -46,8 +46,8 @@ interface CaseFileProps {
   ) => Promise<
     FetchResult<
       UpdateFilesMutationResponse,
-      Record<string, any>,
-      Record<string, any>
+      Record<string, unknown>,
+      Record<string, unknown>
     >
   >
 }
@@ -491,6 +491,8 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
             displayDate: file.created,
             userGeneratedFilename: newName,
           }
+        } else {
+          return null
         }
       })
 

@@ -27,12 +27,6 @@ export const caseFileWrapper = style({
   paddingRight: `${theme.spacing[2]}px`,
 })
 
-export const simpleInput = style({
-  height: `${theme.spacing[6]}px`,
-  borderRadius: theme.border.radius.large,
-  border: `1px solid ${theme.color.blue200}`,
-})
-
 export const editCaseFileButton = style({
   width: '32px',
   height: '34px',
