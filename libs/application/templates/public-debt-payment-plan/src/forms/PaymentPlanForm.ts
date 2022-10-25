@@ -31,6 +31,7 @@ import {
   PaymentPlanBuildIndex,
   PaymentPlanExternalData,
   paymentPlanIndexKeyMapper,
+  PublicDebtPaymentPlan,
 } from '../types'
 
 // Builds a payment plan step that exists of two custom fields:
@@ -177,12 +178,12 @@ export const PaymentPlanForm: Form = buildForm({
         buildMultiField({
           id: 'employerMultiField',
           title: employer.general.pageTitle,
-          // condition: (_formValue, externalData) => {
-          //   const debts = (externalData as PaymentPlanExternalData)
-          //     ?.paymentPlanPrerequisites?.data?.debts
+          condition: (_formValue, externalData) => {
+            const debts = (externalData as PaymentPlanExternalData)
+              ?.paymentPlanPrerequisites?.data?.debts
 
-          //   return debts?.find((x) => x.type === 'Wagedection') !== undefined
-          // },
+            return debts?.find((x) => x.type === 'Wagedection') !== undefined
+          },
           children: [
             buildCustomField({
               id: 'employerInfoDescription',
@@ -211,16 +212,16 @@ export const PaymentPlanForm: Form = buildForm({
         buildMultiField({
           id: 'newEmployerMultiField',
           title: employer.general.pageTitle,
-          // condition: (_formValue, externalData) => {
-          //   const debts = (externalData as PaymentPlanExternalData)
-          //     ?.paymentPlanPrerequisites?.data?.debts
+          condition: (_formValue, externalData) => {
+            const debts = (externalData as PaymentPlanExternalData)
+              ?.paymentPlanPrerequisites?.data?.debts
 
-          //   return (
-          //     debts?.find((x) => x.type === 'Wagedection') !== undefined &&
-          //     (_formValue as PublicDebtPaymentPlan).employer?.isCorrectInfo ===
-          //       NO
-          //   )
-          // },
+            return (
+              debts?.find((x) => x.type === 'Wagedection') !== undefined &&
+              (_formValue as PublicDebtPaymentPlan).employer?.isCorrectInfo ===
+                NO
+            )
+          },
           children: [
             buildCustomField({
               id: 'employerInfoDescription',
@@ -237,12 +238,12 @@ export const PaymentPlanForm: Form = buildForm({
           ],
         }),
       ],
-      // condition: (_formValue, externalData) => {
-      //   const debts = (externalData as PaymentPlanExternalData)
-      //     ?.paymentPlanPrerequisites?.data?.debts
+      condition: (_formValue, externalData) => {
+        const debts = (externalData as PaymentPlanExternalData)
+          ?.paymentPlanPrerequisites?.data?.debts
 
-      //   return debts?.find((x) => x.type === 'Wagedection') !== undefined
-      // },
+        return debts?.find((x) => x.type === 'Wagedection') !== undefined
+      },
     }),
     buildSection({
       id: 'disposableIncomeSection',
