@@ -27,57 +27,106 @@ export const PartyIncome = ({ errors, getSum }: PropTypes): JSX.Element => {
     <Fragment>
       <Box paddingY={1}>
         <InputController
-          id={PARTYOPERATIONIDS.publicDonations}
-          name={PARTYOPERATIONIDS.publicDonations}
-          label={formatMessage(m.publicDonations)}
-          onChange={() => onInputChange(PARTYOPERATIONIDS.publicDonations)}
-          backgroundColor="blue"
-          currency
-          error={
-            errors && getErrorViaPath(errors, PARTYOPERATIONIDS.publicDonations)
-          }
-        />
-      </Box>
-      <Box paddingY={1}>
-        <InputController
-          id={PARTYOPERATIONIDS.partyDonations}
-          name={PARTYOPERATIONIDS.partyDonations}
-          label={formatMessage(m.publicDonations)}
-          onChange={() => onInputChange(PARTYOPERATIONIDS.publicDonations)}
-          backgroundColor="blue"
-          currency
-          error={
-            errors && getErrorViaPath(errors, PARTYOPERATIONIDS.publicDonations)
-          }
-        />
-      </Box>
-      <Box paddingY={1}>
-        <InputController
-          id={PARTYOPERATIONIDS.municipalityDonations}
-          name={PARTYOPERATIONIDS.municipalityDonations}
-          label={formatMessage(m.municipalityDonations)}
+          id={PARTYOPERATIONIDS.contributionsFromTheTreasury}
+          name={PARTYOPERATIONIDS.contributionsFromTheTreasury}
+          label={formatMessage(m.contributionsFromTheTreasury)}
           onChange={() =>
-            onInputChange(PARTYOPERATIONIDS.municipalityDonations)
+            onInputChange(PARTYOPERATIONIDS.contributionsFromTheTreasury)
           }
           backgroundColor="blue"
           currency
           error={
             errors &&
-            getErrorViaPath(errors, PARTYOPERATIONIDS.municipalityDonations)
+            getErrorViaPath(
+              errors,
+              PARTYOPERATIONIDS.contributionsFromTheTreasury,
+            )
           }
         />
       </Box>
       <Box paddingY={1}>
         <InputController
-          id={PARTYOPERATIONIDS.individualDonations}
-          name={PARTYOPERATIONIDS.individualDonations}
-          label={formatMessage(m.individualDonations)}
-          onChange={() => onInputChange(PARTYOPERATIONIDS.individualDonations)}
+          id={PARTYOPERATIONIDS.parliamentaryPartySupport}
+          name={PARTYOPERATIONIDS.parliamentaryPartySupport}
+          label={formatMessage(m.parliamentaryPartySupport)}
+          onChange={() =>
+            onInputChange(PARTYOPERATIONIDS.parliamentaryPartySupport)
+          }
           backgroundColor="blue"
           currency
           error={
             errors &&
-            getErrorViaPath(errors, PARTYOPERATIONIDS.individualDonations)
+            getErrorViaPath(errors, PARTYOPERATIONIDS.parliamentaryPartySupport)
+          }
+        />
+      </Box>
+      <Box paddingY={1}>
+        <InputController
+          id={PARTYOPERATIONIDS.municipalContributions}
+          name={PARTYOPERATIONIDS.municipalContributions}
+          label={formatMessage(m.municipalContributions)}
+          onChange={() =>
+            onInputChange(PARTYOPERATIONIDS.municipalContributions)
+          }
+          backgroundColor="blue"
+          currency
+          error={
+            errors &&
+            getErrorViaPath(errors, PARTYOPERATIONIDS.municipalContributions)
+          }
+        />
+      </Box>
+      <Box paddingY={1}>
+        <InputController
+          id={PARTYOPERATIONIDS.contributionsFromLegalEntities}
+          name={PARTYOPERATIONIDS.contributionsFromLegalEntities}
+          label={formatMessage(m.contributionsFromLegalEntities)}
+          onChange={() =>
+            onInputChange(PARTYOPERATIONIDS.contributionsFromLegalEntities)
+          }
+          backgroundColor="blue"
+          currency
+          error={
+            errors &&
+            getErrorViaPath(
+              errors,
+              PARTYOPERATIONIDS.contributionsFromLegalEntities,
+            )
+          }
+        />
+      </Box>
+      <Box paddingY={1}>
+        <InputController
+          id={PARTYOPERATIONIDS.contributionsFromIndividuals}
+          name={PARTYOPERATIONIDS.contributionsFromIndividuals}
+          label={formatMessage(m.contributionsFromIndividuals)}
+          onChange={() =>
+            onInputChange(PARTYOPERATIONIDS.contributionsFromIndividuals)
+          }
+          backgroundColor="blue"
+          currency
+          error={
+            errors &&
+            getErrorViaPath(
+              errors,
+              PARTYOPERATIONIDS.contributionsFromIndividuals,
+            )
+          }
+        />
+      </Box>
+      <Box paddingY={1}>
+        <InputController
+          id={PARTYOPERATIONIDS.generalMembershipFees}
+          name={PARTYOPERATIONIDS.generalMembershipFees}
+          label={formatMessage(m.generalMembershipFees)}
+          onChange={() =>
+            onInputChange(PARTYOPERATIONIDS.generalMembershipFees)
+          }
+          backgroundColor="blue"
+          currency
+          error={
+            errors &&
+            getErrorViaPath(errors, PARTYOPERATIONIDS.generalMembershipFees)
           }
         />
       </Box>

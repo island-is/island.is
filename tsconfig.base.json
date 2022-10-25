@@ -1,6 +1,7 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "useUnknownInCatchVariables": false,
     "rootDir": ".",
     "sourceMap": true,
     "declaration": false,
@@ -11,7 +12,7 @@
     "target": "es2015",
     "module": "esnext",
     "typeRoots": ["node_modules/@types"],
-    "lib": ["es2017", "dom"],
+    "lib": ["es2019", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "allowSyntheticDefaultImports": true,
@@ -214,6 +215,9 @@
       ],
       "@island.is/application/templates/driving-school-confirmation": [
         "libs/application/templates/driving-school-confirmation/src/index.ts"
+      ],
+      "@island.is/application/templates/estate": [
+        "libs/application/templates/estate/src/index.ts"
       ],
       "@island.is/application/templates/example-payment": [
         "libs/application/templates/example-payment/src/index.ts"
