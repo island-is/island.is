@@ -540,15 +540,15 @@ export const m = defineMessages({
     defaultMessage: 'Aðgangsstýring V2',
   },
   accessControlDelegations: {
-    id: 'sp.access-control-delegations:delegations',
+    id: 'service.portal:delegations',
     defaultMessage: 'Umboð',
   },
   accessControlDelegationsToMe: {
-    id: 'sp.access-control-delegations:to-me',
+    id: 'service.portal:to-me',
     defaultMessage: 'Umboð til mín',
   },
   accessControlDelegationsFromMe: {
-    id: 'sp.access-control-delegations:from-me',
+    id: 'service.portal:from-me',
     defaultMessage: 'Umboð frá mér',
   },
   accessControlDescription: {
