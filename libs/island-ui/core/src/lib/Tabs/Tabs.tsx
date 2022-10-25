@@ -9,6 +9,7 @@ import { ValueType } from 'react-select'
 import { Colors, theme } from '@island.is/island-ui/theme'
 import { FocusableBox } from '../FocusableBox/FocusableBox'
 import { useWindowSize } from 'react-use'
+import { isDefined } from '@island.is/shared/utils'
 
 type TabType = {
   label: string
@@ -37,6 +38,8 @@ export const Tabs: FC<TabInterface> = ({
     selectedId: selected,
   })
 
+  const [prevCurrentId, setPrevCurrentId] = useState(tab.currentId)
+
   const selectOptions = tabs.map(({ label, disabled }, index) => {
     return {
       label,
@@ -61,11 +64,10 @@ export const Tabs: FC<TabInterface> = ({
     setIsMobile(false)
   }, [width])
 
-  useEffect(() => {
-    if (tab.currentId) {
-      onChangeHandler?.(tab.currentId)
-    }
-  }, [onChangeHandler, tab.currentId])
+  if (isDefined(tab?.currentId) && prevCurrentId !== tab.currentId) {
+    onChangeHandler?.(tab?.currentId)
+    setPrevCurrentId(tab.currentId)
+  }
 
   return (
     <Box position="relative">

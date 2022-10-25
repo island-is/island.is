@@ -58,7 +58,7 @@ const Layout: FC = ({ children }) => {
           <GridContainer className={styles.layoutContainer}>
             <GridRow>
               <GridColumn
-                span={['12/12', '12/12', '12/12', '12/12']}
+                span={['12/12', '12/12', '12/12', '11/12']}
                 className={styles.layoutGrid}
               >
                 <Hidden print>

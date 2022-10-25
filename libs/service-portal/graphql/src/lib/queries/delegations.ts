@@ -35,14 +35,5 @@ export const AUTH_DELEGATIONS_QUERY = gql`
       }
     }
   }
-`
-
-export const AUTH_DELEGATIONS_LIST_QUERY = gql`
-  query AuthDelegationsList {
-    authDelegations {
-      ... on AuthCustomDelegation {
-        validTo
-      }
-    }
-  }
+  ${authCustomDelegationFragment}
 `

@@ -1,21 +1,6 @@
 import { gql } from '@apollo/client'
 import { authApiScopeFragment } from '../fragments/scope'
 
-export const AUTH_API_SCOPES_QUERY = gql`
-  query AuthApiScopes($input: AuthApiScopesInput!) {
-    authApiScopes(input: $input) {
-      name
-      displayName
-      description
-      group {
-        name
-        displayName
-        description
-      }
-    }
-  }
-`
-
 export const AUTH_SCOPE_TREE_QUERY = gql`
   query AuthScopeTree($input: AuthApiScopesInput!) {
     authScopeTree(input: $input) {
