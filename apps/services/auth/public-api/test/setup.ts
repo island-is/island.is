@@ -18,8 +18,6 @@ import {
   ApiScopeGroup,
   Client,
   ClientAllowedScope,
-  createApiScopeGroup,
-  createDomain,
   DelegationConfig,
   DelegationsService,
   Domain,
@@ -38,7 +36,11 @@ import { CreateClient } from './fixtures'
 import { RskProcuringClient } from '@island.is/clients/rsk/procuring'
 import { FeatureFlagService } from '@island.is/nest/feature-flags'
 import { ConfigType } from '@island.is/nest/config'
-import { createApiScope } from '@island.is/auth-api-lib'
+import {
+  createDomain,
+  createApiScopeGroup,
+  createApiScope,
+} from '@island.is/services/auth/testing'
 
 export interface ScopeSetupOptions {
   name: string

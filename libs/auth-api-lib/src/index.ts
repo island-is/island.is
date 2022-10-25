@@ -128,6 +128,3 @@ export * from './lib/personal-representative/dto/paginated-personal-representati
 export * from './lib/personal-representative/dto/paginated-personal-representative.dto'
 export * from './lib/personal-representative/dto/paginated-personal-representative-access.dto'
 export * from './lib/personal-representative/dto/personal-representative-scope-permission.dto'
-
-// Test module
-export * from './test'

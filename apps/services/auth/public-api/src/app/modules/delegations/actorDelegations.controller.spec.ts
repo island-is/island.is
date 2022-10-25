@@ -4,7 +4,6 @@ import times from 'lodash/times'
 
 import {
   Client,
-  createDelegation,
   DEFAULT_DOMAIN,
   Delegation,
   DelegationDTO,
@@ -28,6 +27,7 @@ import {
 } from '@island.is/testing/fixtures'
 import { TestApp } from '@island.is/testing/nest'
 import { NationalRegistryClientPerson } from '@island.is/shared/types'
+import { createDelegation } from '@island.is/services/auth/testing'
 
 import { createClient } from '../../../../test/fixtures'
 import {

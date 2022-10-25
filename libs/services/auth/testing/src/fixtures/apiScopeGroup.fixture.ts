@@ -1,5 +1,5 @@
+import { ApiScopeGroup } from '@island.is/auth-api-lib'
 import faker from 'faker'
-import { ApiScopeGroup } from '../../lib/resources/models/api-scope-group.model'
 
 export type CreateApiScopeGroup = Pick<
   ApiScopeGroup,

@@ -3,7 +3,6 @@ import addDays from 'date-fns/addDays'
 import request from 'supertest'
 
 import {
-  createDelegation,
   CreateDelegationDTO,
   Delegation,
   DelegationDTO,
@@ -18,6 +17,7 @@ import {
   createNationalRegistryUser,
 } from '@island.is/testing/fixtures'
 import { TestApp } from '@island.is/testing/nest'
+import { createDelegation } from '@island.is/services/auth/testing'
 
 import { createClient } from '../../../../test/fixtures'
 import {

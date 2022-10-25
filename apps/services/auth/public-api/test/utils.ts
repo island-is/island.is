@@ -7,7 +7,7 @@ import {
   DelegationDTO,
   DelegationScope,
 } from '@island.is/auth-api-lib'
-import { CreateDelegation } from './fixtures'
+import { CreateDelegation } from '@island.is/services/auth/testing'
 
 export const getRequestMethod = (
   server: request.SuperTest<request.Test>,

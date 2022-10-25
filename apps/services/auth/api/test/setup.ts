@@ -1,7 +1,5 @@
 import {
   ApiScope,
-  createApiScope,
-  createDomain,
   Domain,
   SequelizeConfigService,
 } from '@island.is/auth-api-lib'
@@ -21,6 +19,7 @@ import {
 import { TestingModuleBuilder } from '@nestjs/testing'
 import { AppModule } from '../src/app/app.module'
 import { getModelToken } from '@nestjs/sequelize'
+import { createDomain, createApiScope } from '@island.is/services/auth/testing'
 
 type Scopes = {
   [key: string]: {
