@@ -8,7 +8,6 @@ export const AUTH_DOMAINS_QUERY = gql`
       description
       nationalId
       organisationLogoKey
-      organisationLogoUrl
     }
   }
 `
