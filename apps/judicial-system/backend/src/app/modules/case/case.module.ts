@@ -40,10 +40,10 @@ import { LimitedAccessCaseService } from './limitedAccessCase.service'
     forwardRef(() => PoliceModule),
     SequelizeModule.forFeature([Case, CaseArchive]),
   ],
-  providers: [InternalCaseService, CaseService, LimitedAccessCaseService],
+  providers: [CaseService, InternalCaseService, LimitedAccessCaseService],
   controllers: [
-    InternalCaseController,
     CaseController,
+    InternalCaseController,
     LimitedAccessCaseController,
   ],
   exports: [CaseService],
