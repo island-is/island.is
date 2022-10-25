@@ -1,4 +1,4 @@
-# services-auth-testing
+# Services Auth Testing
 
 This library was generated with [Nx](https://nx.dev).
 
