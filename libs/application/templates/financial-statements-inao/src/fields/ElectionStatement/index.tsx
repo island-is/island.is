@@ -17,7 +17,6 @@ export const ElectionStatement = ({
   goToScreen,
   refetch,
 }: FieldBaseProps) => {
-  console.log({ application })
   const { formatMessage } = useLocale()
   const [approveOverview, setApproveOverview] = useState(false)
   const { errors, setError } = useFormContext()

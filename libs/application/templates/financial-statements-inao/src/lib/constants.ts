@@ -159,4 +159,5 @@ export const CEMETRYEQUITIESANDLIABILITIESIDS = {
   reevaluateOther: 'cemetryEquity.reevaluateOther',
   operationResult: 'cemetryEquity.operationResult',
   equityTotal: 'cemetryEquity.total',
+  totalEquityAndLiabilities: 'equityAndLiabilities.total',
 }

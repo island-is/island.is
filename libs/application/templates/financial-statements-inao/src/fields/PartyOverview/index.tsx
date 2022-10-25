@@ -37,7 +37,6 @@ export const PartyOverview = ({
 
   const answers = application.answers as FinancialStatementsInao
   const fileName = answers.attachment?.file?.[0]?.name
-  console.log({ answers })
   const [
     submitApplication,
     { error: submitError, loading },
