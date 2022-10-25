@@ -19,6 +19,7 @@ import {
   Icon,
   AlertMessage,
   Input,
+  toast,
 } from '@island.is/island-ui/core'
 import { CaseFile as TCaseFile } from '@island.is/judicial-system/types'
 import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -418,7 +419,7 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
       }),
   ])
 
-  const handleReorder = (fileId?: string) => {
+  const handleReorder = async (fileId?: string) => {
     if (!fileId) {
       return
     }
@@ -434,7 +435,7 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
       return
     }
 
-    updateFilesMutation({
+    const { errors } = await updateFilesMutation({
       variables: {
         input: {
           caseId,
@@ -455,9 +456,13 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
         },
       },
     })
+
+    if (errors) {
+      toast.error(formatMessage(m.reorderFailedErrorMessage))
+    }
   }
 
-  const handleRename = (fileId: string, newName: string) => {
+  const handleRename = async (fileId: string, newName: string) => {
     const fileInReorderableItems = reorderableItems.findIndex(
       (item) => item.id === fileId,
     )
@@ -475,7 +480,7 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
       return newReorderableItems
     })
 
-    updateFilesMutation({
+    const { errors } = await updateFilesMutation({
       variables: {
         input: {
           caseId,
@@ -488,6 +493,10 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
         },
       },
     })
+
+    if (errors) {
+      toast.error(formatMessage(m.renameFailedErrorMessage))
+    }
   }
 
   return (

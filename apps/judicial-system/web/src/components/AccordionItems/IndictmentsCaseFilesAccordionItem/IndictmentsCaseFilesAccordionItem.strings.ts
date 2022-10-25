@@ -85,4 +85,16 @@ export const indictmentsCaseFilesAccordionItem = defineMessages({
     description:
       'Notaður sem skýritexti í textasvæði reit til að breyta heiti skjals.',
   },
+  renameFailedErrorMessage: {
+    id:
+      'judicial.system.core:indictments_case_files_accordion_item.rename_failed_error_message',
+    defaultMessage: 'Ekki tókst að endurnefna skjal',
+    description: 'Notaður sem villuboð þegar endurnefning á skjali mistókst.',
+  },
+  reorderFailedErrorMessage: {
+    id:
+      'judicial.system.core:indictments_case_files_accordion_item.reorder_failed_error_message',
+    defaultMessage: 'Ekki tókst að endurraða skjölum',
+    description: 'Notaður sem villuboð þegar endurröðun á skjölum mistókst.',
+  },
 })
