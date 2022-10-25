@@ -29,6 +29,7 @@ import {
   TransferRightsOption,
   UnEmployedBenefitTypes,
   PARENTAL_GRANT_STUDENTS,
+  PARENTAL_LEAVE,
 } from '../constants'
 import { SchemaFormValues } from '../lib/dataSchema'
 import { PregnancyStatusAndRightsResults } from '../dataProviders/Children/Children'
@@ -409,10 +410,10 @@ export function getApplicationExternalData(
 }
 
 export function getApplicationAnswers(answers: Application['answers']) {
-  const applicationType = getValueViaPath(
-    answers,
-    'applicationType.option',
-  ) as string
+  let applicationType = getValueViaPath(answers, 'applicationType.option')
+
+  if (!applicationType) applicationType = PARENTAL_LEAVE as string
+  else applicationType = applicationType as string
 
   const otherParent = (getValueViaPath(
     answers,
@@ -451,10 +452,13 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'employer.isSelfEmployed',
   ) as YesOrNo
 
-  const isRecivingUnemploymentBenefits = getValueViaPath(
+  let isRecivingUnemploymentBenefits = getValueViaPath(
     answers,
     'isRecivingUnemploymentBenefits',
   ) as YesOrNo
+
+  if (!isRecivingUnemploymentBenefits)
+    isRecivingUnemploymentBenefits = NO as YesOrNo
 
   const unemploymentBenefits = getValueViaPath(
     answers,
