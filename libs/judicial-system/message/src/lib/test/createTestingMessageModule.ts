@@ -1,4 +1,4 @@
-import { SQS } from 'aws-sdk'
+import { SQSClient } from '@aws-sdk/client-sqs'
 import { uuid } from 'uuidv4'
 
 import { Test } from '@nestjs/testing'
@@ -10,30 +10,41 @@ import { messageModuleConfig } from '../message.config'
 import { MessageService } from '../message.service'
 
 const queueUrl = uuid()
-let sqs: SQS
+let sqs: SQSClient
 
-jest.mock('aws-sdk', () => ({
-  SQS: jest.fn().mockImplementation(() => sqs),
+jest.mock('@aws-sdk/client-sqs', () => ({
+  SQSClient: jest.fn(() => sqs),
+  GetQueueUrlCommand: jest.fn((c) => c),
+  SendMessageCommand: jest.fn((c) => c),
+  ReceiveMessageCommand: jest.fn((c) => c),
+  DeleteMessageCommand: jest.fn((c) => c),
 }))
 
 export const createTestingMessageModule = async () => {
+  const mockSend = jest
+    .fn()
+    .mockRejectedValue(new Error('Some error'))
+    .mockResolvedValueOnce({ QueueUrl: queueUrl })
+
+  const setSendMocks = (mocks: unknown[]) => {
+    for (const mock of mocks) {
+      mockSend.mockResolvedValueOnce(mock)
+    }
+  }
+
   sqs = ({
-    getQueueUrl: jest.fn().mockImplementation(() => ({
-      promise: () => Promise.resolve({ QueueUrl: queueUrl }),
-    })),
-    sendMessage: jest.fn(),
-    receiveMessage: jest.fn(),
-    deleteMessage: jest
-      .fn()
-      .mockReturnValue({ promise: () => Promise.resolve() }),
-  } as unknown) as SQS
+    send: mockSend,
+  } as unknown) as SQSClient
 
   const messageModule = await Test.createTestingModule({
     imports: [ConfigModule.forRoot({ load: [messageModuleConfig] })],
     providers: [
       {
         provide: LOGGER_PROVIDER,
-        useValue: { info: jest.fn(), error: jest.fn() },
+        useValue: {
+          info: jest.fn(),
+          error: jest.fn(),
+        },
       },
       MessageService,
     ],
@@ -41,5 +52,5 @@ export const createTestingMessageModule = async () => {
 
   const messageService = messageModule.get<MessageService>(MessageService)
 
-  return { queueUrl, sqs, messageService }
+  return { setSendMocks, queueUrl, sqs, messageService }
 }

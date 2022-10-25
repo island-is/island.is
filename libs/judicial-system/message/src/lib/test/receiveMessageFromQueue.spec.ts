@@ -1,4 +1,4 @@
-import { SQS } from 'aws-sdk'
+import { SQSClient } from '@aws-sdk/client-sqs'
 import { uuid } from 'uuidv4'
 
 import { Message } from '../message'
@@ -14,12 +14,19 @@ type GivenWhenThen = (
 ) => Promise<Then>
 
 describe('MessageService - Receive message from queue', () => {
+  let setMocks: (mocks: unknown[]) => void
   let mockQueueUrl: string
-  let mockSqs: SQS
+  let mockSqs: SQSClient
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { queueUrl, sqs, messageService } = await createTestingMessageModule()
+    const {
+      setSendMocks,
+      queueUrl,
+      sqs,
+      messageService,
+    } = await createTestingMessageModule()
+    setMocks = setSendMocks
 
     mockQueueUrl = queueUrl
     mockSqs = sqs
@@ -45,27 +52,25 @@ describe('MessageService - Receive message from queue', () => {
     const callback = jest.fn().mockResolvedValueOnce(true)
 
     beforeEach(async () => {
-      const mockReceiveMessage = mockSqs.receiveMessage as jest.Mock
-      mockReceiveMessage.mockReturnValueOnce({
-        promise: () =>
-          Promise.resolve({
-            Messages: [
-              { ReceiptHandle: receiptHandle, Body: JSON.stringify(message) },
-            ],
-          }),
-      })
+      setMocks([
+        {
+          Messages: [
+            { ReceiptHandle: receiptHandle, Body: JSON.stringify(message) },
+          ],
+        },
+      ])
 
       await givenWhenThen(callback)
     })
 
     it('should handle message', async () => {
-      expect(mockSqs.receiveMessage).toHaveBeenCalledWith({
+      expect(mockSqs.send).toHaveBeenCalledWith({
         QueueUrl: mockQueueUrl,
         MaxNumberOfMessages: 1,
         WaitTimeSeconds: 10,
       })
       expect(callback).toHaveBeenCalledWith(message)
-      expect(mockSqs.deleteMessage).toHaveBeenCalledWith({
+      expect(mockSqs.send).toHaveBeenCalledWith({
         QueueUrl: mockQueueUrl,
         ReceiptHandle: receiptHandle,
       })
@@ -78,27 +83,28 @@ describe('MessageService - Receive message from queue', () => {
     const callback = jest.fn().mockResolvedValueOnce(false)
 
     beforeEach(async () => {
-      const mockReceiveMessage = mockSqs.receiveMessage as jest.Mock
-      mockReceiveMessage.mockReturnValueOnce({
-        promise: () =>
-          Promise.resolve({
-            Messages: [
-              { ReceiptHandle: receiptHandle, Body: JSON.stringify(message) },
-            ],
-          }),
-      })
+      setMocks([
+        {
+          Messages: [
+            { ReceiptHandle: receiptHandle, Body: JSON.stringify(message) },
+          ],
+        },
+      ])
 
       await givenWhenThen(callback)
     })
 
     it('should not handle message', async () => {
-      expect(mockSqs.receiveMessage).toHaveBeenCalledWith({
+      expect(mockSqs.send).toHaveBeenCalledWith({
         QueueUrl: mockQueueUrl,
         MaxNumberOfMessages: 1,
         WaitTimeSeconds: 10,
       })
       expect(callback).toHaveBeenCalledWith(message)
-      expect(mockSqs.deleteMessage).not.toHaveBeenCalled()
+      expect(mockSqs.send).not.toHaveBeenCalledWith({
+        QueueUrl: mockQueueUrl,
+        ReceiptHandle: receiptHandle,
+      })
     })
   })
 
@@ -106,25 +112,22 @@ describe('MessageService - Receive message from queue', () => {
     const callback = jest.fn()
 
     beforeEach(async () => {
-      const mockReceiveMessage = mockSqs.receiveMessage as jest.Mock
-      mockReceiveMessage.mockReturnValueOnce({
-        promise: () =>
-          Promise.resolve({
-            Messages: [],
-          }),
-      })
+      setMocks([
+        {
+          Messages: [],
+        },
+      ])
 
       await givenWhenThen(callback)
     })
 
     it('should not receive a message', async () => {
-      expect(mockSqs.receiveMessage).toHaveBeenCalledWith({
+      expect(mockSqs.send).toHaveBeenCalledWith({
         QueueUrl: mockQueueUrl,
         MaxNumberOfMessages: 1,
         WaitTimeSeconds: 10,
       })
-      expect(callback).not.toHaveBeenCalledWith()
-      expect(mockSqs.deleteMessage).not.toHaveBeenCalled()
+      expect(callback).not.toHaveBeenCalled()
     })
   })
 })

@@ -1,4 +1,4 @@
-import { SQS } from 'aws-sdk'
+import { SQSClient } from '@aws-sdk/client-sqs'
 import { uuid } from 'uuidv4'
 import each from 'jest-each'
 
@@ -13,12 +13,19 @@ interface Then {
 type GivenWhenThen = (message: Message) => Promise<Then>
 
 describe('MessageService - Post message to queue', () => {
+  let setMocks: (mocks: unknown[]) => void
   let mockQueueUrl: string
-  let mockSqs: SQS
+  let mockSqs: SQSClient
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { queueUrl, sqs, messageService } = await createTestingMessageModule()
+    const {
+      setSendMocks,
+      queueUrl,
+      sqs,
+      messageService,
+    } = await createTestingMessageModule()
+    setMocks = setSendMocks
 
     mockQueueUrl = queueUrl
     mockSqs = sqs
@@ -44,16 +51,13 @@ describe('MessageService - Post message to queue', () => {
       let then: Then
 
       beforeEach(async () => {
-        const mockSendMessage = mockSqs.sendMessage as jest.Mock
-        mockSendMessage.mockReturnValueOnce({
-          promise: () => Promise.resolve({ MessageId: messageId }),
-        })
+        setMocks([{ MessageId: messageId }])
 
         then = await givenWhenThen(message)
       })
 
       it(`should post message ${type} to queue`, () => {
-        expect(mockSqs.sendMessage).toHaveBeenCalledWith({
+        expect(mockSqs.send).toHaveBeenCalledWith({
           QueueUrl: mockQueueUrl,
           MessageBody: JSON.stringify(message),
         })
@@ -67,10 +71,7 @@ describe('MessageService - Post message to queue', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockSendMessage = mockSqs.sendMessage as jest.Mock
-      mockSendMessage.mockReturnValueOnce({
-        promise: () => Promise.reject(new Error('Some error')),
-      })
+      setMocks([])
 
       then = await givenWhenThen(message)
     })
