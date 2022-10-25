@@ -18,7 +18,11 @@ import {
   getApplicationAnswers,
 } from '../../lib/parentalLeaveUtils'
 import { parentalLeaveFormMessages } from '../../lib/messages'
-import { PARENTAL_GRANT, PARENTAL_GRANT_STUDENTS, StartDateOptions } from '../../constants'
+import {
+  PARENTAL_GRANT,
+  PARENTAL_GRANT_STUDENTS,
+  StartDateOptions,
+} from '../../constants'
 
 type ValidAnswers = StartDateOptions | undefined
 
@@ -46,7 +50,7 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
     setStatefulAnswer(answer as ValidAnswers)
   }
 
-  const isGrant = 
+  const isGrant =
     appAnswers.applicationType === PARENTAL_GRANT ||
     appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
 
@@ -67,9 +71,9 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
     <Box marginY={3} key={field.id}>
       <FieldDescription
         description={formatMessage(
-        isGrant
-          ? parentalLeaveFormMessages.firstPeriodStart.grantDescription
-          : parentalLeaveFormMessages.firstPeriodStart.description        
+          isGrant
+            ? parentalLeaveFormMessages.firstPeriodStart.grantDescription
+            : parentalLeaveFormMessages.firstPeriodStart.description,
         )}
       />
       <Box paddingTop={3} marginBottom={3}>

@@ -26,7 +26,11 @@ import {
 import { parentalLeaveFormMessages, errorMessages } from '../../lib/messages'
 import { getApplicationAnswers } from '../../lib/parentalLeaveUtils'
 import { useRemainingRights } from '../../hooks/useRemainingRights'
-import { PARENTAL_GRANT, PARENTAL_GRANT_STUDENTS, StartDateOptions } from '../../constants'
+import {
+  PARENTAL_GRANT,
+  PARENTAL_GRANT_STUDENTS,
+  StartDateOptions,
+} from '../../constants'
 
 type FieldBaseAndCustomField = FieldBaseProps & CustomField
 
@@ -138,9 +142,7 @@ export const PeriodPercentage: FC<PeriodPercentageField> = ({
     canChooseRemainingDays && selectedValue === maxPercentageValue
 
   const getRatioTitle = (application: Application) => {
-    const appAnswers = getApplicationAnswers(
-        application.answers
-    )
+    const appAnswers = getApplicationAnswers(application.answers)
     if (
       appAnswers.applicationType === PARENTAL_GRANT ||
       appAnswers.applicationType === PARENTAL_GRANT_STUDENTS

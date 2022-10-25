@@ -65,9 +65,7 @@ import { currentDateStartTime } from '../lib/parentalLeaveTemplateUtils'
 import { YesOrNo } from '../types'
 
 const getPeriodSectionTitle = (application: Application) => {
-  const appAnswers = getApplicationAnswers(
-      application.answers
-  )
+  const appAnswers = getApplicationAnswers(application.answers)
   if (
     appAnswers.applicationType === PARENTAL_GRANT ||
     appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
@@ -78,9 +76,7 @@ const getPeriodSectionTitle = (application: Application) => {
 }
 
 const getRightsDescTitle = (application: Application) => {
-  const appAnswers = getApplicationAnswers(
-      application.answers
-  )
+  const appAnswers = getApplicationAnswers(application.answers)
   if (
     appAnswers.applicationType === PARENTAL_GRANT ||
     appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
@@ -91,9 +87,7 @@ const getRightsDescTitle = (application: Application) => {
 }
 
 const getPeriodImageTitle = (application: Application) => {
-  const appAnswers = getApplicationAnswers(
-      application.answers
-  )
+  const appAnswers = getApplicationAnswers(application.answers)
   if (
     appAnswers.applicationType === PARENTAL_GRANT ||
     appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
@@ -104,9 +98,7 @@ const getPeriodImageTitle = (application: Application) => {
 }
 
 const getFirstPeriodTitle = (application: Application) => {
-  const appAnswers = getApplicationAnswers(
-      application.answers
-  )
+  const appAnswers = getApplicationAnswers(application.answers)
   if (
     appAnswers.applicationType === PARENTAL_GRANT ||
     appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
@@ -117,9 +109,7 @@ const getFirstPeriodTitle = (application: Application) => {
 }
 
 const getDurationTitle = (application: Application) => {
-  const appAnswers = getApplicationAnswers(
-      application.answers
-  )
+  const appAnswers = getApplicationAnswers(application.answers)
   if (
     appAnswers.applicationType === PARENTAL_GRANT ||
     appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
@@ -130,9 +120,7 @@ const getDurationTitle = (application: Application) => {
 }
 
 const getRatioTitle = (application: Application) => {
-  const appAnswers = getApplicationAnswers(
-      application.answers
-  )
+  const appAnswers = getApplicationAnswers(application.answers)
   if (
     appAnswers.applicationType === PARENTAL_GRANT ||
     appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
@@ -143,9 +131,7 @@ const getRatioTitle = (application: Application) => {
 }
 
 const getLeavePlanTitle = (application: Application) => {
-  const appAnswers = getApplicationAnswers(
-      application.answers
-  )
+  const appAnswers = getApplicationAnswers(application.answers)
   if (
     appAnswers.applicationType === PARENTAL_GRANT ||
     appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
@@ -156,9 +142,7 @@ const getLeavePlanTitle = (application: Application) => {
 }
 
 const getStartDateTitle = (application: Application) => {
-  const appAnswers = getApplicationAnswers(
-      application.answers
-  )
+  const appAnswers = getApplicationAnswers(application.answers)
   if (
     appAnswers.applicationType === PARENTAL_GRANT ||
     appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
@@ -169,9 +153,7 @@ const getStartDateTitle = (application: Application) => {
 }
 
 const getStartDateDesc = (application: Application) => {
-  const appAnswers = getApplicationAnswers(
-      application.answers
-  )
+  const appAnswers = getApplicationAnswers(application.answers)
   if (
     appAnswers.applicationType === PARENTAL_GRANT ||
     appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
@@ -998,7 +980,7 @@ export const ParentalLeaveForm: Form = buildForm({
       children: [
         buildCustomField({
           id: 'periodsImageScreen',
-          title: getPeriodImageTitle, 
+          title: getPeriodImageTitle,
           component: 'PeriodsSectionImage',
           doesNotRequireAnswer: true,
         }),
@@ -1013,7 +995,7 @@ export const ParentalLeaveForm: Form = buildForm({
               children: [
                 buildCustomField({
                   id: 'firstPeriodStart',
-                  title: getFirstPeriodTitle, 
+                  title: getFirstPeriodTitle,
                   condition: (answers) => {
                     const { periods } = getApplicationAnswers(answers)
 
@@ -1023,7 +1005,7 @@ export const ParentalLeaveForm: Form = buildForm({
                 }),
                 buildDateField({
                   id: 'startDate',
-                  title: getStartDateTitle, 
+                  title: getStartDateTitle,
                   description: getStartDateDesc,
                   placeholder: parentalLeaveFormMessages.startDate.placeholder,
                   defaultValue: NO_ANSWER,

@@ -348,7 +348,8 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:grant.rights.description',
       defaultMessage:
         'Fæðingarstyrksréttur eru 12 mánuðir sem skiptast jafnt milli foreldra, en þó má færa allt að 45 daga frá einu foreldri til hins. ATH Ef þú átt aukinn rétt þarf að biðja Fæðingarorlofssjóð að bæta aukamánuðum við styrkinn eftir á.',
-      description: 'Parental grant allowance is a total of 12 months which is divided equally between two parents. However, you can move up to 45 days from one parent to another. ATTN if you are entitled to increased rights of parental grant you will have to contact Parental Leave Fund and they will add extra months to the grant after submission.',
+      description:
+        'Parental grant allowance is a total of 12 months which is divided equally between two parents. However, you can move up to 45 days from one parent to another. ATTN if you are entitled to increased rights of parental grant you will have to contact Parental Leave Fund and they will add extra months to the grant after submission.',
     },
     requestRightsName: {
       id: 'pl.application:request.rights.name',
@@ -675,12 +676,12 @@ export const parentalLeaveFormMessages: MessageDir = {
     periodsImageTitle: {
       id: 'pl.application:periods.image.title',
       defaultMessage: 'Næst er að velja tímabil fæðingarorlofsins',
-      description: "Now it is time to select the parental leave periods",
+      description: 'Now it is time to select the parental leave periods',
     },
     periodsImageGrantTitle: {
       id: 'pl.application:periods.image.grant.title',
       defaultMessage: 'Næst er að velja tímabil fæðingarstyrksins',
-      description: "Now it is time to select the parental grant period",
+      description: 'Now it is time to select the parental grant period',
     },
     firstPeriodName: {
       id: 'pl.application:first.period.name',
@@ -1049,8 +1050,10 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     grantDescription: {
       id: 'pl.application:start.date.grant.description',
-      defaultMessage: 'Athugaðu að ekki er hægt að nýta réttindi til fæðingarstyrks 24 mánuðum eftir fæðingu barnsins.',
-      description: 'Please note, that your parental grant rights end 24 months after the date of birth',
+      defaultMessage:
+        'Athugaðu að ekki er hægt að nýta réttindi til fæðingarstyrks 24 mánuðum eftir fæðingu barnsins.',
+      description:
+        'Please note, that your parental grant rights end 24 months after the date of birth',
     },
     label: {
       id: 'pl.application:start.date.label',
@@ -1216,7 +1219,7 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:ratio.description',
       defaultMessage:
         '100% þýðir að þú sért í fullu orlofi. Lægra hlutfall hefur bein áhrif á greiðslur til þín úr fæðingarorlofssjóði. Sumir velja 50% orlof á móti 50% starfi. Prósentutalan sem birtist efst í felliglugganum er hæsta mögulega % miðað við þínar forsendur. Ef þú dreifir orlofi á fleiri mánuði en gefinn réttur lækkar prósentan sem því munar.',
-      description:  
+      description:
         'For example, you could work 50% of the time, and have 50% paid leave.',
     },
     label: {
