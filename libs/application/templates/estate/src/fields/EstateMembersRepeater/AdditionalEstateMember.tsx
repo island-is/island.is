@@ -20,7 +20,7 @@ import * as kennitala from 'kennitala'
 import { m } from '../../lib/messages'
 import { YES } from '../../lib/constants'
 import { IDENTITY_QUERY } from '../../graphql'
-import { hasYes } from '../../lib/utils'
+import { hasYes } from '@island.is/application/core'
 import { TextFormField } from '@island.is/application/ui-fields'
 import {
   Application,

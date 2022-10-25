@@ -29,6 +29,7 @@ export const serviceSetup = (): ServiceBuilder<'github-actions-cache'> => {
         public: true,
       },
     })
+    .liveness('/liveness')
     .readiness('/health')
     .replicaCount({
       min: 3,
