@@ -3,6 +3,7 @@ import Cookies from 'js-cookie'
 import { useQuery } from '@apollo/client'
 import { AlertBanner as AlertBannerSchema } from '@island.is/api/schema'
 import { GET_SERVICE_PORTAL_ALERT_BANNERS_QUERY } from './queries'
+import { useLocale } from '@island.is/localization'
 
 type AlertBannerType = AlertBannerSchema & { bannerId: string }
 
@@ -22,6 +23,7 @@ export const stringHash = (str: string): number => {
 export const useAlertBanners = () => {
   const allBanners = useRef<AlertBannerSchema[]>([])
   const [banners, setBanners] = useState<AlertBannerType[]>([])
+  const { lang } = useLocale()
 
   const updateBanners = (updatedBanners: AlertBannerSchema[]) => {
     if (!updatedBanners) return
@@ -38,7 +40,7 @@ export const useAlertBanners = () => {
         .filter((banner: AlertBannerType) => {
           let alertBannerBelongsToCurrentPage = false
 
-          for (const path of banner?.servicePortalPaths ?? []) {
+          for (const path of banner.servicePortalPaths ?? []) {
             if (path === '*' || window.location.href.includes(path)) {
               alertBannerBelongsToCurrentPage = true
               break
@@ -55,8 +57,7 @@ export const useAlertBanners = () => {
   }
 
   useQuery(GET_SERVICE_PORTAL_ALERT_BANNERS_QUERY, {
-    // TODO: figure out a way to determine what language the current page is set to
-    variables: { input: { lang: 'is-IS' } },
+    variables: { input: { lang: lang === 'is' ? 'is-IS' : lang } },
     onCompleted: (data) => {
       const bannerList = data?.getServicePortalAlertBanners
       if (!bannerList) return
