@@ -33,6 +33,7 @@ export const DelegationsFromMe = () => {
     },
     // Make sure that loading state is shown when refetching
     notifyOnNetworkStatusChange: true,
+    fetchPolicy: 'cache-and-network',
   })
 
   const delegations = (data?.authDelegations as AuthCustomDelegation[]) ?? []
