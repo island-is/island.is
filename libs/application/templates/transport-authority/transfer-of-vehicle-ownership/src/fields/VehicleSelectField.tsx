@@ -15,6 +15,7 @@ export const VehicleSelectField: FC<FieldBaseProps> = ({ application }) => {
   const currentVehicleList = application.externalData.currentVehicleList
     .data as VehiclesCurrentVehicle[]
   console.log(application)
+  console.log(currentVehicleList)
   const getVehicleDetails = useLazyVehicleDetails()
 
   const onChange = (option: Option) => {
@@ -43,17 +44,28 @@ export const VehicleSelectField: FC<FieldBaseProps> = ({ application }) => {
   )
   return (
     <Box paddingTop={2}>
-      <SelectController
-        label={formatMessage(information.labels.pickVehicle.vehicle)}
-        id="pickVehicle.vehicle"
-        name="pickVehicle.vehicle"
-        onSelect={(option) => onChange(option as Option)}
-        options={currentVehicleList.map((vehicle) => {
-          return { value: vehicle.permno || '', label: vehicle.permno || '' }
-        })}
-        placeholder="Veldu ökutæki"
-        backgroundColor="blue"
-      />
+      {currentVehicleList.length > 10 ? (
+        <SelectController
+          label={formatMessage(information.labels.pickVehicle.vehicle)}
+          id="pickVehicle.vehicle"
+          name="pickVehicle.vehicle"
+          onSelect={(option) => onChange(option as Option)}
+          options={currentVehicleList.map((vehicle) => {
+            return {
+              value: vehicle.permno || '',
+              label: `${vehicle.make} - ${vehicle.permno}` || '',
+            }
+          })}
+          placeholder="Veldu ökutæki"
+          backgroundColor="blue"
+        />
+      ) : (
+        currentVehicleList.map(
+          ({ make, permno, color }: VehiclesCurrentVehicle) => {
+            return <div>{make}</div>
+          },
+        )
+      )}
     </Box>
   )
 }

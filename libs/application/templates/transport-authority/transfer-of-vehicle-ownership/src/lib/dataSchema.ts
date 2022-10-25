@@ -15,33 +15,33 @@ export const TransferOfVehicleOwnershipSchema = z.object({
         mobilePhoneNumber: z.string(),
       }),
     }),
-    pickVehicle: z.object({
-      plate: z.string(),
-    }),
-    vehicle: z.object({
-      plate: z.string(),
-      type: z.string(),
-      salePrice: z.string(),
-      date: z.string(),
-    }),
-    seller: z.object({
-      nationalId: z.string(),
-      name: z.string(),
-      phone: z.string(),
-      email: z.string(),
-    }),
-    coOwner: z.object({
-      nationalId: z.string(),
-      name: z.string(),
-      phone: z.string(),
-      email: z.string(),
-    }),
-    buyer: z.object({
-      nationalId: z.string(),
-      name: z.string(),
-      phone: z.string(),
-      email: z.string(),
-    }),
+  }),
+  pickVehicle: z.object({
+    plate: z.string(),
+  }),
+  vehicle: z.object({
+    plate: z.string(),
+    type: z.string(),
+    salePrice: z.string(),
+    date: z.string(),
+  }),
+  seller: z.object({
+    nationalId: z.string(),
+    name: z.string(),
+    phone: z.string(),
+    email: z.string(),
+  }),
+  coOwner: z.object({
+    nationalId: z.string(),
+    name: z.string(),
+    phone: z.string(),
+    email: z.string(),
+  }),
+  buyer: z.object({
+    nationalId: z.string(),
+    name: z.string(),
+    phone: z.string(),
+    email: z.string(),
   }),
 })
 
