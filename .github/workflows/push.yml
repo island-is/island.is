@@ -144,7 +144,7 @@ jobs:
     env:
       AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
       GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH }}
-      SERVERSIDE_FEATURES_ON: ""
+      SERVERSIDE_FEATURES_ON: ''
 
     outputs:
       TEST_CHUNKS: ${{ steps.test_projects.outputs.CHUNKS }}
