@@ -30,9 +30,9 @@ import {
   ReligiousLifeViewingSocieties,
 } from '../lib/constants'
 import { UserProfile } from '../types/schema'
-import { removeCountryCode } from '../lib/utils'
 import { fakeDataSection } from './fakeDataSection'
 import { dataCollection } from './sharedSections/dataCollection'
+import { removeCountryCode } from '@island.is/application/ui-components'
 
 export const getApplication = ({ allowFakeData = false }): Form => {
   return buildForm({

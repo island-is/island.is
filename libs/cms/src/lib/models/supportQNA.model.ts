@@ -85,7 +85,7 @@ const convertSupportQnAToLink = (supportQnA: ISupportQna, locale = 'is-IS') => {
       text: supportQnA.fields.question,
       url: `/${locale === 'is-IS' ? 'adstod' : `${locale}/help`}/${
         supportQnA.fields.organization?.fields?.slug ?? ''
-      }/${supportQnA.fields.category?.fields?.slug ?? ''}${
+      }/${supportQnA.fields.category?.fields?.slug ?? ''}/${
         supportQnA.fields?.slug ?? ''
       }`,
     },
