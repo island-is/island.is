@@ -4,7 +4,9 @@ import parseISO from 'date-fns/parseISO'
 import { logger } from '@island.is/logging'
 import { ApplicationWithAttachments as Application } from '@island.is/application/types'
 import { objectToXML } from '../../shared/shared.utils'
+import is from 'date-fns/locale/is'
 import { BucketService } from './bucket/bucket.service'
+import format from 'date-fns/format'
 import {
   ApplyHealthInsuranceInputs,
   Fylgiskjal,
@@ -14,15 +16,9 @@ import {
 } from './types/health-insurance-types'
 
 const formatDate = (date: Date) => {
-  const d = new Date(date)
-  let month = '' + (d.getMonth() + 1)
-  let day = '' + d.getDate()
-  const year = d.getFullYear()
-
-  if (month.length < 2) month = '0' + month
-  if (day.length < 2) day = '0' + day
-
-  return [year, month, day].join('-')
+  return format(new Date(date), 'yyyy-MM-dd', {
+    locale: is,
+  })
 }
 
 /**
@@ -40,7 +36,7 @@ export const insuranceToXML = async (
   attachmentNames: string[],
   bucketService: BucketService,
 ) => {
-  logger.info(`--- Starting to convert application to XML ---`)
+  logger.debug(`--- Starting to convert application to XML ---`)
   const vistaSkjalBody: GetVistaSkjalBody = {
     sjukratryggingumsokn: {
       einstaklingur: {
@@ -91,7 +87,7 @@ export const insuranceToXML = async (
         `Failed to extract filenames or bucket's attachment filenames`,
       )
     }
-    logger.info(`Start getting attachments`)
+    logger.debug(`Start getting attachments`)
     const fylgiskjol: Fylgiskjol = {
       fylgiskjal: [],
     }
@@ -106,7 +102,7 @@ export const insuranceToXML = async (
       fylgiskjol.fylgiskjal.push(fylgiskjal)
     }
     vistaSkjalBody.sjukratryggingumsokn.fylgiskjol = fylgiskjol
-    logger.info(`Finished getting attachments`)
+    logger.debug(`Finished getting attachments`)
   }
 
   // Student has to have status confirmation document
@@ -170,7 +166,7 @@ export const transformApplicationToHealthInsuranceDTO = (
   application: Application,
 ): ApplyHealthInsuranceInputs => {
   try {
-    logger.info(`Start transform Application to Health Insurance DTO`)
+    logger.debug(`Start transform Application to Health Insurance DTO`)
     /*
      * Convert userStatus:
      * employed: 'O'

@@ -17,17 +17,17 @@ export class HealthInsuranceService {
     const formattedDate = format(new Date(date), 'yyyy-MM-dd', {
       locale: is,
     })
-    return await this.personApi
-      .personIsHealthInsured({
+
+    try {
+      const resp = await this.personApi.personIsHealthInsured({
         date: formattedDate,
         nationalID: nationalId,
       })
-      .then((resp) => {
-        return resp.isHealthInsured === 1
-      })
-      .catch((err) => {
-        this.logger.error('Error fetching health insurance data', err)
-        return false
-      })
+
+      return resp.isHealthInsured === 1
+    } catch (error) {
+      this.logger.error('Error fetching health insurance data', error)
+      return false
+    }
   }
 }

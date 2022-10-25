@@ -13,6 +13,24 @@ export class HealthInsuranceV2Client {
       xRoadProviderId,
     } = options
     const basePath = `${xRoadBaseUrl}/r1/${xRoadProviderId}/islandis`
+
+    const configuration = new Configuration({
+      fetchApi: createEnhancedFetch({
+        name: 'clients-health-insurance',
+        treat400ResponsesAsErrors: true,
+        logErrorResponseBody: true,
+        timeout: 20000, // needed because the external service is taking a while to respond to submitting the document
+      }),
+      basePath: basePath,
+      headers: {
+        'X-Road-Client': xRoadClientId,
+        userName: `${username}`,
+        password: `${password}`,
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    })
+
     return {
       module: HealthInsuranceV2Client,
       imports: [],
@@ -20,47 +38,13 @@ export class HealthInsuranceV2Client {
         {
           provide: DocumentApi,
           useFactory: () => {
-            return new DocumentApi(
-              new Configuration({
-                fetchApi: createEnhancedFetch({
-                  name: 'clients-health-insurance',
-                  treat400ResponsesAsErrors: true,
-                  logErrorResponseBody: true,
-                  timeout: 20000, // needed because the external service is taking a while to respond to submitting the document
-                }),
-                basePath: basePath,
-                headers: {
-                  'X-Road-Client': xRoadClientId,
-                  userName: `${username}`,
-                  password: `${password}`,
-                  Accept: 'application/json',
-                  'Content-Type': 'application/json',
-                },
-              }),
-            )
+            return new DocumentApi(configuration)
           },
         },
         {
           provide: PersonApi,
           useFactory: () => {
-            return new PersonApi(
-              new Configuration({
-                fetchApi: createEnhancedFetch({
-                  name: 'clients-health-insurance',
-                  treat400ResponsesAsErrors: true,
-                  logErrorResponseBody: true,
-                  timeout: 20000,
-                }),
-                basePath: basePath,
-                headers: {
-                  'X-Road-Client': xRoadClientId,
-                  userName: `${username}`,
-                  password: `${password}`,
-                  Accept: 'application/json',
-                  'Content-Type': 'application/json',
-                },
-              }),
-            )
+            return new PersonApi(configuration)
           },
         },
       ],
