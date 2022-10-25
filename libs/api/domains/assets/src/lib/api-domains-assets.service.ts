@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { ApolloError } from 'apollo-server-express'
 import { FetchError } from '@island.is/clients/middlewares'
-import { FasteignirApi } from '@island.is/clients/assets'
+import { FasteignirApi, ThinglysturEigandi } from '@island.is/clients/assets'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { Auth, User } from '@island.is/auth-nest-tools'
 import type { Logger } from '@island.is/logging'
@@ -79,7 +79,6 @@ export class AssetsXRoadService {
       const singleFasteignResponse = await this.getRealEstatesWithAuth(
         auth,
       ).fasteignirGetFasteign({ fasteignanumer: getAssetString(assetId) })
-
       if (singleFasteignResponse) {
         return {
           propertyNumber: singleFasteignResponse.fasteignanumer,
@@ -177,7 +176,7 @@ export class AssetsXRoadService {
               paging:
                 singleFasteignResponse.landeign?.thinglystirEigendur?.paging,
               registeredOwners: singleFasteignResponse.landeign?.thinglystirEigendur?.thinglystirEigendur?.map(
-                (owner) => ({
+                (owner: ThinglysturEigandi) => ({
                   name: owner.nafn,
                   ssn: owner.kennitala,
                   ownership: owner.eignarhlutfall,
