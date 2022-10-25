@@ -13,7 +13,7 @@ export class VehicleOperatorsClient {
   public async getOperators(permno: string): Promise<Operator[]> {
     const result = await this.operatorsApi.permnoGet({ permno: permno })
 
-    //TODOx afhverju er result ekki array
+    //TODOx need to update swagger, this should return array
     return [result].map((item) => ({
       startDate: item.startDate,
       endDate: item.endDate,

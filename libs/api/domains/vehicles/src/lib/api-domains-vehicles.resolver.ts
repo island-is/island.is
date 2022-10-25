@@ -14,11 +14,15 @@ import {
 import { GetVehicleDetailInput } from '../dto/getVehicleDetailInput'
 import { VehiclesDetail } from '../models/getVehicleDetail.model'
 import { VehiclesVehicleSearch } from '../models/getVehicleSearch.model'
-import { VehiclesCurrentVehicle } from '../models/getCurrentVehicles.model'
+import {
+  VehiclesCurrentVehicle,
+  VehiclesCurrentVehicleWithFees,
+} from '../models/getCurrentVehicles.model'
 import { GetVehicleSearchInput } from '../dto/getVehicleSearchInput'
 import { GetCurrentVehiclesInput } from '../dto/getCurrentVehiclesInput'
 import { DownloadServiceConfig } from '@island.is/nest/config'
 import type { ConfigType } from '@island.is/nest/config'
+import { VehicleMiniDto } from '@island.is/clients/vehicles'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.vehicles)
@@ -100,11 +104,48 @@ export class VehiclesResolver {
     @Args('input') input: GetCurrentVehiclesInput,
     @CurrentUser() user: User,
   ) {
-    return await this.vehiclesService.getCurrentVehicles(
-      user,
-      input.showOwned,
-      input.showCoowned,
-      input.showOperated,
+    return (
+      await this.vehiclesService.getCurrentVehicles(
+        user,
+        input.showOwned,
+        input.showCoowned,
+        input.showOperated,
+      )
+    )?.map((vehicle: VehicleMiniDto) => ({
+      permno: vehicle.permno,
+      make: vehicle.make,
+      color: vehicle.color,
+      role: vehicle.role,
+      isStolen: Math.random() < 0.2, //TODOx is missing for api endpoint
+    }))
+  }
+
+  @Scopes(ApiScope.internal)
+  @Query(() => [VehiclesCurrentVehicleWithFees], {
+    name: 'currentVehiclesWithFees',
+    nullable: true,
+  })
+  @Audit()
+  async getCurrentVehiclesWithFees(
+    @Args('input') input: GetCurrentVehiclesInput,
+    @CurrentUser() user: User,
+  ) {
+    return await Promise.all(
+      (await this.getCurrentVehicles(input, user)).map(
+        async (vehicle: VehiclesCurrentVehicleWithFees) => {
+          // TODOx use new api endpoint from FJS
+          const vehicleDetails = await this.vehiclesService.getVehicleDetail(
+            user,
+            {
+              clientPersidno: user.nationalId,
+              permno: vehicle.permno || '',
+            },
+          )
+
+          vehicle.fees = vehicleDetails?.fees
+          return vehicle
+        },
+      ),
     )
   }
 }

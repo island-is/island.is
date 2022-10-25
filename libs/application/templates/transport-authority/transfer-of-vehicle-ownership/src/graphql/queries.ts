@@ -5,6 +5,22 @@ export const GET_CURRENT_VEHICLES = `
       make
       color
       role
+      isStolen
+    }
+  } 
+`
+
+export const GET_CURRENT_VEHICLES_WITH_FEES = `
+  query GetCurrentVehiclesWithFees($input: GetCurrentVehiclesInput!) {
+    currentVehiclesWithFees(input: $input) {
+      permno
+      make
+      color
+      role
+      isStolen
+      fees {
+        hasEncumbrances
+      }
     }
   } 
 `

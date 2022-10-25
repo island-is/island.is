@@ -142,6 +142,9 @@
       "@island.is/api/domains/temporary-voter-registry": [
         "libs/api/domains/temporary-voter-registry/src/index.ts"
       ],
+      "@island.is/api/domains/transport-authority/vehicle-owner-change": [
+        "libs/api/domains/transport-authority/vehicle-owner-change/src/index.ts"
+      ],
       "@island.is/api/domains/user-profile": [
         "libs/api/domains/user-profile/src/index.ts"
       ],
@@ -402,9 +405,6 @@
       "@island.is/clients/syslumenn": ["libs/clients/syslumenn/src/index.ts"],
       "@island.is/clients/transport-authority/digital-tachograph-drivers-card": [
         "libs/clients/transport-authority/digital-tachograph-drivers-card/src/index.ts"
-      ],
-      "@island.is/clients/transport-authority/vehicle-co-owner": [
-        "libs/clients/transport-authority/vehicle-co-owner/src/index.ts"
       ],
       "@island.is/clients/transport-authority/vehicle-codetables": [
         "libs/clients/transport-authority/vehicle-codetables/src/index.ts"

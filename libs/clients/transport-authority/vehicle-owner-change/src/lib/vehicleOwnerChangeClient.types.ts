@@ -1,22 +1,31 @@
 export interface OwnerChange {
   permno: string
-  sellerSsn: string
-  sellerEmail?: string | null
-  buyerSsn: string
-  buyerEmail?: string | null
+  seller: OwnerChangeSeller
+  buyer: OwnerChangeByuer
   dateOfPurchase: Date
   saleAmount: number
   insuranceCompanyCode: string
-  useGroup?: string | null
   operators?: Array<OwnerChangeOperator> | null
   coOwners?: Array<OwnerChangeCoOwner> | null
 }
 
+export interface OwnerChangeSeller {
+  ssn: string
+  email: string
+}
+
+export interface OwnerChangeByuer {
+  ssn: string
+  email: string
+}
+
 export interface OwnerChangeOperator {
   ssn: string
+  email: string
   isMainOperator: boolean
 }
 
 export interface OwnerChangeCoOwner {
   ssn: string
+  email: string
 }
