@@ -410,15 +410,10 @@ export function getApplicationExternalData(
 }
 
 export function getApplicationAnswers(answers: Application['answers']) {
-  let applicationType = getValueViaPath(
-    answers,
-    'applicationType.option',
-  ) 
+  let applicationType = getValueViaPath(answers, 'applicationType.option')
 
-  if(!applicationType)
-    applicationType = PARENTAL_LEAVE as string
-  else 
-    applicationType = applicationType as string
+  if (!applicationType) applicationType = PARENTAL_LEAVE as string
+  else applicationType = applicationType as string
 
   const otherParent = (getValueViaPath(
     answers,
@@ -462,7 +457,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'isRecivingUnemploymentBenefits',
   ) as YesOrNo
 
-  if(!isRecivingUnemploymentBenefits)
+  if (!isRecivingUnemploymentBenefits)
     isRecivingUnemploymentBenefits = NO as YesOrNo
 
   const unemploymentBenefits = getValueViaPath(
