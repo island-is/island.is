@@ -17,6 +17,7 @@ export const ElectionStatement = ({
   goToScreen,
   refetch,
 }: FieldBaseProps) => {
+  console.log({ application })
   const { formatMessage } = useLocale()
   const [approveOverview, setApproveOverview] = useState(false)
   const { errors, setError } = useFormContext()
@@ -57,7 +58,7 @@ export const ElectionStatement = ({
           ${formatMessage(m.nationalId)}: ${formatNationalId(
             answers.about.nationalId,
           )}, ${formatMessage(m.participated)} 
-          ${answers.election.selectElection}`}
+          ${answers.election.electionName}`}
         </Text>
       </Box>
       <Box paddingY={2}>
