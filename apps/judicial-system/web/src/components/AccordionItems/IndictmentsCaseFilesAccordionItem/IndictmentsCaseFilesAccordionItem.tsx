@@ -180,23 +180,12 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
   const [isDragging, setIsDragging] = useState<boolean>(false)
   const [editFileId, setEditFileId] = useState<string>()
   const [editedFilenames, setEditedFilenames] = useState<EditedFileName[]>([])
-  const nameHasBeenEdited =
-    editedFilenames.findIndex((i) => i.id === caseFile.id) > -1
-  const displayName = nameHasBeenEdited
-    ? editedFilenames[
-        editedFilenames.findIndex((item) => item.id === caseFile.id)
-      ].editedName
-    : caseFile.userGeneratedFilename
-    ? caseFile.userGeneratedFilename
-    : caseFile.displayText
+  const fileIndex = editedFilenames.findIndex((i) => i.id === caseFile.id)
+  const displayName = caseFile.userGeneratedFilename ?? caseFile.displayText
 
   const handleFileNameChange = (
     evt: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    const fileIndex = editedFilenames.findIndex(
-      (item) => item.id === caseFile.id,
-    )
-
     if (fileIndex > -1) {
       setEditedFilenames([
         ...editedFilenames.slice(0, fileIndex),
@@ -217,12 +206,8 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
   }
 
   const handleEditFileButtonClick = () => {
-    onRename(
-      caseFile.id,
-      editedFilenames[editedFilenames.findIndex((i) => i.id === caseFile.id)]
-        .editedName,
-    )
-
+    onRename(caseFile.id, editedFilenames[fileIndex].editedName)
+    setEditedFilenames(editedFilenames.filter((i) => i.id !== caseFile.id))
     setEditFileId(undefined)
   }
 
@@ -297,12 +282,12 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
                     <Box display="flex" alignItems="center">
                       <button
                         onClick={handleEditFileButtonClick}
-                        disabled={!nameHasBeenEdited}
+                        disabled={fileIndex === -1}
                         className={styles.editCaseFileButton}
                       >
                         <Icon
                           icon="checkmark"
-                          color={nameHasBeenEdited ? 'blue400' : 'dark200'}
+                          color={fileIndex > -1 ? 'blue400' : 'dark200'}
                         />
                       </button>
                     </Box>
@@ -473,24 +458,33 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
   }
 
   const handleRename = (fileId: string, newName: string) => {
-    const [chapter] = getFilePlacement(fileId, reorderableItems)
-    const newFiles = reorderableItems
-      .filter((item) => item.id === fileId)
-      .map((file) => {
-        return {
-          id: file.id,
-          chapter,
-          orderWithinChapter: file.orderWithinChapter,
-          displayDate: file.created,
-          userGeneratedFilename: newName,
-        }
-      })
+    const fileInReorderableItems = reorderableItems.findIndex(
+      (item) => item.id === fileId,
+    )
+
+    if (fileInReorderableItems === -1) {
+      return
+    }
+
+    setReorderableItems((prev) => {
+      const newReorderableItems = [...prev]
+      newReorderableItems[
+        fileInReorderableItems
+      ].userGeneratedFilename = newName
+
+      return newReorderableItems
+    })
 
     updateFilesMutation({
       variables: {
         input: {
           caseId,
-          files: newFiles,
+          files: [
+            {
+              id: fileId,
+              userGeneratedFilename: newName,
+            },
+          ],
         },
       },
     })
