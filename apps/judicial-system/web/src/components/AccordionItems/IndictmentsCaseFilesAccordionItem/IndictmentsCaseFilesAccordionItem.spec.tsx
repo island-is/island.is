@@ -112,8 +112,8 @@ describe('getFilePlacement', () => {
   })
 
   it('should return the correct chapter and orderWithinChapter if a file is reordered under a chapter', () => {
-    expect(getFilePlacement(items[2].id || '', items)).toEqual([0, 1])
-    expect(getFilePlacement(items[4].id || '', items)).toEqual([1, 0])
+    expect(getFilePlacement(items[1].id || '', items)).toEqual([0, 1])
+    expect(getFilePlacement(items[4].id || '', items)).toEqual([1, 1])
   })
 })
 
