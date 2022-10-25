@@ -191,8 +191,8 @@
 /libs/auth-api-lib/                                                                                 @island-is/fuglar @island-is/aranja
 /libs/auth-nest-tools/                                                                              @island-is/fuglar @island-is/aranja
 
-/apps/services/auth/personal-representative/                                                        @island-is/programm
-/apps/services/auth/personal-representative-public/                                                 @island-is/programm
+/apps/services/auth/personal-representative/                                                        @island-is/programm @island-is/aranja
+/apps/services/auth/personal-representative-public/                                                 @island-is/programm @island-is/aranja
 /libs/api/domains/financial-statements-inao/                                                        @island-is/programm
 /libs/clients/financial-statements-inao                                                             @island-is/programm
 /libs/application/templates/financial-statements-inao/                                              @island-is/programm
