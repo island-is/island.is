@@ -58,11 +58,6 @@ interface UpdateFilesMutationResponse {
   caseFiles: TCaseFile[]
 }
 
-interface EditedFileName {
-  id: string
-  editedName: string
-}
-
 const useRaisedShadow = (value: MotionValue<number>) => {
   const inactiveShadow = '0px 0px 0px rgba(0,0,0,0.8)'
   const boxShadow = useMotionValue(inactiveShadow)
@@ -179,37 +174,19 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
   const boxShadow = useRaisedShadow(y)
   const controls = useDragControls()
   const [isDragging, setIsDragging] = useState<boolean>(false)
-  const [editFileId, setEditFileId] = useState<string>()
-  const [editedFilenames, setEditedFilenames] = useState<EditedFileName[]>([])
-  const fileIndex = editedFilenames.findIndex((i) => i.id === caseFile.id)
+  const [isEditing, setIsEditing] = useState<boolean>(false)
+  const [editedFilename, setEditedFilename] = useState<string | undefined>(
+    caseFile.userGeneratedFilename,
+  )
   const displayName = caseFile.userGeneratedFilename ?? caseFile.displayText
 
-  const handleFileNameChange = (
-    evt: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    if (fileIndex > -1) {
-      setEditedFilenames([
-        ...editedFilenames.slice(0, fileIndex),
-        {
-          id: caseFile.id,
-          editedName: evt.target.value,
-        },
-        ...editedFilenames.slice(fileIndex + 1),
-      ])
-    } else
-      setEditedFilenames([
-        ...editedFilenames,
-        {
-          id: caseFile.id,
-          editedName: evt.target.value,
-        },
-      ])
-  }
-
   const handleEditFileButtonClick = () => {
-    onRename(caseFile.id, editedFilenames[fileIndex].editedName)
-    setEditedFilenames(editedFilenames.filter((i) => i.id !== caseFile.id))
-    setEditFileId(undefined)
+    const trimmedFilename = editedFilename?.trim()
+
+    if (trimmedFilename) {
+      onRename(caseFile.id, trimmedFilename)
+      setIsEditing(false)
+    }
   }
 
   return (
@@ -262,7 +239,7 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
           </Box>
           <Box width="full">
             <AnimatePresence initial={false} exitBeforeEnter>
-              {editFileId === caseFile.id ? (
+              {isEditing ? (
                 <motion.div
                   initial={{ y: 10, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
@@ -277,18 +254,24 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
                         size="xs"
                         placeholder={formatMessage(m.simpleInputPlaceholder)}
                         defaultValue={displayName}
-                        onChange={handleFileNameChange}
+                        onChange={(evt) => setEditedFilename(evt.target.value)}
                       />
                     </Box>
                     <Box display="flex" alignItems="center">
                       <button
                         onClick={handleEditFileButtonClick}
-                        disabled={fileIndex === -1}
+                        disabled={
+                          editedFilename === caseFile.userGeneratedFilename
+                        }
                         className={styles.editCaseFileButton}
                       >
                         <Icon
                           icon="checkmark"
-                          color={fileIndex > -1 ? 'blue400' : 'dark200'}
+                          color={
+                            editedFilename === caseFile.userGeneratedFilename
+                              ? 'dark200'
+                              : 'blue400'
+                          }
                         />
                       </button>
                     </Box>
@@ -328,7 +311,7 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
                       </Text>
                     </Box>
                     <button
-                      onClick={() => setEditFileId(caseFile.id)}
+                      onClick={() => setIsEditing(true)}
                       className={styles.editCaseFileButton}
                     >
                       <Icon icon="pencil" color="blue400" />
