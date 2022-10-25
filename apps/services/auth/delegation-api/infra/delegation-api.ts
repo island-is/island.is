@@ -8,7 +8,7 @@ import {
 
 export const serviceSetup = (): ServiceBuilder<'services-auth-delegation-api'> => {
   return service('services-auth-delegation-api')
-    .namespace('identity-server')
+    .namespace('identity-server-delegation')
     .image('services-auth-delegation-api')
     .postgres({
       username: 'servicesauth',

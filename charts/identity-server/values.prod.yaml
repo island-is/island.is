@@ -102,10 +102,8 @@ identity-server:
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   files:
     - 'ids-signing.pfx'
-  grantNamespaces:
-    - 'nginx-ingress-internal'
-    - 'islandis'
-  grantNamespacesEnabled: true
+  grantNamespaces: []
+  grantNamespacesEnabled: false
   healthCheck:
     liveness:
       initialDelaySeconds: 3
@@ -181,6 +179,7 @@ namespaces:
   namespaces:
     - 'identity-server'
     - 'identity-server-admin'
+    - 'identity-server-delegation'
     - 'personal-representative'
 services-auth-admin-api:
   enabled: true
@@ -294,7 +293,7 @@ services-auth-delegation-api:
         - host: 'auth-delegation-api.internal.island.is'
           paths:
             - '/'
-  namespace: 'identity-server'
+  namespace: 'identity-server-delegation'
   pvcs: []
   replicaCount:
     default: 2
@@ -343,10 +342,8 @@ services-auth-ids-api:
     XROAD_TJODSKRA_MEMBER_CODE: '6503760649'
     XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
-  grantNamespaces:
-    - 'nginx-ingress-internal'
-    - 'islandis'
-  grantNamespacesEnabled: true
+  grantNamespaces: []
+  grantNamespacesEnabled: false
   healthCheck:
     liveness:
       initialDelaySeconds: 3
