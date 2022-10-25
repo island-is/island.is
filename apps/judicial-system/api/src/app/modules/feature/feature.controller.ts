@@ -4,7 +4,7 @@ import type { Feature } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
 
-const hiddenFeatures = environment.features?.hidden?.split(',')
+const hiddenFeatures = environment.features?.hidden?.trim().split(/[, ]+/)
 
 // This controller is not guearded as it should also be available to users not logged in
 @Controller('api/feature')
