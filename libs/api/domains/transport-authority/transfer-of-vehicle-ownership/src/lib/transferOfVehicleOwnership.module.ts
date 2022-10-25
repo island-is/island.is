@@ -4,7 +4,7 @@ import {
   VehicleOwnerChangeClientModule,
   VehicleOwnerChangeClientConfig,
 } from '@island.is/clients/transport-authority/vehicle-owner-change'
-import { TransferOfVehicleOwnershipApiResolver } from './transferOfVehicleOwnership.resolver'
+import { TransferOfVehicleOwnershipApiResolver } from './graphql/transferOfVehicleOwnership.resolver'
 import { TransferOfVehicleOwnershipApi } from './transferOfVehicleOwnership.service'
 
 @Module({

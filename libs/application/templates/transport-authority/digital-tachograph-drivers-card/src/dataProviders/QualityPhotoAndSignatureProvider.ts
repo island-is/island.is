@@ -1,18 +1,18 @@
-import { NationalRegistryUser } from '../types/schema'
+import { QualityPhotoAndSignature } from '../types/schema'
 import {
   BasicDataProvider,
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
   StaticText,
 } from '@island.is/application/types'
-import { GET_BIRTHPLACE_AND_DOMICILE } from '../graphql/queries'
+import { QUALITY_PHOTO_AND_SIGNATURE } from '../graphql/queries'
 import { m } from '../lib/messagesx'
 
-export class NationalRegistryCustomProvider extends BasicDataProvider {
-  type = 'NationalRegistryCustomProvider'
+export class QualityPhotoAndSignatureProvider extends BasicDataProvider {
+  type = 'QualityPhotoAndSignatureProvider'
 
-  async provide(): Promise<NationalRegistryUser | null> {
-    return this.useGraphqlGateway(GET_BIRTHPLACE_AND_DOMICILE).then(
+  async provide(): Promise<QualityPhotoAndSignature> {
+    return this.useGraphqlGateway(QUALITY_PHOTO_AND_SIGNATURE).then(
       async (res: Response) => {
         const response = await res.json()
 
@@ -26,20 +26,23 @@ export class NationalRegistryCustomProvider extends BasicDataProvider {
         }
 
         const data = response.data as {
-          nationalRegistryUser: NationalRegistryUser | null
+          digitalTachographQualityPhotoAndSignature: QualityPhotoAndSignature | null
         }
-        const nationalRegistryUserData = data?.nationalRegistryUser
+        const photoAndSignatureData =
+          data?.digitalTachographQualityPhotoAndSignature
 
-        // Make sure user has domicile country as Iceland
-        const domicileCode = nationalRegistryUserData?.address?.code
-        if (!domicileCode || domicileCode.substring(0, 2) === '99') {
+        // Make sure user has quality photo and signature (from either RLS or SGS),
+        // if not then user cannot continue (will allow upload in phase 2)
+        if (
+          !photoAndSignatureData?.hasPhoto ||
+          !photoAndSignatureData?.hasSignature
+        ) {
           return Promise.reject({
-            reason:
-              m.nationalRegistryDomicileProviderErrorMissing.defaultMessage,
+            reason: m.drivingLicenseProviderErrorMissing.defaultMessage,
           })
         }
 
-        return Promise.resolve(nationalRegistryUserData)
+        return Promise.resolve(photoAndSignatureData)
       },
     )
     // .catch(() => {

@@ -212,6 +212,8 @@
 
 /libs/application/templates/transport-authority/                                                    @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/transport-authority/               @island-is/origo
+/libs/api/domains/transport-authority/                                                              @island-is/origo
+/libs/clients/transport-authority/                                                                  @island-is/origo
 
 
 # Temporary assignment while the QA bootstrap project is in progress

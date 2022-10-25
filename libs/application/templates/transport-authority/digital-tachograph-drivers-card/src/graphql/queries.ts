@@ -20,18 +20,13 @@ export const GET_BIRTHPLACE_AND_DOMICILE = `
   }
 `
 
-// export const QUALITY_PHOTO = `
-//   query HasQualityPhoto {
-//     drivingLicenseQualityPhoto {
-//       dataUri
-//     }
-//   }
-// `
-
-// export const QUALITY_SIGNATURE = `
-//   query HasQualitySignature {
-//     drivingLicenseQualitySignature {
-//       dataUri
-//     }
-//   }
-// `
+export const QUALITY_PHOTO_AND_SIGNATURE = `
+  query QualityPhotoAndSignature {
+    digitalTachographQualityPhotoAndSignature {
+      hasPhoto
+      photoDataUri
+      hasSignature
+      signatureDataUri
+    }
+  }
+`
