@@ -96,6 +96,8 @@ export const timelineContainer = style({
   height: 700,
   overflow: 'hidden',
   position: 'relative',
+  userSelect: 'none',
+  cursor: 'move',
 })
 
 export const mobileContainer = style({
