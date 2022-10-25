@@ -11,6 +11,7 @@ import {
   FieldTypes,
   SelectOption,
   StaticTextObject,
+  Application,
 } from '@island.is/application/types'
 import { SelectFormField } from '@island.is/application/ui-fields'
 import { useLocale } from '@island.is/localization'
@@ -25,7 +26,7 @@ import {
 import { parentalLeaveFormMessages, errorMessages } from '../../lib/messages'
 import { getApplicationAnswers } from '../../lib/parentalLeaveUtils'
 import { useRemainingRights } from '../../hooks/useRemainingRights'
-import { StartDateOptions } from '../../constants'
+import { PARENTAL_GRANT, PARENTAL_GRANT_STUDENTS, StartDateOptions } from '../../constants'
 
 type FieldBaseAndCustomField = FieldBaseProps & CustomField
 
@@ -136,6 +137,19 @@ export const PeriodPercentage: FC<PeriodPercentageField> = ({
   const isUsingAllRemainingDays =
     canChooseRemainingDays && selectedValue === maxPercentageValue
 
+  const getRatioTitle = (application: Application) => {
+    const appAnswers = getApplicationAnswers(
+        application.answers
+    )
+    if (
+      appAnswers.applicationType === PARENTAL_GRANT ||
+      appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
+    ) {
+      return parentalLeaveFormMessages.ratio.grantLabel
+    }
+    return parentalLeaveFormMessages.ratio.label
+  }
+
   return (
     <>
       {!!description && (
@@ -151,7 +165,7 @@ export const PeriodPercentage: FC<PeriodPercentageField> = ({
         field={{
           type: FieldTypes.SELECT,
           component: FieldComponents.SELECT,
-          title: parentalLeaveFormMessages.ratio.label,
+          title: getRatioTitle,
           dataTestId: 'select-percentage-use',
           placeholder: parentalLeaveFormMessages.ratio.placeholder,
           id: fieldId,

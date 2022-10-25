@@ -5,7 +5,7 @@ import {
   NO_ANSWER,
   extractRepeaterIndexFromField,
 } from '@island.is/application/core'
-import { FieldBaseProps } from '@island.is/application/types'
+import { Application, FieldBaseProps } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
 import {
   FieldDescription,
@@ -18,7 +18,7 @@ import {
   getApplicationAnswers,
 } from '../../lib/parentalLeaveUtils'
 import { parentalLeaveFormMessages } from '../../lib/messages'
-import { StartDateOptions } from '../../constants'
+import { PARENTAL_GRANT, PARENTAL_GRANT_STUDENTS, StartDateOptions } from '../../constants'
 
 type ValidAnswers = StartDateOptions | undefined
 
@@ -33,7 +33,7 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
   const { rawPeriods } = getApplicationAnswers(application.answers)
   const currentIndex = extractRepeaterIndexFromField(field)
   const currentPeriod = rawPeriods[currentIndex]
-
+  const appAnswers = getApplicationAnswers(application.answers)
   const [statefulAnswer, setStatefulAnswer] = useState<
     ValidAnswers | undefined
   >(
@@ -45,6 +45,10 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
   const onSelect = (answer: string) => {
     setStatefulAnswer(answer as ValidAnswers)
   }
+
+  const isGrant = 
+    appAnswers.applicationType === PARENTAL_GRANT ||
+    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
 
   const renderHiddenStartDateInput =
     statefulAnswer === StartDateOptions.ESTIMATED_DATE_OF_BIRTH ||
@@ -63,7 +67,9 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
     <Box marginY={3} key={field.id}>
       <FieldDescription
         description={formatMessage(
-          parentalLeaveFormMessages.firstPeriodStart.description,
+        isGrant
+          ? parentalLeaveFormMessages.firstPeriodStart.grantDescription
+          : parentalLeaveFormMessages.firstPeriodStart.description        
         )}
       />
       <Box paddingTop={3} marginBottom={3}>
