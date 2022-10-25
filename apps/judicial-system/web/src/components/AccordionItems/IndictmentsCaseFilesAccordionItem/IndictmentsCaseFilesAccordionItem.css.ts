@@ -43,5 +43,9 @@ export const editCaseFileButton = style({
     '&:hover': {
       backgroundColor: theme.color.blue200,
     },
+    '&:disabled': {
+      backgroundColor: theme.color.dark100,
+      cursor: 'default',
+    },
   },
 })

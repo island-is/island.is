@@ -189,6 +189,16 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
   const [isDragging, setIsDragging] = useState<boolean>(false)
   const [editFileId, setEditFileId] = useState<string>()
   const [editedFilenames, setEditedFilenames] = useState<EditedFileName[]>([])
+  const displayName =
+    editedFilenames.findIndex((item) => item.id === caseFile.id) > -1
+      ? editedFilenames[
+          editedFilenames.findIndex((item) => item.id === caseFile.id)
+        ].editedName
+      : caseFile.userGeneratedFilename
+      ? caseFile.userGeneratedFilename
+      : caseFile.displayText
+  const editFileButtonDisabled =
+    editedFilenames.findIndex((i) => i.id === caseFile.id) === -1
 
   return (
     <Reorder.Item
@@ -245,6 +255,7 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
                   initial={{ y: 10, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   exit={{ y: 10, opacity: 0 }}
+                  transition={{ duration: 0.5 }}
                   key={`${caseFile.id}-edit`}
                 >
                   <Box display="flex">
@@ -253,19 +264,7 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
                         name="fileName"
                         size="xs"
                         placeholder={formatMessage(m.simpleInputPlaceholder)}
-                        defaultValue={
-                          editedFilenames.findIndex(
-                            (item) => item.id === caseFile.id,
-                          ) > -1
-                            ? editedFilenames[
-                                editedFilenames.findIndex(
-                                  (item) => item.id === caseFile.id,
-                                )
-                              ].editedName
-                            : caseFile.userGeneratedFilename
-                            ? caseFile.userGeneratedFilename
-                            : caseFile.displayText
-                        }
+                        defaultValue={displayName}
                         onChange={(evt) => {
                           const found = editedFilenames.findIndex(
                             (item) => item.id === caseFile.id,
@@ -304,9 +303,13 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
 
                           setEditFileId(undefined)
                         }}
+                        disabled={editFileButtonDisabled}
                         className={styles.editCaseFileButton}
                       >
-                        <Icon icon="checkmark" color="blue400" />
+                        <Icon
+                          icon="checkmark"
+                          color={editFileButtonDisabled ? 'dark200' : 'blue400'}
+                        />
                       </button>
                     </Box>
                   </Box>
@@ -316,6 +319,7 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
                   initial={false}
                   exit={{ y: -10, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
+                  transition={{ duration: 0.5 }}
                   key={`${caseFile.id}-view`}
                   style={{
                     display: 'flex',
@@ -332,19 +336,7 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
                       }
                     }}
                   >
-                    <Text variant="h5">
-                      {editedFilenames.findIndex(
-                        (item) => item.id === caseFile.id,
-                      ) > -1
-                        ? editedFilenames[
-                            editedFilenames.findIndex(
-                              (item) => item.id === caseFile.id,
-                            )
-                          ].editedName
-                        : caseFile.userGeneratedFilename
-                        ? caseFile.userGeneratedFilename
-                        : caseFile.displayText}
-                    </Text>
+                    <Text variant="h5">{displayName}</Text>
                     <Box marginLeft={2}>
                       <Icon icon="open" type="outline" size="small" />
                     </Box>
