@@ -266,7 +266,7 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
                   initial={{ y: 10, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   exit={{ y: 10, opacity: 0 }}
-                  transition={{ duration: 0.5 }}
+                  transition={{ duration: 0.2 }}
                   key={`${caseFile.id}-edit`}
                 >
                   <Box display="flex">
@@ -298,7 +298,7 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
                   initial={{ y: -10, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   exit={{ y: -10, opacity: 0 }}
-                  transition={{ duration: 0.5 }}
+                  transition={{ duration: 0.2 }}
                   key={`${caseFile.id}-view`}
                   style={{
                     display: 'flex',
