@@ -22,7 +22,10 @@ import {
   toast,
 } from '@island.is/island-ui/core'
 import { CaseFile as TCaseFile } from '@island.is/judicial-system/types'
-import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  useFileList,
+  useS3UploadV2,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import { formatDate } from '@island.is/judicial-system/formatters'
 
 import { indictmentsCaseFilesAccordionItem as m } from './IndictmentsCaseFilesAccordionItem.strings'
@@ -42,6 +45,7 @@ interface CaseFileProps {
   onReorder: (id?: string) => void
   onOpen: (id: string) => void
   onRename: (id: string, name: string) => void
+  onDelete: (id: string) => void
 }
 
 export interface ReorderableItem {
@@ -168,7 +172,7 @@ const renderChapter = (chapter: number, name: string) => (
 )
 
 const CaseFile: React.FC<CaseFileProps> = (props) => {
-  const { caseFile, index, onReorder, onOpen, onRename } = props
+  const { caseFile, index, onReorder, onOpen, onRename, onDelete } = props
   const { formatMessage } = useIntl()
   const y = useMotionValue(0)
   const boxShadow = useRaisedShadow(y)
@@ -274,6 +278,14 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
                           }
                         />
                       </button>
+                      <Box marginLeft={1}>
+                        <button
+                          onClick={() => onDelete(caseFile.id)}
+                          className={styles.editCaseFileButton}
+                        >
+                          <Icon icon="trash" color="blue400" type="outline" />
+                        </button>
+                      </Box>
                     </Box>
                   </Box>
                 </motion.div>
@@ -333,8 +345,8 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
   const [updateFilesMutation] = useMutation<UpdateFilesMutationResponse>(
     UpdateFileMutation,
   )
-
   const { onOpen } = useFileList({ caseId })
+  const { remove } = useS3UploadV2(caseId)
 
   const [reorderableItems, setReorderableItems] = useState<ReorderableItem[]>([
     {
@@ -482,6 +494,18 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
     }
   }
 
+  const handleDelete = async (fileId: string) => {
+    const { errors } = await remove(fileId)
+
+    if (errors) {
+      toast.error(formatMessage(m.removeFailedErrorMessage))
+    }
+
+    setReorderableItems((prev) => {
+      return prev.filter((item) => item.id !== fileId)
+    })
+  }
+
   return (
     <AccordionItem
       id="IndictmentsCaseFilesAccordionItem"
@@ -517,6 +541,7 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
                 onReorder={handleReorder}
                 onOpen={onOpen}
                 onRename={handleRename}
+                onDelete={handleDelete}
               />
             </Box>
           )
