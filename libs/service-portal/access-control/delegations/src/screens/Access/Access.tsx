@@ -17,7 +17,7 @@ import { AuthCustomDelegation } from '@island.is/api/schema'
 import { NotFound } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { useAuthDelegationQuery } from '@island.is/service-portal/graphql'
-import { AccessForm } from '../../components/access'
+import { AccessForm } from '../../components'
 import * as styles from './Access.css'
 
 const Access = () => {

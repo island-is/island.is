@@ -1,19 +1,15 @@
 import { Box } from '@island.is/island-ui/core'
-import {
-  IntroHeader,
-  m,
-  ServicePortalModuleComponent,
-} from '@island.is/service-portal/core'
+import { IntroHeader, m } from '@island.is/service-portal/core'
 
-import { DelegationsFromMe, DelegationsAccessGuard } from '../../components'
+import { DelegationsFromMe } from '../../components'
 import { useLocale, useNamespaces } from '@island.is/localization'
 
-const AccessControl: ServicePortalModuleComponent = (props) => {
+const AccessControl = () => {
   useNamespaces(['sp.settings-access-control', 'sp.access-control-delegations'])
   const { formatMessage } = useLocale()
 
   return (
-    <DelegationsAccessGuard {...props}>
+    <>
       <IntroHeader
         title={formatMessage(m.accessControl)}
         intro={formatMessage({
@@ -25,7 +21,7 @@ const AccessControl: ServicePortalModuleComponent = (props) => {
       <Box marginTop={8}>
         <DelegationsFromMe />
       </Box>
-    </DelegationsAccessGuard>
+    </>
   )
 }
 
