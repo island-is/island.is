@@ -34,6 +34,7 @@ const Access = () => {
       input: {
         delegationId,
       },
+      lang,
     },
   })
 

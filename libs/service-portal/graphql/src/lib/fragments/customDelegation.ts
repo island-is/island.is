@@ -1,5 +1,7 @@
-import { gql } from '@apollo/client'
+import { gql, enableExperimentalFragmentVariables } from '@apollo/client'
 import { authApiScopeFragment } from './scope'
+
+enableExperimentalFragmentVariables()
 
 export const authCustomDelegationFragment = gql`
   fragment AuthCustomDelegationFragment on AuthCustomDelegation {
