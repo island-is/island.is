@@ -91,7 +91,7 @@ export class ContentSearchService {
     }
     
     // // MYSTERY
-    // items = items.map(item=>({...item, title:item.title+" <XXX>",intro:item.intro+" ***"}));
+    // items = items.map(item=>({...item, title:"XXX",intro:"000"}));
 
     // console.log(body.hits.hits)
     return {

@@ -83,7 +83,7 @@ export const Card = ({
   }
 
   const visibleTags = tags.filter((t) => t.title)
-
+  
   const items = (
     <Box
       ref={ref}
@@ -104,7 +104,7 @@ export const Card = ({
                   fontWeight="semiBold"
                   color={titleColor}
                 >
-                  {subTitle}
+                  {subTitle} ***
                 </Text>
               </Box>
             </Box>
@@ -131,7 +131,7 @@ export const Card = ({
 
                     return (
                       <Tag key={index} {...tagProps} disabled>
-                        {title}
+                        {title} ***
                       </Tag>
                     )
                   },
@@ -180,7 +180,6 @@ export const Card = ({
       </FocusableBox>
     )
   }
-
   return <Frame>{items}</Frame>
 }
 

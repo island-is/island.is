@@ -731,6 +731,7 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
     namespace,
   ] = await Promise.all([
     apolloClient.query<GetSearchResultsDetailedQuery, QuerySearchResultsArgs>({
+      fetchPolicy: "no-cache" ,
       query: GET_SEARCH_RESULTS_QUERY_DETAILED,
       variables: {
         query: {
@@ -746,6 +747,7 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
       },
     }),
     apolloClient.query<GetSearchResultsNewsQuery, QuerySearchResultsArgs>({
+      fetchPolicy: "no-cache" ,
       query: GET_SEARCH_COUNT_QUERY,
       variables: {
         query: {
