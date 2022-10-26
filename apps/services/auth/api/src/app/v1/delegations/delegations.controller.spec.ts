@@ -323,12 +323,12 @@ describe('DelegationsController', () => {
             })
 
             it('should only have the nationalId of the valid representees', () => {
-              expect(body.map((d) => d.fromNationalId).sort()).toEqual([
-                ...validRepresentedPersons.map(([_, id]) => id).sort(),
-                ...errorNationalIdsRepresentedPersons
-                  .map(([_, id]) => id)
-                  .sort(),
-              ])
+              expect(body.map((d) => d.fromNationalId).sort()).toEqual(
+                [
+                  ...validRepresentedPersons.map(([_, id]) => id),
+                  ...errorNationalIdsRepresentedPersons.map(([_, id]) => id),
+                ].sort(),
+              )
             })
 
             it(`should only have ${
