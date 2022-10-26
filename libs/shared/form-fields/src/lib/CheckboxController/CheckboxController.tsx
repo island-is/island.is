@@ -34,7 +34,7 @@ interface CheckboxControllerProps {
   onSelect?: (s: string[]) => void
 }
 export const CheckboxController: FC<CheckboxControllerProps> = ({
-  defaultValue = [],
+  defaultValue,
   disabled = false,
   labelVariant,
   spacing = 2,

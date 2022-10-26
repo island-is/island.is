@@ -66,6 +66,7 @@ export function buildCheckboxField(
     options,
     strong = false,
     large = true,
+    required,
     backgroundColor = 'blue',
   } = data
   return {
@@ -75,6 +76,7 @@ export function buildCheckboxField(
     strong,
     backgroundColor,
     options,
+    required,
     type: FieldTypes.CHECKBOX,
     component: FieldComponents.CHECKBOX,
   }

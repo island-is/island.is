@@ -124,6 +124,7 @@ export interface CheckboxField extends BaseField {
   options: MaybeWithApplicationAndField<Option[]>
   large?: boolean
   strong?: boolean
+  required?: boolean
   backgroundColor?: InputBackgroundColor
   onSelect?: ((s: string[]) => void) | undefined
 }
