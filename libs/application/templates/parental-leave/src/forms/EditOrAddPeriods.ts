@@ -14,7 +14,13 @@ import {
   buildRadioField,
 } from '@island.is/application/core'
 import { Form, FormModes, Application } from '@island.is/application/types'
-import { NO, PARENTAL_GRANT, PARENTAL_GRANT_STUDENTS, StartDateOptions, YES } from '../constants'
+import {
+  NO,
+  PARENTAL_GRANT,
+  PARENTAL_GRANT_STUDENTS,
+  StartDateOptions,
+  YES,
+} from '../constants'
 
 import Logo from '../assets/Logo'
 import { parentalLeaveFormMessages } from '../lib/messages'
@@ -30,7 +36,7 @@ import {
 import {
   minimumPeriodStartBeforeExpectedDateOfBirth,
   minPeriodDays,
-} from '../config' 
+} from '../config'
 
 export const EditOrAddPeriods: Form = buildForm({
   id: 'ParentalLeaveEditOrAddPeriods',
@@ -209,9 +215,10 @@ export const EditOrAddPeriods: Form = buildForm({
               placement: 'footer',
               title: parentalLeaveFormMessages.confirmation.title,
               actions: [
-                { event: 'ABORT', 
+                {
+                  event: 'ABORT',
                   name: parentalLeaveFormMessages.confirmation.cancel,
-                  type: 'reject', 
+                  type: 'reject',
                 },
                 {
                   event: 'SUBMIT',

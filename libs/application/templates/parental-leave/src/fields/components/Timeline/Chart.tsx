@@ -39,7 +39,6 @@ const ChartMonths: FC<{
         }}
       >
         {totalDays.map((day, index) => {
-
           const isInitDay = isSameDay(initDate, day)
           const isLastDayAvailable = isSameDay(lastDayInTimespan, day)
           const isFirstDayOfMonth = totalDays[index].getDate() === 1
@@ -56,8 +55,7 @@ const ChartMonths: FC<{
               <Box className={styles.chartMonth}>
                 <Text variant="small">
                   {(isFirstDayOfMonth || index === 0) &&
-                    formatDateFns(day, 'MMM yyyy', 
-                  )}
+                    formatDateFns(day, 'MMM yyyy')}
                   &nbsp;
                 </Text>
                 {isInitDay && <Box className={styles.highlightDay} />}

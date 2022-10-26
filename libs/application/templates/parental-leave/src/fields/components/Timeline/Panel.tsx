@@ -41,8 +41,7 @@ export const Panel: FC<{
 
           {firstPeriodUsingActualDateOfBirth
             ? ''
-            : formatDateFns(initDate, 'dd MMM yyyy', 
-            )}
+            : formatDateFns(initDate, 'dd MMM yyyy')}
         </Text>
         <Box className={styles.firstPanelRowSeparator} />
       </Box>
@@ -77,10 +76,10 @@ export const Panel: FC<{
                     duration: p.duration,
                   },
                 )
-              : `${formatDateFns(parseISO(p.startDate), formatStyle)} - ${formatDateFns(
-                  parseISO(p.endDate),
+              : `${formatDateFns(
+                  parseISO(p.startDate),
                   formatStyle,
-                )}`}
+                )} - ${formatDateFns(parseISO(p.endDate), formatStyle)}`}
           </Text>
         </Box>
       ))}
