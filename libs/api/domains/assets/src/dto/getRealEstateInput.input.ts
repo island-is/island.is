@@ -1,10 +1,11 @@
 import { Field, InputType } from '@nestjs/graphql'
 import { IsString } from 'class-validator'
+import { IsAssetId } from '@island.is/nest/validators'
 
 @InputType()
 export class GetRealEstateInput {
   @Field()
-  @IsString()
+  @IsAssetId()
   assetId!: string
 }
 
