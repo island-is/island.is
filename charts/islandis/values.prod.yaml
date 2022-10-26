@@ -236,6 +236,7 @@ api:
   args:
     - '--tls-min-v1.0'
     - '--no-experimental-fetch'
+    - '--openssl-legacy-provider'
     - 'main.js'
   command:
     - 'node'
