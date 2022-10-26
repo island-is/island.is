@@ -7,6 +7,7 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     return queryInterface.sequelize.transaction(async (transaction) =>
       Promise.all([
+        // temp column for migratating recipients
         queryInterface
           .addColumn(
             'notification',
@@ -25,10 +26,11 @@ module.exports = {
             )
             throw err
           }),
+        // get all notifications and migrate recipients to recipients_json
         queryInterface.sequelize
           .query(`select * from notification`, { transaction })
-          .then(([notifications]) =>
-            notifications.map((notification) => {
+          .then(([notifications]) => {
+            const updates = notifications.map((notification) => {
               let fallback = [{ success: false }]
               let parsedRecipients = fallback
               try {
@@ -49,12 +51,14 @@ module.exports = {
                 { id: [notification.id] },
                 { transaction },
               )
-            }),
-          )
+            })
+            return Promise.all(updates)
+          })
           .catch((err) => {
             console.error('Error when copying', err)
             throw err
           }),
+        // remove old recipients column
         queryInterface
           .removeColumn('notification', 'recipients', {
             transaction,
@@ -66,6 +70,7 @@ module.exports = {
             )
             throw err
           }),
+        // rename recipients_json to recipients
         queryInterface.renameColumn(
           'notification',
           'recipients_json',
@@ -103,9 +108,11 @@ module.exports = {
               )
             }),
           ),
+        // remove new column
         queryInterface.removeColumn('notification', 'recipients', {
           transaction,
         }),
+        // rename old column back to recipients
         queryInterface.renameColumn(
           'notification',
           'recipients_json_string',
