@@ -24,8 +24,6 @@ export class HealthInsuranceService {
         `Start send Health Insurance application for ${application.id}`,
       )
 
-      logger.info(`Finished transform Application to Health Insurance DTO`)
-
       const inputs = transformApplicationToHealthInsuranceDTO(application)
       const xml = await insuranceToXML(
         inputs.vistaskjal,
