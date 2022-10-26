@@ -1,6 +1,5 @@
 import * as z from 'zod'
 import { error } from './messages'
-import * as kennitala from 'kennitala'
 import { FishingLicenseEnum } from '../types'
 
 export const GeneralFishingLicenseSchema = z.object({
@@ -27,19 +26,11 @@ export const GeneralFishingLicenseSchema = z.object({
     }),
   }),
   applicant: z.object({
-    name: z.string().refine((x) => x.trim().length > 0),
-    nationalId: z
-      .string()
-      .refine((x) =>
-        x ? kennitala.isPerson(x) || kennitala.isCompany(x) : false,
-      ),
-    address: z.string().refine((x) => x.trim().length > 0),
-    postalCode: z.string().refine((x) => +x >= 100 && +x <= 999, {
-      params: error.invalidValue,
-    }),
-    city: z.string().refine((x) => x.trim().length > 0, {
-      params: error.invalidValue,
-    }),
+    name: z.string(),
+    nationalId: z.string(),
+    address: z.string(),
+    postalCode: z.string(),
+    city: z.string(),
     email: z.string().email(),
     phoneNumber: z.string().optional(),
   }),

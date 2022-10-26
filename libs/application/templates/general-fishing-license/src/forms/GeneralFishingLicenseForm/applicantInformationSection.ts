@@ -21,9 +21,8 @@ export const applicantInformationSection = buildSection({
           title: applicantInformation.labels.name,
           backgroundColor: 'white',
           disabled: true,
-          required: true,
           defaultValue: (application: GeneralFishingLicense) =>
-            application.externalData?.identityRegistry?.data?.name,
+            application.externalData?.identityRegistry?.data?.name ?? '',
         }),
         buildTextField({
           id: 'applicant.nationalId',
@@ -32,9 +31,8 @@ export const applicantInformationSection = buildSection({
           width: 'half',
           backgroundColor: 'white',
           disabled: true,
-          required: true,
           defaultValue: (application: GeneralFishingLicense) =>
-            application.externalData?.identityRegistry?.data?.nationalId,
+            application.externalData?.identityRegistry?.data?.nationalId ?? '',
         }),
         buildTextField({
           id: 'applicant.address',
@@ -42,10 +40,9 @@ export const applicantInformationSection = buildSection({
           width: 'half',
           backgroundColor: 'white',
           disabled: true,
-          required: true,
           defaultValue: (application: GeneralFishingLicense) =>
             application.externalData?.identityRegistry?.data?.address
-              ?.streetAddress,
+              ?.streetAddress ?? '',
         }),
         buildTextField({
           id: 'applicant.postalCode',
@@ -54,10 +51,9 @@ export const applicantInformationSection = buildSection({
           format: '###',
           backgroundColor: 'white',
           disabled: true,
-          required: true,
           defaultValue: (application: GeneralFishingLicense) =>
             application.externalData?.identityRegistry?.data?.address
-              ?.postalCode,
+              ?.postalCode ?? '',
         }),
         buildTextField({
           id: 'applicant.city',
@@ -65,9 +61,9 @@ export const applicantInformationSection = buildSection({
           width: 'half',
           backgroundColor: 'white',
           disabled: true,
-          required: true,
           defaultValue: (application: GeneralFishingLicense) =>
-            application.externalData?.identityRegistry?.data?.address?.city,
+            application.externalData?.identityRegistry?.data?.address?.city ??
+            '',
         }),
         buildTextField({
           id: 'applicant.email',
