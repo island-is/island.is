@@ -86,6 +86,13 @@ export class PaymentScheduleService {
     }
   }
 
+  /**
+   * Checks if the user is allowed to select specific company as his employer
+   * - returns boolean, true if allowed, false if not
+   * - FJS-Public/paymentSchedule_v1/employerValid/{usernationalid}/{employernationalid}
+   * @typedef {{user: User, nationalId: string}}
+   * @private
+   */
   async isEmployerValid(user: User, nationalId: string): Promise<boolean> {
     const { employerValid, error } = await this.paymentScheduleApiWithAuth(
       user,
