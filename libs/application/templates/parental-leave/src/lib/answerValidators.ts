@@ -177,7 +177,9 @@ export const answerValidators: Record<string, AnswerValidator> = {
       'applicationType.option',
     )
 
-    if (applicationType === PARENTAL_LEAVE) {
+    // added if applicationType === undefined for old parnetal leave applications
+    // that doesn't have applicationType
+    if (applicationType === PARENTAL_LEAVE || applicationType === undefined) {
       const privatePensionFund = getValueViaPath(
         application.answers,
         'payments.privatePensionFund',
