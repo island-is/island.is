@@ -76,7 +76,7 @@ export const CemetryEquities: FC<FieldBaseProps> = ({
 
   useEffect(() => {
     clearErrors(VALIDATOR)
-  }, [totalEquity, totalLiabilities, totalAssets])
+  }, [totalEquity, totalLiabilities, totalAssets, clearErrors])
 
   // we need to validate some info before allowing submission of the current screen data
   // since we're comparing values from different objects, doing it via zod is not an option
