@@ -12,7 +12,7 @@ import {
   B_FULL,
   B_TEMP,
 } from '../../shared/constants'
-import { hasYes } from './hasYes'
+import { hasYes } from '@island.is/application/core'
 import { CurrentLicenseProviderResult } from '../../dataProviders/CurrentLicenseProvider'
 
 export const allowFakeCondition = (result = YES) => (answers: FormValue) =>
