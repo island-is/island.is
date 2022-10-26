@@ -49,7 +49,13 @@ export const AccordionSlice: React.FC<SliceProps> = ({ slice }) => {
                 startExpanded={slice.accordionItems.length === 1}
               >
                 <Box className={styles.accordionBox}>
-                  {richText(item.content as SliceType[])}
+                  {richText(item.content as SliceType[], {
+                    renderComponent: {
+                      AccordionSlice: (slice) => (
+                        <AccordionSlice slice={slice} />
+                      ),
+                    },
+                  })}
                 </Box>
               </AccordionCard>
             </Box>
@@ -64,7 +70,15 @@ export const AccordionSlice: React.FC<SliceProps> = ({ slice }) => {
                   label={item.title}
                   startExpanded={slice.accordionItems.length === 1}
                 >
-                  <Text>{richText(item.content as SliceType[])}</Text>
+                  <Text>
+                    {richText(item.content as SliceType[], {
+                      renderComponent: {
+                        AccordionSlice: (slice) => (
+                          <AccordionSlice slice={slice} />
+                        ),
+                      },
+                    })}
+                  </Text>
                 </AccordionItem>
               ))}
             </Accordion>
