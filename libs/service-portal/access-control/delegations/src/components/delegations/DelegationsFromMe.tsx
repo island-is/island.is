@@ -1,11 +1,9 @@
 import { useState } from 'react'
 import {
   SkeletonLoader,
-  GridRow,
-  GridColumn,
-  GridContainer,
   Stack,
   AlertBanner,
+  Box,
 } from '@island.is/island-ui/core'
 import { AuthCustomDelegation } from '@island.is/api/schema'
 import { DelegationsHeader } from './DelegationsHeader'
@@ -54,43 +52,39 @@ export const DelegationsFromMe = () => {
 
   return (
     <>
-      <GridContainer>
-        <GridRow>
-          <GridColumn paddingBottom={4} span="12/12">
-            <DelegationsHeader
-              domainName={domainName}
-              onDomainChange={onDomainChange}
+      <Box display="flex" flexDirection="column" rowGap={4}>
+        <DelegationsHeader
+          domainName={domainName}
+          onDomainChange={onDomainChange}
+        />
+        <div>
+          {loading ? (
+            <SkeletonLoader width="100%" height={191} />
+          ) : error ? (
+            <AlertBanner
+              description={formatMessage(m.errorFetch)}
+              variant="error"
             />
-          </GridColumn>
-          <GridColumn paddingBottom={4} span="12/12">
-            {loading ? (
-              <SkeletonLoader width="100%" height={191} />
-            ) : error ? (
-              <AlertBanner
-                description={formatMessage(m.errorFetch)}
-                variant="error"
-              />
-            ) : delegations.length === 0 ? (
-              <DelegationsEmptyState />
-            ) : (
-              <Stack space={3}>
-                {delegations.map(
-                  (delegation) =>
-                    delegation.to && (
-                      <AccessCard
-                        key={delegation.id}
-                        delegation={delegation}
-                        onDelete={(delegation) => {
-                          setDelegation(delegation)
-                        }}
-                      />
-                    ),
-                )}
-              </Stack>
-            )}
-          </GridColumn>
-        </GridRow>
-      </GridContainer>
+          ) : delegations.length === 0 ? (
+            <DelegationsEmptyState />
+          ) : (
+            <Stack space={3}>
+              {delegations.map(
+                (delegation) =>
+                  delegation.to && (
+                    <AccessCard
+                      key={delegation.id}
+                      delegation={delegation}
+                      onDelete={(delegation) => {
+                        setDelegation(delegation)
+                      }}
+                    />
+                  ),
+              )}
+            </Stack>
+          )}
+        </div>
+      </Box>
       <AccessDeleteModal
         id={`access-delete-modal-${delegation?.id}`}
         onClose={() => {
