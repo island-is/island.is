@@ -14,17 +14,12 @@ export const delegationsModule: ServicePortalModule = {
   featureFlag: Features.outgoingDelegationsV2,
   widgets: () => [],
   routes: ({ userInfo }) => {
-    const isCompany = userInfo.profile['subjectType'] === 'legalEntity'
-    const isDelegation = Boolean(userInfo.profile.actor)
-    const personDelegation = isDelegation && !isCompany
-
+    const hasAccess = userInfo.scopes.includes(AuthScope.delegations)
     const accessControlCommonFields = {
       name: m.accessControlDelegations,
       path: ServicePortalPath.AccessControlDelegations,
-      navHide: !userInfo.scopes.includes(AuthScope.delegations),
-      enabled: personDelegation
-        ? false
-        : userInfo.scopes.includes(AuthScope.delegations),
+      navHide: !hasAccess,
+      enabled: hasAccess,
       render: () => lazy(() => import('./screens/AccessControl')),
     }
 
@@ -40,13 +35,11 @@ export const delegationsModule: ServicePortalModule = {
       {
         name: m.accessControlGrant,
         path: ServicePortalPath.AccessControlDelegationsGrant,
-        enabled: userInfo.scopes.includes(AuthScope.delegations),
         render: () => lazy(() => import('./screens/GrantAccess')),
       },
       {
         name: m.accessControlAccess,
         path: ServicePortalPath.AccessControlDelegationAccess,
-        enabled: userInfo.scopes.includes(AuthScope.delegations),
         render: () => lazy(() => import('./screens/Access')),
       },
     ]
