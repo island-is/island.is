@@ -9,8 +9,6 @@ interface SidebarShipSearchInputProps {
   label?: string
 }
 
-// TODO: add suggestions to search
-
 export const SidebarShipSearchInput = ({
   shipDetailsHref = '/v/maelabord-fiskistofu?selectedTab=skip&nr=3000',
   shipSearchHref = '/v/maelabord-fiskistofu?selectedTab=skipaleit',

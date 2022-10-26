@@ -16,7 +16,7 @@ export const error = style({
 })
 
 export const tagContainer = style({
-  minHeight: '50px',
+  minHeight: '32px',
   marginTop: '16px',
 })
 

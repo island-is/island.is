@@ -3,6 +3,7 @@ import {
   EntryProjectHeader,
   UkraineProjectHeader,
   ElectionProjectHeader,
+  FiskistofaDashboardHeader,
 } from '@island.is/web/components'
 import { ProjectPage as ProjectPageSchema } from '@island.is/web/graphql/schema'
 
@@ -26,7 +27,7 @@ export const ProjectHeader = ({ projectPage }: ProjectHeaderProps) => {
         />
       )
     case 'maelabord-fiskistofu':
-      return null
+      return <FiskistofaDashboardHeader projectPage={projectPage} />
     default:
       return <DefaultProjectHeader projectPage={projectPage} />
   }
