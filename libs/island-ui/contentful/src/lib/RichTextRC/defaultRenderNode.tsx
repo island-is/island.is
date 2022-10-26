@@ -179,15 +179,21 @@ export const defaultRenderNode: RenderNode = {
     const type = entry?.sys?.contentType?.sys?.id
     switch (type) {
       case 'article':
-        return entry.fields.slug ? (
-          <Hyperlink href={`/${entry.fields.slug}`}>{children}</Hyperlink>
+        return entry?.fields?.slug ? (
+          <Hyperlink
+            href={`/${
+              entry.sys?.locale === 'is-IS' ? '' : entry.sys?.locale + '/'
+            }${entry?.fields?.slug}`}
+          >
+            {children}
+          </Hyperlink>
         ) : null
       case 'subArticle':
-        return entry.fields.url ? (
+        return entry?.fields?.url ? (
           <Hyperlink href={entry.fields.url}>{children}</Hyperlink>
         ) : null
       case 'organizationPage': {
-        const prefix = getOrganizationPrefix(entry.sys?.locale)
+        const prefix = getOrganizationPrefix(entry?.sys?.locale)
         return entry.fields.slug ? (
           <Hyperlink href={`/${prefix}/${entry.fields.slug}`}>
             {children}
@@ -195,8 +201,8 @@ export const defaultRenderNode: RenderNode = {
         ) : null
       }
       case 'organizationSubpage': {
-        const prefix = getOrganizationPrefix(entry.sys?.locale)
-        return entry.fields.slug &&
+        const prefix = getOrganizationPrefix(entry?.sys?.locale)
+        return entry?.fields?.slug &&
           entry.fields.organizationPage?.fields?.slug ? (
           <Hyperlink
             href={`/${prefix}/${entry.fields.organizationPage.fields.slug}/${entry.fields.slug}`}
@@ -213,7 +219,7 @@ export const defaultRenderNode: RenderNode = {
 
 const getOrganizationPrefix = (locale: string) => {
   if (locale && !locale.includes('is')) {
-    return 'o'
+    return `${locale}/o`
   }
   return 's'
 }
