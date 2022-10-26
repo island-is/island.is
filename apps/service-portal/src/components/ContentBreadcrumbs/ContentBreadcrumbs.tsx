@@ -82,7 +82,7 @@ const ContentBreadcrumbs: FC = () => {
   if (items.length < 2) return null
 
   return (
-    <Box paddingTop={3} paddingBottom={[2, 3]}>
+    <Box paddingTop={[0, 3]} paddingBottom={[2, 3]}>
       <Breadcrumbs color="blue400" separatorColor="blue400">
         {items.map((item, index) =>
           item.path !== undefined ? (
