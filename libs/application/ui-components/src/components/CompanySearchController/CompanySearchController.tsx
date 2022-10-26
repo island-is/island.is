@@ -10,7 +10,6 @@ import {
   useSearchCompaniesLazyQuery,
   useIsEmployerValidLazyQuery,
 } from '../../../gen/graphql'
-import { FAILSAFE_SCHEMA } from 'js-yaml'
 
 interface Props {
   id: string
@@ -136,7 +135,9 @@ export const CompanySearchController: FC<Props> = ({
   }
 
   const callValidateEmployer = (nationalId: string) => {
-    if (!validateEmployer) return
+    if (!validateEmployer) {
+      return
+    }
     getIsEmployerValid({
       variables: { input: { companyId: nationalId } },
     })

@@ -86,7 +86,6 @@ export class PaymentScheduleResolver {
   @Query(() => Boolean, {
     name: 'isEmployerValid',
   })
-  @Audit()
   async employerIsValid(
     @CurrentUser() user: User,
     @Args('input', { type: () => GetIsEmployerValidInput })
