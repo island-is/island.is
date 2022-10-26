@@ -157,6 +157,7 @@ export interface RadioField extends BaseField {
   options: MaybeWithApplicationAndField<Option[]>
   backgroundColor?: InputBackgroundColor
   largeButtons?: boolean
+  required?: boolean
   space?: BoxProps['paddingTop']
   onSelect?(s: string): void
 }

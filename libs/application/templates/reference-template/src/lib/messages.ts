@@ -87,6 +87,16 @@ export const m = defineMessages({
     defaultMessage: 'Hvar hefur þú unnið áður?',
     description: 'Some description',
   },
+  careerIndustry: {
+    id: 'example.application:career.industry',
+    defaultMessage: 'Starfsgeiri',
+    description: 'Some description',
+  },
+  careerIndustryDescription: {
+    id: 'example.application:career.industryDescription',
+    defaultMessage: 'Í hvaða geira hefur þú unnið?',
+    description: 'Some description',
+  },
   careerHistory: {
     id: 'example.application:careerHistory',
     defaultMessage: 'Hefurðu unnið yfir höfuð einhvern tímann áður?',

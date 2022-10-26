@@ -41,7 +41,7 @@ interface Props {
 }
 
 export const RadioController: FC<Props> = ({
-  defaultValue = '',
+  defaultValue,
   disabled = false,
   error,
   id,

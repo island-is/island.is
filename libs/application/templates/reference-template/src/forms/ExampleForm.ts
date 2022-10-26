@@ -10,6 +10,7 @@ import {
   buildTextField,
   buildFileUploadField,
   buildRedirectToServicePortalField,
+  buildSelectField,
 } from '@island.is/application/core'
 import {
   Comparators,
@@ -96,6 +97,18 @@ export const ExampleForm: Form = buildForm({
           id: 'history',
           title: m.history,
           children: [
+            buildSelectField({
+              id: 'careerIndustry',
+              title: m.careerIndustry,
+              description: m.careerIndustryDescription,
+              required: true,
+              options: [
+                { label: 'Hugbúnaður', value: 'software' },
+                { label: 'Fjármál', value: 'finance' },
+                { label: 'Efnahagsráðgjöf', value: 'consulting' },
+                { label: 'Önnur', value: 'other' },
+              ],
+            }),
             buildRadioField({
               id: 'careerHistory',
               title: m.careerHistory,
