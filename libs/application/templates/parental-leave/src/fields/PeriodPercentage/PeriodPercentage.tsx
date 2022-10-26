@@ -46,7 +46,9 @@ export const PeriodPercentage: FC<PeriodPercentageField> = ({
   const { formatMessage } = useLocale()
   const { setError, register } = useFormContext()
   const { description } = field
-  const { rawPeriods, applicationType } = getApplicationAnswers(application.answers)
+  const { rawPeriods, applicationType } = getApplicationAnswers(
+    application.answers,
+  )
   const currentIndex = extractRepeaterIndexFromField(field)
   const currentPeriod = rawPeriods[currentIndex]
   const [selectedValue, setSelectedValue] = useState(currentPeriod.ratio)

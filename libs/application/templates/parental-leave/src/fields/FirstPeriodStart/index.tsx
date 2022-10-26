@@ -34,10 +34,12 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
   const { register, unregister, setValue } = useFormContext()
   const { formatMessage } = useLocale()
   const expectedDateOfBirth = getExpectedDateOfBirth(application)
-  const { rawPeriods, applicationType } = getApplicationAnswers(application.answers)
+  const { rawPeriods, applicationType } = getApplicationAnswers(
+    application.answers,
+  )
   const currentIndex = extractRepeaterIndexFromField(field)
   const currentPeriod = rawPeriods[currentIndex]
-  
+
   const [statefulAnswer, setStatefulAnswer] = useState<
     ValidAnswers | undefined
   >(
