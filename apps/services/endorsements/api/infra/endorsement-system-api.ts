@@ -13,7 +13,7 @@ export const serviceSetup = (_services: {}): ServiceBuilder<'endorsement-system-
     .namespace('endorsement-system')
     .serviceAccount('endorsement-system-api')
     .command('node')
-    .args('--tls-min-v1.0', '--no-experimental-fetch', 'main.js')
+    .args('--tls-min-v1.0', 'main.js')
     .postgres(postgresInfo)
     .initContainer({
       containers: [
