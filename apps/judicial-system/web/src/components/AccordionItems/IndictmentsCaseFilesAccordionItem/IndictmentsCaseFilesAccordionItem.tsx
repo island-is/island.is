@@ -36,7 +36,6 @@ interface Props {
 
 interface CaseFileProps {
   caseFile: ReorderableItem
-  index: number
   onReorder: (id?: string) => void
   onOpen: (id: string) => void
 }
@@ -93,17 +92,21 @@ export const getFilePlacement = (fileId: string, files: ReorderableItem[]) => {
     files[i].chapter === undefined;
     i--
   ) {
-    if (files[i - 1].isDivider) {
+    if (files[i - 1] === undefined) {
+      chapter = 0
+      orderWithinChapter = counter++
+      break
+    } else if (files[i - 1].isDivider) {
       chapter = null
       orderWithinChapter = null
       break
-    }
-
-    if (files[i - 1].chapter !== undefined) {
+    } else if (files[i - 1].chapter !== undefined) {
       chapter = files[i - 1].chapter || 0 // The "|| 0" part of this line is to silence a TS error
+      orderWithinChapter = counter++
+      break
+    } else {
+      orderWithinChapter = counter++
     }
-
-    orderWithinChapter = counter++
   }
 
   return [chapter, orderWithinChapter]
@@ -163,7 +166,7 @@ const renderChapter = (chapter: number, name: string) => (
 )
 
 const CaseFile: React.FC<CaseFileProps> = (props) => {
-  const { caseFile, index, onReorder, onOpen } = props
+  const { caseFile, onReorder, onOpen } = props
   const y = useMotionValue(0)
   const boxShadow = useRaisedShadow(y)
   const controls = useDragControls()
@@ -178,8 +181,6 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
         boxShadow,
         // Prevents text selection when dragging
         userSelect: isDragging ? 'none' : 'auto',
-        // Hide the first item because we are rendering it outside the Reorder component
-        display: index === 0 ? 'none' : 'block',
       }}
       className={styles.reorderItem}
       dragListener={false}
@@ -258,12 +259,6 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
   const { onOpen } = useFileList({ caseId })
 
   const [reorderableItems, setReorderableItems] = useState<ReorderableItem[]>([
-    {
-      id: uuid(),
-      displayText: formatMessage(m.chapterIndictmentAndAccompanyingDocuments),
-      chapter: 0,
-      isDivider: false,
-    },
     ...sortedFilesInChapter(0, caseFiles),
     {
       id: uuid(),
@@ -377,22 +372,23 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
       Render the first chapter here, outside the reorder group because 
       you should not be able to put a file above the first chapter.
        */}
-      {renderChapter(
-        0,
-        formatMessage(m.chapterIndictmentAndAccompanyingDocuments),
-      )}
+      <Box marginBottom={2}>
+        {renderChapter(
+          0,
+          formatMessage(m.chapterIndictmentAndAccompanyingDocuments),
+        )}
+      </Box>
       <Reorder.Group
         axis="y"
         values={reorderableItems}
         onReorder={setReorderableItems}
         className={styles.reorderGroup}
       >
-        {reorderableItems.map((item, index) => {
+        {reorderableItems.map((item) => {
           return (
             <Box key={item.id} marginBottom={2}>
               <CaseFile
                 caseFile={item}
-                index={index}
                 onReorder={handleReorder}
                 onOpen={onOpen}
               />
