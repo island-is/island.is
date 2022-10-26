@@ -22,3 +22,8 @@ export const COMPANY_REGISTRY_COMPANIES = gql`
     }
   }
 `
+export const IS_EMPLOYER_VALID = gql`
+  query isEmployerValid($input: GetIsEmployerValidInput!) {
+    isEmployerValid(input: $input)
+  }
+`

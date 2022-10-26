@@ -150,6 +150,7 @@ const CaseQuery = gql`
         policeCaseNumber
         chapter
         orderWithinChapter
+        userGeneratedFilename
       }
       isAppealDeadlineExpired
       isAppealGracePeriodExpired
