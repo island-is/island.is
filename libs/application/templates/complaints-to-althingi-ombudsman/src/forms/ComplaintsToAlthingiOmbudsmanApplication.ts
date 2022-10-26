@@ -77,7 +77,6 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
               subTitle: dataProvider.userProfileSubTitle,
             }),
             buildDataProviderItem({
-              type: undefined,
               title: dataProvider.notificationTitle,
               subTitle: dataProvider.notificationSubTitle,
             }),

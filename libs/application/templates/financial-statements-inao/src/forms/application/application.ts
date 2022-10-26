@@ -23,6 +23,11 @@ import {
   currencyStringToNumber,
   getCurrentUserType,
 } from '../../lib/utils/helpers'
+import {
+  CurrentUserTypeProvider,
+  NationalRegistryUserApi,
+  UserProfileApi,
+} from '../../dataProviders'
 
 export const getApplication = (allowFakeData = false): Form => {
   return buildForm({
@@ -44,20 +49,17 @@ export const getApplication = (allowFakeData = false): Form => {
             checkboxLabel: m.dataCollectionCheckboxLabel,
             dataProviders: [
               buildDataProviderItem({
-                id: 'nationalRegistry',
-                type: 'NationalRegistryProvider',
+                provider: NationalRegistryUserApi,
                 title: m.dataCollectionNationalRegistryTitle,
                 subTitle: m.dataCollectionNationalRegistrySubtitle,
               }),
               buildDataProviderItem({
-                id: 'userProfile',
-                type: 'UserProfileProvider',
+                provider: UserProfileApi,
                 title: m.dataCollectionUserProfileTitle,
                 subTitle: m.dataCollectionUserProfileSubtitle,
               }),
               buildDataProviderItem({
-                id: 'currentUserType',
-                type: 'CurrentUserTypeProvider',
+                provider: CurrentUserTypeProvider,
                 title: '',
                 subTitle: '',
               }),
