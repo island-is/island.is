@@ -23,7 +23,7 @@ const ChartMonths: FC<{
   totalDays: Date[]
   lastDayInTimespan: Date
 }> = ({ initDate, rowWidth, chartColumns, totalDays, lastDayInTimespan }) => {
-
+  const { formatDateFns } = useLocale()
   return (
     <Box
       className={styles.row}
@@ -39,7 +39,7 @@ const ChartMonths: FC<{
         }}
       >
         {totalDays.map((day, index) => {
-          const { formatDateFns } = useLocale()
+
           const isInitDay = isSameDay(initDate, day)
           const isLastDayAvailable = isSameDay(lastDayInTimespan, day)
           const isFirstDayOfMonth = totalDays[index].getDate() === 1
