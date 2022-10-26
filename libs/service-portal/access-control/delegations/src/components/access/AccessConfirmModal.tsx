@@ -21,6 +21,7 @@ import { IdentityCard, Modal, ModalProps } from '..'
 import type { MappedScope } from './access.types'
 import * as accessItemStyles from './AccessItem.css'
 import * as commonAccessStyles from './access.css'
+import { isDefined } from '@island.is/shared/utils'
 
 type AccessConfirmModalProps = ModalProps & {
   delegation: AuthCustomDelegation
@@ -29,9 +30,10 @@ type AccessConfirmModalProps = ModalProps & {
     imgSrc?: string | null
   }
   scopes?: MappedScope[]
-  onConfirm(): void
+  onConfirm(): Promise<void>
   validityPeriod: Date | null
   loading: boolean
+  error?: boolean
 }
 
 export const AccessConfirmModal = ({
@@ -42,11 +44,12 @@ export const AccessConfirmModal = ({
   scopes,
   validityPeriod,
   loading,
+  error: formError,
   ...rest
 }: AccessConfirmModalProps) => {
   const { formatMessage } = useLocale()
   const { userInfo } = useAuth()
-  const [error, setError] = useState(false)
+  const [error, setError] = useState(formError ?? false)
   const { md } = useBreakpoint()
 
   const onConfirmHandler = async () => {
@@ -56,6 +59,10 @@ export const AccessConfirmModal = ({
     }
 
     onConfirm()
+  }
+
+  if (isDefined(formError) && formError !== error) {
+    setError(formError)
   }
 
   const toName = delegation?.to?.name

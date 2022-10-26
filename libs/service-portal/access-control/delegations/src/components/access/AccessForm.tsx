@@ -52,18 +52,23 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
   }>()
   const history = useHistory()
   const [formError, setFormError] = useState(false)
+  const [updateError, setUpdateError] = useState(false)
 
   const onError = () => {
     toast.error(formatMessage(coreMessages.somethingWrong))
   }
+
   const [
     updateDelegation,
-    { loading: updateDelegationLoading },
+    { loading: updateLoading },
   ] = useUpdateAuthDelegationMutation({
     onError,
   })
 
-  const { data: scopeTreeData, loading } = useAuthScopeTreeQuery({
+  const {
+    data: scopeTreeData,
+    loading: scopeTreeLoading,
+  } = useAuthScopeTreeQuery({
     variables: {
       input: {
         domain: delegation.domain.name,
@@ -105,20 +110,24 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
       return
     }
 
-    const { data, errors } = await updateDelegation({
-      variables: {
-        input: {
-          delegationId,
-          scopes,
+    try {
+      const { data, errors } = await updateDelegation({
+        variables: {
+          input: {
+            delegationId,
+            scopes,
+          },
         },
-      },
-    })
+      })
 
-    if (data && !errors && !err) {
-      history.push(ServicePortalPath.AccessControlDelegations)
-      servicePortalSaveAccessControl(
-        ServicePortalPath.AccessControlDelegationsGrant,
-      )
+      if (data && !errors && !err) {
+        history.push(ServicePortalPath.AccessControlDelegations)
+        servicePortalSaveAccessControl(
+          ServicePortalPath.AccessControlDelegationsGrant,
+        )
+      }
+    } catch (error) {
+      setUpdateError(true)
     }
   })
 
@@ -167,7 +176,7 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
         <form onSubmit={onSubmit}>
           <Box className={commonAccessStyles.resetMarginGutter}>
             <AccessItemHeader hideValidityPeriod={!!validityPeriod} />
-            {loading ? (
+            {scopeTreeLoading ? (
               <Box marginTop={3}>
                 <Stack space={3}>
                   <SkeletonLoader width="100%" height={80} />
@@ -196,11 +205,10 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
       <AccessConfirmModal
         id={`access-confirm-modal-${delegation?.id}`}
         onClose={() => {
+          setUpdateError(false)
           setOpenConfirmModal(false)
         }}
-        onConfirm={() => {
-          onSubmit()
-        }}
+        onConfirm={() => onSubmit()}
         label={formatMessage(m.accessControl)}
         title={formatMessage({
           id: 'sp.settings-access-control:access-confirm-modal-title',
@@ -214,7 +222,8 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
         }}
         scopes={scopes}
         validityPeriod={validityPeriod}
-        loading={updateDelegationLoading}
+        loading={updateLoading}
+        error={updateError}
       />
     </>
   )
