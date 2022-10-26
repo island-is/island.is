@@ -1,38 +1,29 @@
 import { Injectable } from '@nestjs/common'
 import { OwnerChangeApi } from '../../gen/fetch/apis'
-import { OwnerChange } from './vehicleOwnerChangeClient.types'
+import {
+  NewestOwnerChange,
+  OwnerChange,
+} from './vehicleOwnerChangeClient.types'
 
 @Injectable()
 export class VehicleOwnerChangeClient {
   constructor(private readonly ownerchangeApi: OwnerChangeApi) {}
 
-  public async getNewestOwnerChange(permno: string): Promise<OwnerChange> {
+  public async getNewestOwnerChange(
+    permno: string,
+  ): Promise<NewestOwnerChange> {
     const result = await this.ownerchangeApi.getOwnerChange({
       permno: permno,
     })
 
     return {
       permno: permno,
-      seller: {
-        ssn: result?.persidno || '',
-        name: result?.ownerName,
-        email: '',
-      },
-      buyer: {
-        ssn: result?.persidno || '',
-        name: result?.ownerName,
-        email: '',
-      },
+      ownerSsn: result?.persidno || '',
+      ownerName: result?.persidno || '',
       dateOfPurchase: result?.dateOfOwnerRegistration || new Date(),
       saleAmount: result?.saleAmount || 0,
       insuranceCompanyCode: result?.insuranceCompanyCode || '',
       insuranceCompanyName: result?.insuranceCompanyName,
-      operators: [], //TODOx sækja úr operators vefþjónustu
-      coOwners: result?.coOwners?.map((coOwner) => ({
-        ssn: coOwner.coOwnerPersidno || '',
-        name: coOwner.coOwnerName,
-        email: '',
-      })),
     }
   }
 

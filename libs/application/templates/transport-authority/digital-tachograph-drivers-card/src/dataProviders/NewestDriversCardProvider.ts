@@ -5,6 +5,7 @@ import {
   FailedDataProviderResult,
   StaticText,
 } from '@island.is/application/types'
+import { GET_NEWEST_DRIVERS_CARD } from '../graphql/queries'
 
 export class NewestDriversCardProvider extends BasicDataProvider {
   type = 'NewestDriversCardProvider'

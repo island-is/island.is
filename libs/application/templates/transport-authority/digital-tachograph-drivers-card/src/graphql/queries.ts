@@ -34,7 +34,6 @@ export const GET_QUALITY_PHOTO_AND_SIGNATURE = `
 export const GET_NEWEST_DRIVERS_CARD = `
   query NewestDriversCardQuery {
     digitalTachographNewestDriversCard {
-      ssn
       applicationCreatedAt
       cardNumber
       cardValidFrom

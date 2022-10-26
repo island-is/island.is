@@ -10,7 +10,7 @@ import {
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messagesx'
-import { payment } from '../lib/messages'
+import { payment, externalData } from '../lib/messages'
 
 export const ChangeOperatorOfVehicleForm: Form = buildForm({
   id: 'ChangeOperatorOfVehicleFormDraft',
@@ -38,6 +38,12 @@ export const ChangeOperatorOfVehicleForm: Form = buildForm({
               type: 'UserProfileProvider',
               title: m.userProfileInformationTitle,
               subTitle: m.userProfileInformationSubTitle,
+            }),
+            buildDataProviderItem({
+              id: 'currentVehicleList',
+              type: 'CurrentVehiclesProvider',
+              title: externalData.currentVehicles.title,
+              subTitle: externalData.currentVehicles.subTitle,
             }),
             buildDataProviderItem({
               id: 'payment',

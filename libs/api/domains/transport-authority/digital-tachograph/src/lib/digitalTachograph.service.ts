@@ -20,6 +20,7 @@ export class DigitalTachographApi {
   ) {}
 
   async checkTachoNet(input: CheckTachoNetInput): Promise<CheckTachoNetExists> {
+    //TODOx can we access application externalData instead of requiring input object?
     const result = await this.digitalTachographDriversCardClient.checkTachoNet(
       input,
     )

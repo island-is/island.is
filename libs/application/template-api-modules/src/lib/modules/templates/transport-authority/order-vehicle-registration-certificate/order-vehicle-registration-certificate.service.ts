@@ -25,14 +25,17 @@ export class OrderVehicleLicensePlateService {
     }
   }
 
-  async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
+  async submitApplication({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps): Promise<void> {
     const { paymentUrl } = application.externalData.createCharge.data as {
       paymentUrl: string
     }
     if (!paymentUrl) {
-      return {
-        success: false,
-      }
+      throw new Error(
+        'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
+      )
     }
 
     const isPayment:
@@ -46,10 +49,6 @@ export class OrderVehicleLicensePlateService {
       throw new Error(
         'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
       )
-    }
-
-    return {
-      success: true,
     }
   }
 }

@@ -44,6 +44,8 @@
     "api-domains-payment-schedule": "libs/api/domains/payment-schedule",
     "api-domains-regulations": "libs/api/domains/regulations",
     "api-domains-syslumenn": "libs/api/domains/syslumenn",
+    "api-domains-transport-authority-change-co-owner-of-vehicle": "libs/api/domains/transport-authority/change-co-owner-of-vehicle",
+    "api-domains-transport-authority-change-operator-of-vehicle": "libs/api/domains/transport-authority/change-operator-of-vehicle",
     "api-domains-transport-authority-digital-tachograph": "libs/api/domains/transport-authority/digital-tachograph",
     "api-domains-transport-authority-transfer-of-vehicle-ownership": "libs/api/domains/transport-authority/transfer-of-vehicle-ownership",
     "api-domains-user-profile": "libs/api/domains/user-profile",

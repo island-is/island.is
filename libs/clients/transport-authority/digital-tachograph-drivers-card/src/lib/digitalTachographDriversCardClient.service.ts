@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common'
+import { fail } from 'assert'
 import { map } from 'rxjs'
 import {
   DriverCardApplicationRequestDeliveryMethodEnum,
@@ -64,6 +65,20 @@ export class DigitalTachographDriversCardClient {
   }
 
   public async getNewestDriversCard(ssn: string): Promise<NewestDriversCard> {
+    // TODOx disabled untill this API goes on xroad
+    const validFrom = new Date()
+    validFrom.setFullYear(validFrom.getFullYear() - 1)
+    const validTo = new Date()
+    validTo.setFullYear(validTo.getFullYear() + 1)
+    return {
+      ssn: ssn,
+      applicationCreatedAt: validFrom,
+      cardNumber: '123456',
+      cardValidFrom: validFrom,
+      cardValidTo: validTo,
+      isValid: true,
+    }
+
     const result = await this.driversCardApi.getNewesticelandicdrivercard({
       persidno: ssn,
     })

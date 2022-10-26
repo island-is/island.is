@@ -142,6 +142,12 @@
       "@island.is/api/domains/temporary-voter-registry": [
         "libs/api/domains/temporary-voter-registry/src/index.ts"
       ],
+      "@island.is/api/domains/transport-authority/change-co-owner-of-vehicle": [
+        "libs/api/domains/transport-authority/change-co-owner-of-vehicle/src/index.ts"
+      ],
+      "@island.is/api/domains/transport-authority/change-operator-of-vehicle": [
+        "libs/api/domains/transport-authority/change-operator-of-vehicle/src/index.ts"
+      ],
       "@island.is/api/domains/transport-authority/digital-tachograph": [
         "libs/api/domains/transport-authority/digital-tachograph/src/index.ts"
       ],

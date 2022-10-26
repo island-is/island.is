@@ -3,5 +3,5 @@ export interface Operator {
   endDate?: Date | null
   ssn?: string | null
   name?: string | null
-  mainOperator?: boolean | null
+  isMainOperator?: boolean | null
 }
