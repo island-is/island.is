@@ -30,6 +30,15 @@ import {
   removeCountryCode,
   showGenericFileUpload,
   getApplicationExternalData,
+  getDurationTitle,
+  getFirstPeriodTitle,
+  getLeavePlanTitle,
+  getPeriodImageTitle,
+  getPeriodSectionTitle,
+  getRatioTitle,
+  getRightsDescTitle,
+  getStartDateDesc,
+  getStartDateTitle,
 } from '../lib/parentalLeaveUtils'
 import {
   GetPensionFunds,
@@ -63,105 +72,6 @@ import {
 } from '../types/schema'
 import { currentDateStartTime } from '../lib/parentalLeaveTemplateUtils'
 import { YesOrNo } from '../types'
-
-const getPeriodSectionTitle = (application: Application) => {
-  const appAnswers = getApplicationAnswers(application.answers)
-  if (
-    appAnswers.applicationType === PARENTAL_GRANT ||
-    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
-  ) {
-    return parentalLeaveFormMessages.shared.periodsGrantSection
-  }
-  return parentalLeaveFormMessages.shared.periodsSection
-}
-
-const getRightsDescTitle = (application: Application) => {
-  const appAnswers = getApplicationAnswers(application.answers)
-  if (
-    appAnswers.applicationType === PARENTAL_GRANT ||
-    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
-  ) {
-    return parentalLeaveFormMessages.shared.grantRightsDescription
-  }
-  return parentalLeaveFormMessages.shared.rightsDescription
-}
-
-const getPeriodImageTitle = (application: Application) => {
-  const appAnswers = getApplicationAnswers(application.answers)
-  if (
-    appAnswers.applicationType === PARENTAL_GRANT ||
-    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
-  ) {
-    return parentalLeaveFormMessages.shared.periodsImageGrantTitle
-  }
-  return parentalLeaveFormMessages.shared.periodsImageTitle
-}
-
-const getFirstPeriodTitle = (application: Application) => {
-  const appAnswers = getApplicationAnswers(application.answers)
-  if (
-    appAnswers.applicationType === PARENTAL_GRANT ||
-    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
-  ) {
-    return parentalLeaveFormMessages.firstPeriodStart.grantTitle
-  }
-  return parentalLeaveFormMessages.firstPeriodStart.title
-}
-
-const getDurationTitle = (application: Application) => {
-  const appAnswers = getApplicationAnswers(application.answers)
-  if (
-    appAnswers.applicationType === PARENTAL_GRANT ||
-    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
-  ) {
-    return parentalLeaveFormMessages.duration.grantTitle
-  }
-  return parentalLeaveFormMessages.duration.title
-}
-
-const getRatioTitle = (application: Application) => {
-  const appAnswers = getApplicationAnswers(application.answers)
-  if (
-    appAnswers.applicationType === PARENTAL_GRANT ||
-    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
-  ) {
-    return parentalLeaveFormMessages.ratio.grantTitle
-  }
-  return parentalLeaveFormMessages.ratio.title
-}
-
-const getLeavePlanTitle = (application: Application) => {
-  const appAnswers = getApplicationAnswers(application.answers)
-  if (
-    appAnswers.applicationType === PARENTAL_GRANT ||
-    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
-  ) {
-    return parentalLeaveFormMessages.leavePlan.grantTitle
-  }
-  return parentalLeaveFormMessages.leavePlan.title
-}
-
-const getStartDateTitle = (application: Application) => {
-  const appAnswers = getApplicationAnswers(application.answers)
-  if (
-    appAnswers.applicationType === PARENTAL_GRANT ||
-    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
-  ) {
-    return parentalLeaveFormMessages.startDate.grantTitle
-  }
-  return parentalLeaveFormMessages.startDate.title
-}
-
-const getStartDateDesc = (application: Application) => {
-  const appAnswers = getApplicationAnswers(application.answers)
-  if (
-    appAnswers.applicationType === PARENTAL_GRANT ||
-    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
-  ) {
-    return parentalLeaveFormMessages.startDate.grantDescription
-  }
-  return parentalLeaveFormMessages.startDate.description
-}
 
 export const ParentalLeaveForm: Form = buildForm({
   id: 'ParentalLeaveDraft',
