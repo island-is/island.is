@@ -1,1 +1,0 @@
-export { DelegationsFromMe } from './DelegationsFromMe'

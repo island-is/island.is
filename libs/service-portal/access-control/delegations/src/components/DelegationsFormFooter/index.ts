@@ -1,1 +1,0 @@
-export { DelegationsFormFooter } from './DelegationsFormFooter'

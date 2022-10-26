@@ -8,8 +8,8 @@ import {
   AlertBanner,
 } from '@island.is/island-ui/core'
 import { AuthCustomDelegation } from '@island.is/api/schema'
-import { DelegationsHeader } from '../DelegationsHeader'
-import { DelegationsEmptyState } from '../DelegationsEmptyState'
+import { DelegationsHeader } from './DelegationsHeader'
+import { DelegationsEmptyState } from './DelegationsEmptyState'
 import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
 import { AccessDeleteModal, AccessCard } from '../access'

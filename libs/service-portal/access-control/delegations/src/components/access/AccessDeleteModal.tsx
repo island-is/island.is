@@ -5,10 +5,8 @@ import { useLocale } from '@island.is/localization'
 import { formatNationalId } from '@island.is/service-portal/core'
 import { useDeleteAuthDelegationMutation } from '@island.is/service-portal/graphql'
 import { useState } from 'react'
-import { DelegationsFormFooter } from '../DelegationsFormFooter'
-import { IdentityCard } from '../IdentityCard'
-import { Modal } from '../Modal'
-import type { ModalProps } from '../Modal/Modal'
+import { DelegationsFormFooter } from '../delegations'
+import { IdentityCard, Modal, ModalProps } from '..'
 
 type AccessDeleteModalProps = ModalProps & {
   delegation: AuthCustomDelegation

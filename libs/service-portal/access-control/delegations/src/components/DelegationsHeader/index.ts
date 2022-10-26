@@ -1,1 +1,0 @@
-export { DelegationsHeader } from './DelegationsHeader'

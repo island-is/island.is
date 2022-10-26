@@ -1,1 +1,0 @@
-export { DelegationsEmptyState } from './DelegationsEmptyState'
