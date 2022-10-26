@@ -86,8 +86,21 @@ export interface ShipStatus {
 
 /** Kvótategund */
 export interface QuotaType {
+  /** kvotategund */
   id?: number
+
+  /** kvotategundHeiti */
   name: string
-  from: string
-  to: string
+
+  /** gildirTil */
+  from?: Date
+
+  /** gildirFra  */
+  to?: Date
+
+  /** thorskigildi */
+  codValue?: number
+
+  /** heildarAflamark */
+  totalCatchQuota?: number
 }

@@ -920,17 +920,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/AflamarkSkipsBreyttDTO"
+                  "$ref": "#/components/schemas/AflamarkSkipsUpphafDeilistofnDTO"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AflamarkSkipsBreyttDTO"
+                  "$ref": "#/components/schemas/AflamarkSkipsUpphafDeilistofnDTO"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AflamarkSkipsBreyttDTO"
+                  "$ref": "#/components/schemas/AflamarkSkipsUpphafDeilistofnDTO"
                 }
               }
             }
@@ -1622,6 +1622,16 @@
             "description": "Númer kvótategundar sem skal breyta.",
             "format": "int32"
           },
+          "kvotategundHeiti": {
+            "type": "string",
+            "description": "Heiti kvótategundar.",
+            "nullable": true
+          },
+          "thorskigildi": {
+            "type": "number",
+            "description": "Þorskígildisstuðull kvótategundar.",
+            "format": "float"
+          },
           "heildarAflamark": {
             "type": "integer",
             "description": "Magn heildaraflamarks fyrir kvótategund.",
@@ -1630,7 +1640,7 @@
           "hlutdeildBreytt": {
             "type": "number",
             "description": "Breytt hlutdeild fyrir kvótategund.",
-            "format": "float"
+            "format": "double"
           },
           "uthlutadAflamarkBreytt": {
             "type": "integer",
@@ -1647,12 +1657,12 @@
             "description": "Breytt magn (Kg) sem er leyfilegt að taka af næsta ári.",
             "format": "int32"
           },
-          "prosenta_aflamark_fra": {
+          "prosentaAflamarkFra": {
             "type": "integer",
             "description": "Prósenta sem er leyfilegt að flytja frá fyrir kvótategund (Gefið í heiltölu, 25 => 0,25 eða 25%).",
             "format": "int32"
           },
-          "prosenta_aflamark_til": {
+          "prosentaAflamarkTil": {
             "type": "integer",
             "description": "Prósenta sem er leyfilegt að flytja til fyrirkvótategund (Gefið í heiltölu, 25 => 0,25 eða 25%).",
             "format": "int32"
@@ -1676,6 +1686,23 @@
             "type": "integer",
             "description": "Breytt ónotað miðað við breyttar niðurstöður kvótaParams.",
             "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AflamarkSkipsUpphafDeilistofnDTO": {
+        "type": "object",
+        "properties": {
+          "skipUpplysingar": {
+            "$ref": "#/components/schemas/AflamarkSkipsUpplDTO"
+          },
+          "aflamarkstegundir": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AflamarkTegundirDeilistofnDTO"
+            },
+            "description": "Listi raunverulegrar stöðu aflamarkstegunda deilistofna.",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -1733,6 +1760,11 @@
             "type": "string",
             "description": "Heiti fisktegundar.",
             "nullable": true
+          },
+          "thorskigildi": {
+            "type": "number",
+            "description": "Þorskígildi fisktegundar. Stuðull sem segir til um verðmæti fisktegundar út frá þorsk.",
+            "format": "float"
           },
           "uthlutun": {
             "type": "integer",
@@ -1933,13 +1965,104 @@
           },
           "gildirFra": {
             "type": "string",
-            "description": "Dagsetning hvenær kvótategund tók gildi",
+            "description": "Dagsetning hvenær kvótategund tók gildi.",
             "format": "date-time"
           },
           "gildirTil": {
             "type": "string",
-            "description": "Dagsetning hvenær kvótategund fellur úr gildi",
+            "description": "Dagsetning hvenær kvótategund fellur úr gildi.",
             "format": "date-time"
+          },
+          "thorskigildi": {
+            "type": "number",
+            "description": "Þorskígildisstuðull fisktegundar.",
+            "format": "float"
+          },
+          "heildarAflamark": {
+            "type": "integer",
+            "description": "Heildar magn sem var úthlutað til aflamarks.",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AflamarkTegundirDeilistofnDTO": {
+        "type": "object",
+        "properties": {
+          "kvotategund": {
+            "type": "integer",
+            "description": "Auðkenni fisktegundar.",
+            "format": "int32"
+          },
+          "kvotategundHeiti": {
+            "type": "string",
+            "description": "Heiti fisktegundar.",
+            "nullable": true
+          },
+          "thorskigildi": {
+            "type": "number",
+            "description": "Þorskígildi fisktegundar. Stuðull sem segir til um verðmæti fisktegundar út frá þorsk.",
+            "format": "float"
+          },
+          "uthlutun": {
+            "type": "integer",
+            "description": "Magn sem skip fékk úthlutað af fisktegund á timabilinu.",
+            "format": "int32"
+          },
+          "serstokUthlutun": {
+            "type": "integer",
+            "description": "Magn sem skip fékk úthlutað sérstaklega af fisktegund á tímabilinu.",
+            "format": "int32"
+          },
+          "milliAra": {
+            "type": "integer",
+            "description": "Magn sem skip setti á milli fiskveiðiára af fisktegund.",
+            "format": "int32"
+          },
+          "milliSkipa": {
+            "type": "integer",
+            "description": "Magn sem skip setti á milli skipa af fisktegund.",
+            "format": "int32"
+          },
+          "aflamark": {
+            "type": "integer",
+            "description": "Magn aflamarks skips fyrir fisktegund (uthlutun, sertsok_uthlutun, milli_ara, milli_skipa lagt saman).",
+            "format": "int32"
+          },
+          "afli": {
+            "type": "integer",
+            "description": "Magn af fisktegund sem skipið hefur raunverulega veitt á tímabilinu.",
+            "format": "int32"
+          },
+          "stada": {
+            "type": "integer",
+            "description": "Staða skips á tímabilinu (afli dreginn frá aflamarki).",
+            "format": "int32"
+          },
+          "tilfaersla": {
+            "type": "integer",
+            "description": "Magn sem skip hefur fært til af fisktegund á aðrar fisktegundir á tímabilinu.",
+            "format": "int32"
+          },
+          "nyStada": {
+            "type": "integer",
+            "description": "Uppfærð staða skips (tekið tillit af tilfærslu: tilfærsla dregin frá stöðu).",
+            "format": "int32"
+          },
+          "aNaestaAr": {
+            "type": "integer",
+            "description": "Magn sem skip sendir á næsta ár af fisktegund fyrir tímabilið.",
+            "format": "int32"
+          },
+          "umframafli": {
+            "type": "integer",
+            "description": "magn umframafla tegundar fyrir skip á tímabilinu.",
+            "format": "int32"
+          },
+          "onotad": {
+            "type": "integer",
+            "description": "Magn fisktegundar sem er ónotuð eftir útreikninga á tímabilinu.",
+            "format": "int32"
           }
         },
         "additionalProperties": false

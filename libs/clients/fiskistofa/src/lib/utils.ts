@@ -6,7 +6,12 @@ import type {
   AflamarkTegundirByTimabilDTO,
   FisktegundDTO,
 } from '../../gen/fetch'
-import type { CatchQuotaCategory, ShipStatus, ShipInformation } from './types'
+import type {
+  CatchQuotaCategory,
+  ShipStatus,
+  ShipInformation,
+  QuotaType,
+} from './types'
 
 const mapShipInformation = (info?: AflamarkSkipsUpplDTO): ShipInformation => ({
   id: info?.einkenni ?? '',
@@ -85,11 +90,13 @@ export const mapFishes = (fishes: FisktegundDTO[]) => {
   }))
 }
 
-export const mapQuotaType = (type: AflamarkTegundirByTimabilDTO) => {
+export const mapQuotaType = (type: AflamarkTegundirByTimabilDTO): QuotaType => {
   return {
-    from: type?.gildirFra ?? '',
-    to: type?.gildirTil ?? '',
+    from: type?.gildirFra,
+    to: type?.gildirTil,
     id: type?.kvotategund,
     name: type?.kvotategundHeiti ?? '',
+    codValue: type?.thorskigildi,
+    totalCatchQuota: type?.heildarAflamark,
   }
 }
