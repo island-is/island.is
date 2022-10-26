@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { LayoutGroup } from 'framer-motion'
 
@@ -12,20 +12,13 @@ import {
   PdfButton,
   ProsecutorCaseInfo,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  Accordion,
-  AlertMessage,
-  Box,
-  Text,
-  toast,
-} from '@island.is/island-ui/core'
+import { Accordion, AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import {
   IndictmentsProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import { CaseFileCategory } from '@island.is/judicial-system/types'
-import { api } from '@island.is/judicial-system-web/src/services'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { caseFile as m } from './CaseFile.strings'
@@ -35,21 +28,6 @@ const CaseFile = () => {
     FormContext,
   )
   const { formatMessage } = useIntl()
-  const [isPdfLoading, setIsPdfLoading] = useState<boolean>(false)
-
-  const handlePdfClickFetch = async (policeCaseNumber: string) => {
-    try {
-      setIsPdfLoading(true)
-
-      const url = `${api.apiUrl}/api/case/${workingCase.id}/caseFiles/${policeCaseNumber}`
-      await fetch(url)
-
-      setIsPdfLoading(false)
-      window.open(url, '_blank')
-    } catch (e) {
-      toast.error(formatMessage(m.generatePDFError))
-    }
-  }
 
   return (
     <PageLayout
@@ -103,8 +81,8 @@ const CaseFile = () => {
                 title={formatMessage(m.pdfButtonText, {
                   policeCaseNumber: policeCaseNumber,
                 })}
-                handleClick={() => handlePdfClickFetch(policeCaseNumber)}
-                loading={isPdfLoading}
+                pdfType="caseFiles"
+                policeCaseNumber={policeCaseNumber}
               />
             </Box>
           ))}
