@@ -1,14 +1,20 @@
 import { DAYS_IN_MONTH } from './lib/directorateOfLabour.utils'
 
-export const maxDaysToGiveOrReceive = 45
 export const defaultMonths = 6
+export const usageMinMonths = 0.5
+export const usageMaxMonths = 24
+export const minPeriodDays = 14
+export const minimumPeriodStartBeforeExpectedDateOfBirth = 30 // can start 30 days before
+export const minimumRatio = 0.01
+
+export const maxDaysToGiveOrReceive = 45
 export const minMonths =
   (defaultMonths * DAYS_IN_MONTH - maxDaysToGiveOrReceive) / DAYS_IN_MONTH
 export const maxMonths =
   (defaultMonths * DAYS_IN_MONTH + maxDaysToGiveOrReceive) / DAYS_IN_MONTH
-export const minPeriodDays = 14
-export const usageMinMonths = 0.5
-export const usageMaxMonths = 24
 export const daysInMonth = DAYS_IN_MONTH
-export const minimumPeriodStartBeforeExpectedDateOfBirth = 30 // can start 30 days before
-export const minimumRatio = 0.01
+
+export const maxMultipleBirths = 3
+export const multipleBirthsDefaultDays = 90
+export const maxMultipleBirthsMonth =
+  (defaultMonths * DAYS_IN_MONTH + multipleBirthsDefaultDays) / DAYS_IN_MONTH

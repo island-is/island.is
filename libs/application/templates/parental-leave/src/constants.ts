@@ -11,6 +11,7 @@ export const FILE_SIZE_LIMIT = 10000000 // 10MB
 export const NO_UNION = 'F000'
 export const NO_PRIVATE_PENSION_FUND = 'X000'
 export const NO_UNEMPLOYED_BENEFITS = 'B000'
+export const NO_MULTIPLE_BIRTHS = '1'
 
 export enum UnEmployedBenefitTypes {
   vmst = 'Vinnumálastofnun (atvinnuleysisbætur)',

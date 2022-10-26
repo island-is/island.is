@@ -7,6 +7,7 @@ import {
   buildForm,
   buildMultiField,
   buildRadioField,
+  buildSelectField,
   buildSection,
   buildSubmitField,
   buildSubSection,
@@ -18,7 +19,10 @@ import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 import { parentalLeaveFormMessages } from '../lib/messages'
 import Logo from '../assets/Logo'
-import { isEligibleForParentalLeave } from '../lib/parentalLeaveUtils'
+import {
+  isEligibleForParentalLeave,
+  getSelectedChild,
+} from '../lib/parentalLeaveUtils'
 import {
   NO,
   YES,
@@ -27,6 +31,7 @@ import {
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
 } from '../constants'
+import { maxMultipleBirths } from '../config'
 
 const shouldRenderMockDataSubSection = !isRunningOnEnvironment('production')
 
@@ -358,6 +363,34 @@ export const PrerequisitesForm: Form = buildForm({
                   id: 'selectedChild',
                   title: parentalLeaveFormMessages.selectChild.screenTitle,
                   component: 'ChildSelector',
+                }),
+                buildCustomField({
+                  component: 'HasMultipleBirths',
+                  id: 'hasMultipleBirths',
+                  title:
+                    parentalLeaveFormMessages.selectChild.multipleBirthsName,
+                  description:
+                    parentalLeaveFormMessages.selectChild
+                      .multipleBirthsDescription,
+                  condition: (answers, externalData) =>
+                    !!answers.selectedChild &&
+                    getSelectedChild(answers, externalData)
+                      ?.parentalRelation === ParentalRelations.primary,
+                }),
+                buildSelectField({
+                  id: 'multipleBirths',
+                  title: parentalLeaveFormMessages.selectChild.multipleBirths,
+                  options: new Array(maxMultipleBirths)
+                    .fill(0)
+                    .map((_, index) => ({
+                      value: `${index + 2}`,
+                      label: `${index + 2}`,
+                    })),
+                  width: 'half',
+                  condition: (answers, externalData) =>
+                    answers?.hasMultipleBirths === YES &&
+                    getSelectedChild(answers, externalData)
+                      ?.parentalRelation === ParentalRelations.primary,
                 }),
                 buildSubmitField({
                   id: 'toDraft',

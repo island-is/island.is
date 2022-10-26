@@ -415,6 +415,22 @@ export function getApplicationAnswers(answers: Application['answers']) {
   if (!applicationType) applicationType = PARENTAL_LEAVE as string
   else applicationType = applicationType as string
 
+  const hasMultipleBirths = getValueViaPath(
+    answers,
+    'hasMultipleBirths',
+  ) as YesOrNo
+
+  const multipleBirths = getValueViaPath(answers, 'multipleBirths') as number
+
+  const multipleBirthsRequestDaysValue = getValueViaPath(
+    answers,
+    'multipleBirthsRequestDays',
+  ) as number | undefined
+  const multipleBirthsRequestDays = getOrFallback(
+    hasMultipleBirths,
+    multipleBirthsRequestDaysValue,
+  )
+
   const otherParent = (getValueViaPath(
     answers,
     'otherParentObj.chooseOtherParent',
@@ -583,6 +599,9 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   return {
     applicationType,
+    hasMultipleBirths,
+    multipleBirths,
+    multipleBirthsRequestDays,
     otherParent,
     otherParentRightOfAccess,
     pensionFund,

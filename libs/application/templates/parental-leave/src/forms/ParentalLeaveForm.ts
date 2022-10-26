@@ -759,6 +759,21 @@ export const ParentalLeaveForm: Form = buildForm({
               ],
             }),
             buildCustomField({
+              id: 'multipleBirthsRequestDays',
+              childInputIds: ['multipleBirthsRequestDays'],
+              title:
+                parentalLeaveFormMessages.shared.requestMultipleBirthsDaysTitle,
+              condition: (answers, externalData) => {
+                const canTransferRights =
+                  getSelectedChild(answers, externalData)?.parentalRelation ===
+                    ParentalRelations.primary && allowOtherParent(answers)
+                const { hasMultipleBirths } = getApplicationAnswers(answers)
+
+                return canTransferRights && hasMultipleBirths === YES
+              },
+              component: 'RequestMultipleBirthsDaysSlider',
+            }),
+            buildCustomField({
               id: 'transferRights',
               childInputIds: [
                 'transferRights',

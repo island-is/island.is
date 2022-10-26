@@ -370,6 +370,25 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'mánuðir',
       description: 'months',
     },
+    requestMultipleBirthsDaysTitle: {
+      id: 'pl.application:request.multipleBirths.daysTitle',
+      defaultMessage: 'Hversu marga daga viltu nota ( Need translated )?',
+      description: 'How many days would you like to use( Need translated )?',
+    },
+    requestMultipleBirthsDay: {
+      id: 'pl.application:request.multipleBirths.day',
+      defaultMessage:
+        '{day} dagur óskað eftir sameign daga frá annað foreldri ( Need translated )',
+      description:
+        "{day} day requested from the other parent's rights( Need translated )",
+    },
+    requestMultipleBirthsDays: {
+      id: 'pl.application:request.multipleBirths.days',
+      defaultMessage:
+        '{day} dagar óskað eftir sameign daga frá annað foreldri ( Need translated )',
+      description:
+        "{day} days requested from the other parent's rights( Need translated )",
+    },
     requestRightsDaysTitle: {
       id: 'pl.application:request.rights.daysTitle',
       defaultMessage: 'Hversu marga daga viltu biðja um?',
@@ -698,6 +717,41 @@ export const parentalLeaveFormMessages: MessageDir = {
   }),
 
   selectChild: defineMessages({
+    activeApplications: {
+      id: 'pl.application:selectChild.activeApplications',
+      defaultMessage: 'Virkar umsóknir',
+      description: 'Active applications',
+    },
+    baby: {
+      id: 'pl.application:selectChild.baby',
+      defaultMessage: 'Barn væntanlegt {dateOfBirth}',
+      description: 'Child copy radio button',
+    },
+    choose: {
+      id: 'pl.application:selectChild.choose',
+      defaultMessage: 'Velja',
+      description: 'Choose',
+    },
+    multipleBirthsName: {
+      id: 'pl.application:selectChild.multipleBirthsName',
+      defaultMessage: 'Fjölburafæðingur ( Need translated )',
+      description: 'Multiple births',
+    },
+    multipleBirthsDescription: {
+      id: 'pl.application:selectChild.multipleBirthsDescription',
+      defaultMessage: 'Er fjölburafæðingur? ( Need translated )',
+      description: 'Need translated',
+    },
+    multipleBirths: {
+      id: 'pl.application:selectChild.multipleBirths',
+      defaultMessage: 'Hvað mörg börn? ( Need translated )',
+      description: 'Need translated',
+    },
+    primaryParent: {
+      id: 'pl.application:selectChild.primaryParent',
+      defaultMessage: 'Þú ert aðalforeldri barnsins',
+      description: 'Primary parent copy',
+    },
     screenTitle: {
       id: 'pl.application:selectChild.screenTitle',
       defaultMessage: 'Upplýsingar um barn',
@@ -709,26 +763,6 @@ export const parentalLeaveFormMessages: MessageDir = {
         'Hér má sjá lista yfir börnin þín. Vinsamlegast veldu barn til að sækja um.',
       description:
         'Below you can see a list with your children. Please select a child to apply for.',
-    },
-    activeApplications: {
-      id: 'pl.application:selectChild.activeApplications',
-      defaultMessage: 'Virkar umsóknir',
-      description: 'Active applications',
-    },
-    choose: {
-      id: 'pl.application:selectChild.choose',
-      defaultMessage: 'Velja',
-      description: 'Choose',
-    },
-    baby: {
-      id: 'pl.application:selectChild.baby',
-      defaultMessage: 'Barn væntanlegt {dateOfBirth}',
-      description: 'Child copy radio button',
-    },
-    primaryParent: {
-      id: 'pl.application:selectChild.primaryParent',
-      defaultMessage: 'Þú ert aðalforeldri barnsins',
-      description: 'Primary parent copy',
     },
     secondaryParent: {
       id: 'pl.application:selectChild.secondaryParent',
