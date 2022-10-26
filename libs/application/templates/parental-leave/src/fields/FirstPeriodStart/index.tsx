@@ -34,10 +34,10 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
   const { register, unregister, setValue } = useFormContext()
   const { formatMessage } = useLocale()
   const expectedDateOfBirth = getExpectedDateOfBirth(application)
-  const { rawPeriods } = getApplicationAnswers(application.answers)
+  const { rawPeriods, applicationType } = getApplicationAnswers(application.answers)
   const currentIndex = extractRepeaterIndexFromField(field)
   const currentPeriod = rawPeriods[currentIndex]
-  const appAnswers = getApplicationAnswers(application.answers)
+  
   const [statefulAnswer, setStatefulAnswer] = useState<
     ValidAnswers | undefined
   >(
@@ -51,8 +51,8 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
   }
 
   const isGrant =
-    appAnswers.applicationType === PARENTAL_GRANT ||
-    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
+    applicationType === PARENTAL_GRANT ||
+    applicationType === PARENTAL_GRANT_STUDENTS
 
   const renderHiddenStartDateInput =
     statefulAnswer === StartDateOptions.ESTIMATED_DATE_OF_BIRTH ||

@@ -46,7 +46,7 @@ export const PeriodPercentage: FC<PeriodPercentageField> = ({
   const { formatMessage } = useLocale()
   const { setError, register } = useFormContext()
   const { description } = field
-  const { rawPeriods } = getApplicationAnswers(application.answers)
+  const { rawPeriods, applicationType } = getApplicationAnswers(application.answers)
   const currentIndex = extractRepeaterIndexFromField(field)
   const currentPeriod = rawPeriods[currentIndex]
   const [selectedValue, setSelectedValue] = useState(currentPeriod.ratio)
@@ -141,11 +141,10 @@ export const PeriodPercentage: FC<PeriodPercentageField> = ({
   const isUsingAllRemainingDays =
     canChooseRemainingDays && selectedValue === maxPercentageValue
 
-  const getRatioTitle = (application: Application) => {
-    const appAnswers = getApplicationAnswers(application.answers)
+  const getRatioTitle = () => {
     if (
-      appAnswers.applicationType === PARENTAL_GRANT ||
-      appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
+      applicationType === PARENTAL_GRANT ||
+      applicationType === PARENTAL_GRANT_STUDENTS
     ) {
       return parentalLeaveFormMessages.ratio.grantLabel
     }
