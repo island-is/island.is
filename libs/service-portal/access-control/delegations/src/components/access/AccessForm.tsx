@@ -93,11 +93,9 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
     const scopes = model[SCOPE_PREFIX].filter(
       (scope) => scope.name?.length > 0,
     ).map((scope) => ({
-      ...scope,
       // If validityPeriod exists then all scopes get the same validity period
       validTo: validityPeriod ?? (scope.validTo as Date),
       name: scope.name[0],
-      displayName: scope.displayName,
     }))
 
     const err = getValues()?.[SCOPE_PREFIX]?.every(
