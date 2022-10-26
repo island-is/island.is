@@ -81,13 +81,14 @@ export const generateApplicationApprovedByEmployerToEmployerEmail: EmployerRejec
           component: 'Copy',
           context: {
             copy: periods
-              .map(
-                (period) =>
-                  `${format(
-                    new Date(period.startDate),
-                    dateFormat.is,
-                  )} til ${format(new Date(period.endDate), dateFormat.is)}`,
-              )
+              .map((period) => {
+                if (!period) return ''
+
+                return `${format(
+                  new Date(period.startDate),
+                  dateFormat.is,
+                )} til ${format(new Date(period.endDate), dateFormat.is)}`
+              })
               .join('<br/>'),
           },
         },

@@ -284,3 +284,7 @@ export const formatDefenderRoute = (
     isIndictmentCase(caseType) ? '/akaera' : ''
   }/${id}`
 }
+
+export const splitStringByComma = (str?: string): string[] => {
+  return str?.trim().split(/[, ]+/) || []
+}
