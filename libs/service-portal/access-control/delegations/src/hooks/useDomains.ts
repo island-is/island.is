@@ -25,7 +25,9 @@ export const useDomains = () => {
   const location = useLocation()
   const history = useHistory()
   const displayNameQueryParam = useQueryParam('domain')
-  const [domainName, setDomainName] = useState<string | null>(null)
+  const [selectedDomainName, setSelectedDomainName] = useState<string | null>(
+    null,
+  )
 
   const defaultLabel = formatMessage({
     id: 'sp.access-control-delegations:all-domains',
@@ -67,7 +69,7 @@ export const useDomains = () => {
     const option = getOptionByName(value) ?? allDomainsOption
 
     const newDomainName = option.value
-    setDomainName(newDomainName)
+    setSelectedDomainName(newDomainName)
     sessionStorage.setItem('domain', newDomainName)
 
     const query = new URLSearchParams(location.search)
@@ -83,7 +85,7 @@ export const useDomains = () => {
       const sessionDomainName = sessionStorage.getItem('domain')
 
       if (sessionDomainName) {
-        setDomainName(sessionDomainName)
+        setSelectedDomainName(sessionDomainName)
       } else if (displayNameQueryParam) {
         const option = getOptionByName(displayNameQueryParam)
 
@@ -99,10 +101,11 @@ export const useDomains = () => {
   }, [data?.authDomains])
 
   return {
-    domainName: domainName === ALL_DOMAINS ? null : domainName,
+    domainName: selectedDomainName === ALL_DOMAINS ? null : selectedDomainName,
     updateDomainName,
     domainOptions: domainOptions,
-    defaultDomainOption: getOptionByName(domainName) ?? allDomainsOption,
+    defaultDomainOption:
+      getOptionByName(selectedDomainName) ?? allDomainsOption,
     loading,
   }
 }
