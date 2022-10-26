@@ -24,10 +24,4 @@ export const caseFile = defineMessages({
     description:
       'Notaður sem texti á PDF takka til að sækja gagnapakka sem PDF á skjalaskrá skrefi í ákærum.',
   },
-  generatePDFError: {
-    id: 'judicial.system.core:case_file.open_pdf_error',
-    defaultMessage: 'Ekki tókst að útbúa gagnapakka',
-    description:
-      'Notaður sem villuboð sem birtist ef ekki tekst að útbúa gagnapakka í ákærum.',
-  },
 })
