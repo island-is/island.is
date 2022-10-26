@@ -18,10 +18,10 @@ const FileSchema = z.object({
 export const ComplaintsToAlthingiOmbudsmanSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v, { params: error.required }),
   information: z.object({
-    name: z.string().nonempty(),
-    ssn: z.string().refine((x) => (x ? kennitala.isPerson(x) : false)),
-    address: z.string().nonempty(),
-    postcode: z.string().nonempty(),
+    name: z.string(),
+    ssn: z.string(),
+    address: z.string(),
+    postcode: z.string(),
     city: z.string().nonempty(),
     email: z
       .string()
