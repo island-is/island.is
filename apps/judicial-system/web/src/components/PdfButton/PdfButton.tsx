@@ -21,7 +21,7 @@ interface Props {
   useSigned?: boolean
   renderAs?: 'button' | 'row'
   handleClick?: () => void
-  policeCaseNumber?: string // Only used if pdfType is caseFiles
+  loading?: boolean
 }
 
 const PdfButton: React.FC<Props> = ({
@@ -34,14 +34,11 @@ const PdfButton: React.FC<Props> = ({
   children,
   // Overwrites the default onClick handler
   handleClick,
-  policeCaseNumber,
+  loading,
 }) => {
   const handlePdfClick = () => {
-    const newPdfType =
-      pdfType === 'caseFiles' ? `${pdfType}/${policeCaseNumber}` : pdfType
-
     window.open(
-      `${api.apiUrl}/api/case/${caseId}/${newPdfType}?useSigned=${useSigned}`,
+      `${api.apiUrl}/api/case/${caseId}/${pdfType}?useSigned=${useSigned}`,
       '_blank',
     )
   }
@@ -54,6 +51,7 @@ const PdfButton: React.FC<Props> = ({
       icon="open"
       iconType="outline"
       disabled={disabled}
+      loading={loading}
       onClick={handleClick ? handleClick : pdfType ? handlePdfClick : undefined}
     >
       {title}
