@@ -50,7 +50,7 @@ export const HealthInsuranceForm: Form = buildForm({
               defaultValue: (application: Application) =>
                 (application.externalData.nationalRegistry?.data as {
                   fullName?: string
-                })?.fullName,
+                })?.fullName ?? '',
             }),
             buildTextField({
               id: 'applicant.nationalId',
@@ -60,7 +60,7 @@ export const HealthInsuranceForm: Form = buildForm({
               defaultValue: (application: Application) =>
                 (application.externalData.nationalRegistry?.data as {
                   nationalId?: string
-                })?.nationalId,
+                })?.nationalId ?? '',
             }),
             buildTextField({
               id: 'applicant.address',
@@ -70,7 +70,7 @@ export const HealthInsuranceForm: Form = buildForm({
               defaultValue: (application: Application) =>
                 (application.externalData.nationalRegistry?.data as {
                   address?: Address
-                }).address?.streetAddress,
+                }).address?.streetAddress ?? '',
             }),
             buildTextField({
               id: 'applicant.postalCode',
@@ -80,7 +80,7 @@ export const HealthInsuranceForm: Form = buildForm({
               defaultValue: (application: Application) =>
                 (application.externalData.nationalRegistry?.data as {
                   address?: Address
-                }).address?.postalCode,
+                }).address?.postalCode ?? '',
             }),
             buildTextField({
               id: 'applicant.city',
@@ -90,7 +90,7 @@ export const HealthInsuranceForm: Form = buildForm({
               defaultValue: (application: Application) =>
                 (application.externalData.nationalRegistry?.data as {
                   address?: Address
-                }).address?.city,
+                }).address?.city ?? '',
             }),
             buildCustomField({
               id: 'applicant.citizenship',
