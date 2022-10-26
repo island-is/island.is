@@ -4,6 +4,9 @@ import { useAuthDomainsQuery } from '@island.is/service-portal/graphql'
 import { ALL_DOMAINS, ISLAND_DOMAIN } from '../constants'
 import { useQueryParam } from '@island.is/service-portal/core'
 import { useLocation, useHistory } from 'react-router-dom'
+import { storageFactory } from '@island.is/shared/utils'
+
+const sessionStore = storageFactory(() => sessionStorage)
 
 export type DomainOption = {
   label: string
@@ -70,7 +73,7 @@ export const useDomains = () => {
 
     const newDomainName = option.value
     setSelectedDomainName(newDomainName)
-    sessionStorage.setItem('domain', newDomainName)
+    sessionStore.setItem('domain', newDomainName)
 
     const query = new URLSearchParams(location.search)
 
@@ -82,7 +85,7 @@ export const useDomains = () => {
 
   useEffect(() => {
     if (data?.authDomains) {
-      const sessionDomainName = sessionStorage.getItem('domain')
+      const sessionDomainName = sessionStore.getItem('domain')
 
       if (sessionDomainName) {
         setSelectedDomainName(sessionDomainName)

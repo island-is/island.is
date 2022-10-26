@@ -34,7 +34,7 @@ import {
   useCreateAuthDelegationMutation,
   useIdentityLazyQuery,
 } from '@island.is/service-portal/graphql'
-import { useDomains } from '../../hooks/useDomains'
+import { useDomains } from '../../hooks'
 import { ALL_DOMAINS } from '../../constants'
 
 const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {

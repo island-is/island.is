@@ -13,7 +13,7 @@ import { m } from '@island.is/service-portal/core'
 import { AccessDeleteModal, AccessCard } from '../access'
 import { isDefined } from '@island.is/shared/utils'
 import { useAuthDelegationsQuery } from '@island.is/service-portal/graphql'
-import { DomainOption, useDomains } from '../../hooks/useDomains'
+import { DomainOption, useDomains } from '../../hooks'
 import { ALL_DOMAINS } from '../../constants'
 
 export const DelegationsFromMe = () => {

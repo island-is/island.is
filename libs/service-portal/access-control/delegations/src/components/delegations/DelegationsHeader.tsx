@@ -4,7 +4,7 @@ import { Box, Button, Select, SkeletonLoader } from '@island.is/island-ui/core'
 import { m, ServicePortalPath } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 import * as styles from './DelegationsHeader.css'
-import { useDomains, DomainOption } from '../../hooks/useDomains'
+import { useDomains, DomainOption } from '../../hooks'
 
 interface DelegationsHeaderProps {
   domainName?: string | null
