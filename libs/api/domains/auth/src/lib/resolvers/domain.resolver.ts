@@ -36,7 +36,7 @@ export class DomainResolver {
   }
 
   @ResolveField('organisationLogoUrl', () => String, { nullable: true })
-  async resolveOrganisationLogoKey(
+  async resolveOrganisationLogoUrl(
     @Loader(OrganizationLogoLoader)
     organizationLogoLoader: OrganizationLogoDataLoader,
     @Parent() domain: Domain,
