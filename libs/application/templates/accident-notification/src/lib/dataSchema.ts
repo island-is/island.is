@@ -65,9 +65,7 @@ export const AccidentNotificationSchema = z.object({
         address: z.object({
           city: z.string(),
           code: z.string(),
-          postalCode: z.string().refine((x) => +x >= 100 && +x <= 999, {
-            params: error.invalidValue,
-          }),
+          postalCode: z.string(),
           streetAddress: z.string(),
         }),
         age: z.number(),
@@ -95,15 +93,11 @@ export const AccidentNotificationSchema = z.object({
   timePassedHindrance: z.enum([YES, NO]),
   carAccidentHindrance: z.enum([YES, NO]),
   applicant: z.object({
-    name: z.string().refine((x) => x.trim().length > 0),
-    nationalId: z.string().refine((x) => (x ? kennitala.isPerson(x) : false)),
-    address: z.string().refine((x) => x.trim().length > 0),
-    postalCode: z.string().refine((x) => +x >= 100 && +x <= 999, {
-      params: error.invalidValue,
-    }),
-    city: z.string().refine((x) => x.trim().length > 0, {
-      params: error.invalidValue,
-    }),
+    name: z.string(),
+    nationalId: z.string(),
+    address: z.string(),
+    postalCode: z.string(),
+    city: z.string(),
     email: z.string().email(),
     phoneNumber: z.string().optional(),
   }),

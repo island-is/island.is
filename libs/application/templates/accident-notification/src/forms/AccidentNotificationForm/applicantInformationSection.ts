@@ -21,9 +21,8 @@ export const applicantInformationSection = buildSection({
           title: applicantInformation.labels.name,
           backgroundColor: 'white',
           disabled: true,
-          required: true,
           defaultValue: (application: AccidentNotification) =>
-            application.externalData?.nationalRegistry?.data?.fullName,
+            application.externalData?.nationalRegistry?.data?.fullName ?? '',
         }),
         buildTextField({
           id: 'applicant.nationalId',
@@ -32,9 +31,8 @@ export const applicantInformationSection = buildSection({
           width: 'half',
           backgroundColor: 'white',
           disabled: true,
-          required: true,
           defaultValue: (application: AccidentNotification) =>
-            application.externalData?.nationalRegistry?.data?.nationalId,
+            application.externalData?.nationalRegistry?.data?.nationalId ?? '',
         }),
         buildTextField({
           id: 'applicant.address',
@@ -42,10 +40,9 @@ export const applicantInformationSection = buildSection({
           width: 'half',
           backgroundColor: 'white',
           disabled: true,
-          required: true,
           defaultValue: (application: AccidentNotification) =>
             application.externalData?.nationalRegistry?.data?.address
-              ?.streetAddress,
+              ?.streetAddress ?? '',
         }),
         buildTextField({
           id: 'applicant.postalCode',
@@ -54,10 +51,11 @@ export const applicantInformationSection = buildSection({
           format: '###',
           backgroundColor: 'white',
           disabled: true,
-          required: true,
           defaultValue: (application: AccidentNotification) => {
-            return application.externalData?.nationalRegistry?.data?.address
-              ?.postalCode
+            return (
+              application.externalData?.nationalRegistry?.data?.address
+                ?.postalCode ?? ''
+            )
           },
         }),
         buildTextField({
@@ -66,9 +64,9 @@ export const applicantInformationSection = buildSection({
           width: 'half',
           backgroundColor: 'white',
           disabled: true,
-          required: true,
           defaultValue: (application: AccidentNotification) =>
-            application.externalData?.nationalRegistry?.data?.address?.city,
+            application.externalData?.nationalRegistry?.data?.address?.city ??
+            '',
         }),
         buildTextField({
           id: 'applicant.email',
