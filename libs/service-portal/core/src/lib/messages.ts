@@ -822,17 +822,17 @@ export const m = defineMessages({
     defaultMessage: 'Villa',
   },
   buttonCancel: {
-    id: 'application.system:button.cancel',
+    id: 'service.portal:button.cancel',
     defaultMessage: 'Hætta við',
     description: 'Cancel',
   },
   buttonDestroy: {
-    id: 'application.system:button.delete',
+    id: 'service.portal:button.delete',
     defaultMessage: 'Eyða',
     description: 'Delete',
   },
   buttonRenew: {
-    id: 'application.system:button.renew',
+    id: 'service.portal:button.renew',
     defaultMessage: 'Endurnýja',
     description: 'Renew',
   },
