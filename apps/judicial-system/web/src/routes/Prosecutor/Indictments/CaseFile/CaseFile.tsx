@@ -75,7 +75,7 @@ const CaseFile = () => {
         </Box>
         <Box marginBottom={7}>
           {workingCase.policeCaseNumbers.map((policeCaseNumber, index) => (
-            <Box marginBottom={1} key={`${policeCaseNumber}-${index}`}>
+            <Box marginBottom={2} key={`${policeCaseNumber}-${index}`}>
               <PdfButton
                 caseId={workingCase.id}
                 title={formatMessage(m.pdfButtonText, {
