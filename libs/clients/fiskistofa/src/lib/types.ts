@@ -75,6 +75,9 @@ export interface CatchQuotaCategory {
 
   /** Úthlutað/Áætlað aflamark */
   allocatedCatchQuota?: number
+
+  /** thorskigildi - Þorskígildi fisktegundar. Stuðull sem segir til um verðmæti fisktegundar út frá þorsk */
+  codEquivalent?: number
 }
 
 export interface ShipStatus {
@@ -92,14 +95,8 @@ export interface QuotaType {
   /** kvotategundHeiti */
   name: string
 
-  /** gildirTil */
-  from?: Date
-
-  /** gildirFra  */
-  to?: Date
-
   /** thorskigildi */
-  codValue?: number
+  codEquivalent?: number
 
   /** heildarAflamark */
   totalCatchQuota?: number

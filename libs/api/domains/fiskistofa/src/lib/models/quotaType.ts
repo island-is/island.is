@@ -8,9 +8,9 @@ export class FiskistofaQuotaType {
   @Field()
   name!: string
 
-  @Field()
-  from!: string
+  @Field({ nullable: true })
+  totalCatchQuota?: number
 
-  @Field()
-  to!: string
+  @Field({ nullable: true })
+  codEquivalent?: number
 }

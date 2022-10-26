@@ -12,11 +12,11 @@ export class FiskistofaShipBasicInfo {
 
   @Field()
   /** Útgerð */
-  shippingCompany!: string
+  operator!: string
 
   @Field()
   /** Útgerðarflokkur */
-  shippingClass!: string
+  typeOfVessel!: string
 
   @Field()
   /** Heimahöfn */

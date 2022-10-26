@@ -4,7 +4,6 @@ import type {
   AflamarkSkipsUpplDTO,
   AflamarkstegundirDTO,
   AflamarkTegundirByTimabilDTO,
-  FisktegundDTO,
 } from '../../gen/fetch'
 import type {
   CatchQuotaCategory,
@@ -44,6 +43,7 @@ const mapCatchQuotaCategoryForTimePeriod = (
   percentNextYearQuota: category?.prosentaANaestaArKvoti,
   percentNextYearFromQuota: category?.prosentaAfNaestaAriKvoti,
   allocatedCatchQuota: category?.uthlutadAflamarkKvoti,
+  codEquivalent: category?.thorskigildi,
 })
 
 export const mapShipStatusForTimePeriod = (
@@ -72,6 +72,7 @@ const mapCatchQuotaCategoryForCalendarYear = (
   nextYear: category?.aNaestaAr,
   excessCatch: category?.umframafli,
   unused: category?.onotad,
+  codEquivalent: category?.thorskigildi,
 })
 
 export const mapShipStatusForCalendarYear = (
@@ -83,20 +84,11 @@ export const mapShipStatusForCalendarYear = (
   ),
 })
 
-export const mapFishes = (fishes: FisktegundDTO[]) => {
-  return fishes.map((fish) => ({
-    id: fish?.fisktegundKodi,
-    name: fish?.heiti ?? '',
-  }))
-}
-
 export const mapQuotaType = (type: AflamarkTegundirByTimabilDTO): QuotaType => {
   return {
-    from: type?.gildirFra,
-    to: type?.gildirTil,
     id: type?.kvotategund,
     name: type?.kvotategundHeiti ?? '',
-    codValue: type?.thorskigildi,
+    codEquivalent: type?.thorskigildi,
     totalCatchQuota: type?.heildarAflamark,
   }
 }

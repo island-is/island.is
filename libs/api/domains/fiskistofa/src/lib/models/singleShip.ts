@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
-export class FiskistofaSingleShip {
+class FiskistofaSingleShip {
   @Field({ nullable: true })
   shipNumber?: number
 
@@ -25,4 +25,10 @@ export class FiskistofaSingleShip {
 
   @Field({ nullable: true })
   grossTons?: number
+}
+
+@ObjectType()
+export class FiskistofaSingleShipResponse {
+  @Field(() => FiskistofaSingleShip, { nullable: true })
+  fiskistofaSingleShip?: FiskistofaSingleShip | null
 }

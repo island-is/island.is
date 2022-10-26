@@ -45,6 +45,8 @@ class FiskistofaCatchQuotaCategory {
   excessCatch?: number
   @Field({ nullable: true })
   unused?: number
+  @Field({ nullable: true })
+  codEquivalent?: number
 }
 
 @ObjectType()
@@ -66,7 +68,7 @@ class FiskistofaExtendedCatchQuotaCategory extends FiskistofaCatchQuotaCategory 
 }
 
 @ObjectType()
-export class FiskistofaShipStatusInformation {
+class FiskistofaShipStatusInformation {
   @Field(() => FiskistofaShip, { nullable: true })
   shipInformation?: FiskistofaShip
 
@@ -75,7 +77,13 @@ export class FiskistofaShipStatusInformation {
 }
 
 @ObjectType()
-export class FiskistofaExtendedShipStatusInformation {
+export class FiskistofaShipStatusInformationResponse {
+  @Field(() => FiskistofaShipStatusInformation, { nullable: true })
+  fiskistofaShipStatus?: FiskistofaShipStatusInformation | null
+}
+
+@ObjectType()
+class FiskistofaExtendedShipStatusInformation {
   @Field(() => FiskistofaShip, { nullable: true })
   shipInformation?: FiskistofaShip
 
@@ -84,10 +92,24 @@ export class FiskistofaExtendedShipStatusInformation {
 }
 
 @ObjectType()
-export class FiskistofaExtendedShipStatusInformationUpdate {
+export class FiskistofaExtendedShipStatusInformationResponse {
+  @Field(() => FiskistofaExtendedShipStatusInformation, { nullable: true })
+  fiskistofaShipStatus?: FiskistofaExtendedShipStatusInformation | null
+}
+
+@ObjectType()
+class FiskistofaExtendedShipStatusInformationUpdate {
   @Field(() => FiskistofaShip, { nullable: true })
   shipInformation?: FiskistofaShip
 
   @Field(() => [FiskistofaCatchQuotaCategory], { nullable: true })
   catchQuotaCategories?: FiskistofaCatchQuotaCategory[]
+}
+
+@ObjectType()
+export class FiskistofaExtendedShipStatusInformationUpdateResponse {
+  @Field(() => FiskistofaExtendedShipStatusInformationUpdate, {
+    nullable: true,
+  })
+  fiskistofaShipStatus?: FiskistofaExtendedShipStatusInformationUpdate | null
 }

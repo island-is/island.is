@@ -105,7 +105,7 @@ export class FiskistofaApi {
     const data = await this.stadaSkipsApi?.v1StadaskipsSkipnumerFiskveidiarFiskveidiarBreyttPost(
       params,
     )
-    return mapShipStatusForTimePeriod(data)
+    return { fiskistofaShipStatus: mapShipStatusForTimePeriod(data) }
   }
 
   async updateShipQuotaStatusForTimePeriod(
@@ -115,18 +115,20 @@ export class FiskistofaApi {
       params,
     )
     return {
-      nextYearCatchQuota: data?.aNaestaArAflamark,
-      nextYearQuota: data?.aNaestaArKvotiBreytt,
-      nextYearFromQuota: data?.afNaestaAriKvotiBreytt,
-      totalCatchQuota: data?.heildarAflamark,
-      quotaShare: data?.hlutdeildBreytt,
-      id: data?.kvotategund,
-      newStatus: data?.nyStada,
-      unused: data?.onotad,
-      percentCatchQuotaFrom: data?.prosentaAflamarkFra,
-      percentCatchQuotaTo: data?.prosentaAflamarkTil,
-      excessCatch: data?.umframafli,
-      allocatedCatchQuota: data?.uthlutadAflamarkBreytt,
+      fiskistofaShipQuotaStatus: {
+        nextYearCatchQuota: data?.aNaestaArAflamark,
+        nextYearQuota: data?.aNaestaArKvotiBreytt,
+        nextYearFromQuota: data?.afNaestaAriKvotiBreytt,
+        totalCatchQuota: data?.heildarAflamark,
+        quotaShare: data?.hlutdeildBreytt,
+        id: data?.kvotategund,
+        newStatus: data?.nyStada,
+        unused: data?.onotad,
+        percentCatchQuotaFrom: data?.prosentaAflamarkFra,
+        percentCatchQuotaTo: data?.prosentaAflamarkTil,
+        excessCatch: data?.umframafli,
+        allocatedCatchQuota: data?.uthlutadAflamarkBreytt,
+      },
     }
   }
 
@@ -136,7 +138,9 @@ export class FiskistofaApi {
     const data = await this.stadaSkipsApi?.v1StadaskipsSkipnumerFiskveidiarFiskveidiarGet(
       params,
     )
-    return mapShipStatusForTimePeriod(data)
+    return {
+      fiskistofaShipStatus: mapShipStatusForTimePeriod(data),
+    }
   }
 
   async getShipStatusForCalendarYear(
@@ -145,7 +149,9 @@ export class FiskistofaApi {
     const data = await this.stadaSkipsApi?.v1StadaskipsSkipnumerAlmanaksarArDeilistofnarGet(
       params,
     )
-    return mapShipStatusForCalendarYear(data)
+    return {
+      fiskistofaShipStatus: mapShipStatusForCalendarYear(data),
+    }
   }
 
   async updateShipStatusForCalendarYear(
@@ -154,7 +160,9 @@ export class FiskistofaApi {
     const data = await this.stadaSkipsApi?.v1StadaskipsSkipnumerAlmanaksarArDeilistofnarBreyttPost(
       params,
     )
-    return mapShipStatusForCalendarYear(data)
+    return {
+      fiskistofaShipStatus: mapShipStatusForCalendarYear(data),
+    }
   }
 
   async getQuotaTypesForTimePeriod(
@@ -163,7 +171,9 @@ export class FiskistofaApi {
     const data = await this.stadaSkipsApi?.v1StadaskipsKvotategundirFiskveidiarFiskveidiarGet(
       params,
     )
-    return (data ?? []).map(mapQuotaType)
+    return {
+      fiskistofaQuotaTypes: (data ?? []).map(mapQuotaType),
+    }
   }
 
   async getQuotaTypesForCalendarYear(
@@ -172,17 +182,21 @@ export class FiskistofaApi {
     const data = await this.stadaSkipsApi?.v1StadaskipsKvotategundirAlmanaksarArGet(
       params,
     )
-    return (data ?? []).map(mapQuotaType)
+    return {
+      fiskistofaQuotaTypes: (data ?? []).map(mapQuotaType),
+    }
   }
 
   async getShips(params: V1SkipHeitiHeitiGetRequest) {
     const data = await this.skipApi?.v1SkipHeitiHeitiGet(params)
     return (data ?? []).map((ship) => ({
-      id: ship?.skipaskraNumer,
-      name: ship?.heiti ?? '',
-      shippingCompany: ship?.utgerdarflokkur ?? '',
-      shippingClass: ship?.utgerd ?? '',
-      homePort: ship?.heimahofn ?? '',
+      fiskistofaShips: {
+        id: ship?.skipaskraNumer,
+        name: ship?.heiti ?? '',
+        typeOfVessel: ship?.utgerdarflokkur ?? '',
+        operator: ship?.utgerd ?? '',
+        homePort: ship?.heimahofn ?? '',
+      },
     }))
   }
 
@@ -190,28 +204,21 @@ export class FiskistofaApi {
     try {
       const data = await this.skipApi?.v1SkipSkipnumerGet(params)
       return {
-        shipNumber: data?.skipNumer,
-        name: data?.heiti ?? '',
-        ownerName: data?.eigandiHeiti ?? '',
-        ownerSsn: data?.eigandiKennitala ?? '',
-        operatorName: data?.rekstraradiliHeiti ?? '',
-        operatorSsn: data?.rekstraradiliKennitala ?? '',
-        operatingCategory: data?.utgerdarflokkurHeiti ?? '',
-        grossTons: data?.bruttotonn,
+        fiskistofaSingleShip: {
+          shipNumber: data?.skipNumer,
+          name: data?.heiti ?? '',
+          ownerName: data?.eigandiHeiti ?? '',
+          ownerSsn: data?.eigandiKennitala ?? '',
+          operatorName: data?.rekstraradiliHeiti ?? '',
+          operatorSsn: data?.rekstraradiliKennitala ?? '',
+          operatingCategory: data?.utgerdarflokkurHeiti ?? '',
+          grossTons: data?.bruttotonn,
+        },
       }
     } catch (error) {
       if (error instanceof FetchError) {
-        if (error.status === 404) {
-          return {
-            shipNumber: undefined,
-            name: '',
-            ownerName: '',
-            ownerSsn: '',
-            operatorName: '',
-            operatorSsn: '',
-            operatingCategory: '',
-            grossTons: undefined,
-          }
+        return {
+          fiskistofaSingleShip: null,
         }
       }
       throw error
