@@ -118,8 +118,11 @@ export const defaultRenderNode: RenderNode = {
     </Box>
   ),
   [BLOCKS.OL_LIST]: (_node, children) => (
-    <Box component="ol" className={styles.orderedList}>
-      {children}
+    // An extra box container was added due to counter not resetting
+    <Box>
+      <Box component="ol" className={styles.orderedList}>
+        {children}
+      </Box>
     </Box>
   ),
   [BLOCKS.UL_LIST]: (_node, children) => (
