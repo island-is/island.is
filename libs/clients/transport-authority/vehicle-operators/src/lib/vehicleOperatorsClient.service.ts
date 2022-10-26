@@ -1,9 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { OperatorApi } from '../../gen/fetch/apis'
-import {
-  PostOperatorsEntityWithContract,
-  ReturnTypeMessage,
-} from '../../gen/fetch/models'
+import { ReturnTypeMessage } from '../../gen/fetch/models'
 import { Operator } from './vehicleOperatorsClient.types'
 
 @Injectable()

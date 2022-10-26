@@ -6,6 +6,36 @@ import { OwnerChange } from './vehicleOwnerChangeClient.types'
 export class VehicleOwnerChangeClient {
   constructor(private readonly ownerchangeApi: OwnerChangeApi) {}
 
+  public async getNewestOwnerChange(permno: string): Promise<OwnerChange> {
+    const result = await this.ownerchangeApi.getOwnerChange({
+      permno: permno,
+    })
+
+    return {
+      permno: permno,
+      seller: {
+        ssn: result?.persidno || '',
+        name: result?.ownerName,
+        email: '',
+      },
+      buyer: {
+        ssn: result?.persidno || '',
+        name: result?.ownerName,
+        email: '',
+      },
+      dateOfPurchase: result?.dateOfOwnerRegistration || new Date(),
+      saleAmount: result?.saleAmount || 0,
+      insuranceCompanyCode: result?.insuranceCompanyCode || '',
+      insuranceCompanyName: result?.insuranceCompanyName,
+      operators: [], //TODOx sækja úr operators vefþjónustu
+      coOwners: result?.coOwners?.map((coOwner) => ({
+        ssn: coOwner.coOwnerPersidno || '',
+        name: coOwner.coOwnerName,
+        email: '',
+      })),
+    }
+  }
+
   public async saveOwnerChange(
     currentUserSsn: string,
     ownerChange: OwnerChange,

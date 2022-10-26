@@ -8,7 +8,7 @@ import {
   VehicleCodetablesClientModule,
   VehicleCodetablesClientConfig,
 } from '@island.is/clients/transport-authority/vehicle-codetables'
-import { TransferOfVehicleOwnershipApiResolver } from './graphql/transferOfVehicleOwnership.resolver'
+import { MainResolver } from './graphql/main.resolver'
 import { TransferOfVehicleOwnershipApi } from './transferOfVehicleOwnership.service'
 
 @Module({
@@ -20,10 +20,7 @@ import { TransferOfVehicleOwnershipApi } from './transferOfVehicleOwnership.serv
       load: [VehicleOwnerChangeClientConfig, VehicleCodetablesClientConfig],
     }),
   ],
-  providers: [
-    TransferOfVehicleOwnershipApiResolver,
-    TransferOfVehicleOwnershipApi,
-  ],
+  providers: [MainResolver, TransferOfVehicleOwnershipApi],
   exports: [TransferOfVehicleOwnershipApi],
 })
 export class TransferOfVehicleOwnershipApiModule {}

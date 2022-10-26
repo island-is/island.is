@@ -1,9 +1,4 @@
-import {
-  Inject,
-  Injectable,
-  NotFoundException,
-  ForbiddenException,
-} from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import {
   OwnerChange,
   VehicleOwnerChangeClient,

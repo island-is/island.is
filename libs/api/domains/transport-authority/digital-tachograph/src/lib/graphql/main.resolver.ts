@@ -1,4 +1,4 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
+import { Args, Query, Resolver } from '@nestjs/graphql'
 import { ApiScope } from '@island.is/auth/scopes'
 import { UseGuards } from '@nestjs/common'
 import {
@@ -8,14 +8,29 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
-import { QualityPhotoAndSignature } from './models'
+import { CheckTachoNetInput } from './dto'
+import {
+  QualityPhotoAndSignature,
+  CheckTachoNetExists,
+  NewestDriversCard,
+} from './models'
 import { DigitalTachographApi } from '../digitalTachograph.service'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.internal)
 @Resolver()
-export class DigitalTachographApiResolver {
+export class MainResolver {
   constructor(private readonly digitalTachographApi: DigitalTachographApi) {}
+
+  @Query(() => CheckTachoNetExists)
+  digitalTachographTachoNetExists(@Args('input') input: CheckTachoNetInput) {
+    return this.digitalTachographApi.checkTachoNet(input)
+  }
+
+  @Query(() => NewestDriversCard)
+  digitalTachographNewestDriversCard(@CurrentUser() user: User) {
+    return this.digitalTachographApi.getNewestDriversCard(user.nationalId)
+  }
 
   @Query(() => QualityPhotoAndSignature)
   digitalTachographQualityPhotoAndSignature(@CurrentUser() user: User) {

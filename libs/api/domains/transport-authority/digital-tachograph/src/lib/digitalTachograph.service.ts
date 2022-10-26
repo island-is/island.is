@@ -1,21 +1,16 @@
-import {
-  Inject,
-  Injectable,
-  NotFoundException,
-  ForbiddenException,
-} from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import {
   DigitalTachographDriversCardClient,
   DriverCardApplicationResponse,
-  DriversCard,
   DriversCardApplicationRequest,
-  PhotoAndSignatureResponse,
-  TachoNetCheckRequest,
-  TachoNetCheckResponse,
 } from '@island.is/clients/transport-authority/digital-tachograph-drivers-card'
-import { User } from '@island.is/auth-nest-tools'
 import { DrivingLicenseApi } from '@island.is/clients/driving-license'
-import { QualityPhotoAndSignature } from './graphql/models'
+import {
+  QualityPhotoAndSignature,
+  CheckTachoNetExists,
+  NewestDriversCard,
+} from './graphql/models'
+import { CheckTachoNetInput } from './graphql/dto'
 
 @Injectable()
 export class DigitalTachographApi {
@@ -24,16 +19,20 @@ export class DigitalTachographApi {
     private readonly drivingLicenseApi: DrivingLicenseApi,
   ) {}
 
-  async checkTachoNet(
-    driversCardRequest: TachoNetCheckRequest,
-  ): Promise<TachoNetCheckResponse> {
-    return await this.digitalTachographDriversCardClient.checkTachoNet(
-      driversCardRequest,
+  async checkTachoNet(input: CheckTachoNetInput): Promise<CheckTachoNetExists> {
+    const result = await this.digitalTachographDriversCardClient.checkTachoNet(
+      input,
     )
+
+    const activeCard = result?.cards?.find((x) => x.isActive)
+
+    return { exists: !!activeCard }
   }
 
-  async getDriversCard(currentUserSsn: string): Promise<DriversCard> {
-    return await this.digitalTachographDriversCardClient.getDriversCard(
+  async getNewestDriversCard(
+    currentUserSsn: string,
+  ): Promise<NewestDriversCard> {
+    return await this.digitalTachographDriversCardClient.getNewestDriversCard(
       currentUserSsn,
     )
   }

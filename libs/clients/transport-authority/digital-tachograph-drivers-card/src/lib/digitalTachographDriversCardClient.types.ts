@@ -27,7 +27,7 @@ export interface TachoNetCheckResponseCard {
   isActive?: boolean
 }
 
-export interface DriversCard {
+export interface NewestDriversCard {
   ssn?: string
   applicationCreatedAt?: Date
   cardNumber?: string

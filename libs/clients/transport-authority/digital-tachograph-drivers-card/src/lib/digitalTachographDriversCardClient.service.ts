@@ -14,8 +14,8 @@ import {
 } from '../../gen/fetch/apis'
 import {
   DriverCardApplicationResponse,
-  DriversCard,
   DriversCardApplicationRequest,
+  NewestDriversCard,
   PhotoAndSignatureResponse,
   TachoNetCheckRequest,
   TachoNetCheckResponse,
@@ -63,7 +63,7 @@ export class DigitalTachographDriversCardClient {
     }
   }
 
-  public async getDriversCard(ssn: string): Promise<DriversCard> {
+  public async getNewestDriversCard(ssn: string): Promise<NewestDriversCard> {
     const result = await this.driversCardApi.getNewesticelandicdrivercard({
       persidno: ssn,
     })

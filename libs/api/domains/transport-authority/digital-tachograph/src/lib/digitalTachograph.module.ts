@@ -4,7 +4,7 @@ import {
   DigitalTachographDriversCardClientModule,
   DigitalTachographDriversCardClientConfig,
 } from '@island.is/clients/transport-authority/digital-tachograph-drivers-card'
-import { DigitalTachographApiResolver } from './graphql/digitalTachograph.resolver'
+import { MainResolver } from './graphql/main.resolver'
 import { DigitalTachographApi } from './digitalTachograph.service'
 import { DrivingLicenseApiModule } from '@island.is/clients/driving-license'
 
@@ -17,7 +17,7 @@ import { DrivingLicenseApiModule } from '@island.is/clients/driving-license'
     }),
     DrivingLicenseApiModule,
   ],
-  providers: [DigitalTachographApiResolver, DigitalTachographApi],
+  providers: [MainResolver, DigitalTachographApi],
   exports: [DigitalTachographApi],
 })
 export class DigitalTachographApiModule {}

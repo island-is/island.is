@@ -20,8 +20,8 @@ export const GET_BIRTHPLACE_AND_DOMICILE = `
   }
 `
 
-export const QUALITY_PHOTO_AND_SIGNATURE = `
-  query QualityPhotoAndSignature {
+export const GET_QUALITY_PHOTO_AND_SIGNATURE = `
+  query QualityPhotoAndSignatureQuery {
     digitalTachographQualityPhotoAndSignature {
       hasPhoto
       photoDataUri
@@ -30,3 +30,24 @@ export const QUALITY_PHOTO_AND_SIGNATURE = `
     }
   }
 `
+
+export const GET_NEWEST_DRIVERS_CARD = `
+  query NewestDriversCardQuery {
+    digitalTachographNewestDriversCard {
+      ssn
+      applicationCreatedAt
+      cardNumber
+      cardValidFrom
+      cardValidTo
+      isValid
+    }
+  }
+`
+
+// export const CHECK_TACHO_NET_EXISTS = `
+//   query TachoNetExistsQuery($input: CheckTachoNetInput!) {
+//     digitalTachographTachoNetExists(input: $input) {
+//       exists
+//     }
+//   }
+// `
