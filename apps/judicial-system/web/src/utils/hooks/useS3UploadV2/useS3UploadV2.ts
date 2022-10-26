@@ -62,11 +62,7 @@ const uploadToS3 = (
   return promise
 }
 
-export const useS3UploadV2 = (
-  caseId: string,
-  category: CaseFileCategory,
-  policeCaseNumber: string,
-) => {
+export const useS3UploadV2 = (caseId: string) => {
   const [createPresignedMutation] = useMutation<
     CreatePresignedPostMutationMutation,
     CreatePresignedPostMutationMutationVariables
@@ -75,7 +71,6 @@ export const useS3UploadV2 = (
     CreateFileMutationMutation,
     CreateFileMutationMutationVariables
   >(CreateFileMutationDocument)
-
   const [deleteFileMutation] = useMutation<
     DeleteFileMutationMutation,
     DeleteFileMutationMutationVariables
@@ -85,6 +80,8 @@ export const useS3UploadV2 = (
     (
       files: Array<[File, string]>,
       updateFile: (file: UploadFile, newId?: string) => void,
+      category: CaseFileCategory,
+      policeCaseNumber: string,
     ) => {
       files.forEach(async ([file, id]) => {
         try {
@@ -146,13 +143,7 @@ export const useS3UploadV2 = (
         }
       })
     },
-    [
-      createPresignedMutation,
-      caseId,
-      addFileToCaseMutation,
-      category,
-      policeCaseNumber,
-    ],
+    [createPresignedMutation, caseId, addFileToCaseMutation],
   )
 
   const remove = useCallback(
