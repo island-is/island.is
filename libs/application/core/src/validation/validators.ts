@@ -36,6 +36,7 @@ function populateError(
     }
     errorObject = set(errorObject, path, message)
   })
+  console.info(errorObject)
   return errorObject
 }
 
