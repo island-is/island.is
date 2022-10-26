@@ -23,7 +23,7 @@ interface Props {
   setLabelToDataSchema?: boolean
   shouldIncludeIsatNumber?: boolean
   setNationalId?: (s: string) => void
-  validateEmployer?: boolean
+  checkIfEmployerIsOnForbiddenList?: boolean
 }
 
 export const CompanySearchController: FC<Props> = ({
@@ -38,7 +38,7 @@ export const CompanySearchController: FC<Props> = ({
   colored = true,
   setLabelToDataSchema = true,
   setNationalId,
-  validateEmployer,
+  checkIfEmployerIsOnForbiddenList,
 }) => {
   const { clearErrors, setValue, getValues } = useFormContext()
   const { formatMessage } = useLocale()
@@ -135,7 +135,7 @@ export const CompanySearchController: FC<Props> = ({
   }
 
   const callValidateEmployer = (nationalId: string) => {
-    if (!validateEmployer) {
+    if (!checkIfEmployerIsOnForbiddenList) {
       return
     }
     getIsEmployerValid({
@@ -194,17 +194,21 @@ export const CompanySearchController: FC<Props> = ({
           )
         }}
       />
-      {validateEmployer && !employerValidLoading && !companyIsValid && (
-        <Box marginTop={[2, 2]}>
-          <AlertMessage
-            type="error"
-            title={formatMessage(coreErrorMessages.invalidCompanySelectedTitle)}
-            message={formatMessage(
-              coreErrorMessages.invalidCompanySelectedMessage,
-            )}
-          />
-        </Box>
-      )}
+      {checkIfEmployerIsOnForbiddenList &&
+        !employerValidLoading &&
+        !companyIsValid && (
+          <Box marginTop={[2, 2]}>
+            <AlertMessage
+              type="error"
+              title={formatMessage(
+                coreErrorMessages.invalidCompanySelectedTitle,
+              )}
+              message={formatMessage(
+                coreErrorMessages.invalidCompanySelectedMessage,
+              )}
+            />
+          </Box>
+        )}
       {noResultsFound && (
         <Box marginTop={[2, 2]}>
           <AlertMessage

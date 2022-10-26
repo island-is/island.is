@@ -177,7 +177,7 @@ export interface CompanySearchField extends BaseField {
   placeholder?: FormText
   setLabelToDataSchema?: boolean
   shouldIncludeIsatNumber?: boolean
-  validateEmployer?: boolean
+  checkIfEmployerIsOnForbiddenList?: boolean
 }
 
 export interface AsyncSelectField extends BaseField {
