@@ -15,6 +15,7 @@ import { coreMessages } from '@island.is/application/core'
 import { AuthCustomDelegation } from '@island.is/api/schema'
 import { useMemo } from 'react'
 import { m } from '@island.is/service-portal/core'
+import sortBy from 'lodash/sortBy'
 
 const isDateExpired = (date: string) => new Date(date) < new Date()
 
@@ -27,10 +28,14 @@ export const AccessCard = ({ delegation, onDelete }: AccessCardProps) => {
   const { formatMessage } = useLocale()
   const history = useHistory()
   const { pathname } = useLocation()
-  const tags = delegation.scopes.map((scope) => ({
-    name: scope.displayName,
-    isExpired: isDateExpired(scope.validTo),
-  }))
+
+  const tags = sortBy(
+    delegation.scopes.map((scope) => ({
+      name: scope.displayName,
+      isExpired: isDateExpired(scope.validTo),
+    })),
+    'name',
+  )
   const href = `${pathname}/${delegation.id}`
 
   const isExpired = useMemo(() => {
