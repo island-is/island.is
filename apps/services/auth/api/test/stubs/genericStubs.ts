@@ -1,3 +1,4 @@
+import { createNationalId } from '@island.is/testing/fixtures'
 import faker from 'faker'
 
 export type NameIdTuple = [name: string, id: string]
@@ -10,7 +11,7 @@ export const getFakeName = () =>
 
 export const getFakePerson = (): NameIdTuple => [
   getFakeName(),
-  getFakeNationalId(),
+  createNationalId('person'),
 ]
 
 export default {

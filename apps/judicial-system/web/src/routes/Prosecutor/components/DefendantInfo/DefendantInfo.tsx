@@ -22,10 +22,7 @@ import {
   Select,
   Text,
 } from '@island.is/island-ui/core'
-import {
-  defendant as defendantMessages,
-  core,
-} from '@island.is/judicial-system-web/messages'
+import { core } from '@island.is/judicial-system-web/messages'
 import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
 import {
   removeErrorMessageIfValid,
