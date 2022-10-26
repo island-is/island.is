@@ -17,7 +17,7 @@ import { DomainOption, useDomains } from '../../hooks/useDomains'
 import { ALL_DOMAINS } from '../../constants'
 
 export const DelegationsFromMe = () => {
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang = 'is' } = useLocale()
   const [delegation, setDelegation] = useState<AuthCustomDelegation | null>(
     null,
   )
@@ -28,6 +28,7 @@ export const DelegationsFromMe = () => {
       input: {
         domain: domainName,
       },
+      lang,
     },
     // Make sure that loading state is shown when refetching
     notifyOnNetworkStatusChange: true,

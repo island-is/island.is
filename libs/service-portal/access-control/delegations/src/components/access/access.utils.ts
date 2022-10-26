@@ -1,8 +1,8 @@
 import { AuthApiScopeGroup } from '@island.is/api/schema'
 import {
-  GROUP_PREFIX,
+  GROUP,
   Scope,
-  SCOPE_PREFIX,
+  SCOPE,
   AuthScopeTree,
   AUTH_API_SCOPE_GROUP_TYPE,
   ScopeGroup,
@@ -28,12 +28,12 @@ export const flattenAndExtendApiScopeGroup = (
   // Scope parent of the children
   {
     ...apiScopeGroup,
-    model: `${GROUP_PREFIX}.${startIndex}`,
+    model: `${GROUP}.${startIndex}`,
   },
   // Scope children
   ...(apiScopeGroup.children?.map((scope, childIndex) => ({
     ...scope,
-    model: `${SCOPE_PREFIX}.${startIndex + childIndex}`,
+    model: `${SCOPE}.${startIndex + childIndex}`,
   })) || []),
 ]
 
@@ -61,7 +61,7 @@ export const extendApiScope = (
 
   return {
     ...apiScope,
-    model: `${SCOPE_PREFIX}.${modelIndex}`,
+    model: `${SCOPE}.${modelIndex}`,
   }
 }
 

@@ -2,7 +2,7 @@ import gql from 'graphql-tag'
 import { authCustomDelegationFragment } from '../fragments/customDelegation'
 
 export const AUTH_DELEGATION_QUERY = gql`
-  query AuthDelegation($input: AuthDelegationInput!) {
+  query AuthDelegation($input: AuthDelegationInput!, $lang: String) {
     authDelegation(input: $input) {
       id
       type
@@ -22,7 +22,7 @@ export const AUTH_DELEGATION_QUERY = gql`
 `
 
 export const AUTH_DELEGATIONS_QUERY = gql`
-  query AuthDelegations($input: AuthDelegationsInput!) {
+  query AuthDelegations($input: AuthDelegationsInput!, $lang: String) {
     authDelegations(input: $input) {
       id
       type

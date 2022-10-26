@@ -1,4 +1,5 @@
 import { gql } from '@apollo/client'
+import { authApiScopeFragment } from './scope'
 
 export const authCustomDelegationFragment = gql`
   fragment AuthCustomDelegationFragment on AuthCustomDelegation {
@@ -8,6 +9,9 @@ export const authCustomDelegationFragment = gql`
       name
       validTo
       displayName
+      apiScope(lang: $lang) {
+        ...AuthApiScopeFragment
+      }
     }
     domain {
       name
@@ -16,4 +20,5 @@ export const authCustomDelegationFragment = gql`
       organisationLogoUrl
     }
   }
+  ${authApiScopeFragment}
 `
