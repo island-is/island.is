@@ -5,10 +5,5 @@ export const authApiScopeFragment = gql`
     name
     displayName
     description
-    group {
-      name
-      displayName
-      description
-    }
   }
 `

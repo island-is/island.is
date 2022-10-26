@@ -6,17 +6,7 @@ export const AUTH_SCOPE_TREE_QUERY = gql`
     authScopeTree(input: $input) {
       __typename
       ... on AuthApiScope {
-        name
-        displayName
-        description
-        group {
-          name
-          displayName
-          description
-          children {
-            ...AuthApiScopeFragment
-          }
-        }
+        ...AuthApiScopeFragment
       }
       ... on AuthApiScopeGroup {
         name
