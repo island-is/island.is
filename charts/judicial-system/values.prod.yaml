@@ -224,6 +224,7 @@ judicial-system-backend:
     name: 'judicial-system-backend'
 judicial-system-message-handler:
   args:
+    - '--no-experimental-fetch'
     - 'main.js'
   command:
     - 'node'
@@ -285,6 +286,7 @@ judicial-system-message-handler:
     name: 'judicial-system-message-handler'
 judicial-system-scheduler:
   args:
+    - '--no-experimental-fetch'
     - 'main.js'
   command:
     - 'node'
