@@ -40,12 +40,7 @@ export class DomainResolver {
     @Loader(OrganizationLogoLoader)
     organizationLogoLoader: OrganizationLogoDataLoader,
     @Parent() domain: Domain,
-    @Args('lang', { type: () => String, nullable: true, defaultValue: 'is' })
-    lang: string,
   ): Promise<LogoUrl> {
-    return organizationLogoLoader.load({
-      lang,
-      organizationTitle: domain.organisationLogoKey,
-    })
+    return organizationLogoLoader.load(domain.organisationLogoKey)
   }
 }

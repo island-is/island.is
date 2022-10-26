@@ -3,32 +3,20 @@ import { Injectable } from '@nestjs/common'
 
 import { NestDataLoader } from '@island.is/nest/dataloader'
 import { CmsContentfulService } from '../cms.contentful.service'
-import { OrganizationLogoInput } from '../dto/getOrganizationsLogo.input'
 
 export type LogoUrl = string | null
 
-export type OrganizationLogoDataLoader = DataLoader<
-  OrganizationLogoInput,
-  LogoUrl,
-  string
->
+export type OrganizationLogoDataLoader = DataLoader<string, LogoUrl, string>
 
 @Injectable()
-export class OrganizationLogoLoader
-  implements NestDataLoader<OrganizationLogoInput, LogoUrl> {
+export class OrganizationLogoLoader implements NestDataLoader<string, LogoUrl> {
   constructor(private readonly cmsContentfulService: CmsContentfulService) {}
 
   async loadOrganizationLogo(
-    inputs: readonly OrganizationLogoInput[],
+    organizationTitles: readonly string[],
   ): Promise<Array<LogoUrl>> {
-    // Only support one language at a time.
-    const lang = inputs[0].lang
-    const organizationTitles = inputs.map(
-      ({ organizationTitle }) => organizationTitle,
-    )
-
-    const organizationLogos = await this.cmsContentfulService.getOrganizationsLogo(
-      { organizationTitles, lang },
+    const organizationLogos = await this.cmsContentfulService.getOrganizationLogos(
+      organizationTitles.map((title) => title),
     )
 
     return organizationLogos

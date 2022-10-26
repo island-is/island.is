@@ -163,13 +163,9 @@ export class CmsContentfulService {
     }
   }
 
-  async getOrganizationsLogo({
-    lang = 'is-IS',
-    organizationTitles,
-  }: {
-    lang?: string
-    organizationTitles: string[]
-  }): Promise<Array<string | null>> {
+  async getOrganizationLogos(
+    organizationTitles: string[],
+  ): Promise<Array<string | null>> {
     const params = {
       ['content_type']: 'organization',
       select: 'fields.logo,fields.title',
@@ -177,7 +173,7 @@ export class CmsContentfulService {
     }
 
     const result = await this.contentfulRepository
-      .getLocalizedEntries<types.IOrganizationFields>(lang, params)
+      .getLocalizedEntries<types.IOrganizationFields>(null, params)
       .catch(errorHandler('getOrganizationsLogo'))
 
     return organizationTitles.map((title) => {
