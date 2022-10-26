@@ -23,6 +23,6 @@ export class OrganizationLogoLoader implements NestDataLoader<string, LogoUrl> {
   }
 
   generateDataLoader(): OrganizationLogoDataLoader {
-    return new DataLoader(this.loadOrganizationLogo.bind(this))
+    return new DataLoader((keys) => this.loadOrganizationLogo(keys))
   }
 }
