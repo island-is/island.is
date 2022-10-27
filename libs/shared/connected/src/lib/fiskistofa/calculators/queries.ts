@@ -181,11 +181,13 @@ export const GET_QUOTA_TYPES_FOR_CALENDAR_YEAR = gql`
   query FiskistofaGetQuotaTypesForCalendarYear(
     $input: FiskistofaGetQuotaTypesForCalendarYearInput!
   ) {
-    fiskistofaQuotaTypes {
-      id
-      name
-      totalCatchQuota
-      codEquivalent
+    fiskistofaGetQuotaTypesForCalendarYear(input: $input) {
+      fiskistofaQuotaTypes {
+        id
+        name
+        totalCatchQuota
+        codEquivalent
+      }
     }
   }
 `

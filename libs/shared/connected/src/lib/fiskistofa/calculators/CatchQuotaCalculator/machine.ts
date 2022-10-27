@@ -3,20 +3,18 @@ import { createMachine, assign } from 'xstate'
 import {
   FiskistofaCatchQuotaCategory as CatchQuotaCategory,
   FiskistofaExtendedCatchQuotaCategory as ExtendedCatchQuotaCategory,
-  FiskistofaExtendedShipStatusInformation as ExtendedShipStatusInformation,
   QueryFiskistofaUpdateShipStatusForTimePeriodArgs as QueryUpdateShipStatusForTimePeriodArgs,
   QueryFiskistofaGetShipStatusForTimePeriodArgs as QueryGetShipStatusForTimePeriodArgs,
   FiskistofaQuotaType as QuotaType,
   FiskistofaShip as Ship,
-  FiskistofaShipStatusInformation as ShipStatusInformation,
   QueryFiskistofaUpdateShipQuotaStatusForTimePeriodArgs as QueryUpdateShipQuotaStatusForTimePeriodArgs,
-  FiskistofaQuotaStatus as QuotaStatus,
   FiskistofaExtendedShipStatusInformationResponse,
   FiskistofaQuotaTypeResponse,
   FiskistofaExtendedShipStatusInformationUpdateResponse,
   FiskistofaQuotaStatusResponse,
 } from '@island.is/api/schema'
-import initApollo from '../../../../utils/apolloClient'
+import { sortAlpha } from '@island.is/shared/utils'
+import { initApollo } from '../../../../utils'
 import {
   GET_QUOTA_TYPES_FOR_TIME_PERIOD,
   GET_SHIP_STATUS_FOR_TIME_PERIOD,
@@ -153,7 +151,7 @@ export const machine = createMachine<Context, Event, State>(
                 selectedQuotaTypes: [],
                 quotaTypes: context.quotaTypes
                   .concat(context.selectedQuotaTypes)
-                  .sort((a, b) => a.name.localeCompare(b.name)),
+                  .sort(sortAlpha('name')),
                 data: { ...context.data, catchQuotaCategories: categories },
               }
             }),
@@ -172,7 +170,7 @@ export const machine = createMachine<Context, Event, State>(
                 !quotaTypes.map((qt) => qt.id).includes(category.id)
               ) {
                 quotaTypes.push(category)
-                quotaTypes.sort((a, b) => a.name.localeCompare(b.name))
+                quotaTypes.sort(sortAlpha('name'))
               }
 
               return {
@@ -314,9 +312,6 @@ export const machine = createMachine<Context, Event, State>(
           }),
         ])
 
-        console.log('DATA1', fiskistofaGetShipStatusForTimePeriodResponse)
-        console.log('DATA2', fiskistofaGetQuotaTypesForTimePeriodResponse)
-
         const fiskistofaShipStatus =
           fiskistofaGetShipStatusForTimePeriodResponse?.data
             ?.fiskistofaGetShipStatusForTimePeriod.fiskistofaShipStatus
@@ -337,7 +332,7 @@ export const machine = createMachine<Context, Event, State>(
           (qt) => !categoryIds.includes(qt.id),
         )
         // Order the types in ascending name order
-        quotaTypes.sort((a, b) => a.name.localeCompare(b.name))
+        quotaTypes.sort(sortAlpha('name'))
 
         const quotaData = []
 

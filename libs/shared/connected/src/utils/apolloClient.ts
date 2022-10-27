@@ -63,7 +63,7 @@ function create(initialState?: any) {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export default function initApollo(initialState?: any) {
+export function initApollo(initialState?: any) {
   // Make sure to create a new client for every server-side request so that data
   // isn't shared between connections (which would be bad)
   if (!isBrowser) {
