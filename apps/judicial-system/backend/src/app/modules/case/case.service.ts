@@ -260,15 +260,21 @@ export class CaseService {
     }
   }
 
-  addCaseCompletedMessageToQueue(caseId: string): Promise<string> {
-    return this.messageService.sendMessageToQueue({
+  async addCaseCompletedMessageToQueue(caseId: string): Promise<void> {
+    await this.messageService.sendMessageToQueue({
       type: MessageType.CASE_COMPLETED,
+      caseId,
+    })
+    await this.messageService.sendMessageToQueue({
+      type: MessageType.SEND_RULING_NOTIFICAGTION,
       caseId,
     })
   }
 
-  addCaseConnectedToCourtCaseMessageToQueue(caseId: string): Promise<string> {
-    return this.messageService.sendMessageToQueue({
+  async addCaseConnectedToCourtCaseMessageToQueue(
+    caseId: string,
+  ): Promise<void> {
+    await this.messageService.sendMessageToQueue({
       type: MessageType.CASE_CONNECTED_TO_COURT_CASE,
       caseId,
     })

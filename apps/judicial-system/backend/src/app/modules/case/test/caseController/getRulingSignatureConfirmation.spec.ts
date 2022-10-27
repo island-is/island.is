@@ -110,6 +110,10 @@ describe('CaseController - Get ruling signature confirmation', () => {
         type: MessageType.CASE_COMPLETED,
         caseId,
       })
+      expect(mockMessageService.sendMessageToQueue).toHaveBeenCalledWith({
+        type: MessageType.SEND_RULING_NOTIFICAGTION,
+        caseId,
+      })
     })
   })
 

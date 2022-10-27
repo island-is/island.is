@@ -111,11 +111,13 @@ export class MessageService {
     })
   }
 
+  // TODO: Add support for sending multiple messages
   async sendMessageToQueue(message: Message): Promise<string> {
     return this.sqs
       .send(
         new SendMessageCommand({
           QueueUrl: this.queueUrl,
+          MessageGroupId: message.caseId,
           MessageBody: JSON.stringify(message),
         }),
       )

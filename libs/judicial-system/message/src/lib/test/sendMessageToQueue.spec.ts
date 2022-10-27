@@ -12,7 +12,7 @@ interface Then {
 
 type GivenWhenThen = (message: Message) => Promise<Then>
 
-describe('MessageService - Post message to queue', () => {
+describe('MessageService - Send message to queue', () => {
   let setMocks: (mocks: unknown[]) => void
   let mockQueueUrl: string
   let mockSqs: SQSClient
@@ -46,7 +46,8 @@ describe('MessageService - Post message to queue', () => {
   each(Object.values(MessageType)).describe(
     'message posted to queue',
     (type) => {
-      const message = { type, caseId: uuid() }
+      const caseId = uuid()
+      const message = { type, caseId }
       const messageId = uuid()
       let then: Then
 
@@ -59,6 +60,7 @@ describe('MessageService - Post message to queue', () => {
       it(`should post message ${type} to queue`, () => {
         expect(mockSqs.send).toHaveBeenCalledWith({
           QueueUrl: mockQueueUrl,
+          MessageGroupId: caseId,
           MessageBody: JSON.stringify(message),
         })
         expect(then.result).toEqual(messageId)

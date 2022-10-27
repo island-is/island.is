@@ -22,32 +22,22 @@ export class MessageHandlerService implements OnModuleDestroy {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  private async handleCaseCompletedMessage(caseId: string): Promise<boolean> {
-    return (
-      (await this.rulingNotificationService.sendRulingNotification(caseId)) &&
-      (await this.caseDeliveryService.deliverCase(caseId))
-    )
-  }
-
-  private async handleCaseConnectedToCourtCaseMessage(
-    caseId: string,
-  ): Promise<boolean> {
-    return this.prosecutorDocumentsDeliveryService.deliverProsecutorDocuments(
-      caseId,
-    )
-  }
-
   private async handleMessage(message: Message): Promise<boolean> {
     this.logger.debug('Handling message', { msg: message })
 
     let handled = false
 
     switch (message.type) {
-      case MessageType.CASE_COMPLETED:
-        handled = await this.handleCaseCompletedMessage(message.caseId)
-        break
       case MessageType.CASE_CONNECTED_TO_COURT_CASE:
-        handled = await this.handleCaseConnectedToCourtCaseMessage(
+        handled = await this.prosecutorDocumentsDeliveryService.deliverProsecutorDocuments(
+          message.caseId,
+        )
+        break
+      case MessageType.CASE_COMPLETED:
+        handled = await this.caseDeliveryService.deliverCase(message.caseId)
+        break
+      case MessageType.SEND_RULING_NOTIFICAGTION:
+        handled = await this.rulingNotificationService.sendRulingNotification(
           message.caseId,
         )
         break
