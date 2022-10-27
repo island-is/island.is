@@ -281,6 +281,7 @@ export class ApplicationService {
     status: ApplicationStatus,
     lifecycle: ApplicationLifecycle,
   ) {
+    console.log('updateApplicationState', id, state, answers, assignees, status)
     const [
       numberOfAffectedRows,
       [updatedApplication],
