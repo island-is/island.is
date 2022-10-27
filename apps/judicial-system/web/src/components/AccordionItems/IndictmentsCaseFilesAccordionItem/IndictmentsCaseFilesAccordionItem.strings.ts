@@ -97,4 +97,10 @@ export const indictmentsCaseFilesAccordionItem = defineMessages({
     defaultMessage: 'Ekki tókst að endurraða skjölum',
     description: 'Notaður sem villuboð þegar endurröðun á skjölum mistókst.',
   },
+  removeFailedErrorMessage: {
+    id:
+      'judicial.system.core:indictments_case_files_accordion_item.remove_failed_error_message',
+    defaultMessage: 'Ekki tókst að eyða skjali',
+    description: 'Notaður sem villuboð þegar eyða skjali mistókst.',
+  },
 })
