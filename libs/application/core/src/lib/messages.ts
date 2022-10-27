@@ -298,6 +298,17 @@ export const coreErrorMessages = defineMessages({
     defaultMessage: 'Ógild kennitala',
     description: 'Message indicating national id is invalid',
   },
+  invalidCompanySelectedTitle: {
+    id: 'application.system:core.payment.invalidCompanySelectedTitle',
+    defaultMessage: 'Þú mátt ekki velja þetta fyrirtæki',
+    description:
+      'Title error message when a user selects company on forbidden list',
+  },
+  invalidCompanySelectedMessage: {
+    id: 'application.system:core.payment.invalidCompanySelectedMessage',
+    defaultMessage: 'Þetta fyrirtæki er á bannlista, vinsamlegast veldu annað',
+    description: 'Error message when a user selects company on forbidden list',
+  },
   noCompanySearchResultsFoundTitle: {
     id: 'application.system:core.payment.noCompanySearchResultsFoundTitle',
     defaultMessage: 'Engar niðurstöður fundust hjá fyrirtækjaskrá',

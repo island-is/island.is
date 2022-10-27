@@ -1,5 +1,5 @@
 import React, { FC, useEffect } from 'react'
-import { useMutation } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client'
 
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import { RepeaterProps, FieldBaseProps } from '@island.is/application/types'
@@ -24,11 +24,14 @@ import {
   getAvailableRightsInDays,
   getExpectedDateOfBirth,
   getApplicationAnswers,
+  calculateDaysUsedByPeriods,
 } from '../../lib/parentalLeaveUtils'
 import { parentalLeaveFormMessages } from '../../lib/messages'
-import { States } from '../../constants'
+import { NO, States } from '../../constants'
 import { useDaysAlreadyUsed } from '../../hooks/useDaysAlreadyUsed'
 import { useRemainingRights } from '../../hooks/useRemainingRights'
+import { GetApplicationInformation } from '../../graphql/queries'
+import { Period, VMSTPeriod, YesOrNo } from '../../types'
 
 type FieldProps = FieldBaseProps & {
   field?: {
@@ -59,7 +62,96 @@ const PeriodsRepeater: FC<ScreenProps> = ({
   const rights = getAvailableRightsInDays(application)
   const daysAlreadyUsed = useDaysAlreadyUsed(application)
   const remainingRights = useRemainingRights(application)
-  const { rawPeriods, periods } = getApplicationAnswers(application.answers)
+  const {
+    rawPeriods,
+    periods,
+    employerReviewerNationalRegistryId,
+  } = getApplicationAnswers(application.answers)
+  const { data, loading } = useQuery(GetApplicationInformation, {
+    variables: {
+      applicationId: application.id,
+      nationalId: application.applicant,
+      employerNationalId: employerReviewerNationalRegistryId,
+    },
+  })
+
+  useEffect(() => {
+    if (loading) {
+      return
+    }
+    const syncVMSTPeriods = async (VMSTPeriods: Period[]) => {
+      setFieldLoadingState?.(true)
+      await setRepeaterItems(VMSTPeriods)
+      setFieldLoadingState?.(false)
+    }
+
+    // If periods is not sync with VMST periods, sync it
+    const newPeriods: Period[] = []
+    const temptVMSTPeriods: Period[] = []
+    const VMSTPeriods: VMSTPeriod[] = data?.getApplicationInformation?.periods
+    VMSTPeriods?.forEach((period, index) => {
+      const obj = {
+        startDate: period.from,
+        endDate: period.to,
+        ratio: period.ratio.split(',')[0],
+        rawIndex: index,
+        firstPeriodStart:
+          period.firstPeriodStart === 'date_of_birth'
+            ? 'actualDateOfBirth'
+            : 'specificDate',
+        useLength: NO as YesOrNo,
+      }
+      if (
+        period.paid ||
+        new Date(period.from).getTime() <= new Date().getTime()
+      ) {
+        newPeriods.push(obj)
+      }
+      temptVMSTPeriods.push(obj)
+    })
+
+    let index = newPeriods.length
+    if (index > 0) {
+      const VMSTEndDate = new Date(newPeriods[index - 1].endDate)
+      periods.forEach((period) => {
+        if (new Date(period.startDate) > VMSTEndDate) {
+          newPeriods.push({ ...period, rawIndex: index })
+          index += 1
+        }
+      })
+
+      let isMustSync = false
+      const usedDayNewPeriods = calculateDaysUsedByPeriods(newPeriods)
+      if (periods.length !== newPeriods.length) {
+        if (usedDayNewPeriods > rights) {
+          syncVMSTPeriods(temptVMSTPeriods)
+        } else {
+          syncVMSTPeriods(newPeriods)
+        }
+      } else {
+        newPeriods.forEach((period, i) => {
+          if (
+            new Date(period.startDate).getTime() !==
+              new Date(periods[i].startDate).getTime() ||
+            new Date(period.endDate).getTime() !==
+              new Date(periods[i].endDate).getTime() ||
+            period.ratio !== periods[i].ratio ||
+            period.firstPeriodStart !== periods[i].firstPeriodStart
+          ) {
+            isMustSync = true
+          }
+        })
+      }
+
+      if (isMustSync) {
+        if (usedDayNewPeriods > rights) {
+          syncVMSTPeriods(temptVMSTPeriods)
+        } else {
+          syncVMSTPeriods(newPeriods)
+        }
+      }
+    }
+  }, [loading])
 
   useEffect(() => {
     if (!editable) {

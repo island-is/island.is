@@ -26,11 +26,11 @@ import { Individual, PersonalInfo } from '../types'
 import { format as formatNationalId } from 'kennitala'
 import type { User } from '@island.is/api/domains/national-registry'
 import { UserProfile } from '../types/schema'
-import { removeCountryCode } from '../lib/utils'
 import { fakeDataSection } from './fakeDataSection'
 import { MaritalStatusApi } from '../dataProviders'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
+import { removeCountryCode } from '@island.is/application/ui-components'
 
 export const spouseConfirmation = ({ allowFakeData = false }): Form =>
   buildForm({

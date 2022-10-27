@@ -7,7 +7,7 @@ FROM $DOCKER_IMAGE_REGISTRY/docker/library/node:12-alpine3.14 as build
 
 ADD infra/package.json infra/yarn.lock /app/infra/
 WORKDIR /app/infra
-RUN yarn install --frozen-lockfile
+RUN yarn install --immutable
 
 ADD infra/ /app/infra/
 ADD apps /app/apps/

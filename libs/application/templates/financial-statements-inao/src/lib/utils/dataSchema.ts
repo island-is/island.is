@@ -65,29 +65,8 @@ const liability = z.object({
   shortTerm: z.string().refine((x) => !!x, { params: m.required }),
   total: z.string().refine((x) => !!x, { params: m.required }),
 })
-
-const cemetryAsset = z.object({
-  currentAssets: z.string().refine((x) => !!x, { params: m.required }),
-  fixedAssetsTotal: z.string().refine((x) => !!x, { params: m.required }),
+const equityAndLiabilities = z.object({
   total: z.string(),
-})
-
-const cemetryEquity = z.object({
-  equityAtTheBeginningOfTheYear: z
-    .string()
-    .refine((x) => !!x, { params: m.required }),
-  operationResult: z.string(),
-  revaluationDueToPriceChanges: z
-    .string()
-    .refine((x) => !!x, { params: m.required }),
-  reevaluateOther: z.string().refine((x) => !!x, { params: m.required }),
-  total: z.string(),
-})
-
-const cemetryLiability = z.object({
-  longTerm: z.string().refine((x) => !!x, { params: m.required }),
-  shortTerm: z.string().refine((x) => !!x, { params: m.required }),
-  total: z.string().refine((x) => !!x, { params: m.required }),
 })
 
 const cemetryOperation = z.object({
@@ -112,6 +91,30 @@ const cemetryExpense = z.object({
   cemeteryFundExpense: z.string().refine((x) => !!x, { params: m.required }),
   otherOperationCost: z.string().refine((x) => !!x, { params: m.required }),
   depreciation: z.string().refine((x) => !!x, { params: m.required }),
+  total: z.string(),
+})
+
+const cemetryEquity = z.object({
+  equityAtTheBeginningOfTheYear: z
+    .string()
+    .refine((x) => !!x, { params: m.required }),
+  operationResult: z.string(),
+  revaluationDueToPriceChanges: z
+    .string()
+    .refine((x) => !!x, { params: m.required }),
+  reevaluateOther: z.string().refine((x) => !!x, { params: m.required }),
+  total: z.string(),
+})
+
+const cemetryLiability = z.object({
+  longTerm: z.string().refine((x) => !!x, { params: m.required }),
+  shortTerm: z.string().refine((x) => !!x, { params: m.required }),
+  total: z.string().refine((x) => !!x, { params: m.required }),
+})
+
+const cemetryAsset = z.object({
+  currentAssets: z.string().refine((x) => !!x, { params: m.required }),
+  fixedAssetsTotal: z.string().refine((x) => !!x, { params: m.required }),
   total: z.string(),
 })
 
@@ -217,9 +220,10 @@ export const dataSchema = z.object({
   capitalNumbers,
   cemetryIncome,
   cemetryExpense,
-  cemetryAsset,
   cemetryEquity,
   cemetryLiability,
+  cemetryAsset,
+  equityAndLiabilities,
   cemetryCaretaker,
   cemetryOperation,
   asset,

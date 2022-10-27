@@ -24,8 +24,15 @@ import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { parentalLeaveFormMessages } from '../lib/messages'
 import Logo from '../assets/Logo'
 import { isEligibleForParentalLeave } from '../lib/parentalLeaveUtils'
-import { NO, YES, ParentalRelations } from '../constants'
 import { ChildrenApi } from '../dataProviders'
+import {
+  NO,
+  YES,
+  ParentalRelations,
+  PARENTAL_LEAVE,
+  PARENTAL_GRANT,
+  PARENTAL_GRANT_STUDENTS,
+} from '../constants'
 
 const shouldRenderMockDataSubSection = !isRunningOnEnvironment('production')
 
@@ -253,6 +260,47 @@ export const PrerequisitesForm: Form = buildForm({
               }),
             ]
           : []),
+        buildSubSection({
+          id: 'applicationType',
+          title: parentalLeaveFormMessages.shared.applicationTypeTitle,
+          children: [
+            buildRadioField({
+              id: 'applicationType.option',
+              title: parentalLeaveFormMessages.shared.applicationTypeTitle,
+              description:
+                parentalLeaveFormMessages.shared
+                  .applicationParentalLeaveDescription,
+              options: [
+                {
+                  value: PARENTAL_LEAVE,
+                  label:
+                    parentalLeaveFormMessages.shared
+                      .applicationParentalLeaveTitle,
+                  subLabel: parentalLeaveFormMessages.shared
+                    .applicationParentalLeaveSubTitle.defaultMessage as string,
+                },
+                {
+                  value: PARENTAL_GRANT,
+                  label:
+                    parentalLeaveFormMessages.shared
+                      .applicationParentalGrantUnemployedTitle,
+                  subLabel: parentalLeaveFormMessages.shared
+                    .applicationParentalGrantUnemployedSubTitle
+                    .defaultMessage as string,
+                },
+                {
+                  value: PARENTAL_GRANT_STUDENTS,
+                  label:
+                    parentalLeaveFormMessages.shared
+                      .applicationParentalGrantStudentTitle,
+                  subLabel: parentalLeaveFormMessages.shared
+                    .applicationParentalGrantStudentSubTitle
+                    .defaultMessage as string,
+                },
+              ],
+            }),
+          ],
+        }),
         buildSubSection({
           id: 'externalData',
           title: parentalLeaveFormMessages.shared.externalDataSubSection,

@@ -20,6 +20,14 @@ export interface PersonInformation {
 
 export type YesOrNo = typeof NO | typeof YES
 
+export interface VMSTPeriod {
+  from: string
+  to: string
+  ratio: string
+  firstPeriodStart: string
+  paid: boolean
+}
+
 export interface Period {
   startDate: string
   endDate: string

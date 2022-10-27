@@ -193,13 +193,18 @@ export function buildAsyncSelectField(
 export function buildCompanySearchField(
   data: Omit<CompanySearchField, 'type' | 'component' | 'children'>,
 ): CompanySearchField {
-  const { placeholder, shouldIncludeIsatNumber } = data
+  const {
+    placeholder,
+    shouldIncludeIsatNumber,
+    checkIfEmployerIsOnForbiddenList,
+  } = data
 
   return {
     ...extractCommonFields(data),
     children: undefined,
     placeholder,
     shouldIncludeIsatNumber,
+    checkIfEmployerIsOnForbiddenList,
     type: FieldTypes.COMPANY_SEARCH,
     component: FieldComponents.COMPANY_SEARCH,
   }

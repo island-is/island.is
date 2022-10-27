@@ -524,7 +524,7 @@ export const m = defineMessages({
   },
   equity: {
     id: 'fsn.application:keyNumbers.equity',
-    defaultMessage: 'Eigið fé samtals',
+    defaultMessage: 'Eigið fé alls',
     description: 'total equity',
   },
   equityAtTheBeginningOfTheYear: {
@@ -764,11 +764,21 @@ export const m = defineMessages({
     defaultMessage: 'Reyndu aftur síðar',
     description: 'Unhandled error in data provider',
   },
+  genericError: {
+    id: 'fsn.application:error.genericError',
+    defaultMessage: 'Eitthvað fór úrskeiðis',
+    description: 'Generic error message',
+  },
   submitErrorTitle: {
     id: 'fsn.application:submitErrorTitle',
     defaultMessage: 'Móttaka ársreiknings tókst ekki',
     description:
       'Title that shows up when an error occurs while submitting the application',
+  },
+  equityDebtsAssetsValidatorError: {
+    id: 'fsn.application:equityValidatorError',
+    defaultMessage: 'Skuldir og eigið fé þarf að vera jafnt og eignir samtals',
+    description: 'Equity + debts shout equal assets',
   },
   submitErrorMessage: {
     id: 'fsn.application:submitErrorMessage',
