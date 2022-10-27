@@ -5,6 +5,6 @@ export class NationalRegistryReligion {
   @Field(() => String, { nullable: true })
   name?: string | null
 
-  @Field(() => String)
-  code!: string
+  @Field(() => String, { nullable: true })
+  code?: string | null
 }

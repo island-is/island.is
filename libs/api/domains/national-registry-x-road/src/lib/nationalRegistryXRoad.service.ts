@@ -185,7 +185,8 @@ export class NationalRegistryXRoadService {
     )
   }
 
-  async getReligions(): Promise<NationalRegistryReligion> {
-    return this.getReligions()
+  async getReligions(): Promise<NationalRegistryReligion[] | null> {
+    const religions = await this.nationalRegistryApi.getReligionCodes()
+    return religions
   }
 }

@@ -96,14 +96,4 @@ export class NationalRegistryXRoadResolver {
   ): Promise<NationalRegistryCitizenship | null> {
     return this.nationalRegistryXRoadService.getCitizenship(person.nationalId)
   }
-
-  @Query(() => NationalRegistryReligion, {
-    name: 'nationalRegistryReligions',
-    nullable: true,
-  })
-  @Audit()
-  async nationalRegistryReligions(
-  ): Promise<NationalRegistryReligion | null> {
-    return this.nationalRegistryXRoadService.getReligions()
-  }
 }

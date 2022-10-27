@@ -33,6 +33,7 @@ import { UserProfile } from '../types/schema'
 import { fakeDataSection } from './fakeDataSection'
 import { dataCollection } from './sharedSections/dataCollection'
 import { removeCountryCode } from '@island.is/application/ui-components'
+import { Religions } from '../dataProviders/ReligionsProvider'
 
 export const getApplication = ({ allowFakeData = false }): Form => {
   return buildForm({
@@ -316,10 +317,14 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     id: 'ceremony.society',
                     title: m.ceremonyAtReligiousLifeViewingSociety,
                     placeholder: m.ceremonyChooseSociety,
-                    options: () => {
-                      return ReligiousLifeViewingSocieties.map((society) => ({
-                        value: society,
-                        label: society,
+                    options: ({
+                      externalData: {
+                        religions: { data },
+                      },
+                    }) => {
+                      return (data as Religions[]).map((society) => ({
+                        value: society.name,
+                        label: society.name,
                       }))
                     },
                     condition: (answers) =>
