@@ -261,14 +261,14 @@ export class CaseService {
   }
 
   addCaseCompletedMessageToQueue(caseId: string): Promise<string> {
-    return this.messageService.postMessageToQueue({
+    return this.messageService.sendMessageToQueue({
       type: MessageType.CASE_COMPLETED,
       caseId,
     })
   }
 
   addCaseConnectedToCourtCaseMessageToQueue(caseId: string): Promise<string> {
-    return this.messageService.postMessageToQueue({
+    return this.messageService.sendMessageToQueue({
       type: MessageType.CASE_CONNECTED_TO_COURT_CASE,
       caseId,
     })

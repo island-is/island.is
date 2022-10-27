@@ -41,7 +41,7 @@ describe('CaseController - Get ruling signature confirmation', () => {
     mockMessageService = messageService
     mockAwsS3Service = awsS3Service
 
-    const mockPostMessageToQueue = mockMessageService.postMessageToQueue as jest.Mock
+    const mockPostMessageToQueue = mockMessageService.sendMessageToQueue as jest.Mock
     mockPostMessageToQueue.mockResolvedValue(uuid())
     const mockPutObject = mockAwsS3Service.putObject as jest.Mock
     mockPutObject.mockResolvedValue(uuid())
@@ -106,7 +106,7 @@ describe('CaseController - Get ruling signature confirmation', () => {
     it('should return success', () => {
       expect(then.result).toEqual({ documentSigned: true })
       expect(mockAwsS3Service.putObject).toHaveBeenCalled()
-      expect(mockMessageService.postMessageToQueue).toHaveBeenCalledWith({
+      expect(mockMessageService.sendMessageToQueue).toHaveBeenCalledWith({
         type: MessageType.CASE_COMPLETED,
         caseId,
       })
@@ -212,7 +212,7 @@ describe('CaseController - Get ruling signature confirmation', () => {
       expect(then.result.code).toBeUndefined()
 
       expect(mockCaseModel.update).not.toHaveBeenCalled()
-      expect(mockMessageService.postMessageToQueue).not.toHaveBeenCalled()
+      expect(mockMessageService.sendMessageToQueue).not.toHaveBeenCalled()
     })
   })
 })

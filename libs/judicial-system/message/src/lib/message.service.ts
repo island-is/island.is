@@ -92,7 +92,7 @@ export class MessageService {
       })
   }
 
-  async postMessageToQueue(message: Message): Promise<string> {
+  async sendMessageToQueue(message: Message): Promise<string> {
     return this.sqs
       .send(
         new SendMessageCommand({

@@ -98,7 +98,7 @@ beforeAll(async () => {
             }),
         })
         .overrideProvider(MessageService)
-        .useValue({ postMessageToQueue: () => uuid() }),
+        .useValue({ sendMessageToQueue: () => uuid() }),
   })
 
   sequelize = await app.resolve(getConnectionToken() as Type<Sequelize>)
