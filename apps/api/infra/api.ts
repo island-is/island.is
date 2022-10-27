@@ -38,6 +38,7 @@ export const serviceSetup = (services: {
       '--tls-min-v1.0',
       '--no-experimental-fetch',
       '--openssl-legacy-provider',
+      '--tls-cipher-list=DEFAULT@SECLEVEL=0',
       'main.js',
     )
 
