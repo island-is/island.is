@@ -48,6 +48,7 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
       variables: { input: { cursor: '1' } },
     },
   )
+
   const assetData = data?.assetsOverview || {}
 
   const paginate = () => {
