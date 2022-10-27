@@ -95,7 +95,7 @@ export const AccessConfirmModal = ({
           {fromName && fromNationalId && (
             <IdentityCard
               label={formatMessage({
-                id: 'sp.access-control-delegations.delegation-to',
+                id: 'sp.access-control-delegations:delegation-to',
                 defaultMessage: 'Aðgangsveitandi',
               })}
               title={fromName}
@@ -106,7 +106,7 @@ export const AccessConfirmModal = ({
           {toName && toNationalId && (
             <IdentityCard
               label={formatMessage({
-                id: 'sp.access-control-delegations:signed-in-user',
+                id: 'sp.access-control-delegations:access-holder',
                 defaultMessage: 'Aðgangshafi',
               })}
               title={toName}
@@ -182,7 +182,7 @@ export const AccessConfirmModal = ({
                           {!md && (
                             <Text variant="small" fontWeight="semiBold">
                               {formatMessage({
-                                id: 'sp.access-control-delegation:grant',
+                                id: 'sp.access-control-delegations:grant',
                                 defaultMessage: 'Heimild',
                               })}
                             </Text>

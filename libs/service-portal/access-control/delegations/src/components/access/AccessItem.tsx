@@ -208,7 +208,7 @@ export const AccessItem = ({
                     {!md && (
                       <Text variant="small" fontWeight="semiBold">
                         {formatMessage({
-                          id: 'sp.access-control-delegation:grant',
+                          id: 'sp.access-control-delegations:grant',
                           defaultMessage: 'Heimild',
                         })}
                       </Text>

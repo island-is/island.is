@@ -95,7 +95,7 @@ export const AccessDeleteModal = ({
           {fromName && fromNationalId && (
             <IdentityCard
               label={formatMessage({
-                id: 'sp.access-control-delegations.delegation-to',
+                id: 'sp.access-control-delegations:delegation-to',
                 defaultMessage: 'Aðgangsveitandi',
               })}
               title={fromName}
@@ -106,7 +106,7 @@ export const AccessDeleteModal = ({
           {toName && toNationalId && (
             <IdentityCard
               label={formatMessage({
-                id: 'sp.access-control-delegations:signed-in-user',
+                id: 'sp.access-control-delegations:access-holder',
                 defaultMessage: 'Aðgangshafi',
               })}
               title={toName}
