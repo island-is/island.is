@@ -20,8 +20,7 @@ export const m = defineMessages({
   },
   introSectionDescription: {
     id: 'mac.application:intro.introSection.description#markdown',
-    defaultMessage: `Í þessu ferli fer fram könnun á hvort öll skilyrði eru uppfyllt til að hjónavígsla megi fara fram. Eftir að þú hefur fyllt út þessa umsókn verður hún send áfram á þinn 
-    maka og á þá svaramenn sem tilgreindir eru í ferlinu. Ef þið uppfyllið öll skilyrði til að ganga í hjónaband gefur sýslumaður út svokallað könnunarvottorð sem vígsluaðili notar til að tilkynna Þjóðskrá Íslands um að hjónavígsla hafi farið fram. Könnunarvottorð gildir í 30 daga og þarf hjónavígsla því að fara fram innan þess gildistíma. Þetta ferli vistast sjálfkrafa á meðan það er fyllt út og hægt er að opna það aftur undir umsóknum inni á Mínar síður á Ísland.is. Þar getur þú einnig fylgst með stöðu mála eftir að öll gögn hafa verið send inn. Meðhöndlun umsóknar kostar 15.500kr og greiðist áður en könnun er send áfram á þinn maka.`,
+    defaultMessage: `Hér er hægt að sækja um að láta kanna hvort öll skilyrði eru uppfyllt til að hjónavígsla megi fara fram. Eftir að þú hefur fyllt út beiðnina verður hún send áfram á þinn maka og á tvo svaramenn sem tilgreindir eru í ferlinu. Til að ljúka umsóknarferlinu þarft þú og þinn maki ásamt báðum svaramönnum að veita rafræna undirskrift áður en beiðni verður tekin til efnislegarar meðferðar. Ef hjónaefni uppfylla öll skilyrði til að ganga í hjónaband gefur sýslumaður út svokallað könnunarvottorð sem vígsluaðili notar til að tilkynna Þjóðskrá Íslands um að hjónavígsla hafi verið fram. Könnunarvottorð eru send í pósthólf beggja hjónaefna á island.is og hjónaefni bera ábyrgð á að afhenda vígsluaðila vottorðið fyrir hjónavígslu. Könnunarvottorð gildir í 30 daga en hjónavígsla þarf að fara fram á gíldistíma könnunarvottorðs. Upplýsingar sem þið veitið í ferlinu vistast sjálfkrafa. Það er því hægt að opna beiðnina aftur undir umsóknum á Mínar síður á Ísland.is. Þar getið þið einnig fylgst með stöðu mála eftir að öll gögn hafa verið send inn. Greiða þarf fyrir könnunarvottorð og fylgigögn frá Þjóðskrá Íslands alls kr. 15.500.`,
     description: 'Some description',
   },
 
@@ -33,18 +32,18 @@ export const m = defineMessages({
   },
   dataCollectionSubtitle: {
     id: 'mac.application:dataCollectionSubtitle',
-    defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt með þínu samþykki',
+    defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt',
     description: 'Subtitle for data collection section',
   },
   dataCollectionDescription: {
     id: 'mac.application:dataCollectionDescription',
     defaultMessage:
-      'Til þess að uppfylla skilyrði til hjónavígslu þurfa bæði hjónaefni að skila inn fæðingar- og hjúskaparvottorði frá Þjóðskrá Íslands.',
+      'Fæðingar- og hjúskaparstöðuvottorð frá Þjóðskrá Íslands fyrir bæði hjónaefni verða sótt vegna beiðnar um könnun hjónavígsluskilyrða.',
     description: 'Description for data collection section',
   },
   dataCollectionCheckboxLabel: {
     id: 'mac.application:dataCollectionCheckboxLabel',
-    defaultMessage: 'Ég samþykki gagnaöflun',
+    defaultMessage: 'Ég skil að ofangreind gögn verði sótt rafrænt',
     description: 'Checkbox label for data collection section',
   },
   dataCollectionBirthCertificateTitle: {
@@ -80,7 +79,7 @@ export const m = defineMessages({
   },
   dataCollectionUserProfileTitle: {
     id: 'mac.application:dataCollectionUserProfileTitle',
-    defaultMessage: 'Mínar síður á Ísland.is/stillingar',
+    defaultMessage: 'Mínar síður á Ísland.is',
     description: 'Your user profile information',
   },
   dataCollectionUserProfileSubtitle: {
@@ -121,34 +120,34 @@ export const m = defineMessages({
   informationAlertMessage: {
     id: 'mac.application:informationAlertMessage',
     defaultMessage:
-      'Tilvonandi hjónaefni fær sendan tölvupóst til þess að samþykkja umsókn.',
+      'Tilvonandi hjónaefni fær sendan tölvupóst til þess að samþykkja umsókn. Vinsamlegast athugaðu hvort símanúmer og netföng séu rétt rituð.',
     description: '',
   },
   informationMaritalSides: {
     id: 'mac.application:maritalSides',
     defaultMessage: 'Hjónaefni',
-    description: 'marital sides',
+    description: '',
   },
   informationMaritalSidesDescription: {
-    id: 'mac.application:maritalSidesDescription',
+    id: 'mac.application:informationMaritalSidesDescription',
     defaultMessage:
-      'Undirritaðir svaramenn hjónaefna ábyrgjast að enginn lagatálmi sbr. II. og III. kafla laga nr. 31/1993 sé á fyrirhuguðum hjúskap þeirra.',
-    description: 'marital sides',
+      'Svaramenn ábyrgjast með rafrænni undirskrift sinni að enginn lagatálmi sbr. II. og II. kafla laga nr. 31/1993 sé á fyrirhuguðum hjúskap. Beiðni um könnun hjónavígsluskilyrða mun ekki hljóta efnismeðferð fyrr en hjónaefni og báðir svaramenn hafa veitt rafræna undirskrift. Vinsamlegast gangið því úr skugga um að símanúmer og netföng séu rétt rituð.',
+    description: '',
   },
   informationWitnessTitle: {
     id: 'mac.application:',
     defaultMessage: 'Svaramenn',
-    description: 'screen title',
+    description: '',
   },
   informationWitness1: {
     id: 'mac.application:informationWitness1',
     defaultMessage: 'Svaramaður 1',
-    description: 'Information title witness 1',
+    description: '',
   },
   informationWitness2: {
     id: 'mac.application:informationWitness2',
     defaultMessage: 'Svaramaður 2',
-    description: 'Information title witness 2',
+    description: '',
   },
 
   /* Individuals info headers */
@@ -210,28 +209,28 @@ export const m = defineMessages({
   personalInformationTitle: {
     id: 'mac.application:personalInformationTitle',
     defaultMessage: 'Persónuuplýsingar',
-    description: 'personal info',
+    description: '',
   },
   personalInformationDescription: {
     id: 'mac.application:personalInformationDescription',
     defaultMessage:
-      'Veita þarf nánari persónuupplýsingar auk upplýsinga um hjúskaparstöðu fyrir vígslu. Hjónaefni ábyrgjast að þær upplýsingar sem eru gefnar séu réttar.',
-    description: 'personal info',
+      'Hjónaefni ábyrgist að neðangreindar upplýsingar séu réttar.',
+    description: '',
   },
   ceremony: {
     id: 'mac.application:ceremony',
-    defaultMessage: 'Vígsla',
+    defaultMessage: 'Hjónavígsla',
     description: '',
   },
   ceremonyDescription: {
     id: 'mac.application:ceremonyDescription',
     defaultMessage:
-      'Veita þarf nánari persónuupplýsingar auk upplýsinga um hjúskaparstöðu fyrir vígslu. Hjónaefni ábyrgjast að þær upplýsingar sem eru gefnar séu réttar.',
+      'Veita þarf áætlaðan vígsludag eða yfirlýsingu hjónaefnis um að vígsludagur hafi ekki verið ákveðinn. Athugið að þessar upplýsingar eru bókun á tíma fyrir hjónavígslu. Snúið ykkur til viðeigandi vígsluaðila til að bóka tíma fyrir hjónavígslu.',
     description: '',
   },
   ceremonyDate: {
     id: 'mac.application:ceremonyDate',
-    defaultMessage: 'Áætlaður vígsludagur',
+    defaultMessage: 'Áætlaður hjónavígsludagur',
     description: '',
   },
   ceremonyDatePlaceholder: {
@@ -241,7 +240,7 @@ export const m = defineMessages({
   },
   ceremonyPlace: {
     id: 'mac.application:ceremonyPlace',
-    defaultMessage: 'Hvar er vígsla áformuð?',
+    defaultMessage: 'Hvar er hjónavígsla áformuð?',
     description: '',
   },
   ceremonyAtDistrictsOffice: {
@@ -273,8 +272,7 @@ export const m = defineMessages({
   },
   spouseIntroDescription: {
     id: 'mac.application:spouseIntroDescription',
-    defaultMessage:
-      '**{applicantsName}** sendi inn umsókn um könnun hjónavígsluskilyrða ykkar þann **{applicationDate}**. Til þess að halda áfram með ferlið þurfa bæði hjónaefni að senda frá sér persónuupplýsingar til samþykktar af Sýslumanni.',
+    defaultMessage: `Þann **{applicationDate}** fyllti **{applicantsName}** út rafræna beiðni um könnun hjónavígsluskilyrða fyrir sitt leyti. Til þess að halda áfram með ferlið þurfa bæði hjónaefni að veita upplýsingar.`,
     description: '',
   },
   spouseContinue: {
@@ -296,17 +294,17 @@ export const m = defineMessages({
   },
   maritalStatusCertificates: {
     id: 'mac.application:maritalStatusCertificates',
-    defaultMessage: 'Tvö hjúskaparstöðuvottorð',
+    defaultMessage: 'Tvö hjúskaparstöðuvottorð frá Þjóðskrá Íslands',
     description: '',
   },
   birthCertificates: {
     id: 'mac.application:birthCertificates',
-    defaultMessage: 'Tvö fæðingarvottorð',
+    defaultMessage: 'Tvö fæðingarvottorð frá Þjóðskrá Íslands',
     description: '',
   },
   surveyCertificate: {
     id: 'mac.application:surveyCertificate',
-    defaultMessage: 'Könnunarvottorð',
+    defaultMessage: 'Könnunvarvottorð sýslumanns',
     description: '',
   },
   total: {
@@ -392,26 +390,26 @@ export const m = defineMessages({
   },
   applicationOverview: {
     id: 'mac.application:applicationOverview',
-    defaultMessage: 'Yfirlit umsóknar',
+    defaultMessage: 'Yfirlit yfir veittar upplýsingar',
     description: '',
   },
   overviewFooterText: {
     id: 'mac.application:overviewFooterText',
     defaultMessage:
-      'Hjónaefni ábyrgjast hér með undirskrift sinni að upplýsingar gefnar af þeim eru réttar og lýsa yfir að viðlögðum drengskap að þau viti ekki um tálma á fyrirhuguðum hjúskap sínum, sbr. II. og III. kafla laga nr. 31/1993.',
+      'Hjónaefni ábyrgist með rafrænni undirskrift sinni að upplýsingar gefnar af þeim eru réttar og lýsa yfir að viðlögðum drengskap að þau viti ekki um tálma á fyrirhuguðum hjúskap sínum, sbr. II. og III. kafli laga nr. 31/1993.',
     description: '',
   },
 
   /* Next steps for spouse 1 */
   nextStepsTitle: {
     id: 'mac.application:nextStepsTitle',
-    defaultMessage: 'Umsókn send áfram á þinn maka',
+    defaultMessage: 'Beiðni send á þinn maka',
     description: '',
   },
   nextStepsDescription: {
     id: 'mac.application:nextStepsDescription',
     defaultMessage:
-      'Umsókn þín um könnun hjónavígsluskilyrða hefur nú verið send á þinn maka.',
+      'Beiðni þín um könnun hjónavígsluskilyrða hefur nú verið send á þinn maka.',
     description: '',
   },
   nextSteps: {
@@ -421,13 +419,13 @@ export const m = defineMessages({
   },
   bullet1: {
     id: 'mac.application:bullet1',
-    defaultMessage: ' þarf að fylla út sinn hluta umsóknarinnar.',
+    defaultMessage: ' þarf nú að fylla út beiðnina fyrir sína hönd.',
     description: '',
   },
   bullet2: {
     id: 'mac.application:bullet2',
     defaultMessage:
-      'Ef maki þinn tekur ekki afstöðu til samningsins innan 60 daga þarf að hefja umsóknarferlið að nýju á Ísland.is.',
+      'Ef maki þinn tekur ekki afstöðu til beiðninnar innan 60 daga þarf að hefja ferlið að nýju á Ísland.is',
     description: '',
   },
   bullet3: {
@@ -439,7 +437,7 @@ export const m = defineMessages({
   bullet4: {
     id: 'mac.application:bullet4',
     defaultMessage:
-      'Könnunarvottorð verður sent í pósthólf ykkar beggja á island.is og þið berið ábyrgð á því að afhenda vígsluaðila vottorðið fyrir hjónavígsluna.',
+      'Könnunarvottorð verður sent í pósthólf ykkar beggja á Ísland.is og þið berið ábyrgð á því að afhenda vígsluaðila vottorðið fyrir hjónavígsluna.',
     description: '',
   },
   copyLink: {
@@ -475,19 +473,19 @@ export const m = defineMessages({
   },
   applicationComplete: {
     id: 'mac.application:actionCard.applicationComplete',
-    defaultMessage: 'Umsókn móttekin',
+    defaultMessage: 'Undirritun',
     description: '',
   },
   spouseDoneDescription: {
     id: 'mac.application:actionCard.spouseDoneDescription#markdown',
     defaultMessage:
-      'Umsókn ykkar um könnun hjónavígsluskilyrða hefur verið send til rafrænnar undirritunar. Þegar bæði hjónaefni og svaramenn hafa undirritað rafrænt berst umsókn til sýslumanns. Sýslumaður gefur út í kjölfarið könnunarvottorð. Þið eruð nú einu skrefi nær því að ganga í hjónaband.',
+      'Beiðni ykkar um könnun hjónavígsluskilyrða verður nú send ykkur hjónaefnum og svaramönnum til rafrænnar undirritunar. Þegar allir hafa veitt rafræna undirritun stofnast umsókn hjá sýslumanni og málsmeðferð hefst.',
     description: '',
   },
   spouseNextSteps: {
     id: 'mac.application:actionCard.spouseNextSteps#markdown',
     defaultMessage:
-      'Umsókn ykkar um könnun hjónavígsluskilyrða hefur verið send til rafrænnar undirritunar. Þegar bæði hjónaefni og svaramenn hafa undirritað rafrænt berst umsókn til sýslumanns. Sýslumaður gefur út í kjölfarið könnunarvottorð. Þið eruð nú einu skrefi nær því að ganga í hjónaband.',
+      'Könnunarvottorð eru send hjónaefnum í pósthólf þeirra á island.is.',
     description: '',
   },
   nameError: {
