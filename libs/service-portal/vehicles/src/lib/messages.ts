@@ -581,4 +581,8 @@ export const messages = defineMessages({
     id: 'sp.vehicles:vehicle-driving-lessons-info-note',
     defaultMessage: 'Samgöngustofa hefur umsjón með ökunámsbók.',
   },
+  vehicleDrivingLessonsComments: {
+    id: 'sp.vehicles:vehicle-driving-lessons-comments',
+    defaultMessage: 'Athugasemdir',
+  },
 })

@@ -38,7 +38,7 @@ const DrivingLessonsSchools = ({ data, title }: PropTypes) => {
             </T.HeadData>
             <T.HeadData>
               <Text variant="medium" fontWeight="semiBold">
-                {formatMessage(messages.vehicleDrivingLessonsStatus)}
+                {formatMessage(messages.vehicleDrivingLessonsComments)}
               </Text>
             </T.HeadData>
           </T.Row>
