@@ -6,4 +6,6 @@ export enum MessageType {
 export type Message = {
   type: MessageType
   caseId: string
+  numberOfRetries?: number
+  nextRetry?: Date
 }

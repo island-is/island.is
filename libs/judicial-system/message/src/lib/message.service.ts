@@ -31,6 +31,8 @@ export class MessageService {
       endpoint: config.endpoint,
       region: config.region,
     })
+
+    // TODO: Make more robust, by retrying
     this.sqs
       .send(new GetQueueUrlCommand({ QueueName: this.config.queueName }))
       .then((data) => {
@@ -64,7 +66,8 @@ export class MessageService {
     throw new ServiceUnavailableException('Message queue is not ready')
   }
 
-  private async deleteMessageFromQueue(receiptHandle?: string): Promise<void> {
+  private deleteMessageFromQueue(receiptHandle?: string): void {
+    // No need to wait
     this.sqs
       .send(
         new DeleteMessageCommand({
@@ -73,6 +76,7 @@ export class MessageService {
         }),
       )
       .catch((err) => {
+        // Tolerate failure, but log error
         this.logger.error('Failed to delete message from queue', err)
       })
   }
@@ -81,15 +85,30 @@ export class MessageService {
     callback: (message: Message) => Promise<boolean>,
     sqsMessage: SqsMessage,
   ): Promise<void> {
-    return callback(JSON.parse(sqsMessage.Body ?? ''))
-      .then((handled) => {
-        if (handled) {
-          return this.deleteMessageFromQueue(sqsMessage.ReceiptHandle)
-        }
-      })
-      .catch((err) => {
-        this.logger.error('Failed to handle message', { err })
-      })
+    const message: Message = JSON.parse(sqsMessage.Body ?? '')
+
+    // The maximum delay is 900 seconds, but we want to be able to wait much longer
+    const now = new Date()
+    if (message.nextRetry && message.nextRetry > now) {
+      return this.sqs
+        .send(
+          new SendMessageCommand({
+            QueueUrl: this.queueUrl,
+            MessageBody: sqsMessage.Body,
+            DelaySeconds: Math.min(
+              Math.round((message.nextRetry.getTime() - now.getTime()) / 1000),
+              900,
+            ),
+          }),
+        )
+        .then(() => this.deleteMessageFromQueue(sqsMessage.ReceiptHandle))
+    }
+
+    return callback(message).then((handled) => {
+      if (handled) {
+        this.deleteMessageFromQueue(sqsMessage.ReceiptHandle)
+      }
+    })
   }
 
   async sendMessageToQueue(message: Message): Promise<string> {
@@ -117,7 +136,7 @@ export class MessageService {
       .then(async (data) => {
         if (data.Messages && data.Messages.length > 0) {
           for (const message of data.Messages) {
-            return this.handleMessage(callback, message)
+            await this.handleMessage(callback, message)
           }
         }
       })
