@@ -1,11 +1,9 @@
-import React, { useState } from 'react'
-import { useIntl } from 'react-intl'
+import React from 'react'
 
-import { Box, Button, Text, toast } from '@island.is/island-ui/core'
+import { Box, Button, Text } from '@island.is/island-ui/core'
 import { api } from '@island.is/judicial-system-web/src/services'
 
 import * as styles from './PdfButton.css'
-import { pdfButton as m } from './PdfButton.strings'
 
 interface Props {
   caseId: string
@@ -38,24 +36,12 @@ const PdfButton: React.FC<Props> = ({
   handleClick,
   policeCaseNumber,
 }) => {
-  const [isPdfLoading, setIsPdfLoading] = useState<boolean>(false)
-  const { formatMessage } = useIntl()
-
   const handlePdfClick = async () => {
-    try {
-      const newPdfType =
-        pdfType === 'caseFiles' ? `${pdfType}/${policeCaseNumber}` : pdfType
-      const url = `${api.apiUrl}/api/case/${caseId}/${newPdfType}?useSigned=${useSigned}`
+    const newPdfType =
+      pdfType === 'caseFiles' ? `${pdfType}/${policeCaseNumber}` : pdfType
+    const url = `${api.apiUrl}/api/case/${caseId}/${newPdfType}?useSigned=${useSigned}`
 
-      setIsPdfLoading(true)
-
-      await fetch(url)
-
-      setIsPdfLoading(false)
-      window.open(url, '_blank')
-    } catch (e) {
-      toast.error(formatMessage(m.generatePDFError))
-    }
+    window.open(url, '_blank')
   }
 
   return renderAs === 'button' ? (
@@ -66,7 +52,6 @@ const PdfButton: React.FC<Props> = ({
       icon="open"
       iconType="outline"
       disabled={disabled}
-      loading={isPdfLoading}
       onClick={handleClick ? handleClick : pdfType ? handlePdfClick : undefined}
     >
       {title}
