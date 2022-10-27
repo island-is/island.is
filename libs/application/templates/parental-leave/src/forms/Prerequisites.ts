@@ -376,18 +376,17 @@ export const PrerequisitesForm: Form = buildForm({
                 buildRadioField({
                   id: 'artificialInseminationQuestion',
                   title: 'Fórstu í tæknifrjóvgun?',
-                  description: 'Á við þegar einhleyp móðir gengst undir tæknifrjóvgun...',
+                  description:
+                    'Á við þegar einhleyp móðir gengst undir tæknifrjóvgun...',
                   width: 'half',
                   options: [
                     {
                       value: YES,
-                      label:
-                        parentalLeaveFormMessages.shared.yesOptionLabel,
+                      label: parentalLeaveFormMessages.shared.yesOptionLabel,
                     },
                     {
                       value: NO,
-                      label:
-                        parentalLeaveFormMessages.shared.noOptionLabel,
+                      label: parentalLeaveFormMessages.shared.noOptionLabel,
                     },
                   ],
                 }),
@@ -413,7 +412,7 @@ export const PrerequisitesForm: Form = buildForm({
               title: '',
               description: '',
             }),
-          ]
+          ],
         }),
       ],
     }),

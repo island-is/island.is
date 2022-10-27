@@ -92,7 +92,12 @@ export const answerValidators: Record<string, AnswerValidator> = {
     const buildError = (message: StaticText, path: string) =>
       buildValidationError(`${FILEUPLOAD}.${path}`)(message)
 
-    const { isSelfEmployed, applicationType, isRecivingUnemploymentBenefits, unemploymentBenefits } = getApplicationAnswers(application.answers)
+    const {
+      isSelfEmployed,
+      applicationType,
+      isRecivingUnemploymentBenefits,
+      unemploymentBenefits,
+    } = getApplicationAnswers(application.answers)
 
     if (
       isSelfEmployed === YES &&
@@ -154,10 +159,14 @@ export const answerValidators: Record<string, AnswerValidator> = {
   [PAYMENTS]: (newAnswer: unknown, application: Application) => {
     const payments = newAnswer as Payments
 
-    const { applicationType, privatePensionFund, privatePensionFundPercentage, usePrivatePensionFund } = getApplicationAnswers(application.answers)
+    const {
+      applicationType,
+      privatePensionFund,
+      privatePensionFundPercentage,
+      usePrivatePensionFund,
+    } = getApplicationAnswers(application.answers)
 
     if (applicationType === PARENTAL_LEAVE) {
-
       const buildError = (message: StaticText, path: string) =>
         buildValidationError(`${PAYMENTS}.${path}`)(message)
 

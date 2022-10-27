@@ -338,9 +338,11 @@ export class ParentalLeaveService {
 
   async getAttachments(application: Application): Promise<Attachment[]> {
     const attachments: Attachment[] = []
-    const { isSelfEmployed, applicationType, artificialInsemination } = getApplicationAnswers(
-      application.answers,
-    )
+    const {
+      isSelfEmployed,
+      applicationType,
+      artificialInsemination,
+    } = getApplicationAnswers(application.answers)
 
     if (isSelfEmployed === YES && applicationType === PARENTAL_LEAVE) {
       const selfEmployedPdfs = (await getValueViaPath(
@@ -392,7 +394,7 @@ export class ParentalLeaveService {
       }
     }
 
-    if(artificialInsemination === YES) {
+    if (artificialInsemination === YES) {
       const artificialInseminationtPdfs = (await getValueViaPath(
         application.answers,
         'fileUpload.artificialInsemination',
@@ -407,7 +409,7 @@ export class ParentalLeaveService {
             attachmentBytes: pdf,
           })
         }
-      }  
+      }
     }
 
     const {

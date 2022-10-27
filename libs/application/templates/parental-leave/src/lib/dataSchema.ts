@@ -35,7 +35,7 @@ export const dataSchema = z.object({
   applicationType: z.object({
     option: z.enum([PARENTAL_GRANT, PARENTAL_GRANT_STUDENTS, PARENTAL_LEAVE]),
   }),
-  artificialInseminationQuestion:  z.enum([YES, NO]),
+  artificialInseminationQuestion: z.enum([YES, NO]),
   applicant: z.object({
     email: z.string().email(),
     phoneNumber: z.string().refine(

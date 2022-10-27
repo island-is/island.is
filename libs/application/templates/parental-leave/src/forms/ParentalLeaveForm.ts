@@ -714,7 +714,9 @@ export const ParentalLeaveForm: Form = buildForm({
                 parentalLeaveFormMessages.attachmentScreen
                   .artificialInseminationDescription,
               condition: (answers) => {
-                const { artificialInsemination } = getApplicationAnswers(answers)
+                const { artificialInsemination } = getApplicationAnswers(
+                  answers,
+                )
 
                 return artificialInsemination === YES
               },
