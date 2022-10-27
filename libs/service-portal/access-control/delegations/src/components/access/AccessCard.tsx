@@ -31,7 +31,7 @@ export const AccessCard = ({ delegation, onDelete }: AccessCardProps) => {
 
   const tags = sortBy(
     delegation.scopes.map((scope) => ({
-      name: scope.displayName,
+      name: scope?.apiScope?.displayName || scope.displayName,
       isExpired: isDateExpired(scope.validTo),
     })),
     'name',
