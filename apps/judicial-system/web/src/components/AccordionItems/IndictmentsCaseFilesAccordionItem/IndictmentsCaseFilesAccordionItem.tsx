@@ -35,6 +35,8 @@ import { indictmentsCaseFilesAccordionItem as m } from './IndictmentsCaseFilesAc
 import * as styles from './IndictmentsCaseFilesAccordionItem.css'
 import { UpdateFileMutation } from './UpdateFiles.gql'
 
+const DDMMYYYY = 'dd.MM.yyyy'
+
 interface Props {
   policeCaseNumber: string
   caseFiles: TCaseFile[]
@@ -192,7 +194,7 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
   )
   const [editedDisplayDate, setEditedDisplayDate] = useState<
     string | undefined
-  >(formatDate(caseFile.displayDate, 'P') ?? undefined)
+  >(formatDate(caseFile.displayDate, DDMMYYYY) ?? undefined)
   const displayName = caseFile.userGeneratedFilename ?? caseFile.displayText
 
   const handleEditFileButtonClick = () => {
@@ -202,14 +204,14 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
     if (trimmedFilename && trimmedDisplayDate) {
       onRename(caseFile.id, trimmedFilename, trimmedDisplayDate)
       setIsEditing(false)
-      setEditedDisplayDate(formatDate(caseFile.displayDate, 'P') ?? '')
+      setEditedDisplayDate(formatDate(caseFile.displayDate, DDMMYYYY) ?? '')
     }
 
     setIsEditing(false)
   }
 
   const displayDate = useMemo(() => {
-    return formatDate(caseFile.displayDate ?? caseFile.created, 'P')
+    return formatDate(caseFile.displayDate ?? caseFile.created, DDMMYYYY)
   }, [caseFile.displayDate, caseFile.created])
 
   return (
@@ -296,7 +298,7 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
                           <Input
                             name="fileDisplayDate"
                             size="xs"
-                            placeholder={'dd.mm.yyyy'}
+                            placeholder={formatDate(new Date(), DDMMYYYY)}
                             autoComplete="off"
                           />
                         </InputMask>
