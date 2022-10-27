@@ -2,10 +2,10 @@ import { useEffect, useRef, useState } from 'react'
 import Cookies from 'js-cookie'
 import { useQuery } from '@apollo/client'
 import { AlertBanner as AlertBannerSchema } from '@island.is/api/schema'
-import { GET_SERVICE_PORTAL_ALERT_BANNERS_QUERY } from './queries'
+import { GET_SERVICE_PORTAL_ALERT_BANNERS_QUERY } from '../../lib/queries/alertBanners'
 import { useLocale } from '@island.is/localization'
 
-type AlertBannerType = AlertBannerSchema & { bannerId: string }
+export type AlertBannerType = AlertBannerSchema & { bannerId: string }
 
 // Taken from here: https://stackoverflow.com/a/7616484
 const stringHash = (str: string): number => {
