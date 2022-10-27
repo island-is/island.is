@@ -17,6 +17,7 @@ import { NationalRegistryResidence } from '../models/nationalRegistryResidence.m
 import { NationalRegistrySpouse } from '../models/nationalRegistrySpouse.model'
 import { NationalRegistryBirthplace } from '../models/nationalRegistryBirthplace.model'
 import { NationalRegistryCitizenship } from '../models/nationalRegistryCitizenship.model'
+import { NationalRegistryReligion } from '../models/nationalRegistryReligion.model'
 
 @UseGuards(IdsAuthGuard, IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.meDetails)
@@ -94,5 +95,15 @@ export class NationalRegistryXRoadResolver {
     @Parent() person: NationalRegistryPerson,
   ): Promise<NationalRegistryCitizenship | null> {
     return this.nationalRegistryXRoadService.getCitizenship(person.nationalId)
+  }
+
+  @Query(() => NationalRegistryReligion, {
+    name: 'nationalRegistryReligions',
+    nullable: true,
+  })
+  @Audit()
+  async nationalRegistryReligions(
+  ): Promise<NationalRegistryReligion | null> {
+    return this.nationalRegistryXRoadService.getReligions()
   }
 }
