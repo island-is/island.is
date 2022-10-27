@@ -1,4 +1,4 @@
-import { Box, Link, ProfileCard } from '@island.is/island-ui/core'
+import { Box, Link, ProfileCard, Text } from '@island.is/island-ui/core'
 import { IconTitleCard } from '@island.is/web/components'
 import type { LifeEventPageListSlice as LifeEventPageListSliceSchema } from '@island.is/web/graphql/schema'
 import { linkResolver, LinkType, useNamespace } from '@island.is/web/hooks'
@@ -54,17 +54,24 @@ export const LifeEventPageListSlice: React.FC<LifeEventPageListSliceProps> = ({
   }
 
   return (
-    <Box className={styles.lifeEventCardContainer}>
-      {slice.lifeEventPageList?.map((page) => (
-        <IconTitleCard
-          heading={page.shortTitle || page.title}
-          imgSrc={page.tinyThumbnail?.url}
-          alt={page.tinyThumbnail?.title}
-          href={
-            linkResolver(anchorPageLinkType, [page.slug], activeLocale).href
-          }
-        />
-      ))}
+    <Box>
+      {slice.title && (
+        <Text variant="h2" marginBottom={3}>
+          {slice.title}
+        </Text>
+      )}
+      <Box className={styles.lifeEventCardContainer}>
+        {slice.lifeEventPageList?.map((page) => (
+          <IconTitleCard
+            heading={page.shortTitle || page.title}
+            imgSrc={page.tinyThumbnail?.url}
+            alt={page.tinyThumbnail?.title}
+            href={
+              linkResolver(anchorPageLinkType, [page.slug], activeLocale).href
+            }
+          />
+        ))}
+      </Box>
     </Box>
   )
 }
