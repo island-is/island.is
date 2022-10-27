@@ -8,6 +8,9 @@ import {
 import * as kennitala from 'kennitala'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { getValueViaPath } from '@island.is/application/core'
+import AmazonS3URI from 'amazon-s3-uri'
+
+import { S3 } from 'aws-sdk'
 import {
   mapValuesToIndividualtype,
   mapValuesToPartytype,
@@ -16,6 +19,11 @@ import {
 import { USERTYPE } from './types'
 
 const LESS = 'less'
+
+export interface AttachmentData {
+  key: string
+  name: string
+}
 
 export const getCurrentUserType = (answers: any, externalData: any) => {
   const fakeUserType: any = getValueViaPath(answers, 'fakeData.options')
@@ -32,9 +40,49 @@ export interface DataResponse {
 }
 @Injectable()
 export class FinancialStatementsInaoTemplateService {
+  s3: S3
   constructor(
     private financialStatementsClientService: FinancialStatementsInaoClientService,
-  ) {}
+  ) {
+    this.s3 = new S3()
+  }
+
+  private async getAttachment({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps): Promise<string> {
+    const attachment: AttachmentData[] | undefined = getValueViaPath(
+      application.answers,
+      'attachment.file',
+    )
+
+    const fileName = attachment?.[0].key
+    console.log('getAttachment', fileName)
+    if (!fileName) {
+      console.log('no filename')
+      return Promise.reject({})
+    }
+
+    const { bucket, key } = AmazonS3URI(fileName)
+    console.log('AmazonS3URI helgi')
+    console.log({ bucket, key })
+    const uploadBucket = bucket
+    try {
+      const file = await this.s3
+        .getObject({
+          Bucket: uploadBucket,
+          Key: key,
+        })
+        .promise()
+      console.log('s3 file', file)
+      const fileContent = file.Body as Buffer
+      console.log('getAttachment', fileContent?.toString('base64') || '')
+      return fileContent?.toString('base64') || ''
+    } catch (error) {
+      console.log('fileContent', error)
+    }
+    return ''
+  }
 
   async getUserType({ auth }: TemplateApiModuleActionProps) {
     const { nationalId } = auth
@@ -53,7 +101,8 @@ export class FinancialStatementsInaoTemplateService {
     const answers = application.answers
     const externalData = application.externalData
     const currentUserType = getCurrentUserType(answers, externalData)
-
+    const fileName = await this.getAttachment({ application, auth })
+    console.log('submitApplication', fileName)
     if (currentUserType === USERTYPE.INDIVIDUAL) {
       const values: PersonalElectionFinancialStatementValues = mapValuesToIndividualtype(
         answers,
