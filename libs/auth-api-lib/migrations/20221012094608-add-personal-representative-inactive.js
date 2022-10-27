@@ -16,7 +16,7 @@ module.exports = {
 
       await queryInterface.addColumn(
         'personal_representative',
-        'inactiveReason',
+        'inactive_reason',
         {
           type: Sequelize.ENUM('DECEASED_PARTY'),
           defaultValue: null,
@@ -34,7 +34,7 @@ module.exports = {
       })
       await queryInterface.removeColumn(
         'personal_representative',
-        'inactiveReason',
+        'inactive_reason',
         {
           transaction,
         },
