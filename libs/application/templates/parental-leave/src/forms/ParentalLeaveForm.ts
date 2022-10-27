@@ -44,6 +44,7 @@ import {
   NO_UNION,
   ParentalRelations,
   PARENTAL_GRANT_STUDENTS,
+  PARENTAL_GRANT,
   PARENTAL_LEAVE,
   StartDateOptions,
   UnEmployedBenefitTypes,
@@ -62,6 +63,105 @@ import {
 } from '../types/schema'
 import { currentDateStartTime } from '../lib/parentalLeaveTemplateUtils'
 import { YesOrNo } from '../types'
+
+const getPeriodSectionTitle = (application: Application) => {
+  const appAnswers = getApplicationAnswers(application.answers)
+  if (
+    appAnswers.applicationType === PARENTAL_GRANT ||
+    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
+  ) {
+    return parentalLeaveFormMessages.shared.periodsGrantSection
+  }
+  return parentalLeaveFormMessages.shared.periodsSection
+}
+
+const getRightsDescTitle = (application: Application) => {
+  const appAnswers = getApplicationAnswers(application.answers)
+  if (
+    appAnswers.applicationType === PARENTAL_GRANT ||
+    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
+  ) {
+    return parentalLeaveFormMessages.shared.grantRightsDescription
+  }
+  return parentalLeaveFormMessages.shared.rightsDescription
+}
+
+const getPeriodImageTitle = (application: Application) => {
+  const appAnswers = getApplicationAnswers(application.answers)
+  if (
+    appAnswers.applicationType === PARENTAL_GRANT ||
+    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
+  ) {
+    return parentalLeaveFormMessages.shared.periodsImageGrantTitle
+  }
+  return parentalLeaveFormMessages.shared.periodsImageTitle
+}
+
+const getFirstPeriodTitle = (application: Application) => {
+  const appAnswers = getApplicationAnswers(application.answers)
+  if (
+    appAnswers.applicationType === PARENTAL_GRANT ||
+    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
+  ) {
+    return parentalLeaveFormMessages.firstPeriodStart.grantTitle
+  }
+  return parentalLeaveFormMessages.firstPeriodStart.title
+}
+
+const getDurationTitle = (application: Application) => {
+  const appAnswers = getApplicationAnswers(application.answers)
+  if (
+    appAnswers.applicationType === PARENTAL_GRANT ||
+    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
+  ) {
+    return parentalLeaveFormMessages.duration.grantTitle
+  }
+  return parentalLeaveFormMessages.duration.title
+}
+
+const getRatioTitle = (application: Application) => {
+  const appAnswers = getApplicationAnswers(application.answers)
+  if (
+    appAnswers.applicationType === PARENTAL_GRANT ||
+    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
+  ) {
+    return parentalLeaveFormMessages.ratio.grantTitle
+  }
+  return parentalLeaveFormMessages.ratio.title
+}
+
+const getLeavePlanTitle = (application: Application) => {
+  const appAnswers = getApplicationAnswers(application.answers)
+  if (
+    appAnswers.applicationType === PARENTAL_GRANT ||
+    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
+  ) {
+    return parentalLeaveFormMessages.leavePlan.grantTitle
+  }
+  return parentalLeaveFormMessages.leavePlan.title
+}
+
+const getStartDateTitle = (application: Application) => {
+  const appAnswers = getApplicationAnswers(application.answers)
+  if (
+    appAnswers.applicationType === PARENTAL_GRANT ||
+    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
+  ) {
+    return parentalLeaveFormMessages.startDate.grantTitle
+  }
+  return parentalLeaveFormMessages.startDate.title
+}
+
+const getStartDateDesc = (application: Application) => {
+  const appAnswers = getApplicationAnswers(application.answers)
+  if (
+    appAnswers.applicationType === PARENTAL_GRANT ||
+    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
+  ) {
+    return parentalLeaveFormMessages.startDate.grantDescription
+  }
+  return parentalLeaveFormMessages.startDate.description
+}
 
 export const ParentalLeaveForm: Form = buildForm({
   id: 'ParentalLeaveDraft',
@@ -209,12 +309,11 @@ export const ParentalLeaveForm: Form = buildForm({
                   placeholder: '0000-00-000000',
                 }),
                 buildAsyncSelectField({
-                  condition: (answers) =>
-                    (answers as {
-                      applicationType: {
-                        option: string
-                      }
-                    })?.applicationType?.option === PARENTAL_LEAVE,
+                  condition: (answers) => {
+                    const { applicationType } = getApplicationAnswers(answers)
+
+                    return applicationType === PARENTAL_LEAVE
+                  },
                   title: parentalLeaveFormMessages.shared.pensionFund,
                   id: 'payments.pensionFund',
                   loadingError: parentalLeaveFormMessages.errors.loading,
@@ -239,12 +338,11 @@ export const ParentalLeaveForm: Form = buildForm({
                   },
                 }),
                 buildCustomField({
-                  condition: (answers) =>
-                    (answers as {
-                      applicationType: {
-                        option: string
-                      }
-                    })?.applicationType?.option === PARENTAL_LEAVE,
+                  condition: (answers) => {
+                    const { applicationType } = getApplicationAnswers(answers)
+
+                    return applicationType === PARENTAL_LEAVE
+                  },
                   component: 'UseUnion',
                   id: 'useUnion',
                   title: parentalLeaveFormMessages.shared.unionName,
@@ -252,13 +350,14 @@ export const ParentalLeaveForm: Form = buildForm({
                     parentalLeaveFormMessages.shared.unionDescription,
                 }),
                 buildAsyncSelectField({
-                  condition: (answers) =>
-                    answers.useUnion === YES &&
-                    (answers as {
-                      applicationType: {
-                        option: string
-                      }
-                    })?.applicationType?.option === PARENTAL_LEAVE,
+                  condition: (answers) => {
+                    const { applicationType } = getApplicationAnswers(answers)
+
+                    return (
+                      applicationType === PARENTAL_LEAVE &&
+                      answers.useUnion === YES
+                    )
+                  },
                   title: parentalLeaveFormMessages.shared.union,
                   id: 'payments.union',
                   loadingError: parentalLeaveFormMessages.errors.loading,
@@ -282,12 +381,11 @@ export const ParentalLeaveForm: Form = buildForm({
                   },
                 }),
                 buildCustomField({
-                  condition: (answers) =>
-                    (answers as {
-                      applicationType: {
-                        option: string
-                      }
-                    })?.applicationType?.option === PARENTAL_LEAVE,
+                  condition: (answers) => {
+                    const { applicationType } = getApplicationAnswers(answers)
+
+                    return applicationType === PARENTAL_LEAVE
+                  },
                   component: 'UsePrivatePensionFund',
                   id: 'usePrivatePensionFund',
                   title:
@@ -297,13 +395,14 @@ export const ParentalLeaveForm: Form = buildForm({
                       .privatePensionFundDescription,
                 }),
                 buildAsyncSelectField({
-                  condition: (answers) =>
-                    answers.usePrivatePensionFund === YES &&
-                    (answers as {
-                      applicationType: {
-                        option: string
-                      }
-                    })?.applicationType?.option === PARENTAL_LEAVE,
+                  condition: (answers) => {
+                    const { applicationType } = getApplicationAnswers(answers)
+
+                    return (
+                      applicationType === PARENTAL_LEAVE &&
+                      answers.usePrivatePensionFund === YES
+                    )
+                  },
                   id: 'payments.privatePensionFund',
                   title: parentalLeaveFormMessages.shared.privatePensionFund,
                   loadingError: parentalLeaveFormMessages.errors.loading,
@@ -327,13 +426,14 @@ export const ParentalLeaveForm: Form = buildForm({
                   },
                 }),
                 buildSelectField({
-                  condition: (answers) =>
-                    answers.usePrivatePensionFund === YES &&
-                    (answers as {
-                      applicationType: {
-                        option: string
-                      }
-                    })?.applicationType?.option === PARENTAL_LEAVE,
+                  condition: (answers) => {
+                    const { applicationType } = getApplicationAnswers(answers)
+
+                    return (
+                      applicationType === PARENTAL_LEAVE &&
+                      answers.usePrivatePensionFund === YES
+                    )
+                  },
                   id: 'payments.privatePensionFundPercentage',
                   dataTestId: 'private-pension-fund-ratio',
                   title:
@@ -442,12 +542,11 @@ export const ParentalLeaveForm: Form = buildForm({
           ],
         }),
         buildSubSection({
-          condition: (answers) =>
-            (answers as {
-              applicationType: {
-                option: string
-              }
-            })?.applicationType?.option === PARENTAL_LEAVE,
+          condition: (answers) => {
+            const { applicationType } = getApplicationAnswers(answers)
+
+            return applicationType === PARENTAL_LEAVE
+          },
           id: 'employer',
           title: parentalLeaveFormMessages.employer.subSection,
           children: [
@@ -731,7 +830,7 @@ export const ParentalLeaveForm: Form = buildForm({
             buildMultiField({
               id: 'rightsIntro',
               title: parentalLeaveFormMessages.shared.theseAreYourRights,
-              description: parentalLeaveFormMessages.shared.rightsDescription,
+              description: getRightsDescTitle,
               children: [
                 buildCustomField(
                   {
@@ -876,11 +975,11 @@ export const ParentalLeaveForm: Form = buildForm({
     }),
     buildSection({
       id: 'leavePeriods',
-      title: parentalLeaveFormMessages.shared.periodsSection,
+      title: getPeriodSectionTitle,
       children: [
         buildCustomField({
           id: 'periodsImageScreen',
-          title: parentalLeaveFormMessages.shared.periodsImageTitle,
+          title: getPeriodImageTitle,
           component: 'PeriodsSectionImage',
           doesNotRequireAnswer: true,
         }),
@@ -890,12 +989,12 @@ export const ParentalLeaveForm: Form = buildForm({
           children: [
             buildRepeater({
               id: 'periods',
-              title: parentalLeaveFormMessages.leavePlan.title,
+              title: getLeavePlanTitle,
               component: 'PeriodsRepeater',
               children: [
                 buildCustomField({
                   id: 'firstPeriodStart',
-                  title: parentalLeaveFormMessages.firstPeriodStart.title,
+                  title: getFirstPeriodTitle,
                   condition: (answers) => {
                     const { periods } = getApplicationAnswers(answers)
 
@@ -905,8 +1004,8 @@ export const ParentalLeaveForm: Form = buildForm({
                 }),
                 buildDateField({
                   id: 'startDate',
-                  title: parentalLeaveFormMessages.startDate.title,
-                  description: parentalLeaveFormMessages.startDate.description,
+                  title: getStartDateTitle,
+                  description: getStartDateDesc,
                   placeholder: parentalLeaveFormMessages.startDate.placeholder,
                   defaultValue: NO_ANSWER,
                   condition: (answers) => {
@@ -962,7 +1061,7 @@ export const ParentalLeaveForm: Form = buildForm({
                 }),
                 buildRadioField({
                   id: 'useLength',
-                  title: parentalLeaveFormMessages.duration.title,
+                  title: getDurationTitle,
                   description: parentalLeaveFormMessages.duration.description,
                   defaultValue: NO_ANSWER,
                   options: [
@@ -984,7 +1083,7 @@ export const ParentalLeaveForm: Form = buildForm({
 
                     return rawPeriods[rawPeriods.length - 1]?.useLength === YES
                   },
-                  title: parentalLeaveFormMessages.duration.title,
+                  title: getDurationTitle,
                   component: 'Duration',
                 }),
                 buildCustomField(
@@ -1022,7 +1121,7 @@ export const ParentalLeaveForm: Form = buildForm({
                 ),
                 buildCustomField({
                   id: 'ratio',
-                  title: parentalLeaveFormMessages.ratio.title,
+                  title: getRatioTitle,
                   description: parentalLeaveFormMessages.ratio.description,
                   component: 'PeriodPercentage',
                 }),
