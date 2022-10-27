@@ -87,8 +87,13 @@ export const fishingLicenseFurtherInfoSection = buildSection({
           condition: hasFileUpload,
         }),
         buildFileUploadField({
-          id: 'attachments',
+          id: 'fishingLicenseFurtherInformation.attachments',
           title: fishingLicenseFurtherInformation.labels.attachments,
+          uploadHeader: fishingLicenseFurtherInformation.attachmentInfo.title,
+          uploadDescription:
+            fishingLicenseFurtherInformation.attachmentInfo.subtitle,
+          uploadButtonLabel:
+            fishingLicenseFurtherInformation.attachmentInfo.buttonLabel,
           condition: hasFileUpload,
         }),
         // Roe net and rail net information fields - only for selected license(s)
