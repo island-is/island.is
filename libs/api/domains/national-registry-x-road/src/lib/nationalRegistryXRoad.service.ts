@@ -10,6 +10,7 @@ import { NationalRegistrySpouse } from '../models/nationalRegistrySpouse.model'
 import { NationalRegistryFamilyMemberInfo } from '../models/nationalRegistryFamilyMember.model'
 import { NationalRegistryBirthplace } from '../models/nationalRegistryBirthplace.model'
 import { NationalRegistryCitizenship } from '../models/nationalRegistryCitizenship.model'
+import { NationalRegistryReligion } from '../models/nationalRegistryReligion.model'
 
 @Injectable()
 export class NationalRegistryXRoadService {
@@ -182,5 +183,9 @@ export class NationalRegistryXRoadService {
         name: citizenship.countryName,
       }
     )
+  }
+
+  async getReligions(): Promise<NationalRegistryReligion> {
+    return this.getReligions()
   }
 }
