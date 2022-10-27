@@ -39,7 +39,11 @@ export const IntroHeader = ({
           </Text>
         </GridColumn>
       )}
-      <GridColumn span="6/9" order={[4, 3]} paddingTop={4}>
+      <GridColumn
+        span={['12/12', '12/12', '6/9']}
+        order={[4, 3]}
+        paddingTop={4}
+      >
         <ModuleAlertBannerSection />
       </GridColumn>
       {img && (
