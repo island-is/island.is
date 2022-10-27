@@ -57,7 +57,6 @@ export const useAlertBanners = () => {
   // When the route changes we update what banners are shown since banners might only be visible on a specific route and hidden on other routes
   useEffect(() => {
     updateBanners(allBanners.current)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [window.location.href])
 
   return banners
