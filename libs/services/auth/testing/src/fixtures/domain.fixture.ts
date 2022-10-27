@@ -1,6 +1,6 @@
 import faker from 'faker'
-import { Domain } from '@island.is/auth-api-lib'
 import { createNationalId } from '@island.is/testing/fixtures'
+import { Domain } from '@island.is/auth-api-lib'
 
 export type CreateDomain = Pick<Domain, 'name' | 'description' | 'nationalId'>
 
