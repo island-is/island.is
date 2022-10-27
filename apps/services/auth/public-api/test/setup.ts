@@ -32,11 +32,15 @@ import {
   RskProcuringClientMock,
   FeatureFlagServiceMock,
 } from './mocks'
-import { createApiScope, createApiScopeGroup, CreateClient } from './fixtures'
+import { CreateClient } from './fixtures'
 import { RskProcuringClient } from '@island.is/clients/rsk/procuring'
 import { FeatureFlagService } from '@island.is/nest/feature-flags'
 import { ConfigType } from '@island.is/nest/config'
-import { createDomain } from './fixtures/domain.fixture'
+import {
+  createDomain,
+  createApiScopeGroup,
+  createApiScope,
+} from '@island.is/services/auth/testing'
 
 export interface ScopeSetupOptions {
   name: string
