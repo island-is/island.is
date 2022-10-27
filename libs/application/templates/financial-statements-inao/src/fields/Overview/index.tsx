@@ -34,7 +34,7 @@ export const Overview = ({
   const { formatMessage } = useLocale()
   const { errors, setError, setValue } = useFormContext()
   const [approveOverview, setApproveOverview] = useState(false)
-
+  console.log({ application })
   const answers = application.answers as FinancialStatementsInao
   const fileName = answers.attachment?.file?.[0]?.name
   const [
