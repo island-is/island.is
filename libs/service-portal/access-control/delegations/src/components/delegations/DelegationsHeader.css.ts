@@ -3,7 +3,7 @@ import { themeUtils, theme } from '@island.is/island-ui/theme'
 
 export const container = style({
   display: 'grid',
-  gridTemplateColumns: 'minmax(220px, 70%) minmax(100px, 30%)',
+  gridTemplateColumns: 'minmax(100px, 65%) minmax(115px, 35%)',
   gridTemplateAreas: `"select button" "search search"`,
   gridTemplateRows: '1fr',
   alignItems: 'end',
@@ -12,7 +12,7 @@ export const container = style({
   ...themeUtils.responsiveStyle({
     lg: {
       gridTemplateColumns:
-        'minmax(200px, 35%) minmax(200px, 40%) minmax(150px, 25%)',
+        'minmax(200px, 35%) minmax(200px, auto) minmax(150px, 172px)',
       gridTemplateAreas: `"select search button"`,
     },
   }),
