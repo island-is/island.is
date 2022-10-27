@@ -17,6 +17,7 @@ import { NationalRegistryResidence } from '../models/nationalRegistryResidence.m
 import { NationalRegistrySpouse } from '../models/nationalRegistrySpouse.model'
 import { NationalRegistryBirthplace } from '../models/nationalRegistryBirthplace.model'
 import { NationalRegistryCitizenship } from '../models/nationalRegistryCitizenship.model'
+import { NationalRegistryReligion } from '../models/nationalRegistryReligion.model'
 
 @UseGuards(IdsAuthGuard, IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.meDetails)
