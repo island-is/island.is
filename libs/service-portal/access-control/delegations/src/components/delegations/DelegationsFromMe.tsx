@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import {
   SkeletonLoader,
   Stack,
@@ -18,6 +18,7 @@ import { ALL_DOMAINS } from '../../constants'
 
 export const DelegationsFromMe = () => {
   const { formatMessage, lang = 'is' } = useLocale()
+  const [searchValue, setSearchValue] = useState('')
   const [delegation, setDelegation] = useState<AuthCustomDelegation | null>(
     null,
   )
@@ -35,7 +36,10 @@ export const DelegationsFromMe = () => {
     fetchPolicy: 'cache-and-network',
   })
 
-  const delegations = (data?.authDelegations as AuthCustomDelegation[]) ?? []
+  const delegations = useMemo(
+    () => (data?.authDelegations as AuthCustomDelegation[]) ?? [],
+    [data?.authDelegations],
+  )
 
   const onDomainChange = (option: DomainOption) => {
     // Select components only supports string or number values, there for we use
@@ -51,12 +55,29 @@ export const DelegationsFromMe = () => {
     })
   }
 
+  const filteredDelegations = useMemo(() => {
+    if (!searchValue) {
+      return delegations
+    }
+
+    return delegations.filter((delegation) => {
+      const searchValueLower = searchValue.toLowerCase()
+      const name = delegation?.to?.name.toLowerCase()
+      const nationalId = delegation?.to?.nationalId.toLowerCase()
+
+      return (
+        name?.includes(searchValueLower) || nationalId?.includes(searchValue)
+      )
+    })
+  }, [searchValue, delegations])
+
   return (
     <>
       <Box display="flex" flexDirection="column" rowGap={4}>
         <DelegationsHeader
           domainName={domainName}
           onDomainChange={onDomainChange}
+          onSearchChange={setSearchValue}
         />
         <div>
           {loading ? (
@@ -70,7 +91,7 @@ export const DelegationsFromMe = () => {
             <DelegationsEmptyState />
           ) : (
             <Stack space={3}>
-              {delegations.map(
+              {filteredDelegations.map(
                 (delegation) =>
                   delegation.to && (
                     <AccessCard
