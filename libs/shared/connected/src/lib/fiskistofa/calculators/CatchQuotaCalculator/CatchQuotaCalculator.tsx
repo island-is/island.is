@@ -105,7 +105,7 @@ export const CatchQuotaCalculator = ({
     lastChangeCategoryId: -1,
     lastChangeFieldName: '',
     lastChangeFieldValue: '',
-    timerId: null,
+    timerId: null as Timeout | null,
   })
   const [quotaChange, setQuotaChange] = useState<QuotaChanges>({})
   const [quotaChangeErrors, setQuotaChangeErrors] = useState<QuotaChangeErrors>(
@@ -147,7 +147,9 @@ export const CatchQuotaCalculator = ({
       },
     }))
 
-    clearTimeout(quotaStateChangeMetadata.current.timerId)
+    if (quotaStateChangeMetadata.current.timerId) {
+      clearTimeout(quotaStateChangeMetadata.current.timerId)
+    }
 
     quotaStateChangeMetadata.current.timerId = setTimeout(() => {
       if (value && isNaN(formattedNumberStringToNumber(value))) {

@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
-export class FiskistofaQuotaType {
+class FiskistofaQuotaType {
   @Field()
   id?: number
 
@@ -13,4 +13,10 @@ export class FiskistofaQuotaType {
 
   @Field({ nullable: true })
   codEquivalent?: number
+}
+
+@ObjectType()
+export class FiskistofaQuotaTypeResponse {
+  @Field(() => [FiskistofaQuotaType], { nullable: true })
+  fiskistofaQuotaTypes?: FiskistofaQuotaType[] | null
 }

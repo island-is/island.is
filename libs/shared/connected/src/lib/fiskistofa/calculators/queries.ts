@@ -5,34 +5,36 @@ export const GET_SHIP_STATUS_FOR_TIME_PERIOD = gql`
     $input: FiskistofaGetShipStatusForTimePeriodInput!
   ) {
     fiskistofaGetShipStatusForTimePeriod(input: $input) {
-      shipInformation {
-        id
-        shipNumber
-        name
-        timePeriod
-      }
-      catchQuotaCategories {
-        id
-        name
-        allocation
-        specialAlloction
-        betweenYears
-        betweenShips
-        catchQuota
-        catch
-        status
-        displacement
-        newStatus
-        nextYear
-        excessCatch
-        unused
-        totalCatchQuota
-        quotaShare
-        nextYearQuota
-        nextYearFromQuota
-        percentNextYearQuota
-        percentNextYearFromQuota
-        allocatedCatchQuota
+      fiskistofaShipStatus {
+        shipInformation {
+          id
+          shipNumber
+          name
+          timePeriod
+        }
+        catchQuotaCategories {
+          id
+          name
+          allocation
+          specialAlloction
+          betweenYears
+          betweenShips
+          catchQuota
+          catch
+          status
+          displacement
+          newStatus
+          nextYear
+          excessCatch
+          unused
+          totalCatchQuota
+          quotaShare
+          nextYearQuota
+          nextYearFromQuota
+          percentNextYearQuota
+          percentNextYearFromQuota
+          allocatedCatchQuota
+        }
       }
     }
   }
@@ -43,27 +45,29 @@ export const UPDATE_SHIP_STATUS_FOR_TIME_PERIOD = gql`
     $input: FiskistofaUpdateShipStatusForTimePeriodInput!
   ) {
     fiskistofaUpdateShipStatusForTimePeriod(input: $input) {
-      shipInformation {
-        id
-        shipNumber
-        name
-        timePeriod
-      }
-      catchQuotaCategories {
-        id
-        name
-        allocation
-        specialAlloction
-        betweenYears
-        betweenShips
-        catchQuota
-        catch
-        status
-        displacement
-        newStatus
-        nextYear
-        excessCatch
-        unused
+      fiskistofaShipStatus {
+        shipInformation {
+          id
+          shipNumber
+          name
+          timePeriod
+        }
+        catchQuotaCategories {
+          id
+          name
+          allocation
+          specialAlloction
+          betweenYears
+          betweenShips
+          catchQuota
+          catch
+          status
+          displacement
+          newStatus
+          nextYear
+          excessCatch
+          unused
+        }
       }
     }
   }
@@ -74,18 +78,20 @@ export const UPDATE_SHIP_QUOTA_STATUS_FOR_TIME_PERIOD = gql`
     $input: FiskistofaUpdateShipQuotaStatusForTimePeriodInput!
   ) {
     fiskistofaUpdateShipQuotaStatusForTimePeriod(input: $input) {
-      nextYearCatchQuota
-      nextYearQuota
-      nextYearFromQuota
-      totalCatchQuota
-      quotaShare
-      id
-      newStatus
-      unused
-      percentCatchQuotaFrom
-      percentCatchQuotaTo
-      excessCatch
-      allocatedCatchQuota
+      fiskistofaShipQuotaStatus {
+        nextYearCatchQuota
+        nextYearQuota
+        nextYearFromQuota
+        totalCatchQuota
+        quotaShare
+        id
+        newStatus
+        unused
+        percentCatchQuotaFrom
+        percentCatchQuotaTo
+        excessCatch
+        allocatedCatchQuota
+      }
     }
   }
 `
@@ -95,27 +101,29 @@ export const GET_SHIP_STATUS_FOR_CALENDAR_YEAR = gql`
     $input: FiskistofaGetShipStatusForCalendarYearInput!
   ) {
     fiskistofaGetShipStatusForCalendarYear(input: $input) {
-      shipInformation {
-        id
-        shipNumber
-        name
-        timePeriod
-      }
-      catchQuotaCategories {
-        id
-        name
-        allocation
-        specialAlloction
-        betweenYears
-        betweenShips
-        catchQuota
-        catch
-        status
-        displacement
-        newStatus
-        nextYear
-        excessCatch
-        unused
+      fiskistofaShipStatus {
+        shipInformation {
+          id
+          shipNumber
+          name
+          timePeriod
+        }
+        catchQuotaCategories {
+          id
+          name
+          allocation
+          specialAlloction
+          betweenYears
+          betweenShips
+          catchQuota
+          catch
+          status
+          displacement
+          newStatus
+          nextYear
+          excessCatch
+          unused
+        }
       }
     }
   }
@@ -126,27 +134,29 @@ export const UPDATE_SHIP_STATUS_FOR_CALENDAR_YEAR = gql`
     $input: FiskistofaUpdateShipStatusForCalendarYearInput!
   ) {
     fiskistofaUpdateShipStatusForCalendarYear(input: $input) {
-      shipInformation {
-        id
-        shipNumber
-        name
-        timePeriod
-      }
-      catchQuotaCategories {
-        id
-        name
-        allocation
-        specialAlloction
-        betweenYears
-        betweenShips
-        catchQuota
-        catch
-        status
-        displacement
-        newStatus
-        nextYear
-        excessCatch
-        unused
+      fiskistofaShipStatus {
+        shipInformation {
+          id
+          shipNumber
+          name
+          timePeriod
+        }
+        catchQuotaCategories {
+          id
+          name
+          allocation
+          specialAlloction
+          betweenYears
+          betweenShips
+          catchQuota
+          catch
+          status
+          displacement
+          newStatus
+          nextYear
+          excessCatch
+          unused
+        }
       }
     }
   }
@@ -157,8 +167,12 @@ export const GET_QUOTA_TYPES_FOR_TIME_PERIOD = gql`
     $input: FiskistofaGetQuotaTypesForTimePeriodInput!
   ) {
     fiskistofaGetQuotaTypesForTimePeriod(input: $input) {
-      id
-      name
+      fiskistofaQuotaTypes {
+        id
+        name
+        totalCatchQuota
+        codEquivalent
+      }
     }
   }
 `
@@ -167,9 +181,11 @@ export const GET_QUOTA_TYPES_FOR_CALENDAR_YEAR = gql`
   query FiskistofaGetQuotaTypesForCalendarYear(
     $input: FiskistofaGetQuotaTypesForCalendarYearInput!
   ) {
-    fiskistofaGetQuotaTypesForCalendarYear(input: $input) {
+    fiskistofaQuotaTypes {
       id
       name
+      totalCatchQuota
+      codEquivalent
     }
   }
 `
@@ -177,14 +193,16 @@ export const GET_QUOTA_TYPES_FOR_CALENDAR_YEAR = gql`
 export const GET_SINGLE_SHIP = gql`
   query FiskistofaGetSingleShip($input: FiskistofaGetSingleShipInput!) {
     fiskistofaGetSingleShip(input: $input) {
-      shipNumber
-      name
-      ownerName
-      ownerSsn
-      operatorName
-      operatorSsn
-      operatingCategory
-      grossTons
+      fiskistofaSingleShip {
+        shipNumber
+        name
+        ownerName
+        ownerSsn
+        operatorName
+        operatorSsn
+        operatingCategory
+        grossTons
+      }
     }
   }
 `

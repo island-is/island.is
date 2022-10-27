@@ -39,6 +39,7 @@ class FiskistofaQuotaStatus {
   allocatedCatchQuota?: number
 }
 
+@ObjectType()
 export class FiskistofaQuotaStatusResponse {
   @Field(() => FiskistofaQuotaStatus, { nullable: true })
   fiskistofaShipQuotaStatus?: FiskistofaQuotaStatus | null

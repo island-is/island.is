@@ -12,7 +12,7 @@ import { FiskistofaUpdateShipStatusForCalendarYearInput } from './dto/updateShip
 import { FiskistofaUpdateShipStatusForTimePeriodInput } from './dto/updateShipStatusForTimePeriod.input'
 
 import { FiskistofaQuotaStatusResponse } from './models/quotaStatus'
-import { FiskistofaQuotaType } from './models/quotaType'
+import { FiskistofaQuotaTypeResponse } from './models/quotaType'
 import { FiskistofaShipBasicInfo } from './models/shipBasicInfo'
 import { FiskistofaSingleShipResponse } from './models/singleShip'
 import {
@@ -70,7 +70,7 @@ export class FiskistofaResolver {
   }
 
   @Directive(cacheControlDirective())
-  @Query(() => [FiskistofaQuotaType])
+  @Query(() => FiskistofaQuotaTypeResponse)
   fiskistofaGetQuotaTypesForTimePeriod(
     @Args('input') input: FiskistofaGetQuotaTypesForTimePeriodInput,
   ) {
@@ -78,7 +78,7 @@ export class FiskistofaResolver {
   }
 
   @Directive(cacheControlDirective())
-  @Query(() => [FiskistofaQuotaType])
+  @Query(() => FiskistofaQuotaTypeResponse)
   fiskistofaGetQuotaTypesForCalendarYear(
     @Args('input') input: FiskistofaGetQuotaTypesForCalendarYearInput,
   ) {
