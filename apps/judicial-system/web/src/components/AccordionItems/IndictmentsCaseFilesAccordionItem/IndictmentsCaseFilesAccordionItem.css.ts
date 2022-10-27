@@ -7,7 +7,7 @@ export const chapterContainer = style({
   backgroundColor: '#fff',
   border: `1px solid ${theme.color.blue400}`,
   borderRadius: theme.border.radius.large,
-  padding: `${theme.spacing[2]}px ${theme.spacing[3]}px`,
+  padding: `12px 20px`,
 })
 
 export const reorderGroup = style({
@@ -18,4 +18,28 @@ export const reorderItem = style({
   position: 'relative',
   borderRadius: theme.border.radius.large,
   overflow: 'hidden',
+})
+
+export const caseFileWrapper = style({
+  display: 'flex',
+  alignItems: 'center',
+  background: theme.color.blue100,
+  paddingRight: `${theme.spacing[2]}px`,
+})
+
+export const editCaseFileButton = style({
+  width: '32px',
+  height: '34px',
+  padding: '4px',
+  borderRadius: theme.border.radius.large,
+  transition: 'background-color 0.2s ease-in-out',
+  selectors: {
+    '&:hover': {
+      backgroundColor: theme.color.blue200,
+    },
+    '&:disabled': {
+      backgroundColor: theme.color.dark100,
+      cursor: 'default',
+    },
+  },
 })
