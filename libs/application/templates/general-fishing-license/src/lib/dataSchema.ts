@@ -84,7 +84,7 @@ export const GeneralFishingLicenseSchema = z.object({
   fishingLicenseFurtherInformation: z.object({
     date: z.string().refine((x) => x.trim().length > 0),
     attachments: z.array(FileSchema).optional(), // TODO: make only optional for those licenses that shouldn't have attatchments
-    railAndRoeNet: z
+    railAndRoeNet: z // TODO: make only optinal for those licenses that shouldn't have roe and rail nets
       .object({
         railnet: z.string().optional(), // TODO: make only optional for those licenses that shouldn't have roe and rail nets
         roenet: z.string().optional(), // TODO: make only optional for those licenses that shouldn't have roe and rail nets
@@ -97,7 +97,8 @@ export const GeneralFishingLicenseSchema = z.object({
           params:
             fishingLicenseFurtherInformation.errorMessages.railNetTooLarge,
         },
-      ),
+      )
+      .optional(),
   }),
 })
 
