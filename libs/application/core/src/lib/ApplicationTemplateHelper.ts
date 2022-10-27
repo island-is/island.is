@@ -61,8 +61,7 @@ export class ApplicationTemplateHelper<
 
   getApplicationStatus(): ApplicationStatus {
     const { state } = this.application
-    console.log('state', state)
-    console.log(this.template.stateMachineConfig.states[state])
+
     if (this.template.stateMachineConfig.states[state].type === 'final') {
       if (state === FinalStates.REJECTED) {
         return ApplicationStatus.REJECTED
