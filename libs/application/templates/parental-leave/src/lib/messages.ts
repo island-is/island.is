@@ -25,6 +25,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Umsókn',
       description: 'Application',
     },
+    formEditTitle: {
+      id: 'pl.application:form.edit.title',
+      defaultMessage: 'Breyta eða bæta við tímabilum',
+      description: 'Edit or Add Periods',
+    },
     prerequisitesSection: {
       id: 'pl.application:prerequisites.section',
       defaultMessage: 'Forsendur',
@@ -1609,6 +1614,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:confirmation.title',
       defaultMessage: 'Senda inn umsókn',
       description: 'Review and submit',
+    },
+    cancel: {
+      id: 'pl.application:confirmation.cancel',
+      defaultMessage: 'Hætta við',
+      description: 'Cancel',
     },
     description: {
       id: 'pl.application:confirmation.description',
