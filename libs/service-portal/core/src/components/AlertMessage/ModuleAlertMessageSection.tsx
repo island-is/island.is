@@ -7,11 +7,17 @@ import {
 import { useAlertBanners } from '@island.is/service-portal/graphql'
 
 export const ModuleAlertBannerSection = () => {
-  const path = window.location.pathname
   const banners = useAlertBanners()
-  const currentBanners = banners.filter((x) =>
-    x.servicePortalPaths?.find((pathname) => path.includes(pathname)),
-  )
+  const currentBanners = banners.filter((x) => {
+    // Don't show the global banner again
+    if (x.servicePortalPaths?.includes('*')) return false
+    for (const path of x.servicePortalPaths ?? []) {
+      if (window.location.href.includes(path as string)) {
+        return true
+      }
+    }
+    return false
+  })
   return (
     <Stack space={2}>
       {currentBanners.map((banner) => (
