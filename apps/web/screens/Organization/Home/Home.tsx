@@ -81,6 +81,7 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace }) => {
                   : undefined,
             }}
             renderedOnOrganizationSubpage={false}
+            paddingTop={!organizationPage.description && index === 0 ? 0 : 6}
           />
         )
       })}
