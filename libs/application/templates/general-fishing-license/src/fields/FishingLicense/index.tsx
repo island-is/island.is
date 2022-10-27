@@ -25,7 +25,7 @@ export const FishingLicense: FC<FieldBaseProps> = ({
   const selectedChargeType = getValueViaPath(
     application.answers,
     'fishingLicense.license',
-    ''
+    '',
   ) as string
   const [chargeType, setChargeType] = useState<string>(selectedChargeType || '')
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
@@ -64,7 +64,7 @@ export const FishingLicense: FC<FieldBaseProps> = ({
   // clears charge type in answers
   // TODO: DOES NOT WORK
   const clearChargeType = async () => {
-    if(!application) return
+    if (!application) return
     const { fishingLicense, ...filteredAnswers } = application.answers
     console.log(filteredAnswers)
     await updateApplication({
@@ -84,12 +84,12 @@ export const FishingLicense: FC<FieldBaseProps> = ({
   // for the currently chosen ship, remove that charge type from the
   // answer once we've  established all legal charge types for current ship
   useEffect(() => {
-    if(!data?.fishingLicenses || !chargeType) return
+    if (!data?.fishingLicenses || !chargeType) return
     const type = data?.fishingLicenses?.find(
       ({ fishingLicenseInfo }: FishingLicenseSchema) =>
         fishingLicenseInfo.code === chargeType,
     ) as FishingLicenseSchema
-    if(!type || !type?.answer) {
+    if (!type || !type?.answer) {
       clearChargeType()
     }
   }, [data])
@@ -140,7 +140,8 @@ export const FishingLicense: FC<FieldBaseProps> = ({
                             fishingLicense.labels[fishingLicenseInfo.code],
                           ),
                     tooltip:
-                      fishingLicenseInfo.code !== 'hookCatchLimit' && fishingLicenseInfo.code !== 'catchMark'
+                      fishingLicenseInfo.code !== 'hookCatchLimit' &&
+                      fishingLicenseInfo.code !== 'catchMark'
                         ? ''
                         : formatMessage(
                             fishingLicense.tooltips[fishingLicenseInfo.code],
@@ -160,9 +161,16 @@ export const FishingLicense: FC<FieldBaseProps> = ({
                   fishingLicenseInfo.code === 'unknown'
                 )
                   return null
-                const warningTitle = formatMessage(fishingLicense.warningMessageTitle.licenseForbidden)
-                const warningText = formatMessage(fishingLicense.warningMessageDescription.licenseForbidden)
-                const licenseName = formatMessage(fishingLicense.labels[fishingLicenseInfo.code]) || ''
+                const warningTitle = formatMessage(
+                  fishingLicense.warningMessageTitle.licenseForbidden,
+                )
+                const warningText = formatMessage(
+                  fishingLicense.warningMessageDescription.licenseForbidden,
+                )
+                const licenseName =
+                  formatMessage(
+                    fishingLicense.labels[fishingLicenseInfo.code],
+                  ) || ''
                 return (
                   <Box marginBottom={2} key={fishingLicenseInfo.code}>
                     <FishingLicenseAlertMessage
