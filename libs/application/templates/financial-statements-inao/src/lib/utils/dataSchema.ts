@@ -65,6 +65,9 @@ const liability = z.object({
   shortTerm: z.string().refine((x) => !!x, { params: m.required }),
   total: z.string().refine((x) => !!x, { params: m.required }),
 })
+const equityAndLiabilities = z.object({
+  total: z.string(),
+})
 
 const cemetryOperation = z.object({
   incomeLimit: z.string().optional(),
@@ -220,6 +223,7 @@ export const dataSchema = z.object({
   cemetryEquity,
   cemetryLiability,
   cemetryAsset,
+  equityAndLiabilities,
   cemetryCaretaker,
   cemetryOperation,
   asset,

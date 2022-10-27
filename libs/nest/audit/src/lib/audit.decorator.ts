@@ -1,5 +1,5 @@
 import { SetMetadata } from '@nestjs/common'
-import { AuditTemplate } from './audit.service'
+import type { AuditTemplate } from './audit.types'
 
 export const AUDIT_METADATA_KEY = Symbol('audit')
 

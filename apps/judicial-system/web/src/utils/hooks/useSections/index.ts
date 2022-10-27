@@ -301,8 +301,7 @@ const useSections = () => {
                   : undefined,
             },
             ...(features.includes(Feature.CASE_FILE_ROUTE)
-              ? []
-              : [
+              ? [
                   {
                     type: 'SUB_SECTION',
                     name: capitalize(
@@ -316,7 +315,8 @@ const useSections = () => {
                         ? `${constants.INDICTMENTS_CASE_FILE_ROUTE}/${id}`
                         : undefined,
                   },
-                ]),
+                ]
+              : []),
             {
               type: 'SUB_SECTION',
               name: capitalize(
