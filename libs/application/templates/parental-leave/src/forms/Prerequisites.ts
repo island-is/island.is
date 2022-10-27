@@ -25,6 +25,7 @@ import { parentalLeaveFormMessages } from '../lib/messages'
 import Logo from '../assets/Logo'
 import { isEligibleForParentalLeave } from '../lib/parentalLeaveUtils'
 import { NO, YES, ParentalRelations } from '../constants'
+import { ChildrenApi } from '../dataProviders'
 
 const shouldRenderMockDataSubSection = !isRunningOnEnvironment('production')
 
@@ -278,8 +279,7 @@ export const PrerequisitesForm: Form = buildForm({
                     parentalLeaveFormMessages.shared.familyInformationSubTitle,
                 }),
                 buildDataProviderItem({
-                  id: 'children',
-                  type: 'Children',
+                  provider: ChildrenApi,
                   title:
                     parentalLeaveFormMessages.shared.childrenInformationTitle,
                   subTitle:

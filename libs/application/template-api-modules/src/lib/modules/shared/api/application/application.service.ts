@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common'
-import { TemplateApiModuleActionProps } from '@island.is/application/template-api-modules'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import {
   CustomTemplateFindQuery,
@@ -7,6 +6,7 @@ import {
   ExistingApplicationParameters,
 } from '@island.is/application/types'
 import { ApplicationService as ApplicationApiService } from '@island.is/application/api/core'
+import { TemplateApiModuleActionProps } from '../../../../types'
 
 type ApplicationInfo = Omit<Application, 'externalData'>
 

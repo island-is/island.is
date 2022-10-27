@@ -1,5 +1,6 @@
-export { UserProfileProvider } from '@island.is/application/data-providers'
-export { FamilyInformationProvider } from '@island.is/application/data-providers'
+import { defineTemplateApi } from '@island.is/application/types'
 
-export { Children } from './Children'
-export { PersonInformationProvider } from './PersonInformation'
+export const ChildrenApi = defineTemplateApi({
+  action: 'getChildren',
+  externalDataId: 'children',
+})

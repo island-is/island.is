@@ -116,6 +116,7 @@ describe('MortgageCertificateSubmissionService', () => {
       const res = await mortgageCertificateSubmissionService.submitApplication({
         application,
         auth: user,
+        currentUserLocale: 'is',
       })
 
       expect(res).toEqual({

@@ -49,6 +49,7 @@ import { apiConstants } from './constants'
 import { ConfigService } from '@nestjs/config'
 import { getConfigValue } from '../../shared/shared.utils'
 import { BaseTemplateApiService } from '../../base-template-api.service'
+import { ChildrenService } from './children/children.service'
 
 interface VMSTError {
   type: string
@@ -73,6 +74,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     @Inject(APPLICATION_ATTACHMENT_BUCKET)
     private readonly attachmentBucket: string,
     private readonly configService: ConfigService<BaseTemplateAPIModuleConfig>,
+    private readonly childrenService: ChildrenService,
   ) {
     super(ApplicationTypes.PARENTAL_LEAVE)
   }
@@ -85,6 +87,10 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     return {
       message: Object.entries(e.errors).map(([, values]) => values.join(', ')),
     }
+  }
+
+  async getChildren({ application, auth }: TemplateApiModuleActionProps) {
+    return this.childrenService.provideChildren(application, auth.nationalId)
   }
 
   async assignOtherParent({ application }: TemplateApiModuleActionProps) {

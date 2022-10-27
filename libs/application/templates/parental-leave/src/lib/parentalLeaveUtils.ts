@@ -16,8 +16,6 @@ import {
   FormValue,
   Option,
 } from '@island.is/application/types'
-import type { FamilyMember } from '@island.is/api/domains/national-registry'
-
 import { parentalLeaveFormMessages } from '../lib/messages'
 import { TimelinePeriod } from '../fields/components/Timeline/Timeline'
 import {
@@ -30,16 +28,19 @@ import {
   TransferRightsOption,
 } from '../constants'
 import { SchemaFormValues } from '../lib/dataSchema'
-import { PregnancyStatusAndRightsResults } from '../dataProviders/Children/Children'
+
 import {
   calculatePeriodLength,
   daysToMonths,
 } from '../lib/directorateOfLabour.utils'
 import {
+  YesOrNo,
+  Period,
+  PersonInformation,
   ChildInformation,
   ChildrenAndExistingApplications,
-} from '../dataProviders/Children/types'
-import { YesOrNo, Period, PersonInformation } from '../types'
+  PregnancyStatusAndRightsResults,
+} from '../types'
 import { FormatMessage } from '@island.is/localization'
 
 export function getExpectedDateOfBirth(

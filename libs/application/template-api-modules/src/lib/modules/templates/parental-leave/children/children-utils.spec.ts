@@ -5,18 +5,18 @@ import {
   FormValue,
 } from '@island.is/application/types'
 
-import { ParentalRelations } from '../../constants'
 import {
   getChildrenAndExistingApplications,
   applicationsToExistingChildApplication,
   applicationsToChildInformation,
-} from './Children-utils'
+} from './children-utils'
 import {
+  ParentalRelations,
   ChildInformationWithoutRights,
   PregnancyStatus,
   ChildrenWithoutRightsAndExistingApplications,
   ChildInformation,
-} from './types'
+} from '@island.is/application/templates/parental-leave'
 
 let id = 0
 

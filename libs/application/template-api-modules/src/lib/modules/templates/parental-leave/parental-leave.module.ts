@@ -13,6 +13,8 @@ import {
   APPLICATION_ATTACHMENT_BUCKET,
 } from './parental-leave.service'
 import { SmsModule } from '@island.is/nova-sms'
+import { ChildrenService } from './children/children.service'
+import { ApplicationApiCoreModule } from '@island.is/application/api/core'
 
 const XROAD_VMST_MEMBER_CODE = process.env.XROAD_VMST_MEMBER_CODE ?? ''
 const XROAD_VMST_API_PATH = process.env.XROAD_VMST_API_PATH ?? ''
@@ -36,8 +38,10 @@ export class ParentalLeaveModule {
         }),
         SharedTemplateAPIModule.register(config),
         SmsModule.register(config.smsOptions),
+        ApplicationApiCoreModule,
       ],
       providers: [
+        ChildrenService,
         ParentalLeaveService,
         {
           provide: APPLICATION_ATTACHMENT_BUCKET,

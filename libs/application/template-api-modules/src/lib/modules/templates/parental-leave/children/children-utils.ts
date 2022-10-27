@@ -2,17 +2,15 @@ import { getValueViaPath } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import type { DistributiveOmit } from '@island.is/shared/types'
 
-import { ParentalRelations } from '../../constants'
 import {
+  ParentalRelations,
   getSelectedChild,
   getTransferredDays,
-} from '../../lib/parentalLeaveUtils'
-import {
   ChildInformation,
   ExistingChildApplication,
   PregnancyStatus,
   ChildrenWithoutRightsAndExistingApplications,
-} from './types'
+} from '@island.is/application/templates/parental-leave'
 
 // We do not require hasRights or remainingDays in this step
 // as it will be calculated later in the process

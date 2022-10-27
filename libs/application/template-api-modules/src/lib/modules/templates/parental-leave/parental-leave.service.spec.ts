@@ -344,7 +344,11 @@ describe('ParentalLeaveService', () => {
         scope: [''],
       }
 
-      await parentalLeaveService.sendApplication({ application, auth })
+      await parentalLeaveService.sendApplication({
+        application,
+        auth,
+        currentUserLocale: 'is',
+      })
 
       // One email to the applicant and one to the employer
       expect(mockedSendEmail.mock.calls.length).toBe(2)
@@ -370,7 +374,11 @@ describe('ParentalLeaveService', () => {
         scope: [''],
       }
 
-      await parentalLeaveService.sendApplication({ application, auth })
+      await parentalLeaveService.sendApplication({
+        application,
+        auth,
+        currentUserLocale: 'is',
+      })
 
       // No email should be sent since applicant is aware of their own approval
       expect(mockedSendEmail.mock.calls.length).toBe(0)
