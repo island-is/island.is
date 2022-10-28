@@ -10,7 +10,6 @@ import { Box, Button, Text } from '@island.is/island-ui/core'
 import { payment } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
-// import { Company } from '../../assets' // TODOx
 
 const QUERY = gql`
   query status($applicationId: String!) {
@@ -52,10 +51,9 @@ export const PaymentPending: FC<Props> = ({ error, application, refetch }) => {
 
   // automatically go to done state if payment has been fulfilled
   useEffect(() => {
-    // TODOx payment step disabled
-    // if (!paymentStatus.fulfilled) {
-    //   return
-    // }
+    if (!paymentStatus.fulfilled) {
+      return
+    }
 
     setContinuePolling(false)
 

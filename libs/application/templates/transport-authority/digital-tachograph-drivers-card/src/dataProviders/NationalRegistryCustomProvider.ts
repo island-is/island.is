@@ -11,7 +11,7 @@ import { m } from '../lib/messagesx'
 export class NationalRegistryCustomProvider extends BasicDataProvider {
   type = 'NationalRegistryCustomProvider'
 
-  async provide(): Promise<NationalRegistryUser> {
+  async provide(): Promise<NationalRegistryUser | null> {
     return this.useGraphqlGateway(GET_BIRTHPLACE_AND_DOMICILE).then(
       async (res: Response) => {
         const response = await res.json()
@@ -28,16 +28,18 @@ export class NationalRegistryCustomProvider extends BasicDataProvider {
         const data = response.data as {
           nationalRegistryUser: NationalRegistryUser | null
         }
+        const nationalRegistryUserData = data?.nationalRegistryUser
 
-        const domicileCode = response.data.nationalRegistryUser?.address?.code
-        if (!domicileCode || domicileCode.substr(0, 2) === '99') {
+        // Make sure user has domicile country as Iceland
+        const domicileCode = nationalRegistryUserData?.address?.code
+        if (!domicileCode || domicileCode.substring(0, 2) === '99') {
           return Promise.reject({
             reason:
               m.nationalRegistryDomicileProviderErrorMissing.defaultMessage,
           })
         }
 
-        return Promise.resolve(response.data.nationalRegistryUser)
+        return Promise.resolve(nationalRegistryUserData)
       },
     )
     // .catch(() => {

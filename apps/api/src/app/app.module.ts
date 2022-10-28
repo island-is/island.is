@@ -55,6 +55,8 @@ import { CriminalRecordModule } from '@island.is/api/domains/criminal-record'
 import { MunicipalitiesFinancialAidModule } from '@island.is/api/domains/municipalities-financial-aid'
 import { MunicipalitiesFinancialAidConfig } from '@island.is/clients/municipalities-financial-aid'
 import { MortgageCertificateModule } from '@island.is/api/domains/mortgage-certificate'
+import { DigitalTachographApiModule } from '@island.is/api/domains/transport-authority/digital-tachograph'
+import { TransferOfVehicleOwnershipApiModule } from '@island.is/api/domains/transport-authority/transfer-of-vehicle-ownership'
 
 import { maskOutFieldsMiddleware } from './graphql.middleware'
 import { FishingLicenseModule } from '@island.is/api/domains/fishing-license'
@@ -267,6 +269,8 @@ const autoSchemaFile = environment.production
     MunicipalitiesFinancialAidModule,
     FishingLicenseModule,
     MortgageCertificateModule,
+    DigitalTachographApiModule,
+    TransferOfVehicleOwnershipApiModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [

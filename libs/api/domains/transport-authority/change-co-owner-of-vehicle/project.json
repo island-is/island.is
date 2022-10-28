@@ -1,0 +1,27 @@
+{
+  "root": "libs/api/domains/transport-authority/change-co-owner-of-vehicle",
+  "sourceRoot": "libs/api/domains/transport-authority/change-co-owner-of-vehicle/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/api/domains/transport-authority/change-co-owner-of-vehicle/**/*.ts"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": [
+        "coverage/libs/api/domains/transport-authority/change-co-owner-of-vehicle"
+      ],
+      "options": {
+        "jestConfig": "libs/api/domains/transport-authority/change-co-owner-of-vehicle/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

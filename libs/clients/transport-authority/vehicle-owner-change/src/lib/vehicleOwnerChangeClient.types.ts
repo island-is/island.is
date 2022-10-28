@@ -29,3 +29,13 @@ export interface OwnerChangeCoOwner {
   ssn: string
   email: string
 }
+
+export interface NewestOwnerChange {
+  permno: string
+  ownerSsn: string
+  ownerName?: string
+  dateOfPurchase: Date
+  saleAmount: number
+  insuranceCompanyCode: string
+  insuranceCompanyName?: string | null
+}

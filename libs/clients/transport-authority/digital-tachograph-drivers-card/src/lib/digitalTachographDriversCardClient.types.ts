@@ -27,7 +27,7 @@ export interface TachoNetCheckResponseCard {
   isActive?: boolean
 }
 
-export interface DriversCard {
+export interface NewestDriversCard {
   ssn?: string
   applicationCreatedAt?: Date
   cardNumber?: string
@@ -68,4 +68,10 @@ export interface DriverCardApplicationResponseDeliveryAddress {
   postalCode?: string
   place?: string
   country?: string
+}
+
+export interface PhotoAndSignatureResponse {
+  ssn?: string
+  photo?: string
+  signature?: string
 }

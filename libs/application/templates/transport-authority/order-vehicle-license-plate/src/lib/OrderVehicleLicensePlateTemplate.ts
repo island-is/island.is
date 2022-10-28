@@ -17,10 +17,7 @@ import * as z from 'zod'
 import { m } from './messagesx'
 import { Features } from '@island.is/feature-flags'
 import { ApiActions } from '../shared'
-
-const OrderVehicleLicensePlateSchema = z.object({
-  approveExternalData: z.boolean().refine((v) => v),
-})
+import { OrderVehicleLicensePlateSchema } from './dataSchema'
 
 const template: ApplicationTemplate<
   ApplicationContext,

@@ -24,12 +24,12 @@ export class DrivingLicenseProvider extends BasicDataProvider {
         const data = response.data as {
           drivingLicense: DrivingLicense | null
         }
-
-        const licenseCategories = data?.drivingLicense?.categories?.map(
-          (x) => x.name,
-        )
+        const drivingLicenseData = data?.drivingLicense
 
         // Validate that user has the necessary categories
+        const licenseCategories = drivingLicenseData?.categories?.map(
+          (x) => x.name,
+        )
         const validCategories = ['C', 'C1', 'D', 'D1', 'B'] //TODOx remove B
         if (
           !licenseCategories ||
@@ -40,7 +40,7 @@ export class DrivingLicenseProvider extends BasicDataProvider {
           })
         }
 
-        return Promise.resolve(data?.drivingLicense)
+        return Promise.resolve(drivingLicenseData)
       },
     )
     // .catch((error) => {

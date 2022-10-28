@@ -4,7 +4,7 @@ import {
   buildSubSection,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
-import { TransferOfVehicleOwnership } from '../../../lib/dataSchema'
+import { Application } from '../../../types/schema'
 
 export const sellerSubSection = buildSubSection({
   id: 'seller',
@@ -23,7 +23,7 @@ export const sellerSubSection = buildSubSection({
           disabled: true,
           format: '######-####',
           required: true,
-          defaultValue: (application: TransferOfVehicleOwnership) =>
+          defaultValue: (application: Application) =>
             application.externalData?.nationalRegistry?.data?.nationalId,
         }),
         buildTextField({
@@ -33,7 +33,7 @@ export const sellerSubSection = buildSubSection({
           width: 'half',
           disabled: true,
           required: true,
-          defaultValue: (application: TransferOfVehicleOwnership) =>
+          defaultValue: (application: Application) =>
             application.externalData?.nationalRegistry?.data?.fullName,
         }),
         buildTextField({
@@ -43,7 +43,7 @@ export const sellerSubSection = buildSubSection({
           variant: 'tel',
           format: '###-####',
           required: true,
-          defaultValue: (application: TransferOfVehicleOwnership) =>
+          defaultValue: (application: Application) =>
             application.externalData?.userProfile?.data?.mobilePhoneNumber,
         }),
         buildTextField({
@@ -52,7 +52,7 @@ export const sellerSubSection = buildSubSection({
           width: 'half',
           variant: 'email',
           required: true,
-          defaultValue: (application: TransferOfVehicleOwnership) =>
+          defaultValue: (application: Application) =>
             application.externalData?.userProfile?.data?.email,
         }),
       ],

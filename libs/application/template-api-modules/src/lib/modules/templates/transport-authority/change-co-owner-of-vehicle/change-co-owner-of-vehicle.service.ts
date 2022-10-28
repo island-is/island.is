@@ -2,11 +2,14 @@ import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { ChargeItemCode } from '@island.is/shared/constants'
+import { ChangeCoOwnerOfVehicleApi } from '@island.is/api/domains/transport-authority/change-co-owner-of-vehicle'
+import { ChangeCoOwnerOfVehicleAnswers } from '@island.is/application/templates/transport-authority/change-co-owner-of-vehicle'
 
 @Injectable()
 export class ChangeCoOwnerOfVehicleService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
+    private readonly changeCoOwnerOfVehicleApi: ChangeCoOwnerOfVehicleApi,
   ) {}
 
   async createCharge({
@@ -25,14 +28,17 @@ export class ChangeCoOwnerOfVehicleService {
     }
   }
 
-  async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
+  async submitApplication({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps): Promise<void> {
     const { paymentUrl } = application.externalData.createCharge.data as {
       paymentUrl: string
     }
     if (!paymentUrl) {
-      return {
-        success: false,
-      }
+      throw new Error(
+        'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
+      )
     }
 
     const isPayment:
@@ -43,14 +49,22 @@ export class ChangeCoOwnerOfVehicleService {
     )
 
     if (!isPayment?.fulfilled) {
-      // TODOx payment step disabled
-      // throw new Error(
-      //   'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
-      // )
+      throw new Error(
+        'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
+      )
     }
 
-    return {
-      success: true,
-    }
+    const answers = application.answers as ChangeCoOwnerOfVehicleAnswers
+
+    // Submit the application
+    await this.changeCoOwnerOfVehicleApi.saveCoOwners(
+      auth.nationalId,
+      answers?.vehicle?.plate,
+      answers?.owner?.email,
+      answers?.coOwners.map((coOwner) => ({
+        ssn: coOwner.nationalId,
+        email: coOwner.email,
+      })),
+    )
   }
 }

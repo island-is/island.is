@@ -1,16 +1,38 @@
 import { Injectable } from '@nestjs/common'
 import { OwnerChangeApi } from '../../gen/fetch/apis'
-import { OwnerChange } from './vehicleOwnerChangeClient.types'
+import {
+  NewestOwnerChange,
+  OwnerChange,
+} from './vehicleOwnerChangeClient.types'
 
 @Injectable()
 export class VehicleOwnerChangeClient {
   constructor(private readonly ownerchangeApi: OwnerChangeApi) {}
+
+  public async getNewestOwnerChange(
+    permno: string,
+  ): Promise<NewestOwnerChange> {
+    const result = await this.ownerchangeApi.getOwnerChange({
+      permno: permno,
+    })
+
+    return {
+      permno: permno,
+      ownerSsn: result?.persidno || '',
+      ownerName: result?.persidno || '',
+      dateOfPurchase: result?.dateOfOwnerRegistration || new Date(),
+      saleAmount: result?.saleAmount || 0,
+      insuranceCompanyCode: result?.insuranceCompanyCode || '',
+      insuranceCompanyName: result?.insuranceCompanyName,
+    }
+  }
 
   public async saveOwnerChange(
     currentUserSsn: string,
     ownerChange: OwnerChange,
   ): Promise<void> {
     // TODOx disabled untill this API goes on xroad
+    throw Error('Not implemented')
     return
 
     const result = await this.ownerchangeApi.rootPost({

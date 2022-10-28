@@ -4134,7 +4134,7 @@
             "nullable": true
           }
         },
-        "additionalProperties": {}
+        "additionalProperties": false
       },
       "RegGroupDto": {
         "type": "object",

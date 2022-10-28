@@ -194,27 +194,42 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/OperatorDto"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OperatorDto"
+                  }
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OperatorDto"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OperatorDto"
+                  }
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OperatorDto"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OperatorDto"
+                  }
                 }
               },
               "application/xml": {
                 "schema": {
-                  "$ref": "#/components/schemas/OperatorDto"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OperatorDto"
+                  }
                 }
               },
               "text/xml": {
                 "schema": {
-                  "$ref": "#/components/schemas/OperatorDto"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OperatorDto"
+                  }
                 }
               }
             }
@@ -303,293 +318,6 @@
               "text/xml": {
                 "schema": {
                   "$ref": "#/components/schemas/OperatorDto"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/withcontract": {
-      "post": {
-        "tags": ["Operator"],
-        "summary": "Post changes for operators",
-        "parameters": [
-          {
-            "name": "json",
-            "in": "query",
-            "description": "Model with information",
-            "schema": {
-              "$ref": "#/components/schemas/PostOperatorsWithContract"
-            }
-          },
-          {
-            "name": "api-version",
-            "in": "query",
-            "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ReturnTypeMessage"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ReturnTypeMessage"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ReturnTypeMessage"
-                  }
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ReturnTypeMessage"
-                  }
-                }
-              },
-              "text/xml": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ReturnTypeMessage"
-                  }
-                }
-              }
-            }
-          },
-          "201": {
-            "description": "Created",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/PostOperatorsWithContract"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PostOperatorsWithContract"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PostOperatorsWithContract"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ValidationProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ValidationProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ValidationProblemDetails"
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ValidationProblemDetails"
-                }
-              },
-              "text/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ValidationProblemDetails"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/": {
-      "put": {
-        "tags": ["Operator"],
-        "summary": "Update operators",
-        "parameters": [
-          {
-            "name": "json",
-            "in": "query",
-            "description": "Model with information",
-            "schema": {
-              "$ref": "#/components/schemas/PutOperatorsWithContract"
-            }
-          },
-          {
-            "name": "api-version",
-            "in": "query",
-            "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ReturnTypeMessage"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ReturnTypeMessage"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ReturnTypeMessage"
-                  }
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ReturnTypeMessage"
-                  }
-                }
-              },
-              "text/xml": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ReturnTypeMessage"
-                  }
-                }
-              }
-            }
-          },
-          "204": {
-            "description": "No Content"
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ValidationProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ValidationProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ValidationProblemDetails"
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ValidationProblemDetails"
-                }
-              },
-              "text/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ValidationProblemDetails"
                 }
               }
             }
@@ -779,7 +507,7 @@
             "nullable": true
           }
         },
-        "additionalProperties": {}
+        "additionalProperties": false
       },
       "PutOperatorsEntityWithContract": {
         "required": ["mainOperator", "personIdNumber", "startDate"],
@@ -987,7 +715,7 @@
             "readOnly": true
           }
         },
-        "additionalProperties": {}
+        "additionalProperties": false
       }
     },
     "securitySchemes": {

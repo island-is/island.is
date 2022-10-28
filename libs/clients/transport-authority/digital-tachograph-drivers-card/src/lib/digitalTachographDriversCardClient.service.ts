@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common'
+import { fail } from 'assert'
 import { map } from 'rxjs'
 import {
   DriverCardApplicationRequestDeliveryMethodEnum,
@@ -7,11 +8,16 @@ import {
   TachonetCheckResponseCardsIsActiveEnum,
   TachonetCheckResponseCardsIsTemporaryEnum,
 } from '../../gen/fetch'
-import { TachoNetApi, DriverCardsApi } from '../../gen/fetch/apis'
+import {
+  TachoNetApi,
+  DriverCardsApi,
+  IndividualApi,
+} from '../../gen/fetch/apis'
 import {
   DriverCardApplicationResponse,
-  DriversCard,
   DriversCardApplicationRequest,
+  NewestDriversCard,
+  PhotoAndSignatureResponse,
   TachoNetCheckRequest,
   TachoNetCheckResponse,
 } from './digitalTachographDriversCardClient.types'
@@ -21,6 +27,7 @@ export class DigitalTachographDriversCardClient {
   constructor(
     private readonly tachoNetApi: TachoNetApi,
     private readonly driversCardApi: DriverCardsApi,
+    private readonly individualApi: IndividualApi,
   ) {}
 
   public async checkTachoNet(
@@ -57,7 +64,21 @@ export class DigitalTachographDriversCardClient {
     }
   }
 
-  public async getDriversCard(ssn: string): Promise<DriversCard> {
+  public async getNewestDriversCard(ssn: string): Promise<NewestDriversCard> {
+    // TODOx disabled untill this API goes on xroad
+    const validFrom = new Date()
+    validFrom.setFullYear(validFrom.getFullYear() - 1)
+    const validTo = new Date()
+    validTo.setFullYear(validTo.getFullYear() + 1)
+    return {
+      ssn: ssn,
+      applicationCreatedAt: validFrom,
+      cardNumber: '123456',
+      cardValidFrom: validFrom,
+      cardValidTo: validTo,
+      isValid: true,
+    }
+
     const result = await this.driversCardApi.getNewesticelandicdrivercard({
       persidno: ssn,
     })
@@ -75,7 +96,11 @@ export class DigitalTachographDriversCardClient {
 
   public async saveDriversCard(
     request: DriversCardApplicationRequest,
-  ): Promise<DriverCardApplicationResponse> {
+  ): Promise<DriverCardApplicationResponse | null> {
+    // TODOx disabled untill this API goes on xroad
+    throw Error('Not implemented')
+    return null
+
     const result = await this.driversCardApi.postDrivercards({
       driverCardApplicationRequest: {
         personIdNumber: request.ssn,
@@ -116,6 +141,22 @@ export class DigitalTachographDriversCardClient {
               country: result?.deliveryIfSend?.country,
             }
           : undefined,
+    }
+  }
+
+  public async getPhotoAndSignature(
+    ssn: string,
+  ): Promise<PhotoAndSignatureResponse> {
+    const result = await this.individualApi.getIndividualPersidnoPhotoandsignature(
+      {
+        persidno: ssn,
+      },
+    )
+
+    return {
+      ssn: result.personIdNumber,
+      photo: result.photo,
+      signature: result.signature,
     }
   }
 }

@@ -2,11 +2,15 @@ import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { ChargeItemCode } from '@island.is/shared/constants'
+import { DigitalTachographApi } from '@island.is/api/domains/transport-authority/digital-tachograph'
+import { DigitalTachographDriversCardAnswers } from '@island.is/application/templates/transport-authority/digital-tachograph-drivers-card'
+import { NationalRegistry, QualityPhoto, QualitySignature } from './types'
 
 @Injectable()
 export class DigitalTachographDriversCardService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
+    private readonly digitalTachographApi: DigitalTachographApi,
   ) {}
 
   async createCharge({
@@ -25,14 +29,17 @@ export class DigitalTachographDriversCardService {
     }
   }
 
-  async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
+  async submitApplication({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps): Promise<void> {
     const { paymentUrl } = application.externalData.createCharge.data as {
       paymentUrl: string
     }
     if (!paymentUrl) {
-      return {
-        success: false,
-      }
+      throw new Error(
+        'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
+      )
     }
 
     const isPayment:
@@ -43,14 +50,35 @@ export class DigitalTachographDriversCardService {
     )
 
     if (!isPayment?.fulfilled) {
-      // TODOx payment step disabled
-      // throw new Error(
-      //   'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
-      // )
+      throw new Error(
+        'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
+      )
     }
 
-    return {
-      success: true,
-    }
+    const answers = application.answers as DigitalTachographDriversCardAnswers
+    const nationalRegistryData = application.externalData.nationalRegistry
+      ?.data as NationalRegistry
+    const createChargeDate = application.externalData.createCharge?.date
+    const qualityPhotoData = application.externalData.qualityPhoto
+      ?.data as QualityPhoto
+    const qualitySignatureData = application.externalData.qualitySignature
+      ?.data as QualitySignature
+
+    // Submit the application
+    await this.digitalTachographApi.saveDriversCard({
+      ssn: auth.nationalId,
+      fullName: nationalRegistryData?.fullName,
+      address: nationalRegistryData?.address?.streetAddress,
+      postalCode: nationalRegistryData?.address?.postalCode,
+      place: nationalRegistryData?.address?.city,
+      birthCountry: answers.birthCountry,
+      birthPlace: answers.birthPlace,
+      emailAddress: answers.email,
+      phoneNumber: answers.phone,
+      deliveryMethodIsSend: answers.deliveryMethodIsSend,
+      paymentReceivedAt: new Date(createChargeDate),
+      photo: qualityPhotoData?.dataUri,
+      signature: qualitySignatureData?.dataUri,
+    })
   }
 }
