@@ -57,15 +57,12 @@ export class FinancialStatementsInaoTemplateService {
     )
 
     const fileName = attachment?.[0].key
-    console.log('getAttachment', fileName)
     if (!fileName) {
-      console.log('no filename')
       return Promise.reject({})
     }
 
     const { bucket, key } = AmazonS3URI(fileName)
-    console.log('AmazonS3URI helgi')
-    console.log({ bucket, key })
+
     const uploadBucket = bucket
     try {
       const file = await this.s3
@@ -74,13 +71,9 @@ export class FinancialStatementsInaoTemplateService {
           Key: key,
         })
         .promise()
-      console.log('s3 file', file)
       const fileContent = file.Body as Buffer
-      console.log('getAttachment', fileContent?.toString('base64') || '')
       return fileContent?.toString('base64') || ''
-    } catch (error) {
-      console.log('fileContent', error)
-    }
+    } catch (error) {}
     return ''
   }
 
@@ -102,7 +95,6 @@ export class FinancialStatementsInaoTemplateService {
     const externalData = application.externalData
     const currentUserType = getCurrentUserType(answers, externalData)
     const fileName = await this.getAttachment({ application, auth })
-    console.log('submitApplication', fileName)
     if (currentUserType === USERTYPE.INDIVIDUAL) {
       const values: PersonalElectionFinancialStatementValues = mapValuesToIndividualtype(
         answers,
