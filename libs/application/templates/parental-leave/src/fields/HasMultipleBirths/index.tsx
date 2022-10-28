@@ -52,10 +52,10 @@ export const HasMultipleBirths: FC<FieldBaseProps> = ({
           ],
           onSelect: (s: string) => {
             if (s === NO) {
-              setValue('multipleBirths', NO_MULTIPLE_BIRTHS)
+              setValue('multipleBirths.multipleBirths', NO_MULTIPLE_BIRTHS)
             }
             if (s === YES) {
-              setValue('multipleBirths', '')
+              setValue('multipleBirths.multipleBirths', '')
             }
           },
         }}
