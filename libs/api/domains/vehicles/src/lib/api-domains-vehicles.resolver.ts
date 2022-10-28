@@ -15,6 +15,7 @@ import { GetVehicleDetailInput } from '../dto/getVehicleDetailInput'
 import { VehiclesDetail } from '../models/getVehicleDetail.model'
 import { VehiclesVehicleSearch } from '../models/getVehicleSearch.model'
 import {
+  VehicleFeesByPermno,
   VehiclesCurrentVehicle,
   VehiclesCurrentVehicleWithFees,
 } from '../models/getCurrentVehicles.model'
@@ -104,6 +105,38 @@ export class VehiclesResolver {
     @Args('input') input: GetCurrentVehiclesInput,
     @CurrentUser() user: User,
   ) {
+    // TODOx disabled while this api is flaky
+    return [
+      {
+        permno: 'FJ496',
+        make: 'Toyota Yaris',
+        color: 'Rauður',
+        role: '',
+        isStolen: false,
+      },
+      {
+        permno: 'RE634',
+        make: 'Kia Sorrento',
+        color: 'Hvítur',
+        role: '',
+        isStolen: false,
+      },
+      {
+        permno: 'OL712',
+        make: 'Ford Fiesta',
+        color: 'Blár',
+        role: '',
+        isStolen: true,
+      },
+      {
+        permno: 'LK561',
+        make: 'Hyundai i30',
+        color: 'Blár',
+        role: '',
+        isStolen: false,
+      },
+    ]
+
     return (
       await this.vehiclesService.getCurrentVehicles(
         user,
@@ -130,6 +163,42 @@ export class VehiclesResolver {
     @Args('input') input: GetCurrentVehiclesInput,
     @CurrentUser() user: User,
   ) {
+    // TODOx disabled while this api is flaky
+    return [
+      {
+        permno: 'FJ496',
+        make: 'Toyota Yaris',
+        color: 'Rauður',
+        role: '',
+        isStolen: false,
+        fees: { hasEncumbrances: false },
+      },
+      {
+        permno: 'RE634',
+        make: 'Kia Sorrento',
+        color: 'Hvítur',
+        role: '',
+        isStolen: false,
+        fees: { hasEncumbrances: false },
+      },
+      {
+        permno: 'OL712',
+        make: 'Ford Fiesta',
+        color: 'Blár',
+        role: '',
+        isStolen: true,
+        fees: { hasEncumbrances: true },
+      },
+      {
+        permno: 'LK561',
+        make: 'Hyundai i30',
+        color: 'Blár',
+        role: '',
+        isStolen: false,
+        fees: { hasEncumbrances: true },
+      },
+    ]
+
     return await Promise.all(
       (await this.getCurrentVehicles(input, user)).map(
         async (vehicle: VehiclesCurrentVehicleWithFees) => {
@@ -147,5 +216,37 @@ export class VehiclesResolver {
         },
       ),
     )
+  }
+
+  @Scopes(ApiScope.internal)
+  @Query(() => VehicleFeesByPermno, {
+    name: 'vehicleFeesByPermno',
+    nullable: true,
+  })
+  @Audit()
+  async getVehicleFeesByPermno(
+    @Args('permno') permno: string,
+    @CurrentUser() user: User,
+  ) {
+    // TODOx disabled while this api is flaky
+    return { fees: { hasEncumbrances: Math.random() < 0.5 } }
+
+    // return await Promise.all(
+    //   (await this.getCurrentVehicles(input, user)).map(
+    //     async (vehicle: VehiclesCurrentVehicleWithFees) => {
+    //       // TODOx use new api endpoint from FJS
+    //       const vehicleDetails = await this.vehiclesService.getVehicleDetail(
+    //         user,
+    //         {
+    //           clientPersidno: user.nationalId,
+    //           permno: vehicle.permno || '',
+    //         },
+    //       )
+
+    //       vehicle.fees = vehicleDetails?.fees
+    //       return vehicle
+    //     },
+    //   ),
+    // )
   }
 }

@@ -24,3 +24,9 @@ export class VehiclesCurrentVehicleWithFees extends VehiclesCurrentVehicle {
   @Field(() => VehiclesFees, { nullable: true })
   fees?: VehiclesFees
 }
+
+@ObjectType()
+export class VehicleFeesByPermno {
+  @Field(() => VehiclesFees, { nullable: true })
+  fees?: VehiclesFees
+}
