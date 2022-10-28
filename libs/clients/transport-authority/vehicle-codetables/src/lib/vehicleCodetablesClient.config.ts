@@ -20,10 +20,11 @@ export const VehicleCodetablesClientConfig = defineConfig<
         'XROAD_CLIENT_ID',
         'IS-DEV/GOV/10000/island-is-client',
       ),
-      secret: env.required('XROAD_VEHICLE_CODETABLES_SECRET', ''), //TODOx munum við nota secret?
+      // TODOx laga tengingu við xroad. Þarf secret? ServiceName?
+      secret: env.required('XROAD_VEHICLE_CODETABLES_SECRET', ''),
       xroadPath: env.required(
         'XROAD_VEHICLE_CODETABLES_PATH',
-        'r1/IS-DEV/GOV/12345/Samgongustofa-Protected/<TODOX_SERVICE_NAME>',
+        'r1/IS-DEV/GOV/12345/Samgongustofa-Protected/<SERVICE_NAME>',
       ),
     }
   },
