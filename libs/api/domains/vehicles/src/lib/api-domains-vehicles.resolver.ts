@@ -231,22 +231,11 @@ export class VehiclesResolver {
     // TODOx disabled while this api is flaky
     return { fees: { hasEncumbrances: Math.random() < 0.5 } }
 
-    // return await Promise.all(
-    //   (await this.getCurrentVehicles(input, user)).map(
-    //     async (vehicle: VehiclesCurrentVehicleWithFees) => {
-    //       // TODOx use new api endpoint from FJS
-    //       const vehicleDetails = await this.vehiclesService.getVehicleDetail(
-    //         user,
-    //         {
-    //           clientPersidno: user.nationalId,
-    //           permno: vehicle.permno || '',
-    //         },
-    //       )
-
-    //       vehicle.fees = vehicleDetails?.fees
-    //       return vehicle
-    //     },
-    //   ),
-    // )
+    // TODOx use new api endpoint from FJS
+    const vehicleDetails = await this.vehiclesService.getVehicleDetail(user, {
+      clientPersidno: user.nationalId,
+      permno: permno,
+    })
+    return vehicleDetails?.fees
   }
 }
