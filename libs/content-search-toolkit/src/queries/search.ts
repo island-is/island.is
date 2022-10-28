@@ -40,8 +40,8 @@ export const searchQuery = (
   should.push({
     multi_match: {
       fields:  [ 
-          "title^6", // note boosting
-          "title.stemmed^2", // note boosting
+          "title^6", // note ^boosting
+          "title.stemmed^2", // note ^boosting
           "title.compound",
           "content",
           "content.stemmed"
@@ -140,7 +140,7 @@ export const searchQuery = (
       number_of_fragments : 3,
       fragment_size : 150,
       fields : {
-        title : { pre_tags : ["<em style='text-decoration: underline;font-weight: 900;font-style: normal;'>"],post_tags : ["</em>"] },
+        title : { pre_tags : ["<b>"],post_tags : ["</b>"] },
         content :{ pre_tags : ["<b>"],post_tags : ["</b>"] }
       }
     },

@@ -13,6 +13,7 @@ import {
 } from './organizationTheme.model'
 import { GenericTag, mapGenericTag } from './genericTag.model'
 import { AlertBanner, mapAlertBanner } from './alertBanner.model'
+import { SystemMetadata } from 'api-cms-domain'
 
 @ObjectType()
 export class OrganizationPage {
@@ -24,7 +25,8 @@ export class OrganizationPage {
 
   @Field()
   slug!: string
-
+  // @Field(() => [String],{nullable:true})
+  // url!: Array<string | null>
   @Field()
   description!: string
 
@@ -74,10 +76,12 @@ export class OrganizationPage {
 export const mapOrganizationPage = ({
   sys,
   fields,
-}: IOrganizationPage): OrganizationPage => ({
+}: IOrganizationPage): SystemMetadata<OrganizationPage>  => ({
+  typename: 'OrganizationPage',
   id: sys.id,
   title: fields.title ?? '',
   slug: fields.slug ?? '',
+  // url: [fields.slug ?? ''],
   description: fields.description ?? '',
   theme: fields.theme ?? 'default',
   themeProperties: mapOrganizationTheme(fields.themeProperties ?? {}),

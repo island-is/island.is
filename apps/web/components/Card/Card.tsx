@@ -104,14 +104,14 @@ export const Card = ({
                   fontWeight="semiBold"
                   color={titleColor}
                 >
-                  {subTitle} ***
+                  {subTitle}
                 </Text>
               </Box>
             </Box>
           )}
           <Box display="flex" flexDirection="row" alignItems="center">
             <Box display="inlineFlex" flexGrow={1}>
-              <Text as="h3" variant="h3" color={titleColor}>
+              <Text as="h3" variant="h3" color={titleColor} fontWeight="medium">
                 <span dangerouslySetInnerHTML={{__html: title}}></span>
               </Text>
             </Box>
@@ -131,7 +131,7 @@ export const Card = ({
 
                     return (
                       <Tag key={index} {...tagProps} disabled>
-                        {title} ***
+                        {title}
                       </Tag>
                     )
                   },

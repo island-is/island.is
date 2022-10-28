@@ -52,6 +52,7 @@ import {
   SubArticle,
   GetSearchResultsTotalQuery,
   OrganizationSubpage,
+  OrganizationPage,
   Link as LinkItem,
   ProjectPage,
 } from '@island.is/web/graphql/schema'
@@ -94,6 +95,7 @@ type SearchType = Article &
   AdgerdirPage &
   SubArticle &
   OrganizationSubpage &
+  OrganizationPage &
   LinkItem &
   ProjectPage
 
@@ -302,12 +304,20 @@ const Search: Screen<CategoryProps> = ({
   }
 
   const getItemLink = (item: SearchType) => {
+     
     if (
       item.__typename === 'LifeEventPage' &&
       item.pageType === AnchorPageType.DIGITAL_ICELAND_SERVICE
     ) {
       return linkResolver('digitalicelandservicesdetailpage', [item.slug])
-    }
+    } 
+    // if (item.__typename === 'OrganizationPage') {
+    //   // console.log(JSON.stringify(item,null,4))
+    //   // return linkResolver('digitalicelandservicesdetailpage', ["rabbz"])
+    //   // console.log(ret)
+    //   return linkResolver('digitalicelandservicesdetailpage', [item.slug])
+    // } 
+
     return linkResolver(item.__typename, item?.url ?? item.slug.split('/'))
   }
 
@@ -321,6 +331,27 @@ const Search: Screen<CategoryProps> = ({
         thumbnail: undefined,
       }
     }
+    if (item.__typename === 'OrganizationPage') {
+      return {
+        image: {
+          id: "6yNQWZxyjJ5qD7Vj5eSORl",
+          url: "https://images.ctfassets.net/8k0h54kbe6bj/6yNQWZxyjJ5qD7Vj5eSORl/ede49a530e87b27105aa2c8b43b72602/baby-life-event.svg",
+          title: "Eignast barn",
+          contentType: "image/svg+xml",
+          width: 2000,
+          height: 800
+        },
+        thumbnail: {
+          id: "4b7HN4aN9kNhnqo9Ah8l7j",
+          url: "https://images.ctfassets.net/8k0h54kbe6bj/4b7HN4aN9kNhnqo9Ah8l7j/af8770efd74c91e955c4511b93a9f422/Barnavagn.svg",
+          title: "Barnavagn",
+          contentType: "image/svg+xml",
+          width: 300,
+          height: 300
+        },
+      }
+    }
+
     return {
       ...(item.image && { image: item.image as Image }),
       ...(item.thumbnail && { thumbnail: item.thumbnail as Image }),
@@ -731,7 +762,7 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
     namespace,
   ] = await Promise.all([
     apolloClient.query<GetSearchResultsDetailedQuery, QuerySearchResultsArgs>({
-      fetchPolicy: "no-cache" ,
+      fetchPolicy: "no-cache",
       query: GET_SEARCH_RESULTS_QUERY_DETAILED,
       variables: {
         query: {
@@ -747,7 +778,7 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
       },
     }),
     apolloClient.query<GetSearchResultsNewsQuery, QuerySearchResultsArgs>({
-      fetchPolicy: "no-cache" ,
+      fetchPolicy: "no-cache",
       query: GET_SEARCH_COUNT_QUERY,
       variables: {
         query: {
@@ -783,7 +814,7 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
   if (searchResults.items.length === 0 && page > 1) {
     throw new CustomNextError(404)
   }
-
+  // console.log(JSON.stringify(searchResults,null,4))
   return {
     q: queryString,
     searchResults,

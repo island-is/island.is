@@ -285,7 +285,11 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
             }
           }
         }
-
+        ... on OrganizationPage {
+          id
+          title
+          slug
+        }
         ... on ProjectPage {
           id
           title

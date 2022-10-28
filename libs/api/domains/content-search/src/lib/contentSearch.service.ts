@@ -74,6 +74,10 @@ export class ContentSearchService {
       query,
     )
 
+    // console log scores for dev
+    body.hits.hits.map((item) =>
+      console.log(item._source.title,"\t",item._score,"\t",typeof(item._score))
+    )
   
     // intercept highlights
     let items = body.hits.hits.map((item) =>
@@ -126,17 +130,17 @@ export class ContentSearchService {
         singleTerm: input.singleTerm.trim(),
       },
     )
-    searchSuggester.forEach(element => {
-      element.options.forEach(item => {
-          console.log(item.text,"***")
-      })
-    });
+    // searchSuggester.forEach(element => {
+    //   element.options.forEach(item => {
+    //       console.log(item.text,"***")
+    //   })
+    // });
     const completions = await this.elasticService.findByQuery(
       this.getIndex(input.language),
       { _source: { include: [ "title", "content" ] },query: { bool: { should: [ { match: { content: "Fyrsta ökuskírteinið er" } }, { prefix: { content: "bráð" } } ] } } },
     )
-    console.log("COMPLETIONS")
-    console.log(completions)
+    // console.log("COMPLETIONS")
+    // console.log(completions)
   //   completions.body.hits.hits.forEach(item => {
   //     console.log(item.text,"***")
   //   })
@@ -153,7 +157,7 @@ export class ContentSearchService {
         (suggestionObjects) => suggestionObjects.text,
       ),
     }
-    console.log(ret)
+    // console.log(ret)
     return ret
   }
 }
