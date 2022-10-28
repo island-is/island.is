@@ -1,5 +1,7 @@
 export { DelegationsFromMe } from './DelegationsFromMe'
 export { DelegationsToMe } from './DelegationsToMe'
-export { DelegationsHeader } from './DelegationsHeader'
+export { DelegationsFromMeHeader } from './DelegationsFromMeHeader'
+export { DelegationsToMeHeader } from './DelegationsToMeHeader'
 export { DelegationsFormFooter } from './DelegationsFormFooter'
 export { DelegationsEmptyState } from './DelegationsEmptyState'
+export { DelegationsDomainSelect } from './DelegationsDomainSelect'

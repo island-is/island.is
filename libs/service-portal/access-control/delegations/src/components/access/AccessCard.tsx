@@ -1,4 +1,4 @@
-import { useHistory, useLocation } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 import format from 'date-fns/format'
 
 import {
@@ -8,13 +8,16 @@ import {
   Tag,
   Inline,
   Icon,
+  IconMapIcon as IconType,
   Button,
+  Tooltip,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { coreMessages } from '@island.is/application/core'
 import { AuthCustomDelegation } from '@island.is/api/schema'
+import { AuthDelegationType } from '@island.is/service-portal/graphql'
 import { useMemo } from 'react'
-import { m } from '@island.is/service-portal/core'
+import { m, ServicePortalPath } from '@island.is/service-portal/core'
 import sortBy from 'lodash/sortBy'
 
 const isDateExpired = (date: string) => new Date(date) < new Date()
@@ -22,13 +25,16 @@ const isDateExpired = (date: string) => new Date(date) < new Date()
 interface AccessCardProps {
   delegation: AuthCustomDelegation
   onDelete(delegation: AuthCustomDelegation): void
+  variant?: 'from' | 'to'
 }
 
-export const AccessCard = ({ delegation, onDelete }: AccessCardProps) => {
+export const AccessCard = ({
+  delegation,
+  onDelete,
+  variant = 'from',
+}: AccessCardProps) => {
   const { formatMessage } = useLocale()
   const history = useHistory()
-  const { pathname } = useLocation()
-
   const tags = sortBy(
     delegation.scopes.map((scope) => ({
       name: scope?.apiScope?.displayName || scope.displayName,
@@ -36,7 +42,11 @@ export const AccessCard = ({ delegation, onDelete }: AccessCardProps) => {
     })),
     'name',
   )
-  const href = `${pathname}/${delegation.id}`
+
+  const isFrom = variant === 'from'
+  const href = isFrom
+    ? `${ServicePortalPath.AccessControlDelegations}/${delegation.id}`
+    : `${ServicePortalPath.AccessControlDelegationsToMe}/${delegation.id}`
 
   const isExpired = useMemo(() => {
     if (delegation.validTo) {
@@ -62,6 +72,56 @@ export const AccessCard = ({ delegation, onDelete }: AccessCardProps) => {
         })
   }
 
+  const renderDelegationTypeLabel = (type: AuthDelegationType) => {
+    // Default to custom delegation type
+    let label = formatMessage(m.delegationTypeCustom)
+    let icon: IconType = 'people'
+
+    switch (type) {
+      case AuthDelegationType.LegalGuardian:
+        label = formatMessage(m.delegationTypeLegalGuardian)
+        break
+
+      case AuthDelegationType.PersonalRepresentative:
+        label = formatMessage(m.delegationTypePersonalRepresentative)
+        break
+
+      case AuthDelegationType.ProcurationHolder:
+        label = formatMessage(m.delegationTypeProcurationHolder)
+        icon = 'business'
+        break
+    }
+
+    return (
+      <Box display="flex" columnGap={1} alignItems="center">
+        <Icon icon={icon} color="blue400" size="small" type="outline" />
+        <Text variant="eyebrow" color="blue400">
+          {label}
+        </Text>
+      </Box>
+    )
+  }
+
+  const renderInfo = (type: AuthDelegationType) => {
+    // Default to custom delegation type
+    let text = formatMessage(m.delegationTypeCustom)
+
+    switch (type) {
+      case AuthDelegationType.LegalGuardian:
+        text = formatMessage(m.delegationTypeLegalGuardian)
+        break
+
+      case AuthDelegationType.PersonalRepresentative:
+        text = formatMessage(m.delegationTypePersonalRepresentative)
+        break
+
+      case AuthDelegationType.ProcurationHolder:
+        text = formatMessage(m.delegationTypeProcurationHolder)
+        break
+    }
+    return <Tooltip placement="bottom" as="button" text={text} />
+  }
+
   return (
     <Box
       paddingY={[2, 3, 4]}
@@ -71,32 +131,49 @@ export const AccessCard = ({ delegation, onDelete }: AccessCardProps) => {
     >
       <Box display="flex" justifyContent="spaceBetween" alignItems="flexStart">
         <Stack space="smallGutter">
-          <Box display="flex" columnGap={1} alignItems="center">
-            {delegation.domain.organisationLogoUrl && (
-              <img
-                src={delegation.domain.organisationLogoUrl}
-                alt={`Mynd af ${delegation.domain.displayName}`}
-                width="16"
-              />
+          <Box display="flex" columnGap={2} alignItems="center">
+            {!isFrom && (
+              <>
+                {renderDelegationTypeLabel(delegation.type)}
+                <Text variant="eyebrow" color="blue300">
+                  {'|'}
+                </Text>
+              </>
             )}
-            <Text variant="eyebrow" color="purple400">
-              {delegation.domain.displayName}
-            </Text>
+            <Box display="flex" columnGap={1} alignItems="center">
+              {delegation.domain.organisationLogoUrl && (
+                <img
+                  src={delegation.domain.organisationLogoUrl}
+                  alt={`Mynd af ${delegation.domain.displayName}`}
+                  width="16"
+                />
+              )}
+
+              <Text variant="eyebrow" color="purple400">
+                {delegation.domain.displayName}
+              </Text>
+            </Box>
           </Box>
           <Text variant="h3" as="h3" color={isExpired ? 'dark300' : 'dark400'}>
             {delegation?.to?.name}
           </Text>
         </Stack>
         <Inline space="smallGutter">
-          <Icon
-            size="small"
-            icon="time"
-            color={isExpired ? 'dark300' : 'blue400'}
-            type="outline"
-          />
-          <Text variant="small" color={isExpired ? 'dark300' : 'dark400'}>
-            {getRightLabel()}
-          </Text>
+          {!isFrom ? (
+            renderInfo(delegation.type)
+          ) : (
+            <>
+              <Icon
+                size="small"
+                icon="time"
+                color={isExpired ? 'dark300' : 'blue400'}
+                type="outline"
+              />
+              <Text variant="small" color={isExpired ? 'dark300' : 'dark400'}>
+                {getRightLabel()}
+              </Text>
+            </>
+          )}
         </Inline>
       </Box>
       <Box marginTop={2}>
@@ -138,7 +215,15 @@ export const AccessCard = ({ delegation, onDelete }: AccessCardProps) => {
               {formatMessage(m.buttonDestroy)}
             </Button>
             <Box marginLeft={3}>
-              {!isExpired ? (
+              {!isFrom ? (
+                <Button
+                  size="small"
+                  variant="utility"
+                  onClick={() => history.push(href)}
+                >
+                  {formatMessage(m.view)}
+                </Button>
+              ) : !isExpired ? (
                 <Button
                   icon="pencil"
                   iconType="outline"

@@ -545,11 +545,11 @@ export const m = defineMessages({
   },
   accessControlDelegationsToMe: {
     id: 'service.portal:to-me',
-    defaultMessage: 'Umboð til mín',
+    defaultMessage: 'Til mín',
   },
   accessControlDelegationsFromMe: {
     id: 'service.portal:from-me',
-    defaultMessage: 'Umboð frá mér',
+    defaultMessage: 'Frá mér',
   },
   accessControlDescription: {
     id: 'service.portal:accessControl-description',
@@ -840,5 +840,21 @@ export const m = defineMessages({
     id: 'service.portal:choose-tabs',
     defaultMessage: 'Veldu umboð',
     description: 'Choose delegation',
+  },
+  delegationTypeCustom: {
+    id: 'service.portal:delegation-type-custom',
+    defaultMessage: 'Umboð',
+  },
+  delegationTypeLegalGuardian: {
+    id: 'service.portal:delegation-type-legal-guardian',
+    defaultMessage: 'Forsjá',
+  },
+  delegationTypeProcurationHolder: {
+    id: 'service.portal:delegation-type-procuration-holder',
+    defaultMessage: 'Prókúra',
+  },
+  delegationTypePersonalRepresentative: {
+    id: 'service.portal:delegation-type-personal-representative',
+    defaultMessage: 'Pers. talsmaður',
   },
 })

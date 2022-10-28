@@ -12,14 +12,14 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 
 const TAB_DELEGATION_TO_FROM_ID = '0'
 const TAB_DELEGATION_TO_ME_ID = '1'
+const DELEGATIONS_TO_ME_PATH = `${ServicePortalPath.MinarSidurPath}${ServicePortalPath.AccessControlDelegationsToMe}`
 
 const AccessControl = () => {
   useNamespaces(['sp.settings-access-control', 'sp.access-control-delegations'])
   const { formatMessage } = useLocale()
   const history = useHistory()
   const location = useLocation()
-  const delegationToMePath = `${ServicePortalPath.MinarSidurPath}${ServicePortalPath.AccessControlDelegationsToMe}`
-  const isDelegationToMe = location.pathname === delegationToMePath
+  const isDelegationToMe = location.pathname === DELEGATIONS_TO_ME_PATH
 
   const tabChangeHandler = (id: string) => {
     const url =
@@ -36,7 +36,7 @@ const AccessControl = () => {
   return (
     <>
       <IntroHeader
-        title={formatMessage(m.accessControl)}
+        title={formatMessage(m.accessControlDelegations)}
         intro={formatMessage({
           id: 'sp.access-control-delegations:header-intro',
           defaultMessage:

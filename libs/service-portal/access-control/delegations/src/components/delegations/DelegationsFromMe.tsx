@@ -6,7 +6,6 @@ import {
   Box,
 } from '@island.is/island-ui/core'
 import { AuthCustomDelegation } from '@island.is/api/schema'
-import { DelegationsHeader } from './DelegationsHeader'
 import { DelegationsEmptyState } from './DelegationsEmptyState'
 import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
@@ -15,6 +14,7 @@ import { isDefined } from '@island.is/shared/utils'
 import { useAuthDelegationsQuery } from '@island.is/service-portal/graphql'
 import { DomainOption, useDomains } from '../../hooks'
 import { ALL_DOMAINS } from '../../constants'
+import { DelegationsFromMeHeader } from './DelegationsFromMeHeader'
 
 export const DelegationsFromMe = () => {
   const { formatMessage, lang = 'is' } = useLocale()
@@ -79,7 +79,7 @@ export const DelegationsFromMe = () => {
         rowGap={4}
         marginTop={[1, 1, 8]}
       >
-        <DelegationsHeader
+        <DelegationsFromMeHeader
           domainName={domainName}
           onDomainChange={onDomainChange}
           onSearchChange={setSearchValue}
