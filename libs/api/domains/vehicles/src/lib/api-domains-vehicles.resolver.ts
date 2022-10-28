@@ -64,6 +64,24 @@ export class VehiclesResolver {
     @Args('input') input: GetVehicleDetailInput,
     @CurrentUser() user: User,
   ) {
+    // TODOx disabled while this api is flaky
+    return [
+      {
+        coOwners: [
+          {
+            nationalId: '1234567890',
+            owner: 'Co-owner name',
+          },
+        ],
+        operators: [
+          {
+            nationalId: '9876543210',
+            owner: 'Operator name',
+          },
+        ],
+      },
+    ]
+
     const data = await this.vehiclesService.getVehicleDetail(user, {
       clientPersidno: user.nationalId,
       permno: input.permno,
@@ -231,22 +249,11 @@ export class VehiclesResolver {
     // TODOx disabled while this api is flaky
     return { fees: { hasEncumbrances: Math.random() < 0.2 } }
 
-    // return await Promise.all(
-    //   (await this.getCurrentVehicles(input, user)).map(
-    //     async (vehicle: VehiclesCurrentVehicleWithFees) => {
-    //       // TODOx use new api endpoint from FJS
-    //       const vehicleDetails = await this.vehiclesService.getVehicleDetail(
-    //         user,
-    //         {
-    //           clientPersidno: user.nationalId,
-    //           permno: vehicle.permno || '',
-    //         },
-    //       )
-
-    //       vehicle.fees = vehicleDetails?.fees
-    //       return vehicle
-    //     },
-    //   ),
-    // )
+    // TODOx use new api endpoint from FJS
+    const vehicleDetails = await this.vehiclesService.getVehicleDetail(user, {
+      clientPersidno: user.nationalId,
+      permno: permno,
+    })
+    return vehicleDetails?.fees
   }
 }
