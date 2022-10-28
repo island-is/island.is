@@ -54,6 +54,7 @@ globalStyle(`${tableContainer} th`, {
 
 globalStyle(`${tableContainer} input`, {
   textAlign: 'right',
+  width: '132px',
 })
 
 globalStyle(`${tableContainer} th:nth-child(1)`, {
@@ -97,9 +98,9 @@ globalStyle(`${tableContainer} tr td:nth-child(2)`, {
   borderRight: '1px solid #CCDFFF',
   position: 'sticky',
   textAlign: 'right',
-  width: '180px',
-  minWidth: '180px',
-  maxWidth: '180px',
+  width: '140px',
+  minWidth: '140px',
+  maxWidth: '140px',
   left: '140px',
   zIndex: 1,
 })
@@ -108,9 +109,9 @@ globalStyle(`${tableContainer} tr th:nth-child(2)`, {
   background: '#E6F2FB',
   borderRight: '1px solid #CCDFFF',
   position: 'sticky',
-  width: '180px',
-  minWidth: '180px',
-  maxWidth: '180px',
+  width: '140px',
+  minWidth: '140px',
+  maxWidth: '140px',
   left: '140px',
   zIndex: 1,
 })
