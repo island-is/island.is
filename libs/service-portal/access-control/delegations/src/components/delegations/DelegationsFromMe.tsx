@@ -73,7 +73,12 @@ export const DelegationsFromMe = () => {
 
   return (
     <>
-      <Box display="flex" flexDirection="column" rowGap={4}>
+      <Box
+        display="flex"
+        flexDirection="column"
+        rowGap={4}
+        marginTop={[1, 1, 8]}
+      >
         <DelegationsHeader
           domainName={domainName}
           onDomainChange={onDomainChange}

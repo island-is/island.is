@@ -64,10 +64,13 @@ export const Tabs: FC<TabInterface> = ({
     setIsMobile(false)
   }, [width])
 
-  if (isDefined(tab?.currentId) && prevCurrentId !== tab.currentId) {
-    onChangeHandler?.(tab?.currentId)
-    setPrevCurrentId(tab.currentId)
-  }
+  useEffect(() => {
+    if (onChangeHandler && tab.currentId && prevCurrentId !== tab.currentId) {
+      onChangeHandler(tab.currentId)
+      setPrevCurrentId(tab.currentId)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tab.currentId])
 
   return (
     <Box position="relative">

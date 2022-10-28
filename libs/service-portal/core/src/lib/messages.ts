@@ -836,4 +836,9 @@ export const m = defineMessages({
     defaultMessage: 'Endurnýja',
     description: 'Renew',
   },
+  chooseDelegation: {
+    id: 'service.portal:choose-tabs',
+    defaultMessage: 'Veldu umboð',
+    description: 'Choose delegation',
+  },
 })
