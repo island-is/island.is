@@ -30,6 +30,7 @@ const AccessControl: ServicePortalModuleComponent = ({ userInfo, client }) => {
   useNamespaces('sp.settings-access-control')
   const { data, loading } = useQuery<Query>(AuthDelegationsQuery, {
     variables: { input: { domain: ISLAND_DOMAIN } },
+    fetchPolicy: 'cache-and-network',
   })
   const { switchUser } = useAuth()
   const { formatMessage } = useLocale()

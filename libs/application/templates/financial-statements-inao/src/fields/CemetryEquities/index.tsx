@@ -53,6 +53,7 @@ export const CemetryEquities: FC<FieldBaseProps> = ({
 
   const [totalOperatingCost, setTotalOperatingCost] = useState('0')
   const [equityTotal, setEquityTotal] = useState(0)
+  const [equityAndDebts, setEquityAndDebts] = useState(0)
 
   const [getTotalAssets, totalAssets] = useTotals(
     CEMETRYEQUITIESANDLIABILITIESIDS.assetPrefix,
@@ -69,8 +70,13 @@ export const CemetryEquities: FC<FieldBaseProps> = ({
   }, [totalEquity, totalOperatingCost])
 
   useEffect(() => {
+    const total = totalEquity + totalLiabilities
+    setEquityAndDebts(total)
+  }, [totalEquity, totalLiabilities])
+
+  useEffect(() => {
     clearErrors(VALIDATOR)
-  }, [totalEquity, totalLiabilities, totalAssets])
+  }, [totalEquity, totalLiabilities, totalAssets, clearErrors])
 
   // we need to validate some info before allowing submission of the current screen data
   // since we're comparing values from different objects, doing it via zod is not an option
@@ -287,6 +293,13 @@ export const CemetryEquities: FC<FieldBaseProps> = ({
             total={equityTotal}
             label={formatMessage(m.totalEquity)}
           />
+          <Box paddingY={1}>
+            <Total
+              name={CEMETRYEQUITIESANDLIABILITIESIDS.totalEquityAndLiabilities}
+              total={equityAndDebts}
+              label={formatMessage(m.debtsAndCash)}
+            />
+          </Box>
         </GridColumn>
       </GridRow>
       {errors && errors.validator ? (
