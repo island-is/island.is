@@ -65,22 +65,24 @@ export class VehiclesResolver {
     @CurrentUser() user: User,
   ) {
     // TODOx disabled while this api is flaky
-    return [
-      {
-        coOwners: [
-          {
-            nationalId: '1234567890',
-            owner: 'Co-owner name',
-          },
-        ],
-        operators: [
-          {
-            nationalId: '9876543210',
-            owner: 'Operator name',
-          },
-        ],
-      },
-    ]
+    return {
+      coOwners: [
+        {
+          nationalId: '1234567890',
+          owner: 'Co-owner name',
+        },
+        {
+          nationalId: '9876543210',
+          owner: 'Co-owner name 2',
+        },
+      ],
+      operators: [
+        {
+          nationalId: '9876543210',
+          name: 'Operator name',
+        },
+      ],
+    }
 
     const data = await this.vehiclesService.getVehicleDetail(user, {
       clientPersidno: user.nationalId,

@@ -3,7 +3,6 @@ import { information } from '../../../lib/messages'
 import { pickVehicleSubSection } from './pickVehicleSubSection'
 import { vehicleSubSection } from './vehicleSubSection'
 import { sellerSubSection } from './sellerSubSection'
-import { coOwnerSubSection } from './coOwnerSubSection'
 import { buyerSubSection } from './buyerSubSection'
 
 export const informationSection = buildSection({
@@ -13,7 +12,6 @@ export const informationSection = buildSection({
     pickVehicleSubSection,
     vehicleSubSection,
     sellerSubSection,
-    coOwnerSubSection,
     buyerSubSection,
   ],
 })

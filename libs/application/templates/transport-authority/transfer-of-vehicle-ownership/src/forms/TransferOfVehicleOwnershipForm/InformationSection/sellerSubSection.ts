@@ -2,6 +2,8 @@ import {
   buildMultiField,
   buildTextField,
   buildSubSection,
+  buildDescriptionField,
+  buildCustomField,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
 import { Application } from '../../../types/schema'
@@ -15,12 +17,17 @@ export const sellerSubSection = buildSubSection({
       title: information.labels.seller.title,
       description: information.general.description,
       children: [
+        buildDescriptionField({
+          id: 'seller.mainSeller',
+          title: information.labels.seller.subtitle,
+          titleVariant: 'h5',
+        }),
         buildTextField({
           id: 'seller.nationalId',
           title: information.labels.seller.nationalId,
           backgroundColor: 'white',
-          width: 'half',
-          disabled: true,
+          width: 'full',
+          readOnly: true,
           format: '######-####',
           required: true,
           defaultValue: (application: Application) =>
@@ -30,30 +37,25 @@ export const sellerSubSection = buildSubSection({
           id: 'seller.name',
           title: information.labels.seller.name,
           backgroundColor: 'white',
-          width: 'half',
-          disabled: true,
+          width: 'full',
+          readOnly: true,
           required: true,
           defaultValue: (application: Application) =>
             application.externalData?.nationalRegistry?.data?.fullName,
         }),
         buildTextField({
-          id: 'seller.phone',
-          title: information.labels.seller.phone,
-          width: 'half',
-          variant: 'tel',
-          format: '###-####',
-          required: true,
-          defaultValue: (application: Application) =>
-            application.externalData?.userProfile?.data?.mobilePhoneNumber,
-        }),
-        buildTextField({
           id: 'seller.email',
           title: information.labels.seller.email,
-          width: 'half',
+          width: 'full',
           variant: 'email',
           required: true,
           defaultValue: (application: Application) =>
             application.externalData?.userProfile?.data?.email,
+        }),
+        buildCustomField({
+          id: 'coOwner',
+          title: '',
+          component: 'CoOwner',
         }),
       ],
     }),

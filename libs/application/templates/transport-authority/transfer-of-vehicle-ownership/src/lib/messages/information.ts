@@ -81,6 +81,11 @@ export const information = {
         defaultMessage: 'Seljandi',
         description: 'Seller title',
       },
+      subtitle: {
+        id: 'ta.tvo.application:information.labels.seller.subtitle',
+        defaultMessage: 'Aðaleigandi',
+        description: 'Main owner title',
+      },
       nationalId: {
         id: 'ta.tvo.application:information.labels.seller.nationalId',
         defaultMessage: 'Kennitala seljanda',

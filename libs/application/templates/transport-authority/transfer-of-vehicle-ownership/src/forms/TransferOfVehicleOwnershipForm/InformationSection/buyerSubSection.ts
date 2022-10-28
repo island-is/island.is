@@ -21,17 +21,9 @@ export const buyerSubSection = buildSubSection({
           title: '',
         }),
         buildTextField({
-          id: 'buyer.phone',
-          title: information.labels.buyer.phone,
-          width: 'half',
-          variant: 'tel',
-          format: '###-####',
-          required: true,
-        }),
-        buildTextField({
           id: 'buyer.email',
           title: information.labels.buyer.email,
-          width: 'half',
+          width: 'full',
           variant: 'email',
           required: true,
         }),

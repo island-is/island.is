@@ -6,6 +6,7 @@ import {
   buildSubSection,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
+import { getSelectedVehicle } from '../../../utils'
 
 export const vehicleSubSection = buildSubSection({
   id: 'vehicle',
@@ -21,12 +22,10 @@ export const vehicleSubSection = buildSubSection({
           title: information.labels.vehicle.plate,
           backgroundColor: 'white',
           width: 'full',
-          disabled: true,
+          readOnly: true,
+          required: true,
           defaultValue: (application: Application) => {
-            const currentVehicleList = application.externalData
-              ?.currentVehicleList?.data as VehiclesCurrentVehicle[]
-            const vehicleValue = application.answers.pickVehicle.vehicle
-            const vehicle = currentVehicleList[parseInt(vehicleValue, 10)]
+            const vehicle = getSelectedVehicle(application)
             return vehicle.permno
           },
         }),
@@ -35,19 +34,16 @@ export const vehicleSubSection = buildSubSection({
           title: information.labels.vehicle.type,
           backgroundColor: 'white',
           width: 'full',
-          disabled: true,
+          required: true,
+          readOnly: true,
           defaultValue: (application: Application) => {
-            const currentVehicleList = application.externalData
-              ?.currentVehicleList?.data as VehiclesCurrentVehicle[]
-            const vehicleValue = application.answers.pickVehicle.vehicle
-            const vehicle = currentVehicleList[parseInt(vehicleValue, 10)]
+            const vehicle = getSelectedVehicle(application)
             return vehicle.make
           },
         }),
         buildTextField({
           id: 'vehicle.salePrice',
           title: information.labels.vehicle.salePrice,
-          required: true,
           width: 'full',
         }),
         buildDateField({
@@ -55,10 +51,11 @@ export const vehicleSubSection = buildSubSection({
           title: information.labels.vehicle.date,
           required: true,
           width: 'full',
+          maxDate: new Date(),
           minDate: () => {
-            const today = new Date()
-            // Maybe have option if buyer to have sellers date.
-            return today
+            const minDate = new Date()
+            minDate.setDate(minDate.getDate() - 7)
+            return minDate
           },
         }),
       ],
