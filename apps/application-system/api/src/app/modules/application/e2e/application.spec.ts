@@ -198,7 +198,7 @@ describe('Application system API', () => {
                         very: {
                           deep: {
                             nested: {
-                              value: 400,
+                              value: 6,
                             },
                           },
                         },
