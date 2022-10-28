@@ -1,4 +1,4 @@
-# clients-hms
+# Clients Hms
 
 This library was generated with [Nx](https://nx.dev).
 
