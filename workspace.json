@@ -125,6 +125,7 @@
     "clients-firearm-license": "libs/clients/firearm-license",
     "clients-fishing-license": "libs/clients/fishing-license",
     "clients-health-insurance-v2": "libs/clients/health-insurance-v2",
+    "clients-hms": "libs/clients/hms",
     "clients-islykill": "libs/clients/islykill",
     "clients-middlewares": "libs/clients/middlewares",
     "clients-mms": "libs/clients/mms",

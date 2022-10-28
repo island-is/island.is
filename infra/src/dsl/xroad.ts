@@ -194,6 +194,21 @@ export const Properties = new XroadConf({
   },
 })
 
+export const HMS = new XroadConf({
+  env: {
+    XROAD_HMS_SERVICE_PATH: {
+      dev: 'IS-TEST/GOV/5812191480/HMS-Protected/Fasteignir-v1',
+      staging: 'IS-TEST/GOV/5812191480/HMS-Protected/Fasteignir-v1',
+      prod:
+        'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/Fasteignir-v1',
+    },
+  },
+  secrets: {
+    XROAD_HMS_CLIENT_SECRET:
+      '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET',
+  },
+})
+
 export const AdrAndMachine = new XroadConf({
   env: {
     XROAD_ADR_MACHINE_LICENSE_PATH: {

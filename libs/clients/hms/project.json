@@ -1,26 +1,27 @@
 {
-  "root": "libs/clients/assets",
-  "sourceRoot": "libs/clients/assets/src",
+  "root": "libs/clients/hms",
+  "sourceRoot": "libs/clients/hms/src",
   "projectType": "library",
   "targets": {
     "lint": {
       "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["libs/clients/assets/**/*.{ts,tsx,js,jsx}"]
+        "lintFilePatterns": ["libs/clients/hms/**/*.ts"]
       }
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/clients/assets"],
+      "outputs": ["coverage/libs/clients/hms"],
       "options": {
-        "jestConfig": "libs/clients/assets/jest.config.js",
+        "jestConfig": "libs/clients/hms/jest.config.js",
         "passWithNoTests": true
       }
     },
     "schemas/external-openapi-generator": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
-        "command": "yarn openapi-generator -o libs/clients/assets/gen/fetch -i libs/clients/assets/src/clientConfig.yaml"
+        "command": "yarn openapi-generator -o libs/clients/hms/gen/fetch -i libs/clients/hms/src/clientConfig.yaml"
       }
     }
   },

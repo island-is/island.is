@@ -68,6 +68,7 @@ import { AdrAndMachineLicenseClientConfig } from '@island.is/clients/adr-and-mac
 import { FirearmLicenseClientConfig } from '@island.is/clients/firearm-license'
 import { PassportsClientConfig } from '@island.is/clients/passports'
 import { FileStorageConfig } from '@island.is/file-storage'
+import { HMSClientConfig, HMSClientModule } from '@island.is/clients/hms'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -106,6 +107,7 @@ const autoSchemaFile = environment.production
     CmsModule,
     DrivingLicenseModule,
     DrivingLicenseBookModule,
+    HMSClientModule,
     EducationModule.register({
       xroad: {
         baseUrl: environment.xroad.baseUrl!,
@@ -277,6 +279,7 @@ const autoSchemaFile = environment.production
       load: [
         AdrAndMachineLicenseClientConfig,
         AssetsClientConfig,
+        HMSClientConfig,
         FirearmLicenseClientConfig,
         VehiclesClientConfig,
         AuthPublicApiClientConfig,
