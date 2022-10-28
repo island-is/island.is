@@ -64,6 +64,24 @@ export class VehiclesResolver {
     @Args('input') input: GetVehicleDetailInput,
     @CurrentUser() user: User,
   ) {
+    // TODOx disabled while this api is flaky
+    return [
+      {
+        coOwners: [
+          {
+            nationalId: '1234567890',
+            owner: 'Co-owner name',
+          },
+        ],
+        operators: [
+          {
+            nationalId: '9876543210',
+            owner: 'Operator name',
+          },
+        ],
+      },
+    ]
+
     const data = await this.vehiclesService.getVehicleDetail(user, {
       clientPersidno: user.nationalId,
       permno: input.permno,
