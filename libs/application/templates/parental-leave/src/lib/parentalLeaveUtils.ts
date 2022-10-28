@@ -417,10 +417,13 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   const hasMultipleBirths = getValueViaPath(
     answers,
-    'hasMultipleBirths',
+    'multipleBirths.hasMultipleBirths',
   ) as YesOrNo
 
-  const multipleBirths = getValueViaPath(answers, 'multipleBirths') as number
+  const multipleBirths = getValueViaPath(
+    answers,
+    'multipleBirths.multipleBirths',
+  ) as number
 
   const multipleBirthsRequestDaysValue = getValueViaPath(
     answers,

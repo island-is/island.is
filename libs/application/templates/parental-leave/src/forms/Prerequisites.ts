@@ -22,6 +22,7 @@ import Logo from '../assets/Logo'
 import {
   isEligibleForParentalLeave,
   getSelectedChild,
+  getApplicationAnswers,
 } from '../lib/parentalLeaveUtils'
 import {
   NO,
@@ -366,7 +367,7 @@ export const PrerequisitesForm: Form = buildForm({
                 }),
                 buildCustomField({
                   component: 'HasMultipleBirths',
-                  id: 'hasMultipleBirths',
+                  id: 'multipleBirths.hasMultipleBirths',
                   title:
                     parentalLeaveFormMessages.selectChild.multipleBirthsName,
                   description:
@@ -378,7 +379,7 @@ export const PrerequisitesForm: Form = buildForm({
                       ?.parentalRelation === ParentalRelations.primary,
                 }),
                 buildSelectField({
-                  id: 'multipleBirths',
+                  id: 'multipleBirths.multipleBirths',
                   title: parentalLeaveFormMessages.selectChild.multipleBirths,
                   options: new Array(maxMultipleBirths)
                     .fill(0)
@@ -387,10 +388,14 @@ export const PrerequisitesForm: Form = buildForm({
                       label: `${index + 2}`,
                     })),
                   width: 'half',
-                  condition: (answers, externalData) =>
-                    answers?.hasMultipleBirths === YES &&
-                    getSelectedChild(answers, externalData)
-                      ?.parentalRelation === ParentalRelations.primary,
+                  condition: (answers, externalData) => {
+                    const selectedChild =
+                      getSelectedChild(answers, externalData)
+                        ?.parentalRelation === ParentalRelations.primary
+                    const { hasMultipleBirths } = getApplicationAnswers(answers)
+
+                    return hasMultipleBirths === YES && selectedChild
+                  },
                 }),
                 buildSubmitField({
                   id: 'toDraft',
