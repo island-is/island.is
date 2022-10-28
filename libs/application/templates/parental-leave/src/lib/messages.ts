@@ -372,22 +372,22 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     requestMultipleBirthsDaysTitle: {
       id: 'pl.application:request.multipleBirths.daysTitle',
-      defaultMessage: 'Hversu marga daga viltu nota ( Need translated )?',
+      defaultMessage: 'Sameiginlegur réttur vegna fjölbura',
       description: 'How many days would you like to use( Need translated )?',
     },
     requestMultipleBirthsDay: {
       id: 'pl.application:request.multipleBirths.day',
       defaultMessage:
-        '{day} dagur óskað eftir sameign daga frá annað foreldri ( Need translated )',
+        '{day} dagur sem óskað er eftir af sameiginlegum rétti vegna fjölbura',
       description:
-        "{day} day requested from the other parent's rights( Need translated )",
+        "{day} day requested from the collective rights due to multiple births",
     },
     requestMultipleBirthsDays: {
       id: 'pl.application:request.multipleBirths.days',
       defaultMessage:
-        '{day} dagar óskað eftir sameign daga frá annað foreldri ( Need translated )',
+        '{day} dagar sem óskað er eftir af sameiginlegum rétti vegna fjölbura',
       description:
-        "{day} days requested from the other parent's rights( Need translated )",
+        "{day} days requested from the collective rights due to multiple births",
     },
     requestRightsDaysTitle: {
       id: 'pl.application:request.rights.daysTitle',
@@ -396,12 +396,12 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     requestRightsDay: {
       id: 'pl.application:request.rights.day',
-      defaultMessage: '{day} dagur óskað eftir af rétti hins foreldrisins',
+      defaultMessage: '{day} dagur sem óskað er eftir af rétti hins foreldrisins',
       description: "{day} day requested from the other parent's rights",
     },
     requestRightsDays: {
       id: 'pl.application:request.rights.days',
-      defaultMessage: '{day} dagar óskað eftir af rétti hins foreldrisins',
+      defaultMessage: '{day} dagar sem óskað er eftir af rétti hins foreldrisins',
       description: "{day} days requested from the other parent's rights",
     },
     requestRightsMonths: {
@@ -734,18 +734,18 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     multipleBirthsName: {
       id: 'pl.application:selectChild.multipleBirthsName',
-      defaultMessage: 'Fjölburafæðingur ( Need translated )',
+      defaultMessage: 'Fjölburafæðing',
       description: 'Multiple births',
     },
     multipleBirthsDescription: {
       id: 'pl.application:selectChild.multipleBirthsDescription',
-      defaultMessage: 'Er fjölburafæðingur? ( Need translated )',
-      description: 'Need translated',
+      defaultMessage: 'Áttu von á fjölburum?',
+      description: 'Are you expecting multiples?',
     },
     multipleBirths: {
       id: 'pl.application:selectChild.multipleBirths',
-      defaultMessage: 'Hvað mörg börn? ( Need translated )',
-      description: 'Need translated',
+      defaultMessage: 'Fjöldi barna',
+      description: 'Number of babies',
     },
     primaryParent: {
       id: 'pl.application:selectChild.primaryParent',
