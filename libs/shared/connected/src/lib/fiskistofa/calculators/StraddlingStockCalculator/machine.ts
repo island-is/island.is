@@ -45,7 +45,7 @@ const orderCategories = (categories: ContextData['catchQuotaCategories']) => {
   }
 }
 
-interface Context {
+export interface Context {
   data: ContextData | null
   initialData: ContextData | null
   updatedData: ContextData | null
@@ -67,7 +67,12 @@ type UpdateDataEvent = {
 
 type AddCategoryEvent = {
   type: 'ADD_CATEGORY'
-  category: { label: string; value: number }
+  category: {
+    label: string
+    value: number
+    codEquivalent: number
+    totalCatchQuota: number
+  }
 }
 
 type RemoveCategoryEvent = {
@@ -79,7 +84,7 @@ type RemoveAllCategoriesEvent = {
   type: 'REMOVE_ALL_CATEGORIES'
 }
 
-type Event =
+export type Event =
   | GetDataEvent
   | UpdateDataEvent
   | AddCategoryEvent
@@ -189,10 +194,11 @@ export const machine = createMachine<Context, Event, State>(
                 quotaTypes: context.quotaTypes.filter(
                   (qt) => qt.id !== event.category.value,
                 ),
-                // TODO: Add codEquivalent and totalCatchQuota
                 selectedQuotaTypes: context.selectedQuotaTypes.concat({
                   name: event.category.label,
                   id: event.category.value,
+                  totalCatchQuota: event.category?.totalCatchQuota,
+                  codEquivalent: event.category?.codEquivalent,
                 }),
               }
             }),

@@ -13,7 +13,7 @@ import {
 import { FiskistofaCatchQuotaCategory as CatchQuotaCategory } from '@island.is/api/schema'
 import { getYearOptions, YearOption, numberFormatter } from '../utils'
 import { useLocalization } from '../../../../utils'
-import { machine } from './machine'
+import { machine, Context, Event as EventType } from './machine'
 
 import * as styles from './StraddlingStockCalculator.css'
 
@@ -53,7 +53,7 @@ export const StraddlingStockCalculator = ({
   const n = useLocalization(namespace)
   const prevChangesRef = useRef<Changes | null>(null)
 
-  const [state, send] = useMachine(machine)
+  const [state, send] = useMachine<Context, EventType>(machine)
 
   const reset = () => {
     send({
@@ -175,6 +175,8 @@ export const StraddlingStockCalculator = ({
       state.context.quotaTypes.map((qt) => ({
         label: qt.name,
         value: qt.id,
+        codEquivalent: qt.codEquivalent,
+        totalCatchQuota: qt.totalCatchQuota,
       })),
     [state.context.quotaTypes],
   )
@@ -208,7 +210,12 @@ export const StraddlingStockCalculator = ({
               label={n('addType', 'Bæta við tegund')}
               name="tegund-fiskur-select"
               options={quotaTypes}
-              onChange={(selectedOption: { value: number; label: string }) => {
+              onChange={(selectedOption: {
+                value: number
+                label: string
+                codEquivalent: number
+                totalCatchQuota: number
+              }) => {
                 send({
                   type: 'ADD_CATEGORY',
                   category: selectedOption,

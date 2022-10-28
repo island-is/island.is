@@ -39,12 +39,12 @@ const orderCategories = (categories: ContextData['catchQuotaCategories']) => {
   categories.sort((a, b) => (a.id as number) - (b.id as number))
 
   // If there's a timestamp we want to use that to order the categories
-  categories.sort((a, b) => {
-    if (!a.timestamp && !b.timestamp) return 0
-    if (a.timestamp && !b.timestamp) return -1
-    if (!a.timestamp && b.timestamp) return 1
-    return (b.timestamp as number) - (a.timestamp as number)
-  })
+  // categories.sort((a, b) => {
+  //   if (!a.timestamp && !b.timestamp) return 0
+  //   if (a.timestamp && !b.timestamp) return -1
+  //   if (!a.timestamp && b.timestamp) return 1
+  //   return (b.timestamp as number) - (a.timestamp as number)
+  // })
 
   // Place the cod value category at the front if it exists
   const codValueIndex = categories.findIndex((c) => c.id === 0)
@@ -91,7 +91,12 @@ type UpdateQuotaDataEvent = {
 
 type AddCategoryEvent = {
   type: 'ADD_CATEGORY'
-  category: { label: string; value: number }
+  category: {
+    label: string
+    value: number
+    codEquivalent: number
+    totalCatchQuota: number
+  }
 }
 
 type RemoveCategoryEvent = {
@@ -192,6 +197,8 @@ export const machine = createMachine<Context, Event, State>(
             actions: assign((context, event) => {
               const categories = context.data?.catchQuotaCategories
 
+              const quotaData = context.quotaData
+
               categories?.push({
                 name: event.category.label,
                 id: event.category.value,
@@ -208,7 +215,20 @@ export const machine = createMachine<Context, Event, State>(
                 status: 0,
                 unused: 0,
                 timestamp: Date.now(), // Also store a timestamp for when the category got added by the user
+                totalCatchQuota: event.category.totalCatchQuota,
+                codEquivalent: event.category.codEquivalent,
               })
+
+              quotaData.push({
+                id: event.category.value,
+                totalCatchQuota: event.category.totalCatchQuota,
+                quotaShare: 0,
+                nextYearQuota: 0,
+                nextYearFromQuota: 0,
+                allocatedCatchQuota: 0,
+              })
+
+              quotaData.sort((a, b) => a?.id - b?.id)
 
               orderCategories(categories)
 
@@ -217,10 +237,12 @@ export const machine = createMachine<Context, Event, State>(
                 quotaTypes: context.quotaTypes.filter(
                   (qt) => qt.id !== event.category.value,
                 ),
-                // TODO: Add codEquivalent and totalCatchQuota
+                quotaData: quotaData,
                 selectedQuotaTypes: context.selectedQuotaTypes.concat({
                   name: event.category.label,
                   id: event.category.value,
+                  codEquivalent: event.category.codEquivalent,
+                  totalCatchQuota: event.category.totalCatchQuota,
                 }),
               }
             }),
@@ -380,6 +402,7 @@ export const machine = createMachine<Context, Event, State>(
           )
           if (categoryFromServer) {
             categories.push({
+              ...category,
               ...categoryFromServer,
               timestamp: category.timestamp,
             })
@@ -392,11 +415,11 @@ export const machine = createMachine<Context, Event, State>(
         return {
           data: {
             ...fiskistofaShipStatus,
-            catcQuotaCategories: categories,
+            catchQuotaCategories: categories,
           },
           updatedData: {
             ...fiskistofaShipStatus,
-            catcQuotaCategories: categories,
+            catchQuotaCategories: categories,
           },
         }
       },

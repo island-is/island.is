@@ -318,6 +318,8 @@ export const CatchQuotaCalculator = ({
       state.context.quotaTypes.map((qt) => ({
         label: qt.name,
         value: qt.id,
+        codEquivalent: qt.codEquivalent,
+        totalCatchQuota: qt.totalCatchQuota,
       })),
     [state.context.quotaTypes],
   )
@@ -351,7 +353,12 @@ export const CatchQuotaCalculator = ({
               label={n('addType', 'Bæta við tegund')}
               name="tegund-fiskur-select"
               options={quotaTypes}
-              onChange={(selectedOption: { value: number; label: string }) => {
+              onChange={(selectedOption: {
+                value: number
+                label: string
+                totalCatchQuota: number
+                codEquivalent: number
+              }) => {
                 send({
                   type: 'ADD_CATEGORY',
                   category: selectedOption,
@@ -446,7 +453,9 @@ export const CatchQuotaCalculator = ({
                 <td>{n('codEquivalentRatio', 'Þorskígildisstuðull')}</td>
                 {state.context.data.catchQuotaCategories.map((category) => (
                   <td key={category.name}>
-                    {numberFormatter.format(category.codEquivalent)}
+                    {category.codEquivalent
+                      ? numberFormatter.format(category.codEquivalent)
+                      : null}
                   </td>
                 ))}
               </tr>
