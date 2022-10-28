@@ -12,7 +12,13 @@ import {
   InputController,
   SelectController,
 } from '@island.is/shared/form-fields'
-import { Box, GridColumn, GridRow, Button } from '@island.is/island-ui/core'
+import {
+  Box,
+  GridColumn,
+  GridRow,
+  Button,
+  Text,
+} from '@island.is/island-ui/core'
 import * as styles from '../styles.css'
 import { useLazyQuery } from '@apollo/client'
 import { IdentityInput, Query } from '@island.is/api/schema'
@@ -108,6 +114,9 @@ export const AdditionalEstateMember = ({
         control={control}
         defaultValue={field.enabled || false}
       />
+      <Text variant="h4">
+        {formatMessage(m.estateMember) + ' ' + (index + 1)}
+      </Text>
       <Box position="absolute" className={styles.removeFieldButton}>
         <Button
           variant="ghost"
