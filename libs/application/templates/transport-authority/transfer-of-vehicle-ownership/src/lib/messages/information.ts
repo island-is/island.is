@@ -31,6 +31,17 @@ export const information = {
         defaultMessage: 'Ökutæki',
         description: 'Pick vehicle label',
       },
+      isStolenTag: {
+        id: 'ta.tvo.application:information.labels.pickVehicle.isStolenTag',
+        defaultMessage: 'Bifreið stolin',
+        description: 'Pick vehicle is stolen tag',
+      },
+      hasEncumbrancesTag: {
+        id:
+          'ta.tvo.application:information.labels.pickVehicle.hasEncumbrancesTag',
+        defaultMessage: 'Ógreidd bifreiðagjöld',
+        description: 'Pick vehicle has encumbrances tag',
+      },
     }),
     vehicle: defineMessages({
       title: {

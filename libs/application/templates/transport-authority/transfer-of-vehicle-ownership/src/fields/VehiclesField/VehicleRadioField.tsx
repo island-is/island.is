@@ -1,17 +1,14 @@
-import { FieldBaseProps } from '@island.is/application/types'
-import { Box, Tag, Text } from '@island.is/island-ui/core'
+import { Box, SkeletonLoader, Tag, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { FC, useCallback } from 'react'
+import { FC } from 'react'
 import {
   VehiclesCurrentVehicle,
-  GetVehicleDetailInput,
+  VehiclesCurrentVehicleWithFees,
 } from '@island.is/api/schema'
 import { information } from '../../lib/messages'
-import {
-  RadioController,
-  SelectController,
-} from '@island.is/shared/form-fields'
-import { useLazyVehicleDetails } from '../../hooks/useLazyVehicleDetails'
+import { RadioController } from '@island.is/shared/form-fields'
+import { gql, useQuery } from '@apollo/client'
+import { GET_CURRENT_VEHICLES_WITH_FEES } from '../../graphql/queries'
 
 interface Option {
   value: string
@@ -27,66 +24,78 @@ export const VehicleRadioField: FC<VehicleSearchFieldProps> = ({
   currentVehicleList,
 }) => {
   const { formatMessage } = useLocale()
-  console.log(currentVehicleList)
-  /* const getVehicleDetails = useLazyVehicleDetails()
 
-  const onChange = (option: Option) => {
-    console.log(option)
-    getVehicleDetailsCallback({
-      permno: option.value,
-    })
-      .then((response) => {
-        console.log(response)
-      })
-      .catch((error) => console.log(error))
-  }
-
-  const getVehicleDetailsCallback = useCallback(
-    async ({ permno }: GetVehicleDetailInput) => {
-      const { data } = await getVehicleDetails({
+  const { data, loading } = useQuery(
+    gql`
+      ${GET_CURRENT_VEHICLES_WITH_FEES}
+    `,
+    {
+      variables: {
         input: {
-          permno,
-          regno: '',
-          vin: '',
+          showOwned: true,
+          showCoowned: false,
+          showOperated: false,
         },
-      })
-      return data
+      },
     },
-    [getVehicleDetails],
-  ) */
+  )
 
-  const vehicleOptions = (vehicles: VehiclesCurrentVehicle[]) => {
+  const vehicleOptions = (vehicles: VehiclesCurrentVehicleWithFees[]) => {
     const options = [] as Option[]
 
     for (const [index, vehicle] of vehicles.entries()) {
-      console.log(vehicle)
+      const disabled = !!vehicle.isStolen || !!vehicle.fees?.hasEncumbrances
       options.push({
         value: `${index}`,
         label: (
-          <Box display="flex" flexDirection="row">
+          <Box display="flex" flexDirection="row" justifyContent="spaceBetween">
             <Box>
-              <Text variant="default">{vehicle.make}</Text>
-              <Text variant="small">
+              <Text variant="default" color={disabled ? 'dark200' : 'dark400'}>
+                {vehicle.make}
+              </Text>
+              <Text variant="small" color={disabled ? 'dark200' : 'dark400'}>
                 {vehicle.color} - {vehicle.permno}
               </Text>
             </Box>
             <Box display="flex" flexDirection="row" wrap="wrap">
-              <Tag variant="red">Bifreið stolin</Tag>
-              <Tag variant="red">Ógreidd bifreiðagjöld</Tag>
+              {vehicle.isStolen && (
+                <Tag variant="red">
+                  {formatMessage(information.labels.pickVehicle.isStolenTag)}
+                </Tag>
+              )}
+              {vehicle.fees?.hasEncumbrances && (
+                <Box paddingLeft={2}>
+                  <Tag variant="red">
+                    {formatMessage(
+                      information.labels.pickVehicle.hasEncumbrancesTag,
+                    )}
+                  </Tag>
+                </Box>
+              )}
             </Box>
           </Box>
         ),
+        disabled: disabled,
       })
     }
     return options
   }
 
-  return (
+  return loading ? (
+    <SkeletonLoader
+      height={100}
+      space={2}
+      repeat={currentVehicleList.length}
+      borderRadius="large"
+    />
+  ) : (
     <RadioController
       id="pickVehicle.plate"
       largeButtons
       backgroundColor="blue"
-      options={vehicleOptions(currentVehicleList)}
+      options={vehicleOptions(
+        data.currentVehiclesWithFees as VehiclesCurrentVehicleWithFees[],
+      )}
     />
   )
 }

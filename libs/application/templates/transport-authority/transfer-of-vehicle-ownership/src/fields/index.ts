@@ -1,6 +1,5 @@
 export { ConfirmationField } from './ConfirmationField'
 export { NationalIdWithName } from './NationalIdWithName'
-export { VehicleSelectField } from './VehicleSelectField'
 export { ApplicationStatus } from './ApplicationStatus'
 export { PaymentChargeOverview } from './Payment/PaymentChargeOverview'
 export { PaymentPending } from './Payment/PaymentPending'

@@ -116,7 +116,7 @@ export class VehiclesResolver {
       make: vehicle.make,
       color: vehicle.color,
       role: vehicle.role,
-      isStolen: Math.random() < 0.2, //TODOx is missing for api endpoint
+      isStolen: Math.random() < 0.5, //TODOx is missing for api endpoint
     }))
   }
 
