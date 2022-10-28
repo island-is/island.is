@@ -19,12 +19,12 @@ export const RailNetAndRoeNetCalculations: FC<FieldBaseProps> = ({
   const { formatMessage } = useLocale()
   const initialRoeNet = getValueViaPath(
     application.answers,
-    `${field}.roenet`,
+    `${field.id}.roenet`,
     '',
   ) as string
   const initialRailNet = getValueViaPath(
     application.answers,
-    `${field}.railnet`,
+    `${field.id}.railnet`,
     '',
   ) as string
   const [numRoeNets, setNumRoeNets] = useState(initialRoeNet || '')
