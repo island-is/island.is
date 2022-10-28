@@ -14,7 +14,7 @@
       "outputs": ["coverage/libs/api/domains/assets"],
       "options": {
         "jestConfig": "libs/api/domains/assets/jest.config.js",
-        "passWithNoTests": true
+        "passWithNoTests": false
       }
     }
   },

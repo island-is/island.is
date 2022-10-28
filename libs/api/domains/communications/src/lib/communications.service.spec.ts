@@ -61,9 +61,7 @@ describe('communicationsService', () => {
 
     emailService = moduleRef.get<EmailService>(EmailService)
     zendeskService = moduleRef.get<ZendeskService>(ZendeskService)
-    communicationsService = moduleRef.get<CommunicationsService>(
-      CommunicationsService,
-    )
+    communicationsService = moduleRef.get<CommunicationsService>( CommunicationsService,)
   })
 
   describe('getEmailTemplate', () => {
