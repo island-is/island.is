@@ -63,7 +63,7 @@ interface QuotaData {
   allocatedCatchQuota?: number
 }
 
-interface Context {
+export interface Context {
   data: ContextData | null
   initialData: ContextData | null
   updatedData: ContextData | null
@@ -103,7 +103,7 @@ type RemoveAllCategoriesEvent = {
   type: 'REMOVE_ALL_CATEGORIES'
 }
 
-type Event =
+export type Event =
   | GetDataEvent
   | UpdateGeneralDataEvent
   | UpdateQuotaDataEvent

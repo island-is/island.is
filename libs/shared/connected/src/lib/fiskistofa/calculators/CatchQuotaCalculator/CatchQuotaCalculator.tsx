@@ -19,7 +19,7 @@ import {
   TimePeriodOption,
   numberFormatter,
 } from '../utils'
-import { machine } from './machine'
+import { Context, machine, Event as EventType } from './machine'
 
 import * as styles from './CatchQuotaCalculator.css'
 
@@ -98,7 +98,7 @@ export const CatchQuotaCalculator = ({
 
   const prevChangesRef = useRef<Changes | null>(null)
 
-  const [state, send] = useMachine(machine)
+  const [state, send] = useMachine<Context, EventType>(machine)
 
   const quotaStateChangeMetadata = useRef({
     lastChangeTimestamp: 0,
@@ -442,6 +442,14 @@ export const CatchQuotaCalculator = ({
               </tr>
             </thead>
             <tbody>
+              <tr>
+                <td>{n('codEquivalentRatio', 'Þorskígildisstuðull')}</td>
+                {state.context.data.catchQuotaCategories.map((category) => (
+                  <td key={category.name}>
+                    {numberFormatter.format(category.codEquivalent)}
+                  </td>
+                ))}
+              </tr>
               <tr>
                 <td>{n('uthlutun', 'Úthlutun')}</td>
                 {state.context.data.catchQuotaCategories.map((category) => (

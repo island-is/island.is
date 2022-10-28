@@ -34,6 +34,7 @@ export const GET_SHIP_STATUS_FOR_TIME_PERIOD = gql`
           percentNextYearQuota
           percentNextYearFromQuota
           allocatedCatchQuota
+          codEquivalent
         }
       }
     }
@@ -123,6 +124,7 @@ export const GET_SHIP_STATUS_FOR_CALENDAR_YEAR = gql`
           nextYear
           excessCatch
           unused
+          codEquivalent
         }
       }
     }

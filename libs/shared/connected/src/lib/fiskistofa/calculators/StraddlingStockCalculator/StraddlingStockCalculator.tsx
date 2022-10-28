@@ -301,6 +301,14 @@ export const StraddlingStockCalculator = ({
             </thead>
             <tbody>
               <tr>
+                <td>{n('codEquivalentRatio', 'Þorskígildisstuðull')}</td>
+                {state.context.data.catchQuotaCategories.map((category) => (
+                  <td key={category.name}>
+                    {numberFormatter.format(category.codEquivalent)}
+                  </td>
+                ))}
+              </tr>
+              <tr>
                 <td>{n('uthlutun', 'Úthlutun')}</td>
                 {state.context.data.catchQuotaCategories.map((category) => (
                   <td key={category.name}>
