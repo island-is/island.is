@@ -1,4 +1,5 @@
 import * as z from 'zod'
+import { error } from './messages'
 
 export const TransferOfVehicleOwnershipSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -17,7 +18,8 @@ export const TransferOfVehicleOwnershipSchema = z.object({
     }),
   }),
   pickVehicle: z.object({
-    plate: z.string(),
+    vehicle: z.string().optional(),
+    plate: z.string().min(1),
   }),
   vehicle: z.object({
     plate: z.string(),

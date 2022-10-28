@@ -1,21 +1,31 @@
 import { FieldBaseProps } from '@island.is/application/types'
-import { Box } from '@island.is/island-ui/core'
+import { Box, InputError } from '@island.is/island-ui/core'
 import { FC } from 'react'
 import { VehiclesCurrentVehicle } from '@island.is/api/schema'
 import { VehicleSelectField } from './VehicleSelectField'
 import { VehicleRadioField } from './VehicleRadioField'
+import { useLocale } from '@island.is/localization'
+import { error } from '../../lib/messages'
+import { getErrorViaPath } from '@island.is/application/core'
 
-export const VehiclesField: FC<FieldBaseProps> = ({ application }) => {
+export const VehiclesField: FC<FieldBaseProps> = (props) => {
+  const { formatMessage } = useLocale()
+  const { application, field, errors } = props
+  console.log(errors)
   const currentVehicleList = application.externalData.currentVehicleList
     .data as VehiclesCurrentVehicle[]
-  console.log(application)
-  console.log(currentVehicleList)
   return (
     <Box paddingTop={2}>
-      {currentVehicleList.length > 10 ? (
-        <VehicleSelectField currentVehicleList={currentVehicleList} />
+      {currentVehicleList.length < 10 ? (
+        <VehicleSelectField
+          currentVehicleList={currentVehicleList}
+          {...props}
+        />
       ) : (
         <VehicleRadioField currentVehicleList={currentVehicleList} />
+      )}
+      {errors && errors.pickVehicle && (
+        <InputError errorMessage={formatMessage(error.requiredValidVehicle)} />
       )}
     </Box>
   )

@@ -17,21 +17,10 @@ const query = gql`
   }
 `
 
-type VehicleDetailsShort = {
-  isStolen: boolean
-  fees: {
-    hasEncumbrances: boolean
-  }
-  coOwners: {
-    owner: string
-    nationalId: string
-  }[]
-}
-
 export const useLazyVehicleDetails = () => {
   return useLazyQuery<
     {
-      vehiclesDetail: VehicleDetailsShort
+      vehiclesDetail: VehiclesDetail
     },
     { input: GetVehicleDetailInput }
   >(query)
