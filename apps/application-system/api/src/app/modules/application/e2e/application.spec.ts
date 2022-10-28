@@ -176,6 +176,75 @@ describe('Application system API', () => {
     `)
   })
 
+  it('should fail when PUT-ing answers in a very deep nested schema which doesnt comply', async () => {
+    const creationResponse = await server
+      .post('/applications')
+      .send({
+        typeId: ApplicationTypes.EXAMPLE,
+      })
+      .expect(201)
+
+    await server
+      .put(`/applications/${creationResponse.body.id}`)
+      .send({
+        answers: {
+          deepNestedValues: {
+            something: {
+              very: {
+                deep: {
+                  so: {
+                    so: {
+                      very: {
+                        very: {
+                          deep: {
+                            nested: {
+                              value: 400,
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          dreamJob: 'pilot',
+        },
+      })
+      .expect(400)
+
+    await server
+      .put(`/applications/${creationResponse.body.id}`)
+      .send({
+        answers: {
+          deepNestedValues: {
+            something: {
+              very: {
+                deep: {
+                  so: {
+                    so: {
+                      very: {
+                        very: {
+                          deep: {
+                            nested: {
+                              value: 'hello',
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          dreamJob: 'pilot',
+        },
+      })
+      .expect(200)
+  })
+
   it('should fail when PUT-ing answers on an application where it is in a state where it is not permitted', async () => {
     const creationResponse = await server
       .post('/applications')

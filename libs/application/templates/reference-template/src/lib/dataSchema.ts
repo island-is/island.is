@@ -57,6 +57,27 @@ export const ExampleSchema = z.object({
       params: m.careerHistoryOtherError,
       path: ['careerHistoryOther'],
     }),
+  deepNestedValues: z.object({
+    something: z.object({
+      very: z.object({
+        deep: z.object({
+          so: z.object({
+            so: z.object({
+              very: z.object({
+                very: z.object({
+                  deep: z.object({
+                    nested: z.object({
+                      value: z.string(),
+                    }),
+                  }),
+                }),
+              }),
+            }),
+          }),
+        }),
+      }),
+    }),
+  }),
   dreamJob: z.string().optional(),
   assigneeEmail: z.string().email(),
   approvedByReviewer: z.enum(['APPROVE', 'REJECT']),
