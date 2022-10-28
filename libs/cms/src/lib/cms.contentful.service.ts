@@ -582,7 +582,7 @@ export class CmsContentfulService {
 
     const items = (result.items as types.IAlertBanner[]).map(mapAlertBanner)
 
-    // Make sure that the globlal alert banner is first in the list
+    // Make sure that the global alert banner is first in the list
     items.sort((a, b) => {
       if (a.servicePortalPaths?.includes('*')) return -1
       if (b.servicePortalPaths?.includes('*')) return 1
