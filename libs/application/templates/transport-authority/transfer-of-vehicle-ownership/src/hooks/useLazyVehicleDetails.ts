@@ -1,27 +1,19 @@
 import { gql } from '@apollo/client'
-import { GetVehicleDetailInput, VehiclesDetail } from '@island.is/api/schema'
+import { VehicleFeesByPermno } from '@island.is/api/schema'
+import { GET_VEHICLE_FEES_BY_PERMNO } from '../graphql/queries'
 import { useLazyQuery } from './useLazyQuery'
-
-const query = gql`
-  query VehiclesDetail($input: GetVehicleDetailInput!) {
-    vehiclesDetail(input: $input) {
-      isStolen
-      fees {
-        hasEncumbrances
-      }
-      coOwners {
-        owner
-        nationalId
-      }
-    }
-  }
-`
 
 export const useLazyVehicleDetails = () => {
   return useLazyQuery<
     {
-      vehiclesDetail: VehiclesDetail
+      vehicleFeesByPermno: VehicleFeesByPermno
     },
-    { input: GetVehicleDetailInput }
-  >(query)
+    {
+      permno: string
+    }
+  >(
+    gql`
+      ${GET_VEHICLE_FEES_BY_PERMNO}
+    `,
+  )
 }

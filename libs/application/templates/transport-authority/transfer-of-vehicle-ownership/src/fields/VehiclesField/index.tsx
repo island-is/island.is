@@ -6,23 +6,21 @@ import { VehicleSelectField } from './VehicleSelectField'
 import { VehicleRadioField } from './VehicleRadioField'
 import { useLocale } from '@island.is/localization'
 import { error } from '../../lib/messages'
-import { getErrorViaPath } from '@island.is/application/core'
 
 export const VehiclesField: FC<FieldBaseProps> = (props) => {
   const { formatMessage } = useLocale()
-  const { application, field, errors } = props
-  console.log(errors)
+  const { application, errors } = props
   const currentVehicleList = application.externalData.currentVehicleList
     .data as VehiclesCurrentVehicle[]
   return (
     <Box paddingTop={2}>
-      {currentVehicleList.length < 10 ? (
+      {currentVehicleList.length > 10 ? (
         <VehicleSelectField
           currentVehicleList={currentVehicleList}
           {...props}
         />
       ) : (
-        <VehicleRadioField currentVehicleList={currentVehicleList} />
+        <VehicleRadioField currentVehicleList={currentVehicleList} {...props} />
       )}
       {errors && errors.pickVehicle && (
         <InputError errorMessage={formatMessage(error.requiredValidVehicle)} />

@@ -225,11 +225,11 @@ export class VehiclesResolver {
   })
   @Audit()
   async getVehicleFeesByPermno(
-    @Args('permno') permno: string,
+    @Args('permno', { type: () => String }) permno: string,
     @CurrentUser() user: User,
   ) {
     // TODOx disabled while this api is flaky
-    return { fees: { hasEncumbrances: Math.random() < 0.5 } }
+    return { fees: { hasEncumbrances: Math.random() < 0.2 } }
 
     // return await Promise.all(
     //   (await this.getCurrentVehicles(input, user)).map(

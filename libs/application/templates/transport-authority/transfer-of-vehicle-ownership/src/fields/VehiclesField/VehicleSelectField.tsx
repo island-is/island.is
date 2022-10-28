@@ -6,7 +6,6 @@ import {
   VehiclesCurrentVehicle,
   GetVehicleDetailInput,
   VehiclesCurrentVehicleWithFees,
-  Application,
 } from '@island.is/api/schema'
 import { information } from '../../lib/messages'
 import { SelectController } from '@island.is/shared/form-fields'
@@ -23,11 +22,30 @@ export const VehicleSelectField: FC<
 > = ({ currentVehicleList, application }) => {
   const { formatMessage } = useLocale()
   const { register } = useFormContext()
+
+  const vehicleValue = getValueViaPath(
+    application.answers,
+    'pickVehicle.vehicle',
+    '',
+  ) as string
+  const currentVehicle = currentVehicleList[parseInt(vehicleValue, 10)]
+
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [
     selectedVehicle,
     setSelectedVehicle,
-  ] = useState<VehiclesCurrentVehicleWithFees | null>(null)
+  ] = useState<VehiclesCurrentVehicleWithFees | null>(
+    {
+      permno: currentVehicle.permno,
+      make: currentVehicle?.make || '',
+      color: currentVehicle?.color || '',
+      role: currentVehicle?.role,
+      isStolen: currentVehicle?.isStolen,
+      fees: {
+        hasEncumbrances: false,
+      },
+    } || null,
+  )
   const [plate, setPlate] = useState<string>(
     (getValueViaPath(application.answers, 'pickVehicle.plate', '') as string) ||
       '',
@@ -35,11 +53,6 @@ export const VehicleSelectField: FC<
 
   const getVehicleDetails = useLazyVehicleDetails()
 
-  console.log(
-    selectedVehicle?.isStolen || selectedVehicle?.fees?.hasEncumbrances
-      ? ''
-      : selectedVehicle?.permno || '',
-  )
   const onChange = (option: Option) => {
     const currentVehicle = currentVehicleList[parseInt(option.value, 10)]
     setIsLoading(true)
@@ -48,18 +61,17 @@ export const VehicleSelectField: FC<
         permno: currentVehicle.permno,
       })
         .then((response) => {
-          console.log(response)
           setSelectedVehicle({
             permno: currentVehicle.permno,
             make: currentVehicle?.make || '',
             color: currentVehicle?.color || '',
             role: currentVehicle?.role,
-            isStolen: currentVehicle.permno === 'ÞB252' ? false : true, // response?.vehiclesDetail?.isStolen,
-            fees: response?.vehiclesDetail?.fees,
+            isStolen: currentVehicle?.isStolen,
+            fees: response?.vehicleFeesByPermno?.fees,
           })
           setPlate(
-            (currentVehicle.permno === 'ÞB252' ? false : true) ||
-              response?.vehiclesDetail?.fees
+            !!currentVehicle?.isStolen ||
+              !!response?.vehicleFeesByPermno?.fees?.hasEncumbrances
               ? ''
               : currentVehicle.permno || '',
           )
@@ -72,18 +84,13 @@ export const VehicleSelectField: FC<
   const getVehicleDetailsCallback = useCallback(
     async ({ permno }: GetVehicleDetailInput) => {
       const { data } = await getVehicleDetails({
-        input: {
-          permno,
-          regno: '',
-          vin: '',
-        },
+        permno,
       })
       return data
     },
     [getVehicleDetails],
   )
 
-  console.log('Plate: ', plate)
   return (
     <Box>
       <SelectController

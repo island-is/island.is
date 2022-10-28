@@ -1,6 +1,6 @@
 import { Box, SkeletonLoader, Tag, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { FC } from 'react'
+import { FC, useState } from 'react'
 import {
   VehiclesCurrentVehicle,
   VehiclesCurrentVehicleWithFees,
@@ -9,6 +9,9 @@ import { information } from '../../lib/messages'
 import { RadioController } from '@island.is/shared/form-fields'
 import { gql, useQuery } from '@apollo/client'
 import { GET_CURRENT_VEHICLES_WITH_FEES } from '../../graphql/queries'
+import { useFormContext } from 'react-hook-form'
+import { getValueViaPath } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 
 interface Option {
   value: string
@@ -20,10 +23,16 @@ interface VehicleSearchFieldProps {
   currentVehicleList: VehiclesCurrentVehicle[]
 }
 
-export const VehicleRadioField: FC<VehicleSearchFieldProps> = ({
-  currentVehicleList,
-}) => {
+export const VehicleRadioField: FC<
+  VehicleSearchFieldProps & FieldBaseProps
+> = ({ currentVehicleList, application }) => {
   const { formatMessage } = useLocale()
+  const { register } = useFormContext()
+
+  const [plate, setPlate] = useState<string>(
+    (getValueViaPath(application.answers, 'pickVehicle.plate', '') as string) ||
+      '',
+  )
 
   const { data, loading } = useQuery(
     gql`
@@ -39,6 +48,12 @@ export const VehicleRadioField: FC<VehicleSearchFieldProps> = ({
       },
     },
   )
+
+  const onRadioControllerSelect = (s: string) => {
+    console.log(s)
+    const currentVehicle = currentVehicleList[parseInt(s, 10)]
+    setPlate(currentVehicle.permno || '')
+  }
 
   const vehicleOptions = (vehicles: VehiclesCurrentVehicleWithFees[]) => {
     const options = [] as Option[]
@@ -81,21 +96,32 @@ export const VehicleRadioField: FC<VehicleSearchFieldProps> = ({
     return options
   }
 
-  return loading ? (
-    <SkeletonLoader
-      height={100}
-      space={2}
-      repeat={currentVehicleList.length}
-      borderRadius="large"
-    />
-  ) : (
-    <RadioController
-      id="pickVehicle.plate"
-      largeButtons
-      backgroundColor="blue"
-      options={vehicleOptions(
-        data.currentVehiclesWithFees as VehiclesCurrentVehicleWithFees[],
+  return (
+    <div>
+      {loading ? (
+        <SkeletonLoader
+          height={100}
+          space={2}
+          repeat={currentVehicleList.length}
+          borderRadius="large"
+        />
+      ) : (
+        <RadioController
+          id="pickVehicle.vehicle"
+          largeButtons
+          backgroundColor="blue"
+          onSelect={onRadioControllerSelect}
+          options={vehicleOptions(
+            data.currentVehiclesWithFees as VehiclesCurrentVehicleWithFees[],
+          )}
+        />
       )}
-    />
+      <input
+        type="hidden"
+        value={plate}
+        ref={register({ required: true })}
+        name="pickVehicle.plate"
+      />
+    </div>
   )
 }

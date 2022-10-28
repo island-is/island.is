@@ -1,3 +1,4 @@
+import { Application, VehiclesCurrentVehicle } from '@island.is/api/schema'
 import {
   buildMultiField,
   buildTextField,
@@ -19,27 +20,41 @@ export const vehicleSubSection = buildSubSection({
           id: 'vehicle.plate',
           title: information.labels.vehicle.plate,
           backgroundColor: 'white',
-          width: 'half',
+          width: 'full',
           disabled: true,
-          required: true,
+          defaultValue: (application: Application) => {
+            const currentVehicleList = application.externalData
+              ?.currentVehicleList?.data as VehiclesCurrentVehicle[]
+            const vehicleValue = application.answers.pickVehicle.vehicle
+            const vehicle = currentVehicleList[parseInt(vehicleValue, 10)]
+            return vehicle.permno
+          },
         }),
         buildTextField({
           id: 'vehicle.type',
           title: information.labels.vehicle.type,
           backgroundColor: 'white',
-          width: 'half',
+          width: 'full',
           disabled: true,
-          required: true,
+          defaultValue: (application: Application) => {
+            const currentVehicleList = application.externalData
+              ?.currentVehicleList?.data as VehiclesCurrentVehicle[]
+            const vehicleValue = application.answers.pickVehicle.vehicle
+            const vehicle = currentVehicleList[parseInt(vehicleValue, 10)]
+            return vehicle.make
+          },
         }),
         buildTextField({
           id: 'vehicle.salePrice',
           title: information.labels.vehicle.salePrice,
-          width: 'half',
+          required: true,
+          width: 'full',
         }),
         buildDateField({
           id: 'vehicle.date',
           title: information.labels.vehicle.date,
-          width: 'half',
+          required: true,
+          width: 'full',
           minDate: () => {
             const today = new Date()
             // Maybe have option if buyer to have sellers date.
