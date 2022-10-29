@@ -10,8 +10,8 @@ interface SidebarShipSearchInputProps {
 }
 
 export const SidebarShipSearchInput = ({
-  shipDetailsHref = '/v/maelabord-fiskistofu?selectedTab=skip&nr=3000',
-  shipSearchHref = '/v/maelabord-fiskistofu?selectedTab=skipaleit',
+  shipDetailsHref = '/v/maelabord-fiskistofu',
+  shipSearchHref = '/s/fiskistofa/skipaleit',
   placeholder = 'Skipaskrárnúmer eða nafn',
   label = 'Skoða skip',
 }: SidebarShipSearchInputProps) => {
@@ -25,7 +25,7 @@ export const SidebarShipSearchInput = ({
     if (searchValueIsNumber) {
       router.push({
         pathname: shipDetailsHref,
-        query: { nr: Number(searchValue) },
+        query: { nr: Number(searchValue), selectedTab: 'skip' },
       })
     } else {
       router.push({

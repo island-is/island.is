@@ -57,7 +57,7 @@ export const TabSectionSlice: React.FC<SliceProps> = ({
             router.push(
               {
                 pathname: router.asPath.split('#')[0].split('?')[0],
-                query: { selectedTab: slugify(tab.tabTitle) },
+                query: { ...router.query, selectedTab: slugify(tab.tabTitle) },
               },
               undefined,
               { shallow: true },

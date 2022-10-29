@@ -47,9 +47,9 @@ const renderConnectedComponent = (slice) => {
     case 'Fiskistofa/ShipSearchSidebarInput':
       return <SidebarShipSearchInput {...data} />
     case 'Fiskistofa/StraddlingStockCalculator':
-      return <StraddlingStockCalculator namespace={{}} shipNumber={1281} />
+      return <StraddlingStockCalculator namespace={data ?? {}} />
     case 'Fiskistofa/CatchQuotaCalculator':
-      return <CatchQuotaCalculator namespace={{}} shipNumber={1281} />
+      return <CatchQuotaCalculator namespace={data ?? {}} />
     default:
       break
   }

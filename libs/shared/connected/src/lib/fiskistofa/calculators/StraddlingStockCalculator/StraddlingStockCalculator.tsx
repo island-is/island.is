@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { useRouter } from 'next/router'
 import { useMachine } from '@xstate/react'
 import cn from 'classnames'
 import {
@@ -39,12 +40,10 @@ type ChangeErrors = Record<
 
 interface StraddlingStockCalculatorProps {
   namespace: Record<string, string>
-  shipNumber: number
 }
 
 export const StraddlingStockCalculator = ({
   namespace,
-  shipNumber,
 }: StraddlingStockCalculatorProps) => {
   const yearOptions = useMemo(() => getYearOptions(), [])
   const [selectedYear, setSelectedYear] = useState<YearOption>(yearOptions[0])
@@ -52,6 +51,15 @@ export const StraddlingStockCalculator = ({
   const [changeErrors, setChangeErrors] = useState<ChangeErrors>({})
   const n = useLocalization(namespace)
   const prevChangesRef = useRef<Changes | null>(null)
+
+  const [shipNumber, setShipNumber] = useState<number | null>(null)
+  const router = useRouter()
+
+  useEffect(() => {
+    if (router.query.nr && !isNaN(Number(router.query.nr))) {
+      setShipNumber(Number(router.query.nr))
+    }
+  }, [router.query.nr])
 
   const [state, send] = useMachine<Context, EventType>(machine)
 

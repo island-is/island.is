@@ -22,6 +22,7 @@ import {
 import { Context, machine, Event as EventType } from './machine'
 
 import * as styles from './CatchQuotaCalculator.css'
+import { useRouter } from 'next/router'
 
 const QUOTA_CHANGE_DEBOUNCE_TIME = 1000
 
@@ -80,12 +81,10 @@ interface QuotaStateChangeMetadata {
 }
 
 interface CatchQuotaCalculatorProps {
-  shipNumber: number
   namespace: Record<string, string>
 }
 
 export const CatchQuotaCalculator = ({
-  shipNumber,
   namespace,
 }: CatchQuotaCalculatorProps) => {
   const timePeriodOptions = useMemo(() => generateTimePeriodOptions(), [])
@@ -95,6 +94,15 @@ export const CatchQuotaCalculator = ({
   )
   const [changes, setChanges] = useState<Changes>({})
   const [changeErrors, setChangeErrors] = useState<ChangeErrors>({})
+
+  const [shipNumber, setShipNumber] = useState<number | null>(null)
+  const router = useRouter()
+
+  useEffect(() => {
+    if (router.query.nr && !isNaN(Number(router.query.nr))) {
+      setShipNumber(Number(router.query.nr))
+    }
+  }, [router.query.nr])
 
   const prevChangesRef = useRef<Changes | null>(null)
 
