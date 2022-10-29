@@ -1,0 +1,73 @@
+import { useLazyQuery } from '@apollo/client'
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
+import { Box, LoadingDots, Stack, Text } from '@island.is/island-ui/core'
+import { GET_SINGLE_SHIP } from '../calculators/queries'
+import { useLocalization } from '../../../utils'
+
+import * as styles from './SelectedShip.css'
+
+interface SelectedShipProps {
+  namespace?: Record<string, string>
+}
+
+export const SelectedShip = ({ namespace }: SelectedShipProps) => {
+  const [shipNumber, setShipNumber] = useState<number | null>(null)
+  const router = useRouter()
+  const [getSingleShip, { data, error, loading }] = useLazyQuery(
+    GET_SINGLE_SHIP,
+  )
+  const n = useLocalization(namespace)
+
+  useEffect(() => {
+    if (router.query.nr && !isNaN(Number(router.query.nr))) {
+      const nr = Number(router.query.nr)
+      setShipNumber(nr)
+      getSingleShip({
+        variables: {
+          input: {
+            shipNumber: nr,
+          },
+        },
+      })
+    }
+  }, [router.query.nr])
+
+  if (loading) {
+    return (
+      <Box className={styles.container}>
+        <LoadingDots />
+      </Box>
+    )
+  }
+
+  const ship = data?.fiskistofaGetSingleShip?.fiskistofaSingleShip
+
+  if (!data || error) {
+    return (
+      <Box className={styles.container}>
+        <Text>{n('noShipSelected', 'Ekkert skip valið')}</Text>
+      </Box>
+    )
+  }
+
+  return (
+    <Box className={styles.container}>
+      <Stack space={1}>
+        {ship?.name ? (
+          <Text variant="h2" as="h4">
+            {ship?.name}
+          </Text>
+        ) : (
+          <Text>{n('', 'Ekki tókst að sækja skip')}</Text>
+        )}
+
+        <Box className={styles.shipNumber}>
+          <Text fontWeight="semiBold" color="white">
+            {shipNumber}
+          </Text>
+        </Box>
+      </Stack>
+    </Box>
+  )
+}

@@ -8,6 +8,7 @@ import {
   SidebarShipSearchInput,
   StraddlingStockCalculator,
   CatchQuotaCalculator,
+  SelectedShip,
 } from '@island.is/shared/connected'
 import { Image } from '../Image/Image'
 import FaqList from '../FaqList/FaqList'
@@ -50,6 +51,8 @@ const renderConnectedComponent = (slice) => {
       return <StraddlingStockCalculator namespace={data ?? {}} />
     case 'Fiskistofa/CatchQuotaCalculator':
       return <CatchQuotaCalculator namespace={data ?? {}} />
+    case 'Fiskistofa/SelectedShip':
+      return <SelectedShip />
     default:
       break
   }
