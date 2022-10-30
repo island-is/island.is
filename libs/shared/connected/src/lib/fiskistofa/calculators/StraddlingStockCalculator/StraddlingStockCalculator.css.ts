@@ -15,6 +15,10 @@ export const error = style({
   borderColor: theme.color.red400,
 })
 
+export const redColor = style({
+  color: theme.color.red400,
+})
+
 export const tagContainer = style({
   marginTop: '16px',
 })

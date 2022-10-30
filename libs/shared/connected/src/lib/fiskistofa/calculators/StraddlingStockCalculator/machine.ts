@@ -324,6 +324,7 @@ export const machine = createMachine<Context, Event, State>(
           )
           if (categoryFromServer) {
             categories.push({
+              ...category,
               ...categoryFromServer,
               timestamp: category.timestamp,
             })

@@ -318,15 +318,26 @@ export const StraddlingStockCalculator = ({
               <tr>
                 <td>{n('codEquivalentRatio', 'Þorskígildisstuðull')}</td>
                 {state.context.data.catchQuotaCategories.map((category) => (
-                  <td key={category.name}>
-                    {numberFormatter.format(category.codEquivalent)}
+                  <td
+                    key={category.name}
+                    className={cn({
+                      [styles.redColor]: category.codEquivalent < 0,
+                    })}
+                  >
+                    {category.codEquivalent &&
+                      numberFormatter.format(category.codEquivalent)}
                   </td>
                 ))}
               </tr>
               <tr>
                 <td>{n('uthlutun', 'Úthlutun')}</td>
                 {state.context.data.catchQuotaCategories.map((category) => (
-                  <td key={category.name}>
+                  <td
+                    key={category.name}
+                    className={cn({
+                      [styles.redColor]: category.allocation < 0,
+                    })}
+                  >
                     {numberFormatter.format(category.allocation)}
                   </td>
                 ))}
@@ -334,7 +345,12 @@ export const StraddlingStockCalculator = ({
               <tr>
                 <td>{n('serstokUthlutun', 'Sérst. úthl.')}</td>
                 {state.context.data.catchQuotaCategories.map((category) => (
-                  <td key={category.name}>
+                  <td
+                    key={category.name}
+                    className={cn({
+                      [styles.redColor]: category.specialAlloction < 0,
+                    })}
+                  >
                     {numberFormatter.format(category.specialAlloction)}
                   </td>
                 ))}
@@ -342,7 +358,12 @@ export const StraddlingStockCalculator = ({
               <tr>
                 <td>{n('milliAra', 'Milli ára')}</td>
                 {state.context.data.catchQuotaCategories.map((category) => (
-                  <td key={category.name}>
+                  <td
+                    key={category.name}
+                    className={cn({
+                      [styles.redColor]: category.betweenYears < 0,
+                    })}
+                  >
                     {numberFormatter.format(category.betweenYears)}
                   </td>
                 ))}
@@ -350,7 +371,12 @@ export const StraddlingStockCalculator = ({
               <tr>
                 <td>{n('milliSkipa', 'Milli skipa')}</td>
                 {state.context.data.catchQuotaCategories.map((category) => (
-                  <td key={category.name}>
+                  <td
+                    key={category.name}
+                    className={cn({
+                      [styles.redColor]: category.betweenShips < 0,
+                    })}
+                  >
                     {numberFormatter.format(category.betweenShips)}
                   </td>
                 ))}
@@ -393,7 +419,12 @@ export const StraddlingStockCalculator = ({
               <tr>
                 <td>{n('aflamark', 'Aflamark')}</td>
                 {state.context.data.catchQuotaCategories.map((category) => (
-                  <td key={category.name}>
+                  <td
+                    key={category.name}
+                    className={cn({
+                      [styles.redColor]: category.catchQuota < 0,
+                    })}
+                  >
                     {numberFormatter.format(category.catchQuota)}
                   </td>
                 ))}
@@ -401,7 +432,12 @@ export const StraddlingStockCalculator = ({
               <tr>
                 <td>{n('afli', 'Afli')}</td>
                 {state.context.data.catchQuotaCategories.map((category) => (
-                  <td key={category.name}>
+                  <td
+                    key={category.name}
+                    className={cn({
+                      [styles.redColor]: category.catch < 0,
+                    })}
+                  >
                     {numberFormatter.format(category.catch)}
                   </td>
                 ))}
@@ -447,7 +483,12 @@ export const StraddlingStockCalculator = ({
               <tr>
                 <td>{n('stada', 'Staða')}</td>
                 {state.context.data.catchQuotaCategories.map((category) => (
-                  <td key={category.name}>
+                  <td
+                    key={category.name}
+                    className={cn({
+                      [styles.redColor]: category.status < 0,
+                    })}
+                  >
                     {numberFormatter.format(category.status)}
                   </td>
                 ))}
@@ -455,7 +496,12 @@ export const StraddlingStockCalculator = ({
               <tr>
                 <td>{n('tilfaersla', 'Tilfærsla')}</td>
                 {state.context.data.catchQuotaCategories.map((category) => (
-                  <td key={category.name}>
+                  <td
+                    key={category.name}
+                    className={cn({
+                      [styles.redColor]: category.displacement < 0,
+                    })}
+                  >
                     {numberFormatter.format(category.displacement)}
                   </td>
                 ))}
@@ -463,7 +509,12 @@ export const StraddlingStockCalculator = ({
               <tr>
                 <td>{n('nyStada', 'Ný staða')}</td>
                 {state.context.data.catchQuotaCategories.map((category) => (
-                  <td key={category.name}>
+                  <td
+                    key={category.name}
+                    className={cn({
+                      [styles.redColor]: category.newStatus < 0,
+                    })}
+                  >
                     {numberFormatter.format(category.newStatus)}
                   </td>
                 ))}
@@ -471,7 +522,10 @@ export const StraddlingStockCalculator = ({
               <tr>
                 <td>{n('aNaestaAr', 'Á næsta ár')}</td>
                 {state.context.data.catchQuotaCategories.map((category) => (
-                  <td key={category.name}>
+                  <td
+                    key={category.name}
+                    className={cn({ [styles.redColor]: category.nextYear < 0 })}
+                  >
                     {numberFormatter.format(category.nextYear)}
                   </td>
                 ))}
@@ -479,7 +533,10 @@ export const StraddlingStockCalculator = ({
               <tr>
                 <td>{n('umframafli', 'Umframafli')}</td>
                 {state.context.data.catchQuotaCategories.map((category) => (
-                  <td key={category.name}>
+                  <td
+                    key={category.name}
+                    className={cn({ [styles.redColor]: category.excessCatch })}
+                  >
                     {numberFormatter.format(category.excessCatch)}
                   </td>
                 ))}
@@ -487,7 +544,12 @@ export const StraddlingStockCalculator = ({
               <tr>
                 <td>{n('onotad', 'Ónotað')}</td>
                 {state.context.data.catchQuotaCategories.map((category) => (
-                  <td key={category.name}>
+                  <td
+                    key={category.name}
+                    className={cn({
+                      [styles.redColor]: category.unused < 0,
+                    })}
+                  >
                     {numberFormatter.format(category.unused)}
                   </td>
                 ))}
