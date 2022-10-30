@@ -44,6 +44,10 @@ export const MonthlyStatistics = ({ slice }: MonthlyStatisticsProps) => {
     value: String(currentYear),
   })
 
+  useEffect(() => {
+    setSelectedRegistrationTypeOption({ label: 'Allt', value: 'Allt' })
+  }, [selectedYear])
+
   const { data: serverData, loading } = useQuery<QueryType>(
     GET_BROKEN_DOWN_ELECTRONIC_REGISTRATION_STATISTICS_QUERY,
     {
