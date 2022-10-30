@@ -1,18 +1,23 @@
+import { useEffect, useMemo, useState } from 'react'
+import { Bar, BarChart, Legend, Tooltip, XAxis, YAxis } from 'recharts'
 import { useQuery } from '@apollo/client'
+
 import { BrokenDownRegistrationStatistic } from '@island.is/api/domains/electronic-registration-statistics'
+import { ConnectedComponent } from '@island.is/api/schema'
 import {
   Box,
   GridColumn,
   GridContainer,
   GridRow,
+  LoadingDots,
   Select,
 } from '@island.is/island-ui/core'
-import { useEffect, useMemo, useState } from 'react'
-import { Bar, BarChart, Legend, Tooltip, XAxis, YAxis } from 'recharts'
+
 import { GET_BROKEN_DOWN_ELECTRONIC_REGISTRATION_STATISTICS_QUERY } from '../queries'
 import { CustomTooltip } from './CustomTooltip'
 import { extractRegistrationTypesFromData } from './utils'
 import { CustomLegend } from './CustomLegend'
+import { useLocalization } from '../../../utils'
 
 import * as styles from './MonthlyStatistics.css'
 
@@ -20,11 +25,17 @@ type QueryType = {
   getBrokenDownElectronicRegistrationStatistics: BrokenDownRegistrationStatistic[]
 }
 
-export const MonthlyStatistics = () => {
+interface MonthlyStatisticsProps {
+  slice?: ConnectedComponent
+}
+
+export const MonthlyStatistics = ({ slice }: MonthlyStatisticsProps) => {
   const [
     selectedRegistrationTypeOption,
     setSelectedRegistrationTypeOption,
   ] = useState({ label: 'Allt', value: 'Allt' })
+
+  const n = useLocalization(slice?.json ?? {})
 
   const currentYear = new Date().getFullYear()
 
@@ -33,13 +44,12 @@ export const MonthlyStatistics = () => {
     value: String(currentYear),
   })
 
-  const { data: serverData, loading, error } = useQuery<QueryType>(
+  const { data: serverData, loading } = useQuery<QueryType>(
     GET_BROKEN_DOWN_ELECTRONIC_REGISTRATION_STATISTICS_QUERY,
     {
       variables: {
         input: {
-          dateFrom: new Date(Number(selectedYear.value), 0, 1),
-          dateTo: new Date(Number(selectedYear.value) + 1, 0, 1),
+          year: Number(selectedYear.value),
         },
       },
     },
@@ -74,8 +84,8 @@ export const MonthlyStatistics = () => {
     return options.reverse()
   }, [])
 
-  const paper = 'Pappír'
-  const electronic = 'Rafrænt'
+  const paper = n('paper', 'Pappír')
+  const electronic = n('electronic', 'Rafrænt')
 
   return (
     <Box>
@@ -86,7 +96,7 @@ export const MonthlyStatistics = () => {
               name="statistics-select"
               options={registrationTypes}
               size="xs"
-              label="Tegund þinglýsinga"
+              label={n('typeOfRegistration', 'Tegund þinglýsinga')}
               value={selectedRegistrationTypeOption}
               onChange={(option) =>
                 setSelectedRegistrationTypeOption(
@@ -100,7 +110,7 @@ export const MonthlyStatistics = () => {
               name="year-select"
               options={yearOptions}
               size="xs"
-              label="Tímabil"
+              label={n('timePeriod', 'Tímabil')}
               value={selectedYear}
               onChange={(option) =>
                 setSelectedYear(option as { label: string; value: string })
@@ -110,14 +120,23 @@ export const MonthlyStatistics = () => {
         </GridRow>
       </GridContainer>
 
-      {data && (
-        <Box marginTop={3} className={styles.barChartContainer}>
+      {loading && (
+        <Box marginTop={3} display="flex" justifyContent="center">
+          <LoadingDots />
+        </Box>
+      )}
+
+      <Box marginTop={3} className={styles.barChartContainer}>
+        {data && (
           <BarChart
             margin={{ top: 30 }}
-            width={600}
+            width={800}
             height={400}
             data={data.map((item) => ({
-              name: item.periodIntervalName?.slice(0, 3),
+              name: (n(
+                item.periodIntervalName?.split(' ')?.[0]?.trim() ?? '',
+                item.periodIntervalName,
+              ) as string).slice(0, 3),
               [paper]:
                 item.registrationTypes?.find(
                   (t) =>
@@ -153,8 +172,8 @@ export const MonthlyStatistics = () => {
             />
             <Legend iconType="circle" content={<CustomLegend />} />
           </BarChart>
-        </Box>
-      )}
+        )}
+      </Box>
     </Box>
   )
 }

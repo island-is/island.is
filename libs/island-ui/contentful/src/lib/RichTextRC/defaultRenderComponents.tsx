@@ -42,7 +42,7 @@ const renderConnectedComponent = (slice) => {
     case 'Lögmenn/Lawyers':
       return <LawyersList slice={slice} />
     case 'ElectronicRegistrations/MonthlyStatistics':
-      return <ElectronicRegistrationsMonthlyStatistics />
+      return <ElectronicRegistrationsMonthlyStatistics slice={slice} />
     default:
       break
   }

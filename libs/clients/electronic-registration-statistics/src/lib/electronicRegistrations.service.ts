@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common'
 import {
   Configuration,
-  FaSundurlidadaThinglysingarTolfraediAsyncRequest,
+  RegistrationOfTypeForPeriod,
   StatisticsApi,
 } from '../../gen/fetch'
 import { ElectronicRegistrationsClientConfig } from './electronicRegistrations.config'
@@ -33,11 +33,32 @@ export class ElectronicRegistrationsClientService {
     )
   }
 
-  async getBrokenDownElectronicRegistrationStatistics(
-    filter: FaSundurlidadaThinglysingarTolfraediAsyncRequest,
-  ) {
+  async getBrokenDownElectronicRegistrationStatistics(filter: {
+    year: number
+  }) {
     const api = await this.createApi()
-    const data = await api.faSundurlidadaThinglysingarTolfraediAsync(filter)
+
+    const promises: Promise<RegistrationOfTypeForPeriod[]>[] = []
+
+    for (let i = 0; i < 12; i += 1) {
+      promises.push(
+        api.faSundurlidadaThinglysingarTolfraediAsync({
+          dateFrom: new Date(filter.year, i, 1),
+          dateTo: new Date(filter.year, i + 1, 0),
+        }),
+      )
+    }
+
+    const responses = await Promise.all(promises)
+
+    const data = []
+
+    for (const response of responses) {
+      for (const result of response) {
+        data.push(result)
+      }
+    }
+
     return data
   }
 
