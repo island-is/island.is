@@ -32,7 +32,7 @@ type ContextData = {
 }
 
 /** Mutates a category list by sorting it an name ascending order */
-const orderCategories = (categories: ContextData['catchQuotaCategories']) => {
+const orderCategories = (categories?: { id?: number | null }[]) => {
   if (!categories) return
 
   // Ascending order by name
@@ -158,6 +158,9 @@ export const machine = createMachine<Context, Event, State>(
                   .concat(context.selectedQuotaTypes)
                   .sort(sortAlpha('name')),
                 data: { ...context.data, catchQuotaCategories: categories },
+                quotaData: context.quotaData.filter(
+                  (qd) => !selectedQuotaTypesIds.includes(qd.id),
+                ),
               }
             }),
           },
@@ -190,6 +193,9 @@ export const machine = createMachine<Context, Event, State>(
                 selectedQuotaTypes: context.selectedQuotaTypes.filter(
                   (qt) => qt.id !== event.categoryId,
                 ),
+                quotaData: context.quotaData.filter(
+                  (qd) => qd.id !== event.categoryId,
+                ),
               }
             }),
           },
@@ -215,7 +221,6 @@ export const machine = createMachine<Context, Event, State>(
                 status: 0,
                 unused: 0,
                 timestamp: Date.now(), // Also store a timestamp for when the category got added by the user
-                totalCatchQuota: event.category.totalCatchQuota,
                 codEquivalent: event.category.codEquivalent,
               })
 
@@ -228,8 +233,7 @@ export const machine = createMachine<Context, Event, State>(
                 allocatedCatchQuota: 0,
               })
 
-              quotaData.sort((a, b) => a?.id - b?.id)
-
+              orderCategories(quotaData)
               orderCategories(categories)
 
               return {
