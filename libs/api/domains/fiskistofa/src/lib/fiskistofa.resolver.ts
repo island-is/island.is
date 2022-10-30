@@ -13,13 +13,13 @@ import { FiskistofaUpdateShipStatusForTimePeriodInput } from './dto/updateShipSt
 
 import { FiskistofaQuotaStatusResponse } from './models/quotaStatus'
 import { FiskistofaQuotaTypeResponse } from './models/quotaType'
-import { FiskistofaShipBasicInfo } from './models/shipBasicInfo'
 import { FiskistofaSingleShipResponse } from './models/singleShip'
 import {
   FiskistofaExtendedShipStatusInformationResponse,
   FiskistofaShipStatusInformationResponse,
   FiskistofaExtendedShipStatusInformationUpdateResponse,
 } from './models/shipStatusInformation'
+import { FiskistofaShipBasicInfoResponse } from './models/shipBasicInfo'
 
 const cacheTime = process.env.CACHE_TIME || 300
 const cacheControlDirective = (ms = cacheTime) => `@cacheControl(maxAge: ${ms})`
@@ -86,7 +86,7 @@ export class FiskistofaResolver {
   }
 
   @Directive(cacheControlDirective())
-  @Query(() => [FiskistofaShipBasicInfo])
+  @Query(() => FiskistofaShipBasicInfoResponse)
   fiskistofaGetShips(@Args('input') input: FiskistofaGetShipsInput) {
     return this.fiskistofaClientService.getShips(input)
   }

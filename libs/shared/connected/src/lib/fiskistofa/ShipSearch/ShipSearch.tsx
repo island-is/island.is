@@ -12,6 +12,7 @@ import {
 import {
   QueryFiskistofaGetShipsArgs as QueryGetShipsArgs,
   FiskistofaShipBasicInfo as ShipBasicInfo,
+  FiskistofaShipBasicInfoResponse,
 } from '@island.is/api/schema'
 import { GET_SHIPS_QUERY } from './queries'
 
@@ -24,8 +25,8 @@ interface ShipSearchProps {
   errorOccuredWhileFetchingShips?: string
   shipNumber?: string
   shipName?: string
-  shippingCompany?: string
-  shippingClass?: string
+  operator?: string
+  typeOfVessel?: string
   homePort?: string
   shipSearchInputLabel?: string
 }
@@ -39,8 +40,8 @@ export const ShipSearch = ({
   errorOccuredWhileFetchingShips = 'Villa kom upp við að leita eftir skipi',
   shipNumber = 'Skipnr.',
   shipName = 'Nafn',
-  shippingCompany = 'Útgerð',
-  shippingClass = 'Útgerðarflokkur',
+  operator = 'Útgerð',
+  typeOfVessel = 'Útgerðarflokkur',
   homePort = 'Heimahöfn',
   shipSearchInputLabel = 'Skipaskrárnúmer eða nafn skips',
 }: ShipSearchProps) => {
@@ -55,7 +56,7 @@ export const ShipSearch = ({
   }
 
   const [loadShips, { data, error, loading, called }] = useLazyQuery<
-    { fiskistofaGetShips: ShipBasicInfo[] },
+    { fiskistofaGetShips: FiskistofaShipBasicInfoResponse },
     QueryGetShipsArgs
   >(GET_SHIPS_QUERY)
 
@@ -66,7 +67,8 @@ export const ShipSearch = ({
     }
   }, [router?.query?.name])
 
-  const ships = data?.fiskistofaGetShips ?? ([] as ShipBasicInfo[])
+  const ships =
+    data?.fiskistofaGetShips?.fiskistofaShips ?? ([] as ShipBasicInfo[])
 
   const handleShipSearch = (nameInput: string) => {
     const nameInputIsNumber = !isNaN(Number(nameInput)) && nameInput.length > 0
@@ -147,8 +149,8 @@ export const ShipSearch = ({
               <T.Row>
                 <T.HeadData>{shipNumber}</T.HeadData>
                 <T.HeadData>{shipName}</T.HeadData>
-                <T.HeadData>{shippingCompany}</T.HeadData>
-                <T.HeadData>{shippingClass}</T.HeadData>
+                <T.HeadData>{typeOfVessel}</T.HeadData>
+                <T.HeadData>{operator}</T.HeadData>
                 <T.HeadData>{homePort}</T.HeadData>
               </T.Row>
             </T.Head>
@@ -163,8 +165,8 @@ export const ShipSearch = ({
                     <T.Data>
                       <a href={href}>{ship.name}</a>
                     </T.Data>
-                    <T.Data>{ship.shippingCompany}</T.Data>
-                    <T.Data>{ship.shippingClass}</T.Data>
+                    <T.Data>{ship.typeOfVessel}</T.Data>
+                    <T.Data>{ship.operator}</T.Data>
                     <T.Data>{ship.homePort}</T.Data>
                   </T.Row>
                 )

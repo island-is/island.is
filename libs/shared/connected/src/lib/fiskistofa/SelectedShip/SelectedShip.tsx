@@ -14,6 +14,8 @@ interface SelectedShipProps {
 export const SelectedShip = ({ namespace }: SelectedShipProps) => {
   const [shipNumber, setShipNumber] = useState<number | null>(null)
   const router = useRouter()
+
+  // TODO: figure out how to not call endpoint when nothing is selected
   const [getSingleShip, { data, error, loading }] = useLazyQuery(
     GET_SINGLE_SHIP,
   )

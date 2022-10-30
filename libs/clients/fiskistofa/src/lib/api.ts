@@ -189,15 +189,15 @@ export class FiskistofaApi {
 
   async getShips(params: V1SkipHeitiHeitiGetRequest) {
     const data = await this.skipApi?.v1SkipHeitiHeitiGet(params)
-    return (data ?? []).map((ship) => ({
-      fiskistofaShips: {
+    return {
+      fiskistofaShips: (data ?? []).map((ship) => ({
         id: ship?.skipaskraNumer,
         name: ship?.heiti ?? '',
         typeOfVessel: ship?.utgerdarflokkur ?? '',
         operator: ship?.utgerd ?? '',
         homePort: ship?.heimahofn ?? '',
-      },
-    }))
+      })),
+    }
   }
 
   async getSingleShip(params: V1SkipSkipnumerGetRequest) {
