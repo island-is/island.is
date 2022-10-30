@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Bar, BarChart, Legend, Tooltip, XAxis, YAxis } from 'recharts'
 import { useQuery } from '@apollo/client'
 
-import { BrokenDownRegistrationStatistic } from '@island.is/api/domains/electronic-registration-statistics'
+import { BrokenDownRegistrationStatisticResponse } from '@island.is/api/domains/electronic-registration-statistics'
 import { ConnectedComponent } from '@island.is/api/schema'
 import {
   Box,
@@ -22,7 +22,7 @@ import { useLocalization } from '../../../utils'
 import * as styles from './MonthlyStatistics.css'
 
 type QueryType = {
-  getBrokenDownElectronicRegistrationStatistics: BrokenDownRegistrationStatistic[]
+  getBrokenDownElectronicRegistrationStatistics: BrokenDownRegistrationStatisticResponse
 }
 
 interface MonthlyStatisticsProps {
@@ -55,7 +55,9 @@ export const MonthlyStatistics = ({ slice }: MonthlyStatisticsProps) => {
     },
   )
 
-  const data = serverData?.getBrokenDownElectronicRegistrationStatistics
+  const data =
+    serverData?.getBrokenDownElectronicRegistrationStatistics
+      ?.electronicRegistrationStatisticBreakdown
 
   const [registrationTypes, setRegistrationTypes] = useState<
     { label: string; value: string }[]

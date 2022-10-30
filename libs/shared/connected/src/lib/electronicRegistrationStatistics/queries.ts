@@ -5,15 +5,19 @@ export const GET_BROKEN_DOWN_ELECTRONIC_REGISTRATION_STATISTICS_QUERY = gql`
     $input: GetBrokenDownElectronicRegistrationStatisticsInput!
   ) {
     getBrokenDownElectronicRegistrationStatistics(input: $input) {
-      periodIntervalName
-      totalRegistrationForCurrentPeriodInterval
-      totalPaperRegistrationsForCurrentPeriodInterval
-      totalElectronicRegistrationsForCurrentPeriodInterval
-      registrationTypes {
-        registrationType
-        totalRegistrationsOfType
-        totalPaperRegistrationsOfType
-        totalElectronicRegistrationsOfType
+      electronicRegistrationStatisticBreakdown {
+        periodIntervalName
+        totalRegistrationForCurrentPeriodInterval
+        totalPaperRegistrationsForCurrentPeriodInterval
+        totalElectronicRegistrationsForCurrentPeriodInterval
+        totalManualRegistrationsForCurrentPeriodInterval
+        registrationTypes {
+          registrationType
+          totalRegistrationsOfType
+          totalPaperRegistrationsOfType
+          totalElectronicRegistrationsOfType
+          totalManualRegistrationsOfType
+        }
       }
     }
   }

@@ -14,13 +14,12 @@ export const ElectronicRegistrationsClientConfig = defineConfig({
   load(env) {
     return {
       url: env.required(
-        'ELECTRONIC_REGISTRATIONS_API_BASE_URL',
+        'ELECTRONIC_REGISTRATION_STATISTICS_API_URL',
         'https://gw-api-staging.skra.is/business/tolfraedi',
       ),
       fetch: {
         timeout:
-          env.optionalJSON('ELECTRONIC_REGISTRATIONS_API_TIMEOUT') ??
-          1000 * 120 * 10,
+          env.optionalJSON('ELECTRONIC_REGISTRATIONS_API_TIMEOUT') ?? 30000,
       },
     }
   },

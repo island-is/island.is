@@ -8,7 +8,7 @@
       "url": "https://www.skra.is",
       "email": "skra@skra.is"
     },
-    "version": "v1.0.1",
+    "version": "v1.0.2",
     "x-category": [
       "open",
       "official",
@@ -18,10 +18,10 @@
       "free"
     ],
     "x-links": {
-      "documentation": "https://gw-api.skra.is/business/thinglysingar/swagger/index.html",
-      "responsibleParty": "https://www.skra.is/um-okkur/um-okkur/skilmalar/skilmalar-fyrir-thinglysingar-og-aflysingar",
-      "bugReport": "verk@skra.is",
-      "featureRequest": "verk@skra.is"
+      "documentation": null,
+      "responsibleParty": null,
+      "bugReport": null,
+      "featureRequest": null
     }
   },
   "servers": [
@@ -190,7 +190,7 @@
           "Statistics"
         ],
         "summary": "Gets information regarding statistics of electronic registrations.",
-        "description": "The API returns the total number of electronic registrations as well as giving a breakdown on \r\nthe number of registrations that were accepted, partly registered, had errors or were sent into manual processing.",
+        "description": "The API returns the total number of electronic registrations as well as giving a breakdown on\r\nthe number of registrations that were accepted, partly registered, had errors or were sent into manual processing.",
         "operationId": "FaFjoldaRafraennaThinglysingaBeidnaAsync",
         "responses": {
           "200": {
@@ -474,6 +474,11 @@
             "description": "Total number of paper registration for current period.",
             "format": "int32"
           },
+          "totalManualRegistrationsForCurrentPeriodInterval": {
+            "type": "integer",
+            "description": "Total number of manual registration for current period.",
+            "format": "int32"
+          },
           "totalElectronicRegistrationsForCurrentPeriodInterval": {
             "type": "integer",
             "description": "Total number of electronic registration for current period.",
@@ -507,6 +512,11 @@
           "totalPaperRegistrationsOfType": {
             "type": "integer",
             "description": "Total number of paper registrations for this document type.",
+            "format": "int32"
+          },
+          "totalManualRegistrationsOfType": {
+            "type": "integer",
+            "description": "Total number of manual registrations for this document type.",
             "format": "int32"
           },
           "totalElectronicRegistrationsOfType": {
