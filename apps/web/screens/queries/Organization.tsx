@@ -111,6 +111,9 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
         logo {
           url
         }
+        namespace {
+          fields
+        }
         footerItems {
           title
           content {

@@ -4,6 +4,7 @@ import { ProblemType } from './ProblemType'
 
 export interface HttpProblem extends BaseProblem {
   type:
+    | ProblemType.HTTP_NO_CONTENT
     | ProblemType.HTTP_BAD_REQUEST
     | ProblemType.HTTP_UNAUTHORIZED
     | ProblemType.HTTP_FORBIDDEN
