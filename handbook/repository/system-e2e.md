@@ -96,7 +96,7 @@ You should therefore aim to write test for:
 
 ## 🏗️ Test structure
 
-Test cases are written spec files somewhere. Tests that don’t modify anything (e.g. _create_ an application, _change_ the user’s name, etc.), and verify basic functionality are called **smoke tests**. Tests that are more detailed and/or make any changes at all, are called **acceptance tests**. Test cases are put into folders by what app they are testing, smoke/acceptance test, and each file tests some aspect of an app. Here is an example of the folder layout for testing the search engine and front-page of the `web` project:
+Test cases are written spec files somewhere. Tests that do not modify anything (e.g. _create_ an application, _change_ the user’s name, etc.), and verify basic functionality are called **smoke tests**. Tests that are more detailed and/or make any changes at all, are called **acceptance tests**. Test cases are put into folders by what app they are testing, smoke/acceptance test, and each file tests some aspect of an app. Here is an example of the folder layout for testing the search engine and front-page of the `web` project:
 
 ```bash
 web/                      (app name)
@@ -108,7 +108,7 @@ web/                      (app name)
 
 ## 🗃️ Spec files
 
-A spec file should have only one description (`test.describe`) of what part of an app is being tested. Therein can be one or more test cases (`test`) with a description of what scenario each test case is testing. Setup and teardown can be done in `test.beforeAll`, `test.beforeEach`, `test.afterAll`, and `test.afterEach`. You shouldn’t _rely_ on `after*` ever running, and you should prepare your environment every time _before_ each test. For example:
+A spec file should have only one description (`test.describe`) of what part of an app is being tested. Therein can be one or more test cases (`test`) with a description of what scenario each test case is testing. Setup and tear down can be done in `test.beforeAll`, `test.beforeEach`, `test.afterAll`, and `test.afterEach`. You should not _rely_ on `after*` ever running, and you should prepare your environment every time _before_ each test. For example:
 
 ```jsx
 test.describe('Overview part of banking app', () => {
@@ -136,10 +136,10 @@ test.describe('Overview part of banking app', () => {
 
 Each test case (`test`) should test a specific scenario from end-to-end. Let’s take the operating licence application as an example. To test various routes/cases your test cases might include:
 
-- Hotel permit with food, but no alchohol
-- Hotel permit with food and alchohol
-- Bar with only alchohol
-- Home accomodation (airbnb style), no food, no alchohol
+- Hotel permit with food, but no alcohol
+- Hotel permit with food and alcohol
+- Bar with only alcohol
+- Home accommodation (AirBnB style), no food, no alcohol
 
 ## 🧰 Using fixtures
 
@@ -176,7 +176,7 @@ Check out the [official playwright documentation](https://playwright.dev/docs/ap
 
 ## 😬 Tricky element searching
 
-Some apps, like service-portal and application-system-form, load their components _very_ asynchronously. This can be an issue when targeting some elements, but they don’t appear on the first page load, but instead load after the basic page has loaded.
+Some apps, like service-portal and application-system-form, load their components _very_ asynchronously. This can be an issue when targeting some elements, but they do not appear on the first page load, but instead load after the basic page has loaded.
 
 In such cases you can wait for the elements to exist with `page.waitFor*`:
 
@@ -195,7 +195,7 @@ await page.waitForFunction(async () => {
 
 ## 🫀 500: Internal Server Error
 
-A 500 error can occur randomly. If the error is coming from your app or code you worked on, you have earned yourself a debug day. If the error isn’t from your code, ignore it for now. We don’t know what’s going on 🤷
+A 500 error can occur randomly. If the error is coming from your app or code you worked on, you have earned yourself a debug day. If the error is not from your code, ignore it for now. We do not know what’s going on 🤷
 
 ## 💀 Error: ESOCKETTIMEDOUT
 
