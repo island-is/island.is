@@ -403,7 +403,7 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
           }
         }),
     ])
-  }, [caseFiles])
+  }, [caseFiles, formatMessage])
 
   const handleReorder = async (fileId?: string) => {
     if (!fileId) {
