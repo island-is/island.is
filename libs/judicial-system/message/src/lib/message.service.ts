@@ -6,6 +6,7 @@ import {
   SendMessageCommand,
   ReceiveMessageCommand,
   DeleteMessageCommand,
+  SendMessageBatchCommand,
 } from '@aws-sdk/client-sqs'
 
 import { Inject, Injectable, ServiceUnavailableException } from '@nestjs/common'
@@ -112,7 +113,7 @@ export class MessageService {
   }
 
   // TODO: Add support for sending multiple messages
-  async sendMessageToQueue(message: Message): Promise<string> {
+  async sendMessageToQueue(message: Message): Promise<void> {
     return this.sqs
       .send(
         new SendMessageCommand({
@@ -121,7 +122,30 @@ export class MessageService {
           MessageBody: JSON.stringify(message),
         }),
       )
-      .then((data) => data.MessageId ?? '')
+      .then((data) => {
+        if (!data.MessageId) {
+          this.logger.error('Failed to send message to queue', { data })
+        }
+      })
+  }
+
+  async sendMessagesToQueue(messages: Message[]): Promise<void> {
+    return this.sqs
+      .send(
+        new SendMessageBatchCommand({
+          QueueUrl: this.queueUrl,
+          Entries: messages.map((message, index) => ({
+            MessageGroupId: message.caseId,
+            MessageBody: JSON.stringify(message),
+            Id: index.toString(),
+          })),
+        }),
+      )
+      .then((data) => {
+        if (data.Failed && data.Failed.length > 0) {
+          this.logger.error('Failed to send messages to queue', { data })
+        }
+      })
   }
 
   async receiveMessageFromQueue(

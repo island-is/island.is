@@ -10,9 +10,9 @@ interface Then {
   error: Error
 }
 
-type GivenWhenThen = (message: Message) => Promise<Then>
+type GivenWhenThen = (messages: Message[]) => Promise<Then>
 
-describe('MessageService - Send message to queue', () => {
+describe('MessageService - Send messages to queue', () => {
   let setMocks: (mocks: unknown[]) => void
   let mockQueueUrl: string
   let mockSqs: SQSClient
@@ -30,11 +30,11 @@ describe('MessageService - Send message to queue', () => {
     mockQueueUrl = queueUrl
     mockSqs = sqs
 
-    givenWhenThen = async (message: Message) => {
+    givenWhenThen = async (messages: Message[]) => {
       const then = {} as Then
 
       try {
-        then.result = await messageService.sendMessageToQueue(message)
+        then.result = await messageService.sendMessagesToQueue(messages)
       } catch (error) {
         then.error = error as Error
       }
@@ -51,16 +51,21 @@ describe('MessageService - Send message to queue', () => {
       const messageId = uuid()
 
       beforeEach(async () => {
-        setMocks([{ MessageId: messageId }])
+        setMocks([{ Entries: [{ MessageId: messageId }] }])
 
-        await givenWhenThen(message)
+        await givenWhenThen([message])
       })
 
       it(`should post message ${type} to queue`, () => {
         expect(mockSqs.send).toHaveBeenCalledWith({
           QueueUrl: mockQueueUrl,
-          MessageGroupId: caseId,
-          MessageBody: JSON.stringify(message),
+          Entries: [
+            {
+              Id: '0',
+              MessageGroupId: caseId,
+              MessageBody: JSON.stringify(message),
+            },
+          ],
         })
       })
     },
@@ -73,7 +78,7 @@ describe('MessageService - Send message to queue', () => {
     beforeEach(async () => {
       setMocks([])
 
-      then = await givenWhenThen(message)
+      then = await givenWhenThen([message])
     })
 
     it('should throw error', () => {

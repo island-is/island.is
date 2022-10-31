@@ -16,6 +16,7 @@ jest.mock('@aws-sdk/client-sqs', () => ({
   SQSClient: jest.fn(() => sqs),
   GetQueueUrlCommand: jest.fn((c) => c),
   SendMessageCommand: jest.fn((c) => c),
+  SendMessageBatchCommand: jest.fn((c) => c),
   ReceiveMessageCommand: jest.fn((c) => c),
   DeleteMessageCommand: jest.fn((c) => c),
 }))
