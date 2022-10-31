@@ -26,7 +26,7 @@ However, not all projects support this, or are incomplete in this setup. If this
 Playwright can be started in several ways. Using utility scripts, in container, on remote (dev), etc.
 
 {% hint style="info" %}
-Add `TEST_ENVIRONMENT=dev` to the bottom of your `.env.secret` file to test against the live [dev-web](https://beta.dev01.devland.is/). Valid values are `local` (default), `dev`, `staging`, and `prod` to test the respective live environment.
+Add `export TEST_ENVIRONMENT=dev` before any command to test against the live [dev-web](https://beta.dev01.devland.is/). Valid values are `local` (default), `dev`, `staging`, and `prod` to test the respective environment.
 {% endhint %}
 
 - Utility script
