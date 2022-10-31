@@ -287,7 +287,7 @@ export class DelegationsService {
 
     if (delegation) {
       delegation.delegationScopes = delegation.delegationScopes?.filter((s) =>
-        this.checkIfScopeAllowed(s, user),
+        this.checkIfOutgoingScopeAllowed(s, user),
       )
     }
 
@@ -353,19 +353,18 @@ export class DelegationsService {
     }
 
     return delegations
-      .filter(
-        (d) =>
-          // The user must have access to at least one scope in the delegation
-          d.delegationScopes?.some((s) => this.checkIfScopeAllowed(s, user)) &&
-          !this.isDelegationToActor(user, d),
-      )
       .map((d) => {
         // Filter out scopes the user does not have access to
         d.delegationScopes = d.delegationScopes?.filter((s) =>
-          this.checkIfScopeAllowed(s, user),
+          this.checkIfOutgoingScopeAllowed(s, user),
         )
         return d.toDTO()
       })
+      .filter(
+        (d) =>
+          // The user must have access to at least one scope in the delegation
+          d.scopes && d.scopes.length > 0 && !this.isDelegationToActor(user, d),
+      )
   }
 
   private isDelegationToActor(
@@ -564,7 +563,7 @@ export class DelegationsService {
 
     if (delegation) {
       delegation.delegationScopes = delegation.delegationScopes?.filter((s) =>
-        this.checkIfScopeAllowed(s, user),
+        this.checkIfOutgoingScopeAllowed(s, user),
       )
     }
 
@@ -796,18 +795,17 @@ export class DelegationsService {
     const allowedScopes = await this.getClientAllowedScopes(user)
 
     const delegationModels = delegations
-      .filter((d) =>
-        // The requesting client must have access to at least one scope for the delegation to be relevant.
-        d.delegationScopes?.some((s) =>
-          this.checkIfScopeAllowed(s, user, allowedScopes),
-        ),
-      )
       .map((d) => {
         d.delegationScopes = d.delegationScopes?.filter((s) =>
-          this.checkIfScopeAllowed(s, user),
+          this.checkIfIncomingScopeAllowed(s, allowedScopes),
         )
         return d.toDTO()
       })
+      .filter(
+        (d) =>
+          // The requesting client must have access to at least one scope for the delegation to be relevant.
+          d.scopes && d.scopes.length > 0,
+      )
 
     // Check live status, i.e. dead or alive for delegations
     const {
@@ -835,12 +833,18 @@ export class DelegationsService {
     return aliveDelegations.filter((d) => d.domainName === DEFAULT_DOMAIN)
   }
 
-  private checkIfScopeAllowed(
+  private checkIfIncomingScopeAllowed(
+    scope: DelegationScope,
+    allowedScopes: string[],
+  ): boolean {
+    return allowedScopes.includes(scope.scopeName)
+  }
+
+  private checkIfOutgoingScopeAllowed(
     scope: DelegationScope,
     user: User,
-    allowedScopes?: string[],
   ): boolean {
-    allowedScopes = (allowedScopes ?? user.scope).filter((scope) =>
+    const allowedScopes = user.scope.filter((scope) =>
       this.filterCustomScopeRule(scope, user),
     )
 
