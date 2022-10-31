@@ -9,7 +9,7 @@ export const userNotificationServiceSetup = (): ServiceBuilder<'user-notificatio
     .namespace('user-notification')
     .serviceAccount('user-notification')
     .command('node')
-    .args('main.js')
+    .args('--no-experimental-fetch', 'main.js')
     .env({
       MAIN_QUEUE_NAME,
       DEAD_LETTER_QUEUE_NAME,
@@ -54,7 +54,7 @@ export const userNotificationWorkerSetup = (services: {
     .namespace('user-notification')
     .serviceAccount('user-notification-worker')
     .command('node')
-    .args('main.js', '--job=worker')
+    .args('--no-experimental-fetch', 'main.js', '--job=worker')
     .env({
       MAIN_QUEUE_NAME,
       DEAD_LETTER_QUEUE_NAME,

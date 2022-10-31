@@ -584,6 +584,9 @@
       "@island.is/service-portal/vehicles": [
         "libs/service-portal/vehicles/src/index.ts"
       ],
+      "@island.is/services/auth/testing": [
+        "libs/services/auth/testing/src/index.ts"
+      ],
       "@island.is/shared/components": ["libs/shared/components/src/index.ts"],
       "@island.is/shared/connected": ["libs/shared/connected/src/index.ts"],
       "@island.is/shared/constants": ["libs/shared/constants/src/index.ts"],
