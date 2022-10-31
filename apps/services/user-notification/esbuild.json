@@ -41,7 +41,8 @@
     "pseudomap",
     "jsonwebtoken",
     "buffer-equal-constant-time",
-    "safer-buffer"
+    "safer-buffer",
+    "jwa"
   ],
   "keepNames": true
 }

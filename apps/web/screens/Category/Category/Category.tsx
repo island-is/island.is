@@ -44,6 +44,7 @@ import {
 import { CustomNextError } from '@island.is/web/units/errors'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { scrollTo } from '@island.is/web/hooks/useScrollSpy'
+import sortAlpha from '@island.is/web/utils/sortAlpha'
 
 type Articles = GetArticlesQuery['getArticles']
 type LifeEvents = GetLifeEventsInCategoryQuery['getLifeEventsInCategory']
@@ -248,16 +249,14 @@ const Category: Screen<CategoryProps> = ({
       a.importance > b.importance
         ? -1
         : a.importance === b.importance
-        ? a.title.localeCompare(b.title)
+        ? sortAlpha('title')(a, b)
         : 1,
     )
 
     // If it's sorted alphabetically we need to be able to communicate that.
     const isSortedAlphabetically =
       JSON.stringify(sortedArticles) ===
-      JSON.stringify(
-        [...articles].sort((a, b) => a.title.localeCompare(b.title)),
-      )
+      JSON.stringify([...articles].sort(sortAlpha('title')))
 
     return { sortedArticles, isSortedAlphabetically }
   }
@@ -280,10 +279,9 @@ const Category: Screen<CategoryProps> = ({
         return foundA.importance > foundB.importance
           ? -1
           : foundA.importance === foundB.importance
-          ? foundA.title.localeCompare(foundB.title)
+          ? sortAlpha('title')(foundA, foundB)
           : 1
       }
-
       // Fall back to alphabet
       return a.localeCompare(b)
     })
@@ -293,7 +291,7 @@ const Category: Screen<CategoryProps> = ({
   ).sort((a: ArticleGroup, b: ArticleGroup) =>
     a.importance > b.importance
       ? -1
-      : a.importance === b.importance && a.title.localeCompare(b.title, 'is'),
+      : a.importance === b.importance && sortAlpha('title')(a, b),
   )
 
   const ArticleGroupComponent = ({

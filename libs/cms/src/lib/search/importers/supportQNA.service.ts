@@ -31,7 +31,12 @@ export class SupportQNASyncService implements CmsSyncProvider<ISupportQna> {
       (processedEntries: ISupportQna[], entry: Entry<any>) => {
         if (this.validateArticle(entry)) {
           // We know that relatedLinks can contain circular references and that is dealt with during the mapping so we ignore it during the circularity check here
-          if (!isCircular({ ...entry, relatedLinks: [] })) {
+          if (
+            !isCircular({
+              ...entry,
+              fields: { ...entry.fields, relatedLinks: [] },
+            })
+          ) {
             processedEntries.push(entry)
           } else {
             logger.warn('Circular reference found in question', {

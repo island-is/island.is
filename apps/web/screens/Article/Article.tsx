@@ -34,6 +34,7 @@ import {
   stepperUtils,
   ChartsCard,
   OneColumnTextSlice,
+  AccordionSlice,
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from '../queries'
@@ -591,6 +592,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
                     OneColumnText: (slice) => (
                       <OneColumnTextSlice slice={slice} />
                     ),
+                    AccordionSlice: (slice) => <AccordionSlice slice={slice} />,
                   },
                 },
                 activeLocale,
