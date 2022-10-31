@@ -1,26 +1,12 @@
 import { Cache as CacheManager } from 'cache-manager'
 import { Module, DynamicModule, CacheModule } from '@nestjs/common'
+import { ConfigType } from '@nestjs/config'
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
-
+import { CmsModule } from '@island.is/cms'
 import { LicenseServiceService } from './licenseService.service'
-
 import { MainResolver } from './graphql/main.resolver'
-
-import { GenericDrivingLicenseApi } from './client/driving-license-client'
-import { GenericAdrLicenseApi } from './client/adr-license-client/adrLicenseService.api'
-import { GenericMachineLicenseApi } from './client/machine-license-client'
-import { GenericFirearmLicenseApi } from './client/firearm-license-client'
-import {
-  FirearmApi,
-  FirearmLicenseClientModule,
-} from '@island.is/clients/firearm-license'
-import {
-  SmartSolutionsApi,
-  SmartSolutionsClientModule,
-} from '@island.is/clients/smartsolutions'
 import {
   CONFIG_PROVIDER,
-  CONFIG_PROVIDER_V2,
   GenericLicenseClient,
   GenericLicenseMetadata,
   GenericLicenseProviderId,
@@ -29,20 +15,22 @@ import {
   GENERIC_LICENSE_FACTORY,
 } from './licenceService.type'
 import {
-  AdrApi,
-  VinnuvelaApi,
-  AdrAndMachineLicenseClientModule,
-} from '@island.is/clients/adr-and-machine-license'
-import { CmsModule } from '@island.is/cms'
-export interface PkPassConfig {
-  apiKey: string
-  apiUrl: string
-  passTemplateId?: string
-  secretKey?: string
-  cacheKey?: string
-  cacheTokenExpiryDelta?: string
-  authRetries?: string
-}
+  GenericAdrLicenseModule,
+  GenericAdrLicenseService,
+  GenericAdrLicenseConfig,
+} from './client/adr-license-client'
+import {
+  GenericFirearmLicenseModule,
+  GenericFirearmLicenseService,
+  GenericFirearmLicenseConfig,
+} from './client/firearm-license-client'
+import {
+  GenericMachineLicenseModule,
+  GenericMachineLicenseService,
+  GenericMachineLicenseConfig,
+} from './client/machine-license-client'
+import { GenericDrivingLicenseApi } from './client/driving-license-client'
+
 export interface DriversLicenseConfig {
   xroad: {
     baseUrl: string
@@ -50,19 +38,25 @@ export interface DriversLicenseConfig {
     path: string
     secret: string
   }
-  pkpass: PkPassConfig
+  pkpass: {
+    apiKey: string
+    apiUrl: string
+    passTemplateId?: string
+    secretKey?: string
+    cacheKey?: string
+    cacheTokenExpiryDelta?: string
+    authRetries?: string
+  }
 }
 export interface LicenseServiceConfig {
-  firearmLicense: PkPassConfig
   driversLicense: DriversLicenseConfig
-  adrLicense: PkPassConfig
-  machineLicense: PkPassConfig
 }
 
-export type LicenseServiceConfigV2 = Omit<
-  LicenseServiceConfig,
-  'driversLicense'
->
+export interface PassTemplateIds {
+  firearmLicense: string
+  adrLicense: string
+  machineLicense: string
+}
 
 export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
   {
@@ -96,18 +90,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     timeout: 100,
     orgSlug: GenericLicenseOrganizationSlug.MachineLicense,
   },
-  {
-    type: GenericLicenseType.FirearmLicense,
-    provider: {
-      id: GenericLicenseProviderId.NationalPoliceCommissioner,
-    },
-    pkpass: true,
-    pkpassVerify: true,
-    timeout: 100,
-    orgSlug: GenericLicenseOrganizationSlug.FirearmLicense,
-  },
 ]
-
 @Module({})
 export class LicenseServiceModule {
   static register(config: LicenseServiceConfig): DynamicModule {
@@ -115,9 +98,9 @@ export class LicenseServiceModule {
       module: LicenseServiceModule,
       imports: [
         CacheModule.register(),
-        AdrAndMachineLicenseClientModule,
-        FirearmLicenseClientModule,
-        SmartSolutionsClientModule,
+        GenericFirearmLicenseModule,
+        GenericAdrLicenseModule,
+        GenericMachineLicenseModule,
         CmsModule,
       ],
       providers: [
@@ -129,18 +112,30 @@ export class LicenseServiceModule {
         },
         {
           provide: CONFIG_PROVIDER,
-          useValue: config,
-        },
-        {
-          provide: CONFIG_PROVIDER_V2,
-          useValue: config as LicenseServiceConfigV2,
+          useFactory: (
+            firearmConfig: ConfigType<typeof GenericFirearmLicenseConfig>,
+            adrConfig: ConfigType<typeof GenericAdrLicenseConfig>,
+            machineConfig: ConfigType<typeof GenericMachineLicenseConfig>,
+          ) => {
+            const ids: PassTemplateIds = {
+              firearmLicense: firearmConfig.passTemplateId,
+              adrLicense: adrConfig.passTemplateId,
+              machineLicense: machineConfig.passTemplateId,
+            }
+            return ids
+          },
+          inject: [
+            GenericFirearmLicenseConfig.KEY,
+            GenericAdrLicenseConfig.KEY,
+            GenericMachineLicenseConfig.KEY,
+          ],
         },
         {
           provide: GENERIC_LICENSE_FACTORY,
           useFactory: (
-            adrApi: AdrApi,
-            machineApi: VinnuvelaApi,
-            firearmApi: FirearmApi,
+            genericFirearmService: GenericFirearmLicenseService,
+            genericAdrService: GenericAdrLicenseService,
+            genericMachineService: GenericMachineLicenseService,
           ) => async (
             type: GenericLicenseType,
             cacheManager: CacheManager,
@@ -153,28 +148,20 @@ export class LicenseServiceModule {
                   cacheManager,
                 )
               case GenericLicenseType.AdrLicense:
-                return new GenericAdrLicenseApi(
-                  logger,
-                  adrApi,
-                  new SmartSolutionsApi(logger, config.adrLicense),
-                )
+                return genericAdrService
               case GenericLicenseType.MachineLicense:
-                return new GenericMachineLicenseApi(
-                  logger,
-                  machineApi,
-                  new SmartSolutionsApi(logger, config.machineLicense),
-                )
+                return genericMachineService
               case GenericLicenseType.FirearmLicense:
-                return new GenericFirearmLicenseApi(
-                  logger,
-                  firearmApi,
-                  new SmartSolutionsApi(logger, config.firearmLicense),
-                )
+                return genericFirearmService
               default:
                 return null
             }
           },
-          inject: [AdrApi, VinnuvelaApi, FirearmApi],
+          inject: [
+            GenericFirearmLicenseService,
+            GenericAdrLicenseService,
+            GenericMachineLicenseService,
+          ],
         },
       ],
       exports: [LicenseServiceService],
