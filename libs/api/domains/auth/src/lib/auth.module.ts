@@ -44,7 +44,6 @@ import { CmsModule } from '@island.is/cms'
     ApiScopeServiceV2,
     ApiScopeLoader,
     DomainLoader,
-    DomainResolver,
     CmsModule,
     {
       provide: APP_INTERCEPTOR,
