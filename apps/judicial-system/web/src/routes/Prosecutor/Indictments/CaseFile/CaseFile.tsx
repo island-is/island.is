@@ -65,7 +65,7 @@ const CaseFile = () => {
                       (caseFile) =>
                         caseFile.policeCaseNumber === policeCaseNumber &&
                         caseFile.category === CaseFileCategory.CASE_FILE,
-                    ) || []
+                    ) ?? []
                   }
                 />
               ))}
