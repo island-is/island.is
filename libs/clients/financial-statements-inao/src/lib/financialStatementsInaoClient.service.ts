@@ -467,7 +467,6 @@ export class FinancialStatementsInaoClientService {
       '$select=star_value&$expand=star_FinancialType($select=star_numeric,star_name)'
     const filter = `$filter=star_TaxInformationEntry/star_year eq ${year} and star_TaxInformationEntry/star_national_id eq '${nationalId}'`
     const url = `${this.basePath}/star_taxinformationvalues?${filter}&${select}`
-    console.log('url', url)
     const response = await this.fetch(url)
     const data = await response.json()
 
