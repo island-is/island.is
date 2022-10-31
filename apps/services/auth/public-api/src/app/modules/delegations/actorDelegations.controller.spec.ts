@@ -46,27 +46,29 @@ import {
 } from '../../../../test/utils'
 
 const swapNames = (
+  delegation: DelegationDTO,
   nationalRegistryUsers: NationalRegistryClientPerson[],
-  fromNationalId: string,
-) =>
-  nationalRegistryUsers.find((nru) => nru.nationalId === fromNationalId)
-    ?.name ?? ''
+) => {
+  const user = nationalRegistryUsers.find(
+    (nru) => nru.nationalId === delegation.fromNationalId,
+  )
+  if (user) {
+    delegation.fromName = user.name
+  }
+  return delegation
+}
 
 function updateDelegationFromNameToPersonName(
   delegations: DelegationDTO[] | DelegationDTO,
   nationalRegistryUsers: NationalRegistryClientPerson[],
 ) {
   if (Array.isArray(delegations)) {
-    return delegations.map((delegation) => ({
-      ...delegation,
-      fromName: swapNames(nationalRegistryUsers, delegation.fromNationalId),
-    }))
+    return delegations.map((delegation) =>
+      swapNames(delegation, nationalRegistryUsers),
+    )
   }
 
-  return {
-    ...delegations,
-    fromName: swapNames(nationalRegistryUsers, delegations.fromNationalId),
-  }
+  return swapNames(delegations, nationalRegistryUsers)
 }
 
 const today = new Date('2021-11-12')
@@ -357,6 +359,44 @@ describe('ActorDelegationsController', () => {
         })
 
         expect(expectedModifyedModels.length).toEqual(1)
+      })
+
+      it('should not mix up companies and individuals when processing deceased delegations [BUG]', async () => {
+        // Arrange
+        const incomingCompany = createDelegation({
+          fromNationalId: createNationalId('company'),
+          toNationalId: user.nationalId,
+          scopes: [Scopes[0].name],
+          today,
+        })
+        await createDelegationModels(delegationModel, [
+          // The order of these is important to trigger the previous bug.
+          incomingCompany,
+          mockDelegations.incoming,
+        ])
+
+        // We expect both models to be returned.
+        const expectedModels = await findExpectedDelegationModels(
+          delegationModel,
+          [mockDelegations.incoming.id, incomingCompany.id],
+          [Scopes[0].name],
+        )
+
+        // Act
+        const res = await server.get(
+          `${path}${query}&delegationTypes=${DelegationType.Custom}`,
+        )
+
+        // Assert
+        expect(res.status).toEqual(200)
+        expect(res.body).toHaveLength(2)
+        expectMatchingObject(
+          res.body,
+          updateDelegationFromNameToPersonName(
+            expectedModels,
+            nationalRegistryUsers,
+          ),
+        )
       })
 
       it('should return delegations when the delegationTypes filter is empty', async () => {
