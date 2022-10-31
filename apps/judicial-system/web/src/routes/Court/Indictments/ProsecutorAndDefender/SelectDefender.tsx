@@ -4,7 +4,6 @@ import { useIntl } from 'react-intl'
 import { Box, Checkbox, Text } from '@island.is/island-ui/core'
 import {
   BlueBox,
-  SectionHeading,
   DefenderInput,
   DefenderNotFound,
 } from '@island.is/judicial-system-web/src/components'
@@ -15,40 +14,48 @@ import { prosecutorAndDefender as m } from './ProsecutorAndDefender.strings'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { UpdateCaseInput } from '@island.is/judicial-system-web/src/graphql/schema'
-import { UpdateCase } from '@island.is/judicial-system/types'
+import { Defendant, UpdateCase } from '@island.is/judicial-system/types'
 
-const SelectDefender: React.FC = () => {
+interface Props {
+  defendant: Defendant
+}
+
+const SelectDefender: React.FC<Props> = (props) => {
+  const { defendant } = props
   const { workingCase, setWorkingCase } = useContext(FormContext)
   const { setAndSendToServer } = useCase()
   const { formatMessage } = useIntl()
 
   const [defenderNotFound, setDefenderNotFound] = useState<boolean>(false)
+  const gender = defendant.gender || 'NONE'
 
-  const onRefuseHavingDefender = useCallback(() => {
-    // TODO: getting around typescript to be able to unset defender
-    // should updatee setAndSendToServer to accept UpdateCaseInput
-    const updateCaseInput: Omit<UpdateCaseInput, 'id'> = {
-      defenderNationalId: null,
-      defenderName: null,
-      defenderEmail: '',
-      defenderPhoneNumber: '',
-      defendantWaivesRightToCounsel: true,
-    }
-    setAndSendToServer(
-      [
-        {
-          ...(updateCaseInput as UpdateCase),
-          force: true,
-        },
-      ],
-      workingCase,
-      setWorkingCase,
-    )
-  }, [workingCase, setWorkingCase, setAndSendToServer])
+  const onRefuseHavingDefender = useCallback(
+    (defendant) => {
+      // TODO: getting around typescript to be able to unset defender
+      // should updatee setAndSendToServer to accept UpdateCaseInput
+      const updateCaseInput: Omit<UpdateCaseInput, 'id'> = {
+        defenderNationalId: null,
+        defenderName: null,
+        defenderEmail: '',
+        defenderPhoneNumber: '',
+        defendantWaivesRightToCounsel: true,
+      }
+      setAndSendToServer(
+        [
+          {
+            ...(updateCaseInput as UpdateCase),
+            force: true,
+          },
+        ],
+        workingCase,
+        setWorkingCase,
+      )
+    },
+    [workingCase, setWorkingCase, setAndSendToServer],
+  )
 
-  return workingCase.defendants && workingCase.defendants[0] ? (
+  return (
     <Box component="section" marginBottom={5}>
-      <SectionHeading title={formatMessage(m.selectDefenderHeading)} required />
       {defenderNotFound && !workingCase.defendantWaivesRightToCounsel && (
         <DefenderNotFound />
       )}
@@ -56,10 +63,8 @@ const SelectDefender: React.FC = () => {
         <Box marginBottom={2}>
           <Text variant="h4">
             {`${capitalize(
-              formatMessage(core.indictmentDefendant, {
-                gender: workingCase.defendants[0].gender || 'NONE',
-              }),
-            )} ${workingCase.defendants[0].name}`}
+              formatMessage(core.indictmentDefendant, { gender }),
+            )} ${defendant.name}`}
           </Text>
         </Box>
         <Box marginBottom={2}>
@@ -67,15 +72,13 @@ const SelectDefender: React.FC = () => {
             name="defendantWaivesRightToCounsel"
             label={capitalize(
               formatMessage(m.defendantWaivesRightToCounsel, {
-                accused: formatMessage(core.indictmentDefendant, {
-                  gender: workingCase.defendants[0].gender || 'NONE',
-                }),
+                accused: formatMessage(core.indictmentDefendant, { gender }),
               }),
             )}
             checked={workingCase.defendantWaivesRightToCounsel}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
               if (event.target.checked) {
-                onRefuseHavingDefender()
+                onRefuseHavingDefender(defendant)
               } else {
                 setAndSendToServer(
                   [{ defendantWaivesRightToCounsel: false, force: true }],
@@ -94,7 +97,7 @@ const SelectDefender: React.FC = () => {
         />
       </BlueBox>
     </Box>
-  ) : null
+  )
 }
 
 export default SelectDefender

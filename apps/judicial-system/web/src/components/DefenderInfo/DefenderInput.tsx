@@ -110,7 +110,7 @@ const DefenderInput: React.FC<Props> = ({ onDefenderNotFound, disabled }) => {
             sessionArrangements: workingCase.sessionArrangements,
           })}
           placeholder={formatMessage(m.emailPlaceholder)}
-          value={workingCase.defenderEmail}
+          value={workingCase.defenderEmail || ''}
           errorMessage={emailErrorMessage}
           hasError={emailErrorMessage !== ''}
           disabled={disabled}
@@ -140,7 +140,7 @@ const DefenderInput: React.FC<Props> = ({ onDefenderNotFound, disabled }) => {
       <InputMask
         mask="999-9999"
         maskPlaceholder={null}
-        value={workingCase.defenderPhoneNumber}
+        value={workingCase.defenderPhoneNumber || ''}
         disabled={disabled}
         onChange={(event) =>
           removeTabsValidateAndSet(

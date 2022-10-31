@@ -81,7 +81,15 @@ const HearingArrangements: React.FC = () => {
           <SectionHeading title={formatMessage(m.selectProsecutorHeading)} />
           <ProsecutorSelection onChange={handleProsecutorChange} />
         </Box>
-        <SelectDefender />
+        <Box component="section" marginBottom={10}>
+          <SectionHeading
+            title={formatMessage(m.selectDefenderHeading)}
+            required
+          />
+          {workingCase.defendants?.map((defendant, index) => (
+            <SelectDefender defendant={defendant} key={index} />
+          ))}
+        </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
