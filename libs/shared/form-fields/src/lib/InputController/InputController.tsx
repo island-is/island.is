@@ -28,6 +28,7 @@ interface Props {
   format?: string | FormatInputValueFunction
   required?: boolean
   readOnly?: boolean
+  rightAlign?: boolean
   maxLength?: number
   loading?: boolean
   size?: 'xs' | 'sm' | 'md'

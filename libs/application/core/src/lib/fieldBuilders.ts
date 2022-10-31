@@ -223,6 +223,7 @@ export function buildTextField(
     required,
     maxLength,
     readOnly,
+    rightAlign,
   } = data
   return {
     ...extractCommonFields(data),
@@ -236,6 +237,7 @@ export function buildTextField(
     required,
     maxLength,
     readOnly,
+    rightAlign,
     type: FieldTypes.TEXT,
     component: FieldComponents.TEXT,
   }
