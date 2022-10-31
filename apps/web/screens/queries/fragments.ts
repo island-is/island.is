@@ -435,6 +435,8 @@ export const slices = gql`
     title
     type
     hasBorderAbove
+    showTitle
+    titleHeadingLevel
     accordionItems {
       id
       title
