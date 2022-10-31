@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl'
 export const m = defineMessages({
   applicationTitle: {
     id: 'mac.application:applicationTitle',
-    defaultMessage: 'Umsókn um könnun hjónavígsluskilyrða',
+    defaultMessage: 'Beiðni um könnun hjónavígsluskilyrða',
     description: 'Application for Marriage Conditions',
   },
 
@@ -120,7 +120,7 @@ export const m = defineMessages({
   informationAlertMessage: {
     id: 'mac.application:informationAlertMessage',
     defaultMessage:
-      'Tilvonandi hjónaefni fær sendan tölvupóst til þess að samþykkja umsókn. Vinsamlegast athugaðu hvort símanúmer og netföng séu rétt rituð.',
+      'Tilvonandi hjónaefni fær sendan tölvupóst til þess að samþykkja umsókn.',
     description: '',
   },
   informationMaritalSides: {
@@ -322,13 +322,6 @@ export const m = defineMessages({
     defaultMessage: 'Augnablik meðan beðið er eftir staðfestingu',
     description: 'Please wait until the payment is confirmed',
   },
-  paymentSuccessExtraDocuments: {
-    id: 'mac.application:paymentSuccessExtraDocuments',
-    defaultMessage:
-      'Ef beðið var um viðbótargögn (nýja ljósmynd eða læknisvottorð) þarf að skila þeim til Sýslumanns svo að fullnaðarskírteini fari í pöntun.',
-    description:
-      'If extra documents are required(new photograph or doctor certificate), you must return them to district commissioner so the driving license can be ordered.',
-  },
   paymentSuccessIfNotReadyFewWeeks: {
     id: 'mac.application:paymentSuccessIfNotReadyFewWeeks',
     defaultMessage:
@@ -336,26 +329,10 @@ export const m = defineMessages({
     description:
       'If not then the driving license will be ready at the drop off location in 3 to 4 weeks.',
   },
-  paymentApprovedContinue: {
-    id: 'mac.application:paymentApprovedContinue',
-    defaultMessage: `Greiðslan hefur verið staðfest, valið er 'Halda áfram' til að klára umsóknina.`,
-    description:
-      'The payment has been confirmed, choose "Continue" to finish the application.',
-  },
   paymentImage: {
     id: 'mac.application:paymentImage',
     defaultMessage: `Skrautmynd`,
     description: 'Company Image',
-  },
-  examplePaymentPendingField: {
-    id: 'mac.application:example.waitingForPayment',
-    defaultMessage: 'Augnablik meðan beðið er eftir greiðslu',
-    description: 'One moment while we wait for payment confirmation.',
-  },
-  examplePaymentPendingFieldError: {
-    id: 'mac.application:example.waitingForPaymentError',
-    defaultMessage: 'Villa kom upp við að sækja upplýsingar um greiðslu',
-    description: 'An error came up while getting payment information',
   },
   submitErrorButtonCaption: {
     id: 'mac.application:submitErrorButtonCaption',
@@ -463,7 +440,7 @@ export const m = defineMessages({
   errorDataProviderMaritalStatus: {
     id: 'mac.application:error.daterrorDataProviderMaritalStatusaProvider',
     defaultMessage:
-      'Núverandi hjúskaparstaða þín leyfir þér ekki að halda áfram með þessa umsókn.',
+      'Núverandi hjúskaparstaða þín leyfir þér ekki að halda áfram með þessa umsókn. Vinsamlega hafðu samband við Sýslumanninn í Vestmannaeyjum fyrir nánari upplýsingar.',
     description: 'Oops! Something went wrong when fetching your data',
   },
   actionCardDoneTag: {

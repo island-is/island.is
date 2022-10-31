@@ -27,7 +27,8 @@ import {
   DistrictCommissionerAgencies,
   maritalStatuses,
   MarriageTermination,
-  ReligiousLifeViewingSocieties,
+  NO,
+  YES,
 } from '../lib/constants'
 import { UserProfile } from '../types/schema'
 import { fakeDataSection } from './fakeDataSection'
@@ -270,16 +271,33 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                 title: m.ceremony,
                 description: m.ceremonyDescription,
                 children: [
+                  buildRadioField({
+                    id: 'ceremony.hasDate',
+                    title: 'Liggur hjónavígsludagur fyrir?',
+                    options: [
+                      { value: YES, label: 'Já' },
+                      {
+                        value: NO,
+                        label: 'Nei',
+                      },
+                    ],
+                    largeButtons: false,
+                    width: 'half',
+                  }),
                   buildDateField({
                     id: 'ceremony.date',
                     title: m.ceremonyDate,
                     placeholder: m.ceremonyDatePlaceholder,
                     width: 'half',
+                    condition: (answers) =>
+                      getValueViaPath(answers, 'ceremony.hasDate') === YES,
                   }),
                   buildDescriptionField({
                     id: 'space',
                     space: 'containerGutter',
                     title: '',
+                    condition: (answers) =>
+                      getValueViaPath(answers, 'ceremony.hasDate') === YES,
                   }),
                   buildRadioField({
                     id: 'ceremony.ceremonyPlace',
@@ -293,6 +311,8 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     ],
                     largeButtons: false,
                     width: 'half',
+                    condition: (answers) =>
+                      getValueViaPath(answers, 'ceremony.hasDate') === YES,
                   }),
                   buildSelectField({
                     id: 'ceremony.office',
@@ -313,7 +333,8 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     },
                     condition: (answers) =>
                       getValueViaPath(answers, 'ceremony.ceremonyPlace') ===
-                      'office',
+                        'office' &&
+                      getValueViaPath(answers, 'ceremony.hasDate') === YES,
                   }),
                   buildSelectField({
                     id: 'ceremony.society',
@@ -331,7 +352,8 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     },
                     condition: (answers) =>
                       getValueViaPath(answers, 'ceremony.ceremonyPlace') ===
-                      'society',
+                        'society' &&
+                      getValueViaPath(answers, 'ceremony.hasDate') === YES,
                   }),
                 ],
               }),
