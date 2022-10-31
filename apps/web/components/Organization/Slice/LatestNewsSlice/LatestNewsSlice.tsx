@@ -10,6 +10,7 @@ interface SliceProps {
   linkType?: LinkType
   overview?: LinkType
   latestNewsSliceBackground?: BoxProps['background']
+  latestNewsSliceColorVariant?: 'default' | 'blue'
   forceTitleSectionHorizontalPadding?: boolean
 }
 
@@ -19,6 +20,7 @@ export const LatestNewsSlice: React.FC<SliceProps> = ({
   linkType = 'organizationnews',
   overview = 'organizationnewsoverview',
   latestNewsSliceBackground = 'purple100',
+  latestNewsSliceColorVariant = 'default',
   forceTitleSectionHorizontalPadding = false,
 }) => {
   return (
@@ -39,6 +41,7 @@ export const LatestNewsSlice: React.FC<SliceProps> = ({
         parameters={[slug]}
         seeMoreHref={slice.readMoreLink?.url}
         forceTitleSectionHorizontalPadding={forceTitleSectionHorizontalPadding}
+        colorVariant={latestNewsSliceColorVariant}
       />
     </Box>
   )
