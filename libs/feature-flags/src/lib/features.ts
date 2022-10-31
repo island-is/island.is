@@ -44,7 +44,7 @@ export enum Features {
   servicePortalDocumentProviderModule = 'isServicePortalDocumentProviderModuleEnabled',
   servicePortalIcelandicNamesRegistryModule = 'isServicePortalIcelandicNamesRegistryModuleEnabled',
   servicePortalPetitionsModule = 'isServicePortalPetitionsModuleEnabled',
-
+  servicePortalDrivingLessonsBookModule = 'isServicePortalDrivingLessonsBookModuleEnabled',
   outgoingDelegationsV2 = 'outgoingdelegationsv2',
 }
 
