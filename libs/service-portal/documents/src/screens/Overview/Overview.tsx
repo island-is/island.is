@@ -41,6 +41,7 @@ import {
 } from '../../utils/types'
 import TableHeading from '../../components/TableHeading/TableHeading'
 import * as styles from './Overview.css'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 const GET_DOCUMENT_CATEGORIES = gql`
   query documentCategories {
@@ -160,7 +161,9 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
     }
   }, [categoriesLoading])
 
-  const isLegal = userInfo.profile.delegationType?.includes('LegalGuardian')
+  const isLegal = userInfo.profile.delegationType?.includes(
+    AuthDelegationType.LegalGuardian,
+  )
   const dateOfBirth = userInfo?.profile.dateOfBirth
   let isOver15 = false
   if (dateOfBirth) {

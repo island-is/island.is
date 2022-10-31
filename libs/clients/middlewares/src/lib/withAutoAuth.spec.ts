@@ -8,6 +8,7 @@ import {
   fakeAuthResponse,
   setupTestEnv,
 } from '../../test/setup'
+import { AuthDelegationType } from 'delegation'
 
 const testUrl = 'http://localhost/test'
 const issuerUrl = 'http://localhost/issuer'
@@ -321,7 +322,7 @@ describe('EnhancedFetch#withAutoAuth', () => {
     it('should request token exchange if requestActorToken and delegation', async () => {
       // Arrange
       const auth = createCurrentUser({ scope })
-      auth.delegationType = ['Custom']
+      auth.delegationType = [AuthDelegationType.Custom]
       auth.actor = {
         nationalId: auth.nationalId,
         scope: [],

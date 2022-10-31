@@ -10,7 +10,7 @@ import { useLocale } from '@island.is/localization'
 import { useAuth } from '@island.is/auth/react'
 import { m } from '@island.is/service-portal/core'
 import * as styles from './Greeting.css'
-import { AuthDelegationType } from '@island.is/service-portal/graphql'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 const Greeting: FC<{}> = () => {
   const { formatMessage } = useLocale()

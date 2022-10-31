@@ -1,6 +1,7 @@
 import { JwtStrategy } from './jwt.strategy'
 import { Request } from 'express'
 import { JwtPayload } from './jwt.payload'
+import { AuthDelegationType } from 'delegation'
 
 describe('JwtStrategy#validate', () => {
   let jwtStrategy: JwtStrategy
@@ -25,7 +26,7 @@ describe('JwtStrategy#validate', () => {
       nationalId: '1234567890',
       scope: ['test-scope-1'],
       client_id: 'test-client',
-      delegationType: ['Custom'],
+      delegationType: [AuthDelegationType.Custom],
       actor: {
         nationalId: '1234564321',
         scope: ['test-scope-2'],
@@ -77,7 +78,7 @@ describe('JwtStrategy#validate', () => {
       nationalId: '1234567890',
       scope: ['test-scope-1'],
       client_id: 'test-client',
-      delegationType: ['Custom'],
+      delegationType: [AuthDelegationType.Custom],
       actor: {
         nationalId: '1234565555',
         scope: ['test-scope-2'],
@@ -119,7 +120,7 @@ describe('JwtStrategy#validate', () => {
       nationalId: '1234567890',
       scope: ['test-scope-1'],
       client_id: 'test-client',
-      delegationType: ['Custom'],
+      delegationType: [AuthDelegationType.Custom],
       actor: {
         nationalId: '1234564321',
         scope: ['test-scope-2'],
