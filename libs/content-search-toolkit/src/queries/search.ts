@@ -34,11 +34,18 @@ export const searchQuery = (
   let minimumShouldMatch = 1
 
   should.push({
-    simple_query_string: {
+    multi_match: {
+      fields: [
+        'title^6', // note boosting ..
+        'title.stemmed^2', // note boosting ..
+        'title.compound',
+        'content',
+        'content.stemmed',
+      ],
       query: queryString,
-      fields: ['title.stemmed^15', 'title.compound', 'content.stemmed^5'],
-      analyze_wildcard: true,
-      default_operator: 'and',
+      fuzziness: 'AUTO',
+      operator: 'and',
+      type: 'best_fields',
     },
   })
 
@@ -102,11 +109,26 @@ export const searchQuery = (
 
   return {
     query: {
-      bool: {
-        should,
-        must,
-        must_not: mustNot,
-        minimum_should_match: minimumShouldMatch,
+      function_score: {
+        query: {
+          bool: {
+            should,
+            must,
+            must_not: mustNot,
+            minimum_should_match: minimumShouldMatch,
+          },
+        },
+        functions: [
+          {
+            field_value_factor: {
+              field: 'popularityScore',
+              factor: 1.2,
+              modifier: 'log1p',
+              missing: 1,
+            },
+          },
+          { filter: { range: { processEntryCount: { gte: 1 } } }, weight: 2 },
+        ],
       },
     },
     ...(Object.keys(aggregation.aggs).length ? aggregation : {}), // spread aggregations if we have any
