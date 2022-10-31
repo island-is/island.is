@@ -33,7 +33,6 @@ import { CmsModule } from '@island.is/cms'
     CustomDelegationResolver,
     DelegationScopeResolver,
     ApiScopeResolver,
-    DomainResolver,
     DomainService,
     ActorDelegationsService,
     MeDelegationsService,
