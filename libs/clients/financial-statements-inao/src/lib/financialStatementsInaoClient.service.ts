@@ -17,6 +17,7 @@ import type {
   KeyValue,
   PersonalElectionFinancialStatementValues,
   PoliticalPartyFinancialStatementValues,
+  TaxInfo,
 } from './types'
 import { ClientTypes } from './types'
 import {
@@ -459,6 +460,26 @@ export class FinancialStatementsInaoClientService {
     })
 
     return config
+  }
+
+  async getTaxInformationValues(nationalId: string, year: string) {
+    const select =
+      '$select=star_value&$expand=star_FinancialType($select=star_numeric,star_name)'
+    const filter = `$filter=star_TaxInformationEntry/star_year eq ${year} and star_TaxInformationEntry/star_national_id eq '${nationalId}'`
+    const url = `${this.basePath}/star_taxinformationvalues?${filter}&${select}`
+    const response = await this.fetch(url)
+    const data = await response.json()
+
+    if (!data || !data.value) return []
+
+    const taxInfo: TaxInfo[] = data.value.map((x: any) => {
+      return <TaxInfo>{
+        key: x.star_FinancialType.star_numeric,
+        value: x.star_value,
+      }
+    })
+
+    return taxInfo
   }
 
   private async postFinancialStatement(body: any): Promise<string | undefined> {
