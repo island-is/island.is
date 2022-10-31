@@ -26,7 +26,6 @@ import {
 import {
   AccessFormScope,
   AuthScopeTree,
-  SCOPE,
   AUTH_API_SCOPE_GROUP_TYPE,
 } from './access.types'
 import {
@@ -81,25 +80,25 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
   const { authScopeTree } = scopeTreeData || {}
 
   const methods = useForm<{
-    [SCOPE]: AccessFormScope[]
+    scope: AccessFormScope[]
     validityPeriod: Date | null
   }>()
   const { handleSubmit, getValues } = methods
 
-  const onSubmit = handleSubmit(async (model) => {
+  const onSubmit = handleSubmit(async (values) => {
     if (formError) {
       setFormError(false)
     }
 
-    const scopes = model[SCOPE].filter((scope) => scope.name?.length > 0).map(
-      (scope) => ({
+    const scopes = values.scope
+      .filter((scope) => scope.name?.length > 0)
+      .map((scope) => ({
         // If validityPeriod exists then all scopes get the same validity period
         validTo: validityPeriod ?? (scope.validTo as Date),
         name: scope.name[0],
-      }),
-    )
+      }))
 
-    const err = getValues()?.[SCOPE]?.every(
+    const err = getValues()?.scope?.every(
       (x) => x.name.length > 0 && !x.validTo,
     )
 
@@ -132,7 +131,7 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
 
   // Map format and flatten scopes to be used in the confirm modal
   const scopes = getValues()
-    ?.[SCOPE]?.map((item) =>
+    ?.scope?.map((item) =>
       formatScopeTreeToScope({ item, authScopeTree, validityPeriod }),
     )
     .filter(isDefined)
