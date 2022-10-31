@@ -17,6 +17,7 @@ import { useLocation } from 'react-router-dom'
 import { OnboardingHeader } from './components/Header'
 import ProfileForm from '../Forms/ProfileForm/ProfileForm'
 import * as styles from './UserOnboardingModal.css'
+import { onboardingModalStorage } from '../../utils/showModal'
 
 const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.settings')
@@ -29,6 +30,10 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
 
   const dropOnboardingSideEffects = () => {
     servicePortalCloseOnBoardingModal(pathname)
+    sessionStorage.setItem(
+      onboardingModalStorage.key,
+      onboardingModalStorage.value,
+    )
   }
 
   const closeModal = () => {
