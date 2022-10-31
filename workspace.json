@@ -102,6 +102,7 @@
     "application-types": "libs/application/types",
     "application-ui-components": "libs/application/ui-components",
     "application-ui-fields": "libs/application/ui-fields",
+    "application-ui-forms": "libs/application/ui-forms",
     "application-ui-shell": "libs/application/ui-shell",
     "auth-admin-web": "apps/auth-admin-web",
     "auth-admin-web-e2e": "apps/auth-admin-web-e2e",

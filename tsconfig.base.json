@@ -322,6 +322,9 @@
       "@island.is/application/ui-fields": [
         "libs/application/ui-fields/src/index.ts"
       ],
+      "@island.is/application/ui-forms": [
+        "libs/application/ui-forms/src/index.ts"
+      ],
       "@island.is/application/ui-shell": [
         "libs/application/ui-shell/src/index.ts"
       ],

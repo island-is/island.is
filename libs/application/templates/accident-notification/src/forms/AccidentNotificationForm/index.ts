@@ -4,7 +4,7 @@ import Logo from '../../assets/Logo'
 import { application } from '../../lib/messages'
 
 import { aboutTheAccidentSection } from './aboutTheAccidentSection'
-import { applicantInformationSection } from './applicantInformationSection'
+import { applicantInformationSection } from '@island.is/application/ui-forms'
 import { conclusionSection } from './conclusionSection'
 import { externalDataSection } from './externalDataSection'
 import { overviewSection } from './overviewSection'

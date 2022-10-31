@@ -1,0 +1,23 @@
+{
+  "root": "libs/application/ui-forms",
+  "sourceRoot": "libs/application/ui-forms/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/application/ui-forms/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/application/ui-forms"],
+      "options": {
+        "jestConfig": "libs/application/ui-forms/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  }
+}
