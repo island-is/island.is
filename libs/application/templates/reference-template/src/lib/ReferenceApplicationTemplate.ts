@@ -186,6 +186,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
                   Promise.resolve(val.PendingReview),
                 ),
               read: 'all',
+              write: 'all',
             },
             {
               id: Roles.ASSIGNEE,
