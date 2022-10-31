@@ -174,6 +174,11 @@ export const m = defineMessages({
     defaultMessage: 'Erfingjar',
     description: '',
   },
+  estateMember: {
+    id: 'es.application:estateMember',
+    defaultMessage: 'Erfingi',
+    description: '',
+  },
   estateMembersHeaderDescription: {
     id: 'es.application:estateMembersHeaderDescription',
     defaultMessage: 'Vantar uppl hér',
@@ -207,6 +212,11 @@ export const m = defineMessages({
   realEstate: {
     id: 'es.application:realEstate',
     defaultMessage: 'Fasteignir',
+    description: '',
+  },
+  realEstateRepeaterHeader: {
+    id: 'es.application:realEstateRepeaterHeader',
+    defaultMessage: 'Fasteign',
     description: '',
   },
   realEstateDescription: {
@@ -419,6 +429,11 @@ export const m = defineMessages({
   debtsDescription: {
     id: 'es.application:debtsDescription',
     defaultMessage: 'Innlendar og erlendar skuldir',
+    description: '',
+  },
+  debtsCreditorHeader: {
+    id: 'es.application:debtsCreditorHeader',
+    defaultMessage: 'Kröfuhafi',
     description: '',
   },
   debtsCreditorName: {
@@ -641,7 +656,7 @@ export const m = defineMessages({
   },
   addProperty: {
     id: 'es.application:addProperty',
-    defaultMessage: 'Bæta við fasteign eða lóð',
+    defaultMessage: 'Bæta við fasteign',
     description: 'Add property',
   },
   addVehicle: {
