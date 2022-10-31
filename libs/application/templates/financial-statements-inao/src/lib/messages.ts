@@ -524,7 +524,7 @@ export const m = defineMessages({
   },
   equity: {
     id: 'fsn.application:keyNumbers.equity',
-    defaultMessage: 'Eigið fé samtals',
+    defaultMessage: 'Eigið fé alls',
     description: 'total equity',
   },
   equityAtTheBeginningOfTheYear: {

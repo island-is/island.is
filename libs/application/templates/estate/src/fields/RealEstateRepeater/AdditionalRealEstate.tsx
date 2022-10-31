@@ -7,7 +7,13 @@ import {
 } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
-import { Box, GridColumn, GridRow, Button } from '@island.is/island-ui/core'
+import {
+  Box,
+  GridColumn,
+  GridRow,
+  Button,
+  Text,
+} from '@island.is/island-ui/core'
 import { Asset } from '../../types'
 import * as styles from '../styles.css'
 import { m } from '../../lib/messages'
@@ -93,6 +99,9 @@ export const AdditionalRealEstate = ({
         control={control}
         defaultValue={field.dummy || false}
       />
+      <Text variant="h4">
+        {formatMessage(m.realEstateRepeaterHeader) + ' ' + (index + 1)}
+      </Text>
       <Box position="absolute" className={styles.removeFieldButton}>
         <Button
           variant="ghost"
@@ -103,7 +112,7 @@ export const AdditionalRealEstate = ({
         />
       </Box>
       <GridRow>
-        <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+        <GridColumn span={['1/1', '1/2']} paddingBottom={2} paddingTop={2}>
           <InputController
             id={propertyNumberField}
             name={propertyNumberField}
@@ -113,7 +122,7 @@ export const AdditionalRealEstate = ({
             error={error?.assetNumber ?? undefined}
           />
         </GridColumn>
-        <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+        <GridColumn span={['1/1', '1/2']} paddingBottom={2} paddingTop={2}>
           <InputController
             id={addressField}
             name={addressField}
