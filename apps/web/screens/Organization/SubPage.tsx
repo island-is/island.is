@@ -246,7 +246,6 @@ const renderSlices = (
               slice={slice}
               namespace={namespace}
               slug={slug}
-              renderedOnOrganizationSubpage={true}
               marginBottom={index === slices.length - 1 ? 5 : 0}
               params={{
                 renderLifeEventPagesAsProfileCards: true,
@@ -254,6 +253,8 @@ const renderSlices = (
                   organizationPage.theme === 'digital_iceland'
                     ? digitalIcelandDetailPageLinkType
                     : undefined,
+                latestNewsSliceBackground: 'white',
+                forceTitleSectionHorizontalPadding: 'true',
               }}
               fullWidth={true}
             />
@@ -266,9 +267,12 @@ const renderSlices = (
             slice={slice}
             namespace={namespace}
             slug={slug}
-            renderedOnOrganizationSubpage={true}
             marginBottom={index === slices.length - 1 ? 5 : 0}
-            params={{ renderLifeEventPagesAsProfileCards: true }}
+            params={{
+              renderLifeEventPagesAsProfileCards: true,
+              latestNewsSliceBackground: 'white',
+              forceTitleSectionHorizontalPadding: 'true',
+            }}
           />
         )
       })
