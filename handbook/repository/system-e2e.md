@@ -11,7 +11,7 @@ When testing an app/project you need to first start the app, then test it with P
 - Start the application: `yarn dev/init <app> && yarn dev <app>`
 - Test the app: `yarn playwright menu --e2e --project <path/to/your/app>`
 
-## 🧑‍🍳 Prepare the app
+## 👨‍🍳 Prepare the app
 
 For local development and testing start your app. Generally, first-time setup and running is simply:
 
@@ -26,7 +26,7 @@ However, not all projects support this, or are incomplete in this setup. If this
 Playwright can be started in several ways. Using utility scripts, in container, on remote (dev), etc.
 
 {% hint style="info" %}
-💡 Add `TEST_ENVIRONMENT=dev` to the bottom of your `.env.secret` file to test against the live [dev-web](https://beta.dev01.devland.is/). Valid values are `local` (default), `dev`, `staging`, and `prod` to test the respective live environment.
+Add `TEST_ENVIRONMENT=dev` to the bottom of your `.env.secret` file to test against the live [dev-web](https://beta.dev01.devland.is/). Valid values are `local` (default), `dev`, `staging`, and `prod` to test the respective live environment.
 {% endhint %}
 
 - Utility script
