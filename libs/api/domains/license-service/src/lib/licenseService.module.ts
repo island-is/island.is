@@ -1,5 +1,5 @@
 import { Cache as CacheManager } from 'cache-manager'
-import { Module, DynamicModule, CacheModule } from '@nestjs/common'
+import { Module, CacheModule } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { CmsModule } from '@island.is/cms'
