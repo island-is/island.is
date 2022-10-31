@@ -203,7 +203,6 @@
 - [Dokobit Signing](libs/dokobit-signing/README.md)
 - [Email Service](libs/email-service/README.md)
 - [Feature Flags](libs/feature-flags/README.md)
-- [Health Insurance](libs/health-insurance/README.md)
 - [Island UI](libs/island-ui/README.md)
   - [Vanilla Extract Utils](libs/island-ui/vanilla-extract-utils/README.md)
 - [Localization](libs/localization/README.md)

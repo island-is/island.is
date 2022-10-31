@@ -70,12 +70,6 @@ export const PrerequisitesForm: Form = buildForm({
               subTitle: 'userProfile',
             }),
             buildDataProviderItem({
-              id: 'applications',
-              type: 'ApplicationsProvider',
-              title: '',
-              subTitle: '',
-            }),
-            buildDataProviderItem({
               id: 'healthInsurance',
               type: 'HealthInsuranceProvider',
               title: '',
