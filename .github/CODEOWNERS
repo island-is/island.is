@@ -137,7 +137,6 @@
 /libs/application/template-api-modules/src/lib/modules/templates/complaints-to-althingi-ombudsman/  @island-is/sendiradid
 /libs/application/templates/accident-notification/                                                  @island-is/sendiradid
 /libs/application/template-api-modules/src/lib/modules/templates/accident-notification/             @island-is/sendiradid
-/libs/health-insurance/                                                                             @island-is/sendiradid
 /libs/application/template-api-modules/src/lib/modules/templates/health-insurance/                  @island-is/sendiradid
 /libs/application/template-api-modules/src/lib/modules/templates/public-debt-payment-plan           @island-is/sendiradid
 /libs/api/domains/health-insurance/                                                                 @island-is/sendiradid

@@ -40,6 +40,7 @@ export class ContentfulRepository {
       accessToken,
       environment: process.env.CONTENTFUL_ENVIRONMENT || 'master',
       host: process.env.CONTENTFUL_HOST || 'preview.contentful.com',
+      removeUnresolved: true,
     })
   }
 

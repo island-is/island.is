@@ -276,6 +276,10 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             path: ServicePortalPath.AssetsVehiclesLookup,
           },
           {
+            name: m.vehiclesDrivingLessons,
+            path: ServicePortalPath.AssetsVehiclesDrivingLessons,
+          },
+          {
             name: m.vehiclesHistory,
             path: ServicePortalPath.AssetsVehiclesHistory,
           },
