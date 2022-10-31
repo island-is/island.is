@@ -13,11 +13,27 @@ import {
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { ApiScope } from './api-scope.model'
 import { Domain } from './domain.model'
+import { Optional } from 'sequelize'
+
+interface ModelAttributes {
+  id: string
+  name: string
+  displayName: string
+  description: string
+  domainName: string
+  order: number
+  created: Date
+  modified?: Date
+  domain?: Domain
+  scopes?: ApiScope[]
+}
+
+type CreationAttributes = Optional<ModelAttributes, 'id' | 'order' | 'created'>
 
 @Table({
   tableName: 'api_scope_group',
 })
-export class ApiScopeGroup extends Model {
+export class ApiScopeGroup extends Model<ModelAttributes, CreationAttributes> {
   @PrimaryKey
   @Column({
     type: DataType.UUID,

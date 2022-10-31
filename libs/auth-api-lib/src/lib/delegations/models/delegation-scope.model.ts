@@ -1,3 +1,4 @@
+import type { Optional } from 'sequelize'
 import {
   Column,
   DataType,
@@ -14,11 +15,31 @@ import { Delegation } from './delegation.model'
 import { DelegationScopeDTO } from '../dto/delegation-scope.dto'
 import { ApiScope } from '../../resources/models/api-scope.model'
 
+interface ModelAttributes {
+  id: string
+  delegationId: string
+  scopeName: string
+  validFrom: Date
+  validTo?: Date
+  created: Date
+  modified?: Date
+  delegation?: Delegation
+  apiScope?: ApiScope
+}
+
+type CreationAttributes = Optional<
+  ModelAttributes,
+  'id' | 'validFrom' | 'created'
+>
+
 @Table({
   tableName: 'delegation_scope',
   timestamps: false,
 })
-export class DelegationScope extends Model {
+export class DelegationScope extends Model<
+  ModelAttributes,
+  CreationAttributes
+> {
   @PrimaryKey
   @Column({
     type: DataType.STRING,
@@ -46,7 +67,7 @@ export class DelegationScope extends Model {
   scopeName!: string
 
   @BelongsTo(() => ApiScope)
-  apiScope!: ApiScope
+  apiScope?: ApiScope
 
   @Column({
     type: DataType.DATE,
@@ -59,7 +80,7 @@ export class DelegationScope extends Model {
     type: DataType.DATE,
     allowNull: true,
   })
-  validTo!: Date
+  validTo?: Date
 
   @CreatedAt
   @ApiProperty()
@@ -74,7 +95,7 @@ export class DelegationScope extends Model {
       id: this.id,
       delegationId: this.delegationId,
       scopeName: this.scopeName,
-      displayName: this.apiScope.displayName,
+      displayName: this.apiScope?.displayName ?? 'N/A',
       validFrom: this.validFrom,
       validTo: this.validTo,
     }

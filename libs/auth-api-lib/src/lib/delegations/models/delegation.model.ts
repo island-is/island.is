@@ -17,12 +17,31 @@ import {
 } from '../dto/delegation.dto'
 import { DelegationScope } from './delegation-scope.model'
 import { Domain } from '../../resources/models/domain.model'
+import { Optional } from 'sequelize'
+
+interface ModelAttributes {
+  id: string
+  fromNationalId: string
+  fromDisplayName: string
+  toNationalId: string
+  toName: string
+  domainName: string
+  validTo: Date | null | undefined
+  created: Date
+  modified?: Date
+  delegationScopes?: DelegationScope[]
+}
+
+type CreationAttributes = Optional<
+  ModelAttributes,
+  'id' | 'created' | 'domainName'
+>
 
 @Table({
   tableName: 'delegation',
   timestamps: false,
 })
-export class Delegation extends Model {
+export class Delegation extends Model<ModelAttributes, CreationAttributes> {
   @PrimaryKey
   @Column({
     type: DataType.STRING,
