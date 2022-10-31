@@ -105,6 +105,7 @@ const Subpoena: React.FC = () => {
         <Box component="section" marginBottom={5}>
           <SectionHeading
             title={formatMessage(strings.selectSubpoenaTypeHeading)}
+            required
           />
           <SelectSubpoenaType
             workingCase={workingCase}

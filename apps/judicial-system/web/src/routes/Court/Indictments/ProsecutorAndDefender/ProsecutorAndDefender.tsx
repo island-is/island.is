@@ -18,14 +18,14 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
-import * as constants from '@island.is/judicial-system/consts'
 import { Box } from '@island.is/island-ui/core'
+import { isprosecutorAndDefenderStepValid } from '@island.is/judicial-system-web/src/utils/validate'
+import { NotificationType } from '@island.is/judicial-system/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import * as constants from '@island.is/judicial-system/consts'
 
 import { prosecutorAndDefender as m } from './ProsecutorAndDefender.strings'
 import SelectDefender from './SelectDefender'
-import { isprosecutorAndDefenderStepValid } from '@island.is/judicial-system-web/src/utils/validate'
-import { NotificationType } from '@island.is/judicial-system/types'
 
 const HearingArrangements: React.FC = () => {
   const {
