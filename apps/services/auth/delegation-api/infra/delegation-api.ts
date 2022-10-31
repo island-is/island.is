@@ -53,7 +53,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-delegation-api'> =
         host: {
           dev: 'auth-delegation-api',
           staging: 'auth-delegation-api',
-          prod: 'auth-delegation-api',
+          prod: 'auth-delegation-api.internal.innskra.island.is',
         },
         paths: ['/'],
         public: false,

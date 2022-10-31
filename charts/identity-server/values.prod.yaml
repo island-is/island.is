@@ -290,7 +290,7 @@ services-auth-delegation-api:
       annotations:
         kubernetes.io/ingress.class: 'nginx-internal-alb'
       hosts:
-        - host: 'auth-delegation-api.internal.island.is'
+        - host: 'auth-delegation-api.internal.innskra.island.is'
           paths:
             - '/'
   namespace: 'identity-server-delegation'
