@@ -13,7 +13,7 @@ type GivenWhenThen = (
   callback: (message: Message) => Promise<boolean>,
 ) => Promise<Then>
 
-describe('MessageService - Receive message from queue', () => {
+describe('MessageService - Receive messages from queue', () => {
   let setMocks: (mocks: unknown[]) => void
   let mockQueueUrl: string
   let mockSqs: SQSClient
@@ -37,7 +37,7 @@ describe('MessageService - Receive message from queue', () => {
       const then = {} as Then
 
       try {
-        then.result = await messageService.receiveMessageFromQueue(callback)
+        then.result = await messageService.receiveMessagesFromQueue(callback)
       } catch (error) {
         then.error = error as Error
       }

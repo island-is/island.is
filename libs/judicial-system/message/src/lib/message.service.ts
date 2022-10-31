@@ -102,7 +102,13 @@ export class MessageService {
             ),
           }),
         )
-        .then(() => this.deleteMessageFromQueue(sqsMessage.ReceiptHandle))
+        .then((data) => {
+          if (data.MessageId) {
+            this.deleteMessageFromQueue(sqsMessage.ReceiptHandle)
+          } else {
+            this.logger.error('Failed to send message to queue', { data })
+          }
+        })
     }
 
     return callback(message).then((handled) => {
@@ -147,7 +153,7 @@ export class MessageService {
       })
   }
 
-  async receiveMessageFromQueue(
+  async receiveMessagesFromQueue(
     callback: (message: Message) => Promise<boolean>,
   ): Promise<void> {
     return this.sqs

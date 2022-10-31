@@ -61,7 +61,7 @@ export class MessageHandlerService implements OnModuleDestroy {
       this.logger.debug('Checking for messages')
 
       await this.messageService
-        .receiveMessageFromQueue(async (message: Message) => {
+        .receiveMessagesFromQueue(async (message: Message) => {
           return await this.handleMessage(message)
         })
         .catch((error) => {
