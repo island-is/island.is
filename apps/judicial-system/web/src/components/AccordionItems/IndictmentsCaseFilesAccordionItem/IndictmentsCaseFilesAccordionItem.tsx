@@ -416,11 +416,6 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
     )
     const filesBelowInChapter = getFilesBelowInChapter(fileId, reorderableItems)
 
-    // Do not update the order of files if the file is not in a chapter
-    if (chapter === null || orderWithinChapter === null) {
-      return
-    }
-
     const { errors } = await updateFilesMutation({
       variables: {
         input: {
@@ -435,7 +430,10 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
               return {
                 id: file.id,
                 chapter,
-                orderWithinChapter: orderWithinChapter + index + 1,
+                orderWithinChapter:
+                  orderWithinChapter === null
+                    ? null
+                    : orderWithinChapter + index + 1,
               }
             }),
           ],
