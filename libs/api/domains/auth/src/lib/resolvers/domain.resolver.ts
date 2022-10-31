@@ -12,11 +12,8 @@ import {
 import { Domain } from '../models/domain.model'
 import { DomainService } from '../services/domain.service'
 import { DomainsInput } from '../dto/domains.input'
-import {
-  OrganizationLogoLoader,
-  OrganizationLogoDataLoader,
-} from '@island.is/cms'
-import type { LogoUrl } from '@island.is/cms'
+import { OrganizationLogoLoader } from '@island.is/cms'
+import type { LogoUrl, OrganizationLogoDataLoader } from '@island.is/cms'
 import { Loader } from '@island.is/nest/dataloader'
 
 @UseGuards(IdsUserGuard, FeatureFlagGuard)
