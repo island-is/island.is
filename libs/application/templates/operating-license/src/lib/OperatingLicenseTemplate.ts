@@ -20,7 +20,7 @@ import {
 } from './constants'
 import { m } from './messages'
 import { Features } from '@island.is/feature-flags'
-import { AuthDelegationType } from '../types/schema'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 const oneDay = 24 * 3600 * 1000
 const thirtyDays = 24 * 3600 * 1000 * 30
