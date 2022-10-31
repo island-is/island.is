@@ -1,7 +1,6 @@
 import { Resolver, Query } from '@nestjs/graphql'
 import { IdsAuthGuard, IdsUserGuard } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
-
 import { NationalRegistryXRoadService } from './nationalRegistryXRoad.service'
 import { NationalRegistryReligion } from '../models/nationalRegistryReligion.model'
 import { UseGuards } from '@nestjs/common'
