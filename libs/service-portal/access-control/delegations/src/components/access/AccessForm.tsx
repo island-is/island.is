@@ -17,7 +17,7 @@ import {
   ServicePortalPath,
 } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
-import { DelegationsFormFooter } from '../../components'
+import { DelegationsFormFooter } from '../delegations/DelegationsFormFooter'
 import { servicePortalSaveAccessControl } from '@island.is/plausible'
 import {
   useUpdateAuthDelegationMutation,
@@ -35,7 +35,8 @@ import {
   formatScopeTreeToScope,
 } from './access.utils'
 import { AccessItem } from './AccessItem'
-import { AccessConfirmModal, AccessItemHeader } from '../../components/access'
+import { AccessConfirmModal } from '../../components/access/AccessConfirmModal'
+import { AccessItemHeader } from '../../components/access/AccessItemHeader'
 import { isDefined } from '@island.is/shared/utils'
 import * as commonAccessStyles from './access.css'
 

@@ -1,7 +1,7 @@
 import { Box } from '@island.is/island-ui/core'
 import { IntroHeader, m } from '@island.is/service-portal/core'
 
-import { DelegationsFromMe } from '../../components'
+import { DelegationsFromMe } from '../../components/delegations/DelegationsFromMe'
 import { useLocale, useNamespaces } from '@island.is/localization'
 
 const AccessControl = () => {

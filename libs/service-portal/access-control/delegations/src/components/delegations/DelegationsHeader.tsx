@@ -10,7 +10,7 @@ import {
 import { m, ServicePortalPath } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 import * as styles from './DelegationsHeader.css'
-import { useDomains, DomainOption } from '../../hooks'
+import { useDomains, DomainOption } from '../../hooks/useDomains'
 
 interface DelegationsHeaderProps {
   domainName?: string | null

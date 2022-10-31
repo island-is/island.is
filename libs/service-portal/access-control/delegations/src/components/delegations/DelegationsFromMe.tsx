@@ -10,11 +10,12 @@ import { DelegationsHeader } from './DelegationsHeader'
 import { DelegationsEmptyState } from './DelegationsEmptyState'
 import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
-import { AccessDeleteModal, AccessCard } from '../access'
+import { AccessDeleteModal } from '../access/AccessDeleteModal'
+import { AccessCard } from '../access/AccessCard'
 import { isDefined } from '@island.is/shared/utils'
 import { useAuthDelegationsQuery } from '@island.is/service-portal/graphql'
-import { DomainOption, useDomains } from '../../hooks'
-import { ALL_DOMAINS } from '../../constants'
+import { DomainOption, useDomains } from '../../hooks/useDomains'
+import { ALL_DOMAINS } from '../../constants/domain'
 
 export const DelegationsFromMe = () => {
   const { formatMessage, lang = 'is' } = useLocale()

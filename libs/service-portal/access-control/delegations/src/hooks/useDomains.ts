@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useLocale } from '@island.is/localization'
 import { useAuthDomainsQuery } from '@island.is/service-portal/graphql'
-import { ALL_DOMAINS, ISLAND_DOMAIN } from '../constants'
+import { ALL_DOMAINS, ISLAND_DOMAIN } from '../constants/domain'
 import { useQueryParam } from '@island.is/service-portal/core'
 import { useLocation, useHistory } from 'react-router-dom'
 import { storageFactory } from '@island.is/shared/utils'
