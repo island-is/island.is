@@ -17,8 +17,9 @@ import {
   createNationalRegistryUser,
 } from '@island.is/testing/fixtures'
 import { TestApp } from '@island.is/testing/nest'
+import { createDelegation } from '@island.is/services/auth/testing'
 
-import { createClient, createDelegation } from '../../../../test/fixtures'
+import { createClient } from '../../../../test/fixtures'
 import {
   Scopes,
   setupWithAuth,
@@ -1128,8 +1129,7 @@ describe('MeDelegationsController', () => {
             include: [{ model: DelegationScope, as: 'delegationScopes' }],
           },
         )
-        expect(model).not.toBeNull()
-        expect(model?.delegationScopes?.length).toEqual(0)
+        expect(model).toBeNull()
       })
 
       it('should return 204 No Content when successfully only delete scopes the user has access to', async () => {

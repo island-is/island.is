@@ -62,11 +62,7 @@ const UploadFilesToPoliceCase: React.FC<{
   caseFiles: CaseFile[]
 }> = ({ caseId, policeCaseNumber, setAllUploaded, caseFiles }) => {
   const { formatMessage } = useIntl()
-  const { upload, remove } = useS3UploadV2(
-    caseId,
-    CaseFileCategory.CASE_FILE,
-    policeCaseNumber,
-  )
+  const { upload, remove } = useS3UploadV2(caseId)
 
   const [displayFiles, setDisplayFiles] = useState<UploadFile[]>(
     caseFiles.map(mapCaseFileToUploadFile),
@@ -125,9 +121,14 @@ const UploadFilesToPoliceCase: React.FC<{
         ),
         ...previous,
       ])
-      upload(filesWithId, setSingleFile)
+      upload(
+        filesWithId,
+        setSingleFile,
+        CaseFileCategory.CASE_FILE,
+        policeCaseNumber,
+      )
     },
-    [upload, setSingleFile],
+    [upload, setSingleFile, policeCaseNumber],
   )
 
   const onRetry = useCallback(
@@ -147,9 +148,11 @@ const UploadFilesToPoliceCase: React.FC<{
           ],
         ],
         setSingleFile,
+        CaseFileCategory.CASE_FILE,
+        policeCaseNumber,
       )
     },
-    [upload, setSingleFile],
+    [setSingleFile, upload, policeCaseNumber],
   )
 
   const onRemove = useCallback(

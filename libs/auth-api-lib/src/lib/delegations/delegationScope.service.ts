@@ -67,12 +67,18 @@ export class DelegationScopeService {
   ): Promise<number> {
     if (scopeNames) {
       return this.delegationScopeModel.destroy({
-        where: { delegationId: delegationId, scopeName: scopeNames },
+        where: { delegationId, scopeName: scopeNames },
       })
     }
 
     return this.delegationScopeModel.destroy({
-      where: { delegationId: delegationId },
+      where: { delegationId },
+    })
+  }
+
+  async findByDelegationId(delegationId: string): Promise<DelegationScope[]> {
+    return this.delegationScopeModel.findAll({
+      where: { delegationId },
     })
   }
 
