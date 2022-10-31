@@ -37,7 +37,12 @@ import { AssetsModule } from '@island.is/api/domains/assets'
 import { EndorsementSystemModule } from '@island.is/api/domains/endorsement-system'
 import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
 import { ApiDomainsPaymentModule } from '@island.is/api/domains/payment'
-import { LicenseServiceModule } from '@island.is/api/domains/license-service'
+import {
+  GenericAdrLicenseConfig,
+  GenericFirearmLicenseConfig,
+  GenericMachineLicenseConfig,
+  LicenseServiceModule,
+} from '@island.is/api/domains/license-service'
 import { PaymentScheduleModule } from '@island.is/api/domains/payment-schedule'
 import { AssetsClientConfig } from '@island.is/clients/assets'
 import { AuthPublicApiClientConfig } from '@island.is/clients/auth-public-api'
@@ -222,21 +227,6 @@ const autoSchemaFile = environment.production
       arkBaseUrl: environment.paymentDomain.arkBaseUrl!,
     }),
     LicenseServiceModule.register({
-      firearmLicense: {
-        apiKey: environment.firearmLicense.pkPassApiKey!,
-        apiUrl: environment.smartSolutionsApiUrl!,
-        passTemplateId: environment.firearmLicense.passTemplateId!,
-      },
-      machineLicense: {
-        apiKey: environment.machineLicense.pkPassApiKey!,
-        apiUrl: environment.smartSolutionsApiUrl!,
-        passTemplateId: environment.machineLicense.passTemplateId!,
-      },
-      adrLicense: {
-        apiKey: environment.adrLicense.pkPassApiKey!,
-        apiUrl: environment.smartSolutionsApiUrl!,
-        passTemplateId: environment.adrLicense.passTemplateId!,
-      },
       driversLicense: {
         xroad: {
           baseUrl: environment.xroad.baseUrl!,
@@ -278,6 +268,9 @@ const autoSchemaFile = environment.production
         AdrAndMachineLicenseClientConfig,
         AssetsClientConfig,
         FirearmLicenseClientConfig,
+        GenericFirearmLicenseConfig,
+        GenericMachineLicenseConfig,
+        GenericAdrLicenseConfig,
         VehiclesClientConfig,
         AuthPublicApiClientConfig,
         DownloadServiceConfig,
