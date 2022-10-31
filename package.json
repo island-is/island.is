@@ -406,6 +406,7 @@
     "eslint-plugin-react": "7.29.4",
     "eslint-plugin-react-hooks": "4.4.0",
     "fetch-mock": "9.10.7",
+    "gitbook-plugin-hints": "^1.0.2",
     "honkit": "^4.0.4",
     "honkit-plugin-mermaid": "^0.1.4",
     "imap-simple": "5.1.0",
