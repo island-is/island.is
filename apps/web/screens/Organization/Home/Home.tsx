@@ -113,9 +113,7 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace }) => {
                 />
               </Box>
               <Box marginBottom={5}>
-                <Text variant="h1" color="blueberry600">
-                  {organizationPage.title}
-                </Text>
+                <Text variant="h1">{organizationPage.title}</Text>
               </Box>
 
               <Box marginBottom={8}>
