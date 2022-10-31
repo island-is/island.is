@@ -1,4 +1,4 @@
-import { AuthDelegationType } from '@island.is/auth-nest-tools'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 export type AllowedDelegations = {
   type: AuthDelegationType

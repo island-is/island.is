@@ -1,6 +1,6 @@
-import { JwtAct, JwtDelegationType } from './jwt.payload'
+import { JwtAct } from './jwt.payload'
 
-export type AuthDelegationType = JwtDelegationType
+import { AuthDelegationType } from '@island.is/shared/types'
 
 export interface Auth {
   nationalId?: string

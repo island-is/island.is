@@ -16,7 +16,7 @@ import {
   UserProfileApi,
   NoDebtCertificateApi,
 } from '../dataProviders'
-import { AuthDelegationType } from '../types/schema'
+import { AuthDelegationType } from '@island.is/shared/types'
 import { Features } from '@island.is/feature-flags'
 
 const NoDebtCertificateSchema = z.object({

@@ -2,24 +2,25 @@ import { Injectable } from '@nestjs/common'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
+
 import {
   StudentAssessment,
-  Teacher,
-  DrivingLicenseBookSchool,
-} from '@island.is/api/schema'
-import {
   DrivingLicenseFakeData,
   HasQualityPhoto,
   YES,
   DrivingLicense,
 } from './types'
-import { TemplateApiModuleActionProps } from '@island.is/application/template-api-modules'
-import { DrivingLicenseBookService } from '@island.is/api/domains/driving-license-book'
+import {
+  DrivingLicenseBookService,
+  Organization as DrivingLicenseBookSchool,
+} from '@island.is/api/domains/driving-license-book'
 import {
   DrivingLicenseApi,
   Juristiction,
+  Teacher,
 } from '@island.is/clients/driving-license'
 import sortTeachers from './sortTeachers'
+import { TemplateApiModuleActionProps } from '../../../../types'
 
 @Injectable()
 export class DrivingLicenseProviderService extends BaseTemplateApiService {

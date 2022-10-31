@@ -22,3 +22,9 @@ export type DrivingLicense = {
   currentLicense: string | null
   healthRemarks?: string[]
 }
+
+export interface StudentAssessment {
+  studentNationalId: string
+  teacherNationalId: string
+  teacherName: string | null
+}

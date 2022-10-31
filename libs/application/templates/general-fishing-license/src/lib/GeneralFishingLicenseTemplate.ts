@@ -14,7 +14,7 @@ import { Events, States, Roles } from '../constants'
 import { GeneralFishingLicenseSchema } from './dataSchema'
 import { application } from './messages'
 import { ApiActions } from '../shared'
-import { AuthDelegationType } from '../types/schema'
+import { AuthDelegationType } from '@island.is/shared/types'
 import {
   DepartmentOfFisheriesPaymentCatalogApi,
   ShipRegistryApi,

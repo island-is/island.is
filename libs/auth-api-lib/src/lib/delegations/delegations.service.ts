@@ -14,7 +14,7 @@ import { isUuid, uuid } from 'uuidv4'
 import * as kennitala from 'kennitala'
 
 import { AuditService } from '@island.is/nest/audit'
-import { AuthDelegationType } from '@island.is/auth-nest-tools'
+import { AuthDelegationType } from '@island.is/shared/types'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   createEnhancedFetch,
