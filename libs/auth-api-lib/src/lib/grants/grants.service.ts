@@ -4,7 +4,7 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { InjectModel } from '@nestjs/sequelize'
 import { GrantDto } from './dto/grant.dto'
-import { WhereOptions } from 'sequelize/types'
+import { WhereOptions } from 'sequelize'
 
 @Injectable()
 export class GrantsService {

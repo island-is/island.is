@@ -6,7 +6,7 @@ import {
   ActorDelegationsControllerFindAllDirectionEnum,
   ActorDelegationsApi,
   DelegationType,
-} from '@island.is/clients/auth-public-api'
+} from '@island.is/clients/auth/public-api'
 
 @Injectable()
 export class ActorDelegationsService {
