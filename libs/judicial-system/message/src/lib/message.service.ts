@@ -112,7 +112,6 @@ export class MessageService {
     })
   }
 
-  // TODO: Add support for sending multiple messages
   async sendMessageToQueue(message: Message): Promise<void> {
     return this.sqs
       .send(

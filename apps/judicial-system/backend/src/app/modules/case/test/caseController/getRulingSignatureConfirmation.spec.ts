@@ -41,8 +41,8 @@ describe('CaseController - Get ruling signature confirmation', () => {
     mockMessageService = messageService
     mockAwsS3Service = awsS3Service
 
-    const mockPostMessageToQueue = mockMessageService.sendMessageToQueue as jest.Mock
-    mockPostMessageToQueue.mockResolvedValue(uuid())
+    const mockPostMessageToQueue = mockMessageService.sendMessagesToQueue as jest.Mock
+    mockPostMessageToQueue.mockResolvedValue(undefined)
     const mockPutObject = mockAwsS3Service.putObject as jest.Mock
     mockPutObject.mockResolvedValue(uuid())
 
@@ -106,14 +106,10 @@ describe('CaseController - Get ruling signature confirmation', () => {
     it('should return success', () => {
       expect(then.result).toEqual({ documentSigned: true })
       expect(mockAwsS3Service.putObject).toHaveBeenCalled()
-      expect(mockMessageService.sendMessageToQueue).toHaveBeenCalledWith({
-        type: MessageType.CASE_COMPLETED,
-        caseId,
-      })
-      expect(mockMessageService.sendMessageToQueue).toHaveBeenCalledWith({
-        type: MessageType.SEND_RULING_NOTIFICAGTION,
-        caseId,
-      })
+      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+        { type: MessageType.CASE_COMPLETED, caseId },
+        { type: MessageType.SEND_RULING_NOTIFICAGTION, caseId },
+      ])
     })
   })
 
@@ -216,7 +212,7 @@ describe('CaseController - Get ruling signature confirmation', () => {
       expect(then.result.code).toBeUndefined()
 
       expect(mockCaseModel.update).not.toHaveBeenCalled()
-      expect(mockMessageService.sendMessageToQueue).not.toHaveBeenCalled()
+      expect(mockMessageService.sendMessagesToQueue).not.toHaveBeenCalled()
     })
   })
 })
