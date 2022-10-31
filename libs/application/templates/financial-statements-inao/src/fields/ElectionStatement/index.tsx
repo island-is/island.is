@@ -18,7 +18,7 @@ export const ElectionStatement = ({
   refetch,
 }: FieldBaseProps) => {
   const { formatMessage } = useLocale()
-  const [approveOverview, setApproveOverview] = useState(false)
+  const [approveOverview, _setApproveOverview] = useState(false)
   const { errors, setError } = useFormContext()
   const answers = application.answers as FinancialStatementsInao
 
@@ -29,7 +29,7 @@ export const ElectionStatement = ({
   })
 
   const onBackButtonClick = () => {
-    const income = currencyStringToNumber(answers.individualIncome?.total)
+    // const income = currencyStringToNumber(answers.individualIncome?.total)
     const incomeLimit = getValueViaPath(answers, 'election.incomeLimit')
 
     if (incomeLimit === GREATER) {
@@ -57,7 +57,7 @@ export const ElectionStatement = ({
           ${formatMessage(m.nationalId)}: ${formatNationalId(
             answers.about.nationalId,
           )}, ${formatMessage(m.participated)} 
-          ${answers.election.selectElection}`}
+          ${answers.election.electionName}`}
         </Text>
       </Box>
       <Box paddingY={2}>

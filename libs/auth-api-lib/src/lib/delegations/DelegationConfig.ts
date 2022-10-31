@@ -47,11 +47,11 @@ export const DelegationConfig = defineConfig<z.infer<typeof schema>>({
       },
       {
         scopeName: ApiScope.financeSalary,
-        onlyForDelegationType: ['ProcurationHolder'],
+        onlyForDelegationType: ['ProcurationHolder', 'Custom'],
       },
       {
         scopeName: ApiScope.company,
-        onlyForDelegationType: ['ProcurationHolder'],
+        onlyForDelegationType: ['ProcurationHolder', 'Custom'],
       },
     ],
     userInfoUrl:

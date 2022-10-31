@@ -15,6 +15,7 @@ import { NationalRegistryClientConfig } from '@island.is/clients/national-regist
 import { CompanyRegistryConfig } from '@island.is/clients/rsk/company-registry'
 import { RskProcuringClientConfig } from '@island.is/clients/rsk/procuring'
 import { UserProfileClientConfig } from '@island.is/clients/user-profile'
+import { AuditModule } from '@island.is/nest/audit'
 
 import { ClientsModule } from './clients/clients.module'
 import { GrantsModule } from './grants/grants.module'
@@ -28,6 +29,7 @@ import { UserProfileModule } from './user-profile/user-profile.module'
 
 @Module({
   imports: [
+    AuditModule.forRoot(environment.audit),
     AuthModule.register(environment.auth),
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,

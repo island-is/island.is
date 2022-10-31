@@ -85,6 +85,7 @@ interface SliceMachineProps {
   renderedOnOrganizationSubpage?: boolean
   marginBottom?: ResponsiveSpace
   params?: Record<string, any>
+  paddingTop?: ResponsiveSpace
 }
 
 const fullWidthSlices = [
@@ -116,7 +117,7 @@ const renderSlice = (
     case 'AccordionSlice':
       return <AccordionSlice slice={slice} />
     case 'TimelineSlice':
-      return <TimelineSlice slice={slice} />
+      return <TimelineSlice slice={slice} namespace={namespace} />
     case 'LogoListSlice':
       return <LogoListSlice slice={slice} />
     case 'TabSection':
@@ -161,12 +162,13 @@ export const SliceMachine = ({
   renderedOnOrganizationSubpage = false,
   marginBottom = 0,
   params,
+  paddingTop = 6,
 }: SliceMachineProps) => {
   return !fullWidth ? (
     <GridContainer>
       <GridRow marginBottom={marginBottom}>
         <GridColumn
-          paddingTop={6}
+          paddingTop={paddingTop}
           span={
             fullWidthSlices.includes(slice.__typename)
               ? '9/9'

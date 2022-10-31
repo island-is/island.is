@@ -35,7 +35,7 @@ export const serviceSetup = (services: {
     .namespace('islandis')
     .serviceAccount()
     .command('node')
-    .args('--tls-min-v1.0', 'main.js')
+    .args('--tls-min-v1.0', '--no-experimental-fetch', 'main.js')
 
     .env({
       APPLICATION_SYSTEM_API_URL: ref(

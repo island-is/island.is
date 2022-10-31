@@ -3,11 +3,13 @@ import {
   DelegationDTO,
   DelegationType,
   Domain,
+  InactiveReason,
   PersonalRepresentative,
   PersonalRepresentativeRight,
   PersonalRepresentativeRightType,
   PersonalRepresentativeScopePermission,
   PersonalRepresentativeType,
+  UNKNOWN_NAME,
 } from '@island.is/auth-api-lib'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import {
@@ -16,10 +18,10 @@ import {
 } from '@island.is/testing/fixtures'
 import { TestApp } from '@island.is/testing/nest'
 import { getModelToken } from '@nestjs/sequelize'
+import times from 'lodash/times'
 import faker from 'faker'
 import request from 'supertest'
-import { setupWithAuth } from '../../../test/setup'
-import { createDomain } from '../../../test/stubs/domain.fixture'
+import { setupWithAuth, defaultScopes } from '../../../test/setup'
 import {
   getFakeName,
   getFakeNationalId,
@@ -33,6 +35,7 @@ import {
   getScopePermission,
   personalRepresentativeType,
 } from '../../../test/stubs/personalRepresentativeStubs'
+import { createDomain } from '@island.is/services/auth/testing'
 
 describe('DelegationsController', () => {
   describe('Given a user is authenticated', () => {
@@ -44,14 +47,13 @@ describe('DelegationsController', () => {
     let prRightsModel: typeof PersonalRepresentativeRight
     let prRightTypeModel: typeof PersonalRepresentativeRightType
     let prTypeModel: typeof PersonalRepresentativeType
-
     let nationalRegistryApi: NationalRegistryClientService
 
-    const userKennitala = getFakeNationalId()
+    const userNationalId = getFakeNationalId()
 
     const user = createCurrentUser({
-      nationalId: userKennitala,
-      scope: ['@identityserver.api/authentication'],
+      nationalId: userNationalId,
+      scope: [defaultScopes.testUserHasAccess.name],
     })
 
     beforeAll(async () => {
@@ -61,23 +63,23 @@ describe('DelegationsController', () => {
       server = request(app.getHttpServer())
 
       prTypeModel = app.get<typeof PersonalRepresentativeType>(
-        'PersonalRepresentativeTypeRepository',
+        getModelToken(PersonalRepresentativeType),
       )
 
       await prTypeModel.create(personalRepresentativeType)
 
-      apiScopeModel = app.get<typeof ApiScope>('ApiScopeRepository')
+      apiScopeModel = app.get<typeof ApiScope>(getModelToken(ApiScope))
       prModel = app.get<typeof PersonalRepresentative>(
-        'PersonalRepresentativeRepository',
+        getModelToken(PersonalRepresentative),
       )
       prRightsModel = app.get<typeof PersonalRepresentativeRight>(
-        'PersonalRepresentativeRightRepository',
+        getModelToken(PersonalRepresentativeRight),
       )
       prRightTypeModel = app.get<typeof PersonalRepresentativeRightType>(
-        'PersonalRepresentativeRightTypeRepository',
+        getModelToken(PersonalRepresentativeRightType),
       )
       prScopePermission = app.get<typeof PersonalRepresentativeScopePermission>(
-        'PersonalRepresentativeScopePermissionRepository',
+        getModelToken(PersonalRepresentativeScopePermission),
       )
       nationalRegistryApi = app.get(NationalRegistryClientService)
     })
@@ -128,20 +130,32 @@ describe('DelegationsController', () => {
       })
 
       describe.each([
-        [1, 0, 0],
-        [2, 0, 0],
-        [0, 0, 0],
-        [0, 1, 0],
-        [0, 0, 1],
-        [0, 1, 1],
-        [1, 1, 1],
+        [1, 0, 0, 2, 1],
+        [2, 0, 0, 1, 0],
+        [0, 0, 0, 0, 0],
+        [0, 1, 0, 0, 1],
+        [0, 0, 1, 0, 0],
+        [0, 1, 1, 0, 2],
+        [1, 1, 1, 0, 0],
       ])(
         'and given user has %d active representees with valid rights, %d active representees with outdate rights and %d active representees with unactivated',
-        (valid: number, outdated: number, unactivated: number) => {
+        (
+          valid: number,
+          outdated: number,
+          unactivated: number,
+          deceased: number,
+          nationalRegistryErrors: number,
+        ) => {
           let nationalRegistryApiSpy: jest.SpyInstance
           const validRepresentedPersons: NameIdTuple[] = []
           const outdatedRepresentedPersons: NameIdTuple[] = []
           const unactivatedRepresentedPersons: NameIdTuple[] = []
+          const errorNationalIdsRepresentedPersons: NameIdTuple[] = []
+          const deceasedNationalIds = times(deceased, getFakeNationalId)
+          const errorNationalIds = times(
+            nationalRegistryErrors,
+            getFakeNationalId,
+          )
 
           beforeAll(async () => {
             for (let i = 0; i < valid; i++) {
@@ -150,7 +164,7 @@ describe('DelegationsController', () => {
                 getFakeNationalId(),
               ]
               const relationship = getPersonalRepresentativeRelationship(
-                userKennitala,
+                userNationalId,
                 representedPerson[1],
               )
               validRepresentedPersons.push(representedPerson)
@@ -166,7 +180,7 @@ describe('DelegationsController', () => {
                 getFakeNationalId(),
               ]
               const relationship = getPersonalRepresentativeRelationship(
-                userKennitala,
+                userNationalId,
                 representedPerson[1],
               )
               outdatedRepresentedPersons.push(representedPerson)
@@ -182,13 +196,48 @@ describe('DelegationsController', () => {
                 getFakeNationalId(),
               ]
               const relationship = getPersonalRepresentativeRelationship(
-                userKennitala,
+                userNationalId,
                 representedPerson[1],
               )
               unactivatedRepresentedPersons.push(representedPerson)
               await prModel.create(relationship)
               await prRightsModel.create(
                 getPersonalRepresentativeRights('unactivated', relationship.id),
+              )
+            }
+
+            for (let i = 0; i < deceased; i++) {
+              const representedPerson: NameIdTuple = [
+                getFakeName(),
+                deceasedNationalIds[i],
+              ]
+              const relationship = getPersonalRepresentativeRelationship(
+                userNationalId,
+                representedPerson[1],
+              )
+
+              await prModel.create(relationship)
+              await prRightsModel.create(
+                getPersonalRepresentativeRights('valid1', relationship.id),
+              )
+            }
+
+            for (let i = 0; i < nationalRegistryErrors; i++) {
+              const representedPerson: NameIdTuple = [
+                UNKNOWN_NAME,
+                errorNationalIds[i],
+              ]
+              const relationship = getPersonalRepresentativeRelationship(
+                userNationalId,
+                representedPerson[1],
+              )
+
+              errorNationalIdsRepresentedPersons.push(representedPerson)
+              // Create Personal Representative model which will have nationalIdRepresentedPerson throw an error
+              // when national registry api getIndividual is called
+              await prModel.create(relationship)
+              await prRightsModel.create(
+                getPersonalRepresentativeRights('valid1', relationship.id),
               )
             }
 
@@ -206,11 +255,27 @@ describe('DelegationsController', () => {
 
             nationalRegistryApiSpy = jest
               .spyOn(nationalRegistryApi, 'getIndividual')
-              .mockImplementation((id) => {
+              .mockImplementation(async (id) => {
+                if (deceasedNationalIds.includes(id)) {
+                  return null
+                }
+
+                if (
+                  errorNationalIds.find(
+                    (errorNationalId) => id === errorNationalId,
+                  )
+                ) {
+                  throw new Error('National registry error')
+                }
+
                 const user = nationalRegistryUsers.find(
-                  (u) => u.nationalId === id,
+                  (u) =>
+                    u?.nationalId === id &&
+                    // Make sure we don't return a user that has been marked as deceased
+                    !deceasedNationalIds.includes(u?.nationalId),
                 )
-                return user ? Promise.resolve(user) : Promise.reject()
+
+                return user ?? null
               })
           })
 
@@ -236,7 +301,7 @@ describe('DelegationsController', () => {
             let body: DelegationDTO[]
 
             beforeAll(async () => {
-              response = await server.get(`${path}`)
+              response = await server.get(path)
               body = response.body
             })
 
@@ -247,37 +312,45 @@ describe('DelegationsController', () => {
             it(`should return ${valid} ${
               valid === 1 ? 'item' : 'items'
             } `, () => {
-              expect(body).toHaveLength(valid)
+              expect(body).toHaveLength(valid + nationalRegistryErrors)
             })
 
             it('should have the nationalId of the user as the representer', () => {
               expect(
-                body.every((d) => d.toNationalId === userKennitala),
+                body.every((d) => d.toNationalId === userNationalId),
               ).toBeTruthy()
             })
 
             it('should only have the nationalId of the valid representees', () => {
               expect(body.map((d) => d.fromNationalId).sort()).toEqual(
-                validRepresentedPersons.map(([_, id]) => id).sort(),
+                [
+                  ...validRepresentedPersons.map(([_, id]) => id),
+                  ...errorNationalIdsRepresentedPersons.map(([_, id]) => id),
+                ].sort(),
               )
             })
 
             it(`should only have ${
-              valid === 1 ? 'name' : 'names'
+              valid + nationalRegistryErrors === 1 ? 'name' : 'names'
             } of the valid represented ${
-              valid === 1 ? 'person' : 'persons'
+              valid + nationalRegistryErrors === 1 ? 'person' : 'persons'
             }`, () => {
-              expect(body.map((d) => d.fromName).sort()).toEqual(
-                validRepresentedPersons.map(([name, _]) => name).sort(),
-              )
+              expect(body.map((d) => d.fromName).sort()).toEqual([
+                ...validRepresentedPersons.map(([name, _]) => name).sort(),
+                ...errorNationalIdsRepresentedPersons.map(([name]) => name),
+              ])
             })
 
             it(`should have fetched the ${
-              valid === 1 ? 'name' : 'names'
+              valid + deceased + nationalRegistryErrors === 1 ? 'name' : 'names'
             }  of the valid represented ${
-              valid === 1 ? 'person' : 'persons'
+              valid + deceased + nationalRegistryErrors === 1
+                ? 'person'
+                : 'persons'
             } from nationalRegistryApi`, () => {
-              expect(nationalRegistryApiSpy).toHaveBeenCalledTimes(valid)
+              expect(nationalRegistryApiSpy).toHaveBeenCalledTimes(
+                valid + deceased + nationalRegistryErrors,
+              )
             })
 
             it('should have the delegation type claims of PersonalRepresentative', () => {
@@ -286,6 +359,39 @@ describe('DelegationsController', () => {
                   (d) => d.type === DelegationType.PersonalRepresentative,
                 ),
               ).toBeTruthy()
+            })
+
+            it('should have made prModels inactive for deceased persons', async () => {
+              // Arrange
+              const expectedModels = await prModel.findAll({
+                where: {
+                  nationalIdRepresentedPerson: deceasedNationalIds,
+                  inactive: true,
+                  inactiveReason: InactiveReason.DECEASED_PARTY,
+                },
+              })
+
+              // Assert
+              expect(expectedModels.length).toEqual(deceased)
+
+              expectedModels.forEach((model) => {
+                expect(model.inactive).toEqual(true)
+                expect(model.inactiveReason).toEqual(
+                  InactiveReason.DECEASED_PARTY,
+                )
+              })
+            })
+
+            it('should return delegation if national registry api getIndividual throws an error', async () => {
+              // Arrange
+              const expectedModels = await prModel.findAll({
+                where: {
+                  nationalIdRepresentedPerson: errorNationalIds,
+                },
+              })
+
+              // Assert
+              expect(expectedModels.length).toEqual(errorNationalIds.length)
             })
           })
         },
@@ -346,12 +452,12 @@ describe('DelegationsController', () => {
         ])(
           'and given user is representing persons with rights %p',
           (rights, expected) => {
-            const representeeKennitala = getFakeNationalId()
+            const representeeNationalId = getFakeNationalId()
 
             beforeAll(async () => {
               const relationship = getPersonalRepresentativeRelationship(
-                userKennitala,
-                representeeKennitala,
+                userNationalId,
+                representeeNationalId,
               )
 
               await prModel.create(relationship)
@@ -384,7 +490,7 @@ describe('DelegationsController', () => {
 
               beforeAll(async () => {
                 response = await server.get(`${path}`).query({
-                  fromNationalId: representeeKennitala,
+                  fromNationalId: representeeNationalId,
                   delegationType: DelegationType.PersonalRepresentative,
                 })
                 body = response.body

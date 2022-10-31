@@ -9,7 +9,6 @@ import {
   CaseType,
   isRestrictionCase,
   isIndictmentCase,
-  SessionArrangements,
 } from '@island.is/judicial-system/types'
 
 const getAsDate = (date: Date | string | undefined | null): Date => {
@@ -284,4 +283,8 @@ export const formatDefenderRoute = (
   return `${baseUrl}/verjandi${
     isIndictmentCase(caseType) ? '/akaera' : ''
   }/${id}`
+}
+
+export const splitStringByComma = (str?: string): string[] => {
+  return str?.trim().split(/[, ]+/) || []
 }

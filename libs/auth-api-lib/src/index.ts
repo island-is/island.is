@@ -115,6 +115,7 @@ export * from './lib/personal-representative/services/personalRepresentativeRigh
 export * from './lib/personal-representative/services/personalRepresentativeAccess.service'
 export * from './lib/personal-representative/services/personal-representative-scope-permission.service'
 export * from './lib/personal-representative/models/personal-representative.model'
+export * from './lib/personal-representative/models/personal-representative.enum'
 export * from './lib/personal-representative/models/personal-representative-type.model'
 export * from './lib/personal-representative/models/personal-representative-right.model'
 export * from './lib/personal-representative/models/personal-representative-right-type.model'

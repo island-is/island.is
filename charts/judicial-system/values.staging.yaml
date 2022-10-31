@@ -20,7 +20,7 @@ judicial-system-api:
     BACKEND_URL: 'http://web-judicial-system-backend'
     CONTENTFUL_ENVIRONMENT: 'test'
     CONTENTFUL_HOST: 'cdn.contentful.com'
-    HIDDEN_FEATURES: 'INDICTMENTS'
+    HIDDEN_FEATURES: 'INDICTMENTS, CASE_FILE_ROUTE'
     NODE_OPTIONS: '--max-old-space-size=208'
     SAML_ENTRY_POINT: 'https://innskraning.island.is/?id=judicial-system.staging'
     SERVERSIDE_FEATURES_ON: 'delegation-api'
@@ -224,6 +224,7 @@ judicial-system-backend:
     name: 'judicial-system-backend'
 judicial-system-message-handler:
   args:
+    - '--no-experimental-fetch'
     - 'main.js'
   command:
     - 'node'
@@ -285,6 +286,7 @@ judicial-system-message-handler:
     name: 'judicial-system-message-handler'
 judicial-system-scheduler:
   args:
+    - '--no-experimental-fetch'
     - 'main.js'
   command:
     - 'node'

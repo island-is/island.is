@@ -230,9 +230,6 @@ function constructRestrictionCourtRecordPdf(
     addNormalJustifiedText(doc, prosecutorAppeal)
   }
 
-  const multipleDefendants =
-    (theCase.defendants && theCase.defendants.length > 1) || false
-
   let accusedAppeal = formatAppeal(
     theCase.accusedAppealDecision,
     capitalize(
