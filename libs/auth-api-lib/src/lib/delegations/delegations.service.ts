@@ -460,14 +460,13 @@ export class DelegationsService {
       }
     }
 
-    const delegationsPromises = delegations
-      // Filter out companies, since we do not need to make a national registry call for them.
-      .filter(({ fromNationalId }) => !kennitala.isCompany(fromNationalId))
-      .map(({ fromNationalId }) =>
-        this.nationalRegistryClient
-          .getIndividual(fromNationalId)
-          .catch(this.handlerGetIndividualError),
-      )
+    const delegationsPromises = delegations.map(({ fromNationalId }) =>
+      kennitala.isCompany(fromNationalId)
+        ? null
+        : this.nationalRegistryClient
+            .getIndividual(fromNationalId)
+            .catch(this.handlerGetIndividualError),
+    )
 
     try {
       // Check if delegations is linked to a person, i.e. not deceased
