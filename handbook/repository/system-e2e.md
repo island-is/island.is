@@ -23,20 +23,14 @@ However, not all projects support this, or are incomplete in this setup. If this
 
 ## 🤖 Start Playwright
 
-Playwright can be started in several ways. Using utility scripts, in container, on remote (dev), etc.
+First time you run Playwright, you'll need to set up its runtime environment with `yarn playwright install`. Then, Playwright can be started in several ways:
+
+- Using our local script: `./scripts/local-e2e.sh --help`
+- Using playwright directly: `yarn playwright test --project <path/to/your/app>`
 
 {% hint style="info" %}
 Add `export TEST_ENVIRONMENT=dev` before any command to test against the live [dev-web](https://beta.dev01.devland.is/). Valid values are `local` (default), `dev`, `staging`, and `prod` to test the respective environment.
 {% endhint %}
-
-- Utility script
-  - Get help: `./scripts/local-e2e.sh --help`
-  - Container: `./scripts/local-e2e.sh run -t acceptance -c container -i <app>`
-  - Source: `./scripts/local-e2e.sh run -t acceptance -c container -i <app>`
-  - ???: `./scripts/local-e2e.sh run -t acceptance -c container -i <app>`
-- Source code in dev-mode
-  - `yarn playwright install`
-  - `yarn playwright test --project <path/to/your/app>`
 
 {% hint style="info" %}
 You can append to the `test` command the path/name of your test case `yarn playwright test <path/to/spec/file>` to only test a specific spec.
