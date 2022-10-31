@@ -146,6 +146,7 @@
     - [Reference Template](libs/application/templates/reference-template/README.md)
   - [Types](libs/application/types/README.md)
   - [UI Fields](libs/application/ui-fields/README.md)
+  - [Application UI Forms](libs/application/ui-forms/README.md)
   - [UI Shell](libs/application/ui-shell/README.md)
 - [Auth](libs/auth/README.md)
   - [@island.is/auth/react](libs/auth/react/README.md)
