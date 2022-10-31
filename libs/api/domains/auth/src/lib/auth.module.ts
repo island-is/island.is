@@ -24,7 +24,6 @@ import { APP_INTERCEPTOR } from '@nestjs/core'
 import { DataLoaderInterceptor } from '@island.is/nest/dataloader'
 import { DomainLoader } from './loaders/domain.loader'
 import { ApiScopeLoader } from './loaders/apiScope.loader'
-import { DomainResolver } from './resolvers/domain.resolver'
 import { CmsModule } from '@island.is/cms'
 
 @Module({
@@ -33,6 +32,7 @@ import { CmsModule } from '@island.is/cms'
     CustomDelegationResolver,
     DelegationScopeResolver,
     ApiScopeResolver,
+    DomainResolver,
     DomainService,
     ActorDelegationsService,
     MeDelegationsService,
