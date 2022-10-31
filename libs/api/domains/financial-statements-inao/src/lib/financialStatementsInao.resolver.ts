@@ -17,7 +17,7 @@ import { InaoClientFinancialLimitInput } from './dto/clientFinancialLimit.input'
 import { Config } from './models/config.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(ApiScope.internal)
+@Scopes(ApiScope.internal, ApiScope.internalProcuring)
 @Resolver()
 export class FinancialStatementsInaoResolver {
   constructor(

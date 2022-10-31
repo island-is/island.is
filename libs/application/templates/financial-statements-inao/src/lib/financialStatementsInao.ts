@@ -20,6 +20,8 @@ import {
   getApplicationFeatureFlags,
 } from './utils/getApplicationFeatureFlags'
 
+import { AuthDelegationType } from '../types/schema'
+
 const FinancialStatementInaoApplication: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
@@ -39,6 +41,7 @@ const FinancialStatementInaoApplication: ApplicationTemplate<
   institution: m.institutionName,
   dataSchema,
   featureFlag: Features.financialStatementInao,
+  allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
