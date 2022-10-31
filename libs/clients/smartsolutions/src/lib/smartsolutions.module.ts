@@ -5,4 +5,4 @@ import { SmartSolutionsApi } from './smartSolutions.api'
   providers: [SmartSolutionsApi],
   exports: [SmartSolutionsApi],
 })
-export class SmartSolutionsClientModule {}
+export class SmartSolutionsApiClientModule {}
