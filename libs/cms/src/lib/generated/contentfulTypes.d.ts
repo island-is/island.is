@@ -15,6 +15,12 @@ export interface IAccordionSliceFields {
 
   /** Has Border Above */
   hasBorderAbove?: boolean | undefined
+
+  /** Title Heading Level */
+  titleHeadingLevel?: 'h2' | 'h3' | 'h4' | undefined
+
+  /** Show Title */
+  showTitle?: boolean | undefined
 }
 
 /** A slice with accordions */

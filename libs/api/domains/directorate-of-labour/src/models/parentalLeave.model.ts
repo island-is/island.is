@@ -11,6 +11,10 @@ export class ParentalLeave {
   @Field(() => ID)
   applicationId!: string
 
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  applicationFundId?: string
+
   @Field(() => String)
   applicant!: string
 

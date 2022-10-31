@@ -22,10 +22,7 @@ import {
   Select,
   Text,
 } from '@island.is/island-ui/core'
-import {
-  defendant as defendantMessages,
-  core,
-} from '@island.is/judicial-system-web/messages'
+import { core } from '@island.is/judicial-system-web/messages'
 import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
 import {
   removeErrorMessageIfValid,
@@ -152,7 +149,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
             size="small"
             data-testid="deleteDefendantButton"
           >
-            {formatMessage(defendantMessages.sections.defendantInfo.delete)}
+            {formatMessage(strings.defendantInfo.delete)}
           </Button>
         )}
       </Box>

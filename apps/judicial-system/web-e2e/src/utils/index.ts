@@ -209,9 +209,12 @@ export const makeCaseFile = ({
   key = 'test_id',
   size = 100,
   category = CaseFileCategory.CASE_FILE,
+  policeCaseNumber = undefined as string | undefined,
+  chapter = undefined as number | undefined,
+  orderWithinChapter = undefined as number | undefined,
 } = {}): CaseFile => {
   return {
-    id: 'test_case_file_id',
+    id: faker.datatype.uuid(),
     created: '2020-09-16T19:50:08.033Z',
     modified: '2020-09-16T19:50:08.033Z',
     caseId,
@@ -221,5 +224,8 @@ export const makeCaseFile = ({
     key,
     size,
     category,
+    policeCaseNumber,
+    chapter,
+    orderWithinChapter,
   }
 }

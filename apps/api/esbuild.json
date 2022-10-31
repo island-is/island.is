@@ -24,7 +24,7 @@
     "source-map-resolve",
     "atob",
     "logform",
-    "p-cancellable",
+    "p-cancelable",
     "pg-native",
     "form-data",
     "bull",
@@ -45,7 +45,19 @@
     "safer-buffer",
     "ts-morph",
     "ioredis",
-    "duplexer3"
+    "duplexer3",
+    "normalize-url",
+    "get-stream",
+    "http-cache-semantics",
+    "clone-response",
+    "to-readable-stream",
+    "url-parse-lax",
+    "@sindresorhus/is",
+    "@szmarczak/http-timer",
+    "cacheable-request",
+    "decompress-response",
+    "lowercase-keys",
+    "mimic-response"
   ],
   "keepNames": true
 }
