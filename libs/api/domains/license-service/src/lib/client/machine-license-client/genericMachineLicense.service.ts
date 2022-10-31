@@ -19,7 +19,7 @@ import {
 import {
   createPkPassDataInput,
   parseMachineLicensePayload,
-} from './machineLicenseMappers'
+} from './machineLicenseMapper'
 import { handle404 } from '@island.is/clients/middlewares'
 import {
   PassDataInput,
@@ -32,7 +32,7 @@ import { Locale } from 'locale'
 const LOG_CATEGORY = 'machinelicense-service'
 
 @Injectable()
-export class GenericMachineLicenseApi
+export class GenericMachineLicenseService
   implements GenericLicenseClient<VinnuvelaDto> {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
