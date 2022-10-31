@@ -51,6 +51,7 @@ export class ContentfulService {
       accessToken: environment.contentful.accessToken,
       environment: environment.contentful.environment,
       host: environment.contentful.host,
+      removeUnresolved: true,
     }
     logger.debug('Syncer created', params)
     this.contentfulClient = createClient(params)
