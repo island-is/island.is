@@ -20,10 +20,11 @@ import {
   PkPassVerification,
   PkPassVerificationError,
 } from '../../licenceService.type'
-import { DriversLicenseConfig } from '../../licenseService.module'
 import { PkPassClient } from './pkpass.client'
 import { PkPassPayload } from './pkpass.type'
 import { Locale } from '@island.is/shared/types'
+import { GenericDrivingLicenseConfig } from './genericDrivingLicense.config'
+import { ConfigType } from '@nestjs/config'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'drivinglicense-service'
@@ -56,7 +57,7 @@ export class GenericDrivingLicenseApi
 
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
-    private config: DriversLicenseConfig,
+    private config: ConfigType<typeof GenericDrivingLicenseConfig>,
     private cacheManager?: CacheManager | null,
   ) {
     // TODO inject the actual RLS x-road client

@@ -29,28 +29,11 @@ import {
   GenericMachineLicenseService,
   GenericMachineLicenseConfig,
 } from './client/machine-license-client'
-import { GenericDrivingLicenseApi } from './client/driving-license-client'
 
-export interface DriversLicenseConfig {
-  xroad: {
-    baseUrl: string
-    clientId: string
-    path: string
-    secret: string
-  }
-  pkpass: {
-    apiKey: string
-    apiUrl: string
-    passTemplateId?: string
-    secretKey?: string
-    cacheKey?: string
-    cacheTokenExpiryDelta?: string
-    authRetries?: string
-  }
-}
-export interface LicenseServiceConfig {
-  driversLicense: DriversLicenseConfig
-}
+import {
+  GenericDrivingLicenseApi,
+  GenericDrivingLicenseConfig,
+} from './client/driving-license-client'
 
 export interface PassTemplateIds {
   firearmLicense: string
@@ -91,80 +74,77 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     orgSlug: GenericLicenseOrganizationSlug.MachineLicense,
   },
 ]
-@Module({})
-export class LicenseServiceModule {
-  static register(config: LicenseServiceConfig): DynamicModule {
-    return {
-      module: LicenseServiceModule,
-      imports: [
-        CacheModule.register(),
-        GenericFirearmLicenseModule,
-        GenericAdrLicenseModule,
-        GenericMachineLicenseModule,
-        CmsModule,
+@Module({
+  imports: [
+    CacheModule.register(),
+    GenericFirearmLicenseModule,
+    GenericAdrLicenseModule,
+    GenericMachineLicenseModule,
+    CmsModule,
+  ],
+  providers: [
+    MainResolver,
+    LicenseServiceService,
+    {
+      provide: LOGGER_PROVIDER,
+      useValue: logger,
+    },
+    {
+      provide: CONFIG_PROVIDER,
+      useFactory: (
+        firearmConfig: ConfigType<typeof GenericFirearmLicenseConfig>,
+        adrConfig: ConfigType<typeof GenericAdrLicenseConfig>,
+        machineConfig: ConfigType<typeof GenericMachineLicenseConfig>,
+      ) => {
+        const ids: PassTemplateIds = {
+          firearmLicense: firearmConfig.passTemplateId,
+          adrLicense: adrConfig.passTemplateId,
+          machineLicense: machineConfig.passTemplateId,
+        }
+        return ids
+      },
+      inject: [
+        GenericFirearmLicenseConfig.KEY,
+        GenericAdrLicenseConfig.KEY,
+        GenericMachineLicenseConfig.KEY,
       ],
-      providers: [
-        MainResolver,
-        LicenseServiceService,
-        {
-          provide: LOGGER_PROVIDER,
-          useValue: logger,
-        },
-        {
-          provide: CONFIG_PROVIDER,
-          useFactory: (
-            firearmConfig: ConfigType<typeof GenericFirearmLicenseConfig>,
-            adrConfig: ConfigType<typeof GenericAdrLicenseConfig>,
-            machineConfig: ConfigType<typeof GenericMachineLicenseConfig>,
-          ) => {
-            const ids: PassTemplateIds = {
-              firearmLicense: firearmConfig.passTemplateId,
-              adrLicense: adrConfig.passTemplateId,
-              machineLicense: machineConfig.passTemplateId,
-            }
-            return ids
-          },
-          inject: [
-            GenericFirearmLicenseConfig.KEY,
-            GenericAdrLicenseConfig.KEY,
-            GenericMachineLicenseConfig.KEY,
-          ],
-        },
-        {
-          provide: GENERIC_LICENSE_FACTORY,
-          useFactory: (
-            genericFirearmService: GenericFirearmLicenseService,
-            genericAdrService: GenericAdrLicenseService,
-            genericMachineService: GenericMachineLicenseService,
-          ) => async (
-            type: GenericLicenseType,
-            cacheManager: CacheManager,
-          ): Promise<GenericLicenseClient<unknown> | null> => {
-            switch (type) {
-              case GenericLicenseType.DriversLicense:
-                return new GenericDrivingLicenseApi(
-                  logger,
-                  config.driversLicense,
-                  cacheManager,
-                )
-              case GenericLicenseType.AdrLicense:
-                return genericAdrService
-              case GenericLicenseType.MachineLicense:
-                return genericMachineService
-              case GenericLicenseType.FirearmLicense:
-                return genericFirearmService
-              default:
-                return null
-            }
-          },
-          inject: [
-            GenericFirearmLicenseService,
-            GenericAdrLicenseService,
-            GenericMachineLicenseService,
-          ],
-        },
+    },
+    {
+      provide: GENERIC_LICENSE_FACTORY,
+      useFactory: (
+        genericFirearmService: GenericFirearmLicenseService,
+        genericAdrService: GenericAdrLicenseService,
+        genericMachineService: GenericMachineLicenseService,
+        drivingLicenseConfig: ConfigType<typeof GenericDrivingLicenseConfig>,
+      ) => async (
+        type: GenericLicenseType,
+        cacheManager: CacheManager,
+      ): Promise<GenericLicenseClient<unknown> | null> => {
+        switch (type) {
+          case GenericLicenseType.DriversLicense:
+            return new GenericDrivingLicenseApi(
+              logger,
+              drivingLicenseConfig,
+              cacheManager,
+            )
+          case GenericLicenseType.AdrLicense:
+            return genericAdrService
+          case GenericLicenseType.MachineLicense:
+            return genericMachineService
+          case GenericLicenseType.FirearmLicense:
+            return genericFirearmService
+          default:
+            return null
+        }
+      },
+      inject: [
+        GenericFirearmLicenseService,
+        GenericAdrLicenseService,
+        GenericMachineLicenseService,
+        GenericDrivingLicenseConfig.KEY,
       ],
-      exports: [LicenseServiceService],
-    }
-  }
-}
+    },
+  ],
+  exports: [LicenseServiceService],
+})
+export class LicenseServiceModule {}

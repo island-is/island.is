@@ -39,6 +39,7 @@ import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-reg
 import { ApiDomainsPaymentModule } from '@island.is/api/domains/payment'
 import {
   GenericAdrLicenseConfig,
+  GenericDrivingLicenseConfig,
   GenericFirearmLicenseConfig,
   GenericMachineLicenseConfig,
   LicenseServiceModule,
@@ -126,11 +127,13 @@ const autoSchemaFile = environment.production
         password: environment.nationalRegistry.password!,
         host: environment.nationalRegistry.host!,
       },
+
       fileDownloadBucket: environment.education.fileDownloadBucket!,
     }),
     ApplicationModule.register({
       baseApiUrl: environment.applicationSystem.baseApiUrl!,
     }),
+    LicenseServiceModule,
     DirectorateOfLabourModule.register(),
     FileUploadModule,
     DocumentModule.register({
@@ -226,24 +229,6 @@ const autoSchemaFile = environment.production
       callbackAdditionUrl: environment.paymentDomain.callbackAdditionUrl!,
       arkBaseUrl: environment.paymentDomain.arkBaseUrl!,
     }),
-    LicenseServiceModule.register({
-      driversLicense: {
-        xroad: {
-          baseUrl: environment.xroad.baseUrl!,
-          clientId: environment.xroad.clientId!,
-          path: environment.drivingLicense.v1.xroadPath!,
-          secret: environment.drivingLicense.secret!,
-        },
-        pkpass: {
-          apiKey: environment.pkpass.apiKey!,
-          apiUrl: environment.pkpass.apiUrl!,
-          secretKey: environment.pkpass.secretKey!,
-          cacheKey: environment.pkpass.cacheKey!,
-          cacheTokenExpiryDelta: environment.pkpass.cacheTokenExpiryDelta!,
-          authRetries: environment.pkpass.authRetries!,
-        },
-      },
-    }),
     PaymentScheduleModule.register({
       xRoadProviderId: environment.paymentSchedule.xRoadProviderId!,
       xRoadBaseUrl: environment.paymentSchedule.xRoadBaseUrl!,
@@ -271,6 +256,7 @@ const autoSchemaFile = environment.production
         GenericFirearmLicenseConfig,
         GenericMachineLicenseConfig,
         GenericAdrLicenseConfig,
+        GenericDrivingLicenseConfig,
         VehiclesClientConfig,
         AuthPublicApiClientConfig,
         DownloadServiceConfig,
