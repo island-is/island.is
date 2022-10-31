@@ -141,7 +141,10 @@ export class DelegationsService {
       })
     }
 
-    await this.delegationScopeService.delete(delegation.id, user.scope)
+    await this.delegationScopeService.delete(
+      delegation.id,
+      user.scope.filter((scope) => this.filterCustomScopeRule(scope, user)),
+    )
 
     delegation.delegationScopes = await this.delegationScopeService.createOrUpdate(
       delegation.id,
@@ -189,7 +192,10 @@ export class DelegationsService {
 
     this.logger.debug(`Updating delegation ${delegationId}`)
 
-    await this.delegationScopeService.delete(delegationId, user.scope)
+    await this.delegationScopeService.delete(
+      delegationId,
+      user.scope.filter((scope) => this.filterCustomScopeRule(scope, user)),
+    )
     await this.delegationScopeService.createOrUpdate(delegationId, input.scopes)
 
     return this.findById(user, delegationId)
@@ -220,7 +226,12 @@ export class DelegationsService {
       throw new NotFoundException()
     }
 
-    await this.delegationScopeService.delete(id, isOutgoing ? user.scope : null)
+    await this.delegationScopeService.delete(
+      id,
+      isOutgoing
+        ? user.scope.filter((scope) => this.filterCustomScopeRule(scope, user))
+        : null,
+    )
 
     const remainingScopes = await this.delegationScopeService.findByDelegationId(
       id,
