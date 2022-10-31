@@ -2,7 +2,13 @@ import { FC, useEffect } from 'react'
 import { useFieldArray } from 'react-hook-form'
 import { InputController } from '@island.is/shared/form-fields'
 import { FieldBaseProps } from '@island.is/application/types'
-import { Box, GridColumn, GridRow, Button } from '@island.is/island-ui/core'
+import {
+  Box,
+  GridColumn,
+  GridRow,
+  Button,
+  Text,
+} from '@island.is/island-ui/core'
 import { Answers } from '../../types'
 import * as styles from '../styles.css'
 
@@ -11,6 +17,7 @@ type Props = {
     props: {
       fields: Array<object>
       repeaterButtonText: string
+      repeaterHeaderText: string
     }
   }
 }
@@ -54,17 +61,23 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
             marginTop={2}
             hidden={field.initial || field?.dummy}
           >
-            <Box position="absolute" className={styles.removeFieldButton}>
-              {index > 0 && (
-                <Button
-                  variant="ghost"
-                  size="small"
-                  circle
-                  icon="remove"
-                  onClick={() => remove(index)}
-                />
-              )}
-            </Box>
+            {index > 0 && (
+              <>
+                <Text variant="h4" marginBottom={2}>
+                  {props.repeaterHeaderText + ' ' + (index + 1)}
+                </Text>
+                <Box position="absolute" className={styles.removeFieldButton}>
+                  <Button
+                    variant="ghost"
+                    size="small"
+                    circle
+                    icon="remove"
+                    onClick={() => remove(index)}
+                  />
+                </Box>
+              </>
+            )}
+
             <GridRow>
               {props.fields.map((field: any) => {
                 return (

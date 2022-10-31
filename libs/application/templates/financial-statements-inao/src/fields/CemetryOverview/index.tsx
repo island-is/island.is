@@ -314,6 +314,12 @@ export const CemetryOverview = ({
               value={formatCurrency(answers.cemetryEquity?.total)}
             />
           </GridColumn>
+          <GridColumn span={['12/12', '6/12']}>
+            <ValueLine
+              label={m.debtsAndCash}
+              value={formatCurrency(answers.equityAndLiabilities?.total)}
+            />
+          </GridColumn>
         </GridRow>
       </Box>
       <Divider />

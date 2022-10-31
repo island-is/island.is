@@ -279,13 +279,14 @@ export class CaseController {
 
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseReadGuard)
   @RolesRules(prosecutorRule, judgeRule, registrarRule)
-  @Get('case/:caseId/caseFiles')
+  @Get('case/:caseId/caseFiles/:policeCaseNumber')
   @ApiOkResponse({
     content: { 'application/pdf': {} },
     description: 'Gets the case files for an existing case as a pdf document',
   })
   async getCaseFilesPdf(
     @Param('caseId') caseId: string,
+    @Param('policeCaseNumber') policeCaseNumber: string,
     @CurrentCase() theCase: Case,
     @Res() res: Response,
   ): Promise<void> {
@@ -293,7 +294,16 @@ export class CaseController {
       `Getting the case files for case ${caseId} as a pdf document`,
     )
 
-    const pdf = await this.caseService.getCaseFilesPdf(theCase)
+    if (!theCase.policeCaseNumbers.includes(policeCaseNumber)) {
+      throw new BadRequestException(
+        `Case ${caseId} does not include police case number ${policeCaseNumber}`,
+      )
+    }
+
+    const pdf = await this.caseService.getCaseFilesPdf(
+      theCase,
+      policeCaseNumber,
+    )
 
     res.end(pdf)
   }

@@ -29,6 +29,8 @@ import {
   TransferRightsOption,
   UnEmployedBenefitTypes,
   PARENTAL_GRANT_STUDENTS,
+  PARENTAL_LEAVE,
+  PARENTAL_GRANT,
 } from '../constants'
 import { SchemaFormValues } from '../lib/dataSchema'
 import { PregnancyStatusAndRightsResults } from '../dataProviders/Children/Children'
@@ -409,10 +411,10 @@ export function getApplicationExternalData(
 }
 
 export function getApplicationAnswers(answers: Application['answers']) {
-  const applicationType = getValueViaPath(
-    answers,
-    'applicationType.option',
-  ) as string
+  let applicationType = getValueViaPath(answers, 'applicationType.option')
+
+  if (!applicationType) applicationType = PARENTAL_LEAVE as string
+  else applicationType = applicationType as string
 
   const otherParent = (getValueViaPath(
     answers,
@@ -451,10 +453,13 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'employer.isSelfEmployed',
   ) as YesOrNo
 
-  const isRecivingUnemploymentBenefits = getValueViaPath(
+  let isRecivingUnemploymentBenefits = getValueViaPath(
     answers,
     'isRecivingUnemploymentBenefits',
   ) as YesOrNo
+
+  if (!isRecivingUnemploymentBenefits)
+    isRecivingUnemploymentBenefits = NO as YesOrNo
 
   const unemploymentBenefits = getValueViaPath(
     answers,
@@ -525,6 +530,11 @@ export function getApplicationAnswers(answers: Application['answers']) {
   const employerNationalRegistryId = getValueViaPath(
     answers,
     'employerNationalRegistryId',
+  ) as string
+
+  const employerReviewerNationalRegistryId = getValueViaPath(
+    answers,
+    'employerReviewerNationalRegistryId',
   ) as string
 
   const shareInformationWithOtherParent = getValueViaPath(
@@ -602,6 +612,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     employerEmail,
     employerPhoneNumber,
     employerNationalRegistryId,
+    employerReviewerNationalRegistryId,
     shareInformationWithOtherParent,
     selectedChild,
     transferRights,
@@ -911,4 +922,104 @@ export const showGenericFileUpload = (answers: Application['answers']) => {
   else if (applicationType === PARENTAL_GRANT_STUDENTS) return false
 
   return true
+}
+
+// Functions that determine dynamic text changes in forms based on application type
+export const getPeriodSectionTitle = (application: Application) => {
+  const appAnswers = getApplicationAnswers(application.answers)
+  if (
+    appAnswers.applicationType === PARENTAL_GRANT ||
+    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
+  ) {
+    return parentalLeaveFormMessages.shared.periodsGrantSection
+  }
+  return parentalLeaveFormMessages.shared.periodsSection
+}
+
+export const getRightsDescTitle = (application: Application) => {
+  const appAnswers = getApplicationAnswers(application.answers)
+  if (
+    appAnswers.applicationType === PARENTAL_GRANT ||
+    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
+  ) {
+    return parentalLeaveFormMessages.shared.grantRightsDescription
+  }
+  return parentalLeaveFormMessages.shared.rightsDescription
+}
+
+export const getPeriodImageTitle = (application: Application) => {
+  const appAnswers = getApplicationAnswers(application.answers)
+  if (
+    appAnswers.applicationType === PARENTAL_GRANT ||
+    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
+  ) {
+    return parentalLeaveFormMessages.shared.periodsImageGrantTitle
+  }
+  return parentalLeaveFormMessages.shared.periodsImageTitle
+}
+
+export const getFirstPeriodTitle = (application: Application) => {
+  const appAnswers = getApplicationAnswers(application.answers)
+  if (
+    appAnswers.applicationType === PARENTAL_GRANT ||
+    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
+  ) {
+    return parentalLeaveFormMessages.firstPeriodStart.grantTitle
+  }
+  return parentalLeaveFormMessages.firstPeriodStart.title
+}
+
+export const getDurationTitle = (application: Application) => {
+  const appAnswers = getApplicationAnswers(application.answers)
+  if (
+    appAnswers.applicationType === PARENTAL_GRANT ||
+    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
+  ) {
+    return parentalLeaveFormMessages.duration.grantTitle
+  }
+  return parentalLeaveFormMessages.duration.title
+}
+
+export const getRatioTitle = (application: Application) => {
+  const appAnswers = getApplicationAnswers(application.answers)
+  if (
+    appAnswers.applicationType === PARENTAL_GRANT ||
+    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
+  ) {
+    return parentalLeaveFormMessages.ratio.grantTitle
+  }
+  return parentalLeaveFormMessages.ratio.title
+}
+
+export const getLeavePlanTitle = (application: Application) => {
+  const appAnswers = getApplicationAnswers(application.answers)
+  if (
+    appAnswers.applicationType === PARENTAL_GRANT ||
+    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
+  ) {
+    return parentalLeaveFormMessages.leavePlan.grantTitle
+  }
+  return parentalLeaveFormMessages.leavePlan.title
+}
+
+export const getStartDateTitle = (application: Application) => {
+  const appAnswers = getApplicationAnswers(application.answers)
+  if (
+    appAnswers.applicationType === PARENTAL_GRANT ||
+    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
+  ) {
+    return parentalLeaveFormMessages.startDate.grantTitle
+  }
+  return parentalLeaveFormMessages.startDate.title
+}
+
+export const getStartDateDesc = (application: Application) => {
+  const appAnswers = getApplicationAnswers(application.answers)
+  if (
+    appAnswers.applicationType === PARENTAL_GRANT ||
+    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
+  ) {
+    return parentalLeaveFormMessages.startDate.grantDescription
+  }
+  return parentalLeaveFormMessages.startDate.description
 }
