@@ -134,14 +134,14 @@ const useSearch = (
       const indexOfLastSpace = term.lastIndexOf(' ')
       const hasSpace = indexOfLastSpace !== -1
       const prefix = hasSpace ? term.slice(0, indexOfLastSpace) : ''
-      const queryString = hasSpace ? term.slice(indexOfLastSpace) : term
+      const queryString = term //hasSpace ? term.slice(indexOfLastSpace) : term
 
       client
         .query<AutocompleteTermResultsQuery, QueryWebSearchAutocompleteArgs>({
           query: GET_SEARCH_AUTOCOMPLETE_TERM_QUERY,
           variables: {
             input: {
-              singleTerm: queryString.trim(),
+              singleTerm: queryString,
               language: locale as ContentLanguage,
               size: 10, // only show top X completions to prevent long list
             },
@@ -431,11 +431,11 @@ const Results = ({
         <Stack space={1}>
           {search.suggestions &&
             search.suggestions.map((suggestion, i) => {
-              const suggestionHasTerm = suggestion.startsWith(search.term)
-              const startOfString = suggestionHasTerm ? search.term : suggestion
-              const endOfString = suggestionHasTerm
-                ? suggestion.replace(search.term, '')
-                : ''
+              // const suggestionHasTerm = suggestion.startsWith(search.term)
+              // const startOfString = suggestionHasTerm ? search.term : suggestion
+              // const endOfString = suggestionHasTerm
+              //   ? suggestion.replace(search.term, '')
+              //   : ''
               const { onClick, ...itemProps } = getItemProps({
                 item: {
                   type: 'query',
@@ -453,8 +453,7 @@ const Results = ({
                   }}
                 >
                   <Text color={i === highlightedIndex ? 'blue400' : 'dark400'}>
-                    {`${search.prefix} ${startOfString}`}
-                    <strong>{endOfString}</strong>
+                  <span dangerouslySetInnerHTML={{__html: suggestion}}></span>
                   </Text>
                 </div>
               )

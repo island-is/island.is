@@ -74,11 +74,8 @@ export class ContentSearchService {
       query,
     )
 
-    // console log scores for dev
-    body.hits.hits.map((item) =>
-      console.log(item._source.title,"\t",item._score,"\t",typeof(item._score))
-    )
-  
+   
+
     // intercept highlights
     let items = body.hits.hits.map((item) =>
       JSON.parse(item._source.response ?? '[]'),
@@ -86,14 +83,14 @@ export class ContentSearchService {
 
     // mix and match highlights
     for (let i = 0; i < body.hits.hits.length; i++) {
-      if (body.hits.hits[i]?.highlight?.title){
+      if (body.hits.hits[i]?.highlight?.title) {
         items[i].title = body.hits.hits[i]?.highlight?.title[0]
       }
-      if (body.hits.hits[i]?.highlight?.content){
+      if (body.hits.hits[i]?.highlight?.content) {
         items[i].intro = body.hits.hits[i]?.highlight?.content[0]
       }
     }
-    
+
     // // MYSTERY
     // items = items.map(item=>({...item, title:"XXX",intro:"000"}));
 
@@ -130,34 +127,46 @@ export class ContentSearchService {
         singleTerm: input.singleTerm.trim(),
       },
     )
-    // searchSuggester.forEach(element => {
-    //   element.options.forEach(item => {
-    //       console.log(item.text,"***")
-    //   })
-    // });
+
+
+    console.log("INPUT",input.singleTerm.trim())
+
     const completions = await this.elasticService.findByQuery(
       this.getIndex(input.language),
-      { _source: { include: [ "title", "content" ] },query: { bool: { should: [ { match: { content: "Fyrsta ökuskírteinið er" } }, { prefix: { content: "bráð" } } ] } } },
+      {
+        _source: { include: ['title'] },
+        query: { prefix: { title: input.singleTerm.trim() } },
+        highlight: {
+          number_of_fragments: 3,
+          fragment_size: 150,
+          fields: { title: { pre_tags: ['<b>'], post_tags: ['</b>'] } },
+        },
+      },
     )
-    // console.log("COMPLETIONS")
-    // console.log(completions)
-  //   completions.body.hits.hits.forEach(item => {
-  //     console.log(item.text,"***")
-  //   })
-  //   for(const val of completions.body.hits.hits) {
-  //     console.log(val)
-  // }
 
-    // we always handle just one terms at a time so we return results for first term
-    const firstWordSuggestions = searchSuggester[0].options
 
+    const titles: string[] = []
+    // @ts-ignore: Unreachable code error
+    completions.body.hits.hits.forEach((item) => {
+      titles.push(item.highlight.title[0])
+      console.log(item._source.title)
+    })
+    
     const ret = {
-      total: firstWordSuggestions.length,
-      completions: firstWordSuggestions.map(
-        (suggestionObjects) => suggestionObjects.text,
-      ),
+      total: titles.length,
+      completions:titles,
     }
-    // console.log(ret)
+    // // we always handle just one terms at a time so we return results for first term
+    // const firstWordSuggestions = searchSuggester[0].options
+
+    // const ret = {
+    //   total: firstWordSuggestions.length,
+    //   completions: firstWordSuggestions.map(
+    //     (suggestionObjects) => suggestionObjects.text,
+    //   ),
+    // }
+    // // console.log(ret)
+    
     return ret
   }
 }
