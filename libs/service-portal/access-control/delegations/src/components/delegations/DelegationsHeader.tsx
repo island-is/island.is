@@ -59,7 +59,10 @@ export const DelegationsHeader = ({
             name="domain"
             backgroundColor="blue"
             id="domain"
-            noOptionsMessage="Enginn valmöguleiki"
+            noOptionsMessage={formatMessage({
+              id: 'sp.access-control-delegations:no-option',
+              defaultMessage: 'Enginn valmöguleiki',
+            })}
             options={domainOptions}
             value={defaultDomainOption}
             onChange={(option) => {

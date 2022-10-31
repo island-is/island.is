@@ -149,7 +149,7 @@ const Access = () => {
                     selected={validityPeriod ? validityPeriod : defaultDate}
                     locale={lang}
                     handleChange={setValidityPeriod}
-                    placeholderText="Veldu dagsetningu"
+                    placeholderText={formatMessage(m.chooseDate)}
                   />
                 )}
               </>
