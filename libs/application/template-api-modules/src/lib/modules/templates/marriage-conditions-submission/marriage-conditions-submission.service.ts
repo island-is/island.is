@@ -99,7 +99,7 @@ export class MarriageConditionsSubmissionService {
         : ''
 
     const extraData: { [key: string]: string } = {
-      vigsluDagur: ceremony.date,
+      vigsluDagur: ceremony.date || '',
       vigsluStadur: ceramonyPlace,
       umsaekjandiRikisfang: personalInfo.citizenship,
       umsaekjandiHjuskaparstada: personalInfo.maritalStatus,
