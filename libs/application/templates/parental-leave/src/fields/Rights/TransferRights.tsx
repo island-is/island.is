@@ -12,7 +12,7 @@ import { useLocale } from '@island.is/localization'
 
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { getApplicationAnswers } from '../../lib/parentalLeaveUtils'
-import { maxDaysToGiveOrReceive } from '../../config'
+import { maxDaysToGiveOrReceive, multipleBirthsDefaultDays } from '../../config'
 import { YES, NO, TransferRightsOption } from '../../constants'
 import { YesOrNo } from '../../types'
 
@@ -54,18 +54,25 @@ const calculateHiddenValues = (
   selectedOption: TransferRightsOption | undefined,
   requestDays: number,
   giveDays: number,
+  hasMultipleBirths: YesOrNo,
+  multipleBirths: number,
 ): HiddenValues => {
+  let maxDays = maxDaysToGiveOrReceive
+  if (hasMultipleBirths === YES) {
+    maxDays += (multipleBirths - 1) * multipleBirthsDefaultDays
+  }
+
   if (selectedOption === TransferRightsOption.REQUEST) {
     return {
       isRequestingRights: YES,
-      requestDays: clampDayValue(requestDays, 1, maxDaysToGiveOrReceive),
+      requestDays: clampDayValue(requestDays, 1, maxDays),
       isGivingRights: NO,
       giveDays: 0,
     }
   } else if (selectedOption === TransferRightsOption.GIVE) {
     return {
       isGivingRights: YES,
-      giveDays: clampDayValue(giveDays, 1, maxDaysToGiveOrReceive),
+      giveDays: clampDayValue(giveDays, 1, maxDays),
       isRequestingRights: NO,
       requestDays: 0,
     }
@@ -90,6 +97,8 @@ export const TransferRights: FC<FieldBaseProps & CustomField> = ({
     requestDays,
     isGivingRights,
     giveDays,
+    hasMultipleBirths,
+    multipleBirths,
   } = getApplicationAnswers(application.answers)
 
   const defaultValue =
@@ -100,13 +109,27 @@ export const TransferRights: FC<FieldBaseProps & CustomField> = ({
   const { register } = useFormContext()
   const { formatMessage } = useLocale()
   const [hiddenValues, setHiddenValues] = useState(
-    calculateHiddenValues(defaultValue, requestDays, giveDays),
+    calculateHiddenValues(
+      defaultValue,
+      requestDays,
+      giveDays,
+      hasMultipleBirths,
+      multipleBirths,
+    ),
   )
 
   const onSelect = (selected: string) => {
     const option = selected as TransferRightsOption
 
-    setHiddenValues(calculateHiddenValues(option, requestDays, giveDays))
+    setHiddenValues(
+      calculateHiddenValues(
+        option,
+        requestDays,
+        giveDays,
+        hasMultipleBirths,
+        multipleBirths,
+      ),
+    )
   }
 
   return (

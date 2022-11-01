@@ -15,7 +15,7 @@ import {
   StaticTextObject,
 } from '@island.is/application/types'
 
-import { Period, Payments, OtherParentObj } from '../types'
+import { Period, Payments, OtherParentObj, MultipleBirths } from '../types'
 import {
   MANUAL,
   NO,
@@ -35,11 +35,14 @@ import {
 } from './parentalLeaveUtils'
 import { filterValidPeriods } from '../lib/parentalLeaveUtils'
 import { validatePeriod } from './answerValidator-utils'
+import { defaultMultipleBirthsMonths } from '../config'
 
 const EMPLOYER = 'employer'
 const FILEUPLOAD = 'fileUpload'
 const PAYMENTS = 'payments'
 const OTHER_PARENT = 'otherParentObj'
+// Check Multiple_Births
+const MULTIPLE_BIRTHS = 'multipleBirths'
 // When attempting to continue from the periods repeater main screen
 // this validator will get called to validate all of the periods
 export const VALIDATE_PERIODS = 'validatedPeriods'
@@ -150,6 +153,36 @@ export const answerValidators: Record<string, AnswerValidator> = {
           'healthInsuranceConfirmationFile',
         )
       }
+    }
+
+    return undefined
+  },
+  [MULTIPLE_BIRTHS]: (newAnswer: unknown, application: Application) => {
+    const obj = newAnswer as MultipleBirths
+
+    const buildError = (message: StaticText, path: string) =>
+      buildValidationError(`${path}`)(message)
+
+    if (obj.hasMultipleBirths === YES) {
+      if (!obj.multipleBirths) {
+        return buildError(coreErrorMessages.defaultError, 'multipleBirths')
+      }
+      if (
+        obj.multipleBirths < 2 ||
+        obj.multipleBirths > defaultMultipleBirthsMonths + 1
+      )
+        return buildError(coreErrorMessages.defaultError, 'multipleBirths')
+      // if (obj.multipleBirthsRequestDays) {
+      //   if (
+      //     obj.multipleBirthsRequestDays < 0 ||
+      //     obj.multipleBirthsRequestDays >
+      //       obj.multipleBirths * multipleBirthsDefaultDays
+      //   )
+      //     return buildError(
+      //       coreErrorMessages.defaultError,
+      //       'multipleBirthsRequestDays',
+      //     )
+      // }
     }
 
     return undefined

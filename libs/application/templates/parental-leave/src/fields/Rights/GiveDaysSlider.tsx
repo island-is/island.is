@@ -12,6 +12,8 @@ import {
   maxDaysToGiveOrReceive,
   defaultMonths,
   daysInMonth,
+  multipleBirthsDefaultDays,
+  defaultMultipleBirthsMonths,
 } from '../../config'
 import { YES } from '../../constants'
 

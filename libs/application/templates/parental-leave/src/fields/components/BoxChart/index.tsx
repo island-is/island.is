@@ -8,7 +8,13 @@ import { formatText } from '@island.is/application/core'
 import { Application, FormText } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
 
-type boxStyle = 'blue' | 'green' | 'gray' | 'greenWithLines' | 'grayWithLines'
+type boxStyle =
+  | 'blue'
+  | 'green'
+  | 'purple'
+  | 'gray'
+  | 'greenWithLines'
+  | 'grayWithLines'
 
 export interface BoxChartKey {
   label: FormText
@@ -76,6 +82,7 @@ const BoxChart = ({
                 [styles.blue]: style === 'blue',
                 [styles.green]: style === 'green' || style === 'greenWithLines',
                 [styles.gray]: style === 'gray' || style === 'grayWithLines',
+                [styles.purple]: style === 'purple',
               })}
               key={index}
             >
@@ -102,6 +109,7 @@ const BoxChart = ({
                   marginRight={1}
                   className={cn(styles.bullet, {
                     [styles.blue]: style === 'blue',
+                    [styles.purple]: style === 'purple',
                     [styles.green]:
                       style === 'green' || style === 'greenWithLines',
                     [styles.gray]:
