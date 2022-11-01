@@ -71,7 +71,6 @@ const PeriodsRepeater: FC<ScreenProps> = ({
     variables: {
       applicationId: application.id,
       nationalId: application.applicant,
-      employerNationalId: employerReviewerNationalRegistryId,
     },
   })
 
