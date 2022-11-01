@@ -14,8 +14,6 @@ import { createTestingCaseModule } from '../createTestingCaseModule'
 import { uuidFactory } from '../../../../factories'
 import { Defendant, DefendantService } from '../../../defendant'
 import { CaseFile, FileService } from '../../../file'
-import { User } from '../../../user'
-import { Institution } from '../../../institution'
 import { ArchiveResponse } from '../../models/archive.response'
 import { Case } from '../../models/case.model'
 import { CaseArchive } from '../../models/caseArchive.model'
@@ -85,35 +83,6 @@ describe('InternalCaseController - Archive', () => {
       expect(mockCaseModel.findOne).toHaveBeenCalledWith({
         include: [
           { model: Defendant, as: 'defendants' },
-          { model: Institution, as: 'court' },
-          {
-            model: User,
-            as: 'creatingProsecutor',
-            include: [{ model: Institution, as: 'institution' }],
-          },
-          {
-            model: User,
-            as: 'prosecutor',
-            include: [{ model: Institution, as: 'institution' }],
-          },
-          { model: Institution, as: 'sharedWithProsecutorsOffice' },
-          {
-            model: User,
-            as: 'judge',
-            include: [{ model: Institution, as: 'institution' }],
-          },
-          {
-            model: User,
-            as: 'registrar',
-            include: [{ model: Institution, as: 'institution' }],
-          },
-          {
-            model: User,
-            as: 'courtRecordSignatory',
-            include: [{ model: Institution, as: 'institution' }],
-          },
-          { model: Case, as: 'parentCase' },
-          { model: Case, as: 'childCase' },
           {
             model: CaseFile,
             as: 'caseFiles',

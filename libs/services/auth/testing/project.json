@@ -1,0 +1,22 @@
+{
+  "root": "libs/services/auth/testing",
+  "sourceRoot": "libs/services/auth/testing/src",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/services/auth/testing/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/services/auth/testing"],
+      "options": {
+        "jestConfig": "libs/services/auth/testing/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

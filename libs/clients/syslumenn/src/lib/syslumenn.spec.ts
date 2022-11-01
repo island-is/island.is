@@ -15,12 +15,14 @@ import {
   REAL_ESTATE_ADDRESS,
   MORTGAGE_CERTIFICATE_CONTENT_NO_KMARKING,
   ESTATE_REGISTRANT_RESPONSE,
+  OPERATING_LICENSES_CSV,
 } from './__mock-data__/responses'
 import {
   mapHomestay,
   mapSyslumennAuction,
   mapDataUploadResponse,
   mapPaginatedOperatingLicenses,
+  mapOperatingLicensesCSV,
   mapEstateRegistrant,
   mapRealEstateAgent,
   mapLawyer,
@@ -139,6 +141,15 @@ describe('SyslumennService', () => {
           JSON.stringify(OPERATING_LICENSE_PAGINATION_INFO_SERVICE_RES),
           OPERATING_LICENSE,
         ),
+      )
+    })
+  })
+
+  describe('getOperatingLicensesCSV', () => {
+    it('should return operating licences CSV', async () => {
+      const response = await service.getOperatingLicensesCSV()
+      expect(response).toStrictEqual(
+        mapOperatingLicensesCSV(OPERATING_LICENSES_CSV),
       )
     })
   })

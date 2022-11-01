@@ -17,8 +17,9 @@ import {
   createNationalRegistryUser,
 } from '@island.is/testing/fixtures'
 import { TestApp } from '@island.is/testing/nest'
+import { createDelegation } from '@island.is/services/auth/testing'
 
-import { createClient, createDelegation } from '../../../../test/fixtures'
+import { createClient } from '../../../../test/fixtures'
 import {
   Scopes,
   setupWithAuth,
@@ -145,10 +146,18 @@ const mockDelegations = {
     scopes: [Scopes[0].name],
     today,
   }),
+  // Valid outgoing delegation on other domain
+  otherDomain: createDelegation({
+    fromNationalId: user.nationalId,
+    toNationalId: '1234567890',
+    scopes: [Scopes[0].name],
+    today,
+    domainName: 'otherdomain',
+  }),
 }
 
 beforeAll(() => {
-  jest.useFakeTimers('modern').setSystemTime(today.getTime())
+  jest.useFakeTimers().setSystemTime(today.getTime())
 })
 
 describe('MeDelegationsController', () => {
@@ -190,7 +199,7 @@ describe('MeDelegationsController', () => {
     })
 
     describe('GET /me/delegations', () => {
-      it('should return all delegations with direction=outgoing', async () => {
+      it('should return all delegations on default domain with direction=outgoing', async () => {
         // Arrange
         await createDelegationModels(
           delegationModel,
@@ -562,6 +571,33 @@ describe('MeDelegationsController', () => {
 
         // Act
         const res = await server.get(`${path}/${mockDelegations.otherUsers.id}`)
+
+        // Assert
+        expect(res.status).toEqual(404)
+        expect(res.body).toMatchInlineSnapshot(`
+          Object {
+            "status": 404,
+            "title": "Not Found",
+            "type": "https://httpstatuses.org/404",
+          }
+        `)
+      })
+
+      it('should return 404 not found if delegation is not on default domain', async () => {
+        // Arrange
+        await delegationModel.bulkCreate(Object.values(mockDelegations), {
+          include: [
+            {
+              model: DelegationScope,
+              as: 'delegationScopes',
+            },
+          ],
+        })
+
+        // Act
+        const res = await server.get(
+          `${path}/${mockDelegations.otherDomain.id}`,
+        )
 
         // Assert
         expect(res.status).toEqual(404)
@@ -1013,20 +1049,52 @@ describe('MeDelegationsController', () => {
         })
       })
 
-      it('should return 404 Not Found when user tries to update delegation that he did not give', async () => {
+      it('should return 404 Not Found when user tries to update a delegation that he is not part of', async () => {
         // Arrange
+        await createDelegationModels(delegationModel, [
+          mockDelegations.otherUsers,
+        ])
         const model = {
           scopes: [
             {
-              name: Scopes[0].name,
+              name: Scopes[4].name,
               validTo: addDays(today, 1),
             },
           ],
         }
-        const delegationId = '709158e8-1f86-4e3d-8576-5b13533bc42a'
 
         // Act
-        const res = await server.put(`${path}/${delegationId}`).send(model)
+        const res = await server
+          .put(`${path}/${mockDelegations.otherUsers.id}`)
+          .send(model)
+
+        // Assert
+        expect(res.status).toEqual(404)
+        expect(res.body).toMatchObject({
+          status: 404,
+          type: 'https://httpstatuses.org/404',
+          title: 'Not Found',
+        })
+      })
+
+      it('should return 404 Not Found when user tries to update delegation that he recevied from other user', async () => {
+        // Arrange
+        await createDelegationModels(delegationModel, [
+          mockDelegations.validIncoming,
+        ])
+        const model = {
+          scopes: [
+            {
+              name: Scopes[4].name,
+              validTo: addDays(today, 1),
+            },
+          ],
+        }
+
+        // Act
+        const res = await server
+          .put(`${path}/${mockDelegations.validIncoming.id}`)
+          .send(model)
 
         // Assert
         expect(res.status).toEqual(404)
@@ -1061,8 +1129,7 @@ describe('MeDelegationsController', () => {
             include: [{ model: DelegationScope, as: 'delegationScopes' }],
           },
         )
-        expect(model).not.toBeNull()
-        expect(model?.delegationScopes?.length).toEqual(0)
+        expect(model).toBeNull()
       })
 
       it('should return 204 No Content when successfully only delete scopes the user has access to', async () => {

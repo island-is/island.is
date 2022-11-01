@@ -22,6 +22,7 @@ import {
   DelegationsService,
   Domain,
   Language,
+  NamesService,
   SequelizeConfigService,
 } from '@island.is/auth-api-lib'
 
@@ -32,11 +33,15 @@ import {
   RskProcuringClientMock,
   FeatureFlagServiceMock,
 } from './mocks'
-import { createApiScope, createApiScopeGroup, CreateClient } from './fixtures'
+import { CreateClient } from './fixtures'
 import { RskProcuringClient } from '@island.is/clients/rsk/procuring'
 import { FeatureFlagService } from '@island.is/nest/feature-flags'
 import { ConfigType } from '@island.is/nest/config'
-import { createDomain } from './fixtures/domain.fixture'
+import {
+  createDomain,
+  createApiScopeGroup,
+  createApiScope,
+} from '@island.is/services/auth/testing'
 
 export interface ScopeSetupOptions {
   name: string
@@ -164,7 +169,12 @@ export const setupWithAuth = async ({
 
   // Add scopes in the "system" to use for delegation setup
   const apiScopeModel = app.get<typeof ApiScope>(getModelToken(ApiScope))
-  await apiScopeModel.bulkCreate(scopes.map((scope) => createApiScope(scope)))
+  await apiScopeModel.bulkCreate(
+    scopes.map((scope) => ({
+      ...createApiScope(scope),
+      domainName: domain.name,
+    })),
+  )
 
   // Add language for translations.
   const languageModel = app.get<typeof Language>(getModelToken(Language))
@@ -195,7 +205,7 @@ export const setupWithAuth = async ({
   jest
     .spyOn(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      app.get<DelegationsService>(DelegationsService) as any,
+      app.get<NamesService>(NamesService) as any,
       'getUserName',
     )
     .mockImplementation(() => userName)

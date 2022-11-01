@@ -182,6 +182,7 @@ export const slices = gql`
     id
     title
     json
+    configJson
     componentType: type
   }
 
@@ -347,6 +348,7 @@ export const slices = gql`
     }
     automaticallyFetchArticles
     sortBy
+    hasBorderAbove
     articles {
       id
       slug
@@ -434,6 +436,8 @@ export const slices = gql`
     title
     type
     hasBorderAbove
+    showTitle
+    titleHeadingLevel
     accordionItems {
       id
       title
@@ -592,6 +596,13 @@ export const slices = gql`
     }
   }
 
+  fragment PowerBiSliceFields on PowerBiSlice {
+    __typename
+    id
+    title
+    powerBiEmbedProps
+  }
+
   fragment BaseSlices on Slice {
     ...TimelineFields
     ...MailingListSignupFields
@@ -626,6 +637,7 @@ export const slices = gql`
     ...GraphCardFields
     ...LifeEventPageListSliceFields
     ...SidebarCardFields
+    ...PowerBiSliceFields
   }
 
   fragment AllSlices on Slice {

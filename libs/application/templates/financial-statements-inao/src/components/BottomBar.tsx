@@ -7,9 +7,14 @@ import { m } from '../lib/messages'
 type Props = {
   onBackButtonClick: () => void
   onSendButtonClick: () => void
+  loading?: boolean
 }
 
-const BottomBar = ({ onBackButtonClick, onSendButtonClick }: Props) => {
+const BottomBar = ({
+  onBackButtonClick,
+  onSendButtonClick,
+  loading = false,
+}: Props) => {
   const { formatMessage } = useLocale()
 
   return (
@@ -18,10 +23,10 @@ const BottomBar = ({ onBackButtonClick, onSendButtonClick }: Props) => {
         <Divider />
       </Box>
       <Box display="flex" justifyContent="spaceBetween" paddingY={5}>
-        <Button variant="ghost" onClick={onBackButtonClick}>
+        <Button variant="ghost" onClick={onBackButtonClick} disabled={loading}>
           {formatMessage(m.goBack)}
         </Button>
-        <Button icon="checkmark" onClick={onSendButtonClick}>
+        <Button icon="checkmark" onClick={onSendButtonClick} loading={loading}>
           {formatMessage(m.send)}
         </Button>
       </Box>

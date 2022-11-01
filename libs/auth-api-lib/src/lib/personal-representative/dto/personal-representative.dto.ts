@@ -1,14 +1,17 @@
 import {
   IsNotEmpty,
   IsString,
+  IsEnum,
   IsDate,
   IsOptional,
   IsArray,
+  IsBoolean,
 } from 'class-validator'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
 import { PersonalRepresentativeRightTypeDTO } from './personal-representative-right-type.dto'
 import { PersonalRepresentative } from '../models/personal-representative.model'
+import { InactiveReason } from '../models/personal-representative.enum'
 
 export class PersonalRepresentativeDTO {
   @IsString()
@@ -78,6 +81,21 @@ export class PersonalRepresentativeDTO {
   })
   rights!: PersonalRepresentativeRightTypeDTO[]
 
+  @IsBoolean()
+  @ApiProperty({
+    description:
+      'Setting model as inactive, i.e. deceased. If set as true then inactiveReason property must be set',
+  })
+  inactive!: boolean
+
+  @IsOptional()
+  @IsEnum(InactiveReason)
+  @ApiPropertyOptional({
+    example: InactiveReason.DECEASED_PARTY,
+    description: 'Reason for personal representative to be inactive',
+  })
+  inactiveReason?: InactiveReason
+
   toModel(id: string): PersonalRepresentative {
     return {
       id: id,
@@ -87,6 +105,8 @@ export class PersonalRepresentativeDTO {
       nationalIdPersonalRepresentative: this.nationalIdPersonalRepresentative,
       nationalIdRepresentedPerson: this.nationalIdRepresentedPerson,
       validTo: this.validTo,
+      inactive: this.inactive,
+      inactiveReason: this.inactiveReason,
     } as PersonalRepresentative
   }
 }
