@@ -27,6 +27,8 @@ interface NewsItemsProps {
   // This boolean value can be used to forcefully add horizontal padding to the title section
   // This is useful if the NewsItems component is nested inside a GridContainer but we still want title section padding
   forceTitleSectionHorizontalPadding?: boolean
+
+  colorVariant?: 'default' | 'blue'
 }
 
 export const NewsItems = ({
@@ -38,6 +40,7 @@ export const NewsItems = ({
   overview = 'newsoverview',
   parameters = [],
   seeMoreHref,
+  colorVariant,
   forceTitleSectionHorizontalPadding = false,
 }: NewsItemsProps) => {
   const { linkResolver } = useLinkResolver()
@@ -61,7 +64,13 @@ export const NewsItems = ({
           })}
         >
           <Box display="flex" flexDirection="row" justifyContent="spaceBetween">
-            <Text variant="h3" as="h2" id={headingTitle} dataTestId="home-news">
+            <Text
+              color={colorVariant === 'blue' ? 'blue600' : undefined}
+              variant="h3"
+              as="h2"
+              id={headingTitle}
+              dataTestId="home-news"
+            >
               {heading}
             </Text>
             <Box display={['none', 'none', 'none', 'block']}>
@@ -100,6 +109,7 @@ export const NewsItems = ({
                 date={date}
                 heading={title}
                 text={intro}
+                colorVariant={colorVariant}
                 href={
                   linkResolver(linkType ?? (tn as LinkType), [
                     ...parameters,

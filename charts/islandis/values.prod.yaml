@@ -41,6 +41,7 @@ air-discount-scheme-api:
   namespace: 'air-discount-scheme'
   podSecurityContext:
     fsGroup: 65534
+  pvcs: []
   replicaCount:
     default: 3
     max: 10
@@ -142,6 +143,7 @@ air-discount-scheme-backend:
     secrets:
       DB_PASS: '/k8s/air-discount-scheme/backend/DB_PASSWORD'
   namespace: 'air-discount-scheme'
+  pvcs: []
   replicaCount:
     default: 3
     max: 10
@@ -209,6 +211,7 @@ air-discount-scheme-web:
           paths:
             - '/'
   namespace: 'air-discount-scheme'
+  pvcs: []
   replicaCount:
     default: 3
     max: 10
@@ -232,6 +235,7 @@ air-discount-scheme-web:
 api:
   args:
     - '--tls-min-v1.0'
+    - '--no-experimental-fetch'
     - 'main.js'
   command:
     - 'node'
@@ -341,6 +345,7 @@ api:
   namespace: 'islandis'
   podSecurityContext:
     fsGroup: 65534
+  pvcs: []
   replicaCount:
     default: 10
     max: 50
@@ -533,6 +538,7 @@ application-system-api:
   namespace: 'application-system'
   podSecurityContext:
     fsGroup: 65534
+  pvcs: []
   replicaCount:
     default: 10
     max: 60
@@ -641,6 +647,7 @@ application-system-api-worker:
   namespace: 'application-system'
   podSecurityContext:
     fsGroup: 65534
+  pvcs: []
   replicaCount:
     default: 3
     max: 10
@@ -718,6 +725,7 @@ application-system-form:
           paths:
             - '/umsoknir'
   namespace: 'application-system'
+  pvcs: []
   replicaCount:
     default: 3
     max: 10
@@ -774,6 +782,7 @@ contentful-translation-extension:
           paths:
             - '/'
   namespace: 'contentful-translation-extension'
+  pvcs: []
   replicaCount:
     default: 3
     max: 10
@@ -836,6 +845,7 @@ download-service:
           paths:
             - '/download'
   namespace: 'download-service'
+  pvcs: []
   replicaCount:
     default: 3
     max: 10
@@ -860,6 +870,7 @@ download-service:
 endorsement-system-api:
   args:
     - '--tls-min-v1.0'
+    - '--no-experimental-fetch'
     - 'main.js'
   command:
     - 'node'
@@ -924,6 +935,7 @@ endorsement-system-api:
   namespace: 'endorsement-system'
   podSecurityContext:
     fsGroup: 65534
+  pvcs: []
   replicaCount:
     default: 3
     max: 10
@@ -1030,6 +1042,7 @@ icelandic-names-registry-backend:
     secrets:
       DB_PASS: '/k8s/icelandic-names-registry-backend/DB_PASSWORD'
   namespace: 'icelandic-names-registry'
+  pvcs: []
   replicaCount:
     default: 3
     max: 10
@@ -1084,6 +1097,7 @@ island-ui-storybook:
           paths:
             - '/'
   namespace: 'storybook'
+  pvcs: []
   replicaCount:
     default: 3
     max: 10
@@ -1213,6 +1227,7 @@ search-indexer-service:
   namespace: 'search-indexer'
   podSecurityContext:
     fsGroup: 65534
+  pvcs: []
   replicaCount:
     default: 1
     max: 1
@@ -1283,6 +1298,7 @@ service-portal:
           paths:
             - '/minarsidur'
   namespace: 'service-portal'
+  pvcs: []
   replicaCount:
     default: 5
     max: 30
@@ -1372,6 +1388,7 @@ service-portal-api:
   namespace: 'service-portal'
   podSecurityContext:
     fsGroup: 65534
+  pvcs: []
   replicaCount:
     default: 2
     max: 30
@@ -1457,6 +1474,7 @@ services-documents:
     secrets:
       DB_PASS: '/k8s/services-documents/DB_PASSWORD'
   namespace: 'services-documents'
+  pvcs: []
   replicaCount:
     default: 3
     max: 10
@@ -1517,6 +1535,7 @@ skilavottord-web:
           paths:
             - '/app/skilavottord/'
   namespace: 'skilavottord'
+  pvcs: []
   replicaCount:
     default: 3
     max: 10
@@ -1605,6 +1624,7 @@ skilavottord-ws:
     secrets:
       DB_PASS: '/k8s/skilavottord/DB_PASSWORD'
   namespace: 'skilavottord'
+  pvcs: []
   replicaCount:
     default: 3
     max: 10
@@ -1634,6 +1654,7 @@ skilavottord-ws:
     privileged: false
 user-notification:
   args:
+    - '--no-experimental-fetch'
     - 'main.js'
   command:
     - 'node'
@@ -1678,6 +1699,7 @@ user-notification:
   namespace: 'user-notification'
   podSecurityContext:
     fsGroup: 65534
+  pvcs: []
   replicaCount:
     default: 3
     max: 10
@@ -1702,6 +1724,7 @@ user-notification:
     name: 'user-notification'
 user-notification-worker:
   args:
+    - '--no-experimental-fetch'
     - 'main.js'
     - '--job=worker'
   command:
@@ -1741,6 +1764,7 @@ user-notification-worker:
   namespace: 'user-notification'
   podSecurityContext:
     fsGroup: 65534
+  pvcs: []
   replicaCount:
     default: 3
     max: 10
@@ -1816,6 +1840,7 @@ web:
           paths:
             - '/'
   namespace: 'islandis'
+  pvcs: []
   replicaCount:
     default: 10
     max: 50
@@ -1837,6 +1862,7 @@ web:
     privileged: false
 xroad-collector:
   args:
+    - '--no-experimental-fetch'
     - 'main.js'
   command:
     - 'node'
@@ -1875,6 +1901,7 @@ xroad-collector:
   namespace: 'xroad-collector'
   podSecurityContext:
     fsGroup: 65534
+  pvcs: []
   replicaCount:
     default: 3
     max: 10

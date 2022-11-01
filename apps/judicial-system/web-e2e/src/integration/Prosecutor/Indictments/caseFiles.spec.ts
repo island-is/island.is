@@ -1,6 +1,6 @@
 import {
   INDICTMENTS_CASE_FILES_ROUTE,
-  INDICTMENTS_OVERVIEW_ROUTE,
+  INDICTMENTS_POLICE_CASE_FILES_ROUTE,
 } from '@island.is/judicial-system/consts'
 import { CaseType, UserRole } from '@island.is/judicial-system/types'
 
@@ -23,6 +23,6 @@ describe(`${INDICTMENTS_CASE_FILES_ROUTE}/:id`, () => {
 
   it('should navigate to the correct page on continue', () => {
     cy.getByTestid('continueButton').click()
-    cy.url().should('contain', INDICTMENTS_OVERVIEW_ROUTE)
+    cy.url().should('contain', INDICTMENTS_POLICE_CASE_FILES_ROUTE)
   })
 })

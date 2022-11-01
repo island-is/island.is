@@ -1,5 +1,6 @@
 import request from 'supertest'
 import { Controller, Get, INestApplication, UseGuards } from '@nestjs/common'
+import { ApolloDriver } from '@nestjs/apollo'
 import { Test } from '@nestjs/testing'
 import { ConfigModule } from '@island.is/nest/config'
 import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
@@ -72,7 +73,11 @@ describe('FeatureFlagGuard', () => {
       providers: [TestResolver, TestFeatureResolver],
       imports: [
         FeatureFlagModule,
-        GraphQLModule.forRoot({ autoSchemaFile: true, path: '/graphql' }),
+        GraphQLModule.forRoot({
+          autoSchemaFile: true,
+          driver: ApolloDriver,
+          path: '/graphql',
+        }),
         ConfigModule.forRoot({ isGlobal: true, load: [FeatureFlagConfig] }),
       ],
     })

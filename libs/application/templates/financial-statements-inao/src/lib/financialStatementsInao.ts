@@ -1,5 +1,7 @@
 import { DefaultStateLifeCycle } from '@island.is/application/core'
 import { FeatureFlagClient } from '@island.is/feature-flags'
+import type { User } from '@island.is/api/domains/national-registry'
+
 import {
   ApplicationTemplate,
   ApplicationTypes,
@@ -24,7 +26,16 @@ const FinancialStatementInaoApplication: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.FINANCIAL_STATEMENTS_INAO,
-  name: m.applicationTitle,
+  name: (application) => {
+    const hasApprovedExternalData = application.answers?.approveExternalData
+    const currentUser = hasApprovedExternalData
+      ? (application.externalData.nationalRegistry.data as User)
+      : undefined
+
+    return currentUser
+      ? `${m.applicationTitle.defaultMessage} - ${currentUser.fullName}`
+      : m.applicationTitle
+  },
   institution: m.institutionName,
   dataSchema,
   featureFlag: Features.financialStatementInao,
@@ -76,6 +87,7 @@ const FinancialStatementInaoApplication: ApplicationTemplate<
             apiModuleAction: ApiActions.getUserType,
             shouldPersistToExternalData: true,
           },
+
           progress: 0.4,
           lifecycle: DefaultStateLifeCycle,
           roles: [
@@ -102,7 +114,10 @@ const FinancialStatementInaoApplication: ApplicationTemplate<
           name: 'Done',
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
-
+          onEntry: {
+            apiModuleAction: ApiActions.submitApplication,
+            throwOnError: true,
+          },
           roles: [
             {
               id: Roles.APPLICANT,

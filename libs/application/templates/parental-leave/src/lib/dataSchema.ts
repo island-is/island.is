@@ -2,7 +2,16 @@ import * as z from 'zod'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
-import { NO, YES, MANUAL, SPOUSE, TransferRightsOption } from '../constants'
+import {
+  NO,
+  YES,
+  MANUAL,
+  SPOUSE,
+  TransferRightsOption,
+  PARENTAL_GRANT,
+  PARENTAL_GRANT_STUDENTS,
+  PARENTAL_LEAVE,
+} from '../constants'
 import { errorMessages } from './messages'
 
 const PersonalAllowance = z
@@ -23,6 +32,9 @@ const PersonalAllowance = z
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   selectedChild: z.string().nonempty(),
+  applicationType: z.object({
+    option: z.enum([PARENTAL_GRANT, PARENTAL_GRANT_STUDENTS, PARENTAL_LEAVE]),
+  }),
   applicant: z.object({
     email: z.string().email(),
     phoneNumber: z.string().refine(
@@ -44,7 +56,7 @@ export const dataSchema = z.object({
       },
       { params: errorMessages.bank },
     ),
-    pensionFund: z.string(),
+    pensionFund: z.string().optional(),
     privatePensionFund: z.string().optional(),
     privatePensionFundPercentage: z.enum(['0', '2', '4', '']).optional(),
     union: z.string().optional(),
@@ -68,6 +80,8 @@ export const dataSchema = z.object({
       { params: errorMessages.phoneNumber },
     )
     .optional(),
+  isRecivingUnemploymentBenefits: z.enum([YES, NO]),
+  unemploymentBenefits: z.string().nonempty(),
   requestRights: z.object({
     isRequestingRights: z.enum([YES, NO]),
     requestDays: z
@@ -109,7 +123,7 @@ export const dataSchema = z.object({
     .refine((n) => !n || (kennitala.isValid(n) && kennitala.isPerson(n)), {
       params: errorMessages.otherParentId,
     }),
-  otherParentRightOfAccess: z.enum([YES, NO]).optional(),
+  otherParentRightOfAccess: z.enum([YES, NO]),
   otherParentEmail: z.string().email(),
   otherParentPhoneNumber: z
     .string()

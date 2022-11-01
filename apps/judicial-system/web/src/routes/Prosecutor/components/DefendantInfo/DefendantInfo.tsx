@@ -22,10 +22,7 @@ import {
   Select,
   Text,
 } from '@island.is/island-ui/core'
-import {
-  defendant as defendantMessages,
-  core,
-} from '@island.is/judicial-system-web/messages'
+import { core } from '@island.is/judicial-system-web/messages'
 import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
 import {
   removeErrorMessageIfValid,
@@ -152,7 +149,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
             size="small"
             data-testid="deleteDefendantButton"
           >
-            {formatMessage(defendantMessages.sections.defendantInfo.delete)}
+            {formatMessage(strings.defendantInfo.delete)}
           </Button>
         )}
       </Box>
@@ -269,7 +266,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
               setAccusedNameErrorMessage,
             )
 
-            onChange(defendant.id, { name: evt.target.value })
+            onChange(defendant.id, { name: evt.target.value.trim() })
           }}
           required
         />
@@ -306,7 +303,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
               setAccusedAddressErrorMessage,
             )
 
-            onChange(defendant.id, { address: evt.target.value })
+            onChange(defendant.id, { address: evt.target.value.trim() })
           }}
           required
         />
@@ -346,7 +343,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
                 })
               }}
               onBlur={(evt) => {
-                onChange(defendant.id, { citizenship: evt.target.value })
+                onChange(defendant.id, { citizenship: evt.target.value.trim() })
               }}
               disabled={isGenderAndCitizenshipDisabled}
             />

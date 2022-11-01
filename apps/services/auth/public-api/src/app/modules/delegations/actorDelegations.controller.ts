@@ -82,7 +82,7 @@ export class ActorDelegationsController {
     @Query('direction') direction: DelegationDirection.INCOMING,
     @Query('delegationTypes') delegationTypes?: Array<DelegationType>,
   ): Promise<DelegationDTO[]> {
-    if (direction != DelegationDirection.INCOMING) {
+    if (direction !== DelegationDirection.INCOMING) {
       throw new BadRequestException(
         `'direction' can only be set to ${DelegationDirection.INCOMING} for the /actor alias`,
       )

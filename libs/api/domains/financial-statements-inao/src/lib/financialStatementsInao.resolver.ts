@@ -1,5 +1,5 @@
 import { UseGuards } from '@nestjs/common'
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
+import { Args, Query, Resolver } from '@nestjs/graphql'
 
 import { ApiScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
@@ -14,9 +14,8 @@ import { FinancialStatementsInaoService } from './financialStatementsInao.servic
 import { Election } from './models/election.model'
 import { ClientType } from './models/clientType.model'
 import { InaoClientFinancialLimitInput } from './dto/clientFinancialLimit.input'
-import { InaoCemeteryFinancialStatementInput } from './dto/cemeteryFinancialStatement.input'
-import { InaoPoliticalPartyFinancialStatementInput } from './dto/politicalPartyFinancialStatement.input'
 import { Config } from './models/config.model'
+import { TaxInfo } from './models/taxInfo.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.internal)
@@ -58,27 +57,14 @@ export class FinancialStatementsInaoResolver {
     return this.financialStatementsService.getConfig()
   }
 
-  @Mutation(() => Boolean)
-  async financialStatementsInaoSubmitPoliticalPartyFinancialStatement(
+  @Query(() => [TaxInfo])
+  async financialStatementsInaoTaxInfo(
     @CurrentUser() user: User,
-    @Args('input') input: InaoPoliticalPartyFinancialStatementInput,
+    @Args('year') year: string,
   ) {
-    return this.financialStatementsService.submitPoliticalPartyFinancialStatement(
+    return this.financialStatementsService.getTaxInformation(
       user.nationalId,
-      user.actor?.nationalId,
-      input,
-    )
-  }
-
-  @Mutation(() => Boolean)
-  async financialStatementsInaoSubmitCemeteryFinancialStatement(
-    @CurrentUser() user: User,
-    @Args('input') input: InaoCemeteryFinancialStatementInput,
-  ) {
-    return this.financialStatementsService.submitCemeteryFinancialStatement(
-      user.nationalId,
-      user.actor?.nationalId,
-      input,
+      year,
     )
   }
 }

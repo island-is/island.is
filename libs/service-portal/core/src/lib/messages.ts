@@ -222,6 +222,10 @@ export const m = defineMessages({
     id: 'service.portal:vehicles-lookup',
     defaultMessage: 'Uppfletting í ökutækjaskrá',
   },
+  vehiclesDrivingLessons: {
+    id: 'service.portal:vehicles-driving-lessons',
+    defaultMessage: 'Ökunám',
+  },
   yourVehicles: {
     id: 'service.portal:your-vehicles',
     defaultMessage: 'Þín ökutæki',
@@ -800,5 +804,9 @@ export const m = defineMessages({
   clearSelected: {
     id: 'service.portal:clear-selected',
     defaultMessage: 'Hreinsa val',
+  },
+  errorTitle: {
+    id: 'service.portal:error-screen-title',
+    defaultMessage: 'Villa',
   },
 })

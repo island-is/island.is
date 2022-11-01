@@ -1,3 +1,5 @@
+<!-- gitbook-ignore -->
+
 # api-domains-transport-authority-change-operator-of-vehicle
 
 This library was generated with [Nx](https://nx.dev).

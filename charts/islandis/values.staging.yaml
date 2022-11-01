@@ -7,7 +7,7 @@ air-discount-scheme-api:
     ELASTIC_NODE: 'https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=464'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'delegation-api'
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
@@ -43,6 +43,7 @@ air-discount-scheme-api:
   namespace: 'air-discount-scheme'
   podSecurityContext:
     fsGroup: 65534
+  pvcs: []
   replicaCount:
     default: 2
     max: 3
@@ -80,7 +81,7 @@ air-discount-scheme-backend:
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=464'
     REDIS_URL_NODE_01: 'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'delegation-api'
     XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
     XROAD_CLIENT_ID: 'IS-TEST/GOV/5501692829/island-is-client'
@@ -144,10 +145,11 @@ air-discount-scheme-backend:
       DB_NAME: 'air_discount_scheme_backend'
       DB_REPLICAS_HOST: 'postgres-applications.internal'
       DB_USER: 'air_discount_scheme_backend'
-      SERVERSIDE_FEATURES_ON: ''
+      SERVERSIDE_FEATURES_ON: 'delegation-api'
     secrets:
       DB_PASS: '/k8s/air-discount-scheme/backend/DB_PASSWORD'
   namespace: 'air-discount-scheme'
+  pvcs: []
   replicaCount:
     default: 2
     max: 3
@@ -180,7 +182,7 @@ air-discount-scheme-web:
     IDENTITY_SERVER_ISSUER_DOMAIN: 'identity-server.staging01.devland.is'
     NEXTAUTH_URL: 'https://loftbru.staging01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'delegation-api'
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
@@ -217,6 +219,7 @@ air-discount-scheme-web:
           paths:
             - '/'
   namespace: 'air-discount-scheme'
+  pvcs: []
   replicaCount:
     default: 2
     max: 3
@@ -240,12 +243,14 @@ air-discount-scheme-web:
 api:
   args:
     - '--tls-min-v1.0'
+    - '--no-experimental-fetch'
     - 'main.js'
   command:
     - 'node'
   enabled: true
   env:
     APPLICATION_SYSTEM_API_URL: 'http://web-application-system-api.application-system.svc.cluster.local'
+    AUTH_DELEGATION_API_URL: 'http://web-services-auth-delegation-api.identity-server.svc.cluster.local'
     AUTH_PUBLIC_API_URL: 'https://identity-server.staging01.devland.is/api'
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-TEST/GOV/5402696029/Skatturinn/ft-v1'
@@ -269,7 +274,7 @@ api:
     NODE_OPTIONS: '--max-old-space-size=2000'
     PAYMENT_SCHEDULE_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10021/FJS-Public'
     SEND_FROM_EMAIL: 'development@island.is'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'delegation-api'
     SERVICE_DOCUMENTS_BASEPATH: 'http://web-services-documents.services-documents.svc.cluster.local'
     SERVICE_USER_PROFILE_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
     SYSLUMENN_TIMEOUT: '40000'
@@ -347,6 +352,7 @@ api:
   namespace: 'islandis'
   podSecurityContext:
     fsGroup: 65534
+  pvcs: []
   replicaCount:
     default: 10
     max: 50
@@ -456,7 +462,7 @@ application-system-api:
     NOVA_USERNAME: 'IslandIs_User_Development'
     PAYMENT_SCHEDULE_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10021/FJS-Public'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'delegation-api'
     SERVICE_DOCUMENTS_BASEPATH: 'http://web-services-documents.services-documents.svc.cluster.local'
     XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
@@ -533,12 +539,13 @@ application-system-api:
       DB_NAME: 'application_system_api'
       DB_REPLICAS_HOST: 'postgres-applications.internal'
       DB_USER: 'application_system_api'
-      SERVERSIDE_FEATURES_ON: ''
+      SERVERSIDE_FEATURES_ON: 'delegation-api'
     secrets:
       DB_PASS: '/k8s/application-system/api/DB_PASSWORD'
   namespace: 'application-system'
   podSecurityContext:
     fsGroup: 65534
+  pvcs: []
   replicaCount:
     default: 10
     max: 60
@@ -614,7 +621,7 @@ application-system-api-worker:
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=208'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'delegation-api'
     XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
     XROAD_CHARGE_FJS_V2_PATH: 'IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2'
@@ -647,6 +654,7 @@ application-system-api-worker:
   namespace: 'application-system'
   podSecurityContext:
     fsGroup: 65534
+  pvcs: []
   replicaCount:
     default: 2
     max: 3
@@ -684,7 +692,7 @@ application-system-form:
   env:
     BASEPATH: '/umsoknir'
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'delegation-api'
     SI_PUBLIC_ENVIRONMENT: 'staging'
     SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
   grantNamespaces:
@@ -722,6 +730,7 @@ application-system-form:
           paths:
             - '/umsoknir'
   namespace: 'application-system'
+  pvcs: []
   replicaCount:
     default: 2
     max: 3
@@ -746,7 +755,7 @@ contentful-translation-extension:
   enabled: true
   env:
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'delegation-api'
   grantNamespaces:
     - 'nginx-ingress-external'
   grantNamespacesEnabled: true
@@ -779,6 +788,7 @@ contentful-translation-extension:
           paths:
             - '/'
   namespace: 'contentful-translation-extension'
+  pvcs: []
   replicaCount:
     default: 2
     max: 3
@@ -801,7 +811,7 @@ download-service:
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/download-service'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=464'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'delegation-api'
     XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
     XROAD_CLIENT_ID: 'IS-TEST/GOV/5501692829/island-is-client'
@@ -842,6 +852,7 @@ download-service:
           paths:
             - '/download'
   namespace: 'download-service'
+  pvcs: []
   replicaCount:
     default: 2
     max: 3
@@ -866,6 +877,7 @@ download-service:
 endorsement-system-api:
   args:
     - '--tls-min-v1.0'
+    - '--no-experimental-fetch'
     - 'main.js'
   command:
     - 'node'
@@ -880,7 +892,7 @@ endorsement-system-api:
     EMAIL_REGION: 'eu-west-1'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'delegation-api'
   grantNamespaces:
     - 'islandis'
     - 'application-system'
@@ -924,12 +936,13 @@ endorsement-system-api:
       DB_NAME: 'services_endorsements_api'
       DB_REPLICAS_HOST: 'postgres-applications.internal'
       DB_USER: 'services_endorsements_api'
-      SERVERSIDE_FEATURES_ON: ''
+      SERVERSIDE_FEATURES_ON: 'delegation-api'
     secrets:
       DB_PASS: '/k8s/services-endorsements-api/DB_PASSWORD'
   namespace: 'endorsement-system'
   podSecurityContext:
     fsGroup: 65534
+  pvcs: []
   replicaCount:
     default: 2
     max: 3
@@ -976,7 +989,7 @@ icelandic-names-registry-backend:
     DB_USER: 'icelandic_names_registry_backend'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'delegation-api'
   grantNamespaces:
     - 'islandis'
   grantNamespacesEnabled: true
@@ -1032,10 +1045,11 @@ icelandic-names-registry-backend:
       DB_NAME: 'icelandic_names_registry_backend'
       DB_REPLICAS_HOST: 'postgres-applications.internal'
       DB_USER: 'icelandic_names_registry_backend'
-      SERVERSIDE_FEATURES_ON: ''
+      SERVERSIDE_FEATURES_ON: 'delegation-api'
     secrets:
       DB_PASS: '/k8s/icelandic-names-registry-backend/DB_PASSWORD'
   namespace: 'icelandic-names-registry'
+  pvcs: []
   replicaCount:
     default: 2
     max: 3
@@ -1058,7 +1072,7 @@ island-ui-storybook:
   enabled: true
   env:
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'delegation-api'
   grantNamespaces:
     - 'nginx-ingress-external'
   grantNamespacesEnabled: true
@@ -1091,6 +1105,7 @@ island-ui-storybook:
           paths:
             - '/'
   namespace: 'storybook'
+  pvcs: []
   replicaCount:
     default: 2
     max: 3
@@ -1135,7 +1150,7 @@ search-indexer-service:
     ELASTIC_INDEX: 'island-is'
     ELASTIC_NODE: 'https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com'
     NODE_OPTIONS: '--max-old-space-size=2000'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'delegation-api'
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
@@ -1214,12 +1229,13 @@ search-indexer-service:
       ELASTIC_INDEX: 'island-is'
       ELASTIC_NODE: 'https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com'
       S3_BUCKET: 'staging-es-custom-packages'
-      SERVERSIDE_FEATURES_ON: ''
+      SERVERSIDE_FEATURES_ON: 'delegation-api'
     secrets:
       CONTENTFUL_ACCESS_TOKEN: '/k8s/search-indexer/CONTENTFUL_ACCESS_TOKEN'
   namespace: 'search-indexer'
   podSecurityContext:
     fsGroup: 65534
+  pvcs: []
   replicaCount:
     default: 1
     max: 1
@@ -1248,7 +1264,7 @@ service-portal:
   env:
     BASEPATH: '/minarsidur'
     NODE_OPTIONS: '--max-old-space-size=464'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'delegation-api'
     SI_PUBLIC_ENVIRONMENT: 'staging'
     SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
   grantNamespaces:
@@ -1288,6 +1304,7 @@ service-portal:
           paths:
             - '/minarsidur'
   namespace: 'service-portal'
+  pvcs: []
   replicaCount:
     default: 5
     max: 30
@@ -1317,7 +1334,7 @@ service-portal-api:
     EMAIL_REGION: 'eu-west-1'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=976'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'delegation-api'
     SERVICE_PORTAL_BASE_URL: 'https://beta.staging01.devland.is/minarsidur'
   grantNamespaces:
     - 'nginx-ingress-internal'
@@ -1371,12 +1388,13 @@ service-portal-api:
       DB_NAME: 'service_portal_api'
       DB_REPLICAS_HOST: 'postgres-applications.internal'
       DB_USER: 'service_portal_api'
-      SERVERSIDE_FEATURES_ON: ''
+      SERVERSIDE_FEATURES_ON: 'delegation-api'
     secrets:
       DB_PASS: '/k8s/service-portal/api/DB_PASSWORD'
   namespace: 'service-portal'
   podSecurityContext:
     fsGroup: 65534
+  pvcs: []
   replicaCount:
     default: 2
     max: 30
@@ -1415,7 +1433,7 @@ services-documents:
     DB_USER: 'services_documents'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'delegation-api'
   grantNamespaces:
     - 'islandis'
     - 'application-system'
@@ -1458,10 +1476,11 @@ services-documents:
       DB_NAME: 'services_documents'
       DB_REPLICAS_HOST: 'postgres-applications.internal'
       DB_USER: 'services_documents'
-      SERVERSIDE_FEATURES_ON: ''
+      SERVERSIDE_FEATURES_ON: 'delegation-api'
     secrets:
       DB_PASS: '/k8s/services-documents/DB_PASSWORD'
   namespace: 'services-documents'
+  pvcs: []
   replicaCount:
     default: 2
     max: 3
@@ -1485,7 +1504,7 @@ skilavottord-web:
     API_URL: 'http://web-skilavottord-ws'
     ENVIRONMENT: 'staging'
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'delegation-api'
   grantNamespaces:
     - 'nginx-ingress-external'
   grantNamespacesEnabled: true
@@ -1519,6 +1538,7 @@ skilavottord-web:
           paths:
             - '/app/skilavottord/'
   namespace: 'skilavottord'
+  pvcs: []
   replicaCount:
     default: 2
     max: 3
@@ -1550,7 +1570,7 @@ skilavottord-ws:
     DB_USER: 'skilavottord'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'delegation-api'
   grantNamespaces:
     - 'nginx-ingress-external'
   grantNamespacesEnabled: true
@@ -1600,10 +1620,11 @@ skilavottord-ws:
       DB_NAME: 'skilavottord'
       DB_REPLICAS_HOST: 'postgres-applications.internal'
       DB_USER: 'skilavottord'
-      SERVERSIDE_FEATURES_ON: ''
+      SERVERSIDE_FEATURES_ON: 'delegation-api'
     secrets:
       DB_PASS: '/k8s/skilavottord/DB_PASSWORD'
   namespace: 'skilavottord'
+  pvcs: []
   replicaCount:
     default: 2
     max: 3
@@ -1633,6 +1654,7 @@ skilavottord-ws:
     privileged: false
 user-notification:
   args:
+    - '--no-experimental-fetch'
     - 'main.js'
   command:
     - 'node'
@@ -1641,7 +1663,7 @@ user-notification:
     DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
     MAIN_QUEUE_NAME: 'user-notification'
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'delegation-api'
   grantNamespaces:
     - 'nginx-ingress-internal'
   grantNamespacesEnabled: true
@@ -1677,6 +1699,7 @@ user-notification:
   namespace: 'user-notification'
   podSecurityContext:
     fsGroup: 65534
+  pvcs: []
   replicaCount:
     default: 2
     max: 3
@@ -1701,6 +1724,7 @@ user-notification:
     name: 'user-notification'
 user-notification-worker:
   args:
+    - '--no-experimental-fetch'
     - 'main.js'
     - '--job=worker'
   command:
@@ -1712,7 +1736,7 @@ user-notification-worker:
     IDENTITY_SERVER_PATH: 'https://identity-server.staging01.devland.is'
     MAIN_QUEUE_NAME: 'user-notification'
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'delegation-api'
     SERVICE_USER_PROFILE_BASEPATH: 'http://web-service-portal-api.service-portal.svc.cluster.local'
     USER_NOTIFICATION_APP_PROTOCOL: 'is.island.app.staging'
   grantNamespaces:
@@ -1740,6 +1764,7 @@ user-notification-worker:
   namespace: 'user-notification'
   podSecurityContext:
     fsGroup: 65534
+  pvcs: []
   replicaCount:
     default: 2
     max: 3
@@ -1775,7 +1800,7 @@ web:
     DISABLE_SYSLUMENN_PAGE: 'false'
     ENVIRONMENT: 'staging'
     NODE_OPTIONS: '--max-old-space-size=464'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'delegation-api'
     TRACKING_DOMAIN: 'beta.staging01.devland.is'
   grantNamespaces:
     - 'nginx-ingress-external'
@@ -1812,6 +1837,7 @@ web:
           paths:
             - '/'
   namespace: 'islandis'
+  pvcs: []
   replicaCount:
     default: 10
     max: 50
@@ -1833,6 +1859,7 @@ web:
     privileged: false
 xroad-collector:
   args:
+    - '--no-experimental-fetch'
     - 'main.js'
   command:
     - 'node'
@@ -1841,7 +1868,7 @@ xroad-collector:
     ELASTIC_NODE: 'https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com'
     NODE_OPTIONS: '--max-old-space-size=208'
     NODE_TLS_REJECT_UNAUTHORIZED: '0'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'delegation-api'
     XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
     XROAD_CLIENT_ID: 'IS-TEST/GOV/5501692829/island-is-client'
@@ -1871,6 +1898,7 @@ xroad-collector:
   namespace: 'xroad-collector'
   podSecurityContext:
     fsGroup: 65534
+  pvcs: []
   replicaCount:
     default: 2
     max: 3

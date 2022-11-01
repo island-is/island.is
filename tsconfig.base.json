@@ -1,6 +1,7 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "useUnknownInCatchVariables": false,
     "rootDir": ".",
     "sourceMap": true,
     "declaration": false,
@@ -11,7 +12,7 @@
     "target": "es2015",
     "module": "esnext",
     "typeRoots": ["node_modules/@types"],
-    "lib": ["es2017", "dom"],
+    "lib": ["es2019", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "allowSyntheticDefaultImports": true,
@@ -227,6 +228,9 @@
       "@island.is/application/templates/driving-school-confirmation": [
         "libs/application/templates/driving-school-confirmation/src/index.ts"
       ],
+      "@island.is/application/templates/estate": [
+        "libs/application/templates/estate/src/index.ts"
+      ],
       "@island.is/application/templates/example-payment": [
         "libs/application/templates/example-payment/src/index.ts"
       ],
@@ -342,8 +346,11 @@
         "libs/clients/adr-and-machine-license/src/index.ts"
       ],
       "@island.is/clients/assets": ["libs/clients/assets/src/index.ts"],
-      "@island.is/clients/auth-public-api": [
-        "libs/clients/auth-public-api/src/index.ts"
+      "@island.is/clients/auth/delegation-api": [
+        "libs/clients/auth/delegation-api/src/index.ts"
+      ],
+      "@island.is/clients/auth/public-api": [
+        "libs/clients/auth/public-api/src/index.ts"
       ],
       "@island.is/clients/charge-fjs-v2": [
         "libs/clients/charge-fjs-v2/src/index.ts"
@@ -467,7 +474,6 @@
       "@island.is/financial-aid/shared/lib": [
         "libs/financial-aid/shared/src/lib/index.ts"
       ],
-      "@island.is/health-insurance": ["libs/health-insurance/src/index.ts"],
       "@island.is/icelandic-names-registry-types": [
         "libs/icelandic-names-registry/types/src/index.ts"
       ],
@@ -517,6 +523,7 @@
       "@island.is/nest/audit": ["libs/nest/audit/src/index.ts"],
       "@island.is/nest/aws": ["libs/nest/aws/src/index.ts"],
       "@island.is/nest/config": ["libs/nest/config/src/index.ts"],
+      "@island.is/nest/dataloader": ["libs/nest/dataloader/src/index.ts"],
       "@island.is/nest/feature-flags": ["libs/nest/feature-flags/src/index.ts"],
       "@island.is/nest/pagination": ["libs/nest/pagination/src/index.ts"],
       "@island.is/nest/problem": ["libs/nest/problem/src/index.ts"],
@@ -603,6 +610,9 @@
       ],
       "@island.is/service-portal/vehicles": [
         "libs/service-portal/vehicles/src/index.ts"
+      ],
+      "@island.is/services/auth/testing": [
+        "libs/services/auth/testing/src/index.ts"
       ],
       "@island.is/shared/components": ["libs/shared/components/src/index.ts"],
       "@island.is/shared/connected": ["libs/shared/connected/src/index.ts"],
