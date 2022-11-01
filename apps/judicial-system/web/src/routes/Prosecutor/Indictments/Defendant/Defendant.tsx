@@ -28,7 +28,6 @@ import {
   CaseType,
   Defendant as TDefendant,
   Gender,
-  UpdateDefendant,
 } from '@island.is/judicial-system/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'

@@ -1,14 +1,14 @@
+import { useCallback } from 'react'
 import { useMutation } from '@apollo/client'
 import { useIntl } from 'react-intl'
 
 import { toast } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
-import { UpdateDefendant } from '@island.is/judicial-system/types'
+import { UpdateDefendantInput } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { CreateDefendantMutation } from './createDefendantGql'
 import { DeleteDefendantMutation } from './deleteDefendantGql'
 import { UpdateDefendantMutation } from './updateDefendantGql'
-import { useCallback } from 'react'
 
 interface CreateDefendantMutationResponse {
   createDefendant: {
@@ -43,7 +43,7 @@ const useDefendants = () => {
   ] = useMutation<UpdateDefendantMutationResponse>(UpdateDefendantMutation)
 
   const createDefendant = useCallback(
-    async (caseId: string, defendant: UpdateDefendant) => {
+    async (caseId: string, defendant: UpdateDefendantInput) => {
       try {
         if (!isCreatingDefendant) {
           const { data } = await createDefendantMutation({
@@ -91,17 +91,11 @@ const useDefendants = () => {
   )
 
   const updateDefendant = useCallback(
-    async (
-      caseId: string,
-      defendantId: string,
-      updateDefendant: UpdateDefendant,
-    ) => {
+    async (updateDefendant: UpdateDefendantInput) => {
       try {
         const { data } = await updateDefendantMutation({
           variables: {
             input: {
-              caseId,
-              defendantId,
               ...updateDefendant,
             },
           },

@@ -9,12 +9,13 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { core } from '@island.is/judicial-system-web/messages'
-
-import { prosecutorAndDefender as m } from './ProsecutorAndDefender.strings'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { UpdateCaseInput } from '@island.is/judicial-system-web/src/graphql/schema'
+import { UpdateDefendantInput } from '@island.is/judicial-system-web/src/graphql/schema'
 import { Defendant, UpdateCase } from '@island.is/judicial-system/types'
+import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
+
+import { prosecutorAndDefender as m } from './ProsecutorAndDefender.strings'
 
 interface Props {
   defendant: Defendant
@@ -25,31 +26,26 @@ const SelectDefender: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase } = useContext(FormContext)
   const { setAndSendToServer } = useCase()
   const { formatMessage } = useIntl()
+  const { createDefendant, updateDefendant, deleteDefendant } = useDefendants()
 
   const [defenderNotFound, setDefenderNotFound] = useState<boolean>(false)
   const gender = defendant.gender || 'NONE'
 
   const onRefuseHavingDefender = useCallback(
-    (defendant) => {
+    (defendant: Defendant) => {
       // TODO: getting around typescript to be able to unset defender
       // should updatee setAndSendToServer to accept UpdateCaseInput
-      const updateCaseInput: Omit<UpdateCaseInput, 'id'> = {
+      const updateDefendantInput: UpdateDefendantInput = {
+        ...defendant,
+        defendantId: defendant.id,
         defenderNationalId: null,
         defenderName: null,
         defenderEmail: '',
         defenderPhoneNumber: '',
         defendantWaivesRightToCounsel: true,
       }
-      setAndSendToServer(
-        [
-          {
-            ...(updateCaseInput as UpdateCase),
-            force: true,
-          },
-        ],
-        workingCase,
-        setWorkingCase,
-      )
+
+      updateDefendant(updateDefendantInput)
     },
     [workingCase, setWorkingCase, setAndSendToServer],
   )

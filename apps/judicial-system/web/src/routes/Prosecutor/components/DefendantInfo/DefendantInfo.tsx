@@ -8,7 +8,6 @@ import {
   Defendant,
   Gender,
   isIndictmentCase,
-  UpdateDefendant,
 } from '@island.is/judicial-system/types'
 import { BlueBox } from '@island.is/judicial-system-web/src/components'
 import {
@@ -31,6 +30,7 @@ import {
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import useNationalRegistry from '@island.is/judicial-system-web/src/utils/hooks/useNationalRegistry'
 import { isBusiness } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import { UpdateDefendantInput } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import * as strings from './DefendantInfo.strings'
 
@@ -39,9 +39,12 @@ interface Props {
   workingCase: Case
   onChange: (
     defendantId: string,
-    updatedDefendant: UpdateDefendant,
+    updatedDefendant: UpdateDefendantInput,
   ) => Promise<void>
-  updateDefendantState: (defendantId: string, update: UpdateDefendant) => void
+  updateDefendantState: (
+    defendantId: string,
+    update: UpdateDefendantInput,
+  ) => void
   onDelete?: (defendant: Defendant) => Promise<void>
 }
 
@@ -110,6 +113,8 @@ const DefendantInfo: React.FC<Props> = (props) => {
       setIsGenderAndCitizenshipDisabled(false)
 
       onChange(defendant.id, {
+        defendantId: defendant.id,
+        caseId: defendant.caseId,
         name: personData.items[0].name,
         gender: mapNationalRegistryGenderToGender(personData.items[0].gender),
         address: personData.items[0].permanent_address.street?.nominative,
@@ -130,6 +135,8 @@ const DefendantInfo: React.FC<Props> = (props) => {
       setIsGenderAndCitizenshipDisabled(true)
 
       onChange(defendant.id, {
+        defendantId: defendant.id,
+        caseId: defendant.caseId,
         name: businessData.items[0].full_name,
         address: businessData.items[0].legal_address.street?.nominative,
         gender: undefined,
@@ -168,11 +175,15 @@ const DefendantInfo: React.FC<Props> = (props) => {
             setNationalIdErrorMessage('')
 
             updateDefendantState(defendant.id, {
+              defendantId: defendant.id,
+              caseId: defendant.caseId,
               noNationalId: !defendant.noNationalId,
               nationalId: undefined,
             })
 
             onChange(defendant.id, {
+              defendantId: defendant.id,
+              caseId: defendant.caseId,
               noNationalId: !defendant.noNationalId,
               nationalId: undefined,
             })
@@ -199,6 +210,8 @@ const DefendantInfo: React.FC<Props> = (props) => {
             )
 
             updateDefendantState(defendant.id, {
+              defendantId: defendant.id,
+              caseId: defendant.caseId,
               nationalId: evt.target.value,
             })
           }}
@@ -211,7 +224,11 @@ const DefendantInfo: React.FC<Props> = (props) => {
               setNationalIdErrorMessage,
             )
 
-            onChange(defendant.id, { nationalId: evt.target.value })
+            onChange(defendant.id, {
+              defendantId: defendant.id,
+              caseId: defendant.caseId,
+              nationalId: evt.target.value,
+            })
           }}
         >
           <Input
@@ -256,6 +273,8 @@ const DefendantInfo: React.FC<Props> = (props) => {
             )
 
             updateDefendantState(defendant.id, {
+              defendantId: defendant.id,
+              caseId: defendant.caseId,
               name: evt.target.value,
             })
           }}
@@ -266,7 +285,11 @@ const DefendantInfo: React.FC<Props> = (props) => {
               setAccusedNameErrorMessage,
             )
 
-            onChange(defendant.id, { name: evt.target.value.trim() })
+            onChange(defendant.id, {
+              defendantId: defendant.id,
+              caseId: defendant.caseId,
+              name: evt.target.value.trim(),
+            })
           }}
           required
         />
@@ -293,6 +316,8 @@ const DefendantInfo: React.FC<Props> = (props) => {
             )
 
             updateDefendantState(defendant.id, {
+              defendantId: defendant.id,
+              caseId: defendant.caseId,
               address: evt.target.value,
             })
           }}
@@ -303,7 +328,11 @@ const DefendantInfo: React.FC<Props> = (props) => {
               setAccusedAddressErrorMessage,
             )
 
-            onChange(defendant.id, { address: evt.target.value.trim() })
+            onChange(defendant.id, {
+              defendantId: defendant.id,
+              caseId: defendant.caseId,
+              address: evt.target.value.trim(),
+            })
           }}
           required
         />
@@ -323,6 +352,8 @@ const DefendantInfo: React.FC<Props> = (props) => {
               }
               onChange={(selectedOption: ValueType<ReactSelectOption>) =>
                 onChange(defendant.id, {
+                  defendantId: defendant.id,
+                  caseId: defendant.caseId,
                   gender: (selectedOption as ReactSelectOption).value as Gender,
                 })
               }
@@ -339,11 +370,17 @@ const DefendantInfo: React.FC<Props> = (props) => {
               value={defendant.citizenship ?? ''}
               onChange={(evt) => {
                 updateDefendantState(defendant.id, {
+                  defendantId: defendant.id,
+                  caseId: defendant.caseId,
                   citizenship: evt.target.value,
                 })
               }}
               onBlur={(evt) => {
-                onChange(defendant.id, { citizenship: evt.target.value.trim() })
+                onChange(defendant.id, {
+                  defendantId: defendant.id,
+                  caseId: defendant.caseId,
+                  citizenship: evt.target.value.trim(),
+                })
               }}
               disabled={isGenderAndCitizenshipDisabled}
             />

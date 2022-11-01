@@ -40,6 +40,16 @@ module.exports = {
           },
           { transaction: t },
         ),
+        queryInterface.addColumn(
+          'defendant',
+          'defendant_waives_right_to_counsel',
+          {
+            type: Sequelize.BOOLEAN,
+            defaultValue: false,
+            allowNull: false,
+          },
+          { transaction: t },
+        ),
       ]),
     )
   },
@@ -59,6 +69,13 @@ module.exports = {
         queryInterface.removeColumn('defendant', 'defender_phone_number', {
           transaction: t,
         }),
+        queryInterface.removeColumn(
+          'defendant',
+          'defendant_waives_right_to_counsel',
+          {
+            transaction: t,
+          },
+        ),
       ]),
     )
   },
