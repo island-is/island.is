@@ -34,6 +34,7 @@ import { RegulationsModule } from '@island.is/api/domains/regulations'
 import { FinanceModule } from '@island.is/api/domains/finance'
 import { VehiclesModule } from '@island.is/api/domains/vehicles'
 import { AssetsModule } from '@island.is/api/domains/assets'
+import { AirDiscountSchemeModule } from '@island.is/api/domains/air-discount-scheme'
 import { EndorsementSystemModule } from '@island.is/api/domains/endorsement-system'
 import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
 import { ApiDomainsPaymentModule } from '@island.is/api/domains/payment'
@@ -68,6 +69,7 @@ import { AdrAndMachineLicenseClientConfig } from '@island.is/clients/adr-and-mac
 import { FirearmLicenseClientConfig } from '@island.is/clients/firearm-license'
 import { PassportsClientConfig } from '@island.is/clients/passports'
 import { FileStorageConfig } from '@island.is/file-storage'
+import { AirDiscountSchemeClientConfig } from '@island.is/clients/air-discount-scheme'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -210,6 +212,7 @@ const autoSchemaFile = environment.production
     FinancialStatementsInaoModule,
     VehiclesModule,
     AssetsModule,
+    AirDiscountSchemeModule,
     NationalRegistryXRoadModule,
     ApiDomainsPaymentModule.register({
       xRoadProviderId: environment.paymentDomain.xRoadProviderId!,
@@ -277,6 +280,7 @@ const autoSchemaFile = environment.production
       load: [
         AdrAndMachineLicenseClientConfig,
         AssetsClientConfig,
+        AirDiscountSchemeClientConfig,
         FirearmLicenseClientConfig,
         VehiclesClientConfig,
         AuthPublicApiClientConfig,

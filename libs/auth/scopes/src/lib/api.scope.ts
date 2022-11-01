@@ -1,5 +1,6 @@
 export enum ApiScope {
   assets = '@island.is/assets',
+  airDiscountScheme = '@island.is/air-discount-scheme',
   education = '@island.is/education',
   educationLicense = '@island.is/education-license',
   fishingLicense = '@island.is/fishing-license',

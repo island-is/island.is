@@ -59,6 +59,7 @@ if (userMocked) {
       ApiScope.licensesVerify,
       ApiScope.company,
       ApiScope.vehicles,
+      '@vegagerdin.is/air-discount-scheme-scope',
     ],
     post_logout_redirect_uri: `${window.location.origin}`,
     userStorePrefix: 'sp.',
