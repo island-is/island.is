@@ -178,7 +178,7 @@ export class PkPassClient {
     }
 
     try {
-      res = await fetch(`${this.pkpassApiUrl}/getersLicenseAccessToken`, {
+      res = await fetch(`${this.pkpassApiUrl}/getDriversLicenseAccessToken`, {
         headers: {
           apiKey: this.pkpassApiKey,
           secretKey: this.pkpassSecretKey,
