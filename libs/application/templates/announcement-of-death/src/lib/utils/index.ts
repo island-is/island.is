@@ -1,9 +1,12 @@
 import { RelationEnum, Answers } from '../../types'
 import { YES } from '../constants'
 import { Application, StaticText } from '@island.is/application/types'
-import { formatText, getValueViaPath } from '@island.is/application/core'
+import {
+  formatText,
+  getValueViaPath,
+  MessageFormatter,
+} from '@island.is/application/core'
 import { m } from '../messages'
-import { useLocale } from '@island.is/localization'
 
 export const getRelationOptions = (): Record<
   keyof typeof RelationEnum,
@@ -45,8 +48,8 @@ export const hasYes = (answer: any) => {
 
 export const determineMessageFromApplicationAnswers = (
   application: Application,
+  formatMessage: MessageFormatter,
 ): StaticText => {
-  const { formatMessage } = useLocale()
   const name = getValueViaPath(
     application.externalData,
     'syslumennOnEntry.data.estate.nameOfDeceased',
