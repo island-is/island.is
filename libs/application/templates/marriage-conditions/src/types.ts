@@ -30,6 +30,7 @@ export type PersonalInfo = {
 }
 
 export type Ceremony = {
+  hasDate: string
   date: string
   ceremonyPlace: string
   office: string

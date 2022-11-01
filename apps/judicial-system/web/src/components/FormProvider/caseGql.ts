@@ -18,6 +18,10 @@ const CaseQuery = gql`
         gender
         address
         citizenship
+        defenderName
+        defenderNationalId
+        defenderEmail
+        defenderPhoneNumber
       }
       defenderName
       defenderNationalId
