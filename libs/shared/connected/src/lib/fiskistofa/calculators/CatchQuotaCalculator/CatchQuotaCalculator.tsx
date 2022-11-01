@@ -18,6 +18,7 @@ import {
   sevenFractionDigitNumberFormatter,
   TimePeriodOption,
   numberFormatter,
+  isNumberBelowZero,
 } from '../utils'
 import { Context, machine, Event as EventType } from './machine'
 
@@ -49,7 +50,7 @@ type ChangeErrors = Record<
 type QuotaChanges = Record<
   number,
   {
-    id: number
+    id?: number
     nextYearFromQuota?: string | undefined
     nextYearQuota?: string | undefined
     quotaShare?: string | undefined
@@ -113,16 +114,12 @@ export const CatchQuotaCalculator = ({
     lastChangeCategoryId: -1,
     lastChangeFieldName: '',
     lastChangeFieldValue: '',
-    timerId: null as Timeout | null,
+    timerId: null,
   })
   const [quotaChange, setQuotaChange] = useState<QuotaChanges>({})
   const [quotaChangeErrors, setQuotaChangeErrors] = useState<QuotaChangeErrors>(
     {},
   )
-
-  useEffect(() => {
-    reset()
-  }, [shipNumber, selectedTimePeriod.value])
 
   const updateQuota = (
     categoryId: number,
@@ -186,6 +183,7 @@ export const CatchQuotaCalculator = ({
   }
 
   const reset = () => {
+    if (typeof shipNumber !== 'number') return
     send({
       type: 'GET_DATA',
       variables: {
@@ -201,14 +199,20 @@ export const CatchQuotaCalculator = ({
     setQuotaChangeErrors({})
   }
 
+  useEffect(() => {
+    reset()
+  }, [shipNumber, selectedTimePeriod.value])
+
   const validateChanges = () => {
     let valid = true
-    const errors = {}
+    const errors: ChangeErrors = {}
     for (const change of Object.values(changes)) {
       // The catchChange needs to be numeric
       if (isNaN(Number(change?.catchChange)) && change?.catchChange) {
         valid = false
-        errors[change?.id] = { ...errors[change?.id], catchChange: true }
+        if (change?.id) {
+          errors[change.id] = { ...errors[change.id], catchChange: true }
+        }
       }
 
       // The catchQuotaChange needs to be numeric
@@ -237,9 +241,9 @@ export const CatchQuotaCalculator = ({
         const catchValue = categoryWasAddedByUser ? 0 : category.catch
         const catchQuotaValue = categoryWasAddedByUser ? 0 : category.catchQuota
 
-        const catchDifference = catchValue + Number(change.catchChange)
+        const catchDifference = (catchValue ?? 0) + Number(change.catchChange)
         const catchQuotaDifference =
-          catchQuotaValue + Number(change.catchQuotaChange)
+          (catchQuotaValue ?? 0) + Number(change.catchQuotaChange)
 
         if (catchDifference < 0) {
           valid = false
@@ -259,7 +263,7 @@ export const CatchQuotaCalculator = ({
   }
 
   const calculate = () => {
-    if (!validateChanges()) {
+    if (!validateChanges() || typeof shipNumber !== 'number') {
       return
     }
     prevChangesRef.current = changes
@@ -284,19 +288,20 @@ export const CatchQuotaCalculator = ({
     if (state.context.quotaData) {
       setQuotaChange(
         state.context.quotaData.reduce((acc, val) => {
-          const formattedVal = {}
-          for (const key of Object.keys(val)) {
+          const formattedVal: Partial<QuotaChanges[number]> = {}
+          for (const k of Object.keys(val)) {
+            const key = k as keyof typeof val
             if (key === 'quotaShare') {
               formattedVal[key] = sevenFractionDigitNumberFormatter.format(
-                val[key],
+                val[key] as number,
               )
             } else {
-              formattedVal[key] = numberFormatter.format(val[key])
+              formattedVal[key] = numberFormatter.format(val[key] as number)
             }
           }
-          acc[val.id] = { ...formattedVal }
+          if (val.id) acc[val.id] = { ...formattedVal }
           return acc
-        }, {}),
+        }, {} as QuotaChanges),
       )
     }
   }, [state.context.quotaData])
@@ -308,7 +313,7 @@ export const CatchQuotaCalculator = ({
 
   const getFieldDifference = (
     category: ExtendedCatchQuotaCategory,
-    fieldName: string,
+    fieldName: keyof ExtendedCatchQuotaCategory,
   ) => {
     const current = state.context.data?.catchQuotaCategories?.find(
       (c) => c.id === category.id,
@@ -361,15 +366,15 @@ export const CatchQuotaCalculator = ({
               label={n('addType', 'Bæta við tegund')}
               name="tegund-fiskur-select"
               options={quotaTypes}
-              onChange={(selectedOption: {
-                value: number
-                label: string
-                totalCatchQuota: number
-                codEquivalent: number
-              }) => {
+              onChange={(selectedOption) => {
                 send({
                   type: 'ADD_CATEGORY',
-                  category: selectedOption,
+                  category: selectedOption as {
+                    value: number
+                    label: string
+                    totalCatchQuota: number
+                    codEquivalent: number
+                  },
                 })
               }}
             />
@@ -445,7 +450,7 @@ export const CatchQuotaCalculator = ({
         )}
       </Box>
 
-      {state.context.data?.catchQuotaCategories?.length > 0 && (
+      {state.context.data?.catchQuotaCategories?.length && (
         <Box marginTop={3} className={styles.tableBox}>
           <table className={styles.tableContainer}>
             <thead className={styles.tableHead}>
@@ -473,10 +478,10 @@ export const CatchQuotaCalculator = ({
                   <td
                     key={category.name}
                     className={cn({
-                      [styles.redColor]: category.allocation < 0,
+                      [styles.redColor]: isNumberBelowZero(category.allocation),
                     })}
                   >
-                    {numberFormatter.format(category.allocation)}
+                    {numberFormatter.format(category.allocation as number)}
                   </td>
                 ))}
               </tr>
@@ -486,10 +491,14 @@ export const CatchQuotaCalculator = ({
                   <td
                     key={category.name}
                     className={cn({
-                      [styles.redColor]: category.specialAlloction < 0,
+                      [styles.redColor]: isNumberBelowZero(
+                        category.specialAlloction,
+                      ),
                     })}
                   >
-                    {numberFormatter.format(category.specialAlloction)}
+                    {numberFormatter.format(
+                      category.specialAlloction as number,
+                    )}
                   </td>
                 ))}
               </tr>
@@ -499,10 +508,12 @@ export const CatchQuotaCalculator = ({
                   <td
                     key={category.name}
                     className={cn({
-                      [styles.redColor]: category.betweenYears < 0,
+                      [styles.redColor]: isNumberBelowZero(
+                        category.betweenYears,
+                      ),
                     })}
                   >
-                    {numberFormatter.format(category.betweenYears)}
+                    {numberFormatter.format(category.betweenYears as number)}
                   </td>
                 ))}
               </tr>
@@ -512,10 +523,12 @@ export const CatchQuotaCalculator = ({
                   <td
                     key={category.name}
                     className={cn({
-                      [styles.redColor]: category.betweenShips < 0,
+                      [styles.redColor]: isNumberBelowZero(
+                        category.betweenShips,
+                      ),
                     })}
                   >
-                    {numberFormatter.format(category.betweenShips)}
+                    {numberFormatter.format(category.betweenShips as number)}
                   </td>
                 ))}
               </tr>
@@ -533,11 +546,16 @@ export const CatchQuotaCalculator = ({
                         }}
                         className={cn({
                           [styles.error]:
-                            changeErrors?.[category.id]?.catchQuotaChange,
+                            changeErrors?.[category.id as number]
+                              ?.catchQuotaChange,
                         })}
-                        value={changes?.[category.id]?.catchQuotaChange ?? ''}
+                        value={
+                          changes?.[category.id as number]?.catchQuotaChange ??
+                          ''
+                        }
                         onChange={(ev) => {
                           setChanges((prevChanges) => {
+                            if (!category.id) return prevChanges
                             return {
                               ...prevChanges,
                               [category.id]: {
@@ -560,10 +578,10 @@ export const CatchQuotaCalculator = ({
                   <td
                     key={category.name}
                     className={cn({
-                      [styles.redColor]: category.catchQuota < 0,
+                      [styles.redColor]: isNumberBelowZero(category.catchQuota),
                     })}
                   >
-                    {numberFormatter.format(category.catchQuota)}
+                    {numberFormatter.format(category.catchQuota as number)}
                   </td>
                 ))}
               </tr>
@@ -573,10 +591,10 @@ export const CatchQuotaCalculator = ({
                   <td
                     key={category.name}
                     className={cn({
-                      [styles.redColor]: category.catch < 0,
+                      [styles.redColor]: isNumberBelowZero(category.catch),
                     })}
                   >
-                    {numberFormatter.format(category.catch)}
+                    {numberFormatter.format(category.catch as number)}
                   </td>
                 ))}
               </tr>
@@ -596,11 +614,15 @@ export const CatchQuotaCalculator = ({
                           }}
                           className={cn({
                             [styles.error]:
-                              changeErrors?.[category.id]?.catchChange,
+                              changeErrors?.[category.id as number]
+                                ?.catchChange,
                           })}
-                          value={changes?.[category.id]?.catchChange ?? ''}
+                          value={
+                            changes?.[category.id as number]?.catchChange ?? ''
+                          }
                           onChange={(ev) => {
                             setChanges((prevChanges) => {
+                              if (!category.id) return prevChanges
                               return {
                                 ...prevChanges,
                                 [category.id]: {
@@ -624,10 +646,10 @@ export const CatchQuotaCalculator = ({
                   <td
                     key={category.name}
                     className={cn({
-                      [styles.redColor]: category.status < 0,
+                      [styles.redColor]: isNumberBelowZero(category.status),
                     })}
                   >
-                    {numberFormatter.format(category.status)}
+                    {numberFormatter.format(category.status as number)}
                   </td>
                 ))}
               </tr>
@@ -637,10 +659,12 @@ export const CatchQuotaCalculator = ({
                   <td
                     key={category.name}
                     className={cn({
-                      [styles.redColor]: category.displacement < 0,
+                      [styles.redColor]: isNumberBelowZero(
+                        category.displacement,
+                      ),
                     })}
                   >
-                    {numberFormatter.format(category.displacement)}
+                    {numberFormatter.format(category.displacement as number)}
                   </td>
                 ))}
               </tr>
@@ -650,10 +674,10 @@ export const CatchQuotaCalculator = ({
                   <td
                     key={category.name}
                     className={cn({
-                      [styles.redColor]: category.newStatus < 0,
+                      [styles.redColor]: isNumberBelowZero(category.newStatus),
                     })}
                   >
-                    {numberFormatter.format(category.newStatus)}
+                    {numberFormatter.format(category.newStatus as number)}
                   </td>
                 ))}
               </tr>
@@ -663,10 +687,10 @@ export const CatchQuotaCalculator = ({
                   <td
                     key={category.name}
                     className={cn({
-                      [styles.redColor]: category.nextYear < 0,
+                      [styles.redColor]: isNumberBelowZero(category.nextYear),
                     })}
                   >
-                    {numberFormatter.format(category.nextYear)}
+                    {numberFormatter.format(category.nextYear as number)}
                   </td>
                 ))}
               </tr>
@@ -677,7 +701,7 @@ export const CatchQuotaCalculator = ({
                     key={category.name}
                     className={cn({ [styles.redColor]: category.excessCatch })}
                   >
-                    {numberFormatter.format(category.excessCatch)}
+                    {numberFormatter.format(category.excessCatch as number)}
                   </td>
                 ))}
               </tr>
@@ -687,10 +711,10 @@ export const CatchQuotaCalculator = ({
                   <td
                     key={category.name}
                     className={cn({
-                      [styles.redColor]: category.unused < 0,
+                      [styles.redColor]: isNumberBelowZero(category.unused),
                     })}
                   >
-                    {numberFormatter.format(category.unused)}
+                    {numberFormatter.format(category.unused as number)}
                   </td>
                 ))}
               </tr>
@@ -702,11 +726,13 @@ export const CatchQuotaCalculator = ({
                 {state.context.quotaData.map((category) => (
                   <td
                     className={cn(styles.visualSeparationLine, {
-                      [styles.redColor]: category.totalCatchQuota < 0,
+                      [styles.redColor]: isNumberBelowZero(
+                        category.totalCatchQuota,
+                      ),
                     })}
                     key={category.id}
                   >
-                    {numberFormatter.format(category.totalCatchQuota)}
+                    {numberFormatter.format(category.totalCatchQuota as number)}
                   </td>
                 ))}
               </tr>

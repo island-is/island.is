@@ -12,7 +12,12 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { FiskistofaCatchQuotaCategory as CatchQuotaCategory } from '@island.is/api/schema'
-import { getYearOptions, YearOption, numberFormatter } from '../utils'
+import {
+  getYearOptions,
+  YearOption,
+  numberFormatter,
+  isNumberBelowZero,
+} from '../utils'
 import { useLocalization } from '../../../../utils'
 import { machine, Context, Event as EventType } from './machine'
 
@@ -64,6 +69,7 @@ export const StraddlingStockCalculator = ({
   const [state, send] = useMachine<Context, EventType>(machine)
 
   const reset = () => {
+    if (!shipNumber) return
     send({
       type: 'GET_DATA',
       variables: {
@@ -83,12 +89,13 @@ export const StraddlingStockCalculator = ({
 
   const validateChanges = () => {
     let valid = true
-    const errors = {}
+    const errors: ChangeErrors = {}
     for (const change of Object.values(changes)) {
       // The catchChange needs to be numeric
       if (isNaN(Number(change?.catchChange)) && change?.catchChange) {
         valid = false
-        errors[change?.id] = { ...errors[change?.id], catchChange: true }
+        if (change.id)
+          errors[change.id] = { ...errors[change.id], catchChange: true }
       }
 
       // The catchQuotaChange needs to be numeric
@@ -117,9 +124,9 @@ export const StraddlingStockCalculator = ({
         const catchValue = categoryWasAddedByUser ? 0 : category.catch
         const catchQuotaValue = categoryWasAddedByUser ? 0 : category.catchQuota
 
-        const catchDifference = catchValue + Number(change.catchChange)
+        const catchDifference = (catchValue ?? 0) + Number(change.catchChange)
         const catchQuotaDifference =
-          catchQuotaValue + Number(change.catchQuotaChange)
+          (catchQuotaValue ?? 0) + Number(change.catchQuotaChange)
 
         if (catchDifference < 0) {
           valid = false
@@ -139,7 +146,7 @@ export const StraddlingStockCalculator = ({
   }
 
   const calculate = () => {
-    if (!validateChanges()) {
+    if (!validateChanges() || !shipNumber) {
       return
     }
     prevChangesRef.current = changes
@@ -218,15 +225,15 @@ export const StraddlingStockCalculator = ({
               label={n('addType', 'Bæta við tegund')}
               name="tegund-fiskur-select"
               options={quotaTypes}
-              onChange={(selectedOption: {
-                value: number
-                label: string
-                codEquivalent: number
-                totalCatchQuota: number
-              }) => {
+              onChange={(selectedOption) => {
                 send({
                   type: 'ADD_CATEGORY',
-                  category: selectedOption,
+                  category: selectedOption as {
+                    value: number
+                    label: string
+                    codEquivalent: number
+                    totalCatchQuota: number
+                  },
                 })
               }}
             />
@@ -303,7 +310,7 @@ export const StraddlingStockCalculator = ({
         )}
       </Box>
 
-      {state.context.data?.catchQuotaCategories?.length > 0 && (
+      {state.context.data?.catchQuotaCategories?.length && (
         <Box marginTop={3} className={styles.tableBox}>
           <table className={styles.tableContainer}>
             <thead className={styles.tableHead}>
@@ -321,7 +328,9 @@ export const StraddlingStockCalculator = ({
                   <td
                     key={category.name}
                     className={cn({
-                      [styles.redColor]: category.codEquivalent < 0,
+                      [styles.redColor]: isNumberBelowZero(
+                        category.codEquivalent,
+                      ),
                     })}
                   >
                     {category.codEquivalent &&
@@ -335,10 +344,10 @@ export const StraddlingStockCalculator = ({
                   <td
                     key={category.name}
                     className={cn({
-                      [styles.redColor]: category.allocation < 0,
+                      [styles.redColor]: isNumberBelowZero(category.allocation),
                     })}
                   >
-                    {numberFormatter.format(category.allocation)}
+                    {numberFormatter.format(category.allocation as number)}
                   </td>
                 ))}
               </tr>
@@ -348,10 +357,14 @@ export const StraddlingStockCalculator = ({
                   <td
                     key={category.name}
                     className={cn({
-                      [styles.redColor]: category.specialAlloction < 0,
+                      [styles.redColor]: isNumberBelowZero(
+                        category.specialAlloction,
+                      ),
                     })}
                   >
-                    {numberFormatter.format(category.specialAlloction)}
+                    {numberFormatter.format(
+                      category.specialAlloction as number,
+                    )}
                   </td>
                 ))}
               </tr>
@@ -361,10 +374,12 @@ export const StraddlingStockCalculator = ({
                   <td
                     key={category.name}
                     className={cn({
-                      [styles.redColor]: category.betweenYears < 0,
+                      [styles.redColor]: isNumberBelowZero(
+                        category.betweenYears,
+                      ),
                     })}
                   >
-                    {numberFormatter.format(category.betweenYears)}
+                    {numberFormatter.format(category.betweenYears as number)}
                   </td>
                 ))}
               </tr>
@@ -374,10 +389,12 @@ export const StraddlingStockCalculator = ({
                   <td
                     key={category.name}
                     className={cn({
-                      [styles.redColor]: category.betweenShips < 0,
+                      [styles.redColor]: isNumberBelowZero(
+                        category.betweenShips,
+                      ),
                     })}
                   >
-                    {numberFormatter.format(category.betweenShips)}
+                    {numberFormatter.format(category.betweenShips as number)}
                   </td>
                 ))}
               </tr>
@@ -395,11 +412,16 @@ export const StraddlingStockCalculator = ({
                         }}
                         className={cn({
                           [styles.error]:
-                            changeErrors?.[category.id]?.catchQuotaChange,
+                            changeErrors?.[category.id as number]
+                              ?.catchQuotaChange,
                         })}
-                        value={changes?.[category.id]?.catchQuotaChange ?? ''}
+                        value={
+                          changes?.[category.id as number]?.catchQuotaChange ??
+                          ''
+                        }
                         onChange={(ev) => {
                           setChanges((prevChanges) => {
+                            if (!category.id) return prevChanges
                             return {
                               ...prevChanges,
                               [category.id]: {
@@ -422,10 +444,10 @@ export const StraddlingStockCalculator = ({
                   <td
                     key={category.name}
                     className={cn({
-                      [styles.redColor]: category.catchQuota < 0,
+                      [styles.redColor]: isNumberBelowZero(category.catchQuota),
                     })}
                   >
-                    {numberFormatter.format(category.catchQuota)}
+                    {numberFormatter.format(category.catchQuota as number)}
                   </td>
                 ))}
               </tr>
@@ -435,10 +457,10 @@ export const StraddlingStockCalculator = ({
                   <td
                     key={category.name}
                     className={cn({
-                      [styles.redColor]: category.catch < 0,
+                      [styles.redColor]: isNumberBelowZero(category.catch),
                     })}
                   >
-                    {numberFormatter.format(category.catch)}
+                    {numberFormatter.format(category.catch as number)}
                   </td>
                 ))}
               </tr>
@@ -458,11 +480,15 @@ export const StraddlingStockCalculator = ({
                           }}
                           className={cn({
                             [styles.error]:
-                              changeErrors?.[category.id]?.catchChange,
+                              changeErrors?.[category.id as number]
+                                ?.catchChange,
                           })}
-                          value={changes?.[category.id]?.catchChange ?? ''}
+                          value={
+                            changes?.[category.id as number]?.catchChange ?? ''
+                          }
                           onChange={(ev) => {
                             setChanges((prevChanges) => {
+                              if (!category.id) return prevChanges
                               return {
                                 ...prevChanges,
                                 [category.id]: {
@@ -486,10 +512,10 @@ export const StraddlingStockCalculator = ({
                   <td
                     key={category.name}
                     className={cn({
-                      [styles.redColor]: category.status < 0,
+                      [styles.redColor]: isNumberBelowZero(category.status),
                     })}
                   >
-                    {numberFormatter.format(category.status)}
+                    {numberFormatter.format(category.status as number)}
                   </td>
                 ))}
               </tr>
@@ -499,10 +525,12 @@ export const StraddlingStockCalculator = ({
                   <td
                     key={category.name}
                     className={cn({
-                      [styles.redColor]: category.displacement < 0,
+                      [styles.redColor]: isNumberBelowZero(
+                        category.displacement,
+                      ),
                     })}
                   >
-                    {numberFormatter.format(category.displacement)}
+                    {numberFormatter.format(category.displacement as number)}
                   </td>
                 ))}
               </tr>
@@ -512,10 +540,10 @@ export const StraddlingStockCalculator = ({
                   <td
                     key={category.name}
                     className={cn({
-                      [styles.redColor]: category.newStatus < 0,
+                      [styles.redColor]: isNumberBelowZero(category.newStatus),
                     })}
                   >
-                    {numberFormatter.format(category.newStatus)}
+                    {numberFormatter.format(category.newStatus as number)}
                   </td>
                 ))}
               </tr>
@@ -524,9 +552,11 @@ export const StraddlingStockCalculator = ({
                 {state.context.data.catchQuotaCategories.map((category) => (
                   <td
                     key={category.name}
-                    className={cn({ [styles.redColor]: category.nextYear < 0 })}
+                    className={cn({
+                      [styles.redColor]: isNumberBelowZero(category.nextYear),
+                    })}
                   >
-                    {numberFormatter.format(category.nextYear)}
+                    {numberFormatter.format(category.nextYear as number)}
                   </td>
                 ))}
               </tr>
@@ -537,7 +567,7 @@ export const StraddlingStockCalculator = ({
                     key={category.name}
                     className={cn({ [styles.redColor]: category.excessCatch })}
                   >
-                    {numberFormatter.format(category.excessCatch)}
+                    {numberFormatter.format(category.excessCatch as number)}
                   </td>
                 ))}
               </tr>
@@ -547,10 +577,10 @@ export const StraddlingStockCalculator = ({
                   <td
                     key={category.name}
                     className={cn({
-                      [styles.redColor]: category.unused < 0,
+                      [styles.redColor]: isNumberBelowZero(category.unused),
                     })}
                   >
-                    {numberFormatter.format(category.unused)}
+                    {numberFormatter.format(category.unused as number)}
                   </td>
                 ))}
               </tr>

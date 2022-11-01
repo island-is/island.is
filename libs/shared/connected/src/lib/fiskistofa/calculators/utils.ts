@@ -78,3 +78,7 @@ const replaceAll = (str: string, substr: string, replacement: string) => {
 export const formattedNumberStringToNumber = (numberString: string) => {
   return Number(replaceAll(replaceAll(numberString, '.', ''), ',', '.'))
 }
+
+export const isNumberBelowZero = (value?: number | undefined | null) => {
+  return typeof value === 'number' && value < 0
+}
