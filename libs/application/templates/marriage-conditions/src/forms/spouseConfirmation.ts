@@ -23,11 +23,11 @@ import { Individual, PersonalInfo } from '../types'
 import { format as formatNationalId } from 'kennitala'
 import type { User } from '@island.is/api/domains/national-registry'
 import { UserProfile } from '../types/schema'
-import { removeCountryCode } from '../lib/utils'
 import { fakeDataSection } from './fakeDataSection'
 import { dataCollection } from './sharedSections/dataCollection'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
+import { removeCountryCode } from '@island.is/application/ui-components'
 
 export const spouseConfirmation = ({ allowFakeData = false }): Form =>
   buildForm({
@@ -96,6 +96,8 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
               buildMultiField({
                 id: 'sides',
                 title: m.informationTitle,
+                description:
+                  'Beiðni um könnun hjónavígsluskilyrða mun ekki hljóta efnismeðeferð fyrr en hjónaefni hafa bæði veitt rafræna undirskrift. Vinsamlegast gangið því úr skugga um að símanúmer og netföng séu rétt rituð.',
                 children: [
                   buildDescriptionField({
                     id: 'header1',

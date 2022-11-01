@@ -1,4 +1,8 @@
 import React, { useRef, useState, useEffect, useMemo, Fragment } from 'react'
+import Link from 'next/link'
+import ReactDOM from 'react-dom'
+import flatten from 'lodash/flatten'
+import cn from 'classnames'
 import {
   Box,
   BoxProps,
@@ -15,14 +19,14 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { TimelineSlice as Timeline } from '@island.is/web/graphql/schema'
-import cn from 'classnames'
+import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
+import { renderSlices, SliceType } from '@island.is/island-ui/contentful'
+import { useNamespace } from '@island.is/web/hooks'
+
 import * as timelineStyles from './TimelineSlice.css'
 import * as eventStyles from './Event.css'
-import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
-import Link from 'next/link'
-import ReactDOM from 'react-dom'
-import { renderSlices, SliceType } from '@island.is/island-ui/contentful'
-import flatten from 'lodash/flatten'
+
+const BUTTON_SCROLL_AMOUNT = 500
 
 function setDefault<K, V>(map: Map<K, V>, key: K, value: V): V {
   if (!map.has(key)) map.set(key, value)
@@ -57,6 +61,7 @@ const mapEvents = (
 const getTimeline = (
   eventMap: Map<number, Map<number, Timeline['events']>>,
   getMonthByIndex,
+  seeMoreText = 'Lesa meira',
 ) => {
   let i = 0
   let offset = 50
@@ -100,6 +105,7 @@ const getTimeline = (
               offset={offset}
               index={i}
               detailed={!!event.body}
+              seeMoreText={seeMoreText}
             />
             <BulletLine
               offset={offset}
@@ -119,10 +125,12 @@ const getTimeline = (
 
 interface SliceProps {
   slice: Timeline
+  namespace: Record<string, string>
 }
 
-export const TimelineSlice: React.FC<SliceProps> = ({ slice }) => {
+export const TimelineSlice: React.FC<SliceProps> = ({ slice, namespace }) => {
   const { getMonthByIndex } = useDateUtils()
+  const n = useNamespace(namespace)
 
   const frameRef = useRef<HTMLDivElement>(null)
   const [position, setPosition] = useState(-1)
@@ -130,20 +138,29 @@ export const TimelineSlice: React.FC<SliceProps> = ({ slice }) => {
   const eventMap = useMemo(() => mapEvents(slice.events), [slice.events])
 
   const { currentMonth, items } = useMemo(
-    () => getTimeline(eventMap, getMonthByIndex),
-    [],
+    () =>
+      getTimeline(
+        eventMap,
+        getMonthByIndex,
+        n('timelineSeeMoreText', 'Lesa meira'),
+      ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [eventMap, n],
   )
 
-  const moveTimeline = (dir: 'left' | 'right') => {
+  const moveTimeline = (
+    dir: 'left' | 'right',
+    scrollAmount = BUTTON_SCROLL_AMOUNT,
+  ) => {
     if (dir === 'right') {
       setPosition(
         Math.min(
-          position + 500,
+          position + scrollAmount,
           frameRef.current.scrollWidth - frameRef.current.offsetWidth + 50,
         ),
       )
     } else {
-      setPosition(Math.max(position - 500, 0))
+      setPosition(Math.max(position - scrollAmount, 0))
     }
   }
 
@@ -199,6 +216,67 @@ export const TimelineSlice: React.FC<SliceProps> = ({ slice }) => {
         paddingTop: 3,
       }
 
+  const ref = useRef<HTMLDivElement | null>(null)
+
+  useEffect(() => {
+    if (!ref?.current) return
+
+    let isMouseDown = false
+    let lastMouseDownPosition: number | null = null
+    let lastMouseMovePosition: number | null = null
+
+    const onMouseDown = (ev: MouseEvent) => {
+      isMouseDown = true
+      lastMouseDownPosition = ev.x
+    }
+    const onMouseUp = () => {
+      isMouseDown = false
+      lastMouseMovePosition = null
+      lastMouseDownPosition = null
+    }
+    const onMouseMove = (ev: MouseEvent) => {
+      if (isMouseDown) {
+        setPosition((position) => {
+          let offset = 0
+          if (lastMouseMovePosition === null) {
+            offset = lastMouseDownPosition - ev.x
+          } else {
+            offset = lastMouseMovePosition - ev.x
+          }
+
+          let newPosition: number = position
+          if (offset > 0) {
+            newPosition = Math.min(
+              position + offset,
+              frameRef.current.scrollWidth - frameRef.current.offsetWidth + 50,
+            )
+          } else {
+            newPosition = Math.max(position + offset, 0)
+          }
+          frameRef.current.scrollTo({
+            left: newPosition,
+          })
+
+          lastMouseMovePosition = ev.x
+
+          return newPosition
+        })
+      }
+    }
+
+    ref.current.addEventListener('mousedown', onMouseDown)
+    document.addEventListener('mouseup', onMouseUp)
+    document.addEventListener('mousemove', onMouseMove)
+
+    return () => {
+      if (ref?.current) {
+        ref.current.removeEventListener('mousedown', onMouseDown)
+      }
+      document.removeEventListener('mouseup', onMouseUp)
+      document.removeEventListener('mousemove', onMouseMove)
+    }
+  }, [ref?.current])
+
   return (
     <section
       key={slice.id}
@@ -223,7 +301,7 @@ export const TimelineSlice: React.FC<SliceProps> = ({ slice }) => {
             </GridRow>
           </GridContainer>
           <Hidden below="lg">
-            <div className={timelineStyles.timelineContainer}>
+            <div className={timelineStyles.timelineContainer} ref={ref}>
               <ArrowButtonShadow type="prev">
                 <ArrowButton
                   type="prev"
@@ -285,6 +363,7 @@ export const TimelineSlice: React.FC<SliceProps> = ({ slice }) => {
                     index={0}
                     detailed={!!event.body}
                     mobile={true}
+                    seeMoreText={n('timelineSeeMoreText', 'Lesa meira')}
                   />
                 ))}
               </div>
@@ -338,7 +417,14 @@ const ArrowButton = ({
   )
 }
 
-const TimelineItem = ({ event, offset, index, detailed, mobile = false }) => {
+const TimelineItem = ({
+  event,
+  offset,
+  index,
+  detailed,
+  mobile = false,
+  seeMoreText = 'Lesa meira',
+}) => {
   const positionStyles = [
     { bottom: 136 },
     { top: 136 },
@@ -383,7 +469,11 @@ const TimelineItem = ({ event, offset, index, detailed, mobile = false }) => {
             onVisibilityChange={(isVisible) => !isVisible && setVisible(false)}
             hideOnEsc={true}
           >
-            <EventModal event={event} onClose={() => setVisible(false)} />
+            <EventModal
+              event={event}
+              onClose={() => setVisible(false)}
+              seeMoreText={seeMoreText}
+            />
           </ModalBase>,
           portalRef.current,
         )}
@@ -457,12 +547,17 @@ const MonthItem = ({ month, offset, year = '' }) => {
 interface EventModalProps {
   event: Timeline['events'][0]
   onClose: () => void
+  seeMoreText?: string
 }
 
 const formatNumber = (value: number) =>
   value.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
 
-const EventModal = ({ event, onClose }: EventModalProps) => {
+const EventModal = ({
+  event,
+  onClose,
+  seeMoreText = 'Lesa meira',
+}: EventModalProps) => {
   if (!event) {
     return null
   }
@@ -533,7 +628,7 @@ const EventModal = ({ event, onClose }: EventModalProps) => {
           {event.link && (
             <Link href={event.link}>
               <Button variant="text" icon="arrowForward">
-                Lesa meira
+                {seeMoreText}
               </Button>
             </Link>
           )}

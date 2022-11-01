@@ -26,7 +26,9 @@
             "name": "notandi",
             "in": "body",
             "required": true,
-            "schema": { "$ref": "#/definitions/ApiNotandi" },
+            "schema": {
+              "$ref": "#/definitions/ApiNotandi"
+            },
             "x-nullable": false
           }
         ],
@@ -34,10 +36,16 @@
           "200": {
             "x-nullable": false,
             "description": "Success",
-            "schema": { "$ref": "#/definitions/InnskraningSvarSkeyti" }
+            "schema": {
+              "$ref": "#/definitions/InnskraningSvarSkeyti"
+            }
           }
         },
-        "security": [{ "JWT Token": [] }]
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
       }
     },
     "/v1/Postnumer": {
@@ -50,11 +58,17 @@
             "description": "",
             "schema": {
               "type": "array",
-              "items": { "$ref": "#/definitions/Postnumer" }
+              "items": {
+                "$ref": "#/definitions/Postnumer"
+              }
             }
           }
         },
-        "security": [{ "JWT Token": [] }]
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
       }
     },
     "/v1/Postnumer/{id}": {
@@ -75,20 +89,30 @@
           "404": {
             "x-nullable": false,
             "description": "",
-            "schema": { "$ref": "#/definitions/ProblemDetails" }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
           },
           "default": {
             "x-nullable": false,
             "description": "",
-            "schema": { "$ref": "#/definitions/ProblemDetails" }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
           },
           "200": {
             "x-nullable": false,
             "description": "",
-            "schema": { "$ref": "#/definitions/Postnumer" }
+            "schema": {
+              "$ref": "#/definitions/Postnumer"
+            }
           }
         },
-        "security": [{ "JWT Token": [] }]
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
       }
     },
     "/v1/AdfarabeidnirHeimildaflokkur": {
@@ -101,11 +125,17 @@
             "description": "",
             "schema": {
               "type": "array",
-              "items": { "$ref": "#/definitions/AdfarabeidnirHeimildaflokkur" }
+              "items": {
+                "$ref": "#/definitions/AdfarabeidnirHeimildaflokkur"
+              }
             }
           }
         },
-        "security": [{ "JWT Token": [] }]
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
       }
     },
     "/v1/AdfarabeidnirHeimildaflokkur/{id}": {
@@ -126,20 +156,30 @@
           "404": {
             "x-nullable": false,
             "description": "",
-            "schema": { "$ref": "#/definitions/ProblemDetails" }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
           },
           "default": {
             "x-nullable": false,
             "description": "",
-            "schema": { "$ref": "#/definitions/ProblemDetails" }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
           },
           "200": {
             "x-nullable": false,
             "description": "",
-            "schema": { "$ref": "#/definitions/AdfarabeidnirHeimildaflokkur" }
+            "schema": {
+              "$ref": "#/definitions/AdfarabeidnirHeimildaflokkur"
+            }
           }
         },
-        "security": [{ "JWT Token": [] }]
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
       }
     },
     "/v1/Embaetti": {
@@ -152,11 +192,17 @@
             "description": "",
             "schema": {
               "type": "array",
-              "items": { "$ref": "#/definitions/Embaetti" }
+              "items": {
+                "$ref": "#/definitions/Embaetti"
+              }
             }
           }
         },
-        "security": [{ "JWT Token": [] }]
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
       }
     },
     "/v1/Embaetti/{id}": {
@@ -176,20 +222,30 @@
           "404": {
             "x-nullable": false,
             "description": "",
-            "schema": { "$ref": "#/definitions/ProblemDetails" }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
           },
           "default": {
             "x-nullable": false,
             "description": "",
-            "schema": { "$ref": "#/definitions/ProblemDetails" }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
           },
           "200": {
             "x-nullable": false,
             "description": "",
-            "schema": { "$ref": "#/definitions/Embaetti" }
+            "schema": {
+              "$ref": "#/definitions/Embaetti"
+            }
           }
         },
-        "security": [{ "JWT Token": [] }]
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
       }
     },
     "/v1/EmbaettiOgStarfsstodvar": {
@@ -202,11 +258,17 @@
             "description": "Success",
             "schema": {
               "type": "array",
-              "items": { "$ref": "#/definitions/EmbaettiOgStarfsstodvar" }
+              "items": {
+                "$ref": "#/definitions/EmbaettiOgStarfsstodvar"
+              }
             }
           }
         },
-        "security": [{ "JWT Token": [] }]
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
       }
     },
     "/api/Uppbod/{audkenni}": {
@@ -228,21 +290,31 @@
             "description": "",
             "schema": {
               "type": "array",
-              "items": { "$ref": "#/definitions/Uppbod" }
+              "items": {
+                "$ref": "#/definitions/Uppbod"
+              }
             }
           },
           "401": {
             "x-nullable": false,
             "description": "",
-            "schema": { "$ref": "#/definitions/ProblemDetails" }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
           },
           "default": {
             "x-nullable": false,
             "description": "",
-            "schema": { "$ref": "#/definitions/ProblemDetails" }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
           }
         },
-        "security": [{ "JWT Token": [] }]
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
       }
     },
     "/v1/IdngreinarMeistara": {
@@ -253,11 +325,22 @@
           "200": {
             "x-nullable": false,
             "description": "",
-            "schema": { "type": "array", "items": { "type": "string" } }
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
           },
-          "500": { "description": "" }
+          "500": {
+            "description": ""
+          }
         },
-        "security": [{ "JWT Token": [] }]
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
       }
     },
     "/api/Logmannalisti": {
@@ -278,11 +361,17 @@
             "description": "Success",
             "schema": {
               "type": "array",
-              "items": { "$ref": "#/definitions/Logmenn" }
+              "items": {
+                "$ref": "#/definitions/Logmenn"
+              }
             }
           }
         },
-        "security": [{ "JWT Token": ["Logmannalisti"] }]
+        "security": [
+          {
+            "JWT Token": ["Logmannalisti"]
+          }
+        ]
       }
     },
     "/api/VirkLeyfi/{audkenni}": {
@@ -324,21 +413,31 @@
             "description": "",
             "schema": {
               "type": "array",
-              "items": { "$ref": "#/definitions/VirkLeyfi" }
+              "items": {
+                "$ref": "#/definitions/VirkLeyfi"
+              }
             }
           },
           "401": {
             "x-nullable": false,
             "description": "",
-            "schema": { "$ref": "#/definitions/ProblemDetails" }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
           },
           "default": {
             "x-nullable": false,
             "description": "",
-            "schema": { "$ref": "#/definitions/ProblemDetails" }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
           }
         },
-        "security": [{ "JWT Token": [] }]
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
       }
     },
     "/api/VirkLeyfiCsv/{audkenni}": {
@@ -358,20 +457,30 @@
           "200": {
             "x-nullable": false,
             "description": "",
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           },
           "401": {
             "x-nullable": false,
             "description": "",
-            "schema": { "$ref": "#/definitions/ProblemDetails" }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
           },
           "default": {
             "x-nullable": false,
             "description": "",
-            "schema": { "$ref": "#/definitions/ProblemDetails" }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
           }
         },
-        "security": [{ "JWT Token": [] }]
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
       }
     },
     "/v1/VirkarHeimagistingar/{audkenni}": {
@@ -393,21 +502,31 @@
             "description": "",
             "schema": {
               "type": "array",
-              "items": { "$ref": "#/definitions/VirkarHeimagistingar" }
+              "items": {
+                "$ref": "#/definitions/VirkarHeimagistingar"
+              }
             }
           },
           "401": {
             "x-nullable": false,
             "description": "",
-            "schema": { "$ref": "#/definitions/ProblemDetails" }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
           },
           "default": {
             "x-nullable": false,
             "description": "",
-            "schema": { "$ref": "#/definitions/ProblemDetails" }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
           }
         },
-        "security": [{ "JWT Token": [] }]
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
       }
     },
     "/v1/VirkarHeimagistingar/{audkenni}/{ar}": {
@@ -436,21 +555,31 @@
             "description": "",
             "schema": {
               "type": "array",
-              "items": { "$ref": "#/definitions/VirkarHeimagistingar" }
+              "items": {
+                "$ref": "#/definitions/VirkarHeimagistingar"
+              }
             }
           },
           "401": {
             "x-nullable": false,
             "description": "",
-            "schema": { "$ref": "#/definitions/ProblemDetails" }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
           },
           "default": {
             "x-nullable": false,
             "description": "",
-            "schema": { "$ref": "#/definitions/ProblemDetails" }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
           }
         },
-        "security": [{ "JWT Token": [] }]
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
       }
     },
     "/v1/ArangurslausFraDags": {
@@ -468,7 +597,9 @@
             "name": "skilabod",
             "in": "body",
             "required": true,
-            "schema": { "$ref": "#/definitions/AranuslausFyrirspurn" },
+            "schema": {
+              "$ref": "#/definitions/AranuslausFyrirspurn"
+            },
             "x-nullable": false
           }
         ],
@@ -476,15 +607,23 @@
           "200": {
             "x-nullable": false,
             "description": "",
-            "schema": { "$ref": "#/definitions/AranuslausSvar" }
+            "schema": {
+              "$ref": "#/definitions/AranuslausSvar"
+            }
           },
           "401": {
             "x-nullable": false,
             "description": "",
-            "schema": { "$ref": "#/definitions/ProblemDetails" }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
           }
         },
-        "security": [{ "JWT Token": [] }]
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
       }
     },
     "/v1/Fullnustusvid/Naudungarsala/UppbodFaFasteignir": {
@@ -497,11 +636,17 @@
             "description": "",
             "schema": {
               "type": "array",
-              "items": { "$ref": "#/definitions/UppbodFasteignir" }
+              "items": {
+                "$ref": "#/definitions/UppbodFasteignir"
+              }
             }
           }
         },
-        "security": [{ "JWT Token": [] }]
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
       }
     },
     "/v1/ArangurslausFraTilDags": {
@@ -519,7 +664,9 @@
             "name": "skilabod",
             "in": "body",
             "required": true,
-            "schema": { "$ref": "#/definitions/AranuslausFratilFyrirspurn" },
+            "schema": {
+              "$ref": "#/definitions/AranuslausFratilFyrirspurn"
+            },
             "x-nullable": false
           }
         ],
@@ -527,15 +674,23 @@
           "200": {
             "x-nullable": false,
             "description": "",
-            "schema": { "$ref": "#/definitions/AranuslausFraTilSvar" }
+            "schema": {
+              "$ref": "#/definitions/AranuslausFraTilSvar"
+            }
           },
           "401": {
             "x-nullable": false,
             "description": "",
-            "schema": { "$ref": "#/definitions/ProblemDetails" }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
           }
         },
-        "security": [{ "JWT Token": [] }]
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
       }
     },
     "/api/DanarbuAlgengTengsl/{audkenni}": {
@@ -557,26 +712,38 @@
             "description": "Success",
             "schema": {
               "type": "array",
-              "items": { "$ref": "#/definitions/AlgengTengsl" }
+              "items": {
+                "$ref": "#/definitions/AlgengTengsl"
+              }
             }
           },
           "404": {
             "x-nullable": false,
             "description": "Not found",
-            "schema": { "$ref": "#/definitions/ProblemDetails" }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
           },
           "400": {
             "x-nullable": false,
             "description": "Bad request",
-            "schema": { "$ref": "#/definitions/ProblemDetails" }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
           },
           "401": {
             "x-nullable": false,
             "description": "Unauthorized",
-            "schema": { "$ref": "#/definitions/ProblemDetails" }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
           }
         },
-        "security": [{ "JWT Token": [] }]
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
       }
     },
     "/api/SkiptaUmSkraningaradilaDanarbus": {
@@ -594,7 +761,9 @@
             "name": "payload",
             "in": "body",
             "required": true,
-            "schema": { "$ref": "#/definitions/SkiptaUmSkraningaradili" },
+            "schema": {
+              "$ref": "#/definitions/SkiptaUmSkraningaradili"
+            },
             "x-nullable": false
           }
         ],
@@ -602,25 +771,37 @@
           "200": {
             "x-nullable": false,
             "description": "Success",
-            "schema": { "$ref": "#/definitions/SkiptaUmSkraningaradiliSkeyti" }
+            "schema": {
+              "$ref": "#/definitions/SkiptaUmSkraningaradiliSkeyti"
+            }
           },
           "404": {
             "x-nullable": false,
             "description": "Not found",
-            "schema": { "$ref": "#/definitions/ProblemDetails" }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
           },
           "400": {
             "x-nullable": false,
             "description": "Bad request",
-            "schema": { "$ref": "#/definitions/ProblemDetails" }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
           },
           "401": {
             "x-nullable": false,
             "description": "Unauthorized",
-            "schema": { "$ref": "#/definitions/ProblemDetails" }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
           }
         },
-        "security": [{ "JWT Token": [] }]
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
       }
     },
     "/api/SkraningaradiliDanarbus/{kennitala}/{audkenni}": {
@@ -649,26 +830,38 @@
             "description": "Success",
             "schema": {
               "type": "array",
-              "items": { "$ref": "#/definitions/SkraningaradiliDanarbusSkeyti" }
+              "items": {
+                "$ref": "#/definitions/SkraningaradiliDanarbusSkeyti"
+              }
             }
           },
           "404": {
             "x-nullable": false,
             "description": "Not found",
-            "schema": { "$ref": "#/definitions/ProblemDetails" }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
           },
           "400": {
             "x-nullable": false,
             "description": "Bad request",
-            "schema": { "$ref": "#/definitions/ProblemDetails" }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
           },
           "401": {
             "x-nullable": false,
             "description": "Unauthorized",
-            "schema": { "$ref": "#/definitions/ProblemDetails" }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
           }
         },
-        "security": [{ "JWT Token": [] }]
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
       }
     },
     "/v1/Danarbu/UpplysingarUrDanarbui": {
@@ -686,7 +879,9 @@
             "name": "fyrirspurn",
             "in": "body",
             "required": true,
-            "schema": { "$ref": "#/definitions/Fyrirspurn" },
+            "schema": {
+              "$ref": "#/definitions/Fyrirspurn"
+            },
             "x-nullable": false
           }
         ],
@@ -694,25 +889,37 @@
           "200": {
             "x-nullable": false,
             "description": "Success",
-            "schema": { "$ref": "#/definitions/UpplysingarUrDanarbuiSkeyti" }
+            "schema": {
+              "$ref": "#/definitions/UpplysingarUrDanarbuiSkeyti"
+            }
           },
           "404": {
             "x-nullable": false,
             "description": "Not found",
-            "schema": { "$ref": "#/definitions/ProblemDetails" }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
           },
           "400": {
             "x-nullable": false,
             "description": "Bad request",
-            "schema": { "$ref": "#/definitions/ProblemDetails" }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
           },
           "401": {
             "x-nullable": false,
             "description": "Unauthorized",
-            "schema": { "$ref": "#/definitions/ProblemDetails" }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
           }
         },
-        "security": [{ "JWT Token": [] }]
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
       }
     },
     "/v1/Danarbu/YfirlitUmFramvinduSkipta": {
@@ -730,24 +937,36 @@
             "name": "fyrirspurn",
             "in": "body",
             "required": true,
-            "schema": { "$ref": "#/definitions/Fyrirspurn" },
+            "schema": {
+              "$ref": "#/definitions/Fyrirspurn"
+            },
             "x-nullable": false
           }
         ],
         "responses": {
-          "200": { "description": "" },
+          "200": {
+            "description": ""
+          },
           "401": {
             "x-nullable": false,
             "description": "",
-            "schema": { "$ref": "#/definitions/ProblemDetails" }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
           },
           "default": {
             "x-nullable": false,
             "description": "",
-            "schema": { "$ref": "#/definitions/ProblemDetails" }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
           }
         },
-        "security": [{ "JWT Token": [] }]
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
       }
     },
     "/api/Fasteignasalar": {
@@ -768,11 +987,17 @@
             "description": "Success",
             "schema": {
               "type": "array",
-              "items": { "$ref": "#/definitions/Fasteignasalar" }
+              "items": {
+                "$ref": "#/definitions/Fasteignasalar"
+              }
             }
           }
         },
-        "security": [{ "JWT Token": ["Fasteignasalar"] }]
+        "security": [
+          {
+            "JWT Token": ["Fasteignasalar"]
+          }
+        ]
       }
     },
     "/api/AlmennFyrirspurn/{audkenni}/{eining}/{adgerd}": {
@@ -806,20 +1031,30 @@
           "200": {
             "x-nullable": false,
             "description": "",
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           },
           "401": {
             "x-nullable": false,
             "description": "",
-            "schema": { "$ref": "#/definitions/ProblemDetails" }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
           },
           "default": {
             "x-nullable": false,
             "description": "",
-            "schema": { "$ref": "#/definitions/ProblemDetails" }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
           }
         },
-        "security": [{ "JWT Token": [] }]
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
       }
     },
     "/api/ErfdarskraJaNei/{kennitala}/{audkenni}": {
@@ -846,25 +1081,37 @@
           "200": {
             "x-nullable": false,
             "description": "Success",
-            "schema": { "$ref": "#/definitions/ErfdarskraSkeyti" }
+            "schema": {
+              "$ref": "#/definitions/ErfdarskraSkeyti"
+            }
           },
           "404": {
             "x-nullable": false,
             "description": "Not found",
-            "schema": { "$ref": "#/definitions/ProblemDetails" }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
           },
           "400": {
             "x-nullable": false,
             "description": "Bad request",
-            "schema": { "$ref": "#/definitions/ProblemDetails" }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
           },
           "401": {
             "x-nullable": false,
             "description": "Unauthorized",
-            "schema": { "$ref": "#/definitions/ProblemDetails" }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
           }
         },
-        "security": [{ "JWT Token": [] }]
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
       }
     },
     "/api/FaVottordUpplysingar/{audkenni}/{kennitala}": {
@@ -891,10 +1138,16 @@
           "200": {
             "x-nullable": false,
             "description": "Success",
-            "schema": { "$ref": "#/definitions/VottordSkeyti" }
+            "schema": {
+              "$ref": "#/definitions/VottordSkeyti"
+            }
           }
         },
-        "security": [{ "JWT Token": [] }]
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
       }
     },
     "/api/Innsiglun": {
@@ -912,7 +1165,9 @@
             "name": "skeyti",
             "in": "body",
             "required": true,
-            "schema": { "$ref": "#/definitions/InnsiglaSkeyti" },
+            "schema": {
+              "$ref": "#/definitions/InnsiglaSkeyti"
+            },
             "x-nullable": false
           }
         ],
@@ -920,10 +1175,16 @@
           "200": {
             "x-nullable": false,
             "description": "Success",
-            "schema": { "$ref": "#/definitions/SvarSkeyti" }
+            "schema": {
+              "$ref": "#/definitions/SvarSkeyti"
+            }
           }
         },
-        "security": [{ "JWT Token": [] }]
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
       }
     },
     "/api/KaupmaliJaNei/{kennitala}/{audkenni}": {
@@ -950,25 +1211,37 @@
           "200": {
             "x-nullable": false,
             "description": "Success",
-            "schema": { "$ref": "#/definitions/KaupmaliSkeyti" }
+            "schema": {
+              "$ref": "#/definitions/KaupmaliSkeyti"
+            }
           },
           "404": {
             "x-nullable": false,
             "description": "Not found",
-            "schema": { "$ref": "#/definitions/ProblemDetails" }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
           },
           "400": {
             "x-nullable": false,
             "description": "Bad request",
-            "schema": { "$ref": "#/definitions/ProblemDetails" }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
           },
           "401": {
             "x-nullable": false,
             "description": "Unauthorized",
-            "schema": { "$ref": "#/definitions/ProblemDetails" }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
           }
         },
-        "security": [{ "JWT Token": [] }]
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
       }
     },
     "/v1/Almennt/MottakaRafraentSkjal": {
@@ -987,24 +1260,36 @@
             "name": "payload",
             "in": "body",
             "required": true,
-            "schema": { "$ref": "#/definitions/WebhookEventPayload" },
+            "schema": {
+              "$ref": "#/definitions/WebhookEventPayload"
+            },
             "x-nullable": false
           }
         ],
         "responses": {
-          "200": { "description": "" },
+          "200": {
+            "description": ""
+          },
           "401": {
             "x-nullable": false,
             "description": "",
-            "schema": { "$ref": "#/definitions/ProblemDetails" }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
           },
           "default": {
             "x-nullable": false,
             "description": "",
-            "schema": { "$ref": "#/definitions/ProblemDetails" }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
           }
         },
-        "security": [{ "JWT Token": [] }]
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
       }
     },
     "/v1/Almennt/MottakaSkjalaUrUndirritun": {
@@ -1022,24 +1307,36 @@
             "name": "payload",
             "in": "body",
             "required": true,
-            "schema": { "$ref": "#/definitions/WebhookEventPayload" },
+            "schema": {
+              "$ref": "#/definitions/WebhookEventPayload"
+            },
             "x-nullable": false
           }
         ],
         "responses": {
-          "200": { "description": "" },
+          "200": {
+            "description": ""
+          },
           "401": {
             "x-nullable": false,
             "description": "",
-            "schema": { "$ref": "#/definitions/ProblemDetails" }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
           },
           "default": {
             "x-nullable": false,
             "description": "",
-            "schema": { "$ref": "#/definitions/ProblemDetails" }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
           }
         },
-        "security": [{ "JWT Token": [] }]
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
       }
     },
     "/v1/Ping": {
@@ -1051,10 +1348,19 @@
           "200": {
             "x-nullable": false,
             "description": "",
-            "schema": { "type": "array", "items": { "type": "string" } }
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
           }
         },
-        "security": [{ "JWT Token": [] }]
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
       },
       "post": {
         "tags": ["Syslumenn"],
@@ -1071,24 +1377,36 @@
             "name": "skilabod",
             "in": "body",
             "required": true,
-            "schema": { "$ref": "#/definitions/Skilabod" },
+            "schema": {
+              "$ref": "#/definitions/Skilabod"
+            },
             "x-nullable": false
           }
         ],
         "responses": {
-          "200": { "description": "" },
+          "200": {
+            "description": ""
+          },
           "401": {
             "x-nullable": false,
             "description": "",
-            "schema": { "$ref": "#/definitions/ProblemDetails" }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
           },
           "default": {
             "x-nullable": false,
             "description": "",
-            "schema": { "$ref": "#/definitions/ProblemDetails" }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
           }
         },
-        "security": [{ "JWT Token": [] }]
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
       }
     },
     "/api/v1/SyslMottakaGogn": {
@@ -1106,7 +1424,9 @@
             "name": "payload",
             "in": "body",
             "required": true,
-            "schema": { "$ref": "#/definitions/SyslSkeyti" },
+            "schema": {
+              "$ref": "#/definitions/SyslSkeyti"
+            },
             "x-nullable": false
           }
         ],
@@ -1114,10 +1434,16 @@
           "200": {
             "x-nullable": false,
             "description": "Success",
-            "schema": { "$ref": "#/definitions/Skilabod" }
+            "schema": {
+              "$ref": "#/definitions/Skilabod"
+            }
           }
         },
-        "security": [{ "JWT Token": [] }]
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
       }
     },
     "/api/SyslSaekjaSkra": {
@@ -1135,24 +1461,36 @@
             "name": "payload",
             "in": "body",
             "required": true,
-            "schema": { "$ref": "#/definitions/SyslSekjaSkra" },
+            "schema": {
+              "$ref": "#/definitions/SyslSekjaSkra"
+            },
             "x-nullable": false
           }
         ],
         "responses": {
-          "200": { "description": "" },
+          "200": {
+            "description": ""
+          },
           "401": {
             "x-nullable": false,
             "description": "",
-            "schema": { "$ref": "#/definitions/ProblemDetails" }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
           },
           "default": {
             "x-nullable": false,
             "description": "",
-            "schema": { "$ref": "#/definitions/ProblemDetails" }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
           }
         },
-        "security": [{ "JWT Token": [] }]
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
       }
     },
     "/api/Vedbokarvottord": {
@@ -1170,7 +1508,9 @@
             "name": "skilabod",
             "in": "body",
             "required": true,
-            "schema": { "$ref": "#/definitions/VedbandayfirlitSkeyti" },
+            "schema": {
+              "$ref": "#/definitions/VedbandayfirlitSkeyti"
+            },
             "x-nullable": false
           }
         ],
@@ -1178,15 +1518,23 @@
           "200": {
             "x-nullable": false,
             "description": "Success",
-            "schema": { "$ref": "#/definitions/VedbandayfirlitSvarSkeyti" }
+            "schema": {
+              "$ref": "#/definitions/VedbandayfirlitSvarSkeyti"
+            }
           },
           "404": {
             "x-nullable": false,
             "description": "NotFound",
-            "schema": { "$ref": "#/definitions/VedbandayfirlitSvarSkeyti" }
+            "schema": {
+              "$ref": "#/definitions/VedbandayfirlitSvarSkeyti"
+            }
           }
         },
-        "security": [{ "JWT Token": [] }]
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
       }
     },
     "/api/VedbokavottordRegluverki": {
@@ -1204,7 +1552,9 @@
             "name": "skilabod",
             "in": "body",
             "required": true,
-            "schema": { "$ref": "#/definitions/VedbandayfirlitSkeyti" },
+            "schema": {
+              "$ref": "#/definitions/VedbandayfirlitSkeyti"
+            },
             "x-nullable": false
           }
         ],
@@ -1230,7 +1580,11 @@
             }
           }
         },
-        "security": [{ "JWT Token": ["Vedbokarvottord"] }]
+        "security": [
+          {
+            "JWT Token": ["Vedbokarvottord"]
+          }
+        ]
       }
     },
     "/Version": {
@@ -1241,11 +1595,20 @@
         "responses": {
           "200": {
             "x-nullable": false,
-            "description": "{\n audkenni=\"\",\n skilabod=\"Version: 1.0.0\"\n}",
-            "schema": { "type": "array", "items": { "type": "string" } }
+            "description": "{\n   audkenni=\"\",\n   skilabod=\"Version: 1.0.0\"\n}",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
           }
         },
-        "security": [{ "JWT Token": [] }]
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
       }
     }
   },
@@ -1253,146 +1616,317 @@
     "InnskraningSvarSkeyti": {
       "type": "object",
       "properties": {
-        "skilabod": { "type": "string" },
-        "audkenni": { "type": "string" },
-        "accessToken": { "type": "string" }
+        "skilabod": {
+          "type": "string"
+        },
+        "audkenni": {
+          "type": "string"
+        },
+        "accessToken": {
+          "type": "string"
+        }
       }
     },
     "ApiNotandi": {
       "type": "object",
       "properties": {
-        "notandi": { "type": "string", "minLength": 4 },
-        "lykilord": { "type": "string", "minLength": 9 }
+        "notandi": {
+          "type": "string",
+          "minLength": 4
+        },
+        "lykilord": {
+          "type": "string",
+          "minLength": 9
+        }
       }
     },
     "Postnumer": {
       "type": "object",
       "required": ["oid"],
       "properties": {
-        "oid": { "type": "integer", "format": "int32" },
-        "numer": { "type": "string" },
-        "heiti": { "type": "string" },
-        "stadur": { "type": "string" },
-        "optimisticLockField": { "type": "integer", "format": "int32" },
-        "gcrecord": { "type": "integer", "format": "int32" }
+        "oid": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "numer": {
+          "type": "string"
+        },
+        "heiti": {
+          "type": "string"
+        },
+        "stadur": {
+          "type": "string"
+        },
+        "optimisticLockField": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "gcrecord": {
+          "type": "integer",
+          "format": "int32"
+        }
       }
     },
     "ProblemDetails": {
       "type": "object",
       "additionalProperties": {},
       "properties": {
-        "type": { "type": "string" },
-        "title": { "type": "string" },
-        "status": { "type": "integer", "format": "int32" },
-        "detail": { "type": "string" },
-        "instance": { "type": "string" }
+        "type": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "status": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "detail": {
+          "type": "string"
+        },
+        "instance": {
+          "type": "string"
+        }
       }
     },
     "AdfarabeidnirHeimildaflokkur": {
       "type": "object",
       "required": ["numer"],
       "properties": {
-        "numer": { "type": "integer", "format": "int32" },
-        "heiti": { "type": "string" }
+        "numer": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "heiti": {
+          "type": "string"
+        }
       }
     },
     "Embaetti": {
       "type": "object",
       "required": ["numer"],
       "properties": {
-        "numer": { "type": "integer", "format": "int32" },
-        "heiti": { "type": "string" },
-        "kennitala": { "type": "string" }
+        "numer": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "heiti": {
+          "type": "string"
+        },
+        "kennitala": {
+          "type": "string"
+        }
       }
     },
     "EmbaettiOgStarfsstodvar": {
       "type": "object",
       "properties": {
-        "kennitala": { "type": "string" },
-        "nafn": { "type": "string" },
-        "stadur": { "type": "string" },
-        "adsetur": { "type": "string" },
-        "starfsstodID": { "type": "string" }
+        "kennitala": {
+          "type": "string"
+        },
+        "nafn": {
+          "type": "string"
+        },
+        "stadur": {
+          "type": "string"
+        },
+        "adsetur": {
+          "type": "string"
+        },
+        "starfsstodID": {
+          "type": "string"
+        }
       }
     },
     "Uppbod": {
       "type": "object",
       "properties": {
-        "embaetti": { "type": "string" },
-        "starfsstod": { "type": "string" },
-        "tegund": { "type": "string" },
-        "andlag": { "type": "string" },
-        "dagsetning": { "type": "string", "format": "date-time" },
-        "klukkan": { "type": "string" },
-        "fastanumer": { "type": "string" },
-        "andlagHeiti": { "type": "string" },
-        "gerdarbeidendur": { "type": "string" },
-        "gerdartholar": { "type": "string" },
-        "lausafjarmunir": { "type": "string" },
-        "auglysingatexti": { "type": "string" },
-        "uppbodStadur": { "type": "string" }
+        "embaetti": {
+          "type": "string"
+        },
+        "starfsstod": {
+          "type": "string"
+        },
+        "tegund": {
+          "type": "string"
+        },
+        "andlag": {
+          "type": "string"
+        },
+        "dagsetning": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "klukkan": {
+          "type": "string"
+        },
+        "fastanumer": {
+          "type": "string"
+        },
+        "andlagHeiti": {
+          "type": "string"
+        },
+        "gerdarbeidendur": {
+          "type": "string"
+        },
+        "gerdartholar": {
+          "type": "string"
+        },
+        "lausafjarmunir": {
+          "type": "string"
+        },
+        "auglysingatexti": {
+          "type": "string"
+        },
+        "uppbodStadur": {
+          "type": "string"
+        }
       }
     },
     "Logmenn": {
       "type": "object",
       "properties": {
-        "nafn": { "type": "string" },
-        "tegundRettinda": { "type": "string" }
+        "nafn": {
+          "type": "string"
+        },
+        "tegundRettinda": {
+          "type": "string"
+        }
       }
     },
     "VirkLeyfi": {
       "type": "object",
       "required": ["rowNum"],
       "properties": {
-        "rowNum": { "type": "integer", "format": "int64" },
-        "utgefidAf": { "type": "string" },
-        "leyfisnumer": { "type": "string" },
-        "stadur": { "type": "string" },
-        "kallast": { "type": "string" },
-        "gata": { "type": "string" },
-        "postnumer": { "type": "string" },
-        "tegund": { "type": "string" },
-        "tegund2": { "type": "string" },
-        "tegundVeitingastadar": { "type": "string" },
-        "gildirFra": { "type": "string", "format": "date-time" },
-        "gildirTil": { "type": "string", "format": "date-time" },
-        "leyfishafi": { "type": "string" },
-        "abyrgdarmadur": { "type": "string" },
-        "flokkur": { "type": "string" },
-        "leyfi_Til_Utiveitinga": { "type": "string" },
-        "afgr_Afgengis_Virkirdagar": { "type": "string" },
-        "afgr_Afgengis_Adfaranott_Fridaga": { "type": "string" },
-        "afgr_Afgengis_Virkirdagar_Utiveitingar": { "type": "string" },
-        "afgr_Afgengis_Adfaranott_Fridaga_Utiveitingar": { "type": "string" },
-        "hamarksfjoldiGesta": { "type": "integer", "format": "int32" },
-        "fjoldiGestaIVeitingum": { "type": "integer", "format": "int32" }
+        "rowNum": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "utgefidAf": {
+          "type": "string"
+        },
+        "leyfisnumer": {
+          "type": "string"
+        },
+        "stadur": {
+          "type": "string"
+        },
+        "kallast": {
+          "type": "string"
+        },
+        "gata": {
+          "type": "string"
+        },
+        "postnumer": {
+          "type": "string"
+        },
+        "tegund": {
+          "type": "string"
+        },
+        "tegund2": {
+          "type": "string"
+        },
+        "tegundVeitingastadar": {
+          "type": "string"
+        },
+        "gildirFra": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "gildirTil": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "leyfishafi": {
+          "type": "string"
+        },
+        "abyrgdarmadur": {
+          "type": "string"
+        },
+        "flokkur": {
+          "type": "string"
+        },
+        "leyfi_Til_Utiveitinga": {
+          "type": "string"
+        },
+        "afgr_Afgengis_Virkirdagar": {
+          "type": "string"
+        },
+        "afgr_Afgengis_Adfaranott_Fridaga": {
+          "type": "string"
+        },
+        "afgr_Afgengis_Virkirdagar_Utiveitingar": {
+          "type": "string"
+        },
+        "afgr_Afgengis_Adfaranott_Fridaga_Utiveitingar": {
+          "type": "string"
+        },
+        "hamarksfjoldiGesta": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "fjoldiGestaIVeitingum": {
+          "type": "integer",
+          "format": "int32"
+        }
       }
     },
     "VirkarHeimagistingar": {
       "type": "object",
       "properties": {
-        "skraningarnumer": { "type": "string" },
-        "heitiHeimagistingar": { "type": "string" },
-        "heimilisfang": { "type": "string" },
-        "abyrgdarmadur": { "type": "string" },
-        "umsoknarAr": { "type": "string" },
-        "sveitarfelag": { "type": "string" },
-        "gestafjoldi": { "type": "integer", "format": "int32" },
-        "fjoldiHerbergja": { "type": "integer", "format": "int32" },
-        "fastanumer": { "type": "string" },
-        "ibudanumer": { "type": "string" },
-        "postnumer": { "type": "string" }
+        "skraningarnumer": {
+          "type": "string"
+        },
+        "heitiHeimagistingar": {
+          "type": "string"
+        },
+        "heimilisfang": {
+          "type": "string"
+        },
+        "abyrgdarmadur": {
+          "type": "string"
+        },
+        "umsoknarAr": {
+          "type": "string"
+        },
+        "sveitarfelag": {
+          "type": "string"
+        },
+        "gestafjoldi": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "fjoldiHerbergja": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "fastanumer": {
+          "type": "string"
+        },
+        "ibudanumer": {
+          "type": "string"
+        },
+        "postnumer": {
+          "type": "string"
+        }
       }
     },
     "AranuslausSvar": {
       "type": "object",
       "required": ["fraDags"],
       "properties": {
-        "fraDags": { "type": "string", "format": "date-time" },
-        "audkenniSvars": { "type": "string" },
+        "fraDags": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "audkenniSvars": {
+          "type": "string"
+        },
         "aranguslausFjarnam": {
           "type": "array",
-          "items": { "$ref": "#/definitions/AranguslausFjarnamMal" }
+          "items": {
+            "$ref": "#/definitions/AranguslausFjarnamMal"
+          }
         }
       }
     },
@@ -1400,44 +1934,86 @@
       "type": "object",
       "required": ["dags"],
       "properties": {
-        "malsnumer": { "type": "string" },
-        "dags": { "type": "string", "format": "date-time" },
-        "kennitala": { "type": "string" },
-        "nafn": { "type": "string" },
-        "upphaedKrofu": { "type": "number", "format": "decimal" },
-        "kennitalaUmbodsmanns": { "type": "string" },
-        "kennitalaGerdarbeidanda": { "type": "string" },
-        "kennitalaEmbaettis": { "type": "string" }
+        "malsnumer": {
+          "type": "string"
+        },
+        "dags": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "kennitala": {
+          "type": "string"
+        },
+        "nafn": {
+          "type": "string"
+        },
+        "upphaedKrofu": {
+          "type": "number",
+          "format": "decimal"
+        },
+        "kennitalaUmbodsmanns": {
+          "type": "string"
+        },
+        "kennitalaGerdarbeidanda": {
+          "type": "string"
+        },
+        "kennitalaEmbaettis": {
+          "type": "string"
+        }
       }
     },
     "AranuslausFyrirspurn": {
       "type": "object",
       "required": ["fraDags"],
       "properties": {
-        "fraDags": { "type": "string", "format": "date-time" },
-        "audkenni": { "type": "string" }
+        "fraDags": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "audkenni": {
+          "type": "string"
+        }
       }
     },
     "UppbodFasteignir": {
       "type": "object",
       "required": ["dagsUppbods"],
       "properties": {
-        "lysing": { "type": "string" },
-        "eigendur": { "type": "string" },
-        "gerdarbeidendur": { "type": "string" },
-        "dagsUppbods": { "type": "string", "format": "date-time" }
+        "lysing": {
+          "type": "string"
+        },
+        "eigendur": {
+          "type": "string"
+        },
+        "gerdarbeidendur": {
+          "type": "string"
+        },
+        "dagsUppbods": {
+          "type": "string",
+          "format": "date-time"
+        }
       }
     },
     "AranuslausFraTilSvar": {
       "type": "object",
       "required": ["fraDags", "tilDags"],
       "properties": {
-        "fraDags": { "type": "string", "format": "date-time" },
-        "tilDags": { "type": "string", "format": "date-time" },
-        "audkenniSvars": { "type": "string" },
+        "fraDags": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "tilDags": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "audkenniSvars": {
+          "type": "string"
+        },
         "aranguslausFjarnam": {
           "type": "array",
-          "items": { "$ref": "#/definitions/AranguslausFjarnamMal" }
+          "items": {
+            "$ref": "#/definitions/AranguslausFjarnamMal"
+          }
         }
       }
     },
@@ -1445,26 +2021,50 @@
       "type": "object",
       "required": ["fraDags", "tilDags"],
       "properties": {
-        "fraDags": { "type": "string", "format": "date-time" },
-        "tilDags": { "type": "string", "format": "date-time" },
-        "audkenni": { "type": "string" }
+        "fraDags": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "tilDags": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "audkenni": {
+          "type": "string"
+        }
       }
     },
     "AlgengTengsl": {
       "type": "object",
-      "properties": { "heiti": { "type": "string" } }
+      "properties": {
+        "heiti": {
+          "type": "string"
+        }
+      }
     },
     "SkiptaUmSkraningaradiliSkeyti": {
       "type": "object",
-      "properties": { "stada": { "type": "string" } }
+      "properties": {
+        "stada": {
+          "type": "string"
+        }
+      }
     },
     "SkiptaUmSkraningaradili": {
       "type": "object",
       "properties": {
-        "audkenni": { "type": "string" },
-        "kennitalaFra": { "type": "string" },
-        "kennitalaTil": { "type": "string" },
-        "malsnumer": { "type": "string" }
+        "audkenni": {
+          "type": "string"
+        },
+        "kennitalaFra": {
+          "type": "string"
+        },
+        "kennitalaTil": {
+          "type": "string"
+        },
+        "malsnumer": {
+          "type": "string"
+        }
       }
     },
     "SkraningaradiliDanarbusSkeyti": {
@@ -1482,46 +2082,98 @@
       "properties": {
         "adilarDanarbus": {
           "type": "array",
-          "items": { "$ref": "#/definitions/AdiliDanarbus" }
+          "items": {
+            "$ref": "#/definitions/AdiliDanarbus"
+          }
         },
         "eignir": {
           "type": "array",
-          "items": { "$ref": "#/definitions/EignirDanarbus" }
+          "items": {
+            "$ref": "#/definitions/EignirDanarbus"
+          }
         },
-        "kennitalaSkreningaradila": { "type": "string" },
-        "simiSkraningaradila": { "type": "string" },
-        "tolvuposturSkreningaradila": { "type": "string" },
-        "kennitalaLatins": { "type": "string" },
-        "nafnLatins": { "type": "string" },
-        "danardagur": { "type": "string", "format": "date-time" },
-        "malsnumer": { "type": "string" },
-        "embaetti": { "type": "string" },
-        "kaupmaili": { "type": "boolean" },
-        "erfdaskraIVorsluSyslumanns": { "type": "boolean" },
-        "vitneskjaUmAdraErfdaskra": { "type": "boolean" },
-        "bankareikningarVerdbrefEdaHlutabref": { "type": "boolean" },
-        "eiginRekstur": { "type": "boolean" },
-        "buseturetturVegnaKaupleiguIbuda": { "type": "boolean" },
-        "eignirErlendis": { "type": "boolean" },
-        "vidbotarupplysingar": { "type": "string" }
+        "kennitalaSkreningaradila": {
+          "type": "string"
+        },
+        "simiSkraningaradila": {
+          "type": "string"
+        },
+        "tolvuposturSkreningaradila": {
+          "type": "string"
+        },
+        "kennitalaLatins": {
+          "type": "string"
+        },
+        "nafnLatins": {
+          "type": "string"
+        },
+        "danardagur": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "malsnumer": {
+          "type": "string"
+        },
+        "embaetti": {
+          "type": "string"
+        },
+        "kaupmaili": {
+          "type": "boolean"
+        },
+        "erfdaskraIVorsluSyslumanns": {
+          "type": "boolean"
+        },
+        "vitneskjaUmAdraErfdaskra": {
+          "type": "boolean"
+        },
+        "bankareikningarVerdbrefEdaHlutabref": {
+          "type": "boolean"
+        },
+        "eiginRekstur": {
+          "type": "boolean"
+        },
+        "buseturetturVegnaKaupleiguIbuda": {
+          "type": "boolean"
+        },
+        "eignirErlendis": {
+          "type": "boolean"
+        },
+        "vidbotarupplysingar": {
+          "type": "string"
+        }
       }
     },
     "AdiliDanarbus": {
       "type": "object",
       "properties": {
-        "kennitala": { "type": "string" },
-        "nafn": { "type": "string" },
-        "tegundTengsla": { "type": "string" }
+        "kennitala": {
+          "type": "string"
+        },
+        "nafn": {
+          "type": "string"
+        },
+        "tegundTengsla": {
+          "type": "string"
+        }
       }
     },
     "EignirDanarbus": {
       "type": "object",
       "required": ["tegundAngalgs", "eignarhlutfall"],
       "properties": {
-        "tegundAngalgs": { "$ref": "#/definitions/TegundAndlags" },
-        "fastanumer": { "type": "string" },
-        "lysing": { "type": "string" },
-        "eignarhlutfall": { "type": "number", "format": "double" }
+        "tegundAngalgs": {
+          "$ref": "#/definitions/TegundAndlags"
+        },
+        "fastanumer": {
+          "type": "string"
+        },
+        "lysing": {
+          "type": "string"
+        },
+        "eignarhlutfall": {
+          "type": "number",
+          "format": "double"
+        }
       }
     },
     "TegundAndlags": {
@@ -1540,119 +2192,209 @@
     "UpplysingarUrDanarbuiSkeyti": {
       "type": "object",
       "properties": {
-        "audkenni": { "type": "string" },
+        "audkenni": {
+          "type": "string"
+        },
         "yfirlit": {
           "type": "array",
-          "items": { "$ref": "#/definitions/DanarbuUppl" }
+          "items": {
+            "$ref": "#/definitions/DanarbuUppl"
+          }
         },
-        "texti": { "type": "string" }
+        "texti": {
+          "type": "string"
+        }
       }
     },
     "DanarbuUppl": {
       "type": "object",
       "required": ["kaupmali", "erfdakraVitneskja"],
       "properties": {
-        "malsnumer": { "type": "string" },
-        "kennitala": { "type": "string" },
-        "nafn": { "type": "string" },
-        "danardagur": { "type": "string", "format": "date-time" },
-        "logheimili": { "type": "string" },
+        "malsnumer": {
+          "type": "string"
+        },
+        "kennitala": {
+          "type": "string"
+        },
+        "nafn": {
+          "type": "string"
+        },
+        "danardagur": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "logheimili": {
+          "type": "string"
+        },
         "erfingar": {
           "type": "array",
-          "items": { "$ref": "#/definitions/Erfingar" }
+          "items": {
+            "$ref": "#/definitions/Erfingar"
+          }
         },
-        "erfdaskra": { "type": "string" },
-        "kaupmali": { "type": "boolean" },
-        "erfdakraVitneskja": { "type": "boolean" },
+        "erfdaskra": {
+          "type": "string"
+        },
+        "kaupmali": {
+          "type": "boolean"
+        },
+        "erfdakraVitneskja": {
+          "type": "boolean"
+        },
         "eignir": {
           "type": "array",
-          "items": { "$ref": "#/definitions/EignirDanarbus" }
+          "items": {
+            "$ref": "#/definitions/EignirDanarbus"
+          }
         }
       }
     },
     "Erfingar": {
       "type": "object",
       "properties": {
-        "kennitala": { "type": "string" },
-        "nafn": { "type": "string" },
-        "heimilisfang": { "type": "string" },
-        "tengsl": { "type": "string" }
+        "kennitala": {
+          "type": "string"
+        },
+        "nafn": {
+          "type": "string"
+        },
+        "heimilisfang": {
+          "type": "string"
+        },
+        "tengsl": {
+          "type": "string"
+        }
       }
     },
     "Fyrirspurn": {
       "type": "object",
       "properties": {
-        "audkenni": { "type": "string" },
-        "kennitala": { "type": "string" }
+        "audkenni": {
+          "type": "string"
+        },
+        "kennitala": {
+          "type": "string"
+        }
       }
     },
     "Fasteignasalar": {
       "type": "object",
       "properties": {
-        "nafn": { "type": "string" },
-        "starfsstod": { "type": "string" }
+        "nafn": {
+          "type": "string"
+        },
+        "starfsstod": {
+          "type": "string"
+        }
       }
     },
     "ErfdarskraSkeyti": {
       "type": "object",
-      "properties": { "stada": { "type": "string" } }
+      "properties": {
+        "stada": {
+          "type": "string"
+        }
+      }
     },
     "VottordSkeyti": {
       "type": "object",
       "properties": {
-        "kennitala": { "type": "string" },
-        "gildisTimi": { "type": "string" },
-        "utgafudagur": { "type": "string" }
+        "kennitala": {
+          "type": "string"
+        },
+        "gildisTimi": {
+          "type": "string"
+        },
+        "utgafudagur": {
+          "type": "string"
+        }
       }
     },
     "SvarSkeyti": {
       "type": "object",
       "properties": {
-        "audkenni": { "type": "string" },
-        "skilabod": { "type": "string" },
-        "skjal": { "type": "string" }
+        "audkenni": {
+          "type": "string"
+        },
+        "skilabod": {
+          "type": "string"
+        },
+        "skjal": {
+          "type": "string"
+        }
       }
     },
     "InnsiglaSkeyti": {
       "type": "object",
       "properties": {
-        "audkenni": { "type": "string" },
-        "skyring": { "type": "string" },
-        "skjal": { "type": "string" }
+        "audkenni": {
+          "type": "string"
+        },
+        "skyring": {
+          "type": "string"
+        },
+        "skjal": {
+          "type": "string"
+        }
       }
     },
     "KaupmaliSkeyti": {
       "type": "object",
-      "properties": { "stada": { "type": "string" } }
+      "properties": {
+        "stada": {
+          "type": "string"
+        }
+      }
     },
     "WebhookEventPayload": {
       "type": "object",
       "required": ["id"],
       "properties": {
-        "id": { "type": "string", "format": "guid" },
-        "eventData": { "$ref": "#/definitions/SignedDocumentEventData" },
-        "eventSignature": { "$ref": "#/definitions/EventSignature" }
+        "id": {
+          "type": "string",
+          "format": "guid"
+        },
+        "eventData": {
+          "$ref": "#/definitions/SignedDocumentEventData"
+        },
+        "eventSignature": {
+          "$ref": "#/definitions/EventSignature"
+        }
       }
     },
     "SignedDocumentEventData": {
       "type": "object",
       "required": ["eventType"],
       "properties": {
-        "flowKey": { "type": "string" },
-        "flowName": { "type": "string" },
+        "flowKey": {
+          "type": "string"
+        },
+        "flowName": {
+          "type": "string"
+        },
         "signees": {
           "type": "array",
-          "items": { "$ref": "#/definitions/Signee" }
+          "items": {
+            "$ref": "#/definitions/Signee"
+          }
         },
-        "signedDocument": { "type": "string" },
+        "signedDocument": {
+          "type": "string"
+        },
         "attachments": {
           "type": "array",
-          "items": { "$ref": "#/definitions/SigningAttachment" }
+          "items": {
+            "$ref": "#/definitions/SigningAttachment"
+          }
         },
-        "eventType": { "$ref": "#/definitions/EventType" },
+        "eventType": {
+          "$ref": "#/definitions/EventType"
+        },
         "meta": {
           "type": "object",
-          "additionalProperties": { "type": "string" }
+          "additionalProperties": {
+            "type": "string"
+          }
         }
       }
     },
@@ -1660,26 +2402,48 @@
       "type": "object",
       "required": ["signed"],
       "properties": {
-        "name": { "type": "string" },
-        "ssn": { "type": "string" },
-        "phoneNumber": { "type": "string" },
-        "email": { "type": "string" },
-        "address": { "type": "string" },
-        "postalCode": { "type": "string" },
-        "city": { "type": "string" },
+        "name": {
+          "type": "string"
+        },
+        "ssn": {
+          "type": "string"
+        },
+        "phoneNumber": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "address": {
+          "type": "string"
+        },
+        "postalCode": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
         "key": {
           "type": "string",
           "description": "Length 14 (it will alwasy be used with SignatureKey so the total will be 19)"
         },
-        "signed": { "type": "boolean" },
-        "processKey": { "type": "string" },
-        "communicationDeliveryType": { "type": "string" }
+        "signed": {
+          "type": "boolean"
+        },
+        "processKey": {
+          "type": "string"
+        },
+        "communicationDeliveryType": {
+          "type": "string"
+        }
       }
     },
     "SigningAttachment": {
       "type": "object",
       "properties": {
-        "fileName": { "type": "string" },
+        "fileName": {
+          "type": "string"
+        },
         "fileContent": {
           "type": "string",
           "description": "FileContent is stored as base64 string"
@@ -1696,42 +2460,70 @@
       "type": "object",
       "required": ["timeStamp", "guid"],
       "properties": {
-        "timeStamp": { "type": "integer", "format": "int64" },
-        "guid": { "type": "string", "format": "guid" },
-        "signature": { "type": "string" }
+        "timeStamp": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "guid": {
+          "type": "string",
+          "format": "guid"
+        },
+        "signature": {
+          "type": "string"
+        }
       }
     },
     "Skilabod": {
       "type": "object",
       "properties": {
-        "skilabod": { "type": "string" },
-        "audkenni": { "type": "string" },
-        "malsnumer": { "type": "string" }
+        "skilabod": {
+          "type": "string"
+        },
+        "audkenni": {
+          "type": "string"
+        },
+        "malsnumer": {
+          "type": "string"
+        }
       }
     },
     "SyslSkeyti": {
       "type": "object",
       "properties": {
-        "audkenni": { "type": "string" },
-        "gognSkeytis": { "$ref": "#/definitions/SyslGagnaSkeyti" }
+        "audkenni": {
+          "type": "string"
+        },
+        "gognSkeytis": {
+          "$ref": "#/definitions/SyslGagnaSkeyti"
+        }
       }
     },
     "SyslGagnaSkeyti": {
       "type": "object",
       "properties": {
-        "audkenni": { "type": "string" },
-        "skeytaHeiti": { "type": "string" },
+        "audkenni": {
+          "type": "string"
+        },
+        "skeytaHeiti": {
+          "type": "string"
+        },
         "adilar": {
           "type": "array",
-          "items": { "$ref": "#/definitions/Adili" }
+          "items": {
+            "$ref": "#/definitions/Adili"
+          }
         },
         "attachments": {
           "type": "array",
-          "items": { "$ref": "#/definitions/VidhengiSkra" }
+          "items": {
+            "$ref": "#/definitions/VidhengiSkra"
+          }
         },
         "gagnaMengi": {
           "type": "object",
-          "additionalProperties": { "type": "string" }
+          "additionalProperties": {
+            "type": "string"
+          }
         }
       }
     },
@@ -1739,16 +2531,36 @@
       "type": "object",
       "required": ["undirritad", "tegund"],
       "properties": {
-        "id": { "type": "string" },
-        "nafn": { "type": "string" },
-        "kennitala": { "type": "string" },
-        "simi": { "type": "string" },
-        "tolvupostur": { "type": "string" },
-        "heimilisfang": { "type": "string" },
-        "postaritun": { "type": "string" },
-        "sveitafelag": { "type": "string" },
-        "undirritad": { "type": "boolean" },
-        "tegund": { "$ref": "#/definitions/AdiliTegund" }
+        "id": {
+          "type": "string"
+        },
+        "nafn": {
+          "type": "string"
+        },
+        "kennitala": {
+          "type": "string"
+        },
+        "simi": {
+          "type": "string"
+        },
+        "tolvupostur": {
+          "type": "string"
+        },
+        "heimilisfang": {
+          "type": "string"
+        },
+        "postaritun": {
+          "type": "string"
+        },
+        "sveitafelag": {
+          "type": "string"
+        },
+        "undirritad": {
+          "type": "boolean"
+        },
+        "tegund": {
+          "$ref": "#/definitions/AdiliTegund"
+        }
       }
     },
     "AdiliTegund": {
@@ -1760,50 +2572,95 @@
     "VidhengiSkra": {
       "type": "object",
       "properties": {
-        "nafnSkraar": { "type": "string" },
-        "innihaldSkraar": { "type": "string" }
+        "nafnSkraar": {
+          "type": "string"
+        },
+        "innihaldSkraar": {
+          "type": "string"
+        }
       }
     },
     "SyslSekjaSkra": {
       "type": "object",
       "properties": {
-        "audkenni": { "type": "string" },
-        "malsnumer": { "type": "string" },
-        "kennitala": { "type": "string" },
-        "skraarnafn": { "type": "string" }
+        "audkenni": {
+          "type": "string"
+        },
+        "malsnumer": {
+          "type": "string"
+        },
+        "kennitala": {
+          "type": "string"
+        },
+        "skraarnafn": {
+          "type": "string"
+        }
       }
     },
     "VedbandayfirlitSvarSkeyti": {
       "type": "object",
       "properties": {
-        "audkenni": { "type": "string" },
-        "skilabod": { "type": "string" },
-        "vedbandayfirlitPDFSkra": { "type": "string" }
+        "audkenni": {
+          "type": "string"
+        },
+        "skilabod": {
+          "type": "string"
+        },
+        "vedbandayfirlitPDFSkra": {
+          "type": "string"
+        }
       }
     },
     "VedbandayfirlitSkeyti": {
       "type": "object",
       "required": ["tegundAndlags"],
       "properties": {
-        "audkenni": { "type": "string" },
-        "fastanumer": { "type": "string" },
-        "tegundAndlags": { "$ref": "#/definitions/TegundAndlags" }
+        "audkenni": {
+          "type": "string"
+        },
+        "fastanumer": {
+          "type": "string"
+        },
+        "tegundAndlags": {
+          "$ref": "#/definitions/TegundAndlags"
+        }
       }
     },
     "VedbandayfirlitReguverkiSvarSkeyti": {
       "type": "object",
       "required": ["landNr"],
       "properties": {
-        "fastnum": { "type": "string" },
-        "landNr": { "type": "integer", "format": "int32" },
-        "heiti": { "type": "string" },
-        "svfn": { "type": "string" },
-        "svetiarfelag": { "type": "string" },
-        "notkun": { "type": "string" },
-        "eining": { "type": "string" },
-        "byggd": { "type": "string" },
-        "embaetti": { "type": "string" },
-        "embaettiNumer": { "type": "string" }
+        "fastnum": {
+          "type": "string"
+        },
+        "landNr": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "heiti": {
+          "type": "string"
+        },
+        "svfn": {
+          "type": "string"
+        },
+        "svetiarfelag": {
+          "type": "string"
+        },
+        "notkun": {
+          "type": "string"
+        },
+        "eining": {
+          "type": "string"
+        },
+        "byggd": {
+          "type": "string"
+        },
+        "embaetti": {
+          "type": "string"
+        },
+        "embaettiNumer": {
+          "type": "string"
+        }
       }
     }
   },
@@ -1815,5 +2672,9 @@
       "in": "header"
     }
   },
-  "security": [{ "Bearer": [] }]
+  "security": [
+    {
+      "Bearer": []
+    }
+  ]
 }
