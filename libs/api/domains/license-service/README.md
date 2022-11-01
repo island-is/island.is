@@ -4,7 +4,7 @@
 
 A layer that provides a single point of entry for all of a users licenses.
 
-## Licenses
+### Licenses
 
 The license service returns a generic license that consists of the following parts.
 
@@ -22,7 +22,7 @@ The license service returns a generic license that consists of the following par
 - Machine License
 - ADR License
 
-## Usage
+### Usage
 
 The Api and Xroad services need to be running
 
@@ -30,6 +30,21 @@ The Api and Xroad services need to be running
   `Yarn start api`
 - XRoad
   `./scripts/run-xroad-proxy.sh`
+
+### Adding a new license
+
+1. Generate an external client that fetches the data from a 3rd party
+2. Create a client folder in `/license-service/client/` folder
+   - Each individual client is a module, so it can be injected into the license service easily. What you need then is:
+     - A service that provides the license data.
+     - A mapper that transforms and raw specific license data into a generic form.
+     - A configuration definition for the service. - All secrets should be kept in the AWS parameter store. Do not use environment files!
+     - (optional) Type definitions if required
+     - Finally, the module definitions, that provides the everything for injection and exports the service.
+3. Add the new license to the relevant types, e.g. `GenericLicenseType``
+4. Inject the new internal client into the LicenseService!
+   - For digital licenses, you also need to provide the config to the CONFIG_PROVIDER factory function if pkpass is available (so it can retrieve the `passTemplateId` from it)
+   - Don't forget to add the new license to the `AVAILABLE_LICENSES` object if it's supposed to be displayed.
 
 ### Digital Licenses
 
@@ -47,8 +62,8 @@ To be able to generate a digital license, some conditions need to be met for eac
 
 - **Firearm License**
 
-  - The license mustn't be expired
+  - The license must not be expired
 
 - **Adr License**
 
-  - The license mustn't be expired
+  - The license must not be expired
