@@ -16,6 +16,7 @@ import {
   Link,
   Text,
   Icon,
+  AlertBanner,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { dateFormat } from '@island.is/shared/constants'
@@ -40,7 +41,7 @@ const DocumentLine: FC<Props> = ({ documentLine, img, documentCategories }) => {
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.sm
 
-  const [getDocument, { data: getFileByIdData, loading }] = useLazyQuery(
+  const [getDocument, { data: getFileByIdData, loading, error }] = useLazyQuery(
     GET_DOCUMENT_BY_ID,
     {
       variables: {
@@ -152,6 +153,17 @@ const DocumentLine: FC<Props> = ({ documentLine, img, documentCategories }) => {
     </Text>
   )
 
+  const displayError = () => {
+    return (
+      <Box paddingTop={2}>
+        <AlertBanner
+          variant="error"
+          description={`Ekki tókst að sækja umbeðið skjal, við bendum þér á að beina fyrirspurn til sendanda þess, ${documentLine.senderName}`}
+        />
+      </Box>
+    )
+  }
+
   return (
     <>
       {loading && <LoadModal />}
@@ -251,6 +263,7 @@ const DocumentLine: FC<Props> = ({ documentLine, img, documentCategories }) => {
             </GridColumn>
           </GridRow>
         )}
+        {error && displayError()}
       </Box>
     </>
   )
