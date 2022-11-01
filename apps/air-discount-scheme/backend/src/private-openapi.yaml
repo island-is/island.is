@@ -228,6 +228,41 @@ components:
         - nationalId
         - bookingDate
         - flightLegs
+    User:
+      type: object
+      properties:
+        firstName:
+          type: string
+        middleName:
+          type: string
+        lastName:
+          type: string
+        gender:
+          type: string
+          enum:
+            - kvk
+            - kk
+            - hvk
+        nationalId:
+          type: string
+        fund:
+          $ref: '#/components/schemas/Fund'
+        address:
+          type: string
+        postalcode:
+          type: number
+        city:
+          type: string
+      required:
+        - firstName
+        - middleName
+        - lastName
+        - gender
+        - nationalId
+        - fund
+        - address
+        - postalcode
+        - city
 paths:
   /liveness:
     get:
@@ -460,5 +495,13 @@ paths:
       responses:
         '200':
           description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
       tags:
         - Users
+      security:
+        - bearer: []
