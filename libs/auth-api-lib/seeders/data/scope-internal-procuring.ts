@@ -5,7 +5,7 @@ export const up = createScope({
   name: '@island.is/internal:procuring',
   displayName: 'Generic internal API scope for procuring holders',
   description:
-    'Shared scope for interal usage in cases of delegation for procuring holders',
+    'Shared scope for internal usage in cases of delegation for procuring holders',
 
   // Optional:
   delegation: {
