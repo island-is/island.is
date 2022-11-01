@@ -55,7 +55,7 @@ import { Case } from './models/case.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { caseModuleConfig } from './case.config'
 
-const includes: Includeable[] = [
+export const includes: Includeable[] = [
   { model: Defendant, as: 'defendants' },
   { model: Institution, as: 'court' },
   {
@@ -96,7 +96,7 @@ const includes: Includeable[] = [
   },
 ]
 
-const defendantsOrder: OrderItem = [
+export const defendantsOrder: OrderItem = [
   { model: Defendant, as: 'defendants' },
   'created',
   'ASC',
@@ -160,6 +160,40 @@ export class CaseService {
       : this.caseModel.create({ ...caseToCreate }))
 
     return theCase.id
+  }
+
+  private addCompletedCaseMessagesToQueue(caseId: string): Promise<void> {
+    return this.messageService.sendMessagesToQueue([
+      { type: MessageType.CASE_COMPLETED, caseId },
+      { type: MessageType.DELIVER_COURT_RECORD_TO_COURT, caseId },
+      { type: MessageType.DELIVER_SIGNED_RULING_TO_COURT, caseId },
+      { type: MessageType.SEND_RULING_NOTIFICAGTION, caseId },
+    ])
+  }
+
+  addCompletedIndictmentCaseMessagesToQueue(theCase: Case): Promise<void> {
+    return this.messageService.sendMessagesToQueue([
+      { type: MessageType.CASE_COMPLETED, caseId: theCase.id },
+      ...(theCase.caseFiles
+        ?.filter(
+          (caseFile) =>
+            caseFile.category === CaseFileCategory.COURT_RECORD ||
+            caseFile.category === CaseFileCategory.RULING,
+        )
+        .map((caseFile) => ({
+          type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+          caseId: theCase.id,
+          caseFileId: caseFile.id,
+        })) ?? []),
+      { type: MessageType.SEND_RULING_NOTIFICAGTION, caseId: theCase.id },
+    ])
+  }
+
+  addCaseConnectedToCourtCaseMessageToQueue(caseId: string): Promise<void> {
+    return this.messageService.sendMessageToQueue({
+      type: MessageType.CASE_CONNECTED_TO_COURT_CASE,
+      caseId,
+    })
   }
 
   async findById(caseId: string): Promise<Case> {
@@ -258,20 +292,6 @@ export class CaseService {
     if (returnUpdatedCase) {
       return this.findById(caseId)
     }
-  }
-
-  addCaseCompletedMessageToQueue(caseId: string): Promise<void> {
-    return this.messageService.sendMessagesToQueue([
-      { type: MessageType.CASE_COMPLETED, caseId },
-      { type: MessageType.SEND_RULING_NOTIFICAGTION, caseId },
-    ])
-  }
-
-  addCaseConnectedToCourtCaseMessageToQueue(caseId: string): Promise<void> {
-    return this.messageService.sendMessageToQueue({
-      type: MessageType.CASE_CONNECTED_TO_COURT_CASE,
-      caseId,
-    })
   }
 
   async getRequestPdf(theCase: Case): Promise<Buffer> {
@@ -545,7 +565,7 @@ export class CaseService {
       )
 
       // No need to wait for now, but may consider including this in a transaction with the database update later
-      this.addCaseCompletedMessageToQueue(theCase.id)
+      this.addCompletedCaseMessagesToQueue(theCase.id)
 
       return { documentSigned: true }
     } catch (error) {

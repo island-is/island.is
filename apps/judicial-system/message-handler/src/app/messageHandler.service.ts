@@ -2,12 +2,17 @@ import { Inject, Injectable, OnModuleDestroy } from '@nestjs/common'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { MessageType, MessageService } from '@island.is/judicial-system/message'
+import {
+  MessageType,
+  MessageService,
+  CaseFileMessage,
+} from '@island.is/judicial-system/message'
 import type { Message } from '@island.is/judicial-system/message'
 
-import { RulingNotificationService } from './rulingNotification.service'
 import { CaseDeliveryService } from './caseDelivery.service'
 import { ProsecutorDocumentsDeliveryService } from './prosecutorDocumentsDelivery.service'
+import { InternalDeliveryService } from './internalDelivery.service'
+import { RulingNotificationService } from './rulingNotification.service'
 
 @Injectable()
 export class MessageHandlerService implements OnModuleDestroy {
@@ -16,13 +21,14 @@ export class MessageHandlerService implements OnModuleDestroy {
 
   constructor(
     private readonly messageService: MessageService,
-    private readonly rulingNotificationService: RulingNotificationService,
     private readonly caseDeliveryService: CaseDeliveryService,
     private readonly prosecutorDocumentsDeliveryService: ProsecutorDocumentsDeliveryService,
+    private readonly internalDeliveryService: InternalDeliveryService,
+    private readonly rulingNotificationService: RulingNotificationService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  private async handleMessage(message: Message): Promise<boolean> {
+  async handleMessage(message: Message): Promise<boolean> {
     this.logger.debug('Handling message', { msg: message })
 
     let handled = false
@@ -36,6 +42,24 @@ export class MessageHandlerService implements OnModuleDestroy {
       case MessageType.CASE_COMPLETED:
         handled = await this.caseDeliveryService.deliverCase(message.caseId)
         break
+      case MessageType.DELIVER_CASE_FILE_TO_COURT:
+        handled = await this.internalDeliveryService.deliver(
+          message.caseId,
+          `file/${(message as CaseFileMessage).caseFileId}/deliverToCourt`,
+        )
+        break
+      case MessageType.DELIVER_COURT_RECORD_TO_COURT:
+        handled = await this.internalDeliveryService.deliver(
+          message.caseId,
+          'deliverCourtRecordToCourt',
+        )
+        break
+      case MessageType.DELIVER_SIGNED_RULING_TO_COURT:
+        handled = await this.internalDeliveryService.deliver(
+          message.caseId,
+          'deliverSignedRulingToCourt',
+        )
+        break
       case MessageType.SEND_RULING_NOTIFICAGTION:
         handled = await this.rulingNotificationService.sendRulingNotification(
           message.caseId,
@@ -48,6 +72,8 @@ export class MessageHandlerService implements OnModuleDestroy {
     this.logger.debug(`Message ${handled ? 'handled' : 'not handled'}`, {
       msg: message,
     })
+
+    // TDOO: Resend unhandled messages a certain number of times before giving up
 
     return handled
   }

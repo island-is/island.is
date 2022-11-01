@@ -1,26 +1,26 @@
+//todo
 import { CanActivate } from '@nestjs/common'
 
 import {
   CaseExistsGuard,
   CaseNotCompletedGuard,
   CaseWriteGuard,
-} from '../../case'
-import { CaseFileExistsGuard } from '../guards/caseFileExists.guard'
-import { FileController } from '../file.controller'
+} from '../../../case'
+import { FileController } from '../../file.controller'
 
-describe('FileController - Delete case file guards', () => {
+describe('FileController - Upload case file to court guards', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let guards: any[]
 
   beforeEach(() => {
     guards = Reflect.getMetadata(
       '__guards__',
-      FileController.prototype.deleteCaseFile,
+      FileController.prototype.updateFiles,
     )
   })
 
-  it('should have four guards', () => {
-    expect(guards).toHaveLength(4)
+  it('should have three guards', () => {
+    expect(guards).toHaveLength(3)
   })
 
   describe('CaseExistsGuard', () => {
@@ -47,7 +47,7 @@ describe('FileController - Delete case file guards', () => {
     })
   })
 
-  describe('CaseNotCompletedGuard', () => {
+  describe('CaseReceivedGuard', () => {
     let guard: CanActivate
 
     beforeEach(() => {
@@ -56,18 +56,6 @@ describe('FileController - Delete case file guards', () => {
 
     it('should have CaseNotCompletedGuard as quard 3', () => {
       expect(guard).toBeInstanceOf(CaseNotCompletedGuard)
-    })
-  })
-
-  describe('CaseFileExistsGuard', () => {
-    let guard: CanActivate
-
-    beforeEach(() => {
-      guard = new guards[3]()
-    })
-
-    it('should have CaseFileExistsGuard as quard 4', () => {
-      expect(guard).toBeInstanceOf(CaseFileExistsGuard)
     })
   })
 })

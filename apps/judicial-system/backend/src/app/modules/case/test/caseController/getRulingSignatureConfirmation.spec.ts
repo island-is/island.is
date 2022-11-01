@@ -108,6 +108,8 @@ describe('CaseController - Get ruling signature confirmation', () => {
       expect(mockAwsS3Service.putObject).toHaveBeenCalled()
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
         { type: MessageType.CASE_COMPLETED, caseId },
+        { type: MessageType.DELIVER_COURT_RECORD_TO_COURT, caseId },
+        { type: MessageType.DELIVER_SIGNED_RULING_TO_COURT, caseId },
         { type: MessageType.SEND_RULING_NOTIFICAGTION, caseId },
       ])
     })
