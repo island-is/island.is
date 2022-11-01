@@ -290,10 +290,9 @@ export class ParentalLeaveService {
 
   async getAttachments(application: Application): Promise<Attachment[]> {
     const attachments: Attachment[] = []
-    const {
-      isSelfEmployed,
-      applicationType,
-    } = getApplicationAnswers(application.answers)
+    const { isSelfEmployed, applicationType } = getApplicationAnswers(
+      application.answers,
+    )
 
     if (isSelfEmployed === YES && applicationType === PARENTAL_LEAVE) {
       const selfEmployedPdfs = (await getValueViaPath(
