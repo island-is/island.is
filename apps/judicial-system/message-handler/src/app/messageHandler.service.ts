@@ -29,7 +29,7 @@ export class MessageHandlerService implements OnModuleDestroy {
   ) {}
 
   async handleMessage(message: Message): Promise<boolean> {
-    this.logger.debug('Handling message', { msg: message })
+    this.logger.info('Handling message', { msg: message })
 
     let handled = false
 
@@ -69,11 +69,9 @@ export class MessageHandlerService implements OnModuleDestroy {
         this.logger.error('Unknown message type', { msg: message })
     }
 
-    this.logger.debug(`Message ${handled ? 'handled' : 'not handled'}`, {
+    this.logger.info(`Message ${handled ? 'handled' : 'not handled'}`, {
       msg: message,
     })
-
-    // TDOO: Resend unhandled messages a certain number of times before giving up
 
     return handled
   }
