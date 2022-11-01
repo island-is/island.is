@@ -35,7 +35,7 @@ import {
 } from './parentalLeaveUtils'
 import { filterValidPeriods } from '../lib/parentalLeaveUtils'
 import { validatePeriod } from './answerValidator-utils'
-import { multipleBirthsDefaultDays, maxMultipleBirths } from '../config'
+import { defaultMultipleBirthsMonths } from '../config'
 
 const EMPLOYER = 'employer'
 const FILEUPLOAD = 'fileUpload'
@@ -167,19 +167,22 @@ export const answerValidators: Record<string, AnswerValidator> = {
       if (!obj.multipleBirths) {
         return buildError(coreErrorMessages.defaultError, 'multipleBirths')
       }
-      if (obj.multipleBirths < 2 || obj.multipleBirths > maxMultipleBirths + 1)
+      if (
+        obj.multipleBirths < 2 ||
+        obj.multipleBirths > defaultMultipleBirthsMonths + 1
+      )
         return buildError(coreErrorMessages.defaultError, 'multipleBirths')
-      if (obj.multipleBirthsRequestDays) {
-        if (
-          obj.multipleBirthsRequestDays < 0 ||
-          obj.multipleBirthsRequestDays >
-            obj.multipleBirths * multipleBirthsDefaultDays
-        )
-          return buildError(
-            coreErrorMessages.defaultError,
-            'multipleBirthsRequestDays',
-          )
-      }
+      // if (obj.multipleBirthsRequestDays) {
+      //   if (
+      //     obj.multipleBirthsRequestDays < 0 ||
+      //     obj.multipleBirthsRequestDays >
+      //       obj.multipleBirths * multipleBirthsDefaultDays
+      //   )
+      //     return buildError(
+      //       coreErrorMessages.defaultError,
+      //       'multipleBirthsRequestDays',
+      //     )
+      // }
     }
 
     return undefined

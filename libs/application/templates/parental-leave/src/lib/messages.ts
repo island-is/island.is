@@ -432,9 +432,9 @@ export const parentalLeaveFormMessages: MessageDir = {
     transferRightsDescription: {
       id: 'pl.application:transferRights.description',
       defaultMessage:
-        'Hægt er að færa allt að 45 daga á milli foreldra. Athugaðu að ef þú óskar eftir dögum þá þarf hitt foreldrið að samþykkja það.',
+        '( Need modify - bætti sameign réttindi fjölbura )Hægt er að færa allt að 45 daga á milli foreldra. Athugaðu að ef þú óskar eftir dögum þá þarf hitt foreldrið að samþykkja það.',
       description:
-        'You can transfer up to {days} between parents. Note that if you choose to request days then the other parent will need to approve it.',
+        '( Need modify - bætti sameign réttindi fjölbura )You can transfer up to {days} between parents. Note that if you choose to request days then the other parent will need to approve it.',
     },
     transferRightsNone: {
       id: 'pl.application:transferRights.option.none',

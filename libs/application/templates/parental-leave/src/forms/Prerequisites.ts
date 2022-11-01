@@ -32,7 +32,7 @@ import {
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
 } from '../constants'
-import { maxMultipleBirths } from '../config'
+import { defaultMultipleBirthsMonths } from '../config'
 
 const shouldRenderMockDataSubSection = !isRunningOnEnvironment('production')
 
@@ -381,7 +381,7 @@ export const PrerequisitesForm: Form = buildForm({
                 buildSelectField({
                   id: 'multipleBirths.multipleBirths',
                   title: parentalLeaveFormMessages.selectChild.multipleBirths,
-                  options: new Array(maxMultipleBirths)
+                  options: new Array(defaultMultipleBirthsMonths)
                     .fill(0)
                     .map((_, index) => ({
                       value: `${index + 2}`,

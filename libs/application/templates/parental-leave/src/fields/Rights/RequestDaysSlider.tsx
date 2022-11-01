@@ -13,15 +13,31 @@ import {
   defaultMonths,
   maxMonths,
   daysInMonth,
+  multipleBirthsDefaultDays,
+  defaultMultipleBirthsMonths,
 } from '../../config'
 import { YES } from '../../constants'
 
 const RequestDaysSlider: FC<FieldBaseProps> = ({ field, application }) => {
-  const maxDays = maxDaysToGiveOrReceive
   const { id } = field
   const { formatMessage } = useLocale()
   const { register } = useFormContext()
-  const { requestDays } = getApplicationAnswers(application.answers)
+  const {
+    requestDays,
+    multipleBirths,
+    hasMultipleBirths,
+  } = getApplicationAnswers(application.answers)
+  const multipleBirthsCounter = multipleBirths - 1
+  const multipleBirthsDays = multipleBirthsCounter * multipleBirthsDefaultDays
+  const maxMultipleBirthsMonths =
+    multipleBirthsCounter * defaultMultipleBirthsMonths + defaultMonths
+
+  let maxDays = maxDaysToGiveOrReceive
+  let maxUsedMonths = maxMonths
+  if (hasMultipleBirths === YES) {
+    maxDays += multipleBirthsDays
+    maxUsedMonths += multipleBirthsCounter * defaultMultipleBirthsMonths
+  }
 
   const [chosenRequestDays, setChosenRequestDays] = useState<number>(
     requestDays === 0 ? 1 : requestDays,
@@ -34,6 +50,11 @@ const RequestDaysSlider: FC<FieldBaseProps> = ({ field, application }) => {
       ? parentalLeaveFormMessages.shared.requestRightsDays
       : parentalLeaveFormMessages.shared.requestRightsDay
 
+  const daysMultipleBirthKey =
+    chosenRequestDays > multipleBirthsDays + 1
+      ? parentalLeaveFormMessages.shared.requestMultipleBirthsDay
+      : parentalLeaveFormMessages.shared.requestMultipleBirthsDays
+
   const boxChartKeys: BoxChartKey[] = [
     {
       label: () => ({
@@ -43,7 +64,27 @@ const RequestDaysSlider: FC<FieldBaseProps> = ({ field, application }) => {
       bulletStyle: 'blue',
     },
     {
-      label: () => ({ ...daysStringKey, values: { day: chosenRequestDays } }),
+      label: () => ({
+        ...daysMultipleBirthKey,
+        values: {
+          day:
+            chosenRequestDays < multipleBirthsDays
+              ? chosenRequestDays
+              : multipleBirthsDays,
+        },
+      }),
+      bulletStyle: 'purple',
+    },
+    {
+      label: () => ({
+        ...daysStringKey,
+        values: {
+          day:
+            chosenRequestDays > multipleBirthsDays
+              ? chosenRequestDays - multipleBirthsDays
+              : 0,
+        },
+      }),
       bulletStyle: 'greenWithLines',
     },
   ]
@@ -76,13 +117,16 @@ const RequestDaysSlider: FC<FieldBaseProps> = ({ field, application }) => {
         </Box>
         <BoxChart
           application={application}
-          boxes={Math.ceil(maxMonths)}
+          boxes={Math.ceil(maxUsedMonths)}
           calculateBoxStyle={(index) => {
             if (index < defaultMonths) {
               return 'blue'
             }
 
             if (index < requestedMonths) {
+              if (index < maxMultipleBirthsMonths) {
+                return 'purple'
+              }
               return 'greenWithLines'
             }
 
