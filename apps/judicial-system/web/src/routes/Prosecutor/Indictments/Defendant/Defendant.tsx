@@ -51,7 +51,7 @@ const Defendant: React.FC = () => {
     caseNotFound,
   } = useContext(FormContext)
   const { formatMessage } = useIntl()
-  const { createCase, isCreatingCase, setAndSendToServer } = useCase()
+  const { createCase, isCreatingCase, setAndSendCaseToServer } = useCase()
   const {
     createDefendant,
     updateDefendant,
@@ -236,7 +236,7 @@ const Defendant: React.FC = () => {
 
               setCaseType(type)
 
-              setAndSendToServer(
+              setAndSendCaseToServer(
                 [
                   {
                     type,

@@ -23,7 +23,7 @@ interface Props {
 const SelectDefender: React.FC<Props> = (props) => {
   const { defendant } = props
   const { workingCase, setWorkingCase } = useContext(FormContext)
-  const { setAndSendToServer } = useCase()
+  const { setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
   const { updateDefendant, updateDefendantState } = useDefendants()
 
@@ -37,7 +37,7 @@ const SelectDefender: React.FC<Props> = (props) => {
       defendantWaivesRightToCounsel: boolean,
     ) => {
       // TODO: getting around typescript to be able to unset defender
-      // should updatee setAndSendToServer to accept UpdateCaseInput
+      // should updatee setAndSendCaseToServer to accept UpdateCaseInput
       const updateDefendantInput: UpdateDefendant = {
         defenderNationalId: defendantWaivesRightToCounsel
           ? ''
@@ -56,7 +56,7 @@ const SelectDefender: React.FC<Props> = (props) => {
 
       updateDefendant(caseId, defendant.id, updateDefendantInput)
     },
-    [workingCase, setWorkingCase, setAndSendToServer],
+    [workingCase, setWorkingCase, setAndSendCaseToServer],
   )
 
   return (

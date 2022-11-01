@@ -36,14 +36,14 @@ const HearingArrangements: React.FC = () => {
   } = useContext(FormContext)
   const router = useRouter()
   const {
-    setAndSendToServer,
+    setAndSendCaseToServer,
     sendNotification,
     isSendingNotification,
   } = useCase()
   const { formatMessage } = useIntl()
   const handleProsecutorChange = useCallback(
     (prosecutorId: string) => {
-      setAndSendToServer(
+      setAndSendCaseToServer(
         [
           {
             prosecutorId: prosecutorId,
@@ -55,7 +55,7 @@ const HearingArrangements: React.FC = () => {
       )
       return true
     },
-    [workingCase, setWorkingCase, setAndSendToServer],
+    [workingCase, setWorkingCase, setAndSendCaseToServer],
   )
 
   const onNextButttonClick = useCallback(async () => {
