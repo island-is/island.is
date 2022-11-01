@@ -328,12 +328,29 @@ export function getCasesQueryFilter(user: User): WhereOptions {
         ]
       : []
 
+  const blockDraftIndictmentsForCourt = [
+    UserRole.JUDGE,
+    UserRole.REGISTRAR,
+  ].includes(user.role)
+    ? [
+        {
+          [Op.not]: {
+            [Op.and]: [
+              { state: CaseState.DRAFT },
+              { [Op.or]: indictmentCases.map((type) => ({ type })) },
+            ],
+          },
+        },
+      ]
+    : []
+
   return {
     [Op.and]: [
       hideArchived,
       blockStates,
       blockInstitutions,
       ...blockHightenedSecurity,
+      ...blockDraftIndictmentsForCourt,
     ],
   }
 }

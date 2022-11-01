@@ -769,6 +769,14 @@ describe('getCasesQueryFilter', () => {
               { court_id: 'Court Id' },
             ],
           },
+          {
+            [Op.not]: {
+              [Op.and]: [
+                { state: CaseState.DRAFT },
+                { [Op.or]: indictmentCases.map((type) => ({ type })) },
+              ],
+            },
+          },
         ],
       })
     })
@@ -805,6 +813,14 @@ describe('getCasesQueryFilter', () => {
               { accused_postponed_appeal_date: { [Op.not]: null } },
               { prosecutor_postponed_appeal_date: { [Op.not]: null } },
             ],
+          },
+          {
+            [Op.not]: {
+              [Op.and]: [
+                { state: CaseState.DRAFT },
+                { [Op.or]: indictmentCases.map((type) => ({ type })) },
+              ],
+            },
           },
         ],
       })
