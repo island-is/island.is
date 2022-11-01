@@ -348,6 +348,7 @@ export const slices = gql`
     }
     automaticallyFetchArticles
     sortBy
+    hasBorderAbove
     articles {
       id
       slug
@@ -435,6 +436,8 @@ export const slices = gql`
     title
     type
     hasBorderAbove
+    showTitle
+    titleHeadingLevel
     accordionItems {
       id
       title
