@@ -1,1 +1,1 @@
-export * from './lib/applicantInformationSection/applicantInformationSection'
+export * from './lib/applicantInformationSection'
