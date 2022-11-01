@@ -29,7 +29,6 @@ export const sellerSubSection = buildSubSection({
           width: 'full',
           readOnly: true,
           format: '######-####',
-          required: true,
           defaultValue: (application: Application) =>
             application.externalData?.nationalRegistry?.data?.nationalId,
         }),
@@ -39,7 +38,6 @@ export const sellerSubSection = buildSubSection({
           backgroundColor: 'white',
           width: 'full',
           readOnly: true,
-          required: true,
           defaultValue: (application: Application) =>
             application.externalData?.nationalRegistry?.data?.fullName,
         }),

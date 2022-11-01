@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useState } from 'react'
 import { Box, GridRow, GridColumn } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { getErrorViaPath } from '@island.is/application/core'
+import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { gql, useLazyQuery } from '@apollo/client'
 import { IdentityInput, Query } from '@island.is/api/schema'
@@ -19,18 +19,35 @@ const IdentityQuery = gql`
   }
 `
 
-export const NationalIdWithName: FC<FieldBaseProps> = ({
+interface Props {
+  customId?: string
+  customNationalIdLabel?: string
+  customNameLabel?: string
+}
+
+export const NationalIdWithName: FC<Props & FieldBaseProps> = ({
+  customId = '',
+  customNationalIdLabel = '',
+  customNameLabel = '',
   field,
   application,
 }) => {
   const { id } = field
+  const usedId = customId.length > 0 ? customId : id
   const { formatMessage } = useLocale()
   const { setValue, errors } = useFormContext()
   const [nationalIdInput, setNationalIdInput] = useState('')
-  const nameField = `${id}.name`
-  const nationaIdField = `${id}.nationalId`
+  const nameField = `${usedId}.name`
+  const nationaIdField = `${usedId}.nationalId`
   const nameFieldErrors = getErrorViaPath(errors, nameField)
   const nationalIdFieldErrors = getErrorViaPath(errors, nationaIdField)
+
+  const defaultNationalId = getValueViaPath(
+    application.answers,
+    `${usedId}.nationalId`,
+    '',
+  )
+  const defaultName = getValueViaPath(application.answers, `${usedId}.name`, '')
 
   const [
     getIdentity,
@@ -59,8 +76,12 @@ export const NationalIdWithName: FC<FieldBaseProps> = ({
         <GridColumn span={'1/1'} paddingTop={2}>
           <InputController
             id={nationaIdField}
-            label={formatMessage(information.labels.buyer.nationalId)}
-            defaultValue={(application.answers[id] as any)?.nationalId ?? ''}
+            label={
+              customNationalIdLabel.length > 0
+                ? customNationalIdLabel
+                : formatMessage(information.labels.buyer.nationalId)
+            }
+            defaultValue={defaultNationalId}
             format="######-####"
             required
             backgroundColor="blue"
@@ -74,8 +95,12 @@ export const NationalIdWithName: FC<FieldBaseProps> = ({
         <GridColumn span={'1/1'} paddingTop={2}>
           <InputController
             id={nameField}
-            defaultValue={(application.answers[id] as any)?.name ?? ''}
-            label={formatMessage(information.labels.buyer.name)}
+            defaultValue={defaultName}
+            label={
+              customNameLabel.length > 0
+                ? customNameLabel
+                : formatMessage(information.labels.buyer.name)
+            }
             required
             error={
               queryError || data?.identity === null

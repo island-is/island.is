@@ -23,7 +23,6 @@ export const vehicleSubSection = buildSubSection({
           backgroundColor: 'white',
           width: 'full',
           readOnly: true,
-          required: true,
           defaultValue: (application: Application) => {
             const vehicle = getSelectedVehicle(application)
             return vehicle.permno
@@ -34,7 +33,6 @@ export const vehicleSubSection = buildSubSection({
           title: information.labels.vehicle.type,
           backgroundColor: 'white',
           width: 'full',
-          required: true,
           readOnly: true,
           defaultValue: (application: Application) => {
             const vehicle = getSelectedVehicle(application)

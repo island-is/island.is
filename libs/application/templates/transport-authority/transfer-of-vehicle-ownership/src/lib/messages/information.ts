@@ -133,6 +133,48 @@ export const information = {
         defaultMessage: 'Netfang',
         description: 'Co-owner email label',
       },
+      remove: {
+        id: 'ta.tvo.application:information.labels.coOwner.remove',
+        defaultMessage: 'Fjarlægja meðeiganda',
+        description: 'Co-owner remove label',
+      },
+      add: {
+        id: 'ta.tvo.application:information.labels.coOwner.add',
+        defaultMessage: 'Bæta við meðeiganda',
+        description: 'Co-owner add label',
+      },
+    }),
+    operator: defineMessages({
+      title: {
+        id: 'ta.tvo.application:information.labels.operator.title',
+        defaultMessage: 'Umráðamaður',
+        description: 'Operator title',
+      },
+      nationalId: {
+        id: 'ta.tvo.application:information.labels.operator.nationalId',
+        defaultMessage: 'Kennitala umráðamanns',
+        description: 'Operator national ID label',
+      },
+      name: {
+        id: 'ta.tvo.application:information.labels.operator.name',
+        defaultMessage: 'Nafn umráðamanns',
+        description: 'Operator name label',
+      },
+      email: {
+        id: 'ta.tvo.application:information.labels.operator.email',
+        defaultMessage: 'Netfang',
+        description: 'Operator email label',
+      },
+      remove: {
+        id: 'ta.tvo.application:information.labels.operator.remove',
+        defaultMessage: 'Fjarlægja umráðamann',
+        description: 'Operator remove label',
+      },
+      add: {
+        id: 'ta.tvo.application:information.labels.operator.add',
+        defaultMessage: 'Bæta við umráðamanni',
+        description: 'Operator add label',
+      },
     }),
     buyer: defineMessages({
       title: {
@@ -159,6 +201,29 @@ export const information = {
         id: 'ta.tvo.application:information.labels.buyer.email',
         defaultMessage: 'Netfang',
         description: 'Buyer email label',
+      },
+    }),
+    mainCoOwner: defineMessages({
+      sectionTitle: {
+        id: 'ta.tvo.application:information.labels.mainCoOwner.sectionTitle',
+        defaultMessage: 'Umráðamaður',
+        description: 'Main CoOwner section title',
+      },
+      title: {
+        id: 'ta.tvo.application:information.labels.mainCoOwner.title',
+        defaultMessage: 'Veldu aðal-umráðamann',
+        description: 'Main CoOwner title',
+      },
+      description: {
+        id: 'ta.tvo.application:information.labels.mainCoOwner.description',
+        defaultMessage:
+          'Et sed ut est aliquam proin elit sed. Nunc tellus lacus sed eu pulvinar. ',
+        description: 'Main CoOwner description',
+      },
+      radioFieldLabel: {
+        id: 'ta.tvo.application:information.labels.mainCoOwner.radioFieldLabel',
+        defaultMessage: 'Skráðir umsáðamenn',
+        description: 'Main CoOwner radio field label',
       },
     }),
   },

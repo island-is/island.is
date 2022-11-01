@@ -22,7 +22,7 @@ export const TransferOfVehicleOwnershipForm: Form = buildForm({
     }),
     informationSection,
     // This section will not be here
-    buildSection({
+    /* buildSection({
       id: 'applicationStatus',
       title: payment.general.sectionTitle,
       children: [
@@ -33,9 +33,9 @@ export const TransferOfVehicleOwnershipForm: Form = buildForm({
           description: '',
         }),
       ],
-    }),
-    conclusionSection,
+    }), */
     paymentSection,
+    conclusionSection,
     // This section will probably be removed
     buildSection({
       id: 'confirmation',

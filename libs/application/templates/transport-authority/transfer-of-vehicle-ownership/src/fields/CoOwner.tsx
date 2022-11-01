@@ -55,7 +55,6 @@ export const CoOwner: FC<FieldBaseProps> = ({ application, field }) => {
                 defaultValue={coOwner.owner || ''}
                 label={formatMessage(information.labels.coOwner.name)}
                 readOnly
-                required
               />
             </Box>
             <Box marginTop={2}>
@@ -65,7 +64,6 @@ export const CoOwner: FC<FieldBaseProps> = ({ application, field }) => {
                 defaultValue={coOwner.nationalId || ''}
                 label={formatMessage(information.labels.coOwner.nationalId)}
                 readOnly
-                required
               />
             </Box>
             <Box marginTop={2}>
