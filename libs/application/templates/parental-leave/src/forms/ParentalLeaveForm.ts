@@ -52,7 +52,6 @@ import {
   NO_UNION,
   ParentalRelations,
   PARENTAL_GRANT_STUDENTS,
-  PARENTAL_GRANT,
   PARENTAL_LEAVE,
   StartDateOptions,
   UnEmployedBenefitTypes,

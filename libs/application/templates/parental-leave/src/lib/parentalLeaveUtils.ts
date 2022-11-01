@@ -27,7 +27,6 @@ import {
   StartDateOptions,
   ParentalRelations,
   TransferRightsOption,
-  UnEmployedBenefitTypes,
   PARENTAL_GRANT_STUDENTS,
   PARENTAL_LEAVE,
   PARENTAL_GRANT,
