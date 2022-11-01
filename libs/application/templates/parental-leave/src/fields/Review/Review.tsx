@@ -979,7 +979,7 @@ export const Review: FC<ReviewScreenProps> = ({
         isLast={true}
       >
         <SummaryTimeline application={application} />
-        {applicationFundId === '' &&
+        {(!applicationFundId || applicationFundId === '') &&
           new Date(periods[0].startDate).getTime() < currentDateStartTime() && (
             <p
               style={{ color: '#B30038', fontSize: '14px', fontWeight: '500' }}
