@@ -100,18 +100,20 @@ module.exports = {
           queryInterface.sequelize
             .query(`select * from notification`, { transaction })
             .then(([notifications]) =>
-              notifications.map((notification) => {
-                return queryInterface.bulkUpdate(
-                  'notification',
-                  {
-                    recipients_json_string: JSON.stringify(
-                      notification.recipients,
-                    ),
-                  },
-                  { id: [notification.id] },
-                  { transaction },
-                )
-              }),
+              Promise.all(
+                notifications.map((notification) => {
+                  return queryInterface.bulkUpdate(
+                    'notification',
+                    {
+                      recipients_json_string: JSON.stringify(
+                        notification.recipients,
+                      ),
+                    },
+                    { id: [notification.id] },
+                    { transaction },
+                  )
+                }),
+              ),
             ),
         )
         .then(() =>
