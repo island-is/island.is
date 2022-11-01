@@ -10,6 +10,7 @@ import { ConfigType } from '@nestjs/config'
 import { GenericFirearmLicenseConfig } from '../firearm-license-client'
 import { GenericMachineLicenseService } from './genericMachineLicense.service'
 import { GenericMachineLicenseConfig } from './genericMachineLicense.config'
+import { LazyDuringDevScope } from '@island.is/nest/config'
 
 @Module({
   imports: [SmartSolutionsApiClientModule, AdrAndMachineLicenseClientModule],
@@ -17,6 +18,7 @@ import { GenericMachineLicenseConfig } from './genericMachineLicense.config'
     GenericMachineLicenseService,
     {
       provide: SMART_SOLUTIONS_API_CONFIG,
+      scope: LazyDuringDevScope,
       useFactory: (config: ConfigType<typeof GenericMachineLicenseConfig>) => {
         const smartConfig: SmartSolutionsConfig = {
           apiKey: config.apiKey,

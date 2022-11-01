@@ -9,6 +9,7 @@ import { Module } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
 import { GenericAdrLicenseService } from './genericAdrLicense.service'
 import { GenericAdrLicenseConfig } from './genericAdrLicense.config'
+import { LazyDuringDevScope } from '@island.is/nest/config'
 
 @Module({
   imports: [SmartSolutionsApiClientModule, AdrAndMachineLicenseClientModule],
@@ -16,6 +17,7 @@ import { GenericAdrLicenseConfig } from './genericAdrLicense.config'
     GenericAdrLicenseService,
     {
       provide: SMART_SOLUTIONS_API_CONFIG,
+      scope: LazyDuringDevScope,
       useFactory: (config: ConfigType<typeof GenericAdrLicenseConfig>) => {
         const smartConfig: SmartSolutionsConfig = {
           apiKey: config.apiKey,
