@@ -9,7 +9,6 @@ import {
 } from '@apollo/client'
 import { onError } from '@apollo/client/link/error'
 import { RetryLink } from '@apollo/client/link/retry'
-import { setContext } from '@apollo/client/link/context'
 
 const { publicRuntimeConfig, serverRuntimeConfig } = getConfig()
 const isBrowser: boolean = process.browser
@@ -44,18 +43,8 @@ function create(initialState?: any) {
     if (networkError) console.log(`[Network error]: ${networkError}`)
   })
 
-  const authLink = setContext((_, { headers }) => {
-    const token = 'mock_token'
-    return {
-      headers: {
-        ...headers,
-        authorization: token ? `Bearer ${token}` : '',
-      },
-    }
-  })
-
   return new ApolloClient({
-    link: ApolloLink.from([retryLink, errorLink, authLink, httpLink]),
+    link: ApolloLink.from([retryLink, errorLink, httpLink]),
     connectToDevTools: isBrowser,
     ssrMode: !isBrowser, // Disables forceFetch on the server (so queries are only run once)
     cache: new InMemoryCache().restore(initialState || {}),
