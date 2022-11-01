@@ -18,10 +18,7 @@ import { PersonalRepresentativeDTO } from '../dto/personal-representative.dto'
 import { PersonalRepresentativeRightType } from './personal-representative-right-type.model'
 import { PersonalRepresentativePublicDTO } from '../dto/personal-representative-public.dto'
 import { IsBoolean } from 'class-validator'
-
-export enum InactiveReason {
-  DECEASED_PARTY = 'DECEASED_PARTY',
-}
+import { InactiveReason } from './personal-representative.enum'
 
 @Table({
   tableName: 'personal_representative',
@@ -109,7 +106,7 @@ export class PersonalRepresentative extends Model {
 
   @IsOptional()
   @IsEnum(InactiveReason)
-  @ApiProperty({ type: InactiveReason, nullable: true })
+  @ApiProperty({ enum: InactiveReason, nullable: true })
   @Column({
     type: DataType.ENUM(...Object.values(InactiveReason)),
     defaultValue: null,

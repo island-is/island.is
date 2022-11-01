@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common'
-import { DelegationDTO, MeDelegationsServiceI } from './types'
+import { DelegationDTO, MeDelegationsServiceInterface } from './types'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { User } from '@island.is/auth-nest-tools'
 import { MeDelegationsServiceV1 } from '../services-v1/meDelegations.service'
+import { MeDelegationsServiceV2 } from '../services-v2/meDelegations.service'
 import {
   CreateDelegationInput,
   DelegationInput,
@@ -11,24 +12,23 @@ import {
   PatchDelegationInput,
   UpdateDelegationInput,
 } from '../dto'
-import { DelegationByOtherUserInput } from '../dto/delegationByOtherUser.input'
 
 @Injectable()
-export class MeDelegationsService implements MeDelegationsServiceI {
+export class MeDelegationsService implements MeDelegationsServiceInterface {
   constructor(
     private meDelegationsServiceV1: MeDelegationsServiceV1,
+    private meDelegationsServiceV2: MeDelegationsServiceV2,
     private featureFlagService: FeatureFlagService,
   ) {}
 
-  private async service(user: User): Promise<MeDelegationsServiceI> {
+  private async service(user: User): Promise<MeDelegationsServiceInterface> {
     const newDelegations = await this.featureFlagService.getValue(
       Features.outgoingDelegationsV2,
       false,
       user,
     )
-    // TODO: Implement MeDelegationsServiceV2.
     return newDelegations
-      ? this.meDelegationsServiceV1
+      ? this.meDelegationsServiceV2
       : this.meDelegationsServiceV1
   }
 
@@ -80,15 +80,6 @@ export class MeDelegationsService implements MeDelegationsServiceI {
   ): Promise<DelegationDTO> {
     return this.service(user).then((service) =>
       service.updateDelegation(user, input),
-    )
-  }
-
-  getDelegationByOtherUser(
-    user: User,
-    input: DelegationByOtherUserInput,
-  ): Promise<DelegationDTO | null> {
-    return this.service(user).then((service) =>
-      service.getDelegationByOtherUser(user, input),
     )
   }
 }

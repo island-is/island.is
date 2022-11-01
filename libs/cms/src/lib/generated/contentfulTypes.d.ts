@@ -2140,6 +2140,7 @@ export interface IOrganizationPageFields {
     | 'landlaeknir'
     | 'rikislogmadur'
     | 'landskjorstjorn'
+    | 'landing_page'
 
   /** Slices */
   slices?:
