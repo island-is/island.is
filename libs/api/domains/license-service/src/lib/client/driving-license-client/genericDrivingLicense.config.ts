@@ -36,8 +36,8 @@ export const GenericDrivingLicenseConfig = defineConfig<z.infer<typeof schema>>(
         ),
       },
       pkpass: {
-        apiKey: env.required('PKPASS_API_KEY'),
-        apiUrl: env.required('PKPASS_API_URL'),
+        apiKey: env.required('PKPASS_API_KEY', ''),
+        apiUrl: env.required('PKPASS_API_URL', ''),
         secretKey: env.required('PKPASS_SECRET_KEY', ''),
         cacheKey: env.required('PKPASS_CACHE_KEY', 'smartsolution:apitoken'),
         cacheTokenExpiryDelta: env.required(
