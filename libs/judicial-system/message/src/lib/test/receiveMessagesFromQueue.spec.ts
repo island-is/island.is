@@ -2,8 +2,10 @@ import { SQSClient } from '@aws-sdk/client-sqs'
 import { uuid } from 'uuidv4'
 
 import { Message } from '../message'
+import { messageModuleConfig } from '../message.config'
 import { createTestingMessageModule } from './createTestingMessageModule'
 
+const config = messageModuleConfig()
 interface Then {
   result: void
   error: Error
@@ -64,13 +66,13 @@ describe('MessageService - Receive messages from queue', () => {
     })
 
     it('should handle message', async () => {
-      expect(mockSqs.send).toHaveBeenCalledWith({
+      expect(mockSqs.send).toHaveBeenNthCalledWith(2, {
         QueueUrl: mockQueueUrl,
-        MaxNumberOfMessages: 1,
-        WaitTimeSeconds: 10,
+        MaxNumberOfMessages: config.maxNumberOfMessages,
+        WaitTimeSeconds: config.waitTimeSeconds,
       })
       expect(callback).toHaveBeenCalledWith(message)
-      expect(mockSqs.send).toHaveBeenCalledWith({
+      expect(mockSqs.send).toHaveBeenNthCalledWith(3, {
         QueueUrl: mockQueueUrl,
         ReceiptHandle: receiptHandle,
       })
@@ -79,6 +81,95 @@ describe('MessageService - Receive messages from queue', () => {
 
   describe('message received from queue but not handled by callback', () => {
     const message = { caseId: uuid() } as Message
+    const receiptHandle = uuid()
+    const callback = jest.fn().mockResolvedValueOnce(false)
+    const now = Date.now()
+
+    beforeEach(async () => {
+      setMocks([
+        {
+          Messages: [
+            { ReceiptHandle: receiptHandle, Body: JSON.stringify(message) },
+          ],
+        },
+        { MessageId: uuid() },
+      ])
+      Date.now = jest.fn().mockReturnValueOnce(now)
+
+      await givenWhenThen(callback)
+    })
+
+    it('should retry message', async () => {
+      expect(mockSqs.send).toHaveBeenNthCalledWith(2, {
+        QueueUrl: mockQueueUrl,
+        MaxNumberOfMessages: config.maxNumberOfMessages,
+        WaitTimeSeconds: config.waitTimeSeconds,
+      })
+      expect(callback).toHaveBeenCalledWith(message)
+      expect(mockSqs.send).toHaveBeenNthCalledWith(3, {
+        QueueUrl: mockQueueUrl,
+        DelaySeconds: config.minRetryIntervalSeconds,
+        MessageBody: JSON.stringify({
+          ...message,
+          numberOfRetries: 1,
+          nextRetry: now + config.minRetryIntervalSeconds * 1000,
+        }),
+      })
+      expect(mockSqs.send).toHaveBeenNthCalledWith(4, {
+        QueueUrl: mockQueueUrl,
+        ReceiptHandle: receiptHandle,
+      })
+    })
+  })
+
+  describe('message received too early from queue', () => {
+    const now = Date.now()
+    const message = {
+      caseId: uuid(),
+      numberOfRetries: 1,
+      nextRetry: now + 1000,
+    } as Message
+    const receiptHandle = uuid()
+    const callback = jest.fn()
+
+    beforeEach(async () => {
+      setMocks([
+        {
+          Messages: [
+            { ReceiptHandle: receiptHandle, Body: JSON.stringify(message) },
+          ],
+        },
+        { MessageId: uuid() },
+      ])
+      Date.now = jest.fn().mockReturnValueOnce(now)
+
+      await givenWhenThen(callback)
+    })
+
+    it('should not handle message', async () => {
+      expect(mockSqs.send).toHaveBeenNthCalledWith(2, {
+        QueueUrl: mockQueueUrl,
+        MaxNumberOfMessages: config.maxNumberOfMessages,
+        WaitTimeSeconds: config.waitTimeSeconds,
+      })
+      expect(callback).not.toHaveBeenCalledWith(message)
+      expect(mockSqs.send).toHaveBeenNthCalledWith(3, {
+        QueueUrl: mockQueueUrl,
+        DelaySeconds: 1,
+        MessageBody: JSON.stringify(message),
+      })
+      expect(mockSqs.send).toHaveBeenCalledWith({
+        QueueUrl: mockQueueUrl,
+        ReceiptHandle: receiptHandle,
+      })
+    })
+  })
+
+  describe('message received from queue but not handled by callback during last retry', () => {
+    const message = {
+      caseId: uuid(),
+      numberOfRetries: config.maxNumberOfRetries,
+    } as Message
     const receiptHandle = uuid()
     const callback = jest.fn().mockResolvedValueOnce(false)
 
@@ -94,14 +185,14 @@ describe('MessageService - Receive messages from queue', () => {
       await givenWhenThen(callback)
     })
 
-    it('should not handle message', async () => {
-      expect(mockSqs.send).toHaveBeenCalledWith({
+    it('should not retry message', async () => {
+      expect(mockSqs.send).toHaveBeenNthCalledWith(2, {
         QueueUrl: mockQueueUrl,
-        MaxNumberOfMessages: 1,
-        WaitTimeSeconds: 10,
+        MaxNumberOfMessages: config.maxNumberOfMessages,
+        WaitTimeSeconds: config.waitTimeSeconds,
       })
       expect(callback).toHaveBeenCalledWith(message)
-      expect(mockSqs.send).not.toHaveBeenCalledWith({
+      expect(mockSqs.send).toHaveBeenNthCalledWith(3, {
         QueueUrl: mockQueueUrl,
         ReceiptHandle: receiptHandle,
       })
@@ -122,10 +213,10 @@ describe('MessageService - Receive messages from queue', () => {
     })
 
     it('should not receive a message', async () => {
-      expect(mockSqs.send).toHaveBeenCalledWith({
+      expect(mockSqs.send).toHaveBeenNthCalledWith(2, {
         QueueUrl: mockQueueUrl,
-        MaxNumberOfMessages: 1,
-        WaitTimeSeconds: 10,
+        MaxNumberOfMessages: config.maxNumberOfMessages,
+        WaitTimeSeconds: config.waitTimeSeconds,
       })
       expect(callback).not.toHaveBeenCalled()
     })

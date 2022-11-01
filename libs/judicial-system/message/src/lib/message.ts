@@ -11,7 +11,7 @@ export type Message = {
   type: MessageType
   caseId: string
   numberOfRetries?: number
-  nextRetry?: Date
+  nextRetry?: number
 }
 
 export type CaseFileMessage = Message & { caseFileId: string }

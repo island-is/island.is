@@ -82,6 +82,28 @@ export class MessageService {
       })
   }
 
+  private async retryMessage(
+    delaySeconds: number,
+    messageBody?: string,
+    receiptHandle?: string,
+  ): Promise<void> {
+    return this.sqs
+      .send(
+        new SendMessageCommand({
+          QueueUrl: this.queueUrl,
+          DelaySeconds: delaySeconds,
+          MessageBody: messageBody,
+        }),
+      )
+      .then((data) => {
+        if (data.MessageId) {
+          this.deleteMessageFromQueue(receiptHandle)
+        } else {
+          this.logger.error('Failed to send message to queue', { data })
+        }
+      })
+  }
+
   private async handleMessage(
     callback: (message: Message) => Promise<boolean>,
     sqsMessage: SqsMessage,
@@ -89,32 +111,41 @@ export class MessageService {
     const message: Message = JSON.parse(sqsMessage.Body ?? '')
 
     // The maximum delay is 900 seconds, but we want to be able to wait much longer
-    const now = new Date()
+    const now = Date.now()
     if (message.nextRetry && message.nextRetry > now) {
-      return this.sqs
-        .send(
-          new SendMessageCommand({
-            QueueUrl: this.queueUrl,
-            MessageBody: sqsMessage.Body,
-            DelaySeconds: Math.min(
-              Math.round((message.nextRetry.getTime() - now.getTime()) / 1000),
-              900,
-            ),
-          }),
-        )
-        .then((data) => {
-          if (data.MessageId) {
-            this.deleteMessageFromQueue(sqsMessage.ReceiptHandle)
-          } else {
-            this.logger.error('Failed to send message to queue', { data })
-          }
-        })
+      return this.retryMessage(
+        Math.min(Math.round((message.nextRetry - now) / 1000), 900),
+        sqsMessage.Body,
+        sqsMessage.ReceiptHandle,
+      )
     }
 
-    return callback(message).then((handled) => {
-      if (handled) {
-        this.deleteMessageFromQueue(sqsMessage.ReceiptHandle)
+    return callback(message).then(async (handled) => {
+      if (!handled) {
+        const numberOfRetries = message.numberOfRetries ?? 0
+        if (numberOfRetries < this.config.maxNumberOfRetries) {
+          // double the interval for each retry
+          const secondsUntilNextRetry =
+            this.config.minRetryIntervalSeconds * 2 ** numberOfRetries
+
+          return this.retryMessage(
+            Math.min(secondsUntilNextRetry, 900),
+            JSON.stringify({
+              ...message,
+              numberOfRetries: numberOfRetries + 1,
+              nextRetry: now + secondsUntilNextRetry * 1000,
+            }),
+            sqsMessage.ReceiptHandle,
+          )
+        } else {
+          this.logger.error(
+            `Failed to handle message after ${numberOfRetries} retries`,
+            { msg: message },
+          )
+        }
       }
+
+      this.deleteMessageFromQueue(sqsMessage.ReceiptHandle)
     })
   }
 

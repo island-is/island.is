@@ -41,9 +41,12 @@ export class InternalDeliveryService {
         return true
       })
       .catch((reason) => {
-        this.logger.error(`Failed to post ${what} for case ${caseId}`, {
-          reason,
-        })
+        this.logger.info(
+          `Failed to post ${what} for case ${caseId} - attempting retry`,
+          {
+            reason,
+          },
+        )
 
         return false
       })
