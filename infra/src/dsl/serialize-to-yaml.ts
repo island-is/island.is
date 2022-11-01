@@ -36,10 +36,10 @@ export const renderValueFile = (
   }, uberChart.env.global)
   const servicesAndMocks = Object.entries(uberChart.deps).reduce(
     (acc, [name, svcs]) => {
-      if (name.indexOf('.') > -1) {
+      if (name.startsWith('mock-')) {
         return {
           ...acc,
-          [`mock-${name}`]: serviceMockDef({
+          [name]: serviceMockDef({
             namespace: svcs.values().next().value.serviceDef.namespace,
             target: name,
           }),

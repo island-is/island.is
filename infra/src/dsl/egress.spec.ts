@@ -21,17 +21,17 @@ const Staging: EnvironmentConfig = {
 
 describe('Egress', () => {
   const sut = service('api').env({
-    A: ref((h) => `https://${h.svc('visir.is')}`),
+    A: ref((h) => h.svc('http://visir.is')),
   })
   const uberChart = new UberChart(Staging)
   const serviceDef = serializeService(sut, uberChart) as SerializeSuccess
   const render = renderValueFile(uberChart, sut)
 
   it('missing variables cause errors', () => {
-    expect(serviceDef.serviceDef.env['A']).toBe('https://mock-visir.is')
+    expect(serviceDef.serviceDef.env['A']).toBe('http://mock-visir-is')
   })
 
   it('should render two services - one extra for the mock', () => {
-    expect(render.services['mock-visir.is'].command).toStrictEqual(['mock'])
+    expect(render.services['mock-visir-is'].command).toStrictEqual(['mock'])
   })
 })

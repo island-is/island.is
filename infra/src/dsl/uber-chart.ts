@@ -18,11 +18,24 @@ export class UberChart implements UberChartType {
         from.serviceDef.namespace === to.serviceDef.namespace
           ? `${this.env.releaseName}-${to.serviceDef.name}`
           : `${this.env.releaseName}-${to.serviceDef.name}.${to.serviceDef.namespace}.svc.cluster.local`
-      return this.env.feature ? `mock-${serviceReference}` : serviceReference
+      return serviceReference
     } else {
-      const dependecies = this.deps[to] ?? new Set<Service>()
-      this.deps[to] = dependecies.add(from)
-      return this.env.feature ? `mock-${to}` : to
+      if (this.env.feature) {
+        const dependencies = this.deps[to] ?? new Set<Service>()
+        this.deps[
+          this.getMockName(to).replace('http://', '')
+        ] = dependencies.add(from)
+        return this.getMockName(to)
+      } else {
+        return to
+      }
     }
+  }
+
+  private getMockName(to: string) {
+    const parsed = new URL(to)
+    parsed.protocol = 'http:'
+    parsed.host = `mock-${parsed.host.replace(/\./g, '-')}`
+    return parsed.href.slice(0, parsed.href.length - (to.endsWith('/') ? 0 : 1))
   }
 }
