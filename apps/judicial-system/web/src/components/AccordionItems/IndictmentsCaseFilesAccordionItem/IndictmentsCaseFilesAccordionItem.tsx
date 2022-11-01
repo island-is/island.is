@@ -291,9 +291,6 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
                           onChange={(evt) => {
                             setEditedDisplayDate(evt.target.value)
                           }}
-                          onBlur={(evt) => {
-                            setEditedDisplayDate(evt.target.value)
-                          }}
                         >
                           <Input
                             name="fileDisplayDate"
