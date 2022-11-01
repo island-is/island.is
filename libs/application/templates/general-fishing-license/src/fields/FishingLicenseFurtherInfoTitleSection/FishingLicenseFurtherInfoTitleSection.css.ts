@@ -4,5 +4,5 @@ import { style } from '@vanilla-extract/css'
 // The reason for that is that since we provide no title in form builder
 // and instead we render dynamic title
 export const sectionTitle = style({
-  marginTop: -40
+  marginTop: -40,
 })

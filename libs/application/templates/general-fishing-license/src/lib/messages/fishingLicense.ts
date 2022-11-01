@@ -118,15 +118,15 @@ export const fishingLicense = {
     licenseForbidden: {
       id: 'gfl.application:fishingLicense.warningMessageTitle.licenseForbidden',
       defaultMessage: 'Ekki hægt að sækja um',
-      description: 'Fishing license warning message title for forbidden licenses',
+      description:
+        'Fishing license warning message title for forbidden licenses',
     },
   }),
   warningMessageDescription: defineMessages({
     licenseForbidden: {
       id:
         'gfl.application:fishingLicense.warningMessageDescription.licenseForbidden',
-      defaultMessage:
-        'Sjáðu ástæður fyrir því að ekki er hægt að sækja um',
+      defaultMessage: 'Sjáðu ástæður fyrir því að ekki er hægt að sækja um',
       description:
         'Fishing license warning message description for forbidden licenses',
     },

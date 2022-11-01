@@ -94,7 +94,6 @@ export const FishingLicense: FC<FieldBaseProps> = ({
     }
   }, [data])
 
-
   return (
     <>
       <Box marginBottom={3}>
