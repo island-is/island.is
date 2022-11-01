@@ -90,6 +90,34 @@ export class NewProblem extends ProblemError {
 throw new NewProblem('extra')
 ```
 
+## No Content response
+
+The API Design Guide describes how REST endpoints using resource IDs, i.e. /delegation/:delegationId, should use 204 No Content response instead of 404 Not Found response when no resource is found.
+
+This module includes a `NoContentException` class can be thrown to trigger a 204 No Content response:
+
+```
+export class DelegationService {
+  async findOne(delegationId: string) {
+    const delegation = await this.delegationModel.findOne({
+      where: {
+        id: delegationId,
+      },
+    })
+
+    if (!delegation) {
+      throw new NoContentException()
+    }
+
+    return delegation
+  }
+}
+```
+
+{% hint style="warning" %}
+Make sure you have included the `ProblemModule` in your root module. See [usage](#usage)
+{% endhint %}
+
 ## Running unit tests
 
 Run `nx test nest-problem` to execute the unit tests via [Jest](https://jestjs.io).
