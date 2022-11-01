@@ -186,26 +186,6 @@ export const m = defineMessages({
     defaultMessage: 'Hjúskaparstaða fyrir vígslu',
     description: 'marital status',
   },
-  previousMarriageTermination: {
-    id: 'mac.application:previousMarriageTermination',
-    defaultMessage: 'Hvernig lauk síðasta hjúskap?',
-    description: 'previous marriage',
-  },
-  terminationByDivorce: {
-    id: 'mac.application:terminationByDivorce',
-    defaultMessage: 'Með lögskilnaði',
-    description: '',
-  },
-  terminationByLosingSpouse: {
-    id: 'mac.application:terminationByLosingSpouse',
-    defaultMessage: 'Með láti maka',
-    description: '',
-  },
-  terminationByAnnulment: {
-    id: 'mac.application:terminationByAnnulment',
-    defaultMessage: 'Með ógildingu',
-    description: '',
-  },
   personalInformationTitle: {
     id: 'mac.application:personalInformationTitle',
     defaultMessage: 'Persónuuplýsingar',
@@ -223,9 +203,9 @@ export const m = defineMessages({
     description: '',
   },
   ceremonyDescription: {
-    id: 'mac.application:ceremonyDescription',
+    id: 'mac.application:ceremonyDescription#markdown',
     defaultMessage:
-      'Veita þarf áætlaðan vígsludag eða yfirlýsingu hjónaefnis um að vígsludagur hafi ekki verið ákveðinn. Athugið að þessar upplýsingar eru bókun á tíma fyrir hjónavígslu. Snúið ykkur til viðeigandi vígsluaðila til að bóka tíma fyrir hjónavígslu.',
+      'Veita þarf áætlaðan vígsludag eða yfirlýsingu hjónaefnis um að vígsludagur hafi ekki verið ákveðinn. Athugið að þessar upplýsingar eru ekki bókun á tíma fyrir hjónavígslu. Snúið ykkur til viðeigandi vígsluaðila til að bóka tíma fyrir hjónavígslu.',
     description: '',
   },
   hasCeremonyDate: {
