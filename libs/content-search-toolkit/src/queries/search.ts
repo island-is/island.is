@@ -33,21 +33,36 @@ export const searchQuery = (
   const mustNot: TagQuery[] = []
   let minimumShouldMatch = 1
 
-  should.push({
-    multi_match: {
-      fields: [
-        'title^6', // note boosting ..
-        'title.stemmed^2', // note boosting ..
-        'title.compound',
-        'content',
-        'content.stemmed',
-      ],
-      query: queryString,
-      fuzziness: 'AUTO',
-      operator: 'and',
-      type: 'best_fields',
-    },
-  })
+  const fieldsWeights = [
+    'title^6', // note boosting ..
+    'title.stemmed^2', // note boosting ..
+    'title.compound',
+    'content',
+    'content.stemmed',
+  ]
+  // * wildcard support for internal clients
+  if(queryString.trim() == "*"){
+    should.push({
+      simple_query_string: {
+        query: queryString,
+        fields: fieldsWeights,
+        analyze_wildcard: true,
+        default_operator: 'and',
+      },
+    })
+  } else {
+    should.push({
+      multi_match: {
+        fields: fieldsWeights,
+        query: queryString,
+        fuzziness: 'AUTO',
+        operator: 'and',
+        type: 'bool_prefix',
+      },
+    })
+  }
+ 
+ 
 
   // if we have types restrict the query to those types
   if (types?.length) {
