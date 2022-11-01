@@ -42,7 +42,7 @@ export type FishingLicenseInfo = {
 export enum FishingLicenseCodeType {
   hookCatchLimit = '1', // Almennt aflamarksveiðileyfi
   fishWithDanishSeine = '8', // Dragnótaveiðileyfi
-  
+
   greyslepp = '11', // TODO naming -  Grásleppuveiðileyfi
   northIceOceanCod = '25', // TODO naming - Norðuríshafsþorskveiðileyfi í norskri lögsögu
 
@@ -60,37 +60,36 @@ export enum FishingLicenseCodeType {
   unknown = '0',
 }
 
-
 // Maps lexical liscense name to liscense code
 export const mapFishingLiscenseToCode = (liscense: string) => {
-  switch(liscense) {
+  switch (liscense) {
     case 'hookCatchLimit':
-      return FishingLicenseCodeType.hookCatchLimit;
+      return FishingLicenseCodeType.hookCatchLimit
     case 'fishWithDanishSeine':
-      return FishingLicenseCodeType.fishWithDanishSeine;
+      return FishingLicenseCodeType.fishWithDanishSeine
     case 'greyslepp':
-      return FishingLicenseCodeType.greyslepp;
+      return FishingLicenseCodeType.greyslepp
     case 'northIceOceanCod':
-      return FishingLicenseCodeType.northIceOceanCod;
+      return FishingLicenseCodeType.northIceOceanCod
     case 'catchMark':
-      return FishingLicenseCodeType.catchMark;
+      return FishingLicenseCodeType.catchMark
     case 'lumpfish':
-      return FishingLicenseCodeType.lumpfish;
+      return FishingLicenseCodeType.lumpfish
     case 'costalFisheries':
-      return FishingLicenseCodeType.costalFisheries;
+      return FishingLicenseCodeType.costalFisheries
     case 'freetime':
-      return FishingLicenseCodeType.freetime;
+      return FishingLicenseCodeType.freetime
     case 'freetimeHook':
-      return FishingLicenseCodeType.freetimeHook;
+      return FishingLicenseCodeType.freetimeHook
     case 'freetimeHookMed':
-      return FishingLicenseCodeType.freetimeHookMed;
+      return FishingLicenseCodeType.freetimeHookMed
     case 'commonWhelk':
-      return FishingLicenseCodeType.commonWhelk;
+      return FishingLicenseCodeType.commonWhelk
     case 'oceanQuahogin':
-      return FishingLicenseCodeType.oceanQuahogin;
+      return FishingLicenseCodeType.oceanQuahogin
     case 'crustaceans':
-      return FishingLicenseCodeType.crustaceans;
+      return FishingLicenseCodeType.crustaceans
     default:
-      return FishingLicenseCodeType.unknown;
+      return FishingLicenseCodeType.unknown
   }
 }

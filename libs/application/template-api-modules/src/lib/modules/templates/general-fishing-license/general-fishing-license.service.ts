@@ -94,7 +94,7 @@ export class GeneralFishingLicenseService {
             utgerdKennitala: applicantNationalId,
             skipaskrarnumer: parseInt(registrationNumber, 10),
             umbedinGildistaka: null,
-            veidileyfiKodi: mapFishingLiscenseToCode(fishingLicense)
+            veidileyfiKodi: mapFishingLiscenseToCode(fishingLicense),
           },
         })
       return { success: true }

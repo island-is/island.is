@@ -1,12 +1,6 @@
 import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
-import {
-  AlertMessage,
-  Box,
-  Text,
-  Stack,
-  Tag,
-} from '@island.is/island-ui/core'
+import { AlertMessage, Box, Text, Stack, Tag } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React, { FC, useState } from 'react'
 import { ShipInformation } from '../components'
@@ -14,9 +8,7 @@ import { RadioController } from '@island.is/shared/form-fields'
 import format from 'date-fns/format'
 import { shipSelection } from '../../lib/messages'
 import is from 'date-fns/locale/is'
-import {
-  FishingLicenseShip as Ship,
-} from '@island.is/api/schema'
+import { FishingLicenseShip as Ship } from '@island.is/api/schema'
 import parseISO from 'date-fns/parseISO'
 import { useFormContext } from 'react-hook-form'
 
@@ -52,7 +44,6 @@ export const ShipSelection: FC<FieldBaseProps> = ({
   const shipOptions = (ships: Ship[]) => {
     const options = [] as Option[]
     for (const [index, ship] of ships.entries()) {
-
       const isExpired = new Date(ship.seaworthiness.validTo) < new Date()
       const seaworthinessDate = format(
         parseISO(ship.seaworthiness.validTo),
