@@ -1665,37 +1665,32 @@ export const parentalLeaveFormMessages: MessageDir = {
     genericTitle: {
       id: 'pl.application:attachmentscreen.genericTitle',
       defaultMessage: `Viðbótargögn með umsókn`,
-      description: `generic title`,
+      description: `Additional documentation for application `,
     },
     genericDescription: {
       id: 'pl.application:attachmentscreen.genericDescription',
       defaultMessage: `Hér getur þú sett viðbótargögn til Fæðingarorlofssjóðs. Athugaðu að skjalið þarf að vera á .pdf formi`,
-      description: `generic description`,
+      description: `Here you can upload additional documentation for the Parental Leave Fund. Note that the document needs to be on .pdf format`,
     },
     studentTitle: {
       id: 'pl.application:attachmentscreen.studentTitle',
       defaultMessage: `Staðfesting á námi`,
-      description: `student title`,
+      description: `Confirmation of student status`,
     },
     studentDescription: {
       id: 'pl.application:attachmentscreen.studentDescription',
       defaultMessage: `Námsmenn þurfa að skila inn staðfestingu á námi og námsárangri. Athugaðu að skjalið þarf að vera á .pdf formi`,
-      description: `student description`,
+      description: `Students need to upload confirmation of student status and academic results. Note that the document needs to be on .pdf format`,
     },
     unemploymentBenefitsTitle: {
       id: 'pl.application:attachmentscreen.unemployedBenefitsTitle',
       defaultMessage: `Bætur`,
       description: `Benefits`,
     },
-    unionDescription: {
-      id: 'pl.application:attachmentscreen.unionDescription',
-      defaultMessage: `Þeir sem þiggja dagpeninga/veikindarétt frá stéttarfélagi þurfa að skila inn skjali því til staðfestingar. Athugaðu að skjalið þarf að vera á .pdf formi`,
-      description: `Those who receive unemployment benefits/sick leave allowance from the Union must submit a document to confirm this. Note that the document needs to be on .pdf format`,
-    },
-    healthInsuranceDescription: {
-      id: 'pl.application:attachmentscreen.sjúkratryggingarDescription',
-      defaultMessage: `Þeir sem þiggja sjúkradagpeninga frá Sjúkratryggingum Íslands þurfa að skila inn skjali því til staðfestingar. Athugaðu að skjalið þarf að vera á .pdf formi`,
-      description: `Those who receive sick leave allowance from Sjúkratryggingar Íslands must submit a document to confirm this. Note that the document needs to be on .pdf format`,
+    benefitDescription: {
+      id: 'pl.application:attachmentscreen.benefitDescription',
+      defaultMessage: `Þeir sem þiggja dagpeninga/veikindarétt frá stéttarfélagi eða skjúkradagpeninga frá Sjúkratryggingum Íslands þurfa að skila inn skjali því til staðfestingar. Athugaðu að skjalið þarf að vera á .pdf formi`,
+      description: `Those who receive unemployment benefits/sick leave allowance from the Union or sick leave allowance from Sjúkratryggingar Íslands must submit a document to confirm this. Note that the document needs to be on .pdf format`,
     },
     fatherWithoutMotherTitle: {
       id: 'pl.application:attachmentscreen.fatherWithoutMotherTitle',

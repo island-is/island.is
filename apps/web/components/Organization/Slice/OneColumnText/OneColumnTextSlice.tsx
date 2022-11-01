@@ -20,6 +20,7 @@ export const OneColumnTextSlice: React.FC<SliceProps> = ({ slice }) => {
         borderTopWidth: 'standard',
         borderColor: 'standard',
         paddingTop: 4,
+        paddingBottom: 4,
       }
     : {}
 

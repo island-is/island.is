@@ -37,7 +37,6 @@ import {
   getPeriodIndex,
   getApplicationExternalData,
   requiresOtherParentApproval,
-  showGenericFileUpload,
 } from './parentalLeaveUtils'
 import { PersonInformation } from '../types'
 
@@ -697,19 +696,5 @@ describe('removeCountryCode', () => {
     const application = buildApplication()
     set(application.externalData, 'userProfile', null)
     expect(removeCountryCode(application)).toEqual(undefined)
-  })
-})
-
-describe('showGenericFileUpload', () => {
-  it('should return true if application type is "PARENTAL_GRANT"', () => {
-    const application = buildApplication({
-      answers: {
-        applicationType: {
-          option: PARENTAL_GRANT,
-        },
-      },
-    })
-
-    expect(showGenericFileUpload(application.answers)).toBe(true)
   })
 })

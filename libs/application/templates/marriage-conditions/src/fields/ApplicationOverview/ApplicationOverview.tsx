@@ -7,7 +7,7 @@ import { Ceremony, Individual, PersonalInfo } from '../../types'
 import { format as formatNationalId } from 'kennitala'
 import format from 'date-fns/format'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
-import { States } from '../../lib/constants'
+import { States, YES } from '../../lib/constants'
 
 type InfoProps = {
   side: Individual
@@ -100,20 +100,6 @@ export const ApplicationOverview: FC<FieldBaseProps> = ({ application }) => {
                 {(answers.personalInfo as PersonalInfo).maritalStatus}
               </Text>
             </Box>
-            {answers.maritalStatus === 'DIVORCED' ||
-              ((answers.fakeData as PersonalInfo).maritalStatus === '6' && (
-                <Box width="half">
-                  <Text variant="h4">
-                    {formatMessage(m.previousMarriageTermination)}
-                  </Text>
-                  <Text>
-                    {
-                      (answers.personalInfo as PersonalInfo)
-                        .previousMarriageTermination
-                    }
-                  </Text>
-                </Box>
-              ))}
           </Box>
         </Box>
       </Box>
@@ -123,32 +109,36 @@ export const ApplicationOverview: FC<FieldBaseProps> = ({ application }) => {
         </Box>
       </Box>
       <Box>
-        <Text variant="h3" marginBottom={3}>
-          {formatMessage(m.ceremony)}
-        </Text>
-        <Box>
-          <Box display="flex" marginBottom={3}>
-            <Box width="half">
-              <Text variant="h4">{formatMessage(m.ceremonyDate)}</Text>
-              <Text>
-                {format(
-                  new Date((answers.ceremony as Ceremony).date),
-                  'dd/MM/yyyy',
+        <Text variant="h3">{formatMessage(m.ceremony)}</Text>
+        {(answers.ceremony as Ceremony).hasDate === YES ? (
+          <Box marginTop={3}>
+            <Box display="flex" marginBottom={3}>
+              <Box width="half">
+                <Text variant="h4">{formatMessage(m.ceremonyDate)}</Text>
+                <Text>
+                  {format(
+                    new Date((answers.ceremony as Ceremony).date),
+                    'dd/MM/yyyy',
+                  )}
+                </Text>
+              </Box>
+            </Box>
+            <Box display="flex">
+              <Box width="half">
+                <Text variant="h4">{formatMessage(m.ceremonyPlace)}</Text>
+                {(answers.ceremony as Ceremony).ceremonyPlace === 'office' ? (
+                  <Text>{(answers.ceremony as Ceremony).office}</Text>
+                ) : (
+                  <Text>{(answers.ceremony as Ceremony).society}</Text>
                 )}
-              </Text>
+              </Box>
             </Box>
           </Box>
-          <Box display="flex">
-            <Box width="half">
-              <Text variant="h4">{formatMessage(m.ceremonyPlace)}</Text>
-              {(answers.ceremony as Ceremony).ceremonyPlace === 'office' ? (
-                <Text>{(answers.ceremony as Ceremony).office}</Text>
-              ) : (
-                <Text>{(answers.ceremony as Ceremony).society}</Text>
-              )}
-            </Box>
-          </Box>
-        </Box>
+        ) : (
+          <Text variant="default">
+            {'Hjónavígsludagurinn liggur ekki fyrir.'}
+          </Text>
+        )}
       </Box>
       <Box marginTop={5}>
         <Box paddingBottom={4}>
