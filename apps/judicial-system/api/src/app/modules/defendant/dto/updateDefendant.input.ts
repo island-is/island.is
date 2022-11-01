@@ -37,4 +37,20 @@ export class UpdateDefendantInput implements UpdateDefendant {
   @Allow()
   @Field({ nullable: true })
   readonly citizenship?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly defenderName?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly defenderNationalId?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly defenderEmail?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly defenderPhoneNumber?: string
 }
