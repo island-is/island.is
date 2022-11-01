@@ -909,7 +909,6 @@ export const removeCountryCode = (application: Application) => {
     : getMobilePhoneNumber(application)
 }
 
-
 // Functions that determine dynamic text changes in forms based on application type
 export const getPeriodSectionTitle = (application: Application) => {
   const appAnswers = getApplicationAnswers(application.answers)

@@ -663,7 +663,8 @@ export const ParentalLeaveForm: Form = buildForm({
 
                 return (
                   isRecivingUnemploymentBenefits &&
-                  (unemploymentBenefitsFromUnion || unemploymentBenefitsFromXjúkratryggingar)
+                  (unemploymentBenefitsFromUnion ||
+                    unemploymentBenefitsFromXjúkratryggingar)
                 )
               },
               maxSize: FILE_SIZE_LIMIT,

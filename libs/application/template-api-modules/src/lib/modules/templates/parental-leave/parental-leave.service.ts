@@ -264,7 +264,6 @@ export class ParentalLeaveService {
     }
   }
 
-
   async getArtificialInseminationPdf(application: Application, index = 0) {
     try {
       const filename = getValueViaPath(
@@ -377,7 +376,8 @@ export class ParentalLeaveService {
     } = getApplicationAnswers(application.answers)
     if (
       isRecivingUnemploymentBenefits === YES &&
-      (unemploymentBenefits === UnEmployedBenefitTypes.union || unemploymentBenefits == UnEmployedBenefitTypes.healthInsurance)
+      (unemploymentBenefits === UnEmployedBenefitTypes.union ||
+        unemploymentBenefits == UnEmployedBenefitTypes.healthInsurance)
     ) {
       const benefitsPdfs = (await getValueViaPath(
         application.answers,
@@ -395,7 +395,6 @@ export class ParentalLeaveService {
         }
       }
     }
-
 
     const genericPdfs = (await getValueViaPath(
       application.answers,
