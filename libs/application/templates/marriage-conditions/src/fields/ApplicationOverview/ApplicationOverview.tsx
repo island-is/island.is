@@ -97,7 +97,9 @@ export const ApplicationOverview: FC<FieldBaseProps> = ({ application }) => {
             <Box width="half">
               <Text variant="h4">{formatMessage(m.maritalStatus)}</Text>
               <Text>
-                {(answers.personalInfo as PersonalInfo).maritalStatus}
+                {application.state === States.SPOUSE_CONFIRM
+                  ? (answers.spousePersonalInfo as PersonalInfo).maritalStatus
+                  : (answers.personalInfo as PersonalInfo).maritalStatus}
               </Text>
             </Box>
             {answers.maritalStatus === 'DIVORCED' ||
@@ -149,9 +151,7 @@ export const ApplicationOverview: FC<FieldBaseProps> = ({ application }) => {
             </Box>
           </Box>
         ) : (
-          <Text variant="default">
-            {'Hjónavígsludagurinn liggur ekki fyrir.'}
-          </Text>
+          <Text variant="default">{formatMessage(m.noCeremonyDate)}</Text>
         )}
       </Box>
       <Box marginTop={5}>
