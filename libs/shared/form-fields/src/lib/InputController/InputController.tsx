@@ -63,6 +63,7 @@ export const InputController: FC<Props & TestSupport> = ({
   suffix,
   rows,
   required,
+  rightAlign,
   readOnly,
   maxLength,
   loading,
@@ -93,6 +94,7 @@ export const InputController: FC<Props & TestSupport> = ({
           maxLength={maxLength}
           autoComplete={autoComplete}
           loading={loading}
+          rightAlign={rightAlign}
           onChange={(
             e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
           ) => {
@@ -117,6 +119,7 @@ export const InputController: FC<Props & TestSupport> = ({
           id={id}
           icon={icon}
           disabled={disabled}
+          rightAlign={rightAlign}
           readOnly={readOnly}
           backgroundColor={backgroundColor}
           placeholder={placeholder}
@@ -153,6 +156,7 @@ export const InputController: FC<Props & TestSupport> = ({
           id={id}
           disabled={disabled}
           readOnly={readOnly}
+          rightAlign={rightAlign}
           backgroundColor={backgroundColor}
           data-testid={dataTestId}
           placeholder={placeholder}
@@ -186,6 +190,7 @@ export const InputController: FC<Props & TestSupport> = ({
           value={value}
           disabled={disabled}
           readOnly={readOnly}
+          rightAlign={rightAlign}
           icon={icon}
           placeholder={placeholder}
           label={label}
