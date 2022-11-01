@@ -26,8 +26,10 @@ import { ValueType } from 'react-select'
 import {
   Case,
   CaseType,
+  Defendant,
   Defendant as TDefendant,
   Gender,
+  UpdateDefendant,
 } from '@island.is/judicial-system/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
@@ -40,7 +42,6 @@ import {
   PoliceCaseNumbers,
   usePoliceCaseNumbers,
 } from '../../components'
-import { UpdateDefendantInput } from '@island.is/judicial-system-web/src/graphql/schema'
 
 const Defendant: React.FC = () => {
   const {
@@ -51,7 +52,12 @@ const Defendant: React.FC = () => {
   } = useContext(FormContext)
   const { formatMessage } = useIntl()
   const { createCase, isCreatingCase, setAndSendToServer } = useCase()
-  const { createDefendant, updateDefendant, deleteDefendant } = useDefendants()
+  const {
+    createDefendant,
+    updateDefendant,
+    deleteDefendant,
+    updateDefendantState,
+  } = useDefendants()
   const router = useRouter()
 
   // This state is needed because type is initially set to OHTER on the
@@ -68,32 +74,9 @@ const Defendant: React.FC = () => {
     workingCase,
   )
 
-  const updateDefendantState = useCallback(
-    (defendantId: string, update: UpdateDefendantInput) => {
-      setWorkingCase((theCase: Case) => {
-        if (!theCase.defendants) {
-          return theCase
-        }
-        const indexOfDefendantToUpdate = theCase.defendants.findIndex(
-          (defendant) => defendant.id === defendantId,
-        )
-
-        const newDefendants = [...theCase.defendants]
-
-        newDefendants[indexOfDefendantToUpdate] = {
-          ...newDefendants[indexOfDefendantToUpdate],
-          ...update,
-        }
-
-        return { ...theCase, defendants: newDefendants }
-      })
-    },
-    [setWorkingCase],
-  )
-
   const handleUpdateDefendant = useCallback(
     async (defendantId: string, updatedDefendant: UpdateDefendant) => {
-      updateDefendantState(defendantId, updatedDefendant)
+      updateDefendantState(defendantId, updatedDefendant, setWorkingCase)
 
       if (workingCase.id) {
         updateDefendant(workingCase.id, defendantId, updatedDefendant)
@@ -113,18 +96,14 @@ const Defendant: React.FC = () => {
             createdCase.defendants &&
             createdCase.defendants.length > 0
           ) {
-            await updateDefendant(
-              createdCase.id,
-              createdCase.defendants[0].id,
-              {
-                gender: defendant.gender,
-                name: defendant.name,
-                address: defendant.address,
-                nationalId: defendant.nationalId,
-                noNationalId: defendant.noNationalId,
-                citizenship: defendant.citizenship,
-              },
-            )
+            await updateDefendant(workingCase.id, defendant.id, {
+              gender: defendant.gender,
+              name: defendant.name,
+              address: defendant.address,
+              nationalId: defendant.nationalId,
+              noNationalId: defendant.noNationalId,
+              citizenship: defendant.citizenship,
+            })
           } else {
             await createDefendant(createdCase.id, {
               gender: defendant.gender,
@@ -306,6 +285,7 @@ const Defendant: React.FC = () => {
                   <DefendantInfo
                     defendant={defendant}
                     workingCase={workingCase}
+                    setWorkingCase={setWorkingCase}
                     onDelete={
                       workingCase.defendants &&
                       workingCase.defendants.length > 1

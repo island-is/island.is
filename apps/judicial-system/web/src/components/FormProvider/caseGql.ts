@@ -22,6 +22,7 @@ const CaseQuery = gql`
         defenderNationalId
         defenderEmail
         defenderPhoneNumber
+        defendantWaivesRightToCounsel
       }
       defenderName
       defenderNationalId

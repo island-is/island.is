@@ -1,10 +1,10 @@
-import { useCallback } from 'react'
+import React, { SetStateAction, useCallback } from 'react'
 import { useMutation } from '@apollo/client'
 import { useIntl } from 'react-intl'
 
 import { toast } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
-import { UpdateDefendantInput } from '@island.is/judicial-system-web/src/graphql/schema'
+import { Case, UpdateDefendant } from '@island.is/judicial-system/types'
 
 import { CreateDefendantMutation } from './createDefendantGql'
 import { DeleteDefendantMutation } from './deleteDefendantGql'
@@ -43,7 +43,7 @@ const useDefendants = () => {
   ] = useMutation<UpdateDefendantMutationResponse>(UpdateDefendantMutation)
 
   const createDefendant = useCallback(
-    async (caseId: string, defendant: UpdateDefendantInput) => {
+    async (caseId: string, defendant: UpdateDefendant) => {
       try {
         if (!isCreatingDefendant) {
           const { data } = await createDefendantMutation({
@@ -91,11 +91,17 @@ const useDefendants = () => {
   )
 
   const updateDefendant = useCallback(
-    async (updateDefendant: UpdateDefendantInput) => {
+    async (
+      caseId: string,
+      defendantId: string,
+      updateDefendant: UpdateDefendant,
+    ) => {
       try {
         const { data } = await updateDefendantMutation({
           variables: {
             input: {
+              caseId,
+              defendantId,
               ...updateDefendant,
             },
           },
@@ -113,10 +119,35 @@ const useDefendants = () => {
     [formatMessage, updateDefendantMutation],
   )
 
+  const updateDefendantState = (
+    defendantId: string,
+    update: UpdateDefendant,
+    setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
+  ) => {
+    setWorkingCase((theCase: Case) => {
+      if (!theCase.defendants) {
+        return theCase
+      }
+      const indexOfDefendantToUpdate = theCase.defendants.findIndex(
+        (defendant) => defendant.id === defendantId,
+      )
+
+      const newDefendants = [...theCase.defendants]
+
+      newDefendants[indexOfDefendantToUpdate] = {
+        ...newDefendants[indexOfDefendantToUpdate],
+        ...update,
+      }
+
+      return { ...theCase, defendants: newDefendants }
+    })
+  }
+
   return {
     createDefendant,
     deleteDefendant,
     updateDefendant,
+    updateDefendantState,
   }
 }
 
