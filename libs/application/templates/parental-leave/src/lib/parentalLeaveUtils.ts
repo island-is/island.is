@@ -415,12 +415,6 @@ export function getApplicationAnswers(answers: Application['answers']) {
   if (!applicationType) applicationType = PARENTAL_LEAVE as string
   else applicationType = applicationType as string
 
-  let artificialInsemination = getValueViaPath(
-    answers,
-    'artificialInseminationQuestion',
-  ) as YesOrNo
-  if (!artificialInsemination) artificialInsemination = NO as YesOrNo
-
   const otherParent = (getValueViaPath(
     answers,
     'otherParentObj.chooseOtherParent',
@@ -594,7 +588,6 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   return {
     applicationType,
-    artificialInsemination,
     otherParent,
     otherParentRightOfAccess,
     pensionFund,

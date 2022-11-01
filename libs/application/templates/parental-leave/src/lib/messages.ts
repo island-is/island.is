@@ -1692,16 +1692,6 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: `Þeir sem þiggja dagpeninga/veikindarétt frá stéttarfélagi eða skjúkradagpeninga frá Sjúkratryggingum Íslands þurfa að skila inn skjali því til staðfestingar. Athugaðu að skjalið þarf að vera á .pdf formi`,
       description: `Those who receive unemployment benefits/sick leave allowance from the Union or sick leave allowance from Sjúkratryggingar Íslands must submit a document to confirm this. Note that the document needs to be on .pdf format`,
     },
-    artificialInseminationTitle: {
-      id: 'pl.application:attachmentscreen.artificialInseminationTitle',
-      defaultMessage: `Staðfesting vegna tæknifrjóvgunar`,
-      description: `Confirmation for artificial insemination`,
-    },
-    artificialInseminationDescription: {
-      id: 'pl.application:attachmentscreen.artificialInseminationDescription',
-      defaultMessage: `Þeir sem hafa farið í tæknifrjóvgun þurfa að skila inn skjali því til staðfestingar frá Livio. Athugaðu að skjalið þarf að vera á .pdf formi`,
-      description: `Those who have undergone artificial insemination must submit a document to confirm this from Livio. Note that the document needs to be on .pdf format`,
-    },
     fatherWithoutMotherTitle: {
       id: 'pl.application:attachmentscreen.fatherWithoutMotherTitle',
       defaultMessage: 'Vottorð frá heilsugæslu',

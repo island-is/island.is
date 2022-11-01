@@ -264,30 +264,6 @@ export class ParentalLeaveService {
     }
   }
 
-  async getArtificialInseminationPdf(application: Application, index = 0) {
-    try {
-      const filename = getValueViaPath(
-        application.answers,
-        `fileUpload.artificialInsemination[${index}].key`,
-      )
-
-      const Key = `${application.id}/${filename}`
-      const file = await this.s3
-        .getObject({ Bucket: this.attachmentBucket, Key })
-        .promise()
-      const fileContent = file.Body as Buffer
-
-      if (!fileContent) {
-        throw new Error('File content was undefined')
-      }
-
-      return fileContent.toString('base64')
-    } catch (e) {
-      this.logger.error('Cannot get artificial insemination attachment', { e })
-      throw new Error('Failed to get the artificial insemination attachment')
-    }
-  }
-
   async getGenericPdf(application: Application, index = 0) {
     try {
       const filename = getValueViaPath(
@@ -317,7 +293,6 @@ export class ParentalLeaveService {
     const {
       isSelfEmployed,
       applicationType,
-      artificialInsemination,
     } = getApplicationAnswers(application.answers)
 
     if (isSelfEmployed === YES && applicationType === PARENTAL_LEAVE) {
