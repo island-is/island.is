@@ -460,7 +460,7 @@ export const m = defineMessages({
   },
   applicationComplete: {
     id: 'mac.application:actionCard.applicationComplete',
-    defaultMessage: 'Undirritun',
+    defaultMessage: 'Beiðni send áfram',
     description: '',
   },
   spouseDoneDescription: {
