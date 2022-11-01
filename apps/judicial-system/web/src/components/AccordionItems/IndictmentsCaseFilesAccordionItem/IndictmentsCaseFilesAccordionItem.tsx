@@ -182,18 +182,17 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
   const controls = useDragControls()
   const [isDragging, setIsDragging] = useState<boolean>(false)
   const [isEditing, setIsEditing] = useState<boolean>(false)
-  const [editedFilename, setEditedFilename] = useState<string | undefined>(
-    caseFile.userGeneratedFilename,
-  )
+  const [editedFilename, setEditedFilename] = useState<string | undefined>()
   const displayName = caseFile.userGeneratedFilename ?? caseFile.displayText
 
   const handleEditFileButtonClick = () => {
     const trimmedFilename = editedFilename?.trim()
 
-    if (trimmedFilename) {
+    if (trimmedFilename && trimmedFilename !== caseFile.userGeneratedFilename) {
       onRename(caseFile.id, trimmedFilename)
-      setIsEditing(false)
     }
+
+    setIsEditing(false)
   }
 
   return (
@@ -265,19 +264,9 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
                     <Box display="flex" alignItems="center">
                       <button
                         onClick={handleEditFileButtonClick}
-                        disabled={
-                          editedFilename === caseFile.userGeneratedFilename
-                        }
                         className={styles.editCaseFileButton}
                       >
-                        <Icon
-                          icon="checkmark"
-                          color={
-                            editedFilename === caseFile.userGeneratedFilename
-                              ? 'dark200'
-                              : 'blue400'
-                          }
-                        />
+                        <Icon icon="checkmark" color="blue400" />
                       </button>
                       <Box marginLeft={1}>
                         <button
@@ -350,65 +339,71 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
   const { onOpen } = useFileList({ caseId })
   const { remove } = useS3UploadV2(caseId)
 
-  const [reorderableItems, setReorderableItems] = useState<ReorderableItem[]>([
-    ...sortedFilesInChapter(0, caseFiles),
-    {
-      id: uuid(),
-      displayText: formatMessage(m.chapterInvesitgationProcess),
-      chapter: 1,
-      isDivider: false,
-    },
-    ...sortedFilesInChapter(1, caseFiles),
-    {
-      id: uuid(),
-      displayText: formatMessage(m.chapterWitnesses),
-      chapter: 2,
-      isDivider: false,
-    },
-    ...sortedFilesInChapter(2, caseFiles),
-    {
-      id: uuid(),
-      displayText: formatMessage(m.chapterDefendant),
-      chapter: 3,
-      isDivider: false,
-    },
-    ...sortedFilesInChapter(3, caseFiles),
-    {
-      id: uuid(),
-      displayText: formatMessage(m.chapterCaseFiles),
-      chapter: 4,
-      isDivider: false,
-    },
-    ...sortedFilesInChapter(4, caseFiles),
-    {
-      id: uuid(),
-      displayText: formatMessage(m.chapterElectronicDocuments),
-      chapter: 5,
-      isDivider: false,
-    },
-    ...sortedFilesInChapter(5, caseFiles),
-    {
-      id: uuid(),
-      displayText: `${formatMessage(m.unorderedFilesTitle)}|${formatMessage(
-        m.unorderedFilesExplanation,
-      )}`,
-      isDivider: true,
-    },
-    ...caseFiles
-      .filter(
-        (caseFile) =>
-          caseFile.chapter === null || caseFile.chapter === undefined,
-      )
-      .map((caseFile) => {
-        return {
-          id: caseFile.id,
-          created: caseFile.created,
-          displayText: caseFile.name,
-          userGeneratedFilename: caseFile.userGeneratedFilename,
-          isDivider: false,
-        }
-      }),
-  ])
+  const [reorderableItems, setReorderableItems] = useState<ReorderableItem[]>(
+    [],
+  )
+
+  useEffect(() => {
+    setReorderableItems([
+      ...sortedFilesInChapter(0, caseFiles),
+      {
+        id: uuid(),
+        displayText: formatMessage(m.chapterInvesitgationProcess),
+        chapter: 1,
+        isDivider: false,
+      },
+      ...sortedFilesInChapter(1, caseFiles),
+      {
+        id: uuid(),
+        displayText: formatMessage(m.chapterWitnesses),
+        chapter: 2,
+        isDivider: false,
+      },
+      ...sortedFilesInChapter(2, caseFiles),
+      {
+        id: uuid(),
+        displayText: formatMessage(m.chapterDefendant),
+        chapter: 3,
+        isDivider: false,
+      },
+      ...sortedFilesInChapter(3, caseFiles),
+      {
+        id: uuid(),
+        displayText: formatMessage(m.chapterCaseFiles),
+        chapter: 4,
+        isDivider: false,
+      },
+      ...sortedFilesInChapter(4, caseFiles),
+      {
+        id: uuid(),
+        displayText: formatMessage(m.chapterElectronicDocuments),
+        chapter: 5,
+        isDivider: false,
+      },
+      ...sortedFilesInChapter(5, caseFiles),
+      {
+        id: uuid(),
+        displayText: `${formatMessage(m.unorderedFilesTitle)}|${formatMessage(
+          m.unorderedFilesExplanation,
+        )}`,
+        isDivider: true,
+      },
+      ...caseFiles
+        .filter(
+          (caseFile) =>
+            caseFile.chapter === null || caseFile.chapter === undefined,
+        )
+        .map((caseFile) => {
+          return {
+            id: caseFile.id,
+            created: caseFile.created,
+            displayText: caseFile.name,
+            userGeneratedFilename: caseFile.userGeneratedFilename,
+            isDivider: false,
+          }
+        }),
+    ])
+  }, [caseFiles, formatMessage])
 
   const handleReorder = async (fileId?: string) => {
     if (!fileId) {
@@ -420,11 +415,6 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
       reorderableItems,
     )
     const filesBelowInChapter = getFilesBelowInChapter(fileId, reorderableItems)
-
-    // Do not update the order of files if the file is not in a chapter
-    if (chapter === null || orderWithinChapter === null) {
-      return
-    }
 
     const { errors } = await updateFilesMutation({
       variables: {
@@ -440,7 +430,10 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
               return {
                 id: file.id,
                 chapter,
-                orderWithinChapter: orderWithinChapter + index + 1,
+                orderWithinChapter:
+                  orderWithinChapter === null
+                    ? null
+                    : orderWithinChapter + index + 1,
               }
             }),
           ],
@@ -545,18 +538,19 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
         })}
       </Reorder.Group>
       <AnimatePresence>
-        {reorderableItems[reorderableItems.length - 1].isDivider && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <AlertMessage
-              type="success"
-              message={formatMessage(m.noCaseFiles)}
-            />
-          </motion.div>
-        )}
+        {reorderableItems.length > 0 &&
+          reorderableItems[reorderableItems.length - 1].isDivider && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              <AlertMessage
+                type="success"
+                message={formatMessage(m.noCaseFiles)}
+              />
+            </motion.div>
+          )}
       </AnimatePresence>
     </AccordionItem>
   )
