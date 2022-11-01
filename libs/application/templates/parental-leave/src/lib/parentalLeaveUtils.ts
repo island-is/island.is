@@ -392,7 +392,7 @@ export function getApplicationExternalData(
   const navId = getValueViaPath(externalData, 'navId', '') as string
 
   let applicationFundId = navId
-  if (applicationFundId === '') {
+  if (!applicationFundId || applicationFundId === '') {
     applicationFundId = getValueViaPath(
       externalData,
       'sendApplication.data.id',

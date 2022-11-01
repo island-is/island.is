@@ -2,7 +2,8 @@ import { CSSProperties, FC, useState } from 'react'
 import { useQuery } from '@apollo/client/react'
 import { GET_LAWYERS_QUERY } from './queries'
 import { ConnectedComponent, Query } from '@island.is/api/schema'
-import { useLocalization, sortAlpha } from '../../utils'
+import { useLocalization } from '../../utils'
+import { sortAlpha } from '@island.is/shared/utils'
 import {
   Box,
   LoadingDots,
