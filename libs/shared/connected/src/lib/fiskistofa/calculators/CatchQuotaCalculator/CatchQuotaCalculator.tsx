@@ -450,7 +450,7 @@ export const CatchQuotaCalculator = ({
         )}
       </Box>
 
-      {state.context.data?.catchQuotaCategories?.length && (
+      {!!state.context.data?.catchQuotaCategories?.length && (
         <Box marginTop={3} className={styles.tableBox}>
           <table className={styles.tableContainer}>
             <thead className={styles.tableHead}>
