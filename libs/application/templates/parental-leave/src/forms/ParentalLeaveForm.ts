@@ -28,7 +28,6 @@ import {
   allowOtherParent,
   getLastValidPeriodEndDate,
   removeCountryCode,
-  showGenericFileUpload,
   getApplicationExternalData,
   getDurationTitle,
   getFirstPeriodTitle,
@@ -53,7 +52,6 @@ import {
   NO_UNION,
   ParentalRelations,
   PARENTAL_GRANT_STUDENTS,
-  PARENTAL_GRANT,
   PARENTAL_LEAVE,
   StartDateOptions,
   UnEmployedBenefitTypes,
@@ -642,12 +640,12 @@ export const ParentalLeaveForm: Form = buildForm({
                 parentalLeaveFormMessages.selfEmployed.attachmentButton,
             }),
             buildFileUploadField({
-              id: 'fileUpload.unionConfirmationFile',
+              id: 'fileUpload.benefitsFile',
               title:
                 parentalLeaveFormMessages.attachmentScreen
                   .unemploymentBenefitsTitle,
               introduction:
-                parentalLeaveFormMessages.attachmentScreen.unionDescription,
+                parentalLeaveFormMessages.attachmentScreen.benefitDescription,
               condition: (answers) => {
                 const isRecivingUnemploymentBenefits =
                   (answers as {
@@ -657,34 +655,6 @@ export const ParentalLeaveForm: Form = buildForm({
                   (answers as {
                     unemploymentBenefits: string
                   })?.unemploymentBenefits === UnEmployedBenefitTypes.union
-
-                return (
-                  isRecivingUnemploymentBenefits &&
-                  unemploymentBenefitsFromUnion
-                )
-              },
-              maxSize: FILE_SIZE_LIMIT,
-              maxSizeErrorText:
-                parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
-              uploadAccept: '.pdf',
-              uploadHeader: '',
-              uploadDescription: '',
-              uploadButtonLabel:
-                parentalLeaveFormMessages.selfEmployed.attachmentButton,
-            }),
-            buildFileUploadField({
-              id: 'fileUpload.healthInsuranceConfirmationFile',
-              title:
-                parentalLeaveFormMessages.attachmentScreen
-                  .unemploymentBenefitsTitle,
-              introduction:
-                parentalLeaveFormMessages.attachmentScreen
-                  .healthInsuranceDescription,
-              condition: (answers) => {
-                const isRecivingUnemploymentBenefits =
-                  (answers as {
-                    isRecivingUnemploymentBenefits: YesOrNo
-                  })?.isRecivingUnemploymentBenefits === YES
                 const unemploymentBenefitsFromXjúkratryggingar =
                   (answers as {
                     unemploymentBenefits: string
@@ -693,7 +663,8 @@ export const ParentalLeaveForm: Form = buildForm({
 
                 return (
                   isRecivingUnemploymentBenefits &&
-                  unemploymentBenefitsFromXjúkratryggingar
+                  (unemploymentBenefitsFromUnion ||
+                    unemploymentBenefitsFromXjúkratryggingar)
                 )
               },
               maxSize: FILE_SIZE_LIMIT,
@@ -711,7 +682,6 @@ export const ParentalLeaveForm: Form = buildForm({
               introduction:
                 parentalLeaveFormMessages.attachmentScreen.genericDescription,
               maxSize: FILE_SIZE_LIMIT,
-              condition: (answers) => showGenericFileUpload(answers),
               maxSizeErrorText:
                 parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
               uploadAccept: '.pdf',
