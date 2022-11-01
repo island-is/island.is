@@ -62,7 +62,6 @@ describe('MessageService - Send messages to queue', () => {
           Entries: [
             {
               Id: '0',
-              MessageGroupId: caseId,
               MessageBody: JSON.stringify(message),
             },
           ],

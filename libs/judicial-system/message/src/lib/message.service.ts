@@ -123,7 +123,6 @@ export class MessageService {
       .send(
         new SendMessageCommand({
           QueueUrl: this.queueUrl,
-          MessageGroupId: message.caseId,
           MessageBody: JSON.stringify(message),
         }),
       )
@@ -140,7 +139,6 @@ export class MessageService {
         new SendMessageBatchCommand({
           QueueUrl: this.queueUrl,
           Entries: messages.map((message, index) => ({
-            MessageGroupId: message.caseId,
             MessageBody: JSON.stringify(message),
             Id: index.toString(),
           })),

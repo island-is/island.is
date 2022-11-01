@@ -59,7 +59,6 @@ describe('MessageService - Send message to queue', () => {
       it(`should post message ${type} to queue`, () => {
         expect(mockSqs.send).toHaveBeenCalledWith({
           QueueUrl: mockQueueUrl,
-          MessageGroupId: caseId,
           MessageBody: JSON.stringify(message),
         })
       })
