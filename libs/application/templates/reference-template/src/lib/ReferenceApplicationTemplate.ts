@@ -223,7 +223,9 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
                 { event: 'APPROVE', name: 'Samþykkja', type: 'primary' },
                 { event: 'REJECT', name: 'Hafna', type: 'reject' },
               ],
-              write: { answers: ['careerHistoryCompanies'] },
+              write: {
+                answers: ['careerHistoryCompanies', 'approvedByReviewer'],
+              },
               read: 'all',
               shouldBeListedForRole: false,
             },

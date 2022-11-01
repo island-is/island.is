@@ -793,7 +793,6 @@ describe('Application system API', () => {
       .send({
         event: 'APPROVE',
         answers: {
-          ...answers,
           approvedByReviewer: 'APPROVE',
         },
       })
