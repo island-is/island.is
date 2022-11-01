@@ -1113,7 +1113,7 @@ export const ParentalLeaveForm: Form = buildForm({
                         const {
                           applicationFundId,
                         } = getApplicationExternalData(externalData)
-                        if (applicationFundId === '') {
+                        if (!applicationFundId || applicationFundId === '') {
                           const { periods } = getApplicationAnswers(answers)
                           return (
                             periods.length > 0 &&

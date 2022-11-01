@@ -1,6 +1,4 @@
-<!-- gitbook-navigation: "Public API" -->
-
-# Auth Public API
+# Public API
 
 ## About
 
@@ -8,21 +6,16 @@ A service for external clients which allows them to query the list of available 
 
 ## Getting started
 
-To run the API locally, you first need to start the database container:
+To run the API locally, you can either connect to the AWS dev db or run a database container locally.
+For further instructions on how to start the database please see [Getting started in IDS API](../ids-api/README.md#getting-started)
 
-```bash
-yarn dev-services services-auth-api
-```
-
-Then run the migration scripts:
-(Note: when running locally you need to make sure the environmental variable "DB_PASS" is either empty or equal to "dev_db")
-
-```bash
-yarn nx run services-auth-api:migrate
-```
-
-Finally, start the service:
+When the database is running then start the service:
 
 ```bash
 yarn start services-auth-public-api
 ```
+
+## Code owners and maintainers
+
+- [Aranja](https://github.com/orgs/island-is/teams/aranja/members)
+- [Fuglar](https://github.com/orgs/island-is/teams/fuglar/members)
