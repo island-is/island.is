@@ -41,7 +41,7 @@ export const searchQuery = (
     'content.stemmed',
   ]
   // * wildcard support for internal clients
-  if (queryString.trim() == '*') {
+  if (queryString.trim() === '*') {
     should.push({
       simple_query_string: {
         query: queryString,
