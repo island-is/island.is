@@ -1,6 +1,5 @@
-export { HealthInsuranceProvider } from './HealthInsuranceProvider'
-export { PendingApplications } from './PendingApplications'
 export {
-  UserProfileProvider,
-  NationalRegistryProvider,
-} from '@island.is/application/data-providers'
+  NationalRegistryUserApi,
+  UserProfileApi,
+  HealthInsuranceApi,
+} from '@island.is/application/types'
