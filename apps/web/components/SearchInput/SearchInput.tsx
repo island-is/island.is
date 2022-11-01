@@ -40,6 +40,7 @@ import {
 import * as styles from './SearchInput.css'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { TestSupport } from '@island.is/island-ui/utils'
+import { usePlausible } from '@island.is/web/hooks'
 
 const DEBOUNCE_TIMER = 150
 const STACK_WIDTH = 400
@@ -134,14 +135,14 @@ const useSearch = (
       const indexOfLastSpace = term.lastIndexOf(' ')
       const hasSpace = indexOfLastSpace !== -1
       const prefix = hasSpace ? term.slice(0, indexOfLastSpace) : ''
-      const queryString = term //hasSpace ? term.slice(indexOfLastSpace) : term
+      const queryString = hasSpace ? term.slice(indexOfLastSpace) : term
 
       client
         .query<AutocompleteTermResultsQuery, QueryWebSearchAutocompleteArgs>({
           query: GET_SEARCH_AUTOCOMPLETE_TERM_QUERY,
           variables: {
             input: {
-              singleTerm: queryString,
+              singleTerm: queryString.trim(), // term
               language: locale as ContentLanguage,
               size: 10, // only show top X completions to prevent long list
             },
@@ -431,11 +432,11 @@ const Results = ({
         <Stack space={1}>
           {search.suggestions &&
             search.suggestions.map((suggestion, i) => {
-              // const suggestionHasTerm = suggestion.startsWith(search.term)
-              // const startOfString = suggestionHasTerm ? search.term : suggestion
-              // const endOfString = suggestionHasTerm
-              //   ? suggestion.replace(search.term, '')
-              //   : ''
+              const suggestionHasTerm = suggestion.startsWith(search.term)
+              const startOfString = suggestionHasTerm ? search.term : suggestion
+              const endOfString = suggestionHasTerm
+                ? suggestion.replace(search.term, '')
+                : ''
               const { onClick, ...itemProps } = getItemProps({
                 item: {
                   type: 'query',
@@ -449,11 +450,15 @@ const Results = ({
                   className={styles.suggestion}
                   onClick={(e) => {
                     onClick(e)
+                    console.log(window.plausible,"window.plausible")
+                    window.plausible?.("Search Query", { props: {q:"TTEST"} })
                     onRouting()
+
                   }}
                 >
                   <Text color={i === highlightedIndex ? 'blue400' : 'dark400'}>
-                  <span dangerouslySetInnerHTML={{__html: suggestion}}></span>
+                    {`${search.prefix} ${startOfString}`}
+                    <strong>{endOfString}</strong> 
                   </Text>
                 </div>
               )

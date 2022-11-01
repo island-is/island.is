@@ -128,44 +128,46 @@ export class ContentSearchService {
       },
     )
 
+    // console.log("INPUT",input.singleTerm.trim())
+    // console.log("INPUT",input.singleTerm.trim())
 
-    console.log("INPUT",input.singleTerm.trim())
-
-    const completions = await this.elasticService.findByQuery(
-      this.getIndex(input.language),
-      {
-        _source: { include: ['title'] },
-        query: { prefix: { title: input.singleTerm.trim() } },
-        highlight: {
-          number_of_fragments: 3,
-          fragment_size: 150,
-          fields: { title: { pre_tags: ['<b>'], post_tags: ['</b>'] } },
-        },
-      },
-    )
+    // const completions = await this.elasticService.findByQuery(
+    //   this.getIndex(input.language),
+    //   {
+    //     _source: { include: ['title'] },
+    //     query: { prefix: { title: input.singleTerm.trim() } },
+    //     highlight: {
+    //       number_of_fragments: 3,
+    //       fragment_size: 150,
+    //       fields: { title: { pre_tags: ['<b>'], post_tags: ['</b>'] } },
+    //     },
+    //   },
+    // )
 
 
-    const titles: string[] = []
-    // @ts-ignore: Unreachable code error
-    completions.body.hits.hits.forEach((item) => {
-      titles.push(item.highlight.title[0])
-      console.log(item._source.title)
-    })
+    // const titles: string[] = []
+    // // @ts-ignore: Unreachable code error
+    // completions.body.hits.hits.forEach((item) => {
+    //   titles.push(item.highlight.title[0])
+    //   console.log(item._source.title)
+    // })
     
-    const ret = {
-      total: titles.length,
-      completions:titles,
-    }
-    // // we always handle just one terms at a time so we return results for first term
-    // const firstWordSuggestions = searchSuggester[0].options
-
     // const ret = {
-    //   total: firstWordSuggestions.length,
-    //   completions: firstWordSuggestions.map(
-    //     (suggestionObjects) => suggestionObjects.text,
-    //   ),
+    //   total: titles.length,
+    //   completions:titles,
     // }
-    // // console.log(ret)
+
+
+    // we always handle just one terms at a time so we return results for first term
+    const firstWordSuggestions = searchSuggester[0].options
+
+    const ret = {
+      total: firstWordSuggestions.length,
+      completions: firstWordSuggestions.map(
+        (suggestionObjects) => suggestionObjects.text,
+      ),
+    }
+    // console.log(ret)
     
     return ret
   }
