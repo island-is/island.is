@@ -16,7 +16,7 @@ import { ApiScopeGroup } from './api-scope-group.model'
 import { ApiScopesDTO } from '../dto/api-scopes.dto'
 import { DelegationScope } from '../../delegations/models/delegation-scope.model'
 import { PersonalRepresentativeScopePermission } from '../../personal-representative/models/personal-representative-scope-permission.model'
-import { Optional } from 'sequelize/types'
+import { Optional } from 'sequelize'
 import { Domain } from './domain.model'
 
 interface ModelAttributes {

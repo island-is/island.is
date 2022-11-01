@@ -22,6 +22,7 @@ jobs:
     env:
       AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
       CHUNK_SIZE: 7
+      SERVERSIDE_FEATURES_ON: ''
 
     outputs:
       TEST_CHUNKS: ${{ steps.test_projects.outputs.CHUNKS }}

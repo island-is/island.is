@@ -57,8 +57,8 @@ export class FileService {
     throw new InternalServerErrorException('Format message not initialized')
   }
 
-  private refreshFormatMessage: () => Promise<void> = async () =>
-    this.intlService
+  private async refreshFormatMessage(): Promise<void> {
+    return this.intlService
       .useIntl(['judicial.system.backend'], 'is')
       .then((res) => {
         this.formatMessage = res.formatMessage
@@ -66,6 +66,7 @@ export class FileService {
       .catch((reason) => {
         this.logger.error('Unable to refresh format messages', { reason })
       })
+  }
 
   private async deleteFileFromDatabase(fileId: string): Promise<boolean> {
     this.logger.debug(`Deleting file ${fileId} from the database`)
@@ -361,18 +362,11 @@ export class FileService {
   ): Promise<CaseFile[]> {
     return this.sequelize.transaction((transaction) => {
       const updates = caseFileUpdates.map(async (update) => {
-        const [affectedNumber, file] = await this.fileModel.update(
-          {
-            orderWithinChapter: update.orderWithinChapter,
-            chapter: update.chapter,
-            userGeneratedFilename: update.userGeneratedFilename,
-          },
-          {
-            where: { caseId, id: update.id },
-            returning: true,
-            transaction,
-          },
-        )
+        const [affectedNumber, file] = await this.fileModel.update(update, {
+          where: { caseId, id: update.id },
+          returning: true,
+          transaction,
+        })
         if (affectedNumber !== 1 || !file[0]) {
           throw new InternalServerErrorException(
             `Could not update file ${update.id} of case ${caseId}`,

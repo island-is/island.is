@@ -19,7 +19,7 @@ export const serviceSetup = (): ServiceBuilder<'xroad-collector'> =>
     })
     .xroad(Base, Client)
     .command('node')
-    .args('main.js')
+    .args('--no-experimental-fetch', 'main.js')
     .extraAttributes({
       dev: { schedule: '0 2 * * *' },
       staging: { schedule: '0 2 * * *' },

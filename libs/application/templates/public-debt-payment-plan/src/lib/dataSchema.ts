@@ -35,6 +35,10 @@ export const CorrectedEmployerSchema = z.object({
       params: error.nationalId,
     }),
   label: z.string().min(1),
+  value: z.string().optional(),
+  validEmployer: z.boolean().refine((x) => x === true, {
+    params: error.invalidEmployer,
+  }),
 })
 
 export const PaymentPlansSchema = z.object({

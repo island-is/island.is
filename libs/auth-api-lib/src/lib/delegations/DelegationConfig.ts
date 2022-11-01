@@ -33,6 +33,7 @@ const schema = z.object({
   // users in custom delegations.
   customScopeRules: customScopeRuleSchema,
   userInfoUrl: z.string(),
+  defaultValidityPeriodInDays: z.number().min(1),
 })
 
 export const DelegationConfig = defineConfig<z.infer<typeof schema>>({
@@ -46,11 +47,11 @@ export const DelegationConfig = defineConfig<z.infer<typeof schema>>({
       },
       {
         scopeName: ApiScope.financeSalary,
-        onlyForDelegationType: ['ProcurationHolder'],
+        onlyForDelegationType: ['ProcurationHolder', 'Custom'],
       },
       {
         scopeName: ApiScope.company,
-        onlyForDelegationType: ['ProcurationHolder'],
+        onlyForDelegationType: ['ProcurationHolder', 'Custom'],
       },
     ],
     userInfoUrl:
@@ -58,5 +59,7 @@ export const DelegationConfig = defineConfig<z.infer<typeof schema>>({
         'IDENTITY_SERVER_ISSUER_URL',
         'https://identity-server.dev01.devland.is',
       ) + '/connect/userinfo',
+    defaultValidityPeriodInDays:
+      env.optionalJSON('DELEGATION_DEFAULT_VALID_PERIOD_IN_DAYS') ?? 365,
   }),
 })

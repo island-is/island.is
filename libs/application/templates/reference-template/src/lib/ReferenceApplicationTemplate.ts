@@ -206,7 +206,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
         meta: {
           name: 'Approved',
           progress: 1,
-          lifecycle: EphemeralStateLifeCycle,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -223,7 +223,8 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
       [States.rejected]: {
         meta: {
           name: 'Rejected',
-          lifecycle: EphemeralStateLifeCycle,
+          progress: 1,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -234,6 +235,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
             },
           ],
         },
+        type: 'final' as const,
       },
     },
   },
