@@ -101,6 +101,7 @@ const SelectDefender: React.FC<Props> = (props) => {
         <DefenderInput
           disabled={defendant.defendantWaivesRightToCounsel}
           onDefenderNotFound={setDefenderNotFound}
+          defendantId={defendant.id}
         />
       </BlueBox>
     </Box>

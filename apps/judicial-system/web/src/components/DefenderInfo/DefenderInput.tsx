@@ -13,22 +13,32 @@ import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
 } from '../../utils/formHelper'
+import useDefendants from '../../utils/hooks/useDefendants'
 
 interface Props {
   onDefenderNotFound: (defenderNotFound: boolean) => void
   disabled?: boolean
+  defendantId?: string
 }
-const DefenderInput: React.FC<Props> = ({ onDefenderNotFound, disabled }) => {
+const DefenderInput: React.FC<Props> = ({
+  onDefenderNotFound,
+  disabled,
+  defendantId,
+}) => {
   const { workingCase, setWorkingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
   const lawyers = useGetLawyers()
   const { updateCase } = useCase()
+  const { updateDefendant } = useDefendants()
 
   const [emailErrorMessage, setEmailErrorMessage] = useState<string>('')
   const [
     phoneNumberErrorMessage,
     setPhoneNumberErrorMessage,
   ] = useState<string>('')
+  const defendantInDefendants = workingCase.defendants?.find(
+    (defendant) => defendant.id === defendantId,
+  )
 
   const options = useMemo(
     () =>
@@ -70,8 +80,12 @@ const DefenderInput: React.FC<Props> = ({ onDefenderNotFound, disabled }) => {
         }
       }
 
-      await updateCase(workingCase.id, updatedLawyer)
-      setWorkingCase({ ...workingCase, ...updatedLawyer })
+      if (defendantId) {
+        updateDefendant(workingCase.id, defendantId, updatedLawyer)
+      } else {
+        await updateCase(workingCase.id, updatedLawyer)
+        setWorkingCase({ ...workingCase, ...updatedLawyer })
+      }
     },
     [lawyers, setWorkingCase, workingCase, updateCase, onDefenderNotFound],
   )
@@ -88,7 +102,12 @@ const DefenderInput: React.FC<Props> = ({ onDefenderNotFound, disabled }) => {
           })}
           placeholder={formatMessage(m.namePlaceholder)}
           value={
-            workingCase.defenderName
+            defendantId
+              ? {
+                  label: defendantInDefendants?.defenderName ?? '',
+                  value: defendantInDefendants?.defenderEmail ?? '',
+                }
+              : workingCase.defenderName
               ? {
                   label: workingCase.defenderName ?? '',
                   value: workingCase.defenderEmail ?? '',
@@ -110,7 +129,11 @@ const DefenderInput: React.FC<Props> = ({ onDefenderNotFound, disabled }) => {
             sessionArrangements: workingCase.sessionArrangements,
           })}
           placeholder={formatMessage(m.emailPlaceholder)}
-          value={workingCase.defenderEmail || ''}
+          value={
+            defendantId
+              ? defendantInDefendants?.defenderEmail
+              : workingCase.defenderEmail || ''
+          }
           errorMessage={emailErrorMessage}
           hasError={emailErrorMessage !== ''}
           disabled={disabled}
@@ -140,7 +163,11 @@ const DefenderInput: React.FC<Props> = ({ onDefenderNotFound, disabled }) => {
       <InputMask
         mask="999-9999"
         maskPlaceholder={null}
-        value={workingCase.defenderPhoneNumber || ''}
+        value={
+          defendantId
+            ? defendantInDefendants?.defenderPhoneNumber
+            : workingCase.defenderPhoneNumber || ''
+        }
         disabled={disabled}
         onChange={(event) =>
           removeTabsValidateAndSet(
