@@ -1,28 +1,22 @@
 import { Injectable } from '@nestjs/common'
-import { User } from '@island.is/auth-nest-tools'
+
+import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import { DomainsApi } from '@island.is/clients/auth/delegation-api'
+
 import { Domain } from '../models/domain.model'
 import { DomainsInput } from '../dto/domains.input'
 
-const MOCK_DATA: Domain[] = [
-  {
-    name: '@island.is',
-    displayName: 'Ísland.is',
-    description: 'Island.is',
-    organisationLogoKey: 'Island.is',
-    nationalId: '...',
-  },
-  {
-    name: '@landsspitalinn.is',
-    displayName: 'Landsspítalaappið',
-    description: '',
-    organisationLogoKey: 'Landsspítalinn',
-    nationalId: '...',
-  },
-]
-
 @Injectable()
 export class DomainService {
-  getDomains(_user: User, _input: DomainsInput): Promise<Domain[]> {
-    return Promise.resolve(MOCK_DATA)
+  constructor(private domainsApi: DomainsApi) {}
+
+  domainsApiWithAuth(auth: Auth): DomainsApi {
+    return this.domainsApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  getDomains(user: User, input: DomainsInput): Promise<Domain[]> {
+    return this.domainsApiWithAuth(user).domainsControllerFindAll({
+      lang: input.lang,
+    })
   }
 }

@@ -14,6 +14,7 @@ import {
   AssetName,
   EstateRegistrant,
   EstateRelations,
+  EstateInfo,
   RealEstateAgent,
   Lawyer,
 } from './syslumennClient.types'
@@ -28,6 +29,7 @@ import {
   constructUploadDataObject,
   mapAssetName,
   mapEstateRegistrant,
+  mapEstateInfo,
   mapRealEstateAgent,
   mapLawyer,
 } from './syslumennClient.utils'
@@ -424,5 +426,16 @@ export class SyslumennService {
       },
     })
     return res
+  }
+
+  async getEstateInfo(nationalId: string): Promise<EstateInfo[]> {
+    const { id, api } = await this.createApi()
+    const res = await api.upplysingarUrDanarbuiPost({
+      fyrirspurn: {
+        audkenni: id,
+        kennitala: nationalId,
+      },
+    })
+    return res.yfirlit?.map(mapEstateInfo) ?? []
   }
 }

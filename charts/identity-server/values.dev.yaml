@@ -6,7 +6,7 @@ auth-admin-web:
     NEXTAUTH_URL: 'https://identity-server.dev01.devland.is/admin/api/auth'
     NEXT_PUBLIC_BACKEND_URL: '/backend'
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'delegation-api'
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
@@ -98,9 +98,9 @@ identity-server:
     IdentityServer__KeyManagement__Enabled: 'true'
     IdentityServer__SigningCertificate__Path: '/etc/config/ids-signing.pfx'
     NODE_OPTIONS: '--max-old-space-size=208'
-    PersistenceSettings__BaseAddress: 'http://web-services-auth-api'
+    PersistenceSettings__BaseAddress: 'http://web-services-auth-ids-api'
     PersistenceSettings__UserProfileBaseAddress: 'http://web-service-portal-api.service-portal.svc.cluster.local'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'delegation-api'
   files:
     - 'ids-signing.pfx'
   grantNamespaces: []
@@ -181,6 +181,7 @@ namespaces:
   namespaces:
     - 'identity-server'
     - 'identity-server-admin'
+    - 'identity-server-delegation'
     - 'personal-representative'
 services-auth-admin-api:
   enabled: true
@@ -191,7 +192,7 @@ services-auth-admin-api:
     DB_USER: 'servicesauth'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'delegation-api'
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
@@ -240,7 +241,84 @@ services-auth-admin-api:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-services-auth-api:
+services-auth-delegation-api:
+  enabled: true
+  env:
+    DB_HOST: 'postgres-applications.internal'
+    DB_NAME: 'servicesauth'
+    DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
+    DB_USER: 'servicesauth'
+    IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api'
+    IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
+    NODE_OPTIONS: '--max-old-space-size=208'
+    SERVERSIDE_FEATURES_ON: 'delegation-api'
+    XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
+    XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
+    XROAD_CLIENT_ID: 'IS-DEV/GOV/10000/island-is-client'
+    XROAD_NATIONAL_REGISTRY_ACTOR_TOKEN: 'true'
+    XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
+    XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1'
+    XROAD_RSK_PROCURING_PATH: 'IS-DEV/GOV/10006/Skatturinn/prokura-v1'
+    XROAD_RSK_PROCURING_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
+    XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1'
+    XROAD_TJODSKRA_MEMBER_CODE: '10001'
+    XROAD_TLS_BASE_PATH: 'https://securityserver.dev01.devland.is'
+    XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
+  grantNamespaces:
+    - 'nginx-ingress-internal'
+    - 'islandis'
+  grantNamespacesEnabled: true
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 2
+      replicas:
+        max: 10
+        min: 2
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-delegation-api'
+  ingress:
+    internal-alb:
+      annotations:
+        kubernetes.io/ingress.class: 'nginx-internal-alb'
+      hosts:
+        - host: 'auth-delegation-api.internal.dev01.devland.is'
+          paths:
+            - '/'
+  namespace: 'identity-server-delegation'
+  pvcs: []
+  replicaCount:
+    default: 2
+    max: 10
+    min: 2
+  resources:
+    limits:
+      cpu: '400m'
+      memory: '256Mi'
+    requests:
+      cpu: '100m'
+      memory: '128Mi'
+  secrets:
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    DB_PASS: '/k8s/services-auth/api/DB_PASSWORD'
+    IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET'
+    NATIONAL_REGISTRY_IDS_CLIENT_SECRET: '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET'
+    RSK_PASSWORD: '/k8s/xroad/client/RSK/PASSWORD'
+    RSK_USERNAME: '/k8s/xroad/client/RSK/USERNAME'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
+services-auth-ids-api:
   enabled: true
   env:
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
@@ -253,7 +331,7 @@ services-auth-api:
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=464'
     PUBLIC_URL: 'https://identity-server.dev01.devland.is/api'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'delegation-api'
     USER_PROFILE_CLIENT_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
@@ -286,7 +364,7 @@ services-auth-api:
         max: 15
         min: 2
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-api'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-ids-api'
   initContainer:
     containers:
       - args:
@@ -320,7 +398,7 @@ services-auth-api:
       DB_NAME: 'servicesauth'
       DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
       DB_USER: 'servicesauth'
-      SERVERSIDE_FEATURES_ON: ''
+      SERVERSIDE_FEATURES_ON: 'delegation-api'
     secrets:
       DB_PASS: '/k8s/services-auth/api/DB_PASSWORD'
   namespace: 'identity-server'
@@ -354,7 +432,7 @@ services-auth-personal-representative:
     DB_USER: 'servicesauth'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'delegation-api'
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
@@ -419,7 +497,7 @@ services-auth-personal-representative-public:
     DB_USER: 'servicesauth'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'delegation-api'
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
@@ -486,7 +564,7 @@ services-auth-public-api:
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=208'
     PUBLIC_URL: 'https://identity-server.dev01.devland.is/api'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'delegation-api'
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
     XROAD_CLIENT_ID: 'IS-DEV/GOV/10000/island-is-client'

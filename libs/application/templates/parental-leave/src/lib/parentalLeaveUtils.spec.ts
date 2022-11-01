@@ -11,7 +11,13 @@ import {
   FormValue,
 } from '@island.is/application/types'
 
-import { NO, MANUAL, ParentalRelations, YES } from '../constants'
+import {
+  NO,
+  MANUAL,
+  ParentalRelations,
+  YES,
+  PARENTAL_GRANT,
+} from '../constants'
 import { ChildInformation } from '../dataProviders/Children/types'
 import {
   formatIsk,
@@ -368,12 +374,14 @@ describe('getApplicationExternalData', () => {
     expect(getApplicationExternalData(application.externalData)).toEqual({
       applicantGenderCode: 'Mock gender code',
       applicantName: 'Mock name',
+      applicationFundId: '',
       children: 'Mock child',
       dataProvider: {
         children: 'Mock child',
         existingApplications: 'Mock application',
       },
       existingApplications: 'Mock application',
+      navId: '',
       userEmail: 'mock@email.is',
       userPhoneNumber: 'Mock number',
     })

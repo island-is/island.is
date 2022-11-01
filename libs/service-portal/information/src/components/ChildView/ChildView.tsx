@@ -1,5 +1,5 @@
 import { ApolloError } from 'apollo-client'
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC } from 'react'
 import { defineMessage } from 'react-intl'
 
 import * as styles from './ChildView.css'
@@ -23,9 +23,6 @@ import {
   NotFound,
   UserInfoLine,
 } from '@island.is/service-portal/core'
-
-import { useFeatureFlagClient } from '@island.is/react/feature-flags'
-import { FeatureFlagClient } from '@island.is/feature-flags'
 
 import { Parents } from '../../components/Parents/Parents'
 import ChildRegistrationModal from '../../screens/FamilyMember/ChildRegistrationModal'
@@ -63,23 +60,6 @@ const ChildView: FC<Props> = ({
 }) => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
-
-  /**
-   * The ChildRegistration module is feature flagged
-   * Please remove all code when fully released.
-   */
-  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
-  const [modalFlagEnabled, setModalFlagEnabled] = useState<boolean>(false)
-  useEffect(() => {
-    const isFlagEnabled = async () => {
-      const ffEnabled = await featureFlagClient.getValue(
-        `servicePortalChildrenFamilyNotification`,
-        false,
-      )
-      setModalFlagEnabled(ffEnabled as boolean)
-    }
-    isFlagEnabled()
-  }, [])
 
   if (!nationalId || error || (!loading && !person))
     return (
@@ -122,7 +102,7 @@ const ChildView: FC<Props> = ({
               flexDirection={['column', 'row']}
             >
               <Inline space={2}>
-                {!loading && !isChild && modalFlagEnabled && (
+                {!loading && !isChild && (
                   <>
                     <ChildRegistrationModal
                       data={{
