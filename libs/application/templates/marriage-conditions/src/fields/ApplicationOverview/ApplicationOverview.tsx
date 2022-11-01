@@ -100,20 +100,6 @@ export const ApplicationOverview: FC<FieldBaseProps> = ({ application }) => {
                 {(answers.personalInfo as PersonalInfo).maritalStatus}
               </Text>
             </Box>
-            {answers.maritalStatus === 'DIVORCED' ||
-              ((answers.fakeData as PersonalInfo).maritalStatus === '6' && (
-                <Box width="half">
-                  <Text variant="h4">
-                    {formatMessage(m.previousMarriageTermination)}
-                  </Text>
-                  <Text>
-                    {
-                      (answers.personalInfo as PersonalInfo)
-                        .previousMarriageTermination
-                    }
-                  </Text>
-                </Box>
-              ))}
           </Box>
         </Box>
       </Box>
