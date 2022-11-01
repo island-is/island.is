@@ -39,6 +39,18 @@ export const queryFishingLicense = gql`
         description
         directions
       }
+      ListColumns {
+        listOptions {
+          key
+          description
+          disabled
+          dateRestriction {
+            dateFrom
+            dateTo
+          }
+          invalidOption
+        }
+      }
     }
   }
 `

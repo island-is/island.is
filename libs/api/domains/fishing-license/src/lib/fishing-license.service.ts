@@ -93,15 +93,21 @@ export class FishingLicenseService {
               title: c.titillSpurningu,
               description: c.upplysingarSpurningu,
             })) || [],
-          areas:
+          listColumns:
             l.serhaefarSpurningar?.listaDalkar?.map((c) => ({
-              options:
+              listOptions:
                 c.listaValmoguleikar?.map((o) => ({
-                  key: o.lykill,
-                  label: o.lysing,
-                  disabled: o.ovirkt,
-                })) || [],
-            })) || [],
+                  key: o.lykill ?? '',
+                  description: o.lysing ?? '',
+                  disabled: o.ovirkt ?? false,
+                  dateRestriction:
+                    {
+                      dateFrom: o.dagsetningarTakmorkun?.dagsetningFra ?? '',
+                      dateTo: o.dagsetningarTakmorkun?.dagsetningTil ?? '',
+                    } || [],
+                  invalidOption: o.ogildurValkostur ?? false,
+                })) ?? [],
+            })) ?? [],
         })) ?? []
       )
     } catch (error) {
