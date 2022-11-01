@@ -1687,15 +1687,10 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: `Bætur`,
       description: `Benefits`,
     },
-    unionDescription: {
-      id: 'pl.application:attachmentscreen.unionDescription',
-      defaultMessage: `Þeir sem þiggja dagpeninga/veikindarétt frá stéttarfélagi þurfa að skila inn skjali því til staðfestingar. Athugaðu að skjalið þarf að vera á .pdf formi`,
-      description: `Those who receive unemployment benefits/sick leave allowance from the Union must submit a document to confirm this. Note that the document needs to be on .pdf format`,
-    },
-    healthInsuranceDescription: {
-      id: 'pl.application:attachmentscreen.healthInsuranceDescription',
-      defaultMessage: `Þeir sem þiggja sjúkradagpeninga frá Sjúkratryggingum Íslands þurfa að skila inn skjali því til staðfestingar. Athugaðu að skjalið þarf að vera á .pdf formi`,
-      description: `Those who receive sick leave allowance from Sjúkratryggingar Íslands must submit a document to confirm this. Note that the document needs to be on .pdf format`,
+    benefitDescription: {
+      id: 'pl.application:attachmentscreen.benefitDescription',
+      defaultMessage: `Þeir sem þiggja dagpeninga/veikindarétt frá stéttarfélagi eða skjúkradagpeninga frá Sjúkratryggingum Íslands þurfa að skila inn skjali því til staðfestingar. Athugaðu að skjalið þarf að vera á .pdf formi`,
+      description: `Those who receive unemployment benefits/sick leave allowance from the Union or sick leave allowance from Sjúkratryggingar Íslands must submit a document to confirm this. Note that the document needs to be on .pdf format`,
     },
     artificialInseminationTitle: {
       id: 'pl.application:attachmentscreen.artificialInseminationTitle',

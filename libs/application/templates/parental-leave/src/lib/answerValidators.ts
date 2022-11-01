@@ -56,7 +56,6 @@ export const answerValidators: Record<string, AnswerValidator> = {
       buildValidationError(`${EMPLOYER}.${path}`)(message)
 
     const { isSelfEmployed } = getApplicationAnswers(application.answers)
-
     if (obj.isSelfEmployed === '' || !obj.isSelfEmployed) {
       if (isSelfEmployed) {
         return undefined
@@ -98,44 +97,29 @@ export const answerValidators: Record<string, AnswerValidator> = {
       isRecivingUnemploymentBenefits,
       unemploymentBenefits,
     } = getApplicationAnswers(application.answers)
+    if (isSelfEmployed === YES && obj.selfEmployedFile) {
+      if (isEmpty((obj as { selfEmployedFile: unknown[] }).selfEmployedFile))
+        return buildError(errorMessages.requiredAttachment, 'selfEmployedFile')
 
-    if (
-      isSelfEmployed === YES &&
-      isEmpty((obj as { selfEmployedFile: unknown[] }).selfEmployedFile)
-    ) {
-      return buildError(errorMessages.requiredAttachment, 'selfEmployedFile')
+      return undefined
     }
 
-    if (
-      applicationType === PARENTAL_GRANT_STUDENTS &&
-      isEmpty((obj as { studentFile: unknown[] }).studentFile)
-    ) {
-      return buildError(errorMessages.requiredAttachment, 'studentFile')
+    if (applicationType === PARENTAL_GRANT_STUDENTS && obj.studentFile) {
+      if (isEmpty((obj as { studentFile: unknown[] }).studentFile))
+        return buildError(errorMessages.requiredAttachment, 'studentFile')
+      return undefined
     }
 
     if (isRecivingUnemploymentBenefits) {
       if (
-        unemploymentBenefits === UnEmployedBenefitTypes.union &&
-        isEmpty(
-          (obj as { unionConfirmationFile: unknown[] }).unionConfirmationFile,
-        )
+        (unemploymentBenefits === UnEmployedBenefitTypes.union ||
+          unemploymentBenefits === UnEmployedBenefitTypes.healthInsurance) &&
+        obj.benefitsFile
       ) {
-        return buildError(
-          errorMessages.requiredAttachment,
-          'unionConfirmationFile',
-        )
-      }
-      if (
-        unemploymentBenefits === UnEmployedBenefitTypes.healthInsurance &&
-        isEmpty(
-          (obj as { healthInsuranceConfirmationFile: unknown[] })
-            .healthInsuranceConfirmationFile,
-        )
-      ) {
-        return buildError(
-          errorMessages.requiredAttachment,
-          'healthInsuranceConfirmationFile',
-        )
+        if (isEmpty((obj as { benefitsFile: unknown[] }).benefitsFile))
+          return buildError(errorMessages.requiredAttachment, 'benefitsFile')
+
+        return undefined
       }
     }
 

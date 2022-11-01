@@ -240,11 +240,11 @@ export class ParentalLeaveService {
     }
   }
 
-  async getUnionConfirmationPdf(application: Application, index = 0) {
+  async getBenefitsPdf(application: Application, index = 0) {
     try {
       const filename = getValueViaPath(
         application.answers,
-        `fileUpload.unionConfirmationFile[${index}].key`,
+        `fileUpload.benefitsFile[${index}].key`,
       )
 
       const Key = `${application.id}/${filename}`
@@ -259,34 +259,11 @@ export class ParentalLeaveService {
 
       return fileContent.toString('base64')
     } catch (e) {
-      this.logger.error('Cannot get union attachment', { e })
-      throw new Error('Failed to get the union attachment')
+      this.logger.error('Cannot get benefits attachment', { e })
+      throw new Error('Failed to get the benefits attachment')
     }
   }
 
-  async getHealthInsuranceConfirmationPdf(application: Application, index = 0) {
-    try {
-      const filename = getValueViaPath(
-        application.answers,
-        `fileUpload.healthInsuranceConfirmationFile[${index}].key`,
-      )
-
-      const Key = `${application.id}/${filename}`
-      const file = await this.s3
-        .getObject({ Bucket: this.attachmentBucket, Key })
-        .promise()
-      const fileContent = file.Body as Buffer
-
-      if (!fileContent) {
-        throw new Error('File content was undefined')
-      }
-
-      return fileContent.toString('base64')
-    } catch (e) {
-      this.logger.error('Cannot get health insurance attachment', { e })
-      throw new Error('Failed to get the health insurance attachment')
-    }
-  }
 
   async getArtificialInseminationPdf(application: Application, index = 0) {
     try {
@@ -394,41 +371,22 @@ export class ParentalLeaveService {
       }
     }
 
-    if (artificialInsemination === YES) {
-      const artificialInseminationtPdfs = (await getValueViaPath(
-        application.answers,
-        'fileUpload.artificialInsemination',
-      )) as unknown[]
-
-      if (artificialInseminationtPdfs?.length) {
-        for (let i = 0; i <= artificialInseminationtPdfs.length - 1; i++) {
-          const pdf = await this.getArtificialInseminationPdf(application, i)
-
-          attachments.push({
-            attachmentType: apiConstants.attachments.artificialInsemination,
-            attachmentBytes: pdf,
-          })
-        }
-      }
-    }
-
     const {
       isRecivingUnemploymentBenefits,
       unemploymentBenefits,
     } = getApplicationAnswers(application.answers)
-
     if (
       isRecivingUnemploymentBenefits === YES &&
-      unemploymentBenefits === UnEmployedBenefitTypes.union
+      (unemploymentBenefits === UnEmployedBenefitTypes.union || unemploymentBenefits == UnEmployedBenefitTypes.healthInsurance)
     ) {
-      const unionPdfs = (await getValueViaPath(
+      const benefitsPdfs = (await getValueViaPath(
         application.answers,
-        'fileUpload.unionConfirmationFile',
+        'fileUpload.benefitsFile',
       )) as unknown[]
 
-      if (unionPdfs?.length) {
-        for (let i = 0; i <= unionPdfs.length - 1; i++) {
-          const pdf = await this.getUnionConfirmationPdf(application, i)
+      if (benefitsPdfs?.length) {
+        for (let i = 0; i <= benefitsPdfs.length - 1; i++) {
+          const pdf = await this.getBenefitsPdf(application, i)
 
           attachments.push({
             attachmentType: apiConstants.attachments.unEmploymentBenefits,
@@ -438,29 +396,6 @@ export class ParentalLeaveService {
       }
     }
 
-    if (
-      isRecivingUnemploymentBenefits === YES &&
-      unemploymentBenefits === UnEmployedBenefitTypes.healthInsurance
-    ) {
-      const healthInsurancePdfs = (await getValueViaPath(
-        application.answers,
-        'fileUpload.healthInsuranceConfirmationFile',
-      )) as unknown[]
-
-      if (healthInsurancePdfs?.length) {
-        for (let i = 0; i <= healthInsurancePdfs.length - 1; i++) {
-          const pdf = await this.getHealthInsuranceConfirmationPdf(
-            application,
-            i,
-          )
-
-          attachments.push({
-            attachmentType: apiConstants.attachments.unEmploymentBenefits,
-            attachmentBytes: pdf,
-          })
-        }
-      }
-    }
 
     const genericPdfs = (await getValueViaPath(
       application.answers,
@@ -750,7 +685,6 @@ export class ParentalLeaveService {
   async validateApplication({ application }: TemplateApiModuleActionProps) {
     const nationalRegistryId = application.applicant
     const attachments = await this.getAttachments(application)
-
     try {
       const periods = await this.createPeriodsDTO(
         application,

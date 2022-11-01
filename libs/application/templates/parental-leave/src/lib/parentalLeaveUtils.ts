@@ -910,26 +910,6 @@ export const removeCountryCode = (application: Application) => {
     : getMobilePhoneNumber(application)
 }
 
-export const showGenericFileUpload = (answers: Application['answers']) => {
-  const {
-    isSelfEmployed,
-    isRecivingUnemploymentBenefits,
-    unemploymentBenefits,
-    applicationType,
-  } = getApplicationAnswers(answers)
-  // we don't want to show generic file upload atm if we are showing another file upload
-  // isSelfEmployed, students, benefits (union & health insurance)
-  if (isSelfEmployed === YES) return false
-  else if (
-    (isRecivingUnemploymentBenefits &&
-      unemploymentBenefits === UnEmployedBenefitTypes.union) ||
-    unemploymentBenefits === UnEmployedBenefitTypes.healthInsurance
-  )
-    return false
-  else if (applicationType === PARENTAL_GRANT_STUDENTS) return false
-
-  return true
-}
 
 // Functions that determine dynamic text changes in forms based on application type
 export const getPeriodSectionTitle = (application: Application) => {
