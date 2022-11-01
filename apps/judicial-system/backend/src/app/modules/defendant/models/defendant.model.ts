@@ -116,4 +116,11 @@ export class Defendant extends Model {
   })
   @ApiProperty()
   defenderPhoneNumber?: string
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+  })
+  @ApiProperty()
+  defendantWaivesRightToCounsel?: boolean
 }

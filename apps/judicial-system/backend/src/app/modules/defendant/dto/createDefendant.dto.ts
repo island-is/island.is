@@ -54,4 +54,9 @@ export class CreateDefendantDto {
   @IsString()
   @ApiPropertyOptional()
   readonly defenderPhoneNumber?: string
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional()
+  readonly defendantWaivesRightToCounsel?: boolean
 }

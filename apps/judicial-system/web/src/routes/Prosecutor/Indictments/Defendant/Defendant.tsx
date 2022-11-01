@@ -40,6 +40,7 @@ import {
   PoliceCaseNumbers,
   usePoliceCaseNumbers,
 } from '../../components'
+import { UpdateDefendantInput } from '@island.is/judicial-system-web/src/graphql/schema'
 
 const Defendant: React.FC = () => {
   const {
@@ -68,7 +69,7 @@ const Defendant: React.FC = () => {
   )
 
   const updateDefendantState = useCallback(
-    (defendantId: string, update: UpdateDefendant) => {
+    (defendantId: string, update: UpdateDefendantInput) => {
       setWorkingCase((theCase: Case) => {
         if (!theCase.defendants) {
           return theCase
