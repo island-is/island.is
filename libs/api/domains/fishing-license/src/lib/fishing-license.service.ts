@@ -17,10 +17,14 @@ export class FishingLicenseService {
     private logger: Logger,
   ) {}
 
-
   // Returns enum value equivalent to the given fishing type
   getLicenseCode = (licenseCode?: string | null) => {
-    if (licenseCode && Object.values(FishingLicenseCodeType).includes(licenseCode as FishingLicenseCodeType)) {
+    if (
+      licenseCode &&
+      Object.values(FishingLicenseCodeType).includes(
+        licenseCode as FishingLicenseCodeType,
+      )
+    ) {
       return licenseCode as FishingLicenseCodeType
     }
     return FishingLicenseCodeType.unknown
@@ -84,6 +88,20 @@ export class FishingLicenseService {
               description: x.lysing ?? '',
               directions: x.leidbeining ?? '',
             })) ?? [],
+          attatchmentInfo:
+            l.serhaefarSpurningar?.skraarDalkar?.map((c) => ({
+              title: c.titillSpurningu,
+              description: c.upplysingarSpurningu,
+            })) || [],
+          areas:
+            l.serhaefarSpurningar?.listaDalkar?.map((c) => ({
+              options:
+                c.listaValmoguleikar?.map((o) => ({
+                  key: o.lykill,
+                  label: o.lysing,
+                  disabled: o.ovirkt,
+                })) || [],
+            })) || [],
         })) ?? []
       )
     } catch (error) {
