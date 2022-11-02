@@ -76,39 +76,51 @@ export class FishingLicenseService {
         })
 
       return (
-        licenses.veidileyfiIBodi?.map((l) => ({
-          fishingLicenseInfo: {
-            code: this.getLicenseCode(l.veidileyfi?.kodi),
-            name: l.veidileyfi?.nafn ?? '',
-            chargeType: l.veidileyfi?.vorunumerfjs ?? '',
-          },
-          answer: !!l.svar,
-          reasons:
-            l.astaedur?.map((x) => ({
-              description: x.lysing ?? '',
-              directions: x.leidbeining ?? '',
-            })) ?? [],
-          attatchmentInfo:
-            l.serhaefarSpurningar?.skraarDalkar?.map((c) => ({
-              title: c.titillSpurningu,
-              description: c.upplysingarSpurningu,
-            })) || [],
-          listColumns:
-            l.serhaefarSpurningar?.listaDalkar?.map((c) => ({
-              listOptions:
-                c.listaValmoguleikar?.map((o) => ({
-                  key: o.lykill ?? '',
-                  description: o.lysing ?? '',
-                  disabled: o.ovirkt ?? false,
-                  dateRestriction:
-                    {
-                      dateFrom: o.dagsetningarTakmorkun?.dagsetningFra ?? '',
-                      dateTo: o.dagsetningarTakmorkun?.dagsetningTil ?? '',
-                    } || [],
-                  invalidOption: o.ogildurValkostur ?? false,
-                })) ?? [],
-            })) ?? [],
-        })) ?? []
+        licenses.veidileyfiIBodi?.map((l) => {
+          const listColumnsMatrix =
+            !l.serhaefarSpurningar?.listaDalkar ||
+            l.serhaefarSpurningar?.listaDalkar.length <= 0
+              ? []
+              : l.serhaefarSpurningar?.listaDalkar
+                  .filter((ld) => ld)
+                  .map((ld) => ld.listaValmoguleikar)
+          const listColumns = listColumnsMatrix
+            .filter((x) => x !== null && x !== undefined)
+            .reduce((acc, val) => acc && val && acc.concat(val), [])
+            ?.filter((x) => x)
+            ?.map((col) => ({
+              key: col.lykill ?? '',
+              description: col.lysing ?? '',
+              disabled: col.ovirkt ?? false,
+              dateRestriction:
+                {
+                  dateFrom: col.dagsetningarTakmorkun?.dagsetningFra ?? '',
+                  dateTo: col.dagsetningarTakmorkun?.dagsetningTil ?? '',
+                } || [],
+              invalidOption: col.ogildurValkostur ?? false,
+            }))
+
+
+          return {
+            fishingLicenseInfo: {
+              code: this.getLicenseCode(l.veidileyfi?.kodi),
+              name: l.veidileyfi?.nafn ?? '',
+              chargeType: l.veidileyfi?.vorunumerfjs ?? '',
+            },
+            answer: !!l.svar,
+            reasons:
+              l.astaedur?.map((x) => ({
+                description: x.lysing ?? '',
+                directions: x.leidbeining ?? '',
+              })) ?? [],
+            attatchmentInfo:
+              l.serhaefarSpurningar?.skraarDalkar?.map((c) => ({
+                title: c.titillSpurningu,
+                description: c.upplysingarSpurningu,
+              })) || [],
+            listColumns: listColumns || [],
+          }
+        }) ?? []
       )
     } catch (error) {
       this.logger.error('Error when trying to get fishing licenses', error)
