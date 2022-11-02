@@ -187,17 +187,17 @@ export class VehiclesResolver {
     // TODOx disabled while this api is flaky
     return [
       {
-        permno: 'FJ496',
-        make: 'Toyota Yaris',
-        color: 'Rauður',
+        permno: 'ÞB252',
+        make: 'ARCTIC CAT PANTHERA',
+        color: 'Óþekktur litur',
         role: '',
         isStolen: false,
         fees: { hasEncumbrances: false },
       },
       {
-        permno: 'RE634',
-        make: 'Kia Sorrento',
-        color: 'Hvítur',
+        permno: 'IR962',
+        make: 'LADA 21043',
+        color: 'Rauður',
         role: '',
         isStolen: false,
         fees: { hasEncumbrances: false },
