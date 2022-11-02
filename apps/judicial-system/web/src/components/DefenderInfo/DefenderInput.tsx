@@ -24,6 +24,7 @@ import {
 } from '../../utils/formHelper'
 import useDefendants from '../../utils/hooks/useDefendants'
 import { Validation } from '../../utils/validate'
+import { replaceTabs } from '../../utils/formatters'
 
 interface Props {
   onDefenderNotFound: (defenderNotFound: boolean) => void
@@ -49,7 +50,7 @@ const DefenderInput: React.FC<Props> = ({
   const { workingCase, setWorkingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
   const lawyers = useGetLawyers()
-  const { updateCase, setAndSendToServer } = useCase()
+  const { updateCase, setAndSendCaseToServer } = useCase()
   const {
     updateDefendant,
     updateDefendantState,
@@ -113,7 +114,7 @@ const DefenderInput: React.FC<Props> = ({
           setWorkingCase,
         )
       } else {
-        setAndSendToServer(
+        setAndSendCaseToServer(
           [{ ...updatedLawyer, force: true }],
           workingCase,
           setWorkingCase,
@@ -127,30 +128,33 @@ const DefenderInput: React.FC<Props> = ({
       setAndSendDefendantToServer,
       workingCase,
       setWorkingCase,
-      setAndSendToServer,
+      setAndSendCaseToServer,
     ],
   )
 
-  const propertyValidations = (property: InputType) => {
-    const propertyValidation: PropertyValidation =
-      property === 'defenderEmail'
-        ? {
-            validations: ['email-format'],
-            errorMessageHandler: {
-              errorMessage: emailErrorMessage,
-              setErrorMessage: setEmailErrorMessage,
-            },
-          }
-        : {
-            validations: ['phonenumber'],
-            errorMessageHandler: {
-              errorMessage: phoneNumberErrorMessage,
-              setErrorMessage: setPhoneNumberErrorMessage,
-            },
-          }
+  const propertyValidations = useCallback(
+    (property: InputType) => {
+      const propertyValidation: PropertyValidation =
+        property === 'defenderEmail'
+          ? {
+              validations: ['email-format'],
+              errorMessageHandler: {
+                errorMessage: emailErrorMessage,
+                setErrorMessage: setEmailErrorMessage,
+              },
+            }
+          : {
+              validations: ['phonenumber'],
+              errorMessageHandler: {
+                errorMessage: phoneNumberErrorMessage,
+                setErrorMessage: setPhoneNumberErrorMessage,
+              },
+            }
 
-    return propertyValidation
-  }
+      return propertyValidation
+    },
+    [emailErrorMessage, phoneNumberErrorMessage],
+  )
 
   const formatUpdate = (property: InputType, value: string) => {
     return property === 'defenderEmail'
@@ -170,7 +174,7 @@ const DefenderInput: React.FC<Props> = ({
       const update = formatUpdate(property, value)
 
       if (newValue.includes('\t')) {
-        newValue = newValue.replace('\t', '')
+        newValue = replaceTabs(value)
       }
 
       removeErrorMessageIfValid(
@@ -192,7 +196,6 @@ const DefenderInput: React.FC<Props> = ({
       property: InputType,
       value: string,
     ) => {
-      // Validate
       const propertyValidation = propertyValidations(property)
       const update = formatUpdate(property, value)
 
