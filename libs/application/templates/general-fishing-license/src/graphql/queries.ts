@@ -39,7 +39,7 @@ export const queryFishingLicense = gql`
         description
         directions
       }
-      ListColumns {
+      listColumns {
         listOptions {
           key
           description

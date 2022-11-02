@@ -2,8 +2,8 @@ import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
 export class FishingLicenseDateRestriction {
-  @Field()
+  @Field({ nullable: true })
   dateFrom?: Date
-  @Field()
+  @Field({ nullable: true })
   dateTo?: Date
 }

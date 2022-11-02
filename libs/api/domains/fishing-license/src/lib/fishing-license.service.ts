@@ -7,6 +7,7 @@ import {
 import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { FishingLicenseLicense } from '../graphql/models/fishing-license-license.model'
 
 @Injectable()
 export class FishingLicenseService {
@@ -67,7 +68,10 @@ export class FishingLicenseService {
       )
     }
   }
-  async getFishingLicenses(shipRegistationNumber: number, user: User) {
+  async getFishingLicenses(
+    shipRegistationNumber: number,
+    user: User,
+  ): Promise<FishingLicenseLicense[]> {
     try {
       const licenses = await this.shipApi
         .withMiddleware(new AuthMiddleware(user, { forwardUserInfo: false }))
@@ -75,52 +79,38 @@ export class FishingLicenseService {
           skipaskrarnumer: shipRegistationNumber,
         })
 
-      return (
-        licenses.veidileyfiIBodi?.map((l) => {
-          const listColumnsMatrix =
-            !l.serhaefarSpurningar?.listaDalkar ||
-            l.serhaefarSpurningar?.listaDalkar.length <= 0
-              ? []
-              : l.serhaefarSpurningar?.listaDalkar
-                  .filter((ld) => ld)
-                  .map((ld) => ld.listaValmoguleikar)
-          const listColumns = listColumnsMatrix
-            .filter((x) => x !== null && x !== undefined)
-            .reduce((acc, val) => acc && val && acc.concat(val), [])
-            ?.filter((x) => x)
-            ?.map((col) => ({
-              key: col.lykill ?? '',
-              description: col.lysing ?? '',
-              disabled: col.ovirkt ?? false,
-              dateRestriction:
-                {
-                  dateFrom: col.dagsetningarTakmorkun?.dagsetningFra ?? '',
-                  dateTo: col.dagsetningarTakmorkun?.dagsetningTil ?? '',
-                } || [],
-              invalidOption: col.ogildurValkostur ?? false,
-            }))
-
-          return {
-            fishingLicenseInfo: {
-              code: this.getLicenseCode(l.veidileyfi?.kodi),
-              name: l.veidileyfi?.nafn ?? '',
-              chargeType: l.veidileyfi?.vorunumerfjs ?? '',
-            },
-            answer: !!l.svar,
-            reasons:
-              l.astaedur?.map((x) => ({
-                description: x.lysing ?? '',
-                directions: x.leidbeining ?? '',
-              })) ?? [],
-            attatchmentInfo:
-              l.serhaefarSpurningar?.skraarDalkar?.map((c) => ({
-                title: c.titillSpurningu,
-                description: c.upplysingarSpurningu,
-              })) || [],
-            listColumns: listColumns || [],
-          }
-        }) ?? []
-      )
+      return licenses.veidileyfiIBodi?.map((l) => {
+        return {
+          fishingLicenseInfo: {
+            code: this.getLicenseCode(l.veidileyfi?.kodi),
+            name: l.veidileyfi?.nafn ?? '',
+            chargeType: l.veidileyfi?.vorunumerfjs ?? '',
+          },
+          answer: !!l.svar,
+          reasons:
+            l.astaedur?.map((x) => ({
+              description: x.lysing ?? '',
+              directions: x.leidbeining ?? '',
+            })) ?? [],
+          attatchmentInfo:
+            l.serhaefarSpurningar?.skraarDalkar?.map((c) => ({
+              title: c.titillSpurningu,
+              description: c.upplysingarSpurningu,
+            })) || [],
+          listColumns: l.serhaefarSpurningar?.listaDalkar?.map((c) => ({
+            listOptions: c.listaValmoguleikar?.map((o) => ({
+              key: o.lykill,
+              description: o.lysing,
+              disabled: o.ogildurValkostur,
+              dateRestriction: {
+                dateFrom: o.dagsetningarTakmorkun?.dagsetningFra,
+                dateTo: o.dagsetningarTakmorkun?.dagsetningTil,
+              },
+              invalidOption: o.ogildurValkostur,
+            })),
+          })),
+        }
+      }) as FishingLicenseLicense[]
     } catch (error) {
       this.logger.error('Error when trying to get fishing licenses', error)
       throw new Error(

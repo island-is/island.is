@@ -9,7 +9,7 @@ export class FishingLicenseListOptions {
   description?: string
   @Field()
   disabled?: boolean
-  @Field()
+  @Field({ nullable: true })
   dateRestriction?: FishingLicenseDateRestriction
   @Field()
   invalidOption?: boolean

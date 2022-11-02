@@ -3,6 +3,6 @@ import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
 export class FishingLicenseListColumns {
-  @Field()
-  listOptions?: FishingLicenseListOptions
+  @Field(() => [FishingLicenseListOptions], { nullable: true })
+  listOptions?: FishingLicenseListOptions[] | undefined
 }

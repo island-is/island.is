@@ -12,5 +12,5 @@ export class FishingLicenseLicense {
   @Field(() => [FishingLicenseReason])
   reasons!: FishingLicenseReason[]
   @Field(() => [FishingLicenseListColumns], { nullable: true })
-  ListColumns?: FishingLicenseListColumns[]
+  listColumns?: FishingLicenseListColumns[] | undefined
 }
