@@ -143,6 +143,8 @@ const useDefendants = () => {
     })
   }
 
+  const setAndSendDefendantToServer = async () => {}
+
   return {
     createDefendant,
     deleteDefendant,
