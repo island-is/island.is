@@ -6,9 +6,7 @@
   "targets": {
     "lint": {
       "executor": "@nrwl/linter:eslint",
-      "outputs": [
-        "{options.outputFile}"
-      ],
+      "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": [
           "libs/service-portal/access-control/delegations/**/*.{ts,tsx,js,jsx}"
@@ -17,9 +15,7 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": [
-        "coverage/libs/service-portal/access-control/delegations"
-      ],
+      "outputs": ["coverage/libs/service-portal/access-control/delegations"],
       "options": {
         "jestConfig": "libs/service-portal/access-control/delegations/jest.config.js",
         "passWithNoTests": true
