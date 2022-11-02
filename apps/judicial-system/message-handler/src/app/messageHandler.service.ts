@@ -8,6 +8,7 @@ import type { Message } from '@island.is/judicial-system/message'
 import { RulingNotificationService } from './rulingNotification.service'
 import { CaseDeliveryService } from './caseDelivery.service'
 import { ProsecutorDocumentsDeliveryService } from './prosecutorDocumentsDelivery.service'
+import { appModuleConfig } from './app.config'
 
 @Injectable()
 export class MessageHandlerService implements OnModuleDestroy {
@@ -74,8 +75,13 @@ export class MessageHandlerService implements OnModuleDestroy {
         .receiveMessageFromQueue(async (message: Message) => {
           return await this.handleMessage(message)
         })
-        .catch((error) => {
+        .catch(async (error) => {
           this.logger.error('Error handling message', { error })
+
+          // Wait a bit before trying again
+          await new Promise((resolve) =>
+            setTimeout(resolve, appModuleConfig().waitTimeSeconds * 1000),
+          )
         })
     }
 
