@@ -417,7 +417,7 @@ describe('Application system API', () => {
       careerHistoryDetails: {
         careerHistoryCompanies: ['government', 'aranja', 'advania'],
       },
-      dreamJob: 'pilot', // this answer is non-writable
+      dreamJob: 'pilot',
     })
   })
 
