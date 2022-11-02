@@ -1,7 +1,11 @@
 import { service } from './dsl'
 import { UberChart } from './uber-chart'
 import { serializeService } from './map-to-values'
-import { SerializeErrors, SerializeSuccess } from './types/output-types'
+import {
+  SerializeErrors,
+  SerializeSuccess,
+  ServiceHelm,
+} from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
 
 const Staging: EnvironmentConfig = {
@@ -52,7 +56,7 @@ describe('Init-container definitions', () => {
     const result = serializeService(
       sut,
       new UberChart(Staging),
-    ) as SerializeSuccess
+    ) as SerializeSuccess<ServiceHelm>
     expect(result.serviceDef.initContainer).toEqual({
       containers: [
         {

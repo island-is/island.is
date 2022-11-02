@@ -132,6 +132,21 @@ export interface ServiceHelm {
   files?: string[]
 }
 
+export interface DockerComposeService {
+  env: ContainerEnvironmentVariables
+  image: string
+  command?: string[]
+  port?: number
+  depends_on: {
+    [name: string]: {
+      condition:
+        | 'service_completed_successfully'
+        | 'service_healthy'
+        | 'service_started'
+    }
+  }
+}
+
 export interface FeatureKubeJob {
   apiVersion: 'batch/v1'
   kind: 'Job'
@@ -152,9 +167,9 @@ export interface FeatureKubeJob {
   }
 }
 
-export type SerializeSuccess = {
+export type SerializeSuccess<T> = {
   type: 'success'
-  serviceDef: ServiceHelm
+  serviceDef: T
 }
 
 export type SerializeErrors = {
@@ -162,17 +177,19 @@ export type SerializeErrors = {
   errors: string[]
 }
 
-export type SerializeMethod = (
+export type ServiceOutputType = ServiceHelm | DockerComposeService
+
+export type SerializeMethod<T extends ServiceOutputType> = (
   service: Service,
   uberChart: UberChartType,
   featuresOn?: FeatureNames[],
-) => SerializeSuccess | SerializeErrors
+) => SerializeSuccess<T> | SerializeErrors
 
-export type Services = {
-  [name: string]: ServiceHelm
+export type Services<T extends ServiceOutputType> = {
+  [name: string]: T
 }
 
-export type ValueFile = {
+export type ValueFile<T extends ServiceOutputType> = {
   namespaces: string[]
-  services: Services
+  services: Services<T>
 }

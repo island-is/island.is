@@ -1,37 +1,38 @@
 import {
   AccessModes,
-  Service,
   EnvironmentVariables,
-  Ingress,
-  ServiceDefinition,
-  ValueType,
-  MissingSetting,
-  Resources,
-  Hash,
-  ExtraValues,
   EnvironmentVariableValue,
-  PostgresInfo,
+  ExtraValues,
   Feature,
   Features,
-  PersistentVolumeClaim,
+  Hash,
+  Ingress,
+  MissingSetting,
+  PostgresInfo,
+  Resources,
+  Secrets,
+  Service,
+  ServiceDefinition,
+  ValueType,
 } from './types/input-types'
 import {
   ContainerEnvironmentVariables,
   ContainerRunHelm,
   ContainerSecrets,
+  DockerComposeService,
   OutputPersistentVolumeClaim,
   SerializeMethod,
-  ServiceHelm,
 } from './types/output-types'
 import { EnvironmentConfig, UberChartType } from './types/charts'
 import { FeatureNames } from './features'
+import { SSM } from '@aws-sdk/client-ssm'
 
 /**
  * Transforms our definition of a service to a Helm values object
  * @param service Our service definition
  * @param uberChart Uber chart in a specific environment the service will be part of
  */
-export const serializeService: SerializeMethod<ServiceHelm> = (
+export const serializeService: SerializeMethod<DockerComposeService> = (
   service: Service,
   uberChart: UberChartType,
 ) => {
@@ -58,107 +59,51 @@ export const serializeService: SerializeMethod<ServiceHelm> = (
     Object.assign(target, source)
   }
   const addToErrors = (errors: string[]) => {
+    if (errors.length > 0) throw new Error(errors.join('\n'))
     allErrors.push(...errors)
   }
   const serviceDef = service.serviceDef
-  const {
-    grantNamespaces,
-    grantNamespacesEnabled,
-    namespace,
-    securityContext,
-  } = serviceDef
-  const result: ServiceHelm = {
-    enabled: true,
-    grantNamespaces: grantNamespaces,
-    grantNamespacesEnabled: grantNamespacesEnabled,
-    namespace: namespace,
-    image: {
-      repository: `821090935708.dkr.ecr.eu-west-1.amazonaws.com/${
-        serviceDef.image ?? serviceDef.name
-      }`,
-    },
+  // const {
+  //   grantNamespaces,
+  //   grantNamespacesEnabled,
+  //   namespace,
+  //   securityContext,
+  // } = serviceDef
+  const dockerImage = `821090935708.dkr.ecr.eu-west-1.amazonaws.com/${
+    serviceDef.image ?? serviceDef.name
+  }`
+  const result: DockerComposeService = {
+    image: dockerImage,
     env: {
       SERVERSIDE_FEATURES_ON: uberChart.env.featuresOn.join(','),
       NODE_OPTIONS: `--max-old-space-size=${
         parseInt(serviceDef.resources.limits.memory, 10) - 48
       }`,
     },
-    secrets: {},
-    healthCheck: {
-      port: serviceDef.healthPort,
-      liveness: {
-        path: serviceDef.liveness.path,
-        initialDelaySeconds: serviceDef.liveness.initialDelaySeconds,
-        timeoutSeconds: serviceDef.liveness.timeoutSeconds,
-      },
-      readiness: {
-        path: serviceDef.readiness.path,
-        initialDelaySeconds: serviceDef.readiness.initialDelaySeconds,
-        timeoutSeconds: serviceDef.readiness.timeoutSeconds,
-      },
-    },
-    securityContext,
+    depends_on: {},
+    command: [],
   }
+  let initContainers: { [name: string]: DockerComposeService } = {}
 
   // command and args
   if (serviceDef.cmds) {
-    result.command = [serviceDef.cmds]
+    result.command = [serviceDef.cmds!].concat(serviceDef.args ?? [])
   }
-  if (serviceDef.args) {
-    result.args = serviceDef.args
-  }
-
-  // resources
-  result.resources = serviceDef.resources
-  if (serviceDef.env.NODE_OPTIONS) {
-    throw new Error(
-      'NODE_OPTIONS already set. At the moment of writing, there is no known use case for this, so this might need to be revisited in the future.',
-    )
-  }
-
-  // replicas
-  if (serviceDef.replicaCount) {
-    result.replicaCount = {
-      min: serviceDef.replicaCount.min,
-      max: serviceDef.replicaCount.max,
-      default: serviceDef.replicaCount.default,
-    }
-  } else {
-    result.replicaCount = {
-      min: uberChart.env.defaultMinReplicas,
-      max: uberChart.env.defaultMaxReplicas,
-      default: uberChart.env.defaultMinReplicas,
-    }
-  }
-
-  result.hpa = {
-    scaling: {
-      replicas: {
-        min: result.replicaCount.min,
-        max: result.replicaCount.max,
-      },
-      metric: {
-        cpuAverageUtilization: 70,
-      },
-    },
-  }
-  result.hpa.scaling.metric.nginxRequestsIrate =
-    serviceDef.replicaCount?.scalingMagicNumber || 2
 
   // extra attributes
-  if (serviceDef.extraAttributes) {
-    const { envs, errors } = serializeExtraVariables(
-      service,
-      uberChart,
-      serviceDef.extraAttributes,
-    )
-    addToErrors(errors)
-    result.extra = envs
-  }
+  // if (serviceDef.extraAttributes) {
+  //   const { envs, errors } = serializeExtraVariables(
+  //     service,
+  //     uberChart,
+  //     serviceDef.extraAttributes,
+  //   )
+  //   addToErrors(errors)
+  //   result.extra = envs
+  // }
 
   // target port
   if (typeof serviceDef.port !== 'undefined') {
-    result.service = { targetPort: serviceDef.port }
+    result.port = serviceDef.port
   }
 
   // environment vars
@@ -173,15 +118,9 @@ export const serializeService: SerializeMethod<ServiceHelm> = (
   }
 
   // secrets
+  let secrets: Secrets = {}
   if (Object.keys(serviceDef.secrets).length > 0) {
-    result.secrets = { ...serviceDef.secrets }
-  }
-  if (Object.keys(serviceDef.files).length > 0) {
-    result.files = []
-    serviceDef.files.forEach((f) => {
-      result.files!.push(f.filename)
-      mergeObjects(result.env, { [f.env]: `/etc/config/${f.filename}` })
-    })
+    // secrets = await retrieveSecrets(serviceDef.secrets)
   }
 
   const {
@@ -191,7 +130,7 @@ export const serializeService: SerializeMethod<ServiceHelm> = (
   } = addFeaturesConfig(serviceDef.features, uberChart, service)
   mergeObjects(result.env, featureEnvs)
   addToErrors(featureErrors)
-  mergeObjects(result.secrets, featureSecrets)
+  mergeObjects(secrets, featureSecrets)
 
   serviceDef.xroadConfig.forEach((conf) => {
     const { envs, errors } = serializeEnvironmentVariables(
@@ -201,36 +140,26 @@ export const serializeService: SerializeMethod<ServiceHelm> = (
     )
     addToErrors(errors)
     mergeObjects(result.env, envs)
-    mergeObjects(result.secrets, conf.getSecrets())
+    mergeObjects(secrets, conf.getSecrets())
   })
-
-  // service account
-  if (serviceDef.serviceAccountEnabled) {
-    result.podSecurityContext = {
-      fsGroup: 65534,
-    }
-    const serviceAccountName = serviceDef.accountName ?? serviceDef.name
-    result.serviceAccount = {
-      create: true,
-      name: serviceAccountName,
-      annotations: {
-        'eks.amazonaws.com/role-arn': `arn:aws:iam::${uberChart.env.awsAccountId}:role/${serviceAccountName}`,
-      },
-    }
-  }
 
   // initContainers
   if (typeof serviceDef.initContainers !== 'undefined') {
-    if (serviceDef.initContainers.containers.length > 0) {
-      result.initContainer = {
-        containers: serializeContainerRuns(
-          serviceDef.initContainers.containers,
-        ),
-        env: {
-          SERVERSIDE_FEATURES_ON: uberChart.env.featuresOn.join(','),
+    initContainers = serviceDef.initContainers.containers.reduce(
+      (acc, initContainer) => ({
+        ...acc,
+        [initContainer.name!]: {
+          image: dockerImage,
+          env: {
+            SERVERSIDE_FEATURES_ON: uberChart.env.featuresOn.join(','),
+          },
+          depends_on: {},
         },
-        secrets: {},
-      }
+      }),
+      {},
+    )
+
+    if (serviceDef.initContainers.containers.length > 0) {
       if (typeof serviceDef.initContainers.envs !== 'undefined') {
         const { envs, errors } = serializeEnvironmentVariables(
           service,
@@ -238,10 +167,12 @@ export const serializeService: SerializeMethod<ServiceHelm> = (
           serviceDef.initContainers.envs,
         )
         addToErrors(errors)
-        mergeObjects(result.initContainer.env, envs)
+        Object.values(initContainers).forEach((initContainer) =>
+          mergeObjects(initContainer.env, envs),
+        )
       }
       if (typeof serviceDef.initContainers.secrets !== 'undefined') {
-        result.initContainer.secrets = serviceDef.initContainers.secrets
+        // result.initContainer.secrets = serviceDef.initContainers.secrets
       }
       if (serviceDef.initContainers.postgres) {
         const { env, secrets, errors } = serializePostgres(
@@ -251,8 +182,10 @@ export const serializeService: SerializeMethod<ServiceHelm> = (
           serviceDef.initContainers.postgres,
         )
 
-        mergeObjects(result.initContainer.env, env)
-        mergeObjects(result.initContainer.secrets, secrets)
+        Object.values(initContainers).forEach((initContainer) =>
+          mergeObjects(initContainer.env, env),
+        )
+        // mergeObjects(result.initContainer.secrets, secrets)
         addToErrors(errors)
       }
       if (serviceDef.initContainers.features) {
@@ -266,38 +199,16 @@ export const serializeService: SerializeMethod<ServiceHelm> = (
           service,
         )
 
-        mergeObjects(result.initContainer.env, featureEnvs)
+        Object.values(initContainers).forEach((initContainer) =>
+          mergeObjects(initContainer.env, featureEnvs),
+        )
         addToErrors(featureErrors)
-        mergeObjects(result.initContainer.secrets, featureSecrets)
+        // mergeObjects(result.initContainer.secrets, featureSecrets)
       }
-      checkCollisions(result.initContainer.secrets, result.initContainer.env)
+      // checkCollisions()
     } else {
       addToErrors(['No containers to run defined in initContainers'])
     }
-  }
-
-  // ingress
-  if (Object.keys(serviceDef.ingress).length > 0) {
-    result.ingress = Object.entries(serviceDef.ingress).reduce(
-      (acc, [ingressName, ingressConf]) => {
-        try {
-          const ingress = serializeIngress(
-            serviceDef,
-            ingressConf,
-            uberChart.env,
-            ingressName,
-          )
-          return {
-            ...acc,
-            [`${ingressName}-alb`]: ingress,
-          }
-        } catch (e: any) {
-          addToErrors([e.message])
-          return acc
-        }
-      },
-      {},
-    )
   }
 
   if (serviceDef.postgres) {
@@ -309,17 +220,11 @@ export const serializeService: SerializeMethod<ServiceHelm> = (
     )
 
     mergeObjects(result.env, env)
-    mergeObjects(result.secrets, secrets)
+    // mergeObjects(secrets, secrets)
     addToErrors(errors)
   }
 
-  // Volumes
-  if (Object.keys(serviceDef.volumes.length > 0)) {
-    const { errors, volumes } = serializeVolumes(service, serviceDef.volumes)
-    addToErrors(errors)
-    result.pvcs = volumes
-  }
-  checkCollisions(result.secrets, result.env)
+  checkCollisions(secrets, result.env)
 
   return allErrors.length === 0
     ? { type: 'success', serviceDef: result }
@@ -566,6 +471,7 @@ function serializeEnvironmentVariables(
 ): { errors: string[]; envs: ContainerEnvironmentVariables } {
   return Object.entries(envs).reduce(
     (acc, [name, value]) => {
+      console.log(`Resolving ${name}`)
       const r = resolveVariable(value, uberChart, service)
       switch (r.type) {
         case 'error':
@@ -610,38 +516,64 @@ function resolveVariable(
     : serializeValueType(value, uberChart, service)
 }
 
+const API_INITIALIZATION_OPTIONS = {
+  region: 'eu-west-1',
+  maxAttempts: 10,
+}
+
+const EXCLUDED_ENVIRONMENT_NAMES = [
+  'DB_PASSWORD',
+  'NOVA_USERNAME',
+  'NOVA_PASSWORD',
+]
+
+const OVERRIDE_ENVIRONMENT_NAMES: Record<string, string> = {
+  IDENTITY_SERVER_CLIENT_SECRET: '/k8s/local-dev/IDENTITY_SERVER_CLIENT_SECRET',
+}
+
+const client = new SSM(API_INITIALIZATION_OPTIONS)
+
+const retrieveSecrets = async (
+  secrets: Secrets,
+): Promise<ContainerEnvironmentVariables> => {
+  const secretPaths = Object.entries(secrets).map((entry) => entry[1])
+  const secretValues = await getParams(secretPaths)
+  return Object.entries(secrets)
+    .map((entry) => [entry[0], secretValues[entry[1]]])
+    .reduce(
+      (acc, item) => ({ ...acc, [item[0]]: item[1] }),
+      {} as { [name: string]: string },
+    )
+}
+
+const getParams = async (
+  ssmNames: string[],
+): Promise<{ [name: string]: string }> => {
+  const chunks = ssmNames.reduce((all: string[][], one: string, i: number) => {
+    const ch = Math.floor(i / 10)
+    all[ch] = ([] as string[]).concat(all[ch] || [], one)
+    return all
+  }, [])
+
+  const allParams = await Promise.all(
+    chunks.map((Names) =>
+      client.getParameters({ Names, WithDecryption: true }),
+    ),
+  )
+  return allParams
+    .map(({ Parameters }) =>
+      Object.fromEntries(Parameters!.map((p) => [p.Name, p.Value])),
+    )
+    .reduce((p, c) => ({ ...p, ...c }), {})
+}
 export const serviceMockDef = (options: {
   namespace: string
   target: string
-}) => {
-  const result: ServiceHelm = {
-    enabled: true,
-    grantNamespaces: [],
-    grantNamespacesEnabled: false,
-    namespace: options.namespace,
-    image: {
-      repository: `wiremock`,
-    },
+}): DockerComposeService => {
+  return {
+    image: 'wiremock',
     env: {},
     command: ['mock'],
-    secrets: {},
-    healthCheck: {
-      port: 8000,
-      liveness: {
-        path: '/',
-        initialDelaySeconds: 5,
-        timeoutSeconds: 5,
-      },
-      readiness: {
-        path: '/',
-        initialDelaySeconds: 5,
-        timeoutSeconds: 5,
-      },
-    },
-    securityContext: {
-      privileged: false,
-      allowPrivilegeEscalation: false,
-    },
+    depends_on: {},
   }
-  return result
 }
