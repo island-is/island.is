@@ -35,11 +35,11 @@ import { ServerSideFeature } from '../../../libs/feature-flags/src'
 /**
  * Transforms our definition of a service to a Helm values object
  * @param service Our service definition
- * @param uberChart Uber chart in a specific environment the service will be part of
+ * @param deployment Uber chart in a specific environment the service will be part of
  */
 export const serializeService: SerializeMethod<DockerComposeService> = (
   service: Service,
-  uberChart: DeploymentRuntime,
+  deployment: DeploymentRuntime,
 ) => {
   let allErrors: string[] = []
   const checkCollisions = (
@@ -80,7 +80,7 @@ export const serializeService: SerializeMethod<DockerComposeService> = (
   const result: DockerComposeService = {
     image: dockerImage,
     env: {
-      SERVERSIDE_FEATURES_ON: uberChart.env.featuresOn.join(','),
+      SERVERSIDE_FEATURES_ON: deployment.env.featuresOn.join(','),
       NODE_OPTIONS: `--max-old-space-size=${
         parseInt(serviceDef.resources.limits.memory, 10) - 48
       }`,
@@ -99,7 +99,7 @@ export const serializeService: SerializeMethod<DockerComposeService> = (
   // if (serviceDef.extraAttributes) {
   //   const { envs, errors } = serializeExtraVariables(
   //     service,
-  //     uberChart,
+  //     deployment,
   //     serviceDef.extraAttributes,
   //   )
   //   addToErrors(errors)
@@ -115,7 +115,7 @@ export const serializeService: SerializeMethod<DockerComposeService> = (
   if (Object.keys(serviceDef.env).length > 0) {
     const { envs, errors } = serializeEnvironmentVariables(
       service,
-      uberChart,
+      deployment,
       serviceDef.env,
     )
     addToErrors(errors)
@@ -132,7 +132,7 @@ export const serializeService: SerializeMethod<DockerComposeService> = (
     envs: featureEnvs,
     errors: featureErrors,
     secrets: featureSecrets,
-  } = addFeaturesConfig(serviceDef.features, uberChart, service)
+  } = addFeaturesConfig(serviceDef.features, deployment, service)
   mergeObjects(result.env, featureEnvs)
   addToErrors(featureErrors)
   mergeObjects(secrets, featureSecrets)
@@ -140,7 +140,7 @@ export const serializeService: SerializeMethod<DockerComposeService> = (
   serviceDef.xroadConfig.forEach((conf) => {
     const { envs, errors } = serializeEnvironmentVariables(
       service,
-      uberChart,
+      deployment,
       conf.getEnv(),
     )
     addToErrors(errors)
@@ -156,7 +156,7 @@ export const serializeService: SerializeMethod<DockerComposeService> = (
         [initContainer.name!]: {
           image: dockerImage,
           env: {
-            SERVERSIDE_FEATURES_ON: uberChart.env.featuresOn.join(','),
+            SERVERSIDE_FEATURES_ON: deployment.env.featuresOn.join(','),
           },
           depends_on: {},
         },
@@ -168,7 +168,7 @@ export const serializeService: SerializeMethod<DockerComposeService> = (
       if (typeof serviceDef.initContainers.envs !== 'undefined') {
         const { envs, errors } = serializeEnvironmentVariables(
           service,
-          uberChart,
+          deployment,
           serviceDef.initContainers.envs,
         )
         addToErrors(errors)
@@ -182,7 +182,7 @@ export const serializeService: SerializeMethod<DockerComposeService> = (
       if (serviceDef.initContainers.postgres) {
         const { env, secrets, errors } = serializePostgres(
           serviceDef,
-          uberChart,
+          deployment,
           service,
           serviceDef.initContainers.postgres,
         )
@@ -200,7 +200,7 @@ export const serializeService: SerializeMethod<DockerComposeService> = (
           secrets: featureSecrets,
         } = addFeaturesConfig(
           serviceDef.initContainers.features!,
-          uberChart,
+          deployment,
           service,
         )
 
@@ -219,7 +219,7 @@ export const serializeService: SerializeMethod<DockerComposeService> = (
   if (serviceDef.postgres) {
     const { env, secrets, errors } = serializePostgres(
       serviceDef,
-      uberChart,
+      deployment,
       service,
       serviceDef.postgres,
     )
@@ -239,13 +239,13 @@ export const serializeService: SerializeMethod<DockerComposeService> = (
 export const postgresIdentifier = (id: string) => id.replace(/[\W\s]/gi, '_')
 export const resolveDbHost = (
   postgres: PostgresInfo,
-  uberChart: DeploymentRuntime,
+  deployment: DeploymentRuntime,
   service: Service,
 ) => {
   if (postgres.host) {
     const resolved = resolveVariable(
-      postgres.host?.[uberChart.env.type],
-      uberChart,
+      postgres.host?.[deployment.env.type],
+      deployment,
       service,
     )
     switch (resolved.type) {
@@ -259,26 +259,26 @@ export const resolveDbHost = (
     }
   } else {
     return {
-      writer: uberChart.env.auroraHost,
-      reader: uberChart.env.auroraReplica ?? uberChart.env.auroraHost,
+      writer: deployment.env.auroraHost,
+      reader: deployment.env.auroraReplica ?? deployment.env.auroraHost,
     }
   }
 }
 
 function addFeaturesConfig(
   serviceDefFeatures: Partial<Features>,
-  uberChart: DeploymentRuntime,
+  deployment: DeploymentRuntime,
   service: Service,
 ) {
   const activeFeatures = Object.entries(
     serviceDefFeatures,
   ).filter(([feature]) =>
-    uberChart.env.featuresOn.includes(feature as FeatureNames),
+    deployment.env.featuresOn.includes(feature as FeatureNames),
   ) as [FeatureNames, Feature][]
   const featureEnvs = activeFeatures.map(([name, v]) => {
     const { envs, errors } = serializeEnvironmentVariables(
       service,
-      uberChart,
+      deployment,
       v.env,
     )
     return {
@@ -312,7 +312,7 @@ function addFeaturesConfig(
 
 function serializePostgres(
   serviceDef: ServiceDefinition,
-  uberChart: DeploymentRuntime,
+  deployment: DeploymentRuntime,
   service: Service,
   postgres: PostgresInfo,
 ) {
@@ -322,7 +322,7 @@ function serializePostgres(
   env['DB_USER'] = postgres.username ?? postgresIdentifier(serviceDef.name)
   env['DB_NAME'] = postgres.name ?? postgresIdentifier(serviceDef.name)
   try {
-    const { reader, writer } = resolveDbHost(postgres, uberChart, service)
+    const { reader, writer } = resolveDbHost(postgres, deployment, service)
     env['DB_HOST'] = writer
     env['DB_REPLICAS_HOST'] = reader
   } catch (e) {
@@ -436,7 +436,7 @@ function serializeContainerRuns(
 
 function serializeValueType(
   value: ValueType,
-  uberChart: DeploymentRuntime,
+  deployment: DeploymentRuntime,
   service: Service,
 ): { type: 'error' } | { type: 'success'; value: string } {
   if (value === MissingSetting) return { type: 'error' }
@@ -444,24 +444,24 @@ function serializeValueType(
     typeof value === 'string'
       ? value
       : value({
-          env: uberChart.env,
-          featureDeploymentName: uberChart.env.feature,
-          svc: (dep) => uberChart.ref(service, dep),
+          env: deployment.env,
+          featureDeploymentName: deployment.env.feature,
+          svc: (dep) => deployment.ref(service, dep),
         })
   return { type: 'success', value: result }
 }
 
 function serializeExtraVariables(
   service: Service,
-  uberChart: DeploymentRuntime,
+  deployment: DeploymentRuntime,
   envs: ExtraValues,
 ): { errors: string[]; envs: Hash } {
-  const extraEnvsForType = envs[uberChart.env.type]
+  const extraEnvsForType = envs[deployment.env.type]
   if (extraEnvsForType === MissingSetting) {
     return {
       envs: {},
       errors: [
-        `Missing extra setting for service ${service.serviceDef.name} in env ${uberChart.env.type}`,
+        `Missing extra setting for service ${service.serviceDef.name} in env ${deployment.env.type}`,
       ],
     }
   } else {
@@ -471,18 +471,18 @@ function serializeExtraVariables(
 
 function serializeEnvironmentVariables(
   service: Service,
-  uberChart: DeploymentRuntime,
+  deployment: DeploymentRuntime,
   envs: EnvironmentVariables,
 ): { errors: string[]; envs: ContainerEnvironmentVariables } {
   return Object.entries(envs).reduce(
     (acc, [name, value]) => {
       console.log(`Resolving ${name}`)
-      const r = resolveVariable(value, uberChart, service)
+      const r = resolveVariable(value, deployment, service)
       switch (r.type) {
         case 'error':
           return {
             errors: acc.errors.concat([
-              `Missing settings for service ${service.serviceDef.name} in env ${uberChart.env.type}. Keys of missing settings: ${name}`,
+              `Missing settings for service ${service.serviceDef.name} in env ${deployment.env.type}. Keys of missing settings: ${name}`,
             ]),
             envs: acc.envs,
           }
@@ -513,12 +513,12 @@ const internalHostFullName = (host: string, env: EnvironmentConfig) =>
 
 function resolveVariable(
   value: EnvironmentVariableValue,
-  uberChart: DeploymentRuntime,
+  deployment: DeploymentRuntime,
   service: Service,
 ) {
   return typeof value === 'object'
-    ? serializeValueType(value[uberChart.env.type], uberChart, service)
-    : serializeValueType(value, uberChart, service)
+    ? serializeValueType(value[deployment.env.type], deployment, service)
+    : serializeValueType(value, deployment, service)
 }
 
 const API_INITIALIZATION_OPTIONS = {
@@ -586,10 +586,10 @@ export const serviceMockDef = (options: {
 export const DockerComposeOutput: OutputFormat<DockerComposeService> = {
   serializeService(
     service: Service,
-    uberChart: DeploymentRuntime,
+    deployment: DeploymentRuntime,
     featuresOn?: ServerSideFeature[],
   ): SerializeSuccess<DockerComposeService> | SerializeErrors {
-    return serializeService(service, uberChart)
+    return serializeService(service, deployment)
   },
 
   serviceMockDef(options: {
