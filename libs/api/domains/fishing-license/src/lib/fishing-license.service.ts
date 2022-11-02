@@ -100,7 +100,6 @@ export class FishingLicenseService {
               invalidOption: col.ogildurValkostur ?? false,
             }))
 
-
           return {
             fishingLicenseInfo: {
               code: this.getLicenseCode(l.veidileyfi?.kodi),
