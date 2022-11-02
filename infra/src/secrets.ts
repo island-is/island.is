@@ -3,7 +3,7 @@ import yargs from 'yargs'
 import { OpsEnv } from './dsl/types/input-types'
 import { UberChart } from './dsl/uber-chart'
 import { Envs } from './environments'
-import { serializeService } from './dsl/map-to-values'
+import { serializeService } from './dsl/map-to-helm-values'
 import {
   ChartName,
   Charts,

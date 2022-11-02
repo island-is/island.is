@@ -19,12 +19,17 @@ import {
   ContainerEnvironmentVariables,
   ContainerRunHelm,
   ContainerSecrets,
+  DockerComposeService,
+  OutputFormat,
   OutputPersistentVolumeClaim,
+  SerializeErrors,
   SerializeMethod,
+  SerializeSuccess,
   ServiceHelm,
 } from './types/output-types'
 import { EnvironmentConfig, UberChartType } from './types/charts'
 import { FeatureNames } from './features'
+import { ServerSideFeature } from '../../../libs/feature-flags/src'
 
 /**
  * Transforms our definition of a service to a Helm values object
@@ -644,4 +649,18 @@ export const serviceMockDef = (options: {
     },
   }
   return result
+}
+
+export const HelmOutput: OutputFormat<ServiceHelm> = {
+  serializeService(
+    service: Service,
+    uberChart: UberChartType,
+    featuresOn?: ServerSideFeature[],
+  ): SerializeSuccess<ServiceHelm> | SerializeErrors {
+    return serializeService(service, uberChart)
+  },
+
+  serviceMockDef(options: { namespace: string; target: string }): ServiceHelm {
+    return serviceMockDef(options)
+  },
 }

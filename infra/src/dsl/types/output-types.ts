@@ -6,6 +6,7 @@ import {
 } from './input-types'
 import { UberChartType } from './charts'
 import { FeatureNames } from '../features'
+import { serviceMockDef } from '../map-to-docker-compose'
 
 // Output types
 export type ContainerRunHelm = {
@@ -177,6 +178,7 @@ export type SerializeErrors = {
   errors: string[]
 }
 
+export type Output = 'helm' | 'docker-compose'
 export type ServiceOutputType = ServiceHelm | DockerComposeService
 
 export type SerializeMethod<T extends ServiceOutputType> = (
@@ -192,4 +194,14 @@ export type Services<T extends ServiceOutputType> = {
 export type ValueFile<T extends ServiceOutputType> = {
   namespaces: string[]
   services: Services<T>
+}
+
+export interface OutputFormat<T extends ServiceOutputType> {
+  serializeService(
+    service: Service,
+    uberChart: UberChartType,
+    featuresOn?: FeatureNames[],
+  ): SerializeSuccess<T> | SerializeErrors
+
+  serviceMockDef(options: { namespace: string; target: string }): T
 }

@@ -1,4 +1,4 @@
-import { generateYamlForEnv } from '../dsl/serialize-to-yaml'
+import { renderHelmValueFile } from '../dsl/process-services'
 import { UberChart } from '../dsl/uber-chart'
 import { Envs } from '../environments'
 import { Charts } from '../uber-charts/all-charts'
@@ -24,7 +24,7 @@ const OVERRIDE_ENVIRONMENT_NAMES: Record<string, string> = {
 export const renderServiceEnvVars = async (service: string) => {
   const uberChart = new UberChart(Envs.dev01)
   const services = Object.values(Charts).map(
-    (chart) => generateYamlForEnv(uberChart, ...chart.dev).services,
+    (chart) => renderHelmValueFile(uberChart, ...chart.dev).services,
   )
 
   const secretRequests: [string, string][] = services

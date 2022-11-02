@@ -1,9 +1,9 @@
 import { ref, service } from './dsl'
 import { UberChart } from './uber-chart'
-import { serializeService } from './map-to-values'
+import { serializeService } from './map-to-helm-values'
 import { SerializeSuccess } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
-import { renderValueFile } from './serialize-to-yaml'
+import { renderHelmValueFile } from './process-services'
 
 const Staging: EnvironmentConfig = {
   auroraHost: 'a',
@@ -25,7 +25,7 @@ describe('Egress', () => {
   })
   const uberChart = new UberChart(Staging)
   const serviceDef = serializeService(sut, uberChart) as SerializeSuccess
-  const render = renderValueFile(uberChart, sut)
+  const render = renderHelmValueFile(uberChart, sut)
 
   it('missing variables cause errors', () => {
     expect(serviceDef.serviceDef.env['A']).toBe('http://mock-visir-is')

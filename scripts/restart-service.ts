@@ -1,9 +1,9 @@
 #!/usr/bin/env ts-node
 import yargs from 'yargs'
-import { featureSpecificServiceDef } from '../infra/src/dsl/serialize-to-yaml'
 import { Charts } from '../infra/src/uber-charts/all-charts'
 import { execSync } from 'child_process'
 import { branchNameToFeatureName } from './_common'
+import { featureSpecificServiceDef } from '../infra/src/dsl/feature-deployments'
 
 const argv = yargs(process.argv.slice(2))
   .options({

@@ -1,9 +1,9 @@
-import { generateYamlForFeature } from './serialize-to-yaml'
 import { ref, service, ServiceBuilder } from './dsl'
 import { UberChart } from './uber-chart'
-import { serializeService } from './map-to-values'
+import { serializeService } from './map-to-helm-values'
 import { SerializeSuccess } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
+import { generateYamlForFeature } from './feature-deployments'
 
 const Dev: EnvironmentConfig = {
   auroraHost: 'a',

@@ -2,11 +2,6 @@ import yargs from 'yargs'
 import { hideBin } from 'yargs/helpers'
 import AWS from 'aws-sdk'
 
-import {
-  generateYamlForFeature,
-  dumpYaml,
-  dumpJobYaml,
-} from './dsl/serialize-to-yaml'
 import { generateJobsForFeature } from './dsl/feature-jobs'
 import { UberChart } from './dsl/uber-chart'
 import { Envs } from './environments'
@@ -19,6 +14,8 @@ import { Services as IDSServices } from './uber-charts/identity-server'
 import { EnvironmentServices } from './dsl/types/charts'
 import { ServiceHelm } from './dsl/types/output-types'
 import { Deployments } from './uber-charts/all-charts'
+import { generateYamlForFeature } from './dsl/feature-deployments'
+import { dumpJobYaml, dumpServiceHelm } from './dsl/yaml'
 
 type ChartName = 'islandis' | 'identity-server'
 
@@ -116,7 +113,7 @@ yargs(hideBin(process.argv))
         affectedServices.slice(),
         ExcludedFeatureDeploymentServices,
       )
-      await writeToOutput(dumpYaml(ch, featureYaml), argv.output)
+      await writeToOutput(dumpServiceHelm(ch, featureYaml), argv.output)
     },
   )
   .command(

@@ -1,7 +1,7 @@
 import { service } from './dsl'
 import { UberChart } from './uber-chart'
 import { MissingSetting } from './types/input-types'
-import { serializeService } from './map-to-values'
+import { serializeService } from './map-to-helm-values'
 import { SerializeErrors, SerializeSuccess } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
 

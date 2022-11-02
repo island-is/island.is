@@ -1,4 +1,4 @@
-import { generateYamlForEnv } from '../dsl/serialize-to-yaml'
+import { renderHelmValueFile } from '../dsl/process-services'
 import { OpsEnv } from '../dsl/types/input-types'
 import { ServiceHelm } from '../dsl/types/output-types'
 import { UberChart } from '../dsl/uber-chart'
@@ -9,7 +9,6 @@ import {
   Charts,
   Deployments,
 } from '../uber-charts/all-charts'
-import { OpsEnvName } from '../dsl/types/charts'
 
 const renderUrlsForService = ({ ingress = {} }: ServiceHelm) => {
   const urls: string[] = []
@@ -24,7 +23,7 @@ const renderUrlsForService = ({ ingress = {} }: ServiceHelm) => {
 }
 
 const renderUrlsForChart = (environment: OpsEnv, chartName: ChartName) => {
-  const { services } = generateYamlForEnv(
+  const { services } = renderHelmValueFile(
     new UberChart(Envs[Deployments[chartName][environment]]),
     ...Charts[chartName][environment],
   )

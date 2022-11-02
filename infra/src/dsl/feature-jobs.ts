@@ -1,12 +1,12 @@
 import { UberChart } from './uber-chart'
 import { PostgresInfo, Service } from './types/input-types'
+import { getWithDependantServices } from './process-services'
+import { resolveDbHost } from './map-to-helm-values'
+import { FeatureKubeJob } from './types/output-types'
 import {
-  getDependantServices,
   getPostgresInfoForFeature,
   resolveWithMaxLength,
-} from './serialize-to-yaml'
-import { resolveDbHost } from './map-to-values'
-import { FeatureKubeJob } from './types/output-types'
+} from './feature-deployments'
 
 export const generateJobsForFeature = (
   uberChart: UberChart,
@@ -18,7 +18,7 @@ export const generateJobsForFeature = (
   if (typeof feature === 'undefined') {
     throw new Error('Feature jobs with a feature name not defined')
   }
-  const featureSpecificServices = getDependantServices(
+  const featureSpecificServices = getWithDependantServices(
     uberChart,
     habitat,
     ...services,

@@ -1,6 +1,6 @@
 import { ref, service, ServiceBuilder } from './dsl'
 import { UberChart } from './uber-chart'
-import { serializeService } from './map-to-values'
+import { serializeService } from './map-to-helm-values'
 import { SerializeSuccess } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
 import { XroadConf } from './xroad'
