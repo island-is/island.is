@@ -30,6 +30,7 @@ import {
   removeCountryCode,
   showGenericFileUpload,
   getApplicationExternalData,
+  getMaxMultipleBirthsDays,
 } from '../lib/parentalLeaveUtils'
 import {
   GetPensionFunds,
@@ -787,7 +788,22 @@ export const ParentalLeaveForm: Form = buildForm({
                   getSelectedChild(answers, externalData)?.parentalRelation ===
                     ParentalRelations.primary && allowOtherParent(answers)
 
-                return canTransferRights
+                const answerss = getApplicationAnswers(answers)
+                const multipleBirthsRequestDays: number = answerss.multipleBirthsRequestDays
+                const hasMultipleBirths = answers.hasMultipleBirths
+
+                console.log('------requestDay', typeof multipleBirthsRequestDays)
+                console.log('--------- maxDays: ', typeof getMaxMultipleBirthsDays(answers))
+                console.log('---- maxDay boolean: ', multipleBirthsRequestDays * 1 === getMaxMultipleBirthsDays(answers))
+                console.log('---- maxDay boolean: ', multipleBirthsRequestDays === getMaxMultipleBirthsDays(answers))
+
+                console.log(
+                  canTransferRights &&
+                  (hasMultipleBirths === NO ||
+                    multipleBirthsRequestDays === getMaxMultipleBirthsDays(answers) ||
+                    multipleBirthsRequestDays === 0)
+                )
+                return false
               },
               title: parentalLeaveFormMessages.shared.transferRightsTitle,
               description:
@@ -807,9 +823,16 @@ export const ParentalLeaveForm: Form = buildForm({
                   getSelectedChild(answers, externalData)?.parentalRelation ===
                     ParentalRelations.primary && allowOtherParent(answers)
 
+                const {
+                  multipleBirthsRequestDays,
+                  hasMultipleBirths,
+                } = getApplicationAnswers(answers)
+
                 return (
                   canTransferRights &&
-                  getApplicationAnswers(answers).isRequestingRights === YES
+                  getApplicationAnswers(answers).isRequestingRights === YES &&
+                  (hasMultipleBirths === NO ||
+                    multipleBirthsRequestDays === getMaxMultipleBirthsDays(answers))
                 )
               },
               component: 'RequestDaysSlider',
@@ -826,9 +849,15 @@ export const ParentalLeaveForm: Form = buildForm({
                   getSelectedChild(answers, externalData)?.parentalRelation ===
                     ParentalRelations.primary && allowOtherParent(answers)
 
+                const {
+                  multipleBirthsRequestDays,
+                  hasMultipleBirths,
+                } = getApplicationAnswers(answers)
+
                 return (
                   canTransferRights &&
-                  getApplicationAnswers(answers).isGivingRights === YES
+                  getApplicationAnswers(answers).isGivingRights === YES &&
+                  (hasMultipleBirths === NO || multipleBirthsRequestDays === 0)
                 )
               },
               component: 'GiveDaysSlider',
