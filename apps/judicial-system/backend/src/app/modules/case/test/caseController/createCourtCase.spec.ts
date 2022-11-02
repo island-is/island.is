@@ -194,7 +194,7 @@ describe('CaseController - Create court case', () => {
     })
 
     it('should post to queue', () => {
-      expect(mockMessageService.postMessageToQueue).toHaveBeenCalledWith({
+      expect(mockMessageService.sendMessageToQueue).toHaveBeenCalledWith({
         type: MessageType.CASE_CONNECTED_TO_COURT_CASE,
         caseId,
       })

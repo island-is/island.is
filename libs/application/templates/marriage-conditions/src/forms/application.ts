@@ -242,7 +242,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                 children: [
                   buildRadioField({
                     id: 'ceremony.hasDate',
-                    title: 'Liggur hjónavígsludagur fyrir?',
+                    title: m.hasCeremonyDate,
                     options: [
                       { value: YES, label: 'Já' },
                       {

@@ -399,6 +399,38 @@ describe('ActorDelegationsController', () => {
         )
       })
 
+      it.only('should return delegations which only has scopes with special scope rules [BUG]', async () => {
+        // Arrange
+        const specialDelegation = createDelegation({
+          fromNationalId: nationalRegistryUser.nationalId,
+          toNationalId: user.nationalId,
+          scopes: [Scopes[3].name],
+          today,
+        })
+        await createDelegationModels(delegationModel, [specialDelegation])
+
+        // We expect the delegation to be returned.
+        const expectedModels = await findExpectedDelegationModels(
+          delegationModel,
+          [specialDelegation.id],
+        )
+
+        // Act
+        const res = await server.get(
+          `${path}${query}&delegationTypes=${DelegationType.Custom}`,
+        )
+
+        // Assert
+        expect(res.status).toEqual(200)
+        expectMatchingObject(
+          res.body,
+          updateDelegationFromNameToPersonName(
+            expectedModels,
+            nationalRegistryUsers,
+          ),
+        )
+      })
+
       it('should return delegations when the delegationTypes filter is empty', async () => {
         // Arrange
         await createDelegationModels(delegationModel, [
