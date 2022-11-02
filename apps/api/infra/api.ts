@@ -222,10 +222,10 @@ export const serviceSetup = (services: {
         env: {
           AUTH_DELEGATION_API_URL: {
             dev:
-              'http://web-services-auth-delegation-api.identity-server.svc.cluster.local',
+              'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local',
             staging:
-              'http://web-services-auth-delegation-api.identity-server.svc.cluster.local',
-            prod: MissingSetting, // this allows us to specify that we still do not know that the value is
+              'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local',
+            prod: 'https://auth-delegation-api.internal.innskra.island.is',
           },
         },
         secrets: {},
