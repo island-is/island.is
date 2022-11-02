@@ -1,9 +1,9 @@
 import template from './lib/OrderVehicleLicensePlateTemplate'
+import { OrderVehicleLicensePlate } from './lib/dataSchema'
 
 export const getFields = () => import('./fields/')
 export const getDataProviders = () => import('./dataProviders/')
 
-import { OrderVehicleLicensePlate } from './lib/dataSchema'
 export type OrderVehicleLicensePlateAnswers = OrderVehicleLicensePlate
 
 export default template

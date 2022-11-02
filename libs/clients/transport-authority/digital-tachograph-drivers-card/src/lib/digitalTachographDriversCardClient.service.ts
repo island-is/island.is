@@ -1,6 +1,4 @@
 import { Injectable } from '@nestjs/common'
-import { fail } from 'assert'
-import { map } from 'rxjs'
 import {
   DriverCardApplicationRequestDeliveryMethodEnum,
   DriverCardApplicationResponseDeliveryMethodEnum,
