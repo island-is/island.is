@@ -370,30 +370,38 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'mánuðir',
       description: 'months',
     },
-    requestMultipleBirthsDaysTitle: {
+    multipleBirthsDaysTitle: {
       id: 'pl.application:request.multipleBirths.daysTitle',
-      defaultMessage: 'Hversu marga daga viltu nota ( Need translated )?',
-      description: 'How many days would you like to use( Need translated )?',
+      defaultMessage: 'Sameiginlegur réttur vegna fjölbura',
+      description: 'Joint entitlement due to multiple births ',
     },
     multipleBirthsDaysDescription: {
       id: 'pl.application:multipleBirths.daysDescription',
       defaultMessage:
-        'Hér verður betra lýsing á fjölburafæðingar réttindi ( Need translated )?',
-      description: 'Multiple births description( Need translated )?',
+        'Fyrir hvert barn sem fæðist bætist við 3 mánaða sameiginlegur réttur foreldra til fæðingarorlofs',
+      description:
+        'For each child the parents’ joint entitlement to a maternity/paternity leave is extended by 3 months.',
+    },
+    multipleBirthsDaysDescriptionGrant: {
+      id: 'pl.application:multipleBirths.daysDescription.grant',
+      defaultMessage:
+        'Fyrir hvert barn sem fæðist bætist við 3 mánaða sameiginlegur réttur foreldra til fæðingarstyrks',
+      description:
+        'For each child the parents’ joint entitlement to a maternity/paternity grant is extended by 3 months.',
     },
     requestMultipleBirthsDay: {
       id: 'pl.application:request.multipleBirths.day',
       defaultMessage:
         '{day} dagur sem óskað er eftir af sameiginlegum rétti vegna fjölbura',
       description:
-        "{day} day requested from the collective rights due to multiple births",
+        '{day} day requested from the joint entitlement due to multiple births',
     },
     requestMultipleBirthsDays: {
       id: 'pl.application:request.multipleBirths.days',
       defaultMessage:
         '{day} dagar sem óskað er eftir af sameiginlegum rétti vegna fjölbura',
       description:
-        "{day} days requested from the collective rights due to multiple births",
+        '{day} days requested from the joint entitlement due to multiple births',
     },
     requestRightsDaysTitle: {
       id: 'pl.application:request.rights.daysTitle',
@@ -402,12 +410,14 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     requestRightsDay: {
       id: 'pl.application:request.rights.day',
-      defaultMessage: '{day} dagur sem óskað er eftir af rétti hins foreldrisins',
+      defaultMessage:
+        '{day} dagur sem óskað er eftir af rétti hins foreldrisins',
       description: "{day} day requested from the other parent's rights",
     },
     requestRightsDays: {
       id: 'pl.application:request.rights.days',
-      defaultMessage: '{day} dagar sem óskað er eftir af rétti hins foreldrisins',
+      defaultMessage:
+        '{day} dagar sem óskað er eftir af rétti hins foreldrisins',
       description: "{day} days requested from the other parent's rights",
     },
     requestRightsMonths: {

@@ -35,7 +35,9 @@ const RequestMultipleBirthsDaysSlider: FC<FieldBaseProps> = ({
   const requestedMonths = defaultMonths + chosenRequestDays / daysInMonth
 
   const daysStringKey =
-    chosenRequestDays > 1
+    chosenRequestDays === 0
+      ? parentalLeaveFormMessages.shared.requestMultipleBirthsDays
+      : chosenRequestDays > 1
       ? parentalLeaveFormMessages.shared.requestMultipleBirthsDays
       : parentalLeaveFormMessages.shared.requestMultipleBirthsDay
 
