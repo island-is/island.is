@@ -156,6 +156,7 @@ const CaseQuery = gql`
         chapter
         orderWithinChapter
         userGeneratedFilename
+        displayDate
       }
       isAppealDeadlineExpired
       isAppealGracePeriodExpired
