@@ -675,7 +675,7 @@ export class ApplicationController {
       existingApplication as BaseApplication,
       newAnswers,
       user.nationalId,
-      false,
+      true,
       intl.formatMessage,
     )
 

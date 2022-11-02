@@ -32,6 +32,7 @@ import {
   isInvestigationCase,
   isIndictmentCase,
   CaseState,
+  Recipient,
 } from '@island.is/judicial-system/types'
 import {
   caseTypes,
@@ -72,11 +73,6 @@ import { Notification } from './models/notification.model'
 import { SendNotificationResponse } from './models/sendNotification.resopnse'
 import { notificationModuleConfig } from './notification.config'
 import { DefendantService } from '../defendant'
-
-interface Recipient {
-  address?: string
-  success: boolean
-}
 
 interface Attachment {
   filename: string
@@ -134,18 +130,12 @@ export class NotificationService {
         },
       )
 
-      return notifications.some((notification) => {
-        if (!notification.recipients) {
-          return false
-        }
-
-        const recipients: Recipient[] = JSON.parse(notification.recipients)
-
-        return recipients.some(
+      return notifications.some(({ recipients }) =>
+        recipients.some(
           (recipient) =>
             recipient.address === recipientAddress && recipient.success,
-        )
-      })
+        ),
+      )
     } catch (error) {
       // Tolerate failure, but log error
       this.logger.error(
@@ -257,12 +247,12 @@ export class NotificationService {
     const notification = await this.notificationModel.create({
       caseId,
       type,
-      recipients: JSON.stringify(recipients),
+      recipients: recipients,
     })
 
     return {
       notificationSent: recipients.reduce(
-        (sent, recipient) => sent || recipient?.success,
+        (sent, recipient) => sent || recipient.success,
         false as boolean,
       ),
       notification,
@@ -452,7 +442,7 @@ export class NotificationService {
       })
 
       exists = notifications.some(async (notification) =>
-        JSON.parse(notification.recipients ?? '[]').some(
+        notification.recipients.some(
           (recipient: Recipient) =>
             recipient.address === theCase.defenderEmail &&
             recipient.success === true,
@@ -1233,7 +1223,7 @@ export class NotificationService {
       where: { caseId: theCase.id, type: NotificationType.DEFENDER_ASSIGNED },
     })
     const hasSentNotificationBefore = pastNotifications.some(({ recipients }) =>
-      recipients?.includes(defenderEmail),
+      recipients.some(({ address }) => address === defenderEmail),
     )
 
     if (hasSentNotificationBefore) {

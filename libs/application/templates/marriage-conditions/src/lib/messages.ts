@@ -208,6 +208,16 @@ export const m = defineMessages({
       'Veita þarf áætlaðan vígsludag eða yfirlýsingu hjónaefnis um að vígsludagur hafi ekki verið ákveðinn. Athugið að þessar upplýsingar eru ekki bókun á tíma fyrir hjónavígslu. Snúið ykkur til viðeigandi vígsluaðila til að bóka tíma fyrir hjónavígslu.',
     description: '',
   },
+  hasCeremonyDate: {
+    id: 'mac.application:hasCeremonyDate',
+    defaultMessage: 'Liggur hjónavígsludagur fyrir?',
+    description: '',
+  },
+  noCeremonyDate: {
+    id: 'mac.application:noCeremonyDate',
+    defaultMessage: 'Hjónavígsludagurinn liggur ekki fyrir.',
+    description: '',
+  },
   ceremonyDate: {
     id: 'mac.application:ceremonyDate',
     defaultMessage: 'Áætlaður hjónavígsludagur',
@@ -430,7 +440,7 @@ export const m = defineMessages({
   },
   applicationComplete: {
     id: 'mac.application:actionCard.applicationComplete',
-    defaultMessage: 'Undirritun',
+    defaultMessage: 'Beiðni send áfram',
     description: '',
   },
   spouseDoneDescription: {
