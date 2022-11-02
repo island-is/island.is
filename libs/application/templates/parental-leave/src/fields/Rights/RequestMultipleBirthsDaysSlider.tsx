@@ -4,30 +4,29 @@ import { useFormContext } from 'react-hook-form'
 import { Box } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
-import { getApplicationAnswers } from '../../lib/parentalLeaveUtils'
+import {
+  getApplicationAnswers,
+  getMaxMultipleBirthsDays,
+  getMaxMultipleBirthsMonths,
+} from '../../lib/parentalLeaveUtils'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import Slider from '../components/Slider'
 import BoxChart, { BoxChartKey } from '../components/BoxChart'
-import {
-  multipleBirthsDefaultDays,
-  defaultMonths,
-  maxMultipleBirthsMonth,
-  daysInMonth,
-} from '../../config'
+import { defaultMonths, daysInMonth } from '../../config'
 
 const RequestMultipleBirthsDaysSlider: FC<FieldBaseProps> = ({
   field,
   application,
 }) => {
-  const maxDays = multipleBirthsDefaultDays
-  const maxMonths = maxMultipleBirthsMonth
-
   const { id } = field
   const { formatMessage } = useLocale()
   const { register } = useFormContext()
   const { multipleBirthsRequestDays } = getApplicationAnswers(
     application.answers,
   )
+
+  const maxDays = getMaxMultipleBirthsDays(application.answers)
+  const maxMonths = getMaxMultipleBirthsMonths(application.answers)
 
   const [chosenRequestDays, setChosenRequestDays] = useState<number>(
     multipleBirthsRequestDays,
@@ -50,7 +49,7 @@ const RequestMultipleBirthsDaysSlider: FC<FieldBaseProps> = ({
     },
     {
       label: () => ({ ...daysStringKey, values: { day: chosenRequestDays } }),
-      bulletStyle: 'greenWithLines',
+      bulletStyle: 'purpleWithLines',
     },
   ]
 
@@ -89,7 +88,7 @@ const RequestMultipleBirthsDaysSlider: FC<FieldBaseProps> = ({
             }
 
             if (index < requestedMonths) {
-              return 'greenWithLines'
+              return 'purpleWithLines'
             }
 
             return 'grayWithLines'

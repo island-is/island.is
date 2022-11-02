@@ -372,8 +372,14 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     requestMultipleBirthsDaysTitle: {
       id: 'pl.application:request.multipleBirths.daysTitle',
-      defaultMessage: 'Sameiginlegur réttur vegna fjölbura',
+      defaultMessage: 'Hversu marga daga viltu nota ( Need translated )?',
       description: 'How many days would you like to use( Need translated )?',
+    },
+    multipleBirthsDaysDescription: {
+      id: 'pl.application:multipleBirths.daysDescription',
+      defaultMessage:
+        'Hér verður betra lýsing á fjölburafæðingar réttindi ( Need translated )?',
+      description: 'Multiple births description( Need translated )?',
     },
     requestMultipleBirthsDay: {
       id: 'pl.application:request.multipleBirths.day',
@@ -432,9 +438,9 @@ export const parentalLeaveFormMessages: MessageDir = {
     transferRightsDescription: {
       id: 'pl.application:transferRights.description',
       defaultMessage:
-        '( Need modify - bætti sameign réttindi fjölbura )Hægt er að færa allt að 45 daga á milli foreldra. Athugaðu að ef þú óskar eftir dögum þá þarf hitt foreldrið að samþykkja það.',
+        'Hægt er að færa allt að 45 daga á milli foreldra. Athugaðu að ef þú óskar eftir dögum þá þarf hitt foreldrið að samþykkja það.',
       description:
-        '( Need modify - bætti sameign réttindi fjölbura )You can transfer up to {days} between parents. Note that if you choose to request days then the other parent will need to approve it.',
+        'You can transfer up to {days} between parents. Note that if you choose to request days then the other parent will need to approve it.',
     },
     transferRightsNone: {
       id: 'pl.application:transferRights.option.none',

@@ -11,7 +11,10 @@ import {
 import { useLocale } from '@island.is/localization'
 
 import { parentalLeaveFormMessages } from '../../lib/messages'
-import { getApplicationAnswers } from '../../lib/parentalLeaveUtils'
+import {
+  getApplicationAnswers,
+  getMaxMultipleBirthsDays,
+} from '../../lib/parentalLeaveUtils'
 import { maxDaysToGiveOrReceive } from '../../config'
 import { YES, NO, TransferRightsOption } from '../../constants'
 import { YesOrNo } from '../../types'
@@ -90,7 +93,12 @@ export const TransferRights: FC<FieldBaseProps & CustomField> = ({
     requestDays,
     isGivingRights,
     giveDays,
+    hasMultipleBirths,
+    multipleBirthsRequestDays,
   } = getApplicationAnswers(application.answers)
+
+  //typeof multipleBirthsRequestDays is string and we need to convert it to number
+  const multipleBirthsRequestDaysNumber = multipleBirthsRequestDays * 1
 
   const defaultValue =
     transferRights !== undefined
@@ -132,12 +140,19 @@ export const TransferRights: FC<FieldBaseProps & CustomField> = ({
                 parentalLeaveFormMessages.shared.transferRightsRequest,
               ),
               value: TransferRightsOption.REQUEST,
+              disabled:
+                hasMultipleBirths === YES &&
+                multipleBirthsRequestDaysNumber === 0,
             },
             {
               label: formatMessage(
                 parentalLeaveFormMessages.shared.transferRightsGive,
               ),
               value: TransferRightsOption.GIVE,
+              disabled:
+                hasMultipleBirths === YES &&
+                multipleBirthsRequestDaysNumber ===
+                  getMaxMultipleBirthsDays(application.answers),
             },
           ],
           backgroundColor: 'blue',
