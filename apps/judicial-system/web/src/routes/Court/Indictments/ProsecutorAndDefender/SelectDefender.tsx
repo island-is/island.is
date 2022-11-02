@@ -25,7 +25,7 @@ const SelectDefender: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase } = useContext(FormContext)
   const { setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
-  const { updateDefendant, updateDefendantState } = useDefendants()
+  const { setAndSendDefendantToServer } = useDefendants()
 
   const [defenderNotFound, setDefenderNotFound] = useState<boolean>(false)
   const gender = defendant.gender || 'NONE'
@@ -36,8 +36,6 @@ const SelectDefender: React.FC<Props> = (props) => {
       defendant: Defendant,
       defendantWaivesRightToCounsel: boolean,
     ) => {
-      // TODO: getting around typescript to be able to unset defender
-      // should update setAndSendCaseToServer to accept UpdateCaseInput
       const updateDefendantInput: UpdateDefendant = {
         defenderNationalId: defendantWaivesRightToCounsel
           ? ''
@@ -51,12 +49,15 @@ const SelectDefender: React.FC<Props> = (props) => {
         defenderPhoneNumber: defendantWaivesRightToCounsel
           ? ''
           : defendant.defenderPhoneNumber,
+        defendantWaivesRightToCounsel,
       }
 
-      console.log(updateDefendantInput)
-
-      updateDefendantState(defendant.id, updateDefendantInput, setWorkingCase)
-      updateDefendant(caseId, defendant.id, updateDefendantInput)
+      setAndSendDefendantToServer(
+        caseId,
+        defendant.id,
+        updateDefendantInput,
+        setWorkingCase,
+      )
     },
     [workingCase, setWorkingCase, setAndSendCaseToServer],
   )
@@ -84,12 +85,6 @@ const SelectDefender: React.FC<Props> = (props) => {
             )}
             checked={defendant.defendantWaivesRightToCounsel}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-              updateDefendantState(
-                defendant.id,
-                { defendantWaivesRightToCounsel: event.target.checked },
-                setWorkingCase,
-              )
-
               toggleDefendantWaivesRightToCounsel(
                 workingCase.id,
                 defendant,
