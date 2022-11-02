@@ -1,7 +1,7 @@
 import AWS from 'aws-sdk'
 import yargs from 'yargs'
 import { OpsEnv } from './dsl/types/input-types'
-import { UberChart } from './dsl/uber-chart'
+import { Kubernetes } from './dsl/kubernetes'
 import { Envs } from './environments'
 import { serializeService } from './dsl/map-to-helm-values'
 import {
@@ -44,7 +44,7 @@ yargs(hideBin(process.argv))
           services.map((s) =>
             serializeService(
               s,
-              new UberChart(Envs[Deployments[chartName][p.env as OpsEnv]]),
+              new Kubernetes(Envs[Deployments[chartName][p.env as OpsEnv]]),
             ),
           ),
         )

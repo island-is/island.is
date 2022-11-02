@@ -1,5 +1,5 @@
 import { service } from './dsl'
-import { UberChart } from './uber-chart'
+import { Kubernetes } from './kubernetes'
 import { serializeService } from './map-to-helm-values'
 import { SerializeErrors, SerializeSuccess } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
@@ -22,7 +22,7 @@ describe('Postgres', () => {
     const sut = service('service-portal-api').postgres()
     const result = serializeService(
       sut,
-      new UberChart(Staging),
+      new Kubernetes(Staging),
     ) as SerializeSuccess
 
     it('fixing user and name to comply with postgres identifier allowed character set', () => {
@@ -43,7 +43,7 @@ describe('Postgres', () => {
       .env({ DB_USER: 'aaa', DB_HOST: 'a', DB_NAME: '' })
     const result = serializeService(
       sut,
-      new UberChart(Staging),
+      new Kubernetes(Staging),
     ) as SerializeErrors
 
     it('Env and secret variables already defined', () => {

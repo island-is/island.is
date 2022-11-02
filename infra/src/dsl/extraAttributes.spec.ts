@@ -1,5 +1,5 @@
 import { service } from './dsl'
-import { UberChart } from './uber-chart'
+import { Kubernetes } from './kubernetes'
 import { MissingSetting } from './types/input-types'
 import { serializeService } from './map-to-helm-values'
 import { SerializeErrors, SerializeSuccess } from './types/output-types'
@@ -30,7 +30,7 @@ describe('Extra attributes', () => {
     })
     const serviceDef = serializeService(
       sut,
-      new UberChart(Staging),
+      new Kubernetes(Staging),
     ) as SerializeSuccess
     expect(serviceDef.serviceDef.extra).toEqual({
       API: 'api',
@@ -45,7 +45,7 @@ describe('Extra attributes', () => {
     })
     const serviceDef = serializeService(
       sut,
-      new UberChart(Staging),
+      new Kubernetes(Staging),
     ) as SerializeErrors
     expect(serviceDef.errors).toEqual([
       'Missing extra setting for service api in env staging',

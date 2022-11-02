@@ -1,5 +1,5 @@
 import { service } from './dsl'
-import { UberChart } from './uber-chart'
+import { Kubernetes } from './kubernetes'
 import { MissingSetting } from './types/input-types'
 import { serializeService } from './map-to-helm-values'
 import { SerializeErrors, SerializeSuccess } from './types/output-types'
@@ -32,7 +32,7 @@ describe('Ingress definitions', () => {
     })
     const result = serializeService(
       sut,
-      new UberChart(Staging),
+      new Kubernetes(Staging),
     ) as SerializeSuccess
 
     expect(result.serviceDef.ingress).toEqual({
@@ -65,7 +65,7 @@ describe('Ingress definitions', () => {
     })
     const result = serializeService(
       sut,
-      new UberChart(Staging),
+      new Kubernetes(Staging),
     ) as SerializeSuccess
 
     expect(result.serviceDef.ingress).toEqual({
@@ -99,7 +99,7 @@ describe('Ingress definitions', () => {
     })
     const result = serializeService(
       sut,
-      new UberChart(Staging),
+      new Kubernetes(Staging),
     ) as SerializeSuccess
 
     expect(result.serviceDef.ingress).toEqual({
@@ -121,7 +121,7 @@ describe('Ingress definitions', () => {
     })
     const result = serializeService(
       sut,
-      new UberChart(Staging),
+      new Kubernetes(Staging),
     ) as SerializeSuccess
 
     expect(result.serviceDef.ingress).toEqual({

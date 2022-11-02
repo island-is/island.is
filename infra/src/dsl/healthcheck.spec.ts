@@ -1,5 +1,5 @@
 import { service } from './dsl'
-import { UberChart } from './uber-chart'
+import { Kubernetes } from './kubernetes'
 import { serializeService } from './map-to-helm-values'
 import { SerializeSuccess } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
@@ -23,7 +23,7 @@ describe('Healthchecks definitions', () => {
       const sut = service('api').liveness('/ready')
       const result = serializeService(
         sut,
-        new UberChart(Staging),
+        new Kubernetes(Staging),
       ) as SerializeSuccess
       expect(result.serviceDef.healthCheck).toEqual({
         liveness: {
@@ -41,7 +41,7 @@ describe('Healthchecks definitions', () => {
       })
       const result = serializeService(
         sut,
-        new UberChart(Staging),
+        new Kubernetes(Staging),
       ) as SerializeSuccess
       expect(result.serviceDef.healthCheck).toEqual({
         liveness: {

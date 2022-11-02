@@ -1,5 +1,5 @@
 import { service, ServiceBuilder } from './dsl'
-import { UberChart } from './uber-chart'
+import { Kubernetes } from './kubernetes'
 import { MissingSetting } from './types/input-types'
 import { serializeService } from './map-to-helm-values'
 import { SerializeErrors, SerializeSuccess } from './types/output-types'
@@ -35,7 +35,7 @@ describe('Volume Support', () => {
 
   const stagingWithVolumes = serializeService(
     sut,
-    new UberChart(Staging),
+    new Kubernetes(Staging),
   ) as SerializeSuccess
 
   it('Support multi volume definitions', () => {
@@ -62,7 +62,7 @@ describe('Volume Support', () => {
     })
     const stagingWithDefaultVolume = serializeService(
       sut,
-      new UberChart(Staging),
+      new Kubernetes(Staging),
     ) as SerializeSuccess
     expect(stagingWithDefaultVolume.serviceDef.pvcs![0]).toEqual({
       name: 'api',

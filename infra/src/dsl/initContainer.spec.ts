@@ -1,5 +1,5 @@
 import { service } from './dsl'
-import { UberChart } from './uber-chart'
+import { Kubernetes } from './kubernetes'
 import { serializeService } from './map-to-helm-values'
 import {
   SerializeErrors,
@@ -55,7 +55,7 @@ describe('Init-container definitions', () => {
     })
     const result = serializeService(
       sut,
-      new UberChart(Staging),
+      new Kubernetes(Staging),
     ) as SerializeSuccess<ServiceHelm>
     expect(result.serviceDef.initContainer).toEqual({
       containers: [
@@ -102,7 +102,7 @@ describe('Init-container definitions', () => {
     })
     const result = serializeService(
       sut,
-      new UberChart(Staging),
+      new Kubernetes(Staging),
     ) as SerializeErrors
     expect(result.errors).toEqual([
       'No containers to run defined in initContainers',

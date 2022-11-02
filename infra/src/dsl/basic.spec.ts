@@ -1,5 +1,5 @@
 import { service } from './dsl'
-import { UberChart } from './uber-chart'
+import { Kubernetes } from './kubernetes'
 import { serializeService } from './map-to-helm-values'
 import { SerializeSuccess } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
@@ -46,7 +46,7 @@ describe('Basic serialization', () => {
     .postgres()
   const result = serializeService(
     sut,
-    new UberChart(Staging),
+    new Kubernetes(Staging),
   ) as SerializeSuccess
 
   it('basic props', () => {
@@ -143,7 +143,7 @@ describe('Env definition defaults', () => {
   const sut = service('api').namespace('islandis').image('test')
   const result = serializeService(
     sut,
-    new UberChart(Staging),
+    new Kubernetes(Staging),
   ) as SerializeSuccess
 
   it('replica max count', () => {

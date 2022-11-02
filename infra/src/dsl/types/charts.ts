@@ -1,9 +1,8 @@
 import { FeatureNames } from '../features'
 import { OpsEnv, Service } from './input-types'
 
-export interface UberChartType {
+export interface DeploymentRuntime {
   env: EnvironmentConfig
-
   ref(from: Service, to: Service | string): string
 }
 

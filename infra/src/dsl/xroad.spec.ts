@@ -1,5 +1,5 @@
 import { ref, service, ServiceBuilder } from './dsl'
-import { UberChart } from './uber-chart'
+import { Kubernetes } from './kubernetes'
 import { serializeService } from './map-to-helm-values'
 import { SerializeSuccess } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
@@ -35,7 +35,7 @@ describe('X-road support', () => {
       },
     }),
   )
-  const svc = serializeService(sut, new UberChart(Dev)) as SerializeSuccess
+  const svc = serializeService(sut, new Kubernetes(Dev)) as SerializeSuccess
 
   it('contains all xroad environment variables', () => {
     expect(svc.serviceDef.env).toHaveProperty('XROAD_VAR1')

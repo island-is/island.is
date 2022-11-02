@@ -1,7 +1,7 @@
 import { PostgresInfo, Service } from './types/input-types'
 import { GRAPHQL_API_URL_ENV_VAR_NAME } from '../../../apps/application-system/api/infra/application-system-api'
 import { postgresIdentifier } from './map-to-docker-compose'
-import { UberChart } from './uber-chart'
+import { Kubernetes } from './kubernetes'
 import {
   getWithDependantServices,
   renderHelmValueFile,
@@ -84,7 +84,7 @@ export function featureSpecificServiceDef(
 }
 
 function featureSpecificServicesPrepare(
-  uberChart: UberChart,
+  uberChart: Kubernetes,
   habitat: Service[],
   services: Service[],
   feature: string,
@@ -99,7 +99,7 @@ function featureSpecificServicesPrepare(
 }
 
 export const generateYamlForFeature = (
-  uberChart: UberChart,
+  uberChart: Kubernetes,
   habitat: Service[],
   services: Service[],
   excludedServices: Service[] = [],
@@ -120,7 +120,7 @@ export const generateYamlForFeature = (
   }
 }
 export const dumpDockerCompose = (
-  ch: UberChart,
+  ch: Kubernetes,
   valueFile: ValueFile<DockerComposeService>,
 ) => {
   const { services } = valueFile

@@ -1,9 +1,8 @@
 import { Service } from './types/input-types'
-import { EnvironmentConfig, UberChartType } from './types/charts'
+import { EnvironmentConfig, DeploymentRuntime } from './types/charts'
 
-export class UberChart implements UberChartType {
-  env: EnvironmentConfig
-
+export class Kubernetes implements DeploymentRuntime {
+  env: EnvironmentConfig // TODO: get rid of this?
   constructor(env: EnvironmentConfig) {
     this.env = env
   }

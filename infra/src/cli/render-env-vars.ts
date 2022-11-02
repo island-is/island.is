@@ -1,5 +1,5 @@
 import { renderHelmValueFile } from '../dsl/process-services'
-import { UberChart } from '../dsl/uber-chart'
+import { Kubernetes } from '../dsl/kubernetes'
 import { Envs } from '../environments'
 import { Charts } from '../uber-charts/all-charts'
 
@@ -22,7 +22,7 @@ const OVERRIDE_ENVIRONMENT_NAMES: Record<string, string> = {
 }
 
 export const renderServiceEnvVars = async (service: string) => {
-  const uberChart = new UberChart(Envs.dev01)
+  const uberChart = new Kubernetes(Envs.dev01)
   const services = Object.values(Charts).map(
     (chart) => renderHelmValueFile(uberChart, ...chart.dev).services,
   )

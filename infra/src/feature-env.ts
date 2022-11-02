@@ -3,7 +3,7 @@ import { hideBin } from 'yargs/helpers'
 import AWS from 'aws-sdk'
 
 import { generateJobsForFeature } from './dsl/feature-jobs'
-import { UberChart } from './dsl/uber-chart'
+import { Kubernetes } from './dsl/kubernetes'
 import { Envs } from './environments'
 import {
   Services,
@@ -65,7 +65,7 @@ const parseArguments = (argv: Arguments) => {
   const env = 'dev'
   const chart = argv.chart as ChartName
 
-  const ch = new UberChart({
+  const ch = new Kubernetes({
     ...Envs[Deployments[chart][env]],
     feature: feature,
   })

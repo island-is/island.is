@@ -4,7 +4,7 @@ import {
   ReplicaCount,
   Service,
 } from './input-types'
-import { UberChartType } from './charts'
+import { DeploymentRuntime } from './charts'
 import { FeatureNames } from '../features'
 import { serviceMockDef } from '../map-to-docker-compose'
 
@@ -183,7 +183,7 @@ export type ServiceOutputType = ServiceHelm | DockerComposeService
 
 export type SerializeMethod<T extends ServiceOutputType> = (
   service: Service,
-  uberChart: UberChartType,
+  uberChart: DeploymentRuntime,
   featuresOn?: FeatureNames[],
 ) => SerializeSuccess<T> | SerializeErrors
 
@@ -199,7 +199,7 @@ export type ValueFile<T extends ServiceOutputType> = {
 export interface OutputFormat<T extends ServiceOutputType> {
   serializeService(
     service: Service,
-    uberChart: UberChartType,
+    uberChart: DeploymentRuntime,
     featuresOn?: FeatureNames[],
   ): SerializeSuccess<T> | SerializeErrors
 

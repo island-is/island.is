@@ -1,4 +1,4 @@
-import { UberChart } from './uber-chart'
+import { Kubernetes } from './kubernetes'
 import { PostgresInfo, Service } from './types/input-types'
 import { getWithDependantServices } from './process-services'
 import { resolveDbHost } from './map-to-helm-values'
@@ -9,7 +9,7 @@ import {
 } from './feature-deployments'
 
 export const generateJobsForFeature = (
-  uberChart: UberChart,
+  uberChart: Kubernetes,
   habitat: Service[],
   image: string,
   ...services: Service[]

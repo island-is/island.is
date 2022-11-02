@@ -1,5 +1,5 @@
 import { ref, service, ServiceBuilder } from './dsl'
-import { UberChart } from './uber-chart'
+import { Kubernetes } from './kubernetes'
 import { serializeService } from './map-to-helm-values'
 import { SerializeSuccess } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
@@ -47,7 +47,7 @@ describe('Feature-deployment support', () => {
     })
     .postgres()
 
-  const chart = new UberChart(Dev)
+  const chart = new Kubernetes(Dev)
   const values = generateYamlForFeature(
     chart,
     [apiService, dependencyA, dependencyB],

@@ -1,6 +1,6 @@
 import { dump, load } from 'js-yaml'
 import { FeatureKubeJob, ServiceHelm, ValueFile } from './types/output-types'
-import { UberChart } from './uber-chart'
+import { Kubernetes } from './kubernetes'
 
 export const dumpOpts = {
   sortKeys: true,
@@ -13,7 +13,7 @@ export const reformatYaml = (content: string): string => {
 }
 export const dumpJobYaml = (job: FeatureKubeJob) => dump(job, dumpOpts)
 export const dumpServiceHelm = (
-  ch: UberChart,
+  ch: Kubernetes,
   valueFile: ValueFile<ServiceHelm>,
 ) => {
   const { namespaces, services } = valueFile

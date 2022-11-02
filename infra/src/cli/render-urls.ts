@@ -1,7 +1,7 @@
 import { renderHelmValueFile } from '../dsl/process-services'
 import { OpsEnv } from '../dsl/types/input-types'
 import { ServiceHelm } from '../dsl/types/output-types'
-import { UberChart } from '../dsl/uber-chart'
+import { Kubernetes } from '../dsl/kubernetes'
 import { Envs } from '../environments'
 import {
   ChartName,
@@ -24,7 +24,7 @@ const renderUrlsForService = ({ ingress = {} }: ServiceHelm) => {
 
 const renderUrlsForChart = (environment: OpsEnv, chartName: ChartName) => {
   const { services } = renderHelmValueFile(
-    new UberChart(Envs[Deployments[chartName][environment]]),
+    new Kubernetes(Envs[Deployments[chartName][environment]]),
     ...Charts[chartName][environment],
   )
   return Object.keys(services).reduce((acc, serviceName) => {

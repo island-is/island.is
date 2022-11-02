@@ -9,7 +9,7 @@ import {
   serviceMockDef,
 } from './map-to-docker-compose'
 import { Service } from './types/input-types'
-import { UberChart } from './uber-chart'
+import { Kubernetes } from './kubernetes'
 import {
   DockerComposeService,
   ServiceHelm,
@@ -26,7 +26,7 @@ const renderers = {
 }
 
 export const renderHelmValueFile = (
-  uberChart: UberChart,
+  uberChart: Kubernetes,
   ...services: Service[]
 ): ValueFile<ServiceHelm> => {
   const helmServices: Services<ServiceHelm> = services.reduce((acc, s) => {
@@ -86,7 +86,7 @@ export const renderHelmValueFile = (
 }
 
 const findDependencies = (
-  uberChart: UberChart,
+  uberChart: Kubernetes,
   svc: Service,
   svcs: Service[],
   level: number = 0,
@@ -117,7 +117,7 @@ const findDependencies = (
 }
 
 export const getWithDependantServices = (
-  uberChart: UberChart,
+  uberChart: Kubernetes,
   habitat: Service[],
   ...services: Service[]
 ): Service[] => {
@@ -135,7 +135,7 @@ export const getWithDependantServices = (
 }
 
 const renderDockerComposeFile = (
-  uberChart: UberChart,
+  uberChart: Kubernetes,
   ...services: Service[]
 ): ValueFile<DockerComposeService> => {
   const helmServices: Services<DockerComposeService> = services.reduce(

@@ -1,5 +1,5 @@
 import { ref, service } from './dsl'
-import { UberChart } from './uber-chart'
+import { Kubernetes } from './kubernetes'
 import { serializeService } from './map-to-helm-values'
 import { SerializeSuccess } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
@@ -23,7 +23,7 @@ describe('Egress', () => {
   const sut = service('api').env({
     A: ref((h) => h.svc('http://visir.is')),
   })
-  const uberChart = new UberChart(Staging)
+  const uberChart = new Kubernetes(Staging)
   const serviceDef = serializeService(sut, uberChart) as SerializeSuccess
   const render = renderHelmValueFile(uberChart, sut)
 

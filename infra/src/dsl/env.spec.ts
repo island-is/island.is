@@ -1,5 +1,5 @@
 import { service, json } from './dsl'
-import { UberChart } from './uber-chart'
+import { Kubernetes } from './kubernetes'
 import { MissingSetting } from './types/input-types'
 import { serializeService } from './map-to-helm-values'
 import { SerializeErrors, SerializeSuccess } from './types/output-types'
@@ -25,7 +25,7 @@ describe('Env variable', () => {
   })
   const serviceDef = serializeService(
     sut,
-    new UberChart(Staging),
+    new Kubernetes(Staging),
   ) as SerializeErrors
 
   it('missing variables cause errors', () => {
@@ -44,7 +44,7 @@ describe('Env variable', () => {
       })
     const serviceDef = serializeService(
       sut,
-      new UberChart(Staging),
+      new Kubernetes(Staging),
     ) as SerializeErrors
 
     expect(serviceDef.errors).toStrictEqual([
@@ -64,7 +64,7 @@ describe('Env variable', () => {
     })
     const serviceDef = serializeService(
       sut,
-      new UberChart(Staging),
+      new Kubernetes(Staging),
     ) as SerializeErrors
 
     expect(serviceDef.errors).toStrictEqual([
@@ -95,7 +95,7 @@ describe('Env variable', () => {
     })
     const serviceDef = serializeService(
       sut,
-      new UberChart(Staging),
+      new Kubernetes(Staging),
     ) as SerializeSuccess
 
     expect(serviceDef.serviceDef.env.A).toEqual(JSON.stringify(value))

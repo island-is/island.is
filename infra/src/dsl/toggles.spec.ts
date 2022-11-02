@@ -1,5 +1,5 @@
 import { service } from './dsl'
-import { UberChart } from './uber-chart'
+import { Kubernetes } from './kubernetes'
 import { serializeService } from './map-to-helm-values'
 import { SerializeErrors, SerializeSuccess } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
@@ -65,14 +65,14 @@ describe('Server-side toggles', () => {
     })
   const stagingWithFeatures = serializeService(
     sut,
-    new UberChart({
+    new Kubernetes({
       ...Staging,
       featuresOn: [FeatureNames.testing],
     }),
   ) as SerializeSuccess
   const stagingNoFeatures = serializeService(
     sut,
-    new UberChart(Staging),
+    new Kubernetes(Staging),
   ) as SerializeSuccess
 
   it('env variables present when feature toggled', () => {
@@ -130,14 +130,14 @@ describe('Server-side toggles', () => {
   describe('Missing envs variables for the target environment', () => {
     const prod = serializeService(
       sut,
-      new UberChart({
+      new Kubernetes({
         ...Prod,
         featuresOn: [FeatureNames.testing],
       }),
     ) as SerializeErrors
     const prodNoFeature = serializeService(
       sut,
-      new UberChart(Prod),
+      new Kubernetes(Prod),
     ) as SerializeSuccess
 
     it('should result in serialization errors when feature is turned on', () => {
@@ -183,14 +183,14 @@ describe('Server-side toggles', () => {
       })
     const prod = serializeService(
       sut,
-      new UberChart({
+      new Kubernetes({
         ...Prod,
         featuresOn: [FeatureNames.testing],
       }),
     ) as SerializeErrors
     const prodNoFeature = serializeService(
       sut,
-      new UberChart(Prod),
+      new Kubernetes(Prod),
     ) as SerializeSuccess
 
     it('should result in serialization errors when feature is turned on', () => {
