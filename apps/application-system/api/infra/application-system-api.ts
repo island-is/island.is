@@ -259,6 +259,8 @@ export const serviceSetup = (services: {
         '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_ID',
       FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET:
         '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET',
+      ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE',
+      ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH',
     })
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
@@ -276,6 +278,7 @@ export const serviceSetup = (services: {
       max: 60,
       min: 10,
     })
+    .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({
       primary: {
         host: {
