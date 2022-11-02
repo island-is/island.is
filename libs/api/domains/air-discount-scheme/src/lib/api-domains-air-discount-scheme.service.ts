@@ -1,7 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { ApolloError } from 'apollo-server-express'
 import { FetchError } from '@island.is/clients/middlewares'
-import { UsersApi as AirDiscountSchemeApi } from '@island.is/clients/air-discount-scheme'
+import {
+  UsersApi as AirDiscountSchemeApi,
+  User as TUser,
+} from '@island.is/clients/air-discount-scheme'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { Auth, User } from '@island.is/auth-nest-tools'
 import type { Logger } from '@island.is/logging'
@@ -63,23 +66,22 @@ export class AirDiscountSchemeService {
       ).privateDiscountControllerCreateDiscountCode({
         nationalId,
       })
-      console.log('createDiscountResponse', createDiscountResponse)
       return createDiscountResponse
     } catch (e) {
       this.handle4xx(e)
     }
   }
 
-  async getUserRelations(auth: User): Promise<unknown | null> {
+  async getUserRelations(auth: User): Promise<TUser[] | null> {
     try {
       const getRelationsResponse = await this.getADSWithAuth(
         auth,
       ).privateUserControllerGetUserRelations({ nationalId: auth.nationalId })
 
-      console.log('getRelationResponse: ', getRelationsResponse)
       return getRelationsResponse
     } catch (e) {
       this.handle4xx(e)
+      return null
     }
   }
 }
