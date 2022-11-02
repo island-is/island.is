@@ -95,14 +95,18 @@ const Defendant: React.FC = () => {
             createdCase.defendants &&
             createdCase.defendants.length > 0
           ) {
-            await updateDefendant(workingCase.id, defendant.id, {
-              gender: defendant.gender,
-              name: defendant.name,
-              address: defendant.address,
-              nationalId: defendant.nationalId,
-              noNationalId: defendant.noNationalId,
-              citizenship: defendant.citizenship,
-            })
+            await updateDefendant(
+              workingCase.id,
+              createdCase.defendants[0].id,
+              {
+                gender: defendant.gender,
+                name: defendant.name,
+                address: defendant.address,
+                nationalId: defendant.nationalId,
+                noNationalId: defendant.noNationalId,
+                citizenship: defendant.citizenship,
+              },
+            )
           } else {
             await createDefendant(createdCase.id, {
               gender: defendant.gender,
