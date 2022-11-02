@@ -44,7 +44,11 @@ import {
 import { YesOrNo, Period, PersonInformation } from '../types'
 import { FormatMessage } from '@island.is/localization'
 import { currentDateStartTime } from './parentalLeaveTemplateUtils'
-import { multipleBirthsDefaultDays } from '../config'
+import {
+  daysInMonth,
+  defaultMonths,
+  multipleBirthsDefaultDays,
+} from '../config'
 
 export function getExpectedDateOfBirth(
   application: Application,
@@ -187,6 +191,16 @@ export const getTransferredDays = (
 export const getMaxMultipleBirthsDays = (answers: Application['answers']) => {
   const { multipleBirths } = getApplicationAnswers(answers)
   return (multipleBirths - 1) * multipleBirthsDefaultDays
+}
+
+export const getMultipleBirthsInMonths = (answers: Application['answers']) => {
+  const maxDays = getMaxMultipleBirthsDays(answers)
+  return Math.ceil(maxDays / daysInMonth)
+}
+
+export const getMaxMultipleBirthsMonths = (answers: Application['answers']) => {
+  const multipleBirthsDaysInMonths = getMultipleBirthsInMonths(answers)
+  return defaultMonths + multipleBirthsDaysInMonths
 }
 
 export const getAvailableRightsInDays = (application: Application) => {

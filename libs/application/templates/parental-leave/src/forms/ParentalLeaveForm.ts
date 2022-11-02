@@ -762,9 +762,19 @@ export const ParentalLeaveForm: Form = buildForm({
             buildCustomField({
               id: 'multipleBirthsRequestDays',
               childInputIds: ['multipleBirthsRequestDays'],
-              title:
-                parentalLeaveFormMessages.shared.requestMultipleBirthsDaysTitle,
+              title: parentalLeaveFormMessages.shared.multipleBirthsDaysTitle,
+              description:
+                parentalLeaveFormMessages.shared.multipleBirthsDaysDescription,
               condition: (answers, externalData) => {
+                console.log(
+                  '----mess: ',
+                  parentalLeaveFormMessages.shared.multipleBirthsDaysTitle,
+                )
+                console.log(
+                  '---descr: ',
+                  parentalLeaveFormMessages.shared
+                    .multipleBirthsDaysDescription,
+                )
                 const canTransferRights =
                   getSelectedChild(answers, externalData)?.parentalRelation ===
                     ParentalRelations.primary && allowOtherParent(answers)
@@ -788,22 +798,22 @@ export const ParentalLeaveForm: Form = buildForm({
                   getSelectedChild(answers, externalData)?.parentalRelation ===
                     ParentalRelations.primary && allowOtherParent(answers)
 
-                const answerss = getApplicationAnswers(answers)
-                const multipleBirthsRequestDays: number = answerss.multipleBirthsRequestDays
-                const hasMultipleBirths = answers.hasMultipleBirths
+                const {
+                  multipleBirthsRequestDays,
+                  hasMultipleBirths,
+                } = getApplicationAnswers(answers)
 
-                console.log('------requestDay', typeof multipleBirthsRequestDays)
-                console.log('--------- maxDays: ', typeof getMaxMultipleBirthsDays(answers))
-                console.log('---- maxDay boolean: ', multipleBirthsRequestDays * 1 === getMaxMultipleBirthsDays(answers))
-                console.log('---- maxDay boolean: ', multipleBirthsRequestDays === getMaxMultipleBirthsDays(answers))
+                //typeof multipleBirthsRequestDays is string and we need to convert it to number
+                const multipleBirthsRequestDaysNumber =
+                  multipleBirthsRequestDays * 1
 
-                console.log(
+                return (
                   canTransferRights &&
                   (hasMultipleBirths === NO ||
-                    multipleBirthsRequestDays === getMaxMultipleBirthsDays(answers) ||
-                    multipleBirthsRequestDays === 0)
+                    multipleBirthsRequestDaysNumber ===
+                      getMaxMultipleBirthsDays(answers) ||
+                    multipleBirthsRequestDaysNumber === 0)
                 )
-                return false
               },
               title: parentalLeaveFormMessages.shared.transferRightsTitle,
               description:
@@ -828,11 +838,16 @@ export const ParentalLeaveForm: Form = buildForm({
                   hasMultipleBirths,
                 } = getApplicationAnswers(answers)
 
+                //typeof multipleBirthsRequestDays is string and we need to convert it to number
+                const multipleBirthsRequestDaysNumber =
+                  multipleBirthsRequestDays * 1
+
                 return (
                   canTransferRights &&
                   getApplicationAnswers(answers).isRequestingRights === YES &&
                   (hasMultipleBirths === NO ||
-                    multipleBirthsRequestDays === getMaxMultipleBirthsDays(answers))
+                    multipleBirthsRequestDaysNumber ===
+                      getMaxMultipleBirthsDays(answers))
                 )
               },
               component: 'RequestDaysSlider',
@@ -854,10 +869,15 @@ export const ParentalLeaveForm: Form = buildForm({
                   hasMultipleBirths,
                 } = getApplicationAnswers(answers)
 
+                //typeof multipleBirthsRequestDays is string and we need to convert it to number
+                const multipleBirthsRequestDaysNumber =
+                  multipleBirthsRequestDays * 1
+
                 return (
                   canTransferRights &&
                   getApplicationAnswers(answers).isGivingRights === YES &&
-                  (hasMultipleBirths === NO || multipleBirthsRequestDays === 0)
+                  (hasMultipleBirths === NO ||
+                    multipleBirthsRequestDaysNumber === 0)
                 )
               },
               component: 'GiveDaysSlider',
