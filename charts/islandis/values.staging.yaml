@@ -434,6 +434,8 @@ application-system-api:
   env:
     APPLICATION_ATTACHMENT_BUCKET: 'island-is-staging-storage-application-system'
     CLIENT_LOCATION_ORIGIN: 'https://beta.staging01.devland.is/umsoknir'
+    COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
+    COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-TEST/GOV/5402696029/Skatturinn/ft-v1'
     CONTENTFUL_HOST: 'cdn.contentful.com'
     DATA_PROTECTION_COMPLAINT_XROAD_PROVIDER_ID: 'IS-TEST/GOV/5608002820/gopro/kvortun-v1'
     DB_HOST: 'postgres-applications.internal'
@@ -481,6 +483,8 @@ application-system-api:
     XROAD_PAYMENT_ADDITION_CALLBACK_URL: '/'
     XROAD_PAYMENT_BASE_CALLBACK_URL: 'XROAD:'
     XROAD_PAYMENT_PROVIDER_ID: 'IS-TEST/GOV/10021/FJS-DEV-Public'
+    XROAD_PROPERTIES_API_PATH: '/SKRA-Protected/Fasteignir-v1'
+    XROAD_PROPERTIES_SERVICE_PATH: 'IS-TEST/GOV/6503760649/SKRA-Protected/Fasteignir-v1'
     XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1'
     XROAD_TJODSKRA_MEMBER_CODE: '6503760649'
     XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
@@ -593,6 +597,7 @@ application-system-api:
     XROAD_HEALTH_INSURANCE_V2_XROAD_USERNAME: '/k8s/api/HEALTH_INSURANCE_V2_XROAD_USERNAME'
     XROAD_PAYMENT_PASSWORD: '/k8s/application-system-api/PAYMENT_PASSWORD'
     XROAD_PAYMENT_USER: '/k8s/application-system-api/PAYMENT_USER'
+    XROAD_PROPERTIES_CLIENT_SECRET: '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET'
     XROAD_VMST_API_KEY: '/k8s/vmst-client/VMST_API_KEY'
   securityContext:
     allowPrivilegeEscalation: false

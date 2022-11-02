@@ -13,6 +13,8 @@ import {
   MunicipalitiesFinancialAid,
   ChargeFjsV2,
   Finance,
+  Properties,
+  RskCompanyInfo,
 } from '../../../../infra/src/dsl/xroad'
 import {
   ref,
@@ -225,6 +227,8 @@ export const serviceSetup = (services: {
       MunicipalitiesFinancialAid,
       ChargeFjsV2,
       Finance,
+      Properties,
+      RskCompanyInfo,
     )
     .secrets({
       NOVA_URL: '/k8s/application-system-api/NOVA_URL',
