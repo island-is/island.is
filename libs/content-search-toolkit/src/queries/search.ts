@@ -4,15 +4,11 @@ import { TagQuery, tagQuery } from './tagQuery'
 import { typeAggregationQuery } from './typeAggregation'
 import { processAggregationQuery } from './processAggregation'
 
-
-// TODO is this really necessary any more ?
 const getBoostForType = (type: string, defaultBoost: string | number = 1) => {
   if (type === 'webArticle') {
     // The number 55 was chosen since it was the threshold between the highest scoring news and the highest scoring article in search results
     // The test that determined this boost was to type in "Umsókn um fæðingarorlof" and compare the news and article scores
-    return 1
-  } else if (type === 'webNews') {
-    return 0.5
+    return 55
   }
   return defaultBoost
 }
@@ -37,21 +33,34 @@ export const searchQuery = (
   const mustNot: TagQuery[] = []
   let minimumShouldMatch = 1
 
-  should.push({
-    multi_match: {
-      fields:  [ 
-          "title^6", // note ^boosting
-          "title.stemmed^2", // note ^boosting
-          "title.compound",
-          "content",
-          "content.stemmed"
-      ],
-      query: queryString, // organization page // respect incoming filters
-      fuzziness: "AUTO",
-      operator: "and",
-      type: "best_fields" // best_fields  most_fields. cross_fields phrase phrase_prefix bool_prefix
-      }
-  })
+  const fieldsWeights = [
+    'title^6', // note boosting ..
+    'title.stemmed^2', // note boosting ..
+    'title.compound',
+    'content',
+    'content.stemmed',
+  ]
+  // * wildcard support for internal clients
+  if (queryString.trim() === '*') {
+    should.push({
+      simple_query_string: {
+        query: queryString,
+        fields: fieldsWeights,
+        analyze_wildcard: true,
+        default_operator: 'and',
+      },
+    })
+  } else {
+    should.push({
+      multi_match: {
+        fields: fieldsWeights,
+        query: queryString,
+        fuzziness: 'AUTO',
+        operator: 'and',
+        type: 'bool_prefix',
+      },
+    })
+  }
 
   // if we have types restrict the query to those types
   if (types?.length) {
@@ -111,10 +120,10 @@ export const searchQuery = (
     }
   }
 
-  const esQuery = {
+  return {
     query: {
-      function_score:{
-        query:{
+      function_score: {
+        query: {
           bool: {
             should,
             must,
@@ -122,31 +131,21 @@ export const searchQuery = (
             minimum_should_match: minimumShouldMatch,
           },
         },
-        functions:[
+        functions: [
           {
-          field_value_factor: {
-            field: "popularityScore",
-            factor: 1.2,
-            modifier: "log1p",
-            missing: 1
-            }
+            field_value_factor: {
+              field: 'popularityScore',
+              factor: 1.2,
+              modifier: 'log1p',
+              missing: 1,
+            },
           },
-          {filter: { range: { processEntryCount: { gte: 1 } } }, weight: 2},
+          { filter: { range: { processEntryCount: { gte: 1 } } }, weight: 2 },
         ],
-      }
+      },
     },
     ...(Object.keys(aggregation.aggs).length ? aggregation : {}), // spread aggregations if we have any
-    highlight : {
-      number_of_fragments : 3,
-      fragment_size : 150,
-      fields : {
-        title : { pre_tags : ["<b>"],post_tags : ["</b>"] },
-        content :{ pre_tags : ["<b>"],post_tags : ["</b>"] }
-      }
-    },
     size,
     from: (page - 1) * size, // if we have a page number add it as offset for pagination
   }
-  // console.log(esQuery)
-  return esQuery
 }

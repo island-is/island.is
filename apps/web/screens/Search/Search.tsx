@@ -311,17 +311,13 @@ const Search: Screen<CategoryProps> = ({
     ) {
       return linkResolver('digitalicelandservicesdetailpage', [item.slug])
     } 
-    // if (item.__typename === 'OrganizationPage') {
-    //   // console.log(JSON.stringify(item,null,4))
-    //   // return linkResolver('digitalicelandservicesdetailpage', ["rabbz"])
-    //   // console.log(ret)
-    //   return linkResolver('digitalicelandservicesdetailpage', [item.slug])
-    // } 
+
 
     return linkResolver(item.__typename, item?.url ?? item.slug.split('/'))
   }
 
   const getItemImages = (item: SearchType) => {
+    
     if (
       item.__typename === 'LifeEventPage' &&
       item.pageType === AnchorPageType.DIGITAL_ICELAND_SERVICE
@@ -331,26 +327,27 @@ const Search: Screen<CategoryProps> = ({
         thumbnail: undefined,
       }
     }
-    if (item.__typename === 'OrganizationPage') {
-      return {
-        image: {
-          id: "6yNQWZxyjJ5qD7Vj5eSORl",
-          url: "https://images.ctfassets.net/8k0h54kbe6bj/6yNQWZxyjJ5qD7Vj5eSORl/ede49a530e87b27105aa2c8b43b72602/baby-life-event.svg",
-          title: "Eignast barn",
-          contentType: "image/svg+xml",
-          width: 2000,
-          height: 800
-        },
-        thumbnail: {
-          id: "4b7HN4aN9kNhnqo9Ah8l7j",
-          url: "https://images.ctfassets.net/8k0h54kbe6bj/4b7HN4aN9kNhnqo9Ah8l7j/af8770efd74c91e955c4511b93a9f422/Barnavagn.svg",
-          title: "Barnavagn",
-          contentType: "image/svg+xml",
-          width: 300,
-          height: 300
-        },
-      }
-    }
+    // if (item.__typename === 'OrganizationPage') {
+    //   console.log(item,"ITEM ORG PICS")
+    //   return {
+    //     image: {
+    //       id: "6yNQWZxyjJ5qD7Vj5eSORl",
+    //       url: "https://images.ctfassets.net/8k0h54kbe6bj/6yNQWZxyjJ5qD7Vj5eSORl/ede49a530e87b27105aa2c8b43b72602/baby-life-event.svg",
+    //       title: "Eignast barn",
+    //       contentType: "image/svg+xml",
+    //       width: 2000,
+    //       height: 800
+    //     },
+    //     thumbnail: {
+    //       id: "4b7HN4aN9kNhnqo9Ah8l7j",
+    //       url: "https://images.ctfassets.net/8k0h54kbe6bj/4b7HN4aN9kNhnqo9Ah8l7j/af8770efd74c91e955c4511b93a9f422/Barnavagn.svg",
+    //       title: "Barnavagn",
+    //       contentType: "image/svg+xml",
+    //       width: 300,
+    //       height: 300
+    //     },
+    //   }
+    // }
 
     return {
       ...(item.image && { image: item.image as Image }),
@@ -814,7 +811,7 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
   if (searchResults.items.length === 0 && page > 1) {
     throw new CustomNextError(404)
   }
-  // console.log(JSON.stringify(searchResults,null,4))
+  console.log(JSON.stringify(searchResults,null,4))
   return {
     q: queryString,
     searchResults,
