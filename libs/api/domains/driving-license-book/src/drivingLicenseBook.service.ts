@@ -41,62 +41,20 @@ export class DrivingLicenseBookService {
   async createPracticalDrivingLesson(
     input: CreatePracticalDrivingLessonInput,
     user: User,
-  ): Promise<PracticalDrivingLesson | null> {
-    const api = await this.apiWithAuth()
-    const { data } = await api.apiTeacherCreatePracticalDrivingLessonPost({
-      practicalDrivingLessonCreateRequestBody: {
-        ...input,
-        teacherSsn: user.nationalId,
-      },
-    })
-    if (data && data.id) {
-      return {
-        bookId: '',
-        id: data.id,
-        studentNationalId: '',
-        studentName: '',
-        licenseCategory: '',
-        teacherNationalId: '',
-        teacherName: '',
-        minutes: -1,
-        createdOn: '',
-        comments: '',
-      }
-    }
-    return null
+  ): Promise<Partial<Pick<PracticalDrivingLesson, 'id'>> | null> {
+    return await this.drivingLicenseBookClientApiFactory.createPracticalDrivingLesson(
+      input,
+      user,
+    )
   }
 
   async updatePracticalDrivingLesson(
-    {
-      bookId,
-      id,
-      minutes,
-      createdOn,
-      comments,
-    }: UpdatePracticalDrivingLessonInput,
+    input: UpdatePracticalDrivingLessonInput,
     user: User,
   ): Promise<{ success: boolean }> {
-    const api = await this.apiWithAuth()
-    const lesson: PracticalDrivingLesson[] = await this.getPracticalDrivingLessons(
-      { bookId, id },
-    )
-    if (lesson[0].teacherNationalId === user.nationalId) {
-      try {
-        await api.apiTeacherUpdatePracticalDrivingLessonIdPut({
-          id: id,
-          practicalDrivingLessonUpdateRequestBody: {
-            minutes: minutes,
-            createdOn: createdOn,
-            comments: comments,
-          },
-        })
-        return { success: true }
-      } catch (e) {
-        return { success: false }
-      }
-    }
-    throw new ForbiddenException(
-      `User ${user.nationalId} can not update practical driving lesson ${id}`,
+    return await this.drivingLicenseBookClientApiFactory.updatePracticalDrivingLesson(
+      input,
+      user,
     )
   }
 
