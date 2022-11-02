@@ -119,7 +119,7 @@ export const dataSchema = z.object({
     }),
 
   info: z.object({
-    operationName: z.string().nonempty(),
+    operationName: z.string().min(1),
     vskNr: z
       .string()
       .refine((v) => isValidVskNr(v), { params: error.invalidValue }),

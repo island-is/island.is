@@ -33,7 +33,7 @@ export const dataSchema = z.object({
   applicationFor: z.enum([B_FULL, B_TEMP]),
   email: z.string().email(),
   phone: z.string().refine((v) => isValidPhoneNumber(v)),
-  drivingInstructor: z.string().nonempty(),
+  drivingInstructor: z.string().min(1),
   drivingLicenseInOtherCountry: z.enum([YES, NO]),
   drivingLicenseDeprivedOrRestrictedInOtherCountry: z.union([
     z.array(z.enum([YES, NO])).nonempty(),

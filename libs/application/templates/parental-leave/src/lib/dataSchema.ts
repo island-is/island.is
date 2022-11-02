@@ -31,7 +31,7 @@ const PersonalAllowance = z
  */
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
-  selectedChild: z.string().nonempty(),
+  selectedChild: z.string().min(1),
   applicationType: z.object({
     option: z.enum([PARENTAL_GRANT, PARENTAL_GRANT_STUDENTS, PARENTAL_LEAVE]),
   }),
@@ -82,7 +82,7 @@ export const dataSchema = z.object({
     )
     .optional(),
   isRecivingUnemploymentBenefits: z.enum([YES, NO]),
-  unemploymentBenefits: z.string().nonempty(),
+  unemploymentBenefits: z.string().min(1),
   requestRights: z.object({
     isRequestingRights: z.enum([YES, NO]),
     requestDays: z

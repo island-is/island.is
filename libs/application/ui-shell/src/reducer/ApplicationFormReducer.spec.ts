@@ -29,7 +29,7 @@ const dataSchema = z.object({
           }
           return asNumber > 15
         }),
-        name: z.string().nonempty().max(256), // unique in the repeater hmm?
+        name: z.string().min(1).max(256), // unique in the repeater hmm?
         pets: z
           .array(
             z.object({
@@ -42,7 +42,7 @@ const dataSchema = z.object({
     )
     .max(5)
     .nonempty(),
-  familyName: z.string().nonempty(),
+  familyName: z.string().min(1),
   house: z.string().optional(),
 })
 type SchemaFormValues = z.infer<typeof dataSchema>

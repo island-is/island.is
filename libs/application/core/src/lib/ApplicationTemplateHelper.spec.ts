@@ -53,7 +53,7 @@ const createTestApplicationTemplate = (): ApplicationTemplate<
     person: z.object({
       age: z.number().min(18),
       pets: z.array(
-        z.object({ name: z.string().nonempty(), kind: z.enum(['dog', 'cat']) }),
+        z.object({ name: z.string().min(1), kind: z.enum(['dog', 'cat']) }),
       ),
     }),
     externalReviewAccepted: z.boolean(),
