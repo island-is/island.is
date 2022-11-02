@@ -340,7 +340,7 @@ export function formatPrisonCourtDateEmailNotification(
 
   const isolationText = formatMessage(
     notifications.prisonCourtDateEmail.isolationTextV2,
-    { isolation: isolation },
+    { isolation: Boolean(isolation) },
   )
   const defenderText = formatMessage(notifications.defender, {
     defenderName: defenderName ?? 'NONE',

@@ -9,12 +9,16 @@ import {
   ForeignKey,
   HasMany,
 } from 'sequelize-typescript'
+import { IsEnum, IsOptional } from 'class-validator'
+
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { PersonalRepresentativeType } from './personal-representative-type.model'
 import { PersonalRepresentativeRight } from './personal-representative-right.model'
 import { PersonalRepresentativeDTO } from '../dto/personal-representative.dto'
 import { PersonalRepresentativeRightType } from './personal-representative-right-type.model'
 import { PersonalRepresentativePublicDTO } from '../dto/personal-representative-public.dto'
+import { IsBoolean } from 'class-validator'
+import { InactiveReason } from './personal-representative.enum'
 
 @Table({
   tableName: 'personal_representative',
@@ -90,12 +94,32 @@ export class PersonalRepresentative extends Model {
 
   @ApiProperty({ type: () => [PersonalRepresentativeRight] })
   @HasMany(() => PersonalRepresentativeRight)
-  @ApiProperty()
   rights!: PersonalRepresentativeRight[]
 
   @ApiProperty({ type: () => PersonalRepresentativeType })
-  @ApiProperty()
   type!: PersonalRepresentativeType
+
+  @IsBoolean()
+  @ApiProperty({ type: DataType.BOOLEAN, default: false })
+  @Column({ type: DataType.BOOLEAN, defaultValue: false })
+  inactive!: boolean
+
+  @IsOptional()
+  @IsEnum(InactiveReason)
+  @ApiProperty({ enum: InactiveReason, nullable: true })
+  @Column({
+    type: DataType.ENUM(...Object.values(InactiveReason)),
+    defaultValue: null,
+    allowNull: true,
+    validate: {
+      ddlConstraint(this: PersonalRepresentative) {
+        if (this.inactive && !this.inactiveReason) {
+          throw new Error('inactive is required')
+        }
+      },
+    },
+  })
+  inactiveReason?: InactiveReason
 
   toDTO(): PersonalRepresentativeDTO {
     return {
@@ -109,6 +133,8 @@ export class PersonalRepresentative extends Model {
       rights: this.rights?.map((r) =>
         (r.rightType as PersonalRepresentativeRightType).toDTO(),
       ),
+      inactive: this.inactive,
+      inactiveReason: this.inactiveReason,
     } as PersonalRepresentativeDTO
   }
 

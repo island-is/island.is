@@ -1,7 +1,6 @@
 import { Op } from 'sequelize'
 import { Includeable, OrderItem, Transaction } from 'sequelize/types'
 import { Sequelize } from 'sequelize-typescript'
-import { PDFDocument, PDFName, PDFRef, StandardFonts } from 'pdf-lib'
 
 import {
   Inject,
@@ -11,6 +10,7 @@ import {
 } from '@nestjs/common'
 import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 
+import type { ConfigType } from '@island.is/nest/config'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { FormatMessage, IntlService } from '@island.is/cms-translations'
@@ -20,6 +20,7 @@ import {
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   CaseFileCategory,
   CaseFileState,
@@ -37,6 +38,8 @@ import {
   getCourtRecordPdfAsBuffer,
   getCourtRecordPdfAsString,
   formatRulingModifiedHistory,
+  writeFile,
+  createCaseFilesRecord,
 } from '../../formatters'
 import { CaseFile } from '../file'
 import { DefendantService, Defendant } from '../defendant'
@@ -50,6 +53,7 @@ import { UpdateCaseDto } from './dto/updateCase.dto'
 import { getCasesQueryFilter } from './filters/case.filters'
 import { Case } from './models/case.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
+import { caseModuleConfig } from './case.config'
 
 const includes: Includeable[] = [
   { model: Defendant, as: 'defendants' },
@@ -103,6 +107,8 @@ export class CaseService {
   constructor(
     @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(Case) private readonly caseModel: typeof Case,
+    @Inject(caseModuleConfig.KEY)
+    private readonly config: ConfigType<typeof caseModuleConfig>,
     private readonly defendantService: DefendantService,
     private readonly awsS3Service: AwsS3Service,
     private readonly courtService: CourtService,
@@ -117,8 +123,8 @@ export class CaseService {
     throw new InternalServerErrorException('Format message not initialized')
   }
 
-  private refreshFormatMessage: () => Promise<void> = async () =>
-    this.intlService
+  private async refreshFormatMessage(): Promise<void> {
+    return this.intlService
       .useIntl(['judicial.system.backend'], 'is')
       .then((res) => {
         this.formatMessage = res.formatMessage
@@ -126,6 +132,7 @@ export class CaseService {
       .catch((reason) => {
         this.logger.error('Unable to refresh format messages', { reason })
       })
+  }
 
   private async uploadSignedRulingPdfToS3(
     theCase: Case,
@@ -290,91 +297,62 @@ export class CaseService {
     return getCourtRecordPdfAsBuffer(theCase, this.formatMessage, user)
   }
 
-  async getCaseFilesPdf(theCase: Case): Promise<Buffer> {
-    const PAGE_WIDTH = 500
-    const PAGE_HEIGHT = 750
+  async getCaseFilesPdf(
+    theCase: Case,
+    policeCaseNumber: string,
+  ): Promise<Buffer> {
+    await this.refreshFormatMessage()
 
-    const createPageLinkAnnotation = (pdfDoc: PDFDocument, pageRef: PDFRef) =>
-      pdfDoc.context.register(
-        pdfDoc.context.obj({
-          Type: 'Annot',
-          Subtype: 'Link',
-          /* Bounds of the link on the page */
-          Rect: [
-            145, // lower left x coord
-            PAGE_HEIGHT - 200 - 10, // lower left y coord
-            358, // upper right x coord
-            PAGE_HEIGHT - 200 + 25, // upper right y coord
-          ],
-          /* Give the link a 2-unit-wide border, with sharp corners */
-          Border: [0, 0, 2],
-          /* Make the border color blue: rgb(0, 0, 1) */
-          C: [0, 0, 1],
-          /* Page to be visited when the link is clicked */
-          Dest: [pageRef, 'XYZ', null, null, null],
-        }),
+    const caseFiles = theCase.caseFiles
+      ?.filter(
+        (caseFile) =>
+          caseFile.policeCaseNumber === policeCaseNumber &&
+          caseFile.category === CaseFileCategory.CASE_FILE &&
+          caseFile.type === 'application/pdf' &&
+          caseFile.key &&
+          caseFile.chapter !== null &&
+          caseFile.orderWithinChapter !== null,
       )
-
-    const pdfDoc = await PDFDocument.create()
-    let pageNumber = 0
-    const pageNumberFont = await pdfDoc.embedFont(StandardFonts.TimesRoman)
-    const coverPage = pdfDoc.addPage([PAGE_WIDTH, PAGE_HEIGHT])
-    const files =
-      theCase.caseFiles?.filter(
-        (file) =>
-          file.category === CaseFileCategory.CASE_FILE &&
-          file.type === 'application/pdf' &&
-          file.key,
-      ) ?? []
-    for (let i = 0; i < files.length; i++) {
-      await this.awsS3Service
-        .getObject(files[i].key ?? '')
-        .then(async (next) => {
-          const nextPdf = await PDFDocument.load(next)
-          const pages = await pdfDoc.copyPages(
-            nextPdf,
-            nextPdf.getPageIndices(),
-          )
-          for (let j = 0; j < pages.length; j++) {
-            const page = pages[j]
-            if (i === 0 && j === 0) {
-              const link1 = createPageLinkAnnotation(pdfDoc, page.ref)
-              coverPage.node.set(
-                PDFName.of('Annots'),
-                pdfDoc.context.obj([link1]),
-              )
-            }
-            const pageNumberText = `${++pageNumber}`
-            const pageNumberTextWidth = pageNumberFont.widthOfTextAtSize(
-              pageNumberText,
-              20,
+      ?.sort(
+        (caseFile1, caseFile2) =>
+          (caseFile1.chapter ?? 0) - (caseFile2.chapter ?? 0) ||
+          (caseFile1.orderWithinChapter ?? 0) -
+            (caseFile2.orderWithinChapter ?? 0),
+      )
+      ?.map((caseFile) => async () => {
+        const buffer = await this.awsS3Service
+          .getObject(caseFile.key ?? '')
+          .catch((reason) => {
+            // Tolerate failure, but log error
+            this.logger.error(
+              `Unable to get file ${caseFile.id} of case ${theCase.id} from AWS S3`,
+              { reason },
             )
-            page.drawText(pageNumberText, {
-              x: page.getWidth() - 10 - pageNumberTextWidth,
-              y: 10,
-              size: 20,
-              font: pageNumberFont,
-            })
-            pdfDoc.addPage(page)
-          }
-        })
-        .catch((err) => {
-          this.logger.error(
-            `Could not get file ${files[i].id} of case ${theCase.id} from AWS S3`,
-            { err },
-          )
-        })
+          })
+
+        return {
+          chapter: caseFile.chapter as number,
+          date: formatDate(
+            caseFile.displayDate ?? caseFile.created,
+            'dd.MM.yyyy',
+          ) as string,
+          name: caseFile.userGeneratedFilename ?? caseFile.name,
+          buffer: buffer ?? undefined,
+        }
+      })
+
+    const pdf = await createCaseFilesRecord(
+      theCase,
+      policeCaseNumber,
+      caseFiles ?? [],
+      this.formatMessage,
+    )
+
+    if (!this.config.production) {
+      writeFile(`${theCase.id}-case-files.pdf`, pdf)
     }
-    coverPage.drawText('Skjalaskrá', { size: 50, x: 175, y: PAGE_HEIGHT - 100 })
-    coverPage.drawText('Skjal 1', {
-      size: 24,
-      x: 175,
-      y: PAGE_HEIGHT - 200,
-    })
 
-    const pdf = await pdfDoc.save()
-
-    return Buffer.from(pdf)
+    return pdf
   }
 
   async getRulingPdf(theCase: Case, useSigned = true): Promise<Buffer> {
