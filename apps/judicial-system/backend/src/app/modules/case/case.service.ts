@@ -330,8 +330,8 @@ export class CaseService {
           caseFile.category === CaseFileCategory.CASE_FILE &&
           caseFile.type === 'application/pdf' &&
           caseFile.key &&
-          caseFile.chapter !== undefined &&
-          caseFile.orderWithinChapter !== undefined,
+          caseFile.chapter !== null &&
+          caseFile.orderWithinChapter !== null,
       )
       ?.sort(
         (caseFile1, caseFile2) =>

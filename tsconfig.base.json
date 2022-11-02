@@ -334,8 +334,11 @@
         "libs/clients/adr-and-machine-license/src/index.ts"
       ],
       "@island.is/clients/assets": ["libs/clients/assets/src/index.ts"],
-      "@island.is/clients/auth-public-api": [
-        "libs/clients/auth-public-api/src/index.ts"
+      "@island.is/clients/auth/delegation-api": [
+        "libs/clients/auth/delegation-api/src/index.ts"
+      ],
+      "@island.is/clients/auth/public-api": [
+        "libs/clients/auth/public-api/src/index.ts"
       ],
       "@island.is/clients/charge-fjs-v2": [
         "libs/clients/charge-fjs-v2/src/index.ts"
@@ -447,7 +450,6 @@
       "@island.is/financial-aid/shared/lib": [
         "libs/financial-aid/shared/src/lib/index.ts"
       ],
-      "@island.is/health-insurance": ["libs/health-insurance/src/index.ts"],
       "@island.is/icelandic-names-registry-types": [
         "libs/icelandic-names-registry/types/src/index.ts"
       ],
@@ -513,6 +515,9 @@
       "@island.is/regulations": ["libs/regulations/src/index.ts"],
       "@island.is/regulations/*": ["libs/regulations/src/sub/*"],
       "@island.is/residence-history": ["libs/residence-history/src/index.ts"],
+      "@island.is/service-portal/access-control/delegations": [
+        "libs/service-portal/access-control/delegations/src/index.ts"
+      ],
       "@island.is/service-portal/applications": [
         "libs/service-portal/applications/src/index.ts"
       ],
