@@ -11,7 +11,6 @@ import {
 import { createTestingCaseModule } from '../createTestingCaseModule'
 import { getCourtRecordPdfAsString } from '../../../../formatters'
 import { AwsS3Service } from '../../../aws-s3'
-import { CourtService } from '../../../court'
 import { PoliceService } from '../../../police'
 import { CaseFile, FileService } from '../../../file'
 import { Case } from '../../models/case.model'
@@ -27,7 +26,6 @@ interface Then {
 type GivenWhenThen = (caseId: string, theCase: Case) => Promise<Then>
 
 describe('InternalCaseController - Deliver', () => {
-  let mockCourtService: CourtService
   let mockPoliceService: PoliceService
   let mockFileService: FileService
   let mockAwsS3Service: AwsS3Service
@@ -35,14 +33,12 @@ describe('InternalCaseController - Deliver', () => {
 
   beforeEach(async () => {
     const {
-      courtService,
       policeService,
       fileService,
       awsS3Service,
       internalCaseController,
     } = await createTestingCaseModule()
 
-    mockCourtService = courtService
     mockPoliceService = policeService
     mockFileService = fileService
     mockAwsS3Service = awsS3Service
