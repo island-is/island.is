@@ -171,20 +171,10 @@ export class CaseService {
     ])
   }
 
+  // Note that the court record and ruling are not delieverd to court for indictment cases
   addCompletedIndictmentCaseMessagesToQueue(theCase: Case): Promise<void> {
     return this.messageService.sendMessagesToQueue([
       { type: MessageType.CASE_COMPLETED, caseId: theCase.id },
-      ...(theCase.caseFiles
-        ?.filter(
-          (caseFile) =>
-            caseFile.category === CaseFileCategory.COURT_RECORD ||
-            caseFile.category === CaseFileCategory.RULING,
-        )
-        .map((caseFile) => ({
-          type: MessageType.DELIVER_CASE_FILE_TO_COURT,
-          caseId: theCase.id,
-          caseFileId: caseFile.id,
-        })) ?? []),
       { type: MessageType.SEND_RULING_NOTIFICAGTION, caseId: theCase.id },
     ])
   }
