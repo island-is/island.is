@@ -26,6 +26,7 @@ class ErrorBoundary extends PureComponent<PropTypes, StateTypes> {
 
   componentDidCatch(error: Error, errorInfo: any) {
     this.setState({ error })
+    console.error(error)
   }
 
   render() {
