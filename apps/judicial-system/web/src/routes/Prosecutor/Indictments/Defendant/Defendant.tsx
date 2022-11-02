@@ -26,7 +26,6 @@ import { ValueType } from 'react-select'
 import {
   Case,
   CaseType,
-  Defendant,
   Defendant as TDefendant,
   Gender,
   UpdateDefendant,
@@ -82,7 +81,7 @@ const Defendant: React.FC = () => {
         updateDefendant(workingCase.id, defendantId, updatedDefendant)
       }
     },
-    [updateDefendantState, workingCase.id, updateDefendant],
+    [updateDefendantState, setWorkingCase, workingCase.id, updateDefendant],
   )
 
   const handleNextButtonClick = async (theCase: Case) => {
