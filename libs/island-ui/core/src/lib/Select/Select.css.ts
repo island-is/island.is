@@ -287,7 +287,6 @@ export const menu = style(
         borderBottomLeftRadius: 8,
         borderBottomRightRadius: 8,
         boxSizing: 'border-box',
-        zIndex: 9999,
       },
     },
   },

@@ -78,7 +78,7 @@ globalStyle(`${tableContainer} tr td:nth-child(1)`, {
   minWidth: '150px',
   maxWidth: '150px',
   left: '0px',
-  zIndex: 1,
+  zIndex: 0,
 })
 
 globalStyle(`${tableContainer} tr th:nth-child(1)`, {
@@ -88,7 +88,7 @@ globalStyle(`${tableContainer} tr th:nth-child(1)`, {
   minWidth: '150px',
   maxWidth: '150px',
   left: '0px',
-  zIndex: 1,
+  zIndex: 0,
   background: '#E6F2FB',
 })
 
@@ -101,7 +101,7 @@ globalStyle(`${tableContainer} tr td:nth-child(2)`, {
   minWidth: '150px',
   maxWidth: '150px',
   left: '150px',
-  zIndex: 1,
+  zIndex: 0,
 })
 
 globalStyle(`${tableContainer} tr th:nth-child(2)`, {
@@ -112,5 +112,5 @@ globalStyle(`${tableContainer} tr th:nth-child(2)`, {
   minWidth: '150px',
   maxWidth: '150px',
   left: '150px',
-  zIndex: 1,
+  zIndex: 0,
 })
