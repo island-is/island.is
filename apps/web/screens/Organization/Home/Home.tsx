@@ -100,7 +100,7 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace }) => {
                         'landingPageOrganizationsBreadcrumbTitle',
                         'Opinberir aðilar',
                       ),
-                      href: '/s',
+                      href: linkResolver('organizations').href,
                     },
                   ]}
                   renderLink={(link, item) => {

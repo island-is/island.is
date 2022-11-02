@@ -53,6 +53,7 @@ import { mapFrontpage, Frontpage } from './models/frontpage.model'
 import { GetFrontpageInput } from './dto/getFrontpage.input'
 import { OpenDataPage, mapOpenDataPage } from './models/openDataPage.model'
 import { GetOpenDataPageInput } from './dto/getOpenDataPage.input'
+import { GetOrganizationsInput } from './dto/getOrganizations.input'
 import {
   OpenDataSubpage,
   mapOpenDataSubpage,
@@ -77,6 +78,7 @@ import {
 import { GetMailingListSignupSliceInput } from './dto/getMailingListSignupSlice'
 import { Form, mapForm } from './models/form.model'
 import { GetFormInput } from './dto/getForm.input'
+import { mapImage } from './models/image.model'
 
 const errorHandler = (name: string) => {
   return (error: Error) => {
@@ -137,11 +139,17 @@ export class CmsContentfulService {
     }
   }
 
-  async getOrganizations(lang = 'is-IS'): Promise<Organizations> {
+  async getOrganizations({
+    lang = 'is-IS',
+    organizationTitles,
+  }: GetOrganizationsInput): Promise<Organizations> {
     const params = {
       ['content_type']: 'organization',
       include: 10,
       limit: 1000,
+      ...(organizationTitles && {
+        'fields.title[in]': organizationTitles.join(','),
+      }),
     }
 
     const result = await this.contentfulRepository
@@ -153,6 +161,36 @@ export class CmsContentfulService {
         .map(mapOrganization)
         .filter((organization) => organization.title && organization.slug),
     }
+  }
+
+  async getOrganizationLogos(
+    organizationTitles: string[],
+  ): Promise<Array<string | null>> {
+    const params = {
+      ['content_type']: 'organization',
+      select: 'fields.logo,fields.title',
+      'fields.title[in]': organizationTitles.join(','),
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IOrganizationFields>(null, params)
+      .catch(errorHandler('getOrganizationsLogo'))
+
+    return organizationTitles.map((title) => {
+      if (!result.items) {
+        return null
+      } else {
+        const organization = result.items.find(
+          (item) => item.fields.title === title,
+        )
+
+        const image = organization?.fields.logo
+          ? mapImage(organization?.fields.logo)
+          : null
+
+        return image?.url ? image.url : null
+      }
+    })
   }
 
   async getAdgerdirTags(lang = 'is-IS'): Promise<AdgerdirTags> {
