@@ -9,6 +9,7 @@ import {
   indictmentCases,
   InstitutionType,
   investigationCases,
+  isIndictmentCase,
   restrictionCases,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -21,6 +22,7 @@ const hideArchived = { isArchived: false }
 function getAllowedStates(
   role: UserRole,
   institutionType?: InstitutionType,
+  caseType?: CaseType,
 ): CaseState[] {
   if (role === UserRole.PROSECUTOR) {
     return [
@@ -35,6 +37,16 @@ function getAllowedStates(
   }
 
   if (institutionType === InstitutionType.COURT) {
+    if (isIndictmentCase(caseType)) {
+      return [
+        CaseState.SUBMITTED,
+        CaseState.RECEIVED,
+        CaseState.ACCEPTED,
+        CaseState.REJECTED,
+        CaseState.DISMISSED,
+      ]
+    }
+
     return [
       CaseState.DRAFT,
       CaseState.SUBMITTED,
@@ -55,8 +67,9 @@ function getAllowedStates(
 function getBlockedStates(
   role: UserRole,
   institutionType?: InstitutionType,
+  caseType?: CaseType,
 ): CaseState[] {
-  const allowedStates = getAllowedStates(role, institutionType)
+  const allowedStates = getAllowedStates(role, institutionType, caseType)
 
   return Object.values(CaseState).filter(
     (state) => !allowedStates.includes(state as CaseState),
@@ -75,8 +88,9 @@ function isStateHiddenFromRole(
   state: CaseState,
   role: UserRole,
   institutionType?: InstitutionType,
+  caseType?: CaseType,
 ): boolean {
-  return getBlockedStates(role, institutionType).includes(state)
+  return getBlockedStates(role, institutionType, caseType).includes(state)
 }
 
 function getAllowedTypes(
@@ -219,7 +233,12 @@ export function isCaseBlockedFromUser(
   forUpdate = true,
 ): boolean {
   return (
-    isStateHiddenFromRole(theCase.state, user.role, user.institution?.type) ||
+    isStateHiddenFromRole(
+      theCase.state,
+      user.role,
+      user.institution?.type,
+      theCase.type,
+    ) ||
     isTypeHiddenFromRole(
       theCase.type,
       user.role,
