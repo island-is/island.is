@@ -7,11 +7,12 @@ import React, {
 } from 'react'
 import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
-import Option, { ValueType } from 'react-select'
+import { ValueType } from 'react-select'
 
 import { Box, Input, Select } from '@island.is/island-ui/core'
-import { FormContext } from '../FormProvider/FormProvider'
+import { Case } from '@island.is/judicial-system/types'
 
+import { FormContext } from '../FormProvider/FormProvider'
 import { useCase, useGetLawyers } from '../../utils/hooks'
 import { defenderInput as m } from './DefenderInput.strings'
 import { Lawyer, ReactSelectOption } from '../../types'
@@ -23,8 +24,6 @@ import {
 } from '../../utils/formHelper'
 import useDefendants from '../../utils/hooks/useDefendants'
 import { Validation } from '../../utils/validate'
-import { Case, UpdateDefendant } from '@island.is/judicial-system/types'
-import { Defendant } from '../../graphql/schema'
 
 interface Props {
   onDefenderNotFound: (defenderNotFound: boolean) => void
@@ -102,7 +101,16 @@ const DefenderInput: React.FC<Props> = ({
         setWorkingCase({ ...workingCase, ...updatedLawyer })
       }
     },
-    [lawyers, setWorkingCase, workingCase, updateCase, onDefenderNotFound],
+    [
+      defendantId,
+      onDefenderNotFound,
+      lawyers,
+      updateDefendantState,
+      setWorkingCase,
+      updateDefendant,
+      workingCase,
+      updateCase,
+    ],
   )
 
   const propertyValidations = (property: InputType) => {
