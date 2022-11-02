@@ -9,6 +9,7 @@ import {
   hasOperationName,
   Operation,
   makeJudge,
+  makeDefendant,
 } from '../../../utils'
 
 describe(`${INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE}/:id`, () => {
@@ -20,6 +21,7 @@ describe(`${INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE}/:id`, () => {
       creatingProsecutor: makeProsecutor(),
       court: makeCourt(),
       judge: makeJudge(),
+      defendants: [makeDefendant(caseData.id), makeDefendant(caseData.id)],
     }
 
     cy.stubAPIResponses()
@@ -56,6 +58,13 @@ describe(`${INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE}/:id`, () => {
 
     cy.getByTestid('defendantWaivesRightToCounsel').uncheck()
     cy.getByTestid('continueButton').should('be.disabled')
+  })
+
+  it('should list all defendants and have fields to update defender for each defendant', () => {
+    cy.get('[data-testid=creatable-select-defenderName]').should(
+      'have.length',
+      2,
+    )
   })
 
   it('should send notification to defender', () => {
