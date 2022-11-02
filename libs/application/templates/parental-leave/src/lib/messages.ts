@@ -373,7 +373,7 @@ export const parentalLeaveFormMessages: MessageDir = {
     multipleBirthsDaysTitle: {
       id: 'pl.application:request.multipleBirths.daysTitle',
       defaultMessage: 'Sameiginlegur réttur vegna fjölbura',
-      description: 'Joint entitlement due to multiple births ',
+      description: 'Joint entitlement for multiple births ',
     },
     multipleBirthsDaysDescription: {
       id: 'pl.application:multipleBirths.daysDescription',
@@ -394,7 +394,7 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage:
         '{day} dagur sem óskað er eftir af sameiginlegum rétti vegna fjölbura',
       description:
-        '{day} day requested from the joint entitlement due to multiple births',
+        '{day} day requested from the joint entitlement for multiple births',
     },
     requestMultipleBirthsDays: {
       id: 'pl.application:request.multipleBirths.days',
@@ -402,6 +402,11 @@ export const parentalLeaveFormMessages: MessageDir = {
         '{day} dagar sem óskað er eftir af sameiginlegum rétti vegna fjölbura',
       description:
         '{day} days requested from the joint entitlement due to multiple births',
+    },
+    yourMultipleBirthsRightsInMonths: {
+      id: 'pl.application:your.multipleBirths.rights.inMonths',
+      defaultMessage: '{months} mánuðir – sameiginlegur réttur vegna fjölbura',
+      description: '{months} months – joint entitlement for multiple births',
     },
     requestRightsDaysTitle: {
       id: 'pl.application:request.rights.daysTitle',
