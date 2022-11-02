@@ -96,6 +96,7 @@ export const answerValidators: Record<string, AnswerValidator> = {
       applicationType,
       isRecivingUnemploymentBenefits,
       unemploymentBenefits,
+      artificialInsemination,
     } = getApplicationAnswers(application.answers)
     if (isSelfEmployed === YES && obj.selfEmployedFile) {
       if (isEmpty((obj as { selfEmployedFile: unknown[] }).selfEmployedFile))
@@ -107,6 +108,20 @@ export const answerValidators: Record<string, AnswerValidator> = {
     if (applicationType === PARENTAL_GRANT_STUDENTS && obj.studentFile) {
       if (isEmpty((obj as { studentFile: unknown[] }).studentFile))
         return buildError(errorMessages.requiredAttachment, 'studentFile')
+      return undefined
+    }
+
+    if (artificialInsemination && obj.artificialInsemination) {
+      if (
+        isEmpty(
+          (obj as { artificialInsemination: unknown[] }).artificialInsemination,
+        )
+      )
+        return buildError(
+          errorMessages.requiredAttachment,
+          'artificialInsemination',
+        )
+
       return undefined
     }
 

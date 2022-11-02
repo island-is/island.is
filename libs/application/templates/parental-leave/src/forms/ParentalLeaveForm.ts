@@ -677,6 +677,30 @@ export const ParentalLeaveForm: Form = buildForm({
                 parentalLeaveFormMessages.selfEmployed.attachmentButton,
             }),
             buildFileUploadField({
+              id: 'fileUpload.artificialInsemination',
+              title:
+                parentalLeaveFormMessages.attachmentScreen
+                  .artificialInseminationTitle,
+              introduction:
+                parentalLeaveFormMessages.attachmentScreen
+                  .artificialInseminationDescription,
+              condition: (answers) => {
+                const { artificialInsemination } = getApplicationAnswers(
+                  answers,
+                )
+
+                return artificialInsemination === YES
+              },
+              maxSize: FILE_SIZE_LIMIT,
+              maxSizeErrorText:
+                parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
+              uploadAccept: '.pdf',
+              uploadHeader: '',
+              uploadDescription: '',
+              uploadButtonLabel:
+                parentalLeaveFormMessages.selfEmployed.attachmentButton,
+            }),
+            buildFileUploadField({
               id: 'fileUpload.file',
               title: parentalLeaveFormMessages.attachmentScreen.genericTitle,
               introduction:

@@ -18,6 +18,7 @@ export const apiConstants = {
     student: 'Student',
     unEmploymentBenefits: 'UnemploymentBenefits',
     other: 'Other',
+    artificialInsemination: 'ArtificialInsemination'
   },
 }
 

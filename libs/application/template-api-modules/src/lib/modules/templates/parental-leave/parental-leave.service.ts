@@ -264,6 +264,30 @@ export class ParentalLeaveService {
     }
   }
 
+  async getArtificialInseminationPdf(application: Application, index = 0) {
+    try {
+      const filename = getValueViaPath(
+        application.answers,
+        `fileUpload.artificialInsemination[${index}].key`,
+      )
+
+      const Key = `${application.id}/${filename}`
+      const file = await this.s3
+        .getObject({ Bucket: this.attachmentBucket, Key })
+        .promise()
+      const fileContent = file.Body as Buffer
+
+      if (!fileContent) {
+        throw new Error('File content was undefined')
+      }
+
+      return fileContent.toString('base64')
+    } catch (e) {
+      this.logger.error('Cannot get artificial insemination attachment', { e })
+      throw new Error('Failed to get the artificial insemination attachment')
+    }
+  }
+
   async getGenericPdf(application: Application, index = 0) {
     try {
       const filename = getValueViaPath(
@@ -290,7 +314,7 @@ export class ParentalLeaveService {
 
   async getAttachments(application: Application): Promise<Attachment[]> {
     const attachments: Attachment[] = []
-    const { isSelfEmployed, applicationType } = getApplicationAnswers(
+    const { isSelfEmployed, applicationType, artificialInsemination } = getApplicationAnswers(
       application.answers,
     )
 
@@ -338,6 +362,24 @@ export class ParentalLeaveService {
 
           attachments.push({
             attachmentType: apiConstants.attachments.student,
+            attachmentBytes: pdf,
+          })
+        }
+      }
+    }
+
+    if (artificialInsemination) {
+      const artificialInseminationtPdfs = (await getValueViaPath(
+        application.answers,
+        'fileUpload.artificialInsemination',
+      )) as unknown[]
+
+      if (artificialInseminationtPdfs?.length) {
+        for (let i = 0; i <= artificialInseminationtPdfs.length - 1; i++) {
+          const pdf = await this.getArtificialInseminationPdf(application, i)
+
+          attachments.push({
+            attachmentType: apiConstants.attachments.artificialInsemination,
             attachmentBytes: pdf,
           })
         }

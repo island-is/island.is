@@ -359,6 +359,37 @@ export const PrerequisitesForm: Form = buildForm({
                   title: parentalLeaveFormMessages.selectChild.screenTitle,
                   component: 'ChildSelector',
                 }),
+              ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'artificialInsemination',
+          title: 'Viðbótar upplýsingar',
+          children: [
+            buildMultiField({
+              id: 'artificialInseminationScreen',
+              title: 'Tæknifrjóvgun',
+              // condition: (_, externalData) =>
+              //   isEligibleForParentalLeave(externalData),
+              children: [
+                buildRadioField({
+                  id: 'artificialInseminationQuestion',
+                  title: 'Fórstu í tæknifrjóvgun?',
+                  description:
+                    'Á við þegar einhleyp móðir gengst undir tæknifrjóvgun...',
+                  width: 'half',
+                  options: [
+                    {
+                      value: YES,
+                      label: parentalLeaveFormMessages.shared.yesOptionLabel,
+                    },
+                    {
+                      value: NO,
+                      label: parentalLeaveFormMessages.shared.noOptionLabel,
+                    },
+                  ],
+                }),
                 buildSubmitField({
                   id: 'toDraft',
                   title: parentalLeaveFormMessages.confirmation.title,
