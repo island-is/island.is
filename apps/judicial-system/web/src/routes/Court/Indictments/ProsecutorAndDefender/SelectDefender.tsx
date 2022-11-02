@@ -40,8 +40,6 @@ const SelectDefender: React.FC<Props> = (props) => {
       defendant: Defendant,
       defendantWaivesRightToCounsel: boolean,
     ) => {
-      // TODO: getting around typescript to be able to unset defender
-      // should update setAndSendCaseToServer to accept UpdateCaseInput
       const updateDefendantInput: UpdateDefendant = {
         defenderNationalId: defendantWaivesRightToCounsel
           ? ''
