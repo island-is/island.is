@@ -1,9 +1,7 @@
 const withNx = require('@nrwl/next/plugins/with-nx')
 const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin')
 
-const {
-  API_URL = 'http://localhost:3339',
-} = process.env
+const { API_URL = 'http://localhost:3339' } = process.env
 
 const graphqlPath = '/api/graphql'
 const withVanillaExtract = createVanillaExtractPlugin()

@@ -23,7 +23,9 @@ export const EmployerInfo = ({ application }: FieldBaseProps) => {
   )
 
   if (!employerInfo) {
-    console.error('Public Dept Payment Plan Application: Did not receive employer information from service.')
+    console.error(
+      'Public Dept Payment Plan Application: Did not receive employer information from service.',
+    )
     return null
   }
 

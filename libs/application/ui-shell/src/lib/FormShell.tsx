@@ -104,9 +104,7 @@ export const FormShell: FC<{
                 height="full"
                 borderRadius="large"
                 background="white"
-              >
-                
-              </Box>
+              ></Box>
             </GridColumn>
             <GridColumn
               span={['12/12', '12/12', '3/12', '3/12']}

@@ -179,7 +179,5 @@ export const ApplicationForm: FC<{
 }> = ({ applicationId, nationalRegistryId, slug }) => {
   const { formatMessage } = useLocale()
 
-  return (
-    <></>
-  )
+  return <></>
 }

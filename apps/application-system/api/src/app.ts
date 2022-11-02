@@ -4,7 +4,6 @@ import { AppModule } from './app/app.module'
 import { environment } from './environments'
 import { openApi } from './openApi'
 
-
 export const bootstrapServer = () => {
   bootstrap({
     appModule: AppModule,
