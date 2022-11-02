@@ -145,6 +145,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
                   Promise.resolve(val.PendingReview),
                 ),
               read: 'all',
+              write: 'all',
             },
             {
               id: Roles.ASSIGNEE,
@@ -182,7 +183,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
                 { event: 'REJECT', name: 'Hafna', type: 'reject' },
               ],
               write: {
-                answers: ['careerHistoryDetails'],
+                answers: ['careerHistoryCompanies', 'approvedByReviewer'],
               },
               read: 'all',
               shouldBeListedForRole: false,

@@ -162,7 +162,7 @@ describe('Config definitions', () => {
       )
     })
 
-    it.only('should return transformed values', () => {
+    it('should return transformed values', () => {
       // Arrange
       process.env.CONFIG_TEST = '{"hello": "world"}'
       const schema = z

@@ -1,4 +1,3 @@
-import { MarriageTermination } from './lib/constants'
 import { dataSchema } from './lib/dataSchema'
 import { z } from 'zod'
 
@@ -26,10 +25,10 @@ export type PersonalInfo = {
   address: string
   citizenship: string
   maritalStatus: string
-  previousMarriageTermination: MarriageTermination
 }
 
 export type Ceremony = {
+  hasDate: string
   date: string
   ceremonyPlace: string
   office: string
