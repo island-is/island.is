@@ -92,7 +92,7 @@ describe('CaseController - Update', () => {
     })
 
     it('should post to queue', () => {
-      expect(mockMessageService.postMessageToQueue).toHaveBeenCalledWith({
+      expect(mockMessageService.sendMessageToQueue).toHaveBeenCalledWith({
         type: MessageType.CASE_CONNECTED_TO_COURT_CASE,
         caseId,
       })
@@ -111,7 +111,7 @@ describe('CaseController - Update', () => {
     })
 
     it('should not post to queue', () => {
-      expect(mockMessageService.postMessageToQueue).not.toHaveBeenCalled()
+      expect(mockMessageService.sendMessageToQueue).not.toHaveBeenCalled()
     })
   })
 })
