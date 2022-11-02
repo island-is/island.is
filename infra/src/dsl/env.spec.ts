@@ -98,6 +98,6 @@ describe('Env variable', () => {
       new Kubernetes(Staging),
     ) as SerializeSuccess
 
-    expect(serviceDef.serviceDef.env.A).toEqual(JSON.stringify(value))
+    expect(serviceDef.serviceDef[0].env.A).toEqual(JSON.stringify(value))
   })
 })

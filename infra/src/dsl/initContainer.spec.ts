@@ -57,7 +57,7 @@ describe('Init-container definitions', () => {
       sut,
       new Kubernetes(Staging),
     ) as SerializeSuccess<ServiceHelm>
-    expect(result.serviceDef.initContainer).toEqual({
+    expect(result.serviceDef[0].initContainer).toEqual({
       containers: [
         {
           command: ['migration'],

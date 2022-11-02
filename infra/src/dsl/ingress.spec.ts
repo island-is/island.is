@@ -35,7 +35,7 @@ describe('Ingress definitions', () => {
       new Kubernetes(Staging),
     ) as SerializeSuccess
 
-    expect(result.serviceDef.ingress).toEqual({
+    expect(result.serviceDef[0].ingress).toEqual({
       'primary-alb': {
         annotations: {
           'kubernetes.io/ingress.class': 'nginx-external-alb',
@@ -68,7 +68,7 @@ describe('Ingress definitions', () => {
       new Kubernetes(Staging),
     ) as SerializeSuccess
 
-    expect(result.serviceDef.ingress).toEqual({
+    expect(result.serviceDef[0].ingress).toEqual({
       'primary-alb': {
         annotations: {
           'kubernetes.io/ingress.class': 'nginx-external-alb',
@@ -102,7 +102,7 @@ describe('Ingress definitions', () => {
       new Kubernetes(Staging),
     ) as SerializeSuccess
 
-    expect(result.serviceDef.ingress).toEqual({
+    expect(result.serviceDef[0].ingress).toEqual({
       'primary-alb': {
         annotations: {
           'kubernetes.io/ingress.class': 'nginx-external-alb',
@@ -124,7 +124,7 @@ describe('Ingress definitions', () => {
       new Kubernetes(Staging),
     ) as SerializeSuccess
 
-    expect(result.serviceDef.ingress).toEqual({
+    expect(result.serviceDef[0].ingress).toEqual({
       'primary-alb': {
         annotations: {
           'kubernetes.io/ingress.class': 'nginx-internal-alb',

@@ -24,7 +24,7 @@ describe('Basic serialization', () => {
       sut,
       new Kubernetes(Staging),
     ) as SerializeSuccess
-    expect(result.serviceDef.service).toEqual({
+    expect(result.serviceDef[0].service).toEqual({
       targetPort: 4200,
     })
   })

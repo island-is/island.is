@@ -39,14 +39,14 @@ describe('Volume Support', () => {
   ) as SerializeSuccess
 
   it('Support multi volume definitions', () => {
-    expect(stagingWithVolumes.serviceDef.pvcs![0]).toEqual({
+    expect(stagingWithVolumes.serviceDef[0].pvcs![0]).toEqual({
       name: 'something',
       size: '1Gi',
       accessModes: 'ReadOnlyMany',
       mountPath: '/storage_one',
       storageClass: 'efs-csi',
     }),
-      expect(stagingWithVolumes.serviceDef.pvcs![1]).toEqual({
+      expect(stagingWithVolumes.serviceDef[0].pvcs![1]).toEqual({
         name: 'somethingelse',
         size: '1Gi',
         accessModes: 'ReadWriteMany',
@@ -64,7 +64,7 @@ describe('Volume Support', () => {
       sut,
       new Kubernetes(Staging),
     ) as SerializeSuccess
-    expect(stagingWithDefaultVolume.serviceDef.pvcs![0]).toEqual({
+    expect(stagingWithDefaultVolume.serviceDef[0].pvcs![0]).toEqual({
       name: 'api',
       size: '1Gi',
       accessModes: 'ReadOnlyMany',

@@ -170,7 +170,7 @@ export interface FeatureKubeJob {
 
 export type SerializeSuccess<T> = {
   type: 'success'
-  serviceDef: T
+  serviceDef: T[]
 }
 
 export type SerializeErrors = {

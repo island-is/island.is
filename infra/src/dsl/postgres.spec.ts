@@ -26,7 +26,7 @@ describe('Postgres', () => {
     ) as SerializeSuccess
 
     it('fixing user and name to comply with postgres identifier allowed character set', () => {
-      expect(result.serviceDef.env).toEqual({
+      expect(result.serviceDef[0].env).toEqual({
         DB_USER: 'service_portal_api',
         DB_NAME: 'service_portal_api',
         DB_HOST: 'a',

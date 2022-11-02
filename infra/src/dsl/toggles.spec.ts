@@ -76,44 +76,48 @@ describe('Server-side toggles', () => {
   ) as SerializeSuccess
 
   it('env variables present when feature toggled', () => {
-    expect(stagingWithFeatures.serviceDef.env!['A']).toBe('B')
+    expect(stagingWithFeatures.serviceDef[0].env!['A']).toBe('B')
   })
 
   it('should be added to the ON list', () => {
-    expect(stagingWithFeatures.serviceDef.env!['SERVERSIDE_FEATURES_ON']).toBe(
-      'do-not-remove-for-testing-only',
-    )
+    expect(
+      stagingWithFeatures.serviceDef[0].env!['SERVERSIDE_FEATURES_ON'],
+    ).toBe('do-not-remove-for-testing-only')
   })
 
   it('should have ON list emtpy when nothing is toggled', () => {
-    expect(stagingNoFeatures.serviceDef.env!['SERVERSIDE_FEATURES_ON']).toBe('')
+    expect(stagingNoFeatures.serviceDef[0].env!['SERVERSIDE_FEATURES_ON']).toBe(
+      '',
+    )
   })
 
   it('env variables missing when feature not toggled', () => {
-    expect(stagingNoFeatures.serviceDef.env!['A']).toBeUndefined()
+    expect(stagingNoFeatures.serviceDef[0].env!['A']).toBeUndefined()
   })
 
   it('secret present when feature toggled', () => {
-    expect(stagingWithFeatures.serviceDef.secrets!['KEY']).toBe('/k8s/secret')
+    expect(stagingWithFeatures.serviceDef[0].secrets!['KEY']).toBe(
+      '/k8s/secret',
+    )
   })
 
   it('secret missing when feature not toggled', () => {
-    expect(stagingNoFeatures.serviceDef.secrets!['KEY']).toBeUndefined()
+    expect(stagingNoFeatures.serviceDef[0].secrets!['KEY']).toBeUndefined()
   })
 
   it('should have initcontainer env variables present when feature toggled', () => {
-    expect(stagingWithFeatures.serviceDef.initContainer!.env!['C']).toBe('D')
+    expect(stagingWithFeatures.serviceDef[0].initContainer!.env!['C']).toBe('D')
   })
 
   it('should have initcontainer secret present when feature toggled', () => {
-    expect(stagingWithFeatures.serviceDef.initContainer!.secrets!['INIT']).toBe(
-      '/a/b/c',
-    )
+    expect(
+      stagingWithFeatures.serviceDef[0].initContainer!.secrets!['INIT'],
+    ).toBe('/a/b/c')
   })
 
   it('should be added to the ON list for the init container', () => {
     expect(
-      stagingWithFeatures.serviceDef.initContainer!.env![
+      stagingWithFeatures.serviceDef[0].initContainer!.env![
         'SERVERSIDE_FEATURES_ON'
       ],
     ).toBe('do-not-remove-for-testing-only')
@@ -121,7 +125,7 @@ describe('Server-side toggles', () => {
 
   it('should have ON list for the init container emtpy when nothing is toggled', () => {
     expect(
-      stagingNoFeatures.serviceDef.initContainer!.env![
+      stagingNoFeatures.serviceDef[0].initContainer!.env![
         'SERVERSIDE_FEATURES_ON'
       ],
     ).toBe('')

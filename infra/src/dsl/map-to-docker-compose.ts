@@ -64,7 +64,6 @@ export const serializeService: SerializeMethod<DockerComposeService> = (
     Object.assign(target, source)
   }
   const addToErrors = (errors: string[]) => {
-    if (errors.length > 0) throw new Error(errors.join('\n'))
     allErrors.push(...errors)
   }
   const serviceDef = service.serviceDef
@@ -232,7 +231,7 @@ export const serializeService: SerializeMethod<DockerComposeService> = (
   checkCollisions(secrets, result.env)
 
   return allErrors.length === 0
-    ? { type: 'success', serviceDef: result }
+    ? { type: 'success', serviceDef: [result] }
     : { type: 'error', errors: allErrors }
 }
 

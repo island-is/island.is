@@ -327,7 +327,7 @@ export const serializeService: SerializeMethod<ServiceHelm> = (
   checkCollisions(result.secrets, result.env)
 
   return allErrors.length === 0
-    ? { type: 'success', serviceDef: result }
+    ? { type: 'success', serviceDef: [result] }
     : { type: 'error', errors: allErrors }
 }
 

@@ -32,7 +32,7 @@ describe('Extra attributes', () => {
       sut,
       new Kubernetes(Staging),
     ) as SerializeSuccess
-    expect(serviceDef.serviceDef.extra).toEqual({
+    expect(serviceDef.serviceDef[0].extra).toEqual({
       API: 'api',
       KEY: { SUBKEY: 'value' },
     })

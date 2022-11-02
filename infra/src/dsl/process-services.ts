@@ -35,11 +35,11 @@ export const renderHelmValueFile = (
       case 'error':
         throw new Error(values.errors.join('\n'))
       case 'success':
-        const extras = values.serviceDef.extra
-        delete values.serviceDef.extra
+        const extras = values.serviceDef[0].extra
+        delete values.serviceDef[0].extra
         return {
           ...acc,
-          [s.serviceDef.name]: Object.assign({}, values.serviceDef, extras),
+          [s.serviceDef.name]: Object.assign({}, values.serviceDef[0], extras),
         }
     }
   }, uberChart.env.global)

@@ -26,12 +26,12 @@ describe('HPA definitions', () => {
       new Kubernetes(Staging),
     ) as SerializeSuccess
 
-    expect(result.serviceDef.replicaCount).toEqual({
+    expect(result.serviceDef[0].replicaCount).toEqual({
       min: 2,
       max: 3,
       default: 2,
     })
-    expect(result.serviceDef.hpa).toEqual({
+    expect(result.serviceDef[0].hpa).toEqual({
       scaling: {
         replicas: {
           min: 2,
@@ -53,12 +53,12 @@ describe('HPA definitions', () => {
       new Kubernetes(Staging),
     ) as SerializeSuccess
 
-    expect(result.serviceDef.replicaCount).toEqual({
+    expect(result.serviceDef[0].replicaCount).toEqual({
       min: 1,
       max: 2,
       default: 2,
     })
-    expect(result.serviceDef.hpa).toEqual({
+    expect(result.serviceDef[0].hpa).toEqual({
       scaling: {
         replicas: {
           min: 1,

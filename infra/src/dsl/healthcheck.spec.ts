@@ -25,7 +25,7 @@ describe('Healthchecks definitions', () => {
         sut,
         new Kubernetes(Staging),
       ) as SerializeSuccess
-      expect(result.serviceDef.healthCheck).toEqual({
+      expect(result.serviceDef[0].healthCheck).toEqual({
         liveness: {
           path: '/ready',
           initialDelaySeconds: 3,
@@ -43,7 +43,7 @@ describe('Healthchecks definitions', () => {
         sut,
         new Kubernetes(Staging),
       ) as SerializeSuccess
-      expect(result.serviceDef.healthCheck).toEqual({
+      expect(result.serviceDef[0].healthCheck).toEqual({
         liveness: {
           path: '/ready',
           initialDelaySeconds: 10,

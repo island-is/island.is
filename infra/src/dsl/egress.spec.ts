@@ -28,7 +28,7 @@ describe('Egress', () => {
   const render = renderHelmValueFile(uberChart, sut)
 
   it('missing variables cause errors', () => {
-    expect(serviceDef.serviceDef.env['A']).toBe('http://mock-visir-is')
+    expect(serviceDef.serviceDef[0].env['A']).toBe('http://mock-visir-is')
   })
 
   it('should render two services - one extra for the mock', () => {
