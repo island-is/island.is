@@ -85,9 +85,7 @@ interface CatchQuotaCalculatorProps {
   namespace: Record<string, string>
 }
 
-export const CatchQuotaCalculator = ({
-  namespace,
-}: CatchQuotaCalculatorProps) => {
+const CatchQuotaCalculator = ({ namespace }: CatchQuotaCalculatorProps) => {
   const timePeriodOptions = useMemo(() => generateTimePeriodOptions(), [])
   const n = useLocalization(namespace)
   const [selectedTimePeriod, setSelectedTimePeriod] = useState(
@@ -114,7 +112,7 @@ export const CatchQuotaCalculator = ({
     lastChangeCategoryId: -1,
     lastChangeFieldName: '',
     lastChangeFieldValue: '',
-    timerId: null,
+    timerId: null as NodeJS.Timeout | null,
   })
   const [quotaChange, setQuotaChange] = useState<QuotaChanges>({})
   const [quotaChangeErrors, setQuotaChangeErrors] = useState<QuotaChangeErrors>(
@@ -165,6 +163,8 @@ export const CatchQuotaCalculator = ({
         return
       }
       setQuotaChangeErrors({})
+
+      if (!shipNumber) return
 
       send({
         type: 'UPDATE_QUOTA_DATA',
@@ -867,3 +867,5 @@ export const CatchQuotaCalculator = ({
     </Box>
   )
 }
+
+export default CatchQuotaCalculator

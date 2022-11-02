@@ -35,16 +35,8 @@ type ContextData = {
 const orderCategories = (categories?: { id?: number | null }[]) => {
   if (!categories) return
 
-  // Ascending order by name
+  // Ascending order by id
   categories.sort((a, b) => (a.id as number) - (b.id as number))
-
-  // If there's a timestamp we want to use that to order the categories
-  // categories.sort((a, b) => {
-  //   if (!a.timestamp && !b.timestamp) return 0
-  //   if (a.timestamp && !b.timestamp) return -1
-  //   if (!a.timestamp && b.timestamp) return 1
-  //   return (b.timestamp as number) - (a.timestamp as number)
-  // })
 
   // Place the cod value category at the front if it exists
   const codValueIndex = categories.findIndex((c) => c.id === 0)

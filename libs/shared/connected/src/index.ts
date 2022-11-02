@@ -5,6 +5,6 @@ export { RealEstateAgentsList } from './lib/RealEstateAgentsList/RealEstateAgent
 export { LawyersList } from './lib/LawyersList/LawyersList'
 export { ShipSearch } from './lib/fiskistofa/ShipSearch/ShipSearch'
 export { SidebarShipSearchInput } from './lib/fiskistofa/SidebarShipSearchInput/SidebarShipSearchInput'
-export { StraddlingStockCalculator } from './lib/fiskistofa/calculators/StraddlingStockCalculator/StraddlingStockCalculator'
-export { CatchQuotaCalculator } from './lib/fiskistofa/calculators/CatchQuotaCalculator/CatchQuotaCalculator'
+export { StraddlingStockCalculator } from './lib/fiskistofa/calculators/StraddlingStockCalculator'
+export { CatchQuotaCalculator } from './lib/fiskistofa/calculators/CatchQuotaCalculator'
 export { SelectedShip } from './lib/fiskistofa/SelectedShip/SelectedShip'

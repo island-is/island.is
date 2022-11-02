@@ -47,7 +47,7 @@ interface StraddlingStockCalculatorProps {
   namespace: Record<string, string>
 }
 
-export const StraddlingStockCalculator = ({
+const StraddlingStockCalculator = ({
   namespace,
 }: StraddlingStockCalculatorProps) => {
   const yearOptions = useMemo(() => getYearOptions(), [])
@@ -591,3 +591,5 @@ export const StraddlingStockCalculator = ({
     </Box>
   )
 }
+
+export default StraddlingStockCalculator
