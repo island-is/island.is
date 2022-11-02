@@ -38,6 +38,7 @@ export class UserResolver {
   @Scopes('@vegagerdin.is/air-discount-scheme-scope')
   @ResolveField('meetsADSRequirements')
   resolveMeetsADSRequirements(@Parent() user: TUser): boolean {
+    console.log('MEETSADSREQUIREMENTSUSER', user)
     if (user.fund) {
       return user.fund.credit === user.fund.total - user.fund.used
     }

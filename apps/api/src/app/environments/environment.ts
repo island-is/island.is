@@ -89,6 +89,9 @@ const prodConfig = () => ({
     username: process.env.SYSLUMENN_USERNAME,
     password: process.env.SYSLUMENN_PASSWORD,
   },
+  airDiscountScheme: {
+    backendUrl: process.env.BACKEND_URL ?? 'http://localhost:4248',
+  },
   icelandicNamesRegistry: {
     backendUrl: process.env.ICELANDIC_NAMES_REGISTRY_BACKEND_URL,
   },
@@ -255,6 +258,9 @@ const devConfig = () => ({
     xRoadProviderId: process.env.COMPANY_REGISTRY_XROAD_PROVIDER_ID,
     xRoadClientId: process.env.XROAD_CLIENT_ID,
     apiPath: process.env.COMPANY_REGISTRY_XROAD_API_PATH,
+  },
+  airDiscountScheme: {
+    backendUrl: process.env.BACKEND_URL ?? 'http://localhost:4248',
   },
   icelandicNamesRegistry: {
     backendUrl: 'http://localhost:4239',
