@@ -99,16 +99,12 @@ export class MarriageConditionsSubmissionService {
         : ''
 
     const extraData: { [key: string]: string } = {
-      vigsluDagur: ceremony.date,
+      vigsluDagur: ceremony.date || '',
       vigsluStadur: ceramonyPlace,
       umsaekjandiRikisfang: personalInfo.citizenship,
       umsaekjandiHjuskaparstada: personalInfo.maritalStatus,
-      umsaekjandiLoksFyrriHjuskapar:
-        personalInfo.previousMarriageTermination || '',
       makiRikisfang: spousePersonalInfo.citizenship,
       makiHjuskaparstada: spousePersonalInfo.maritalStatus,
-      makiLoksFyrriHjuskapar:
-        spousePersonalInfo.previousMarriageTermination || '',
     }
     const uploadDataName = 'hjonavigsla1.0'
     const uploadDataId = 'hjonavigsla1.0'
