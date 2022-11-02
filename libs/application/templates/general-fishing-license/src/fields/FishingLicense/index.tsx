@@ -1,13 +1,13 @@
 import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box, SkeletonLoader, Text } from '@island.is/island-ui/core'
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useState } from 'react'
 import { FishingLicenseAlertMessage, ShipInformation } from '../components'
 import {
   FishingLicenseLicense as FishingLicenseSchema,
   FishingLicenseShip as Ship,
 } from '@island.is/api/schema'
-import { useMutation, useQuery } from '@apollo/client'
+import { useQuery } from '@apollo/client'
 import { queryFishingLicense } from '../../graphql/queries'
 import { RadioController } from '@island.is/shared/form-fields'
 import { fishingLicense } from '../../lib/messages'
@@ -20,7 +20,7 @@ export const FishingLicense: FC<FieldBaseProps> = ({
   field,
   errors,
 }) => {
-  const { formatMessage, locale } = useLocale()
+  const { formatMessage } = useLocale()
   const { register } = useFormContext()
   const selectedChargeType = getValueViaPath(
     application.answers,
@@ -28,7 +28,6 @@ export const FishingLicense: FC<FieldBaseProps> = ({
     '',
   ) as string
   const [chargeType, setChargeType] = useState<string>(selectedChargeType || '')
-  const [updateApplication] = useMutation(UPDATE_APPLICATION)
   const ships = getValueViaPath(
     application.externalData,
     'directoryOfFisheries.data.ships',
@@ -60,39 +59,6 @@ export const FishingLicense: FC<FieldBaseProps> = ({
     if (selectedLicense)
       setChargeType(selectedLicense.fishingLicenseInfo.chargeType)
   }
-
-  // clears charge type in answers
-  // TODO: DOES NOT WORK
-  const clearChargeType = async () => {
-    if (!application) return
-    const { fishingLicense, ...filteredAnswers } = application.answers
-    console.log(filteredAnswers)
-    await updateApplication({
-      variables: {
-        input: {
-          id: application.id,
-          answers: {
-            ...filteredAnswers,
-          },
-        },
-        locale,
-      },
-    })
-  }
-
-  // If a charge type is present in the answer but is invalid/illegal
-  // for the currently chosen ship, remove that charge type from the
-  // answer once we've  established all legal charge types for current ship
-  useEffect(() => {
-    if (!data?.fishingLicenses || !chargeType) return
-    const type = data?.fishingLicenses?.find(
-      ({ fishingLicenseInfo }: FishingLicenseSchema) =>
-        fishingLicenseInfo.code === chargeType,
-    ) as FishingLicenseSchema
-    if (!type || !type?.answer) {
-      clearChargeType()
-    }
-  }, [data])
 
   return (
     <>

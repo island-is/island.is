@@ -40,7 +40,7 @@ export const RailNetAndRoeNetCalculations: FC<FieldBaseProps> = ({
         </Text>
       </Box>
       <Box display="flex" justifyContent="spaceBetween">
-        <Box width="half">
+        <Box width="half" paddingRight={2}>
           <InputController
             id={`${field.id}.roenet`}
             name={`${field.id}.roenet`}
