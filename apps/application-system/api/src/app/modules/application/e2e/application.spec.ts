@@ -370,6 +370,7 @@ describe('Application system API', () => {
       })
       .expect(200)
 
+    // Advance from draft state
     await server
       .put(`/applications/${response.body.id}/submit`)
       .send({
@@ -377,6 +378,7 @@ describe('Application system API', () => {
       })
       .expect(200)
 
+    // Advance from waitingToAssign state
     await server
       .put(`/applications/${response.body.id}/submit`)
       .send({
@@ -384,6 +386,7 @@ describe('Application system API', () => {
       })
       .expect(200)
 
+    // Attempt to approve the application
     await server
       .put(`/applications/${response.body.id}/submit`)
       .send({
@@ -402,10 +405,12 @@ describe('Application system API', () => {
       .send({
         event: 'APPROVE',
         answers: {
-          careerHistoryCompanies: ['government', 'aranja', 'advania'],
+          careerHistoryDetails: {
+            careerHistoryCompanies: ['government', 'aranja', 'advania'],
+          },
         },
       })
-      .expect(200) // should fail because we are not allowed to update dreamJob
+      .expect(200)
 
     expect(finalStateResponse.body.state).toBe('approved')
     expect(finalStateResponse.body.answers).toEqual({

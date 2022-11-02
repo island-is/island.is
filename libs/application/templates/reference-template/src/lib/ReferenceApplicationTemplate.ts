@@ -183,7 +183,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
                 { event: 'REJECT', name: 'Hafna', type: 'reject' },
               ],
               write: {
-                answers: ['careerHistoryCompanies', 'approvedByReviewer'],
+                answers: ['careerHistoryDetails', 'approvedByReviewer'],
               },
               read: 'all',
               shouldBeListedForRole: false,
