@@ -91,7 +91,8 @@ describe('CaseController - Transition', () => {
         let then: Then
 
         beforeEach(async () => {
-          ;(mockCaseModel.update as jest.Mock).mockResolvedValueOnce([1])
+          const mockUpdate = mockCaseModel.update as jest.Mock
+          mockUpdate.mockResolvedValueOnce([1])
           transition !== CaseTransition.DELETE &&
             (mockCaseModel.findOne as jest.Mock).mockResolvedValueOnce(
               updatedCase,

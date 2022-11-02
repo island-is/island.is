@@ -9,12 +9,9 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
-import {
-  getCourtRecordPdfAsBuffer,
-  getCourtRecordPdfAsString,
-} from '../../../../formatters'
+import { getCourtRecordPdfAsString } from '../../../../formatters'
 import { AwsS3Service } from '../../../aws-s3'
-import { CourtDocumentFolder, CourtService } from '../../../court'
+import { CourtService } from '../../../court'
 import { PoliceService } from '../../../police'
 import { CaseFile, FileService } from '../../../file'
 import { Case } from '../../models/case.model'

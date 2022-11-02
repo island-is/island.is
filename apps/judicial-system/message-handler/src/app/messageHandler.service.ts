@@ -29,7 +29,7 @@ export class MessageHandlerService implements OnModuleDestroy {
   ) {}
 
   async handleMessage(message: Message): Promise<boolean> {
-    this.logger.info('Handling message', { msg: message })
+    this.logger.debug('Handling message', { msg: message })
 
     let handled = false
 
@@ -69,7 +69,7 @@ export class MessageHandlerService implements OnModuleDestroy {
         this.logger.error('Unknown message type', { msg: message })
     }
 
-    this.logger.info(`Message ${handled ? 'handled' : 'not handled'}`, {
+    this.logger.debug(`Message ${handled ? 'handled' : 'not handled'}`, {
       msg: message,
     })
 
