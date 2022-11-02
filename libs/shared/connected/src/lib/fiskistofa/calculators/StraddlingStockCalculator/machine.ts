@@ -248,9 +248,6 @@ export const machine = createMachine<Context, Event, State>(
   {
     services: {
       getData: async (context: Context, event: GetDataEvent) => {
-        console.log('EVENT')
-        console.log(event)
-
         const [
           fiskistofaGetShipStatusForCalendarYearResponse,
           fiskistofaGetQuotaTypesForCalendarYearResponse,
