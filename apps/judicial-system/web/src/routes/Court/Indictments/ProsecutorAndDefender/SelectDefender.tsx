@@ -25,11 +25,7 @@ const SelectDefender: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase } = useContext(FormContext)
   const { setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
-  const {
-    updateDefendant,
-    updateDefendantState,
-    setAndSendDefendantToServer,
-  } = useDefendants()
+  const { setAndSendDefendantToServer } = useDefendants()
 
   const [defenderNotFound, setDefenderNotFound] = useState<boolean>(false)
   const gender = defendant.gender || 'NONE'
