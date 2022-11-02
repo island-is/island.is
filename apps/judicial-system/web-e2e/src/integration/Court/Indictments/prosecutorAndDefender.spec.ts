@@ -1,5 +1,5 @@
 import { INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE } from '@island.is/judicial-system/consts'
-import { CaseType } from '@island.is/judicial-system/types'
+import { CaseType, UserRole } from '@island.is/judicial-system/types'
 
 import {
   makeCourt,
@@ -8,6 +8,7 @@ import {
   intercept,
   hasOperationName,
   Operation,
+  makeJudge,
 } from '../../../utils'
 
 describe(`${INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE}/:id`, () => {
@@ -18,10 +19,12 @@ describe(`${INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE}/:id`, () => {
       prosecutor: makeProsecutor(),
       creatingProsecutor: makeProsecutor(),
       court: makeCourt(),
+      judge: makeJudge(),
     }
 
     cy.stubAPIResponses()
     intercept(caseDataAddition)
+    cy.login(UserRole.JUDGE)
     cy.visit(`${INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE}/test_id`)
   })
 
@@ -41,7 +44,7 @@ describe(`${INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE}/:id`, () => {
     cy.getByTestid('defenderNotFound').should('not.exist')
     cy.getByTestid('continueButton').should('be.enabled')
 
-    cy.get('#defendantWaivesRightToCounsel').check()
+    cy.getByTestid('defendantWaivesRightToCounsel').first().check()
     cy.getByTestid('creatable-select-defenderName').should('not.have.value')
     cy.getByTestid('defenderEmail')
       .should('have.value', '')
@@ -51,11 +54,11 @@ describe(`${INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE}/:id`, () => {
       .should('be.disabled')
     cy.getByTestid('continueButton').should('be.enabled')
 
-    cy.get('#defendantWaivesRightToCounsel').uncheck()
+    cy.getByTestid('defendantWaivesRightToCounsel').uncheck()
     cy.getByTestid('continueButton').should('be.disabled')
   })
 
-  it.only('should send notification to defender', () => {
+  it('should send notification to defender', () => {
     cy.getByTestid('select-prosecutor').contains('Áki Ákærandi')
 
     cy.getByTestid('creatable-select-defenderName')

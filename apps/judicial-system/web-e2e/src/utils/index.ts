@@ -23,6 +23,7 @@ export enum Operation {
   SendNotificationMutation = 'SendNotificationMutation',
   CreatePresignedPostMutation = 'CreatePresignedPostMutation',
   CreateFileMutation = 'CreateFileMutation',
+  UpdateDefendantMutation = 'UpdateDefendantMutation',
   LimitedAccessCaseQuery = 'LimitedAccessCaseQuery',
 }
 
@@ -77,6 +78,11 @@ export const intercept = (res: Case, forceFail?: Operation) => {
       req.alias = 'CreateFileMutation'
       req.reply({
         fixture: 'createFileMutationResponse',
+      })
+    } else if (hasOperationName(req, Operation.UpdateDefendantMutation)) {
+      req.alias = 'UpdateDefendantMutation'
+      req.reply({
+        fixture: 'updateDefendantMutationResponse',
       })
     }
   })
