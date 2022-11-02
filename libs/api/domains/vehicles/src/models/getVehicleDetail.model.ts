@@ -318,4 +318,7 @@ export class VehiclesDetail {
 
   @Field(() => VehiclesFees, { nullable: true })
   fees?: VehiclesFees
+
+  @Field(() => Boolean, { nullable: true })
+  isOutOfCommission?: boolean
 }

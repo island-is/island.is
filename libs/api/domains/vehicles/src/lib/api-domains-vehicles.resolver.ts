@@ -82,6 +82,7 @@ export class VehiclesResolver {
           name: 'Operator name',
         },
       ],
+      isOutOfCommission: Math.random() < 0.5,
     }
 
     const data = await this.vehiclesService.getVehicleDetail(user, {

@@ -171,6 +171,7 @@ export const basicVehicleInformationMapper = (
     fees: {
       hasEncumbrances: data.fees?.hasEncumbrances === 1,
     },
+    isOutOfCommission: data.vehiclestatus === 'Úr umferð',
   }
 
   return response
