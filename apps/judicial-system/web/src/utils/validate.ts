@@ -2,7 +2,6 @@
 import {
   Case,
   CaseType,
-  Defendant,
   isIndictmentCase,
   User,
 } from '@island.is/judicial-system/types'
