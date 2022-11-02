@@ -9,7 +9,6 @@ const schema = z.object({
 export const AuthDelegationApiClientConfig = defineConfig({
   name: 'AuthDelegationClient',
   schema,
-  serverSideFeature: ServerSideFeature.delegationApi,
   load(env) {
     return {
       basePath: env.required(
