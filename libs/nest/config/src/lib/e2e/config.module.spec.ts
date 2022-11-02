@@ -162,31 +162,33 @@ describe('Config definitions', () => {
       )
     })
 
-    // TODO: Add when we upgrade to Zod 3.
-    // it('should return transformed values', () => {
-    //   // Arrange
-    //   process.env.CONFIG_TEST = '{"hello": "world"}'
-    //   const schema = z
-    //     .object({
-    //       test: z.object({
-    //         hello: z.string(),
-    //       }),
-    //     })
-    //     .transform((obj) => obj.hello)
-    //   const config = defineConfig({
-    //     name: 'test',
-    //     schema,
-    //     load: (env) => ({
-    //       test: env.requiredJSON('CONFIG_TEST'),
-    //     }),
-    //   })
-    //
-    //   // Act
-    //   const result = testInjection(config)
-    //
-    //   // Assert
-    //   return expect(result.test).toEqual('world')
-    // })
+    it.only('should return transformed values', () => {
+      // Arrange
+      process.env.CONFIG_TEST = '{"hello": "world"}'
+      const schema = z
+        .object({
+          test: z.object({
+            hello: z.string(),
+          }),
+        })
+        .transform((obj) => obj.test)
+      const config = defineConfig({
+        name: 'test',
+        schema,
+        load: (env) => ({
+          test: env.requiredJSON('CONFIG_TEST'),
+        }),
+      })
+
+      // Act
+      const result = testInjection(config)
+
+      // Assert
+      return expect(result).resolves.toEqual({
+        isConfigured: true,
+        test: { hello: 'world' },
+      })
+    })
 
     it('should work if server side feature is available', () => {
       // Arrange
