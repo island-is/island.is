@@ -8,15 +8,16 @@ info:
     name: Tryggingastofnun
     email: helpdesk@tr.is
 servers:
-  - url:  https://xroad-dev.xxxxx.is/r1/IS-DEV/GOV/10008/TR-Protected/oryrki-v1
+  - url: https://xroad-dev.xxxxx.is/r1/IS-DEV/GOV/10008/TR-Protected/oryrki-v1
     description: Optional server description, XROAD-DEV
   - url: https://test-oryrki-rest.tr.is/api/v1/oryrki
     description: test server innanhús hjá TR
 paths:
   /erOryrki:
     get:
-      summary: Sækir hvort einstaklingur sé öryrki (disabled person), þ.e. hafi gilt 75% örorkumat (disability assessment).
-               Kennitala í JWT.
+      summary:
+        Sækir hvort einstaklingur sé öryrki (disabled person), þ.e. hafi gilt 75% örorkumat (disability assessment).
+        Kennitala í JWT.
       responses:
         '200':
           description: success
@@ -35,11 +36,12 @@ paths:
           content:
             application/json:
               schema:
-                type: string  
+                type: string
   /faskirteini:
     get:
-      summary: Skilar upplýsingum um örorkuskíteini (disability card), ef einstaklingur er með gilt 75% örorkumat (disability assessment).
-               Kennitala í JWT.
+      summary:
+        Skilar upplýsingum um örorkuskíteini (disability card), ef einstaklingur er með gilt 75% örorkumat (disability assessment).
+        Kennitala í JWT.
       responses:
         '200':
           description: success
@@ -58,10 +60,10 @@ paths:
           content:
             application/json:
               schema:
-                type: string    
+                type: string
 components:
   securitySchemes:
-    bearerAuth:         
+    bearerAuth:
       type: http
       scheme: bearer
   schemas:
@@ -82,7 +84,7 @@ components:
           type: string
           minLength: 12
           maxLength: 12
-          pattern: '^\d{12}$'         
+          pattern: '^\d{12}$'
           example: 0101302479
         gildir_til:
           type: string
