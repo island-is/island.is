@@ -2,7 +2,6 @@ import { PaymentScheduleEmployer } from '@island.is/api/schema'
 import { getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Text } from '@island.is/island-ui/core'
-import * as Sentry from '@sentry/react'
 import { format as formatKennitala } from 'kennitala'
 import React from 'react'
 
@@ -24,9 +23,7 @@ export const EmployerInfo = ({ application }: FieldBaseProps) => {
   )
 
   if (!employerInfo) {
-    Sentry.captureException(
-      'Public Dept Payment Plan Application: Did not receive employer information from service.',
-    )
+    console.error('Public Dept Payment Plan Application: Did not receive employer information from service.')
     return null
   }
 
