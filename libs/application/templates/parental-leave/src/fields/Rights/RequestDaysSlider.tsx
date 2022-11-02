@@ -4,20 +4,27 @@ import { useFormContext } from 'react-hook-form'
 import { Box } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
-import { getApplicationAnswers } from '../../lib/parentalLeaveUtils'
+import {
+  getApplicationAnswers,
+  getMaxMultipleBirthsMonths,
+  getMultipleBirthsInMonths,
+} from '../../lib/parentalLeaveUtils'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import Slider from '../components/Slider'
 import BoxChart, { BoxChartKey } from '../components/BoxChart'
 import {
-  maxDaysToGiveOrReceive,
   defaultMonths,
-  maxMonths,
   daysInMonth,
+  maxDaysToGiveOrReceive,
 } from '../../config'
 import { YES } from '../../constants'
 
 const RequestDaysSlider: FC<FieldBaseProps> = ({ field, application }) => {
   const maxDays = maxDaysToGiveOrReceive
+  const alreadySelectedMonths = getMaxMultipleBirthsMonths(application.answers)
+  const maxMonths =
+    alreadySelectedMonths + Math.ceil(maxDaysToGiveOrReceive / daysInMonth)
+  const multipleBirthsInMonths = getMultipleBirthsInMonths(application.answers)
   const { id } = field
   const { formatMessage } = useLocale()
   const { register } = useFormContext()
@@ -27,7 +34,8 @@ const RequestDaysSlider: FC<FieldBaseProps> = ({ field, application }) => {
     requestDays === 0 ? 1 : requestDays,
   )
 
-  const requestedMonths = defaultMonths + chosenRequestDays / daysInMonth
+  const requestedMonths =
+    defaultMonths + multipleBirthsInMonths + chosenRequestDays / daysInMonth
 
   const daysStringKey =
     chosenRequestDays > 1
@@ -41,6 +49,13 @@ const RequestDaysSlider: FC<FieldBaseProps> = ({ field, application }) => {
         values: { months: defaultMonths },
       }),
       bulletStyle: 'blue',
+    },
+    {
+      label: () => ({
+        ...parentalLeaveFormMessages.shared.yourMultipleBirthsRightsInMonths,
+        values: { months: multipleBirthsInMonths },
+      }),
+      bulletStyle: 'purple',
     },
     {
       label: () => ({ ...daysStringKey, values: { day: chosenRequestDays } }),
@@ -80,6 +95,10 @@ const RequestDaysSlider: FC<FieldBaseProps> = ({ field, application }) => {
           calculateBoxStyle={(index) => {
             if (index < defaultMonths) {
               return 'blue'
+            }
+
+            if (index < alreadySelectedMonths) {
+              return 'purple'
             }
 
             if (index < requestedMonths) {
