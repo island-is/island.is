@@ -6,7 +6,6 @@ import {
 import { Form, FormModes } from '@island.is/application/types'
 import Logo from '../assets/Logo'
 import { information, externalData, payment } from '../lib/messages'
-import { m } from '../lib/messagess'
 
 export const Approved: Form = buildForm({
   id: 'ApprovedApplicationForm',
@@ -28,18 +27,6 @@ export const Approved: Form = buildForm({
       id: 'payment',
       title: payment.general.sectionTitle,
       children: [],
-    }),
-    buildSection({
-      id: 'confirmation',
-      title: m.confirmation,
-      children: [
-        buildCustomField({
-          component: 'ConfirmationField',
-          id: 'confirmationField',
-          title: '',
-          description: '',
-        }),
-      ],
     }),
   ],
 })

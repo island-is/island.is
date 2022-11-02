@@ -4,8 +4,8 @@ import {
   FailedDataProviderResult,
 } from '@island.is/application/types'
 import { PaymentCatalogProvider } from '@island.is/application/data-providers'
-import { m } from '../lib/messagess'
 import { ChargeItemCode } from '@island.is/shared/constants'
+import { error } from '../lib/messages'
 
 const CHARGE_ITEM_CODE = ChargeItemCode.TRANSPORT_AUTHORITY_XXX
 const SYSLUMADUR_NATIONAL_ID = '6509142520'
@@ -24,7 +24,7 @@ export class PaymentChargeInfoProvider extends PaymentCatalogProvider {
   onProvideError(result: string): FailedDataProviderResult {
     return {
       date: new Date(),
-      reason: m.errorDataProvider,
+      reason: error.errorDataProvider,
       status: 'failure',
       data: result,
     }

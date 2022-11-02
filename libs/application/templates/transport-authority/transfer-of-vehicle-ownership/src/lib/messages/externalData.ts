@@ -42,13 +42,12 @@ export const externalData = {
   nationalRegistry: defineMessages({
     title: {
       id: 'ta.tvo.application:externalData.nationalRegistry.title',
-      defaultMessage: 'Persónuupplýsingar úr Þjóðskrá',
+      defaultMessage: 'Upplýsingar úr Þjóðskrá',
       description: 'Personal information from the National Registry',
     },
     subTitle: {
       id: 'ta.tvo.application:externalData.nationalRegistry.subTitle',
-      defaultMessage:
-        'Til þess að auðvelda fyrir sækjum við persónuupplýsingar úr Þjóðskrá til þess að fylla út umsóknina',
+      defaultMessage: 'Hér sækjum við nafn, kennitölu og heimilisfang',
       description:
         'Information from the National Registry will be used to prefill the data in the application',
     },
@@ -70,17 +69,35 @@ export const externalData = {
   currentVehicles: defineMessages({
     title: {
       id: 'ta.tvo.application:externalData.currentVehicles.title',
-      defaultMessage: 'Þín ökutæki úr ökutækjaskrá',
+      defaultMessage: 'Upplýsingar um bifreiðar í þinni eigu og stöðu þeirra',
       description: 'Your vehicles from the vehicle registry',
     },
     subTitle: {
       id: 'ta.tvo.application:externalData.currentVehicles.subTitle',
-      defaultMessage: 'Til þess að einfalda val á ökutæki',
+      defaultMessage:
+        'Upplýsingar úr ökutækjaskrá  - Upplýsingar um þínar bifreiðar og stöðu þeirra.',
       description: 'To make stuff easier',
     },
     empty: {
       id: 'ta.tvo.application:externalData.currentVehicles.empty',
       defaultMessage: 'Þú átt engin ökutæki þar sem þú ert aðaleigandi',
+      description: 'You do not have any vehicles where you are the main owner',
+    },
+  }),
+  payment: defineMessages({
+    title: {
+      id: 'ta.tvo.application:externalData.payment.title',
+      defaultMessage: 'Upplýsingar frá Fjársýslunni',
+      description: 'Your vehicles from the vehicle registry',
+    },
+    subTitle: {
+      id: 'ta.tvo.application:externalData.payment.subTitle',
+      defaultMessage: 'Um stöðu bifreiðagjalda',
+      description: 'To make stuff easier',
+    },
+    empty: {
+      id: 'ta.tvo.application:externalData.payment.empty',
+      defaultMessage: 'Ekki tókst að sækja upplýsingar frá Fjársýslunni',
       description: 'You do not have any vehicles where you are the main owner',
     },
   }),

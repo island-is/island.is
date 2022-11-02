@@ -6,7 +6,6 @@ import {
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
 import { payment } from '../../lib/messages'
-import { m } from '../../lib/messagess'
 
 export const paymentSection = buildSection({
   id: 'payment',
@@ -25,12 +24,12 @@ export const paymentSection = buildSection({
         buildSubmitField({
           id: 'submit',
           placement: 'footer',
-          title: m.confirm,
+          title: payment.confirmation.confirm,
           refetchApplicationAfterSubmit: true,
           actions: [
             {
               event: DefaultEvents.SUBMIT,
-              name: m.confirm,
+              name: payment.confirmation.confirm,
               type: 'primary',
             },
           ],

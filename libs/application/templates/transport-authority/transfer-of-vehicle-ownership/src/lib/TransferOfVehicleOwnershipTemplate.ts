@@ -14,9 +14,9 @@ import {
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
 import { ApiActions } from '../shared'
-import { m } from './messagess'
 import { Features } from '@island.is/feature-flags'
 import { TransferOfVehicleOwnershipSchema } from './dataSchema'
+import { application } from './messages'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -24,50 +24,22 @@ const template: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.TRANSFER_OF_VEHICLE_OWNERSHIP,
-  name: m.name,
-  institution: m.institutionName,
+  name: application.name,
+  institution: application.institutionName,
   translationNamespaces: [
     ApplicationConfigurations.TransferOfVehicleOwnership.translation,
   ],
   dataSchema: TransferOfVehicleOwnershipSchema,
   featureFlag: Features.transportAuthorityTransferOfVehicleOwnership,
   stateMachineConfig: {
-    initial: States.PREREQUISITES,
+    initial: States.DRAFT,
     states: {
-      [States.PREREQUISITES]: {
-        meta: {
-          name: 'Skilyrði',
-          progress: 0,
-          lifecycle: EphemeralStateLifeCycle,
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/PrerequisitesForm').then((module) =>
-                  Promise.resolve(module.PrerequisitesForm),
-                ),
-              actions: [
-                {
-                  event: DefaultEvents.SUBMIT,
-                  name: 'Staðfesta',
-                  type: 'primary',
-                },
-              ],
-              write: 'all',
-              delete: true,
-            },
-          ],
-        },
-        on: {
-          [DefaultEvents.SUBMIT]: { target: States.DRAFT },
-        },
-      },
       [States.DRAFT]: {
         meta: {
           name: 'Tilkynning um eigendaskipti að ökutæki',
           actionCard: {
             tag: {
-              label: m.actionCardDraft,
+              label: application.actionCardDraft,
               variant: 'blue',
             },
           },
@@ -103,7 +75,7 @@ const template: ApplicationTemplate<
           name: 'Greiðsla',
           actionCard: {
             tag: {
-              label: m.actionCardPayment,
+              label: application.actionCardPayment,
               variant: 'red',
             },
           },
@@ -139,7 +111,7 @@ const template: ApplicationTemplate<
           name: 'Tilkynning um eigendaskipti að ökutæki',
           actionCard: {
             tag: {
-              label: m.actionCardDraft,
+              label: application.actionCardDraft,
               variant: 'blue',
             },
           },
@@ -174,7 +146,7 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: { target: States.PAYMENT },
+          [DefaultEvents.SUBMIT]: { target: States.REVIEW },
         },
       },
       [States.COMPLETED]: {
@@ -184,7 +156,7 @@ const template: ApplicationTemplate<
           lifecycle: pruneAfterDays(3 * 30),
           actionCard: {
             tag: {
-              label: m.actionCardDone,
+              label: application.actionCardDone,
               variant: 'blueberry',
             },
           },

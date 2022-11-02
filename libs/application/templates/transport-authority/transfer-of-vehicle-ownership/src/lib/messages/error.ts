@@ -12,4 +12,9 @@ export const error = defineMessages({
     defaultMessage: 'Ökutæki þarf að vera gilt',
     description: 'Error message if the vehicle chosen is invalid or not chosen',
   },
+  errorDataProvider: {
+    id: 'cr.application:error.dataProvider',
+    defaultMessage: 'Reyndu aftur síðar',
+    description: 'Unhandled error in data provider',
+  },
 })

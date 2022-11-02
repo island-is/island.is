@@ -6,7 +6,6 @@ import {
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { information, externalData, payment, conclusion } from '../lib/messages'
-import { m } from '../lib/messagess'
 
 export const TransferOfVehicleOwnershipForm: Form = buildForm({
   id: 'TransferOfVehicleOwnershipFormDraft',
@@ -50,18 +49,6 @@ export const TransferOfVehicleOwnershipForm: Form = buildForm({
               description: '',
             }),
           ],
-        }),
-      ],
-    }),
-    buildSection({
-      id: 'confirmation',
-      title: m.confirmation,
-      children: [
-        buildCustomField({
-          component: 'ConfirmationField',
-          id: 'ConfirmationField',
-          title: '',
-          description: '',
         }),
       ],
     }),

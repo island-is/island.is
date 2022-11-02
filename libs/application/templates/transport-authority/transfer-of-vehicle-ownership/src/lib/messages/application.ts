@@ -1,6 +1,6 @@
 import { defineMessages } from 'react-intl'
 
-export const m = defineMessages({
+export const application = defineMessages({
   name: {
     id: 'ta.tvo.application:name',
     defaultMessage: 'Tilkynning um eigendaskipti að ökutæki',
@@ -28,36 +28,5 @@ export const m = defineMessages({
     defaultMessage: 'Afgreidd',
     description:
       'Description of application state/status when application is processed',
-  },
-  errorDataProvider: {
-    id: 'cr.application:error.dataProvider',
-    defaultMessage: 'Reyndu aftur síðar',
-    description: 'Unhandled error in data provider',
-  },
-  confirmation: {
-    id: 'ta.tvo.application:confirmation',
-    defaultMessage: 'Staðfesting',
-    description: 'confirmation',
-  },
-  confirm: {
-    id: 'cr.application:confirm',
-    defaultMessage: 'Staðfesta',
-    description: 'confirm',
-  },
-  openMySites: {
-    id: 'ta.tvo.application:openMySites',
-    defaultMessage: 'Opna mínar síður',
-    description: 'Open my sites',
-  },
-  successTitle: {
-    id: 'ta.tvo.application:successTitle',
-    defaultMessage:
-      'Tilkynning þín um eigendaskipti að ökutæki hefur verið staðfest',
-    description: '',
-  },
-  successDescription: {
-    id: 'ta.tvo.application:successDescription',
-    defaultMessage: ' ',
-    description: '',
   },
 })

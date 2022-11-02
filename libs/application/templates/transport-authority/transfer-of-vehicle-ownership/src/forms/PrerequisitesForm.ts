@@ -8,8 +8,7 @@ import {
   buildDescriptionField,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
-import { information, externalData, payment } from '../lib/messages'
-import { m } from '../lib/messagess'
+import { information, externalData, payment, conclusion } from '../lib/messages'
 
 export const PrerequisitesForm: Form = buildForm({
   id: 'PrerequisitesForm',
@@ -28,18 +27,6 @@ export const PrerequisitesForm: Form = buildForm({
           checkboxLabel: externalData.dataProvider.checkboxLabel,
           dataProviders: [
             buildDataProviderItem({
-              id: 'nationalRegistry',
-              type: 'NationalRegistryProvider',
-              title: externalData.nationalRegistry.title,
-              subTitle: externalData.nationalRegistry.subTitle,
-            }),
-            buildDataProviderItem({
-              id: 'userProfile',
-              type: 'UserProfileProvider',
-              title: externalData.userProfile.title,
-              subTitle: externalData.userProfile.subTitle,
-            }),
-            buildDataProviderItem({
               id: 'currentVehicleList',
               type: 'CurrentVehiclesProvider',
               title: externalData.currentVehicles.title,
@@ -53,7 +40,20 @@ export const PrerequisitesForm: Form = buildForm({
             buildDataProviderItem({
               id: 'payment',
               type: 'PaymentChargeInfoProvider',
-              title: '',
+              title: externalData.payment.title,
+              subTitle: externalData.payment.subTitle,
+            }),
+            buildDataProviderItem({
+              id: 'nationalRegistry',
+              type: 'NationalRegistryProvider',
+              title: externalData.nationalRegistry.title,
+              subTitle: externalData.nationalRegistry.subTitle,
+            }),
+            buildDataProviderItem({
+              id: 'userProfile',
+              type: 'UserProfileProvider',
+              title: externalData.userProfile.title,
+              subTitle: externalData.userProfile.subTitle,
             }),
           ],
         }),
@@ -104,7 +104,7 @@ export const PrerequisitesForm: Form = buildForm({
     }),
     buildSection({
       id: 'confirmation',
-      title: m.confirmation,
+      title: conclusion.general.sectionTitle,
       children: [],
     }),
   ],

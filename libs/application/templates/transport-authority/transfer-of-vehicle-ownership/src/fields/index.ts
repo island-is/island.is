@@ -1,4 +1,3 @@
-export { ConfirmationField } from './ConfirmationField'
 export { NationalIdWithName } from './NationalIdWithName'
 export { ApplicationStatus } from './ApplicationStatus'
 export { PaymentChargeOverview } from './Payment/PaymentChargeOverview'
