@@ -34,7 +34,7 @@ export const parseDisabilityLicensePayload = (
     {
       type: GenericLicenseDataFieldType.Value,
       label: label ? label['validTo'] : i18n.validTo[locale],
-      value: license.gildirTil ?? '',
+      value: license.gildirTil?.toISOString() ?? '',
     },
   ]
 
@@ -50,8 +50,9 @@ export const parseDisabilityLicensePayload = (
   }
 }
 
-const formatDateString = (dateTime: string) =>
-  dateTime ? format(new Date(dateTime), 'dd/MM/yyyy') : ''
+const formatDateString = (dateTime: Date) => {
+  return dateTime ? format(dateTime, 'dd/MM/yyyy') : ''
+}
 
 // TODO FORMAT CORRECTLY
 export const createPkPassDataInput = (license: OrorkuSkirteini) => {

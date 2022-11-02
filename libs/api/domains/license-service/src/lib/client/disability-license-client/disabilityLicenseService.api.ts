@@ -41,12 +41,8 @@ export class GenericDisabilityLicenseApi
     this.disabilityLicenseApi.withMiddleware(new AuthMiddleware(user as Auth))
 
   async fetchLicense(user: User) {
-    // TODO: FIX -> TEMPORARY WHILE IN DEV
-    const devKennitala = '0101302479'
     const license = await this.disabilityLicenseApi
-      .faskirteiniPost({
-        inlineObject1: { kennitala: devKennitala },
-      })
+      .faskirteiniGet()
       .catch(handle404)
     return license
   }

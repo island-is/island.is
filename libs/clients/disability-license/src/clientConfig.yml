@@ -1,26 +1,22 @@
 openapi: 3.0.0
 info:
-  title: Öryrki
-  description: Upplýsingar um öryrkja frá Tryggingastofnun
+  title: Öryrki V1
+  description: Upplýsingar um einstaklinga sem eru skilgreindir eru sem öryrkja frá Tryggingastofnun
   version: 1.0.0
+  x-category: health
+  contact:
+    name: Tryggingastofnun
+    email: helpdesk@tr.is
 servers:
-  - url: https://xroad-dev.xxxxx.is/r1/IS-DEV/GOV/10008/TR-Protected/oryrki-v1
+  - url:  https://xroad-dev.xxxxx.is/r1/IS-DEV/GOV/10008/TR-Protected/oryrki-v1
     description: Optional server description, XROAD-DEV
+  - url: https://test-oryrki-rest.tr.is/api/v1/oryrki
+    description: test server innanhús hjá TR
 paths:
   /erOryrki:
-    post:
-      summary: Sækir hvort einstaklingur sé öryrki, þ.e. hafi gilt 75% örorkumat
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                kennitala:
-                  type: string
-                  default:
-                  description: kennitala greiðsluþega
+    get:
+      summary: Sækir hvort einstaklingur sé öryrki (disabled person), þ.e. hafi gilt 75% örorkumat (disability assessment).
+               Kennitala í JWT.
       responses:
         '200':
           description: success
@@ -28,33 +24,22 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/er_oryrki'
-
-        '400':
-          description: bad Request
+        '401':
+          description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/errors'
+                type: string
         '500':
           description: internal Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/errors'
+                type: string  
   /faskirteini:
-    post:
-      summary: Skilar upplýsingum um örorkuskíteini, ef einstaklingur er með gilt 75% mat
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                kennitala:
-                  type: string
-                  default:
-                  description: kennitala greiðsluþega
+    get:
+      summary: Skilar upplýsingum um örorkuskíteini (disability card), ef einstaklingur er með gilt 75% örorkumat (disability assessment).
+               Kennitala í JWT.
       responses:
         '200':
           description: success
@@ -62,18 +47,30 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ororku_skirteini'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: string
+        '500':
+          description: internal Error
+          content:
+            application/json:
+              schema:
+                type: string    
 components:
   securitySchemes:
-    bearerAuth:
+    bearerAuth:         
       type: http
       scheme: bearer
   schemas:
     er_oryrki:
       properties:
         erOryrki:
-          type: string
-          example: 'J'
-          description: J=Já eða N=Nei, Nei felur ekki í sér upplýsignar um hvort einstaklingurinn sé viðskiptavinur TR
+          type: boolean
+          example: true
+          description: true=Já eða false=Nei, Nei felur ekki í sér upplýsingar um hvort einstaklingurinn sé viðskiptavinur TR eöa ekki
       required:
         - erOryrki
     ororku_skirteini:
@@ -83,28 +80,13 @@ components:
           example: nafn greiðsluþega
         kennitala:
           type: string
+          minLength: 12
+          maxLength: 12
+          pattern: '^\d{12}$'         
           example: 0101302479
         gildir_til:
           type: string
-          example: 2023-10-07
-    errors:
-      properties:
-        errors:
-          type: array
-          items:
-            $ref: '#/components/schemas/error'
-    error:
-      type: object
-      properties:
-        message:
-          type: string
-        status:
-          type: integer
-        code:
-          type: integer
-          required:
-            - message
-            - status
-            - code
+          format: date
+          example: 2023-10-07 (yyyy-mm-dd)
 security:
   - bearerAuth: []
