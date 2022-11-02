@@ -1,0 +1,31 @@
+{
+  "root": "libs/service-portal/access-control/delegations",
+  "sourceRoot": "libs/service-portal/access-control/delegations/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/service-portal/access-control/delegations/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/service-portal/access-control/delegations"],
+      "options": {
+        "jestConfig": "libs/service-portal/access-control/delegations/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "extract-strings": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/service-portal/access-control/delegations/src/{components,screens,hooks}/**/*.{js,ts,tsx}'"
+      }
+    }
+  }
+}

@@ -27,7 +27,6 @@ import {
   StartDateOptions,
   ParentalRelations,
   TransferRightsOption,
-  UnEmployedBenefitTypes,
   PARENTAL_GRANT_STUDENTS,
   PARENTAL_LEAVE,
   PARENTAL_GRANT,
@@ -389,7 +388,7 @@ export function getApplicationExternalData(
   const navId = getValueViaPath(externalData, 'navId', '') as string
 
   let applicationFundId = navId
-  if (applicationFundId === '') {
+  if (!applicationFundId || applicationFundId === '') {
     applicationFundId = getValueViaPath(
       externalData,
       'sendApplication.data.id',
@@ -901,27 +900,6 @@ export const removeCountryCode = (application: Application) => {
     : getMobilePhoneNumber(application)?.startsWith('00354')
     ? getMobilePhoneNumber(application)?.slice(5)
     : getMobilePhoneNumber(application)
-}
-
-export const showGenericFileUpload = (answers: Application['answers']) => {
-  const {
-    isSelfEmployed,
-    isRecivingUnemploymentBenefits,
-    unemploymentBenefits,
-    applicationType,
-  } = getApplicationAnswers(answers)
-  // we don't want to show generic file upload atm if we are showing another file upload
-  // isSelfEmployed, students, benefits (union & health insurance)
-  if (isSelfEmployed === YES) return false
-  else if (
-    (isRecivingUnemploymentBenefits &&
-      unemploymentBenefits === UnEmployedBenefitTypes.union) ||
-    unemploymentBenefits === UnEmployedBenefitTypes.healthInsurance
-  )
-    return false
-  else if (applicationType === PARENTAL_GRANT_STUDENTS) return false
-
-  return true
 }
 
 // Functions that determine dynamic text changes in forms based on application type
