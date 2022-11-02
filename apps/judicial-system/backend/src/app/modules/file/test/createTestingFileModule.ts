@@ -14,6 +14,7 @@ import { CaseService } from '../../case'
 import { CaseFile } from '../models/file.model'
 import { FileService } from '../file.service'
 import { FileController } from '../file.controller'
+import { InternalFileController } from '../internalFile.controller'
 import { Sequelize } from 'sequelize-typescript'
 
 jest.mock('../../aws-s3/awsS3.service.ts')
@@ -28,7 +29,7 @@ export const createTestingFileModule = async () => {
         secretToken: environment.auth.secretToken,
       }),
     ],
-    controllers: [FileController],
+    controllers: [FileController, InternalFileController],
     providers: [
       CaseService,
       CourtService,
@@ -84,6 +85,10 @@ export const createTestingFileModule = async () => {
 
   const fileController = fileModule.get<FileController>(FileController)
 
+  const internalFileController = fileModule.get<InternalFileController>(
+    InternalFileController,
+  )
+
   const sequelize = fileModule.get<Sequelize>(Sequelize)
 
   return {
@@ -92,6 +97,7 @@ export const createTestingFileModule = async () => {
     fileModel,
     fileService,
     fileController,
+    internalFileController,
     sequelize,
   }
 }
