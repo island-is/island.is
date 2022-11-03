@@ -7,7 +7,6 @@ import {
   EphemeralStateLifeCycle,
   getValueViaPath,
   pruneAfterDays,
-  DefaultStateLifeCycle,
 } from '@island.is/application/core'
 import {
   ApplicationContext,
@@ -32,6 +31,7 @@ import {
   NO_UNION,
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
+  TransferRightsOption,
 } from '../constants'
 import { dataSchema } from './dataSchema'
 import { answerValidators } from './answerValidators'
@@ -43,6 +43,7 @@ import {
 import {
   getApplicationAnswers,
   getApplicationExternalData,
+  getMaxMultipleBirthsDays,
   getOtherParentId,
   getSelectedChild,
 } from '../lib/parentalLeaveUtils'
@@ -140,6 +141,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           'setSpouseUsageToHundredIfUseAsMuchAsPossibleIsYes',
           'removeNullPeriod',
           'setNavId',
+          'correctTransferRights',
         ],
         meta: {
           name: States.DRAFT,
@@ -1148,6 +1150,26 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         )
 
         set(answers, 'otherParentObj.chooseOtherParent', MANUAL)
+
+        return context
+      }),
+      correctTransferRights: assign((context) => {
+        const { application } = context
+        const { answers } = application
+        const {
+          hasMultipleBirths,
+          multipleBirthsRequestDays,
+        } = getApplicationAnswers(answers)
+        const multipleBirthsRequestDaysNumber = multipleBirthsRequestDays * 1
+
+        if (
+          hasMultipleBirths === YES &&
+          multipleBirthsRequestDaysNumber !==
+            getMaxMultipleBirthsDays(answers) &&
+          multipleBirthsRequestDaysNumber > 0
+        ) {
+          set(answers, 'transferRights', TransferRightsOption.NONE)
+        }
 
         return context
       }),
