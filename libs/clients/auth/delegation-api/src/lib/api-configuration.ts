@@ -11,7 +11,7 @@ export const ApiConfiguration = {
       fetchApi: createEnhancedFetch({
         name: 'clients-auth-delegation-api',
       }),
-      basePath: config.isConfigured ? config.basePath : `/FEATURE-FLAGGED`,
+      basePath: config.basePath,
     })
   },
   inject: [AuthDelegationApiClientConfig.KEY],

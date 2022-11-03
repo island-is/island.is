@@ -261,9 +261,9 @@ export class CmsResolver {
   @Directive(cacheControlDirective())
   @Query(() => Organizations)
   getOrganizations(
-    @Args('input') input: GetOrganizationsInput,
+    @Args('input', { nullable: true }) input: GetOrganizationsInput,
   ): Promise<Organizations> {
-    return this.cmsContentfulService.getOrganizations(input?.lang ?? 'is-IS')
+    return this.cmsContentfulService.getOrganizations(input)
   }
 
   @Directive(cacheControlDirective())

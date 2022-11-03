@@ -67,7 +67,10 @@ const Layout: FC = ({ children }) => {
         <Box as="main" component="main" style={{ marginTop: height }}>
           <GridContainer className={styles.layoutContainer}>
             <GridRow>
-              <GridColumn span={'11/12'} className={styles.layoutGrid}>
+              <GridColumn
+                span={['12/12', '12/12', '12/12', '11/12']}
+                className={styles.layoutGrid}
+              >
                 <Hidden print>
                   <ContentBreadcrumbs />
                 </Hidden>

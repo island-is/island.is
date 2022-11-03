@@ -26,7 +26,6 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 import type { User as TUser } from '@island.is/judicial-system/types'
-import { SIGNED_VERDICT_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
 
 import { uuidFactory } from '../../factories'
 import {
@@ -37,7 +36,7 @@ import {
   formatCourtUploadRulingTitle,
   getRequestPdfAsBuffer,
 } from '../../formatters'
-import { courtUpload, notifications } from '../../messages'
+import { courtUpload } from '../../messages'
 import { CaseEvent, EventService } from '../event'
 import { AwsS3Service } from '../aws-s3'
 import { CourtDocumentFolder, CourtService } from '../court'
@@ -51,8 +50,9 @@ import { oldFilter } from './filters/case.filters'
 import { Case } from './models/case.model'
 import { CaseArchive } from './models/caseArchive.model'
 import { ArchiveResponse } from './models/archive.response'
-import { DeliverResponse } from './models/deliver.response'
+import { DeliverCompletedCaseResponse } from './models/deliverCompletedCase.response'
 import { DeliverProsecutorDocumentsResponse } from './models/deliverProsecutorDocuments.response'
+import { DeliverResponse } from './models/deliver.response'
 import { caseModuleConfig } from './case.config'
 
 const caseEncryptionProperties: (keyof Case)[] = [
@@ -352,7 +352,7 @@ export class InternalCaseService {
     return success
   }
 
-  private async deliverSignedRulingToCourt(theCase: Case): Promise<boolean> {
+  private async deliverSignedRulingPdfToCourt(theCase: Case): Promise<boolean> {
     return this.awsS3Service
       .getObject(`generated/${theCase.id}/ruling.pdf`)
       .then((pdf) => this.uploadSignedRulingPdfToCourt(theCase, pdf))
@@ -602,17 +602,8 @@ export class InternalCaseService {
     return { caseArchived: true }
   }
 
-  async deliver(theCase: Case): Promise<DeliverResponse> {
+  async deliver(theCase: Case): Promise<DeliverCompletedCaseResponse> {
     await this.refreshFormatMessage()
-
-    const rulingDeliveredToCourt =
-      isIndictmentCase(theCase.type) ||
-      (await this.deliverSignedRulingToCourt(theCase))
-
-    const courtRecordDeliveredToCourt =
-      isIndictmentCase(theCase.type) ||
-      Boolean(theCase.rulingModifiedHistory) || // court record did not change
-      (await this.uploadCourtRecordPdfToCourt(theCase))
 
     const caseFilesDeliveredToCourt =
       isIndictmentCase(theCase.type) ||
@@ -624,27 +615,7 @@ export class InternalCaseService {
       (Boolean(theCase.rulingModifiedHistory) || // no relevant changes
         (await this.deliverCaseToPolice(theCase)))
 
-    if (
-      !isIndictmentCase(theCase.type) &&
-      (!rulingDeliveredToCourt || !courtRecordDeliveredToCourt)
-    ) {
-      this.sendEmailToCourt(
-        theCase,
-        this.formatMessage(notifications.signedRuling.subjectV2, {
-          courtCaseNumber: theCase.courtCaseNumber,
-          isModifyingRuling: Boolean(theCase.rulingModifiedHistory),
-        }),
-        this.formatMessage(notifications.signedRuling.courtBody, {
-          courtCaseNumber: theCase.courtCaseNumber,
-          linkStart: `<a href="${this.config.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${theCase.id}">`,
-          linkEnd: '</a>',
-        }),
-      )
-    }
-
     return {
-      rulingDeliveredToCourt,
-      courtRecordDeliveredToCourt,
       caseFilesDeliveredToCourt,
       caseDeliveredToPolice,
     }
@@ -662,5 +633,21 @@ export class InternalCaseService {
     return {
       requestDeliveredToCourt,
     }
+  }
+
+  async deliverCourtRecordToCourt(theCase: Case): Promise<DeliverResponse> {
+    await this.refreshFormatMessage()
+
+    const delivered = await this.uploadCourtRecordPdfToCourt(theCase)
+
+    return { delivered }
+  }
+
+  async deliverSignedRulingToCourt(theCase: Case): Promise<DeliverResponse> {
+    await this.refreshFormatMessage()
+
+    const delivered = await this.deliverSignedRulingPdfToCourt(theCase)
+
+    return { delivered }
   }
 }

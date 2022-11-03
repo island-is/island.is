@@ -29,7 +29,7 @@ const FinancialStatementInaoApplication: ApplicationTemplate<
   name: (application) => {
     const hasApprovedExternalData = application.answers?.approveExternalData
     const currentUser = hasApprovedExternalData
-      ? (application.externalData.nationalRegistry.data as User)
+      ? (application.externalData?.nationalRegistry?.data as User)
       : undefined
 
     return currentUser

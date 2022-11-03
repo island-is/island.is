@@ -4,7 +4,7 @@
   "projectType": "application",
   "targets": {
     "build": {
-      "executor": "@nrwl/node:webpack",
+      "executor": "./tools/executors/node:build",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/services/auth/delegation-api",
@@ -16,13 +16,7 @@
         "production": {
           "optimization": true,
           "extractLicenses": true,
-          "inspect": false,
-          "fileReplacements": [
-            {
-              "replace": "apps/services/auth/delegation-api/src/environments/environment.ts",
-              "with": "apps/services/auth/delegation-api/src/environments/environment.prod.ts"
-            }
-          ]
+          "inspect": false
         }
       }
     },

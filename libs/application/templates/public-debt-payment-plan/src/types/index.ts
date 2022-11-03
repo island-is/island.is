@@ -6,7 +6,7 @@ import {
   PaymentScheduleType,
 } from '@island.is/api/schema'
 import { SuccessfulDataProviderResult } from '@island.is/application/types'
-import * as z from 'zod'
+import { z } from 'zod'
 import {
   PaymentPlanSchema,
   PublicDebtPaymentPlanSchema,

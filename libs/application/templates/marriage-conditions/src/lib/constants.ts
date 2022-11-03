@@ -25,12 +25,6 @@ export enum ApiActions {
   assignSpouse = 'assignSpouse',
 }
 
-export enum MarriageTermination {
-  divorce = 'divorce',
-  lostSpouse = 'lostSpouse',
-  annulment = 'annulment',
-}
-
 export type DistrictCommissionerAgencies = {
   name: string
   place: string

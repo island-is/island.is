@@ -55,7 +55,7 @@ import { Case } from './models/case.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { caseModuleConfig } from './case.config'
 
-const includes: Includeable[] = [
+export const includes: Includeable[] = [
   { model: Defendant, as: 'defendants' },
   { model: Institution, as: 'court' },
   {
@@ -96,7 +96,7 @@ const includes: Includeable[] = [
   },
 ]
 
-const defendantsOrder: OrderItem = [
+export const defendantsOrder: OrderItem = [
   { model: Defendant, as: 'defendants' },
   'created',
   'ASC',
@@ -160,6 +160,30 @@ export class CaseService {
       : this.caseModel.create({ ...caseToCreate }))
 
     return theCase.id
+  }
+
+  private addCompletedCaseMessagesToQueue(caseId: string): Promise<void> {
+    return this.messageService.sendMessagesToQueue([
+      { type: MessageType.CASE_COMPLETED, caseId },
+      { type: MessageType.DELIVER_COURT_RECORD_TO_COURT, caseId },
+      { type: MessageType.DELIVER_SIGNED_RULING_TO_COURT, caseId },
+      { type: MessageType.SEND_RULING_NOTIFICAGTION, caseId },
+    ])
+  }
+
+  // Note that the court record and ruling are not delieverd to court for indictment cases
+  addCompletedIndictmentCaseMessagesToQueue(theCase: Case): Promise<void> {
+    return this.messageService.sendMessagesToQueue([
+      { type: MessageType.CASE_COMPLETED, caseId: theCase.id },
+      { type: MessageType.SEND_RULING_NOTIFICAGTION, caseId: theCase.id },
+    ])
+  }
+
+  addCaseConnectedToCourtCaseMessageToQueue(caseId: string): Promise<void> {
+    return this.messageService.sendMessageToQueue({
+      type: MessageType.CASE_CONNECTED_TO_COURT_CASE,
+      caseId,
+    })
   }
 
   async findById(caseId: string): Promise<Case> {
@@ -260,20 +284,6 @@ export class CaseService {
     }
   }
 
-  addCaseCompletedMessageToQueue(caseId: string): Promise<string> {
-    return this.messageService.postMessageToQueue({
-      type: MessageType.CASE_COMPLETED,
-      caseId,
-    })
-  }
-
-  addCaseConnectedToCourtCaseMessageToQueue(caseId: string): Promise<string> {
-    return this.messageService.postMessageToQueue({
-      type: MessageType.CASE_CONNECTED_TO_COURT_CASE,
-      caseId,
-    })
-  }
-
   async getRequestPdf(theCase: Case): Promise<Buffer> {
     await this.refreshFormatMessage()
 
@@ -310,8 +320,8 @@ export class CaseService {
           caseFile.category === CaseFileCategory.CASE_FILE &&
           caseFile.type === 'application/pdf' &&
           caseFile.key &&
-          caseFile.chapter !== undefined &&
-          caseFile.orderWithinChapter !== undefined,
+          caseFile.chapter !== null &&
+          caseFile.orderWithinChapter !== null,
       )
       ?.sort(
         (caseFile1, caseFile2) =>
@@ -545,7 +555,7 @@ export class CaseService {
       )
 
       // No need to wait for now, but may consider including this in a transaction with the database update later
-      this.addCaseCompletedMessageToQueue(theCase.id)
+      this.addCompletedCaseMessagesToQueue(theCase.id)
 
       return { documentSigned: true }
     } catch (error) {
