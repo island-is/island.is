@@ -53,7 +53,7 @@ export class OrganizationPage {
   @Field(() => LinkGroup, { nullable: true })
   secondaryMenu!: LinkGroup | null
 
-  @Field(() => Organization)
+  @Field(() => Organization, { nullable: true })
   organization!: Organization | null
 
   @Field(() => Image, { nullable: true })
@@ -78,37 +78,39 @@ export class OrganizationPage {
 export const mapOrganizationPage = ({
   sys,
   fields,
-}: IOrganizationPage): SystemMetadata<OrganizationPage> => ({
-  typename: 'OrganizationPage',
-  id: sys.id,
-  title: fields.title ?? '',
-  slug: fields.slug ?? '',
-  intro: fields.intro ?? '',
-  description: fields.description ?? '',
-  theme: fields.theme ?? 'default',
-  themeProperties: mapOrganizationTheme(fields.themeProperties ?? {}),
-  slices: (fields.slices ?? []).map(safelyMapSliceUnion).filter(Boolean),
-  bottomSlices: (fields.bottomSlices ?? [])
-    .map(safelyMapSliceUnion)
-    .filter(Boolean),
-  newsTag: fields.newsTag ? mapGenericTag(fields.newsTag) : null,
-  menuLinks: (fields.menuLinks ?? []).map(mapLinkGroup),
-  secondaryMenu: fields.secondaryMenu
-    ? mapLinkGroup(fields.secondaryMenu)
-    : null,
-  organization: fields.organization
-    ? mapOrganization(fields.organization)
-    : null,
-  featuredImage: fields.featuredImage ? mapImage(fields.featuredImage) : null,
-  footerItems: (fields.footerItems ?? []).map(mapFooterItem),
-  sidebarCards: (fields.sidebarCards ?? [])
-    .map(safelyMapSliceUnion)
-    .filter(Boolean),
-  externalLinks: (fields.externalLinks ?? []).map(mapLink),
-  alertBanner: fields.alertBanner
-    ? mapAlertBanner(fields.alertBanner)
-    : undefined,
-  defaultHeaderImage: fields.defaultHeaderImage
-    ? mapImage(fields.defaultHeaderImage)
-    : undefined,
-})
+}: IOrganizationPage): SystemMetadata<OrganizationPage> => {
+  return {
+    typename: 'OrganizationPage',
+    id: sys.id,
+    title: fields.title ?? '',
+    slug: fields.slug ?? '',
+    intro: fields.intro ?? '',
+    description: fields.description ?? '',
+    theme: fields.theme ?? 'default',
+    themeProperties: mapOrganizationTheme(fields.themeProperties ?? {}),
+    slices: (fields.slices ?? []).map(safelyMapSliceUnion).filter(Boolean),
+    bottomSlices: (fields.bottomSlices ?? [])
+      .map(safelyMapSliceUnion)
+      .filter(Boolean),
+    newsTag: fields.newsTag ? mapGenericTag(fields.newsTag) : null,
+    menuLinks: (fields.menuLinks ?? []).map(mapLinkGroup),
+    secondaryMenu: fields.secondaryMenu
+      ? mapLinkGroup(fields.secondaryMenu)
+      : null,
+    organization: fields.organization
+      ? mapOrganization(fields.organization)
+      : null,
+    featuredImage: fields.featuredImage ? mapImage(fields.featuredImage) : null,
+    footerItems: (fields.footerItems ?? []).map(mapFooterItem),
+    sidebarCards: (fields.sidebarCards ?? [])
+      .map(safelyMapSliceUnion)
+      .filter(Boolean),
+    externalLinks: (fields.externalLinks ?? []).map(mapLink),
+    alertBanner: fields.alertBanner
+      ? mapAlertBanner(fields.alertBanner)
+      : undefined,
+    defaultHeaderImage: fields.defaultHeaderImage
+      ? mapImage(fields.defaultHeaderImage)
+      : undefined,
+  }
+}
