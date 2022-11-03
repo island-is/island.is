@@ -42,7 +42,7 @@ const RequestDaysSlider: FC<FieldBaseProps> = ({ field, application }) => {
       ? parentalLeaveFormMessages.shared.requestRightsDays
       : parentalLeaveFormMessages.shared.requestRightsDay
 
-  const boxChartKeys: BoxChartKey[] = [
+  const boxChartKeysWithMultipleBirths: BoxChartKey[] = [
     {
       label: () => ({
         ...parentalLeaveFormMessages.shared.yourRightsInMonths,
@@ -56,6 +56,20 @@ const RequestDaysSlider: FC<FieldBaseProps> = ({ field, application }) => {
         values: { months: multipleBirthsInMonths },
       }),
       bulletStyle: 'purple',
+    },
+    {
+      label: () => ({ ...daysStringKey, values: { day: chosenRequestDays } }),
+      bulletStyle: 'greenWithLines',
+    },
+  ]
+
+  const boxChartKeys: BoxChartKey[] = [
+    {
+      label: () => ({
+        ...parentalLeaveFormMessages.shared.yourRightsInMonths,
+        values: { months: defaultMonths },
+      }),
+      bulletStyle: 'blue',
     },
     {
       label: () => ({ ...daysStringKey, values: { day: chosenRequestDays } }),
@@ -107,7 +121,11 @@ const RequestDaysSlider: FC<FieldBaseProps> = ({ field, application }) => {
 
             return 'grayWithLines'
           }}
-          keys={boxChartKeys as BoxChartKey[]}
+          keys={
+            defaultMonths === alreadySelectedMonths
+              ? boxChartKeys
+              : boxChartKeysWithMultipleBirths
+          }
         />
       </Box>
 

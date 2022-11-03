@@ -761,20 +761,17 @@ export const ParentalLeaveForm: Form = buildForm({
             }),
             buildCustomField({
               id: 'multipleBirthsRequestDays',
-              childInputIds: ['multipleBirthsRequestDays'],
+              childInputIds: [
+                'multipleBirthsRequestDays',
+                'requestRights.isRequestingRights',
+                'requestRights.requestDays',
+                'giveRights.isGivingRights',
+                'giveRights.giveDays',
+              ],
               title: parentalLeaveFormMessages.shared.multipleBirthsDaysTitle,
               description:
                 parentalLeaveFormMessages.shared.multipleBirthsDaysDescription,
               condition: (answers, externalData) => {
-                console.log(
-                  '----mess: ',
-                  parentalLeaveFormMessages.shared.multipleBirthsDaysTitle,
-                )
-                console.log(
-                  '---descr: ',
-                  parentalLeaveFormMessages.shared
-                    .multipleBirthsDaysDescription,
-                )
                 const canTransferRights =
                   getSelectedChild(answers, externalData)?.parentalRelation ===
                     ParentalRelations.primary && allowOtherParent(answers)
