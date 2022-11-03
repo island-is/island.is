@@ -32,7 +32,7 @@ const TWO_HOURS = 7200
 
 @Resolver(() => Discount)
 @Directive(cacheControlDirective())
-export class IcelandicNamesResolver {
+export class AirDiscountSchemeResolver {
   constructor(private backendAPI: BackendAPI) {}
 
   @UseGuards(IdsUserGuard)

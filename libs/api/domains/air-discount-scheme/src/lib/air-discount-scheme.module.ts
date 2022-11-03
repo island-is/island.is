@@ -1,6 +1,6 @@
 import { DynamicModule, Module } from '@nestjs/common'
 import { BackendAPI } from './services'
-import { IcelandicNamesResolver } from './icelandic-names.resolver'
+import { AirDiscountSchemeResolver } from './air-discount-scheme.resolver'
 
 import {
   AirDiscountSchemeOptions,
@@ -13,7 +13,7 @@ export class AirDiscountSchemeModule {
     return {
       module: AirDiscountSchemeModule,
       providers: [
-        IcelandicNamesResolver,
+        AirDiscountSchemeResolver,
         AirDiscountSchemeModule,
         BackendAPI,
         {
