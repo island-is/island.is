@@ -297,7 +297,7 @@ describe('Application system API', () => {
       })
       .expect(200)
 
-    const finalStateResponse = await server
+    await server
       .put(`/applications/${response.body.id}/submit`)
       .send({
         event: 'APPROVE',
@@ -306,12 +306,22 @@ describe('Application system API', () => {
           dreamJob: 'firefighter',
         },
       })
-      .expect(200)
+      .expect(403) // should fail because we are not allowed to update dreamJob
+
+    const finalStateResponse = await server
+      .put(`/applications/${response.body.id}/submit`)
+      .send({
+        event: 'APPROVE',
+        answers: {
+          careerHistoryCompanies: ['government', 'aranja', 'advania'],
+        },
+      })
+      .expect(200) // should fail because we are not allowed to update dreamJob
 
     expect(finalStateResponse.body.state).toBe('approved')
     expect(finalStateResponse.body.answers).toEqual({
       careerHistoryCompanies: ['government', 'aranja', 'advania'],
-      dreamJob: 'pilot', // this answer is non-writable
+      dreamJob: 'pilot',
     })
   })
 
@@ -783,7 +793,6 @@ describe('Application system API', () => {
       .send({
         event: 'APPROVE',
         answers: {
-          ...answers,
           approvedByReviewer: 'APPROVE',
         },
       })
