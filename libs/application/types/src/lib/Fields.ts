@@ -124,6 +124,7 @@ export interface CheckboxField extends BaseField {
   options: MaybeWithApplicationAndField<Option[]>
   large?: boolean
   strong?: boolean
+  required?: boolean
   backgroundColor?: InputBackgroundColor
   onSelect?: ((s: string[]) => void) | undefined
 }
@@ -157,6 +158,7 @@ export interface RadioField extends BaseField {
   options: MaybeWithApplicationAndField<Option[]>
   backgroundColor?: InputBackgroundColor
   largeButtons?: boolean
+  required?: boolean
   space?: BoxProps['paddingTop']
   onSelect?(s: string): void
 }

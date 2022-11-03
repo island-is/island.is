@@ -7666,15 +7666,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/mapped-types@npm:0.4.1":
-  version: 0.4.1
-  resolution: "@nestjs/mapped-types@npm:0.4.1"
+"@nestjs/mapped-types@npm:1.0.1":
+  version: 1.0.1
+  resolution: "@nestjs/mapped-types@npm:1.0.1"
   peerDependencies:
-    "@nestjs/common": ^7.0.8
-    class-transformer: ^0.2.0 || ^0.3.0 || ^0.4.0
+    "@nestjs/common": ^7.0.8 || ^8.0.0
+    class-transformer: ^0.2.0 || ^0.3.0 || ^0.4.0 || ^0.5.0
     class-validator: ^0.11.1 || ^0.12.0 || ^0.13.0
     reflect-metadata: ^0.1.12
-  checksum: 53b3834a4f554ee297e92f2e23d9a853e92c46bdb6a7bdc99b503cef4805952875fec2492fde18164c3ca35279988100a9b9cae9b57d31be828e973f73772322
+  peerDependenciesMeta:
+    class-transformer:
+      optional: true
+    class-validator:
+      optional: true
+  checksum: ca8dae254f98e8550c92f264d90dee767f30598a5bbe40e80ea93cf622da5c67bd2bc8ef83828198919cc39c543421d4eb977d032ecbbb545863eaea9deb797c
   languageName: node
   linkType: hard
 
@@ -7752,16 +7757,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/swagger@npm:4.8.2":
-  version: 4.8.2
-  resolution: "@nestjs/swagger@npm:4.8.2"
+"@nestjs/swagger@npm:5.2.1":
+  version: 5.2.1
+  resolution: "@nestjs/swagger@npm:5.2.1"
   dependencies:
-    "@nestjs/mapped-types": 0.4.1
+    "@nestjs/mapped-types": 1.0.1
     lodash: 4.17.21
     path-to-regexp: 3.2.0
   peerDependencies:
-    "@nestjs/common": ^6.8.0 || ^7.0.0
-    "@nestjs/core": ^6.8.0 || ^7.0.0
+    "@nestjs/common": ^8.0.0
+    "@nestjs/core": ^8.0.0
     fastify-swagger: "*"
     reflect-metadata: ^0.1.12
     swagger-ui-express: "*"
@@ -7770,7 +7775,7 @@ __metadata:
       optional: true
     swagger-ui-express:
       optional: true
-  checksum: 305f86c3739e19e1625c628c2cee3620f9a2fe8de5a05f04af1644c483588bfef2727e0d699ad18eb624e132abb0a11e5aa0f20d0e9f6debd02d7724deeabd01
+  checksum: 70e204c6068a0aebcd5c3486599e83cfc34e6d1823a580e1d1ed60f80f01c50ed2be9765b76d171b28eaf3b1f7f237f388c1daf86041634a3289e84c7219af5d
   languageName: node
   linkType: hard
 
@@ -26922,7 +26927,7 @@ __metadata:
     "@nestjs/platform-express": 8.4.5
     "@nestjs/schematics": 8.0.10
     "@nestjs/sequelize": 8.0.0
-    "@nestjs/swagger": 4.8.2
+    "@nestjs/swagger": 5.2.1
     "@nestjs/terminus": 7.0.1
     "@nestjs/testing": 8.4.4
     "@nrwl/cli": 13.10.5
@@ -27246,7 +27251,7 @@ __metadata:
     xml2js: 0.4.23
     xstate: 4.20.0
     yargs: 15.4.1
-    zod: 1.11.13
+    zod: 3.19.1
   languageName: unknown
   linkType: soft
 
@@ -44608,10 +44613,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod@npm:1.11.13":
-  version: 1.11.13
-  resolution: "zod@npm:1.11.13"
-  checksum: c36ee5df65517305e668e64b06ba38a1fb97f4da233784ad73587616764227e1360720fddb3c01b87ea28b093ec140e8d2cadfeae1b516de6c4bde9891ae7981
+"zod@npm:3.19.1":
+  version: 3.19.1
+  resolution: "zod@npm:3.19.1"
+  checksum: 56e420ea5845912324a8fc61833714a2aec84954e418b52660d76502183c6e62fef9447cbfa64349640c5ce190cf2c24267e006bb80f066183e2f3fa9fe11864
   languageName: node
   linkType: hard
 

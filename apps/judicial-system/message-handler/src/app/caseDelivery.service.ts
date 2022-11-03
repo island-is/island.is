@@ -3,7 +3,8 @@ import fetch from 'node-fetch'
 import { Inject, Injectable } from '@nestjs/common'
 
 import type { ConfigType } from '@island.is/nest/config'
-import { logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 
 import { appModuleConfig } from './app.config'
 
@@ -12,10 +13,11 @@ export class CaseDeliveryService {
   constructor(
     @Inject(appModuleConfig.KEY)
     private readonly config: ConfigType<typeof appModuleConfig>,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  async deliverCase(caseId: string): Promise<true> {
-    logger.debug(`Delivering case ${caseId} to court and police`)
+  async deliverCase(caseId: string): Promise<boolean> {
+    this.logger.debug(`Delivering case ${caseId} to court and police`)
 
     await fetch(
       `${this.config.backendUrl}/api/internal/case/${caseId}/deliver`,
@@ -31,41 +33,35 @@ export class CaseDeliveryService {
         const response = await res.json()
 
         if (res.ok) {
-          logger.debug(`Delivered case ${caseId} to court`)
-
-          if (!response.rulingDeliveredToCourt) {
-            logger.error(
-              `Failed to deliver the ruling for case ${caseId} to court`,
-            )
-          }
-
-          if (!response.courtRecordDeliveredToCourt) {
-            logger.error(
-              `Failed to deliver the court record for case ${caseId} to court`,
-            )
-          }
+          this.logger.debug(`Delivered case ${caseId} to court`)
 
           if (!response.caseFilesDeliveredToCourt) {
-            logger.error(
+            this.logger.error(
               `Failed to deliver some case files for case ${caseId} to court`,
             )
           }
 
           if (!response.caseDeliveredToPolice) {
-            logger.error(`Failed to deliver case ${caseId} to police`)
+            this.logger.error(`Failed to deliver case ${caseId} to police`)
           }
 
           return
         }
 
-        logger.error(`Failed to deliver case ${caseId} to court and police`, {
-          response,
-        })
+        this.logger.error(
+          `Failed to deliver case ${caseId} to court and police`,
+          {
+            response,
+          },
+        )
       })
       .catch((reason) => {
-        logger.error(`Failed to deliver case ${caseId} to court and police`, {
-          reason,
-        })
+        this.logger.error(
+          `Failed to deliver case ${caseId} to court and police`,
+          {
+            reason,
+          },
+        )
       })
 
     return true
