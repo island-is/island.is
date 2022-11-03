@@ -4,17 +4,17 @@ import {
   CaseExistsGuard,
   CaseNotCompletedGuard,
   CaseWriteGuard,
-} from '../../case'
-import { FileController } from '../file.controller'
+} from '../../../case'
+import { FileController } from '../../file.controller'
 
-describe('FileController - Create case file guards', () => {
+describe('FileController - Create presigned post guards', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let guards: any[]
 
   beforeEach(() => {
     guards = Reflect.getMetadata(
       '__guards__',
-      FileController.prototype.createCaseFile,
+      FileController.prototype.createPresignedPost,
     )
   })
 
