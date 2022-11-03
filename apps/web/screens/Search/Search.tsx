@@ -745,7 +745,7 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
     namespace,
   ] = await Promise.all([
     apolloClient.query<GetSearchResultsDetailedQuery, QuerySearchResultsArgs>({
-      fetchPolicy: 'no-cache',
+      fetchPolicy: 'no-cache', // for local
       query: GET_SEARCH_RESULTS_QUERY_DETAILED,
       variables: {
         query: {
@@ -765,7 +765,7 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
       },
     }),
     apolloClient.query<GetSearchResultsNewsQuery, QuerySearchResultsArgs>({
-      fetchPolicy: 'no-cache',
+      fetchPolicy: 'no-cache', // for local
       query: GET_SEARCH_COUNT_QUERY,
       variables: {
         query: {
@@ -801,7 +801,7 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
   if (searchResults.items.length === 0 && page > 1) {
     throw new CustomNextError(404)
   }
-  console.log(JSON.stringify(searchResults, null, 4))
+  // console.log(JSON.stringify(searchResults, null, 4))
   return {
     q: queryString,
     searchResults,
