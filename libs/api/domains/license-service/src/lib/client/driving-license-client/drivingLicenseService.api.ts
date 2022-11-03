@@ -24,7 +24,7 @@ import { PkPassClient } from './pkpass.client'
 import { PkPassPayload } from './pkpass.type'
 import { Locale } from '@island.is/shared/types'
 import { GenericDrivingLicenseConfig } from './genericDrivingLicense.config'
-import { ConfigType } from '@island.is/nest/config'
+import { ConfigType, XRoadConfig } from '@island.is/nest/config'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'drivinglicense-service'
@@ -57,12 +57,14 @@ export class GenericDrivingLicenseApi
 
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
+    @Inject(XRoadConfig.KEY)
+    private xroadConfig: ConfigType<typeof XRoadConfig>,
     private config: ConfigType<typeof GenericDrivingLicenseConfig>,
     private cacheManager?: CacheManager | null,
   ) {
     // TODO inject the actual RLS x-road client
-    this.xroadApiUrl = config.xroad.baseUrl
-    this.xroadClientId = config.xroad.clientId
+    this.xroadApiUrl = xroadConfig.xRoadBasePath
+    this.xroadClientId = xroadConfig.xRoadClient
     this.xroadPath = config.xroad.path
     this.xroadSecret = config.xroad.secret
 

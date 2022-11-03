@@ -1,6 +1,6 @@
 import { Cache as CacheManager } from 'cache-manager'
 import { Module, CacheModule } from '@nestjs/common'
-import { ConfigType } from '@island.is/nest/config'
+import { ConfigType, XRoadConfig } from '@island.is/nest/config'
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { CmsModule } from '@island.is/cms'
 import { LicenseServiceService } from './licenseService.service'
@@ -125,6 +125,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
         genericAdrService: GenericAdrLicenseService,
         genericMachineService: GenericMachineLicenseService,
         drivingLicenseConfig: ConfigType<typeof GenericDrivingLicenseConfig>,
+        xRoadConfig: ConfigType<typeof XRoadConfig>,
       ) => async (
         type: GenericLicenseType,
         cacheManager: CacheManager,
@@ -133,6 +134,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
           case GenericLicenseType.DriversLicense:
             return new GenericDrivingLicenseApi(
               logger,
+              xRoadConfig,
               drivingLicenseConfig,
               cacheManager,
             )
@@ -151,6 +153,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
         GenericAdrLicenseService,
         GenericMachineLicenseService,
         GenericDrivingLicenseConfig.KEY,
+        XRoadConfig.KEY,
       ],
     },
   ],
