@@ -6,7 +6,11 @@ import { ServicePortalPath } from '../lib/navigation/paths'
  * Service-portal must de-construct all identifiable user data before passing info on-to plausible.
  * @param path ServicePortalPath of current page
  * @param fileName optional param for document plausible events
- * @returns
+ * @returns ParamType: {
+ * url: string,
+ * location: string,
+ * fileName: string
+ * }
  */
 export const formatPlausiblePathToParams = (
   path: string,
