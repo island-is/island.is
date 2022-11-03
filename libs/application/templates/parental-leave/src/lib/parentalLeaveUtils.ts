@@ -675,6 +675,7 @@ export const requiresOtherParentApproval = (
   const {
     isRequestingRights,
     usePersonalAllowanceFromSpouse,
+    multipleBirthsRequestDays,
   } = applicationAnswers
 
   const needsApprovalForRequestingRights =
@@ -682,7 +683,8 @@ export const requiresOtherParentApproval = (
 
   return (
     (isRequestingRights === YES && needsApprovalForRequestingRights) ||
-    usePersonalAllowanceFromSpouse === YES
+    usePersonalAllowanceFromSpouse === YES ||
+    multipleBirthsRequestDays * 1 > 0
   )
 }
 

@@ -2085,6 +2085,35 @@ export const errorMessages = defineMessages({
       'icel-trans: "Start date is in the past. The form will not be sent!"',
     description: 'Start date is in the past. The form will not be sent!',
   },
+  missingMultipleBirthsAnswer: {
+    id: 'pl.application:errors.missing.multiple.births.answer',
+    defaultMessage:
+      'icel-trans: "Verður að velja fjölda barn ef það er fjölburafæðing ( Need translated )!"',
+    description: 'English version ( Need translated )!',
+  },
+  tooFewMultipleBirthsAnswer: {
+    id: 'pl.application:errors.too.few.multiple.births.answer',
+    defaultMessage:
+      'icel-trans: "Ekki hægt að skrá minni en 2 börn ( Need translated )!"',
+    description: 'English version ( Need translated )!',
+  },
+  tooManyMultipleBirthsAnswer: {
+    id: 'pl.application:errors.too.few.multiple.births.answer',
+    defaultMessage:
+      'icel-trans: "Ekki hægt að skrá fleira en 4 börn ( Need translated )!"',
+    description: 'English version ( Need translated )!',
+  },
+  notAllowedToGiveRights: {
+    id: 'pl.application:errors.not.allowed.to.give.rights',
+    defaultMessage: 'icel-trans: "Ekki hægt að gefa daga ( Need translated )!"',
+    description: 'English version ( Need translated )!',
+  },
+  notAllowedToRequestRights: {
+    id: 'pl.application:errors.not.allowed.to.request.rights',
+    defaultMessage:
+      'icel-trans: "Ekki hægt að biðja um daga ( Need translated )!"',
+    description: 'English version ( Need translated )!',
+  },
 })
 
 export const statesMessages = defineMessages({

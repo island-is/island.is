@@ -99,6 +99,7 @@ export const TransferRights: FC<FieldBaseProps & CustomField> = ({
 
   //typeof multipleBirthsRequestDays is string and we need to convert it to number
   const multipleBirthsRequestDaysNumber = multipleBirthsRequestDays * 1
+  const maxMultipleBirthsDays = getMaxMultipleBirthsDays(application.answers)
 
   const defaultValue =
     transferRights !== undefined
@@ -151,8 +152,7 @@ export const TransferRights: FC<FieldBaseProps & CustomField> = ({
               value: TransferRightsOption.GIVE,
               disabled:
                 hasMultipleBirths === YES &&
-                multipleBirthsRequestDaysNumber ===
-                  getMaxMultipleBirthsDays(application.answers),
+                multipleBirthsRequestDaysNumber === maxMultipleBirthsDays,
             },
           ],
           backgroundColor: 'blue',

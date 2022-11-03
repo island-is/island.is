@@ -5,6 +5,16 @@ export interface MultipleBirths {
   multipleBirths?: number
 }
 
+export interface RequestRightsObj {
+  isRequestingRights: YesOrNo
+  requestDays: number
+}
+
+export interface GiveRightsObj {
+  isGivingRights: YesOrNo
+  requestDays: number
+}
+
 export interface PersonInformation {
   fullName: string
   genderCode: string

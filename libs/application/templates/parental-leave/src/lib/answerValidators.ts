@@ -15,7 +15,14 @@ import {
   StaticTextObject,
 } from '@island.is/application/types'
 
-import { Period, Payments, OtherParentObj, MultipleBirths } from '../types'
+import {
+  Period,
+  Payments,
+  OtherParentObj,
+  MultipleBirths,
+  RequestRightsObj,
+  GiveRightsObj,
+} from '../types'
 import {
   MANUAL,
   NO,
@@ -32,6 +39,8 @@ import {
   getExpectedDateOfBirth,
   calculateDaysUsedByPeriods,
   getAvailableRightsInDays,
+  getApplicationAnswers,
+  getMaxMultipleBirthsDays,
 } from './parentalLeaveUtils'
 import { filterValidPeriods } from '../lib/parentalLeaveUtils'
 import { validatePeriod } from './answerValidator-utils'
@@ -41,6 +50,8 @@ const EMPLOYER = 'employer'
 const FILEUPLOAD = 'fileUpload'
 const PAYMENTS = 'payments'
 const OTHER_PARENT = 'otherParentObj'
+const REQUEST_RIGHTS = 'requestRights'
+const GIVE_RIGHTS = 'giveRights'
 // Check Multiple_Births
 const MULTIPLE_BIRTHS = 'multipleBirths'
 // When attempting to continue from the periods repeater main screen
@@ -157,7 +168,7 @@ export const answerValidators: Record<string, AnswerValidator> = {
 
     return undefined
   },
-  [MULTIPLE_BIRTHS]: (newAnswer: unknown, application: Application) => {
+  [MULTIPLE_BIRTHS]: (newAnswer: unknown) => {
     const obj = newAnswer as MultipleBirths
 
     const buildError = (message: StaticText, path: string) =>
@@ -165,26 +176,24 @@ export const answerValidators: Record<string, AnswerValidator> = {
 
     if (obj.hasMultipleBirths === YES) {
       if (!obj.multipleBirths) {
-        return buildError(coreErrorMessages.defaultError, 'multipleBirths')
+        return buildError(
+          errorMessages.missingMultipleBirthsAnswer,
+          'multipleBirths',
+        )
       }
-      if (
-        obj.multipleBirths < 2 ||
-        obj.multipleBirths > defaultMultipleBirthsMonths + 1
-      )
-        return buildError(coreErrorMessages.defaultError, 'multipleBirths')
-      // if (obj.multipleBirthsRequestDays) {
-      //   if (
-      //     obj.multipleBirthsRequestDays < 0 ||
-      //     obj.multipleBirthsRequestDays >
-      //       obj.multipleBirths * multipleBirthsDefaultDays
-      //   )
-      //     return buildError(
-      //       coreErrorMessages.defaultError,
-      //       'multipleBirthsRequestDays',
-      //     )
-      // }
+      if (obj.multipleBirths < 2) {
+        return buildError(
+          errorMessages.tooFewMultipleBirthsAnswer,
+          'multipleBirths',
+        )
+      }
+      if (obj.multipleBirths > defaultMultipleBirthsMonths + 1) {
+        return buildError(
+          errorMessages.tooManyMultipleBirthsAnswer,
+          'multipleBirths',
+        )
+      }
     }
-
     return undefined
   },
   // TODO: should we add validation for otherParent's email?
@@ -198,6 +207,46 @@ export const answerValidators: Record<string, AnswerValidator> = {
     if (otherParentObj.chooseOtherParent === MANUAL) {
       if (isEmpty(otherParentObj.otherParentId))
         return buildError(coreErrorMessages.missingAnswer, 'otherParentId')
+    }
+
+    return undefined
+  },
+  [REQUEST_RIGHTS]: (newAnswer: unknown, application: Application) => {
+    const requestRightsObj = newAnswer as RequestRightsObj
+    const buildError = (message: StaticText, path: string) =>
+      buildValidationError(`${path}`)(message)
+
+    const { multipleBirthsRequestDays } = getApplicationAnswers(
+      application.answers,
+    )
+
+    if (
+      requestRightsObj.isRequestingRights === YES &&
+      multipleBirthsRequestDays * 1 !==
+        getMaxMultipleBirthsDays(application.answers)
+    ) {
+      return buildError(
+        errorMessages.notAllowedToRequestRights,
+        'requestRights',
+      )
+    }
+
+    return undefined
+  },
+  [GIVE_RIGHTS]: (newAnswer: unknown, application: Application) => {
+    const givingRightsObj = newAnswer as GiveRightsObj
+    const buildError = (message: StaticText, path: string) =>
+      buildValidationError(`${path}`)(message)
+
+    const { multipleBirthsRequestDays } = getApplicationAnswers(
+      application.answers,
+    )
+
+    if (
+      givingRightsObj.isGivingRights === YES &&
+      multipleBirthsRequestDays * 1 !== 0
+    ) {
+      return buildError(errorMessages.notAllowedToGiveRights, 'giveRights')
     }
 
     return undefined
