@@ -1,6 +1,6 @@
 import { applicantInformationSchema } from '@island.is/application/ui-forms'
 import * as kennitala from 'kennitala'
-import * as z from 'zod'
+import { z } from 'zod'
 import { AMOUNT, MONTHS, NO, YES } from '../shared/constants'
 import { error } from './messages'
 

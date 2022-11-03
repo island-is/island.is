@@ -1,4 +1,4 @@
-import * as z from 'zod'
+import { z } from 'zod'
 import { error } from './messages'
 import * as kennitala from 'kennitala'
 import { FishingLicenseEnum } from '../types'
