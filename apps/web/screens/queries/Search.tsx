@@ -289,6 +289,7 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
           id
           title
           slug
+          intro
           singleOrganization: organization {
             logo {
               id

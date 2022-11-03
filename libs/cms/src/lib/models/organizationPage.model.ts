@@ -25,8 +25,10 @@ export class OrganizationPage {
 
   @Field()
   slug!: string
-  // @Field(() => [String],{nullable:true})
-  // url!: Array<string | null>
+
+  @Field({ nullable: true })
+  intro?: string
+
   @Field()
   description!: string
 
@@ -76,12 +78,12 @@ export class OrganizationPage {
 export const mapOrganizationPage = ({
   sys,
   fields,
-}: IOrganizationPage): SystemMetadata<OrganizationPage>  => ({
+}: IOrganizationPage): SystemMetadata<OrganizationPage> => ({
   typename: 'OrganizationPage',
   id: sys.id,
   title: fields.title ?? '',
   slug: fields.slug ?? '',
-  // url: [fields.slug ?? ''],
+  intro: fields.intro ?? '',
   description: fields.description ?? '',
   theme: fields.theme ?? 'default',
   themeProperties: mapOrganizationTheme(fields.themeProperties ?? {}),
