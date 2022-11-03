@@ -19,10 +19,7 @@ import {
   FormModes,
   FormValue,
 } from '@island.is/application/types'
-import {
-  applicantInformationMultiField,
-  applicantInformationSchema,
-} from '@island.is/application/ui-forms'
+import { applicantInformationMultiField } from '@island.is/application/ui-forms'
 
 import Logo from '../assets/Logo'
 import {
