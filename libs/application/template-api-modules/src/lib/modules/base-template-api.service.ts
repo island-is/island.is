@@ -1,13 +1,6 @@
 import { PerformActionResult } from '@island.is/application/types'
 import { TemplateApiError } from '@island.is/nest/problem'
-
-import { TemplateApiModuleActionProps } from '../types'
-
-export interface ApplicationApiAction {
-  templateId: string
-  actionId: string
-  props: TemplateApiModuleActionProps
-}
+import { ApplicationApiAction } from './template-api.service'
 
 export class BaseTemplateApiService {
   serviceId: string
@@ -18,6 +11,10 @@ export class BaseTemplateApiService {
 
   async performAction(
     action: ApplicationApiAction,
+    handleError: (
+      action: ApplicationApiAction,
+      error: Error,
+    ) => TemplateApiError,
   ): Promise<PerformActionResult> {
     // No index signature with a parameter of type 'string' was found on type
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -34,15 +31,9 @@ export class BaseTemplateApiService {
           response,
         }
       } catch (error) {
-        if (error.problem) {
-          return {
-            success: false,
-            error: error as TemplateApiError,
-          }
-        }
         return {
           success: false,
-          error: new TemplateApiError((error as Error).message, 500),
+          error: handleError(action, error),
         }
       }
     }

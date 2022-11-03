@@ -8,6 +8,7 @@ import {
 import { BaseTemplateAPIModuleConfig } from '../types'
 import { TemplateAPIService } from './template-api.service'
 import { TEMPLATE_API_SERVICES } from './template-api.constants'
+import { LoggingModule } from '@island.is/logging'
 
 export class TemplateAPIModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
@@ -17,6 +18,7 @@ export class TemplateAPIModule {
         ...Object.values([...modules, ...sharedModules]).map((Module) =>
           Module.register(config),
         ),
+        LoggingModule,
       ],
       providers: [
         TemplateAPIService,

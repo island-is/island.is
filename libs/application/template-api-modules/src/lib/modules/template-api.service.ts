@@ -1,13 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { PerformActionResult } from '@island.is/application/types'
 import { TemplateApiModuleActionProps } from '../types'
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { TEMPLATE_API_SERVICES } from './template-api.constants'
 import { BaseTemplateApiService } from './base-template-api.service'
+import { coreErrorMessages } from '@island.is/application/core'
 
-interface ApplicationApiAction<Params = unknown> {
+export interface ApplicationApiAction<Params = unknown> {
   templateId: string
   actionId: string
   action: string
@@ -32,19 +33,41 @@ export class TemplateAPIService {
     const service = this.services.find((x) => x.serviceId === serviceId)
 
     if (service) {
-      return await service.performAction(action)
+      const result = await service.performAction(
+        action,
+        this.handleError.bind(this),
+      )
+
+      return result
     }
 
+    const noTemplateError = new TemplateApiError(
+      {
+        title: 'Invalid template api',
+        summary: 'No api registered with: ' + serviceId,
+      },
+      500,
+    )
+    this.logger.error(noTemplateError)
     return {
       success: false,
-      error: new TemplateApiError(
-        {
-          title: 'Invalid template api',
-          summary: 'No api registered with: ' + serviceId,
-        },
-        500,
-      ),
+      error: noTemplateError,
     }
+  }
+
+  handleError(action: ApplicationApiAction, error: Error): TemplateApiError {
+    const problemError: TemplateApiError =
+      'problem' in error
+        ? (error as TemplateApiError)
+        : new TemplateApiError(coreErrorMessages.defaultTemplateApiError, 500)
+
+    if (problemError?.problem?.status && problemError?.problem?.status >= 500) {
+      this.logger.error(
+        `PerformAction error on action ${action.actionId} from template ${action.templateId}`,
+        error,
+      )
+    }
+    return problemError
   }
 
   getServiceId(action: ApplicationApiAction): string {

@@ -235,7 +235,7 @@ export const runsSecond = defineTemplateApi({
 })
 ```
 
-## Custom error messages
+## Custom error messages and error handling
 
 Within your service you can throw a TemplateApiError and provide it with an `ErrorReason` object and a status code.
 
@@ -248,6 +248,8 @@ throw new TemplateApiError(
   400,
 )
 ```
+
+If the service throws an unexpected error the template runner catches it logs the error and throws a New TemplateApiError with a default message and a 500 error code.
 
 ## Parameters
 

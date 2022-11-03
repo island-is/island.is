@@ -208,6 +208,11 @@ export const coreMessages = defineMessages({
 })
 
 export const coreErrorMessages = defineMessages({
+  defaultTemplateApiError: {
+    id: 'application.system:core.defaultTemplateApiError',
+    defaultMessage: 'Villa kom upp',
+    description: 'Unkonwn template api error',
+  },
   defaultError: {
     id: 'application.system:core.default.error',
     defaultMessage: 'Ógilt gildi',
