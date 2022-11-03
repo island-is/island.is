@@ -8,37 +8,6 @@ import {
 } from '@island.is/auth-api-lib'
 import { CreateDelegation } from '@island.is/services/auth/testing'
 
-/**
- * Helper to match complete object when the received object has gone over the "wire"
- * and was JSON stringified.
- * @param received The SUT object recevied
- * @param expected The expected object to be matched against the received object
- */
-export const expectMatchingObject = (
-  received: DelegationDTO | DelegationDTO[],
-  expected: DelegationDTO | DelegationDTO[],
-) => {
-  if (Array.isArray(received)) {
-    sortDelegations(received)
-  }
-  if (Array.isArray(expected)) {
-    sortDelegations(expected)
-  }
-
-  expect(received).toMatchObject(JSON.parse(JSON.stringify(expected)))
-}
-
-/**
- * Sorts the delegation by id parameter to use for consistent expecting
- * @param delegations
- */
-const sortDelegations = (delegations: DelegationDTO[]) => {
-  delegations.sort((a, b) => {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    return a.id === b.id ? 0 : a.id! < b.id! ? -1 : 1
-  })
-}
-
 export type NameIdTuple = [name: string, id: string]
 
 export const getFakeName = () =>

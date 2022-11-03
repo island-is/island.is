@@ -68,7 +68,7 @@ export class DelegationsOutgoingService {
           model: DelegationScope,
           include: [
             {
-              attributes: [],
+              attributes: ['displayName'],
               model: ApiScope,
               required: true,
               include: [
@@ -298,6 +298,12 @@ export class DelegationsOutgoingService {
         {
           model: DelegationScope,
           required: false,
+          include: [
+            {
+              attributes: ['displayName'],
+              model: ApiScope,
+            },
+          ],
         },
       ],
     })
@@ -312,8 +318,9 @@ export class DelegationsOutgoingService {
       delegation.domainName,
     )
     if (!userScopes.length) {
-      throw new BadRequestException('User does not have access to this domain.')
+      return null
     }
+
     delegation.delegationScopes = delegation.delegationScopes?.filter((scope) =>
       userScopes.includes(scope.scopeName),
     )
