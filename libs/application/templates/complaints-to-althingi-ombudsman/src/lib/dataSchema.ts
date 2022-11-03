@@ -1,5 +1,5 @@
 import * as kennitala from 'kennitala'
-import * as z from 'zod'
+import { z } from 'zod'
 import {
   ComplainedForTypes,
   ComplaineeTypes,
@@ -18,11 +18,11 @@ const FileSchema = z.object({
 export const ComplaintsToAlthingiOmbudsmanSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v, { params: error.required }),
   information: z.object({
-    name: z.string().nonempty(),
+    name: z.string().min(1),
     ssn: z.string().refine((x) => (x ? kennitala.isPerson(x) : false)),
-    address: z.string().nonempty(),
-    postcode: z.string().nonempty(),
-    city: z.string().nonempty(),
+    address: z.string().min(1),
+    postcode: z.string().min(1),
+    city: z.string().min(1),
     email: z
       .string()
       .email()

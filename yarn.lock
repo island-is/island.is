@@ -27251,7 +27251,7 @@ __metadata:
     xml2js: 0.4.23
     xstate: 4.20.0
     yargs: 15.4.1
-    zod: 1.11.13
+    zod: 3.19.1
   languageName: unknown
   linkType: soft
 
@@ -44613,10 +44613,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod@npm:1.11.13":
-  version: 1.11.13
-  resolution: "zod@npm:1.11.13"
-  checksum: c36ee5df65517305e668e64b06ba38a1fb97f4da233784ad73587616764227e1360720fddb3c01b87ea28b093ec140e8d2cadfeae1b516de6c4bde9891ae7981
+"zod@npm:3.19.1":
+  version: 3.19.1
+  resolution: "zod@npm:3.19.1"
+  checksum: 56e420ea5845912324a8fc61833714a2aec84954e418b52660d76502183c6e62fef9447cbfa64349640c5ce190cf2c24267e006bb80f066183e2f3fa9fe11864
   languageName: node
   linkType: hard
 
