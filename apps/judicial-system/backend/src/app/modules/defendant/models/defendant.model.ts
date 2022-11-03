@@ -119,8 +119,9 @@ export class Defendant extends Model {
 
   @Column({
     type: DataType.BOOLEAN,
-    allowNull: true,
+    allowNull: false,
+    defaultValue: false,
   })
   @ApiProperty()
-  defendantWaivesRightToCounsel?: boolean
+  defendantWaivesRightToCounsel!: boolean
 }

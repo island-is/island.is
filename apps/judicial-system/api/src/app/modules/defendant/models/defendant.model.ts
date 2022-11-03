@@ -49,6 +49,6 @@ export class Defendant implements TDefendant {
   @Field({ nullable: true })
   readonly defenderPhoneNumber?: string
 
-  @Field({ nullable: true })
-  readonly defendantWaivesRightToCounsel?: boolean
+  @Field(() => Boolean)
+  readonly defendantWaivesRightToCounsel!: boolean
 }

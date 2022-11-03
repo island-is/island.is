@@ -19,7 +19,7 @@ export interface Defendant {
   defenderNationalId?: string
   defenderEmail?: string
   defenderPhoneNumber?: string
-  defendantWaivesRightToCounsel?: boolean
+  defendantWaivesRightToCounsel: boolean
 }
 
 export interface CreateDefendant {
