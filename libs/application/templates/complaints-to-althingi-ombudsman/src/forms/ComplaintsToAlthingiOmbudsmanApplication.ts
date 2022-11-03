@@ -19,7 +19,10 @@ import {
   FormModes,
   FormValue,
 } from '@island.is/application/types'
-import { applicantInformationSection } from '@island.is/application/ui-forms'
+import {
+  applicantInformationMultiField,
+  applicantInformationSchema,
+} from '@island.is/application/ui-forms'
 
 import Logo from '../assets/Logo'
 import {
@@ -89,7 +92,11 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
         }),
       ],
     }),
-    applicantInformationSection,
+    buildSection({
+      id: 'information',
+      title: section.information,
+      children: [applicantInformationMultiField],
+    }),
     buildSection({
       id: 'section.complainedFor',
       title: section.complainedFor,

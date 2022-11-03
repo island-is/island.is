@@ -19,6 +19,7 @@ import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { NO, YES } from '../shared/constants'
 import { PaymentPlanExternalData } from '../types'
 import { Application } from '@island.is/api/schema'
+import { applicantInformationMultiField } from '@island.is/application/ui-forms'
 
 const shouldRenderMockDataSubSection = !isRunningOnEnvironment('production')
 
@@ -173,7 +174,6 @@ export const PrerequisitesForm: Form = buildForm({
               width: 'half',
               variant: 'tel',
               backgroundColor: 'blue',
-              required: true,
               defaultValue: (application: Application) =>
                 (application.externalData as PaymentPlanExternalData)
                   ?.userProfile?.data?.mobilePhoneNumber,

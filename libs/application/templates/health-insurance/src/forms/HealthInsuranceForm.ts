@@ -27,6 +27,7 @@ import {
   requireWaitingPeriod,
 } from '../healthInsuranceUtils'
 import { Countries } from '../lib/Countries'
+import { applicantInformationMultiField } from '@island.is/application/ui-forms'
 
 export const HealthInsuranceForm: Form = buildForm({
   id: 'HealthInsuranceDraft',
@@ -37,96 +38,7 @@ export const HealthInsuranceForm: Form = buildForm({
     buildSection({
       id: 'applicantInfoSection',
       title: m.applicantInfoSection,
-      children: [
-        buildMultiField({
-          id: 'contactInfoSection',
-          title: m.contactInfoTitle,
-          children: [
-            buildTextField({
-              id: 'applicant.name',
-              title: m.name,
-              width: 'half',
-              disabled: true,
-              defaultValue: (application: Application) =>
-                (application.externalData.nationalRegistry?.data as {
-                  fullName?: string
-                })?.fullName,
-            }),
-            buildTextField({
-              id: 'applicant.nationalId',
-              title: m.nationalId,
-              width: 'half',
-              disabled: true,
-              defaultValue: (application: Application) =>
-                (application.externalData.nationalRegistry?.data as {
-                  nationalId?: string
-                })?.nationalId,
-            }),
-            buildTextField({
-              id: 'applicant.address',
-              title: m.address,
-              width: 'half',
-              disabled: true,
-              defaultValue: (application: Application) =>
-                (application.externalData.nationalRegistry?.data as {
-                  address?: Address
-                }).address?.streetAddress,
-            }),
-            buildTextField({
-              id: 'applicant.postalCode',
-              title: m.postalCode,
-              width: 'half',
-              disabled: true,
-              defaultValue: (application: Application) =>
-                (application.externalData.nationalRegistry?.data as {
-                  address?: Address
-                }).address?.postalCode,
-            }),
-            buildTextField({
-              id: 'applicant.city',
-              title: m.city,
-              width: 'half',
-              disabled: true,
-              defaultValue: (application: Application) =>
-                (application.externalData.nationalRegistry?.data as {
-                  address?: Address
-                }).address?.city,
-            }),
-            buildCustomField({
-              id: 'applicant.citizenship',
-              title: '',
-              component: 'CitizenshipField',
-            }),
-            buildDescriptionField({
-              id: 'editNationalRegistryData',
-              title: '',
-              description: m.editNationalRegistryData,
-            }),
-            buildTextField({
-              id: 'applicant.email',
-              title: m.email,
-              width: 'half',
-              variant: 'email',
-              defaultValue: (application: Application) =>
-                (application.externalData.userProfile?.data as {
-                  email?: string
-                })?.email,
-            }),
-            buildTextField({
-              id: 'applicant.phoneNumber',
-              title: m.phoneNumber,
-              width: 'half',
-              variant: 'tel',
-              format: '###-####',
-              placeholder: '000-0000',
-              defaultValue: (application: Application) =>
-                (application.externalData.userProfile?.data as {
-                  mobilePhoneNumber?: string
-                })?.mobilePhoneNumber,
-            }),
-          ],
-        }),
-      ],
+      children: [applicantInformationMultiField],
     }),
     buildSection({
       id: 'statusAndChildrenSection',

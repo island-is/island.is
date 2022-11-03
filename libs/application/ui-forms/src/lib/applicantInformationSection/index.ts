@@ -1,2 +1,2 @@
-export * from './applicantInformationSection'
+export * from './applicantInformationMultiField'
 export * from './applicantInformationSchema'

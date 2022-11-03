@@ -1,3 +1,4 @@
+import { applicantInformationSchema } from '@island.is/application/ui-forms'
 import * as kennitala from 'kennitala'
 import * as z from 'zod'
 import { NO, YES } from '../shared'
@@ -78,17 +79,7 @@ export const DataProtectionComplaintSchema = z.object({
       OnBehalf.ORGANIZATION_OR_INSTITUTION,
     ]),
   }),
-  applicant: z.object({
-    name: z.string().refine((x) => !!x, { params: error.required }),
-    nationalId: z.string().refine((x) => (x ? kennitala.isPerson(x) : false), {
-      params: error.nationalId,
-    }),
-    address: z.string().refine((x) => !!x, { params: error.required }),
-    postalCode: z.string().refine((x) => !!x, { params: error.required }),
-    city: z.string().refine((x) => !!x, { params: error.required }),
-    email: optionalEmail,
-    phoneNumber: z.string().optional(),
-  }),
+  applicant: applicantInformationSchema,
   organizationOrInstitution: z.object({
     name: z.string().refine((x) => !!x, { params: error.required }),
     nationalId: z.string().refine((x) => (x ? kennitala.isCompany(x) : false), {

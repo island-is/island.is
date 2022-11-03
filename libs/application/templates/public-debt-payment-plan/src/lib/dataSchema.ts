@@ -1,3 +1,4 @@
+import { applicantInformationSchema } from '@island.is/application/ui-forms'
 import * as kennitala from 'kennitala'
 import * as z from 'zod'
 import { AMOUNT, MONTHS, NO, YES } from '../shared/constants'
@@ -16,8 +17,6 @@ export const PaymentPlanSchema = z
   })
   .optional()
 
-// optional fields to prevent error if data is missing from data fetching
-// Also it helps testing the application with fake users.
 export const ApplicantSchema = z.object({
   address: z.string().optional(),
   city: z.string().optional(),
@@ -56,7 +55,7 @@ export const PaymentPlansSchema = z.object({
 
 export const PublicDebtPaymentPlanSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
-  applicant: ApplicantSchema,
+  applicant: applicantInformationSchema,
   employer: z.object({
     isCorrectInfo: z.enum([YES, NO]),
   }),
