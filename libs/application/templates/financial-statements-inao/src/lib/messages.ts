@@ -321,6 +321,12 @@ export const m = defineMessages({
     defaultMessage: 'Skrá þarf bæði skoðunarmann og stjórnarmann',
     description: 'Members missing',
   },
+  errormemberNotUnique: {
+    id: 'fsn.application:error.errormemberNotUnique',
+    defaultMessage:
+      'Ekki er hægt að skrá sama aðila sem Stjórnarmann og Skoðunarmann',
+    description: 'Members missing',
+  },
   contributionsFromTheTreasury: {
     id: 'fsn.application:income.contributionsFromTheTreasury',
     defaultMessage: 'Framlög úr ríkissjóði',
