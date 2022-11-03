@@ -61,13 +61,13 @@ export const ElectionEquities: FC<FieldBaseProps> = ({
   )
 
   const [totalOperatingCost, setTotalOperatingCost] = useState(0)
-  const [equityTotal, setEquityTotal] = useState(0)
+  // const [equityTotal, setEquityTotal] = useState(0)
   const [equityAndDebts, setEquityAndDebts] = useState(0)
 
-  useEffect(() => {
-    const total = totalEquity
-    setEquityTotal(total)
-  }, [totalEquity, totalOperatingCost])
+  // useEffect(() => {
+  //   const total = totalEquity
+  //   setEquityTotal(total)
+  // }, [totalEquity, totalOperatingCost])
 
   useEffect(() => {
     const total = totalEquity + totalLiabilities
@@ -207,28 +207,6 @@ export const ElectionEquities: FC<FieldBaseProps> = ({
               currency
             />
           </Box>
-          <Box paddingY={1}>
-            <InputController
-              id={EQUITIESANDLIABILITIESIDS.operationResult}
-              name={EQUITIESANDLIABILITIESIDS.operationResult}
-              readOnly
-              error={
-                errors &&
-                getErrorViaPath(
-                  errors,
-                  EQUITIESANDLIABILITIESIDS.operationResult,
-                )
-              }
-              label={formatMessage(m.operationResult)}
-              backgroundColor="blue"
-              currency
-            />
-          </Box>
-          <Total
-            name={EQUITIESANDLIABILITIESIDS.totalCash}
-            total={equityTotal}
-            label={formatMessage(m.totalEquity)}
-          />
           <Box paddingY={1}>
             <Total
               name={EQUITIESANDLIABILITIESIDS.totalEquityAndLiabilities}
