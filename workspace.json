@@ -12,6 +12,7 @@
     "api-catalogue-elastic": "libs/api-catalogue/elastic",
     "api-catalogue-services": "libs/api-catalogue/services",
     "api-catalogue-types": "libs/api-catalogue/types",
+    "api-domains-air-discount-scheme": "libs/api/domains/air-discount-scheme",
     "api-domains-api-catalogue": "libs/api/domains/api-catalogue",
     "api-domains-application": "libs/api/domains/application",
     "api-domains-assets": "libs/api/domains/assets",
