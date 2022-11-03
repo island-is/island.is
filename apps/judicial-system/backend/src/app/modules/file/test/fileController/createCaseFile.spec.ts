@@ -4,10 +4,10 @@ import { BadRequestException } from '@nestjs/common'
 
 import { CaseFileState } from '@island.is/judicial-system/types'
 
-import { randomDate } from '../../../test'
-import { CreateFileDto } from '../dto/createFile.dto'
-import { CaseFile } from '../models/file.model'
-import { createTestingFileModule } from './createTestingFileModule'
+import { randomDate } from '../../../../test'
+import { CreateFileDto } from '../../dto/createFile.dto'
+import { CaseFile } from '../../models/file.model'
+import { createTestingFileModule } from '../createTestingFileModule'
 
 interface Then {
   result: CaseFile
