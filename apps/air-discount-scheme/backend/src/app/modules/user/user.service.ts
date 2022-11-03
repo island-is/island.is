@@ -41,10 +41,8 @@ export class UserService {
       user.nationalId,
     )
     let meetsADSRequirements = false
-    console.log('GETFUND user', user)
 
     if (this.flightService.isADSPostalCode(user.postalcode)) {
-      console.log('SETTING TRUE')
       meetsADSRequirements = true
     } else if (info(user.nationalId).age < MAX_AGE_LIMIT) {
       // NationalId is a minor and doesn't live in ADS postal codes.

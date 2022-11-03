@@ -28,6 +28,7 @@ export const serviceSetup = (services: {
   appSystemApi: ServiceBuilder<'application-system-api'>
   servicePortalApi: ServiceBuilder<'service-portal-api'>
   icelandicNameRegistryBackend: ServiceBuilder<'icelandic-names-registry-backend'>
+  airDiscountSchemeBackend: ServiceBuilder<'air-discount-scheme-backend'>
   documentsService: ServiceBuilder<'services-documents'>
   servicesEndorsementApi: ServiceBuilder<'services-endorsement-api'>
 }): ServiceBuilder<'api'> => {
@@ -43,6 +44,9 @@ export const serviceSetup = (services: {
       ),
       ICELANDIC_NAMES_REGISTRY_BACKEND_URL: ref(
         (h) => `http://${h.svc(services.icelandicNameRegistryBackend)}`,
+      ),
+      AIR_DISCOUNT_SCHEME_BACKEND: ref(
+        (h) => `http://${h.svc(services.airDiscountSchemeBackend)}`,
       ),
       FILE_STORAGE_UPLOAD_BUCKET: {
         dev: 'island-is-dev-upload-api',

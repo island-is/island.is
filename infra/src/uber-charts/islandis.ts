@@ -26,6 +26,7 @@ import { serviceSetup as contentfulTranslationExtensionSetup } from '../../../li
 import { serviceSetup as downloadServiceSetup } from '../../../apps/download-service/infra/download-service'
 import { serviceSetup as endorsementServiceSetup } from '../../../apps/services/endorsements/api/infra/endorsement-system-api'
 import { serviceSetup as githubActionsCacheSetup } from '../../../apps/github-actions-cache/infra/github-actions-cache'
+import { serviceSetup as serviceAirDiscountSchemeBackendSetup } from '../../../apps/air-discount-scheme/backend/infra/backend'
 
 import {
   userNotificationServiceSetup,
@@ -53,11 +54,13 @@ const appSystemForm = appSystemFormSetup({})
 const servicePortalApi = servicePortalApiSetup()
 const servicePortal = servicePortalSetup({})
 const nameRegistryBackend = serviceNameRegistryBackendSetup()
+const airDiscountSchemeBackend = serviceAirDiscountSchemeBackendSetup()
 const api = apiSetup({
   appSystemApi,
   servicePortalApi,
   documentsService,
   icelandicNameRegistryBackend: nameRegistryBackend,
+  airDiscountSchemeBackend,
   servicesEndorsementApi: endorsement,
 })
 const web = webSetup({ api: api })

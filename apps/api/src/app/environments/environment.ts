@@ -90,7 +90,7 @@ const prodConfig = () => ({
     password: process.env.SYSLUMENN_PASSWORD,
   },
   airDiscountScheme: {
-    backendUrl: process.env.BACKEND_URL ?? 'http://localhost:4248',
+    backendUrl: process.env.ICELANDIC_NAMES_REGISTRY_BACKEND_URL,
   },
   icelandicNamesRegistry: {
     backendUrl: process.env.ICELANDIC_NAMES_REGISTRY_BACKEND_URL,
@@ -260,7 +260,7 @@ const devConfig = () => ({
     apiPath: process.env.COMPANY_REGISTRY_XROAD_API_PATH,
   },
   airDiscountScheme: {
-    backendUrl: process.env.BACKEND_URL ?? 'http://localhost:4248',
+    backendUrl: 'http://localhost:4248',
   },
   icelandicNamesRegistry: {
     backendUrl: 'http://localhost:4239',
