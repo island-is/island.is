@@ -66,6 +66,7 @@ export function buildCheckboxField(
     options,
     strong = false,
     large = true,
+    required,
     backgroundColor = 'blue',
   } = data
   return {
@@ -75,6 +76,7 @@ export function buildCheckboxField(
     strong,
     backgroundColor,
     options,
+    required,
     type: FieldTypes.CHECKBOX,
     component: FieldComponents.CHECKBOX,
   }
@@ -134,7 +136,13 @@ export function buildDescriptionField(
 export function buildRadioField(
   data: Omit<RadioField, 'type' | 'component' | 'children'>,
 ): RadioField {
-  const { options, largeButtons = true, backgroundColor, space } = data
+  const {
+    options,
+    largeButtons = true,
+    backgroundColor,
+    space,
+    required,
+  } = data
 
   return {
     ...extractCommonFields(data),
@@ -143,6 +151,7 @@ export function buildRadioField(
     options,
     backgroundColor,
     space,
+    required,
     type: FieldTypes.RADIO,
     component: FieldComponents.RADIO,
   }
@@ -151,12 +160,19 @@ export function buildRadioField(
 export function buildSelectField(
   data: Omit<SelectField, 'type' | 'component' | 'children'>,
 ): SelectField {
-  const { options, placeholder, onSelect, backgroundColor = 'blue' } = data
+  const {
+    options,
+    placeholder,
+    onSelect,
+    backgroundColor = 'blue',
+    required,
+  } = data
   return {
     ...extractCommonFields(data),
     children: undefined,
     placeholder,
     options,
+    required,
     type: FieldTypes.SELECT,
     component: FieldComponents.SELECT,
     onSelect,

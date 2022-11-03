@@ -1,4 +1,4 @@
-import * as z from 'zod'
+import { z } from 'zod'
 
 import { ApiScope, AuthScope } from '@island.is/auth/scopes'
 import { defineConfig } from '@island.is/nest/config'
