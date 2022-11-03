@@ -304,20 +304,17 @@ const Search: Screen<CategoryProps> = ({
   }
 
   const getItemLink = (item: SearchType) => {
-     
     if (
       item.__typename === 'LifeEventPage' &&
       item.pageType === AnchorPageType.DIGITAL_ICELAND_SERVICE
     ) {
       return linkResolver('digitalicelandservicesdetailpage', [item.slug])
-    } 
-
+    }
 
     return linkResolver(item.__typename, item?.url ?? item.slug.split('/'))
   }
 
   const getItemImages = (item: SearchType) => {
-    
     if (
       item.__typename === 'LifeEventPage' &&
       item.pageType === AnchorPageType.DIGITAL_ICELAND_SERVICE
@@ -327,27 +324,13 @@ const Search: Screen<CategoryProps> = ({
         thumbnail: undefined,
       }
     }
-    // if (item.__typename === 'OrganizationPage') {
-    //   console.log(item,"ITEM ORG PICS")
-    //   return {
-    //     image: {
-    //       id: "6yNQWZxyjJ5qD7Vj5eSORl",
-    //       url: "https://images.ctfassets.net/8k0h54kbe6bj/6yNQWZxyjJ5qD7Vj5eSORl/ede49a530e87b27105aa2c8b43b72602/baby-life-event.svg",
-    //       title: "Eignast barn",
-    //       contentType: "image/svg+xml",
-    //       width: 2000,
-    //       height: 800
-    //     },
-    //     thumbnail: {
-    //       id: "4b7HN4aN9kNhnqo9Ah8l7j",
-    //       url: "https://images.ctfassets.net/8k0h54kbe6bj/4b7HN4aN9kNhnqo9Ah8l7j/af8770efd74c91e955c4511b93a9f422/Barnavagn.svg",
-    //       title: "Barnavagn",
-    //       contentType: "image/svg+xml",
-    //       width: 300,
-    //       height: 300
-    //     },
-    //   }
-    // }
+    if (item.__typename === 'OrganizationPage') {
+      return {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        image: (item as any).singleOrganization.logo,
+        thumbnail: undefined,
+      }
+    }
 
     return {
       ...(item.image && { image: item.image as Image }),
@@ -734,7 +717,7 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
   const types: SearchableContentTypes[] = stringToArray(type).map(
     (x: SearchableContentTypes) => x,
   )
-  const allTypes:`${SearchableContentTypes}`[] = [
+  const allTypes: `${SearchableContentTypes}`[] = [
     'webArticle',
     'webLifeEventPage',
     'webDigitalIcelandService',
@@ -747,8 +730,11 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
     'webProjectPage',
   ]
 
-  const ensureContentTypeExists = (types: string[]): types is SearchableContentTypes[] => !!types.length && allTypes.every(type => allTypes.includes(type)) 
- 
+  const ensureContentTypeExists = (
+    types: string[],
+  ): types is SearchableContentTypes[] =>
+    !!types.length && allTypes.every((type) => allTypes.includes(type))
+
   const [
     {
       data: { searchResults },
@@ -759,13 +745,17 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
     namespace,
   ] = await Promise.all([
     apolloClient.query<GetSearchResultsDetailedQuery, QuerySearchResultsArgs>({
-      fetchPolicy: "no-cache",
+      fetchPolicy: 'no-cache',
       query: GET_SEARCH_RESULTS_QUERY_DETAILED,
       variables: {
         query: {
           language: locale as ContentLanguage,
           queryString,
-          types: types.length ? types : ensureContentTypeExists(allTypes) ? allTypes : [],
+          types: types.length
+            ? types
+            : ensureContentTypeExists(allTypes)
+            ? allTypes
+            : [],
           ...(tags.length && { tags }),
           ...countTag,
           countTypes: true,
@@ -775,7 +765,7 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
       },
     }),
     apolloClient.query<GetSearchResultsNewsQuery, QuerySearchResultsArgs>({
-      fetchPolicy: "no-cache",
+      fetchPolicy: 'no-cache',
       query: GET_SEARCH_COUNT_QUERY,
       variables: {
         query: {
@@ -811,7 +801,7 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
   if (searchResults.items.length === 0 && page > 1) {
     throw new CustomNextError(404)
   }
-  console.log(JSON.stringify(searchResults,null,4))
+  console.log(JSON.stringify(searchResults, null, 4))
   return {
     q: queryString,
     searchResults,
