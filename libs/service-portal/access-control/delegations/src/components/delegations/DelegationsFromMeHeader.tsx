@@ -1,16 +1,11 @@
 import { useHistory } from 'react-router-dom'
 
-import {
-  Box,
-  Button,
-  Select,
-  SkeletonLoader,
-  Input,
-} from '@island.is/island-ui/core'
-import { m, ServicePortalPath } from '@island.is/service-portal/core'
+import { Box, Button, Input } from '@island.is/island-ui/core'
+import { ServicePortalPath } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
-import * as styles from './DelegationsHeader.css'
+import * as styles from './DelegationsFromMeHeader.css'
 import { useDomains, DomainOption } from '../../hooks/useDomains'
+import { DelegationsDomainSelect } from './DelegationsDomainSelect'
 
 interface DelegationsHeaderProps {
   domainName?: string | null
@@ -18,18 +13,13 @@ interface DelegationsHeaderProps {
   onSearchChange(val: string): void
 }
 
-export const DelegationsHeader = ({
+export const DelegationsFromMeHeader = ({
   onDomainChange,
   onSearchChange,
 }: DelegationsHeaderProps) => {
   const { formatMessage } = useLocale()
   const history = useHistory()
-  const {
-    domainOptions,
-    defaultDomainOption,
-    loading,
-    domainName,
-  } = useDomains()
+  const { domainName } = useDomains()
 
   const onClickHandler = () => {
     const query = new URLSearchParams()
@@ -50,34 +40,7 @@ export const DelegationsHeader = ({
   return (
     <Box className={styles.container}>
       <Box className={styles.selectContainer}>
-        {loading ? (
-          <SkeletonLoader height={71} />
-        ) : (
-          <Select
-            label={formatMessage(m.accessControl)}
-            size="xs"
-            name="domain"
-            backgroundColor="blue"
-            id="domain"
-            noOptionsMessage={formatMessage({
-              id: 'sp.access-control-delegations:no-option',
-              defaultMessage: 'Enginn valmöguleiki',
-            })}
-            options={domainOptions}
-            value={defaultDomainOption}
-            onChange={(option) => {
-              const opt = option as DomainOption
-
-              if (opt) {
-                onDomainChange(opt)
-              }
-            }}
-            placeholder={formatMessage({
-              id: 'sp.access-control-delegations:choose-domain',
-              defaultMessage: 'Veldu kerfi',
-            })}
-          />
-        )}
+        <DelegationsDomainSelect onDomainChange={onDomainChange} />
       </Box>
       <Box className={styles.searchContainer}>
         <Input
@@ -93,6 +56,7 @@ export const DelegationsHeader = ({
           icon="search"
         />
       </Box>
+
       <Box className={styles.buttonContainer}>
         <Button onClick={onClickHandler} size="small" fluid>
           {formatMessage({

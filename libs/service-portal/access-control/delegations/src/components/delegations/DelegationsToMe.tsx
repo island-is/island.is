@@ -6,25 +6,24 @@ import {
   Box,
 } from '@island.is/island-ui/core'
 import { AuthCustomDelegation } from '@island.is/api/schema'
-import { DelegationsFromMeHeader } from './DelegationsFromMeHeader'
 import { DelegationsEmptyState } from './DelegationsEmptyState'
 import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
-import { AccessDeleteModal } from '../access/AccessDeleteModal'
-import { AccessCard } from '../access/AccessCard'
-import { isDefined } from '@island.is/shared/utils'
 import { useAuthDelegationsQuery } from '@island.is/service-portal/graphql'
 import { DomainOption, useDomains } from '../../hooks/useDomains'
 import { ALL_DOMAINS } from '../../constants/domain'
+import { DelegationsToMeHeader } from './DelegationsToMeHeader'
+import { AccessDeleteModal } from '../access/AccessDeleteModal'
+import { AccessCard } from '../access/AccessCard'
 
-export const DelegationsFromMe = () => {
+import { isDefined } from 'class-validator'
+
+export const DelegationsToMe = () => {
   const { formatMessage, lang = 'is' } = useLocale()
-  const [searchValue, setSearchValue] = useState('')
+  const { domainName, updateDomainName } = useDomains()
   const [delegation, setDelegation] = useState<AuthCustomDelegation | null>(
     null,
   )
-  const { domainName, updateDomainName } = useDomains()
-
   const { data, loading, refetch, error } = useAuthDelegationsQuery({
     variables: {
       input: {
@@ -56,63 +55,40 @@ export const DelegationsFromMe = () => {
     })
   }
 
-  const filteredDelegations = useMemo(() => {
-    if (!searchValue) {
-      return delegations
-    }
-
-    return delegations.filter((delegation) => {
-      const searchValueLower = searchValue.toLowerCase()
-      const name = delegation?.to?.name.toLowerCase()
-      const nationalId = delegation?.to?.nationalId.toLowerCase()
-
-      return (
-        name?.includes(searchValueLower) || nationalId?.includes(searchValue)
-      )
-    })
-  }, [searchValue, delegations])
-
   return (
-    <>
-      <Box
-        display="flex"
-        flexDirection="column"
-        rowGap={4}
-        marginTop={[1, 1, 8]}
-      >
-        <DelegationsFromMeHeader
-          domainName={domainName}
-          onDomainChange={onDomainChange}
-          onSearchChange={setSearchValue}
-        />
-        <div>
-          {loading ? (
-            <SkeletonLoader width="100%" height={191} />
-          ) : error ? (
-            <AlertBanner
-              description={formatMessage(m.errorFetch)}
-              variant="error"
-            />
-          ) : delegations.length === 0 ? (
-            <DelegationsEmptyState />
-          ) : (
-            <Stack space={3}>
-              {filteredDelegations.map(
-                (delegation) =>
-                  delegation.to && (
-                    <AccessCard
-                      key={delegation.id}
-                      delegation={delegation}
-                      onDelete={(delegation) => {
-                        setDelegation(delegation)
-                      }}
-                    />
-                  ),
-              )}
-            </Stack>
-          )}
-        </div>
-      </Box>
+    <Box display="flex" flexDirection="column" rowGap={4} marginTop={[1, 1, 8]}>
+      <DelegationsToMeHeader
+        domainName={domainName}
+        onDomainChange={onDomainChange}
+      />
+      <div>
+        {loading ? (
+          <SkeletonLoader width="100%" height={191} />
+        ) : error ? (
+          <AlertBanner
+            description={formatMessage(m.errorFetch)}
+            variant="error"
+          />
+        ) : delegations.length === 0 ? (
+          <DelegationsEmptyState />
+        ) : (
+          <Stack space={3}>
+            {delegations.map(
+              (delegation) =>
+                delegation.to && (
+                  <AccessCard
+                    key={delegation.id}
+                    delegation={delegation}
+                    onDelete={(delegation) => {
+                      setDelegation(delegation)
+                    }}
+                    variant="to"
+                  />
+                ),
+            )}
+          </Stack>
+        )}
+      </div>
       <AccessDeleteModal
         id={`access-delete-modal-${delegation?.id}`}
         onClose={() => {
@@ -138,6 +114,6 @@ export const DelegationsFromMe = () => {
           imgSrc: delegation?.domain.organisationLogoUrl,
         }}
       />
-    </>
+    </Box>
   )
 }
