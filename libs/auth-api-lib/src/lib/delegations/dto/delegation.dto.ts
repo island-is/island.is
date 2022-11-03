@@ -7,17 +7,11 @@ import {
   IsDateString,
   ValidateNested,
 } from 'class-validator'
+import { DelegationType } from '../types/delegationType'
 import {
   DelegationScopeDTO,
   UpdateDelegationScopeDTO,
 } from './delegation-scope.dto'
-
-export enum DelegationType {
-  LegalGuardian = 'LegalGuardian',
-  ProcurationHolder = 'ProcurationHolder',
-  PersonalRepresentative = 'PersonalRepresentative',
-  Custom = 'Custom',
-}
 
 export enum DelegationProvider {
   NationalRegistry = 'thjodskra',

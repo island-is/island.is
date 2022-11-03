@@ -1,8 +1,8 @@
 import {
   ApiScope,
-  DelegationDTO,
   DelegationType,
   Domain,
+  MergedDelegationDTO,
   InactiveReason,
   PersonalRepresentative,
   PersonalRepresentativeRight,
@@ -10,6 +10,7 @@ import {
   PersonalRepresentativeScopePermission,
   PersonalRepresentativeType,
   UNKNOWN_NAME,
+  DelegationDTO,
 } from '@island.is/auth-api-lib'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import {
@@ -292,6 +293,106 @@ describe('DelegationsController', () => {
               cascade: true,
               truncate: true,
               force: true,
+            })
+          })
+
+          describe('when user calls GET /delegations/v2', () => {
+            const path = '/delegations/v2'
+            let response: request.Response
+            let body: MergedDelegationDTO[]
+
+            beforeAll(async () => {
+              response = await server.get(path)
+              body = response.body
+            })
+
+            it('should have a an OK return status', () => {
+              expect(response.status).toEqual(200)
+            })
+
+            it(`should return ${valid} ${
+              valid === 1 ? 'item' : 'items'
+            } `, () => {
+              expect(body).toHaveLength(valid + nationalRegistryErrors)
+            })
+
+            it('should have the nationalId of the user as the representer', () => {
+              expect(
+                body.every((d) => d.toNationalId === userNationalId),
+              ).toBeTruthy()
+            })
+
+            it('should only have the nationalId of the valid representees', () => {
+              expect(body.map((d) => d.fromNationalId).sort()).toEqual(
+                [
+                  ...validRepresentedPersons.map(([_, id]) => id),
+                  ...errorNationalIdsRepresentedPersons.map(([_, id]) => id),
+                ].sort(),
+              )
+            })
+
+            it(`should only have ${
+              valid + nationalRegistryErrors === 1 ? 'name' : 'names'
+            } of the valid represented ${
+              valid + nationalRegistryErrors === 1 ? 'person' : 'persons'
+            }`, () => {
+              expect(body.map((d) => d.fromName).sort()).toEqual([
+                ...validRepresentedPersons.map(([name, _]) => name).sort(),
+                ...errorNationalIdsRepresentedPersons.map(([name]) => name),
+              ])
+            })
+
+            it(`should have fetched the ${
+              valid + deceased + nationalRegistryErrors === 1 ? 'name' : 'names'
+            }  of the valid represented ${
+              valid + deceased + nationalRegistryErrors === 1
+                ? 'person'
+                : 'persons'
+            } from nationalRegistryApi`, () => {
+              expect(nationalRegistryApiSpy).toHaveBeenCalledTimes(
+                valid + deceased + nationalRegistryErrors,
+              )
+            })
+
+            it('should have the delegation type claims of PersonalRepresentative', () => {
+              expect(
+                body.every(
+                  (d) => d.types[0] === DelegationType.PersonalRepresentative,
+                ),
+              ).toBeTruthy()
+            })
+
+            it('should have made prModels inactive for deceased persons', async () => {
+              // Arrange
+              const expectedModels = await prModel.findAll({
+                where: {
+                  nationalIdRepresentedPerson: deceasedNationalIds,
+                  inactive: true,
+                  inactiveReason: InactiveReason.DECEASED_PARTY,
+                },
+              })
+
+              // Assert
+              expect(expectedModels.length).toEqual(deceased)
+
+              expectedModels.forEach((model) => {
+                expect(model.inactive).toEqual(true)
+                expect(model.inactiveReason).toEqual(
+                  InactiveReason.DECEASED_PARTY,
+                )
+              })
+            })
+
+            it('should return delegation if national registry api getIndividual throws an error', async () => {
+              // Arrange
+              const expectedModels = await prModel.findAll({
+                where: {
+                  nationalIdRepresentedPerson: errorNationalIds,
+                },
+              })
+
+              // Assert
+              expect(expectedModels.length).toEqual(errorNationalIds.length)
             })
           })
 

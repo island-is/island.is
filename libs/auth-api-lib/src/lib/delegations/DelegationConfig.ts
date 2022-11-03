@@ -2,7 +2,7 @@ import * as z from 'zod'
 
 import { ApiScope, AuthScope } from '@island.is/auth/scopes'
 import { defineConfig } from '@island.is/nest/config'
-import { DelegationType } from './dto/delegation.dto'
+import { DelegationType } from './types/delegationType'
 
 const customScopeRuleSchema = z.array(
   z.object({

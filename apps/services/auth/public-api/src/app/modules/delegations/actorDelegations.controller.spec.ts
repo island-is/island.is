@@ -4,11 +4,12 @@ import times from 'lodash/times'
 
 import {
   Client,
-  DEFAULT_DOMAIN,
   Delegation,
   DelegationDTO,
+  DelegationDTOMapper,
   DelegationScope,
   DelegationType,
+  MergedDelegationDTO,
   PersonalRepresentative,
   PersonalRepresentativeRight,
   PersonalRepresentativeRightType,
@@ -43,12 +44,26 @@ import {
   getFakeName,
   createDelegationModels,
   findExpectedDelegationModels,
+  expectMatchingMergedDelegations,
 } from '../../../../test/utils'
 
 const swapNames = (
   delegation: DelegationDTO,
   nationalRegistryUsers: NationalRegistryClientPerson[],
 ) => {
+  const user = nationalRegistryUsers.find(
+    (nru) => nru.nationalId === delegation.fromNationalId,
+  )
+  if (user) {
+    delegation.fromName = user.name
+  }
+  return delegation
+}
+
+const swapMergedNames = (
+  delegation: MergedDelegationDTO,
+  nationalRegistryUsers: NationalRegistryClientPerson[],
+): MergedDelegationDTO => {
   const user = nationalRegistryUsers.find(
     (nru) => nru.nationalId === delegation.fromNationalId,
   )
@@ -69,6 +84,19 @@ function updateDelegationFromNameToPersonName(
   }
 
   return swapNames(delegations, nationalRegistryUsers)
+}
+
+function updateMergedDelegationFromNameToPersonName(
+  delegations: MergedDelegationDTO[] | MergedDelegationDTO,
+  nationalRegistryUsers: NationalRegistryClientPerson[],
+) {
+  if (Array.isArray(delegations)) {
+    return delegations.map((delegation) =>
+      swapMergedNames(delegation, nationalRegistryUsers),
+    )
+  }
+
+  return swapMergedNames(delegations, nationalRegistryUsers)
 }
 
 const today = new Date('2021-11-12')
@@ -241,10 +269,12 @@ describe('ActorDelegationsController', () => {
         // Assert
         expect(res.status).toEqual(200)
         expect(res.body).toHaveLength(3)
-        expectMatchingObject(
+        expectMatchingMergedDelegations(
           res.body,
-          updateDelegationFromNameToPersonName(
-            expectedModels,
+          updateMergedDelegationFromNameToPersonName(
+            expectedModels.map((d) =>
+              DelegationDTOMapper.toMergedDelegationDTO(d),
+            ),
             nationalRegistryUsers,
           ),
         )
@@ -267,10 +297,10 @@ describe('ActorDelegationsController', () => {
         // Assert
         expect(res.status).toEqual(200)
         expect(res.body).toHaveLength(1)
-        expectMatchingObject(
+        expectMatchingMergedDelegations(
           res.body[0],
-          updateDelegationFromNameToPersonName(
-            expectedModel,
+          updateMergedDelegationFromNameToPersonName(
+            DelegationDTOMapper.toMergedDelegationDTO(expectedModel),
             nationalRegistryUsers,
           ),
         )
@@ -295,10 +325,10 @@ describe('ActorDelegationsController', () => {
         // Assert
         expect(res.status).toEqual(200)
         expect(res.body).toHaveLength(1)
-        expectMatchingObject(
+        expectMatchingMergedDelegations(
           res.body[0],
-          updateDelegationFromNameToPersonName(
-            expectedModel,
+          updateMergedDelegationFromNameToPersonName(
+            DelegationDTOMapper.toMergedDelegationDTO(expectedModel),
             nationalRegistryUsers,
           ),
         )
@@ -337,10 +367,10 @@ describe('ActorDelegationsController', () => {
         // Assert
         expect(res.status).toEqual(200)
         expect(res.body).toHaveLength(1)
-        expectMatchingObject(
+        expectMatchingMergedDelegations(
           res.body[0],
-          updateDelegationFromNameToPersonName(
-            expectedModel,
+          updateMergedDelegationFromNameToPersonName(
+            DelegationDTOMapper.toMergedDelegationDTO(expectedModel),
             nationalRegistryUsers,
           ),
         )
@@ -390,10 +420,12 @@ describe('ActorDelegationsController', () => {
         // Assert
         expect(res.status).toEqual(200)
         expect(res.body).toHaveLength(2)
-        expectMatchingObject(
+        expectMatchingMergedDelegations(
           res.body,
-          updateDelegationFromNameToPersonName(
-            expectedModels,
+          updateMergedDelegationFromNameToPersonName(
+            expectedModels.map((d) =>
+              DelegationDTOMapper.toMergedDelegationDTO(d),
+            ),
             nationalRegistryUsers,
           ),
         )
@@ -416,10 +448,10 @@ describe('ActorDelegationsController', () => {
         // Assert
         expect(res.status).toEqual(200)
         expect(res.body).toHaveLength(1)
-        expectMatchingObject(
+        expectMatchingMergedDelegations(
           res.body[0],
-          updateDelegationFromNameToPersonName(
-            expectedModel,
+          updateMergedDelegationFromNameToPersonName(
+            DelegationDTOMapper.toMergedDelegationDTO(expectedModel),
             nationalRegistryUsers,
           ),
         )
@@ -518,32 +550,6 @@ describe('ActorDelegationsController', () => {
         )
       })
 
-      it('should not return scopes in delegation that are no longer allowed for delegation', async () => {
-        // Arrange
-        await createDelegationModels(delegationModel, [
-          mockDelegations.incomingBothValidAndNotAllowed,
-        ])
-        const expectedModels = await findExpectedDelegationModels(
-          delegationModel,
-          [mockDelegations.incomingBothValidAndNotAllowed.id],
-          [Scopes[0].name],
-        )
-
-        // Act
-        const res = await server.get(`${path}${query}`)
-
-        // Assert
-        expect(res.status).toEqual(200)
-        expect(res.body).toHaveLength(1)
-        expectMatchingObject(
-          res.body,
-          updateDelegationFromNameToPersonName(
-            expectedModels,
-            nationalRegistryUsers,
-          ),
-        )
-      })
-
       describe('with legal guardian delegations', () => {
         let getForsja: jest.SpyInstance
         beforeAll(() => {
@@ -565,14 +571,16 @@ describe('ActorDelegationsController', () => {
             provider: 'thjodskra',
             toNationalId: user.nationalId,
             type: 'LegalGuardian',
-          }
+          } as DelegationDTO
           // Act
           const res = await server.get(`${path}${query}`)
 
           // Assert
           expect(res.status).toEqual(200)
           expect(res.body).toHaveLength(1)
-          expect(res.body[0]).toEqual(expectedDelegation)
+          expect(res.body[0]).toEqual(
+            DelegationDTOMapper.toMergedDelegationDTO(expectedDelegation),
+          )
         })
 
         it('should not return delegations when client does not support legal guardian delegations', async () => {
@@ -599,7 +607,7 @@ describe('ActorDelegationsController', () => {
           // Assert
           expect(res.status).toEqual(200)
           expect(res.body).toHaveLength(1)
-          expect(res.body[0].type).toEqual(DelegationType.LegalGuardian)
+          expect(res.body[0].types[0]).toEqual(DelegationType.LegalGuardian)
         })
 
         it('should not return a legal guardian delegation since the type is not included in the delegationTypes filter', async () => {
@@ -640,14 +648,16 @@ describe('ActorDelegationsController', () => {
             provider: 'fyrirtaekjaskra',
             toNationalId: user.nationalId,
             type: 'ProcurationHolder',
-          }
+          } as DelegationDTO
           // Act
           const res = await server.get(`${path}${query}`)
 
           // Assert
           expect(res.status).toEqual(200)
           expect(res.body).toHaveLength(1)
-          expect(res.body[0]).toEqual(expectedDelegation)
+          expect(res.body[0]).toEqual(
+            DelegationDTOMapper.toMergedDelegationDTO(expectedDelegation),
+          )
         })
 
         it('should not return delegations when client does not support procuring holder delegations', async () => {
@@ -674,7 +684,7 @@ describe('ActorDelegationsController', () => {
           // Assert
           expect(res.status).toEqual(200)
           expect(res.body).toHaveLength(1)
-          expect(res.body[0].type).toEqual(DelegationType.ProcurationHolder)
+          expect(res.body[0].types[0]).toEqual(DelegationType.ProcurationHolder)
         })
 
         it('should not return a procuring holder delegation since the type is not included in the delegationTypes filter', async () => {
@@ -736,7 +746,7 @@ describe('ActorDelegationsController', () => {
 
         describe('when fetched', () => {
           let response: request.Response
-          let body: DelegationDTO[]
+          let body: MergedDelegationDTO[]
 
           beforeAll(async () => {
             response = await server.get(`${path}${query}`)
@@ -774,7 +784,7 @@ describe('ActorDelegationsController', () => {
           it('should have the delegation type claim of PersonalRepresentative', () => {
             expect(
               body.some(
-                (d) => d.type === DelegationType.PersonalRepresentative,
+                (d) => d.types[0] === DelegationType.PersonalRepresentative,
               ),
             ).toBeTruthy()
           })
@@ -804,7 +814,7 @@ describe('ActorDelegationsController', () => {
           // Assert
           expect(res.status).toEqual(200)
           expect(res.body).toHaveLength(1)
-          expect(res.body[0].type).toEqual(
+          expect(res.body[0].types[0]).toEqual(
             DelegationType.PersonalRepresentative,
           )
         })
@@ -846,46 +856,6 @@ describe('ActorDelegationsController', () => {
             force: true,
           })
         })
-      })
-
-      it('should only return delegations in the default domain', async () => {
-        // Arrange
-        const delegations = [
-          createDelegation({
-            fromNationalId: nationalRegistryUser.nationalId,
-            toNationalId: user.nationalId,
-            scopes: [Scopes[0].name],
-            today,
-            domainName: 'someotherdomain',
-          }),
-          createDelegation({
-            fromNationalId: nationalRegistryUser.nationalId,
-            toNationalId: user.nationalId,
-            scopes: [Scopes[0].name],
-            today,
-            domainName: DEFAULT_DOMAIN,
-          }),
-        ]
-        await createDelegationModels(delegationModel, delegations)
-
-        const models = await findExpectedDelegationModels(delegationModel, [
-          delegations[1].id,
-        ])
-        const expectedModel = models[0]
-
-        // Act
-        const res = await server.get(`${path}${query}`)
-
-        // Assert
-        expect(res.status).toEqual(200)
-        expect(res.body).toHaveLength(1)
-        expectMatchingObject(
-          res.body[0],
-          updateDelegationFromNameToPersonName(
-            expectedModel,
-            nationalRegistryUsers,
-          ),
-        )
       })
     })
   })

@@ -40,7 +40,6 @@ import {
   CreateDelegationDTO,
   DelegationDTO,
   DelegationProvider,
-  DelegationType,
   UpdateDelegationDTO,
 } from './dto/delegation.dto'
 import { DelegationScope } from './models/delegation-scope.model'
@@ -53,6 +52,7 @@ import {
   getScopeValidityWhereClause,
   validateScopesPeriod,
 } from './utils/scopes'
+import { DelegationType } from './types/delegationType'
 
 export const UNKNOWN_NAME = 'Óþekkt nafn'
 
@@ -364,6 +364,9 @@ export class DelegationsService {
     return user.actor?.nationalId === delegation.toNationalId
   }
 
+  /**
+   * Deprecated: Use DelegationsIncomingService instead for incoming delegations.
+   */
   /***** Incoming Delegations *****/
 
   /**

@@ -5,6 +5,7 @@ import {
   Delete,
   Get,
   Headers,
+  Inject,
   Param,
   Patch,
   Post,
@@ -20,6 +21,7 @@ import {
   DelegationValidity,
   DelegationsOutgoingService,
   PatchDelegationDTO,
+  DelegationsIncomingService,
 } from '@island.is/auth-api-lib'
 import {
   CurrentUser,
@@ -32,12 +34,15 @@ import { AuthScope } from '@island.is/auth/scopes'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import {
   FeatureFlag,
+  FeatureFlagClient,
   FeatureFlagGuard,
   Features,
+  FEATURE_FLAG_CLIENT,
 } from '@island.is/nest/feature-flags'
 import { Documentation } from '@island.is/nest/swagger'
 import type { DocumentationParamOptions } from '@island.is/nest/swagger'
 import { isDefined } from '@island.is/shared/utils'
+import { FeatureFlagUser } from '@island.is/feature-flags'
 
 const namespace = '@island.is/auth/delegation-api/me/delegations'
 
@@ -61,6 +66,9 @@ const delegationId: DocumentationParamOptions = {
 export class MeDelegationsController {
   constructor(
     private readonly delegationsOutgoingService: DelegationsOutgoingService,
+    private readonly delegationsIncomingService: DelegationsIncomingService,
+    @Inject(FEATURE_FLAG_CLIENT)
+    private readonly featureFlagClient: FeatureFlagClient,
     private readonly auditService: AuditService,
   ) {}
 
@@ -109,7 +117,7 @@ export class MeDelegationsController {
     resources: (delegations) =>
       delegations.map((delegation) => delegation?.id).filter(isDefined),
   })
-  findAll(
+  async findAll(
     @CurrentUser() user: User,
     @Query('domain') domainName: string,
     @Query('direction')
@@ -118,16 +126,28 @@ export class MeDelegationsController {
     @Headers('X-Query-OtherUser') otherUser: string,
   ): Promise<DelegationDTO[]> {
     if (direction !== DelegationDirection.OUTGOING) {
+      return this.delegationsOutgoingService.findAll(
+        user,
+        validity,
+        domainName,
+        otherUser,
+      )
+    } else if (
+      await this.featureFlagClient.getValue(
+        Features.incomingDelegationsV2,
+        false,
+      )
+    ) {
+      return this.delegationsIncomingService.findAllValid(
+        user,
+        domainName,
+        otherUser,
+      )
+    } else {
       throw new BadRequestException(
         'direction=outgoing is currently the only supported value',
       )
     }
-    return this.delegationsOutgoingService.findAll(
-      user,
-      validity,
-      domainName,
-      otherUser,
-    )
   }
 
   @Get(':delegationId')
