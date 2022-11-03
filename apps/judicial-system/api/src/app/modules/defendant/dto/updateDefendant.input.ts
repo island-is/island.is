@@ -55,6 +55,6 @@ export class UpdateDefendantInput implements UpdateDefendant {
   readonly defenderPhoneNumber?: string
 
   @Allow()
-  @Field({ nullable: false })
-  readonly defendantWaivesRightToCounsel!: boolean
+  @Field({ nullable: true })
+  readonly defendantWaivesRightToCounsel?: boolean
 }
