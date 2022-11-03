@@ -7,6 +7,7 @@ import {
   EndorsementsScope,
   DocumentsScope,
   ApiScope,
+  AirDiscountSchemeScope,
 } from '@island.is/auth/scopes'
 
 import { environment } from './environments'
@@ -59,7 +60,7 @@ if (userMocked) {
       ApiScope.licensesVerify,
       ApiScope.company,
       ApiScope.vehicles,
-      '@vegagerdin.is/air-discount-scheme-scope',
+      AirDiscountSchemeScope.public,
     ],
     post_logout_redirect_uri: `${window.location.origin}`,
     userStorePrefix: 'sp.',

@@ -34,6 +34,7 @@ import { UserService } from '../user/user.service'
 import { AuthGuard } from '../common'
 import { GetUserByDiscountCodeParams } from '../user/dto'
 import { AirlineUser } from '../user/user.model'
+import { AirDiscountSchemeScope } from '@island.is/auth/scopes'
 
 @ApiTags('Users')
 @Controller('api/public')
@@ -83,7 +84,7 @@ export class PrivateDiscountController {
   }
 
   @UseGuards(IdsUserGuard, ScopesGuard)
-  @Scopes('@vegagerdin.is/air-discount-scheme-scope')
+  @Scopes(AirDiscountSchemeScope.full, AirDiscountSchemeScope.public)
   @Post('users/:nationalId/discounts')
   @ApiExcludeEndpoint()
   async createDiscountCode(

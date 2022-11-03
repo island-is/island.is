@@ -14,13 +14,14 @@ import {
 } from '@island.is/auth-nest-tools'
 import type { User as AuthUser } from '@island.is/auth-nest-tools'
 import { UseGuards } from '@nestjs/common'
+import { AirDiscountSchemeScope } from '@island.is/auth/scopes'
 
 type DiscountWithTUser = Discount & { user: TUser }
 
 const TWO_HOURS = 7200 // seconds
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes('@vegagerdin.is/air-discount-scheme-scope')
+@Scopes(AirDiscountSchemeScope.full)
 @Resolver(() => Discount)
 export class DiscountResolver {
   @Query(() => [Discount], { nullable: true })

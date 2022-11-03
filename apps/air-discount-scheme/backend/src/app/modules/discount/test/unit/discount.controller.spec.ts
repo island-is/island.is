@@ -18,10 +18,11 @@ import { CACHE_MANAGER } from '@nestjs/common'
 import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
 import { AirlineUser } from '../../../user/user.model'
 import { createTestUser } from '../../../../../../test/createTestUser'
+import { AirDiscountSchemeScope } from '@island.is/auth/scopes'
 
 const auth: AuthUser = {
   nationalId: '1326487905',
-  scope: ['@vegagerdin.is/air-discount-scheme-scope'],
+  scope: [AirDiscountSchemeScope.full],
   authorization: '',
   client: '',
 }

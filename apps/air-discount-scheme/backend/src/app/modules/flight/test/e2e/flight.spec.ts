@@ -7,6 +7,7 @@ import {
 import { Flight } from '../../flight.model'
 import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
 import { setup } from '../../../../../../test/setup'
+import { AirDiscountSchemeScope } from '@island.is/auth/scopes'
 
 let app: INestApplication
 let cacheManager: CacheManager
@@ -25,7 +26,7 @@ const user: NationalRegistryUser = {
 
 const mockAuthGuard = new MockAuthGuard({
   nationalId: '1326487905',
-  scope: ['@vegagerdin.is/air-discount-scheme-scope'],
+  scope: [AirDiscountSchemeScope.full],
 })
 
 beforeAll(async () => {

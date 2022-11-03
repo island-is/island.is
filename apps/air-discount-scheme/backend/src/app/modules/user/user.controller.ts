@@ -17,9 +17,10 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import type { User as AuthUser } from '@island.is/auth-nest-tools'
+import { AirDiscountSchemeScope } from '@island.is/auth/scopes'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes('@vegagerdin.is/air-discount-scheme-scope')
+@Scopes(AirDiscountSchemeScope.full, AirDiscountSchemeScope.public)
 @Controller('api/private')
 export class PrivateUserController {
   constructor(private readonly userService: UserService) {}

@@ -15,6 +15,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import { UseGuards } from '@nestjs/common'
 import { getRole } from '../auth/roles'
+import { AirDiscountSchemeScope } from '@island.is/auth/scopes'
 
 @Resolver(() => User)
 export class UserResolver {
@@ -35,7 +36,7 @@ export class UserResolver {
   }
 
   @UseGuards(IdsUserGuard, ScopesGuard)
-  @Scopes('@vegagerdin.is/air-discount-scheme-scope')
+  @Scopes(AirDiscountSchemeScope.full)
   @ResolveField('meetsADSRequirements')
   resolveMeetsADSRequirements(@Parent() user: TUser): boolean {
     if (user.fund) {
@@ -45,7 +46,7 @@ export class UserResolver {
   }
 
   @UseGuards(IdsUserGuard, ScopesGuard)
-  @Scopes('@vegagerdin.is/air-discount-scheme-scope')
+  @Scopes(AirDiscountSchemeScope.full)
   @ResolveField('flightLegs', () => [FlightLeg])
   async resolveFlights(
     @CurrentUser() user: AuthUser,

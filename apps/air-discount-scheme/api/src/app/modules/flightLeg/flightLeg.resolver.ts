@@ -16,9 +16,9 @@ import { UseGuards } from '@nestjs/common'
 import { Roles } from '../decorators/roles.decorator'
 import { Role } from '@island.is/air-discount-scheme/types'
 import { RolesGuard } from '../auth/roles.guard'
+import { AirDiscountSchemeScope } from '@island.is/auth/scopes'
 
-@UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes('@vegagerdin.is/air-discount-scheme-scope')
+@Scopes(AirDiscountSchemeScope.full)
 @Resolver(() => FlightLeg)
 export class FlightLegResolver {
   @Roles(Role.ADMIN)

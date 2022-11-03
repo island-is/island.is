@@ -11,6 +11,7 @@ import {
   NationalRegistryClientConfig,
   NationalRegistryClientModule,
 } from '@island.is/clients/national-registry-v2'
+import { AirDiscountSchemeScope } from '@island.is/auth/scopes'
 
 const user: NationalRegistryUser = {
   nationalId: '1306886513',
@@ -25,7 +26,7 @@ const user: NationalRegistryUser = {
 
 const auth: AuthUser = {
   nationalId: '1326487905',
-  scope: ['@vegagerdin.is/air-discount-scheme-scope'],
+  scope: [AirDiscountSchemeScope.full],
   authorization: '',
   client: '',
 }

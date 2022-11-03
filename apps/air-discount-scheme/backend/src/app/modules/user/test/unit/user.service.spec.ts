@@ -7,13 +7,14 @@ import type { User as AuthUser } from '@island.is/auth-nest-tools'
 import { CACHE_MANAGER } from '@nestjs/common'
 import kennitala from 'kennitala'
 import { createTestUser } from '../../../../../../test/createTestUser'
+import { AirDiscountSchemeScope } from '@island.is/auth/scopes'
 
 function getAuthUser(nationalId: string): AuthUser {
   return {
     nationalId,
     authorization: '',
     client: '',
-    scope: ['@vegagerdin.is/air-discount-scheme-scope'],
+    scope: [AirDiscountSchemeScope.full],
   }
 }
 
