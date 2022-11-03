@@ -19,7 +19,6 @@ import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { NO, YES } from '../shared/constants'
 import { PaymentPlanExternalData } from '../types'
 import { Application } from '@island.is/api/schema'
-import { applicantInformationMultiField } from '@island.is/application/ui-forms'
 
 const shouldRenderMockDataSubSection = !isRunningOnEnvironment('production')
 
