@@ -242,6 +242,7 @@ api:
   enabled: true
   env:
     APPLICATION_SYSTEM_API_URL: 'http://web-application-system-api.application-system.svc.cluster.local'
+    AUTH_DELEGATION_API_URL: 'https://auth-delegation-api.internal.innskra.island.is'
     AUTH_PUBLIC_API_URL: 'https://innskra.island.is/api'
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS/GOV/5402696029/Skatturinn/ft-v1'

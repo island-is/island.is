@@ -9,20 +9,18 @@ import type { Logger } from '@island.is/logging'
 import { appModuleConfig } from './app.config'
 
 @Injectable()
-export class ProsecutorDocumentsDeliveryService {
+export class InternalDeliveryService {
   constructor(
     @Inject(appModuleConfig.KEY)
     private readonly config: ConfigType<typeof appModuleConfig>,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  async deliverProsecutorDocuments(caseId: string): Promise<boolean> {
-    this.logger.debug(
-      `Delivering prosecutor documents for case ${caseId} to court`,
-    )
+  async deliver(caseId: string, what: string): Promise<boolean> {
+    this.logger.debug(`Posting ${what} for case ${caseId}`)
 
-    await fetch(
-      `${this.config.backendUrl}/api/internal/case/${caseId}/deliverProsecutorDocuments`,
+    return fetch(
+      `${this.config.backendUrl}/api/internal/case/${caseId}/${what}`,
       {
         method: 'POST',
         headers: {
@@ -34,31 +32,23 @@ export class ProsecutorDocumentsDeliveryService {
       .then(async (res) => {
         const response = await res.json()
 
-        if (res.ok) {
-          this.logger.debug(
-            `Delivered prosecutor documents for case ${caseId} to court`,
-          )
-
-          if (!response.requestDeliveredToCourt) {
-            this.logger.error(
-              `Failed to deliver the request for case ${caseId} to court`,
-            )
-          }
-
-          return
+        if (!res.ok || !response.delivered) {
+          throw response
         }
 
-        throw response
+        this.logger.debug(`Posted ${what} for case ${caseId}`)
+
+        return true
       })
       .catch((reason) => {
-        this.logger.error(
-          `Failed to deliver prosecutor documents for case ${caseId} to court`,
+        this.logger.info(
+          `Failed to post ${what} for case ${caseId} - attempting retry`,
           {
             reason,
           },
         )
-      })
 
-    return true
+        return false
+      })
   }
 }

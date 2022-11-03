@@ -1,9 +1,9 @@
 import { uuid } from 'uuidv4'
 
-import { AwsS3Service } from '../../aws-s3'
-import { CreatePresignedPostDto } from '../dto/createPresignedPost.dto'
-import { PresignedPost } from '../models/presignedPost.model'
-import { createTestingFileModule } from './createTestingFileModule'
+import { AwsS3Service } from '../../../aws-s3'
+import { CreatePresignedPostDto } from '../../dto/createPresignedPost.dto'
+import { PresignedPost } from '../../models/presignedPost.model'
+import { createTestingFileModule } from '../createTestingFileModule'
 
 interface Then {
   result: PresignedPost
