@@ -386,7 +386,7 @@ export class NotificationService {
 
   private sendResubmittedToCourtEmailToDefender(
     theCase: Case,
-  ): Promise<Recipient> {
+  ): Promise<Recipient>[] {
     const { body, subject } = formatDefenderResubmittedToCourtEmailNotification(
       this.formatMessage,
       theCase.defenderNationalId &&
@@ -395,12 +395,30 @@ export class NotificationService {
       theCase.courtCaseNumber,
     )
 
-    return this.sendEmail(
-      subject,
-      body,
-      theCase.defenderName,
-      theCase.defenderEmail,
-    )
+    if (isIndictmentCase(theCase.type)) {
+      const promises: Promise<Recipient>[] = []
+      theCase.defendants?.forEach((defendant) =>
+        promises.push(
+          this.sendEmail(
+            subject,
+            body,
+            defendant.defenderName,
+            defendant.defenderEmail,
+          ),
+        ),
+      )
+
+      return promises
+    } else {
+      return [
+        this.sendEmail(
+          subject,
+          body,
+          theCase.defenderName,
+          theCase.defenderEmail,
+        ),
+      ]
+    }
   }
 
   private async sendReadyForCourtEmailNotificationToProsecutor(
