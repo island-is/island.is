@@ -582,13 +582,21 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'transferRights',
   ) as TransferRightsOption
 
-  const isRequestingRights =
+  let isRequestingRights =
     transferRights === TransferRightsOption.REQUEST
       ? YES
       : (getValueViaPath(
           answers,
           'requestRights.isRequestingRights',
         ) as YesOrNo)
+  if (isRequestingRights === YES) {
+    if (
+      multipleBirthsRequestDays * 1 !==
+      (multipleBirths - 1) * multipleBirthsDefaultDays
+    ) {
+      isRequestingRights = NO
+    }
+  }
 
   const requestValue = getValueViaPath(answers, 'requestRights.requestDays') as
     | number
@@ -675,7 +683,6 @@ export const requiresOtherParentApproval = (
   const {
     isRequestingRights,
     usePersonalAllowanceFromSpouse,
-    multipleBirthsRequestDays,
   } = applicationAnswers
 
   const needsApprovalForRequestingRights =
@@ -683,8 +690,7 @@ export const requiresOtherParentApproval = (
 
   return (
     (isRequestingRights === YES && needsApprovalForRequestingRights) ||
-    usePersonalAllowanceFromSpouse === YES ||
-    multipleBirthsRequestDays * 1 > 0
+    usePersonalAllowanceFromSpouse === YES
   )
 }
 
