@@ -19,6 +19,7 @@ import {
   FormModes,
   FormValue,
 } from '@island.is/application/types'
+import { applicantInformationMultiField } from '@island.is/application/ui-forms'
 import { DataProtectionComplaint, OnBehalf } from '../lib/dataSchema'
 import {
   application,
@@ -305,97 +306,7 @@ export const ComplaintForm: Form = buildForm({
               onBehalf === OnBehalf.OTHERS
             )
           },
-          children: [
-            buildMultiField({
-              id: 'applicantSection',
-              title: info.general.applicantPageTitle,
-              description: info.general.applicantPageDescription,
-              children: [
-                buildTextField({
-                  id: 'applicant.name',
-                  title: info.labels.name,
-                  backgroundColor: 'white',
-                  disabled: true,
-                  required: true,
-                  defaultValue: (application: DataProtectionComplaint) =>
-                    application.externalData?.nationalRegistry?.data?.fullName,
-                }),
-                buildTextField({
-                  id: 'applicant.nationalId',
-                  title: info.labels.nationalId,
-                  format: '######-####',
-                  width: 'half',
-                  backgroundColor: 'white',
-                  disabled: true,
-                  required: true,
-                  defaultValue: (application: DataProtectionComplaint) =>
-                    application.externalData?.nationalRegistry?.data
-                      ?.nationalId,
-                }),
-                buildTextField({
-                  id: 'applicant.address',
-                  title: info.labels.address,
-                  width: 'half',
-                  backgroundColor: 'blue',
-                  required: true,
-                  defaultValue: (application: DataProtectionComplaint) =>
-                    application.externalData?.nationalRegistry?.data?.address
-                      ?.streetAddress,
-                }),
-                buildTextField({
-                  id: 'applicant.postalCode',
-                  title: info.labels.postalCode,
-                  width: 'half',
-                  backgroundColor: 'blue',
-                  required: true,
-                  defaultValue: (application: DataProtectionComplaint) =>
-                    application.externalData?.nationalRegistry?.data?.address
-                      ?.postalCode,
-                }),
-                buildTextField({
-                  id: 'applicant.city',
-                  title: info.labels.city,
-                  width: 'half',
-                  backgroundColor: 'blue',
-                  required: true,
-                  defaultValue: (application: DataProtectionComplaint) =>
-                    application.externalData?.nationalRegistry?.data?.address
-                      ?.city,
-                }),
-                buildTextField({
-                  id: 'applicant.email',
-                  title: info.labels.email,
-                  width: 'half',
-                  variant: 'email',
-                  backgroundColor: 'blue',
-                  defaultValue: (application: DataProtectionComplaint) =>
-                    application.externalData?.userProfile?.data?.email,
-                }),
-                buildTextField({
-                  id: 'applicant.phoneNumber',
-                  title: info.labels.tel,
-                  format: '###-####',
-                  width: 'half',
-                  variant: 'tel',
-                  backgroundColor: 'blue',
-                  defaultValue: (application: DataProtectionComplaint) => {
-                    const phoneNumber =
-                      application.externalData?.userProfile?.data
-                        ?.mobilePhoneNumber
-                    if (phoneNumber?.startsWith('+')) {
-                      const splitNumber = phoneNumber.split('-')
-                      if (splitNumber.length === 3) {
-                        return `${splitNumber[1]}${splitNumber[2]}`
-                      } else if (splitNumber.length === 2) {
-                        return `${splitNumber[1]}`
-                      }
-                    }
-                    return phoneNumber
-                  },
-                }),
-              ],
-            }),
-          ],
+          children: [applicantInformationMultiField],
         }),
         buildSubSection({
           id: 'organizationOrInstitution',

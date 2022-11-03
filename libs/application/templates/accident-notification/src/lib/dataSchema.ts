@@ -1,3 +1,4 @@
+import { applicantInformationSchema } from '@island.is/application/ui-forms'
 import * as kennitala from 'kennitala'
 import { z } from 'zod'
 import { NO, YES } from '../constants'
@@ -94,19 +95,7 @@ export const AccidentNotificationSchema = z.object({
   }),
   timePassedHindrance: z.enum([YES, NO]),
   carAccidentHindrance: z.enum([YES, NO]),
-  applicant: z.object({
-    name: z.string().refine((x) => x.trim().length > 0),
-    nationalId: z.string().refine((x) => (x ? kennitala.isPerson(x) : false)),
-    address: z.string().refine((x) => x.trim().length > 0),
-    postalCode: z.string().refine((x) => +x >= 100 && +x <= 999, {
-      params: error.invalidValue,
-    }),
-    city: z.string().refine((x) => x.trim().length > 0, {
-      params: error.invalidValue,
-    }),
-    email: z.string().email(),
-    phoneNumber: z.string().optional(),
-  }),
+  applicant: applicantInformationSchema,
   whoIsTheNotificationFor: z.object({
     answer: z.enum([
       WhoIsTheNotificationForEnum.JURIDICALPERSON,
