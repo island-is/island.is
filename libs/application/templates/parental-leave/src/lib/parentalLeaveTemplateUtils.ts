@@ -21,8 +21,6 @@ export function hasEmployer(context: ApplicationContext) {
     employer: { isSelfEmployed: typeof YES | typeof NO }
   }
 
-  console.log('current: ', currentApplicationAnswers)
-
   // Added this check for applications that is in the db already so they can go through to next state
   if (currentApplicationAnswers.applicationType === undefined) {
     if (
