@@ -1,5 +1,5 @@
-import * as kennitala from 'kennitala'
-import { z } from 'zod'
+import { applicantInformationSchema } from '@island.is/application/ui-forms'
+import * as z from 'zod'
 import {
   ComplainedForTypes,
   ComplaineeTypes,
@@ -17,22 +17,7 @@ const FileSchema = z.object({
 
 export const ComplaintsToAlthingiOmbudsmanSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v, { params: error.required }),
-  information: z.object({
-    name: z.string().min(1),
-    ssn: z.string().refine((x) => (x ? kennitala.isPerson(x) : false)),
-    address: z.string().min(1),
-    postcode: z.string().min(1),
-    city: z.string().min(1),
-    email: z
-      .string()
-      .email()
-      .refine((val) => (val ? val.length > 0 : false), {
-        params: error.required,
-      }),
-    phone: z.string().refine((p) => p, {
-      params: error.required,
-    }),
-  }),
+  applicant: applicantInformationSchema,
   complainedFor: z.object({
     decision: z.enum([
       ComplainedForTypes.MYSELF,
