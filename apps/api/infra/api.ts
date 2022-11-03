@@ -118,6 +118,13 @@ export const serviceSetup = (services: {
       XROAD_DRIVING_LICENSE_BOOK_TIMEOUT: '20000',
       XROAD_FINANCES_TIMEOUT: '20000',
       XROAD_CHARGE_FJS_V2_TIMEOUT: '20000',
+      AUTH_DELEGATION_API_URL: {
+        dev:
+          'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local',
+        staging:
+          'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local',
+        prod: 'https://auth-delegation-api.internal.innskra.island.is',
+      },
       IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',
@@ -221,20 +228,6 @@ export const serviceSetup = (services: {
       Vehicles,
       Passports,
     )
-    .features({
-      'delegation-api': {
-        env: {
-          AUTH_DELEGATION_API_URL: {
-            dev:
-              'http://web-services-auth-delegation-api.identity-server.svc.cluster.local',
-            staging:
-              'http://web-services-auth-delegation-api.identity-server.svc.cluster.local',
-            prod: MissingSetting, // this allows us to specify that we still do not know that the value is
-          },
-        },
-        secrets: {},
-      },
-    })
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({
       primary: {
