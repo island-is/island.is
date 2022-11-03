@@ -8,10 +8,15 @@ import {
   generateAssignReviewerEmail,
   generateConfirmationEmail,
 } from './emailGenerators'
+import {
+  generateAssignReviewerSms,
+  generateConfirmationSms,
+} from './smsGenerators'
 
 interface EmailRecipient {
   name: string
   email: string
+  phone: string
 }
 
 @Injectable()
@@ -81,6 +86,7 @@ export class TransferOfVehicleOwnershipService {
         newSubmitRecipientList.push({
           name: sellerCoOwners[i].name,
           email: sellerCoOwners[i].email,
+          phone: sellerCoOwners[i].phone,
         })
       }
     }
@@ -90,6 +96,7 @@ export class TransferOfVehicleOwnershipService {
       newSubmitRecipientList.push({
         name: answers.buyer.name,
         email: answers.buyer.email,
+        phone: answers.buyer.phone,
       })
     }
 
@@ -102,6 +109,7 @@ export class TransferOfVehicleOwnershipService {
         newSubmitRecipientList.push({
           name: buyerCoOwners[i].name,
           email: buyerCoOwners[i].email,
+          phone: buyerCoOwners[i].phone,
         })
       }
     }
@@ -115,22 +123,34 @@ export class TransferOfVehicleOwnershipService {
         newSubmitRecipientList.push({
           name: buyerOperators[i].name,
           email: buyerOperators[i].email,
+          phone: buyerOperators[i].phone,
         })
       }
     }
 
-    // // Send email individually to each recipient
-    // for (var i = 0; i < newSubmitRecipientList.length; i++) {
-    //   await this.sharedTemplateAPIService.sendEmail(
-    //     (props) =>
-    //       generateAssignReviewerEmail(
-    //         props,
-    //         newSubmitRecipientList[i].name,
-    //         newSubmitRecipientList[i].email,
-    //       ),
-    //     application,
-    //   )
-    // }
+    // Send email individually to each recipient
+    for (var i = 0; i < newSubmitRecipientList.length; i++) {
+      await this.sharedTemplateAPIService.sendEmail(
+        (props) =>
+          generateAssignReviewerEmail(
+            props,
+            newSubmitRecipientList[i].name,
+            newSubmitRecipientList[i].email,
+          ),
+        application,
+      )
+
+      if (newSubmitRecipientList[i].phone) {
+        await this.sharedTemplateAPIService.sendSms(
+          () =>
+            generateAssignReviewerSms(
+              newSubmitRecipientList[i].name,
+              newSubmitRecipientList[i].phone,
+            ),
+          application,
+        )
+      }
+    }
 
     return newSubmitRecipientList
   }
@@ -167,6 +187,7 @@ export class TransferOfVehicleOwnershipService {
           newRecipientList.push({
             name: buyerCoOwners[i].name,
             email: buyerCoOwners[i].email,
+            phone: buyerCoOwners[i].phone,
           })
         }
       }
@@ -186,23 +207,35 @@ export class TransferOfVehicleOwnershipService {
           newRecipientList.push({
             name: buyerOperators[i].name,
             email: buyerOperators[i].email,
+            phone: buyerOperators[i].phone,
           })
         }
       }
     }
 
-    // // Send email individually to each recipient
-    // for (var i = 0; i < newRecipientList.length; i++) {
-    //   await this.sharedTemplateAPIService.sendEmail(
-    //     (props) =>
-    //       generateAssignReviewerEmail(
-    //         props,
-    //         newRecipientList[i].name,
-    //         newRecipientList[i].email,
-    //       ),
-    //     application,
-    //   )
-    // }
+    // Send email individually to each recipient
+    for (var i = 0; i < newRecipientList.length; i++) {
+      await this.sharedTemplateAPIService.sendEmail(
+        (props) =>
+          generateAssignReviewerEmail(
+            props,
+            newRecipientList[i].name,
+            newRecipientList[i].email,
+          ),
+        application,
+      )
+
+      if (newRecipientList[i].phone) {
+        await this.sharedTemplateAPIService.sendSms(
+          () =>
+            generateAssignReviewerSms(
+              newRecipientList[i].name,
+              newRecipientList[i].phone,
+            ),
+          application,
+        )
+      }
+    }
 
     return [...oldRecipientList, ...newRecipientList]
   }
@@ -257,6 +290,7 @@ export class TransferOfVehicleOwnershipService {
       recipientList.push({
         name: answers.seller.name,
         email: answers.seller.email,
+        phone: answers.seller.phone,
       })
     }
 
@@ -267,6 +301,7 @@ export class TransferOfVehicleOwnershipService {
         recipientList.push({
           name: sellerCoOwners[i].name,
           email: sellerCoOwners[i].email,
+          phone: sellerCoOwners[i].phone,
         })
       }
     }
@@ -276,6 +311,7 @@ export class TransferOfVehicleOwnershipService {
       recipientList.push({
         name: answers.buyer.name,
         email: answers.buyer.email,
+        phone: answers.buyer.phone,
       })
     }
 
@@ -285,6 +321,7 @@ export class TransferOfVehicleOwnershipService {
         recipientList.push({
           name: buyerCoOwners[i].name,
           email: buyerCoOwners[i].email,
+          phone: buyerCoOwners[i].phone,
         })
       }
     }
@@ -295,21 +332,33 @@ export class TransferOfVehicleOwnershipService {
         recipientList.push({
           name: buyerOperators[i].name,
           email: buyerOperators[i].email,
+          phone: buyerOperators[i].phone,
         })
       }
     }
 
-    // // Send email individually to each recipient about success of submitting application
-    // for (var i = 0; i < recipientList.length; i++) {
-    //   await this.sharedTemplateAPIService.sendEmail(
-    //     (props) =>
-    //       generateConfirmationEmail(
-    //         props,
-    //         recipientList[i].name,
-    //         recipientList[i].email,
-    //       ),
-    //     application,
-    //   )
-    // }
+    // Send email individually to each recipient about success of submitting application
+    for (var i = 0; i < recipientList.length; i++) {
+      await this.sharedTemplateAPIService.sendEmail(
+        (props) =>
+          generateConfirmationEmail(
+            props,
+            recipientList[i].name,
+            recipientList[i].email,
+          ),
+        application,
+      )
+
+      if (recipientList[i].phone) {
+        await this.sharedTemplateAPIService.sendSms(
+          () =>
+            generateConfirmationSms(
+              recipientList[i].name,
+              recipientList[i].phone,
+            ),
+          application,
+        )
+      }
+    }
   }
 }

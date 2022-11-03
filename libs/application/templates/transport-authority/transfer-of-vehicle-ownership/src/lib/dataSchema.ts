@@ -16,24 +16,28 @@ export const TransferOfVehicleOwnershipSchema = z.object({
     nationalId: z.string(),
     name: z.string(),
     email: z.string(),
+    phone: z.string(),
   }),
   coOwner: z.array(
     z.object({
       nationalId: z.string(),
       name: z.string(),
       email: z.string(),
+      phone: z.string(),
     }),
   ),
   buyer: z.object({
     nationalId: z.string(),
     name: z.string(),
     email: z.string(),
+    phone: z.string(),
   }),
   coOwnerAndOperator: z.array(
     z.object({
       nationalId: z.string(),
       name: z.string(),
       email: z.string(),
+      phone: z.string(),
       type: z.enum(['operator', 'coOwner']),
     }),
   ),
