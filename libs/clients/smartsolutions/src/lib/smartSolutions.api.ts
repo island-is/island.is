@@ -1,5 +1,5 @@
 import fetch, { Response } from 'node-fetch'
-import type { Logger } from '@island.is/logging'
+import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import {
   UpsertPkPassResponse,
   PassTemplatesDTO,
@@ -18,6 +18,8 @@ import {
   PassTemplatePageInfo,
 } from '../../gen/schema'
 import { ErrorMessageToStatusCodeMap } from './utils'
+import { Inject } from '@nestjs/common'
+import { SMART_SOLUTIONS_API_CONFIG } from './smartSolutions.config'
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'smartsolutions'
 
@@ -29,7 +31,9 @@ export interface SmartSolutionsConfig {
 
 export class SmartSolutionsApi {
   constructor(
+    @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
+    @Inject(SMART_SOLUTIONS_API_CONFIG)
     private config: SmartSolutionsConfig,
   ) {}
 

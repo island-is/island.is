@@ -24,7 +24,7 @@ import { PkPassClient } from './pkpass.client'
 import { PkPassPayload } from './pkpass.type'
 import { Locale } from '@island.is/shared/types'
 import { GenericDrivingLicenseConfig } from './genericDrivingLicense.config'
-import { ConfigType } from '@nestjs/config'
+import { ConfigType } from '@island.is/nest/config'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'drivinglicense-service'

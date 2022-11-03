@@ -1,6 +1,6 @@
 import { Cache as CacheManager } from 'cache-manager'
 import { Module, CacheModule } from '@nestjs/common'
-import { ConfigType } from '@nestjs/config'
+import { ConfigType } from '@island.is/nest/config'
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { CmsModule } from '@island.is/cms'
 import { LicenseServiceService } from './licenseService.service'
@@ -43,6 +43,16 @@ export interface PassTemplateIds {
 
 export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
   {
+    type: GenericLicenseType.FirearmLicense,
+    provider: {
+      id: GenericLicenseProviderId.NationalPoliceCommissioner,
+    },
+    pkpass: true,
+    pkpassVerify: true,
+    timeout: 100,
+    orgSlug: GenericLicenseOrganizationSlug.FirearmLicense,
+  },
+  {
     type: GenericLicenseType.DriversLicense,
     provider: {
       id: GenericLicenseProviderId.NationalPoliceCommissioner,
@@ -64,7 +74,6 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
   },
   {
     type: GenericLicenseType.MachineLicense,
-
     provider: {
       id: GenericLicenseProviderId.AdministrationOfOccupationalSafetyAndHealth,
     },

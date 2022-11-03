@@ -1,23 +1,17 @@
 import { AdrAndMachineLicenseClientModule } from '@island.is/clients/adr-and-machine-license'
 import {
-  SmartSolutionsApi,
   SmartSolutionsApiClientModule,
   SmartSolutionsConfig,
-  SMART_SOLUTIONS_API_CONFIG,
 } from '@island.is/clients/smartsolutions'
 import { Module } from '@nestjs/common'
-import { ConfigType } from '@nestjs/config'
-import { GenericFirearmLicenseConfig } from '../firearm-license-client'
+import { ConfigType, LazyDuringDevScope } from '@island.is/nest/config'
 import { GenericMachineLicenseService } from './genericMachineLicense.service'
 import { GenericMachineLicenseConfig } from './genericMachineLicense.config'
-import { LazyDuringDevScope } from '@island.is/nest/config'
 
 @Module({
-  imports: [SmartSolutionsApiClientModule, AdrAndMachineLicenseClientModule],
-  providers: [
-    GenericMachineLicenseService,
-    {
-      provide: SMART_SOLUTIONS_API_CONFIG,
+  imports: [
+    AdrAndMachineLicenseClientModule,
+    SmartSolutionsApiClientModule.registerAsync({
       scope: LazyDuringDevScope,
       useFactory: (config: ConfigType<typeof GenericMachineLicenseConfig>) => {
         const smartConfig: SmartSolutionsConfig = {
@@ -27,10 +21,10 @@ import { LazyDuringDevScope } from '@island.is/nest/config'
         }
         return smartConfig
       },
-      inject: [GenericFirearmLicenseConfig.KEY],
-    },
-    SmartSolutionsApi,
+      inject: [GenericMachineLicenseConfig.KEY],
+    }),
   ],
+  providers: [GenericMachineLicenseService],
   exports: [GenericMachineLicenseService],
 })
 export class GenericMachineLicenseModule {}

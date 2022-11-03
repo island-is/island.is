@@ -13,7 +13,7 @@ import {
   PkPassVerifyResult,
 } from './pkpass.type'
 import { GenericDrivingLicenseConfig } from './genericDrivingLicense.config'
-import { ConfigType } from '@nestjs/config'
+import { ConfigType } from '@island.is/nest/config'
 /** Set TTL to less than given expiry from service */
 const DEFAULT_CACHE_TOKEN_EXPIRY_DELTA_IN_MS = 2000
 

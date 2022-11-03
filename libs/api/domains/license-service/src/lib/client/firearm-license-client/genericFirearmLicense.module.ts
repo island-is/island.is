@@ -3,23 +3,18 @@ import {
   FirearmLicenseClientModule,
 } from '@island.is/clients/firearm-license'
 import {
-  SmartSolutionsApi,
   SmartSolutionsApiClientModule,
   SmartSolutionsConfig,
-  SMART_SOLUTIONS_API_CONFIG,
 } from '@island.is/clients/smartsolutions'
 import { Module } from '@nestjs/common'
-import { ConfigType } from '@nestjs/config'
+import { ConfigType, LazyDuringDevScope } from '@island.is/nest/config'
 import { GenericFirearmLicenseService } from './genericFirearmLicense.service'
 import { GenericFirearmLicenseConfig } from './genericFirearmLicense.config'
-import { LazyDuringDevScope } from '@island.is/nest/config'
 
 @Module({
-  imports: [SmartSolutionsApiClientModule, FirearmLicenseClientModule],
-  providers: [
-    GenericFirearmLicenseService,
-    {
-      provide: SMART_SOLUTIONS_API_CONFIG,
+  imports: [
+    FirearmLicenseClientModule,
+    SmartSolutionsApiClientModule.registerAsync({
       scope: LazyDuringDevScope,
       useFactory: (config: ConfigType<typeof GenericFirearmLicenseConfig>) => {
         const smartConfig: SmartSolutionsConfig = {
@@ -30,10 +25,9 @@ import { LazyDuringDevScope } from '@island.is/nest/config'
         return smartConfig
       },
       inject: [GenericFirearmLicenseConfig.KEY],
-    },
-    FirearmLicenseApiProvider,
-    SmartSolutionsApi,
+    }),
   ],
+  providers: [GenericFirearmLicenseService, FirearmLicenseApiProvider],
   exports: [GenericFirearmLicenseService],
 })
 export class GenericFirearmLicenseModule {}
