@@ -138,6 +138,11 @@ export class MeDelegationsController {
         false,
       )
     ) {
+      if (user.actor) {
+        throw new BadRequestException(
+          'Only supported when the subject is the authenticated user.',
+        )
+      }
       return this.delegationsIncomingService.findAllValid(
         user,
         domainName,
