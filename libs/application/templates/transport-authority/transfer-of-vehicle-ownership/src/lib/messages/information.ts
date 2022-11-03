@@ -203,27 +203,28 @@ export const information = {
         description: 'Buyer email label',
       },
     }),
-    mainCoOwner: defineMessages({
+    mainOperator: defineMessages({
       sectionTitle: {
-        id: 'ta.tvo.application:information.labels.mainCoOwner.sectionTitle',
+        id: 'ta.tvo.application:information.labels.mainOperator.sectionTitle',
         defaultMessage: 'Umráðamaður',
-        description: 'Main CoOwner section title',
+        description: 'Main operator section title',
       },
       title: {
-        id: 'ta.tvo.application:information.labels.mainCoOwner.title',
+        id: 'ta.tvo.application:information.labels.mainOperator.title',
         defaultMessage: 'Veldu aðal-umráðamann',
-        description: 'Main CoOwner title',
+        description: 'Main operator title',
       },
       description: {
-        id: 'ta.tvo.application:information.labels.mainCoOwner.description',
+        id: 'ta.tvo.application:information.labels.mainOperator.description',
         defaultMessage:
           'Et sed ut est aliquam proin elit sed. Nunc tellus lacus sed eu pulvinar. ',
-        description: 'Main CoOwner description',
+        description: 'Main operator description',
       },
       radioFieldLabel: {
-        id: 'ta.tvo.application:information.labels.mainCoOwner.radioFieldLabel',
-        defaultMessage: 'Skráðir umsáðamenn',
-        description: 'Main CoOwner radio field label',
+        id:
+          'ta.tvo.application:information.labels.mainOperator.radioFieldLabel',
+        defaultMessage: 'Skráðir umráðamenn',
+        description: 'Main operator radio field label',
       },
     }),
   },

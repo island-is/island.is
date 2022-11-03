@@ -9,17 +9,16 @@ export class VehicleCodetablesClient {
   public async getInsuranceCompanies(): Promise<InsuranceCompany[]> {
     // TODOx disabled untill this API goes on xroad
     return [
-      { code: '001', name: 'VÍS', valid: true },
-      { code: '002', name: 'Vörður', valid: true },
-      { code: '003', name: 'TM', valid: true },
+      { code: '001', name: 'VÍS' },
+      { code: '002', name: 'Vörður' },
+      { code: '003', name: 'TM' },
     ]
 
-    const result = await this.codetablesApi.insurancecompaniesAllGet({})
+    const result = await this.codetablesApi.insurancecompaniesGet({})
 
     return result.map((item) => ({
       code: item.code,
       name: item.name,
-      valid: item.valid == 1, //TODOx validate what item.valid looks like
     }))
   }
 }

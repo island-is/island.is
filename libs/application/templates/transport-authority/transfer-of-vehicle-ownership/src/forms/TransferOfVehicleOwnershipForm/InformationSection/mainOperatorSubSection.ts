@@ -8,44 +8,41 @@ import {
 import { CoOwnerAndOperatorField } from '../../../fields/CoOwnerAndOperatorRepeater/CoOwnerAndOperatorRepeater'
 import { information } from '../../../lib/messages'
 
-export const mainCoOwnerSubSection = buildSubSection({
-  id: 'mainCoOwner',
-  title: information.labels.mainCoOwner.sectionTitle,
+export const mainOperatorSubSection = buildSubSection({
+  id: 'mainOperator',
+  title: information.labels.mainOperator.sectionTitle,
   condition: (formValue) => {
     const coOwnerAndOperator = getValueViaPath(
       formValue,
       'coOwnerAndOperator',
       [],
     ) as CoOwnerAndOperatorField[]
-    console.log(
-      coOwnerAndOperator.filter((field) => field.type === 'coOwner').length,
-    )
     return (
-      coOwnerAndOperator.filter((field) => field.type === 'coOwner').length > 1
+      coOwnerAndOperator.filter((field) => field.type === 'operator').length > 1
     )
   },
   children: [
     buildMultiField({
-      id: 'mainCoOwnerMultiField',
-      title: information.labels.mainCoOwner.title,
-      description: information.labels.mainCoOwner.description,
+      id: 'mainOperatorMultiField',
+      title: information.labels.mainOperator.title,
+      description: information.labels.mainOperator.description,
       children: [
         buildRadioField({
-          id: 'mainCoOwner.nationalId',
-          title: information.labels.mainCoOwner.radioFieldLabel,
+          id: 'mainOperator.nationalId',
+          title: information.labels.mainOperator.radioFieldLabel,
           options: (application) => {
             const coOwnerAndOperator = getValueViaPath(
               application.answers,
               'coOwnerAndOperator',
               [],
             ) as CoOwnerAndOperatorField[]
-            const coOwners = coOwnerAndOperator.filter(
-              (field) => field.type === 'coOwner',
+            const operators = coOwnerAndOperator.filter(
+              (field) => field.type === 'operator',
             )
-            return coOwners.map((coOwner) => {
+            return operators.map((operator) => {
               return {
-                value: coOwner.nationalId,
-                label: `${coOwner.name} - ${coOwner.nationalId}`,
+                value: operator.nationalId,
+                label: `${operator.name} - ${operator.nationalId}`,
               }
             })
           },

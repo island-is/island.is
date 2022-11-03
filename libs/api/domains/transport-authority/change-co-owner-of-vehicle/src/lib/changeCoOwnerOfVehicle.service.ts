@@ -41,7 +41,10 @@ export class ChangeCoOwnerOfVehicleApi {
       insuranceCompanyCode: currentOwnerChange?.insuranceCompanyCode,
       operators: currentOperators?.map((operator) => ({
         ssn: operator.ssn || '',
-        email: 'xxx', //TODOx missing operators email or should send in empty array
+        // Note: It should be ok that the email we send in is empty, since we dont get
+        // the email when fetching current operators, and according to them (SGS), they
+        // are not using the operator email in their API (not being saved in their DB)
+        email: '',
         isMainOperator: operator.isMainOperator || false,
       })),
       coOwners: newCoOwners,

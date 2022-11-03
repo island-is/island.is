@@ -37,7 +37,7 @@ export const TransferOfVehicleOwnershipSchema = z.object({
       type: z.enum(['operator', 'coOwner']),
     }),
   ),
-  mainCoOwner: z.object({
+  mainOperator: z.object({
     nationalId: z.string(),
   }),
 })
