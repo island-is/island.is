@@ -1,24 +1,33 @@
 import { Test } from '@nestjs/testing'
-import { AssetsXRoadService } from './api-domains-assets.service'
 import {
   MOCK_ASSET_ID,
   MOCK_USER,
   requestHandlers,
 } from './__mock-data__/requestHandlers'
 import { startMocking } from '@island.is/shared/mocking'
+import { AssetsModule } from '../src/lib/api-domains-assets.module'
+import { AssetsXRoadResolver } from '../src/lib/api-domains-assets.resolver'
+import { AssetsXRoadService } from '../src/lib/api-domains-assets.service'
+import { Logger, LOGGER_PROVIDER, LoggingModule } from '@island.is/logging'
+import {
+  AssetsClientModule,
+  AssetsClientConfig,
+} from '@island.is/clients/assets'
 
 startMocking(requestHandlers)
 describe('AssetsXRoadService', () => {
-  let service: AssetsXRoadService
+  let service: any
 
   beforeEach(async () => {
-    const module = await Test.createTestingModule({}).compile()
-
-    service = module.get(AssetsXRoadService)
+    const module = await Test.createTestingModule({
+      providers: [AssetsXRoadResolver, AssetsXRoadService],
+      imports: [AssetsClientModule, AuthModule],
+    }).compile()
+    expect(module.get(AssetsXRoadService)).toBeInstanceOf(AssetsXRoadService)
   })
 
-  describe('getRealEstates', () => {
-    it('User should see information on owned property', async () => {
+  describe.only('getRealEstates', () => {
+    it.only('User should see information on owned property', async () => {
       const response = await service.getRealEstates(MOCK_USER)
       expect(response).toMatchObject({
         name: 'Valid Jónsson',
@@ -35,7 +44,10 @@ describe('AssetsXRoadService', () => {
 
   describe('getRealEstateDetail', () => {
     it('User should only see public information', async () => {
-      const response = await service.getRealEstateDetail(MOCK_ASSET_ID, MOCK_USER)
+      const response = await service.getRealEstateDetail(
+        MOCK_ASSET_ID,
+        MOCK_USER,
+      )
       expect(response).toBeNull()
     })
   })
