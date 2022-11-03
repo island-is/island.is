@@ -25,7 +25,7 @@ export class MergedDelegationDTO {
   validTo?: Date | null
 
   @ApiProperty({
-    enum: [DelegationType],
+    enum: DelegationType,
     enumName: 'DelegationType',
     isArray: true,
   })

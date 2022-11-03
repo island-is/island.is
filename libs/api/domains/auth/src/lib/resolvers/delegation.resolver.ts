@@ -30,6 +30,7 @@ import { ActorDelegationsService } from '../services/actorDelegations.service'
 import { ActorDelegationInput } from '../dto/actorDelegation.input'
 import { MeDelegationsService } from '../services/meDelegations.service'
 import type { DelegationDTO } from '../services/types'
+import { MergedDelegationDTO } from '@island.is/clients/auth/public-api'
 
 @UseGuards(IdsUserGuard, FeatureFlagGuard)
 @Resolver(() => Delegation)
@@ -45,7 +46,7 @@ export class DelegationResolver {
     @CurrentUser() user: User,
     @Args('input', { type: () => ActorDelegationInput, nullable: true })
     input?: ActorDelegationInput,
-  ): Promise<DelegationDTO[]> {
+  ): Promise<MergedDelegationDTO[]> {
     return this.actorDelegationsService.getActorDelegations(
       user,
       input?.delegationTypes,
