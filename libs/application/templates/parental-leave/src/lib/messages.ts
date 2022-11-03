@@ -760,7 +760,7 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     multipleBirthsDescription: {
       id: 'pl.application:selectChild.multipleBirthsDescription',
-      defaultMessage: 'Áttu von á fjölburum?',
+      defaultMessage: 'Átt þú von á fjölburum?',
       description: 'Are you expecting multiples?',
     },
     multipleBirths: {
