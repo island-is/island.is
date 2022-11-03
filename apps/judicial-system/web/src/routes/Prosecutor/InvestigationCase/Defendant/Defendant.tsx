@@ -360,6 +360,7 @@ const Defendant = () => {
                       <DefendantInfo
                         defendant={defendant}
                         workingCase={workingCase}
+                        setWorkingCase={setWorkingCase}
                         onDelete={
                           workingCase.defendants &&
                           workingCase.defendants.length > 1

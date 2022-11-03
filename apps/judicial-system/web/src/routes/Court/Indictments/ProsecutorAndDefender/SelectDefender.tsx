@@ -23,7 +23,6 @@ interface Props {
 const SelectDefender: React.FC<Props> = (props) => {
   const { defendant } = props
   const { workingCase, setWorkingCase } = useContext(FormContext)
-  const { setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
   const { setAndSendDefendantToServer } = useDefendants()
 
@@ -59,7 +58,7 @@ const SelectDefender: React.FC<Props> = (props) => {
         setWorkingCase,
       )
     },
-    [workingCase, setWorkingCase, setAndSendCaseToServer],
+    [setWorkingCase, setAndSendDefendantToServer],
   )
 
   return (
@@ -77,6 +76,7 @@ const SelectDefender: React.FC<Props> = (props) => {
         </Box>
         <Box marginBottom={2}>
           <Checkbox
+            dataTestId="defendantWaivesRightToCounsel"
             name={`defendantWaivesRightToCounsel-${defendant.id}`}
             label={capitalize(
               formatMessage(m.defendantWaivesRightToCounsel, {

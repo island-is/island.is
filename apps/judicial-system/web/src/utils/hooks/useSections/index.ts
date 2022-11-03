@@ -41,7 +41,7 @@ import {
   isProcessingStepValidIndictments,
   isReceptionAndAssignmentStepValid,
   isSubpoenaStepValid,
-  isprosecutorAndDefenderStepValid,
+  isProsecutorAndDefenderStepValid,
 } from '../../validate'
 
 interface Section {
@@ -562,7 +562,7 @@ const useSections = () => {
                 href:
                   isReceptionAndAssignmentStepValid(workingCase) &&
                   isSubpoenaStepValid(workingCase) &&
-                  isprosecutorAndDefenderStepValid(workingCase)
+                  isProsecutorAndDefenderStepValid(workingCase)
                     ? `${constants.INDICTMENTS_COURT_RECORD_ROUTE}/${workingCase.id}`
                     : undefined,
               },
