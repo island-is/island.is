@@ -201,7 +201,7 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
     const trimmedFilename = editedFilename?.trim()
     const trimmedDisplayDate = editedDisplayDate?.trim()
 
-    if (trimmedFilename && trimmedDisplayDate) {
+    if (trimmedFilename || trimmedDisplayDate) {
       onRename(caseFile.id, trimmedFilename, trimmedDisplayDate)
       setIsEditing(false)
       setEditedDisplayDate(formatDate(caseFile.displayDate, DDMMYYYY) ?? '')
@@ -486,9 +486,10 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
 
   const handleRename = async (
     fileId: string,
-    newName: string,
-    newDisplayDate: string,
+    newName?: string,
+    newDisplayDate?: string,
   ) => {
+    let newDate: Date | null = null
     const fileInReorderableItems = reorderableItems.findIndex(
       (item) => item.id === fileId,
     )
@@ -497,11 +498,14 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
       return
     }
 
-    const [day, month, year] = newDisplayDate.split('.')
-    const newDate = parseISO(`${year}-${month}-${day}`)
-    if (!isValid(newDate)) {
-      toast.error(formatMessage(m.invalidDateErrorMessage))
-      return
+    if (newDisplayDate) {
+      const [day, month, year] = newDisplayDate.split('.')
+      newDate = parseISO(`${year}-${month}-${day}`)
+
+      if (!isValid(newDate)) {
+        toast.error(formatMessage(m.invalidDateErrorMessage))
+        return
+      }
     }
 
     setReorderableItems((prev) => {
@@ -509,9 +513,9 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
       newReorderableItems[
         fileInReorderableItems
       ].userGeneratedFilename = newName
-      newReorderableItems[
-        fileInReorderableItems
-      ].displayDate = newDate.toISOString()
+      newReorderableItems[fileInReorderableItems].displayDate = newDate
+        ? newDate.toISOString()
+        : newReorderableItems[fileInReorderableItems].displayDate
 
       return newReorderableItems
     })
@@ -524,7 +528,7 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
             {
               id: fileId,
               userGeneratedFilename: newName,
-              displayDate: newDate.toISOString(),
+              ...(newDate && { displayDate: newDate.toISOString() }),
             },
           ],
         },
