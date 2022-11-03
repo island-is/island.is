@@ -10,6 +10,7 @@ const schema = z.object({
   accessTokenServiceClientSecret: z.string(),
   accessTokenServiceClientId: z.string(),
   accessTokenServiceAudience: z.string(),
+  scope: z.array(z.string()),
 })
 
 export const FiskistofaClientConfig = defineConfig({
@@ -17,6 +18,11 @@ export const FiskistofaClientConfig = defineConfig({
   schema,
   load(env) {
     return {
+      scope: env.optionalJSON('FISKISTOFA_ACCESS_TOKEN_SERVICE_SCOPE') ?? [
+        'read:skip',
+        'read:stodtoflur',
+        'read:stadaSkips',
+      ],
       url: env.required('FISKISTOFA_API_URL'),
       fetch: {
         timeout: env.optionalJSON('FISKISTOFA_API_TIMEOUT') ?? 20000,

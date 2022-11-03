@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import { FetchError } from '@island.is/clients/middlewares'
 import {
+  SkipApi,
+  StadaSkipsApi,
   V1SkipSkipnumerGetRequest,
   V1StadaskipsKvotategundirAlmanaksarArGetRequest,
   V1StadaskipsKvotategundirFiskveidiarFiskveidiarGetRequest,
@@ -10,27 +12,18 @@ import {
   V1StadaskipsSkipnumerFiskveidiarFiskveidiarGetRequest,
   V1StadaskipsSkipnumerFiskveidiarFiskveidiarKvotiBreyttPostRequest,
 } from '../../gen/fetch'
-import { FiskistofaApi } from './api'
+import {
+  mapQuotaType,
+  mapShipStatusForCalendarYear,
+  mapShipStatusForTimePeriod,
+} from './utils'
 
 @Injectable()
 export class FiskistofaClientService {
-  constructor(private api: FiskistofaApi) {}
-
-  async wrapper(callback: (api: FiskistofaApi) => any) {
-    try {
-      await this.api.initialize()
-      return callback(this.api)
-    } catch (error) {
-      // If we are unauthorized, then we want to re-initialize the api by getting a new access token and then calling the callback again
-      if (error instanceof FetchError) {
-        if (error.status === 401) {
-          await this.api.initialize(true)
-          return callback(this.api)
-        }
-      }
-      throw error
-    }
-  }
+  constructor(
+    private readonly shipApi: SkipApi,
+    private readonly shipStatusApi: StadaSkipsApi,
+  ) {}
 
   async updateShipStatusForTimePeriod(input: {
     shipNumber: number
@@ -50,7 +43,10 @@ export class FiskistofaClientService {
         ),
       },
     }
-    return this.wrapper((api) => api.updateShipStatusForTimePeriod(params))
+    const data = await this.shipStatusApi.v1StadaskipsSkipnumerFiskveidiarFiskveidiarBreyttPost(
+      params,
+    )
+    return { fiskistofaShipStatus: mapShipStatusForTimePeriod(data) }
   }
 
   async updateShipQuotaStatusForTimePeriod(input: {
@@ -75,7 +71,25 @@ export class FiskistofaClientService {
       fiskveidiar: input.timePeriod,
       skipnumer: input.shipNumber,
     }
-    return this.wrapper((api) => api.updateShipQuotaStatusForTimePeriod(params))
+    const data = await this.shipStatusApi.v1StadaskipsSkipnumerFiskveidiarFiskveidiarKvotiBreyttPost(
+      params,
+    )
+    return {
+      fiskistofaShipQuotaStatus: {
+        nextYearCatchQuota: data?.aNaestaArAflamark,
+        nextYearQuota: data?.aNaestaArKvotiBreytt,
+        nextYearFromQuota: data?.afNaestaAriKvotiBreytt,
+        totalCatchQuota: data?.heildarAflamark,
+        quotaShare: data?.hlutdeildBreytt,
+        id: data?.kvotategund,
+        newStatus: data?.nyStada,
+        unused: data?.onotad,
+        percentCatchQuotaFrom: data?.prosentaAflamarkFra,
+        percentCatchQuotaTo: data?.prosentaAflamarkTil,
+        excessCatch: data?.umframafli,
+        allocatedCatchQuota: data?.uthlutadAflamarkBreytt,
+      },
+    }
   }
 
   async getShipStatusForTimePeriod(input: {
@@ -86,7 +100,12 @@ export class FiskistofaClientService {
       skipnumer: input.shipNumber,
       fiskveidiar: input.timePeriod,
     }
-    return this.wrapper((api) => api.getShipStatusForTimePeriod(params))
+    const data = await this.shipStatusApi.v1StadaskipsSkipnumerFiskveidiarFiskveidiarGet(
+      params,
+    )
+    return {
+      fiskistofaShipStatus: mapShipStatusForTimePeriod(data),
+    }
   }
 
   async getShipStatusForCalendarYear(input: {
@@ -97,7 +116,12 @@ export class FiskistofaClientService {
       ar: input.year,
       skipnumer: input.shipNumber,
     }
-    return this.wrapper((api) => api.getShipStatusForCalendarYear(params))
+    const data = await this.shipStatusApi.v1StadaskipsSkipnumerAlmanaksarArDeilistofnarGet(
+      params,
+    )
+    return {
+      fiskistofaShipStatus: mapShipStatusForCalendarYear(data),
+    }
   }
 
   async updateShipStatusForCalendarYear(input: {
@@ -118,34 +142,79 @@ export class FiskistofaClientService {
         ),
       },
     }
-    return this.wrapper((api) => api.updateShipStatusForCalendarYear(params))
+    const data = await this.shipStatusApi.v1StadaskipsSkipnumerAlmanaksarArDeilistofnarBreyttPost(
+      params,
+    )
+    return {
+      fiskistofaShipStatus: mapShipStatusForCalendarYear(data),
+    }
   }
 
   async getQuotaTypesForTimePeriod(input: { timePeriod: string }) {
     const params: V1StadaskipsKvotategundirFiskveidiarFiskveidiarGetRequest = {
       fiskveidiar: input.timePeriod,
     }
-    return this.wrapper((api) => api.getQuotaTypesForTimePeriod(params))
+    const data = await this.shipStatusApi.v1StadaskipsKvotategundirFiskveidiarFiskveidiarGet(
+      params,
+    )
+    return {
+      fiskistofaQuotaTypes: (data ?? []).map(mapQuotaType),
+    }
   }
 
   async getQuotaTypesForCalendarYear(input: { year: string }) {
     const params: V1StadaskipsKvotategundirAlmanaksarArGetRequest = {
       ar: input.year,
     }
-    return this.wrapper((api) => api.getQuotaTypesForCalendarYear(params))
+    const data = await this.shipStatusApi.v1StadaskipsKvotategundirAlmanaksarArGet(
+      params,
+    )
+    return {
+      fiskistofaQuotaTypes: (data ?? []).map(mapQuotaType),
+    }
   }
 
   async getShips(input: { shipName: string }) {
     const params = {
       heiti: input.shipName,
     }
-    return this.wrapper((api) => api.getShips(params))
+    const data = await this.shipApi.v1SkipHeitiHeitiGet(params)
+    return {
+      fiskistofaShips: (data ?? []).map((ship) => ({
+        id: ship?.skipaskraNumer,
+        name: ship?.heiti ?? '',
+        typeOfVessel: ship?.utgerdarflokkur ?? '',
+        operator: ship?.utgerd ?? '',
+        homePort: ship?.heimahofn ?? '',
+      })),
+    }
   }
 
   async getSingleShip(input: { shipNumber: number }) {
     const params: V1SkipSkipnumerGetRequest = {
       skipnumer: input.shipNumber,
     }
-    return this.wrapper((api) => api.getSingleShip(params))
+    try {
+      const data = await this.shipApi.v1SkipSkipnumerGet(params)
+      return {
+        fiskistofaSingleShip: {
+          shipNumber: data?.skipNumer,
+          name: data?.heiti ?? '',
+          ownerName: data?.eigandiHeiti ?? '',
+          ownerSsn: data?.eigandiKennitala ?? '',
+          operatorName: data?.rekstraradiliHeiti ?? '',
+          operatorSsn: data?.rekstraradiliKennitala ?? '',
+          operatingCategory: data?.utgerdarflokkurHeiti ?? '',
+          grossTons: data?.bruttotonn,
+        },
+      }
+    } catch (error) {
+      if (error instanceof FetchError) {
+        return {
+          fiskistofaSingleShip: null,
+        }
+      }
+      throw error
+    }
   }
 }

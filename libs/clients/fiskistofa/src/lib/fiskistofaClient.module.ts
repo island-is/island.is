@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common'
-import { FiskistofaApi } from './api'
+import { ApiConfiguration } from './apiConfiguration'
+import { apiProviders } from './apiProviders'
 import { FiskistofaClientService } from './fiskistofaClient.service'
 
 @Module({
-  providers: [FiskistofaClientService, FiskistofaApi],
+  providers: [ApiConfiguration, FiskistofaClientService, ...apiProviders],
   exports: [FiskistofaClientService],
 })
 export class FiskistofaClientModule {}
