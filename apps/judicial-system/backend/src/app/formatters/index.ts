@@ -30,4 +30,3 @@ export {
 export { getRequestPdfAsBuffer, getRequestPdfAsString } from './requestPdf'
 export { getRulingPdfAsBuffer, getRulingPdfAsString } from './rulingPdf'
 export { createCaseFilesRecord } from './caseFilesRecordPdf'
-export { writeFile } from './writeFile'
