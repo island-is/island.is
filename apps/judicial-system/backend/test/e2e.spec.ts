@@ -1,4 +1,3 @@
-import { uuid } from 'uuidv4'
 import { Sequelize } from 'sequelize-typescript'
 import { execSync } from 'child_process'
 import request from 'supertest'
@@ -98,7 +97,7 @@ beforeAll(async () => {
             }),
         })
         .overrideProvider(MessageService)
-        .useValue({ postMessageToQueue: () => uuid() }),
+        .useValue({ sendMessageToQueue: () => undefined }),
   })
 
   sequelize = await app.resolve(getConnectionToken() as Type<Sequelize>)

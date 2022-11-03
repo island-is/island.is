@@ -2,7 +2,7 @@ import { CanActivate } from '@nestjs/common'
 
 import { JwtAuthGuard, RolesGuard } from '@island.is/judicial-system/auth'
 
-import { FileController } from '../file.controller'
+import { FileController } from '../../file.controller'
 
 describe('FileController - guards', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
