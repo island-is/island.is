@@ -18,6 +18,12 @@
         "jestConfig": "libs/application/ui-forms/jest.config.js",
         "passWithNoTests": true
       }
+    },
+    "extract-strings": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/ui-forms/src/**/*.{js,ts,tsx}'"
+      }
     }
   }
 }

@@ -1,7 +1,10 @@
+<!-- gitbook-navigation: "UI Forms" -->
+
 # Application UI Forms
 
-This library was generated with [Nx](https://nx.dev).
+This library includes reusable form builder components for the application system
 
-## Running unit tests
+## How to create a new form
 
-Run `nx test application-ui-forms` to execute the unit tests via [Jest](https://jestjs.io).
+You can choose any element from the form builder and continue from there to create a reusable form builder component.
+Each form should include data schema and translations (messages) if applicable.
