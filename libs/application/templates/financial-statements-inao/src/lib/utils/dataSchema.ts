@@ -56,8 +56,6 @@ const asset = z.object({
 
 const equity = z.object({
   totalEquity: z.string().refine((x) => !!x, { params: m.required }),
-  operationResult: z.string(),
-  total: z.string().refine((x) => !!x, { params: m.required }),
 })
 
 const liability = z.object({
