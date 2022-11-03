@@ -67,31 +67,31 @@ export const EmployerApproveEdits: Form = buildForm({
                   title: '',
                   component: 'EmployerApprovalExtraInformation',
                 }),
-                buildDescriptionField({
-                  id: 'final',
-                  title: otherParentApprovalFormMessages.warning,
-                  titleVariant: 'h4',
-                  description:
-                    otherParentApprovalFormMessages.startDateInThePast,
+                // buildDescriptionField({
+                //   id: 'final',
+                //   title: otherParentApprovalFormMessages.warning,
+                //   titleVariant: 'h4',
+                //   description:
+                //     otherParentApprovalFormMessages.startDateInThePast,
 
-                  // TODO: enable this when we could get 'applicationFundId' from externalData
+                //   // TODO: enable this when we could get 'applicationFundId' from externalData
 
-                  // condition: (answers, externalData) => {
-                  //   const { applicationFundId } = getApplicationExternalData(
-                  //     externalData,
-                  //   )
-                  //   if (!applicationFundId || applicationFundId === '') {
-                  //     const { periods } = getApplicationAnswers(answers)
-                  //     return (
-                  //       periods.length > 0 &&
-                  //       new Date(periods[0].startDate).getTime() >=
-                  //         currentDateStartTime()
-                  //     )
-                  //   }
+                //   // condition: (answers, externalData) => {
+                //   //   const { applicationFundId } = getApplicationExternalData(
+                //   //     externalData,
+                //   //   )
+                //   //   if (!applicationFundId || applicationFundId === '') {
+                //   //     const { periods } = getApplicationAnswers(answers)
+                //   //     return (
+                //   //       periods.length > 0 &&
+                //   //       new Date(periods[0].startDate).getTime() >=
+                //   //         currentDateStartTime()
+                //   //     )
+                //   //   }
 
-                  //   return true
-                  // },
-                }),
+                //   //   return true
+                //   // },
+                // }),
                 buildSubmitField({
                   id: 'submit',
                   title: coreMessages.buttonSubmit,
