@@ -5,6 +5,7 @@ import { typeAggregationQuery } from './typeAggregation'
 import { processAggregationQuery } from './processAggregation'
 
 const getBoostForType = (type: string, defaultBoost: string | number = 1) => {
+  // normalising all types before boosting
   return 1
   if (type === 'webArticle') {
     // The number 55 was chosen since it was the threshold between the highest scoring news and the highest scoring article in search results

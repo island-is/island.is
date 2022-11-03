@@ -82,19 +82,21 @@ export class ContentSearchService {
     )
 
     // mix and match highlights
-    for (let i = 0; i < body.hits.hits.length; i++) {
-      if (body.hits.hits[i]?.highlight?.title) {
-        items[i].title = body.hits.hits[i]?.highlight?.title[0]
-      }
-      if (body.hits.hits[i]?.highlight?.content) {
-        items[i].intro = body.hits.hits[i]?.highlight?.content[0]
+    // mix and match highlights -- move this to a place where others can use it
+    // add highlights to request to replace values
+    if(query.highlightResults){
+      for (let i = 0; i < body.hits.hits.length; i++) {
+        if (body.hits.hits[i]?.highlight?.title) {
+          items[i].title = body.hits.hits[i]?.highlight?.title[0]
+        }
+        if (body.hits.hits[i]?.highlight?.content) {
+          items[i].intro = body.hits.hits[i]?.highlight?.content[0]
+        }
       }
     }
+    
 
-    // // MYSTERY
-    // items = items.map(item=>({...item, title:"XXX",intro:"000"}));
 
-    // console.log(body.hits.hits)
     return {
       total: body.hits.total.value,
       // we map data when it goes into the index we can return it without mapping it here
@@ -128,47 +130,15 @@ export class ContentSearchService {
       },
     )
 
-    // console.log("INPUT",input.singleTerm.trim())
-    // console.log("INPUT",input.singleTerm.trim())
-
-    // const completions = await this.elasticService.findByQuery(
-    //   this.getIndex(input.language),
-    //   {
-    //     _source: { include: ['title'] },
-    //     query: { prefix: { title: input.singleTerm.trim() } },
-    //     highlight: {
-    //       number_of_fragments: 3,
-    //       fragment_size: 150,
-    //       fields: { title: { pre_tags: ['<b>'], post_tags: ['</b>'] } },
-    //     },
-    //   },
-    // )
-
-
-    // const titles: string[] = []
-    // // @ts-ignore: Unreachable code error
-    // completions.body.hits.hits.forEach((item) => {
-    //   titles.push(item.highlight.title[0])
-    //   console.log(item._source.title)
-    // })
-    
-    // const ret = {
-    //   total: titles.length,
-    //   completions:titles,
-    // }
-
-
     // we always handle just one terms at a time so we return results for first term
     const firstWordSuggestions = searchSuggester[0].options
 
-    const ret = {
+    return {
       total: firstWordSuggestions.length,
       completions: firstWordSuggestions.map(
         (suggestionObjects) => suggestionObjects.text,
       ),
     }
-    // console.log(ret)
-    
-    return ret
+
   }
 }

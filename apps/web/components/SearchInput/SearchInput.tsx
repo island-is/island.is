@@ -121,6 +121,7 @@ const useSearch = (
                 SearchableContentTypes['WebSubArticle'],
                 SearchableContentTypes['WebProjectPage'],
               ],
+              highlightResults: true
             },
           },
         })
