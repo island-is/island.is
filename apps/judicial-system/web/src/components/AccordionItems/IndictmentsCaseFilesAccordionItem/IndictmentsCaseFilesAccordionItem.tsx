@@ -1,6 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import { uuid } from 'uuidv4'
+import InputMask from 'react-input-mask'
+import isValid from 'date-fns/isValid'
+import parseISO from 'date-fns/parseISO'
 import {
   animate,
   AnimatePresence,
@@ -32,6 +35,8 @@ import { indictmentsCaseFilesAccordionItem as m } from './IndictmentsCaseFilesAc
 import * as styles from './IndictmentsCaseFilesAccordionItem.css'
 import { UpdateFileMutation } from './UpdateFiles.gql'
 
+const DDMMYYYY = 'dd.MM.yyyy'
+
 interface Props {
   policeCaseNumber: string
   caseFiles: TCaseFile[]
@@ -43,7 +48,7 @@ interface CaseFileProps {
   caseFile: ReorderableItem
   onReorder: (id?: string) => void
   onOpen: (id: string) => void
-  onRename: (id: string, name: string) => void
+  onRename: (id: string, name?: string, displayDate?: string) => void
   onDelete: (id: string) => void
 }
 
@@ -55,6 +60,7 @@ export interface ReorderableItem {
   chapter?: number
   orderWithinChapter?: number
   userGeneratedFilename?: string
+  displayDate?: string
 }
 
 interface UpdateFilesMutationResponse {
@@ -151,6 +157,7 @@ export const sortedFilesInChapter = (
         created: file.created,
         orderWithinChapter: file.orderWithinChapter,
         userGeneratedFilename: file.userGeneratedFilename,
+        displayDate: file.displayDate,
       }
     })
     .sort((a, b) => {
@@ -182,18 +189,30 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
   const controls = useDragControls()
   const [isDragging, setIsDragging] = useState<boolean>(false)
   const [isEditing, setIsEditing] = useState<boolean>(false)
-  const [editedFilename, setEditedFilename] = useState<string | undefined>()
+  const [editedFilename, setEditedFilename] = useState<string | undefined>(
+    caseFile.userGeneratedFilename,
+  )
+  const [editedDisplayDate, setEditedDisplayDate] = useState<
+    string | undefined
+  >(formatDate(caseFile.displayDate, DDMMYYYY) ?? undefined)
   const displayName = caseFile.userGeneratedFilename ?? caseFile.displayText
 
   const handleEditFileButtonClick = () => {
     const trimmedFilename = editedFilename?.trim()
+    const trimmedDisplayDate = editedDisplayDate?.trim()
 
-    if (trimmedFilename && trimmedFilename !== caseFile.userGeneratedFilename) {
-      onRename(caseFile.id, trimmedFilename)
+    if (trimmedFilename || trimmedDisplayDate) {
+      onRename(caseFile.id, trimmedFilename, trimmedDisplayDate)
+      setIsEditing(false)
+      setEditedDisplayDate(formatDate(caseFile.displayDate, DDMMYYYY) ?? '')
     }
 
     setIsEditing(false)
   }
+
+  const displayDate = useMemo(() => {
+    return formatDate(caseFile.displayDate ?? caseFile.created, DDMMYYYY)
+  }, [caseFile.displayDate, caseFile.created])
 
   return (
     <Reorder.Item
@@ -252,14 +271,35 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
                   key={`${caseFile.id}-edit`}
                 >
                   <Box display="flex">
-                    <Box flexGrow={1} marginRight={2}>
-                      <Input
-                        name="fileName"
-                        size="xs"
-                        placeholder={formatMessage(m.simpleInputPlaceholder)}
-                        defaultValue={displayName}
-                        onChange={(evt) => setEditedFilename(evt.target.value)}
-                      />
+                    <Box className={styles.editCaseFileInputContainer}>
+                      <Box className={styles.editCaseFileName}>
+                        <Input
+                          name="fileName"
+                          size="xs"
+                          placeholder={formatMessage(m.simpleInputPlaceholder)}
+                          defaultValue={displayName}
+                          onChange={(evt) =>
+                            setEditedFilename(evt.target.value)
+                          }
+                        />
+                      </Box>
+                      <Box className={styles.editCaseFileDisplayDate}>
+                        <InputMask
+                          mask={'99.99.9999'}
+                          maskPlaceholder={null}
+                          value={editedDisplayDate || ''}
+                          onChange={(evt) => {
+                            setEditedDisplayDate(evt.target.value)
+                          }}
+                        >
+                          <Input
+                            name="fileDisplayDate"
+                            size="xs"
+                            placeholder={formatDate(new Date(), DDMMYYYY)}
+                            autoComplete="off"
+                          />
+                        </InputMask>
+                      </Box>
                     </Box>
                     <Box display="flex" alignItems="center">
                       <button
@@ -308,9 +348,7 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
                   </Box>
                   <Box display="flex" alignItems="center">
                     <Box marginRight={1}>
-                      <Text variant="small">
-                        {formatDate(caseFile.created, 'P')}
-                      </Text>
+                      <Text variant="small">{displayDate}</Text>
                     </Box>
                     <button
                       onClick={() => setIsEditing(true)}
@@ -446,7 +484,12 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
     }
   }
 
-  const handleRename = async (fileId: string, newName: string) => {
+  const handleRename = async (
+    fileId: string,
+    newName?: string,
+    newDisplayDate?: string,
+  ) => {
+    let newDate: Date | null = null
     const fileInReorderableItems = reorderableItems.findIndex(
       (item) => item.id === fileId,
     )
@@ -455,11 +498,24 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
       return
     }
 
+    if (newDisplayDate) {
+      const [day, month, year] = newDisplayDate.split('.')
+      newDate = parseISO(`${year}-${month}-${day}`)
+
+      if (!isValid(newDate)) {
+        toast.error(formatMessage(m.invalidDateErrorMessage))
+        return
+      }
+    }
+
     setReorderableItems((prev) => {
       const newReorderableItems = [...prev]
       newReorderableItems[
         fileInReorderableItems
       ].userGeneratedFilename = newName
+      newReorderableItems[fileInReorderableItems].displayDate = newDate
+        ? newDate.toISOString()
+        : newReorderableItems[fileInReorderableItems].displayDate
 
       return newReorderableItems
     })
@@ -472,6 +528,7 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
             {
               id: fileId,
               userGeneratedFilename: newName,
+              ...(newDate && { displayDate: newDate.toISOString() }),
             },
           ],
         },
