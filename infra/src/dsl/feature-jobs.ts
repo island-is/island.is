@@ -1,12 +1,9 @@
 import { Kubernetes } from './kubernetes'
 import { Service } from './types/input-types'
-import { getWithDependantServices } from './process-services'
+import { processForFeatureDeployment, renderers } from './process-services'
 import { resolveDbHost } from './map-to-helm-values'
 import { FeatureKubeJob } from './types/output-types'
-import {
-  getPostgresInfoForFeature,
-  resolveWithMaxLength,
-} from './feature-deployments'
+import { resolveWithMaxLength } from './serialization-helpers'
 
 export const generateJobsForFeature = async (
   uberChart: Kubernetes,
@@ -18,24 +15,14 @@ export const generateJobsForFeature = async (
   if (typeof feature === 'undefined') {
     throw new Error('Feature jobs with a feature name not defined')
   }
-  const featureSpecificServices = await getWithDependantServices(
-    uberChart,
-    habitat,
-    ...services,
-  )
+  processForFeatureDeployment(services, renderers.helm, uberChart)
   const securityContext = {
     privileged: false,
     allowPrivilegeEscalation: false,
   }
-  const containers = featureSpecificServices
+  const containers = Object.values(services)
     .map((service) =>
-      [
-        getPostgresInfoForFeature(feature, service.serviceDef.postgres),
-        getPostgresInfoForFeature(
-          feature,
-          service.serviceDef.initContainers?.postgres,
-        ),
-      ]
+      [service.serviceDef.postgres, service.serviceDef.initContainers?.postgres]
         .filter((id) => id)
         .map((info) => {
           const host = resolveDbHost(

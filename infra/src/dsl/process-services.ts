@@ -3,36 +3,60 @@
 //   serializeService,
 //   serviceMockDef,
 // } from './map-to-values'
-import {
-  DockerComposeOutput,
-  serializeService,
-  serviceMockDef,
-} from './map-to-docker-compose'
+// import {DockerComposeOutput, serviceMockDef,} from './map-to-docker-compose'
 import { Service } from './types/input-types'
-import { Kubernetes } from './kubernetes'
+import { DependencyTracer, Kubernetes } from './kubernetes'
 import {
-  DockerComposeService,
+  OutputFormat,
   ServiceHelm,
   Services,
   ValueFile,
 } from './types/output-types'
 import { HelmOutput } from './map-to-helm-values'
+import { DeploymentRuntime, EnvironmentConfig } from './types/charts'
 
 const MAX_LEVEL_DEPENDENCIES = 20
 
-const renderers = {
+export const renderers = {
   helm: HelmOutput,
-  'docker-compose': DockerComposeOutput,
+  // 'docker-compose': DockerComposeOutput,
+}
+
+export const discoverDependencies = async (
+  runtime: DeploymentRuntime,
+  services: Service[],
+) => {
+  for (const service of services) {
+    await renderers.helm.serializeService(service, runtime, runtime.env.feature)
+  }
+}
+
+export function processForFeatureDeployment(
+  services: Service[],
+  outputFormat: OutputFormat<ServiceHelm>,
+  uberChart: Kubernetes,
+) {
+  for (const servicesAndMock of services) {
+    outputFormat.featureDeployment(servicesAndMock, uberChart.env)
+  }
 }
 
 export const renderHelmValueFile = async (
   uberChart: Kubernetes,
   ...services: Service[]
 ): Promise<ValueFile<ServiceHelm>> => {
+  const outputFormat = renderers.helm
+  if (uberChart.env.feature) {
+    processForFeatureDeployment(services, outputFormat, uberChart)
+  }
   const helmServices: Services<ServiceHelm> = await services.reduce(
     async (acc, s) => {
       const accVal = await acc
-      const values = await renderers.helm.serializeService(s, uberChart)
+      const values = await outputFormat.serializeService(
+        s,
+        uberChart,
+        uberChart.env.feature,
+      )
       switch (values.type) {
         case 'error':
           throw new Error(values.errors.join('\n'))
@@ -56,7 +80,7 @@ export const renderHelmValueFile = async (
       if (name.startsWith('mock-')) {
         return {
           ...acc,
-          [name]: renderers.helm.serviceMockDef({
+          [name]: outputFormat.serviceMockDef({
             namespace: svcs.values().next().value.serviceDef.namespace,
             target: name,
           }),
@@ -94,7 +118,7 @@ export const renderHelmValueFile = async (
 }
 
 const findDependencies = (
-  uberChart: Kubernetes,
+  uberChart: DeploymentRuntime,
   svc: Service,
   svcs: Service[],
   level: number = 0,
@@ -125,13 +149,14 @@ const findDependencies = (
 }
 
 export const getWithDependantServices = async (
-  uberChart: Kubernetes,
+  env: EnvironmentConfig,
   habitat: Service[],
   ...services: Service[]
 ): Promise<Service[]> => {
-  await renderHelmValueFile(uberChart, ...habitat) // doing this so we find out the dependencies
+  const dependencyTracer = new DependencyTracer(env)
+  await discoverDependencies(dependencyTracer, habitat) // doing this so we find out the dependencies
   const dependantServices = services
-    .map((s) => findDependencies(uberChart, s, habitat))
+    .map((s) => findDependencies(dependencyTracer, s, habitat))
     .flatMap((x) => x)
   return services
     .concat(dependantServices)
@@ -142,50 +167,50 @@ export const getWithDependantServices = async (
     )
 }
 
-const renderDockerComposeFile = async (
-  uberChart: Kubernetes,
-  ...services: Service[]
-): Promise<ValueFile<DockerComposeService>> => {
-  const helmServices: Services<DockerComposeService> = await services.reduce(
-    async (acc, s) => {
-      const accVal = await acc
-      const values = await renderers['docker-compose'].serializeService(
-        s,
-        uberChart,
-      )
-      switch (values.type) {
-        case 'error':
-          throw new Error(values.errors.join('\n'))
-        case 'success':
-          // const extras = values.serviceDef.extra
-          // delete values.serviceDef.extra
-          return Promise.resolve({
-            ...accVal,
-            [s.serviceDef.name]: values.serviceDef,
-          })
-      }
-    },
-    Promise.resolve(uberChart.env.global),
-  )
-  const servicesAndMocks = Object.entries(uberChart.deps).reduce(
-    (acc, [name, svcs]) => {
-      if (name.startsWith('mock-')) {
-        return {
-          ...acc,
-          [name]: serviceMockDef({
-            namespace: svcs.values().next().value.serviceDef.namespace,
-            target: name,
-          }),
-        }
-      }
-      return {
-        ...acc,
-      }
-    },
-    helmServices,
-  )
-  return {
-    namespaces: [],
-    services: servicesAndMocks,
-  }
-}
+// const renderDockerComposeFile = async (
+//   uberChart: Kubernetes,
+//   ...services: Service[]
+// ): Promise<ValueFile<DockerComposeService>> => {
+//   const helmServices: Services<DockerComposeService> = await services.reduce(
+//     async (acc, s) => {
+//       const accVal = await acc
+//       const values = await renderers['docker-compose'].serializeService(
+//         s,
+//         uberChart,
+//       )
+//       switch (values.type) {
+//         case 'error':
+//           throw new Error(values.errors.join('\n'))
+//         case 'success':
+//           // const extras = values.serviceDef.extra
+//           // delete values.serviceDef.extra
+//           return Promise.resolve({
+//             ...accVal,
+//             [s.serviceDef.name]: values.serviceDef,
+//           })
+//       }
+//     },
+//     Promise.resolve(uberChart.env.global),
+//   )
+//   const servicesAndMocks = Object.entries(uberChart.deps).reduce(
+//     (acc, [name, svcs]) => {
+//       if (name.startsWith('mock-')) {
+//         return {
+//           ...acc,
+//           [name]: serviceMockDef({
+//             namespace: svcs.values().next().value.serviceDef.namespace,
+//             target: name,
+//           }),
+//         }
+//       }
+//       return {
+//         ...acc,
+//       }
+//     },
+//     helmServices,
+//   )
+//   return {
+//     namespaces: [],
+//     services: servicesAndMocks,
+//   }
+// }

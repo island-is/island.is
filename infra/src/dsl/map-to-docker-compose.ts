@@ -265,7 +265,7 @@ export const DockerComposeOutput: OutputFormat<DockerComposeService> = {
   serializeService(
     service: Service,
     deployment: DeploymentRuntime,
-    featuresOn?: ServerSideFeature[],
+    featureDeployment,
   ) {
     return serializeService(service, deployment)
   },

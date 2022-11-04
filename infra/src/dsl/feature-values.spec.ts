@@ -19,36 +19,35 @@ const Dev: EnvironmentConfig = {
 }
 
 describe('Feature-deployment support', () => {
-  const dependencyA = service('service-a').namespace('A')
-  const dependencyB = service('service-b')
-  const dependencyC = service('service-c')
-  const apiService = service('graphql')
-    .env({
-      A: ref((h) => `${h.svc(dependencyA)}`),
-      B: ref(
-        (h) =>
-          `${h.featureDeploymentName ? 'feature-' : ''}${h.svc(dependencyB)}`,
-      ),
-    })
-    .initContainer({
-      containers: [
-        {
-          command: 'node',
-        },
-      ],
-      postgres: {},
-    })
-    .ingress({
-      primary: {
-        host: { dev: 'a', staging: 'a', prod: 'a' },
-        paths: ['/'],
-      },
-    })
-    .postgres()
-
   let values: ValueFile<ServiceHelm>
 
-  beforeAll(async () => {
+  beforeEach(async () => {
+    const dependencyA = service('service-a').namespace('A')
+    const dependencyB = service('service-b')
+    const dependencyC = service('service-c')
+    const apiService = service('graphql')
+      .env({
+        A: ref((h) => `${h.svc(dependencyA)}`),
+        B: ref(
+          (h) =>
+            `${h.featureDeploymentName ? 'feature-' : ''}${h.svc(dependencyB)}`,
+        ),
+      })
+      .initContainer({
+        containers: [
+          {
+            command: 'node',
+          },
+        ],
+        postgres: {},
+      })
+      .ingress({
+        primary: {
+          host: { dev: 'a', staging: 'a', prod: 'a' },
+          paths: ['/'],
+        },
+      })
+      .postgres()
     const chart = new Kubernetes(Dev)
     values = await generateYamlForFeature(
       chart,

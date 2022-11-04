@@ -1,5 +1,5 @@
 import { Hash, Service } from './input-types'
-import { DeploymentRuntime } from './charts'
+import { DeploymentRuntime, EnvironmentConfig } from './charts'
 import { FeatureNames } from '../features'
 
 // Output types
@@ -178,7 +178,7 @@ export type ServiceOutputType = ServiceHelm | DockerComposeService
 export type SerializeMethod<T extends ServiceOutputType> = (
   service: Service,
   uberChart: DeploymentRuntime,
-  featuresOn?: FeatureNames[],
+  featureDeployment?: string,
 ) => Promise<SerializeSuccess<T> | SerializeErrors>
 
 export type Services<T extends ServiceOutputType> = {
@@ -194,8 +194,10 @@ export interface OutputFormat<T extends ServiceOutputType> {
   serializeService(
     service: Service,
     uberChart: DeploymentRuntime,
-    featuresOn?: FeatureNames[],
+    featureDeployment?: string,
   ): Promise<SerializeSuccess<T> | SerializeErrors>
 
   serviceMockDef(options: { namespace: string; target: string }): T
+
+  featureDeployment(service: Service, env: EnvironmentConfig): void
 }

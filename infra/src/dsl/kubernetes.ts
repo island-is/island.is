@@ -38,3 +38,21 @@ export class Kubernetes implements DeploymentRuntime {
     return parsed.href.slice(0, parsed.href.length - (to.endsWith('/') ? 0 : 1))
   }
 }
+export class DependencyTracer implements DeploymentRuntime {
+  env: EnvironmentConfig // TODO: get rid of this?
+  constructor(env: EnvironmentConfig) {
+    this.env = env
+  }
+
+  deps: { [name: string]: Set<Service> } = {}
+
+  ref(from: Service, to: Service | string) {
+    if (typeof to === 'object') {
+      const dependecies = this.deps[to.serviceDef.name] ?? new Set<Service>()
+      this.deps[to.serviceDef.name] = dependecies.add(from)
+      return 'tracer'
+    } else {
+      return to
+    }
+  }
+}

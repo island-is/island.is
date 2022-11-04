@@ -1,6 +1,7 @@
 import {
   AccessModes,
   IngressForEnv,
+  PostgresInfo,
   PostgresInfoForEnv,
   Resources,
   Service,
@@ -11,15 +12,17 @@ import {
   ContainerRunHelm,
   OutputFormat,
   OutputPersistentVolumeClaim,
+  SerializeErrors,
   SerializeMethod,
+  SerializeSuccess,
   ServiceHelm,
 } from './types/output-types'
 import { DeploymentRuntime, EnvironmentConfig } from './types/charts'
-import { ServerSideFeature } from '../../../libs/feature-flags/src'
 import { processService } from './pre-process-service'
 import { checksAndValidations } from './errors'
 import {
   postgresIdentifier,
+  resolveWithMaxLength,
   serializeEnvironmentVariables,
   serializeValueSource,
 } from './serialization-helpers'
@@ -33,12 +36,9 @@ export const serializeService: SerializeMethod<ServiceHelm> = async (
   service: Service,
   deployment: DeploymentRuntime,
 ) => {
-  const {
-    addToErrors,
-    mergeObjects,
-    checkCollisions,
-    getErrors,
-  } = checksAndValidations(service.serviceDef.name)
+  const { addToErrors, mergeObjects, getErrors } = checksAndValidations(
+    service.serviceDef.name,
+  )
   const processedService = processService(service, deployment.env)
   if (processedService.type === 'success') {
     const serviceDef = processedService.serviceDef
@@ -274,6 +274,23 @@ export const resolveDbHost = (
   }
 }
 
+const getPostgresInfoForFeature = (feature: string, postgres: PostgresInfo) => {
+  const postgresCopy = { ...postgres }
+  postgresCopy.passwordSecret = postgres.passwordSecret?.replace(
+    '/k8s/',
+    `/k8s/feature-${feature}-`,
+  )
+  postgresCopy.name = resolveWithMaxLength(
+    `feature_${postgresIdentifier(feature)}_${postgres.name}`,
+    60,
+  )
+  postgresCopy.username = resolveWithMaxLength(
+    `feature_${postgresIdentifier(feature)}_${postgres.username}`,
+    60,
+  )
+  return postgresCopy
+}
+
 function serializePostgres(
   serviceDef: ServiceDefinitionForEnv,
   deployment: DeploymentRuntime,
@@ -441,12 +458,36 @@ export const serviceMockDef = (options: {
 }
 
 export const HelmOutput: OutputFormat<ServiceHelm> = {
+  featureDeployment(s: Service, env): void {
+    Object.entries(s.serviceDef.ingress).forEach(([name, ingress]) => {
+      if (!Array.isArray(ingress.host.dev)) {
+        ingress.host.dev = [ingress.host.dev]
+      }
+      ingress.host.dev = ingress.host.dev.map(
+        (host) => `${env.feature}-${host}`,
+      )
+    })
+    s.serviceDef.replicaCount = { min: 1, max: 2, default: 1 }
+    s.serviceDef.namespace = `feature-${env.feature}`
+    if (s.serviceDef.postgres) {
+      s.serviceDef.postgres = getPostgresInfoForFeature(
+        env.feature!,
+        s.serviceDef.postgres,
+      )
+    }
+    if (s.serviceDef.initContainers?.postgres) {
+      s.serviceDef.initContainers.postgres = getPostgresInfoForFeature(
+        env.feature!,
+        s.serviceDef.initContainers.postgres,
+      )
+    }
+  },
   serializeService(
     service: Service,
     deployment: DeploymentRuntime,
-    featuresOn?: ServerSideFeature[],
-  ) {
-    return serializeService(service, deployment)
+    featureDeployment?: string,
+  ): Promise<SerializeSuccess<ServiceHelm> | SerializeErrors> {
+    return serializeService(service, deployment, featureDeployment)
   },
 
   serviceMockDef(options: { namespace: string; target: string }): ServiceHelm {

@@ -1,4 +1,4 @@
-import { PostgresInfo, Service } from './types/input-types'
+import { Service } from './types/input-types'
 import { GRAPHQL_API_URL_ENV_VAR_NAME } from '../../../apps/application-system/api/infra/application-system-api'
 import { Kubernetes } from './kubernetes'
 import {
@@ -8,66 +8,53 @@ import {
 import { DockerComposeService, ValueFile } from './types/output-types'
 import { dump } from 'js-yaml'
 import { dumpOpts } from './yaml'
-import { postgresIdentifier } from './serialization-helpers'
+import { EnvironmentConfig } from './types/charts'
 
-export const resolveWithMaxLength = (str: string, max: number) => {
-  if (str.length > max) {
-    return `${str.substr(0, Math.ceil(max / 3))}${str.substr((-max / 3) * 2)}`
-  }
-  return str
-}
-export const getPostgresInfoForFeature = (
-  feature: string,
-  postgres?: PostgresInfo,
-): PostgresInfo | undefined => {
-  if (postgres) {
-    const postgresCopy = { ...postgres }
-    postgresCopy.passwordSecret = postgres.passwordSecret?.replace(
-      '/k8s/',
-      `/k8s/feature-${feature}-`,
-    )
-    postgresCopy.name = resolveWithMaxLength(
-      `feature_${postgresIdentifier(feature)}_${postgres.name}`,
-      60,
-    )
-    postgresCopy.username = resolveWithMaxLength(
-      `feature_${postgresIdentifier(feature)}_${postgres.username}`,
-      60,
-    )
-    return postgresCopy
-  }
-  return postgres
-}
+// export const getPostgresInfoForFeature = (
+//   feature: string,
+//   postgres?: PostgresInfo,
+// ): PostgresInfo | undefined => {
+//   if (postgres) {
+//     const postgresCopy = { ...postgres }
+//     postgresCopy.passwordSecret = postgres.passwordSecret?.replace(
+//       '/k8s/',
+//       `/k8s/feature-${feature}-`,
+//     )
+//     postgresCopy.name = resolveWithMaxLength(
+//       `feature_${postgresIdentifier(feature)}_${postgres.name}`,
+//       60,
+//     )
+//     postgresCopy.username = resolveWithMaxLength(
+//       `feature_${postgresIdentifier(feature)}_${postgres.username}`,
+//       60,
+//     )
+//     return postgresCopy
+//   }
+//   return postgres
+// }
 
-export function featureSpecificServiceDef(
-  feature: string,
-  featureSpecificServices: Service[],
-) {
-  const namespace = `feature-${feature}`
-  featureSpecificServices.forEach((s) => {
-    s.serviceDef.namespace = namespace
-    s.serviceDef.replicaCount = { min: 1, max: 2, default: 1 }
-  })
-  featureSpecificServices.forEach((s) => {
-    Object.entries(s.serviceDef.ingress).forEach(([name, ingress]) => {
-      if (!Array.isArray(ingress.host.dev)) {
-        ingress.host.dev = [ingress.host.dev]
-      }
-      ingress.host.dev = ingress.host.dev.map((host) => `${feature}-${host}`)
-    })
-  })
-  featureSpecificServices.forEach((s) => {
-    s.serviceDef.postgres = getPostgresInfoForFeature(
-      feature,
-      s.serviceDef.postgres,
-    )
-    if (s.serviceDef.initContainers) {
-      s.serviceDef.initContainers.postgres = getPostgresInfoForFeature(
-        feature,
-        s.serviceDef.initContainers.postgres,
-      )
-    }
-  })
+export function featureSpecificServiceDef(featureSpecificServices: Service[]) {
+  // featureSpecificServices.forEach((s) => {
+  //   Object.entries(s.serviceDef.ingress).forEach(([name, ingress]) => {
+  //     if (!Array.isArray(ingress.host.dev)) {
+  //       ingress.host.dev = [ingress.host.dev]
+  //     }
+  //     ingress.host.dev = ingress.host.dev.map((host) => `${feature}-${host}`)
+  //   })
+  // })
+  // featureSpecificServices.forEach((s) => {
+  //   s.serviceDef.postgres = getPostgresInfoForFeature(
+  //     feature,
+  //     s.serviceDef.postgres,
+  //   )
+  //   if (s.serviceDef.initContainers) {
+  //     s.serviceDef.initContainers.postgres = getPostgresInfoForFeature(
+  //       feature,
+  //       s.serviceDef.initContainers.postgres,
+  //     )
+  //   }
+  // })
+
   const hackForThatOneCircularDependency = () => {
     const isApiServicePresent = featureSpecificServices.some(
       (s) => s.serviceDef.name === 'api',
@@ -84,17 +71,16 @@ export function featureSpecificServiceDef(
 }
 
 async function featureSpecificServicesPrepare(
-  uberChart: Kubernetes,
+  env: EnvironmentConfig,
   habitat: Service[],
   services: Service[],
-  feature: string,
 ) {
   const featureSpecificServices = await getWithDependantServices(
-    uberChart,
+    env,
     habitat,
     ...services,
   )
-  featureSpecificServiceDef(feature, featureSpecificServices)
+  featureSpecificServiceDef(featureSpecificServices)
   return featureSpecificServices
 }
 
@@ -109,12 +95,7 @@ export const generateYamlForFeature = async (
     const excludedServiceNames = excludedServices.map((f) => f.serviceDef.name)
 
     const featureSpecificServices = (
-      await featureSpecificServicesPrepare(
-        uberChart,
-        habitat,
-        services,
-        feature,
-      )
+      await featureSpecificServicesPrepare(uberChart.env, habitat, services)
     ).filter((f) => !excludedServiceNames.includes(f.serviceDef.name))
     return renderHelmValueFile(uberChart, ...featureSpecificServices)
   } else {

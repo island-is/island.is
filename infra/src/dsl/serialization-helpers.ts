@@ -6,6 +6,13 @@ import {
 import { DeploymentRuntime } from './types/charts'
 import { ContainerEnvironmentVariables } from './types/output-types'
 
+export const resolveWithMaxLength = (str: string, max: number) => {
+  if (str.length > max) {
+    return `${str.substr(0, Math.ceil(max / 3))}${str.substr((-max / 3) * 2)}`
+  }
+  return str
+}
+
 export function serializeValueSource(
   value: ValueSource,
   deployment: DeploymentRuntime,
