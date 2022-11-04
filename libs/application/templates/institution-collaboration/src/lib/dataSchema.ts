@@ -1,18 +1,18 @@
-import * as z from 'zod'
+import { z } from 'zod'
 
 import { NO, YES } from '../constants'
 
 export const contactSchema = z.object({
-  name: z.string().nonempty(),
+  name: z.string().min(1),
   email: z.string().email().nonempty(),
-  phoneNumber: z.string().nonempty(),
+  phoneNumber: z.string().min(1),
 })
 
 export const dataSchema = z.object({
   applicant: z.object({
     institution: z.object({
-      nationalId: z.string().nonempty(),
-      label: z.string().nonempty(),
+      nationalId: z.string().min(1),
+      label: z.string().min(1),
       isat: z.string().optional(),
     }),
     institutionEmail: z.string().email().nonempty(),

@@ -10,14 +10,14 @@ import {
 } from '@island.is/nest/feature-flags'
 
 import { ApiScopesInput } from '../dto/apiScopes.input'
-import { ApiScopeServiceV1 } from '../services-v1/apiScope.service'
+import { ApiScopeService } from '../services/apiScope.service'
 import { ApiScope } from '../models/apiScope.model'
 import { ScopeTreeNode } from '../models/scopeTreeNode.model'
 
 @UseGuards(IdsUserGuard, FeatureFlagGuard)
 @Resolver(() => ApiScope)
 export class ApiScopeResolver {
-  constructor(private apiScope: ApiScopeServiceV1) {}
+  constructor(private apiScope: ApiScopeService) {}
 
   @Query(() => [ApiScope], {
     name: 'authApiScopes',

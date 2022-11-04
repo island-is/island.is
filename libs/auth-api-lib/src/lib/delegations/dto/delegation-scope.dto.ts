@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
-import { IsString, IsDate, IsOptional, IsDateString } from 'class-validator'
+import { IsDate, IsDateString, IsOptional, IsString } from 'class-validator'
 
 export class UpdateDelegationScopeDTO {
   @IsString()
