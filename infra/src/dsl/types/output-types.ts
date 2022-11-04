@@ -1,12 +1,6 @@
-import {
-  Hash,
-  PersistentVolumeClaim,
-  ReplicaCount,
-  Service,
-} from './input-types'
+import { Hash, Service } from './input-types'
 import { DeploymentRuntime } from './charts'
 import { FeatureNames } from '../features'
-import { serviceMockDef } from '../map-to-docker-compose'
 
 // Output types
 export type ContainerRunHelm = {

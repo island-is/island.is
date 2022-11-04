@@ -25,9 +25,8 @@ import {
   SerializeErrors,
   SerializeMethod,
   SerializeSuccess,
-  ServiceOutputType,
 } from './types/output-types'
-import { EnvironmentConfig, DeploymentRuntime } from './types/charts'
+import { DeploymentRuntime, EnvironmentConfig } from './types/charts'
 import { FeatureNames } from './features'
 import { SSM } from '@aws-sdk/client-ssm'
 import { ServerSideFeature } from '../../../libs/feature-flags/src'

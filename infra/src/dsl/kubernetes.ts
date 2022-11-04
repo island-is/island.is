@@ -1,5 +1,5 @@
 import { Service } from './types/input-types'
-import { EnvironmentConfig, DeploymentRuntime } from './types/charts'
+import { DeploymentRuntime, EnvironmentConfig } from './types/charts'
 
 export class Kubernetes implements DeploymentRuntime {
   env: EnvironmentConfig // TODO: get rid of this?

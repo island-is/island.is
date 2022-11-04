@@ -1,22 +1,23 @@
 import {
+  Context,
+  EnvironmentVariables,
+  ExtraValues,
+  Features,
+  HealthProbe,
   Ingress,
   InitContainers,
-  EnvironmentVariables,
-  Context,
-  Service,
-  ServiceDefinition,
-  ExtraValues,
-  Resources,
-  ReplicaCount,
-  PostgresInfo,
-  HealthProbe,
-  Features,
-  Secrets,
-  ValueType,
-  XroadConfig,
   MountedFile,
   PersistentVolumeClaim,
+  PostgresInfo,
+  ReplicaCount,
+  Resources,
+  Secrets,
+  Service,
+  ServiceDefinition,
+  ValueType,
+  XroadConfig,
 } from './types/input-types'
+
 type Optional<T, L extends keyof T> = Omit<T, L> & Partial<Pick<T, L>>
 
 export class ServiceBuilder<ServiceType> implements Service {
@@ -24,7 +25,9 @@ export class ServiceBuilder<ServiceType> implements Service {
     this.serviceDef.extraAttributes = attr
     return this
   }
+
   serviceDef: ServiceDefinition
+
   liveness(path: string | Partial<HealthProbe>) {
     if (typeof path === 'string') {
       this.serviceDef.liveness.path = path
@@ -33,6 +36,7 @@ export class ServiceBuilder<ServiceType> implements Service {
     }
     return this
   }
+
   readiness(path: string | Partial<HealthProbe>) {
     if (typeof path === 'string') {
       this.serviceDef.readiness.path = path
@@ -113,6 +117,7 @@ export class ServiceBuilder<ServiceType> implements Service {
     this.serviceDef.image = name
     return this
   }
+
   setNamespace(name: string) {
     this.serviceDef.namespace = name
   }
@@ -171,6 +176,7 @@ export class ServiceBuilder<ServiceType> implements Service {
     this.serviceDef.volumes = [...this.serviceDef.volumes, ...volumes]
     return this
   }
+
   /**
    * To perform maintenance before deploying the main service(database migrations, etc.), create an `initContainer` (optional). It maps to a Pod specification for an [initContainer](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/).
    * @param ic initContainer definitions
@@ -268,6 +274,7 @@ export class ServiceBuilder<ServiceType> implements Service {
     return this
   }
 }
+
 const postgresIdentifier = (id: string) => id.replace(/[\W\s]/gi, '_')
 
 export const ref = (renderer: (env: Context) => string) => {

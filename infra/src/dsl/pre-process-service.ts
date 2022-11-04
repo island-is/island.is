@@ -64,12 +64,16 @@ export const processService = (
     (acc, [name, ingress]) => {
       return {
         ...acc,
-        [name]: {
-          host: ingress.host[env.type],
-          paths: ingress.paths,
-          public: ingress.public,
-          extraAnnotations: ingress.extraAnnotations?.[env.type],
-        },
+        ...(ingress.host[env.type] === MissingSetting
+          ? {}
+          : {
+              [name]: {
+                host: ingress.host[env.type],
+                paths: ingress.paths,
+                public: ingress.public,
+                extraAnnotations: ingress.extraAnnotations?.[env.type],
+              },
+            }),
       }
     },
     {} as { [name: string]: IngressForEnv },

@@ -2,11 +2,7 @@ import { service } from './dsl'
 import { Kubernetes } from './kubernetes'
 import { MissingSetting } from './types/input-types'
 import { serializeService } from './map-to-helm-values'
-import {
-  SerializeErrors,
-  SerializeSuccess,
-  ServiceHelm,
-} from './types/output-types'
+import { SerializeSuccess, ServiceHelm } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
 
 const Staging: EnvironmentConfig = {

@@ -3,6 +3,7 @@ import { OpsEnv, Service } from './input-types'
 
 export interface DeploymentRuntime {
   env: EnvironmentConfig
+
   ref(from: Service, to: Service | string): string
 }
 

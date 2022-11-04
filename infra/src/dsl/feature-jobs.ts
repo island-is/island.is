@@ -1,5 +1,5 @@
 import { Kubernetes } from './kubernetes'
-import { PostgresInfo, Service } from './types/input-types'
+import { Service } from './types/input-types'
 import { getWithDependantServices } from './process-services'
 import { resolveDbHost } from './map-to-helm-values'
 import { FeatureKubeJob } from './types/output-types'

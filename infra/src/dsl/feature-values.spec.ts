@@ -1,7 +1,5 @@
 import { ref, service, ServiceBuilder } from './dsl'
 import { Kubernetes } from './kubernetes'
-import { serializeService } from './map-to-helm-values'
-import { SerializeSuccess } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
 import { generateYamlForFeature } from './feature-deployments'
 

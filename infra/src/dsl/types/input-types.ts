@@ -4,9 +4,11 @@ import { EnvironmentConfig } from './charts'
 export type OpsEnv = 'dev' | 'staging' | 'prod'
 export const MissingSetting = 'Missing setting'
 export type MissingSettingType = typeof MissingSetting
+
 export interface Service {
   serviceDef: ServiceDefinition
 }
+
 // Input types
 export type Hash = { [name: string]: Hash | string | number }
 export type ValueSource = string | ((e: Context) => string)
@@ -23,7 +25,7 @@ export type PostgresInfo = {
   passwordSecret?: string
 }
 export type PostgresInfoForEnv = {
-  host?: ValueType
+  host?: ValueSource
   name?: string
   username?: string
   passwordSecret?: string
@@ -47,13 +49,15 @@ export type EnvironmentVariables = {
   [name: string]: EnvironmentVariableValue
 }
 export type EnvironmentVariablesForEnv = {
-  [name: string]: ValueType
+  [name: string]: ValueSource
 }
 
 export interface XroadConfig {
   getEnv(): EnvironmentVariables
+
   getSecrets(): Secrets
 }
+
 export type Feature = {
   env: EnvironmentVariables
   secrets: Secrets
@@ -112,6 +116,7 @@ export interface Ingress {
   public?: boolean
   extraAnnotations?: { [name in OpsEnv]: { [idx: string]: string | null } }
 }
+
 export interface IngressForEnv {
   host: string | string[]
   paths: string[]
@@ -180,9 +185,11 @@ export type InitContainersForEnv = {
 
 export interface Context {
   featureDeploymentName?: string
+
   svc(dep: Service | string): string
+
   env: EnvironmentConfig
 }
 
-export type ExtraValuesForEnv = Hash | MissingSettingType
+export type ExtraValuesForEnv = Hash
 export type ExtraValues = { [idx in OpsEnv]: Hash | MissingSettingType }

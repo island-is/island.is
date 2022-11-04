@@ -7,7 +7,7 @@ import {
   Resources,
   Service,
   ServiceDefinitionForEnv,
-  ValueType,
+  ValueSource,
 } from './types/input-types'
 import {
   ContainerEnvironmentVariables,
@@ -126,10 +126,7 @@ export const serializeService: SerializeMethod<ServiceHelm> = (
     result.hpa.scaling.metric.nginxRequestsIrate =
       serviceDef.replicaCount?.scalingMagicNumber || 2
 
-    if (
-      serviceDef.extraAttributes &&
-      serviceDef.extraAttributes !== MissingSetting
-    ) {
+    if (serviceDef.extraAttributes) {
       result.extra = serviceDef.extraAttributes
     }
     // target port
@@ -275,7 +272,7 @@ export const resolveDbHost = (
   service: Service,
 ) => {
   if (postgres.host) {
-    const resolved = serializeValueType(postgres.host, deployment, service)
+    const resolved = serializeValueSource(postgres.host, deployment, service)
     switch (resolved.type) {
       case 'error': {
         throw new Error()
@@ -323,9 +320,6 @@ function serializeIngress(
   ingressConf: IngressForEnv,
   env: EnvironmentConfig,
 ) {
-  if (ingressConf.host === MissingSetting) {
-    return
-  }
   const hosts = (typeof ingressConf.host === 'string'
     ? [ingressConf.host]
     : ingressConf.host
@@ -415,8 +409,8 @@ function serializeContainerRuns(
   })
 }
 
-function serializeValueType(
-  value: ValueType,
+function serializeValueSource(
+  value: ValueSource,
   deployment: DeploymentRuntime,
   service: Service,
 ): { type: 'error' } | { type: 'success'; value: string } {
@@ -439,7 +433,7 @@ function serializeEnvironmentVariables(
 ): { errors: string[]; envs: ContainerEnvironmentVariables } {
   return Object.entries(envs).reduce(
     (acc, [name, value]) => {
-      const r = serializeValueType(value, deployment, service)
+      const r = serializeValueSource(value, deployment, service)
       switch (r.type) {
         case 'error':
           return {

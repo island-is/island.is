@@ -12,9 +12,11 @@ export class XroadConf implements XroadConfig {
   constructor(config: XroadSectionConfig) {
     this.config = config
   }
+
   getEnv(): EnvironmentVariables {
     return this.config.env || {}
   }
+
   getSecrets(): Secrets {
     return this.config.secrets || {}
   }

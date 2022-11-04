@@ -1,4 +1,4 @@
-import { service, json } from './dsl'
+import { json, service } from './dsl'
 import { Kubernetes } from './kubernetes'
 import { MissingSetting } from './types/input-types'
 import { serializeService } from './map-to-helm-values'
