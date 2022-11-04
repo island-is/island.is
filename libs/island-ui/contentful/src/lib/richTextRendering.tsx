@@ -1,4 +1,4 @@
-import { ReactNode, Fragment } from 'react'
+import React, { ReactNode, Fragment } from 'react'
 import {
   Document,
   Block,
@@ -151,6 +151,7 @@ const renderConnectedComponent = (slice) => {
     case 'Skilavottord/CompanyListConnected':
       if (typeof data === 'object') {
         const { graphqlLink } = data
+
         return <CompanyListConnected graphqlLink={graphqlLink} />
       }
       break
