@@ -17,9 +17,6 @@ export const mainCoOwnerSubSection = buildSubSection({
       'coOwnerAndOperator',
       [],
     ) as CoOwnerAndOperatorField[]
-    console.log(
-      coOwnerAndOperator.filter((field) => field.type === 'coOwner').length,
-    )
     return (
       coOwnerAndOperator.filter((field) => field.type === 'coOwner').length > 1
     )

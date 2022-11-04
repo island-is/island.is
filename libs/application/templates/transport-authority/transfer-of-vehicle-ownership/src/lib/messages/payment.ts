@@ -89,8 +89,8 @@ export const payment = {
   confirmation: defineMessages({
     confirm: {
       id: 'ta.tvo.application:payment.confirmation.confirm',
-      defaultMessage: 'Villa kom upp við að sækja upplýsingar um greiðslu',
-      description: 'An error came up while getting payment information',
+      defaultMessage: 'Staðfesta',
+      description: 'Confirm button',
     },
   }),
 }
