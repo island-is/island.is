@@ -61,18 +61,18 @@ export class DrivingLicenseBookService {
     )
   }
 
+  async getPracticalDrivingLessons(
+    input: PracticalDrivingLessonsInput,
+  ): Promise<PracticalDrivingLesson[]> {
+    return await this.drivingLicenseBookClientApiFactory.getPracticalDrivingLessons(
+      input,
+    )
+  }
+
   async findStudent(
     input: DrivingLicenseBookStudentsInput,
   ): Promise<DrivingLicenseBookStudent[]> {
     return await this.drivingLicenseBookClientApiFactory.findStudent(input)
-  }
-
-  async getStudentsForTeacher(
-    user: User,
-  ): Promise<DrivingLicenseBookStudentForTeacher[]> {
-    return await this.drivingLicenseBookClientApiFactory.getStudentsForTeacher(
-      user,
-    )
   }
 
   async getStudent({
@@ -83,6 +83,14 @@ export class DrivingLicenseBookService {
     })
   }
 
+  async getStudentsForTeacher(
+    user: User,
+  ): Promise<DrivingLicenseBookStudentForTeacher[]> {
+    return await this.drivingLicenseBookClientApiFactory.getStudentsForTeacher(
+      user,
+    )
+  }
+
   async getMostRecentStudentBook({
     nationalId,
   }: DrivingLicenseBookStudentInput): Promise<DrivingLicenseBookStudentOverview | null> {
@@ -90,14 +98,6 @@ export class DrivingLicenseBookService {
       {
         nationalId,
       },
-    )
-  }
-
-  async getPracticalDrivingLessons(
-    input: PracticalDrivingLessonsInput,
-  ): Promise<PracticalDrivingLesson[]> {
-    return await this.drivingLicenseBookClientApiFactory.getPracticalDrivingLessons(
-      input,
     )
   }
 

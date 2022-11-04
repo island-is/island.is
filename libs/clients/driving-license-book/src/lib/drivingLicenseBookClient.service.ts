@@ -26,7 +26,14 @@ import {
   SchoolType,
   UpdatePracticalDrivingLessonInput,
 } from './drivingLicenseBookType.types'
-import { getStudentMapper } from '../utils/drivingLicenseBookMapper'
+import {
+  drivingLessonMapper,
+  getStudentAndBookMapper,
+  getStudentForTeacherMapper,
+  getStudentMapper,
+  schoolForSchoolStaffMapper,
+  schoolTypeMapper,
+} from '../utils/mappers'
 
 @Injectable()
 export class DrivingLicenseBookClientApiFactory {
@@ -148,18 +155,9 @@ export class DrivingLicenseBookClientApiFactory {
     }
     return data
       .filter((student) => !!student && !!student.ssn && !!student.id)
-      .map((student) => ({
-        id: student.id ?? '',
-        nationalId: student.ssn ?? '',
-        name: student.name ?? '',
-        zipCode: student.zipCode ?? -1,
-        address: student.address ?? '',
-        email: student.email ?? '',
-        primaryPhoneNumber: student.primaryPhoneNumber ?? '',
-        secondaryPhoneNumber: student.secondaryPhoneNumber ?? '',
-        active: student.active ?? false,
-        bookLicenseCategories: student.bookLicenseCategories ?? [''],
-      }))
+      .map((student) => {
+        return getStudentMapper(student)
+      })
   }
 
   async getStudentsForTeacher(
@@ -180,12 +178,9 @@ export class DrivingLicenseBookClientApiFactory {
     // Note that id and nationalId are never missing in practice.
     return data
       .filter((student) => !!student && !!student.ssn && !!student.studentId)
-      .map((student) => ({
-        id: student.studentId ?? '-1',
-        nationalId: student.ssn ?? '',
-        name: student.name ?? '',
-        totalLessonCount: student.totalLessonCount ?? -1,
-      }))
+      .map((student) => {
+        return getStudentForTeacherMapper(student)
+      })
   }
 
   async getStudent({
@@ -198,7 +193,7 @@ export class DrivingLicenseBookClientApiFactory {
     if (data?.books && data?.ssn) {
       const activeBook = await this.getActiveBookId(data?.ssn)
       const book = data.books.filter((b) => b.id === activeBook && !!b.id)[0]
-      return getStudentMapper(data, book)
+      return getStudentAndBookMapper(data, book)
     }
 
     throw new NotFoundException(
@@ -219,7 +214,7 @@ export class DrivingLicenseBookClientApiFactory {
         new Date(a.createdOn ?? '') > new Date(b.createdOn ?? '') ? a : b,
       )
 
-      return getStudentMapper(data, book)
+      return getStudentAndBookMapper(data, book)
     }
     return null
   }
@@ -235,7 +230,7 @@ export class DrivingLicenseBookClientApiFactory {
       )
     }
     const { data } = await api.apiSchoolGetSchoolTypesGet({
-      licenseCategory: 'B',
+      licenseCategory: LICENSE_CATEGORY_B,
     })
 
     const allowedSchoolTypes = data
@@ -244,26 +239,11 @@ export class DrivingLicenseBookClientApiFactory {
           type?.schoolTypeCode &&
           employee.allowedDrivingSchoolTypes?.includes(type?.schoolTypeCode),
       )
-      .map(
-        (type) =>
-          ({
-            schoolTypeId: type.schoolTypeId ?? -1,
-            schoolTypeName: type.schoolTypeName ?? '',
-            schoolTypeCode: type.schoolTypeCode ?? '',
-            licenseCategory: type.licenseCategory ?? '',
-          } as SchoolType),
-      )
+      .map((type) => {
+        return schoolTypeMapper(type)
+      })
 
-    return {
-      nationalId: employee.ssn ?? '',
-      name: employee.name ?? '',
-      address: employee.address ?? '',
-      zipCode: employee.zipCode ?? '',
-      phoneNumber: employee.phoneNumber ?? '',
-      email: employee.email ?? '',
-      website: employee.website ?? '',
-      allowedDrivingSchoolTypes: allowedSchoolTypes ?? [],
-    }
+    return schoolForSchoolStaffMapper(employee, allowedSchoolTypes)
   }
 
   async isSchoolStaff(user: User): Promise<boolean> {
@@ -310,18 +290,9 @@ export class DrivingLicenseBookClientApiFactory {
       .filter(
         (practical) => !!practical && !!practical.bookId && !!practical.id,
       )
-      .map((practical) => ({
-        bookId: practical.bookId ?? '',
-        id: practical.id ?? '',
-        studentNationalId: practical.studentSsn ?? '',
-        studentName: practical.studentName ?? '',
-        licenseCategory: practical.licenseCategory ?? '',
-        teacherNationalId: practical.teacherSsn ?? '',
-        teacherName: practical.teacherName ?? '',
-        minutes: practical.minutes ?? -1,
-        createdOn: practical.createdOn ?? '',
-        comments: practical.comments ?? '',
-      }))
+      .map((practical) => {
+        return drivingLessonMapper(practical)
+      })
   }
 
   async getSchoolTypes(): Promise<SchoolType[] | null> {
@@ -330,12 +301,9 @@ export class DrivingLicenseBookClientApiFactory {
       licenseCategory: LICENSE_CATEGORY_B,
     })
     return (
-      data?.map((type) => ({
-        schoolTypeId: type.schoolTypeId ?? -1,
-        schoolTypeName: type.schoolTypeName ?? '',
-        schoolTypeCode: type.schoolTypeCode ?? '',
-        licenseCategory: type.licenseCategory ?? '',
-      })) || null
+      data?.map((type) => {
+        return schoolTypeMapper(type)
+      }) || null
     )
   }
 

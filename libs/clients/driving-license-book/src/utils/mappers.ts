@@ -1,7 +1,21 @@
-import { BookOverview, StudentOverView } from '../../gen/fetch'
-import { DrivingLicenseBookStudentOverview } from '../lib/drivingLicenseBookType.types'
+import {
+  BookOverview,
+  Organization,
+  PracticalDrivingLesson,
+  SchoolTestResultType,
+  StudentOverView,
+  StudentShortOverview,
+} from '../../gen/fetch'
+import {
+  DrivingLicenseBookStudent,
+  DrivingLicenseBookStudentForTeacher,
+  DrivingLicenseBookStudentOverview,
+  PracticalDrivingLesson as PracticalDrivingLessonMapped,
+  SchoolType,
+  Organization as OrganizationMapped,
+} from '../lib/drivingLicenseBookType.types'
 
-export const getStudentMapper = (
+export const getStudentAndBookMapper = (
   data: StudentOverView,
   book: BookOverview,
 ): DrivingLicenseBookStudentOverview => {
@@ -72,5 +86,75 @@ export const getStudentMapper = (
             comments: lesson.comments ?? '',
           })),
     },
+  }
+}
+
+export const getStudentMapper = (
+  data: StudentOverView,
+): DrivingLicenseBookStudent => {
+  return {
+    nationalId: data.ssn ?? '',
+    id: data.id ?? '',
+    name: data.name ?? '',
+    zipCode: data.zipCode ?? -1,
+    address: data.address ?? '',
+    email: data.email ?? '',
+    primaryPhoneNumber: data.primaryPhoneNumber ?? '',
+    secondaryPhoneNumber: data.secondaryPhoneNumber ?? '',
+    active: data.active ?? false,
+    bookLicenseCategories: data.bookLicenseCategories ?? [],
+  }
+}
+
+export const getStudentForTeacherMapper = (
+  data: StudentShortOverview,
+): DrivingLicenseBookStudentForTeacher => {
+  return {
+    id: data.studentId ?? '-1',
+    nationalId: data.ssn ?? '',
+    name: data.name ?? '',
+    totalLessonCount: data.totalLessonCount ?? -1,
+  }
+}
+
+export const drivingLessonMapper = (
+  data: PracticalDrivingLesson,
+): PracticalDrivingLessonMapped => {
+  return {
+    bookId: data.bookId ?? '',
+    id: data.id ?? '',
+    studentNationalId: data.studentSsn ?? '',
+    studentName: data.studentName ?? '',
+    licenseCategory: data.licenseCategory ?? '',
+    teacherNationalId: data.teacherSsn ?? '',
+    teacherName: data.teacherName ?? '',
+    minutes: data.minutes ?? -1,
+    createdOn: data.createdOn ?? '',
+    comments: data.comments ?? '',
+  }
+}
+
+export const schoolForSchoolStaffMapper = (
+  employee: Organization,
+  allowedSchoolTypes?: SchoolType[],
+): OrganizationMapped => {
+  return {
+    nationalId: employee.ssn ?? '',
+    name: employee.name ?? '',
+    address: employee.address ?? '',
+    zipCode: employee.zipCode ?? '',
+    phoneNumber: employee.phoneNumber ?? '',
+    email: employee.email ?? '',
+    website: employee.website ?? '',
+    allowedDrivingSchoolTypes: allowedSchoolTypes ?? [],
+  }
+}
+
+export const schoolTypeMapper = (data: SchoolTestResultType): SchoolType => {
+  return {
+    schoolTypeId: data.schoolTypeId ?? -1,
+    schoolTypeName: data.schoolTypeName ?? '',
+    schoolTypeCode: data.schoolTypeCode ?? '',
+    licenseCategory: data.licenseCategory ?? '',
   }
 }
