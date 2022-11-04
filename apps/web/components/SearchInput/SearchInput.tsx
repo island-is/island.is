@@ -454,10 +454,6 @@ const Results = ({
                   className={styles.suggestion}
                   onClick={(e) => {
                     onClick(e)
-                    console.log(window.plausible, 'window.plausible')
-                    window.plausible?.('Search Query', {
-                      props: { q: 'TTEST' },
-                    })
                     onRouting()
                   }}
                 >
