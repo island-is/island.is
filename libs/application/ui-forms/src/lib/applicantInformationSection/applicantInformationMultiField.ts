@@ -1,7 +1,7 @@
-import { Application } from '@island.is/api/schema'
 import { buildMultiField, buildTextField } from '@island.is/application/core'
 
 import { applicantInformation } from './messages'
+import { ApplicantInformationInterface } from './types'
 
 export const applicantInformationMultiField = buildMultiField({
   id: 'applicant',
@@ -12,7 +12,7 @@ export const applicantInformationMultiField = buildMultiField({
       title: applicantInformation.labels.name,
       backgroundColor: 'white',
       disabled: true,
-      defaultValue: (application: Application) =>
+      defaultValue: (application: ApplicantInformationInterface) =>
         application.externalData?.nationalRegistry?.data?.fullName ??
         application.externalData?.identityRegistry?.data?.name ??
         '',
@@ -24,7 +24,7 @@ export const applicantInformationMultiField = buildMultiField({
       width: 'half',
       backgroundColor: 'white',
       disabled: true,
-      defaultValue: (application: Application) =>
+      defaultValue: (application: ApplicantInformationInterface) =>
         application.externalData?.nationalRegistry?.data?.nationalId ??
         application.externalData?.identityRegistry?.data?.nationalId ??
         '',
@@ -35,7 +35,7 @@ export const applicantInformationMultiField = buildMultiField({
       width: 'half',
       backgroundColor: 'white',
       disabled: true,
-      defaultValue: (application: Application) =>
+      defaultValue: (application: ApplicantInformationInterface) =>
         application.externalData?.nationalRegistry?.data?.address
           ?.streetAddress ??
         application.externalData?.identityRegistry?.data?.address
@@ -49,7 +49,7 @@ export const applicantInformationMultiField = buildMultiField({
       format: '###',
       backgroundColor: 'white',
       disabled: true,
-      defaultValue: (application: Application) => {
+      defaultValue: (application: ApplicantInformationInterface) => {
         return (
           application.externalData?.nationalRegistry?.data?.address
             ?.postalCode ??
@@ -65,7 +65,7 @@ export const applicantInformationMultiField = buildMultiField({
       width: 'half',
       backgroundColor: 'white',
       disabled: true,
-      defaultValue: (application: Application) =>
+      defaultValue: (application: ApplicantInformationInterface) =>
         application.externalData?.nationalRegistry?.data?.address?.city ??
         application.externalData?.identityRegistry?.data?.address?.city ??
         '',

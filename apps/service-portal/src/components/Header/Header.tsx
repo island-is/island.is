@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import React, { useState } from 'react'
 import {
   Box,
   Hidden,
@@ -18,7 +18,10 @@ import { m } from '@island.is/service-portal/core'
 import { Link } from 'react-router-dom'
 import { useAuth } from '@island.is/auth/react'
 
-export const Header: FC<{}> = () => {
+interface Props {
+  position: number
+}
+export const Header = ({ position }: Props) => {
   const { formatMessage } = useLocale()
   const [{ mobileMenuState }, dispatch] = useStore()
   const [userMenuOpen, setUserMenuOpen] = useState(false)
@@ -51,9 +54,9 @@ export const Header: FC<{}> = () => {
     )
   }
   return (
-    <>
-      <div className={styles.placeholder} />
-      <header className={styles.header}>
+    <div className={styles.placeholder}>
+      {/*  Inline style to dynamicly change position of header because of alert banners */}
+      <header className={styles.header} style={{ top: position }}>
         <Box width="full">
           <Box
             display="flex"
@@ -120,7 +123,7 @@ export const Header: FC<{}> = () => {
           </Box>
         </Box>
       </header>
-    </>
+    </div>
   )
 }
 
