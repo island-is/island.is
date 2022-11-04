@@ -106,7 +106,7 @@ const CaseFiles: React.FC = () => {
             onRetry={handleRetry}
           />
         </Box>
-        <Box component="section" marginBottom={10}>
+        <Box component="section" marginBottom={5}>
           <SectionHeading
             title={formatMessage(strings.caseFiles.sections.costBreakdown)}
           />
