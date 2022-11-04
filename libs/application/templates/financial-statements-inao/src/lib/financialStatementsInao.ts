@@ -12,13 +12,14 @@ import {
   DefaultEvents,
 } from '@island.is/application/types'
 import { m } from './messages'
-import { Events, States, Roles, ApiActions } from './constants'
+import { Events, States, Roles, ApiActions, USERTYPE } from './constants'
 import { dataSchema } from './utils/dataSchema'
 import { Features } from '@island.is/feature-flags'
 import {
   FinancialStatementInaoFeatureFlags,
   getApplicationFeatureFlags,
 } from './utils/getApplicationFeatureFlags'
+import { getCurrentUserType } from './utils/helpers'
 
 const FinancialStatementInaoApplication: ApplicationTemplate<
   ApplicationContext,
@@ -27,10 +28,18 @@ const FinancialStatementInaoApplication: ApplicationTemplate<
 > = {
   type: ApplicationTypes.FINANCIAL_STATEMENTS_INAO,
   name: (application) => {
+    const { answers, externalData } = application
+    const userType = getCurrentUserType(answers, externalData)
     const hasApprovedExternalData = application.answers?.approveExternalData
     const currentUser = hasApprovedExternalData
-      ? (application.externalData?.nationalRegistry?.data as User)
+      ? (externalData?.nationalRegistry?.data as User)
       : undefined
+
+    if (userType === USERTYPE.INDIVIDUAL) {
+      return currentUser
+        ? `${m.applicationTitleAlt.defaultMessage} - ${currentUser.fullName}`
+        : m.applicationTitleAlt
+    }
 
     return currentUser
       ? `${m.applicationTitle.defaultMessage} - ${currentUser.fullName}`
