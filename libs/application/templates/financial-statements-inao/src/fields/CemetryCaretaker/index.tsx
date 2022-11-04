@@ -24,7 +24,7 @@ import {
 import { FinancialStatementsInao } from '../../lib/utils/dataSchema'
 import * as styles from './CemetryCaretaker.css'
 import { IdentityQuery } from '../../graphql'
-import { BOARDMEMEBER, CARETAKER } from '../../lib/constants'
+import { BOARDMEMEBER, CARETAKER, VALIDATOR } from '../../lib/constants'
 
 type Props = {
   id: string
@@ -44,7 +44,7 @@ const CareTakerRepeaterItem = ({
   const { formatMessage } = useLocale()
 
   const [nationalIdInput, setNationalIdInput] = useState('')
-  const { setValue } = useFormContext()
+  const { clearErrors, setValue } = useFormContext()
   const fieldIndex = `${id}[${index}]`
   const nameField = `${fieldIndex}.name`
   const nationalIdField = `${fieldIndex}.nationalId`
@@ -60,6 +60,7 @@ const CareTakerRepeaterItem = ({
   })
 
   useEffect(() => {
+    clearErrors()
     if (nationalIdInput.length === 10 && kennitala.isValid(nationalIdInput)) {
       getIdentity({
         variables: {
@@ -155,9 +156,13 @@ export const CemetryCaretaker: FC<FieldBaseProps<FinancialStatementsInao>> = ({
   application,
   field,
   errors,
+  setBeforeSubmitCallback,
 }) => {
   const { formatMessage } = useLocale()
   const { id } = field
+
+  const { getValues, setError } = useFormContext()
+  const values = getValues()
 
   const { fields, append, remove } = useFieldArray({
     name: `${id}.caretakers`,
@@ -176,6 +181,23 @@ export const CemetryCaretaker: FC<FieldBaseProps<FinancialStatementsInao>> = ({
   useEffect(() => {
     if (fields.length === 0) handleAddCaretaker()
   }, [fields, handleAddCaretaker])
+  setBeforeSubmitCallback &&
+    setBeforeSubmitCallback(async () => {
+      const caretakers = values.cemetryCaretaker
+      const includesApplicant =
+        caretakers.filter(
+          (member: any) => member.nationalId === application.applicant,
+        ).length > 0
+
+      if (includesApplicant) {
+        setError(VALIDATOR, {
+          type: 'custom',
+          message: formatMessage(m.errormemberCanNotIncludeApplicant),
+        })
+        return [false, formatMessage(m.errormemberCanNotIncludeApplicant)]
+      }
+      return [true, null]
+    })
 
   return (
     <GridContainer>
@@ -211,6 +233,11 @@ export const CemetryCaretaker: FC<FieldBaseProps<FinancialStatementsInao>> = ({
               ? errors.cemetryCaretaker
               : undefined
           }
+        />
+      ) : null}
+      {errors && errors.validator ? (
+        <InputError
+          errorMessage={formatMessage(m.errormemberCanNotIncludeApplicant)}
         />
       ) : null}
     </GridContainer>

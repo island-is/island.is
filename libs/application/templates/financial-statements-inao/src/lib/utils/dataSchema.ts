@@ -220,7 +220,6 @@ const cemetryCaretaker = z
         careTakers.includes(member),
       )
 
-      console.log({ careTakersUnique, boardMembersUnique })
       if (careTakersUnique.length > 0 || boardMembersUnique.length > 0) {
         return false
       } else {
