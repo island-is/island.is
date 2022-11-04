@@ -123,7 +123,6 @@ export const searchQuery = (
   }
 
   const esQuery = {
-
     query: {
       function_score: {
         query: {
@@ -147,20 +146,20 @@ export const searchQuery = (
           // content that is an entrance to "umsoknir" gets a boost
           { filter: { range: { processEntryCount: { gte: 1 } } }, weight: 2 },
           // content that is a "forsíða stofnunar" gets a boost
-          { filter: { term: { type: "webOrganizationPage" } }, weight: 3 },
+          { filter: { term: { type: 'webOrganizationPage' } }, weight: 3 },
         ],
       },
     },
     ...(Object.keys(aggregation.aggs).length ? aggregation : {}), // spread aggregations if we have any
-    highlight : {
-      pre_tags : ["<b>"],
-      post_tags : ["</b>"],
-      number_of_fragments : 3,
-      fragment_size : 150,
-      fields : {
-        title : {},
-        content : {}
-      }
+    highlight: {
+      pre_tags: ['<b>'],
+      post_tags: ['</b>'],
+      number_of_fragments: 3,
+      fragment_size: 150,
+      fields: {
+        title: {},
+        content: {},
+      },
     },
     size,
     from: (page - 1) * size, // if we have a page number add it as offset for pagination

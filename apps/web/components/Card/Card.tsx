@@ -39,7 +39,7 @@ export interface CardProps {
   tags?: Array<CardTagsProps>
   linkProps?: LinkProps
   link?: LinkResolverResponse
-  highlightedResults?: boolean 
+  highlightedResults?: boolean
 }
 
 export const Card = ({
@@ -50,7 +50,7 @@ export const Card = ({
   tags = [],
   link,
   dataTestId,
-  highlightedResults = false
+  highlightedResults = false,
 }: CardProps & TestSupport) => {
   const { colorScheme } = useContext(ColorSchemeContext)
   const [ref, { width }] = useMeasure()
@@ -85,7 +85,7 @@ export const Card = ({
   }
 
   const visibleTags = tags.filter((t) => t.title)
-  
+
   const items = (
     <Box
       ref={ref}
@@ -113,19 +113,30 @@ export const Card = ({
           )}
           <Box display="flex" flexDirection="row" alignItems="center">
             <Box display="inlineFlex" flexGrow={1}>
-              {highlightedResults
-                ? <Text as="h3" variant="h3" color={titleColor} fontWeight="medium"><span dangerouslySetInnerHTML={{__html: title}}></span></Text>
-                : <Text as="h3" variant="h3" color={titleColor}><Hyphen>{title}</Hyphen></Text>
-              }
+              {highlightedResults ? (
+                <Text
+                  as="h3"
+                  variant="h3"
+                  color={titleColor}
+                  fontWeight="medium"
+                >
+                  <span dangerouslySetInnerHTML={{ __html: title }}></span>
+                </Text>
+              ) : (
+                <Text as="h3" variant="h3" color={titleColor}>
+                  <Hyphen>{title}</Hyphen>
+                </Text>
+              )}
             </Box>
           </Box>
-          {description &&
-            highlightedResults
-              ? <Text><span dangerouslySetInnerHTML={{__html: description}}></span></Text>
-              : <Text>{description}</Text>
-          }
+          {description && highlightedResults ? (
+            <Text>
+              <span dangerouslySetInnerHTML={{ __html: description }}></span>
+            </Text>
+          ) : (
+            <Text>{description}</Text>
+          )}
 
-  
           {visibleTags.length > 0 && highlightedResults && (
             <Box paddingTop={3} flexGrow={0} position="relative">
               <Inline space={1}>

@@ -311,8 +311,6 @@ export class ElasticService {
     return data.body
   }
 
-  
-
   async deleteByIds(index: string, ids: Array<string>) {
     // In case we get an empty list, ES will match that to all records... which we don't want to delete
     if (!ids.length) {

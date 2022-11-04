@@ -89,7 +89,7 @@ export const SearchInput = ({
   useDebounce(
     () => {
       if (searchTerms) {
-        const queryString =  searchTerms
+        const queryString = searchTerms
 
         if (searchTerms.trim() === lastSearchTerms.trim()) {
           updateOptions()

@@ -386,7 +386,7 @@ ServiceSearch.getInitialProps = async ({ apolloClient, locale, query }) => {
             : 'excludedTags']: mannaudstorgTag,
           size: PERPAGE,
           page,
-          highlightResults:true
+          highlightResults: true,
         },
       },
     }),

@@ -74,8 +74,6 @@ export class ContentSearchService {
       query,
     )
 
-   
-
     // intercept highlights
     let items = body.hits.hits.map((item) =>
       JSON.parse(item._source.response ?? '[]'),
@@ -84,7 +82,7 @@ export class ContentSearchService {
     // mix and match highlights
     // mix and match highlights -- move this to a place where others can use it
     // add highlights to request to replace values
-    if(query.highlightResults){
+    if (query.highlightResults) {
       for (let i = 0; i < body.hits.hits.length; i++) {
         if (body.hits.hits[i]?.highlight?.title) {
           items[i].title = body.hits.hits[i]?.highlight?.title[0]
@@ -94,8 +92,6 @@ export class ContentSearchService {
         }
       }
     }
-    
-
 
     return {
       total: body.hits.total.value,
@@ -139,6 +135,5 @@ export class ContentSearchService {
         (suggestionObjects) => suggestionObjects.text,
       ),
     }
-
   }
 }

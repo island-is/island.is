@@ -121,7 +121,7 @@ const useSearch = (
                 SearchableContentTypes['WebSubArticle'],
                 SearchableContentTypes['WebProjectPage'],
               ],
-              highlightResults: true
+              highlightResults: true,
             },
           },
         })
@@ -408,7 +408,7 @@ const Results = ({
   autosuggest,
   onRouting,
   quickContentLabel = 'Beint að efninu',
-  highlightedResults
+  highlightedResults,
 }: ResultsProps) => {
   const { linkResolver } = useLinkResolver()
 
@@ -454,15 +454,16 @@ const Results = ({
                   className={styles.suggestion}
                   onClick={(e) => {
                     onClick(e)
-                    console.log(window.plausible,"window.plausible")
-                    window.plausible?.("Search Query", { props: {q:"TTEST"} })
+                    console.log(window.plausible, 'window.plausible')
+                    window.plausible?.('Search Query', {
+                      props: { q: 'TTEST' },
+                    })
                     onRouting()
-
                   }}
                 >
                   <Text color={i === highlightedIndex ? 'blue400' : 'dark400'}>
                     {`${search.prefix} ${startOfString}`}
-                    <strong>{endOfString}</strong> 
+                    <strong>{endOfString}</strong>
                   </Text>
                 </div>
               )
@@ -494,7 +495,7 @@ const Results = ({
                   })
                   return (
                     // TODO track search and click for plausble on these links
-                    
+
                     <Link
                       key={item.id}
                       {...itemProps}
@@ -513,10 +514,13 @@ const Results = ({
                       }
                       skipTab
                     >
-                    {highlightedResults 
-                      ? <span dangerouslySetInnerHTML={{__html: item.title}}></span>
-                      : item.title
-                    }
+                      {highlightedResults ? (
+                        <span
+                          dangerouslySetInnerHTML={{ __html: item.title }}
+                        ></span>
+                      ) : (
+                        item.title
+                      )}
                     </Link>
                   )
                 })}
