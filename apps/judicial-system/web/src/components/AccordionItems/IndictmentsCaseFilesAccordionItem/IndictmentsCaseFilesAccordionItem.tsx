@@ -48,7 +48,7 @@ interface CaseFileProps {
   caseFile: ReorderableItem
   onReorder: (id?: string) => void
   onOpen: (id: string) => void
-  onRename: (id: string, name: string, displayDate: string) => void
+  onRename: (id: string, name?: string, displayDate?: string) => void
   onDelete: (id: string) => void
 }
 
