@@ -20,7 +20,7 @@ const Staging: EnvironmentConfig = {
 describe('Healthchecks definitions', () => {
   describe('Liveness', () => {
     it('defined with path only', () => {
-      const sut = service('api').liveness('/ready')
+      const sut = service('api').liveness('/ready').healthPort(5000)
       const result = serializeService(
         sut,
         new Kubernetes(Staging),
@@ -31,6 +31,7 @@ describe('Healthchecks definitions', () => {
           initialDelaySeconds: 3,
           timeoutSeconds: 3,
         },
+        port: 5000,
         readiness: { path: '/', initialDelaySeconds: 3, timeoutSeconds: 3 },
       })
     })

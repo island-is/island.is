@@ -22,6 +22,7 @@ import {
 import { DeploymentRuntime, EnvironmentConfig } from './types/charts'
 import { ServerSideFeature } from '../../../libs/feature-flags/src'
 import { processService } from './pre-process-service'
+import { checksAndValidations } from './errors'
 
 /**
  * Transforms our definition of a service to a Helm values object
@@ -32,31 +33,12 @@ export const serializeService: SerializeMethod<ServiceHelm> = (
   service: Service,
   deployment: DeploymentRuntime,
 ) => {
-  let allErrors: string[] = []
-  const checkCollisions = (
-    target: { [name: string]: string },
-    source: { [name: string]: string },
-  ) => {
-    const targetKeys = Object.keys(target)
-    addToErrors(
-      Object.keys(source)
-        .filter((srcKey) => targetKeys.includes(srcKey))
-        .map(
-          (key) =>
-            `Collisions in ${service.serviceDef.name} for environment or secrets for key ${key}`,
-        ),
-    )
-  }
-  const mergeObjects = (
-    target: { [name: string]: string },
-    source: { [name: string]: string },
-  ) => {
-    checkCollisions(target, source)
-    Object.assign(target, source)
-  }
-  const addToErrors = (errors: string[]) => {
-    allErrors.push(...errors)
-  }
+  const {
+    addToErrors,
+    mergeObjects,
+    checkCollisions,
+    getErrors,
+  } = checksAndValidations(service.serviceDef.name)
   const processedService = processService(service, deployment.env)
   if (processedService.type === 'success') {
     const serviceDef = processedService.serviceDef
@@ -279,6 +261,7 @@ export const serializeService: SerializeMethod<ServiceHelm> = (
     }
     checkCollisions(result.secrets, result.env)
 
+    const allErrors = getErrors()
     return allErrors.length === 0
       ? { type: 'success', serviceDef: [result] }
       : { type: 'error', errors: allErrors }

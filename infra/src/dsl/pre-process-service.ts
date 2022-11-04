@@ -88,6 +88,8 @@ export const processService = (
     resources: serviceDef.resources,
     securityContext: serviceDef.securityContext,
     serviceAccountEnabled: serviceDef.serviceAccountEnabled,
+    accountName: serviceDef.accountName,
+    healthPort: serviceDef.healthPort,
     volumes: serviceDef.volumes,
     port: serviceDef.port,
     env: envs,
