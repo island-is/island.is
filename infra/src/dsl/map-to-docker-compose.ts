@@ -74,12 +74,11 @@ export const serializeService: SerializeMethod<DockerComposeService> = (
 
     // environment vars
     if (Object.keys(serviceDef.env).length > 0) {
-      const { envs, errors } = serializeEnvironmentVariables(
+      const { envs } = serializeEnvironmentVariables(
         service,
         deployment,
         serviceDef.env,
       )
-      addToErrors(errors)
       mergeObjects(result.env, envs)
     }
 
@@ -107,12 +106,11 @@ export const serializeService: SerializeMethod<DockerComposeService> = (
 
       if (serviceDef.initContainers.containers.length > 0) {
         if (typeof serviceDef.initContainers.envs !== 'undefined') {
-          const { envs, errors } = serializeEnvironmentVariables(
+          const { envs } = serializeEnvironmentVariables(
             service,
             deployment,
             serviceDef.initContainers.envs,
           )
-          addToErrors(errors)
           Object.values(initContainers).forEach((initContainer) =>
             mergeObjects(initContainer.env, envs),
           )
@@ -128,8 +126,9 @@ export const serializeService: SerializeMethod<DockerComposeService> = (
             serviceDef.initContainers.postgres,
           )
 
-          Object.values(initContainers).forEach((initContainer) =>
-            mergeObjects(initContainer.env, env),
+          Object.values(initContainers).forEach(
+            (initContainer) => mergeObjects(initContainer.env, env),
+            // mergeObjects(initContainer.secrets, secrets),
           )
           // mergeObjects(result.initContainer.secrets, secrets)
           addToErrors(errors)
