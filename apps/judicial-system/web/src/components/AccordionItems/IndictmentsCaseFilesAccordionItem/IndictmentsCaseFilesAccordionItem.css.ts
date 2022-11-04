@@ -27,6 +27,22 @@ export const caseFileWrapper = style({
   paddingRight: `${theme.spacing[2]}px`,
 })
 
+export const editCaseFileInputContainer = style({
+  display: 'flex',
+  flexDirection: 'row',
+  flexGrow: 1,
+  marginRight: theme.spacing[2],
+})
+
+export const editCaseFileName = style({
+  flex: 2,
+  marginRight: theme.spacing[1],
+})
+
+export const editCaseFileDisplayDate = style({
+  flex: 1,
+})
+
 export const editCaseFileButton = style({
   width: '32px',
   height: '34px',

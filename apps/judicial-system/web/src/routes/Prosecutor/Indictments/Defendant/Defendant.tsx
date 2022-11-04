@@ -1,4 +1,10 @@
-import React, { useCallback, useContext, useState, useEffect } from 'react'
+import React, {
+  useCallback,
+  useContext,
+  useState,
+  useEffect,
+  useMemo,
+} from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import { uuid } from 'uuidv4'
@@ -28,6 +34,7 @@ import {
   CaseType,
   Defendant as TDefendant,
   Gender,
+  indictmentCases,
   UpdateDefendant,
 } from '@island.is/judicial-system/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -215,6 +222,17 @@ const Defendant: React.FC = () => {
     }
   }
 
+  const options = useMemo(
+    () =>
+      indictmentCases
+        .map((type) => ({
+          label: capitalize(caseTypes[type]),
+          value: type,
+        }))
+        .sort((a, b) => a.label.localeCompare(b.label)),
+    [],
+  )
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -248,7 +266,7 @@ const Defendant: React.FC = () => {
           </Box>
           <Select
             name="case-type"
-            options={constants.IndictmentTypes}
+            options={options}
             label={formatMessage(m.sections.indictmentType.label)}
             placeholder={formatMessage(m.sections.indictmentType.placeholder)}
             onChange={(selectedOption: ValueType<ReactSelectOption>) => {

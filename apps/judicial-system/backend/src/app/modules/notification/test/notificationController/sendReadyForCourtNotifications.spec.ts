@@ -232,7 +232,7 @@ describe('NotificationController - Send ready for court notifications', () => {
       mockFindOne.mockResolvedValueOnce({} as Notification)
       const mockFindAll = mockNotificationModel.findAll as jest.Mock
       mockFindAll.mockResolvedValueOnce([
-        { recipients: '[{"name":"Saul Goodman","address": ""}]' },
+        { recipients: [{ name: 'Saul Goodman', address: '' }] },
       ])
 
       await givenWhenThen(caseId, user, theCase, notification)
