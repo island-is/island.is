@@ -63,15 +63,20 @@ export class DelegationsController {
   ): Promise<string[]> {
     const scopePromises = []
 
-    if (delegationType.includes(DelegationType.ProcurationHolder))
+    const delegationTypes =
+      delegationType && !Array.isArray(delegationType)
+        ? [delegationType]
+        : delegationType
+
+    if (delegationTypes.includes(DelegationType.ProcurationHolder))
       scopePromises.push(this.delegationScopeService.findAllProcurationScopes())
 
-    if (delegationType.includes(DelegationType.LegalGuardian))
+    if (delegationTypes.includes(DelegationType.LegalGuardian))
       scopePromises.push(
         this.delegationScopeService.findAllLegalGuardianScopes(),
       )
 
-    if (delegationType.includes(DelegationType.PersonalRepresentative))
+    if (delegationTypes.includes(DelegationType.PersonalRepresentative))
       scopePromises.push(
         this.delegationScopeService.findPersonalRepresentativeScopes(
           user.nationalId,
@@ -79,7 +84,7 @@ export class DelegationsController {
         ),
       )
 
-    if (delegationType.includes(DelegationType.Custom))
+    if (delegationTypes.includes(DelegationType.Custom))
       scopePromises.push(
         this.delegationScopeService
           .findAllValidCustomScopesTo(user.nationalId, fromNationalId)
