@@ -6,12 +6,6 @@ import { processAggregationQuery } from './processAggregation'
 
 const getBoostForType = (type: string, defaultBoost: string | number = 1) => {
   // normalising all types before boosting
-  return 1
-  if (type === 'webArticle') {
-    // The number 55 was chosen since it was the threshold between the highest scoring news and the highest scoring article in search results
-    // The test that determined this boost was to type in "Umsókn um fæðingarorlof" and compare the news and article scores
-    return 55
-  }
   return defaultBoost
 }
 
@@ -147,6 +141,8 @@ export const searchQuery = (
           { filter: { range: { processEntryCount: { gte: 1 } } }, weight: 2 },
           // content that is a "forsíða stofnunar" gets a boost
           { filter: { term: { type: 'webOrganizationPage' } }, weight: 3 },
+          // reduce news weight
+          { filter: { term: { type: 'webNews' } }, weight: 0.5 },
         ],
       },
     },
@@ -164,6 +160,6 @@ export const searchQuery = (
     size,
     from: (page - 1) * size, // if we have a page number add it as offset for pagination
   }
-  console.log(esQuery)
+  // console.log(esQuery)
   return esQuery
 }
