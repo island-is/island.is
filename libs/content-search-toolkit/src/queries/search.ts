@@ -165,6 +165,6 @@ export const searchQuery = (
     size,
     from: (page - 1) * size, // if we have a page number add it as offset for pagination
   }
-  // console.log(esQuery)
+  console.log(esQuery)
   return esQuery
 }

@@ -349,7 +349,7 @@ ServiceSearch.getInitialProps = async ({ apolloClient, locale, query }) => {
 
   const types = ['webQNA' as SearchableContentTypes]
 
-  const queryString = ServiceWebModifySearchTerms(q)
+  const queryString = q
 
   const institutionSlugBelongsToMannaudstorg = slug.includes('mannaudstorg')
   const mannaudstorgTag = [
