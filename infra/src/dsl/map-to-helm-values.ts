@@ -225,7 +225,6 @@ export const serializeService: SerializeMethod<ServiceHelm> = (
               serviceDef,
               ingressConf,
               deployment.env,
-              ingressName,
             )
             return {
               ...acc,
@@ -259,7 +258,6 @@ export const serializeService: SerializeMethod<ServiceHelm> = (
       addToErrors(errors)
       result.pvcs = volumes
     }
-    checkCollisions(result.secrets, result.env)
 
     const allErrors = getErrors()
     return allErrors.length === 0
@@ -324,7 +322,6 @@ function serializeIngress(
   serviceDef: ServiceDefinitionForEnv,
   ingressConf: IngressForEnv,
   env: EnvironmentConfig,
-  ingressName: string,
 ) {
   if (ingressConf.host === MissingSetting) {
     return
