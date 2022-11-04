@@ -16,5 +16,3 @@ export const GenericFirearmLicenseConfig = defineConfig<z.infer<typeof schema>>(
     }),
   },
 )
-
-export const CONFIG_PROVIDER = 'config_provider'

@@ -1,5 +1,6 @@
 import fetch, { Response } from 'node-fetch'
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 import {
   UpsertPkPassResponse,
   PassTemplatesDTO,

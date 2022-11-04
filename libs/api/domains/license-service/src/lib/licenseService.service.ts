@@ -21,10 +21,11 @@ import {
   GenericUserLicensePkPassStatus,
   GenericLicenseOrganizationSlug,
   GenericLicenseLabels,
+  PassTemplateIds,
   CONFIG_PROVIDER,
 } from './licenceService.type'
 import { Locale } from '@island.is/shared/types'
-import { AVAILABLE_LICENSES, PassTemplateIds } from './licenseService.module'
+import { AVAILABLE_LICENSES } from './licenseService.module'
 import { FetchError } from '@island.is/clients/middlewares'
 
 const CACHE_KEY = 'licenseService'
@@ -420,8 +421,9 @@ export class LicenseServiceService {
     passTemplateId: string,
   ): GenericLicenseType | null {
     for (const [key, value] of Object.entries(this.config)) {
+      console.log(value)
       // some license Config id === barcode id
-      if (value.passTemplateId === passTemplateId) {
+      if (value === passTemplateId) {
         // firearmLicense => FirearmLicense
         const keyAsEnumKey = key.slice(0, 1).toUpperCase() + key.slice(1)
 

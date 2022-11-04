@@ -4,7 +4,7 @@ import {
   SmartSolutionsConfig,
 } from '@island.is/clients/smartsolutions'
 import { Module } from '@nestjs/common'
-import { ConfigType, LazyDuringDevScope } from '@island.is/nest/config'
+import { ConfigType } from '@island.is/nest/config'
 import { GenericAdrLicenseService } from './genericAdrLicense.service'
 import { GenericAdrLicenseConfig } from './genericAdrLicense.config'
 
@@ -12,7 +12,6 @@ import { GenericAdrLicenseConfig } from './genericAdrLicense.config'
   imports: [
     AdrAndMachineLicenseClientModule,
     SmartSolutionsApiClientModule.registerAsync({
-      scope: LazyDuringDevScope,
       useFactory: (config: ConfigType<typeof GenericAdrLicenseConfig>) => {
         const smartConfig: SmartSolutionsConfig = {
           apiKey: config.apiKey,

@@ -13,6 +13,7 @@ import {
   GenericLicenseType,
   GenericLicenseOrganizationSlug,
   GENERIC_LICENSE_FACTORY,
+  PassTemplateIds,
 } from './licenceService.type'
 import {
   GenericAdrLicenseModule,
@@ -34,12 +35,6 @@ import {
   GenericDrivingLicenseApi,
   GenericDrivingLicenseConfig,
 } from './client/driving-license-client'
-
-export interface PassTemplateIds {
-  firearmLicense: string
-  adrLicense: string
-  machineLicense: string
-}
 
 export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
   {
