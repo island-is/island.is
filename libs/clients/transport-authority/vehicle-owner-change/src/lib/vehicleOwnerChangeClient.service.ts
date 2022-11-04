@@ -13,6 +13,8 @@ export class VehicleOwnerChangeClient {
     permno: string,
   ): Promise<NewestOwnerChange> {
     const result = await this.ownerchangeApi.getOwnerChange({
+      apiVersion: '2.0',
+      apiVersion2: '2.0',
       permno: permno,
     })
 
@@ -31,11 +33,9 @@ export class VehicleOwnerChangeClient {
     currentUserSsn: string,
     ownerChange: OwnerChange,
   ): Promise<void> {
-    // TODOx disabled untill this API goes on xroad
-    throw Error('Not implemented')
-    return
-
     const result = await this.ownerchangeApi.rootPost({
+      apiVersion: '2.0',
+      apiVersion2: '2.0',
       postOwnerChange: {
         permno: ownerChange.permno,
         sellerPersonIdNumber: ownerChange.seller.ssn,

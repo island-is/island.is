@@ -12,7 +12,6 @@ const configFactory = (
   }),
   headers: {
     'X-Road-Client': config.xroadClientId,
-    SECRET: config.secret,
     'Content-Type': 'application/json',
     Accept: 'application/json',
   },
@@ -25,7 +24,10 @@ export const exportedApis = [
     useFactory: (config: ConfigType<typeof VehicleOperatorsClientConfig>) => {
       return new OperatorApi(
         new Configuration(
-          configFactory(config, `${config.xroadBaseUrl}/${config.xroadPath}`),
+          configFactory(
+            config,
+            `${config.xroadBaseUrl}/r1/${config.xroadPath}`,
+          ),
         ),
       )
     },
