@@ -80,8 +80,6 @@ export class ContentSearchService {
     )
 
     // mix and match highlights
-    // mix and match highlights -- move this to a place where others can use it
-    // add highlights to request to replace values
     if (query.highlightResults) {
       for (let i = 0; i < body.hits.hits.length; i++) {
         if (body.hits.hits[i]?.highlight?.title) {

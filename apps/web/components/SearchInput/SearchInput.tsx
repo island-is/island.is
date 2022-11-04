@@ -143,7 +143,7 @@ const useSearch = (
           query: GET_SEARCH_AUTOCOMPLETE_TERM_QUERY,
           variables: {
             input: {
-              singleTerm: queryString.trim(), // term
+              singleTerm: queryString.trim(),
               language: locale as ContentLanguage,
               size: 10, // only show top X completions to prevent long list
             },
