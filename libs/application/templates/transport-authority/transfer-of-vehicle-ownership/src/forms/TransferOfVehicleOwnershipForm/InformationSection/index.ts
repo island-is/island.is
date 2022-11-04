@@ -4,7 +4,7 @@ import { pickVehicleSubSection } from './pickVehicleSubSection'
 import { vehicleSubSection } from './vehicleSubSection'
 import { sellerSubSection } from './sellerSubSection'
 import { buyerSubSection } from './buyerSubSection'
-import { mainCoOwnerSubSection } from './mainCoOwnerSubSection'
+import { mainOperatorSubSection } from './mainOperatorSubSection'
 
 export const informationSection = buildSection({
   id: 'informationSection',
@@ -14,6 +14,6 @@ export const informationSection = buildSection({
     vehicleSubSection,
     sellerSubSection,
     buyerSubSection,
-    mainCoOwnerSubSection,
+    mainOperatorSubSection,
   ],
 })

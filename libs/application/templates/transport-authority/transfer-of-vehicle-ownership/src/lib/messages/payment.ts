@@ -89,8 +89,8 @@ export const payment = {
   confirmation: defineMessages({
     confirm: {
       id: 'ta.tvo.application:payment.confirmation.confirm',
-      defaultMessage: 'Staðfesta',
-      description: 'Confirm button',
+      defaultMessage: 'Áfram',
+      description: 'Continue',
     },
   }),
 }

@@ -46,6 +46,7 @@ export const GET_VEHICLE_INFORMATION = `
         nationalId
         name
       }
+      isOutOfCommission
     }
   }
 `
