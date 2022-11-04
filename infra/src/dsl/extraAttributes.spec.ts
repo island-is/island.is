@@ -23,7 +23,7 @@ const Staging: EnvironmentConfig = {
 }
 
 describe('Extra attributes', () => {
-  it('basic values', () => {
+  it('basic values', async () => {
     const sut = service('api').extraAttributes({
       staging: {
         API: 'api',
@@ -32,25 +32,25 @@ describe('Extra attributes', () => {
       dev: MissingSetting,
       prod: MissingSetting,
     })
-    const serviceDef = serializeService(
+    const serviceDef = (await serializeService(
       sut,
       new Kubernetes(Staging),
-    ) as SerializeSuccess<ServiceHelm>
+    )) as SerializeSuccess<ServiceHelm>
     expect(serviceDef.serviceDef[0].extra).toEqual({
       API: 'api',
       KEY: { SUBKEY: 'value' },
     })
   })
-  it('missing values', () => {
+  it('missing values', async () => {
     const sut = service('api').extraAttributes({
       staging: MissingSetting,
       dev: MissingSetting,
       prod: MissingSetting,
     })
-    const serviceDef = serializeService(
+    const serviceDef = (await serializeService(
       sut,
       new Kubernetes(Staging),
-    ) as SerializeErrors
+    )) as SerializeErrors
     expect(serviceDef.errors).toEqual([
       'Missing extra setting for service api in env staging',
     ])

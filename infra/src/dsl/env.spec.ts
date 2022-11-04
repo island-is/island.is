@@ -27,18 +27,20 @@ describe('Env variable', () => {
     A: 'B',
     B: { dev: 'C', staging: MissingSetting, prod: 'D' },
   })
-  const serviceDef = serializeService(
-    sut,
-    new Kubernetes(Staging),
-  ) as SerializeErrors
-
+  let serviceDef: SerializeErrors
+  beforeEach(async () => {
+    serviceDef = (await serializeService(
+      sut,
+      new Kubernetes(Staging),
+    )) as SerializeErrors
+  })
   it('missing variables cause errors', () => {
     expect(serviceDef.errors).toEqual([
       'Missing settings for service api in env staging. Keys of missing settings: B',
     ])
   })
 
-  it('Should not allow to collision of secrets and env variables', () => {
+  it('Should not allow to collision of secrets and env variables', async () => {
     const sut = service('api')
       .env({
         A: 'B',
@@ -46,17 +48,17 @@ describe('Env variable', () => {
       .secrets({
         A: 'somesecret',
       })
-    const serviceDef = serializeService(
+    const serviceDef = (await serializeService(
       sut,
       new Kubernetes(Staging),
-    ) as SerializeErrors
+    )) as SerializeErrors
 
     expect(serviceDef.errors).toStrictEqual([
       'Collisions in api for environment or secrets for key A',
     ])
   })
 
-  it('Should not allow collision of secrets and env variables in init containers', () => {
+  it('Should not allow collision of secrets and env variables in init containers', async () => {
     const sut = service('api').initContainer({
       envs: {
         A: 'B',
@@ -66,10 +68,10 @@ describe('Env variable', () => {
       },
       containers: [{ command: 'go' }],
     })
-    const serviceDef = serializeService(
+    const serviceDef = (await serializeService(
       sut,
       new Kubernetes(Staging),
-    ) as SerializeErrors
+    )) as SerializeErrors
 
     expect(serviceDef.errors).toStrictEqual([
       'Collisions in api for environment or secrets for key A',
@@ -92,15 +94,15 @@ describe('Env variable', () => {
     )
   })
 
-  it('Should support json encoded variables', () => {
+  it('Should support json encoded variables', async () => {
     const value = [{ value: 5 }]
     const sut = service('api').env({
       A: json(value),
     })
-    const serviceDef = serializeService(
+    const serviceDef = (await serializeService(
       sut,
       new Kubernetes(Staging),
-    ) as SerializeSuccess<ServiceHelm>
+    )) as SerializeSuccess<ServiceHelm>
 
     expect(serviceDef.serviceDef[0].env.A).toEqual(JSON.stringify(value))
   })

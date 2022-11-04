@@ -179,7 +179,7 @@ export type SerializeMethod<T extends ServiceOutputType> = (
   service: Service,
   uberChart: DeploymentRuntime,
   featuresOn?: FeatureNames[],
-) => SerializeSuccess<T> | SerializeErrors
+) => Promise<SerializeSuccess<T> | SerializeErrors>
 
 export type Services<T extends ServiceOutputType> = {
   [name: string]: T
@@ -195,7 +195,7 @@ export interface OutputFormat<T extends ServiceOutputType> {
     service: Service,
     uberChart: DeploymentRuntime,
     featuresOn?: FeatureNames[],
-  ): SerializeSuccess<T> | SerializeErrors
+  ): Promise<SerializeSuccess<T> | SerializeErrors>
 
   serviceMockDef(options: { namespace: string; target: string }): T
 }

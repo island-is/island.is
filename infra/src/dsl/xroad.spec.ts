@@ -35,10 +35,13 @@ describe('X-road support', () => {
       },
     }),
   )
-  const svc = serializeService(
-    sut,
-    new Kubernetes(Dev),
-  ) as SerializeSuccess<ServiceHelm>
+  let svc: SerializeSuccess<ServiceHelm>
+  beforeEach(async () => {
+    svc = (await serializeService(
+      sut,
+      new Kubernetes(Dev),
+    )) as SerializeSuccess<ServiceHelm>
+  })
 
   it('contains all xroad environment variables', () => {
     expect(svc.serviceDef[0].env).toHaveProperty('XROAD_VAR1')

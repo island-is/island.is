@@ -1,6 +1,6 @@
 module.exports = {
   transform: {
-    '^.+\\.[tj]sx?$': 'esbuild-jest',
+    '^.+\\.[tj]sx?$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js'],
   coverageDirectory: '../coverage/infra',

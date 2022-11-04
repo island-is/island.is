@@ -18,12 +18,12 @@ const Staging: EnvironmentConfig = {
 }
 
 describe('HPA definitions', () => {
-  it('Support classic replicaCount definition', () => {
+  it('Support classic replicaCount definition', async () => {
     const sut = service('api')
-    const result = serializeService(
+    const result = (await serializeService(
       sut,
       new Kubernetes(Staging),
-    ) as SerializeSuccess<ServiceHelm>
+    )) as SerializeSuccess<ServiceHelm>
 
     expect(result.serviceDef[0].replicaCount).toEqual({
       min: 2,
@@ -40,17 +40,17 @@ describe('HPA definitions', () => {
       },
     })
   })
-  it('Support explicit HPA definition', () => {
+  it('Support explicit HPA definition', async () => {
     const sut = service('api').replicaCount({
       min: 1,
       max: 2,
       default: 2,
       scalingMagicNumber: 5,
     })
-    const result = serializeService(
+    const result = (await serializeService(
       sut,
       new Kubernetes(Staging),
-    ) as SerializeSuccess<ServiceHelm>
+    )) as SerializeSuccess<ServiceHelm>
 
     expect(result.serviceDef[0].replicaCount).toEqual({
       min: 1,

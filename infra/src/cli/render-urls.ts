@@ -22,8 +22,11 @@ const renderUrlsForService = ({ ingress = {} }: ServiceHelm) => {
   return urls
 }
 
-const renderUrlsForChart = (environment: OpsEnv, chartName: ChartName) => {
-  const { services } = renderHelmValueFile(
+const renderUrlsForChart = async (
+  environment: OpsEnv,
+  chartName: ChartName,
+) => {
+  const { services } = await renderHelmValueFile(
     new Kubernetes(Envs[Deployments[chartName][environment]]),
     ...Charts[chartName][environment],
   )
@@ -36,10 +39,13 @@ const renderUrlsForChart = (environment: OpsEnv, chartName: ChartName) => {
   }, {})
 }
 
-export const renderUrls = (environment: OpsEnv) => {
+export const renderUrls = async (environment: OpsEnv) => {
   console.log(
-    ChartNames.reduce((acc, chartName) => {
-      return { ...acc, ...renderUrlsForChart(environment, chartName) }
-    }, {}),
+    await ChartNames.reduce(async (acc, chartName) => {
+      return {
+        ...(await acc),
+        ...(await renderUrlsForChart(environment, chartName)),
+      }
+    }, Promise.resolve({})),
   )
 }

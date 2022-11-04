@@ -1,7 +1,8 @@
-import { ref, service, ServiceBuilder } from './dsl'
+import { ref, service } from './dsl'
 import { Kubernetes } from './kubernetes'
 import { EnvironmentConfig } from './types/charts'
 import { generateYamlForFeature } from './feature-deployments'
+import { ServiceHelm, ValueFile } from './types/output-types'
 
 const Dev: EnvironmentConfig = {
   auroraHost: 'a',
@@ -21,7 +22,7 @@ describe('Feature-deployment support', () => {
   const dependencyA = service('service-a').namespace('A')
   const dependencyB = service('service-b')
   const dependencyC = service('service-c')
-  const apiService: ServiceBuilder<'graphql'> = service('graphql')
+  const apiService = service('graphql')
     .env({
       A: ref((h) => `${h.svc(dependencyA)}`),
       B: ref(
@@ -45,13 +46,17 @@ describe('Feature-deployment support', () => {
     })
     .postgres()
 
-  const chart = new Kubernetes(Dev)
-  const values = generateYamlForFeature(
-    chart,
-    [apiService, dependencyA, dependencyB],
-    [dependencyA, dependencyC],
-    [dependencyC],
-  )
+  let values: ValueFile<ServiceHelm>
+
+  beforeAll(async () => {
+    const chart = new Kubernetes(Dev)
+    values = await generateYamlForFeature(
+      chart,
+      [apiService, dependencyA, dependencyB],
+      [dependencyA, dependencyC],
+      [dependencyC],
+    )
+  })
 
   it('dynamic service name generation', () => {
     expect(values.services.graphql.env).toEqual({

@@ -16,9 +16,9 @@ yargs(process.argv.slice(2))
         .option('env', { choices: OpsEnvNames, demandOption: true })
         .option('chart', { choices: ChartNames, demandOption: true })
     },
-    (argv) => {
+    async (argv) => {
       process.stdout.write(
-        renderEnv(argv.env as OpsEnv, argv.chart as ChartName),
+        await renderEnv(argv.env as OpsEnv, argv.chart as ChartName),
       )
     },
   )
@@ -28,8 +28,8 @@ yargs(process.argv.slice(2))
     (yargs) => {
       return yargs.option('env', { choices: OpsEnvNames, demandOption: true })
     },
-    (argv) => {
-      renderUrls(argv.env as OpsEnv)
+    async (argv) => {
+      await renderUrls(argv.env as OpsEnv)
     },
   )
   .command(

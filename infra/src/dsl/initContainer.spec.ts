@@ -22,7 +22,7 @@ const Staging: EnvironmentConfig = {
 }
 
 describe('Init-container definitions', () => {
-  it('Basic setup', () => {
+  it('Basic setup', async () => {
     const sut = service('api').initContainer({
       containers: [
         {
@@ -53,10 +53,10 @@ describe('Init-container definitions', () => {
       },
       postgres: {},
     })
-    const result = serializeService(
+    const result = (await serializeService(
       sut,
       new Kubernetes(Staging),
-    ) as SerializeSuccess<ServiceHelm>
+    )) as SerializeSuccess<ServiceHelm>
     expect(result.serviceDef[0].initContainer).toEqual({
       containers: [
         {
@@ -96,14 +96,14 @@ describe('Init-container definitions', () => {
       secrets: { S1: '/as/dfadf', DB_PASS: '/k8s/api/DB_PASSWORD' },
     })
   })
-  it('Empty list of containers', () => {
+  it('Empty list of containers', async () => {
     const sut = service('api').initContainer({
       containers: [],
     })
-    const result = serializeService(
+    const result = (await serializeService(
       sut,
       new Kubernetes(Staging),
-    ) as SerializeErrors
+    )) as SerializeErrors
     expect(result.errors).toEqual([
       'No containers to run defined in initContainers',
     ])

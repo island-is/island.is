@@ -25,24 +25,32 @@ const renderers = {
   'docker-compose': DockerComposeOutput,
 }
 
-export const renderHelmValueFile = (
+export const renderHelmValueFile = async (
   uberChart: Kubernetes,
   ...services: Service[]
-): ValueFile<ServiceHelm> => {
-  const helmServices: Services<ServiceHelm> = services.reduce((acc, s) => {
-    const values = renderers.helm.serializeService(s, uberChart)
-    switch (values.type) {
-      case 'error':
-        throw new Error(values.errors.join('\n'))
-      case 'success':
-        const extras = values.serviceDef[0].extra
-        delete values.serviceDef[0].extra
-        return {
-          ...acc,
-          [s.serviceDef.name]: Object.assign({}, values.serviceDef[0], extras),
-        }
-    }
-  }, uberChart.env.global)
+): Promise<ValueFile<ServiceHelm>> => {
+  const helmServices: Services<ServiceHelm> = await services.reduce(
+    async (acc, s) => {
+      const accVal = await acc
+      const values = await renderers.helm.serializeService(s, uberChart)
+      switch (values.type) {
+        case 'error':
+          throw new Error(values.errors.join('\n'))
+        case 'success':
+          const extras = values.serviceDef[0].extra
+          delete values.serviceDef[0].extra
+          return Promise.resolve({
+            ...accVal,
+            [s.serviceDef.name]: Object.assign(
+              {},
+              values.serviceDef[0],
+              extras,
+            ),
+          })
+      }
+    },
+    Promise.resolve(uberChart.env.global),
+  )
   const servicesAndMocks = Object.entries(uberChart.deps).reduce(
     (acc, [name, svcs]) => {
       if (name.startsWith('mock-')) {
@@ -116,12 +124,12 @@ const findDependencies = (
   }
 }
 
-export const getWithDependantServices = (
+export const getWithDependantServices = async (
   uberChart: Kubernetes,
   habitat: Service[],
   ...services: Service[]
-): Service[] => {
-  renderHelmValueFile(uberChart, ...habitat) // doing this so we find out the dependencies
+): Promise<Service[]> => {
+  await renderHelmValueFile(uberChart, ...habitat) // doing this so we find out the dependencies
   const dependantServices = services
     .map((s) => findDependencies(uberChart, s, habitat))
     .flatMap((x) => x)
@@ -134,26 +142,30 @@ export const getWithDependantServices = (
     )
 }
 
-const renderDockerComposeFile = (
+const renderDockerComposeFile = async (
   uberChart: Kubernetes,
   ...services: Service[]
-): ValueFile<DockerComposeService> => {
-  const helmServices: Services<DockerComposeService> = services.reduce(
-    (acc, s) => {
-      const values = serializeService(s, uberChart)
+): Promise<ValueFile<DockerComposeService>> => {
+  const helmServices: Services<DockerComposeService> = await services.reduce(
+    async (acc, s) => {
+      const accVal = await acc
+      const values = await renderers['docker-compose'].serializeService(
+        s,
+        uberChart,
+      )
       switch (values.type) {
         case 'error':
           throw new Error(values.errors.join('\n'))
         case 'success':
           // const extras = values.serviceDef.extra
           // delete values.serviceDef.extra
-          return {
-            ...acc,
+          return Promise.resolve({
+            ...accVal,
             [s.serviceDef.name]: values.serviceDef,
-          }
+          })
       }
     },
-    uberChart.env.global,
+    Promise.resolve(uberChart.env.global),
   )
   const servicesAndMocks = Object.entries(uberChart.deps).reduce(
     (acc, [name, svcs]) => {

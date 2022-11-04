@@ -19,12 +19,12 @@ const Staging: EnvironmentConfig = {
 
 describe('Healthchecks definitions', () => {
   describe('Liveness', () => {
-    it('defined with path only', () => {
+    it('defined with path only', async () => {
       const sut = service('api').liveness('/ready').healthPort(5000)
-      const result = serializeService(
+      const result = (await serializeService(
         sut,
         new Kubernetes(Staging),
-      ) as SerializeSuccess<ServiceHelm>
+      )) as SerializeSuccess<ServiceHelm>
       expect(result.serviceDef[0].healthCheck).toEqual({
         liveness: {
           path: '/ready',
@@ -35,15 +35,15 @@ describe('Healthchecks definitions', () => {
         readiness: { path: '/', initialDelaySeconds: 3, timeoutSeconds: 3 },
       })
     })
-    it('defined with object', () => {
+    it('defined with object', async () => {
       const sut = service('api').liveness({
         path: '/ready',
         initialDelaySeconds: 10,
       })
-      const result = serializeService(
+      const result = (await serializeService(
         sut,
         new Kubernetes(Staging),
-      ) as SerializeSuccess<ServiceHelm>
+      )) as SerializeSuccess<ServiceHelm>
       expect(result.serviceDef[0].healthCheck).toEqual({
         liveness: {
           path: '/ready',

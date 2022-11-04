@@ -107,7 +107,7 @@ yargs(hideBin(process.argv))
     () => {},
     async (argv: Arguments) => {
       const { ch, habitat, affectedServices } = parseArguments(argv)
-      const featureYaml = generateYamlForFeature(
+      const featureYaml = await generateYamlForFeature(
         ch,
         habitat,
         affectedServices.slice(),
@@ -122,7 +122,7 @@ yargs(hideBin(process.argv))
     () => {},
     async (argv: Arguments) => {
       const { ch, habitat, affectedServices } = parseArguments(argv)
-      const featureYaml = generateYamlForFeature(
+      const featureYaml = await generateYamlForFeature(
         ch,
         habitat,
         affectedServices.slice(),
@@ -143,7 +143,7 @@ yargs(hideBin(process.argv))
     },
     async (argv: Arguments) => {
       const { ch, habitat, affectedServices } = parseArguments(argv)
-      const featureYaml = generateJobsForFeature(
+      const featureYaml = await generateJobsForFeature(
         ch,
         habitat,
         argv.jobImage!,

@@ -32,11 +32,13 @@ describe('Volume Support', () => {
     },
   )
 
-  const stagingWithVolumes = serializeService(
-    sut,
-    new Kubernetes(Staging),
-  ) as SerializeSuccess<ServiceHelm>
-
+  let stagingWithVolumes: SerializeSuccess<ServiceHelm>
+  beforeEach(async () => {
+    stagingWithVolumes = (await serializeService(
+      sut,
+      new Kubernetes(Staging),
+    )) as SerializeSuccess<ServiceHelm>
+  })
   it('Support multi volume definitions', () => {
     expect(stagingWithVolumes.serviceDef[0].pvcs![0]).toEqual({
       name: 'something',
@@ -53,16 +55,16 @@ describe('Volume Support', () => {
         storageClass: 'efs-csi',
       })
   })
-  it('Support default name for volumes', () => {
+  it('Support default name for volumes', async () => {
     const sut: ServiceBuilder<'api'> = service('api').volumes({
       size: '1Gi',
       accessModes: 'ReadOnly',
       mountPath: '/storage_one',
     })
-    const stagingWithDefaultVolume = serializeService(
+    const stagingWithDefaultVolume = (await serializeService(
       sut,
       new Kubernetes(Staging),
-    ) as SerializeSuccess<ServiceHelm>
+    )) as SerializeSuccess<ServiceHelm>
     expect(stagingWithDefaultVolume.serviceDef[0].pvcs![0]).toEqual({
       name: 'api',
       size: '1Gi',

@@ -83,13 +83,13 @@ export function featureSpecificServiceDef(
   hackForThatOneCircularDependency()
 }
 
-function featureSpecificServicesPrepare(
+async function featureSpecificServicesPrepare(
   uberChart: Kubernetes,
   habitat: Service[],
   services: Service[],
   feature: string,
 ) {
-  const featureSpecificServices = getWithDependantServices(
+  const featureSpecificServices = await getWithDependantServices(
     uberChart,
     habitat,
     ...services,
@@ -98,7 +98,7 @@ function featureSpecificServicesPrepare(
   return featureSpecificServices
 }
 
-export const generateYamlForFeature = (
+export const generateYamlForFeature = async (
   uberChart: Kubernetes,
   habitat: Service[],
   services: Service[],
@@ -108,11 +108,13 @@ export const generateYamlForFeature = (
   if (typeof feature !== 'undefined') {
     const excludedServiceNames = excludedServices.map((f) => f.serviceDef.name)
 
-    const featureSpecificServices = featureSpecificServicesPrepare(
-      uberChart,
-      habitat,
-      services,
-      feature,
+    const featureSpecificServices = (
+      await featureSpecificServicesPrepare(
+        uberChart,
+        habitat,
+        services,
+        feature,
+      )
     ).filter((f) => !excludedServiceNames.includes(f.serviceDef.name))
     return renderHelmValueFile(uberChart, ...featureSpecificServices)
   } else {

@@ -19,7 +19,7 @@ const Staging: EnvironmentConfig = {
 }
 
 describe('Ingress definitions', () => {
-  it('Support multiple ingresses', () => {
+  it('Support multiple ingresses', async () => {
     const sut = service('api').ingress({
       primary: {
         host: { dev: 'a', staging: 'a', prod: 'a' },
@@ -30,10 +30,10 @@ describe('Ingress definitions', () => {
         paths: ['/'],
       },
     })
-    const result = serializeService(
+    const result = (await serializeService(
       sut,
       new Kubernetes(Staging),
-    ) as SerializeSuccess<ServiceHelm>
+    )) as SerializeSuccess<ServiceHelm>
 
     expect(result.serviceDef[0].ingress).toEqual({
       'primary-alb': {
@@ -51,7 +51,7 @@ describe('Ingress definitions', () => {
     })
   })
 
-  it('Extra annotations', () => {
+  it('Extra annotations', async () => {
     const sut = service('api').ingress({
       primary: {
         host: { dev: 'a', staging: 'staging01.devland.is', prod: 'a' },
@@ -63,10 +63,10 @@ describe('Ingress definitions', () => {
         },
       },
     })
-    const result = serializeService(
+    const result = (await serializeService(
       sut,
       new Kubernetes(Staging),
-    ) as SerializeSuccess<ServiceHelm>
+    )) as SerializeSuccess<ServiceHelm>
 
     expect(result.serviceDef[0].ingress).toEqual({
       'primary-alb': {
@@ -78,7 +78,7 @@ describe('Ingress definitions', () => {
       },
     })
   })
-  it('MissingSetting value for ingress host skips rendering it', () => {
+  it('MissingSetting value for ingress host skips rendering it', async () => {
     const sut = service('api').ingress({
       primary: {
         host: {
@@ -97,10 +97,10 @@ describe('Ingress definitions', () => {
         paths: ['/api'],
       },
     })
-    const result = serializeService(
+    const result = (await serializeService(
       sut,
       new Kubernetes(Staging),
-    ) as SerializeSuccess<ServiceHelm>
+    )) as SerializeSuccess<ServiceHelm>
 
     expect(result.serviceDef[0].ingress).toEqual({
       'primary-alb': {
@@ -111,7 +111,7 @@ describe('Ingress definitions', () => {
       },
     })
   })
-  it('Internal ingress basic', () => {
+  it('Internal ingress basic', async () => {
     const sut = service('api').ingress({
       primary: {
         public: false,
@@ -119,10 +119,10 @@ describe('Ingress definitions', () => {
         paths: ['/api'],
       },
     })
-    const result = serializeService(
+    const result = (await serializeService(
       sut,
       new Kubernetes(Staging),
-    ) as SerializeSuccess<ServiceHelm>
+    )) as SerializeSuccess<ServiceHelm>
 
     expect(result.serviceDef[0].ingress).toEqual({
       'primary-alb': {

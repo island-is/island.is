@@ -19,11 +19,13 @@ const Staging: EnvironmentConfig = {
 
 describe('Service account', () => {
   const sut = service('api').namespace('islandis').serviceAccount('demo')
-  const result = serializeService(
-    sut,
-    new Kubernetes(Staging),
-  ) as SerializeSuccess<ServiceHelm>
-
+  let result: SerializeSuccess<ServiceHelm>
+  beforeEach(async () => {
+    result = (await serializeService(
+      sut,
+      new Kubernetes(Staging),
+    )) as SerializeSuccess<ServiceHelm>
+  })
   it('service account name', () => {
     expect(result.serviceDef[0].serviceAccount).toEqual({
       annotations: {

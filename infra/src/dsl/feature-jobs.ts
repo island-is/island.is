@@ -8,17 +8,17 @@ import {
   resolveWithMaxLength,
 } from './feature-deployments'
 
-export const generateJobsForFeature = (
+export const generateJobsForFeature = async (
   uberChart: Kubernetes,
   habitat: Service[],
   image: string,
   ...services: Service[]
-): FeatureKubeJob => {
+): Promise<FeatureKubeJob> => {
   const feature = uberChart.env.feature
   if (typeof feature === 'undefined') {
     throw new Error('Feature jobs with a feature name not defined')
   }
-  const featureSpecificServices = getWithDependantServices(
+  const featureSpecificServices = await getWithDependantServices(
     uberChart,
     habitat,
     ...services,

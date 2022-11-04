@@ -27,7 +27,7 @@ import {
  * @param service Our service definition
  * @param deployment Uber chart in a specific environment the service will be part of
  */
-export const serializeService: SerializeMethod<DockerComposeService> = (
+export const serializeService: SerializeMethod<DockerComposeService> = async (
   service: Service,
   deployment: DeploymentRuntime,
 ) => {
@@ -266,7 +266,7 @@ export const DockerComposeOutput: OutputFormat<DockerComposeService> = {
     service: Service,
     deployment: DeploymentRuntime,
     featuresOn?: ServerSideFeature[],
-  ): SerializeSuccess<DockerComposeService> | SerializeErrors {
+  ) {
     return serializeService(service, deployment)
   },
 

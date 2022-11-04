@@ -24,11 +24,13 @@ const Staging: EnvironmentConfig = {
 describe('Postgres', () => {
   describe('identifier fixes', () => {
     const sut = service('service-portal-api').postgres()
-    const result = serializeService(
-      sut,
-      new Kubernetes(Staging),
-    ) as SerializeSuccess<ServiceHelm>
-
+    let result: SerializeSuccess<ServiceHelm>
+    beforeEach(async () => {
+      result = (await serializeService(
+        sut,
+        new Kubernetes(Staging),
+      )) as SerializeSuccess<ServiceHelm>
+    })
     it('fixing user and name to comply with postgres identifier allowed character set', () => {
       expect(result.serviceDef[0].env).toEqual({
         DB_USER: 'service_portal_api',
@@ -45,11 +47,13 @@ describe('Postgres', () => {
       .postgres()
       .secrets({ DB_PASS: 'aaa' })
       .env({ DB_USER: 'aaa', DB_HOST: 'a', DB_NAME: '' })
-    const result = serializeService(
-      sut,
-      new Kubernetes(Staging),
-    ) as SerializeErrors
-
+    let result: SerializeErrors
+    beforeEach(async () => {
+      result = (await serializeService(
+        sut,
+        new Kubernetes(Staging),
+      )) as SerializeErrors
+    })
     it('Env and secret variables already defined', () => {
       expect(result.errors).toEqual([
         'Collisions in service-portal-api for environment or secrets for key DB_USER',

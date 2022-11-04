@@ -37,8 +37,11 @@ export const renderSecretsCommand = async (service: string) => {
 export const renderSecrets = async (service: string) => {
   const urls: string[] = []
   const uberChart = new Kubernetes(Envs.dev01)
-  const services = Object.values(Charts).map(
-    (chart) => renderHelmValueFile(uberChart, ...chart.dev).services,
+  const services = await Promise.all(
+    Object.values(Charts).map(
+      async (chart) =>
+        (await renderHelmValueFile(uberChart, ...chart.dev)).services,
+    ),
   )
 
   const secretRequests: [string, string][] = services

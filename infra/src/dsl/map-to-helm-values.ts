@@ -11,9 +11,7 @@ import {
   ContainerRunHelm,
   OutputFormat,
   OutputPersistentVolumeClaim,
-  SerializeErrors,
   SerializeMethod,
-  SerializeSuccess,
   ServiceHelm,
 } from './types/output-types'
 import { DeploymentRuntime, EnvironmentConfig } from './types/charts'
@@ -31,7 +29,7 @@ import {
  * @param service Our service definition
  * @param deployment Uber chart in a specific environment the service will be part of
  */
-export const serializeService: SerializeMethod<ServiceHelm> = (
+export const serializeService: SerializeMethod<ServiceHelm> = async (
   service: Service,
   deployment: DeploymentRuntime,
 ) => {
@@ -447,7 +445,7 @@ export const HelmOutput: OutputFormat<ServiceHelm> = {
     service: Service,
     deployment: DeploymentRuntime,
     featuresOn?: ServerSideFeature[],
-  ): SerializeSuccess<ServiceHelm> | SerializeErrors {
+  ) {
     return serializeService(service, deployment)
   },
 

@@ -1,7 +1,7 @@
 import { ref, service } from './dsl'
 import { Kubernetes } from './kubernetes'
 import { serializeService } from './map-to-helm-values'
-import { SerializeSuccess, ServiceHelm } from './types/output-types'
+import { SerializeSuccess, ServiceHelm, ValueFile } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
 import { renderHelmValueFile } from './process-services'
 
@@ -24,11 +24,15 @@ describe('Egress', () => {
     A: ref((h) => h.svc('http://visir.is')),
   })
   const uberChart = new Kubernetes(Staging)
-  const serviceDef = serializeService(
-    sut,
-    uberChart,
-  ) as SerializeSuccess<ServiceHelm>
-  const render = renderHelmValueFile(uberChart, sut)
+  let serviceDef: SerializeSuccess<ServiceHelm>
+  let render: ValueFile<ServiceHelm>
+  beforeEach(async () => {
+    serviceDef = (await serializeService(
+      sut,
+      uberChart,
+    )) as SerializeSuccess<ServiceHelm>
+    render = await renderHelmValueFile(uberChart, sut)
+  })
 
   it('missing variables cause errors', () => {
     expect(serviceDef.serviceDef[0].env['A']).toBe('http://mock-visir-is')

@@ -67,18 +67,21 @@ describe('Server-side toggles', () => {
         },
       },
     })
-  const stagingWithFeatures = serializeService(
-    sut,
-    new Kubernetes({
-      ...Staging,
-      featuresOn: [FeatureNames.testing],
-    }),
-  ) as SerializeSuccess<ServiceHelm>
-  const stagingNoFeatures = serializeService(
-    sut,
-    new Kubernetes(Staging),
-  ) as SerializeSuccess<ServiceHelm>
-
+  let stagingWithFeatures: SerializeSuccess<ServiceHelm>
+  let stagingNoFeatures: SerializeSuccess<ServiceHelm>
+  beforeEach(async () => {
+    stagingWithFeatures = (await serializeService(
+      sut,
+      new Kubernetes({
+        ...Staging,
+        featuresOn: [FeatureNames.testing],
+      }),
+    )) as SerializeSuccess<ServiceHelm>
+    stagingNoFeatures = (await serializeService(
+      sut,
+      new Kubernetes(Staging),
+    )) as SerializeSuccess<ServiceHelm>
+  })
   it('env variables present when feature toggled', () => {
     expect(stagingWithFeatures.serviceDef[0].env!['A']).toBe('B')
   })
@@ -136,18 +139,21 @@ describe('Server-side toggles', () => {
   })
 
   describe('Missing envs variables for the target environment', () => {
-    const prod = serializeService(
-      sut,
-      new Kubernetes({
-        ...Prod,
-        featuresOn: [FeatureNames.testing],
-      }),
-    ) as SerializeErrors
-    const prodNoFeature = serializeService(
-      sut,
-      new Kubernetes(Prod),
-    ) as SerializeSuccess<ServiceHelm>
-
+    let prod: SerializeErrors
+    let prodNoFeature: SerializeSuccess<ServiceHelm>
+    beforeEach(async () => {
+      prod = (await serializeService(
+        sut,
+        new Kubernetes({
+          ...Prod,
+          featuresOn: [FeatureNames.testing],
+        }),
+      )) as SerializeErrors
+      prodNoFeature = (await serializeService(
+        sut,
+        new Kubernetes(Prod),
+      )) as SerializeSuccess<ServiceHelm>
+    })
     it('should result in serialization errors when feature is turned on', () => {
       expect(prod.errors).toStrictEqual([
         'Missing settings for service api in env prod. Keys of missing settings: A',
@@ -189,18 +195,21 @@ describe('Server-side toggles', () => {
           },
         },
       })
-    const prod = serializeService(
-      sut,
-      new Kubernetes({
-        ...Prod,
-        featuresOn: [FeatureNames.testing],
-      }),
-    ) as SerializeErrors
-    const prodNoFeature = serializeService(
-      sut,
-      new Kubernetes(Prod),
-    ) as SerializeSuccess<ServiceHelm>
-
+    let prod: SerializeErrors
+    let prodNoFeature: SerializeSuccess<ServiceHelm>
+    beforeEach(async () => {
+      prod = (await serializeService(
+        sut,
+        new Kubernetes({
+          ...Prod,
+          featuresOn: [FeatureNames.testing],
+        }),
+      )) as SerializeErrors
+      prodNoFeature = (await serializeService(
+        sut,
+        new Kubernetes(Prod),
+      )) as SerializeSuccess<ServiceHelm>
+    })
     it('should result in serialization errors when feature is turned on', () => {
       expect(prod.errors).toStrictEqual([
         'Missing settings for service api in env prod. Keys of missing settings: B',
