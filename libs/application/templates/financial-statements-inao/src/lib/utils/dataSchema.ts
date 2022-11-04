@@ -1,4 +1,4 @@
-import * as z from 'zod'
+import { z } from 'zod'
 import { m } from '../../lib/messages'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
