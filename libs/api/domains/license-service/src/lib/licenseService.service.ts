@@ -21,9 +21,9 @@ import {
   GenericUserLicensePkPassStatus,
   GenericLicenseOrganizationSlug,
   GenericLicenseLabels,
-  PassTemplateIds,
   CONFIG_PROVIDER,
 } from './licenceService.type'
+import type { PassTemplateIds } from './licenceService.type'
 import { Locale } from '@island.is/shared/types'
 import { AVAILABLE_LICENSES } from './licenseService.module'
 import { FetchError } from '@island.is/clients/middlewares'
