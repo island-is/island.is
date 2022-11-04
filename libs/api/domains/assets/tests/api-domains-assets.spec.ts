@@ -12,6 +12,7 @@ import { Logger, LOGGER_PROVIDER, LoggingModule } from '@island.is/logging'
 import {
   AssetsClientModule,
   AssetsClientConfig,
+  FasteignirApi,
 } from '@island.is/clients/assets'
 
 startMocking(requestHandlers)
@@ -20,8 +21,11 @@ describe('AssetsXRoadService', () => {
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
-      providers: [AssetsXRoadResolver, AssetsXRoadService],
-      imports: [AssetsClientModule, AuthModule],
+      providers: [
+        AssetsXRoadService,
+        { provide: FasteignirApi, useValue: {} },
+        { provide: 'Logger', useValue: {} },
+      ],
     }).compile()
     expect(module.get(AssetsXRoadService)).toBeInstanceOf(AssetsXRoadService)
   })
