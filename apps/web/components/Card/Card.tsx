@@ -39,6 +39,7 @@ export interface CardProps {
   tags?: Array<CardTagsProps>
   linkProps?: LinkProps
   link?: LinkResolverResponse
+  highlightedResults?: boolean 
 }
 
 export const Card = ({
@@ -49,6 +50,7 @@ export const Card = ({
   tags = [],
   link,
   dataTestId,
+  highlightedResults = false
 }: CardProps & TestSupport) => {
   const { colorScheme } = useContext(ColorSchemeContext)
   const [ref, { width }] = useMeasure()
@@ -111,14 +113,20 @@ export const Card = ({
           )}
           <Box display="flex" flexDirection="row" alignItems="center">
             <Box display="inlineFlex" flexGrow={1}>
-              <Text as="h3" variant="h3" color={titleColor} fontWeight="medium">
-                <span dangerouslySetInnerHTML={{__html: title}}></span>
-              </Text>
+              {highlightedResults
+                ? <Text as="h3" variant="h3" color={titleColor} fontWeight="medium"><span dangerouslySetInnerHTML={{__html: title}}></span></Text>
+                : <Text as="h3" variant="h3" color={titleColor}><Hyphen>{title}</Hyphen></Text>
+              }
             </Box>
           </Box>
-          <p dangerouslySetInnerHTML={{__html: description}}></p>
-         
-          {visibleTags.length > 0 && (
+          {description &&
+            highlightedResults
+              ? <Text><span dangerouslySetInnerHTML={{__html: description}}></span></Text>
+              : <Text>{description}</Text>
+          }
+
+  
+          {visibleTags.length > 0 && highlightedResults && (
             <Box paddingTop={3} flexGrow={0} position="relative">
               <Inline space={1}>
                 {visibleTags.map(
