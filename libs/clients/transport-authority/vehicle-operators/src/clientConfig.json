@@ -2,12 +2,12 @@
   "openapi": "3.0.1",
   "info": {
     "title": "SGS Rest API",
-    "description": "Operators API developed in .Net5.0",
+    "description": "Operators API developed in .Net6.0",
     "contact": {
       "name": "Samgöngustofa",
       "email": "tolvuhjalp@samgongustofa.is"
     },
-    "version": "1.0"
+    "version": "2.0"
   },
   "servers": [
     {
@@ -17,16 +17,27 @@
   "paths": {
     "/authenticate": {
       "post": {
-        "tags": ["Operator"],
+        "tags": ["Authentication"],
         "summary": "Authentication for Domain user",
         "parameters": [
           {
             "name": "api-version",
-            "in": "query",
+            "in": "header",
             "description": "The requested API version",
+            "required": true,
             "schema": {
               "type": "string",
-              "default": "1.0"
+              "default": "2.0"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "2.0"
             }
           }
         ],
@@ -52,21 +63,6 @@
               "schema": {
                 "$ref": "#/components/schemas/AuthenticateModel"
               }
-            },
-            "application/xml": {
-              "schema": {
-                "$ref": "#/components/schemas/AuthenticateModel"
-              }
-            },
-            "text/xml": {
-              "schema": {
-                "$ref": "#/components/schemas/AuthenticateModel"
-              }
-            },
-            "application/*+xml": {
-              "schema": {
-                "$ref": "#/components/schemas/AuthenticateModel"
-              }
             }
           }
         },
@@ -85,16 +81,6 @@
                 }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/User"
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/User"
-                }
-              },
-              "text/xml": {
                 "schema": {
                   "$ref": "#/components/schemas/User"
                 }
@@ -117,46 +103,6 @@
               "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ValidationProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ValidationProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ValidationProblemDetails"
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ValidationProblemDetails"
-                }
-              },
-              "text/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ValidationProblemDetails"
                 }
               }
             }
@@ -180,11 +126,22 @@
           },
           {
             "name": "api-version",
-            "in": "query",
+            "in": "header",
             "description": "The requested API version",
+            "required": true,
             "schema": {
               "type": "string",
-              "default": "1.0"
+              "default": "2.0"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "2.0"
             }
           }
         ],
@@ -194,42 +151,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OperatorDto"
-                  }
+                  "$ref": "#/components/schemas/OperatorDto"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OperatorDto"
-                  }
+                  "$ref": "#/components/schemas/OperatorDto"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OperatorDto"
-                  }
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OperatorDto"
-                  }
-                }
-              },
-              "text/xml": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OperatorDto"
-                  }
+                  "$ref": "#/components/schemas/OperatorDto"
                 }
               }
             }
@@ -251,13 +183,191 @@
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
                 }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{permno}/{operatorserialnumber}": {
+      "get": {
+        "tags": ["Operator"],
+        "summary": "Get operators for a permno and specific operator serialnumber",
+        "operationId": "GetByPermnoAndSerialNumber",
+        "parameters": [
+          {
+            "name": "permno",
+            "in": "path",
+            "description": "Vehicle permno",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "operatorSerialNumber",
+            "in": "path",
+            "description": "Operator serial number",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "2.0"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "2.0"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/OperatorDto"
+                }
               },
-              "application/xml": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OperatorDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OperatorDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
                 }
               },
-              "text/xml": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{permno}/{persidno}/{operatorserialnumber}": {
+      "get": {
+        "tags": ["Operator"],
+        "summary": "Get operator info for a specific vehicle, persidno and serial number",
+        "parameters": [
+          {
+            "name": "permno",
+            "in": "path",
+            "description": "Vehicle permno",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "persidno",
+            "in": "path",
+            "description": "Person persidno",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "operatorSerialNumber",
+            "in": "path",
+            "description": "Operator serial number",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "2.0"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "2.0"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/OperatorDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OperatorDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OperatorDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
                 }
@@ -283,11 +393,22 @@
           },
           {
             "name": "api-version",
-            "in": "query",
+            "in": "header",
             "description": "The requested API version",
+            "required": true,
             "schema": {
               "type": "string",
-              "default": "1.0"
+              "default": "2.0"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "2.0"
             }
           }
         ],
@@ -306,16 +427,6 @@
                 }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/OperatorDto"
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/OperatorDto"
-                }
-              },
-              "text/xml": {
                 "schema": {
                   "$ref": "#/components/schemas/OperatorDto"
                 }
@@ -339,13 +450,274 @@
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
                 }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/withcontract": {
+      "post": {
+        "tags": ["Operator"],
+        "summary": "Post changes for operators, using file in base64 format",
+        "description": "Success status codes:\r\n\r\n    200: operation is successful but message needs to be returned, no object returned         \r\n    201: operation is successful , object created is returned",
+        "parameters": [
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "2.0"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "2.0"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Model with information",
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostOperatorsWithBase64Contract"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostOperatorsWithBase64Contract"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostOperatorsWithBase64Contract"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostOperatorsWithBase64Contract"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReturnTypeMessage"
+                  }
+                }
               },
-              "application/xml": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReturnTypeMessage"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReturnTypeMessage"
+                  }
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostOperatorsWithBase64Contract"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostOperatorsWithBase64Contract"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostOperatorsWithBase64Contract"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
                 }
               },
-              "text/xml": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Operator"],
+        "summary": "Update operators using file in base64 format",
+        "description": "Success status codes:\r\n\r\n    200: operation is successful but message needs to be returned, no object returned                 \r\n    204: operation is successful",
+        "parameters": [
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "2.0"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "2.0"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Model with information",
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PutOperatorsWithBase64Contract"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PutOperatorsWithBase64Contract"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PutOperatorsWithBase64Contract"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PutOperatorsWithBase64Contract"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReturnTypeMessage"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReturnTypeMessage"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReturnTypeMessage"
+                  }
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
                 }
@@ -448,7 +820,7 @@
         "additionalProperties": false,
         "description": "Entity to post when posting multiple operators"
       },
-      "PostOperatorsWithContract": {
+      "PostOperatorsWithBase64Contract": {
         "required": ["contract", "operators", "permno"],
         "type": "object",
         "properties": {
@@ -475,8 +847,7 @@
           },
           "contract": {
             "type": "string",
-            "description": "Contract of operator change",
-            "format": "binary"
+            "description": "Contract of operator change (pdf file) form US142"
           }
         },
         "additionalProperties": false,
@@ -542,7 +913,7 @@
         "additionalProperties": false,
         "description": "Entity for operator when updating multiple operators"
       },
-      "PutOperatorsWithContract": {
+      "PutOperatorsWithBase64Contract": {
         "required": ["contract", "operators", "permno"],
         "type": "object",
         "properties": {
@@ -570,8 +941,7 @@
           },
           "contract": {
             "type": "string",
-            "description": "Contract of operator change",
-            "format": "binary"
+            "description": "Contract of operator change"
           }
         },
         "additionalProperties": false,
@@ -675,44 +1045,6 @@
           "role": {
             "type": "string",
             "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "ValidationProblemDetails": {
-        "type": "object",
-        "properties": {
-          "type": {
-            "type": "string",
-            "nullable": true
-          },
-          "title": {
-            "type": "string",
-            "nullable": true
-          },
-          "status": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "detail": {
-            "type": "string",
-            "nullable": true
-          },
-          "instance": {
-            "type": "string",
-            "nullable": true
-          },
-          "errors": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            },
-            "nullable": true,
-            "readOnly": true
           }
         },
         "additionalProperties": false

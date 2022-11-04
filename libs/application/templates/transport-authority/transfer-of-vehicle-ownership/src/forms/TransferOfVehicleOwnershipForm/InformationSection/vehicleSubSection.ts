@@ -55,6 +55,9 @@ export const vehicleSubSection = buildSubSection({
             minDate.setDate(minDate.getDate() - 7)
             return minDate
           },
+          defaultValue: (application: Application) => {
+            return new Date().toISOString().substring(0, 10)
+          },
         }),
       ],
     }),

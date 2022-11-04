@@ -17,7 +17,6 @@ const configFactory = (
   }),
   headers: {
     'X-Road-Client': config.xroadClientId,
-    SECRET: config.secret,
     'Content-Type': 'application/json',
     Accept: 'application/json',
   },
@@ -32,7 +31,10 @@ export const exportedApis = [
     ) => {
       return new TachoNetApi(
         new Configuration(
-          configFactory(config, `${config.xroadBaseUrl}/${config.xroadPath}`),
+          configFactory(
+            config,
+            `${config.xroadBaseUrl}/r1/${config.xroadPath}`,
+          ),
         ),
       )
     },
@@ -45,7 +47,10 @@ export const exportedApis = [
     ) => {
       return new DriverCardsApi(
         new Configuration(
-          configFactory(config, `${config.xroadBaseUrl}/${config.xroadPath}`),
+          configFactory(
+            config,
+            `${config.xroadBaseUrl}/r1/${config.xroadPath}`,
+          ),
         ),
       )
     },
@@ -58,7 +63,10 @@ export const exportedApis = [
     ) => {
       return new IndividualApi(
         new Configuration(
-          configFactory(config, `${config.xroadBaseUrl}/${config.xroadPath}`),
+          configFactory(
+            config,
+            `${config.xroadBaseUrl}/r1/${config.xroadPath}`,
+          ),
         ),
       )
     },

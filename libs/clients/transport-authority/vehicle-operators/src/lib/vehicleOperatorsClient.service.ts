@@ -25,10 +25,9 @@ export class VehicleOperatorsClient {
     permno: string,
     operators: Operator[],
   ): Promise<ReturnTypeMessage[] | null> {
-    // TODOx disabled untill this API goes on xroad
+    //TODOx waiting for new endpoint without contract
     throw Error('Not implemented')
     return null
-
     // const result = await this.operatorsApi.post({
     //   json: {
     //     permno: permno,

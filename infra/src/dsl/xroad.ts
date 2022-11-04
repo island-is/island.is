@@ -396,3 +396,34 @@ export const ChargeFjsV2 = new XroadConf({
     },
   },
 })
+
+export const TransportAuthority = new XroadConf({
+  env: {
+    XROAD_DIGITAL_TACHOGRAPH_DRIVERS_CARD_PATH: {
+      dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/TODOX',
+      staging: 'IS-DEV/GOV/10017/Samgongustofa-Protected/TODOX',
+      prod: 'IS/GOV/5405131040/Samgongustofa-Protected/TODOX',
+    },
+    XROAD_VEHICLE_CODETABLES_PATH: {
+      dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Codetables-V1',
+      staging: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Codetables-V1',
+      prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Codetables-V1',
+    },
+    XROAD_VEHICLE_OPERATORS_PATH: {
+      dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Operators-V2',
+      staging: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Operators-V2',
+      prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Operators-V2',
+    },
+    XROAD_VEHICLE_OWNER_CHANGE_PATH: {
+      dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Ownerchange-V2',
+      staging:
+        'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Ownerchange-V2',
+      prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Ownerchange-V2',
+    },
+    XROAD_VEHICLE_PRINTING_PATH: {
+      dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Printing-V1',
+      staging: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Printing-V1',
+      prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Printing-V1',
+    },
+  },
+})

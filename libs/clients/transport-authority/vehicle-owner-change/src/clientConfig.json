@@ -1,13 +1,13 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "SGS owner change Rest API",
-    "description": "RESTFul .Net 5 API for handling owner changes",
+    "title": "SGS Rest API",
+    "description": "Ownerchange API developed in .Net6.0",
     "contact": {
       "name": "Samgöngustofa",
       "email": "tolvuhjalp@samgongustofa.is"
     },
-    "version": "1.0"
+    "version": "2.0"
   },
   "servers": [
     {
@@ -17,21 +17,32 @@
   "paths": {
     "/authenticate": {
       "post": {
-        "tags": ["OwnerChange"],
+        "tags": ["Authentication"],
         "summary": "Authentication for Domain user",
         "parameters": [
           {
             "name": "api-version",
-            "in": "query",
+            "in": "header",
             "description": "The requested API version",
+            "required": true,
             "schema": {
               "type": "string",
-              "default": "1.0"
+              "default": "2.0"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "2.0"
             }
           }
         ],
         "requestBody": {
-          "description": "Authentication model",
+          "description": "",
           "content": {
             "application/json-patch+json": {
               "schema": {
@@ -72,7 +83,240 @@
         },
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/withcontract": {
+      "post": {
+        "tags": ["OwnerChange"],
+        "summary": "Post owner change",
+        "description": "Success status codes:\r\n\r\n    200: operation is successful but message needs to be returned, no object returned         \r\n    201: operation is successful , object created is returned",
+        "parameters": [
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "2.0"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "2.0"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Owner change model",
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostOwnerChangeWithBase64Contract"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostOwnerChangeWithBase64Contract"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostOwnerChangeWithBase64Contract"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostOwnerChangeWithBase64Contract"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/PostOwnerChangeWithBase64Contract"
+              }
+            },
+            "text/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/PostOwnerChangeWithBase64Contract"
+              }
+            },
+            "application/*+xml": {
+              "schema": {
+                "$ref": "#/components/schemas/PostOwnerChangeWithBase64Contract"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReturnTypeMessage"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReturnTypeMessage"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReturnTypeMessage"
+                  }
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReturnTypeMessage"
+                  }
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReturnTypeMessage"
+                  }
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostOwnerChangeWithBase64Contract"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostOwnerChangeWithBase64Contract"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostOwnerChangeWithBase64Contract"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostOwnerChangeWithBase64Contract"
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostOwnerChangeWithBase64Contract"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
           },
           "401": {
             "description": "Unauthorized",
@@ -111,14 +355,26 @@
       "post": {
         "tags": ["OwnerChange"],
         "summary": "Post owner change",
+        "description": "Success status codes:\r\n\r\n    200: operation is successful but message needs to be returned, no object returned         \r\n    201: operation is successful , object created is returned",
         "parameters": [
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "2.0"
+            }
+          },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
+            "required": true,
             "schema": {
               "type": "string",
-              "default": "1.0"
+              "default": "2.0"
             }
           }
         ],
@@ -163,8 +419,80 @@
           }
         },
         "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReturnTypeMessage"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReturnTypeMessage"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReturnTypeMessage"
+                  }
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReturnTypeMessage"
+                  }
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReturnTypeMessage"
+                  }
+                }
+              }
+            }
+          },
           "201": {
-            "description": "Success"
+            "description": "Created",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostOwnerChangeForFinancialCompanies"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostOwnerChangeForFinancialCompanies"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostOwnerChangeForFinancialCompanies"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostOwnerChangeForFinancialCompanies"
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostOwnerChangeForFinancialCompanies"
+                }
+              }
+            }
           },
           "400": {
             "description": "Bad Request",
@@ -233,14 +561,26 @@
       "post": {
         "tags": ["OwnerChange"],
         "summary": "Post owner change",
+        "description": "Success status codes:\r\n\r\n    200: operation is successful but message needs to be returned, no object returned         \r\n    201: operation is successful , object created is returned",
         "parameters": [
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "2.0"
+            }
+          },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
+            "required": true,
             "schema": {
               "type": "string",
-              "default": "1.0"
+              "default": "2.0"
             }
           }
         ],
@@ -285,8 +625,80 @@
           }
         },
         "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReturnTypeMessage"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReturnTypeMessage"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReturnTypeMessage"
+                  }
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReturnTypeMessage"
+                  }
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReturnTypeMessage"
+                  }
+                }
+              }
+            }
+          },
           "201": {
-            "description": "Success"
+            "description": "Created",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostOwnerChange"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostOwnerChange"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostOwnerChange"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostOwnerChange"
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostOwnerChange"
+                }
+              }
+            }
           },
           "400": {
             "description": "Bad Request",
@@ -355,14 +767,26 @@
       "post": {
         "tags": ["OwnerChange"],
         "summary": "Test owner change for person",
+        "description": "Success status codes:\r\n\r\n    200: operation is successful but message needs to be returned, no object returned         \r\n    204: operation is successful",
         "parameters": [
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "2.0"
+            }
+          },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
+            "required": true,
             "schema": {
               "type": "string",
-              "default": "1.0"
+              "default": "2.0"
             }
           }
         ],
@@ -408,7 +832,52 @@
         },
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReturnTypeMessage"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReturnTypeMessage"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReturnTypeMessage"
+                  }
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReturnTypeMessage"
+                  }
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReturnTypeMessage"
+                  }
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No Content"
           },
           "400": {
             "description": "Bad Request",
@@ -480,11 +949,22 @@
         "parameters": [
           {
             "name": "api-version",
-            "in": "query",
+            "in": "header",
             "description": "The requested API version",
+            "required": true,
             "schema": {
               "type": "string",
-              "default": "1.0"
+              "default": "2.0"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "2.0"
             }
           }
         ],
@@ -530,7 +1010,52 @@
         },
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReturnTypeMessage"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReturnTypeMessage"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReturnTypeMessage"
+                  }
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReturnTypeMessage"
+                  }
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReturnTypeMessage"
+                  }
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No Content"
           },
           "400": {
             "description": "Bad Request",
@@ -612,11 +1137,22 @@
           },
           {
             "name": "api-version",
-            "in": "query",
+            "in": "header",
             "description": "The requested API version",
+            "required": true,
             "schema": {
               "type": "string",
-              "default": "1.0"
+              "default": "2.0"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "2.0"
             }
           }
         ],
@@ -650,6 +1186,66 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
           }
         }
       }
@@ -662,9 +1258,11 @@
         "type": "object",
         "properties": {
           "username": {
+            "minLength": 1,
             "type": "string"
           },
           "password": {
+            "minLength": 1,
             "type": "string"
           }
         },
@@ -864,6 +1462,8 @@
             "nullable": true
           },
           "saleAmount": {
+            "maximum": 9999999999,
+            "minimum": 0,
             "type": "integer",
             "description": "Amount in purchase",
             "format": "int32"
@@ -905,6 +1505,7 @@
           "reportingPersonIdNumber": {
             "maxLength": 10,
             "minLength": 10,
+            "pattern": "^[0-9]{1,10}$",
             "type": "string",
             "description": "Reporting person's social security number (car sale)"
           }
@@ -936,6 +1537,114 @@
         },
         "additionalProperties": false,
         "description": "Model to post owner change for financial companies"
+      },
+      "PostOwnerChangeWithBase64Contract": {
+        "required": [
+          "buyerPersonIdNumber",
+          "contract",
+          "dateOfPurchase",
+          "insuranceCompanyCode",
+          "permno",
+          "reportingPersonIdNumber",
+          "saleAmount",
+          "sellerPersonIdNumber"
+        ],
+        "type": "object",
+        "properties": {
+          "permno": {
+            "maxLength": 5,
+            "minLength": 5,
+            "type": "string",
+            "description": "Vehicle permanent number"
+          },
+          "buyerPersonIdNumber": {
+            "maxLength": 10,
+            "minLength": 10,
+            "pattern": "^[0-9]{1,10}$",
+            "type": "string",
+            "description": "Buyer's social security number"
+          },
+          "sellerPersonIdNumber": {
+            "maxLength": 10,
+            "minLength": 10,
+            "pattern": "^[0-9]{1,10}$",
+            "type": "string",
+            "description": "Seller's social security number"
+          },
+          "dateOfPurchase": {
+            "type": "string",
+            "description": "Date when vehicle was purchased",
+            "format": "date-time"
+          },
+          "insuranceCompanyCode": {
+            "maxLength": 4,
+            "minLength": 4,
+            "type": "string",
+            "description": "Code for insurance company, see REST GET endpoint /vehicle/codetables/insurancecompanies"
+          },
+          "useGroup": {
+            "maxLength": 3,
+            "minLength": 3,
+            "type": "string",
+            "description": "Use group for vehicle, see REST GET endpoint /vehicle/codetables/usegroups",
+            "nullable": true
+          },
+          "saleAmount": {
+            "maximum": 9999999999,
+            "minimum": 0,
+            "type": "integer",
+            "description": "Amount in purchase",
+            "format": "int32"
+          },
+          "sellerEmail": {
+            "type": "string",
+            "description": "Email for seller",
+            "format": "email",
+            "nullable": true
+          },
+          "buyerEmail": {
+            "type": "string",
+            "description": "Email for buyer",
+            "format": "email",
+            "nullable": true
+          },
+          "operatorEmail": {
+            "type": "string",
+            "description": "Email of operator",
+            "format": "email",
+            "nullable": true
+          },
+          "operators": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PostOperator"
+            },
+            "description": "List of vehicle operators",
+            "nullable": true
+          },
+          "coOwners": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PostCoOwner"
+            },
+            "description": "List of vehicle co owners",
+            "nullable": true
+          },
+          "reportingPersonIdNumber": {
+            "maxLength": 10,
+            "minLength": 10,
+            "pattern": "^[0-9]{1,10}$",
+            "type": "string",
+            "description": "Reporting person's social security number (car sale)"
+          },
+          "contract": {
+            "minLength": 1,
+            "type": "string",
+            "description": "Contract of owner change (pdf file) form US140"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Post owner change with contract in pdf format"
       },
       "PostPersonOwnerChange": {
         "required": [
@@ -1013,7 +1722,7 @@
             "items": {
               "$ref": "#/components/schemas/PostOperator"
             },
-            "description": "List of vehicle's operators",
+            "description": "List of vehicle operators",
             "nullable": true
           },
           "coOwners": {
@@ -1021,7 +1730,7 @@
             "items": {
               "$ref": "#/components/schemas/PostCoOwner"
             },
-            "description": "List of vehicle's co owners",
+            "description": "List of vehicle co owners",
             "nullable": true
           },
           "reportingPersonIdNumber": {
@@ -1081,6 +1790,146 @@
           "instance": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ReturnTypeMessage": {
+        "type": "object",
+        "properties": {
+          "lookupNo": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "warnSever": {
+            "type": "string",
+            "nullable": true
+          },
+          "errorMess": {
+            "type": "string",
+            "nullable": true
+          },
+          "permno": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "userName": {
+            "type": "string",
+            "nullable": true
+          },
+          "normalizedUserName": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "normalizedEmail": {
+            "type": "string",
+            "nullable": true
+          },
+          "emailConfirmed": {
+            "type": "boolean"
+          },
+          "passwordHash": {
+            "type": "string",
+            "nullable": true
+          },
+          "securityStamp": {
+            "type": "string",
+            "nullable": true
+          },
+          "concurrencyStamp": {
+            "type": "string",
+            "nullable": true
+          },
+          "phoneNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "phoneNumberConfirmed": {
+            "type": "boolean"
+          },
+          "twoFactorEnabled": {
+            "type": "boolean"
+          },
+          "lockoutEnd": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "lockoutEnabled": {
+            "type": "boolean"
+          },
+          "accessFailedCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "username": {
+            "type": "string",
+            "nullable": true
+          },
+          "password": {
+            "type": "string",
+            "nullable": true
+          },
+          "jwtToken": {
+            "type": "string",
+            "nullable": true
+          },
+          "role": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ValidationProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "detail": {
+            "type": "string",
+            "nullable": true
+          },
+          "instance": {
+            "type": "string",
+            "nullable": true
+          },
+          "errors": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "nullable": true,
+            "readOnly": true
           }
         },
         "additionalProperties": false

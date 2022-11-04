@@ -152,6 +152,9 @@
       "@island.is/api/domains/transport-authority/digital-tachograph": [
         "libs/api/domains/transport-authority/digital-tachograph/src/index.ts"
       ],
+      "@island.is/api/domains/transport-authority/order-vehicle-registration-certificate": [
+        "libs/api/domains/transport-authority/order-vehicle-registration-certificate/src/index.ts"
+      ],
       "@island.is/api/domains/transport-authority/transfer-of-vehicle-ownership": [
         "libs/api/domains/transport-authority/transfer-of-vehicle-ownership/src/index.ts"
       ],
@@ -430,6 +433,9 @@
       ],
       "@island.is/clients/transport-authority/vehicle-owner-change": [
         "libs/clients/transport-authority/vehicle-owner-change/src/index.ts"
+      ],
+      "@island.is/clients/transport-authority/vehicle-printing": [
+        "libs/clients/transport-authority/vehicle-printing/src/index.ts"
       ],
       "@island.is/clients/user-profile": [
         "libs/clients/user-profile/src/index.ts"

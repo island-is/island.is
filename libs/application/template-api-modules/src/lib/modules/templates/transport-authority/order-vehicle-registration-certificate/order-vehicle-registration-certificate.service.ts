@@ -2,11 +2,14 @@ import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { ChargeItemCode } from '@island.is/shared/constants'
+import { OrderVehicleRegistrationCertificateApi } from '@island.is/api/domains/transport-authority/order-vehicle-registration-certificate'
+import { OrderVehicleRegistrationCertificateAnswers } from '@island.is/application/templates/transport-authority/order-vehicle-registration-certificate'
 
 @Injectable()
 export class OrderVehicleLicensePlateService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
+    private readonly orderVehicleRegistrationCertificateApi: OrderVehicleRegistrationCertificateApi,
   ) {}
 
   async createCharge({
@@ -50,5 +53,11 @@ export class OrderVehicleLicensePlateService {
         'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
       )
     }
+
+    const answers = application.answers as OrderVehicleRegistrationCertificateAnswers
+
+    this.orderVehicleRegistrationCertificateApi.RequestRegistrationCardPrint(
+      answers?.vehicle?.plate,
+    )
   }
 }

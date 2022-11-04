@@ -56,7 +56,6 @@ export const GET_INSURANCE_COMPANIES = `
     transportAuthorityInsuranceCompanies {
       code
       name
-      valid
     }
   } 
 `
