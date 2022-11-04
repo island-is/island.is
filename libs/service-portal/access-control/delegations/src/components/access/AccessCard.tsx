@@ -219,16 +219,20 @@ export const AccessCard = ({
               width="full"
               marginTop={[3, 0]}
             >
-              <Button
-                variant="text"
-                icon="trash"
-                iconType="outline"
-                size="small"
-                colorScheme="destructive"
-                onClick={() => onDelete(delegation)}
-              >
-                {formatMessage(m.buttonDestroy)}
-              </Button>
+              {(isOutgoing ||
+                (!isOutgoing &&
+                  delegation.type === AuthDelegationType.Custom)) && (
+                <Button
+                  variant="text"
+                  icon="trash"
+                  iconType="outline"
+                  size="small"
+                  colorScheme="destructive"
+                  onClick={() => onDelete(delegation)}
+                >
+                  {formatMessage(m.buttonDestroy)}
+                </Button>
+              )}
               <Box marginLeft={3}>
                 {!isOutgoing ? (
                   <Button

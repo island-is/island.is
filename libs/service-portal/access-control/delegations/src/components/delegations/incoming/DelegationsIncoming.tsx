@@ -16,8 +16,6 @@ import { AccessDeleteModal } from '../../access/AccessDeleteModal'
 import { AccessCard } from '../../access/AccessCard'
 import { DelegationsEmptyState } from '../DelegationsEmptyState'
 
-import { isDefined } from 'class-validator'
-
 export const DelegationsIncoming = () => {
   const { formatMessage, lang = 'is' } = useLocale()
   const { domainName, updateDomainName } = useDomains()
@@ -107,7 +105,7 @@ export const DelegationsIncoming = () => {
           id: 'sp.settings-access-control:access-remove-modal-content',
           defaultMessage: 'Ertu viss um að þú viljir eyða þessum aðgangi?',
         })}
-        isVisible={isDefined(delegation)}
+        isVisible={!!delegation}
         delegation={delegation as AuthCustomDelegation}
         domain={{
           name: delegation?.domain.displayName,

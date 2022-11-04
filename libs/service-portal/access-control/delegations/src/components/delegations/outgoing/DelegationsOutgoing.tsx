@@ -8,7 +8,6 @@ import {
 import { AuthCustomDelegation } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
-import { isDefined } from '@island.is/shared/utils'
 import { useAuthDelegationsQuery } from '@island.is/service-portal/graphql'
 import { AccessCard } from '../../access/AccessCard'
 import { AccessDeleteModal } from '../../access/AccessDeleteModal'
@@ -131,7 +130,7 @@ export const DelegationsOutgoing = () => {
           id: 'sp.settings-access-control:access-remove-modal-content',
           defaultMessage: 'Ertu viss um að þú viljir eyða þessum aðgangi?',
         })}
-        isVisible={isDefined(delegation)}
+        isVisible={!!delegation}
         delegation={delegation as AuthCustomDelegation}
         domain={{
           name: delegation?.domain.displayName,

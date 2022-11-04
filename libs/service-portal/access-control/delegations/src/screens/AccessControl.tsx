@@ -7,8 +7,8 @@ import {
   ServicePortalPath,
 } from '@island.is/service-portal/core'
 
-import { DelegationsIncoming } from '../../components/delegations/incoming/DelegationsIncoming'
-import { DelegationsOutgoing } from '../../components/delegations/outgoing/DelegationsOutgoing'
+import { DelegationsIncoming } from '../components/delegations/incoming/DelegationsIncoming'
+import { DelegationsOutgoing } from '../components/delegations/outgoing/DelegationsOutgoing'
 import { useLocale, useNamespaces } from '@island.is/localization'
 
 const TAB_DELEGATION_OUTGOING_ID = '0'

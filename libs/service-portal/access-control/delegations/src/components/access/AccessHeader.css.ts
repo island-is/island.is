@@ -12,6 +12,6 @@ export const row = style({
   }),
 })
 
-export const checkboxColumn = style({
+export const rightColumn = style({
   width: '100%',
 })
