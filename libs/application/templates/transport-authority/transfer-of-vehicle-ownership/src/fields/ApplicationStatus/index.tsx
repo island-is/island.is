@@ -1,14 +1,16 @@
 import { FieldBaseProps } from '@island.is/application/types'
-import { Box, Button, Text } from '@island.is/island-ui/core'
+import { Box, Button, Text, Divider } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC } from 'react'
+import { ReviewScreenProps } from '../../types'
 import { StatusStep } from './StatusStep'
-import { ApplicationStatusProps, Steps } from './StatusStep/types'
+import { Steps } from './StatusStep/types'
 
-export const ApplicationStatus: FC<ApplicationStatusProps & FieldBaseProps> = ({
+export const ApplicationStatus: FC<FieldBaseProps & ReviewScreenProps> = ({
   goToScreen,
   application,
   field,
+  setStep,
 }) => {
   const { formatMessage } = useLocale()
 
@@ -78,6 +80,10 @@ export const ApplicationStatus: FC<ApplicationStatusProps & FieldBaseProps> = ({
             visible={step.visible}
           />
         ))}
+      </Box>
+      <Divider />
+      <Box display="flex" justifyContent="flexEnd" paddingY={5}>
+        <Button onClick={() => setStep('overview')}>Opna yfirlit</Button>
       </Box>
     </Box>
   )

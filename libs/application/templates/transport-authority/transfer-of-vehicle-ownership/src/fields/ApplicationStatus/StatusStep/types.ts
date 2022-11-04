@@ -43,11 +43,3 @@ export interface SubmittedApplicationData {
     documentId: string
   }
 }
-
-export interface ApplicationStatusProps {
-  field: {
-    props: {
-      isAssignee: boolean
-    }
-  }
-}

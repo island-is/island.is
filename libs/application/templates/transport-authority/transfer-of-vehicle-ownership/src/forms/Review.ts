@@ -7,34 +7,24 @@ import {
 import { Form, FormModes } from '@island.is/application/types'
 import { information, externalData, payment, conclusion } from '../lib/messages'
 
-export const TransferOfVehicleOwnershipForm: Form = buildForm({
-  id: 'TransferOfVehicleOwnershipFormDraft',
+export const ReviewForm: Form = buildForm({
+  id: 'ReviewForm',
   title: '',
   mode: FormModes.APPLYING,
   children: [
     buildSection({
-      id: 'externalData',
-      title: externalData.dataProvider.sectionTitle,
-      children: [],
-    }),
-    buildSection({
-      id: 'informationSection',
-      title: information.general.sectionTitle,
-      children: [],
-    }),
-    buildSection({
-      id: 'applicationStatus',
+      id: 'reviewSection',
       title: payment.general.sectionTitle,
       children: [
         buildCustomField({
-          component: 'ApplicationStatus',
-          id: 'ApplicationStatus',
+          component: 'Review',
+          id: 'review',
           title: '',
           description: '',
         }),
       ],
     }),
-    buildSection({
+    /* buildSection({
       id: 'conclusion',
       title: conclusion.general.sectionTitle,
       children: [
@@ -51,6 +41,6 @@ export const TransferOfVehicleOwnershipForm: Form = buildForm({
           ],
         }),
       ],
-    }),
+    }), */
   ],
 })

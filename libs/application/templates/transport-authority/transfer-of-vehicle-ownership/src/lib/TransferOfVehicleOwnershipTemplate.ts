@@ -67,7 +67,7 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: { target: States.PAYMENT },
+          [DefaultEvents.SUBMIT]: { target: States.REVIEW },
         },
       },
       [States.PAYMENT]: {
@@ -128,10 +128,8 @@ const template: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import(
-                  '../forms/TransferOfVehicleOwnershipForm/index'
-                ).then((module) =>
-                  Promise.resolve(module.TransferOfVehicleOwnershipForm),
+                import('../forms/Review').then((module) =>
+                  Promise.resolve(module.ReviewForm),
                 ),
               actions: [
                 {

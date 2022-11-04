@@ -13,6 +13,7 @@ import { GET_VEHICLE_INFORMATION } from '../graphql/queries'
 import { information } from '../lib/messages'
 export const CoOwner: FC<FieldBaseProps> = ({ application, field }) => {
   const { formatMessage } = useLocale()
+  const { id } = field
 
   const currentVehicleList = application.externalData?.currentVehicleList
     ?.data as VehiclesCurrentVehicle[]
@@ -50,8 +51,8 @@ export const CoOwner: FC<FieldBaseProps> = ({ application, field }) => {
             </Text>
             <Box marginTop={2}>
               <InputController
-                id={`${field}[${index}].name`}
-                name={`${field}[${index}].name`}
+                id={`${id}[${index}].name`}
+                name={`${id}[${index}].name`}
                 defaultValue={coOwner.owner || ''}
                 label={formatMessage(information.labels.coOwner.name)}
                 readOnly
@@ -59,8 +60,8 @@ export const CoOwner: FC<FieldBaseProps> = ({ application, field }) => {
             </Box>
             <Box marginTop={2}>
               <InputController
-                id={`${field}[${index}].nationalId`}
-                name={`${field}[${index}].nationalId`}
+                id={`${id}[${index}].nationalId`}
+                name={`${id}[${index}].nationalId`}
                 defaultValue={coOwner.nationalId || ''}
                 label={formatMessage(information.labels.coOwner.nationalId)}
                 readOnly
@@ -68,9 +69,16 @@ export const CoOwner: FC<FieldBaseProps> = ({ application, field }) => {
             </Box>
             <Box marginTop={2}>
               <InputController
-                id={`${field}[${index}].email`}
-                name={`${field}[${index}].email`}
+                id={`${id}[${index}].email`}
+                name={`${id}[${index}].email`}
                 label={formatMessage(information.labels.coOwner.email)}
+                defaultValue={
+                  getValueViaPath(
+                    application.answers,
+                    `${id}[${index}].email`,
+                    '',
+                  ) as string
+                }
                 type="email"
                 backgroundColor="blue"
                 required
