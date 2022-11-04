@@ -12,7 +12,7 @@ export interface ApplicantInformationInterface {
         }
       }
     }
-    // old dataprovider, will be depcrecated / replaced soon by the other one
+    // old dataprovider, will be replaced soon by the other one
     nationalRegistry: {
       data: {
         fullName: 'string'
