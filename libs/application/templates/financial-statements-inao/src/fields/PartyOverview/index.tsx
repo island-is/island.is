@@ -37,7 +37,6 @@ export const PartyOverview = ({
 
   const answers = application.answers as FinancialStatementsInao
   const fileName = answers.attachment?.file?.[0]?.name
-
   const [
     submitApplication,
     { error: submitError, loading },
@@ -277,7 +276,7 @@ export const PartyOverview = ({
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
               label={m.debtsAndCash}
-              value={formatCurrency(answers.equity?.total)}
+              value={formatCurrency(answers.equityAndLiabilities?.total)}
             />
           </GridColumn>
         </GridRow>

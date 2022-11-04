@@ -6,7 +6,6 @@ import { LinkGroup, mapLinkGroup } from './linkGroup.model'
 import { Link, mapLink } from './link.model'
 import { Image, mapImage } from './image.model'
 import { safelyMapSliceUnion, SliceUnion } from '../unions/slice.union'
-import { FooterItem, mapFooterItem } from './footerItem.model'
 import {
   mapOrganizationTheme,
   OrganizationTheme,
@@ -59,9 +58,6 @@ export class OrganizationPage {
   @Field(() => Image, { nullable: true })
   featuredImage!: Image | null
 
-  @Field(() => [FooterItem])
-  footerItems!: Array<FooterItem>
-
   @Field(() => [SliceUnion], { nullable: true })
   sidebarCards?: Array<typeof SliceUnion | null>
 
@@ -78,39 +74,34 @@ export class OrganizationPage {
 export const mapOrganizationPage = ({
   sys,
   fields,
-}: IOrganizationPage): SystemMetadata<OrganizationPage> => {
-  return {
-    typename: 'OrganizationPage',
-    id: sys.id,
-    title: fields.title ?? '',
-    slug: fields.slug ?? '',
-    intro: fields.intro ?? '',
-    description: fields.description ?? '',
-    theme: fields.theme ?? 'default',
-    themeProperties: mapOrganizationTheme(fields.themeProperties ?? {}),
-    slices: (fields.slices ?? []).map(safelyMapSliceUnion).filter(Boolean),
-    bottomSlices: (fields.bottomSlices ?? [])
-      .map(safelyMapSliceUnion)
-      .filter(Boolean),
-    newsTag: fields.newsTag ? mapGenericTag(fields.newsTag) : null,
-    menuLinks: (fields.menuLinks ?? []).map(mapLinkGroup),
-    secondaryMenu: fields.secondaryMenu
-      ? mapLinkGroup(fields.secondaryMenu)
-      : null,
-    organization: fields.organization
-      ? mapOrganization(fields.organization)
-      : null,
-    featuredImage: fields.featuredImage ? mapImage(fields.featuredImage) : null,
-    footerItems: (fields.footerItems ?? []).map(mapFooterItem),
-    sidebarCards: (fields.sidebarCards ?? [])
-      .map(safelyMapSliceUnion)
-      .filter(Boolean),
-    externalLinks: (fields.externalLinks ?? []).map(mapLink),
-    alertBanner: fields.alertBanner
-      ? mapAlertBanner(fields.alertBanner)
-      : undefined,
-    defaultHeaderImage: fields.defaultHeaderImage
-      ? mapImage(fields.defaultHeaderImage)
-      : undefined,
-  }
-}
+}: IOrganizationPage): OrganizationPage => ({
+  id: sys.id,
+  title: fields.title ?? '',
+  slug: fields.slug ?? '',
+  description: fields.description ?? '',
+  theme: fields.theme ?? 'default',
+  themeProperties: mapOrganizationTheme(fields.themeProperties ?? {}),
+  slices: (fields.slices ?? []).map(safelyMapSliceUnion).filter(Boolean),
+  bottomSlices: (fields.bottomSlices ?? [])
+    .map(safelyMapSliceUnion)
+    .filter(Boolean),
+  newsTag: fields.newsTag ? mapGenericTag(fields.newsTag) : null,
+  menuLinks: (fields.menuLinks ?? []).map(mapLinkGroup),
+  secondaryMenu: fields.secondaryMenu
+    ? mapLinkGroup(fields.secondaryMenu)
+    : null,
+  organization: fields.organization
+    ? mapOrganization(fields.organization)
+    : null,
+  featuredImage: fields.featuredImage ? mapImage(fields.featuredImage) : null,
+  sidebarCards: (fields.sidebarCards ?? [])
+    .map(safelyMapSliceUnion)
+    .filter(Boolean),
+  externalLinks: (fields.externalLinks ?? []).map(mapLink),
+  alertBanner: fields.alertBanner
+    ? mapAlertBanner(fields.alertBanner)
+    : undefined,
+  defaultHeaderImage: fields.defaultHeaderImage
+    ? mapImage(fields.defaultHeaderImage)
+    : undefined,
+})

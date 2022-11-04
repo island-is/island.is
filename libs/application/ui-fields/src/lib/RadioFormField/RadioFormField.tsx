@@ -35,6 +35,7 @@ export const RadioFormField: FC<Props> = ({
     width,
     largeButtons,
     backgroundColor,
+    required,
   } = field
   const { formatMessage } = useLocale()
 
@@ -75,8 +76,11 @@ export const RadioFormField: FC<Props> = ({
           split={width === 'half' ? '1/2' : '1/1'}
           name={id}
           defaultValue={
-            (getValueViaPath(application.answers, id) as string[]) ??
-            getDefaultValue(field, application)
+            ((getValueViaPath(application.answers, id) as string[]) ??
+              getDefaultValue(field, application)) ||
+            required
+              ? ''
+              : undefined
           }
           options={finalOptions.map(({ label, tooltip, ...o }) => ({
             ...o,

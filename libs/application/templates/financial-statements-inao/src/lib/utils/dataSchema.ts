@@ -1,4 +1,4 @@
-import * as z from 'zod'
+import { z } from 'zod'
 import { m } from '../../lib/messages'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
@@ -56,14 +56,15 @@ const asset = z.object({
 
 const equity = z.object({
   totalEquity: z.string().refine((x) => !!x, { params: m.required }),
-  operationResult: z.string(),
-  total: z.string().refine((x) => !!x, { params: m.required }),
 })
 
 const liability = z.object({
   longTerm: z.string().refine((x) => !!x, { params: m.required }),
   shortTerm: z.string().refine((x) => !!x, { params: m.required }),
   total: z.string().refine((x) => !!x, { params: m.required }),
+})
+const equityAndLiabilities = z.object({
+  total: z.string(),
 })
 
 const cemetryOperation = z.object({
@@ -220,6 +221,7 @@ export const dataSchema = z.object({
   cemetryEquity,
   cemetryLiability,
   cemetryAsset,
+  equityAndLiabilities,
   cemetryCaretaker,
   cemetryOperation,
   asset,

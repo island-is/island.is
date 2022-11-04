@@ -17,8 +17,9 @@ import {
   createNationalRegistryUser,
 } from '@island.is/testing/fixtures'
 import { TestApp } from '@island.is/testing/nest'
+import { createDelegation } from '@island.is/services/auth/testing'
 
-import { createClient, createDelegation } from '../../../../test/fixtures'
+import { createClient } from '../../../../test/fixtures'
 import {
   Scopes,
   setupWithAuth,
@@ -870,7 +871,12 @@ describe('MeDelegationsController', () => {
           createDelegation({
             fromNationalId: user.nationalId,
             toNationalId: nationalRegistryUser.nationalId,
-            scopes: [Scopes[0].name, Scopes[1].name, Scopes[5].name],
+            scopes: [
+              Scopes[0].name,
+              Scopes[1].name,
+              Scopes[3].name,
+              Scopes[5].name,
+            ],
             today,
           }),
           {
@@ -905,10 +911,12 @@ describe('MeDelegationsController', () => {
             ],
           },
         )
-        expect(updatedDelegation?.delegationScopes?.length).toEqual(3)
         expect(updatedDelegation?.delegationScopes).toMatchObject([
           {
             scopeName: Scopes[1].name,
+          },
+          {
+            scopeName: Scopes[3].name,
           },
           {
             scopeName: Scopes[4].name,
@@ -1128,34 +1136,40 @@ describe('MeDelegationsController', () => {
             include: [{ model: DelegationScope, as: 'delegationScopes' }],
           },
         )
-        expect(model).not.toBeNull()
-        expect(model?.delegationScopes?.length).toEqual(0)
+        expect(model).toBeNull()
       })
 
       it('should return 204 No Content when successfully only delete scopes the user has access to', async () => {
         // Arrange
-        await createDelegationModels(delegationModel, [
-          mockDelegations.outgoingWithOtherDomain,
-        ])
+        const delegation = createDelegation({
+          fromNationalId: user.nationalId,
+          toNationalId: createNationalId('person'),
+          scopes: [Scopes[0].name, Scopes[3].name, Scopes[5].name],
+          today,
+        })
+        await createDelegationModels(delegationModel, [delegation])
 
         // Act
-        const res = await server.delete(
-          `${path}/${mockDelegations.outgoingWithOtherDomain.id}`,
-        )
+        const res = await server.delete(`${path}/${delegation.id}`)
 
         // Assert
         expect(res.status).toEqual(204)
         expect(res.body).toMatchObject({})
 
         // Check the DB
-        const model = await delegationModel.findByPk(
-          mockDelegations.outgoingWithOtherDomain.id,
-          {
-            include: [{ model: DelegationScope, as: 'delegationScopes' }],
-          },
-        )
+        const model = await delegationModel.findByPk(delegation.id, {
+          include: [{ model: DelegationScope, as: 'delegationScopes' }],
+        })
         expect(model).not.toBeNull()
-        expect(model?.delegationScopes?.length).toEqual(1)
+        expect(model?.delegationScopes?.length).toEqual(2)
+        expect(model?.delegationScopes).toMatchObject([
+          {
+            scopeName: Scopes[3].name,
+          },
+          {
+            scopeName: Scopes[5].name,
+          },
+        ])
       })
 
       it('should return 404 Not Found for a delegation that user did not give', async () => {

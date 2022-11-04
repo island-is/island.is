@@ -9,7 +9,7 @@ import {
   DefaultEvents,
 } from '@island.is/application/types'
 import { Events, States, Roles } from './constants'
-import * as z from 'zod'
+import { z } from 'zod'
 import { ApiActions } from '../shared'
 import { m } from './messages'
 

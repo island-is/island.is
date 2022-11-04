@@ -22,6 +22,7 @@ import {
   Firearm,
 } from '../../../infra/src/dsl/xroad'
 import { settings } from '../../../infra/src/dsl/settings'
+import { MissingSetting } from '../../../infra/src/dsl/types/input-types'
 
 export const serviceSetup = (services: {
   appSystemApi: ServiceBuilder<'application-system-api'>
@@ -34,7 +35,7 @@ export const serviceSetup = (services: {
     .namespace('islandis')
     .serviceAccount()
     .command('node')
-    .args('--tls-min-v1.0', 'main.js')
+    .args('--tls-min-v1.0', '--no-experimental-fetch', 'main.js')
 
     .env({
       APPLICATION_SYSTEM_API_URL: ref(
@@ -113,6 +114,13 @@ export const serviceSetup = (services: {
       XROAD_DRIVING_LICENSE_BOOK_TIMEOUT: '20000',
       XROAD_FINANCES_TIMEOUT: '20000',
       XROAD_CHARGE_FJS_V2_TIMEOUT: '20000',
+      AUTH_DELEGATION_API_URL: {
+        dev:
+          'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local',
+        staging:
+          'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local',
+        prod: 'https://auth-delegation-api.internal.innskra.island.is',
+      },
       IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',
