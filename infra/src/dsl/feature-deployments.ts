@@ -1,6 +1,5 @@
 import { PostgresInfo, Service } from './types/input-types'
 import { GRAPHQL_API_URL_ENV_VAR_NAME } from '../../../apps/application-system/api/infra/application-system-api'
-import { postgresIdentifier } from './map-to-docker-compose'
 import { Kubernetes } from './kubernetes'
 import {
   getWithDependantServices,
@@ -9,6 +8,7 @@ import {
 import { DockerComposeService, ValueFile } from './types/output-types'
 import { dump } from 'js-yaml'
 import { dumpOpts } from './yaml'
+import { postgresIdentifier } from './serialization-helpers'
 
 export const resolveWithMaxLength = (str: string, max: number) => {
   if (str.length > max) {

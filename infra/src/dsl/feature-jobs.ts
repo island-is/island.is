@@ -38,7 +38,11 @@ export const generateJobsForFeature = (
       ]
         .filter((id) => id)
         .map((info) => {
-          const host = resolveDbHost(info!, uberChart, service)
+          const host = resolveDbHost(
+            uberChart,
+            service,
+            info?.host?.[uberChart.env.type],
+          )
           return {
             command: ['/app/create-db.sh'],
             image,

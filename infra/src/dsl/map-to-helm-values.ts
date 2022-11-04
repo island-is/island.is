@@ -1,8 +1,6 @@
 import {
   AccessModes,
-  EnvironmentVariablesForEnv,
   IngressForEnv,
-  MissingSetting,
   PostgresInfoForEnv,
   Resources,
   Service,
@@ -10,7 +8,6 @@ import {
   ValueSource,
 } from './types/input-types'
 import {
-  ContainerEnvironmentVariables,
   ContainerRunHelm,
   OutputFormat,
   OutputPersistentVolumeClaim,
@@ -23,6 +20,11 @@ import { DeploymentRuntime, EnvironmentConfig } from './types/charts'
 import { ServerSideFeature } from '../../../libs/feature-flags/src'
 import { processService } from './pre-process-service'
 import { checksAndValidations } from './errors'
+import {
+  postgresIdentifier,
+  serializeEnvironmentVariables,
+  serializeValueSource,
+} from './serialization-helpers'
 
 /**
  * Transforms our definition of a service to a Helm values object
@@ -136,12 +138,11 @@ export const serializeService: SerializeMethod<ServiceHelm> = (
 
     // environment vars
     if (Object.keys(serviceDef.env).length > 0) {
-      const { envs, errors } = serializeEnvironmentVariables(
+      const { envs } = serializeEnvironmentVariables(
         service,
         deployment,
         serviceDef.env,
       )
-      addToErrors(errors)
       mergeObjects(result.env, envs)
     }
 
@@ -185,12 +186,11 @@ export const serializeService: SerializeMethod<ServiceHelm> = (
           secrets: {},
         }
         if (typeof serviceDef.initContainers.envs !== 'undefined') {
-          const { envs, errors } = serializeEnvironmentVariables(
+          const { envs } = serializeEnvironmentVariables(
             service,
             deployment,
             serviceDef.initContainers.envs,
           )
-          addToErrors(errors)
           mergeObjects(result.initContainer.env, envs)
         }
         if (typeof serviceDef.initContainers.secrets !== 'undefined') {
@@ -217,19 +217,14 @@ export const serializeService: SerializeMethod<ServiceHelm> = (
     if (Object.keys(serviceDef.ingress).length > 0) {
       result.ingress = Object.entries(serviceDef.ingress).reduce(
         (acc, [ingressName, ingressConf]) => {
-          try {
-            const ingress = serializeIngress(
-              serviceDef,
-              ingressConf,
-              deployment.env,
-            )
-            return {
-              ...acc,
-              [`${ingressName}-alb`]: ingress,
-            }
-          } catch (e: any) {
-            addToErrors([e.message])
-            return acc
+          const ingress = serializeIngress(
+            serviceDef,
+            ingressConf,
+            deployment.env,
+          )
+          return {
+            ...acc,
+            [`${ingressName}-alb`]: ingress,
           }
         },
         {},
@@ -265,23 +260,14 @@ export const serializeService: SerializeMethod<ServiceHelm> = (
   }
 }
 
-export const postgresIdentifier = (id: string) => id.replace(/[\W\s]/gi, '_')
 export const resolveDbHost = (
-  postgres: PostgresInfoForEnv,
   deployment: DeploymentRuntime,
   service: Service,
+  host?: ValueSource,
 ) => {
-  if (postgres.host) {
-    const resolved = serializeValueSource(postgres.host, deployment, service)
-    switch (resolved.type) {
-      case 'error': {
-        throw new Error()
-        break
-      }
-      case 'success': {
-        return { writer: resolved.value, reader: resolved.value }
-      }
-    }
+  if (host) {
+    const resolved = serializeValueSource(host, deployment, service)
+    return { writer: resolved.value, reader: resolved.value }
   } else {
     return {
       writer: deployment.env.auroraHost,
@@ -302,7 +288,7 @@ function serializePostgres(
   env['DB_USER'] = postgres.username ?? postgresIdentifier(serviceDef.name)
   env['DB_NAME'] = postgres.name ?? postgresIdentifier(serviceDef.name)
   try {
-    const { reader, writer } = resolveDbHost(postgres, deployment, service)
+    const { reader, writer } = resolveDbHost(deployment, service, postgres.host)
     env['DB_HOST'] = writer
     env['DB_REPLICAS_HOST'] = reader
   } catch (e) {
@@ -407,53 +393,6 @@ function serializeContainerRuns(
     }
     return result
   })
-}
-
-function serializeValueSource(
-  value: ValueSource,
-  deployment: DeploymentRuntime,
-  service: Service,
-): { type: 'error' } | { type: 'success'; value: string } {
-  if (value === MissingSetting) return { type: 'error' }
-  const result =
-    typeof value === 'string'
-      ? value
-      : value({
-          env: deployment.env,
-          featureDeploymentName: deployment.env.feature,
-          svc: (dep) => deployment.ref(service, dep),
-        })
-  return { type: 'success', value: result }
-}
-
-function serializeEnvironmentVariables(
-  service: Service,
-  deployment: DeploymentRuntime,
-  envs: EnvironmentVariablesForEnv,
-): { errors: string[]; envs: ContainerEnvironmentVariables } {
-  return Object.entries(envs).reduce(
-    (acc, [name, value]) => {
-      const r = serializeValueSource(value, deployment, service)
-      switch (r.type) {
-        case 'error':
-          return {
-            errors: acc.errors.concat([
-              `Missing settings for service ${service.serviceDef.name} in env ${deployment.env.type}. Keys of missing settings: ${name}`,
-            ]),
-            envs: acc.envs,
-          }
-        case 'success':
-          return {
-            errors: acc.errors,
-            envs: {
-              ...acc.envs,
-              [name]: r.value,
-            },
-          }
-      }
-    },
-    { errors: [] as string[], envs: {} as ContainerEnvironmentVariables },
-  )
 }
 
 const hostFullName = (host: string, env: EnvironmentConfig) => {
