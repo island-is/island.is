@@ -4,6 +4,7 @@ import { IntlShape, useIntl } from 'react-intl'
 import { Box, Text, Input, Checkbox } from '@island.is/island-ui/core'
 import {
   formatDate,
+  formatDOB,
   formatNationalId,
 } from '@island.is/judicial-system/formatters'
 import {
@@ -66,11 +67,14 @@ export const getDemandsAutofill = (
   formatMessage: IntlShape['formatMessage'],
   props: DemandsAutofillProps,
 ): string => {
-  return formatMessage(rcReportForm.sections.demands.autofillV3, {
-    accusedName: props.defendant.name,
-    accusedNationalId: props.defendant.noNationalId
-      ? ' '
-      : `, kt. ${formatNationalId(props.defendant.nationalId ?? '')}, `,
+  const defendantDOB = formatDOB(
+    props.defendant.nationalId,
+    props.defendant.noNationalId,
+    '',
+  )
+  return formatMessage(rcReportForm.sections.demands.autofill, {
+    defendantName: props.defendant.name,
+    defendantDOB: defendantDOB ? `, ${defendantDOB}, ` : ', ',
     isExtended:
       props.parentCaseDecision &&
       isAcceptingCaseDecision(props.parentCaseDecision),
