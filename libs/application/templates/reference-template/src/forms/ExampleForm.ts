@@ -10,6 +10,7 @@ import {
   buildTextField,
   buildFileUploadField,
   buildRedirectToServicePortalField,
+  buildSelectField,
 } from '@island.is/application/core'
 import {
   Comparators,
@@ -96,6 +97,18 @@ export const ExampleForm: Form = buildForm({
           id: 'history',
           title: m.history,
           children: [
+            buildSelectField({
+              id: 'careerIndustry',
+              title: m.careerIndustry,
+              description: m.careerIndustryDescription,
+              required: true,
+              options: [
+                { label: 'Hugbúnaður', value: 'software' },
+                { label: 'Fjármál', value: 'finance' },
+                { label: 'Efnahagsráðgjöf', value: 'consulting' },
+                { label: 'Önnur', value: 'other' },
+              ],
+            }),
             buildRadioField({
               id: 'careerHistory',
               title: m.careerHistory,
@@ -110,13 +123,24 @@ export const ExampleForm: Form = buildForm({
                 )
               },
             }),
-            buildCheckboxField({
-              id: 'careerHistoryCompanies',
-              title: m.careerHistoryCompanies,
-              options: [
-                { value: 'government', label: m.governmentOptionLabel },
-                { value: 'aranja', label: 'Aranja' },
-                { value: 'advania', label: 'Advania' },
+            buildMultiField({
+              id: 'careerHistoryDetails',
+              title: '',
+              children: [
+                buildCheckboxField({
+                  id: 'careerHistoryDetails.careerHistoryCompanies',
+                  title: m.careerHistoryCompanies,
+                  options: [
+                    { value: 'government', label: m.governmentOptionLabel },
+                    { value: 'aranja', label: 'Aranja' },
+                    { value: 'advania', label: 'Advania' },
+                    { value: 'other', label: 'Annað' },
+                  ],
+                }),
+                buildTextField({
+                  id: 'careerHistoryDetails.careerHistoryOther',
+                  title: m.careerHistoryOther,
+                }),
               ],
             }),
           ],

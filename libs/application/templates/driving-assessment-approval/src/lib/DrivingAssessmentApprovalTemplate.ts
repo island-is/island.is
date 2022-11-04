@@ -6,7 +6,7 @@ import {
   ApplicationStateSchema,
   DefaultEvents,
 } from '@island.is/application/types'
-import * as z from 'zod'
+import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import { ApiActions } from '../shared'
 
