@@ -161,12 +161,12 @@ describe('NotificationController - Send defender assigned notifications', () => 
       expect(mockNotificationModel.create).toHaveBeenCalledWith({
         caseId,
         type: notification.type,
-        recipients: [
+        recipients: JSON.stringify([
           {
             address: theCase.defenderEmail,
             success: true,
           },
-        ],
+        ]),
       })
     })
   })
@@ -220,7 +220,7 @@ describe('NotificationController - Send defender assigned notifications', () => 
         {
           caseId,
           type: notification.type,
-          recipients: [{ address: theCase.defenderEmail, success: true }],
+          recipients: theCase.defenderEmail,
         } as Notification,
       ])
 
