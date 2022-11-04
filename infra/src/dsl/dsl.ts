@@ -17,6 +17,7 @@ import {
   MountedFile,
   PersistentVolumeClaim,
 } from './types/input-types'
+type Optional<T, L extends keyof T> = Omit<T, L> & Partial<Pick<T, L>>
 
 export class ServiceBuilder<ServiceType> implements Service {
   extraAttributes(attr: ExtraValues) {
@@ -174,7 +175,7 @@ export class ServiceBuilder<ServiceType> implements Service {
    * To perform maintenance before deploying the main service(database migrations, etc.), create an `initContainer` (optional). It maps to a Pod specification for an [initContainer](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/).
    * @param ic initContainer definitions
    */
-  initContainer(ic: InitContainers) {
+  initContainer(ic: Optional<InitContainers, 'envs' | 'secrets' | 'features'>) {
     if (ic.postgres) {
       ic.postgres = this.withDefaults(ic.postgres)
     }
@@ -184,7 +185,12 @@ export class ServiceBuilder<ServiceType> implements Service {
         'For multiple init containers, you must set a unique name for each container.',
       )
     }
-    this.serviceDef.initContainers = ic
+    this.serviceDef.initContainers = {
+      envs: {},
+      secrets: {},
+      features: {},
+      ...ic,
+    }
     return this
   }
 

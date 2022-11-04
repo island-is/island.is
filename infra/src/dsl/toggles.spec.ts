@@ -1,7 +1,11 @@
 import { service } from './dsl'
 import { Kubernetes } from './kubernetes'
 import { serializeService } from './map-to-helm-values'
-import { SerializeErrors, SerializeSuccess } from './types/output-types'
+import {
+  SerializeErrors,
+  SerializeSuccess,
+  ServiceHelm,
+} from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
 import { MissingSetting } from './types/input-types'
 import { FeatureNames } from './features'
@@ -69,11 +73,11 @@ describe('Server-side toggles', () => {
       ...Staging,
       featuresOn: [FeatureNames.testing],
     }),
-  ) as SerializeSuccess
+  ) as SerializeSuccess<ServiceHelm>
   const stagingNoFeatures = serializeService(
     sut,
     new Kubernetes(Staging),
-  ) as SerializeSuccess
+  ) as SerializeSuccess<ServiceHelm>
 
   it('env variables present when feature toggled', () => {
     expect(stagingWithFeatures.serviceDef[0].env!['A']).toBe('B')
@@ -142,7 +146,7 @@ describe('Server-side toggles', () => {
     const prodNoFeature = serializeService(
       sut,
       new Kubernetes(Prod),
-    ) as SerializeSuccess
+    ) as SerializeSuccess<ServiceHelm>
 
     it('should result in serialization errors when feature is turned on', () => {
       expect(prod.errors).toStrictEqual([
@@ -195,7 +199,7 @@ describe('Server-side toggles', () => {
     const prodNoFeature = serializeService(
       sut,
       new Kubernetes(Prod),
-    ) as SerializeSuccess
+    ) as SerializeSuccess<ServiceHelm>
 
     it('should result in serialization errors when feature is turned on', () => {
       expect(prod.errors).toStrictEqual([

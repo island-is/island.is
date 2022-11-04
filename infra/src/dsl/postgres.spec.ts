@@ -1,7 +1,11 @@
 import { service } from './dsl'
 import { Kubernetes } from './kubernetes'
 import { serializeService } from './map-to-helm-values'
-import { SerializeErrors, SerializeSuccess } from './types/output-types'
+import {
+  SerializeErrors,
+  SerializeSuccess,
+  ServiceHelm,
+} from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
 
 const Staging: EnvironmentConfig = {
@@ -23,7 +27,7 @@ describe('Postgres', () => {
     const result = serializeService(
       sut,
       new Kubernetes(Staging),
-    ) as SerializeSuccess
+    ) as SerializeSuccess<ServiceHelm>
 
     it('fixing user and name to comply with postgres identifier allowed character set', () => {
       expect(result.serviceDef[0].env).toEqual({

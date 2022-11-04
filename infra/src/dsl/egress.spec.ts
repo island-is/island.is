@@ -1,7 +1,7 @@
 import { ref, service } from './dsl'
 import { Kubernetes } from './kubernetes'
 import { serializeService } from './map-to-helm-values'
-import { SerializeSuccess } from './types/output-types'
+import { SerializeSuccess, ServiceHelm } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
 import { renderHelmValueFile } from './process-services'
 
@@ -24,7 +24,10 @@ describe('Egress', () => {
     A: ref((h) => h.svc('http://visir.is')),
   })
   const uberChart = new Kubernetes(Staging)
-  const serviceDef = serializeService(sut, uberChart) as SerializeSuccess
+  const serviceDef = serializeService(
+    sut,
+    uberChart,
+  ) as SerializeSuccess<ServiceHelm>
   const render = renderHelmValueFile(uberChart, sut)
 
   it('missing variables cause errors', () => {

@@ -1,7 +1,7 @@
 import { service } from './dsl'
 import { Kubernetes } from './kubernetes'
 import { serializeService } from './map-to-helm-values'
-import { SerializeSuccess } from './types/output-types'
+import { SerializeSuccess, ServiceHelm } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
 
 const Staging: EnvironmentConfig = {
@@ -24,7 +24,7 @@ describe('Healthchecks definitions', () => {
       const result = serializeService(
         sut,
         new Kubernetes(Staging),
-      ) as SerializeSuccess
+      ) as SerializeSuccess<ServiceHelm>
       expect(result.serviceDef[0].healthCheck).toEqual({
         liveness: {
           path: '/ready',
@@ -42,7 +42,7 @@ describe('Healthchecks definitions', () => {
       const result = serializeService(
         sut,
         new Kubernetes(Staging),
-      ) as SerializeSuccess
+      ) as SerializeSuccess<ServiceHelm>
       expect(result.serviceDef[0].healthCheck).toEqual({
         liveness: {
           path: '/ready',

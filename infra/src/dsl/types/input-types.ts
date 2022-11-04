@@ -22,6 +22,12 @@ export type PostgresInfo = {
   username?: string
   passwordSecret?: string
 }
+export type PostgresInfoForEnv = {
+  host?: ValueType
+  name?: string
+  username?: string
+  passwordSecret?: string
+}
 
 export type HealthProbe = {
   path: string
@@ -40,6 +46,9 @@ export type EnvironmentVariableValue =
 export type EnvironmentVariables = {
   [name: string]: EnvironmentVariableValue
 }
+export type EnvironmentVariablesForEnv = {
+  [name: string]: ValueType
+}
 
 export interface XroadConfig {
   getEnv(): EnvironmentVariables
@@ -53,17 +62,13 @@ export type Feature = {
 export type Features = { [name in FeatureNames]: Feature }
 export type MountedFile = { filename: string; env: string }
 
-export type ServiceDefinition = {
+type ServiceDefinitionCore = {
   liveness: HealthProbe
   readiness: HealthProbe
   healthPort?: number
   port?: number
-  initContainers?: InitContainers
-  env: EnvironmentVariables
   secrets: Secrets
-  ingress: { [name: string]: Ingress }
   features: Partial<Features>
-  postgres?: PostgresInfo
   namespace: string
   grantNamespaces: string[]
   grantNamespacesEnabled: boolean
@@ -72,7 +77,6 @@ export type ServiceDefinition = {
   serviceAccountEnabled: boolean
   cmds?: string
   args?: string[]
-  extraAttributes?: ExtraValues
   image?: string
   resources: Resources
   replicaCount?: ReplicaCount
@@ -80,9 +84,24 @@ export type ServiceDefinition = {
     privileged: boolean
     allowPrivilegeEscalation: boolean
   }
-  xroadConfig: XroadConfig[]
   files: MountedFile[]
   volumes: PersistentVolumeClaim[]
+}
+export type ServiceDefinition = ServiceDefinitionCore & {
+  initContainers?: InitContainers
+  env: EnvironmentVariables
+  ingress: { [name: string]: Ingress }
+  postgres?: PostgresInfo
+  extraAttributes?: ExtraValues
+  xroadConfig: XroadConfig[]
+}
+
+export type ServiceDefinitionForEnv = ServiceDefinitionCore & {
+  initContainers?: InitContainersForEnv
+  env: EnvironmentVariablesForEnv
+  ingress: { [name: string]: IngressForEnv }
+  postgres?: PostgresInfoForEnv
+  extraAttributes?: ExtraValuesForEnv
 }
 
 export interface Ingress {
@@ -92,6 +111,12 @@ export interface Ingress {
   paths: string[]
   public?: boolean
   extraAnnotations?: { [name in OpsEnv]: { [idx: string]: string | null } }
+}
+export interface IngressForEnv {
+  host: string | string[]
+  paths: string[]
+  public?: boolean
+  extraAnnotations?: { [idx: string]: string | null }
 }
 
 export type PersistentVolumeClaim = {
@@ -129,9 +154,9 @@ export type ReplicaCount = {
 }
 
 export type InitContainers = {
-  envs?: EnvironmentVariables
-  secrets?: Secrets
-  features?: Partial<Features>
+  envs: EnvironmentVariables
+  secrets: Secrets
+  features: Partial<Features>
   containers: {
     command: string
     args?: string[]
@@ -140,6 +165,18 @@ export type InitContainers = {
   }[]
   postgres?: PostgresInfo
 }
+export type InitContainersForEnv = {
+  envs: EnvironmentVariablesForEnv
+  secrets: Secrets
+  features: Partial<Features>
+  containers: {
+    command: string
+    args?: string[]
+    name?: string
+    resources?: Resources
+  }[]
+  postgres?: PostgresInfoForEnv
+}
 
 export interface Context {
   featureDeploymentName?: string
@@ -147,4 +184,5 @@ export interface Context {
   env: EnvironmentConfig
 }
 
+export type ExtraValuesForEnv = Hash | MissingSettingType
 export type ExtraValues = { [idx in OpsEnv]: Hash | MissingSettingType }

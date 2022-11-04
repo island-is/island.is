@@ -1,25 +1,17 @@
 import {
   AccessModes,
-  Service,
-  EnvironmentVariables,
-  Ingress,
-  ServiceDefinition,
-  ValueType,
+  EnvironmentVariablesForEnv,
+  IngressForEnv,
   MissingSetting,
+  PostgresInfoForEnv,
   Resources,
-  Hash,
-  ExtraValues,
-  EnvironmentVariableValue,
-  PostgresInfo,
-  Feature,
-  Features,
-  PersistentVolumeClaim,
+  Service,
+  ServiceDefinitionForEnv,
+  ValueType,
 } from './types/input-types'
 import {
   ContainerEnvironmentVariables,
   ContainerRunHelm,
-  ContainerSecrets,
-  DockerComposeService,
   OutputFormat,
   OutputPersistentVolumeClaim,
   SerializeErrors,
@@ -27,9 +19,9 @@ import {
   SerializeSuccess,
   ServiceHelm,
 } from './types/output-types'
-import { EnvironmentConfig, DeploymentRuntime } from './types/charts'
-import { FeatureNames } from './features'
+import { DeploymentRuntime, EnvironmentConfig } from './types/charts'
 import { ServerSideFeature } from '../../../libs/feature-flags/src'
+import { processService } from './pre-process-service'
 
 /**
  * Transforms our definition of a service to a Helm values object
@@ -65,284 +57,244 @@ export const serializeService: SerializeMethod<ServiceHelm> = (
   const addToErrors = (errors: string[]) => {
     allErrors.push(...errors)
   }
-  const serviceDef = service.serviceDef
-  const {
-    grantNamespaces,
-    grantNamespacesEnabled,
-    namespace,
-    securityContext,
-  } = serviceDef
-  const result: ServiceHelm = {
-    enabled: true,
-    grantNamespaces: grantNamespaces,
-    grantNamespacesEnabled: grantNamespacesEnabled,
-    namespace: namespace,
-    image: {
-      repository: `821090935708.dkr.ecr.eu-west-1.amazonaws.com/${
-        serviceDef.image ?? serviceDef.name
-      }`,
-    },
-    env: {
-      SERVERSIDE_FEATURES_ON: deployment.env.featuresOn.join(','),
-      NODE_OPTIONS: `--max-old-space-size=${
-        parseInt(serviceDef.resources.limits.memory, 10) - 48
-      }`,
-    },
-    secrets: {},
-    healthCheck: {
-      port: serviceDef.healthPort,
-      liveness: {
-        path: serviceDef.liveness.path,
-        initialDelaySeconds: serviceDef.liveness.initialDelaySeconds,
-        timeoutSeconds: serviceDef.liveness.timeoutSeconds,
+  const processedService = processService(service, deployment.env)
+  if (processedService.type === 'success') {
+    const serviceDef = processedService.serviceDef
+    const {
+      grantNamespaces,
+      grantNamespacesEnabled,
+      namespace,
+      securityContext,
+    } = serviceDef
+    const result: ServiceHelm = {
+      enabled: true,
+      grantNamespaces: grantNamespaces,
+      grantNamespacesEnabled: grantNamespacesEnabled,
+      namespace: namespace,
+      image: {
+        repository: `821090935708.dkr.ecr.eu-west-1.amazonaws.com/${
+          serviceDef.image ?? serviceDef.name
+        }`,
       },
-      readiness: {
-        path: serviceDef.readiness.path,
-        initialDelaySeconds: serviceDef.readiness.initialDelaySeconds,
-        timeoutSeconds: serviceDef.readiness.timeoutSeconds,
+      env: {
+        SERVERSIDE_FEATURES_ON: deployment.env.featuresOn.join(','),
+        NODE_OPTIONS: `--max-old-space-size=${
+          parseInt(serviceDef.resources.limits.memory, 10) - 48
+        }`,
       },
-    },
-    securityContext,
-  }
-
-  // command and args
-  if (serviceDef.cmds) {
-    result.command = [serviceDef.cmds]
-  }
-  if (serviceDef.args) {
-    result.args = serviceDef.args
-  }
-
-  // resources
-  result.resources = serviceDef.resources
-  if (serviceDef.env.NODE_OPTIONS) {
-    throw new Error(
-      'NODE_OPTIONS already set. At the moment of writing, there is no known use case for this, so this might need to be revisited in the future.',
-    )
-  }
-
-  // replicas
-  if (serviceDef.replicaCount) {
-    result.replicaCount = {
-      min: serviceDef.replicaCount.min,
-      max: serviceDef.replicaCount.max,
-      default: serviceDef.replicaCount.default,
-    }
-  } else {
-    result.replicaCount = {
-      min: deployment.env.defaultMinReplicas,
-      max: deployment.env.defaultMaxReplicas,
-      default: deployment.env.defaultMinReplicas,
-    }
-  }
-
-  result.hpa = {
-    scaling: {
-      replicas: {
-        min: result.replicaCount.min,
-        max: result.replicaCount.max,
-      },
-      metric: {
-        cpuAverageUtilization: 70,
-      },
-    },
-  }
-  result.hpa.scaling.metric.nginxRequestsIrate =
-    serviceDef.replicaCount?.scalingMagicNumber || 2
-
-  // extra attributes
-  if (serviceDef.extraAttributes) {
-    const { envs, errors } = serializeExtraVariables(
-      service,
-      deployment,
-      serviceDef.extraAttributes,
-    )
-    addToErrors(errors)
-    result.extra = envs
-  }
-
-  // target port
-  if (typeof serviceDef.port !== 'undefined') {
-    result.service = { targetPort: serviceDef.port }
-  }
-
-  // environment vars
-  if (Object.keys(serviceDef.env).length > 0) {
-    const { envs, errors } = serializeEnvironmentVariables(
-      service,
-      deployment,
-      serviceDef.env,
-    )
-    addToErrors(errors)
-    mergeObjects(result.env, envs)
-  }
-
-  // secrets
-  if (Object.keys(serviceDef.secrets).length > 0) {
-    result.secrets = { ...serviceDef.secrets }
-  }
-  if (Object.keys(serviceDef.files).length > 0) {
-    result.files = []
-    serviceDef.files.forEach((f) => {
-      result.files!.push(f.filename)
-      mergeObjects(result.env, { [f.env]: `/etc/config/${f.filename}` })
-    })
-  }
-
-  const {
-    envs: featureEnvs,
-    errors: featureErrors,
-    secrets: featureSecrets,
-  } = addFeaturesConfig(serviceDef.features, deployment, service)
-  mergeObjects(result.env, featureEnvs)
-  addToErrors(featureErrors)
-  mergeObjects(result.secrets, featureSecrets)
-
-  serviceDef.xroadConfig.forEach((conf) => {
-    const { envs, errors } = serializeEnvironmentVariables(
-      service,
-      deployment,
-      conf.getEnv(),
-    )
-    addToErrors(errors)
-    mergeObjects(result.env, envs)
-    mergeObjects(result.secrets, conf.getSecrets())
-  })
-
-  // service account
-  if (serviceDef.serviceAccountEnabled) {
-    result.podSecurityContext = {
-      fsGroup: 65534,
-    }
-    const serviceAccountName = serviceDef.accountName ?? serviceDef.name
-    result.serviceAccount = {
-      create: true,
-      name: serviceAccountName,
-      annotations: {
-        'eks.amazonaws.com/role-arn': `arn:aws:iam::${deployment.env.awsAccountId}:role/${serviceAccountName}`,
-      },
-    }
-  }
-
-  // initContainers
-  if (typeof serviceDef.initContainers !== 'undefined') {
-    if (serviceDef.initContainers.containers.length > 0) {
-      result.initContainer = {
-        containers: serializeContainerRuns(
-          serviceDef.initContainers.containers,
-        ),
-        env: {
-          SERVERSIDE_FEATURES_ON: deployment.env.featuresOn.join(','),
+      secrets: {},
+      healthCheck: {
+        port: serviceDef.healthPort,
+        liveness: {
+          path: serviceDef.liveness.path,
+          initialDelaySeconds: serviceDef.liveness.initialDelaySeconds,
+          timeoutSeconds: serviceDef.liveness.timeoutSeconds,
         },
-        secrets: {},
-      }
-      if (typeof serviceDef.initContainers.envs !== 'undefined') {
-        const { envs, errors } = serializeEnvironmentVariables(
-          service,
-          deployment,
-          serviceDef.initContainers.envs,
-        )
-        addToErrors(errors)
-        mergeObjects(result.initContainer.env, envs)
-      }
-      if (typeof serviceDef.initContainers.secrets !== 'undefined') {
-        result.initContainer.secrets = serviceDef.initContainers.secrets
-      }
-      if (serviceDef.initContainers.postgres) {
-        const { env, secrets, errors } = serializePostgres(
-          serviceDef,
-          deployment,
-          service,
-          serviceDef.initContainers.postgres,
-        )
-
-        mergeObjects(result.initContainer.env, env)
-        mergeObjects(result.initContainer.secrets, secrets)
-        addToErrors(errors)
-      }
-      if (serviceDef.initContainers.features) {
-        const {
-          envs: featureEnvs,
-          errors: featureErrors,
-          secrets: featureSecrets,
-        } = addFeaturesConfig(
-          serviceDef.initContainers.features!,
-          deployment,
-          service,
-        )
-
-        mergeObjects(result.initContainer.env, featureEnvs)
-        addToErrors(featureErrors)
-        mergeObjects(result.initContainer.secrets, featureSecrets)
-      }
-      checkCollisions(result.initContainer.secrets, result.initContainer.env)
-    } else {
-      addToErrors(['No containers to run defined in initContainers'])
-    }
-  }
-
-  // ingress
-  if (Object.keys(serviceDef.ingress).length > 0) {
-    result.ingress = Object.entries(serviceDef.ingress).reduce(
-      (acc, [ingressName, ingressConf]) => {
-        try {
-          const ingress = serializeIngress(
-            serviceDef,
-            ingressConf,
-            deployment.env,
-            ingressName,
-          )
-          return {
-            ...acc,
-            [`${ingressName}-alb`]: ingress,
-          }
-        } catch (e: any) {
-          addToErrors([e.message])
-          return acc
-        }
+        readiness: {
+          path: serviceDef.readiness.path,
+          initialDelaySeconds: serviceDef.readiness.initialDelaySeconds,
+          timeoutSeconds: serviceDef.readiness.timeoutSeconds,
+        },
       },
-      {},
-    )
+      securityContext,
+    }
+
+    // command and args
+    if (serviceDef.cmds) {
+      result.command = [serviceDef.cmds]
+    }
+    if (serviceDef.args) {
+      result.args = serviceDef.args
+    }
+
+    // resources
+    result.resources = serviceDef.resources
+    if (serviceDef.env.NODE_OPTIONS) {
+      throw new Error(
+        'NODE_OPTIONS already set. At the moment of writing, there is no known use case for this, so this might need to be revisited in the future.',
+      )
+    }
+
+    // replicas
+    if (serviceDef.replicaCount) {
+      result.replicaCount = {
+        min: serviceDef.replicaCount.min,
+        max: serviceDef.replicaCount.max,
+        default: serviceDef.replicaCount.default,
+      }
+    } else {
+      result.replicaCount = {
+        min: deployment.env.defaultMinReplicas,
+        max: deployment.env.defaultMaxReplicas,
+        default: deployment.env.defaultMinReplicas,
+      }
+    }
+
+    result.hpa = {
+      scaling: {
+        replicas: {
+          min: result.replicaCount.min,
+          max: result.replicaCount.max,
+        },
+        metric: {
+          cpuAverageUtilization: 70,
+        },
+      },
+    }
+    result.hpa.scaling.metric.nginxRequestsIrate =
+      serviceDef.replicaCount?.scalingMagicNumber || 2
+
+    if (
+      serviceDef.extraAttributes &&
+      serviceDef.extraAttributes !== MissingSetting
+    ) {
+      result.extra = serviceDef.extraAttributes
+    }
+    // target port
+    if (typeof serviceDef.port !== 'undefined') {
+      result.service = { targetPort: serviceDef.port }
+    }
+
+    // environment vars
+    if (Object.keys(serviceDef.env).length > 0) {
+      const { envs, errors } = serializeEnvironmentVariables(
+        service,
+        deployment,
+        serviceDef.env,
+      )
+      addToErrors(errors)
+      mergeObjects(result.env, envs)
+    }
+
+    // secrets
+    if (Object.keys(serviceDef.secrets).length > 0) {
+      result.secrets = { ...serviceDef.secrets }
+    }
+    if (Object.keys(serviceDef.files).length > 0) {
+      result.files = []
+      serviceDef.files.forEach((f) => {
+        result.files!.push(f.filename)
+        mergeObjects(result.env, { [f.env]: `/etc/config/${f.filename}` })
+      })
+    }
+
+    // service account
+    if (serviceDef.serviceAccountEnabled) {
+      result.podSecurityContext = {
+        fsGroup: 65534,
+      }
+      const serviceAccountName = serviceDef.accountName ?? serviceDef.name
+      result.serviceAccount = {
+        create: true,
+        name: serviceAccountName,
+        annotations: {
+          'eks.amazonaws.com/role-arn': `arn:aws:iam::${deployment.env.awsAccountId}:role/${serviceAccountName}`,
+        },
+      }
+    }
+
+    // initContainers
+    if (typeof serviceDef.initContainers !== 'undefined') {
+      if (serviceDef.initContainers.containers.length > 0) {
+        result.initContainer = {
+          containers: serializeContainerRuns(
+            serviceDef.initContainers.containers,
+          ),
+          env: {
+            SERVERSIDE_FEATURES_ON: deployment.env.featuresOn.join(','),
+          },
+          secrets: {},
+        }
+        if (typeof serviceDef.initContainers.envs !== 'undefined') {
+          const { envs, errors } = serializeEnvironmentVariables(
+            service,
+            deployment,
+            serviceDef.initContainers.envs,
+          )
+          addToErrors(errors)
+          mergeObjects(result.initContainer.env, envs)
+        }
+        if (typeof serviceDef.initContainers.secrets !== 'undefined') {
+          result.initContainer.secrets = serviceDef.initContainers.secrets
+        }
+        if (serviceDef.initContainers.postgres) {
+          const { env, secrets, errors } = serializePostgres(
+            serviceDef,
+            deployment,
+            service,
+            serviceDef.initContainers.postgres,
+          )
+
+          mergeObjects(result.initContainer.env, env)
+          mergeObjects(result.initContainer.secrets, secrets)
+          addToErrors(errors)
+        }
+      } else {
+        addToErrors(['No containers to run defined in initContainers'])
+      }
+    }
+
+    // ingress
+    if (Object.keys(serviceDef.ingress).length > 0) {
+      result.ingress = Object.entries(serviceDef.ingress).reduce(
+        (acc, [ingressName, ingressConf]) => {
+          try {
+            const ingress = serializeIngress(
+              serviceDef,
+              ingressConf,
+              deployment.env,
+              ingressName,
+            )
+            return {
+              ...acc,
+              [`${ingressName}-alb`]: ingress,
+            }
+          } catch (e: any) {
+            addToErrors([e.message])
+            return acc
+          }
+        },
+        {},
+      )
+    }
+
+    if (serviceDef.postgres) {
+      const { env, secrets, errors } = serializePostgres(
+        serviceDef,
+        deployment,
+        service,
+        serviceDef.postgres,
+      )
+
+      mergeObjects(result.env, env)
+      mergeObjects(result.secrets, secrets)
+      addToErrors(errors)
+    }
+
+    // Volumes
+    if (Object.keys(serviceDef.volumes.length > 0)) {
+      const { errors, volumes } = serializeVolumes(service, serviceDef.volumes)
+      addToErrors(errors)
+      result.pvcs = volumes
+    }
+    checkCollisions(result.secrets, result.env)
+
+    return allErrors.length === 0
+      ? { type: 'success', serviceDef: [result] }
+      : { type: 'error', errors: allErrors }
+  } else {
+    return { type: 'error', errors: processedService.errors }
   }
-
-  if (serviceDef.postgres) {
-    const { env, secrets, errors } = serializePostgres(
-      serviceDef,
-      deployment,
-      service,
-      serviceDef.postgres,
-    )
-
-    mergeObjects(result.env, env)
-    mergeObjects(result.secrets, secrets)
-    addToErrors(errors)
-  }
-
-  // Volumes
-  if (Object.keys(serviceDef.volumes.length > 0)) {
-    const { errors, volumes } = serializeVolumes(service, serviceDef.volumes)
-    addToErrors(errors)
-    result.pvcs = volumes
-  }
-  checkCollisions(result.secrets, result.env)
-
-  return allErrors.length === 0
-    ? { type: 'success', serviceDef: [result] }
-    : { type: 'error', errors: allErrors }
 }
 
 export const postgresIdentifier = (id: string) => id.replace(/[\W\s]/gi, '_')
 export const resolveDbHost = (
-  postgres: PostgresInfo,
+  postgres: PostgresInfoForEnv,
   deployment: DeploymentRuntime,
   service: Service,
 ) => {
   if (postgres.host) {
-    const resolved = resolveVariable(
-      postgres.host?.[deployment.env.type],
-      deployment,
-      service,
-    )
+    const resolved = serializeValueType(postgres.host, deployment, service)
     switch (resolved.type) {
       case 'error': {
         throw new Error()
@@ -360,56 +312,11 @@ export const resolveDbHost = (
   }
 }
 
-function addFeaturesConfig(
-  serviceDefFeatures: Partial<Features>,
-  deployment: DeploymentRuntime,
-  service: Service,
-) {
-  const activeFeatures = Object.entries(
-    serviceDefFeatures,
-  ).filter(([feature]) =>
-    deployment.env.featuresOn.includes(feature as FeatureNames),
-  ) as [FeatureNames, Feature][]
-  const featureEnvs = activeFeatures.map(([name, v]) => {
-    const { envs, errors } = serializeEnvironmentVariables(
-      service,
-      deployment,
-      v.env,
-    )
-    return {
-      name,
-      envs,
-      errors,
-    }
-  })
-  const featureSecrets = activeFeatures.map(([name, v]) => {
-    return {
-      name,
-      secrets: v.secrets,
-    }
-  })
-
-  return {
-    envs: featureEnvs.reduce(
-      (acc, feature) => ({ ...acc, ...feature.envs }),
-      {} as ContainerEnvironmentVariables,
-    ),
-    secrets: featureSecrets.reduce(
-      (acc, toggle) => ({ ...acc, ...toggle.secrets }),
-      {} as ContainerSecrets,
-    ),
-    errors: featureEnvs.reduce(
-      (acc, feature) => [...acc, ...feature.errors],
-      [] as string[],
-    ),
-  }
-}
-
 function serializePostgres(
-  serviceDef: ServiceDefinition,
+  serviceDef: ServiceDefinitionForEnv,
   deployment: DeploymentRuntime,
   service: Service,
-  postgres: PostgresInfo,
+  postgres: PostgresInfoForEnv,
 ) {
   const env: { [name: string]: string } = {}
   const secrets: { [name: string]: string } = {}
@@ -431,18 +338,17 @@ function serializePostgres(
 }
 
 function serializeIngress(
-  serviceDef: ServiceDefinition,
-  ingressConf: Ingress,
+  serviceDef: ServiceDefinitionForEnv,
+  ingressConf: IngressForEnv,
   env: EnvironmentConfig,
   ingressName: string,
 ) {
-  const ingress = ingressConf.host[env.type]
-  if (ingress === MissingSetting) {
+  if (ingressConf.host === MissingSetting) {
     return
   }
-  const hosts = (typeof ingress === 'string'
-    ? [ingressConf.host[env.type] as string]
-    : (ingressConf.host[env.type] as string[])
+  const hosts = (typeof ingressConf.host === 'string'
+    ? [ingressConf.host]
+    : ingressConf.host
   ).map((host) =>
     ingressConf.public ?? true
       ? hostFullName(host, env)
@@ -455,7 +361,7 @@ function serializeIngress(
         ingressConf.public ?? true
           ? 'nginx-external-alb'
           : 'nginx-internal-alb',
-      ...ingressConf.extraAnnotations?.[env.type],
+      ...ingressConf.extraAnnotations,
     },
     hosts: hosts.map((host) => ({
       host: host,
@@ -546,32 +452,14 @@ function serializeValueType(
   return { type: 'success', value: result }
 }
 
-function serializeExtraVariables(
-  service: Service,
-  deployment: DeploymentRuntime,
-  extraValues: ExtraValues,
-): { errors: string[]; envs: Hash } {
-  const extraEnvsForType = extraValues[deployment.env.type]
-  if (extraEnvsForType === MissingSetting) {
-    return {
-      envs: {},
-      errors: [
-        `Missing extra setting for service ${service.serviceDef.name} in env ${deployment.env.type}`,
-      ],
-    }
-  } else {
-    return { errors: [], envs: extraEnvsForType }
-  }
-}
-
 function serializeEnvironmentVariables(
   service: Service,
   deployment: DeploymentRuntime,
-  envs: EnvironmentVariables,
+  envs: EnvironmentVariablesForEnv,
 ): { errors: string[]; envs: ContainerEnvironmentVariables } {
   return Object.entries(envs).reduce(
     (acc, [name, value]) => {
-      const r = resolveVariable(value, deployment, service)
+      const r = serializeValueType(value, deployment, service)
       switch (r.type) {
         case 'error':
           return {
@@ -604,16 +492,6 @@ const hostFullName = (host: string, env: EnvironmentConfig) => {
 }
 const internalHostFullName = (host: string, env: EnvironmentConfig) =>
   host.indexOf('.') < 0 ? `${host}.internal.${env.domain}` : host
-
-function resolveVariable(
-  value: EnvironmentVariableValue,
-  deployment: DeploymentRuntime,
-  service: Service,
-) {
-  return typeof value === 'object'
-    ? serializeValueType(value[deployment.env.type], deployment, service)
-    : serializeValueType(value, deployment, service)
-}
 
 export const serviceMockDef = (options: {
   namespace: string

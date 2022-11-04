@@ -2,7 +2,11 @@ import { service } from './dsl'
 import { Kubernetes } from './kubernetes'
 import { MissingSetting } from './types/input-types'
 import { serializeService } from './map-to-helm-values'
-import { SerializeErrors, SerializeSuccess } from './types/output-types'
+import {
+  SerializeErrors,
+  SerializeSuccess,
+  ServiceHelm,
+} from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
 
 const Staging: EnvironmentConfig = {
@@ -24,7 +28,7 @@ describe('HPA definitions', () => {
     const result = serializeService(
       sut,
       new Kubernetes(Staging),
-    ) as SerializeSuccess
+    ) as SerializeSuccess<ServiceHelm>
 
     expect(result.serviceDef[0].replicaCount).toEqual({
       min: 2,
@@ -51,7 +55,7 @@ describe('HPA definitions', () => {
     const result = serializeService(
       sut,
       new Kubernetes(Staging),
-    ) as SerializeSuccess
+    ) as SerializeSuccess<ServiceHelm>
 
     expect(result.serviceDef[0].replicaCount).toEqual({
       min: 1,

@@ -1,7 +1,7 @@
 import { ref, service, ServiceBuilder } from './dsl'
 import { Kubernetes } from './kubernetes'
 import { serializeService } from './map-to-helm-values'
-import { SerializeSuccess } from './types/output-types'
+import { SerializeSuccess, ServiceHelm } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
 import { XroadConf } from './xroad'
 
@@ -35,7 +35,10 @@ describe('X-road support', () => {
       },
     }),
   )
-  const svc = serializeService(sut, new Kubernetes(Dev)) as SerializeSuccess
+  const svc = serializeService(
+    sut,
+    new Kubernetes(Dev),
+  ) as SerializeSuccess<ServiceHelm>
 
   it('contains all xroad environment variables', () => {
     expect(svc.serviceDef[0].env).toHaveProperty('XROAD_VAR1')

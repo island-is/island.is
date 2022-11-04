@@ -2,7 +2,11 @@ import { service, ServiceBuilder } from './dsl'
 import { Kubernetes } from './kubernetes'
 import { MissingSetting } from './types/input-types'
 import { serializeService } from './map-to-helm-values'
-import { SerializeErrors, SerializeSuccess } from './types/output-types'
+import {
+  SerializeErrors,
+  SerializeSuccess,
+  ServiceHelm,
+} from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
 
 const Staging: EnvironmentConfig = {
@@ -36,7 +40,7 @@ describe('Volume Support', () => {
   const stagingWithVolumes = serializeService(
     sut,
     new Kubernetes(Staging),
-  ) as SerializeSuccess
+  ) as SerializeSuccess<ServiceHelm>
 
   it('Support multi volume definitions', () => {
     expect(stagingWithVolumes.serviceDef[0].pvcs![0]).toEqual({
@@ -63,7 +67,7 @@ describe('Volume Support', () => {
     const stagingWithDefaultVolume = serializeService(
       sut,
       new Kubernetes(Staging),
-    ) as SerializeSuccess
+    ) as SerializeSuccess<ServiceHelm>
     expect(stagingWithDefaultVolume.serviceDef[0].pvcs![0]).toEqual({
       name: 'api',
       size: '1Gi',

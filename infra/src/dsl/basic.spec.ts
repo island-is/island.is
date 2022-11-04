@@ -1,7 +1,7 @@
 import { service } from './dsl'
 import { Kubernetes } from './kubernetes'
 import { serializeService } from './map-to-helm-values'
-import { SerializeSuccess } from './types/output-types'
+import { SerializeSuccess, ServiceHelm } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
 
 const Staging: EnvironmentConfig = {
@@ -47,7 +47,7 @@ describe('Basic serialization', () => {
   const result = serializeService(
     sut,
     new Kubernetes(Staging),
-  ) as SerializeSuccess
+  ) as SerializeSuccess<ServiceHelm>
 
   it('basic props', () => {
     expect(result.serviceDef[0].enabled).toBe(true)
@@ -144,7 +144,7 @@ describe('Env definition defaults', () => {
   const result = serializeService(
     sut,
     new Kubernetes(Staging),
-  ) as SerializeSuccess
+  ) as SerializeSuccess<ServiceHelm>
 
   it('replica max count', () => {
     expect(result.serviceDef[0].replicaCount).toStrictEqual({

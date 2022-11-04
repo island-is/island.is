@@ -2,7 +2,11 @@ import { service } from './dsl'
 import { Kubernetes } from './kubernetes'
 import { MissingSetting } from './types/input-types'
 import { serializeService } from './map-to-helm-values'
-import { SerializeErrors, SerializeSuccess } from './types/output-types'
+import {
+  SerializeErrors,
+  SerializeSuccess,
+  ServiceHelm,
+} from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
 
 const Staging: EnvironmentConfig = {
@@ -31,7 +35,7 @@ describe('Extra attributes', () => {
     const serviceDef = serializeService(
       sut,
       new Kubernetes(Staging),
-    ) as SerializeSuccess
+    ) as SerializeSuccess<ServiceHelm>
     expect(serviceDef.serviceDef[0].extra).toEqual({
       API: 'api',
       KEY: { SUBKEY: 'value' },

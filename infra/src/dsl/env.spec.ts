@@ -2,7 +2,11 @@ import { service, json } from './dsl'
 import { Kubernetes } from './kubernetes'
 import { MissingSetting } from './types/input-types'
 import { serializeService } from './map-to-helm-values'
-import { SerializeErrors, SerializeSuccess } from './types/output-types'
+import {
+  SerializeErrors,
+  SerializeSuccess,
+  ServiceHelm,
+} from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
 
 const Staging: EnvironmentConfig = {
@@ -96,7 +100,7 @@ describe('Env variable', () => {
     const serviceDef = serializeService(
       sut,
       new Kubernetes(Staging),
-    ) as SerializeSuccess
+    ) as SerializeSuccess<ServiceHelm>
 
     expect(serviceDef.serviceDef[0].env.A).toEqual(JSON.stringify(value))
   })
