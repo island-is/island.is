@@ -7,11 +7,11 @@
 set -euo pipefail
 
 
-RESET=$(echo -en '\033[0m')
 RED=$(echo -en '\033[00;31m')
 GREEN=$(echo -en '\033[00;32m')
 YELLOW=$(echo -en '\033[00;33m')
 LBLUE=$(echo -en '\033[01;34m')
+RESET=$(echo -en '\033[0m')
 
 
 export \
@@ -88,7 +88,7 @@ function _get_source_path() {
 }
 
 function _build_app() {
-  nx run ${APP}:build
+  yarn nx run ${APP}:build
 }
 
 function open_menu() {
@@ -105,11 +105,21 @@ function run_container() {
   cp "${SECRETS_FILE}" "${SECRETS_ENV_FILE}"
 
   # transform .env secrets file to actual .env file
-  grep -v '^#' "${SECRETS_FILE}" | cut -d ' ' -f 2- > "${SECRETS_ENV_FILE}"
+  grep -v '^#' "${SECRETS_FILE}" | cut -d ' ' -f 2- > "${SECRETS_ENV_FILE}" || info "secrets file is empty"
+  if [ -z "${TEST_ENVIRONMENT}" ] && ! grep -q '^TEST_ENVIRONMENT' "${SECRETS_ENV_FILE}"; then
+    echo "TEST_ENVIRONMENT=local" >> "${SECRETS_ENV_FILE}"
+    info "Setting default TEST_ENVIRONMENT to local"
+  else
+    echo "TEST_ENVIRONMENT=${TEST_ENVIRONMENT}" >> "${SECRETS_ENV_FILE}"
+    info "Setting overridden TEST_ENVIRONMENT=${TEST_ENVIRONMENT}"
+  fi
+  info "Found TEST_ENVIRONMENT in .env.secrets: $(grep TEST_ENVIRONMENT ${SECRETS_ENV_FILE} | tail -n 1)"
 
   _build_app
   _image_exists
   runner \
+    --rm \
+    --name playwright-e2e-"${INTEGRATION:-test}" \
     -v "${TMP_DIR}":/out:Z \
     -v "${PROJECT_DIR}/${APP_DIST_HOME}":"/${APP_DIST_HOME}":Z \
     -v "${PROJECT_DIR}/${APP_HOME}/entrypoint.sh":"/${APP_DIST_HOME}/entrypoint.sh":Z \

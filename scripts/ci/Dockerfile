@@ -144,7 +144,7 @@ ARG APP_HOME
 
 # node user exists in the base image
 RUN mkdir -p /out \
-  && chown node:node /out
+  && chown pwuser:pwuser /out
 
 COPY --chown=pwuser:pwuser ${APP_HOME}/entrypoint.sh .
 
