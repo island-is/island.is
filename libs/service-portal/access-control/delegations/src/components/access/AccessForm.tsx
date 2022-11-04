@@ -2,14 +2,7 @@ import React, { useState } from 'react'
 import { useParams, useHistory } from 'react-router-dom'
 import { useForm, FormProvider } from 'react-hook-form'
 
-import {
-  Box,
-  Stack,
-  SkeletonLoader,
-  Divider,
-  toast,
-  AlertBanner,
-} from '@island.is/island-ui/core'
+import { Box, toast, AlertBanner } from '@island.is/island-ui/core'
 import { AuthCustomDelegation } from '@island.is/api/schema'
 import {
   m as coreMessages,
@@ -21,7 +14,7 @@ import { DelegationsFormFooter } from '../delegations/DelegationsFormFooter'
 import { servicePortalSaveAccessControl } from '@island.is/plausible'
 import {
   useUpdateAuthDelegationMutation,
-  useAuthScopeTreeQuery,
+  AuthScopeTreeQuery,
 } from '@island.is/service-portal/graphql'
 import {
   AccessFormScope,
@@ -41,12 +34,17 @@ import * as commonAccessStyles from './access.css'
 
 type AccessFormProps = {
   delegation: AuthCustomDelegation
+  scopeTree: AuthScopeTreeQuery['authScopeTree']
   validityPeriod: Date | null
 }
 
-export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
+export const AccessForm = ({
+  delegation,
+  scopeTree,
+  validityPeriod,
+}: AccessFormProps) => {
   const [openConfirmModal, setOpenConfirmModal] = useState(false)
-  const { formatMessage, lang } = useLocale()
+  const { formatMessage } = useLocale()
   const { delegationId } = useParams<{
     delegationId: string
   }>()
@@ -64,20 +62,6 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
   ] = useUpdateAuthDelegationMutation({
     onError,
   })
-
-  const {
-    data: scopeTreeData,
-    loading: scopeTreeLoading,
-  } = useAuthScopeTreeQuery({
-    variables: {
-      input: {
-        domain: delegation.domain.name,
-        lang,
-      },
-    },
-  })
-
-  const { authScopeTree } = scopeTreeData || {}
 
   const methods = useForm<{
     scope: AccessFormScope[]
@@ -132,7 +116,7 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
   // Map format and flatten scopes to be used in the confirm modal
   const scopes = getValues()
     ?.scope?.map((item) =>
-      formatScopeTreeToScope({ item, authScopeTree, validityPeriod }),
+      formatScopeTreeToScope({ item, scopeTree, validityPeriod }),
     )
     .filter(isDefined)
 
@@ -174,16 +158,7 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
         <form onSubmit={onSubmit}>
           <Box className={commonAccessStyles.resetMarginGutter}>
             <AccessItemHeader hideValidityPeriod={!!validityPeriod} />
-            {scopeTreeLoading ? (
-              <Box marginTop={3}>
-                <Stack space={3}>
-                  <SkeletonLoader width="100%" height={80} />
-                  <Divider />
-                </Stack>
-              </Box>
-            ) : (
-              authScopeTree?.map(renderAccessItem)
-            )}
+            {scopeTree.map(renderAccessItem)}
           </Box>
         </form>
         <Box position="sticky" bottom={0} marginTop={20}>

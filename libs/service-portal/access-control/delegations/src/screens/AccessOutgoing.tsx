@@ -20,7 +20,7 @@ const AccessOutgoing = () => {
   useNamespaces(['sp.settings-access-control', 'sp.access-control-delegations'])
   const { md } = useBreakpoint()
   const { formatMessage, lang } = useLocale()
-  const { delegation, loading } = useDelegation()
+  const { delegation, scopeTree, delegationLoading } = useDelegation()
 
   /**
    * If validity period is set then user cannot change scopes validity period individually
@@ -55,7 +55,7 @@ const AccessOutgoing = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [delegation])
 
-  if (!loading && !delegation) {
+  if (!delegationLoading && !delegation) {
     return <NotFound />
   }
 
@@ -111,8 +111,12 @@ const AccessOutgoing = () => {
           )}
         </Box>
       </AccessHeader>
-      {delegation ? (
-        <AccessForm delegation={delegation} validityPeriod={validityPeriod} />
+      {delegation && scopeTree ? (
+        <AccessForm
+          delegation={delegation}
+          scopeTree={scopeTree}
+          validityPeriod={validityPeriod}
+        />
       ) : (
         <SkeletonLoader width="100%" height={250} />
       )}

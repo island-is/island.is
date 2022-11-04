@@ -9,9 +9,9 @@ import { AccessList } from '../components/access/AccessList'
 const AccessIncoming = () => {
   useNamespaces(['sp.settings-access-control', 'sp.access-control-delegations'])
   const { formatMessage } = useLocale()
-  const { delegation, loading } = useDelegation()
+  const { delegation, delegationLoading, scopeTree } = useDelegation()
 
-  if (!loading && !delegation) {
+  if (!delegationLoading && !delegation) {
     return <NotFound />
   }
 
@@ -34,8 +34,8 @@ const AccessIncoming = () => {
           />
         )}
       </AccessHeader>
-      {delegation ? (
-        <AccessList delegation={delegation} />
+      {delegation && scopeTree ? (
+        <AccessList delegation={delegation} scopeTree={scopeTree} />
       ) : (
         <SkeletonLoader width="100%" height={250} />
       )}

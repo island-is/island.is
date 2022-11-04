@@ -1,10 +1,14 @@
 import { useParams } from 'react-router-dom'
 import { AuthCustomDelegation } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
-import { useAuthDelegationQuery } from '@island.is/service-portal/graphql'
+import {
+  useAuthDelegationQuery,
+  useAuthScopeTreeLazyQuery,
+} from '@island.is/service-portal/graphql'
 
 /**
- * Wrapper hook for getting delegation by id from url param
+ * Wrapper hook for fetching delegation by id from url param
+ * and fetching delegation scopes.
  */
 export const useDelegation = () => {
   const { lang } = useLocale()
@@ -12,7 +16,12 @@ export const useDelegation = () => {
     delegationId: string
   }>()
 
-  const { data, loading } = useAuthDelegationQuery({
+  const [
+    getAuthScopeTreeQuery,
+    { data: scopeTreeData, loading: scopeTreeLoading },
+  ] = useAuthScopeTreeLazyQuery()
+
+  const { data, loading: delegationLoading } = useAuthDelegationQuery({
     fetchPolicy: 'network-only',
     variables: {
       input: {
@@ -20,12 +29,32 @@ export const useDelegation = () => {
       },
       lang,
     },
+    onCompleted(data) {
+      const delegation = data?.authDelegation
+        ? (data.authDelegation as AuthCustomDelegation)
+        : undefined
+
+      if (delegation) {
+        getAuthScopeTreeQuery({
+          variables: {
+            input: {
+              domain: delegation?.domain.name,
+              lang,
+            },
+          },
+        })
+      }
+    },
   })
 
+  const { authScopeTree } = scopeTreeData || {}
+
   return {
+    scopeTree: authScopeTree,
     delegation: data?.authDelegation
       ? (data.authDelegation as AuthCustomDelegation)
       : undefined,
-    loading,
+    delegationLoading,
+    scopeTreeLoading,
   }
 }
