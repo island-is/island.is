@@ -18,6 +18,16 @@ import { Features } from '@island.is/feature-flags'
 import { TransferOfVehicleOwnershipSchema } from './dataSchema'
 import { application } from './messages'
 
+const pruneInDaysAtMidnight = (application: Application, days: number) => {
+  const date = new Date(application.created)
+  date.setDate(date.getDate() + days)
+  // const utcDate = new Date(date.toUTCString()) // In case user is not on GMT
+  const midnightDate = new Date(date.toUTCString())
+  midnightDate.setHours(23, 59, 59)
+  // const timeToPrune = midnightDate.getTime() - utcDate.getTime()
+  return midnightDate // Time left of the day + 6 more days
+}
+
 const template: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
@@ -116,7 +126,12 @@ const template: ApplicationTemplate<
             },
           },
           progress: 0.25,
-          lifecycle: pruneAfterDays(7),
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: (application: Application) =>
+              pruneInDaysAtMidnight(application, 3),
+          },
           // onEntry: {
           //   apiModuleAction: ApiActions.addReview,
           //   shouldPersistToExternalData: true,

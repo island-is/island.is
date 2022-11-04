@@ -1,5 +1,12 @@
 import * as z from 'zod'
 
+export const UserInformationSchema = z.object({
+  nationalId: z.string(),
+  name: z.string(),
+  email: z.string(),
+  // phone: z.string().optional(),
+})
+
 export const TransferOfVehicleOwnershipSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   pickVehicle: z.object({
@@ -12,26 +19,9 @@ export const TransferOfVehicleOwnershipSchema = z.object({
     salePrice: z.string(),
     date: z.string(),
   }),
-  seller: z.object({
-    nationalId: z.string(),
-    name: z.string(),
-    email: z.string(),
-    // phone: z.string().optional(),
-  }),
-  coOwner: z.array(
-    z.object({
-      nationalId: z.string(),
-      name: z.string(),
-      email: z.string(),
-      // phone: z.string().optional(),
-    }),
-  ),
-  buyer: z.object({
-    nationalId: z.string(),
-    name: z.string(),
-    email: z.string(),
-    // phone: z.string().optional(),
-  }),
+  seller: UserInformationSchema,
+  coOwner: z.array(UserInformationSchema),
+  buyer: UserInformationSchema,
   coOwnerAndOperator: z.array(
     z.object({
       nationalId: z.string(),
