@@ -7,25 +7,25 @@ import {
   ServicePortalPath,
 } from '@island.is/service-portal/core'
 
-import { DelegationsToMe } from '../../components/delegations/DelegationsToMe'
-import { DelegationsFromMe } from '../../components/delegations/DelegationsFromMe'
+import { DelegationsIncoming } from '../../components/delegations/incoming/DelegationsIncoming'
+import { DelegationsOutgoing } from '../../components/delegations/outgoing/DelegationsOutgoing'
 import { useLocale, useNamespaces } from '@island.is/localization'
 
-const TAB_DELEGATION_TO_FROM_ID = '0'
-const TAB_DELEGATION_TO_ME_ID = '1'
-const DELEGATIONS_TO_ME_PATH = `${ServicePortalPath.MinarSidurPath}${ServicePortalPath.AccessControlDelegationsToMe}`
+const TAB_DELEGATION_OUTGOING_ID = '0'
+const TAB_DELEGATION_INCOMING_ID = '1'
+const DELEGATIONS_INCOMING_PATH = `${ServicePortalPath.MinarSidurPath}${ServicePortalPath.AccessControlDelegationsIncoming}`
 
 const AccessControl = () => {
   useNamespaces(['sp.settings-access-control', 'sp.access-control-delegations'])
   const { formatMessage } = useLocale()
   const history = useHistory()
   const location = useLocation()
-  const isDelegationToMe = location.pathname === DELEGATIONS_TO_ME_PATH
+  const isDelegationIncoming = location.pathname === DELEGATIONS_INCOMING_PATH
 
   const tabChangeHandler = (id: string) => {
     const url =
-      id === TAB_DELEGATION_TO_ME_ID
-        ? ServicePortalPath.AccessControlDelegationsToMe
+      id === TAB_DELEGATION_INCOMING_ID
+        ? ServicePortalPath.AccessControlDelegationsIncoming
         : ServicePortalPath.AccessControlDelegations
 
     // Make sure not to add to history stack the same route twice in a row
@@ -47,20 +47,20 @@ const AccessControl = () => {
       <Box marginTop={8}>
         <Tabs
           selected={
-            isDelegationToMe
-              ? TAB_DELEGATION_TO_ME_ID
-              : TAB_DELEGATION_TO_FROM_ID
+            isDelegationIncoming
+              ? TAB_DELEGATION_INCOMING_ID
+              : TAB_DELEGATION_OUTGOING_ID
           }
           onChange={tabChangeHandler}
           label={formatMessage(m.chooseDelegation)}
           tabs={[
             {
-              label: formatMessage(m.accessControlDelegationsFromMe),
-              content: <DelegationsFromMe />,
+              label: formatMessage(m.accessControlDelegationsOutgoing),
+              content: <DelegationsOutgoing />,
             },
             {
-              label: formatMessage(m.accessControlDelegationsToMe),
-              content: <DelegationsToMe />,
+              label: formatMessage(m.accessControlDelegationsIncoming),
+              content: <DelegationsIncoming />,
             },
           ]}
           contentBackground="white"

@@ -22,10 +22,13 @@ export enum ServicePortalPath {
   SettingsAccessControlAccess = '/stillingar/adgangsstyring/:delegationId',
 
   // Access Control
-  AccessControlDelegations = '/adgangsstyring/umbod',
-  AccessControlDelegationsToMe = '/adgangsstyring/umbod-til-min',
   AccessControlDelegationsGrant = '/adgangsstyring/umbod/veita',
+  // Access Control - From me
+  AccessControlDelegations = '/adgangsstyring/umbod',
   AccessControlDelegationAccess = '/adgangsstyring/umbod/:delegationId',
+  // Access Control - To me
+  AccessControlDelegationsIncoming = '/adgangsstyring/umbod-til-min',
+  AccessControlDelegationsIncomingAccess = '/adgangsstyring/umbod-til-min/:delegationId',
 
   SettingsPersonalInformation = '/stillingar/minar-stillingar',
   SettingsPersonalInformationEditPhoneNumber = '/stillingar/minar-stillingar/breyta-simanumeri',

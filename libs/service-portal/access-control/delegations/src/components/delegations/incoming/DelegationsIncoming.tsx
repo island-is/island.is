@@ -6,28 +6,28 @@ import {
   Box,
 } from '@island.is/island-ui/core'
 import { AuthCustomDelegation } from '@island.is/api/schema'
-import { DelegationsEmptyState } from './DelegationsEmptyState'
 import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
-import { useAuthDelegationsQuery } from '@island.is/service-portal/graphql'
-import { DomainOption, useDomains } from '../../hooks/useDomains'
-import { ALL_DOMAINS } from '../../constants/domain'
-import { DelegationsToMeHeader } from './DelegationsToMeHeader'
-import { AccessDeleteModal } from '../access/AccessDeleteModal'
-import { AccessCard } from '../access/AccessCard'
+import { useAuthActorDelegationsQuery } from '@island.is/service-portal/graphql'
+import { DomainOption, useDomains } from '../../../hooks/useDomains'
+import { ALL_DOMAINS } from '../../../constants/domain'
+import { DelegationsIncomingHeader } from './DelegationsIncomingHeader'
+import { AccessDeleteModal } from '../../access/AccessDeleteModal'
+import { AccessCard } from '../../access/AccessCard'
+import { DelegationsEmptyState } from '../DelegationsEmptyState'
 
 import { isDefined } from 'class-validator'
 
-export const DelegationsToMe = () => {
+export const DelegationsIncoming = () => {
   const { formatMessage, lang = 'is' } = useLocale()
   const { domainName, updateDomainName } = useDomains()
   const [delegation, setDelegation] = useState<AuthCustomDelegation | null>(
     null,
   )
-  const { data, loading, refetch, error } = useAuthDelegationsQuery({
+  const { data, loading, refetch, error } = useAuthActorDelegationsQuery({
     variables: {
       input: {
-        domain: domainName,
+        //domain: domainName,
       },
       lang,
     },
@@ -37,8 +37,8 @@ export const DelegationsToMe = () => {
   })
 
   const delegations = useMemo(
-    () => (data?.authDelegations as AuthCustomDelegation[]) ?? [],
-    [data?.authDelegations],
+    () => (data?.authActorDelegations as AuthCustomDelegation[]) ?? [],
+    [data?.authActorDelegations],
   )
 
   const onDomainChange = (option: DomainOption) => {
@@ -50,14 +50,14 @@ export const DelegationsToMe = () => {
     updateDomainName(domainName)
     refetch({
       input: {
-        domain: domainName,
+        //domain: domainName,
       },
     })
   }
 
   return (
     <Box display="flex" flexDirection="column" rowGap={4} marginTop={[1, 1, 8]}>
-      <DelegationsToMeHeader
+      <DelegationsIncomingHeader
         domainName={domainName}
         onDomainChange={onDomainChange}
       />
@@ -82,7 +82,7 @@ export const DelegationsToMe = () => {
                     onDelete={(delegation) => {
                       setDelegation(delegation)
                     }}
-                    variant="to"
+                    variant="incoming"
                   />
                 ),
             )}
@@ -98,7 +98,7 @@ export const DelegationsToMe = () => {
           setDelegation(null)
           refetch({
             input: {
-              domain: domainName,
+              //domain: domainName,
             },
           })
         }}

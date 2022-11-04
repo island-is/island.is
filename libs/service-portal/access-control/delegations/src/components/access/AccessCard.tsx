@@ -25,35 +25,35 @@ const isDateExpired = (date: string) => new Date(date) < new Date()
 interface AccessCardProps {
   delegation: AuthCustomDelegation
   onDelete(delegation: AuthCustomDelegation): void
-  variant?: 'from' | 'to'
+  variant?: 'outgoing' | 'incoming'
 }
 
 export const AccessCard = ({
   delegation,
   onDelete,
-  variant = 'from',
+  variant = 'outgoing',
 }: AccessCardProps) => {
   const { formatMessage } = useLocale()
   const history = useHistory()
   const tags = sortBy(
-    delegation.scopes.map((scope) => ({
+    delegation.scopes?.map((scope) => ({
       name: scope?.apiScope?.displayName || scope.displayName,
       isExpired: isDateExpired(scope.validTo),
     })),
     'name',
   )
-
-  const isFrom = variant === 'from'
-  const href = isFrom
+  const hasTags = tags.length > 0
+  const isOutgoing = variant === 'outgoing'
+  const href = isOutgoing
     ? `${ServicePortalPath.AccessControlDelegations}/${delegation.id}`
-    : `${ServicePortalPath.AccessControlDelegationsToMe}/${delegation.id}`
+    : `${ServicePortalPath.AccessControlDelegationsIncoming}/${delegation.id}`
 
   const isExpired = useMemo(() => {
     if (delegation.validTo) {
       return isDateExpired(delegation.validTo)
     }
 
-    return delegation.scopes.every((scope) => isDateExpired(scope.validTo))
+    return delegation.scopes?.every((scope) => isDateExpired(scope.validTo))
   }, [delegation])
 
   const getRightLabel = () => {
@@ -122,6 +122,11 @@ export const AccessCard = ({
     return <Tooltip placement="bottom" as="button" text={text} />
   }
 
+  const showActions =
+    isOutgoing ||
+    delegation.type === AuthDelegationType.Custom ||
+    delegation.type === AuthDelegationType.ProcurationHolder
+
   return (
     <Box
       paddingY={[2, 3, 4]}
@@ -129,37 +134,44 @@ export const AccessCard = ({
       border={isExpired ? 'disabled' : 'standard'}
       borderRadius="large"
     >
-      <Box display="flex" justifyContent="spaceBetween" alignItems="flexStart">
+      <Box
+        display="flex"
+        justifyContent="spaceBetween"
+        alignItems={isOutgoing ? 'flexStart' : 'center'}
+      >
         <Stack space="smallGutter">
           <Box display="flex" columnGap={2} alignItems="center">
-            {!isFrom && (
+            {!isOutgoing && (
               <>
                 {renderDelegationTypeLabel(delegation.type)}
-                <Text variant="eyebrow" color="blue300">
-                  {'|'}
-                </Text>
+                {delegation.domain && (
+                  <Text variant="eyebrow" color="blue300">
+                    {'|'}
+                  </Text>
+                )}
               </>
             )}
-            <Box display="flex" columnGap={1} alignItems="center">
-              {delegation.domain.organisationLogoUrl && (
-                <img
-                  src={delegation.domain.organisationLogoUrl}
-                  alt={`Mynd af ${delegation.domain.displayName}`}
-                  width="16"
-                />
-              )}
-
-              <Text variant="eyebrow" color="purple400">
-                {delegation.domain.displayName}
-              </Text>
-            </Box>
+            {delegation.domain && (
+              <Box display="flex" columnGap={1} alignItems="center">
+                {delegation.domain.organisationLogoUrl && (
+                  <img
+                    src={delegation.domain.organisationLogoUrl}
+                    alt={`Mynd af ${delegation.domain.displayName}`}
+                    width="16"
+                  />
+                )}
+                <Text variant="eyebrow" color="purple400">
+                  {delegation.domain?.displayName}
+                </Text>
+              </Box>
+            )}
           </Box>
           <Text variant="h3" as="h3" color={isExpired ? 'dark300' : 'dark400'}>
             {delegation?.to?.name}
           </Text>
         </Stack>
         <Inline space="smallGutter">
-          {!isFrom ? (
+          {!isOutgoing ? (
             renderInfo(delegation.type)
           ) : (
             <>
@@ -176,7 +188,7 @@ export const AccessCard = ({
           )}
         </Inline>
       </Box>
-      <Box marginTop={2}>
+      <Box marginTop={hasTags && showActions ? 2 : 0}>
         <Box
           display="flex"
           justifyContent="spaceBetween"
@@ -184,68 +196,72 @@ export const AccessCard = ({
           flexDirection={['column', 'row']}
           width="full"
         >
-          <Box width="full">
-            <Inline alignY="bottom" space={1}>
-              {tags.map((tag, index) => (
-                <Tag
-                  disabled
-                  key={index}
-                  variant={tag.isExpired ? 'disabled' : 'blue'}
-                >
-                  {tag.name}
-                </Tag>
-              ))}
-            </Inline>
-          </Box>
-          <Box
-            display="flex"
-            alignItems="center"
-            justifyContent={['spaceBetween', 'flexEnd']}
-            width="full"
-            marginTop={[3, 0]}
-          >
-            <Button
-              variant="text"
-              icon="trash"
-              iconType="outline"
-              size="small"
-              colorScheme="destructive"
-              onClick={() => onDelete(delegation)}
-            >
-              {formatMessage(m.buttonDestroy)}
-            </Button>
-            <Box marginLeft={3}>
-              {!isFrom ? (
-                <Button
-                  size="small"
-                  variant="utility"
-                  onClick={() => history.push(href)}
-                >
-                  {formatMessage(m.view)}
-                </Button>
-              ) : !isExpired ? (
-                <Button
-                  icon="pencil"
-                  iconType="outline"
-                  size="small"
-                  variant="utility"
-                  onClick={() => history.push(href)}
-                >
-                  {formatMessage(coreMessages.buttonEdit)}
-                </Button>
-              ) : (
-                <Button
-                  icon="reload"
-                  iconType="outline"
-                  size="small"
-                  variant="utility"
-                  onClick={() => history.push(href)}
-                >
-                  {formatMessage(m.buttonRenew)}
-                </Button>
-              )}
+          {hasTags && (
+            <Box width="full">
+              <Inline alignY="bottom" space={1}>
+                {tags.map((tag, index) => (
+                  <Tag
+                    disabled
+                    key={index}
+                    variant={tag.isExpired ? 'disabled' : 'blue'}
+                  >
+                    {tag.name}
+                  </Tag>
+                ))}
+              </Inline>
             </Box>
-          </Box>
+          )}
+          {showActions && (
+            <Box
+              display="flex"
+              alignItems="center"
+              justifyContent={['spaceBetween', 'flexEnd']}
+              width="full"
+              marginTop={[3, 0]}
+            >
+              <Button
+                variant="text"
+                icon="trash"
+                iconType="outline"
+                size="small"
+                colorScheme="destructive"
+                onClick={() => onDelete(delegation)}
+              >
+                {formatMessage(m.buttonDestroy)}
+              </Button>
+              <Box marginLeft={3}>
+                {!isOutgoing ? (
+                  <Button
+                    size="small"
+                    variant="utility"
+                    onClick={() => history.push(href)}
+                  >
+                    {formatMessage(m.view)}
+                  </Button>
+                ) : !isExpired ? (
+                  <Button
+                    icon="pencil"
+                    iconType="outline"
+                    size="small"
+                    variant="utility"
+                    onClick={() => history.push(href)}
+                  >
+                    {formatMessage(coreMessages.buttonEdit)}
+                  </Button>
+                ) : (
+                  <Button
+                    icon="reload"
+                    iconType="outline"
+                    size="small"
+                    variant="utility"
+                    onClick={() => history.push(href)}
+                  >
+                    {formatMessage(m.buttonRenew)}
+                  </Button>
+                )}
+              </Box>
+            </Box>
+          )}
         </Box>
       </Box>
     </Box>

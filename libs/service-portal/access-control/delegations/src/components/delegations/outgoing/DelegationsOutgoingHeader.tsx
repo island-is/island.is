@@ -3,20 +3,20 @@ import { useHistory } from 'react-router-dom'
 import { Box, Button, Input } from '@island.is/island-ui/core'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
-import * as styles from './DelegationsFromMeHeader.css'
-import { useDomains, DomainOption } from '../../hooks/useDomains'
-import { DelegationsDomainSelect } from './DelegationsDomainSelect'
+import { useDomains, DomainOption } from '../../../hooks/useDomains'
+import { DelegationsDomainSelect } from '../DelegationsDomainSelect'
+import * as styles from './DelegationsOutgoingHeader.css'
 
-interface DelegationsHeaderProps {
+interface DelegationsOutgoingHeaderProps {
   domainName?: string | null
   onDomainChange(domainOption: DomainOption): void
   onSearchChange(val: string): void
 }
 
-export const DelegationsFromMeHeader = ({
+export const DelegationsOutgoingHeader = ({
   onDomainChange,
   onSearchChange,
-}: DelegationsHeaderProps) => {
+}: DelegationsOutgoingHeaderProps) => {
   const { formatMessage } = useLocale()
   const history = useHistory()
   const { domainName } = useDomains()
@@ -56,7 +56,6 @@ export const DelegationsFromMeHeader = ({
           icon="search"
         />
       </Box>
-
       <Box className={styles.buttonContainer}>
         <Button onClick={onClickHandler} size="small" fluid>
           {formatMessage({

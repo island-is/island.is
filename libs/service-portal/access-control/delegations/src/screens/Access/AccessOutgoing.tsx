@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
 import add from 'date-fns/add'
 
 import {
@@ -13,34 +12,17 @@ import {
   useBreakpoint,
 } from '@island.is/island-ui/core'
 import { m } from '@island.is/service-portal/core'
-import { AuthCustomDelegation } from '@island.is/api/schema'
 import { NotFound } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { useAuthDelegationQuery } from '@island.is/service-portal/graphql'
 import { AccessForm } from '../../components/access/AccessForm'
+import { useDelegation } from '../../hooks/useDelegation'
 import * as styles from './Access.css'
 
 const Access = () => {
   useNamespaces(['sp.settings-access-control', 'sp.access-control-delegations'])
   const { md } = useBreakpoint()
   const { formatMessage, lang } = useLocale()
-  const { delegationId } = useParams<{
-    delegationId: string
-  }>()
-
-  const { data: delegationData, loading } = useAuthDelegationQuery({
-    fetchPolicy: 'network-only',
-    variables: {
-      input: {
-        delegationId,
-      },
-      lang,
-    },
-  })
-
-  const authDelegation = (delegationData || {})
-    .authDelegation as AuthCustomDelegation
-  const hasDelegationData = !!authDelegation
+  const { delegation, loading } = useDelegation()
 
   /**
    * If validity period is set then user cannot change scopes validity period individually
@@ -49,7 +31,7 @@ const Access = () => {
   const defaultDate = add(new Date(), { years: 1 })
 
   const [validityPeriod, setValidityPeriod] = useState(
-    authDelegation?.validTo ? new Date(authDelegation?.validTo) : null,
+    delegation?.validTo ? new Date(delegation?.validTo) : null,
   )
 
   const onValidityPeriodCheck = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -60,25 +42,24 @@ const Access = () => {
   }
 
   useEffect(() => {
-    const scopesCnt = authDelegation?.scopes ? authDelegation.scopes.length : 0
+    const scopesCnt = delegation?.scopes ? delegation.scopes.length : 0
 
-    if (authDelegation) {
-      if (authDelegation?.validTo && scopesCnt > 0) {
-        setEnableValidityPeriod(!!authDelegation.validTo)
-        setValidityPeriod(new Date(authDelegation.validTo))
+    if (delegation) {
+      if (delegation?.validTo && scopesCnt > 0) {
+        setEnableValidityPeriod(!!delegation.validTo)
+        setValidityPeriod(new Date(delegation.validTo))
       } else if (scopesCnt === 0) {
         // We do not wan't to set validity period to default date if there are scopes already set
         setEnableValidityPeriod(true)
         setValidityPeriod(defaultDate)
       }
     }
-  }, [authDelegation])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [delegation])
 
-  if (!loading && !delegationData?.authDelegation) {
+  if (!loading && !delegation) {
     return <NotFound />
   }
-
-  const labelHeaderText = `${authDelegation?.to?.name} • ${authDelegation?.domain.displayName}`
 
   return (
     <Box
@@ -99,8 +80,8 @@ const Access = () => {
                 defaultMessage: 'Réttindi',
               })}
             </Text>
-            {hasDelegationData ? (
-              <Text variant="eyebrow">{labelHeaderText}</Text>
+            {delegation ? (
+              <Text variant="eyebrow">{`${delegation?.to?.name} • ${delegation?.domain.displayName}`}</Text>
             ) : (
               <SkeletonLoader width="60%" height={21} />
             )}
@@ -126,7 +107,7 @@ const Access = () => {
                 })}
               </Text>
             )}
-            {hasDelegationData ? (
+            {delegation ? (
               <>
                 <Checkbox
                   name="validityPeriodCheck"
@@ -162,11 +143,8 @@ const Access = () => {
           </Box>
         </GridColumn>
       </GridRow>
-      {hasDelegationData ? (
-        <AccessForm
-          delegation={authDelegation}
-          validityPeriod={validityPeriod}
-        />
+      {delegation ? (
+        <AccessForm delegation={delegation} validityPeriod={validityPeriod} />
       ) : (
         <SkeletonLoader width="100%" height={250} />
       )}

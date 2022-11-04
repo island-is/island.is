@@ -37,3 +37,21 @@ export const AUTH_DELEGATIONS_QUERY = gql`
   }
   ${authCustomDelegationFragment}
 `
+
+// TODO: Remove this query when delegations to me are implemented
+export const AUTH_ACTOR_DELEGATIONS_QUERY = gql`
+  query AuthActorDelegations($input: AuthActorDelegationInput, $lang: String) {
+    authActorDelegations(input: $input) {
+      id
+      type
+      to {
+        nationalId
+        name
+      }
+      provider
+      ... on AuthCustomDelegation {
+        ...AuthCustomDelegationFragment
+      }
+    }
+  }
+`

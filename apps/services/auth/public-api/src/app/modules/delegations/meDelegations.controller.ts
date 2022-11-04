@@ -21,7 +21,6 @@ import {
   DelegationDirection,
   DelegationDTO,
   DelegationsService,
-  DelegationType,
   DelegationValidity,
   UpdateDelegationDTO,
 } from '@island.is/auth-api-lib'

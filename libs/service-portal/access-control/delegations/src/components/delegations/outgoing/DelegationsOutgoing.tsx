@@ -6,18 +6,18 @@ import {
   Box,
 } from '@island.is/island-ui/core'
 import { AuthCustomDelegation } from '@island.is/api/schema'
-import { DelegationsFromMeHeader } from './DelegationsFromMeHeader'
-import { DelegationsEmptyState } from './DelegationsEmptyState'
 import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
-import { AccessDeleteModal } from '../access/AccessDeleteModal'
-import { AccessCard } from '../access/AccessCard'
 import { isDefined } from '@island.is/shared/utils'
 import { useAuthDelegationsQuery } from '@island.is/service-portal/graphql'
-import { DomainOption, useDomains } from '../../hooks/useDomains'
-import { ALL_DOMAINS } from '../../constants/domain'
+import { AccessCard } from '../../access/AccessCard'
+import { AccessDeleteModal } from '../../access/AccessDeleteModal'
+import { DomainOption, useDomains } from '../../../hooks/useDomains'
+import { ALL_DOMAINS } from '../../../constants/domain'
+import { DelegationsEmptyState } from '../DelegationsEmptyState'
+import { DelegationsOutgoingHeader } from './DelegationsOutgoingHeader'
 
-export const DelegationsFromMe = () => {
+export const DelegationsOutgoing = () => {
   const { formatMessage, lang = 'is' } = useLocale()
   const [searchValue, setSearchValue] = useState('')
   const [delegation, setDelegation] = useState<AuthCustomDelegation | null>(
@@ -80,7 +80,7 @@ export const DelegationsFromMe = () => {
         rowGap={4}
         marginTop={[1, 1, 8]}
       >
-        <DelegationsFromMeHeader
+        <DelegationsOutgoingHeader
           domainName={domainName}
           onDomainChange={onDomainChange}
           onSearchChange={setSearchValue}

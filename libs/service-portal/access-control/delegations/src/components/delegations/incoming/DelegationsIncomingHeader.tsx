@@ -1,10 +1,10 @@
 import { Box, Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import * as styles from './DelegationsToMeHeader.css'
-import { DomainOption } from '../../hooks/useDomains'
-import { DelegationsDomainSelect } from './DelegationsDomainSelect'
+import { DomainOption } from '../../../hooks/useDomains'
+import { DelegationsDomainSelect } from '../DelegationsDomainSelect'
+import * as styles from './DelegationsIncomingHeader.css'
 
-interface DelegationsHeaderProps {
+interface DelegationsIncomingHeaderProps {
   domainName?: string | null
   onDomainChange(domainOption: DomainOption): void
   onSearchChange?(val: string): void
@@ -12,9 +12,9 @@ interface DelegationsHeaderProps {
   showFilter?: boolean
 }
 
-export const DelegationsToMeHeader = ({
+export const DelegationsIncomingHeader = ({
   onDomainChange,
-}: DelegationsHeaderProps) => {
+}: DelegationsIncomingHeaderProps) => {
   const { formatMessage } = useLocale()
 
   return (
