@@ -40,7 +40,6 @@ import {
 import * as styles from './SearchInput.css'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { TestSupport } from '@island.is/island-ui/utils'
-import { usePlausible } from '@island.is/web/hooks'
 
 const DEBOUNCE_TIMER = 150
 const STACK_WIDTH = 400
@@ -490,8 +489,6 @@ const Results = ({
                     },
                   })
                   return (
-                    // TODO track search and click for plausble on these links
-
                     <Link
                       key={item.id}
                       {...itemProps}

@@ -75,7 +75,7 @@ export class ContentSearchService {
     )
 
     // intercept highlights
-    let items = body.hits.hits.map((item) =>
+    const items = body.hits.hits.map((item) =>
       JSON.parse(item._source.response ?? '[]'),
     )
 
