@@ -6,7 +6,6 @@ import {
   Features,
   Hash,
   IngressForEnv,
-  InitContainersForEnv,
   MissingSetting,
   PostgresInfo,
   PostgresInfoForEnv,
@@ -16,11 +15,7 @@ import {
 } from './types/input-types'
 import { EnvironmentConfig } from './types/charts'
 import { FeatureNames } from './features'
-import {
-  ContainerSecrets,
-  SerializeErrors,
-  SerializeSuccess,
-} from './types/output-types'
+import { ContainerSecrets, SerializeErrors } from './types/output-types'
 
 export const processService = (
   service: Service,
@@ -259,11 +254,10 @@ function getEnvPostgres(
   env: EnvironmentConfig,
 ): PostgresInfoForEnv {
   const { host, ...rest } = { host: 'default', ...postgres }
-  const result = {
+  return {
     ...rest,
     host: postgres.host?.[env.type],
   }
-  return result
 }
 
 function addFeaturesConfig(
