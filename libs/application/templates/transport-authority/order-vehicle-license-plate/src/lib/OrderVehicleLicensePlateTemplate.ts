@@ -13,7 +13,6 @@ import {
   pruneAfterDays,
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
-import * as z from 'zod'
 import { m } from './messagesx'
 import { Features } from '@island.is/feature-flags'
 import { ApiActions } from '../shared'

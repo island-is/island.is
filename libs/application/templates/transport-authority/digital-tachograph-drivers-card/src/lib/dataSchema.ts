@@ -1,4 +1,4 @@
-import * as z from 'zod'
+import { z } from 'zod'
 
 export const DigitalTachographDriversCardSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),

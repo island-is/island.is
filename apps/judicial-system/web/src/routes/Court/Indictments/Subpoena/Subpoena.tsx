@@ -134,7 +134,9 @@ const Subpoena: React.FC = () => {
       </FormContentContainer>
       {modalVisible && (
         <Modal
-          title={formatMessage(strings.modalTitle)}
+          title={formatMessage(strings.modalTitle, {
+            courtDateHasChanged,
+          })}
           onPrimaryButtonClick={() => {
             sendNotification(workingCase.id, NotificationType.COURT_DATE)
             router.push(

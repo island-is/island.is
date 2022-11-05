@@ -7,7 +7,6 @@ import is from 'date-fns/locale/is'
 import parseISO from 'date-fns/parseISO'
 import { useLocale } from '@island.is/localization'
 import { information } from '../../../lib/messages'
-
 import { ReviewGroup } from '../../ReviewGroup'
 
 export const VehicleSection: FC<FieldBaseProps> = ({ application }) => {

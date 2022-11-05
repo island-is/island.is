@@ -1,5 +1,5 @@
 import { UserInformationSchema } from '../lib/dataSchema'
-import * as z from 'zod'
+import { z } from 'zod'
 
 export interface ReviewScreenProps {
   setStep: (s: ReviewState) => void
