@@ -1,17 +1,35 @@
 import { Service } from './types/input-types'
-import { DependencyTracer } from './kubernetes'
 import { HelmOutput } from './output-generators/map-to-helm-values'
 import { DeploymentRuntime, EnvironmentConfig } from './types/charts'
 import { DockerComposeOutput } from './output-generators/map-to-docker-compose'
 
 const MAX_LEVEL_DEPENDENCIES = 20
 
+export class DependencyTracer implements DeploymentRuntime {
+  env: EnvironmentConfig // TODO: get rid of this?
+  constructor(env: EnvironmentConfig) {
+    this.env = env
+  }
+
+  deps: { [name: string]: Set<Service> } = {}
+
+  ref(from: Service, to: Service | string) {
+    if (typeof to === 'object') {
+      const dependecies = this.deps[to.serviceDef.name] ?? new Set<Service>()
+      this.deps[to.serviceDef.name] = dependecies.add(from)
+      return 'tracer'
+    } else {
+      return to
+    }
+  }
+}
+
 export const renderers = {
   helm: HelmOutput,
   'docker-compose': DockerComposeOutput,
 }
 
-export const discoverDependencies = async (
+const discoverDependencies = async (
   runtime: DeploymentRuntime,
   services: Service[],
 ) => {

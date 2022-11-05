@@ -1,5 +1,5 @@
 import { service } from './dsl'
-import { Kubernetes } from './kubernetes'
+import { Kubernetes } from './kubernetes-runtime'
 import { serializeService } from './output-generators/map-to-helm-values'
 import {
   SerializeErrors,

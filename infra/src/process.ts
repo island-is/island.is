@@ -1,4 +1,4 @@
-import { reformatYaml } from './dsl/yaml'
+import { reformatYaml } from './dsl/file-formats/yaml'
 
 var readline = require('readline')
 var rl = readline.createInterface({

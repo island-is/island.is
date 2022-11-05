@@ -1,8 +1,9 @@
 import { ref, service } from './dsl'
-import { Kubernetes } from './kubernetes'
+import { Kubernetes } from './kubernetes-runtime'
 import { EnvironmentConfig } from './types/charts'
-import { generateYamlForFeature } from './feature-deployments'
+import { getFeatureAffectedServices } from './feature-deployments'
 import { ServiceHelm, ValueFile } from './types/output-types'
+import { renderHelmValueFile } from './output-generators/render-helm-value-file'
 
 const Dev: EnvironmentConfig = {
   auroraHost: 'a',
@@ -49,11 +50,15 @@ describe('Feature-deployment support', () => {
       })
       .postgres()
     const chart = new Kubernetes(Dev)
-    values = await generateYamlForFeature(
+
+    values = await renderHelmValueFile(
       chart,
-      [apiService, dependencyA, dependencyB],
-      [dependencyA, dependencyC],
-      [dependencyC],
+      await getFeatureAffectedServices(
+        chart,
+        [apiService, dependencyA, dependencyB],
+        [dependencyA, dependencyC],
+        [dependencyC],
+      ),
     )
   })
 

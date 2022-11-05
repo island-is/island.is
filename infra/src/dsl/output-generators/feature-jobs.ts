@@ -1,4 +1,4 @@
-import { Kubernetes } from '../kubernetes'
+import { Kubernetes } from '../kubernetes-runtime'
 import { Service } from '../types/input-types'
 import { renderers } from '../service-dependencies'
 import { resolveDbHost } from './map-to-helm-values'

@@ -1,5 +1,5 @@
 import { ref, service } from './dsl'
-import { Kubernetes } from './kubernetes'
+import { Kubernetes } from './kubernetes-runtime'
 import { SerializeSuccess, ServiceHelm, ValueFile } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
 import { renderers } from './service-dependencies'
@@ -31,7 +31,7 @@ describe('Egress', () => {
       sut,
       uberChart,
     )) as SerializeSuccess<ServiceHelm>
-    render = await renderHelmValueFile(uberChart, sut)
+    render = await renderHelmValueFile(uberChart, [sut])
   })
 
   it('missing variables cause errors', () => {

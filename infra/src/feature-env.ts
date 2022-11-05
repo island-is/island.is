@@ -3,7 +3,7 @@ import { hideBin } from 'yargs/helpers'
 import AWS from 'aws-sdk'
 
 import { generateJobsForFeature } from './dsl/output-generators/feature-jobs'
-import { Kubernetes } from './dsl/kubernetes'
+import { Kubernetes } from './dsl/kubernetes-runtime'
 import { Envs } from './environments'
 import {
   Services,
@@ -14,8 +14,8 @@ import { Services as IDSServices } from './uber-charts/identity-server'
 import { EnvironmentServices } from './dsl/types/charts'
 import { ServiceHelm } from './dsl/types/output-types'
 import { Deployments } from './uber-charts/all-charts'
-import { generateYamlForFeature } from './dsl/feature-deployments'
-import { dumpJobYaml, dumpServiceHelm } from './dsl/yaml'
+import { getFeatureAffectedServices } from './dsl/feature-deployments'
+import { dumpJobYaml, dumpServiceHelm } from './dsl/file-formats/yaml'
 
 type ChartName = 'islandis' | 'identity-server'
 
@@ -107,7 +107,7 @@ yargs(hideBin(process.argv))
     () => {},
     async (argv: Arguments) => {
       const { ch, habitat, affectedServices } = parseArguments(argv)
-      const featureYaml = await generateYamlForFeature(
+      const featureYaml = await getFeatureAffectedServices(
         ch,
         habitat,
         affectedServices.slice(),
@@ -122,7 +122,7 @@ yargs(hideBin(process.argv))
     () => {},
     async (argv: Arguments) => {
       const { ch, habitat, affectedServices } = parseArguments(argv)
-      const featureYaml = await generateYamlForFeature(
+      const featureYaml = await getFeatureAffectedServices(
         ch,
         habitat,
         affectedServices.slice(),

@@ -1,5 +1,5 @@
 import { json, service } from './dsl'
-import { Kubernetes } from './kubernetes'
+import { Kubernetes } from './kubernetes-runtime'
 import { MissingSetting } from './types/input-types'
 import {
   SerializeErrors,

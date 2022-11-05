@@ -1,6 +1,6 @@
 import { dump, load } from 'js-yaml'
-import { FeatureKubeJob, ServiceHelm, ValueFile } from './types/output-types'
-import { Kubernetes } from './kubernetes'
+import { FeatureKubeJob, ServiceHelm, ValueFile } from '../types/output-types'
+import { Kubernetes } from '../kubernetes-runtime'
 
 export const dumpOpts = {
   sortKeys: true,

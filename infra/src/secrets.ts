@@ -1,7 +1,7 @@
 import AWS from 'aws-sdk'
 import yargs from 'yargs'
 import { OpsEnv } from './dsl/types/input-types'
-import { Kubernetes } from './dsl/kubernetes'
+import { Kubernetes } from './dsl/kubernetes-runtime'
 import { Envs } from './environments'
 import { serializeService } from './dsl/output-generators/map-to-helm-values'
 import {

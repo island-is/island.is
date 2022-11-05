@@ -1,6 +1,6 @@
 import { Service } from './types/input-types'
 import { OutputFormat, ServiceHelm } from './types/output-types'
-import { Kubernetes } from './kubernetes'
+import { Kubernetes } from './kubernetes-runtime'
 
 export function processForFeatureDeployment(
   services: Service[],

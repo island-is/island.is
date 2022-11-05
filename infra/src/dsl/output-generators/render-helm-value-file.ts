@@ -1,4 +1,4 @@
-import { Kubernetes } from '../kubernetes'
+import { Kubernetes } from '../kubernetes-runtime'
 import { Service } from '../types/input-types'
 import { ServiceHelm, Services, ValueFile } from '../types/output-types'
 import { renderers } from '../service-dependencies'
@@ -6,7 +6,7 @@ import { processForFeatureDeployment } from '../process-for-feature-deployment'
 
 export const renderHelmValueFile = async (
   uberChart: Kubernetes,
-  ...services: Service[]
+  services: Service[],
 ): Promise<ValueFile<ServiceHelm>> => {
   const outputFormat = renderers.helm
   if (uberChart.env.feature) {

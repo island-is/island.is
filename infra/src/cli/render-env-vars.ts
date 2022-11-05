@@ -1,4 +1,4 @@
-import { Kubernetes } from '../dsl/kubernetes'
+import { Kubernetes } from '../dsl/kubernetes-runtime'
 import { Envs } from '../environments'
 import { Charts } from '../uber-charts/all-charts'
 import { renderHelmValueFile } from '../dsl/output-generators/render-helm-value-file'
@@ -26,7 +26,7 @@ export const renderServiceEnvVars = async (service: string) => {
   const services = await Promise.all(
     Object.values(Charts).map(
       async (chart) =>
-        (await renderHelmValueFile(uberChart, ...chart.dev)).services,
+        (await renderHelmValueFile(uberChart, chart.dev)).services,
     ),
   )
 
