@@ -3,7 +3,7 @@ import yargs from 'yargs'
 import { OpsEnv } from './dsl/types/input-types'
 import { Kubernetes } from './dsl/kubernetes'
 import { Envs } from './environments'
-import { serializeService } from './dsl/map-to-helm-values'
+import { serializeService } from './dsl/output-generators/map-to-helm-values'
 import {
   ChartName,
   Charts,

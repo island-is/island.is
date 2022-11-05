@@ -2,9 +2,9 @@ import {
   EnvironmentVariablesForEnv,
   Service,
   ValueSource,
-} from './types/input-types'
-import { DeploymentRuntime } from './types/charts'
-import { ContainerEnvironmentVariables } from './types/output-types'
+} from '../types/input-types'
+import { DeploymentRuntime } from '../types/charts'
+import { ContainerEnvironmentVariables } from '../types/output-types'
 
 export const resolveWithMaxLength = (str: string, max: number) => {
   if (str.length > max) {

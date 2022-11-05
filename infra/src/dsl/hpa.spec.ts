@@ -1,8 +1,8 @@
 import { service } from './dsl'
 import { Kubernetes } from './kubernetes'
-import { serializeService } from './map-to-helm-values'
 import { SerializeSuccess, ServiceHelm } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
+import { renderers } from './service-dependencies'
 
 const Staging: EnvironmentConfig = {
   auroraHost: 'a',
@@ -20,7 +20,7 @@ const Staging: EnvironmentConfig = {
 describe('HPA definitions', () => {
   it('Support classic replicaCount definition', async () => {
     const sut = service('api')
-    const result = (await serializeService(
+    const result = (await renderers.helm.serializeService(
       sut,
       new Kubernetes(Staging),
     )) as SerializeSuccess<ServiceHelm>
@@ -47,7 +47,7 @@ describe('HPA definitions', () => {
       default: 2,
       scalingMagicNumber: 5,
     })
-    const result = (await serializeService(
+    const result = (await renderers.helm.serializeService(
       sut,
       new Kubernetes(Staging),
     )) as SerializeSuccess<ServiceHelm>

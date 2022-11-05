@@ -7,7 +7,7 @@ import {
   Service,
   ServiceDefinitionForEnv,
   ValueSource,
-} from './types/input-types'
+} from '../types/input-types'
 import {
   ContainerRunHelm,
   OutputFormat,
@@ -16,9 +16,9 @@ import {
   SerializeMethod,
   SerializeSuccess,
   ServiceHelm,
-} from './types/output-types'
-import { DeploymentRuntime, EnvironmentConfig } from './types/charts'
-import { processService } from './pre-process-service'
+} from '../types/output-types'
+import { DeploymentRuntime, EnvironmentConfig } from '../types/charts'
+import { prepareServiceForEnv } from '../service-to-environment/pre-process-service'
 import { checksAndValidations } from './errors'
 import {
   postgresIdentifier,
@@ -32,14 +32,14 @@ import {
  * @param service Our service definition
  * @param deployment Uber chart in a specific environment the service will be part of
  */
-export const serializeService: SerializeMethod<ServiceHelm> = async (
+const serializeService: SerializeMethod<ServiceHelm> = async (
   service: Service,
   deployment: DeploymentRuntime,
 ) => {
   const { addToErrors, mergeObjects, getErrors } = checksAndValidations(
     service.serviceDef.name,
   )
-  const processedService = processService(service, deployment.env)
+  const processedService = prepareServiceForEnv(service, deployment.env)
   if (processedService.type === 'success') {
     const serviceDef = processedService.serviceDef
     const {
@@ -91,11 +91,6 @@ export const serializeService: SerializeMethod<ServiceHelm> = async (
 
     // resources
     result.resources = serviceDef.resources
-    if (serviceDef.env.NODE_OPTIONS) {
-      throw new Error(
-        'NODE_OPTIONS already set. At the moment of writing, there is no known use case for this, so this might need to be revisited in the future.',
-      )
-    }
 
     // replicas
     if (serviceDef.replicaCount) {
@@ -421,10 +416,7 @@ const hostFullName = (host: string, env: EnvironmentConfig) => {
 const internalHostFullName = (host: string, env: EnvironmentConfig) =>
   host.indexOf('.') < 0 ? `${host}.internal.${env.domain}` : host
 
-export const serviceMockDef = (options: {
-  namespace: string
-  target: string
-}) => {
+const serviceMockDef = (options: { namespace: string; target: string }) => {
   const result: ServiceHelm = {
     enabled: true,
     grantNamespaces: [],

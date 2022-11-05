@@ -1,12 +1,13 @@
 import { service } from './dsl'
 import { Kubernetes } from './kubernetes'
-import { serializeService } from './map-to-helm-values'
+import { serializeService } from './output-generators/map-to-helm-values'
 import {
   SerializeErrors,
   SerializeSuccess,
   ServiceHelm,
 } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
+import { renderers } from './service-dependencies'
 
 const Staging: EnvironmentConfig = {
   auroraHost: 'a',
@@ -26,7 +27,7 @@ describe('Postgres', () => {
     const sut = service('service-portal-api').postgres()
     let result: SerializeSuccess<ServiceHelm>
     beforeEach(async () => {
-      result = (await serializeService(
+      result = (await renderers.helm.serializeService(
         sut,
         new Kubernetes(Staging),
       )) as SerializeSuccess<ServiceHelm>
@@ -49,7 +50,7 @@ describe('Postgres', () => {
       .env({ DB_USER: 'aaa', DB_HOST: 'a', DB_NAME: '' })
     let result: SerializeErrors
     beforeEach(async () => {
-      result = (await serializeService(
+      result = (await renderers.helm.serializeService(
         sut,
         new Kubernetes(Staging),
       )) as SerializeErrors

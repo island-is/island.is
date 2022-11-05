@@ -1,8 +1,8 @@
 import { service, ServiceBuilder } from './dsl'
 import { Kubernetes } from './kubernetes'
-import { serializeService } from './map-to-helm-values'
 import { SerializeSuccess, ServiceHelm } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
+import { renderers } from './service-dependencies'
 
 const Staging: EnvironmentConfig = {
   auroraHost: 'a',
@@ -34,7 +34,7 @@ describe('Volume Support', () => {
 
   let stagingWithVolumes: SerializeSuccess<ServiceHelm>
   beforeEach(async () => {
-    stagingWithVolumes = (await serializeService(
+    stagingWithVolumes = (await renderers.helm.serializeService(
       sut,
       new Kubernetes(Staging),
     )) as SerializeSuccess<ServiceHelm>
@@ -61,7 +61,7 @@ describe('Volume Support', () => {
       accessModes: 'ReadOnly',
       mountPath: '/storage_one',
     })
-    const stagingWithDefaultVolume = (await serializeService(
+    const stagingWithDefaultVolume = (await renderers.helm.serializeService(
       sut,
       new Kubernetes(Staging),
     )) as SerializeSuccess<ServiceHelm>

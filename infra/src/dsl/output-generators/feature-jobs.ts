@@ -1,9 +1,10 @@
-import { Kubernetes } from './kubernetes'
-import { Service } from './types/input-types'
-import { processForFeatureDeployment, renderers } from './process-services'
+import { Kubernetes } from '../kubernetes'
+import { Service } from '../types/input-types'
+import { renderers } from '../service-dependencies'
 import { resolveDbHost } from './map-to-helm-values'
-import { FeatureKubeJob } from './types/output-types'
+import { FeatureKubeJob } from '../types/output-types'
 import { resolveWithMaxLength } from './serialization-helpers'
+import { processForFeatureDeployment } from '../process-for-feature-deployment'
 
 export const generateJobsForFeature = async (
   uberChart: Kubernetes,

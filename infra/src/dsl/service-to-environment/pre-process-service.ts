@@ -12,12 +12,12 @@ import {
   Service,
   ServiceDefinitionForEnv,
   ValueType,
-} from './types/input-types'
-import { EnvironmentConfig } from './types/charts'
-import { FeatureNames } from './features'
-import { ContainerSecrets, SerializeErrors } from './types/output-types'
+} from '../types/input-types'
+import { EnvironmentConfig } from '../types/charts'
+import { FeatureNames } from '../features'
+import { ContainerSecrets, SerializeErrors } from '../types/output-types'
 
-export const processService = (
+export const prepareServiceForEnv = (
   service: Service,
   env: EnvironmentConfig,
 ):

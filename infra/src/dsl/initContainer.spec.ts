@@ -1,12 +1,12 @@
 import { service } from './dsl'
 import { Kubernetes } from './kubernetes'
-import { serializeService } from './map-to-helm-values'
 import {
   SerializeErrors,
   SerializeSuccess,
   ServiceHelm,
 } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
+import { renderers } from './service-dependencies'
 
 const Staging: EnvironmentConfig = {
   auroraHost: 'a',
@@ -53,7 +53,7 @@ describe('Init-container definitions', () => {
       },
       postgres: {},
     })
-    const result = (await serializeService(
+    const result = (await renderers.helm.serializeService(
       sut,
       new Kubernetes(Staging),
     )) as SerializeSuccess<ServiceHelm>
@@ -100,7 +100,7 @@ describe('Init-container definitions', () => {
     const sut = service('api').initContainer({
       containers: [],
     })
-    const result = (await serializeService(
+    const result = (await renderers.helm.serializeService(
       sut,
       new Kubernetes(Staging),
     )) as SerializeErrors

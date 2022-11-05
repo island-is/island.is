@@ -1,7 +1,7 @@
-import { renderHelmValueFile } from '../dsl/process-services'
 import { Kubernetes } from '../dsl/kubernetes'
 import { Envs } from '../environments'
 import { Charts } from '../uber-charts/all-charts'
+import { renderHelmValueFile } from '../dsl/output-generators/render-helm-value-file'
 
 const EXCLUDED_ENVIRONMENT_NAMES = [
   'DB_PASSWORD',

@@ -1,13 +1,13 @@
 import { service } from './dsl'
 import { Kubernetes } from './kubernetes'
 import { MissingSetting } from './types/input-types'
-import { serializeService } from './map-to-helm-values'
 import {
   SerializeErrors,
   SerializeSuccess,
   ServiceHelm,
 } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
+import { renderers } from './service-dependencies'
 
 const Staging: EnvironmentConfig = {
   auroraHost: 'a',
@@ -32,7 +32,7 @@ describe('Extra attributes', () => {
       dev: MissingSetting,
       prod: MissingSetting,
     })
-    const serviceDef = (await serializeService(
+    const serviceDef = (await renderers.helm.serializeService(
       sut,
       new Kubernetes(Staging),
     )) as SerializeSuccess<ServiceHelm>
@@ -47,7 +47,7 @@ describe('Extra attributes', () => {
       dev: MissingSetting,
       prod: MissingSetting,
     })
-    const serviceDef = (await serializeService(
+    const serviceDef = (await renderers.helm.serializeService(
       sut,
       new Kubernetes(Staging),
     )) as SerializeErrors

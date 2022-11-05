@@ -1,60 +1,14 @@
 import { Service } from './types/input-types'
 import { GRAPHQL_API_URL_ENV_VAR_NAME } from '../../../apps/application-system/api/infra/application-system-api'
 import { Kubernetes } from './kubernetes'
-import {
-  getWithDependantServices,
-  renderHelmValueFile,
-} from './process-services'
+import { getWithDependantServices } from './service-dependencies'
 import { DockerComposeService, ValueFile } from './types/output-types'
 import { dump } from 'js-yaml'
 import { dumpOpts } from './yaml'
 import { EnvironmentConfig } from './types/charts'
-
-// export const getPostgresInfoForFeature = (
-//   feature: string,
-//   postgres?: PostgresInfo,
-// ): PostgresInfo | undefined => {
-//   if (postgres) {
-//     const postgresCopy = { ...postgres }
-//     postgresCopy.passwordSecret = postgres.passwordSecret?.replace(
-//       '/k8s/',
-//       `/k8s/feature-${feature}-`,
-//     )
-//     postgresCopy.name = resolveWithMaxLength(
-//       `feature_${postgresIdentifier(feature)}_${postgres.name}`,
-//       60,
-//     )
-//     postgresCopy.username = resolveWithMaxLength(
-//       `feature_${postgresIdentifier(feature)}_${postgres.username}`,
-//       60,
-//     )
-//     return postgresCopy
-//   }
-//   return postgres
-// }
+import { renderHelmValueFile } from './output-generators/render-helm-value-file'
 
 export function featureSpecificServiceDef(featureSpecificServices: Service[]) {
-  // featureSpecificServices.forEach((s) => {
-  //   Object.entries(s.serviceDef.ingress).forEach(([name, ingress]) => {
-  //     if (!Array.isArray(ingress.host.dev)) {
-  //       ingress.host.dev = [ingress.host.dev]
-  //     }
-  //     ingress.host.dev = ingress.host.dev.map((host) => `${feature}-${host}`)
-  //   })
-  // })
-  // featureSpecificServices.forEach((s) => {
-  //   s.serviceDef.postgres = getPostgresInfoForFeature(
-  //     feature,
-  //     s.serviceDef.postgres,
-  //   )
-  //   if (s.serviceDef.initContainers) {
-  //     s.serviceDef.initContainers.postgres = getPostgresInfoForFeature(
-  //       feature,
-  //       s.serviceDef.initContainers.postgres,
-  //     )
-  //   }
-  // })
-
   const hackForThatOneCircularDependency = () => {
     const isApiServicePresent = featureSpecificServices.some(
       (s) => s.serviceDef.name === 'api',

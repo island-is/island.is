@@ -1,9 +1,9 @@
 import { service } from './dsl'
 import { Kubernetes } from './kubernetes'
-import { serializeService } from './map-to-helm-values'
 import { SerializeSuccess, ServiceHelm } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
 import { XroadConf } from './xroad'
+import { renderers } from './service-dependencies'
 
 const Dev: EnvironmentConfig = {
   auroraHost: 'a',
@@ -37,7 +37,7 @@ describe('X-road support', () => {
   )
   let svc: SerializeSuccess<ServiceHelm>
   beforeEach(async () => {
-    svc = (await serializeService(
+    svc = (await renderers.helm.serializeService(
       sut,
       new Kubernetes(Dev),
     )) as SerializeSuccess<ServiceHelm>

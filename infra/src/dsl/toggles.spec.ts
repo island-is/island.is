@@ -1,6 +1,5 @@
 import { service } from './dsl'
 import { Kubernetes } from './kubernetes'
-import { serializeService } from './map-to-helm-values'
 import {
   SerializeErrors,
   SerializeSuccess,
@@ -9,6 +8,7 @@ import {
 import { EnvironmentConfig } from './types/charts'
 import { MissingSetting } from './types/input-types'
 import { FeatureNames } from './features'
+import { renderers } from './service-dependencies'
 
 const Staging: EnvironmentConfig = {
   auroraHost: 'a',
@@ -70,14 +70,14 @@ describe('Server-side toggles', () => {
   let stagingWithFeatures: SerializeSuccess<ServiceHelm>
   let stagingNoFeatures: SerializeSuccess<ServiceHelm>
   beforeEach(async () => {
-    stagingWithFeatures = (await serializeService(
+    stagingWithFeatures = (await renderers.helm.serializeService(
       sut,
       new Kubernetes({
         ...Staging,
         featuresOn: [FeatureNames.testing],
       }),
     )) as SerializeSuccess<ServiceHelm>
-    stagingNoFeatures = (await serializeService(
+    stagingNoFeatures = (await renderers.helm.serializeService(
       sut,
       new Kubernetes(Staging),
     )) as SerializeSuccess<ServiceHelm>
@@ -142,14 +142,14 @@ describe('Server-side toggles', () => {
     let prod: SerializeErrors
     let prodNoFeature: SerializeSuccess<ServiceHelm>
     beforeEach(async () => {
-      prod = (await serializeService(
+      prod = (await renderers.helm.serializeService(
         sut,
         new Kubernetes({
           ...Prod,
           featuresOn: [FeatureNames.testing],
         }),
       )) as SerializeErrors
-      prodNoFeature = (await serializeService(
+      prodNoFeature = (await renderers.helm.serializeService(
         sut,
         new Kubernetes(Prod),
       )) as SerializeSuccess<ServiceHelm>
@@ -198,14 +198,14 @@ describe('Server-side toggles', () => {
     let prod: SerializeErrors
     let prodNoFeature: SerializeSuccess<ServiceHelm>
     beforeEach(async () => {
-      prod = (await serializeService(
+      prod = (await renderers.helm.serializeService(
         sut,
         new Kubernetes({
           ...Prod,
           featuresOn: [FeatureNames.testing],
         }),
       )) as SerializeErrors
-      prodNoFeature = (await serializeService(
+      prodNoFeature = (await renderers.helm.serializeService(
         sut,
         new Kubernetes(Prod),
       )) as SerializeSuccess<ServiceHelm>

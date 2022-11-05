@@ -2,7 +2,7 @@ import yargs from 'yargs'
 import { hideBin } from 'yargs/helpers'
 import AWS from 'aws-sdk'
 
-import { generateJobsForFeature } from './dsl/feature-jobs'
+import { generateJobsForFeature } from './dsl/output-generators/feature-jobs'
 import { Kubernetes } from './dsl/kubernetes'
 import { Envs } from './environments'
 import {

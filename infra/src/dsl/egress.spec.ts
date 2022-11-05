@@ -1,9 +1,9 @@
 import { ref, service } from './dsl'
 import { Kubernetes } from './kubernetes'
-import { serializeService } from './map-to-helm-values'
 import { SerializeSuccess, ServiceHelm, ValueFile } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
-import { renderHelmValueFile } from './process-services'
+import { renderers } from './service-dependencies'
+import { renderHelmValueFile } from './output-generators/render-helm-value-file'
 
 const Staging: EnvironmentConfig = {
   auroraHost: 'a',
@@ -27,7 +27,7 @@ describe('Egress', () => {
   let serviceDef: SerializeSuccess<ServiceHelm>
   let render: ValueFile<ServiceHelm>
   beforeEach(async () => {
-    serviceDef = (await serializeService(
+    serviceDef = (await renderers.helm.serializeService(
       sut,
       uberChart,
     )) as SerializeSuccess<ServiceHelm>

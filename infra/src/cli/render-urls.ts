@@ -1,4 +1,3 @@
-import { renderHelmValueFile } from '../dsl/process-services'
 import { OpsEnv } from '../dsl/types/input-types'
 import { ServiceHelm } from '../dsl/types/output-types'
 import { Kubernetes } from '../dsl/kubernetes'
@@ -9,6 +8,7 @@ import {
   Charts,
   Deployments,
 } from '../uber-charts/all-charts'
+import { renderHelmValueFile } from '../dsl/output-generators/render-helm-value-file'
 
 const renderUrlsForService = ({ ingress = {} }: ServiceHelm) => {
   const urls: string[] = []

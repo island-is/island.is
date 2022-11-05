@@ -3,7 +3,7 @@ import {
   Secrets,
   Service,
   ServiceDefinitionForEnv,
-} from './types/input-types'
+} from '../types/input-types'
 import {
   ContainerEnvironmentVariables,
   DockerComposeService,
@@ -11,12 +11,12 @@ import {
   SerializeErrors,
   SerializeMethod,
   SerializeSuccess,
-} from './types/output-types'
-import { DeploymentRuntime } from './types/charts'
+} from '../types/output-types'
+import { DeploymentRuntime, EnvironmentConfig } from '../types/charts'
 import { SSM } from '@aws-sdk/client-ssm'
-import { ServerSideFeature } from '../../../libs/feature-flags/src'
+import { ServerSideFeature } from '../../../../libs/feature-flags/src'
 import { checksAndValidations } from './errors'
-import { processService } from './pre-process-service'
+import { prepareServiceForEnv } from '../service-to-environment/pre-process-service'
 import {
   postgresIdentifier,
   serializeEnvironmentVariables,
@@ -27,7 +27,7 @@ import {
  * @param service Our service definition
  * @param deployment Uber chart in a specific environment the service will be part of
  */
-export const serializeService: SerializeMethod<DockerComposeService> = async (
+const serializeService: SerializeMethod<DockerComposeService> = async (
   service: Service,
   deployment: DeploymentRuntime,
 ) => {
@@ -37,7 +37,7 @@ export const serializeService: SerializeMethod<DockerComposeService> = async (
     checkCollisions,
     getErrors,
   } = checksAndValidations(service.serviceDef.name)
-  const processedService = processService(service, deployment.env)
+  const processedService = prepareServiceForEnv(service, deployment.env)
   if (processedService.type === 'success') {
     const serviceDef = processedService.serviceDef
     // const {
@@ -249,7 +249,7 @@ const getParams = async (
     )
     .reduce((p, c) => ({ ...p, ...c }), {})
 }
-export const serviceMockDef = (options: {
+const serviceMockDef = (options: {
   namespace: string
   target: string
 }): DockerComposeService => {
@@ -262,6 +262,7 @@ export const serviceMockDef = (options: {
 }
 
 export const DockerComposeOutput: OutputFormat<DockerComposeService> = {
+  featureDeployment(service: Service, env: EnvironmentConfig): void {},
   serializeService(
     service: Service,
     deployment: DeploymentRuntime,

@@ -1,13 +1,13 @@
 import { json, service } from './dsl'
 import { Kubernetes } from './kubernetes'
 import { MissingSetting } from './types/input-types'
-import { serializeService } from './map-to-helm-values'
 import {
   SerializeErrors,
   SerializeSuccess,
   ServiceHelm,
 } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
+import { renderers } from './service-dependencies'
 
 const Staging: EnvironmentConfig = {
   auroraHost: 'a',
@@ -29,7 +29,7 @@ describe('Env variable', () => {
   })
   let serviceDef: SerializeErrors
   beforeEach(async () => {
-    serviceDef = (await serializeService(
+    serviceDef = (await renderers.helm.serializeService(
       sut,
       new Kubernetes(Staging),
     )) as SerializeErrors
@@ -48,7 +48,7 @@ describe('Env variable', () => {
       .secrets({
         A: 'somesecret',
       })
-    const serviceDef = (await serializeService(
+    const serviceDef = (await renderers.helm.serializeService(
       sut,
       new Kubernetes(Staging),
     )) as SerializeErrors
@@ -68,7 +68,7 @@ describe('Env variable', () => {
       },
       containers: [{ command: 'go' }],
     })
-    const serviceDef = (await serializeService(
+    const serviceDef = (await renderers.helm.serializeService(
       sut,
       new Kubernetes(Staging),
     )) as SerializeErrors
@@ -99,7 +99,7 @@ describe('Env variable', () => {
     const sut = service('api').env({
       A: json(value),
     })
-    const serviceDef = (await serializeService(
+    const serviceDef = (await renderers.helm.serializeService(
       sut,
       new Kubernetes(Staging),
     )) as SerializeSuccess<ServiceHelm>
