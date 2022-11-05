@@ -189,7 +189,7 @@
         }
       }
     },
-    "/{permno}/{operatorserialnumber}": {
+    "/{permno}/{operatorSerialNumber}": {
       "get": {
         "tags": ["Operator"],
         "summary": "Get operators for a permno and specific operator serialnumber",
@@ -279,7 +279,7 @@
         }
       }
     },
-    "/{permno}/{persidno}/{operatorserialnumber}": {
+    "/{permno}/{persidno}/{operatorSerialNumber}": {
       "get": {
         "tags": ["Operator"],
         "summary": "Get operator info for a specific vehicle, persidno and serial number",

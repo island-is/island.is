@@ -4,7 +4,14 @@ import { Box, Text, Divider, Button } from '@island.is/island-ui/core'
 import { ReviewScreenProps } from '../../types'
 import { useLocale } from '@island.is/localization'
 import { overview, review } from '../../lib/messages'
-import { VehicleSection, SellerSection, BuyerSection } from './sections'
+import {
+  VehicleSection,
+  SellerSection,
+  BuyerSection,
+  CoOwnersSection,
+  OperatorSection,
+  InsuranceSection,
+} from './sections'
 
 export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
   setStep,
@@ -36,6 +43,9 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
       <VehicleSection {...props} />
       <SellerSection {...props} />
       <BuyerSection setStep={setStep} {...props} />
+      <CoOwnersSection {...props} />
+      <OperatorSection {...props} />
+      <InsuranceSection setStep={setStep} {...props} />
       <Box marginTop={14}>
         <Divider />
         <Box display="flex" justifyContent="spaceBetween" paddingY={5}>

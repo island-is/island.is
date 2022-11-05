@@ -20,10 +20,30 @@ export const overview = {
       defaultMessage: 'Meðeigandi seljanda',
       description: 'Sellers co owner label',
     },
+    buyersCoOwner: {
+      id: 'ta.tvo.application:overview.labels.buyersCoOwner',
+      defaultMessage: 'Meðeigandi kaupanda',
+      description: 'Buyers co owner label',
+    },
     addCoOwnerAndOperatorButton: {
       id: 'ta.tvo.application:overview.labels.addCoOwnerAndOperatorButton',
       defaultMessage: 'Bæta við meðeiganda/umráðamanni',
       description: 'Add co owner and operator button',
+    },
+    insuranceTitle: {
+      id: 'ta.tvo.application:overview.labels.insuranceTitle',
+      defaultMessage: 'Tryggingafélag',
+      description: 'Insurance company title',
+    },
+    noChosenInsurance: {
+      id: 'ta.tvo.application:overview.labels.noChosenInsurance',
+      defaultMessage: 'Ekkert tryggingafélag er valið',
+      description: 'User has not chosen an insurance company',
+    },
+    addInsuranceButton: {
+      id: 'ta.tvo.application:overview.labels.addInsuranceButton',
+      defaultMessage: 'Skrá tryggingafélag',
+      description: 'Add insurance company button',
     },
   }),
 }

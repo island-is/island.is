@@ -1,4 +1,7 @@
-import { UserInformationSchema } from '../lib/dataSchema'
+import {
+  UserInformationSchema,
+  CoOwnerAndOperatorSchema,
+} from '../lib/dataSchema'
 import { z } from 'zod'
 
 export interface ReviewScreenProps {
@@ -13,3 +16,4 @@ export type ReviewState =
   | 'insurance'
 
 export type UserInformation = z.TypeOf<typeof UserInformationSchema>
+export type CoOwnerAndOperator = z.TypeOf<typeof CoOwnerAndOperatorSchema>

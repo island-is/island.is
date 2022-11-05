@@ -8,16 +8,17 @@ export class VehicleOperatorsClient {
   constructor(private readonly operatorsApi: OperatorApi) {}
 
   public async getOperators(permno: string): Promise<Operator[]> {
-    const result = await this.operatorsApi.permnoGet({ permno: permno })
+    // const result = await this.operatorsApi.permnoGet({ permno: permno })
 
-    return result.map((item) => ({
+    return []
+    /* result.map((item) => ({
       startDate: item.startDate,
       endDate: item.endDate,
       ssn: item.persidno,
       name: item.name,
       isMainOperator: item.mainOperator,
       operatorSerialNumber: item.operatorSerialNumber,
-    }))
+    })) */
   }
 
   public async saveOperators(

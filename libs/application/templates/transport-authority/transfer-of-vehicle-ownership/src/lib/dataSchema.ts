@@ -7,6 +7,14 @@ export const UserInformationSchema = z.object({
   // phone: z.string().optional(),
 })
 
+export const CoOwnerAndOperatorSchema = z.object({
+  nationalId: z.string(),
+  name: z.string(),
+  email: z.string(),
+  // phone: z.string().optional(),
+  type: z.enum(['operator', 'coOwner']),
+})
+
 export const TransferOfVehicleOwnershipSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   pickVehicle: z.object({
@@ -22,17 +30,13 @@ export const TransferOfVehicleOwnershipSchema = z.object({
   seller: UserInformationSchema,
   coOwner: z.array(UserInformationSchema),
   buyer: UserInformationSchema,
-  coOwnerAndOperator: z.array(
-    z.object({
-      nationalId: z.string(),
-      name: z.string(),
-      email: z.string(),
-      // phone: z.string().optional(),
-      type: z.enum(['operator', 'coOwner']),
-    }),
-  ),
+  coOwnerAndOperator: z.array(CoOwnerAndOperatorSchema),
   mainOperator: z.object({
     nationalId: z.string(),
+  }),
+  insurance: z.object({
+    value: z.string(),
+    name: z.string(),
   }),
 })
 
