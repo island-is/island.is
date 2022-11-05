@@ -3,6 +3,7 @@ import { Kubernetes } from './kubernetes-runtime'
 import { SerializeSuccess, ServiceHelm } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
 import { renderers } from './service-dependencies'
+import { rendererForOne } from './output-generators/render-helm-value-file'
 
 const Staging: EnvironmentConfig = {
   auroraHost: 'a',
@@ -21,7 +22,8 @@ describe('Service account', () => {
   const sut = service('api').namespace('islandis').serviceAccount('demo')
   let result: SerializeSuccess<ServiceHelm>
   beforeEach(async () => {
-    result = (await renderers.helm.serializeService(
+    result = (await rendererForOne(
+      renderers.helm,
       sut,
       new Kubernetes(Staging),
     )) as SerializeSuccess<ServiceHelm>

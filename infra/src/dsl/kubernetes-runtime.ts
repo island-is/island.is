@@ -1,4 +1,4 @@
-import { Service } from './types/input-types'
+import { Service, ServiceDefinitionForEnv } from './types/input-types'
 import { DeploymentRuntime, EnvironmentConfig } from './types/charts'
 
 export class Kubernetes implements DeploymentRuntime {
@@ -7,14 +7,14 @@ export class Kubernetes implements DeploymentRuntime {
     this.env = env
   }
 
-  deps: { [name: string]: Set<Service> } = {}
+  deps: { [name: string]: Set<ServiceDefinitionForEnv> } = {}
 
-  ref(from: Service, to: Service | string) {
+  ref(from: ServiceDefinitionForEnv, to: Service | string) {
     if (typeof to === 'object') {
       const dependecies = this.deps[to.serviceDef.name] ?? new Set<Service>()
       this.deps[to.serviceDef.name] = dependecies.add(from)
       const serviceReference =
-        from.serviceDef.namespace === to.serviceDef.namespace
+        from.namespace === to.serviceDef.namespace
           ? `${this.env.releaseName}-${to.serviceDef.name}`
           : `${this.env.releaseName}-${to.serviceDef.name}.${to.serviceDef.namespace}.svc.cluster.local`
       return serviceReference

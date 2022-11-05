@@ -1,9 +1,16 @@
 import { ref, service } from './dsl'
 import { Kubernetes } from './kubernetes-runtime'
-import { SerializeSuccess, ServiceHelm, ValueFile } from './types/output-types'
+import {
+  SerializeSuccess,
+  ServiceHelm,
+  HelmValueFile,
+} from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
 import { renderers } from './service-dependencies'
-import { renderHelmValueFile } from './output-generators/render-helm-value-file'
+import {
+  rendererForOne,
+  renderHelmValueFile,
+} from './output-generators/render-helm-value-file'
 
 const Staging: EnvironmentConfig = {
   auroraHost: 'a',
@@ -25,13 +32,14 @@ describe('Egress', () => {
   })
   const uberChart = new Kubernetes(Staging)
   let serviceDef: SerializeSuccess<ServiceHelm>
-  let render: ValueFile<ServiceHelm>
+  let render: HelmValueFile<ServiceHelm>
   beforeEach(async () => {
-    serviceDef = (await renderers.helm.serializeService(
+    serviceDef = (await rendererForOne(
+      renderers.helm,
       sut,
       uberChart,
     )) as SerializeSuccess<ServiceHelm>
-    render = await renderHelmValueFile(uberChart, [sut])
+    render = renderHelmValueFile(uberChart, { a: serviceDef.serviceDef[0] })
   })
 
   it('missing variables cause errors', () => {

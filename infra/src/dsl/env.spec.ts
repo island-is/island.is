@@ -8,6 +8,7 @@ import {
 } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
 import { renderers } from './service-dependencies'
+import { rendererForOne } from './output-generators/render-helm-value-file'
 
 const Staging: EnvironmentConfig = {
   auroraHost: 'a',
@@ -29,7 +30,8 @@ describe('Env variable', () => {
   })
   let serviceDef: SerializeErrors
   beforeEach(async () => {
-    serviceDef = (await renderers.helm.serializeService(
+    serviceDef = (await rendererForOne(
+      renderers.helm,
       sut,
       new Kubernetes(Staging),
     )) as SerializeErrors
@@ -48,7 +50,8 @@ describe('Env variable', () => {
       .secrets({
         A: 'somesecret',
       })
-    const serviceDef = (await renderers.helm.serializeService(
+    const serviceDef = (await rendererForOne(
+      renderers.helm,
       sut,
       new Kubernetes(Staging),
     )) as SerializeErrors
@@ -68,7 +71,8 @@ describe('Env variable', () => {
       },
       containers: [{ command: 'go' }],
     })
-    const serviceDef = (await renderers.helm.serializeService(
+    const serviceDef = (await rendererForOne(
+      renderers.helm,
       sut,
       new Kubernetes(Staging),
     )) as SerializeErrors
@@ -99,7 +103,8 @@ describe('Env variable', () => {
     const sut = service('api').env({
       A: json(value),
     })
-    const serviceDef = (await renderers.helm.serializeService(
+    const serviceDef = (await rendererForOne(
+      renderers.helm,
       sut,
       new Kubernetes(Staging),
     )) as SerializeSuccess<ServiceHelm>

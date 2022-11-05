@@ -1,6 +1,6 @@
 import {
   EnvironmentVariablesForEnv,
-  Service,
+  Service, ServiceDefinitionForEnv,
   ValueSource,
 } from '../types/input-types'
 import { DeploymentRuntime } from '../types/charts'
@@ -16,7 +16,7 @@ export const resolveWithMaxLength = (str: string, max: number) => {
 export function serializeValueSource(
   value: ValueSource,
   deployment: DeploymentRuntime,
-  service: Service,
+  service: ServiceDefinitionForEnv,
 ): { type: 'success'; value: string } {
   const result =
     typeof value === 'string'
@@ -30,7 +30,7 @@ export function serializeValueSource(
 }
 
 export function serializeEnvironmentVariables(
-  service: Service,
+  service: ServiceDefinitionForEnv,
   deployment: DeploymentRuntime,
   envs: EnvironmentVariablesForEnv,
 ): { envs: ContainerEnvironmentVariables } {

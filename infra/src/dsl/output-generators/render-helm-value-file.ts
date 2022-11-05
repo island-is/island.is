@@ -1,42 +1,96 @@
 import { Kubernetes } from '../kubernetes-runtime'
-import { Service } from '../types/input-types'
-import { ServiceHelm, Services, ValueFile } from '../types/output-types'
+import { Service, ServiceDefinitionForEnv } from '../types/input-types'
+import {
+  HelmValueFile,
+  OutputFormat,
+  ServiceHelm,
+  ServiceOutputType,
+  Services,
+} from '../types/output-types'
 import { renderers } from '../service-dependencies'
-import { processForFeatureDeployment } from '../process-for-feature-deployment'
+import { DeploymentRuntime } from '../types/charts'
+import { prepareServiceForEnv } from '../service-to-environment/pre-process-service'
 
-export const renderHelmValueFile = async (
-  uberChart: Kubernetes,
-  services: Service[],
-): Promise<ValueFile<ServiceHelm>> => {
-  const outputFormat = renderers.helm
-  if (uberChart.env.feature) {
-    processForFeatureDeployment(services, outputFormat, uberChart)
+export const renderer = async <T extends ServiceOutputType>(
+  runtime: DeploymentRuntime,
+  services: Service[] | Service,
+  renderer: OutputFormat<T>,
+) => {
+  const servicesToProcess = Array.isArray(services) ? services : [services]
+  if (runtime.env.feature) {
+    for (const service of servicesToProcess) {
+      renderer.featureDeployment(service, runtime.env)
+    }
   }
-  const helmServices: Services<ServiceHelm> = await services.reduce(
-    async (acc, s) => {
-      const accVal = await acc
-      const values = await outputFormat.serializeService(
-        s,
-        uberChart,
-        uberChart.env.feature,
-      )
-      switch (values.type) {
-        case 'error':
-          throw new Error(values.errors.join('\n'))
-        case 'success':
-          const extras = values.serviceDef[0].extra
-          delete values.serviceDef[0].extra
-          return Promise.resolve({
-            ...accVal,
-            [s.serviceDef.name]: Object.assign(
-              {},
-              values.serviceDef[0],
-              extras,
-            ),
-          })
+  const preparedServices: ServiceDefinitionForEnv[] = []
+  for (const service of servicesToProcess) {
+    const serviceForEnv = prepareServiceForEnv(service, runtime.env)
+    switch (serviceForEnv.type) {
+      case 'error':
+        throw new Error(serviceForEnv.errors.join('\n'))
+      case 'success':
+        preparedServices.push(serviceForEnv.serviceDef)
+    }
+  }
+  const outputServices = await preparedServices.reduce(async (acc, s) => {
+    const accVal = await acc
+    const values = await renderer.serializeService(
+      s,
+      runtime,
+      runtime.env.feature,
+    )
+    switch (values.type) {
+      case 'error':
+        throw new Error(values.errors.join('\n'))
+      case 'success':
+        return { ...accVal, [s.name]: values.serviceDef[0] }
+    }
+  }, Promise.resolve({} as Services<T>))
+
+  return outputServices
+}
+export const rendererForOne = async <T extends ServiceOutputType>(
+  renderer: OutputFormat<T>,
+  service: Service,
+  runtime: DeploymentRuntime,
+) => {
+  if (runtime.env.feature) {
+    renderer.featureDeployment(service, runtime.env)
+  }
+  const preparedServices: ServiceDefinitionForEnv[] = []
+  const serviceForEnv = prepareServiceForEnv(service, runtime.env)
+  switch (serviceForEnv.type) {
+    case 'error':
+      return serviceForEnv
+    case 'success':
+      preparedServices.push(serviceForEnv.serviceDef)
+  }
+  return renderer.serializeService(
+    preparedServices[0],
+    runtime,
+    runtime.env.feature,
+  )
+}
+
+export const renderHelmValueFile = (
+  uberChart: Kubernetes,
+  services: Services<ServiceHelm>,
+): HelmValueFile<ServiceHelm> => {
+  const outputFormat = renderers.helm
+  // if (uberChart.env.feature) {
+  //   processForFeatureDeployment(services, outputFormat, uberChart)
+  // }
+  const helmServices: Services<ServiceHelm> = Object.entries(services).reduce(
+    (acc, [name, service]) => {
+      const accVal = acc
+      const extras = service.extra
+      delete service.extra
+      return {
+        ...accVal,
+        [name]: Object.assign({}, service, extras),
       }
     },
-    Promise.resolve(uberChart.env.global),
+    uberChart.env.global,
   )
   const servicesAndMocks = Object.entries(uberChart.deps).reduce(
     (acc, [name, svcs]) => {
@@ -44,7 +98,7 @@ export const renderHelmValueFile = async (
         return {
           ...acc,
           [name]: outputFormat.serviceMockDef({
-            namespace: svcs.values().next().value.serviceDef.namespace,
+            namespace: svcs.values().next().value.namespace,
             target: name,
           }),
         }

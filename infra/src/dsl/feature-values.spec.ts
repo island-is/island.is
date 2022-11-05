@@ -2,8 +2,12 @@ import { ref, service } from './dsl'
 import { Kubernetes } from './kubernetes-runtime'
 import { EnvironmentConfig } from './types/charts'
 import { getFeatureAffectedServices } from './feature-deployments'
-import { ServiceHelm, ValueFile } from './types/output-types'
-import { renderHelmValueFile } from './output-generators/render-helm-value-file'
+import { ServiceHelm, HelmValueFile } from './types/output-types'
+import {
+  renderer,
+  renderHelmValueFile,
+} from './output-generators/render-helm-value-file'
+import { renderers } from './service-dependencies'
 
 const Dev: EnvironmentConfig = {
   auroraHost: 'a',
@@ -20,7 +24,7 @@ const Dev: EnvironmentConfig = {
 }
 
 describe('Feature-deployment support', () => {
-  let values: ValueFile<ServiceHelm>
+  let values: HelmValueFile<ServiceHelm>
 
   beforeEach(async () => {
     const dependencyA = service('service-a').namespace('A')
@@ -51,7 +55,7 @@ describe('Feature-deployment support', () => {
       .postgres()
     const chart = new Kubernetes(Dev)
 
-    values = await renderHelmValueFile(
+    const services = await renderer(
       chart,
       await getFeatureAffectedServices(
         chart,
@@ -59,7 +63,9 @@ describe('Feature-deployment support', () => {
         [dependencyA, dependencyC],
         [dependencyC],
       ),
+      renderers.helm,
     )
+    values = renderHelmValueFile(chart, services)
   })
 
   it('dynamic service name generation', () => {

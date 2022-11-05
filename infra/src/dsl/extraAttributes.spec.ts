@@ -8,6 +8,7 @@ import {
 } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
 import { renderers } from './service-dependencies'
+import { rendererForOne } from './output-generators/render-helm-value-file'
 
 const Staging: EnvironmentConfig = {
   auroraHost: 'a',
@@ -32,7 +33,8 @@ describe('Extra attributes', () => {
       dev: MissingSetting,
       prod: MissingSetting,
     })
-    const serviceDef = (await renderers.helm.serializeService(
+    const serviceDef = (await rendererForOne(
+      renderers.helm,
       sut,
       new Kubernetes(Staging),
     )) as SerializeSuccess<ServiceHelm>
@@ -47,7 +49,8 @@ describe('Extra attributes', () => {
       dev: MissingSetting,
       prod: MissingSetting,
     })
-    const serviceDef = (await renderers.helm.serializeService(
+    const serviceDef = (await rendererForOne(
+      renderers.helm,
       sut,
       new Kubernetes(Staging),
     )) as SerializeErrors

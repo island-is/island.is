@@ -3,6 +3,10 @@ import { Kubernetes } from './kubernetes-runtime'
 import { SerializeSuccess, ServiceHelm } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
 import { renderers } from './service-dependencies'
+import {
+  renderer,
+  rendererForOne,
+} from './output-generators/render-helm-value-file'
 
 const Staging: EnvironmentConfig = {
   auroraHost: 'a',
@@ -46,7 +50,8 @@ describe('Basic serialization', () => {
     .postgres()
   let result: SerializeSuccess<ServiceHelm>
   beforeEach(async () => {
-    result = (await renderers.helm.serializeService(
+    result = (await rendererForOne(
+      renderers.helm,
       sut,
       new Kubernetes(Staging),
     )) as SerializeSuccess<ServiceHelm>
@@ -146,7 +151,8 @@ describe('Env definition defaults', () => {
   const sut = service('api').namespace('islandis').image('test')
   let result: SerializeSuccess<ServiceHelm>
   beforeEach(async () => {
-    result = (await renderers.helm.serializeService(
+    result = (await rendererForOne(
+      renderers.helm,
       sut,
       new Kubernetes(Staging),
     )) as SerializeSuccess<ServiceHelm>

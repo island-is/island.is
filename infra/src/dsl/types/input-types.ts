@@ -66,7 +66,7 @@ export type Feature = {
 export type Features = { [name in FeatureNames]: Feature }
 export type MountedFile = { filename: string; env: string }
 
-type ServiceDefinitionCore = {
+export type ServiceDefinitionCore = {
   liveness: HealthProbe
   readiness: HealthProbe
   healthPort?: number

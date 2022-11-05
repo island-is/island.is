@@ -1,7 +1,8 @@
-import { Service } from './types/input-types'
+import { Service, ServiceDefinitionForEnv } from './types/input-types'
 import { HelmOutput } from './output-generators/map-to-helm-values'
 import { DeploymentRuntime, EnvironmentConfig } from './types/charts'
 import { DockerComposeOutput } from './output-generators/map-to-docker-compose'
+import { renderer } from './output-generators/render-helm-value-file'
 
 const MAX_LEVEL_DEPENDENCIES = 20
 
@@ -11,9 +12,9 @@ export class DependencyTracer implements DeploymentRuntime {
     this.env = env
   }
 
-  deps: { [name: string]: Set<Service> } = {}
+  deps: { [name: string]: Set<ServiceDefinitionForEnv> } = {}
 
-  ref(from: Service, to: Service | string) {
+  ref(from: ServiceDefinitionForEnv, to: Service | string) {
     if (typeof to === 'object') {
       const dependecies = this.deps[to.serviceDef.name] ?? new Set<Service>()
       this.deps[to.serviceDef.name] = dependecies.add(from)
@@ -29,14 +30,14 @@ export const renderers = {
   'docker-compose': DockerComposeOutput,
 }
 
-const discoverDependencies = async (
-  runtime: DeploymentRuntime,
-  services: Service[],
-) => {
-  for (const service of services) {
-    await renderers.helm.serializeService(service, runtime, runtime.env.feature)
-  }
-}
+// const discoverDependencies = async (
+//   runtime: DeploymentRuntime,
+//   services: Service[],
+// ) => {
+//   for (const service of services) {
+//     await renderers.helm.serializeService(service, runtime, runtime.env.feature)
+//   }
+// }
 
 const findDependencies = (
   uberChart: DeploymentRuntime,
@@ -49,13 +50,12 @@ const findDependencies = (
     throw new Error(
       `Too deep level of dependencies - ${MAX_LEVEL_DEPENDENCIES}. Some kind of circular dependency or you fellas have gone off the deep end ;)`,
     )
-  const mocks = Object.entries(uberChart.deps)
-    .filter(([s, entry]) => s.startsWith('http'))
-    .filter(([s, entry]) => entry.has(svc))
-    .map(([s, entry]) => svcs.find((ss) => ss.serviceDef.name === s)!)
-  const currentDeps = Array.from(deps ?? new Set<Service>()).concat(
-    Array.from(mocks),
-  )
+  // const mocks = Object.entries(uberChart.deps)
+  //   .filter(([s, entry]) => s.startsWith('http'))
+  //   .filter(([s, entry]) => entry.has(svc))
+  //   .map(([s, entry]) => svcs.find((ss) => ss.serviceDef.name === s)!)
+  const currentDeps = Array.from(deps ?? new Set<ServiceDefinitionForEnv>())
+  // .concat(Array.from(mocks))
   if (currentDeps) {
     const serviceDependencies = currentDeps
     return serviceDependencies
@@ -74,8 +74,20 @@ export const getWithDependantServices = async (
   habitat: Service[],
   ...services: Service[]
 ): Promise<Service[]> => {
-  const dependencyTracer = new DependencyTracer(env)
-  await discoverDependencies(dependencyTracer, habitat) // doing this so we find out the dependencies
+  const dummyEnv: EnvironmentConfig = {
+    auroraHost: '',
+    awsAccountId: '',
+    awsAccountRegion: 'eu-west-1',
+    defaultMaxReplicas: 0,
+    defaultMinReplicas: 0,
+    domain: '',
+    featuresOn: [],
+    global: {},
+    releaseName: '',
+    type: 'dev',
+  }
+  const dependencyTracer = new DependencyTracer(dummyEnv)
+  // await renderer(dependencyTracer, habitat, renderers.helm) // doing this so we find out the dependencies
   const dependantServices = services
     .map((s) => findDependencies(dependencyTracer, s, habitat))
     .flatMap((x) => x)

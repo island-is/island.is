@@ -3,6 +3,7 @@ import { Kubernetes } from './kubernetes-runtime'
 import { SerializeSuccess, ServiceHelm } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
 import { renderers } from './service-dependencies'
+import { rendererForOne } from './output-generators/render-helm-value-file'
 
 const Staging: EnvironmentConfig = {
   auroraHost: 'a',
@@ -34,7 +35,8 @@ describe('Volume Support', () => {
 
   let stagingWithVolumes: SerializeSuccess<ServiceHelm>
   beforeEach(async () => {
-    stagingWithVolumes = (await renderers.helm.serializeService(
+    stagingWithVolumes = (await rendererForOne(
+      renderers.helm,
       sut,
       new Kubernetes(Staging),
     )) as SerializeSuccess<ServiceHelm>
@@ -61,7 +63,8 @@ describe('Volume Support', () => {
       accessModes: 'ReadOnly',
       mountPath: '/storage_one',
     })
-    const stagingWithDefaultVolume = (await renderers.helm.serializeService(
+    const stagingWithDefaultVolume = (await rendererForOne(
+      renderers.helm,
       sut,
       new Kubernetes(Staging),
     )) as SerializeSuccess<ServiceHelm>

@@ -39,7 +39,8 @@ void (async function () {
     throw Error(`Service with name ${serviceName} not found in chart ${chart}`)
   }
 
-  featureSpecificServiceDef(featureName, target)
+  featureSpecificServiceDef(target)
+  renderer.helm.featureDeployment(target[0])
   const targetService = target[0]
   targetService.serviceDef.postgres
 

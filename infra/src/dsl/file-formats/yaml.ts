@@ -1,5 +1,9 @@
 import { dump, load } from 'js-yaml'
-import { FeatureKubeJob, ServiceHelm, ValueFile } from '../types/output-types'
+import {
+  FeatureKubeJob,
+  ServiceHelm,
+  HelmValueFile,
+} from '../types/output-types'
 import { Kubernetes } from '../kubernetes-runtime'
 
 export const dumpOpts = {
@@ -14,7 +18,7 @@ export const reformatYaml = (content: string): string => {
 export const dumpJobYaml = (job: FeatureKubeJob) => dump(job, dumpOpts)
 export const dumpServiceHelm = (
   ch: Kubernetes,
-  valueFile: ValueFile<ServiceHelm>,
+  valueFile: HelmValueFile<ServiceHelm>,
 ) => {
   const { namespaces, services } = valueFile
   const namespaceLabels = ch.env.feature ? { namespaceType: 'feature' } : {}

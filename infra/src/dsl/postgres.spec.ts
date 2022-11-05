@@ -8,6 +8,7 @@ import {
 } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
 import { renderers } from './service-dependencies'
+import { rendererForOne } from './output-generators/render-helm-value-file'
 
 const Staging: EnvironmentConfig = {
   auroraHost: 'a',
@@ -27,7 +28,8 @@ describe('Postgres', () => {
     const sut = service('service-portal-api').postgres()
     let result: SerializeSuccess<ServiceHelm>
     beforeEach(async () => {
-      result = (await renderers.helm.serializeService(
+      result = (await rendererForOne(
+        renderers.helm,
         sut,
         new Kubernetes(Staging),
       )) as SerializeSuccess<ServiceHelm>
@@ -50,7 +52,8 @@ describe('Postgres', () => {
       .env({ DB_USER: 'aaa', DB_HOST: 'a', DB_NAME: '' })
     let result: SerializeErrors
     beforeEach(async () => {
-      result = (await renderers.helm.serializeService(
+      result = (await rendererForOne(
+        renderers.helm,
         sut,
         new Kubernetes(Staging),
       )) as SerializeErrors

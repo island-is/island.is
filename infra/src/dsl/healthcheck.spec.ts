@@ -3,6 +3,7 @@ import { Kubernetes } from './kubernetes-runtime'
 import { SerializeSuccess, ServiceHelm } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
 import { renderers } from './service-dependencies'
+import { rendererForOne } from './output-generators/render-helm-value-file'
 
 const Staging: EnvironmentConfig = {
   auroraHost: 'a',
@@ -21,7 +22,8 @@ describe('Healthchecks definitions', () => {
   describe('Liveness', () => {
     it('defined with path only', async () => {
       const sut = service('api').liveness('/ready').healthPort(5000)
-      const result = (await renderers.helm.serializeService(
+      const result = (await rendererForOne(
+        renderers.helm,
         sut,
         new Kubernetes(Staging),
       )) as SerializeSuccess<ServiceHelm>
@@ -40,7 +42,8 @@ describe('Healthchecks definitions', () => {
         path: '/ready',
         initialDelaySeconds: 10,
       })
-      const result = (await renderers.helm.serializeService(
+      const result = (await rendererForOne(
+        renderers.helm,
         sut,
         new Kubernetes(Staging),
       )) as SerializeSuccess<ServiceHelm>

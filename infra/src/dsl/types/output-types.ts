@@ -1,4 +1,4 @@
-import { Hash, Service } from './input-types'
+import { Hash, Service, ServiceDefinitionForEnv } from './input-types'
 import { DeploymentRuntime, EnvironmentConfig } from './charts'
 import { FeatureNames } from '../features'
 
@@ -176,7 +176,7 @@ export type Output = 'helm' | 'docker-compose'
 export type ServiceOutputType = ServiceHelm | DockerComposeService
 
 export type SerializeMethod<T extends ServiceOutputType> = (
-  service: Service,
+  service: ServiceDefinitionForEnv,
   uberChart: DeploymentRuntime,
   featureDeployment?: string,
 ) => Promise<SerializeSuccess<T> | SerializeErrors>
@@ -185,14 +185,14 @@ export type Services<T extends ServiceOutputType> = {
   [name: string]: T
 }
 
-export type ValueFile<T extends ServiceOutputType> = {
+export type HelmValueFile<T extends ServiceOutputType> = {
   namespaces: string[]
   services: Services<T>
 }
 
 export interface OutputFormat<T extends ServiceOutputType> {
   serializeService(
-    service: Service,
+    service: ServiceDefinitionForEnv,
     uberChart: DeploymentRuntime,
     featureDeployment?: string,
   ): Promise<SerializeSuccess<T> | SerializeErrors>
