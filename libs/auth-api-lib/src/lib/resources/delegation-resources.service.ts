@@ -1,13 +1,8 @@
+import { isCompany } from 'kennitala'
 import { ForbiddenException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import type {
-  Filterable,
-  Includeable,
-  Order,
-  WhereOptions,
-  Projectable,
-} from 'sequelize'
-import { literal, Op } from 'sequelize'
+import type { Attributes, WhereOptions } from 'sequelize'
+import { and, Op, or } from 'sequelize'
 
 import { User } from '@island.is/auth-nest-tools'
 import type { ConfigType } from '@island.is/nest/config'
@@ -23,12 +18,7 @@ import { ApiScopeUserAccess } from './models/api-scope-user-access.model'
 import { DelegationScope } from '../delegations/models/delegation-scope.model'
 import { Delegation } from '../delegations/models/delegation.model'
 import { DelegationConfig } from '../delegations/DelegationConfig'
-import { isCompany } from 'kennitala'
-
-interface ApiScopeQueryOptions extends Filterable<ApiScope>, Projectable {
-  include?: Includeable[]
-  order?: Order
-}
+import { col } from './utils/col'
 
 type DelegationConfigType = ConfigType<typeof DelegationConfig>
 type ScopeRule = DelegationConfigType['customScopeRules'] extends Array<
@@ -51,11 +41,15 @@ export class DelegationResourcesService {
 
   async findAllDomains(user: User, language?: string): Promise<Domain[]> {
     const domains = await this.domainModel.findAll({
+      where: and(...this.apiScopeFilter(user, 'scopes')),
       include: [
-        this.wrapApiScopeQuery(user, 'scopes->', {
-          attributes: [],
+        {
           model: ApiScope,
-        }),
+          attributes: [],
+          required: true,
+          duplicating: false,
+          include: [...this.apiScopeInclude(user)],
+        },
       ],
       logging: true,
     })
@@ -73,15 +67,23 @@ export class DelegationResourcesService {
     language?: string,
   ): Promise<Domain> {
     const domain = await this.domainModel.findOne({
-      where: {
-        name: domainName,
-      },
+      where: and(
+        {
+          name: domainName,
+        },
+        ...this.apiScopeFilter(user, 'scopes'),
+      ),
       include: [
-        this.wrapApiScopeQuery(user, 'scopes->', {
-          attributes: [],
+        {
           model: ApiScope,
-        }),
+          attributes: [],
+          required: true,
+          duplicating: false,
+          subQuery: false,
+          include: [...this.apiScopeInclude(user)],
+        },
       ],
+      logging: true,
     })
 
     if (!domain) {
@@ -93,41 +95,6 @@ export class DelegationResourcesService {
     }
 
     return domain
-  }
-
-  // Scope is visible:
-  // AND: [
-  //  - allowExplicitDelegationGrant: true,
-  //  - OR: [
-  //    - isAccessControlled: false,
-  //    - ApiScopeUserAccess.nationalId: nationalId,
-  //  ],
-  //  IS COMPANY:
-  //  - grantToProcuringHolders: true,
-  private async findScopesInternal(
-    user: User,
-    domainName: string,
-    language?: string,
-  ): Promise<ApiScope[]> {
-    const scopes = await this.apiScopeModel.findAll(
-      this.wrapApiScopeQuery(user, '', {
-        where: {
-          domainName,
-        },
-        include: [ApiScopeGroup],
-        order: [
-          ['group_id', 'ASC NULLS FIRST'],
-          ['order', 'ASC'],
-        ],
-        logging: true,
-      }),
-    )
-
-    if (language) {
-      await this.resourceTranslationService.translateApiScopes(scopes, language)
-    }
-
-    return scopes
   }
 
   async findScopes(
@@ -171,86 +138,169 @@ export class DelegationResourcesService {
       }))
   }
 
-  private wrapApiScopeQuery<T extends ApiScopeQueryOptions>(
+  async findScopeNames(user: User, domainName: string) {
+    const scopes = await this.findScopesInternal(user, domainName, undefined, [
+      'name',
+    ])
+    return scopes.map((scope) => scope.name)
+  }
+
+  async validateScopeAccess(
     user: User,
-    prefix: string,
-    queryOptions: T,
-  ): T {
+    domainName: string,
+    scopesToCheck: Array<string>,
+  ): Promise<boolean> {
+    const userScopes = await this.findScopeNames(user, domainName)
+    if (userScopes.length === 0) {
+      return false
+    }
+
+    return scopesToCheck.every((scopeName) => userScopes.includes(scopeName))
+  }
+
+  apiScopeFilter(user: User, prefix?: string) {
+    return [
+      {
+        [col(prefix, 'allowExplicitDelegationGrant')]: true,
+        [col(prefix, 'enabled')]: true,
+      },
+      ...this.skipScopeFilter(user, prefix),
+      ...this.accessControlFilter(user, prefix),
+      ...this.delegationTypeFilter(user, prefix),
+    ]
+  }
+
+  apiScopeInclude(user: User) {
+    return [
+      this.accessControlInclude(user),
+      ...this.delegationTypeInclude(user),
+    ]
+  }
+
+  private async findScopesInternal(
+    user: User,
+    domainName: string,
+    language?: string,
+    attributes?: Array<keyof Attributes<ApiScope>>,
+  ): Promise<ApiScope[]> {
+    const scopes = await this.apiScopeModel.findAll({
+      attributes: attributes as string[],
+      where: and(
+        {
+          domainName,
+        },
+        this.apiScopeFilter(user),
+      ),
+      include: [ApiScopeGroup, ...this.apiScopeInclude(user)],
+      order: [
+        ['group_id', 'ASC NULLS FIRST'],
+        ['order', 'ASC'],
+      ],
+      logging: true,
+    })
+
+    if (language) {
+      await this.resourceTranslationService.translateApiScopes(scopes, language)
+    }
+
+    return scopes
+  }
+
+  private skipScopeFilter(
+    user: User,
+    prefix?: string,
+  ): Array<WhereOptions<ApiScope>> {
     const skipScopes = this.delegationConfig.customScopeRules
       .filter((scopeRule) => !this.scopeRuleMatchesUser(user, scopeRule))
       .map((scopeRule) => scopeRule.scopeName)
+    return skipScopes.length === 0
+      ? []
+      : [{ [col(prefix, 'name')]: { [Op.notIn]: skipScopes } }]
+  }
 
-    let where = queryOptions.where ?? { [Op.and]: [] }
-    if (!Array.isArray(where[Op.and as never])) {
-      where = { [Op.and]: [where] }
-    }
-    const whereAnd = where[Op.and as never] as Array<WhereOptions>
-    whereAnd.push({
-      allowExplicitDelegationGrant: true,
-      enabled: true,
-      ...(skipScopes.length > 0 ? { name: { [Op.notIn]: skipScopes } } : {}),
-      [Op.or]: [
-        { isAccessControlled: { [Op.ne]: true } },
-        { [`$${prefix}apiScopeUserAccesses.scope$`]: { [Op.ne]: null } },
-      ],
-    })
-
-    let include = queryOptions.include ?? []
-    if (!Array.isArray(include)) {
-      include = [include]
-    }
-    include.push({
+  private accessControlInclude(user: User) {
+    return {
       attributes: [],
       model: ApiScopeUserAccess,
       where: {
         nationalId: user.nationalId,
       },
+      duplicating: false,
       required: false,
-    })
+    }
+  }
 
-    if (user.delegationType && user.actor) {
-      // We currently only support access control for company (delegation) actors.
-      // Actors for individuals should not have the scope required to reach this
-      // point, but we assert it just to be safe.
-      if (!isCompany(user.nationalId)) {
-        throw new ForbiddenException(
-          'Actors for individuals should not be able to manage delegations.',
-        )
-      }
+  private accessControlFilter(
+    user: User,
+    prefix?: string,
+  ): Array<WhereOptions<ApiScope>> {
+    return [
+      // isAccessControlled != true or apiScopeUserAccesses.nationalId == user.nationalId
+      or(
+        { [col(prefix, 'isAccessControlled')]: { [Op.ne]: true } },
+        {
+          [col(prefix, 'apiScopeUserAccesses', 'nationalId')]: user.nationalId,
+        },
+      ),
+    ]
+  }
 
-      const delegationOr: Array<WhereOptions<ApiScope>> = []
-      whereAnd.push({ [Op.or]: delegationOr })
-      if (user.delegationType.includes('ProcurationHolder')) {
-        delegationOr.push({ grantToProcuringHolders: true })
-      }
-      if (user.delegationType.includes('Custom')) {
-        include.push({
-          attributes: [],
-          model: DelegationScope,
-          required: false,
-          include: [
-            {
-              attributes: [],
-              model: Delegation,
-              where: {
-                fromNationalId: user.nationalId,
-                toNationalId: user.actor.nationalId,
-              },
-              required: false,
-            },
-          ],
-        })
-        delegationOr.push({
-          [`$${prefix}delegationScopes->delegation.to_national_id$`]: {
-            [Op.ne]: null,
-          },
-        })
-      }
+  private delegationTypeInclude(user: User) {
+    if (
+      !user.delegationType ||
+      !user.actor ||
+      !user.delegationType.includes('Custom')
+    ) {
+      return []
     }
 
-    queryOptions.where = where
-    queryOptions.include = include
-    return queryOptions
+    return [
+      {
+        attributes: [],
+        model: DelegationScope,
+        required: false,
+        duplicating: false,
+        include: [
+          {
+            attributes: [],
+            model: Delegation,
+            where: {
+              fromNationalId: user.nationalId,
+              toNationalId: user.actor.nationalId,
+            },
+            required: false,
+            duplicating: false,
+          },
+        ],
+      },
+    ]
+  }
+
+  private delegationTypeFilter(user: User, prefix?: string) {
+    if (!user.delegationType || !user.actor) {
+      return []
+    }
+
+    // We currently only support access control for company (delegation) actors.
+    // Actors for individuals should not have the scope required to reach this
+    // point, but we assert it just to be safe.
+    if (!isCompany(user.nationalId)) {
+      throw new ForbiddenException(
+        'Actors for individuals should not be able to manage delegations.',
+      )
+    }
+
+    const delegationOr: Array<WhereOptions<ApiScope>> = []
+    if (user.delegationType.includes('ProcurationHolder')) {
+      delegationOr.push({ [col(prefix, 'grantToProcuringHolders')]: true })
+    }
+    if (user.delegationType.includes('Custom')) {
+      delegationOr.push({
+        [col(prefix, 'delegationScopes', 'delegation', 'toNationalId')]: user
+          .actor.nationalId,
+      })
+    }
+    return [or(...delegationOr)]
   }
 
   private scopeRuleMatchesUser(
