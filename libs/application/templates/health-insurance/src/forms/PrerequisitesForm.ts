@@ -12,9 +12,12 @@ import {
   FormModes,
   FormValue,
   ExternalData,
+} from '@island.is/application/types'
+import {
+  HealthInsuranceApi,
   NationalRegistryUserApi,
   UserProfileApi,
-} from '@island.is/application/types'
+} from '../dataProviders'
 import { m } from './messages'
 import Logo from '../assets/Logo'
 import { prerequisitesFailed } from '../healthInsuranceUtils'
@@ -66,18 +69,11 @@ export const PrerequisitesForm: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: UserProfileApi,
-              title: 'userProfile',
-              subTitle: 'userProfile',
-            }),
-            buildDataProviderItem({
-              id: 'healthInsurance',
-              type: 'HealthInsuranceProvider',
               title: '',
               subTitle: '',
             }),
             buildDataProviderItem({
-              id: 'pendingApplications',
-              type: 'PendingApplications',
+              provider: HealthInsuranceApi,
               title: '',
               subTitle: '',
             }),

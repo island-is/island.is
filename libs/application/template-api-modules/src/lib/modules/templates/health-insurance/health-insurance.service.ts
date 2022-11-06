@@ -6,18 +6,41 @@ import {
   insuranceToXML,
   transformApplicationToHealthInsuranceDTO,
 } from './health-insurance.utils'
-import { DocumentApi } from '@island.is/clients/health-insurance-v2'
+import { DocumentApi, PersonApi } from '@island.is/clients/health-insurance-v2'
 import { BucketService } from './bucket/bucket.service'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
+import format from 'date-fns/format'
+import is from 'date-fns/locale/is'
 
 @Injectable()
 export class HealthInsuranceService extends BaseTemplateApiService {
   constructor(
     private documentApi: DocumentApi,
     private bucketService: BucketService,
+    private personApi: PersonApi,
   ) {
     super(ApplicationTypes.HEALTH_INSURANCE)
+  }
+
+  // return true or false when asked if person is health insured
+  async isHealthInsured(
+    application: TemplateApiModuleActionProps,
+  ): Promise<boolean> {
+    const formattedDate = format(new Date(), 'yyyy-MM-dd', {
+      locale: is,
+    })
+
+    try {
+      const resp = await this.personApi.personIsHealthInsured({
+        date: formattedDate,
+        nationalID: application.auth.nationalId,
+      })
+      return resp.isHealthInsured === 1
+    } catch (error) {
+      logger.error('Error fetching health insurance data', error)
+      return false
+    }
   }
 
   async sendApplyHealthInsuranceApplication({
