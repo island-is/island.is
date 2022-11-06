@@ -19,6 +19,7 @@ import { DelegationScope } from '../delegations/models/delegation-scope.model'
 import { Delegation } from '../delegations/models/delegation.model'
 import { DelegationConfig } from '../delegations/DelegationConfig'
 import { col } from './utils/col'
+import { Includeable } from 'sequelize/types/model'
 
 type DelegationConfigType = ConfigType<typeof DelegationConfig>
 type ScopeRule = DelegationConfigType['customScopeRules'] extends Array<
@@ -51,7 +52,6 @@ export class DelegationResourcesService {
           include: [...this.apiScopeInclude(user)],
         },
       ],
-      logging: true,
     })
 
     if (language) {
@@ -83,7 +83,6 @@ export class DelegationResourcesService {
           include: [...this.apiScopeInclude(user)],
         },
       ],
-      logging: true,
     })
 
     if (!domain) {
@@ -196,7 +195,6 @@ export class DelegationResourcesService {
         ['group_id', 'ASC NULLS FIRST'],
         ['order', 'ASC'],
       ],
-      logging: true,
     })
 
     if (language) {
@@ -218,7 +216,7 @@ export class DelegationResourcesService {
       : [{ [col(prefix, 'name')]: { [Op.notIn]: skipScopes } }]
   }
 
-  private accessControlInclude(user: User) {
+  private accessControlInclude(user: User): Includeable {
     return {
       attributes: [],
       model: ApiScopeUserAccess,
@@ -245,7 +243,7 @@ export class DelegationResourcesService {
     ]
   }
 
-  private delegationTypeInclude(user: User) {
+  private delegationTypeInclude(user: User): Includeable[] {
     if (
       !user.delegationType ||
       !user.actor ||

@@ -232,6 +232,7 @@ export const testCases: Record<string, TestCase> = {
   // Should see scopes configured for specific types of delegation.
   customScopeRulesIncluded: {
     user: createCurrentUser({
+      nationalIdType: 'company',
       scope: [AuthScope.delegations],
       delegationType: ['ProcurationHolder', 'Custom'],
     }),
