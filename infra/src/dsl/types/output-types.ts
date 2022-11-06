@@ -1,6 +1,5 @@
 import { Hash, Service, ServiceDefinitionForEnv } from './input-types'
 import { DeploymentRuntime, EnvironmentConfig } from './charts'
-import { FeatureNames } from '../features'
 
 // Output types
 export type ContainerRunHelm = {

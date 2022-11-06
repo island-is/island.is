@@ -1,10 +1,9 @@
 import yargs from 'yargs/yargs'
 import { renderEnv } from './render-env'
 import { renderUrls } from './render-urls'
-import { renderSecrets, renderSecretsCommand } from './render-secrets'
+import { renderSecretsCommand } from './render-secrets'
 import { ChartName, ChartNames, OpsEnvNames } from '../uber-charts/all-charts'
 import { OpsEnv } from '../dsl/types/input-types'
-import { OpsEnvName } from '../dsl/types/charts'
 import { renderServiceEnvVars } from './render-env-vars'
 
 yargs(process.argv.slice(2))
