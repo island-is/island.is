@@ -1,7 +1,6 @@
 import { style } from '@vanilla-extract/css'
-import { theme, themeUtils } from '@island.is/island-ui/theme'
+import { themeUtils } from '@island.is/island-ui/theme'
 import {
-  BLEED_AMOUNT,
   DESKTOP_HEADER_HEIGHT,
   MOBILE_HEADER_HEIGHT,
   DESKTOP_HEIGHT,
@@ -25,22 +24,4 @@ export const searchSection = style({
       height: MOBILE_HEIGHT - DESKTOP_HEADER_HEIGHT,
     },
   }),
-})
-
-export const categories = style({
-  overflow: 'hidden',
-  position: 'relative',
-  display: 'inline-block',
-  width: '100%',
-  top: -BLEED_AMOUNT,
-  marginBottom: -BLEED_AMOUNT,
-})
-
-export const faqs = style({
-  position: 'relative',
-  width: '100%',
-  borderWidth: 1,
-  borderStyle: 'solid',
-  borderColor: theme.color.blue200,
-  borderRadius: theme.border.radius.large,
 })
