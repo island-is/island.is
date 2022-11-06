@@ -46,7 +46,7 @@ export class ApiScopeUser extends Model<
   userAccess?: ApiScopeUserAccess[]
 
   @CreatedAt
-  @ApiProperty()
+  @ApiProperty({ type: Date })
   readonly created!: CreationOptional<Date>
 
   @UpdatedAt

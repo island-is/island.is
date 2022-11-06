@@ -70,7 +70,7 @@ export class DelegationScope extends Model<
   validTo?: Date
 
   @CreatedAt
-  @ApiProperty()
+  @ApiProperty({ type: Date })
   readonly created!: CreationOptional<Date>
 
   @UpdatedAt

@@ -31,7 +31,7 @@ export class ApiScopeGroup extends Model<
     type: DataType.UUID,
     allowNull: false,
   })
-  @ApiProperty()
+  @ApiProperty({ type: String })
   id!: CreationOptional<string>
 
   @Column({
@@ -71,6 +71,7 @@ export class ApiScopeGroup extends Model<
     },
   })
   @ApiProperty({
+    type: Number,
     example: 0,
   })
   order!: CreationOptional<number>
@@ -86,7 +87,7 @@ export class ApiScopeGroup extends Model<
   domainName!: string
 
   @CreatedAt
-  @ApiProperty()
+  @ApiProperty({ type: Date })
   readonly created!: CreationOptional<Date>
 
   @UpdatedAt
