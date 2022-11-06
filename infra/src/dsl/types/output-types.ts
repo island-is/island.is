@@ -185,9 +185,9 @@ export type Services<T extends ServiceOutputType> = {
   [name: string]: T
 }
 
-export type HelmValueFile<T extends ServiceOutputType> = {
+export type HelmValueFile = {
   namespaces: string[]
-  services: Services<T>
+  services: Services<ServiceHelm>
 }
 export type DockerComposeValueFile = {
   services: Services<DockerComposeService>

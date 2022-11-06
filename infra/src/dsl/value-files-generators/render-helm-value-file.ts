@@ -5,7 +5,7 @@ import { renderers } from '../service-dependencies'
 export const renderHelmValueFile = (
   uberChart: Kubernetes,
   services: Services<ServiceHelm>,
-): HelmValueFile<ServiceHelm> => {
+): HelmValueFile => {
   const outputFormat = renderers.helm
   const helmServices: Services<ServiceHelm> = Object.entries(services).reduce(
     (acc, [name, service]) => {

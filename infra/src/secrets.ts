@@ -1,15 +1,17 @@
 import AWS from 'aws-sdk'
 import yargs from 'yargs'
 import { OpsEnv } from './dsl/types/input-types'
-import { Kubernetes } from './dsl/kubernetes-runtime'
 import { Envs } from './environments'
-import { serializeService } from './dsl/output-generators/map-to-helm-values'
+// import { serializeService } from './dsl/output-generators/map-to-helm-values'
 import {
   ChartName,
   Charts,
   Deployments,
   OpsEnvNames,
 } from './uber-charts/all-charts'
+import { toServices } from './dsl/feature-deployments'
+import { renderHelmServices } from './dsl/exports/exports'
+
 const { hideBin } = require('yargs/helpers')
 
 interface GetArguments {
@@ -34,26 +36,28 @@ yargs(hideBin(process.argv))
     'get-all-required-secrets',
     'get all required secrets from all charts',
     { env: { type: 'string', demand: true, choices: OpsEnvNames } },
-    (p) => {
-      const secrets = Object.entries(Charts)
-        .map(([chartName, chart]) => ({
-          services: chart[p.env as OpsEnv],
-          chartName: chartName as ChartName,
-        }))
-        .flatMap(({ services, chartName }) =>
-          services.map((s) =>
-            serializeService(
-              s,
-              new Kubernetes(Envs[Deployments[chartName][p.env as OpsEnv]]),
-            ),
-          ),
+    async (p) => {
+      const services = (
+        await Promise.all(
+          Object.entries(Charts)
+            .map(([chartName, chart]) => ({
+              services: chart[p.env as OpsEnv],
+              chartName: chartName as ChartName,
+            }))
+            .flatMap(async ({ services, chartName }) => {
+              return Object.values(
+                await renderHelmServices(
+                  Envs[Deployments[chartName][p.env as OpsEnv]],
+                  toServices(services),
+                ),
+              )
+            }),
         )
-        .flatMap((s) => {
-          if (s.type === 'success') {
-            return Object.values(s.serviceDef.secrets!)
-          }
-          return [`serialize errors: ${s.errors.join(', ')}`]
-        })
+      ).flat()
+
+      const secrets = services.flatMap((s) => {
+        return Object.values(s.secrets)
+      })
       console.log([...new Set(secrets)].join('\n'))
     },
   )

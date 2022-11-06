@@ -2,7 +2,8 @@ import { Kubernetes } from '../dsl/kubernetes-runtime'
 import { Envs } from '../environments'
 import { Charts } from '../uber-charts/all-charts'
 import { SSM } from '@aws-sdk/client-ssm'
-import { renderHelmValueFile } from '../dsl/value-files-generators/render-helm-value-file'
+import { toServices } from '../dsl/feature-deployments'
+import { renderHelmServices } from '../dsl/exports/exports'
 
 const API_INITIALIZATION_OPTIONS = {
   region: 'eu-west-1',
@@ -40,7 +41,7 @@ export const renderSecrets = async (service: string) => {
   const services = await Promise.all(
     Object.values(Charts).map(
       async (chart) =>
-        (await renderHelmValueFile(uberChart, chart.dev)).services,
+        await renderHelmServices(uberChart.env, toServices(chart.dev)),
     ),
   )
 

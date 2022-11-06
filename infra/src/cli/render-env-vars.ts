@@ -1,7 +1,8 @@
 import { Kubernetes } from '../dsl/kubernetes-runtime'
 import { Envs } from '../environments'
 import { Charts } from '../uber-charts/all-charts'
-import { renderHelmValueFile } from '../dsl/value-files-generators/render-helm-value-file'
+import { renderHelmServiceFile } from '../dsl/exports/exports'
+import { toServices } from '../dsl/feature-deployments'
 
 const EXCLUDED_ENVIRONMENT_NAMES = [
   'DB_PASSWORD',
@@ -26,7 +27,8 @@ export const renderServiceEnvVars = async (service: string) => {
   const services = await Promise.all(
     Object.values(Charts).map(
       async (chart) =>
-        (await renderHelmValueFile(uberChart, chart.dev)).services,
+        (await renderHelmServiceFile(uberChart.env, toServices(chart.dev)))
+          .services,
     ),
   )
 
@@ -39,9 +41,10 @@ export const renderServiceEnvVars = async (service: string) => {
           }
           return []
         })
-        .reduce((p, c) => p.concat(c), [])
+        .flat()
     })
-    .reduce((p, c) => p.concat(c), [])
+    .flat()
+    // .reduce((p, c) => p.concat(c), [])
     .filter(([envName]) => !EXCLUDED_ENVIRONMENT_NAMES.includes(envName))
     .map((request) => {
       const envName = request[0]

@@ -1,6 +1,5 @@
 import { OpsEnv } from '../dsl/types/input-types'
 import { ServiceHelm } from '../dsl/types/output-types'
-import { Kubernetes } from '../dsl/kubernetes-runtime'
 import { Envs } from '../environments'
 import {
   ChartName,
@@ -8,7 +7,8 @@ import {
   Charts,
   Deployments,
 } from '../uber-charts/all-charts'
-import { renderHelmValueFile } from '../dsl/value-files-generators/render-helm-value-file'
+import { renderHelmServices } from '../dsl/exports/exports'
+import { toServices } from '../dsl/feature-deployments'
 
 const renderUrlsForService = ({ ingress = {} }: ServiceHelm) => {
   const urls: string[] = []
@@ -26,10 +26,11 @@ const renderUrlsForChart = async (
   environment: OpsEnv,
   chartName: ChartName,
 ) => {
-  const { services } = await renderHelmValueFile(
-    new Kubernetes(Envs[Deployments[chartName][environment]]),
-    Charts[chartName][environment],
+  const services = await renderHelmServices(
+    Envs[Deployments[chartName][environment]],
+    toServices(Charts[chartName][environment]),
   )
+
   return Object.keys(services).reduce((acc, serviceName) => {
     const urls = renderUrlsForService(services[serviceName])
     if (urls.length <= 0) {

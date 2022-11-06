@@ -7,11 +7,11 @@ import { DeploymentRuntime } from '../types/charts'
 import { Service, ServiceDefinitionForEnv } from '../types/input-types'
 import { prepareServiceForEnv } from '../service-to-environment/pre-process-service'
 
-export const renderer = async <T extends ServiceOutputType>(
-  runtime: DeploymentRuntime,
+export function prepareServices<T extends ServiceOutputType>(
   services: Service[] | Service,
+  runtime: DeploymentRuntime,
   renderer: OutputFormat<T>,
-) => {
+) {
   const servicesToProcess = Array.isArray(services) ? services : [services]
 
   if (runtime.env.feature) {
@@ -29,6 +29,15 @@ export const renderer = async <T extends ServiceOutputType>(
         return serviceForEnv.serviceDef
     }
   })
+  return preparedServices
+}
+
+export const renderer = async <T extends ServiceOutputType>(
+  runtime: DeploymentRuntime,
+  services: Service[] | Service,
+  renderer: OutputFormat<T>,
+) => {
+  const preparedServices = prepareServices(services, runtime, renderer)
 
   return preparedServices.reduce(async (acc, s) => {
     const accVal = await acc

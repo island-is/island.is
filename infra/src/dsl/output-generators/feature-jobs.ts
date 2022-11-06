@@ -3,9 +3,10 @@ import { Service, ServiceDefinitionForEnv } from '../types/input-types'
 import { resolveDbHost } from './map-to-helm-values'
 import { FeatureKubeJob } from '../types/output-types'
 import { resolveWithMaxLength } from './serialization-helpers'
+import { DeploymentRuntime } from '../types/charts'
 
 export const generateJobsForFeature = async (
-  uberChart: Kubernetes,
+  uberChart: DeploymentRuntime,
   habitat: Service[],
   image: string,
   services: ServiceDefinitionForEnv[],

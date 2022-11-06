@@ -6,6 +6,7 @@ import {
   ServiceDefinitionCore,
   ServiceDefinitionForEnv,
 } from './input-types'
+import { ServiceBuilder } from '../dsl'
 
 export interface DeploymentRuntime {
   env: EnvironmentConfig
@@ -37,6 +38,6 @@ export type OpsEnvName =
   | 'prod'
   | 'prod-ids'
 
-export type EnvironmentServices = { [name in OpsEnv]: Service[] }
+export type EnvironmentServices = { [name in OpsEnv]: ServiceBuilder<any>[] }
 
 export type EnvironmentConfigs = { [name in OpsEnvName]: EnvironmentConfig }

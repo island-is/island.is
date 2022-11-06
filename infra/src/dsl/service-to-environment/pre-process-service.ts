@@ -130,16 +130,18 @@ export const prepareServiceForEnv = (
   addToErrors(featureErrors)
   mergeObjects(result.secrets, featureSecrets)
 
-  serviceDef.xroadConfig.forEach((conf) => {
-    const { envs, errors } = getEnvVariables(
-      conf.getEnv(),
-      env,
-      serviceDef.name,
-    )
-    addToErrors(errors)
-    mergeObjects(result.env, envs)
-    mergeObjects(result.secrets, conf.getSecrets())
-  })
+  if (serviceDef.xroadConfig) {
+    serviceDef.xroadConfig.forEach((conf) => {
+      const { envs, errors } = getEnvVariables(
+        conf.getEnv(),
+        env,
+        serviceDef.name,
+      )
+      addToErrors(errors)
+      mergeObjects(result.env, envs)
+      mergeObjects(result.secrets, conf.getSecrets())
+    })
+  }
 
   // initContainers
   if (typeof serviceDef.initContainers !== 'undefined') {

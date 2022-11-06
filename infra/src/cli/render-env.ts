@@ -1,14 +1,12 @@
 import { OpsEnv } from '../dsl/types/input-types'
-import { Kubernetes } from '../dsl/kubernetes-runtime'
 import { Envs } from '../environments'
 import { ChartName, Charts, Deployments } from '../uber-charts/all-charts'
-import { dumpServiceHelm } from '../dsl/file-formats/yaml'
-import { renderHelmValueFile } from '../dsl/value-files-generators/render-helm-value-file'
-import { renderHelmServices } from '../dsl/exports/exports'
+import { renderHelmValueFileContent } from '../dsl/exports/exports'
+import { toServices } from '../dsl/feature-deployments'
 
 export const renderEnv = async (env: OpsEnv, chartName: ChartName) => {
-  return renderHelmServices(
+  return renderHelmValueFileContent(
     Envs[Deployments[chartName][env]],
-    Charts[chartName][env],
+    toServices(Charts[chartName][env]),
   )
 }

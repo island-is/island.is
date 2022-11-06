@@ -1,26 +1,32 @@
 import yargs from 'yargs'
 import { hideBin } from 'yargs/helpers'
 import AWS from 'aws-sdk'
-
-import { generateJobsForFeature } from './dsl/output-generators/feature-jobs'
 import { Kubernetes } from './dsl/kubernetes-runtime'
 import { Envs } from './environments'
 import {
-  Services,
-  FeatureDeploymentServices,
   ExcludedFeatureDeploymentServices,
+  FeatureDeploymentServices,
+  Services as IslandisServices,
 } from './uber-charts/islandis'
 import { Services as IDSServices } from './uber-charts/identity-server'
 import { EnvironmentServices } from './dsl/types/charts'
-import { ServiceHelm } from './dsl/types/output-types'
+import { ServiceHelm, Services } from './dsl/types/output-types'
 import { Deployments } from './uber-charts/all-charts'
-import { getFeatureAffectedServices } from './dsl/feature-deployments'
-import { dumpJobYaml, dumpServiceHelm } from './dsl/file-formats/yaml'
+import {
+  getFeatureAffectedServices,
+  toServices,
+} from './dsl/feature-deployments'
+import { dumpJobYaml } from './dsl/file-formats/yaml'
+import {
+  renderHelmJobForFeature,
+  renderHelmServices,
+  renderHelmValueFileContent,
+} from './dsl/exports/exports'
 
 type ChartName = 'islandis' | 'identity-server'
 
 const charts: { [name in ChartName]: EnvironmentServices } = {
-  islandis: Services,
+  islandis: IslandisServices,
   'identity-server': IDSServices,
 }
 
@@ -94,7 +100,7 @@ const buildIngressComment = (data: ServiceHelm[]): string =>
     .sort()
     .join('\n')
 
-const buildComment = (data: { [key: string]: ServiceHelm }): string => {
+const buildComment = (data: Services<ServiceHelm>): string => {
   return `Feature deployment successful! Access your feature here:\n\n${buildIngressComment(
     Object.values(data),
   )}`
@@ -109,11 +115,14 @@ yargs(hideBin(process.argv))
       const { ch, habitat, affectedServices } = parseArguments(argv)
       const featureYaml = await getFeatureAffectedServices(
         ch,
-        habitat,
-        affectedServices.slice(),
-        ExcludedFeatureDeploymentServices,
+        toServices(habitat),
+        toServices(affectedServices.slice()),
+        toServices(ExcludedFeatureDeploymentServices),
       )
-      await writeToOutput(dumpServiceHelm(ch, featureYaml), argv.output)
+      await writeToOutput(
+        await renderHelmValueFileContent(ch.env, featureYaml),
+        argv.output,
+      )
     },
   )
   .command(
@@ -124,11 +133,14 @@ yargs(hideBin(process.argv))
       const { ch, habitat, affectedServices } = parseArguments(argv)
       const featureYaml = await getFeatureAffectedServices(
         ch,
-        habitat,
-        affectedServices.slice(),
-        ExcludedFeatureDeploymentServices,
+        toServices(habitat),
+        toServices(affectedServices.slice()),
+        toServices(ExcludedFeatureDeploymentServices),
       )
-      await writeToOutput(buildComment(featureYaml.services), argv.output)
+      await writeToOutput(
+        buildComment(await renderHelmServices(ch.env, featureYaml)),
+        argv.output,
+      )
     },
   )
   .command(
@@ -143,11 +155,11 @@ yargs(hideBin(process.argv))
     },
     async (argv: Arguments) => {
       const { ch, habitat, affectedServices } = parseArguments(argv)
-      const featureYaml = await generateJobsForFeature(
+      const featureYaml = await renderHelmJobForFeature(
         ch,
-        habitat,
+        toServices(habitat),
         argv.jobImage!,
-        affectedServices,
+        toServices(affectedServices),
       )
       await writeToOutput(dumpJobYaml(featureYaml), argv.output)
     },
