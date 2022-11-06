@@ -1,4 +1,8 @@
-import type { Optional } from 'sequelize'
+import type {
+  CreationOptional,
+  InferAttributes,
+  InferCreationAttributes,
+} from 'sequelize'
 import {
   Column,
   DataType,
@@ -15,30 +19,13 @@ import { Delegation } from './delegation.model'
 import { DelegationScopeDTO } from '../dto/delegation-scope.dto'
 import { ApiScope } from '../../resources/models/api-scope.model'
 
-interface ModelAttributes {
-  id: string
-  delegationId: string
-  scopeName: string
-  validFrom: Date
-  validTo?: Date
-  created: Date
-  modified?: Date
-  delegation?: Delegation
-  apiScope?: ApiScope
-}
-
-type CreationAttributes = Optional<
-  ModelAttributes,
-  'id' | 'validFrom' | 'created'
->
-
 @Table({
   tableName: 'delegation_scope',
   timestamps: false,
 })
 export class DelegationScope extends Model<
-  ModelAttributes,
-  CreationAttributes
+  InferAttributes<DelegationScope>,
+  InferCreationAttributes<DelegationScope>
 > {
   @PrimaryKey
   @Column({
@@ -46,7 +33,7 @@ export class DelegationScope extends Model<
     primaryKey: true,
     allowNull: false,
   })
-  id!: string
+  id!: CreationOptional<string>
 
   @ForeignKey(() => Delegation)
   @Column({
@@ -57,7 +44,7 @@ export class DelegationScope extends Model<
   delegationId!: string
 
   @BelongsTo(() => Delegation)
-  delegation!: Delegation
+  delegation?: Delegation
 
   @ForeignKey(() => ApiScope)
   @Column({
@@ -74,7 +61,7 @@ export class DelegationScope extends Model<
     allowNull: false,
     defaultValue: DataType.NOW,
   })
-  validFrom!: Date
+  validFrom!: CreationOptional<Date>
 
   @Column({
     type: DataType.DATE,
@@ -84,7 +71,7 @@ export class DelegationScope extends Model<
 
   @CreatedAt
   @ApiProperty()
-  readonly created!: Date
+  readonly created!: CreationOptional<Date>
 
   @UpdatedAt
   @ApiProperty()

@@ -1,3 +1,8 @@
+import type {
+  CreationOptional,
+  InferAttributes,
+  InferCreationAttributes,
+} from 'sequelize'
 import {
   Column,
   CreatedAt,
@@ -13,34 +18,21 @@ import {
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { ApiScope } from './api-scope.model'
 import { Domain } from './domain.model'
-import { Optional } from 'sequelize'
-
-interface ModelAttributes {
-  id: string
-  name: string
-  displayName: string
-  description: string
-  domainName: string
-  order: number
-  created: Date
-  modified?: Date
-  domain?: Domain
-  scopes?: ApiScope[]
-}
-
-type CreationAttributes = Optional<ModelAttributes, 'id' | 'order' | 'created'>
 
 @Table({
   tableName: 'api_scope_group',
 })
-export class ApiScopeGroup extends Model<ModelAttributes, CreationAttributes> {
+export class ApiScopeGroup extends Model<
+  InferAttributes<ApiScopeGroup>,
+  InferCreationAttributes<ApiScopeGroup>
+> {
   @PrimaryKey
   @Column({
     type: DataType.UUID,
     allowNull: false,
   })
   @ApiProperty()
-  id!: string
+  id!: CreationOptional<string>
 
   @Column({
     type: DataType.STRING,
@@ -81,7 +73,7 @@ export class ApiScopeGroup extends Model<ModelAttributes, CreationAttributes> {
   @ApiProperty({
     example: 0,
   })
-  order!: number
+  order!: CreationOptional<number>
 
   @Column({
     type: DataType.STRING,
@@ -95,7 +87,7 @@ export class ApiScopeGroup extends Model<ModelAttributes, CreationAttributes> {
 
   @CreatedAt
   @ApiProperty()
-  readonly created!: Date
+  readonly created!: CreationOptional<Date>
 
   @UpdatedAt
   @ApiProperty()
