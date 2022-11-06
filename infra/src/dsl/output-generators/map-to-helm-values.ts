@@ -4,7 +4,7 @@ import {
   PostgresInfo,
   PostgresInfoForEnv,
   Resources,
-  Service,
+  ServiceDefinition,
   ServiceDefinitionForEnv,
   ValueSource,
 } from '../types/input-types'
@@ -444,7 +444,7 @@ const serviceMockDef = (options: { namespace: string; target: string }) => {
 }
 
 export const HelmOutput: OutputFormat<ServiceHelm> = {
-  featureDeployment(s: Service, env): void {
+  featureDeployment(s: ServiceDefinition, env): void {
     Object.entries(s.ingress).forEach(([name, ingress]) => {
       if (!Array.isArray(ingress.host.dev)) {
         ingress.host.dev = [ingress.host.dev]

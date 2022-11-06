@@ -9,7 +9,7 @@ import {
   MissingSetting,
   PostgresInfo,
   PostgresInfoForEnv,
-  Service,
+  ServiceDefinition,
   ServiceDefinitionForEnv,
   ValueType,
 } from '../types/input-types'
@@ -18,7 +18,7 @@ import { FeatureNames } from '../features'
 import { ContainerSecrets, SerializeErrors } from '../types/output-types'
 
 export const prepareServiceForEnv = (
-  service: Service,
+  service: ServiceDefinition,
   env: EnvironmentConfig,
 ):
   | {
@@ -240,7 +240,7 @@ function getEnvValue(
 }
 
 function getEnvExtraValues(
-  service: Service,
+  service: ServiceDefinition,
   env: EnvironmentConfig,
   extraValues: ExtraValues,
 ): { errors: string[]; envs: Hash } {

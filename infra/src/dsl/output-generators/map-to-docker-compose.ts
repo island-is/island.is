@@ -1,7 +1,7 @@
 import {
   PostgresInfoForEnv,
   Secrets,
-  Service,
+  ServiceDefinition,
   ServiceDefinitionForEnv,
 } from '../types/input-types'
 import {
@@ -243,7 +243,10 @@ const serviceMockDef = (options: {
 }
 
 export const DockerComposeOutput: OutputFormat<DockerComposeService> = {
-  featureDeployment(service: Service, env: EnvironmentConfig): void {},
+  featureDeployment(
+    service: ServiceDefinition,
+    env: EnvironmentConfig,
+  ): void {},
   serializeService(
     service: ServiceDefinitionForEnv,
     deployment: DeploymentRuntime,

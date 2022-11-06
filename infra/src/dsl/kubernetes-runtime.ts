@@ -1,9 +1,4 @@
-import {
-  Service,
-  ServiceDefinition,
-  ServiceDefinitionCore,
-  ServiceDefinitionForEnv,
-} from './types/input-types'
+import { ServiceDefinition, ServiceDefinitionCore } from './types/input-types'
 import { DeploymentRuntime, EnvironmentConfig } from './types/charts'
 
 export class Kubernetes implements DeploymentRuntime {
@@ -14,7 +9,7 @@ export class Kubernetes implements DeploymentRuntime {
 
   deps: { [name: string]: Set<string> } = {}
 
-  ref(from: ServiceDefinitionCore, to: Service | string) {
+  ref(from: ServiceDefinitionCore, to: ServiceDefinition | string) {
     if (typeof to === 'object') {
       const dependecies = this.deps[to.name] ?? new Set<string>()
       this.deps[to.name] = dependecies.add(from.name)

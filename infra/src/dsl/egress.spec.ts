@@ -30,7 +30,7 @@ describe('Egress', () => {
   })
   const uberChart = new Kubernetes(Staging)
   let serviceDef: SerializeSuccess<ServiceHelm>
-  let render: HelmValueFile<ServiceHelm>
+  let render: HelmValueFile
   beforeEach(async () => {
     serviceDef = (await rendererForOne(
       renderers.helm,

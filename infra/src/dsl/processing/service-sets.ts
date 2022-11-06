@@ -4,11 +4,14 @@ import {
   Services,
 } from '../types/output-types'
 import { DeploymentRuntime } from '../types/charts'
-import { Service, ServiceDefinitionForEnv } from '../types/input-types'
+import {
+  ServiceDefinition,
+  ServiceDefinitionForEnv,
+} from '../types/input-types'
 import { prepareServiceForEnv } from '../service-to-environment/pre-process-service'
 
 export function prepareServices<T extends ServiceOutputType>(
-  services: Service[] | Service,
+  services: ServiceDefinition[] | ServiceDefinition,
   runtime: DeploymentRuntime,
   renderer: OutputFormat<T>,
 ) {
@@ -34,7 +37,7 @@ export function prepareServices<T extends ServiceOutputType>(
 
 export const renderer = async <T extends ServiceOutputType>(
   runtime: DeploymentRuntime,
-  services: Service[] | Service,
+  services: ServiceDefinition[] | ServiceDefinition,
   renderer: OutputFormat<T>,
 ) => {
   const preparedServices = prepareServices(services, runtime, renderer)
@@ -56,7 +59,7 @@ export const renderer = async <T extends ServiceOutputType>(
 }
 export const rendererForOne = async <T extends ServiceOutputType>(
   renderer: OutputFormat<T>,
-  service: Service,
+  service: ServiceDefinition,
   runtime: DeploymentRuntime,
 ) => {
   if (runtime.env.feature) {

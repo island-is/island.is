@@ -2,10 +2,9 @@ import { ref, service } from './dsl'
 import { Kubernetes } from './kubernetes-runtime'
 import { EnvironmentConfig } from './types/charts'
 import { getFeatureAffectedServices } from './feature-deployments'
-import { ServiceHelm, HelmValueFile } from './types/output-types'
+import { HelmValueFile } from './types/output-types'
 import { renderHelmValueFile } from './value-files-generators/render-helm-value-file'
 import { renderers } from './service-dependencies'
-import { ServiceDefinition, ServiceDefinitionForEnv } from './types/input-types'
 import { renderer } from './processing/service-sets'
 
 const Dev: EnvironmentConfig = {
@@ -23,7 +22,7 @@ const Dev: EnvironmentConfig = {
 }
 
 describe('Feature-deployment support', () => {
-  let values: HelmValueFile<ServiceHelm>
+  let values: HelmValueFile
 
   beforeEach(async () => {
     const dependencyA = service('service-a').namespace('A')

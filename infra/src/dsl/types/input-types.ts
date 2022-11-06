@@ -6,8 +6,6 @@ export type OpsEnv = 'dev' | 'staging' | 'prod'
 export const MissingSetting = 'Missing setting'
 export type MissingSettingType = typeof MissingSetting
 
-export type Service = ServiceDefinition
-
 // Input types
 export type Hash = { [name: string]: Hash | string | number }
 export type ValueSource = string | ((e: Context) => string)

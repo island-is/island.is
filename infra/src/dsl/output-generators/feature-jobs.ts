@@ -1,5 +1,7 @@
-import { Kubernetes } from '../kubernetes-runtime'
-import { Service, ServiceDefinitionForEnv } from '../types/input-types'
+import {
+  ServiceDefinition,
+  ServiceDefinitionForEnv,
+} from '../types/input-types'
 import { resolveDbHost } from './map-to-helm-values'
 import { FeatureKubeJob } from '../types/output-types'
 import { resolveWithMaxLength } from './serialization-helpers'
@@ -7,7 +9,7 @@ import { DeploymentRuntime } from '../types/charts'
 
 export const generateJobsForFeature = async (
   uberChart: DeploymentRuntime,
-  habitat: Service[],
+  habitat: ServiceDefinition[],
   image: string,
   services: ServiceDefinitionForEnv[],
 ): Promise<FeatureKubeJob> => {

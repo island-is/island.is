@@ -1,4 +1,4 @@
-import { Service } from '../types/input-types'
+import { ServiceDefinition } from '../types/input-types'
 import { Kubernetes } from '../kubernetes-runtime'
 import { dumpServiceHelm } from '../file-formats/yaml'
 import { renderHelmValueFile as internalRenderHelmValueFile } from '../value-files-generators/render-helm-value-file'
@@ -9,7 +9,7 @@ import { generateJobsForFeature } from '../output-generators/feature-jobs'
 
 export const renderHelmValueFileContent = async (
   env: EnvironmentConfig,
-  services: Service[],
+  services: ServiceDefinition[],
 ) => {
   let uberChart = new Kubernetes(env)
   return dumpServiceHelm(
@@ -23,7 +23,7 @@ export const renderHelmValueFileContent = async (
 
 export const renderHelmServiceFile = async (
   env: EnvironmentConfig,
-  services: Service[],
+  services: ServiceDefinition[],
 ) => {
   let uberChart = new Kubernetes(env)
   return internalRenderHelmValueFile(
@@ -33,7 +33,7 @@ export const renderHelmServiceFile = async (
 }
 export const renderHelmServices = async (
   env: EnvironmentConfig,
-  services: Service[],
+  services: ServiceDefinition[],
 ) => {
   let uberChart = new Kubernetes(env)
   return await renderer(uberChart, services, renderers.helm)
@@ -41,9 +41,9 @@ export const renderHelmServices = async (
 
 export const renderHelmJobForFeature = async (
   env: DeploymentRuntime,
-  habitat: Service[],
+  habitat: ServiceDefinition[],
   image: string,
-  services: Service[],
+  services: ServiceDefinition[],
 ) => {
   const result = prepareServices(services, env, renderers.helm)
   return generateJobsForFeature(env, habitat, image, result)

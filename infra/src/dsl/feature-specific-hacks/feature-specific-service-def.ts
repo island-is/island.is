@@ -1,7 +1,9 @@
-import { Service } from '../types/input-types'
+import { ServiceDefinition } from '../types/input-types'
 import { GRAPHQL_API_URL_ENV_VAR_NAME } from '../../../../apps/application-system/api/infra/application-system-api'
 
-export function featureSpecificServiceDef(featureSpecificServices: Service[]) {
+export function featureSpecificServiceDef(
+  featureSpecificServices: ServiceDefinition[],
+) {
   const hackForThatOneCircularDependency = () => {
     const isApiServicePresent = featureSpecificServices.some(
       (s) => s.name === 'api',

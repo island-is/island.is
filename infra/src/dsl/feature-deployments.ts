@@ -1,13 +1,13 @@
-import { Service } from './types/input-types'
+import { ServiceDefinition } from './types/input-types'
 import { Kubernetes } from './kubernetes-runtime'
 import { getWithDependantServices } from './service-dependencies'
 import { ServiceBuilder } from './dsl'
 
 export const getFeatureAffectedServices = async (
   uberChart: Kubernetes,
-  habitat: Service[],
-  services: Service[],
-  excludedServices: Service[] = [],
+  habitat: ServiceDefinition[],
+  services: ServiceDefinition[],
+  excludedServices: ServiceDefinition[] = [],
 ) => {
   const feature = uberChart.env.feature
   if (typeof feature !== 'undefined') {

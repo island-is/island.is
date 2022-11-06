@@ -1,4 +1,4 @@
-import { Hash, Service, ServiceDefinitionForEnv } from './input-types'
+import { Hash, ServiceDefinition, ServiceDefinitionForEnv } from './input-types'
 import { DeploymentRuntime, EnvironmentConfig } from './charts'
 
 // Output types
@@ -201,5 +201,5 @@ export interface OutputFormat<T extends ServiceOutputType> {
 
   serviceMockDef(options: { namespace: string; target: string }): T
 
-  featureDeployment(service: Service, env: EnvironmentConfig): void
+  featureDeployment(service: ServiceDefinition, env: EnvironmentConfig): void
 }

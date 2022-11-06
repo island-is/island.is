@@ -1,4 +1,4 @@
-import { Service, ServiceDefinitionCore } from './types/input-types'
+import { ServiceDefinition, ServiceDefinitionCore } from './types/input-types'
 import { HelmOutput } from './output-generators/map-to-helm-values'
 import { DeploymentRuntime, EnvironmentConfig } from './types/charts'
 import { DockerComposeOutput } from './output-generators/map-to-docker-compose'
@@ -15,7 +15,7 @@ class DependencyTracer implements DeploymentRuntime {
 
   deps: { [name: string]: Set<string> } = {}
 
-  ref(from: ServiceDefinitionCore, to: Service | string) {
+  ref(from: ServiceDefinitionCore, to: ServiceDefinition | string) {
     if (typeof to === 'object') {
       const dependecies = this.deps[to.name] ?? new Set<string>()
       this.deps[to.name] = dependecies.add(from.name)
@@ -33,8 +33,8 @@ export const renderers = {
 
 const findDependencies = (
   uberChart: DeploymentRuntime,
-  svc: Service | string,
-  habitat: Service[],
+  svc: ServiceDefinition | string,
+  habitat: ServiceDefinition[],
   level: number = 0,
 ): string[] => {
   const deps = uberChart.deps[typeof svc === 'string' ? svc : svc.name]
@@ -63,9 +63,9 @@ const findDependencies = (
 
 export const getWithDependantServices = async (
   env: EnvironmentConfig,
-  habitat: Service[],
-  services: Service[],
-): Promise<Service[]> => {
+  habitat: ServiceDefinition[],
+  services: ServiceDefinition[],
+): Promise<ServiceDefinition[]> => {
   const dummyEnv: EnvironmentConfig = {
     auroraHost: '',
     awsAccountId: '',
@@ -90,7 +90,7 @@ export const getWithDependantServices = async (
       dependantServices.map((dep) => habitat.find((s) => s.name === dep)!),
     )
     .reduce(
-      (acc: Service[], cur: Service): Service[] =>
+      (acc: ServiceDefinition[], cur: ServiceDefinition): ServiceDefinition[] =>
         acc.indexOf(cur) === -1 ? acc.concat([cur]) : acc,
       [],
     )
