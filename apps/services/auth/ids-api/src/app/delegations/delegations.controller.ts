@@ -1,6 +1,7 @@
 import {
   Controller,
   Get,
+  ParseArrayPipe,
   Query,
   UseGuards,
   Version,
@@ -59,24 +60,23 @@ export class DelegationsController {
   async findAllScopesTo(
     @CurrentUser() user: User,
     @Query('fromNationalId') fromNationalId: string,
-    @Query('delegationType') delegationType: Array<DelegationType>,
+    @Query(
+      'delegationType',
+      new ParseArrayPipe({ optional: true, items: String, separator: ',' }),
+    )
+    delegationType: Array<DelegationType>,
   ): Promise<string[]> {
     const scopePromises = []
 
-    const delegationTypes =
-      delegationType && !Array.isArray(delegationType)
-        ? [delegationType]
-        : delegationType
-
-    if (delegationTypes.includes(DelegationType.ProcurationHolder))
+    if (delegationType.includes(DelegationType.ProcurationHolder))
       scopePromises.push(this.delegationScopeService.findAllProcurationScopes())
 
-    if (delegationTypes.includes(DelegationType.LegalGuardian))
+    if (delegationType.includes(DelegationType.LegalGuardian))
       scopePromises.push(
         this.delegationScopeService.findAllLegalGuardianScopes(),
       )
 
-    if (delegationTypes.includes(DelegationType.PersonalRepresentative))
+    if (delegationType.includes(DelegationType.PersonalRepresentative))
       scopePromises.push(
         this.delegationScopeService.findPersonalRepresentativeScopes(
           user.nationalId,
@@ -84,7 +84,7 @@ export class DelegationsController {
         ),
       )
 
-    if (delegationTypes.includes(DelegationType.Custom))
+    if (delegationType.includes(DelegationType.Custom))
       scopePromises.push(
         this.delegationScopeService
           .findAllValidCustomScopesTo(user.nationalId, fromNationalId)
