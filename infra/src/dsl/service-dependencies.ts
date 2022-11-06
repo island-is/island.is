@@ -1,18 +1,13 @@
-import {
-  Service,
-  ServiceDefinition,
-  ServiceDefinitionCore,
-  ServiceDefinitionForEnv,
-} from './types/input-types'
+import { Service, ServiceDefinitionCore } from './types/input-types'
 import { HelmOutput } from './output-generators/map-to-helm-values'
 import { DeploymentRuntime, EnvironmentConfig } from './types/charts'
 import { DockerComposeOutput } from './output-generators/map-to-docker-compose'
-import { renderer } from './output-generators/render-helm-value-file'
 import cloneDeep from 'lodash/cloneDeep'
+import { renderer } from './processing/service-sets'
 
 const MAX_LEVEL_DEPENDENCIES = 20
 
-export class DependencyTracer implements DeploymentRuntime {
+class DependencyTracer implements DeploymentRuntime {
   env: EnvironmentConfig // TODO: get rid of this?
   constructor(env: EnvironmentConfig) {
     this.env = env
@@ -35,15 +30,6 @@ export const renderers = {
   helm: HelmOutput,
   'docker-compose': DockerComposeOutput,
 }
-
-// const discoverDependencies = async (
-//   runtime: DeploymentRuntime,
-//   services: Service[],
-// ) => {
-//   for (const service of services) {
-//     await renderers.helm.serializeService(service, runtime, runtime.env.feature)
-//   }
-// }
 
 const findDependencies = (
   uberChart: DeploymentRuntime,
@@ -109,51 +95,3 @@ export const getWithDependantServices = async (
       [],
     )
 }
-
-// const renderDockerComposeFile = async (
-//   uberChart: Kubernetes,
-//   ...services: Service[]
-// ): Promise<ValueFile<DockerComposeService>> => {
-//   const helmServices: Services<DockerComposeService> = await services.reduce(
-//     async (acc, s) => {
-//       const accVal = await acc
-//       const values = await renderers['docker-compose'].serializeService(
-//         s,
-//         uberChart,
-//       )
-//       switch (values.type) {
-//         case 'error':
-//           throw new Error(values.errors.join('\n'))
-//         case 'success':
-//           // const extras = values.serviceDef.extra
-//           // delete values.serviceDef.extra
-//           return Promise.resolve({
-//             ...accVal,
-//             [s.serviceDef.name]: values.serviceDef,
-//           })
-//       }
-//     },
-//     Promise.resolve(uberChart.env.global),
-//   )
-//   const servicesAndMocks = Object.entries(uberChart.deps).reduce(
-//     (acc, [name, svcs]) => {
-//       if (name.startsWith('mock-')) {
-//         return {
-//           ...acc,
-//           [name]: serviceMockDef({
-//             namespace: svcs.values().next().value.serviceDef.namespace,
-//             target: name,
-//           }),
-//         }
-//       }
-//       return {
-//         ...acc,
-//       }
-//     },
-//     helmServices,
-//   )
-//   return {
-//     namespaces: [],
-//     services: servicesAndMocks,
-//   }
-// }

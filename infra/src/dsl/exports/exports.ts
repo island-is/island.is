@@ -1,0 +1,21 @@
+import { Service } from '../types/input-types'
+import { Kubernetes } from '../kubernetes-runtime'
+import { dumpServiceHelm } from '../file-formats/yaml'
+import { renderHelmValueFile } from '../value-files-generators/render-helm-value-file'
+import { EnvironmentConfig } from '../types/charts'
+import { renderers } from '../service-dependencies'
+import { renderer } from '../processing/service-sets'
+
+export const renderHelmServices = async (
+  env: EnvironmentConfig,
+  services: Service[],
+) => {
+  let uberChart = new Kubernetes(env)
+  return dumpServiceHelm(
+    uberChart,
+    await renderHelmValueFile(
+      uberChart,
+      await renderer(uberChart, services, renderers.helm),
+    ),
+  )
+}

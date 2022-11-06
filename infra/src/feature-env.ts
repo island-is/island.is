@@ -147,7 +147,7 @@ yargs(hideBin(process.argv))
         ch,
         habitat,
         argv.jobImage!,
-        ...affectedServices,
+        affectedServices,
       )
       await writeToOutput(dumpJobYaml(featureYaml), argv.output)
     },

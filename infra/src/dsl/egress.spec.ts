@@ -7,10 +7,8 @@ import {
 } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
 import { renderers } from './service-dependencies'
-import {
-  rendererForOne,
-  renderHelmValueFile,
-} from './output-generators/render-helm-value-file'
+import { renderHelmValueFile } from './value-files-generators/render-helm-value-file'
+import { rendererForOne } from './processing/service-sets'
 
 const Staging: EnvironmentConfig = {
   auroraHost: 'a',

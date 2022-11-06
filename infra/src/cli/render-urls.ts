@@ -8,7 +8,7 @@ import {
   Charts,
   Deployments,
 } from '../uber-charts/all-charts'
-import { renderHelmValueFile } from '../dsl/output-generators/render-helm-value-file'
+import { renderHelmValueFile } from '../dsl/value-files-generators/render-helm-value-file'
 
 const renderUrlsForService = ({ ingress = {} }: ServiceHelm) => {
   const urls: string[] = []

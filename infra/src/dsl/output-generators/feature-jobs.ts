@@ -1,36 +1,29 @@
 import { Kubernetes } from '../kubernetes-runtime'
-import { Service } from '../types/input-types'
-import { renderers } from '../service-dependencies'
+import { Service, ServiceDefinitionForEnv } from '../types/input-types'
 import { resolveDbHost } from './map-to-helm-values'
 import { FeatureKubeJob } from '../types/output-types'
 import { resolveWithMaxLength } from './serialization-helpers'
-import { processForFeatureDeployment } from '../process-for-feature-deployment'
 
 export const generateJobsForFeature = async (
   uberChart: Kubernetes,
   habitat: Service[],
   image: string,
-  ...services: Service[]
+  services: ServiceDefinitionForEnv[],
 ): Promise<FeatureKubeJob> => {
   const feature = uberChart.env.feature
   if (typeof feature === 'undefined') {
     throw new Error('Feature jobs with a feature name not defined')
   }
-  processForFeatureDeployment(services, renderers.helm, uberChart)
   const securityContext = {
     privileged: false,
     allowPrivilegeEscalation: false,
   }
   const containers = Object.values(services)
     .map((service) =>
-      [service.serviceDef.postgres, service.serviceDef.initContainers?.postgres]
+      [service.postgres, service.initContainers?.postgres]
         .filter((id) => id)
         .map((info) => {
-          const host = resolveDbHost(
-            uberChart,
-            service,
-            info?.host?.[uberChart.env.type],
-          )
+          const host = resolveDbHost(uberChart, service, info?.host)
           return {
             command: ['/app/create-db.sh'],
             image,

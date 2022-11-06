@@ -3,12 +3,10 @@ import { Kubernetes } from './kubernetes-runtime'
 import { EnvironmentConfig } from './types/charts'
 import { getFeatureAffectedServices } from './feature-deployments'
 import { ServiceHelm, HelmValueFile } from './types/output-types'
-import {
-  renderer,
-  renderHelmValueFile,
-} from './output-generators/render-helm-value-file'
+import { renderHelmValueFile } from './value-files-generators/render-helm-value-file'
 import { renderers } from './service-dependencies'
 import { ServiceDefinition, ServiceDefinitionForEnv } from './types/input-types'
+import { renderer } from './processing/service-sets'
 
 const Dev: EnvironmentConfig = {
   auroraHost: 'a',

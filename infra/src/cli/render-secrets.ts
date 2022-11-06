@@ -2,7 +2,7 @@ import { Kubernetes } from '../dsl/kubernetes-runtime'
 import { Envs } from '../environments'
 import { Charts } from '../uber-charts/all-charts'
 import { SSM } from '@aws-sdk/client-ssm'
-import { renderHelmValueFile } from '../dsl/output-generators/render-helm-value-file'
+import { renderHelmValueFile } from '../dsl/value-files-generators/render-helm-value-file'
 
 const API_INITIALIZATION_OPTIONS = {
   region: 'eu-west-1',

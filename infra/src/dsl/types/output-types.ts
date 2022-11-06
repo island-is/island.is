@@ -189,6 +189,9 @@ export type HelmValueFile<T extends ServiceOutputType> = {
   namespaces: string[]
   services: Services<T>
 }
+export type DockerComposeValueFile = {
+  services: Services<DockerComposeService>
+}
 
 export interface OutputFormat<T extends ServiceOutputType> {
   serializeService(

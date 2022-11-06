@@ -4,7 +4,7 @@ import { SerializeSuccess, ServiceHelm } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
 import { XroadConf } from './xroad'
 import { renderers } from './service-dependencies'
-import { rendererForOne } from './output-generators/render-helm-value-file'
+import { rendererForOne } from './processing/service-sets'
 
 const Dev: EnvironmentConfig = {
   auroraHost: 'a',

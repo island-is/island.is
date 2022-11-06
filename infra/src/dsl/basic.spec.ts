@@ -3,10 +3,7 @@ import { Kubernetes } from './kubernetes-runtime'
 import { SerializeSuccess, ServiceHelm } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
 import { renderers } from './service-dependencies'
-import {
-  renderer,
-  rendererForOne,
-} from './output-generators/render-helm-value-file'
+import { renderer, rendererForOne } from './processing/service-sets'
 
 const Staging: EnvironmentConfig = {
   auroraHost: 'a',

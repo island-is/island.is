@@ -8,15 +8,11 @@ import {
   ContainerEnvironmentVariables,
   DockerComposeService,
   OutputFormat,
-  SerializeErrors,
   SerializeMethod,
-  SerializeSuccess,
 } from '../types/output-types'
 import { DeploymentRuntime, EnvironmentConfig } from '../types/charts'
 import { SSM } from '@aws-sdk/client-ssm'
-import { ServerSideFeature } from '../../../../libs/feature-flags/src'
 import { checksAndValidations } from './errors'
-import { prepareServiceForEnv } from '../service-to-environment/pre-process-service'
 import {
   postgresIdentifier,
   serializeEnvironmentVariables,
@@ -38,12 +34,6 @@ const serializeService: SerializeMethod<DockerComposeService> = async (
     getErrors,
   } = checksAndValidations(service.name)
   const serviceDef = service
-  // const {
-  //   grantNamespaces,
-  //   grantNamespacesEnabled,
-  //   namespace,
-  //   securityContext,
-  // } = serviceDef
   const dockerImage = `821090935708.dkr.ecr.eu-west-1.amazonaws.com/${
     serviceDef.image ?? serviceDef.name
   }`
