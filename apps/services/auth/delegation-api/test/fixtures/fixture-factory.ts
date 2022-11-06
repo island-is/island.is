@@ -1,6 +1,7 @@
 import faker from 'faker'
 import addYears from 'date-fns/addYears'
 import { getModelToken } from '@nestjs/sequelize'
+import { Model } from 'sequelize'
 
 import { TestApp } from '@island.is/testing/nest'
 import { createNationalId } from '@island.is/testing/fixtures'
@@ -21,13 +22,11 @@ import {
   CreateCustomDelegation,
   CreateDomain,
 } from './types'
-import { Model } from 'sequelize'
-import { CreateTranslation } from '../../../public-api/test/fixtures'
 
 export class FixtureFactory {
   constructor(private app: TestApp) {}
 
-  get<T extends Function>(model: T): T {
+  get<T extends new () => Model>(model: T): T {
     return this.app.get(getModelToken(model))
   }
 

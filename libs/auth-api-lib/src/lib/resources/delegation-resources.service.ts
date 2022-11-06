@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { ForbiddenException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import type {
   Filterable,
@@ -10,7 +10,7 @@ import type {
 import { literal, Op } from 'sequelize'
 
 import { User } from '@island.is/auth-nest-tools'
-import { ConfigType } from '@island.is/nest/config'
+import type { ConfigType } from '@island.is/nest/config'
 import { NoContentException } from '@island.is/nest/problem'
 
 import { ApiScopeListDTO } from './dto/api-scope-list.dto'
@@ -23,6 +23,7 @@ import { ApiScopeUserAccess } from './models/api-scope-user-access.model'
 import { DelegationScope } from '../delegations/models/delegation-scope.model'
 import { Delegation } from '../delegations/models/delegation.model'
 import { DelegationConfig } from '../delegations/DelegationConfig'
+import { isCompany } from 'kennitala'
 
 interface ApiScopeQueryOptions extends Filterable<ApiScope>, Projectable {
   include?: Includeable[]
@@ -207,18 +208,20 @@ export class DelegationResourcesService {
       required: false,
     })
 
-    // Currently only supporting access control for company delegations.
     if (user.delegationType && user.actor) {
+      // We currently only support access control for company (delegation) actors.
+      // Actors for individuals should not have the scope required to reach this
+      // point, but we assert it just to be safe.
+      if (!isCompany(user.nationalId)) {
+        throw new ForbiddenException(
+          'Actors for individuals should not be able to manage delegations.',
+        )
+      }
+
       const delegationOr: Array<WhereOptions<ApiScope>> = []
       whereAnd.push({ [Op.or]: delegationOr })
       if (user.delegationType.includes('ProcurationHolder')) {
         delegationOr.push({ grantToProcuringHolders: true })
-      }
-      if (user.delegationType.includes('LegalGuardian')) {
-        delegationOr.push(literal('false'))
-      }
-      if (user.delegationType.includes('PersonalRepresentative')) {
-        delegationOr.push(literal('false'))
       }
       if (user.delegationType.includes('Custom')) {
         include.push({

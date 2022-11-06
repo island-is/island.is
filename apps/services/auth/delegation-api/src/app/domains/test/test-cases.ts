@@ -108,7 +108,7 @@ export const testCases: Record<string, TestCase> = {
       },
     ],
   },
-  // Procuring holder should only see scopes they have access to.
+  // Can grant forward custom delegations which you have.
   customDelegationScopes: {
     user: createCurrentUser({
       nationalIdType: 'company',
@@ -154,7 +154,7 @@ export const testCases: Record<string, TestCase> = {
       },
     ],
   },
-  // Procuring holder should only see scopes they have access to.
+  // Custom delegations should not leak between users.
   unrelatedCustomDelegations: {
     user: createCurrentUser({
       nationalIdType: 'company',
@@ -185,7 +185,7 @@ export const testCases: Record<string, TestCase> = {
     ],
     expected: [],
   },
-  // Company actor should not see protected scopes except as procuration holder or custom delegation.
+  // Company actor should not see access controlled scopes except as procuration holder or custom delegation.
   accessControlledCompanyScopes: {
     user: createCurrentUser({
       nationalIdType: 'company',
@@ -229,7 +229,7 @@ export const testCases: Record<string, TestCase> = {
       },
     ],
   },
-  // Don't see scopes configured for specific types of delegation.
+  // Should see scopes configured for specific types of delegation.
   customScopeRulesIncluded: {
     user: createCurrentUser({
       scope: [AuthScope.delegations],
@@ -270,7 +270,7 @@ export const testCases: Record<string, TestCase> = {
       },
     ],
   },
-  // Don't see scopes configured for specific types of delegation.
+  // Should not see scopes configured for other types of delegation.
   customScopeRulesExcluded: {
     user: createCurrentUser({
       scope: [AuthScope.delegations],

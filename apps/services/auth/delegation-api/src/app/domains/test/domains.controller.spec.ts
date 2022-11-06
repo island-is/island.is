@@ -2,7 +2,7 @@ import assert from 'assert'
 import differenceWith from 'lodash/differenceWith'
 import request from 'supertest'
 
-import { TestApp } from '@island.is/testing/nest'
+import { getRequestMethod, TestApp } from '@island.is/testing/nest'
 
 import {
   setupWithAuth,
@@ -11,7 +11,6 @@ import {
 } from '../../../../test/setup'
 import { TestEndpointOptions } from '../../../../test/types'
 import { FixtureFactory } from '../../../../test/fixtures/fixture-factory'
-import { getRequestMethod } from '../../../../test/utils'
 import { testCases } from './test-cases'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 import { AuthScope } from '@island.is/auth/scopes'
@@ -117,7 +116,7 @@ describe('DomainsController', () => {
         )
 
         it.each(validDomains)(
-          'GET /domains/%s/scope-tree returns expected scope tree',
+          'GET /domains/%s/scope-tree returns expected scopes',
           async (domainName) => {
             // Arrange
             const domain = testCase.expected.find(
@@ -139,7 +138,7 @@ describe('DomainsController', () => {
 
       if (invalidDomains.length) {
         it.each(invalidDomains)(
-          'GET /domains/%s returns unexpected domains',
+          'GET /domains/%s returns no content response',
           async (domainName) => {
             // Act
             const res = await server.get(`/v1/domains/${domainName}`)

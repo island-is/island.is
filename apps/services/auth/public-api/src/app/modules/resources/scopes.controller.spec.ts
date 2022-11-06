@@ -9,7 +9,7 @@ import {
   createCurrentUser,
   createNationalRegistryUser,
 } from '@island.is/testing/fixtures'
-import { TestApp } from '@island.is/testing/nest'
+import { TestApp, getRequestMethod } from '@island.is/testing/nest'
 
 import {
   ScopeGroupSetupOptions,
@@ -20,7 +20,6 @@ import {
   setupWithoutPermission,
 } from '../../../../test/setup'
 import { TestEndpointOptions } from '../../../../test/types'
-import { getRequestMethod } from '../../../../test/utils'
 import { createTranslations } from '../../../../test/fixtures'
 
 const user = createCurrentUser({

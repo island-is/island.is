@@ -13,7 +13,8 @@ interface UserOptions {
   nationalIdType?: NationalIdType
   delegationType?: AuthDelegationType | AuthDelegationType[]
   actor?: {
-    nationalId: string
+    nationalId?: string
+    scope?: string[]
   }
 }
 
@@ -23,11 +24,8 @@ export const createCurrentUser = (user: UserOptions = {}): User => {
       ? [user.delegationType]
       : user.delegationType
   const actor =
-    user.actor ?? delegationType
-      ? {
-          nationalId: createNationalId(),
-          scope: [],
-        }
+    delegationType || user.actor
+      ? { nationalId: createNationalId('person'), scope: [], ...user.actor }
       : undefined
 
   return {
