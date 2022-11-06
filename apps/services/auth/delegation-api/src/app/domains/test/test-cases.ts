@@ -74,7 +74,6 @@ export const testCases: Record<string, TestCase> = {
       delegationType: 'ProcurationHolder',
       scope: [AuthScope.delegations],
     }),
-    accessTo: ['s1'],
     domains: [
       {
         name: 'd1',
