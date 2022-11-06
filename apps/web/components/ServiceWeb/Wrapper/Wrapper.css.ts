@@ -8,17 +8,14 @@ import {
 } from '../../../components/ServiceWeb/constants'
 
 export const searchSection = style({
-  position: 'relative',
-  display: 'inline-block',
+  position: 'absolute',
+  top: DESKTOP_HEADER_HEIGHT + 60,
+  height: MOBILE_HEIGHT - DESKTOP_HEADER_HEIGHT,
   width: '100%',
-  marginTop: DESKTOP_HEADER_HEIGHT,
-  paddingBottom: 150,
-  top: -DESKTOP_HEADER_HEIGHT,
   ...themeUtils.responsiveStyle({
     lg: {
       height: DESKTOP_HEIGHT - MOBILE_HEADER_HEIGHT,
-      marginTop: MOBILE_HEADER_HEIGHT,
-      top: -MOBILE_HEADER_HEIGHT,
+      top: MOBILE_HEADER_HEIGHT,
     },
     md: {
       height: MOBILE_HEIGHT - DESKTOP_HEADER_HEIGHT,
