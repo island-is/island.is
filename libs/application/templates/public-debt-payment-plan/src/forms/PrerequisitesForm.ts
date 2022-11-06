@@ -171,7 +171,6 @@ export const PrerequisitesForm: Form = buildForm({
               width: 'half',
               variant: 'tel',
               backgroundColor: 'blue',
-              required: true,
               defaultValue: (application: Application) =>
                 (application.externalData as PaymentPlanExternalData)
                   ?.userProfile?.data?.mobilePhoneNumber,

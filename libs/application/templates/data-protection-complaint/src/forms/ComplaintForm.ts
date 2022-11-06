@@ -1,4 +1,5 @@
 import {
+  buildCheckboxField,
   buildCustomField,
   buildDataProviderItem,
   buildExternalDataProvider,
@@ -10,6 +11,7 @@ import {
   buildSubmitField,
   buildSubSection,
   buildTextField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import {
   DefaultEvents,
@@ -19,7 +21,8 @@ import {
   NationalRegistryUserApi,
   UserProfileApi,
 } from '@island.is/application/types'
-import { DataProtectionComplaint, OnBehalf } from '../lib/dataSchema'
+import { applicantInformationMultiField } from '@island.is/application/ui-forms'
+import { OnBehalf } from '../lib/dataSchema'
 import {
   application,
   complaint,
@@ -31,7 +34,7 @@ import {
   sharedFields,
 } from '../lib/messages'
 import { externalData } from '../lib/messages/externalData'
-import { FILE_SIZE_LIMIT, NO, YES } from '../shared'
+import { FILE_SIZE_LIMIT, NO, YES, SubjectOfComplaint } from '../shared'
 
 const yesOption = { value: YES, label: sharedFields.yes }
 const noOption = { value: NO, label: sharedFields.no }
@@ -303,97 +306,7 @@ export const ComplaintForm: Form = buildForm({
               onBehalf === OnBehalf.OTHERS
             )
           },
-          children: [
-            buildMultiField({
-              id: 'applicantSection',
-              title: info.general.applicantPageTitle,
-              description: info.general.applicantPageDescription,
-              children: [
-                buildTextField({
-                  id: 'applicant.name',
-                  title: info.labels.name,
-                  backgroundColor: 'white',
-                  disabled: true,
-                  required: true,
-                  defaultValue: (application: DataProtectionComplaint) =>
-                    application.externalData?.nationalRegistry?.data?.fullName,
-                }),
-                buildTextField({
-                  id: 'applicant.nationalId',
-                  title: info.labels.nationalId,
-                  format: '######-####',
-                  width: 'half',
-                  backgroundColor: 'white',
-                  disabled: true,
-                  required: true,
-                  defaultValue: (application: DataProtectionComplaint) =>
-                    application.externalData?.nationalRegistry?.data
-                      ?.nationalId,
-                }),
-                buildTextField({
-                  id: 'applicant.address',
-                  title: info.labels.address,
-                  width: 'half',
-                  backgroundColor: 'blue',
-                  required: true,
-                  defaultValue: (application: DataProtectionComplaint) =>
-                    application.externalData?.nationalRegistry?.data?.address
-                      ?.streetAddress,
-                }),
-                buildTextField({
-                  id: 'applicant.postalCode',
-                  title: info.labels.postalCode,
-                  width: 'half',
-                  backgroundColor: 'blue',
-                  required: true,
-                  defaultValue: (application: DataProtectionComplaint) =>
-                    application.externalData?.nationalRegistry?.data?.address
-                      ?.postalCode,
-                }),
-                buildTextField({
-                  id: 'applicant.city',
-                  title: info.labels.city,
-                  width: 'half',
-                  backgroundColor: 'blue',
-                  required: true,
-                  defaultValue: (application: DataProtectionComplaint) =>
-                    application.externalData?.nationalRegistry?.data?.address
-                      ?.locality,
-                }),
-                buildTextField({
-                  id: 'applicant.email',
-                  title: info.labels.email,
-                  width: 'half',
-                  variant: 'email',
-                  backgroundColor: 'blue',
-                  defaultValue: (application: DataProtectionComplaint) =>
-                    application.externalData?.userProfile?.data?.email,
-                }),
-                buildTextField({
-                  id: 'applicant.phoneNumber',
-                  title: info.labels.tel,
-                  format: '###-####',
-                  width: 'half',
-                  variant: 'tel',
-                  backgroundColor: 'blue',
-                  defaultValue: (application: DataProtectionComplaint) => {
-                    const phoneNumber =
-                      application.externalData?.userProfile?.data
-                        ?.mobilePhoneNumber
-                    if (phoneNumber?.startsWith('+')) {
-                      const splitNumber = phoneNumber.split('-')
-                      if (splitNumber.length === 3) {
-                        return `${splitNumber[1]}${splitNumber[2]}`
-                      } else if (splitNumber.length === 2) {
-                        return `${splitNumber[1]}`
-                      }
-                    }
-                    return phoneNumber
-                  },
-                }),
-              ],
-            }),
-          ],
+          children: [applicantInformationMultiField],
         }),
         buildSubSection({
           id: 'organizationOrInstitution',
@@ -540,11 +453,83 @@ export const ComplaintForm: Form = buildForm({
               description: complaint.general.subjectOfComplaintPageDescription,
               space: 3,
               children: [
-                buildCustomField({
-                  component: 'ReasonsForComplaint',
-                  id: 'subjectOfComplaint',
-                  doesNotRequireAnswer: true,
+                buildCheckboxField({
+                  id: 'subjectOfComplaint.values',
                   title: '',
+                  options: [
+                    {
+                      label:
+                        complaint.labels[SubjectOfComplaint.WITH_AUTHORITIES],
+                      value: SubjectOfComplaint.WITH_AUTHORITIES,
+                    },
+                    {
+                      label:
+                        complaint.labels[SubjectOfComplaint.LACK_OF_EDUCATION],
+                      value: SubjectOfComplaint.LACK_OF_EDUCATION,
+                    },
+                    {
+                      label: complaint.labels[SubjectOfComplaint.SOCIAL_MEDIA],
+                      value: SubjectOfComplaint.SOCIAL_MEDIA,
+                    },
+                    {
+                      label:
+                        complaint.labels[SubjectOfComplaint.REQUEST_FOR_ACCESS],
+                      value: SubjectOfComplaint.REQUEST_FOR_ACCESS,
+                    },
+                    {
+                      label:
+                        complaint.labels[
+                          SubjectOfComplaint.RIGHTS_OF_OBJECTION
+                        ],
+                      value: SubjectOfComplaint.RIGHTS_OF_OBJECTION,
+                    },
+                    {
+                      label: complaint.labels[SubjectOfComplaint.EMAIL],
+                      value: SubjectOfComplaint.EMAIL,
+                    },
+                    {
+                      label: complaint.labels[SubjectOfComplaint.NATIONAL_ID],
+                      value: SubjectOfComplaint.NATIONAL_ID,
+                    },
+                    {
+                      label:
+                        complaint.labels[SubjectOfComplaint.EMAIL_IN_WORKPLACE],
+                      value: SubjectOfComplaint.EMAIL_IN_WORKPLACE,
+                    },
+                    {
+                      label:
+                        complaint.labels[
+                          SubjectOfComplaint.UNAUTHORIZED_PUBLICATION
+                        ],
+                      value: SubjectOfComplaint.UNAUTHORIZED_PUBLICATION,
+                    },
+                    {
+                      label: complaint.labels[SubjectOfComplaint.VANSKILASKRA],
+                      value: SubjectOfComplaint.VANSKILASKRA,
+                    },
+                    {
+                      label:
+                        complaint.labels[SubjectOfComplaint.VIDEO_RECORDINGS],
+                      value: SubjectOfComplaint.VIDEO_RECORDINGS,
+                    },
+                    {
+                      label: complaint.labels[SubjectOfComplaint.OTHER],
+                      value: SubjectOfComplaint.OTHER,
+                    },
+                  ],
+                }),
+                buildTextField({
+                  id: 'subjectOfComplaint.somethingElse',
+                  title: complaint.labels.subjectSomethingElse,
+                  placeholder: complaint.labels.subjectSomethingElsePlaceholder,
+                  required: true,
+                  condition: (formValue) => {
+                    const value = getValueViaPath(
+                      formValue,
+                      'subjectOfComplaint.values',
+                    ) as SubjectOfComplaint[]
+                    return value.includes(SubjectOfComplaint.OTHER)
+                  },
                 }),
               ],
             }),

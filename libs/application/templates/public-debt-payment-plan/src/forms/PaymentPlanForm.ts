@@ -15,6 +15,7 @@ import {
   Form,
   FormModes,
 } from '@island.is/application/types'
+import { applicantInformationMultiField } from '@island.is/application/ui-forms'
 import { Logo } from '../assets'
 import {
   application,
@@ -85,89 +86,7 @@ export const PaymentPlanForm: Form = buildForm({
     buildSection({
       id: 'info',
       title: section.info,
-      children: [
-        buildMultiField({
-          id: 'applicantSection',
-          title: info.general.pageTitle,
-          description: info.general.pageDescription,
-          children: [
-            buildTextField({
-              id: 'applicant.name',
-              title: info.labels.name,
-              backgroundColor: 'white',
-              disabled: true,
-              defaultValue: (application: Application) => {
-                return (application.externalData as PaymentPlanExternalData)
-                  ?.identity?.data?.name
-              },
-            }),
-            buildTextField({
-              id: 'applicant.nationalId',
-              title: info.labels.nationalId,
-              format: '######-####',
-              width: 'half',
-              backgroundColor: 'white',
-              disabled: true,
-              defaultValue: (application: Application) =>
-                (application.externalData as PaymentPlanExternalData)?.identity
-                  ?.data?.nationalId,
-            }),
-            buildTextField({
-              id: 'applicant.address',
-              title: info.labels.address,
-              width: 'half',
-              backgroundColor: 'white',
-              disabled: true,
-              defaultValue: (application: Application) =>
-                (application.externalData as PaymentPlanExternalData)?.identity
-                  ?.data?.address?.streetAddress,
-            }),
-            buildTextField({
-              id: 'applicant.postalCode',
-              title: info.labels.postalCode,
-              width: 'half',
-              backgroundColor: 'white',
-              disabled: true,
-              defaultValue: (application: Application) =>
-                (application.externalData as PaymentPlanExternalData)?.identity
-                  ?.data?.address?.postalCode,
-            }),
-            buildTextField({
-              id: 'applicant.city',
-              title: info.labels.city,
-              width: 'half',
-              backgroundColor: 'white',
-              disabled: true,
-              defaultValue: (application: Application) =>
-                (application.externalData as PaymentPlanExternalData)?.identity
-                  ?.data?.address?.city,
-            }),
-            buildTextField({
-              id: 'applicant.email',
-              title: info.labels.email,
-              width: 'half',
-              variant: 'email',
-              backgroundColor: 'blue',
-              required: true,
-              defaultValue: (application: Application) =>
-                (application.externalData as PaymentPlanExternalData)
-                  ?.userProfile?.data?.email,
-            }),
-            buildTextField({
-              id: 'applicant.phoneNumber',
-              title: info.labels.tel,
-              format: '###-####',
-              width: 'half',
-              variant: 'tel',
-              backgroundColor: 'blue',
-              required: true,
-              defaultValue: (application: Application) =>
-                (application.externalData as PaymentPlanExternalData)
-                  ?.userProfile?.data?.mobilePhoneNumber,
-            }),
-          ],
-        }),
-      ],
+      children: [applicantInformationMultiField],
     }),
     buildSection({
       id: 'employer',

@@ -12,7 +12,7 @@ import {
 } from '@island.is/application/types'
 import { EphemeralStateLifeCycle } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
-import * as z from 'zod'
+import { z } from 'zod'
 import { m } from './messages'
 import { Features } from '@island.is/feature-flags'
 

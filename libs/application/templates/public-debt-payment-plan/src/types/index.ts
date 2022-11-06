@@ -7,7 +7,7 @@ import {
 } from '@island.is/api/schema'
 import { SuccessfulDataProviderResult } from '@island.is/application/types'
 import { Identity } from '@island.is/clients/identity'
-import * as z from 'zod'
+import { z } from 'zod'
 import {
   PaymentPlanSchema,
   PublicDebtPaymentPlanSchema,
