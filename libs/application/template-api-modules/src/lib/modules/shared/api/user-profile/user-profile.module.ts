@@ -17,7 +17,6 @@ export class UserProfileModule {
       ],
       providers: [
         UserProfileService,
-        IslyklarApi,
         {
           provide: UserProfileApi,
           useFactory: () =>
