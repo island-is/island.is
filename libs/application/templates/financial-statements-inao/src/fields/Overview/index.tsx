@@ -36,7 +36,7 @@ export const Overview = ({
   const [approveOverview, setApproveOverview] = useState(false)
   console.log({ application })
   const answers = application.answers as FinancialStatementsInao
-  const fileName = answers.attachment?.file?.[0]?.name
+  const fileName = answers.attachments?.file?.[0]?.name
   const [
     submitApplication,
     { error: submitError, loading },
@@ -268,7 +268,7 @@ export const Overview = ({
 
       {fileName ? (
         <Fragment>
-          <FileValueLine label={answers.attachment?.file?.[0]?.name} />
+          <FileValueLine label={answers.attachments?.file?.[0]?.name} />
           <Divider />
         </Fragment>
       ) : null}

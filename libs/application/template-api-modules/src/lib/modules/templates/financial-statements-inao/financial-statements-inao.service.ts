@@ -17,6 +17,7 @@ import {
   mapValuesToCemeterytype,
 } from './mappers/mapValuesToUsertype'
 import { USERTYPE } from './types'
+import { SharedTemplateApiService } from '../../shared'
 
 const LESS = 'less'
 
@@ -43,6 +44,7 @@ export class FinancialStatementsInaoTemplateService {
   s3: S3
   constructor(
     private financialStatementsClientService: FinancialStatementsInaoClientService,
+    private readonly sharedService: SharedTemplateApiService,
   ) {
     this.s3 = new S3()
   }
@@ -51,16 +53,21 @@ export class FinancialStatementsInaoTemplateService {
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<string> {
-    const attachment: AttachmentData[] | undefined = getValueViaPath(
+    const attachments: AttachmentData[] | undefined = getValueViaPath(
       application.answers,
-      'attachment.file',
-    )
+      'attachments.file',
+    ) as Array<{ key: string; name: string }>
 
-    const fileName = attachment?.[0].key
+    const attachmentKey = attachments[0].key
+
+    const fileName = (application.attachments as {
+      [key: string]: string
+    })[attachmentKey]
+
     if (!fileName) {
       return Promise.reject({})
     }
-
+    console.log({ fileName })
     const { bucket, key } = AmazonS3URI(fileName)
 
     const uploadBucket = bucket
