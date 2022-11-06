@@ -1,6 +1,7 @@
 import {
   EnvironmentVariablesForEnv,
-  Service, ServiceDefinitionForEnv,
+  Service,
+  ServiceDefinitionForEnv,
   ValueSource,
 } from '../types/input-types'
 import { DeploymentRuntime } from '../types/charts'
@@ -24,7 +25,11 @@ export function serializeValueSource(
       : value({
           env: deployment.env,
           featureDeploymentName: deployment.env.feature,
-          svc: (dep) => deployment.ref(service, dep),
+          svc: (dep) =>
+            deployment.ref(
+              service,
+              typeof dep === 'string' ? dep : dep.serviceDef,
+            ),
         })
   return { type: 'success', value: result }
 }

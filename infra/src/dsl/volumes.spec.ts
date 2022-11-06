@@ -37,7 +37,7 @@ describe('Volume Support', () => {
   beforeEach(async () => {
     stagingWithVolumes = (await rendererForOne(
       renderers.helm,
-      sut,
+      sut.serviceDef,
       new Kubernetes(Staging),
     )) as SerializeSuccess<ServiceHelm>
   })
@@ -65,7 +65,7 @@ describe('Volume Support', () => {
     })
     const stagingWithDefaultVolume = (await rendererForOne(
       renderers.helm,
-      sut,
+      sut.serviceDef,
       new Kubernetes(Staging),
     )) as SerializeSuccess<ServiceHelm>
     expect(stagingWithDefaultVolume.serviceDef[0].pvcs![0]).toEqual({

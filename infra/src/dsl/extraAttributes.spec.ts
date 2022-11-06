@@ -35,7 +35,7 @@ describe('Extra attributes', () => {
     })
     const serviceDef = (await rendererForOne(
       renderers.helm,
-      sut,
+      sut.serviceDef,
       new Kubernetes(Staging),
     )) as SerializeSuccess<ServiceHelm>
     expect(serviceDef.serviceDef[0].extra).toEqual({
@@ -51,7 +51,7 @@ describe('Extra attributes', () => {
     })
     const serviceDef = (await rendererForOne(
       renderers.helm,
-      sut,
+      sut.serviceDef,
       new Kubernetes(Staging),
     )) as SerializeErrors
     expect(serviceDef.errors).toEqual([

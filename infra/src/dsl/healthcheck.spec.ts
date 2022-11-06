@@ -24,7 +24,7 @@ describe('Healthchecks definitions', () => {
       const sut = service('api').liveness('/ready').healthPort(5000)
       const result = (await rendererForOne(
         renderers.helm,
-        sut,
+        sut.serviceDef,
         new Kubernetes(Staging),
       )) as SerializeSuccess<ServiceHelm>
       expect(result.serviceDef[0].healthCheck).toEqual({
@@ -44,7 +44,7 @@ describe('Healthchecks definitions', () => {
       })
       const result = (await rendererForOne(
         renderers.helm,
-        sut,
+        sut.serviceDef,
         new Kubernetes(Staging),
       )) as SerializeSuccess<ServiceHelm>
       expect(result.serviceDef[0].healthCheck).toEqual({

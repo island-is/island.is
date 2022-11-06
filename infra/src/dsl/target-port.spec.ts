@@ -23,7 +23,7 @@ describe('Basic serialization', () => {
     const sut = service('api').targetPort(4200)
     const result = (await rendererForOne(
       renderers.helm,
-      sut,
+      sut.serviceDef,
       new Kubernetes(Staging),
     )) as SerializeSuccess<ServiceHelm>
     expect(result.serviceDef[0].service).toEqual({

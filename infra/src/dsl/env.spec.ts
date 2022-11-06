@@ -32,7 +32,7 @@ describe('Env variable', () => {
   beforeEach(async () => {
     serviceDef = (await rendererForOne(
       renderers.helm,
-      sut,
+      sut.serviceDef,
       new Kubernetes(Staging),
     )) as SerializeErrors
   })
@@ -52,7 +52,7 @@ describe('Env variable', () => {
       })
     const serviceDef = (await rendererForOne(
       renderers.helm,
-      sut,
+      sut.serviceDef,
       new Kubernetes(Staging),
     )) as SerializeErrors
 
@@ -73,7 +73,7 @@ describe('Env variable', () => {
     })
     const serviceDef = (await rendererForOne(
       renderers.helm,
-      sut,
+      sut.serviceDef,
       new Kubernetes(Staging),
     )) as SerializeErrors
 
@@ -105,7 +105,7 @@ describe('Env variable', () => {
     })
     const serviceDef = (await rendererForOne(
       renderers.helm,
-      sut,
+      sut.serviceDef,
       new Kubernetes(Staging),
     )) as SerializeSuccess<ServiceHelm>
 

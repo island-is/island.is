@@ -1,6 +1,5 @@
 import { service } from './dsl'
 import { Kubernetes } from './kubernetes-runtime'
-import { serializeService } from './output-generators/map-to-helm-values'
 import {
   SerializeErrors,
   SerializeSuccess,
@@ -30,7 +29,7 @@ describe('Postgres', () => {
     beforeEach(async () => {
       result = (await rendererForOne(
         renderers.helm,
-        sut,
+        sut.serviceDef,
         new Kubernetes(Staging),
       )) as SerializeSuccess<ServiceHelm>
     })
@@ -54,7 +53,7 @@ describe('Postgres', () => {
     beforeEach(async () => {
       result = (await rendererForOne(
         renderers.helm,
-        sut,
+        sut.serviceDef,
         new Kubernetes(Staging),
       )) as SerializeErrors
     })

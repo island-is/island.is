@@ -56,7 +56,7 @@ describe('Init-container definitions', () => {
     })
     const result = (await rendererForOne(
       renderers.helm,
-      sut,
+      sut.serviceDef,
       new Kubernetes(Staging),
     )) as SerializeSuccess<ServiceHelm>
     expect(result.serviceDef[0].initContainer).toEqual({
@@ -104,7 +104,7 @@ describe('Init-container definitions', () => {
     })
     const result = (await rendererForOne(
       renderers.helm,
-      sut,
+      sut.serviceDef,
       new Kubernetes(Staging),
     )) as SerializeErrors
     expect(result.errors).toEqual([

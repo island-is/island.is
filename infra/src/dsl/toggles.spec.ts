@@ -73,7 +73,7 @@ describe('Server-side toggles', () => {
   beforeEach(async () => {
     stagingWithFeatures = (await rendererForOne(
       renderers.helm,
-      sut,
+      sut.serviceDef,
       new Kubernetes({
         ...Staging,
         featuresOn: [FeatureNames.testing],
@@ -81,7 +81,7 @@ describe('Server-side toggles', () => {
     )) as SerializeSuccess<ServiceHelm>
     stagingNoFeatures = (await rendererForOne(
       renderers.helm,
-      sut,
+      sut.serviceDef,
       new Kubernetes(Staging),
     )) as SerializeSuccess<ServiceHelm>
   })
@@ -147,7 +147,7 @@ describe('Server-side toggles', () => {
     beforeEach(async () => {
       prod = (await rendererForOne(
         renderers.helm,
-        sut,
+        sut.serviceDef,
         new Kubernetes({
           ...Prod,
           featuresOn: [FeatureNames.testing],
@@ -155,7 +155,7 @@ describe('Server-side toggles', () => {
       )) as SerializeErrors
       prodNoFeature = (await rendererForOne(
         renderers.helm,
-        sut,
+        sut.serviceDef,
         new Kubernetes(Prod),
       )) as SerializeSuccess<ServiceHelm>
     })
@@ -205,7 +205,7 @@ describe('Server-side toggles', () => {
     beforeEach(async () => {
       prod = (await rendererForOne(
         renderers.helm,
-        sut,
+        sut.serviceDef,
         new Kubernetes({
           ...Prod,
           featuresOn: [FeatureNames.testing],
@@ -213,7 +213,7 @@ describe('Server-side toggles', () => {
       )) as SerializeErrors
       prodNoFeature = (await rendererForOne(
         renderers.helm,
-        sut,
+        sut.serviceDef,
         new Kubernetes(Prod),
       )) as SerializeSuccess<ServiceHelm>
     })

@@ -36,7 +36,7 @@ describe('Egress', () => {
   beforeEach(async () => {
     serviceDef = (await rendererForOne(
       renderers.helm,
-      sut,
+      sut.serviceDef,
       uberChart,
     )) as SerializeSuccess<ServiceHelm>
     render = renderHelmValueFile(uberChart, { a: serviceDef.serviceDef[0] })

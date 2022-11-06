@@ -1,13 +1,12 @@
 import { FeatureNames } from '../features'
 import { EnvironmentConfig } from './charts'
+import { ServiceBuilder } from '../dsl'
 
 export type OpsEnv = 'dev' | 'staging' | 'prod'
 export const MissingSetting = 'Missing setting'
 export type MissingSettingType = typeof MissingSetting
 
-export interface Service {
-  serviceDef: ServiceDefinition
-}
+export type Service = ServiceDefinition
 
 // Input types
 export type Hash = { [name: string]: Hash | string | number }
@@ -186,7 +185,7 @@ export type InitContainersForEnv = {
 export interface Context {
   featureDeploymentName?: string
 
-  svc(dep: Service | string): string
+  svc(dep: ServiceBuilder<any> | string): string
 
   env: EnvironmentConfig
 }

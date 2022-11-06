@@ -28,7 +28,7 @@ import {
  * @param deployment Uber chart in a specific environment the service will be part of
  */
 const serializeService: SerializeMethod<DockerComposeService> = async (
-  service: Service,
+  service: ServiceDefinitionForEnv,
   deployment: DeploymentRuntime,
 ) => {
   const {
@@ -36,137 +36,129 @@ const serializeService: SerializeMethod<DockerComposeService> = async (
     mergeObjects,
     checkCollisions,
     getErrors,
-  } = checksAndValidations(service.serviceDef.name)
-  const processedService = prepareServiceForEnv(service, deployment.env)
-  if (processedService.type === 'success') {
-    const serviceDef = processedService.serviceDef
-    // const {
-    //   grantNamespaces,
-    //   grantNamespacesEnabled,
-    //   namespace,
-    //   securityContext,
-    // } = serviceDef
-    const dockerImage = `821090935708.dkr.ecr.eu-west-1.amazonaws.com/${
-      serviceDef.image ?? serviceDef.name
-    }`
-    const result: DockerComposeService = {
-      image: dockerImage,
-      env: {
-        SERVERSIDE_FEATURES_ON: deployment.env.featuresOn.join(','),
-        NODE_OPTIONS: `--max-old-space-size=${
-          parseInt(serviceDef.resources.limits.memory, 10) - 48
-        }`,
-      },
-      depends_on: {},
-      command: [],
-    }
-    let initContainers: { [name: string]: DockerComposeService } = {}
-
-    // command and args
-    if (serviceDef.cmds) {
-      result.command = [serviceDef.cmds!].concat(serviceDef.args ?? [])
-    }
-
-    // target port
-    if (typeof serviceDef.port !== 'undefined') {
-      result.port = serviceDef.port
-    }
-
-    // environment vars
-    if (Object.keys(serviceDef.env).length > 0) {
-      const { envs } = serializeEnvironmentVariables(
-        service,
-        deployment,
-        serviceDef.env,
-      )
-      mergeObjects(result.env, envs)
-    }
-
-    // secrets
-    let secrets: Secrets = {}
-    if (Object.keys(serviceDef.secrets).length > 0) {
-      // secrets = await retrieveSecrets(serviceDef.secrets)
-    }
-
-    // initContainers
-    if (typeof serviceDef.initContainers !== 'undefined') {
-      initContainers = serviceDef.initContainers.containers.reduce(
-        (acc, initContainer) => ({
-          ...acc,
-          [initContainer.name!]: {
-            image: dockerImage,
-            env: {
-              SERVERSIDE_FEATURES_ON: deployment.env.featuresOn.join(','),
-            },
-            depends_on: {},
-          },
-        }),
-        {},
-      )
-
-      if (serviceDef.initContainers.containers.length > 0) {
-        if (typeof serviceDef.initContainers.envs !== 'undefined') {
-          const { envs } = serializeEnvironmentVariables(
-            service,
-            deployment,
-            serviceDef.initContainers.envs,
-          )
-          Object.values(initContainers).forEach((initContainer) =>
-            mergeObjects(initContainer.env, envs),
-          )
-        }
-        if (typeof serviceDef.initContainers.secrets !== 'undefined') {
-          // result.initContainer.secrets = serviceDef.initContainers.secrets
-        }
-        if (serviceDef.initContainers.postgres) {
-          const { env, secrets, errors } = serializePostgres(
-            serviceDef,
-            deployment,
-            service,
-            serviceDef.initContainers.postgres,
-          )
-
-          Object.values(initContainers).forEach(
-            (initContainer) => mergeObjects(initContainer.env, env),
-            // mergeObjects(initContainer.secrets, secrets),
-          )
-          // mergeObjects(result.initContainer.secrets, secrets)
-          addToErrors(errors)
-        }
-        // checkCollisions()
-      } else {
-        addToErrors(['No containers to run defined in initContainers'])
-      }
-    }
-
-    if (serviceDef.postgres) {
-      const { env, secrets, errors } = serializePostgres(
-        serviceDef,
-        deployment,
-        service,
-        serviceDef.postgres,
-      )
-
-      mergeObjects(result.env, env)
-      // mergeObjects(secrets, secrets)
-      addToErrors(errors)
-    }
-
-    checkCollisions(secrets, result.env)
-
-    const allErrors = getErrors()
-    return allErrors.length === 0
-      ? { type: 'success', serviceDef: [result] }
-      : { type: 'error', errors: allErrors }
-  } else {
-    return { type: 'error', errors: processedService.errors }
+  } = checksAndValidations(service.name)
+  const serviceDef = service
+  // const {
+  //   grantNamespaces,
+  //   grantNamespacesEnabled,
+  //   namespace,
+  //   securityContext,
+  // } = serviceDef
+  const dockerImage = `821090935708.dkr.ecr.eu-west-1.amazonaws.com/${
+    serviceDef.image ?? serviceDef.name
+  }`
+  const result: DockerComposeService = {
+    image: dockerImage,
+    env: {
+      SERVERSIDE_FEATURES_ON: deployment.env.featuresOn.join(','),
+      NODE_OPTIONS: `--max-old-space-size=${
+        parseInt(serviceDef.resources.limits.memory, 10) - 48
+      }`,
+    },
+    depends_on: {},
+    command: [],
   }
+  let initContainers: { [name: string]: DockerComposeService } = {}
+
+  // command and args
+  if (serviceDef.cmds) {
+    result.command = [serviceDef.cmds!].concat(serviceDef.args ?? [])
+  }
+
+  // target port
+  if (typeof serviceDef.port !== 'undefined') {
+    result.port = serviceDef.port
+  }
+
+  // environment vars
+  if (Object.keys(serviceDef.env).length > 0) {
+    const { envs } = serializeEnvironmentVariables(
+      service,
+      deployment,
+      serviceDef.env,
+    )
+    mergeObjects(result.env, envs)
+  }
+
+  // secrets
+  let secrets: Secrets = {}
+  if (Object.keys(serviceDef.secrets).length > 0) {
+    // secrets = await retrieveSecrets(serviceDef.secrets)
+  }
+
+  // initContainers
+  if (typeof serviceDef.initContainers !== 'undefined') {
+    initContainers = serviceDef.initContainers.containers.reduce(
+      (acc, initContainer) => ({
+        ...acc,
+        [initContainer.name!]: {
+          image: dockerImage,
+          env: {
+            SERVERSIDE_FEATURES_ON: deployment.env.featuresOn.join(','),
+          },
+          depends_on: {},
+        },
+      }),
+      {},
+    )
+
+    if (serviceDef.initContainers.containers.length > 0) {
+      if (typeof serviceDef.initContainers.envs !== 'undefined') {
+        const { envs } = serializeEnvironmentVariables(
+          service,
+          deployment,
+          serviceDef.initContainers.envs,
+        )
+        Object.values(initContainers).forEach((initContainer) =>
+          mergeObjects(initContainer.env, envs),
+        )
+      }
+      if (typeof serviceDef.initContainers.secrets !== 'undefined') {
+        // result.initContainer.secrets = serviceDef.initContainers.secrets
+      }
+      if (serviceDef.initContainers.postgres) {
+        const { env, secrets, errors } = serializePostgres(
+          serviceDef,
+          deployment,
+          serviceDef.initContainers.postgres,
+        )
+
+        Object.values(initContainers).forEach(
+          (initContainer) => mergeObjects(initContainer.env, env),
+          // mergeObjects(initContainer.secrets, secrets),
+        )
+        // mergeObjects(result.initContainer.secrets, secrets)
+        addToErrors(errors)
+      }
+      // checkCollisions()
+    } else {
+      addToErrors(['No containers to run defined in initContainers'])
+    }
+  }
+
+  if (serviceDef.postgres) {
+    const { env, secrets, errors } = serializePostgres(
+      serviceDef,
+      deployment,
+      serviceDef.postgres,
+    )
+
+    mergeObjects(result.env, env)
+    // mergeObjects(secrets, secrets)
+    addToErrors(errors)
+  }
+
+  checkCollisions(secrets, result.env)
+
+  const allErrors = getErrors()
+  return allErrors.length === 0
+    ? { type: 'success', serviceDef: [result] }
+    : { type: 'error', errors: allErrors }
 }
 
 const resolveDbHost = (
   postgres: PostgresInfoForEnv,
   deployment: DeploymentRuntime,
-  service: Service,
 ) => {
   return {
     writer: 'db',
@@ -177,7 +169,6 @@ const resolveDbHost = (
 function serializePostgres(
   serviceDef: ServiceDefinitionForEnv,
   deployment: DeploymentRuntime,
-  service: Service,
   postgres: PostgresInfoForEnv,
 ) {
   const env: { [name: string]: string } = {}
@@ -186,7 +177,7 @@ function serializePostgres(
   env['DB_USER'] = postgres.username ?? postgresIdentifier(serviceDef.name)
   env['DB_NAME'] = postgres.name ?? postgresIdentifier(serviceDef.name)
   try {
-    const { reader, writer } = resolveDbHost(postgres, deployment, service)
+    const { reader, writer } = resolveDbHost(postgres, deployment)
     env['DB_HOST'] = writer
     env['DB_REPLICAS_HOST'] = reader
   } catch (e) {
@@ -264,7 +255,7 @@ const serviceMockDef = (options: {
 export const DockerComposeOutput: OutputFormat<DockerComposeService> = {
   featureDeployment(service: Service, env: EnvironmentConfig): void {},
   serializeService(
-    service: Service,
+    service: ServiceDefinitionForEnv,
     deployment: DeploymentRuntime,
     featureDeployment,
   ) {

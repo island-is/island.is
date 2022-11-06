@@ -37,7 +37,7 @@ export const prepareServiceForEnv = (
         .filter((srcKey) => targetKeys.includes(srcKey))
         .map(
           (key) =>
-            `Collisions in ${service.serviceDef.name} for environment or secrets for key ${key}`,
+            `Collisions in ${service.name} for environment or secrets for key ${key}`,
         ),
     )
   }
@@ -51,7 +51,7 @@ export const prepareServiceForEnv = (
   const addToErrors = (errors: string[]) => {
     allErrors.push(...errors)
   }
-  const serviceDef = service.serviceDef
+  const serviceDef = service
 
   if (serviceDef.env.NODE_OPTIONS) {
     throw new Error(
@@ -247,7 +247,7 @@ function getEnvExtraValues(
     return {
       envs: {},
       errors: [
-        `Missing extra setting for service ${service.serviceDef.name} in env ${env.type}`,
+        `Missing extra setting for service ${service.name} in env ${env.type}`,
       ],
     }
   } else {

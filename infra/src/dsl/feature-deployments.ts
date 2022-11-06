@@ -10,11 +10,11 @@ export const getFeatureAffectedServices = async (
 ) => {
   const feature = uberChart.env.feature
   if (typeof feature !== 'undefined') {
-    const excludedServiceNames = excludedServices.map((f) => f.serviceDef.name)
+    const excludedServiceNames = excludedServices.map((f) => f.name)
 
     return (
-      await getWithDependantServices(uberChart.env, habitat, ...services)
-    ).filter((f) => !excludedServiceNames.includes(f.serviceDef.name))
+      await getWithDependantServices(uberChart.env, habitat, services)
+    ).filter((f) => !excludedServiceNames.includes(f.name))
   } else {
     throw new Error('Feature deployment with a feature name not defined')
   }

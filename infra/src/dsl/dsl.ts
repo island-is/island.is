@@ -20,7 +20,7 @@ import {
 
 type Optional<T, L extends keyof T> = Omit<T, L> & Partial<Pick<T, L>>
 
-export class ServiceBuilder<ServiceType> implements Service {
+export class ServiceBuilder<ServiceType> {
   extraAttributes(attr: ExtraValues) {
     this.serviceDef.extraAttributes = attr
     return this

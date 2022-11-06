@@ -24,7 +24,7 @@ describe('Service account', () => {
   beforeEach(async () => {
     result = (await rendererForOne(
       renderers.helm,
-      sut,
+      sut.serviceDef,
       new Kubernetes(Staging),
     )) as SerializeSuccess<ServiceHelm>
   })

@@ -2,13 +2,14 @@ import { FeatureNames } from '../features'
 import {
   OpsEnv,
   Service,
+  ServiceDefinition,
   ServiceDefinitionCore,
   ServiceDefinitionForEnv,
 } from './input-types'
 
 export interface DeploymentRuntime {
   env: EnvironmentConfig
-  deps: { [name: string]: Set<ServiceDefinitionCore> }
+  deps: { [name: string]: Set<string> }
 
   ref(from: ServiceDefinitionCore, to: Service | string): string
 }

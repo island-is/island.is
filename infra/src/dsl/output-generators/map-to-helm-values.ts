@@ -445,7 +445,7 @@ const serviceMockDef = (options: { namespace: string; target: string }) => {
 
 export const HelmOutput: OutputFormat<ServiceHelm> = {
   featureDeployment(s: Service, env): void {
-    Object.entries(s.serviceDef.ingress).forEach(([name, ingress]) => {
+    Object.entries(s.ingress).forEach(([name, ingress]) => {
       if (!Array.isArray(ingress.host.dev)) {
         ingress.host.dev = [ingress.host.dev]
       }
@@ -453,18 +453,15 @@ export const HelmOutput: OutputFormat<ServiceHelm> = {
         (host) => `${env.feature}-${host}`,
       )
     })
-    s.serviceDef.replicaCount = { min: 1, max: 2, default: 1 }
-    s.serviceDef.namespace = `feature-${env.feature}`
-    if (s.serviceDef.postgres) {
-      s.serviceDef.postgres = getPostgresInfoForFeature(
-        env.feature!,
-        s.serviceDef.postgres,
-      )
+    s.replicaCount = { min: 1, max: 2, default: 1 }
+    s.namespace = `feature-${env.feature}`
+    if (s.postgres) {
+      s.postgres = getPostgresInfoForFeature(env.feature!, s.postgres)
     }
-    if (s.serviceDef.initContainers?.postgres) {
-      s.serviceDef.initContainers.postgres = getPostgresInfoForFeature(
+    if (s.initContainers?.postgres) {
+      s.initContainers.postgres = getPostgresInfoForFeature(
         env.feature!,
-        s.serviceDef.initContainers.postgres,
+        s.initContainers.postgres,
       )
     }
   },

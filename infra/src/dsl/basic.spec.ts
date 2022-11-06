@@ -52,7 +52,7 @@ describe('Basic serialization', () => {
   beforeEach(async () => {
     result = (await rendererForOne(
       renderers.helm,
-      sut,
+      sut.serviceDef,
       new Kubernetes(Staging),
     )) as SerializeSuccess<ServiceHelm>
   })
@@ -153,7 +153,7 @@ describe('Env definition defaults', () => {
   beforeEach(async () => {
     result = (await rendererForOne(
       renderers.helm,
-      sut,
+      sut.serviceDef,
       new Kubernetes(Staging),
     )) as SerializeSuccess<ServiceHelm>
   })

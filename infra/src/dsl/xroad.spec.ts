@@ -16,7 +16,6 @@ const Dev: EnvironmentConfig = {
   releaseName: 'web',
   awsAccountId: '111111',
   awsAccountRegion: 'eu-west-1',
-  feature: 'feature-A',
   global: {},
 }
 
@@ -40,7 +39,7 @@ describe('X-road support', () => {
   beforeEach(async () => {
     svc = (await rendererForOne(
       renderers.helm,
-      sut,
+      sut.serviceDef,
       new Kubernetes(Dev),
     )) as SerializeSuccess<ServiceHelm>
   })

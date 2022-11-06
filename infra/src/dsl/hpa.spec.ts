@@ -23,7 +23,7 @@ describe('HPA definitions', () => {
     const sut = service('api')
     const result = (await rendererForOne(
       renderers.helm,
-      sut,
+      sut.serviceDef,
       new Kubernetes(Staging),
     )) as SerializeSuccess<ServiceHelm>
 
@@ -51,7 +51,7 @@ describe('HPA definitions', () => {
     })
     const result = (await rendererForOne(
       renderers.helm,
-      sut,
+      sut.serviceDef,
       new Kubernetes(Staging),
     )) as SerializeSuccess<ServiceHelm>
 
