@@ -12,7 +12,6 @@ import {
   ReplicaCount,
   Resources,
   Secrets,
-  Service,
   ServiceDefinition,
   ValueType,
   XroadConfig,

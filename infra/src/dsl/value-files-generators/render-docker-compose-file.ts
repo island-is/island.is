@@ -2,11 +2,8 @@ import { Kubernetes } from '../kubernetes-runtime'
 import {
   DockerComposeService,
   DockerComposeValueFile,
-  HelmValueFile,
-  ServiceHelm,
   Services,
 } from '../types/output-types'
-import { renderers } from '../service-dependencies'
 
 const renderDockerComposeFile = async (
   uberChart: Kubernetes,

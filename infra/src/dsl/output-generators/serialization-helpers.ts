@@ -1,6 +1,5 @@
 import {
   EnvironmentVariablesForEnv,
-  Service,
   ServiceDefinitionForEnv,
   ValueSource,
 } from '../types/input-types'
