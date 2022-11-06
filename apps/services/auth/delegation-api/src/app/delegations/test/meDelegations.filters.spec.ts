@@ -7,11 +7,11 @@ import {
   DelegationValidity,
   PatchDelegationDTO,
 } from '@island.is/auth-api-lib'
-import { expectMatchingDelegations } from '@island.is/services/auth/testing'
 import {
-  createCurrentUser,
-  createNationalId,
-} from '@island.is/testing/fixtures'
+  expectMatchingDelegations,
+  findExpectedDelegationModels,
+} from '@island.is/services/auth/testing'
+import { createNationalId } from '@island.is/testing/fixtures'
 import { TestApp } from '@island.is/testing/nest'
 
 import { FixtureFactory } from '../../../../test/fixtures/fixture-factory'
@@ -25,7 +25,6 @@ import {
   testScopes,
   testUser,
 } from './test-data'
-import { findExpectedDelegationModels } from '../../../../../public-api/test/utils'
 
 describe('MeDelegationsController filters', () => {
   let app: TestApp
