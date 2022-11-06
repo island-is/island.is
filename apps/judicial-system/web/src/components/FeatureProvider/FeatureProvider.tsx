@@ -6,10 +6,7 @@ interface FeatureProvider {
   features: Feature[]
 }
 
-const availableFeatures: Feature[] = [
-  Feature.INDICTMENTS,
-  Feature.CASE_FILE_ROUTE,
-]
+const availableFeatures: Feature[] = [Feature.INDICTMENTS]
 
 export const FeatureContext = createContext<FeatureProvider>({ features: [] })
 

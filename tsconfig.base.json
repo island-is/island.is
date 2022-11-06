@@ -322,6 +322,9 @@
       "@island.is/application/ui-fields": [
         "libs/application/ui-fields/src/index.ts"
       ],
+      "@island.is/application/ui-forms": [
+        "libs/application/ui-forms/src/index.ts"
+      ],
       "@island.is/application/ui-shell": [
         "libs/application/ui-shell/src/index.ts"
       ],
@@ -515,6 +518,9 @@
       "@island.is/regulations": ["libs/regulations/src/index.ts"],
       "@island.is/regulations/*": ["libs/regulations/src/sub/*"],
       "@island.is/residence-history": ["libs/residence-history/src/index.ts"],
+      "@island.is/service-portal/access-control/delegations": [
+        "libs/service-portal/access-control/delegations/src/index.ts"
+      ],
       "@island.is/service-portal/applications": [
         "libs/service-portal/applications/src/index.ts"
       ],

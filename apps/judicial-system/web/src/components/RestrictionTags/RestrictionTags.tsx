@@ -19,19 +19,20 @@ const RestrictionTags: React.FC<Props> = (props) => {
 
   return (
     <>
-      {workingCase.isCustodyIsolation && (
-        <Box marginBottom={1}>
-          <Tag
-            variant={getRestrictionTagVariant(
-              CaseCustodyRestrictions.ISOLATION,
-            )}
-            outlined
-            disabled
-          >
-            {getShortRestrictionByValue(CaseCustodyRestrictions.ISOLATION)}
-          </Tag>
-        </Box>
-      )}
+      {isAcceptingCaseDecision(workingCase.decision) &&
+        workingCase.isCustodyIsolation && (
+          <Box marginBottom={1}>
+            <Tag
+              variant={getRestrictionTagVariant(
+                CaseCustodyRestrictions.ISOLATION,
+              )}
+              outlined
+              disabled
+            >
+              {getShortRestrictionByValue(CaseCustodyRestrictions.ISOLATION)}
+            </Tag>
+          </Box>
+        )}
       {
         // Custody restrictions
         (workingCase.type === CaseType.CUSTODY ||
