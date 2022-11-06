@@ -89,29 +89,28 @@ export class DelegationsIncomingCustomService {
       return []
     }
 
-    let { delegations, fromNameInfo } = await this.findAllIncoming(
+    const { delegations, fromNameInfo } = await this.findAllIncoming(
       user,
       DelegationValidity.NOW,
     )
 
     const allowedScopes = await this.getClientAllowedScopes(user)
 
-    delegations = delegations
-      .filter((d) =>
-        // The requesting client must have access to at least one scope for the delegation to be relevant.
-        d.delegationScopes?.some((s) =>
-          this.checkIfScopeAllowed(s, user, allowedScopes),
-        ),
-      )
+    const allowedDelegations = delegations
       .map((d) => {
         d.delegationScopes = d.delegationScopes?.filter((s) =>
-          this.checkIfScopeAllowed(s, user),
+          this.checkIfScopeAllowed(s, allowedScopes),
         )
         return d
       })
+      .filter(
+        (d) =>
+          // The requesting client must have access to at least one scope for the delegation to be relevant.
+          d.delegationScopes && d.delegationScopes.length > 0,
+      )
 
     const mergedDelegationDTOs = uniqBy(
-      delegations.map((d) => d.toMergedDTO()),
+      allowedDelegations.map((d) => d.toMergedDTO()),
       'fromNationalId',
     )
 
@@ -186,13 +185,8 @@ export class DelegationsIncomingCustomService {
 
   private checkIfScopeAllowed(
     scope: DelegationScope,
-    user: User,
-    allowedScopes?: string[],
+    allowedScopes: string[],
   ): boolean {
-    allowedScopes = (allowedScopes ?? user.scope).filter((scope) =>
-      this.filterCustomScopeRule(scope, user),
-    )
-
     return allowedScopes.includes(scope.scopeName)
   }
 

@@ -454,10 +454,12 @@ describe('ActorDelegationsController', () => {
 
         // Assert
         expect(res.status).toEqual(200)
-        expectMatchingObject(
+        expectMatchingMergedDelegations(
           res.body,
-          updateDelegationFromNameToPersonName(
-            expectedModels,
+          updateMergedDelegationFromNameToPersonName(
+            expectedModels.map((d) =>
+              DelegationDTOMapper.toMergedDelegationDTO(d),
+            ),
             nationalRegistryUsers,
           ),
         )
