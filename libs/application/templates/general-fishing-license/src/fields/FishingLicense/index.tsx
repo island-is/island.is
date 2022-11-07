@@ -1,7 +1,7 @@
 import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box, SkeletonLoader, Text } from '@island.is/island-ui/core'
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { FishingLicenseAlertMessage, ShipInformation } from '../components'
 import {
   FishingLicenseLicense as FishingLicenseSchema,
@@ -14,6 +14,7 @@ import { fishingLicense } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { useFormContext } from 'react-hook-form'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
+import { FishingLicenseEnum } from '../../types'
 
 export const FishingLicense: FC<FieldBaseProps> = ({
   application,
@@ -21,7 +22,7 @@ export const FishingLicense: FC<FieldBaseProps> = ({
   errors,
 }) => {
   const { formatMessage } = useLocale()
-  const { register } = useFormContext()
+  const { register, setValue } = useFormContext()
   const selectedChargeType = getValueViaPath(
     application.answers,
     'fishingLicense.license',
@@ -59,6 +60,14 @@ export const FishingLicense: FC<FieldBaseProps> = ({
     if (selectedLicense)
       setChargeType(selectedLicense.fishingLicenseInfo.chargeType)
   }
+
+  // If charge type is set to unknown initially the front-end signals error
+  // And nullifies the selected charge type so user cannot continue
+  useEffect(() => {
+    if (selectedChargeType === FishingLicenseEnum.UNKNOWN) {
+      setValue(`${field.id}.license`, null)
+    }
+  }, [])
 
   return (
     <>

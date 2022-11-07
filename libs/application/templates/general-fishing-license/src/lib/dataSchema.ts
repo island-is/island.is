@@ -75,6 +75,7 @@ export const GeneralFishingLicenseSchema = z.object({
         FishingLicenseEnum.COMMONWHELK,
         FishingLicenseEnum.OCEANQUAHOGIN,
         FishingLicenseEnum.CRUSTACEANS,
+        FishingLicenseEnum.UNKNOWN,
       ])
       .refine((x) => x, {
         params: error.requiredRadioField,
