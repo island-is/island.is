@@ -22,6 +22,7 @@ import {
   CreateCustomDelegation,
   CreateDomain,
 } from './types'
+import startOfDay from 'date-fns/startOfDay'
 
 export class FixtureFactory {
   constructor(private app: TestApp) {}
@@ -41,7 +42,7 @@ export class FixtureFactory {
       description: description ?? faker.lorem.sentence(),
       nationalId: nationalId ?? createNationalId('company'),
     })
-    await Promise.all(
+    domain.scopes = await Promise.all(
       apiScopes.map((apiScope) =>
         this.createApiScope({ domainName: domain.name, ...apiScope }),
       ),
@@ -136,13 +137,13 @@ export class FixtureFactory {
       toName: faker.name.findName(),
     })
 
-    await Promise.all(
+    delegation.delegationScopes = await Promise.all(
       scopes.map(({ scopeName, validFrom, validTo }) =>
         this.get(DelegationScope).create({
           id: faker.datatype.uuid(),
           delegationId: delegation.id,
           scopeName,
-          validFrom,
+          validFrom: validFrom ?? startOfDay(new Date()),
           validTo: validTo ?? addYears(new Date(), 1),
         }),
       ),
