@@ -29,7 +29,6 @@ import type { User as TUser } from '@island.is/judicial-system/types'
 
 import { uuidFactory } from '../../factories'
 import {
-  writeFile,
   stripHtmlTags,
   getCourtRecordPdfAsBuffer,
   getCourtRecordPdfAsString,
@@ -159,10 +158,6 @@ export class InternalCaseService {
     buffer: Buffer,
     user?: TUser,
   ): Promise<boolean> {
-    if (!this.config.production) {
-      writeFile(`${theCase.id}-ruling-signed.pdf`, buffer)
-    }
-
     const fileName = formatCourtUploadRulingTitle(
       this.formatMessage,
       theCase.courtCaseNumber,
@@ -196,10 +191,6 @@ export class InternalCaseService {
   private async uploadCourtRecordPdfToCourt(theCase: Case): Promise<boolean> {
     try {
       const pdf = await getCourtRecordPdfAsBuffer(theCase, this.formatMessage)
-
-      if (!this.config.production) {
-        writeFile(`${theCase.id}-court-record.pdf`, pdf)
-      }
 
       const fileName = this.formatMessage(courtUpload.courtRecord, {
         courtCaseNumber: theCase.courtCaseNumber,
