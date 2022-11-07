@@ -116,11 +116,11 @@ describe('getConclusionAutofill', () => {
       )
     })
 
-    it('should format extended admission to facility case, defendant with national id', () => {
+    it('should format extended admission to facility case, defendant with date of birth', () => {
       const defendant = {
         ...defendantBase,
-        noNationalId: false,
-        nationalId: '0000000000',
+        noNationalId: true,
+        nationalId: '1990-01-01',
       }
       const theCase = {
         type: CaseType.ADMISSION_TO_FACILITY,
@@ -130,7 +130,7 @@ describe('getConclusionAutofill', () => {
       const result = fn(theCase, decision, defendant)
 
       expect(result).toEqual(
-        'Kröfu um að varnaraðili, Blær, kt. 000000-0000, sæti áframhaldandi vistun á viðeigandi stofnun er hafnað.',
+        'Kröfu um að varnaraðili, Blær, fd. 1990-01-01, sæti áframhaldandi vistun á viðeigandi stofnun er hafnað.',
       )
     })
   })
