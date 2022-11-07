@@ -53,17 +53,6 @@ export abstract class Delegation {
   @Field(() => DelegationProvider)
   provider!: DelegationProvider
 }
-@ObjectType('AuthMergedDelegation')
-export class MergedDelegation {
-  @Field(() => Identity)
-  from!: Identity
-
-  @Field(() => Identity)
-  to!: Identity
-
-  @Field(() => [DelegationType])
-  type!: DelegationType[]
-}
 
 @ObjectType('AuthLegalGuardianDelegation', {
   implements: Delegation,
@@ -92,4 +81,10 @@ export class CustomDelegation extends Delegation {
 
   // Internal attributes, used in field resolvers.
   domainName?: string
+}
+
+@ObjectType('AuthMergedDelegation')
+export class MergedDelegation {
+  @Field(() => [DelegationType])
+  types!: DelegationType[]
 }

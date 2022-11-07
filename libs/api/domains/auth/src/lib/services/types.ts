@@ -70,7 +70,7 @@ export interface DelegationDTO {
 
 export interface MergedDelegationDTO {
   fromNationalId: string
-  fromName: string
+  fromName?: string | null
   toNationalId: string
   toName?: string | null
   validTo?: Date | null
