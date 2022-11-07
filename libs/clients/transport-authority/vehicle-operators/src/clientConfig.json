@@ -17,7 +17,9 @@
   "paths": {
     "/authenticate": {
       "post": {
-        "tags": ["Authentication"],
+        "tags": [
+          "Authentication"
+        ],
         "summary": "Authentication for Domain user",
         "parameters": [
           {
@@ -112,7 +114,9 @@
     },
     "/{permno}": {
       "get": {
-        "tags": ["Operator"],
+        "tags": [
+          "Operator"
+        ],
         "summary": "GET for vehicle permno",
         "parameters": [
           {
@@ -198,9 +202,11 @@
         }
       }
     },
-    "/{permno}/{operatorSerialNumber}": {
+    "/{permno}/{operatorserialnumber}": {
       "get": {
-        "tags": ["Operator"],
+        "tags": [
+          "Operator"
+        ],
         "summary": "Get operators for a permno and specific operator serialnumber",
         "operationId": "GetByPermnoAndSerialNumber",
         "parameters": [
@@ -297,9 +303,11 @@
         }
       }
     },
-    "/{permno}/{persidno}/{operatorSerialNumber}": {
+    "/{permno}/{persidno}/{operatorserialnumber}": {
       "get": {
-        "tags": ["Operator"],
+        "tags": [
+          "Operator"
+        ],
         "summary": "Get operator info for a specific vehicle, persidno and serial number",
         "parameters": [
           {
@@ -397,7 +405,9 @@
     },
     "/all/{permno}": {
       "get": {
-        "tags": ["Operator"],
+        "tags": [
+          "Operator"
+        ],
         "summary": "Get operator history for specific vehicle",
         "parameters": [
           {
@@ -485,7 +495,9 @@
     },
     "/withcontract": {
       "post": {
-        "tags": ["Operator"],
+        "tags": [
+          "Operator"
+        ],
         "summary": "Post changes for operators, using file in base64 format",
         "description": "Success status codes:\r\n\r\n    200: operation is successful but message needs to be returned, no object returned         \r\n    201: operation is successful , object created is returned",
         "parameters": [
@@ -628,7 +640,9 @@
         }
       },
       "put": {
-        "tags": ["Operator"],
+        "tags": [
+          "Operator"
+        ],
         "summary": "Update operators using file in base64 format",
         "description": "Success status codes:\r\n\r\n    200: operation is successful but message needs to be returned, no object returned                 \r\n    204: operation is successful",
         "parameters": [
@@ -758,7 +772,10 @@
   "components": {
     "schemas": {
       "AuthenticateModel": {
-        "required": ["password", "username"],
+        "required": [
+          "password",
+          "username"
+        ],
         "type": "object",
         "properties": {
           "username": {
@@ -815,7 +832,11 @@
         "description": "Operator entity"
       },
       "PostOperatorsEntityWithContract": {
-        "required": ["mainOperator", "personIdNumber", "startDate"],
+        "required": [
+          "mainOperator",
+          "personIdNumber",
+          "startDate"
+        ],
         "type": "object",
         "properties": {
           "personIdNumber": {
@@ -848,7 +869,11 @@
         "description": "Entity to post when posting multiple operators"
       },
       "PostOperatorsWithBase64Contract": {
-        "required": ["contract", "operators", "permno"],
+        "required": [
+          "contract",
+          "operators",
+          "permno"
+        ],
         "type": "object",
         "properties": {
           "permno": {
@@ -908,7 +933,11 @@
         "additionalProperties": false
       },
       "PutOperatorsEntityWithContract": {
-        "required": ["mainOperator", "personIdNumber", "startDate"],
+        "required": [
+          "mainOperator",
+          "personIdNumber",
+          "startDate"
+        ],
         "type": "object",
         "properties": {
           "personIdNumber": {
@@ -941,7 +970,11 @@
         "description": "Entity for operator when updating multiple operators"
       },
       "PutOperatorsWithBase64Contract": {
-        "required": ["contract", "operators", "permno"],
+        "required": [
+          "contract",
+          "operators",
+          "permno"
+        ],
         "type": "object",
         "properties": {
           "permno": {
