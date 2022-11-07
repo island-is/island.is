@@ -1451,6 +1451,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: '{months} persónulegir mánuðir',
       description: 'Copy for the number of personal months',
     },
+    rightsMultipleBirths: {
+      id: 'pl.application:review.rights.multiple.births',
+      defaultMessage: '{common} sameign mánuður ( need translated)',
+      description: 'Common months ( need translated )',
+    },
     rightsAllowanceRequested: {
       id: 'pl.application:review.rights.allowance.requested',
       defaultMessage: '{requested} mánuður veittur af öðru foreldri',

@@ -4,6 +4,8 @@ import type { DistributiveOmit } from '@island.is/shared/types'
 
 import { ParentalRelations } from '../../constants'
 import {
+  getApplicationAnswers,
+  getMaxMultipleBirthsDays,
   getSelectedChild,
   getTransferredDays,
 } from '../../lib/parentalLeaveUtils'
@@ -39,6 +41,10 @@ export const applicationsToChildInformation = (
 
     if (asOtherParent) {
       let transferredDays = getTransferredDays(application, selectedChild)
+      const { multipleBirthsRequestDays } = getApplicationAnswers(
+        application.answers,
+      )
+      const maxMultipleBirthDays = getMaxMultipleBirthsDays(application.answers)
 
       if (transferredDays !== undefined && transferredDays !== 0) {
         // * -1 because we need to reverse the days over to this parent
@@ -53,6 +59,8 @@ export const applicationsToChildInformation = (
           expectedDateOfBirth: selectedChild.expectedDateOfBirth,
           primaryParentNationalRegistryId: application.applicant,
           transferredDays,
+          multipleBirthsDays:
+            maxMultipleBirthDays - multipleBirthsRequestDays * 1,
         })
       } else {
         result.push({
