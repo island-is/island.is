@@ -82,9 +82,7 @@ export const AccessForm = ({
         name: scope.name[0],
       }))
 
-    const err = getValues()?.scope?.every(
-      (x) => x.name.length > 0 && !x.validTo,
-    )
+    const err = scopes.every((x) => x.name.length > 0 && !x.validTo)
 
     if (err) {
       setOpenConfirmModal(false)

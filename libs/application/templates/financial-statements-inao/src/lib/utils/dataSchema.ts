@@ -1,4 +1,4 @@
-import * as z from 'zod'
+import { z } from 'zod'
 import { m } from '../../lib/messages'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
@@ -56,8 +56,6 @@ const asset = z.object({
 
 const equity = z.object({
   totalEquity: z.string().refine((x) => !!x, { params: m.required }),
-  operationResult: z.string(),
-  total: z.string().refine((x) => !!x, { params: m.required }),
 })
 
 const liability = z.object({

@@ -19,7 +19,7 @@ export const DelegationsOutgoingHeader = ({
 }: DelegationsOutgoingHeaderProps) => {
   const { formatMessage } = useLocale()
   const history = useHistory()
-  const { domainName } = useDomains()
+  const { name: domainName } = useDomains()
 
   const onClickHandler = () => {
     const query = new URLSearchParams()

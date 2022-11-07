@@ -10,7 +10,6 @@ import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
 import { useAuthActorDelegationsQuery } from '@island.is/service-portal/graphql'
 import { DomainOption, useDomains } from '../../../hooks/useDomains'
-import { ALL_DOMAINS } from '../../../constants/domain'
 import { DelegationsIncomingHeader } from './DelegationsIncomingHeader'
 import { AccessDeleteModal } from '../../access/AccessDeleteModal'
 import { AccessCard } from '../../access/AccessCard'
@@ -18,7 +17,7 @@ import { DelegationsEmptyState } from '../DelegationsEmptyState'
 
 export const DelegationsIncoming = () => {
   const { formatMessage, lang = 'is' } = useLocale()
-  const { domainName, updateDomainName } = useDomains()
+  const { name: domainName } = useDomains()
   const [delegation, setDelegation] = useState<AuthCustomDelegation | null>(
     null,
   )
@@ -41,14 +40,11 @@ export const DelegationsIncoming = () => {
 
   const onDomainChange = (option: DomainOption) => {
     // Select components only supports string or number values, there for we use
-    // the string all-domains as a value for the all domains option.
+    // the const ALL_DOMAINS as a value for the all domains option.
     // The service takes null as a value for all domains.
-    const domainName = option.value === ALL_DOMAINS ? null : option.value
-
-    updateDomainName(domainName)
     refetch({
       input: {
-        //domain: domainName,
+        //domain: option.value === ALL_DOMAINS ? null : option.value,
       },
     })
   }

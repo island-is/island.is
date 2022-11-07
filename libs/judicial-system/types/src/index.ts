@@ -13,7 +13,6 @@ export type { Institution } from './lib/institution'
 
 export { NotificationType } from './lib/notification'
 export type {
-  Recipient,
   Notification,
   SendNotification,
   SendNotificationResponse,

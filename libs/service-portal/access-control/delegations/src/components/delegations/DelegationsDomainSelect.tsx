@@ -11,7 +11,7 @@ export const DelegationsDomainSelect = ({
   onDomainChange,
 }: DelegationsHeaderProps) => {
   const { formatMessage } = useLocale()
-  const { domainOptions, defaultDomainOption, loading } = useDomains()
+  const { options, selectedOption, loading } = useDomains()
 
   return loading ? (
     <SkeletonLoader height={71} />
@@ -23,8 +23,9 @@ export const DelegationsDomainSelect = ({
       backgroundColor="blue"
       id="domain"
       noOptionsMessage="Enginn valmöguleiki"
-      options={domainOptions}
-      value={defaultDomainOption}
+      options={options}
+      value={selectedOption}
+      defaultValue={selectedOption}
       onChange={(option) => {
         const opt = option as DomainOption
 

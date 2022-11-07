@@ -260,19 +260,12 @@ export const Overview = ({
         </GridColumn>
         <GridColumn span={['12/12', '6/12']}>
           <ValueLine
-            label={m.totalEquity}
-            value={formatCurrency(answers.equity?.total)}
-          />
-        </GridColumn>
-      </GridRow>
-      <GridRow>
-        <GridColumn span={['12/12', '6/12']}>
-          <ValueLine
             label={m.debtsAndCash}
             value={formatCurrency(answers.equityAndLiabilities?.total)}
           />
         </GridColumn>
       </GridRow>
+
       {fileName ? (
         <Fragment>
           <FileValueLine label={answers.attachment?.file?.[0]?.name} />
