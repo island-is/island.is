@@ -1,4 +1,4 @@
-import * as z from 'zod'
+import { z } from 'zod'
 import { error, fishingLicenseFurtherInformation } from './messages'
 import * as kennitala from 'kennitala'
 import { FishingLicenseEnum } from '../types'
@@ -6,6 +6,7 @@ import {
   calculateTotalRailNet,
   MAXIMUM_TOTAL_RAIL_NET_LENGTH,
 } from '../utils/licenses'
+import { applicantInformationSchema } from '@island.is/application/ui-forms'
 
 const FileSchema = z.object({
   name: z.string(),
@@ -36,23 +37,7 @@ export const GeneralFishingLicenseSchema = z.object({
       }),
     }),
   }),
-  applicant: z.object({
-    name: z.string().refine((x) => x.trim().length > 0),
-    nationalId: z
-      .string()
-      .refine((x) =>
-        x ? kennitala.isPerson(x) || kennitala.isCompany(x) : false,
-      ),
-    address: z.string().refine((x) => x.trim().length > 0),
-    postalCode: z.string().refine((x) => +x >= 100 && +x <= 999, {
-      params: error.invalidValue,
-    }),
-    city: z.string().refine((x) => x.trim().length > 0, {
-      params: error.invalidValue,
-    }),
-    email: z.string().email(),
-    phoneNumber: z.string().optional(),
-  }),
+  applicant: applicantInformationSchema,
   shipSelection: z.object({
     ship: z.enum(['0', '1', '2', '3', '4', '5']).refine((x) => x, {
       params: error.requiredRadioField,

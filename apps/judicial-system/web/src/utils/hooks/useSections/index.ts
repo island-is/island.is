@@ -1,9 +1,11 @@
+import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import {
   Case,
   CaseState,
+  Feature,
   Gender,
   InstitutionType,
   isInvestigationCase,
@@ -13,7 +15,13 @@ import {
 import { core, sections } from '@island.is/judicial-system-web/messages'
 import { caseResult } from '@island.is/judicial-system-web/src/components/PageLayout/utils'
 import { capitalize } from '@island.is/judicial-system/formatters'
+import {
+  INVESTIGATION_CASE_MODIFY_RULING_ROUTE,
+  RESTRICTION_CASE_MODIFY_RULING_ROUTE,
+} from '@island.is/judicial-system/consts'
+import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import * as constants from '@island.is/judicial-system/consts'
+
 import {
   isDefendantStepValidForSidebarRC,
   isCourtHearingArrangemenstStepValidRC,
@@ -35,10 +43,6 @@ import {
   isSubpoenaStepValid,
   isprosecutorAndDefenderStepValid,
 } from '../../validate'
-import {
-  INVESTIGATION_CASE_MODIFY_RULING_ROUTE,
-  RESTRICTION_CASE_MODIFY_RULING_ROUTE,
-} from '@island.is/judicial-system/consts'
 
 interface Section {
   name: string
@@ -51,6 +55,7 @@ interface Section {
 
 const useSections = () => {
   const { formatMessage } = useIntl()
+  const { features } = useContext(FeatureContext)
   const router = useRouter()
 
   const findLastValidStep = (section: Section) => {
@@ -293,6 +298,19 @@ const useSections = () => {
                 isDefendantStepValidForSidebarIndictments(workingCase) &&
                 isProcessingStepValidIndictments(workingCase)
                   ? `${constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE}/${id}`
+                  : undefined,
+            },
+            {
+              type: 'SUB_SECTION',
+              name: capitalize(
+                formatMessage(
+                  sections.indictmentCaseProsecutorSection.caseFile,
+                ),
+              ),
+              href:
+                isDefendantStepValidForSidebarIndictments(workingCase) &&
+                isProcessingStepValidIndictments(workingCase)
+                  ? `${constants.INDICTMENTS_CASE_FILE_ROUTE}/${id}`
                   : undefined,
             },
             {

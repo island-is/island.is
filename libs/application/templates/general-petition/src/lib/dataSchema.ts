@@ -1,4 +1,4 @@
-import * as z from 'zod'
+import { z } from 'zod'
 import { m } from './messages'
 
 const FileSchema = z.object({

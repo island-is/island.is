@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import React, { FC, useState, useEffect } from 'react'
 import debounce from 'lodash/debounce'
 import { useFormContext } from 'react-hook-form'
+import { FieldBaseProps } from '@island.is/application/types'
 import {
+  AlertBanner,
   Box,
   GridColumn,
   GridContainer,
@@ -11,36 +13,24 @@ import {
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
 import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
-import { Application } from '@island.is/application/types'
 import { m } from '../../lib/messages'
 import { Total } from '../KeyNumbers'
 import {
   INPUTCHANGEINTERVAL,
   EQUITIESANDLIABILITIESIDS,
   OPERATINGCOST,
+  VALIDATOR,
 } from '../../lib/constants'
 import { useTotals } from '../../hooks'
+import { getTotal } from '../../lib/utils/helpers'
 
-export const ElectionEquities = ({
+export const ElectionEquities: FC<FieldBaseProps> = ({
   application,
-}: {
-  application: Application
+  setBeforeSubmitCallback,
 }): JSX.Element => {
-  const answers = application.answers
-
   const { formatMessage } = useLocale()
 
-  const { errors, clearErrors, setValue } = useFormContext()
-
-  const operatingCostTotal = getValueViaPath(
-    answers,
-    OPERATINGCOST.total,
-  ) as string
-
-  useEffect(() => {
-    setValue(EQUITIESANDLIABILITIESIDS.operationResult, operatingCostTotal)
-    setTotalOperatingCost(Number(operatingCostTotal))
-  }, [operatingCostTotal, setValue])
+  const { errors, clearErrors, getValues, setError } = useFormContext()
 
   const [getTotalEquity, totalEquity] = useTotals(
     EQUITIESANDLIABILITIESIDS.equityPrefix,
@@ -52,13 +42,35 @@ export const ElectionEquities = ({
     EQUITIESANDLIABILITIESIDS.liabilityPrefix,
   )
 
-  const [totalOperatingCost, setTotalOperatingCost] = useState(0)
-  const [equityTotal, setEquityTotal] = useState(0)
+  const [equityAndDebts, setEquityAndDebts] = useState(0)
 
   useEffect(() => {
-    const total = totalEquity - totalLiabilities
-    setEquityTotal(total)
-  }, [totalLiabilities, totalEquity, totalOperatingCost])
+    const total = totalEquity + totalLiabilities
+    setEquityAndDebts(total)
+  }, [totalEquity, totalLiabilities])
+
+  useEffect(() => {
+    clearErrors(VALIDATOR)
+  }, [totalEquity, totalLiabilities, totalAssets])
+
+  setBeforeSubmitCallback &&
+    setBeforeSubmitCallback(async () => {
+      const values = getValues()
+      const assets = getTotal(values, 'asset')
+      const liabilties = getTotal(values, 'liability')
+      const equities = getTotal(values, 'equity')
+
+      // assets should equal liabilties + equities
+      const isValid = liabilties + equities === assets
+      if (!isValid) {
+        setError(VALIDATOR, {
+          type: 'custom',
+          message: formatMessage(m.equityDebtsAssetsValidatorError),
+        })
+        return [false, formatMessage(m.equityDebtsAssetsValidatorError)]
+      }
+      return [true, null]
+    })
 
   return (
     <GridContainer>
@@ -171,29 +183,23 @@ export const ElectionEquities = ({
             />
           </Box>
           <Box paddingY={1}>
-            <InputController
-              id={EQUITIESANDLIABILITIESIDS.operationResult}
-              name={EQUITIESANDLIABILITIESIDS.operationResult}
-              readOnly
-              error={
-                errors &&
-                getErrorViaPath(
-                  errors,
-                  EQUITIESANDLIABILITIESIDS.operationResult,
-                )
-              }
-              label={formatMessage(m.operationResult)}
-              backgroundColor="blue"
-              currency
+            <Total
+              name={EQUITIESANDLIABILITIESIDS.totalEquityAndLiabilities}
+              total={equityAndDebts}
+              label={formatMessage(m.debtsAndCash)}
             />
           </Box>
-          <Total
-            name={EQUITIESANDLIABILITIESIDS.totalCash}
-            total={equityTotal}
-            label={formatMessage(m.debtsAndCash)}
-          />
         </GridColumn>
       </GridRow>
+      {errors && errors.validator ? (
+        <Box paddingY={2}>
+          <AlertBanner
+            title={formatMessage(m.genericError)}
+            description={formatMessage(m.equityDebtsAssetsValidatorError)}
+            variant="error"
+          />
+        </Box>
+      ) : null}
     </GridContainer>
   )
 }

@@ -80,13 +80,13 @@ We are using the same service library and database as auth-api and therefore thi
 First, make sure you have docker, then run:
 
 ```bash
-yarn dev-services services-auth-api
+yarn dev-services services-auth-ids-api
 ```
 
 Then run the migrations:
 
 ```bash
-yarn nx run services-auth-api:migrate
+yarn nx run services-auth-ids-api:migrate
 ```
 
 You can serve this service locally by running:

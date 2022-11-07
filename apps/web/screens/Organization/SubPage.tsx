@@ -37,6 +37,7 @@ import {
   Form,
   OneColumnTextSlice,
   PowerBiSlice,
+  AccordionSlice,
 } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
@@ -183,6 +184,9 @@ const SubPage: Screen<SubPageProps> = ({
                         PowerBiSlice: (slice: PowerBiSliceSchema) => (
                           <PowerBiSlice slice={slice} />
                         ),
+                        AccordionSlice: (slice) => (
+                          <AccordionSlice slice={slice} />
+                        ),
                       },
                     })}
                   </GridColumn>
@@ -242,7 +246,6 @@ const renderSlices = (
               slice={slice}
               namespace={namespace}
               slug={slug}
-              renderedOnOrganizationSubpage={true}
               marginBottom={index === slices.length - 1 ? 5 : 0}
               params={{
                 renderLifeEventPagesAsProfileCards: true,
@@ -250,6 +253,8 @@ const renderSlices = (
                   organizationPage.theme === 'digital_iceland'
                     ? digitalIcelandDetailPageLinkType
                     : undefined,
+                latestNewsSliceBackground: 'white',
+                forceTitleSectionHorizontalPadding: 'true',
               }}
               fullWidth={true}
             />
@@ -262,9 +267,12 @@ const renderSlices = (
             slice={slice}
             namespace={namespace}
             slug={slug}
-            renderedOnOrganizationSubpage={true}
             marginBottom={index === slices.length - 1 ? 5 : 0}
-            params={{ renderLifeEventPagesAsProfileCards: true }}
+            params={{
+              renderLifeEventPagesAsProfileCards: true,
+              latestNewsSliceBackground: 'white',
+              forceTitleSectionHorizontalPadding: 'true',
+            }}
           />
         )
       })

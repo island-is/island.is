@@ -714,6 +714,15 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "showInactiveBooks",
+            "in": "query",
+            "description": "If true, show digital books which are inactive",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
           }
         ],
         "responses": {
@@ -2706,6 +2715,18 @@
             "type": "boolean",
             "description": "Whether driving license book is digital or not (else on paper)",
             "example": true
+          },
+          "status": {
+            "type": "integer",
+            "description": "Status id of application (0=New, 1=In Progress,..)",
+            "format": "int32",
+            "example": 1
+          },
+          "statusName": {
+            "type": "string",
+            "description": "Name of book status",
+            "nullable": true,
+            "example": "Nýtt"
           },
           "totalLessonTime": {
             "type": "integer",

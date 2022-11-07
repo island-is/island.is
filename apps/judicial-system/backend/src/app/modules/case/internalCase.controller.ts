@@ -19,8 +19,9 @@ import { CurrentCase } from './guards/case.decorator'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { Case } from './models/case.model'
 import { ArchiveResponse } from './models/archive.response'
-import { DeliverResponse } from './models/deliver.response'
+import { DeliverCompletedCaseResponse } from './models/deliverCompletedCase.response'
 import { DeliverProsecutorDocumentsResponse } from './models/deliverProsecutorDocuments.response'
+import { DeliverResponse } from './models/deliver.response'
 import { InternalCaseService } from './internalCase.service'
 
 @Controller('api/internal')
@@ -59,13 +60,13 @@ export class InternalCaseController {
   @UseGuards(CaseExistsGuard, CaseCompletedGuard)
   @Post('case/:caseId/deliver')
   @ApiOkResponse({
-    type: DeliverResponse,
+    type: DeliverCompletedCaseResponse,
     description: 'Delivers a completed case to court and police',
   })
   deliver(
     @Param('caseId') caseId: string,
     @CurrentCase() theCase: Case,
-  ): Promise<DeliverResponse> {
+  ): Promise<DeliverCompletedCaseResponse> {
     this.logger.debug(`Delivering case ${caseId} to court and police`)
 
     return this.internalCaseService.deliver(theCase)
@@ -86,5 +87,35 @@ export class InternalCaseController {
     )
 
     return this.internalCaseService.deliverProsecutorDocuments(theCase)
+  }
+
+  @UseGuards(CaseExistsGuard, CaseCompletedGuard)
+  @Post('case/:caseId/deliverCourtRecordToCourt')
+  @ApiOkResponse({
+    type: DeliverResponse,
+    description: 'Delivers a court record to court',
+  })
+  deliverCourtRecordToCourt(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(`Delivering the court record for case ${caseId} to court`)
+
+    return this.internalCaseService.deliverCourtRecordToCourt(theCase)
+  }
+
+  @UseGuards(CaseExistsGuard, CaseCompletedGuard)
+  @Post('case/:caseId/deliverSignedRulingToCourt')
+  @ApiOkResponse({
+    type: DeliverResponse,
+    description: 'Delivers a court record to court',
+  })
+  deliverSignedRulingToCourt(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(`Delivering the court record for case ${caseId} to court`)
+
+    return this.internalCaseService.deliverSignedRulingToCourt(theCase)
   }
 }

@@ -4,6 +4,7 @@ import { Sequelize } from 'sequelize-typescript'
 
 import {
   BadRequestException,
+  forwardRef,
   Inject,
   Injectable,
   InternalServerErrorException,
@@ -25,18 +26,16 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 import type { User as TUser } from '@island.is/judicial-system/types'
-import { SIGNED_VERDICT_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
 
 import { uuidFactory } from '../../factories'
 import {
-  writeFile,
   stripHtmlTags,
   getCourtRecordPdfAsBuffer,
   getCourtRecordPdfAsString,
   formatCourtUploadRulingTitle,
   getRequestPdfAsBuffer,
 } from '../../formatters'
-import { courtUpload, notifications } from '../../messages'
+import { courtUpload } from '../../messages'
 import { CaseEvent, EventService } from '../event'
 import { AwsS3Service } from '../aws-s3'
 import { CourtDocumentFolder, CourtService } from '../court'
@@ -50,8 +49,9 @@ import { oldFilter } from './filters/case.filters'
 import { Case } from './models/case.model'
 import { CaseArchive } from './models/caseArchive.model'
 import { ArchiveResponse } from './models/archive.response'
-import { DeliverResponse } from './models/deliver.response'
+import { DeliverCompletedCaseResponse } from './models/deliverCompletedCase.response'
 import { DeliverProsecutorDocumentsResponse } from './models/deliverProsecutorDocuments.response'
+import { DeliverResponse } from './models/deliver.response'
 import { caseModuleConfig } from './case.config'
 
 const caseEncryptionProperties: (keyof Case)[] = [
@@ -117,14 +117,23 @@ export class InternalCaseService {
     private readonly caseArchiveModel: typeof CaseArchive,
     @Inject(caseModuleConfig.KEY)
     private readonly config: ConfigType<typeof caseModuleConfig>,
+    @Inject(forwardRef(() => IntlService))
     private readonly intlService: IntlService,
+    @Inject(forwardRef(() => EmailService))
     private readonly emailService: EmailService,
+    @Inject(forwardRef(() => EventService))
     private readonly eventService: EventService,
+    @Inject(forwardRef(() => AwsS3Service))
     private readonly awsS3Service: AwsS3Service,
+    @Inject(forwardRef(() => CourtService))
     private readonly courtService: CourtService,
+    @Inject(forwardRef(() => PoliceService))
     private readonly policeService: PoliceService,
+    @Inject(forwardRef(() => UserService))
     private readonly userService: UserService,
+    @Inject(forwardRef(() => FileService))
     private readonly fileService: FileService,
+    @Inject(forwardRef(() => DefendantService))
     private readonly defendantService: DefendantService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
@@ -133,8 +142,8 @@ export class InternalCaseService {
     throw new InternalServerErrorException('Format message not initialized')
   }
 
-  private refreshFormatMessage: () => Promise<void> = async () =>
-    this.intlService
+  private async refreshFormatMessage(): Promise<void> {
+    return this.intlService
       .useIntl(['judicial.system.backend'], 'is')
       .then((res) => {
         this.formatMessage = res.formatMessage
@@ -142,16 +151,13 @@ export class InternalCaseService {
       .catch((reason) => {
         this.logger.error('Unable to refresh format messages', { reason })
       })
+  }
 
   private async uploadSignedRulingPdfToCourt(
     theCase: Case,
     buffer: Buffer,
     user?: TUser,
   ): Promise<boolean> {
-    if (!this.config.production) {
-      writeFile(`${theCase.id}-ruling-signed.pdf`, buffer)
-    }
-
     const fileName = formatCourtUploadRulingTitle(
       this.formatMessage,
       theCase.courtCaseNumber,
@@ -185,10 +191,6 @@ export class InternalCaseService {
   private async uploadCourtRecordPdfToCourt(theCase: Case): Promise<boolean> {
     try {
       const pdf = await getCourtRecordPdfAsBuffer(theCase, this.formatMessage)
-
-      if (!this.config.production) {
-        writeFile(`${theCase.id}-court-record.pdf`, pdf)
-      }
 
       const fileName = this.formatMessage(courtUpload.courtRecord, {
         courtCaseNumber: theCase.courtCaseNumber,
@@ -341,7 +343,7 @@ export class InternalCaseService {
     return success
   }
 
-  private async deliverSignedRulingToCourt(theCase: Case): Promise<boolean> {
+  private async deliverSignedRulingPdfToCourt(theCase: Case): Promise<boolean> {
     return this.awsS3Service
       .getObject(`generated/${theCase.id}/ruling.pdf`)
       .then((pdf) => this.uploadSignedRulingPdfToCourt(theCase, pdf))
@@ -591,17 +593,8 @@ export class InternalCaseService {
     return { caseArchived: true }
   }
 
-  async deliver(theCase: Case): Promise<DeliverResponse> {
+  async deliver(theCase: Case): Promise<DeliverCompletedCaseResponse> {
     await this.refreshFormatMessage()
-
-    const rulingDeliveredToCourt =
-      isIndictmentCase(theCase.type) ||
-      (await this.deliverSignedRulingToCourt(theCase))
-
-    const courtRecordDeliveredToCourt =
-      isIndictmentCase(theCase.type) ||
-      Boolean(theCase.rulingModifiedHistory) || // court record did not change
-      (await this.uploadCourtRecordPdfToCourt(theCase))
 
     const caseFilesDeliveredToCourt =
       isIndictmentCase(theCase.type) ||
@@ -613,27 +606,7 @@ export class InternalCaseService {
       (Boolean(theCase.rulingModifiedHistory) || // no relevant changes
         (await this.deliverCaseToPolice(theCase)))
 
-    if (
-      !isIndictmentCase(theCase.type) &&
-      (!rulingDeliveredToCourt || !courtRecordDeliveredToCourt)
-    ) {
-      this.sendEmailToCourt(
-        theCase,
-        this.formatMessage(notifications.signedRuling.subjectV2, {
-          courtCaseNumber: theCase.courtCaseNumber,
-          isModifyingRuling: Boolean(theCase.rulingModifiedHistory),
-        }),
-        this.formatMessage(notifications.signedRuling.courtBody, {
-          courtCaseNumber: theCase.courtCaseNumber,
-          linkStart: `<a href="${this.config.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${theCase.id}">`,
-          linkEnd: '</a>',
-        }),
-      )
-    }
-
     return {
-      rulingDeliveredToCourt,
-      courtRecordDeliveredToCourt,
       caseFilesDeliveredToCourt,
       caseDeliveredToPolice,
     }
@@ -651,5 +624,21 @@ export class InternalCaseService {
     return {
       requestDeliveredToCourt,
     }
+  }
+
+  async deliverCourtRecordToCourt(theCase: Case): Promise<DeliverResponse> {
+    await this.refreshFormatMessage()
+
+    const delivered = await this.uploadCourtRecordPdfToCourt(theCase)
+
+    return { delivered }
+  }
+
+  async deliverSignedRulingToCourt(theCase: Case): Promise<DeliverResponse> {
+    await this.refreshFormatMessage()
+
+    const delivered = await this.deliverSignedRulingPdfToCourt(theCase)
+
+    return { delivered }
   }
 }

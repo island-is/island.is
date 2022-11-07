@@ -111,6 +111,9 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
         logo {
           url
         }
+        namespace {
+          fields
+        }
         footerItems {
           title
           content {
@@ -256,6 +259,7 @@ export const GET_SYSLUMENN_AUCTIONS_QUERY = gql`
       auctionTime
       petitioners
       respondent
+      publishText
       auctionTakesPlaceAt
     }
   }
@@ -298,6 +302,14 @@ export const GET_OPERATING_LICENSES_QUERY = gql`
         maximumNumberOfGuests
         numberOfDiningGuests
       }
+    }
+  }
+`
+
+export const GET_OPERATING_LICENSES_CSV_QUERY = gql`
+  query GetOperatingLicensesCSV {
+    getOperatingLicensesCSV {
+      value
     }
   }
 `
