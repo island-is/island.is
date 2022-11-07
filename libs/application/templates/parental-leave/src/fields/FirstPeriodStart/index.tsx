@@ -5,7 +5,7 @@ import {
   NO_ANSWER,
   extractRepeaterIndexFromField,
 } from '@island.is/application/core'
-import { Application, FieldBaseProps } from '@island.is/application/types'
+import { FieldBaseProps } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
 import {
   FieldDescription,
