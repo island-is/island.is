@@ -20,8 +20,6 @@ import {
 } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 
-import { environment } from '../../../environments'
-import { writeFile } from '../../formatters'
 import { courtUpload } from '../../messages'
 import { AwsS3Service } from '../aws-s3'
 import { CourtDocumentFolder, CourtService } from '../court'
@@ -172,10 +170,6 @@ export class FileService {
     })
 
     const content = await this.awsS3Service.getObject(file.key ?? '')
-
-    if (!environment.production) {
-      writeFile(`${file.name}`, content)
-    }
 
     const { courtDocumentFolder, subject, fileName } = this.getFileProperties(
       file,
