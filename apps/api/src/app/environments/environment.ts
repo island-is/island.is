@@ -108,28 +108,6 @@ const prodConfig = () => ({
     callbackAdditionUrl: process.env.XROAD_PAYMENT_ADDITION_CALLBACK_URL,
     arkBaseUrl: process.env.ARK_BASE_URL,
   },
-  pkpass: {
-    apiKey: process.env.PKPASS_API_KEY,
-    apiUrl: process.env.PKPASS_API_URL,
-    secretKey: process.env.PKPASS_SECRET_KEY,
-    cacheKey: process.env.PKPASS_CACHE_KEY ?? 'smartsolution:apitoken',
-    cacheTokenExpiryDelta:
-      process.env.PKPASS_CACHE_TOKEN_EXPIRY_DELTA ?? '2000',
-    authRetries: process.env.PKPASS_AUTH_RETRIES ?? '1',
-  },
-  firearmLicense: {
-    passTemplateId: process.env.FIREARM_LICENSE_PASS_TEMPLATE_ID,
-    pkPassApiKey: process.env.RLS_PKPASS_API_KEY,
-  },
-  machineLicense: {
-    passTemplateId: process.env.MACHINE_LICENSE_PASS_TEMPLATE_ID,
-    pkPassApiKey: process.env.VE_PKPASS_API_KEY,
-  },
-  adrLicense: {
-    passTemplateId: process.env.ADR_LICENSE_PASS_TEMPLATE_ID,
-    pkPassApiKey: process.env.VE_PKPASS_API_KEY,
-  },
-  smartSolutionsApiUrl: process.env.SMART_SOLUTIONS_API_URL,
   audit: {
     defaultNamespace: '@island.is/api',
     groupName: process.env.AUDIT_GROUP_NAME,
@@ -278,28 +256,6 @@ const devConfig = () => ({
     callbackAdditionUrl: process.env.XROAD_PAYMENT_ADDITION_CALLBACK_URL,
     arkBaseUrl: process.env.ARK_BASE_URL,
   },
-  pkpass: {
-    apiKey: process.env.PKPASS_API_KEY,
-    apiUrl: process.env.PKPASS_API_URL,
-    secretKey: process.env.PKPASS_SECRET_KEY,
-    cacheKey: process.env.PKPASS_CACHE_KEY ?? 'smartsolution:apitoken',
-    cacheTokenExpiryDelta:
-      process.env.PKPASS_CACHE_TOKEN_EXPIRY_DELTA ?? '2000',
-    authRetries: process.env.PKPASS_AUTH_RETRIES ?? '1',
-  },
-  firearmLicense: {
-    passTemplateId: process.env.FIREARM_LICENSE_PASS_TEMPLATE_ID,
-    pkPassApiKey: process.env.VE_PKPASS_API_KEY,
-  },
-  machineLicense: {
-    passTemplateId: process.env.MACHINE_LICENSE_PASS_TEMPLATE_ID,
-    pkPassApiKey: process.env.VE_PKPASS_API_KEY,
-  },
-  adrLicense: {
-    passTemplateId: process.env.ADR_LICENSE_PASS_TEMPLATE_ID,
-    pkPassApiKey: process.env.VE_PKPASS_API_KEY,
-  },
-  smartSolutionsApiUrl: process.env.SMART_SOLUTIONS_API_URL,
   audit: {
     defaultNamespace: '@island.is/api',
   },
