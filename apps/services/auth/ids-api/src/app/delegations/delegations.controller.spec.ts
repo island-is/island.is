@@ -296,8 +296,8 @@ describe('DelegationsController', () => {
             })
           })
 
-          describe('when user calls GET /delegations/v2', () => {
-            const path = '/delegations/v2'
+          describe('when user calls GET /v2/delegations', () => {
+            const path = '/v2/delegations'
             let response: request.Response
             let body: MergedDelegationDTO[]
 
