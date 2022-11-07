@@ -9,3 +9,21 @@ export const resetMarginGutter = style({
     },
   }),
 })
+
+export const gridRow = style({
+  display: 'grid',
+  gridTemplateRows: '1fr',
+  gridColumnGap: theme.spacing[1],
+  gridRowGap: theme.spacing[1] / 2,
+  paddingTop: theme.spacing[2],
+  paddingBottom: theme.spacing[2],
+
+  ...themeUtils.responsiveStyle({
+    lg: {
+      gridTemplateColumns:
+        'minmax(150px, 30%) minmax(200px, 50%) minmax(100px, 20%)',
+      gridTemplateAreas: '1fr 1fr 1fr',
+      padding: theme.spacing[2],
+    },
+  }),
+})

@@ -26,9 +26,9 @@ import {
   extendApiScope,
   formatScopeTreeToScope,
 } from './access.utils'
-import { AccessItem } from './AccessItem'
-import { AccessConfirmModal } from '../../components/access/AccessConfirmModal'
-import { AccessItemHeader } from '../../components/access/AccessItemHeader'
+import { AccessItem } from './AccessItem/AccessItem'
+import { AccessConfirmModal } from './AccessConfirmModal'
+import { AccessItemHeader } from './AccessItemHeader/AccessItemHeader'
 import { isDefined } from '@island.is/shared/utils'
 import * as commonAccessStyles from './access.css'
 

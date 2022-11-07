@@ -106,3 +106,10 @@ export const formatScopeTreeToScope = ({
     description: authApiScope?.description,
   }
 }
+
+export const accessMessages = {
+  dateValidTo: {
+    id: 'sp.settings-access-control:access-item-datepicker-label-mobile',
+    defaultMessage: 'Í gildi til',
+  },
+}

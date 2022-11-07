@@ -73,7 +73,7 @@ export const DelegationsIncoming = () => {
           <Stack space={3}>
             {delegations.map(
               (delegation) =>
-                delegation.to && (
+                delegation.from && (
                   <AccessCard
                     key={delegation.id}
                     delegation={delegation}

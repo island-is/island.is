@@ -19,19 +19,12 @@ import { useLocale } from '@island.is/localization'
 import * as styles from './AccessItem.css'
 import add from 'date-fns/add'
 import format from 'date-fns/format'
-import { Scope } from './access.types'
 import classNames from 'classnames'
 import { isDefined } from '@island.is/shared/utils'
-import { isApiScopeGroup } from './access.utils'
+import { Scope } from '../access.types'
+import { accessMessages, isApiScopeGroup } from '../access.utils'
 
 export const DATE_FORMAT = 'dd.MM.yyyy'
-
-const messages = {
-  dateValidTo: {
-    id: 'sp.settings-access-control:access-item-datepicker-label-mobile',
-    defaultMessage: 'Í gildi til',
-  },
-}
 
 interface PropTypes {
   apiScopes: Scope[]
@@ -238,7 +231,7 @@ export const AccessItem = ({
                         size="sm"
                         label={
                           !md
-                            ? formatMessage(messages.dateValidTo)
+                            ? formatMessage(accessMessages.dateValidTo)
                             : formatMessage({
                                 id:
                                   'sp.settings-access-control:access-item-datepicker-label',
@@ -276,7 +269,7 @@ export const AccessItem = ({
                       >
                         {!md && (
                           <Text variant="small" fontWeight="semiBold">
-                            {formatMessage(messages.dateValidTo)}
+                            {formatMessage(accessMessages.dateValidTo)}
                           </Text>
                         )}
                         <Box display="flex" className={styles.rowGap}>

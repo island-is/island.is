@@ -44,7 +44,7 @@ export const AUTH_ACTOR_DELEGATIONS_QUERY = gql`
     authActorDelegations(input: $input) {
       id
       type
-      to {
+      from {
         nationalId
         name
       }

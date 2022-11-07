@@ -1,3 +1,4 @@
+import { isDefined } from '@island.is/shared/utils'
 import { AuthCustomDelegation } from '@island.is/api/schema'
 import { useAuth } from '@island.is/auth/react'
 import {
@@ -14,15 +15,14 @@ import { useLocale } from '@island.is/localization'
 import { formatNationalId } from '@island.is/service-portal/core'
 import { useState } from 'react'
 import format from 'date-fns/format'
-import { DATE_FORMAT } from './AccessItem'
-import { AccessItemHeader } from './AccessItemHeader'
 import { DelegationsFormFooter } from '../delegations/DelegationsFormFooter'
 import { Modal, ModalProps } from '../Modal/Modal'
 import { IdentityCard } from '../IdentityCard/IdentityCard'
 import type { MappedScope } from './access.types'
-import * as accessItemStyles from './AccessItem.css'
+import { DATE_FORMAT } from './AccessItem/AccessItem'
+import { AccessItemHeader } from './AccessItemHeader/AccessItemHeader'
+import * as accessItemStyles from './AccessItem/AccessItem.css'
 import * as commonAccessStyles from './access.css'
-import { isDefined } from '@island.is/shared/utils'
 
 type AccessConfirmModalProps = ModalProps & {
   delegation: AuthCustomDelegation

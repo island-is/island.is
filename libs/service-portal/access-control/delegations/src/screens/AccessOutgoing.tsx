@@ -14,7 +14,7 @@ import { NotFound } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { AccessForm } from '../components/access/AccessForm'
 import { useDelegation } from '../hooks/useDelegation'
-import { AccessHeader } from '../components/access/AccessHeader'
+import { AccessHeader } from '../components/access/AccessHeader/AccessHeader'
 
 const AccessOutgoing = () => {
   useNamespaces(['sp.settings-access-control', 'sp.access-control-delegations'])

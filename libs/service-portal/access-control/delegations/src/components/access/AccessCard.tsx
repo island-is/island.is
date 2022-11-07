@@ -167,7 +167,7 @@ export const AccessCard = ({
             )}
           </Box>
           <Text variant="h3" as="h3" color={isExpired ? 'dark300' : 'dark400'}>
-            {delegation?.to?.name}
+            {isOutgoing ? delegation?.to?.name : delegation?.from?.name}
           </Text>
         </Stack>
         <Inline space="smallGutter">

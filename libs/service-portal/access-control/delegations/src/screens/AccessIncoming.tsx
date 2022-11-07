@@ -3,8 +3,8 @@ import { NotFound } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { IdentityCard } from '../components/IdentityCard/IdentityCard'
 import { useDelegation } from '../hooks/useDelegation'
-import { AccessHeader } from '../components/access/AccessHeader'
-import { AccessList } from '../components/access/AccessList'
+import { AccessHeader } from '../components/access/AccessHeader/AccessHeader'
+import { AccessList } from '../components/access/AccessList/AccessList'
 
 const AccessIncoming = () => {
   useNamespaces(['sp.settings-access-control', 'sp.access-control-delegations'])
