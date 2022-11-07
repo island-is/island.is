@@ -100,6 +100,11 @@ export const fishingLicense = {
       defaultMessage: 'Krabbaveiðileyfi',
       description: 'Crustaceans',
     },
+    unknown: {
+      id: 'gfl.application:shipSelection.labels.notSpecified',
+      defaultMessage: 'Ekki tilgreint',
+      description: 'Not specified',
+    },
   }),
   tooltips: defineMessages({
     hookCatchLimit: {
