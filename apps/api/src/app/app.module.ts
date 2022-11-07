@@ -28,6 +28,8 @@ import { ApiCatalogueModule } from '@island.is/api/domains/api-catalogue'
 import { DocumentProviderModule } from '@island.is/api/domains/document-provider'
 import { SyslumennClientConfig } from '@island.is/clients/syslumenn'
 import { SyslumennModule } from '@island.is/api/domains/syslumenn'
+import { ElectronicRegistrationsClientConfig } from '@island.is/clients/electronic-registration-statistics'
+import { ElectronicRegistrationsModule } from '@island.is/api/domains/electronic-registration-statistics'
 import { CompanyRegistryModule } from '@island.is/api/domains/company-registry'
 import { IcelandicNamesModule } from '@island.is/api/domains/icelandic-names-registry'
 import { RegulationsModule } from '@island.is/api/domains/regulations'
@@ -189,6 +191,7 @@ const autoSchemaFile = environment.production
     IdentityModule,
     AuthModule.register(environment.auth as AuthConfig),
     SyslumennModule,
+    ElectronicRegistrationsModule,
     CompanyRegistryModule,
     IcelandicNamesModule.register({
       backendUrl: environment.icelandicNamesRegistry.backendUrl!,
@@ -280,6 +283,7 @@ const autoSchemaFile = environment.production
         IdsClientConfig,
         NationalRegistryClientConfig,
         SyslumennClientConfig,
+        ElectronicRegistrationsClientConfig,
         FeatureFlagConfig,
         XRoadConfig,
         MunicipalitiesFinancialAidConfig,
