@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react'
-import { shouldLinkOpenInNewWindow } from '@island.is/shared/utils'
 import { Link } from 'react-router-dom'
+import { isExternalLink } from '../..'
 
 interface Props {
   children?: ReactNode
@@ -8,7 +8,7 @@ interface Props {
 }
 
 export const LinkResolver = ({ href = '/', children }: Props) => {
-  if (shouldLinkOpenInNewWindow(href)) {
+  if (isExternalLink(href)) {
     return (
       <a href={href} target="_blank" rel="noreferrer noopener">
         {children}

@@ -11,9 +11,8 @@ import {
   TagVariant,
   Text,
 } from '@island.is/island-ui/core'
-import { shouldLinkOpenInNewWindow } from '@island.is/shared/utils'
 import * as React from 'react'
-import { CardLoader } from '../..'
+import { CardLoader, isExternalLink } from '../..'
 import * as styles from './ActionCard.css'
 import LinkResolver from '../LinkResolver/LinkResolver'
 
@@ -233,7 +232,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
             {cta.url ? (
               <LinkResolver href={cta.url}>
                 <Button
-                  icon={shouldLinkOpenInNewWindow(cta.url) ? 'open' : undefined}
+                  icon={isExternalLink(cta.url) ? 'open' : undefined}
                   colorScheme="default"
                   iconType="outline"
                   size="small"

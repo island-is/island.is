@@ -16,6 +16,7 @@ export class ApiScopeService implements ApiScopeServiceInterface {
     private featureFlagService: FeatureFlagService,
   ) {}
 
+  /** here */
   private async service(user: User): Promise<ApiScopeServiceInterface> {
     const newDelegations = await this.featureFlagService.getValue(
       Features.outgoingDelegationsV2,
