@@ -5,6 +5,7 @@ import {
   ApiScope,
   Delegation,
   DelegationDTO,
+  DelegationDTOMapper,
   DelegationScope,
   MergedDelegationDTO,
 } from '@island.is/auth-api-lib'
@@ -110,6 +111,30 @@ export async function createDelegationModels(
       },
     ],
   })
+}
+
+export async function findExpectedMergedDelegationModels(
+  model: typeof Delegation,
+  modelIds: string,
+  allowedScopes?: string[],
+): Promise<MergedDelegationDTO>
+export async function findExpectedMergedDelegationModels(
+  model: typeof Delegation,
+  modelIds: string[],
+  allowedScopes?: string[],
+): Promise<MergedDelegationDTO[]>
+export async function findExpectedMergedDelegationModels(
+  model: typeof Delegation,
+  modelIds: string | string[],
+  allowedScopes?: string[],
+): Promise<MergedDelegationDTO | MergedDelegationDTO[]> {
+  if (!Array.isArray(modelIds)) {
+    modelIds = [modelIds]
+  }
+
+  return (
+    await findExpectedDelegationModels(model, modelIds, allowedScopes)
+  ).map((d) => DelegationDTOMapper.toMergedDelegationDTO(d))
 }
 
 export async function findExpectedDelegationModels(
