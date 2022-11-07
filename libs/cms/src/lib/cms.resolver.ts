@@ -89,6 +89,7 @@ import { GetSingleSupportQNAInput } from './dto/getSingleSupportQNA.input'
 import { GetFeaturedSupportQNAsInput } from './dto/getFeaturedSupportQNAs.input'
 import { Locale } from '@island.is/shared/types'
 import { FeaturedArticles } from './models/featuredArticles.model'
+import { GetServicePortalAlertBannersInput } from './dto/getServicePortalAlertBanners.input'
 
 const { cacheTime } = environment
 
@@ -128,6 +129,14 @@ export class CmsResolver {
     @Args('input') input: GetAlertBannerInput,
   ): Promise<AlertBanner | null> {
     return this.cmsContentfulService.getAlertBanner(input)
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => [AlertBanner], { nullable: true })
+  getServicePortalAlertBanners(
+    @Args('input') input: GetServicePortalAlertBannersInput,
+  ): Promise<AlertBanner[] | null> {
+    return this.cmsContentfulService.getServicePortalAlertBanners(input)
   }
 
   @Directive(cacheControlDirective())

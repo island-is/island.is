@@ -21,7 +21,7 @@ export const createWrappedFetchWithLogging = (
               input,
             )}, init - ${JSON.stringify(init)}, response - ${JSON.stringify(
               body,
-            )}`,
+            )} status text: ${response.statusText}`,
           )
           return reject(body)
         }

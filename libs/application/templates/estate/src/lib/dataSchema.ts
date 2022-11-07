@@ -11,7 +11,7 @@ const isValidPhoneNumber = (phoneNumber: string) => {
 
 const asset = z
   .object({
-    assetNumber: customZodError(z.string().nonempty(), m.errorNumberEmpty),
+    assetNumber: customZodError(z.string().min(1), m.errorNumberEmpty),
     description: z.string().optional(),
     initial: z.boolean(),
     enabled: z.boolean(),
@@ -44,12 +44,12 @@ export const estateSchema = z.object({
   estate: z.object({
     estateMembers: z
       .object({
-        name: z.string().nonempty(),
-        relation: customZodError(z.string().nonempty(), m.errorRelation),
+        name: z.string().min(1),
+        relation: customZodError(z.string().min(1), m.errorRelation),
         nationalId: z.string().optional(),
         custodian: z.string().length(10).optional(),
         foreignCitizenship: z.string().array().min(0).max(1).optional(),
-        dateOfBirth: z.string().nonempty().optional(),
+        dateOfBirth: z.string().min(1).optional(),
         initial: z.boolean(),
         enabled: z.boolean(),
         dummy: z.boolean().optional(),
@@ -62,9 +62,9 @@ export const estateSchema = z.object({
     vehicles: asset,
     ships: asset,
     knowledgeOfOtherWills: z.enum([YES, NO]).optional(),
-    caseNumber: z.string().nonempty().optional(),
+    caseNumber: z.string().min(1).optional(),
     dateOfDeath: z.date().optional(),
-    nameOfDeceased: z.string().nonempty().optional(),
+    nameOfDeceased: z.string().min(1).optional(),
     nationalIdOfDeceased: z.string().optional(),
     districtCommissionerHasWill: z.boolean().optional(),
   }),

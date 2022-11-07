@@ -29,7 +29,7 @@ export const ComplaintOverview: FC<Props> = ({
   const {
     appeals,
     complaintType,
-    information: { name, phone, email, address },
+    applicant: { name, phoneNumber, email, address },
     complaintDescription: { decisionDate },
     attachments: { documents },
   } = answers
@@ -77,7 +77,7 @@ export const ComplaintOverview: FC<Props> = ({
         <GridRow>
           <GridColumn span={['9/12', '9/12', '9/12', '5/12']}>
             <ValueLine
-              value={phone}
+              value={phoneNumber ?? ''}
               label={information.aboutTheComplainer.phone}
             />
           </GridColumn>

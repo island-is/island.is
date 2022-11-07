@@ -8,7 +8,6 @@ import { ApiScopeUserAccess } from './models/api-scope-user-access.model'
 import { ApiScopeUserDTO } from './dto/api-scope-user.dto'
 import { ApiScopeUserUpdateDTO } from './dto/api-scope-user-update.dto'
 import { ApiScopeUserAccessDTO } from './dto/api-scope-user-access.dto'
-import { throwError } from 'rxjs'
 
 @Injectable()
 export class ResourceAccessService {
@@ -80,18 +79,19 @@ export class ResourceAccessService {
   }
 
   /** Creates a new Api Scope User */
-  async create(apiScopeUser: ApiScopeUserDTO): Promise<ApiScopeUser | null> {
+  async create({
+    userAccess,
+    ...apiScopeUser
+  }: ApiScopeUserDTO): Promise<ApiScopeUser | null> {
     this.logger.debug('Creating a new admin')
 
-    const response = await this.apiScopeUser.create({ ...apiScopeUser })
+    const response = await this.apiScopeUser.create(apiScopeUser)
     if (response) {
-      const apiScopeResponse = await this.createUserScopes(
-        apiScopeUser.userAccess,
-      )
+      const apiScopeResponse = await this.createUserScopes(userAccess)
       if (apiScopeResponse) {
         return response
       } else {
-        throwError('Error inserting scopes')
+        throw new Error('Error inserting scopes')
       }
     }
 
@@ -100,7 +100,7 @@ export class ResourceAccessService {
 
   /** Updates an existing Api Scope User */
   async update(
-    apiScopeUser: ApiScopeUserUpdateDTO,
+    { userAccess, ...apiScopeUser }: ApiScopeUserUpdateDTO,
     nationalId: string,
   ): Promise<ApiScopeUser | null> {
     this.logger.debug('Updating Api Scope User with nationalId: ', nationalId)
@@ -111,14 +111,11 @@ export class ResourceAccessService {
 
     await this.deleteUserScopes(nationalId)
 
-    await this.apiScopeUser.update(
-      { ...apiScopeUser },
-      {
-        where: { nationalId: nationalId },
-      },
-    )
+    await this.apiScopeUser.update(apiScopeUser, {
+      where: { nationalId: nationalId },
+    })
 
-    await this.createUserScopes(apiScopeUser.userAccess)
+    await this.createUserScopes(userAccess)
 
     return await this.findOne(nationalId)
   }
