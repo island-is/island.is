@@ -33,7 +33,7 @@ export const AirDiscountSchemeClientConfig = defineConfig<
                 'IDENTITY_SERVER_ISSUER_URL',
                 'https://identity-server.dev01.devland.is',
               ),
-              clientId: '@island.is/web',
+              clientId: '@island.is/air-discount-scheme-client',
               clientSecret,
               scope: ['@vegagerdin.is/air-discount-scheme-scope'],
             }

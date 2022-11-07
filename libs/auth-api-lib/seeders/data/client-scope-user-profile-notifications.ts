@@ -20,7 +20,7 @@ export const up = compose(
     displayName: 'Air Discount Scheme Client',
     description: 'Public facing Air Discount Scheme Client',
     grantTypes: ['urn:ietf:params:oauth:grant-type:token-exchange'],
-    allowedScopes: [],
+    allowedScopes: ['@vegagerdin.is/air-discount-scheme-scope'],
   }),
   createScope({
     name: '@island.is/air-discount-scheme',
