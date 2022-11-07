@@ -14,24 +14,23 @@ LBLUE=$(echo -en '\033[01;34m')
 RESET=$(echo -en '\033[0m')
 
 
-export \
-  APP="system-e2e" \
-  TEST_ENVIRONMENT="local"
+export APP=${APP:-"system-e2e"}
+export TEST_ENVIRONMENT=${TEST_ENVIRONMENT:-"local"}
 
-PROJECT_DIR=$(git rev-parse --show-toplevel)
-APP_HOME=$(jq ".projects[\"$APP\"]" -r < "$PROJECT_DIR"/workspace.json)
-APP_DIST_HOME=$(jq ".targets.build.options.outputPath" -r < "$PROJECT_DIR"/"$APP_HOME"/project.json)
-TEST_PROG="$PROJECT_DIR/node_modules/.bin/playwright"
-ENV_FILE="$PROJECT_DIR/.env.secret"
+: ${PROJECT_DIR:=$(git rev-parse --show-toplevel)}
+: ${APP_HOME:=$(jq ".projects[\"$APP\"]" -r < "$PROJECT_DIR"/workspace.json)}
+: ${APP_DIST_HOME:=$(jq ".targets.build.options.outputPath" -r < "$PROJECT_DIR"/"$APP_HOME"/project.json)}
+: ${TEST_PROG:="$PROJECT_DIR/node_modules/.bin/playwright"}
+: ${ENV_FILE:="$PROJECT_DIR/.env.secret"}
 
 # shellcheck disable=SC1091,SC1090
-source "$ENV_FILE"
+. "$ENV_FILE"
 
-DOCKERFILE="${PROJECT_DIR}/scripts/ci/Dockerfile"
-DOCKER_TAG="$(git rev-parse --short HEAD)"
-DOCKER_IMAGE="localhost/${APP}":"${DOCKER_TAG}"
-DOCKER_TARGET="output-local"
-DOCKER_BUILD_ARGS="--build-arg APP=${APP} --build-arg APP_HOME=${APP_HOME} --build-arg APP_DIST_HOME=${APP_DIST_HOME} --build-arg GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD) --build-arg GIT_SHA=${DOCKER_TAG}"
+: ${DOCKERFILE:="${PROJECT_DIR}/scripts/ci/Dockerfile"}
+: ${DOCKER_TAG:="$(git rev-parse --short HEAD)"}
+: ${DOCKER_IMAGE:="localhost/${APP}":"${DOCKER_TAG}"}
+: ${DOCKER_TARGET:="output-local"}
+: ${DOCKER_BUILD_ARGS:="--build-arg APP=${APP} --build-arg APP_HOME=${APP_HOME} --build-arg APP_DIST_HOME=${APP_DIST_HOME} --build-arg GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD) --build-arg GIT_SHA=${DOCKER_TAG}"}
 
 function info() {
   local msg
