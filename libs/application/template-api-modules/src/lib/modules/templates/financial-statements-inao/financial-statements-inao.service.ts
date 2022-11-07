@@ -67,7 +67,7 @@ export class FinancialStatementsInaoTemplateService {
     if (!fileName) {
       return Promise.reject({})
     }
-    console.log({ fileName })
+
     const { bucket, key } = AmazonS3URI(fileName)
 
     const uploadBucket = bucket
@@ -101,7 +101,7 @@ export class FinancialStatementsInaoTemplateService {
     const answers = application.answers
     const externalData = application.externalData
     const currentUserType = getCurrentUserType(answers, externalData)
-    const fileName = await this.getAttachment({ application, auth })
+
     if (currentUserType === USERTYPE.INDIVIDUAL) {
       const values: PersonalElectionFinancialStatementValues = mapValuesToIndividualtype(
         answers,
@@ -119,6 +119,10 @@ export class FinancialStatementsInaoTemplateService {
 
       const noValueStatement = electionIncomeLimit === LESS ? true : false
 
+      const fileName = noValueStatement
+        ? ''
+        : await this.getAttachment({ application, auth })
+
       const result: DataResponse = await this.financialStatementsClientService
         .postFinancialStatementForPersonalElection(
           nationalId,
@@ -127,6 +131,7 @@ export class FinancialStatementsInaoTemplateService {
           noValueStatement,
           clientName,
           values,
+          fileName,
         )
         .then((data) => {
           if (data === true) {
@@ -154,16 +159,16 @@ export class FinancialStatementsInaoTemplateService {
         'conditionalAbout.operatingYear',
       ) as string
 
-      // default to comment to empty string, currently there's no comment field
-      const comment = ''
+      const fileName = await this.getAttachment({ application, auth })
 
       const result: DataResponse = await this.financialStatementsClientService
         .postFinancialStatementForPoliticalParty(
           nationalId,
           actor?.nationalId,
           year,
-          comment,
+          '',
           values,
+          fileName,
         )
         .then((data) => {
           if (data === true) {
@@ -191,16 +196,16 @@ export class FinancialStatementsInaoTemplateService {
         'conditionalAbout.operatingYear',
       ) as string
 
-      // default to comment to empty string, currently there's no comment field
-      const comment = ''
+      const fileName = await this.getAttachment({ application, auth })
 
       const result: DataResponse = await this.financialStatementsClientService
         .postFinancialStatementForCemetery(
           nationalId,
           actor?.nationalId,
           year,
-          comment,
+          '',
           values,
+          fileName,
         )
         .then((data) => {
           if (data === true) {
