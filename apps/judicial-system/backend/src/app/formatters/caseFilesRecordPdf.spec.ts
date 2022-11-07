@@ -9,7 +9,7 @@ describe('FormatDefendant', () => {
       nationalId: '1234567890',
     } as Defendant)
 
-    expect(result).toBe('John Doe, 123456-7890, 123 Main Street')
+    expect(result).toBe('John Doe, kt. 123456-7890, 123 Main Street')
   })
 
   test('with date of birth', () => {
@@ -20,7 +20,7 @@ describe('FormatDefendant', () => {
       nationalId: '01.10.1999',
     } as Defendant)
 
-    expect(result).toBe('John Doe, 01.10.1999, 123 Main Street')
+    expect(result).toBe('John Doe, fd. 01.10.1999, 123 Main Street')
   })
 
   test('without nationa id and date of birth', () => {

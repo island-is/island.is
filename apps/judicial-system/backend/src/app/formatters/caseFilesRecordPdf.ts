@@ -2,7 +2,7 @@ import { FormatMessage } from '@island.is/cms-translations'
 import {
   capitalize,
   caseTypes,
-  formatNationalId,
+  formatDOB,
 } from '@island.is/judicial-system/formatters'
 
 import { caseFilesRecord } from '../messages'
@@ -11,16 +11,16 @@ import { Case } from '../modules/case'
 import { Alignment, PageLink, PdfDocument } from './pdf'
 
 export function formatDefendant(defendant: Defendant) {
-  let nationalId = ''
-  if (defendant.noNationalId) {
-    if (defendant.nationalId) {
-      nationalId = `${defendant.nationalId}, `
-    }
-  } else {
-    nationalId = `${formatNationalId(defendant.nationalId ?? '')}, `
-  }
+  const defendantDOB = formatDOB(
+    defendant.nationalId,
+    defendant.noNationalId,
+    '',
+  )
+  const defendantDOBSection = defendantDOB ? ` ${defendantDOB},` : ''
 
-  return `${defendant.name ?? ''}, ${nationalId}${defendant.address ?? ''}`
+  return `${defendant.name ?? ''},${defendantDOBSection} ${
+    defendant.address ?? ''
+  }`
 }
 
 export const createCaseFilesRecord = async (

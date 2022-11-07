@@ -16,8 +16,13 @@ import {
   createNationalId,
   createNationalRegistryUser,
 } from '@island.is/testing/fixtures'
-import { TestApp } from '@island.is/testing/nest'
-import { createDelegation } from '@island.is/services/auth/testing'
+import { TestApp, getRequestMethod } from '@island.is/testing/nest'
+import {
+  createDelegation,
+  createDelegationModels,
+  expectMatchingDelegations,
+  findExpectedDelegationModels,
+} from '@island.is/services/auth/testing'
 
 import { createClient } from '../../../../test/fixtures'
 import {
@@ -27,12 +32,6 @@ import {
   setupWithoutPermission,
 } from '../../../../test/setup'
 import { TestEndpointOptions } from '../../../../test/types'
-import {
-  createDelegationModels,
-  expectMatchingObject,
-  findExpectedDelegationModels,
-  getRequestMethod,
-} from '../../../../test/utils'
 
 const client = createClient({ clientId: '@island.is/webapp' })
 const actorNationalId = createNationalId('person')
@@ -223,7 +222,7 @@ describe('MeDelegationsController', () => {
         // Assert
         expect(res.status).toEqual(200)
         expect(res.body).toHaveLength(5)
-        expectMatchingObject(res.body, expectedModels)
+        expectMatchingDelegations(res.body, expectedModels)
       })
 
       it('should return only delegations with scopes the user has access to', async () => {
@@ -243,7 +242,7 @@ describe('MeDelegationsController', () => {
         // Assert
         expect(res.status).toEqual(200)
         expect(res.body).toHaveLength(1)
-        expectMatchingObject(res.body, [expectedModel])
+        expectMatchingDelegations(res.body, [expectedModel])
       })
 
       it('should return no delegation when the client does not have access to any scope', async () => {
@@ -284,7 +283,7 @@ describe('MeDelegationsController', () => {
         // Assert
         expect(res.status).toEqual(200)
         expect(res.body).toHaveLength(3)
-        expectMatchingObject(res.body, expectedModels)
+        expectMatchingDelegations(res.body, expectedModels)
       })
 
       it('should return all valid delegations with direction=outgoing&validity=includeFuture', async () => {
@@ -312,7 +311,7 @@ describe('MeDelegationsController', () => {
         // Assert
         expect(res.status).toEqual(200)
         expect(res.body).toHaveLength(4)
-        expectMatchingObject(res.body, expectedModels)
+        expectMatchingDelegations(res.body, expectedModels)
       })
 
       it('should return all expired delegations with direction=outgoing&validity=past', async () => {
@@ -334,7 +333,7 @@ describe('MeDelegationsController', () => {
         // Assert
         expect(res.status).toEqual(200)
         expect(res.body).toHaveLength(1)
-        expectMatchingObject(res.body, expectedModels)
+        expectMatchingDelegations(res.body, expectedModels)
       })
 
       it('should return an array with single delegation when filtered to specific otherUser', async () => {
@@ -356,7 +355,7 @@ describe('MeDelegationsController', () => {
         // Assert
         expect(res.status).toEqual(200)
         expect(res.body).toHaveLength(1)
-        expectMatchingObject(res.body, expectedModels)
+        expectMatchingDelegations(res.body, expectedModels)
       })
 
       it('should return no delegation for otherUser when user has access to none of the scopes', async () => {
@@ -373,7 +372,7 @@ describe('MeDelegationsController', () => {
         // Assert
         expect(res.status).toEqual(200)
         expect(res.body).toHaveLength(0)
-        expectMatchingObject(res.body, [])
+        expectMatchingDelegations(res.body, [])
       })
 
       it('should not return delegation to the actor', async () => {
@@ -388,7 +387,7 @@ describe('MeDelegationsController', () => {
         // Assert
         expect(res.status).toEqual(200)
         expect(res.body).toHaveLength(0)
-        expectMatchingObject(res.body, [])
+        expectMatchingDelegations(res.body, [])
       })
 
       it('should return an empty array when filtered to specific otherUser and no delegation exists', async () => {
@@ -477,7 +476,7 @@ describe('MeDelegationsController', () => {
         // Assert
         expect(res.status).toEqual(200)
         expect((res.body as DelegationDTO).scopes).toHaveLength(1)
-        expectMatchingObject(res.body, expectedModel)
+        expectMatchingDelegations(res.body, expectedModel)
       })
 
       it('should return a delegation with no scopes if no scope is allowed for delegation', async () => {
@@ -499,7 +498,7 @@ describe('MeDelegationsController', () => {
         // Assert
         expect(res.status).toEqual(200)
         expect((res.body as DelegationDTO).scopes).toHaveLength(0)
-        expectMatchingObject(res.body, expectedModel)
+        expectMatchingDelegations(res.body, expectedModel)
       })
 
       it('should return a delegation with filtered scopes list by user access', async () => {
@@ -518,7 +517,7 @@ describe('MeDelegationsController', () => {
 
         // Assert
         expect(res.status).toEqual(200)
-        expectMatchingObject(res.body, expectedModel)
+        expectMatchingDelegations(res.body, expectedModel)
       })
 
       it('should return a delegation with empty scopes list when user does not have access to any scopes', async () => {
@@ -537,7 +536,7 @@ describe('MeDelegationsController', () => {
 
         // Assert
         expect(res.status).toEqual(200)
-        expectMatchingObject(res.body, expectedModel)
+        expectMatchingDelegations(res.body, expectedModel)
       })
 
       it('should filter expired scopes for delegation that exists for auth user', async () => {
@@ -559,7 +558,7 @@ describe('MeDelegationsController', () => {
 
         // Assert
         expect(res.status).toEqual(200)
-        expectMatchingObject(res.body, expectedModel)
+        expectMatchingDelegations(res.body, expectedModel)
       })
 
       it('should return 404 not found if delegation does not exist or not connected to the user', async () => {
@@ -664,7 +663,7 @@ describe('MeDelegationsController', () => {
             (res.body as DelegationDTO).id!,
           )
           expect(res.status).toEqual(201)
-          expectMatchingObject(res.body, expectedModel)
+          expectMatchingDelegations(res.body, expectedModel)
         },
       )
 

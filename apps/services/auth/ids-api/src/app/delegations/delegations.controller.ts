@@ -71,7 +71,7 @@ export class DelegationsController {
           user.nationalId,
           fromNationalId,
         )
-        scopes = result.map((s) => s.apiScope.name)
+        scopes = result.map((s) => s.scopeName)
         break
       }
     }
