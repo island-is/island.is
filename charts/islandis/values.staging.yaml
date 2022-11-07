@@ -257,7 +257,7 @@ api:
     CONTENTFUL_HOST: 'cdn.contentful.com'
     DOWNLOAD_SERVICE_BASE_PATH: 'https://api.staging01.devland.is'
     ELASTIC_NODE: 'https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com/'
-    ELECTRONIC_REGISTRATION_STATISTICS_API_URL: 'https://gw-api.skra.is/business/tolfraedi'
+    ELECTRONIC_REGISTRATION_STATISTICS_API_URL: 'https://gw-api-staging.skra.is/business/tolfraedi'
     ENDORSEMENT_SYSTEM_BASE_API_URL: 'http://web-endorsement-system-api.endorsement-system.svc.cluster.local'
     FILE_DOWNLOAD_BUCKET: 'island-is-staging-download-cache-api'
     FILE_STORAGE_UPLOAD_BUCKET: 'island-is-staging-upload-api'
