@@ -1,11 +1,15 @@
 import { DynamicModule, Module } from '@nestjs/common'
 import { SmartSolutionsApi, SmartSolutionsConfig } from './smartSolutions.api'
 import { SMART_SOLUTIONS_API_CONFIG } from './smartSolutions.config'
-import { ConfigType, LazyDuringDevScope } from '@island.is/nest/config'
+import { LazyDuringDevScope } from '@island.is/nest/config'
 
 export type SmartSolutionsModuleAsyncOptions = {
-  useFactory: (...args: any[]) => Promise<SmartSolutionsConfig> | SmartSolutionsConfig;
-  inject?: any[];
+  useFactory: (
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ...args: any[]
+  ) => Promise<SmartSolutionsConfig> | SmartSolutionsConfig
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  inject?: any[]
 }
 
 @Module({})

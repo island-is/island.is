@@ -421,7 +421,6 @@ export class LicenseServiceService {
     passTemplateId: string,
   ): GenericLicenseType | null {
     for (const [key, value] of Object.entries(this.config)) {
-      console.log(value)
       // some license Config id === barcode id
       if (value === passTemplateId) {
         // firearmLicense => FirearmLicense
