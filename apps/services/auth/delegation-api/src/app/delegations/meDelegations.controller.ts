@@ -66,7 +66,6 @@ export class MeDelegationsController {
   constructor(
     private readonly delegationsOutgoingService: DelegationsOutgoingService,
     private readonly delegationsIncomingService: DelegationsIncomingService,
-    @Inject(FEATURE_FLAG_CLIENT)
     private readonly featureFlagService: FeatureFlagService,
     private readonly auditService: AuditService,
   ) {}
