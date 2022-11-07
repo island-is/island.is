@@ -2,6 +2,7 @@ import type {
   CreationOptional,
   InferAttributes,
   InferCreationAttributes,
+  NonAttribute,
 } from 'sequelize'
 import {
   Column,
@@ -99,7 +100,7 @@ export class Delegation extends Model<
   readonly modified?: Date
 
   @HasMany(() => DelegationScope)
-  delegationScopes?: DelegationScope[]
+  delegationScopes?: NonAttribute<DelegationScope[]>
 
   toDTO(): DelegationDTO {
     return {

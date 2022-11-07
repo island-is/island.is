@@ -21,6 +21,7 @@ import { ConfigType } from '@island.is/nest/config'
 interface SetupOptions {
   user?: User
   customScopeRules?: ConfigType<typeof DelegationConfig>['customScopeRules']
+  override?: (builder: TestingModuleBuilder) => TestingModuleBuilder
 }
 
 const delegationConfig: ConfigType<typeof DelegationConfig> = {
@@ -33,13 +34,14 @@ const delegationConfig: ConfigType<typeof DelegationConfig> = {
 export const setupWithAuth = ({
   user = createCurrentUser(),
   customScopeRules,
+  override = (builder) => builder,
 }: SetupOptions = {}): Promise<TestApp> => {
   // Setup app with authentication and database
   return testServer({
     appModule: AppModule,
     enableVersioning: true,
     override: (builder: TestingModuleBuilder) =>
-      builder
+      override(builder)
         .overrideProvider(FeatureFlagService)
         .useValue(FeatureFlagServiceMock)
         .overrideProvider(DelegationConfig.KEY)
@@ -62,8 +64,9 @@ export const setupWithoutAuth = (): Promise<TestApp> => {
   })
 }
 
-export const setupWithoutPermission = (): Promise<TestApp> => {
-  const user = createCurrentUser()
+export const setupWithoutPermission = ({
+  user = createCurrentUser(),
+}: { user?: User } = {}): Promise<TestApp> => {
   return testServer({
     appModule: AppModule,
     enableVersioning: true,
