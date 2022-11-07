@@ -106,7 +106,7 @@ const CaseFiles: React.FC = () => {
             onRetry={handleRetry}
           />
         </Box>
-        <Box component="section" marginBottom={10}>
+        <Box component="section" marginBottom={5}>
           <SectionHeading
             title={formatMessage(strings.caseFiles.sections.costBreakdown)}
           />
@@ -118,6 +118,23 @@ const CaseFiles: React.FC = () => {
             buttonLabel={formatMessage(strings.caseFiles.sections.buttonLabel)}
             onChange={(files) =>
               handleS3Upload(files, false, CaseFileCategory.COST_BREAKDOWN)
+            }
+            onRemove={handleRemoveFromS3}
+            onRetry={handleRetry}
+          />
+        </Box>
+        <Box component="section" marginBottom={10}>
+          <SectionHeading
+            title={formatMessage(strings.caseFiles.sections.otherDocuments)}
+          />
+          <InputFileUpload
+            fileList={files.filter(
+              (file) => file.category === CaseFileCategory.CASE_FILE,
+            )}
+            header={formatMessage(strings.caseFiles.sections.inputFieldLabel)}
+            buttonLabel={formatMessage(strings.caseFiles.sections.buttonLabel)}
+            onChange={(files) =>
+              handleS3Upload(files, false, CaseFileCategory.CASE_FILE)
             }
             onRemove={handleRemoveFromS3}
             onRetry={handleRetry}
