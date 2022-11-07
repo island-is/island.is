@@ -327,7 +327,7 @@ const Search: Screen<CategoryProps> = ({
     if (item.__typename === 'OrganizationPage') {
       return {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        image: (item as any).singleOrganization?.logo,
+        image: (item as any)?.singleOrganization?.logo,
         thumbnail: undefined,
       }
     }
