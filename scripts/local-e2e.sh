@@ -82,8 +82,11 @@ function _image_exists() {
 }
 
 function _get_source_path() {
-  [ "${CODE_SOURCE}" = "source" ] && echo "${APP_HOME}"
-  [ "${CODE_SOURCE}" = "dist" ] && echo "${APP_DIST_HOME}"
+  if [ "${CODE_SOURCE}" = "source" ]; then
+    echo "${APP_HOME}"
+  elif [ "${CODE_SOURCE}" = "dist" ]; then
+    echo "${APP_DIST_HOME}"
+  fi
 }
 
 function _build_app() {
@@ -153,7 +156,7 @@ usage() {
   echo
   echo "menu          opens up e2e interactive spec dashboard " 2>&1
   echo "build         [-a app-name: default system-e2e]" 2>&1
-  echo "run           -i integration -t smoke|acceptance -c <source|dist|container> [-e <local|dev|staging|prod>, default: local] [-b browser, default: chrome] [-l, default: headless] [-d, extremely verbose debugging]" 2>&1
+  echo "run           -i integration -t smoke|acceptance -c <source|dist|container> [-e <local|dev|staging|prod>, default: local] [-b browser, default: chrome] [-l, default: headless] [-d, extremely verbose debugging] [-n, only list tests (don't run anything)]" 2>&1
   echo
   echo "examples " 2>&1
   echo "         $(basename "$0") run -i air-discount-scheme -t acceptance -c source -l" 2>&1
@@ -165,7 +168,8 @@ usage() {
 CODE_SOURCE=""
 INTEGRATION=""
 TEST_TYPE=""
-HEAD="--headless"
+HEAD=""
+LIST=""
 BROWSER="chrome"
 
 if [ ! 0 == $# ]; then
@@ -193,13 +197,14 @@ if [ ! 0 == $# ]; then
       ;;
     run)
       shift
-      while getopts ":i:c:t:b:e:ld" opt; do
+      while getopts ":i:c:t:b:e:ldn" opt; do
         case "${opt}" in
           i)
             INTEGRATION=${OPTARG}
             ;;
           c)
             if [ "${OPTARG}" != "dist" ] && [ "${OPTARG}" != "source" ] && [ "${OPTARG}" != "container" ]; then
+              error "Invalid source type"
               usage
             fi
             CODE_SOURCE=${OPTARG}
@@ -213,23 +218,31 @@ if [ ! 0 == $# ]; then
           d)
             export DEBUG="cypress:*"
             ;;
+          n)
+            LIST="--list"
+            ;;
           l)
             HEAD="--headed"
             ;;
           e)
-            [ "${OPTARG}" != "local" ] && [ "${OPTARG}" != "dev" ] && [ "${OPTARG}" != "staging" ] && [ "${OPTARG}" != "prod" ] && usage
+            if [ "${OPTARG}" != "local" ] && [ "${OPTARG}" != "dev" ] && [ "${OPTARG}" != "staging" ] && [ "${OPTARG}" != "prod" ]; then
+              error "Invalid environment"
+              usage
+            fi
             export TEST_ENVIRONMENT=${OPTARG}
             ;;
           :)
             error "-${OPTARG} requires an argument."
             ;;
           \?)
+            error "Unknown run option"
             usage
             ;;
         esac
       done
       ;;
     *)
+      error "Unknown option $opt"
       usage
       ;;
   esac
@@ -241,4 +254,10 @@ fi
 [ "$CODE_SOURCE" = "container" ] && run_container -s "**/${INTEGRATION}/${TEST_TYPE}/*.spec.{ts,js}" --headless
 
 # run either from source or dist
-"${TEST_PROG}" test --project "$(_get_source_path "${CODE_SOURCE}")" -s "**/integration/${INTEGRATION}/${TEST_TYPE}/*.spec.{ts,js}" --browser "${BROWSER}" ${HEAD} && exit 0
+APP_BASE_PATH="$(_get_source_path "${CODE_SOURCE}")"
+PATTERN="${TEST_TYPE}/.*.spec.(ts|js)"
+info "Pattern prefix: $APP_BASE_PATH"
+info "Integration: $INTEGRATION"
+info "Test type: $TEST_TYPE"
+info "Pattern: $PATTERN"
+"${TEST_PROG}" test ${HEAD} ${LIST} --browser "${BROWSER}" --config "$APP_BASE_PATH"/**/playwright.config.ts "$PATTERN" && exit 0
