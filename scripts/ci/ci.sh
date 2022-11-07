@@ -8,7 +8,7 @@ source "$DIR"/_common.sh
 
 export DOCKER_TAG=local
 export PUBLISH=local
-export CYPRESS_RUN_GROUP=local-$USER
+export E2E_RUN_GROUP=local-$USER
 
 export APP=$1
 
@@ -27,4 +27,4 @@ export APP=$1
 # Alternatively build different type of containers
 # $PROJECT_ROOT/scripts/ci/90_docker-next.sh
 # $PROJECT_ROOT/scripts/ci/90_docker-static.sh
-# $PROJECT_ROOT/scripts/ci/90_docker-cypress.sh
+# $PROJECT_ROOT/scripts/ci/90_docker-e2e.sh

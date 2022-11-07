@@ -111,11 +111,11 @@ USER runner
 
 CMD [ "jest", "main.spec.js" ]
 
-FROM mcr.microsoft.com/playwright:v1.25.2-focal as playwright-base
+FROM mcr.microsoft.com/playwright:v1.25.2-focal as e2e-base
 
 
 
-FROM playwright-base as output-playwright
+FROM e2e-base as output-e2e
 
 ARG APP_HOME
 ARG APP_DIST_HOME
@@ -138,7 +138,7 @@ COPY --chown=pwuser:pwuser ${APP_HOME}/entrypoint.sh .
 USER pwuser
 ENTRYPOINT ["./entrypoint.sh"]
 
-FROM playwright-base as output-local
+FROM e2e-base as output-local
 ARG APP_HOME
 
 

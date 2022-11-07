@@ -122,7 +122,7 @@ const test = () => {
       child.stdout.on('data', (data) => {
         // Tests can fail but the command still exits normally
         // So to be sure that all tests where successful we check
-        // for the string 'All specs passed!' written to stdout by cypress runner.
+        // for the string 'All specs passed!' written to stdout by e2e runner.
         console.log(`${data}`)
         if (data.includes('All specs passed!')) {
           successful = true

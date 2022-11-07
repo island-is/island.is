@@ -21,7 +21,7 @@ export \
 PROJECT_DIR=$(git rev-parse --show-toplevel)
 APP_HOME=$(jq ".projects[\"$APP\"]" -r < "$PROJECT_DIR"/workspace.json)
 APP_DIST_HOME=$(jq ".targets.build.options.outputPath" -r < "$PROJECT_DIR"/"$APP_HOME"/project.json)
-CYPRESS_BIN="$PROJECT_DIR/node_modules/.bin/cypress"
+TEST_PROG="$PROJECT_DIR/node_modules/.bin/playwright"
 ENV_FILE="$PROJECT_DIR/.env.secret"
 
 # shellcheck disable=SC1091,SC1090
@@ -92,7 +92,7 @@ function _build_app() {
 }
 
 function open_menu() {
-  "${CYPRESS_BIN}" open -P "$@"
+  "${TEST_PROG}" open -P "$@"
 }
 
 function run_container() {
@@ -119,7 +119,7 @@ function run_container() {
   _image_exists
   runner \
     --rm \
-    --name playwright-e2e-"${INTEGRATION:-test}" \
+    --name e2e-"${INTEGRATION:-test}" \
     -v "${TMP_DIR}":/out:Z \
     -v "${PROJECT_DIR}/${APP_DIST_HOME}":"/${APP_DIST_HOME}":Z \
     -v "${PROJECT_DIR}/${APP_HOME}/entrypoint.sh":"/${APP_DIST_HOME}/entrypoint.sh":Z \
@@ -152,9 +152,9 @@ usage() {
   echo
   echo "Usage: $(basename "$0") <build|menu|run>" 2>&1
   echo
-  echo "menu          opens up Cypress interactive spec dashboard " 2>&1
+  echo "menu          opens up e2e interactive spec dashboard " 2>&1
   echo "build         [-a app-name: default system-e2e]" 2>&1
-  echo "run           -i integration -t smoke|acceptance -c <source|dist|container> [-e <local|dev|staging|prod>, default: local] [-b browser, default: chrome] [-l, default: headless] [-d, extremely verbose cypress debugging]" 2>&1
+  echo "run           -i integration -t smoke|acceptance -c <source|dist|container> [-e <local|dev|staging|prod>, default: local] [-b browser, default: chrome] [-l, default: headless] [-d, extremely verbose debugging]" 2>&1
   echo
   echo "examples " 2>&1
   echo "         $(basename "$0") run -i air-discount-scheme -t acceptance -c source -l" 2>&1
@@ -240,4 +240,4 @@ fi
 [ "$CODE_SOURCE" = "container" ] && run_container -s "**/${INTEGRATION}/${TEST_TYPE}/*.spec.{ts,js}" --headless
 
 # run either from source or dist
-"${CYPRESS_BIN}" run -P "$(_get_source_path "${CODE_SOURCE}")" -s "**/integration/${INTEGRATION}/${TEST_TYPE}/*.spec.{ts,js}" --browser "${BROWSER}" ${HEAD} && exit 0
+"${TEST_PROG}" run -P "$(_get_source_path "${CODE_SOURCE}")" -s "**/integration/${INTEGRATION}/${TEST_TYPE}/*.spec.{ts,js}" --browser "${BROWSER}" ${HEAD} && exit 0
