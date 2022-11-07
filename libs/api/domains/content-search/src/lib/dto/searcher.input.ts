@@ -75,4 +75,9 @@ export class SearcherInput {
   @IsBoolean()
   @IsOptional()
   countProcessEntry?: boolean = false
+
+  @Field(() => Boolean, { nullable: true })
+  @IsBoolean()
+  @IsOptional()
+  highlightResults?: boolean = false
 }
