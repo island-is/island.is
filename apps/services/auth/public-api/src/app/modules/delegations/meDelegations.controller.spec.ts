@@ -16,7 +16,7 @@ import {
   createNationalId,
   createNationalRegistryUser,
 } from '@island.is/testing/fixtures'
-import { TestApp } from '@island.is/testing/nest'
+import { TestApp, getRequestMethod } from '@island.is/testing/nest'
 import { createDelegation } from '@island.is/services/auth/testing'
 
 import { createClient } from '../../../../test/fixtures'
@@ -31,7 +31,6 @@ import {
   createDelegationModels,
   expectMatchingObject,
   findExpectedDelegationModels,
-  getRequestMethod,
 } from '../../../../test/utils'
 
 const client = createClient({ clientId: '@island.is/webapp' })
