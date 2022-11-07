@@ -8,8 +8,8 @@ export class MergedDelegationDTO {
   fromNationalId!: string
 
   @IsString()
-  @ApiProperty()
-  fromName!: string
+  @ApiPropertyOptional({ nullable: true, type: String })
+  fromName?: string
 
   @IsString()
   @ApiProperty()
