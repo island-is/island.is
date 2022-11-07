@@ -2,11 +2,7 @@ import React, { useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 
 import { Box, Text, Input, Checkbox } from '@island.is/island-ui/core'
-import {
-  formatDate,
-  formatDOB,
-  formatNationalId,
-} from '@island.is/judicial-system/formatters'
+import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
 import {
   CaseCustodyRestrictions,
   CaseType,
