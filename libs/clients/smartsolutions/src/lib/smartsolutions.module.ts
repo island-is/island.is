@@ -4,8 +4,8 @@ import { SMART_SOLUTIONS_API_CONFIG } from './smartSolutions.config'
 import { ConfigType, LazyDuringDevScope } from '@island.is/nest/config'
 
 export type SmartSolutionsModuleAsyncOptions = {
-  useFactory: (config: ConfigType<never>) => SmartSolutionsConfig
-  inject: Array<string>
+  useFactory: (...args: any[]) => Promise<SmartSolutionsConfig> | SmartSolutionsConfig;
+  inject?: any[];
 }
 
 @Module({})
