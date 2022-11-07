@@ -121,14 +121,11 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
                 accused: enumerate(
                   workingCase.defendants.map(
                     (defendant) =>
-                      `${defendant.name}${
-                        defendant.nationalId
-                          ? ` ${formatDOB(
-                              defendant.nationalId,
-                              defendant.noNationalId,
-                            )}`
-                          : ''
-                      }`,
+                      `${defendant.name} ${`${formatDOB(
+                        defendant.nationalId,
+                        defendant.noNationalId,
+                        '',
+                      )}`.trim()}`,
                   ),
                   formatMessage(core.and),
                 ),

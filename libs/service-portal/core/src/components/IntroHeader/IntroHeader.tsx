@@ -9,6 +9,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { ModuleAlertBannerSection } from '../AlertMessage/ModuleAlertMessageSection'
 
 interface Props {
   title: MessageDescriptor | string
@@ -36,8 +37,15 @@ export const IntroHeader = ({
           </Text>
         )}
       </GridColumn>
+      <GridColumn
+        span={['12/12', '12/12', '6/9']}
+        order={[4, 3]}
+        paddingTop={4}
+      >
+        <ModuleAlertBannerSection />
+      </GridColumn>
       {img && (
-        <GridColumn span={['8/8', '3/8']} order={[1, 2]}>
+        <GridColumn span={['8/8', '3/8']} order={[1, 4]}>
           <Hidden print={hideImgPrint} below="lg">
             <Box textAlign="center" padding={[6, 0]}>
               <img src={img} alt="" />
