@@ -12,7 +12,6 @@ import {
 } from './organizationTheme.model'
 import { GenericTag, mapGenericTag } from './genericTag.model'
 import { AlertBanner, mapAlertBanner } from './alertBanner.model'
-import { SystemMetadata } from 'api-cms-domain'
 
 @ObjectType()
 export class OrganizationPage {
