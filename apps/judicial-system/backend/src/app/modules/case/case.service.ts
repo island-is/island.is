@@ -38,7 +38,6 @@ import {
   getCourtRecordPdfAsBuffer,
   getCourtRecordPdfAsString,
   formatRulingModifiedHistory,
-  writeFile,
   createCaseFilesRecord,
 } from '../../formatters'
 import { CaseFile } from '../file'
@@ -351,18 +350,12 @@ export class CaseService {
         }
       })
 
-    const pdf = await createCaseFilesRecord(
+    return createCaseFilesRecord(
       theCase,
       policeCaseNumber,
       caseFiles ?? [],
       this.formatMessage,
     )
-
-    if (!this.config.production) {
-      writeFile(`${theCase.id}-case-files.pdf`, pdf)
-    }
-
-    return pdf
   }
 
   async getRulingPdf(theCase: Case, useSigned = true): Promise<Buffer> {

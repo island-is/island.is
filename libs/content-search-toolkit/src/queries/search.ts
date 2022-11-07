@@ -5,11 +5,7 @@ import { typeAggregationQuery } from './typeAggregation'
 import { processAggregationQuery } from './processAggregation'
 
 const getBoostForType = (type: string, defaultBoost: string | number = 1) => {
-  if (type === 'webArticle') {
-    // The number 55 was chosen since it was the threshold between the highest scoring news and the highest scoring article in search results
-    // The test that determined this boost was to type in "Umsókn um fæðingarorlof" and compare the news and article scores
-    return 55
-  }
+  // normalising all types before boosting
   return defaultBoost
 }
 
@@ -36,7 +32,6 @@ export const searchQuery = (
   const fieldsWeights = [
     'title^6', // note boosting ..
     'title.stemmed^2', // note boosting ..
-    'title.compound',
     'content',
     'content.stemmed',
   ]
@@ -57,7 +52,7 @@ export const searchQuery = (
         query: queryString,
         fuzziness: 'AUTO',
         operator: 'and',
-        type: 'bool_prefix',
+        type: 'best_fields',
       },
     })
   }
@@ -132,6 +127,7 @@ export const searchQuery = (
           },
         },
         functions: [
+          // content gets a natural boost based on visits/popularity
           {
             field_value_factor: {
               field: 'popularityScore',
@@ -140,11 +136,26 @@ export const searchQuery = (
               missing: 1,
             },
           },
+          // content that is an entrance to "umsoknir" gets a boost
           { filter: { range: { processEntryCount: { gte: 1 } } }, weight: 2 },
+          // content that is a "forsíða stofnunar" gets a boost
+          { filter: { term: { type: 'webOrganizationPage' } }, weight: 3 },
+          // reduce news weight
+          { filter: { term: { type: 'webNews' } }, weight: 0.5 },
         ],
       },
     },
     ...(Object.keys(aggregation.aggs).length ? aggregation : {}), // spread aggregations if we have any
+    highlight: {
+      pre_tags: ['<b>'],
+      post_tags: ['</b>'],
+      number_of_fragments: 3,
+      fragment_size: 150,
+      fields: {
+        title: {},
+        content: {},
+      },
+    },
     size,
     from: (page - 1) * size, // if we have a page number add it as offset for pagination
   }
