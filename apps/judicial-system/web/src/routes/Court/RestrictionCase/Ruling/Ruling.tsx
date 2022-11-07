@@ -57,7 +57,7 @@ import {
 import {
   capitalize,
   formatDate,
-  formatNationalId,
+  formatDOB,
 } from '@island.is/judicial-system/formatters'
 import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
@@ -77,9 +77,15 @@ export function getConclusionAutofill(
     isolationToDate &&
     new Date(validToDate) > new Date(isolationToDate)
 
+  const defendantDOB = formatDOB(
+    defendant.nationalId,
+    defendant.noNationalId,
+    '',
+  )
+
   return decision === CaseDecision.DISMISSING
     ? formatMessage(m.sections.conclusion.dismissingAutofill, {
-        accusedName: defendant.name,
+        defendantName: defendant.name,
         isExtended:
           workingCase.parentCase &&
           isAcceptingCaseDecision(workingCase.parentCase.decision),
@@ -87,20 +93,16 @@ export function getConclusionAutofill(
       })
     : decision === CaseDecision.REJECTING
     ? formatMessage(m.sections.conclusion.rejectingAutofill, {
-        accusedName: defendant.name,
-        accusedNationalId: defendant.noNationalId
-          ? ', '
-          : `, kt. ${formatNationalId(defendant.nationalId ?? '')}, `,
+        defendantName: defendant.name,
+        defendantDOB: defendantDOB ? `, ${defendantDOB}, ` : ', ',
         isExtended:
           workingCase.parentCase &&
           isAcceptingCaseDecision(workingCase.parentCase.decision),
         caseType: workingCase.type,
       })
     : formatMessage(m.sections.conclusion.acceptingAutofill, {
-        accusedName: defendant.name,
-        accusedNationalId: defendant.noNationalId
-          ? ', '
-          : `, kt. ${formatNationalId(defendant.nationalId ?? '')}, `,
+        defendantName: defendant.name,
+        defendantDOB: defendantDOB ? `, ${defendantDOB}, ` : ', ',
         isExtended:
           workingCase.parentCase &&
           isAcceptingCaseDecision(workingCase.parentCase.decision) &&

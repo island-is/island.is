@@ -528,6 +528,8 @@ export const SignedVerdictOverview: React.FC = () => {
             </Box>
           </Box>
           {isRestrictionCase(workingCase.type) &&
+            workingCase.decision !==
+              CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN &&
             workingCase.state === CaseState.ACCEPTED && (
               <CaseDates
                 workingCase={workingCase}
