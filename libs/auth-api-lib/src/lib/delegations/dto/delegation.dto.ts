@@ -64,7 +64,7 @@ export class DelegationDTO {
   scopes?: DelegationScopeDTO[]
 
   @IsString()
-  @ApiPropertyOptional({ nullable: true })
+  @ApiPropertyOptional({ type: String, nullable: true })
   domainName?: string | null
 }
 
