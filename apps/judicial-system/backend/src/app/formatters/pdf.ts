@@ -22,7 +22,7 @@ export interface PdfTextOptions {
   bold?: boolean
   pageLink?: PageLink
   marginTop?: number
-  maxwidth?: number
+  maxWidth?: number
   newLine?: boolean
   position?: { x?: number; y?: number }
 }
@@ -214,7 +214,7 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
         bold = false,
         pageLink,
         marginTop,
-        maxwidth,
+        maxWidth,
         newLine = true,
         position,
       } = options ?? {}
@@ -222,10 +222,10 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
       const { y } = position ?? {}
       const font = bold ? boldFont : normalFont
 
-      if (maxwidth) {
+      if (maxWidth) {
         while (
           text.length > 0 &&
-          font.widthOfTextAtSize(`${text}...`, fontSize) > maxwidth
+          font.widthOfTextAtSize(`${text}...`, fontSize) > maxWidth
         ) {
           text = text.slice(0, -1)
         }
