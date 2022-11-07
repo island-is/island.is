@@ -1,3 +1,8 @@
+import type {
+  CreationOptional,
+  InferAttributes,
+  InferCreationAttributes,
+} from 'sequelize'
 import {
   Column,
   CreatedAt,
@@ -14,7 +19,10 @@ import { ApiScopeUserAccess } from './api-scope-user-access.model'
 @Table({
   tableName: 'api_scope_user',
 })
-export class ApiScopeUser extends Model {
+export class ApiScopeUser extends Model<
+  InferAttributes<ApiScopeUser>,
+  InferCreationAttributes<ApiScopeUser>
+> {
   @PrimaryKey
   @Column({
     type: DataType.STRING,
@@ -24,22 +32,22 @@ export class ApiScopeUser extends Model {
   nationalId!: string
 
   @Column({
-    type: DataType.BOOLEAN,
+    type: DataType.STRING,
     allowNull: false,
     defaultValue: true,
   })
   @ApiProperty({
-    example: true,
+    example: 'something@domain.com',
   })
-  email!: boolean
+  email!: string
 
   @HasMany(() => ApiScopeUserAccess)
   @ApiProperty()
   userAccess?: ApiScopeUserAccess[]
 
   @CreatedAt
-  @ApiProperty()
-  readonly created!: Date
+  @ApiProperty({ type: Date })
+  readonly created!: CreationOptional<Date>
 
   @UpdatedAt
   @ApiProperty()
