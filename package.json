@@ -84,7 +84,7 @@
     "@nestjs/passport": "7.1.0",
     "@nestjs/platform-express": "8.4.5",
     "@nestjs/sequelize": "8.0.0",
-    "@nestjs/swagger": "4.8.2",
+    "@nestjs/swagger": "5.2.1",
     "@nestjs/terminus": "7.0.1",
     "@rehooks/component-size": "1.0.3",
     "@sentry/browser": "6.9.0",
@@ -287,7 +287,7 @@
     "xml2js": "0.4.23",
     "xstate": "4.20.0",
     "yargs": "15.4.1",
-    "zod": "1.11.13"
+    "zod": "3.19.1"
   },
   "devDependencies": {
     "@anatine/esbuild-decorators": "0.2.4",
@@ -308,7 +308,6 @@
     "@graphql-codegen/typescript-operations": "2.5.3",
     "@graphql-codegen/typescript-react-apollo": "3.3.3",
     "@graphql-codegen/typescript-resolvers": "2.7.3",
-    "@honkit/honkit-plugin-highlight": "^4.0.0",
     "@jeremybarbet/contentful-extension-scripts": "0.22.7",
     "@nestjs/schematics": "8.0.10",
     "@nestjs/testing": "8.4.4",
@@ -406,9 +405,6 @@
     "eslint-plugin-react": "7.29.4",
     "eslint-plugin-react-hooks": "4.4.0",
     "fetch-mock": "9.10.7",
-    "gitbook-plugin-hints": "^1.0.2",
-    "honkit": "^4.0.4",
-    "honkit-plugin-mermaid": "^0.1.4",
     "imap-simple": "5.1.0",
     "inspectpack": "4.7.1",
     "jest": "28.1.3",
@@ -455,6 +451,7 @@
     "node-fetch": "2.6.7",
     "browserslist": "4.16.6",
     "ws": "8.8.0",
+    "css-what": "5.0.1",
     "glob-parent": "5.1.2",
     "trim-newlines": "3.0.1",
     "normalize-url": "4.5.1",
