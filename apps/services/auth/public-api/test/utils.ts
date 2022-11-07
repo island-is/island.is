@@ -85,15 +85,15 @@ export const getFakeName = () =>
   faker.fake('{{name.firstName}} {{name.lastName}}')
 
 /**
- * Sorts the merged delegation by id parameter to use for consistent expecting
+ * Sorts the merged delegation by fromNationalId parameter to use for consistent expecting
  * @param delegations
  */
 const sortMergedDelegations = (delegations: MergedDelegationDTO[]) => {
   delegations.sort((a, b) => {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     return a.fromNationalId === b.fromNationalId
       ? 0
-      : a.fromNationalId! < b.fromNationalId!
+      : // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      a.fromNationalId! < b.fromNationalId!
       ? -1
       : 1
   })
