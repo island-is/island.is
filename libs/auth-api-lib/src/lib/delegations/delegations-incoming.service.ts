@@ -158,13 +158,14 @@ export class DelegationsIncomingService {
         acc: Map<string, MergedDelegationDTO>,
         delegation: MergedDelegationDTO,
       ) => {
-        let current = delegation
-
         const existing = acc.get(delegation.fromNationalId)
-        if (existing)
-          current = { ...existing, types: existing.types.concat(current.types) }
 
-        acc.set(delegation.fromNationalId, current)
+        if (existing) {
+          existing.types.push(...delegation.types)
+        } else {
+          acc.set(delegation.fromNationalId, delegation)
+        }
+
         return acc
       },
       new Map(),
