@@ -8,15 +8,20 @@ import {
 } from '../../../components/ServiceWeb/constants'
 
 export const bg = style({
-  position: 'absolute',
+  position: 'relative',
+  marginTop: -MOBILE_HEADER_HEIGHT,
+  paddingTop: MOBILE_HEADER_HEIGHT,
   overflow: 'hidden',
-  top: 0,
-  left: 0,
-  right: 0,
   zIndex: -1,
   height: MOBILE_HEIGHT,
   ...themeUtils.responsiveStyle({
+    md: {
+      marginTop: -DESKTOP_HEADER_HEIGHT,
+      paddingTop: DESKTOP_HEADER_HEIGHT,
+    },
     lg: {
+      marginTop: -DESKTOP_HEADER_HEIGHT,
+      paddingTop: DESKTOP_HEADER_HEIGHT,
       height: DESKTOP_HEIGHT,
     },
   }),

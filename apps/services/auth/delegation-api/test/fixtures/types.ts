@@ -6,7 +6,6 @@ import {
   DelegationDTO,
   DelegationScopeDTO,
   DomainDTO,
-  Translation,
 } from '@island.is/auth-api-lib'
 
 export type CreateDomain = Partial<DomainDTO> & { apiScopes?: CreateApiScope[] }

@@ -27,7 +27,13 @@ import {
 } from '@island.is/testing/fixtures'
 import { TestApp, getRequestMethod } from '@island.is/testing/nest'
 import { NationalRegistryClientPerson } from '@island.is/shared/types'
-import { createDelegation } from '@island.is/services/auth/testing'
+import {
+  createDelegation,
+  expectMatchingDelegations,
+  getFakeName,
+  createDelegationModels,
+  findExpectedDelegationModels,
+} from '@island.is/services/auth/testing'
 
 import { createClient } from '../../../../test/fixtures'
 import {
@@ -37,12 +43,6 @@ import {
   setupWithoutPermission,
 } from '../../../../test/setup'
 import { TestEndpointOptions } from '../../../../test/types'
-import {
-  expectMatchingObject,
-  getFakeName,
-  createDelegationModels,
-  findExpectedDelegationModels,
-} from '../../../../test/utils'
 
 const swapNames = (
   delegation: DelegationDTO,
@@ -240,7 +240,7 @@ describe('ActorDelegationsController', () => {
         // Assert
         expect(res.status).toEqual(200)
         expect(res.body).toHaveLength(3)
-        expectMatchingObject(
+        expectMatchingDelegations(
           res.body,
           updateDelegationFromNameToPersonName(
             expectedModels,
@@ -266,7 +266,7 @@ describe('ActorDelegationsController', () => {
         // Assert
         expect(res.status).toEqual(200)
         expect(res.body).toHaveLength(1)
-        expectMatchingObject(
+        expectMatchingDelegations(
           res.body[0],
           updateDelegationFromNameToPersonName(
             expectedModel,
@@ -294,7 +294,7 @@ describe('ActorDelegationsController', () => {
         // Assert
         expect(res.status).toEqual(200)
         expect(res.body).toHaveLength(1)
-        expectMatchingObject(
+        expectMatchingDelegations(
           res.body[0],
           updateDelegationFromNameToPersonName(
             expectedModel,
@@ -336,7 +336,7 @@ describe('ActorDelegationsController', () => {
         // Assert
         expect(res.status).toEqual(200)
         expect(res.body).toHaveLength(1)
-        expectMatchingObject(
+        expectMatchingDelegations(
           res.body[0],
           updateDelegationFromNameToPersonName(
             expectedModel,
@@ -389,7 +389,7 @@ describe('ActorDelegationsController', () => {
         // Assert
         expect(res.status).toEqual(200)
         expect(res.body).toHaveLength(2)
-        expectMatchingObject(
+        expectMatchingDelegations(
           res.body,
           updateDelegationFromNameToPersonName(
             expectedModels,
@@ -421,7 +421,7 @@ describe('ActorDelegationsController', () => {
 
         // Assert
         expect(res.status).toEqual(200)
-        expectMatchingObject(
+        expectMatchingDelegations(
           res.body,
           updateDelegationFromNameToPersonName(
             expectedModels,
@@ -447,7 +447,7 @@ describe('ActorDelegationsController', () => {
         // Assert
         expect(res.status).toEqual(200)
         expect(res.body).toHaveLength(1)
-        expectMatchingObject(
+        expectMatchingDelegations(
           res.body[0],
           updateDelegationFromNameToPersonName(
             expectedModel,
@@ -514,7 +514,7 @@ describe('ActorDelegationsController', () => {
         // Assert
         expect(res.status).toEqual(200)
         expect(res.body).toHaveLength(0)
-        expectMatchingObject(
+        expectMatchingDelegations(
           res.body,
           updateDelegationFromNameToPersonName(
             expectedModels,
@@ -540,7 +540,7 @@ describe('ActorDelegationsController', () => {
         // Assert
         expect(res.status).toEqual(200)
         expect(res.body).toHaveLength(0)
-        expectMatchingObject(
+        expectMatchingDelegations(
           res.body,
           updateDelegationFromNameToPersonName(
             expectedModels,
@@ -566,7 +566,7 @@ describe('ActorDelegationsController', () => {
         // Assert
         expect(res.status).toEqual(200)
         expect(res.body).toHaveLength(1)
-        expectMatchingObject(
+        expectMatchingDelegations(
           res.body,
           updateDelegationFromNameToPersonName(
             expectedModels,
@@ -910,7 +910,7 @@ describe('ActorDelegationsController', () => {
         // Assert
         expect(res.status).toEqual(200)
         expect(res.body).toHaveLength(1)
-        expectMatchingObject(
+        expectMatchingDelegations(
           res.body[0],
           updateDelegationFromNameToPersonName(
             expectedModel,
