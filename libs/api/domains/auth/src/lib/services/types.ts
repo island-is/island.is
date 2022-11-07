@@ -68,6 +68,15 @@ export interface DelegationDTO {
   scopes?: Array<DelegationScopeDTO>
 }
 
+export interface MergedDelegationDTO {
+  fromNationalId: string
+  fromName: string
+  toNationalId: string
+  toName?: string | null
+  validTo?: Date | null
+  types: DelegationType[]
+}
+
 export enum DelegationProvider {
   Thjodskra = 'thjodskra',
   Fyrirtaekjaskra = 'fyrirtaekjaskra',
