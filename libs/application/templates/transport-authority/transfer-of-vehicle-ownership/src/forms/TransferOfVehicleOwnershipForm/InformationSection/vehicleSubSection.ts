@@ -1,4 +1,4 @@
-import { Application, VehiclesCurrentVehicle } from '@island.is/api/schema'
+import { Application } from '@island.is/api/schema'
 import {
   buildMultiField,
   buildTextField,

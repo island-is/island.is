@@ -4,10 +4,11 @@ import { Box } from '@island.is/island-ui/core'
 import { ApplicationStatus } from '../ApplicationStatus'
 import { Overview } from '../Overview'
 import { ReviewConclusion } from '../ReviewConclusion'
+import { ReviewState } from '../../types'
 
 export const Review: FC<FieldBaseProps> = (props) => {
-  const [step, setStep] = useState<string>('states')
-  const displayScreen = (displayStep: string) => {
+  const [step, setStep] = useState<ReviewState>('states')
+  const displayScreen = (displayStep: ReviewState) => {
     switch (displayStep) {
       case 'states':
         return <ApplicationStatus setStep={setStep} {...props} />
@@ -16,11 +17,11 @@ export const Review: FC<FieldBaseProps> = (props) => {
       case 'conclusion':
         return <ReviewConclusion setStep={setStep} {...props} />
       case 'addPeople':
-        return null
+        return <div>Add coowner and operator</div>
       case 'insurance':
-        return null
+        return <div>Add insurance</div>
       default:
-        return null
+        return <ApplicationStatus setStep={setStep} {...props} />
     }
   }
   return <Box>{displayScreen(step)}</Box>
