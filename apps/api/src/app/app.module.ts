@@ -39,7 +39,13 @@ import { AssetsModule } from '@island.is/api/domains/assets'
 import { EndorsementSystemModule } from '@island.is/api/domains/endorsement-system'
 import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
 import { ApiDomainsPaymentModule } from '@island.is/api/domains/payment'
-import { LicenseServiceModule } from '@island.is/api/domains/license-service'
+import {
+  GenericAdrLicenseConfig,
+  GenericDrivingLicenseConfig,
+  GenericFirearmLicenseConfig,
+  GenericMachineLicenseConfig,
+  LicenseServiceModule,
+} from '@island.is/api/domains/license-service'
 import { PaymentScheduleModule } from '@island.is/api/domains/payment-schedule'
 import { AssetsClientConfig } from '@island.is/clients/assets'
 import { AuthPublicApiClientConfig } from '@island.is/clients/auth/public-api'
@@ -124,11 +130,13 @@ const autoSchemaFile = environment.production
         password: environment.nationalRegistry.password!,
         host: environment.nationalRegistry.host!,
       },
+
       fileDownloadBucket: environment.education.fileDownloadBucket!,
     }),
     ApplicationModule.register({
       baseApiUrl: environment.applicationSystem.baseApiUrl!,
     }),
+    LicenseServiceModule,
     DirectorateOfLabourModule.register(),
     FileUploadModule,
     DocumentModule.register({
@@ -217,39 +225,6 @@ const autoSchemaFile = environment.production
       callbackAdditionUrl: environment.paymentDomain.callbackAdditionUrl!,
       arkBaseUrl: environment.paymentDomain.arkBaseUrl!,
     }),
-    LicenseServiceModule.register({
-      firearmLicense: {
-        apiKey: environment.firearmLicense.pkPassApiKey!,
-        apiUrl: environment.smartSolutionsApiUrl!,
-        passTemplateId: environment.firearmLicense.passTemplateId!,
-      },
-      machineLicense: {
-        apiKey: environment.machineLicense.pkPassApiKey!,
-        apiUrl: environment.smartSolutionsApiUrl!,
-        passTemplateId: environment.machineLicense.passTemplateId!,
-      },
-      adrLicense: {
-        apiKey: environment.adrLicense.pkPassApiKey!,
-        apiUrl: environment.smartSolutionsApiUrl!,
-        passTemplateId: environment.adrLicense.passTemplateId!,
-      },
-      driversLicense: {
-        xroad: {
-          baseUrl: environment.xroad.baseUrl!,
-          clientId: environment.xroad.clientId!,
-          path: environment.drivingLicense.v1.xroadPath!,
-          secret: environment.drivingLicense.secret!,
-        },
-        pkpass: {
-          apiKey: environment.pkpass.apiKey!,
-          apiUrl: environment.pkpass.apiUrl!,
-          secretKey: environment.pkpass.secretKey!,
-          cacheKey: environment.pkpass.cacheKey!,
-          cacheTokenExpiryDelta: environment.pkpass.cacheTokenExpiryDelta!,
-          authRetries: environment.pkpass.authRetries!,
-        },
-      },
-    }),
     PaymentScheduleModule.register({
       xRoadProviderId: environment.paymentSchedule.xRoadProviderId!,
       xRoadBaseUrl: environment.paymentSchedule.xRoadBaseUrl!,
@@ -274,6 +249,10 @@ const autoSchemaFile = environment.production
         AdrAndMachineLicenseClientConfig,
         AssetsClientConfig,
         FirearmLicenseClientConfig,
+        GenericFirearmLicenseConfig,
+        GenericMachineLicenseConfig,
+        GenericAdrLicenseConfig,
+        GenericDrivingLicenseConfig,
         VehiclesClientConfig,
         AuthPublicApiClientConfig,
         AuthDelegationApiClientConfig,
