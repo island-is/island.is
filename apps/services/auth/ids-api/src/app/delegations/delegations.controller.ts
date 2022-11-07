@@ -89,7 +89,7 @@ export class DelegationsController {
         this.delegationScopeService
           .findAllValidCustomScopesTo(user.nationalId, fromNationalId)
           .then((delegationScopes: DelegationScope[]) =>
-            delegationScopes.map((ds) => ds.apiScope.name),
+            delegationScopes.map((ds) => ds.scopeName),
           ),
       )
 

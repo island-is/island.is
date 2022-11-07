@@ -39,7 +39,6 @@ import {
 } from '../../../../test/setup'
 import { TestEndpointOptions } from '../../../../test/types'
 import {
-  getRequestMethod,
   getFakeName,
   createDelegationModels,
   expectMatchingMergedDelegations,
