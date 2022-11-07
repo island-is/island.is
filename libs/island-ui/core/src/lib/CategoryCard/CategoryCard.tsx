@@ -1,4 +1,4 @@
-import React, { ReactElement, ReactNode, forwardRef } from 'react'
+import React, { ReactElement, ReactNode, forwardRef, ElementType } from 'react'
 import cn from 'classnames'
 import { ObjectFitProperty } from 'csstype'
 import { useMeasure } from 'react-use'
@@ -42,6 +42,8 @@ export type CategoryCardProps = {
   stackWidth?: number
   /** Hyphenate the heading */
   hyphenate?: boolean
+  to?: string
+  component?: ElementType
 }
 
 const colorSchemes = {
@@ -100,6 +102,7 @@ const Component = forwardRef<
       hyphenate = false,
       tagOptions,
       autoStack,
+      ...rest
     },
     ref,
   ) => {
@@ -125,6 +128,7 @@ const Component = forwardRef<
         width="full"
         background="white"
         color={colorScheme}
+        {...rest}
       >
         <Box
           ref={ref}
