@@ -149,7 +149,7 @@ export class CmsContentfulService {
       ['content_type']: 'organization',
       include: 10,
       limit: 1000,
-      organizationTitles,
+      ...organizationTitles,
     }
 
     const result = await this.contentfulRepository
