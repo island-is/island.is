@@ -25,7 +25,7 @@ export const getEnvironmentBaseUrl = (authority: string) => {
       : ''
   return `https://${prefix}${authority}`
 }
-export const getEnvironmentUrls = (env: TestEnvironment) => {
+export const getEnvironmentUrls = (env: TestEnvironment = 'local') => {
   const envs: {
     [envName in TestEnvironment]: {
       authUrl: string
@@ -54,7 +54,11 @@ export const getEnvironmentUrls = (env: TestEnvironment) => {
       adsBaseUrl: `http://${BaseAuthority.local}`,
     },
   }
-  return envs[env]
+  const ret = envs[env]
+  if (!ret) {
+    throw new Error(`Invalid test environment '${env}'`)
+  }
+  return ret
 }
 export type CognitoCreds = {
   username: string

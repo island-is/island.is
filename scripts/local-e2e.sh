@@ -199,7 +199,9 @@ if [ ! 0 == $# ]; then
             INTEGRATION=${OPTARG}
             ;;
           c)
-            [ "${OPTARG}" != "dist" ] && [ "${OPTARG}" != "source" ] && [ "${OPTARG}" != "container" ] && usage
+            if [ "${OPTARG}" != "dist" ] && [ "${OPTARG}" != "source" ] && [ "${OPTARG}" != "container" ]; then
+              usage
+            fi
             CODE_SOURCE=${OPTARG}
             ;;
           t)
@@ -239,4 +241,4 @@ fi
 [ "$CODE_SOURCE" = "container" ] && run_container -s "**/${INTEGRATION}/${TEST_TYPE}/*.spec.{ts,js}" --headless
 
 # run either from source or dist
-"${TEST_PROG}" run -P "$(_get_source_path "${CODE_SOURCE}")" -s "**/integration/${INTEGRATION}/${TEST_TYPE}/*.spec.{ts,js}" --browser "${BROWSER}" ${HEAD} && exit 0
+"${TEST_PROG}" test --project "$(_get_source_path "${CODE_SOURCE}")" -s "**/integration/${INTEGRATION}/${TEST_TYPE}/*.spec.{ts,js}" --browser "${BROWSER}" ${HEAD} && exit 0
