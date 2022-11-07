@@ -23,6 +23,7 @@ import {
   NO_UNION,
   PARENTAL_GRANT_STUDENTS,
   PARENTAL_LEAVE,
+  SINGLE,
   UnEmployedBenefitTypes,
   YES,
 } from '../constants'
@@ -96,7 +97,7 @@ export const answerValidators: Record<string, AnswerValidator> = {
       applicationType,
       isRecivingUnemploymentBenefits,
       unemploymentBenefits,
-      artificialInsemination,
+      otherParent,
     } = getApplicationAnswers(application.answers)
     if (isSelfEmployed === YES && obj.selfEmployedFile) {
       if (isEmpty((obj as { selfEmployedFile: unknown[] }).selfEmployedFile))
@@ -111,15 +112,15 @@ export const answerValidators: Record<string, AnswerValidator> = {
       return undefined
     }
 
-    if (artificialInsemination && obj.artificialInsemination) {
+    if (otherParent === SINGLE && obj.singleParent) {
       if (
         isEmpty(
-          (obj as { artificialInsemination: unknown[] }).artificialInsemination,
+          (obj as { singleParent: unknown[] }).singleParent,
         )
       )
         return buildError(
           errorMessages.requiredAttachment,
-          'artificialInsemination',
+          'singleParent',
         )
 
       return undefined

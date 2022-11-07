@@ -30,6 +30,7 @@ import {
   PARENTAL_GRANT_STUDENTS,
   PARENTAL_LEAVE,
   PARENTAL_GRANT,
+  SINGLE,
 } from '../constants'
 import { SchemaFormValues } from '../lib/dataSchema'
 import { PregnancyStatusAndRightsResults } from '../dataProviders/Children/Children'
@@ -247,7 +248,7 @@ export const getSpouse = (
   return null
 }
 
-export const getOtherParentOptions = (application: Application) => {
+export const getOtherParentOptions = (application: Application, formatMessage: FormatMessage) => {
   const options: Option[] = [
     {
       value: NO,
@@ -255,10 +256,16 @@ export const getOtherParentOptions = (application: Application) => {
       label: parentalLeaveFormMessages.shared.noOtherParent,
     },
     {
+      value: SINGLE,
+      label: parentalLeaveFormMessages.shared.singleParentOption,
+      subLabel: formatMessage(parentalLeaveFormMessages.shared.singleParentDescription),
+    },
+    {
       value: MANUAL,
       dataTestId: 'other-parent',
       label: parentalLeaveFormMessages.shared.otherParentOption,
     },
+    
   ]
 
   const spouse = getSpouse(application)
@@ -414,12 +421,6 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   if (!applicationType) applicationType = PARENTAL_LEAVE as string
   else applicationType = applicationType as string
-
-  let artificialInsemination = getValueViaPath(
-    answers,
-    'artificialInseminationQuestion',
-  ) as YesOrNo
-  if (!artificialInsemination) artificialInsemination = NO as YesOrNo
 
   const otherParent = (getValueViaPath(
     answers,
@@ -594,7 +595,6 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   return {
     applicationType,
-    artificialInsemination,
     otherParent,
     otherParentRightOfAccess,
     pensionFund,

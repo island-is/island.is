@@ -29,7 +29,7 @@ export const OtherParent: FC<FieldBaseProps> = ({ application, field }) => {
           component: FieldComponents.RADIO,
           title,
           children: undefined,
-          options: (application) => getOtherParentOptions(application),
+          options: (application) => getOtherParentOptions(application, formatMessage),
           onSelect: (s: string) => {
             if (s === SPOUSE || s === NO) {
               setValue('otherParentObj.otherParentName', '')

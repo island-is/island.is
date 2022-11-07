@@ -178,9 +178,9 @@ export const parentalLeaveFormMessages: MessageDir = {
     otherParentDescription: {
       id: 'pl.application:otherParent.description',
       defaultMessage:
-        'Skráður maki í þjóðskrá er sjálfgefinn. Þú getur skráð hitt foreldrið eða haldið áfram án skráningar.',
+        'Skráður maki í þjóðskrá er sjálfgefinn. Þú getur valið að skráð hitt foreldri, hvort þú sért einstætt foreldri eða haldið áfram án skráningar.',
       description:
-        'Your spouse according to National Registry records is filled in by default. You can register the other parent or continue without registration.',
+        'Your spouse according to National Registry records is filled in by default. You can choose to register the other parent, whether you are a single parent or continue without registration.',
     },
     otherParentTitle: {
       id: 'pl.application:otherParent.title',
@@ -211,6 +211,17 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:otherParent.option',
       defaultMessage: 'Hitt foreldrið er:',
       description: 'The other parent is:',
+    },
+    singleParentOption: {
+      id: 'pl.application:singleParent.option',
+      defaultMessage: 'Einstætt foreldri',
+      description: 'Single parent',
+    },
+    singleParentDescription: {
+      id: 'pl.application:singleParent.option.description',
+      defaultMessage: 'Á við þegar annað foreldri andast á meðgöngu barns og barnið fæðist lifandi eða einhleyp móðir gengst undir tæknifrjóvgun',
+      description: "This applies in such instances when either parent passes away during the pregnancy and the child is born alive, or a single mother undergoes artificial insemination",
+      
     },
     otherParentSpouse: {
       id: 'pl.application:otherParent.spouse',
@@ -1692,13 +1703,13 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: `Þeir sem þiggja dagpeninga/veikindarétt frá stéttarfélagi eða skjúkradagpeninga frá Sjúkratryggingum Íslands þurfa að skila inn skjali því til staðfestingar. Athugaðu að skjalið þarf að vera á .pdf formi`,
       description: `Those who receive unemployment benefits/sick leave allowance from the Union or sick leave allowance from Sjúkratryggingar Íslands must submit a document to confirm this. Note that the document needs to be on .pdf format`,
     },
-    artificialInseminationTitle: {
-      id: 'pl.application:attachmentscreen.artificialInseminationTitle',
-      defaultMessage: `Staðfesting vegna tæknifrjóvgunar`,
-      description: `Confirmation for artificial insemination`,
+    singleParentTitle: {
+      id: 'pl.application:attachmentscreen.singleParent',
+      defaultMessage: `Staðfesting vegna einstæðra foreldra`,
+      description: `Confirmation for single parent`,
     },
-    artificialInseminationDescription: {
-      id: 'pl.application:attachmentscreen.artificialInseminationDescription',
+    singleParentDescription: {
+      id: 'pl.application:attachmentscreen.singleParentDescription',
       defaultMessage: `Þeir sem hafa farið í tæknifrjóvgun þurfa að skila inn skjali því til staðfestingar frá Livio. Athugaðu að skjalið þarf að vera á .pdf formi`,
       description: `Those who have undergone artificial insemination must submit a document to confirm this from Livio. Note that the document needs to be on .pdf format`,
     },

@@ -53,6 +53,7 @@ import {
   ParentalRelations,
   PARENTAL_GRANT_STUDENTS,
   PARENTAL_LEAVE,
+  SINGLE,
   StartDateOptions,
   UnEmployedBenefitTypes,
   YES,
@@ -677,20 +678,19 @@ export const ParentalLeaveForm: Form = buildForm({
                 parentalLeaveFormMessages.selfEmployed.attachmentButton,
             }),
             buildFileUploadField({
-              id: 'fileUpload.artificialInsemination',
+              id: 'fileUpload.singleParent',
               title:
                 parentalLeaveFormMessages.attachmentScreen
-                  .artificialInseminationTitle,
+                  .singleParentTitle,
               introduction:
                 parentalLeaveFormMessages.attachmentScreen
-                  .artificialInseminationDescription,
-              condition: (answers) => {
-                const { artificialInsemination } = getApplicationAnswers(
-                  answers,
-                )
-
-                return artificialInsemination === YES
-              },
+                  .singleParentDescription,
+                  condition: (answers) =>
+                  (answers as {
+                    otherParentObj: {
+                      chooseOtherParent: string
+                    }
+                  })?.otherParentObj?.chooseOtherParent === SINGLE,
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
                 parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,

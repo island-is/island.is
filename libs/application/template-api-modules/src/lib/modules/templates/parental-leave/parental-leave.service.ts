@@ -22,6 +22,7 @@ import {
   UnEmployedBenefitTypes,
   PARENTAL_LEAVE,
   PARENTAL_GRANT_STUDENTS,
+  SINGLE,
 } from '@island.is/application/templates/parental-leave'
 
 import { SharedTemplateApiService } from '../../shared'
@@ -264,11 +265,11 @@ export class ParentalLeaveService {
     }
   }
 
-  async getArtificialInseminationPdf(application: Application, index = 0) {
+  async getSingleParentPdf(application: Application, index = 0) {
     try {
       const filename = getValueViaPath(
         application.answers,
-        `fileUpload.artificialInsemination[${index}].key`,
+        `fileUpload.singleParent[${index}].key`,
       )
 
       const Key = `${application.id}/${filename}`
@@ -283,8 +284,8 @@ export class ParentalLeaveService {
 
       return fileContent.toString('base64')
     } catch (e) {
-      this.logger.error('Cannot get artificial insemination attachment', { e })
-      throw new Error('Failed to get the artificial insemination attachment')
+      this.logger.error('Cannot get single parent attachment', { e })
+      throw new Error('Failed to get the single parent attachment')
     }
   }
 
@@ -314,7 +315,7 @@ export class ParentalLeaveService {
 
   async getAttachments(application: Application): Promise<Attachment[]> {
     const attachments: Attachment[] = []
-    const { isSelfEmployed, applicationType, artificialInsemination } = getApplicationAnswers(
+    const { isSelfEmployed, applicationType, otherParent } = getApplicationAnswers(
       application.answers,
     )
 
@@ -368,15 +369,15 @@ export class ParentalLeaveService {
       }
     }
 
-    if (artificialInsemination) {
-      const artificialInseminationtPdfs = (await getValueViaPath(
+    if (otherParent === SINGLE) {
+      const singleParentPdfs = (await getValueViaPath(
         application.answers,
-        'fileUpload.artificialInsemination',
+        'fileUpload.singleParent',
       )) as unknown[]
 
-      if (artificialInseminationtPdfs?.length) {
-        for (let i = 0; i <= artificialInseminationtPdfs.length - 1; i++) {
-          const pdf = await this.getArtificialInseminationPdf(application, i)
+      if (singleParentPdfs?.length) {
+        for (let i = 0; i <= singleParentPdfs.length - 1; i++) {
+          const pdf = await this.getSingleParentPdf(application, i)
 
           attachments.push({
             attachmentType: apiConstants.attachments.artificialInsemination,
