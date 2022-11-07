@@ -6,17 +6,14 @@ import { AuthScope } from '@island.is/auth/scopes'
 import { User } from '@island.is/auth-nest-tools'
 import { ConfigType } from '@island.is/nest/config'
 import { DelegationConfig } from '@island.is/auth-api-lib'
-import {
-  CreateCustomDelegation,
-  CreateDomain,
-} from '../../../../test/fixtures/types'
+import { CreateCustomDelegation, CreateDomain } from './fixtures/types'
 
-type DomainAssertion = {
+export interface DomainAssertion {
   name: string
   scopes: Array<{ name: string }>
 }
 
-type TestCase = {
+export interface TestCase {
   user: User
   customScopeRules?: ConfigType<typeof DelegationConfig>['customScopeRules']
   delegations?: CreateCustomDelegation[]
@@ -25,7 +22,7 @@ type TestCase = {
   expected: DomainAssertion[]
 }
 
-export const testCases: Record<string, TestCase> = {
+export const accessTestCases: Record<string, TestCase> = {
   // Normal user should be able to grant delegations for scopes allowing explicit delegation grants.
   happyCase: {
     user: createCurrentUser({ scope: [AuthScope.delegations] }),

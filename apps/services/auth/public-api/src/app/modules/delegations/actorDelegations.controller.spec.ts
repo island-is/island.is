@@ -28,7 +28,13 @@ import {
 } from '@island.is/testing/fixtures'
 import { TestApp, getRequestMethod } from '@island.is/testing/nest'
 import { NationalRegistryClientPerson } from '@island.is/shared/types'
-import { createDelegation } from '@island.is/services/auth/testing'
+import {
+  createDelegation,
+  expectMatchingDelegations,
+  getFakeName,
+  createDelegationModels,
+  findExpectedDelegationModels,
+} from '@island.is/services/auth/testing'
 
 import { createClient } from '../../../../test/fixtures'
 import {
