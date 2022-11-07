@@ -25,6 +25,7 @@ export enum Operation {
   CreateFileMutation = 'CreateFileMutation',
   UpdateDefendantMutation = 'UpdateDefendantMutation',
   LimitedAccessCaseQuery = 'LimitedAccessCaseQuery',
+  ProsecutorSelectionUsersQuery = 'ProsecutorSelectionUsersQuery',
 }
 
 export const intercept = (res: Case, forceFail?: Operation) => {
@@ -83,6 +84,11 @@ export const intercept = (res: Case, forceFail?: Operation) => {
       req.alias = 'UpdateDefendantMutation'
       req.reply({
         fixture: 'updateDefendantMutationResponse',
+      })
+    } else if (hasOperationName(req, Operation.ProsecutorSelectionUsersQuery)) {
+      req.alias = 'gqlProsecutorSelectionUsersQuery'
+      req.reply({
+        fixture: 'prosecutorUsers',
       })
     }
   })
@@ -195,6 +201,7 @@ export const makeDefendant = (caseId: string) => {
     name: mockName,
     gender: Gender.MALE,
     address: mockAddress,
+    defendantWaivesRightToCounsel: false,
   }
 }
 

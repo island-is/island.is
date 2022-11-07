@@ -214,7 +214,7 @@ const DefenderInput: React.FC<Props> = ({
     <>
       <Box marginBottom={2}>
         <Select
-          name="defenderName"
+          name={`defenderName-${defendantId}`}
           icon="search"
           options={options}
           label={formatMessage(m.nameLabel, {
@@ -245,7 +245,7 @@ const DefenderInput: React.FC<Props> = ({
       </Box>
       <Box marginBottom={2}>
         <Input
-          data-testid="defenderEmail"
+          data-testid={`defenderEmail-${defendantId}`}
           name="defenderEmail"
           autoComplete="off"
           label={formatMessage(m.emailLabel, {
@@ -351,7 +351,7 @@ const DefenderInput: React.FC<Props> = ({
         }}
       >
         <Input
-          data-testid="defenderPhoneNumber"
+          data-testid={`defenderPhoneNumber-${defendantId}`}
           name="defenderPhoneNumber"
           autoComplete="off"
           label={formatMessage(m.phoneNumberLabel, {

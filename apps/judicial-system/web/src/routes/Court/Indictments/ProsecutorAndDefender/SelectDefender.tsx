@@ -76,7 +76,7 @@ const SelectDefender: React.FC<Props> = (props) => {
         </Box>
         <Box marginBottom={2}>
           <Checkbox
-            dataTestId="defendantWaivesRightToCounsel"
+            dataTestId={`defendantWaivesRightToCounsel-${defendant.id}`}
             name={`defendantWaivesRightToCounsel-${defendant.id}`}
             label={capitalize(
               formatMessage(m.defendantWaivesRightToCounsel, {
