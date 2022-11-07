@@ -5,13 +5,13 @@ import {
   Services,
 } from '../types/output-types'
 
-const renderDockerComposeFile = async (
+export const renderDockerComposeFile = (
   uberChart: Kubernetes,
   services: Services<DockerComposeService>,
-): Promise<DockerComposeValueFile> => {
+): DockerComposeValueFile => {
   const dockerComposeServices: Services<DockerComposeService> = Object.entries(
     services,
-  ).reduce(async (acc, [name, service]) => {
+  ).reduce((acc, [name, service]) => {
     const accVal = acc
     return {
       ...accVal,

@@ -1,5 +1,6 @@
 import { dump, load } from 'js-yaml'
 import {
+  DockerComposeValueFile,
   FeatureKubeJob,
   HelmValueFile,
   ServiceHelm,
@@ -23,4 +24,11 @@ export const dumpServiceHelm = (ch: Kubernetes, valueFile: HelmValueFile) => {
     { namespaces: { namespaces, labels: namespaceLabels }, ...services },
     dumpOpts,
   )
+}
+export const dumpDockerCompose = (
+  ch: Kubernetes,
+  valueFile: DockerComposeValueFile,
+) => {
+  const { services } = valueFile
+  return dump(services, dumpOpts)
 }
