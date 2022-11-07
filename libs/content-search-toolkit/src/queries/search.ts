@@ -32,7 +32,6 @@ export const searchQuery = (
   const fieldsWeights = [
     'title^6', // note boosting ..
     'title.stemmed^2', // note boosting ..
-    // 'title.compound',
     'content',
     'content.stemmed',
   ]
@@ -116,7 +115,7 @@ export const searchQuery = (
     }
   }
 
-  const esQuery = {
+  return {
     query: {
       function_score: {
         query: {
@@ -160,6 +159,4 @@ export const searchQuery = (
     size,
     from: (page - 1) * size, // if we have a page number add it as offset for pagination
   }
-  // console.log(esQuery)
-  return esQuery
 }

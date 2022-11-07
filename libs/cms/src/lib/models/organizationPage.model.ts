@@ -25,8 +25,6 @@ export class OrganizationPage {
   @Field()
   slug!: string
 
-  @Field({ nullable: true })
-  intro?: string
 
   @Field()
   description!: string
