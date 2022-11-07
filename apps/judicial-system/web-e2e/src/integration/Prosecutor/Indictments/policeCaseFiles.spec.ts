@@ -6,8 +6,7 @@ import { CaseType, UserRole } from '@island.is/judicial-system/types'
 
 import { makeCourt, mockCase, makeProsecutor, intercept } from '../../../utils'
 
-// TODO: Add test when CASE_FILE_ROUTE feature hiding has been removed
-describe.skip(`${INDICTMENTS_POLICE_CASE_FILES_ROUTE}/:id`, () => {
+describe(`${INDICTMENTS_POLICE_CASE_FILES_ROUTE}/:id`, () => {
   beforeEach(() => {
     const caseData = mockCase(CaseType.MURDER)
     const caseDataAddition = {

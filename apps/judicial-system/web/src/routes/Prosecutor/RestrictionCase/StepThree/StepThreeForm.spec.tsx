@@ -86,7 +86,7 @@ describe('getDemandsAutofill', () => {
     const result = f(props)
 
     expect(result).toEqual(
-      'Þess er krafist að Blær sæti farbanni með úrskurði Héraðsdóms, til miðvikudagsins 1. janúar 2020, kl. 00:00.',
+      'Þess er krafist að Blær, fd. 1991-01-01, sæti farbanni með úrskurði Héraðsdóms, til miðvikudagsins 1. janúar 2020, kl. 00:00.',
     )
   })
 

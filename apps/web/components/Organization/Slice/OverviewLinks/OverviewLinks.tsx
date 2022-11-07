@@ -66,8 +66,8 @@ export const OverviewLinksSlice: React.FC<SliceProps> = ({ slice }) => {
                         paddingRight={leftImage ? [10, 0, 0, 0, 6] : [10, 0]}
                       >
                         <Image
-                          url={image.url + '?w=774&fm=webp&q=80'}
-                          thumbnail={image.url + '?w=50&fm=webp&q=80'}
+                          url={image?.url + '?w=774&fm=webp&q=80'}
+                          thumbnail={image?.url + '?w=50&fm=webp&q=80'}
                           {...image}
                         />
                       </Box>
@@ -97,17 +97,19 @@ export const OverviewLinksSlice: React.FC<SliceProps> = ({ slice }) => {
                               )}{' '}
                             </Box>
                           )}
-                          <Link
-                            {...linkResolver(link.type as LinkType, [
-                              link.slug,
-                            ])}
-                            skipTab
-                            newTab={openLinkInNewTab ?? true}
-                          >
-                            <Button icon="arrowForward" variant="text">
-                              {linkTitle}
-                            </Button>
-                          </Link>
+                          {link?.slug && link?.type && (
+                            <Link
+                              {...linkResolver(link.type as LinkType, [
+                                link.slug,
+                              ])}
+                              skipTab
+                              newTab={openLinkInNewTab ?? true}
+                            >
+                              <Button icon="arrowForward" variant="text">
+                                {linkTitle}
+                              </Button>
+                            </Link>
+                          )}
                         </Box>
                       </Box>
                     </GridColumn>

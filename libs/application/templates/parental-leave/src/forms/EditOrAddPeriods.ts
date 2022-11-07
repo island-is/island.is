@@ -14,7 +14,13 @@ import {
   buildRadioField,
 } from '@island.is/application/core'
 import { Form, FormModes, Application } from '@island.is/application/types'
-import { NO, StartDateOptions, YES } from '../constants'
+import {
+  NO,
+  PARENTAL_GRANT,
+  PARENTAL_GRANT_STUDENTS,
+  StartDateOptions,
+  YES,
+} from '../constants'
 
 import Logo from '../assets/Logo'
 import { parentalLeaveFormMessages } from '../lib/messages'
@@ -23,6 +29,9 @@ import {
   getAllPeriodDates,
   getExpectedDateOfBirth,
   getLastValidPeriodEndDate,
+  getPeriodImageTitle,
+  getPeriodSectionTitle,
+  getLeavePlanTitle,
 } from '../lib/parentalLeaveUtils'
 import {
   minimumPeriodStartBeforeExpectedDateOfBirth,
@@ -31,17 +40,17 @@ import {
 
 export const EditOrAddPeriods: Form = buildForm({
   id: 'ParentalLeaveEditOrAddPeriods',
-  title: 'Edit or add periods',
+  title: parentalLeaveFormMessages.shared.formEditTitle,
   logo: Logo,
   mode: FormModes.EDITING,
   children: [
     buildSection({
       id: 'editOrAddPeriods',
-      title: parentalLeaveFormMessages.shared.periodsSection,
+      title: getPeriodSectionTitle,
       children: [
         buildCustomField({
           id: 'periodsImageScreen',
-          title: parentalLeaveFormMessages.shared.periodsImageTitle,
+          title: getPeriodImageTitle,
           component: 'PeriodsSectionImage',
           doesNotRequireAnswer: true,
         }),
@@ -51,7 +60,7 @@ export const EditOrAddPeriods: Form = buildForm({
           children: [
             buildRepeater({
               id: 'periods',
-              title: parentalLeaveFormMessages.leavePlan.title,
+              title: getLeavePlanTitle,
               component: 'PeriodsRepeater',
               children: [
                 buildCustomField({
@@ -206,7 +215,11 @@ export const EditOrAddPeriods: Form = buildForm({
               placement: 'footer',
               title: parentalLeaveFormMessages.confirmation.title,
               actions: [
-                { name: 'Cancel', type: 'reject', event: 'ABORT' },
+                {
+                  event: 'ABORT',
+                  name: parentalLeaveFormMessages.confirmation.cancel,
+                  type: 'reject',
+                },
                 {
                   event: 'SUBMIT',
                   name: parentalLeaveFormMessages.confirmation.title,

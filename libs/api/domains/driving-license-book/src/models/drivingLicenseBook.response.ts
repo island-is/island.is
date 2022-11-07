@@ -30,6 +30,12 @@ export class DrivingLicenseBook {
   isDigital!: boolean
 
   @Field()
+  status!: number
+
+  @Field()
+  statusName!: string
+
+  @Field()
   totalLessonTime!: number
 
   @Field()

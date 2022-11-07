@@ -6,6 +6,11 @@ export const m = defineMessages({
     defaultMessage: 'Skil á ársreikningi',
     description: 'Application for Digital',
   },
+  applicationTitleAlt: {
+    id: 'fsn.application:applicationTitleAlt',
+    defaultMessage: 'Skil á upplýsingum ',
+    description: 'Application for Individual elections',
+  },
   inao: {
     id: 'fsn.application:inao',
     defaultMessage: 'Ríkisendurskoðun',
@@ -524,7 +529,7 @@ export const m = defineMessages({
   },
   equity: {
     id: 'fsn.application:keyNumbers.equity',
-    defaultMessage: 'Eigið fé samtals',
+    defaultMessage: 'Eigið fé',
     description: 'total equity',
   },
   equityAtTheBeginningOfTheYear: {

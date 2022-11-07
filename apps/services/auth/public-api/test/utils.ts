@@ -1,4 +1,4 @@
-import request, { CallbackHandler } from 'supertest'
+import faker from 'faker'
 
 import {
   ApiScope,
@@ -6,25 +6,7 @@ import {
   DelegationDTO,
   DelegationScope,
 } from '@island.is/auth-api-lib'
-
-import { CreateDelegation } from './fixtures'
-
-export const getRequestMethod = (
-  server: request.SuperTest<request.Test>,
-  method: string,
-): ((url: string, callback?: CallbackHandler | undefined) => request.Test) => {
-  switch (method) {
-    case 'POST':
-      return server.post
-    case 'PUT':
-      return server.put
-    case 'DELETE':
-      return server.delete
-    default:
-      // GET
-      return server.get
-  }
-}
+import { CreateDelegation } from '@island.is/services/auth/testing'
 
 /**
  * Helper to match complete object when the received object has gone over the "wire"
@@ -56,6 +38,11 @@ const sortDelegations = (delegations: DelegationDTO[]) => {
     return a.id === b.id ? 0 : a.id! < b.id! ? -1 : 1
   })
 }
+
+export type NameIdTuple = [name: string, id: string]
+
+export const getFakeName = () =>
+  faker.fake('{{name.firstName}} {{name.lastName}}')
 
 export async function createDelegationModels(
   model: typeof Delegation,

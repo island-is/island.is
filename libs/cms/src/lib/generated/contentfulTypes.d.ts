@@ -15,6 +15,12 @@ export interface IAccordionSliceFields {
 
   /** Has Border Above */
   hasBorderAbove?: boolean | undefined
+
+  /** Title Heading Level */
+  titleHeadingLevel?: 'h2' | 'h3' | 'h4' | undefined
+
+  /** Show Title */
+  showTitle?: boolean | undefined
 }
 
 /** A slice with accordions */
@@ -70,6 +76,23 @@ export interface IAlertBannerFields {
 
   /** dismissed for days */
   dismissedForDays: number
+
+  /** Service Portal Paths */
+  servicePortalPaths?:
+    | (
+        | 'postholf'
+        | 'umsoknir'
+        | 'min-gogn'
+        | 'skirteini'
+        | 'leyfisbref'
+        | 'menntun'
+        | 'fasteignir'
+        | 'fjarmal'
+        | 'okutaeki'
+        | 'stillingar'
+        | '*'
+      )[]
+    | undefined
 }
 
 /** Alert banner will show on top of all pages */
@@ -2134,6 +2157,7 @@ export interface IOrganizationPageFields {
     | 'landlaeknir'
     | 'rikislogmadur'
     | 'landskjorstjorn'
+    | 'landing_page'
 
   /** Slices */
   slices?:
@@ -2422,7 +2446,6 @@ export interface IProcessEntryFields {
     | 'Not digital w/login'
     | 'No type'
     | 'Application system'
-
   /** Process title */
   processTitle: string
 

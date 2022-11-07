@@ -16,8 +16,6 @@ import {
   employerFormMessages,
   otherParentApprovalFormMessages,
 } from '../lib/messages'
-import { currentDateStartTime } from '../lib/parentalLeaveTemplateUtils'
-import { getApplicationAnswers } from '../lib/parentalLeaveUtils'
 
 export const EmployerApproveEdits: Form = buildForm({
   id: 'EmployerApprovEditsParentalLeave',
@@ -69,17 +67,31 @@ export const EmployerApproveEdits: Form = buildForm({
                   title: '',
                   component: 'EmployerApprovalExtraInformation',
                 }),
-                buildDescriptionField({
-                  id: 'final',
-                  title: otherParentApprovalFormMessages.warning,
-                  titleVariant: 'h4',
-                  description:
-                    otherParentApprovalFormMessages.startDateInThePast,
-                  condition: (answers) =>
-                    new Date(
-                      getApplicationAnswers(answers).periods[0].startDate,
-                    ).getTime() < currentDateStartTime(),
-                }),
+                // buildDescriptionField({
+                //   id: 'final',
+                //   title: otherParentApprovalFormMessages.warning,
+                //   titleVariant: 'h4',
+                //   description:
+                //     otherParentApprovalFormMessages.startDateInThePast,
+
+                //   // TODO: enable this when we could get 'applicationFundId' from externalData
+
+                //   // condition: (answers, externalData) => {
+                //   //   const { applicationFundId } = getApplicationExternalData(
+                //   //     externalData,
+                //   //   )
+                //   //   if (!applicationFundId || applicationFundId === '') {
+                //   //     const { periods } = getApplicationAnswers(answers)
+                //   //     return (
+                //   //       periods.length > 0 &&
+                //   //       new Date(periods[0].startDate).getTime() >=
+                //   //         currentDateStartTime()
+                //   //     )
+                //   //   }
+
+                //   //   return true
+                //   // },
+                // }),
                 buildSubmitField({
                   id: 'submit',
                   title: coreMessages.buttonSubmit,
@@ -94,10 +106,25 @@ export const EmployerApproveEdits: Form = buildForm({
                       name: coreMessages.buttonApprove,
                       type: 'primary',
                       event: 'APPROVE',
-                      condition: (answers) =>
-                        new Date(
-                          getApplicationAnswers(answers).periods[0].startDate,
-                        ).getTime() >= currentDateStartTime(),
+
+                      // TODO: enable this when we could get 'applicationFundId' from externalData
+
+                      // condition: (answers, externalData) => {
+                      //   const {
+                      //     applicationFundId,
+                      //   } = getApplicationExternalData(externalData)
+                      //   console.log('----------- Emloyer', applicationFundId)
+                      //   if (!applicationFundId || applicationFundId === '') {
+                      //     const { periods } = getApplicationAnswers(answers)
+                      //     return (
+                      //       periods.length > 0 &&
+                      //       new Date(periods[0].startDate).getTime() >=
+                      //         currentDateStartTime()
+                      //     )
+                      //   }
+
+                      //   return true
+                      // },
                     },
                   ],
                 }),
