@@ -84,9 +84,9 @@ const template: ApplicationTemplate<
           onEntry: {
             apiModuleAction: ApiActions.createCharge,
           },
-          // onExit: {
-          //   apiModuleAction: ApiActions.initReview,
-          // },
+          onExit: {
+            apiModuleAction: ApiActions.initReview,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -101,7 +101,7 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
+          [DefaultEvents.SUBMIT]: { target: States.REVIEW },
           [DefaultEvents.ABORT]: { target: States.DRAFT },
         },
       },

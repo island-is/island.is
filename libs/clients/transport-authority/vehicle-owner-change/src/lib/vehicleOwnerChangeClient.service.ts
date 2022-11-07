@@ -1,3 +1,4 @@
+import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
 import { OwnerChangeApi } from '../../gen/fetch/apis'
 import {
@@ -9,10 +10,15 @@ import {
 export class VehicleOwnerChangeClient {
   constructor(private readonly ownerchangeApi: OwnerChangeApi) {}
 
+  private ownerchangeApiWithAuth(auth: Auth) {
+    return this.ownerchangeApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
   public async getNewestOwnerChange(
+    auth: User,
     permno: string,
   ): Promise<NewestOwnerChange> {
-    const result = await this.ownerchangeApi.getOwnerChange({
+    const result = await this.ownerchangeApiWithAuth(auth).getOwnerChange({
       apiVersion: '2.0',
       apiVersion2: '2.0',
       permno: permno,
@@ -21,7 +27,7 @@ export class VehicleOwnerChangeClient {
     return {
       permno: permno,
       ownerSsn: result?.persidno || '',
-      ownerName: result?.persidno || '',
+      ownerName: result?.ownerName || '',
       dateOfPurchase: result?.dateOfOwnerRegistration || new Date(),
       saleAmount: result?.saleAmount || 0,
       insuranceCompanyCode: result?.insuranceCompanyCode || '',
@@ -30,10 +36,10 @@ export class VehicleOwnerChangeClient {
   }
 
   public async saveOwnerChange(
-    currentUserSsn: string,
+    auth: User,
     ownerChange: OwnerChange,
   ): Promise<void> {
-    const result = await this.ownerchangeApi.rootPost({
+    const result = await this.ownerchangeApiWithAuth(auth).rootPost({
       apiVersion: '2.0',
       apiVersion2: '2.0',
       postOwnerChange: {
@@ -55,7 +61,7 @@ export class VehicleOwnerChangeClient {
         coOwners: ownerChange.coOwners?.map((coOwner) => ({
           personIdNumber: coOwner.ssn,
         })),
-        reportingPersonIdNumber: currentUserSsn,
+        reportingPersonIdNumber: auth.nationalId,
       },
     })
   }

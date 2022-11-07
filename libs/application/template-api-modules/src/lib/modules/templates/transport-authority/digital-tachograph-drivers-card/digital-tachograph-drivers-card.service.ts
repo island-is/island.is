@@ -65,7 +65,7 @@ export class DigitalTachographDriversCardService {
       ?.data as QualitySignature
 
     // Submit the application
-    await this.digitalTachographApi.saveDriversCard({
+    await this.digitalTachographApi.saveDriversCard(auth, {
       ssn: auth.nationalId,
       fullName: nationalRegistryData?.fullName,
       address: nationalRegistryData?.address?.streetAddress,

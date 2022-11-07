@@ -130,15 +130,17 @@ export class TransferOfVehicleOwnershipService {
 
     // Send email individually to each recipient
     for (var i = 0; i < newSubmitRecipientList.length; i++) {
-      await this.sharedTemplateAPIService.sendEmail(
-        (props) =>
-          generateAssignReviewerEmail(
-            props,
-            newSubmitRecipientList[i].name,
-            newSubmitRecipientList[i].email,
-          ),
-        application,
-      )
+      if (newSubmitRecipientList[i].email) {
+        await this.sharedTemplateAPIService.sendEmail(
+          (props) =>
+            generateAssignReviewerEmail(
+              props,
+              newSubmitRecipientList[i].name,
+              newSubmitRecipientList[i].email,
+            ),
+          application,
+        )
+      }
 
       // if (newSubmitRecipientList[i].phone) {
       //   await this.sharedTemplateAPIService.sendSms(
@@ -215,15 +217,17 @@ export class TransferOfVehicleOwnershipService {
 
     // Send email individually to each recipient
     for (var i = 0; i < newRecipientList.length; i++) {
-      await this.sharedTemplateAPIService.sendEmail(
-        (props) =>
-          generateAssignReviewerEmail(
-            props,
-            newRecipientList[i].name,
-            newRecipientList[i].email,
-          ),
-        application,
-      )
+      if (newRecipientList[i].email) {
+        await this.sharedTemplateAPIService.sendEmail(
+          (props) =>
+            generateAssignReviewerEmail(
+              props,
+              newRecipientList[i].name,
+              newRecipientList[i].email,
+            ),
+          application,
+        )
+      }
 
       // if (newRecipientList[i].phone) {
       //   await this.sharedTemplateAPIService.sendSms(
@@ -255,7 +259,7 @@ export class TransferOfVehicleOwnershipService {
     )
 
     // Submit the application
-    await this.transferOfVehicleOwnershipApi.saveOwnerChange(auth.nationalId, {
+    await this.transferOfVehicleOwnershipApi.saveOwnerChange(auth, {
       permno: answers?.vehicle?.plate,
       seller: {
         ssn: answers?.seller?.nationalId,
@@ -265,9 +269,9 @@ export class TransferOfVehicleOwnershipService {
         ssn: answers?.buyer?.nationalId,
         email: answers?.buyer?.email,
       },
-      dateOfPurchase: new Date(answers?.vehicle?.date || Date.now()),
+      dateOfPurchase: this.getDateAtNoonFromString(answers?.vehicle?.date),
       saleAmount: Number(answers?.vehicle?.salePrice) || 0,
-      insuranceCompanyCode: 'TODOx vantar',
+      insuranceCompanyCode: '6090', // TODOx vantar reit í viðmóti
       coOwners: buyerCoOwners?.map((coOwner) => ({
         ssn: coOwner.nationalId,
         email: coOwner.email,
@@ -339,15 +343,17 @@ export class TransferOfVehicleOwnershipService {
 
     // Send email individually to each recipient about success of submitting application
     for (var i = 0; i < recipientList.length; i++) {
-      await this.sharedTemplateAPIService.sendEmail(
-        (props) =>
-          generateConfirmationEmail(
-            props,
-            recipientList[i].name,
-            recipientList[i].email,
-          ),
-        application,
-      )
+      if (recipientList[i].email) {
+        await this.sharedTemplateAPIService.sendEmail(
+          (props) =>
+            generateConfirmationEmail(
+              props,
+              recipientList[i].name,
+              recipientList[i].email,
+            ),
+          application,
+        )
+      }
 
       // if (recipientList[i].phone) {
       //   await this.sharedTemplateAPIService.sendSms(
@@ -360,5 +366,14 @@ export class TransferOfVehicleOwnershipService {
       //   )
       // }
     }
+  }
+
+  private getDateAtNoonFromString(dateStr: string): Date {
+    const dateObj = new Date(dateStr)
+    const date =
+      dateObj instanceof Date && !isNaN(dateObj.getDate())
+        ? dateObj
+        : new Date()
+    return new Date(date.toISOString().substring(0, 10) + 'T12:00:00Z')
   }
 }

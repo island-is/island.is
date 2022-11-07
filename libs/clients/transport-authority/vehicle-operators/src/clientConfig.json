@@ -151,17 +151,26 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/OperatorDto"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OperatorDto"
+                  }
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OperatorDto"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OperatorDto"
+                  }
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OperatorDto"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OperatorDto"
+                  }
                 }
               }
             }
@@ -205,7 +214,7 @@
             }
           },
           {
-            "name": "operatorSerialNumber",
+            "name": "operatorserialnumber",
             "in": "path",
             "description": "Operator serial number",
             "required": true,
@@ -241,17 +250,26 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/OperatorDto"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OperatorDto"
+                  }
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OperatorDto"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OperatorDto"
+                  }
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OperatorDto"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OperatorDto"
+                  }
                 }
               }
             }
@@ -303,7 +321,7 @@
             }
           },
           {
-            "name": "operatorSerialNumber",
+            "name": "operatorserialnumber",
             "in": "path",
             "description": "Operator serial number",
             "required": true,
@@ -418,17 +436,26 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/OperatorDto"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OperatorDto"
+                  }
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OperatorDto"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OperatorDto"
+                  }
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OperatorDto"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OperatorDto"
+                  }
                 }
               }
             }

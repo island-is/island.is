@@ -58,7 +58,7 @@ export class ChangeCoOwnerOfVehicleService {
 
     // Submit the application
     await this.changeCoOwnerOfVehicleApi.saveCoOwners(
-      auth.nationalId,
+      auth,
       answers?.vehicle?.plate,
       answers?.owner?.email,
       answers?.coOwners.map((coOwner) => ({

@@ -4,6 +4,7 @@ import {
   VehicleOwnerChangeClient,
 } from '@island.is/clients/transport-authority/vehicle-owner-change'
 import { VehicleOperatorsClient } from '@island.is/clients/transport-authority/vehicle-operators'
+import { User } from '@island.is/auth-nest-tools'
 
 @Injectable()
 export class ChangeCoOwnerOfVehicleApi {
@@ -13,20 +14,22 @@ export class ChangeCoOwnerOfVehicleApi {
   ) {}
 
   async saveCoOwners(
-    currentUserSsn: string,
+    user: User,
     permno: string,
     ownerEmail: string,
     newCoOwners: OwnerChangeCoOwner[],
   ): Promise<void> {
     const currentOwnerChange = await this.vehicleOwnerChangeClient.getNewestOwnerChange(
+      user,
       permno,
     )
 
     const currentOperators = await this.vehicleOperatorsClient.getOperators(
+      user,
       permno,
     )
 
-    await this.vehicleOwnerChangeClient.saveOwnerChange(currentUserSsn, {
+    await this.vehicleOwnerChangeClient.saveOwnerChange(user, {
       permno: currentOwnerChange?.permno,
       seller: {
         ssn: currentOwnerChange?.ownerSsn,

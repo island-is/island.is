@@ -1,3 +1,4 @@
+import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
 import {
   DriverCardApplicationRequestDeliveryMethodEnum,
@@ -28,10 +29,23 @@ export class DigitalTachographDriversCardClient {
     private readonly individualApi: IndividualApi,
   ) {}
 
+  private tachoNetApiWithAuth(auth: Auth) {
+    return this.tachoNetApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  private driversCardApiWithAuth(auth: Auth) {
+    return this.driversCardApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  private individualApiWithAuth(auth: Auth) {
+    return this.individualApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
   public async checkTachoNet(
+    auth: User,
     request: TachoNetCheckRequest,
   ): Promise<TachoNetCheckResponse> {
-    const result = await this.tachoNetApi.postTachonetcheck({
+    const result = await this.tachoNetApiWithAuth(auth).postTachonetcheck({
       tachonetCheckRequest: {
         firstName: request.firstName,
         lastName: request.lastName,
@@ -62,14 +76,14 @@ export class DigitalTachographDriversCardClient {
     }
   }
 
-  public async getNewestDriversCard(ssn: string): Promise<NewestDriversCard> {
+  public async getNewestDriversCard(auth: User): Promise<NewestDriversCard> {
     // TODOx disabled untill this API goes on xroad
     const validFrom = new Date()
     validFrom.setFullYear(validFrom.getFullYear() - 1)
     const validTo = new Date()
     validTo.setFullYear(validTo.getFullYear() + 1)
     return {
-      ssn: ssn,
+      ssn: auth.nationalId,
       applicationCreatedAt: validFrom,
       cardNumber: '123456',
       cardValidFrom: validFrom,
@@ -77,8 +91,10 @@ export class DigitalTachographDriversCardClient {
       isValid: true,
     }
 
-    const result = await this.driversCardApi.getNewesticelandicdrivercard({
-      persidno: ssn,
+    const result = await this.driversCardApiWithAuth(
+      auth,
+    ).getNewesticelandicdrivercard({
+      persidno: auth.nationalId,
     })
 
     return {
@@ -93,13 +109,14 @@ export class DigitalTachographDriversCardClient {
   }
 
   public async saveDriversCard(
+    auth: User,
     request: DriversCardApplicationRequest,
   ): Promise<DriverCardApplicationResponse | null> {
     // TODOx disabled untill this API goes on xroad
     throw Error('Not implemented')
     return null
 
-    const result = await this.driversCardApi.postDrivercards({
+    const result = await this.driversCardApiWithAuth(auth).postDrivercards({
       driverCardApplicationRequest: {
         personIdNumber: request.ssn,
         fullName: request.fullName,
@@ -143,13 +160,13 @@ export class DigitalTachographDriversCardClient {
   }
 
   public async getPhotoAndSignature(
-    ssn: string,
+    auth: User,
   ): Promise<PhotoAndSignatureResponse> {
-    const result = await this.individualApi.getIndividualPersidnoPhotoandsignature(
-      {
-        persidno: ssn,
-      },
-    )
+    const result = await this.individualApiWithAuth(
+      auth,
+    ).getIndividualPersidnoPhotoandsignature({
+      persidno: auth.nationalId,
+    })
 
     return {
       ssn: result.personIdNumber,

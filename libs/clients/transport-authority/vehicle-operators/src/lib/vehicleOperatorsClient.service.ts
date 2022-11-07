@@ -1,3 +1,4 @@
+import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
 import { OperatorApi } from '../../gen/fetch/apis'
 import { ReturnTypeMessage } from '../../gen/fetch/models'
@@ -7,8 +8,16 @@ import { Operator } from './vehicleOperatorsClient.types'
 export class VehicleOperatorsClient {
   constructor(private readonly operatorsApi: OperatorApi) {}
 
-  public async getOperators(permno: string): Promise<Operator[]> {
-    const result = await this.operatorsApi.permnoGet({ permno: permno })
+  private operatorsApiWithAuth(auth: Auth) {
+    return this.operatorsApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  public async getOperators(auth: User, permno: string): Promise<Operator[]> {
+    const result = await this.operatorsApiWithAuth(auth).permnoGet({
+      apiVersion: '2.0',
+      apiVersion2: '2.0',
+      permno: permno,
+    })
 
     return result.map((item) => ({
       startDate: item.startDate,
@@ -21,17 +30,17 @@ export class VehicleOperatorsClient {
   }
 
   public async saveOperators(
-    currentUserSsn: string,
+    auth: User,
     permno: string,
     operators: Operator[],
   ): Promise<ReturnTypeMessage[] | null> {
     //TODOx waiting for new endpoint without contract
     throw Error('Not implemented')
     return null
-    // const result = await this.operatorsApi.post({
+    // const result = await this.operatorsApiWithAuth(auth).post({
     //   json: {
     //     permno: permno,
-    //     reportingPersonIdNumber: currentUserSsn,
+    //     reportingPersonIdNumber: auth.nationalId,
     //     operators: operators.map((operator) => ({
     //       personIdNumber: operator.ssn || '',
     //       // startDate: operator.startDate || new Date(),

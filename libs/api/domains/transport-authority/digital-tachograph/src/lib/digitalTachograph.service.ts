@@ -11,6 +11,7 @@ import {
   NewestDriversCard,
 } from './graphql/models'
 import { CheckTachoNetInput } from './graphql/dto'
+import { User } from '@island.is/auth-nest-tools'
 
 @Injectable()
 export class DigitalTachographApi {
@@ -19,8 +20,12 @@ export class DigitalTachographApi {
     private readonly drivingLicenseApi: DrivingLicenseApi,
   ) {}
 
-  async checkTachoNet(input: CheckTachoNetInput): Promise<CheckTachoNetExists> {
+  async checkTachoNet(
+    user: User,
+    input: CheckTachoNetInput,
+  ): Promise<CheckTachoNetExists> {
     const result = await this.digitalTachographDriversCardClient.checkTachoNet(
+      user,
       input,
     )
 
@@ -29,40 +34,38 @@ export class DigitalTachographApi {
     return { exists: !!activeCard }
   }
 
-  async getNewestDriversCard(
-    currentUserSsn: string,
-  ): Promise<NewestDriversCard> {
+  async getNewestDriversCard(user: User): Promise<NewestDriversCard> {
     return await this.digitalTachographDriversCardClient.getNewestDriversCard(
-      currentUserSsn,
+      user,
     )
   }
 
   async saveDriversCard(
+    user: User,
     driversCardRequest: DriversCardApplicationRequest,
   ): Promise<DriverCardApplicationResponse | null> {
     return await this.digitalTachographDriversCardClient.saveDriversCard(
+      user,
       driversCardRequest,
     )
   }
 
-  async getPhotoAndSignature(
-    currentUserSsn: string,
-  ): Promise<QualityPhotoAndSignature> {
+  async getPhotoAndSignature(user: User): Promise<QualityPhotoAndSignature> {
     // First we'll check if photo and signature exists in RLS database
     const hasQualityPhotoRLS = await this.drivingLicenseApi.getHasQualityPhoto({
-      nationalId: currentUserSsn,
+      nationalId: user.nationalId,
     })
     const hasQualitySignatureRLS = await this.drivingLicenseApi.getHasQualitySignature(
       {
-        nationalId: currentUserSsn,
+        nationalId: user.nationalId,
       },
     )
     if (hasQualityPhotoRLS && hasQualitySignatureRLS) {
       const photo = await this.drivingLicenseApi.getQualityPhoto({
-        nationalId: currentUserSsn,
+        nationalId: user.nationalId,
       })
       const signature = await this.drivingLicenseApi.getQualitySignature({
-        nationalId: currentUserSsn,
+        nationalId: user.nationalId,
       })
 
       return {
@@ -75,7 +78,7 @@ export class DigitalTachographApi {
 
     // If not we need to check the SGS database
     const qualityPhotoAndSignatureSGS = await this.digitalTachographDriversCardClient.getPhotoAndSignature(
-      currentUserSsn,
+      user,
     )
     if (
       qualityPhotoAndSignatureSGS?.photo &&

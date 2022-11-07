@@ -9,6 +9,11 @@
     },
     "version": "1.0"
   },
+  "servers": [
+    {
+      "url": "/vehicle/printing"
+    }
+  ],
   "paths": {
     "/registration/printpreregistrationdone": {
       "post": {
