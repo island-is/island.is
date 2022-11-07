@@ -120,7 +120,7 @@ export class FinancialStatementsInaoTemplateService {
       const noValueStatement = electionIncomeLimit === LESS ? true : false
 
       const fileName = noValueStatement
-        ? ''
+        ? undefined
         : await this.getAttachment({ application, auth })
 
       const result: DataResponse = await this.financialStatementsClientService
@@ -196,7 +196,11 @@ export class FinancialStatementsInaoTemplateService {
         'conditionalAbout.operatingYear',
       ) as string
 
-      const fileName = await this.getAttachment({ application, auth })
+      const file = getValueViaPath(answers, 'attachments.file')
+
+      const fileName = file
+        ? await this.getAttachment({ application, auth })
+        : undefined
 
       const result: DataResponse = await this.financialStatementsClientService
         .postFinancialStatementForCemetery(
