@@ -1,5 +1,4 @@
 import faker from 'faker'
-import request, { CallbackHandler } from 'supertest'
 
 import {
   ApiScope,
@@ -10,23 +9,6 @@ import {
   MergedDelegationDTO,
 } from '@island.is/auth-api-lib'
 import { CreateDelegation } from '@island.is/services/auth/testing'
-
-export const getRequestMethod = (
-  server: request.SuperTest<request.Test>,
-  method: string,
-): ((url: string, callback?: CallbackHandler | undefined) => request.Test) => {
-  switch (method) {
-    case 'POST':
-      return server.post
-    case 'PUT':
-      return server.put
-    case 'DELETE':
-      return server.delete
-    default:
-      // GET
-      return server.get
-  }
-}
 
 /**
  * Helper to match complete object when the received object has gone over the "wire"

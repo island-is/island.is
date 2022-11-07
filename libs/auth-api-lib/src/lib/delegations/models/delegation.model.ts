@@ -1,3 +1,8 @@
+import type {
+  CreationOptional,
+  InferAttributes,
+  InferCreationAttributes,
+} from 'sequelize'
 import {
   Column,
   CreatedAt,
@@ -20,14 +25,17 @@ import { DelegationType } from '../types/delegationType'
   tableName: 'delegation',
   timestamps: false,
 })
-export class Delegation extends Model {
+export class Delegation extends Model<
+  InferAttributes<Delegation>,
+  InferCreationAttributes<Delegation>
+> {
   @PrimaryKey
   @Column({
     type: DataType.STRING,
     primaryKey: true,
     allowNull: false,
   })
-  id!: string
+  id!: CreationOptional<string>
 
   @Column({
     type: DataType.STRING,
@@ -59,7 +67,7 @@ export class Delegation extends Model {
     defaultValue: DEFAULT_DOMAIN,
   })
   @ForeignKey(() => Domain)
-  domainName!: string
+  domainName!: CreationOptional<string>
 
   get validTo(): Date | null | undefined {
     // 1. Find a value with null as validTo. Null means that delegation scope set valid not to a specific time period
@@ -83,7 +91,7 @@ export class Delegation extends Model {
   }
 
   @CreatedAt
-  readonly created!: Date
+  readonly created!: CreationOptional<Date>
 
   @UpdatedAt
   readonly modified?: Date
