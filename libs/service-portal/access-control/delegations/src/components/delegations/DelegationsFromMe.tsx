@@ -35,6 +35,7 @@ export const DelegationsFromMe = () => {
     // Make sure that loading state is shown when refetching
     notifyOnNetworkStatusChange: true,
     fetchPolicy: 'cache-and-network',
+    errorPolicy: 'all',
   })
 
   const delegations = useMemo(
@@ -81,7 +82,7 @@ export const DelegationsFromMe = () => {
         <div>
           {loading ? (
             <SkeletonLoader width="100%" height={191} />
-          ) : error ? (
+          ) : error && !delegations ? (
             <AlertBanner
               description={formatMessage(m.errorFetch)}
               variant="error"
