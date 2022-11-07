@@ -16,6 +16,10 @@ import {
 import { formatIsk, formatPhonenumber } from '../../utils'
 import { FishingLicenseShip } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
+import {
+  licenseHasAreaSelection,
+  licenseHasRailNetAndRoeNetField,
+} from '../../utils/licenses'
 
 export const Overview: FC<FieldBaseProps> = ({ application, goToScreen }) => {
   const answers = application.answers as GeneralFishingLicense
@@ -142,17 +146,18 @@ export const Overview: FC<FieldBaseProps> = ({ application, goToScreen }) => {
               value={fishingLicense.labels[answers.fishingLicense.license]}
             />
           </GridColumn>
-          {answers?.fishingLicenseFurtherInformation?.area && (
-            <GridColumn
-              paddingBottom={3}
-              span={['9/12', '9/12', '9/12', '5/12']}
-            >
-              <ValueLine
-                label={fishingLicenseFurtherInformation.labels.area}
-                value={answers.fishingLicenseFurtherInformation.area}
-              />
-            </GridColumn>
-          )}
+          {licenseHasAreaSelection(answers.fishingLicense.license) &&
+            answers?.fishingLicenseFurtherInformation?.area && (
+              <GridColumn
+                paddingBottom={3}
+                span={['9/12', '9/12', '9/12', '5/12']}
+              >
+                <ValueLine
+                  label={fishingLicenseFurtherInformation.labels.area}
+                  value={answers.fishingLicenseFurtherInformation.area}
+                />
+              </GridColumn>
+            )}
           {answers?.fishingLicenseFurtherInformation?.date && (
             <GridColumn
               paddingBottom={3}
@@ -164,7 +169,8 @@ export const Overview: FC<FieldBaseProps> = ({ application, goToScreen }) => {
               />
             </GridColumn>
           )}
-          {answers?.fishingLicenseFurtherInformation?.railAndRoeNet?.railnet &&
+          {licenseHasRailNetAndRoeNetField(answers.fishingLicense.license) &&
+            answers?.fishingLicenseFurtherInformation?.railAndRoeNet?.railnet &&
             answers?.fishingLicenseFurtherInformation?.railAndRoeNet
               ?.roenet && (
               <>

@@ -39,11 +39,11 @@ export const AreaWithDateSelection: FC<FieldBaseProps> = ({
   errors,
 }) => {
   const { setValue } = useFormContext()
-  const datePickerId = `${field.id}.date`
+  const datePickerId = `fishingLicenseFurtherInformation.date`
   const { formatMessage, lang } = useLocale()
   const initialArea = getValueViaPath(
     application.answers,
-    `${field.id}.area`,
+    `fishingLicenseFurtherInformation.area`,
     '',
   ) as string
   const [selectedArea, setSelectedArea] = useState<string | number>(
@@ -83,8 +83,8 @@ export const AreaWithDateSelection: FC<FieldBaseProps> = ({
     <Box>
       <Box marginTop={3}>
         <SelectController
-          id={`${field.id}.area`}
-          name={`${field.id}.area`}
+          id={`fishingLicenseFurtherInformation.area`}
+          name={`fishingLicenseFurtherInformation.area`}
           backgroundColor="blue"
           label={formatMessage(fishingLicenseFurtherInformation.labels.area)}
           placeholder={formatMessage(
@@ -99,8 +99,8 @@ export const AreaWithDateSelection: FC<FieldBaseProps> = ({
       </Box>
       <Box marginTop={3}>
         <DatePickerController
-          id={`${field.id}.date`}
-          name={`${field.id}.date`}
+          id={`fishingLicenseFurtherInformation.date`}
+          name={`fishingLicenseFurtherInformation.date`}
           disabled={!selectedArea}
           backgroundColor="blue"
           locale={lang}
@@ -108,7 +108,10 @@ export const AreaWithDateSelection: FC<FieldBaseProps> = ({
           placeholder={formatMessage(
             fishingLicenseFurtherInformation.placeholders.date,
           )}
-          error={errors && getErrorViaPath(errors, `${field.id}.date`)}
+          error={
+            errors &&
+            getErrorViaPath(errors, `fishingLicenseFurtherInformation.date`)
+          }
           minDate={getMinDate()}
           maxDate={getMaxDate()}
         />

@@ -1,9 +1,11 @@
 import { z } from 'zod'
 import { error, fishingLicenseFurtherInformation } from './messages'
-import * as kennitala from 'kennitala'
 import { FishingLicenseEnum } from '../types'
 import {
   calculateTotalRailNet,
+  licenseHasAreaSelection,
+  licenseHasFileUploadField,
+  licenseHasRailNetAndRoeNetField,
   MAXIMUM_TOTAL_RAIL_NET_LENGTH,
 } from '../utils/licenses'
 import { applicantInformationSchema } from '@island.is/application/ui-forms'
@@ -67,29 +69,72 @@ export const GeneralFishingLicenseSchema = z.object({
       }),
     chargeType: z.string().min(1),
   }),
-  fishingLicenseFurtherInformation: z.object({
-    date: z.string().refine((x) => x.trim().length > 0),
-    area: z
-      .string()
-      .refine((x) => x.trim().length > 0)
-      .optional(),
-    attachments: z.array(FileSchema).optional(), // TODO: make only optional for those licenses that shouldn't have attatchments
-    railAndRoeNet: z // TODO: make only optinal for those licenses that shouldn't have roe and rail nets
-      .object({
-        railnet: z.string().optional(), // TODO: make only optional for those licenses that shouldn't have roe and rail nets
-        roenet: z.string().optional(), // TODO: make only optional for those licenses that shouldn't have roe and rail nets
-      })
-      .refine(
-        ({ railnet, roenet }) =>
-          calculateTotalRailNet(railnet, roenet) <=
-          MAXIMUM_TOTAL_RAIL_NET_LENGTH,
-        {
-          params:
-            fishingLicenseFurtherInformation.errorMessages.railNetTooLarge,
-        },
-      )
-      .optional(),
-  }),
+  fishingLicenseFurtherInformation: z
+    .object({
+      // Pseudo field to make this license field visible to this current object
+      // To be able to properly configure validation based on which license user is
+      // currently applying for
+      license: z
+        .enum([
+          FishingLicenseEnum.HOOKCATCHLIMIT,
+          FishingLicenseEnum.FISHWITHDANISHSEINE,
+          FishingLicenseEnum.GREYSLEPP,
+          FishingLicenseEnum.NORTHICEOCEANCOD,
+          FishingLicenseEnum.CATCHLIMIT,
+          FishingLicenseEnum.LUMPFISH,
+          FishingLicenseEnum.COSTALFISHERIES,
+          FishingLicenseEnum.FREETIME,
+          FishingLicenseEnum.FREETIMEHOOK,
+          FishingLicenseEnum.FREETIMEHOOKMED,
+          FishingLicenseEnum.COMMONWHELK,
+          FishingLicenseEnum.OCEANQUAHOGIN,
+          FishingLicenseEnum.CRUSTACEANS,
+          FishingLicenseEnum.UNKNOWN,
+        ])
+      date: z.string().refine((x) => x.trim().length > 0),
+      area: z
+        .string()
+        .refine((x) => x.trim().length > 0)
+        .optional(),
+      attachments: z.array(FileSchema).optional(),
+      railAndRoeNet: z
+        .object({
+          railnet: z.string().optional(),
+          roenet: z.string().optional(),
+        })
+        .refine(
+          ({ railnet, roenet }) =>
+            calculateTotalRailNet(railnet, roenet) <=
+            MAXIMUM_TOTAL_RAIL_NET_LENGTH,
+          {
+            params:
+              fishingLicenseFurtherInformation.errorMessages.railNetTooLarge,
+          },
+        )
+        .optional(),
+    })
+    .refine(
+      ({ license, railAndRoeNet, area, attachments }) => {
+        // Condition defaults to true, but is altered depending
+        // on which license we are working with each time
+        let condition = true
+        if (licenseHasAreaSelection(license)) {
+          condition = condition && !!area
+        }
+        if (licenseHasRailNetAndRoeNetField(license)) {
+          condition =
+            condition && !(!railAndRoeNet?.railnet || !railAndRoeNet?.roenet)
+        }
+        if (licenseHasFileUploadField(license)) {
+          condition = condition && !!attachments && attachments.length >= 1
+        }
+        return condition
+      },
+      {
+        params:
+          fishingLicenseFurtherInformation.errorMessages.missingRequiredFields,
+      },
+    ),
 })
 
 export type GeneralFishingLicense = z.TypeOf<typeof GeneralFishingLicenseSchema>

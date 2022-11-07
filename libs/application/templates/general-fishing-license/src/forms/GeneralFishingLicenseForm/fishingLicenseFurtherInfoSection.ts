@@ -59,7 +59,7 @@ export const fishingLicenseFurtherInfoSection = buildSection({
         // Custom field to replace section title
         // i.e. to make it dynamic
         buildCustomField({
-          id: 'custom-section-title',
+          id: 'fishingLicenseFurtherInformation.customTitle',
           title: '',
           doesNotRequireAnswer: true,
           component: 'FishingLicenseFurtherInfoTitleSection',
@@ -74,7 +74,7 @@ export const fishingLicenseFurtherInfoSection = buildSection({
           condition: hasAreaSelection,
         }),
         buildCustomField({
-          id: 'fishingLicenseFurtherInformation',
+          id: 'fishingLicenseFurtherInformation.areaWithDate',
           title: '',
           doesNotRequireAnswer: true,
           component: 'AreaWithDateSelection',
@@ -126,6 +126,13 @@ export const fishingLicenseFurtherInfoSection = buildSection({
           doesNotRequireAnswer: true,
           component: 'RailNetAndRoeNetCalculations',
           condition: hasRailNetAndRoeNetField,
+        }),
+        // Display custom validation errors if applicable
+        buildCustomField({
+          id: 'fishingLicenseFurtherInformation.customError',
+          title: '',
+          doesNotRequireAnswer: true,
+          component: 'CustomLicensesErrorCheck',
         }),
       ],
     }),

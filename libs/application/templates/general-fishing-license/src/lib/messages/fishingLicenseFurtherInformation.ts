@@ -110,9 +110,15 @@ export const fishingLicenseFurtherInformation = {
   errorMessages: defineMessages({
     railNetTooLarge: {
       id:
-        'gfl.application:fishingLicenseFurtherInformation.attachmentInfo.railNetTooLarge',
+        'gfl.application:fishingLicenseFurtherInformation.errorMessages.railNetTooLarge',
       defaultMessage: 'Samtals teinalengd má ekki vera hærri en 7500 metrar',
       description: 'Total rail net length cannot exceed 7500 meters',
+    },
+    missingRequiredFields: {
+      id:
+        'gfl.application:fishingLicenseFurtherInformation.errorMessages.missingRequiredFields',
+      defaultMessage: 'Vinsamlegast fylltu út alla reiti',
+      description: 'Please fill out all required fields',
     },
   }),
 }
