@@ -169,19 +169,6 @@ export class DelegationsIncomingCustomService {
     return allowedScopes.includes(scope.scopeName)
   }
 
-  private filterCustomScopeRule(scope: string, user: User): boolean {
-    const customRule = this.delegationConfig.customScopeRules.find(
-      (rule) => rule.scopeName === scope,
-    )
-
-    return (
-      !customRule ||
-      customRule.onlyForDelegationType.some((type) =>
-        user.delegationType?.includes(type as AuthDelegationType),
-      )
-    )
-  }
-
   private async getClientAllowedScopes(user: User) {
     return (
       await this.clientAllowedScopeModel.findAll({
