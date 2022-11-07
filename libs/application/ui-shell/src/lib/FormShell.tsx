@@ -104,7 +104,40 @@ export const FormShell: FC<{
                 height="full"
                 borderRadius="large"
                 background="white"
-              ></Box>
+              >
+                <Screen
+                  application={storedApplication}
+                  addExternalData={(payload) =>
+                    dispatch({ type: ActionTypes.ADD_EXTERNAL_DATA, payload })
+                  }
+                  answerQuestions={(payload) =>
+                    dispatch({ type: ActionTypes.ANSWER, payload })
+                  }
+                  dataSchema={dataSchema}
+                  expandRepeater={() =>
+                    dispatch({ type: ActionTypes.EXPAND_REPEATER })
+                  }
+                  answerAndGoToNextScreen={(payload) =>
+                    dispatch({
+                      type: ActionTypes.ANSWER_AND_GO_NEXT_SCREEN,
+                      payload,
+                    })
+                  }
+                  goToScreen={(payload: string) => {
+                    dispatch({
+                      type: ActionTypes.GO_TO_SCREEN,
+                      payload,
+                    })
+                  }}
+                  prevScreen={() => dispatch({ type: ActionTypes.PREV_SCREEN })}
+                  activeScreenIndex={activeScreen}
+                  numberOfScreens={screens.length}
+                  renderLastScreenButton={renderLastScreenButton}
+                  renderLastScreenBackButton={renderLastScreenBackButton}
+                  screen={currentScreen}
+                  mode={mode}
+                />
+              </Box>
             </GridColumn>
             <GridColumn
               span={['12/12', '12/12', '3/12', '3/12']}
