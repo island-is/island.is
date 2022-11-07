@@ -142,6 +142,17 @@ export const Overview: FC<FieldBaseProps> = ({ application, goToScreen }) => {
               value={fishingLicense.labels[answers.fishingLicense.license]}
             />
           </GridColumn>
+          {answers?.fishingLicenseFurtherInformation?.area && (
+            <GridColumn
+              paddingBottom={3}
+              span={['9/12', '9/12', '9/12', '5/12']}
+            >
+              <ValueLine
+                label={fishingLicenseFurtherInformation.labels.area}
+                value={answers.fishingLicenseFurtherInformation.area}
+              />
+            </GridColumn>
+          )}
           {answers?.fishingLicenseFurtherInformation?.date && (
             <GridColumn
               paddingBottom={3}

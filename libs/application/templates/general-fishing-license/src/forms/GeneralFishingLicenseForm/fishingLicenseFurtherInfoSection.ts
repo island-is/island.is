@@ -5,6 +5,7 @@ import {
   buildFileUploadField,
   buildMultiField,
   buildSection,
+  buildSelectField,
   getValueViaPath,
 } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
@@ -63,18 +64,40 @@ export const fishingLicenseFurtherInfoSection = buildSection({
           doesNotRequireAnswer: true,
           component: 'FishingLicenseFurtherInfoTitleSection',
         }),
+        // Select fishing area field is visible for a subset of licenses
+        buildDescriptionField({
+          id: 'area-selection-title',
+          space: 6,
+          title: fishingLicenseFurtherInformation.labels.area,
+          titleVariant: 'h5',
+          doesNotRequireAnswer: true,
+          condition: hasAreaSelection,
+        }),
+        buildCustomField({
+          id: 'fishingLicenseFurtherInformation',
+          title: '',
+          doesNotRequireAnswer: true,
+          component: 'AreaWithDateSelection',
+          condition: hasAreaSelection,
+        }),
         // Date field is visible for all types of licenses
+        // But this simplified input is hidden for licenses that have
+        // area selection because in that case, min and max dates depend
+        // on the area selected
         buildDescriptionField({
           id: 'date-title',
+          space: 6,
           title: fishingLicenseFurtherInformation.labels.date,
           titleVariant: 'h5',
           doesNotRequireAnswer: true,
+          condition: (formValue) => !hasAreaSelection(formValue),
         }),
         buildDateField({
           id: 'fishingLicenseFurtherInformation.date',
           title: fishingLicenseFurtherInformation.labels.date,
           minDate: new Date(),
           placeholder: fishingLicenseFurtherInformation.placeholders.date,
+          condition: (formValue) => !hasAreaSelection(formValue),
         }),
         // File upload field is visible for a subset of licenses
         buildDescriptionField({

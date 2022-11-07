@@ -28,8 +28,8 @@ export const FishingLicenseFurtherInfoTitleSection: FC<FieldBaseProps> = ({
           {licenseName || fishingLicenseFurtherInformation.general.title}
         </Text>
       </Box>
-      <Box marginBottom={6}>
-        <Text marginBottom={4}>
+      <Box>
+        <Text>
           {formatMessage(fishingLicenseFurtherInformation.general.subtitle)}
         </Text>
       </Box>
