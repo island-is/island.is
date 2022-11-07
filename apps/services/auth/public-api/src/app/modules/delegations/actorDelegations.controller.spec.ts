@@ -405,7 +405,7 @@ describe('ActorDelegationsController', () => {
         )
       })
 
-      it.only('should return delegations which only has scopes with special scope rules [BUG]', async () => {
+      it('should return delegations which only has scopes with special scope rules [BUG]', async () => {
         // Arrange
         const specialDelegation = createDelegation({
           fromNationalId: nationalRegistryUser.nationalId,
