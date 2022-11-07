@@ -29,20 +29,19 @@ import {
   Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
-import type { User } from '@island.is/auth-nest-tools'
 import { AuthScope } from '@island.is/auth/scopes'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import {
   FeatureFlag,
-  FeatureFlagClient,
   FeatureFlagGuard,
+  FeatureFlagService,
   Features,
   FEATURE_FLAG_CLIENT,
 } from '@island.is/nest/feature-flags'
 import { Documentation } from '@island.is/nest/swagger'
 import type { DocumentationParamOptions } from '@island.is/nest/swagger'
 import { isDefined } from '@island.is/shared/utils'
-import { FeatureFlagUser } from '@island.is/feature-flags'
+import { User } from '@island.is/auth-nest-tools'
 
 const namespace = '@island.is/auth/delegation-api/me/delegations'
 
@@ -68,7 +67,7 @@ export class MeDelegationsController {
     private readonly delegationsOutgoingService: DelegationsOutgoingService,
     private readonly delegationsIncomingService: DelegationsIncomingService,
     @Inject(FEATURE_FLAG_CLIENT)
-    private readonly featureFlagClient: FeatureFlagClient,
+    private readonly featureFlagService: FeatureFlagService,
     private readonly auditService: AuditService,
   ) {}
 
@@ -125,33 +124,44 @@ export class MeDelegationsController {
     @Query('validity') validity: DelegationValidity = DelegationValidity.ALL,
     @Headers('X-Query-OtherUser') otherUser: string,
   ): Promise<DelegationDTO[]> {
-    if (direction !== DelegationDirection.OUTGOING) {
-      return this.delegationsOutgoingService.findAll(
-        user,
-        validity,
-        domainName,
-        otherUser,
-      )
-    } else if (
-      await this.featureFlagClient.getValue(
-        Features.incomingDelegationsV2,
-        false,
-      )
-    ) {
-      if (user.actor) {
-        throw new BadRequestException(
-          'Only supported when the subject is the authenticated user.',
+    switch (direction) {
+      case DelegationDirection.INCOMING: {
+        const incomingDelegationsAreEnabled = await this.featureFlagService.getValue(
+          Features.incomingDelegationsV2,
+          false,
+          user,
+        )
+        if (!incomingDelegationsAreEnabled) {
+          throw new BadRequestException(
+            'direction=outgoing is currently the only supported value',
+          )
+        }
+
+        if (user.actor) {
+          throw new BadRequestException(
+            'Only supported when the subject is the authenticated user.',
+          )
+        }
+
+        return this.delegationsIncomingService.findAllValid(
+          user,
+          domainName,
+          otherUser,
         )
       }
-      return this.delegationsIncomingService.findAllValid(
-        user,
-        domainName,
-        otherUser,
-      )
-    } else {
-      throw new BadRequestException(
-        'direction=outgoing is currently the only supported value',
-      )
+      case DelegationDirection.OUTGOING: {
+        return this.delegationsOutgoingService.findAll(
+          user,
+          validity,
+          domainName,
+          otherUser,
+        )
+      }
+      default: {
+        throw new BadRequestException(
+          `direction must be either 'incoming' or 'outgoing'.`,
+        )
+      }
     }
   }
 
