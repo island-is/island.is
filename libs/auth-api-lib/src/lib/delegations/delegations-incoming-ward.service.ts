@@ -4,7 +4,6 @@ import {
   NationalRegistryClientService,
 } from '@island.is/clients/national-registry-v2'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { Inject, Injectable, Logger } from '@nestjs/common'
 import { DelegationDTO, DelegationProvider } from './dto/delegation.dto'
 import { DelegationType } from './types/delegationType'
@@ -12,7 +11,6 @@ import { DelegationType } from './types/delegationType'
 @Injectable()
 export class DelegationsIncomingWardService {
   constructor(
-    private featureFlagService: FeatureFlagService,
     private nationalRegistryClient: NationalRegistryClientService,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
@@ -20,15 +18,6 @@ export class DelegationsIncomingWardService {
 
   async findAllIncoming(user: User): Promise<DelegationDTO[]> {
     try {
-      const supported = await this.featureFlagService.getValue(
-        Features.legalGuardianDelegations,
-        false,
-        user,
-      )
-      if (!supported) {
-        return []
-      }
-
       const response = await this.nationalRegistryClient.getCustodyChildren(
         user,
       )

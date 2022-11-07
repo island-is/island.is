@@ -22,8 +22,6 @@ import { isDefined } from '@island.is/shared/utils'
 import { partitionWithIndex } from './utils/partitionWithIndex'
 import { AuditService } from '@island.is/nest/audit'
 import { DelegationsOutgoingService } from './delegations-outgoing.service'
-import { Features } from '@island.is/feature-flags'
-import { FeatureFlagService } from '@island.is/nest/feature-flags'
 
 export const UNKNOWN_NAME = 'Óþekkt nafn'
 
@@ -41,7 +39,6 @@ export class DelegationsIncomingCustomService {
     @Inject(DelegationConfig.KEY)
     private delegationConfig: ConfigType<typeof DelegationConfig>,
     private nationalRegistryClient: NationalRegistryClientService,
-    private featureFlagService: FeatureFlagService,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private auditService: AuditService,
@@ -52,15 +49,6 @@ export class DelegationsIncomingCustomService {
     user: User,
     domainName?: string,
   ): Promise<DelegationDTO[]> {
-    const feature = await this.featureFlagService.getValue(
-      Features.customDelegations,
-      false,
-      user,
-    )
-    if (!feature) {
-      return []
-    }
-
     const { delegations, fromNameInfo } = await this.findAllIncoming(
       user,
       DelegationValidity.NOW,
@@ -80,15 +68,6 @@ export class DelegationsIncomingCustomService {
   }
 
   async findAllAvailableIncoming(user: User): Promise<MergedDelegationDTO[]> {
-    const feature = await this.featureFlagService.getValue(
-      Features.customDelegations,
-      false,
-      user,
-    )
-    if (!feature) {
-      return []
-    }
-
     const { delegations, fromNameInfo } = await this.findAllIncoming(
       user,
       DelegationValidity.NOW,
