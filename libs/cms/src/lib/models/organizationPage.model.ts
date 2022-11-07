@@ -25,7 +25,6 @@ export class OrganizationPage {
   @Field()
   slug!: string
 
-
   @Field()
   description!: string
 
