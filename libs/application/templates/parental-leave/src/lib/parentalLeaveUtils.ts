@@ -188,6 +188,26 @@ export const getTransferredDays = (
   return days
 }
 
+export const getMultipleBirthsDays = (application: Application) => {
+  const selectedChild = getSelectedChild(
+    application.answers,
+    application.externalData,
+  )
+
+  if (!selectedChild) {
+    throw new Error('Missing selected child')
+  }
+
+  if (selectedChild.parentalRelation === ParentalRelations.secondary) {
+    return selectedChild.multipleBirthsDays ?? 0
+  }
+
+  const { multipleBirthsRequestDays } = getApplicationAnswers(
+    application.answers,
+  )
+  return multipleBirthsRequestDays * 1
+}
+
 export const getMaxMultipleBirthsDays = (answers: Application['answers']) => {
   const { multipleBirths } = getApplicationAnswers(answers)
   return (multipleBirths - 1) * multipleBirthsDefaultDays
@@ -221,8 +241,15 @@ export const getAvailableRightsInDays = (application: Application) => {
 
   // Primary parent chooses transferred days so they are persisted into answers
   const transferredDays = getTransferredDays(application, selectedChild)
+  const { multipleBirthsRequestDays } = getApplicationAnswers(
+    application.answers,
+  )
 
-  return selectedChild.remainingDays + transferredDays
+  return (
+    selectedChild.remainingDays +
+    multipleBirthsRequestDays * 1 +
+    transferredDays
+  )
 }
 
 export const getAvailablePersonalRightsInDays = (application: Application) => {
@@ -238,8 +265,9 @@ export const getAvailablePersonalRightsInDays = (application: Application) => {
   }
 
   const totalTransferredDays = getTransferredDays(application, selectedChild)
+  const multipleBirthsDays = getMultipleBirthsDays(application)
 
-  return totalDaysAvailable - totalTransferredDays
+  return totalDaysAvailable - totalTransferredDays - multipleBirthsDays
 }
 
 export const getAvailablePersonalRightsInMonths = (application: Application) =>
@@ -582,13 +610,14 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'transferRights',
   ) as TransferRightsOption
 
-  let isRequestingRights =
+  const isRequestingRightsSecondary =
     transferRights === TransferRightsOption.REQUEST
       ? YES
       : (getValueViaPath(
           answers,
           'requestRights.isRequestingRights',
         ) as YesOrNo)
+  let isRequestingRights = isRequestingRightsSecondary
   if (isRequestingRights === YES) {
     if (
       multipleBirthsRequestDays * 1 !==
@@ -602,7 +631,12 @@ export function getApplicationAnswers(answers: Application['answers']) {
     | number
     | undefined
 
-  const requestDays = getOrFallback(isRequestingRights, requestValue)
+  const requestDays = getOrFallback(
+    isRequestingRights === YES
+      ? isRequestingRights
+      : isRequestingRightsSecondary,
+    requestValue,
+  )
 
   const isGivingRights =
     transferRights === TransferRightsOption.GIVE
@@ -660,6 +694,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     selectedChild,
     transferRights,
     isRequestingRights,
+    isRequestingRightsSecondary,
     requestDays: Number(requestDays),
     isGivingRights,
     giveDays: Number(giveDays),
