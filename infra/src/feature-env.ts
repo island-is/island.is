@@ -12,16 +12,14 @@ import { Services as IDSServices } from './uber-charts/identity-server'
 import { EnvironmentServices } from './dsl/types/charts'
 import { ServiceHelm, Services } from './dsl/types/output-types'
 import { Deployments } from './uber-charts/all-charts'
-import {
-  getFeatureAffectedServices,
-  toServices,
-} from './dsl/feature-deployments'
+import { getFeatureAffectedServices } from './dsl/feature-deployments'
 import { dumpJobYaml } from './dsl/file-formats/yaml'
 import {
   renderHelmJobForFeature,
   renderHelmServices,
   renderHelmValueFileContent,
 } from './dsl/exports/exports'
+import { toServices } from './dsl/exports/to-services'
 
 type ChartName = 'islandis' | 'identity-server'
 

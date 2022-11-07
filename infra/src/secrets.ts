@@ -9,8 +9,8 @@ import {
   Deployments,
   OpsEnvNames,
 } from './uber-charts/all-charts'
-import { toServices } from './dsl/feature-deployments'
 import { renderHelmServices } from './dsl/exports/exports'
+import { toServices } from './dsl/exports/to-services'
 
 const { hideBin } = require('yargs/helpers')
 

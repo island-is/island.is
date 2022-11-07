@@ -1,7 +1,6 @@
 import { ServiceDefinition } from './types/input-types'
 import { Kubernetes } from './kubernetes-runtime'
 import { getWithDependantServices } from './service-dependencies'
-import { ServiceBuilder } from './dsl'
 
 export const getFeatureAffectedServices = async (
   uberChart: Kubernetes,
@@ -20,6 +19,3 @@ export const getFeatureAffectedServices = async (
     throw new Error('Feature deployment with a feature name not defined')
   }
 }
-
-export const toServices = (builders: ServiceBuilder<any>[]) =>
-  builders.map((b) => b.serviceDef)

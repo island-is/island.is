@@ -2,8 +2,8 @@ import { Kubernetes } from '../dsl/kubernetes-runtime'
 import { Envs } from '../environments'
 import { Charts } from '../uber-charts/all-charts'
 import { SSM } from '@aws-sdk/client-ssm'
-import { toServices } from '../dsl/feature-deployments'
 import { renderHelmServices } from '../dsl/exports/exports'
+import { toServices } from '../dsl/exports/to-services'
 
 const API_INITIALIZATION_OPTIONS = {
   region: 'eu-west-1',
