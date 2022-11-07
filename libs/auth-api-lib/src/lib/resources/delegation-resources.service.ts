@@ -188,7 +188,7 @@ export class DelegationResourcesService {
         {
           domainName,
         },
-        this.apiScopeFilter(user),
+        ...this.apiScopeFilter(user),
       ),
       include: [ApiScopeGroup, ...this.apiScopeInclude(user)],
       order: [
