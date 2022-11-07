@@ -104,6 +104,6 @@ export class DelegationsController {
       ]
     }
 
-    return scopes
+    return [...new Set(scopes)]
   }
 }
