@@ -34,6 +34,12 @@ type Props = {
   errors: RecordObject<unknown> | undefined
 }
 
+type BoardMember = {
+  nationalId: string
+  name: string
+  role: string
+}
+
 const CareTakerRepeaterItem = ({
   id,
   index,
@@ -70,7 +76,7 @@ const CareTakerRepeaterItem = ({
         },
       })
     }
-  }, [nationalIdInput, getIdentity])
+  }, [nationalIdInput, getIdentity, clearErrors])
 
   return (
     <GridContainer>
@@ -186,7 +192,7 @@ export const CemetryCaretaker: FC<FieldBaseProps<FinancialStatementsInao>> = ({
       const caretakers = values.cemetryCaretaker
       const includesApplicant =
         caretakers.filter(
-          (member: any) => member.nationalId === application.applicant,
+          (member: BoardMember) => member.nationalId === application.applicant,
         ).length > 0
 
       if (includesApplicant) {
