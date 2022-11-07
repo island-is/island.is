@@ -527,8 +527,9 @@ export const ComplaintForm: Form = buildForm({
                     const value = getValueViaPath(
                       formValue,
                       'subjectOfComplaint.values',
-                    ) as SubjectOfComplaint[]
-                    return value.includes(SubjectOfComplaint.OTHER)
+                    ) as SubjectOfComplaint[] | undefined
+
+                    return value?.includes(SubjectOfComplaint.OTHER) ?? false
                   },
                 }),
               ],
