@@ -7,14 +7,15 @@ import {
   Icon,
   IconMapIcon,
   Inline,
-  Link,
   Tag,
   TagVariant,
   Text,
 } from '@island.is/island-ui/core'
+import { shouldLinkOpenInNewWindow } from '@island.is/shared/utils'
 import * as React from 'react'
 import { CardLoader } from '../..'
 import * as styles from './ActionCard.css'
+import LinkResolver from '../LinkResolver/LinkResolver'
 
 type ActionCardProps = {
   date?: string
@@ -29,7 +30,8 @@ type ActionCardProps = {
     outlined?: boolean
   }
   cta: {
-    externalUrl?: string
+    url?: string
+    internalUrl?: string
     label: string
     variant?: ButtonTypes['variant']
     size?: ButtonSizes
@@ -228,10 +230,10 @@ export const ActionCard: React.FC<ActionCardProps> = ({
             </Box>
           )}
           <Box marginLeft={[0, 3]}>
-            {cta.externalUrl ? (
-              <Link href={cta.externalUrl}>
+            {cta.url ? (
+              <LinkResolver href={cta.url}>
                 <Button
-                  icon="open"
+                  icon={shouldLinkOpenInNewWindow(cta.url) ? 'open' : undefined}
                   colorScheme="default"
                   iconType="outline"
                   size="small"
@@ -240,7 +242,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
                 >
                   {cta.label}
                 </Button>
-              </Link>
+              </LinkResolver>
             ) : (
               <Button
                 variant={cta.variant}
