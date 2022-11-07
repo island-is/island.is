@@ -11,6 +11,7 @@ import is from 'date-fns/locale/is'
 import { FishingLicenseShip as Ship } from '@island.is/api/schema'
 import parseISO from 'date-fns/parseISO'
 import { useFormContext } from 'react-hook-form'
+import { FishingLicenseEnum } from '../../types'
 
 interface Option {
   value: string
@@ -24,7 +25,7 @@ export const ShipSelection: FC<FieldBaseProps> = ({
   errors,
 }) => {
   const { formatMessage } = useLocale()
-  const { register } = useFormContext()
+  const { register, setValue } = useFormContext()
   const [showTitle, setShowTitle] = useState<boolean>(false)
 
   const registrationNumberValue = getValueViaPath(
@@ -96,6 +97,11 @@ export const ShipSelection: FC<FieldBaseProps> = ({
         onSelect={(value) => {
           const ship = ships[parseInt(value)]
           setRegistrationNumber(ship.registrationNumber.toString())
+          // Set fishing license to null/unknown since we've now changed ships
+          // and the chosen license could be invalid for the new ship selection
+          // null/unknown signals error in front end on next screen
+          setValue('fishingLicense.license', FishingLicenseEnum.UNKNOWN)
+          setValue('fishingLicense.chargeType', FishingLicenseEnum.UNKNOWN)
         }}
         options={shipOptions(ships)}
       />
