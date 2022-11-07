@@ -97,8 +97,8 @@ export const fishingLicenseFurtherInformation = {
       id:
         'gfl.application:fishingLicenseFurtherInformation.attachmentInfo.subtitle',
       defaultMessage:
-        'Tekið er við skjölum með endingunum: .pdf, .docx, .rtf, .jpg, png. ',
-      description: 'Approved file formats: .pdf, .docx, .rtf, .jpg, png. ',
+        'Tekið er við skjölum með endingunum: .jpg, .png, .jpeg, og .pdf ',
+      description: 'Approved file formats: .jpg, .png, .jpeg, and .pdf',
     },
     buttonLabel: {
       id:

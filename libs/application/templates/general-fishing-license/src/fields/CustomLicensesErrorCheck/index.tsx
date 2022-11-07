@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { FieldBaseProps } from '@island.is/application/types'
-import { Box, Text } from '@island.is/island-ui/core'
+import { Text } from '@island.is/island-ui/core'
 import { getErrorViaPath } from '@island.is/application/core'
 
 // Simply displays any custom validation errors that are directly on the

@@ -1,5 +1,7 @@
 import { FishingLicenseEnum } from '../types'
 
+export const FILE_UPLOAD_ACCEPT = '.pdf, .jpg, .jpeg, .png'
+
 // Determines whether fishing license has a file upload field
 export const licenseHasFileUploadField = (license: FishingLicenseEnum) => {
   return (

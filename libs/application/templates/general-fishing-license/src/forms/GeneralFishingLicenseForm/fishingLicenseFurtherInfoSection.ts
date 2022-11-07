@@ -15,6 +15,7 @@ import {
   licenseHasAreaSelection,
   licenseHasFileUploadField,
   licenseHasRailNetAndRoeNetField,
+  FILE_UPLOAD_ACCEPT,
 } from '../../utils/licenses'
 
 // Condition that determines whether given license has file upload field
@@ -117,6 +118,7 @@ export const fishingLicenseFurtherInfoSection = buildSection({
             fishingLicenseFurtherInformation.attachmentInfo.subtitle,
           uploadButtonLabel:
             fishingLicenseFurtherInformation.attachmentInfo.buttonLabel,
+          uploadAccept: FILE_UPLOAD_ACCEPT,
           condition: hasFileUpload,
         }),
         // Roe net and rail net information fields - only for selected license(s)

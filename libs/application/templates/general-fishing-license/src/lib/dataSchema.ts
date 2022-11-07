@@ -91,6 +91,8 @@ export const GeneralFishingLicenseSchema = z.object({
           FishingLicenseEnum.CRUSTACEANS,
           FishingLicenseEnum.UNKNOWN,
         ])
+        .refine((x) => {
+          console.log('input for license is ' + x)
       date: z.string().refine((x) => x.trim().length > 0),
       area: z
         .string()
