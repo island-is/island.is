@@ -159,7 +159,7 @@ export const Ruling: React.FC = () => {
 
   const { user } = useContext(UserContext)
   const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
-  const { updateCase, setAndSendToServer } = useCase()
+  const { updateCase, setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
 
   useDeb(workingCase, 'prosecutorDemands')
@@ -177,7 +177,7 @@ export const Ruling: React.FC = () => {
 
   useEffect(() => {
     if (isCaseUpToDate && !initialAutoFillDone) {
-      setAndSendToServer(
+      setAndSendCaseToServer(
         [
           {
             introduction: formatMessage(m.sections.introduction.autofill, {
@@ -216,7 +216,7 @@ export const Ruling: React.FC = () => {
       setInitialAutoFillDone(true)
     }
   }, [
-    setAndSendToServer,
+    setAndSendCaseToServer,
     formatMessage,
     initialAutoFillDone,
     isCaseUpToDate,
@@ -531,7 +531,7 @@ export const Ruling: React.FC = () => {
                   )
                 }
 
-                setAndSendToServer(
+                setAndSendCaseToServer(
                   [{ conclusion, decision, force: true }],
                   workingCase,
                   setWorkingCase,
@@ -612,7 +612,7 @@ export const Ruling: React.FC = () => {
                     )
                   }
 
-                  setAndSendToServer(
+                  setAndSendCaseToServer(
                     [
                       {
                         validToDate,
@@ -670,7 +670,7 @@ export const Ruling: React.FC = () => {
                         )
                       }
 
-                      setAndSendToServer(
+                      setAndSendCaseToServer(
                         [
                           {
                             isCustodyIsolation: !workingCase.isCustodyIsolation,
@@ -734,7 +734,7 @@ export const Ruling: React.FC = () => {
                       )
                     }
 
-                    setAndSendToServer(
+                    setAndSendCaseToServer(
                       [
                         {
                           isolationToDate,
