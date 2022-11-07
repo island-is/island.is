@@ -17,10 +17,16 @@ export enum ServicePortalPath {
 
   // Settings
   SettingsRoot = '/stillingar',
-
   SettingsAccessControl = '/stillingar/adgangsstyring',
   SettingsAccessControlGrant = '/stillingar/adgangsstyring/veita',
   SettingsAccessControlAccess = '/stillingar/adgangsstyring/:delegationId',
+
+  // Access Control
+  AccessControlDelegations = '/adgangsstyring/umbod',
+  AccessControlDelegationsToMe = '/adgangsstyring/umbod-til-min',
+  AccessControlDelegationsGrant = '/adgangsstyring/umbod/veita',
+  AccessControlDelegationAccess = '/adgangsstyring/umbod/:delegationId',
+
   SettingsPersonalInformation = '/stillingar/minar-stillingar',
   SettingsPersonalInformationEditPhoneNumber = '/stillingar/minar-stillingar/breyta-simanumeri',
   SettingsPersonalInformationEditEmail = '/stillingar/minar-stillingar/breyta-netfangi',

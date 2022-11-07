@@ -1,7 +1,7 @@
-import * as z from 'zod'
+import { z } from 'zod'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import * as kennitala from 'kennitala'
-import { YES, NO, MarriageTermination } from './constants'
+import { YES, NO } from './constants'
 import { coreErrorMessages } from '@island.is/application/core/messages'
 
 const emailRegex = /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
@@ -25,13 +25,6 @@ const personalInfo = z.object({
   address: z.string().refine((v) => v),
   citizenship: z.string(),
   maritalStatus: z.string(),
-  previousMarriageTermination: z
-    .enum([
-      MarriageTermination.divorce,
-      MarriageTermination.lostSpouse,
-      MarriageTermination.annulment,
-    ])
-    .optional(),
 })
 
 export const dataSchema = z.object({

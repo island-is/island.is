@@ -21,15 +21,9 @@ import {
 } from '@island.is/application/types'
 import type { User } from '@island.is/api/domains/national-registry'
 import { format as formatNationalId } from 'kennitala'
-import { Individual, PersonalInfo } from '../types'
+import { Individual } from '../types'
 import { m } from '../lib/messages'
-import {
-  DistrictCommissionerAgencies,
-  maritalStatuses,
-  MarriageTermination,
-  NO,
-  YES,
-} from '../lib/constants'
+import { DistrictCommissionerAgencies, NO, YES } from '../lib/constants'
 import { UserProfile } from '../types/schema'
 import { fakeDataSection } from './fakeDataSection'
 import { dataCollection } from './sharedSections/dataCollection'
@@ -233,37 +227,12 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     space: 'containerGutter',
                     title: '',
                   }),
-                  buildRadioField({
-                    id: 'personalInfo.previousMarriageTermination',
-                    title: m.previousMarriageTermination,
-                    options: [
-                      {
-                        value: MarriageTermination.divorce,
-                        label: m.terminationByDivorce,
-                      },
-                      {
-                        value: MarriageTermination.lostSpouse,
-                        label: m.terminationByLosingSpouse,
-                      },
-                      {
-                        value: MarriageTermination.annulment,
-                        label: m.terminationByAnnulment,
-                      },
-                    ],
-                    largeButtons: false,
-                    condition: (answers) => {
-                      return (
-                        (answers.personalInfo as PersonalInfo)
-                          ?.maritalStatus === maritalStatuses['6']
-                      )
-                    },
-                  }),
                 ],
               }),
             ],
           }),
           buildSubSection({
-            id: 'info',
+            id: 'infoCeremony',
             title: m.ceremony,
             children: [
               buildMultiField({
@@ -273,7 +242,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                 children: [
                   buildRadioField({
                     id: 'ceremony.hasDate',
-                    title: 'Liggur hjónavígsludagur fyrir?',
+                    title: m.hasCeremonyDate,
                     options: [
                       { value: YES, label: 'Já' },
                       {
