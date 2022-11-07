@@ -22,4 +22,6 @@ export enum FishingLicenseEnum {
   COMMONWHELK = 'commonWhelk', // Beitukóngsveiðileyfi
   OCEANQUAHOGIN = 'oceanQuahogin', // Kúfiskveiðileyfi
   CRUSTACEANS = 'crustaceans', // Krabbaveiðileyfi
+
+  UNKNOWN = 'unknown', // Unknown, signals error
 }
