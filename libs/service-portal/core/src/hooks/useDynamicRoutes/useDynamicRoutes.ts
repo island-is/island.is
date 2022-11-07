@@ -4,7 +4,8 @@ import { useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
 import { ServicePortalPath } from '../../lib/navigation/paths'
 import uniq from 'lodash/uniq'
-
+import { useFeatureFlagClient } from '@island.is/react/feature-flags'
+import { FeatureFlagClient, Features } from '@island.is/feature-flags'
 export const GET_TAPS_QUERY = gql`
   query GetTapsQuery {
     getCustomerTapControl {
@@ -16,6 +17,16 @@ export const GET_TAPS_QUERY = gql`
   }
 `
 
+export const GET_DRIVING_LICENSE_BOOK_QUERY = gql`
+  query GetDrivingLicenseBook {
+    drivingLicenseBookUserBook {
+      book {
+        id
+      }
+    }
+  }
+`
+
 /**
  * Returns an active navigation that matches all defined module routes
  */
@@ -23,8 +34,28 @@ export const useDynamicRoutes = () => {
   const [activeDynamicRoutes, setActiveDynamicRoutes] = useState<
     ServicePortalPath[]
   >([])
+  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
+  const [
+    drivingLessonsFlagEnabled,
+    setDrivingLessonsFlagEnabled,
+  ] = useState<boolean>(false)
+
+  useEffect(() => {
+    const isFlagEnabled = async () => {
+      const ffEnabled = await featureFlagClient.getValue(
+        Features.servicePortalDrivingLessonsBookModule,
+        false,
+      )
+      setDrivingLessonsFlagEnabled(ffEnabled as boolean)
+    }
+    isFlagEnabled()
+  }, [])
 
   const { data, loading } = useQuery<Query>(GET_TAPS_QUERY)
+
+  const { data: licenseBook, loading: licenseBookLoading } = useQuery<Query>(
+    GET_DRIVING_LICENSE_BOOK_QUERY,
+  )
 
   useEffect(() => {
     /**
@@ -32,6 +63,9 @@ export const useDynamicRoutes = () => {
      * Tabs control for finance routes. Transactions, claims, tax, finance schedule.
      */
     const tabData = data?.getCustomerTapControl
+
+    const licenseBookData = licenseBook?.drivingLicenseBookUserBook
+
     const dynamicPathArray = []
 
     if (tabData?.RecordsTap) {
@@ -47,10 +81,13 @@ export const useDynamicRoutes = () => {
       dynamicPathArray.push(ServicePortalPath.FinanceSchedule)
     }
 
+    if (drivingLessonsFlagEnabled && licenseBookData?.book?.id) {
+      dynamicPathArray.push(ServicePortalPath.AssetsVehiclesDrivingLessons)
+    }
     setActiveDynamicRoutes(uniq([...activeDynamicRoutes, ...dynamicPathArray]))
-  }, [data])
+  }, [data, licenseBook])
 
-  return { activeDynamicRoutes, loading }
+  return { activeDynamicRoutes, loading: loading && licenseBookLoading }
 }
 
 export default useDynamicRoutes

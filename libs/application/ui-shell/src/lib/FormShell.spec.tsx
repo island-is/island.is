@@ -1,7 +1,7 @@
 import React from 'react'
 import { act, render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
-import * as z from 'zod'
+import { z } from 'zod'
 
 import { FormShell } from './FormShell'
 import { buildForm, buildDescriptionField } from '@island.is/application/core'

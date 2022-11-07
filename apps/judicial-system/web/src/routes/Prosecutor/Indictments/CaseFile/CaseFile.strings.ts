@@ -18,4 +18,10 @@ export const caseFile = defineMessages({
     description:
       'Notaður sem titill á fellilista í skjalaskrá skrefi í ákærum.',
   },
+  pdfButtonText: {
+    id: 'judicial.system.core:case_file.pdf_button_text',
+    defaultMessage: 'Gagnapakki ({policeCaseNumber}) - PDF',
+    description:
+      'Notaður sem texti á PDF takka til að sækja gagnapakka sem PDF á skjalaskrá skrefi í ákærum.',
+  },
 })

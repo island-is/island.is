@@ -42,7 +42,7 @@ import { ApiDomainsPaymentModule } from '@island.is/api/domains/payment'
 import { LicenseServiceModule } from '@island.is/api/domains/license-service'
 import { PaymentScheduleModule } from '@island.is/api/domains/payment-schedule'
 import { AssetsClientConfig } from '@island.is/clients/assets'
-import { AuthPublicApiClientConfig } from '@island.is/clients/auth-public-api'
+import { AuthPublicApiClientConfig } from '@island.is/clients/auth/public-api'
 import { FinanceClientConfig } from '@island.is/clients/finance'
 import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
 import { AuditModule } from '@island.is/nest/audit'
@@ -70,6 +70,7 @@ import { AdrAndMachineLicenseClientConfig } from '@island.is/clients/adr-and-mac
 import { FirearmLicenseClientConfig } from '@island.is/clients/firearm-license'
 import { PassportsClientConfig } from '@island.is/clients/passports'
 import { FileStorageConfig } from '@island.is/file-storage'
+import { AuthDelegationApiClientConfig } from '@island.is/clients/auth/delegation-api'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -167,14 +168,6 @@ const autoSchemaFile = environment.production
       },
     }),
     HealthInsuranceModule.register({
-      soapConfig: {
-        wsdlUrl: environment.healthInsurance.wsdlUrl!,
-        baseUrl: environment.healthInsurance.baseUrl!,
-        username: environment.healthInsurance.username!,
-        password: environment.healthInsurance.password!,
-        clientID: environment.healthInsurance.clientID!,
-        xroadID: environment.healthInsurance.xroadID!,
-      },
       clientV2Config: {
         xRoadBaseUrl: environment.healthInsuranceV2.xRoadBaseUrl!,
         xRoadProviderId: environment.healthInsuranceV2.xRoadProviderId!,
@@ -283,6 +276,7 @@ const autoSchemaFile = environment.production
         FirearmLicenseClientConfig,
         VehiclesClientConfig,
         AuthPublicApiClientConfig,
+        AuthDelegationApiClientConfig,
         DownloadServiceConfig,
         FeatureFlagConfig,
         FinanceClientConfig,

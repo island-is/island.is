@@ -1,7 +1,7 @@
 import { getConnectionToken, SequelizeModuleOptions } from '@nestjs/sequelize'
 import { Type } from '@nestjs/common'
 import { Sequelize } from 'sequelize-typescript'
-import { Dialect } from 'sequelize/types'
+import { Dialect } from 'sequelize'
 import { TestingModuleBuilder } from '@nestjs/testing/testing-module.builder'
 
 import { getOptions } from '@island.is/nest/sequelize'

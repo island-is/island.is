@@ -32,4 +32,10 @@ export const dataCollection = [
     title: '',
     subTitle: '',
   }),
+  buildDataProviderItem({
+    id: 'religions',
+    type: 'ReligionsProvider',
+    title: '',
+    subTitle: '',
+  }),
 ]
