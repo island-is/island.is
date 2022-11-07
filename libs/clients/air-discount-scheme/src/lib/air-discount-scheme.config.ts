@@ -22,9 +22,7 @@ export const AirDiscountSchemeClientConfig = defineConfig<
   name: 'AirDiscountSchemeClient',
   schema,
   load(env) {
-    //const clientSecret = env.optional('VEGAGERDIN_IDS_CLIENTS_SECRET')
-    //console.log("AIR DISCOUNT SCHEME CLIENT SECRET", clientSecret)
-    const clientSecret = 'oI3RrLXq5cVb9x0mPogPQis0j' //TODO: Get this normally
+    const clientSecret = 'A4t5t7itPLvdyS2QuFMY3bZhB' //TODO: Get this normally
     return {
       fetch: {
         timeout: 10000,
