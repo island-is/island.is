@@ -53,15 +53,16 @@ export abstract class Delegation {
   @Field(() => DelegationProvider)
   provider!: DelegationProvider
 }
-export abstract class MergedDelegation {
+@ObjectType('AuthMergedDelegation')
+export class MergedDelegation {
   @Field(() => Identity)
   from!: Identity
 
   @Field(() => Identity)
   to!: Identity
 
-  @Field(() => DelegationType)
-  type!: DelegationType
+  @Field(() => [DelegationType])
+  type!: DelegationType[]
 }
 
 @ObjectType('AuthLegalGuardianDelegation', {
