@@ -51,7 +51,7 @@ const HearingArrangements = () => {
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
   const {
-    setAndSendToServer,
+    setAndSendCaseToServer,
     sendNotification,
     isSendingNotification,
   } = useCase()
@@ -73,7 +73,7 @@ const HearingArrangements = () => {
         setInitialAutoFillDone(true)
       }
 
-      setAndSendToServer(
+      setAndSendCaseToServer(
         [
           {
             sessionArrangements: workingCase.defenderName
@@ -88,7 +88,7 @@ const HearingArrangements = () => {
       setInitialAutoFillDone(true)
     }
   }, [
-    setAndSendToServer,
+    setAndSendCaseToServer,
     initialAutoFillDone,
     isCaseUpToDate,
     setCourtDate,
@@ -101,7 +101,7 @@ const HearingArrangements = () => {
       (notification) => notification.type === NotificationType.COURT_DATE,
     )
 
-    setAndSendToServer(
+    setAndSendCaseToServer(
       [
         {
           courtDate: courtDate
@@ -123,7 +123,7 @@ const HearingArrangements = () => {
     }
   }, [
     workingCase,
-    setAndSendToServer,
+    setAndSendCaseToServer,
     courtDate,
     setWorkingCase,
     courtDateHasChanged,
@@ -197,7 +197,7 @@ const HearingArrangements = () => {
                       SessionArrangements.ALL_PRESENT
                     }
                     onChange={() => {
-                      setAndSendToServer(
+                      setAndSendCaseToServer(
                         [
                           {
                             sessionArrangements:
@@ -226,7 +226,7 @@ const HearingArrangements = () => {
                       SessionArrangements.ALL_PRESENT_SPOKESPERSON
                     }
                     onChange={() => {
-                      setAndSendToServer(
+                      setAndSendCaseToServer(
                         [
                           {
                             sessionArrangements:
@@ -253,7 +253,7 @@ const HearingArrangements = () => {
                     SessionArrangements.PROSECUTOR_PRESENT
                   }
                   onChange={() => {
-                    setAndSendToServer(
+                    setAndSendCaseToServer(
                       [
                         {
                           sessionArrangements:
@@ -332,16 +332,18 @@ const HearingArrangements = () => {
                   )
                 }
               }}
-              onSecondaryButtonClick={() => {
-                sendNotification(
+              onSecondaryButtonClick={async () => {
+                const notificationSent = await sendNotification(
                   workingCase.id,
                   NotificationType.COURT_DATE,
                   true,
                 )
 
-                router.push(
-                  `${constants.INVESTIGATION_CASE_RULING_ROUTE}/${workingCase.id}`,
-                )
+                if (notificationSent) {
+                  router.push(
+                    `${constants.INVESTIGATION_CASE_RULING_ROUTE}/${workingCase.id}`,
+                  )
+                }
               }}
               primaryButtonText={formatMessage(m.modal.primaryButtonText)}
               secondaryButtonText={formatMessage(m.modal.secondaryButtonText)}

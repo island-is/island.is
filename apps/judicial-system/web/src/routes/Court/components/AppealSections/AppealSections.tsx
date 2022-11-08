@@ -27,7 +27,7 @@ interface Props {
 const AppealSections: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase } = props
   const { formatMessage } = useIntl()
-  const { setAndSendToServer, updateCase } = useCase()
+  const { setAndSendCaseToServer, updateCase } = useCase()
 
   return (
     <>
@@ -69,7 +69,7 @@ const AppealSections: React.FC<Props> = (props) => {
                   CaseAppealDecision.APPEAL
                 }
                 onChange={() => {
-                  setAndSendToServer(
+                  setAndSendCaseToServer(
                     [
                       {
                         accusedAppealDecision: CaseAppealDecision.APPEAL,
@@ -108,7 +108,7 @@ const AppealSections: React.FC<Props> = (props) => {
                   CaseAppealDecision.ACCEPT
                 }
                 onChange={() => {
-                  setAndSendToServer(
+                  setAndSendCaseToServer(
                     [
                       {
                         accusedAppealDecision: CaseAppealDecision.ACCEPT,
@@ -138,7 +138,7 @@ const AppealSections: React.FC<Props> = (props) => {
                   CaseAppealDecision.POSTPONE
                 }
                 onChange={() => {
-                  setAndSendToServer(
+                  setAndSendCaseToServer(
                     [
                       {
                         accusedAppealDecision: CaseAppealDecision.POSTPONE,
@@ -166,7 +166,7 @@ const AppealSections: React.FC<Props> = (props) => {
                   CaseAppealDecision.NOT_APPLICABLE
                 }
                 onChange={() => {
-                  setAndSendToServer(
+                  setAndSendCaseToServer(
                     [
                       {
                         accusedAppealDecision:
@@ -238,7 +238,7 @@ const AppealSections: React.FC<Props> = (props) => {
                 CaseAppealDecision.APPEAL
               }
               onChange={() => {
-                setAndSendToServer(
+                setAndSendCaseToServer(
                   [
                     {
                       prosecutorAppealDecision: CaseAppealDecision.APPEAL,
@@ -269,7 +269,7 @@ const AppealSections: React.FC<Props> = (props) => {
                 CaseAppealDecision.ACCEPT
               }
               onChange={() => {
-                setAndSendToServer(
+                setAndSendCaseToServer(
                   [
                     {
                       prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
@@ -299,7 +299,7 @@ const AppealSections: React.FC<Props> = (props) => {
                 CaseAppealDecision.POSTPONE
               }
               onChange={() => {
-                setAndSendToServer(
+                setAndSendCaseToServer(
                   [
                     {
                       prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
@@ -328,7 +328,7 @@ const AppealSections: React.FC<Props> = (props) => {
                 CaseAppealDecision.NOT_APPLICABLE
               }
               onChange={() => {
-                setAndSendToServer(
+                setAndSendCaseToServer(
                   [
                     {
                       prosecutorAppealDecision:
