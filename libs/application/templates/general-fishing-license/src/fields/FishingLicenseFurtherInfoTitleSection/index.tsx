@@ -35,6 +35,27 @@ export const FishingLicenseFurtherInfoTitleSection: FC<FieldBaseProps> = ({
 
   // Reinitialize license type if needed
   useEffect(() => {
+    if (
+      !licenseHasAreaSelection(selectedChargeType) &&
+      getValues(areaId) !== undefined
+    ) {
+      setValue(areaId, undefined)
+    }
+    if (
+      !licenseHasRailNetAndRoeNetField(selectedChargeType) &&
+      (getValues(railnetId) !== undefined || getValues(roenetId) !== undefined)
+    ) {
+      setValue(railnetId, undefined)
+      setValue(roenetId, undefined)
+    }
+    if (licenseHasFileUploadField(selectedChargeType)) {
+      setValue(attachmentsId, [])
+    }
+    if (
+      !licenseHasFileUploadField(selectedChargeType) &&
+      getValues(attachmentsId) !== undefined
+    ) {
+      setValue(attachmentsId, undefined)
     }
   }, [])
 
