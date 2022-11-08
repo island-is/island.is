@@ -36,10 +36,10 @@ export class DirectorateOfLabourResolver {
   async getApplicationInformation(
     @Args('applicationId') applicationId: string,
     @Args('nationalId') nationalId: string,
-    @Args('shouldCall') shouldCall: boolean,
+    @Args('shouldNotCall') shouldNotCall: boolean,
     @CurrentUser() user: User,
   ): Promise<ApplicationInformation | null> {
-    if (shouldCall) {
+    if (shouldNotCall) {
       return null
     }
 

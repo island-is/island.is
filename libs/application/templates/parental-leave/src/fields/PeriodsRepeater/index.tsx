@@ -70,7 +70,7 @@ const PeriodsRepeater: FC<ScreenProps> = ({
     variables: {
       applicationId: application.id,
       nationalId: application.applicant,
-      shouldCall: shouldCall,
+      shouldNotCall: !shouldCall,
     },
   })
 

@@ -31,12 +31,12 @@ export const GetApplicationInformation = gql`
   query GetApplicationInformation(
     $applicationId: String!
     $nationalId: String!
-    $shouldCall: Boolean!
+    $shouldNotCall: Boolean!
   ) {
     getApplicationInformation(
       applicationId: $applicationId
       nationalId: $nationalId
-      shouldCall: $shouldCall
+      shouldNotCall: $shouldNotCall
     ) {
       periods {
         from
