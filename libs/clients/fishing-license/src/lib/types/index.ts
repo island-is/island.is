@@ -52,7 +52,7 @@ export enum FishingLicenseCodeType {
 
   freetime = '38', // TODO naming - Frístundaveiðar án aflaheimilda
   freetimeHook = '42', // TODO naming - Frístundaveiðar með aflamarki
-  freetimeHookMed = 'MED', // TODO naming - Frístundaveiðileyfi með aflaheimild
+  freetimeHookMed = '39', // TODO naming - Frístundaveiðileyfi með aflaheimild
 
   commonWhelk = '50', // Beitukóngsveiðileyfi
   oceanQuahogin = '52', // Kúfiskveiðileyfi
