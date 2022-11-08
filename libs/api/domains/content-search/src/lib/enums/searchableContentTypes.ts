@@ -8,6 +8,7 @@ export enum SearchableContentTypes {
   webNews = 'webNews',
   webAdgerdirPage = 'webAdgerdirPage',
   webOrganizationSubpage = 'webOrganizationSubpage',
+  webOrganizationPage = 'webOrganizationPage',
   webQNA = 'webQNA',
   webLink = 'webLink',
   webProjectPage = 'webProjectPage',

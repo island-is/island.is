@@ -23,7 +23,9 @@ export enum Operation {
   SendNotificationMutation = 'SendNotificationMutation',
   CreatePresignedPostMutation = 'CreatePresignedPostMutation',
   CreateFileMutation = 'CreateFileMutation',
+  UpdateDefendantMutation = 'UpdateDefendantMutation',
   LimitedAccessCaseQuery = 'LimitedAccessCaseQuery',
+  ProsecutorSelectionUsersQuery = 'ProsecutorSelectionUsersQuery',
 }
 
 export const intercept = (res: Case, forceFail?: Operation) => {
@@ -78,6 +80,16 @@ export const intercept = (res: Case, forceFail?: Operation) => {
       req.reply({
         fixture: 'createFileMutationResponse',
       })
+    } else if (hasOperationName(req, Operation.UpdateDefendantMutation)) {
+      req.alias = 'UpdateDefendantMutation'
+      req.reply({
+        fixture: 'updateDefendantMutationResponse',
+      })
+    } else if (hasOperationName(req, Operation.ProsecutorSelectionUsersQuery)) {
+      req.alias = 'gqlProsecutorSelectionUsersQuery'
+      req.reply({
+        fixture: 'prosecutorUsers',
+      })
     }
   })
 }
@@ -127,18 +139,7 @@ export const mockCase = (type: CaseType): Case => {
     type,
     court: makeCourt(),
     policeCaseNumbers: ['007-2021-202000'],
-    defendants: [
-      {
-        id: faker.datatype.uuid(),
-        created: '2020-09-16T19:50:08.033Z',
-        modified: '2020-09-16T19:51:39.466Z',
-        caseId,
-        nationalId: '000000-0000',
-        name: mockName,
-        gender: Gender.MALE,
-        address: mockAddress,
-      },
-    ],
+    defendants: [makeDefendant(caseId)],
     defendantWaivesRightToCounsel: false,
   }
 }
@@ -187,6 +188,20 @@ export const makeProsecutor = (name?: string): User => {
       name: 'Lögreglan á Höfuðborgarsvæðinu',
       active: true,
     },
+  }
+}
+
+export const makeDefendant = (caseId: string) => {
+  return {
+    id: faker.datatype.uuid(),
+    created: '2020-09-16T19:50:08.033Z',
+    modified: '2020-09-16T19:51:39.466Z',
+    caseId,
+    nationalId: '000000-0000',
+    name: mockName,
+    gender: Gender.MALE,
+    address: mockAddress,
+    defendantWaivesRightToCounsel: false,
   }
 }
 

@@ -638,6 +638,7 @@ export const requiresOtherParentApproval = (
 ) => {
   const applicationAnswers = getApplicationAnswers(answers)
   const selectedChild = getSelectedChild(answers, externalData)
+  const { navId } = getApplicationExternalData(externalData)
 
   const {
     isRequestingRights,
@@ -646,6 +647,11 @@ export const requiresOtherParentApproval = (
 
   const needsApprovalForRequestingRights =
     selectedChild?.parentalRelation === ParentalRelations.primary
+
+  //if an application has already been sent in then we don't need other parent approval as they are only changing period
+  if (navId) {
+    return false
+  }
 
   return (
     (isRequestingRights === YES && needsApprovalForRequestingRights) ||
@@ -914,7 +920,7 @@ export const getPeriodSectionTitle = (application: Application) => {
   ) {
     return parentalLeaveFormMessages.shared.periodsGrantSection
   }
-  return parentalLeaveFormMessages.shared.periodsSection
+  return parentalLeaveFormMessages.shared.periodsLeaveSection
 }
 
 export const getRightsDescTitle = (application: Application) => {
