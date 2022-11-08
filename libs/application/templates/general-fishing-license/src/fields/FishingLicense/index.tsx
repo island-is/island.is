@@ -15,6 +15,17 @@ import { useLocale } from '@island.is/localization'
 import { useFormContext } from 'react-hook-form'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import { FishingLicenseEnum } from '../../types'
+import {
+  licenseHasAreaSelection,
+  licenseHasFileUploadField,
+  licenseHasRailNetAndRoeNetField,
+} from '../../utils/licenses'
+import {
+  AREA_FIELD_ID,
+  ATTACHMENTS_FIELD_ID,
+  RAILNET_FIELD_ID,
+  ROENET_FIELD_ID,
+} from '../../utils/fields'
 
 export const FishingLicense: FC<FieldBaseProps> = ({
   application,
@@ -22,7 +33,7 @@ export const FishingLicense: FC<FieldBaseProps> = ({
   errors,
 }) => {
   const { formatMessage } = useLocale()
-  const { register, setValue } = useFormContext()
+  const { register, getValues, setValue } = useFormContext()
   const selectedChargeType = getValueViaPath(
     application.answers,
     'fishingLicense.license',
@@ -68,6 +79,36 @@ export const FishingLicense: FC<FieldBaseProps> = ({
       setValue(`${field.id}.license`, null)
     }
   }, [])
+
+  // Reinitialize license type if needed
+  // If any values are not undefined in this step where they should be
+  // User cannot proceed, so this fixes the problem of user getting stuck
+  // after navigating here from the next step after inputting values there
+  useEffect(() => {
+    // Setting area to undefined if charge type does not have area selection
+    if (
+      !licenseHasAreaSelection(chargeType) &&
+      getValues(AREA_FIELD_ID) !== undefined
+    ) {
+      setValue(AREA_FIELD_ID, undefined)
+    }
+    // Setting rail and roe net to undefined if charge type does not have that selection
+    if (
+      !licenseHasRailNetAndRoeNetField(chargeType) &&
+      (getValues(RAILNET_FIELD_ID) !== undefined ||
+        getValues(ROENET_FIELD_ID) !== undefined)
+    ) {
+      setValue(RAILNET_FIELD_ID, undefined)
+      setValue(ROENET_FIELD_ID, undefined)
+    }
+    // Setting attachment to undefined if charge type should not provide attatchments
+    if (
+      !licenseHasFileUploadField(chargeType) &&
+      getValues(ATTACHMENTS_FIELD_ID) !== undefined
+    ) {
+      setValue(ATTACHMENTS_FIELD_ID, undefined)
+    }
+  }, [chargeType])
 
   return (
     <>

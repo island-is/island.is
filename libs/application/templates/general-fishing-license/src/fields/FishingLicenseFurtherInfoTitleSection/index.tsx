@@ -15,14 +15,16 @@ import {
   licenseHasFileUploadField,
   licenseHasRailNetAndRoeNetField,
 } from '../../utils/licenses'
+import {
+  AREA_FIELD_ID,
+  ATTACHMENTS_FIELD_ID,
+  RAILNET_FIELD_ID,
+  ROENET_FIELD_ID,
+} from '../../utils/fields'
 
 export const FishingLicenseFurtherInfoTitleSection: FC<FieldBaseProps> = ({
   application,
 }) => {
-  const areaId = 'fishingLicenseFurtherInformation.area'
-  const attachmentsId = 'fishingLicenseFurtherInformation.attachments'
-  const railnetId = 'fishingLicenseFurtherInformation.railAndRoeNet.railNet'
-  const roenetId = 'fishingLicenseFurtherInformation.railAndRoeNet.roeNet'
   const { setValue, getValues } = useFormContext()
   const { formatMessage } = useLocale()
   const selectedChargeType = getValueViaPath(
@@ -34,28 +36,35 @@ export const FishingLicenseFurtherInfoTitleSection: FC<FieldBaseProps> = ({
     formatMessage(fishingLicense.labels[selectedChargeType]) || ''
 
   // Reinitialize license type if needed
+  // If any values are undefined in this step but shouldn't be or vice versa
+  // The validation doesn't validate these fields, so we must initialize them
   useEffect(() => {
+    // Setting area to undefined if charge type does not have area selection
     if (
       !licenseHasAreaSelection(selectedChargeType) &&
-      getValues(areaId) !== undefined
+      getValues(AREA_FIELD_ID) !== undefined
     ) {
-      setValue(areaId, undefined)
+      setValue(AREA_FIELD_ID, undefined)
     }
+    // Setting rail and roe net to undefined if charge type does not have that selection
     if (
       !licenseHasRailNetAndRoeNetField(selectedChargeType) &&
-      (getValues(railnetId) !== undefined || getValues(roenetId) !== undefined)
+      (getValues(RAILNET_FIELD_ID) !== undefined ||
+        getValues(ROENET_FIELD_ID) !== undefined)
     ) {
-      setValue(railnetId, undefined)
-      setValue(roenetId, undefined)
+      setValue(RAILNET_FIELD_ID, undefined)
+      setValue(ROENET_FIELD_ID, undefined)
     }
-    if (licenseHasFileUploadField(selectedChargeType)) {
-      setValue(attachmentsId, [])
-    }
+    // Setting attachment to undefined if charge type should not provide attatchments
     if (
       !licenseHasFileUploadField(selectedChargeType) &&
-      getValues(attachmentsId) !== undefined
+      getValues(ATTACHMENTS_FIELD_ID) !== undefined
     ) {
-      setValue(attachmentsId, undefined)
+      setValue(ATTACHMENTS_FIELD_ID, undefined)
+    }
+    // If attatchments should be with current charge type, initialize as empty array
+    if (licenseHasFileUploadField(selectedChargeType)) {
+      setValue(ATTACHMENTS_FIELD_ID, [])
     }
   }, [])
 
