@@ -920,27 +920,30 @@ export const Review: FC<ReviewScreenProps> = ({
                 )}
                 value={isSelfEmployed}
               />
-              {isSelfEmployed === NO && employerPhoneNumber && (
-                <Box paddingTop={2}>
-                  <DataValue
-                    label={formatMessage(
-                      parentalLeaveFormMessages.employer.phoneNumber,
-                    )}
-                    value={formatPhoneNumber(employerPhoneNumber)}
-                  />
-                </Box>
-              )}
+              {isSelfEmployed === NO &&
+                isRecivingUnemploymentBenefits === NO &&
+                employerPhoneNumber && (
+                  <Box paddingTop={2}>
+                    <DataValue
+                      label={formatMessage(
+                        parentalLeaveFormMessages.employer.phoneNumber,
+                      )}
+                      value={formatPhoneNumber(employerPhoneNumber)}
+                    />
+                  </Box>
+                )}
             </GridColumn>
 
             <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-              {isSelfEmployed === NO && (
-                <DataValue
-                  label={formatMessage(
-                    parentalLeaveFormMessages.employer.email,
-                  )}
-                  value={employerEmail}
-                />
-              )}
+              {isSelfEmployed === NO &&
+                isRecivingUnemploymentBenefits === NO && (
+                  <DataValue
+                    label={formatMessage(
+                      parentalLeaveFormMessages.employer.email,
+                    )}
+                    value={employerEmail}
+                  />
+                )}
             </GridColumn>
           </GridRow>
           {isSelfEmployed === NO && ( // only show benefits in review if user had to answer that question

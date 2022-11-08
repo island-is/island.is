@@ -117,7 +117,9 @@ export class DelegationScopeService {
       where: {
         [Op.and]: [
           { validFrom: { [Op.lte]: today } },
-          { validTo: { [Op.or]: [{ [Op.eq]: null }, { [Op.gte]: today }] } },
+          {
+            validTo: { [Op.or]: [{ [Op.eq]: undefined }, { [Op.gte]: today }] },
+          },
         ],
       },
       include: [

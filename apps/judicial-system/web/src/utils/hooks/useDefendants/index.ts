@@ -1,14 +1,14 @@
+import React, { SetStateAction, useCallback } from 'react'
 import { useMutation } from '@apollo/client'
 import { useIntl } from 'react-intl'
 
 import { toast } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
-import { UpdateDefendant } from '@island.is/judicial-system/types'
+import { Case, UpdateDefendant } from '@island.is/judicial-system/types'
 
 import { CreateDefendantMutation } from './createDefendantGql'
 import { DeleteDefendantMutation } from './deleteDefendantGql'
 import { UpdateDefendantMutation } from './updateDefendantGql'
-import { useCallback } from 'react'
 
 interface CreateDefendantMutationResponse {
   createDefendant: {
@@ -119,10 +119,49 @@ const useDefendants = () => {
     [formatMessage, updateDefendantMutation],
   )
 
+  const updateDefendantState = (
+    defendantId: string,
+    update: UpdateDefendant,
+    setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
+  ) => {
+    setWorkingCase((theCase: Case) => {
+      if (!theCase.defendants) {
+        return theCase
+      }
+      const indexOfDefendantToUpdate = theCase.defendants.findIndex(
+        (defendant) => defendant.id === defendantId,
+      )
+
+      const newDefendants = [...theCase.defendants]
+
+      newDefendants[indexOfDefendantToUpdate] = {
+        ...newDefendants[indexOfDefendantToUpdate],
+        ...update,
+      }
+
+      return { ...theCase, defendants: newDefendants }
+    })
+  }
+
+  const setAndSendDefendantToServer = useCallback(
+    (
+      caseId: string,
+      defendantId: string,
+      update: UpdateDefendant,
+      setWorkingCase: React.Dispatch<SetStateAction<Case>>,
+    ) => {
+      updateDefendantState(defendantId, update, setWorkingCase)
+      updateDefendant(caseId, defendantId, update)
+    },
+    [updateDefendant],
+  )
+
   return {
     createDefendant,
     deleteDefendant,
     updateDefendant,
+    updateDefendantState,
+    setAndSendDefendantToServer,
   }
 }
 

@@ -120,6 +120,7 @@ const useSearch = (
                 SearchableContentTypes['WebSubArticle'],
                 SearchableContentTypes['WebProjectPage'],
               ],
+              highlightResults: true,
             },
           },
         })
@@ -378,6 +379,7 @@ export const SearchInput = forwardRef<
                     onRouting()
                   }
                 }}
+                highlightedResults={true}
               />
             )}
           </AsyncSearchInput>
@@ -395,6 +397,7 @@ type ResultsProps = {
   autosuggest: boolean
   onRouting?: () => void
   quickContentLabel?: string
+  highlightedResults?: boolean | false
 }
 
 const Results = ({
@@ -404,6 +407,7 @@ const Results = ({
   autosuggest,
   onRouting,
   quickContentLabel = 'Beint að efninu',
+  highlightedResults,
 }: ResultsProps) => {
   const { linkResolver } = useLinkResolver()
 
@@ -503,7 +507,13 @@ const Results = ({
                       }
                       skipTab
                     >
-                      {item.title}
+                      {highlightedResults ? (
+                        <span
+                          dangerouslySetInnerHTML={{ __html: item.title }}
+                        ></span>
+                      ) : (
+                        item.title
+                      )}
                     </Link>
                   )
                 })}
