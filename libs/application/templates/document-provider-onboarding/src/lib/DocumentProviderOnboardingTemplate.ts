@@ -1,5 +1,5 @@
 import { assign } from 'xstate'
-import * as z from 'zod'
+import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { DefaultStateLifeCycle } from '@island.is/application/core'

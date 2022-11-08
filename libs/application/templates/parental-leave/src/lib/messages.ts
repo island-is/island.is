@@ -680,7 +680,12 @@ export const parentalLeaveFormMessages: MessageDir = {
       description: 'Do you want to change or split the period?',
     },
     periodsSection: {
-      id: 'pl.application:periods.section',
+      id: 'pl.application:periods.periodSection',
+      defaultMessage: 'Tilhögun',
+      description: 'periods',
+    },
+    periodsLeaveSection: {
+      id: 'pl.application:periods.leaveSection',
       defaultMessage: 'Tilhögun fæðingarorlofs',
       description: 'Leave periods',
     },
