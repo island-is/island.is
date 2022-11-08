@@ -11,13 +11,7 @@ import {
   FormValue,
 } from '@island.is/application/types'
 
-import {
-  NO,
-  MANUAL,
-  ParentalRelations,
-  YES,
-  PARENTAL_GRANT,
-} from '../constants'
+import { NO, MANUAL, ParentalRelations, YES } from '../constants'
 import { ChildInformation } from '../dataProviders/Children/types'
 import {
   formatIsk,
