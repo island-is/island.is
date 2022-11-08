@@ -17,7 +17,11 @@ import {
   UpdateDelegationInput,
 } from '../dto'
 import { DelegationByOtherUserInput } from '../dto/delegationByOtherUser.input'
-import { DelegationDTO, MeDelegationsServiceInterface } from '../services/types'
+import {
+  DelegationDTO,
+  DelegationScopeDTO,
+  MeDelegationsServiceInterface,
+} from '../services/types'
 
 @Injectable()
 export class MeDelegationsServiceV2 implements MeDelegationsServiceInterface {
@@ -27,24 +31,31 @@ export class MeDelegationsServiceV2 implements MeDelegationsServiceInterface {
     return this.delegationsApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  getDelegations(
+  async getDelegations(
     user: User,
     input: DelegationsInput,
   ): Promise<DelegationDTO[]> {
-    return this.delegationsApiWithAuth(user).meDelegationsControllerFindAll({
+    const delegations = await this.delegationsApiWithAuth(
+      user,
+    ).meDelegationsControllerFindAll({
       domain: input.domain ?? undefined,
       direction: MeDelegationsControllerFindAllDirectionEnum.Outgoing,
       validity: MeDelegationsControllerFindAllValidityEnum.IncludeFuture,
     })
+    return delegations.map(this.includeDomainNameInScopes)
   }
 
-  getDelegationById(
+  async getDelegationById(
     user: User,
     { delegationId }: DelegationInput,
   ): Promise<DelegationDTO | null> {
-    return this.delegationsApiWithAuth(user).meDelegationsControllerFindOne({
+    const request = await this.delegationsApiWithAuth(
+      user,
+    ).meDelegationsControllerFindOneRaw({
       delegationId,
     })
+    const delegation = request.raw.status === 204 ? null : await request.value()
+    return delegation ? this.includeDomainNameInScopes(delegation) : null
   }
 
   async getDelegationByOtherUser(
@@ -59,7 +70,9 @@ export class MeDelegationsServiceV2 implements MeDelegationsServiceInterface {
       domain: domain ?? undefined,
     })
 
-    return delegations[0] ?? null
+    return delegations[0]
+      ? this.includeDomainNameInScopes(delegations[0])
+      : null
   }
 
   async createOrUpdateDelegation(
@@ -79,10 +92,10 @@ export class MeDelegationsServiceV2 implements MeDelegationsServiceInterface {
       })
     }
 
-    return delegation
+    return this.includeDomainNameInScopes(delegation)
   }
 
-  createDelegation(
+  private createDelegation(
     user: User,
     { toNationalId, domainName, scopes }: CreateDelegationInput,
   ): Promise<DelegationDTO> {
@@ -139,7 +152,7 @@ export class MeDelegationsServiceV2 implements MeDelegationsServiceInterface {
     })
   }
 
-  patchDelegation(
+  async patchDelegation(
     user: User,
     {
       delegationId,
@@ -147,13 +160,16 @@ export class MeDelegationsServiceV2 implements MeDelegationsServiceInterface {
       deleteScopes = [],
     }: PatchDelegationInput,
   ): Promise<DelegationDTO> {
-    return this.delegationsApiWithAuth(user).meDelegationsControllerPatch({
+    const delegation = await this.delegationsApiWithAuth(
+      user,
+    ).meDelegationsControllerPatch({
       delegationId,
       patchDelegationDTO: {
         deleteScopes,
         updateScopes,
       },
     })
+    return this.includeDomainNameInScopes(delegation)
   }
 
   private compareScopesByName(
@@ -168,5 +184,18 @@ export class MeDelegationsServiceV2 implements MeDelegationsServiceInterface {
     scopeB: { name: string; validTo?: Date | null },
   ): boolean {
     return scopeA.name === scopeB.name && scopeA.validTo === scopeB.validTo
+  }
+
+  private includeDomainNameInScopes(delegation: DelegationDTO): DelegationDTO {
+    if (!delegation) {
+      return delegation
+    }
+    return {
+      ...delegation,
+      scopes: delegation.scopes?.map((scope) => ({
+        ...scope,
+        domainName: delegation.domainName,
+      })),
+    }
   }
 }

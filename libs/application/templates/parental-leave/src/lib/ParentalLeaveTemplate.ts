@@ -7,7 +7,6 @@ import {
   EphemeralStateLifeCycle,
   getValueViaPath,
   pruneAfterDays,
-  DefaultStateLifeCycle,
 } from '@island.is/application/core'
 import {
   ApplicationContext,
