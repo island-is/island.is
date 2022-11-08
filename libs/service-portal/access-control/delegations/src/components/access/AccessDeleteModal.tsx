@@ -127,12 +127,16 @@ export const AccessDeleteModal = ({
           />
         )}
         <AlertMessage
-          message={formatMessage({
-            id: 'sp.access-control-delegations:delete-warning',
-            defaultMessage:
-              '[Ath. að öll réttindi aðgangshafa í þessu kerfi detta út/öll réttindi sem fylgja þessu umboði detta út.]',
+          title={formatMessage({
+            id: 'sp.access-control-delegations:delete-warning-title',
+            defaultMessage: 'Athugið',
           })}
-          type="warning"
+          message={formatMessage({
+            id: 'sp.access-control-delegations:delete-warning-message',
+            defaultMessage:
+              'Öllum réttindum sem þú hefur aðgang að í viðkomandi kerfi verður eytt.',
+          })}
+          type="info"
         />
       </Box>
       <DelegationsFormFooter

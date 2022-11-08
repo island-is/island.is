@@ -539,10 +539,6 @@ export const m = defineMessages({
     id: 'service.portal:accessControl',
     defaultMessage: 'Aðgangsstýring',
   },
-  accessControlV2: {
-    id: 'service.portal:accessControlV2',
-    defaultMessage: 'Aðgangsstýring V2',
-  },
   accessControlDelegations: {
     id: 'service.portal:delegations',
     defaultMessage: 'Umboð',
