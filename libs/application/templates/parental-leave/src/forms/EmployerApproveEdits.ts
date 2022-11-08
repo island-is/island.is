@@ -12,10 +12,7 @@ import {
 import { Form, FormModes } from '@island.is/application/types'
 
 import Logo from '../assets/Logo'
-import {
-  employerFormMessages,
-  otherParentApprovalFormMessages,
-} from '../lib/messages'
+import { employerFormMessages } from '../lib/messages'
 
 export const EmployerApproveEdits: Form = buildForm({
   id: 'EmployerApprovEditsParentalLeave',

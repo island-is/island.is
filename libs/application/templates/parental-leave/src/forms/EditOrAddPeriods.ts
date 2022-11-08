@@ -7,20 +7,13 @@ import {
   buildMultiField,
   buildRepeater,
   buildSection,
-  buildSelectField,
   buildSubmitField,
   buildSubSection,
   NO_ANSWER,
   buildRadioField,
 } from '@island.is/application/core'
 import { Form, FormModes, Application } from '@island.is/application/types'
-import {
-  NO,
-  PARENTAL_GRANT,
-  PARENTAL_GRANT_STUDENTS,
-  StartDateOptions,
-  YES,
-} from '../constants'
+import { NO, StartDateOptions, YES } from '../constants'
 
 import Logo from '../assets/Logo'
 import { parentalLeaveFormMessages } from '../lib/messages'
