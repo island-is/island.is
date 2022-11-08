@@ -36,7 +36,7 @@ test.describe('Service portal', () => {
     const page = await context.newPage()
     await page.goto('/minarsidur')
     await expect(page.locator('text=Pósthólf')).toBeVisible()
-    await page.locator('a[href="/minarsidur/postholf"]').click()
+    await page.locator('aside a[href="/minarsidur/postholf"]').click()
     await expect(page.locator('text=Hér getur þú fundið skjöl')).toBeVisible()
   })
 })
