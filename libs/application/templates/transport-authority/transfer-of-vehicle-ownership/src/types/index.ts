@@ -6,6 +6,8 @@ import { z } from 'zod'
 
 export interface ReviewScreenProps {
   setStep: (s: ReviewState) => void
+  setInsurance?: (s: string) => void
+  insurance?: string
 }
 
 export type ReviewState =

@@ -3,18 +3,16 @@
 import { FieldBaseProps } from '@island.is/application/types'
 import { FC } from 'react'
 import { Text, GridRow, GridColumn } from '@island.is/island-ui/core'
-import { getValueViaPath } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
 import { overview } from '../../../lib/messages'
 import { ReviewGroup } from '../../ReviewGroup'
 import { ReviewScreenProps } from '../../../types'
 
 export const InsuranceSection: FC<FieldBaseProps & ReviewScreenProps> = ({
-  application,
   setStep,
+  insurance = undefined,
 }) => {
   const { formatMessage } = useLocale()
-  const { answers } = application
 
   const onButtonClick = () => {
     setStep('insurance')
@@ -32,13 +30,7 @@ export const InsuranceSection: FC<FieldBaseProps & ReviewScreenProps> = ({
             {formatMessage(overview.labels.insuranceTitle)}
           </Text>
           <Text>
-            {
-              getValueViaPath(
-                answers,
-                'insurance.name',
-                formatMessage(overview.labels.noChosenInsurance),
-              ) as string
-            }
+            {insurance || formatMessage(overview.labels.noChosenInsurance)}
           </Text>
         </GridColumn>
       </GridRow>
