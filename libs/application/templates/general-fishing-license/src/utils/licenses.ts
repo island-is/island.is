@@ -3,7 +3,9 @@ import { FishingLicenseEnum } from '../types'
 export const FILE_UPLOAD_ACCEPT = '.pdf, .jpg, .jpeg, .png'
 
 // Determines whether fishing license has a file upload field
-export const licenseHasFileUploadField = (license: FishingLicenseEnum) => {
+export const licenseHasFileUploadField = (
+  license: FishingLicenseEnum | string,
+) => {
   return (
     license === FishingLicenseEnum.FREETIME ||
     license === FishingLicenseEnum.FREETIMEHOOK ||
@@ -15,13 +17,15 @@ export const licenseHasFileUploadField = (license: FishingLicenseEnum) => {
 }
 
 // Determines whether fishing license has a dropdown to select area (veiðisvæði)
-export const licenseHasAreaSelection = (license: FishingLicenseEnum) => {
+export const licenseHasAreaSelection = (
+  license: FishingLicenseEnum | string,
+) => {
   return license === FishingLicenseEnum.GREYSLEPP
 }
 
 // Determines whether fishing license has field to input number of roe nets (fjöldi hrognkelsaneta)
 export const licenseHasRailNetAndRoeNetField = (
-  license: FishingLicenseEnum,
+  license: FishingLicenseEnum | string,
 ) => {
   return license === FishingLicenseEnum.GREYSLEPP
 }

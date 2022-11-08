@@ -9,6 +9,7 @@ import {
 } from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'
 import { fishingLicenseFurtherInformation } from '../../lib/messages'
+import { AREA_FIELD_ID, DATE_FIELD_ID } from '../../utils/fields'
 
 const MOCKSELECTOPTIONS = [
   {
@@ -34,12 +35,10 @@ const MOCKSELECTOPTIONS = [
 ]
 
 export const AreaWithDateSelection: FC<FieldBaseProps> = ({
-  field,
   application,
   errors,
 }) => {
   const { setValue } = useFormContext()
-  const datePickerId = `fishingLicenseFurtherInformation.date`
   const { formatMessage, lang } = useLocale()
   const initialArea = getValueViaPath(
     application.answers,
@@ -76,15 +75,15 @@ export const AreaWithDateSelection: FC<FieldBaseProps> = ({
   // it's date restrictions
   const handleAreaSelect = (o: Option) => {
     setSelectedArea(o.value)
-    setValue(datePickerId, null)
+    setValue(DATE_FIELD_ID, null)
   }
 
   return (
     <Box>
       <Box marginTop={3}>
         <SelectController
-          id={`fishingLicenseFurtherInformation.area`}
-          name={`fishingLicenseFurtherInformation.area`}
+          id={AREA_FIELD_ID}
+          name={AREA_FIELD_ID}
           backgroundColor="blue"
           label={formatMessage(fishingLicenseFurtherInformation.labels.area)}
           placeholder={formatMessage(
@@ -92,10 +91,7 @@ export const AreaWithDateSelection: FC<FieldBaseProps> = ({
           )}
           onSelect={handleAreaSelect}
           required
-          error={
-            errors &&
-            getErrorViaPath(errors, `fishingLicenseFurtherInformation.area`)
-          }
+          error={errors && getErrorViaPath(errors, AREA_FIELD_ID)}
           defaultValue={''}
           options={MOCKSELECTOPTIONS.map((o) => ({
             label: o.description,
@@ -105,8 +101,8 @@ export const AreaWithDateSelection: FC<FieldBaseProps> = ({
       </Box>
       <Box marginTop={3}>
         <DatePickerController
-          id={`fishingLicenseFurtherInformation.date`}
-          name={`fishingLicenseFurtherInformation.date`}
+          id={DATE_FIELD_ID}
+          name={DATE_FIELD_ID}
           disabled={!selectedArea}
           backgroundColor="blue"
           locale={lang}

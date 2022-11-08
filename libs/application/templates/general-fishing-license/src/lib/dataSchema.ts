@@ -78,7 +78,11 @@ export const GeneralFishingLicenseSchema = z.object({
       }),
     attachments: z
       .array(FileSchema)
-      .refine((x) => x === undefined || x.length > 0),
+      .optional()
+      .refine((x) => {
+        console.log('file upload is ' + x)
+        return x === undefined || x.length > 0
+      }),
     railAndRoeNet: z
       .object({
         railnet: z.string().optional(),

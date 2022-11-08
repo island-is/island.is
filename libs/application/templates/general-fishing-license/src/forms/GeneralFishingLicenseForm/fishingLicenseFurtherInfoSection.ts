@@ -10,6 +10,7 @@ import {
 import { FormValue } from '@island.is/application/types'
 import { fishingLicenseFurtherInformation } from '../../lib/messages'
 import { FishingLicenseEnum } from '../../types'
+import { ATTACHMENTS_FIELD_ID, DATE_FIELD_ID } from '../../utils/fields'
 import {
   licenseHasAreaSelection,
   licenseHasFileUploadField,
@@ -93,7 +94,7 @@ export const fishingLicenseFurtherInfoSection = buildSection({
           condition: (formValue) => !hasAreaSelection(formValue),
         }),
         buildDateField({
-          id: 'fishingLicenseFurtherInformation.date',
+          id: DATE_FIELD_ID,
           title: fishingLicenseFurtherInformation.labels.date,
           minDate: new Date(),
           placeholder: fishingLicenseFurtherInformation.placeholders.date,
@@ -110,7 +111,7 @@ export const fishingLicenseFurtherInfoSection = buildSection({
           condition: hasFileUpload,
         }),
         buildFileUploadField({
-          id: 'fishingLicenseFurtherInformation.attachments',
+          id: ATTACHMENTS_FIELD_ID,
           title: fishingLicenseFurtherInformation.labels.attachments,
           uploadHeader: fishingLicenseFurtherInformation.attachmentInfo.title,
           uploadDescription:

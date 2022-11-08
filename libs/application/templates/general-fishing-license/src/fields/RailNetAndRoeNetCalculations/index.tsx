@@ -10,6 +10,7 @@ import {
   calculateTotalRailNet,
   MAXIMUM_TOTAL_RAIL_NET_LENGTH,
 } from '../../utils/licenses'
+import { RAILNET_FIELD_ID, ROENET_FIELD_ID } from '../../utils/fields'
 
 export const RailNetAndRoeNetCalculations: FC<FieldBaseProps> = ({
   application,
@@ -42,8 +43,8 @@ export const RailNetAndRoeNetCalculations: FC<FieldBaseProps> = ({
       <Box display="flex" justifyContent="spaceBetween">
         <Box width="half" paddingRight={2}>
           <InputController
-            id={`${field.id}.roenet`}
-            name={`${field.id}.roenet`}
+            id={ROENET_FIELD_ID}
+            name={ROENET_FIELD_ID}
             format="####"
             label={formatMessage(
               fishingLicenseFurtherInformation.labels.roenet,
@@ -56,8 +57,8 @@ export const RailNetAndRoeNetCalculations: FC<FieldBaseProps> = ({
         </Box>
         <Box width="half">
           <InputController
-            id={`${field.id}.railnet`}
-            name={`${field.id}.railnet`}
+            id={RAILNET_FIELD_ID}
+            name={RAILNET_FIELD_ID}
             format="####m"
             error={errors && getErrorViaPath(errors, `${field.id}`)}
             label={formatMessage(
