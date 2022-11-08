@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import {
   CemeteryFinancialStatementValues,
   FinancialStatementsInaoClientService,
@@ -18,6 +18,8 @@ import {
 } from './mappers/mapValuesToUsertype'
 import { USERTYPE } from './types'
 import { SharedTemplateApiService } from '../../shared'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 const LESS = 'less'
 
@@ -43,6 +45,7 @@ export interface DataResponse {
 export class FinancialStatementsInaoTemplateService {
   s3: S3
   constructor(
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
     private financialStatementsClientService: FinancialStatementsInaoClientService,
     private readonly sharedService: SharedTemplateApiService,
   ) {
@@ -124,6 +127,14 @@ export class FinancialStatementsInaoTemplateService {
         ? undefined
         : await this.getAttachment({ application, auth })
 
+      this.logger.debug(
+        `PostFinancialStatementForPersonalElection => clientNationalId: '${nationalId}', actorNationalId: '${
+          actor?.nationalId
+        }', electionId: '${electionId}', noValueStatement: '${noValueStatement}', clientName: '${clientName}', values: '${JSON.stringify(
+          values,
+        )}', file: '${fileName}'`,
+      )
+
       const result: DataResponse = await this.financialStatementsClientService
         .postFinancialStatementForPersonalElection(
           nationalId,
@@ -142,6 +153,10 @@ export class FinancialStatementsInaoTemplateService {
           }
         })
         .catch((e) => {
+          this.logger.error(
+            'Failed to post financial statement for personal election',
+            e,
+          )
           return {
             success: false,
             errorMessage: e.message,

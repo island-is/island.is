@@ -85,3 +85,6 @@ fragmentTypes.json
 # IDE - Visual Studio
 *.suo
 /.vs
+
+# Gitbook/Honkit
+_book
