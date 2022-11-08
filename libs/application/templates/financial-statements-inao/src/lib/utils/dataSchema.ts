@@ -247,7 +247,10 @@ const individualIncome = z.object({
     .string()
     .refine((x) => !!x, { params: m.required })
     .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
-  otherIncome: z.string().refine((x) => !!x, { params: m.required }),
+  otherIncome: z
+    .string()
+    .refine((x) => !!x, { params: m.required })
+    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
   total: z.string(),
 })
 
