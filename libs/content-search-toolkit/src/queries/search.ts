@@ -23,7 +23,7 @@ export const searchQuery = (
     countProcessEntry = false,
   }: SearchInput,
   aggregate = true,
-  highlightSection = false
+  highlightSection = false,
 ) => {
   const should = []
   const must: TagQuery[] = []
@@ -160,9 +160,8 @@ export const searchQuery = (
       },
     },
     ...(Object.keys(aggregation.aggs).length ? aggregation : {}), // spread aggregations if we have any
-    ...(highlightSection)? highlight : {},
+    ...(highlightSection ? highlight : {}),
     size,
     from: (page - 1) * size, // if we have a page number add it as offset for pagination
   }
-  
 }
