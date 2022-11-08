@@ -78,7 +78,6 @@ export class FishingLicenseService {
         .v1SkipSkipaskrarnumerVeidileyfiGet({
           skipaskrarnumer: shipRegistationNumber,
         })
-
       return licenses.veidileyfiIBodi?.map((l) => {
         return {
           fishingLicenseInfo: {
@@ -92,23 +91,18 @@ export class FishingLicenseService {
               description: x.lysing ?? '',
               directions: x.leidbeining ?? '',
             })) ?? [],
-          attatchmentInfo:
-            l.serhaefarSpurningar?.skraarDalkar?.map((c) => ({
-              title: c.titillSpurningu,
-              description: c.upplysingarSpurningu,
-            })) || [],
-          listColumns: l.serhaefarSpurningar?.listaDalkar?.map((c) => ({
-            listOptions: c.listaValmoguleikar?.map((o) => ({
+          attatchmentInfo: l.serhaefdarSpurningarGogn?.vidhengiLysing,
+          areas:
+            l.serhaefdarSpurningarGogn?.veidisvaediValmoguleikar?.map((o) => ({
               key: o.lykill,
               description: o.lysing,
               disabled: o.ogildurValkostur,
               dateRestriction: {
-                dateFrom: o.dagsetningarTakmorkun?.dagsetningFra,
-                dateTo: o.dagsetningarTakmorkun?.dagsetningTil,
+                dateFrom: o.umbedinGildistakaTakmorkun?.dagsetningFra,
+                dateTo: o.umbedinGildistakaTakmorkun?.dagsetningTil,
               },
               invalidOption: o.ogildurValkostur,
-            })),
-          })),
+            })) || [],
         }
       }) as FishingLicenseLicense[]
     } catch (error) {

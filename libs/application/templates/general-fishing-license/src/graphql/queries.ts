@@ -39,17 +39,16 @@ export const queryFishingLicense = gql`
         description
         directions
       }
-      listColumns {
-        listOptions {
-          key
-          description
-          disabled
-          dateRestriction {
-            dateFrom
-            dateTo
-          }
-          invalidOption
+      attatchmentInfo
+      areas {
+        key
+        description
+        disabled
+        dateRestriction {
+          dateFrom
+          dateTo
         }
+        invalidOption
       }
     }
   }

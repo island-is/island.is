@@ -44,13 +44,13 @@
         }
       }
     },
-    "/v1/umsoknir/{umsoknid}": {
+    "/v1/umsoknir/{umsoknId}": {
       "get": {
         "tags": ["Umsoknir"],
         "summary": "Sækir veiðileyfaumsókn.",
         "parameters": [
           {
-            "name": "umsoknid",
+            "name": "umsoknId",
             "in": "path",
             "description": "Umsóknarauðkenni",
             "required": true,
@@ -171,24 +171,6 @@
         },
         "additionalProperties": false
       },
-      "DagsetningarTakmorkun": {
-        "type": "object",
-        "properties": {
-          "dagsetningFra": {
-            "type": "string",
-            "description": "Restriction á dagsetningu sem hægt er að velja frá.",
-            "format": "date-time",
-            "nullable": true
-          },
-          "dagsetningTil": {
-            "type": "string",
-            "description": "Restriction á dagsetningu sem hægt er að velja til.",
-            "format": "date-time",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
       "Forsendur": {
         "type": "object",
         "properties": {
@@ -210,173 +192,22 @@
         "additionalProperties": false,
         "description": "Hvort haffæri skips sé í gildi eða ekki."
       },
-      "Logheimili": {
+      "SerhaefdSpurningGogn": {
         "type": "object",
         "properties": {
-          "heiti": {
-            "type": "string",
-            "description": "Heiti á heimilisfangi. Dæmi: Öskubakki 15.",
-            "nullable": true
-          },
-          "postnumer": {
-            "type": "integer",
-            "description": "Póstnúmer, dæmi 600.",
-            "format": "int32"
-          },
-          "stadur": {
-            "type": "string",
-            "description": "Staður, bær, borg.",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "SerhaefSpurningDate": {
-        "type": "object",
-        "properties": {
-          "takmorkunVillulysing": {
-            "type": "string",
-            "description": "Villuskilaboð ef user input brýtur / er út fyrir takmörkunValue.",
-            "nullable": true
-          },
-          "dagsetningarTakmorkun": {
-            "$ref": "#/components/schemas/DagsetningarTakmorkun"
-          },
-          "lykillSpurningu": {
-            "type": "string",
-            "description": "Lykill á spurningunni.",
-            "nullable": true
-          },
-          "titillSpurningu": {
-            "type": "string",
-            "description": "Textalýsing aukaspurningu.",
-            "nullable": true
-          },
-          "upplysingarSpurningu": {
+          "vidhengiLysing": {
             "type": "string",
             "description": "Textalýsing á upplýsingum um spurninguna (info icon).",
             "nullable": true
           },
-          "requiredField": {
-            "type": "boolean",
-            "description": "Er þessi field required/nauðsynlegur."
-          }
-        },
-        "additionalProperties": false
-      },
-      "SerhaefSpurningFile": {
-        "type": "object",
-        "properties": {
-          "lykillSpurningu": {
-            "type": "string",
-            "description": "Lykill á spurningunni.",
-            "nullable": true
+          "umbedinGildistakaTakmorkun": {
+            "$ref": "#/components/schemas/UmbedinGildistakaTakmorkun"
           },
-          "titillSpurningu": {
-            "type": "string",
-            "description": "Textalýsing aukaspurningu.",
-            "nullable": true
-          },
-          "upplysingarSpurningu": {
-            "type": "string",
-            "description": "Textalýsing á upplýsingum um spurninguna (info icon).",
-            "nullable": true
-          },
-          "requiredField": {
-            "type": "boolean",
-            "description": "Er þessi field required/nauðsynlegur."
-          }
-        },
-        "additionalProperties": false
-      },
-      "SerhaefSpurningNumber": {
-        "type": "object",
-        "properties": {
-          "tolugildiTakmorkun": {
-            "type": "integer",
-            "description": "Tölugildi um takmörkun spurningu, t.d. hámarksgildi.",
-            "format": "int32",
-            "nullable": true
-          },
-          "takmorkunVillulysing": {
-            "type": "string",
-            "description": "Villuskilaboð ef user input brýtur / er út fyrir takmörkunValue.",
-            "nullable": true
-          },
-          "lykillSpurningu": {
-            "type": "string",
-            "description": "Lykill á spurningunni.",
-            "nullable": true
-          },
-          "titillSpurningu": {
-            "type": "string",
-            "description": "Textalýsing aukaspurningu.",
-            "nullable": true
-          },
-          "upplysingarSpurningu": {
-            "type": "string",
-            "description": "Textalýsing á upplýsingum um spurninguna (info icon).",
-            "nullable": true
-          },
-          "requiredField": {
-            "type": "boolean",
-            "description": "Er þessi field required/nauðsynlegur."
-          }
-        },
-        "additionalProperties": false
-      },
-      "SerhaefSpurningSelect": {
-        "type": "object",
-        "properties": {
-          "listaValmoguleikar": {
+          "veidisvaediValmoguleikar": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/Valmoguleiki" },
             "description": "Listi af dropdown valmöguleikum.",
             "nullable": true
-          },
-          "lykillSpurningu": {
-            "type": "string",
-            "description": "Lykill á spurningunni.",
-            "nullable": true
-          },
-          "titillSpurningu": {
-            "type": "string",
-            "description": "Textalýsing aukaspurningu.",
-            "nullable": true
-          },
-          "upplysingarSpurningu": {
-            "type": "string",
-            "description": "Textalýsing á upplýsingum um spurninguna (info icon).",
-            "nullable": true
-          },
-          "requiredField": {
-            "type": "boolean",
-            "description": "Er þessi field required/nauðsynlegur."
-          }
-        },
-        "additionalProperties": false
-      },
-      "SerhaefSpurningString": {
-        "type": "object",
-        "properties": {
-          "lykillSpurningu": {
-            "type": "string",
-            "description": "Lykill á spurningunni.",
-            "nullable": true
-          },
-          "titillSpurningu": {
-            "type": "string",
-            "description": "Textalýsing aukaspurningu.",
-            "nullable": true
-          },
-          "upplysingarSpurningu": {
-            "type": "string",
-            "description": "Textalýsing á upplýsingum um spurninguna (info icon).",
-            "nullable": true
-          },
-          "requiredField": {
-            "type": "boolean",
-            "description": "Er þessi field required/nauðsynlegur."
           }
         },
         "additionalProperties": false
@@ -434,42 +265,6 @@
         },
         "additionalProperties": false
       },
-      "SpurningaListi": {
-        "type": "object",
-        "properties": {
-          "toluDalkar": {
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/SerhaefSpurningNumber" },
-            "description": "Listi af tölugildis spurningum.",
-            "nullable": true
-          },
-          "textaDalkar": {
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/SerhaefSpurningString" },
-            "description": "Listi af texta spurningum.",
-            "nullable": true
-          },
-          "dagsetningarDalkar": {
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/SerhaefSpurningDate" },
-            "description": "Listi af dagsetningar inputs.",
-            "nullable": true
-          },
-          "skraarDalkar": {
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/SerhaefSpurningFile" },
-            "description": "Listi af file input spurningum.",
-            "nullable": true
-          },
-          "listaDalkar": {
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/SerhaefSpurningSelect" },
-            "description": "Listi af select listum.",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
       "Svipting": {
         "required": ["skyring"],
         "type": "object",
@@ -489,20 +284,21 @@
         },
         "additionalProperties": false
       },
-      "TengdurAdili": {
+      "UmbedinGildistakaTakmorkun": {
         "type": "object",
         "properties": {
-          "kennitala": {
+          "dagsetningFra": {
             "type": "string",
-            "description": "Kennitala (fyrirtæki, einstaklingur).",
+            "description": "Restriction á dagsetningu sem hægt er að velja frá.",
+            "format": "date-time",
             "nullable": true
           },
-          "nafn": {
+          "dagsetningTil": {
             "type": "string",
-            "description": "Nafn (fyrirtæki, einstaklingur).",
+            "description": "Restriction á dagsetningu sem hægt er að velja til.",
+            "format": "date-time",
             "nullable": true
-          },
-          "logheimili": { "$ref": "#/components/schemas/Logheimili" }
+          }
         },
         "additionalProperties": false
       },
@@ -573,12 +369,6 @@
             "description": "Listi af skrám sem notandi sendir með umsókn.",
             "nullable": true
           },
-          "strandveidiTengdirAdilar": {
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/TengdurAdili" },
-            "description": "Aðili (einstaklingur eða fyrirtæki) sem er tengdur eignarhaldi skips/útgerðar.",
-            "nullable": true
-          },
           "fjarsyslaFaersluNumer": {
             "type": "string",
             "description": "Vörunúmer frá fjársýslunni fyrir veiðileyfið.",
@@ -630,8 +420,8 @@
             "description": "Lýsing á selection sem birtist notanda.",
             "nullable": true
           },
-          "dagsetningarTakmorkun": {
-            "$ref": "#/components/schemas/DagsetningarTakmorkun"
+          "umbedinGildistakaTakmorkun": {
+            "$ref": "#/components/schemas/UmbedinGildistakaTakmorkun"
           },
           "ovirkt": {
             "type": "boolean",
@@ -675,8 +465,8 @@
             "type": "boolean",
             "description": "Hvort notandi geti sótt um veiðileyfi eða ekki.\r\nDefault er að hann getur það."
           },
-          "serhaefarSpurningar": {
-            "$ref": "#/components/schemas/SpurningaListi"
+          "serhaefdarSpurningarGogn": {
+            "$ref": "#/components/schemas/SerhaefdSpurningGogn"
           },
           "astaedur": {
             "type": "array",
