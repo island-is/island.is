@@ -60,7 +60,7 @@ export const subTypes: SubTypes = {
   // 'Afhending gagna',
   // 'Afturköllun á skipun verjanda',
   OTHER: 'Annað',
-  TRACKING_EQUIPMENT: 'Eftirfarabúnaður',
+  TRACKING_EQUIPMENT: 'Eftirfararbúnaður',
   TRAVEL_BAN: ['Farbann', 'Framlenging farbanns'],
   // 'Framlenging frests',
   // 'Framsalsmál',
