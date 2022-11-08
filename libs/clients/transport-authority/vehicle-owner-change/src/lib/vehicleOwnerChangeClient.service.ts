@@ -35,6 +35,9 @@ export class VehicleOwnerChangeClient {
     }
   }
 
+  // Note: auth.nationalId might not be the same as ownerChange.seller.ssn, but when calling this
+  // function, we should be sure that the seller (ownerChange.seller.ssn) is the one that created
+  // the application and is the only one that has changed the fields: permno, seller and buyer
   public async saveOwnerChange(
     auth: User,
     ownerChange: OwnerChange,
@@ -50,7 +53,7 @@ export class VehicleOwnerChangeClient {
         buyerEmail: ownerChange.buyer.email,
         dateOfPurchase: ownerChange.dateOfPurchase,
         saleAmount: ownerChange.saleAmount,
-        insuranceCompanyCode: ownerChange.insuranceCompanyCode || 'TODOx',
+        insuranceCompanyCode: ownerChange.insuranceCompanyCode || '', //TODOx what should send in if null, Krilli is checking with SGS
         useGroup: '000',
         operatorEmail: ownerChange.operators?.find((x) => x.isMainOperator)
           ?.email,

@@ -81,7 +81,7 @@ export class TransferOfVehicleOwnershipService {
     const answers = application.answers as TransferOfVehicleOwnershipAnswers
 
     // Seller's co-owners
-    const sellerCoOwners = answers.coOwner
+    const sellerCoOwners = answers.sellerCoOwner
     if (sellerCoOwners) {
       for (var i = 0; i < sellerCoOwners.length; i++) {
         recipientList.push({
@@ -102,7 +102,7 @@ export class TransferOfVehicleOwnershipService {
     }
 
     // Buyer's co-owners
-    const buyerCoOwners = answers.coOwnerAndOperator?.filter(
+    const buyerCoOwners = answers.buyerCoOwnerAndOperator?.filter(
       (x) => x.type === 'coOwner',
     )
     if (buyerCoOwners) {
@@ -116,7 +116,7 @@ export class TransferOfVehicleOwnershipService {
     }
 
     // Buyer's operators
-    const buyerOperators = answers.coOwnerAndOperator?.filter(
+    const buyerOperators = answers.buyerCoOwnerAndOperator?.filter(
       (x) => x.type === 'operator',
     )
     if (buyerOperators) {
@@ -161,9 +161,17 @@ export class TransferOfVehicleOwnershipService {
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<void> {
-    // TODOx validate that only buyer can continue
-    // we will only look at newly added buyerCoOwners and buyerOperators
-    // and they will be kept in a new field in answers
+    const answers = application.answers as TransferOfVehicleOwnershipAnswers
+
+    if (
+      !answers.buyer.nationalId ||
+      auth.nationalId !== answers.buyer.nationalId
+    ) {
+      return
+    }
+
+    //TODOx refactor addReview
+
     // const oldInitReviewRecipientList = (application.externalData.initReview
     //   ?.data || []) as Array<EmailRecipient>
     // const oldAddReviewRecipientList = (application.externalData.addReview
@@ -174,9 +182,8 @@ export class TransferOfVehicleOwnershipService {
     // ]
     // // Notify users that need to review, that were recently added by buyer (buyer coOwners and buyerOperators)
     // const newRecipientList: Array<EmailRecipient> = []
-    // const answers = application.answers as TransferOfVehicleOwnershipAnswers
     // // Buyer's co-owners
-    // const buyerCoOwners = answers.coOwnerAndOperator?.filter(
+    // const buyerCoOwners = answers.buyerCoOwnerAndOperator?.filter(
     //   (x) => x.type === 'coOwner',
     // )
     // if (buyerCoOwners) {
@@ -195,7 +202,7 @@ export class TransferOfVehicleOwnershipService {
     //   }
     // }
     // // Buyer's operators
-    // const buyerOperators = answers.coOwnerAndOperator?.filter(
+    // const buyerOperators = answers.buyerCoOwnerAndOperator?.filter(
     //   (x) => x.type === 'operator',
     // )
     // if (buyerOperators) {
@@ -244,8 +251,9 @@ export class TransferOfVehicleOwnershipService {
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<void> {
-    // TODOx send email to everyone involved about this
-    // TODOx cancel charge so that seller gets reimburshed
+    // TODOx implement rejectApplication
+    // send email to everyone involved about this
+    // cancel charge so that seller gets reimburshed
   }
 
   // After everyone has reviewed (and approved), then submit the application, and notify everyone involved it was a success
@@ -255,11 +263,11 @@ export class TransferOfVehicleOwnershipService {
   }: TemplateApiModuleActionProps): Promise<void> {
     const answers = application.answers as TransferOfVehicleOwnershipAnswers
 
-    const buyerCoOwners = answers.coOwnerAndOperator?.filter(
+    const buyerCoOwners = answers.buyerCoOwnerAndOperator?.filter(
       (x) => x.type === 'coOwner',
     )
 
-    const buyerOperators = answers.coOwnerAndOperator?.filter(
+    const buyerOperators = answers.buyerCoOwnerAndOperator?.filter(
       (x) => x.type === 'operator',
     )
 
@@ -291,7 +299,7 @@ export class TransferOfVehicleOwnershipService {
         email: operator.email,
         isMainOperator:
           buyerOperators.length > 1
-            ? operator.nationalId === answers.mainOperator?.nationalId
+            ? operator.nationalId === answers.buyerMainOperator?.nationalId
             : true,
       })),
     })
@@ -309,7 +317,7 @@ export class TransferOfVehicleOwnershipService {
     }
 
     // Seller's co-owners
-    const sellerCoOwners = answers.coOwner
+    const sellerCoOwners = answers.sellerCoOwner
     if (sellerCoOwners) {
       for (var i = 0; i < sellerCoOwners.length; i++) {
         recipientList.push({

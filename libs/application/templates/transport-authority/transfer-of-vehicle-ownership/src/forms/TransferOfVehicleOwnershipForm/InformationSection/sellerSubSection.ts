@@ -60,7 +60,7 @@ export const sellerSubSection = buildSubSection({
             application.externalData?.userProfile?.data?.phone,
         }),
         buildCustomField({
-          id: 'coOwner',
+          id: 'sellerCoOwner',
           title: '',
           component: 'CoOwner',
         }),

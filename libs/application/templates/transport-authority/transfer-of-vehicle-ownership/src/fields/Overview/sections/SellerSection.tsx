@@ -12,7 +12,11 @@ export const SellerSection: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
   const { answers } = application
 
-  const coOwners = getValueViaPath(answers, 'coOwner', []) as UserInformation[]
+  const coOwners = getValueViaPath(
+    answers,
+    'sellerCoOwner',
+    [],
+  ) as UserInformation[]
 
   return (
     <ReviewGroup isLast>

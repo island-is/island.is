@@ -46,7 +46,7 @@ export const CoOwnerAndOperatorRepeater: FC<FieldBaseProps> = (props) => {
             : allCoOwners.indexOf(field)
         return (
           <CoOwnerAndOperatorRepeaterItem
-            id="coOwnerAndOperator"
+            id="buyerCoOwnerAndOperator"
             repeaterField={field}
             index={index}
             rowLocation={rowLocation + 1}

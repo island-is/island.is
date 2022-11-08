@@ -8,12 +8,12 @@ import { CoOwnerAndOperatorField } from '../../../fields/CoOwnerAndOperatorRepea
 import { information } from '../../../lib/messages'
 
 export const mainOperatorSubSection = buildSubSection({
-  id: 'mainOperator',
+  id: 'buyerMainOperator',
   title: information.labels.mainOperator.sectionTitle,
   condition: (formValue) => {
     const coOwnerAndOperator = getValueViaPath(
       formValue,
-      'coOwnerAndOperator',
+      'buyerCoOwnerAndOperator',
       [],
     ) as CoOwnerAndOperatorField[]
     return (
@@ -22,17 +22,17 @@ export const mainOperatorSubSection = buildSubSection({
   },
   children: [
     buildMultiField({
-      id: 'mainOperatorMultiField',
+      id: 'buyerMainOperatorMultiField',
       title: information.labels.mainOperator.title,
       description: information.labels.mainOperator.description,
       children: [
         buildRadioField({
-          id: 'mainOperator.nationalId',
+          id: 'buyerMainOperator.nationalId',
           title: information.labels.mainOperator.radioFieldLabel,
           options: (application) => {
             const coOwnerAndOperator = getValueViaPath(
               application.answers,
-              'coOwnerAndOperator',
+              'buyerCoOwnerAndOperator',
               [],
             ) as CoOwnerAndOperatorField[]
             const operators = coOwnerAndOperator.filter(

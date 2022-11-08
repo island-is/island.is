@@ -28,10 +28,10 @@ export const TransferOfVehicleOwnershipSchema = z.object({
     date: z.string(),
   }),
   seller: UserInformationSchema,
-  coOwner: z.array(UserInformationSchema),
+  sellerCoOwner: z.array(UserInformationSchema),
   buyer: UserInformationSchema,
-  coOwnerAndOperator: z.array(CoOwnerAndOperatorSchema),
-  mainOperator: z.object({
+  buyerCoOwnerAndOperator: z.array(CoOwnerAndOperatorSchema),
+  buyerMainOperator: z.object({
     nationalId: z.string(),
   }),
   insurance: z.object({

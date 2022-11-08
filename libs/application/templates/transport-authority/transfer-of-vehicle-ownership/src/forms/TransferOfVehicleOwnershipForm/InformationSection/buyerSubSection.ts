@@ -35,7 +35,7 @@ export const buyerSubSection = buildSubSection({
           required: true,
         }),
         buildCustomField({
-          id: 'coOwnerAndOperator',
+          id: 'buyerCoOwnerAndOperator',
           component: 'CoOwnerAndOperatorRepeater',
           title: '',
         }),

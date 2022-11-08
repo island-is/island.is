@@ -14,7 +14,7 @@ export const OperatorSection: FC<FieldBaseProps> = ({ application }) => {
 
   const coOwnersAndOperators = getValueViaPath(
     answers,
-    'coOwnerAndOperator',
+    'buyerCoOwnerAndOperator',
     [],
   ) as CoOwnerAndOperator[]
   const operators = coOwnersAndOperators.filter((x) => x.type === 'operator')
