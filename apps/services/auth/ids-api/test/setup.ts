@@ -57,6 +57,7 @@ export const setupWithAuth = async ({
   // Setup app with authentication and database
   const app = await testServer({
     appModule: AppModule,
+    enableVersioning: true,
     override: (builder: TestingModuleBuilder) =>
       builder
         .overrideProvider(IdsUserGuard)
@@ -107,6 +108,7 @@ export const setupWithAuth = async ({
 export const setupWithoutAuth = async (): Promise<TestApp> => {
   const app = await testServer({
     appModule: AppModule,
+    enableVersioning: true,
     hooks: [useDatabase({ type: 'sqlite', provider: SequelizeConfigService })],
   })
 
@@ -117,6 +119,7 @@ export const setupWithoutPermission = async (): Promise<TestApp> => {
   const user = createCurrentUser()
   const app = await testServer({
     appModule: AppModule,
+    enableVersioning: true,
     hooks: [
       useAuth({ auth: user }),
       useDatabase({ type: 'sqlite', provider: SequelizeConfigService }),

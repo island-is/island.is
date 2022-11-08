@@ -14,9 +14,14 @@ import { ResourcesModule } from '../resources/resources.module'
 import { DelegationScopeService } from './delegation-scope.service'
 import { DelegationsOutgoingService } from './delegations-outgoing.service'
 import { DelegationsService } from './delegations.service'
+import { DelegationsIncomingService } from './delegations-incoming.service'
 import { DelegationScope } from './models/delegation-scope.model'
 import { Delegation } from './models/delegation.model'
 import { NamesService } from './names.service'
+import { DelegationsIncomingWardService } from './delegations-incoming-ward.service'
+import { IncomingDelegationsCompanyService } from './delegations-incoming-company.service'
+import { DelegationsIncomingCustomService } from './delegations-incoming-custom.service'
+import { DelegationsIncomingRepresentativeService } from './delegations-incoming-representative.service'
 
 @Module({
   imports: [
@@ -37,12 +42,18 @@ import { NamesService } from './names.service'
   providers: [
     DelegationsService,
     DelegationsOutgoingService,
+    DelegationsIncomingService,
     DelegationScopeService,
     NamesService,
+    DelegationsIncomingWardService,
+    IncomingDelegationsCompanyService,
+    DelegationsIncomingCustomService,
+    DelegationsIncomingRepresentativeService,
   ],
   exports: [
     DelegationsService,
     DelegationsOutgoingService,
+    DelegationsIncomingService,
     DelegationScopeService,
   ],
 })
