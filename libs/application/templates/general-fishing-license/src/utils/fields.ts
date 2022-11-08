@@ -5,6 +5,6 @@ export const DATE_FIELD_ID = 'fishingLicenseFurtherInformation.date'
 export const ATTACHMENTS_FIELD_ID =
   'fishingLicenseFurtherInformation.attachments'
 export const RAILNET_FIELD_ID =
-  'fishingLicenseFurtherInformation.railAndRoeNet.railNet'
+  'fishingLicenseFurtherInformation.railAndRoeNet.railnet'
 export const ROENET_FIELD_ID =
-  'fishingLicenseFurtherInformation.railAndRoeNet.roeNet'
+  'fishingLicenseFurtherInformation.railAndRoeNet.roenet'
