@@ -91,6 +91,12 @@ export const AreaWithDateSelection: FC<FieldBaseProps> = ({
             fishingLicenseFurtherInformation.placeholders.area,
           )}
           onSelect={handleAreaSelect}
+          required
+          error={
+            errors &&
+            getErrorViaPath(errors, `fishingLicenseFurtherInformation.area`)
+          }
+          defaultValue={''}
           options={MOCKSELECTOPTIONS.map((o) => ({
             label: o.description,
             value: o.key,

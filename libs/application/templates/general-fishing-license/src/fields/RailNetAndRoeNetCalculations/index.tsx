@@ -27,8 +27,8 @@ export const RailNetAndRoeNetCalculations: FC<FieldBaseProps> = ({
     `${field.id}.railnet`,
     '',
   ) as string
-  const [numRoeNets, setNumRoeNets] = useState(initialRoeNet || '')
-  const [lengthRailNet, setLengthRailNet] = useState(initialRailNet || '')
+  const [numRoeNets, setNumRoeNets] = useState(initialRoeNet || '0')
+  const [lengthRailNet, setLengthRailNet] = useState(initialRailNet || '0')
   return (
     <Box marginTop={6}>
       <Box>
