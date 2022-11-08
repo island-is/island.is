@@ -219,7 +219,7 @@ export class CaseController {
     // Indictment cases are not signed
     if (isIndictmentCase(theCase.type) && completedCaseStates.includes(state)) {
       // No need to wait for now, but may consider including this in a transaction with the database update later
-      this.caseService.addCaseCompletedMessageToQueue(caseId)
+      this.caseService.addCompletedIndictmentCaseMessagesToQueue(theCase)
     }
 
     // No need to wait

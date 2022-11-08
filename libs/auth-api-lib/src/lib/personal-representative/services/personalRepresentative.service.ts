@@ -11,10 +11,8 @@ import { PersonalRepresentativeCreateDTO } from '../dto/personal-representative-
 import { PersonalRepresentativeDTO } from '../dto/personal-representative.dto'
 import { PersonalRepresentativeRightType } from '../models/personal-representative-right-type.model'
 import { PersonalRepresentativeRight } from '../models/personal-representative-right.model'
-import {
-  PersonalRepresentative,
-  InactiveReason,
-} from '../models/personal-representative.model'
+import { InactiveReason } from '../models/personal-representative.enum'
+import { PersonalRepresentative } from '../models/personal-representative.model'
 
 @Injectable()
 export class PersonalRepresentativeService {

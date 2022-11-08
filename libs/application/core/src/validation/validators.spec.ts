@@ -1,4 +1,4 @@
-import * as z from 'zod'
+import { z } from 'zod'
 import { buildValidationError, validateAnswers } from './validators'
 import { FormValue, StaticText } from '@island.is/application/types'
 
@@ -11,7 +11,7 @@ const dataSchema = z.object({
       }
       return asNumber > 0
     }),
-    name: z.string().nonempty().max(256),
+    name: z.string().min(1).max(256),
     minString: z.string().min(7).optional(),
     email: z.string().email().optional(),
   }),
@@ -81,7 +81,7 @@ describe('validateAnswers', () => {
           }
           return asNumber > 15
         }),
-        name: z.string().nonempty().max(256),
+        name: z.string().min(1).max(256),
         nationalId: z.string().refine((x) => x === 'the only string'),
         phoneNumber: z.string().min(7),
         email: z.string().email(),
@@ -116,7 +116,7 @@ describe('validateAnswers', () => {
     const veryNestedSchema = z.object({
       requiredString: z.string(),
       nested: z.object({
-        name: z.string().nonempty().optional(),
+        name: z.string().min(1).optional(),
         deep: z.object({
           age: z.number().positive().optional(),
           soDeep: z.object({
@@ -267,12 +267,12 @@ describe('validateAnswers', () => {
                   return asNumber > 15
                 })
                 .optional(),
-              name: z.string().nonempty().max(256),
+              name: z.string().min(1).max(256),
             }),
           )
           .max(5)
           .nonempty(),
-        requiredString: z.string().nonempty(),
+        requiredString: z.string().min(1),
       })
       const okFormValue = {
         requiredString: 'yes',
@@ -414,7 +414,20 @@ describe('validateAnswers', () => {
         formatMessage,
       })
       expect(secondError).toEqual({
-        person: defaultError,
+        person: [
+          {
+            name: defaultError,
+            age: defaultError,
+          },
+          {
+            name: defaultError,
+            age: defaultError,
+          },
+          {
+            name: defaultError,
+            age: defaultError,
+          },
+        ],
       })
     })
     it('should skip null elements in the array if the validation is not strict', () => {
@@ -440,7 +453,7 @@ describe('validateAnswers', () => {
           )
           .max(5)
           .nonempty(),
-        requiredString: z.string().nonempty(),
+        requiredString: z.string().min(1),
       })
 
       const okFormValue = {
@@ -494,6 +507,51 @@ describe('validateAnswers', () => {
       expect(secondError).toEqual({
         person: [undefined, { age: defaultError }],
       })
+    })
+
+    it('should validate optional value given another value is defined', () => {
+      const schemaEitherOfTwo = z
+        .object({
+          first: z.string().optional(),
+          second: z.string(),
+          age: z.number().min(18),
+        })
+        .partial()
+        .refine(
+          (data) =>
+            (data.first && data.second) || (!data.first && !data.second),
+          {
+            message: 'Second should be filled in if first is filled in.',
+            path: ['second'],
+          },
+        )
+
+      const secondNotSpecified = {
+        first: 'true',
+      } as FormValue
+
+      const secondNotSpecifiedError = validateAnswers({
+        dataSchema: schemaEitherOfTwo,
+        answers: secondNotSpecified,
+        formatMessage,
+      })
+
+      expect(secondNotSpecifiedError).toEqual({
+        second: 'Second should be filled in if first is filled in.',
+      })
+
+      const secondAndFirstSpecified = {
+        first: 'true',
+        second: 'something',
+      } as FormValue
+
+      const bothSpecified = validateAnswers({
+        dataSchema: schemaEitherOfTwo,
+        answers: secondAndFirstSpecified,
+        formatMessage,
+      })
+
+      expect(bothSpecified).toBeUndefined()
     })
 
     it('should return default error message for invalid value', () => {

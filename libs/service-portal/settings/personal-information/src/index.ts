@@ -54,7 +54,6 @@ export const personalInformationModule: ServicePortalModule = {
       const showTheModal = showModal(res.data?.getUserProfile)
 
       if (
-        // true
         process.env.NODE_ENV !== 'development' &&
         userInfo.scopes.includes(UserProfileScope.write) &&
         showTheModal

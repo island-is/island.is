@@ -74,12 +74,27 @@ export class ContentSearchService {
       query,
     )
 
+    // intercept highlights
+    const items = body.hits.hits.map((item) =>
+      JSON.parse(item._source.response ?? '[]'),
+    )
+
+    // mix and match highlights
+    if (query.highlightResults) {
+      for (let i = 0; i < body.hits.hits.length; i++) {
+        if (body.hits.hits[i]?.highlight?.title) {
+          items[i].title = body.hits.hits[i]?.highlight?.title[0]
+        }
+        if (body.hits.hits[i]?.highlight?.content) {
+          items[i].intro = body.hits.hits[i]?.highlight?.content[0]
+        }
+      }
+    }
+
     return {
       total: body.hits.total.value,
       // we map data when it goes into the index we can return it without mapping it here
-      items: body.hits.hits.map((item) =>
-        JSON.parse(item._source.response ?? '[]'),
-      ),
+      items: items,
       tagCounts: this.mapTagAggregations(
         body.aggregations as TagAggregationResponse,
       ),

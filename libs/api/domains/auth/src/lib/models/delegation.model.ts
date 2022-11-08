@@ -9,7 +9,7 @@ import {
 import {
   DelegationProvider,
   DelegationType,
-} from '@island.is/clients/auth-public-api'
+} from '@island.is/clients/auth/public-api'
 import { Identity } from '@island.is/api/domains/identity'
 
 import { DelegationScope } from './delegationScope.model'

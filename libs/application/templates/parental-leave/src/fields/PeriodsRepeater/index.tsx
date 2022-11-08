@@ -62,16 +62,11 @@ const PeriodsRepeater: FC<ScreenProps> = ({
   const rights = getAvailableRightsInDays(application)
   const daysAlreadyUsed = useDaysAlreadyUsed(application)
   const remainingRights = useRemainingRights(application)
-  const {
-    rawPeriods,
-    periods,
-    employerReviewerNationalRegistryId,
-  } = getApplicationAnswers(application.answers)
+  const { rawPeriods, periods } = getApplicationAnswers(application.answers)
   const { data, loading } = useQuery(GetApplicationInformation, {
     variables: {
       applicationId: application.id,
       nationalId: application.applicant,
-      employerNationalId: employerReviewerNationalRegistryId,
     },
   })
 

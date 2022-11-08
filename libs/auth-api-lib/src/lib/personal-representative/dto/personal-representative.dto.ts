@@ -10,10 +10,8 @@ import {
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
 import { PersonalRepresentativeRightTypeDTO } from './personal-representative-right-type.dto'
-import {
-  PersonalRepresentative,
-  InactiveReason,
-} from '../models/personal-representative.model'
+import { PersonalRepresentative } from '../models/personal-representative.model'
+import { InactiveReason } from '../models/personal-representative.enum'
 
 export class PersonalRepresentativeDTO {
   @IsString()

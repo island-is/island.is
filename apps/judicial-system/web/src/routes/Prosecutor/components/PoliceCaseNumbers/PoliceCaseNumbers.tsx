@@ -42,14 +42,14 @@ export const PoliceCaseNumbers: React.FC<Props> = (props) => {
     setClientPoliceNumbers,
   } = props
   const { user } = useContext(UserContext)
-  const { setAndSendToServer } = useCase()
+  const { setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
 
   const [hasError, setHasError] = useState(false)
   const updatePoliceNumbers = useCallback(
     (newPoliceCaseNumbers: string[]) => {
       setClientPoliceNumbers(newPoliceCaseNumbers)
-      setAndSendToServer(
+      setAndSendCaseToServer(
         [
           {
             policeCaseNumbers: newPoliceCaseNumbers,
@@ -60,7 +60,12 @@ export const PoliceCaseNumbers: React.FC<Props> = (props) => {
         setWorkingCase,
       )
     },
-    [workingCase, setWorkingCase, setAndSendToServer, setClientPoliceNumbers],
+    [
+      workingCase,
+      setWorkingCase,
+      setAndSendCaseToServer,
+      setClientPoliceNumbers,
+    ],
   )
 
   const onAdd = useCallback(
