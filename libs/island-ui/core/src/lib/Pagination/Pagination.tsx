@@ -24,8 +24,8 @@ const range = (min: number, max: number): number[] =>
 export interface PaginationProps {
   page: number
   totalPages?: number
-  pageSize?: number
-  dataSize?: number
+  itemsPerPage?: number
+  totalItems?: number
   variant?: keyof typeof styles.variants
   renderLink: (
     page: number,
@@ -37,13 +37,15 @@ export interface PaginationProps {
 export const Pagination: FC<PaginationProps> = ({
   page,
   totalPages = 0,
-  dataSize,
-  pageSize,
+  totalItems,
+  itemsPerPage,
   variant = 'purple',
   renderLink,
 }) => {
   const calculatedTotalPages =
-    dataSize && pageSize ? Math.ceil(dataSize / pageSize) : totalPages
+    totalItems && itemsPerPage
+      ? Math.ceil(totalItems / itemsPerPage)
+      : totalPages
 
   const ranges = useMemo(() => {
     return uniq(
