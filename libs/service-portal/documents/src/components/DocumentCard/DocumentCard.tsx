@@ -145,7 +145,7 @@ const DocumentCard: FC<Props> = ({ document }) => {
         eyebrow={document.senderName}
         key={document.id}
         cta={{
-          externalUrl: getEdgecaseDocument(document)?.url,
+          url: getEdgecaseDocument(document)?.url,
           onClick: onClickHandler,
           label: formatMessage({
             id: 'sp.documents:documentCard-ctaLabel',

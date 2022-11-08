@@ -49,12 +49,13 @@ export class MeDelegationsServiceV2 implements MeDelegationsServiceInterface {
     user: User,
     { delegationId }: DelegationInput,
   ): Promise<DelegationDTO | null> {
-    const delegation = await this.delegationsApiWithAuth(
+    const request = await this.delegationsApiWithAuth(
       user,
-    ).meDelegationsControllerFindOne({
+    ).meDelegationsControllerFindOneRaw({
       delegationId,
     })
-    return this.includeDomainNameInScopes(delegation)
+    const delegation = request.raw.status === 204 ? null : await request.value()
+    return delegation ? this.includeDomainNameInScopes(delegation) : null
   }
 
   async getDelegationByOtherUser(
@@ -69,7 +70,9 @@ export class MeDelegationsServiceV2 implements MeDelegationsServiceInterface {
       domain: domain ?? undefined,
     })
 
-    return this.includeDomainNameInScopes(delegations[0]) ?? null
+    return delegations[0]
+      ? this.includeDomainNameInScopes(delegations[0])
+      : null
   }
 
   async createOrUpdateDelegation(
@@ -184,6 +187,9 @@ export class MeDelegationsServiceV2 implements MeDelegationsServiceInterface {
   }
 
   private includeDomainNameInScopes(delegation: DelegationDTO): DelegationDTO {
+    if (!delegation) {
+      return delegation
+    }
     return {
       ...delegation,
       scopes: delegation.scopes?.map((scope) => ({
