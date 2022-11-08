@@ -14,7 +14,7 @@ import {
 } from '../../licenceService.type'
 import { Locale } from '@island.is/shared/types'
 import { getLabel } from '../../utils/translations'
-import { LicenseData } from './firearmLicense.type'
+import { LicenseData } from './genericFirearmLicense.type'
 
 const formatDateString = (dateTime: string) =>
   dateTime ? format(new Date(dateTime), 'dd.MM.yyyy') : ''

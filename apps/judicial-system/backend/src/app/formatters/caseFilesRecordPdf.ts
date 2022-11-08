@@ -76,6 +76,7 @@ export const createCaseFilesRecord = async (
         .addText(name, subtitleFontSize, {
           alignment: Alignment.Center,
           bold: true,
+          maxWidth: 500,
         })
     }
 
@@ -167,6 +168,7 @@ export const createCaseFilesRecord = async (
           `${pageReference.date} - ${pageReference.name}`,
           textFontSize,
           {
+            maxWidth: 400,
             pageLink: pageReference.pageLink,
             position: { x: pageReferenceIndent },
           },
