@@ -17,8 +17,10 @@ module.exports = {
         )
         .then(() =>
           // get all notifications and migrate recipients to recipients_json
-          queryInterface.sequelize
-            .query(`select * from notification`, { transaction }))
+          queryInterface.sequelize.query(`select * from notification`, {
+            transaction,
+          }),
+        )
         .then(async ([notifications]) => {
           for (const notification of notifications) {
             const fallback = [{ success: false }]
@@ -38,10 +40,9 @@ module.exports = {
         })
         .then(() =>
           // remove old recipients column
-          queryInterface
-            .removeColumn('notification', 'recipients', {
-              transaction,
-            })
+          queryInterface.removeColumn('notification', 'recipients', {
+            transaction,
+          }),
         )
         .then(() =>
           // rename recipients_json to recipients
@@ -67,16 +68,16 @@ module.exports = {
         )
         .then(() =>
           // copy data from new column to temp column
-          queryInterface.sequelize
-            .query(`select * from notification`, { transaction }))
+          queryInterface.sequelize.query(`select * from notification`, {
+            transaction,
+          }),
+        )
         .then(async ([notifications]) => {
           for (const notification of notifications) {
             await queryInterface.bulkUpdate(
               'notification',
               {
-                recipients_json_string: JSON.stringify(
-                  notification.recipients,
-                ),
+                recipients_json_string: JSON.stringify(notification.recipients),
               },
               { id: [notification.id] },
               { transaction },
