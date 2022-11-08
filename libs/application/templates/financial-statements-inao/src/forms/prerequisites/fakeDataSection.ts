@@ -37,15 +37,15 @@ export const fakeDataSection = buildSubSection({
           width: 'half',
           options: [
             {
-              value: USERTYPE.INDIVIDUAL,
+              value: USERTYPE.INDIVIDUAL.toString(),
               label: 'Persónukjör',
             },
             {
-              value: USERTYPE.PARTY,
+              value: USERTYPE.PARTY.toString(),
               label: 'Stjórnmálaflokkur',
             },
             {
-              value: USERTYPE.CEMETRY,
+              value: USERTYPE.CEMETRY.toString(),
               label: 'Kirkjugarður',
             },
           ],

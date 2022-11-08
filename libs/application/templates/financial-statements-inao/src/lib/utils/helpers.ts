@@ -43,6 +43,7 @@ export const getCurrentUserType = (
     answers,
     'fakeData.options',
   )
+
   const currentUserType: USERTYPE | undefined = getValueViaPath(
     externalData,
     'getUserType.data.value',

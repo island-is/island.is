@@ -39,12 +39,12 @@ const FinancialStatementInaoApplication: ApplicationTemplate<
 
     if (userType === USERTYPE.INDIVIDUAL) {
       return currentUser
-        ? `${m.applicationTitleAlt.defaultMessage} - ${currentUser.fullName}`
+        ? `${m.applicationTitleAlt.defaultMessage} - ${currentUser.name}`
         : m.applicationTitleAlt
     }
 
     return currentUser
-      ? `${m.applicationTitle.defaultMessage} - ${currentUser.fullName}`
+      ? `${m.applicationTitle.defaultMessage} - ${currentUser.name}`
       : m.applicationTitle
   },
   institution: m.institutionName,
