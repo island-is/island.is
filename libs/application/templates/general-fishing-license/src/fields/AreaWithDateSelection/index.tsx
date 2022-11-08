@@ -103,6 +103,7 @@ export const AreaWithDateSelection: FC<FieldBaseProps> = ({
         <DatePickerController
           id={DATE_FIELD_ID}
           name={DATE_FIELD_ID}
+          required
           disabled={!selectedArea}
           backgroundColor="blue"
           locale={lang}

@@ -45,6 +45,7 @@ export const RailNetAndRoeNetCalculations: FC<FieldBaseProps> = ({
           <InputController
             id={ROENET_FIELD_ID}
             name={ROENET_FIELD_ID}
+            required
             format="####"
             label={formatMessage(
               fishingLicenseFurtherInformation.labels.roenet,
@@ -59,6 +60,7 @@ export const RailNetAndRoeNetCalculations: FC<FieldBaseProps> = ({
           <InputController
             id={RAILNET_FIELD_ID}
             name={RAILNET_FIELD_ID}
+            required
             format="####m"
             error={errors && getErrorViaPath(errors, `${field.id}`)}
             label={formatMessage(

@@ -71,18 +71,11 @@ export const GeneralFishingLicenseSchema = z.object({
     area: z
       .string()
       .optional()
-      .refine((x) => {
-        console.log('area is ' + x)
-        console.log(x === undefined || x.trim().length > 0)
-        return x === undefined || x.trim().length > 0
-      }),
+      .refine((x) => x === undefined || x.trim().length > 0),
     attachments: z
       .array(FileSchema)
       .optional()
-      .refine((x) => {
-        console.log('file upload is ' + x)
-        return x === undefined || x.length > 0
-      }),
+      .refine((x) => x === undefined || x.length > 0),
     railAndRoeNet: z
       .object({
         railnet: z.string().optional(),

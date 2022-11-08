@@ -80,34 +80,15 @@ export const FishingLicense: FC<FieldBaseProps> = ({
     }
   }, [])
 
-  // Reinitialize license type if needed
+  // Reinitialize license type when user changes charge type
   // If any values are not undefined in this step where they should be
   // User cannot proceed, so this fixes the problem of user getting stuck
   // after navigating here from the next step after inputting values there
   useEffect(() => {
-    // Setting area to undefined if charge type does not have area selection
-    if (
-      !licenseHasAreaSelection(chargeType) &&
-      getValues(AREA_FIELD_ID) !== undefined
-    ) {
-      setValue(AREA_FIELD_ID, undefined)
-    }
-    // Setting rail and roe net to undefined if charge type does not have that selection
-    if (
-      !licenseHasRailNetAndRoeNetField(chargeType) &&
-      (getValues(RAILNET_FIELD_ID) !== undefined ||
-        getValues(ROENET_FIELD_ID) !== undefined)
-    ) {
-      setValue(RAILNET_FIELD_ID, undefined)
-      setValue(ROENET_FIELD_ID, undefined)
-    }
-    // Setting attachment to undefined if charge type should not provide attatchments
-    if (
-      !licenseHasFileUploadField(chargeType) &&
-      getValues(ATTACHMENTS_FIELD_ID) !== undefined
-    ) {
-      setValue(ATTACHMENTS_FIELD_ID, undefined)
-    }
+    setValue(AREA_FIELD_ID, undefined)
+    setValue(RAILNET_FIELD_ID, undefined)
+    setValue(ROENET_FIELD_ID, undefined)
+    setValue(ATTACHMENTS_FIELD_ID, undefined)
   }, [chargeType])
 
   return (
