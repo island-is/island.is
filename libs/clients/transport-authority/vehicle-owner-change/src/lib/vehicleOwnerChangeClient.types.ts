@@ -4,7 +4,7 @@ export interface OwnerChange {
   buyer: OwnerChangeByuer
   dateOfPurchase: Date
   saleAmount: number
-  insuranceCompanyCode: string
+  insuranceCompanyCode?: string
   operators?: Array<OwnerChangeOperator> | null
   coOwners?: Array<OwnerChangeCoOwner> | null
 }

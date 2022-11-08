@@ -14,7 +14,7 @@ export const CoOwnersSection: FC<FieldBaseProps> = ({ application }) => {
 
   const coOwnersAndOperators = getValueViaPath(
     answers,
-    'coOwnerAndOperator',
+    'buyerCoOwnerAndOperator',
     [],
   ) as CoOwnerAndOperator[]
   const coOwners = coOwnersAndOperators.filter((x) => x.type === 'coOwner')
@@ -22,7 +22,7 @@ export const CoOwnersSection: FC<FieldBaseProps> = ({ application }) => {
   return coOwners.length > 0 ? (
     <ReviewGroup isLast>
       <GridRow>
-        {coOwners?.map(({ name, nationalId, email }, index: number) => {
+        {coOwners?.map(({ name, nationalId, email, phone }, index: number) => {
           if (name.length === 0) return null
           return (
             <GridColumn
@@ -37,6 +37,7 @@ export const CoOwnersSection: FC<FieldBaseProps> = ({ application }) => {
                 <Text>{name}</Text>
                 <Text>{nationalId}</Text>
                 <Text>{email}</Text>
+                <Text>{phone}</Text>
               </Box>
             </GridColumn>
           )

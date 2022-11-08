@@ -23,17 +23,20 @@ export class MainResolver {
   constructor(private readonly digitalTachographApi: DigitalTachographApi) {}
 
   @Query(() => CheckTachoNetExists)
-  digitalTachographTachoNetExists(@Args('input') input: CheckTachoNetInput) {
-    return this.digitalTachographApi.checkTachoNet(input)
+  digitalTachographTachoNetExists(
+    @CurrentUser() user: User,
+    @Args('input') input: CheckTachoNetInput,
+  ) {
+    return this.digitalTachographApi.checkTachoNet(user, input)
   }
 
   @Query(() => NewestDriversCard)
   digitalTachographNewestDriversCard(@CurrentUser() user: User) {
-    return this.digitalTachographApi.getNewestDriversCard(user.nationalId)
+    return this.digitalTachographApi.getNewestDriversCard(user)
   }
 
   @Query(() => QualityPhotoAndSignature)
   digitalTachographQualityPhotoAndSignature(@CurrentUser() user: User) {
-    return this.digitalTachographApi.getPhotoAndSignature(user.nationalId)
+    return this.digitalTachographApi.getPhotoAndSignature(user)
   }
 }

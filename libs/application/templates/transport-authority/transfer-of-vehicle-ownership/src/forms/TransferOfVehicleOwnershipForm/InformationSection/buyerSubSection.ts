@@ -27,8 +27,15 @@ export const buyerSubSection = buildSubSection({
           variant: 'email',
           required: true,
         }),
+        buildTextField({
+          id: 'buyer.phone',
+          title: information.labels.buyer.phone,
+          width: 'full',
+          variant: 'tel',
+          required: true,
+        }),
         buildCustomField({
-          id: 'coOwnerAndOperator',
+          id: 'buyerCoOwnerAndOperator',
           component: 'CoOwnerAndOperatorRepeater',
           title: '',
         }),

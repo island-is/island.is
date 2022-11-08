@@ -20,13 +20,7 @@ export class TransferOfVehicleOwnershipApi {
     return await this.vehicleCodetablesClient.getInsuranceCompanies()
   }
 
-  async saveOwnerChange(
-    currentUserSsn: string,
-    ownerChange: OwnerChange,
-  ): Promise<void> {
-    await this.vehicleOwnerChangeClient.saveOwnerChange(
-      currentUserSsn,
-      ownerChange,
-    )
+  async saveOwnerChange(user: User, ownerChange: OwnerChange): Promise<void> {
+    await this.vehicleOwnerChangeClient.saveOwnerChange(user, ownerChange)
   }
 }

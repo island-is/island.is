@@ -1,11 +1,15 @@
 import { Injectable } from '@nestjs/common'
 import { VehiclePrintingClient } from '@island.is/clients/transport-authority/vehicle-printing'
+import { User } from '@island.is/auth-nest-tools'
 
 @Injectable()
 export class OrderVehicleRegistrationCertificateApi {
   constructor(private readonly vehiclePrintingClient: VehiclePrintingClient) {}
 
-  async RequestRegistrationCardPrint(permno: string): Promise<void> {
-    this.vehiclePrintingClient.RequestRegistrationCardPrint(permno)
+  async RequestRegistrationCardPrint(
+    user: User,
+    permno: string,
+  ): Promise<void> {
+    this.vehiclePrintingClient.RequestRegistrationCardPrint(user, permno)
   }
 }

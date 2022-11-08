@@ -96,15 +96,15 @@ export const information = {
         defaultMessage: 'Nafn seljanda',
         description: 'Seller name label',
       },
-      phone: {
-        id: 'ta.tvo.application:information.labels.seller.phone',
-        defaultMessage: 'Gsm númer',
-        description: 'Seller phone number label',
-      },
       email: {
         id: 'ta.tvo.application:information.labels.seller.email',
         defaultMessage: 'Netfang',
         description: 'Seller email label',
+      },
+      phone: {
+        id: 'ta.tvo.application:information.labels.seller.phone',
+        defaultMessage: 'Gsm númer',
+        description: 'Seller phone number label',
       },
     }),
     coOwner: defineMessages({
@@ -123,15 +123,15 @@ export const information = {
         defaultMessage: 'Nafn meðeiganda',
         description: 'Co-owner name label',
       },
-      phone: {
-        id: 'ta.tvo.application:information.labels.coOwner.phone',
-        defaultMessage: 'Gsm númer',
-        description: 'Co-owner phone number label',
-      },
       email: {
         id: 'ta.tvo.application:information.labels.coOwner.email',
         defaultMessage: 'Netfang',
         description: 'Co-owner email label',
+      },
+      phone: {
+        id: 'ta.tvo.application:information.labels.coOwner.phone',
+        defaultMessage: 'Gsm númer',
+        description: 'Co-owner phone number label',
       },
       remove: {
         id: 'ta.tvo.application:information.labels.coOwner.remove',
@@ -165,6 +165,11 @@ export const information = {
         defaultMessage: 'Netfang',
         description: 'Operator email label',
       },
+      phone: {
+        id: 'ta.tvo.application:information.labels.operator.phone',
+        defaultMessage: 'Gsm númer',
+        description: 'Operator phone number label',
+      },
       remove: {
         id: 'ta.tvo.application:information.labels.operator.remove',
         defaultMessage: 'Fjarlægja umráðamann',
@@ -192,15 +197,15 @@ export const information = {
         defaultMessage: 'Nafn kaupanda',
         description: 'Buyer name label',
       },
-      phone: {
-        id: 'ta.tvo.application:information.labels.buyer.phone',
-        defaultMessage: 'Gsm númer',
-        description: 'Buyer phone number label',
-      },
       email: {
         id: 'ta.tvo.application:information.labels.buyer.email',
         defaultMessage: 'Netfang',
         description: 'Buyer email label',
+      },
+      phone: {
+        id: 'ta.tvo.application:information.labels.buyer.phone',
+        defaultMessage: 'Gsm númer',
+        description: 'Buyer phone number label',
       },
     }),
     mainOperator: defineMessages({

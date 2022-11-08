@@ -64,27 +64,6 @@ export class VehiclesResolver {
     @Args('input') input: GetVehicleDetailInput,
     @CurrentUser() user: User,
   ) {
-    // TODOx disabled while this api is flaky
-    return {
-      coOwners: [
-        {
-          nationalId: '1234567890',
-          owner: 'Co-owner name',
-        },
-        {
-          nationalId: '9876543210',
-          owner: 'Co-owner name 2',
-        },
-      ],
-      operators: [
-        {
-          nationalId: '9876543210',
-          name: 'Operator name',
-        },
-      ],
-      isOutOfCommission: Math.random() < 0.5,
-    }
-
     const data = await this.vehiclesService.getVehicleDetail(user, {
       clientPersidno: user.nationalId,
       permno: input.permno,
@@ -126,38 +105,6 @@ export class VehiclesResolver {
     @Args('input') input: GetCurrentVehiclesInput,
     @CurrentUser() user: User,
   ) {
-    // TODOx disabled while this api is flaky
-    return [
-      {
-        permno: 'FJ496',
-        make: 'Toyota Yaris',
-        color: 'Rauður',
-        role: '',
-        isStolen: false,
-      },
-      {
-        permno: 'RE634',
-        make: 'Kia Sorrento',
-        color: 'Hvítur',
-        role: '',
-        isStolen: false,
-      },
-      {
-        permno: 'OL712',
-        make: 'Ford Fiesta',
-        color: 'Blár',
-        role: '',
-        isStolen: true,
-      },
-      {
-        permno: 'LK561',
-        make: 'Hyundai i30',
-        color: 'Blár',
-        role: '',
-        isStolen: false,
-      },
-    ]
-
     return (
       await this.vehiclesService.getCurrentVehicles(
         user,
@@ -170,7 +117,7 @@ export class VehiclesResolver {
       make: vehicle.make,
       color: vehicle.color,
       role: vehicle.role,
-      isStolen: Math.random() < 0.5, //TODOx is missing for api endpoint
+      isStolen: vehicle.stolen,
     }))
   }
 
@@ -184,42 +131,6 @@ export class VehiclesResolver {
     @Args('input') input: GetCurrentVehiclesInput,
     @CurrentUser() user: User,
   ) {
-    // TODOx disabled while this api is flaky
-    return [
-      {
-        permno: 'ÞB252',
-        make: 'ARCTIC CAT PANTHERA',
-        color: 'Óþekktur litur',
-        role: '',
-        isStolen: false,
-        fees: { hasEncumbrances: false },
-      },
-      {
-        permno: 'IR962',
-        make: 'LADA 21043',
-        color: 'Rauður',
-        role: '',
-        isStolen: false,
-        fees: { hasEncumbrances: false },
-      },
-      {
-        permno: 'OL712',
-        make: 'Ford Fiesta',
-        color: 'Blár',
-        role: '',
-        isStolen: true,
-        fees: { hasEncumbrances: true },
-      },
-      {
-        permno: 'LK561',
-        make: 'Hyundai i30',
-        color: 'Blár',
-        role: '',
-        isStolen: false,
-        fees: { hasEncumbrances: true },
-      },
-    ]
-
     return await Promise.all(
       (await this.getCurrentVehicles(input, user)).map(
         async (vehicle: VehiclesCurrentVehicleWithFees) => {
@@ -249,9 +160,6 @@ export class VehiclesResolver {
     @Args('permno', { type: () => String }) permno: string,
     @CurrentUser() user: User,
   ) {
-    // TODOx disabled while this api is flaky
-    return { fees: { hasEncumbrances: Math.random() < 0.2 } }
-
     // TODOx use new api endpoint from FJS
     const vehicleDetails = await this.vehiclesService.getVehicleDetail(user, {
       clientPersidno: user.nationalId,

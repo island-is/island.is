@@ -3,6 +3,7 @@ import {
   Operator,
   VehicleOperatorsClient,
 } from '@island.is/clients/transport-authority/vehicle-operators'
+import { User } from '@island.is/auth-nest-tools'
 
 @Injectable()
 export class ChangeOperatorOfVehicleApi {
@@ -11,14 +12,10 @@ export class ChangeOperatorOfVehicleApi {
   ) {}
 
   async saveOperators(
-    currentUserSsn: string,
+    user: User,
     permno: string,
     newOperators: Operator[],
   ): Promise<void> {
-    await this.vehicleOperatorsClient.saveOperators(
-      currentUserSsn,
-      permno,
-      newOperators,
-    )
+    await this.vehicleOperatorsClient.saveOperators(user, permno, newOperators)
   }
 }

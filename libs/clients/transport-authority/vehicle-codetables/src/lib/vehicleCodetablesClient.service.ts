@@ -7,13 +7,6 @@ export class VehicleCodetablesClient {
   constructor(private readonly codetablesApi: CodeTableApi) {}
 
   public async getInsuranceCompanies(): Promise<InsuranceCompany[]> {
-    // TODOx disabled while SGS xroad is not working
-    return [
-      { code: '001', name: 'VÍS' },
-      { code: '002', name: 'Vörður' },
-      { code: '003', name: 'TM' },
-    ]
-
     const result = await this.codetablesApi.insurancecompaniesGet({})
 
     return result.map((item) => ({

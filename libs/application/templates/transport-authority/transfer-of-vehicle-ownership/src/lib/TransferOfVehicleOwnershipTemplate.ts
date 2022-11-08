@@ -77,7 +77,7 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: { target: States.REVIEW },
+          [DefaultEvents.SUBMIT]: { target: States.PAYMENT },
         },
       },
       [States.PAYMENT]: {
@@ -94,9 +94,9 @@ const template: ApplicationTemplate<
           onEntry: {
             apiModuleAction: ApiActions.createCharge,
           },
-          // onExit: {
-          //   apiModuleAction: ApiActions.initReview,
-          // },
+          onExit: {
+            apiModuleAction: ApiActions.initReview,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -111,7 +111,7 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
+          [DefaultEvents.SUBMIT]: { target: States.REVIEW },
           [DefaultEvents.ABORT]: { target: States.DRAFT },
         },
       },
@@ -132,13 +132,10 @@ const template: ApplicationTemplate<
             whenToPrune: (application: Application) =>
               pruneInDaysAtMidnight(application, 3),
           },
-          // onEntry: {
-          //   apiModuleAction: ApiActions.addReview,
-          //   shouldPersistToExternalData: true,
-          // },
-          // onExit: {
-          //   apiModuleAction: ApiActions.submitApplication,
-          // },
+          onEntry: {
+            apiModuleAction: ApiActions.addReview,
+            shouldPersistToExternalData: true,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -162,11 +159,40 @@ const template: ApplicationTemplate<
           [DefaultEvents.SUBMIT]: { target: States.REVIEW },
         },
       },
+      // [States.REJECTED]: {
+      //   meta: {
+      //     name: 'Rejected',
+      //     progress: 1,
+      //     lifecycle: pruneAfterDays(3 * 30),
+      //     onEntry: {
+      //       apiModuleAction: ApiActions.rejectApplication,
+      //     },
+      //     actionCard: {
+      //       tag: {
+      //         label: application.actionCardRejected,
+      //         variant: 'blueberry',
+      //       },
+      //     },
+      //     roles: [
+      //       {
+      //         id: Roles.APPLICANT,
+      //         formLoader: () =>
+      //           import('../forms/Rejected').then((val) =>
+      //             Promise.resolve(val.Approved),
+      //           ),
+      //         read: 'all',
+      //       },
+      //     ],
+      //   },
+      // },
       [States.COMPLETED]: {
         meta: {
           name: 'Completed',
           progress: 1,
           lifecycle: pruneAfterDays(3 * 30),
+          onEntry: {
+            apiModuleAction: ApiActions.submitApplication,
+          },
           actionCard: {
             tag: {
               label: application.actionCardDone,

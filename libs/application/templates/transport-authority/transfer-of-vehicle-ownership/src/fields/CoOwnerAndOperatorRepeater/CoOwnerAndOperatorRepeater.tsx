@@ -11,6 +11,7 @@ export type CoOwnerAndOperatorField = {
   nationalId: string
   name: string
   email: string
+  phone: string
   type: 'operator' | 'coOwner'
 }
 
@@ -28,6 +29,7 @@ export const CoOwnerAndOperatorRepeater: FC<FieldBaseProps> = (props) => {
       name: '',
       nationalId: '',
       email: '',
+      phone: '',
       type,
     })
 
@@ -44,7 +46,7 @@ export const CoOwnerAndOperatorRepeater: FC<FieldBaseProps> = (props) => {
             : allCoOwners.indexOf(field)
         return (
           <CoOwnerAndOperatorRepeaterItem
-            id="coOwnerAndOperator"
+            id="buyerCoOwnerAndOperator"
             repeaterField={field}
             index={index}
             rowLocation={rowLocation + 1}

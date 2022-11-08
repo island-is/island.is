@@ -84,6 +84,23 @@ export const CoOwner: FC<FieldBaseProps> = ({ application, field }) => {
                 required
               />
             </Box>
+            <Box marginTop={2}>
+              <InputController
+                id={`${id}[${index}].phone`}
+                name={`${id}[${index}].phone`}
+                label={formatMessage(information.labels.coOwner.phone)}
+                defaultValue={
+                  getValueViaPath(
+                    application.answers,
+                    `${id}[${index}].phone`,
+                    '',
+                  ) as string
+                }
+                type="tel"
+                backgroundColor="blue"
+                required
+              />
+            </Box>
           </Box>
         ),
       )}

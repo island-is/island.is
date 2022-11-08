@@ -58,7 +58,7 @@ export class ChangeOperatorOfVehicleService {
 
     // Submit the application
     await this.changeOperatorOfVehicleApi.saveOperators(
-      auth.nationalId,
+      auth,
       answers?.vehicle?.plate,
       answers?.operators.map((operator) => ({
         ssn: operator.nationalId,

@@ -50,8 +50,17 @@ export const sellerSubSection = buildSubSection({
           defaultValue: (application: Application) =>
             application.externalData?.userProfile?.data?.email,
         }),
+        buildTextField({
+          id: 'seller.phone',
+          title: information.labels.seller.phone,
+          width: 'full',
+          variant: 'tel',
+          required: true,
+          defaultValue: (application: Application) =>
+            application.externalData?.userProfile?.data?.phone,
+        }),
         buildCustomField({
-          id: 'coOwner',
+          id: 'sellerCoOwner',
           title: '',
           component: 'CoOwner',
         }),

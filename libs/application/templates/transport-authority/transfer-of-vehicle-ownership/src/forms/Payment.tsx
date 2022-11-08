@@ -100,7 +100,7 @@ export const Payment: Form = buildForm({
           component: 'PaymentPending',
           title: conclusion.general.title,
           condition: (_, externalData) => {
-            //TODOx remove, used to make payment testing easy
+            //TODOx remove, used to make testing payment easy
             const url = window.location.href
             const applicationId = url.substring(
               url.lastIndexOf('/') + 1,

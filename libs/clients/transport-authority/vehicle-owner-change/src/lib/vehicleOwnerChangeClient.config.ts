@@ -1,10 +1,12 @@
 import { defineConfig } from '@island.is/nest/config'
 import * as z from 'zod'
+import { VehiclesScope } from '@island.is/auth/scopes'
 
 const schema = z.object({
   xroadBaseUrl: z.string(),
   xroadClientId: z.string(),
   xroadPath: z.string(),
+  scope: z.array(z.string()),
 })
 
 export const VehicleOwnerChangeClientConfig = defineConfig<
@@ -23,6 +25,7 @@ export const VehicleOwnerChangeClientConfig = defineConfig<
         'XROAD_VEHICLE_OWNER_CHANGE_PATH',
         'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Ownerchange-V2',
       ),
+      scope: [VehiclesScope.vehicle],
     }
   },
 })

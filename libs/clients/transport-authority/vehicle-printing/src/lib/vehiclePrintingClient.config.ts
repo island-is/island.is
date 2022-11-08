@@ -1,10 +1,12 @@
 import { defineConfig } from '@island.is/nest/config'
 import * as z from 'zod'
+import { VehiclesScope } from '@island.is/auth/scopes'
 
 const schema = z.object({
   xroadBaseUrl: z.string(),
   xroadClientId: z.string(),
   xroadPath: z.string(),
+  scope: z.array(z.string()),
 })
 
 export const VehiclePrintingClientConfig = defineConfig<z.infer<typeof schema>>(
@@ -22,6 +24,7 @@ export const VehiclePrintingClientConfig = defineConfig<z.infer<typeof schema>>(
           'XROAD_VEHICLE_PRINTING_PATH',
           'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Printing-V1',
         ),
+        scope: [VehiclesScope.vehicle],
       }
     },
   },

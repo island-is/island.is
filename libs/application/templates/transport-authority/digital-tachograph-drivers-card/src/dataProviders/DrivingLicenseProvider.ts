@@ -30,7 +30,7 @@ export class DrivingLicenseProvider extends BasicDataProvider {
         const licenseCategories = drivingLicenseData?.categories?.map(
           (x) => x.name,
         )
-        const validCategories = ['C', 'C1', 'D', 'D1', 'B'] //TODOx remove B
+        const validCategories = ['C', 'C1', 'D', 'D1']
         if (
           !licenseCategories ||
           !licenseCategories.some((x) => validCategories.includes(x))

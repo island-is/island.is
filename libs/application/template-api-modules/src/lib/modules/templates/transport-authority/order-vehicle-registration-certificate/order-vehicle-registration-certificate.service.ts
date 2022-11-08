@@ -57,6 +57,7 @@ export class OrderVehicleLicensePlateService {
     const answers = application.answers as OrderVehicleRegistrationCertificateAnswers
 
     this.orderVehicleRegistrationCertificateApi.RequestRegistrationCardPrint(
+      auth,
       answers?.vehicle?.plate,
     )
   }

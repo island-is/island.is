@@ -1,3 +1,4 @@
+import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
 import { RegistrationApi } from '../../gen/fetch/apis'
 
@@ -5,8 +6,17 @@ import { RegistrationApi } from '../../gen/fetch/apis'
 export class VehiclePrintingClient {
   constructor(private readonly registrationApi: RegistrationApi) {}
 
-  public async RequestRegistrationCardPrint(permno: string): Promise<void> {
-    await this.registrationApi.registrationRequestregistrationcardprintPost({
+  private registrationApiWithAuth(auth: Auth) {
+    return this.registrationApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  public async RequestRegistrationCardPrint(
+    auth: User,
+    permno: string,
+  ): Promise<void> {
+    await this.registrationApiWithAuth(
+      auth,
+    ).registrationRequestregistrationcardprintPost({
       permno: permno,
     })
   }
