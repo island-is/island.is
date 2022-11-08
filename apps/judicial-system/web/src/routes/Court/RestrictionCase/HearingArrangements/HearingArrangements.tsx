@@ -46,7 +46,7 @@ export const HearingArrangements: React.FC = () => {
 
   const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
   const {
-    setAndSendToServer,
+    setAndSendCaseToServer,
     sendNotification,
     isSendingNotification,
   } = useCase()
@@ -66,7 +66,7 @@ export const HearingArrangements: React.FC = () => {
         setInitialAutoFillDone(true)
       }
 
-      setAndSendToServer(
+      setAndSendCaseToServer(
         [
           // validToDate, isolationToDate and isCustodyIsolation are autofilled here
           // so they are ready for conclusion autofill later
@@ -94,7 +94,7 @@ export const HearingArrangements: React.FC = () => {
       )
     }
   }, [
-    setAndSendToServer,
+    setAndSendCaseToServer,
     initialAutoFillDone,
     isCaseUpToDate,
     setCourtDate,
@@ -107,7 +107,7 @@ export const HearingArrangements: React.FC = () => {
       (notification) => notification.type === NotificationType.COURT_DATE,
     )
 
-    setAndSendToServer(
+    setAndSendCaseToServer(
       [
         {
           courtDate: courtDate
@@ -129,7 +129,7 @@ export const HearingArrangements: React.FC = () => {
     }
   }, [
     workingCase,
-    setAndSendToServer,
+    setAndSendCaseToServer,
     courtDate,
     setWorkingCase,
     courtDateHasChanged,
