@@ -45,7 +45,7 @@ export const getApplication = (allowFakeData = false): Form => {
             dataProviders: [
               buildDataProviderItem({
                 id: 'nationalRegistry',
-                type: 'NationalRegistryProvider',
+                type: 'IdentityProvider',
                 title: m.dataCollectionNationalRegistryTitle,
                 subTitle: m.dataCollectionNationalRegistrySubtitle,
               }),
