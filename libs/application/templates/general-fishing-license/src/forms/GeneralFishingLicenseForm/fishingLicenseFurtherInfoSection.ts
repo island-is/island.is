@@ -5,7 +5,6 @@ import {
   buildFileUploadField,
   buildMultiField,
   buildSection,
-  buildSelectField,
   getValueViaPath,
 } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
@@ -125,16 +124,8 @@ export const fishingLicenseFurtherInfoSection = buildSection({
         buildCustomField({
           id: 'fishingLicenseFurtherInformation.railAndRoeNet',
           title: '',
-          doesNotRequireAnswer: true,
           component: 'RailNetAndRoeNetCalculations',
           condition: hasRailNetAndRoeNetField,
-        }),
-        // Display custom validation errors if applicable
-        buildCustomField({
-          id: 'fishingLicenseFurtherInformation.customError',
-          title: '',
-          doesNotRequireAnswer: true,
-          component: 'CustomLicensesErrorCheck',
         }),
       ],
     }),
