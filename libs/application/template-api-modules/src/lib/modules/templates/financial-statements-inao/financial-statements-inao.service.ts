@@ -80,8 +80,9 @@ export class FinancialStatementsInaoTemplateService {
         .promise()
       const fileContent = file.Body as Buffer
       return fileContent?.toString('base64') || ''
-    } catch (error) {}
-    return ''
+    } catch (error) {
+      throw new Error('Villa kom kom upp við að senda umsókn')
+    }
   }
 
   async getUserType({ auth }: TemplateApiModuleActionProps) {
