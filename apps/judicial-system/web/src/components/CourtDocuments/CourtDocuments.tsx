@@ -30,7 +30,7 @@ interface Props {
 const CourtDocuments: FC<Props> = (props) => {
   const { workingCase, setWorkingCase } = props
   const { formatMessage } = useIntl()
-  const { setAndSendToServer } = useCase()
+  const { setAndSendCaseToServer } = useCase()
   const [submittedByMenuIsOpen, setSubmittedByMenuIsOpen] = useState<boolean>(
     false,
   )
@@ -112,7 +112,7 @@ const CourtDocuments: FC<Props> = (props) => {
       return doc.name !== name
     })
 
-    setAndSendToServer(
+    setAndSendCaseToServer(
       [{ courtDocuments: updatedCourtDocuments, force: true }],
       workingCase,
       setWorkingCase,
@@ -125,7 +125,7 @@ const CourtDocuments: FC<Props> = (props) => {
       { name: document } as CourtDocument,
     ]
 
-    setAndSendToServer(
+    setAndSendCaseToServer(
       [{ courtDocuments: updatedCourtDocuments, force: true }],
       workingCase,
       setWorkingCase,
@@ -137,7 +137,7 @@ const CourtDocuments: FC<Props> = (props) => {
       idx === index ? ({ name: doc.name, submittedBy } as CourtDocument) : doc,
     )
 
-    setAndSendToServer(
+    setAndSendCaseToServer(
       [
         {
           courtDocuments: updatedCourtDocuments,
