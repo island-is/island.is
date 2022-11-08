@@ -82,7 +82,7 @@ export const getApplication = (allowFakeData = false): Form => {
         },
         children: [
           buildFileUploadField({
-            id: 'attachment.file',
+            id: 'attachments.file',
             title: m.upload,
             condition: (answers, externalData) => {
               const userType = getCurrentUserType(answers, externalData)

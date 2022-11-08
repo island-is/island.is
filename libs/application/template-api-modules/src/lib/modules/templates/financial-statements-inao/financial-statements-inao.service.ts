@@ -8,8 +8,14 @@ import {
 import * as kennitala from 'kennitala'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-import { ApplicationTypes } from '@island.is/application/types'
+import {
+  ApplicationTypes,
+  ApplicationWithAttachments as Application,
+} from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
+import AmazonS3URI from 'amazon-s3-uri'
+
+import { S3 } from 'aws-sdk'
 import {
   mapValuesToIndividualtype,
   mapValuesToPartytype,
@@ -18,6 +24,11 @@ import {
 import { USERTYPE } from './types'
 
 const LESS = 'less'
+
+export interface AttachmentData {
+  key: string
+  name: string
+}
 
 export const getCurrentUserType = (answers: any, externalData: any) => {
   const fakeUserType: any = getValueViaPath(answers, 'fakeData.options')
@@ -34,10 +45,45 @@ export interface DataResponse {
 }
 @Injectable()
 export class FinancialStatementsInaoTemplateService extends BaseTemplateApiService {
+  s3: S3
   constructor(
     private financialStatementsClientService: FinancialStatementsInaoClientService,
   ) {
     super(ApplicationTypes.FINANCIAL_STATEMENTS_INAO)
+    this.s3 = new S3()
+  }
+
+  private async getAttachment(application: Application): Promise<string> {
+    const attachments: AttachmentData[] | undefined = getValueViaPath(
+      application.answers,
+      'attachments.file',
+    ) as Array<{ key: string; name: string }>
+
+    const attachmentKey = attachments[0].key
+
+    const fileName = (application.attachments as {
+      [key: string]: string
+    })[attachmentKey]
+
+    if (!fileName) {
+      return Promise.reject({})
+    }
+
+    const { bucket, key } = AmazonS3URI(fileName)
+
+    const uploadBucket = bucket
+    try {
+      const file = await this.s3
+        .getObject({
+          Bucket: uploadBucket,
+          Key: key,
+        })
+        .promise()
+      const fileContent = file.Body as Buffer
+      return fileContent?.toString('base64') || ''
+    } catch (error) {
+      throw new Error('Villa kom kom upp við að senda umsókn')
+    }
   }
 
   async getUserType({ auth }: TemplateApiModuleActionProps) {
@@ -75,6 +121,10 @@ export class FinancialStatementsInaoTemplateService extends BaseTemplateApiServi
 
       const noValueStatement = electionIncomeLimit === LESS ? true : false
 
+      const fileName = noValueStatement
+        ? undefined
+        : await this.getAttachment(application)
+
       const result: DataResponse = await this.financialStatementsClientService
         .postFinancialStatementForPersonalElection(
           nationalId,
@@ -83,6 +133,7 @@ export class FinancialStatementsInaoTemplateService extends BaseTemplateApiServi
           noValueStatement,
           clientName,
           values,
+          fileName,
         )
         .then((data) => {
           if (data === true) {
@@ -110,16 +161,16 @@ export class FinancialStatementsInaoTemplateService extends BaseTemplateApiServi
         'conditionalAbout.operatingYear',
       ) as string
 
-      // default to comment to empty string, currently there's no comment field
-      const comment = ''
+      const fileName = await this.getAttachment(application)
 
       const result: DataResponse = await this.financialStatementsClientService
         .postFinancialStatementForPoliticalParty(
           nationalId,
           actor?.nationalId,
           year,
-          comment,
+          '',
           values,
+          fileName,
         )
         .then((data) => {
           if (data === true) {
@@ -147,16 +198,18 @@ export class FinancialStatementsInaoTemplateService extends BaseTemplateApiServi
         'conditionalAbout.operatingYear',
       ) as string
 
-      // default to comment to empty string, currently there's no comment field
-      const comment = ''
+      const file = getValueViaPath(answers, 'attachments.file')
+
+      const fileName = file ? await this.getAttachment(application) : undefined
 
       const result: DataResponse = await this.financialStatementsClientService
         .postFinancialStatementForCemetery(
           nationalId,
           actor?.nationalId,
           year,
-          comment,
+          '',
           values,
+          fileName,
         )
         .then((data) => {
           if (data === true) {

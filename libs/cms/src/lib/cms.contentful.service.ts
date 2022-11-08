@@ -140,21 +140,23 @@ export class CmsContentfulService {
     }
   }
 
-  async getOrganizations({
-    lang = 'is-IS',
-    organizationTitles,
-  }: GetOrganizationsInput): Promise<Organizations> {
+  async getOrganizations(input: GetOrganizationsInput): Promise<Organizations> {
+    const organizationTitles = input?.organizationTitles && {
+      'fields.title[in]': input.organizationTitles.join(','),
+    }
+
     const params = {
       ['content_type']: 'organization',
       include: 10,
       limit: 1000,
-      ...(organizationTitles && {
-        'fields.title[in]': organizationTitles.join(','),
-      }),
+      ...organizationTitles,
     }
 
     const result = await this.contentfulRepository
-      .getLocalizedEntries<types.IOrganizationFields>(lang, params)
+      .getLocalizedEntries<types.IOrganizationFields>(
+        input?.lang ?? 'is-IS',
+        params,
+      )
       .catch(errorHandler('getOrganizations'))
 
     return {
