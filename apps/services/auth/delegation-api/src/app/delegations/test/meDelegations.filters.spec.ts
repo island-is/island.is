@@ -220,7 +220,7 @@ describe('MeDelegationsController filters', () => {
     expect(res.status).toEqual(400)
     expect(res.body).toMatchInlineSnapshot(`
       Object {
-        "detail": "direction=outgoing is currently the only supported value",
+        "detail": "direction must be either 'incoming' or 'outgoing'.",
         "status": 400,
         "title": "Bad Request",
         "type": "https://httpstatuses.org/400",
