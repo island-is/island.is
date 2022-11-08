@@ -290,7 +290,7 @@ const DataFields = ({
                   <Box marginY={3}>
                     <Pagination
                       page={page}
-                      totalPages={Math.round(field.fields.length / pageSize)}
+                      totalPages={Math.ceil(field.fields.length / pageSize)}
                       renderLink={(page, className, children) => (
                         <Box
                           cursor="pointer"

@@ -17,27 +17,27 @@ export class ApiScopeTreeDTO {
 
   @ApiProperty({
     description: 'Name of the api scope or api scope group.',
-    example: 'finances',
+    example: '@island.is/finances',
   })
-  name!: string
+  name: string
 
   @ApiProperty({
     description: 'Display name of the api scope or api scope group.',
     example: 'Fjármál',
   })
-  displayName!: string
+  displayName: string
 
   @ApiProperty({
     description: 'Description of the api scope or api scope group.',
     example: 'Aðgangur að fjármálum.',
   })
-  description!: string
+  description: string
 
   @ApiProperty({
     description: 'Domain name which the scope or group belongs to.',
     example: '@island.is',
   })
-  domainName!: string
+  domainName: string
 
   @ApiPropertyOptional({
     description:

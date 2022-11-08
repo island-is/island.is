@@ -9,17 +9,12 @@ export enum NotificationType {
   DEFENDER_ASSIGNED = 'DEFENDER_ASSIGNED',
 }
 
-export interface Recipient {
-  success: boolean
-  address?: string
-}
-
 export interface Notification {
   id: string
   created: string
   caseId: string
   type: NotificationType
-  recipients: Recipient[]
+  recipients?: string
 }
 
 export interface SendNotification {
