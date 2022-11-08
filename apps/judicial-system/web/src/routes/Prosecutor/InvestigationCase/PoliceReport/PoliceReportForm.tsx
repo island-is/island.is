@@ -31,7 +31,7 @@ const PoliceReportForm: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase, isLoading } = props
 
   const { formatMessage } = useIntl()
-  const { updateCase, setAndSendToServer } = useCase()
+  const { updateCase, setAndSendCaseToServer } = useCase()
 
   const [caseFactsEM, setCaseFactsEM] = useState<string>('')
   const [legalArgumentsEM, setLegalArgumentsEM] = useState<string>('')
@@ -45,7 +45,7 @@ const PoliceReportForm: React.FC<Props> = (props) => {
       !workingCase.prosecutorOnlySessionRequest &&
       workingCase.requestProsecutorOnlySession
     ) {
-      setAndSendToServer(
+      setAndSendCaseToServer(
         [
           {
             prosecutorOnlySessionRequest: formatMessage(
@@ -57,7 +57,7 @@ const PoliceReportForm: React.FC<Props> = (props) => {
         setWorkingCase,
       )
     }
-  }, [setAndSendToServer, formatMessage, setWorkingCase, workingCase])
+  }, [setAndSendCaseToServer, formatMessage, setWorkingCase, workingCase])
 
   return (
     <>

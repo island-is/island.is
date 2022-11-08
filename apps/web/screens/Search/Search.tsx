@@ -52,6 +52,7 @@ import {
   SubArticle,
   GetSearchResultsTotalQuery,
   OrganizationSubpage,
+  OrganizationPage,
   Link as LinkItem,
   ProjectPage,
 } from '@island.is/web/graphql/schema'
@@ -94,6 +95,7 @@ type SearchType = Article &
   AdgerdirPage &
   SubArticle &
   OrganizationSubpage &
+  OrganizationPage &
   LinkItem &
   ProjectPage
 
@@ -107,6 +109,7 @@ const connectedTypes: Partial<
     'WebArticle',
     'WebSubArticle',
     'WebOrganizationSubpage',
+    'webOrganizationPage',
     'WebProjectPage',
   ],
   webAdgerdirPage: ['WebAdgerdirPage'],
@@ -307,6 +310,7 @@ const Search: Screen<CategoryProps> = ({
     ) {
       return linkResolver('digitalicelandservicesdetailpage', [item.slug])
     }
+
     return linkResolver(item.__typename, item?.url ?? item.slug.split('/'))
   }
 
@@ -320,6 +324,14 @@ const Search: Screen<CategoryProps> = ({
         thumbnail: undefined,
       }
     }
+    if (item.__typename === 'OrganizationPage') {
+      return {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        image: (item as any)?.singleOrganization?.logo,
+        thumbnail: undefined,
+      }
+    }
+
     return {
       ...(item.image && { image: item.image as Image }),
       ...(item.thumbnail && { thumbnail: item.thumbnail as Image }),
@@ -637,6 +649,7 @@ const Search: Screen<CategoryProps> = ({
                         dataTestId="search-result"
                         image={thumbnail ? thumbnail : image}
                         subTitle={parentTitle}
+                        highlightedResults={true}
                         {...rest}
                       />
                     )
@@ -705,18 +718,23 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
   const types: SearchableContentTypes[] = stringToArray(type).map(
     (x: SearchableContentTypes) => x,
   )
-
-  const allTypes = [
-    'webArticle' as SearchableContentTypes,
-    'webLifeEventPage' as SearchableContentTypes,
-    'webDigitalIcelandService' as SearchableContentTypes,
-    'webAdgerdirPage' as SearchableContentTypes,
-    'webSubArticle' as SearchableContentTypes,
-    'webLink' as SearchableContentTypes,
-    'webNews' as SearchableContentTypes,
-    'webOrganizationSubpage' as SearchableContentTypes,
-    'webProjectPage' as SearchableContentTypes,
+  const allTypes: `${SearchableContentTypes}`[] = [
+    'webArticle',
+    'webLifeEventPage',
+    'webDigitalIcelandService',
+    'webAdgerdirPage',
+    'webSubArticle',
+    'webLink',
+    'webNews',
+    'webOrganizationSubpage',
+    'webOrganizationPage',
+    'webProjectPage',
   ]
+
+  const ensureContentTypeExists = (
+    types: string[],
+  ): types is SearchableContentTypes[] =>
+    !!types.length && allTypes.every((type) => allTypes.includes(type))
 
   const [
     {
@@ -728,21 +746,28 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
     namespace,
   ] = await Promise.all([
     apolloClient.query<GetSearchResultsDetailedQuery, QuerySearchResultsArgs>({
+      fetchPolicy: 'no-cache', // overriding because at least local caching is broken
       query: GET_SEARCH_RESULTS_QUERY_DETAILED,
       variables: {
         query: {
           language: locale as ContentLanguage,
           queryString,
-          types: types.length ? types : allTypes,
+          types: types.length
+            ? types
+            : ensureContentTypeExists(allTypes)
+            ? allTypes
+            : [],
           ...(tags.length && { tags }),
           ...countTag,
           countTypes: true,
           size: PERPAGE,
           page,
+          highlightResults: true,
         },
       },
     }),
     apolloClient.query<GetSearchResultsNewsQuery, QuerySearchResultsArgs>({
+      fetchPolicy: 'no-cache', // overriding because at least local caching is broken
       query: GET_SEARCH_COUNT_QUERY,
       variables: {
         query: {
@@ -753,7 +778,7 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
             'organization' as SearchableTags,
             'processentry' as SearchableTags,
           ],
-          types: allTypes,
+          types: ensureContentTypeExists(allTypes) ? allTypes : [],
           countTypes: true,
           countProcessEntry: true,
         },
@@ -778,7 +803,6 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
   if (searchResults.items.length === 0 && page > 1) {
     throw new CustomNextError(404)
   }
-
   return {
     q: queryString,
     searchResults,

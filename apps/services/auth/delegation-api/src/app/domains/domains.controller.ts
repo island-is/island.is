@@ -2,12 +2,17 @@ import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common'
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 
 import {
-  ApiScope,
   ApiScopeTreeDTO,
   DelegationResourcesService,
   DomainDTO,
 } from '@island.is/auth-api-lib'
-import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import {
+  CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+  User,
+} from '@island.is/auth-nest-tools'
 import { AuthScope } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
 import {
@@ -60,8 +65,11 @@ export class DomainsController {
   @Audit<DomainDTO[]>({
     resources: (domains) => domains.map((domain) => domain.name),
   })
-  findAll(@Query('lang') language?: string): Promise<DomainDTO[]> {
-    return this.resourceService.findAllDomains(language)
+  findAll(
+    @CurrentUser() user: User,
+    @Query('lang') language?: string,
+  ): Promise<DomainDTO[]> {
+    return this.resourceService.findAllDomains(user, language)
   }
 
   @Get(':domainName')
@@ -85,10 +93,11 @@ export class DomainsController {
     resources: (domain) => domain.name,
   })
   findOne(
+    @CurrentUser() user: User,
     @Param('domainName') domainName: string,
     @Query('lang') language?: string,
   ): Promise<DomainDTO> {
-    return this.resourceService.findOneDomain(domainName, language)
+    return this.resourceService.findOneDomain(user, domainName, language)
   }
 
   @Get(':domainName/scope-tree')
@@ -108,15 +117,16 @@ export class DomainsController {
     resources: (scopeTree) => scopeTree.map((node) => node.name),
   })
   findScopeTree(
+    @CurrentUser() user: User,
     @Param('domainName') domainName: string,
     @Query('lang') language?: string,
   ): Promise<ApiScopeTreeDTO[]> {
-    return this.resourceService.findScopeTree(domainName, language)
+    return this.resourceService.findScopeTree(user, domainName, language)
   }
 
   @Get(':domainName/scopes')
   @Documentation({
-    description: 'Returns the list of scopes for the given domain.',
+    description: 'Returns a list of scopes for the given domain.',
     request: {
       params: {
         domainName,
@@ -125,12 +135,13 @@ export class DomainsController {
         lang,
       },
     },
-    response: { status: 200, type: [ApiScope] },
+    response: { status: 200, type: [ApiScopeTreeDTO] },
   })
   async findScopes(
+    @CurrentUser() user: User,
     @Param('domainName') domainName: string,
     @Query('lang') language?: string,
-  ): Promise<ApiScope[]> {
-    return this.resourceService.findScopes(domainName, language)
+  ): Promise<ApiScopeTreeDTO[]> {
+    return this.resourceService.findScopes(user, domainName, language)
   }
 }
