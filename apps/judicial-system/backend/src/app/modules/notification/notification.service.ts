@@ -816,7 +816,12 @@ export class NotificationService {
     )
   }
 
-  private async sendRulingEmailNotificationToDefender(theCase: Case) {
+  private async sendRulingEmailNotificationToDefender(
+    theCase: Case,
+    defenderNationalId?: string,
+    defenderName?: string,
+    defenderEmail?: string,
+  ) {
     return this.sendEmail(
       isIndictmentCase(theCase.type)
         ? this.formatMessage(notifications.caseCompleted.subject, {
@@ -830,7 +835,7 @@ export class NotificationService {
         ? this.formatMessage(notifications.caseCompleted.defenderBody, {
             courtCaseNumber: theCase.courtCaseNumber,
             courtName: theCase.court?.name?.replace('dómur', 'dómi'),
-            defenderHasAccessToRvg: Boolean(theCase.defenderNationalId),
+            defenderHasAccessToRvg: Boolean(defenderNationalId),
             linkStart: `<a href="${formatDefenderRoute(
               this.config.clientUrl,
               theCase.type,
@@ -842,7 +847,7 @@ export class NotificationService {
             isModifyingRuling: Boolean(theCase.rulingModifiedHistory),
             courtCaseNumber: theCase.courtCaseNumber,
             courtName: theCase.court?.name?.replace('dómur', 'dómi'),
-            defenderHasAccessToRvg: Boolean(theCase.defenderNationalId),
+            defenderHasAccessToRvg: Boolean(defenderNationalId),
             linkStart: `<a href="${formatDefenderRoute(
               this.config.clientUrl,
               theCase.type,
@@ -853,8 +858,8 @@ export class NotificationService {
               `generated/${theCase.id}/ruling.pdf`,
             ),
           }),
-      theCase.defenderName ?? '',
-      theCase.defenderEmail ?? '',
+      defenderName ?? '',
+      defenderEmail ?? '',
     )
   }
 
@@ -928,11 +933,20 @@ export class NotificationService {
     theCase: Case,
   ): Promise<SendNotificationResponse> {
     const promises = [this.sendRunlingEmailNotificationToProsecutor(theCase)]
-
-    if (
+    if (isIndictmentCase(theCase.type) && theCase.defendants) {
+      theCase.defendants.forEach((defendant) => {
+        promises.push(
+          this.sendRulingEmailNotificationToDefender(
+            theCase,
+            defendant.defenderNationalId,
+            defendant.defenderName,
+            defendant.defenderEmail,
+          ),
+        )
+      })
+    } else if (
       theCase.defenderEmail &&
-      (isIndictmentCase(theCase.type) ||
-        isRestrictionCase(theCase.type) ||
+      (isRestrictionCase(theCase.type) ||
         (isInvestigationCase(theCase.type) &&
           theCase.sessionArrangements &&
           [
@@ -940,7 +954,14 @@ export class NotificationService {
             SessionArrangements.ALL_PRESENT_SPOKESPERSON,
           ].includes(theCase.sessionArrangements)))
     ) {
-      this.sendRulingEmailNotificationToDefender(theCase)
+      promises.push(
+        this.sendRulingEmailNotificationToDefender(
+          theCase,
+          theCase.defenderNationalId,
+          theCase.defenderName,
+          theCase.defenderEmail,
+        ),
+      )
     }
 
     if (isRestrictionCase(theCase.type)) {
