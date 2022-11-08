@@ -251,7 +251,7 @@ export const dataSchema = z.object({
   asset,
   equity,
   liability,
-  attachment: z.object({
+  attachments: z.object({
     file: z.array(FileSchema).nonempty(),
   }),
 })
