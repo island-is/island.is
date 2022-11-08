@@ -1224,39 +1224,67 @@ export class NotificationService {
   private async sendDefenderAssignedNotifications(
     theCase: Case,
   ): Promise<SendNotificationResponse> {
-    const defenderEmail = theCase.defenderEmail
-    if (!theCase.defenderNationalId || !defenderEmail) {
-      return Promise.resolve({ notificationSent: false })
-    }
-
+    const promises: Promise<Recipient>[] = []
     const pastNotifications = await this.notificationModel.findAll({
       where: { caseId: theCase.id, type: NotificationType.DEFENDER_ASSIGNED },
     })
-    const hasSentNotificationBefore = pastNotifications.some(({ recipients }) =>
-      recipients?.includes(defenderEmail),
-    )
 
-    if (hasSentNotificationBefore) {
-      return Promise.resolve({ notificationSent: false })
+    if (isIndictmentCase(theCase.type) && theCase.defendants) {
+      theCase.defendants.forEach((defendant) => {
+        const { defenderEmail, defenderNationalId, defenderName } = defendant
+
+        if (!defenderNationalId || !defenderEmail) {
+          return Promise.resolve({ notificationSent: false })
+        }
+
+        const hasSentNotificationBefore = pastNotifications.some(
+          ({ recipients }) => recipients?.includes(defenderEmail),
+        )
+
+        if (hasSentNotificationBefore) {
+          return Promise.resolve({ notificationSent: false })
+        }
+
+        const { subject, body } = formatDefenderAssignedEmailNotification(
+          this.formatMessage,
+          theCase,
+          `${this.config.clientUrl}${DEFENDER_ROUTE}/${theCase.id}`,
+        )
+
+        promises.push(
+          this.sendEmail(subject, body, defenderName, defenderEmail),
+        )
+      })
+    } else {
+      const { defenderEmail, defenderNationalId, defenderName } = theCase
+
+      if (!defenderNationalId || !defenderEmail) {
+        return Promise.resolve({ notificationSent: false })
+      }
+
+      const hasSentNotificationBefore = pastNotifications.some(
+        ({ recipients }) => recipients?.includes(defenderEmail),
+      )
+
+      if (hasSentNotificationBefore) {
+        return Promise.resolve({ notificationSent: false })
+      }
+
+      const { subject, body } = formatDefenderAssignedEmailNotification(
+        this.formatMessage,
+        theCase,
+        `${this.config.clientUrl}${DEFENDER_ROUTE}/${theCase.id}`,
+      )
+
+      promises.push(this.sendEmail(subject, body, defenderName, defenderEmail))
     }
 
-    const { subject, body } = formatDefenderAssignedEmailNotification(
-      this.formatMessage,
-      theCase,
-      `${this.config.clientUrl}${DEFENDER_ROUTE}/${theCase.id}`,
-    )
-
-    const recipient = await this.sendEmail(
-      subject,
-      body,
-      theCase.defenderName,
-      defenderEmail,
-    )
+    const recipients = await Promise.all(promises)
 
     return this.recordNotification(
       theCase.id,
       NotificationType.DEFENDER_ASSIGNED,
-      [recipient],
+      recipients,
     )
   }
 
