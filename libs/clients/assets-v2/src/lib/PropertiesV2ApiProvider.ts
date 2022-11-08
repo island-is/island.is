@@ -1,0 +1,47 @@
+import { Provider } from '@nestjs/common/interfaces/modules/provider.interface'
+import nodeFetch, { Request } from 'node-fetch'
+
+import { createEnhancedFetch } from '@island.is/clients/middlewares'
+import {
+  ConfigType,
+  LazyDuringDevScope,
+  XRoadConfig,
+} from '@island.is/nest/config'
+
+import {
+  Configuration,
+  FasteignirApi as FasteignirApiV2,
+} from '../../gen/fetch'
+import { AssetsV2ClientConfig } from './assetsV2.config'
+
+export const PropertiesV2ApiProvider: Provider<FasteignirApiV2> = {
+  provide: FasteignirApiV2,
+  scope: LazyDuringDevScope,
+  useFactory: (
+    xroadConfig: ConfigType<typeof XRoadConfig>,
+    config: ConfigType<typeof AssetsV2ClientConfig>,
+  ) =>
+    new FasteignirApiV2(
+      new Configuration({
+        fetchApi: createEnhancedFetch({
+          name: 'clients-assets-v2',
+          ...config.fetch,
+          fetch: (url, init) => {
+            // The Properties API expects two different authorization headers for some reason.
+            const request = new Request(url, init)
+            request.headers.set(
+              'authorization-identity',
+              request.headers.get('authorization') ?? '',
+            )
+            return nodeFetch(request)
+          },
+        }),
+        basePath: `${xroadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
+        headers: {
+          'X-Road-Client': xroadConfig.xRoadClient,
+          Accept: 'application/json',
+        },
+      }),
+    ),
+  inject: [XRoadConfig.KEY, AssetsV2ClientConfig.KEY],
+}
