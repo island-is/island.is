@@ -33,7 +33,7 @@ export class UserProfileService extends BaseTemplateApiService {
         }
       })
       .catch((error) => {
-        if (false) {
+        if (isRunningOnEnvironment('local')) {
           return {
             email: 'mockEmail@island.is',
             mobilePhoneNumber: '9999999',
