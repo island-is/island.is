@@ -13,13 +13,7 @@ import { RadioController } from '@island.is/shared/form-fields'
 import { fishingLicense } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { useFormContext } from 'react-hook-form'
-import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import { FishingLicenseEnum } from '../../types'
-import {
-  licenseHasAreaSelection,
-  licenseHasFileUploadField,
-  licenseHasRailNetAndRoeNetField,
-} from '../../utils/licenses'
 import {
   AREA_FIELD_ID,
   ATTACHMENTS_FIELD_ID,
