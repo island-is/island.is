@@ -11,7 +11,7 @@ export const DelegationsDomainSelect = ({
   onDomainChange,
 }: DelegationsHeaderProps) => {
   const { formatMessage } = useLocale()
-  const { options, selectedOption, loading } = useDomains()
+  const { options, selectedOption, loading, updateDomain } = useDomains()
 
   return loading ? (
     <SkeletonLoader height={71} />
@@ -30,6 +30,7 @@ export const DelegationsDomainSelect = ({
         const opt = option as DomainOption
 
         if (opt) {
+          updateDomain(opt)
           onDomainChange(opt)
         }
       }}
