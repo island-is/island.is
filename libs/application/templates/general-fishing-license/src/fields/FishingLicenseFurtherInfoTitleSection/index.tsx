@@ -10,11 +10,19 @@ import {
 import { FishingLicenseEnum } from '../../types'
 import * as styles from './FishingLicenseFurtherInfoTitleSection.css'
 import { useFormContext } from 'react-hook-form'
+import {
+  licenseHasAreaSelection,
+  licenseHasFileUploadField,
+  licenseHasRailNetAndRoeNetField,
+} from '../../utils/licenses'
 
 export const FishingLicenseFurtherInfoTitleSection: FC<FieldBaseProps> = ({
   application,
 }) => {
-  const licenseId = 'fishingLicenseFurtherInformation.license'
+  const areaId = 'fishingLicenseFurtherInformation.area'
+  const attachmentsId = 'fishingLicenseFurtherInformation.attachments'
+  const railnetId = 'fishingLicenseFurtherInformation.railAndRoeNet.railNet'
+  const roenetId = 'fishingLicenseFurtherInformation.railAndRoeNet.roeNet'
   const { setValue, getValues } = useFormContext()
   const { formatMessage } = useLocale()
   const selectedChargeType = getValueViaPath(
@@ -27,9 +35,6 @@ export const FishingLicenseFurtherInfoTitleSection: FC<FieldBaseProps> = ({
 
   // Reinitialize license type if needed
   useEffect(() => {
-    const licenseType = getValues(licenseId)
-    if (selectedChargeType !== licenseType) {
-      setValue(licenseId, selectedChargeType)
     }
   }, [])
 
@@ -45,13 +50,6 @@ export const FishingLicenseFurtherInfoTitleSection: FC<FieldBaseProps> = ({
           {formatMessage(fishingLicenseFurtherInformation.general.subtitle)}
         </Text>
       </Box>
-      {/* Hidden input to monitor which license is chosen in order to validate according to the license chosen */}
-      <input
-        type="hidden"
-        id={licenseId}
-        name={licenseId}
-        value={selectedChargeType}
-      />
     </>
   )
 }
