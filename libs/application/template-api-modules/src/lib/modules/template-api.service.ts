@@ -62,10 +62,12 @@ export class TemplateAPIService {
         : new TemplateApiError(coreErrorMessages.defaultTemplateApiError, 500)
 
     if (problemError?.problem?.status && problemError?.problem?.status >= 500) {
-      this.logger.error(
-        `PerformAction error on action ${action.actionId} from template ${action.templateId}`,
-        error,
-      )
+      this.logger.error(`PerformAction error`, {
+        error: { ...error, stack: error?.stack },
+        templateId: action.templateId,
+        actionId: action.actionId,
+        applicationId: action.props.application.id,
+      })
     }
     return problemError
   }
