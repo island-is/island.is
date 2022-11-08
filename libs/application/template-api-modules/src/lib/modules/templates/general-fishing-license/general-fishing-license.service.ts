@@ -83,6 +83,26 @@ export class GeneralFishingLicenseService {
         application.answers,
         'fishingLicense.license',
       ) as string
+      const date = getValueViaPath(
+        application.answers,
+        'fishingLicenseFurtherInformation.date',
+      ) as string
+      const area = getValueViaPath(
+        application.answers,
+        'fishingLicenseFurtherInformation.area',
+      ) as string | undefined
+      const roenetStr = getValueViaPath(
+        application.answers,
+        'fishingLicenseFurtherInformation.railAndRoeNet.roenet',
+        '',
+      ) as string
+      const railnetStr = getValueViaPath(
+        application.answers,
+        'fishingLicenseFurtherInformation.railAndRoeNet.railnet',
+        '',
+      ) as string
+      const roenet = parseInt(roenetStr.trim().split('m').join(''), 10)
+      const railnet = parseInt(railnetStr.trim().split('m').join(''), 10)
 
       await this.umsoknirApi
         .withMiddleware(new AuthMiddleware(auth as Auth))
@@ -93,8 +113,11 @@ export class GeneralFishingLicenseService {
             email: applicantEmail,
             utgerdKennitala: applicantNationalId,
             skipaskrarnumer: parseInt(registrationNumber, 10),
-            umbedinGildistaka: null,
+            umbedinGildistaka: new Date(date),
             veidileyfiKodi: mapFishingLiscenseToCode(fishingLicense),
+            veidisvaediLykill: area,
+            fjoldiNeta: railnet,
+            teinalengd: roenet,
           },
         })
       return { success: true }
