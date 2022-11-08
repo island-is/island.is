@@ -79,10 +79,18 @@ export const FishingLicense: FC<FieldBaseProps> = ({
   // User cannot proceed, so this fixes the problem of user getting stuck
   // after navigating here from the next step after inputting values there
   useEffect(() => {
-    setValue(AREA_FIELD_ID, undefined)
-    setValue(RAILNET_FIELD_ID, undefined)
-    setValue(ROENET_FIELD_ID, undefined)
-    setValue(ATTACHMENTS_FIELD_ID, undefined)
+    if (getValues(AREA_FIELD_ID) !== undefined) {
+      setValue(AREA_FIELD_ID, undefined)
+    }
+    if (getValues(RAILNET_FIELD_ID) !== undefined) {
+      setValue(RAILNET_FIELD_ID, undefined)
+    }
+    if (getValues(ROENET_FIELD_ID) !== undefined) {
+      setValue(ROENET_FIELD_ID, undefined)
+    }
+    if (getValues(ATTACHMENTS_FIELD_ID) !== undefined) {
+      setValue(ATTACHMENTS_FIELD_ID, undefined)
+    }
   }, [chargeType])
 
   return (
