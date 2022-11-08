@@ -144,11 +144,9 @@ export class DelegationsIncomingCustomService {
 
     if (deceasedDelegations.length > 0) {
       // Delete all deceased delegations by deleting them and their scopes.
-      const deletePromises = deceasedDelegations
-        .map(({ id }) =>
-          id ? this.delegationsOutgoingService.delete(user, id) : undefined,
-        )
-        .filter(isDefined)
+      const deletePromises = deceasedDelegations.map((delegation) =>
+        delegation.destroy(),
+      )
 
       await Promise.all(deletePromises)
 

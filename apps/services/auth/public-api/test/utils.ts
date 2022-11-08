@@ -110,13 +110,19 @@ export async function findExpectedMergedDelegationModels(
   modelIds: string | string[],
   allowedScopes?: string[],
 ): Promise<MergedDelegationDTO | MergedDelegationDTO[]> {
-  if (!Array.isArray(modelIds)) {
-    modelIds = [modelIds]
-  }
+  const expectedModels = await findExpectedDelegationModels(
+    model,
+    Array.isArray(modelIds) ? modelIds : [modelIds],
+    allowedScopes,
+  )
 
-  return (
-    await findExpectedDelegationModels(model, modelIds, allowedScopes)
-  ).map((d) => DelegationDTOMapper.toMergedDelegationDTO(d))
+  if (Array.isArray(modelIds)) {
+    return expectedModels.map((delegation) =>
+      DelegationDTOMapper.toMergedDelegationDTO(delegation),
+    )
+  } else {
+    return DelegationDTOMapper.toMergedDelegationDTO(expectedModels[0])
+  }
 }
 
 export async function findExpectedDelegationModels(

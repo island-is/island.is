@@ -352,7 +352,7 @@ describe('ActorDelegationsController', () => {
         )
 
         // Verify
-        const expectedModifyedModels = await delegationModel.findAll({
+        const expectedModifiedModels = await delegationModel.findAll({
           where: {
             toNationalId: user.nationalId,
           },
@@ -364,7 +364,7 @@ describe('ActorDelegationsController', () => {
           ],
         })
 
-        expect(expectedModifyedModels.length).toEqual(1)
+        expect(expectedModifiedModels.length).toEqual(1)
       })
 
       it('should not mix up companies and individuals when processing deceased delegations [BUG]', async () => {
