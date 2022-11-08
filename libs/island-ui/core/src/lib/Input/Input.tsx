@@ -64,6 +64,7 @@ export const Input = forwardRef(
       id = name,
       disabled,
       required,
+      rightAlign,
       placeholder,
       tooltip,
       backgroundColor = 'white',
@@ -203,6 +204,7 @@ export const Input = forwardRef(
                 ),
                 styles.inputSize[size],
                 {
+                  [styles.rightAlign]: rightAlign,
                   [styles.textarea]: textarea,
                 },
               )}
