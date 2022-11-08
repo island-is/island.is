@@ -56,6 +56,9 @@ const PeriodsRepeater: FC<ScreenProps> = ({
     application.state === States.DRAFT ||
     application.state === States.EDIT_OR_ADD_PERIODS
 
+  // Need to be consider again when applicant could change basic information
+  const shouldCall = application.state === States.EDIT_OR_ADD_PERIODS
+
   const showDescription = field?.props?.showDescription ?? true
   const dob = getExpectedDateOfBirth(application)
   const { formatMessage, locale } = useLocale()
@@ -67,6 +70,7 @@ const PeriodsRepeater: FC<ScreenProps> = ({
     variables: {
       applicationId: application.id,
       nationalId: application.applicant,
+      shouldCall: shouldCall,
     },
   })
 

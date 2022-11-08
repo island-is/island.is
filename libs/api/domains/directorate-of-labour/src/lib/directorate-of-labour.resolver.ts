@@ -36,8 +36,13 @@ export class DirectorateOfLabourResolver {
   async getApplicationInformation(
     @Args('applicationId') applicationId: string,
     @Args('nationalId') nationalId: string,
+    @Args('shouldCall') shouldCall: boolean,
     @CurrentUser() user: User,
   ): Promise<ApplicationInformation | null> {
+    if (shouldCall) {
+      return null
+    }
+
     if (nationalId == user.nationalId) {
       return this.directorateOfLabourService.getApplicationInfo(applicationId)
     }
