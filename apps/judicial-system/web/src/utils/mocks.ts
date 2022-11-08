@@ -133,6 +133,7 @@ export const mockCase = (caseType: CaseType): Case => {
         name: 'Donald Duck',
         gender: Gender.MALE,
         address: 'Batcave 1337',
+        defendantWaivesRightToCounsel: false,
       },
     ],
     defendantWaivesRightToCounsel: false,
