@@ -8,6 +8,7 @@ import {
   CreateDomain,
 } from '../../../../test/fixtures/types'
 import addDays from 'date-fns/addDays'
+import { AuthDelegationType } from 'delegation'
 
 // TODO: Refactor to use satisfied operator in TypeScript 4.9
 const createDomain = (domain: CreateDomain): CreateDomain => domain
@@ -22,7 +23,7 @@ export const testUser = createCurrentUser({
 export const testCompanyActorNationalId = createNationalId('person')
 export const testCompanyUser = createCurrentUser({
   nationalIdType: 'company',
-  delegationType: 'Custom',
+  delegationType: AuthDelegationType.Custom,
   scope: [AuthScope.delegations],
   actor: {
     nationalId: testCompanyActorNationalId,
