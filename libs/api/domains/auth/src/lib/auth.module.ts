@@ -17,6 +17,7 @@ import {
   DelegationScopeResolver,
   CustomDelegationResolver,
   DomainResolver,
+  MergedDelegationResolver,
 } from './resolvers'
 import { MeDelegationsService } from './services/meDelegations.service'
 import { ApiScopeService } from './services/apiScope.service'
@@ -30,6 +31,7 @@ import { CmsModule } from '@island.is/cms'
   providers: [
     DelegationResolver,
     CustomDelegationResolver,
+    MergedDelegationResolver,
     DelegationScopeResolver,
     ApiScopeResolver,
     DomainResolver,

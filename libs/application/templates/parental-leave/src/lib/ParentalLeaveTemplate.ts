@@ -337,7 +337,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 externalData: ['children'],
               },
               write: {
-                answers: ['employerNationalRegistryId'],
+                answers: [
+                  'employerNationalRegistryId',
+                  'periods',
+                  'selectedChild',
+                  'payments',
+                ],
               },
               actions: [
                 {
@@ -725,7 +730,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 externalData: ['children'],
               },
               write: {
-                answers: ['employerNationalRegistryId'],
+                answers: [
+                  'employerNationalRegistryId',
+                  'periods',
+                  'selectedChild',
+                  'payments',
+                ],
               },
               actions: [
                 {
