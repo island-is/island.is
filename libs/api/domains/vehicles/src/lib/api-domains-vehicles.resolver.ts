@@ -170,7 +170,7 @@ export class VehiclesResolver {
       make: vehicle.make,
       color: vehicle.color,
       role: vehicle.role,
-      isStolen: Math.random() < 0.5, //TODOx is missing in the new API endpoint, Krilli will add
+      isStolen: false, //TODOx is missing in the new API endpoint, Krilli will add
     }))
   }
 

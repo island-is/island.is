@@ -22,7 +22,7 @@ export const CoOwnersSection: FC<FieldBaseProps> = ({ application }) => {
   return coOwners.length > 0 ? (
     <ReviewGroup isLast>
       <GridRow>
-        {coOwners?.map(({ name, nationalId, email }, index: number) => {
+        {coOwners?.map(({ name, nationalId, email, phone }, index: number) => {
           if (name.length === 0) return null
           return (
             <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
@@ -34,6 +34,7 @@ export const CoOwnersSection: FC<FieldBaseProps> = ({ application }) => {
                 <Text>{name}</Text>
                 <Text>{nationalId}</Text>
                 <Text>{email}</Text>
+                <Text>{phone}</Text>
               </Box>
             </GridColumn>
           )

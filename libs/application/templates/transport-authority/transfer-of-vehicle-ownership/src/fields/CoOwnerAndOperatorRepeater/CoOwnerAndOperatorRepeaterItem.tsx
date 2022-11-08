@@ -37,6 +37,7 @@ export const CoOwnerAndOperatorRepeaterItem: FC<Props & FieldBaseProps> = ({
   const fieldIndex = `${id}[${index}]`
   const userMessageId = repeaterField.type ?? 'coOwner'
   const emailField = `${fieldIndex}.email`
+  const phoneField = `${fieldIndex}.phone`
   const typeField = `${fieldIndex}.type`
 
   return (
@@ -70,6 +71,20 @@ export const CoOwnerAndOperatorRepeaterItem: FC<Props & FieldBaseProps> = ({
           required
           defaultValue={
             getValueViaPath(application.answers, emailField, '') as string
+          }
+        />
+      </Box>
+      <Box marginTop={2}>
+        <InputController
+          id={phoneField}
+          name={phoneField}
+          type="tel"
+          label={formatMessage(information.labels[userMessageId].phone)}
+          error={errors && getErrorViaPath(errors, phoneField)}
+          backgroundColor="blue"
+          required
+          defaultValue={
+            getValueViaPath(application.answers, phoneField, '') as string
           }
         />
       </Box>

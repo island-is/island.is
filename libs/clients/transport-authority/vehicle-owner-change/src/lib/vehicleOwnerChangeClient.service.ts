@@ -50,7 +50,7 @@ export class VehicleOwnerChangeClient {
         buyerEmail: ownerChange.buyer.email,
         dateOfPurchase: ownerChange.dateOfPurchase,
         saleAmount: ownerChange.saleAmount,
-        insuranceCompanyCode: ownerChange.insuranceCompanyCode,
+        insuranceCompanyCode: ownerChange.insuranceCompanyCode || 'TODOx',
         useGroup: '000',
         operatorEmail: ownerChange.operators?.find((x) => x.isMainOperator)
           ?.email,

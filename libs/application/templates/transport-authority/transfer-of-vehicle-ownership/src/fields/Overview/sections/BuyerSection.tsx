@@ -35,6 +35,7 @@ export const BuyerSection: FC<FieldBaseProps & ReviewScreenProps> = ({
             {getValueViaPath(answers, 'buyer.nationalId', '') as string}
           </Text>
           <Text>{getValueViaPath(answers, 'buyer.email', '') as string}</Text>
+          <Text>{getValueViaPath(answers, 'buyer.phone', '') as string}</Text>
         </GridColumn>
       </GridRow>
     </ReviewGroup>

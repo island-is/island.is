@@ -4,14 +4,14 @@ export const UserInformationSchema = z.object({
   nationalId: z.string(),
   name: z.string(),
   email: z.string(),
-  // phone: z.string().optional(),
+  phone: z.string().optional(),
 })
 
 export const CoOwnerAndOperatorSchema = z.object({
   nationalId: z.string(),
   name: z.string(),
   email: z.string(),
-  // phone: z.string().optional(),
+  phone: z.string().optional(),
   type: z.enum(['operator', 'coOwner']),
 })
 

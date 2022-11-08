@@ -26,8 +26,9 @@ export const SellerSection: FC<FieldBaseProps> = ({ application }) => {
             {getValueViaPath(answers, 'seller.nationalId', '') as string}
           </Text>
           <Text>{getValueViaPath(answers, 'seller.email', '') as string}</Text>
+          <Text>{getValueViaPath(answers, 'seller.phone', '') as string}</Text>
         </GridColumn>
-        {coOwners?.map(({ name, nationalId, email }, index: number) => {
+        {coOwners?.map(({ name, nationalId, email, phone }, index: number) => {
           return (
             <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
               <Box marginBottom={coOwners.length === index + 1 ? 0 : 2}>
@@ -38,6 +39,7 @@ export const SellerSection: FC<FieldBaseProps> = ({ application }) => {
                 <Text>{name}</Text>
                 <Text>{nationalId}</Text>
                 <Text>{email}</Text>
+                <Text>{phone}</Text>
               </Box>
             </GridColumn>
           )
