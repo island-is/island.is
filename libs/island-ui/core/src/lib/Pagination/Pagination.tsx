@@ -23,7 +23,9 @@ const range = (min: number, max: number): number[] =>
 
 export interface PaginationProps {
   page: number
-  totalPages: number
+  totalPages?: number
+  pageSize?: number
+  dataSize?: number
   variant?: keyof typeof styles.variants
   renderLink: (
     page: number,
@@ -34,22 +36,27 @@ export interface PaginationProps {
 
 export const Pagination: FC<PaginationProps> = ({
   page,
-  totalPages,
+  totalPages = 0,
+  dataSize,
+  pageSize,
   variant = 'purple',
   renderLink,
 }) => {
+  const calculatedTotalPages =
+    dataSize && pageSize ? Math.ceil(dataSize / pageSize) : totalPages
+
   const ranges = useMemo(() => {
     return uniq(
       ([] as number[])
         .concat(
           range(1, 3),
           range(page - 1, page + 1),
-          range(totalPages - 2, totalPages),
+          range(calculatedTotalPages - 2, calculatedTotalPages),
         )
-        .filter((p) => 1 <= p && p <= totalPages)
+        .filter((p) => 1 <= p && p <= calculatedTotalPages)
         .sort((a, b) => a - b),
     )
-  }, [page, totalPages])
+  }, [page, calculatedTotalPages])
 
   const renderEdgeLink = ({
     page,
