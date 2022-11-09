@@ -6,6 +6,11 @@ export const m = defineMessages({
     defaultMessage: 'Skil á ársreikningi',
     description: 'Application for Digital',
   },
+  applicationTitleAlt: {
+    id: 'fsn.application:applicationTitleAlt',
+    defaultMessage: 'Skil á upplýsingum ',
+    description: 'Application for Individual elections',
+  },
   inao: {
     id: 'fsn.application:inao',
     defaultMessage: 'Ríkisendurskoðun',
@@ -316,6 +321,18 @@ export const m = defineMessages({
     defaultMessage: 'Skrá þarf bæði skoðunarmann og stjórnarmann',
     description: 'Members missing',
   },
+  errormemberNotUnique: {
+    id: 'fsn.application:error.errormemberNotUnique',
+    defaultMessage:
+      'Ekki er hægt að skrá sama aðila sem Stjórnarmann og Skoðunarmann',
+    description: 'Members missing',
+  },
+  errormemberCanNotIncludeApplicant: {
+    id: 'fsn.application:error.errormemberCanNotIncludeApplicant',
+    defaultMessage:
+      'Umsækjandi má ekki vera skráður sem stjórnarmaður eða skoðunarmaður',
+    description: 'error, applicant regsitered as caretaker/boardmember',
+  },
   contributionsFromTheTreasury: {
     id: 'fsn.application:income.contributionsFromTheTreasury',
     defaultMessage: 'Framlög úr ríkissjóði',
@@ -524,7 +541,7 @@ export const m = defineMessages({
   },
   equity: {
     id: 'fsn.application:keyNumbers.equity',
-    defaultMessage: 'Eigið fé alls',
+    defaultMessage: 'Eigið fé',
     description: 'total equity',
   },
   equityAtTheBeginningOfTheYear: {

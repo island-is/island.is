@@ -81,6 +81,7 @@
 /libs/clients/auth/                                                                                 @island-is/aranja
 /libs/clients/middlewares/                                                                          @island-is/aranja
 /libs/service-portal/settings/access-control                                                        @island-is/aranja
+/libs/service-portal/access-control/delegations                                                     @island-is/aranja
 
 /apps/judicial-system/                                                                              @island-is/kolibri-justice-league
 /libs/judicial-system/                                                                              @island-is/kolibri-justice-league
@@ -171,6 +172,8 @@
 /libs/api/domains/content-search/                                                                   @island-is/stefna @island-is/juni
 /libs/api/domains/syslumenn/                                                                        @island-is/stefna
 /libs/api/domains/mailchimp/                                                                        @island-is/stefna
+/libs/api/domains/electronic-registration-statistics/                                               @island-is/stefna
+/libs/clients/electronic-registration-statistics/                                                   @island-is/stefna
 /libs/clients/syslumenn/                                                                            @island-is/stefna @island-is/juni
 /libs/shared/connected/                                                                             @island-is/stefna
 

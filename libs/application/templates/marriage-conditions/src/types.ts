@@ -1,6 +1,5 @@
-import { MarriageTermination } from './lib/constants'
 import { dataSchema } from './lib/dataSchema'
-import * as z from 'zod'
+import { z } from 'zod'
 
 export type Individual = {
   person: {
@@ -26,7 +25,6 @@ export type PersonalInfo = {
   address: string
   citizenship: string
   maritalStatus: string
-  previousMarriageTermination: MarriageTermination
 }
 
 export type Ceremony = {

@@ -7,7 +7,6 @@ import {
   EphemeralStateLifeCycle,
   getValueViaPath,
   pruneAfterDays,
-  DefaultStateLifeCycle,
 } from '@island.is/application/core'
 import {
   ApplicationContext,
@@ -221,6 +220,14 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   'periods',
                 ],
               },
+              write: {
+                answers: [
+                  'requestRights',
+                  'usePersonalAllowanceFromSpouse',
+                  'personalAllowanceFromSpouse',
+                  'periods',
+                ],
+              },
             },
             {
               id: Roles.APPLICANT,
@@ -338,7 +345,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 externalData: ['children'],
               },
               write: {
-                answers: ['employerNationalRegistryId'],
+                answers: [
+                  'employerNationalRegistryId',
+                  'periods',
+                  'selectedChild',
+                  'payments',
+                ],
               },
               actions: [
                 {
@@ -603,8 +615,13 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
       // Edit Flow States
       [States.EDIT_OR_ADD_PERIODS]: {
-        entry: ['createTempPeriods', 'assignToVMST', 'removeNullPeriod'],
-        exit: ['restorePeriodsFromTemp', 'removeNullPeriod'],
+        entry: [
+          'createTempPeriods',
+          'assignToVMST',
+          'removeNullPeriod',
+          'setNavId',
+        ],
+        exit: ['restorePeriodsFromTemp', 'removeNullPeriod', 'setNavId'],
         meta: {
           name: States.EDIT_OR_ADD_PERIODS,
           actionCard: {
@@ -721,7 +738,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 externalData: ['children'],
               },
               write: {
-                answers: ['employerNationalRegistryId'],
+                answers: [
+                  'employerNationalRegistryId',
+                  'periods',
+                  'selectedChild',
+                  'payments',
+                ],
               },
               actions: [
                 {
@@ -1000,15 +1022,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       setNavId: assign((context) => {
         const { application } = context
 
-        const { applicationFundId, navId } = getApplicationExternalData(
+        const { applicationFundId } = getApplicationExternalData(
           application.externalData,
         )
 
-        if (navId !== '') {
-          return context
-        }
-
-        if (applicationFundId !== '') {
+        if (applicationFundId && applicationFundId !== '') {
           set(application.externalData, 'navId', applicationFundId)
         }
 

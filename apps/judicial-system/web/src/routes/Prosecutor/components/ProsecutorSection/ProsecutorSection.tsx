@@ -11,10 +11,10 @@ import ProsecutorSectionHeading from './ProsecutorSectionHeading'
 
 const ProsecutorSection: React.FC = () => {
   const { workingCase, setWorkingCase } = useContext(FormContext)
-  const { setAndSendToServer } = useCase()
+  const { setAndSendCaseToServer } = useCase()
 
   const handleProsecutorChange = (prosecutorId: string) => {
-    setAndSendToServer(
+    setAndSendCaseToServer(
       [
         {
           prosecutorId: prosecutorId,

@@ -67,7 +67,7 @@ export const ReviewApplication: Form = buildForm({
               ],
             }),
             buildCheckboxField({
-              id: 'careerHistoryCompanies',
+              id: 'careerHistoryDetails.careerHistoryCompanies',
               title: m.careerHistoryCompanies,
               disabled: true,
               width: 'half',
@@ -75,7 +75,13 @@ export const ReviewApplication: Form = buildForm({
                 { value: 'government', label: m.governmentOptionLabel },
                 { value: 'aranja', label: 'Aranja' },
                 { value: 'advania', label: 'Advania' },
+                { value: 'other', label: 'Annað' },
               ],
+            }),
+            buildTextField({
+              id: 'careerHistoryDetails.careerHistoryOther',
+              disabled: true,
+              title: m.careerHistoryOther,
             }),
             buildTextField({
               id: 'dreamJob',

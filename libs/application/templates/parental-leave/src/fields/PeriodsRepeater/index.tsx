@@ -56,22 +56,21 @@ const PeriodsRepeater: FC<ScreenProps> = ({
     application.state === States.DRAFT ||
     application.state === States.EDIT_OR_ADD_PERIODS
 
+  // Need to be consider again when applicant could change basic information
+  const shouldCall = application.state === States.EDIT_OR_ADD_PERIODS
+
   const showDescription = field?.props?.showDescription ?? true
   const dob = getExpectedDateOfBirth(application)
   const { formatMessage, locale } = useLocale()
   const rights = getAvailableRightsInDays(application)
   const daysAlreadyUsed = useDaysAlreadyUsed(application)
   const remainingRights = useRemainingRights(application)
-  const {
-    rawPeriods,
-    periods,
-    employerReviewerNationalRegistryId,
-  } = getApplicationAnswers(application.answers)
+  const { rawPeriods, periods } = getApplicationAnswers(application.answers)
   const { data, loading } = useQuery(GetApplicationInformation, {
     variables: {
       applicationId: application.id,
       nationalId: application.applicant,
-      employerNationalId: employerReviewerNationalRegistryId,
+      shouldNotCall: !shouldCall,
     },
   })
 
@@ -90,15 +89,23 @@ const PeriodsRepeater: FC<ScreenProps> = ({
     const temptVMSTPeriods: Period[] = []
     const VMSTPeriods: VMSTPeriod[] = data?.getApplicationInformation?.periods
     VMSTPeriods?.forEach((period, index) => {
+      /*
+       ** VMST could change startDate but still return 'date_of_birth'
+       ** Make sure if period is in the past then we use the date they sent
+       */
+      let firstPeriodStart =
+        period.firstPeriodStart === 'date_of_birth'
+          ? 'actualDateOfBirth'
+          : 'specificDate'
+      if (new Date(period.firstPeriodStart).getTime() < new Date().getTime()) {
+        firstPeriodStart = 'specificDate'
+      }
       const obj = {
         startDate: period.from,
         endDate: period.to,
         ratio: period.ratio.split(',')[0],
         rawIndex: index,
-        firstPeriodStart:
-          period.firstPeriodStart === 'date_of_birth'
-            ? 'actualDateOfBirth'
-            : 'specificDate',
+        firstPeriodStart: firstPeriodStart,
         useLength: NO as YesOrNo,
       }
       if (
