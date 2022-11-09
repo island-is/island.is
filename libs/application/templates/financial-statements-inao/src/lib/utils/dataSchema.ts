@@ -32,7 +32,7 @@ const operatingCost = z.object({
 const about = z.object({
   nationalId: z
     .string()
-    .refine((val) => (val ? kennitala.isPerson(val) : false), {
+    .refine((val) => (val ? kennitala.isValid(val) : false), {
       params: m.nationalIdError,
     }),
   fullName: z.string().refine((x) => !!x, { params: m.required }),
@@ -251,7 +251,7 @@ export const dataSchema = z.object({
   asset,
   equity,
   liability,
-  attachment: z.object({
+  attachments: z.object({
     file: z.array(FileSchema).nonempty(),
   }),
 })

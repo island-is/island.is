@@ -82,3 +82,9 @@ export class CustomDelegation extends Delegation {
   // Internal attributes, used in field resolvers.
   domainName?: string
 }
+
+@ObjectType('AuthMergedDelegation')
+export class MergedDelegation {
+  @Field(() => [DelegationType])
+  types!: DelegationType[]
+}

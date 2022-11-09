@@ -220,6 +220,14 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   'periods',
                 ],
               },
+              write: {
+                answers: [
+                  'requestRights',
+                  'usePersonalAllowanceFromSpouse',
+                  'personalAllowanceFromSpouse',
+                  'periods',
+                ],
+              },
             },
             {
               id: Roles.APPLICANT,
@@ -337,7 +345,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 externalData: ['children'],
               },
               write: {
-                answers: ['employerNationalRegistryId'],
+                answers: [
+                  'employerNationalRegistryId',
+                  'periods',
+                  'selectedChild',
+                  'payments',
+                ],
               },
               actions: [
                 {
@@ -725,7 +738,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 externalData: ['children'],
               },
               write: {
-                answers: ['employerNationalRegistryId'],
+                answers: [
+                  'employerNationalRegistryId',
+                  'periods',
+                  'selectedChild',
+                  'payments',
+                ],
               },
               actions: [
                 {
