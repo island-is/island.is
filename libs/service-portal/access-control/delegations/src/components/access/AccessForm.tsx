@@ -195,6 +195,9 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
               defaultMessage: 'Veita aðgang',
             })}
             confirmIcon="arrowForward"
+            disabled={
+              delegation.scopes.length === 0 && (!scopes || scopes.length === 0)
+            }
           />
         </Box>
       </FormProvider>
