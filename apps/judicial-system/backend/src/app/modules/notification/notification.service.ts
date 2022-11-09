@@ -1251,7 +1251,7 @@ export class NotificationService {
     })
 
     if (isIndictmentCase(theCase.type) && theCase.defendants) {
-      theCase.defendants.forEach((defendant) => {
+      for (const defendant of theCase.defendants) {
         const { defenderEmail, defenderNationalId, defenderName } = defendant
 
         if (!defenderNationalId || !defenderEmail) {
@@ -1261,7 +1261,6 @@ export class NotificationService {
         const hasSentNotificationBefore = pastNotifications.some(
           ({ recipients }) => recipients?.includes(defenderEmail),
         )
-
         if (hasSentNotificationBefore) {
           return Promise.resolve({ notificationSent: false })
         }
@@ -1275,7 +1274,7 @@ export class NotificationService {
         promises.push(
           this.sendEmail(subject, body, defenderName, defenderEmail),
         )
-      })
+      }
     } else {
       const { defenderEmail, defenderNationalId, defenderName } = theCase
 
