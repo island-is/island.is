@@ -15,6 +15,14 @@ const FileSchema = z.object({
   url: z.string().optional(),
 })
 
+const checkIfNegative = (inputNumber: string) => {
+  if (Number(inputNumber) < 0) {
+    return false
+  } else {
+    return true
+  }
+}
+
 const election = z.object({
   selectElection: z.string().optional(),
   electionName: z.string().optional(),
@@ -49,19 +57,37 @@ const about = z.object({
 })
 
 const asset = z.object({
-  currentAssets: z.string().refine((x) => !!x, { params: m.required }),
-  fixedAssetsTotal: z.string().refine((x) => !!x, { params: m.required }),
+  currentAssets: z
+    .string()
+    .refine((x) => !!x, { params: m.required })
+    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
+  fixedAssetsTotal: z
+    .string()
+    .refine((x) => !!x, { params: m.required })
+    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
   total: z.string().refine((x) => !!x, { params: m.required }),
 })
 
 const equity = z.object({
-  totalEquity: z.string().refine((x) => !!x, { params: m.required }),
+  totalEquity: z
+    .string()
+    .refine((x) => !!x, { params: m.required })
+    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
 })
 
 const liability = z.object({
-  longTerm: z.string().refine((x) => !!x, { params: m.required }),
-  shortTerm: z.string().refine((x) => !!x, { params: m.required }),
-  total: z.string().refine((x) => !!x, { params: m.required }),
+  longTerm: z
+    .string()
+    .refine((x) => !!x, { params: m.required })
+    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
+  shortTerm: z
+    .string()
+    .refine((x) => !!x, { params: m.required })
+    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
+  total: z
+    .string()
+    .refine((x) => !!x, { params: m.required })
+    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
 })
 const equityAndLiabilities = z.object({
   total: z.string(),
@@ -72,100 +98,191 @@ const cemetryOperation = z.object({
 })
 
 const cemetryIncome = z.object({
-  careIncome: z.string().refine((x) => !!x, { params: m.required }),
-  burialRevenue: z.string().refine((x) => !!x, { params: m.required }),
+  careIncome: z
+    .string()
+    .refine((x) => !!x, { params: m.required })
+    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
+  burialRevenue: z
+    .string()
+    .refine((x) => !!x, { params: m.required })
+    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
   grantFromTheCemeteryFund: z
     .string()
-    .refine((x) => !!x, { params: m.required }),
-  otherIncome: z.string().refine((x) => !!x, { params: m.required }),
+    .refine((x) => !!x, { params: m.required })
+    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
+  otherIncome: z
+    .string()
+    .refine((x) => !!x, { params: m.required })
+    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
   total: z.string(),
 })
 
 const cemetryExpense = z.object({
-  payroll: z.string().refine((x) => !!x, { params: m.required }),
-  funeralCost: z.string().refine((x) => !!x, { params: m.required }),
-  chapelExpense: z.string().refine((x) => !!x, { params: m.required }),
-  donationsToOther: z.string().refine((x) => !!x, { params: m.required }),
-  cemeteryFundExpense: z.string().refine((x) => !!x, { params: m.required }),
-  otherOperationCost: z.string().refine((x) => !!x, { params: m.required }),
-  depreciation: z.string().refine((x) => !!x, { params: m.required }),
+  payroll: z
+    .string()
+    .refine((x) => !!x, { params: m.required })
+    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
+  funeralCost: z
+    .string()
+    .refine((x) => !!x, { params: m.required })
+    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
+  chapelExpense: z
+    .string()
+    .refine((x) => !!x, { params: m.required })
+    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
+  donationsToOther: z
+    .string()
+    .refine((x) => !!x, { params: m.required })
+    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
+  cemeteryFundExpense: z
+    .string()
+    .refine((x) => !!x, { params: m.required })
+    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
+  otherOperationCost: z
+    .string()
+    .refine((x) => !!x, { params: m.required })
+    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
+  depreciation: z
+    .string()
+    .refine((x) => !!x, { params: m.required })
+    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
   total: z.string(),
 })
 
 const cemetryEquity = z.object({
   equityAtTheBeginningOfTheYear: z
     .string()
-    .refine((x) => !!x, { params: m.required }),
+    .refine((x) => !!x, { params: m.required })
+    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
   operationResult: z.string(),
   revaluationDueToPriceChanges: z
     .string()
-    .refine((x) => !!x, { params: m.required }),
-  reevaluateOther: z.string().refine((x) => !!x, { params: m.required }),
+    .refine((x) => !!x, { params: m.required })
+    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
+  reevaluateOther: z
+    .string()
+    .refine((x) => !!x, { params: m.required })
+    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
   total: z.string(),
 })
 
 const cemetryLiability = z.object({
-  longTerm: z.string().refine((x) => !!x, { params: m.required }),
-  shortTerm: z.string().refine((x) => !!x, { params: m.required }),
+  longTerm: z
+    .string()
+    .refine((x) => !!x, { params: m.required })
+    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
+  shortTerm: z
+    .string()
+    .refine((x) => !!x, { params: m.required })
+    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
   total: z.string().refine((x) => !!x, { params: m.required }),
 })
 
 const cemetryAsset = z.object({
-  currentAssets: z.string().refine((x) => !!x, { params: m.required }),
-  fixedAssetsTotal: z.string().refine((x) => !!x, { params: m.required }),
+  currentAssets: z
+    .string()
+    .refine((x) => !!x, { params: m.required })
+    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
+  fixedAssetsTotal: z
+    .string()
+    .refine((x) => !!x, { params: m.required })
+    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
   total: z.string(),
 })
 
 const partyIncome = z.object({
   contributionsFromTheTreasury: z
     .string()
-    .refine((x) => !!x, { params: m.required }),
+    .refine((x) => !!x, { params: m.required })
+    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
   parliamentaryPartySupport: z
     .string()
-    .refine((x) => !!x, { params: m.required }),
-  municipalContributions: z.string().refine((x) => !!x, { params: m.required }),
+    .refine((x) => !!x, { params: m.required })
+    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
+  municipalContributions: z
+    .string()
+    .refine((x) => !!x, { params: m.required })
+    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
   contributionsFromLegalEntities: z
     .string()
-    .refine((x) => !!x, { params: m.required }),
+    .refine((x) => !!x, { params: m.required })
+    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
   contributionsFromIndividuals: z
     .string()
-    .refine((x) => !!x, { params: m.required }),
-  generalMembershipFees: z.string().refine((x) => !!x, { params: m.required }),
-  otherIncome: z.string().refine((x) => !!x, { params: m.required }),
+    .refine((x) => !!x, { params: m.required })
+    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
+  generalMembershipFees: z
+    .string()
+    .refine((x) => !!x, { params: m.required })
+    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
+  otherIncome: z
+    .string()
+    .refine((x) => !!x, { params: m.required })
+    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
   total: z.string(),
 })
 
 const partyExpense = z.object({
-  electionOffice: z.string().refine((x) => !!x, { params: m.required }),
-  otherCost: z.string().refine((x) => !!x, { params: m.required }),
+  electionOffice: z
+    .string()
+    .refine((x) => !!x, { params: m.required })
+    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
+  otherCost: z
+    .string()
+    .refine((x) => !!x, { params: m.required })
+    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
   total: z.string(),
 })
 
 const individualIncome = z.object({
   contributionsByLegalEntities: z
     .string()
-    .refine((x) => !!x, { params: m.required }),
+    .refine((x) => !!x, { params: m.required })
+    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
   candidatesOwnContributions: z
     .string()
-    .refine((x) => !!x, { params: m.required }),
+    .refine((x) => !!x, { params: m.required })
+    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
   individualContributions: z
     .string()
-    .refine((x) => !!x, { params: m.required }),
-  otherIncome: z.string().refine((x) => !!x, { params: m.required }),
+    .refine((x) => !!x, { params: m.required })
+    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
+  otherIncome: z
+    .string()
+    .refine((x) => !!x, { params: m.required })
+    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
   total: z.string(),
 })
 
 const individualExpense = z.object({
-  electionOffice: z.string().refine((x) => !!x, { params: m.required }),
-  advertisements: z.string().refine((x) => !!x, { params: m.required }),
-  travelCost: z.string().refine((x) => !!x, { params: m.required }),
-  otherCost: z.string().refine((x) => !!x, { params: m.required }),
+  electionOffice: z
+    .string()
+    .refine((x) => !!x, { params: m.required })
+    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
+  advertisements: z
+    .string()
+    .refine((x) => !!x, { params: m.required })
+    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
+  travelCost: z
+    .string()
+    .refine((x) => !!x, { params: m.required })
+    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
+  otherCost: z
+    .string()
+    .refine((x) => !!x, { params: m.required })
+    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
   total: z.string().refine((x) => !!x, { params: m.required }),
 })
 
 const capitalNumbers = z.object({
-  capitalIncome: z.string().refine((x) => !!x, { params: m.required }),
-  capitalCost: z.string().refine((x) => !!x, { params: m.required }),
+  capitalIncome: z
+    .string()
+    .refine((x) => !!x, { params: m.required })
+    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
+  capitalCost: z
+    .string()
+    .refine((x) => !!x, { params: m.required })
+    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
   total: z.string(),
 })
 
