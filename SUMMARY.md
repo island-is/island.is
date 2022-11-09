@@ -159,7 +159,7 @@
 - [Clients](libs/clients/README.md)
   - [ADR and Machine License](libs/clients/adr-and-machine-license/README.md)
   - [Assets](libs/clients/assets/README.md)
-  - [Clients Assets V2](libs/clients/assets-v2/README.md)
+  - [Assets Client V2](libs/clients/assets-v2/README.md)
   - [Auth](libs/clients/auth/README.md)
     - [Delegation API](libs/clients/auth/delegation-api/README.md)
     - [Public API](libs/clients/auth/public-api/README.md)
