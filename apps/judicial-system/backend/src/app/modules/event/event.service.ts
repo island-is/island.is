@@ -84,7 +84,7 @@ export class EventService {
       const title =
         event === CaseEvent.ACCEPT && isIndictmentCase(theCase.type)
           ? caseEvent[CaseEvent.CLOSE_INDICTMENT]
-          : event === CaseEvent.OPEN
+          : event === CaseEvent.OPEN && isIndictmentCase(theCase.type)
           ? caseEvent[CaseEvent.OPEN_INDICTMENT]
           : caseEvent[event]
       const typeText = `${capitalize(caseTypes[theCase.type])} *${theCase.id}*`
