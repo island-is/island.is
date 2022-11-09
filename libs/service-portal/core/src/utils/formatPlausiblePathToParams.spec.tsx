@@ -15,6 +15,23 @@ describe('formatPlausiblePathToParams', () => {
       location: anyPath,
     })
   })
+
+  it('should match non identifiable service-portal path when given identifiable path', async () => {
+    // arrange
+    const anyPath = ServicePortalPath.AssetsRealEstateDetail.replace(
+      ':id',
+      '123',
+    )
+    const pageOrigin = window.location.origin
+    const rootPath = ServicePortalPath.MinarSidurPath
+
+    // assert
+    expect(formatPlausiblePathToParams(anyPath)).toStrictEqual({
+      url: `${pageOrigin}${rootPath}${ServicePortalPath.AssetsRealEstateDetail}`,
+      location: ServicePortalPath.AssetsRealEstateDetail,
+    })
+  })
+
   it('should return root url and current location when path is not available in ServicePortalPath enum', async () => {
     // arrange
     const anyPath = '/non-existant-path'
@@ -23,9 +40,10 @@ describe('formatPlausiblePathToParams', () => {
     // assert
     expect(formatPlausiblePathToParams(anyPath)).toStrictEqual({
       url: `${pageOrigin}${rootPath}`,
-      location: anyPath,
+      location: undefined,
     })
   })
+
   it('should return filename when provided', async () => {
     // arrange
     const fileName = 'file_name.jpg'

@@ -29,7 +29,7 @@ export const formatPlausiblePathToParams = (
 
   return {
     url: absoluteUrl,
-    location: path,
+    location: currentPath,
     ...(fileName && { fileName }),
   } as ParamType
 }
