@@ -38,10 +38,7 @@ interface Props {
   defendant: Defendant
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
-  onChange: (
-    defendantId: string,
-    updatedDefendant: UpdateDefendant,
-  ) => Promise<void>
+  onChange: (defendantId: string, updatedDefendant: UpdateDefendant) => void
   updateDefendantState: (
     defendantId: string,
     update: UpdateDefendant,
@@ -260,7 +257,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
           autoComplete="off"
           label={formatMessage(core.fullName)}
           placeholder={formatMessage(core.fullName)}
-          value={defendant.name ?? ''}
+          value={defendant?.name ?? ''}
           errorMessage={accusedNameErrorMessage}
           hasError={accusedNameErrorMessage !== ''}
           onChange={(evt) => {
