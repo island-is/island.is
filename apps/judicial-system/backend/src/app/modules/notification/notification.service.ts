@@ -1265,6 +1265,24 @@ export class NotificationService {
     return true
   }
 
+  private sendDefenderAssignedNotification(
+    theCase: Case,
+    defenderName?: string,
+    defenderEmail?: string,
+  ): Promise<Recipient>[] {
+    const promises: Promise<Recipient>[] = []
+
+    const { subject, body } = formatDefenderAssignedEmailNotification(
+      this.formatMessage,
+      theCase,
+      `${this.config.clientUrl}${DEFENDER_ROUTE}/${theCase.id}`,
+    )
+
+    promises.push(this.sendEmail(subject, body, defenderName, defenderEmail))
+
+    return promises
+  }
+
   private async sendDefenderAssignedNotifications(
     theCase: Case,
   ): Promise<SendNotificationResponse | void> {
@@ -1284,14 +1302,12 @@ export class NotificationService {
           break
         }
 
-        const { subject, body } = formatDefenderAssignedEmailNotification(
-          this.formatMessage,
-          theCase,
-          `${this.config.clientUrl}${DEFENDER_ROUTE}/${theCase.id}`,
-        )
-
         promises.push(
-          this.sendEmail(subject, body, defenderName, defenderEmail),
+          ...this.sendDefenderAssignedNotification(
+            theCase,
+            defenderName,
+            defenderEmail,
+          ),
         )
       }
     } else {
@@ -1303,13 +1319,13 @@ export class NotificationService {
         defenderEmail,
       )
 
-      const { subject, body } = formatDefenderAssignedEmailNotification(
-        this.formatMessage,
-        theCase,
-        `${this.config.clientUrl}${DEFENDER_ROUTE}/${theCase.id}`,
+      promises.push(
+        ...this.sendDefenderAssignedNotification(
+          theCase,
+          defenderName,
+          defenderEmail,
+        ),
       )
-
-      promises.push(this.sendEmail(subject, body, defenderName, defenderEmail))
     }
 
     const recipients = await Promise.all(promises)
