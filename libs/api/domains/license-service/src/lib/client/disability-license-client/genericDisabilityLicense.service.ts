@@ -16,7 +16,10 @@ import {
   createPkPassDataInput,
   parseDisabilityLicensePayload,
 } from './disabilityLicenseMapper'
-import { DefaultApi } from '@island.is/clients/disability-license'
+import {
+  DefaultApi,
+  OrorkuSkirteini,
+} from '@island.is/clients/disability-license'
 import {
   PassDataInput,
   SmartSolutionsApi,
@@ -24,13 +27,14 @@ import {
 import { format } from 'kennitala'
 import { handle404 } from '@island.is/clients/middlewares'
 import { Locale } from '@island.is/shared/types'
+import compareAsc from 'date-fns/compareAsc'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'disability-license-service'
 
 @Injectable()
-export class GenericDisabilityLicenseApi
-  implements GenericLicenseClient<DefaultApi> {
+export class GenericDisabilityLicenseService
+  implements GenericLicenseClient<OrorkuSkirteini> {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private disabilityLicenseApi: DefaultApi,
@@ -41,9 +45,7 @@ export class GenericDisabilityLicenseApi
     this.disabilityLicenseApi.withMiddleware(new AuthMiddleware(user as Auth))
 
   async fetchLicense(user: User) {
-    const license = await this.disabilityLicenseApi
-      .faskirteiniGet()
-      .catch(handle404)
+    const license = await this.withAuth(user).faskirteiniGet().catch(handle404)
     return license
   }
 
@@ -59,11 +61,16 @@ export class GenericDisabilityLicenseApi
     }
     const payload = parseDisabilityLicensePayload(licenseData, locale, labels)
 
+    let pkpassStatus = GenericUserLicensePkPassStatus.Unknown
+
     if (payload) {
+      pkpassStatus = GenericDisabilityLicenseService.licenseIsValidForPkpass(
+        licenseData,
+      )
       return {
         status: GenericUserLicenseStatus.HasLicense,
         payload,
-        pkpassStatus: GenericUserLicensePkPassStatus.Available,
+        pkpassStatus,
       }
     }
 
@@ -72,6 +79,23 @@ export class GenericDisabilityLicenseApi
       payload,
       pkpassStatus: GenericUserLicensePkPassStatus.NotAvailable,
     }
+  }
+
+  static licenseIsValidForPkpass(
+    licenseInfo: OrorkuSkirteini | null | undefined,
+  ): GenericUserLicensePkPassStatus {
+    if (!licenseInfo || !licenseInfo.gildirTil) {
+      return GenericUserLicensePkPassStatus.Unknown
+    }
+
+    const expired = new Date(licenseInfo.gildirTil)
+    const comparison = compareAsc(expired, new Date())
+
+    if (isNaN(comparison) || comparison < 0) {
+      return GenericUserLicensePkPassStatus.NotAvailable
+    }
+
+    return GenericUserLicensePkPassStatus.Available
   }
 
   async getLicenseDetail(

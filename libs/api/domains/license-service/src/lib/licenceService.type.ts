@@ -191,6 +191,7 @@ export type PassTemplateIds = {
   firearmLicense: string
   adrLicense: string
   machineLicense: string
+  disabilityLicense: string
 }
 
 export type PkPassVerificationData = {

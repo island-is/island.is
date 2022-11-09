@@ -5,8 +5,8 @@ const schema = z.object({
   xRoadServicePath: z.string(),
   fetch: z.object({
     timeout: z.number().int(),
+    scope: z.array(z.string()),
   }),
-  scope: z.array(z.string()),
 })
 
 export const DisabilityLicenseClientConfig = defineConfig<
@@ -22,8 +22,8 @@ export const DisabilityLicenseClientConfig = defineConfig<
       ),
       fetch: {
         timeout: 30000,
+        scope: [],
       },
-      scope: [''],
     }
   },
 })
