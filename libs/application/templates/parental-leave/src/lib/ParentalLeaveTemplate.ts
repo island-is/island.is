@@ -220,6 +220,14 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   'periods',
                 ],
               },
+              write: {
+                answers: [
+                  'requestRights',
+                  'usePersonalAllowanceFromSpouse',
+                  'personalAllowanceFromSpouse',
+                  'periods',
+                ],
+              },
             },
             {
               id: Roles.APPLICANT,
