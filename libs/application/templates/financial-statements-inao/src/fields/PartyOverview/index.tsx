@@ -47,7 +47,7 @@ export const PartyOverview = ({
   })
 
   const onBackButtonClick = () => {
-    goToScreen && goToScreen('attachment.file')
+    goToScreen && goToScreen('attachments.file')
   }
 
   const onSendButtonClick = () => {
