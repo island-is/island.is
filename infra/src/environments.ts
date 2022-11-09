@@ -20,6 +20,7 @@ const dev01: EnvironmentConfig = {
         AWS_REGION: 'eu-west-1',
         PORT: '3333',
         name: 'dev',
+        NO_UPDATE_NOTIFIER: 'true',
         AUDIT_GROUP_NAME: '/island-is/audit-log',
       },
       image: {
@@ -49,6 +50,7 @@ const staging01: EnvironmentConfig = {
         AWS_REGION: 'eu-west-1',
         PORT: '3333',
         name: 'staging',
+        NO_UPDATE_NOTIFIER: 'true',
         AUDIT_GROUP_NAME: '/island-is/audit-log',
       },
       image: {
@@ -92,6 +94,7 @@ export let Envs: EnvironmentConfigs = {
           AWS_REGION: 'eu-west-1',
           PORT: '3333',
           name: 'prod',
+          NO_UPDATE_NOTIFIER: 'true',
           AUDIT_GROUP_NAME: '/island-is/audit-log',
         },
         image: {
@@ -121,6 +124,7 @@ export let Envs: EnvironmentConfigs = {
           AWS_REGION: 'eu-west-1',
           PORT: '3333',
           name: 'prod',
+          NO_UPDATE_NOTIFIER: 'true',
           AUDIT_GROUP_NAME: '/identity-server/audit-log',
         },
         image: {
