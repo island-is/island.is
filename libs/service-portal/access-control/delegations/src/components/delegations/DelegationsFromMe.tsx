@@ -23,7 +23,7 @@ export const DelegationsFromMe = () => {
   const [delegation, setDelegation] = useState<AuthCustomDelegation | null>(
     null,
   )
-  const { domainName, updateDomainName } = useDomains()
+  const { name: domainName } = useDomains()
 
   const { data, loading, refetch, error } = useAuthDelegationsQuery({
     variables: {
@@ -35,6 +35,7 @@ export const DelegationsFromMe = () => {
     // Make sure that loading state is shown when refetching
     notifyOnNetworkStatusChange: true,
     fetchPolicy: 'cache-and-network',
+    errorPolicy: 'all',
   })
 
   const delegations = useMemo(
@@ -44,14 +45,12 @@ export const DelegationsFromMe = () => {
 
   const onDomainChange = (option: DomainOption) => {
     // Select components only supports string or number values, there for we use
-    // the string all-domains as a value for the all domains option.
+    // the const ALL_DOMAINS as a value for the all domains option.
     // The service takes null as a value for all domains.
-    const domainName = option.value === ALL_DOMAINS ? null : option.value
 
-    updateDomainName(domainName)
     refetch({
       input: {
-        domain: domainName,
+        domain: option.value === ALL_DOMAINS ? null : option.value,
       },
     })
   }
@@ -83,7 +82,7 @@ export const DelegationsFromMe = () => {
         <div>
           {loading ? (
             <SkeletonLoader width="100%" height={191} />
-          ) : error ? (
+          ) : error && !delegations ? (
             <AlertBanner
               description={formatMessage(m.errorFetch)}
               variant="error"

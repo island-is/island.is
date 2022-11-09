@@ -27,11 +27,11 @@ const ProsecutorSectionHeightenedSecurity: React.FC = () => {
     isProsecutorAccessModalVisible,
     setIsProsecutorAccessModalVisible,
   ] = useState<boolean>(false)
-  const { setAndSendToServer } = useCase()
+  const { setAndSendCaseToServer } = useCase()
 
   const setProsecutor = async (prosecutorId: string) => {
     if (workingCase) {
-      return setAndSendToServer(
+      return setAndSendCaseToServer(
         [
           {
             prosecutorId: prosecutorId,
@@ -81,7 +81,7 @@ const ProsecutorSectionHeightenedSecurity: React.FC = () => {
           }
           checked={workingCase.isHeightenedSecurityLevel}
           onChange={(event) =>
-            setAndSendToServer(
+            setAndSendCaseToServer(
               [
                 {
                   isHeightenedSecurityLevel: event.target.checked,
