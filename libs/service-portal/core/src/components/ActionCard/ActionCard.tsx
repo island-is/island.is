@@ -232,7 +232,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
             {cta.url ? (
               <LinkResolver href={cta.url}>
                 <Button
-                  icon={isExternalLink(cta.url) ? 'open' : undefined}
+                  icon={isExternalLink(cta.url) ? 'open' : cta.icon}
                   colorScheme="default"
                   iconType="outline"
                   size="small"
