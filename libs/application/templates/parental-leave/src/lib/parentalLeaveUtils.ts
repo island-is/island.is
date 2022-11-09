@@ -618,6 +618,11 @@ export function getApplicationAnswers(answers: Application['answers']) {
           'requestRights.isRequestingRights',
         ) as YesOrNo)
   let isRequestingRights = isRequestingRightsSecondary
+
+  /*
+   ** When multiple births is selected and applicant is not using all 'common' rights
+   ** Need this check so we are not returning wrong answer
+   */
   if (isRequestingRights === YES) {
     if (
       multipleBirthsRequestDays * 1 !==
