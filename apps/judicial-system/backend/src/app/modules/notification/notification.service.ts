@@ -1269,18 +1269,14 @@ export class NotificationService {
     theCase: Case,
     defenderName?: string,
     defenderEmail?: string,
-  ): Promise<Recipient>[] {
-    const promises: Promise<Recipient>[] = []
-
+  ): Promise<Recipient> {
     const { subject, body } = formatDefenderAssignedEmailNotification(
       this.formatMessage,
       theCase,
       `${this.config.clientUrl}${DEFENDER_ROUTE}/${theCase.id}`,
     )
 
-    promises.push(this.sendEmail(subject, body, defenderName, defenderEmail))
-
-    return promises
+    return this.sendEmail(subject, body, defenderName, defenderEmail)
   }
 
   private async sendDefenderAssignedNotifications(
@@ -1303,7 +1299,7 @@ export class NotificationService {
         }
 
         promises.push(
-          ...this.sendDefenderAssignedNotification(
+          this.sendDefenderAssignedNotification(
             theCase,
             defenderName,
             defenderEmail,
@@ -1320,7 +1316,7 @@ export class NotificationService {
       )
 
       promises.push(
-        ...this.sendDefenderAssignedNotification(
+        this.sendDefenderAssignedNotification(
           theCase,
           defenderName,
           defenderEmail,
