@@ -2,8 +2,10 @@ import { Inject, Injectable } from '@nestjs/common'
 import { ApolloError } from 'apollo-server-express'
 import { FetchError } from '@island.is/clients/middlewares'
 import { FasteignirApi } from '@island.is/clients/assets'
+import { FasteignirApi as FasteignirApiV2 } from '@island.is/clients/assets-v2'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
-import type { Auth, User } from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
@@ -16,6 +18,8 @@ export class AssetsXRoadService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private fasteignirApi: FasteignirApi,
+    private fasteignirApiV2: FasteignirApiV2,
+    private featureFlagService: FeatureFlagService,
   ) {}
 
   handleError(error: any): any {
@@ -34,10 +38,20 @@ export class AssetsXRoadService {
     this.handleError(error)
   }
 
-  private getRealEstatesWithAuth(auth: Auth) {
-    return this.fasteignirApi.withMiddleware(
-      new AuthMiddleware(auth, { forwardUserInfo: true }),
+  private async service(user: User): Promise<FasteignirApi | FasteignirApiV2> {
+    const isAssetsV2enabled = await this.featureFlagService.getValue(
+      Features.servicePortalAssetsApiV2Enabled,
+      false,
+      user,
     )
+
+    return isAssetsV2enabled
+      ? this.fasteignirApiV2.withMiddleware(
+          new AuthMiddleware(user, { forwardUserInfo: true }),
+        )
+      : this.fasteignirApi.withMiddleware(
+          new AuthMiddleware(user, { forwardUserInfo: true }),
+        )
   }
 
   async getRealEstates(
@@ -45,9 +59,8 @@ export class AssetsXRoadService {
     cursor?: string | null,
   ): Promise<any | null> {
     try {
-      const fasteignirResponse = await this.getRealEstatesWithAuth(
-        auth,
-      ).fasteignirGetFasteignir({
+      const assetService = await this.service(auth)
+      const fasteignirResponse = await assetService.fasteignirGetFasteignir({
         kennitala: auth.nationalId,
         cursor: cursor,
       })
@@ -76,9 +89,10 @@ export class AssetsXRoadService {
 
   async getRealEstateDetail(assetId: string, auth: User): Promise<any | null> {
     try {
-      const singleFasteignResponse = await this.getRealEstatesWithAuth(
-        auth,
-      ).fasteignirGetFasteign({ fasteignanumer: getAssetString(assetId) })
+      const assetService = await this.service(auth)
+      const singleFasteignResponse = await assetService.fasteignirGetFasteign({
+        fasteignanumer: getAssetString(assetId),
+      })
 
       if (singleFasteignResponse) {
         return {
@@ -202,13 +216,14 @@ export class AssetsXRoadService {
     limit?: number | null,
   ): Promise<any | null> {
     try {
-      const singleFasteignResponse = await this.getRealEstatesWithAuth(
-        auth,
-      ).fasteignirGetFasteignEigendur({
-        fasteignanumer: getAssetString(assetId),
-        cursor: cursor,
-        limit: limit,
-      })
+      const assetService = await this.service(auth)
+      const singleFasteignResponse = await assetService.fasteignirGetFasteignEigendur(
+        {
+          fasteignanumer: getAssetString(assetId),
+          cursor: cursor,
+          limit: limit,
+        },
+      )
 
       if (singleFasteignResponse) {
         return {
@@ -237,13 +252,14 @@ export class AssetsXRoadService {
     limit?: number | null,
   ): Promise<any | null> {
     try {
-      const unitsOfUseResponse = await this.getRealEstatesWithAuth(
-        auth,
-      ).fasteignirGetFasteignNotkunareiningar({
-        fasteignanumer: getAssetString(assetId),
-        cursor: cursor,
-        limit: limit,
-      })
+      const assetService = await this.service(auth)
+      const unitsOfUseResponse = await assetService.fasteignirGetFasteignNotkunareiningar(
+        {
+          fasteignanumer: getAssetString(assetId),
+          cursor: cursor,
+          limit: limit,
+        },
+      )
 
       if (unitsOfUseResponse) {
         return {

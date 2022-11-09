@@ -8,20 +8,17 @@ import {
   XRoadConfig,
 } from '@island.is/nest/config'
 
-import {
-  Configuration,
-  FasteignirApi as FasteignirApiV2,
-} from '../../gen/fetch'
+import { Configuration, FasteignirApi } from '../../gen/fetch'
 import { AssetsV2ClientConfig } from './assetsV2.config'
 
-export const PropertiesV2ApiProvider: Provider<FasteignirApiV2> = {
-  provide: FasteignirApiV2,
+export const PropertiesV2ApiProvider: Provider<FasteignirApi> = {
+  provide: FasteignirApi,
   scope: LazyDuringDevScope,
   useFactory: (
     xroadConfig: ConfigType<typeof XRoadConfig>,
     config: ConfigType<typeof AssetsV2ClientConfig>,
   ) =>
-    new FasteignirApiV2(
+    new FasteignirApi(
       new Configuration({
         fetchApi: createEnhancedFetch({
           name: 'clients-assets-v2',

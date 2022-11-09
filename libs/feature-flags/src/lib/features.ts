@@ -46,6 +46,7 @@ export enum Features {
   servicePortalPetitionsModule = 'isServicePortalPetitionsModuleEnabled',
   servicePortalDrivingLessonsBookModule = 'isServicePortalDrivingLessonsBookModuleEnabled',
   outgoingDelegationsV2 = 'outgoingdelegationsv2',
+  servicePortalAssetsApiV2Enabled = 'servicePortalAssetsApiV2Enabled',
 }
 
 export enum ServerSideFeature {
