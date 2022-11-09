@@ -16,6 +16,7 @@ import { isDefined } from '@island.is/shared/utils'
 import { useAuthDelegationsQuery } from '@island.is/service-portal/graphql'
 import { DomainOption, useDomains } from '../../hooks/useDomains'
 import { ALL_DOMAINS } from '../../constants/domain'
+import sortBy from 'lodash/sortBy'
 
 export const DelegationsFromMe = () => {
   const { formatMessage, lang = 'is' } = useLocale()
@@ -39,7 +40,11 @@ export const DelegationsFromMe = () => {
   })
 
   const delegations = useMemo(
-    () => (data?.authDelegations as AuthCustomDelegation[]) ?? [],
+    () =>
+      sortBy(
+        data?.authDelegations as AuthCustomDelegation[],
+        (d) => d?.to?.name,
+      ) ?? [],
     [data?.authDelegations],
   )
 

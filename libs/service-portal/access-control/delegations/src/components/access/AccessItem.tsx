@@ -164,11 +164,7 @@ export const AccessItem = ({
 
         return (
           <div key={index}>
-            <GridRow
-              className={classNames(styles.row, {
-                [styles.rowWithBackground]: settingForFirstTime,
-              })}
-            >
+            <GridRow className={styles.row}>
               <GridColumn
                 span={['12/12', '12/12', '3/12']}
                 className={styles.item}
