@@ -35,16 +35,18 @@ export const VehicleSelectField: FC<
     selectedVehicle,
     setSelectedVehicle,
   ] = useState<VehiclesCurrentVehicleWithFees | null>(
-    {
-      permno: currentVehicle.permno,
-      make: currentVehicle?.make || '',
-      color: currentVehicle?.color || '',
-      role: currentVehicle?.role,
-      isStolen: currentVehicle?.isStolen,
-      fees: {
-        hasEncumbrances: false,
-      },
-    } || null,
+    currentVehicle && currentVehicle.permno
+      ? {
+          permno: currentVehicle.permno,
+          make: currentVehicle?.make || '',
+          color: currentVehicle?.color || '',
+          role: currentVehicle?.role,
+          isStolen: currentVehicle?.isStolen,
+          fees: {
+            hasEncumbrances: false,
+          },
+        }
+      : null,
   )
   const [plate, setPlate] = useState<string>(
     (getValueViaPath(application.answers, 'pickVehicle.plate', '') as string) ||

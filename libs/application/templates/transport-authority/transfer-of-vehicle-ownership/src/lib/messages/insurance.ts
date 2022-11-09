@@ -30,5 +30,10 @@ export const insurance = {
       defaultMessage: 'Staðfesta tryggingafélag',
       description: 'Insurance approve button text',
     },
+    outOfCommission: {
+      id: 'ta.tvo.application:insurance.labels.outOfCommission',
+      defaultMessage: 'Úr umferð, á ekki að tryggja.',
+      description: 'Car is out of commission',
+    },
   }),
 }

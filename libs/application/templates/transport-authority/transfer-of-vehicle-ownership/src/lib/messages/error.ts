@@ -13,8 +13,18 @@ export const error = defineMessages({
     description: 'Error message if the vehicle chosen is invalid or not chosen',
   },
   errorDataProvider: {
-    id: 'cr.application:error.dataProvider',
+    id: 'ta.tvo.application:error.dataProvider',
     defaultMessage: 'Reyndu aftur síðar',
     description: 'Unhandled error in data provider',
+  },
+  noInsuranceSelected: {
+    id: 'ta.tvo.application:error.nothingSelected',
+    defaultMessage: 'Vinsamlega veldu tryggingarfélag',
+    description: 'If no insurance is selected',
+  },
+  couldNotUpdateApplication: {
+    id: 'ta.tvo.application:error.couldNotUpdateApplication',
+    defaultMessage: 'Ekki tókst að uppfæra umsókn, vinsamlegast reynið aftur',
+    description: 'Could not update the application answers',
   },
 })
