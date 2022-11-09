@@ -47,7 +47,7 @@ export const HealthInsuranceForm: Form = buildForm({
           title: m.statusAndChildren,
           children: [
             buildCustomField({
-              id: 'applicant.citizenship',
+              id: 'citizenship',
               title: '',
               component: 'CitizenshipField',
             }),
