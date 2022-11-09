@@ -222,7 +222,7 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
       const { y } = position ?? {}
       const font = bold ? boldFont : normalFont
 
-      if (maxWidth) {
+      if (maxWidth && font.widthOfTextAtSize(text, fontSize) > maxWidth) {
         while (
           text.length > 0 &&
           font.widthOfTextAtSize(`${text}...`, fontSize) > maxWidth
