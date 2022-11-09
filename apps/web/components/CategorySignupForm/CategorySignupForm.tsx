@@ -43,9 +43,13 @@ export const CategorySignupForm = ({
 }: NameSignupFormProps) => {
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState<MessageProps>({ type: '', text: '' })
+  const [checked, setChecked] = useState(false)
 
   const n = useNamespace(namespace)
-  const categories = useMemo(() => JSON.parse(slice.categories), [slice])
+  const categories = useMemo(() => JSON.parse(slice.categories ?? '[]'), [
+    slice,
+  ])
+  const inputs = useMemo(() => JSON.parse(slice.inputs ?? '[]'), [slice])
 
   const validate = async (values) => {
     const errors: FormProps = {}
@@ -71,8 +75,9 @@ export const CategorySignupForm = ({
       email: '',
       toggle: 'Yes',
       ...Object.fromEntries(
-        categories.map((category, idx) => [`category-${idx}`, false]),
+        categories.map((_, idx) => [`category-${idx}`, false]),
       ),
+      ...Object.fromEntries(inputs),
     },
     validateOnChange: false,
     validate,
@@ -84,6 +89,10 @@ export const CategorySignupForm = ({
             signupID: slice.id,
             email: formik.values.email,
             name: formik.values.name,
+            inputFields: inputs.map((input) => ({
+              ...input,
+              value: formik.values[input.name],
+            })),
             categories: categories
               .map((category, idx) => idx)
               .filter((idx) => formik.values[`category-${idx}`]),
@@ -175,6 +184,23 @@ export const CategorySignupForm = ({
                     value={formik.values.email}
                   />
                 </GridColumn>
+                {inputs.map((input) => (
+                  <GridColumn span="12/12">
+                    <Input
+                      name={input.name}
+                      label={input.label}
+                      defaultValue=""
+                      required={input.required}
+                      errorMessage={n(
+                        'formInvalidName',
+                        'Þennan reit þarf að fylla út.',
+                      )}
+                      hasError={!!formik.errors[input.name]}
+                      onChange={formik.handleChange}
+                      value={formik.values[input.name]}
+                    />
+                  </GridColumn>
+                ))}
               </GridRow>
               <GridRow>
                 <GridColumn span={['12/12', '12/12', '12/12', '12/12', '9/12']}>
@@ -192,25 +218,27 @@ export const CategorySignupForm = ({
                     </Box>
                   ))}
                 </GridColumn>
-                <GridColumn span={['12/12', '12/12', '12/12', '12/12', '3/12']}>
-                  <Box
-                    display="flex"
-                    flexDirection={[
-                      'row',
-                      'row',
-                      'row',
-                      'row',
-                      'columnReverse',
-                    ]}
-                    height="full"
-                  >
-                    <Box marginTop={2}>
-                      <Button type="submit" disabled={loading}>
-                        {slice.buttonText}
-                      </Button>
-                    </Box>
+              </GridRow>
+              {slice.disclaimerLabel && (
+                <GridRow>
+                  <Box>
+                    <Checkbox
+                      label={slice.disclaimerLabel}
+                      checked={checked}
+                      onChange={(e) => setChecked(e.target.checked)}
+                    />
                   </Box>
-                </GridColumn>
+                </GridRow>
+              )}
+              <GridRow>
+                <Box width="full" display="flex" justifyContent="flexEnd">
+                  <Button
+                    type="submit"
+                    disabled={(slice.disclaimerLabel && !checked) || loading}
+                  >
+                    {slice.buttonText}
+                  </Button>
+                </Box>
               </GridRow>
             </>
           )}

@@ -36,6 +36,10 @@ export class MailchimpResolver {
         )
       : []
 
+    const selectedInputs = mailingListSignupSlice?.inputs
+      ? JSON.parse(mailingListSignupSlice?.inputs)
+      : []
+
     const populatedUrl = url
       .replace('{{EMAIL}}', input.email)
       .replace('{{NAME}}', input.name ?? '')
@@ -44,12 +48,20 @@ export class MailchimpResolver {
         '{{CATEGORIES}}',
         selectedCategories.map((category) => `${category.name}=1`).join('&'),
       )
+      .replace('{{FNAME}}', input.name?.split(' ')?.[0] ?? '')
+      .replace('{{LNAME}}', input.name?.split(' ')?.slice(1)?.join(' ') ?? ' ')
+      .replace(
+        '{{INPUTS}}',
+        selectedInputs.map((i) => `${i.name}=${input.}`).join('&'),
+      )
 
     return axios
       .get(populatedUrl)
-      .then((response) => ({
-        subscribed: true,
-      }))
+      .then((response) => {
+        return {
+          subscribed: true,
+        }
+      })
       .catch((err) => ({
         subscribed: false,
       }))

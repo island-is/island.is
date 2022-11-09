@@ -1619,6 +1619,9 @@ export interface IMailingListSignupFields {
   /** Category Label */
   categoryLabel?: string | undefined
 
+  /** Inputs */
+  inputs?: Record<string, any> | undefined
+
   /** Categories */
   categories?: Record<string, any> | undefined
 
@@ -2775,7 +2778,6 @@ export interface ISliceConnectedComponentFields {
     | 'Fiskistofa/ShipSearchSidebarInput'
     | 'Fasteignasalar/RealEstateAgents'
     | 'Lögmenn/Lawyers'
-    | 'ElectronicRegistrations/MonthlyStatistics'
     | undefined
 
   /** Localized JSON */
