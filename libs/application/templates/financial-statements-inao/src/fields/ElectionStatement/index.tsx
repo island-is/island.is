@@ -33,7 +33,7 @@ export const ElectionStatement = ({
     const incomeLimit = getValueViaPath(answers, 'election.incomeLimit')
 
     if (incomeLimit === GREATER) {
-      goToScreen && goToScreen('attachment.file')
+      goToScreen && goToScreen('attachments.file')
     } else {
       goToScreen && goToScreen('election')
     }

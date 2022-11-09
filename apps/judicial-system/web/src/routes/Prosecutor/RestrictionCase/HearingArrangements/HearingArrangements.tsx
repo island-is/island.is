@@ -64,7 +64,7 @@ export const HearingArrangements: React.FC = () => {
     transitionCase,
     isTransitioningCase,
     updateCase,
-    setAndSendToServer,
+    setAndSendCaseToServer,
   } = useCase()
 
   const { courts, loading: institutionLoading } = useInstitution()
@@ -101,7 +101,7 @@ export const HearingArrangements: React.FC = () => {
 
   const handleCourtChange = (court: Institution) => {
     if (workingCase) {
-      setAndSendToServer(
+      setAndSendCaseToServer(
         [
           {
             courtId: court.id,
@@ -164,7 +164,7 @@ export const HearingArrangements: React.FC = () => {
                 workingCase={workingCase}
                 onChange={(date: Date | undefined, valid: boolean) => {
                   if (date && valid) {
-                    setAndSendToServer(
+                    setAndSendCaseToServer(
                       [
                         {
                           requestedCourtDate: formatDateForServer(date),

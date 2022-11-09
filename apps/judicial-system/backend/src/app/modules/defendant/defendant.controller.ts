@@ -18,7 +18,7 @@ import {
   RolesRules,
 } from '@island.is/judicial-system/auth'
 
-import { prosecutorRule } from '../../guards'
+import { judgeRule, prosecutorRule, registrarRule } from '../../guards'
 import { CaseExistsGuard, CaseWriteGuard } from '../case'
 import { DefendantExistsGuard } from './guards/defendantExists.guard'
 import { CreateDefendantDto } from './dto/createDefendant.dto'
@@ -53,7 +53,7 @@ export class DefendantController {
   }
 
   @UseGuards(CaseExistsGuard, CaseWriteGuard, DefendantExistsGuard)
-  @RolesRules(prosecutorRule)
+  @RolesRules(prosecutorRule, judgeRule, registrarRule)
   @Put(':defendantId')
   @ApiOkResponse({
     type: Defendant,
