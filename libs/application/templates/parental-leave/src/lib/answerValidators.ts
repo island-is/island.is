@@ -67,17 +67,8 @@ export const answerValidators: Record<string, AnswerValidator> = {
     const obj = newAnswer as Record<string, Answer>
     const buildError = (message: StaticText, path: string) =>
       buildValidationError(`${EMPLOYER}.${path}`)(message)
-    const isSelfEmployed = getValueViaPath(
-      application.answers,
-      'employer.isSelfEmployed',
-    )
 
-    if (obj.isSelfEmployed === '' || !obj.isSelfEmployed) {
-      if (isSelfEmployed) {
-        return undefined
-      }
-      return buildError(coreErrorMessages.defaultError, 'isSelfEmployed')
-    }
+    const { isSelfEmployed } = getApplicationAnswers(application.answers)
 
     // If the new answer is the `isSelfEmployed` step, it means we didn't enter the email address yet
     if (obj.isSelfEmployed) {
@@ -99,6 +90,13 @@ export const answerValidators: Record<string, AnswerValidator> = {
       return buildError(errorMessages.email, 'email')
     }
 
+    if (obj.isSelfEmployed === '' || !obj.isSelfEmployed) {
+      if (isSelfEmployed) {
+        return undefined
+      }
+      return buildError(coreErrorMessages.defaultError, 'isSelfEmployed')
+    }
+
     return undefined
   },
   [FILEUPLOAD]: (newAnswer: unknown, application: Application) => {
@@ -107,62 +105,35 @@ export const answerValidators: Record<string, AnswerValidator> = {
     const buildError = (message: StaticText, path: string) =>
       buildValidationError(`${FILEUPLOAD}.${path}`)(message)
 
-    const isSelfEmployed = getValueViaPath(
-      application.answers,
-      'employer.isSelfEmployed',
-    )
-    const applicationType = getValueViaPath(
-      application.answers,
-      'applicationType.option',
-    )
+    const {
+      isSelfEmployed,
+      applicationType,
+      isRecivingUnemploymentBenefits,
+      unemploymentBenefits,
+    } = getApplicationAnswers(application.answers)
+    if (isSelfEmployed === YES && obj.selfEmployedFile) {
+      if (isEmpty((obj as { selfEmployedFile: unknown[] }).selfEmployedFile))
+        return buildError(errorMessages.requiredAttachment, 'selfEmployedFile')
 
-    const isRecivingUnemploymentBenefits = getValueViaPath(
-      application.answers,
-      'isRecivingUnemploymentBenefits',
-    )
-
-    const unemploymentBenefitsSelect = getValueViaPath(
-      application.answers,
-      'unemploymentBenefits',
-    )
-
-    if (
-      isSelfEmployed === YES &&
-      isEmpty((obj as { selfEmployedFile: unknown[] }).selfEmployedFile)
-    ) {
-      return buildError(errorMessages.requiredAttachment, 'selfEmployedFile')
+      return undefined
     }
 
-    if (
-      applicationType === PARENTAL_GRANT_STUDENTS &&
-      isEmpty((obj as { studentFile: unknown[] }).studentFile)
-    ) {
-      return buildError(errorMessages.requiredAttachment, 'studentFile')
+    if (applicationType === PARENTAL_GRANT_STUDENTS && obj.studentFile) {
+      if (isEmpty((obj as { studentFile: unknown[] }).studentFile))
+        return buildError(errorMessages.requiredAttachment, 'studentFile')
+      return undefined
     }
 
     if (isRecivingUnemploymentBenefits) {
       if (
-        unemploymentBenefitsSelect === UnEmployedBenefitTypes.union &&
-        isEmpty(
-          (obj as { unionConfirmationFile: unknown[] }).unionConfirmationFile,
-        )
+        (unemploymentBenefits === UnEmployedBenefitTypes.union ||
+          unemploymentBenefits === UnEmployedBenefitTypes.healthInsurance) &&
+        obj.benefitsFile
       ) {
-        return buildError(
-          errorMessages.requiredAttachment,
-          'unionConfirmationFile',
-        )
-      }
-      if (
-        unemploymentBenefitsSelect === UnEmployedBenefitTypes.healthInsurance &&
-        isEmpty(
-          (obj as { healthInsuranceConfirmationFile: unknown[] })
-            .healthInsuranceConfirmationFile,
-        )
-      ) {
-        return buildError(
-          errorMessages.requiredAttachment,
-          'healthInsuranceConfirmationFile',
-        )
+        if (isEmpty((obj as { benefitsFile: unknown[] }).benefitsFile))
+          return buildError(errorMessages.requiredAttachment, 'benefitsFile')
+
+        return undefined
       }
     }
 
@@ -254,26 +225,14 @@ export const answerValidators: Record<string, AnswerValidator> = {
   [PAYMENTS]: (newAnswer: unknown, application: Application) => {
     const payments = newAnswer as Payments
 
-    const applicationType = getValueViaPath(
-      application.answers,
-      'applicationType.option',
-    )
+    const {
+      applicationType,
+      privatePensionFund,
+      privatePensionFundPercentage,
+      usePrivatePensionFund,
+    } = getApplicationAnswers(application.answers)
 
     if (applicationType === PARENTAL_LEAVE) {
-      const privatePensionFund = getValueViaPath(
-        application.answers,
-        'payments.privatePensionFund',
-      )
-
-      const privatePensionFundPercentage = getValueViaPath(
-        application.answers,
-        'payments.privatePensionFundPercentage',
-      )
-      const usePrivatePensionFund = getValueViaPath(
-        application.answers,
-        'usePrivatePensionFund',
-      )
-
       const buildError = (message: StaticText, path: string) =>
         buildValidationError(`${PAYMENTS}.${path}`)(message)
 

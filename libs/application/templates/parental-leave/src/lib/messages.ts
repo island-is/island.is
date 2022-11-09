@@ -22,8 +22,13 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     formTitle: {
       id: 'pl.application:form.title',
-      defaultMessage: 'Fæðingarorlof',
-      description: 'Parental Leave',
+      defaultMessage: 'Umsókn',
+      description: 'Application',
+    },
+    formEditTitle: {
+      id: 'pl.application:form.edit.title',
+      defaultMessage: 'Breyta eða bæta við tímabilum',
+      description: 'Edit or Add Periods',
     },
     prerequisitesSection: {
       id: 'pl.application:prerequisites.section',
@@ -343,6 +348,13 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage:
         'Sjálfstæður réttur hvers foreldris er sex mánuðir í fæðingarorlof, en annað foreldrið má yfirfæra allt að einn mánuð af sínum réttindum yfir á hitt foreldrið.',
       description: `Both parents have 6 months, but can transfer up to 45 days to the other parent.`,
+    },
+    grantRightsDescription: {
+      id: 'pl.application:grant.rights.description',
+      defaultMessage:
+        'Fæðingarstyrksréttur eru 12 mánuðir sem skiptast jafnt milli foreldra, en þó má færa allt að 45 daga frá einu foreldri til hins. ATH Ef þú átt aukinn rétt þarf að biðja Fæðingarorlofssjóð að bæta aukamánuðum við styrkinn eftir á.',
+      description:
+        'Parental grant allowance is a total of 12 months which is divided equally between two parents. However, you can move up to 45 days from one parent to another. ATTN if you are entitled to increased rights of parental grant you will have to contact Parental Leave Fund and they will add extra months to the grant after submission.',
     },
     requestRightsName: {
       id: 'pl.application:request.rights.name',
@@ -697,14 +709,29 @@ export const parentalLeaveFormMessages: MessageDir = {
       description: 'Do you want to change or split the period?',
     },
     periodsSection: {
-      id: 'pl.application:periods.section',
+      id: 'pl.application:periods.periodSection',
+      defaultMessage: 'Tilhögun',
+      description: 'periods',
+    },
+    periodsLeaveSection: {
+      id: 'pl.application:periods.leaveSection',
       defaultMessage: 'Tilhögun fæðingarorlofs',
       description: 'Leave periods',
     },
+    periodsGrantSection: {
+      id: 'pl.application:periods.grantSection',
+      defaultMessage: 'Tilhögun fæðingarstyrks',
+      description: 'Grant periods',
+    },
     periodsImageTitle: {
       id: 'pl.application:periods.image.title',
-      defaultMessage: 'Nú skulum við skipuleggja tíma þinn með barninu þínu',
-      description: "Let's plan your time with the baby",
+      defaultMessage: 'Næst er að velja tímabil fæðingarorlofsins',
+      description: 'Now it is time to select the parental leave periods',
+    },
+    periodsImageGrantTitle: {
+      id: 'pl.application:periods.image.grant.title',
+      defaultMessage: 'Næst er að velja tímabil fæðingarstyrksins',
+      description: 'Now it is time to select the parental grant period',
     },
     firstPeriodName: {
       id: 'pl.application:first.period.name',
@@ -938,6 +965,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Hér er tilhögun fæðingarorlofsins þíns',
       description: 'Here is your current leave plan',
     },
+    grantTitle: {
+      id: 'pl.application:leave.plan.grant.title',
+      defaultMessage: 'Tilhögun fæðingarstyrksins þíns',
+      description: 'Your parental grant arrangement',
+    },
     emptyDescription: {
       id: 'pl.application:leave.plan.emptyDescription',
       defaultMessage: 'Nú er komið að því að velja tímabil',
@@ -957,7 +989,7 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     addAnother: {
       id: 'pl.application:periods.add.another',
-      defaultMessage: 'Tímabil fæðingarorlofs',
+      defaultMessage: 'Bæta við tímabili',
       description: 'Leave period',
     },
     change: {
@@ -997,12 +1029,23 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Upphaf fæðingarorlofs',
       description: 'When do you want to start your parental leave',
     },
+    grantTitle: {
+      id: 'pl.application:periods.first.period.grantTitle',
+      defaultMessage: 'Upphaf fæðingarstyrks',
+      description: 'Grant start',
+    },
     description: {
       id: 'pl.application:periods.first.period.description',
       defaultMessage:
         'Þú getur valið um að byrja fæðingarorlof á áætluðum fæðingardegi, frá raunverulegum fæðingardegi eða ákveðinni dagsetningu. Athugaðu að ekki er hægt að nýta réttindi til fæðingarorlofs 24 mánuðum eftir fæðingu barnsins.',
       description:
         'Please note, that your rights end 24 months after the date of birth.',
+    },
+    grantDescription: {
+      id: 'pl.application:periods.first.period.grantDescription',
+      defaultMessage:
+        'Þú getur valið um að byrja fæðingarstyrk á áætluðum fæðingardegi, frá raunverulegum fæðingardegi eða ákveðinni dagsetningu. Athugaðu að ekki er hægt að nýta réttindi til fæðingarstyrks 24 mánuðum eftir fæðingu barnsins.',
+      description: 'Add translation',
     },
     estimatedDateOfBirthOption: {
       id: 'pl.application:periods.first.period.estimatedDateOfBirth',
@@ -1060,10 +1103,22 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Vinsamlegast veldu upphafsdag tímabilsins',
       description: 'Please pick the start date',
     },
+    grantTitle: {
+      id: 'pl.application:start.date.grant.title',
+      defaultMessage: 'Veldu upphafsdag fæðingarstyrksins',
+      description: 'Pick the grant start date',
+    },
     description: {
       id: 'pl.application:start.date.description',
       defaultMessage: `Athugaðu að ekki er hægt að nýta réttindi til fæðingarorlofs 24 mánuðum eftir fæðingu barnsins.`,
       description: `Please note, that your parental leave rights end 24 months after the date of birth`,
+    },
+    grantDescription: {
+      id: 'pl.application:start.date.grant.description',
+      defaultMessage:
+        'Athugaðu að ekki er hægt að nýta réttindi til fæðingarstyrks 24 mánuðum eftir fæðingu barnsins.',
+      description:
+        'Please note, that your parental grant rights end 24 months after the date of birth',
     },
     label: {
       id: 'pl.application:start.date.label',
@@ -1082,6 +1137,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:duration.title',
       defaultMessage: 'Lengd fæðingarorlofs',
       description: 'Leave duration',
+    },
+    grantTitle: {
+      id: 'pl.application:duration.grant.title',
+      defaultMessage: 'Lengd fæðingarstyrks',
+      description: 'Grant duration',
     },
     description: {
       id: 'pl.application:duration.description',
@@ -1103,6 +1163,12 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:duration.months.description',
       defaultMessage:
         'Hægt er að dreifa rétti sínum yfir lengra tímabil en það hefur bein áhrif á greiðslur til þín úr fæðingarorlofssjóði. Dragðu stikuna til að stilla lengd tímabilsins ímánuðum.',
+      description: 'Add translation',
+    },
+    monthsGrantDescription: {
+      id: 'pl.application:duration.months.grant.description',
+      defaultMessage:
+        'Hægt er að dreifa styrknum yfir lengra tímabil en það hefur bein áhrif á greiðslur til þín úr fæðingarorlofssjóði. Dragðu stikuna til að stilla lengd tímabilsins í mánuðum.',
       description: 'Add translation',
     },
     paymentsRatio: {
@@ -1208,10 +1274,16 @@ export const parentalLeaveFormMessages: MessageDir = {
         'Hversu hátt hlutfall viltu að fæðingarorlofið sé af starfshlutfalli þínu?',
       description: 'What percent off will you take for this period?',
     },
+    grantTitle: {
+      id: 'pl.application:ratio.grant.title',
+      defaultMessage:
+        'Hversu hátt hlutfall viltu að fæðingarstyrkurinn sé af starfshlutfalli þínu?',
+      description: 'What percent off will you take for this period?',
+    },
     description: {
       id: 'pl.application:ratio.description',
       defaultMessage:
-        '100% þýðir að þú sért í fullu fæðingarorlofi. Lægra hlutfall hefur bein áhrif á greiðslur til þín úr fæðingarorlofssjóði. Sumir velja 50% fæðingarorlof á móti 50% starfi.',
+        '100% þýðir að þú sért í fullu orlofi. Lægra hlutfall hefur bein áhrif á greiðslur til þín úr fæðingarorlofssjóði. Sumir velja 50% orlof á móti 50% starfi. Prósentutalan sem birtist efst í felliglugganum er hæsta mögulega % miðað við þínar forsendur. Ef þú dreifir orlofi á fleiri mánuði en gefinn réttur lækkar prósentan sem því munar.',
       description:
         'For example, you could work 50% of the time, and have 50% paid leave.',
     },
@@ -1219,6 +1291,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:ratio.label',
       defaultMessage: 'Hlutfall fæðingarorlofs',
       description: 'Percent leave',
+    },
+    grantLabel: {
+      id: 'pl.application:ratio.grant.label',
+      defaultMessage: 'Hlutfall fæðingarstyrks',
+      description: 'Grant percentage',
     },
     placeholder: {
       id: 'pl.application:ratio.placeholder',
@@ -1603,6 +1680,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Senda inn umsókn',
       description: 'Review and submit',
     },
+    cancel: {
+      id: 'pl.application:confirmation.cancel',
+      defaultMessage: 'Hætta við',
+      description: 'Cancel',
+    },
     description: {
       id: 'pl.application:confirmation.description',
       defaultMessage:
@@ -1648,37 +1730,32 @@ export const parentalLeaveFormMessages: MessageDir = {
     genericTitle: {
       id: 'pl.application:attachmentscreen.genericTitle',
       defaultMessage: `Viðbótargögn með umsókn`,
-      description: `generic title`,
+      description: `Additional documentation for application `,
     },
     genericDescription: {
       id: 'pl.application:attachmentscreen.genericDescription',
       defaultMessage: `Hér getur þú sett viðbótargögn til Fæðingarorlofssjóðs. Athugaðu að skjalið þarf að vera á .pdf formi`,
-      description: `generic description`,
+      description: `Here you can upload additional documentation for the Parental Leave Fund. Note that the document needs to be on .pdf format`,
     },
     studentTitle: {
       id: 'pl.application:attachmentscreen.studentTitle',
       defaultMessage: `Staðfesting á námi`,
-      description: `student title`,
+      description: `Confirmation of student status`,
     },
     studentDescription: {
       id: 'pl.application:attachmentscreen.studentDescription',
       defaultMessage: `Námsmenn þurfa að skila inn staðfestingu á námi og námsárangri. Athugaðu að skjalið þarf að vera á .pdf formi`,
-      description: `student description`,
+      description: `Students need to upload confirmation of student status and academic results. Note that the document needs to be on .pdf format`,
     },
     unemploymentBenefitsTitle: {
       id: 'pl.application:attachmentscreen.unemployedBenefitsTitle',
       defaultMessage: `Bætur`,
       description: `Benefits`,
     },
-    unionDescription: {
-      id: 'pl.application:attachmentscreen.unionDescription',
-      defaultMessage: `Þeir sem þiggja dagpeninga/veikindarétt frá stéttarfélagi þurfa að skila inn skjali því til staðfestingar. Athugaðu að skjalið þarf að vera á .pdf formi`,
-      description: `Those who receive unemployment benefits/sick leave allowance from the Union must submit a document to confirm this. Note that the document needs to be on .pdf format`,
-    },
-    healthInsuranceDescription: {
-      id: 'pl.application:attachmentscreen.sjúkratryggingarDescription',
-      defaultMessage: `Þeir sem þiggja sjúkradagpeninga frá Sjúkratryggingum Íslands þurfa að skila inn skjali því til staðfestingar. Athugaðu að skjalið þarf að vera á .pdf formi`,
-      description: `Those who receive sick leave allowance from Sjúkratryggingar Íslands must submit a document to confirm this. Note that the document needs to be on .pdf format`,
+    benefitDescription: {
+      id: 'pl.application:attachmentscreen.benefitDescription',
+      defaultMessage: `Þeir sem þiggja dagpeninga/veikindarétt frá stéttarfélagi eða skjúkradagpeninga frá Sjúkratryggingum Íslands þurfa að skila inn skjali því til staðfestingar. Athugaðu að skjalið þarf að vera á .pdf formi`,
+      description: `Those who receive unemployment benefits/sick leave allowance from the Union or sick leave allowance from Sjúkratryggingar Íslands must submit a document to confirm this. Note that the document needs to be on .pdf format`,
     },
     fatherWithoutMotherTitle: {
       id: 'pl.application:attachmentscreen.fatherWithoutMotherTitle',

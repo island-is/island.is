@@ -27,9 +27,9 @@ import {
   StartDateOptions,
   ParentalRelations,
   TransferRightsOption,
-  UnEmployedBenefitTypes,
   PARENTAL_GRANT_STUDENTS,
   PARENTAL_LEAVE,
+  PARENTAL_GRANT,
 } from '../constants'
 import { SchemaFormValues } from '../lib/dataSchema'
 import { PregnancyStatusAndRightsResults } from '../dataProviders/Children/Children'
@@ -436,7 +436,7 @@ export function getApplicationExternalData(
   const navId = getValueViaPath(externalData, 'navId', '') as string
 
   let applicationFundId = navId
-  if (applicationFundId === '') {
+  if (!applicationFundId || applicationFundId === '') {
     applicationFundId = getValueViaPath(
       externalData,
       'sendApplication.data.id',
@@ -598,6 +598,11 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'employerNationalRegistryId',
   ) as string
 
+  const employerReviewerNationalRegistryId = getValueViaPath(
+    answers,
+    'employerReviewerNationalRegistryId',
+  ) as string
+
   const shareInformationWithOtherParent = getValueViaPath(
     answers,
     'shareInformationWithOtherParent',
@@ -695,6 +700,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     employerEmail,
     employerPhoneNumber,
     employerNationalRegistryId,
+    employerReviewerNationalRegistryId,
     shareInformationWithOtherParent,
     selectedChild,
     transferRights,
@@ -719,6 +725,7 @@ export const requiresOtherParentApproval = (
 ) => {
   const applicationAnswers = getApplicationAnswers(answers)
   const selectedChild = getSelectedChild(answers, externalData)
+  const { navId } = getApplicationExternalData(externalData)
 
   const {
     isRequestingRights,
@@ -727,6 +734,11 @@ export const requiresOtherParentApproval = (
 
   const needsApprovalForRequestingRights =
     selectedChild?.parentalRelation === ParentalRelations.primary
+
+  //if an application has already been sent in then we don't need other parent approval as they are only changing period
+  if (navId) {
+    return false
+  }
 
   return (
     (isRequestingRights === YES && needsApprovalForRequestingRights) ||
@@ -986,23 +998,102 @@ export const removeCountryCode = (application: Application) => {
     : getMobilePhoneNumber(application)
 }
 
-export const showGenericFileUpload = (answers: Application['answers']) => {
-  const {
-    isSelfEmployed,
-    isRecivingUnemploymentBenefits,
-    unemploymentBenefits,
-    applicationType,
-  } = getApplicationAnswers(answers)
-  // we don't want to show generic file upload atm if we are showing another file upload
-  // isSelfEmployed, students, benefits (union & health insurance)
-  if (isSelfEmployed === YES) return false
-  else if (
-    (isRecivingUnemploymentBenefits &&
-      unemploymentBenefits === UnEmployedBenefitTypes.union) ||
-    unemploymentBenefits === UnEmployedBenefitTypes.healthInsurance
-  )
-    return false
-  else if (applicationType === PARENTAL_GRANT_STUDENTS) return false
+// Functions that determine dynamic text changes in forms based on application type
+export const getPeriodSectionTitle = (application: Application) => {
+  const appAnswers = getApplicationAnswers(application.answers)
+  if (
+    appAnswers.applicationType === PARENTAL_GRANT ||
+    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
+  ) {
+    return parentalLeaveFormMessages.shared.periodsGrantSection
+  }
+  return parentalLeaveFormMessages.shared.periodsLeaveSection
+}
 
-  return true
+export const getRightsDescTitle = (application: Application) => {
+  const appAnswers = getApplicationAnswers(application.answers)
+  if (
+    appAnswers.applicationType === PARENTAL_GRANT ||
+    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
+  ) {
+    return parentalLeaveFormMessages.shared.grantRightsDescription
+  }
+  return parentalLeaveFormMessages.shared.rightsDescription
+}
+
+export const getPeriodImageTitle = (application: Application) => {
+  const appAnswers = getApplicationAnswers(application.answers)
+  if (
+    appAnswers.applicationType === PARENTAL_GRANT ||
+    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
+  ) {
+    return parentalLeaveFormMessages.shared.periodsImageGrantTitle
+  }
+  return parentalLeaveFormMessages.shared.periodsImageTitle
+}
+
+export const getFirstPeriodTitle = (application: Application) => {
+  const appAnswers = getApplicationAnswers(application.answers)
+  if (
+    appAnswers.applicationType === PARENTAL_GRANT ||
+    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
+  ) {
+    return parentalLeaveFormMessages.firstPeriodStart.grantTitle
+  }
+  return parentalLeaveFormMessages.firstPeriodStart.title
+}
+
+export const getDurationTitle = (application: Application) => {
+  const appAnswers = getApplicationAnswers(application.answers)
+  if (
+    appAnswers.applicationType === PARENTAL_GRANT ||
+    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
+  ) {
+    return parentalLeaveFormMessages.duration.grantTitle
+  }
+  return parentalLeaveFormMessages.duration.title
+}
+
+export const getRatioTitle = (application: Application) => {
+  const appAnswers = getApplicationAnswers(application.answers)
+  if (
+    appAnswers.applicationType === PARENTAL_GRANT ||
+    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
+  ) {
+    return parentalLeaveFormMessages.ratio.grantTitle
+  }
+  return parentalLeaveFormMessages.ratio.title
+}
+
+export const getLeavePlanTitle = (application: Application) => {
+  const appAnswers = getApplicationAnswers(application.answers)
+  if (
+    appAnswers.applicationType === PARENTAL_GRANT ||
+    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
+  ) {
+    return parentalLeaveFormMessages.leavePlan.grantTitle
+  }
+  return parentalLeaveFormMessages.leavePlan.title
+}
+
+export const getStartDateTitle = (application: Application) => {
+  const appAnswers = getApplicationAnswers(application.answers)
+  if (
+    appAnswers.applicationType === PARENTAL_GRANT ||
+    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
+  ) {
+    return parentalLeaveFormMessages.startDate.grantTitle
+  }
+  return parentalLeaveFormMessages.startDate.title
+}
+
+export const getStartDateDesc = (application: Application) => {
+  const appAnswers = getApplicationAnswers(application.answers)
+  if (
+    appAnswers.applicationType === PARENTAL_GRANT ||
+    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
+  ) {
+    return parentalLeaveFormMessages.startDate.grantDescription
+  }
+  return parentalLeaveFormMessages.startDate.description
 }

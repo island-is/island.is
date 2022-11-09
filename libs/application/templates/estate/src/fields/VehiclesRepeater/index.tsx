@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from 'react'
+import { FC, useEffect } from 'react'
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
@@ -9,6 +9,7 @@ import {
   GridRow,
   Button,
   ProfileCard,
+  Text,
 } from '@island.is/island-ui/core'
 import { Answers, Asset } from '../../types'
 
@@ -55,6 +56,7 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
             return acc
           }
           return [
+            ...acc,
             <GridColumn
               key={asset.id}
               span={['12/12', '12/12', '6/12']}
@@ -117,7 +119,9 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
               control={control}
               defaultValue={field.dummy || false}
             />
-
+            <Text variant="h4">
+              {formatMessage(m.vehiclesTitle) + ' ' + (index + 1)}
+            </Text>
             <Box position="absolute" className={styles.removeFieldButton}>
               <Button
                 variant="ghost"
@@ -128,7 +132,11 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
               />
             </Box>
             <GridRow>
-              <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+              <GridColumn
+                span={['1/1', '1/2']}
+                paddingBottom={2}
+                paddingTop={2}
+              >
                 <InputController
                   id={vehicleNumberField}
                   name={vehicleNumberField}
@@ -139,7 +147,11 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
                   size="sm"
                 />
               </GridColumn>
-              <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+              <GridColumn
+                span={['1/1', '1/2']}
+                paddingBottom={2}
+                paddingTop={2}
+              >
                 <InputController
                   id={vehicleTypeField}
                   name={vehicleTypeField}

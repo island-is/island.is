@@ -45,7 +45,9 @@ export const SelectFormField: FC<Props> = ({ application, error, field }) => {
       <Box paddingTop={2}>
         <SelectController
           required={required}
-          defaultValue={getDefaultValue(field, application)}
+          defaultValue={
+            getDefaultValue(field, application) || required ? '' : undefined
+          }
           label={formatText(title, application, formatMessage)}
           name={id}
           disabled={disabled}
