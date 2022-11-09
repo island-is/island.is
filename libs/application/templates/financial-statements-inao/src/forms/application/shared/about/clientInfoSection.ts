@@ -70,6 +70,10 @@ export const clientInfoSection = buildSection({
           format: '######-####',
           width: 'half',
           readOnly: true,
+          condition: (answers, externalData) => {
+            const userType = getCurrentUserType(answers, externalData)
+            return userType === USERTYPE.CEMETRY || userType === USERTYPE.PARTY
+          },
         }),
         buildTextField({
           id: 'about.powerOfAttorneyName',
