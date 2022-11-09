@@ -18,6 +18,7 @@ import {
 } from '../dto'
 import { DelegationByOtherUserInput } from '../dto/delegationByOtherUser.input'
 import { DelegationDTO, MeDelegationsServiceInterface } from '../services/types'
+import startOfDay from 'date-fns/startOfDay'
 
 @Injectable()
 export class MeDelegationsServiceV2 implements MeDelegationsServiceInterface {
@@ -188,10 +189,12 @@ export class MeDelegationsServiceV2 implements MeDelegationsServiceInterface {
       return delegation
     }
 
+    const today = startOfDay(new Date())
+
     return {
       ...delegation,
       scopes: delegation.scopes
-        ?.filter((scope) => scope?.validTo && scope.validTo > new Date())
+        ?.filter((scope) => scope?.validTo && scope.validTo > today)
         .map((scope) => ({
           ...scope,
           domainName: delegation.domainName,

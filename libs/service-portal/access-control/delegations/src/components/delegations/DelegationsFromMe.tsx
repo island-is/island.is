@@ -43,7 +43,7 @@ export const DelegationsFromMe = () => {
     () =>
       sortBy(
         data?.authDelegations as AuthCustomDelegation[],
-        (d) => d?.to?.name,
+        (d) => d.to?.name,
       ) ?? [],
     [data?.authDelegations],
   )
@@ -67,8 +67,8 @@ export const DelegationsFromMe = () => {
 
     return delegations.filter((delegation) => {
       const searchValueLower = searchValue.toLowerCase()
-      const name = delegation?.to?.name.toLowerCase()
-      const nationalId = delegation?.to?.nationalId.toLowerCase()
+      const name = delegation.to?.name.toLowerCase()
+      const nationalId = delegation.to?.nationalId.toLowerCase()
 
       return (
         name?.includes(searchValueLower) || nationalId?.includes(searchValue)
