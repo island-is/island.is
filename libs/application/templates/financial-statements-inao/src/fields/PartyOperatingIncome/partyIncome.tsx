@@ -10,14 +10,20 @@ import { m } from '../../lib/messages'
 import { INPUTCHANGEINTERVAL, PARTYOPERATIONIDS } from '../../lib/constants'
 
 interface PropTypes {
+  data: any
+  loading: boolean
   getSum: () => void
   errors: RecordObject<unknown> | undefined
 }
 
-export const PartyIncome = ({ errors, getSum }: PropTypes): JSX.Element => {
+export const PartyIncome = ({
+  data,
+  loading,
+  errors,
+  getSum,
+}: PropTypes): JSX.Element => {
   const { formatMessage } = useLocale()
   const { clearErrors } = useFormContext()
-
   const onInputChange = debounce((fieldId: string) => {
     getSum()
     clearErrors(fieldId)
@@ -35,6 +41,7 @@ export const PartyIncome = ({ errors, getSum }: PropTypes): JSX.Element => {
           }
           backgroundColor="blue"
           currency
+          loading={loading}
           error={
             errors &&
             getErrorViaPath(
