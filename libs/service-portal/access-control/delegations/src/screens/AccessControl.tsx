@@ -46,6 +46,7 @@ const AccessControl = () => {
       />
       <Box marginTop={8}>
         <Tabs
+          onlyRenderSelectedTab
           selected={
             isDelegationIncoming
               ? TAB_DELEGATION_INCOMING_ID
@@ -55,10 +56,12 @@ const AccessControl = () => {
           label={formatMessage(m.chooseDelegation)}
           tabs={[
             {
+              id: TAB_DELEGATION_OUTGOING_ID,
               label: formatMessage(m.accessControlDelegationsOutgoing),
               content: <DelegationsOutgoing />,
             },
             {
+              id: TAB_DELEGATION_INCOMING_ID,
               label: formatMessage(m.accessControlDelegationsIncoming),
               content: <DelegationsIncoming />,
             },

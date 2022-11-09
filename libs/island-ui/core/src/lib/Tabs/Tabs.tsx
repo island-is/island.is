@@ -11,6 +11,10 @@ import { FocusableBox } from '../FocusableBox/FocusableBox'
 import { useWindowSize } from 'react-use'
 
 type TabType = {
+  /**
+   * Required when prop onlyRenderSelectedTab is true
+   */
+  id?: string
   label: string
   content: ReactNode
   disabled?: boolean
@@ -23,6 +27,7 @@ interface TabInterface {
   contentBackground?: Colors
   size?: 'xs' | 'sm' | 'md'
   onChange?(id: string): void
+  onlyRenderSelectedTab?: boolean
 }
 
 export const Tabs: FC<TabInterface> = ({
@@ -32,6 +37,7 @@ export const Tabs: FC<TabInterface> = ({
   contentBackground = 'purple100',
   size = 'md',
   onChange: onChangeHandler,
+  onlyRenderSelectedTab,
 }) => {
   const { loop, wrap, ...tab } = useTabState({
     selectedId: selected,
@@ -112,9 +118,13 @@ export const Tabs: FC<TabInterface> = ({
             </FocusableBox>
           ))}
         </TabList>
-        {tabs.map(({ content }, index) => (
+        {tabs.map(({ content, id }, index) => (
           <TabPanel {...tab} key={index} className={styles.tabPanel}>
-            <Box>{content}</Box>
+            {onlyRenderSelectedTab && id ? (
+              tab.selectedId === id && <Box>{content}</Box>
+            ) : (
+              <Box>{content}</Box>
+            )}
           </TabPanel>
         ))}
       </Box>

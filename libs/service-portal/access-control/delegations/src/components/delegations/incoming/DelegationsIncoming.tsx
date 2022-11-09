@@ -21,6 +21,7 @@ export const DelegationsIncoming = () => {
   const [delegation, setDelegation] = useState<AuthCustomDelegation | null>(
     null,
   )
+
   const { data, loading, refetch, error } = useAuthActorDelegationsQuery({
     variables: {
       input: {
@@ -31,6 +32,7 @@ export const DelegationsIncoming = () => {
     // Make sure that loading state is shown when refetching
     notifyOnNetworkStatusChange: true,
     fetchPolicy: 'cache-and-network',
+    errorPolicy: 'all',
   })
 
   const delegations = useMemo(

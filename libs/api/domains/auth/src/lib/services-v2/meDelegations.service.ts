@@ -17,11 +17,7 @@ import {
   UpdateDelegationInput,
 } from '../dto'
 import { DelegationByOtherUserInput } from '../dto/delegationByOtherUser.input'
-import {
-  DelegationDTO,
-  DelegationScopeDTO,
-  MeDelegationsServiceInterface,
-} from '../services/types'
+import { DelegationDTO, MeDelegationsServiceInterface } from '../services/types'
 
 @Injectable()
 export class MeDelegationsServiceV2 implements MeDelegationsServiceInterface {
