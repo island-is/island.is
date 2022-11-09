@@ -349,7 +349,7 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
                       <span
                         style={{
                           display: 'block',
-                          width: `${width - 180}px`,
+                          maxWidth: `${width - 180}px`,
                           overflow: 'hidden',
                           textOverflow: 'ellipsis',
                           whiteSpace: 'nowrap',
