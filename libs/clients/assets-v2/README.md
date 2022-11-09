@@ -1,4 +1,4 @@
-# clients-assets-v2
+# Clients Assets V2
 
 This library was generated with [Nx](https://nx.dev).
 
