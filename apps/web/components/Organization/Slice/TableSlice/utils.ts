@@ -20,6 +20,7 @@ export const isHeaderRow = (row: Block) => {
 }
 
 export const extractTextFromRichTextTableCell = (block: Block) => {
+  if (!helpers.isBlock(block)) return ''
   let text = ''
   for (const item of block.content) {
     if (item.nodeType !== BLOCKS.PARAGRAPH) continue
