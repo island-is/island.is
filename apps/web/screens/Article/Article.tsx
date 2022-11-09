@@ -35,6 +35,7 @@ import {
   ChartsCard,
   OneColumnTextSlice,
   AccordionSlice,
+  TableSlice,
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from '../queries'
@@ -573,6 +574,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
                 (subArticle ?? article).body as SliceType[],
                 {
                   renderComponent: {
+                    TableSlice: (slice) => <TableSlice slice={slice} />,
                     Stepper: () => (
                       <Box marginY={3} printHidden className="rs_read">
                         <ProcessEntry
