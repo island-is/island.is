@@ -21,8 +21,8 @@ test.describe('Service portal', () => {
   test('should have clickable navigation bar', async () => {
     const page = await context.newPage()
     await page.goto('/minarsidur')
-    expect(
-      page.locator('a[href^="/minarsidur/"]:has(svg):visible').nth(4),
+    await expect(
+      await page.locator('a[href^="/minarsidur/"]:has(svg):visible').nth(4),
     ).toBeTruthy()
   })
   test('should have user ${fakeUser.name} logged in', async () => {
