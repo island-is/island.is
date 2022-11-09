@@ -257,7 +257,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
           autoComplete="off"
           label={formatMessage(core.fullName)}
           placeholder={formatMessage(core.fullName)}
-          value={defendant?.name ?? ''}
+          value={defendant.name ?? ''}
           errorMessage={accusedNameErrorMessage}
           hasError={accusedNameErrorMessage !== ''}
           onChange={(evt) => {
