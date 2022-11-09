@@ -33,6 +33,7 @@ export const clientInfoSection = buildSection({
         buildTextField({
           id: 'about.nationalId',
           title: (application: Application) => {
+            console.log({ application })
             const answers = application.answers
             const externalData = application.externalData
             const userType = getCurrentUserType(answers, externalData)

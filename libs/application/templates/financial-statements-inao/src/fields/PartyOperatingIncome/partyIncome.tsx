@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react'
+import React, { Fragment, useEffect } from 'react'
 import debounce from 'lodash/debounce'
 import { RecordObject } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
@@ -8,9 +8,10 @@ import { useLocale } from '@island.is/localization'
 import { getErrorViaPath } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { INPUTCHANGEINTERVAL, PARTYOPERATIONIDS } from '../../lib/constants'
+import { FinancialStatementsInaoTaxInfo } from '@island.is/api/schema'
 
 interface PropTypes {
-  data: any
+  data: { financialStatementsInaoTaxInfo: FinancialStatementsInaoTaxInfo[] }
   loading: boolean
   getSum: () => void
   errors: RecordObject<unknown> | undefined
@@ -23,7 +24,25 @@ export const PartyIncome = ({
   getSum,
 }: PropTypes): JSX.Element => {
   const { formatMessage } = useLocale()
-  const { clearErrors } = useFormContext()
+  const { clearErrors, setValue } = useFormContext()
+
+  useEffect(() => {
+    if (data?.financialStatementsInaoTaxInfo) {
+      setValue(
+        PARTYOPERATIONIDS.contributionsFromTheTreasury,
+        data.financialStatementsInaoTaxInfo?.[0]?.value?.toString() ?? '',
+      )
+      setValue(
+        PARTYOPERATIONIDS.parliamentaryPartySupport,
+        data.financialStatementsInaoTaxInfo?.[1]?.value?.toString() ?? '',
+      )
+      setValue(
+        PARTYOPERATIONIDS.municipalContributions,
+        data.financialStatementsInaoTaxInfo?.[2]?.value?.toString() ?? '',
+      )
+    }
+  }, [data, setValue])
+
   const onInputChange = debounce((fieldId: string) => {
     getSum()
     clearErrors(fieldId)
@@ -39,9 +58,10 @@ export const PartyIncome = ({
           onChange={() =>
             onInputChange(PARTYOPERATIONIDS.contributionsFromTheTreasury)
           }
+          defaultValue={data?.financialStatementsInaoTaxInfo?.[0]?.value?.toString()}
           backgroundColor="blue"
-          currency
           loading={loading}
+          currency
           error={
             errors &&
             getErrorViaPath(
@@ -59,6 +79,8 @@ export const PartyIncome = ({
           onChange={() =>
             onInputChange(PARTYOPERATIONIDS.parliamentaryPartySupport)
           }
+          loading={loading}
+          defaultValue={data?.financialStatementsInaoTaxInfo?.[1]?.value?.toString()}
           backgroundColor="blue"
           currency
           error={
@@ -75,6 +97,8 @@ export const PartyIncome = ({
           onChange={() =>
             onInputChange(PARTYOPERATIONIDS.municipalContributions)
           }
+          loading={loading}
+          defaultValue={data?.financialStatementsInaoTaxInfo?.[2]?.value?.toString()}
           backgroundColor="blue"
           currency
           error={

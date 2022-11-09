@@ -445,7 +445,7 @@ export const m = defineMessages({
   },
   donationsToCemeteryFund: {
     id: 'fsn.application:income.donationsToCemeteryFund',
-    defaultMessage: 'Styrkur frá kirkjugarðasjóði',
+    defaultMessage: 'Framlög til kirkjugarðasjóðs',
     description: 'donations from cemetry fund',
   },
   cemeteryCaretakers: {
