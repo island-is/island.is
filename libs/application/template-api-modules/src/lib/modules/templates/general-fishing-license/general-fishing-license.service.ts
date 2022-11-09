@@ -103,6 +103,20 @@ export class GeneralFishingLicenseService {
       ) as string
       const roenet = parseInt(roenetStr.trim().split('m').join(''), 10)
       const railnet = parseInt(railnetStr.trim().split('m').join(''), 10)
+      const attachmentsRaw = getValueViaPath(
+        application.answers,
+        'fishingLicenseFurtherInformation.attachments',
+        [],
+      ) as Array<{ key: string; name: string }>
+      const attachments =
+        attachmentsRaw?.map((a) => {
+          // TODO: fetch base64 for attatchment
+          return {
+            vidhengiBase64: 'TODO',
+            vidhengiNafn: a.name,
+            vidhengiTypa: a.name.split('.').pop(),
+          }
+        }) || []
 
       await this.umsoknirApi
         .withMiddleware(new AuthMiddleware(auth as Auth))
@@ -118,6 +132,7 @@ export class GeneralFishingLicenseService {
             veidisvaediLykill: area,
             fjoldiNeta: railnet,
             teinalengd: roenet,
+            skraarVidhengi: attachments,
           },
         })
       return { success: true }
