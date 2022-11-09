@@ -51,6 +51,7 @@ export const UnEmploymentBenefits: FC<FieldBaseProps> = ({
           onSelect: (s: string) => {
             if (s !== YES) {
               setValue('unemploymentBenefits', NO_UNEMPLOYED_BENEFITS)
+              setValue('fileUpload.benefitsFile', null)
             }
             if (s === YES) {
               setValue('unemploymentBenefits', '')

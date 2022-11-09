@@ -511,7 +511,8 @@ export const messages = defineMessages({
   },
   vehicleDrivingLessonsText: {
     id: 'sp.vehicles:vehicle-driving-lessons-text',
-    defaultMessage: 'Hér birtast upplýsingar um stöðu ökunáms.',
+    defaultMessage:
+      'Hér birtast upplýsingar sem hafa verið skráðar í stafræna ökunámsbók.',
   },
   vehicleDrivingLessonsLabel: {
     id: 'sp.vehicles:vehicle-driving-lessons-label',

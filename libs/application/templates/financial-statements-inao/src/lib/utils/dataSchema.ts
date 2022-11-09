@@ -1,4 +1,4 @@
-import * as z from 'zod'
+import { z } from 'zod'
 import { m } from '../../lib/messages'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
@@ -56,8 +56,6 @@ const asset = z.object({
 
 const equity = z.object({
   totalEquity: z.string().refine((x) => !!x, { params: m.required }),
-  operationResult: z.string(),
-  total: z.string().refine((x) => !!x, { params: m.required }),
 })
 
 const liability = z.object({
@@ -206,6 +204,30 @@ const cemetryCaretaker = z
     },
     { params: m.errorMembersMissing },
   )
+  .refine(
+    (x) => {
+      const careTakers = x
+        .filter((member) => member.role === CARETAKER)
+        .map((member) => member.nationalId)
+      const boardMembers = x
+        .filter((member) => member.role === BOARDMEMEBER)
+        .map((member) => member.nationalId)
+
+      const careTakersUnique = careTakers.filter((member) =>
+        boardMembers.includes(member),
+      )
+      const boardMembersUnique = boardMembers.filter((member) =>
+        careTakers.includes(member),
+      )
+
+      if (careTakersUnique.length > 0 || boardMembersUnique.length > 0) {
+        return false
+      } else {
+        return true
+      }
+    },
+    { params: m.errormemberNotUnique },
+  )
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -229,7 +251,7 @@ export const dataSchema = z.object({
   asset,
   equity,
   liability,
-  attachment: z.object({
+  attachments: z.object({
     file: z.array(FileSchema).nonempty(),
   }),
 })

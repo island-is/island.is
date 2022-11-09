@@ -1,76 +1,52 @@
 import { Cache as CacheManager } from 'cache-manager'
-import { Module, DynamicModule, CacheModule } from '@nestjs/common'
+import { Module, CacheModule } from '@nestjs/common'
+import { ConfigType, XRoadConfig } from '@island.is/nest/config'
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
-
+import { CmsModule } from '@island.is/cms'
 import { LicenseServiceService } from './licenseService.service'
-
 import { MainResolver } from './graphql/main.resolver'
-
-import { GenericDrivingLicenseApi } from './client/driving-license-client'
-import { GenericAdrLicenseApi } from './client/adr-license-client/adrLicenseService.api'
-import { GenericMachineLicenseApi } from './client/machine-license-client'
-import { GenericFirearmLicenseApi } from './client/firearm-license-client'
-import {
-  FirearmApi,
-  FirearmLicenseClientModule,
-} from '@island.is/clients/firearm-license'
-import {
-  SmartSolutionsApi,
-  SmartSolutionsClientModule,
-} from '@island.is/clients/smartsolutions'
 import {
   CONFIG_PROVIDER,
-  CONFIG_PROVIDER_V2,
   GenericLicenseClient,
   GenericLicenseMetadata,
   GenericLicenseProviderId,
   GenericLicenseType,
   GenericLicenseOrganizationSlug,
   GENERIC_LICENSE_FACTORY,
+  PassTemplateIds,
 } from './licenceService.type'
 import {
-  AdrApi,
-  VinnuvelaApi,
-  AdrAndMachineLicenseClientModule,
-} from '@island.is/clients/adr-and-machine-license'
-import { CmsModule } from '@island.is/cms'
+  GenericAdrLicenseModule,
+  GenericAdrLicenseService,
+  GenericAdrLicenseConfig,
+} from './client/adr-license-client'
 import {
-  DefaultApi as DisabilityApi,
-  DisabilityLicenseClientModule,
-} from '@island.is/clients/disability-license'
-import { GenericDisabilityLicenseApi } from './client/disability-license-client'
-export interface PkPassConfig {
-  apiKey: string
-  apiUrl: string
-  passTemplateId?: string
-  secretKey?: string
-  cacheKey?: string
-  cacheTokenExpiryDelta?: string
-  authRetries?: string
-}
-export interface DriversLicenseConfig {
-  xroad: {
-    baseUrl: string
-    clientId: string
-    path: string
-    secret: string
-  }
-  pkpass: PkPassConfig
-}
-export interface LicenseServiceConfig {
-  firearmLicense: PkPassConfig
-  driversLicense: DriversLicenseConfig
-  adrLicense: PkPassConfig
-  machineLicense: PkPassConfig
-  disabilityLicense: PkPassConfig
-}
+  GenericFirearmLicenseModule,
+  GenericFirearmLicenseService,
+  GenericFirearmLicenseConfig,
+} from './client/firearm-license-client'
+import {
+  GenericMachineLicenseModule,
+  GenericMachineLicenseService,
+  GenericMachineLicenseConfig,
+} from './client/machine-license-client'
 
-export type LicenseServiceConfigV2 = Omit<
-  LicenseServiceConfig,
-  'driversLicense'
->
+import {
+  GenericDrivingLicenseApi,
+  GenericDrivingLicenseConfig,
+} from './client/driving-license-client'
 
 export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
+  {
+    type: GenericLicenseType.FirearmLicense,
+    provider: {
+      id: GenericLicenseProviderId.NationalPoliceCommissioner,
+    },
+    pkpass: true,
+    pkpassVerify: true,
+    timeout: 100,
+    orgSlug: GenericLicenseOrganizationSlug.FirearmLicense,
+  },
   {
     type: GenericLicenseType.DriversLicense,
     provider: {
@@ -93,7 +69,6 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
   },
   {
     type: GenericLicenseType.MachineLicense,
-
     provider: {
       id: GenericLicenseProviderId.AdministrationOfOccupationalSafetyAndHealth,
     },
@@ -103,105 +78,90 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     orgSlug: GenericLicenseOrganizationSlug.MachineLicense,
   },
   {
-    type: GenericLicenseType.FirearmLicense,
+    type: GenericLicenseType.DisabilityLicense,
     provider: {
       id: GenericLicenseProviderId.NationalPoliceCommissioner,
     },
     pkpass: true,
     pkpassVerify: true,
     timeout: 100,
-    orgSlug: GenericLicenseOrganizationSlug.FirearmLicense,
-  },
-  {
-    type: GenericLicenseType.DisabilityLicense,
-    provider: {
-      id: GenericLicenseProviderId.SocialInsuranceAdministration,
-    },
-    pkpass: false,
-    pkpassVerify: false,
-    timeout: 100,
     orgSlug: GenericLicenseOrganizationSlug.DisabilityLicense,
   },
 ]
-
-@Module({})
-export class LicenseServiceModule {
-  static register(config: LicenseServiceConfig): DynamicModule {
-    return {
-      module: LicenseServiceModule,
-      imports: [
-        CacheModule.register(),
-        AdrAndMachineLicenseClientModule,
-        FirearmLicenseClientModule,
-        DisabilityLicenseClientModule,
-        SmartSolutionsClientModule,
-        CmsModule,
+@Module({
+  imports: [
+    CacheModule.register(),
+    GenericFirearmLicenseModule,
+    GenericAdrLicenseModule,
+    GenericMachineLicenseModule,
+    CmsModule,
+  ],
+  providers: [
+    MainResolver,
+    LicenseServiceService,
+    {
+      provide: LOGGER_PROVIDER,
+      useValue: logger,
+    },
+    {
+      provide: CONFIG_PROVIDER,
+      useFactory: (
+        firearmConfig: ConfigType<typeof GenericFirearmLicenseConfig>,
+        adrConfig: ConfigType<typeof GenericAdrLicenseConfig>,
+        machineConfig: ConfigType<typeof GenericMachineLicenseConfig>,
+      ) => {
+        const ids: PassTemplateIds = {
+          firearmLicense: firearmConfig.passTemplateId,
+          adrLicense: adrConfig.passTemplateId,
+          machineLicense: machineConfig.passTemplateId,
+        }
+        return ids
+      },
+      inject: [
+        GenericFirearmLicenseConfig.KEY,
+        GenericAdrLicenseConfig.KEY,
+        GenericMachineLicenseConfig.KEY,
       ],
-      providers: [
-        MainResolver,
-        LicenseServiceService,
-        {
-          provide: LOGGER_PROVIDER,
-          useValue: logger,
-        },
-        {
-          provide: CONFIG_PROVIDER,
-          useValue: config,
-        },
-        {
-          provide: CONFIG_PROVIDER_V2,
-          useValue: config as LicenseServiceConfigV2,
-        },
-        {
-          provide: GENERIC_LICENSE_FACTORY,
-          useFactory: (
-            adrApi: AdrApi,
-            machineApi: VinnuvelaApi,
-            firearmApi: FirearmApi,
-            disabilityApi: DisabilityApi,
-          ) => async (
-            type: GenericLicenseType,
-            cacheManager: CacheManager,
-          ): Promise<GenericLicenseClient<unknown> | null> => {
-            switch (type) {
-              case GenericLicenseType.DriversLicense:
-                return new GenericDrivingLicenseApi(
-                  logger,
-                  config.driversLicense,
-                  cacheManager,
-                )
-              case GenericLicenseType.AdrLicense:
-                return new GenericAdrLicenseApi(
-                  logger,
-                  adrApi,
-                  new SmartSolutionsApi(logger, config.adrLicense),
-                )
-              case GenericLicenseType.MachineLicense:
-                return new GenericMachineLicenseApi(
-                  logger,
-                  machineApi,
-                  new SmartSolutionsApi(logger, config.machineLicense),
-                )
-              case GenericLicenseType.FirearmLicense:
-                return new GenericFirearmLicenseApi(
-                  logger,
-                  firearmApi,
-                  new SmartSolutionsApi(logger, config.firearmLicense),
-                )
-              case GenericLicenseType.DisabilityLicense:
-                return new GenericDisabilityLicenseApi(
-                  logger,
-                  disabilityApi,
-                  new SmartSolutionsApi(logger, config.disabilityLicense),
-                )
-              default:
-                return null
-            }
-          },
-          inject: [AdrApi, VinnuvelaApi, FirearmApi, DisabilityApi],
-        },
+    },
+    {
+      provide: GENERIC_LICENSE_FACTORY,
+      useFactory: (
+        genericFirearmService: GenericFirearmLicenseService,
+        genericAdrService: GenericAdrLicenseService,
+        genericMachineService: GenericMachineLicenseService,
+        drivingLicenseConfig: ConfigType<typeof GenericDrivingLicenseConfig>,
+        xRoadConfig: ConfigType<typeof XRoadConfig>,
+      ) => async (
+        type: GenericLicenseType,
+        cacheManager: CacheManager,
+      ): Promise<GenericLicenseClient<unknown> | null> => {
+        switch (type) {
+          case GenericLicenseType.DriversLicense:
+            return new GenericDrivingLicenseApi(
+              logger,
+              xRoadConfig,
+              drivingLicenseConfig,
+              cacheManager,
+            )
+          case GenericLicenseType.AdrLicense:
+            return genericAdrService
+          case GenericLicenseType.MachineLicense:
+            return genericMachineService
+          case GenericLicenseType.FirearmLicense:
+            return genericFirearmService
+          default:
+            return null
+        }
+      },
+      inject: [
+        GenericFirearmLicenseService,
+        GenericAdrLicenseService,
+        GenericMachineLicenseService,
+        GenericDrivingLicenseConfig.KEY,
+        XRoadConfig.KEY,
       ],
-      exports: [LicenseServiceService],
-    }
-  }
-}
+    },
+  ],
+  exports: [LicenseServiceService],
+})
+export class LicenseServiceModule {}

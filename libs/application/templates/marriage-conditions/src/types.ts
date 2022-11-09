@@ -1,5 +1,5 @@
 import { dataSchema } from './lib/dataSchema'
-import * as z from 'zod'
+import { z } from 'zod'
 
 export type Individual = {
   person: {

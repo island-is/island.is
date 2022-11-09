@@ -27170,7 +27170,7 @@ __metadata:
     powerbi-client: 2.21.1
     powerbi-client-react: 1.3.5
     prettier: 2.2.1
-    prom-client: 12.0.0
+    prom-client: 14.1.0
     pubsub-js: 1.8.0
     quicktype: 15.0.258
     react: 17.0.2
@@ -27251,7 +27251,7 @@ __metadata:
     xml2js: 0.4.23
     xstate: 4.20.0
     yargs: 15.4.1
-    zod: 1.11.13
+    zod: 3.19.1
   languageName: unknown
   linkType: soft
 
@@ -35671,12 +35671,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prom-client@npm:12.0.0":
-  version: 12.0.0
-  resolution: "prom-client@npm:12.0.0"
+"prom-client@npm:14.1.0":
+  version: 14.1.0
+  resolution: "prom-client@npm:14.1.0"
   dependencies:
     tdigest: ^0.1.1
-  checksum: 22e0bff493b8cfe9da3bc02b662aedbee09dcf779d58c920e77d8b9214a092fdbc0352d9d1091940347030477db64b5cd666ac59f11deae6533064999b25ff32
+  checksum: 88f8e67020c0af07d09ab8f15caaa2a3d0810b01d903d0977d82947d3b0100a539db77bcccfde0bf2449a85060475f7fb05b64e7c34951c8a54b84240ae7ae81
   languageName: node
   linkType: hard
 
@@ -44613,10 +44613,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod@npm:1.11.13":
-  version: 1.11.13
-  resolution: "zod@npm:1.11.13"
-  checksum: c36ee5df65517305e668e64b06ba38a1fb97f4da233784ad73587616764227e1360720fddb3c01b87ea28b093ec140e8d2cadfeae1b516de6c4bde9891ae7981
+"zod@npm:3.19.1":
+  version: 3.19.1
+  resolution: "zod@npm:3.19.1"
+  checksum: 56e420ea5845912324a8fc61833714a2aec84954e418b52660d76502183c6e62fef9447cbfa64349640c5ce190cf2c24267e006bb80f066183e2f3fa9fe11864
   languageName: node
   linkType: hard
 

@@ -20,7 +20,6 @@ import {
 } from '@island.is/service-portal/graphql'
 import { Query } from '@island.is/api/schema'
 import { Box } from '@island.is/island-ui/core'
-import { useHistory } from 'react-router-dom'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import {
   getPathFromProviderId,
@@ -88,7 +87,6 @@ const GenericLicensesQuery = gql`
 export const LicensesOverview: ServicePortalModuleComponent = () => {
   useNamespaces('sp.license')
   const { formatMessage } = useLocale()
-  const history = useHistory()
   const { data: userProfile } = useUserProfile()
   const locale = (userProfile?.locale as Locale) ?? 'is'
 
@@ -180,16 +178,10 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
                   )}
                   cta={{
                     label: formatMessage(m.seeDetails),
-                    onClick: () =>
-                      history.push(
-                        ServicePortalPath.LicensesDetail.replace(
-                          ':provider',
-                          getPathFromProviderId(license.license.provider.id),
-                        ).replace(
-                          ':type',
-                          getPathFromType(license.license.type),
-                        ),
-                      ),
+                    url: ServicePortalPath.LicensesDetail.replace(
+                      ':provider',
+                      getPathFromProviderId(license.license.provider.id),
+                    ).replace(':type', getPathFromType(license.license.type)),
                     variant: 'text',
                   }}
                   tag={
