@@ -25,7 +25,10 @@ export const OperatorSection: FC<FieldBaseProps> = ({ application }) => {
         {operators?.map(({ name, nationalId, email, phone }, index: number) => {
           if (name.length === 0) return null
           return (
-            <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+            <GridColumn
+              span={['12/12', '12/12', '12/12', '6/12']}
+              key={`operator-${index}`}
+            >
               <Box marginBottom={operators.length === index + 1 ? 0 : 2}>
                 <Text variant="h4">
                   {formatMessage(information.labels.operator.title)}{' '}

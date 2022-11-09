@@ -34,7 +34,10 @@ export const SellerSection: FC<FieldBaseProps> = ({ application }) => {
         </GridColumn>
         {coOwners?.map(({ name, nationalId, email, phone }, index: number) => {
           return (
-            <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+            <GridColumn
+              span={['12/12', '12/12', '12/12', '6/12']}
+              key={`sellers-coowner-${index}`}
+            >
               <Box marginBottom={coOwners.length === index + 1 ? 0 : 2}>
                 <Text variant="h4">
                   {formatMessage(overview.labels.sellersCoOwner)}{' '}
