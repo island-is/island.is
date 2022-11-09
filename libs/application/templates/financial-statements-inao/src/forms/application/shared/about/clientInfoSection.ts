@@ -60,7 +60,7 @@ export const clientInfoSection = buildSection({
           defaultValue: (application: Application) => {
             const nationalRegistry = application.externalData.nationalRegistry
               .data as User
-            return nationalRegistry.fullName
+            return nationalRegistry.name
           },
         }),
         buildTextField({

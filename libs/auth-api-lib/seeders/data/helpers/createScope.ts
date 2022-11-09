@@ -52,6 +52,9 @@ const getScopeFields = (options: ScopeOptions): DbScope => ({
   also_for_delegated_user: options.delegation?.custom === true,
   is_access_controlled: options.accessControlled ?? false,
 
+  // The scope name should be prefixed with the organisation domain, eg `@island.is/some-scope:name`.
+  domain_name: options.name.split('/')[0],
+
   // defaults
   enabled: true,
   show_in_discovery_document: true,
@@ -82,6 +85,7 @@ export const createScope = (options: ScopeOptions) => async (
         scope_name: scope.name,
       },
     ],
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     ({ api_resource_name }) =>
       `linking scope ${scope.name} to resource ${api_resource_name}`,
   )
@@ -90,10 +94,12 @@ export const createScope = (options: ScopeOptions) => async (
     await safeBulkInsert(
       queryInterface,
       'client_allowed_scope',
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       options.addToClients.map((client_id) => ({
         client_id,
         scope_name: scope.name,
       })),
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       ({ client_id }) => `linking scope ${scope.name} to client ${client_id}`,
     )
   }

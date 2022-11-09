@@ -32,7 +32,7 @@ const operatingCost = z.object({
 const about = z.object({
   nationalId: z
     .string()
-    .refine((val) => (val ? kennitala.isPerson(val) : false), {
+    .refine((val) => (val ? kennitala.isValid(val) : false), {
       params: m.nationalIdError,
     }),
   fullName: z.string().refine((x) => !!x, { params: m.required }),
@@ -204,6 +204,30 @@ const cemetryCaretaker = z
     },
     { params: m.errorMembersMissing },
   )
+  .refine(
+    (x) => {
+      const careTakers = x
+        .filter((member) => member.role === CARETAKER)
+        .map((member) => member.nationalId)
+      const boardMembers = x
+        .filter((member) => member.role === BOARDMEMEBER)
+        .map((member) => member.nationalId)
+
+      const careTakersUnique = careTakers.filter((member) =>
+        boardMembers.includes(member),
+      )
+      const boardMembersUnique = boardMembers.filter((member) =>
+        careTakers.includes(member),
+      )
+
+      if (careTakersUnique.length > 0 || boardMembersUnique.length > 0) {
+        return false
+      } else {
+        return true
+      }
+    },
+    { params: m.errormemberNotUnique },
+  )
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -227,7 +251,7 @@ export const dataSchema = z.object({
   asset,
   equity,
   liability,
-  attachment: z.object({
+  attachments: z.object({
     file: z.array(FileSchema).nonempty(),
   }),
 })

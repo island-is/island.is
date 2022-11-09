@@ -75,12 +75,6 @@ export const PrerequisitesForm: Form = buildForm({
               title: '',
               subTitle: '',
             }),
-            buildDataProviderItem({
-              id: 'pendingApplications',
-              type: 'PendingApplications',
-              title: '',
-              subTitle: '',
-            }),
           ],
         }),
         buildMultiField({
