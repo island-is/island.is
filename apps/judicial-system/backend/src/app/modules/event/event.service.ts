@@ -12,6 +12,7 @@ import {
 
 import { environment } from '../../../environments'
 import { Case } from '../case'
+import { CaseType, isIndictmentCase } from '@island.is/judicial-system/types'
 
 const errorEmojis = [
   ':sos:',
@@ -32,16 +33,18 @@ const errorEmojis = [
 ]
 
 const caseEvent = {
-  CREATE: ':new: Krafa stofnuð',
-  CREATE_XRD: ':new: Krafa stofnuð í gegnum Strauminn',
-  EXTEND: ':recycle: Krafa framlengd',
+  CREATE: ':new: Mál stofnað',
+  CREATE_XRD: ':new: Mál stofnað í gegnum Strauminn',
+  EXTEND: ':recycle: Mál framlengt',
   OPEN: ':unlock: Krafa opnuð fyrir dómstól',
-  SUBMIT: ':mailbox_with_mail: Krafa send til dómstóls',
-  RESUBMIT: ':mailbox_with_mail: Krafa send aftur til dómstóls',
-  RECEIVE: ':eyes: Krafa móttekin',
+  OPEN_INDICTMENT: ':unlock: Ákæra opnuð fyrir dómstól',
+  SUBMIT: ':mailbox_with_mail: Sent',
+  RESUBMIT: ':mailbox_with_mail: Sent aftur',
+  RECEIVE: ':eyes: Móttekið',
+  CLOSE_INDICTMENT: ':white_check_mark: Lokið',
   ACCEPT: ':white_check_mark: Krafa samþykkt',
   REJECT: ':negative_squared_cross_mark: Kröfu hafnað',
-  DELETE: ':fire: Krafa dregin til baka',
+  DELETE: ':fire: Afturkallað',
   SCHEDULE_COURT_DATE: ':timer_clock: Kröfu úthlutað fyrirtökutíma',
   DISMISS: ':woman-shrugging: Kröfu vísað frá',
   ARCHIVE: ':file_cabinet: Sett í geymslu',
@@ -52,9 +55,11 @@ export enum CaseEvent {
   CREATE_XRD = 'CREATE_XRD',
   EXTEND = 'EXTEND',
   OPEN = 'OPEN',
+  OPEN_INDICTMENT = 'OPEN_INDICTMENT',
   SUBMIT = 'SUBMIT',
   RESUBMIT = 'RESUBMIT',
   RECEIVE = 'RECEIVE',
+  CLOSE_INDICTMENT = 'CLOSE_INDICTMENT',
   ACCEPT = 'ACCEPT',
   REJECT = 'REJECT',
   DELETE = 'DELETE',
@@ -76,6 +81,12 @@ export class EventService {
         return
       }
 
+      const title =
+        event === CaseEvent.ACCEPT && isIndictmentCase(theCase.type)
+          ? caseEvent[CaseEvent.CLOSE_INDICTMENT]
+          : event === CaseEvent.OPEN
+          ? caseEvent[CaseEvent.OPEN_INDICTMENT]
+          : caseEvent[event]
       const typeText = `${capitalize(caseTypes[theCase.type])} *${theCase.id}*`
       const prosecutionText = `${
         theCase.creatingProsecutor?.institution
@@ -107,7 +118,7 @@ export class EventService {
               type: 'section',
               text: {
                 type: 'mrkdwn',
-                text: `*${caseEvent[event]}:*\n>${typeText}\n>${prosecutionText}\n>${courtText}${extraText}`,
+                text: `*${title}:*\n>${typeText}\n>${prosecutionText}\n>${courtText}${extraText}`,
               },
             },
           ],

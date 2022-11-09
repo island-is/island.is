@@ -115,7 +115,7 @@ export const caseTypes: CaseTypes = {
   SEXUAL_OFFENSES_OTHER_THAN_RAPE: 'kynferðisbrot önnur en nauðgun',
   MAJOR_ASSAULT: 'líkamsárás - meiriháttar',
   MINOR_ASSAULT: 'líkamsárás - minniháttar',
-  AGGRAVATED_ASSAULT: 'líkamsáras - sérlega hættuleg',
+  AGGRAVATED_ASSAULT: 'líkamsárás - sérlega hættuleg',
   ASSAULT_LEADING_TO_DEATH: 'líkamsáras sem leiðir til dauða',
   MURDER: 'manndráp',
   RAPE: 'nauðgun',
