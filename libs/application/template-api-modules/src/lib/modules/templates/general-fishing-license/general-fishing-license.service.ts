@@ -91,18 +91,35 @@ export class GeneralFishingLicenseService {
         application.answers,
         'fishingLicenseFurtherInformation.area',
       ) as string | undefined
-      const roenetStr = getValueViaPath(
+      const roeNetStr = getValueViaPath(
         application.answers,
         'fishingLicenseFurtherInformation.railAndRoeNet.roenet',
         '',
       ) as string
-      const railnetStr = getValueViaPath(
+      const railNetStr = getValueViaPath(
         application.answers,
         'fishingLicenseFurtherInformation.railAndRoeNet.railnet',
         '',
       ) as string
-      const roenet = parseInt(roenetStr.trim().split('m').join(''), 10)
-      const railnet = parseInt(railnetStr.trim().split('m').join(''), 10)
+      const roeNet = parseInt(roeNetStr.trim().split('m').join(''), 10)
+      const railNet = parseInt(railNetStr.trim().split('m').join(''), 10)
+      const attachmentsRaw = getValueViaPath(
+        application.answers,
+        'fishingLicenseFurtherInformation.attachments',
+        [],
+      ) as Array<{ key: string; name: string }>
+      const attachments =
+        attachmentsRaw?.map(async (a) => {
+          const vidhengiBase64 = await this.sharedTemplateAPIService.getAttachmentContentAsBase64(
+            application,
+            a.key,
+          )
+          return {
+            vidhengiBase64,
+            vidhengiNafn: a.name,
+            vidhengiTypa: a.name.split('.').pop(),
+          }
+        }) || []
 
       await this.umsoknirApi
         .withMiddleware(new AuthMiddleware(auth as Auth))
@@ -116,8 +133,9 @@ export class GeneralFishingLicenseService {
             umbedinGildistaka: new Date(date),
             veidileyfiKodi: mapFishingLiscenseToCode(fishingLicense),
             veidisvaediLykill: area,
-            fjoldiNeta: railnet,
-            teinalengd: roenet,
+            fjoldiNeta: railNet,
+            teinalengd: roeNet,
+            skraarVidhengi: attachments,
           },
         })
       return { success: true }
