@@ -607,6 +607,7 @@ export const slices = gql`
     __typename
     id
     title
+    tableContent
   }
 
   fragment BaseSlices on Slice {

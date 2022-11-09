@@ -1,4 +1,5 @@
 import GraphqlTypeJson from 'graphql-type-json'
+import { Document as RichTextDocument } from '@contentful/rich-text-types'
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { SystemMetadata } from '@island.is/shared/types'
 import { ITableSlice } from '../generated/contentfulTypes'
@@ -12,7 +13,7 @@ export class TableSlice {
   title?: string
 
   @Field(() => GraphqlTypeJson, { nullable: true })
-  tableContent?: Record<string, unknown> | null
+  tableContent?: RichTextDocument | null
 }
 
 export const mapTableSlice = ({
@@ -22,5 +23,5 @@ export const mapTableSlice = ({
   typename: 'TableSlice',
   id: sys.id,
   title: fields.title ?? '',
-  tableContent: { test: true },
+  tableContent: fields.tableContent ?? null,
 })

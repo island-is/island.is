@@ -1,34 +1,45 @@
-import { BLOCKS } from '@contentful/rich-text-types'
-import { richText, SliceType } from '@island.is/island-ui/contentful'
-import { Box, Table as T } from '@island.is/island-ui/core'
+import { Block, Document } from '@contentful/rich-text-types'
+import { Table as T, Text } from '@island.is/island-ui/core'
 import { TableSlice as TableSliceSchema } from '@island.is/web/graphql/schema'
+import {
+  extractTableRowsFromRichTextDocument,
+  extractTextFromRichTextTableCell,
+  isHeaderRow,
+} from './utils'
 
 interface TableSliceProps {
-  slice: any
+  slice: TableSliceSchema
 }
 
 export const TableSlice = ({ slice }: TableSliceProps) => {
-  console.log('TABLESLICE', slice)
-  return null
-  // <Box>
-  //   {richText(slice.tableContent as SliceType[], {
-  //     renderNode: {
-  //       [BLOCKS.TABLE]: (_node, children) => <T.Table>{children}</T.Table>,
-  //       [BLOCKS.TABLE_ROW]: (_node, children) => {
-  //         if (
-  //           (children as { nodeType: string }[])?.every(
-  //             (childNode) => childNode?.nodeType === BLOCKS.TABLE_HEADER_CELL,
-  //           )
-  //         ) {
-  //           return <T.Head>{children}</T.Head>
-  //         }
-  //         return <T.Row>{children}</T.Row>
-  //       },
-  //       [BLOCKS.TABLE_HEADER_CELL]: (_node, children) => (
-  //         <T.HeadData>{children}</T.HeadData>
-  //       ),
-  //       [BLOCKS.TABLE_CELL]: (_node, children) => <T.Data>{children}</T.Data>,
-  //     },
-  //   })}
-  // </Box>
+  const rows = extractTableRowsFromRichTextDocument(
+    slice.tableContent as Document,
+  )
+  const isFirstRowAHeader = isHeaderRow(rows[0])
+
+  return (
+    <T.Table>
+      {rows.length > 0 && isFirstRowAHeader && (
+        <T.Head>
+          {rows[0].content?.map((cell, index) => (
+            <T.HeadData key={index}>
+              <Text>{extractTextFromRichTextTableCell(cell as Block)}</Text>
+            </T.HeadData>
+          ))}
+        </T.Head>
+      )}
+
+      <T.Body>
+        {rows.slice(isFirstRowAHeader ? 1 : 0).map((row, rowIndex) => (
+          <T.Row key={rowIndex}>
+            {row.content.map((cell, cellIndex) => (
+              <T.Data key={cellIndex}>
+                <Text>{extractTextFromRichTextTableCell(cell as Block)}</Text>
+              </T.Data>
+            ))}
+          </T.Row>
+        ))}
+      </T.Body>
+    </T.Table>
+  )
 }
