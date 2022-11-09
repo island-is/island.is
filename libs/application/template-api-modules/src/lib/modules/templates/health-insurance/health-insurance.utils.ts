@@ -231,8 +231,8 @@ export const transformApplicationToHealthInsuranceDTO = (
       postalAddress:
         extractAnswer(application.answers, 'applicant.postalCode') ?? undefined,
       citizenship:
-        extractAnswerFromJson(application.answers, 'applicant.citizenship')
-          ?.name ?? undefined,
+        extractAnswerFromJson(application.answers, 'citizenship')?.name ??
+        undefined,
       email: extractAnswer(application.answers, 'applicant.email') ?? '',
       phoneNumber:
         extractAnswer(application.answers, 'applicant.phoneNumber') ?? '',
