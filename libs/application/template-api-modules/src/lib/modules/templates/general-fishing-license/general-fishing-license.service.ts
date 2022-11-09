@@ -108,7 +108,7 @@ export class GeneralFishingLicenseService {
         'fishingLicenseFurtherInformation.attachments',
         [],
       ) as Array<{ key: string; name: string }>
-      const attachments =
+      const attachments = await Promise.all(
         attachmentsRaw?.map(async (a) => {
           const vidhengiBase64 = await this.sharedTemplateAPIService.getAttachmentContentAsBase64(
             application,
@@ -119,7 +119,8 @@ export class GeneralFishingLicenseService {
             vidhengiNafn: a.name,
             vidhengiTypa: a.name.split('.').pop(),
           }
-        }) || []
+        }) || [],
+      )
 
       await this.umsoknirApi
         .withMiddleware(new AuthMiddleware(auth as Auth))
