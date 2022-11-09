@@ -175,8 +175,8 @@ export const HealthInsuranceForm: Form = buildForm({
                   formerInsurance: { country: string }
                 })?.formerInsurance?.country
                 const citizenship = (answers as {
-                  applicant: { citizenship: string }
-                })?.applicant?.citizenship
+                  citizenship: string
+                })?.citizenship
                 return (
                   !!formerCountry &&
                   requireWaitingPeriod(formerCountry, citizenship)
@@ -212,8 +212,8 @@ export const HealthInsuranceForm: Form = buildForm({
                   formerInsurance: { country: string }
                 })?.formerInsurance?.country
                 const citizenship = (answers as {
-                  applicant: { citizenship: string }
-                })?.applicant?.citizenship
+                  citizenship: string
+                })?.citizenship
                 return !requireWaitingPeriod(formerCountry, citizenship)
               },
             }),
@@ -231,8 +231,8 @@ export const HealthInsuranceForm: Form = buildForm({
                   formerInsurance: { country: string }
                 })?.formerInsurance?.country
                 const citizenship = (answers as {
-                  applicant: { citizenship: string }
-                })?.applicant?.citizenship
+                  citizenship: string
+                }).citizenship
                 return !requireWaitingPeriod(formerCountry, citizenship)
               },
             }),
@@ -248,8 +248,8 @@ export const HealthInsuranceForm: Form = buildForm({
                   formerInsurance: { country: string }
                 })?.formerInsurance?.country
                 const citizenship = (answers as {
-                  applicant: { citizenship: string }
-                })?.applicant?.citizenship
+                  citizenship: string
+                })?.citizenship
                 return !requireWaitingPeriod(formerCountry, citizenship)
               },
             }),
