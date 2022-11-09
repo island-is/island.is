@@ -89,15 +89,23 @@ const PeriodsRepeater: FC<ScreenProps> = ({
     const temptVMSTPeriods: Period[] = []
     const VMSTPeriods: VMSTPeriod[] = data?.getApplicationInformation?.periods
     VMSTPeriods?.forEach((period, index) => {
+      /*
+       ** VMST could change startDate but still return 'date_of_birth'
+       ** Make sure if period is in the past then we use the date they sent
+       */
+      let firstPeriodStart =
+        period.firstPeriodStart === 'date_of_birth'
+          ? 'actualDateOfBirth'
+          : 'specificDate'
+      if (new Date(period.firstPeriodStart).getTime() < new Date().getTime()) {
+        firstPeriodStart = 'specificDate'
+      }
       const obj = {
         startDate: period.from,
         endDate: period.to,
         ratio: period.ratio.split(',')[0],
         rawIndex: index,
-        firstPeriodStart:
-          period.firstPeriodStart === 'date_of_birth'
-            ? 'actualDateOfBirth'
-            : 'specificDate',
+        firstPeriodStart: firstPeriodStart,
         useLength: NO as YesOrNo,
       }
       if (
