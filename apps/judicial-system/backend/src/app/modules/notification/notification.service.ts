@@ -1243,14 +1243,13 @@ export class NotificationService {
 
   private async shouldSendDefenderAssignedNotification(
     theCase: Case,
-    defenderNationalId?: string,
     defenderEmail?: string,
   ): Promise<true | { notificationSent: boolean }> {
     const pastNotifications = await this.notificationModel.findAll({
       where: { caseId: theCase.id, type: NotificationType.DEFENDER_ASSIGNED },
     })
 
-    if (!defenderNationalId || !defenderEmail) {
+    if (!defenderEmail) {
       return Promise.resolve({ notificationSent: false })
     }
 
@@ -1267,13 +1266,16 @@ export class NotificationService {
 
   private sendDefenderAssignedNotification(
     theCase: Case,
+    defenderNationalId?: string,
     defenderName?: string,
     defenderEmail?: string,
   ): Promise<Recipient> {
     const { subject, body } = formatDefenderAssignedEmailNotification(
       this.formatMessage,
       theCase,
-      `${this.config.clientUrl}${DEFENDER_ROUTE}/${theCase.id}`,
+      defenderNationalId
+        ? `${this.config.clientUrl}${DEFENDER_ROUTE}/${theCase.id}`
+        : undefined,
     )
 
     return this.sendEmail(subject, body, defenderName, defenderEmail)
@@ -1290,7 +1292,6 @@ export class NotificationService {
 
         const shouldSend = await this.shouldSendDefenderAssignedNotification(
           theCase,
-          defenderNationalId,
           defenderEmail,
         )
 
@@ -1301,6 +1302,7 @@ export class NotificationService {
         promises.push(
           this.sendDefenderAssignedNotification(
             theCase,
+            defenderNationalId,
             defenderName,
             defenderEmail,
           ),
@@ -1309,15 +1311,12 @@ export class NotificationService {
     } else {
       const { defenderEmail, defenderNationalId, defenderName } = theCase
 
-      await this.shouldSendDefenderAssignedNotification(
-        theCase,
-        defenderNationalId,
-        defenderEmail,
-      )
+      await this.shouldSendDefenderAssignedNotification(theCase, defenderEmail)
 
       promises.push(
         this.sendDefenderAssignedNotification(
           theCase,
+          defenderNationalId,
           defenderName,
           defenderEmail,
         ),
@@ -1326,13 +1325,11 @@ export class NotificationService {
 
     const recipients = await Promise.all(promises)
 
-    if (recipients.length > 0) {
-      return this.recordNotification(
-        theCase.id,
-        NotificationType.DEFENDER_ASSIGNED,
-        recipients,
-      )
-    }
+    return this.recordNotification(
+      theCase.id,
+      NotificationType.DEFENDER_ASSIGNED,
+      recipients,
+    )
   }
 
   /* API */
