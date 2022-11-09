@@ -680,17 +680,16 @@ export const ParentalLeaveForm: Form = buildForm({
             buildFileUploadField({
               id: 'fileUpload.singleParent',
               title:
-                parentalLeaveFormMessages.attachmentScreen
-                  .singleParentTitle,
+                parentalLeaveFormMessages.attachmentScreen.singleParentTitle,
               introduction:
                 parentalLeaveFormMessages.attachmentScreen
                   .singleParentDescription,
-                  condition: (answers) =>
-                  (answers as {
-                    otherParentObj: {
-                      chooseOtherParent: string
-                    }
-                  })?.otherParentObj?.chooseOtherParent === SINGLE,
+              condition: (answers) =>
+                (answers as {
+                  otherParentObj: {
+                    chooseOtherParent: string
+                  }
+                })?.otherParentObj?.chooseOtherParent === SINGLE,
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
                 parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
@@ -736,29 +735,12 @@ export const ParentalLeaveForm: Form = buildForm({
               title: parentalLeaveFormMessages.shared.theseAreYourRights,
               description: getRightsDescTitle,
               children: [
-                buildCustomField(
-                  {
-                    id: 'rightsIntro',
-                    title: '',
-                    component: 'BoxChart',
-                    doesNotRequireAnswer: true,
-                  },
-                  {
-                    boxes: defaultMonths,
-                    application: {},
-                    calculateBoxStyle: () => 'blue',
-                    keys: [
-                      {
-                        label: () => ({
-                          ...parentalLeaveFormMessages.shared
-                            .yourRightsInMonths,
-                          values: { months: defaultMonths },
-                        }),
-                        bulletStyle: 'blue',
-                      },
-                    ],
-                  },
-                ),
+                buildCustomField({
+                  id: 'rightsIntro',
+                  doesNotRequireAnswer: true,
+                  title: '',
+                  component: 'Rights',
+                }),
               ],
             }),
             buildCustomField({

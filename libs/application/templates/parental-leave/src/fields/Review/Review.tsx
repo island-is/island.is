@@ -56,6 +56,7 @@ import {
   NO_UNION,
   NO_PRIVATE_PENSION_FUND,
   PARENTAL_LEAVE,
+  SINGLE,
 } from '../../constants'
 import { YesOrNo } from '../../types'
 import { SummaryTimeline } from '../components/SummaryTimeline/SummaryTimeline'
@@ -329,12 +330,12 @@ export const Review: FC<ReviewScreenProps> = ({
         isEditable={editable && isPrimaryParent}
         editAction={() => goToScreen?.('otherParentObj')}
       >
-        {otherParent === NO && (
+        {(otherParent === NO || otherParent === SINGLE) && (
           <RadioValue
             label={formatMessage(
               parentalLeaveFormMessages.shared.otherParentTitle,
             )}
-            value={otherParent}
+            value={NO}
           />
         )}
 
