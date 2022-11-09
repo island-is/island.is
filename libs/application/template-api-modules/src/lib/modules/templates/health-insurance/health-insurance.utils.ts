@@ -2,12 +2,128 @@ import get from 'lodash/get'
 import parse from 'date-fns/parse'
 import parseISO from 'date-fns/parseISO'
 import { logger } from '@island.is/logging'
-
 import { ApplicationWithAttachments as Application } from '@island.is/application/types'
+import { objectToXML } from '../../shared/shared.utils'
+import is from 'date-fns/locale/is'
+import { BucketService } from './bucket/bucket.service'
+import format from 'date-fns/format'
 import {
   ApplyHealthInsuranceInputs,
+  Fylgiskjal,
+  Fylgiskjol,
+  GetVistaSkjalBody,
   VistaSkjalInput,
-} from '@island.is/health-insurance'
+} from './types/health-insurance-types'
+
+const formatDate = (date: Date) => {
+  return format(new Date(date), 'yyyy-MM-dd', {
+    locale: is,
+  })
+}
+
+/**
+ * Generates Xml correctly formatted for each type of SÍ application
+ * The order of the elements is important as an incorrect order
+ * will result in an Invalid Xml error from SÍ
+ * @param answers - The answers to the accident notification
+ * @param attachments - The attachments names and base64 Content
+ * @returns The application Xml correctly formatted for SÍ application
+ */
+
+// Apply Insurance without attachment
+export const insuranceToXML = async (
+  inputObj: VistaSkjalInput,
+  attachmentNames: string[],
+  bucketService: BucketService,
+) => {
+  logger.debug(`--- Starting to convert application to XML ---`)
+  const vistaSkjalBody: GetVistaSkjalBody = {
+    sjukratryggingumsokn: {
+      einstaklingur: {
+        kennitala: inputObj.nationalId,
+        erlendkennitala: inputObj.foreignNationalId,
+        nafn: inputObj.name,
+        heimili: inputObj.address ?? '',
+        postfangstadur: inputObj.postalAddress ?? '',
+        rikisfang: inputObj.citizenship ?? '',
+        rikisfangkodi: inputObj.postalAddress ? 'IS' : '',
+        simi: inputObj.phoneNumber,
+        netfang: inputObj.email,
+      },
+      numerumsoknar: inputObj.applicationNumber,
+      dagsumsoknar: formatDate(inputObj.applicationDate),
+      // 'dagssidustubusetuthjodskra' could be empty string
+      dagssidustubusetuthjodskra: inputObj.residenceDateFromNationalRegistry
+        ? formatDate(inputObj.residenceDateFromNationalRegistry)
+        : '',
+      // 'dagssidustubusetu' could be empty string
+      dagssidustubusetu: inputObj.residenceDateUserThink
+        ? formatDate(inputObj.residenceDateUserThink)
+        : '',
+      // There is 'Employed' status in frontend
+      // but we don't have it yet in request
+      // So we convert it to 'Other/O'
+      stadaeinstaklings: inputObj.userStatus,
+      bornmedumsaekjanda: inputObj.isChildrenFollowed,
+      fyrrautgafuland: inputObj.previousCountry,
+      fyrrautgafulandkodi: inputObj.previousCountryCode,
+      fyrriutgafustofnunlands: inputObj.previousIssuingInstitution ?? '',
+      tryggdurfyrralandi: inputObj.isHealthInsuredInPreviousCountry,
+      tryggingaretturfyrralandi:
+        inputObj.hasHealthInsuranceRightInPreviousCountry,
+      vidbotarupplysingar: inputObj.additionalInformation ?? '',
+    },
+  }
+
+  // Add attachments from S3 bucket
+  // Attachment's name need to be exactly same as the file name, including file type (ex: skra.txt)
+  const arrAttachments = inputObj.attachmentsFileNames
+  if (arrAttachments && arrAttachments.length > 0) {
+    if (arrAttachments.length !== attachmentNames.length) {
+      logger.error(
+        `Failed to extract filenames or bucket's attachment filenames`,
+      )
+      throw new Error(
+        `Failed to extract filenames or bucket's attachment filenames`,
+      )
+    }
+    logger.debug(`Start getting attachments`)
+    const fylgiskjol: Fylgiskjol = {
+      fylgiskjal: [],
+    }
+    for (let i = 0; i < arrAttachments.length; i++) {
+      const filename = arrAttachments[i]
+      const fylgiskjal: Fylgiskjal = {
+        heiti: filename,
+        innihald: await bucketService.getFileContentAsBase64(
+          attachmentNames[i],
+        ),
+      }
+      fylgiskjol.fylgiskjal.push(fylgiskjal)
+    }
+    vistaSkjalBody.sjukratryggingumsokn.fylgiskjol = fylgiskjol
+    logger.debug(`Finished getting attachments`)
+  }
+
+  // Student has to have status confirmation document
+  if (
+    inputObj.userStatus == 'S' &&
+    !vistaSkjalBody.sjukratryggingumsokn.fylgiskjol
+  ) {
+    logger.error(
+      `Student applys for health insurance must have confirmation document`,
+    )
+    throw new Error(
+      `Student applys for health insurance must have confirmation document`,
+    )
+  }
+
+  const xml = `<?xml version="1.0" encoding="ISO-8859-1"?>${objectToXML(
+    vistaSkjalBody,
+  )}`
+
+  return xml
+}
 
 const extractAnswer = <T>(object: unknown, key: string): T | null => {
   const value = get(object, key, null) as T | null | undefined
@@ -50,7 +166,7 @@ export const transformApplicationToHealthInsuranceDTO = (
   application: Application,
 ): ApplyHealthInsuranceInputs => {
   try {
-    logger.info(`Start transform Application to Health Insurance DTO`)
+    logger.debug(`Start transform Application to Health Insurance DTO`)
     /*
      * Convert userStatus:
      * employed: 'O'
@@ -116,7 +232,7 @@ export const transformApplicationToHealthInsuranceDTO = (
         extractAnswer(application.answers, 'applicant.postalCode') ?? undefined,
       citizenship:
         extractAnswerFromJson(application.answers, 'applicant.citizenship')
-          .name ?? undefined,
+          ?.name ?? undefined,
       email: extractAnswer(application.answers, 'applicant.email') ?? '',
       phoneNumber:
         extractAnswer(application.answers, 'applicant.phoneNumber') ?? '',
@@ -134,10 +250,10 @@ export const transformApplicationToHealthInsuranceDTO = (
         extractAnswer(application.answers, 'children') == 'no' ? 0 : 1,
       previousCountry:
         extractAnswerFromJson(application.answers, 'formerInsurance.country')
-          .name ?? '',
+          ?.name ?? '',
       previousCountryCode:
         extractAnswerFromJson(application.answers, 'formerInsurance.country')
-          .countryCode ?? '',
+          ?.countryCode ?? '',
       previousIssuingInstitution:
         extractAnswer(application.answers, 'formerInsurance.institution') ?? '',
       isHealthInsuredInPreviousCountry:

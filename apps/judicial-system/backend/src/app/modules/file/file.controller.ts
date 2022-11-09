@@ -169,12 +169,12 @@ export class FileController {
     return this.fileService.uploadCaseFileToCourt(caseFile, theCase, user)
   }
 
-  @UseGuards(CaseExistsGuard, CaseWriteGuard, CaseReceivedGuard)
+  @UseGuards(CaseExistsGuard, CaseWriteGuard, CaseNotCompletedGuard)
   @RolesRules(prosecutorRule)
   @Patch('files')
   @ApiOkResponse({
     type: Boolean,
-    description: 'Updates mulitple files of the case',
+    description: 'Updates multiple files of the case',
   })
   updateFiles(
     @Param('caseId') caseId: string,

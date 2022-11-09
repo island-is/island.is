@@ -6,10 +6,10 @@ import {
   buildTextField,
 } from '@island.is/application/core'
 import { Application, DefaultEvents } from '@island.is/application/types'
+import { removeCountryCode } from '@island.is/application/ui-components'
 import { format as formatKennitala } from 'kennitala'
 import { Passport, YES } from '../../lib/constants'
 import { m } from '../../lib/messages'
-import { removeCountryCode } from '../../utils/removeCountryCode'
 
 export const personalInfo = buildMultiField({
   id: 'personalInfo',

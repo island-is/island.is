@@ -17,7 +17,6 @@ import {
   capitalize,
 } from '@island.is/judicial-system/formatters'
 
-import { environment } from '../../environments'
 import { Case } from '../modules/case'
 import { nowFactory } from '../factories'
 import { courtRecord } from '../messages'
@@ -33,7 +32,6 @@ import {
   addNormalJustifiedText,
   addNormalCenteredText,
 } from './pdfHelpers'
-import { writeFile } from './writeFile'
 
 export function formatCourtEndDate(
   formatMessage: FormatMessage,
@@ -229,9 +227,6 @@ function constructRestrictionCourtRecordPdf(
     addEmptyLines(doc)
     addNormalJustifiedText(doc, prosecutorAppeal)
   }
-
-  const multipleDefendants =
-    (theCase.defendants && theCase.defendants.length > 1) || false
 
   let accusedAppeal = formatAppeal(
     theCase.accusedAppealDecision,
@@ -553,27 +548,21 @@ function constructCourtRecordPdf(
     : constructInvestigationCourtRecordPdf(theCase, formatMessage, user)
 }
 
-export async function getCourtRecordPdfAsString(
+export function getCourtRecordPdfAsString(
   theCase: Case,
   formatMessage: FormatMessage,
 ): Promise<string> {
   const stream = constructCourtRecordPdf(theCase, formatMessage)
 
   // wait for the writing to finish
-  const pdf = await new Promise<string>(function (resolve) {
+  return new Promise<string>(function (resolve) {
     stream.on('finish', () => {
       resolve(stream.getContentsAsString('binary') as string)
     })
   })
-
-  if (!environment.production) {
-    writeFile(`${theCase.id}-ruling.pdf`, pdf)
-  }
-
-  return pdf
 }
 
-export async function getCourtRecordPdfAsBuffer(
+export function getCourtRecordPdfAsBuffer(
   theCase: Case,
   formatMessage: FormatMessage,
   user?: User,
@@ -581,15 +570,9 @@ export async function getCourtRecordPdfAsBuffer(
   const stream = constructCourtRecordPdf(theCase, formatMessage, user)
 
   // wait for the writing to finish
-  const pdf = await new Promise<Buffer>(function (resolve) {
+  return new Promise<Buffer>(function (resolve) {
     stream.on('finish', () => {
       resolve(stream.getContents() as Buffer)
     })
   })
-
-  if (!environment.production) {
-    writeFile(`${theCase.id}-ruling.pdf`, pdf)
-  }
-
-  return pdf
 }

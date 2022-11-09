@@ -12,17 +12,12 @@ import { ApiScope } from '../models'
 import { ScopeTreeNode } from '../models/scopeTreeNode.model'
 import { ApiScopesInput } from '../dto/apiScopes.input'
 
-export interface MeDelegationsServiceI {
+export interface MeDelegationsServiceInterface {
   getDelegations(user: User, input: DelegationsInput): Promise<DelegationDTO[]>
 
   getDelegationById(
     user: User,
     input: DelegationInput,
-  ): Promise<DelegationDTO | null>
-
-  getDelegationByOtherUser(
-    user: User,
-    input: DelegationByOtherUserInput,
   ): Promise<DelegationDTO | null>
 
   createOrUpdateDelegation(
@@ -43,7 +38,7 @@ export interface MeDelegationsServiceI {
   ): Promise<DelegationDTO>
 }
 
-export interface ApiScopeServiceI {
+export interface ApiScopeServiceInterface {
   getApiScopes(user: User, input: ApiScopesInput): Promise<ApiScope[]>
 
   getScopeTree(
@@ -59,6 +54,7 @@ export interface DelegationScopeDTO {
   displayName: string
   validFrom: Date
   validTo?: Date | null
+  domainName?: string | null
 }
 
 export interface DelegationDTO {
@@ -68,9 +64,19 @@ export interface DelegationDTO {
   toNationalId: string
   toName?: string | null
   validTo?: Date | null
+  domainName?: string | null
   type: DelegationType
   provider: DelegationProvider
   scopes?: Array<DelegationScopeDTO>
+}
+
+export interface MergedDelegationDTO {
+  fromNationalId: string
+  fromName?: string | null
+  toNationalId: string
+  toName?: string | null
+  validTo?: Date | null
+  types: DelegationType[]
 }
 
 export enum DelegationProvider {

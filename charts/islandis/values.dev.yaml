@@ -243,12 +243,14 @@ air-discount-scheme-web:
 api:
   args:
     - '--tls-min-v1.0'
+    - '--no-experimental-fetch'
     - 'main.js'
   command:
     - 'node'
   enabled: true
   env:
     APPLICATION_SYSTEM_API_URL: 'http://web-application-system-api.application-system.svc.cluster.local'
+    AUTH_DELEGATION_API_URL: 'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local'
     AUTH_PUBLIC_API_URL: 'https://identity-server.dev01.devland.is/api'
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10006/Skatturinn/ft-v1'
@@ -256,6 +258,7 @@ api:
     CONTENTFUL_HOST: 'preview.contentful.com'
     DOWNLOAD_SERVICE_BASE_PATH: 'https://api.dev01.devland.is'
     ELASTIC_NODE: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com'
+    ELECTRONIC_REGISTRATION_STATISTICS_API_URL: 'https://gw-api-staging.skra.is/business/tolfraedi'
     ENDORSEMENT_SYSTEM_BASE_API_URL: 'http://web-endorsement-system-api.endorsement-system.svc.cluster.local'
     FILE_DOWNLOAD_BUCKET: 'island-is-dev-download-cache-api'
     FILE_STORAGE_UPLOAD_BUCKET: 'island-is-dev-upload-api'
@@ -937,6 +940,7 @@ download-service:
 endorsement-system-api:
   args:
     - '--tls-min-v1.0'
+    - '--no-experimental-fetch'
     - 'main.js'
   command:
     - 'node'
@@ -1088,6 +1092,7 @@ external-contracts-tests:
 github-actions-cache:
   args:
     - '--tls-min-v1.0'
+    - '--no-experimental-fetch'
     - 'main.js'
   command:
     - 'node'
@@ -1838,6 +1843,7 @@ skilavottord-ws:
     privileged: false
 user-notification:
   args:
+    - '--no-experimental-fetch'
     - 'main.js'
   command:
     - 'node'
@@ -1907,6 +1913,7 @@ user-notification:
     name: 'user-notification'
 user-notification-worker:
   args:
+    - '--no-experimental-fetch'
     - 'main.js'
     - '--job=worker'
   command:
@@ -2040,6 +2047,7 @@ web:
     privileged: false
 xroad-collector:
   args:
+    - '--no-experimental-fetch'
     - 'main.js'
   command:
     - 'node'

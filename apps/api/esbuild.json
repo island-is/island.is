@@ -46,7 +46,18 @@
     "ts-morph",
     "ioredis",
     "duplexer3",
-    "normalize-url"
+    "normalize-url",
+    "get-stream",
+    "http-cache-semantics",
+    "clone-response",
+    "to-readable-stream",
+    "url-parse-lax",
+    "@sindresorhus/is",
+    "@szmarczak/http-timer",
+    "cacheable-request",
+    "decompress-response",
+    "lowercase-keys",
+    "mimic-response"
   ],
   "keepNames": true
 }
