@@ -3,9 +3,9 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import { AnimatePresence } from 'framer-motion'
 
-import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import {
   FormContentContainer,
+  FormContext,
   FormFooter,
   InfoCardActiveIndictment,
   Modal,
@@ -24,7 +24,12 @@ import {
   useCase,
   useFileList,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { CaseState, CaseTransition } from '@island.is/judicial-system/types'
+import {
+  CaseState,
+  CaseTransition,
+  Feature,
+} from '@island.is/judicial-system/types'
+import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import * as constants from '@island.is/judicial-system/consts'
 
 import * as strings from './Overview.strings'
@@ -37,6 +42,7 @@ const Overview: React.FC = () => {
     isLoadingWorkingCase,
     caseNotFound,
   } = useContext(FormContext)
+  const { features } = useContext(FeatureContext)
   const [modal, setModal] = useState<'noModal' | 'caseSubmittedModal'>(
     'noModal',
   )
@@ -56,13 +62,20 @@ const Overview: React.FC = () => {
     setModal('caseSubmittedModal')
   }
 
+  const caseHasBeenSentToCourt =
+    workingCase.state !== CaseState.NEW && workingCase.state !== CaseState.DRAFT
+
   return (
     <PageLayout
       workingCase={workingCase}
       activeSection={
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
-      activeSubSection={IndictmentsProsecutorSubsections.OVERVIEW}
+      activeSubSection={
+        caseHasBeenSentToCourt
+          ? undefined
+          : IndictmentsProsecutorSubsections.OVERVIEW
+      }
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
@@ -103,10 +116,20 @@ const Overview: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={constants.INDICTMENTS_CASE_FILES_ROUTE}
+          previousUrl={
+            caseHasBeenSentToCourt
+              ? constants.CASES_ROUTE
+              : `${constants.INDICTMENTS_CASE_FILE_ROUTE}/${workingCase.id}`
+          }
           nextButtonText={formatMessage(strings.overview.nextButtonText, {
             isNewIndictment,
           })}
+          hideNextButton={caseHasBeenSentToCourt}
+          infoBoxText={
+            caseHasBeenSentToCourt
+              ? formatMessage(strings.overview.caseSendToCourt)
+              : undefined
+          }
           onNextButtonClick={handleNextButtonClick}
         />
       </FormContentContainer>

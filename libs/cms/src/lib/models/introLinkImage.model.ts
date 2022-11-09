@@ -9,20 +9,20 @@ export class IntroLinkImage {
   @Field()
   title?: string
 
-  @Field(() => Html)
+  @Field(() => Html, { nullable: true })
   intro?: Html
 
   @Field(() => Image, { nullable: true })
-  image!: Image
+  image?: Image | null
 
   @Field(() => Boolean)
   leftImage?: boolean
 
   @Field()
-  linkTitle!: string
+  linkTitle?: string
 
-  @Field(() => ReferenceLink)
-  link!: ReferenceLink | null
+  @Field(() => ReferenceLink, { nullable: true })
+  link?: ReferenceLink | null
 
   @Field(() => Boolean)
   openLinkInNewTab?: boolean
@@ -34,7 +34,7 @@ export const mapIntroLinkImage = ({
 }: IIntroLinkImage): IntroLinkImage => ({
   title: fields.title ?? '',
   intro: (fields.intro && mapHtml(fields.intro, sys.id + ':intro')) ?? null,
-  image: mapImage(fields.image),
+  image: fields.image ? mapImage(fields.image) : null,
   leftImage: fields.leftImage ?? false,
   linkTitle: fields.linkTitle ?? '',
   link: fields.link ? mapReferenceLink(fields.link) : null,

@@ -10,7 +10,6 @@ import {
   CaseState,
   CaseType,
   Defendant,
-  isInvestigationCase,
   isCourtRole,
 } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
@@ -194,7 +193,7 @@ const PastCases: React.FC<Props> = (props) => {
             formatMessage,
             row.row.original.state,
             user?.role ? isCourtRole(user.role) : false,
-            isInvestigationCase(row.row.original.type),
+            row.row.original.type,
             row.row.original.isValidToDateInThePast,
           )
 

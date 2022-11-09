@@ -1,106 +1,350 @@
-import React, { FC } from 'react'
 import {
   Box,
   Button,
+  ButtonSizes,
+  ButtonTypes,
+  Hidden,
+  Icon,
+  IconMapIcon,
+  Inline,
+  Tag,
+  TagVariant,
   Text,
-  Link,
-  LoadingDots,
-  FocusableBox,
 } from '@island.is/island-ui/core'
-import format from 'date-fns/format'
-import { dateFormat } from '@island.is/shared/constants'
-
+import * as React from 'react'
+import { CardLoader, isExternalLink } from '../..'
 import * as styles from './ActionCard.css'
+import LinkResolver from '../LinkResolver/LinkResolver'
 
-interface Props {
-  label: string
-  title: string
-  date: Date
+type ActionCardProps = {
+  date?: string
+  heading?: string
+  text?: string
+  eyebrow?: string
   loading?: boolean
-  cta: {
-    externalUrl?: string
+  backgroundColor?: 'white' | 'blue' | 'red'
+  tag?: {
     label: string
-    onClick: () => void
+    variant?: TagVariant
+    outlined?: boolean
+  }
+  cta: {
+    url?: string
+    internalUrl?: string
+    label: string
+    variant?: ButtonTypes['variant']
+    size?: ButtonSizes
+    icon?: IconMapIcon
+    onClick?: () => void
+    disabled?: boolean
+  }
+  secondaryCta?: {
+    label: string
+    visible?: boolean
+    size?: ButtonSizes
+    icon?: IconMapIcon
+    onClick?: () => void
+    disabled?: boolean
+  }
+  image?: {
+    type: 'avatar' | 'image' | 'logo'
+    url?: string
   }
 }
 
-export const ActionCard: FC<Props> = ({ label, title, date, cta, loading }) => {
-  return (
-    <Box
-      className={styles.wrapper}
-      paddingTop={[2, 3]}
-      paddingBottom={[2, 3]}
-      paddingX={[2, 3]}
-      border="standard"
-      borderRadius="large"
-      position="relative"
-    >
-      <Box display="flex" alignItems="center" justifyContent="spaceBetween">
-        <Text variant="eyebrow" color="purple400">
-          {label}
-        </Text>
-        <Text variant="small" as="span" color="dark400">
-          {format(date, dateFormat.is)}
-        </Text>
-      </Box>
-      <Box
-        display={['block', 'flex']}
-        justifyContent="spaceBetween"
-        alignItems="center"
-      >
-        <FocusableBox component="button" onClick={cta.onClick}>
-          <Text variant="h4" as="h4" color="blue400">
-            {title}
-          </Text>
-        </FocusableBox>
-        <Box className={styles.buttonWrapper} marginLeft={[0, 3]}>
-          {cta.externalUrl ? (
-            <Link href={cta.externalUrl}>
-              <Button
-                icon="open"
-                colorScheme="default"
-                iconType="outline"
-                size="small"
-                type="button"
-                variant="text"
-              >
-                {cta.label}
-              </Button>
-            </Link>
-          ) : (
-            <Button
-              icon="open"
-              colorScheme="default"
-              iconType="outline"
-              onClick={cta.onClick}
-              size="small"
-              type="button"
-              variant="text"
-            >
-              {cta.label}
-            </Button>
-          )}
-        </Box>
-      </Box>
-      {loading && (
+const defaultCta = {
+  variant: 'primary',
+  icon: 'arrowForward',
+  onClick: () => null,
+} as const
+const defaultTag = {
+  variant: 'blue',
+  outlined: true,
+  label: '',
+} as const
+
+export const ActionCard: React.FC<ActionCardProps> = ({
+  date,
+  heading,
+  text,
+  eyebrow,
+  loading,
+  backgroundColor = 'white',
+  cta: _cta,
+  secondaryCta,
+  tag: _tag,
+  image,
+}) => {
+  const cta = { ...defaultCta, ..._cta }
+  const tag = { ...defaultTag, ..._tag }
+  const bgr =
+    backgroundColor === 'white'
+      ? 'white'
+      : backgroundColor === 'red'
+      ? 'red100'
+      : 'blue100'
+
+  const renderImage = () => {
+    if (!image) {
+      return null
+    }
+
+    if (image.type === 'avatar' && heading) {
+      return (
         <Box
-          className={styles.isLoadingContainer}
-          position="absolute"
-          left={0}
-          right={0}
-          top={0}
-          bottom={0}
           display="flex"
           justifyContent="center"
           alignItems="center"
-          borderRadius="large"
+          flexShrink={0}
+          marginRight={[2, 3]}
+          borderRadius="circle"
           background="blue100"
+          className={styles.avatar}
         >
-          <LoadingDots />
+          <Text variant="h3" as="p" color="blue400">
+            {getTitleAbbreviation(heading)}
+          </Text>
         </Box>
-      )}
+      )
+    }
+    if (!image.url || image.url.length === 0) return null
+    if (image.type === 'image') {
+      return (
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          flexShrink={0}
+          marginRight={[2, 3]}
+          borderRadius="circle"
+        >
+          <img className={styles.avatar} src={image.url} alt="action-card" />
+        </Box>
+      )
+    }
+    if (image.type === 'logo') {
+      return (
+        <Box
+          padding={2}
+          marginRight={2}
+          className={styles.logo}
+          style={{ backgroundImage: `url(${image.url})` }}
+        />
+      )
+    }
+    return null
+  }
+
+  const renderEyebrow = () => {
+    if (!eyebrow) {
+      return null
+    }
+
+    return (
+      <Box
+        alignItems="center"
+        display="flex"
+        flexDirection="row"
+        justifyContent={eyebrow ? 'spaceBetween' : 'flexEnd'}
+        marginBottom={[0, 1]}
+      >
+        <Text variant="eyebrow" color="purple400">
+          {eyebrow}
+        </Text>
+
+        {renderTag()}
+      </Box>
+    )
+  }
+  const renderDate = () => {
+    if (!date) {
+      return null
+    }
+
+    return (
+      <Box
+        alignItems="center"
+        display="flex"
+        flexDirection="row"
+        justifyContent={date ? 'spaceBetween' : 'flexEnd'}
+        marginBottom={[0, 2]}
+      >
+        <Box
+          display="flex"
+          flexDirection="row"
+          alignItems="center"
+          justifyContent="center"
+        >
+          <Box display="flex" marginRight={1} justifyContent="center">
+            <Icon icon="time" size="medium" type="outline" color="blue400" />
+          </Box>
+          <Box display="flex" justifyContent="center">
+            <Text variant="small">{date}</Text>
+          </Box>
+        </Box>
+        <Inline alignY="center" space={1}>
+          {!eyebrow && renderTag()}
+        </Inline>
+      </Box>
+    )
+  }
+
+  const renderTag = () => {
+    if (!tag.label) {
+      return null
+    }
+
+    return (
+      <Tag outlined={tag.outlined} variant={tag.variant} disabled>
+        {tag.label}
+      </Tag>
+    )
+  }
+
+  const renderDefault = () => {
+    const hasCTA = cta.label
+    const hasSecondaryCTA =
+      hasCTA && secondaryCta?.label && secondaryCta?.visible
+
+    return (
+      !!hasCTA && (
+        <Box
+          paddingTop={tag.label ? 'gutter' : 0}
+          display="flex"
+          justifyContent={['flexStart', 'flexEnd']}
+          alignItems="center"
+          flexDirection="row"
+        >
+          {hasSecondaryCTA && (
+            <Box paddingRight={4} paddingLeft={2}>
+              <Button
+                variant="text"
+                size={secondaryCta?.size}
+                onClick={secondaryCta?.onClick}
+                icon={secondaryCta?.icon}
+                disabled={secondaryCta?.disabled}
+              >
+                {secondaryCta?.label}
+              </Button>
+            </Box>
+          )}
+          <Box marginLeft={[0, 3]}>
+            {cta.url ? (
+              <LinkResolver href={cta.url}>
+                <Button
+                  icon={isExternalLink(cta.url) ? 'open' : undefined}
+                  colorScheme="default"
+                  iconType="outline"
+                  size="small"
+                  type="button"
+                  variant="text"
+                >
+                  {cta.label}
+                </Button>
+              </LinkResolver>
+            ) : (
+              <Button
+                variant={cta.variant}
+                size="small"
+                onClick={cta.onClick}
+                disabled={cta.disabled}
+                icon={cta.icon}
+              >
+                {cta.label}
+              </Button>
+            )}
+          </Box>
+        </Box>
+      )
+    )
+  }
+
+  if (loading) {
+    return (
+      <Box width="full" className={styles.loader}>
+        <CardLoader />
+      </Box>
+    )
+  }
+  return (
+    <Box
+      display="flex"
+      flexDirection="column"
+      borderColor={
+        backgroundColor === 'red'
+          ? 'red200'
+          : backgroundColor === 'blue'
+          ? 'blue100'
+          : 'blue200'
+      }
+      borderRadius="large"
+      borderWidth="standard"
+      paddingX={[3, 3, 4]}
+      paddingY={3}
+      background={bgr}
+    >
+      {renderEyebrow()}
+
+      {renderDate()}
+      <Box
+        alignItems={['flexStart', 'center']}
+        display="flex"
+        flexDirection={['column', 'row']}
+      >
+        {/* Checking image type so the image is placed correctly */}
+        {image?.type !== 'logo' && renderImage()}
+        <Box flexDirection="row" width="full">
+          {heading && (
+            <Box
+              display="flex"
+              flexDirection="row"
+              justifyContent="spaceBetween"
+              alignItems={['flexStart', 'flexStart', 'flexEnd']}
+            >
+              <Box display="flex" flexDirection="row" alignItems="center">
+                {/* Checking image type so the logo is placed correctly */}
+                {image?.type === 'logo' && renderImage()}
+                <Text
+                  variant="h4"
+                  color={
+                    backgroundColor === 'blue' ? 'blue600' : 'currentColor'
+                  }
+                >
+                  {heading}
+                </Text>
+              </Box>
+              <Hidden above="xs">
+                <Box>{!date && !eyebrow && renderTag()}</Box>
+              </Hidden>
+            </Box>
+          )}
+
+          {text && <Text paddingTop={heading ? 1 : 0}>{text}</Text>}
+        </Box>
+
+        <Box
+          display="flex"
+          alignItems={['flexStart', 'flexEnd']}
+          flexDirection="column"
+          flexShrink={0}
+          marginTop={[1, 0]}
+          marginLeft={[0, 'auto']}
+          className={tag?.label ? styles.tag : styles.button}
+        >
+          <Hidden below="sm">{!date && !eyebrow && renderTag()}</Hidden>
+          {renderDefault()}
+        </Box>
+      </Box>
     </Box>
   )
 }
 
-export default ActionCard
+const getTitleAbbreviation = (title: string) => {
+  const words = title.split(' ')
+  let initials = words[0].substring(0, 1).toUpperCase()
+
+  if (words.length > 1)
+    initials += words[words.length - 1].substring(0, 1).toUpperCase()
+
+  return initials
+}

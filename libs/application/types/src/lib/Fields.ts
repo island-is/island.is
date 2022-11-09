@@ -124,6 +124,7 @@ export interface CheckboxField extends BaseField {
   options: MaybeWithApplicationAndField<Option[]>
   large?: boolean
   strong?: boolean
+  required?: boolean
   backgroundColor?: InputBackgroundColor
   onSelect?: ((s: string[]) => void) | undefined
 }
@@ -157,6 +158,7 @@ export interface RadioField extends BaseField {
   options: MaybeWithApplicationAndField<Option[]>
   backgroundColor?: InputBackgroundColor
   largeButtons?: boolean
+  required?: boolean
   space?: BoxProps['paddingTop']
   onSelect?(s: string): void
 }
@@ -177,6 +179,7 @@ export interface CompanySearchField extends BaseField {
   placeholder?: FormText
   setLabelToDataSchema?: boolean
   shouldIncludeIsatNumber?: boolean
+  checkIfEmployerIsOnForbiddenList?: boolean
 }
 
 export interface AsyncSelectField extends BaseField {
@@ -196,6 +199,7 @@ export interface TextField extends BaseField {
   component: FieldComponents.TEXT
   disabled?: boolean
   readOnly?: boolean
+  rightAlign?: boolean
   minLength?: number
   maxLength?: number
   placeholder?: FormText

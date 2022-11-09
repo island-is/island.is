@@ -11,12 +11,13 @@ import {
   CommentsAccordionItem,
   AccordionListItem,
   InfoCard,
+  FormContext,
+  MarkdownWrapper,
 } from '@island.is/judicial-system-web/src/components'
 import {
   RestrictionCaseCourtSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import {
   UploadState,
   useCourtUpload,
@@ -45,12 +46,11 @@ import {
   AlertMessage,
 } from '@island.is/island-ui/core'
 import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
-import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import * as constants from '@island.is/judicial-system/consts'
 
-import DraftConclusionModal from '../../components/DraftConclusionModal/DraftConclusionModal'
+import { DraftConclusionModal } from '../../components'
 
 export const JudgeOverview: React.FC = () => {
   const {
@@ -66,13 +66,13 @@ export const JudgeOverview: React.FC = () => {
   const id = router.query.id
 
   const { uploadState } = useCourtUpload(workingCase, setWorkingCase)
-  const { setAndSendToServer } = useCase()
+  const { setAndSendCaseToServer } = useCase()
 
   const [isDraftingConclusion, setIsDraftingConclusion] = useState<boolean>()
 
   useEffect(() => {
     if (isCaseUpToDate) {
-      setAndSendToServer(
+      setAndSendCaseToServer(
         [
           {
             ruling: !workingCase.parentCase
@@ -89,7 +89,7 @@ export const JudgeOverview: React.FC = () => {
       )
     }
   }, [
-    setAndSendToServer,
+    setAndSendCaseToServer,
     formatMessage,
     isCaseUpToDate,
     setWorkingCase,

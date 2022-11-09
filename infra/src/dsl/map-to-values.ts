@@ -1,4 +1,5 @@
 import {
+  AccessModes,
   Service,
   EnvironmentVariables,
   Ingress,
@@ -12,11 +13,13 @@ import {
   PostgresInfo,
   Feature,
   Features,
+  PersistentVolumeClaim,
 } from './types/input-types'
 import {
   ContainerEnvironmentVariables,
   ContainerRunHelm,
   ContainerSecrets,
+  OutputPersistentVolumeClaim,
   SerializeMethod,
   ServiceHelm,
 } from './types/output-types'
@@ -310,6 +313,12 @@ export const serializeService: SerializeMethod = (
     addToErrors(errors)
   }
 
+  // Volumes
+  if (Object.keys(serviceDef.volumes.length > 0)) {
+    const { errors, volumes } = serializeVolumes(service, serviceDef.volumes)
+    addToErrors(errors)
+    result.pvcs = volumes
+  }
   checkCollisions(result.secrets, result.env)
 
   return allErrors.length === 0
@@ -450,6 +459,38 @@ function serializeIngress(
   }
 }
 
+function serializeVolumes(
+  service: Service,
+  volumes: {
+    name?: string
+    size: string
+    accessModes: AccessModes
+    mountPath: string
+    storageClass?: string
+  }[],
+) {
+  const errors: string[] = []
+  const mapping: {
+    [mode in AccessModes]: OutputPersistentVolumeClaim['accessModes']
+  } = {
+    ReadOnly: 'ReadOnlyMany',
+    ReadWrite: 'ReadWriteMany',
+  }
+  if (volumes.some((v) => typeof v.name === undefined) && volumes.length > 1) {
+    return { errors: ['Must set volume name if more than one'], volumes: [] }
+  }
+
+  const results: OutputPersistentVolumeClaim[] = volumes.map((volume) => ({
+    name: volume.name ?? `${service.serviceDef.name}`,
+    size: volume.size,
+    mountPath: volume.mountPath,
+    storageClass: 'efs-csi',
+    accessModes: mapping[volume.accessModes],
+  }))
+
+  return { errors, volumes: results }
+}
+
 function serializeContainerRuns(
   containers: {
     command: string
@@ -494,7 +535,7 @@ function serializeValueType(
       ? value
       : value({
           env: uberChart.env,
-          featureName: uberChart.env.feature,
+          featureDeploymentName: uberChart.env.feature,
           svc: (dep) => uberChart.ref(service, dep),
         })
   return { type: 'success', value: result }

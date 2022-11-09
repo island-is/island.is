@@ -14,9 +14,11 @@ import { FinancialStatementsInaoService } from './financialStatementsInao.servic
 import { Election } from './models/election.model'
 import { ClientType } from './models/clientType.model'
 import { InaoClientFinancialLimitInput } from './dto/clientFinancialLimit.input'
+import { Config } from './models/config.model'
+import { TaxInfo } from './models/taxInfo.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(ApiScope.internal)
+@Scopes(ApiScope.internal, ApiScope.internalProcuring)
 @Resolver()
 export class FinancialStatementsInaoResolver {
   constructor(
@@ -47,6 +49,22 @@ export class FinancialStatementsInaoResolver {
     return this.financialStatementsService.getClientFinancialLimit(
       input.clientType,
       input.year,
+    )
+  }
+
+  @Query(() => [Config])
+  async financialStatementsInaoConfig() {
+    return this.financialStatementsService.getConfig()
+  }
+
+  @Query(() => [TaxInfo])
+  async financialStatementsInaoTaxInfo(
+    @CurrentUser() user: User,
+    @Args('year') year: string,
+  ) {
+    return this.financialStatementsService.getTaxInformation(
+      user.nationalId,
+      year,
     )
   }
 }

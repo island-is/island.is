@@ -14,6 +14,7 @@ import {
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   ContentLanguage,
+  PowerBiSlice as PowerBiSliceSchema,
   Query,
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
@@ -27,13 +28,16 @@ import {
 } from '../queries'
 import { Screen } from '../../types'
 import { useNamespace } from '@island.is/web/hooks'
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import {
   getThemeConfig,
   SliceMachine,
   OrganizationWrapper,
   SliceDropdown,
   Form,
+  OneColumnTextSlice,
+  PowerBiSlice,
+  AccordionSlice,
 } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
@@ -174,6 +178,15 @@ const SubPage: Screen<SubPageProps> = ({
                         Form: (slice) => (
                           <Form form={slice} namespace={namespace} />
                         ),
+                        OneColumnText: (slice) => (
+                          <OneColumnTextSlice slice={slice} />
+                        ),
+                        PowerBiSlice: (slice: PowerBiSliceSchema) => (
+                          <PowerBiSlice slice={slice} />
+                        ),
+                        AccordionSlice: (slice) => (
+                          <AccordionSlice slice={slice} />
+                        ),
                       },
                     })}
                   </GridColumn>
@@ -205,6 +218,7 @@ const SubPage: Screen<SubPageProps> = ({
         subpage.sliceExtraText,
         namespace,
         organizationPage.slug,
+        organizationPage,
       )}
     </OrganizationWrapper>
   )
@@ -216,21 +230,52 @@ const renderSlices = (
   extraText: string,
   namespace: Record<string, string>,
   slug: string,
+  organizationPage: Query['getOrganizationPage'],
 ) => {
   switch (renderType) {
     case 'SliceDropdown':
       return <SliceDropdown slices={slices} sliceExtraText={extraText} />
     default:
-      return slices.map((slice, index) => (
-        <SliceMachine
-          key={slice.id}
-          slice={slice}
-          namespace={namespace}
-          slug={slug}
-          renderedOnOrganizationSubpage={true}
-          marginBottom={index === slices.length - 1 ? 5 : 0}
-        />
-      ))
+      return slices.map((slice, index) => {
+        if (slice.__typename === 'LifeEventPageListSlice') {
+          const digitalIcelandDetailPageLinkType: LinkType =
+            'digitalicelandservicesdetailpage'
+          return (
+            <SliceMachine
+              key={slice.id}
+              slice={slice}
+              namespace={namespace}
+              slug={slug}
+              marginBottom={index === slices.length - 1 ? 5 : 0}
+              params={{
+                renderLifeEventPagesAsProfileCards: true,
+                anchorPageLinkType:
+                  organizationPage.theme === 'digital_iceland'
+                    ? digitalIcelandDetailPageLinkType
+                    : undefined,
+                latestNewsSliceBackground: 'white',
+                forceTitleSectionHorizontalPadding: 'true',
+              }}
+              fullWidth={true}
+            />
+          )
+        }
+
+        return (
+          <SliceMachine
+            key={slice.id}
+            slice={slice}
+            namespace={namespace}
+            slug={slug}
+            marginBottom={index === slices.length - 1 ? 5 : 0}
+            params={{
+              renderLifeEventPagesAsProfileCards: true,
+              latestNewsSliceBackground: 'white',
+              forceTitleSectionHorizontalPadding: 'true',
+            }}
+          />
+        )
+      })
   }
 }
 

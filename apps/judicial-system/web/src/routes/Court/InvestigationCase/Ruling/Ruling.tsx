@@ -7,18 +7,20 @@ import {
   CourtCaseInfo,
   Decision,
   FormContentContainer,
+  FormContext,
   FormFooter,
   PageLayout,
   PdfButton,
   PoliceRequestAccordionItem,
   RulingInput,
+  SigningModal,
+  useRequestRulingSignature,
 } from '@island.is/judicial-system-web/src/components'
 import {
   RestrictionCaseCourtSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { useCase, useDeb } from '@island.is/judicial-system-web/src/utils/hooks'
-import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import {
   isAcceptingCaseDecision,
   completedCaseStates,
@@ -47,9 +49,6 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { isRulingValidIC } from '@island.is/judicial-system-web/src/utils/validate'
-import SigningModal, {
-  useRequestRulingSignature,
-} from '@island.is/judicial-system-web/src/components/SigningModal/SigningModal'
 import * as constants from '@island.is/judicial-system/consts'
 
 const Ruling = () => {
@@ -61,7 +60,7 @@ const Ruling = () => {
     isCaseUpToDate,
   } = useContext(FormContext)
   const { user } = useContext(UserContext)
-  const { setAndSendToServer, updateCase } = useCase()
+  const { setAndSendCaseToServer, updateCase } = useCase()
   const { formatMessage } = useIntl()
 
   const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
@@ -92,7 +91,7 @@ const Ruling = () => {
 
   useEffect(() => {
     if (isCaseUpToDate && !initialAutoFillDone) {
-      setAndSendToServer(
+      setAndSendCaseToServer(
         [
           {
             introduction: formatMessage(m.sections.introduction.autofill, {
@@ -121,7 +120,7 @@ const Ruling = () => {
     }
   }, [
     isCaseUpToDate,
-    setAndSendToServer,
+    setAndSendCaseToServer,
     workingCase,
     formatMessage,
     setWorkingCase,
@@ -389,7 +388,7 @@ const Ruling = () => {
               dismissLabelText={formatMessage(m.sections.decision.dismissLabel)}
               disabled={isModifyingRuling}
               onChange={(decision) => {
-                setAndSendToServer(
+                setAndSendCaseToServer(
                   [
                     {
                       conclusion:

@@ -1,4 +1,3 @@
-import React from 'react'
 import { BLOCKS, INLINES } from '@contentful/rich-text-types'
 import { Asset } from 'contentful'
 import { RenderNode } from '@contentful/rich-text-react-renderer'
@@ -8,6 +7,7 @@ import {
   Blockquote,
   ResponsiveSpace,
   Box,
+  Table as T,
 } from '@island.is/island-ui/core'
 import Hyperlink from '../Hyperlink/Hyperlink'
 import * as styles from './RichText.css'
@@ -118,8 +118,11 @@ export const defaultRenderNode: RenderNode = {
     </Box>
   ),
   [BLOCKS.OL_LIST]: (_node, children) => (
-    <Box component="ol" className={styles.orderedList}>
-      {children}
+    // An extra box container was added due to counter not resetting
+    <Box>
+      <Box component="ol" className={styles.orderedList}>
+        {children}
+      </Box>
     </Box>
   ),
   [BLOCKS.UL_LIST]: (_node, children) => (
@@ -142,6 +145,21 @@ export const defaultRenderNode: RenderNode = {
       <hr />
     </Box>
   ),
+  [BLOCKS.TABLE]: (_node, children) => <T.Table>{children}</T.Table>,
+  [BLOCKS.TABLE_ROW]: (_node, children) => {
+    if (
+      (children as { nodeType: string }[])?.every(
+        (childNode) => childNode?.nodeType === BLOCKS.TABLE_HEADER_CELL,
+      )
+    ) {
+      return <T.Head>{children}</T.Head>
+    }
+    return <T.Row>{children}</T.Row>
+  },
+  [BLOCKS.TABLE_HEADER_CELL]: (_node, children) => (
+    <T.HeadData>{children}</T.HeadData>
+  ),
+  [BLOCKS.TABLE_CELL]: (_node, children) => <T.Data>{children}</T.Data>,
   [INLINES.HYPERLINK]: (node, children) => (
     <Hyperlink href={node.data.uri}>{children}</Hyperlink>
   ),
@@ -164,15 +182,21 @@ export const defaultRenderNode: RenderNode = {
     const type = entry?.sys?.contentType?.sys?.id
     switch (type) {
       case 'article':
-        return entry.fields.slug ? (
-          <Hyperlink href={`/${entry.fields.slug}`}>{children}</Hyperlink>
+        return entry?.fields?.slug ? (
+          <Hyperlink
+            href={`/${
+              entry.sys?.locale === 'is-IS' ? '' : entry.sys?.locale + '/'
+            }${entry?.fields?.slug}`}
+          >
+            {children}
+          </Hyperlink>
         ) : null
       case 'subArticle':
-        return entry.fields.url ? (
+        return entry?.fields?.url ? (
           <Hyperlink href={entry.fields.url}>{children}</Hyperlink>
         ) : null
       case 'organizationPage': {
-        const prefix = getOrganizationPrefix(entry.sys?.locale)
+        const prefix = getOrganizationPrefix(entry?.sys?.locale)
         return entry.fields.slug ? (
           <Hyperlink href={`/${prefix}/${entry.fields.slug}`}>
             {children}
@@ -180,8 +204,8 @@ export const defaultRenderNode: RenderNode = {
         ) : null
       }
       case 'organizationSubpage': {
-        const prefix = getOrganizationPrefix(entry.sys?.locale)
-        return entry.fields.slug &&
+        const prefix = getOrganizationPrefix(entry?.sys?.locale)
+        return entry?.fields?.slug &&
           entry.fields.organizationPage?.fields?.slug ? (
           <Hyperlink
             href={`/${prefix}/${entry.fields.organizationPage.fields.slug}/${entry.fields.slug}`}
@@ -198,7 +222,7 @@ export const defaultRenderNode: RenderNode = {
 
 const getOrganizationPrefix = (locale: string) => {
   if (locale && !locale.includes('is')) {
-    return 'o'
+    return `${locale}/o`
   }
   return 's'
 }

@@ -16,7 +16,6 @@ import {
   FormValue,
   Option,
 } from '@island.is/application/types'
-import type { FamilyMember } from '@island.is/api/domains/national-registry'
 
 import { parentalLeaveFormMessages } from '../lib/messages'
 import { TimelinePeriod } from '../fields/components/Timeline/Timeline'
@@ -28,6 +27,9 @@ import {
   StartDateOptions,
   ParentalRelations,
   TransferRightsOption,
+  PARENTAL_GRANT_STUDENTS,
+  PARENTAL_LEAVE,
+  PARENTAL_GRANT,
 } from '../constants'
 import { SchemaFormValues } from '../lib/dataSchema'
 import { PregnancyStatusAndRightsResults } from '../dataProviders/Children/Children'
@@ -41,6 +43,7 @@ import {
 } from '../dataProviders/Children/types'
 import { YesOrNo, Period, PersonInformation } from '../types'
 import { FormatMessage } from '@island.is/localization'
+import { currentDateStartTime } from './parentalLeaveTemplateUtils'
 
 export function getExpectedDateOfBirth(
   application: Application,
@@ -65,6 +68,10 @@ export function formatPeriods(
   const { periods, firstPeriodStart } = getApplicationAnswers(
     application.answers,
   )
+  const { applicationFundId } = getApplicationExternalData(
+    application.externalData,
+  )
+
   const timelinePeriods: TimelinePeriod[] = []
 
   periods?.forEach((period, index) => {
@@ -76,6 +83,28 @@ export function formatPeriods(
       period.endDate,
     ).toString()
 
+    const startDateDateTime = new Date(period.startDate)
+    let canDelete = startDateDateTime.getTime() > currentDateStartTime()
+    const today = new Date()
+
+    if (applicationFundId === '') {
+      canDelete = true
+    } else if (canDelete && today.getDate() >= 20) {
+      const startDateBeginOfMonth = addDays(
+        startDateDateTime,
+        startDateDateTime.getDate() * -1,
+      )
+      const currentDateBeginOfMonth = addDays(today, today.getDate() * -1)
+      if (
+        startDateBeginOfMonth.getMonth() ===
+          currentDateBeginOfMonth.getMonth() &&
+        startDateBeginOfMonth.getFullYear() ===
+          currentDateBeginOfMonth.getFullYear()
+      ) {
+        canDelete = false
+      }
+    }
+
     if (isActualDob) {
       timelinePeriods.push({
         actualDob: isActualDob,
@@ -83,7 +112,7 @@ export function formatPeriods(
         endDate: period.endDate,
         ratio: period.ratio,
         duration: calculatedLength,
-        canDelete: true,
+        canDelete: canDelete,
         title: formatMessage(parentalLeaveFormMessages.reviewScreen.period, {
           index: index + 1,
           ratio: period.ratio,
@@ -98,7 +127,7 @@ export function formatPeriods(
         endDate: period.endDate,
         ratio: period.ratio,
         duration: calculatedLength,
-        canDelete: true,
+        canDelete: canDelete,
         title: formatMessage(parentalLeaveFormMessages.reviewScreen.period, {
           index: index + 1,
           ratio: period.ratio,
@@ -202,20 +231,6 @@ export const getAvailablePersonalRightsInMonths = (application: Application) =>
 export const getAvailableRightsInMonths = (application: Application) =>
   daysToMonths(getAvailableRightsInDays(application))
 
-export const getSpouseDeprecated = (application: Application) => {
-  const family = getValueViaPath(
-    application.externalData,
-    'family.data',
-    [],
-  ) as FamilyMember[]
-
-  if (!family) {
-    return null
-  }
-
-  return family.find((member) => member.familyRelation === SPOUSE)
-}
-
 export const getSpouse = (
   application: Application,
 ): PersonInformation['spouse'] | null => {
@@ -227,15 +242,6 @@ export const getSpouse = (
 
   if (person?.spouse?.nationalId) {
     return person.spouse
-  }
-
-  const spouse = getSpouseDeprecated(application)
-
-  if (spouse) {
-    return {
-      name: spouse.fullName,
-      nationalId: spouse.nationalId,
-    }
   }
 
   return null
@@ -379,18 +385,36 @@ export function getApplicationExternalData(
     '',
   ) as string
 
+  const navId = getValueViaPath(externalData, 'navId', '') as string
+
+  let applicationFundId = navId
+  if (!applicationFundId || applicationFundId === '') {
+    applicationFundId = getValueViaPath(
+      externalData,
+      'sendApplication.data.id',
+      '',
+    ) as string
+  }
+
   return {
     applicantName,
     applicantGenderCode,
+    applicationFundId,
     dataProvider,
     children,
     existingApplications,
+    navId,
     userEmail,
     userPhoneNumber,
   }
 }
 
 export function getApplicationAnswers(answers: Application['answers']) {
+  let applicationType = getValueViaPath(answers, 'applicationType.option')
+
+  if (!applicationType) applicationType = PARENTAL_LEAVE as string
+  else applicationType = applicationType as string
+
   const otherParent = (getValueViaPath(
     answers,
     'otherParentObj.chooseOtherParent',
@@ -427,6 +451,19 @@ export function getApplicationAnswers(answers: Application['answers']) {
     answers,
     'employer.isSelfEmployed',
   ) as YesOrNo
+
+  let isRecivingUnemploymentBenefits = getValueViaPath(
+    answers,
+    'isRecivingUnemploymentBenefits',
+  ) as YesOrNo
+
+  if (!isRecivingUnemploymentBenefits)
+    isRecivingUnemploymentBenefits = NO as YesOrNo
+
+  const unemploymentBenefits = getValueViaPath(
+    answers,
+    'unemploymentBenefits',
+  ) as string
 
   const otherParentName = (getValueViaPath(
     answers,
@@ -494,6 +531,11 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'employerNationalRegistryId',
   ) as string
 
+  const employerReviewerNationalRegistryId = getValueViaPath(
+    answers,
+    'employerReviewerNationalRegistryId',
+  ) as string
+
   const shareInformationWithOtherParent = getValueViaPath(
     answers,
     'shareInformationWithOtherParent',
@@ -545,6 +587,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     periods.length > 0 ? periods[0].firstPeriodStart : undefined
 
   return {
+    applicationType,
     otherParent,
     otherParentRightOfAccess,
     pensionFund,
@@ -568,6 +611,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     employerEmail,
     employerPhoneNumber,
     employerNationalRegistryId,
+    employerReviewerNationalRegistryId,
     shareInformationWithOtherParent,
     selectedChild,
     transferRights,
@@ -580,6 +624,8 @@ export function getApplicationAnswers(answers: Application['answers']) {
     periods,
     rawPeriods,
     firstPeriodStart,
+    isRecivingUnemploymentBenefits,
+    unemploymentBenefits,
   }
 }
 
@@ -589,6 +635,7 @@ export const requiresOtherParentApproval = (
 ) => {
   const applicationAnswers = getApplicationAnswers(answers)
   const selectedChild = getSelectedChild(answers, externalData)
+  const { navId } = getApplicationExternalData(externalData)
 
   const {
     isRequestingRights,
@@ -597,6 +644,11 @@ export const requiresOtherParentApproval = (
 
   const needsApprovalForRequestingRights =
     selectedChild?.parentalRelation === ParentalRelations.primary
+
+  //if an application has already been sent in then we don't need other parent approval as they are only changing period
+  if (navId) {
+    return false
+  }
 
   return (
     (isRequestingRights === YES && needsApprovalForRequestingRights) ||
@@ -740,7 +792,33 @@ export const getLastValidPeriodEndDate = (
     return null
   }
 
-  return new Date(lastPeriodEndDate)
+  const lastEndDate = new Date(lastPeriodEndDate)
+
+  const today = new Date()
+  const beginningOfMonth = addDays(today, today.getDate() * -1 + 1)
+
+  // LastPeriod's endDate is in current month then Applicant could only start from next month
+  if (
+    lastEndDate.getMonth() === today.getMonth() &&
+    lastEndDate.getFullYear() === today.getFullYear()
+  ) {
+    return addMonths(beginningOfMonth, 1)
+  }
+
+  // Current Date is >= 20 and lastEndDate is in the past then Applicant could only start from next month
+  if (today.getDate() >= 20 && lastEndDate.getTime() < today.getTime()) {
+    return addMonths(beginningOfMonth, 1)
+  }
+
+  // LastPeriod's endDate is long in the past then Applicant could only start from beginning of current month
+  if (
+    lastEndDate.getTime() < today.getTime() &&
+    lastEndDate.getMonth() !== today.getMonth()
+  ) {
+    return beginningOfMonth
+  }
+
+  return lastEndDate
 }
 
 export const calculateDaysUsedByPeriods = (periods: Period[]) =>
@@ -828,4 +906,104 @@ export const removeCountryCode = (application: Application) => {
     : getMobilePhoneNumber(application)?.startsWith('00354')
     ? getMobilePhoneNumber(application)?.slice(5)
     : getMobilePhoneNumber(application)
+}
+
+// Functions that determine dynamic text changes in forms based on application type
+export const getPeriodSectionTitle = (application: Application) => {
+  const appAnswers = getApplicationAnswers(application.answers)
+  if (
+    appAnswers.applicationType === PARENTAL_GRANT ||
+    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
+  ) {
+    return parentalLeaveFormMessages.shared.periodsGrantSection
+  }
+  return parentalLeaveFormMessages.shared.periodsLeaveSection
+}
+
+export const getRightsDescTitle = (application: Application) => {
+  const appAnswers = getApplicationAnswers(application.answers)
+  if (
+    appAnswers.applicationType === PARENTAL_GRANT ||
+    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
+  ) {
+    return parentalLeaveFormMessages.shared.grantRightsDescription
+  }
+  return parentalLeaveFormMessages.shared.rightsDescription
+}
+
+export const getPeriodImageTitle = (application: Application) => {
+  const appAnswers = getApplicationAnswers(application.answers)
+  if (
+    appAnswers.applicationType === PARENTAL_GRANT ||
+    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
+  ) {
+    return parentalLeaveFormMessages.shared.periodsImageGrantTitle
+  }
+  return parentalLeaveFormMessages.shared.periodsImageTitle
+}
+
+export const getFirstPeriodTitle = (application: Application) => {
+  const appAnswers = getApplicationAnswers(application.answers)
+  if (
+    appAnswers.applicationType === PARENTAL_GRANT ||
+    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
+  ) {
+    return parentalLeaveFormMessages.firstPeriodStart.grantTitle
+  }
+  return parentalLeaveFormMessages.firstPeriodStart.title
+}
+
+export const getDurationTitle = (application: Application) => {
+  const appAnswers = getApplicationAnswers(application.answers)
+  if (
+    appAnswers.applicationType === PARENTAL_GRANT ||
+    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
+  ) {
+    return parentalLeaveFormMessages.duration.grantTitle
+  }
+  return parentalLeaveFormMessages.duration.title
+}
+
+export const getRatioTitle = (application: Application) => {
+  const appAnswers = getApplicationAnswers(application.answers)
+  if (
+    appAnswers.applicationType === PARENTAL_GRANT ||
+    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
+  ) {
+    return parentalLeaveFormMessages.ratio.grantTitle
+  }
+  return parentalLeaveFormMessages.ratio.title
+}
+
+export const getLeavePlanTitle = (application: Application) => {
+  const appAnswers = getApplicationAnswers(application.answers)
+  if (
+    appAnswers.applicationType === PARENTAL_GRANT ||
+    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
+  ) {
+    return parentalLeaveFormMessages.leavePlan.grantTitle
+  }
+  return parentalLeaveFormMessages.leavePlan.title
+}
+
+export const getStartDateTitle = (application: Application) => {
+  const appAnswers = getApplicationAnswers(application.answers)
+  if (
+    appAnswers.applicationType === PARENTAL_GRANT ||
+    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
+  ) {
+    return parentalLeaveFormMessages.startDate.grantTitle
+  }
+  return parentalLeaveFormMessages.startDate.title
+}
+
+export const getStartDateDesc = (application: Application) => {
+  const appAnswers = getApplicationAnswers(application.answers)
+  if (
+    appAnswers.applicationType === PARENTAL_GRANT ||
+    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
+  ) {
+    return parentalLeaveFormMessages.startDate.grantDescription
+  }
+  return parentalLeaveFormMessages.startDate.description
 }

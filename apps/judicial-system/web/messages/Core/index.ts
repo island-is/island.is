@@ -245,4 +245,9 @@ export const core = defineMessages({
     defaultMessage: 'ákæra',
     description: 'Notaður fyrir orðið Ákæra.',
   },
+  closeModal: {
+    id: 'judicial.system.core:close_modal',
+    defaultMessage: 'Loka glugga',
+    description: 'Notaður fyrir texta í Loka glugga takka í modölum.',
+  },
 })

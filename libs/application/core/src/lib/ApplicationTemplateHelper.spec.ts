@@ -1,4 +1,4 @@
-import * as z from 'zod'
+import { z } from 'zod'
 import set from 'lodash/set'
 import { ApplicationTemplateHelper } from './ApplicationTemplateHelper'
 import {
@@ -14,7 +14,7 @@ import {
   ApplicationTemplateAPIAction,
 } from '@island.is/application/types'
 import { buildForm } from './formBuilders'
-import { DEPRECATED_DefaultStateLifeCycle } from './constants'
+import { DefaultStateLifeCycle } from './constants'
 
 const createMockApplication = (
   data: {
@@ -53,7 +53,7 @@ const createTestApplicationTemplate = (): ApplicationTemplate<
     person: z.object({
       age: z.number().min(18),
       pets: z.array(
-        z.object({ name: z.string().nonempty(), kind: z.enum(['dog', 'cat']) }),
+        z.object({ name: z.string().min(1), kind: z.enum(['dog', 'cat']) }),
       ),
     }),
     externalReviewAccepted: z.boolean(),
@@ -67,7 +67,7 @@ const createTestApplicationTemplate = (): ApplicationTemplate<
         meta: {
           name: 'draft',
           progress: 0.33,
-          lifecycle: DEPRECATED_DefaultStateLifeCycle,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               actions: [{ event: 'SUBMIT', name: 'Submit', type: 'primary' }],
@@ -95,7 +95,7 @@ const createTestApplicationTemplate = (): ApplicationTemplate<
         meta: {
           name: 'In Review',
           progress: 0.66,
-          lifecycle: DEPRECATED_DefaultStateLifeCycle,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: 'applicant',
@@ -119,14 +119,14 @@ const createTestApplicationTemplate = (): ApplicationTemplate<
         meta: {
           name: 'Approved',
           progress: 1,
-          lifecycle: DEPRECATED_DefaultStateLifeCycle,
+          lifecycle: DefaultStateLifeCycle,
         },
         type: 'final' as const,
       },
       rejected: {
         meta: {
           name: 'Rejected',
-          lifecycle: DEPRECATED_DefaultStateLifeCycle,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: 'applicant',
@@ -138,7 +138,7 @@ const createTestApplicationTemplate = (): ApplicationTemplate<
       closed: {
         meta: {
           name: 'Closed',
-          lifecycle: DEPRECATED_DefaultStateLifeCycle,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: 'applicant',

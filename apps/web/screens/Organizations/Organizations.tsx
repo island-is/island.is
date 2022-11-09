@@ -34,6 +34,7 @@ import { useNamespace } from '@island.is/web/hooks'
 import { Screen } from '@island.is/web/types'
 import { CustomNextError } from '../../units/errors'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import sortAlpha from '@island.is/web/utils/sortAlpha'
 import {
   FilterMenu,
   CategoriesProps,
@@ -96,9 +97,9 @@ const OrganizationPage: Screen<OrganizationProps> = ({
   const organizationsItems = useMemo(() => {
     const items = [...organizations.items]
     if (selectedTitleSortOption.value === 'asc') {
-      items.sort((a, b) => a.title.localeCompare(b.title))
+      items.sort(sortAlpha('title'))
     } else {
-      items.sort((a, b) => b.title.localeCompare(a.title))
+      items.sort((a, b) => sortAlpha('title')(b, a))
     }
     return items
   }, [organizations, selectedTitleSortOption])

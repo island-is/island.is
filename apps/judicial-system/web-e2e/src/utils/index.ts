@@ -13,6 +13,7 @@ import {
   CaseOrigin,
   CaseFile,
   CaseFileState,
+  CaseFileCategory,
 } from '@island.is/judicial-system/types'
 
 export enum Operation {
@@ -22,7 +23,9 @@ export enum Operation {
   SendNotificationMutation = 'SendNotificationMutation',
   CreatePresignedPostMutation = 'CreatePresignedPostMutation',
   CreateFileMutation = 'CreateFileMutation',
+  UpdateDefendantMutation = 'UpdateDefendantMutation',
   LimitedAccessCaseQuery = 'LimitedAccessCaseQuery',
+  ProsecutorSelectionUsersQuery = 'ProsecutorSelectionUsersQuery',
 }
 
 export const intercept = (res: Case, forceFail?: Operation) => {
@@ -77,6 +80,16 @@ export const intercept = (res: Case, forceFail?: Operation) => {
       req.reply({
         fixture: 'createFileMutationResponse',
       })
+    } else if (hasOperationName(req, Operation.UpdateDefendantMutation)) {
+      req.alias = 'UpdateDefendantMutation'
+      req.reply({
+        fixture: 'updateDefendantMutationResponse',
+      })
+    } else if (hasOperationName(req, Operation.ProsecutorSelectionUsersQuery)) {
+      req.alias = 'gqlProsecutorSelectionUsersQuery'
+      req.reply({
+        fixture: 'prosecutorUsers',
+      })
     }
   })
 }
@@ -114,8 +127,9 @@ export const aliasMutation = (
 export const mockName = `${faker.name.firstName()} ${faker.name.lastName()}`
 export const mockAddress = faker.address.streetAddress()
 
-export const mockCase = (type: CaseType) => {
+export const mockCase = (type: CaseType): Case => {
   const caseId = faker.datatype.uuid()
+
   return {
     id: caseId,
     created: '2020-09-16T19:50:08.033Z',
@@ -125,18 +139,8 @@ export const mockCase = (type: CaseType) => {
     type,
     court: makeCourt(),
     policeCaseNumbers: ['007-2021-202000'],
-    defendants: [
-      {
-        id: faker.datatype.uuid(),
-        created: '2020-09-16T19:50:08.033Z',
-        modified: '2020-09-16T19:51:39.466Z',
-        caseId,
-        nationalId: '000000-0000',
-        name: mockName,
-        gender: Gender.MALE,
-        address: mockAddress,
-      },
-    ],
+    defendants: [makeDefendant(caseId)],
+    defendantWaivesRightToCounsel: false,
   }
 }
 
@@ -164,12 +168,12 @@ export const makeJudge = (): User => {
   }
 }
 
-export const makeProsecutor = (): User => {
+export const makeProsecutor = (name?: string): User => {
   return {
     id: '9c0b4106-4213-43be-a6b2-ff324f4ba0c2',
     created: '2020-09-16T19:50:08.033Z',
     modified: '2020-09-16T19:50:08.033Z',
-    name: 'Áki Ákærandi',
+    name: name ?? 'Áki Ákærandi',
     nationalId: '000000-0000',
     mobileNumber: '000-0000',
     email: 'prosecutor@law.is',
@@ -187,6 +191,20 @@ export const makeProsecutor = (): User => {
   }
 }
 
+export const makeDefendant = (caseId: string) => {
+  return {
+    id: faker.datatype.uuid(),
+    created: '2020-09-16T19:50:08.033Z',
+    modified: '2020-09-16T19:51:39.466Z',
+    caseId,
+    nationalId: '000000-0000',
+    name: mockName,
+    gender: Gender.MALE,
+    address: mockAddress,
+    defendantWaivesRightToCounsel: false,
+  }
+}
+
 export const makeCourt = (): Institution => {
   return {
     id: 'd1e6e06f-dcfd-45e0-9a24-2fdabc2cc8bf',
@@ -198,16 +216,20 @@ export const makeCourt = (): Institution => {
   }
 }
 
-export const makeCaseFile = (
+export const makeCaseFile = ({
   caseId = 'test_id',
   name = 'test_file_name',
   type = 'pdf',
   state = CaseFileState.STORED_IN_RVG,
   key = 'test_id',
   size = 100,
-): CaseFile => {
+  category = CaseFileCategory.CASE_FILE,
+  policeCaseNumber = undefined as string | undefined,
+  chapter = undefined as number | undefined,
+  orderWithinChapter = undefined as number | undefined,
+} = {}): CaseFile => {
   return {
-    id: 'test_case_file_id',
+    id: faker.datatype.uuid(),
     created: '2020-09-16T19:50:08.033Z',
     modified: '2020-09-16T19:50:08.033Z',
     caseId,
@@ -216,5 +238,9 @@ export const makeCaseFile = (
     state,
     key,
     size,
+    category,
+    policeCaseNumber,
+    chapter,
+    orderWithinChapter,
   }
 }

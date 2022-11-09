@@ -4,7 +4,6 @@ import { documentsModule } from '@island.is/service-portal/documents'
 import { assetsModule } from '@island.is/service-portal/assets'
 import { informationModule } from '@island.is/service-portal/information'
 import { financeModule } from '@island.is/service-portal/finance'
-import { financeScheduleModule } from '@island.is/service-portal/finance-schedule'
 import { icelandicNamesRegistryModule } from '@island.is/service-portal/icelandic-names-registry'
 import { personalInformationModule } from '@island.is/service-portal/settings/personal-information'
 import { accessControlModule } from '@island.is/service-portal/settings/access-control'
@@ -17,6 +16,8 @@ import { applicationsModule } from '@island.is/service-portal/applications'
 import { regulationsAdminModule } from '@island.is/service-portal/regulations-admin'
 import { licensesModule } from '@island.is/service-portal/licenses'
 import { vehiclesModule } from '@island.is/service-portal/vehicles'
+import { delegationsModule } from '@island.is/service-portal/access-control/delegations'
+
 /**
  * NOTE:
  * Modules should only be here if they are production ready
@@ -27,14 +28,12 @@ import { vehiclesModule } from '@island.is/service-portal/vehicles'
  * and create a feature flag in ConfigCat called
  * `isServicePortalFinanceModuleEnabled` where your module is called `finance`.
  */
-
 export type ModuleKeys =
   | 'accessControl'
   | 'documentProvider'
   | 'documents'
   | 'information'
   | 'finance'
-  | 'financeSchedule'
   | 'icelandicNamesRegistry'
   | 'personalInformation'
   | 'education'
@@ -47,12 +46,7 @@ export type ModuleKeys =
   | 'licenses'
   | 'petitions'
   | 'vehicles'
-
-export const featureFlaggedModules: ModuleKeys[] = [
-  'documentProvider',
-  'icelandicNamesRegistry',
-  'petitions',
-]
+  | 'delegations'
 
 export const companyModules: ModuleKeys[] = [
   'documents',
@@ -63,18 +57,16 @@ export const companyModules: ModuleKeys[] = [
   'vehicles',
   'personalInformation',
   'accessControl',
+  'delegations',
   // TODO: Next in:
   // 'licenses',
 ]
-
-export const featureFlaggedCompanyModules: ModuleKeys[] = []
 
 export const modules: Record<ModuleKeys, ServicePortalModule> = {
   documentProvider: documentProviderModule,
   documents: documentsModule,
   information: informationModule,
   finance: financeModule,
-  financeSchedule: financeScheduleModule,
   icelandicNamesRegistry: icelandicNamesRegistryModule,
   personalInformation: personalInformationModule,
   education: educationModule,
@@ -88,4 +80,5 @@ export const modules: Record<ModuleKeys, ServicePortalModule> = {
   regulationsAdmin: regulationsAdminModule,
   licenses: licensesModule,
   vehicles: vehiclesModule,
+  delegations: delegationsModule,
 }

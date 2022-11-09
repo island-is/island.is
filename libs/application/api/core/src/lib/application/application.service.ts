@@ -117,6 +117,7 @@ export class ApplicationService {
     nationalId: string,
     typeId?: string,
     status?: string,
+    actor?: string,
   ): Promise<Application[]> {
     const typeIds = typeId?.split(',')
     const statuses = status?.split(',')
@@ -128,8 +129,13 @@ export class ApplicationService {
         [Op.and]: [
           {
             [Op.or]: [
-              { applicant: nationalId },
-              { assignees: { [Op.contains]: [nationalId] } },
+              ...(actor
+                ? [
+                    { applicant: nationalId },
+                    { applicantActors: { [Op.contains]: [actor] } },
+                  ]
+                : [{ applicant: { [Op.eq]: nationalId } }]),
+              ...[{ assignees: { [Op.contains]: [nationalId] } }],
             ],
           },
           applicationIsNotSetToBePruned(),

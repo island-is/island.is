@@ -42,6 +42,8 @@ export enum CaseFileState {
 }
 
 export enum CaseFileCategory {
+  COURT_RECORD = 'COURT_RECORD',
+  RULING = 'RULING',
   COVER_LETTER = 'COVER_LETTER',
   INDICTMENT = 'INDICTMENT',
   CRIMINAL_RECORD = 'CRIMINAL_RECORD',
@@ -60,10 +62,26 @@ export interface CaseFile {
   state: CaseFileState
   key?: string
   size: number
+  category?: CaseFileCategory
+  policeCaseNumber?: string
+  userGeneratedFilename?: string
+  chapter?: number
+  orderWithinChapter?: number
+  displayDate?: string
 }
 
 export interface CreateFile {
   type: string
+  category?: CaseFileCategory
   key: string
   size: number
+  policeCaseNumber?: string
+}
+
+export interface UpdateFile {
+  id: string
+  userGeneratedFilename?: string | null
+  chapter?: number | null
+  orderWithinChapter?: number | null
+  displayDate?: string | null
 }

@@ -1,8 +1,7 @@
 import isAfter from 'date-fns/isAfter'
 import isEqual from 'lodash/isEqual'
 import React, { useState } from 'react'
-
-import { useQuery } from '@apollo/client'
+import { useQuery, gql } from '@apollo/client'
 import { Query, VehiclesVehicle } from '@island.is/api/schema'
 import {
   Box,
@@ -10,7 +9,7 @@ import {
   DatePicker,
   GridColumn,
   GridRow,
-  LoadingDots,
+  SkeletonLoader,
   Stack,
   Tabs,
   Text,
@@ -18,14 +17,48 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   EmptyState,
+  ErrorScreen,
   IntroHeader,
   m,
   ServicePortalModuleComponent,
 } from '@island.is/service-portal/core'
 
 import { messages } from '../../lib/messages'
-import { GET_USERS_VEHICLES_HISTORY } from '../../queries/getUsersVehicleHistory'
 import TabContent from './TabContent'
+import {
+  VEHICLE_OPERATOR,
+  VEHICLE_OWNER,
+  VEHICLE_COOWNER,
+} from '../../utils/constants'
+
+export const GET_USERS_VEHICLES_HISTORY = gql`
+  query GetUsersVehicles {
+    vehiclesHistoryList {
+      vehicleList {
+        permno
+        regno
+        type
+        color
+        firstRegDate
+        modelYear
+        productYear
+        role
+        operatorStartDate
+        operatorEndDate
+        outOfUse
+        otherOwners
+        termination
+        vehicleStatus
+        plateStatus
+        nextInspection {
+          nextInspectionDate
+          nextInspectionDateIfPassedInspectionToday
+        }
+        deregistrationDate
+      }
+    }
+  }
+`
 
 const getFilteredVehicles = (
   vehicles: VehiclesVehicle[],
@@ -82,15 +115,15 @@ export const VehiclesHistory: ServicePortalModuleComponent = () => {
     toDate,
   )
   const filteredOwnersVehicles = filteredVehicles.filter(
-    (x: VehiclesVehicle) => x.role?.toLowerCase() === 'eigandi',
-  )
-
-  const filteredOperatorVehicles = filteredVehicles.filter(
-    (x: VehiclesVehicle) => x.role?.toLowerCase() === 'umráðamaður',
+    (x: VehiclesVehicle) => x.role?.toLowerCase() === VEHICLE_OWNER,
   )
 
   const filteredCoOwnerVehicles = filteredVehicles.filter(
-    (x: VehiclesVehicle) => x.role?.toLowerCase() === 'meðeigandi',
+    (x: VehiclesVehicle) => x.role?.toLowerCase() === VEHICLE_COOWNER,
+  )
+
+  const filteredOperatorVehicles = filteredVehicles.filter(
+    (x: VehiclesVehicle) => x.role?.toLowerCase() === VEHICLE_OPERATOR,
   )
 
   const tabs = [
@@ -107,6 +140,19 @@ export const VehiclesHistory: ServicePortalModuleComponent = () => {
       content: <TabContent data={filteredOperatorVehicles} />,
     },
   ]
+  if (error && !loading) {
+    return (
+      <ErrorScreen
+        figure="./assets/images/hourglass.svg"
+        tagVariant="red"
+        tag={formatMessage(m.errorTitle)}
+        title={formatMessage(m.somethingWrong)}
+        children={formatMessage(m.errorFetchModule, {
+          module: formatMessage(m.vehicles).toLowerCase(),
+        })}
+      />
+    )
+  }
 
   return (
     <>
@@ -115,11 +161,6 @@ export const VehiclesHistory: ServicePortalModuleComponent = () => {
         intro={messages.historyIntro}
       />
 
-      {error && (
-        <Box>
-          <EmptyState description={m.errorFetch} />
-        </Box>
-      )}
       {!loading && !error && vehicles.length === 0 && (
         <Box marginTop={8}>
           <EmptyState />
@@ -194,14 +235,8 @@ export const VehiclesHistory: ServicePortalModuleComponent = () => {
           )}
 
         {loading && (
-          <Box
-            display="flex"
-            alignItems="center"
-            justifyContent="center"
-            width="full"
-            marginTop={6}
-          >
-            <LoadingDots large />
+          <Box padding={3}>
+            <SkeletonLoader space={1} height={40} repeat={5} />
           </Box>
         )}
         {!loading && !error && filteredVehicles.length > 0 && (

@@ -22,12 +22,36 @@ export enum Features {
   financialStatementInao = 'financialStatementInao',
   operatingLicense = 'isApplicationOperatingLicenseEnabled',
   marriageConditions = 'isMarriageConditionsApplicationEnabled',
+  estateApplication = 'isEstateApplicationEnabled',
+  drivingLicenseDuplicate = 'isDrivingLicenseDuplicateEnabled',
+  transportAuthorityAnonymityInVehicleRegistry = 'isTransportAuthorityAnonymityInVehicleRegistryEnabled',
+  transportAuthorityChangeCoOwnerOfVehicle = 'isTransportAuthorityChangeCoOwnerOfVehicleEnabled',
+  transportAuthorityChangeOperatorOfVehicle = 'isTransportAuthorityChangeOperatorOfVehicleEnabled',
+  transportAuthorityDigitalTachographCompanyCard = 'isTransportAuthorityDigitalTachographCompanyCardEnabled',
+  transportAuthorityDigitalTachographDriversCard = 'isTransportAuthorityDigitalTachographDriversCardEnabled',
+  transportAuthorityDigitalTachographWorkshopCard = 'isTransportAuthorityDigitalTachographWorkshopCardEnabled',
+  transportAuthorityOrderVehicleLicensePlate = 'isTransportAuthorityOrderVehicleLicensePlateEnabled',
+  transportAuthorityOrderVehicleRegistrationCertificate = 'isTransportAuthorityOrderVehicleRegistrationCertificateEnabled',
+  transportAuthorityTransferOfVehicleOwnership = 'isTransportAuthorityTransferOfVehicleOwnershipEnabled',
+
+  // Application delegation flags
+  noDebtCertificateCompanyDelegations = 'applicationNoDebtCertificateCompanyDelegations',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
+
+  // Service portal modules
+  servicePortalDocumentProviderModule = 'isServicePortalDocumentProviderModuleEnabled',
+  servicePortalIcelandicNamesRegistryModule = 'isServicePortalIcelandicNamesRegistryModuleEnabled',
+  servicePortalPetitionsModule = 'isServicePortalPetitionsModuleEnabled',
+  servicePortalDrivingLessonsBookModule = 'isServicePortalDrivingLessonsBookModuleEnabled',
+  outgoingDelegationsV1 = 'outgoingdelegationsv1',
+  outgoingDelegationsV2 = 'outgoingdelegationsv2',
+  incomingDelegationsV2 = 'incomingdelegationsv2',
 }
 
 export enum ServerSideFeature {
   testing = 'do-not-remove-for-testing-only',
   drivingLicense = 'driving-license-use-v1-endpoint-for-v2-comms',
+  delegationApi = 'delegation-api',
 }

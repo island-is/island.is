@@ -2,10 +2,12 @@ import { uuid } from 'uuidv4'
 import { Op } from 'sequelize'
 
 import {
+  CaseFileState,
   CaseState,
   CaseType,
   User as TUser,
 } from '@island.is/judicial-system/types'
+import { MessageService, MessageType } from '@island.is/judicial-system/message'
 
 import { randomEnum } from '../../../../test'
 import { createTestingCaseModule } from '../createTestingCaseModule'
@@ -14,6 +16,7 @@ import { Defendant } from '../../../defendant'
 import { User } from '../../../user'
 import { Institution } from '../../../institution'
 import { Case } from '../../models/case.model'
+import { CaseFile } from '../../../file'
 
 interface Then {
   result: Case
@@ -27,16 +30,20 @@ type GivenWhenThen = (
 ) => Promise<Then>
 
 describe('CaseController - Create court case', () => {
+  let mockMessageService: MessageService
   let mockCourtService: CourtService
   let mockCaseModel: typeof Case
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
     const {
+      messageService,
       courtService,
       caseModel,
       caseController,
     } = await createTestingCaseModule()
+
+    mockMessageService = messageService
     mockCourtService = courtService
     mockCaseModel = caseModel
 
@@ -147,6 +154,14 @@ describe('CaseController - Create court case', () => {
           },
           { model: Case, as: 'parentCase' },
           { model: Case, as: 'childCase' },
+          {
+            model: CaseFile,
+            as: 'caseFiles',
+            required: false,
+            where: {
+              state: { [Op.not]: CaseFileState.DELETED },
+            },
+          },
         ],
         order: [[{ model: Defendant, as: 'defendants' }, 'created', 'ASC']],
         where: {
@@ -162,7 +177,7 @@ describe('CaseController - Create court case', () => {
     const user = {} as TUser
     const caseId = uuid()
     const theCase = { id: caseId } as Case
-    const returnedCase = {} as Case
+    const returnedCase = { id: caseId } as Case
     let then: Then
 
     beforeEach(async () => {
@@ -176,6 +191,13 @@ describe('CaseController - Create court case', () => {
 
     it('should return the case', () => {
       expect(then.result).toBe(returnedCase)
+    })
+
+    it('should post to queue', () => {
+      expect(mockMessageService.sendMessageToQueue).toHaveBeenCalledWith({
+        type: MessageType.CASE_CONNECTED_TO_COURT_CASE,
+        caseId,
+      })
     })
   })
 

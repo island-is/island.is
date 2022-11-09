@@ -15,6 +15,7 @@ import {
   ValueType,
   XroadConfig,
   MountedFile,
+  PersistentVolumeClaim,
 } from './types/input-types'
 
 export class ServiceBuilder<ServiceType> implements Service {
@@ -84,6 +85,7 @@ export class ServiceBuilder<ServiceType> implements Service {
       },
       xroadConfig: [],
       files: [],
+      volumes: [],
     }
   }
 
@@ -159,6 +161,15 @@ export class ServiceBuilder<ServiceType> implements Service {
     return this
   }
 
+  /**
+   * Volumes to create and attach to containers
+   * @param ...volumes: volume configs
+   *
+   */
+  volumes(...volumes: PersistentVolumeClaim[]) {
+    this.serviceDef.volumes = [...this.serviceDef.volumes, ...volumes]
+    return this
+  }
   /**
    * To perform maintenance before deploying the main service(database migrations, etc.), create an `initContainer` (optional). It maps to a Pod specification for an [initContainer](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/).
    * @param ic initContainer definitions

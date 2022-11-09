@@ -25,7 +25,6 @@ import {
   applicantIsMale,
   getOtherParentName,
   removeCountryCode,
-  getSpouseDeprecated,
   getSpouse,
   getOtherParentOptions,
   isEligibleForParentalLeave,
@@ -218,13 +217,6 @@ describe('getAvailableRightsInMonths', () => {
   })
 })
 
-describe('getSpouseDeprecated', () => {
-  it('should return undefined without spouse', () => {
-    const application = buildApplication()
-    expect(getSpouseDeprecated(application)).toEqual(undefined)
-  })
-})
-
 describe('getSpouse', () => {
   it('should return null with no spouse', () => {
     const application = buildApplication()
@@ -376,12 +368,14 @@ describe('getApplicationExternalData', () => {
     expect(getApplicationExternalData(application.externalData)).toEqual({
       applicantGenderCode: 'Mock gender code',
       applicantName: 'Mock name',
+      applicationFundId: '',
       children: 'Mock child',
       dataProvider: {
         children: 'Mock child',
         existingApplications: 'Mock application',
       },
       existingApplications: 'Mock application',
+      navId: '',
       userEmail: 'mock@email.is',
       userPhoneNumber: 'Mock number',
     })

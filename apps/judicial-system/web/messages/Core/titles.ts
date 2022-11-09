@@ -108,6 +108,19 @@ export const titles = {
         description:
           'Notaður sem titill fyrir Dómskjöl skjá hjá saksóknara í ákærum',
       }),
+      caseFile: defineMessage({
+        id: 'judicial.system.core:titles.prosecutor.indictments.case_file',
+        defaultMessage: 'Skjalaskrá - Réttarvörslugátt',
+        description:
+          'Notaður sem titill fyrir Skjalaskrá skjá hjá saksóknara í ákærum',
+      }),
+      policeCaseFiles: defineMessage({
+        id:
+          'judicial.system.core:titles.prosecutor.indictments.police_case_files',
+        defaultMessage: 'Málsgögn - Réttarvörslugátt',
+        description:
+          'Notaður sem titill fyrir Málsgögn skjá hjá saksóknara í ákærum',
+      }),
       overview: defineMessage({
         id: 'judicial.system.core:titles.prosecutor.indictments.overview',
         defaultMessage: 'Yfirlit ákæru - Réttarvörslugátt',
@@ -204,6 +217,19 @@ export const titles = {
         defaultMessage: 'Fyrirkall - Réttarvörslugátt',
         description:
           'Notaður sem titill fyrir Fyrirkall skjá hjá dómstólum í ákærum',
+      },
+      prosecutorAndDefender: {
+        id:
+          'judicial.system.core:titles.court.indictments.prosecutor_and_defender',
+        defaultMessage: 'Málflytjendur - Réttarvörslugátt',
+        description:
+          'Notaður sem titill fyrir Málflytjendur skjá hjá dómstólum í ákærum',
+      },
+      courtRecord: {
+        id: 'judicial.system.core:titles.court.indictments.court_record',
+        defaultMessage: 'Þingbók og dómur - Réttarvörslugátt',
+        description:
+          'Notaður sem titill fyrir Þingbók og dómur úrskurðar skjá hjá dómstólum í ákærum',
       },
     }),
   },

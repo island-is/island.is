@@ -64,6 +64,7 @@ export const Input = forwardRef(
       id = name,
       disabled,
       required,
+      rightAlign,
       placeholder,
       tooltip,
       backgroundColor = 'white',
@@ -126,7 +127,7 @@ export const Input = forwardRef(
     return (
       <div>
         {/* If size is xs then the label is above the input box */}
-        {size === 'xs' && (
+        {size === 'xs' && label && (
           <label
             htmlFor={id}
             className={cn(styles.label, styles.labelSizes[size], {
@@ -168,7 +169,7 @@ export const Input = forwardRef(
           }}
         >
           <Box flexGrow={1}>
-            {size !== 'xs' && (
+            {size !== 'xs' && label && (
               <label
                 htmlFor={id}
                 className={cn(styles.label, styles.labelSizes[size], {
@@ -203,6 +204,7 @@ export const Input = forwardRef(
                 ),
                 styles.inputSize[size],
                 {
+                  [styles.rightAlign]: rightAlign,
                   [styles.textarea]: textarea,
                 },
               )}

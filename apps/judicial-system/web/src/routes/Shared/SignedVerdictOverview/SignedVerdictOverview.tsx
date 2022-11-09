@@ -36,6 +36,13 @@ import {
   RulingAccordionItem,
   CommentsAccordionItem,
   CaseFilesAccordionItem,
+  CaseDates,
+  FormContext,
+  MarkdownWrapper,
+  RestrictionTags,
+  SignedDocument,
+  useRequestRulingSignature,
+  SigningModal,
 } from '@island.is/judicial-system-web/src/components'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import {
@@ -57,25 +64,17 @@ import {
   Divider,
   AlertMessage,
 } from '@island.is/island-ui/core'
-import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import {
   capitalize,
   formatDate,
   caseTypes,
 } from '@island.is/judicial-system/formatters'
-import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
   core,
   signedVerdictOverview as m,
   titles,
 } from '@island.is/judicial-system-web/messages'
-import { SignedDocument } from '@island.is/judicial-system-web/src/components/SignedDocument/SignedDocument'
-import CaseDates from '@island.is/judicial-system-web/src/components/CaseDates/CaseDates'
-import RestrictionTags from '@island.is/judicial-system-web/src/components/RestrictionTags/RestrictionTags'
-import SigningModal, {
-  useRequestRulingSignature,
-} from '@island.is/judicial-system-web/src/components/SigningModal/SigningModal'
 import * as constants from '@island.is/judicial-system/consts'
 
 import AppealSection from './Components/AppealSection/AppealSection'
@@ -529,6 +528,8 @@ export const SignedVerdictOverview: React.FC = () => {
             </Box>
           </Box>
           {isRestrictionCase(workingCase.type) &&
+            workingCase.decision !==
+              CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN &&
             workingCase.state === CaseState.ACCEPTED && (
               <CaseDates
                 workingCase={workingCase}

@@ -6,8 +6,10 @@ import {
   CaseFilesAccordionItem,
   CommentsAccordionItem,
   FormContentContainer,
+  FormContext,
   FormFooter,
   InfoCard,
+  MarkdownWrapper,
   PageLayout,
   PdfButton,
 } from '@island.is/judicial-system-web/src/components'
@@ -15,7 +17,6 @@ import {
   RestrictionCaseCourtSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
@@ -34,7 +35,6 @@ import {
   Button,
   Text,
 } from '@island.is/island-ui/core'
-import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
 import {
   UploadState,
   useCourtUpload,
@@ -47,7 +47,7 @@ import {
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import * as constants from '@island.is/judicial-system/consts'
 
-import DraftConclusionModal from '../../components/DraftConclusionModal/DraftConclusionModal'
+import { DraftConclusionModal } from '../../components'
 
 const Overview = () => {
   const {
@@ -58,14 +58,14 @@ const Overview = () => {
     isCaseUpToDate,
   } = useContext(FormContext)
   const { formatMessage } = useIntl()
-  const { setAndSendToServer } = useCase()
+  const { setAndSendCaseToServer } = useCase()
   const { user } = useContext(UserContext)
   const { uploadState } = useCourtUpload(workingCase, setWorkingCase)
   const [isDraftingConclusion, setIsDraftingConclusion] = useState<boolean>()
 
   useEffect(() => {
     if (isCaseUpToDate) {
-      setAndSendToServer(
+      setAndSendCaseToServer(
         [
           {
             ruling: !workingCase.parentCase
@@ -82,7 +82,7 @@ const Overview = () => {
       )
     }
   }, [
-    setAndSendToServer,
+    setAndSendCaseToServer,
     formatMessage,
     isCaseUpToDate,
     setWorkingCase,

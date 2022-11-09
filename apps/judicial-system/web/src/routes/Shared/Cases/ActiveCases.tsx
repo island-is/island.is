@@ -6,18 +6,14 @@ import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
 import {
   AnimatePresence,
-  AnimateSharedLayout,
+  LayoutGroup,
   motion,
   useAnimation,
 } from 'framer-motion'
 
 import { theme } from '@island.is/island-ui/theme'
 import { Box, Text, Tag, Icon, Button } from '@island.is/island-ui/core'
-import {
-  CaseState,
-  isInvestigationCase,
-  UserRole,
-} from '@island.is/judicial-system/types'
+import { CaseState, UserRole } from '@island.is/judicial-system/types'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import {
   directionType,
@@ -239,7 +235,7 @@ const ActiveCases: React.FC<Props> = (props) => {
           <th></th>
         </tr>
       </thead>
-      <AnimateSharedLayout>
+      <LayoutGroup>
         <tbody>
           <AnimatePresence>
             {cases.map((c, i) => (
@@ -328,7 +324,7 @@ const ActiveCases: React.FC<Props> = (props) => {
                         formatMessage,
                         c.state,
                         isCourtRole,
-                        isInvestigationCase(c.type),
+                        c.type,
                         c.isValidToDateInThePast,
                         c.courtDate,
                       ).color
@@ -341,7 +337,7 @@ const ActiveCases: React.FC<Props> = (props) => {
                         formatMessage,
                         c.state,
                         isCourtRole,
-                        isInvestigationCase(c.type),
+                        c.type,
                         c.isValidToDateInThePast,
                         c.courtDate,
                       ).text
@@ -434,7 +430,7 @@ const ActiveCases: React.FC<Props> = (props) => {
             ))}
           </AnimatePresence>
         </tbody>
-      </AnimateSharedLayout>
+      </LayoutGroup>
     </table>
   )
 }

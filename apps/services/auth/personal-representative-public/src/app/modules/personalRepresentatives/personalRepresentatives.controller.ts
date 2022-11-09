@@ -2,7 +2,7 @@ import { AuthScope } from '@island.is/auth/scopes'
 import {
   PersonalRepresentativeService,
   PersonalRepresentativePublicDTO,
-} from '@island.is/auth-api-lib/personal-representative'
+} from '@island.is/auth-api-lib'
 import {
   BadRequestException,
   Controller,
@@ -62,10 +62,9 @@ export class PersonalRepresentativesController {
       )
     }
 
-    const personalReps = await this.prService.getByPersonalRepresentative(
-      prId,
-      false,
-    )
+    const personalReps = await this.prService.getByPersonalRepresentative({
+      nationalIdPersonalRepresentative: prId,
+    })
 
     return personalReps.map((pr) => PersonalRepresentativePublicDTO.fromDTO(pr))
   }

@@ -38,3 +38,7 @@ export const linkRow = style({
 export const bsiLogo = style({
   height: '60px',
 })
+
+export const bsiLogoMobile = style({
+  height: '40px',
+})

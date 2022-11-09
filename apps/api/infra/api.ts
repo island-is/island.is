@@ -19,8 +19,10 @@ import {
   MunicipalitiesFinancialAid,
   Vehicles,
   AdrAndMachine,
+  Firearm,
 } from '../../../infra/src/dsl/xroad'
 import { settings } from '../../../infra/src/dsl/settings'
+import { MissingSetting } from '../../../infra/src/dsl/types/input-types'
 
 export const serviceSetup = (services: {
   appSystemApi: ServiceBuilder<'application-system-api'>
@@ -34,7 +36,7 @@ export const serviceSetup = (services: {
     .namespace('islandis')
     .serviceAccount()
     .command('node')
-    .args('--tls-min-v1.0', 'main.js')
+    .args('--tls-min-v1.0', '--no-experimental-fetch', 'main.js')
 
     .env({
       APPLICATION_SYSTEM_API_URL: ref(
@@ -112,10 +114,17 @@ export const serviceSetup = (services: {
       IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/api',
       XROAD_NATIONAL_REGISTRY_TIMEOUT: '20000',
       XROAD_PROPERTIES_TIMEOUT: '20000',
-      SYSLUMENN_TIMEOUT: '30000',
+      SYSLUMENN_TIMEOUT: '40000',
       XROAD_DRIVING_LICENSE_BOOK_TIMEOUT: '20000',
       XROAD_FINANCES_TIMEOUT: '20000',
       XROAD_CHARGE_FJS_V2_TIMEOUT: '20000',
+      AUTH_DELEGATION_API_URL: {
+        dev:
+          'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local',
+        staging:
+          'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local',
+        prod: 'https://auth-delegation-api.internal.innskra.island.is',
+      },
       IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',
@@ -140,6 +149,11 @@ export const serviceSetup = (services: {
       },
       FINANCIAL_STATEMENTS_INAO_TOKEN_ENDPOINT:
         'https://login.microsoftonline.com/05a20268-aaea-4bb5-bb78-960b0462185e/oauth2/v2.0/token',
+      ELECTRONIC_REGISTRATION_STATISTICS_API_URL: {
+        dev: 'https://gw-api-staging.skra.is/business/tolfraedi',
+        staging: 'https://gw-api-staging.skra.is/business/tolfraedi',
+        prod: 'https://gw-api.skra.is/business/tolfraedi',
+      },
     })
 
     .secrets({
@@ -187,6 +201,14 @@ export const serviceSetup = (services: {
       PKPASS_CACHE_TOKEN_EXPIRY_DELTA:
         '/k8s/api/PKPASS_CACHE_TOKEN_EXPIRY_DELTA',
       PKPASS_SECRET_KEY: '/k8s/api/PKPASS_SECRET_KEY',
+      VE_PKPASS_API_KEY: '/k8s/api/VE_PKPASS_API_KEY',
+      RLS_PKPASS_API_KEY: '/k8s/api/RLS_PKPASS_API_KEY',
+      SMART_SOLUTIONS_API_URL: '/k8s/api/SMART_SOLUTIONS_API_URL',
+      FIREARM_LICENSE_PASS_TEMPLATE_ID:
+        '/k8s/api/FIREARM_LICENSE_PASS_TEMPLATE_ID',
+      MACHINE_LICENSE_PASS_TEMPLATE_ID:
+        '/k8s/api/MACHINE_LICENSE_PASS_TEMPLATE_ID',
+      ADR_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/ADR_LICENSE_PASS_TEMPLATE_ID',
       ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE',
       ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH',
       IDENTITY_SERVER_CLIENT_SECRET: '/k8s/api/IDENTITY_SERVER_CLIENT_SECRET',
@@ -197,6 +219,7 @@ export const serviceSetup = (services: {
     })
     .xroad(
       AdrAndMachine,
+      Firearm,
       Base,
       Client,
       HealthInsurance,

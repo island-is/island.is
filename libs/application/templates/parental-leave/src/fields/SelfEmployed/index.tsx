@@ -1,8 +1,8 @@
 import React, { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
 
-import { Box } from '@island.is/island-ui/core'
-import { getErrorViaPath } from '@island.is/application/core'
+import { Box, Text } from '@island.is/island-ui/core'
+import { formatText, getErrorViaPath } from '@island.is/application/core'
 import {
   FieldBaseProps,
   FieldComponents,
@@ -12,19 +12,24 @@ import { RadioFormField } from '@island.is/application/ui-fields'
 
 import { NO, YES } from '../../constants'
 import { parentalLeaveFormMessages } from '../../lib/messages'
+import { useLocale } from '@island.is/localization'
 
 export const SelfEmployed: FC<FieldBaseProps> = ({ application, field }) => {
   const { errors, setValue } = useFormContext()
+  const { formatMessage } = useLocale()
   const { id, title, description } = field
 
   return (
     <Box>
+      <Text variant="h2" as="h2">
+        {formatText(title, application, formatMessage)}
+      </Text>
       <RadioFormField
         error={errors && getErrorViaPath(errors, id)}
         application={application}
         field={{
           id: id,
-          title,
+          title: '',
           description,
           type: FieldTypes.RADIO,
           component: FieldComponents.RADIO,
@@ -43,9 +48,12 @@ export const SelfEmployed: FC<FieldBaseProps> = ({ application, field }) => {
           onSelect: (s: string) => {
             if (s === YES) {
               setValue('employer.email', '')
+              setValue('isRecivingUnemploymentBenefits', NO)
             }
             if (s !== YES) {
               setValue('employer.selfEmployed.file', null)
+              setValue('fileUpload.selfEmployedFile', null)
+              setValue('isRecivingUnemploymentBenefits', '')
             }
           },
         }}

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
-
-import { useLazyQuery } from '@apollo/client'
+import { useLazyQuery, gql } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
 import {
   Accordion,
@@ -16,17 +15,53 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
-  EmptyState,
   IntroHeader,
   m,
   ServicePortalModuleComponent,
   TableGrid,
   formatDate,
+  ErrorScreen,
 } from '@island.is/service-portal/core'
 
 import { messages } from '../../lib/messages'
-import { GET_USERS_VEHICLES_SEARCH_LIMIT } from '../../queries/getUsersVehicleSearchLimit'
-import { GET_VEHICLES_SEARCH } from '../../queries/getVehiclesSearch'
+import chunk from 'lodash/chunk'
+
+type ExcludesFalse = <T>(x: T | null | undefined | false | '') => x is T
+
+export const GET_USERS_VEHICLES_SEARCH_LIMIT = gql`
+  query GetUsersVehiclesSearchLimit {
+    vehiclesSearchLimit
+  }
+`
+
+export const GET_VEHICLES_SEARCH = gql`
+  query GetVehiclesSearch($input: GetVehicleSearchInput!) {
+    vehiclesSearch(input: $input) {
+      permno
+      regno
+      vin
+      type
+      color
+      firstregdate
+      latestregistration
+      nextInspection {
+        nextinspectiondate
+        nextinspectiondateIfPassedInspectionToday
+      }
+      currentOwner
+      currentOwnerAddress
+      currentOwnerIsAnonymous
+      useGroup
+      regtype
+      mass
+      massLaden
+      vehicleStatus
+      co
+      co2Wltp
+      weightedco2Wltp
+    }
+  }
+`
 
 export const Lookup: ServicePortalModuleComponent = () => {
   useNamespaces('sp.vehicles')
@@ -68,6 +103,7 @@ export const Lookup: ServicePortalModuleComponent = () => {
     nextInspection,
     currentOwner,
     currentOwnerAddress,
+    currentOwnerIsAnonymous,
     useGroup,
     regtype,
     mass,
@@ -97,11 +133,17 @@ export const Lookup: ServicePortalModuleComponent = () => {
     }
   }, [searchLimitData?.data?.vehiclesSearchLimit])
 
-  if (error) {
+  if (!loading && error) {
     return (
-      <Box>
-        <EmptyState description={m.errorFetch} />
-      </Box>
+      <ErrorScreen
+        figure="./assets/images/hourglass.svg"
+        tagVariant="red"
+        tag={formatMessage(m.errorTitle)}
+        title={formatMessage(m.somethingWrong)}
+        children={formatMessage(m.errorFetchModule, {
+          module: formatMessage(messages.title).toLowerCase(),
+        })}
+      />
     )
   }
 
@@ -117,6 +159,7 @@ export const Lookup: ServicePortalModuleComponent = () => {
 
   const limit = searchLimitData?.data?.vehiclesSearchLimit || 0
   const limitExceeded = limit === 0
+
   return (
     <>
       <Box marginBottom={[2, 3, 5]}>
@@ -242,92 +285,81 @@ export const Lookup: ServicePortalModuleComponent = () => {
           </Text>
           <TableGrid
             title={type ?? ''}
-            dataArray={[
+            dataArray={chunk(
               [
-                {
-                  title: formatMessage(messages.permno),
-                  value: permno ?? '',
-                },
-                {
-                  title: formatMessage(messages.regno),
-                  value: regno ?? '',
-                },
-              ],
-              [
-                {
-                  title: formatMessage(messages.verno),
-                  value: vin ?? '',
-                },
-                {
-                  title: formatMessage(messages.useGroup),
-                  value: useGroup ?? '',
-                },
-              ],
-
-              [
-                {
-                  title: formatMessage(messages.regType),
-                  value: regtype ?? '',
-                },
                 {
                   title: formatMessage(messages.owner),
-                  value: currentOwner ?? '',
-                },
-              ],
-              [
-                {
-                  title: formatMessage(messages.firstReg),
-                  value: firstregdate ? formatDate(firstregdate) : '',
+                  value: currentOwnerIsAnonymous
+                    ? formatMessage(messages.vehicleNameSecret)
+                    : currentOwner ?? '',
                 },
                 {
                   title: formatMessage(messages.address),
-                  value: currentOwnerAddress ?? '',
+                  value: currentOwnerIsAnonymous
+                    ? formatMessage(messages.vehicleNameSecret)
+                    : currentOwnerAddress ?? '',
                 },
-              ],
-              [
-                {
+                permno && {
+                  title: formatMessage(messages.permno),
+                  value: permno,
+                },
+                regno && {
+                  title: formatMessage(messages.regno),
+                  value: regno,
+                },
+                vin && {
+                  title: formatMessage(messages.verno),
+                  value: vin,
+                },
+                useGroup && {
+                  title: formatMessage(messages.useGroup),
+                  value: useGroup,
+                },
+                regtype && {
+                  title: formatMessage(messages.regType),
+                  value: regtype,
+                },
+
+                firstregdate && {
+                  title: formatMessage(messages.firstReg),
+                  value: formatDate(firstregdate),
+                },
+
+                vehicleStatus && {
                   title: formatMessage(messages.vehicleStatus),
-                  value: vehicleStatus ?? '',
+                  value: vehicleStatus,
                 },
-                {
+                color && {
                   title: formatMessage(messages.color),
-                  value: color ?? '',
+                  value: color,
                 },
-              ],
-              [
-                {
+                nextInspection?.nextinspectiondate && {
                   title: formatMessage(messages.nextInspection),
-                  value:
-                    nextInspection && nextInspection.nextinspectiondate
-                      ? formatDate(nextInspection.nextinspectiondate)
-                      : '',
+                  value: formatDate(nextInspection.nextinspectiondate),
                 },
-                {
+                co && {
                   title: formatMessage(messages.co2),
-                  value: co ? String(co) : '',
+                  value: String(co),
                 },
-              ],
-              [
-                {
+                mass && {
                   title: formatMessage(messages.vehicleWeightLong),
-                  value: mass ? String(mass) : '',
+                  value: String(mass),
                 },
-                {
+                co2Wltp && {
                   title: formatMessage(messages.wltpWeighted),
-                  value: co2Wltp ? String(co2Wltp) : '',
+                  value: String(co2Wltp),
                 },
-              ],
-              [
-                {
+                massLaden && {
                   title: formatMessage(messages.vehicleTotalWeightLong),
-                  value: massLaden ? String(massLaden) : '',
+                  value: String(massLaden),
                 },
-                {
+                weightedco2Wltp && {
                   title: formatMessage(messages.weightedWLTPCo2),
-                  value: weightedco2Wltp ? String(weightedco2Wltp) : '',
+                  value: String(weightedco2Wltp),
                 },
-              ],
-            ]}
+              ].filter((Boolean as unknown) as ExcludesFalse),
+              2,
+            )}
           />
         </>
       )}

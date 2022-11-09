@@ -1,43 +1,47 @@
-import request from 'supertest'
-import addDays from 'date-fns/addDays'
 import { getModelToken } from '@nestjs/sequelize'
+import addDays from 'date-fns/addDays'
+import request from 'supertest'
 
 import {
-  ApiScope,
   CreateDelegationDTO,
   Delegation,
   DelegationDTO,
   DelegationScope,
   DelegationValidity,
-  ScopeType,
 } from '@island.is/auth-api-lib'
 import { AuthDelegationType } from '@island.is/auth-nest-tools'
-import { TestApp } from '@island.is/testing/nest'
+import { AuthScope } from '@island.is/auth/scopes'
 import {
   createCurrentUser,
+  createNationalId,
   createNationalRegistryUser,
 } from '@island.is/testing/fixtures'
-import { AuthScope } from '@island.is/auth/scopes'
+import { TestApp, getRequestMethod } from '@island.is/testing/nest'
+import {
+  createDelegation,
+  createDelegationModels,
+  expectMatchingDelegations,
+  findExpectedDelegationModels,
+} from '@island.is/services/auth/testing'
+
+import { createClient } from '../../../../test/fixtures'
 import {
   Scopes,
   setupWithAuth,
   setupWithoutAuth,
   setupWithoutPermission,
 } from '../../../../test/setup'
-import { createClient, createDelegation } from '../../../../test/fixtures'
-import {
-  expectMatchingObject,
-  getRequestMethod,
-  sortDelegations,
-} from '../../../../test/utils'
 import { TestEndpointOptions } from '../../../../test/types'
 
 const client = createClient({ clientId: '@island.is/webapp' })
+const actorNationalId = createNationalId('person')
 const user = createCurrentUser({
-  nationalId: '1122334455',
+  nationalId: createNationalId(),
+  actor: {
+    nationalId: actorNationalId,
+  },
   scope: [
-    AuthScope.readDelegations,
-    AuthScope.writeDelegations,
+    AuthScope.delegations,
     Scopes[0].name,
     Scopes[3].name,
     Scopes[4].name,
@@ -53,14 +57,14 @@ const mockDelegations = {
   // Valid outgoing delegation
   validOutgoing: createDelegation({
     fromNationalId: user.nationalId,
-    toNationalId: '1234567890',
+    toNationalId: createNationalId('person'),
     scopes: [Scopes[0].name],
     today,
   }),
   // Valid but becomes active in the future outgoing delegation
   futureValidOutgoing: createDelegation({
     fromNationalId: user.nationalId,
-    toNationalId: '2234567890',
+    toNationalId: createNationalId('person'),
     scopes: [Scopes[0].name],
     today,
     expired: false,
@@ -69,7 +73,7 @@ const mockDelegations = {
   // Expired outgoing delegation
   expiredOutgoing: createDelegation({
     fromNationalId: user.nationalId,
-    toNationalId: '3234567890',
+    toNationalId: createNationalId('person'),
     scopes: [Scopes[0].name],
     today,
     expired: true,
@@ -77,27 +81,27 @@ const mockDelegations = {
   // With scope that changes to be not allowed for delegation
   notAllowedOutgoing: createDelegation({
     fromNationalId: user.nationalId,
-    toNationalId: '4234567890',
+    toNationalId: createNationalId('person'),
     scopes: [Scopes[2].name],
     today,
   }),
   // With multiple scopes where one changes to be not allowed for delegation
   withOneNotAllowedOutgoing: createDelegation({
     fromNationalId: user.nationalId,
-    toNationalId: '5234567890',
+    toNationalId: createNationalId('person'),
     scopes: [Scopes[0].name, Scopes[2].name],
     today,
   }),
   // Valid incoming delegation
   validIncoming: createDelegation({
-    fromNationalId: '1234567890',
+    fromNationalId: createNationalId('person'),
     toNationalId: user.nationalId,
     scopes: [Scopes[0].name],
     today,
   }),
   // Valid but becomes active in the future incoming delegation
   futureValidIncoming: createDelegation({
-    fromNationalId: '2234567890',
+    fromNationalId: createNationalId('person'),
     toNationalId: user.nationalId,
     scopes: [Scopes[0].name],
     today,
@@ -106,7 +110,7 @@ const mockDelegations = {
   }),
   // Expired incoming delegation
   expiredIncoming: createDelegation({
-    fromNationalId: '3234567890',
+    fromNationalId: createNationalId('person'),
     toNationalId: user.nationalId,
     scopes: [Scopes[0].name],
     today,
@@ -114,15 +118,45 @@ const mockDelegations = {
   }),
   // Other users
   otherUsers: createDelegation({
-    fromNationalId: '1234567890',
-    toNationalId: '0987654321',
+    fromNationalId: createNationalId('person'),
+    toNationalId: createNationalId('person'),
     scopes: [Scopes[1].name],
     today,
+  }),
+  // With both allowed scope and scope from another domain
+  outgoingWithOtherDomain: createDelegation({
+    fromNationalId: user.nationalId,
+    toNationalId: createNationalId('person'),
+    scopes: [Scopes[0].name, Scopes[5].name],
+    today,
+  }),
+  // With only scope from another domain
+  outgoingOnlyOtherDomain: createDelegation({
+    fromNationalId: user.nationalId,
+    toNationalId: createNationalId('person'),
+    scopes: [Scopes[5].name],
+    today,
+  }),
+  // Valid outgoing delegation to actor
+  validOutgoingToActor: createDelegation({
+    fromNationalId: user.nationalId,
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    toNationalId: actorNationalId,
+    scopes: [Scopes[0].name],
+    today,
+  }),
+  // Valid outgoing delegation on other domain
+  otherDomain: createDelegation({
+    fromNationalId: user.nationalId,
+    toNationalId: '1234567890',
+    scopes: [Scopes[0].name],
+    today,
+    domainName: 'otherdomain',
   }),
 }
 
 beforeAll(() => {
-  jest.useFakeTimers('modern').setSystemTime(today.getTime())
+  jest.useFakeTimers().setSystemTime(today.getTime())
 })
 
 describe('MeDelegationsController', () => {
@@ -164,80 +198,42 @@ describe('MeDelegationsController', () => {
     })
 
     describe('GET /me/delegations', () => {
-      it('should return all delegations with direction=outgoing', async () => {
+      it('should return all delegations on default domain with direction=outgoing', async () => {
         // Arrange
-        await delegationModel.bulkCreate(Object.values(mockDelegations), {
-          include: [
-            {
-              model: DelegationScope,
-              as: 'delegationScopes',
-            },
+        await createDelegationModels(
+          delegationModel,
+          Object.values(mockDelegations),
+        )
+        const expectedModels = await findExpectedDelegationModels(
+          delegationModel,
+          [
+            mockDelegations.validOutgoing.id,
+            mockDelegations.futureValidOutgoing.id,
+            mockDelegations.expiredOutgoing.id,
+            mockDelegations.withOneNotAllowedOutgoing.id,
+            mockDelegations.outgoingWithOtherDomain.id,
           ],
-        })
-        const expectedModels = (
-          await delegationModel.findAll({
-            where: {
-              id: [
-                mockDelegations.validOutgoing.id,
-                mockDelegations.futureValidOutgoing.id,
-                mockDelegations.expiredOutgoing.id,
-                mockDelegations.withOneNotAllowedOutgoing.id,
-              ],
-            },
-            include: [
-              {
-                model: DelegationScope,
-                as: 'delegationScopes',
-                include: [
-                  {
-                    model: ApiScope,
-                    as: 'apiScope',
-                    where: {
-                      allowExplicitDelegationGrant: true,
-                    },
-                  },
-                ],
-              },
-            ],
-          })
-        )?.map((delegation) => delegation.toDTO())
+          [Scopes[0].name],
+        )
 
         // Act
         const res = await server.get(`${path}?direction=outgoing`)
 
-        // Sort before asserting
-        sortDelegations(res.body)
-        sortDelegations(expectedModels)
-
         // Assert
         expect(res.status).toEqual(200)
-        expect(res.body).toHaveLength(4)
-        expectMatchingObject(res.body, expectedModels)
+        expect(res.body).toHaveLength(5)
+        expectMatchingDelegations(res.body, expectedModels)
       })
 
       it('should return only delegations with scopes the user has access to', async () => {
         // Arrange
-        const expectedModel = (
-          await delegationModel.create(
-            createDelegation({
-              fromNationalId: user.nationalId,
-              toNationalId: '1234567890',
-              scopes: [Scopes[0].name, Scopes[5].name],
-              today,
-            }),
-            {
-              include: [
-                {
-                  model: DelegationScope,
-                  as: 'delegationScopes',
-                },
-              ],
-            },
-          )
-        ).toDTO()
-        // The expected model should not contain the scope from the other org
-        expectedModel.scopes = expectedModel.scopes?.filter(
-          (s) => s.scopeName === Scopes[0].name,
+        await createDelegationModels(delegationModel, [
+          mockDelegations.outgoingWithOtherDomain,
+        ])
+        const expectedModel = await findExpectedDelegationModels(
+          delegationModel,
+          mockDelegations.outgoingWithOtherDomain.id,
+          [Scopes[0].name],
         )
 
         // Act
@@ -246,22 +242,14 @@ describe('MeDelegationsController', () => {
         // Assert
         expect(res.status).toEqual(200)
         expect(res.body).toHaveLength(1)
-        expectMatchingObject(res.body, [expectedModel])
+        expectMatchingDelegations(res.body, [expectedModel])
       })
 
       it('should return no delegation when the client does not have access to any scope', async () => {
         // Arrange
-        await delegationModel.create(
-          createDelegation({
-            fromNationalId: nationalRegistryUser.nationalId,
-            toNationalId: user.nationalId,
-            scopes: [Scopes[5].name],
-            today,
-          }),
-          {
-            include: [{ model: DelegationScope, as: 'delegationScopes' }],
-          },
-        )
+        await createDelegationModels(delegationModel, [
+          mockDelegations.outgoingOnlyOtherDomain,
+        ])
 
         // Act
         const res = await server.get(`${path}?direction=outgoing`)
@@ -273,130 +261,69 @@ describe('MeDelegationsController', () => {
 
       it('should return all valid delegations with direction=outgoing&validity=now', async () => {
         // Arrange
-        await delegationModel.bulkCreate(Object.values(mockDelegations), {
-          include: [
-            {
-              model: DelegationScope,
-              as: 'delegationScopes',
-            },
+        await createDelegationModels(
+          delegationModel,
+          Object.values(mockDelegations),
+        )
+        const expectedModels = await findExpectedDelegationModels(
+          delegationModel,
+          [
+            mockDelegations.validOutgoing.id,
+            mockDelegations.withOneNotAllowedOutgoing.id,
+            mockDelegations.outgoingWithOtherDomain.id,
           ],
-        })
-        const expectedModels = (
-          await delegationModel.findAll({
-            where: {
-              id: [
-                mockDelegations.validOutgoing.id,
-                mockDelegations.withOneNotAllowedOutgoing.id,
-              ],
-            },
-            include: [
-              {
-                model: DelegationScope,
-                as: 'delegationScopes',
-                include: [
-                  {
-                    model: ApiScope,
-                    as: 'apiScope',
-                    where: {
-                      allowExplicitDelegationGrant: true,
-                    },
-                  },
-                ],
-              },
-            ],
-          })
-        )?.map((delegation) => delegation.toDTO())
+          [Scopes[0].name],
+        )
 
         // Act
         const res = await server.get(
           `${path}?direction=outgoing&validity=${DelegationValidity.NOW}`,
         )
 
-        // Sort before asserting
-        sortDelegations(res.body)
-        sortDelegations(expectedModels)
-
         // Assert
         expect(res.status).toEqual(200)
-        expect(res.body).toHaveLength(2)
-        expectMatchingObject(res.body, expectedModels)
+        expect(res.body).toHaveLength(3)
+        expectMatchingDelegations(res.body, expectedModels)
       })
 
       it('should return all valid delegations with direction=outgoing&validity=includeFuture', async () => {
         // Arrange
-        await delegationModel.bulkCreate(Object.values(mockDelegations), {
-          include: [
-            {
-              model: DelegationScope,
-              as: 'delegationScopes',
-            },
+        await createDelegationModels(
+          delegationModel,
+          Object.values(mockDelegations),
+        )
+        const expectedModels = await findExpectedDelegationModels(
+          delegationModel,
+          [
+            mockDelegations.validOutgoing.id,
+            mockDelegations.futureValidOutgoing.id,
+            mockDelegations.withOneNotAllowedOutgoing.id,
+            mockDelegations.outgoingWithOtherDomain.id,
           ],
-        })
-        const expectedModels = (
-          await delegationModel.findAll({
-            where: {
-              id: [
-                mockDelegations.validOutgoing.id,
-                mockDelegations.futureValidOutgoing.id,
-                mockDelegations.withOneNotAllowedOutgoing.id,
-              ],
-            },
-            include: [
-              {
-                model: DelegationScope,
-                as: 'delegationScopes',
-                include: [
-                  {
-                    model: ApiScope,
-                    as: 'apiScope',
-                    where: {
-                      allowExplicitDelegationGrant: true,
-                    },
-                  },
-                ],
-              },
-            ],
-          })
-        )?.map((delegation) => delegation.toDTO())
+          [Scopes[0].name],
+        )
 
         // Act
         const res = await server.get(
           `${path}?direction=outgoing&validity=${DelegationValidity.INCLUDE_FUTURE}`,
         )
 
-        // Sort delegation before asserting
-        sortDelegations(res.body)
-        sortDelegations(expectedModels)
-
         // Assert
         expect(res.status).toEqual(200)
-        expect(res.body).toHaveLength(3)
-        expectMatchingObject(res.body, expectedModels)
+        expect(res.body).toHaveLength(4)
+        expectMatchingDelegations(res.body, expectedModels)
       })
 
       it('should return all expired delegations with direction=outgoing&validity=past', async () => {
         // Arrange
-        await delegationModel.bulkCreate(Object.values(mockDelegations), {
-          include: [
-            {
-              model: DelegationScope,
-              as: 'delegationScopes',
-            },
-          ],
-        })
-        const expectedModel = [
-          (
-            await delegationModel.findByPk(mockDelegations.expiredOutgoing.id, {
-              include: [
-                {
-                  model: DelegationScope,
-                  as: 'delegationScopes',
-                  include: [{ model: ApiScope, as: 'apiScope' }],
-                },
-              ],
-            })
-          )?.toDTO(),
-        ]
+        await createDelegationModels(
+          delegationModel,
+          Object.values(mockDelegations),
+        )
+        const expectedModels = await findExpectedDelegationModels(
+          delegationModel,
+          [mockDelegations.expiredOutgoing.id],
+        )
 
         // Act
         const res = await server.get(
@@ -406,32 +333,19 @@ describe('MeDelegationsController', () => {
         // Assert
         expect(res.status).toEqual(200)
         expect(res.body).toHaveLength(1)
-        expectMatchingObject(res.body, expectedModel)
+        expectMatchingDelegations(res.body, expectedModels)
       })
 
       it('should return an array with single delegation when filtered to specific otherUser', async () => {
         // Arrange
-        await delegationModel.bulkCreate(Object.values(mockDelegations), {
-          include: [
-            {
-              model: DelegationScope,
-              as: 'delegationScopes',
-            },
-          ],
-        })
-        const expectedModel = [
-          (
-            await delegationModel.findByPk(mockDelegations.validOutgoing.id, {
-              include: [
-                {
-                  model: DelegationScope,
-                  as: 'delegationScopes',
-                  include: [{ model: ApiScope, as: 'apiScope' }],
-                },
-              ],
-            })
-          )?.toDTO(),
-        ]
+        await createDelegationModels(
+          delegationModel,
+          Object.values(mockDelegations),
+        )
+        const expectedModels = await findExpectedDelegationModels(
+          delegationModel,
+          [mockDelegations.validOutgoing.id],
+        )
 
         // Act
         const res = await server.get(
@@ -441,38 +355,39 @@ describe('MeDelegationsController', () => {
         // Assert
         expect(res.status).toEqual(200)
         expect(res.body).toHaveLength(1)
-        expectMatchingObject(res.body, expectedModel)
+        expectMatchingDelegations(res.body, expectedModels)
       })
 
       it('should return no delegation for otherUser when user has access to none of the scopes', async () => {
         // Arrange
-        const expectedModel = await delegationModel.create(
-          createDelegation({
-            fromNationalId: user.nationalId,
-            toNationalId: nationalRegistryUser.nationalId,
-            scopes: [Scopes[5].name],
-            today,
-          }),
-          {
-            include: [
-              {
-                model: DelegationScope,
-                as: 'delegationScopes',
-              },
-            ],
-          },
-        )
-        expectedModel.delegationScopes = []
+        await createDelegationModels(delegationModel, [
+          mockDelegations.outgoingOnlyOtherDomain,
+        ])
 
         // Act
         const res = await server.get(
-          `${path}?direction=outgoing&otherUser=${expectedModel.toNationalId}`,
+          `${path}?direction=outgoing&otherUser=${mockDelegations.outgoingOnlyOtherDomain.toNationalId}`,
         )
 
         // Assert
         expect(res.status).toEqual(200)
         expect(res.body).toHaveLength(0)
-        expectMatchingObject(res.body, [])
+        expectMatchingDelegations(res.body, [])
+      })
+
+      it('should not return delegation to the actor', async () => {
+        // Arrange
+        await createDelegationModels(delegationModel, [
+          mockDelegations.validOutgoingToActor,
+        ])
+
+        // Act
+        const res = await server.get(`${path}?direction=outgoing`)
+
+        // Assert
+        expect(res.status).toEqual(200)
+        expect(res.body).toHaveLength(0)
+        expectMatchingDelegations(res.body, [])
       })
 
       it('should return an empty array when filtered to specific otherUser and no delegation exists', async () => {
@@ -488,23 +403,13 @@ describe('MeDelegationsController', () => {
 
       it('should return a 500 Internal Server Error when filtered to specific otherUser has two or more delegations', async () => {
         // Arrange
-        await delegationModel.bulkCreate(
-          [
-            mockDelegations.validOutgoing,
-            {
-              ...mockDelegations.expiredOutgoing,
-              toNationalId: mockDelegations.validOutgoing.toNationalId,
-            },
-          ],
+        await createDelegationModels(delegationModel, [
+          mockDelegations.validOutgoing,
           {
-            include: [
-              {
-                model: DelegationScope,
-                as: 'delegationScopes',
-              },
-            ],
+            ...mockDelegations.expiredOutgoing,
+            toNationalId: mockDelegations.validOutgoing.toNationalId,
           },
-        )
+        ])
 
         // Act
         const res = await server.get(
@@ -554,36 +459,14 @@ describe('MeDelegationsController', () => {
     describe('GET /me/delegations/:id', () => {
       it('should return a delegation that exists for auth user', async () => {
         // Arrange
-        await delegationModel.bulkCreate(Object.values(mockDelegations), {
-          include: [
-            {
-              model: DelegationScope,
-              as: 'delegationScopes',
-            },
-          ],
-        })
-        const expectedModel = (
-          await delegationModel.findByPk(
-            mockDelegations.withOneNotAllowedOutgoing.id,
-            {
-              include: [
-                {
-                  model: DelegationScope,
-                  as: 'delegationScopes',
-                  include: [
-                    {
-                      model: ApiScope,
-                      as: 'apiScope',
-                      where: {
-                        allowExplicitDelegationGrant: true,
-                      },
-                    },
-                  ],
-                },
-              ],
-            },
-          )
-        )?.toDTO()
+        await createDelegationModels(
+          delegationModel,
+          Object.values(mockDelegations),
+        )
+        const expectedModel = await findExpectedDelegationModels(
+          delegationModel,
+          mockDelegations.withOneNotAllowedOutgoing.id,
+        )
 
         // Act
         const res = await server.get(
@@ -593,41 +476,19 @@ describe('MeDelegationsController', () => {
         // Assert
         expect(res.status).toEqual(200)
         expect((res.body as DelegationDTO).scopes).toHaveLength(1)
-        expectMatchingObject(res.body, expectedModel)
+        expectMatchingDelegations(res.body, expectedModel)
       })
 
       it('should return a delegation with no scopes if no scope is allowed for delegation', async () => {
         // Arrange
-        await delegationModel.bulkCreate(Object.values(mockDelegations), {
-          include: [
-            {
-              model: DelegationScope,
-              as: 'delegationScopes',
-            },
-          ],
-        })
-        const expectedModel = (
-          await delegationModel.findByPk(
-            mockDelegations.notAllowedOutgoing.id,
-            {
-              include: [
-                {
-                  model: DelegationScope,
-                  as: 'delegationScopes',
-                  include: [
-                    {
-                      model: ApiScope,
-                      as: 'apiScope',
-                      where: {
-                        allowExplicitDelegationGrant: true,
-                      },
-                    },
-                  ],
-                },
-              ],
-            },
-          )
-        )?.toDTO()
+        await createDelegationModels(
+          delegationModel,
+          Object.values(mockDelegations),
+        )
+        const expectedModel = await findExpectedDelegationModels(
+          delegationModel,
+          mockDelegations.notAllowedOutgoing.id,
+        )
 
         // Act
         const res = await server.get(
@@ -637,27 +498,18 @@ describe('MeDelegationsController', () => {
         // Assert
         expect(res.status).toEqual(200)
         expect((res.body as DelegationDTO).scopes).toHaveLength(0)
-        expectMatchingObject(res.body, expectedModel)
+        expectMatchingDelegations(res.body, expectedModel)
       })
 
       it('should return a delegation with filtered scopes list by user access', async () => {
         // Arrange
-        const expectedModel = (
-          await delegationModel.create(
-            createDelegation({
-              fromNationalId: nationalRegistryUser.nationalId,
-              toNationalId: user.nationalId,
-              scopes: [Scopes[0].name, Scopes[5].name],
-              today,
-            }),
-            {
-              include: [{ model: DelegationScope, as: 'delegationScopes' }],
-            },
-          )
-        ).toDTO()
-        // The expected model should not contain the scope from the other org
-        expectedModel.scopes = expectedModel.scopes?.filter(
-          (s) => s.scopeName === Scopes[0].name,
+        await createDelegationModels(delegationModel, [
+          mockDelegations.outgoingWithOtherDomain,
+        ])
+        const expectedModel = await findExpectedDelegationModels(
+          delegationModel,
+          mockDelegations.outgoingWithOtherDomain.id,
+          [Scopes[0].name],
         )
 
         // Act
@@ -665,54 +517,38 @@ describe('MeDelegationsController', () => {
 
         // Assert
         expect(res.status).toEqual(200)
-        expectMatchingObject(res.body, expectedModel)
+        expectMatchingDelegations(res.body, expectedModel)
       })
 
       it('should return a delegation with empty scopes list when user does not have access to any scopes', async () => {
         // Arrange
-        const expectedModel = await delegationModel.create(
-          createDelegation({
-            fromNationalId: nationalRegistryUser.nationalId,
-            toNationalId: user.nationalId,
-            scopes: [Scopes[5].name],
-            today,
-          }),
-          {
-            include: [{ model: DelegationScope, as: 'delegationScopes' }],
-          },
+        await createDelegationModels(delegationModel, [
+          mockDelegations.outgoingOnlyOtherDomain,
+        ])
+        const expectedModel = await findExpectedDelegationModels(
+          delegationModel,
+          mockDelegations.outgoingOnlyOtherDomain.id,
+          [],
         )
-        // The expected model should not contain the scope from the other org
-        expectedModel.delegationScopes = []
 
         // Act
         const res = await server.get(`${path}/${expectedModel.id}`)
 
         // Assert
         expect(res.status).toEqual(200)
-        expectMatchingObject(res.body, expectedModel.toDTO())
+        expectMatchingDelegations(res.body, expectedModel)
       })
 
       it('should filter expired scopes for delegation that exists for auth user', async () => {
         // Arrange
-        await delegationModel.bulkCreate(Object.values(mockDelegations), {
-          include: [
-            {
-              model: DelegationScope,
-              as: 'delegationScopes',
-            },
-          ],
-        })
-        const expectedModel = (
-          await delegationModel.findByPk(mockDelegations.expiredOutgoing.id, {
-            include: [
-              {
-                model: DelegationScope,
-                as: 'delegationScopes',
-                include: [{ model: ApiScope, as: 'apiScope' }],
-              },
-            ],
-          })
-        )?.toDTO()
+        await createDelegationModels(
+          delegationModel,
+          Object.values(mockDelegations),
+        )
+        const expectedModel = await findExpectedDelegationModels(
+          delegationModel,
+          mockDelegations.expiredOutgoing.id,
+        )
         Object.assign(expectedModel, { scopes: [], validTo: undefined })
 
         // Act
@@ -722,19 +558,15 @@ describe('MeDelegationsController', () => {
 
         // Assert
         expect(res.status).toEqual(200)
-        expectMatchingObject(res.body, expectedModel)
+        expectMatchingDelegations(res.body, expectedModel)
       })
 
       it('should return 404 not found if delegation does not exist or not connected to the user', async () => {
         // Arrange
-        await delegationModel.bulkCreate(Object.values(mockDelegations), {
-          include: [
-            {
-              model: DelegationScope,
-              as: 'delegationScopes',
-            },
-          ],
-        })
+        await createDelegationModels(
+          delegationModel,
+          Object.values(mockDelegations),
+        )
 
         // Act
         const res = await server.get(`${path}/${mockDelegations.otherUsers.id}`)
@@ -750,7 +582,7 @@ describe('MeDelegationsController', () => {
         `)
       })
 
-      it('should return 400 Bad Request if delegationId is not valid uuid', async () => {
+      it('should return 404 not found if delegation is not on default domain', async () => {
         // Arrange
         await delegationModel.bulkCreate(Object.values(mockDelegations), {
           include: [
@@ -760,6 +592,29 @@ describe('MeDelegationsController', () => {
             },
           ],
         })
+
+        // Act
+        const res = await server.get(
+          `${path}/${mockDelegations.otherDomain.id}`,
+        )
+
+        // Assert
+        expect(res.status).toEqual(404)
+        expect(res.body).toMatchInlineSnapshot(`
+          Object {
+            "status": 404,
+            "title": "Not Found",
+            "type": "https://httpstatuses.org/404",
+          }
+        `)
+      })
+
+      it('should return 400 Bad Request if delegationId is not valid uuid', async () => {
+        // Arrange
+        await createDelegationModels(
+          delegationModel,
+          Object.values(mockDelegations),
+        )
 
         // Act
         const res = await server.get(`${path}/delegationId`)
@@ -791,7 +646,6 @@ describe('MeDelegationsController', () => {
   toNationalId: nationalRegistryUser.nationalId,
   scopes: [{
       name: Scopes[0].name,
-      type: ScopeType.ApiScope,
       validTo: addDays(today, 1),
     }],
 }}
@@ -803,19 +657,13 @@ describe('MeDelegationsController', () => {
           const res = await server.post(path).send(model)
 
           // Assert
-          const { rows, count } = await delegationModel.findAndCountAll({
-            include: [DelegationScope],
-          })
+          const expectedModel = await findExpectedDelegationModels(
+            delegationModel,
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            (res.body as DelegationDTO).id!,
+          )
           expect(res.status).toEqual(201)
-          expect(count).toEqual(1)
-          expectMatchingObject(res.body, {
-            ...rows[0].toDTO(),
-            toNationalId: model.toNationalId,
-            scopes: model.scopes?.map((scope) => ({
-              scopeName: scope.name,
-              validTo: scope.validTo?.toISOString(),
-            })),
-          })
+          expectMatchingDelegations(res.body, expectedModel)
         },
       )
 
@@ -826,7 +674,6 @@ describe('MeDelegationsController', () => {
           scopes: [
             {
               name: Scopes[2].name,
-              type: ScopeType.ApiScope,
               validTo: addDays(today, 1),
             },
           ],
@@ -844,6 +691,30 @@ describe('MeDelegationsController', () => {
         })
       })
 
+      it('should return 400 Bad Request when creating delegation to actor', async () => {
+        // Arrange
+        const model = {
+          toNationalId: actorNationalId,
+          scopes: [
+            {
+              name: Scopes[0].name,
+              validTo: addDays(today, 1),
+            },
+          ],
+        }
+        // Act
+        const res = await server.post(path).send(model)
+
+        // Assert
+        expect(res.status).toEqual(400)
+        expect(res.body).toMatchObject({
+          status: 400,
+          type: 'https://httpstatuses.org/400',
+          title: 'Bad Request',
+          detail: 'Can not create delegation to self.',
+        })
+      })
+
       it('should return 400 Bad Request when user does not have access to all the requested scopes', async () => {
         // Arrange
         const model = {
@@ -851,12 +722,10 @@ describe('MeDelegationsController', () => {
           scopes: [
             {
               name: Scopes[0].name,
-              type: ScopeType.ApiScope,
               validTo: addDays(today, 1),
             },
             {
               name: Scopes[1].name,
-              type: ScopeType.ApiScope,
               validTo: addDays(today, 1),
             },
           ],
@@ -882,7 +751,6 @@ describe('MeDelegationsController', () => {
           scopes: [
             {
               name: Scopes[0].name,
-              type: ScopeType.ApiScope,
               validTo: addDays(today, -1),
             },
           ],
@@ -909,7 +777,6 @@ describe('MeDelegationsController', () => {
           scopes: [
             {
               name: Scopes[0].name,
-              type: ScopeType.ApiScope,
             },
           ],
         }
@@ -924,32 +791,6 @@ describe('MeDelegationsController', () => {
           type: 'https://httpstatuses.org/400',
           title: 'Bad Request',
           detail: ['scopes.0.validTo must be a Date instance'],
-        })
-      })
-
-      it('should return 400 Bad Request when scopes have a invalid type', async () => {
-        // Arrange
-        const model = {
-          toNationalId: nationalRegistryUser.nationalId,
-          scopes: [
-            {
-              name: Scopes[0].name,
-              type: 'invalidType',
-              validTo: addDays(today, 1),
-            },
-          ],
-        }
-
-        // Act
-        const res = await server.post(path).send(model)
-
-        // Assert
-        expect(res.status).toEqual(400)
-        expect(res.body).toMatchObject({
-          status: 400,
-          type: 'https://httpstatuses.org/400',
-          title: 'Bad Request',
-          detail: ['scopes.0.type must be a valid enum value'],
         })
       })
     })
@@ -970,7 +811,6 @@ describe('MeDelegationsController', () => {
           scopes: [
             {
               name: Scopes[0].name,
-              type: ScopeType.ApiScope,
               validTo: expectedValidTo,
             },
           ],
@@ -1022,7 +862,6 @@ describe('MeDelegationsController', () => {
           scopes: [
             {
               name: Scopes[4].name,
-              type: ScopeType.ApiScope,
               validTo: expectedValidTo,
             },
           ],
@@ -1031,7 +870,12 @@ describe('MeDelegationsController', () => {
           createDelegation({
             fromNationalId: user.nationalId,
             toNationalId: nationalRegistryUser.nationalId,
-            scopes: [Scopes[0].name, Scopes[1].name, Scopes[5].name],
+            scopes: [
+              Scopes[0].name,
+              Scopes[1].name,
+              Scopes[3].name,
+              Scopes[5].name,
+            ],
             today,
           }),
           {
@@ -1066,10 +910,12 @@ describe('MeDelegationsController', () => {
             ],
           },
         )
-        expect(updatedDelegation?.delegationScopes?.length).toEqual(3)
         expect(updatedDelegation?.delegationScopes).toMatchObject([
           {
             scopeName: Scopes[1].name,
+          },
+          {
+            scopeName: Scopes[3].name,
           },
           {
             scopeName: Scopes[4].name,
@@ -1094,7 +940,6 @@ describe('MeDelegationsController', () => {
           scopes: [
             {
               name: Scopes[2].name,
-              type: ScopeType.ApiScope,
               validTo: addDays(today, 1),
             },
           ],
@@ -1113,6 +958,38 @@ describe('MeDelegationsController', () => {
         })
       })
 
+      it('should return 400 Bad Request when updating delegation to actor', async () => {
+        // Arrange
+        const { id } = await delegationModel.create(
+          createDelegation({
+            fromNationalId: user.nationalId,
+            toNationalId: actorNationalId,
+            scopes: [],
+            today,
+          }),
+        )
+        const model = {
+          scopes: [
+            {
+              name: Scopes[0].name,
+              validTo: addDays(today, 2),
+            },
+          ],
+        }
+
+        // Act
+        const res = await server.put(`${path}/${id}`).send(model)
+
+        // Assert
+        expect(res.status).toEqual(400)
+        expect(res.body).toMatchObject({
+          status: 400,
+          type: 'https://httpstatuses.org/400',
+          title: 'Bad Request',
+          detail: 'Can not update delegation to self.',
+        })
+      })
+
       it('should return 400 Bad Request when user does not have access to all the requested scopes', async () => {
         // Arrange
         const { id } = await delegationModel.create(
@@ -1127,7 +1004,6 @@ describe('MeDelegationsController', () => {
           scopes: [
             {
               name: Scopes[1].name,
-              type: ScopeType.ApiScope,
               validTo: addDays(today, 1),
             },
           ],
@@ -1160,7 +1036,6 @@ describe('MeDelegationsController', () => {
           scopes: [
             {
               name: Scopes[0].name,
-              type: ScopeType.ApiScope,
               validTo: addDays(today, -1),
             },
           ],
@@ -1180,54 +1055,52 @@ describe('MeDelegationsController', () => {
         })
       })
 
-      it('should return 400 Bad Request when scopes have a invalid type', async () => {
+      it('should return 404 Not Found when user tries to update a delegation that he is not part of', async () => {
         // Arrange
-        const { id } = await delegationModel.create(
-          createDelegation({
-            fromNationalId: user.nationalId,
-            toNationalId: nationalRegistryUser.nationalId,
-            scopes: [],
-            today,
-          }),
-        )
+        await createDelegationModels(delegationModel, [
+          mockDelegations.otherUsers,
+        ])
         const model = {
           scopes: [
             {
-              name: Scopes[0].name,
-              type: 'invalidScope',
+              name: Scopes[4].name,
               validTo: addDays(today, 1),
             },
           ],
         }
 
         // Act
-        const res = await server.put(`${path}/${id}`).send(model)
+        const res = await server
+          .put(`${path}/${mockDelegations.otherUsers.id}`)
+          .send(model)
 
         // Assert
-        expect(res.status).toEqual(400)
+        expect(res.status).toEqual(404)
         expect(res.body).toMatchObject({
-          status: 400,
-          type: 'https://httpstatuses.org/400',
-          title: 'Bad Request',
-          detail: ['scopes.0.type must be a valid enum value'],
+          status: 404,
+          type: 'https://httpstatuses.org/404',
+          title: 'Not Found',
         })
       })
 
-      it('should return 404 Not Found when user tries to update delegation that he did not give', async () => {
+      it('should return 404 Not Found when user tries to update delegation that he recevied from other user', async () => {
         // Arrange
+        await createDelegationModels(delegationModel, [
+          mockDelegations.validIncoming,
+        ])
         const model = {
           scopes: [
             {
-              name: Scopes[0].name,
-              type: ScopeType.ApiScope,
+              name: Scopes[4].name,
               validTo: addDays(today, 1),
             },
           ],
         }
-        const delegationId = '709158e8-1f86-4e3d-8576-5b13533bc42a'
 
         // Act
-        const res = await server.put(`${path}/${delegationId}`).send(model)
+        const res = await server
+          .put(`${path}/${mockDelegations.validIncoming.id}`)
+          .send(model)
 
         // Assert
         expect(res.status).toEqual(404)
@@ -1242,60 +1115,60 @@ describe('MeDelegationsController', () => {
     describe('DELETE /me/delegations/:id', () => {
       it('should return 204 No Content when successfully deleted delegation', async () => {
         // Arrange
-        const { id } = await delegationModel.create(
-          createDelegation({
-            fromNationalId: user.nationalId,
-            toNationalId: nationalRegistryUser.nationalId,
-            scopes: [Scopes[0].name],
-            today,
-          }),
-          {
-            include: [{ model: DelegationScope, as: 'delegationScopes' }],
-          },
-        )
+        await createDelegationModels(delegationModel, [
+          mockDelegations.validOutgoing,
+        ])
 
         // Act
-        const res = await server.delete(`${path}/${id}`)
+        const res = await server.delete(
+          `${path}/${mockDelegations.validOutgoing.id}`,
+        )
 
         // Assert
         expect(res.status).toEqual(204)
         expect(res.body).toMatchObject({})
 
         // Check the DB
-        const model = await delegationModel.findByPk(id, {
-          include: [{ model: DelegationScope, as: 'delegationScopes' }],
-        })
-        expect(model).not.toBeNull()
-        expect(model?.delegationScopes?.length).toEqual(0)
+        const model = await delegationModel.findByPk(
+          mockDelegations.validOutgoing.id,
+          {
+            include: [{ model: DelegationScope, as: 'delegationScopes' }],
+          },
+        )
+        expect(model).toBeNull()
       })
 
       it('should return 204 No Content when successfully only delete scopes the user has access to', async () => {
         // Arrange
-        const { id } = await delegationModel.create(
-          createDelegation({
-            fromNationalId: user.nationalId,
-            toNationalId: nationalRegistryUser.nationalId,
-            scopes: [Scopes[0].name, Scopes[5].name],
-            today,
-          }),
-          {
-            include: [{ model: DelegationScope, as: 'delegationScopes' }],
-          },
-        )
+        const delegation = createDelegation({
+          fromNationalId: user.nationalId,
+          toNationalId: createNationalId('person'),
+          scopes: [Scopes[0].name, Scopes[3].name, Scopes[5].name],
+          today,
+        })
+        await createDelegationModels(delegationModel, [delegation])
 
         // Act
-        const res = await server.delete(`${path}/${id}`)
+        const res = await server.delete(`${path}/${delegation.id}`)
 
         // Assert
         expect(res.status).toEqual(204)
         expect(res.body).toMatchObject({})
 
         // Check the DB
-        const model = await delegationModel.findByPk(id, {
+        const model = await delegationModel.findByPk(delegation.id, {
           include: [{ model: DelegationScope, as: 'delegationScopes' }],
         })
         expect(model).not.toBeNull()
-        expect(model?.delegationScopes?.length).toEqual(1)
+        expect(model?.delegationScopes?.length).toEqual(2)
+        expect(model?.delegationScopes).toMatchObject([
+          {
+            scopeName: Scopes[3].name,
+          },
+          {
+            scopeName: Scopes[5].name,
+          },
+        ])
       })
 
       it('should return 404 Not Found for a delegation that user did not give', async () => {
@@ -1338,7 +1211,7 @@ describe('MeDelegationsController', () => {
       beforeAll(async () => {
         // TestApp setup with auth and database
         const testUser =
-          delegationType === []
+          Array.isArray(delegationType) && delegationType.length === 0
             ? user
             : {
                 ...user,
@@ -1376,7 +1249,6 @@ describe('MeDelegationsController', () => {
           scopes: [
             {
               name: Scopes[3].name,
-              type: ScopeType.ApiScope,
               validTo: addDays(today, 1),
             },
           ],
@@ -1396,18 +1268,17 @@ describe('MeDelegationsController', () => {
           scopes: [
             {
               name: Scopes[0].name,
-              type: ScopeType.ApiScope,
               validTo: addDays(today, 1),
             },
           ],
         }
         const delegation = (await server.post(path).send(createModel))
           .body as DelegationDTO
+
         const model = {
           scopes: [
             {
               name: Scopes[3].name,
-              type: ScopeType.ApiScope,
               validTo: expectedValidTo,
             },
           ],

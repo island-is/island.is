@@ -3,7 +3,7 @@ import {
   PaginatedPersonalRepresentativeRightTypeDto,
   PersonalRepresentativeRightTypeDTO,
   PersonalRepresentativeRightTypeService,
-} from '@island.is/auth-api-lib/personal-representative'
+} from '@island.is/auth-api-lib'
 import { IdsAuthGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import {
   Controller,

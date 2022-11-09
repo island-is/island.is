@@ -18,6 +18,7 @@ import {
   FormFooter,
   Modal,
   PageLayout,
+  FormContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
   removeTabsValidateAndSet,
@@ -33,16 +34,17 @@ import {
   rcRequestedHearingArrangements,
   titles,
 } from '@island.is/judicial-system-web/messages'
-import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { isHearingArrangementsStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
+import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import * as constants from '@island.is/judicial-system/consts'
 
-import SelectCourt from '../../SharedComponents/SelectCourt/SelectCourt'
 import ArrestDate from './ArrestDate'
-import RequestCourtDate from '../../SharedComponents/RequestCourtDate/RequestCourtDate'
-import ProsecutorSectionHeightenedSecurity from '../../SharedComponents/ProsecutorSection/ProsecutorSectionHeightenedSecurity'
-import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import {
+  RequestCourtDate,
+  SelectCourt,
+  ProsecutorSectionHeightenedSecurity,
+} from '../../components'
 
 export const HearingArrangements: React.FC = () => {
   const router = useRouter()
@@ -62,7 +64,7 @@ export const HearingArrangements: React.FC = () => {
     transitionCase,
     isTransitioningCase,
     updateCase,
-    setAndSendToServer,
+    setAndSendCaseToServer,
   } = useCase()
 
   const { courts, loading: institutionLoading } = useInstitution()
@@ -99,7 +101,7 @@ export const HearingArrangements: React.FC = () => {
 
   const handleCourtChange = (court: Institution) => {
     if (workingCase) {
-      setAndSendToServer(
+      setAndSendCaseToServer(
         [
           {
             courtId: court.id,
@@ -162,7 +164,7 @@ export const HearingArrangements: React.FC = () => {
                 workingCase={workingCase}
                 onChange={(date: Date | undefined, valid: boolean) => {
                   if (date && valid) {
-                    setAndSendToServer(
+                    setAndSendCaseToServer(
                       [
                         {
                           requestedCourtDate: formatDateForServer(date),
@@ -208,7 +210,7 @@ export const HearingArrangements: React.FC = () => {
                 onBlur={(event) =>
                   validateAndSendToServer(
                     'translator',
-                    event.target.value,
+                    event.target.value.trim(),
                     [],
                     workingCase,
                     updateCase,

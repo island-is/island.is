@@ -6,8 +6,10 @@ import { ValueType } from 'react-select'
 
 import {
   FormContentContainer,
+  FormContext,
   FormFooter,
   PageLayout,
+  SelectCourtOfficials,
 } from '@island.is/judicial-system-web/src/components'
 import {
   IndictmentsCourtSubsections,
@@ -16,7 +18,6 @@ import {
   Sections,
   UserData,
 } from '@island.is/judicial-system-web/src/types'
-import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import {
   Case,
   CaseState,
@@ -32,12 +33,11 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import { titles } from '@island.is/judicial-system-web/messages'
-import SelectCourtOfficials from '@island.is/judicial-system-web/src/components/SelectCourtOfficials/SelectCourtOfficials'
 import { isReceptionAndAssignmentStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 import * as constants from '@island.is/judicial-system/consts'
 
-import CourtCaseNumber from '../../SharedComponents/CourtCaseNumber/CourtCaseNumber'
 import { receptionAndAssignment as strings } from './ReceptionAndAssignment.strings'
+import CourtCaseNumber from '../CourtCaseNumber/CourtCaseNumber'
 
 type JudgeSelectOption = ReactSelectOption & { judge: User }
 type RegistrarSelectOption = ReactSelectOption & { registrar: User }
@@ -64,7 +64,7 @@ const ReceptionAndAssignment = () => {
     transitionCase,
     isTransitioningCase,
     sendNotification,
-    setAndSendToServer,
+    setAndSendCaseToServer,
   } = useCase()
 
   const { data: userData, loading: userLoading } = useQuery<UserData>(
@@ -105,7 +105,7 @@ const ReceptionAndAssignment = () => {
 
   const setJudge = (judge: User) => {
     if (workingCase) {
-      setAndSendToServer(
+      setAndSendCaseToServer(
         [{ judgeId: judge.id, force: true }],
         workingCase,
         setWorkingCase,
@@ -115,7 +115,7 @@ const ReceptionAndAssignment = () => {
 
   const setRegistrar = (registrar?: User) => {
     if (workingCase) {
-      setAndSendToServer(
+      setAndSendCaseToServer(
         [{ registrarId: registrar?.id ?? null, force: true }],
         workingCase,
         setWorkingCase,

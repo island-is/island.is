@@ -1,0 +1,39 @@
+{
+  "root": "libs/application/templates/transport-authority/order-vehicle-registration-certificate",
+  "sourceRoot": "libs/application/templates/transport-authority/order-vehicle-registration-certificate/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/application/templates/transport-authority/order-vehicle-registration-certificate/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": [
+        "coverage/libs/application/templates/transport-authority/order-vehicle-registration-certificate"
+      ],
+      "options": {
+        "jestConfig": "libs/application/templates/transport-authority/order-vehicle-registration-certificate/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "schemas/codegen": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "graphql-codegen --config libs/application/templates/transport-authority/order-vehicle-registration-certificate/codegen.yml"
+      }
+    },
+    "extract-strings": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/transport-authority/order-vehicle-registration-certificate/src/**/*.{js,ts,tsx}'"
+      }
+    }
+  }
+}

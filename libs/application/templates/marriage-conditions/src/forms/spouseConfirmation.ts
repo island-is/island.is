@@ -5,14 +5,12 @@ import {
   buildCheckboxField,
   buildSection,
   buildMultiField,
-  buildExternalDataProvider,
-  buildDataProviderItem,
   buildSubmitField,
   buildTextField,
-  buildRadioField,
   buildSubSection,
+  buildExternalDataProvider,
 } from '@island.is/application/core'
-import { YES, MarriageTermination, maritalStatuses } from '../lib/constants'
+import { YES } from '../lib/constants'
 import { m } from '../lib/messages'
 import {
   Form,
@@ -20,12 +18,15 @@ import {
   DefaultEvents,
   Application,
 } from '@island.is/application/types'
-import { Individual, PersonalInfo } from '../types'
+import { Individual } from '../types'
 import { format as formatNationalId } from 'kennitala'
 import type { User } from '@island.is/api/domains/national-registry'
 import { UserProfile } from '../types/schema'
-import { removeCountryCode } from '../lib/utils'
 import { fakeDataSection } from './fakeDataSection'
+import { dataCollection } from './sharedSections/dataCollection'
+import format from 'date-fns/format'
+import is from 'date-fns/locale/is'
+import { removeCountryCode } from '@island.is/application/ui-components'
 
 export const spouseConfirmation = ({ allowFakeData = false }): Form =>
   buildForm({
@@ -47,6 +48,12 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
               values: {
                 applicantsName: (application.answers.applicant as Individual)
                   ?.person.name,
+                // application was created the day spouse1 completed payment
+                applicationDate: format(
+                  new Date(application.externalData.createCharge.date),
+                  'dd. MMMM, yyyy',
+                  { locale: is },
+                ).toLowerCase(),
               },
             }),
             children: [
@@ -73,32 +80,7 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
             subTitle: m.dataCollectionSubtitle,
             description: m.dataCollectionDescription,
             checkboxLabel: m.dataCollectionCheckboxLabel,
-            dataProviders: [
-              buildDataProviderItem({
-                id: 'nationalRegistry',
-                type: 'NationalRegistryProvider',
-                title: m.dataCollectionNationalRegistryTitle,
-                subTitle: m.dataCollectionNationalRegistrySubtitle,
-              }),
-              buildDataProviderItem({
-                id: 'userProfile',
-                type: 'UserProfileProvider',
-                title: m.dataCollectionUserProfileTitle,
-                subTitle: m.dataCollectionUserProfileSubtitle,
-              }),
-              buildDataProviderItem({
-                id: 'birthCertificate',
-                type: '',
-                title: m.dataCollectionBirthCertificateTitle,
-                subTitle: m.dataCollectionBirthCertificateDescription,
-              }),
-              buildDataProviderItem({
-                id: 'maritalStatus',
-                type: 'NationalRegistryMaritalStatusProvider',
-                title: m.dataCollectionMaritalStatusTitle,
-                subTitle: m.dataCollectionMaritalStatusDescription,
-              }),
-            ],
+            dataProviders: dataCollection,
           }),
         ],
       }),
@@ -113,10 +95,12 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
               buildMultiField({
                 id: 'sides',
                 title: m.informationTitle,
+                description:
+                  'Beiðni um könnun hjónavígsluskilyrða mun ekki hljóta efnismeðeferð fyrr en hjónaefni hafa bæði veitt rafræna undirskrift. Vinsamlegast gangið því úr skugga um að símanúmer og netföng séu rétt rituð.',
                 children: [
                   buildDescriptionField({
                     id: 'header1',
-                    title: m.informationWitness1,
+                    title: m.informationSpouse1,
                     titleVariant: 'h4',
                   }),
                   buildTextField({
@@ -170,7 +154,7 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
                   }),
                   buildDescriptionField({
                     id: 'header2',
-                    title: m.informationWitness2,
+                    title: m.informationSpouse2,
                     titleVariant: 'h4',
                     space: 'gutter',
                   }),
@@ -253,31 +237,6 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
                     id: 'space',
                     space: 'containerGutter',
                     title: '',
-                  }),
-                  buildRadioField({
-                    id: 'spousePersonalInfo.previousMarriageTermination',
-                    title: m.previousMarriageTermination,
-                    options: [
-                      {
-                        value: MarriageTermination.divorce,
-                        label: m.terminationByDivorce,
-                      },
-                      {
-                        value: MarriageTermination.lostSpouse,
-                        label: m.terminationByLosingSpouse,
-                      },
-                      {
-                        value: MarriageTermination.annulment,
-                        label: m.terminationByAnnulment,
-                      },
-                    ],
-                    largeButtons: false,
-                    condition: (answers) => {
-                      return (
-                        (answers.personalInfo as PersonalInfo)
-                          ?.maritalStatus === maritalStatuses['6']
-                      )
-                    },
                   }),
                 ],
               }),

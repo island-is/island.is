@@ -35,6 +35,7 @@ if (userMocked) {
       NationalRegistryScope.individuals,
       EndorsementsScope.main,
       ApiScope.internal,
+      ApiScope.internalProcuring,
       ApiScope.meDetails,
       ApiScope.fishingLicense,
       MunicipalitiesFinancialAidScope.read,

@@ -12,9 +12,8 @@ import {
   PkPassServiceVerifyDriversLicenseResponse,
   PkPassVerifyResult,
 } from './pkpass.type'
-
-import { Config } from '../../licenseService.module'
-
+import { GenericDrivingLicenseConfig } from './genericDrivingLicense.config'
+import { ConfigType } from '@island.is/nest/config'
 /** Set TTL to less than given expiry from service */
 const DEFAULT_CACHE_TOKEN_EXPIRY_DELTA_IN_MS = 2000
 
@@ -40,7 +39,7 @@ function strToPositiveNum(s: string): number | undefined {
 /**
  * Client for PkPass generation and verification via SmartSolution API.
  *
- * TODO: Move this to an actual client.
+ * TODO: Move this to an actual client. This will be done in drivers license V2 which is coming up soon.
  */
 export class PkPassClient {
   private readonly pkpassApiKey: string
@@ -51,19 +50,19 @@ export class PkPassClient {
   private readonly pkpassAuthRetries: number
 
   constructor(
-    private config: Config,
+    private config: ConfigType<typeof GenericDrivingLicenseConfig>,
     private logger: Logger,
     private cacheManager?: CacheManager | null,
   ) {
     this.pkpassApiKey = config.pkpass.apiKey
-    this.pkpassSecretKey = config.pkpass.secretKey
+    this.pkpassSecretKey = config.pkpass.secretKey ?? ''
     this.pkpassApiUrl = config.pkpass.apiUrl
-    this.pkpassCacheKey = config.pkpass.cacheKey
+    this.pkpassCacheKey = config.pkpass.cacheKey ?? ''
     this.pkpassCacheTokenExpiryDelta =
-      strToPositiveNum(config.pkpass.cacheTokenExpiryDelta) ??
+      strToPositiveNum(config.pkpass.cacheTokenExpiryDelta ?? '') ??
       DEFAULT_CACHE_TOKEN_EXPIRY_DELTA_IN_MS
     this.pkpassAuthRetries =
-      strToPositiveNum(config.pkpass.authRetries) ?? DEFAULT_AUTH_RETRIES
+      strToPositiveNum(config.pkpass.authRetries ?? '') ?? DEFAULT_AUTH_RETRIES
 
     this.logger = logger
     this.cacheManager = cacheManager

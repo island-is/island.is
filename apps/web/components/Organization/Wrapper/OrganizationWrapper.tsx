@@ -52,7 +52,12 @@ import { LandlaeknirHeader } from './Themes/LandlaeknirTheme/LandlaeknirHeader'
 import HeilbrigdisstofnunNordurlandsFooter from './Themes/HeilbrigdisstofnunNordurlandsTheme/HeilbrigdisstofnunNordurlandsFooter'
 import { FiskistofaHeader } from './Themes/FiskistofaTheme/FiskistofaHeader'
 import FiskistofaFooter from './Themes/FiskistofaTheme/FiskistofaFooter'
+import { LandskjorstjornFooter } from './Themes/LandkjorstjornTheme/LandkjorstjornFooter'
 import { LatestNewsCardConnectedComponent } from '../LatestNewsCardConnectedComponent'
+import { RikislogmadurHeader } from './Themes/RikislogmadurTheme/RikislogmadurHeader'
+import { RikislogmadurFooter } from './Themes/RikislogmadurTheme/RikislogmadurFooter'
+import { LandskjorstjornHeader } from './Themes/LandkjorstjornTheme/LandskjorstjornHeader'
+import { useI18n } from '@island.is/web/i18n'
 import * as styles from './OrganizationWrapper.css'
 
 interface NavigationData {
@@ -86,6 +91,7 @@ export const lightThemes = [
   'default',
   'landlaeknir',
   'fiskistofa',
+  'landing_page',
 ]
 export const footerEnabled = [
   'syslumenn',
@@ -104,6 +110,13 @@ export const footerEnabled = [
 
   'fiskistofa',
   'directorate-of-fisheries',
+
+  'landskjorstjorn',
+
+  'hsn',
+
+  'rikislogmadur',
+  'office-of-the-attorney-general-civil-affairs',
 ]
 
 export const getThemeConfig = (
@@ -116,7 +129,7 @@ export const getThemeConfig = (
     footerVersion = 'organization'
   }
 
-  if (theme === 'sjukratryggingar')
+  if (theme === 'sjukratryggingar' || theme === 'rikislogmadur')
     return {
       themeConfig: {
         headerButtonColorScheme: 'blueberry',
@@ -157,6 +170,12 @@ const OrganizationHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
       return <LandlaeknirHeader organizationPage={organizationPage} />
     case 'fiskistofa':
       return <FiskistofaHeader organizationPage={organizationPage} />
+    case 'rikislogmadur':
+      return <RikislogmadurHeader organizationPage={organizationPage} />
+    case 'landskjorstjorn':
+      return <LandskjorstjornHeader organizationPage={organizationPage} />
+    case 'landing_page':
+      return null
     default:
       return <DefaultHeader organizationPage={organizationPage} />
   }
@@ -209,7 +228,11 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
     ? organizations[0]
     : organizations.find((x) => footerEnabled.includes(x.slug))
 
-  const n = useNamespace(organization?.namespace ?? {})
+  const namespace = useMemo(
+    () => JSON.parse(organization?.namespace?.fields ?? '{}'),
+    [],
+  )
+  const n = useNamespace(namespace)
 
   let OrganizationFooterComponent = null
 
@@ -273,6 +296,21 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
         <FiskistofaFooter footerItems={organization.footerItems} />
       )
       break
+    case 'landskjorstjorn':
+      OrganizationFooterComponent = (
+        <LandskjorstjornFooter footerItems={organization.footerItems} />
+      )
+      break
+    case 'rikislogmadur':
+    case 'office-of-the-attorney-general-civil-affairs':
+      OrganizationFooterComponent = (
+        <RikislogmadurFooter
+          title={organization.title}
+          footerItems={organization.footerItems}
+          logo={organization.logo?.url}
+        />
+      )
+      break
   }
 
   return OrganizationFooterComponent
@@ -284,6 +322,8 @@ export const OrganizationChatPanel = ({
   organizationIds: string[]
   pushUp?: boolean
 }) => {
+  const { activeLocale } = useI18n()
+
   const organizationIdWithLiveChat = organizationIds.find((id) => {
     return id in liveChatIncConfig
   })
@@ -297,11 +337,15 @@ export const OrganizationChatPanel = ({
   }
 
   const organizationIdWithWatson = organizationIds.find((id) => {
-    return id in watsonConfig
+    return id in watsonConfig[activeLocale]
   })
 
   if (organizationIdWithWatson) {
-    return <WatsonChatPanel {...watsonConfig[organizationIdWithWatson]} />
+    return (
+      <WatsonChatPanel
+        {...watsonConfig[activeLocale][organizationIdWithWatson]}
+      />
+    )
   }
 
   return null
@@ -560,7 +604,6 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
           </Box>
         </SidebarLayout>
       )}
-      {!!mainContent && children}
       {minimal && (
         <GridContainer>
           <GridRow>
@@ -569,11 +612,12 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
               span={['12/12', '12/12', '10/12']}
               offset={['0', '0', '1/12']}
             >
-              {children}
+              {mainContent}
             </GridColumn>
           </GridRow>
         </GridContainer>
       )}
+      {!!mainContent && children}
       {!minimal && (
         <OrganizationFooter
           organizations={[organizationPage.organization]}

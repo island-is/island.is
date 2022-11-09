@@ -4,6 +4,7 @@ import {
   CaseDecision,
   CaseState,
   CaseType,
+  indictmentCases,
 } from '@island.is/judicial-system/types'
 
 import { mapCaseStateToTagVariant, displayCaseType } from './utils'
@@ -22,29 +23,7 @@ describe('displayCaseType', () => {
     ).toBe('Farbann')
   })
 
-  it.each`
-    caseType
-    ${CaseType.CHILD_PROTECTION_LAWS}
-    ${CaseType.PROPERTY_DAMAGE}
-    ${CaseType.NARCOTICS_OFFENSE}
-    ${CaseType.EMBEZZLEMENT}
-    ${CaseType.FRAUD}
-    ${CaseType.DOMESTIC_VIOLENCE}
-    ${CaseType.ASSAULT_LEADING_TO_DEATH}
-    ${CaseType.MURDER}
-    ${CaseType.MAJOR_ASSAULT}
-    ${CaseType.MINOR_ASSAULT}
-    ${CaseType.RAPE}
-    ${CaseType.UTILITY_THEFT}
-    ${CaseType.AGGRAVATED_ASSAULT}
-    ${CaseType.TAX_VIOLATION}
-    ${CaseType.ATTEMPTED_MURDER}
-    ${CaseType.TRAFFIC_VIOLATION}
-    ${CaseType.THEFT}
-    ${CaseType.OTHER_CRIMINAL_OFFENSES}
-    ${CaseType.SEXUAL_OFFENSES_OTHER_THAN_RAPE}
-    ${CaseType.OTHER_OFFENSES}
-  `('should display indictment case: $caseType', ({ caseType }) => {
+  it.each(indictmentCases)('should display indictment case: %s', (caseType) => {
     expect(fn(caseType)).toEqual('Ákæra')
   })
 })
@@ -53,7 +32,7 @@ describe('mapCaseStateToTagVariant', () => {
   const fn = (
     state: CaseState,
     isCourtRole: boolean,
-    isInvestigationCase?: boolean,
+    caseType: CaseType,
     isValidToDateInThePast?: boolean,
     courtDate?: string,
   ) =>
@@ -61,80 +40,87 @@ describe('mapCaseStateToTagVariant', () => {
       formatMessage,
       state,
       isCourtRole,
-      isInvestigationCase,
+      caseType,
       isValidToDateInThePast,
       courtDate,
     )
 
   test('should return draft state', () => {
-    expect(fn(CaseState.NEW, false)).toEqual({
+    expect(fn(CaseState.NEW, false, CaseType.CUSTODY)).toEqual({
       color: 'red',
       text: m.tags.draft.defaultMessage,
     })
-    expect(fn(CaseState.DRAFT, false)).toEqual({
+    expect(fn(CaseState.DRAFT, false, CaseType.CUSTODY)).toEqual({
       color: 'red',
       text: m.tags.draft.defaultMessage,
     })
   })
 
   test('should return new state', () => {
-    expect(fn(CaseState.SUBMITTED, true)).toEqual({
+    expect(fn(CaseState.SUBMITTED, true, CaseType.CUSTODY)).toEqual({
       color: 'purple',
       text: m.tags.new.defaultMessage,
     })
   })
 
   test('should return sent state', () => {
-    expect(fn(CaseState.SUBMITTED, false)).toEqual({
+    expect(fn(CaseState.SUBMITTED, false, CaseType.CUSTODY)).toEqual({
       color: 'purple',
       text: m.tags.sent.defaultMessage,
     })
   })
 
   test('should return scheduled state', () => {
-    expect(fn(CaseState.RECEIVED, false, false, false, '2020-01-01')).toEqual({
+    expect(
+      fn(CaseState.RECEIVED, false, CaseType.CUSTODY, false, '2020-01-01'),
+    ).toEqual({
       color: 'mint',
       text: m.tags.scheduled.defaultMessage,
     })
   })
 
   test('should return received state', () => {
-    expect(fn(CaseState.RECEIVED, false)).toEqual({
+    expect(fn(CaseState.RECEIVED, false, CaseType.CUSTODY)).toEqual({
       color: 'blueberry',
       text: m.tags.received.defaultMessage,
     })
   })
 
   test('should return active state', () => {
-    expect(fn(CaseState.ACCEPTED, false, false, false)).toEqual({
+    expect(fn(CaseState.ACCEPTED, false, CaseType.CUSTODY, false)).toEqual({
       color: 'blue',
       text: m.tags.active.defaultMessage,
+    })
+
+    expect(fn(CaseState.ACCEPTED, false, CaseType.MURDER)).toEqual({
+      color: 'darkerBlue',
+      text: m.tags.inactive.defaultMessage,
     })
   })
 
   test('should return inactive state', () => {
-    expect(fn(CaseState.ACCEPTED, false, false, true)).toEqual({
+    expect(fn(CaseState.ACCEPTED, false, CaseType.CUSTODY, true)).toEqual({
       color: 'darkerBlue',
       text: m.tags.inactive.defaultMessage,
     })
   })
 
   test('should return rejected state', () => {
-    expect(fn(CaseState.REJECTED, false)).toEqual({
+    expect(fn(CaseState.REJECTED, false, CaseType.CUSTODY)).toEqual({
       color: 'rose',
       text: m.tags.rejected.defaultMessage,
     })
   })
 
   test('should return dismissed state', () => {
-    expect(fn(CaseState.DISMISSED, false)).toEqual({
+    expect(fn(CaseState.DISMISSED, false, CaseType.CUSTODY)).toEqual({
       color: 'dark',
       text: m.tags.dismissed.defaultMessage,
     })
   })
 
   test('should return unknown state', () => {
-    expect(fn('testing' as CaseState, false)).toEqual({
+    expect(fn('testing' as CaseState, false, CaseType.CUSTODY)).toEqual({
       color: 'white',
       text: m.tags.unknown.defaultMessage,
     })

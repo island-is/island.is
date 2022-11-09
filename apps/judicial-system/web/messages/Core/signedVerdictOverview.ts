@@ -380,13 +380,22 @@ export const signedVerdictOverview = {
         defaultMessage:
           'Kærufrestur {isAppealDeadlineExpired, select, true {rann} false {rennur}} út {appealDeadline}',
       },
+      // TODO: Remove accusedAppealed
       accusedAppealed: {
         id:
           'judicial.system.core:signed_verdict_overview.appeal.accused_appealed',
         defaultMessage:
           '{genderedAccused} hefur kært úrskurðinn í þinghaldi sem lauk {courtEndTime}',
         description:
-          'Notaður sem upplýsingatexti sem útskýrir að kærði kærði úrskurðinn í þinghaldi á yfirlitsskjá afgreiddra mála.',
+          'Notaður sem upplýsingatexti sem útskýrir að varnaraðili kærði úrskurðinn í þinghaldi á yfirlitsskjá afgreiddra mála.',
+      },
+      defendantAppealed: {
+        id:
+          'judicial.system.core:signed_verdict_overview.appeal.defendant_appealed',
+        defaultMessage:
+          'Varnaraðili hefur kært úrskurðinn í þinghaldi sem lauk {courtEndTime}',
+        description:
+          'Notaður sem upplýsingatexti sem útskýrir að varnaraðili kærði úrskurðinn í þinghaldi á yfirlitsskjá afgreiddra mála.',
       },
       prosecutorAppealed: {
         id:

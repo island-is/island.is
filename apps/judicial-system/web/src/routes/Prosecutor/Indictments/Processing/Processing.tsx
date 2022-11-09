@@ -4,11 +4,11 @@ import { useRouter } from 'next/router'
 
 import {
   FormContentContainer,
+  FormContext,
   FormFooter,
   PageLayout,
   ProsecutorCaseInfo,
 } from '@island.is/judicial-system-web/src/components'
-import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import {
   IndictmentsProsecutorSubsections,
   Sections,
@@ -19,7 +19,11 @@ import {
   processing as m,
 } from '@island.is/judicial-system-web/messages'
 import { Box, Text } from '@island.is/island-ui/core'
-import { CaseTransition, Institution } from '@island.is/judicial-system/types'
+import {
+  CaseState,
+  CaseTransition,
+  Institution,
+} from '@island.is/judicial-system/types'
 import {
   useCase,
   useInstitution,
@@ -28,8 +32,7 @@ import CommentsInput from '@island.is/judicial-system-web/src/components/Comment
 import { isProcessingStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 import * as constants from '@island.is/judicial-system/consts'
 
-import ProsecutorSection from '../../SharedComponents/ProsecutorSection/ProsecutorSection'
-import SelectCourt from '../../SharedComponents/SelectCourt/SelectCourt'
+import { ProsecutorSection, SelectCourt } from '../../components'
 
 const Processing: React.FC = () => {
   const {
@@ -38,14 +41,14 @@ const Processing: React.FC = () => {
     isLoadingWorkingCase,
     caseNotFound,
   } = useContext(FormContext)
-  const { setAndSendToServer, transitionCase } = useCase()
+  const { setAndSendCaseToServer, transitionCase } = useCase()
   const { formatMessage } = useIntl()
   const { courts } = useInstitution()
   const router = useRouter()
 
   const handleCourtChange = (court: Institution) => {
     if (workingCase) {
-      setAndSendToServer(
+      setAndSendCaseToServer(
         [
           {
             courtId: court.id,
@@ -63,7 +66,9 @@ const Processing: React.FC = () => {
   }
 
   const handleNextButtonClick = async () => {
-    await transitionCase(workingCase, CaseTransition.OPEN, setWorkingCase)
+    if (workingCase.state === CaseState.NEW) {
+      await transitionCase(workingCase, CaseTransition.OPEN, setWorkingCase)
+    }
 
     router.push(`${constants.INDICTMENTS_CASE_FILES_ROUTE}/${workingCase.id}`)
   }

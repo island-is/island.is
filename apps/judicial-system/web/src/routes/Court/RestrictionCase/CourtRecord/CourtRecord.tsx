@@ -8,7 +8,6 @@ import {
   GridContainer,
   GridRow,
   Input,
-  RadioButton,
   Text,
   Tooltip,
 } from '@island.is/island-ui/core'
@@ -22,13 +21,11 @@ import {
   HideableText,
   PdfButton,
   CourtDocuments,
+  FormContext,
 } from '@island.is/judicial-system-web/src/components'
-import { capitalize } from '@island.is/judicial-system/formatters'
 import {
-  CaseAppealDecision,
   CaseDecision,
   CaseType,
-  Gender,
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
 import {
@@ -46,7 +43,6 @@ import {
   core,
   titles,
 } from '@island.is/judicial-system-web/messages'
-import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
@@ -54,6 +50,7 @@ import * as constants from '@island.is/judicial-system/consts'
 
 import { isCourtRecordStepValidRC } from '../../../../utils/validate'
 import { formatCustodyRestrictions } from '../../../../utils/restrictions'
+import AppealSections from '../../components/AppealSections/AppealSections'
 
 export const CourtRecord: React.FC = () => {
   const {
@@ -74,7 +71,7 @@ export const CourtRecord: React.FC = () => {
 
   const router = useRouter()
   const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
-  const { updateCase, setAndSendToServer } = useCase()
+  const { updateCase, setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
 
   const id = router.query.id
@@ -101,14 +98,9 @@ export const CourtRecord: React.FC = () => {
         if (workingCase.defenderName) {
           autofillAttendees.push(
             `\n${workingCase.defenderName} skipaður verjandi ${formatMessage(
-              core.accused,
+              core.defendant,
               {
-                suffix:
-                  workingCase.defendants &&
-                  workingCase.defendants.length > 0 &&
-                  workingCase.defendants[0].gender === Gender.FEMALE
-                    ? 'u'
-                    : 'a',
+                suffix: 'a',
               },
             )}`,
           )
@@ -120,10 +112,12 @@ export const CourtRecord: React.FC = () => {
 
         if (workingCase.defendants && workingCase.defendants.length > 0) {
           autofillAttendees.push(
-            `\n${workingCase.defendants[0].name} ${formatMessage(core.accused, {
-              suffix:
-                workingCase.defendants[0].gender === Gender.MALE ? 'i' : 'a',
-            })}`,
+            `\n${workingCase.defendants[0].name} ${formatMessage(
+              core.defendant,
+              {
+                suffix: 'i',
+              },
+            )}`,
           )
         }
       }
@@ -158,17 +152,9 @@ export const CourtRecord: React.FC = () => {
       ) {
         autofillSessionBookings.push(
           `\n\n${formatMessage(
-            m.sections.sessionBookings.autofillPresentationsV2,
+            m.sections.sessionBookings.autofillPresentationsV3,
             {
               caseType: workingCase.type,
-              accused: formatMessage(core.accused, {
-                suffix:
-                  workingCase.defendants &&
-                  workingCase.defendants.length > 0 &&
-                  workingCase.defendants[0].gender === Gender.FEMALE
-                    ? 'u'
-                    : 'a',
-              }),
             },
           )}`,
         )
@@ -221,7 +207,7 @@ export const CourtRecord: React.FC = () => {
         }
       }
 
-      setAndSendToServer(
+      setAndSendCaseToServer(
         [
           {
             courtStartDate: workingCase.courtDate,
@@ -253,7 +239,7 @@ export const CourtRecord: React.FC = () => {
       setInitialAutoFillDone(true)
     }
   }, [
-    setAndSendToServer,
+    setAndSendCaseToServer,
     formatMessage,
     initialAutoFillDone,
     isCaseUpToDate,
@@ -294,7 +280,7 @@ export const CourtRecord: React.FC = () => {
                 selectedDate={workingCase.courtStartDate}
                 onChange={(date: Date | undefined, valid: boolean) => {
                   if (date && valid) {
-                    setAndSendToServer(
+                    setAndSendCaseToServer(
                       [
                         {
                           courtStartDate: formatDateForServer(date),
@@ -351,7 +337,7 @@ export const CourtRecord: React.FC = () => {
               text={formatMessage(closedCourt.text)}
               isHidden={workingCase.isClosedCourtHidden}
               onToggleVisibility={(isVisible: boolean) =>
-                setAndSendToServer(
+                setAndSendCaseToServer(
                   [
                     {
                       isClosedCourtHidden: isVisible,
@@ -455,392 +441,10 @@ export const CourtRecord: React.FC = () => {
           </Box>
         )}
         <Box component="section" marginBottom={8}>
-          <Box marginBottom={2}>
-            <Text as="h3" variant="h3">
-              {formatMessage(m.sections.appealDecision.title)}
-            </Text>
-          </Box>
-          <Box marginBottom={3}>
-            <Text variant="h4" fontWeight="light">
-              {formatMessage(m.sections.appealDecision.disclaimer)}
-            </Text>
-          </Box>
-          {workingCase.defendants && workingCase.defendants.length > 0 && (
-            <Box marginBottom={3}>
-              <BlueBox>
-                <Box marginBottom={2}>
-                  <Text as="h4" variant="h4">
-                    {formatMessage(m.sections.appealDecision.accusedTitle, {
-                      accused: formatMessage(core.accused, {
-                        suffix:
-                          workingCase.defendants[0].gender === Gender.FEMALE
-                            ? 'u'
-                            : 'a',
-                      }),
-                    })}{' '}
-                    <Text as="span" color="red600" fontWeight="semiBold">
-                      *
-                    </Text>
-                  </Text>
-                </Box>
-                <Box marginBottom={2}>
-                  <GridRow>
-                    <GridColumn span="6/12">
-                      <RadioButton
-                        name="accused-appeal-decision"
-                        id="accused-appeal"
-                        label={formatMessage(
-                          m.sections.appealDecision.accusedAppeal,
-                          {
-                            accused: capitalize(
-                              formatMessage(core.accused, {
-                                suffix:
-                                  workingCase.defendants[0].gender ===
-                                  Gender.MALE
-                                    ? 'i'
-                                    : 'a',
-                              }),
-                            ),
-                          },
-                        )}
-                        value={CaseAppealDecision.APPEAL}
-                        checked={
-                          workingCase.accusedAppealDecision ===
-                          CaseAppealDecision.APPEAL
-                        }
-                        onChange={() => {
-                          setWorkingCase({
-                            ...workingCase,
-                            accusedAppealDecision: CaseAppealDecision.APPEAL,
-                          })
-
-                          updateCase(workingCase.id, {
-                            accusedAppealDecision: CaseAppealDecision.APPEAL,
-                          })
-                        }}
-                        large
-                        backgroundColor="white"
-                      />
-                    </GridColumn>
-                    <GridColumn span="6/12">
-                      <RadioButton
-                        name="accused-appeal-decision"
-                        id="accused-accept"
-                        label={formatMessage(
-                          m.sections.appealDecision.accusedAccept,
-                          {
-                            accused: capitalize(
-                              formatMessage(core.accused, {
-                                suffix:
-                                  workingCase.defendants[0].gender ===
-                                  Gender.MALE
-                                    ? 'i'
-                                    : 'a',
-                              }),
-                            ),
-                          },
-                        )}
-                        value={CaseAppealDecision.ACCEPT}
-                        checked={
-                          workingCase.accusedAppealDecision ===
-                          CaseAppealDecision.ACCEPT
-                        }
-                        onChange={() => {
-                          setWorkingCase({
-                            ...workingCase,
-                            accusedAppealDecision: CaseAppealDecision.ACCEPT,
-                          })
-
-                          updateCase(workingCase.id, {
-                            accusedAppealDecision: CaseAppealDecision.ACCEPT,
-                          })
-                        }}
-                        large
-                        backgroundColor="white"
-                      />
-                    </GridColumn>
-                  </GridRow>
-                </Box>
-                <Box marginBottom={2}>
-                  <GridRow>
-                    <GridColumn span="7/12">
-                      <RadioButton
-                        name="accused-appeal-decision"
-                        id="accused-postpone"
-                        label={formatMessage(
-                          m.sections.appealDecision.accusedPostpone,
-                          {
-                            accused: capitalize(
-                              formatMessage(core.accused, {
-                                suffix:
-                                  workingCase.defendants[0].gender ===
-                                  Gender.MALE
-                                    ? 'i'
-                                    : 'a',
-                              }),
-                            ),
-                          },
-                        )}
-                        value={CaseAppealDecision.POSTPONE}
-                        checked={
-                          workingCase.accusedAppealDecision ===
-                          CaseAppealDecision.POSTPONE
-                        }
-                        onChange={() => {
-                          setWorkingCase({
-                            ...workingCase,
-                            accusedAppealDecision: CaseAppealDecision.POSTPONE,
-                          })
-
-                          updateCase(workingCase.id, {
-                            accusedAppealDecision: CaseAppealDecision.POSTPONE,
-                          })
-                        }}
-                        large
-                        backgroundColor="white"
-                      />
-                    </GridColumn>
-                    <GridColumn span="5/12">
-                      <RadioButton
-                        name="accused-appeal-decision"
-                        id="accused-not-applicable"
-                        label={formatMessage(
-                          m.sections.appealDecision.accusedNotApplicable,
-                        )}
-                        value={CaseAppealDecision.NOT_APPLICABLE}
-                        checked={
-                          workingCase.accusedAppealDecision ===
-                          CaseAppealDecision.NOT_APPLICABLE
-                        }
-                        onChange={() => {
-                          setWorkingCase({
-                            ...workingCase,
-                            accusedAppealDecision:
-                              CaseAppealDecision.NOT_APPLICABLE,
-                          })
-
-                          updateCase(workingCase.id, {
-                            accusedAppealDecision:
-                              CaseAppealDecision.NOT_APPLICABLE,
-                          })
-                        }}
-                        large
-                        backgroundColor="white"
-                      />
-                    </GridColumn>
-                  </GridRow>
-                </Box>
-                <Input
-                  name="accusedAppealAnnouncement"
-                  data-testid="accusedAppealAnnouncement"
-                  label={formatMessage(
-                    m.sections.appealDecision.accusedAnnouncementLabel,
-                    {
-                      accused: formatMessage(core.accused, {
-                        suffix:
-                          workingCase.defendants[0].gender === Gender.FEMALE
-                            ? 'u'
-                            : 'a',
-                      }),
-                    },
-                  )}
-                  value={workingCase.accusedAppealAnnouncement || ''}
-                  placeholder={formatMessage(
-                    m.sections.appealDecision.accusedAnnouncementPlaceholder,
-                    {
-                      accused: formatMessage(core.accused, {
-                        suffix:
-                          workingCase.defendants[0].gender === Gender.MALE
-                            ? 'i'
-                            : 'a',
-                      }),
-                    },
-                  )}
-                  onChange={(event) =>
-                    removeTabsValidateAndSet(
-                      'accusedAppealAnnouncement',
-                      event.target.value,
-                      [],
-                      workingCase,
-                      setWorkingCase,
-                    )
-                  }
-                  onBlur={(event) =>
-                    validateAndSendToServer(
-                      'accusedAppealAnnouncement',
-                      event.target.value,
-                      [],
-                      workingCase,
-                      updateCase,
-                    )
-                  }
-                  textarea
-                  rows={7}
-                  autoExpand={{ on: true, maxHeight: 300 }}
-                />
-              </BlueBox>
-            </Box>
-          )}
-          <Box marginBottom={5}>
-            <BlueBox>
-              <Box marginBottom={2}>
-                <Text as="h4" variant="h4">
-                  {formatMessage(m.sections.appealDecision.prosecutorTitle)}{' '}
-                  <Text as="span" color="red400" fontWeight="semiBold">
-                    *
-                  </Text>
-                </Text>
-              </Box>
-              <Box marginBottom={2}>
-                <GridRow>
-                  <GridColumn span="6/12">
-                    <RadioButton
-                      name="prosecutor-appeal-decision"
-                      id="prosecutor-appeal"
-                      label={formatMessage(
-                        m.sections.appealDecision.prosecutorAppeal,
-                      )}
-                      value={CaseAppealDecision.APPEAL}
-                      checked={
-                        workingCase.prosecutorAppealDecision ===
-                        CaseAppealDecision.APPEAL
-                      }
-                      onChange={() => {
-                        setWorkingCase({
-                          ...workingCase,
-                          prosecutorAppealDecision: CaseAppealDecision.APPEAL,
-                        })
-
-                        updateCase(workingCase.id, {
-                          prosecutorAppealDecision: CaseAppealDecision.APPEAL,
-                        })
-                      }}
-                      large
-                      backgroundColor="white"
-                    />
-                  </GridColumn>
-                  <GridColumn span="6/12">
-                    <RadioButton
-                      name="prosecutor-appeal-decision"
-                      id="prosecutor-accept"
-                      label={formatMessage(
-                        m.sections.appealDecision.prosecutorAccept,
-                      )}
-                      value={CaseAppealDecision.ACCEPT}
-                      checked={
-                        workingCase.prosecutorAppealDecision ===
-                        CaseAppealDecision.ACCEPT
-                      }
-                      onChange={() => {
-                        setWorkingCase({
-                          ...workingCase,
-                          prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
-                        })
-
-                        updateCase(workingCase.id, {
-                          prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
-                        })
-                      }}
-                      large
-                      backgroundColor="white"
-                    />
-                  </GridColumn>
-                </GridRow>
-              </Box>
-              <Box marginBottom={2}>
-                <GridRow>
-                  <GridColumn span="7/12">
-                    <RadioButton
-                      name="prosecutor-appeal-decision"
-                      id="prosecutor-postpone"
-                      label={formatMessage(
-                        m.sections.appealDecision.prosecutorPostpone,
-                      )}
-                      value={CaseAppealDecision.POSTPONE}
-                      checked={
-                        workingCase.prosecutorAppealDecision ===
-                        CaseAppealDecision.POSTPONE
-                      }
-                      onChange={() => {
-                        setWorkingCase({
-                          ...workingCase,
-                          prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
-                        })
-
-                        updateCase(workingCase.id, {
-                          prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
-                        })
-                      }}
-                      large
-                      backgroundColor="white"
-                    />
-                  </GridColumn>
-                  <GridColumn span="5/12">
-                    <RadioButton
-                      name="prosecutor-appeal-decision"
-                      id="prosecutor-not-applicable"
-                      label={formatMessage(
-                        m.sections.appealDecision.prosecutorNotApplicable,
-                      )}
-                      value={CaseAppealDecision.NOT_APPLICABLE}
-                      checked={
-                        workingCase.prosecutorAppealDecision ===
-                        CaseAppealDecision.NOT_APPLICABLE
-                      }
-                      onChange={() => {
-                        setWorkingCase({
-                          ...workingCase,
-                          prosecutorAppealDecision:
-                            CaseAppealDecision.NOT_APPLICABLE,
-                        })
-
-                        updateCase(workingCase.id, {
-                          prosecutorAppealDecision:
-                            CaseAppealDecision.NOT_APPLICABLE,
-                        })
-                      }}
-                      large
-                      backgroundColor="white"
-                    />
-                  </GridColumn>
-                </GridRow>
-              </Box>
-              <Box>
-                <Input
-                  name="prosecutorAppealAnnouncement"
-                  data-testid="prosecutorAppealAnnouncement"
-                  label={formatMessage(
-                    m.sections.appealDecision.prosecutorAnnouncementLabel,
-                  )}
-                  value={workingCase.prosecutorAppealAnnouncement || ''}
-                  placeholder={formatMessage(
-                    m.sections.appealDecision.prosecutorAnnouncementPlaceholder,
-                  )}
-                  onChange={(event) =>
-                    removeTabsValidateAndSet(
-                      'prosecutorAppealAnnouncement',
-                      event.target.value,
-                      [],
-                      workingCase,
-                      setWorkingCase,
-                    )
-                  }
-                  onBlur={(event) =>
-                    validateAndSendToServer(
-                      'prosecutorAppealAnnouncement',
-                      event.target.value,
-                      [],
-                      workingCase,
-                      updateCase,
-                    )
-                  }
-                  textarea
-                  rows={7}
-                  autoExpand={{ on: true, maxHeight: 300 }}
-                />
-              </Box>
-            </BlueBox>
-          </Box>
+          <AppealSections
+            workingCase={workingCase}
+            setWorkingCase={setWorkingCase}
+          />
         </Box>
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
@@ -904,7 +508,7 @@ export const CourtRecord: React.FC = () => {
                   maxDate={new Date()}
                   selectedDate={workingCase.courtEndTime}
                   onChange={(date: Date | undefined, valid: boolean) => {
-                    setAndSendToServer(
+                    setAndSendCaseToServer(
                       [
                         {
                           courtEndTime:

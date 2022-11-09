@@ -3,13 +3,10 @@ import {
   setupWithoutAuth,
   setupWithoutScope,
 } from '../../../../../test/setup'
-import {
-  errorExpectedStructure,
-  getRequestMethod,
-} from '../../../../../test/testHelpers'
+import { errorExpectedStructure } from '../../../../../test/testHelpers'
 import { TestEndpointOptions } from '../../../../../test/types'
 import request from 'supertest'
-import { TestApp } from '@island.is/testing/nest'
+import { TestApp, getRequestMethod } from '@island.is/testing/nest'
 import {
   PersonalRepresentative,
   PersonalRepresentativeRight,
@@ -18,7 +15,7 @@ import {
   PersonalRepresentativeRightType,
   PaginatedPersonalRepresentativeDto,
   PersonalRepresentativeType,
-} from '@island.is/auth-api-lib/personal-representative'
+} from '@island.is/auth-api-lib'
 import { AuthScope } from '@island.is/auth/scopes'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 

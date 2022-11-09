@@ -1,4 +1,4 @@
-import * as z from 'zod'
+import { z } from 'zod'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { error } from './error'
 import { Services } from './constants'
@@ -27,7 +27,7 @@ export const dataSchema = z.object({
       },
     ),
   personalInfo: z.object({
-    name: z.string().nonempty(),
+    name: z.string().min(1),
     nationalId: z.string().refine((x) => (x ? nationalIdRegex.test(x) : false)),
     email: z
       .string()
@@ -38,10 +38,10 @@ export const dataSchema = z.object({
     hasDisabilityDiscount: z.array(z.string()).optional(),
   }),
   childsPersonalInfo: z.object({
-    name: z.string().nonempty(),
+    name: z.string().min(1),
     nationalId: z.string().refine((x) => (x ? nationalIdRegex.test(x) : false)),
     guardian1: z.object({
-      name: z.string().nonempty(),
+      name: z.string().min(1),
       nationalId: z
         .string()
         .refine((x) => (x ? nationalIdRegex.test(x) : false)),
@@ -54,7 +54,7 @@ export const dataSchema = z.object({
         .refine((v) => isValidPhoneNumber(v), { params: error.invalidValue }),
     }),
     guardian2: z.object({
-      name: z.string().nonempty(),
+      name: z.string().min(1),
       nationalId: z
         .string()
         .refine((x) => (x ? nationalIdRegex.test(x) : false)),
@@ -69,7 +69,7 @@ export const dataSchema = z.object({
   }),
   service: z.object({
     type: z.enum([Services.REGULAR, Services.EXPRESS]),
-    dropLocation: z.string().nonempty(),
+    dropLocation: z.string().min(1),
   }),
   approveExternalDataParentB: z.boolean().refine((v) => v),
 })
