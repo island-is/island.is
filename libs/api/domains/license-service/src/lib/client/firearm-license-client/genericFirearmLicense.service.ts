@@ -23,13 +23,13 @@ import {
   SmartSolutionsApi,
 } from '@island.is/clients/smartsolutions'
 import { Locale } from '@island.is/shared/types'
-import { LicenseData } from './firearmLicense.type'
 import compareAsc from 'date-fns/compareAsc'
+import { LicenseData } from './genericFirearmLicense.type'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'firearmlicense-service'
 @Injectable()
-export class GenericFirearmLicenseApi
+export class GenericFirearmLicenseService
   implements GenericLicenseClient<LicenseInfo> {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
@@ -70,7 +70,7 @@ export class GenericFirearmLicenseApi
     let pkpassStatus = GenericUserLicensePkPassStatus.Unknown
 
     if (payload) {
-      pkpassStatus = GenericFirearmLicenseApi.licenseIsValidForPkpass(
+      pkpassStatus = GenericFirearmLicenseService.licenseIsValidForPkpass(
         licenseData.licenseInfo,
       )
     }

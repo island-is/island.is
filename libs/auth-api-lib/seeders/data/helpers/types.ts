@@ -60,4 +60,5 @@ export interface DbScope {
   automatic_delegation_grant: boolean
   also_for_delegated_user: boolean
   is_access_controlled: boolean
+  domain_name: string
 }
