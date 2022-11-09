@@ -55,6 +55,7 @@ export const companyModules: ModuleKeys[] = [
   'vehicles',
   'personalInformation',
   'accessControl',
+  'delegations',
   // TODO: Next in:
   // 'licenses',
 ]
