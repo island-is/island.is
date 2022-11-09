@@ -94,10 +94,13 @@ export const EmployerApproval: Form = buildForm({
                       name: coreMessages.buttonApprove,
                       type: 'primary',
                       event: 'APPROVE',
-                      condition: (answers) =>
-                        new Date(
-                          getApplicationAnswers(answers).periods[0].startDate,
-                        ).getTime() >= currentDateStartTime(),
+
+                      // TODO: enable this when we could get 'applicationFundId' from externalData
+
+                      // condition: (answers) =>
+                      //   new Date(
+                      //     getApplicationAnswers(answers).periods[0].startDate,
+                      //   ).getTime() >= currentDateStartTime(),
                     },
                   ],
                 }),

@@ -7,9 +7,11 @@ import {
   ServicePortalRoute,
   m,
 } from '@island.is/service-portal/core'
+import { Features } from '@island.is/feature-flags'
 
 export const accessControlModule: ServicePortalModule = {
   name: 'Aðgangsstýring',
+  featureFlag: Features.outgoingDelegationsV1,
   widgets: () => [],
   routes: ({ userInfo }) => {
     const routes: ServicePortalRoute[] = [

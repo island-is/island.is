@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common'
+import { ApolloDriver } from '@nestjs/apollo'
 import { GraphQLModule } from '@nestjs/graphql'
 import { TerminusModule } from '@nestjs/terminus'
-import responseCachePlugin from 'apollo-server-plugin-response-cache'
+//import responseCachePlugin from 'apollo-server-plugin-response-cache'
 import { AuthModule as AuthDomainModule } from '@island.is/api/domains/auth'
 import { ContentSearchModule } from '@island.is/api/domains/content-search'
 import { CmsModule } from '@island.is/cms'
@@ -27,6 +28,8 @@ import { ApiCatalogueModule } from '@island.is/api/domains/api-catalogue'
 import { DocumentProviderModule } from '@island.is/api/domains/document-provider'
 import { SyslumennClientConfig } from '@island.is/clients/syslumenn'
 import { SyslumennModule } from '@island.is/api/domains/syslumenn'
+import { ElectronicRegistrationsClientConfig } from '@island.is/clients/electronic-registration-statistics'
+import { ElectronicRegistrationsModule } from '@island.is/api/domains/electronic-registration-statistics'
 import { CompanyRegistryModule } from '@island.is/api/domains/company-registry'
 import { IcelandicNamesModule } from '@island.is/api/domains/icelandic-names-registry'
 import { RegulationsModule } from '@island.is/api/domains/regulations'
@@ -36,10 +39,16 @@ import { AssetsModule } from '@island.is/api/domains/assets'
 import { EndorsementSystemModule } from '@island.is/api/domains/endorsement-system'
 import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
 import { ApiDomainsPaymentModule } from '@island.is/api/domains/payment'
-import { LicenseServiceModule } from '@island.is/api/domains/license-service'
+import {
+  GenericAdrLicenseConfig,
+  GenericDrivingLicenseConfig,
+  GenericFirearmLicenseConfig,
+  GenericMachineLicenseConfig,
+  LicenseServiceModule,
+} from '@island.is/api/domains/license-service'
 import { PaymentScheduleModule } from '@island.is/api/domains/payment-schedule'
 import { AssetsClientConfig } from '@island.is/clients/assets'
-import { AuthPublicApiClientConfig } from '@island.is/clients/auth-public-api'
+import { AuthPublicApiClientConfig } from '@island.is/clients/auth/public-api'
 import { FinanceClientConfig } from '@island.is/clients/finance'
 import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
 import { AuditModule } from '@island.is/nest/audit'
@@ -67,6 +76,7 @@ import { AdrAndMachineLicenseClientConfig } from '@island.is/clients/adr-and-mac
 import { FirearmLicenseClientConfig } from '@island.is/clients/firearm-license'
 import { PassportsClientConfig } from '@island.is/clients/passports'
 import { FileStorageConfig } from '@island.is/file-storage'
+import { AuthDelegationApiClientConfig } from '@island.is/clients/auth/delegation-api'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -79,6 +89,7 @@ const autoSchemaFile = environment.production
   controllers: [HealthController],
   imports: [
     GraphQLModule.forRoot({
+      driver: ApolloDriver,
       debug,
       playground,
       autoSchemaFile,
@@ -87,14 +98,17 @@ const autoSchemaFile = environment.production
         fieldMiddleware: [maskOutFieldsMiddleware],
       },
       plugins: [
-        responseCachePlugin({
-          shouldReadFromCache: ({ request: { http } }) => {
-            const bypassCacheKey = http?.headers.get('bypass-cache-key')
-            return bypassCacheKey !== process.env.BYPASS_CACHE_KEY
-          },
-        }),
+        // This was causing problems since graphql upgrade, gives us issues like:
+        // Error: overallCachePolicy.policyIfCacheable is not a function
+        // responseCachePlugin({
+        //   shouldReadFromCache: ({ request: { http } }) => {
+        //     const bypassCacheKey = http?.headers.get('bypass-cache-key')
+        //     return bypassCacheKey !== process.env.BYPASS_CACHE_KEY
+        //   },
+        // }),
       ],
     }),
+
     AuthDomainModule,
     AuditModule.forRoot(environment.audit),
     ContentSearchModule,
@@ -116,11 +130,13 @@ const autoSchemaFile = environment.production
         password: environment.nationalRegistry.password!,
         host: environment.nationalRegistry.host!,
       },
+
       fileDownloadBucket: environment.education.fileDownloadBucket!,
     }),
     ApplicationModule.register({
       baseApiUrl: environment.applicationSystem.baseApiUrl!,
     }),
+    LicenseServiceModule,
     DirectorateOfLabourModule.register(),
     FileUploadModule,
     DocumentModule.register({
@@ -160,14 +176,6 @@ const autoSchemaFile = environment.production
       },
     }),
     HealthInsuranceModule.register({
-      soapConfig: {
-        wsdlUrl: environment.healthInsurance.wsdlUrl!,
-        baseUrl: environment.healthInsurance.baseUrl!,
-        username: environment.healthInsurance.username!,
-        password: environment.healthInsurance.password!,
-        clientID: environment.healthInsurance.clientID!,
-        xroadID: environment.healthInsurance.xroadID!,
-      },
       clientV2Config: {
         xRoadBaseUrl: environment.healthInsuranceV2.xRoadBaseUrl!,
         xRoadProviderId: environment.healthInsuranceV2.xRoadProviderId!,
@@ -191,6 +199,7 @@ const autoSchemaFile = environment.production
     IdentityModule,
     AuthModule.register(environment.auth as AuthConfig),
     SyslumennModule,
+    ElectronicRegistrationsModule,
     CompanyRegistryModule,
     IcelandicNamesModule.register({
       backendUrl: environment.icelandicNamesRegistry.backendUrl!,
@@ -216,39 +225,6 @@ const autoSchemaFile = environment.production
       callbackAdditionUrl: environment.paymentDomain.callbackAdditionUrl!,
       arkBaseUrl: environment.paymentDomain.arkBaseUrl!,
     }),
-    LicenseServiceModule.register({
-      firearmLicense: {
-        apiKey: environment.firearmLicense.pkPassApiKey!,
-        apiUrl: environment.smartSolutionsApiUrl!,
-        passTemplateId: environment.firearmLicense.passTemplateId!,
-      },
-      machineLicense: {
-        apiKey: environment.machineLicense.pkPassApiKey!,
-        apiUrl: environment.smartSolutionsApiUrl!,
-        passTemplateId: environment.machineLicense.passTemplateId!,
-      },
-      adrLicense: {
-        apiKey: environment.adrLicense.pkPassApiKey!,
-        apiUrl: environment.smartSolutionsApiUrl!,
-        passTemplateId: environment.adrLicense.passTemplateId!,
-      },
-      driversLicense: {
-        xroad: {
-          baseUrl: environment.xroad.baseUrl!,
-          clientId: environment.xroad.clientId!,
-          path: environment.drivingLicense.v1.xroadPath!,
-          secret: environment.drivingLicense.secret!,
-        },
-        pkpass: {
-          apiKey: environment.pkpass.apiKey!,
-          apiUrl: environment.pkpass.apiUrl!,
-          secretKey: environment.pkpass.secretKey!,
-          cacheKey: environment.pkpass.cacheKey!,
-          cacheTokenExpiryDelta: environment.pkpass.cacheTokenExpiryDelta!,
-          authRetries: environment.pkpass.authRetries!,
-        },
-      },
-    }),
     PaymentScheduleModule.register({
       xRoadProviderId: environment.paymentSchedule.xRoadProviderId!,
       xRoadBaseUrl: environment.paymentSchedule.xRoadBaseUrl!,
@@ -273,14 +249,20 @@ const autoSchemaFile = environment.production
         AdrAndMachineLicenseClientConfig,
         AssetsClientConfig,
         FirearmLicenseClientConfig,
+        GenericFirearmLicenseConfig,
+        GenericMachineLicenseConfig,
+        GenericAdrLicenseConfig,
+        GenericDrivingLicenseConfig,
         VehiclesClientConfig,
         AuthPublicApiClientConfig,
+        AuthDelegationApiClientConfig,
         DownloadServiceConfig,
         FeatureFlagConfig,
         FinanceClientConfig,
         IdsClientConfig,
         NationalRegistryClientConfig,
         SyslumennClientConfig,
+        ElectronicRegistrationsClientConfig,
         FeatureFlagConfig,
         XRoadConfig,
         MunicipalitiesFinancialAidConfig,

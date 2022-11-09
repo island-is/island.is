@@ -1,12 +1,19 @@
-import React, { Fragment } from 'react'
-import { FieldBaseProps } from '@island.is/application/types'
+import React, { Fragment, useState } from 'react'
+import { DefaultEvents, FieldBaseProps } from '@island.is/application/types'
+
 import {
+  AlertBanner,
   Box,
+  Checkbox,
   Divider,
   GridColumn,
   GridRow,
+  InputError,
   Text,
 } from '@island.is/island-ui/core'
+import { Controller, useFormContext } from 'react-hook-form'
+import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
+
 import { formatPhoneNumber } from '@island.is/application/ui-components'
 import { useLocale } from '@island.is/localization'
 import { FinancialStatementsInao } from '../../lib/utils/dataSchema'
@@ -15,12 +22,49 @@ import { m } from '../../lib/messages'
 import { FileValueLine, ValueLine } from '../Shared'
 import { formatCurrency } from '../../lib/utils/helpers'
 import { starterColumnStyle } from '../Shared/styles/overviewStyles.css'
+import { useSubmitApplication } from '../../hooks/useSubmitApplication'
+import BottomBar from '../../components/BottomBar'
+import { GREATER } from '../../lib/constants'
 
-export const Overview = ({ application }: FieldBaseProps) => {
+export const Overview = ({
+  application,
+  goToScreen,
+  refetch,
+}: FieldBaseProps) => {
   const { formatMessage } = useLocale()
+  const { errors, setError, setValue } = useFormContext()
+  const [approveOverview, setApproveOverview] = useState(false)
 
   const answers = application.answers as FinancialStatementsInao
-  const fileName = answers.attachment?.file?.[0]?.name
+  const fileName = answers.attachments?.file?.[0]?.name
+  const [
+    submitApplication,
+    { error: submitError, loading },
+  ] = useSubmitApplication({
+    application,
+    refetch,
+    event: DefaultEvents.SUBMIT,
+  })
+
+  const onBackButtonClick = () => {
+    const incomeLimit = getValueViaPath(answers, 'election.incomeLimit')
+
+    if (incomeLimit === GREATER) {
+      goToScreen && goToScreen('attachment.file')
+    } else {
+      goToScreen && goToScreen('election')
+    }
+  }
+
+  const onSendButtonClick = () => {
+    if (approveOverview) {
+      submitApplication()
+    } else {
+      setError('applicationApprove', {
+        type: 'error',
+      })
+    }
+  }
 
   return (
     <Box marginBottom={2}>
@@ -41,18 +85,22 @@ export const Overview = ({ application }: FieldBaseProps) => {
         </GridColumn>
       </GridRow>
       <GridRow>
-        <GridColumn span={['12/12', '6/12']}>
-          <ValueLine
-            label={m.powerOfAttorneyName}
-            value={answers.about.powerOfAttorneyName}
-          />
-        </GridColumn>
-        <GridColumn span={['12/12', '6/12']}>
-          <ValueLine
-            label={m.powerOfAttorneyNationalId}
-            value={formatNationalId(answers.about.powerOfAttorneyNationalId)}
-          />
-        </GridColumn>
+        {answers.about.powerOfAttorneyName ? (
+          <GridColumn span={['12/12', '6/12']}>
+            <ValueLine
+              label={m.powerOfAttorneyName}
+              value={answers.about.powerOfAttorneyName}
+            />
+          </GridColumn>
+        ) : null}
+        {answers.about.powerOfAttorneyNationalId ? (
+          <GridColumn span={['12/12', '6/12']}>
+            <ValueLine
+              label={m.powerOfAttorneyNationalId}
+              value={formatNationalId(answers.about.powerOfAttorneyNationalId)}
+            />
+          </GridColumn>
+        ) : null}
       </GridRow>
       <GridRow>
         <GridColumn span={['12/12', '6/12']}>
@@ -74,17 +122,21 @@ export const Overview = ({ application }: FieldBaseProps) => {
       <GridRow>
         <GridColumn span={['12/12', '6/12']}>
           <ValueLine
-            label={m.personalDonations}
-            value={formatCurrency(answers.individualIncome?.personalDonations)}
-          />
-          <ValueLine
-            label={m.corporateDonation}
-            value={formatCurrency(answers.individualIncome?.corporateDonations)}
-          />
-          <ValueLine
-            label={m.individualDonations}
+            label={m.candidatesOwnContributions}
             value={formatCurrency(
-              answers.individualIncome?.individualDonations,
+              answers.individualIncome?.candidatesOwnContributions,
+            )}
+          />
+          <ValueLine
+            label={m.contributionsFromLegalEntities}
+            value={formatCurrency(
+              answers.individualIncome?.contributionsByLegalEntities,
+            )}
+          />
+          <ValueLine
+            label={m.contributionsFromIndividuals}
+            value={formatCurrency(
+              answers.individualIncome?.individualContributions,
             )}
           />
           <ValueLine
@@ -102,7 +154,7 @@ export const Overview = ({ application }: FieldBaseProps) => {
             value={formatCurrency(answers.individualExpense?.advertisements)}
           />
           <ValueLine
-            label={m.expenses}
+            label={m.electionOffice}
             value={formatCurrency(answers.individualExpense?.electionOffice)}
           />
           <ValueLine
@@ -158,14 +210,14 @@ export const Overview = ({ application }: FieldBaseProps) => {
       <GridRow>
         <GridColumn span={['12/12', '6/12']}>
           <ValueLine
-            label={m.currentAssets}
-            value={formatCurrency(answers.asset?.current)}
+            label={m.fixedAssetsTotal}
+            value={formatCurrency(answers.asset?.fixedAssetsTotal)}
           />
         </GridColumn>
         <GridColumn span={['12/12', '6/12']}>
           <ValueLine
-            label={m.tangibleAssets}
-            value={formatCurrency(answers.asset?.tangible)}
+            label={m.currentAssets}
+            value={formatCurrency(answers.asset?.currentAssets)}
           />
         </GridColumn>
       </GridRow>
@@ -209,17 +261,63 @@ export const Overview = ({ application }: FieldBaseProps) => {
         <GridColumn span={['12/12', '6/12']}>
           <ValueLine
             label={m.debtsAndCash}
-            value={formatCurrency(answers.equity?.total)}
+            value={formatCurrency(answers.equityAndLiabilities?.total)}
           />
         </GridColumn>
       </GridRow>
+
       {fileName ? (
         <Fragment>
-          <FileValueLine label={answers.attachment?.file?.[0]?.name} />
+          <FileValueLine label={answers.attachments?.file?.[0]?.name} />
           <Divider />
         </Fragment>
       ) : null}
-      <Divider />
+      <Box paddingY={3}>
+        <Text variant="h3" as="h3">
+          {formatMessage(m.overview)}
+        </Text>
+      </Box>
+      <Box background="blue100" padding={3}>
+        <Controller
+          name="applicationApprove"
+          defaultValue={approveOverview}
+          rules={{ required: true }}
+          render={({ value, onChange }) => {
+            return (
+              <Checkbox
+                onChange={(e) => {
+                  onChange(e.target.checked)
+                  setApproveOverview(e.target.checked)
+                  setValue('applicationApprove' as string, e.target.checked)
+                }}
+                checked={value}
+                name="applicationApprove"
+                id="applicationApprove"
+                label={formatMessage(m.overviewCorrect)}
+                large
+              />
+            )
+          }}
+        />
+      </Box>
+      {errors && getErrorViaPath(errors, 'applicationApprove') ? (
+        <InputError errorMessage={formatMessage(m.errorApproval)} />
+      ) : null}
+      {submitError ? (
+        <Box paddingY={2}>
+          <AlertBanner
+            title={formatMessage(m.submitErrorTitle)}
+            description={formatMessage(m.submitErrorMessage)}
+            variant="error"
+            dismissable
+          />
+        </Box>
+      ) : null}
+      <BottomBar
+        loading={loading}
+        onSendButtonClick={onSendButtonClick}
+        onBackButtonClick={onBackButtonClick}
+      />
     </Box>
   )
 }

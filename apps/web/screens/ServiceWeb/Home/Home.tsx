@@ -1,4 +1,3 @@
-import React from 'react'
 import { useRouter } from 'next/router'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
@@ -10,7 +9,6 @@ import {
   QueryGetOrganizationArgs,
   QueryGetSupportCategoriesInOrganizationArgs,
   QueryGetSupportQnAsArgs,
-  SearchableTags,
   SupportCategory,
 } from '@island.is/web/graphql/schema'
 import {
@@ -38,10 +36,17 @@ import {
   ServiceWebWrapper,
   ServiceWebContext,
 } from '@island.is/web/components'
-import { useNamespace, LinkResolverResponse } from '@island.is/web/hooks'
+import {
+  useNamespace,
+  LinkResolverResponse,
+  useLinkResolver,
+} from '@island.is/web/hooks'
 import ContactBanner from '../ContactBanner/ContactBanner'
 import { getSlugPart } from '../utils'
 import sortAlpha from '@island.is/web/utils/sortAlpha'
+import { Locale } from 'locale'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
 
 import * as styles from './Home.css'
 
@@ -53,6 +58,7 @@ interface HomeProps {
     | Query['getSupportCategories']
     | Query['getSupportCategoriesInOrganization']
   featuredQNAs: Query['getFeaturedSupportQNAs']
+  locale: Locale
 }
 
 const Home: Screen<HomeProps> = ({
@@ -61,12 +67,17 @@ const Home: Screen<HomeProps> = ({
   namespace,
   organizationNamespace,
   featuredQNAs,
+  locale,
 }) => {
   const Router = useRouter()
   const n = useNamespace(namespace)
   const o = useNamespace(organizationNamespace)
+  const { linkResolver } = useLinkResolver()
 
-  const institutionSlug = getSlugPart(Router.asPath, 2)
+  useContentfulId(organization.id)
+  useLocalLinkTypeResolver()
+
+  const institutionSlug = getSlugPart(Router.asPath, locale === 'is' ? 2 : 3)
 
   const institutionSlugBelongsToMannaudstorg = institutionSlug.includes(
     'mannaudstorg',
@@ -150,7 +161,10 @@ const Home: Screen<HomeProps> = ({
                           description={description}
                           link={
                             {
-                              href: `/adstod/${organization.slug}/${slug}`,
+                              href: linkResolver('supportcategory', [
+                                organization.slug,
+                                slug,
+                              ]).href,
                             } as LinkResolverResponse
                           }
                         />
@@ -183,7 +197,13 @@ const Home: Screen<HomeProps> = ({
                                 return (
                                   <Box key={index}>
                                     <TopicCard
-                                      href={`/adstod/${organization.slug}/${category.slug}/${slug}`}
+                                      href={
+                                        linkResolver('supportqna', [
+                                          organization.slug,
+                                          category.slug,
+                                          slug,
+                                        ]).href
+                                      }
                                     >
                                       {title}
                                     </TopicCard>
@@ -207,7 +227,27 @@ const Home: Screen<HomeProps> = ({
                       span={['12/12', '12/12', '12/12', '10/12']}
                     >
                       <Box marginY={[2, 2, 4]}>
-                        <ContactBanner slug={institutionSlug} />
+                        <ContactBanner
+                          slug={institutionSlug}
+                          cantFindWhatYouAreLookingForText={o(
+                            'cantFindWhatYouAreLookingForText',
+                            n(
+                              'cantFindWhatYouAreLookingForText',
+                              'Finnurðu ekki það sem þig vantar?',
+                            ),
+                          )}
+                          contactUsText={o(
+                            'contactUsText',
+                            n('contactUsText', 'Hafa samband'),
+                          )}
+                          howCanWeHelpText={o(
+                            'howCanWeHelpText',
+                            n(
+                              'howCanWeHelpText',
+                              'Hvernig getum við aðstoðað?',
+                            ),
+                          )}
+                        />
                       </Box>
                     </GridColumn>
                   </GridRow>
@@ -222,7 +262,8 @@ const Home: Screen<HomeProps> = ({
 }
 
 Home.getInitialProps = async ({ apolloClient, locale, query }) => {
-  const slug = query.slug ? (query.slug as string) : 'stafraent-island'
+  const defaultSlug = locale === 'en' ? 'digital-iceland' : 'stafraent-island'
+  const slug = query.slug ? (query.slug as string) : defaultSlug
 
   const [organization, namespace, supportCategories] = await Promise.all([
     !!slug &&
@@ -316,6 +357,7 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
     featuredQNAs: featuredQNAs
       ? featuredQNAs?.data?.getFeaturedSupportQNAs
       : [],
+    locale: locale as Locale,
   }
 }
 

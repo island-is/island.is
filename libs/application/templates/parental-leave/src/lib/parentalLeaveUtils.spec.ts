@@ -368,12 +368,14 @@ describe('getApplicationExternalData', () => {
     expect(getApplicationExternalData(application.externalData)).toEqual({
       applicantGenderCode: 'Mock gender code',
       applicantName: 'Mock name',
+      applicationFundId: '',
       children: 'Mock child',
       dataProvider: {
         children: 'Mock child',
         existingApplications: 'Mock application',
       },
       existingApplications: 'Mock application',
+      navId: '',
       userEmail: 'mock@email.is',
       userPhoneNumber: 'Mock number',
     })

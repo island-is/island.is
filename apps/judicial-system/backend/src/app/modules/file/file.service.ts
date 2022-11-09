@@ -1,5 +1,5 @@
 import { uuid } from 'uuidv4'
-import { Op } from 'sequelize'
+import { Op, Sequelize } from 'sequelize'
 import { Transaction } from 'sequelize/types'
 
 import {
@@ -9,7 +9,7 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
+import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
@@ -20,8 +20,6 @@ import {
 } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 
-import { environment } from '../../../environments'
-import { writeFile } from '../../formatters'
 import { courtUpload } from '../../messages'
 import { AwsS3Service } from '../aws-s3'
 import { CourtDocumentFolder, CourtService } from '../court'
@@ -33,6 +31,7 @@ import { CaseFile } from './models/file.model'
 import { DeleteFileResponse } from './models/deleteFile.response'
 import { SignedUrl } from './models/signedUrl.model'
 import { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
+import { UpdateFileDto } from './dto/updateFile.dto'
 
 // Files are stored in AWS S3 under a key which has the following format:
 // uploads/<uuid>/<uuid>/<filename>
@@ -44,6 +43,7 @@ export class FileService {
   private throttle = Promise.resolve('')
 
   constructor(
+    @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(CaseFile) private readonly fileModel: typeof CaseFile,
     private readonly courtService: CourtService,
     private readonly awsS3Service: AwsS3Service,
@@ -55,8 +55,8 @@ export class FileService {
     throw new InternalServerErrorException('Format message not initialized')
   }
 
-  private refreshFormatMessage: () => Promise<void> = async () =>
-    this.intlService
+  private async refreshFormatMessage(): Promise<void> {
+    return this.intlService
       .useIntl(['judicial.system.backend'], 'is')
       .then((res) => {
         this.formatMessage = res.formatMessage
@@ -64,6 +64,7 @@ export class FileService {
       .catch((reason) => {
         this.logger.error('Unable to refresh format messages', { reason })
       })
+  }
 
   private async deleteFileFromDatabase(fileId: string): Promise<boolean> {
     this.logger.debug(`Deleting file ${fileId} from the database`)
@@ -169,10 +170,6 @@ export class FileService {
     })
 
     const content = await this.awsS3Service.getObject(file.key ?? '')
-
-    if (!environment.production) {
-      writeFile(`${file.name}`, content)
-    }
 
     const { courtDocumentFolder, subject, fileName } = this.getFileProperties(
       file,
@@ -351,5 +348,28 @@ export class FileService {
     }
 
     return updatedCaseFiles[0]
+  }
+
+  async updateFiles(
+    caseId: string,
+    caseFileUpdates: UpdateFileDto[],
+  ): Promise<CaseFile[]> {
+    return this.sequelize.transaction((transaction) => {
+      const updates = caseFileUpdates.map(async (update) => {
+        const [affectedNumber, file] = await this.fileModel.update(update, {
+          where: { caseId, id: update.id },
+          returning: true,
+          transaction,
+        })
+        if (affectedNumber !== 1 || !file[0]) {
+          throw new InternalServerErrorException(
+            `Could not update file ${update.id} of case ${caseId}`,
+          )
+        }
+        return file[0]
+      })
+
+      return Promise.all(updates)
+    })
   }
 }

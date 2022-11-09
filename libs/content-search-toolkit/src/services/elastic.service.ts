@@ -283,7 +283,7 @@ export class ElasticService {
   }
 
   async search(index: string, query: SearchInput) {
-    const requestBody = searchQuery(query)
+    const requestBody = searchQuery(query, true, true)
 
     return this.findByQuery<
       SearchResponse<
@@ -302,7 +302,6 @@ export class ElasticService {
   ): Promise<AutocompleteTermResponse> {
     const { singleTerm, size } = input
     const requestBody = autocompleteTermQuery({ singleTerm, size })
-
     const data = await this.findByQuery<
       AutocompleteTermResponse,
       typeof requestBody

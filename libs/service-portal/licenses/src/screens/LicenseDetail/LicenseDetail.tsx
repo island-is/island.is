@@ -9,7 +9,6 @@ import {
   GridRow,
   Stack,
   Text,
-  AlertBanner,
   Button,
   Icon,
   Table as T,
@@ -18,6 +17,9 @@ import {
 import {
   ServicePortalModuleComponent,
   UserInfoLine,
+  CardLoader,
+  ErrorScreen,
+  m as coreMessages,
 } from '@island.is/service-portal/core'
 import ExpandableLine from './ExpandableLine'
 import { m } from '../../lib/messages'
@@ -27,12 +29,11 @@ import format from 'date-fns/format'
 import { dateFormat } from '@island.is/shared/constants'
 import { GenericLicenseDataField, Query } from '@island.is/api/schema'
 import { PkPass } from '../../components/QRCodeModal/PkPass'
-import { LicenseLoader } from '../../components/LicenseLoader/LicenseLoader'
 import {
   getLicenseDetailHeading,
   getTypeFromPath,
 } from '../../utils/dataMapper'
-import { isExpired, toDate } from '../../utils/dateUtils'
+import { isExpired } from '../../utils/dateUtils'
 import isValid from 'date-fns/isValid'
 
 const dataFragment = gql`
@@ -105,6 +106,7 @@ const checkLicenseExpired = (date?: string) => {
 
   return isExpired(new Date(), new Date(date))
 }
+
 const DataFields = ({
   fields,
   licenseType,
@@ -288,7 +290,7 @@ const DataFields = ({
                   <Box marginY={3}>
                     <Pagination
                       page={page}
-                      totalPages={Math.round(field.fields.length / pageSize)}
+                      totalPages={Math.ceil(field.fields.length / pageSize)}
                       renderLink={(page, className, children) => (
                         <Box
                           cursor="pointer"
@@ -337,12 +339,15 @@ const LicenseDetail: ServicePortalModuleComponent = () => {
 
   if (error && !queryLoading) {
     return (
-      <Box>
-        <AlertBanner
-          description={formatMessage(m.errorFetchingDrivingLicense)}
-          variant="error"
-        />
-      </Box>
+      <ErrorScreen
+        figure="./assets/images/hourglass.svg"
+        tagVariant="red"
+        tag={formatMessage(coreMessages.errorTitle)}
+        title={formatMessage(coreMessages.somethingWrong)}
+        children={formatMessage(coreMessages.errorFetchModule, {
+          module: formatMessage(coreMessages.licenses).toLowerCase(),
+        })}
+      />
     )
   }
 
@@ -367,7 +372,7 @@ const LicenseDetail: ServicePortalModuleComponent = () => {
           </GridColumn>
         </GridRow>
       </Box>
-      {queryLoading && <LicenseLoader />}
+      {queryLoading && <CardLoader />}
 
       {!error && !queryLoading && (
         <>

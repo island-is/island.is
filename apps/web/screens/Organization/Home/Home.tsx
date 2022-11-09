@@ -1,5 +1,24 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { NavigationItem } from '@island.is/island-ui/core'
+import { useMemo } from 'react'
+import NextLink from 'next/link'
+
+import {
+  Box,
+  Breadcrumbs,
+  GridContainer,
+  NavigationItem,
+  Text,
+} from '@island.is/island-ui/core'
+import { LinkType, useLinkResolver, useNamespace } from '@island.is/web/hooks'
+import {
+  getThemeConfig,
+  SliceMachine,
+  OrganizationWrapper,
+  SearchBox,
+  IconTitleCard,
+} from '@island.is/web/components'
+import { CustomNextError } from '@island.is/web/units/errors'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   ContentLanguage,
@@ -7,18 +26,11 @@ import {
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
 } from '@island.is/web/graphql/schema'
-import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_PAGE_QUERY } from '../../queries'
+
 import { Screen } from '../../../types'
-import { LinkType, useNamespace } from '@island.is/web/hooks'
-import {
-  getThemeConfig,
-  SliceMachine,
-  OrganizationWrapper,
-  SearchBox,
-} from '@island.is/web/components'
-import { CustomNextError } from '@island.is/web/units/errors'
-import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_PAGE_QUERY } from '../../queries'
 import { getCustomAlertBanners } from './utils'
+import { LandingPageFooter } from './LandingPageFooter'
 
 interface HomeProps {
   organizationPage: Query['getOrganizationPage']
@@ -40,6 +52,13 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace }) => {
   const n = useNamespace(namespace)
   useContentfulId(organizationPage.id)
 
+  const organizationNamespace = useMemo(() => {
+    return JSON.parse(organizationPage?.organization?.namespace?.fields ?? '{}')
+  }, [organizationPage?.organization?.namespace?.fields])
+  const o = useNamespace(organizationNamespace)
+
+  const { linkResolver } = useLinkResolver()
+
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink.text,
@@ -60,30 +79,85 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace }) => {
       organizationPage={organizationPage}
       pageFeaturedImage={organizationPage.featuredImage}
       fullWidthContent={true}
+      minimal={organizationPage.theme === 'landing_page'}
       navigationData={{
         title: n('navigationTitle', 'Efnisyfirlit'),
         items: navList,
       }}
-      mainContent={organizationPage.slices.map((slice, index) => {
-        const digitalIcelandDetailPageLinkType: LinkType =
-          'digitalicelandservicesdetailpage'
-        return (
-          <SliceMachine
-            key={slice.id}
-            slice={slice}
-            namespace={namespace}
-            slug={organizationPage.slug}
-            marginBottom={index === organizationPage.slices.length - 1 ? 5 : 0}
-            params={{
-              anchorPageLinkType:
-                organizationPage.theme === 'digital_iceland'
-                  ? digitalIcelandDetailPageLinkType
-                  : undefined,
-            }}
-            renderedOnOrganizationSubpage={false}
-          />
-        )
-      })}
+      mainContent={
+        <Box>
+          {organizationPage.theme === 'landing_page' && (
+            <GridContainer>
+              <Box marginBottom={3}>
+                <Breadcrumbs
+                  items={[
+                    {
+                      title: 'Ísland.is',
+                      href: linkResolver('homepage').href,
+                    },
+                    {
+                      title: n(
+                        'landingPageOrganizationsBreadcrumbTitle',
+                        'Opinberir aðilar',
+                      ),
+                      href: linkResolver('organizations').href,
+                    },
+                  ]}
+                  renderLink={(link, item) => {
+                    return item?.href ? (
+                      <NextLink href={item?.href}>{link}</NextLink>
+                    ) : (
+                      link
+                    )
+                  }}
+                />
+              </Box>
+              <Box marginBottom={5}>
+                <Text variant="h1" color="blueberry600">
+                  {organizationPage.title}
+                </Text>
+              </Box>
+
+              <Box marginBottom={8}>
+                <IconTitleCard
+                  heading={o('landingPageTitleCardHeading', '')}
+                  href={o('landingPageTitleCardHref', '')}
+                  imgSrc={o(
+                    'landingPageTitleCardImageSrc',
+                    'https://images.ctfassets.net/8k0h54kbe6bj/dMv61A2SII5Y6AACjOzFo/63d1627ccf2113ae137c401725b1b35b/T__lva_og_kaffibolli.svg',
+                  )}
+                  alt={o('landingPageTitleCardImageAlt', '')}
+                />
+              </Box>
+            </GridContainer>
+          )}
+          {organizationPage.slices.map((slice, index) => {
+            const digitalIcelandDetailPageLinkType: LinkType =
+              'digitalicelandservicesdetailpage'
+            return (
+              <SliceMachine
+                key={slice.id}
+                slice={slice}
+                namespace={namespace}
+                slug={organizationPage.slug}
+                fullWidth={organizationPage.theme === 'landing_page'}
+                marginBottom={
+                  index === organizationPage.slices.length - 1 ? 5 : 0
+                }
+                params={{
+                  anchorPageLinkType:
+                    organizationPage.theme === 'digital_iceland'
+                      ? digitalIcelandDetailPageLinkType
+                      : undefined,
+                }}
+                paddingTop={
+                  !organizationPage.description && index === 0 ? 0 : 6
+                }
+              />
+            )
+          })}
+        </Box>
+      }
       sidebarContent={
         WITH_SEARCH.includes(organizationPage.slug) && (
           <SearchBox
@@ -109,8 +183,19 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace }) => {
           namespace={namespace}
           slug={organizationPage.slug}
           fullWidth={true}
+          params={{
+            latestNewsSliceBackground:
+              organizationPage.theme === 'landing_page' ? 'white' : 'purple100',
+            latestNewsSliceColorVariant:
+              organizationPage.theme === 'landing_page' ? 'blue' : 'default',
+          }}
         />
       ))}
+      {organizationPage.theme === 'landing_page' && (
+        <LandingPageFooter
+          footerItems={organizationPage.organization?.footerItems}
+        />
+      )}
     </OrganizationWrapper>
   )
 }

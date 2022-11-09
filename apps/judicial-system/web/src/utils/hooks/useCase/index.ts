@@ -359,7 +359,7 @@ const useCase = () => {
     [extendCaseMutation, formatMessage],
   )
 
-  const setAndSendToServer = async (
+  const setAndSendCaseToServer = async (
     updates: autofillEntry[],
     workingCase: Case,
     setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
@@ -406,7 +406,7 @@ const useCase = () => {
     isRequestingCourtRecordSignature,
     extendCase,
     isExtendingCase,
-    setAndSendToServer,
+    setAndSendCaseToServer,
   }
 }
 

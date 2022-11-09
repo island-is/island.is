@@ -108,7 +108,7 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
       <ErrorScreen
         figure="./assets/images/hourglass.svg"
         tagVariant="red"
-        tag="500"
+        tag={formatMessage(m.errorTitle)}
         title={formatMessage(m.somethingWrong)}
         children={formatMessage(m.errorFetchModule, {
           module: formatMessage(m.finance).toLowerCase(),
@@ -131,7 +131,7 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
       />
       <Stack space={2}>
         <GridRow>
-          <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+          <GridColumn span={['12/12', '12/12', '12/12', '8/12']}>
             {financeStatusData.organizations?.length > 0 ||
             financeStatusZero ? (
               <Box display="flex" justifyContent="flexStart" printHidden>

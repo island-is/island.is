@@ -51,9 +51,11 @@
 /apps/application-system/api/src/app/modules/payment                                                @island-is/juni
 /libs/api/domains/driving-license/                                                                  @island-is/juni
 /libs/api/domains/education/                                                                        @island-is/juni
+/libs/application/templates/estate/                                                                 @island-is/juni
+/libs/application/template-api-modules/src/lib/modules/templates/estate                             @island-is/juni
 /libs/application/templates/general-petition/                                                       @island-is/juni
 /libs/shared/connected/src/lib/generalPetition/GeneralPetitionLists                                 @island-is/juni
-/libs/api/domains/communications/                                                                   @island-is/juni
+/libs/api/domains/communications/                                                                   @island-is/juni @island-is/stefna
 /apps/services/user-notification/                                                                   @island-is/juni
 /apps/air-discount-scheme/                                                                          @island-is/juni
 /libs/air-discount-scheme/                                                                          @island-is/juni
@@ -76,11 +78,10 @@
 /libs/application/templates/driving-license-duplicate/                                              @island-is/juni
 /libs/application/template-api-modules/src/lib/modules/templates/driving-license-duplicate/         @island-is/juni
 
-/libs/clients/auth-public-api/                                                                      @island-is/aranja
+/libs/clients/auth/                                                                                 @island-is/aranja
 /libs/clients/middlewares/                                                                          @island-is/aranja
 /libs/service-portal/settings/access-control                                                        @island-is/aranja
-/libs/clients/vmst/                                                                                 @island-is/aranja
-/libs/api/domains/directorate-of-labour/                                                            @island-is/aranja
+/libs/service-portal/access-control/delegations                                                     @island-is/aranja
 
 /apps/judicial-system/                                                                              @island-is/kolibri-justice-league
 /libs/judicial-system/                                                                              @island-is/kolibri-justice-league
@@ -136,7 +137,6 @@
 /libs/application/template-api-modules/src/lib/modules/templates/complaints-to-althingi-ombudsman/  @island-is/sendiradid
 /libs/application/templates/accident-notification/                                                  @island-is/sendiradid
 /libs/application/template-api-modules/src/lib/modules/templates/accident-notification/             @island-is/sendiradid
-/libs/health-insurance/                                                                             @island-is/sendiradid
 /libs/application/template-api-modules/src/lib/modules/templates/health-insurance/                  @island-is/sendiradid
 /libs/application/template-api-modules/src/lib/modules/templates/public-debt-payment-plan           @island-is/sendiradid
 /libs/api/domains/health-insurance/                                                                 @island-is/sendiradid
@@ -172,6 +172,8 @@
 /libs/api/domains/content-search/                                                                   @island-is/stefna @island-is/juni
 /libs/api/domains/syslumenn/                                                                        @island-is/stefna
 /libs/api/domains/mailchimp/                                                                        @island-is/stefna
+/libs/api/domains/electronic-registration-statistics/                                               @island-is/stefna
+/libs/clients/electronic-registration-statistics/                                                   @island-is/stefna
 /libs/clients/syslumenn/                                                                            @island-is/stefna @island-is/juni
 /libs/shared/connected/                                                                             @island-is/stefna
 
@@ -181,17 +183,20 @@
 /libs/skilavottord/                                                                                 @island-is/deloitte
 /libs/application/templates/parental-leave/                                                         @island-is/deloitte
 /libs/application/template-api-modules/src/lib/modules/templates/parental-leave/                    @island-is/deloitte
+/libs/clients/vmst/                                                                                 @island-is/deloitte
+/libs/api/domains/directorate-of-labour/                                                            @island-is/deloitte
 
-/apps/services/auth/api/                                                                            @island-is/fuglar @island-is/aranja
+/apps/services/auth/ids-api/                                                                        @island-is/fuglar @island-is/aranja
 /apps/services/auth/admin-api/                                                                      @island-is/fuglar @island-is/aranja
 /apps/services/auth/public-api/                                                                     @island-is/fuglar @island-is/aranja
+/apps/services/auth/delegation-api/                                                                 @island-is/fuglar @island-is/aranja
 /apps/auth-admin-web/                                                                               @island-is/fuglar @island-is/aranja
 /apps/auth-admin-web-e2e/                                                                           @island-is/fuglar @island-is/aranja
 /libs/auth-api-lib/                                                                                 @island-is/fuglar @island-is/aranja
 /libs/auth-nest-tools/                                                                              @island-is/fuglar @island-is/aranja
 
-/apps/services/auth/personal-representative/                                                        @island-is/programm
-/apps/services/auth/personal-representative-public/                                                 @island-is/programm
+/apps/services/auth/personal-representative/                                                        @island-is/programm @island-is/aranja
+/apps/services/auth/personal-representative-public/                                                 @island-is/programm @island-is/aranja
 /libs/api/domains/financial-statements-inao/                                                        @island-is/programm
 /libs/clients/financial-statements-inao                                                             @island-is/programm
 /libs/application/templates/financial-statements-inao/                                              @island-is/programm
@@ -209,6 +214,10 @@
 /libs/application/templates/no-debt-certificate/                                                    @island-is/origo
 
 /libs/clients/charge-fjs-v2/                                                                        @island-is/origo
+
+/libs/application/templates/transport-authority/                                                    @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/transport-authority/               @island-is/origo
+
 
 # Temporary assignment while the QA bootstrap project is in progress
 /apps/system-e2e/                                                                                   @island-is/qa

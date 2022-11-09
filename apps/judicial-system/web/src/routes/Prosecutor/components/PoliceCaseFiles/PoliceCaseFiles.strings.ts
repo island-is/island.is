@@ -2,8 +2,9 @@ import { defineMessages } from 'react-intl'
 
 export const policeCaseFiles = defineMessages({
   heading: {
-    id: 'judicial.system.core:police_case_files.heading',
-    defaultMessage: 'Gögn úr LÖKE',
+    id: 'judicial.system.core:police_case_files.heading_v1',
+    defaultMessage:
+      'Gögn úr LÖKE{policeCaseNumber, select, NONE {} other {-máli {policeCaseNumber}}}',
     description:
       'Notaður sem titill fyrir "LOKE" gagnapakkann á rannsóknargagna skrefi.',
   },

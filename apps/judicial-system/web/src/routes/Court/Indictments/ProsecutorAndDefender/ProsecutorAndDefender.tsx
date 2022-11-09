@@ -18,14 +18,14 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
-import * as constants from '@island.is/judicial-system/consts'
 import { Box } from '@island.is/island-ui/core'
+import { isProsecutorAndDefenderStepValid } from '@island.is/judicial-system-web/src/utils/validate'
+import { NotificationType } from '@island.is/judicial-system/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import * as constants from '@island.is/judicial-system/consts'
 
 import { prosecutorAndDefender as m } from './ProsecutorAndDefender.strings'
 import SelectDefender from './SelectDefender'
-import { isprosecutorAndDefenderStepValid } from '@island.is/judicial-system-web/src/utils/validate'
-import { NotificationType } from '@island.is/judicial-system/types'
 
 const HearingArrangements: React.FC = () => {
   const {
@@ -36,14 +36,14 @@ const HearingArrangements: React.FC = () => {
   } = useContext(FormContext)
   const router = useRouter()
   const {
-    setAndSendToServer,
+    setAndSendCaseToServer,
     sendNotification,
     isSendingNotification,
   } = useCase()
   const { formatMessage } = useIntl()
   const handleProsecutorChange = useCallback(
     (prosecutorId: string) => {
-      setAndSendToServer(
+      setAndSendCaseToServer(
         [
           {
             prosecutorId: prosecutorId,
@@ -55,7 +55,7 @@ const HearingArrangements: React.FC = () => {
       )
       return true
     },
-    [workingCase, setWorkingCase, setAndSendToServer],
+    [workingCase, setWorkingCase, setAndSendCaseToServer],
   )
 
   const onNextButttonClick = useCallback(async () => {
@@ -75,13 +75,21 @@ const HearingArrangements: React.FC = () => {
         title={formatMessage(titles.court.indictments.prosecutorAndDefender)}
       />
       <FormContentContainer>
-        <PageTitle title={formatMessage(m.title)} />
+        <PageTitle>{formatMessage(m.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={5}>
           <SectionHeading title={formatMessage(m.selectProsecutorHeading)} />
           <ProsecutorSelection onChange={handleProsecutorChange} />
         </Box>
-        <SelectDefender />
+        <Box component="section" marginBottom={10}>
+          <SectionHeading
+            title={formatMessage(m.selectDefenderHeading)}
+            required
+          />
+          {workingCase.defendants?.map((defendant, index) => (
+            <SelectDefender defendant={defendant} key={index} />
+          ))}
+        </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
@@ -91,7 +99,7 @@ const HearingArrangements: React.FC = () => {
           nextUrl={`${constants.INDICTMENTS_COURT_RECORD_ROUTE}/${workingCase.id}`}
           nextIsDisabled={
             isSendingNotification ||
-            !isprosecutorAndDefenderStepValid(workingCase)
+            !isProsecutorAndDefenderStepValid(workingCase)
           }
           onNextButtonClick={onNextButttonClick}
         />

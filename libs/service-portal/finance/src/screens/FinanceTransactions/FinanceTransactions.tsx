@@ -2,7 +2,6 @@ import format from 'date-fns/format'
 import sub from 'date-fns/sub'
 import React, { useEffect, useState } from 'react'
 import cn from 'classnames'
-
 import { useLazyQuery, useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
 import {
@@ -48,15 +47,14 @@ const defaultCalState = { top: false, lower: false }
 const FinanceTransactions: ServicePortalModuleComponent = () => {
   useNamespaces('sp.finance-transactions')
   const { formatMessage } = useLocale()
-
-  const backInTheDay = sub(new Date(), {
-    months: 3,
-  })
   const [openCal, setOpenCal] = useState<{ top: boolean; lower: boolean }>(
     defaultCalState,
   )
-  const [fromDate, setFromDate] = useState<Date | null>()
-  const [toDate, setToDate] = useState<Date | null>()
+  const backInTheDay = sub(new Date(), {
+    months: 3,
+  })
+  const [fromDate, setFromDate] = useState<Date>()
+  const [toDate, setToDate] = useState<Date>()
   const [q, setQ] = useState<string>('')
   const [chargeTypesEmpty, setChargeTypesEmpty] = useState(false)
   const [dropdownSelect, setDropdownSelect] = useState<string[] | undefined>()
@@ -68,7 +66,7 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
   } = useQuery<Query>(GET_CUSTOMER_CHARGETYPE, {
     onCompleted: () => {
       if (customerChartypeData?.getCustomerChargeType?.chargeType) {
-        setAllChargeTypes()
+        setEmptyChargeTypes()
       } else {
         setChargeTypesEmpty(true)
       }
@@ -87,7 +85,10 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
       loadCustomerRecords({
         variables: {
           input: {
-            chargeTypeID: dropdownSelect,
+            chargeTypeID:
+              dropdownSelect.length === 0
+                ? getAllChargeTypes()
+                : dropdownSelect,
             dayFrom: format(fromDate, 'yyyy-MM-dd'),
             dayTo: format(toDate, 'yyyy-MM-dd'),
           },
@@ -101,14 +102,19 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
     setToDate(new Date())
   }, [])
 
-  function setAllChargeTypes() {
+  function getAllChargeTypes() {
+    const allChargeTypeValues = chargeTypeData?.chargeType?.map((ct) => ct.id)
+    return allChargeTypeValues ?? []
+  }
+
+  function setEmptyChargeTypes() {
     setDropdownSelect([])
   }
 
   function clearAllFilters() {
-    setDropdownSelect([])
-    setFromDate(null)
-    setToDate(null)
+    setEmptyChargeTypes()
+    setFromDate(backInTheDay)
+    setToDate(new Date())
     setQ('')
   }
 
@@ -176,7 +182,6 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
                 labelClearAll={formatMessage(m.clearAllFilters)}
                 labelOpen={formatMessage(m.openFilter)}
                 labelClose={formatMessage(m.closeFilter)}
-                popoverFlip={false}
                 filterInput={
                   <FilterInput
                     placeholder={formatMessage(m.searchPlaceholder)}
@@ -195,7 +200,7 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
                     setDropdownSelect(selected)
                   }}
                   onClear={() => {
-                    setAllChargeTypes()
+                    setEmptyChargeTypes()
                   }}
                   categories={[
                     {
@@ -256,16 +261,16 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
                             <DatePicker
                               label={formatMessage(m.datepickerToLabel)}
                               placeholderText={formatMessage(m.datepickLabel)}
+                              locale="is"
+                              backgroundColor="blue"
+                              size="xs"
+                              handleChange={(d) => setToDate(d)}
                               handleOpenCalendar={() =>
                                 setOpenCal({ top: false, lower: true })
                               }
                               handleCloseCalendar={() =>
                                 setOpenCal(defaultCalState)
                               }
-                              locale="is"
-                              backgroundColor="blue"
-                              size="xs"
-                              handleChange={(d) => setToDate(d)}
                               selected={toDate}
                             />
                           </Box>
