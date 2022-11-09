@@ -5,14 +5,16 @@ import { ChargeItemCode } from '@island.is/shared/constants'
 import { TransferOfVehicleOwnershipApi } from '@island.is/api/domains/transport-authority/transfer-of-vehicle-ownership'
 import { TransferOfVehicleOwnershipAnswers } from '@island.is/application/templates/transport-authority/transfer-of-vehicle-ownership'
 import {
-  generateAssignReviewerEmail,
-  generateConfirmationEmail,
+  generateRequestReviewEmail,
+  generateApplicationSubmittedEmail,
+  generateApplicationRejectedEmail,
 } from './emailGenerators'
 import {
-  generateAssignReviewerSms,
-  generateConfirmationSms,
+  generateRequestReviewSms,
+  generateApplicationSubmittedSms,
+  generateApplicationRejectedSms,
 } from './smsGenerators'
-import { EmailRecipient } from './types'
+import { EmailRecipient, EmailRole } from './types'
 
 @Injectable()
 export class TransferOfVehicleOwnershipService {
@@ -32,10 +34,13 @@ export class TransferOfVehicleOwnershipService {
     | undefined
   > {
     try {
+      const chargeItemCode =
+        ChargeItemCode.TRANSPORT_AUTHORITY_TRANSFER_OF_VEHICLE_OWNERSHIP
+
       const result = this.sharedTemplateAPIService.createCharge(
         auth.authorization,
         id,
-        ChargeItemCode.TRANSPORT_AUTHORITY_XXX,
+        chargeItemCode,
       )
       return result
     } catch (exeption) {
@@ -76,79 +81,26 @@ export class TransferOfVehicleOwnershipService {
     // 2. Notify users that need to review
 
     // 2a. Get list of users that need to review
-
-    const recipientList: Array<EmailRecipient> = []
     const answers = application.answers as TransferOfVehicleOwnershipAnswers
-
-    // Seller's co-owners
-    const sellerCoOwners = answers.sellerCoOwner
-    if (sellerCoOwners) {
-      for (var i = 0; i < sellerCoOwners.length; i++) {
-        recipientList.push({
-          ssn: sellerCoOwners[i].nationalId,
-          name: sellerCoOwners[i].name,
-          email: sellerCoOwners[i].email,
-          phone: sellerCoOwners[i].phone,
-          role: 'sellerCoOwner',
-        })
-      }
-    }
-
-    // Buyer
-    if (answers.buyer) {
-      recipientList.push({
-        ssn: answers.buyer.nationalId,
-        name: answers.buyer.name,
-        email: answers.buyer.email,
-        phone: answers.buyer.phone,
-        role: 'buyer',
-      })
-    }
-
-    // Buyer's co-owners
-    const buyerCoOwners = answers.buyerCoOwnerAndOperator?.filter(
-      (x) => x.type === 'coOwner',
-    )
-    if (buyerCoOwners) {
-      for (var i = 0; i < buyerCoOwners.length; i++) {
-        recipientList.push({
-          ssn: buyerCoOwners[i].nationalId,
-          name: buyerCoOwners[i].name,
-          email: buyerCoOwners[i].email,
-          phone: buyerCoOwners[i].phone,
-          role: 'buyerCoOwner',
-        })
-      }
-    }
-
-    // Buyer's operators
-    const buyerOperators = answers.buyerCoOwnerAndOperator?.filter(
-      (x) => x.type === 'operator',
-    )
-    if (buyerOperators) {
-      for (var i = 0; i < buyerOperators.length; i++) {
-        recipientList.push({
-          ssn: buyerOperators[i].nationalId,
-          name: buyerOperators[i].name,
-          email: buyerOperators[i].email,
-          phone: buyerOperators[i].phone,
-          role: 'buyerOperator',
-        })
-      }
-    }
+    const recipientList = this.getRecipients(answers, [
+      EmailRole.sellerCoOwner,
+      EmailRole.buyer,
+      EmailRole.buyerCoOwner,
+      EmailRole.buyerOperator,
+    ])
 
     // 2b. Send email/sms individually to each recipient
     for (var i = 0; i < recipientList.length; i++) {
       if (recipientList[i].email) {
         await this.sharedTemplateAPIService.sendEmail(
-          (props) => generateAssignReviewerEmail(props, recipientList[i]),
+          (props) => generateRequestReviewEmail(props, recipientList[i]),
           application,
         )
       }
 
       if (recipientList[i].phone) {
         await this.sharedTemplateAPIService.sendSms(
-          () => generateAssignReviewerSms(recipientList[i]),
+          () => generateRequestReviewSms(recipientList[i]),
           application,
         )
       }
@@ -190,7 +142,8 @@ export class TransferOfVehicleOwnershipService {
     if (buyerCoOwners) {
       for (var i = 0; i < buyerCoOwners.length; i++) {
         const oldEntry = oldRecipientList.find((x) => {
-          x.role === 'buyerCoOwner' && x.ssn === buyerCoOwners[i].nationalId
+          x.role === EmailRole.buyerCoOwner &&
+            x.ssn === buyerCoOwners[i].nationalId
         })
         const emailChanged = oldEntry
           ? oldEntry.email !== buyerCoOwners[i].email
@@ -204,7 +157,7 @@ export class TransferOfVehicleOwnershipService {
             name: buyerCoOwners[i].name,
             email: emailChanged ? buyerCoOwners[i].email : undefined,
             phone: phoneChanged ? buyerCoOwners[i].phone : undefined,
-            role: 'buyerCoOwner',
+            role: EmailRole.buyerCoOwner,
           })
         }
       }
@@ -217,7 +170,8 @@ export class TransferOfVehicleOwnershipService {
     if (buyerOperators) {
       for (var i = 0; i < buyerOperators.length; i++) {
         const oldEntry = oldRecipientList.find((x) => {
-          x.role === 'buyerOperator' && x.ssn === buyerOperators[i].nationalId
+          x.role === EmailRole.buyerOperator &&
+            x.ssn === buyerOperators[i].nationalId
         })
         const emailChanged = oldEntry
           ? oldEntry.email !== buyerOperators[i].email
@@ -231,7 +185,7 @@ export class TransferOfVehicleOwnershipService {
             name: buyerOperators[i].name,
             email: emailChanged ? buyerOperators[i].email : undefined,
             phone: phoneChanged ? buyerOperators[i].phone : undefined,
-            role: 'buyerOperator',
+            role: EmailRole.buyerOperator,
           })
         }
       }
@@ -242,13 +196,13 @@ export class TransferOfVehicleOwnershipService {
       if (newlyAddedRecipientList[i].email) {
         await this.sharedTemplateAPIService.sendEmail(
           (props) =>
-            generateAssignReviewerEmail(props, newlyAddedRecipientList[i]),
+            generateRequestReviewEmail(props, newlyAddedRecipientList[i]),
           application,
         )
       }
       if (newlyAddedRecipientList[i].phone) {
         await this.sharedTemplateAPIService.sendSms(
-          () => generateAssignReviewerSms(newlyAddedRecipientList[i]),
+          () => generateRequestReviewSms(newlyAddedRecipientList[i]),
           application,
         )
       }
@@ -259,9 +213,38 @@ export class TransferOfVehicleOwnershipService {
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<void> {
-    // TODOx implement rejectApplication
-    // send email to everyone involved about this
-    // cancel charge so that seller gets reimburshed
+    // 1. Revert charge so that the seller gets reimburshed
+    // TODOx revert charge so that the seller gets reimburshed
+    // await this.chargeFjsV2ClientService.revertCharge(chargeId)
+
+    // 2. Notify everyone in the process that the application has been withdrawn
+
+    // 2a. Get list of users that need to be notified
+    const answers = application.answers as TransferOfVehicleOwnershipAnswers
+    const recipientList = this.getRecipients(answers, [
+      EmailRole.seller,
+      EmailRole.sellerCoOwner,
+      EmailRole.buyer,
+      EmailRole.buyerCoOwner,
+      EmailRole.buyerOperator,
+    ])
+
+    // 2b. Send email/sms individually to each recipient about success of withdrawing application
+    for (var i = 0; i < recipientList.length; i++) {
+      if (recipientList[i].email) {
+        await this.sharedTemplateAPIService.sendEmail(
+          (props) => generateApplicationRejectedEmail(props, recipientList[i]),
+          application,
+        )
+      }
+
+      if (recipientList[i].phone) {
+        await this.sharedTemplateAPIService.sendSms(
+          () => generateApplicationRejectedSms(recipientList[i]),
+          application,
+        )
+      }
+    }
   }
 
   // After everyone has reviewed (and approved), then submit the application, and notify everyone involved it was a success
@@ -317,86 +300,29 @@ export class TransferOfVehicleOwnershipService {
       })),
     })
 
-    // 2. Notify everyone in the process that the application have successfully been submitted
+    // 2. Notify everyone in the process that the application has successfully been submitted
 
     // 2a. Get list of users that need to be notified
-
-    const recipientList: Array<EmailRecipient> = []
-
-    // Seller
-    if (answers.seller) {
-      recipientList.push({
-        ssn: answers.seller.nationalId,
-        name: answers.seller.name,
-        email: answers.seller.email,
-        phone: answers.seller.phone,
-        role: 'seller',
-      })
-    }
-
-    // Seller's co-owners
-    const sellerCoOwners = answers.sellerCoOwner
-    if (sellerCoOwners) {
-      for (var i = 0; i < sellerCoOwners.length; i++) {
-        recipientList.push({
-          ssn: sellerCoOwners[i].nationalId,
-          name: sellerCoOwners[i].name,
-          email: sellerCoOwners[i].email,
-          phone: sellerCoOwners[i].phone,
-          role: 'sellerCoOwner',
-        })
-      }
-    }
-
-    // Buyer
-    if (answers.buyer) {
-      recipientList.push({
-        ssn: answers.buyer.nationalId,
-        name: answers.buyer.name,
-        email: answers.buyer.email,
-        phone: answers.buyer.phone,
-        role: 'buyer',
-      })
-    }
-
-    // Buyer's co-owners
-    if (buyerCoOwners) {
-      for (var i = 0; i < buyerCoOwners.length; i++) {
-        recipientList.push({
-          ssn: buyerCoOwners[i].nationalId,
-          name: buyerCoOwners[i].name,
-          email: buyerCoOwners[i].email,
-          phone: buyerCoOwners[i].phone,
-          role: 'buyerCoOwner',
-        })
-      }
-    }
-
-    // Buyer's operators
-    if (buyerOperators) {
-      for (var i = 0; i < buyerOperators.length; i++) {
-        recipientList.push({
-          ssn: buyerOperators[i].nationalId,
-          name: buyerOperators[i].name,
-          email: buyerOperators[i].email,
-          phone: buyerOperators[i].phone,
-          role: 'buyerOperator',
-        })
-      }
-    }
+    const recipientList = this.getRecipients(answers, [
+      EmailRole.seller,
+      EmailRole.sellerCoOwner,
+      EmailRole.buyer,
+      EmailRole.buyerCoOwner,
+      EmailRole.buyerOperator,
+    ])
 
     // 2b. Send email/sms individually to each recipient about success of submitting application
     for (var i = 0; i < recipientList.length; i++) {
       if (recipientList[i].email) {
         await this.sharedTemplateAPIService.sendEmail(
-          (props) => generateConfirmationEmail(props, recipientList[i]),
+          (props) => generateApplicationSubmittedEmail(props, recipientList[i]),
           application,
         )
       }
 
       if (recipientList[i].phone) {
         await this.sharedTemplateAPIService.sendSms(
-          () => generateConfirmationSms(recipientList[i]),
+          () => generateApplicationSubmittedSms(recipientList[i]),
           application,
         )
       }
@@ -411,5 +337,82 @@ export class TransferOfVehicleOwnershipService {
         ? dateObj
         : new Date()
     return new Date(date.toISOString().substring(0, 10) + 'T12:00:00Z')
+  }
+
+  private getRecipients(
+    answers: TransferOfVehicleOwnershipAnswers,
+    roles: Array<EmailRole>,
+  ): Array<EmailRecipient> {
+    const recipientList: Array<EmailRecipient> = []
+
+    // Seller
+    if (roles.includes(EmailRole.seller) && answers.seller) {
+      recipientList.push({
+        ssn: answers.seller.nationalId,
+        name: answers.seller.name,
+        email: answers.seller.email,
+        phone: answers.seller.phone,
+        role: EmailRole.seller,
+      })
+    }
+
+    // Seller's co-owners
+    const sellerCoOwners = answers.sellerCoOwner
+    if (roles.includes(EmailRole.sellerCoOwner) && sellerCoOwners) {
+      for (var i = 0; i < sellerCoOwners.length; i++) {
+        recipientList.push({
+          ssn: sellerCoOwners[i].nationalId,
+          name: sellerCoOwners[i].name,
+          email: sellerCoOwners[i].email,
+          phone: sellerCoOwners[i].phone,
+          role: EmailRole.sellerCoOwner,
+        })
+      }
+    }
+
+    // Buyer
+    if (roles.includes(EmailRole.buyer) && answers.buyer) {
+      recipientList.push({
+        ssn: answers.buyer.nationalId,
+        name: answers.buyer.name,
+        email: answers.buyer.email,
+        phone: answers.buyer.phone,
+        role: EmailRole.buyer,
+      })
+    }
+
+    // Buyer's co-owners
+    const buyerCoOwners = answers.buyerCoOwnerAndOperator?.filter(
+      (x) => x.type === 'coOwner',
+    )
+    if (roles.includes(EmailRole.buyerCoOwner) && buyerCoOwners) {
+      for (var i = 0; i < buyerCoOwners.length; i++) {
+        recipientList.push({
+          ssn: buyerCoOwners[i].nationalId,
+          name: buyerCoOwners[i].name,
+          email: buyerCoOwners[i].email,
+          phone: buyerCoOwners[i].phone,
+          role: EmailRole.buyerCoOwner,
+        })
+      }
+    }
+
+    // Buyer's operators
+    const buyerOperators = answers.buyerCoOwnerAndOperator?.filter(
+      (x) => x.type === 'operator',
+    )
+    if (roles.includes(EmailRole.buyerOperator) && buyerOperators) {
+      for (var i = 0; i < buyerOperators.length; i++) {
+        recipientList.push({
+          ssn: buyerOperators[i].nationalId,
+          name: buyerOperators[i].name,
+          email: buyerOperators[i].email,
+          phone: buyerOperators[i].phone,
+          role: EmailRole.buyerOperator,
+        })
+      }
+    }
+
+    return recipientList
   }
 }

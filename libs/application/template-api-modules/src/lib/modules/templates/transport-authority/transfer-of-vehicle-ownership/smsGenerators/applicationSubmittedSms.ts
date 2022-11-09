@@ -1,9 +1,11 @@
 import { SmsMessage } from '../../../../../types'
 import { EmailRecipient } from '../types'
 
-export type ConfirmationSms = (recipient: EmailRecipient) => SmsMessage
+export type ApplicationSubmittedSms = (recipient: EmailRecipient) => SmsMessage
 
-export const generateConfirmationSms: ConfirmationSms = (recipient) => {
+export const generateApplicationSubmittedSms: ApplicationSubmittedSms = (
+  recipient,
+) => {
   if (!recipient.phone) throw new Error('Recipient phone was undefined')
 
   const subject = 'Tilkynning um eigendaskipti - Búið er að klára umsókn'

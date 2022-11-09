@@ -1,9 +1,9 @@
 import { SmsMessage } from '../../../../../types'
 import { EmailRecipient } from '../types'
 
-export type AssignReviewerSms = (recipient: EmailRecipient) => SmsMessage
+export type RequestReviewSms = (recipient: EmailRecipient) => SmsMessage
 
-export const generateAssignReviewerSms: AssignReviewerSms = (recipient) => {
+export const generateRequestReviewSms: RequestReviewSms = (recipient) => {
   if (!recipient.phone) throw new Error('Recipient phone was undefined')
 
   const subject = 'Tilkynning um eigendaskipti - Vantar samþykki'

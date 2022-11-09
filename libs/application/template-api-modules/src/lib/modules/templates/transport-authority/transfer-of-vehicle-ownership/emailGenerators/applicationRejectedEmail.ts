@@ -2,12 +2,12 @@ import { Message } from '@island.is/email-service'
 import { EmailTemplateGeneratorProps } from '../../../../../types'
 import { EmailRecipient } from '../types'
 
-export type ConfirmationEmail = (
+export type ApplicationRejectedEmail = (
   props: EmailTemplateGeneratorProps,
   recipient: EmailRecipient,
 ) => Message
 
-export const generateConfirmationEmail: ConfirmationEmail = (
+export const generateApplicationRejectedEmail: ApplicationRejectedEmail = (
   props,
   recipient,
 ): Message => {
@@ -18,7 +18,7 @@ export const generateConfirmationEmail: ConfirmationEmail = (
 
   if (!recipient.email) throw new Error('Recipient email was undefined')
 
-  const subject = 'Tilkynning um eigendaskipti - Búið er að klára umsókn'
+  const subject = 'Tilkynning um eigendaskipti - Búið er að afturkalla umsókn'
 
   return {
     from: {
@@ -33,7 +33,7 @@ export const generateConfirmationEmail: ConfirmationEmail = (
         {
           component: 'Copy',
           context: {
-            copy: 'Umsóknin er komin til okkar.',
+            copy: 'Búið er að afturkalla umsókn.',
           },
         },
       ],

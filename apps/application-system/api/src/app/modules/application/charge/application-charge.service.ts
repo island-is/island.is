@@ -43,6 +43,32 @@ export class ApplicationChargeService {
     }
   }
 
+  async revertCharge(application: Pick<Application, 'id' | 'externalData'>) {
+    try {
+      const payment = await this.paymentService.findPaymentByApplicationId(
+        application.id,
+      )
+
+      // No need to revert charge if not yet paid or never existed
+      if (!payment || !payment.fulfilled) {
+        return
+      }
+
+      // Revert the charge, using the ID we got from FJS
+      const chargeId = this.getChargeId(application)
+      if (chargeId) {
+        await this.chargeFjsV2ClientService.revertCharge(chargeId)
+      }
+    } catch (error) {
+      this.logger.error(
+        `Application charge revert error on id ${application.id}`,
+        error,
+      )
+
+      throw error
+    }
+  }
+
   getChargeId(application: Pick<Application, 'externalData'>) {
     const externalData = application.externalData as
       | ExternalData

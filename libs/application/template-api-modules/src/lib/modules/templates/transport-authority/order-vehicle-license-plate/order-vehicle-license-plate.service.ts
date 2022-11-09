@@ -14,10 +14,14 @@ export class OrderVehicleRegistrationCertificateService {
     auth,
   }: TemplateApiModuleActionProps) {
     try {
+      // TODOx check stuff about charging
+      const chargeItemCode =
+        ChargeItemCode.TRANSPORT_AUTHORITY_ORDER_VEHICLE_LICENSE_PLATE
+
       const result = this.sharedTemplateAPIService.createCharge(
         auth.authorization,
         id,
-        ChargeItemCode.TRANSPORT_AUTHORITY_XXX,
+        chargeItemCode,
       )
       return result
     } catch (exeption) {

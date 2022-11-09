@@ -17,10 +17,14 @@ export class OrderVehicleLicensePlateService {
     auth,
   }: TemplateApiModuleActionProps) {
     try {
+      // TODOx check if includes rush fee
+      const chargeItemCode =
+        ChargeItemCode.TRANSPORT_AUTHORITY_ORDER_VEHICLE_REGISTRATION_CERTIFICATE
+
       const result = this.sharedTemplateAPIService.createCharge(
         auth.authorization,
         id,
-        ChargeItemCode.TRANSPORT_AUTHORITY_XXX,
+        chargeItemCode,
       )
       return result
     } catch (exeption) {

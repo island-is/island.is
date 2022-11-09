@@ -2,12 +2,12 @@ import { Message } from '@island.is/email-service'
 import { EmailTemplateGeneratorProps } from '../../../../../types'
 import { EmailRecipient } from '../types'
 
-export type AssignReviewerEmail = (
+export type RequestReviewEmail = (
   props: EmailTemplateGeneratorProps,
   recipient: EmailRecipient,
 ) => Message
 
-export const generateAssignReviewerEmail: AssignReviewerEmail = (
+export const generateRequestReviewEmail: RequestReviewEmail = (
   props,
   recipient,
 ): Message => {

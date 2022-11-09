@@ -18,4 +18,9 @@ export class ChargeFjsV2ClientService {
 
     return response.receptionID
   }
+
+  async revertCharge(chargeId: string): Promise<string> {
+    // TODOx waiting for new endpoint in FJS api
+    return ''
+  }
 }
