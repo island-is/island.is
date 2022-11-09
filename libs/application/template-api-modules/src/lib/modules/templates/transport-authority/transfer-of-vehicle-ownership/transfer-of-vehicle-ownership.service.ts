@@ -12,12 +12,7 @@ import {
   generateAssignReviewerSms,
   generateConfirmationSms,
 } from './smsGenerators'
-
-interface EmailRecipient {
-  name: string
-  email: string
-  phone?: string
-}
+import { EmailRecipient } from './types'
 
 @Injectable()
 export class TransferOfVehicleOwnershipService {
@@ -52,9 +47,10 @@ export class TransferOfVehicleOwnershipService {
   async initReview({
     application,
     auth,
-  }: TemplateApiModuleActionProps): Promise<void> {
-    // Validate payment:
+  }: TemplateApiModuleActionProps): Promise<Array<EmailRecipient>> {
+    // 1. Validate payment
 
+    // 1a. Make sure a paymentUrl was created
     const { paymentUrl } = application.externalData.createCharge.data as {
       paymentUrl: string
     }
@@ -64,6 +60,7 @@ export class TransferOfVehicleOwnershipService {
       )
     }
 
+    // 1b. Make sure payment is fulfilled (has been paid)
     const isPayment:
       | { fulfilled: boolean }
       | undefined = await this.sharedTemplateAPIService.getPaymentStatus(
@@ -76,7 +73,10 @@ export class TransferOfVehicleOwnershipService {
       )
     }
 
-    // Notify users that need to review
+    // 2. Notify users that need to review
+
+    // 2a. Get list of users that need to review
+
     const recipientList: Array<EmailRecipient> = []
     const answers = application.answers as TransferOfVehicleOwnershipAnswers
 
@@ -85,9 +85,11 @@ export class TransferOfVehicleOwnershipService {
     if (sellerCoOwners) {
       for (var i = 0; i < sellerCoOwners.length; i++) {
         recipientList.push({
+          ssn: sellerCoOwners[i].nationalId,
           name: sellerCoOwners[i].name,
           email: sellerCoOwners[i].email,
           phone: sellerCoOwners[i].phone,
+          role: 'sellerCoOwner',
         })
       }
     }
@@ -95,9 +97,11 @@ export class TransferOfVehicleOwnershipService {
     // Buyer
     if (answers.buyer) {
       recipientList.push({
+        ssn: answers.buyer.nationalId,
         name: answers.buyer.name,
         email: answers.buyer.email,
         phone: answers.buyer.phone,
+        role: 'buyer',
       })
     }
 
@@ -108,9 +112,11 @@ export class TransferOfVehicleOwnershipService {
     if (buyerCoOwners) {
       for (var i = 0; i < buyerCoOwners.length; i++) {
         recipientList.push({
+          ssn: buyerCoOwners[i].nationalId,
           name: buyerCoOwners[i].name,
           email: buyerCoOwners[i].email,
           phone: buyerCoOwners[i].phone,
+          role: 'buyerCoOwner',
         })
       }
     }
@@ -122,47 +128,45 @@ export class TransferOfVehicleOwnershipService {
     if (buyerOperators) {
       for (var i = 0; i < buyerOperators.length; i++) {
         recipientList.push({
+          ssn: buyerOperators[i].nationalId,
           name: buyerOperators[i].name,
           email: buyerOperators[i].email,
           phone: buyerOperators[i].phone,
+          role: 'buyerOperator',
         })
       }
     }
 
-    // Send email/sms individually to each recipient
+    // 2b. Send email/sms individually to each recipient
     for (var i = 0; i < recipientList.length; i++) {
       if (recipientList[i].email) {
         await this.sharedTemplateAPIService.sendEmail(
-          (props) =>
-            generateAssignReviewerEmail(
-              props,
-              recipientList[i].name,
-              recipientList[i].email,
-            ),
+          (props) => generateAssignReviewerEmail(props, recipientList[i]),
           application,
         )
       }
 
       if (recipientList[i].phone) {
         await this.sharedTemplateAPIService.sendSms(
-          () =>
-            generateAssignReviewerSms(
-              recipientList[i].name,
-              recipientList[i].phone || '',
-            ),
+          () => generateAssignReviewerSms(recipientList[i]),
           application,
         )
       }
     }
+
+    return recipientList
   }
 
-  // Notify everyone that has been added to the application (by the buyer) that needs to review
+  // Notify everyone (buyerCoOwners and buyerOperators) that has been added (or email/phone changed)
+  // to the application (by the buyer) that needs to review
   async addReview({
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<void> {
     const answers = application.answers as TransferOfVehicleOwnershipAnswers
 
+    // 1. Make sure review comes from buyer, he is the only one that can add more reviewers
+    // Note: This should only be called once from the same nationalId, even though user has more than 1 role
     if (
       !answers.buyer.nationalId ||
       auth.nationalId !== answers.buyer.nationalId
@@ -170,81 +174,85 @@ export class TransferOfVehicleOwnershipService {
       return
     }
 
-    //TODOx refactor addReview
+    // 2. Notify users that were added that need to review
 
-    // const oldInitReviewRecipientList = (application.externalData.initReview
-    //   ?.data || []) as Array<EmailRecipient>
-    // const oldAddReviewRecipientList = (application.externalData.addReview
-    //   ?.data || []) as Array<EmailRecipient>
-    // const oldRecipientList = [
-    //   ...oldInitReviewRecipientList,
-    //   ...oldAddReviewRecipientList,
-    // ]
-    // // Notify users that need to review, that were recently added by buyer (buyer coOwners and buyerOperators)
-    // const newRecipientList: Array<EmailRecipient> = []
-    // // Buyer's co-owners
-    // const buyerCoOwners = answers.buyerCoOwnerAndOperator?.filter(
-    //   (x) => x.type === 'coOwner',
-    // )
-    // if (buyerCoOwners) {
-    //   for (var i = 0; i < buyerCoOwners.length; i++) {
-    //     if (
-    //       !oldRecipientList.find((x) => {
-    //         x.email === buyerCoOwners[i].email
-    //       })
-    //     ) {
-    //       newRecipientList.push({
-    //         name: buyerCoOwners[i].name,
-    //         email: buyerCoOwners[i].email,
-    //         phone: buyerCoOwners[i].phone,
-    //       })
-    //     }
-    //   }
-    // }
-    // // Buyer's operators
-    // const buyerOperators = answers.buyerCoOwnerAndOperator?.filter(
-    //   (x) => x.type === 'operator',
-    // )
-    // if (buyerOperators) {
-    //   for (var i = 0; i < buyerOperators.length; i++) {
-    //     if (
-    //       !oldRecipientList.find((x) => {
-    //         x.email === buyerOperators[i].email
-    //       })
-    //     ) {
-    //       newRecipientList.push({
-    //         name: buyerOperators[i].name,
-    //         email: buyerOperators[i].email,
-    //         phone: buyerOperators[i].phone,
-    //       })
-    //     }
-    //   }
-    // }
-    // // Send email/sms individually to each recipient
-    // for (var i = 0; i < newRecipientList.length; i++) {
-    //   if (newRecipientList[i].email) {
-    //     await this.sharedTemplateAPIService.sendEmail(
-    //       (props) =>
-    //         generateAssignReviewerEmail(
-    //           props,
-    //           newRecipientList[i].name,
-    //           newRecipientList[i].email,
-    //         ),
-    //       application,
-    //     )
-    //   }
-    //   if (newRecipientList[i].phone) {
-    //     await this.sharedTemplateAPIService.sendSms(
-    //       () =>
-    //         generateAssignReviewerSms(
-    //           newRecipientList[i].name,
-    //           newRecipientList[i].phone || '',
-    //         ),
-    //       application,
-    //     )
-    //   }
-    // }
-    // return [...oldRecipientList, ...newRecipientList]
+    // 2a. Get list of buyerCoOwners and buyerOperators that were added (or email/phone changed)
+
+    const oldRecipientList = (application.externalData.initReview?.data ||
+      []) as Array<EmailRecipient>
+
+    const newlyAddedRecipientList: Array<EmailRecipient> = []
+
+    // Buyer's co-owners
+    const buyerCoOwners = answers.buyerCoOwnerAndOperator?.filter(
+      (x) => x.type === 'coOwner',
+    )
+    if (buyerCoOwners) {
+      for (var i = 0; i < buyerCoOwners.length; i++) {
+        const oldEntry = oldRecipientList.find((x) => {
+          x.role === 'buyerCoOwner' && x.ssn === buyerCoOwners[i].nationalId
+        })
+        const emailChanged = oldEntry
+          ? oldEntry.email !== buyerCoOwners[i].email
+          : false
+        const phoneChanged = oldEntry
+          ? oldEntry.phone !== buyerCoOwners[i].phone
+          : false
+        if (!oldEntry || emailChanged || phoneChanged) {
+          newlyAddedRecipientList.push({
+            ssn: buyerCoOwners[i].nationalId,
+            name: buyerCoOwners[i].name,
+            email: emailChanged ? buyerCoOwners[i].email : undefined,
+            phone: phoneChanged ? buyerCoOwners[i].phone : undefined,
+            role: 'buyerCoOwner',
+          })
+        }
+      }
+    }
+
+    // Buyer's operators
+    const buyerOperators = answers.buyerCoOwnerAndOperator?.filter(
+      (x) => x.type === 'operator',
+    )
+    if (buyerOperators) {
+      for (var i = 0; i < buyerOperators.length; i++) {
+        const oldEntry = oldRecipientList.find((x) => {
+          x.role === 'buyerOperator' && x.ssn === buyerOperators[i].nationalId
+        })
+        const emailChanged = oldEntry
+          ? oldEntry.email !== buyerOperators[i].email
+          : false
+        const phoneChanged = oldEntry
+          ? oldEntry.phone !== buyerOperators[i].phone
+          : false
+        if (!oldEntry || emailChanged || phoneChanged) {
+          newlyAddedRecipientList.push({
+            ssn: buyerOperators[i].nationalId,
+            name: buyerOperators[i].name,
+            email: emailChanged ? buyerOperators[i].email : undefined,
+            phone: phoneChanged ? buyerOperators[i].phone : undefined,
+            role: 'buyerOperator',
+          })
+        }
+      }
+    }
+
+    // Send email/sms individually to each recipient
+    for (var i = 0; i < newlyAddedRecipientList.length; i++) {
+      if (newlyAddedRecipientList[i].email) {
+        await this.sharedTemplateAPIService.sendEmail(
+          (props) =>
+            generateAssignReviewerEmail(props, newlyAddedRecipientList[i]),
+          application,
+        )
+      }
+      if (newlyAddedRecipientList[i].phone) {
+        await this.sharedTemplateAPIService.sendSms(
+          () => generateAssignReviewerSms(newlyAddedRecipientList[i]),
+          application,
+        )
+      }
+    }
   }
 
   async rejectApplication({
@@ -262,16 +270,21 @@ export class TransferOfVehicleOwnershipService {
     auth,
   }: TemplateApiModuleActionProps): Promise<void> {
     const answers = application.answers as TransferOfVehicleOwnershipAnswers
-
     const buyerCoOwners = answers.buyerCoOwnerAndOperator?.filter(
       (x) => x.type === 'coOwner',
     )
-
     const buyerOperators = answers.buyerCoOwnerAndOperator?.filter(
       (x) => x.type === 'operator',
     )
 
-    // Submit the application
+    // Note: Need to be sure that the user that created the application is the seller when submitting application to SGS
+    if (answers?.seller?.nationalId !== application.applicant) {
+      throw new Error(
+        'Aðeins sá sem skráði umsókn má vera skráður sem seljandi.',
+      )
+    }
+
+    // 1. Submit the application
     await this.transferOfVehicleOwnershipApi.saveOwnerChange(auth, {
       permno: answers?.vehicle?.plate,
       seller: {
@@ -304,15 +317,20 @@ export class TransferOfVehicleOwnershipService {
       })),
     })
 
-    // Notify everyone in the process that the application have successfully been submitted
+    // 2. Notify everyone in the process that the application have successfully been submitted
+
+    // 2a. Get list of users that need to be notified
+
     const recipientList: Array<EmailRecipient> = []
 
     // Seller
     if (answers.seller) {
       recipientList.push({
+        ssn: answers.seller.nationalId,
         name: answers.seller.name,
         email: answers.seller.email,
         phone: answers.seller.phone,
+        role: 'seller',
       })
     }
 
@@ -321,9 +339,11 @@ export class TransferOfVehicleOwnershipService {
     if (sellerCoOwners) {
       for (var i = 0; i < sellerCoOwners.length; i++) {
         recipientList.push({
+          ssn: sellerCoOwners[i].nationalId,
           name: sellerCoOwners[i].name,
           email: sellerCoOwners[i].email,
           phone: sellerCoOwners[i].phone,
+          role: 'sellerCoOwner',
         })
       }
     }
@@ -331,9 +351,11 @@ export class TransferOfVehicleOwnershipService {
     // Buyer
     if (answers.buyer) {
       recipientList.push({
+        ssn: answers.buyer.nationalId,
         name: answers.buyer.name,
         email: answers.buyer.email,
         phone: answers.buyer.phone,
+        role: 'buyer',
       })
     }
 
@@ -341,9 +363,11 @@ export class TransferOfVehicleOwnershipService {
     if (buyerCoOwners) {
       for (var i = 0; i < buyerCoOwners.length; i++) {
         recipientList.push({
+          ssn: buyerCoOwners[i].nationalId,
           name: buyerCoOwners[i].name,
           email: buyerCoOwners[i].email,
           phone: buyerCoOwners[i].phone,
+          role: 'buyerCoOwner',
         })
       }
     }
@@ -352,40 +376,34 @@ export class TransferOfVehicleOwnershipService {
     if (buyerOperators) {
       for (var i = 0; i < buyerOperators.length; i++) {
         recipientList.push({
+          ssn: buyerOperators[i].nationalId,
           name: buyerOperators[i].name,
           email: buyerOperators[i].email,
           phone: buyerOperators[i].phone,
+          role: 'buyerOperator',
         })
       }
     }
 
-    // Send email/sms individually to each recipient about success of submitting application
+    // 2b. Send email/sms individually to each recipient about success of submitting application
     for (var i = 0; i < recipientList.length; i++) {
       if (recipientList[i].email) {
         await this.sharedTemplateAPIService.sendEmail(
-          (props) =>
-            generateConfirmationEmail(
-              props,
-              recipientList[i].name,
-              recipientList[i].email,
-            ),
+          (props) => generateConfirmationEmail(props, recipientList[i]),
           application,
         )
       }
 
       if (recipientList[i].phone) {
         await this.sharedTemplateAPIService.sendSms(
-          () =>
-            generateConfirmationSms(
-              recipientList[i].name,
-              recipientList[i].phone || '',
-            ),
+          () => generateConfirmationSms(recipientList[i]),
           application,
         )
       }
     }
   }
 
+  // Returns date object with the timestamp 12:00 (UTC timezone)
   private getDateAtNoonFromString(dateStr: string): Date {
     const dateObj = new Date(dateStr)
     const date =
