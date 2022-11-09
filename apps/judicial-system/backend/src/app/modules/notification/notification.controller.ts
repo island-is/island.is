@@ -62,7 +62,7 @@ export class NotificationController {
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @Body() notification: SendNotificationDto,
-  ): Promise<SendNotificationResponse> {
+  ): Promise<SendNotificationResponse | void> {
     this.logger.debug(
       `Sending ${notification.type} notification for case ${caseId}`,
     )
