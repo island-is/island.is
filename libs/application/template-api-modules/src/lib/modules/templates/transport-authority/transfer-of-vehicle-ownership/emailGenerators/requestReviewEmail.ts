@@ -2,6 +2,7 @@ import { TransferOfVehicleOwnershipAnswers } from '@island.is/application/templa
 import { Message } from '@island.is/email-service'
 import { EmailTemplateGeneratorProps } from '../../../../../types'
 import { EmailRecipient } from '../types'
+import { getApplicationPruneDateStr } from '../transfer-of-vehicle-ownership.utils'
 
 export type RequestReviewEmail = (
   props: EmailTemplateGeneratorProps,
@@ -23,6 +24,7 @@ export const generateRequestReviewEmail: RequestReviewEmail = (
   if (!permno) throw new Error('Permno was undefined')
 
   const subject = 'Tilkynning um eigendaskipti - Vantar samþykki'
+  const pruneDateStr = getApplicationPruneDateStr(application.created)
 
   return {
     from: {
@@ -42,7 +44,7 @@ export const generateRequestReviewEmail: RequestReviewEmail = (
               `<p>Þín bíður ósamþykkt beiðni um eigendaskipti fyrir ökutækið ${permno} á island.is.</p>` +
               `<p>Til þess að samþykkja beiðnina skráir þú þig inn á island.is/umsóknir.</p>` +
               `<p>Þú hefur 7 daga til þess að samþykkja beiðnina.</p>` +
-              `<p>Ef eigendaskiptin hafa ekki verið samþykkt innan 7 daga falla þau niður.</p>`,
+              `<p>Ef eigendaskiptin hafa ekki verið samþykkt fyrir ${pruneDateStr} munu þau falla niður.</p>`,
           },
         },
       ],

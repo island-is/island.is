@@ -2,6 +2,7 @@ import { TransferOfVehicleOwnershipAnswers } from '@island.is/application/templa
 import { SmsMessage } from '../../../../../types'
 import { EmailRecipient } from '../types'
 import { Application } from '@island.is/application/types'
+import { getApplicationPruneDateStr } from '../transfer-of-vehicle-ownership.utils'
 
 export type RequestReviewSms = (
   application: Application,
@@ -18,10 +19,12 @@ export const generateRequestReviewSms: RequestReviewSms = (
   if (!recipient.phone) throw new Error('Recipient phone was undefined')
   if (!permno) throw new Error('Permno was undefined')
 
+  const pruneDateStr = getApplicationPruneDateStr(application.created)
+
   return {
     phoneNumber: recipient.phone || '',
     message:
       `Þín bíður ósamþykkt beiðni um eigendaskipti fyrir ökutækið ${permno} inn á island.is/umsóknir. ` +
-      `Til þess að eigendaskiptin verði skráð þarftu að samþykkja beiðnina innan 7 daga.`,
+      `Til þess að eigendaskiptin verði skráð þarftu að samþykkja beiðnina fyrir ${pruneDateStr}.`,
   }
 }

@@ -54,7 +54,7 @@ const template: ApplicationTemplate<
             },
           },
           progress: 0.25,
-          lifecycle: EphemeralStateLifeCycle,
+          lifecycle: pruneAfterDays(1),
           roles: [
             {
               id: Roles.APPLICANT,
