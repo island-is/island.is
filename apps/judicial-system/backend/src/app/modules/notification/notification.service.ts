@@ -1238,7 +1238,6 @@ export class NotificationService {
     const pastNotifications = await this.notificationModel.findAll({
       where: { caseId: theCase.id, type: NotificationType.DEFENDER_ASSIGNED },
     })
-<<<<<<< HEAD
 
     if (!defenderEmail) {
       return false
@@ -1255,10 +1254,6 @@ export class NotificationService {
             recipient.address === defenderEmail && recipient.success,
         )
       },
-=======
-    const hasSentNotificationBefore = pastNotifications.some(({ recipients }) =>
-      recipients.some(({ address }) => address === defenderEmail),
->>>>>>> c69d04a031af3ec9bbbf706735d61141b9f0741c
     )
 
     if (hasSentNotificationBefore) {
