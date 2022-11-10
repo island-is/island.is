@@ -28,7 +28,7 @@ export class Discount implements TDiscount {
   @ApiProperty()
   discountCode: string
 
-  @ApiProperty({type: GQLConnectionDiscountCode})
+  @ApiProperty({ type: [GQLConnectionDiscountCode] })
   connectionDiscountCodes: ConnectionDiscountCode[]
 
   @ApiProperty()

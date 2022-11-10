@@ -52,7 +52,7 @@ export class AirDiscountSchemeResolver {
           relation.nationalId,
         )
 
-        if(createdDiscount) {
+        if (createdDiscount) {
           discount = createdDiscount
         }
       }
