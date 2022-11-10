@@ -5,20 +5,32 @@ import { ChargeItemCode } from '@island.is/shared/constants'
 import { TransferOfVehicleOwnershipApi } from '@island.is/api/domains/transport-authority/transfer-of-vehicle-ownership'
 import { TransferOfVehicleOwnershipAnswers } from '@island.is/application/templates/transport-authority/transfer-of-vehicle-ownership'
 import {
-  generateAssignReviewerEmail,
-  generateConfirmationEmail,
+  generateRequestReviewEmail,
+  generateApplicationSubmittedEmail,
+  generateApplicationRejectedEmail,
 } from './emailGenerators'
 import {
-  generateAssignReviewerSms,
-  generateConfirmationSms,
+  generateRequestReviewSms,
+  generateApplicationSubmittedSms,
+  generateApplicationRejectedSms,
 } from './smsGenerators'
-import { EmailRecipient } from './types'
+import { EmailRecipient, EmailRole } from './types'
+import {
+  getDateAtNoonFromString,
+  getRecipients,
+  getRecipientBySsn,
+} from './transfer-of-vehicle-ownership.utils'
+import {
+  ChargeFjsV2ClientService,
+  getChargeId,
+} from '@island.is/clients/charge-fjs-v2'
 
 @Injectable()
 export class TransferOfVehicleOwnershipService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly transferOfVehicleOwnershipApi: TransferOfVehicleOwnershipApi,
+    private readonly chargeFjsV2ClientService: ChargeFjsV2ClientService,
   ) {}
 
   async createCharge({
@@ -32,10 +44,13 @@ export class TransferOfVehicleOwnershipService {
     | undefined
   > {
     try {
+      const chargeItemCode =
+        ChargeItemCode.TRANSPORT_AUTHORITY_TRANSFER_OF_VEHICLE_OWNERSHIP
+
       const result = this.sharedTemplateAPIService.createCharge(
         auth.authorization,
         id,
-        ChargeItemCode.TRANSPORT_AUTHORITY_XXX,
+        chargeItemCode,
       )
       return result
     } catch (exeption) {
@@ -61,13 +76,13 @@ export class TransferOfVehicleOwnershipService {
     }
 
     // 1b. Make sure payment is fulfilled (has been paid)
-    const isPayment:
+    const payment:
       | { fulfilled: boolean }
       | undefined = await this.sharedTemplateAPIService.getPaymentStatus(
       auth.authorization,
       application.id,
     )
-    if (!isPayment?.fulfilled) {
+    if (!payment?.fulfilled) {
       throw new Error(
         'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
       )
@@ -76,79 +91,26 @@ export class TransferOfVehicleOwnershipService {
     // 2. Notify users that need to review
 
     // 2a. Get list of users that need to review
-
-    const recipientList: Array<EmailRecipient> = []
     const answers = application.answers as TransferOfVehicleOwnershipAnswers
-
-    // Seller's co-owners
-    const sellerCoOwners = answers.sellerCoOwner
-    if (sellerCoOwners) {
-      for (var i = 0; i < sellerCoOwners.length; i++) {
-        recipientList.push({
-          ssn: sellerCoOwners[i].nationalId,
-          name: sellerCoOwners[i].name,
-          email: sellerCoOwners[i].email,
-          phone: sellerCoOwners[i].phone,
-          role: 'sellerCoOwner',
-        })
-      }
-    }
-
-    // Buyer
-    if (answers.buyer) {
-      recipientList.push({
-        ssn: answers.buyer.nationalId,
-        name: answers.buyer.name,
-        email: answers.buyer.email,
-        phone: answers.buyer.phone,
-        role: 'buyer',
-      })
-    }
-
-    // Buyer's co-owners
-    const buyerCoOwners = answers.buyerCoOwnerAndOperator?.filter(
-      (x) => x.type === 'coOwner',
-    )
-    if (buyerCoOwners) {
-      for (var i = 0; i < buyerCoOwners.length; i++) {
-        recipientList.push({
-          ssn: buyerCoOwners[i].nationalId,
-          name: buyerCoOwners[i].name,
-          email: buyerCoOwners[i].email,
-          phone: buyerCoOwners[i].phone,
-          role: 'buyerCoOwner',
-        })
-      }
-    }
-
-    // Buyer's operators
-    const buyerOperators = answers.buyerCoOwnerAndOperator?.filter(
-      (x) => x.type === 'operator',
-    )
-    if (buyerOperators) {
-      for (var i = 0; i < buyerOperators.length; i++) {
-        recipientList.push({
-          ssn: buyerOperators[i].nationalId,
-          name: buyerOperators[i].name,
-          email: buyerOperators[i].email,
-          phone: buyerOperators[i].phone,
-          role: 'buyerOperator',
-        })
-      }
-    }
+    const recipientList = getRecipients(answers, [
+      EmailRole.sellerCoOwner,
+      EmailRole.buyer,
+      EmailRole.buyerCoOwner,
+      EmailRole.buyerOperator,
+    ])
 
     // 2b. Send email/sms individually to each recipient
     for (var i = 0; i < recipientList.length; i++) {
       if (recipientList[i].email) {
         await this.sharedTemplateAPIService.sendEmail(
-          (props) => generateAssignReviewerEmail(props, recipientList[i]),
+          (props) => generateRequestReviewEmail(props, recipientList[i]),
           application,
         )
       }
 
       if (recipientList[i].phone) {
         await this.sharedTemplateAPIService.sendSms(
-          () => generateAssignReviewerSms(recipientList[i]),
+          () => generateRequestReviewSms(application, recipientList[i]),
           application,
         )
       }
@@ -190,7 +152,8 @@ export class TransferOfVehicleOwnershipService {
     if (buyerCoOwners) {
       for (var i = 0; i < buyerCoOwners.length; i++) {
         const oldEntry = oldRecipientList.find((x) => {
-          x.role === 'buyerCoOwner' && x.ssn === buyerCoOwners[i].nationalId
+          x.role === EmailRole.buyerCoOwner &&
+            x.ssn === buyerCoOwners[i].nationalId
         })
         const emailChanged = oldEntry
           ? oldEntry.email !== buyerCoOwners[i].email
@@ -204,7 +167,7 @@ export class TransferOfVehicleOwnershipService {
             name: buyerCoOwners[i].name,
             email: emailChanged ? buyerCoOwners[i].email : undefined,
             phone: phoneChanged ? buyerCoOwners[i].phone : undefined,
-            role: 'buyerCoOwner',
+            role: EmailRole.buyerCoOwner,
           })
         }
       }
@@ -217,7 +180,8 @@ export class TransferOfVehicleOwnershipService {
     if (buyerOperators) {
       for (var i = 0; i < buyerOperators.length; i++) {
         const oldEntry = oldRecipientList.find((x) => {
-          x.role === 'buyerOperator' && x.ssn === buyerOperators[i].nationalId
+          x.role === EmailRole.buyerOperator &&
+            x.ssn === buyerOperators[i].nationalId
         })
         const emailChanged = oldEntry
           ? oldEntry.email !== buyerOperators[i].email
@@ -231,7 +195,7 @@ export class TransferOfVehicleOwnershipService {
             name: buyerOperators[i].name,
             email: emailChanged ? buyerOperators[i].email : undefined,
             phone: phoneChanged ? buyerOperators[i].phone : undefined,
-            role: 'buyerOperator',
+            role: EmailRole.buyerOperator,
           })
         }
       }
@@ -242,13 +206,14 @@ export class TransferOfVehicleOwnershipService {
       if (newlyAddedRecipientList[i].email) {
         await this.sharedTemplateAPIService.sendEmail(
           (props) =>
-            generateAssignReviewerEmail(props, newlyAddedRecipientList[i]),
+            generateRequestReviewEmail(props, newlyAddedRecipientList[i]),
           application,
         )
       }
       if (newlyAddedRecipientList[i].phone) {
         await this.sharedTemplateAPIService.sendSms(
-          () => generateAssignReviewerSms(newlyAddedRecipientList[i]),
+          () =>
+            generateRequestReviewSms(application, newlyAddedRecipientList[i]),
           application,
         )
       }
@@ -259,9 +224,79 @@ export class TransferOfVehicleOwnershipService {
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<void> {
-    // TODOx implement rejectApplication
-    // send email to everyone involved about this
-    // cancel charge so that seller gets reimburshed
+    // 1. Revert charge so that the seller gets reimburshed
+    this.revertCharge({ application, auth })
+
+    // 2. Notify everyone in the process that the application has been withdrawn
+
+    // 2a. Get list of users that need to be notified
+    const answers = application.answers as TransferOfVehicleOwnershipAnswers
+    const recipientList = getRecipients(answers, [
+      EmailRole.seller,
+      EmailRole.sellerCoOwner,
+      EmailRole.buyer,
+      EmailRole.buyerCoOwner,
+      EmailRole.buyerOperator,
+    ])
+
+    // 2b. Send email/sms individually to each recipient about success of withdrawing application
+    const rejectedByRecipient = getRecipientBySsn(answers, auth.nationalId)
+    for (var i = 0; i < recipientList.length; i++) {
+      if (recipientList[i].email) {
+        await this.sharedTemplateAPIService.sendEmail(
+          (props) =>
+            generateApplicationRejectedEmail(
+              props,
+              recipientList[i],
+              rejectedByRecipient,
+            ),
+          application,
+        )
+      }
+
+      if (recipientList[i].phone) {
+        await this.sharedTemplateAPIService.sendSms(
+          () =>
+            generateApplicationRejectedSms(
+              application,
+              recipientList[i],
+              rejectedByRecipient,
+            ),
+          application,
+        )
+      }
+    }
+  }
+
+  private async revertCharge({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps) {
+    const payment:
+      | { fulfilled: boolean }
+      | undefined = await this.sharedTemplateAPIService.getPaymentStatus(
+      auth.authorization,
+      application.id,
+    )
+
+    // No need to revert charge if never existed
+    if (!payment) {
+      return
+    }
+
+    // No need to revert charge if not yet paid
+    if (!payment.fulfilled) {
+      return
+    }
+
+    // Fetch the ID we got from FJS, and make sure it exists
+    const chargeId = getChargeId(application)
+    if (!chargeId) {
+      return
+    }
+
+    // Revert the charge
+    await this.chargeFjsV2ClientService.revertCharge(chargeId)
   }
 
   // After everyone has reviewed (and approved), then submit the application, and notify everyone involved it was a success
@@ -296,7 +331,7 @@ export class TransferOfVehicleOwnershipService {
         email: answers?.buyer?.email,
       },
       // Note: API throws error if timestamp is 00:00:00, so we will use noon
-      dateOfPurchase: this.getDateAtNoonFromString(answers?.vehicle?.date),
+      dateOfPurchase: getDateAtNoonFromString(answers?.vehicle?.date),
       saleAmount: Number(answers?.vehicle?.salePrice) || 0,
       // Note: Insurance code 000 is when car is out of commission and is not going to be insured
       insuranceCompanyCode:
@@ -317,99 +352,32 @@ export class TransferOfVehicleOwnershipService {
       })),
     })
 
-    // 2. Notify everyone in the process that the application have successfully been submitted
+    // 2. Notify everyone in the process that the application has successfully been submitted
 
     // 2a. Get list of users that need to be notified
-
-    const recipientList: Array<EmailRecipient> = []
-
-    // Seller
-    if (answers.seller) {
-      recipientList.push({
-        ssn: answers.seller.nationalId,
-        name: answers.seller.name,
-        email: answers.seller.email,
-        phone: answers.seller.phone,
-        role: 'seller',
-      })
-    }
-
-    // Seller's co-owners
-    const sellerCoOwners = answers.sellerCoOwner
-    if (sellerCoOwners) {
-      for (var i = 0; i < sellerCoOwners.length; i++) {
-        recipientList.push({
-          ssn: sellerCoOwners[i].nationalId,
-          name: sellerCoOwners[i].name,
-          email: sellerCoOwners[i].email,
-          phone: sellerCoOwners[i].phone,
-          role: 'sellerCoOwner',
-        })
-      }
-    }
-
-    // Buyer
-    if (answers.buyer) {
-      recipientList.push({
-        ssn: answers.buyer.nationalId,
-        name: answers.buyer.name,
-        email: answers.buyer.email,
-        phone: answers.buyer.phone,
-        role: 'buyer',
-      })
-    }
-
-    // Buyer's co-owners
-    if (buyerCoOwners) {
-      for (var i = 0; i < buyerCoOwners.length; i++) {
-        recipientList.push({
-          ssn: buyerCoOwners[i].nationalId,
-          name: buyerCoOwners[i].name,
-          email: buyerCoOwners[i].email,
-          phone: buyerCoOwners[i].phone,
-          role: 'buyerCoOwner',
-        })
-      }
-    }
-
-    // Buyer's operators
-    if (buyerOperators) {
-      for (var i = 0; i < buyerOperators.length; i++) {
-        recipientList.push({
-          ssn: buyerOperators[i].nationalId,
-          name: buyerOperators[i].name,
-          email: buyerOperators[i].email,
-          phone: buyerOperators[i].phone,
-          role: 'buyerOperator',
-        })
-      }
-    }
+    const recipientList = getRecipients(answers, [
+      EmailRole.seller,
+      EmailRole.sellerCoOwner,
+      EmailRole.buyer,
+      EmailRole.buyerCoOwner,
+      EmailRole.buyerOperator,
+    ])
 
     // 2b. Send email/sms individually to each recipient about success of submitting application
     for (var i = 0; i < recipientList.length; i++) {
       if (recipientList[i].email) {
         await this.sharedTemplateAPIService.sendEmail(
-          (props) => generateConfirmationEmail(props, recipientList[i]),
+          (props) => generateApplicationSubmittedEmail(props, recipientList[i]),
           application,
         )
       }
 
       if (recipientList[i].phone) {
         await this.sharedTemplateAPIService.sendSms(
-          () => generateConfirmationSms(recipientList[i]),
+          () => generateApplicationSubmittedSms(application, recipientList[i]),
           application,
         )
       }
     }
-  }
-
-  // Returns date object with the timestamp 12:00 (UTC timezone)
-  private getDateAtNoonFromString(dateStr: string): Date {
-    const dateObj = new Date(dateStr)
-    const date =
-      dateObj instanceof Date && !isNaN(dateObj.getDate())
-        ? dateObj
-        : new Date()
-    return new Date(date.toISOString().substring(0, 10) + 'T12:00:00Z')
   }
 }

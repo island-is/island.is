@@ -5,13 +5,14 @@ import { getValueViaPath } from '@island.is/application/core'
 export const getReviewSteps = (application: Application) => {
   console.log(application)
 
-  const buyerNationalId = getValueViaPath(
+  const buyerApproved = getValueViaPath(
     application.answers,
-    'buyer.nationalId',
-    '',
-  ) as string
+    'buyer.approved',
+    false,
+  ) as boolean
 
   const steps = [
+    //
     {
       tagText: 'Móttekin',
       tagVariant: 'mint',

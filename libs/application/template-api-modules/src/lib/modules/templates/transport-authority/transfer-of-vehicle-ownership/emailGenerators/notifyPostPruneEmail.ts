@@ -1,13 +1,14 @@
+import { TransferOfVehicleOwnershipAnswers } from '@island.is/application/templates/transport-authority/transfer-of-vehicle-ownership'
 import { Message } from '@island.is/email-service'
 import { EmailTemplateGeneratorProps } from '../../../../../types'
 import { EmailRecipient } from '../types'
 
-export type AssignReviewerEmail = (
+export type NotifyPostPruneEmail = (
   props: EmailTemplateGeneratorProps,
   recipient: EmailRecipient,
 ) => Message
 
-export const generateAssignReviewerEmail: AssignReviewerEmail = (
+export const generateNotifyPostPruneEmail: NotifyPostPruneEmail = (
   props,
   recipient,
 ): Message => {
@@ -15,10 +16,13 @@ export const generateAssignReviewerEmail: AssignReviewerEmail = (
     application,
     options: { email },
   } = props
+  const answers = application.answers as TransferOfVehicleOwnershipAnswers
+  const permno = answers?.vehicle?.plate
 
   if (!recipient.email) throw new Error('Recipient email was undefined')
+  if (!permno) throw new Error('Permno was undefined')
 
-  const subject = 'Tilkynning um eigendaskipti - Vantar samþykki'
+  const subject = 'Tilkynning um eigendaskipti - Umsókn hefur runnið út'
 
   return {
     from: {
@@ -34,7 +38,8 @@ export const generateAssignReviewerEmail: AssignReviewerEmail = (
           component: 'Copy',
           context: {
             copy:
-              'Tilkynning um eigendaskipti hefur borist Samgöngustofu þar sem þú þarft að samþykkja.',
+              `<p>Góðan dag,</p><br/>` +
+              `<p>Eigendaskipti fyrir ökutækið ${permno} hefur runnið út.</p>`, // TODOx need text from SGS
           },
         },
       ],

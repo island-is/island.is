@@ -17,10 +17,14 @@ export class ChangeCoOwnerOfVehicleService {
     auth,
   }: TemplateApiModuleActionProps) {
     try {
+      // TODOx check if added/removed/both
+      const chargeItemCode =
+        ChargeItemCode.TRANSPORT_AUTHORITY_CHANGE_CO_OWNER_OF_VEHICLE_ADD
+
       const result = this.sharedTemplateAPIService.createCharge(
         auth.authorization,
         id,
-        ChargeItemCode.TRANSPORT_AUTHORITY_XXX,
+        chargeItemCode,
       )
       return result
     } catch (exeption) {

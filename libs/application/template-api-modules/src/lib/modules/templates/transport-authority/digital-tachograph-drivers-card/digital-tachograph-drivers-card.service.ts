@@ -18,10 +18,14 @@ export class DigitalTachographDriversCardService {
     auth,
   }: TemplateApiModuleActionProps) {
     try {
+      // TODOx check if includes shipping
+      const chargeItemCode =
+        ChargeItemCode.TRANSPORT_AUTHORITY_DIGITAL_TACHOGRAPH_DRIVERS_CARD
+
       const result = this.sharedTemplateAPIService.createCharge(
         auth.authorization,
         id,
-        ChargeItemCode.TRANSPORT_AUTHORITY_XXX,
+        chargeItemCode,
       )
       return result
     } catch (exeption) {
