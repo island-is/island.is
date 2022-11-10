@@ -17,9 +17,8 @@ import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
 import { useLocale } from '@island.is/localization'
 import { FinancialStatementsInao } from '../../lib/utils/dataSchema'
-import { format as formatNationalId } from 'kennitala'
 import { m } from '../../lib/messages'
-import { FileValueLine, ValueLine } from '../Shared'
+import { AboutOverview, FileValueLine, ValueLine } from '../Shared'
 import { formatCurrency } from '../../lib/utils/helpers'
 import { starterColumnStyle } from '../Shared/styles/overviewStyles.css'
 import { useSubmitApplication } from '../../hooks/useSubmitApplication'
@@ -69,50 +68,7 @@ export const Overview = ({
   return (
     <Box marginBottom={2}>
       <Divider />
-      <GridRow>
-        <GridColumn span={['12/12', '6/12']}>
-          <ValueLine
-            label={m.nationalId}
-            value={
-              answers.about?.nationalId
-                ? formatNationalId(answers.about.nationalId)
-                : '-'
-            }
-          />
-        </GridColumn>
-        <GridColumn span={['12/12', '6/12']}>
-          <ValueLine label={m.fullName} value={answers.about.fullName} />
-        </GridColumn>
-      </GridRow>
-      <GridRow>
-        {answers.about.powerOfAttorneyName ? (
-          <GridColumn span={['12/12', '6/12']}>
-            <ValueLine
-              label={m.powerOfAttorneyName}
-              value={answers.about.powerOfAttorneyName}
-            />
-          </GridColumn>
-        ) : null}
-        {answers.about.powerOfAttorneyNationalId ? (
-          <GridColumn span={['12/12', '6/12']}>
-            <ValueLine
-              label={m.powerOfAttorneyNationalId}
-              value={formatNationalId(answers.about.powerOfAttorneyNationalId)}
-            />
-          </GridColumn>
-        ) : null}
-      </GridRow>
-      <GridRow>
-        <GridColumn span={['12/12', '6/12']}>
-          <ValueLine label={m.email} value={answers.about.email} />
-        </GridColumn>
-        <GridColumn span={['12/12', '6/12']}>
-          <ValueLine
-            label={m.phoneNumber}
-            value={formatPhoneNumber(answers.about.phoneNumber)}
-          />
-        </GridColumn>
-      </GridRow>
+      <AboutOverview answers={answers} />
       <Divider />
       <Box paddingTop={4} paddingBottom={2}>
         <Text variant="h3" as="h3">
