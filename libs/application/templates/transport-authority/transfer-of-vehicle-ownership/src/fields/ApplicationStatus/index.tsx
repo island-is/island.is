@@ -3,8 +3,9 @@ import { Box, Button, Text, Divider } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC } from 'react'
 import { ReviewScreenProps } from '../../types'
+import { getReviewSteps } from '../../utils'
 import { StatusStep } from './StatusStep'
-import { Steps } from './StatusStep/types'
+import { useAuth } from '@island.is/auth/react'
 
 export const ApplicationStatus: FC<FieldBaseProps & ReviewScreenProps> = ({
   goToScreen,
@@ -14,41 +15,40 @@ export const ApplicationStatus: FC<FieldBaseProps & ReviewScreenProps> = ({
 }) => {
   const { formatMessage } = useLocale()
 
+  const { userInfo } = useAuth()
+  console.log(userInfo)
+
+  /* const reviewerNationalIdList = [] as string[]
+    const buyerNationalId = getValueViaPath(
+      application.answers,
+      'buyer.nationalId',
+      '',
+    ) as string
+    reviewerNationalIdList.push(buyerNationalId)
+    const sellerCoOwner = getValueViaPath(
+      application.answers,
+      'sellerCoOwner',
+      [],
+    ) as UserInformation[]
+    const buyerCoOwnerAndOperator = getValueViaPath(
+      application.answers,
+      'buyerCoOwnerAndOperator',
+      [],
+    ) as CoOwnerAndOperator[]
+    sellerCoOwner?.map(({ nationalId }) => {
+      reviewerNationalIdList.push(nationalId)
+      return nationalId
+    })
+    buyerCoOwnerAndOperator?.map(({ nationalId }) => {
+      reviewerNationalIdList.push(nationalId)
+      return nationalId
+    }) */
+
   const changeScreens = (screen: string) => {
     if (goToScreen) goToScreen(screen)
   }
 
-  const steps = [
-    {
-      tagText: 'Móttekin',
-      tagVariant: 'mint',
-      title: 'Skráning eigendaskipta á ökutæki OL712',
-      description: 'Tilkynning um eigendaskiptu hefur borist til Samgöngustofu',
-      hasActionMessage: false,
-    },
-    {
-      tagText: 'Móttekin',
-      tagVariant: 'mint',
-      title: 'Greiðsla móttekin',
-      description: 'Greitt hefur verið fyrir eigendaskiptin af seljanda',
-      hasActionMessage: false,
-    },
-    {
-      tagText: 'Samþykki í bið',
-      tagVariant: 'purple',
-      title: 'Samþykki kaupanda',
-      description: 'Beðið er eftir að nýr eigandi staðfesti eigendaskiptin.',
-      hasActionMessage: false,
-    },
-    {
-      tagText: 'Samþykki í bið',
-      tagVariant: 'purple',
-      title: 'Samþykki meðeiganda',
-      description:
-        'Beðið er eftir að meðeigandi kaupanda staðfesti eigendaskiptin.',
-      hasActionMessage: false,
-    },
-  ] as Steps[]
+  const steps = getReviewSteps(application)
 
   return (
     <Box marginBottom={10}>
@@ -73,8 +73,6 @@ export const ApplicationStatus: FC<FieldBaseProps & ReviewScreenProps> = ({
             key={index}
             title={step.title}
             description={step.description}
-            hasActionMessage={step.hasActionMessage}
-            action={step.action}
             tagText={step.tagText}
             tagVariant={step.tagVariant}
             visible={step.visible}

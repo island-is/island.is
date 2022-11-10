@@ -5,6 +5,7 @@ export const UserInformationSchema = z.object({
   name: z.string(),
   email: z.string(),
   phone: z.string().optional(),
+  approved: z.boolean().optional(),
 })
 
 export const CoOwnerAndOperatorSchema = z.object({
@@ -12,6 +13,7 @@ export const CoOwnerAndOperatorSchema = z.object({
   name: z.string(),
   email: z.string(),
   phone: z.string().optional(),
+  approved: z.boolean().optional(),
   type: z.enum(['operator', 'coOwner']),
 })
 

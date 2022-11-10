@@ -10,6 +10,7 @@ import {
 } from '@island.is/application/types'
 import {
   EphemeralStateLifeCycle,
+  getValueViaPath,
   pruneAfterDays,
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
@@ -17,6 +18,9 @@ import { ApiActions } from '../shared'
 import { Features } from '@island.is/feature-flags'
 import { TransferOfVehicleOwnershipSchema } from './dataSchema'
 import { application } from './messages'
+import { CoOwnerAndOperator, UserInformation } from '../types'
+import { assign } from 'xstate'
+import set from 'lodash/set'
 
 const pruneInDaysAtMidnight = (application: Application, days: number) => {
   const date = new Date(application.created)
@@ -77,7 +81,7 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: { target: States.PAYMENT },
+          [DefaultEvents.SUBMIT]: { target: States.REVIEW },
         },
       },
       [States.PAYMENT]: {
@@ -117,6 +121,7 @@ const template: ApplicationTemplate<
       },
       [States.REVIEW]: {
         // TODO
+        entry: 'assignUsers',
         meta: {
           name: 'Tilkynning um eigendaskipti að ökutæki',
           actionCard: {
@@ -150,8 +155,47 @@ const template: ApplicationTemplate<
                   type: 'primary',
                 },
               ],
-              write: 'all',
+              write: {
+                answers: [],
+              },
+              read: 'all',
               delete: true,
+            },
+            {
+              id: Roles.BUYER,
+              formLoader: () =>
+                import('../forms/Review').then((module) =>
+                  Promise.resolve(module.ReviewForm),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Staðfesta',
+                  type: 'primary',
+                },
+              ],
+              write: {
+                answers: ['buyerCoOwnerAndOperator', 'insurance'],
+              },
+              read: 'all',
+            },
+            {
+              id: Roles.REVIEWER,
+              formLoader: () =>
+                import('../forms/Review').then((module) =>
+                  Promise.resolve(module.ReviewForm),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Staðfesta',
+                  type: 'primary',
+                },
+              ],
+              write: {
+                answers: [],
+              },
+              read: 'all',
             },
           ],
         },
@@ -214,15 +258,98 @@ const template: ApplicationTemplate<
       },
     },
   },
+  stateMachineOptions: {
+    actions: {
+      assignUsers: assign((context) => {
+        const { application } = context
+
+        const assigneeNationalIds = getNationalIdListOfReviewers(application)
+        if (assigneeNationalIds.length > 0) {
+          set(application, 'assignees', assigneeNationalIds)
+        }
+        return context
+      }),
+    },
+  },
   mapUserToRole(
     id: string,
     application: Application,
   ): ApplicationRole | undefined {
+    const buyerNationalId = getValueViaPath(
+      application.answers,
+      'buyer.nationalId',
+      '',
+    ) as string
+    const reviewerNationalIdList = [] as string[]
+    const sellerCoOwner = getValueViaPath(
+      application.answers,
+      'sellerCoOwner',
+      [],
+    ) as UserInformation[]
+    const buyerCoOwnerAndOperator = getValueViaPath(
+      application.answers,
+      'buyerCoOwnerAndOperator',
+      [],
+    ) as CoOwnerAndOperator[]
+    sellerCoOwner?.map(({ nationalId }) => {
+      reviewerNationalIdList.push(nationalId)
+      return nationalId
+    })
+    buyerCoOwnerAndOperator?.map(({ nationalId }) => {
+      reviewerNationalIdList.push(nationalId)
+      return nationalId
+    })
     if (id === application.applicant) {
       return Roles.APPLICANT
+    }
+    console.log(application.answers)
+    console.log(id, buyerNationalId)
+    console.log(reviewerNationalIdList)
+    if (id === buyerNationalId && application.assignees.includes(id)) {
+      return Roles.BUYER
+    }
+    if (
+      reviewerNationalIdList.includes(id) &&
+      application.assignees.includes(id)
+    ) {
+      return Roles.REVIEWER
     }
     return undefined
   },
 }
 
 export default template
+
+const getNationalIdListOfReviewers = (application: Application) => {
+  try {
+    const reviewerNationalIdList = [] as string[]
+    const buyerNationalId = getValueViaPath(
+      application.answers,
+      'buyer.nationalId',
+      '',
+    ) as string
+    reviewerNationalIdList.push(buyerNationalId)
+    const sellerCoOwner = getValueViaPath(
+      application.answers,
+      'sellerCoOwner',
+      [],
+    ) as UserInformation[]
+    const buyerCoOwnerAndOperator = getValueViaPath(
+      application.answers,
+      'buyerCoOwnerAndOperator',
+      [],
+    ) as CoOwnerAndOperator[]
+    sellerCoOwner?.map(({ nationalId }) => {
+      reviewerNationalIdList.push(nationalId)
+      return nationalId
+    })
+    buyerCoOwnerAndOperator?.map(({ nationalId }) => {
+      reviewerNationalIdList.push(nationalId)
+      return nationalId
+    })
+    return reviewerNationalIdList
+  } catch (error) {
+    console.log(error)
+    return []
+  }
+}

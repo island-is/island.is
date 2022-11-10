@@ -1,20 +1,14 @@
-import { Box, Button, Tag, Text } from '@island.is/island-ui/core'
+import { Box, Tag, Text } from '@island.is/island-ui/core'
 import React, { FC } from 'react'
-import * as styles from './StatusStep.css'
-import { ReviewSectionProps } from './types'
+import { ReviewSectionProps } from '../../../types'
 
 export const StatusStep: FC<ReviewSectionProps> = ({
   title,
   description,
   tagVariant = 'blue',
   tagText = 'Í bið',
-  hasActionMessage,
-  action,
   visible = true,
 }) => {
-  const handleOnCTAButtonClick = () => {
-    action?.cta && action.cta()
-  }
   if (!visible) return null
 
   return (
@@ -42,21 +36,6 @@ export const StatusStep: FC<ReviewSectionProps> = ({
             <Text marginTop={1} variant="default">
               {description}
             </Text>
-            {!hasActionMessage && action && action.showAlways && (
-              <Box className={styles.flexNone}>
-                <Button
-                  colorScheme="default"
-                  icon={action.hasActionButtonIcon ? 'attach' : undefined}
-                  iconType="filled"
-                  size="small"
-                  type="button"
-                  variant="text"
-                  onClick={handleOnCTAButtonClick}
-                >
-                  {action.actionButtonTitle}
-                </Button>
-              </Box>
-            )}
           </Box>
         </Box>
       </Box>
