@@ -2,9 +2,11 @@ import { Inject, Injectable } from '@nestjs/common'
 import { Application } from '@island.is/application/api/core'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { ChargeFjsV2ClientService } from '@island.is/clients/charge-fjs-v2'
+import {
+  ChargeFjsV2ClientService,
+  getChargeId,
+} from '@island.is/clients/charge-fjs-v2'
 import { PaymentService } from '../../payment/payment.service'
-import { ExternalData } from '@island.is/application/types'
 
 @Injectable()
 export class ApplicationChargeService {
@@ -18,24 +20,33 @@ export class ApplicationChargeService {
   }
 
   async deleteCharge(application: Pick<Application, 'id' | 'externalData'>) {
+    const payment = await this.paymentService.findPaymentByApplicationId(
+      application.id,
+    )
+
+    // No need to delete charge if never existed
+    if (!payment) {
+      return
+    }
+
+    // No need to delete charge if already paid
+    if (payment.fulfilled) {
+      return
+    }
+
+    // Fetch the ID we got from FJS, and make sure it exists
+    const chargeId = getChargeId(application)
+    if (!chargeId) {
+      return
+    }
+
+    // Delete the charge
     try {
-      const payment = await this.paymentService.findPaymentByApplicationId(
-        application.id,
-      )
-
-      // No need to delete charge if already paid or never existed
-      if (!payment || payment.fulfilled) {
-        return
-      }
-
-      // Delete the charge, using the ID we got from FJS
-      const chargeId = this.getChargeId(application)
-      if (chargeId) {
-        await this.chargeFjsV2ClientService.deleteCharge(chargeId)
-      }
+      // TODOx: Either get FJS to not throw error if charge has already been deleted OR call FJS endpoint (does not exist) that checks if charge has been deleted
+      await this.chargeFjsV2ClientService.deleteCharge(chargeId)
     } catch (error) {
       this.logger.error(
-        `Application charge delete error on id ${application.id}`,
+        `Application charge delete error on application id ${application.id} and charge id ${chargeId}`,
         error,
       )
 
@@ -44,44 +55,37 @@ export class ApplicationChargeService {
   }
 
   async revertCharge(application: Pick<Application, 'id' | 'externalData'>) {
+    const payment = await this.paymentService.findPaymentByApplicationId(
+      application.id,
+    )
+
+    // No need to revert charge if never existed
+    if (!payment) {
+      return
+    }
+
+    // No need to revert charge if not yet paid
+    if (!payment.fulfilled) {
+      return
+    }
+
+    // Fetch the ID we got from FJS, and make sure it exists
+    const chargeId = getChargeId(application)
+    if (!chargeId) {
+      return
+    }
+
+    // Revert the charge
     try {
-      const payment = await this.paymentService.findPaymentByApplicationId(
-        application.id,
-      )
-
-      // No need to revert charge if not yet paid or never existed
-      if (!payment || !payment.fulfilled) {
-        return
-      }
-
-      // Revert the charge, using the ID we got from FJS
-      const chargeId = this.getChargeId(application)
-      if (chargeId) {
-        await this.chargeFjsV2ClientService.revertCharge(chargeId)
-      }
+      // TODOx: Either get FJS to not throw error if charge has already been reverted OR call FJS endpoint (does not exist) that checks if charge has been reverted
+      await this.chargeFjsV2ClientService.revertCharge(chargeId)
     } catch (error) {
       this.logger.error(
-        `Application charge revert error on id ${application.id}`,
+        `Application charge revert error on application id ${application.id} and charge id ${chargeId}`,
         error,
       )
 
       throw error
     }
-  }
-
-  getChargeId(application: Pick<Application, 'externalData'>) {
-    const externalData = application.externalData as
-      | ExternalData
-      | undefined
-      | null
-    if (!externalData?.createCharge?.data) {
-      return
-    }
-
-    const { id: chargeId } = externalData.createCharge.data as {
-      id: string
-    }
-
-    return chargeId
   }
 }

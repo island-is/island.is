@@ -7,12 +7,14 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { ApplicationChargeService } from '../charge/application-charge.service'
 import { FileService } from '@island.is/application/api/files'
-
+import { ApplicationTypes } from '@island.is/application/types'
+import { TransferOfVehicleOwnershipStates } from '@island.is/application/templates/transport-authority/transfer-of-vehicle-ownership'
+import { getChargeId } from '@island.is/clients/charge-fjs-v2'
 export interface ApplicationPruning {
   pruned: boolean
   application: Pick<
     Application,
-    'id' | 'attachments' | 'answers' | 'externalData'
+    'id' | 'attachments' | 'answers' | 'externalData' | 'typeId' | 'state'
   >
   failedAttachments: object
   failedExternalData: object
@@ -49,7 +51,7 @@ export class ApplicationLifeCycleService {
   private async fetchApplicationsToBePruned() {
     const applications = (await this.applicationService.findAllDueToBePruned()) as Pick<
       Application,
-      'id' | 'attachments' | 'answers' | 'externalData'
+      'id' | 'attachments' | 'answers' | 'externalData' | 'typeId' | 'state'
     >[]
 
     this.logger.info(`Found ${applications.length} applications to be pruned.`)
@@ -82,11 +84,19 @@ export class ApplicationLifeCycleService {
   private async pruneApplicationCharge() {
     for (const prune of this.processingApplications) {
       try {
+        // delete charge in FJS (charge has not been paid)
         await this.applicationChargeService.deleteCharge(prune.application)
+
+        // revert charge in FJS (charge has been paid), if applies
+        if (
+          prune.application.typeId ===
+            ApplicationTypes.TRANSFER_OF_VEHICLE_OWNERSHIP &&
+          prune.application.state === TransferOfVehicleOwnershipStates.REVIEW
+        ) {
+          await this.applicationChargeService.revertCharge(prune.application)
+        }
       } catch (error) {
-        const chargeId = this.applicationChargeService.getChargeId(
-          prune.application,
-        )
+        const chargeId = getChargeId(prune.application)
         if (chargeId) {
           prune.failedExternalData = {
             createCharge: {
@@ -99,7 +109,7 @@ export class ApplicationLifeCycleService {
 
         prune.pruned = false
         this.logger.error(
-          `Application charge prune error on id ${prune.application.id}`,
+          `Application charge prune error on application id ${prune.application.id}`,
           error,
         )
       }

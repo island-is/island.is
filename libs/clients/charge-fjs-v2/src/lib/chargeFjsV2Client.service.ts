@@ -5,7 +5,7 @@ import { DefaultApi } from '../../gen/fetch'
 export class ChargeFjsV2ClientService {
   constructor(private api: DefaultApi) {}
 
-  async deleteCharge(chargeId: string): Promise<string> {
+  async deleteCharge(chargeId: string) {
     const response = await this.api.chargerequestIDDELETE2({
       requestID: chargeId,
     })
@@ -19,8 +19,7 @@ export class ChargeFjsV2ClientService {
     return response.receptionID
   }
 
-  async revertCharge(chargeId: string): Promise<string> {
-    // TODOx waiting for new endpoint in FJS api
-    return ''
+  async revertCharge(chargeId: string) {
+    // TODOx waiting for new endpoint in FJS api to revert charge
   }
 }
