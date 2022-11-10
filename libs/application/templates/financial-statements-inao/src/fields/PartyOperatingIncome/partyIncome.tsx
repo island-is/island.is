@@ -11,7 +11,9 @@ import { INPUTCHANGEINTERVAL, PARTYOPERATIONIDS } from '../../lib/constants'
 import { FinancialStatementsInaoTaxInfo } from '@island.is/api/schema'
 
 interface PropTypes {
-  data: { financialStatementsInaoTaxInfo: FinancialStatementsInaoTaxInfo[] }
+  data?: {
+    financialStatementsInaoTaxInfo: FinancialStatementsInaoTaxInfo[]
+  } | null
   loading: boolean
   getSum: () => void
   errors: RecordObject<unknown> | undefined
