@@ -58,7 +58,6 @@ export const PartyIncome = ({
           onChange={() =>
             onInputChange(PARTYOPERATIONIDS.contributionsFromTheTreasury)
           }
-          defaultValue={data?.financialStatementsInaoTaxInfo?.[0]?.value?.toString()}
           backgroundColor="blue"
           loading={loading}
           currency
@@ -80,7 +79,6 @@ export const PartyIncome = ({
             onInputChange(PARTYOPERATIONIDS.parliamentaryPartySupport)
           }
           loading={loading}
-          defaultValue={data?.financialStatementsInaoTaxInfo?.[1]?.value?.toString()}
           backgroundColor="blue"
           currency
           error={
@@ -98,7 +96,6 @@ export const PartyIncome = ({
             onInputChange(PARTYOPERATIONIDS.municipalContributions)
           }
           loading={loading}
-          defaultValue={data?.financialStatementsInaoTaxInfo?.[2]?.value?.toString()}
           backgroundColor="blue"
           currency
           error={
