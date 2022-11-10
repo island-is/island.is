@@ -38,8 +38,9 @@ export const generateApplicationSubmittedEmail: ApplicationSubmittedEmail = (
           component: 'Copy',
           context: {
             copy:
-              `Góðan dag. Eigendaskipti fyrir ökutækið ${permno} hafa verið skráð. ` +
-              `Allir aðilar samþykktu inn á island.is/umsoknir og búið er að greiða fyrir tilkynninguna. `,
+              `<p>Góðan dag,</p><br/>` +
+              `<p>Eigendaskipti fyrir ökutækið ${permno} hafa verið skráð.</p>` +
+              `<p>Allir aðilar samþykktu inn á island.is/umsoknir og búið er að greiða fyrir tilkynninguna.</p>`,
           },
         },
       ],

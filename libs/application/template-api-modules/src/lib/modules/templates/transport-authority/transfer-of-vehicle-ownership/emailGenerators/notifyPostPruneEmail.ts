@@ -37,7 +37,9 @@ export const generateNotifyPostPruneEmail: NotifyPostPruneEmail = (
         {
           component: 'Copy',
           context: {
-            copy: `Eigendaskipti fyrir ökutækið ${permno} hefur runnið út. `, // TODOx need text from SGS
+            copy:
+              `<p>Góðan dag,</p><br/>` +
+              `<p>Eigendaskipti fyrir ökutækið ${permno} hefur runnið út.</p>`, // TODOx need text from SGS
           },
         },
       ],

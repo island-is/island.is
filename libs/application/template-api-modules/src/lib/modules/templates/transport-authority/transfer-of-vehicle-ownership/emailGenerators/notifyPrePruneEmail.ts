@@ -32,9 +32,9 @@ export const generateNotifyPrePruneEmail: NotifyPrePruneEmail = (
   const notApprovedByListStr = notApprovedByList
     .map(
       (notApprovedBy) =>
-        `${notApprovedBy.name}, kt. ${notApprovedBy.ssn} (${getRoleNameById(
-          notApprovedBy.role,
-        )}). `,
+        `<li><p>${notApprovedBy.name}, kt. ${
+          notApprovedBy.ssn
+        } (${getRoleNameById(notApprovedBy.role)})</p></li>`,
     )
     .join(',')
 
@@ -52,10 +52,11 @@ export const generateNotifyPrePruneEmail: NotifyPrePruneEmail = (
           component: 'Copy',
           context: {
             copy:
-              `Góðan dag. Ert þú nokkuð að gleyma þér? ` +
-              `Á morgun ${pruneDateStr} mun beiðni um eigendaskipti fyrir ökutækið ${permno} falla niður þar sem eftirfarandi aðilar hafa ekki samþykkt: ` +
-              `${notApprovedByListStr}. ` +
-              `Hægt er að samþykkja beiðnina á island.is/umsoknir.`,
+              `<p>Góðan dag,</p><br/>` +
+              `<p>Ert þú nokkuð að gleyma þér?</p>` +
+              `<p>Á morgun ${pruneDateStr} mun beiðni um eigendaskipti fyrir ökutækið ${permno} falla niður þar sem eftirfarandi aðilar hafa ekki samþykkt:</p>` +
+              `<ul>${notApprovedByListStr}.</ul>` +
+              `<p>Hægt er að samþykkja beiðnina á island.is/umsoknir.</p>`,
           },
         },
       ],

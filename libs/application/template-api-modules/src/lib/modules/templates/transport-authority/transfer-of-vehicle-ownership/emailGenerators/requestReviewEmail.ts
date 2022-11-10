@@ -38,10 +38,11 @@ export const generateRequestReviewEmail: RequestReviewEmail = (
           component: 'Copy',
           context: {
             copy:
-              `Góðan dag. Þín bíður ósamþykkt beiðni um eigendaskipti fyrir ökutækið ${permno} á island.is. ` +
-              `Til þess að samþykkja beiðnina skráir þú þig inn á island.is/umsóknir. ` +
-              `Þú hefur 7 daga til þess að samþykkja beiðnina. ` +
-              `Ef eigendaskiptin hafa ekki verið samþykkt innan 7 daga falla þau niður.`,
+              `<p>Góðan dag,</p><br/>` +
+              `<p>Þín bíður ósamþykkt beiðni um eigendaskipti fyrir ökutækið ${permno} á island.is.</p>` +
+              `<p>Til þess að samþykkja beiðnina skráir þú þig inn á island.is/umsóknir.</p>` +
+              `<p>Þú hefur 7 daga til þess að samþykkja beiðnina.</p>` +
+              `<p>Ef eigendaskiptin hafa ekki verið samþykkt innan 7 daga falla þau niður.</p>`,
           },
         },
       ],

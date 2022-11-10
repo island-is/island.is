@@ -45,12 +45,12 @@ export const generateApplicationRejectedEmail: ApplicationRejectedEmail = (
           component: 'Copy',
           context: {
             copy:
-              `Góðan dag. Beiðni um eigendaskipti á ökutækinu ${permno} hefur verið afturkölluð þar sem eftirfarandi aðilar staðfestu ekki: ` +
-              `${rejectedByStr}. ` +
-              `Til þess að skrá eigendaskiptin rafrænt verður að byrja ferlið að upp á nýtt á umsóknarvef island.is: island.is/umsoknir, ` +
-              `ásamt því að allir aðilar þurfa að staðfesta rafrænt innan gefins tímafrests. ` +
-              `Þessi tilkynning á aðeins við um rafræna umsókn af umsóknarvef island.is en ekki um eigendaskipti sem skilað hefur verið inn til Samgöngustofu á pappír. ` +
-              `Vinsamlegast hafið samband við Þjónustuver Samgöngustofu (afgreidsla@samgongustofa.is) ef nánari upplýsinga er þörf. `,
+              `<p>Góðan dag,</p><br/>` +
+              `<p>Beiðni um eigendaskipti á ökutækinu ${permno} hefur verið afturkölluð þar sem eftirfarandi aðilar staðfestu ekki:</p>` +
+              `<ul><li><p>${rejectedByStr}</p></li></ul>` +
+              `<p>Til þess að skrá eigendaskiptin rafrænt verður að byrja ferlið að upp á nýtt á umsóknarvef island.is: island.is/umsoknir, ásamt því að allir aðilar þurfa að staðfesta rafrænt innan gefins tímafrests.</p>` +
+              `<p>Þessi tilkynning á aðeins við um rafræna umsókn af umsóknarvef island.is en ekki um eigendaskipti sem skilað hefur verið inn til Samgöngustofu á pappír.</p>` +
+              `<p>Vinsamlegast hafið samband við Þjónustuver Samgöngustofu (afgreidsla@samgongustofa.is) ef nánari upplýsinga er þörf.</p>`,
           },
         },
       ],
