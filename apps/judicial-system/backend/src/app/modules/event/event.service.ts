@@ -9,10 +9,10 @@ import {
   caseTypes,
   formatDate,
 } from '@island.is/judicial-system/formatters'
+import { isIndictmentCase } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
 import { Case } from '../case'
-import { isIndictmentCase } from '@island.is/judicial-system/types'
 
 const errorEmojis = [
   ':sos:',
