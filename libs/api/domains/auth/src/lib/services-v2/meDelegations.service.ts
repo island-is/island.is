@@ -17,11 +17,8 @@ import {
   UpdateDelegationInput,
 } from '../dto'
 import { DelegationByOtherUserInput } from '../dto/delegationByOtherUser.input'
-import {
-  DelegationDTO,
-  DelegationScopeDTO,
-  MeDelegationsServiceInterface,
-} from '../services/types'
+import { DelegationDTO, MeDelegationsServiceInterface } from '../services/types'
+import startOfDay from 'date-fns/startOfDay'
 
 @Injectable()
 export class MeDelegationsServiceV2 implements MeDelegationsServiceInterface {
@@ -55,6 +52,7 @@ export class MeDelegationsServiceV2 implements MeDelegationsServiceInterface {
       delegationId,
     })
     const delegation = request.raw.status === 204 ? null : await request.value()
+
     return delegation ? this.includeDomainNameInScopes(delegation) : null
   }
 
@@ -190,12 +188,17 @@ export class MeDelegationsServiceV2 implements MeDelegationsServiceInterface {
     if (!delegation) {
       return delegation
     }
+
+    const today = startOfDay(new Date())
+
     return {
       ...delegation,
-      scopes: delegation.scopes?.map((scope) => ({
-        ...scope,
-        domainName: delegation.domainName,
-      })),
+      scopes: delegation.scopes
+        ?.filter((scope) => scope?.validTo && scope.validTo > today)
+        .map((scope) => ({
+          ...scope,
+          domainName: delegation.domainName,
+        })),
     }
   }
 }
