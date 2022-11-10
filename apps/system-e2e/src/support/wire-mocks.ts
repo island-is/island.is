@@ -38,7 +38,7 @@ export const wildcard = async () => {
     new Stub()
       .withPredicate(new FlexiPredicate().withMethod(HttpMethod.GET))
       .withProxy(
-        new Proxy('http://host.docker.internal:8088').withMode(
+        new Proxy('http://host.docker.internal:8081').withMode(
           ProxyMode.ProxyAlways,
         ),
       ),

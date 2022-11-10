@@ -2,7 +2,7 @@ import { getStaticEnv } from '@island.is/shared/utils'
 
 const devConfig = {
   production: false,
-  baseApiUrl: 'http://localhost:4444',
+  baseApiUrl: 'http://localhost:9456',
   identityServer: {
     authority: 'https://identity-server.dev01.devland.is',
   },
@@ -34,4 +34,7 @@ const prodConfig = {
   APP_VERSION: getStaticEnv('APP_VERSION'),
 }
 
-export default process.env.NODE_ENV === 'production' ? prodConfig : devConfig
+export default process.env.PROD_MODE === 'true' ||
+process.env.NODE_ENV === 'production'
+  ? prodConfig
+  : devConfig
