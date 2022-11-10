@@ -62,7 +62,6 @@ export class FinancialStatementsInaoResolver {
     @CurrentUser() user: User,
     @Args('year') year: string,
   ) {
-    console.log(user)
     return this.financialStatementsService.getTaxInformation(
       user.nationalId,
       year,

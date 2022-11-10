@@ -39,7 +39,6 @@ export const PowerOfAttorneyFields = ({ application }: FieldBaseProps) => {
     },
   })
 
-  console.log({ application, currentActor, queryError })
   return (
     <GridContainer>
       <GridRow align="spaceBetween">

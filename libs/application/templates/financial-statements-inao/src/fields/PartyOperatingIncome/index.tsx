@@ -25,7 +25,7 @@ export const PartyOperatingIncome = ({ application }: FieldBaseProps) => {
     answers,
     'conditionalAbout.operatingYear',
   )
-  console.log({ application })
+
   const { data, loading } = useQuery(TaxInfoQuery, {
     variables: { year: operatingYear },
   })
