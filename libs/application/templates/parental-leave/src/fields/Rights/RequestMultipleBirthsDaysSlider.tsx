@@ -8,6 +8,7 @@ import {
   getApplicationAnswers,
   getMaxMultipleBirthsDays,
   getMaxMultipleBirthsMonths,
+  getMultipleBirthRequestDays,
 } from '../../lib/parentalLeaveUtils'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import Slider from '../components/Slider'
@@ -23,7 +24,7 @@ const RequestMultipleBirthsDaysSlider: FC<FieldBaseProps> = ({
   const { id, description } = field
   const { formatMessage } = useLocale()
   const { register } = useFormContext()
-  const { multipleBirthsRequestDays } = getApplicationAnswers(
+  const multipleBirthsRequestDays = getMultipleBirthRequestDays(
     application.answers,
   )
 

@@ -6,6 +6,7 @@ import { ParentalRelations } from '../../constants'
 import {
   getApplicationAnswers,
   getMaxMultipleBirthsDays,
+  getMultipleBirthRequestDays,
   getSelectedChild,
   getTransferredDays,
 } from '../../lib/parentalLeaveUtils'
@@ -41,7 +42,7 @@ export const applicationsToChildInformation = (
 
     if (asOtherParent) {
       let transferredDays = getTransferredDays(application, selectedChild)
-      const { multipleBirthsRequestDays } = getApplicationAnswers(
+      const multipleBirthsRequestDays = getMultipleBirthRequestDays(
         application.answers,
       )
       const maxMultipleBirthDays = getMaxMultipleBirthsDays(application.answers)
@@ -59,8 +60,7 @@ export const applicationsToChildInformation = (
           expectedDateOfBirth: selectedChild.expectedDateOfBirth,
           primaryParentNationalRegistryId: application.applicant,
           transferredDays,
-          multipleBirthsDays:
-            maxMultipleBirthDays - multipleBirthsRequestDays * 1,
+          multipleBirthsDays: maxMultipleBirthDays - multipleBirthsRequestDays,
         })
       } else {
         result.push({
