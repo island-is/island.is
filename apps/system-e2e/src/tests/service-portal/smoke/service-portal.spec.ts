@@ -1,6 +1,15 @@
 import { BrowserContext, expect, test } from '@playwright/test'
 import { urls } from '../../../support/utils'
 import { session } from '../../../support/session'
+import {
+  DefaultStub,
+  HttpMethod,
+  Imposter,
+  Mountebank,
+  Proxy,
+  ProxyMode,
+} from '@anev/ts-mountebank'
+import { helpers } from '../../../support/locator-helpers'
 
 test.use({ baseURL: urls.islandisBaseUrl })
 
@@ -18,7 +27,12 @@ test.describe('Service portal', () => {
   test.afterAll(async () => {
     await context.close()
   })
-  test('should have clickable navigation bar', async () => {
+  test.only('should have clickable navigation bar', async () => {
+    // const mb = new Mountebank()
+    // const imposter = new Imposter()
+    //   .withPort(9091)
+    //   .withStub(new DefaultStub('/', HttpMethod.GET, 'testbody', 500))
+    // await mb.createImposter(imposter)
     const page = await context.newPage()
     await page.goto('/minarsidur')
     await expect(

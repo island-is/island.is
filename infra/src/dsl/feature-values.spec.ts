@@ -4,7 +4,7 @@ import { EnvironmentConfig } from './types/charts'
 import { getFeatureAffectedServices } from './feature-deployments'
 import { HelmValueFile } from './types/output-types'
 import { renderHelmValueFile } from './value-files-generators/render-helm-value-file'
-import { renderers } from './service-dependencies'
+import { renderers } from './downstream-dependencies'
 import { renderer } from './processing/service-sets'
 
 const Dev: EnvironmentConfig = {

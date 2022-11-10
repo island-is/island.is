@@ -4,38 +4,50 @@ import {
   DockerComposeValueFile,
   Services,
 } from '../types/output-types'
+import { renderers } from '../downstream-dependencies'
+import { Localhost } from '../localhost-runtime'
+import { EXCLUDED_ENVIRONMENT_NAMES } from '../../cli/render-env-vars'
 
 export const renderDockerComposeFile = (
-  uberChart: Kubernetes,
+  uberChart: Localhost,
   services: Services<DockerComposeService>,
 ): DockerComposeValueFile => {
+  const outputFormat = renderers['docker-compose']
   const dockerComposeServices: Services<DockerComposeService> = Object.entries(
     services,
   ).reduce((acc, [name, service]) => {
-    const accVal = acc
     return {
-      ...accVal,
-      [name]: service,
+      ...acc,
+      [name]: ` ${
+        uberChart.ports[name] ? `PORT=${uberChart.ports[name]} ` : ''
+      }${Object.entries(service.env)
+        .filter(([name, val]) => !EXCLUDED_ENVIRONMENT_NAMES.includes(name))
+        .map(([key, value]) => `${key}="${value}"`)
+        .join(' ')} yarn start ${name}`,
     }
-  }, uberChart.env.global)
-  // const servicesAndMocks = Object.entries(uberChart.deps).reduce(
-  //   (acc, [name, svcs]) => {
-  //     if (name.startsWith('mock-')) {
-  //       return {
-  //         ...acc,
-  //         [name]: serviceMockDef({
-  //           namespace: svcs.values().next().value.serviceDef.namespace,
-  //           target: name,
-  //         }),
-  //       }
-  //     }
-  //     return {
-  //       ...acc,
-  //     }
-  //   },
-  //   helmServices,
-  // )
+  }, {})
+  const mocks: Services<DockerComposeService> = Object.entries(
+    uberChart.mocks,
+  ).reduce((acc, [name, svcs]) => {
+    if (name.startsWith('mock-')) {
+      const mock = outputFormat.serviceMockDef({
+        namespace: 'doesnotmatter',
+        target: name,
+      })
+      return {
+        ...acc,
+        [name]: `${
+          uberChart.ports[name] ? `PORT=${uberChart.ports[name]} ` : ''
+        } ${mock}`,
+      }
+    }
+    return {
+      ...acc,
+    }
+  }, {})
+
   return {
-    services: dockerComposeServices,
+    services: { ...dockerComposeServices },
+    mocks: mocks,
   }
 }

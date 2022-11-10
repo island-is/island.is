@@ -1,6 +1,6 @@
 import { Kubernetes } from '../kubernetes-runtime'
 import { HelmValueFile, ServiceHelm, Services } from '../types/output-types'
-import { renderers } from '../service-dependencies'
+import { renderers } from '../downstream-dependencies'
 
 export const renderHelmValueFile = (
   uberChart: Kubernetes,

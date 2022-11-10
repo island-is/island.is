@@ -1,21 +1,22 @@
 import { BrowserContext, expect, test } from '@playwright/test'
 import {
   BaseAuthority,
-  env,
   getEnvironmentBaseUrl,
   TestEnvironment,
   urls,
 } from '../../../support/utils'
-import { session } from '../../../support/session'
-import { mockApi } from '../../../support/api-tools'
 import {
   employerFormMessages,
   parentalLeaveFormMessages,
 } from '@island.is/application/templates/parental-leave/messages'
 import { coreMessages } from '@island.is/application/core/messages'
 import { label } from '../../../support/i18n'
-import { EmailAccount, makeEmailAccount } from '../../../support/email-account'
+import { EmailAccount } from '../../../support/email-account'
 import { helpers, locatorByRole } from '../../../support/locator-helpers'
+import { Response } from '@anev/ts-mountebank'
+import { EinstaklingsupplysingarToJSON } from '../../../../../../libs/clients/national-registry/v2/gen/fetch'
+import { addXroadMock, resetMocks, wildcard } from '../../../support/wire-mocks'
+import { NationalRegistry } from '../../../../../../infra/src/dsl/xroad'
 
 test.use({ baseURL: urls.islandisBaseUrl })
 
@@ -25,34 +26,234 @@ const applicationSystemApi: { [env in TestEnvironment]: string } = {
   prod: getEnvironmentBaseUrl(BaseAuthority.prod),
   local: 'http://localhost:4444',
 }
+
+async function setupXroadMocks() {
+  await resetMocks()
+  await addXroadMock(
+    NationalRegistry,
+    'XROAD_NATIONAL_REGISTRY_SERVICE_PATH',
+    '/api/v1/einstaklingar/0101303019',
+    new Response().withJSONBody(
+      EinstaklingsupplysingarToJSON({
+        kennitala: '0101303019',
+        nafn: 'Gervimaður Afríka',
+        eiginnafn: 'Gervimaður',
+        millinafn: null,
+        kenninafn: 'Afríka',
+        fulltNafn: 'Gervimaður Afríka',
+        kynkodi: '1',
+        bannmerking: false,
+        faedingardagur: new Date('1930-01-01T00:00:00'),
+        logheimili: {
+          heiti: 'Engihjalli 3',
+          postnumer: '200',
+          stadur: 'Kópavogur',
+          sveitarfelagsnumer: '1000',
+        },
+        adsetur: {
+          heiti: 'Fellsmúli 2',
+          postnumer: '108',
+          stadur: 'Reykjavík',
+          sveitarfelagsnumer: '0000',
+        },
+      }),
+    ),
+  )
+  await addXroadMock(
+    NationalRegistry,
+    'XROAD_NATIONAL_REGISTRY_SERVICE_PATH',
+    '/api/v1/einstaklingar/1111111119',
+    new Response().withJSONBody(
+      EinstaklingsupplysingarToJSON({
+        kennitala: '1111111119',
+        nafn: 'Stubbur Maack',
+        eiginnafn: 'Stubbur',
+        millinafn: null,
+        kenninafn: 'Maack',
+        fulltNafn: 'Stubbur Maack',
+        kynkodi: '3',
+        bannmerking: false,
+        faedingardagur: new Date('2011-11-11T00:00:00'),
+        logheimili: {
+          heiti: 'Engihjalli 3',
+          postnumer: '200',
+          stadur: 'K..pavogur',
+          sveitarfelagsnumer: '1000',
+        },
+        adsetur: {
+          heiti: 'Fellsm..li 2',
+          postnumer: '108',
+          stadur: 'Reykjav..k',
+          sveitarfelagsnumer: '0000',
+        },
+      }),
+    ),
+  )
+  await addXroadMock(
+    NationalRegistry,
+    'XROAD_NATIONAL_REGISTRY_SERVICE_PATH',
+    '/api/v1/einstaklingar/0101307789',
+    new Response().withJSONBody(
+      EinstaklingsupplysingarToJSON({
+        kennitala: '0101307789',
+        nafn: 'Gervima..ur ..tl..nd',
+        eiginnafn: 'Gervima..ur',
+        millinafn: null,
+        kenninafn: '..tl..nd',
+        fulltNafn: 'Gervima..ur ..tl..nd',
+        kynkodi: '1',
+        bannmerking: false,
+        faedingardagur: new Date('1930-01-01T00:00:00'),
+        logheimili: {
+          heiti: 'Engihjalli 3',
+          postnumer: '200',
+          stadur: 'K..pavogur',
+          sveitarfelagsnumer: '1000',
+        },
+        adsetur: {
+          heiti: 'Fellsm..li 2',
+          postnumer: '108',
+          stadur: 'Reykjav..k',
+          sveitarfelagsnumer: '0000',
+        },
+      }),
+    ),
+  )
+  await addXroadMock(
+    NationalRegistry,
+    'XROAD_NATIONAL_REGISTRY_SERVICE_PATH',
+    '/api/v1/einstaklingar/0101303019/forsja',
+    new Response().withJSONBody(['1111111119']),
+  )
+  await addXroadMock(
+    NationalRegistry,
+    'XROAD_NATIONAL_REGISTRY_SERVICE_PATH',
+    '/api/v1/einstaklingar/0101303019/forsja/1111111119',
+    new Response().withJSONBody(['0101307789']),
+  )
+  await addXroadMock(
+    NationalRegistry,
+    'XROAD_NATIONAL_REGISTRY_SERVICE_PATH',
+    '/api/v1/einstaklingar/0101303019/hjuskapur',
+    new Response().withJSONBody({
+      kennitalaMaka: '0101307789',
+      nafnMaka: 'Gervima..ur ..tl..nd',
+      hjuskaparkodi: '3',
+      breytt: '2021-05-26T22:23:40.513',
+    }),
+  )
+  await addXroadMock(
+    NationalRegistry,
+    'XROAD_NATIONAL_REGISTRY_SERVICE_PATH',
+    '/api/v1/einstaklingar/0101303019/fjolskyldumedlimir',
+    new Response().withJSONBody({
+      fjolskyldunumer: '0101303019',
+      einstaklingar: [
+        {
+          kennitala: '0101303019',
+          nafn: 'Gervima..ur Afr..ka',
+          eiginnafn: 'Gervima..ur',
+          millinafn: null,
+          kenninafn: 'Afr..ka',
+          fulltNafn: 'Gervima..ur Afr..ka',
+          kynkodi: '1',
+          bannmerking: false,
+          faedingardagur: '1930-01-01T00:00:00',
+          logheimili: {
+            heiti: 'Engihjalli 3',
+            postnumer: '200',
+            stadur: 'K..pavogur',
+            sveitarfelagsnumer: '1000',
+          },
+          adsetur: {
+            heiti: 'Fellsm..li 2',
+            postnumer: '108',
+            stadur: 'Reykjav..k',
+            sveitarfelagsnumer: '0000',
+          },
+        },
+        {
+          kennitala: '0101307789',
+          nafn: 'Gervima..ur ..tl..nd',
+          eiginnafn: 'Gervima..ur',
+          millinafn: null,
+          kenninafn: '..tl..nd',
+          fulltNafn: 'Gervima..ur ..tl..nd',
+          kynkodi: '1',
+          bannmerking: false,
+          faedingardagur: '1930-01-01T00:00:00',
+          logheimili: {
+            heiti: 'Engihjalli 3',
+            postnumer: '200',
+            stadur: 'K..pavogur',
+            sveitarfelagsnumer: '1000',
+          },
+          adsetur: {
+            heiti: 'Fellsm..li 2',
+            postnumer: '108',
+            stadur: 'Reykjav..k',
+            sveitarfelagsnumer: '0000',
+          },
+        },
+        {
+          kennitala: '1111111119',
+          nafn: 'Stubbur Maack',
+          eiginnafn: 'Stubbur',
+          millinafn: null,
+          kenninafn: 'Maack',
+          fulltNafn: 'Stubbur Maack',
+          kynkodi: '3',
+          bannmerking: false,
+          faedingardagur: '2011-11-11T00:00:00',
+          logheimili: {
+            heiti: 'Engihjalli 3',
+            postnumer: '200',
+            stadur: 'K..pavogur',
+            sveitarfelagsnumer: '1000',
+          },
+          adsetur: {
+            heiti: 'Fellsm..li 2',
+            postnumer: '108',
+            stadur: 'Reykjav..k',
+            sveitarfelagsnumer: '0000',
+          },
+        },
+      ],
+    }),
+  )
+  await wildcard()
+}
+
 test.describe('Parental leave', () => {
   let context: BrowserContext
   let applicant: EmailAccount
   let employer: EmailAccount
 
   test.beforeAll(async () => {
-    applicant = await makeEmailAccount('applicant')
-    employer = await makeEmailAccount('employer')
+    // applicant = await makeEmailAccount('applicant')
+    // employer = await makeEmailAccount('employer')
   })
   test.beforeAll(async ({ browser }) => {
-    context = await session({
-      browser: browser,
-      storageState: 'parental-leave.json',
-      homeUrl: `${urls.islandisBaseUrl}/umsoknir/faedingarorlof`,
-      phoneNumber: '0103019',
-      idsLoginOn: true,
-    })
+    // context = await session({
+    //   browser: browser,
+    //   storageState: 'parental-leave.json',
+    //   homeUrl: `${urls.islandisBaseUrl}/umsoknir/faedingarorlof`,
+    //   phoneNumber: '0103019',
+    //   idsLoginOn: true,
+    // })
   })
   test.afterAll(async () => {
-    await context.close()
+    // await context.close()
   })
 
   test('should be able to create application', async () => {
+    // const apiUrl = applicationSystemApi[env]
+    // await mockApi(page, `${apiUrl}/api/graphql?op=GetTranslations`, {
+    //   data: { getTranslations: {} },
+    // })
+
+    await setupXroadMocks()
     const page = await context.newPage()
-    const apiUrl = applicationSystemApi[env]
-    await mockApi(page, `${apiUrl}/api/graphql?op=GetTranslations`, {
-      data: { getTranslations: {} },
-    })
 
     await page.goto('/umsoknir/faedingarorlof', { waitUntil: 'networkidle' })
     const { findByRole, findByTestId, proceed } = helpers(page)

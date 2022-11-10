@@ -4,13 +4,16 @@ import { Charts } from '../uber-charts/all-charts'
 import { renderHelmServiceFile } from '../dsl/exports/exports'
 import { toServices } from '../dsl/exports/to-services'
 
-const EXCLUDED_ENVIRONMENT_NAMES = [
+export const EXCLUDED_ENVIRONMENT_NAMES = [
   'DB_PASSWORD',
+  'DB_HOST',
+  'DB_USER',
   'NOVA_USERNAME',
   'NOVA_PASSWORD',
   'DB_REPLICAS_HOST',
   'NODE_OPTIONS',
   'REDIS_NODES',
+  'REDIS_URL_NODE_01',
   'XROAD_NATIONAL_REGISTRY_REDIS_NODES',
   'COMPANY_REGISTRY_REDIS_NODES',
 ]

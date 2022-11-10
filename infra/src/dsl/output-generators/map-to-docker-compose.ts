@@ -71,9 +71,9 @@ const serializeService: SerializeMethod<DockerComposeService> = async (
   }
 
   // secrets
-  let secrets: Secrets = {}
   if (Object.keys(serviceDef.secrets).length > 0) {
-    // secrets = await retrieveSecrets(serviceDef.secrets)
+    const secrets = await retrieveSecrets(serviceDef.secrets)
+    mergeObjects(result.env, secrets)
   }
 
   // initContainers
@@ -138,8 +138,6 @@ const serializeService: SerializeMethod<DockerComposeService> = async (
     addToErrors(errors)
   }
 
-  checkCollisions(secrets, result.env)
-
   const allErrors = getErrors()
   return allErrors.length === 0
     ? { type: 'success', serviceDef: [result] }
@@ -164,7 +162,7 @@ function serializePostgres(
   const env: { [name: string]: string } = {}
   const secrets: { [name: string]: string } = {}
   const errors: string[] = []
-  env['DB_USER'] = postgres.username ?? postgresIdentifier(serviceDef.name)
+  env['DB_USER'] = 'testdb'
   env['DB_NAME'] = postgres.name ?? postgresIdentifier(serviceDef.name)
   try {
     const { reader, writer } = resolveDbHost(postgres, deployment)
@@ -175,8 +173,7 @@ function serializePostgres(
       `Could not resolve DB_HOST variable for service: ${serviceDef.name}`,
     )
   }
-  secrets['DB_PASS'] =
-    postgres.passwordSecret ?? `/k8s/${serviceDef.name}/DB_PASSWORD`
+  secrets['DB_PASS'] = 'testdb'
   return { env, secrets, errors }
 }
 

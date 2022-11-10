@@ -6,6 +6,7 @@ import {
   ServiceHelm,
 } from '../types/output-types'
 import { Kubernetes } from '../kubernetes-runtime'
+import { Localhost } from '../localhost-runtime'
 
 export const dumpOpts = {
   sortKeys: true,
@@ -26,9 +27,9 @@ export const dumpServiceHelm = (ch: Kubernetes, valueFile: HelmValueFile) => {
   )
 }
 export const dumpDockerCompose = (
-  ch: Kubernetes,
+  ch: Localhost,
   valueFile: DockerComposeValueFile,
 ) => {
-  const { services } = valueFile
-  return dump(services, dumpOpts)
+  const { services, mocks } = valueFile
+  return dump({ ...services, ...mocks }, dumpOpts)
 }

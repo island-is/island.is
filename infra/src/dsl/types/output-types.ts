@@ -190,6 +190,7 @@ export type HelmValueFile = {
 }
 export type DockerComposeValueFile = {
   services: Services<DockerComposeService>
+  mocks: Services<DockerComposeService>
 }
 
 export interface OutputFormat<T extends ServiceOutputType> {

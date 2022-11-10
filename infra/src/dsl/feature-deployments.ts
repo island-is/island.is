@@ -1,6 +1,6 @@
 import { ServiceDefinition } from './types/input-types'
 import { Kubernetes } from './kubernetes-runtime'
-import { getWithDependantServices } from './service-dependencies'
+import { getWithDownstreamServices } from './downstream-dependencies'
 
 export const getFeatureAffectedServices = async (
   uberChart: Kubernetes,
@@ -13,7 +13,7 @@ export const getFeatureAffectedServices = async (
     const excludedServiceNames = excludedServices.map((f) => f.name)
 
     return (
-      await getWithDependantServices(uberChart.env, habitat, services)
+      await getWithDownstreamServices(uberChart.env, habitat, services)
     ).filter((f) => !excludedServiceNames.includes(f.name))
   } else {
     throw new Error('Feature deployment with a feature name not defined')

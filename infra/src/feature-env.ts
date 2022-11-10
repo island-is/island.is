@@ -15,6 +15,7 @@ import { Deployments } from './uber-charts/all-charts'
 import { getFeatureAffectedServices } from './dsl/feature-deployments'
 import { dumpJobYaml } from './dsl/file-formats/yaml'
 import {
+  renderDockerComposeValueFileContent,
   renderHelmJobForFeature,
   renderHelmServices,
   renderHelmValueFileContent,
@@ -118,7 +119,7 @@ yargs(hideBin(process.argv))
         toServices(ExcludedFeatureDeploymentServices),
       )
       await writeToOutput(
-        await renderHelmValueFileContent(ch.env, featureYaml),
+        await renderDockerComposeValueFileContent(ch.env, featureYaml),
         argv.output,
       )
     },

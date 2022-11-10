@@ -6,7 +6,7 @@ import {
   ServiceHelm,
 } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
-import { renderers } from './service-dependencies'
+import { renderers } from './downstream-dependencies'
 import { rendererForOne } from './processing/service-sets'
 
 const Staging: EnvironmentConfig = {
