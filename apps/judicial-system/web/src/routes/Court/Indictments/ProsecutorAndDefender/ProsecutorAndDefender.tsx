@@ -58,7 +58,7 @@ const HearingArrangements: React.FC = () => {
     [workingCase, setWorkingCase, setAndSendCaseToServer],
   )
 
-  const onNextButttonClick = useCallback(async () => {
+  const onNextButtonClick = useCallback(async () => {
     await sendNotification(workingCase.id, NotificationType.DEFENDER_ASSIGNED)
     router.push(`${constants.INDICTMENTS_COURT_RECORD_ROUTE}/${workingCase.id}`)
   }, [workingCase.id, sendNotification, router])
@@ -101,7 +101,7 @@ const HearingArrangements: React.FC = () => {
             isSendingNotification ||
             !isProsecutorAndDefenderStepValid(workingCase)
           }
-          onNextButtonClick={onNextButttonClick}
+          onNextButtonClick={onNextButtonClick}
         />
       </FormContentContainer>
     </PageLayout>
