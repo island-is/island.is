@@ -241,6 +241,8 @@ export class UserIdentitiesService {
       )
     })
 
-    return this.claimModel.findAll({ where: { subjectId: subjectId } })
+    return this.claimModel.findAll({
+      where: { subjectId: subjectId, useMaster: true },
+    })
   }
 }
