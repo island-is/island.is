@@ -1,7 +1,7 @@
-import { Field, InputType, ObjectType } from '@nestjs/graphql'
+import { Field, InputType } from '@nestjs/graphql'
 import { IsEmail } from 'class-validator'
 
-@ObjectType()
+@InputType()
 class MailchimpInputField {
   @Field({ nullable: true })
   label?: string
@@ -9,6 +9,8 @@ class MailchimpInputField {
   value?: string
   @Field({ nullable: true })
   name?: string
+  @Field({ nullable: true })
+  required?: boolean
 }
 
 @InputType()

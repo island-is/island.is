@@ -36,9 +36,15 @@ export class MailchimpResolver {
         )
       : []
 
-    const selectedInputs = mailingListSignupSlice?.inputs
-      ? JSON.parse(mailingListSignupSlice?.inputs)
-      : []
+    const inputFieldNames = input.inputFields?.map((i) => i?.name)
+
+    const parsedInputs = JSON.parse(
+      mailingListSignupSlice?.inputs ?? '[]',
+    ) as typeof input['inputFields']
+
+    const selectedInputs = (parsedInputs ?? []).filter((i) =>
+      inputFieldNames?.includes(i?.name),
+    )
 
     const populatedUrl = url
       .replace('{{EMAIL}}', input.email)
@@ -52,12 +58,15 @@ export class MailchimpResolver {
       .replace('{{LNAME}}', input.name?.split(' ')?.slice(1)?.join(' ') ?? ' ')
       .replace(
         '{{INPUTS}}',
-        selectedInputs.map((i) => `${i.name}=${input.}`).join('&'),
+        selectedInputs.map((i) => `${i.name}=${i.value}`).join('&'),
       )
+
+    console.log(populatedUrl)
 
     return axios
       .get(populatedUrl)
       .then((response) => {
+        console.log(response.data)
         return {
           subscribed: true,
         }

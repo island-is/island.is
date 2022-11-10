@@ -604,6 +604,22 @@ export const slices = gql`
     powerBiEmbedProps
   }
 
+  fragment EmailSignupFields on EmailSignup {
+    __typename
+    id
+    title
+    description
+    formFields {
+      title
+      placeholder
+      type
+      required
+      options
+    }
+    signupType
+    configuration
+  }
+
   fragment BaseSlices on Slice {
     ...TimelineFields
     ...MailingListSignupFields
@@ -639,6 +655,7 @@ export const slices = gql`
     ...LifeEventPageListSliceFields
     ...SidebarCardFields
     ...PowerBiSliceFields
+    ...EmailSignupFields
   }
 
   fragment AllSlices on Slice {

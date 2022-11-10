@@ -36,7 +36,13 @@ interface FormProps {
   namespace: Record<string, string>
 }
 
-const FormField = ({ field, slug, value, error, onChange }: FormFieldProps) => {
+export const FormField = ({
+  field,
+  slug,
+  value,
+  error,
+  onChange,
+}: FormFieldProps) => {
   switch (field.type) {
     case 'input':
       return (

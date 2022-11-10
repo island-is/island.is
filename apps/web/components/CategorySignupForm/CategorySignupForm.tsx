@@ -61,6 +61,12 @@ export const CategorySignupForm = ({
       errors.email = 'invalid'
     }
 
+    for (const i of inputs ?? []) {
+      if (!values[i?.name] && i?.required) {
+        errors[i?.name] = 'invalid'
+      }
+    }
+
     return errors
   }
 
@@ -77,7 +83,7 @@ export const CategorySignupForm = ({
       ...Object.fromEntries(
         categories.map((_, idx) => [`category-${idx}`, false]),
       ),
-      ...Object.fromEntries(inputs),
+      ...Object.fromEntries(inputs?.map((i) => [i?.name, ''])),
     },
     validateOnChange: false,
     validate,
@@ -89,7 +95,7 @@ export const CategorySignupForm = ({
             signupID: slice.id,
             email: formik.values.email,
             name: formik.values.name,
-            inputFields: inputs.map((input) => ({
+            inputFields: inputs?.map((input) => ({
               ...input,
               value: formik.values[input.name],
             })),
@@ -169,7 +175,7 @@ export const CategorySignupForm = ({
                     value={formik.values.name}
                   />
                 </GridColumn>
-                <GridColumn span="12/12">
+                <GridColumn span="12/12" paddingBottom={3}>
                   <Input
                     name="email"
                     label={slice.inputLabel}
@@ -185,7 +191,7 @@ export const CategorySignupForm = ({
                   />
                 </GridColumn>
                 {inputs.map((input) => (
-                  <GridColumn span="12/12">
+                  <GridColumn span="12/12" paddingBottom={3}>
                     <Input
                       name={input.name}
                       label={input.label}
