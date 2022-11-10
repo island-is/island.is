@@ -24,10 +24,17 @@ export type CoOwnerAndOperator = z.TypeOf<typeof CoOwnerAndOperatorSchema>
 
 // Review
 
+interface ReviewerProps {
+  nationalId: string
+  name: string
+  approved: boolean
+}
+
 export interface ReviewSectionProps {
   title: string
   description: string
   visible?: boolean
   tagText: MessageDescriptor | string
   tagVariant: TagVariant
+  reviewer?: ReviewerProps[]
 }

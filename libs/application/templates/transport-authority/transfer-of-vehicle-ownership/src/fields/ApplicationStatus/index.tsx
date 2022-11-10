@@ -62,9 +62,9 @@ export const ApplicationStatus: FC<FieldBaseProps & ReviewScreenProps> = ({
           size="small"
           type="button"
           variant="text"
-          onClick={() => changeScreens('inReviewOverviewScreen')}
+          onClick={() => setStep('overview')}
         >
-          Yfirlit
+          Skoða yfirlit
         </Button>
       </Box>
       <Box marginTop={4} marginBottom={8}>
@@ -76,12 +76,13 @@ export const ApplicationStatus: FC<FieldBaseProps & ReviewScreenProps> = ({
             tagText={step.tagText}
             tagVariant={step.tagVariant}
             visible={step.visible}
+            reviewer={step.reviewer}
           />
         ))}
       </Box>
       <Divider />
       <Box display="flex" justifyContent="flexEnd" paddingY={5}>
-        <Button onClick={() => setStep('overview')}>Opna yfirlit</Button>
+        <Button onClick={() => setStep('overview')}>Opna samþykki</Button>
       </Box>
     </Box>
   )
