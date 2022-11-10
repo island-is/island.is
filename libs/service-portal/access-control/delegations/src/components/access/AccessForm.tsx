@@ -159,9 +159,6 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
     )
   }
 
-  const disableSubmit =
-    delegation.scopes.length === 0 && (!scopes || scopes.length === 0)
-
   return (
     <>
       {formError && (
@@ -209,7 +206,9 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
               defaultMessage: 'Veita aðgang',
             })}
             confirmIcon="arrowForward"
-            disabled={disableSubmit}
+            disabled={
+              delegation.scopes.length === 0 && (!scopes || scopes.length === 0)
+            }
           />
         </Box>
       </FormProvider>
