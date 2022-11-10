@@ -1245,11 +1245,7 @@ export class NotificationService {
 
     const hasSentNotificationBefore = pastNotifications.some(
       (pastNotification) => {
-        const recipients: Recipient[] = JSON.parse(
-          pastNotification.recipients || '[]',
-        )
-
-        return recipients.some(
+        return pastNotification.recipients.some(
           (recipient) =>
             recipient.address === defenderEmail && recipient.success,
         )
