@@ -116,7 +116,7 @@ export const caseTypes: CaseTypes = {
   MAJOR_ASSAULT: 'líkamsárás - meiriháttar',
   MINOR_ASSAULT: 'líkamsárás - minniháttar',
   AGGRAVATED_ASSAULT: 'líkamsárás - sérlega hættuleg',
-  ASSAULT_LEADING_TO_DEATH: 'líkamsáras sem leiðir til dauða',
+  ASSAULT_LEADING_TO_DEATH: 'líkamsárás sem leiðir til dauða',
   MURDER: 'manndráp',
   RAPE: 'nauðgun',
   UTILITY_THEFT: 'nytjastuldur',

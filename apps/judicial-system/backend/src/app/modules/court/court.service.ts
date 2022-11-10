@@ -43,7 +43,7 @@ export const subTypes: SubTypes = {
   SEXUAL_OFFENSES_OTHER_THAN_RAPE: 'Kynferðisbrot önnur en nauðgun',
   MAJOR_ASSAULT: 'Líkamsárás - meiriháttar',
   MINOR_ASSAULT: 'Líkamsárás - minniháttar',
-  AGGRAVATED_ASSAULT: 'Líkamsáras - sérlega hættuleg',
+  AGGRAVATED_ASSAULT: 'Líkamsárás - sérlega hættuleg',
   ASSAULT_LEADING_TO_DEATH: 'Líkamsárás sem leiðir til dauða',
   MURDER: 'Manndráp',
   RAPE: 'Nauðgun',
