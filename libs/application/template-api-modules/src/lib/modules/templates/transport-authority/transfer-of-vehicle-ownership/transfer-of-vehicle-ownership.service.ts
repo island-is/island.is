@@ -15,6 +15,11 @@ import {
   generateApplicationRejectedSms,
 } from './smsGenerators'
 import { EmailRecipient, EmailRole } from './types'
+import {
+  getDateAtNoonFromString,
+  getRecipients,
+  getRecipientBySsn,
+} from './transfer-of-vehicle-ownership.utils'
 
 @Injectable()
 export class TransferOfVehicleOwnershipService {
@@ -82,7 +87,7 @@ export class TransferOfVehicleOwnershipService {
 
     // 2a. Get list of users that need to review
     const answers = application.answers as TransferOfVehicleOwnershipAnswers
-    const recipientList = this.getRecipients(answers, [
+    const recipientList = getRecipients(answers, [
       EmailRole.sellerCoOwner,
       EmailRole.buyer,
       EmailRole.buyerCoOwner,
@@ -100,7 +105,7 @@ export class TransferOfVehicleOwnershipService {
 
       if (recipientList[i].phone) {
         await this.sharedTemplateAPIService.sendSms(
-          () => generateRequestReviewSms(recipientList[i]),
+          () => generateRequestReviewSms(application, recipientList[i]),
           application,
         )
       }
@@ -202,7 +207,8 @@ export class TransferOfVehicleOwnershipService {
       }
       if (newlyAddedRecipientList[i].phone) {
         await this.sharedTemplateAPIService.sendSms(
-          () => generateRequestReviewSms(newlyAddedRecipientList[i]),
+          () =>
+            generateRequestReviewSms(application, newlyAddedRecipientList[i]),
           application,
         )
       }
@@ -221,7 +227,7 @@ export class TransferOfVehicleOwnershipService {
 
     // 2a. Get list of users that need to be notified
     const answers = application.answers as TransferOfVehicleOwnershipAnswers
-    const recipientList = this.getRecipients(answers, [
+    const recipientList = getRecipients(answers, [
       EmailRole.seller,
       EmailRole.sellerCoOwner,
       EmailRole.buyer,
@@ -230,17 +236,28 @@ export class TransferOfVehicleOwnershipService {
     ])
 
     // 2b. Send email/sms individually to each recipient about success of withdrawing application
+    const rejectedByRecipient = getRecipientBySsn(answers, auth.nationalId)
     for (var i = 0; i < recipientList.length; i++) {
       if (recipientList[i].email) {
         await this.sharedTemplateAPIService.sendEmail(
-          (props) => generateApplicationRejectedEmail(props, recipientList[i]),
+          (props) =>
+            generateApplicationRejectedEmail(
+              props,
+              recipientList[i],
+              rejectedByRecipient,
+            ),
           application,
         )
       }
 
       if (recipientList[i].phone) {
         await this.sharedTemplateAPIService.sendSms(
-          () => generateApplicationRejectedSms(recipientList[i]),
+          () =>
+            generateApplicationRejectedSms(
+              application,
+              recipientList[i],
+              rejectedByRecipient,
+            ),
           application,
         )
       }
@@ -279,7 +296,7 @@ export class TransferOfVehicleOwnershipService {
         email: answers?.buyer?.email,
       },
       // Note: API throws error if timestamp is 00:00:00, so we will use noon
-      dateOfPurchase: this.getDateAtNoonFromString(answers?.vehicle?.date),
+      dateOfPurchase: getDateAtNoonFromString(answers?.vehicle?.date),
       saleAmount: Number(answers?.vehicle?.salePrice) || 0,
       // Note: Insurance code 000 is when car is out of commission and is not going to be insured
       insuranceCompanyCode:
@@ -303,7 +320,7 @@ export class TransferOfVehicleOwnershipService {
     // 2. Notify everyone in the process that the application has successfully been submitted
 
     // 2a. Get list of users that need to be notified
-    const recipientList = this.getRecipients(answers, [
+    const recipientList = getRecipients(answers, [
       EmailRole.seller,
       EmailRole.sellerCoOwner,
       EmailRole.buyer,
@@ -322,97 +339,10 @@ export class TransferOfVehicleOwnershipService {
 
       if (recipientList[i].phone) {
         await this.sharedTemplateAPIService.sendSms(
-          () => generateApplicationSubmittedSms(recipientList[i]),
+          () => generateApplicationSubmittedSms(application, recipientList[i]),
           application,
         )
       }
     }
-  }
-
-  // Returns date object with the timestamp 12:00 (UTC timezone)
-  private getDateAtNoonFromString(dateStr: string): Date {
-    const dateObj = new Date(dateStr)
-    const date =
-      dateObj instanceof Date && !isNaN(dateObj.getDate())
-        ? dateObj
-        : new Date()
-    return new Date(date.toISOString().substring(0, 10) + 'T12:00:00Z')
-  }
-
-  private getRecipients(
-    answers: TransferOfVehicleOwnershipAnswers,
-    roles: Array<EmailRole>,
-  ): Array<EmailRecipient> {
-    const recipientList: Array<EmailRecipient> = []
-
-    // Seller
-    if (roles.includes(EmailRole.seller) && answers.seller) {
-      recipientList.push({
-        ssn: answers.seller.nationalId,
-        name: answers.seller.name,
-        email: answers.seller.email,
-        phone: answers.seller.phone,
-        role: EmailRole.seller,
-      })
-    }
-
-    // Seller's co-owners
-    const sellerCoOwners = answers.sellerCoOwner
-    if (roles.includes(EmailRole.sellerCoOwner) && sellerCoOwners) {
-      for (var i = 0; i < sellerCoOwners.length; i++) {
-        recipientList.push({
-          ssn: sellerCoOwners[i].nationalId,
-          name: sellerCoOwners[i].name,
-          email: sellerCoOwners[i].email,
-          phone: sellerCoOwners[i].phone,
-          role: EmailRole.sellerCoOwner,
-        })
-      }
-    }
-
-    // Buyer
-    if (roles.includes(EmailRole.buyer) && answers.buyer) {
-      recipientList.push({
-        ssn: answers.buyer.nationalId,
-        name: answers.buyer.name,
-        email: answers.buyer.email,
-        phone: answers.buyer.phone,
-        role: EmailRole.buyer,
-      })
-    }
-
-    // Buyer's co-owners
-    const buyerCoOwners = answers.buyerCoOwnerAndOperator?.filter(
-      (x) => x.type === 'coOwner',
-    )
-    if (roles.includes(EmailRole.buyerCoOwner) && buyerCoOwners) {
-      for (var i = 0; i < buyerCoOwners.length; i++) {
-        recipientList.push({
-          ssn: buyerCoOwners[i].nationalId,
-          name: buyerCoOwners[i].name,
-          email: buyerCoOwners[i].email,
-          phone: buyerCoOwners[i].phone,
-          role: EmailRole.buyerCoOwner,
-        })
-      }
-    }
-
-    // Buyer's operators
-    const buyerOperators = answers.buyerCoOwnerAndOperator?.filter(
-      (x) => x.type === 'operator',
-    )
-    if (roles.includes(EmailRole.buyerOperator) && buyerOperators) {
-      for (var i = 0; i < buyerOperators.length; i++) {
-        recipientList.push({
-          ssn: buyerOperators[i].nationalId,
-          name: buyerOperators[i].name,
-          email: buyerOperators[i].email,
-          phone: buyerOperators[i].phone,
-          role: EmailRole.buyerOperator,
-        })
-      }
-    }
-
-    return recipientList
   }
 }

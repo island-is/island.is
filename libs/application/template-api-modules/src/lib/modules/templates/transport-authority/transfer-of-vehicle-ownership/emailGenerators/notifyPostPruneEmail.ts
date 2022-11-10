@@ -3,12 +3,12 @@ import { Message } from '@island.is/email-service'
 import { EmailTemplateGeneratorProps } from '../../../../../types'
 import { EmailRecipient } from '../types'
 
-export type RequestReviewEmail = (
+export type NotifyPostPruneEmail = (
   props: EmailTemplateGeneratorProps,
   recipient: EmailRecipient,
 ) => Message
 
-export const generateRequestReviewEmail: RequestReviewEmail = (
+export const generateNotifyPostPruneEmail: NotifyPostPruneEmail = (
   props,
   recipient,
 ): Message => {
@@ -22,7 +22,7 @@ export const generateRequestReviewEmail: RequestReviewEmail = (
   if (!recipient.email) throw new Error('Recipient email was undefined')
   if (!permno) throw new Error('Permno was undefined')
 
-  const subject = 'Tilkynning um eigendaskipti - Vantar samþykki'
+  const subject = 'Tilkynning um eigendaskipti - Umsókn hefur runnið út'
 
   return {
     from: {
@@ -37,11 +37,7 @@ export const generateRequestReviewEmail: RequestReviewEmail = (
         {
           component: 'Copy',
           context: {
-            copy:
-              `Góðan dag. Þín bíður ósamþykkt beiðni um eigendaskipti fyrir ökutækið ${permno} á island.is. ` +
-              `Til þess að samþykkja beiðnina skráir þú þig inn á island.is/umsóknir. ` +
-              `Þú hefur 7 daga til þess að samþykkja beiðnina. ` +
-              `Ef eigendaskiptin hafa ekki verið samþykkt innan 7 daga falla þau niður.`,
+            copy: `Eigendaskipti fyrir ökutækið ${permno} hefur runnið út. `, // TODOx need text from SGS
           },
         },
       ],

@@ -1,16 +1,27 @@
+import { TransferOfVehicleOwnershipAnswers } from '@island.is/application/templates/transport-authority/transfer-of-vehicle-ownership'
 import { SmsMessage } from '../../../../../types'
 import { EmailRecipient } from '../types'
+import { Application } from '@island.is/application/types'
 
-export type RequestReviewSms = (recipient: EmailRecipient) => SmsMessage
+export type RequestReviewSms = (
+  application: Application,
+  recipient: EmailRecipient,
+) => SmsMessage
 
-export const generateRequestReviewSms: RequestReviewSms = (recipient) => {
+export const generateRequestReviewSms: RequestReviewSms = (
+  application,
+  recipient,
+) => {
+  const answers = application.answers as TransferOfVehicleOwnershipAnswers
+  const permno = answers?.vehicle?.plate
+
   if (!recipient.phone) throw new Error('Recipient phone was undefined')
+  if (!permno) throw new Error('Permno was undefined')
 
-  const subject = 'Tilkynning um eigendaskipti - Vantar samþykki'
-  const bodyText =
-    'Tilkynning um eigendaskipti hefur borist Samgöngustofu þar sem þú þarft að samþykkja.'
   return {
     phoneNumber: recipient.phone || '',
-    message: subject + '\n' + bodyText,
+    message:
+      `Þín bíður ósamþykkt beiðni um eigendaskipti fyrir ökutækið ${permno} inn á island.is/umsóknir. ` +
+      `Til þess að eigendaskiptin verði skráð þarftu að samþykkja beiðnina innan 7 daga.`,
   }
 }

@@ -3,12 +3,12 @@ import { EmailRecipient } from '../types'
 import { Application } from '@island.is/application/types'
 import { TransferOfVehicleOwnershipAnswers } from '@island.is/application/templates/transport-authority/transfer-of-vehicle-ownership'
 
-export type ApplicationSubmittedSms = (
+export type NotifyPostPruneSms = (
   application: Application,
   recipient: EmailRecipient,
 ) => SmsMessage
 
-export const generateApplicationSubmittedSms: ApplicationSubmittedSms = (
+export const generateNotifyPostPruneSms: NotifyPostPruneSms = (
   application,
   recipient,
 ) => {
@@ -20,8 +20,6 @@ export const generateApplicationSubmittedSms: ApplicationSubmittedSms = (
 
   return {
     phoneNumber: recipient.phone || '',
-    message:
-      `Eigendaskipti fyrir ökutækið ${permno} hafa verið skráð. ` +
-      `Allir aðilar samþykktu inn á island.is/umsoknir og búið er að greiða fyrir tilkynninguna. `,
+    message: `Eigendaskipti fyrir ökutækið ${permno} hefur runnið út. `, // TODOx need text from SGS
   }
 }

@@ -1,3 +1,4 @@
+import { TransferOfVehicleOwnershipAnswers } from '@island.is/application/templates/transport-authority/transfer-of-vehicle-ownership'
 import { Message } from '@island.is/email-service'
 import { EmailTemplateGeneratorProps } from '../../../../../types'
 import { EmailRecipient } from '../types'
@@ -15,10 +16,13 @@ export const generateApplicationSubmittedEmail: ApplicationSubmittedEmail = (
     application,
     options: { email },
   } = props
+  const answers = application.answers as TransferOfVehicleOwnershipAnswers
+  const permno = answers?.vehicle?.plate
 
   if (!recipient.email) throw new Error('Recipient email was undefined')
+  if (!permno) throw new Error('Permno was undefined')
 
-  const subject = 'Tilkynning um eigendaskipti - Búið er að klára umsókn'
+  const subject = 'Tilkynning um eigendaskipti - Búið er að skrá beiðni'
 
   return {
     from: {
@@ -33,7 +37,9 @@ export const generateApplicationSubmittedEmail: ApplicationSubmittedEmail = (
         {
           component: 'Copy',
           context: {
-            copy: 'Umsóknin er komin til okkar.',
+            copy:
+              `Góðan dag. Eigendaskipti fyrir ökutækið ${permno} hafa verið skráð. ` +
+              `Allir aðilar samþykktu inn á island.is/umsoknir og búið er að greiða fyrir tilkynninguna. `,
           },
         },
       ],

@@ -2,13 +2,17 @@ import { TransferOfVehicleOwnershipAnswers } from '@island.is/application/templa
 import { Message } from '@island.is/email-service'
 import { EmailTemplateGeneratorProps } from '../../../../../types'
 import { EmailRecipient } from '../types'
+import {
+  getRoleNameById,
+  getApplicationPruneDateStr,
+} from '../transfer-of-vehicle-ownership.utils'
 
-export type RequestReviewEmail = (
+export type NotifyPrePruneEmail = (
   props: EmailTemplateGeneratorProps,
   recipient: EmailRecipient,
 ) => Message
 
-export const generateRequestReviewEmail: RequestReviewEmail = (
+export const generateNotifyPrePruneEmail: NotifyPrePruneEmail = (
   props,
   recipient,
 ): Message => {
@@ -18,11 +22,21 @@ export const generateRequestReviewEmail: RequestReviewEmail = (
   } = props
   const answers = application.answers as TransferOfVehicleOwnershipAnswers
   const permno = answers?.vehicle?.plate
+  const notApprovedByList: EmailRecipient[] = [] //TODOx get list of recipient that have not approved
 
   if (!recipient.email) throw new Error('Recipient email was undefined')
   if (!permno) throw new Error('Permno was undefined')
 
-  const subject = 'Tilkynning um eigendaskipti - Vantar samþykki'
+  const subject = 'Tilkynning um eigendaskipti - Ertu nokkuð að gleyma þér?'
+  const pruneDateStr = getApplicationPruneDateStr(application.created)
+  const notApprovedByListStr = notApprovedByList
+    .map(
+      (notApprovedBy) =>
+        `${notApprovedBy.name}, kt. ${notApprovedBy.ssn} (${getRoleNameById(
+          notApprovedBy.role,
+        )}). `,
+    )
+    .join(',')
 
   return {
     from: {
@@ -38,10 +52,10 @@ export const generateRequestReviewEmail: RequestReviewEmail = (
           component: 'Copy',
           context: {
             copy:
-              `Góðan dag. Þín bíður ósamþykkt beiðni um eigendaskipti fyrir ökutækið ${permno} á island.is. ` +
-              `Til þess að samþykkja beiðnina skráir þú þig inn á island.is/umsóknir. ` +
-              `Þú hefur 7 daga til þess að samþykkja beiðnina. ` +
-              `Ef eigendaskiptin hafa ekki verið samþykkt innan 7 daga falla þau niður.`,
+              `Góðan dag. Ert þú nokkuð að gleyma þér? ` +
+              `Á morgun ${pruneDateStr} mun beiðni um eigendaskipti fyrir ökutækið ${permno} falla niður þar sem eftirfarandi aðilar hafa ekki samþykkt: ` +
+              `${notApprovedByListStr}. ` +
+              `Hægt er að samþykkja beiðnina á island.is/umsoknir.`,
           },
         },
       ],
