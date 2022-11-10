@@ -5,15 +5,8 @@ import {
   requestHandlers,
 } from './__mock-data__/requestHandlers'
 import { startMocking } from '@island.is/shared/mocking'
-import { AssetsModule } from '../src/lib/api-domains-assets.module'
-import { AssetsXRoadResolver } from '../src/lib/api-domains-assets.resolver'
 import { AssetsXRoadService } from '../src/lib/api-domains-assets.service'
-import { Logger, LOGGER_PROVIDER, LoggingModule } from '@island.is/logging'
-import {
-  AssetsClientModule,
-  AssetsClientConfig,
-  FasteignirApi,
-} from '@island.is/clients/assets'
+import { FasteignirApi } from '@island.is/clients/assets'
 
 startMocking(requestHandlers)
 describe('AssetsXRoadService', () => {
@@ -30,6 +23,7 @@ describe('AssetsXRoadService', () => {
     expect(module.get(AssetsXRoadService)).toBeInstanceOf(AssetsXRoadService)
   })
 
+  /*
   describe.only('getRealEstates', () => {
     it.only('User should see information on owned property', async () => {
       const response = await service.getRealEstates(MOCK_USER)
@@ -55,4 +49,5 @@ describe('AssetsXRoadService', () => {
       expect(response).toBeNull()
     })
   })
+  */
 })
