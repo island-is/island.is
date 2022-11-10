@@ -228,6 +228,22 @@ export const m = defineMessages({
     defaultMessage: 'Skráðu inn dag',
     description: '',
   },
+  ceremonyPeriodDescription: {
+    id: 'mac.application:ceremonyPeriodDescription',
+    defaultMessage:
+      'Ef áætlaður dagur liggur ekki fyrir, þá þarf samt að velja áætlað tímabil hjónavíglsu.',
+    description: '',
+  },
+  ceremonyPeriodFrom: {
+    id: 'mac.application:ceremonyPeriodFrom',
+    defaultMessage: 'Áætlað tímabil hjónavígslu frá',
+    description: '',
+  },
+  ceremonyPeriodTil: {
+    id: 'mac.application:ceremonyPeriodTil',
+    defaultMessage: 'Áætlað tímabil hjónavígslu til',
+    description: '',
+  },
   ceremonyPlace: {
     id: 'mac.application:ceremonyPlace',
     defaultMessage: 'Hvar er hjónavígsla áformuð?',
@@ -241,6 +257,11 @@ export const m = defineMessages({
   ceremonyAtReligiousLifeViewingSociety: {
     id: 'mac.application:ceremonyAtReligiousLifeViewingSociety',
     defaultMessage: 'Trú- eða lífsskoðunarfélagi',
+    description: '',
+  },
+  ceremonyPlaceNone: {
+    id: 'mac.application:ceremonyPlaceNone',
+    defaultMessage: 'Ekki ákveðið',
     description: '',
   },
   ceremonyChooseDistrict: {

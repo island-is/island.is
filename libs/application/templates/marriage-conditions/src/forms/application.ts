@@ -253,6 +253,30 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     largeButtons: false,
                     width: 'half',
                   }),
+                  buildDescriptionField({
+                    id: 'ceremonyPeriodDescription',
+                    space: 'gutter',
+                    title: '',
+                    description: m.ceremonyPeriodDescription,
+                    condition: (answers) =>
+                      getValueViaPath(answers, 'ceremony.hasDate') === NO,
+                  }),
+                  buildDateField({
+                    id: 'ceremony.dateFrom',
+                    title: m.ceremonyPeriodFrom,
+                    placeholder: m.ceremonyDatePlaceholder,
+                    width: 'half',
+                    condition: (answers) =>
+                      getValueViaPath(answers, 'ceremony.hasDate') === NO,
+                  }),
+                  buildDateField({
+                    id: 'ceremony.dateTil',
+                    title: m.ceremonyPeriodTil,
+                    placeholder: m.ceremonyDatePlaceholder,
+                    width: 'half',
+                    condition: (answers) =>
+                      getValueViaPath(answers, 'ceremony.hasDate') === NO,
+                  }),
                   buildDateField({
                     id: 'ceremony.date',
                     title: m.ceremonyDate,
@@ -277,9 +301,13 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                         value: 'society',
                         label: m.ceremonyAtReligiousLifeViewingSociety,
                       },
+                      {
+                        value: 'none',
+                        label: m.ceremonyPlaceNone,
+                      },
                     ],
                     largeButtons: false,
-                    width: 'half',
+                    width: 'full',
                     condition: (answers) =>
                       getValueViaPath(answers, 'ceremony.hasDate') === YES,
                   }),

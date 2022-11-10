@@ -130,8 +130,11 @@ export const ApplicationOverview: FC<FieldBaseProps> = ({ application }) => {
                 <Text variant="h4">{formatMessage(m.ceremonyPlace)}</Text>
                 {(answers.ceremony as Ceremony).ceremonyPlace === 'office' ? (
                   <Text>{(answers.ceremony as Ceremony).office}</Text>
-                ) : (
+                ) : (answers.ceremony as Ceremony).ceremonyPlace ===
+                  'society' ? (
                   <Text>{(answers.ceremony as Ceremony).society}</Text>
+                ) : (
+                  <Text>{formatMessage(m.ceremonyPlaceNone)}</Text>
                 )}
               </Box>
             </Box>
