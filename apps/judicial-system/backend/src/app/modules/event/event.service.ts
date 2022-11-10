@@ -41,6 +41,7 @@ const caseEvent = {
   RESUBMIT: ':mailbox_with_mail: Sent aftur',
   RECEIVE: ':eyes: Móttekið',
   ACCEPT: ':white_check_mark: Samþykkt',
+  ACCEPT_INDICTMENT: ':white_check_mark: Lokið',
   REJECT: ':negative_squared_cross_mark: Hafnað',
   DELETE: ':fire: Afturkallað',
   SCHEDULE_COURT_DATE: ':timer_clock: Úthlutað fyrirtökutíma',
@@ -57,6 +58,7 @@ export enum CaseEvent {
   RESUBMIT = 'RESUBMIT',
   RECEIVE = 'RECEIVE',
   ACCEPT = 'ACCEPT',
+  ACCEPT_INDICTMENT = 'ACCEPT_INDICTMENT',
   REJECT = 'REJECT',
   DELETE = 'DELETE',
   SCHEDULE_COURT_DATE = 'SCHEDULE_COURT_DATE',
@@ -77,6 +79,10 @@ export class EventService {
         return
       }
 
+      const title =
+        event === CaseEvent.ACCEPT && isIndictmentCase(theCase.type)
+          ? caseEvent[CaseEvent.ACCEPT_INDICTMENT]
+          : caseEvent[event]
       const typeText = `${capitalize(caseTypes[theCase.type])} *${theCase.id}*`
       const prosecutionText = `${
         theCase.creatingProsecutor?.institution
@@ -108,7 +114,7 @@ export class EventService {
               type: 'section',
               text: {
                 type: 'mrkdwn',
-                text: `*${caseEvent[event]}*\n>${typeText}\n>${prosecutionText}\n>${courtText}${extraText}`,
+                text: `*${title}*\n>${typeText}\n>${prosecutionText}\n>${courtText}${extraText}`,
               },
             },
           ],
