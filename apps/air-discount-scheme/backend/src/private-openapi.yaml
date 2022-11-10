@@ -438,7 +438,9 @@ components:
         discountCode:
           type: string
         connectionDiscountCodes:
-          $ref: '#/components/schemas/ConnectionDiscountCode'
+          type: array
+          items:
+            $ref: '#/components/schemas/ConnectionDiscountCode'
         nationalId:
           type: string
         expiresIn:
