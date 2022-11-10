@@ -81,7 +81,7 @@ const Defendant: React.FC = () => {
   )
 
   const handleUpdateDefendant = useCallback(
-    async (defendantId: string, updatedDefendant: UpdateDefendant) => {
+    (defendantId: string, updatedDefendant: UpdateDefendant) => {
       updateDefendantState(defendantId, updatedDefendant, setWorkingCase)
 
       if (workingCase.id) {

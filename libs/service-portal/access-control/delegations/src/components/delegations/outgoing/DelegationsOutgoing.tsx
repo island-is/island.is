@@ -11,10 +11,11 @@ import { m } from '@island.is/service-portal/core'
 import { useAuthDelegationsQuery } from '@island.is/service-portal/graphql'
 import { AccessCard } from '../../access/AccessCard'
 import { AccessDeleteModal } from '../../access/AccessDeleteModal'
-import { DomainOption, useDomains } from '../../../hooks/useDomains'
-import { ALL_DOMAINS } from '../../../constants/domain'
 import { DelegationsEmptyState } from '../DelegationsEmptyState'
 import { DelegationsOutgoingHeader } from './DelegationsOutgoingHeader'
+import { DomainOption, useDomains } from '../../../hooks/useDomains'
+import { ALL_DOMAINS } from '../../../constants/domain'
+import sortBy from 'lodash/sortBy'
 
 export const DelegationsOutgoing = () => {
   const { formatMessage, lang = 'is' } = useLocale()
@@ -38,7 +39,11 @@ export const DelegationsOutgoing = () => {
   })
 
   const delegations = useMemo(
-    () => (data?.authDelegations as AuthCustomDelegation[]) ?? [],
+    () =>
+      sortBy(
+        data?.authDelegations as AuthCustomDelegation[],
+        (d) => d.to?.name,
+      ) ?? [],
     [data?.authDelegations],
   )
 
@@ -60,8 +65,8 @@ export const DelegationsOutgoing = () => {
 
     return delegations.filter((delegation) => {
       const searchValueLower = searchValue.toLowerCase()
-      const name = delegation?.to?.name.toLowerCase()
-      const nationalId = delegation?.to?.nationalId.toLowerCase()
+      const name = delegation.to?.name.toLowerCase()
+      const nationalId = delegation.to?.nationalId.toLowerCase()
 
       return (
         name?.includes(searchValueLower) || nationalId?.includes(searchValue)

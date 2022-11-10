@@ -8,12 +8,14 @@ import {
 import { AuthCustomDelegation } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
-import { useAuthActorDelegationsQuery } from '@island.is/service-portal/graphql'
+import { useAuthDelegationsQuery } from '@island.is/service-portal/graphql'
 import { DomainOption, useDomains } from '../../../hooks/useDomains'
 import { DelegationsIncomingHeader } from './DelegationsIncomingHeader'
 import { AccessDeleteModal } from '../../access/AccessDeleteModal'
 import { AccessCard } from '../../access/AccessCard'
 import { DelegationsEmptyState } from '../DelegationsEmptyState'
+import { ALL_DOMAINS } from '../../../constants/domain'
+import sortBy from 'lodash/sortBy'
 
 export const DelegationsIncoming = () => {
   const { formatMessage, lang = 'is' } = useLocale()
@@ -22,10 +24,10 @@ export const DelegationsIncoming = () => {
     null,
   )
 
-  const { data, loading, refetch, error } = useAuthActorDelegationsQuery({
+  const { data, loading, refetch, error } = useAuthDelegationsQuery({
     variables: {
       input: {
-        //domain: domainName,
+        domain: domainName,
       },
       lang,
     },
@@ -36,17 +38,20 @@ export const DelegationsIncoming = () => {
   })
 
   const delegations = useMemo(
-    () => (data?.authActorDelegations as AuthCustomDelegation[]) ?? [],
-    [data?.authActorDelegations],
+    () =>
+      sortBy(
+        data?.authDelegations as AuthCustomDelegation[],
+        (d) => d.to?.name,
+      ) ?? [],
+    [data?.authDelegations],
   )
-
   const onDomainChange = (option: DomainOption) => {
     // Select components only supports string or number values, there for we use
     // the const ALL_DOMAINS as a value for the all domains option.
     // The service takes null as a value for all domains.
     refetch({
       input: {
-        //domain: option.value === ALL_DOMAINS ? null : option.value,
+        domain: option.value === ALL_DOMAINS ? null : option.value,
       },
     })
   }
@@ -71,7 +76,8 @@ export const DelegationsIncoming = () => {
           <Stack space={3}>
             {delegations.map(
               (delegation) =>
-                delegation.from && (
+                // TODO set .from instead of .to when delegation incoming graphql is ready
+                delegation.to && (
                   <AccessCard
                     key={delegation.id}
                     delegation={delegation}
@@ -94,7 +100,7 @@ export const DelegationsIncoming = () => {
           setDelegation(null)
           refetch({
             input: {
-              //domain: domainName,
+              domain: domainName,
             },
           })
         }}

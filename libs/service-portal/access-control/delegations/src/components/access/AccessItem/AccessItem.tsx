@@ -150,18 +150,12 @@ export const AccessItem = ({
         const hasExisting = isDefined(existingScope)
         // Current state value for if the date picker is visible or not
         const stateDateIsActive = datePickerVisibleGroup[index]
-        const settingForFirstTime = isSelected && !hasExisting
         const showDatePicker =
-          (isSelected && stateDateIsActive) ||
-          (settingForFirstTime && isSelected)
+          (isSelected && stateDateIsActive) || (!hasExisting && isSelected)
 
         return (
           <div key={index}>
-            <GridRow
-              className={classNames(styles.row, {
-                [styles.rowWithBackground]: settingForFirstTime,
-              })}
-            >
+            <GridRow className={styles.row}>
               <GridColumn
                 span={['12/12', '12/12', '3/12']}
                 className={styles.item}
