@@ -77,7 +77,7 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          // TODOx payment step disabled while ark is not working
+          // TODOx payment step disabled while new payment codes are not available
           // [DefaultEvents.SUBMIT]: { target: States.PAYMENT },
           [DefaultEvents.SUBMIT]: { target: States.REVIEW },
         },
