@@ -663,7 +663,8 @@ export function formatDefenderAssignedEmailNotification(
   const body = formatMessage(notifications.defenderAssignedEmail.bodyV2, {
     defenderHasAccessToRVG: Boolean(overviewUrl),
     courtCaseNumber: capitalize(theCase.courtCaseNumber ?? ''),
-    court: theCase.court?.name.replace('dómur', 'dómi') ?? '',
+    court: theCase.court?.name ?? '',
+    courtName: theCase.court?.name.replace('dómur', 'dómi') ?? '',
     linkStart: `<a href="${overviewUrl}">`,
     linkEnd: '</a>',
   })

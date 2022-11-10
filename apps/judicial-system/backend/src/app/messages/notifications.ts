@@ -546,7 +546,7 @@ export const notifications = {
       id:
         'judicial.system.backend:notifications.defender_assigned_email.body_v2',
       defaultMessage:
-        '{court} hefur skipað þig verjanda í máli {linkStart}{courtCaseNumber}{linkEnd}. {defenderHasAccessToRVG, select, true {Gögn málsins eru aðgengileg í Réttarvörslugátt með rafrænum skilríkjum} other {Þú getur nálgast gögn málsins hjá {court} ef þau hafa ekki þegar verið afhent}}.',
+        '{court} hefur skipað þig verjanda í máli {linkStart}{courtCaseNumber}{linkEnd}. {defenderHasAccessToRVG, select, true {Gögn málsins eru aðgengileg í Réttarvörslugátt með rafrænum skilríkjum} other {Þú getur nálgast gögn málsins hjá {courtName} ef þau hafa ekki þegar verið afhent}}.',
       description: 'Texti í pósti til verjanda þegar hann er skráður á mál.',
     },
   }),
