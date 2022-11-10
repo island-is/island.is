@@ -39,6 +39,7 @@ import {
   getRightsDescTitle,
   getStartDateDesc,
   getStartDateTitle,
+  getMultipleBirthRequestDays,
 } from '../lib/parentalLeaveUtils'
 import {
   GetPensionFunds,
@@ -774,21 +775,18 @@ export const ParentalLeaveForm: Form = buildForm({
                   getSelectedChild(answers, externalData)?.parentalRelation ===
                     ParentalRelations.primary && allowOtherParent(answers)
 
-                const {
-                  multipleBirthsRequestDays,
-                  hasMultipleBirths,
-                } = getApplicationAnswers(answers)
+                const { hasMultipleBirths } = getApplicationAnswers(answers)
 
-                //typeof multipleBirthsRequestDays is string and we need to convert it to number
-                const multipleBirthsRequestDaysNumber =
-                  multipleBirthsRequestDays * 1
+                const multipleBirthsRequestDays = getMultipleBirthRequestDays(
+                  answers,
+                )
 
                 return (
                   canTransferRights &&
                   (hasMultipleBirths === NO ||
-                    multipleBirthsRequestDaysNumber ===
+                    multipleBirthsRequestDays ===
                       getMaxMultipleBirthsDays(answers) ||
-                    multipleBirthsRequestDaysNumber === 0)
+                    multipleBirthsRequestDays === 0)
                 )
               },
               title: parentalLeaveFormMessages.shared.transferRightsTitle,
@@ -809,20 +807,17 @@ export const ParentalLeaveForm: Form = buildForm({
                   getSelectedChild(answers, externalData)?.parentalRelation ===
                     ParentalRelations.primary && allowOtherParent(answers)
 
-                const {
-                  multipleBirthsRequestDays,
-                  hasMultipleBirths,
-                } = getApplicationAnswers(answers)
+                const { hasMultipleBirths } = getApplicationAnswers(answers)
 
-                //typeof multipleBirthsRequestDays is string and we need to convert it to number
-                const multipleBirthsRequestDaysNumber =
-                  multipleBirthsRequestDays * 1
+                const multipleBirthsRequestDays = getMultipleBirthRequestDays(
+                  answers,
+                )
 
                 return (
                   canTransferRights &&
                   getApplicationAnswers(answers).isRequestingRights === YES &&
                   (hasMultipleBirths === NO ||
-                    multipleBirthsRequestDaysNumber ===
+                    multipleBirthsRequestDays ===
                       getMaxMultipleBirthsDays(answers))
                 )
               },
@@ -840,20 +835,16 @@ export const ParentalLeaveForm: Form = buildForm({
                   getSelectedChild(answers, externalData)?.parentalRelation ===
                     ParentalRelations.primary && allowOtherParent(answers)
 
-                const {
-                  multipleBirthsRequestDays,
-                  hasMultipleBirths,
-                } = getApplicationAnswers(answers)
+                const { hasMultipleBirths } = getApplicationAnswers(answers)
 
-                //typeof multipleBirthsRequestDays is string and we need to convert it to number
-                const multipleBirthsRequestDaysNumber =
-                  multipleBirthsRequestDays * 1
+                const multipleBirthsRequestDays = getMultipleBirthRequestDays(
+                  answers,
+                )
 
                 return (
                   canTransferRights &&
                   getApplicationAnswers(answers).isGivingRights === YES &&
-                  (hasMultipleBirths === NO ||
-                    multipleBirthsRequestDaysNumber === 0)
+                  (hasMultipleBirths === NO || multipleBirthsRequestDays === 0)
                 )
               },
               component: 'GiveDaysSlider',

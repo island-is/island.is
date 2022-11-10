@@ -44,6 +44,7 @@ import {
   getApplicationAnswers,
   getApplicationExternalData,
   getMaxMultipleBirthsDays,
+  getMultipleBirthRequestDays,
   getOtherParentId,
   getSelectedChild,
 } from '../lib/parentalLeaveUtils'
@@ -1175,17 +1176,13 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       correctTransferRights: assign((context) => {
         const { application } = context
         const { answers } = application
-        const {
-          hasMultipleBirths,
-          multipleBirthsRequestDays,
-        } = getApplicationAnswers(answers)
-        const multipleBirthsRequestDaysNumber = multipleBirthsRequestDays * 1
+        const { hasMultipleBirths } = getApplicationAnswers(answers)
+        const multipleBirthsRequestDays = getMultipleBirthRequestDays(answers)
 
         if (
           hasMultipleBirths === YES &&
-          multipleBirthsRequestDaysNumber !==
-            getMaxMultipleBirthsDays(answers) &&
-          multipleBirthsRequestDaysNumber > 0
+          multipleBirthsRequestDays !== getMaxMultipleBirthsDays(answers) &&
+          multipleBirthsRequestDays > 0
         ) {
           set(answers, 'transferRights', TransferRightsOption.NONE)
         }

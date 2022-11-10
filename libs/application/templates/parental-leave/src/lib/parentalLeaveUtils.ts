@@ -202,9 +202,22 @@ export const getMultipleBirthsDays = (application: Application) => {
     return selectedChild.multipleBirthsDays ?? 0
   }
 
-  const { multipleBirthsRequestDays } = getApplicationAnswers(
-    application.answers,
-  )
+  return getMultipleBirthRequestDays(application.answers)
+}
+
+export const getMultipleBirthRequestDays = (
+  answers: Application['answers'],
+) => {
+  const {
+    multipleBirthsRequestDays,
+    otherParent,
+    hasMultipleBirths,
+  } = getApplicationAnswers(answers)
+
+  // if (otherParent === NO && hasMultipleBirths) {
+  //   return getMaxMultipleBirthsDays(application.answers)
+  // }
+
   return multipleBirthsRequestDays * 1
 }
 
@@ -241,14 +254,12 @@ export const getAvailableRightsInDays = (application: Application) => {
 
   // Primary parent chooses transferred days so they are persisted into answers
   const transferredDays = getTransferredDays(application, selectedChild)
-  const { multipleBirthsRequestDays } = getApplicationAnswers(
+  const multipleBirthsRequestDays = getMultipleBirthRequestDays(
     application.answers,
   )
 
   return (
-    selectedChild.remainingDays +
-    multipleBirthsRequestDays * 1 +
-    transferredDays
+    selectedChild.remainingDays + multipleBirthsRequestDays + transferredDays
   )
 }
 

@@ -23,7 +23,6 @@ import {
   PARENTAL_LEAVE,
   PARENTAL_GRANT_STUDENTS,
   getMultipleBirthsDays,
-  getMaxMultipleBirthsDays,
 } from '@island.is/application/templates/parental-leave'
 
 import { SharedTemplateApiService } from '../../shared'
