@@ -28,9 +28,9 @@ const TWO_HOURS = 7200
 export class AirDiscountSchemeResolver {
   constructor(private airDiscountSchemeService: AirDiscountSchemeService) {}
 
-  @Query(() => Discount)
+  @Query(() => [Discount], { nullable: true })
   @Audit()
-  async getDiscount(@CurrentUser() user: User) {
+  async adsGetDiscount(@CurrentUser() user: User) {
     let relations: TUser[] = (await this.airDiscountSchemeService.getUserRelations(
       user,
     )) as TUser[]
@@ -47,10 +47,14 @@ export class AirDiscountSchemeResolver {
         relation.nationalId,
       )) as TDiscount
       if (!discount || discount.expiresIn <= TWO_HOURS) {
-        discount = (await this.airDiscountSchemeService.createDiscount(
+        const createdDiscount = await this.airDiscountSchemeService.createDiscount(
           user,
           relation.nationalId,
-        )) as Discount
+        )
+
+        if(createdDiscount) {
+          discount = createdDiscount
+        }
       }
       discounts.push({
         ...discount,

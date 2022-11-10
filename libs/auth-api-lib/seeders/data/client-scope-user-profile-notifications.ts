@@ -14,24 +14,12 @@ export const up = compose(
     description: '',
     addToClients: ['@island.is/system/notifications'],
   }),
-  createClient({
-    clientId: '@island.is/air-discount-scheme-client',
-    clientType: 'machine',
-    displayName: 'Air Discount Scheme Client',
-    description: 'Public facing Air Discount Scheme Client',
-    grantTypes: ['urn:ietf:params:oauth:grant-type:token-exchange'],
-    allowedScopes: ['@vegagerdin.is/air-discount-scheme-scope'],
-  }),
   createScope({
     name: '@island.is/air-discount-scheme',
     displayName: 'air discount scheme public scope',
     description: 'Public facing Air Discount Scheme Scope',
     addToResource: '@island.is',
-    addToClients: [
-      '@island.is/web',
-      '@island.is/dev',
-      '@island.is/air-discount-scheme-client',
-    ],
+    addToClients: ['@island.is/web', '@island.is/clients/api'],
     delegation: {
       legalGuardians: true,
       custom: true,

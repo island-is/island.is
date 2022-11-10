@@ -9,6 +9,7 @@ import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { Auth, User } from '@island.is/auth-nest-tools'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { Discount } from '@island.is/air-discount-scheme/types'
 
 @Injectable()
 export class AirDiscountSchemeService {
@@ -25,6 +26,14 @@ export class AirDiscountSchemeService {
       'Failed to resolve request',
       error?.message ?? error?.response?.message,
     )
+  }
+
+  private handleJSONError(e: FetchError) {
+    // Couldn't generate client for Discount | null
+    if (e.message.includes('invalid json')) {
+      return null
+    }
+    this.handle4xx(e)
   }
 
   private handle4xx(error: FetchError) {
@@ -48,18 +57,16 @@ export class AirDiscountSchemeService {
         nationalId,
       })
 
-      console.log('discountResponse', JSON.stringify(discountResponse))
-
-      return JSON.stringify(discountResponse)
+      return discountResponse
     } catch (e) {
-      this.handle4xx(e)
+      this.handleJSONError(e)
     }
   }
 
   async createDiscount(
     auth: User,
     nationalId: string,
-  ): Promise<unknown | null> {
+  ): Promise<Discount | null> {
     try {
       const createDiscountResponse = await this.getADSWithAuth(
         auth,
@@ -69,6 +76,7 @@ export class AirDiscountSchemeService {
       return createDiscountResponse
     } catch (e) {
       this.handle4xx(e)
+      return null
     }
   }
 

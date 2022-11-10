@@ -12,8 +12,10 @@ import {
 import {
   ApiBearerAuth,
   ApiExcludeEndpoint,
+  ApiExtraModels,
   ApiOkResponse,
   ApiTags,
+  getSchemaPath,
 } from '@nestjs/swagger'
 
 import { Discount } from './discount.model'
@@ -78,16 +80,20 @@ export class PrivateDiscountController {
   @Get('users/:nationalId/discounts/current')
   @UseGuards(IdsUserGuard, ScopesGuard)
   @Scopes('@vegagerdin.is/air-discount-scheme-scope')
+  @ApiOkResponse({ type: Discount })
+  @ApiBearerAuth()
   @ApiExcludeEndpoint(!process.env.ADS_PRIVATE_CLIENT)
-  getCurrentDiscountByNationalId(
+  async getCurrentDiscountByNationalId(
     @Param() params: GetCurrentDiscountByNationalIdParams,
   ): Promise<Discount | null> {
-    return this.discountService.getDiscountByNationalId(params.nationalId)
+    return await this.discountService.getDiscountByNationalId(params.nationalId)
   }
 
   @UseGuards(IdsUserGuard, ScopesGuard)
   @Scopes('@vegagerdin.is/air-discount-scheme-scope')
   @Post('users/:nationalId/discounts')
+  @ApiOkResponse({ type: Discount })
+  @ApiBearerAuth()
   @ApiExcludeEndpoint(!process.env.ADS_PRIVATE_CLIENT)
   async createDiscountCode(
     @Param() params: CreateDiscountCodeParams,

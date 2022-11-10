@@ -38,7 +38,6 @@ export class PrivateUserController {
     @Param() params: GetUserRelationsParams,
     @CurrentUser() authUser: AuthUser,
   ): Promise<User[]> {
-    console.log('Made it inside!')
     if (params.nationalId !== authUser.nationalId) {
       throw new BadRequestException(
         '[/relations] Request parameters do not correspond with user authentication.',

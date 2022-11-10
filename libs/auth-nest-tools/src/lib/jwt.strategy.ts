@@ -37,7 +37,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       return []
     }
     if (typeof scopes === 'string') {
-      console.log('WE ARE DOING THIS HERE HAHAHAHAHAHHA')
       return scopes.split(' ')
     }
     return scopes
