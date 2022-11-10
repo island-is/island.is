@@ -60,7 +60,7 @@ export const CemetryOverview = ({
     ) {
       goToScreen && goToScreen('caretakers')
     } else {
-      goToScreen && goToScreen('attachment.file')
+      goToScreen && goToScreen('attachments.file')
     }
   }
 
