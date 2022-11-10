@@ -66,13 +66,13 @@ export const JudgeOverview: React.FC = () => {
   const id = router.query.id
 
   const { uploadState } = useCourtUpload(workingCase, setWorkingCase)
-  const { setAndSendToServer } = useCase()
+  const { setAndSendCaseToServer } = useCase()
 
   const [isDraftingConclusion, setIsDraftingConclusion] = useState<boolean>()
 
   useEffect(() => {
     if (isCaseUpToDate) {
-      setAndSendToServer(
+      setAndSendCaseToServer(
         [
           {
             ruling: !workingCase.parentCase
@@ -89,7 +89,7 @@ export const JudgeOverview: React.FC = () => {
       )
     }
   }, [
-    setAndSendToServer,
+    setAndSendCaseToServer,
     formatMessage,
     isCaseUpToDate,
     setWorkingCase,

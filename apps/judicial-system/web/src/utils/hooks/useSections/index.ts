@@ -1,11 +1,9 @@
-import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import {
   Case,
   CaseState,
-  Feature,
   Gender,
   InstitutionType,
   isInvestigationCase,
@@ -19,7 +17,6 @@ import {
   INVESTIGATION_CASE_MODIFY_RULING_ROUTE,
   RESTRICTION_CASE_MODIFY_RULING_ROUTE,
 } from '@island.is/judicial-system/consts'
-import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import * as constants from '@island.is/judicial-system/consts'
 
 import {
@@ -41,7 +38,7 @@ import {
   isProcessingStepValidIndictments,
   isReceptionAndAssignmentStepValid,
   isSubpoenaStepValid,
-  isprosecutorAndDefenderStepValid,
+  isProsecutorAndDefenderStepValid,
 } from '../../validate'
 
 interface Section {
@@ -55,7 +52,6 @@ interface Section {
 
 const useSections = () => {
   const { formatMessage } = useIntl()
-  const { features } = useContext(FeatureContext)
   const router = useRouter()
 
   const findLastValidStep = (section: Section) => {
@@ -300,23 +296,19 @@ const useSections = () => {
                   ? `${constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE}/${id}`
                   : undefined,
             },
-            ...(features.includes(Feature.CASE_FILE_ROUTE)
-              ? [
-                  {
-                    type: 'SUB_SECTION',
-                    name: capitalize(
-                      formatMessage(
-                        sections.indictmentCaseProsecutorSection.caseFile,
-                      ),
-                    ),
-                    href:
-                      isDefendantStepValidForSidebarIndictments(workingCase) &&
-                      isProcessingStepValidIndictments(workingCase)
-                        ? `${constants.INDICTMENTS_CASE_FILE_ROUTE}/${id}`
-                        : undefined,
-                  },
-                ]
-              : []),
+            {
+              type: 'SUB_SECTION',
+              name: capitalize(
+                formatMessage(
+                  sections.indictmentCaseProsecutorSection.caseFile,
+                ),
+              ),
+              href:
+                isDefendantStepValidForSidebarIndictments(workingCase) &&
+                isProcessingStepValidIndictments(workingCase)
+                  ? `${constants.INDICTMENTS_CASE_FILE_ROUTE}/${id}`
+                  : undefined,
+            },
             {
               type: 'SUB_SECTION',
               name: capitalize(
@@ -562,7 +554,7 @@ const useSections = () => {
                 href:
                   isReceptionAndAssignmentStepValid(workingCase) &&
                   isSubpoenaStepValid(workingCase) &&
-                  isprosecutorAndDefenderStepValid(workingCase)
+                  isProsecutorAndDefenderStepValid(workingCase)
                     ? `${constants.INDICTMENTS_COURT_RECORD_ROUTE}/${workingCase.id}`
                     : undefined,
               },

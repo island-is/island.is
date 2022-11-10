@@ -78,6 +78,7 @@ import {
 import { GetMailingListSignupSliceInput } from './dto/getMailingListSignupSlice'
 import { Form, mapForm } from './models/form.model'
 import { GetFormInput } from './dto/getForm.input'
+import { GetServicePortalAlertBannersInput } from './dto/getServicePortalAlertBanners.input'
 import { mapImage } from './models/image.model'
 
 const errorHandler = (name: string) => {
@@ -139,21 +140,23 @@ export class CmsContentfulService {
     }
   }
 
-  async getOrganizations({
-    lang = 'is-IS',
-    organizationTitles,
-  }: GetOrganizationsInput): Promise<Organizations> {
+  async getOrganizations(input: GetOrganizationsInput): Promise<Organizations> {
+    const organizationTitles = input?.organizationTitles && {
+      'fields.title[in]': input.organizationTitles.join(','),
+    }
+
     const params = {
       ['content_type']: 'organization',
       include: 10,
       limit: 1000,
-      ...(organizationTitles && {
-        'fields.title[in]': organizationTitles.join(','),
-      }),
+      ...organizationTitles,
     }
 
     const result = await this.contentfulRepository
-      .getLocalizedEntries<types.IOrganizationFields>(lang, params)
+      .getLocalizedEntries<types.IOrganizationFields>(
+        input?.lang ?? 'is-IS',
+        params,
+      )
       .catch(errorHandler('getOrganizations'))
 
     return {
@@ -603,6 +606,30 @@ export class CmsContentfulService {
       .catch(errorHandler('getAlertBanner'))
 
     return (result.items as types.IAlertBanner[]).map(mapAlertBanner)[0] ?? null
+  }
+
+  async getServicePortalAlertBanners({
+    lang,
+  }: GetServicePortalAlertBannersInput): Promise<AlertBanner[]> {
+    const params = {
+      ['content_type']: 'alertBanner',
+      'fields.servicePortalPaths[exists]': 'true',
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IAlertBannerFields>(lang, params)
+      .catch(errorHandler('getAlertBanner'))
+
+    const items = (result.items as types.IAlertBanner[]).map(mapAlertBanner)
+
+    // Make sure that the global alert banner is first in the list
+    items.sort((a, b) => {
+      if (a.servicePortalPaths?.includes('*')) return -1
+      if (b.servicePortalPaths?.includes('*')) return 1
+      return 0
+    })
+
+    return items
   }
 
   async getUrl(slug: string, lang: string): Promise<Url | null> {

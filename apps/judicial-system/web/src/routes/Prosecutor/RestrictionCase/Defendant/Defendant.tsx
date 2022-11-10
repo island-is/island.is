@@ -169,6 +169,7 @@ export const StepOne: React.FC = () => {
                 <DefendantInfo
                   defendant={workingCase.defendants[0]}
                   workingCase={workingCase}
+                  setWorkingCase={setWorkingCase}
                   onChange={handleUpdateDefendant}
                   updateDefendantState={updateDefendantState}
                 />

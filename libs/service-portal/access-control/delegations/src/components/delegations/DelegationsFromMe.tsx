@@ -16,6 +16,7 @@ import { isDefined } from '@island.is/shared/utils'
 import { useAuthDelegationsQuery } from '@island.is/service-portal/graphql'
 import { DomainOption, useDomains } from '../../hooks/useDomains'
 import { ALL_DOMAINS } from '../../constants/domain'
+import sortBy from 'lodash/sortBy'
 
 export const DelegationsFromMe = () => {
   const { formatMessage, lang = 'is' } = useLocale()
@@ -23,7 +24,7 @@ export const DelegationsFromMe = () => {
   const [delegation, setDelegation] = useState<AuthCustomDelegation | null>(
     null,
   )
-  const { domainName, updateDomainName } = useDomains()
+  const { name: domainName } = useDomains()
 
   const { data, loading, refetch, error } = useAuthDelegationsQuery({
     variables: {
@@ -35,23 +36,26 @@ export const DelegationsFromMe = () => {
     // Make sure that loading state is shown when refetching
     notifyOnNetworkStatusChange: true,
     fetchPolicy: 'cache-and-network',
+    errorPolicy: 'all',
   })
 
   const delegations = useMemo(
-    () => (data?.authDelegations as AuthCustomDelegation[]) ?? [],
+    () =>
+      sortBy(
+        data?.authDelegations as AuthCustomDelegation[],
+        (d) => d.to?.name,
+      ) ?? [],
     [data?.authDelegations],
   )
 
   const onDomainChange = (option: DomainOption) => {
     // Select components only supports string or number values, there for we use
-    // the string all-domains as a value for the all domains option.
+    // the const ALL_DOMAINS as a value for the all domains option.
     // The service takes null as a value for all domains.
-    const domainName = option.value === ALL_DOMAINS ? null : option.value
 
-    updateDomainName(domainName)
     refetch({
       input: {
-        domain: domainName,
+        domain: option.value === ALL_DOMAINS ? null : option.value,
       },
     })
   }
@@ -63,8 +67,8 @@ export const DelegationsFromMe = () => {
 
     return delegations.filter((delegation) => {
       const searchValueLower = searchValue.toLowerCase()
-      const name = delegation?.to?.name.toLowerCase()
-      const nationalId = delegation?.to?.nationalId.toLowerCase()
+      const name = delegation.to?.name.toLowerCase()
+      const nationalId = delegation.to?.nationalId.toLowerCase()
 
       return (
         name?.includes(searchValueLower) || nationalId?.includes(searchValue)
@@ -83,7 +87,7 @@ export const DelegationsFromMe = () => {
         <div>
           {loading ? (
             <SkeletonLoader width="100%" height={191} />
-          ) : error ? (
+          ) : error && !delegations ? (
             <AlertBanner
               description={formatMessage(m.errorFetch)}
               variant="error"

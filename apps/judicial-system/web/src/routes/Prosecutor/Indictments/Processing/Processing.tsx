@@ -41,14 +41,14 @@ const Processing: React.FC = () => {
     isLoadingWorkingCase,
     caseNotFound,
   } = useContext(FormContext)
-  const { setAndSendToServer, transitionCase } = useCase()
+  const { setAndSendCaseToServer, transitionCase } = useCase()
   const { formatMessage } = useIntl()
   const { courts } = useInstitution()
   const router = useRouter()
 
   const handleCourtChange = (court: Institution) => {
     if (workingCase) {
-      setAndSendToServer(
+      setAndSendCaseToServer(
         [
           {
             courtId: court.id,

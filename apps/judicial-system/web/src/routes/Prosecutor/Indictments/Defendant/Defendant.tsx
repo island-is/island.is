@@ -57,8 +57,13 @@ const Defendant: React.FC = () => {
     caseNotFound,
   } = useContext(FormContext)
   const { formatMessage } = useIntl()
-  const { createCase, isCreatingCase, setAndSendToServer } = useCase()
-  const { createDefendant, updateDefendant, deleteDefendant } = useDefendants()
+  const { createCase, isCreatingCase, setAndSendCaseToServer } = useCase()
+  const {
+    createDefendant,
+    updateDefendant,
+    deleteDefendant,
+    updateDefendantState,
+  } = useDefendants()
   const router = useRouter()
 
   // This state is needed because type is initially set to OHTER on the
@@ -75,38 +80,15 @@ const Defendant: React.FC = () => {
     workingCase,
   )
 
-  const updateDefendantState = useCallback(
-    (defendantId: string, update: UpdateDefendant) => {
-      setWorkingCase((theCase: Case) => {
-        if (!theCase.defendants) {
-          return theCase
-        }
-        const indexOfDefendantToUpdate = theCase.defendants.findIndex(
-          (defendant) => defendant.id === defendantId,
-        )
-
-        const newDefendants = [...theCase.defendants]
-
-        newDefendants[indexOfDefendantToUpdate] = {
-          ...newDefendants[indexOfDefendantToUpdate],
-          ...update,
-        }
-
-        return { ...theCase, defendants: newDefendants }
-      })
-    },
-    [setWorkingCase],
-  )
-
   const handleUpdateDefendant = useCallback(
-    async (defendantId: string, updatedDefendant: UpdateDefendant) => {
-      updateDefendantState(defendantId, updatedDefendant)
+    (defendantId: string, updatedDefendant: UpdateDefendant) => {
+      updateDefendantState(defendantId, updatedDefendant, setWorkingCase)
 
       if (workingCase.id) {
         updateDefendant(workingCase.id, defendantId, updatedDefendant)
       }
     },
-    [updateDefendantState, workingCase.id, updateDefendant],
+    [updateDefendantState, setWorkingCase, workingCase.id, updateDefendant],
   )
 
   const handleNextButtonClick = async (theCase: Case) => {
@@ -275,7 +257,7 @@ const Defendant: React.FC = () => {
 
               setCaseType(type)
 
-              setAndSendToServer(
+              setAndSendCaseToServer(
                 [
                   {
                     type,
@@ -324,6 +306,7 @@ const Defendant: React.FC = () => {
                   <DefendantInfo
                     defendant={defendant}
                     workingCase={workingCase}
+                    setWorkingCase={setWorkingCase}
                     onDelete={
                       workingCase.defendants &&
                       workingCase.defendants.length > 1

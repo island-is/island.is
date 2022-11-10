@@ -1011,8 +1011,10 @@ export class ResourcesService {
       const scopeGroup = await this.apiScopeGroupModel.findByPk(
         apiScope.groupId,
       )
-      if (apiScope && apiScope.domainName !== scopeGroup?.domain?.name)
+
+      if (apiScope && apiScope.domainName !== scopeGroup?.domainName) {
         throw new BadRequestException('Scope domain must match group domain.')
+      }
     }
   }
 
@@ -1021,7 +1023,8 @@ export class ResourcesService {
       where: { groupId: id },
     })
 
-    if (apiScope && apiScope.domainName !== group.domainName)
+    if (apiScope && apiScope.domainName !== group.domainName) {
       throw new BadRequestException('Group domain must match scopes domain.')
+    }
   }
 }
