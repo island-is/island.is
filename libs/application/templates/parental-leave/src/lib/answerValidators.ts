@@ -28,6 +28,7 @@ import {
   NO,
   NO_PRIVATE_PENSION_FUND,
   NO_UNION,
+  ParentalRelations,
   PARENTAL_GRANT_STUDENTS,
   PARENTAL_LEAVE,
   UnEmployedBenefitTypes,
@@ -41,6 +42,7 @@ import {
   getAvailableRightsInDays,
   getApplicationAnswers,
   getMaxMultipleBirthsDays,
+  getSelectedChild,
 } from './parentalLeaveUtils'
 import { filterValidPeriods } from '../lib/parentalLeaveUtils'
 import { validatePeriod } from './answerValidator-utils'
@@ -190,11 +192,16 @@ export const answerValidators: Record<string, AnswerValidator> = {
     const { multipleBirthsRequestDays } = getApplicationAnswers(
       application.answers,
     )
+    const selectedChild = getSelectedChild(
+      application.answers,
+      application.externalData,
+    )
 
     if (
       requestRightsObj.isRequestingRights === YES &&
       multipleBirthsRequestDays * 1 !==
-        getMaxMultipleBirthsDays(application.answers)
+        getMaxMultipleBirthsDays(application.answers) &&
+      selectedChild?.parentalRelation === ParentalRelations.primary
     ) {
       return buildError(
         errorMessages.notAllowedToRequestRights,
@@ -213,9 +220,14 @@ export const answerValidators: Record<string, AnswerValidator> = {
       application.answers,
     )
 
+    const selectedChild = getSelectedChild(
+      application.answers,
+      application.externalData,
+    )
     if (
       givingRightsObj.isGivingRights === YES &&
-      multipleBirthsRequestDays * 1 !== 0
+      multipleBirthsRequestDays * 1 !== 0 &&
+      selectedChild?.parentalRelation === ParentalRelations.primary
     ) {
       return buildError(errorMessages.notAllowedToGiveRights, 'giveRights')
     }
