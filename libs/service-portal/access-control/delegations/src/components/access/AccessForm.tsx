@@ -77,7 +77,7 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
     },
   })
 
-  const { authScopeTree } = scopeTreeData || {}
+  const scopeTree = (scopeTreeData || {})?.authScopeTree
 
   const methods = useForm<{
     scope: AccessFormScope[]
@@ -130,7 +130,7 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
   // Map format and flatten scopes to be used in the confirm modal
   const scopes = getValues()
     ?.scope?.map((item) =>
-      formatScopeTreeToScope({ item, authScopeTree, validityPeriod }),
+      formatScopeTreeToScope({ item, scopeTree, validityPeriod }),
     )
     .filter(isDefined)
 
@@ -180,7 +180,7 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
                 </Stack>
               </Box>
             ) : (
-              authScopeTree?.map(renderAccessItem)
+              scopeTree?.map(renderAccessItem)
             )}
           </Box>
         </form>
@@ -195,6 +195,9 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
               defaultMessage: 'Veita aðgang',
             })}
             confirmIcon="arrowForward"
+            disabled={
+              delegation.scopes.length === 0 && (!scopes || scopes.length === 0)
+            }
           />
         </Box>
       </FormProvider>

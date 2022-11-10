@@ -729,6 +729,11 @@ export const m = defineMessages({
     defaultMessage: 'Reitur má ekki vera tómur',
     description: 'Error message when a required field has not been filled',
   },
+  negativeNumberError: {
+    id: 'fsn.application:error.negativeNumberError',
+    defaultMessage: 'Ekki er leyfilegt að setja inn neikvæðar tölur',
+    description: 'Error message when a required field has not been filled',
+  },
   nationalIdError: {
     id: 'fsn.application:error.nationalIdError',
     defaultMessage: 'Kennitala er ekki á réttu formi',
