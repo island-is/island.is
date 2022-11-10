@@ -1,22 +1,19 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { useQuery } from '@apollo/client'
+import { useLazyQuery } from '@apollo/client'
 import {
   Box,
   GridColumn,
   GridContainer,
   GridRow,
   InputError,
-  Text,
 } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
-
 import { useLocale } from '@island.is/localization'
+import { IdentityInput, Query } from '@island.is/api/schema'
 
 import { m } from '../../lib/messages'
-
 import { ABOUTIDS } from '../../lib/constants'
-
 import { FieldBaseProps } from '@island.is/application/types'
 import { getErrorViaPath } from '@island.is/application/core'
 import { IdentityQuery } from '../../graphql'
@@ -25,19 +22,33 @@ export const PowerOfAttorneyFields = ({ application }: FieldBaseProps) => {
   const { formatMessage } = useLocale()
   const { errors, setValue } = useFormContext()
 
-  if (application.applicantActors.length === 0) {
-    return null
-  }
-
   const currentActor =
     application.applicantActors[application.applicantActors.length - 1]
 
-  const { error: queryError, loading } = useQuery(IdentityQuery, {
-    variables: { input: { nationalId: currentActor } },
+  const [getIdentity, { loading, error: queryError }] = useLazyQuery<
+    Query,
+    { input: IdentityInput }
+  >(IdentityQuery, {
     onCompleted: (data) => {
       setValue(ABOUTIDS.powerOfAttorneyName, data.identity?.name ?? '')
     },
   })
+
+  useEffect(() => {
+    if (currentActor) {
+      getIdentity({
+        variables: {
+          input: {
+            nationalId: currentActor,
+          },
+        },
+      })
+    }
+  }, [])
+
+  if (application.applicantActors.length === 0) {
+    return null
+  }
 
   return (
     <GridContainer>

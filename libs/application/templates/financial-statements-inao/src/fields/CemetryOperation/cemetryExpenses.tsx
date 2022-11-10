@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect } from 'react'
 import { useLocale } from '@island.is/localization'
-import { Box, SkeletonLoader } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
 import { getErrorViaPath } from '@island.is/application/core'
 import { RecordObject } from '@island.is/application/types'
