@@ -42,8 +42,9 @@ export const CemetryIncome = ({
         CEMETRYOPERATIONIDS.grantFromTheCemeteryFund,
         data.financialStatementsInaoTaxInfo?.[2]?.value?.toString() ?? '',
       )
+      getSum()
     }
-  }, [data, setValue])
+  }, [data, getSum, setValue])
 
   const onInputChange = debounce((fieldId: string) => {
     getSum()
