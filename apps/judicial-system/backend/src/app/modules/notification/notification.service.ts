@@ -1244,21 +1244,30 @@ export class NotificationService {
   private async shouldSendDefenderAssignedNotification(
     theCase: Case,
     defenderEmail?: string,
-  ): Promise<true | { notificationSent: boolean }> {
+  ): Promise<boolean> {
     const pastNotifications = await this.notificationModel.findAll({
       where: { caseId: theCase.id, type: NotificationType.DEFENDER_ASSIGNED },
     })
 
     if (!defenderEmail) {
-      return Promise.resolve({ notificationSent: false })
+      return false
     }
 
-    const hasSentNotificationBefore = pastNotifications.some(({ recipients }) =>
-      recipients?.includes(defenderEmail),
+    const hasSentNotificationBefore = pastNotifications.some(
+      (pastNotification) => {
+        const recipients: Recipient[] = JSON.parse(
+          pastNotification.recipients || '[]',
+        )
+
+        return recipients.some(
+          (recipient) =>
+            recipient.address === defenderEmail && recipient.success,
+        )
+      },
     )
 
     if (hasSentNotificationBefore) {
-      return Promise.resolve({ notificationSent: false })
+      return false
     }
 
     return true
@@ -1283,7 +1292,7 @@ export class NotificationService {
 
   private async sendDefenderAssignedNotifications(
     theCase: Case,
-  ): Promise<SendNotificationResponse | void> {
+  ): Promise<SendNotificationResponse> {
     const promises: Promise<Recipient>[] = []
 
     if (isIndictmentCase(theCase.type) && theCase.defendants) {
@@ -1295,10 +1304,26 @@ export class NotificationService {
           defenderEmail,
         )
 
-        if (shouldSend !== true) {
-          break
+        if (shouldSend === true) {
+          promises.push(
+            this.sendDefenderAssignedNotification(
+              theCase,
+              defenderNationalId,
+              defenderName,
+              defenderEmail,
+            ),
+          )
         }
+      }
+    } else {
+      const { defenderEmail, defenderNationalId, defenderName } = theCase
 
+      const shouldSend = await this.shouldSendDefenderAssignedNotification(
+        theCase,
+        defenderEmail,
+      )
+
+      if (shouldSend === true) {
         promises.push(
           this.sendDefenderAssignedNotification(
             theCase,
@@ -1308,22 +1333,13 @@ export class NotificationService {
           ),
         )
       }
-    } else {
-      const { defenderEmail, defenderNationalId, defenderName } = theCase
-
-      await this.shouldSendDefenderAssignedNotification(theCase, defenderEmail)
-
-      promises.push(
-        this.sendDefenderAssignedNotification(
-          theCase,
-          defenderNationalId,
-          defenderName,
-          defenderEmail,
-        ),
-      )
     }
 
     const recipients = await Promise.all(promises)
+
+    if (recipients.length === 0) {
+      return { notificationSent: false }
+    }
 
     return this.recordNotification(
       theCase.id,
@@ -1345,7 +1361,7 @@ export class NotificationService {
     notification: SendNotificationDto,
     theCase: Case,
     user?: User,
-  ): Promise<SendNotificationResponse | void> {
+  ): Promise<SendNotificationResponse> {
     await this.refreshFormatMessage()
 
     switch (notification.type) {

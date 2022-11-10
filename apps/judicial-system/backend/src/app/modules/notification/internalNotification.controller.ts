@@ -35,7 +35,7 @@ export class InternalNotificationController {
     @Param('caseId') caseId: string,
     @CurrentCase() theCase: Case,
     @Body() notification: SendNotificationDto,
-  ): Promise<SendNotificationResponse | void> {
+  ): Promise<SendNotificationResponse> {
     this.logger.debug(
       `Sending ${notification.type} notification for case ${caseId}`,
     )
