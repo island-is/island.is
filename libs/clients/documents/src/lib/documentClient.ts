@@ -75,12 +75,8 @@ export class DocumentClient {
       const errMsg = 'Failed to get from Postholf'
       const error = e.toJSON()
       const description = error.message
-
-      this.logger.error(errMsg, {
-        message: description,
-      })
-
-      return null
+      const message = [errMsg, error, description].filter(Boolean).join(' - ')
+      throw new Error(message)
     }
   }
 

@@ -1,5 +1,6 @@
 import React, { FC, useEffect, useState } from 'react'
 import {
+  formatPlausiblePathToParams,
   ServicePortalNavigationItem,
   ServicePortalPath,
 } from '@island.is/service-portal/core'
@@ -45,7 +46,8 @@ const ModuleNavigation: FC<Props> = ({ nav, onItemClick, badge }) => {
   const handleRootItemClick = (external?: boolean) => {
     if (nav.path === undefined) handleExpand()
     if (onItemClick) onItemClick()
-    if (external) servicePortalOutboundLink()
+    if (external)
+      servicePortalOutboundLink(formatPlausiblePathToParams(nav.path || ''))
   }
 
   useEffect(() => {

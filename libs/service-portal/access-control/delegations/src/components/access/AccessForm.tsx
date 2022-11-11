@@ -12,6 +12,7 @@ import {
 } from '@island.is/island-ui/core'
 import { AuthCustomDelegation } from '@island.is/api/schema'
 import {
+  formatPlausiblePathToParams,
   m as coreMessages,
   m,
   ServicePortalPath,
@@ -119,7 +120,9 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
       if (data && !errors && !err) {
         history.push(ServicePortalPath.AccessControlDelegations)
         servicePortalSaveAccessControl(
-          ServicePortalPath.AccessControlDelegationsGrant,
+          formatPlausiblePathToParams(
+            ServicePortalPath.AccessControlDelegationsGrant,
+          ),
         )
       }
     } catch (error) {
