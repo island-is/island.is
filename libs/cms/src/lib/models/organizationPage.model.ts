@@ -12,6 +12,7 @@ import {
 } from './organizationTheme.model'
 import { GenericTag, mapGenericTag } from './genericTag.model'
 import { AlertBanner, mapAlertBanner } from './alertBanner.model'
+import { SystemMetadata } from 'api-cms-domain'
 
 @ObjectType()
 export class OrganizationPage {
@@ -48,7 +49,7 @@ export class OrganizationPage {
   @Field(() => LinkGroup, { nullable: true })
   secondaryMenu!: LinkGroup | null
 
-  @Field(() => Organization)
+  @Field(() => Organization, { nullable: true })
   organization!: Organization | null
 
   @Field(() => Image, { nullable: true })

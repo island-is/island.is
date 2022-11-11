@@ -258,6 +258,7 @@ api:
     CONTENTFUL_HOST: 'preview.contentful.com'
     DOWNLOAD_SERVICE_BASE_PATH: 'https://api.dev01.devland.is'
     ELASTIC_NODE: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com'
+    ELECTRONIC_REGISTRATION_STATISTICS_API_URL: 'https://gw-api-staging.skra.is/business/tolfraedi'
     ENDORSEMENT_SYSTEM_BASE_API_URL: 'http://web-endorsement-system-api.endorsement-system.svc.cluster.local'
     FILE_DOWNLOAD_BUCKET: 'island-is-dev-download-cache-api'
     FILE_STORAGE_UPLOAD_BUCKET: 'island-is-dev-upload-api'
@@ -1159,6 +1160,7 @@ global:
   env:
     AUDIT_GROUP_NAME: '/island-is/audit-log'
     AWS_REGION: 'eu-west-1'
+    NO_UPDATE_NOTIFIER: 'true'
     PORT: '3333'
     name: 'dev'
   image:

@@ -1,5 +1,4 @@
 import React, { FC, useRef } from 'react'
-import format from 'date-fns/format'
 import subMonths from 'date-fns/subMonths'
 import eachDayOfInterval from 'date-fns/eachDayOfInterval'
 import toDate from 'date-fns/toDate'

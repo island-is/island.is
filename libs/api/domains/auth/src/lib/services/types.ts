@@ -54,6 +54,7 @@ export interface DelegationScopeDTO {
   displayName: string
   validFrom: Date
   validTo?: Date | null
+  domainName?: string | null
 }
 
 export interface DelegationDTO {
@@ -63,9 +64,19 @@ export interface DelegationDTO {
   toNationalId: string
   toName?: string | null
   validTo?: Date | null
+  domainName?: string | null
   type: DelegationType
   provider: DelegationProvider
   scopes?: Array<DelegationScopeDTO>
+}
+
+export interface MergedDelegationDTO {
+  fromNationalId: string
+  fromName?: string | null
+  toNationalId: string
+  toName?: string | null
+  validTo?: Date | null
+  types: DelegationType[]
 }
 
 export enum DelegationProvider {

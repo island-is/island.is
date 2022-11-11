@@ -199,6 +199,7 @@ export interface TextField extends BaseField {
   component: FieldComponents.TEXT
   disabled?: boolean
   readOnly?: boolean
+  rightAlign?: boolean
   minLength?: number
   maxLength?: number
   placeholder?: FormText

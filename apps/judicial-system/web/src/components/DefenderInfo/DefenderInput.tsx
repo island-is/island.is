@@ -1,34 +1,70 @@
-import React, { useCallback, useContext, useMemo, useState } from 'react'
+import React, {
+  SetStateAction,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+} from 'react'
 import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
+import { ValueType } from 'react-select'
 
 import { Box, Input, Select } from '@island.is/island-ui/core'
-import { FormContext } from '../FormProvider/FormProvider'
+import { Case } from '@island.is/judicial-system/types'
 
+import { FormContext } from '../FormProvider/FormProvider'
 import { useCase, useGetLawyers } from '../../utils/hooks'
 import { defenderInput as m } from './DefenderInput.strings'
 import { Lawyer, ReactSelectOption } from '../../types'
-import { ValueType } from 'react-select'
 import {
+  removeErrorMessageIfValid,
   removeTabsValidateAndSet,
   validateAndSendToServer,
+  validateAndSetErrorMessage,
 } from '../../utils/formHelper'
+import useDefendants from '../../utils/hooks/useDefendants'
+import { Validation } from '../../utils/validate'
+import { replaceTabs } from '../../utils/formatters'
 
 interface Props {
   onDefenderNotFound: (defenderNotFound: boolean) => void
   disabled?: boolean
+  defendantId?: string
 }
-const DefenderInput: React.FC<Props> = ({ onDefenderNotFound, disabled }) => {
+
+interface PropertyValidation {
+  validations: Validation[]
+  errorMessageHandler: {
+    errorMessage: string
+    setErrorMessage: React.Dispatch<React.SetStateAction<string>>
+  }
+}
+
+type InputType = 'defenderEmail' | 'defenderPhoneNumber'
+
+const DefenderInput: React.FC<Props> = ({
+  onDefenderNotFound,
+  disabled,
+  defendantId,
+}) => {
   const { workingCase, setWorkingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
   const lawyers = useGetLawyers()
-  const { updateCase } = useCase()
-
+  const { updateCase, setAndSendCaseToServer } = useCase()
+  const {
+    updateDefendant,
+    updateDefendantState,
+    setAndSendDefendantToServer,
+  } = useDefendants()
   const [emailErrorMessage, setEmailErrorMessage] = useState<string>('')
   const [
     phoneNumberErrorMessage,
     setPhoneNumberErrorMessage,
   ] = useState<string>('')
+
+  const defendantInDefendants = workingCase.defendants?.find(
+    (defendant) => defendant.id === defendantId,
+  )
 
   const options = useMemo(
     () =>
@@ -40,8 +76,8 @@ const DefenderInput: React.FC<Props> = ({ onDefenderNotFound, disabled }) => {
     [lawyers],
   )
 
-  const onChange = useCallback(
-    async (selectedOption: ValueType<ReactSelectOption>) => {
+  const handleLawyerChange = useCallback(
+    (selectedOption: ValueType<ReactSelectOption>) => {
       let updatedLawyer = {
         defenderName: '',
         defenderNationalId: '',
@@ -70,17 +106,115 @@ const DefenderInput: React.FC<Props> = ({ onDefenderNotFound, disabled }) => {
         }
       }
 
-      await updateCase(workingCase.id, updatedLawyer)
-      setWorkingCase({ ...workingCase, ...updatedLawyer })
+      if (defendantId) {
+        setAndSendDefendantToServer(
+          workingCase.id,
+          defendantId,
+          updatedLawyer,
+          setWorkingCase,
+        )
+      } else {
+        setAndSendCaseToServer(
+          [{ ...updatedLawyer, force: true }],
+          workingCase,
+          setWorkingCase,
+        )
+      }
     },
-    [lawyers, setWorkingCase, workingCase, updateCase, onDefenderNotFound],
+    [
+      defendantId,
+      onDefenderNotFound,
+      lawyers,
+      setAndSendDefendantToServer,
+      workingCase,
+      setWorkingCase,
+      setAndSendCaseToServer,
+    ],
+  )
+
+  const propertyValidations = useCallback(
+    (property: InputType) => {
+      const propertyValidation: PropertyValidation =
+        property === 'defenderEmail'
+          ? {
+              validations: ['email-format'],
+              errorMessageHandler: {
+                errorMessage: emailErrorMessage,
+                setErrorMessage: setEmailErrorMessage,
+              },
+            }
+          : {
+              validations: ['phonenumber'],
+              errorMessageHandler: {
+                errorMessage: phoneNumberErrorMessage,
+                setErrorMessage: setPhoneNumberErrorMessage,
+              },
+            }
+
+      return propertyValidation
+    },
+    [emailErrorMessage, phoneNumberErrorMessage],
+  )
+
+  const formatUpdate = (property: InputType, value: string) => {
+    return property === 'defenderEmail'
+      ? { defenderEmail: value }
+      : { defenderPhoneNumber: value }
+  }
+
+  const handleLawyerPropertyChange = useCallback(
+    (
+      defendantId: string,
+      property: InputType,
+      value: string,
+      setWorkingCase: React.Dispatch<SetStateAction<Case>>,
+    ) => {
+      let newValue = value
+      const propertyValidation = propertyValidations(property)
+      const update = formatUpdate(property, value)
+
+      if (newValue.includes('\t')) {
+        newValue = replaceTabs(value)
+      }
+
+      removeErrorMessageIfValid(
+        propertyValidation.validations,
+        newValue,
+        propertyValidation.errorMessageHandler.errorMessage,
+        propertyValidation.errorMessageHandler.setErrorMessage,
+      )
+
+      updateDefendantState(defendantId, update, setWorkingCase)
+    },
+    [propertyValidations, updateDefendantState],
+  )
+
+  const handleLawyerPropertyBlur = useCallback(
+    (
+      caseId: string,
+      defendantId: string,
+      property: InputType,
+      value: string,
+    ) => {
+      const propertyValidation = propertyValidations(property)
+      const update = formatUpdate(property, value)
+
+      validateAndSetErrorMessage(
+        propertyValidation.validations,
+        value,
+        propertyValidation.errorMessageHandler.setErrorMessage,
+      )
+
+      updateDefendant(caseId, defendantId, update)
+    },
+    [propertyValidations, updateDefendant],
   )
 
   return (
     <>
       <Box marginBottom={2}>
         <Select
-          name="defenderName"
+          name={`defenderName${defendantId ? `-${defendantId}` : ''}`}
           icon="search"
           options={options}
           label={formatMessage(m.nameLabel, {
@@ -88,14 +222,22 @@ const DefenderInput: React.FC<Props> = ({ onDefenderNotFound, disabled }) => {
           })}
           placeholder={formatMessage(m.namePlaceholder)}
           value={
-            workingCase.defenderName
+            defendantId
+              ? defendantInDefendants?.defenderName === '' ||
+                !defendantInDefendants?.defenderName
+                ? null
+                : {
+                    label: defendantInDefendants?.defenderName ?? '',
+                    value: defendantInDefendants?.defenderEmail ?? '',
+                  }
+              : workingCase.defenderName
               ? {
                   label: workingCase.defenderName ?? '',
                   value: workingCase.defenderEmail ?? '',
                 }
               : null
           }
-          onChange={onChange}
+          onChange={handleLawyerChange}
           filterConfig={{ matchFrom: 'start' }}
           isCreatable
           disabled={disabled}
@@ -103,69 +245,115 @@ const DefenderInput: React.FC<Props> = ({ onDefenderNotFound, disabled }) => {
       </Box>
       <Box marginBottom={2}>
         <Input
-          data-testid="defenderEmail"
+          data-testid={`defenderEmail${defendantId ? `-${defendantId}` : ''}`}
           name="defenderEmail"
           autoComplete="off"
           label={formatMessage(m.emailLabel, {
             sessionArrangements: workingCase.sessionArrangements,
           })}
           placeholder={formatMessage(m.emailPlaceholder)}
-          value={workingCase.defenderEmail}
+          value={
+            defendantId
+              ? defendantInDefendants?.defenderEmail
+              : workingCase.defenderEmail || ''
+          }
           errorMessage={emailErrorMessage}
           hasError={emailErrorMessage !== ''}
           disabled={disabled}
-          onChange={(event) =>
-            removeTabsValidateAndSet(
-              'defenderEmail',
-              event.target.value,
-              ['email-format'],
-              workingCase,
-              setWorkingCase,
-              emailErrorMessage,
-              setEmailErrorMessage,
-            )
-          }
-          onBlur={(event) =>
-            validateAndSendToServer(
-              'defenderEmail',
-              event.target.value,
-              ['email-format'],
-              workingCase,
-              updateCase,
-              setEmailErrorMessage,
-            )
-          }
+          onChange={(event) => {
+            if (defendantId) {
+              handleLawyerPropertyChange(
+                defendantId,
+                'defenderEmail',
+                event.target.value,
+                setWorkingCase,
+              )
+            } else {
+              removeTabsValidateAndSet(
+                'defenderEmail',
+                event.target.value,
+                ['email-format'],
+                workingCase,
+                setWorkingCase,
+                emailErrorMessage,
+                setEmailErrorMessage,
+              )
+            }
+          }}
+          onBlur={(event) => {
+            if (defendantId) {
+              handleLawyerPropertyBlur(
+                workingCase.id,
+                defendantId,
+                'defenderEmail',
+                event.target.value,
+              )
+            } else {
+              validateAndSendToServer(
+                'defenderEmail',
+                event.target.value,
+                ['email-format'],
+                workingCase,
+                updateCase,
+                setEmailErrorMessage,
+              )
+            }
+          }}
         />
       </Box>
       <InputMask
         mask="999-9999"
         maskPlaceholder={null}
-        value={workingCase.defenderPhoneNumber}
+        value={
+          defendantId
+            ? defendantInDefendants?.defenderPhoneNumber
+            : workingCase.defenderPhoneNumber || ''
+        }
         disabled={disabled}
-        onChange={(event) =>
-          removeTabsValidateAndSet(
-            'defenderPhoneNumber',
-            event.target.value,
-            ['phonenumber'],
-            workingCase,
-            setWorkingCase,
-            phoneNumberErrorMessage,
-            setPhoneNumberErrorMessage,
-          )
-        }
-        onBlur={(event) =>
-          validateAndSendToServer(
-            'defenderPhoneNumber',
-            event.target.value,
-            ['phonenumber'],
-            workingCase,
-            updateCase,
-            setPhoneNumberErrorMessage,
-          )
-        }
+        onChange={(event) => {
+          if (defendantId) {
+            handleLawyerPropertyChange(
+              defendantId,
+              'defenderPhoneNumber',
+              event.target.value,
+              setWorkingCase,
+            )
+          } else {
+            removeTabsValidateAndSet(
+              'defenderPhoneNumber',
+              event.target.value,
+              ['phonenumber'],
+              workingCase,
+              setWorkingCase,
+              phoneNumberErrorMessage,
+              setPhoneNumberErrorMessage,
+            )
+          }
+        }}
+        onBlur={(event) => {
+          if (defendantId) {
+            handleLawyerPropertyBlur(
+              workingCase.id,
+              defendantId,
+              'defenderPhoneNumber',
+              event.target.value,
+            )
+          } else {
+            validateAndSendToServer(
+              'defenderPhoneNumber',
+              event.target.value,
+              ['phonenumber'],
+              workingCase,
+              updateCase,
+              setPhoneNumberErrorMessage,
+            )
+          }
+        }}
       >
         <Input
-          data-testid="defenderPhoneNumber"
+          data-testid={`defenderPhoneNumber${
+            defendantId ? `-${defendantId}` : ''
+          }`}
           name="defenderPhoneNumber"
           autoComplete="off"
           label={formatMessage(m.phoneNumberLabel, {

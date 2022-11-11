@@ -296,7 +296,6 @@ export class FinancialStatementsInaoClientService {
     }
 
     const financialStatementId = await this.postFinancialStatement(body)
-
     if (!financialStatementId) {
       throw new Error('FinancialStatementId can not be null')
     }
