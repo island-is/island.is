@@ -67,7 +67,7 @@ export const extendApiScope = (
 
 type MapScopeTreeToScope = {
   item: AccessFormScope
-  authScopeTree?: AuthScopeTree
+  scopeTree?: AuthScopeTree
   validityPeriod: Date | null
 }
 
@@ -76,10 +76,10 @@ type MapScopeTreeToScope = {
  */
 export const formatScopeTreeToScope = ({
   item,
-  authScopeTree,
+  scopeTree,
   validityPeriod,
 }: MapScopeTreeToScope): MappedScope | null => {
-  const flattenScopes = authScopeTree
+  const flattenScopes = scopeTree
     ?.map((apiScope) => {
       if (apiScope.__typename === AUTH_API_SCOPE_GROUP_TYPE) {
         return [apiScope, ...(apiScope?.children || [])]

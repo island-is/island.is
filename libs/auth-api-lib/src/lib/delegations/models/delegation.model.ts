@@ -16,13 +16,11 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { DEFAULT_DOMAIN } from '../../types/defaultDomain'
-import {
-  DelegationDTO,
-  DelegationProvider,
-  DelegationType,
-} from '../dto/delegation.dto'
+import { DelegationDTO, DelegationProvider } from '../dto/delegation.dto'
 import { DelegationScope } from './delegation-scope.model'
 import { Domain } from '../../resources/models/domain.model'
+import { MergedDelegationDTO } from '../dto/merged-delegation.dto'
+import { DelegationType } from '../types/delegationType'
 
 @Table({
   tableName: 'delegation',
@@ -116,6 +114,17 @@ export class Delegation extends Model<
       provider: DelegationProvider.Custom,
       type: DelegationType.Custom,
       domainName: this.domainName,
+    }
+  }
+
+  toMergedDTO(): MergedDelegationDTO {
+    return {
+      fromName: this.fromDisplayName,
+      fromNationalId: this.fromNationalId,
+      toNationalId: this.toNationalId,
+      toName: this.toName,
+      validTo: this.validTo,
+      types: [DelegationType.Custom],
     }
   }
 }

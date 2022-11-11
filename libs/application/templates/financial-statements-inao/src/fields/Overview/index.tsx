@@ -36,7 +36,7 @@ export const Overview = ({
   const [approveOverview, setApproveOverview] = useState(false)
 
   const answers = application.answers as FinancialStatementsInao
-  const fileName = answers.attachment?.file?.[0]?.name
+  const fileName = answers.attachments?.file?.[0]?.name
   const [
     submitApplication,
     { error: submitError, loading },
@@ -50,7 +50,7 @@ export const Overview = ({
     const incomeLimit = getValueViaPath(answers, 'election.incomeLimit')
 
     if (incomeLimit === GREATER) {
-      goToScreen && goToScreen('attachment.file')
+      goToScreen && goToScreen('attachments.file')
     } else {
       goToScreen && goToScreen('election')
     }
@@ -268,7 +268,7 @@ export const Overview = ({
 
       {fileName ? (
         <Fragment>
-          <FileValueLine label={answers.attachment?.file?.[0]?.name} />
+          <FileValueLine label={answers.attachments?.file?.[0]?.name} />
           <Divider />
         </Fragment>
       ) : null}

@@ -398,7 +398,6 @@ export const isProsecutorAndDefenderStepValid = (workingCase: Case) => {
       return (
         defendant.defendantWaivesRightToCounsel ||
         validate([
-          [defendant.defenderNationalId, ['empty']],
           [defendant.defenderName, ['empty']],
           [defendant.defenderEmail, ['email-format']],
           [defendant.defenderPhoneNumber, ['phonenumber']],

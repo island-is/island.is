@@ -60,22 +60,20 @@ export const clientInfoSection = buildSection({
           defaultValue: (application: Application) => {
             const nationalRegistry = application.externalData.nationalRegistry
               .data as User
-            return nationalRegistry.fullName
+            return nationalRegistry.name
           },
         }),
-        buildTextField({
-          id: 'about.powerOfAttorneyNationalId',
-          title: m.powerOfAttorneyNationalId,
-          format: '######-####',
-          width: 'half',
-          readOnly: true,
+        buildCustomField({
+          id: 'powerOfAttorney',
+          title: '',
+          description: '',
+          component: 'PowerOfAttorneyFields',
+          childInputIds: [
+            ABOUTIDS.powerOfAttorneyNationalId,
+            ABOUTIDS.powerOfAttorneyName,
+          ],
         }),
-        buildTextField({
-          id: 'about.powerOfAttorneyName',
-          title: m.powerOfAttorneyName,
-          width: 'half',
-          readOnly: true,
-        }),
+
         buildTextField({
           id: 'about.email',
           title: m.email,

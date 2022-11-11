@@ -18,7 +18,6 @@ import { partyKeyNumbersSection } from './party/partyKeyNumbers'
 import { individualKeyNumbersSection } from './individual/individualKeyNumbers'
 import { electionInfoSection } from './shared/electionInfo/electionInfo'
 import { sectionCemetryCaretaker } from './cemetry/sectionCemetryCaretaker'
-import { fakeDataSection } from '../prerequisites/fakeDataSection'
 import {
   currencyStringToNumber,
   getCurrentUserType,
@@ -37,7 +36,6 @@ export const getApplication = (allowFakeData = false): Form => {
         id: 'conditions',
         title: m.dataCollectionTitle,
         children: [
-          ...(allowFakeData ? [fakeDataSection] : []),
           buildExternalDataProvider({
             id: 'approveExternalData',
             title: m.dataCollectionTitle,
@@ -45,7 +43,7 @@ export const getApplication = (allowFakeData = false): Form => {
             dataProviders: [
               buildDataProviderItem({
                 id: 'nationalRegistry',
-                type: 'NationalRegistryProvider',
+                type: 'IdentityProvider',
                 title: m.dataCollectionNationalRegistryTitle,
                 subTitle: m.dataCollectionNationalRegistrySubtitle,
               }),
@@ -80,7 +78,7 @@ export const getApplication = (allowFakeData = false): Form => {
         },
         children: [
           buildFileUploadField({
-            id: 'attachment.file',
+            id: 'attachments.file',
             title: m.upload,
             condition: (answers, externalData) => {
               const userType = getCurrentUserType(answers, externalData)
