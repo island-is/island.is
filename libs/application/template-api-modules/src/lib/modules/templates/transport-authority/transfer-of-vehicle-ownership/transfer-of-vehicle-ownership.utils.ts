@@ -9,6 +9,16 @@ export const getDateAtNoonFromString = (dateStr: string): Date => {
   return new Date(date.toISOString().substring(0, 10) + 'T12:00:00Z')
 }
 
+export const getAllRoles = (): EmailRole[] => {
+  return [
+    EmailRole.seller,
+    EmailRole.sellerCoOwner,
+    EmailRole.buyer,
+    EmailRole.buyerCoOwner,
+    EmailRole.buyerOperator,
+  ]
+}
+
 export const getRoleNameById = (roleId: EmailRole): string | undefined => {
   switch (roleId) {
     case EmailRole.seller:
@@ -50,6 +60,7 @@ export const getRecipients = (
       email: answers.seller.email,
       phone: answers.seller.phone,
       role: EmailRole.seller,
+      approved: true,
     })
   }
 
@@ -63,6 +74,7 @@ export const getRecipients = (
         email: sellerCoOwners[i].email,
         phone: sellerCoOwners[i].phone,
         role: EmailRole.sellerCoOwner,
+        approved: sellerCoOwners[i].approved,
       })
     }
   }
@@ -75,6 +87,7 @@ export const getRecipients = (
       email: answers.buyer.email,
       phone: answers.buyer.phone,
       role: EmailRole.buyer,
+      approved: answers.buyer.approved,
     })
   }
 
@@ -90,6 +103,7 @@ export const getRecipients = (
         email: buyerCoOwners[i].email,
         phone: buyerCoOwners[i].phone,
         role: EmailRole.buyerCoOwner,
+        approved: buyerCoOwners[i].approved,
       })
     }
   }
@@ -106,6 +120,7 @@ export const getRecipients = (
         email: buyerOperators[i].email,
         phone: buyerOperators[i].phone,
         role: EmailRole.buyerOperator,
+        approved: buyerOperators[i].approved,
       })
     }
   }
@@ -125,6 +140,7 @@ export const getRecipientBySsn = (
       email: answers.seller.email,
       phone: answers.seller.phone,
       role: EmailRole.seller,
+      approved: true,
     }
   }
 
@@ -139,6 +155,7 @@ export const getRecipientBySsn = (
           email: sellerCoOwners[i].email,
           phone: sellerCoOwners[i].phone,
           role: EmailRole.sellerCoOwner,
+          approved: sellerCoOwners[i].approved,
         }
       }
     }
@@ -152,6 +169,7 @@ export const getRecipientBySsn = (
       email: answers.buyer.email,
       phone: answers.buyer.phone,
       role: EmailRole.buyer,
+      approved: answers.buyer.approved,
     }
   }
 
@@ -168,6 +186,7 @@ export const getRecipientBySsn = (
           email: buyerCoOwners[i].email,
           phone: buyerCoOwners[i].phone,
           role: EmailRole.buyerCoOwner,
+          approved: buyerCoOwners[i].approved,
         }
       }
     }
@@ -186,6 +205,7 @@ export const getRecipientBySsn = (
           email: buyerOperators[i].email,
           phone: buyerOperators[i].phone,
           role: EmailRole.buyerOperator,
+          approved: buyerOperators[i].approved,
         }
       }
     }

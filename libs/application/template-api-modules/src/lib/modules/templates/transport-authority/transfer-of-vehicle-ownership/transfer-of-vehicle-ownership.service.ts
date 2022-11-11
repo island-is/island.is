@@ -17,6 +17,7 @@ import {
 import { EmailRecipient, EmailRole } from './types'
 import {
   getDateAtNoonFromString,
+  getAllRoles,
   getRecipients,
   getRecipientBySsn,
 } from './transfer-of-vehicle-ownership.utils'
@@ -231,13 +232,7 @@ export class TransferOfVehicleOwnershipService {
 
     // 2a. Get list of users that need to be notified
     const answers = application.answers as TransferOfVehicleOwnershipAnswers
-    const recipientList = getRecipients(answers, [
-      EmailRole.seller,
-      EmailRole.sellerCoOwner,
-      EmailRole.buyer,
-      EmailRole.buyerCoOwner,
-      EmailRole.buyerOperator,
-    ])
+    const recipientList = getRecipients(answers, getAllRoles())
 
     // 2b. Send email/sms individually to each recipient about success of withdrawing application
     const rejectedByRecipient = getRecipientBySsn(answers, auth.nationalId)
@@ -355,13 +350,7 @@ export class TransferOfVehicleOwnershipService {
     // 2. Notify everyone in the process that the application has successfully been submitted
 
     // 2a. Get list of users that need to be notified
-    const recipientList = getRecipients(answers, [
-      EmailRole.seller,
-      EmailRole.sellerCoOwner,
-      EmailRole.buyer,
-      EmailRole.buyerCoOwner,
-      EmailRole.buyerOperator,
-    ])
+    const recipientList = getRecipients(answers, getAllRoles())
 
     // 2b. Send email/sms individually to each recipient about success of submitting application
     for (var i = 0; i < recipientList.length; i++) {
