@@ -15,12 +15,12 @@ libs/contentful-extensions/parent-slug/.cache
 
 # dependencies
 node_modules/
-.yarn/*
-!.yarn/patches
-!.yarn/releases
-!.yarn/plugins
-!.yarn/sdks
-!.yarn/versions
+**/.yarn/*
+!**/.yarn/patches
+!**/.yarn/releases
+!**/.yarn/plugins
+!**/.yarn/sdks
+!**/.yarn/versions
 
 # IDEs and editors
 /.idea
@@ -85,3 +85,6 @@ fragmentTypes.json
 # IDE - Visual Studio
 *.suo
 /.vs
+
+# Gitbook/Honkit
+_book

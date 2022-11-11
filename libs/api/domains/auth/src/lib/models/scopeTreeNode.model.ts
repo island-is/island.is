@@ -5,4 +5,7 @@ import { ApiScope } from './apiScope.model'
 export const ScopeTreeNode = createUnionType({
   name: 'AuthScopeTreeNode',
   types: () => [ApiScope, ApiScopeGroup],
+  resolveType: (args) => {
+    return args.children?.length ? ApiScopeGroup : ApiScope
+  },
 })

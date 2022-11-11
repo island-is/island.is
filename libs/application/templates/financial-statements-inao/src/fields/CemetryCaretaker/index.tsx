@@ -1,8 +1,7 @@
 import React, { FC, useState, useEffect, useCallback } from 'react'
-import { useFieldArray } from 'react-hook-form'
-// import { IdentityInput, Query } from '@island.is/api/schema'
-// import * as kennitala from 'kennitala'
-// import throttle from 'lodash/throttle'
+import { useFieldArray, useFormContext } from 'react-hook-form'
+import { IdentityInput, Query } from '@island.is/api/schema'
+import * as kennitala from 'kennitala'
 
 import { RecordObject } from '@island.is/application/types'
 import {
@@ -11,11 +10,11 @@ import {
   GridColumn,
   GridRow,
   GridContainer,
-  // InputError,
+  InputError,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-// import { useLazyQuery } from '@apollo/client'
+import { useLazyQuery } from '@apollo/client'
 import { getValueViaPath, getErrorViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import {
@@ -24,8 +23,8 @@ import {
 } from '@island.is/shared/form-fields'
 import { FinancialStatementsInao } from '../../lib/utils/dataSchema'
 import * as styles from './CemetryCaretaker.css'
-// import { IdentityQuery } from '../../graphql'
-import { BOARDMEMEBER, CARETAKER } from '../../lib/constants'
+import { IdentityQuery } from '../../graphql'
+import { BOARDMEMEBER, CARETAKER, VALIDATOR } from '../../lib/constants'
 
 type Props = {
   id: string
@@ -33,6 +32,12 @@ type Props = {
   answers: FinancialStatementsInao
   handleRemoveCaretaker: (index: number) => void
   errors: RecordObject<unknown> | undefined
+}
+
+type BoardMember = {
+  nationalId: string
+  name: string
+  role: string
 }
 
 const CareTakerRepeaterItem = ({
@@ -45,51 +50,33 @@ const CareTakerRepeaterItem = ({
   const { formatMessage } = useLocale()
 
   const [nationalIdInput, setNationalIdInput] = useState('')
-  // const { getValues, setValue } = useFormContext()
+  const { clearErrors, setValue } = useFormContext()
   const fieldIndex = `${id}[${index}]`
   const nameField = `${fieldIndex}.name`
   const nationalIdField = `${fieldIndex}.nationalId`
   const roleField = `${fieldIndex}.role`
 
-  // currently getting a weird errir when trying to fetch name
-  // keeping some code for late use
+  const [getIdentity, { loading, error: queryError }] = useLazyQuery<
+    Query,
+    { input: IdentityInput }
+  >(IdentityQuery, {
+    onCompleted: (data) => {
+      setValue(nameField, data.identity?.name ?? '')
+    },
+  })
 
-  // const [getIdentity, { data, loading, error }] = useLazyQuery<
-  //   Query,
-  //   { input: IdentityInput }
-  // >(IdentityQuery, {
-  //   onCompleted: (data) => {
-  //     console.log(data)
-  //   },
-  // })
-
-  // useEffect(() => {
-  //   if (nationalIdInput.length === 10 && kennitala.isValid(nationalIdInput)) {
-  //     getIdentity({
-  //       variables: {
-  //         input: {
-  //           nationalId: nationalIdInput,
-  //         },
-  //       },
-  //     })
-  //   }
-  // }, [nationalIdInput])
-
-  // console.log({ data, loading, error })
-  // const fetchName = throttle((nationalId: string) => {
-  //   const isPerson = kennitala.isPerson(nationalId)
-  //   if (isPerson) {
-  //     getIdentity({
-  //       variables: {
-  //         input: {
-  //           nationalId,
-  //         },
-  //       },
-  //     })
-  //   } else {
-  //     console.log('not a person')
-  //   }
-  // }, 1000)
+  useEffect(() => {
+    clearErrors()
+    if (nationalIdInput.length === 10 && kennitala.isValid(nationalIdInput)) {
+      getIdentity({
+        variables: {
+          input: {
+            nationalId: nationalIdInput,
+          },
+        },
+      })
+    }
+  }, [nationalIdInput, getIdentity, clearErrors])
 
   return (
     <GridContainer>
@@ -132,7 +119,13 @@ const CareTakerRepeaterItem = ({
               name={nameField}
               label={formatMessage(m.fullName)}
               backgroundColor="blue"
-              error={errors && getErrorViaPath(errors, nameField)}
+              loading={loading}
+              readOnly
+              error={
+                queryError
+                  ? formatMessage(m.errorNationalIdIncorrect)
+                  : undefined
+              }
             />
           </Box>
         </GridColumn>
@@ -169,9 +162,13 @@ export const CemetryCaretaker: FC<FieldBaseProps<FinancialStatementsInao>> = ({
   application,
   field,
   errors,
+  setBeforeSubmitCallback,
 }) => {
   const { formatMessage } = useLocale()
   const { id } = field
+
+  const { getValues, setError } = useFormContext()
+  const values = getValues()
 
   const { fields, append, remove } = useFieldArray({
     name: `${id}.caretakers`,
@@ -190,6 +187,23 @@ export const CemetryCaretaker: FC<FieldBaseProps<FinancialStatementsInao>> = ({
   useEffect(() => {
     if (fields.length === 0) handleAddCaretaker()
   }, [fields, handleAddCaretaker])
+  setBeforeSubmitCallback &&
+    setBeforeSubmitCallback(async () => {
+      const caretakers = values.cemetryCaretaker
+      const includesApplicant =
+        caretakers.filter(
+          (member: BoardMember) => member.nationalId === application.applicant,
+        ).length > 0
+
+      if (includesApplicant) {
+        setError(VALIDATOR, {
+          type: 'custom',
+          message: formatMessage(m.errormemberCanNotIncludeApplicant),
+        })
+        return [false, formatMessage(m.errormemberCanNotIncludeApplicant)]
+      }
+      return [true, null]
+    })
 
   return (
     <GridContainer>
@@ -218,6 +232,20 @@ export const CemetryCaretaker: FC<FieldBaseProps<FinancialStatementsInao>> = ({
           </Button>
         </Box>
       </GridRow>
+      {errors && errors.cemetryCaretaker ? (
+        <InputError
+          errorMessage={
+            typeof errors.cemetryCaretaker === 'string'
+              ? errors.cemetryCaretaker
+              : undefined
+          }
+        />
+      ) : null}
+      {errors && errors.validator ? (
+        <InputError
+          errorMessage={formatMessage(m.errormemberCanNotIncludeApplicant)}
+        />
+      ) : null}
     </GridContainer>
   )
 }

@@ -1,8 +1,9 @@
-import { FC, useState } from 'react'
+import { CSSProperties, FC, useState } from 'react'
 import { useQuery } from '@apollo/client/react'
 import { GET_LAWYERS_QUERY } from './queries'
 import { ConnectedComponent, Query } from '@island.is/api/schema'
-import { useLocalization, sortAlpha } from '../../utils'
+import { useLocalization } from '../../utils'
+import { sortAlpha } from '@island.is/shared/utils'
 import {
   Box,
   LoadingDots,
@@ -15,7 +16,8 @@ import {
 
 import * as styles from './LawyersList.css'
 
-const PAGE_SIZE = 5
+const DEFAULT_PAGE_SIZE = 5
+const DEFAULT_TABLE_MIN_HEIGHT = '800px'
 
 interface LawyersListProps {
   slice: ConnectedComponent
@@ -72,8 +74,21 @@ const LawyersList: FC<LawyersListProps> = ({ slice }) => {
     )
   })
 
-  const totalPages = Math.ceil(filteredLawyers.length / PAGE_SIZE)
-  const forceTableMinimumHeight = totalPages > 1
+  const pageSize = slice?.configJson?.pageSize ?? DEFAULT_PAGE_SIZE
+
+  const totalPages = Math.ceil(filteredLawyers.length / pageSize)
+
+  const minHeightFromConfig = slice?.configJson?.minHeight
+  const tableContainerStyles: CSSProperties = {}
+  if (totalPages > 1) {
+    /**
+     * Force a minimum height of the table, so that the pagination elements stay in the same
+     * location. E.g. when the last page has fewer items, then this will prevent the
+     * pagination elements from moving.
+     */
+    tableContainerStyles.minHeight =
+      minHeightFromConfig ?? DEFAULT_TABLE_MIN_HEIGHT
+  }
 
   return (
     <Box>
@@ -116,7 +131,7 @@ const LawyersList: FC<LawyersListProps> = ({ slice }) => {
       )}
       {listState === 'loaded' && filteredLawyers.length > 0 && (
         <Box>
-          <Box className={forceTableMinimumHeight && styles.tableMinimumHeight}>
+          <Box style={tableContainerStyles}>
             <T.Table>
               <T.Head>
                 <T.Row>
@@ -127,8 +142,8 @@ const LawyersList: FC<LawyersListProps> = ({ slice }) => {
               <T.Body>
                 {filteredLawyers
                   .slice(
-                    (currentPageNumber - 1) * PAGE_SIZE,
-                    currentPageNumber * PAGE_SIZE,
+                    (currentPageNumber - 1) * pageSize,
+                    currentPageNumber * pageSize,
                   )
                   .map((lawyer, index) => {
                     return (

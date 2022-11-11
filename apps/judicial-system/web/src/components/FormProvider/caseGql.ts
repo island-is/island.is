@@ -18,6 +18,11 @@ const CaseQuery = gql`
         gender
         address
         citizenship
+        defenderName
+        defenderNationalId
+        defenderEmail
+        defenderPhoneNumber
+        defendantWaivesRightToCounsel
       }
       defenderName
       defenderNationalId
@@ -143,10 +148,15 @@ const CaseQuery = gql`
         name
         size
         created
+        modified
         state
         key
         category
         policeCaseNumber
+        chapter
+        orderWithinChapter
+        userGeneratedFilename
+        displayDate
       }
       isAppealDeadlineExpired
       isAppealGracePeriodExpired

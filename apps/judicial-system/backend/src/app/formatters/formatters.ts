@@ -340,7 +340,7 @@ export function formatPrisonCourtDateEmailNotification(
 
   const isolationText = formatMessage(
     notifications.prisonCourtDateEmail.isolationTextV2,
-    { isolation: isolation },
+    { isolation: Boolean(isolation) },
   )
   const defenderText = formatMessage(notifications.defender, {
     defenderName: defenderName ?? 'NONE',
@@ -654,15 +654,17 @@ export function formatCourtUploadRulingTitle(
 export function formatDefenderAssignedEmailNotification(
   formatMessage: FormatMessage,
   theCase: Case,
-  overviewUrl: string,
+  overviewUrl?: string,
 ): SubjectAndBody {
   const subject = formatMessage(notifications.defenderAssignedEmail.subject, {
     court: capitalize(theCase.court?.name ?? ''),
   })
 
-  const body = formatMessage(notifications.defenderAssignedEmail.body, {
+  const body = formatMessage(notifications.defenderAssignedEmail.bodyV2, {
+    defenderHasAccessToRVG: Boolean(overviewUrl),
     courtCaseNumber: capitalize(theCase.courtCaseNumber ?? ''),
     court: theCase.court?.name ?? '',
+    courtName: theCase.court?.name.replace('dómur', 'dómi') ?? '',
     linkStart: `<a href="${overviewUrl}">`,
     linkEnd: '</a>',
   })

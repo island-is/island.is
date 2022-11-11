@@ -80,6 +80,9 @@
       "@island.is/api/domains/education": [
         "libs/api/domains/education/src/index.ts"
       ],
+      "@island.is/api/domains/electronic-registration-statistics": [
+        "libs/api/domains/electronic-registration-statistics/src/index.ts"
+      ],
       "@island.is/api/domains/endorsement-system": [
         "libs/api/domains/endorsement-system/src/index.ts"
       ],
@@ -216,6 +219,9 @@
       "@island.is/application/templates/driving-school-confirmation": [
         "libs/application/templates/driving-school-confirmation/src/index.ts"
       ],
+      "@island.is/application/templates/estate": [
+        "libs/application/templates/estate/src/index.ts"
+      ],
       "@island.is/application/templates/example-payment": [
         "libs/application/templates/example-payment/src/index.ts"
       ],
@@ -319,6 +325,9 @@
       "@island.is/application/ui-fields": [
         "libs/application/ui-fields/src/index.ts"
       ],
+      "@island.is/application/ui-forms": [
+        "libs/application/ui-forms/src/index.ts"
+      ],
       "@island.is/application/ui-shell": [
         "libs/application/ui-shell/src/index.ts"
       ],
@@ -331,8 +340,11 @@
         "libs/clients/adr-and-machine-license/src/index.ts"
       ],
       "@island.is/clients/assets": ["libs/clients/assets/src/index.ts"],
-      "@island.is/clients/auth-public-api": [
-        "libs/clients/auth-public-api/src/index.ts"
+      "@island.is/clients/auth/delegation-api": [
+        "libs/clients/auth/delegation-api/src/index.ts"
+      ],
+      "@island.is/clients/auth/public-api": [
+        "libs/clients/auth/public-api/src/index.ts"
       ],
       "@island.is/clients/charge-fjs-v2": [
         "libs/clients/charge-fjs-v2/src/index.ts"
@@ -352,6 +364,9 @@
       ],
       "@island.is/clients/driving-license-book": [
         "libs/clients/driving-license-book/src/index.ts"
+      ],
+      "@island.is/clients/electronic-registration-statistics": [
+        "libs/clients/electronic-registration-statistics/src/index.ts"
       ],
       "@island.is/clients/finance": ["libs/clients/finance/src/index.ts"],
       "@island.is/clients/financial-statements-inao": [
@@ -444,7 +459,6 @@
       "@island.is/financial-aid/shared/lib": [
         "libs/financial-aid/shared/src/lib/index.ts"
       ],
-      "@island.is/health-insurance": ["libs/health-insurance/src/index.ts"],
       "@island.is/icelandic-names-registry-types": [
         "libs/icelandic-names-registry/types/src/index.ts"
       ],
@@ -510,6 +524,9 @@
       "@island.is/regulations": ["libs/regulations/src/index.ts"],
       "@island.is/regulations/*": ["libs/regulations/src/sub/*"],
       "@island.is/residence-history": ["libs/residence-history/src/index.ts"],
+      "@island.is/service-portal/access-control/delegations": [
+        "libs/service-portal/access-control/delegations/src/index.ts"
+      ],
       "@island.is/service-portal/applications": [
         "libs/service-portal/applications/src/index.ts"
       ],
@@ -581,6 +598,9 @@
       ],
       "@island.is/service-portal/vehicles": [
         "libs/service-portal/vehicles/src/index.ts"
+      ],
+      "@island.is/services/auth/testing": [
+        "libs/services/auth/testing/src/index.ts"
       ],
       "@island.is/shared/components": ["libs/shared/components/src/index.ts"],
       "@island.is/shared/connected": ["libs/shared/connected/src/index.ts"],

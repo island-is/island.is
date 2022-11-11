@@ -2,6 +2,7 @@ global:
   env:
     AUDIT_GROUP_NAME: '/island-is/audit-log'
     AWS_REGION: 'eu-west-1'
+    NO_UPDATE_NOTIFIER: 'true'
     PORT: '3333'
     name: 'prod'
   image:
@@ -224,6 +225,7 @@ judicial-system-backend:
     name: 'judicial-system-backend'
 judicial-system-message-handler:
   args:
+    - '--no-experimental-fetch'
     - 'main.js'
   command:
     - 'node'
@@ -285,6 +287,7 @@ judicial-system-message-handler:
     name: 'judicial-system-message-handler'
 judicial-system-scheduler:
   args:
+    - '--no-experimental-fetch'
     - 'main.js'
   command:
     - 'node'

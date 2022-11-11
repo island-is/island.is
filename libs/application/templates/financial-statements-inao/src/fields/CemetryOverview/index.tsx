@@ -46,7 +46,7 @@ export const CemetryOverview = ({
   })
 
   const answers = application.answers as FinancialStatementsInao
-  const fileName = answers.attachment?.file?.[0]?.name
+  const fileName = answers.attachments?.file?.[0]?.name
   const careTakerLimit = answers.cemetryOperation.incomeLimit ?? '0'
 
   const onBackButtonClick = () => {
@@ -60,7 +60,7 @@ export const CemetryOverview = ({
     ) {
       goToScreen && goToScreen('caretakers')
     } else {
-      goToScreen && goToScreen('attachment.file')
+      goToScreen && goToScreen('attachments.file')
     }
   }
 
@@ -314,6 +314,12 @@ export const CemetryOverview = ({
               value={formatCurrency(answers.cemetryEquity?.total)}
             />
           </GridColumn>
+          <GridColumn span={['12/12', '6/12']}>
+            <ValueLine
+              label={m.debtsAndCash}
+              value={formatCurrency(answers.equityAndLiabilities?.total)}
+            />
+          </GridColumn>
         </GridRow>
       </Box>
       <Divider />
@@ -356,7 +362,7 @@ export const CemetryOverview = ({
       ) : null}
       {fileName ? (
         <Fragment>
-          <FileValueLine label={answers.attachment?.file?.[0]?.name} />
+          <FileValueLine label={answers.attachments?.file?.[0]?.name} />
           <Divider />
         </Fragment>
       ) : null}

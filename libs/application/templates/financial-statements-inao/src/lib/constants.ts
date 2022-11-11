@@ -30,9 +30,9 @@ export const INPUTCHANGEINTERVAL = 300
 export const UPDATE_ELECTION_ACTION = 'updateCurrentElection'
 
 export enum USERTYPE {
-  INDIVIDUAL = '150000000',
-  PARTY = '150000001',
-  CEMETRY = '150000002',
+  INDIVIDUAL = 150000000,
+  PARTY = 150000001,
+  CEMETRY = 150000002,
 }
 
 export const BACKYEARSLIMITFALLBACK = '1'
@@ -42,6 +42,8 @@ export const PARTY = 'party'
 export const CEMETRY = 'cemetery'
 
 // input ids
+export const VALIDATOR = 'validator'
+
 export const INDIVIDUALOPERATIONIDS = {
   incomePrefix: 'individualIncome',
   expensePrefix: 'individualExpense',
@@ -119,6 +121,8 @@ export const ABOUTIDS = {
   selectElection: 'election.selectElection',
   electionName: 'election.electionName',
   incomeLimit: 'election.incomeLimit',
+  powerOfAttorneyNationalId: 'about.powerOfAttorneyNationalId',
+  powerOfAttorneyName: 'about.powerOfAttorneyName',
 }
 
 export const OPERATINGCOST = {
@@ -139,6 +143,7 @@ export const EQUITIESANDLIABILITIESIDS = {
   equityPrefix: 'equity',
   totalEquity: 'equity.totalEquity',
   totalCash: 'equity.total',
+  totalEquityAndLiabilities: 'equityAndLiabilities.total',
 }
 
 export const CEMETRYEQUITIESANDLIABILITIESIDS = {
@@ -156,4 +161,5 @@ export const CEMETRYEQUITIESANDLIABILITIESIDS = {
   reevaluateOther: 'cemetryEquity.reevaluateOther',
   operationResult: 'cemetryEquity.operationResult',
   equityTotal: 'cemetryEquity.total',
+  totalEquityAndLiabilities: 'equityAndLiabilities.total',
 }

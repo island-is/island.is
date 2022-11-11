@@ -29,7 +29,8 @@ import { Delegation } from '../models'
 import { ActorDelegationsService } from '../services/actorDelegations.service'
 import { ActorDelegationInput } from '../dto/actorDelegation.input'
 import { MeDelegationsService } from '../services/meDelegations.service'
-import type { DelegationDTO } from '../services/types'
+import type { DelegationDTO, MergedDelegationDTO } from '../services/types'
+import { MergedDelegation } from '../models/delegation.model'
 
 @UseGuards(IdsUserGuard, FeatureFlagGuard)
 @Resolver(() => Delegation)
@@ -40,12 +41,12 @@ export class DelegationResolver {
     private identityService: IdentityService,
   ) {}
 
-  @Query(() => [Delegation], { name: 'authActorDelegations' })
+  @Query(() => [MergedDelegation], { name: 'authActorDelegations' })
   getActorDelegations(
     @CurrentUser() user: User,
     @Args('input', { type: () => ActorDelegationInput, nullable: true })
     input?: ActorDelegationInput,
-  ): Promise<DelegationDTO[]> {
+  ): Promise<MergedDelegationDTO[]> {
     return this.actorDelegationsService.getActorDelegations(
       user,
       input?.delegationTypes,

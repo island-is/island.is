@@ -15,6 +15,8 @@ import { educationStudentAssessmentModule } from '@island.is/service-portal/educ
 import { applicationsModule } from '@island.is/service-portal/applications'
 import { licensesModule } from '@island.is/service-portal/licenses'
 import { vehiclesModule } from '@island.is/service-portal/vehicles'
+import { delegationsModule } from '@island.is/service-portal/access-control/delegations'
+
 /**
  * NOTE:
  * Modules should only be here if they are production ready
@@ -25,7 +27,6 @@ import { vehiclesModule } from '@island.is/service-portal/vehicles'
  * and create a feature flag in ConfigCat called
  * `isServicePortalFinanceModuleEnabled` where your module is called `finance`.
  */
-
 export type ModuleKeys =
   | 'accessControl'
   | 'documentProvider'
@@ -43,6 +44,7 @@ export type ModuleKeys =
   | 'licenses'
   | 'petitions'
   | 'vehicles'
+  | 'delegations'
 
 export const companyModules: ModuleKeys[] = [
   'documents',
@@ -53,6 +55,7 @@ export const companyModules: ModuleKeys[] = [
   'vehicles',
   'personalInformation',
   'accessControl',
+  'delegations',
   // TODO: Next in:
   // 'licenses',
 ]
@@ -74,4 +77,5 @@ export const modules: Record<ModuleKeys, ServicePortalModule> = {
   accessControl: accessControlModule,
   licenses: licensesModule,
   vehicles: vehiclesModule,
+  delegations: delegationsModule,
 }
