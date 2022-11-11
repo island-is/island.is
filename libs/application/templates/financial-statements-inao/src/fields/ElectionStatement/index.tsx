@@ -18,7 +18,6 @@ export const ElectionStatement = ({
   refetch,
 }: FieldBaseProps) => {
   const { formatMessage } = useLocale()
-  const [approveOverview, _setApproveOverview] = useState(false)
   const { errors, setError } = useFormContext()
   const answers = application.answers as FinancialStatementsInao
 
@@ -29,7 +28,6 @@ export const ElectionStatement = ({
   })
 
   const onBackButtonClick = () => {
-    // const income = currencyStringToNumber(answers.individualIncome?.total)
     const incomeLimit = getValueViaPath(answers, 'election.incomeLimit')
 
     if (incomeLimit === GREATER) {
@@ -40,13 +38,7 @@ export const ElectionStatement = ({
   }
 
   const onSendButtonClick = () => {
-    if (approveOverview) {
-      submitApplication()
-    } else {
-      setError('applicationApprove', {
-        type: 'error',
-      })
-    }
+    submitApplication()
   }
 
   return (
