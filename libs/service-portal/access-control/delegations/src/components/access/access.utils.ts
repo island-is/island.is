@@ -10,6 +10,8 @@ import {
   MappedScope,
 } from './access.types'
 
+export const DATE_FORMAT = 'dd.MM.yyyy'
+
 /**
  * Checks if scope is a scope group type
  */

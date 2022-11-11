@@ -8,7 +8,7 @@ import {
 import { AuthCustomDelegation } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
-import { useAuthDelegationsQuery } from '@island.is/service-portal/graphql'
+import { useAuthDelegationsIncomingQuery } from '@island.is/service-portal/graphql'
 import { DomainOption, useDomains } from '../../../hooks/useDomains'
 import { DelegationsIncomingHeader } from './DelegationsIncomingHeader'
 import { AccessDeleteModal } from '../../access/AccessDeleteModal'
@@ -24,12 +24,13 @@ export const DelegationsIncoming = () => {
     null,
   )
 
-  const { data, loading, refetch, error } = useAuthDelegationsQuery({
+  const { data, loading, refetch, error } = useAuthDelegationsIncomingQuery({
     variables: {
       input: {
         domain: domainName,
       },
-      lang,
+      // TODO enable when backend is ready
+      //lang,
     },
     // Make sure that loading state is shown when refetching
     notifyOnNetworkStatusChange: true,
@@ -76,8 +77,7 @@ export const DelegationsIncoming = () => {
           <Stack space={3}>
             {delegations.map(
               (delegation) =>
-                // TODO set .from instead of .to when delegation incoming graphql is ready
-                delegation.to && (
+                delegation.from && (
                   <AccessCard
                     key={delegation.id}
                     delegation={delegation}

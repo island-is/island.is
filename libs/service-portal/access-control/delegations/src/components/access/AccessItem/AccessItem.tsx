@@ -22,9 +22,7 @@ import format from 'date-fns/format'
 import classNames from 'classnames'
 import { isDefined } from '@island.is/shared/utils'
 import { Scope } from '../access.types'
-import { accessMessages, isApiScopeGroup } from '../access.utils'
-
-export const DATE_FORMAT = 'dd.MM.yyyy'
+import { accessMessages, DATE_FORMAT, isApiScopeGroup } from '../access.utils'
 
 interface PropTypes {
   apiScopes: Scope[]

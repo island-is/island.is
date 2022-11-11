@@ -3,7 +3,6 @@ import { Box, Divider } from '@island.is/island-ui/core'
 import { AUTH_API_SCOPE_GROUP_TYPE, AuthScopeTree } from '../access.types'
 import { AccessListHeader } from '../AccessListHeader'
 import { AccessListItem } from '../AccessListItem'
-
 import * as styles from './AccessList.css'
 
 interface AccessListProps {
@@ -12,14 +11,20 @@ interface AccessListProps {
 }
 
 export const AccessList = ({ delegation, scopeTree }: AccessListProps) => {
-  console.log('delegation', delegation, scopeTree)
+  const getDelegationScope = (scopeName: string) =>
+    delegation.scopes.find(({ name }) => name === scopeName)
 
   const renderScopeTree = (
     scopeTree: AuthScopeTree | AuthApiScope[],
     indent?: boolean,
   ) => {
     return scopeTree.map((scope) => {
-      if (scope.__typename === AUTH_API_SCOPE_GROUP_TYPE && scope.children) {
+      if (
+        scope.__typename === AUTH_API_SCOPE_GROUP_TYPE &&
+        scope.children?.some((childScope) =>
+          getDelegationScope(childScope.name),
+        )
+      ) {
         return (
           <div key={scope.name}>
             <AccessListItem
@@ -38,26 +43,33 @@ export const AccessList = ({ delegation, scopeTree }: AccessListProps) => {
         )
       }
 
-      return (
-        <div key={scope.name}>
-          <AccessListItem
-            key={scope.name}
-            indent={indent}
-            name={scope.displayName}
-            description={scope.description}
-            validTo={'12.12.2022'}
-          />
-          <div className={styles.divider}>
-            <Divider />
+      const delegationScope = getDelegationScope(scope.name)
+
+      if (delegationScope) {
+        return (
+          <div key={scope.name}>
+            <AccessListItem
+              key={scope.name}
+              indent={indent}
+              name={scope.displayName}
+              description={scope.description}
+              validTo={delegationScope.validTo}
+              validityPeriod={delegation.validTo}
+            />
+            <div className={styles.divider}>
+              <Divider />
+            </div>
           </div>
-        </div>
-      )
+        )
+      }
+
+      return null
     })
   }
 
   return (
     <Box>
-      <AccessListHeader />
+      <AccessListHeader validityPeriod={delegation.validTo} />
       {renderScopeTree(scopeTree)}
     </Box>
   )

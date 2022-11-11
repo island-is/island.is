@@ -17,13 +17,36 @@ export const gridRow = style({
   gridRowGap: theme.spacing[1] / 2,
   paddingTop: theme.spacing[2],
   paddingBottom: theme.spacing[2],
+  ...themeUtils.responsiveStyle({
+    lg: {
+      gridTemplateAreas: '1fr 1fr 1fr',
+      padding: theme.spacing[2],
+    },
+  }),
+})
 
+export const gridRowMaxThreeCols = style({
   ...themeUtils.responsiveStyle({
     lg: {
       gridTemplateColumns:
         'minmax(150px, 30%) minmax(200px, 50%) minmax(100px, 20%)',
-      gridTemplateAreas: '1fr 1fr 1fr',
-      padding: theme.spacing[2],
+    },
+  }),
+})
+
+export const gridRowMaxTwoCols = style({
+  ...themeUtils.responsiveStyle({
+    lg: {
+      gridTemplateColumns: 'minmax(150px, 30%) minmax(200px, 70%)',
+    },
+  }),
+})
+
+export const gridRowValidityPeriod = style({
+  ...themeUtils.responsiveStyle({
+    lg: {
+      gridTemplateColumns:
+        'minmax(150px, 30%) minmax(200px, 45%) minmax(150px, 25%)',
     },
   }),
 })

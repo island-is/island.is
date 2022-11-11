@@ -19,10 +19,10 @@ import { DelegationsFormFooter } from '../delegations/DelegationsFormFooter'
 import { Modal, ModalProps } from '../Modal/Modal'
 import { IdentityCard } from '../IdentityCard/IdentityCard'
 import type { MappedScope } from './access.types'
-import { DATE_FORMAT } from './AccessItem/AccessItem'
 import { AccessItemHeader } from './AccessItemHeader/AccessItemHeader'
 import * as accessItemStyles from './AccessItem/AccessItem.css'
 import * as commonAccessStyles from './access.css'
+import { DATE_FORMAT } from './access.utils'
 
 type AccessConfirmModalProps = ModalProps & {
   delegation: AuthCustomDelegation
