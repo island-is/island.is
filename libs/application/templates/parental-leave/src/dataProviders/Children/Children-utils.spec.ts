@@ -208,6 +208,7 @@ describe('getChildrenAndExistingApplications', () => {
         parentalRelation: ParentalRelations.secondary,
         primaryParentNationalRegistryId: PRIMARY_PARENT_ID,
         transferredDays: 0,
+        multipleBirthsDays: NaN,
       },
     ]
 
@@ -324,7 +325,6 @@ describe('getChildrenAndExistingApplications', () => {
       applicationsWhereOtherParent,
       pregnancyStatus,
     )
-
     expect(result.children[0].transferredDays).toBe(-45)
   })
 

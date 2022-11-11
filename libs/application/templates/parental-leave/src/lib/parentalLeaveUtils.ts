@@ -639,7 +639,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
    ** When multiple births is selected and applicant is not using all 'common' rights
    ** Need this check so we are not returning wrong answer
    */
-  if (isRequestingRights === YES) {
+  if (isRequestingRights === YES && hasMultipleBirths === YES) {
     if (
       multipleBirthsRequestDays * 1 !==
       (multipleBirths - 1) * multipleBirthsDefaultDays
