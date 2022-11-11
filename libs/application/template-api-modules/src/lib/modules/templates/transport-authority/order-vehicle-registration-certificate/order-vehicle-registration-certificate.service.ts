@@ -12,18 +12,17 @@ export class OrderVehicleLicensePlateService {
     private readonly orderVehicleRegistrationCertificateApi: OrderVehicleRegistrationCertificateApi,
   ) {}
 
-  async createCharge({
-    application: { id },
-    auth,
-  }: TemplateApiModuleActionProps) {
+  async createCharge({ application, auth }: TemplateApiModuleActionProps) {
     try {
-      // TODOx check if includes rush fee
-      const chargeItemCode =
-        ChargeItemCode.TRANSPORT_AUTHORITY_ORDER_VEHICLE_REGISTRATION_CERTIFICATE
+      const answers = application.answers as OrderVehicleRegistrationCertificateAnswers
+
+      const chargeItemCode = answers.includeRushFee
+        ? ChargeItemCode.TRANSPORT_AUTHORITY_ORDER_VEHICLE_REGISTRATION_CERTIFICATE
+        : ChargeItemCode.TRANSPORT_AUTHORITY_ORDER_VEHICLE_REGISTRATION_CERTIFICATE_WITH_RUSH_FEE
 
       const result = this.sharedTemplateAPIService.createCharge(
         auth.authorization,
-        id,
+        application.id,
         chargeItemCode,
       )
       return result

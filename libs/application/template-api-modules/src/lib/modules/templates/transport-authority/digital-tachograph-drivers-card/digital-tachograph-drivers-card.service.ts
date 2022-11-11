@@ -13,18 +13,17 @@ export class DigitalTachographDriversCardService {
     private readonly digitalTachographApi: DigitalTachographApi,
   ) {}
 
-  async createCharge({
-    application: { id },
-    auth,
-  }: TemplateApiModuleActionProps) {
+  async createCharge({ application, auth }: TemplateApiModuleActionProps) {
     try {
-      // TODOx check if includes shipping
-      const chargeItemCode =
-        ChargeItemCode.TRANSPORT_AUTHORITY_DIGITAL_TACHOGRAPH_DRIVERS_CARD
+      const answers = application.answers as DigitalTachographDriversCardAnswers
+
+      const chargeItemCode = answers.deliveryMethodIsSend
+        ? ChargeItemCode.TRANSPORT_AUTHORITY_DIGITAL_TACHOGRAPH_DRIVERS_CARD
+        : ChargeItemCode.TRANSPORT_AUTHORITY_DIGITAL_TACHOGRAPH_DRIVERS_CARD_WITH_SHIPPING
 
       const result = this.sharedTemplateAPIService.createCharge(
         auth.authorization,
-        id,
+        application.id,
         chargeItemCode,
       )
       return result

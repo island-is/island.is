@@ -5,6 +5,8 @@ import { EmailRecipient } from '../types'
 import {
   getRoleNameById,
   getApplicationPruneDateStr,
+  getRecipients,
+  getAllRoles,
 } from '../transfer-of-vehicle-ownership.utils'
 
 export type NotifyPrePruneEmail = (
@@ -22,7 +24,9 @@ export const generateNotifyPrePruneEmail: NotifyPrePruneEmail = (
   } = props
   const answers = application.answers as TransferOfVehicleOwnershipAnswers
   const permno = answers?.vehicle?.plate
-  const notApprovedByList: EmailRecipient[] = [] //TODOx get list of recipient that have not approved
+  const notApprovedByList = getRecipients(answers, getAllRoles()).filter(
+    (x) => x.approved !== true,
+  )
 
   if (!recipient.email) throw new Error('Recipient email was undefined')
   if (!permno) throw new Error('Permno was undefined')

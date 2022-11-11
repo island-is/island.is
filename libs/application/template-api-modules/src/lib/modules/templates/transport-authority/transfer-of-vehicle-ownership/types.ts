@@ -12,4 +12,5 @@ export interface EmailRecipient {
   email?: string
   phone?: string
   role: EmailRole
+  approved?: boolean
 }

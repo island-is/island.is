@@ -9,6 +9,8 @@ export const ChangeOperatorOfVehicleSchema = z.object({
     z.object({
       nationalId: z.string(),
       isMainOperator: z.boolean(),
+      wasAdded: z.boolean(),
+      wasRemoved: z.boolean(),
     }),
   ),
 })

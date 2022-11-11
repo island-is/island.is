@@ -42,7 +42,6 @@ export class ApplicationChargeService {
 
     // Delete the charge
     try {
-      // TODOx: Either get FJS to not throw error if charge has already been deleted OR call FJS endpoint (does not exist) that checks if charge has been deleted
       await this.chargeFjsV2ClientService.deleteCharge(chargeId)
     } catch (error) {
       this.logger.error(
@@ -77,7 +76,6 @@ export class ApplicationChargeService {
 
     // Revert the charge
     try {
-      // TODOx: Either get FJS to not throw error if charge has already been reverted OR call FJS endpoint (does not exist) that checks if charge has been reverted
       await this.chargeFjsV2ClientService.revertCharge(chargeId)
     } catch (error) {
       this.logger.error(

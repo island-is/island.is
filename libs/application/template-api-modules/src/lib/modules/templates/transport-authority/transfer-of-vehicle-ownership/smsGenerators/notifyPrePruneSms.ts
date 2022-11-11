@@ -4,6 +4,8 @@ import { Application } from '@island.is/application/types'
 import { TransferOfVehicleOwnershipAnswers } from '@island.is/application/templates/transport-authority/transfer-of-vehicle-ownership'
 import {
   getRoleNameById,
+  getAllRoles,
+  getRecipients,
   getApplicationPruneDateStr,
 } from '../transfer-of-vehicle-ownership.utils'
 
@@ -18,7 +20,9 @@ export const generateNotifyPrePruneSms: NotifyPrePruneSms = (
 ) => {
   const answers = application.answers as TransferOfVehicleOwnershipAnswers
   const permno = answers?.vehicle?.plate
-  const notApprovedByList: EmailRecipient[] = [] //TODOx get list of recipient that have not approved
+  const notApprovedByList = getRecipients(answers, getAllRoles()).filter(
+    (x) => x.approved !== true,
+  )
 
   if (!recipient.phone) throw new Error('Recipient phone was undefined')
   if (!permno) throw new Error('Permno was undefined')

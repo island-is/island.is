@@ -12,6 +12,8 @@ export const ChangeCoOwnerOfVehicleSchema = z.object({
     z.object({
       nationalId: z.string(),
       email: z.string(),
+      wasAdded: z.boolean(),
+      wasRemoved: z.boolean(),
     }),
   ),
 })
