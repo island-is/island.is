@@ -5,6 +5,7 @@ export const OrderVehicleRegistrationCertificateSchema = z.object({
   vehicle: z.object({
     plate: z.string(),
   }),
+  includeRushFee: z.boolean(),
 })
 
 export type OrderVehicleRegistrationCertificate = z.TypeOf<

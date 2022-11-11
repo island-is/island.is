@@ -12,18 +12,32 @@ export class ChangeOperatorOfVehicleService {
     private readonly changeOperatorOfVehicleApi: ChangeOperatorOfVehicleApi,
   ) {}
 
-  async createCharge({
-    application: { id },
-    auth,
-  }: TemplateApiModuleActionProps) {
+  async createCharge({ application, auth }: TemplateApiModuleActionProps) {
     try {
-      // TODOx check if added/removed/both
-      const chargeItemCode =
-        ChargeItemCode.TRANSPORT_AUTHORITY_CHANGE_OPERATOR_OF_VEHICLE_ADD
+      const answers = application.answers as ChangeOperatorOfVehicleAnswers
+
+      const coOwnerWasAdded = !!answers.operators.find((x) => x.wasAdded)
+      const coOwnerWasRemoved = !!answers.operators.find((x) => x.wasRemoved)
+
+      let chargeItemCode: string | null = null
+      if (coOwnerWasAdded && coOwnerWasRemoved) {
+        chargeItemCode =
+          ChargeItemCode.TRANSPORT_AUTHORITY_CHANGE_OPERATOR_OF_VEHICLE_ADD_AND_REMOVE
+      } else if (coOwnerWasAdded) {
+        chargeItemCode =
+          ChargeItemCode.TRANSPORT_AUTHORITY_CHANGE_OPERATOR_OF_VEHICLE_ADD
+      } else if (coOwnerWasRemoved) {
+        chargeItemCode =
+          ChargeItemCode.TRANSPORT_AUTHORITY_CHANGE_OPERATOR_OF_VEHICLE_REMOVE
+      }
+
+      if (chargeItemCode === null) {
+        throw new Error('Það var hvorki bætt við né eytt meðeiganda')
+      }
 
       const result = this.sharedTemplateAPIService.createCharge(
         auth.authorization,
-        id,
+        application.id,
         chargeItemCode,
       )
       return result
