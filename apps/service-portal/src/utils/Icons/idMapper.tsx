@@ -44,7 +44,7 @@ export const iconIdMapper = (iconType: string) => {
       break
     // Aðgangsstýringar vol.2
     case 'people':
-      return 'e3Rg6l2PCqQ1' //'eb7BzYOvsc31'
+      return 'eje81k4ND7o1'
       break
     // Menntun
     case 'school':
