@@ -7,20 +7,16 @@ import { useDeleteAuthDelegationMutation } from '@island.is/service-portal/graph
 import { useState } from 'react'
 import { DelegationsFormFooter } from '../delegations/DelegationsFormFooter'
 import { Modal, ModalProps } from '../Modal/Modal'
+import { m } from '@island.is/service-portal/core'
 import { IdentityCard } from '../IdentityCard/IdentityCard'
 
-type AccessDeleteModalProps = ModalProps & {
+type AccessDeleteModalProps = Pick<ModalProps, 'onClose' | 'isVisible'> & {
   delegation: AuthCustomDelegation
-  domain: {
-    name: string | undefined
-    imgSrc?: string | null
-  }
   onDelete(): void
 }
 
 export const AccessDeleteModal = ({
   delegation,
-  domain,
   onClose,
   onDelete,
   ...rest
@@ -66,7 +62,16 @@ export const AccessDeleteModal = ({
   const fromNationalId = userInfo?.profile.nationalId
 
   return (
-    <Modal {...rest} onClose={onClose}>
+    <Modal
+      id={`access-delete-modal-${delegation?.id}`}
+      label={formatMessage(m.accessControl)}
+      title={formatMessage({
+        id: 'sp.settings-access-control:access-remove-modal-content',
+        defaultMessage: 'Ertu viss um að þú viljir eyða þessum aðgangi?',
+      })}
+      onClose={onClose}
+      {...rest}
+    >
       <Box
         marginTop={[2, 2, 8]}
         marginBottom={[2, 2, 5]}
@@ -116,14 +121,14 @@ export const AccessDeleteModal = ({
             />
           )}
         </Box>
-        {domain?.name && (
+        {delegation?.domain && (
           <IdentityCard
             label={formatMessage({
               id: 'sp.access-control-delegations:domain',
               defaultMessage: 'Kerfi',
             })}
-            title={domain.name}
-            imgSrc={domain?.imgSrc}
+            title={delegation.domain.name}
+            imgSrc={delegation.domain.organisationLogoUrl}
           />
         )}
         <AlertMessage

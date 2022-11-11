@@ -141,6 +141,7 @@ export class ChildrenService {
       NO,
     ) as YesOrNo
 
+<<<<<<< HEAD:libs/application/template-api-modules/src/lib/modules/templates/parental-leave/children/children.service.ts
     if (useApplication === NO) {
       const children = getChildrenFromMockData(application)
 
@@ -148,6 +149,29 @@ export class ChildrenService {
         throw new TemplateApiError(
           parentalLeaveFormMessages.shared.childrenError,
           500,
+=======
+  async queryParentalLeavesAndPregnancyStatus(): Promise<{
+    getParentalLeaves: ParentalLeave[] | null
+    getPregnancyStatus: PregnancyStatus | null
+  }> {
+    return await this.useGraphqlGateway(parentalLeavesAndPregnancyStatus)
+      .then(async (res: Response) => {
+        const response = await res.json()
+
+        if (response.errors) {
+          console.error(response.errors)
+          return Promise.reject(
+            'Response.errors queryParentalLeavesAndPregnancyStatus',
+          )
+        }
+
+        return Promise.resolve(response.data)
+      })
+      .catch((error) => {
+        console.error(error)
+        return Promise.reject(
+          'Catch error queryParentalLeavesAndPregnancyStatus',
+>>>>>>> e19b56f4d34ad20e0337ae73140a1c71afb9356c:libs/application/templates/parental-leave/src/dataProviders/Children/Children.ts
         )
       }
 
@@ -165,6 +189,7 @@ export class ChildrenService {
     const applicationFromPrimaryParent = await customTemplateFindQuery({
       id: applicationId,
     })
+<<<<<<< HEAD:libs/application/template-api-modules/src/lib/modules/templates/parental-leave/children/children.service.ts
 
     const childrenWhereOtherParent = applicationsToChildInformation(
       applicationFromPrimaryParent,
@@ -195,6 +220,23 @@ export class ChildrenService {
         hasRights:
           (parentalLeavesEntitlements?.independentMonths ?? 0) > 0 ||
           (parentalLeavesEntitlements?.transferableMonths ?? 0) > 0,
+=======
+      .then(async (res: Response) => {
+        const response = await res.json()
+
+        if (response.errors) {
+          console.error(response.errors)
+          return Promise.reject(
+            'Response.errors queryParentalLeavesEntitlements',
+          )
+        }
+
+        return Promise.resolve(response.data.getParentalLeavesEntitlements)
+      })
+      .catch((error) => {
+        console.error(error)
+        return Promise.reject('Catch error queryParentalLeavesEntitlements')
+>>>>>>> e19b56f4d34ad20e0337ae73140a1c71afb9356c:libs/application/templates/parental-leave/src/dataProviders/Children/Children.ts
       })
     }
 
