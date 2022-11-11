@@ -363,4 +363,197 @@ describe('getChildrenAndExistingApplications', () => {
 
     expect(result.children[0].transferredDays).toBe(45)
   })
+
+  it('should return the number of "common" days primary parent left', () => {
+    const childFromPregnancyStatus: ChildInformationWithoutRights = {
+      expectedDateOfBirth: '2021-05-10',
+      parentalRelation: ParentalRelations.primary,
+    }
+
+    const children: ChildInformationWithoutRights[] = [childFromPregnancyStatus]
+
+    const pregnancyStatus: PregnancyStatus = {
+      hasActivePregnancy: true,
+      expectedDateOfBirth: childFromPregnancyStatus.expectedDateOfBirth,
+    }
+
+    const applicationsWhereOtherParent: Application[] = [
+      createApplicationWithChildren(PRIMARY_PARENT_ID, children, 0, {
+        multipleBirths: {
+          hasMultipleBirths: 'yes',
+          multipleBirths: 3,
+        },
+        multipleBirthsRequestDays: 110,
+      }),
+    ]
+
+    const result = getChildrenAndExistingApplications(
+      [],
+      applicationsWhereOtherParent,
+      pregnancyStatus,
+    )
+    expect(result.children[0].multipleBirthsDays).toBe(70)
+  })
+
+  it('should return the number of days requested and "common" days is 0 by the primary parent', () => {
+    const childFromPregnancyStatus: ChildInformationWithoutRights = {
+      expectedDateOfBirth: '2021-05-10',
+      parentalRelation: ParentalRelations.primary,
+    }
+
+    const children: ChildInformationWithoutRights[] = [childFromPregnancyStatus]
+
+    const pregnancyStatus: PregnancyStatus = {
+      hasActivePregnancy: true,
+      expectedDateOfBirth: childFromPregnancyStatus.expectedDateOfBirth,
+    }
+
+    const applicationsWhereOtherParent: Application[] = [
+      createApplicationWithChildren(PRIMARY_PARENT_ID, children, 0, {
+        multipleBirths: {
+          hasMultipleBirths: 'yes',
+          multipleBirths: 2,
+        },
+        multipleBirthsRequestDays: 90,
+        requestRights: {
+          isRequestingRights: 'yes',
+          requestDays: 30,
+        },
+        giveRights: {
+          isGivingRights: 'no',
+        },
+      }),
+    ]
+
+    const result = getChildrenAndExistingApplications(
+      [],
+      applicationsWhereOtherParent,
+      pregnancyStatus,
+    )
+    expect(result.children[0].transferredDays).toBe(-30)
+    expect(result.children[0].multipleBirthsDays).toBe(0)
+  })
+
+  it('should return the number of days requested is 0 and get "common" days by the primary parent', () => {
+    const childFromPregnancyStatus: ChildInformationWithoutRights = {
+      expectedDateOfBirth: '2021-05-10',
+      parentalRelation: ParentalRelations.primary,
+    }
+
+    const children: ChildInformationWithoutRights[] = [childFromPregnancyStatus]
+
+    const pregnancyStatus: PregnancyStatus = {
+      hasActivePregnancy: true,
+      expectedDateOfBirth: childFromPregnancyStatus.expectedDateOfBirth,
+    }
+
+    const applicationsWhereOtherParent: Application[] = [
+      createApplicationWithChildren(PRIMARY_PARENT_ID, children, 0, {
+        multipleBirths: {
+          hasMultipleBirths: 'yes',
+          multipleBirths: 2,
+        },
+        multipleBirthsRequestDays: 45,
+        requestRights: {
+          isRequestingRights: 'yes',
+          requestDays: 30,
+        },
+        giveRights: {
+          isGivingRights: 'no',
+        },
+      }),
+    ]
+
+    const result = getChildrenAndExistingApplications(
+      [],
+      applicationsWhereOtherParent,
+      pregnancyStatus,
+    )
+    expect(result.children[0].transferredDays).toBe(0)
+    expect(result.children[0].multipleBirthsDays).toBe(45)
+  })
+
+  it('should return the number of days given and "common" days by the primary parent', () => {
+    const childFromPregnancyStatus: ChildInformation = {
+      expectedDateOfBirth: '2021-05-10',
+      parentalRelation: ParentalRelations.primary,
+      hasRights: true,
+      remainingDays: 180,
+    }
+
+    const children: ChildInformation[] = [childFromPregnancyStatus]
+
+    const pregnancyStatus: PregnancyStatus = {
+      hasActivePregnancy: true,
+      expectedDateOfBirth: childFromPregnancyStatus.expectedDateOfBirth,
+    }
+
+    const applicationsWhereOtherParent: Application[] = [
+      createApplicationWithChildren(PRIMARY_PARENT_ID, children, 0, {
+        multipleBirths: {
+          hasMultipleBirths: 'yes',
+          multipleBirths: 2,
+        },
+        multipleBirthsRequestDays: 0,
+        requestRights: {
+          isRequestingRights: 'no',
+        },
+        giveRights: {
+          isGivingRights: 'yes',
+          giveDays: 45,
+        },
+      }),
+    ]
+
+    const result = getChildrenAndExistingApplications(
+      [],
+      applicationsWhereOtherParent,
+      pregnancyStatus,
+    )
+
+    expect(result.children[0].multipleBirthsDays).toBe(90)
+    expect(result.children[0].transferredDays).toBe(45)
+  })
+
+  it('should return the number of days given is 0 and "common" days by the primary parent', () => {
+    const childFromPregnancyStatus: ChildInformation = {
+      expectedDateOfBirth: '2021-05-10',
+      parentalRelation: ParentalRelations.primary,
+      hasRights: true,
+      remainingDays: 180,
+    }
+
+    const children: ChildInformation[] = [childFromPregnancyStatus]
+
+    const pregnancyStatus: PregnancyStatus = {
+      hasActivePregnancy: true,
+      expectedDateOfBirth: childFromPregnancyStatus.expectedDateOfBirth,
+    }
+
+    const applicationsWhereOtherParent: Application[] = [
+      createApplicationWithChildren(PRIMARY_PARENT_ID, children, 0, {
+        multipleBirths: {
+          hasMultipleBirths: 'yes',
+          multipleBirths: 3,
+        },
+        multipleBirthsRequestDays: 100,
+        requestRights: {
+          isRequestingRights: 'no',
+        },
+        giveRights: {
+          isGivingRights: 'yes',
+          giveDays: 45,
+        },
+      }),
+    ]
+
+    const result = getChildrenAndExistingApplications(
+      [],
+      applicationsWhereOtherParent,
+      pregnancyStatus,
+    )
+
+    expect(result.children[0].multipleBirthsDays).toBe(80)
+    expect(result.children[0].transferredDays).toBe(0)
+  })
 })
