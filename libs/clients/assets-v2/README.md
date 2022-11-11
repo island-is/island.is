@@ -1,4 +1,4 @@
-<!-- gitbook-navigation: "Assets v2" -->
+<!-- gitbook-navigation: "Assets V2" -->
 
 # Assets Client V2
 
