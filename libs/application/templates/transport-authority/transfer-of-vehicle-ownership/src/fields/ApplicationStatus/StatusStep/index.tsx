@@ -44,12 +44,13 @@ export const StatusStep: FC<ReviewSectionProps> = ({
           {reviewer.length > 0 &&
             !!reviewer.find((reviewerItem) => !reviewerItem.approved) && (
               <Box>
-                {reviewer.map((reviewerItem) => {
+                {reviewer.map((reviewerItem, index) => {
                   return (
                     <Text
                       marginTop={1}
                       variant="eyebrow"
                       color={reviewerItem.approved ? 'mint600' : 'red600'}
+                      key={`reviewer-${index}-${reviewerItem.nationalId}`}
                     >
                       {reviewerItem.name}{' '}
                       {userNationalId === reviewerItem.nationalId ? '(þú)' : ''}

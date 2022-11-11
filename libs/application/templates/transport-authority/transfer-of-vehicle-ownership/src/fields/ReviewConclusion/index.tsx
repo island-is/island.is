@@ -20,11 +20,11 @@ export const ReviewConclusion: FC<FieldBaseProps & ReviewScreenProps> = ({
   const { formatMessage } = useLocale()
 
   const onBackButtonClick = () => {
-    setStep('overview')
+    setStep && setStep('overview')
   }
 
   const onForwardButtonClick = () => {
-    setStep('states')
+    setStep && setStep('states')
   }
 
   return (

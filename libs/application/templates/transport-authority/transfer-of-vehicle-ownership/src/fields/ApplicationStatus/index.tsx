@@ -62,7 +62,7 @@ export const ApplicationStatus: FC<FieldBaseProps & ReviewScreenProps> = ({
           size="small"
           type="button"
           variant="text"
-          onClick={() => setStep('overview')}
+          onClick={() => setStep && setStep('overview')}
         >
           Skoða yfirlit
         </Button>
@@ -82,7 +82,9 @@ export const ApplicationStatus: FC<FieldBaseProps & ReviewScreenProps> = ({
       </Box>
       <Divider />
       <Box display="flex" justifyContent="flexEnd" paddingY={5}>
-        <Button onClick={() => setStep('overview')}>Opna samþykki</Button>
+        <Button onClick={() => setStep && setStep('overview')}>
+          Opna samþykki
+        </Button>
       </Box>
     </Box>
   )
