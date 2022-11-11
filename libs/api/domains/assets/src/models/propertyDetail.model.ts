@@ -3,12 +3,12 @@ import {
   Appraisal,
   UnitsOfUseModel,
 } from './propertyUnitsOfUse.model'
-import { PropertyOwner } from './propertyOwners.model'
+import { PropertyOwnersModel, PropertyOwner } from './propertyOwners.model'
 import { LandModel } from './Land.model'
 import { Extensions, Field, ObjectType } from '@nestjs/graphql'
 import { MiddlewareContext } from '@nestjs/graphql'
 
-function isPropertyOwner({ source }: MiddlewareContext) {
+export const isPropertyOwner = ({ source }: MiddlewareContext) => {
   const owners: [PropertyOwner] = source.registeredOwners?.registeredOwners
   if (!owners) return false
   return owners.some((owner) => owner.ssn == source.nationalId)
