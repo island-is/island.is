@@ -1,5 +1,9 @@
 import React, { FC, useState } from 'react'
-import { ActionCard, Modal } from '@island.is/service-portal/core'
+import {
+  ActionCard,
+  formatPlausiblePathToParams,
+  Modal,
+} from '@island.is/service-portal/core'
 import { Document, DocumentDetails } from '@island.is/api/schema'
 import { GET_DOCUMENT, client } from '@island.is/service-portal/graphql'
 import { useLocale } from '@island.is/localization'
@@ -111,7 +115,9 @@ const DocumentCard: FC<Props> = ({ document }) => {
         level: Sentry.Severity.Info,
       })
       setDocumentDetails({ documentDetails: doc })
-      documentsOpenDocument(pathname, document.subject)
+      documentsOpenDocument(
+        formatPlausiblePathToParams(pathname, document.subject),
+      )
       if (documentIsPdf(doc) && windowRef) {
         windowRef.location.assign(getPdfURL(doc.content))
         return
