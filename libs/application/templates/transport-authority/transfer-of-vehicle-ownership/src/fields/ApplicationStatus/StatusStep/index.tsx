@@ -1,6 +1,7 @@
 import { Box, Tag, Text } from '@island.is/island-ui/core'
 import React, { FC } from 'react'
 import { ReviewSectionProps } from '../../../types'
+import { useAuth } from '@island.is/auth/react'
 
 export const StatusStep: FC<ReviewSectionProps> = ({
   title,
@@ -8,8 +9,11 @@ export const StatusStep: FC<ReviewSectionProps> = ({
   tagVariant = 'blue',
   tagText = 'Í bið',
   visible = true,
+  reviewer = [],
 }) => {
-  if (!visible) return null
+  const { userInfo } = useAuth()
+  const userNationalId = userInfo?.profile.nationalId || null
+  if (!visible || !userNationalId) return null
 
   return (
     <Box
@@ -37,6 +41,23 @@ export const StatusStep: FC<ReviewSectionProps> = ({
               {description}
             </Text>
           </Box>
+          {reviewer.length > 0 &&
+            !!reviewer.find((reviewerItem) => !reviewerItem.approved) && (
+              <Box>
+                {reviewer.map((reviewerItem) => {
+                  return (
+                    <Text
+                      marginTop={1}
+                      variant="eyebrow"
+                      color={reviewerItem.approved ? 'mint600' : 'red600'}
+                    >
+                      {reviewerItem.name}{' '}
+                      {userNationalId === reviewerItem.nationalId ? '(þú)' : ''}
+                    </Text>
+                  )
+                })}
+              </Box>
+            )}
         </Box>
       </Box>
     </Box>
