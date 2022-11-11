@@ -30,7 +30,7 @@ import compareAsc from 'date-fns/compareAsc'
 const LOG_CATEGORY = 'adrlicense-service'
 
 @Injectable()
-export class GenericAdrLicenseApi implements GenericLicenseClient<AdrDto> {
+export class GenericAdrLicenseService implements GenericLicenseClient<AdrDto> {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private adrApi: AdrApi,
@@ -60,7 +60,9 @@ export class GenericAdrLicenseApi implements GenericLicenseClient<AdrDto> {
     let pkpassStatus = GenericUserLicensePkPassStatus.Unknown
 
     if (payload) {
-      pkpassStatus = GenericAdrLicenseApi.licenseIsValidForPkpass(licenseData)
+      pkpassStatus = GenericAdrLicenseService.licenseIsValidForPkpass(
+        licenseData,
+      )
     }
 
     return {

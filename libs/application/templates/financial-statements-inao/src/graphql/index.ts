@@ -35,3 +35,11 @@ export const IdentityQuery = gql`
     }
   }
 `
+export const TaxInfoQuery = gql`
+  query TaxInfoQuery($year: String!) {
+    financialStatementsInaoTaxInfo(year: $year) {
+      key
+      value
+    }
+  }
+`

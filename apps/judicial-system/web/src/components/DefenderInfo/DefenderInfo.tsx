@@ -31,7 +31,7 @@ interface Props {
 const DefenderInfo: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase } = props
   const { formatMessage } = useIntl()
-  const { setAndSendToServer } = useCase()
+  const { setAndSendCaseToServer } = useCase()
   const { user } = useContext(UserContext)
 
   const [defenderNotFound, setDefenderNotFound] = useState<boolean>(false)
@@ -122,7 +122,7 @@ const DefenderInfo: React.FC<Props> = (props) => {
               }
               checked={workingCase.sendRequestToDefender}
               onChange={(event) => {
-                setAndSendToServer(
+                setAndSendCaseToServer(
                   [
                     {
                       sendRequestToDefender: event.target.checked,
