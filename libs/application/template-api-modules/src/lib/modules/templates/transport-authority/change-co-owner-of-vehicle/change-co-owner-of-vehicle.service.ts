@@ -3,7 +3,10 @@ import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { ChargeItemCode } from '@island.is/shared/constants'
 import { ChangeCoOwnerOfVehicleApi } from '@island.is/api/domains/transport-authority/change-co-owner-of-vehicle'
-import { ChangeCoOwnerOfVehicleAnswers } from '@island.is/application/templates/transport-authority/change-co-owner-of-vehicle'
+import {
+  ChangeCoOwnerOfVehicleAnswers,
+  getChargeItemCodes,
+} from '@island.is/application/templates/transport-authority/change-co-owner-of-vehicle'
 
 @Injectable()
 export class ChangeCoOwnerOfVehicleService {
@@ -14,31 +17,18 @@ export class ChangeCoOwnerOfVehicleService {
 
   async createCharge({ application, auth }: TemplateApiModuleActionProps) {
     try {
-      const answers = application.answers as ChangeCoOwnerOfVehicleAnswers
+      const chargeItemCodes = getChargeItemCodes(
+        application.answers as ChangeCoOwnerOfVehicleAnswers,
+      )
 
-      const coOwnerWasAdded = !!answers.coOwners.find((x) => x.wasAdded)
-      const coOwnerWasRemoved = !!answers.coOwners.find((x) => x.wasRemoved)
-
-      let chargeItemCode: string | null = null
-      if (coOwnerWasAdded && coOwnerWasRemoved) {
-        chargeItemCode =
-          ChargeItemCode.TRANSPORT_AUTHORITY_CHANGE_CO_OWNER_OF_VEHICLE_ADD_AND_REMOVE
-      } else if (coOwnerWasAdded) {
-        chargeItemCode =
-          ChargeItemCode.TRANSPORT_AUTHORITY_CHANGE_CO_OWNER_OF_VEHICLE_ADD
-      } else if (coOwnerWasRemoved) {
-        chargeItemCode =
-          ChargeItemCode.TRANSPORT_AUTHORITY_CHANGE_CO_OWNER_OF_VEHICLE_REMOVE
-      }
-
-      if (chargeItemCode === null) {
+      if (!chargeItemCodes[0]) {
         throw new Error('Það var hvorki bætt við né eytt meðeiganda')
       }
 
       const result = this.sharedTemplateAPIService.createCharge(
         auth.authorization,
         application.id,
-        chargeItemCode,
+        chargeItemCodes[0],
       )
       return result
     } catch (exeption) {

@@ -10,7 +10,7 @@ export class VehiclePrintingClient {
     return this.registrationApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  public async RequestRegistrationCardPrint(
+  public async requestRegistrationCardPrint(
     auth: User,
     permno: string,
   ): Promise<void> {

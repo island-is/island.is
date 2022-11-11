@@ -6,10 +6,10 @@ import { User } from '@island.is/auth-nest-tools'
 export class OrderVehicleRegistrationCertificateApi {
   constructor(private readonly vehiclePrintingClient: VehiclePrintingClient) {}
 
-  async RequestRegistrationCardPrint(
+  async requestRegistrationCardPrint(
     user: User,
     permno: string,
   ): Promise<void> {
-    this.vehiclePrintingClient.RequestRegistrationCardPrint(user, permno)
+    this.vehiclePrintingClient.requestRegistrationCardPrint(user, permno)
   }
 }

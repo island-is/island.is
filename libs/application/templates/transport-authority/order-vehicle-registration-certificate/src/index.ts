@@ -6,4 +6,6 @@ export const getDataProviders = () => import('./dataProviders/')
 
 export type OrderVehicleRegistrationCertificateAnswers = OrderVehicleRegistrationCertificate
 
+export * from './utils'
+
 export default template

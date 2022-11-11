@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
-import { ChargeItemCode } from '@island.is/shared/constants'
 import { TransferOfVehicleOwnershipApi } from '@island.is/api/domains/transport-authority/transfer-of-vehicle-ownership'
-import { TransferOfVehicleOwnershipAnswers } from '@island.is/application/templates/transport-authority/transfer-of-vehicle-ownership'
+import {
+  getChargeItemCodes,
+  TransferOfVehicleOwnershipAnswers,
+} from '@island.is/application/templates/transport-authority/transfer-of-vehicle-ownership'
 import {
   generateRequestReviewEmail,
   generateApplicationSubmittedEmail,
@@ -35,7 +37,7 @@ export class TransferOfVehicleOwnershipService {
   ) {}
 
   async createCharge({
-    application: { id },
+    application,
     auth,
   }: TemplateApiModuleActionProps): Promise<
     | {
@@ -45,13 +47,14 @@ export class TransferOfVehicleOwnershipService {
     | undefined
   > {
     try {
-      const chargeItemCode =
-        ChargeItemCode.TRANSPORT_AUTHORITY_TRANSFER_OF_VEHICLE_OWNERSHIP
+      const chargeItemCodes = getChargeItemCodes(
+        application.answers as TransferOfVehicleOwnershipAnswers,
+      )
 
       const result = this.sharedTemplateAPIService.createCharge(
         auth.authorization,
-        id,
-        chargeItemCode,
+        application.id,
+        chargeItemCodes[0],
       )
       return result
     } catch (exeption) {

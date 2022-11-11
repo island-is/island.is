@@ -3,16 +3,28 @@ import { AlertMessage, Box, Divider, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC } from 'react'
 import { payment } from '../../lib/messages'
-import { formatIsk } from '../../utils'
+import { formatIsk, getChargeItemCodes } from '../../utils'
+import { OrderVehicleRegistrationCertificate } from '../../lib/dataSchema'
 
 export const PaymentChargeOverview: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
 
+  const chargeItemCodes = getChargeItemCodes(
+    application.answers as OrderVehicleRegistrationCertificate,
+  )
+
   const { externalData } = application
-  const item = externalData?.payment?.data as {
-    priceAmount: number
-    chargeItemName: string
-  }
+  const items = externalData?.payment?.data as [
+    {
+      priceAmount: number
+      chargeItemName: string
+      chargeItemCode: string
+    },
+  ]
+  const item = items.filter(({ chargeItemCode }) =>
+    chargeItemCodes.includes(chargeItemCode),
+  )[0]
+
   const price = item?.priceAmount || 0
 
   return (

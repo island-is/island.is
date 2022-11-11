@@ -4,7 +4,6 @@ export type Events = { type: DefaultEvents.SUBMIT | DefaultEvents.ABORT }
 
 export enum States {
   DRAFT = 'draft',
-  PAYMENT = 'payment',
   COMPLETED = 'completed',
 }
 

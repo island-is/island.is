@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
-import { ChargeItemCode } from '@island.is/shared/constants'
 import { ChangeOperatorOfVehicleApi } from '@island.is/api/domains/transport-authority/change-operator-of-vehicle'
-import { ChangeOperatorOfVehicleAnswers } from '@island.is/application/templates/transport-authority/change-operator-of-vehicle'
+import {
+  ChangeOperatorOfVehicleAnswers,
+  getChargeItemCodes,
+} from '@island.is/application/templates/transport-authority/change-operator-of-vehicle'
 
 @Injectable()
 export class ChangeOperatorOfVehicleService {
@@ -14,31 +16,18 @@ export class ChangeOperatorOfVehicleService {
 
   async createCharge({ application, auth }: TemplateApiModuleActionProps) {
     try {
-      const answers = application.answers as ChangeOperatorOfVehicleAnswers
+      const chargeItemCodes = getChargeItemCodes(
+        application.answers as ChangeOperatorOfVehicleAnswers,
+      )
 
-      const coOwnerWasAdded = !!answers.operators.find((x) => x.wasAdded)
-      const coOwnerWasRemoved = !!answers.operators.find((x) => x.wasRemoved)
-
-      let chargeItemCode: string | null = null
-      if (coOwnerWasAdded && coOwnerWasRemoved) {
-        chargeItemCode =
-          ChargeItemCode.TRANSPORT_AUTHORITY_CHANGE_OPERATOR_OF_VEHICLE_ADD_AND_REMOVE
-      } else if (coOwnerWasAdded) {
-        chargeItemCode =
-          ChargeItemCode.TRANSPORT_AUTHORITY_CHANGE_OPERATOR_OF_VEHICLE_ADD
-      } else if (coOwnerWasRemoved) {
-        chargeItemCode =
-          ChargeItemCode.TRANSPORT_AUTHORITY_CHANGE_OPERATOR_OF_VEHICLE_REMOVE
-      }
-
-      if (chargeItemCode === null) {
-        throw new Error('Það var hvorki bætt við né eytt meðeiganda')
+      if (chargeItemCodes[0]) {
+        throw new Error('Það var hvorki bætt við né eytt umráðamann')
       }
 
       const result = this.sharedTemplateAPIService.createCharge(
         auth.authorization,
         application.id,
-        chargeItemCode,
+        chargeItemCodes[0],
       )
       return result
     } catch (exeption) {

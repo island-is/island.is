@@ -3,7 +3,10 @@ import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { ChargeItemCode } from '@island.is/shared/constants'
 import { OrderVehicleRegistrationCertificateApi } from '@island.is/api/domains/transport-authority/order-vehicle-registration-certificate'
-import { OrderVehicleRegistrationCertificateAnswers } from '@island.is/application/templates/transport-authority/order-vehicle-registration-certificate'
+import {
+  getChargeItemCodes,
+  OrderVehicleRegistrationCertificateAnswers,
+} from '@island.is/application/templates/transport-authority/order-vehicle-registration-certificate'
 
 @Injectable()
 export class OrderVehicleLicensePlateService {
@@ -14,16 +17,14 @@ export class OrderVehicleLicensePlateService {
 
   async createCharge({ application, auth }: TemplateApiModuleActionProps) {
     try {
-      const answers = application.answers as OrderVehicleRegistrationCertificateAnswers
-
-      const chargeItemCode = answers.includeRushFee
-        ? ChargeItemCode.TRANSPORT_AUTHORITY_ORDER_VEHICLE_REGISTRATION_CERTIFICATE
-        : ChargeItemCode.TRANSPORT_AUTHORITY_ORDER_VEHICLE_REGISTRATION_CERTIFICATE_WITH_RUSH_FEE
+      const chargeItemCodes = getChargeItemCodes(
+        application.answers as OrderVehicleRegistrationCertificateAnswers,
+      )
 
       const result = this.sharedTemplateAPIService.createCharge(
         auth.authorization,
         application.id,
-        chargeItemCode,
+        chargeItemCodes[0],
       )
       return result
     } catch (exeption) {
@@ -59,7 +60,7 @@ export class OrderVehicleLicensePlateService {
 
     const answers = application.answers as OrderVehicleRegistrationCertificateAnswers
 
-    this.orderVehicleRegistrationCertificateApi.RequestRegistrationCardPrint(
+    this.orderVehicleRegistrationCertificateApi.requestRegistrationCardPrint(
       auth,
       answers?.vehicle?.plate,
     )

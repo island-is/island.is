@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
-import { ChargeItemCode } from '@island.is/shared/constants'
 import { DigitalTachographApi } from '@island.is/api/domains/transport-authority/digital-tachograph'
-import { DigitalTachographDriversCardAnswers } from '@island.is/application/templates/transport-authority/digital-tachograph-drivers-card'
+import {
+  DigitalTachographDriversCardAnswers,
+  getChargeItemCodes,
+} from '@island.is/application/templates/transport-authority/digital-tachograph-drivers-card'
 import { NationalRegistry, QualityPhoto, QualitySignature } from './types'
 
 @Injectable()
@@ -15,16 +17,14 @@ export class DigitalTachographDriversCardService {
 
   async createCharge({ application, auth }: TemplateApiModuleActionProps) {
     try {
-      const answers = application.answers as DigitalTachographDriversCardAnswers
-
-      const chargeItemCode = answers.deliveryMethodIsSend
-        ? ChargeItemCode.TRANSPORT_AUTHORITY_DIGITAL_TACHOGRAPH_DRIVERS_CARD
-        : ChargeItemCode.TRANSPORT_AUTHORITY_DIGITAL_TACHOGRAPH_DRIVERS_CARD_WITH_SHIPPING
+      const chargeItemCodes = getChargeItemCodes(
+        application.answers as DigitalTachographDriversCardAnswers,
+      )
 
       const result = this.sharedTemplateAPIService.createCharge(
         auth.authorization,
         application.id,
-        chargeItemCode,
+        chargeItemCodes[0],
       )
       return result
     } catch (exeption) {

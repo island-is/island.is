@@ -10,7 +10,6 @@ import {
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messagesx'
-import { payment } from '../lib/messages'
 
 export const AnonymityInVehicleRegistryForm: Form = buildForm({
   id: 'AnonymityInVehicleRegistryFormDraft',

@@ -8,14 +8,14 @@ import { m } from '../lib/messagesx'
 import { ChargeItemCode } from '@island.is/shared/constants'
 
 const CHARGE_ITEM_CODES = [ChargeItemCode.TRANSPORT_AUTHORITY_XXX.toString()]
-const SYSLUMADUR_NATIONAL_ID = '6509142520'
+const SAMGONGUSTOFA_NATIONAL_ID = '5405131040'
 
 export class PaymentChargeInfoProvider extends PaymentCatalogProvider {
   type = 'PaymentChargeInfoProvider'
 
   async provide(): Promise<PaymentCatalogItem[]> {
     const items =
-      (await this.getCatalogForOrganization(SYSLUMADUR_NATIONAL_ID)) || []
+      (await this.getCatalogForOrganization(SAMGONGUSTOFA_NATIONAL_ID)) || []
     return items.filter(({ chargeItemCode }) =>
       CHARGE_ITEM_CODES.includes(chargeItemCode),
     )

@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
-import { ChargeItemCode } from '@island.is/shared/constants'
+import {
+  OrderVehicleLicensePlateAnswers,
+  getChargeItemCodes,
+} from '@island.is/application/templates/transport-authority/order-vehicle-license-plate'
 
 @Injectable()
 export class OrderVehicleRegistrationCertificateService {
@@ -9,19 +12,16 @@ export class OrderVehicleRegistrationCertificateService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {}
 
-  async createCharge({
-    application: { id },
-    auth,
-  }: TemplateApiModuleActionProps) {
+  async createCharge({ application, auth }: TemplateApiModuleActionProps) {
     try {
-      // TODOx check stuff about charging
-      const chargeItemCode =
-        ChargeItemCode.TRANSPORT_AUTHORITY_ORDER_VEHICLE_LICENSE_PLATE
+      const chargeItemCodes = getChargeItemCodes(
+        application.answers as OrderVehicleLicensePlateAnswers,
+      )
 
       const result = this.sharedTemplateAPIService.createCharge(
         auth.authorization,
-        id,
-        chargeItemCode,
+        application.id,
+        chargeItemCodes[0],
       )
       return result
     } catch (exeption) {

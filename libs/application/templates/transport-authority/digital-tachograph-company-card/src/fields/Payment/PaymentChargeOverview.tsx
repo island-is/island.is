@@ -9,10 +9,13 @@ export const PaymentChargeOverview: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
 
   const { externalData } = application
-  const item = externalData?.payment?.data as {
-    priceAmount: number
-    chargeItemName: string
-  }
+  const items = externalData?.payment?.data as [
+    {
+      priceAmount: number
+      chargeItemName: string
+    },
+  ]
+  const item = items[0]
   const price = item?.priceAmount || 0
 
   return (

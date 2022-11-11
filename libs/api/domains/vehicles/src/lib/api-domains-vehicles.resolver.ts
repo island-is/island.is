@@ -134,7 +134,7 @@ export class VehiclesResolver {
     return await Promise.all(
       (await this.getCurrentVehicles(input, user)).map(
         async (vehicle: VehiclesCurrentVehicleWithFees) => {
-          // TODOx use new api endpoint from FJS
+          // TODOx use new api endpoint from FJS to get vehicle fees
           const vehicleDetails = await this.vehiclesService.getVehicleDetail(
             user,
             {
@@ -160,7 +160,7 @@ export class VehiclesResolver {
     @Args('permno', { type: () => String }) permno: string,
     @CurrentUser() user: User,
   ) {
-    // TODOx use new api endpoint from FJS
+    // TODOx use new api endpoint from FJS to get vehicle fees
     const vehicleDetails = await this.vehiclesService.getVehicleDetail(user, {
       clientPersidno: user.nationalId,
       permno: permno,
