@@ -23,16 +23,8 @@ import {
   useUpdateAuthDelegationMutation,
   useAuthScopeTreeQuery,
 } from '@island.is/service-portal/graphql'
-import {
-  AccessFormScope,
-  AuthScopeTree,
-  AUTH_API_SCOPE_GROUP_TYPE,
-} from './access.types'
-import {
-  flattenAndExtendApiScopeGroup,
-  extendApiScope,
-  formatScopeTreeToScope,
-} from './access.utils'
+import { AccessFormScope } from './access.types'
+import { extendApiScope, formatScopeTreeToScope } from './access.utils'
 import { AccessItem } from './AccessItem'
 import { AccessConfirmModal } from '../../components/access/AccessConfirmModal'
 import { AccessItemHeader } from '../../components/access/AccessItemHeader'
@@ -134,26 +126,6 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
     )
     .filter(isDefined)
 
-  const renderAccessItem = (
-    authScope: AuthScopeTree[0],
-    index: number,
-    authScopes: AuthScopeTree,
-  ) => {
-    const apiScopes =
-      authScope.__typename === AUTH_API_SCOPE_GROUP_TYPE
-        ? flattenAndExtendApiScopeGroup(authScope, index)
-        : [extendApiScope(authScope, index, authScopes)]
-
-    return (
-      <AccessItem
-        key={index}
-        apiScopes={apiScopes}
-        authDelegation={delegation}
-        validityPeriod={validityPeriod}
-      />
-    )
-  }
-
   return (
     <>
       {formError && (
@@ -180,7 +152,14 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
                 </Stack>
               </Box>
             ) : (
-              scopeTree?.map(renderAccessItem)
+              scopeTree?.map((authScope, index) => (
+                <AccessItem
+                  key={index}
+                  apiScopes={extendApiScope(authScope, index, scopeTree)}
+                  authDelegation={delegation}
+                  validityPeriod={validityPeriod}
+                />
+              ))
             )}
           </Box>
         </form>
