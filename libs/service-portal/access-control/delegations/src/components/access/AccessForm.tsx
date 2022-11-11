@@ -195,23 +195,13 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
         </Box>
       </FormProvider>
       <AccessConfirmModal
-        id={`access-confirm-modal-${delegation?.id}`}
         onClose={() => {
           setUpdateError(false)
           setOpenConfirmModal(false)
         }}
         onConfirm={() => onSubmit()}
-        label={formatMessage(m.accessControl)}
-        title={formatMessage({
-          id: 'sp.settings-access-control:access-confirm-modal-title',
-          defaultMessage: 'Þú ert að veita aðgang',
-        })}
         isVisible={openConfirmModal}
         delegation={delegation}
-        domain={{
-          name: delegation.domain.displayName,
-          imgSrc: delegation.domain.organisationLogoUrl,
-        }}
         scopes={scopes}
         validityPeriod={validityPeriod}
         loading={updateLoading}
