@@ -13,17 +13,21 @@ import {
 } from '@island.is/island-ui/core'
 import { Controller, useFormContext } from 'react-hook-form'
 import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
-
-import { formatPhoneNumber } from '@island.is/application/ui-components'
 import { useLocale } from '@island.is/localization'
 import { FinancialStatementsInao } from '../../lib/utils/dataSchema'
 import { m } from '../../lib/messages'
-import { AboutOverview, FileValueLine, ValueLine } from '../Shared'
+import {
+  AboutOverview,
+  AssetDebtEquityOverview,
+  FileValueLine,
+  ValueLine,
+} from '../Shared'
 import { formatCurrency } from '../../lib/utils/helpers'
-import { starterColumnStyle } from '../Shared/styles/overviewStyles.css'
 import { useSubmitApplication } from '../../hooks/useSubmitApplication'
 import BottomBar from '../../components/BottomBar'
 import { GREATER } from '../../lib/constants'
+import { CapitalNumberOverview } from '../Shared/CapitalNumberOverview'
+import { starterColumnStyle } from '../Shared/styles/overviewStyles.css'
 
 export const Overview = ({
   application,
@@ -68,172 +72,111 @@ export const Overview = ({
   return (
     <Box marginBottom={2}>
       <Divider />
-      <AboutOverview answers={answers} />
-      <Divider />
-      <Box paddingTop={4} paddingBottom={2}>
-        <Text variant="h3" as="h3">
-          {formatMessage(m.keyNumbersIncomeAndExpenses)}
-        </Text>
+      <Box paddingY={3}>
+        <AboutOverview answers={answers} />
       </Box>
-      <GridRow>
-        <GridColumn span={['12/12', '6/12']}>
-          <ValueLine
-            label={m.candidatesOwnContributions}
-            value={formatCurrency(
-              answers.individualIncome?.candidatesOwnContributions,
-            )}
-          />
-          <ValueLine
-            label={m.contributionsFromLegalEntities}
-            value={formatCurrency(
-              answers.individualIncome?.contributionsByLegalEntities,
-            )}
-          />
-          <ValueLine
-            label={m.contributionsFromIndividuals}
-            value={formatCurrency(
-              answers.individualIncome?.individualContributions,
-            )}
-          />
-          <ValueLine
-            label={m.otherIncome}
-            value={formatCurrency(answers.individualIncome?.otherIncome)}
-          />
-          <ValueLine
-            label={m.totalIncome}
-            value={formatCurrency(answers.individualIncome?.total)}
-          />
-        </GridColumn>
-        <GridColumn span={['12/12', '6/12']}>
-          <ValueLine
-            label={m.advertisements}
-            value={formatCurrency(answers.individualExpense?.advertisements)}
-          />
-          <ValueLine
-            label={m.electionOffice}
-            value={formatCurrency(answers.individualExpense?.electionOffice)}
-          />
-          <ValueLine
-            label={m.travelCost}
-            value={formatCurrency(answers.individualExpense?.travelCost)}
-          />
-          <ValueLine
-            label={m.otherCost}
-            value={formatCurrency(answers.individualExpense?.otherCost)}
-          />
-          <ValueLine
-            label={m.totalExpenses}
-            value={formatCurrency(answers.individualExpense?.total)}
-          />
-        </GridColumn>
-      </GridRow>
       <Divider />
-      <Box className={starterColumnStyle}>
-        <Text variant="h3" as="h3">
-          {formatMessage(m.capitalCost)}
-        </Text>
-      </Box>
-      <GridRow>
-        <GridColumn span={['12/12', '6/12']}>
-          <ValueLine
-            label={m.capitalIncome}
-            value={answers.capitalNumbers.capitalIncome}
-          />
-        </GridColumn>
-        {answers.capitalNumbers?.capitalCost ? (
+      <Box paddingY={3}>
+        <Box className={starterColumnStyle}>
+          <Text variant="h3" as="h3">
+            {formatMessage(m.keyNumbersIncomeAndExpenses)}
+          </Text>
+        </Box>
+        <GridRow>
           <GridColumn span={['12/12', '6/12']}>
+            <Box paddingTop={3} paddingBottom={2}>
+              <Text variant="h4" as="h4">
+                {formatMessage(m.income)}
+              </Text>
+            </Box>
             <ValueLine
-              label={m.capitalCost}
-              value={formatPhoneNumber(answers.capitalNumbers.capitalCost)}
+              label={m.candidatesOwnContributions}
+              value={formatCurrency(
+                answers.individualIncome?.candidatesOwnContributions,
+              )}
+            />
+            <ValueLine
+              label={m.contributionsFromLegalEntities}
+              value={formatCurrency(
+                answers.individualIncome?.contributionsByLegalEntities,
+              )}
+            />
+            <ValueLine
+              label={m.contributionsFromIndividuals}
+              value={formatCurrency(
+                answers.individualIncome?.individualContributions,
+              )}
+            />
+            <ValueLine
+              label={m.otherIncome}
+              value={formatCurrency(answers.individualIncome?.otherIncome)}
+            />
+            <ValueLine
+              label={m.totalIncome}
+              value={formatCurrency(answers.individualIncome?.total)}
+              isTotal
             />
           </GridColumn>
-        ) : null}
-      </GridRow>
-      <GridRow>
-        <GridColumn>
-          <ValueLine
-            label={m.totalCapital}
-            value={formatCurrency(answers.capitalNumbers?.total)}
-          />
-        </GridColumn>
-      </GridRow>
-      <Divider />
-      <Box paddingTop={4} paddingBottom={2}>
-        <Text variant="h3" as="h3">
-          {formatMessage(m.keyNumbersDebt)}
-        </Text>
+          <GridColumn span={['12/12', '6/12']}>
+            <Box paddingTop={3} paddingBottom={2}>
+              <Text variant="h4" as="h4">
+                {formatMessage(m.expenses)}
+              </Text>
+            </Box>
+            <ValueLine
+              label={m.electionOffice}
+              value={formatCurrency(answers.individualExpense?.electionOffice)}
+            />
+            <ValueLine
+              label={m.advertisements}
+              value={formatCurrency(answers.individualExpense?.advertisements)}
+            />
+            <ValueLine
+              label={m.travelCost}
+              value={formatCurrency(answers.individualExpense?.travelCost)}
+            />
+            <ValueLine
+              label={m.otherCost}
+              value={formatCurrency(answers.individualExpense?.otherCost)}
+            />
+            <ValueLine
+              label={m.totalExpenses}
+              value={formatCurrency(answers.individualExpense?.total)}
+              isTotal
+            />
+          </GridColumn>
+        </GridRow>
       </Box>
-      <GridRow>
-        <GridColumn span={['12/12', '6/12']}>
-          <ValueLine
-            label={m.fixedAssetsTotal}
-            value={formatCurrency(answers.asset?.fixedAssetsTotal)}
-          />
-        </GridColumn>
-        <GridColumn span={['12/12', '6/12']}>
-          <ValueLine
-            label={m.currentAssets}
-            value={formatCurrency(answers.asset?.currentAssets)}
-          />
-        </GridColumn>
-      </GridRow>
-      <GridRow>
-        <GridColumn span={['12/12', '6/12']}>
-          <ValueLine
-            label={m.totalAssets}
-            value={formatCurrency(answers.asset?.total)}
-          />
-        </GridColumn>
-      </GridRow>
-      <GridRow>
-        <GridColumn span={['12/12', '6/12']}>
-          <ValueLine
-            label={m.shortTerm}
-            value={formatCurrency(answers.liability?.shortTerm)}
-          />
-        </GridColumn>
-        <GridColumn span={['12/12', '6/12']}>
-          <ValueLine
-            label={m.longTerm}
-            value={formatCurrency(answers.liability?.longTerm)}
-          />
-        </GridColumn>
-      </GridRow>
-      <GridRow>
-        <GridColumn span={['12/12', '6/12']}>
-          <ValueLine
-            label={m.totalLiabilities}
-            value={formatCurrency(answers.liability?.total)}
-          />
-        </GridColumn>
-      </GridRow>
-      <GridRow>
-        <GridColumn span={['12/12', '6/12']}>
-          <ValueLine
-            label={m.equity}
-            value={formatCurrency(answers.equity?.totalEquity)}
-          />
-        </GridColumn>
-        <GridColumn span={['12/12', '6/12']}>
-          <ValueLine
-            label={m.debtsAndCash}
-            value={formatCurrency(answers.equityAndLiabilities?.total)}
-          />
-        </GridColumn>
-      </GridRow>
+      <Divider />
+      <Box paddingY={3}>
+        <CapitalNumberOverview answers={answers} />
+      </Box>
+      <Divider />
+      <Box paddingY={3}>
+        <Box className={starterColumnStyle}>
+          <Text variant="h3" as="h3">
+            {formatMessage(m.keyNumbersDebt)}
+          </Text>
+        </Box>
+        <AssetDebtEquityOverview answers={answers} />
+      </Box>
+      <Box paddingY={3}>
+        {fileName ? (
+          <Fragment>
+            <FileValueLine label={answers.attachments?.file?.[0]?.name} />
+            <Divider />
+          </Fragment>
+        ) : null}
+      </Box>
 
-      {fileName ? (
-        <Fragment>
-          <FileValueLine label={answers.attachments?.file?.[0]?.name} />
-          <Divider />
-        </Fragment>
-      ) : null}
+      <Divider />
+
       <Box paddingY={3}>
         <Text variant="h3" as="h3">
           {formatMessage(m.overview)}
         </Text>
       </Box>
-      <Box background="blue100" padding={3}>
+      <Box background="blue100">
         <Controller
           name="applicationApprove"
           defaultValue={approveOverview}
@@ -260,7 +203,7 @@ export const Overview = ({
         <InputError errorMessage={formatMessage(m.errorApproval)} />
       ) : null}
       {submitError ? (
-        <Box paddingY={2}>
+        <Box paddingY={3}>
           <AlertBanner
             title={formatMessage(m.submitErrorTitle)}
             description={formatMessage(m.submitErrorMessage)}

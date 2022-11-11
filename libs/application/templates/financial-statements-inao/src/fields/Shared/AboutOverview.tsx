@@ -1,5 +1,4 @@
 import React, { Fragment } from 'react'
-import { FieldBaseProps } from '@island.is/application/types'
 import { GridColumn, GridRow } from '@island.is/island-ui/core'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
 import { FinancialStatementsInao } from '../../lib/utils/dataSchema'
@@ -16,6 +15,9 @@ export const AboutOverview = ({
     <Fragment>
       <GridRow>
         <GridColumn span={['12/12', '6/12']}>
+          <ValueLine label={m.fullName} value={answers.about.fullName} />
+        </GridColumn>
+        <GridColumn span={['12/12', '6/12']}>
           <ValueLine
             label={m.nationalId}
             value={
@@ -24,9 +26,6 @@ export const AboutOverview = ({
                 : '-'
             }
           />
-        </GridColumn>
-        <GridColumn span={['12/12', '6/12']}>
-          <ValueLine label={m.fullName} value={answers.about.fullName} />
         </GridColumn>
       </GridRow>
       <GridRow>

@@ -90,13 +90,19 @@ export class FinancialStatementsInaoTemplateService {
 
   async getUserType({ auth }: TemplateApiModuleActionProps) {
     const { nationalId } = auth
-
     if (kennitala.isPerson(nationalId)) {
       return this.financialStatementsClientService.getClientType(
         'Einstaklingur',
       )
     } else {
-      return this.financialStatementsClientService.getUserClientType(nationalId)
+      const clientType = this.financialStatementsClientService.getUserClientType(
+        nationalId,
+      )
+      console.log({ clientType })
+      if (!clientType) {
+        throw new Error('Kennitala fannst ekki í lista yfir skilaskylda aðila')
+      }
+      return clientType
     }
   }
 
