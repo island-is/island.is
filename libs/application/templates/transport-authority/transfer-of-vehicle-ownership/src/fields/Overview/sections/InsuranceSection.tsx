@@ -7,20 +7,32 @@ import { useLocale } from '@island.is/localization'
 import { overview } from '../../../lib/messages'
 import { ReviewGroup } from '../../ReviewGroup'
 import { ReviewScreenProps } from '../../../types'
+import { getValueViaPath } from '@island.is/application/core'
 
 export const InsuranceSection: FC<FieldBaseProps & ReviewScreenProps> = ({
   setStep,
   insurance = undefined,
+  reviewerNationalId,
+  application,
 }) => {
   const { formatMessage } = useLocale()
+  const { answers } = application
 
   const onButtonClick = () => {
-    setStep('insurance')
+    setStep && setStep('insurance')
   }
+
+  if (!reviewerNationalId) return null
+
+  const isBuyer =
+    (getValueViaPath(answers, 'buyer.nationalId', '') as string) ===
+    reviewerNationalId
 
   return (
     <ReviewGroup
-      editMessage={formatMessage(overview.labels.addInsuranceButton)}
+      editMessage={
+        isBuyer ? formatMessage(overview.labels.addInsuranceButton) : undefined
+      }
       isLast
       handleClick={onButtonClick}
     >

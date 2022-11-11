@@ -7,9 +7,10 @@ import { MessageDescriptor } from '@formatjs/intl'
 import { z } from 'zod'
 
 export interface ReviewScreenProps {
-  setStep: (s: ReviewState) => void
+  setStep?: (s: ReviewState) => void
   setInsurance?: (s: string) => void
   insurance?: string
+  reviewerNationalId?: string
 }
 
 export type ReviewState =

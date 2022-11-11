@@ -8,8 +8,12 @@ import parseISO from 'date-fns/parseISO'
 import { useLocale } from '@island.is/localization'
 import { information } from '../../../lib/messages'
 import { ReviewGroup } from '../../ReviewGroup'
+import { CoOwnerAndOperator, ReviewScreenProps } from '../../../types'
 
-export const VehicleSection: FC<FieldBaseProps> = ({ application }) => {
+export const VehicleSection: FC<FieldBaseProps & ReviewScreenProps> = ({
+  application,
+  reviewerNationalId,
+}) => {
   const { formatMessage } = useLocale()
   const { answers } = application
 
@@ -21,6 +25,17 @@ export const VehicleSection: FC<FieldBaseProps> = ({ application }) => {
     },
   )
   const salePrice = getValueViaPath(answers, 'vehicle.salePrice', '') as string
+  const buyerCoOwnerAndOperator = getValueViaPath(
+    answers,
+    'buyerCoOwnerAndOperator',
+  ) as CoOwnerAndOperator[]
+  const isOperator = buyerCoOwnerAndOperator.find(
+    (reviewerItems) =>
+      reviewerItems.nationalId === reviewerNationalId &&
+      reviewerItems.type === 'operator',
+  )
+
+  if (!reviewerNationalId) return null
 
   return (
     <ReviewGroup isLast>
@@ -34,7 +49,7 @@ export const VehicleSection: FC<FieldBaseProps> = ({ application }) => {
           <Text>{getValueViaPath(answers, 'vehicle.type', '') as string}</Text>
           <Text>
             {
-              /* Add color too */ getValueViaPath(
+              /* TODO: Add color too */ getValueViaPath(
                 answers,
                 'vehicle.plate',
                 '',
@@ -43,7 +58,7 @@ export const VehicleSection: FC<FieldBaseProps> = ({ application }) => {
           </Text>
         </GridColumn>
         <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
-          {salePrice.length > 0 && (
+          {!isOperator && salePrice.length > 0 && (
             <Text>
               Söluverð:{' '}
               {getValueViaPath(answers, 'vehicle.salePrice', '') as string} kr.

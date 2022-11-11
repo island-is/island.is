@@ -11,17 +11,28 @@ import { ReviewScreenProps } from '../../../types'
 export const BuyerSection: FC<FieldBaseProps & ReviewScreenProps> = ({
   application,
   setStep,
+  reviewerNationalId,
 }) => {
   const { formatMessage } = useLocale()
   const { answers } = application
 
   const onButtonClick = () => {
-    setStep('addPeople')
+    setStep && setStep('addPeople')
   }
+
+  if (!reviewerNationalId) return null
+
+  const isBuyer =
+    (getValueViaPath(answers, 'buyer.nationalId', '') as string) ===
+    reviewerNationalId
 
   return (
     <ReviewGroup
-      editMessage={formatMessage(overview.labels.addCoOwnerAndOperatorButton)}
+      editMessage={
+        isBuyer
+          ? formatMessage(overview.labels.addCoOwnerAndOperatorButton)
+          : undefined
+      }
       isLast
       handleClick={onButtonClick}
     >

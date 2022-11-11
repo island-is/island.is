@@ -53,7 +53,7 @@ export const Insurance: FC<FieldBaseProps & ReviewScreenProps> = ({
 
   const onBackButtonClick = () => {
     setErrorMessage(undefined)
-    setStep('overview')
+    setStep && setStep('overview')
   }
 
   const onForwardButtonClick = async () => {
@@ -80,7 +80,7 @@ export const Insurance: FC<FieldBaseProps & ReviewScreenProps> = ({
       } else {
         setInsurance(selectedValue.label as string)
         setErrorMessage(undefined)
-        setStep('overview')
+        setStep && setStep('overview')
       }
     } else {
       setErrorMessage(formatMessage(error.noInsuranceSelected))

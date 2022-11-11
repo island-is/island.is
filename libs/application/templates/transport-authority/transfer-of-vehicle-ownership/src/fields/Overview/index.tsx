@@ -12,6 +12,7 @@ import {
   OperatorSection,
   InsuranceSection,
 } from './sections'
+import { useAuth } from '@island.is/auth/react'
 
 export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
   setStep,
@@ -22,15 +23,18 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
   console.log(application)
   const { formatMessage } = useLocale()
   const { answers } = application
+  const { userInfo } = useAuth()
+  const reviewerNationalId = userInfo?.profile.nationalId || null
+  if (!reviewerNationalId) return null
 
   const onBackButtonClick = () => {
-    setStep('states')
+    setStep && setStep('states')
   }
   const onRejectButtonClick = () => {
-    setStep('states')
+    setStep && setStep('states')
   }
   const onApproveButtonClick = () => {
-    setStep('conclusion')
+    setStep && setStep('conclusion')
   }
   return (
     <Box>
@@ -40,12 +44,20 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
       <Text marginBottom={4}>
         {formatMessage(overview.general.description)}
       </Text>
-      <VehicleSection {...props} />
+      <VehicleSection {...props} reviewerNationalId={reviewerNationalId} />
       <SellerSection {...props} />
-      <BuyerSection setStep={setStep} {...props} />
+      <BuyerSection
+        setStep={setStep}
+        {...props}
+        reviewerNationalId={reviewerNationalId}
+      />
       <CoOwnersSection {...props} />
       <OperatorSection {...props} />
-      <InsuranceSection setStep={setStep} {...props} />
+      <InsuranceSection
+        setStep={setStep}
+        {...props}
+        reviewerNationalId={reviewerNationalId}
+      />
       <Box marginTop={14}>
         <Divider />
         <Box display="flex" justifyContent="spaceBetween" paddingY={5}>
