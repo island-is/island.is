@@ -42,6 +42,7 @@ import {
   SCOPE_PREFIX,
 } from '../../utils/types'
 import { servicePortalSaveAccessControl } from '@island.is/plausible'
+import { ISLAND_DOMAIN } from '../../constants'
 
 const AuthApiScopesQuery = gql`
   query AuthApiScopesQuery($input: AuthApiScopesInput!) {
@@ -121,17 +122,42 @@ const Access: FC = () => {
   }
   const [updateDelegation, { loading: updateLoading }] = useMutation<Mutation>(
     UpdateAuthDelegationMutation,
-    { refetchQueries: [{ query: AuthDelegationsQuery }], onError },
+    {
+      refetchQueries: [
+        {
+          query: AuthDelegationsQuery,
+          variables: {
+            input: {
+              domain: ISLAND_DOMAIN,
+            },
+          },
+        },
+      ],
+      onError,
+    },
   )
   const [deleteDelegation, { loading: deleteLoading }] = useMutation<Mutation>(
     DeleteAuthDelegationMutation,
-    { refetchQueries: [{ query: AuthDelegationsQuery }], onError },
+    {
+      refetchQueries: [
+        {
+          query: AuthDelegationsQuery,
+          variables: {
+            input: {
+              domain: ISLAND_DOMAIN,
+            },
+          },
+        },
+      ],
+      onError,
+    },
   )
   const { data: apiScopeData, loading: apiScopeLoading } = useQuery<Query>(
     AuthApiScopesQuery,
     {
       variables: {
         input: {
+          domain: ISLAND_DOMAIN,
           lang,
         },
       },
