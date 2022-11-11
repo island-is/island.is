@@ -1,4 +1,4 @@
-import { AuthDelegationType, User } from '@island.is/auth-nest-tools'
+import { User } from '@island.is/auth-nest-tools'
 import { Inject, Injectable, Logger } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
 import { InjectModel } from '@nestjs/sequelize'
