@@ -1,26 +1,28 @@
-import { Args, Mutation, Resolver } from '@nestjs/graphql'
-import { MailchimpSubscribeResponse } from './models/mailchimpSubscribeResponse.model'
-import { MailchimpSubscribeInput } from './dto/mailchimpSubscribe.input'
 import axios from 'axios'
-import { CmsContentfulService } from '@island.is/cms'
 import { Injectable } from '@nestjs/common'
-import { Category } from './mailchimp.types'
+import { Args, Mutation, Resolver } from '@nestjs/graphql'
+
+import { CmsContentfulService } from '@island.is/cms'
+
+import { EmailSignupInput } from './dto/emailSignup.input'
+import { EmailSignupResponse } from './models/emailSignupResponse.model'
 
 @Resolver()
 @Injectable()
-export class MailchimpResolver {
+export class EmailSignupResolver {
   constructor(private readonly cmsContentfulService: CmsContentfulService) {}
 
-  @Mutation(() => MailchimpSubscribeResponse)
-  async mailchimpSubscribe(
-    @Args('input') input: MailchimpSubscribeInput,
-  ): Promise<MailchimpSubscribeResponse> {
-    const mailingListSignupSlice = await this.cmsContentfulService.getMailingListSignupSlice(
-      {
-        id: input.signupID,
-      },
-    )
-    const url = mailingListSignupSlice?.signupUrl ?? ''
+  @Mutation(() => EmailSignupResponse)
+  async emailSignupSubscription(
+    @Args('input') input: EmailSignupInput,
+  ): Promise<EmailSignupResponse> {
+    const emailSignupModel = await this.cmsContentfulService.getEmailSignup({
+      id: input.signupID,
+    })
+
+    if (!emailSignupModel) return { subscribed: false }
+
+    const url = (emailSignupModel?.configuration?.signupUrl as string) ?? ''
 
     if (!url.includes('{{EMAIL}}')) {
       return {

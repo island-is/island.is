@@ -868,7 +868,7 @@ export interface IFormFieldFields {
   placeholder?: string | undefined
 
   /** Type */
-  type: 'input' | 'text' | 'dropdown' | 'radio' | 'acceptTerms'
+  type: 'input' | 'text' | 'dropdown' | 'radio' | 'acceptTerms' | 'email'
 
   /** Required */
   required?: boolean | undefined

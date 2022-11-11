@@ -17,7 +17,7 @@ export class FormField {
   placeholder!: string
 
   @Field()
-  type!: 'input' | 'text' | 'dropdown' | 'radio' | 'acceptTerms'
+  type!: 'input' | 'text' | 'dropdown' | 'radio' | 'acceptTerms' | 'email'
 
   @Field()
   required!: boolean
