@@ -256,7 +256,7 @@ describe('InternalCaseController - Deliver', () => {
           )
         })
 
-        it('should update the plice case', async () => {
+        it('should update the police case', async () => {
           expect(mockPoliceService.updatePoliceCase).toHaveBeenCalledWith(
             caseId,
             indictmentSubType,
