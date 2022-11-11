@@ -107,21 +107,22 @@ export class FinancialStatementsInaoTemplateService {
     const currentUserType = getCurrentUserType(answers, externalData)
 
     if (currentUserType === USERTYPE.INDIVIDUAL) {
-      const values: PersonalElectionFinancialStatementValues = mapValuesToIndividualtype(
+      const electionIncomeLimit = getValueViaPath(
         answers,
-      )
+        'election.incomeLimit',
+      ) as string
+      const noValueStatement = electionIncomeLimit === LESS ? true : false
+      const values:
+        | PersonalElectionFinancialStatementValues
+        | undefined = noValueStatement
+        ? mapValuesToIndividualtype(answers)
+        : undefined
 
       const electionId = getValueViaPath(
         answers,
         'election.selectElection',
       ) as string
       const clientName = getValueViaPath(answers, 'about.fullName') as string
-      const electionIncomeLimit = getValueViaPath(
-        answers,
-        'election.incomeLimit',
-      ) as string
-
-      const noValueStatement = electionIncomeLimit === LESS ? true : false
 
       const fileName = noValueStatement
         ? undefined
@@ -244,6 +245,8 @@ export class FinancialStatementsInaoTemplateService {
         throw new Error(`Application submission failed`)
       }
       return { success: result.success }
+    } else {
+      throw new Error(`Application submission failed`)
     }
   }
 }

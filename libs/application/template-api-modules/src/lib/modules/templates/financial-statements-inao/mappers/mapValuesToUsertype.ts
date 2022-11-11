@@ -1,7 +1,9 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
 
-export const mapValuesToIndividualtype = (answers: FormValue) => {
+export const mapValuesToIndividualtype = (answers: FormValue, less = false) => {
+  if (less) {
+  }
   return {
     contributionsByLegalEntities: Number(
       getValueViaPath(answers, 'individualIncome.contributionsByLegalEntities'),
