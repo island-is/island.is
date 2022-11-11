@@ -1,6 +1,5 @@
 import React, { FC, useEffect, useState, useCallback } from 'react'
 import { useQuery } from '@apollo/client'
-import * as Sentry from '@sentry/react'
 
 import { APPLICATION_APPLICATION } from '@island.is/application/graphql'
 import {
@@ -180,27 +179,5 @@ export const ApplicationForm: FC<{
 }> = ({ applicationId, nationalRegistryId, slug }) => {
   const { formatMessage } = useLocale()
 
-  return (
-    <Sentry.ErrorBoundary
-      beforeCapture={(scope) => {
-        scope.setTag('errorBoundaryLocation', 'ApplicationForm')
-        scope.setExtra('applicationId', applicationId)
-        scope.setExtra('nationalRegistryId', nationalRegistryId)
-      }}
-      fallback={
-        <ErrorShell
-          title={formatMessage(coreMessages.globalErrorTitle)}
-          subTitle={formatMessage(coreMessages.globalErrorMessage)}
-        />
-      }
-    >
-      <FieldProvider>
-        <ApplicationLoader
-          applicationId={applicationId}
-          nationalRegistryId={nationalRegistryId}
-          slug={slug}
-        />
-      </FieldProvider>
-    </Sentry.ErrorBoundary>
-  )
+  return <></>
 }

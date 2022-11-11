@@ -8,7 +8,6 @@ import {
   StaticText,
 } from '@island.is/application/types'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
-import * as Sentry from '@sentry/react'
 
 import type {
   ChildInformation,
@@ -85,7 +84,7 @@ export class Children extends BasicDataProvider {
         const response = await res.json()
 
         if (response.errors) {
-          Sentry.captureException(response.errors)
+          console.error(response.errors)
           return Promise.reject(
             'Response.errors queryParentalLeavesAndPregnancyStatus',
           )
@@ -94,7 +93,7 @@ export class Children extends BasicDataProvider {
         return Promise.resolve(response.data)
       })
       .catch((error) => {
-        Sentry.captureException(error)
+        console.error(error)
         return Promise.reject(
           'Catch error queryParentalLeavesAndPregnancyStatus',
         )
@@ -111,7 +110,7 @@ export class Children extends BasicDataProvider {
         const response = await res.json()
 
         if (response.errors) {
-          Sentry.captureException(response.errors)
+          console.error(response.errors)
           return Promise.reject(
             'Response.errors queryParentalLeavesEntitlements',
           )
@@ -120,7 +119,7 @@ export class Children extends BasicDataProvider {
         return Promise.resolve(response.data.getParentalLeavesEntitlements)
       })
       .catch((error) => {
-        Sentry.captureException(error)
+        console.error(error)
         return Promise.reject('Catch error queryParentalLeavesEntitlements')
       })
   }

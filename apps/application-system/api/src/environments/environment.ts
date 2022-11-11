@@ -5,7 +5,6 @@ const devConfig = {
   environment: 'local',
   name: 'local',
   baseApiUrl: 'http://localhost:4444',
-  sentryDsn: '',
   audit: {
     defaultNamespace: '@island.is/applications',
   },
@@ -102,8 +101,6 @@ const devConfig = {
 const prodConfig = {
   production: true,
   environment: process.env.ENVIRONMENT,
-  sentryDsn:
-    'https://22093678b2b24a0cad25111c1806a8d7@o406638.ingest.sentry.io/5530607',
   name: process.env.name,
   baseApiUrl: process.env.GRAPHQL_API_URL,
   audit: {

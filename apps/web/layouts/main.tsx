@@ -16,8 +16,6 @@ import getConfig from 'next/config'
 import { NextComponentType, NextPageContext } from 'next'
 import { Screen, GetInitialPropsContext } from '../types'
 import Cookies from 'js-cookie'
-import * as Sentry from '@sentry/node'
-import { RewriteFrames } from '@sentry/integrations'
 import { userMonitoring } from '@island.is/user-monitoring'
 import { useRouter } from 'next/router'
 import {
@@ -109,21 +107,6 @@ export interface LayoutProps {
   megaMenuData
 }
 
-if (environment.sentryDsn) {
-  Sentry.init({
-    dsn: environment.sentryDsn,
-    enabled: environment.production,
-    integrations: [
-      new RewriteFrames({
-        iteratee: (frame) => {
-          frame.filename = frame.filename.replace(`~/.next`, 'app:///_next')
-          return frame
-        },
-      }),
-    ],
-  })
-}
-
 if (
   publicRuntimeConfig.ddRumApplicationId &&
   publicRuntimeConfig.ddRumClientToken &&
@@ -171,23 +154,6 @@ const Layout: NextComponentType<
   const n = useNamespace(namespace)
   const { route, pathname, query, asPath } = useRouter()
   const fullUrl = `${respOrigin}${asPath}`
-
-  Sentry.configureScope((scope) => {
-    scope.setExtra('lang', activeLocale)
-
-    scope.setContext('router', {
-      route,
-      pathname,
-      query,
-      asPath,
-    })
-  })
-
-  Sentry.addBreadcrumb({
-    category: 'pages/main',
-    message: `Rendering from ${process.browser ? 'browser' : 'server'}`,
-    level: Sentry.Severity.Debug,
-  })
 
   const menuTabs = [
     {
