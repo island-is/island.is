@@ -491,9 +491,7 @@ export function formatCourtRevokedSmsNotification(
 
   const courtRevokedText = formatMessage(
     notifications.courtRevoked.caseTypeRevoked,
-    {
-      caseType: type,
-    },
+    { caseType: type },
   )
 
   return [courtRevokedText, prosecutorText, courtDateText]

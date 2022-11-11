@@ -82,7 +82,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
     const prosecutor = { name: 'Lögmaður', email: 'logmadur@gmail.com' }
     const theCase = {
       id: caseId,
-      type: CaseType.MURDER,
+      type: CaseType.INDICTMENT,
       courtCaseNumber: '007-2022-07',
       court: { name: 'Héraðsdómur Reykjavíkur' },
       prosecutor,
