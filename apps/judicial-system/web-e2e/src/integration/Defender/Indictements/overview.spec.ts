@@ -4,6 +4,7 @@ import {
   CaseFileCategory,
   CaseState,
   CaseType,
+  IndictmentSubType,
 } from '@island.is/judicial-system/types'
 
 import {
@@ -15,7 +16,7 @@ import {
 } from '../../../utils'
 
 describe('Indictment case overview for defenders', () => {
-  const theCase = mockCase(CaseType.MURDER)
+  const theCase = mockCase(CaseType.INDICTMENT, IndictmentSubType.MURDER)
   const prosecutor = makeProsecutor()
   const judge = makeJudge()
 
