@@ -1,5 +1,5 @@
 import { UseGuards } from '@nestjs/common'
-import { Query, Args } from '@nestjs/graphql'
+import { Query } from '@nestjs/graphql'
 import type { User } from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
 import {
@@ -31,14 +31,9 @@ export class AirDiscountSchemeResolver {
   @Query(() => [Discount], { nullable: true })
   @Audit()
   async adsGetDiscount(@CurrentUser() user: User) {
-    let relations: TUser[] = (await this.airDiscountSchemeService.getUserRelations(
+    const relations: TUser[] = (await this.airDiscountSchemeService.getUserRelations(
       user,
     )) as TUser[]
-
-    // Should not generate discountcodes for users who do not meet requirements
-    relations = relations.filter(
-      (user) => user.fund.credit === user.fund.total - user.fund.used,
-    )
 
     const discounts: DiscountWithTUser[] = []
     for (const relation of relations) {

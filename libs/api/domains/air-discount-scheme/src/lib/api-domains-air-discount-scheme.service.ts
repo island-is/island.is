@@ -82,9 +82,14 @@ export class AirDiscountSchemeService {
 
   async getUserRelations(auth: User): Promise<TUser[] | null> {
     try {
-      const getRelationsResponse = await this.getADSWithAuth(
+      let getRelationsResponse = await this.getADSWithAuth(
         auth,
       ).privateUserControllerGetUserRelations({ nationalId: auth.nationalId })
+
+      // Should not generate discountcodes for users who do not meet requirements
+      getRelationsResponse = getRelationsResponse.filter(
+        (user) => user.fund.credit === user.fund.total - user.fund.used,
+      )
 
       return getRelationsResponse
     } catch (e) {
