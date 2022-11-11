@@ -36,18 +36,18 @@ export class DirectorateOfLabourResolver {
   async getApplicationInformation(
     @Args('applicationId') applicationId: string,
     @Args('nationalId') nationalId: string,
-    @Args('employerNationalId') employerNationalId: string,
+    @Args('shouldNotCall') shouldNotCall: boolean,
     @CurrentUser() user: User,
   ): Promise<ApplicationInformation | null> {
+    if (shouldNotCall) {
+      return null
+    }
+
     if (nationalId == user.nationalId) {
       return this.directorateOfLabourService.getApplicationInfo(applicationId)
     }
-    if (employerNationalId === user.nationalId) {
-      return null
-    }
-    throw new Error(
-      `Access Denied: Applicant may not view another's application information`,
-    )
+
+    return null
   }
 
   @Query(() => ParentalLeaveEntitlement, { nullable: true })

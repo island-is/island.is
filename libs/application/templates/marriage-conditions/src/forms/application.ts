@@ -21,18 +21,14 @@ import {
 } from '@island.is/application/types'
 import type { User } from '@island.is/api/domains/national-registry'
 import { format as formatNationalId } from 'kennitala'
-import { Individual, PersonalInfo } from '../types'
+import { Individual } from '../types'
 import { m } from '../lib/messages'
-import {
-  DistrictCommissionerAgencies,
-  maritalStatuses,
-  MarriageTermination,
-  ReligiousLifeViewingSocieties,
-} from '../lib/constants'
+import { DistrictCommissionerAgencies, NO, YES } from '../lib/constants'
 import { UserProfile } from '../types/schema'
 import { fakeDataSection } from './fakeDataSection'
 import { dataCollection } from './sharedSections/dataCollection'
 import { removeCountryCode } from '@island.is/application/ui-components'
+import { Religions } from '../dataProviders/ReligionsProvider'
 
 export const getApplication = ({ allowFakeData = false }): Form => {
   return buildForm({
@@ -85,6 +81,8 @@ export const getApplication = ({ allowFakeData = false }): Form => {
               buildMultiField({
                 id: 'sides',
                 title: m.informationTitle,
+                description:
+                  'Beiðni um könnun hjónavígsluskilyrða mun ekki hljóta efnismeðeferð fyrr en hjónaefni hafa bæði veitt rafræna undirskrift. Vinsamlegast gangið því úr skugga um að símanúmer og netföng séu rétt rituð.',
                 children: [
                   buildDescriptionField({
                     id: 'header1',
@@ -229,37 +227,12 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     space: 'containerGutter',
                     title: '',
                   }),
-                  buildRadioField({
-                    id: 'personalInfo.previousMarriageTermination',
-                    title: m.previousMarriageTermination,
-                    options: [
-                      {
-                        value: MarriageTermination.divorce,
-                        label: m.terminationByDivorce,
-                      },
-                      {
-                        value: MarriageTermination.lostSpouse,
-                        label: m.terminationByLosingSpouse,
-                      },
-                      {
-                        value: MarriageTermination.annulment,
-                        label: m.terminationByAnnulment,
-                      },
-                    ],
-                    largeButtons: false,
-                    condition: (answers) => {
-                      return (
-                        (answers.personalInfo as PersonalInfo)
-                          ?.maritalStatus === maritalStatuses['6']
-                      )
-                    },
-                  }),
                 ],
               }),
             ],
           }),
           buildSubSection({
-            id: 'info',
+            id: 'infoCeremony',
             title: m.ceremony,
             children: [
               buildMultiField({
@@ -267,16 +240,33 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                 title: m.ceremony,
                 description: m.ceremonyDescription,
                 children: [
+                  buildRadioField({
+                    id: 'ceremony.hasDate',
+                    title: m.hasCeremonyDate,
+                    options: [
+                      { value: YES, label: 'Já' },
+                      {
+                        value: NO,
+                        label: 'Nei',
+                      },
+                    ],
+                    largeButtons: false,
+                    width: 'half',
+                  }),
                   buildDateField({
                     id: 'ceremony.date',
                     title: m.ceremonyDate,
                     placeholder: m.ceremonyDatePlaceholder,
                     width: 'half',
+                    condition: (answers) =>
+                      getValueViaPath(answers, 'ceremony.hasDate') === YES,
                   }),
                   buildDescriptionField({
                     id: 'space',
                     space: 'containerGutter',
                     title: '',
+                    condition: (answers) =>
+                      getValueViaPath(answers, 'ceremony.hasDate') === YES,
                   }),
                   buildRadioField({
                     id: 'ceremony.ceremonyPlace',
@@ -290,6 +280,8 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     ],
                     largeButtons: false,
                     width: 'half',
+                    condition: (answers) =>
+                      getValueViaPath(answers, 'ceremony.hasDate') === YES,
                   }),
                   buildSelectField({
                     id: 'ceremony.office',
@@ -310,21 +302,27 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     },
                     condition: (answers) =>
                       getValueViaPath(answers, 'ceremony.ceremonyPlace') ===
-                      'office',
+                        'office' &&
+                      getValueViaPath(answers, 'ceremony.hasDate') === YES,
                   }),
                   buildSelectField({
                     id: 'ceremony.society',
                     title: m.ceremonyAtReligiousLifeViewingSociety,
                     placeholder: m.ceremonyChooseSociety,
-                    options: () => {
-                      return ReligiousLifeViewingSocieties.map((society) => ({
-                        value: society,
-                        label: society,
+                    options: ({
+                      externalData: {
+                        religions: { data },
+                      },
+                    }) => {
+                      return (data as Religions[]).map((society) => ({
+                        value: society.name,
+                        label: society.name,
                       }))
                     },
                     condition: (answers) =>
                       getValueViaPath(answers, 'ceremony.ceremonyPlace') ===
-                      'society',
+                        'society' &&
+                      getValueViaPath(answers, 'ceremony.hasDate') === YES,
                   }),
                 ],
               }),

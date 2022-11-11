@@ -1,4 +1,13 @@
-import { SQS } from 'aws-sdk'
+import {
+  SQSClient,
+  Message as SqsMessage,
+  GetQueueUrlCommand,
+  CreateQueueCommand,
+  SendMessageCommand,
+  ReceiveMessageCommand,
+  DeleteMessageCommand,
+  SendMessageBatchCommand,
+} from '@aws-sdk/client-sqs'
 
 import { Inject, Injectable, ServiceUnavailableException } from '@nestjs/common'
 
@@ -11,7 +20,7 @@ import { Message } from './message'
 
 @Injectable()
 export class MessageService {
-  private readonly sqs: SQS
+  private readonly sqs: SQSClient
   private _queueUrl: string | undefined
 
   constructor(
@@ -19,10 +28,14 @@ export class MessageService {
     private readonly config: ConfigType<typeof messageModuleConfig>,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {
-    this.sqs = new SQS({ endpoint: config.endpoint, region: config.region })
+    this.sqs = new SQSClient({
+      endpoint: config.endpoint,
+      region: config.region,
+    })
+
+    // TODO: Make more robust, by retrying
     this.sqs
-      .getQueueUrl({ QueueName: this.config.queueName })
-      .promise()
+      .send(new GetQueueUrlCommand({ QueueName: this.config.queueName }))
       .then((data) => {
         this.logger.info('Message queue is ready')
 
@@ -34,8 +47,7 @@ export class MessageService {
         }
 
         this.sqs
-          .createQueue({ QueueName: this.config.queueName })
-          .promise()
+          .send(new CreateQueueCommand({ QueueName: this.config.queueName }))
           .then((data) => {
             this.logger.info('Message queue is ready')
 
@@ -55,61 +67,137 @@ export class MessageService {
     throw new ServiceUnavailableException('Message queue is not ready')
   }
 
-  private async deleteMessageFromQueue(receiptHandle?: string): Promise<void> {
-    return this.sqs
-      .deleteMessage({
-        QueueUrl: this.queueUrl,
-        ReceiptHandle: receiptHandle ?? '',
-      })
-      .promise()
-      .then((data) => {
-        if (data?.$response?.error) {
-          throw data.$response.error
-        }
-      })
+  private deleteMessageFromQueue(receiptHandle?: string): void {
+    // No need to wait
+    this.sqs
+      .send(
+        new DeleteMessageCommand({
+          QueueUrl: this.queueUrl,
+          ReceiptHandle: receiptHandle,
+        }),
+      )
       .catch((err) => {
+        // Tolerate failure, but log error
         this.logger.error('Failed to delete message from queue', err)
+      })
+  }
+
+  private async retryMessage(
+    delaySeconds: number,
+    messageBody?: string,
+    receiptHandle?: string,
+  ): Promise<void> {
+    return this.sqs
+      .send(
+        new SendMessageCommand({
+          QueueUrl: this.queueUrl,
+          DelaySeconds: delaySeconds,
+          MessageBody: messageBody,
+        }),
+      )
+      .then((data) => {
+        if (data.MessageId) {
+          this.deleteMessageFromQueue(receiptHandle)
+        } else {
+          this.logger.error('Failed to send message to queue', { data })
+        }
       })
   }
 
   private async handleMessage(
     callback: (message: Message) => Promise<boolean>,
-    sqsMessage: SQS.Message,
+    sqsMessage: SqsMessage,
   ): Promise<void> {
-    return callback(JSON.parse(sqsMessage.Body ?? ''))
-      .then((handled) => {
-        if (handled) {
-          return this.deleteMessageFromQueue(sqsMessage.ReceiptHandle)
+    const message: Message = JSON.parse(sqsMessage.Body ?? '')
+
+    // The maximum delay is 900 seconds, but we want to be able to wait much longer
+    const now = Date.now()
+    if (message.nextRetry && message.nextRetry > now) {
+      return this.retryMessage(
+        Math.min(Math.round((message.nextRetry - now) / 1000), 900),
+        sqsMessage.Body,
+        sqsMessage.ReceiptHandle,
+      )
+    }
+
+    return callback(message).then(async (handled) => {
+      if (!handled) {
+        const numberOfRetries = message.numberOfRetries ?? 0
+        if (numberOfRetries < this.config.maxNumberOfRetries) {
+          // double the interval for each retry
+          const secondsUntilNextRetry =
+            this.config.minRetryIntervalSeconds * 2 ** numberOfRetries
+
+          return this.retryMessage(
+            Math.min(secondsUntilNextRetry, 900),
+            JSON.stringify({
+              ...message,
+              numberOfRetries: numberOfRetries + 1,
+              nextRetry: now + secondsUntilNextRetry * 1000,
+            }),
+            sqsMessage.ReceiptHandle,
+          )
+        } else {
+          this.logger.error(
+            `Failed to handle message after ${numberOfRetries} retries`,
+            { msg: message },
+          )
+        }
+      }
+
+      this.deleteMessageFromQueue(sqsMessage.ReceiptHandle)
+    })
+  }
+
+  async sendMessageToQueue(message: Message): Promise<void> {
+    return this.sqs
+      .send(
+        new SendMessageCommand({
+          QueueUrl: this.queueUrl,
+          MessageBody: JSON.stringify(message),
+        }),
+      )
+      .then((data) => {
+        if (!data.MessageId) {
+          this.logger.error('Failed to send message to queue', { data })
         }
       })
-      .catch((err) => {
-        this.logger.error('Failed to handle message', { err })
-      })
   }
 
-  async postMessageToQueue(message: Message): Promise<string> {
+  async sendMessagesToQueue(messages: Message[]): Promise<void> {
     return this.sqs
-      .sendMessage({
-        QueueUrl: this.queueUrl,
-        MessageBody: JSON.stringify(message),
+      .send(
+        new SendMessageBatchCommand({
+          QueueUrl: this.queueUrl,
+          Entries: messages.map((message, index) => ({
+            MessageBody: JSON.stringify(message),
+            Id: index.toString(),
+          })),
+        }),
+      )
+      .then((data) => {
+        if (data.Failed && data.Failed.length > 0) {
+          this.logger.error('Failed to send messages to queue', { data })
+        }
       })
-      .promise()
-      .then((data) => data.MessageId ?? '')
   }
 
-  async receiveMessageFromQueue(
+  async receiveMessagesFromQueue(
     callback: (message: Message) => Promise<boolean>,
   ): Promise<void> {
     return this.sqs
-      .receiveMessage({
-        QueueUrl: this.queueUrl,
-        MaxNumberOfMessages: this.config.maxNumberOfMessages,
-        WaitTimeSeconds: this.config.waitTimeSeconds,
-      })
-      .promise()
+      .send(
+        new ReceiveMessageCommand({
+          QueueUrl: this.queueUrl,
+          MaxNumberOfMessages: this.config.maxNumberOfMessages,
+          WaitTimeSeconds: this.config.waitTimeSeconds,
+        }),
+      )
       .then(async (data) => {
         if (data.Messages && data.Messages.length > 0) {
-          return this.handleMessage(callback, data.Messages[0])
+          for (const message of data.Messages) {
+            await this.handleMessage(callback, message)
+          }
         }
       })
   }

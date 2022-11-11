@@ -392,17 +392,20 @@ export const isSubpoenaStepValid = (workingCase: Case, courtDate?: string) => {
   )
 }
 
-export const isprosecutorAndDefenderStepValid = (workingCase: Case) => {
-  return (
-    workingCase.prosecutor &&
-    (workingCase.defendantWaivesRightToCounsel ||
-      validate([
-        [workingCase.defenderNationalId, ['empty']],
-        [workingCase.defenderName, ['empty']],
-        [workingCase.defenderEmail, ['email-format']],
-        [workingCase.defenderPhoneNumber, ['phonenumber']],
-      ]).isValid)
-  )
+export const isProsecutorAndDefenderStepValid = (workingCase: Case) => {
+  const defendantsAreValid = () =>
+    workingCase.defendants?.every((defendant) => {
+      return (
+        defendant.defendantWaivesRightToCounsel ||
+        validate([
+          [defendant.defenderName, ['empty']],
+          [defendant.defenderEmail, ['email-format']],
+          [defendant.defenderPhoneNumber, ['phonenumber']],
+        ]).isValid
+      )
+    })
+
+  return workingCase.prosecutor && defendantsAreValid()
 }
 
 export const isAdminUserFormValid = (user: User) => {

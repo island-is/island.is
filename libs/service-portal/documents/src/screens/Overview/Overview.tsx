@@ -15,6 +15,8 @@ import {
   ServicePortalModuleComponent,
   IntroHeader,
   EmptyState,
+  ServicePortalPath,
+  formatPlausiblePathToParams,
 } from '@island.is/service-portal/core'
 import {
   DocumentCategory,
@@ -247,7 +249,11 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
         searchQuery: e.target?.value ?? '',
       }))
       if (!searchInteractionEventSent) {
-        documentsSearchDocumentsInitialized(pathname)
+        documentsSearchDocumentsInitialized(
+          formatPlausiblePathToParams(
+            ServicePortalPath.ElectronicDocumentsRoot,
+          ),
+        )
         setSearchInteractionEventSent(true)
       }
     }

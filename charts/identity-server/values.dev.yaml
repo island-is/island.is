@@ -6,7 +6,7 @@ auth-admin-web:
     NEXTAUTH_URL: 'https://identity-server.dev01.devland.is/admin/api/auth'
     NEXT_PUBLIC_BACKEND_URL: '/backend'
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: 'delegation-api'
+    SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
@@ -62,6 +62,7 @@ global:
   env:
     AUDIT_GROUP_NAME: '/identity-server/audit-log'
     AWS_REGION: 'eu-west-1'
+    NO_UPDATE_NOTIFIER: 'true'
     PORT: '3333'
     name: 'dev'
   image:
@@ -95,11 +96,12 @@ identity-server:
     Datadog__Metrics__Port: '5003'
     IdentityServer__EnableFakeLogin: 'true'
     IdentityServer__EnableFeatureDeploymentWildcards: 'true'
+    IdentityServer__KeyManagement__Enabled: 'true'
     IdentityServer__SigningCertificate__Path: '/etc/config/ids-signing.pfx'
     NODE_OPTIONS: '--max-old-space-size=208'
     PersistenceSettings__BaseAddress: 'http://web-services-auth-ids-api'
     PersistenceSettings__UserProfileBaseAddress: 'http://web-service-portal-api.service-portal.svc.cluster.local'
-    SERVERSIDE_FEATURES_ON: 'delegation-api'
+    SERVERSIDE_FEATURES_ON: ''
   files:
     - 'ids-signing.pfx'
   grantNamespaces: []
@@ -191,7 +193,7 @@ services-auth-admin-api:
     DB_USER: 'servicesauth'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: 'delegation-api'
+    SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
@@ -250,7 +252,7 @@ services-auth-delegation-api:
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: 'delegation-api'
+    SERVERSIDE_FEATURES_ON: ''
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
     XROAD_CLIENT_ID: 'IS-DEV/GOV/10000/island-is-client'
@@ -330,7 +332,7 @@ services-auth-ids-api:
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=464'
     PUBLIC_URL: 'https://identity-server.dev01.devland.is/api'
-    SERVERSIDE_FEATURES_ON: 'delegation-api'
+    SERVERSIDE_FEATURES_ON: ''
     USER_PROFILE_CLIENT_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
@@ -397,7 +399,7 @@ services-auth-ids-api:
       DB_NAME: 'servicesauth'
       DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
       DB_USER: 'servicesauth'
-      SERVERSIDE_FEATURES_ON: 'delegation-api'
+      SERVERSIDE_FEATURES_ON: ''
     secrets:
       DB_PASS: '/k8s/services-auth/api/DB_PASSWORD'
   namespace: 'identity-server'
@@ -431,7 +433,7 @@ services-auth-personal-representative:
     DB_USER: 'servicesauth'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: 'delegation-api'
+    SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
@@ -496,7 +498,7 @@ services-auth-personal-representative-public:
     DB_USER: 'servicesauth'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: 'delegation-api'
+    SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
@@ -563,7 +565,7 @@ services-auth-public-api:
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=208'
     PUBLIC_URL: 'https://identity-server.dev01.devland.is/api'
-    SERVERSIDE_FEATURES_ON: 'delegation-api'
+    SERVERSIDE_FEATURES_ON: ''
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
     XROAD_CLIENT_ID: 'IS-DEV/GOV/10000/island-is-client'

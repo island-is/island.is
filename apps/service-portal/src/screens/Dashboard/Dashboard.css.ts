@@ -1,8 +1,12 @@
-import { style } from '@vanilla-extract/css'
+import { style, globalStyle } from '@vanilla-extract/css'
 import { themeUtils } from '@island.is/island-ui/theme'
 
 export const relative = style({
   position: 'relative',
+})
+
+globalStyle(`${relative} a`, {
+  textDecoration: 'none',
 })
 
 export const imageAbsolute = style({

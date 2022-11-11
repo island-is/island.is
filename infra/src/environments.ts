@@ -8,7 +8,7 @@ const dev01: EnvironmentConfig = {
     'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com',
   domain: 'dev01.devland.is',
   type: 'dev',
-  featuresOn: [FeatureNames.delegationApi],
+  featuresOn: [],
   defaultMaxReplicas: 3,
   defaultMinReplicas: 2,
   releaseName: 'web',
@@ -20,6 +20,7 @@ const dev01: EnvironmentConfig = {
         AWS_REGION: 'eu-west-1',
         PORT: '3333',
         name: 'dev',
+        NO_UPDATE_NOTIFIER: 'true',
         AUDIT_GROUP_NAME: '/island-is/audit-log',
       },
       image: {
@@ -37,7 +38,7 @@ const staging01: EnvironmentConfig = {
   auroraHost: 'postgres-applications.internal',
   domain: 'staging01.devland.is',
   type: 'staging',
-  featuresOn: [FeatureNames.delegationApi],
+  featuresOn: [],
   defaultMaxReplicas: 3,
   defaultMinReplicas: 2,
   releaseName: 'web',
@@ -49,6 +50,7 @@ const staging01: EnvironmentConfig = {
         AWS_REGION: 'eu-west-1',
         PORT: '3333',
         name: 'staging',
+        NO_UPDATE_NOTIFIER: 'true',
         AUDIT_GROUP_NAME: '/island-is/audit-log',
       },
       image: {
@@ -92,6 +94,7 @@ export let Envs: EnvironmentConfigs = {
           AWS_REGION: 'eu-west-1',
           PORT: '3333',
           name: 'prod',
+          NO_UPDATE_NOTIFIER: 'true',
           AUDIT_GROUP_NAME: '/island-is/audit-log',
         },
         image: {
@@ -121,6 +124,7 @@ export let Envs: EnvironmentConfigs = {
           AWS_REGION: 'eu-west-1',
           PORT: '3333',
           name: 'prod',
+          NO_UPDATE_NOTIFIER: 'true',
           AUDIT_GROUP_NAME: '/identity-server/audit-log',
         },
         image: {

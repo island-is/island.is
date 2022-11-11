@@ -241,6 +241,7 @@ api:
   enabled: true
   env:
     APPLICATION_SYSTEM_API_URL: 'http://web-application-system-api.application-system.svc.cluster.local'
+    AUTH_DELEGATION_API_URL: 'https://auth-delegation-api.internal.innskra.island.is'
     AUTH_PUBLIC_API_URL: 'https://innskra.island.is/api'
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS/GOV/5402696029/Skatturinn/ft-v1'
@@ -248,6 +249,7 @@ api:
     CONTENTFUL_HOST: 'cdn.contentful.com'
     DOWNLOAD_SERVICE_BASE_PATH: 'https://api.island.is'
     ELASTIC_NODE: 'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com/'
+    ELECTRONIC_REGISTRATION_STATISTICS_API_URL: 'https://gw-api.skra.is/business/tolfraedi'
     ENDORSEMENT_SYSTEM_BASE_API_URL: 'http://web-endorsement-system-api.endorsement-system.svc.cluster.local'
     FILE_DOWNLOAD_BUCKET: 'island-is-prod-download-cache-api'
     FILE_STORAGE_UPLOAD_BUCKET: 'island-is-prod-upload-api'
@@ -965,6 +967,7 @@ global:
   env:
     AUDIT_GROUP_NAME: '/island-is/audit-log'
     AWS_REGION: 'eu-west-1'
+    NO_UPDATE_NOTIFIER: 'true'
     PORT: '3333'
     name: 'prod'
   image:

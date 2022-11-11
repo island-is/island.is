@@ -6,6 +6,11 @@ export const m = defineMessages({
     defaultMessage: 'Skil á ársreikningi',
     description: 'Application for Digital',
   },
+  applicationTitleAlt: {
+    id: 'fsn.application:applicationTitleAlt',
+    defaultMessage: 'Skil á upplýsingum ',
+    description: 'Application for Individual elections',
+  },
   inao: {
     id: 'fsn.application:inao',
     defaultMessage: 'Ríkisendurskoðun',
@@ -296,6 +301,11 @@ export const m = defineMessages({
     defaultMessage: 'Þessi kennitala virðist ekki vera rétt',
     description: 'National id is invalid',
   },
+  errorFetchingName: {
+    id: 'fsn.application:error.errorFetchingName',
+    defaultMessage: 'Tókst ekki að sækja nafn umboðsmanns',
+    description: 'Could not fetch powerofattorney name',
+  },
   errorEmpty: {
     id: 'fsn.application:error.empty',
     defaultMessage: 'Reitur má ekki vera tómur',
@@ -315,6 +325,18 @@ export const m = defineMessages({
     id: 'fsn.application:error.errorMembersMissing',
     defaultMessage: 'Skrá þarf bæði skoðunarmann og stjórnarmann',
     description: 'Members missing',
+  },
+  errormemberNotUnique: {
+    id: 'fsn.application:error.errormemberNotUnique',
+    defaultMessage:
+      'Ekki er hægt að skrá sama aðila sem Stjórnarmann og Skoðunarmann',
+    description: 'Members missing',
+  },
+  errormemberCanNotIncludeApplicant: {
+    id: 'fsn.application:error.errormemberCanNotIncludeApplicant',
+    defaultMessage:
+      'Umsækjandi má ekki vera skráður sem stjórnarmaður eða skoðunarmaður',
+    description: 'error, applicant regsitered as caretaker/boardmember',
   },
   contributionsFromTheTreasury: {
     id: 'fsn.application:income.contributionsFromTheTreasury',
@@ -428,7 +450,7 @@ export const m = defineMessages({
   },
   donationsToCemeteryFund: {
     id: 'fsn.application:income.donationsToCemeteryFund',
-    defaultMessage: 'Styrkur frá kirkjugarðasjóði',
+    defaultMessage: 'Framlög til kirkjugarðasjóðs',
     description: 'donations from cemetry fund',
   },
   cemeteryCaretakers: {
@@ -524,7 +546,7 @@ export const m = defineMessages({
   },
   equity: {
     id: 'fsn.application:keyNumbers.equity',
-    defaultMessage: 'Eigið fé alls',
+    defaultMessage: 'Eigið fé',
     description: 'total equity',
   },
   equityAtTheBeginningOfTheYear: {
@@ -705,6 +727,11 @@ export const m = defineMessages({
   required: {
     id: 'fsn.application:error.required',
     defaultMessage: 'Reitur má ekki vera tómur',
+    description: 'Error message when a required field has not been filled',
+  },
+  negativeNumberError: {
+    id: 'fsn.application:error.negativeNumberError',
+    defaultMessage: 'Ekki er leyfilegt að setja inn neikvæðar tölur',
     description: 'Error message when a required field has not been filled',
   },
   nationalIdError: {

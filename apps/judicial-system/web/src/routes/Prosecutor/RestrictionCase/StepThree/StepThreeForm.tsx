@@ -2,10 +2,7 @@ import React, { useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 
 import { Box, Text, Input, Checkbox } from '@island.is/island-ui/core'
-import {
-  formatDate,
-  formatNationalId,
-} from '@island.is/judicial-system/formatters'
+import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
 import {
   CaseCustodyRestrictions,
   CaseType,
@@ -66,11 +63,14 @@ export const getDemandsAutofill = (
   formatMessage: IntlShape['formatMessage'],
   props: DemandsAutofillProps,
 ): string => {
-  return formatMessage(rcReportForm.sections.demands.autofillV3, {
-    accusedName: props.defendant.name,
-    accusedNationalId: props.defendant.noNationalId
-      ? ' '
-      : `, kt. ${formatNationalId(props.defendant.nationalId ?? '')}, `,
+  const defendantDOB = formatDOB(
+    props.defendant.nationalId,
+    props.defendant.noNationalId,
+    '',
+  )
+  return formatMessage(rcReportForm.sections.demands.autofill, {
+    defendantName: props.defendant.name,
+    defendantDOB: defendantDOB ? `, ${defendantDOB}, ` : ', ',
     isExtended:
       props.parentCaseDecision &&
       isAcceptingCaseDecision(props.parentCaseDecision),
@@ -96,7 +96,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
     '',
   )
 
-  const { updateCase, setAndSendToServer } = useCase()
+  const { updateCase, setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
 
   useDeb(workingCase, 'lawsBroken')
@@ -110,7 +110,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
       requestedValidToDate: Date | string | undefined,
       requestedCustodyRestrictions: CaseCustodyRestrictions[] | undefined,
     ) => {
-      setAndSendToServer(
+      setAndSendCaseToServer(
         [
           entry,
           {
@@ -132,7 +132,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
         setWorkingCase,
       )
     },
-    [workingCase, formatMessage, setWorkingCase, setAndSendToServer],
+    [workingCase, formatMessage, setWorkingCase, setAndSendCaseToServer],
   )
 
   return (

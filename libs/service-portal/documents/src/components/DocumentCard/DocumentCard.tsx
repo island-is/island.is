@@ -1,5 +1,9 @@
 import React, { FC, useState } from 'react'
-import { ActionCard, Modal } from '@island.is/service-portal/core'
+import {
+  ActionCard,
+  formatPlausiblePathToParams,
+  Modal,
+} from '@island.is/service-portal/core'
 import { Document, DocumentDetails } from '@island.is/api/schema'
 import { GET_DOCUMENT, client } from '@island.is/service-portal/graphql'
 import { useLocale } from '@island.is/localization'
@@ -86,7 +90,9 @@ const DocumentCard: FC<Props> = ({ document }) => {
       }
 
       setDocumentDetails({ documentDetails: doc })
-      documentsOpenDocument(pathname, document.subject)
+      documentsOpenDocument(
+        formatPlausiblePathToParams(pathname, document.subject),
+      )
       if (documentIsPdf(doc) && windowRef) {
         windowRef.location.assign(getPdfURL(doc.content))
         return
@@ -120,7 +126,7 @@ const DocumentCard: FC<Props> = ({ document }) => {
         eyebrow={document.senderName}
         key={document.id}
         cta={{
-          externalUrl: getEdgecaseDocument(document)?.url,
+          url: getEdgecaseDocument(document)?.url,
           onClick: onClickHandler,
           label: formatMessage({
             id: 'sp.documents:documentCard-ctaLabel',

@@ -17,6 +17,7 @@ import {
   DelegationScopeResolver,
   CustomDelegationResolver,
   DomainResolver,
+  MergedDelegationResolver,
 } from './resolvers'
 import { MeDelegationsService } from './services/meDelegations.service'
 import { ApiScopeService } from './services/apiScope.service'
@@ -24,11 +25,13 @@ import { APP_INTERCEPTOR } from '@nestjs/core'
 import { DataLoaderInterceptor } from '@island.is/nest/dataloader'
 import { DomainLoader } from './loaders/domain.loader'
 import { ApiScopeLoader } from './loaders/apiScope.loader'
+import { CmsModule } from '@island.is/cms'
 
 @Module({
   providers: [
     DelegationResolver,
     CustomDelegationResolver,
+    MergedDelegationResolver,
     DelegationScopeResolver,
     ApiScopeResolver,
     DomainResolver,
@@ -42,6 +45,7 @@ import { ApiScopeLoader } from './loaders/apiScope.loader'
     ApiScopeServiceV2,
     ApiScopeLoader,
     DomainLoader,
+    CmsModule,
     {
       provide: APP_INTERCEPTOR,
       useClass: DataLoaderInterceptor,
