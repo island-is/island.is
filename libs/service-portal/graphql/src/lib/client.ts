@@ -39,6 +39,15 @@ export const client = new ApolloClient({
       UserProfile: {
         keyFields: ['nationalId'],
       },
+      Query: {
+        fields: {
+          authDelegations: {
+            merge(_, incoming) {
+              return incoming
+            },
+          },
+        },
+      },
     },
   }),
 })

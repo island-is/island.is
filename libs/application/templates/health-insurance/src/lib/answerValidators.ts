@@ -51,6 +51,11 @@ export const answerValidators: Record<string, AnswerValidator> = {
       'applicant',
     ) as Applicant
 
+    const citizenship = getValueViaPath(
+      application.answers,
+      'citizenship',
+    ) as string
+
     /* Registration must be Yes / No */
     if (registration !== YES && registration !== NO) {
       const field = `${FORMER_INSURANCE}.registration`
@@ -65,7 +70,7 @@ export const answerValidators: Record<string, AnswerValidator> = {
       return buildError('Please select a country', field)
     }
 
-    if (!requireWaitingPeriod(country, applicant?.citizenship)) {
+    if (!requireWaitingPeriod(country, citizenship)) {
       const personalIdField = `${FORMER_INSURANCE}.personalId`
 
       if (personalId) {

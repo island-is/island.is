@@ -24,12 +24,7 @@ import {
   useCase,
   useFileList,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import {
-  CaseState,
-  CaseTransition,
-  Feature,
-} from '@island.is/judicial-system/types'
-import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
+import { CaseState, CaseTransition } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 
 import * as strings from './Overview.strings'
@@ -42,7 +37,6 @@ const Overview: React.FC = () => {
     isLoadingWorkingCase,
     caseNotFound,
   } = useContext(FormContext)
-  const { features } = useContext(FeatureContext)
   const [modal, setModal] = useState<'noModal' | 'caseSubmittedModal'>(
     'noModal',
   )

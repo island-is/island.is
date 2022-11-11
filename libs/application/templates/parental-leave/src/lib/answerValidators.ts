@@ -57,12 +57,6 @@ export const answerValidators: Record<string, AnswerValidator> = {
       buildValidationError(`${EMPLOYER}.${path}`)(message)
 
     const { isSelfEmployed } = getApplicationAnswers(application.answers)
-    if (obj.isSelfEmployed === '' || !obj.isSelfEmployed) {
-      if (isSelfEmployed) {
-        return undefined
-      }
-      return buildError(coreErrorMessages.defaultError, 'isSelfEmployed')
-    }
 
     // If the new answer is the `isSelfEmployed` step, it means we didn't enter the email address yet
     if (obj.isSelfEmployed) {
@@ -82,6 +76,13 @@ export const answerValidators: Record<string, AnswerValidator> = {
 
     if (isSelfEmployed === NO && !isValidEmail(obj.email as string)) {
       return buildError(errorMessages.email, 'email')
+    }
+
+    if (obj.isSelfEmployed === '' || !obj.isSelfEmployed) {
+      if (isSelfEmployed) {
+        return undefined
+      }
+      return buildError(coreErrorMessages.defaultError, 'isSelfEmployed')
     }
 
     return undefined
