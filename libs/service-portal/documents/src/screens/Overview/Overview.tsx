@@ -30,7 +30,6 @@ import { messages } from '../../utils/messages'
 import DocumentLine from '../../components/DocumentLine/DocumentLine'
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 import isAfter from 'date-fns/isAfter'
-import * as Sentry from '@sentry/react'
 import differenceInYears from 'date-fns/differenceInYears'
 import DocumentsFilter from '../../components/DocumentFilter/DocumentsFilter'
 import debounce from 'lodash/debounce'
@@ -76,9 +75,6 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   client,
 }) => {
   useNamespaces('sp.documents')
-  Sentry.configureScope((scope) =>
-    scope.setTransactionName('Electronic-Documents'),
-  )
 
   const { formatMessage } = useLocale()
   const [page, setPage] = useState(1)
