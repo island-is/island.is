@@ -18,14 +18,13 @@ import { partyKeyNumbersSection } from './party/partyKeyNumbers'
 import { individualKeyNumbersSection } from './individual/individualKeyNumbers'
 import { electionInfoSection } from './shared/electionInfo/electionInfo'
 import { sectionCemetryCaretaker } from './cemetry/sectionCemetryCaretaker'
-import { fakeDataSection } from '../prerequisites/fakeDataSection'
 import {
   currencyStringToNumber,
   getCurrentUserType,
 } from '../../lib/utils/helpers'
 import {
   CurrentUserTypeProvider,
-  NationalRegistryUserApi,
+  IndentityApiProvider,
   UserProfileApi,
 } from '../../dataProviders'
 
@@ -42,14 +41,13 @@ export const getApplication = (allowFakeData = false): Form => {
         id: 'conditions',
         title: m.dataCollectionTitle,
         children: [
-          ...(allowFakeData ? [fakeDataSection] : []),
           buildExternalDataProvider({
             id: 'approveExternalData',
             title: m.dataCollectionTitle,
             checkboxLabel: m.dataCollectionCheckboxLabel,
             dataProviders: [
               buildDataProviderItem({
-                provider: NationalRegistryUserApi,
+                provider: IndentityApiProvider,
                 title: m.dataCollectionNationalRegistryTitle,
                 subTitle: m.dataCollectionNationalRegistrySubtitle,
               }),

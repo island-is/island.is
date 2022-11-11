@@ -301,6 +301,11 @@ export const m = defineMessages({
     defaultMessage: 'Þessi kennitala virðist ekki vera rétt',
     description: 'National id is invalid',
   },
+  errorFetchingName: {
+    id: 'fsn.application:error.errorFetchingName',
+    defaultMessage: 'Tókst ekki að sækja nafn umboðsmanns',
+    description: 'Could not fetch powerofattorney name',
+  },
   errorEmpty: {
     id: 'fsn.application:error.empty',
     defaultMessage: 'Reitur má ekki vera tómur',
@@ -445,7 +450,7 @@ export const m = defineMessages({
   },
   donationsToCemeteryFund: {
     id: 'fsn.application:income.donationsToCemeteryFund',
-    defaultMessage: 'Styrkur frá kirkjugarðasjóði',
+    defaultMessage: 'Framlög til kirkjugarðasjóðs',
     description: 'donations from cemetry fund',
   },
   cemeteryCaretakers: {
@@ -722,6 +727,11 @@ export const m = defineMessages({
   required: {
     id: 'fsn.application:error.required',
     defaultMessage: 'Reitur má ekki vera tómur',
+    description: 'Error message when a required field has not been filled',
+  },
+  negativeNumberError: {
+    id: 'fsn.application:error.negativeNumberError',
+    defaultMessage: 'Ekki er leyfilegt að setja inn neikvæðar tölur',
     description: 'Error message when a required field has not been filled',
   },
   nationalIdError: {

@@ -47,7 +47,7 @@ export enum ScreenType {
 }
 
 export type Delegation = {
-  type: string
+  types: string[]
   from: {
     nationalId: string
     name: string

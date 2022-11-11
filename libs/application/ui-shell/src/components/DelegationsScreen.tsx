@@ -1,3 +1,4 @@
+import intersection from 'lodash/intersection'
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { useQuery } from '@apollo/client'
 import { useAuth } from '@island.is/auth/react'
@@ -23,6 +24,7 @@ import { useHistory } from 'react-router-dom'
 import { ScreenType, DelegationsScreenDataType, Delegation } from '../types'
 import { FeatureFlagClient, Features } from '@island.is/feature-flags'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
+
 interface DelegationsScreenProps {
   alternativeSubjects?: { nationalId: string }[]
   checkDelegation: Dispatch<SetStateAction<boolean>>
@@ -89,7 +91,7 @@ export const DelegationsScreen = ({
               screenType: ScreenType.NOT_SUPPORTED,
               authDelegations: [
                 {
-                  type: 'user',
+                  types: ['user'],
                   from: {
                     nationalId: user.profile.actor.nationalId,
                     name: user.profile.actor.name,
@@ -117,7 +119,8 @@ export const DelegationsScreen = ({
     if (delegations && !!screenData.allowedDelegations && user) {
       const authActorDelegations: Delegation[] = delegations.authActorDelegations.filter(
         (delegation: Delegation) =>
-          screenData.allowedDelegations?.includes(delegation.type),
+          intersection(screenData.allowedDelegations, delegation.types).length >
+          0,
       )
       if (authActorDelegations.length <= 0) {
         checkDelegation(true)
@@ -141,7 +144,7 @@ export const DelegationsScreen = ({
             screenType: ScreenType.NEW,
             authDelegations: [
               {
-                type: 'user',
+                types: ['user'],
                 from: user.profile.actor
                   ? {
                       nationalId: user.profile.actor.nationalId,
