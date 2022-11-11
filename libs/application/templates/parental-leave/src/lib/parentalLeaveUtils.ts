@@ -228,8 +228,9 @@ export const getAvailablePersonalRightsInDays = (application: Application) => {
   }
 
   const totalTransferredDays = getTransferredDays(application, selectedChild)
+  const additionalSingleParentDays = getAdditionalSingleParentRightsInDays(application)
 
-  return totalDaysAvailable - totalTransferredDays
+  return totalDaysAvailable - additionalSingleParentDays - totalTransferredDays
 }
 
 export const getAvailablePersonalRightsInMonths = (application: Application) =>
