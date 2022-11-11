@@ -1,3 +1,4 @@
+import { useMemo, useState } from 'react'
 import {
   Box,
   Button,
@@ -8,13 +9,27 @@ import {
 } from '@island.is/island-ui/core'
 import { FormField } from '@island.is/web/components'
 import { EmailSignup as EmailSignupSchema } from '@island.is/web/graphql/schema'
-import slugify from '@sindresorhus/slugify'
+
+const getInitialValues = (formFields: EmailSignupSchema['formFields']) => {
+  const formFieldsWithNames = formFields?.filter((field) => field?.name) ?? []
+  return formFieldsWithNames.reduce((acc, curr) => {
+    acc[curr.name] = ''
+    return acc
+  }, {})
+}
 
 interface EmailSignupProps {
   slice: EmailSignupSchema
 }
 
 const EmailSignup = ({ slice }: EmailSignupProps) => {
+  const formFields = useMemo(
+    () => slice.formFields?.filter((field) => field?.name) ?? [],
+    [slice.formFields],
+  )
+
+  const [values, setValues] = useState(getInitialValues(formFields))
+
   return (
     <Box
       paddingY={[3, 3, 8]}
@@ -34,18 +49,25 @@ const EmailSignup = ({ slice }: EmailSignupProps) => {
           </GridRow>
 
           <GridRow>
-            {slice.formFields?.map((field) => {
-              const slug = slugify(field.title)
-              return (
-                <FormField
-                  key={field.id}
-                  field={field}
-                  slug={slug}
-                  onChange={() => {}}
-                  value=""
-                />
-              )
-            })}
+            <GridColumn span="1/1">
+              {formFields.map((field) => {
+                return (
+                  <Box key={field.id} marginBottom={3} width="full">
+                    <FormField
+                      field={field}
+                      slug={field.name}
+                      onChange={(slug, value) =>
+                        setValues((prevValues) => ({
+                          ...prevValues,
+                          [slug]: value,
+                        }))
+                      }
+                      value={values[field.name]}
+                    />
+                  </Box>
+                )
+              })}
+            </GridColumn>
           </GridRow>
 
           <GridRow>

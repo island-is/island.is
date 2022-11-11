@@ -861,6 +861,9 @@ export interface IFormFieldFields {
   /** Title */
   title: string
 
+  /** Name */
+  name?: string | undefined
+
   /** Placeholder */
   placeholder?: string | undefined
 
@@ -1851,6 +1854,9 @@ export interface INamespace extends Entry<INamespaceFields> {
 }
 
 export interface INewsFields {
+  /** Tilkynning */
+  tilkynning?: string | undefined
+
   /** Content status */
   contentStatus?: 'Undefined' | 'Needs work' | 'In review' | 'Done' | undefined
 

@@ -508,6 +508,7 @@ export const slices = gql`
     recipient
     fields {
       title
+      name
       placeholder
       type
       required
@@ -611,6 +612,7 @@ export const slices = gql`
     description
     formFields {
       title
+      name
       placeholder
       type
       required

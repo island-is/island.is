@@ -10,6 +10,9 @@ export class FormField {
   @Field()
   title!: string
 
+  @Field({ nullable: true })
+  name?: string
+
   @Field()
   placeholder!: string
 
@@ -29,6 +32,7 @@ export class FormField {
 export const mapFormField = ({ sys, fields }: IFormField): FormField => ({
   id: sys.id,
   title: fields.title ?? '',
+  name: fields.name ?? '',
   placeholder: fields.placeholder ?? '',
   type: fields.type ?? 'input',
   required: fields.required ?? false,
