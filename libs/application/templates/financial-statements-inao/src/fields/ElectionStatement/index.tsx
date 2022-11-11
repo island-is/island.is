@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
 import { Box, InputError, Text } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
@@ -8,7 +8,7 @@ import { FinancialStatementsInao } from '../../lib/utils/dataSchema'
 import { format as formatNationalId } from 'kennitala'
 import { useSubmitApplication } from '../../hooks/useSubmitApplication'
 import { ELECTIONLIMIT, GREATER } from '../../lib/constants'
-import { currencyStringToNumber, formatNumber } from '../../lib/utils/helpers'
+import { formatNumber } from '../../lib/utils/helpers'
 import BottomBar from '../../components/BottomBar'
 import { useFormContext } from 'react-hook-form'
 
@@ -18,7 +18,7 @@ export const ElectionStatement = ({
   refetch,
 }: FieldBaseProps) => {
   const { formatMessage } = useLocale()
-  const { errors, setError } = useFormContext()
+  const { errors } = useFormContext()
   const answers = application.answers as FinancialStatementsInao
 
   const [submitApplication] = useSubmitApplication({
