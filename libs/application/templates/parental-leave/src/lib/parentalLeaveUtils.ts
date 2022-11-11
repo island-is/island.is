@@ -488,6 +488,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     answers,
     'multipleBirthsRequestDays',
   ) as number | undefined
+
   const multipleBirthsRequestDays = getOrFallback(
     hasMultipleBirths,
     multipleBirthsRequestDaysValue,
@@ -659,10 +660,20 @@ export function getApplicationAnswers(answers: Application['answers']) {
     requestValue,
   )
 
-  const isGivingRights =
+  let isGivingRights =
     transferRights === TransferRightsOption.GIVE
       ? YES
       : (getValueViaPath(answers, 'giveRights.isGivingRights') as YesOrNo)
+
+  /*
+   ** When multiple births is selected and applicant is not using all 'common' rights
+   ** Need this check so we are not returning wrong answer
+   */
+  if (isGivingRights === YES && hasMultipleBirths === YES) {
+    if (multipleBirthsRequestDays * 1 !== 0) {
+      isGivingRights = NO
+    }
+  }
 
   const giveValue = getValueViaPath(answers, 'giveRights.giveDays') as
     | number
@@ -687,7 +698,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     applicationType,
     hasMultipleBirths,
     multipleBirths,
-    multipleBirthsRequestDays,
+    multipleBirthsRequestDays: Number(multipleBirthsRequestDays),
     otherParent,
     otherParentRightOfAccess,
     pensionFund,
