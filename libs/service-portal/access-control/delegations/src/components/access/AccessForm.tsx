@@ -236,7 +236,6 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
         error={updateError}
       />
       <AccessDeleteModal
-        id={`access-delete-modal-${delegation?.id}`}
         onDelete={() => {
           history.push(
             delegation.to?.nationalId === userInfo?.profile.nationalId
@@ -245,17 +244,8 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
           )
         }}
         onClose={() => setOpenDeleteModal(false)}
-        label={formatMessage(m.accessControl)}
-        title={formatMessage({
-          id: 'sp.settings-access-control:access-remove-modal-content',
-          defaultMessage: 'Ertu viss um að þú viljir eyða þessum aðgangi?',
-        })}
         isVisible={openDeleteModal}
         delegation={delegation as AuthCustomDelegation}
-        domain={{
-          name: delegation?.domain.displayName,
-          imgSrc: delegation?.domain.organisationLogoUrl,
-        }}
       />
     </>
   )
