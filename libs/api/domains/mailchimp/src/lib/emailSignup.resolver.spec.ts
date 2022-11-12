@@ -27,11 +27,11 @@ describe('emailSignupResolver', () => {
     const testInput: EmailSignupInput = {
       signupID: '123',
       inputFields: [
-        // {
-        //   name: 'EMAIL',
-        //   type: 'email',
-        //   value: 'test@example.com',
-        // },
+        {
+          name: 'EMAIL',
+          type: 'email',
+          value: 'test@example.com',
+        },
         {
           name: 'NAME',
           type: 'input',
@@ -48,9 +48,10 @@ describe('emailSignupResolver', () => {
         )
 
       jest.spyOn(axios, 'get').mockImplementation((url) => {
+        console.log('URL', url)
         if (
           url ===
-          'https://example.com/signup?email=test@example.com&name=Tester&toggle=Yes'
+          'https://example.com/signup?EMAIL=test@example.com&NAME=Tester'
         ) {
           return Promise.resolve(true)
         } else {
@@ -67,9 +68,9 @@ describe('emailSignupResolver', () => {
 
     it('should try to subscribe to a mailing list that responds with an error', async () => {
       jest
-        .spyOn(cmsContentfulService, 'getMailingListSignupSlice')
+        .spyOn(cmsContentfulService, 'getEmailSignup')
         .mockImplementation(({ id }) =>
-          Promise.resolve(id === '123' ? emailSlice : null),
+          Promise.resolve(id === '123' ? emailSignup : null),
         )
 
       // Mock axios throwing an error
@@ -84,17 +85,19 @@ describe('emailSignupResolver', () => {
 
     it('should try to subscribe to a mailing list that has an invalid URL', async () => {
       const testEmailSlice = {
-        ...emailSlice,
+        ...emailSignup,
         signupUrl: 'https://example.com/invalid_url',
       }
 
       jest
-        .spyOn(cmsContentfulService, 'getMailingListSignupSlice')
+        .spyOn(cmsContentfulService, 'getEmailSignup')
         .mockImplementation(({ id }) =>
           Promise.resolve(id === '123' ? testEmailSlice : null),
         )
 
-      const result = await emailSignupResolver.mailchimpSubscribe(testInput)
+      const result = await emailSignupResolver.emailSignupSubscription(
+        testInput,
+      )
 
       expect(result?.subscribed).toBe(false)
     })
