@@ -1,6 +1,6 @@
 import { dump, load } from 'js-yaml'
 import {
-  DockerComposeValueFile,
+  LocalrunValueFile,
   FeatureKubeJob,
   HelmValueFile,
   ServiceHelm,
@@ -28,7 +28,7 @@ export const dumpServiceHelm = (ch: Kubernetes, valueFile: HelmValueFile) => {
 }
 export const dumpDockerCompose = (
   ch: Localhost,
-  valueFile: DockerComposeValueFile,
+  valueFile: LocalrunValueFile,
 ) => {
   const { services, mocks } = valueFile
   return dump({ ...services, ...mocks }, dumpOpts)

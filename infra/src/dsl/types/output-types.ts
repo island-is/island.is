@@ -126,19 +126,10 @@ export interface ServiceHelm {
   files?: string[]
 }
 
-export interface DockerComposeService {
+export interface LocalrunService {
   env: ContainerEnvironmentVariables
-  image: string
   command?: string[]
   port?: number
-  depends_on: {
-    [name: string]: {
-      condition:
-        | 'service_completed_successfully'
-        | 'service_healthy'
-        | 'service_started'
-    }
-  }
 }
 
 export interface FeatureKubeJob {
@@ -172,7 +163,7 @@ export type SerializeErrors = {
 }
 
 export type Output = 'helm' | 'docker-compose'
-export type ServiceOutputType = ServiceHelm | DockerComposeService
+export type ServiceOutputType = ServiceHelm | LocalrunService
 
 export type SerializeMethod<T extends ServiceOutputType> = (
   service: ServiceDefinitionForEnv,
@@ -188,9 +179,9 @@ export type HelmValueFile = {
   namespaces: string[]
   services: Services<ServiceHelm>
 }
-export type DockerComposeValueFile = {
-  services: Services<DockerComposeService>
-  mocks: Services<DockerComposeService>
+export type LocalrunValueFile = {
+  services: Services<LocalrunService>
+  mocks: Services<LocalrunService>
 }
 
 export interface OutputFormat<T extends ServiceOutputType> {

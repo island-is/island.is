@@ -6,7 +6,7 @@ import {
 } from '../types/input-types'
 import {
   ContainerEnvironmentVariables,
-  DockerComposeService,
+  LocalrunService,
   OutputFormat,
   SerializeMethod,
 } from '../types/output-types'
@@ -23,32 +23,24 @@ import {
  * @param service Our service definition
  * @param deployment Uber chart in a specific environment the service will be part of
  */
-const serializeService: SerializeMethod<DockerComposeService> = async (
+const serializeService: SerializeMethod<LocalrunService> = async (
   service: ServiceDefinitionForEnv,
   deployment: DeploymentRuntime,
 ) => {
-  const {
-    addToErrors,
-    mergeObjects,
-    checkCollisions,
-    getErrors,
-  } = checksAndValidations(service.name)
+  const { addToErrors, mergeObjects, getErrors } = checksAndValidations(
+    service.name,
+  )
   const serviceDef = service
-  const dockerImage = `821090935708.dkr.ecr.eu-west-1.amazonaws.com/${
-    serviceDef.image ?? serviceDef.name
-  }`
-  const result: DockerComposeService = {
-    image: dockerImage,
+  const result: LocalrunService = {
     env: {
       SERVERSIDE_FEATURES_ON: deployment.env.featuresOn.join(','),
       NODE_OPTIONS: `--max-old-space-size=${
         parseInt(serviceDef.resources.limits.memory, 10) - 48
       }`,
     },
-    depends_on: {},
     command: [],
   }
-  let initContainers: { [name: string]: DockerComposeService } = {}
+  let initContainers: { [name: string]: LocalrunService } = {}
 
   // command and args
   if (serviceDef.cmds) {
@@ -82,11 +74,9 @@ const serializeService: SerializeMethod<DockerComposeService> = async (
       (acc, initContainer) => ({
         ...acc,
         [initContainer.name!]: {
-          image: dockerImage,
           env: {
             SERVERSIDE_FEATURES_ON: deployment.env.featuresOn.join(','),
           },
-          depends_on: {},
         },
       }),
       {},
@@ -227,19 +217,8 @@ const getParams = async (
     )
     .reduce((p, c) => ({ ...p, ...c }), {})
 }
-const serviceMockDef = (options: {
-  namespace: string
-  target: string
-}): DockerComposeService => {
-  return {
-    image: 'wiremock',
-    env: {},
-    command: ['mock'],
-    depends_on: {},
-  }
-}
 
-export const DockerComposeOutput: OutputFormat<DockerComposeService> = {
+export const LocalrunOutput: OutputFormat<LocalrunService> = {
   featureDeployment(
     service: ServiceDefinition,
     env: EnvironmentConfig,
@@ -255,7 +234,7 @@ export const DockerComposeOutput: OutputFormat<DockerComposeService> = {
   serviceMockDef(options: {
     namespace: string
     target: string
-  }): DockerComposeService {
-    return serviceMockDef(options)
+  }): LocalrunService {
+    throw new Error('Not used')
   },
 }

@@ -1,6 +1,6 @@
 import {
-  DockerComposeService,
-  DockerComposeValueFile,
+  LocalrunService,
+  LocalrunValueFile,
   Services,
 } from '../types/output-types'
 import { renderers } from '../downstream-dependencies'
@@ -9,10 +9,9 @@ import { EXCLUDED_ENVIRONMENT_NAMES } from '../../cli/render-env-vars'
 
 export const getLocalSetup = (
   uberChart: Localhost,
-  services: Services<DockerComposeService>,
-): DockerComposeValueFile => {
-  const outputFormat = renderers['docker-compose']
-  const dockerComposeServices: Services<DockerComposeService> = Object.entries(
+  services: Services<LocalrunService>,
+): LocalrunValueFile => {
+  const dockerComposeServices: Services<LocalrunService> = Object.entries(
     services,
   ).reduce((acc, [name, service]) => {
     return {
@@ -25,7 +24,7 @@ export const getLocalSetup = (
         .join(' ')} yarn start ${name}`,
     }
   }, {})
-  const mocks: Services<DockerComposeService> = Object.entries(
+  const mocks: Services<LocalrunService> = Object.entries(
     uberChart.mocks,
   ).reduce((acc, [name, target]) => {
     if (name.startsWith('mock-')) {
