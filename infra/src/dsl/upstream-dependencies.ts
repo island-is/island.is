@@ -53,7 +53,7 @@ const findUpstreamDependencies = (
     .concat(upstreams)
 }
 
-export const getWithUpstreamServices = async (
+export const withUpstreamDependencies = async (
   env: EnvironmentConfig,
   habitat: ServiceDefinition[],
   services: ServiceDefinition[],

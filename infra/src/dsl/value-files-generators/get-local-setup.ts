@@ -8,7 +8,7 @@ import { renderers } from '../downstream-dependencies'
 import { Localhost } from '../localhost-runtime'
 import { EXCLUDED_ENVIRONMENT_NAMES } from '../../cli/render-env-vars'
 
-export const renderDockerComposeFile = (
+export const getLocalSetup = (
   uberChart: Localhost,
   services: Services<DockerComposeService>,
 ): DockerComposeValueFile => {
@@ -20,7 +20,7 @@ export const renderDockerComposeFile = (
       ...acc,
       [name]: ` ${
         uberChart.ports[name] ? `PORT=${uberChart.ports[name]} ` : ''
-      }${Object.entries(service.env)
+      } PROD_MODE=true ${Object.entries(service.env)
         .filter(([name, val]) => !EXCLUDED_ENVIRONMENT_NAMES.includes(name))
         .map(([key, value]) => `${key}="${value}"`)
         .join(' ')} yarn start ${name}`,

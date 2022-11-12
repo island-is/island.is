@@ -6,7 +6,7 @@ import { DeploymentRuntime, EnvironmentConfig } from '../types/charts'
 import { renderers } from '../downstream-dependencies'
 import { prepareServices, renderer } from '../processing/service-sets'
 import { generateJobsForFeature } from '../output-generators/feature-jobs'
-import { renderDockerComposeFile } from '../value-files-generators/render-docker-compose-file'
+import { getLocalSetup } from '../value-files-generators/get-local-setup'
 import { Localhost } from '../localhost-runtime'
 
 export const renderHelmValueFileContent = async (
