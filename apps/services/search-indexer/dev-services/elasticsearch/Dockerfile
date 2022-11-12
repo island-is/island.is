@@ -1,4 +1,4 @@
-FROM elasticsearch:7.9.1
+FROM elasticsearch:7.4.2
 
 # adding ICO for unicode support
 RUN bin/elasticsearch-plugin install analysis-icu
