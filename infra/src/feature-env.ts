@@ -1,5 +1,4 @@
 import yargs from 'yargs'
-import { hideBin } from 'yargs/helpers'
 import AWS from 'aws-sdk'
 import { Kubernetes } from './dsl/kubernetes-runtime'
 import { Envs } from './environments'
@@ -15,7 +14,6 @@ import { Deployments } from './uber-charts/all-charts'
 import { getFeatureAffectedServices } from './dsl/feature-deployments'
 import { dumpJobYaml } from './dsl/file-formats/yaml'
 import {
-  renderDockerComposeValueFileContent,
   renderHelmJobForFeature,
   renderHelmServices,
   renderHelmValueFileContent,
@@ -105,7 +103,7 @@ const buildComment = (data: Services<ServiceHelm>): string => {
   )}`
 }
 
-yargs(hideBin(process.argv))
+yargs(process.argv.slice(2))
   .command(
     'values',
     'get helm values file',
@@ -119,7 +117,7 @@ yargs(hideBin(process.argv))
         toServices(ExcludedFeatureDeploymentServices),
       )
       await writeToOutput(
-        await renderDockerComposeValueFileContent(ch.env, featureYaml),
+        await renderHelmValueFileContent(ch.env, featureYaml),
         argv.output,
       )
     },

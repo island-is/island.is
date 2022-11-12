@@ -65,17 +65,15 @@ export const rendererForOne = async <T extends ServiceOutputType>(
   if (runtime.env.feature) {
     renderer.featureDeployment(service, runtime.env)
   }
-  const preparedServices: ServiceDefinitionForEnv[] = []
   const serviceForEnv = prepareServiceForEnv(service, runtime.env)
   switch (serviceForEnv.type) {
     case 'error':
       return serviceForEnv
     case 'success':
-      preparedServices.push(serviceForEnv.serviceDef)
+      return renderer.serializeService(
+        serviceForEnv.serviceDef,
+        runtime,
+        runtime.env.feature,
+      )
   }
-  return renderer.serializeService(
-    preparedServices[0],
-    runtime,
-    runtime.env.feature,
-  )
 }

@@ -1,4 +1,3 @@
-import { Kubernetes } from '../kubernetes-runtime'
 import {
   DockerComposeService,
   DockerComposeValueFile,
@@ -28,7 +27,7 @@ export const getLocalSetup = (
   }, {})
   const mocks: Services<DockerComposeService> = Object.entries(
     uberChart.mocks,
-  ).reduce((acc, [name, svcs]) => {
+  ).reduce((acc, [name, target]) => {
     if (name.startsWith('mock-')) {
       const mock = outputFormat.serviceMockDef({
         namespace: 'doesnotmatter',
@@ -36,9 +35,10 @@ export const getLocalSetup = (
       })
       return {
         ...acc,
-        [name]: `${
-          uberChart.ports[name] ? `PORT=${uberChart.ports[name]} ` : ''
-        } ${mock}`,
+        [name]: {
+          'proxy-port': uberChart.ports[name],
+          'mountebank-default-rule': `{"predicates":[{"equals":{}}],"responses":[{"proxy":{"to":"${target}","mode":"proxyAlways","predicateGenerators":[{"matches":{"method":true,"path":true,"query":true,"body":true}}]}}]}`,
+        },
       }
     }
     return {

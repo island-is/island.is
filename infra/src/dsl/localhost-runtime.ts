@@ -32,26 +32,20 @@ export class Localhost implements DeploymentRuntime {
       this.deps[to.name] = dependencies.add(from.name)
       return `localhost:${this.ports[to.name]}`
     } else {
-      const mockName1 = this.getMockName(to)
-      const mockName = mockName1.url.replace('http://', '')
-      this.ports[mockName] =
-        this.ports[mockName] ?? portNumberFromHost(mockName1.host)
-      const dependencies = this.mocks[mockName]
-      this.mocks[mockName] = mockName1.url
-      return `http://localhost:${this.ports[mockName]}`
+      const { name, host } = this.getMockName(to)
+      this.ports[name] = this.ports[name] ?? portNumberFromHost(host)
+      const dependencies = this.mocks[name]
+      this.mocks[name] = host
+      return `http://localhost:${this.ports[name]}`
     }
   }
 
   private getMockName(to: string) {
     const parsed = new URL(to)
-    parsed.protocol = 'http:'
-    parsed.host = `mock-${parsed.host.replace(/\./g, '-')}`
+    parsed.pathname = ''
     return {
-      url: parsed.href.slice(
-        0,
-        parsed.href.length - (to.endsWith('/') ? 0 : 1),
-      ),
-      host: parsed.host,
+      name: `mock-${parsed.host.replace(/\./g, '-')}`,
+      host: parsed.toString().slice(0, -1),
     }
   }
 }
