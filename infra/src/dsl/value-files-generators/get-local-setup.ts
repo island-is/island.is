@@ -29,10 +29,6 @@ export const getLocalSetup = (
     uberChart.mocks,
   ).reduce((acc, [name, target]) => {
     if (name.startsWith('mock-')) {
-      const mock = outputFormat.serviceMockDef({
-        namespace: 'doesnotmatter',
-        target: name,
-      })
       return {
         ...acc,
         [name]: {
