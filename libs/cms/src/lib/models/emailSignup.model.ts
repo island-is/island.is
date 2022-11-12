@@ -23,6 +23,9 @@ export class EmailSignup {
 
   @Field(() => GraphQLJSON, { nullable: true })
   configuration?: Record<string, unknown>
+
+  @Field(() => GraphQLJSON, { nullable: true })
+  translations?: Record<string, string>
 }
 
 export const mapEmailSignup = ({
@@ -36,4 +39,5 @@ export const mapEmailSignup = ({
   formFields: (fields.formFields ?? []).map(mapFormField),
   signupType: fields.signupType || 'mailchimp',
   configuration: fields.configuration ?? {},
+  translations: fields.translations ?? {},
 })

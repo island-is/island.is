@@ -6,11 +6,7 @@ import {
   GridContainer,
   GridRow,
 } from '@island.is/island-ui/core'
-import {
-  CategorySignupForm,
-  MailingListSignup,
-  NameSignupForm,
-} from '@island.is/web/components'
+import { MailingListSignup, NameSignupForm } from '@island.is/web/components'
 
 interface SliceProps {
   slice: MailingListSignupSliceSchema
@@ -32,15 +28,6 @@ export const MailingListSignupSlice: React.FC<SliceProps> = ({
           <GridRow>
             <GridColumn span={['9/9', '9/9', '7/9']} offset={['0', '0', '1/9']}>
               <NameSignupForm namespace={namespace} slice={slice} />
-            </GridColumn>
-          </GridRow>
-        </GridContainer>
-      )}
-      {slice.variant === 'categories' && (
-        <GridContainer>
-          <GridRow>
-            <GridColumn span={['9/9', '9/9', '7/9']} offset={['0', '0', '1/9']}>
-              <CategorySignupForm namespace={namespace} slice={slice} />
             </GridColumn>
           </GridRow>
         </GridContainer>

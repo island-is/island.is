@@ -519,6 +519,9 @@ export interface IEmailSignupFields {
 
   /** Configuration */
   configuration?: Record<string, any> | undefined
+
+  /** Translations */
+  translations?: Record<string, any> | undefined
 }
 
 export interface IEmailSignup extends Entry<IEmailSignupFields> {
@@ -868,7 +871,14 @@ export interface IFormFieldFields {
   placeholder?: string | undefined
 
   /** Type */
-  type: 'input' | 'text' | 'dropdown' | 'radio' | 'acceptTerms' | 'email'
+  type:
+    | 'input'
+    | 'text'
+    | 'dropdown'
+    | 'radio'
+    | 'acceptTerms'
+    | 'email'
+    | 'checkboxes'
 
   /** Required */
   required?: boolean | undefined

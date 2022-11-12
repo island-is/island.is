@@ -22,59 +22,50 @@ export class EmailSignupResolver {
 
     if (!emailSignupModel) return { subscribed: false }
 
-    const url = (emailSignupModel?.configuration?.signupUrl as string) ?? ''
-
-    if (!url.includes('{{EMAIL}}')) {
-      return {
-        subscribed: false,
-      }
-    }
-
-    const selectedCategories = mailingListSignupSlice?.categories
-      ? (JSON.parse(
-          mailingListSignupSlice?.categories,
-        ) as Category[]).filter((category, idx) =>
-          input.categories?.includes(idx),
-        )
-      : []
-
-    const inputFieldNames = input.inputFields?.map((i) => i?.name)
-
-    const parsedInputs = JSON.parse(
-      mailingListSignupSlice?.inputs ?? '[]',
-    ) as typeof input['inputFields']
-
-    const selectedInputs = (parsedInputs ?? []).filter((i) =>
-      inputFieldNames?.includes(i?.name),
+    const formFieldNames =
+      emailSignupModel.formFields?.filter((f) => f?.name)?.map((f) => f.name) ??
+      []
+    const inputFields = input.inputFields.filter((field) =>
+      formFieldNames.includes(field.name),
     )
 
-    const populatedUrl = url
-      .replace('{{EMAIL}}', input.email)
-      .replace('{{NAME}}', input.name ?? '')
-      .replace('{{TOGGLE}}', input.toggle ? 'Yes' : 'No')
-      .replace(
-        '{{CATEGORIES}}',
-        selectedCategories.map((category) => `${category.name}=1`).join('&'),
-      )
-      .replace('{{FNAME}}', input.name?.split(' ')?.[0] ?? '')
-      .replace('{{LNAME}}', input.name?.split(' ')?.slice(1)?.join(' ') ?? ' ')
-      .replace(
-        '{{INPUTS}}',
-        selectedInputs.map((i) => `${i.name}=${i.value}`).join('&'),
-      )
+    if (emailSignupModel.signupType === 'mailchimp') {
+      const url = (emailSignupModel.configuration?.signupUrl as string) ?? ''
+      const populatedUrl = url.replace(
+        '{{INPUT_FIELDS}}',
+        inputFields
+          .map((field) => {
+            // The checkboxes type can have many selected options
+            if (field.type === 'checkboxes') {
+              const fieldValues = JSON.parse(field.value)
+              const checkboxOptions = Object.entries(fieldValues)
+                .filter(([_, value]) => value === 'true')
+                .map(([name, _]) => `${name}=1`)
+                .join('&')
 
-    console.log(populatedUrl)
+              // Make sure we don't add an extra &
+              if (checkboxOptions[checkboxOptions.length - 1] === '&')
+                return checkboxOptions.slice(0, checkboxOptions.length - 1)
+              return checkboxOptions
+            }
 
-    return axios
-      .get(populatedUrl)
-      .then((response) => {
-        console.log(response.data)
-        return {
-          subscribed: true,
-        }
-      })
-      .catch((err) => ({
-        subscribed: false,
-      }))
+            return `${field.name}=${field.value}`
+          })
+          .join('&'),
+      )
+      return axios
+        .get(populatedUrl)
+        .then((response) => {
+          console.log(response.data)
+          return {
+            subscribed: true,
+          }
+        })
+        .catch(() => ({
+          subscribed: false,
+        }))
+    }
+
+    return { subscribed: false }
   }
 }

@@ -618,8 +618,7 @@ export const slices = gql`
       required
       options
     }
-    signupType
-    configuration
+    translations
   }
 
   fragment BaseSlices on Slice {

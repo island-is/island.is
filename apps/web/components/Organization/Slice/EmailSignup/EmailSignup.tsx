@@ -1,4 +1,6 @@
 import { FormEvent, useMemo, useState } from 'react'
+import { useMutation } from '@apollo/client'
+
 import {
   Box,
   Button,
@@ -10,19 +12,22 @@ import {
 import { FormField } from '@island.is/web/components'
 import {
   EmailSignup as EmailSignupSchema,
-  MailchimpSubscribeMutation,
-  MailchimpSubscribeMutationVariables,
+  EmailSignupInputField,
+  EmailSignupSubscriptionMutation,
+  EmailSignupSubscriptionMutationVariables,
 } from '@island.is/web/graphql/schema'
-import { useMutation } from '@apollo/client'
-import { MAILING_LIST_SIGNUP_MUTATION } from '@island.is/web/screens/queries'
+import { EMAIL_SIGNUP_MUTATION } from '@island.is/web/screens/queries'
+import { useNamespace } from '@island.is/web/hooks'
+import { isValidEmail } from '@island.is/web/utils/isValidEmail'
+import { FieldTypes } from '@island.is/application/types'
 
-enum SignupType {
-  MAILCHIMP = 'mailchimp',
+enum FieldType {
+  CHECKBOXES = 'checkboxes',
+  EMAIL = 'email',
 }
 
 const getInitialValues = (formFields: EmailSignupSchema['formFields']) => {
-  const formFieldsWithNames = formFields?.filter((field) => field?.name) ?? []
-  return formFieldsWithNames.reduce((acc, curr) => {
+  return formFields.reduce((acc, curr) => {
     acc[curr.name] = ''
     return acc
   }, {})
@@ -33,18 +38,21 @@ interface EmailSignupProps {
 }
 
 const EmailSignup = ({ slice }: EmailSignupProps) => {
+  const n = useNamespace(slice.translations ?? {})
   const formFields = useMemo(
     () => slice.formFields?.filter((field) => field?.name) ?? [],
     [slice.formFields],
   )
 
-  const [values, setValues] = useState(getInitialValues(formFields))
+  const [values, setValues] = useState<Record<string, string>>(
+    getInitialValues(formFields),
+  )
   const [errors, setErrors] = useState<Record<string, string>>({})
 
-  const [subscribeToMailchimp] = useMutation<
-    MailchimpSubscribeMutation,
-    MailchimpSubscribeMutationVariables
-  >(MAILING_LIST_SIGNUP_MUTATION)
+  const [subscribe] = useMutation<
+    EmailSignupSubscriptionMutation,
+    EmailSignupSubscriptionMutationVariables
+  >(EMAIL_SIGNUP_MUTATION)
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault()
@@ -54,7 +62,28 @@ const EmailSignup = ({ slice }: EmailSignupProps) => {
     for (const [fieldName, value] of Object.entries(values)) {
       const field = formFields.find((f) => f.name === fieldName)
       if (field.required && !value) {
-        newErrors[fieldName] = 'Required'
+        newErrors[fieldName] = n(
+          'fieldIsRequired',
+          'Þennan reit þarf að fylla út',
+        )
+      } else if (
+        field.type === FieldTypes.EMAIL &&
+        !isValidEmail.test(value as string)
+      ) {
+        newErrors[fieldName] = n(
+          'invalidEmail',
+          'Vinsamlegast sláðu inn gilt netfang',
+        )
+      } else if (
+        field.type === FieldType.CHECKBOXES &&
+        value &&
+        field.required &&
+        !Object.values(JSON.parse(value)).some((v) => v === 'true')
+      ) {
+        newErrors[fieldName] = n(
+          'fieldIsRequired',
+          'Þennan reit þarf að fylla út',
+        )
       }
     }
 
@@ -62,13 +91,25 @@ const EmailSignup = ({ slice }: EmailSignupProps) => {
 
     if (Object.keys(newErrors).length > 0) return
 
-    if (slice.signupType === SignupType.MAILCHIMP) {
-      subscribeToMailchimp({
-        variables: {
-          input: {},
-        },
+    const inputFields: EmailSignupInputField[] = []
+
+    for (const [fieldName, value] of Object.entries(values)) {
+      const field = formFields.find((f) => f.name === fieldName)
+      inputFields.push({
+        name: fieldName,
+        type: field.type,
+        value,
       })
     }
+
+    subscribe({
+      variables: {
+        input: {
+          signupID: slice.id,
+          inputFields,
+        },
+      },
+    })
   }
 
   return (
@@ -98,12 +139,40 @@ const EmailSignup = ({ slice }: EmailSignupProps) => {
                       field={field}
                       slug={field.name}
                       error={errors[field.name]}
-                      onChange={(slug, value) =>
-                        setValues((prevValues) => ({
-                          ...prevValues,
-                          [slug]: value,
-                        }))
-                      }
+                      onChange={(slug, value) => {
+                        if (field.type !== FieldType.CHECKBOXES) {
+                          return setValues((prevValues) => ({
+                            ...prevValues,
+                            [slug]: value,
+                          }))
+                        }
+
+                        // The checkboxes type can have many options selected at a time (unlike the radio type)
+
+                        // The slug is esssentially the option instead of being the field name
+                        const option = slug
+                        return setValues((prevValues) => {
+                          // We store a stringified object behind the field.name key
+                          const prevFieldValues = prevValues[field.name]
+                          if (prevFieldValues) {
+                            const json = JSON.parse(prevFieldValues)
+                            json[option] =
+                              json[option] === 'false' ? 'true' : 'false'
+                            return {
+                              ...prevValues,
+                              [field.name]: JSON.stringify(json),
+                            }
+                          }
+
+                          // The option always starts off as false so if there is nothing previously stored it's safe to toggle the option on
+                          return {
+                            ...prevValues,
+                            [field.name]: JSON.stringify({
+                              [option]: 'true',
+                            }),
+                          }
+                        })
+                      }}
                       value={values[field.name]}
                     />
                   </Box>
@@ -114,9 +183,7 @@ const EmailSignup = ({ slice }: EmailSignupProps) => {
 
           <GridRow>
             <Box width="full" display="flex" justifyContent="flexEnd">
-              <Button type="submit">
-                {slice.configuration['submitButtonText'] || 'Skrá'}
-              </Button>
+              <Button type="submit">{n('submitButtonText', 'Skrá')}</Button>
             </Box>
           </GridRow>
         </Stack>

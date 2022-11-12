@@ -21,6 +21,7 @@ import { isEmailValid } from '@island.is/financial-aid/shared/lib'
 import { useMutation } from '@apollo/client/react'
 import { GENERIC_FORM_MUTATION } from '@island.is/web/screens/queries/Form'
 import { useNamespace } from '@island.is/web/hooks'
+import { isValidEmail } from '@island.is/web/utils/isValidEmail'
 import * as styles from './Form.css'
 
 interface FormFieldProps {
@@ -28,7 +29,7 @@ interface FormFieldProps {
   slug: string
   value: string
   error?: string
-  onChange: (field: string, value: string | number) => void
+  onChange: (field: string, value: string) => void
 }
 
 interface FormProps {
@@ -45,6 +46,7 @@ export const FormField = ({
 }: FormFieldProps) => {
   switch (field.type) {
     case 'input':
+    case 'email':
       return (
         <Input
           key={slug}
@@ -144,9 +146,33 @@ export const FormField = ({
           )}
           <Checkbox
             label={field.placeholder}
-            checked={value === 'Já'}
-            onChange={(e) => onChange(slug, e.target.checked ? 'Já' : 'Nei')}
+            checked={value === 'true'}
+            onChange={(e) =>
+              onChange(slug, e.target.checked ? 'true' : 'false')
+            }
           />
+        </Stack>
+      )
+    case 'checkboxes':
+      return (
+        <Stack space={2}>
+          <Text variant="h5" color="blue600">
+            {field.title}
+          </Text>
+          {field.options.map((option, idx) => {
+            const fieldValue = value ? JSON.parse(value)[option] : 'false'
+            return (
+              <Checkbox
+                key={idx}
+                label={option}
+                checked={fieldValue === 'true'}
+                onChange={(e) =>
+                  onChange(option, e.target.checked ? 'true' : 'false')
+                }
+                hasError={!!error}
+              />
+            )
+          })}
         </Stack>
       )
   }
@@ -209,9 +235,16 @@ export const Form = ({ form, namespace }: FormProps) => {
           return null
         }
 
+        if (field.type === 'email' && !isValidEmail.test(data[slug])) {
+          return {
+            field: slug,
+            error: n('formInvalidEmail', 'Þetta er ekki gilt netfang.'),
+          }
+        }
+
         if (
           (field.required && !data[slug]) ||
-          (field.type === 'acceptTerms' && data[slug] !== 'Já')
+          (field.type === 'acceptTerms' && data[slug] !== 'true')
         ) {
           return {
             field: slug,
@@ -231,12 +264,19 @@ export const Form = ({ form, namespace }: FormProps) => {
   const formatBody = () => {
     return `Sendandi: ${data['name']} <${data['email']}>\n\n`.concat(
       form.fields
-        .map(
-          (field) =>
-            `${field.title}\nSvar: ${
-              data[slugify(field.title)] ?? 'Ekkert svar'
-            }\n\n`,
-        )
+        .map((field) => {
+          const value = data[slugify(field.title)]
+          if (field.type === 'acceptTerms' || field.type === 'radio') {
+            return `${field.title}\nSvar: ${
+              value === 'true'
+                ? 'Já'
+                : value === 'false'
+                ? 'Nei'
+                : 'Ekkert svar'
+            }\n\n`
+          }
+          return `${field.title}\nSvar: ${value ?? 'Ekkert svar'}\n\n`
+        })
         .join(''),
     )
   }

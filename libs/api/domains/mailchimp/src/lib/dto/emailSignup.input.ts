@@ -7,7 +7,14 @@ class EmailSignupInputField {
   @Field()
   value!: string
   @Field()
-  type!: 'input' | 'text' | 'dropdown' | 'radio' | 'acceptTerms' | 'email'
+  type!:
+    | 'input'
+    | 'text'
+    | 'dropdown'
+    | 'radio'
+    | 'acceptTerms'
+    | 'email'
+    | 'checkboxes'
 }
 
 @InputType()
