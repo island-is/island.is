@@ -9,7 +9,6 @@ import {
   GridColumn,
   GridRow,
   ResponsiveSpace,
-  Stack,
   Text,
 } from '@island.is/island-ui/core'
 import { FormField } from '@island.is/web/components'
@@ -22,6 +21,8 @@ import {
 import { EMAIL_SIGNUP_MUTATION } from '@island.is/web/screens/queries'
 import { useNamespace } from '@island.is/web/hooks'
 import { isValidEmail } from '@island.is/web/utils/isValidEmail'
+
+import * as styles from './EmailSignup.css'
 
 enum FieldType {
   CHECKBOXES = 'checkboxes',
@@ -155,92 +156,105 @@ const EmailSignup = ({ slice, marginLeft }: EmailSignupProps) => {
 
   return (
     <Box
-      paddingY={[3, 3, 8]}
-      paddingX={[3, 3, 3, 3, 15]}
+      paddingY={[3, 3, 5]}
+      paddingX={[3, 3, 3, 3, 12]}
       borderRadius="large"
       background="blue100"
       marginLeft={marginLeft}
     >
       <form onSubmit={handleSubmit}>
-        <Stack space={5}>
-          <GridRow>
-            <GridColumn span={'12/12'}>
-              <Text as="h3" variant="h3" color="blue600">
-                {slice.title}
-              </Text>
-              <Text>{slice.description}</Text>
-            </GridColumn>
-          </GridRow>
+        <Box display="flex" alignItems="flexStart">
+          {slice.translations.leftImageSrc && (
+            <img
+              src={slice.translations.leftImageSrc}
+              className={styles.image}
+              alt=""
+            />
+          )}
+          <Box width="full">
+            <GridRow>
+              <GridColumn span={'12/12'}>
+                <Text as="h3" variant="h3" color="blue600">
+                  {slice.title}
+                </Text>
+                <Text>{slice.description}</Text>
+              </GridColumn>
+            </GridRow>
 
-          <GridRow>
-            <GridColumn span="1/1">
-              {submitResponse ? (
-                <AlertMessage {...submitResponse} />
-              ) : (
-                <Box width="full">
-                  {formFields.map((field) => {
-                    return (
-                      <Box key={field.id} marginBottom={3} width="full">
-                        <FormField
-                          field={field}
-                          slug={field.name}
-                          error={errors[field.name]}
-                          onChange={(slug, value) => {
-                            if (field.type !== FieldType.CHECKBOXES) {
-                              return setValues((prevValues) => ({
-                                ...prevValues,
-                                [slug]: value,
-                              }))
-                            }
+            <GridRow>
+              <GridColumn span="1/1">
+                {submitResponse ? (
+                  <Box marginTop={5}>
+                    <AlertMessage {...submitResponse} />
+                  </Box>
+                ) : (
+                  <Box width="full" marginTop={5}>
+                    {formFields.map((field) => {
+                      return (
+                        <Box key={field.id} marginBottom={3} width="full">
+                          <FormField
+                            field={field}
+                            slug={field.name}
+                            error={errors[field.name]}
+                            onChange={(slug, value) => {
+                              if (field.type !== FieldType.CHECKBOXES) {
+                                return setValues((prevValues) => ({
+                                  ...prevValues,
+                                  [slug]: value,
+                                }))
+                              }
 
-                            // The checkboxes type can have many options selected at a time (unlike the radio type)
+                              // The checkboxes type can have many options selected at a time (unlike the radio type)
 
-                            // The slug is esssentially the option instead of being the field name
-                            const option = slug
-                            return setValues((prevValues) => {
-                              // We store a stringified object behind the field.name key
-                              const prevFieldValues = prevValues[field.name]
-                              if (prevFieldValues) {
-                                const json = JSON.parse(prevFieldValues)
-                                json[option] =
-                                  json[option] === 'false' || !json[option]
-                                    ? 'true'
-                                    : 'false'
+                              // The slug is esssentially the option instead of being the field name
+                              const option = slug
+                              return setValues((prevValues) => {
+                                // We store a stringified object behind the field.name key
+                                const prevFieldValues = prevValues[field.name]
+                                if (prevFieldValues) {
+                                  const json = JSON.parse(prevFieldValues)
+                                  json[option] =
+                                    json[option] === 'false' || !json[option]
+                                      ? 'true'
+                                      : 'false'
+                                  return {
+                                    ...prevValues,
+                                    [field.name]: JSON.stringify(json),
+                                  }
+                                }
+
+                                // The option always starts off as false so if there is nothing previously stored it's safe to toggle the option on
                                 return {
                                   ...prevValues,
-                                  [field.name]: JSON.stringify(json),
+                                  [field.name]: JSON.stringify({
+                                    [option]: 'true',
+                                  }),
                                 }
-                              }
+                              })
+                            }}
+                            value={values[field.name]}
+                          />
+                        </Box>
+                      )
+                    })}
+                  </Box>
+                )}
+              </GridColumn>
+            </GridRow>
+          </Box>
+        </Box>
 
-                              // The option always starts off as false so if there is nothing previously stored it's safe to toggle the option on
-                              return {
-                                ...prevValues,
-                                [field.name]: JSON.stringify({
-                                  [option]: 'true',
-                                }),
-                              }
-                            })
-                          }}
-                          value={values[field.name]}
-                        />
-                      </Box>
-                    )
-                  })}
-                </Box>
-              )}
-            </GridColumn>
-          </GridRow>
-
-          {!submitResponse && (
-            <GridRow>
+        {!submitResponse && (
+          <GridRow>
+            <GridColumn span="1/1">
               <Box width="full" display="flex" justifyContent="flexEnd">
                 <Button disabled={loading} type="submit">
                   {n('submitButtonText', 'Skrá')}
                 </Button>
               </Box>
-            </GridRow>
-          )}
-        </Stack>
+            </GridColumn>
+          </GridRow>
+        )}
       </form>
     </Box>
   )
