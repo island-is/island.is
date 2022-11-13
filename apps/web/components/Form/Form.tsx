@@ -24,6 +24,12 @@ import { useNamespace } from '@island.is/web/hooks'
 import { isValidEmail } from '@island.is/web/utils/isValidEmail'
 import * as styles from './Form.css'
 
+export enum FormFieldType {
+  CHECKBOXES = 'checkboxes',
+  EMAIL = 'email',
+  ACCEPT_TERMS = 'acceptTerms',
+}
+
 interface FormFieldProps {
   field: FormType['fields'][0]
   slug: string
@@ -158,6 +164,11 @@ export const FormField = ({
         <Stack space={2}>
           <Text variant="h5" color="blue600">
             {field.title}
+            {field.required && (
+              <span aria-hidden="true" className={styles.isRequiredStar}>
+                *
+              </span>
+            )}
           </Text>
           {field.options.map((option, idx) => {
             const fieldValue = value ? JSON.parse(value)[option] : 'false'
@@ -235,7 +246,10 @@ export const Form = ({ form, namespace }: FormProps) => {
           return null
         }
 
-        if (field.type === 'email' && !isValidEmail.test(data[slug])) {
+        if (
+          field.type === FormFieldType.EMAIL &&
+          !isValidEmail.test(data[slug])
+        ) {
           return {
             field: slug,
             error: n('formInvalidEmail', 'Þetta er ekki gilt netfang.'),
@@ -244,7 +258,19 @@ export const Form = ({ form, namespace }: FormProps) => {
 
         if (
           (field.required && !data[slug]) ||
-          (field.type === 'acceptTerms' && data[slug] !== 'true')
+          (field.type === FormFieldType.ACCEPT_TERMS && data[slug] !== 'true')
+        ) {
+          return {
+            field: slug,
+            error: n('formInvalidName', 'Þennan reit þarf að fylla út.'),
+          }
+        }
+
+        if (
+          field.type === FormFieldType.CHECKBOXES &&
+          data[slug] &&
+          field.required &&
+          !Object.values(JSON.parse(data[slug])).some((v) => v === 'true')
         ) {
           return {
             field: slug,
@@ -266,7 +292,7 @@ export const Form = ({ form, namespace }: FormProps) => {
       form.fields
         .map((field) => {
           const value = data[slugify(field.title)]
-          if (field.type === 'acceptTerms' || field.type === 'radio') {
+          if (field.type === FormFieldType.ACCEPT_TERMS) {
             return `${field.title}\nSvar: ${
               value === 'true'
                 ? 'Já'
@@ -275,6 +301,13 @@ export const Form = ({ form, namespace }: FormProps) => {
                 : 'Ekkert svar'
             }\n\n`
           }
+          if (field.type === FormFieldType.CHECKBOXES) {
+            const json = JSON.parse(value)
+            return `${field.title}\nSvar:\n\t${Object.entries(json)
+              .map(([k, v]) => `${k}: ${v === 'true' ? 'Já' : 'Nei'}`)
+              .join('\n\t')}\n\n`
+          }
+
           return `${field.title}\nSvar: ${value ?? 'Ekkert svar'}\n\n`
         })
         .join(''),
@@ -380,7 +413,7 @@ export const Form = ({ form, namespace }: FormProps) => {
                   value={data[slug] ?? ''}
                   error={errors.find((error) => error.field === slug)?.error}
                   onChange={(key, value) => {
-                    if (field.type === 'checkboxes') {
+                    if (field.type === FormFieldType.CHECKBOXES) {
                       const prevFieldData = data[slug]
                       if (prevFieldData) {
                         const json = JSON.parse(prevFieldData)

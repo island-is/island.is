@@ -11,7 +11,7 @@ import {
   ResponsiveSpace,
   Text,
 } from '@island.is/island-ui/core'
-import { FormField } from '@island.is/web/components'
+import { FormField, FormFieldType } from '@island.is/web/components'
 import {
   EmailSignup as EmailSignupSchema,
   EmailSignupInputField,
@@ -23,11 +23,6 @@ import { useNamespace } from '@island.is/web/hooks'
 import { isValidEmail } from '@island.is/web/utils/isValidEmail'
 
 import * as styles from './EmailSignup.css'
-
-enum FieldType {
-  CHECKBOXES = 'checkboxes',
-  EMAIL = 'email',
-}
 
 type SubmitResponse = {
   message: string
@@ -78,7 +73,7 @@ const EmailSignup = ({ slice, marginLeft }: EmailSignupProps) => {
           'Þennan reit þarf að fylla út',
         )
       } else if (
-        field.type === FieldType.EMAIL &&
+        field.type === FormFieldType.EMAIL &&
         !isValidEmail.test(value as string)
       ) {
         newErrors[fieldName] = n(
@@ -86,7 +81,7 @@ const EmailSignup = ({ slice, marginLeft }: EmailSignupProps) => {
           'Vinsamlegast sláðu inn gilt netfang',
         )
       } else if (
-        field.type === FieldType.CHECKBOXES &&
+        field.type === FormFieldType.CHECKBOXES &&
         value &&
         field.required &&
         !Object.values(JSON.parse(value)).some((v) => v === 'true')
@@ -197,7 +192,7 @@ const EmailSignup = ({ slice, marginLeft }: EmailSignupProps) => {
                             slug={field.name}
                             error={errors[field.name]}
                             onChange={(slug, value) => {
-                              if (field.type !== FieldType.CHECKBOXES) {
+                              if (field.type !== FormFieldType.CHECKBOXES) {
                                 return setValues((prevValues) => ({
                                   ...prevValues,
                                   [slug]: value,
