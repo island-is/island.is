@@ -56,9 +56,8 @@ export class EmailSignupResolver {
       return axios
         .get(populatedUrl)
         .then((response) => {
-          console.log(response.data)
           return {
-            subscribed: true,
+            subscribed: response?.data?.result === 'error' ? false : true,
           }
         })
         .catch(() => ({
