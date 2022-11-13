@@ -40,8 +40,8 @@ describe('Local setup', () => {
     expect(serviceDef.mocks).toStrictEqual({
       'mock-www-visir-is': {
         'proxy-port': 9453,
-        'mountebank-default-rule':
-          '{"predicates":[{"equals":{}}],"responses":[{"proxy":{"to":"https://www.visir.is","mode":"proxyAlways","predicateGenerators":[{"matches":{"method":true,"path":true,"query":true,"body":true}}]}}]}',
+        'mountebank-imposter-config':
+          '{"protocol":"http","name":"mock-www-visir-is","port":9453,"stubs":[{"predicates":[{"equals":{}}],"responses":[{"proxy":{"to":"https://www.visir.is","mode":"proxyAlways","predicateGenerators":[{"matches":{"method":true,"path":true,"query":true,"body":true}}]}}]}]}',
       },
     })
   })

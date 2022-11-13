@@ -32,7 +32,34 @@ export const getLocalSetup = (
         ...acc,
         [name]: {
           'proxy-port': uberChart.ports[name],
-          'mountebank-default-rule': `{"predicates":[{"equals":{}}],"responses":[{"proxy":{"to":"${target}","mode":"proxyAlways","predicateGenerators":[{"matches":{"method":true,"path":true,"query":true,"body":true}}]}}]}`,
+          'mountebank-imposter-config': JSON.stringify({
+            protocol: 'http',
+            name: name,
+            port: uberChart.ports[name],
+            stubs: [
+              {
+                predicates: [{ equals: {} }],
+                responses: [
+                  {
+                    proxy: {
+                      to: target,
+                      mode: 'proxyAlways',
+                      predicateGenerators: [
+                        {
+                          matches: {
+                            method: true,
+                            path: true,
+                            query: true,
+                            body: true,
+                          },
+                        },
+                      ],
+                    },
+                  },
+                ],
+              },
+            ],
+          }),
         },
       }
     }

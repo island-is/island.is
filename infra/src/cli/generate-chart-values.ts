@@ -1,5 +1,4 @@
 import { renderEnv } from './render-env'
-import { OpsEnvName } from '../dsl/types/charts'
 import { ChartName, Deployments } from '../uber-charts/all-charts'
 import { writeFileSync } from 'fs'
 import { Envs } from '../environments'
