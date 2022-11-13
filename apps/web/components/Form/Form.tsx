@@ -92,7 +92,7 @@ export const FormField = ({
           value={
             options.find((o) => o.value === value) ?? { label: value, value }
           }
-          onChange={({ value }: Option) => onChange(slug, value)}
+          onChange={({ value }: Option) => onChange(slug, value as string)}
           hasError={!!error}
           errorMessage={error}
         />
@@ -379,7 +379,21 @@ export const Form = ({ form, namespace }: FormProps) => {
                   slug={slug}
                   value={data[slug] ?? ''}
                   error={errors.find((error) => error.field === slug)?.error}
-                  onChange={onChange}
+                  onChange={(key, value) => {
+                    if (field.type === 'checkboxes') {
+                      const prevFieldData = data[slug]
+                      if (prevFieldData) {
+                        const json = JSON.parse(prevFieldData)
+                        json[key] =
+                          json[key] === 'false' || !json[key] ? 'true' : 'false'
+                        onChange(slug, JSON.stringify(json))
+                      } else {
+                        onChange(slug, JSON.stringify({ [key]: 'true' }))
+                      }
+                    } else {
+                      onChange(key, value)
+                    }
+                  }}
                 />
               )
             })}
