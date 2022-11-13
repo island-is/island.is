@@ -420,7 +420,7 @@ const serviceMockDef = (options: { uberChart: DeploymentRuntime }) => {
       repository: `bbyars/mountebank:2.8.1`,
     },
     env: {},
-    command: ['start --configfile=/app/default.json'],
+    command: ['start --configfile=/etc/config/default-imposters.json'],
     secrets: {},
     service: {
       targetPort: 2525,
