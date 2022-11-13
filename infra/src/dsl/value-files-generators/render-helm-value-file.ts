@@ -2,9 +2,11 @@ import { Kubernetes } from '../kubernetes-runtime'
 import { HelmValueFile, ServiceHelm, Services } from '../types/output-types'
 import { renderers } from '../downstream-dependencies'
 
+export type Mocks = 'with-mocks' | 'no-mocks'
 export const renderHelmValueFile = (
   uberChart: Kubernetes,
   services: Services<ServiceHelm>,
+  withMocks: Mocks,
 ): HelmValueFile => {
   const outputFormat = renderers.helm
   const helmServices: Services<ServiceHelm> = Object.entries(services).reduce(
@@ -18,23 +20,15 @@ export const renderHelmValueFile = (
     },
     uberChart.env.global,
   )
-  const servicesAndMocks = Object.entries(uberChart.deps).reduce(
-    (acc, [name, svcs]) => {
-      if (name.startsWith('mock-')) {
-        return {
-          ...acc,
-          [name]: outputFormat.serviceMockDef({
-            namespace: svcs.values().next().value.namespace,
-            target: name,
+  const mocks: Services<ServiceHelm> =
+    withMocks === 'with-mocks' && Object.keys(uberChart.mocks).length > 0
+      ? {
+          'mock-server': outputFormat.serviceMockDef({
+            uberChart,
           }),
         }
-      }
-      return {
-        ...acc,
-      }
-    },
-    helmServices,
-  )
+      : {}
+  const servicesAndMocks = { ...helmServices, ...mocks }
   Object.values(servicesAndMocks)
     .filter((s) => s.grantNamespacesEnabled)
     .forEach(({ namespace, grantNamespaces }) =>

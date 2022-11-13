@@ -30,8 +30,13 @@ export const renderServiceEnvVars = async (service: string) => {
   const services = await Promise.all(
     Object.values(Charts).map(
       async (chart) =>
-        (await renderHelmServiceFile(uberChart.env, toServices(chart.dev)))
-          .services,
+        (
+          await renderHelmServiceFile(
+            uberChart.env,
+            toServices(chart.dev),
+            'no-mocks',
+          )
+        ).services,
     ),
   )
 

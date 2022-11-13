@@ -37,14 +37,18 @@ describe('Egress', () => {
       sut.serviceDef,
       uberChart,
     )) as SerializeSuccess<ServiceHelm>
-    render = renderHelmValueFile(uberChart, { a: serviceDef.serviceDef[0] })
+    render = renderHelmValueFile(
+      uberChart,
+      { a: serviceDef.serviceDef[0] },
+      'with-mocks',
+    )
   })
 
   it('missing variables cause errors', () => {
-    expect(serviceDef.serviceDef[0].env['A']).toBe('http://mock-visir-is')
+    expect(serviceDef.serviceDef[0].env['A']).toBe('http://mock-server:9209')
   })
 
   it('should render two services - one extra for the mock', () => {
-    expect(render.services['mock-visir-is'].command).toStrictEqual(['mock'])
+    expect(render.services['mock-server'].command?.[0]).toMatch('start')
   })
 })

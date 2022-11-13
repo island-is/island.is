@@ -1,5 +1,6 @@
 import { ServiceDefinition, ServiceDefinitionCore } from './types/input-types'
 import { DeploymentRuntime, EnvironmentConfig } from './types/charts'
+import { getMockName, hostPortNumber } from './mocks/mocks-support'
 
 export class Kubernetes implements DeploymentRuntime {
   env: EnvironmentConfig // TODO: get rid of this?
@@ -8,6 +9,8 @@ export class Kubernetes implements DeploymentRuntime {
   }
 
   deps: { [name: string]: Set<string> } = {}
+  ports: { [name: string]: number } = {}
+  mocks: { [name: string]: string } = {}
 
   ref(from: ServiceDefinitionCore, to: ServiceDefinition | string) {
     if (typeof to === 'object') {
@@ -20,21 +23,13 @@ export class Kubernetes implements DeploymentRuntime {
       return serviceReference
     } else {
       if (this.env.feature) {
-        const dependencies = this.deps[to] ?? new Set<string>()
-        this.deps[
-          this.getMockName(to).replace('http://', '')
-        ] = dependencies.add(from.name)
-        return this.getMockName(to)
+        const { name, host } = getMockName(to)
+        this.ports[name] = this.ports[name] ?? hostPortNumber(host)
+        this.mocks[name] = host
+        return `http://mock-server:${this.ports[name]}`
       } else {
         return to
       }
     }
-  }
-
-  private getMockName(to: string) {
-    const parsed = new URL(to)
-    parsed.protocol = 'http:'
-    parsed.host = `mock-${parsed.host.replace(/\./g, '-')}`
-    return parsed.href.slice(0, parsed.href.length - (to.endsWith('/') ? 0 : 1))
   }
 }

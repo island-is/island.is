@@ -8,5 +8,6 @@ export const renderEnv = async (env: OpsEnv, chartName: ChartName) => {
   return renderHelmValueFileContent(
     Envs[Deployments[chartName][env]],
     toServices(Charts[chartName][env]),
+    'no-mocks',
   )
 }

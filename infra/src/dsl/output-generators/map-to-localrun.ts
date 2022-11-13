@@ -231,10 +231,7 @@ export const LocalrunOutput: OutputFormat<LocalrunService> = {
     return serializeService(service, deployment)
   },
 
-  serviceMockDef(options: {
-    namespace: string
-    target: string
-  }): LocalrunService {
+  serviceMockDef(options): LocalrunService {
     throw new Error('Not used')
   },
 }

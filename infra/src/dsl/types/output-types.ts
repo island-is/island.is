@@ -191,7 +191,7 @@ export interface OutputFormat<T extends ServiceOutputType> {
     featureDeployment?: string,
   ): Promise<SerializeSuccess<T> | SerializeErrors>
 
-  serviceMockDef(options: { namespace: string; target: string }): T
+  serviceMockDef(options: { uberChart: DeploymentRuntime }): T
 
   featureDeployment(service: ServiceDefinition, env: EnvironmentConfig): void
 }

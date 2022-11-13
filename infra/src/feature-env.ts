@@ -117,7 +117,7 @@ yargs(process.argv.slice(2))
         toServices(ExcludedFeatureDeploymentServices),
       )
       await writeToOutput(
-        await renderHelmValueFileContent(ch.env, featureYaml),
+        await renderHelmValueFileContent(ch.env, featureYaml, 'with-mocks'),
         argv.output,
       )
     },

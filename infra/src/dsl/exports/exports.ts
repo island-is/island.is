@@ -1,25 +1,24 @@
 import { ServiceDefinition } from '../types/input-types'
 import { Kubernetes } from '../kubernetes-runtime'
-import { dumpDockerCompose, dumpServiceHelm } from '../file-formats/yaml'
-import { renderHelmValueFile as internalRenderHelmValueFile } from '../value-files-generators/render-helm-value-file'
+import { dumpServiceHelm } from '../file-formats/yaml'
+import {
+  Mocks,
+  renderHelmValueFile as internalRenderHelmValueFile,
+} from '../value-files-generators/render-helm-value-file'
 import { DeploymentRuntime, EnvironmentConfig } from '../types/charts'
 import { renderers } from '../downstream-dependencies'
 import { prepareServices, renderer } from '../processing/service-sets'
 import { generateJobsForFeature } from '../output-generators/feature-jobs'
-import { getLocalSetup } from '../value-files-generators/get-local-setup'
-import { Localhost } from '../localhost-runtime'
 
 export const renderHelmValueFileContent = async (
   env: EnvironmentConfig,
   services: ServiceDefinition[],
+  withMocks: Mocks,
 ) => {
   let uberChart = new Kubernetes(env)
   return dumpServiceHelm(
     uberChart,
-    await internalRenderHelmValueFile(
-      uberChart,
-      await renderer(uberChart, services, renderers.helm),
-    ),
+    await renderHelmServiceFile(env, services, withMocks),
   )
 }
 // export const renderDockerComposeValueFileContent = async (
@@ -39,11 +38,13 @@ export const renderHelmValueFileContent = async (
 export const renderHelmServiceFile = async (
   env: EnvironmentConfig,
   services: ServiceDefinition[],
+  withMocks: Mocks,
 ) => {
   let uberChart = new Kubernetes(env)
   return internalRenderHelmValueFile(
     uberChart,
-    await renderer(uberChart, services, renderers.helm),
+    await renderHelmServices(uberChart.env, services),
+    withMocks,
   )
 }
 export const renderHelmServices = async (

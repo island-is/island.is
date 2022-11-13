@@ -61,7 +61,7 @@ describe('Feature-deployment support', () => {
     )
     const chart1 = new Kubernetes(Dev)
     const services = await renderer(chart1, services1, renderers.helm)
-    values = renderHelmValueFile(chart1, services)
+    values = renderHelmValueFile(chart1, services, 'no-mocks')
   })
 
   it('dynamic service name generation', () => {

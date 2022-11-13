@@ -410,20 +410,23 @@ const hostFullName = (host: string, env: EnvironmentConfig) => {
 const internalHostFullName = (host: string, env: EnvironmentConfig) =>
   host.indexOf('.') < 0 ? `${host}.internal.${env.domain}` : host
 
-const serviceMockDef = (options: { namespace: string; target: string }) => {
+const serviceMockDef = (options: { uberChart: DeploymentRuntime }) => {
   const result: ServiceHelm = {
     enabled: true,
     grantNamespaces: [],
     grantNamespacesEnabled: false,
-    namespace: options.namespace,
+    namespace: getFeatureDeploymentNamespace(options.uberChart.env),
     image: {
-      repository: `wiremock`,
+      repository: `bbyars/mountebank:2.8.1`,
     },
     env: {},
-    command: ['mock'],
+    command: ['start --configfile=/app/default.json'],
     secrets: {},
+    service: {
+      targetPort: 2525,
+    },
     healthCheck: {
-      port: 8000,
+      port: 2525,
       liveness: {
         path: '/',
         initialDelaySeconds: 5,
@@ -443,6 +446,10 @@ const serviceMockDef = (options: { namespace: string; target: string }) => {
   return result
 }
 
+function getFeatureDeploymentNamespace(env: EnvironmentConfig) {
+  return `feature-${env.feature}`
+}
+
 export const HelmOutput: OutputFormat<ServiceHelm> = {
   featureDeployment(s: ServiceDefinition, env): void {
     Object.entries(s.ingress).forEach(([name, ingress]) => {
@@ -454,7 +461,7 @@ export const HelmOutput: OutputFormat<ServiceHelm> = {
       )
     })
     s.replicaCount = { min: 1, max: 2, default: 1 }
-    s.namespace = `feature-${env.feature}`
+    s.namespace = getFeatureDeploymentNamespace(env)
     if (s.postgres) {
       s.postgres = getPostgresInfoForFeature(env.feature!, s.postgres)
     }
@@ -473,7 +480,7 @@ export const HelmOutput: OutputFormat<ServiceHelm> = {
     return serializeService(service, deployment, featureDeployment)
   },
 
-  serviceMockDef(options: { namespace: string; target: string }): ServiceHelm {
+  serviceMockDef(options): ServiceHelm {
     return serviceMockDef(options)
   },
 }
