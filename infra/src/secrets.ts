@@ -46,10 +46,12 @@ yargs(hideBin(process.argv))
             }))
             .flatMap(async ({ services, chartName }) => {
               return Object.values(
-                await renderHelmServices(
-                  Envs[Deployments[chartName][p.env as OpsEnv]],
-                  toServices(services),
-                ),
+                (
+                  await renderHelmServices(
+                    Envs[Deployments[chartName][p.env as OpsEnv]],
+                    toServices(services),
+                  )
+                ).services,
               )
             }),
         )

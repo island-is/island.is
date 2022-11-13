@@ -135,7 +135,7 @@ yargs(process.argv.slice(2))
         toServices(ExcludedFeatureDeploymentServices),
       )
       await writeToOutput(
-        buildComment(await renderHelmServices(ch.env, featureYaml)),
+        buildComment((await renderHelmServices(ch.env, featureYaml)).services),
         argv.output,
       )
     },

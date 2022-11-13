@@ -41,7 +41,8 @@ export const renderSecrets = async (service: string) => {
   const services = await Promise.all(
     Object.values(Charts).map(
       async (chart) =>
-        await renderHelmServices(uberChart.env, toServices(chart.dev)),
+        (await renderHelmServices(uberChart.env, toServices(chart.dev)))
+          .services,
     ),
   )
 

@@ -7,6 +7,7 @@ import {
 } from '../types/output-types'
 import { Kubernetes } from '../kubernetes-runtime'
 import { Localhost } from '../localhost-runtime'
+import { EnvironmentConfig } from '../types/charts'
 
 export const dumpOpts = {
   sortKeys: true,
@@ -18,9 +19,12 @@ export const reformatYaml = (content: string): string => {
   return dump(obj, dumpOpts)
 }
 export const dumpJobYaml = (job: FeatureKubeJob) => dump(job, dumpOpts)
-export const dumpServiceHelm = (ch: Kubernetes, valueFile: HelmValueFile) => {
+export const dumpServiceHelm = (
+  env: EnvironmentConfig,
+  valueFile: HelmValueFile,
+) => {
   const { namespaces, services } = valueFile
-  const namespaceLabels = ch.env.feature ? { namespaceType: 'feature' } : {}
+  const namespaceLabels = env.feature ? { namespaceType: 'feature' } : {}
   return dump(
     { namespaces: { namespaces, labels: namespaceLabels }, ...services },
     dumpOpts,

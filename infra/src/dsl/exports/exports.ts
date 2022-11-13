@@ -15,9 +15,8 @@ export const renderHelmValueFileContent = async (
   services: ServiceDefinition[],
   withMocks: Mocks,
 ) => {
-  let uberChart = new Kubernetes(env)
   return dumpServiceHelm(
-    uberChart,
+    env,
     await renderHelmServiceFile(env, services, withMocks),
   )
 }
@@ -40,19 +39,21 @@ export const renderHelmServiceFile = async (
   services: ServiceDefinition[],
   withMocks: Mocks,
 ) => {
-  let uberChart = new Kubernetes(env)
-  return internalRenderHelmValueFile(
-    uberChart,
-    await renderHelmServices(uberChart.env, services),
-    withMocks,
+  const { services: renderedServices, uber } = await renderHelmServices(
+    env,
+    services,
   )
+  return internalRenderHelmValueFile(uber, renderedServices, withMocks)
 }
 export const renderHelmServices = async (
   env: EnvironmentConfig,
   services: ServiceDefinition[],
 ) => {
   let uberChart = new Kubernetes(env)
-  return await renderer(uberChart, services, renderers.helm)
+  return {
+    services: await renderer(uberChart, services, renderers.helm),
+    uber: uberChart,
+  }
 }
 
 export const renderHelmJobForFeature = async (

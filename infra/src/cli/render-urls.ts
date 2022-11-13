@@ -26,10 +26,12 @@ const renderUrlsForChart = async (
   environment: OpsEnv,
   chartName: ChartName,
 ) => {
-  const services = await renderHelmServices(
-    Envs[Deployments[chartName][environment]],
-    toServices(Charts[chartName][environment]),
-  )
+  const services = (
+    await renderHelmServices(
+      Envs[Deployments[chartName][environment]],
+      toServices(Charts[chartName][environment]),
+    )
+  ).services
 
   return Object.keys(services).reduce((acc, serviceName) => {
     const urls = renderUrlsForService(services[serviceName])
