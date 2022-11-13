@@ -20,7 +20,9 @@ const mockedServices = {
   XROAD_BASE_PATH: defaultMock(9029),
 }
 
-const mb = new Mountebank()
+const mb = new Mountebank().withURL(
+  process.env.MOCK_SERVER ?? 'http://localhost:2525',
+)
 export const resetMocks = async () => {
   await Promise.all(
     Object.values(mockedServices).map(async (mock) => {
