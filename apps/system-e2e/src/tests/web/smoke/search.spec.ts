@@ -19,7 +19,7 @@ test.describe('Search feature', () => {
     await context.close()
   })
 
-  test.only('has expected sections', async () => {
+  test('has expected sections', async () => {
     const testPhrase = 'umsókn'
     const page = await context.newPage()
     await page.goto('/')
