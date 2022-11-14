@@ -341,7 +341,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         name: m.accessControl,
         path: ServicePortalPath.AccessControlDelegations,
         icon: {
-          icon: 'lockClosed',
+          icon: 'people',
         },
         description: m.accessControlDescription,
         children: [

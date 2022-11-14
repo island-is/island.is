@@ -5,6 +5,7 @@ import { useForm, FormProvider } from 'react-hook-form'
 import { Box, toast, AlertBanner } from '@island.is/island-ui/core'
 import { AuthCustomDelegation } from '@island.is/api/schema'
 import {
+  formatPlausiblePathToParams,
   m as coreMessages,
   m,
   ServicePortalPath,
@@ -22,15 +23,17 @@ import {
   AUTH_API_SCOPE_GROUP_TYPE,
 } from './access.types'
 import {
-  flattenAndExtendApiScopeGroup,
   extendApiScope,
   formatScopeTreeToScope,
+  flattenAndExtendApiScopeGroup,
 } from './access.utils'
 import { AccessItem } from './AccessItem/AccessItem'
 import { AccessConfirmModal } from './AccessConfirmModal'
 import { AccessItemHeader } from './AccessItemHeader/AccessItemHeader'
 import { isDefined } from '@island.is/shared/utils'
 import * as commonAccessStyles from './access.css'
+import { AccessDeleteModal } from './AccessDeleteModal'
+import { useAuth } from '@island.is/auth/react'
 
 type AccessFormProps = {
   delegation: AuthCustomDelegation
@@ -43,12 +46,15 @@ export const AccessForm = ({
   scopeTree,
   validityPeriod,
 }: AccessFormProps) => {
-  const [openConfirmModal, setOpenConfirmModal] = useState(false)
   const { formatMessage } = useLocale()
   const { delegationId } = useParams<{
     delegationId: string
   }>()
   const history = useHistory()
+  const { userInfo } = useAuth()
+
+  const [openConfirmModal, setOpenConfirmModal] = useState(false)
+  const [openDeleteModal, setOpenDeleteModal] = useState(false)
   const [formError, setFormError] = useState(false)
   const [updateError, setUpdateError] = useState(false)
 
@@ -103,7 +109,9 @@ export const AccessForm = ({
       if (data && !errors && !err) {
         history.push(ServicePortalPath.AccessControlDelegations)
         servicePortalSaveAccessControl(
-          ServicePortalPath.AccessControlDelegationsGrant,
+          formatPlausiblePathToParams(
+            ServicePortalPath.AccessControlDelegationsGrant,
+          ),
         )
       }
     } catch (error) {
@@ -164,7 +172,13 @@ export const AccessForm = ({
             onCancel={() =>
               history.push(ServicePortalPath.AccessControlDelegations)
             }
-            onConfirm={() => setOpenConfirmModal(true)}
+            onConfirm={() => {
+              if (scopes.length > 0) {
+                setOpenConfirmModal(true)
+              } else {
+                setOpenDeleteModal(true)
+              }
+            }}
             confirmLabel={formatMessage({
               id: 'sp.settings-access-control:empty-new-access',
               defaultMessage: 'Veita aðgang',
@@ -198,6 +212,18 @@ export const AccessForm = ({
         validityPeriod={validityPeriod}
         loading={updateLoading}
         error={updateError}
+      />
+      <AccessDeleteModal
+        onDelete={() => {
+          history.push(
+            delegation.to?.nationalId === userInfo?.profile.nationalId
+              ? ServicePortalPath.AccessControlDelegationsIncoming
+              : ServicePortalPath.AccessControlDelegations,
+          )
+        }}
+        onClose={() => setOpenDeleteModal(false)}
+        isVisible={openDeleteModal}
+        delegation={delegation as AuthCustomDelegation}
       />
     </>
   )

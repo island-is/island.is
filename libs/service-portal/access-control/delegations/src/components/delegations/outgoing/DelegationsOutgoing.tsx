@@ -1,10 +1,12 @@
 import { useMemo, useState } from 'react'
+import sortBy from 'lodash/sortBy'
 import {
   SkeletonLoader,
   Stack,
   AlertBanner,
   Box,
 } from '@island.is/island-ui/core'
+import { isDefined } from '@island.is/shared/utils'
 import { AuthCustomDelegation } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
@@ -15,7 +17,6 @@ import { DelegationsEmptyState } from '../DelegationsEmptyState'
 import { DelegationsOutgoingHeader } from './DelegationsOutgoingHeader'
 import { DomainOption, useDomains } from '../../../hooks/useDomains'
 import { ALL_DOMAINS } from '../../../constants/domain'
-import sortBy from 'lodash/sortBy'
 
 export const DelegationsOutgoing = () => {
   const { formatMessage, lang = 'is' } = useLocale()
@@ -116,7 +117,6 @@ export const DelegationsOutgoing = () => {
         </div>
       </Box>
       <AccessDeleteModal
-        id={`access-delete-modal-${delegation?.id}`}
         onClose={() => {
           setDelegation(null)
         }}
@@ -128,17 +128,8 @@ export const DelegationsOutgoing = () => {
             },
           })
         }}
-        label={formatMessage(m.accessControl)}
-        title={formatMessage({
-          id: 'sp.settings-access-control:access-remove-modal-content',
-          defaultMessage: 'Ertu viss um að þú viljir eyða þessum aðgangi?',
-        })}
-        isVisible={!!delegation}
+        isVisible={isDefined(delegation)}
         delegation={delegation as AuthCustomDelegation}
-        domain={{
-          name: delegation?.domain.displayName,
-          imgSrc: delegation?.domain.organisationLogoUrl,
-        }}
       />
     </>
   )
