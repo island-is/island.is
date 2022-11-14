@@ -69,7 +69,9 @@ describe('DomainsController', () => {
           }))
 
           // Act
-          const res = await server.get('/v1/domains')
+          const res = await server.get(
+            `/v1/domains?direction=${testCase.direction}`,
+          )
 
           // Assert
           expect(res.status).toEqual(200)
@@ -108,7 +110,9 @@ describe('DomainsController', () => {
               const expected = domain.scopes
 
               // Act
-              const res = await server.get(`/v1/domains/${domainName}/scopes`)
+              const res = await server.get(
+                `/v1/domains/${domainName}/scopes?direction=${testCase.direction}`,
+              )
 
               // Assert
               expect(res.status).toEqual(200)
@@ -129,7 +133,7 @@ describe('DomainsController', () => {
 
               // Act
               const res = await server.get(
-                `/v1/domains/${domainName}/scope-tree`,
+                `/v1/domains/${domainName}/scope-tree?direction=${testCase.direction}`,
               )
 
               // Assert
@@ -142,22 +146,11 @@ describe('DomainsController', () => {
 
         if (invalidDomains.length) {
           it.each(invalidDomains)(
-            'GET /domains/%s returns no content response',
-            async (domainName) => {
-              // Act
-              const res = await server.get(`/v1/domains/${domainName}`)
-
-              // Assert
-              expect(res.status).toEqual(204)
-            },
-          )
-
-          it.each(invalidDomains)(
             'GET /domains/%s/scope-tree returns no results',
             async (domainName) => {
               // Act
               const res = await server.get(
-                `/v1/domains/${domainName}/scope-tree`,
+                `/v1/domains/${domainName}/scope-tree?direction=${testCase.direction}`,
               )
 
               // Assert
@@ -170,7 +163,9 @@ describe('DomainsController', () => {
             'GET /domains/%s/scopes returns no results',
             async (domainName) => {
               // Act
-              const res = await server.get(`/v1/domains/${domainName}/scopes`)
+              const res = await server.get(
+                `/v1/domains/${domainName}/scopes?direction=${testCase.direction}`,
+              )
 
               // Assert
               expect(res.status).toEqual(200)
@@ -314,6 +309,24 @@ describe('DomainsController', () => {
       // Assert
       expect(res.status).toEqual(200)
       expect(res.body).toMatchObject(expected)
+    })
+
+    it('GET /domains/:domainName returns no content response for invalid domain', async () => {
+      // Arrange
+      const app = await setupWithAuth({
+        user: createCurrentUser({ scope: [AuthScope.delegations] }),
+      })
+      const factory = new FixtureFactory(app)
+      await factory.createDomain({ name: 'd1' })
+      const invalidDomainName = 'invalid-d1'
+
+      // Act
+      const res = await request(app.getHttpServer()).get(
+        `/v1/domains/${invalidDomainName}`,
+      )
+
+      // Assert
+      expect(res.status).toEqual(204)
     })
   })
 
