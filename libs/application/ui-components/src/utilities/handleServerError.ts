@@ -1,8 +1,12 @@
 import { ApolloError } from '@apollo/client'
-import { coreMessages } from '@island.is/application/core'
+import {
+  coreMessages,
+  getErrorReasonIfPresent,
+} from '@island.is/application/core'
 
 import { toast } from '@island.is/island-ui/core'
 import { FormatMessage } from '@island.is/localization'
+import { findProblemInApolloError } from '@island.is/shared/problem'
 
 export function handleServerError(
   error: ApolloError,
