@@ -2,7 +2,6 @@ import React, { useEffect } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 import { ServerError, useMutation } from '@apollo/client'
 import { GraphQLError } from 'graphql'
-import * as Sentry from '@sentry/react'
 import qs from 'qs'
 
 import { ErrorShell, LoadingShell } from '@island.is/application/ui-shell'
@@ -45,7 +44,7 @@ export const AssignApplication = () => {
   useEffect(() => {
     const init = async () => {
       if (isMissingToken) {
-        Sentry.captureMessage(
+        console.error(
           `Missing token, cannot assign the application ${location.search}`,
         )
 

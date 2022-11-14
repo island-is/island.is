@@ -20,6 +20,7 @@ import {
 } from '@island.is/island-ui/core'
 import { Query, Mutation, AuthCustomDelegation } from '@island.is/api/schema'
 import {
+  formatPlausiblePathToParams,
   IntroHeader,
   m as coreMessages,
   NotFound,
@@ -207,7 +208,9 @@ const Access: FC = () => {
     if (data && !errors && !err) {
       history.push(ServicePortalPath.SettingsAccessControl)
       servicePortalSaveAccessControl(
-        ServicePortalPath.SettingsAccessControlGrant,
+        formatPlausiblePathToParams(
+          ServicePortalPath.SettingsAccessControlGrant,
+        ),
       )
     }
   })

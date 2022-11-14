@@ -14,10 +14,6 @@ export const row = style({
   padding: '20px 0',
 })
 
-export const rowWithBackground = style({
-  backgroundColor: theme.color.blue100,
-})
-
 export const item = style({
   display: 'flex',
   alignItems: 'flex-start',
