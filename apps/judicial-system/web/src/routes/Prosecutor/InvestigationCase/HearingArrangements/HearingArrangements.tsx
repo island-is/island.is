@@ -64,7 +64,7 @@ const HearingArrangements = () => {
     transitionCase,
     isTransitioningCase,
     updateCase,
-    setAndSendToServer,
+    setAndSendCaseToServer,
   } = useCase()
 
   const [
@@ -104,7 +104,7 @@ const HearingArrangements = () => {
 
   const handleCourtChange = (court: Institution) => {
     if (workingCase) {
-      setAndSendToServer(
+      setAndSendCaseToServer(
         [
           {
             courtId: court.id,
@@ -159,7 +159,7 @@ const HearingArrangements = () => {
                 workingCase={workingCase}
                 onChange={(date: Date | undefined, valid: boolean) => {
                   if (date && valid) {
-                    setAndSendToServer(
+                    setAndSendCaseToServer(
                       [
                         {
                           requestedCourtDate: formatDateForServer(date),

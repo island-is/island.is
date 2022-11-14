@@ -11,7 +11,6 @@ import {
   FieldTypes,
   SelectOption,
   StaticTextObject,
-  Application,
 } from '@island.is/application/types'
 import { SelectFormField } from '@island.is/application/ui-fields'
 import { useLocale } from '@island.is/localization'

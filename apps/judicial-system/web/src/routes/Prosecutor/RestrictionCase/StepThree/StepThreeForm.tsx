@@ -96,7 +96,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
     '',
   )
 
-  const { updateCase, setAndSendToServer } = useCase()
+  const { updateCase, setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
 
   useDeb(workingCase, 'lawsBroken')
@@ -110,7 +110,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
       requestedValidToDate: Date | string | undefined,
       requestedCustodyRestrictions: CaseCustodyRestrictions[] | undefined,
     ) => {
-      setAndSendToServer(
+      setAndSendCaseToServer(
         [
           entry,
           {
@@ -132,7 +132,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
         setWorkingCase,
       )
     },
-    [workingCase, formatMessage, setWorkingCase, setAndSendToServer],
+    [workingCase, formatMessage, setWorkingCase, setAndSendCaseToServer],
   )
 
   return (

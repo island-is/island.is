@@ -34,6 +34,7 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 import { indictmentsCaseFilesAccordionItem as m } from './IndictmentsCaseFilesAccordionItem.strings'
 import * as styles from './IndictmentsCaseFilesAccordionItem.css'
 import { UpdateFileMutation } from './UpdateFiles.gql'
+import { useMeasure } from 'react-use'
 
 const DDMMYYYY = 'dd.MM.yyyy'
 
@@ -192,6 +193,8 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
   const [editedFilename, setEditedFilename] = useState<string | undefined>(
     caseFile.userGeneratedFilename,
   )
+  const [ref, { width }] = useMeasure<HTMLDivElement>()
+
   const [editedDisplayDate, setEditedDisplayDate] = useState<
     string | undefined
   >(formatDate(caseFile.displayDate, DDMMYYYY) ?? undefined)
@@ -326,6 +329,7 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
                   exit={{ y: -10, opacity: 0 }}
                   transition={{ duration: 0.2 }}
                   key={`${caseFile.id}-view`}
+                  ref={ref}
                   style={{
                     display: 'flex',
                     justifyContent: 'space-between',
@@ -341,7 +345,19 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
                       }
                     }}
                   >
-                    <Text variant="h5">{displayName}</Text>
+                    <Text variant="h5">
+                      <span
+                        style={{
+                          display: 'block',
+                          maxWidth: `${width - 180}px`,
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        {displayName}
+                      </span>
+                    </Text>
                     <Box marginLeft={2}>
                       <Icon icon="open" type="outline" size="small" />
                     </Box>
