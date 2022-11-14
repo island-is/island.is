@@ -141,9 +141,11 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
     }
   })
 
-  const clearForm = () => {
+  const clearName = () => {
     setName('')
-    reset()
+    reset({
+      toNationalId: '',
+    })
   }
 
   return (
@@ -241,7 +243,7 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
                 ) : name ? (
                   <button
                     disabled={loading}
-                    onClick={clearForm}
+                    onClick={clearName}
                     className={styles.icon}
                   >
                     <Icon icon="close" size="large" color="blue400" />
