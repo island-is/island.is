@@ -25,10 +25,6 @@ import { useStore } from '../../store/stateProvider'
 import { WidgetErrorBoundary } from './WidgetError/WidgetError'
 import WidgetLoading from './WidgetLoading/WidgetLoading'
 import useNavigation from '../../hooks/useNavigation/useNavigation'
-<<<<<<< HEAD
-import { AuthDelegationType } from '@island.is/shared/types'
-=======
->>>>>>> e19b56f4d34ad20e0337ae73140a1c71afb9356c
 import * as styles from './Dashboard.css'
 import { iconIdMapper, iconTypeToSVG } from '../../utils/Icons/idMapper'
 import { useWindowSize } from 'react-use'
