@@ -1,5 +1,4 @@
 import { MutationTuple, useMutation } from '@apollo/client'
-import * as Sentry from '@sentry/react'
 import { DefaultEvents, Application } from '@island.is/application/types'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 
@@ -27,7 +26,8 @@ export const useSubmitApplication: UseSubmitApplication = ({
 }) => {
   return useMutation(SUBMIT_APPLICATION, {
     onError: (e) => {
-      return Sentry.captureException(e.message)
+      console.error(e.message)
+      return
     },
     onCompleted: () => {
       refetch?.()
