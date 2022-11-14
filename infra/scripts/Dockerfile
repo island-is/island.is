@@ -1,9 +1,9 @@
-ARG DOCKER_IMAGE_REGISTRY=public.ecr.aws/docker/library/
-FROM ${DOCKER_IMAGE_REGISTRY}node:18-alpine3.15 as runner
+ARG DOCKER_IMAGE_REGISTRY=public.ecr.aws
+FROM $DOCKER_IMAGE_REGISTRY/docker/library/node:18-alpine3.15 as runner
 
 RUN apk add postgresql-client bash
 
-FROM ${DOCKER_IMAGE_REGISTRY}node:18-alpine3.15 as build
+FROM $DOCKER_IMAGE_REGISTRY/docker/library/node:18-alpine3.15 as build
 
 ENV NODE_OPTIONS=--openssl-legacy-provider
 
