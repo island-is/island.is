@@ -515,7 +515,7 @@ export interface IEmailSignupFields {
   formFields?: IFormField[] | undefined
 
   /** Signup Type */
-  signupType?: 'mailchimp' | undefined
+  signupType?: 'mailchimp' | 'zenter' | undefined
 
   /** Configuration */
   configuration?: Record<string, any> | undefined
@@ -1864,9 +1864,6 @@ export interface INamespace extends Entry<INamespaceFields> {
 }
 
 export interface INewsFields {
-  /** Tilkynning */
-  tilkynning?: string | undefined
-
   /** Content status */
   contentStatus?: 'Undefined' | 'Needs work' | 'In review' | 'Done' | undefined
 
@@ -2317,6 +2314,7 @@ export interface IOrganizationSubpageFields {
         | IContactUs
         | IDistricts
         | IMailingListSignup
+        | IEmailSignup
         | IEventSlice
         | IFeaturedArticles
         | ILatestNewsSlice
