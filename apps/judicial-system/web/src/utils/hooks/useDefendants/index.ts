@@ -119,29 +119,32 @@ const useDefendants = () => {
     [formatMessage, updateDefendantMutation],
   )
 
-  const updateDefendantState = (
-    defendantId: string,
-    update: UpdateDefendant,
-    setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
-  ) => {
-    setWorkingCase((theCase: Case) => {
-      if (!theCase.defendants) {
-        return theCase
-      }
-      const indexOfDefendantToUpdate = theCase.defendants.findIndex(
-        (defendant) => defendant.id === defendantId,
-      )
+  const updateDefendantState = useCallback(
+    (
+      defendantId: string,
+      update: UpdateDefendant,
+      setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
+    ) => {
+      setWorkingCase((theCase: Case) => {
+        if (!theCase.defendants) {
+          return theCase
+        }
+        const indexOfDefendantToUpdate = theCase.defendants.findIndex(
+          (defendant) => defendant.id === defendantId,
+        )
 
-      const newDefendants = [...theCase.defendants]
+        const newDefendants = [...theCase.defendants]
 
-      newDefendants[indexOfDefendantToUpdate] = {
-        ...newDefendants[indexOfDefendantToUpdate],
-        ...update,
-      }
+        newDefendants[indexOfDefendantToUpdate] = {
+          ...newDefendants[indexOfDefendantToUpdate],
+          ...update,
+        }
 
-      return { ...theCase, defendants: newDefendants }
-    })
-  }
+        return { ...theCase, defendants: newDefendants }
+      })
+    },
+    [],
+  )
 
   const setAndSendDefendantToServer = useCallback(
     (
@@ -153,7 +156,7 @@ const useDefendants = () => {
       updateDefendantState(defendantId, update, setWorkingCase)
       updateDefendant(caseId, defendantId, update)
     },
-    [updateDefendant],
+    [updateDefendant, updateDefendantState],
   )
 
   return {

@@ -80,6 +80,7 @@ import { Form, mapForm } from './models/form.model'
 import { GetFormInput } from './dto/getForm.input'
 import { GetServicePortalAlertBannersInput } from './dto/getServicePortalAlertBanners.input'
 import { mapImage } from './models/image.model'
+import { EmailSignup, mapEmailSignup } from './models/emailSignup.model'
 
 const errorHandler = (name: string) => {
   return (error: Error) => {
@@ -845,6 +846,22 @@ export class CmsContentfulService {
         mapMailingListSignup,
       )[0] ?? null
     )
+  }
+
+  async getEmailSignup({
+    id,
+    lang = 'is',
+  }: GetMailingListSignupSliceInput): Promise<EmailSignup | null> {
+    const params = {
+      ['content_type']: 'emailSignup',
+      'sys.id': id,
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IEmailSignupFields>(lang, params)
+      .catch(errorHandler('getEmailSignup'))
+
+    return (result.items as types.IEmailSignup[]).map(mapEmailSignup)[0] ?? null
   }
 
   async getForm(input: GetFormInput): Promise<Form | null> {

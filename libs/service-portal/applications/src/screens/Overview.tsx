@@ -15,7 +15,6 @@ import {
 } from '@island.is/island-ui/core'
 import { useApplications } from '@island.is/service-portal/graphql'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import * as Sentry from '@sentry/react'
 import { useLocation } from 'react-router-dom'
 import { useGetOrganizationsQuery } from '../../../graphql/src/schema'
 import { m } from '../lib/messages'
@@ -41,7 +40,6 @@ const defaultFilterValues: FilterValues = {
 const Overview: ServicePortalModuleComponent = () => {
   useNamespaces('sp.applications')
   useNamespaces('application.system')
-  Sentry.configureScope((scope) => scope.setTransactionName('Applications'))
 
   const { formatMessage } = useLocale()
   const { data: applications, loading, error, refetch } = useApplications()

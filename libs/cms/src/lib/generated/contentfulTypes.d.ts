@@ -504,6 +504,43 @@ export interface IDistricts extends Entry<IDistrictsFields> {
   }
 }
 
+export interface IEmailSignupFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Description */
+  description?: string | undefined
+
+  /** Form Fields */
+  formFields?: IFormField[] | undefined
+
+  /** Signup Type */
+  signupType?: 'mailchimp' | 'zenter' | undefined
+
+  /** Configuration */
+  configuration?: Record<string, any> | undefined
+
+  /** Translations */
+  translations?: Record<string, any> | undefined
+}
+
+export interface IEmailSignup extends Entry<IEmailSignupFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'emailSignup'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IEmbeddedVideoFields {
   /** Title */
   title: string
@@ -827,11 +864,21 @@ export interface IFormFieldFields {
   /** Title */
   title: string
 
+  /** Name */
+  name?: string | undefined
+
   /** Placeholder */
   placeholder?: string | undefined
 
   /** Type */
-  type: 'input' | 'text' | 'dropdown' | 'radio' | 'acceptTerms'
+  type:
+    | 'input'
+    | 'text'
+    | 'dropdown'
+    | 'radio'
+    | 'acceptTerms'
+    | 'email'
+    | 'checkboxes'
 
   /** Required */
   required?: boolean | undefined
@@ -1609,6 +1656,9 @@ export interface IMailingListSignupFields {
   /** Category Label */
   categoryLabel?: string | undefined
 
+  /** Inputs */
+  inputs?: Record<string, any> | undefined
+
   /** Categories */
   categories?: Record<string, any> | undefined
 
@@ -2267,6 +2317,7 @@ export interface IOrganizationSubpageFields {
         | IContactUs
         | IDistricts
         | IMailingListSignup
+        | IEmailSignup
         | IEventSlice
         | IFeaturedArticles
         | ILatestNewsSlice
@@ -2779,7 +2830,9 @@ export interface ISliceConnectedComponentFields {
     | 'Fiskistofa/ShipSearchSidebarInput'
     | 'Fasteignasalar/RealEstateAgents'
     | 'Lögmenn/Lawyers'
-    | 'ElectronicRegistrations/MonthlyStatistics'
+    | 'Fiskistofa/CatchQuotaCalculator'
+    | 'Fiskistofa/StraddlingStockCalculator'
+    | 'Fiskistofa/SelectedShip'
     | undefined
 
   /** Localized JSON */
@@ -3852,6 +3905,7 @@ export type CONTENT_TYPE =
   | 'cardSection'
   | 'contactUs'
   | 'districts'
+  | 'emailSignup'
   | 'embeddedVideo'
   | 'enhancedAsset'
   | 'errorPage'
