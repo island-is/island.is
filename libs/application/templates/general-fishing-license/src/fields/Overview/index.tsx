@@ -1,6 +1,11 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
-import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
+import {
+  Box,
+  GridColumn,
+  GridRow,
+  ResponsiveSpace,
+} from '@island.is/island-ui/core'
 import React, { FC, useEffect, useState } from 'react'
 import { ShipInformation } from '../components'
 import { ReviewGroup } from '@island.is/application/ui-components'
@@ -20,6 +25,8 @@ import {
   licenseHasAreaSelection,
   licenseHasRailNetAndRoeNetField,
 } from '../../utils/licenses'
+import { MessageDescriptor } from '@formatjs/intl'
+import { Colors } from '@island.is/island-ui/theme'
 
 export const Overview: FC<FieldBaseProps> = ({ application, goToScreen }) => {
   const answers = application.answers as GeneralFishingLicense
@@ -74,51 +81,39 @@ export const Overview: FC<FieldBaseProps> = ({ application, goToScreen }) => {
         isEditable
       >
         <GridRow>
-          <GridColumn paddingBottom={3} span={['9/12', '9/12', '9/12', '5/12']}>
-            <ValueLine
-              label={applicantInformation.labels.name}
-              value={answers.applicant.name}
-            />
-          </GridColumn>
-          <GridColumn paddingBottom={3} span={['9/12', '9/12', '9/12', '5/12']}>
-            <ValueLine
-              label={applicantInformation.labels.nationalId}
-              value={kennitala.format(answers.applicant.nationalId)}
-            />
-          </GridColumn>
-          <GridColumn paddingBottom={3} span={['9/12', '9/12', '9/12', '5/12']}>
-            <ValueLine
-              label={applicantInformation.labels.address}
-              value={answers.applicant.address}
-            />
-          </GridColumn>
-          <GridColumn paddingBottom={3} span={['9/12', '9/12', '9/12', '5/12']}>
-            <ValueLine
-              label={applicantInformation.labels.postalCode}
-              value={answers.applicant.postalCode}
-            />
-          </GridColumn>
-          <GridColumn paddingBottom={3} span={['9/12', '9/12', '9/12', '5/12']}>
-            <ValueLine
-              label={applicantInformation.labels.city}
-              value={answers.applicant.city}
-            />
-          </GridColumn>
+          <OverviewItem
+            label={applicantInformation.labels.name}
+            value={answers.applicant.name}
+          />
+          <OverviewItem
+            label={applicantInformation.labels.nationalId}
+            value={kennitala.format(answers.applicant.nationalId)}
+          />
+          <OverviewItem
+            label={applicantInformation.labels.address}
+            value={answers.applicant.address}
+          />
+          <OverviewItem
+            label={applicantInformation.labels.postalCode}
+            value={answers.applicant.postalCode}
+          />
+          <OverviewItem
+            label={applicantInformation.labels.city}
+            value={answers.applicant.city}
+          />
           {answers.applicant.email && (
-            <GridColumn span={['9/12', '9/12', '9/12', '5/12']}>
-              <ValueLine
-                label={applicantInformation.labels.email}
-                value={answers.applicant.email}
-              />
-            </GridColumn>
+            <OverviewItem
+              paddingBottom={0}
+              label={applicantInformation.labels.email}
+              value={answers.applicant.email}
+            />
           )}
           {answers.applicant.phoneNumber && (
-            <GridColumn span={['9/12', '9/12', '9/12', '5/12']}>
-              <ValueLine
-                label={applicantInformation.labels.tel}
-                value={formatPhonenumber(answers.applicant.phoneNumber)}
-              />
-            </GridColumn>
+            <OverviewItem
+              paddingBottom={0}
+              label={applicantInformation.labels.tel}
+              value={formatPhonenumber(answers.applicant.phoneNumber)}
+            />
           )}
         </GridRow>
       </ReviewGroup>
@@ -140,64 +135,42 @@ export const Overview: FC<FieldBaseProps> = ({ application, goToScreen }) => {
         editAction={() => changeScreens('fishingLicenseFurtherInformation')}
       >
         <GridRow>
-          <GridColumn span={['9/12', '9/12', '9/12', '5/12']} paddingBottom={3}>
-            <ValueLine
-              label={fishingLicense.general.title}
-              value={fishingLicense.labels[answers.fishingLicense.license]}
-            />
-          </GridColumn>
+          <OverviewItem
+            label={fishingLicense.general.title}
+            value={fishingLicense.labels[answers.fishingLicense.license]}
+          />
           {licenseHasAreaSelection(answers.fishingLicense.license) &&
             answers?.fishingLicenseFurtherInformation?.area && (
-              <GridColumn
-                paddingBottom={3}
-                span={['9/12', '9/12', '9/12', '5/12']}
-              >
-                <ValueLine
-                  label={fishingLicenseFurtherInformation.labels.area}
-                  value={answers.fishingLicenseFurtherInformation.area}
-                />
-              </GridColumn>
+              <OverviewItem
+                label={fishingLicenseFurtherInformation.labels.area}
+                value={answers.fishingLicenseFurtherInformation.area}
+              />
             )}
           {answers?.fishingLicenseFurtherInformation?.date && (
-            <GridColumn
-              paddingBottom={3}
-              span={['9/12', '9/12', '9/12', '5/12']}
-            >
-              <ValueLine
-                label={fishingLicenseFurtherInformation.labels.date}
-                value={answers.fishingLicenseFurtherInformation.date}
-              />
-            </GridColumn>
+            <OverviewItem
+              label={fishingLicenseFurtherInformation.labels.date}
+              value={answers.fishingLicenseFurtherInformation.date}
+            />
           )}
           {licenseHasRailNetAndRoeNetField(answers.fishingLicense.license) &&
             answers?.fishingLicenseFurtherInformation?.railAndRoeNet?.railnet &&
             answers?.fishingLicenseFurtherInformation?.railAndRoeNet
               ?.roenet && (
               <>
-                <GridColumn
-                  paddingBottom={3}
-                  span={['9/12', '9/12', '9/12', '5/12']}
-                >
-                  <ValueLine
-                    label={fishingLicenseFurtherInformation.labels.roenet}
-                    value={
-                      answers.fishingLicenseFurtherInformation.railAndRoeNet
-                        ?.roenet
-                    }
-                  />
-                </GridColumn>
-                <GridColumn
-                  paddingBottom={3}
-                  span={['9/12', '9/12', '9/12', '5/12']}
-                >
-                  <ValueLine
-                    label={fishingLicenseFurtherInformation.labels.railnet}
-                    value={
-                      answers.fishingLicenseFurtherInformation.railAndRoeNet
-                        ?.railnet
-                    }
-                  />
-                </GridColumn>
+                <OverviewItem
+                  label={fishingLicenseFurtherInformation.labels.roenet}
+                  value={
+                    answers.fishingLicenseFurtherInformation.railAndRoeNet
+                      ?.roenet
+                  }
+                />
+                <OverviewItem
+                  label={fishingLicenseFurtherInformation.labels.railnet}
+                  value={
+                    answers.fishingLicenseFurtherInformation.railAndRoeNet
+                      ?.railnet
+                  }
+                />
               </>
             )}
         </GridRow>
@@ -205,17 +178,33 @@ export const Overview: FC<FieldBaseProps> = ({ application, goToScreen }) => {
       {!!fishingLicensePrice && (
         <ReviewGroup>
           <GridRow>
-            <GridColumn span={['9/12', '9/12', '9/12', '5/12']}>
-              <ValueLine
-                label={overview.labels.amount}
-                value={formatIsk(fishingLicensePrice)}
-                color="blue400"
-                isPrice
-              />
-            </GridColumn>
+            <OverviewItem
+              paddingBottom={0}
+              label={overview.labels.amount}
+              value={formatIsk(fishingLicensePrice)}
+              color="blue400"
+              isPrice
+            />
           </GridRow>
         </ReviewGroup>
       )}
     </Box>
   )
 }
+
+type OverviewItemProps = {
+  label: string | MessageDescriptor
+  value: string | MessageDescriptor
+  color?: Colors
+  isPrice?: boolean
+  paddingBottom?: ResponsiveSpace
+}
+
+const OverviewItem = ({ paddingBottom = 3, ...props }: OverviewItemProps) => (
+  <GridColumn
+    paddingBottom={paddingBottom}
+    span={['9/12', '9/12', '9/12', '5/12']}
+  >
+    <ValueLine {...props} />
+  </GridColumn>
+)
