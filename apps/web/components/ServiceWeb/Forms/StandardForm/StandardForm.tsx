@@ -256,7 +256,7 @@ export const StandardForm = ({
       }
 
       if (subject.length > MIN_SEARCH_QUERY_LENGTH) {
-        const queryString = ModifySearchTerms(subject)
+        const queryString = subject
 
         if (subject.trim() === lastSubject.trim()) {
           updateSuggestions()

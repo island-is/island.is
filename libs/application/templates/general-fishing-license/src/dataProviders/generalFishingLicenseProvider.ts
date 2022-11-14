@@ -5,7 +5,6 @@ import {
   SuccessfulDataProviderResult,
 } from '@island.is/application/types'
 import { FishingLicenseShip } from '@island.is/api/schema'
-import * as Sentry from '@sentry/react'
 import { queryShips } from '../graphql/queries'
 import { error } from '../lib/messages'
 interface GeneralFishingLicenseProps {
@@ -60,7 +59,7 @@ export class GeneralFishingLicenseProvider extends BasicDataProvider {
   }
 
   handleError(error: Error | unknown) {
-    Sentry.captureException(error)
+    console.error(error)
     return Promise.reject('Failed to fetch data')
   }
 }
