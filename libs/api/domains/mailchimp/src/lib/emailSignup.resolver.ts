@@ -7,6 +7,10 @@ import { CmsContentfulService, EmailSignup } from '@island.is/cms'
 import { EmailSignupInput } from './dto/emailSignup.input'
 import { EmailSignupResponse } from './models/emailSignupResponse.model'
 
+enum FormFieldType {
+  CHECKBOXES = 'checkboxes',
+}
+
 const FISKISTOFA_ZENTER_EMAIL = process.env.FISKISTOFA_ZENTER_EMAIL
 const FISKISTOFA_ZENTER_PASSWORD = process.env.FISKISTOFA_ZENTER_PASSWORD
 
@@ -25,7 +29,7 @@ export class EmailSignupResolver {
       inputFields
         .map((field) => {
           // The checkboxes type can have many selected options
-          if (field.type === 'checkboxes') {
+          if (field.type === FormFieldType.CHECKBOXES) {
             const fieldValues = JSON.parse(field.value)
             const checkboxOptions = Object.entries(fieldValues)
               .filter(([_, value]) => value === 'true')

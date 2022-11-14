@@ -11,7 +11,7 @@ import {
   ResponsiveSpace,
   Text,
 } from '@island.is/island-ui/core'
-import { FormField, FormFieldType } from '@island.is/web/components'
+import { FormField } from '@island.is/web/components'
 import {
   EmailSignup as EmailSignupSchema,
   EmailSignupInputField,
@@ -23,6 +23,12 @@ import { useNamespace } from '@island.is/web/hooks'
 import { isValidEmail } from '@island.is/web/utils/isValidEmail'
 
 import * as styles from './EmailSignup.css'
+
+enum FormFieldType {
+  CHECKBOXES = 'checkboxes',
+  EMAIL = 'email',
+  ACCEPT_TERMS = 'acceptTerms',
+}
 
 type SubmitResponse = {
   message: string
