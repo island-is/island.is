@@ -605,6 +605,13 @@ export const slices = gql`
     powerBiEmbedProps
   }
 
+  fragment TableSliceFields on TableSlice {
+    __typename
+    id
+    title
+    tableContent
+  }
+
   fragment EmailSignupFields on EmailSignup {
     __typename
     id
@@ -656,6 +663,7 @@ export const slices = gql`
     ...LifeEventPageListSliceFields
     ...SidebarCardFields
     ...PowerBiSliceFields
+    ...TableSliceFields
     ...EmailSignupFields
   }
 

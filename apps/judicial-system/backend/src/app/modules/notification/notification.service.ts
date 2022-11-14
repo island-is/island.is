@@ -923,12 +923,12 @@ export class NotificationService {
     theCase: Case,
   ): Promise<SendNotificationResponse> {
     const promises = [this.sendRunlingEmailNotificationToProsecutor(theCase)]
-    if (isIndictmentCase(theCase.type) && theCase.defendants) {
-      theCase.defendants.forEach((defendant) => {
+    if (isIndictmentCase(theCase.type)) {
+      theCase.defendants?.forEach((defendant) => {
         promises.push(
           this.sendRulingEmailNotificationToDefender(
             theCase,
-            defendant.defenderNationalId,
+            undefined && defendant.defenderNationalId, // Temporarily dicable links in defender emails for indictments
             defendant.defenderName,
             defendant.defenderEmail,
           ),
@@ -1231,17 +1231,19 @@ export class NotificationService {
     return { notificationSent: false }
   }
 
+  // DEFENDER_ASSIGNED notifications
+
   private async shouldSendDefenderAssignedNotification(
     theCase: Case,
     defenderEmail?: string,
   ): Promise<boolean> {
-    const pastNotifications = await this.notificationModel.findAll({
-      where: { caseId: theCase.id, type: NotificationType.DEFENDER_ASSIGNED },
-    })
-
     if (!defenderEmail) {
       return false
     }
+
+    const pastNotifications = await this.notificationModel.findAll({
+      where: { caseId: theCase.id, type: NotificationType.DEFENDER_ASSIGNED },
+    })
 
     const hasSentNotificationBefore = pastNotifications.some(
       (pastNotification) => {
@@ -1281,8 +1283,8 @@ export class NotificationService {
   ): Promise<SendNotificationResponse> {
     const promises: Promise<Recipient>[] = []
 
-    if (isIndictmentCase(theCase.type) && theCase.defendants) {
-      for (const defendant of theCase.defendants) {
+    if (isIndictmentCase(theCase.type)) {
+      for (const defendant of theCase.defendants ?? []) {
         const { defenderEmail, defenderNationalId, defenderName } = defendant
 
         const shouldSend = await this.shouldSendDefenderAssignedNotification(
@@ -1294,7 +1296,7 @@ export class NotificationService {
           promises.push(
             this.sendDefenderAssignedNotification(
               theCase,
-              defenderNationalId,
+              undefined && defenderNationalId, // Temporarily disable links in defender emails for indictments
               defenderName,
               defenderEmail,
             ),

@@ -35,6 +35,7 @@ import {
   ILifeEventPageListSlice,
   ISidebarCard,
   IPowerBiSlice,
+  ITableSlice,
   IEmailSignup,
 } from '../generated/contentfulTypes'
 import { Image, mapImage } from '../models/image.model'
@@ -99,6 +100,7 @@ import {
 } from '../models/lifeEventPageListSlice.model'
 import { mapSidebarCard, SidebarCard } from '../models/sidebarCard.model'
 import { PowerBiSlice, mapPowerBiSlice } from '../models/powerBiSlice.model'
+import { mapTableSlice, TableSlice } from '../models/tableSlice.model'
 import { EmailSignup, mapEmailSignup } from '../models/emailSignup.model'
 
 type SliceTypes =
@@ -134,6 +136,7 @@ type SliceTypes =
   | ILifeEventPageListSlice
   | ISidebarCard
   | IPowerBiSlice
+  | ITableSlice
   | IEmailSignup
 
 export const SliceUnion = createUnionType({
@@ -174,6 +177,7 @@ export const SliceUnion = createUnionType({
     LifeEventPageListSlice,
     SidebarCard,
     PowerBiSlice,
+    TableSlice,
     EmailSignup,
   ],
   resolveType: (document) => document.typename, // typename is appended to request on indexing
@@ -246,6 +250,8 @@ export const mapSliceUnion = (slice: SliceTypes): typeof SliceUnion => {
       return mapSidebarCard(slice as ISidebarCard)
     case 'powerBiSlice':
       return mapPowerBiSlice(slice as IPowerBiSlice)
+    case 'tableSlice':
+      return mapTableSlice(slice as ITableSlice)
     case 'emailSignup':
       return mapEmailSignup(slice as IEmailSignup)
     default:
