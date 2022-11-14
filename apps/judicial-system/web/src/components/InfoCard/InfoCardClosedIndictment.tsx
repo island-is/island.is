@@ -48,8 +48,11 @@ const InfoCardClosedIndictment: React.FC = () => {
         {
           title: formatMessage(m.offence),
           value: capitalize(
-            workingCase.indictmentSubType
-              ? indictmentSubTypes[workingCase.indictmentSubType]
+            workingCase.indictmentSubTypes &&
+              Object.entries(workingCase.indictmentSubTypes).length > 0
+              ? indictmentSubTypes[
+                  Object.entries(workingCase.indictmentSubTypes)[0][1][0]
+                ]
               : caseTypes[workingCase.type],
           ),
         },

@@ -147,7 +147,7 @@ describe('InternalCaseController - Deliver', () => {
       const caseId = uuid()
       const caseType = CaseType.CUSTODY
       const caseState = CaseState.ACCEPTED
-      const policeCaseNumbers = [uuid()]
+      const policeCaseNumber = uuid()
       const defendantNationalId = uuid()
       const caseConclusion = 'test conclusion'
       const theCase = {
@@ -155,7 +155,7 @@ describe('InternalCaseController - Deliver', () => {
         origin: CaseOrigin.LOKE,
         type: caseType,
         state: caseState,
-        policeCaseNumbers,
+        policeCaseNumbers: [policeCaseNumber],
         defendants: [{ nationalId: defendantNationalId }],
         conclusion: caseConclusion,
       } as Case
@@ -184,7 +184,7 @@ describe('InternalCaseController - Deliver', () => {
           caseType,
           caseState,
           pdf,
-          policeCaseNumbers,
+          policeCaseNumber,
           [defendantNationalId],
           caseConclusion,
         )
@@ -202,7 +202,7 @@ describe('InternalCaseController - Deliver', () => {
       const caseId = uuid()
       const caseType = CaseType.INDICTMENT
       const caseState = CaseState.ACCEPTED
-      const policeCaseNumbers = [uuid()]
+      const policeCaseNumber = uuid()
       const defendantNationalId = uuid()
       const courtId = uuid()
       const courtCaseNumber = uuid()
@@ -220,11 +220,11 @@ describe('InternalCaseController - Deliver', () => {
         id: caseId,
         origin: CaseOrigin.LOKE,
         type: caseType,
-        indictmentSubType,
+        indictmentSubTypes: { [policeCaseNumber]: [indictmentSubType] },
         state: caseState,
         courtId,
         courtCaseNumber,
-        policeCaseNumbers,
+        policeCaseNumbers: [policeCaseNumber],
         defendants: [{ nationalId: defendantNationalId }],
         conclusion: caseConclusion,
         caseFiles: [ruling, courtRecord],
@@ -262,7 +262,7 @@ describe('InternalCaseController - Deliver', () => {
             indictmentSubType,
             caseState,
             'test court record',
-            policeCaseNumbers,
+            policeCaseNumber,
             [defendantNationalId],
             caseConclusion,
           )

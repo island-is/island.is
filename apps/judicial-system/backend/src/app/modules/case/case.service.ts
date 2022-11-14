@@ -232,6 +232,7 @@ export class CaseService {
   }
 
   async create(caseToCreate: CreateCaseDto, prosecutor: TUser): Promise<Case> {
+    this.logger.debug('Creating case', { caseToCreate })
     return this.sequelize
       .transaction(async (transaction) => {
         const caseId = await this.createCase(
@@ -583,7 +584,7 @@ export class CaseService {
           {
             origin: theCase.origin,
             type: theCase.type,
-            indictmentSubType: theCase.indictmentSubType,
+            indictmentSubTypes: theCase.indictmentSubTypes,
             description: theCase.description,
             policeCaseNumbers: theCase.policeCaseNumbers,
             defenderName: theCase.defenderName,
@@ -641,7 +642,7 @@ export class CaseService {
       theCase.type,
       theCase.policeCaseNumbers,
       Boolean(theCase.parentCaseId),
-      theCase.indictmentSubType,
+      theCase.indictmentSubTypes,
     )
 
     const updatedCase = (await this.update(

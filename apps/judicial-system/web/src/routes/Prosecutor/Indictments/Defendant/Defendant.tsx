@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useMemo } from 'react'
+import React, { useCallback, useContext, useEffect, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import { uuid } from 'uuidv4'
@@ -244,7 +244,9 @@ const Defendant: React.FC = () => {
               setAndSendCaseToServer(
                 [
                   {
-                    indictmentSubType,
+                    indictmentSubTypes: {
+                      [workingCase.policeCaseNumbers[0]]: [indictmentSubType],
+                    },
                     force: true,
                   },
                 ],
@@ -253,11 +255,17 @@ const Defendant: React.FC = () => {
               )
             }}
             value={
-              workingCase.indictmentSubType
+              workingCase.indictmentSubTypes &&
+              Object.keys(workingCase.indictmentSubTypes).length > 0
                 ? {
-                    value: IndictmentSubType[workingCase.indictmentSubType],
+                    value:
+                      IndictmentSubType[
+                        Object.entries(workingCase.indictmentSubTypes)[0][1][0]
+                      ],
                     label: capitalize(
-                      indictmentSubTypes[workingCase.indictmentSubType],
+                      indictmentSubTypes[
+                        Object.entries(workingCase.indictmentSubTypes)[0][1][0]
+                      ],
                     ),
                   }
                 : undefined

@@ -22,7 +22,7 @@ export const attributes: (keyof Case)[] = [
   'modified',
   'origin',
   'type',
-  'indictmentSubType',
+  'indictmentSubTypes',
   'state',
   'policeCaseNumbers',
   'defenderName',

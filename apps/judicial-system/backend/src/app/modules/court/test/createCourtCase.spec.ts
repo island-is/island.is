@@ -6,6 +6,7 @@ import { CourtClientService } from '@island.is/judicial-system/court-client'
 import {
   CaseType,
   IndictmentSubType,
+  IndictmentSubtypeMap,
   investigationCases,
   isIndictmentCase,
   User,
@@ -30,7 +31,7 @@ type GivenWhenThen = (
   type: CaseType,
   policeCaseNumbers: string[],
   isExtension: boolean,
-  indictmentSubType?: IndictmentSubType,
+  indictmentSubTypes?: IndictmentSubtypeMap,
 ) => Promise<Then>
 
 describe('CourtService - Create court case', () => {
@@ -56,7 +57,7 @@ describe('CourtService - Create court case', () => {
       type: CaseType,
       policeCaseNumbers: string[],
       isExtension: boolean,
-      indictmentSubType?: IndictmentSubType,
+      indictmentSubTypes?: IndictmentSubtypeMap,
     ) => {
       const then = {} as Then
 
@@ -68,7 +69,7 @@ describe('CourtService - Create court case', () => {
           type,
           policeCaseNumbers,
           isExtension,
-          indictmentSubType,
+          indictmentSubTypes,
         )
       } catch (error) {
         then.error = error as Error
@@ -121,7 +122,9 @@ describe('CourtService - Create court case', () => {
       const caseId = uuid()
       const type = CaseType.INDICTMENT
       const courtId = uuid()
-      const policeCaseNumbers = [uuid()]
+      const policeCaseNumber = uuid()
+      const indictmentSubTypes = { [policeCaseNumber]: [indictmentSubType] }
+      const policeCaseNumbers = [policeCaseNumber]
       const isExtension = false
 
       beforeEach(async () => {
@@ -132,7 +135,7 @@ describe('CourtService - Create court case', () => {
           type,
           policeCaseNumbers,
           isExtension,
-          indictmentSubType,
+          indictmentSubTypes,
         )
       })
 
@@ -228,7 +231,11 @@ describe('CourtService - Create court case', () => {
     const indictmentSubType = isIndictmentCase(type)
       ? randomEnum(IndictmentSubType)
       : undefined
-    const policeCaseNumbers = [uuid()]
+    const policeCaseNumber = uuid()
+    const indictmentSubTypes = indictmentSubType
+      ? { [policeCaseNumber]: [indictmentSubType] }
+      : undefined
+    const policeCaseNumbers = [policeCaseNumber]
     const courtCaseNumber = uuid()
     const isExtension = randomBoolean()
     let then: Then
@@ -244,7 +251,7 @@ describe('CourtService - Create court case', () => {
         type,
         policeCaseNumbers,
         isExtension,
-        indictmentSubType,
+        indictmentSubTypes,
       )
     })
 

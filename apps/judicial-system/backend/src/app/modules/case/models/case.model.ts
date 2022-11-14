@@ -24,7 +24,7 @@ import {
   CourtDocument,
   CaseOrigin,
   SubpoenaType,
-  IndictmentSubType,
+  IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
 
 import { CaseFile } from '../../file'
@@ -87,11 +87,10 @@ export class Case extends Model {
    * The case sub type it type is INDICTMENT - example: MINOR_ASSAULT
    **********/
   @Column({
-    type: DataType.ENUM,
+    type: DataType.JSON,
     allowNull: true,
-    values: Object.values(IndictmentSubType),
   })
-  indictmentSubType?: IndictmentSubType
+  indictmentSubTypes?: IndictmentSubtypeMap
 
   /**********
    * A further description of the case type - optional

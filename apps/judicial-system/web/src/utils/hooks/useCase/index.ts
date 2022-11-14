@@ -188,7 +188,7 @@ const useCase = () => {
             variables: {
               input: {
                 type: theCase.type,
-                indictmentSubType: theCase.indictmentSubType,
+                indictmentSubTypes: theCase.indictmentSubTypes,
                 description: theCase.description,
                 policeCaseNumbers: theCase.policeCaseNumbers,
                 defenderName: theCase.defenderName,

@@ -6,6 +6,7 @@ import { CourtClientService } from '@island.is/judicial-system/court-client'
 import {
   CaseType,
   IndictmentSubType,
+  IndictmentSubtypeMap,
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
@@ -177,17 +178,25 @@ export class CourtService {
     type: CaseType,
     policeCaseNumbers: string[],
     isExtension: boolean,
-    indictmentSubType?: IndictmentSubType,
+    indictmentSubTypes?: IndictmentSubtypeMap,
   ): Promise<string> {
     try {
       const isIndictment = isIndictmentCase(type)
 
-      if (isIndictment && !indictmentSubType) {
+      if (
+        isIndictment &&
+        (policeCaseNumbers.length === 0 ||
+          !indictmentSubTypes ||
+          !indictmentSubTypes[policeCaseNumbers[0]] ||
+          indictmentSubTypes[policeCaseNumbers[0]].length !== 0)
+      ) {
         throw 'Sub type is required for indictments'
       }
 
       // At this point we know that we have a valid sub type
-      const subType = (isIndictment ? indictmentSubType : type) as SubType
+      const subType = (isIndictment && indictmentSubTypes
+        ? indictmentSubTypes[policeCaseNumbers[0]][0]
+        : type) as SubType
 
       let courtSubType = courtSubTypes[subType]
 

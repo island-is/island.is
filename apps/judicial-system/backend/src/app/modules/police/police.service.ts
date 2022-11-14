@@ -210,7 +210,7 @@ export class PoliceService {
     caseType: CaseType | IndictmentSubType,
     caseState: CaseState,
     courtRecordPdf: string,
-    policeCaseNumbers: string[],
+    policeCaseNumber: string,
     defendantNationalIds?: string[],
     caseConclusion?: string,
   ): Promise<boolean> {
@@ -226,7 +226,7 @@ export class PoliceService {
         agent: this.agent,
         body: JSON.stringify({
           rvMal_ID: caseId,
-          caseNumber: policeCaseNumbers[0] ? policeCaseNumbers[0] : '',
+          caseNumber: policeCaseNumber,
           ssn:
             defendantNationalIds && defendantNationalIds[0]
               ? defendantNationalIds[0]
@@ -256,7 +256,7 @@ export class PoliceService {
             caseId,
             caseType,
             caseState,
-            policeCaseNumbers: policeCaseNumbers.join(', '),
+            policeCaseNumber,
           },
           reason,
         )

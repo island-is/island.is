@@ -122,28 +122,28 @@ export const createCaseFilesRecord = async (
     )
   }
 
-  pdfDocument
-    .addText(formatMessage(caseFilesRecord.accusedOf), textFontSize, {
-      bold: true,
-      marginTop: 1,
-      newLine: false,
+  const subTypes =
+    (theCase.indictmentSubTypes &&
+      theCase.indictmentSubTypes[policeCaseNumber]) ??
+    []
+
+  pdfDocument.addText(formatMessage(caseFilesRecord.accusedOf), textFontSize, {
+    bold: true,
+    marginTop: 1,
+    newLine: subTypes.length === 0,
+  })
+
+  for (const subType of subTypes) {
+    pdfDocument.addText(capitalize(indictmentSubTypes[subType]), textFontSize, {
+      position: { x: defendantIndent },
     })
-    .addText(
-      capitalize(
-        theCase.indictmentSubType
-          ? indictmentSubTypes[theCase.indictmentSubType]
-          : caseTypes[theCase.type],
-      ),
-      textFontSize,
-      {
-        position: { x: defendantIndent },
-      },
-    )
-    .addText(
-      formatMessage(caseFilesRecord.tableOfContentsHeading),
-      subtitleFontSize,
-      { alignment: Alignment.Center, bold: true, marginTop: 9 },
-    )
+  }
+
+  pdfDocument.addText(
+    formatMessage(caseFilesRecord.tableOfContentsHeading),
+    subtitleFontSize,
+    { alignment: Alignment.Center, bold: true, marginTop: 9 },
+  )
 
   for (const chapter of chapters) {
     if (chapter === 0) {
