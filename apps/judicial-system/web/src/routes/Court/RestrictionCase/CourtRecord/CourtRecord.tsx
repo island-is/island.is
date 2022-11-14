@@ -153,9 +153,7 @@ export const CourtRecord: React.FC = () => {
         autofillSessionBookings.push(
           `\n\n${formatMessage(
             m.sections.sessionBookings.autofillPresentationsV3,
-            {
-              caseType: workingCase.type,
-            },
+            { caseType: workingCase.type },
           )}`,
         )
 
