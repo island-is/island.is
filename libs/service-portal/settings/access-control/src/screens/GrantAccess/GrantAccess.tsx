@@ -72,7 +72,12 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
     createAuthDelegation,
     { loading: mutationLoading },
   ] = useMutation<Mutation>(CreateAuthDelegationMutation, {
-    refetchQueries: [{ query: AuthDelegationsQuery }],
+    refetchQueries: [
+      {
+        query: AuthDelegationsQuery,
+        variables: { input: { domain: ISLAND_DOMAIN } },
+      },
+    ],
   })
   const [getIdentity, { data, loading: queryLoading }] = useLazyQuery<Query>(
     IdentityQuery,
