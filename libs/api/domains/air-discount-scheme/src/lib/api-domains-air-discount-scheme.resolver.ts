@@ -30,7 +30,7 @@ export class AirDiscountSchemeResolver {
 
   @Query(() => [Discount], { nullable: true })
   @Audit()
-  async adsGetDiscount(@CurrentUser() user: User) {
+  async getDiscount(@CurrentUser() user: User) {
     const relations: TUser[] = (await this.airDiscountSchemeService.getUserRelations(
       user,
     )) as TUser[]
