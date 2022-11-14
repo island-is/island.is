@@ -1,6 +1,5 @@
 import { ref, service } from '../dsl'
 import { EnvironmentConfig } from '../types/charts'
-import { renderers } from '../upstream-dependencies'
 import { renderer } from '../processing/service-sets'
 import { getLocalSetup } from './get-local-setup'
 import { Localhost } from '../localhost-runtime'
