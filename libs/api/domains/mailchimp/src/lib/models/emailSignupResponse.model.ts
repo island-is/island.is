@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
-export class MailchimpSubscribeResponse {
+export class EmailSignupResponse {
   @Field(() => Boolean)
   subscribed!: boolean
 }

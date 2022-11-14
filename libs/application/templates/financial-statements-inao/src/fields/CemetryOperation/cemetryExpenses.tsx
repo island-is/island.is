@@ -34,7 +34,8 @@ export const CemetryExpenses = ({
         data.financialStatementsInaoTaxInfo?.[3]?.value?.toString() ?? '',
       )
     }
-  }, [data, setValue])
+    getSum()
+  }, [data, getSum, setValue])
 
   const onInputChange = debounce((fieldId: string) => {
     getSum()

@@ -13,7 +13,6 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import * as Sentry from '@sentry/react'
 import kennitala from 'kennitala'
 import React, { useEffect } from 'react'
 import { employer } from '../../lib/messages'
@@ -74,7 +73,7 @@ export const DisposableIncome = ({ application }: FieldBaseProps) => {
     })
 
     if (!results.data) {
-      Sentry.captureException(results.errors)
+      console.error(results.errors)
     }
   }
 
