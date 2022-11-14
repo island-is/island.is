@@ -24,22 +24,17 @@ import * as accessItemStyles from './AccessItem.css'
 import * as commonAccessStyles from './access.css'
 import { isDefined } from '@island.is/shared/utils'
 
-type AccessConfirmModalProps = ModalProps & {
+type AccessConfirmModalProps = Pick<ModalProps, 'onClose' | 'isVisible'> & {
   delegation: AuthCustomDelegation
-  domain: {
-    name: string | undefined
-    imgSrc?: string | null
-  }
   scopes?: MappedScope[]
-  onConfirm(): Promise<void>
   validityPeriod: Date | null
   loading: boolean
   error?: boolean
+  onConfirm(): Promise<void>
 }
 
 export const AccessConfirmModal = ({
   delegation,
-  domain,
   onClose,
   onConfirm,
   scopes,
@@ -72,7 +67,17 @@ export const AccessConfirmModal = ({
   const fromNationalId = userInfo?.profile.nationalId
 
   return (
-    <Modal {...rest} onClose={onClose} noPaddingBottom>
+    <Modal
+      id={`access-confirm-modal-${delegation?.id}`}
+      label={formatMessage(m.accessControl)}
+      title={formatMessage({
+        id: 'sp.settings-access-control:access-confirm-modal-title',
+        defaultMessage: 'Þú ert að veita aðgang',
+      })}
+      {...rest}
+      onClose={onClose}
+      noPaddingBottom
+    >
       <Box marginY={[4, 4, 8]} display="flex" flexDirection="column" rowGap={3}>
         {error && (
           <Box paddingBottom={3}>
@@ -116,14 +121,14 @@ export const AccessConfirmModal = ({
             />
           )}
         </Box>
-        {domain?.name && (
+        {delegation.domain && (
           <IdentityCard
             label={formatMessage({
               id: 'sp.access-control-delegations:domain',
               defaultMessage: 'Kerfi',
             })}
-            title={domain.name}
-            imgSrc={domain?.imgSrc}
+            title={delegation.domain.displayName}
+            imgSrc={delegation.domain.organisationLogoUrl}
           />
         )}
       </Box>
