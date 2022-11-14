@@ -6,8 +6,8 @@ import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
 import {
   getApplicationAnswers,
-  getMaxMultipleBirthsMonths,
-  getMultipleBirthsInMonths,
+  getMaxMultipleBirthsAndDefaultMonths,
+  getMaxMultipleBirthsInMonths,
 } from '../../lib/parentalLeaveUtils'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import Slider from '../components/Slider'
@@ -21,10 +21,14 @@ import { YES } from '../../constants'
 
 const RequestDaysSlider: FC<FieldBaseProps> = ({ field, application }) => {
   const maxDays = maxDaysToGiveOrReceive
-  const alreadySelectedMonths = getMaxMultipleBirthsMonths(application.answers)
+  const alreadySelectedMonths = getMaxMultipleBirthsAndDefaultMonths(
+    application.answers,
+  )
   const maxMonths =
     alreadySelectedMonths + Math.ceil(maxDaysToGiveOrReceive / daysInMonth)
-  const multipleBirthsInMonths = getMultipleBirthsInMonths(application.answers)
+  const multipleBirthsInMonths = getMaxMultipleBirthsInMonths(
+    application.answers,
+  )
   const { id } = field
   const { formatMessage } = useLocale()
   const { register } = useFormContext()

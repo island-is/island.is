@@ -5,9 +5,8 @@ import { Box } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
 import {
-  getApplicationAnswers,
   getMaxMultipleBirthsDays,
-  getMaxMultipleBirthsMonths,
+  getMaxMultipleBirthsAndDefaultMonths,
   getMultipleBirthRequestDays,
 } from '../../lib/parentalLeaveUtils'
 import { parentalLeaveFormMessages } from '../../lib/messages'
@@ -15,7 +14,7 @@ import Slider from '../components/Slider'
 import BoxChart, { BoxChartKey } from '../components/BoxChart'
 import { defaultMonths, daysInMonth } from '../../config'
 import { formatText } from '@island.is/application/core'
-import { NO, TransferRightsOption } from '../../constants'
+import { NO } from '../../constants'
 
 const RequestMultipleBirthsDaysSlider: FC<FieldBaseProps> = ({
   field,
@@ -29,7 +28,7 @@ const RequestMultipleBirthsDaysSlider: FC<FieldBaseProps> = ({
   )
 
   const maxDays = getMaxMultipleBirthsDays(application.answers)
-  const maxMonths = getMaxMultipleBirthsMonths(application.answers)
+  const maxMonths = getMaxMultipleBirthsAndDefaultMonths(application.answers)
 
   const [chosenRequestDays, setChosenRequestDays] = useState<number>(
     multipleBirthsRequestDays,

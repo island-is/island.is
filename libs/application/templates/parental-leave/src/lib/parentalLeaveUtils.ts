@@ -226,13 +226,17 @@ export const getMaxMultipleBirthsDays = (answers: Application['answers']) => {
   return (multipleBirths - 1) * multipleBirthsDefaultDays
 }
 
-export const getMultipleBirthsInMonths = (answers: Application['answers']) => {
+export const getMaxMultipleBirthsInMonths = (
+  answers: Application['answers'],
+) => {
   const maxDays = getMaxMultipleBirthsDays(answers)
   return Math.ceil(maxDays / daysInMonth)
 }
 
-export const getMaxMultipleBirthsMonths = (answers: Application['answers']) => {
-  const multipleBirthsDaysInMonths = getMultipleBirthsInMonths(answers)
+export const getMaxMultipleBirthsAndDefaultMonths = (
+  answers: Application['answers'],
+) => {
+  const multipleBirthsDaysInMonths = getMaxMultipleBirthsInMonths(answers)
   return defaultMonths + multipleBirthsDaysInMonths
 }
 
@@ -249,7 +253,7 @@ export const getAvailableRightsInDays = (application: Application) => {
   if (selectedChild.parentalRelation === ParentalRelations.secondary) {
     // Transferred days are chosen for secondary parent by primary parent
     // so they are persisted into external data
-    return selectedChild.remainingDays
+    return selectedChild.remainingDays ?? 0
   }
 
   // Primary parent chooses transferred days so they are persisted into answers
