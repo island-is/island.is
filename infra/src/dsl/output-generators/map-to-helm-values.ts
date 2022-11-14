@@ -417,7 +417,7 @@ const serviceMockDef = (options: { uberChart: DeploymentRuntime }) => {
     grantNamespacesEnabled: false,
     namespace: getFeatureDeploymentNamespace(options.uberChart.env),
     image: {
-      repository: `bbyars/mountebank:2.8.1`,
+      repository: `bbyars/mountebank`,
     },
     env: {},
     command: ['start --configfile=/etc/config/default-imposters.json'],
@@ -425,6 +425,7 @@ const serviceMockDef = (options: { uberChart: DeploymentRuntime }) => {
     service: {
       targetPort: 2525,
     },
+    files: ['default-imposters.json'],
     healthCheck: {
       port: 2525,
       liveness: {
