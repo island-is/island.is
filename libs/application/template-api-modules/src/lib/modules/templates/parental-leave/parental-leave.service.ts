@@ -397,6 +397,7 @@ export class ParentalLeaveService {
     const {
       periods: originalPeriods,
       firstPeriodStart,
+      applicationType,
     } = getApplicationAnswers(application.answers)
 
     const answers = cloneDeep(originalPeriods).sort((a, b) => {
@@ -414,6 +415,10 @@ export class ParentalLeaveService {
     const maximumMultipleBirthsDaysToSpend = getMultipleBirthsDays(application)
     const maximumDaysBeforeUsingTransferRights =
       maximumPersonalDaysToSpend + maximumMultipleBirthsDaysToSpend
+    const mulitpleBirthsRights =
+      applicationType === PARENTAL_LEAVE
+        ? apiConstants.rights.multipleBirthsOrlofRightsId
+        : apiConstants.rights.multipleBirthsGrantRightsId
 
     const isActualDateOfBirth =
       firstPeriodStart === StartDateOptions.ACTUAL_DATE_OF_BIRTH
@@ -630,7 +635,7 @@ export class ParentalLeaveService {
             ),
             approved: false,
             paid: false,
-            rightsCodePeriod: apiConstants.rights.multipleBirthsRightsId,
+            rightsCodePeriod: mulitpleBirthsRights,
           })
 
           const transferredPeriodStartDate = addDays(
@@ -740,7 +745,7 @@ export class ParentalLeaveService {
             ),
             approved: false,
             paid: false,
-            rightsCodePeriod: apiConstants.rights.multipleBirthsRightsId,
+            rightsCodePeriod: mulitpleBirthsRights,
           })
 
           const transferredPeriodStartDate = addDays(
@@ -794,7 +799,7 @@ export class ParentalLeaveService {
           ),
           approved: false,
           paid: false,
-          rightsCodePeriod: apiConstants.rights.multipleBirthsRightsId,
+          rightsCodePeriod: mulitpleBirthsRights,
         })
       } else {
         // If we reach here then there is personal rights mix with common rights
@@ -868,7 +873,7 @@ export class ParentalLeaveService {
           ),
           approved: false,
           paid: false,
-          rightsCodePeriod: apiConstants.rights.multipleBirthsRightsId,
+          rightsCodePeriod: mulitpleBirthsRights,
         })
       }
 
