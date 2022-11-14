@@ -311,7 +311,10 @@ export const transformApplicationToParentalLeaveDTO = (
     rightsCode: getRightsCode(application),
     attachments,
     testData,
-    noOfChildren: multipleBirths ? multipleBirths.toString() : undefined,
+    noOfChildren:
+      multipleBirths && multipleBirths > 1
+        ? multipleBirths.toString()
+        : undefined,
   }
 }
 
