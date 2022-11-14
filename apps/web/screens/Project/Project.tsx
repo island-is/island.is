@@ -21,6 +21,7 @@ import {
   Form,
   PowerBiSlice,
   AccordionSlice,
+  TableSlice,
   EmailSignup,
 } from '@island.is/web/components'
 import {
@@ -142,6 +143,7 @@ const ProjectPage: Screen<PageProps> = ({
                   Form: (slice) => <Form form={slice} namespace={namespace} />,
                   PowerBiSlice: (slice) => <PowerBiSlice slice={slice} />,
                   AccordionSlice: (slice) => <AccordionSlice slice={slice} />,
+                  TableSlice: (slice) => <TableSlice slice={slice} />,
                   EmailSignup: (slice) => <EmailSignup slice={slice} />,
                 },
               })}
@@ -181,6 +183,7 @@ const ProjectPage: Screen<PageProps> = ({
               Form: (slice) => <Form form={slice} namespace={namespace} />,
               PowerBiSlice: (slice) => <PowerBiSlice slice={slice} />,
               AccordionSlice: (slice) => <AccordionSlice slice={slice} />,
+              TableSlice: (slice) => <TableSlice slice={slice} />,
               EmailSignup: (slice) => <EmailSignup slice={slice} />,
             },
           })}

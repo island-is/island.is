@@ -61,6 +61,7 @@ export default {
     'formField',
     'graphCard',
     'powerBiSlice',
+    'tableSlice',
     'emailSignup',
   ],
   contentful: {

@@ -1864,6 +1864,9 @@ export interface INamespace extends Entry<INamespaceFields> {
 }
 
 export interface INewsFields {
+  /** Tilkynning */
+  tilkynning?: string | undefined
+
   /** Content status */
   contentStatus?: 'Undefined' | 'Needs work' | 'In review' | 'Done' | undefined
 
