@@ -1530,8 +1530,8 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     rightsMultipleBirths: {
       id: 'pl.application:review.rights.multiple.births',
-      defaultMessage: '{common} sameign mánuður ( need translated)',
-      description: 'Common months ( need translated )',
+      defaultMessage: '{common} sameiginlegir mánuðir',
+      description: 'month from joint entitlement',
     },
     rightsAllowanceRequested: {
       id: 'pl.application:review.rights.allowance.requested',
@@ -2170,31 +2170,31 @@ export const errorMessages = defineMessages({
   missingMultipleBirthsAnswer: {
     id: 'pl.application:errors.missing.multiple.births.answer',
     defaultMessage:
-      'icel-trans: "Verður að velja fjölda barn ef það er fjölburafæðing ( Need translated )!"',
-    description: 'English version ( Need translated )!',
+      'icel-trans: "Þú þarft að velja fjölda barna ef um fjölburafæðingu er að ræða!"',
+    description: 'You must pick number of children if choosing multiple birth!',
   },
   tooFewMultipleBirthsAnswer: {
     id: 'pl.application:errors.too.few.multiple.births.answer',
     defaultMessage:
-      'icel-trans: "Ekki hægt að skrá minni en 2 börn ( Need translated )!"',
-    description: 'English version ( Need translated )!',
+      'icel-trans: "Ekki hægt að skrá minna en tvö börn!"',
+    description: 'Unable to assign fewer than two children!',
   },
   tooManyMultipleBirthsAnswer: {
     id: 'pl.application:errors.too.few.multiple.births.answer',
     defaultMessage:
-      'icel-trans: "Ekki hægt að skrá fleira en 4 börn ( Need translated )!"',
-    description: 'English version ( Need translated )!',
+      'icel-trans: "Ekki hægt að skrá fleiri en fjögur börn!"',
+    description: 'Unable to assign more than four children!',
   },
   notAllowedToGiveRights: {
     id: 'pl.application:errors.not.allowed.to.give.rights',
-    defaultMessage: 'icel-trans: "Ekki hægt að gefa daga ( Need translated )!"',
-    description: 'English version ( Need translated )!',
+    defaultMessage: 'icel-trans: "Ekki hægt að gefa daga!"',
+    description: 'Unable to transfer days!',
   },
   notAllowedToRequestRights: {
     id: 'pl.application:errors.not.allowed.to.request.rights',
     defaultMessage:
-      'icel-trans: "Ekki hægt að biðja um daga ( Need translated )!"',
-    description: 'English version ( Need translated )!',
+      'icel-trans: "Ekki hægt að biðja um daga!"',
+    description: 'Unable to request days!',
   },
 })
 
