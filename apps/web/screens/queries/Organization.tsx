@@ -314,9 +314,9 @@ export const GET_OPERATING_LICENSES_CSV_QUERY = gql`
   }
 `
 
-export const MAILING_LIST_SIGNUP_MUTATION = gql`
-  mutation MailchimpSubscribe($input: MailchimpSubscribeInput!) {
-    mailchimpSubscribe(input: $input) {
+export const EMAIL_SIGNUP_MUTATION = gql`
+  mutation EmailSignupSubscription($input: EmailSignupInput!) {
+    emailSignupSubscription(input: $input) {
       subscribed
     }
   }

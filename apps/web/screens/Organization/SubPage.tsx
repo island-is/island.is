@@ -38,6 +38,8 @@ import {
   OneColumnTextSlice,
   PowerBiSlice,
   AccordionSlice,
+  TableSlice,
+  EmailSignup,
 } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
@@ -187,6 +189,8 @@ const SubPage: Screen<SubPageProps> = ({
                         AccordionSlice: (slice) => (
                           <AccordionSlice slice={slice} />
                         ),
+                        TableSlice: (slice) => <TableSlice slice={slice} />,
+                        EmailSignup: (slice) => <EmailSignup slice={slice} />,
                       },
                     })}
                   </GridColumn>
