@@ -3,6 +3,8 @@ import { Field, InputType } from '@nestjs/graphql'
 @InputType()
 class EmailSignupInputField {
   @Field()
+  id!: string
+  @Field()
   name!: string
   @Field()
   value!: string
