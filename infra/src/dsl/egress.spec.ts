@@ -45,10 +45,12 @@ describe('Egress', () => {
   })
 
   it('missing variables cause errors', () => {
-    expect(serviceDef.serviceDef[0].env['A']).toBe('http://mock-server:9209')
+    expect(serviceDef.serviceDef[0].env['A']).toBe(
+      'http://web-mock-server:9209',
+    )
   })
 
   it('should render two services - one extra for the mock', () => {
-    expect(render.services['mock-server'].command?.[0]).toMatch('start')
+    expect(render.services['mock-server'].command?.[0]).toMatch('mb')
   })
 })
