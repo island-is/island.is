@@ -12,17 +12,18 @@ import {
   SerializeSuccess,
 } from '../types/output-types'
 import { DeploymentRuntime, EnvironmentConfig } from '../types/charts'
-import { SSM } from '@aws-sdk/client-ssm'
 import { checksAndValidations } from './errors'
 import {
   postgresIdentifier,
   serializeEnvironmentVariables,
 } from './serialization-helpers'
+import { getParams } from '../adapters/get-params'
 
 /**
  * Transforms our definition of a service to a Helm values object
  * @param service Our service definition
  * @param deployment Uber chart in a specific environment the service will be part of
+ * @param withSecrets Should secrets be retrieved from AWS Parameter store or not (useful for tests)
  */
 const serializeService = async (
   service: ServiceDefinitionForEnv,
@@ -169,23 +170,6 @@ function serializePostgres(
   return { env, secrets, errors }
 }
 
-const API_INITIALIZATION_OPTIONS = {
-  region: 'eu-west-1',
-  maxAttempts: 10,
-}
-
-const EXCLUDED_ENVIRONMENT_NAMES = [
-  'DB_PASSWORD',
-  'NOVA_USERNAME',
-  'NOVA_PASSWORD',
-]
-
-const OVERRIDE_ENVIRONMENT_NAMES: Record<string, string> = {
-  IDENTITY_SERVER_CLIENT_SECRET: '/k8s/local-dev/IDENTITY_SERVER_CLIENT_SECRET',
-}
-
-const client = new SSM(API_INITIALIZATION_OPTIONS)
-
 type RetrieveSecrets = (
   secrets: Secrets,
 ) => Promise<ContainerEnvironmentVariables>
@@ -202,31 +186,11 @@ const retrieveSecrets: RetrieveSecrets = async (
     )
 }
 
-const getParams = async (
-  ssmNames: string[],
-): Promise<{ [name: string]: string }> => {
-  const chunks = ssmNames.reduce((all: string[][], one: string, i: number) => {
-    const ch = Math.floor(i / 10)
-    all[ch] = ([] as string[]).concat(all[ch] || [], one)
-    return all
-  }, [])
-
-  const allParams = await Promise.all(
-    chunks.map((Names) =>
-      client.getParameters({ Names, WithDecryption: true }),
-    ),
-  )
-  return allParams
-    .map(({ Parameters }) =>
-      Object.fromEntries(Parameters!.map((p) => [p.Name, p.Value])),
-    )
-    .reduce((p, c) => ({ ...p, ...c }), {})
-}
-
 export enum SecretOptions {
   withSecrets,
   noSecrets,
 }
+
 export const LocalrunOutput = (options: { secrets: SecretOptions }) =>
   ({
     featureDeployment(

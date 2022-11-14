@@ -1,14 +1,9 @@
 import { Kubernetes } from '../dsl/kubernetes-runtime'
 import { Envs } from '../environments'
 import { Charts } from '../uber-charts/all-charts'
-import { SSM } from '@aws-sdk/client-ssm'
 import { renderHelmServices } from '../dsl/exports/exports'
 import { toServices } from '../dsl/exports/to-services'
-
-const API_INITIALIZATION_OPTIONS = {
-  region: 'eu-west-1',
-  maxAttempts: 10,
-}
+import { getParams } from '../dsl/adapters/get-params'
 
 const EXCLUDED_ENVIRONMENT_NAMES = [
   'DB_PASSWORD',
@@ -19,8 +14,6 @@ const EXCLUDED_ENVIRONMENT_NAMES = [
 const OVERRIDE_ENVIRONMENT_NAMES: Record<string, string> = {
   IDENTITY_SERVER_CLIENT_SECRET: '/k8s/local-dev/IDENTITY_SERVER_CLIENT_SECRET',
 }
-
-const client = new SSM(API_INITIALIZATION_OPTIONS)
 
 export const renderSecretsCommand = async (service: string) => {
   renderSecrets(service).catch((error) => {
@@ -76,25 +69,4 @@ export const renderSecrets = async (service: string) => {
       .replace(/'/g, "'\\''")
     console.log(`export ${envName}='${escapedValue}'`)
   })
-}
-
-const getParams = async (
-  ssmNames: string[],
-): Promise<{ [name: string]: string }> => {
-  const chunks = ssmNames.reduce((all: string[][], one: string, i: number) => {
-    const ch = Math.floor(i / 10)
-    all[ch] = ([] as string[]).concat(all[ch] || [], one)
-    return all
-  }, [])
-
-  const allParams = await Promise.all(
-    chunks.map((Names) =>
-      client.getParameters({ Names, WithDecryption: true }),
-    ),
-  )
-  return allParams
-    .map(({ Parameters }) =>
-      Object.fromEntries(Parameters!.map((p) => [p.Name, p.Value])),
-    )
-    .reduce((p, c) => ({ ...p, ...c }), {})
 }
