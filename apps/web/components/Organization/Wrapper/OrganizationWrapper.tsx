@@ -91,6 +91,7 @@ export const lightThemes = [
   'default',
   'landlaeknir',
   'fiskistofa',
+  'landing_page',
 ]
 export const footerEnabled = [
   'syslumenn',
@@ -173,6 +174,8 @@ const OrganizationHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
       return <RikislogmadurHeader organizationPage={organizationPage} />
     case 'landskjorstjorn':
       return <LandskjorstjornHeader organizationPage={organizationPage} />
+    case 'landing_page':
+      return null
     default:
       return <DefaultHeader organizationPage={organizationPage} />
   }
@@ -225,7 +228,11 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
     ? organizations[0]
     : organizations.find((x) => footerEnabled.includes(x.slug))
 
-  const n = useNamespace(organization?.namespace ?? {})
+  const namespace = useMemo(
+    () => JSON.parse(organization?.namespace?.fields ?? '{}'),
+    [],
+  )
+  const n = useNamespace(namespace)
 
   let OrganizationFooterComponent = null
 
@@ -597,7 +604,6 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
           </Box>
         </SidebarLayout>
       )}
-      {!!mainContent && children}
       {minimal && (
         <GridContainer>
           <GridRow>
@@ -606,11 +612,12 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
               span={['12/12', '12/12', '10/12']}
               offset={['0', '0', '1/12']}
             >
-              {children}
+              {mainContent}
             </GridColumn>
           </GridRow>
         </GridContainer>
       )}
+      {!!mainContent && children}
       {!minimal && (
         <OrganizationFooter
           organizations={[organizationPage.organization]}

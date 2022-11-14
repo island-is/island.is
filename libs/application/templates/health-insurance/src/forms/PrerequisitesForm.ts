@@ -70,20 +70,8 @@ export const PrerequisitesForm: Form = buildForm({
               subTitle: '',
             }),
             buildDataProviderItem({
-              id: 'applications',
-              type: 'ApplicationsProvider',
-              title: '',
-              subTitle: '',
-            }),
-            buildDataProviderItem({
               id: 'healthInsurance',
               type: 'HealthInsuranceProvider',
-              title: '',
-              subTitle: '',
-            }),
-            buildDataProviderItem({
-              id: 'pendingApplications',
-              type: 'PendingApplications',
               title: '',
               subTitle: '',
             }),

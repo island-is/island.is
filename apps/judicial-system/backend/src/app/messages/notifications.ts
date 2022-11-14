@@ -122,18 +122,26 @@ export const notifications = {
   defenderResubmittedToCourt: defineMessages({
     subject: {
       id:
-        'judicial.system.backend:notifications.defender_resubmitted_to_court.subject_v2',
-      defaultMessage: 'Krafa um {caseType} send aftur',
+        'judicial.system.backend:notifications.defender_resubmitted_to_court.subject_v3',
+      defaultMessage: 'Gögn í máli {courtCaseNumber}',
       description:
         'Notaður sem titil í pósti til verjanda þegar sækjandi breytir kröfunni og sendir aftur á héraðsdómstól',
     },
     body: {
       id:
-        'judicial.system.backend:notifications.defender_resubmitted_to_court.body_v2',
+        'judicial.system.backend:notifications.defender_resubmitted_to_court.body_v3',
       defaultMessage:
-        'Sækjandi í {policeCaseNumbersCount, plural, zero {máli} one {máli {policeCaseNumbers}} other {málum: {policeCaseNumbers}}} hjá {court} hefur sent kröfuna aftur á dóminn. {linkStart}Uppfærð útgáfa er aðgengileg í Réttarvörslugátt.{linkEnd}',
+        'Sækjandi í máli {courtCaseNumber} hjá {courtName} hefur breytt kröfunni og sent hana aftur á dóminn.',
       description:
         'Notaður sem texti í pósti til verjanda þegar sækjandi breytir kröfunni og sendir aftur á héraðsdómstól',
+    },
+    link: {
+      id:
+        'judicial.system.backend:notifications.defender_resubmitted_to_court.link',
+      defaultMessage:
+        '<br /><br />{defenderHasAccessToRvg, select, false {Þú getur nálgast gögn málsins hjá {courtName} ef þau hafa ekki þegar verið afhent} other {Þú getur nálgast gögn málsins í {linkStart}Réttarvörslugátt{linkEnd} með rafrænum skilríkjum}}.',
+      description:
+        'Notaður sem vísun í gögn málsins í pósti til verjanda/talsmanns þegar sækjandi breytir kröfunni og sendir aftur á héraðsdómstól',
     },
   }),
   prosecutorReceivedByCourt: defineMessage({
@@ -527,10 +535,18 @@ export const notifications = {
       description:
         'Fyrirsögn í pósti til verjanda þegar hann er skráður á mál.',
     },
+    // TODO: REMOVE body
     body: {
       id: 'judicial.system.backend:notifications.defender_assigned_email.body',
       defaultMessage:
         '{court} hefur skipað þig verjanda í máli {linkStart}{courtCaseNumber}{linkEnd}. Gögn málsins eru aðgengileg í Réttarvörslugátt með rafrænum skilríkjum.',
+      description: 'Texti í pósti til verjanda þegar hann er skráður á mál.',
+    },
+    bodyV2: {
+      id:
+        'judicial.system.backend:notifications.defender_assigned_email.body_v2',
+      defaultMessage:
+        '{court} hefur skipað þig verjanda í máli {linkStart}{courtCaseNumber}{linkEnd}. {defenderHasAccessToRVG, select, true {Gögn málsins eru aðgengileg í Réttarvörslugátt með rafrænum skilríkjum} other {Þú getur nálgast gögn málsins hjá {courtName} ef þau hafa ekki þegar verið afhent}}.',
       description: 'Texti í pósti til verjanda þegar hann er skráður á mál.',
     },
   }),

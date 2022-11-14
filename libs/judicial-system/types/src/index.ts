@@ -13,6 +13,7 @@ export type { Institution } from './lib/institution'
 
 export { NotificationType } from './lib/notification'
 export type {
+  Recipient,
   Notification,
   SendNotification,
   SendNotificationResponse,
@@ -30,6 +31,7 @@ export type {
   UploadFileToCourt,
   UploadFileToCourtResponse,
   CaseFile,
+  UpdateFile,
   CreateFile,
 } from './lib/file'
 

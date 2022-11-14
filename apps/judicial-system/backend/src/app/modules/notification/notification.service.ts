@@ -32,6 +32,7 @@ import {
   isInvestigationCase,
   isIndictmentCase,
   CaseState,
+  Recipient,
 } from '@island.is/judicial-system/types'
 import {
   caseTypes,
@@ -73,11 +74,6 @@ import { SendNotificationResponse } from './models/sendNotification.resopnse'
 import { notificationModuleConfig } from './notification.config'
 import { DefendantService } from '../defendant'
 
-interface Recipient {
-  address?: string
-  success: boolean
-}
-
 interface Attachment {
   filename: string
   content: string
@@ -105,8 +101,8 @@ export class NotificationService {
     throw new InternalServerErrorException('Format message not initialized')
   }
 
-  private refreshFormatMessage: () => Promise<void> = async () =>
-    this.intlService
+  private async refreshFormatMessage(): Promise<void> {
+    return this.intlService
       .useIntl(['judicial.system.backend'], 'is')
       .then((res) => {
         this.formatMessage = res.formatMessage
@@ -114,6 +110,7 @@ export class NotificationService {
       .catch((reason) => {
         this.logger.error('Unable to refresh format messages', { reason })
       })
+  }
 
   private async existsRevokableNotification(
     caseId: string,
@@ -133,18 +130,12 @@ export class NotificationService {
         },
       )
 
-      return notifications.some((notification) => {
-        if (!notification.recipients) {
-          return false
-        }
-
-        const recipients: Recipient[] = JSON.parse(notification.recipients)
-
-        return recipients.some(
+      return notifications.some(({ recipients }) =>
+        recipients.some(
           (recipient) =>
             recipient.address === recipientAddress && recipient.success,
-        )
-      })
+        ),
+      )
     } catch (error) {
       // Tolerate failure, but log error
       this.logger.error(
@@ -256,12 +247,12 @@ export class NotificationService {
     const notification = await this.notificationModel.create({
       caseId,
       type,
-      recipients: JSON.stringify(recipients),
+      recipients: recipients,
     })
 
     return {
       notificationSent: recipients.reduce(
-        (sent, recipient) => sent || recipient?.success,
+        (sent, recipient) => sent || recipient.success,
         false as boolean,
       ),
       notification,
@@ -398,10 +389,10 @@ export class NotificationService {
   ): Promise<Recipient> {
     const { body, subject } = formatDefenderResubmittedToCourtEmailNotification(
       this.formatMessage,
-      theCase.type,
-      theCase.policeCaseNumbers,
-      formatDefenderRoute(this.config.clientUrl, theCase.type, theCase.id),
+      theCase.defenderNationalId &&
+        formatDefenderRoute(this.config.clientUrl, theCase.type, theCase.id),
       theCase.court?.name,
+      theCase.courtCaseNumber,
     )
 
     return this.sendEmail(
@@ -439,6 +430,35 @@ export class NotificationService {
     )
   }
 
+  private async defenderCourtDateNotificationSent(theCase: Case) {
+    let exists = false
+
+    try {
+      const notifications = await this.notificationModel.findAll({
+        where: {
+          caseId: theCase.id,
+          type: NotificationType.COURT_DATE,
+        },
+      })
+
+      exists = notifications.some(async (notification) =>
+        notification.recipients.some(
+          (recipient: Recipient) =>
+            recipient.address === theCase.defenderEmail &&
+            recipient.success === true,
+        ),
+      )
+    } catch (error) {
+      // Tolerate failure, but log error
+      this.logger.error(
+        `Error when looking for defender court date notification for case ${theCase.id}`,
+        { error },
+      )
+    }
+
+    return exists
+  }
+
   private async sendReadyForCourtNotifications(
     theCase: Case,
     user?: User,
@@ -450,10 +470,7 @@ export class NotificationService {
     }
 
     const notification = await this.notificationModel.findOne({
-      where: {
-        caseId: theCase.id,
-        type: NotificationType.READY_FOR_COURT,
-      },
+      where: { caseId: theCase.id, type: NotificationType.READY_FOR_COURT },
     })
 
     const promises: Promise<Recipient>[] = [
@@ -471,11 +488,17 @@ export class NotificationService {
         promises.push(
           this.sendResubmittedToCourtSmsNotificationToCourt(theCase),
         )
+
+        const defenderCourtDateNotificationSent = await this.defenderCourtDateNotificationSent(
+          theCase,
+        )
+
         if (
           theCase.courtDate &&
           theCase.sendRequestToDefender &&
           theCase.defenderName &&
-          theCase.defenderEmail
+          theCase.defenderEmail &&
+          defenderCourtDateNotificationSent
         ) {
           promises.push(this.sendResubmittedToCourtEmailToDefender(theCase))
         }
@@ -783,7 +806,12 @@ export class NotificationService {
     )
   }
 
-  private async sendRulingEmailNotificationToDefender(theCase: Case) {
+  private async sendRulingEmailNotificationToDefender(
+    theCase: Case,
+    defenderNationalId?: string,
+    defenderName?: string,
+    defenderEmail?: string,
+  ) {
     return this.sendEmail(
       isIndictmentCase(theCase.type)
         ? this.formatMessage(notifications.caseCompleted.subject, {
@@ -797,7 +825,7 @@ export class NotificationService {
         ? this.formatMessage(notifications.caseCompleted.defenderBody, {
             courtCaseNumber: theCase.courtCaseNumber,
             courtName: theCase.court?.name?.replace('dómur', 'dómi'),
-            defenderHasAccessToRvg: Boolean(theCase.defenderNationalId),
+            defenderHasAccessToRvg: Boolean(defenderNationalId),
             linkStart: `<a href="${formatDefenderRoute(
               this.config.clientUrl,
               theCase.type,
@@ -809,7 +837,7 @@ export class NotificationService {
             isModifyingRuling: Boolean(theCase.rulingModifiedHistory),
             courtCaseNumber: theCase.courtCaseNumber,
             courtName: theCase.court?.name?.replace('dómur', 'dómi'),
-            defenderHasAccessToRvg: Boolean(theCase.defenderNationalId),
+            defenderHasAccessToRvg: Boolean(defenderNationalId),
             linkStart: `<a href="${formatDefenderRoute(
               this.config.clientUrl,
               theCase.type,
@@ -820,8 +848,8 @@ export class NotificationService {
               `generated/${theCase.id}/ruling.pdf`,
             ),
           }),
-      theCase.defenderName ?? '',
-      theCase.defenderEmail ?? '',
+      defenderName ?? '',
+      defenderEmail ?? '',
     )
   }
 
@@ -895,11 +923,20 @@ export class NotificationService {
     theCase: Case,
   ): Promise<SendNotificationResponse> {
     const promises = [this.sendRunlingEmailNotificationToProsecutor(theCase)]
-
-    if (
+    if (isIndictmentCase(theCase.type) && theCase.defendants) {
+      theCase.defendants.forEach((defendant) => {
+        promises.push(
+          this.sendRulingEmailNotificationToDefender(
+            theCase,
+            defendant.defenderNationalId,
+            defendant.defenderName,
+            defendant.defenderEmail,
+          ),
+        )
+      })
+    } else if (
       theCase.defenderEmail &&
-      (isIndictmentCase(theCase.type) ||
-        isRestrictionCase(theCase.type) ||
+      (isRestrictionCase(theCase.type) ||
         (isInvestigationCase(theCase.type) &&
           theCase.sessionArrangements &&
           [
@@ -907,7 +944,14 @@ export class NotificationService {
             SessionArrangements.ALL_PRESENT_SPOKESPERSON,
           ].includes(theCase.sessionArrangements)))
     ) {
-      this.sendRulingEmailNotificationToDefender(theCase)
+      promises.push(
+        this.sendRulingEmailNotificationToDefender(
+          theCase,
+          theCase.defenderNationalId,
+          theCase.defenderName,
+          theCase.defenderEmail,
+        ),
+      )
     }
 
     if (isRestrictionCase(theCase.type)) {
@@ -1176,7 +1220,6 @@ export class NotificationService {
     }
 
     const recipients = await Promise.all(promises)
-
     if (recipients.length > 0) {
       return this.recordNotification(
         theCase.id,
@@ -1188,42 +1231,106 @@ export class NotificationService {
     return { notificationSent: false }
   }
 
-  private async sendDefenderAssignedNotifications(
+  private async shouldSendDefenderAssignedNotification(
     theCase: Case,
-  ): Promise<SendNotificationResponse> {
-    const defenderEmail = theCase.defenderEmail
-    if (!theCase.defenderNationalId || !defenderEmail) {
-      return Promise.resolve({ notificationSent: false })
-    }
-
+    defenderEmail?: string,
+  ): Promise<boolean> {
     const pastNotifications = await this.notificationModel.findAll({
       where: { caseId: theCase.id, type: NotificationType.DEFENDER_ASSIGNED },
     })
-    const hasSentNotificationBefore = pastNotifications.some(({ recipients }) =>
-      recipients?.includes(defenderEmail),
+
+    if (!defenderEmail) {
+      return false
+    }
+
+    const hasSentNotificationBefore = pastNotifications.some(
+      (pastNotification) => {
+        return pastNotification.recipients.some(
+          (recipient) =>
+            recipient.address === defenderEmail && recipient.success,
+        )
+      },
     )
 
     if (hasSentNotificationBefore) {
-      return Promise.resolve({ notificationSent: false })
+      return false
     }
 
+    return true
+  }
+
+  private sendDefenderAssignedNotification(
+    theCase: Case,
+    defenderNationalId?: string,
+    defenderName?: string,
+    defenderEmail?: string,
+  ): Promise<Recipient> {
     const { subject, body } = formatDefenderAssignedEmailNotification(
       this.formatMessage,
       theCase,
-      `${this.config.clientUrl}${DEFENDER_ROUTE}/${theCase.id}`,
+      defenderNationalId
+        ? `${this.config.clientUrl}${DEFENDER_ROUTE}/${theCase.id}`
+        : undefined,
     )
 
-    const recipient = await this.sendEmail(
-      subject,
-      body,
-      theCase.defenderName,
-      defenderEmail,
-    )
+    return this.sendEmail(subject, body, defenderName, defenderEmail)
+  }
+
+  private async sendDefenderAssignedNotifications(
+    theCase: Case,
+  ): Promise<SendNotificationResponse> {
+    const promises: Promise<Recipient>[] = []
+
+    if (isIndictmentCase(theCase.type) && theCase.defendants) {
+      for (const defendant of theCase.defendants) {
+        const { defenderEmail, defenderNationalId, defenderName } = defendant
+
+        const shouldSend = await this.shouldSendDefenderAssignedNotification(
+          theCase,
+          defenderEmail,
+        )
+
+        if (shouldSend === true) {
+          promises.push(
+            this.sendDefenderAssignedNotification(
+              theCase,
+              defenderNationalId,
+              defenderName,
+              defenderEmail,
+            ),
+          )
+        }
+      }
+    } else {
+      const { defenderEmail, defenderNationalId, defenderName } = theCase
+
+      const shouldSend = await this.shouldSendDefenderAssignedNotification(
+        theCase,
+        defenderEmail,
+      )
+
+      if (shouldSend === true) {
+        promises.push(
+          this.sendDefenderAssignedNotification(
+            theCase,
+            defenderNationalId,
+            defenderName,
+            defenderEmail,
+          ),
+        )
+      }
+    }
+
+    const recipients = await Promise.all(promises)
+
+    if (recipients.length === 0) {
+      return { notificationSent: false }
+    }
 
     return this.recordNotification(
       theCase.id,
       NotificationType.DEFENDER_ASSIGNED,
-      [recipient],
+      recipients,
     )
   }
 

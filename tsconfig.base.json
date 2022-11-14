@@ -1,6 +1,7 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "useUnknownInCatchVariables": false,
     "rootDir": ".",
     "sourceMap": true,
     "declaration": false,
@@ -11,7 +12,7 @@
     "target": "es2015",
     "module": "esnext",
     "typeRoots": ["node_modules/@types"],
-    "lib": ["es2017", "dom"],
+    "lib": ["es2019", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "allowSyntheticDefaultImports": true,
@@ -78,6 +79,9 @@
       ],
       "@island.is/api/domains/education": [
         "libs/api/domains/education/src/index.ts"
+      ],
+      "@island.is/api/domains/electronic-registration-statistics": [
+        "libs/api/domains/electronic-registration-statistics/src/index.ts"
       ],
       "@island.is/api/domains/endorsement-system": [
         "libs/api/domains/endorsement-system/src/index.ts"
@@ -215,6 +219,9 @@
       "@island.is/application/templates/driving-school-confirmation": [
         "libs/application/templates/driving-school-confirmation/src/index.ts"
       ],
+      "@island.is/application/templates/estate": [
+        "libs/application/templates/estate/src/index.ts"
+      ],
       "@island.is/application/templates/example-payment": [
         "libs/application/templates/example-payment/src/index.ts"
       ],
@@ -284,12 +291,42 @@
       "@island.is/application/templates/reference-template": [
         "libs/application/templates/reference-template/src/index.ts"
       ],
+      "@island.is/application/templates/transport-authority/anonymity-in-vehicle-registry": [
+        "libs/application/templates/transport-authority/anonymity-in-vehicle-registry/src/index.ts"
+      ],
+      "@island.is/application/templates/transport-authority/change-co-owner-of-vehicle": [
+        "libs/application/templates/transport-authority/change-co-owner-of-vehicle/src/index.ts"
+      ],
+      "@island.is/application/templates/transport-authority/change-operator-of-vehicle": [
+        "libs/application/templates/transport-authority/change-operator-of-vehicle/src/index.ts"
+      ],
+      "@island.is/application/templates/transport-authority/digital-tachograph-company-card": [
+        "libs/application/templates/transport-authority/digital-tachograph-company-card/src/index.ts"
+      ],
+      "@island.is/application/templates/transport-authority/digital-tachograph-drivers-card": [
+        "libs/application/templates/transport-authority/digital-tachograph-drivers-card/src/index.ts"
+      ],
+      "@island.is/application/templates/transport-authority/digital-tachograph-workshop-card": [
+        "libs/application/templates/transport-authority/digital-tachograph-workshop-card/src/index.ts"
+      ],
+      "@island.is/application/templates/transport-authority/order-vehicle-license-plate": [
+        "libs/application/templates/transport-authority/order-vehicle-license-plate/src/index.ts"
+      ],
+      "@island.is/application/templates/transport-authority/order-vehicle-registration-certificate": [
+        "libs/application/templates/transport-authority/order-vehicle-registration-certificate/src/index.ts"
+      ],
+      "@island.is/application/templates/transport-authority/transfer-of-vehicle-ownership": [
+        "libs/application/templates/transport-authority/transfer-of-vehicle-ownership/src/index.ts"
+      ],
       "@island.is/application/types": ["libs/application/types/src/index.ts"],
       "@island.is/application/ui-components": [
         "libs/application/ui-components/src/index.ts"
       ],
       "@island.is/application/ui-fields": [
         "libs/application/ui-fields/src/index.ts"
+      ],
+      "@island.is/application/ui-forms": [
+        "libs/application/ui-forms/src/index.ts"
       ],
       "@island.is/application/ui-shell": [
         "libs/application/ui-shell/src/index.ts"
@@ -303,8 +340,11 @@
         "libs/clients/adr-and-machine-license/src/index.ts"
       ],
       "@island.is/clients/assets": ["libs/clients/assets/src/index.ts"],
-      "@island.is/clients/auth-public-api": [
-        "libs/clients/auth-public-api/src/index.ts"
+      "@island.is/clients/auth/delegation-api": [
+        "libs/clients/auth/delegation-api/src/index.ts"
+      ],
+      "@island.is/clients/auth/public-api": [
+        "libs/clients/auth/public-api/src/index.ts"
       ],
       "@island.is/clients/charge-fjs-v2": [
         "libs/clients/charge-fjs-v2/src/index.ts"
@@ -324,6 +364,9 @@
       ],
       "@island.is/clients/driving-license-book": [
         "libs/clients/driving-license-book/src/index.ts"
+      ],
+      "@island.is/clients/electronic-registration-statistics": [
+        "libs/clients/electronic-registration-statistics/src/index.ts"
       ],
       "@island.is/clients/finance": ["libs/clients/finance/src/index.ts"],
       "@island.is/clients/financial-statements-inao": [
@@ -416,7 +459,6 @@
       "@island.is/financial-aid/shared/lib": [
         "libs/financial-aid/shared/src/lib/index.ts"
       ],
-      "@island.is/health-insurance": ["libs/health-insurance/src/index.ts"],
       "@island.is/icelandic-names-registry-types": [
         "libs/icelandic-names-registry/types/src/index.ts"
       ],
@@ -466,6 +508,7 @@
       "@island.is/nest/audit": ["libs/nest/audit/src/index.ts"],
       "@island.is/nest/aws": ["libs/nest/aws/src/index.ts"],
       "@island.is/nest/config": ["libs/nest/config/src/index.ts"],
+      "@island.is/nest/dataloader": ["libs/nest/dataloader/src/index.ts"],
       "@island.is/nest/feature-flags": ["libs/nest/feature-flags/src/index.ts"],
       "@island.is/nest/pagination": ["libs/nest/pagination/src/index.ts"],
       "@island.is/nest/problem": ["libs/nest/problem/src/index.ts"],
@@ -481,6 +524,9 @@
       "@island.is/regulations": ["libs/regulations/src/index.ts"],
       "@island.is/regulations/*": ["libs/regulations/src/sub/*"],
       "@island.is/residence-history": ["libs/residence-history/src/index.ts"],
+      "@island.is/service-portal/access-control/delegations": [
+        "libs/service-portal/access-control/delegations/src/index.ts"
+      ],
       "@island.is/service-portal/applications": [
         "libs/service-portal/applications/src/index.ts"
       ],
@@ -552,6 +598,9 @@
       ],
       "@island.is/service-portal/vehicles": [
         "libs/service-portal/vehicles/src/index.ts"
+      ],
+      "@island.is/services/auth/testing": [
+        "libs/services/auth/testing/src/index.ts"
       ],
       "@island.is/shared/components": ["libs/shared/components/src/index.ts"],
       "@island.is/shared/connected": ["libs/shared/connected/src/index.ts"],

@@ -182,6 +182,7 @@ export const slices = gql`
     id
     title
     json
+    configJson
     componentType: type
   }
 
@@ -347,6 +348,7 @@ export const slices = gql`
     }
     automaticallyFetchArticles
     sortBy
+    hasBorderAbove
     articles {
       id
       slug
@@ -422,6 +424,7 @@ export const slices = gql`
     content {
       ...HtmlFields
       ...AssetFields
+      ...ImageFields
     }
     dividerOnTop
     showTitle
@@ -432,12 +435,16 @@ export const slices = gql`
     id
     title
     type
+    hasBorderAbove
+    showTitle
+    titleHeadingLevel
     accordionItems {
       id
       title
       content {
         ...HtmlFields
         ...AssetFields
+        ...ImageFields
       }
       link {
         url
@@ -589,6 +596,13 @@ export const slices = gql`
     }
   }
 
+  fragment PowerBiSliceFields on PowerBiSlice {
+    __typename
+    id
+    title
+    powerBiEmbedProps
+  }
+
   fragment BaseSlices on Slice {
     ...TimelineFields
     ...MailingListSignupFields
@@ -623,6 +637,7 @@ export const slices = gql`
     ...GraphCardFields
     ...LifeEventPageListSliceFields
     ...SidebarCardFields
+    ...PowerBiSliceFields
   }
 
   fragment AllSlices on Slice {
@@ -636,6 +651,30 @@ export const nestedOneColumnTextFields = gql`
     ...OneColumnTextFields
     content {
       ...AllSlices
+    }
+  }
+`
+
+export const nestedAccordionAndFaqListFields = `
+  ... on AccordionSlice {
+    ...AccordionSliceFields
+    accordionItems {
+      ... on OneColumnText {
+        ...OneColumnTextFields
+        content {
+          ...AllSlices
+        }
+      }
+    }
+  }
+  ... on FaqList {
+    ...FaqListFields
+    questions {
+      id
+      question
+      answer {
+        ...AllSlices
+      }
     }
   }
 `

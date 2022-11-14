@@ -8,8 +8,8 @@ import {
   m as coreMessage,
   ActionCard,
   EmptyState,
+  CardLoader,
 } from '@island.is/service-portal/core'
-import { LicenseLoader } from '../../components/LicenseLoader/LicenseLoader'
 import { m } from '../../lib/messages'
 import { gql, useQuery } from '@apollo/client'
 import { Locale } from '@island.is/shared/types'
@@ -20,7 +20,6 @@ import {
 } from '@island.is/service-portal/graphql'
 import { Query } from '@island.is/api/schema'
 import { Box } from '@island.is/island-ui/core'
-import { useHistory } from 'react-router-dom'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import {
   getPathFromProviderId,
@@ -88,7 +87,6 @@ const GenericLicensesQuery = gql`
 export const LicensesOverview: ServicePortalModuleComponent = () => {
   useNamespaces('sp.license')
   const { formatMessage } = useLocale()
-  const history = useHistory()
   const { data: userProfile } = useUserProfile()
   const locale = (userProfile?.locale as Locale) ?? 'is'
 
@@ -140,7 +138,7 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
       <ErrorScreen
         figure="./assets/images/hourglass.svg"
         tagVariant="red"
-        tag="500"
+        tag={formatMessage(coreMessage.errorTitle)}
         title={formatMessage(coreMessage.somethingWrong)}
         children={formatMessage(coreMessage.errorFetchModule, {
           module: formatMessage(coreMessage.licenses).toLowerCase(),
@@ -156,7 +154,7 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
           intro={defineMessage(m.intro)}
         />
       </Box>
-      {loading && <LicenseLoader />}
+      {loading && <CardLoader />}
       {data &&
         !isEmpty &&
         genericLicenses
@@ -179,16 +177,10 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
                   )}
                   cta={{
                     label: formatMessage(m.seeDetails),
-                    onClick: () =>
-                      history.push(
-                        ServicePortalPath.LicensesDetail.replace(
-                          ':provider',
-                          getPathFromProviderId(license.license.provider.id),
-                        ).replace(
-                          ':type',
-                          getPathFromType(license.license.type),
-                        ),
-                      ),
+                    url: ServicePortalPath.LicensesDetail.replace(
+                      ':provider',
+                      getPathFromProviderId(license.license.provider.id),
+                    ).replace(':type', getPathFromType(license.license.type)),
                     variant: 'text',
                   }}
                   tag={

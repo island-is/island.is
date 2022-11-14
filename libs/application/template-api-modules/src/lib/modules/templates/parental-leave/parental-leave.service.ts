@@ -19,6 +19,9 @@ import {
   getAvailablePersonalRightsInDays,
   YES,
   StartDateOptions,
+  UnEmployedBenefitTypes,
+  PARENTAL_LEAVE,
+  PARENTAL_GRANT_STUDENTS,
 } from '@island.is/application/templates/parental-leave'
 
 import { SharedTemplateApiService } from '../../shared'
@@ -43,6 +46,7 @@ import {
 import {
   transformApplicationToParentalLeaveDTO,
   getRatio,
+  getRightsCode,
 } from './parental-leave.utils'
 import { apiConstants } from './constants'
 import { ConfigService } from '@nestjs/config'
@@ -94,8 +98,14 @@ export class ParentalLeaveService {
     )
 
     if (otherParentPhoneNumber) {
+      const clientLocationOrigin = getConfigValue(
+        this.configService,
+        'clientLocationOrigin',
+      ) as string
+      const link = `${clientLocationOrigin}/${ApplicationConfigurations.ParentalLeave.slug}/${application.id}`
+
       await this.sharedTemplateAPIService.sendSms(
-        generateAssignOtherParentApplicationSms,
+        () => generateAssignOtherParentApplicationSms(application, link),
         application,
       )
     }
@@ -206,30 +216,53 @@ export class ParentalLeaveService {
     }
   }
 
-  // add when we add student confirmation
-  // async getStudentPdf(application: Application) {
-  //   try {
-  //     const filename = getValueViaPath(
-  //       application.answers,
-  //       'fileUpload.studentFile[0].key',
-  //     )
+  async getStudentPdf(application: Application, index = 0) {
+    try {
+      const filename = getValueViaPath(
+        application.answers,
+        `fileUpload.studentFile[${index}].key`,
+      )
 
-  //     const Key = `${application.id}/${filename}`
-  //     const file = await this.s3
-  //       .getObject({ Bucket: this.attachmentBucket, Key })
-  //       .promise()
-  //     const fileContent = file.Body as Buffer
+      const Key = `${application.id}/${filename}`
+      const file = await this.s3
+        .getObject({ Bucket: this.attachmentBucket, Key })
+        .promise()
+      const fileContent = file.Body as Buffer
 
-  //     if (!fileContent) {
-  //       throw new Error('File content was undefined')
-  //     }
+      if (!fileContent) {
+        throw new Error('File content was undefined')
+      }
 
-  //     return fileContent.toString('base64')
-  //   } catch (e) {
-  //     this.logger.error('Cannot get student attachment', { e })
-  //     throw new Error('Failed to get the student attachment')
-  //   }
-  // }
+      return fileContent.toString('base64')
+    } catch (e) {
+      this.logger.error('Cannot get student attachment', { e })
+      throw new Error('Failed to get the student attachment')
+    }
+  }
+
+  async getBenefitsPdf(application: Application, index = 0) {
+    try {
+      const filename = getValueViaPath(
+        application.answers,
+        `fileUpload.benefitsFile[${index}].key`,
+      )
+
+      const Key = `${application.id}/${filename}`
+      const file = await this.s3
+        .getObject({ Bucket: this.attachmentBucket, Key })
+        .promise()
+      const fileContent = file.Body as Buffer
+
+      if (!fileContent) {
+        throw new Error('File content was undefined')
+      }
+
+      return fileContent.toString('base64')
+    } catch (e) {
+      this.logger.error('Cannot get benefits attachment', { e })
+      throw new Error('Failed to get the benefits attachment')
+    }
+  }
 
   async getGenericPdf(application: Application, index = 0) {
     try {
@@ -257,9 +290,11 @@ export class ParentalLeaveService {
 
   async getAttachments(application: Application): Promise<Attachment[]> {
     const attachments: Attachment[] = []
-    const { isSelfEmployed } = getApplicationAnswers(application.answers)
+    const { isSelfEmployed, applicationType } = getApplicationAnswers(
+      application.answers,
+    )
 
-    if (isSelfEmployed === YES) {
+    if (isSelfEmployed === YES && applicationType === PARENTAL_LEAVE) {
       const selfEmployedPdfs = (await getValueViaPath(
         application.answers,
         'fileUpload.selfEmployedFile',
@@ -291,6 +326,48 @@ export class ParentalLeaveService {
           }
         }
       }
+    } else if (applicationType === PARENTAL_GRANT_STUDENTS) {
+      const stuydentPdfs = (await getValueViaPath(
+        application.answers,
+        'fileUpload.studentFile',
+      )) as unknown[]
+
+      if (stuydentPdfs?.length) {
+        for (let i = 0; i <= stuydentPdfs.length - 1; i++) {
+          const pdf = await this.getStudentPdf(application, i)
+
+          attachments.push({
+            attachmentType: apiConstants.attachments.student,
+            attachmentBytes: pdf,
+          })
+        }
+      }
+    }
+
+    const {
+      isRecivingUnemploymentBenefits,
+      unemploymentBenefits,
+    } = getApplicationAnswers(application.answers)
+    if (
+      isRecivingUnemploymentBenefits === YES &&
+      (unemploymentBenefits === UnEmployedBenefitTypes.union ||
+        unemploymentBenefits == UnEmployedBenefitTypes.healthInsurance)
+    ) {
+      const benefitsPdfs = (await getValueViaPath(
+        application.answers,
+        'fileUpload.benefitsFile',
+      )) as unknown[]
+
+      if (benefitsPdfs?.length) {
+        for (let i = 0; i <= benefitsPdfs.length - 1; i++) {
+          const pdf = await this.getBenefitsPdf(application, i)
+
+          attachments.push({
+            attachmentType: apiConstants.attachments.unEmploymentBenefits,
+            attachmentBytes: pdf,
+          })
+        }
+      }
     }
 
     const genericPdfs = (await getValueViaPath(
@@ -303,7 +380,6 @@ export class ParentalLeaveService {
         const pdf = await this.getGenericPdf(application, i)
 
         attachments.push({
-          // needs to add other types
           attachmentType: apiConstants.attachments.other,
           attachmentBytes: pdf,
         })
@@ -349,6 +425,7 @@ export class ParentalLeaveService {
 
       const startDate = new Date(period.startDate)
       const endDate = new Date(period.endDate)
+      const useLength = period.useLength
 
       let periodLength = 0
 
@@ -388,7 +465,9 @@ export class ParentalLeaveService {
         // We know its a normal period and it will not exceed personal rights
         periods.push({
           from:
-            isFirstPeriod && isActualDateOfBirth
+            isFirstPeriod && isActualDateOfBirth && useLength === YES
+              ? apiConstants.actualDateOfBirthMonths
+              : isFirstPeriod && isActualDateOfBirth
               ? apiConstants.actualDateOfBirth
               : period.startDate,
           to: period.endDate,
@@ -399,13 +478,15 @@ export class ParentalLeaveService {
           ),
           approved: false,
           paid: false,
-          rightsCodePeriod: null,
+          rightsCodePeriod: getRightsCode(application),
         })
       } else if (isUsingTransferredRights) {
         // We know all of the period will be using transferred rights
         periods.push({
           from:
-            isFirstPeriod && isActualDateOfBirth
+            isFirstPeriod && isActualDateOfBirth && useLength === YES
+              ? apiConstants.actualDateOfBirthMonths
+              : isFirstPeriod && isActualDateOfBirth
               ? apiConstants.actualDateOfBirth
               : period.startDate,
           to: period.endDate,
@@ -443,7 +524,9 @@ export class ParentalLeaveService {
         // Add the period using personal rights
         periods.push({
           from:
-            isFirstPeriod && isActualDateOfBirth
+            isFirstPeriod && isActualDateOfBirth && useLength === YES
+              ? apiConstants.actualDateOfBirthMonths
+              : isFirstPeriod && isActualDateOfBirth
               ? apiConstants.actualDateOfBirth
               : period.startDate,
           to: format(getNormalPeriodEndDate.periodEndDate, df),
@@ -454,7 +537,7 @@ export class ParentalLeaveService {
           ),
           approved: false,
           paid: false,
-          rightsCodePeriod: null,
+          rightsCodePeriod: getRightsCode(application),
         })
 
         const transferredPeriodStartDate = addDays(
@@ -502,7 +585,11 @@ export class ParentalLeaveService {
   }
 
   async sendApplication({ application }: TemplateApiModuleActionProps) {
-    const { isSelfEmployed } = getApplicationAnswers(application.answers)
+    const {
+      isSelfEmployed,
+      isRecivingUnemploymentBenefits,
+      applicationType,
+    } = getApplicationAnswers(application.answers)
     const nationalRegistryId = application.applicant
     const attachments = await this.getAttachments(application)
 
@@ -535,9 +622,12 @@ export class ParentalLeaveService {
       // There has been case when island.is got Access Denied from AWS when sending out emails
       // This try/catch keeps application in correct state
       try {
-        const selfEmployed = isSelfEmployed === YES
+        const selfEmployed =
+          applicationType === PARENTAL_LEAVE ? isSelfEmployed === YES : true
+        const recivingUnemploymentBenefits =
+          isRecivingUnemploymentBenefits === YES
 
-        if (!selfEmployed) {
+        if (!selfEmployed && !recivingUnemploymentBenefits) {
           // Only needs to send an email if being approved by employer
           // Self employed applicant was aware of the approval
           await this.sharedTemplateAPIService.sendEmail(
@@ -568,7 +658,6 @@ export class ParentalLeaveService {
   async validateApplication({ application }: TemplateApiModuleActionProps) {
     const nationalRegistryId = application.applicant
     const attachments = await this.getAttachments(application)
-
     try {
       const periods = await this.createPeriodsDTO(
         application,

@@ -22,10 +22,7 @@ import {
   Select,
   Text,
 } from '@island.is/island-ui/core'
-import {
-  defendant as defendantMessages,
-  core,
-} from '@island.is/judicial-system-web/messages'
+import { core } from '@island.is/judicial-system-web/messages'
 import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
 import {
   removeErrorMessageIfValid,
@@ -40,11 +37,13 @@ import * as strings from './DefendantInfo.strings'
 interface Props {
   defendant: Defendant
   workingCase: Case
-  onChange: (
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
+  onChange: (defendantId: string, updatedDefendant: UpdateDefendant) => void
+  updateDefendantState: (
     defendantId: string,
-    updatedDefendant: UpdateDefendant,
-  ) => Promise<void>
-  updateDefendantState: (defendantId: string, update: UpdateDefendant) => void
+    update: UpdateDefendant,
+    setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
+  ) => void
   onDelete?: (defendant: Defendant) => Promise<void>
 }
 
@@ -52,6 +51,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
   const {
     defendant,
     workingCase,
+    setWorkingCase,
     onDelete,
     onChange,
     updateDefendantState,
@@ -152,7 +152,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
             size="small"
             data-testid="deleteDefendantButton"
           >
-            {formatMessage(defendantMessages.sections.defendantInfo.delete)}
+            {formatMessage(strings.defendantInfo.delete)}
           </Button>
         )}
       </Box>
@@ -170,10 +170,14 @@ const DefendantInfo: React.FC<Props> = (props) => {
             setNationalIdNotFound(false)
             setNationalIdErrorMessage('')
 
-            updateDefendantState(defendant.id, {
-              noNationalId: !defendant.noNationalId,
-              nationalId: undefined,
-            })
+            updateDefendantState(
+              defendant.id,
+              {
+                noNationalId: !defendant.noNationalId,
+                nationalId: undefined,
+              },
+              setWorkingCase,
+            )
 
             onChange(defendant.id, {
               noNationalId: !defendant.noNationalId,
@@ -201,9 +205,13 @@ const DefendantInfo: React.FC<Props> = (props) => {
               setNationalIdErrorMessage,
             )
 
-            updateDefendantState(defendant.id, {
-              nationalId: evt.target.value,
-            })
+            updateDefendantState(
+              defendant.id,
+              {
+                nationalId: evt.target.value,
+              },
+              setWorkingCase,
+            )
           }}
           onBlur={async (evt) => {
             validateAndSetErrorMessage(
@@ -214,7 +222,9 @@ const DefendantInfo: React.FC<Props> = (props) => {
               setNationalIdErrorMessage,
             )
 
-            onChange(defendant.id, { nationalId: evt.target.value })
+            onChange(defendant.id, {
+              nationalId: evt.target.value,
+            })
           }}
         >
           <Input
@@ -258,9 +268,13 @@ const DefendantInfo: React.FC<Props> = (props) => {
               setAccusedNameErrorMessage,
             )
 
-            updateDefendantState(defendant.id, {
-              name: evt.target.value,
-            })
+            updateDefendantState(
+              defendant.id,
+              {
+                name: evt.target.value,
+              },
+              setWorkingCase,
+            )
           }}
           onBlur={(evt) => {
             validateAndSetErrorMessage(
@@ -269,7 +283,9 @@ const DefendantInfo: React.FC<Props> = (props) => {
               setAccusedNameErrorMessage,
             )
 
-            onChange(defendant.id, { name: evt.target.value })
+            onChange(defendant.id, {
+              name: evt.target.value.trim(),
+            })
           }}
           required
         />
@@ -295,9 +311,13 @@ const DefendantInfo: React.FC<Props> = (props) => {
               setAccusedAddressErrorMessage,
             )
 
-            updateDefendantState(defendant.id, {
-              address: evt.target.value,
-            })
+            updateDefendantState(
+              defendant.id,
+              {
+                address: evt.target.value,
+              },
+              setWorkingCase,
+            )
           }}
           onBlur={(evt) => {
             validateAndSetErrorMessage(
@@ -306,7 +326,9 @@ const DefendantInfo: React.FC<Props> = (props) => {
               setAccusedAddressErrorMessage,
             )
 
-            onChange(defendant.id, { address: evt.target.value })
+            onChange(defendant.id, {
+              address: evt.target.value.trim(),
+            })
           }}
           required
         />
@@ -341,12 +363,18 @@ const DefendantInfo: React.FC<Props> = (props) => {
               placeholder={formatMessage(core.selectCitizenship)}
               value={defendant.citizenship ?? ''}
               onChange={(evt) => {
-                updateDefendantState(defendant.id, {
-                  citizenship: evt.target.value,
-                })
+                updateDefendantState(
+                  defendant.id,
+                  {
+                    citizenship: evt.target.value,
+                  },
+                  setWorkingCase,
+                )
               }}
               onBlur={(evt) => {
-                onChange(defendant.id, { citizenship: evt.target.value })
+                onChange(defendant.id, {
+                  citizenship: evt.target.value.trim(),
+                })
               }}
               disabled={isGenderAndCitizenshipDisabled}
             />

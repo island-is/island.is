@@ -7,6 +7,7 @@ import {
   FormFooter,
   PageLayout,
   FormContext,
+  SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import {
   IndictmentsProsecutorSubsections,
@@ -53,14 +54,9 @@ const CaseFiles: React.FC = () => {
         </Box>
         <ProsecutorCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={5}>
-          <Box marginBottom={3} display="inlineFlex">
-            <Text variant="h3" as="h3">
-              {formatMessage(strings.caseFiles.sections.coverLetter)}
-            </Text>
-          </Box>
-          <Text color="red400" as="span" variant="h3">
-            {` *`}
-          </Text>
+          <SectionHeading
+            title={formatMessage(strings.caseFiles.sections.coverLetter)}
+          />
           <InputFileUpload
             fileList={files.filter(
               (file) => file.category === CaseFileCategory.COVER_LETTER,
@@ -76,15 +72,9 @@ const CaseFiles: React.FC = () => {
           />
         </Box>
         <Box component="section" marginBottom={5}>
-          <Box marginBottom={3} display="inlineFlex">
-            <Text variant="h3" as="h3">
-              {formatMessage(strings.caseFiles.sections.indictment)}
-            </Text>
-          </Box>
-          <Text color="red400" as="span" variant="h3">
-            {` *`}
-          </Text>
-
+          <SectionHeading
+            title={formatMessage(strings.caseFiles.sections.indictment)}
+          />
           <InputFileUpload
             fileList={files.filter(
               (file) => file.category === CaseFileCategory.INDICTMENT,
@@ -100,15 +90,9 @@ const CaseFiles: React.FC = () => {
           />
         </Box>
         <Box component="section" marginBottom={5}>
-          <Box marginBottom={3} display="inlineFlex">
-            <Text variant="h3" as="h3">
-              {formatMessage(strings.caseFiles.sections.criminalRecord)}
-            </Text>
-          </Box>
-          <Text color="red400" as="span" variant="h3">
-            {` *`}
-          </Text>
-
+          <SectionHeading
+            title={formatMessage(strings.caseFiles.sections.criminalRecord)}
+          />
           <InputFileUpload
             fileList={files.filter(
               (file) => file.category === CaseFileCategory.CRIMINAL_RECORD,
@@ -123,15 +107,9 @@ const CaseFiles: React.FC = () => {
           />
         </Box>
         <Box component="section" marginBottom={5}>
-          <Box marginBottom={3} display="inlineFlex">
-            <Text variant="h3" as="h3">
-              {formatMessage(strings.caseFiles.sections.costBreakdown)}
-            </Text>
-          </Box>
-          <Text color="red400" as="span" variant="h3">
-            {` *`}
-          </Text>
-
+          <SectionHeading
+            title={formatMessage(strings.caseFiles.sections.costBreakdown)}
+          />
           <InputFileUpload
             fileList={files.filter(
               (file) => file.category === CaseFileCategory.COST_BREAKDOWN,
@@ -145,39 +123,10 @@ const CaseFiles: React.FC = () => {
             onRetry={handleRetry}
           />
         </Box>
-        <Box component="section" marginBottom={5}>
-          <Box marginBottom={3} display="inlineFlex">
-            <Text variant="h3" as="h3">
-              {formatMessage(strings.caseFiles.sections.caseFileContents)}
-            </Text>
-          </Box>
-          <Text color="red400" as="span" variant="h3">
-            {` *`}
-          </Text>
-
-          <InputFileUpload
-            fileList={files.filter(
-              (file) => file.category === CaseFileCategory.CASE_FILE_CONTENTS,
-            )}
-            header={formatMessage(strings.caseFiles.sections.inputFieldLabel)}
-            buttonLabel={formatMessage(strings.caseFiles.sections.buttonLabel)}
-            onChange={(files) =>
-              handleS3Upload(files, false, CaseFileCategory.CASE_FILE_CONTENTS)
-            }
-            onRemove={handleRemoveFromS3}
-            onRetry={handleRetry}
-          />
-        </Box>
         <Box component="section" marginBottom={10}>
-          <Box marginBottom={3} display="inlineFlex">
-            <Text variant="h3" as="h3">
-              {formatMessage(strings.caseFiles.sections.caseFile)}
-            </Text>
-          </Box>
-          <Text color="red400" as="span" variant="h3">
-            {` *`}
-          </Text>
-
+          <SectionHeading
+            title={formatMessage(strings.caseFiles.sections.otherDocuments)}
+          />
           <InputFileUpload
             fileList={files.filter(
               (file) => file.category === CaseFileCategory.CASE_FILE,
@@ -195,7 +144,7 @@ const CaseFiles: React.FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${constants.INDICTMENTS_PROCESSING_ROUTE}/${workingCase.id}`}
-          nextUrl={`${constants.INDICTMENTS_OVERVIEW_ROUTE}/${workingCase.id}`}
+          nextUrl={`${constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!allFilesUploaded}
           nextIsLoading={isLoadingWorkingCase}
         />

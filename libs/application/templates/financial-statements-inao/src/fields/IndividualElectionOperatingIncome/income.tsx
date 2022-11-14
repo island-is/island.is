@@ -27,15 +27,18 @@ export const Income = ({ getSum }: PropTypes): JSX.Element => {
     <Fragment>
       <Box paddingY={1}>
         <InputController
-          id={INDIVIDUALOPERATIONIDS.corporateDonations}
-          name={INDIVIDUALOPERATIONIDS.corporateDonations}
+          id={INDIVIDUALOPERATIONIDS.contributionsByLegalEntities}
+          name={INDIVIDUALOPERATIONIDS.contributionsByLegalEntities}
           error={
             errors &&
-            getErrorViaPath(errors, INDIVIDUALOPERATIONIDS.corporateDonations)
+            getErrorViaPath(
+              errors,
+              INDIVIDUALOPERATIONIDS.contributionsByLegalEntities,
+            )
           }
-          label={formatMessage(m.corporateDonation)}
+          label={formatMessage(m.contributionsFromLegalEntities)}
           onChange={() =>
-            onInputChange(INDIVIDUALOPERATIONIDS.corporateDonations)
+            onInputChange(INDIVIDUALOPERATIONIDS.contributionsByLegalEntities)
           }
           backgroundColor="blue"
           currency
@@ -43,15 +46,18 @@ export const Income = ({ getSum }: PropTypes): JSX.Element => {
       </Box>
       <Box paddingY={1}>
         <InputController
-          id={INDIVIDUALOPERATIONIDS.individualDonations}
-          name={INDIVIDUALOPERATIONIDS.individualDonations}
+          id={INDIVIDUALOPERATIONIDS.individualContributions}
+          name={INDIVIDUALOPERATIONIDS.individualContributions}
           error={
             errors &&
-            getErrorViaPath(errors, INDIVIDUALOPERATIONIDS.individualDonations)
+            getErrorViaPath(
+              errors,
+              INDIVIDUALOPERATIONIDS.individualContributions,
+            )
           }
-          label={formatMessage(m.individualDonations)}
+          label={formatMessage(m.contributionsFromIndividuals)}
           onChange={() =>
-            onInputChange(INDIVIDUALOPERATIONIDS.individualDonations)
+            onInputChange(INDIVIDUALOPERATIONIDS.individualContributions)
           }
           backgroundColor="blue"
           currency
@@ -59,15 +65,18 @@ export const Income = ({ getSum }: PropTypes): JSX.Element => {
       </Box>
       <Box paddingY={1}>
         <InputController
-          id={INDIVIDUALOPERATIONIDS.personalDonations}
-          name={INDIVIDUALOPERATIONIDS.personalDonations}
+          id={INDIVIDUALOPERATIONIDS.candidatesOwnContributions}
+          name={INDIVIDUALOPERATIONIDS.candidatesOwnContributions}
           error={
             errors &&
-            getErrorViaPath(errors, INDIVIDUALOPERATIONIDS.personalDonations)
+            getErrorViaPath(
+              errors,
+              INDIVIDUALOPERATIONIDS.candidatesOwnContributions,
+            )
           }
-          label={formatMessage(m.personalDonations)}
+          label={formatMessage(m.candidatesOwnContributions)}
           onChange={() =>
-            onInputChange(INDIVIDUALOPERATIONIDS.personalDonations)
+            onInputChange(INDIVIDUALOPERATIONIDS.candidatesOwnContributions)
           }
           backgroundColor="blue"
           currency

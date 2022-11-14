@@ -55,7 +55,7 @@ const Defendant = () => {
     isLoadingWorkingCase,
     caseNotFound,
   } = useContext(FormContext)
-  const { createCase, isCreatingCase, setAndSendToServer } = useCase()
+  const { createCase, isCreatingCase, setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
   // This state is needed because type is initially set to OHTER on the
   // workingCase and we need to validate that the user selects an option
@@ -273,7 +273,7 @@ const Defendant = () => {
                       .value as CaseType
 
                     setCaseType(type)
-                    setAndSendToServer(
+                    setAndSendCaseToServer(
                       [
                         {
                           type,
@@ -323,10 +323,10 @@ const Defendant = () => {
                   })
                 }}
                 onBlur={(evt) =>
-                  setAndSendToServer(
+                  setAndSendCaseToServer(
                     [
                       {
-                        description: evt.target.value,
+                        description: evt.target.value.trim(),
                         force: true,
                       },
                     ],
@@ -360,6 +360,7 @@ const Defendant = () => {
                       <DefendantInfo
                         defendant={defendant}
                         workingCase={workingCase}
+                        setWorkingCase={setWorkingCase}
                         onDelete={
                           workingCase.defendants &&
                           workingCase.defendants.length > 1

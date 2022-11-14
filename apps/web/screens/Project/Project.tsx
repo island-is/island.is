@@ -19,6 +19,8 @@ import {
   Stepper,
   stepperUtils,
   Form,
+  PowerBiSlice,
+  AccordionSlice,
 } from '@island.is/web/components'
 import {
   Box,
@@ -74,8 +76,9 @@ const ProjectPage: Screen<PageProps> = ({
   >(undefined)
 
   let content: SliceType[] = []
-  if (!!subpage && renderSlicesAsTabs)
+  if (!!subpage && renderSlicesAsTabs) {
     content = selectedSliceTab?.content as SliceType[]
+  }
   if (!subpage) content = projectPage?.content as SliceType[]
 
   useEffect(() => {
@@ -136,6 +139,8 @@ const ProjectPage: Screen<PageProps> = ({
               richText(subpage.content as SliceType[], {
                 renderComponent: {
                   Form: (slice) => <Form form={slice} namespace={namespace} />,
+                  PowerBiSlice: (slice) => <PowerBiSlice slice={slice} />,
+                  AccordionSlice: (slice) => <AccordionSlice slice={slice} />,
                 },
               })}
           </Box>
@@ -168,7 +173,14 @@ const ProjectPage: Screen<PageProps> = ({
             {selectedSliceTab.title}
           </Text>
         )}
-        {content && richText(content)}
+        {content &&
+          richText(content, {
+            renderComponent: {
+              Form: (slice) => <Form form={slice} namespace={namespace} />,
+              PowerBiSlice: (slice) => <PowerBiSlice slice={slice} />,
+              AccordionSlice: (slice) => <AccordionSlice slice={slice} />,
+            },
+          })}
         {!subpage && projectPage.stepper && (
           <Box marginTop={6}>
             <Stepper
