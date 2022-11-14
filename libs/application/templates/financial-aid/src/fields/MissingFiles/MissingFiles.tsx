@@ -71,6 +71,10 @@ const MissingFiles = ({
       }
 
       try {
+        if(!application.externalData.veita.data.currentApplicationId) {
+          throw new Error()
+        }
+        
         const uploadedFiles = await uploadFiles(
           application.externalData.veita.data.currentApplicationId,
           FileType.OTHER,

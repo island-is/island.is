@@ -20,7 +20,7 @@ import {
   hasSpouseCheck,
 } from './utils'
 import { FAApplication } from '..'
-import { CreateApplicationApi, TestActionApi } from '../dataProviders'
+import { CreateApplicationApi, CurrentApplicationApi } from '../dataProviders'
 
 type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.EDIT }
 
@@ -60,15 +60,10 @@ const FinancialAidTemplate: ApplicationTemplate<
                 ),
               write: {
                 answers: ['approveExternalData'],
-                externalData: [
-                  'nationalRegistry',
-                  'veita',
-                  'taxDataFetch',
-                  'testAction',
-                ],
+                externalData: ['nationalRegistry', 'veita', 'taxDataFetch'],
               },
               delete: true,
-              api: [TestActionApi],
+              api: [CurrentApplicationApi],
             },
           ],
         },

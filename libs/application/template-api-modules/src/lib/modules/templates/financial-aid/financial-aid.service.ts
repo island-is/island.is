@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common'
 
 import {
   ApproveOptions,
+  CurrentApplication,
   FAApplication,
   findFamilyStatus,
-  TestActionParam,
 } from '@island.is/application/templates/financial-aid'
 import type { Auth } from '@island.is/auth-nest-tools'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
@@ -15,6 +15,7 @@ import { UploadFile } from '@island.is/island-ui/core'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
+import { FetchError } from '@island.is/clients/middlewares'
 
 type Props<T> = Omit<TemplateApiModuleActionProps<T>, 'application'> & {
   application: FAApplication
@@ -44,7 +45,17 @@ export class FinancialAidService extends BaseTemplateApiService {
     })
   }
 
-  async createApplication({ application, auth }: Props<null>) {
+  private handle404(error: FetchError) {
+    if (error.status === 404) {
+      return undefined
+    }
+    throw error
+  }
+
+  async createApplication({
+    application,
+    auth,
+  }: Props<null>): Promise<CurrentApplication> {
     const { id, answers, externalData } = application
 
     if (externalData.veita.data.currentApplicationId) {
@@ -162,8 +173,12 @@ export class FinancialAidService extends BaseTemplateApiService {
       })
   }
 
-  async testAction({ application, params }: Props<TestActionParam>) {
-    console.log('message: ', params?.message)
-    await new Promise((resolve) => setTimeout(resolve, 10000))
+  async currentApplication({ auth }: Props<null>): Promise<CurrentApplication> {
+    const currentApplicationId = await this.applicationApiWithAuth(auth)
+      .applicationControllerGetCurrentApplication()
+      .catch(this.handle404)
+    return {
+      currentApplicationId,
+    }
   }
 }

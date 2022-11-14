@@ -5,15 +5,9 @@ export { VeitaProvider } from './VeitaProvider'
 export { NationalRegistryProvider } from './NationalRegistryProvider'
 export { TaxDataFetchProvider } from './TaxDataFetchProvider'
 
-export interface TestActionParam {
-  message: string
-}
-
-export const TestActionApi = defineTemplateApi<TestActionParam>({
-  action: ApiActions.TESTACTION,
-  params: {
-    message: 'wooooooowwwwwww',
-  },
+export const CurrentApplicationApi = defineTemplateApi({
+  action: ApiActions.CURRENTAPPLICATION,
+  externalDataId: 'veita',
 })
 
 export const CreateApplicationApi = defineTemplateApi({
