@@ -1,9 +1,8 @@
 import { ServiceDefinition, ServiceDefinitionCore } from './types/input-types'
-import { HelmOutput } from './output-generators/map-to-helm-values'
 import { DeploymentRuntime, EnvironmentConfig } from './types/charts'
-import { LocalrunOutput } from './output-generators/map-to-localrun'
 import cloneDeep from 'lodash/cloneDeep'
 import { renderer } from './processing/service-sets'
+import { renderers } from './upstream-dependencies'
 
 const MAX_LEVEL_DEPENDENCIES = 20
 
@@ -24,11 +23,6 @@ class DownstreamDependencyTracer implements DeploymentRuntime {
       return to
     }
   }
-}
-
-export const renderers = {
-  helm: HelmOutput,
-  'docker-compose': LocalrunOutput,
 }
 
 const findDownstreamDependencies = (

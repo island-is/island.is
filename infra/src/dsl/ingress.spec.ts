@@ -3,7 +3,7 @@ import { Kubernetes } from './kubernetes-runtime'
 import { MissingSetting } from './types/input-types'
 import { SerializeSuccess, ServiceHelm } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
-import { renderers } from './downstream-dependencies'
+import { renderers } from './upstream-dependencies'
 import { rendererForOne } from './processing/service-sets'
 
 const Staging: EnvironmentConfig = {

@@ -1,6 +1,6 @@
 import { Kubernetes } from '../kubernetes-runtime'
 import { HelmValueFile, ServiceHelm, Services } from '../types/output-types'
-import { renderers } from '../downstream-dependencies'
+import { renderers } from '../upstream-dependencies'
 
 export type Mocks = 'with-mocks' | 'no-mocks'
 export const renderHelmValueFile = (

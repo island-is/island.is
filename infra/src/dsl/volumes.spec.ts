@@ -2,7 +2,7 @@ import { service, ServiceBuilder } from './dsl'
 import { Kubernetes } from './kubernetes-runtime'
 import { SerializeSuccess, ServiceHelm } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
-import { renderers } from './downstream-dependencies'
+import { renderers } from './upstream-dependencies'
 import { rendererForOne } from './processing/service-sets'
 
 const Staging: EnvironmentConfig = {

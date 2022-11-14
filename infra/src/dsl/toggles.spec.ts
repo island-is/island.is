@@ -8,7 +8,7 @@ import {
 import { EnvironmentConfig } from './types/charts'
 import { MissingSetting } from './types/input-types'
 import { FeatureNames } from './features'
-import { renderers } from './downstream-dependencies'
+import { renderers } from './upstream-dependencies'
 import { rendererForOne } from './processing/service-sets'
 
 const Staging: EnvironmentConfig = {

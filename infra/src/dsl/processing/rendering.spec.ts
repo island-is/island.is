@@ -2,9 +2,13 @@ import { ref, service } from '../dsl'
 import { Localhost } from '../localhost-runtime'
 import { renderer } from './service-sets'
 import { toServices } from '../exports/to-services'
-import { renderers } from '../downstream-dependencies'
+import { renderers } from '../upstream-dependencies'
 import { EnvironmentConfig } from '../types/charts'
 import { MissingSetting } from '../types/input-types'
+import {
+  LocalrunOutput,
+  SecretOptions,
+} from '../output-generators/map-to-localrun'
 
 const Staging: EnvironmentConfig = {
   auroraHost: 'a',
@@ -21,7 +25,7 @@ const Staging: EnvironmentConfig = {
 
 describe.only('ServiceDefinition to Env', () => {
   let uberChart: Localhost
-  const currentOutput = renderers['docker-compose']
+  const currentOutput = LocalrunOutput({ secrets: SecretOptions.noSecrets })
   beforeEach(async () => {
     uberChart = new Localhost(Staging)
   })

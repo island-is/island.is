@@ -8,7 +8,8 @@ import {
   ContainerEnvironmentVariables,
   LocalrunService,
   OutputFormat,
-  SerializeMethod,
+  SerializeErrors,
+  SerializeSuccess,
 } from '../types/output-types'
 import { DeploymentRuntime, EnvironmentConfig } from '../types/charts'
 import { SSM } from '@aws-sdk/client-ssm'
@@ -23,10 +24,11 @@ import {
  * @param service Our service definition
  * @param deployment Uber chart in a specific environment the service will be part of
  */
-const serializeService: SerializeMethod<LocalrunService> = async (
+const serializeService = async (
   service: ServiceDefinitionForEnv,
   deployment: DeploymentRuntime,
-) => {
+  withSecrets: boolean,
+): Promise<SerializeSuccess<LocalrunService> | SerializeErrors> => {
   const { addToErrors, mergeObjects, getErrors } = checksAndValidations(
     service.name,
   )
@@ -63,7 +65,7 @@ const serializeService: SerializeMethod<LocalrunService> = async (
   }
 
   // secrets
-  if (Object.keys(serviceDef.secrets).length > 0) {
+  if (Object.keys(serviceDef.secrets).length > 0 && withSecrets) {
     const secrets = await retrieveSecrets(serviceDef.secrets)
     mergeObjects(result.env, secrets)
   }
@@ -184,7 +186,10 @@ const OVERRIDE_ENVIRONMENT_NAMES: Record<string, string> = {
 
 const client = new SSM(API_INITIALIZATION_OPTIONS)
 
-const retrieveSecrets = async (
+type RetrieveSecrets = (
+  secrets: Secrets,
+) => Promise<ContainerEnvironmentVariables>
+const retrieveSecrets: RetrieveSecrets = async (
   secrets: Secrets,
 ): Promise<ContainerEnvironmentVariables> => {
   const secretPaths = Object.entries(secrets).map((entry) => entry[1])
@@ -218,20 +223,29 @@ const getParams = async (
     .reduce((p, c) => ({ ...p, ...c }), {})
 }
 
-export const LocalrunOutput: OutputFormat<LocalrunService> = {
-  featureDeployment(
-    service: ServiceDefinition,
-    env: EnvironmentConfig,
-  ): void {},
-  serializeService(
-    service: ServiceDefinitionForEnv,
-    deployment: DeploymentRuntime,
-    featureDeployment,
-  ) {
-    return serializeService(service, deployment)
-  },
-
-  serviceMockDef(options): LocalrunService {
-    throw new Error('Not used')
-  },
+export enum SecretOptions {
+  withSecrets,
+  noSecrets,
 }
+export const LocalrunOutput = (options: { secrets: SecretOptions }) =>
+  ({
+    featureDeployment(
+      service: ServiceDefinition,
+      env: EnvironmentConfig,
+    ): void {},
+    serializeService(
+      service: ServiceDefinitionForEnv,
+      deployment: DeploymentRuntime,
+      featureDeployment,
+    ) {
+      return serializeService(
+        service,
+        deployment,
+        options.secrets === SecretOptions.withSecrets,
+      )
+    },
+
+    serviceMockDef(options): LocalrunService {
+      throw new Error('Not used')
+    },
+  } as OutputFormat<LocalrunService>)

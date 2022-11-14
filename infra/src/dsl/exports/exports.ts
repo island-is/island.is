@@ -6,7 +6,7 @@ import {
   renderHelmValueFile as internalRenderHelmValueFile,
 } from '../value-files-generators/render-helm-value-file'
 import { DeploymentRuntime, EnvironmentConfig } from '../types/charts'
-import { renderers } from '../downstream-dependencies'
+import { renderers } from '../upstream-dependencies'
 import { prepareServices, renderer } from '../processing/service-sets'
 import { generateJobsForFeature } from '../output-generators/feature-jobs'
 

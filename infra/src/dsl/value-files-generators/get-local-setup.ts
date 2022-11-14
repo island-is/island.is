@@ -3,7 +3,7 @@ import {
   LocalrunValueFile,
   Services,
 } from '../types/output-types'
-import { renderers } from '../downstream-dependencies'
+import { renderers } from '../upstream-dependencies'
 import { Localhost } from '../localhost-runtime'
 import { EXCLUDED_ENVIRONMENT_NAMES } from '../../cli/render-env-vars'
 

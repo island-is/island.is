@@ -1,9 +1,13 @@
 import { ServiceDefinition, ServiceDefinitionCore } from './types/input-types'
 import { HelmOutput } from './output-generators/map-to-helm-values'
 import { DeploymentRuntime, EnvironmentConfig } from './types/charts'
-import { LocalrunOutput } from './output-generators/map-to-localrun'
+import {
+  LocalrunOutput,
+  SecretOptions,
+} from './output-generators/map-to-localrun'
 import cloneDeep from 'lodash/cloneDeep'
 import { renderer } from './processing/service-sets'
+import { OutputFormat, ServiceOutputType } from './types/output-types'
 
 const MAX_LEVEL_DEPENDENCIES = 20
 
@@ -29,7 +33,7 @@ class UpstreamDependencyTracer implements DeploymentRuntime {
 
 export const renderers = {
   helm: HelmOutput,
-  'docker-compose': LocalrunOutput,
+  localrun: LocalrunOutput({ secrets: SecretOptions.withSecrets }),
 }
 
 const findUpstreamDependencies = (
@@ -53,10 +57,11 @@ const findUpstreamDependencies = (
     .concat(upstreams)
 }
 
-export const withUpstreamDependencies = async (
+export const withUpstreamDependencies = async <T extends ServiceOutputType>(
   env: EnvironmentConfig,
   habitat: ServiceDefinition[],
   services: ServiceDefinition[],
+  serializer: OutputFormat<T>,
 ): Promise<ServiceDefinition[]> => {
   const dummyEnv: EnvironmentConfig = {
     auroraHost: '',
@@ -73,7 +78,7 @@ export const withUpstreamDependencies = async (
   }
   const dependencyTracer = new UpstreamDependencyTracer(dummyEnv)
   const localHabitat = cloneDeep(habitat)
-  await renderer(dependencyTracer, localHabitat, renderers['docker-compose']) // doing this so we find out the dependencies
+  await renderer(dependencyTracer, localHabitat, serializer) // doing this so we find out the dependencies
   const downstreamServices = services
     .map((s) => findUpstreamDependencies(dependencyTracer, s))
     .flatMap((x) => x)

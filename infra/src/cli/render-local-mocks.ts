@@ -2,7 +2,7 @@ import { Envs } from '../environments'
 import { Charts, Deployments } from '../uber-charts/all-charts'
 import { toServices } from '../dsl/exports/to-services'
 import { renderer } from '../dsl/processing/service-sets'
-import { renderers } from '../dsl/downstream-dependencies'
+import { renderers } from '../dsl/upstream-dependencies'
 import { Localhost } from '../dsl/localhost-runtime'
 import { getLocalSetup } from '../dsl/value-files-generators/get-local-setup'
 import { withUpstreamDependencies } from '../dsl/upstream-dependencies'
@@ -18,6 +18,7 @@ export const renderLocalServices = async (services: string[]) => {
     Envs[Deployments[chartName][env]],
     toServices(habitat),
     toServices(habitat.filter((s) => services.includes(s.name()))),
+    renderers.localrun,
   )
 
   const api = fullSetOfServices.find((s) => s.name === 'api')
@@ -32,6 +33,6 @@ export const renderLocalServices = async (services: string[]) => {
 
   return getLocalSetup(
     uberChart,
-    await renderer(uberChart, fullSetOfServices, renderers['docker-compose']),
+    await renderer(uberChart, fullSetOfServices, renderers.localrun),
   )
 }

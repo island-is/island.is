@@ -6,7 +6,7 @@ import {
   ServiceHelm,
 } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
-import { renderers } from './downstream-dependencies'
+import { renderers } from './upstream-dependencies'
 import { renderHelmValueFile } from './value-files-generators/render-helm-value-file'
 import { rendererForOne } from './processing/service-sets'
 

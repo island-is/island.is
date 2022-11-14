@@ -1,10 +1,14 @@
 import { ref, service } from '../dsl'
 import { EnvironmentConfig } from '../types/charts'
-import { renderers } from '../downstream-dependencies'
+import { renderers } from '../upstream-dependencies'
 import { renderer } from '../processing/service-sets'
 import { getLocalSetup } from './get-local-setup'
 import { Localhost } from '../localhost-runtime'
 import { toServices } from '../exports/to-services'
+import {
+  LocalrunOutput,
+  SecretOptions,
+} from '../output-generators/map-to-localrun'
 
 const Staging: EnvironmentConfig = {
   auroraHost: 'a',
@@ -29,7 +33,11 @@ describe('Local setup', () => {
     const uberChart = new Localhost(Staging)
     serviceDef = getLocalSetup(
       uberChart,
-      await renderer(uberChart, toServices([sut]), renderers['docker-compose']),
+      await renderer(
+        uberChart,
+        toServices([sut]),
+        LocalrunOutput({ secrets: SecretOptions.noSecrets }),
+      ),
     )
   })
 
