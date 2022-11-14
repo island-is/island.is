@@ -17,7 +17,12 @@ import {
   createXRoadAPIPath,
   XRoadMemberClass,
 } from '@island.is/shared/utils/server'
-import { CaseState, CaseType, User } from '@island.is/judicial-system/types'
+import {
+  CaseState,
+  CaseType,
+  IndictmentSubType,
+  User,
+} from '@island.is/judicial-system/types'
 
 import { EventService } from '../event'
 import { AwsS3Service } from '../aws-s3'
@@ -202,7 +207,7 @@ export class PoliceService {
 
   async updatePoliceCase(
     caseId: string,
-    caseType: CaseType,
+    caseType: CaseType | IndictmentSubType,
     caseState: CaseState,
     courtRecordPdf: string,
     policeCaseNumbers: string[],

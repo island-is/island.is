@@ -5,6 +5,8 @@ import {
   CaseFileState,
   CaseState,
   CaseType,
+  IndictmentSubType,
+  isIndictmentCase,
   User as TUser,
 } from '@island.is/judicial-system/types'
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
@@ -15,8 +17,8 @@ import { CourtService } from '../../../court'
 import { Defendant } from '../../../defendant'
 import { User } from '../../../user'
 import { Institution } from '../../../institution'
-import { Case } from '../../models/case.model'
 import { CaseFile } from '../../../file'
+import { Case } from '../../models/case.model'
 
 interface Then {
   result: Case
@@ -68,6 +70,9 @@ describe('CaseController - Create court case', () => {
     const user = { id: uuid() } as TUser
     const caseId = uuid()
     const type = randomEnum(CaseType)
+    const indictmentSubType = isIndictmentCase(type)
+      ? randomEnum(IndictmentSubType)
+      : undefined
     const policeCaseNumbers = [uuid()]
     const courtId = uuid()
     const theCase = { id: caseId, type, policeCaseNumbers, courtId } as Case
@@ -84,6 +89,7 @@ describe('CaseController - Create court case', () => {
         type,
         policeCaseNumbers,
         false,
+        indictmentSubType,
       )
     })
   })
