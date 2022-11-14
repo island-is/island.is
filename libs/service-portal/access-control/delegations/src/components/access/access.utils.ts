@@ -17,7 +17,7 @@ export const isApiScopeGroup = (scope: Scope): scope is ScopeGroup =>
   scope.__typename === AUTH_API_SCOPE_GROUP_TYPE
 
 /**
- * Gets scopeTree current model index based on order in list and takes into account if scope bares children.
+ * Gets scopeTree current model index based on order in list and take into account if scope bares children.
  * This makes sure the model indexes will all be unique and in sequential order, i.e. 0,1,2,3,4,5,6,7,8,9,...
  */
 const getScopeTreeCurrentModelIndex = (
