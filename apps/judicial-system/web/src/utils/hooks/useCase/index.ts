@@ -278,7 +278,6 @@ const useCase = () => {
           variables: {
             input: {
               id: workingCase.id,
-              modified: workingCase.modified,
               transition,
             },
           },

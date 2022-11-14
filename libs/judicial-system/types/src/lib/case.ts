@@ -311,7 +311,6 @@ export interface UpdateCase
 }
 
 export interface TransitionCase {
-  modified: string
   transition: CaseTransition
 }
 
