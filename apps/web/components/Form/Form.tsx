@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import slugify from '@sindresorhus/slugify'
+import { useMutation } from '@apollo/client/react'
 
 import {
   Box,
@@ -16,15 +18,13 @@ import {
   GenericFormMutation,
   GenericFormMutationVariables,
 } from '@island.is/web/graphql/schema'
-import slugify from '@sindresorhus/slugify'
 import { isEmailValid } from '@island.is/financial-aid/shared/lib'
-import { useMutation } from '@apollo/client/react'
 import { GENERIC_FORM_MUTATION } from '@island.is/web/screens/queries/Form'
 import { useNamespace } from '@island.is/web/hooks'
 import { isValidEmail } from '@island.is/web/utils/isValidEmail'
 import * as styles from './Form.css'
 
-export enum FormFieldType {
+enum FormFieldType {
   CHECKBOXES = 'checkboxes',
   EMAIL = 'email',
   ACCEPT_TERMS = 'acceptTerms',
