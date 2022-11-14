@@ -3,35 +3,55 @@ import {
   Box,
   GridColumn,
   GridRow,
+  Hidden,
   SkeletonLoader,
   Text,
   useBreakpoint,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import * as styles from './AccessHeader.css'
 import { AuthCustomDelegation } from '@island.is/api/schema'
+import { AccessDate } from '../AccessDate/AccessDate'
+import * as styles from './AccessHeader.css'
 
 interface AccessHeaderProps {
   delegation?: AuthCustomDelegation
+  showValidityPeriodMobile?: boolean
   children: React.ReactNode
 }
 
-export const AccessHeader = ({ delegation, children }: AccessHeaderProps) => {
+export const AccessHeader = ({
+  delegation,
+  children,
+  showValidityPeriodMobile,
+}: AccessHeaderProps) => {
   const { formatMessage } = useLocale()
   const { md } = useBreakpoint()
+
   return (
     <GridRow
       alignItems={['flexStart', 'flexStart', 'flexStart', 'flexEnd']}
       className={styles.row}
     >
-      <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+      <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
         <Box display="flex" flexDirection="column" rowGap={md ? 1 : 2}>
-          <Text variant="h3">
-            {formatMessage({
-              id: 'sp.access-control-delegations:access-title',
-              defaultMessage: 'Réttindi',
-            })}
-          </Text>
+          <Box
+            display="flex"
+            justifyContent="spaceBetween"
+            alignItems="center"
+            columnGap={1}
+          >
+            <Text variant="h3">
+              {formatMessage({
+                id: 'sp.access-control-delegations:access-title',
+                defaultMessage: 'Réttindi',
+              })}
+            </Text>
+            <Hidden above="md">
+              {showValidityPeriodMobile && delegation?.validTo && (
+                <AccessDate validTo={delegation.validTo} />
+              )}
+            </Hidden>
+          </Box>
           {delegation ? (
             <Text variant="eyebrow">{`${delegation?.to?.name} • ${delegation?.domain.displayName}`}</Text>
           ) : (
@@ -47,7 +67,7 @@ export const AccessHeader = ({ delegation, children }: AccessHeaderProps) => {
         </Box>
       </GridColumn>
       <GridColumn
-        span={['12/12', '12/12', '12/12', '5/12', '4/12']}
+        span={['12/12', '12/12', '12/12', '7/12', '4/12']}
         className={styles.rightColumn}
       >
         {children}

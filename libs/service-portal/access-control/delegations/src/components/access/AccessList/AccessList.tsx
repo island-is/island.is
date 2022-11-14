@@ -1,8 +1,8 @@
 import { AuthApiScope, AuthCustomDelegation } from '@island.is/api/schema'
 import { Box, Divider } from '@island.is/island-ui/core'
 import { AUTH_API_SCOPE_GROUP_TYPE, AuthScopeTree } from '../access.types'
-import { AccessListHeader } from '../AccessListHeader'
-import { AccessListItem } from '../AccessListItem'
+import { AccessListHeader } from './AccessListHeader'
+import { AccessListItem } from './AccessListItem'
 import * as styles from './AccessList.css'
 
 interface AccessListProps {
@@ -11,7 +11,7 @@ interface AccessListProps {
 }
 
 export const AccessList = ({ delegation, scopeTree }: AccessListProps) => {
-  const getDelegationScope = (scopeName: string) =>
+  const getDelegationScopeByName = (scopeName: string) =>
     delegation.scopes.find(({ name }) => name === scopeName)
 
   const renderScopeTree = (
@@ -22,7 +22,7 @@ export const AccessList = ({ delegation, scopeTree }: AccessListProps) => {
       if (
         scope.__typename === AUTH_API_SCOPE_GROUP_TYPE &&
         scope.children?.some((childScope) =>
-          getDelegationScope(childScope.name),
+          getDelegationScopeByName(childScope.name),
         )
       ) {
         return (
@@ -43,7 +43,7 @@ export const AccessList = ({ delegation, scopeTree }: AccessListProps) => {
         )
       }
 
-      const delegationScope = getDelegationScope(scope.name)
+      const delegationScope = getDelegationScopeByName(scope.name)
 
       if (delegationScope) {
         return (
@@ -70,6 +70,9 @@ export const AccessList = ({ delegation, scopeTree }: AccessListProps) => {
   return (
     <Box>
       <AccessListHeader validityPeriod={delegation.validTo} />
+      <div className={styles.divider}>
+        <Divider />
+      </div>
       {renderScopeTree(scopeTree)}
     </Box>
   )

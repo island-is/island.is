@@ -1,9 +1,8 @@
 import classNames from 'classnames'
 import { Box, Text, useBreakpoint } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
-import format from 'date-fns/format'
-import { accessMessages, DATE_FORMAT } from './access.utils'
-import * as styles from './access.css'
+import { AccessDate } from '../AccessDate/AccessDate'
+import * as commonAccessStyles from '../access.css'
+import * as styles from './AccessListItem.css'
 
 interface AccessListItemProps {
   name: string
@@ -20,7 +19,6 @@ export const AccessListItem = ({
   validityPeriod,
   indent,
 }: AccessListItemProps) => {
-  const { formatMessage } = useLocale()
   const { lg } = useBreakpoint()
 
   // Indent the hole row for screen size smaller than lg
@@ -28,12 +26,17 @@ export const AccessListItem = ({
   return (
     <Box
       className={classNames(
-        styles.gridRow,
-        validityPeriod ? styles.gridRowMaxTwoCols : styles.gridRowMaxThreeCols,
+        commonAccessStyles.gridRow,
+        validityPeriod
+          ? commonAccessStyles.gridRowMaxTwoCols
+          : commonAccessStyles.gridRowMaxThreeCols,
       )}
       {...(indent && { paddingLeft: [2, 2, 2, 0] })}
     >
-      <Box {...(indent && { paddingLeft: [0, 0, 0, 4] })}>
+      <Box
+        {...(indent && { paddingLeft: [0, 0, 0, 4] })}
+        className={styles.headerContainer}
+      >
         <Text
           fontWeight="semiBold"
           capitalizeFirstLetter
@@ -41,21 +44,12 @@ export const AccessListItem = ({
         >
           {name}
         </Text>
+        {/* For smaller devices, i.e. < lg */}
+        {!lg && validTo && !validityPeriod && <AccessDate validTo={validTo} />}
       </Box>
       {description?.trim() && <Text>{description}</Text>}
-      {!validityPeriod ||
-        (!lg && validTo && (
-          <Box paddingTop={[2, 2, 2, 0]}>
-            {!lg && (
-              <Text variant="small" fontWeight="semiBold">
-                {formatMessage(accessMessages.dateValidTo)}
-              </Text>
-            )}
-            <Text variant={lg ? 'default' : 'small'}>
-              {format(new Date(validTo), DATE_FORMAT)}
-            </Text>
-          </Box>
-        ))}
+      {/* For bigger devices, i.e. > lg */}
+      {lg && validTo && !validityPeriod && <AccessDate validTo={validTo} />}
     </Box>
   )
 }

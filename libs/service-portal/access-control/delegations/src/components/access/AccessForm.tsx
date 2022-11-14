@@ -29,7 +29,7 @@ import {
 } from './access.utils'
 import { AccessItem } from './AccessItem/AccessItem'
 import { AccessConfirmModal } from './AccessConfirmModal'
-import { AccessItemHeader } from './AccessItemHeader/AccessItemHeader'
+import { AccessItemHeader } from './AccessItem/AccessItemHeader'
 import { isDefined } from '@island.is/shared/utils'
 import * as commonAccessStyles from './access.css'
 import { AccessDeleteModal } from './AccessDeleteModal'

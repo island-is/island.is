@@ -2,8 +2,8 @@ import { useLocale } from '@island.is/localization'
 import { Text, Hidden, Box, Divider } from '@island.is/island-ui/core'
 import classNames from 'classnames'
 import format from 'date-fns/format'
-import { DATE_FORMAT } from './access.utils'
-import * as styles from './access.css'
+import { DATE_FORMAT } from '../access.utils'
+import * as styles from '../access.css'
 
 type AccessListHeaderProps = {
   validityPeriod?: string
@@ -15,7 +15,12 @@ export const AccessListHeader = ({ validityPeriod }: AccessListHeaderProps) => {
   return (
     <Hidden below="lg">
       <Box
-        className={classNames(styles.gridRow, styles.gridRowValidityPeriod)}
+        className={classNames(
+          styles.gridRow,
+          validityPeriod
+            ? styles.gridRowValidityPeriod
+            : styles.gridRowMaxThreeCols,
+        )}
         background="blue100"
       >
         <Text variant="medium" fontWeight="semiBold">

@@ -22,7 +22,7 @@ const AccessIncoming = () => {
       rowGap={5}
       flexDirection="column"
     >
-      <AccessHeader delegation={delegation}>
+      <AccessHeader delegation={delegation} showValidityPeriodMobile>
         {delegation && (
           <IdentityCard
             label={formatMessage({
@@ -31,6 +31,7 @@ const AccessIncoming = () => {
             })}
             title={delegation.domain.displayName}
             imgSrc={delegation.domain.organisationLogoUrl}
+            size="small"
           />
         )}
       </AccessHeader>
