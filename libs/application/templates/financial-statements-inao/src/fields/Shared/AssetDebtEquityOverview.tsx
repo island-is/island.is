@@ -44,12 +44,12 @@ export const AssetDebtEquityOverview = ({
             </Text>
           </Box>
           <ValueLine
-            label={m.shortTerm}
-            value={formatCurrency(answers.liability?.shortTerm)}
-          />
-          <ValueLine
             label={m.longTerm}
             value={formatCurrency(answers.liability?.longTerm)}
+          />
+          <ValueLine
+            label={m.shortTerm}
+            value={formatCurrency(answers.liability?.shortTerm)}
           />
           <ValueLine
             label={m.totalLiabilities}

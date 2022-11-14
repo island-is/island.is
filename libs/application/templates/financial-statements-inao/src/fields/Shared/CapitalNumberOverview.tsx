@@ -41,6 +41,7 @@ export const CapitalNumberOverview = ({
       <GridRow>
         <GridColumn>
           <ValueLine
+            isTotal
             label={m.totalCapital}
             value={formatCurrency(answers.capitalNumbers?.total)}
           />

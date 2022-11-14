@@ -25,7 +25,6 @@ export const clientInfoSection = buildSection({
           childInputIds: Object.values(ABOUTIDS),
           title: '',
           condition: (answers, externalData) => {
-            console.log({ externalData })
             const userType = getCurrentUserType(answers, externalData)
             return userType === USERTYPE.CEMETRY || userType === USERTYPE.PARTY
           },
