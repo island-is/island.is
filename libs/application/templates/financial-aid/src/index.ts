@@ -10,4 +10,6 @@ export * from './lib/types'
 
 export * from './lib/utils'
 
+export * from './dataProviders'
+
 export default FinancialAidTemplate

@@ -4,6 +4,7 @@ import {
   ApproveOptions,
   FAApplication,
   findFamilyStatus,
+  TestActionParam,
 } from '@island.is/application/templates/financial-aid'
 import type { Auth } from '@island.is/auth-nest-tools'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
@@ -15,7 +16,7 @@ import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
 
-type Props = Omit<TemplateApiModuleActionProps, 'application'> & {
+type Props<T> = Omit<TemplateApiModuleActionProps<T>, 'application'> & {
   application: FAApplication
 }
 
@@ -43,7 +44,7 @@ export class FinancialAidService extends BaseTemplateApiService {
     })
   }
 
-  async createApplication({ application, auth }: Props) {
+  async createApplication({ application, auth }: Props<null>) {
     const { id, answers, externalData } = application
 
     if (externalData.veita.data.currentApplicationId) {
@@ -159,5 +160,10 @@ export class FinancialAidService extends BaseTemplateApiService {
       .catch((error) => {
         throw error
       })
+  }
+
+  async testAction({ application, params }: Props<TestActionParam>) {
+    console.log('message: ', params?.message)
+    await new Promise((resolve) => setTimeout(resolve, 10000))
   }
 }

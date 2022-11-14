@@ -12,6 +12,7 @@ import { DataProviderTypes } from '../lib/types'
 
 import * as m from '../lib/messages'
 import { Routes } from '../lib/constants'
+import { TestActionApi } from '../dataProviders'
 
 export const Prerequisites: Form = buildForm({
   id: 'FinancialAidApplication',
@@ -29,6 +30,12 @@ export const Prerequisites: Form = buildForm({
           description: m.externalData.general.description,
           checkboxLabel: m.externalData.general.checkboxLabel,
           dataProviders: [
+            buildDataProviderItem({
+              id: 'testProvider',
+              provider: TestActionApi,
+              title: 'Testing API',
+              subTitle: 'Testing API - subtitle',
+            }),
             buildDataProviderItem({
               id: 'nationalRegistry',
               type: DataProviderTypes.NationalRegistry,

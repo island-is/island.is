@@ -6,18 +6,11 @@ import {
   ApplicationStateSchema,
   DefaultEvents,
   Application,
-  defineTemplateApi,
 } from '@island.is/application/types'
 
 import { assign } from 'xstate'
 
-import {
-  Roles,
-  ApplicationStates,
-  ONE_DAY,
-  ONE_MONTH,
-  ApiActions,
-} from './constants'
+import { Roles, ApplicationStates, ONE_DAY, ONE_MONTH } from './constants'
 
 import { application, stateDescriptions } from './messages'
 import { dataSchema } from './dataSchema'
@@ -27,6 +20,7 @@ import {
   hasSpouseCheck,
 } from './utils'
 import { FAApplication } from '..'
+import { CreateApplicationApi, TestActionApi } from '../dataProviders'
 
 type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.EDIT }
 
@@ -66,9 +60,15 @@ const FinancialAidTemplate: ApplicationTemplate<
                 ),
               write: {
                 answers: ['approveExternalData'],
-                externalData: ['nationalRegistry', 'veita', 'taxDataFetch'],
+                externalData: [
+                  'nationalRegistry',
+                  'veita',
+                  'taxDataFetch',
+                  'testAction',
+                ],
               },
               delete: true,
+              api: [TestActionApi],
             },
           ],
         },
@@ -224,11 +224,7 @@ const FinancialAidTemplate: ApplicationTemplate<
           actionCard: {
             description: stateDescriptions.submitted,
           },
-          onEntry: defineTemplateApi({
-            action: ApiActions.CREATEAPPLICATION,
-            shouldPersistToExternalData: true,
-            externalDataId: 'veita',
-          }),
+          onEntry: CreateApplicationApi,
           roles: [
             {
               id: Roles.APPLICANT,
