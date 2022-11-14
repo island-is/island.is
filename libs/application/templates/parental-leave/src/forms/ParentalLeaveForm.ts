@@ -60,7 +60,6 @@ import {
 } from '../constants'
 import Logo from '../assets/Logo'
 import {
-  defaultMonths,
   minimumPeriodStartBeforeExpectedDateOfBirth,
   minPeriodDays,
 } from '../config'

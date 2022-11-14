@@ -219,9 +219,10 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     singleParentDescription: {
       id: 'pl.application:singleParent.option.description',
-      defaultMessage: 'Á við þegar annað foreldri andast á meðgöngu barns og barnið fæðist lifandi eða einhleyp móðir gengst undir tæknifrjóvgun',
-      description: "This applies in such instances when either parent passes away during the pregnancy and the child is born alive, or a single mother undergoes artificial insemination",
-      
+      defaultMessage:
+        'Á við þegar einhleyp móðir gengst undir tæknifrjóvgun',
+      description:
+        'This applies when a single mother undergoes artificial insemination',
     },
     otherParentSpouse: {
       id: 'pl.application:otherParent.spouse',

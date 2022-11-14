@@ -114,15 +114,8 @@ export const answerValidators: Record<string, AnswerValidator> = {
     }
 
     if (otherParent === SINGLE && obj.singleParent) {
-      if (
-        isEmpty(
-          (obj as { singleParent: unknown[] }).singleParent,
-        )
-      )
-        return buildError(
-          errorMessages.requiredAttachment,
-          'singleParent',
-        )
+      if (isEmpty((obj as { singleParent: unknown[] }).singleParent))
+        return buildError(errorMessages.requiredAttachment, 'singleParent')
 
       return undefined
     }

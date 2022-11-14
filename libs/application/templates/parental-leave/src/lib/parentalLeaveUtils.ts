@@ -186,7 +186,9 @@ export const getTransferredDays = (
   return days
 }
 
-export const getAdditionalSingleParentRightsInDays = (application: Application) => {
+export const getAdditionalSingleParentRightsInDays = (
+  application: Application,
+) => {
   const { otherParent } = getApplicationAnswers(application.answers)
 
   return otherParent === SINGLE ? monthsToDays(additionalSingleParentMonths) : 0 // can this be like this?!
@@ -210,9 +212,13 @@ export const getAvailableRightsInDays = (application: Application) => {
 
   // Primary parent chooses transferred days so they are persisted into answers
   const transferredDays = getTransferredDays(application, selectedChild)
-  const additionalSingleParentDays = getAdditionalSingleParentRightsInDays(application)
+  const additionalSingleParentDays = getAdditionalSingleParentRightsInDays(
+    application,
+  )
 
-  return selectedChild.remainingDays + additionalSingleParentDays + transferredDays
+  return (
+    selectedChild.remainingDays + additionalSingleParentDays + transferredDays
+  )
 }
 
 export const getAvailablePersonalRightsInDays = (application: Application) => {
@@ -228,13 +234,20 @@ export const getAvailablePersonalRightsInDays = (application: Application) => {
   }
 
   const totalTransferredDays = getTransferredDays(application, selectedChild)
-  const additionalSingleParentDays = getAdditionalSingleParentRightsInDays(application)
+  const additionalSingleParentDays = getAdditionalSingleParentRightsInDays(
+    application,
+  )
 
   return totalDaysAvailable - additionalSingleParentDays - totalTransferredDays
 }
 
-export const getAvailablePersonalRightsSingleParentInMonths = (application: Application) => 
-  daysToMonths(getAvailablePersonalRightsInDays(application) + getAdditionalSingleParentRightsInDays(application))
+export const getAvailablePersonalRightsSingleParentInMonths = (
+  application: Application,
+) =>
+  daysToMonths(
+    getAvailablePersonalRightsInDays(application) +
+      getAdditionalSingleParentRightsInDays(application),
+  )
 
 export const getAvailablePersonalRightsInMonths = (application: Application) =>
   daysToMonths(getAvailablePersonalRightsInDays(application))

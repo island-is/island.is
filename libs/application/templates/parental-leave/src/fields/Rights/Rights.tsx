@@ -10,13 +10,15 @@ import { SINGLE } from '../../constants'
 
 const GiveDaysSlider: FC<FieldBaseProps> = ({ application }) => {
   const { otherParent } = getApplicationAnswers(application.answers)
-  const getDefaultMonths = otherParent === SINGLE ? additionalSingleParentMonths + defaultMonths : defaultMonths
-  
+  const getDefaultMonths =
+    otherParent === SINGLE
+      ? additionalSingleParentMonths + defaultMonths
+      : defaultMonths
+
   const boxChartKeys: BoxChartKey[] = [
     {
       label: () => ({
-        ...parentalLeaveFormMessages.shared
-          .yourRightsInMonths,
+        ...parentalLeaveFormMessages.shared.yourRightsInMonths,
         values: { months: getDefaultMonths },
       }),
       bulletStyle: 'blue',
@@ -24,18 +26,16 @@ const GiveDaysSlider: FC<FieldBaseProps> = ({ application }) => {
   ]
 
   return (
-    <>
-      <Box marginBottom={6} marginTop={3}>
-        <BoxChart
-          application={application}
-          boxes={getDefaultMonths}
-          calculateBoxStyle={() => {
-            return 'blue'
-          }}
-          keys={boxChartKeys as BoxChartKey[]}
-        />
-      </Box>
-    </>
+    <Box marginBottom={6} marginTop={3}>
+      <BoxChart
+        application={application}
+        boxes={getDefaultMonths}
+        calculateBoxStyle={() => {
+          return 'blue'
+        }}
+        keys={boxChartKeys as BoxChartKey[]}
+      />
+    </Box>
   )
 }
 

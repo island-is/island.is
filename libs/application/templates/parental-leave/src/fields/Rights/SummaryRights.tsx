@@ -30,7 +30,10 @@ export const SummaryRights = ({ application }: SummaryRightsProps) => {
     giveDays,
     otherParent,
   } = useApplicationAnswers(application)
-  const personalMonths = otherParent !== SINGLE ? getAvailablePersonalRightsInMonths(application) : getAvailablePersonalRightsSingleParentInMonths(application)
+  const personalMonths =
+    otherParent !== SINGLE
+      ? getAvailablePersonalRightsInMonths(application)
+      : getAvailablePersonalRightsSingleParentInMonths(application)
   const total = round(getAvailableRightsInMonths(application))
   const requested = daysToMonths(requestDays)
   const given = daysToMonths(Math.abs(giveDays))
