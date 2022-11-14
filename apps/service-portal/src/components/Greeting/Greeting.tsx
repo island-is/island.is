@@ -4,10 +4,6 @@ import { useLocale } from '@island.is/localization'
 import { useAuth } from '@island.is/auth/react'
 import { m } from '@island.is/service-portal/core'
 import * as styles from './Greeting.css'
-<<<<<<< HEAD
-import { AuthDelegationType } from '@island.is/shared/types'
-=======
->>>>>>> e19b56f4d34ad20e0337ae73140a1c71afb9356c
 
 const Greeting: FC<{}> = () => {
   const { formatMessage } = useLocale()
