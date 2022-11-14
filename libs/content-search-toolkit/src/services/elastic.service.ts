@@ -105,6 +105,22 @@ export class ElasticService {
     await this.bulkRequest(index, requests)
   }
 
+  /**
+   * @param {T} err Error object
+   * @return {boolean} True iff a document was removed
+   * Filter the HUMONGOUS documents in an error object
+   */
+  private filterDoc<T>(x: T): boolean {
+    let deleted = false
+    if (Object.keys(x).length == 0) return false
+    for (const key in x) {
+      if (key != 'doc') return this.filterDoc(x[key])
+      delete x[key]
+      deleted = true
+    }
+    return deleted
+  }
+
   async bulkRequest(index: string, requests: Record<string, unknown>[]) {
     try {
       // elasticsearch does not like big requests (above 5mb) so we limit the size to X entries just in case
@@ -120,6 +136,8 @@ export class ElasticService {
 
         // not all errors are thrown log if the response has any errors
         if (response.body.errors) {
+          // Filter HUGE request object
+          this.filterDoc(response)
           logger.error('Failed to import some documents in bulk import', {
             response,
           })
@@ -129,6 +147,8 @@ export class ElasticService {
 
       return true
     } catch (error) {
+      // Filter HUGE request object
+      this.filterDoc(error)
       logger.error('Elasticsearch request failed on bulk import', error)
       throw error
     }
