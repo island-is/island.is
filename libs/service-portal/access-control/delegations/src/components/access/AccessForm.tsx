@@ -14,7 +14,6 @@ import { AuthCustomDelegation } from '@island.is/api/schema'
 import {
   formatPlausiblePathToParams,
   m as coreMessages,
-  m,
   ServicePortalPath,
 } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
@@ -177,7 +176,10 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
               history.push(ServicePortalPath.AccessControlDelegations)
             }
             onConfirm={() => {
-              if (scopes.length > 0) {
+              if (
+                (scopes && scopes.length > 0) ||
+                (delegation.scopes && delegation.scopes.length > 0)
+              ) {
                 setOpenConfirmModal(true)
               } else {
                 setOpenDeleteModal(true)
