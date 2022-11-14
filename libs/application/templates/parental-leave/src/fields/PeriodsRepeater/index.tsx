@@ -107,6 +107,7 @@ const PeriodsRepeater: FC<ScreenProps> = ({
         rawIndex: index,
         firstPeriodStart: firstPeriodStart,
         useLength: NO as YesOrNo,
+        rightCodePeriod: period.rightsCodePeriod,
       }
       if (
         period.paid ||
@@ -127,14 +128,25 @@ const PeriodsRepeater: FC<ScreenProps> = ({
         }
       })
 
-      let isMustSync = false
       const usedDayNewPeriods = calculateDaysUsedByPeriods(newPeriods)
+      // We don't want update periods if there isn't necessary. Otherwise, enable below code
+      // if (usedDayNewPeriods > rights) {
+      //   syncVMSTPeriods(temptVMSTPeriods)
+      // } else {
+      //   syncVMSTPeriods(newPeriods)
+      // }
+      let isMustSync = false
       if (periods.length !== newPeriods.length) {
         if (usedDayNewPeriods > rights) {
           syncVMSTPeriods(temptVMSTPeriods)
         } else {
           syncVMSTPeriods(newPeriods)
         }
+      } else if (
+        newPeriods[0].rightCodePeriod &&
+        newPeriods[0]?.rightCodePeriod !== periods[0]?.rightCodePeriod
+      ) {
+        isMustSync = true
       } else {
         newPeriods.forEach((period, i) => {
           if (
