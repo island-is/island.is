@@ -16,6 +16,11 @@ export enum Roles {
   ASSIGNED_SPOUSE = 'assigned_spouse',
 }
 
+export enum CeremonyPlaces {
+  office = 'office',
+  society = 'society',
+}
+
 export const YES = 'yes'
 export const NO = 'no'
 

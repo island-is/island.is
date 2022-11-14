@@ -7,7 +7,6 @@ import { AuthCustomDelegation } from '@island.is/api/schema'
 import {
   formatPlausiblePathToParams,
   m as coreMessages,
-  m,
   ServicePortalPath,
 } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
@@ -17,23 +16,15 @@ import {
   useUpdateAuthDelegationMutation,
   AuthScopeTreeQuery,
 } from '@island.is/service-portal/graphql'
-import {
-  AccessFormScope,
-  AuthScopeTree,
-  AUTH_API_SCOPE_GROUP_TYPE,
-} from './access.types'
-import {
-  extendApiScope,
-  formatScopeTreeToScope,
-  flattenAndExtendApiScopeGroup,
-} from './access.utils'
+import { useAuth } from '@island.is/auth/react'
+import { AccessFormScope } from './access.types'
+import { extendApiScope, formatScopeTreeToScope } from './access.utils'
 import { AccessItem } from './AccessItem/AccessItem'
-import { AccessConfirmModal } from './AccessConfirmModal'
 import { AccessItemHeader } from './AccessItem/AccessItemHeader'
+import { AccessConfirmModal } from './AccessConfirmModal'
 import { isDefined } from '@island.is/shared/utils'
 import * as commonAccessStyles from './access.css'
 import { AccessDeleteModal } from './AccessDeleteModal'
-import { useAuth } from '@island.is/auth/react'
 
 type AccessFormProps = {
   delegation: AuthCustomDelegation
@@ -126,26 +117,6 @@ export const AccessForm = ({
     )
     .filter(isDefined)
 
-  const renderAccessItem = (
-    authScope: AuthScopeTree[0],
-    index: number,
-    authScopes: AuthScopeTree,
-  ) => {
-    const apiScopes =
-      authScope.__typename === AUTH_API_SCOPE_GROUP_TYPE
-        ? flattenAndExtendApiScopeGroup(authScope, index)
-        : [extendApiScope(authScope, index, authScopes)]
-
-    return (
-      <AccessItem
-        key={index}
-        apiScopes={apiScopes}
-        authDelegation={delegation}
-        validityPeriod={validityPeriod}
-      />
-    )
-  }
-
   return (
     <>
       {formError && (
@@ -164,7 +135,14 @@ export const AccessForm = ({
         <form onSubmit={onSubmit}>
           <Box className={commonAccessStyles.resetMarginGutter}>
             <AccessItemHeader hideValidityPeriod={!!validityPeriod} />
-            {scopeTree.map(renderAccessItem)}
+            {scopeTree?.map((authScope, index) => (
+              <AccessItem
+                key={index}
+                apiScopes={extendApiScope(authScope, index, scopeTree)}
+                authDelegation={delegation}
+                validityPeriod={validityPeriod}
+              />
+            ))}
           </Box>
         </form>
         <Box position="sticky" bottom={0} marginTop={20}>
@@ -173,7 +151,10 @@ export const AccessForm = ({
               history.push(ServicePortalPath.AccessControlDelegations)
             }
             onConfirm={() => {
-              if (scopes.length > 0) {
+              if (
+                (scopes && scopes.length > 0) ||
+                (delegation.scopes && delegation.scopes.length > 0)
+              ) {
                 setOpenConfirmModal(true)
               } else {
                 setOpenDeleteModal(true)
@@ -191,23 +172,13 @@ export const AccessForm = ({
         </Box>
       </FormProvider>
       <AccessConfirmModal
-        id={`access-confirm-modal-${delegation?.id}`}
         onClose={() => {
           setUpdateError(false)
           setOpenConfirmModal(false)
         }}
         onConfirm={() => onSubmit()}
-        label={formatMessage(m.accessControl)}
-        title={formatMessage({
-          id: 'sp.settings-access-control:access-confirm-modal-title',
-          defaultMessage: 'Þú ert að veita aðgang',
-        })}
         isVisible={openConfirmModal}
         delegation={delegation}
-        domain={{
-          name: delegation.domain.displayName,
-          imgSrc: delegation.domain.organisationLogoUrl,
-        }}
         scopes={scopes}
         validityPeriod={validityPeriod}
         loading={updateLoading}

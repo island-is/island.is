@@ -13,6 +13,31 @@ export enum CaseOrigin {
 
 export enum CaseType {
   // Indictment cases
+  INDICTMENT = 'INDICTMENT',
+  // Restriction Cases
+  ADMISSION_TO_FACILITY = 'ADMISSION_TO_FACILITY',
+  CUSTODY = 'CUSTODY',
+  TRAVEL_BAN = 'TRAVEL_BAN',
+  // Investigation Cases
+  AUTOPSY = 'AUTOPSY',
+  BANKING_SECRECY_WAIVER = 'BANKING_SECRECY_WAIVER',
+  BODY_SEARCH = 'BODY_SEARCH',
+  ELECTRONIC_DATA_DISCOVERY_INVESTIGATION = 'ELECTRONIC_DATA_DISCOVERY_INVESTIGATION',
+  EXPULSION_FROM_HOME = 'EXPULSION_FROM_HOME',
+  INTERNET_USAGE = 'INTERNET_USAGE',
+  OTHER = 'OTHER',
+  PHONE_TAPPING = 'PHONE_TAPPING',
+  PSYCHIATRIC_EXAMINATION = 'PSYCHIATRIC_EXAMINATION',
+  RESTRAINING_ORDER = 'RESTRAINING_ORDER',
+  RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME = 'RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME',
+  SEARCH_WARRANT = 'SEARCH_WARRANT',
+  SOUND_RECORDING_EQUIPMENT = 'SOUND_RECORDING_EQUIPMENT',
+  TELECOMMUNICATIONS = 'TELECOMMUNICATIONS',
+  TRACKING_EQUIPMENT = 'TRACKING_EQUIPMENT',
+  VIDEO_RECORDING_EQUIPMENT = 'VIDEO_RECORDING_EQUIPMENT',
+}
+
+export enum IndictmentSubType {
   AGGRAVATED_ASSAULT = 'AGGRAVATED_ASSAULT',
   ALCOHOL_LAWS = 'ALCOHOL_LAWS',
   ASSAULT_LEADING_TO_DEATH = 'ASSAULT_LEADING_TO_DEATH',
@@ -47,27 +72,6 @@ export enum CaseType {
   TRAFFIC_VIOLATION = 'TRAFFIC_VIOLATION',
   UTILITY_THEFT = 'UTILITY_THEFT',
   WEPONS_VIOLATION = 'WEPONS_VIOLATION',
-  // Restriction Cases
-  ADMISSION_TO_FACILITY = 'ADMISSION_TO_FACILITY',
-  CUSTODY = 'CUSTODY',
-  TRAVEL_BAN = 'TRAVEL_BAN',
-  // Investigation Cases
-  AUTOPSY = 'AUTOPSY',
-  BANKING_SECRECY_WAIVER = 'BANKING_SECRECY_WAIVER',
-  BODY_SEARCH = 'BODY_SEARCH',
-  ELECTRONIC_DATA_DISCOVERY_INVESTIGATION = 'ELECTRONIC_DATA_DISCOVERY_INVESTIGATION',
-  EXPULSION_FROM_HOME = 'EXPULSION_FROM_HOME',
-  INTERNET_USAGE = 'INTERNET_USAGE',
-  OTHER = 'OTHER',
-  PHONE_TAPPING = 'PHONE_TAPPING',
-  PSYCHIATRIC_EXAMINATION = 'PSYCHIATRIC_EXAMINATION',
-  RESTRAINING_ORDER = 'RESTRAINING_ORDER',
-  RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME = 'RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME',
-  SEARCH_WARRANT = 'SEARCH_WARRANT',
-  SOUND_RECORDING_EQUIPMENT = 'SOUND_RECORDING_EQUIPMENT',
-  TELECOMMUNICATIONS = 'TELECOMMUNICATIONS',
-  TRACKING_EQUIPMENT = 'TRACKING_EQUIPMENT',
-  VIDEO_RECORDING_EQUIPMENT = 'VIDEO_RECORDING_EQUIPMENT',
 }
 
 export enum CaseState {
@@ -145,6 +149,7 @@ export interface Case {
   modified: string
   origin: CaseOrigin
   type: CaseType
+  indictmentSubType?: IndictmentSubType
   description?: string
   state: CaseState
   policeCaseNumbers: string[]
@@ -222,12 +227,13 @@ export interface Case {
   caseResentExplanation?: string
   seenByDefender?: string
   subpoenaType?: SubpoenaType
-  defendantWaivesRightToCounsel: boolean
+  defendantWaivesRightToCounsel?: boolean
 }
 
 export type CreateCase = Pick<
   Case,
   | 'type'
+  | 'indictmentSubType'
   | 'description'
   | 'policeCaseNumbers'
   | 'defenderName'
@@ -241,6 +247,7 @@ export type CreateCase = Pick<
 export interface UpdateCase
   extends Pick<
     Case,
+    | 'indictmentSubType'
     | 'description'
     | 'defenderName'
     | 'defenderNationalId'
@@ -298,20 +305,18 @@ export interface UpdateCase
     | 'caseResentExplanation'
     | 'seenByDefender'
     | 'subpoenaType'
+    | 'defendantWaivesRightToCounsel'
   > {
   type?: CaseType
-  state?: CaseState
   policeCaseNumbers?: string[]
   courtId?: string
   prosecutorId?: string
   sharedWithProsecutorsOfficeId?: string | null
   registrarId?: string | null
   judgeId?: string
-  defendantWaivesRightToCounsel?: boolean
 }
 
 export interface TransitionCase {
-  modified: string
   transition: CaseTransition
 }
 
@@ -326,42 +331,7 @@ export interface SignatureConfirmationResponse {
   message?: string
 }
 
-export const indictmentCases = [
-  CaseType.AGGRAVATED_ASSAULT,
-  CaseType.ALCOHOL_LAWS,
-  CaseType.ASSAULT_LEADING_TO_DEATH,
-  CaseType.ATTEMPTED_MURDER,
-  CaseType.BREAKING_AND_ENTERING,
-  CaseType.CHILD_PROTECTION_LAWS,
-  CaseType.COVER_UP,
-  CaseType.CUSTOMS_VIOLATION,
-  CaseType.DOMESTIC_VIOLENCE,
-  CaseType.EMBEZZLEMENT,
-  CaseType.FRAUD,
-  CaseType.INDECENT_EXPOSURE,
-  CaseType.INTIMATE_RELATIONS,
-  CaseType.LEGAL_ENFORCEMENT_LAWS,
-  CaseType.LOOTING,
-  CaseType.MAJOR_ASSAULT,
-  CaseType.MINOR_ASSAULT,
-  CaseType.MONEY_LAUNDERING,
-  CaseType.MURDER,
-  CaseType.NARCOTICS_OFFENSE,
-  CaseType.NAVAL_LAW_VIOLATION,
-  CaseType.OTHER_CRIMINAL_OFFENSES,
-  CaseType.OTHER_OFFENSES,
-  CaseType.POLICE_REGULATIONS,
-  CaseType.PROPERTY_DAMAGE,
-  CaseType.PUBLIC_SERVICE_VIOLATION,
-  CaseType.RAPE,
-  CaseType.SEXUAL_OFFENSES_OTHER_THAN_RAPE,
-  CaseType.TAX_VIOLATION,
-  CaseType.THEFT,
-  CaseType.THREAT,
-  CaseType.TRAFFIC_VIOLATION,
-  CaseType.UTILITY_THEFT,
-  CaseType.WEPONS_VIOLATION,
-]
+export const indictmentCases = [CaseType.INDICTMENT]
 
 export const restrictionCases = [
   CaseType.ADMISSION_TO_FACILITY,

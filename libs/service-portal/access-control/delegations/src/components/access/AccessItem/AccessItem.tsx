@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
-
+import addYears from 'date-fns/addYears'
 import {
   Text,
   Box,
@@ -17,12 +17,13 @@ import {
 } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import * as styles from './AccessItem.css'
-import add from 'date-fns/add'
 import format from 'date-fns/format'
 import classNames from 'classnames'
 import { isDefined } from '@island.is/shared/utils'
 import { Scope } from '../access.types'
 import { accessMessages, DATE_FORMAT, isApiScopeGroup } from '../access.utils'
+
+const getDefaultDate = () => addYears(new Date(), 1)
 
 interface PropTypes {
   apiScopes: Scope[]
@@ -38,7 +39,6 @@ export const AccessItem = ({
   const { lang, formatMessage } = useLocale()
   const { setValue, getValues } = useFormContext()
   const { md } = useBreakpoint()
-
   const [datePickerVisibleGroup, setDatePickerVisibleGroup] = useState<
     boolean[]
   >(apiScopes.map(() => false))
@@ -55,14 +55,13 @@ export const AccessItem = ({
   }, [apiScopes, getValues, setValue])
 
   const toggleDatePickerGroup = useCallback(() => {
-    const values = apiScopes
-      .filter((apiScope) => !isApiScopeGroup(apiScope))
-      .map((apiScope) => getValues(`${apiScope.model}.validTo`))
+    apiScopes.forEach((apiScope) => {
+      if (getValues(`${apiScope.model}.validTo`) || isApiScopeGroup(apiScope)) {
+        return
+      }
 
-    setValue(
-      `${apiScopes[0].model}.validTo`,
-      values.every((value) => value === values[0]) ? values[0] : undefined,
-    )
+      setValue(`${apiScope.model}.validTo`, getDefaultDate().toISOString())
+    })
   }, [apiScopes, getValues, setValue])
 
   const onSelect = (item: Scope, value: string[], index: number) => {
@@ -77,9 +76,10 @@ export const AccessItem = ({
           setValue(`${apiScope.model}.validTo`, undefined)
         }
       })
-    } else {
-      toggleCheckboxGroup()
     }
+
+    toggleCheckboxGroup()
+    toggleDatePickerGroup()
 
     if (value.length === 0) {
       setDatePickerVisibleGroup((prevState) => {
@@ -117,9 +117,10 @@ export const AccessItem = ({
     <>
       {apiScopes.map((item, index) => {
         const isFirstItem = index === 0
-        const defaultDate = add(new Date(), { years: 1 })
+        const defaultDate = getDefaultDate()
+        const isGroup = isApiScopeGroup(item)
 
-        const existingScope = isApiScopeGroup(item)
+        const existingScope = isGroup
           ? apiScopes
               .filter((scope) => !isApiScopeGroup(scope))
               .every((scope) =>

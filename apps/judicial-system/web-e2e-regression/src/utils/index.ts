@@ -68,7 +68,6 @@ export const transitionCase = (caseId: string, transition: CaseTransition) => {
       input: {
         id: caseId,
         transition,
-        modified: new Date().toISOString(),
       },
     },
     fetchPolicy: 'no-cache',
