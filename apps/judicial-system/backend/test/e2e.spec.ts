@@ -766,7 +766,6 @@ describe('Case', () => {
         dbCase = caseToCCase(value)
 
         const data = {
-          modified: value.modified.toISOString(),
           transition: CaseTransition.ACCEPT,
         }
 
