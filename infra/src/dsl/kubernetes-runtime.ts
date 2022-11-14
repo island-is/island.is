@@ -26,7 +26,7 @@ export class Kubernetes implements DeploymentRuntime {
         const { name, host } = getMockName(to)
         this.ports[name] = this.ports[name] ?? hostPortNumber(host)
         this.mocks[name] = host
-        return `http://mock-server:${this.ports[name]}`
+        return `http://web-mock-server:${this.ports[name]}`
       } else {
         return to
       }

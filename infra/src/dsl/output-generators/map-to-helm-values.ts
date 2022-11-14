@@ -439,6 +439,11 @@ const serviceMockDef = (options: { uberChart: DeploymentRuntime }) => {
         timeoutSeconds: 5,
       },
     },
+    replicaCount: {
+      min: 1,
+      max: 1,
+      default: 1,
+    },
     securityContext: {
       privileged: false,
       allowPrivilegeEscalation: false,
@@ -461,7 +466,11 @@ export const HelmOutput: OutputFormat<ServiceHelm> = {
         (host) => `${env.feature}-${host}`,
       )
     })
-    s.replicaCount = { min: 1, max: 2, default: 1 }
+    s.replicaCount = {
+      min: Math.min(1, s.replicaCount?.min ?? 1),
+      max: Math.min(2, s.replicaCount?.max ?? 2),
+      default: Math.min(1, s.replicaCount?.default ?? 1),
+    }
     s.namespace = getFeatureDeploymentNamespace(env)
     if (s.postgres) {
       s.postgres = getPostgresInfoForFeature(env.feature!, s.postgres)
