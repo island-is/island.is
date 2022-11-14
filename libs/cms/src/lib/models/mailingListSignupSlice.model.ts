@@ -49,6 +49,9 @@ export class MailingListSignupSlice {
 
   @Field(() => Image, { nullable: true })
   image?: Image
+
+  @Field({ nullable: true })
+  inputs?: string
 }
 
 export const mapMailingListSignup = ({
@@ -66,8 +69,9 @@ export const mapMailingListSignup = ({
   yesLabel: fields.yesLabel ?? '',
   noLabel: fields.noLabel ?? '',
   disclaimerLabel: fields.disclaimerLabel ?? '',
+  inputs: JSON.stringify(fields.inputs ?? []) ?? '[]',
   categoryLabel: fields.categoryLabel ?? '',
-  categories: JSON.stringify(fields.categories) ?? '',
+  categories: JSON.stringify(fields.categories ?? []) ?? '[]',
   buttonText: fields.buttonText ?? '',
   signupUrl: fields.signupUrl ?? '',
   image: fields.image ? mapImage(fields.image) : undefined,
