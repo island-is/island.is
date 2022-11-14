@@ -207,6 +207,7 @@ export const serviceSetup = (services: {
       FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET:
         '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET',
       FISKISTOFA_ZENTER_EMAIL: '/k8s/api/FISKISTOFA_ZENTER_EMAIL',
+      FISKISTOFA_ZENTER_PASSWORD: 'k8s/api/FISKISTOFA_ZENTER_PASSWORD',
     })
     .xroad(
       AdrAndMachine,
