@@ -107,7 +107,7 @@ const PeriodsRepeater: FC<ScreenProps> = ({
         rawIndex: index,
         firstPeriodStart: firstPeriodStart,
         useLength: NO as YesOrNo,
-        rightCodePeriod: period.rightsCodePeriod,
+        rightCodePeriod: period.rightsCodePeriod.split(',')[0],
       }
       if (
         period.paid ||
