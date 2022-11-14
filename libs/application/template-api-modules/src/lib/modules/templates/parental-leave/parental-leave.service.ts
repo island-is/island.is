@@ -543,9 +543,7 @@ export class ParentalLeaveService {
         })
       } else if (otherParent === SINGLE) {
         // single parent
-        console.log('single parent')
         if (isUsingAdditionalRights) {
-          console.log('single parent - aukarettur')
           // We know all of the period will be using additional single parent rights
           periods.push({
             from:
@@ -566,7 +564,6 @@ export class ParentalLeaveService {
               apiConstants.rights.artificialInseminationRightsId,
           })
         } else {
-          console.log('single parent - grunn + auka')
           // If we reach here, we have a period that will have to be split into
           // two, a part of it will be using personal rights and the other part
           // will be using additional single parent rights
@@ -652,7 +649,6 @@ export class ParentalLeaveService {
       } else {
         // other parent
         if (isUsingTransferredRights) {
-          console.log('venjuleg - transferred')
           // We know all of the period will be using transferred rights
           periods.push({
             from:
@@ -672,7 +668,6 @@ export class ParentalLeaveService {
             rightsCodePeriod: apiConstants.rights.receivingRightsId,
           })
         } else {
-          console.log('venjuleg - grunn + transferred')
           // If we reach here, we have a period that will have to be split into
           // two, a part of it will be using personal rights and the other part
           // will be using transferred rights
