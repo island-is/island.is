@@ -87,7 +87,11 @@ const defendantEncryptionProperties: (keyof Defendant)[] = [
   'address',
 ]
 
-const caseFileEncryptionProperties: (keyof CaseFile)[] = ['name', 'key']
+const caseFileEncryptionProperties: (keyof CaseFile)[] = [
+  'name',
+  'key',
+  'userGeneratedFilename',
+]
 
 function collectEncryptionProperties(
   properties: string[],
