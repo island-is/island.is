@@ -25,7 +25,11 @@ import {
 import { parentalLeaveFormMessages, errorMessages } from '../../lib/messages'
 import { getApplicationAnswers } from '../../lib/parentalLeaveUtils'
 import { useRemainingRights } from '../../hooks/useRemainingRights'
-import { StartDateOptions } from '../../constants'
+import {
+  PARENTAL_GRANT,
+  PARENTAL_GRANT_STUDENTS,
+  StartDateOptions,
+} from '../../constants'
 
 type FieldBaseAndCustomField = FieldBaseProps & CustomField
 
@@ -41,7 +45,9 @@ export const PeriodPercentage: FC<PeriodPercentageField> = ({
   const { formatMessage } = useLocale()
   const { setError, register } = useFormContext()
   const { description } = field
-  const { rawPeriods } = getApplicationAnswers(application.answers)
+  const { rawPeriods, applicationType } = getApplicationAnswers(
+    application.answers,
+  )
   const currentIndex = extractRepeaterIndexFromField(field)
   const currentPeriod = rawPeriods[currentIndex]
   const [selectedValue, setSelectedValue] = useState(currentPeriod.ratio)
@@ -136,6 +142,16 @@ export const PeriodPercentage: FC<PeriodPercentageField> = ({
   const isUsingAllRemainingDays =
     canChooseRemainingDays && selectedValue === maxPercentageValue
 
+  const getRatioTitle = () => {
+    if (
+      applicationType === PARENTAL_GRANT ||
+      applicationType === PARENTAL_GRANT_STUDENTS
+    ) {
+      return parentalLeaveFormMessages.ratio.grantLabel
+    }
+    return parentalLeaveFormMessages.ratio.label
+  }
+
   return (
     <>
       {!!description && (
@@ -151,7 +167,7 @@ export const PeriodPercentage: FC<PeriodPercentageField> = ({
         field={{
           type: FieldTypes.SELECT,
           component: FieldComponents.SELECT,
-          title: parentalLeaveFormMessages.ratio.label,
+          title: getRatioTitle,
           dataTestId: 'select-percentage-use',
           placeholder: parentalLeaveFormMessages.ratio.placeholder,
           id: fieldId,

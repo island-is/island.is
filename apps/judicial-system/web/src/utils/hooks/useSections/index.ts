@@ -41,7 +41,7 @@ import {
   isProcessingStepValidIndictments,
   isReceptionAndAssignmentStepValid,
   isSubpoenaStepValid,
-  isprosecutorAndDefenderStepValid,
+  isProsecutorAndDefenderStepValid,
 } from '../../validate'
 
 interface Section {
@@ -300,23 +300,19 @@ const useSections = () => {
                   ? `${constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE}/${id}`
                   : undefined,
             },
-            ...(features.includes(Feature.CASE_FILE_ROUTE)
-              ? [
-                  {
-                    type: 'SUB_SECTION',
-                    name: capitalize(
-                      formatMessage(
-                        sections.indictmentCaseProsecutorSection.caseFile,
-                      ),
-                    ),
-                    href:
-                      isDefendantStepValidForSidebarIndictments(workingCase) &&
-                      isProcessingStepValidIndictments(workingCase)
-                        ? `${constants.INDICTMENTS_CASE_FILE_ROUTE}/${id}`
-                        : undefined,
-                  },
-                ]
-              : []),
+            {
+              type: 'SUB_SECTION',
+              name: capitalize(
+                formatMessage(
+                  sections.indictmentCaseProsecutorSection.caseFile,
+                ),
+              ),
+              href:
+                isDefendantStepValidForSidebarIndictments(workingCase) &&
+                isProcessingStepValidIndictments(workingCase)
+                  ? `${constants.INDICTMENTS_CASE_FILE_ROUTE}/${id}`
+                  : undefined,
+            },
             {
               type: 'SUB_SECTION',
               name: capitalize(
@@ -562,7 +558,7 @@ const useSections = () => {
                 href:
                   isReceptionAndAssignmentStepValid(workingCase) &&
                   isSubpoenaStepValid(workingCase) &&
-                  isprosecutorAndDefenderStepValid(workingCase)
+                  isProsecutorAndDefenderStepValid(workingCase)
                     ? `${constants.INDICTMENTS_COURT_RECORD_ROUTE}/${workingCase.id}`
                     : undefined,
               },

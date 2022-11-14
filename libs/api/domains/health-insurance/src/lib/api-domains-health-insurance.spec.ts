@@ -1,14 +1,11 @@
 import { apiDomainsHealthInsurance } from './api-domains-health-insurance'
-import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { Test } from '@nestjs/testing'
+import { HealthInsuranceService } from './healthInsurance.service'
 import {
-  HealthInsuranceAPI,
-  HealthInsuranceConfig,
-  HEALTH_INSURANCE_CONFIG,
-} from './soap'
-import { BucketService } from './bucket.service'
-import { VistaSkjalInput } from '@island.is/health-insurance'
-import { VistaSkjalModel } from './graphql/models'
+  HealthInsuranceV2Client,
+  HealthInsuranceV2Options,
+} from '@island.is/clients/health-insurance-v2'
+import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 describe('apiDomainsHealthInsurance', () => {
   it('should work', () => {
@@ -17,279 +14,61 @@ describe('apiDomainsHealthInsurance', () => {
 })
 
 describe('healthInsuranceTest', () => {
-  let hapi: HealthInsuranceAPI
-  const config: HealthInsuranceConfig = {
-    baseUrl: 'http://localhost:8080',
-    password: '',
-    username: '',
-    wsdlUrl: '',
-    clientID: '',
-    xroadID: '',
+  interface HealthInsuranceOptions {
+    clientV2Config: HealthInsuranceV2Options
   }
-
+  const options: HealthInsuranceOptions = {
+    clientV2Config: {
+      xRoadBaseUrl: 'http://localhost:8080',
+      password: '',
+      username: '',
+      xRoadClientId: '',
+      xRoadProviderId: '',
+    },
+  }
+  let service: HealthInsuranceService
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
+      imports: [HealthInsuranceV2Client.register(options.clientV2Config)],
       providers: [
         {
           provide: LOGGER_PROVIDER,
           useValue: logger,
         },
-        HealthInsuranceAPI,
-        {
-          provide: HEALTH_INSURANCE_CONFIG,
-          useValue: config,
-        },
-        BucketService,
+        HealthInsuranceService,
       ],
     }).compile()
-    hapi = moduleRef.get<HealthInsuranceAPI>(HealthInsuranceAPI)
+
+    service = moduleRef.get<HealthInsuranceService>(HealthInsuranceService)
   })
 
   describe('isHealthInsuredMock', () => {
     const kennitala = '0123456789'
     it('is healthInsured tjekk', async () => {
-      /*eslint-disable */
-      const res = {
-        SjukratryggdurType: {
-          radnumer_si: 211426334,
-          sjukratryggdur: 1,
-          dags: '2020-09-04T00:00:00.000Z',
-          a_bidtima: 0,
-        },
-      }
-      /*eslint-enable */
+      const res = true
       jest
-        .spyOn(hapi, 'xroadCall')
+        .spyOn(service, 'isHealthInsured')
         .mockImplementation(() => Promise.resolve(res))
-      const isInsured = await hapi.isHealthInsured(kennitala)
+      const isInsured = await service.isHealthInsured(kennitala, new Date())
       expect(isInsured).toBe(true)
     })
 
     it('should normalize thrown errors', async () => {
-      jest.spyOn(hapi, 'xroadCall').mockImplementation(() => {
+      jest.spyOn(service, 'isHealthInsured').mockImplementation(() => {
         throw new Error('Some unexpected error')
       })
 
       expect(async () => {
-        await hapi.isHealthInsured(kennitala)
+        await service.isHealthInsured(kennitala, new Date())
       }).rejects.toThrowError('Some unexpected error')
     })
 
     it('is healthInsured return false', async () => {
-      /*eslint-disable */
-      const res = {
-        SjukratryggdurType: {
-          radnumer_si: 211426334,
-          sjukratryggdur: 0,
-          dags: '2020-09-04T00:00:00.000Z',
-          a_bidtima: 0,
-        },
-      }
-      /*eslint-enable */
+      const res = false
       jest
-        .spyOn(hapi, 'xroadCall')
+        .spyOn(service, 'isHealthInsured')
         .mockImplementation(() => Promise.resolve(res))
-      expect(await hapi.isHealthInsured(kennitala)).toBe(false)
-    })
-  })
-
-  describe('getPendingApplicationMock', () => {
-    const kennitala = '0123456789'
-    it('pending application tjekk', async () => {
-      /*eslint-disable */
-      const res = {
-        FaUmsoknSjukratryggingType: {
-          umsoknir: [
-            {
-              skjalanumer: 32942472,
-              stada: 2,
-            },
-            {
-              skjalanumer: 2424242,
-              stada: 1,
-            },
-            {
-              skjalanumer: 329424472,
-              stada: 2,
-            },
-          ],
-        },
-      }
-      /*eslint-enable */
-      jest
-        .spyOn(hapi, 'xroadCall')
-        .mockImplementation(() => Promise.resolve(res))
-      expect(await hapi.getPendingApplication(kennitala)).toStrictEqual([
-        32942472,
-        329424472,
-      ])
-    })
-
-    it('should normalize thrown errors', async () => {
-      jest.spyOn(hapi, 'xroadCall').mockImplementation(() => {
-        throw new Error('Some unexpected error')
-      })
-
-      expect(async () => {
-        await hapi.getPendingApplication(kennitala)
-      }).rejects.toThrowError('Some unexpected error')
-    })
-
-    it('pending application return empty array', async () => {
-      /*eslint-disable */
-      const res = {
-        FaUmsoknSjukratryggingType: {
-          umsoknir: [
-            {
-              skjalanumer: 32942472,
-              stada: 1,
-            },
-            {
-              skjalanumer: 2424242,
-              stada: 1,
-            },
-            {
-              skjalanumer: 329424472,
-              stada: 0,
-            },
-          ],
-        },
-      }
-      /*eslint-enable */
-      jest
-        .spyOn(hapi, 'xroadCall')
-        .mockImplementation(() => Promise.resolve(res))
-      expect(await hapi.getPendingApplication(kennitala)).toStrictEqual([])
-    })
-  })
-
-  describe('applyHealthInsuranceMock', () => {
-    const inputs: VistaSkjalInput = {
-      applicationNumber: '123456',
-      applicationDate: new Date(),
-      nationalId: '0123456789',
-      email: 'test@test.is',
-      phoneNumber: '5551234',
-      foreignNationalId: '0987654321',
-      name: 'Test Testson',
-      address: 'Batavegur 1',
-      citizenship: 'Ísland',
-      postalAddress: '101 Reykjavík',
-      countryCode: 'IS',
-      residenceDateFromNationalRegistry: new Date(),
-      residenceDateUserThink: new Date(),
-      userStatus: 'O',
-      isChildrenFollowed: 1,
-      previousCountry: 'Viet Nam',
-      previousCountryCode: 'VN',
-      previousIssuingInstitution: 'The gioi',
-      isHealthInsuredInPreviousCountry: 0,
-      hasHealthInsuranceRightInPreviousCountry: 0,
-    }
-    const appNumber = 570
-    const kennitala = '0123456789'
-    it('apply Health Insurance application tjekk', async () => {
-      /*eslint-disable */
-      const res = {
-        VistaSkjalType: {
-          radnumer_si: 211426334,
-          tokst: 1,
-          skjalanumer_si: 841641,
-        },
-      }
-      const vistaskjal = new VistaSkjalModel()
-      vistaskjal.isSucceeded = true
-      vistaskjal.caseId = 841641
-      vistaskjal.comment = ''
-      /*eslint-enable */
-      jest
-        .spyOn(hapi, 'xroadCall')
-        .mockImplementation(() => Promise.resolve(res))
-      expect(
-        await hapi.applyInsurance(appNumber, inputs, kennitala),
-      ).toStrictEqual(vistaskjal)
-    })
-    it('apply Health Insurance application return true with comment', async () => {
-      /*eslint-disable */
-      const res = {
-        VistaSkjalType: {
-          radnumer_si: 211426334,
-          tokst: 2,
-          skjalanumer_si: 841641,
-          villulysing: 'vantar gogn',
-        },
-      }
-      const vistaskjal = new VistaSkjalModel()
-      vistaskjal.isSucceeded = true
-      vistaskjal.caseId = 841641
-      vistaskjal.comment = 'vantar gogn'
-      /*eslint-enable */
-      jest
-        .spyOn(hapi, 'xroadCall')
-        .mockImplementation(() => Promise.resolve(res))
-      expect(
-        await hapi.applyInsurance(appNumber, inputs, kennitala),
-      ).toStrictEqual(vistaskjal)
-    })
-
-    it('should normalize thrown errors', async () => {
-      jest.spyOn(hapi, 'xroadCall').mockImplementation(() => {
-        throw new Error('Some unexpected error')
-      })
-
-      expect(async () => {
-        await hapi.applyInsurance(570, inputs, kennitala)
-      }).rejects.toThrowError('Some unexpected error')
-    })
-
-    it('apply Health Insurance application return false', async () => {
-      /*eslint-disable */
-      const res = {
-        VistaSkjalType: {
-          radnumer_si: 211426334,
-          tokst: 0,
-          villulysing: 'error',
-          villulisti: [
-            {
-              linunumer: 46,
-              villa: 'something unexpected',
-              tegundvillu: 'tegund villu',
-              villulysinginnri: 'something unexpected',
-            },
-          ],
-        },
-      }
-      const vistaskjal = new VistaSkjalModel()
-      vistaskjal.isSucceeded = false
-      vistaskjal.comment = 'something unexpected'
-      /*eslint-enable */
-      jest
-        .spyOn(hapi, 'xroadCall')
-        .mockImplementation(() => Promise.resolve(res))
-      expect(
-        await hapi.applyInsurance(appNumber, inputs, kennitala),
-      ).toStrictEqual(vistaskjal)
-    })
-
-    it('apply Health Insurance application return false', async () => {
-      /*eslint-disable */
-      const res = {
-        VistaSkjalType: {
-          radnumer_si: 211426334,
-          tokst: 0,
-          villulysing: 'something unexpected',
-        },
-      }
-      const vistaskjal = new VistaSkjalModel()
-      vistaskjal.isSucceeded = false
-      vistaskjal.comment = 'something unexpected'
-      /*eslint-enable */
-      jest
-        .spyOn(hapi, 'xroadCall')
-        .mockImplementation(() => Promise.resolve(res))
-      expect(
-        await hapi.applyInsurance(appNumber, inputs, kennitala),
-      ).toStrictEqual(vistaskjal)
+      expect(await service.isHealthInsured(kennitala, new Date())).toBe(false)
     })
   })
 })

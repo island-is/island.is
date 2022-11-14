@@ -9,7 +9,6 @@ import {
   CaseType,
   isRestrictionCase,
   isIndictmentCase,
-  SessionArrangements,
 } from '@island.is/judicial-system/types'
 
 const getAsDate = (date: Date | string | undefined | null): Date => {
@@ -95,29 +94,46 @@ export const laws = {
 
 type CaseTypes = { [c in CaseType]: string }
 export const caseTypes: CaseTypes = {
+  // Indicitment cases
+  ALCOHOL_LAWS: 'áfengislagabrot',
   CHILD_PROTECTION_LAWS: 'barnaverndarlög',
+  INDECENT_EXPOSURE: 'blygðunarsemisbrot',
+  LEGAL_ENFORCEMENT_LAWS: 'brot gegn lögreglulögum',
+  POLICE_REGULATIONS: 'brot gegn lögreglusamþykkt',
+  INTIMATE_RELATIONS: 'brot í nánu sambandi',
+  PUBLIC_SERVICE_VIOLATION: 'brot í opinberu starfi',
   PROPERTY_DAMAGE: 'eignaspjöll',
   NARCOTICS_OFFENSE: 'fíkniefnalagabrot',
   EMBEZZLEMENT: 'fjárdráttur',
   FRAUD: 'fjársvik',
+  LOOTING: 'gripdeild',
+  OTHER_CRIMINAL_OFFENSES: 'hegningarlagabrot önnur',
   DOMESTIC_VIOLENCE: 'heimilisofbeldi',
+  THREAT: 'hótun',
+  BREAKING_AND_ENTERING: 'húsbrot',
+  COVER_UP: 'hylming',
+  SEXUAL_OFFENSES_OTHER_THAN_RAPE: 'kynferðisbrot önnur en nauðgun',
+  MAJOR_ASSAULT: 'líkamsárás - meiriháttar',
+  MINOR_ASSAULT: 'líkamsárás - minniháttar',
+  AGGRAVATED_ASSAULT: 'líkamsáras - sérlega hættuleg',
   ASSAULT_LEADING_TO_DEATH: 'líkamsáras sem leiðir til dauða',
   MURDER: 'manndráp',
-  MAJOR_ASSAULT: 'meiriháttar líkamsárás',
-  MINOR_ASSAULT: 'minniháttar líkamsárás',
   RAPE: 'nauðgun',
   UTILITY_THEFT: 'nytjastuldur',
-  AGGRAVATED_ASSAULT: 'sérlega hættuleg líkamsáras',
+  MONEY_LAUNDERING: 'peningaþvætti',
+  OTHER_OFFENSES: 'sérrefsilagabrot önnur',
+  NAVAL_LAW_VIOLATION: 'siglingalagabrot',
   TAX_VIOLATION: 'skattalagabrot',
   ATTEMPTED_MURDER: 'tilraun til manndráps',
+  CUSTOMS_VIOLATION: 'tollalagabrot',
   TRAFFIC_VIOLATION: 'umferðarlagabrot',
+  WEPONS_VIOLATION: 'vopnalagabrot',
   THEFT: 'þjófnaður',
-  OTHER_CRIMINAL_OFFENSES: 'önnur hegningarlagabrot',
-  SEXUAL_OFFENSES_OTHER_THAN_RAPE: 'önnur kynferðisbrot en nauðgun',
-  OTHER_OFFENSES: 'önnur sérrefsilagabrot',
+  // Restriction cases
   CUSTODY: 'gæsluvarðhald',
   TRAVEL_BAN: 'farbann',
   ADMISSION_TO_FACILITY: 'vistun á viðeigandi stofnun',
+  // Investigation Cases
   SEARCH_WARRANT: 'húsleit',
   BANKING_SECRECY_WAIVER: 'rof bankaleyndar',
   PHONE_TAPPING: 'símhlustun',
@@ -248,9 +264,13 @@ export function formatRequestCaseType(type: CaseType): string {
     : 'rannsóknarheimild'
 }
 
-export const formatDOB = (nationalId?: string, noNationalId?: boolean) => {
+export const formatDOB = (
+  nationalId?: string,
+  noNationalId?: boolean,
+  fallback = '-',
+) => {
   if (!nationalId) {
-    return '-'
+    return fallback
   }
 
   return noNationalId
@@ -284,4 +304,8 @@ export const formatDefenderRoute = (
   return `${baseUrl}/verjandi${
     isIndictmentCase(caseType) ? '/akaera' : ''
   }/${id}`
+}
+
+export const splitStringByComma = (str?: string): string[] => {
+  return str?.trim().split(/[, ]+/) || []
 }

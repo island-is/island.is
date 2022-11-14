@@ -7,7 +7,6 @@ import {
   EphemeralStateLifeCycle,
   getValueViaPath,
   pruneAfterDays,
-  DefaultStateLifeCycle,
 } from '@island.is/application/core'
 import {
   ApplicationContext,
@@ -32,6 +31,7 @@ import {
   NO_UNION,
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
+  TransferRightsOption,
 } from '../constants'
 import { dataSchema } from './dataSchema'
 import { answerValidators } from './answerValidators'
@@ -43,6 +43,8 @@ import {
 import {
   getApplicationAnswers,
   getApplicationExternalData,
+  getMaxMultipleBirthsDays,
+  getMultipleBirthRequestDays,
   getOtherParentId,
   getSelectedChild,
 } from '../lib/parentalLeaveUtils'
@@ -140,6 +142,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           'setSpouseUsageToHundredIfUseAsMuchAsPossibleIsYes',
           'removeNullPeriod',
           'setNavId',
+          'correctTransferRights',
         ],
         meta: {
           name: States.DRAFT,
@@ -214,6 +217,14 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 { event: DefaultEvents.REJECT, name: 'Reject', type: 'reject' },
               ],
               read: {
+                answers: [
+                  'requestRights',
+                  'usePersonalAllowanceFromSpouse',
+                  'personalAllowanceFromSpouse',
+                  'periods',
+                ],
+              },
+              write: {
                 answers: [
                   'requestRights',
                   'usePersonalAllowanceFromSpouse',
@@ -338,7 +349,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 externalData: ['children'],
               },
               write: {
-                answers: ['employerNationalRegistryId'],
+                answers: [
+                  'employerNationalRegistryId',
+                  'periods',
+                  'selectedChild',
+                  'payments',
+                ],
               },
               actions: [
                 {
@@ -603,8 +619,13 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
       // Edit Flow States
       [States.EDIT_OR_ADD_PERIODS]: {
-        entry: ['createTempPeriods', 'assignToVMST', 'removeNullPeriod'],
-        exit: ['restorePeriodsFromTemp', 'removeNullPeriod'],
+        entry: [
+          'createTempPeriods',
+          'assignToVMST',
+          'removeNullPeriod',
+          'setNavId',
+        ],
+        exit: ['restorePeriodsFromTemp', 'removeNullPeriod', 'setNavId'],
         meta: {
           name: States.EDIT_OR_ADD_PERIODS,
           actionCard: {
@@ -721,7 +742,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 externalData: ['children'],
               },
               write: {
-                answers: ['employerNationalRegistryId'],
+                answers: [
+                  'employerNationalRegistryId',
+                  'periods',
+                  'selectedChild',
+                  'payments',
+                ],
               },
               actions: [
                 {
@@ -1000,15 +1026,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       setNavId: assign((context) => {
         const { application } = context
 
-        const { applicationFundId, navId } = getApplicationExternalData(
+        const { applicationFundId } = getApplicationExternalData(
           application.externalData,
         )
 
-        if (navId !== '') {
-          return context
-        }
-
-        if (applicationFundId !== '') {
+        if (applicationFundId && applicationFundId !== '') {
           set(application.externalData, 'navId', applicationFundId)
         }
 
@@ -1151,6 +1173,22 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         return context
       }),
+      correctTransferRights: assign((context) => {
+        const { application } = context
+        const { answers } = application
+        const { hasMultipleBirths } = getApplicationAnswers(answers)
+        const multipleBirthsRequestDays = getMultipleBirthRequestDays(answers)
+
+        if (
+          hasMultipleBirths === YES &&
+          multipleBirthsRequestDays !== getMaxMultipleBirthsDays(answers) &&
+          multipleBirthsRequestDays > 0
+        ) {
+          set(answers, 'transferRights', TransferRightsOption.NONE)
+        }
+
+        return context
+      }),
       setRightsToOtherParent: assign((context) => {
         const { application } = context
         const { answers, externalData } = application
@@ -1206,9 +1244,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           unset(application.answers, 'periods')
           unset(application.answers, 'validatedPeriods')
           set(application.answers, 'requestRights.requestDays', '0')
-          set(application.answers, 'requestRights.isRequestingRights', 'no')
+          set(application.answers, 'requestRights.isRequestingRights', NO)
           set(application.answers, 'giveRights.giveDays', '0')
-          set(application.answers, 'giveRights.isGivingRights', 'no')
+          set(application.answers, 'giveRights.isGivingRights', NO)
         }
 
         if (answers.usePersonalAllowanceFromSpouse === YES) {

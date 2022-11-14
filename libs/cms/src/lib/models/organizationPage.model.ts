@@ -6,13 +6,13 @@ import { LinkGroup, mapLinkGroup } from './linkGroup.model'
 import { Link, mapLink } from './link.model'
 import { Image, mapImage } from './image.model'
 import { safelyMapSliceUnion, SliceUnion } from '../unions/slice.union'
-import { FooterItem, mapFooterItem } from './footerItem.model'
 import {
   mapOrganizationTheme,
   OrganizationTheme,
 } from './organizationTheme.model'
 import { GenericTag, mapGenericTag } from './genericTag.model'
 import { AlertBanner, mapAlertBanner } from './alertBanner.model'
+import { SystemMetadata } from 'api-cms-domain'
 
 @ObjectType()
 export class OrganizationPage {
@@ -49,14 +49,11 @@ export class OrganizationPage {
   @Field(() => LinkGroup, { nullable: true })
   secondaryMenu!: LinkGroup | null
 
-  @Field(() => Organization)
+  @Field(() => Organization, { nullable: true })
   organization!: Organization | null
 
   @Field(() => Image, { nullable: true })
   featuredImage!: Image | null
-
-  @Field(() => [FooterItem])
-  footerItems!: Array<FooterItem>
 
   @Field(() => [SliceUnion], { nullable: true })
   sidebarCards?: Array<typeof SliceUnion | null>
@@ -94,7 +91,6 @@ export const mapOrganizationPage = ({
     ? mapOrganization(fields.organization)
     : null,
   featuredImage: fields.featuredImage ? mapImage(fields.featuredImage) : null,
-  footerItems: (fields.footerItems ?? []).map(mapFooterItem),
   sidebarCards: (fields.sidebarCards ?? [])
     .map(safelyMapSliceUnion)
     .filter(Boolean),

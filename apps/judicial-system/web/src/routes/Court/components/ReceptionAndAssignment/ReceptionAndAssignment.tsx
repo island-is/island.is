@@ -64,7 +64,7 @@ const ReceptionAndAssignment = () => {
     transitionCase,
     isTransitioningCase,
     sendNotification,
-    setAndSendToServer,
+    setAndSendCaseToServer,
   } = useCase()
 
   const { data: userData, loading: userLoading } = useQuery<UserData>(
@@ -105,7 +105,7 @@ const ReceptionAndAssignment = () => {
 
   const setJudge = (judge: User) => {
     if (workingCase) {
-      setAndSendToServer(
+      setAndSendCaseToServer(
         [{ judgeId: judge.id, force: true }],
         workingCase,
         setWorkingCase,
@@ -115,7 +115,7 @@ const ReceptionAndAssignment = () => {
 
   const setRegistrar = (registrar?: User) => {
     if (workingCase) {
-      setAndSendToServer(
+      setAndSendCaseToServer(
         [{ registrarId: registrar?.id ?? null, force: true }],
         workingCase,
         setWorkingCase,

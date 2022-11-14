@@ -22,6 +22,8 @@ import {
   getOtherParentId,
   applicantIsMale,
   PARENTAL_LEAVE,
+  PARENTAL_GRANT,
+  PARENTAL_GRANT_STUDENTS,
   NO,
 } from '@island.is/application/templates/parental-leave'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
@@ -176,8 +178,8 @@ export const getRightsCode = (application: Application): string => {
   const answers = getApplicationAnswers(application.answers)
   const isSelfEmployed = answers.isSelfEmployed === YES
 
-  const isUnemployed = answers.applicationType === 'parentalGrant'
-  const isStudent = answers.applicationType === 'parentalGrantStudents'
+  const isUnemployed = answers.applicationType === PARENTAL_GRANT
+  const isStudent = answers.applicationType === PARENTAL_GRANT_STUDENTS
 
   if (selectedChild.parentalRelation === ParentalRelations.primary) {
     if (isUnemployed) {
@@ -260,6 +262,7 @@ export const transformApplicationToParentalLeaveDTO = (
     bank,
     applicationType,
     isRecivingUnemploymentBenefits,
+    multipleBirths,
   } = getApplicationAnswers(application.answers)
 
   const { applicationFundId } = getApplicationExternalData(
@@ -308,6 +311,7 @@ export const transformApplicationToParentalLeaveDTO = (
     rightsCode: getRightsCode(application),
     attachments,
     testData,
+    noOfChildren: multipleBirths ? multipleBirths.toString() : undefined,
   }
 }
 

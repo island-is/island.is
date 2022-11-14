@@ -36,8 +36,7 @@ export const PartyOverview = ({
   const { errors, setError, setValue } = useFormContext()
 
   const answers = application.answers as FinancialStatementsInao
-  const fileName = answers.attachment?.file?.[0]?.name
-
+  const fileName = answers.attachments?.file?.[0]?.name
   const [
     submitApplication,
     { error: submitError, loading },
@@ -48,7 +47,7 @@ export const PartyOverview = ({
   })
 
   const onBackButtonClick = () => {
-    goToScreen && goToScreen('attachment.file')
+    goToScreen && goToScreen('attachments.file')
   }
 
   const onSendButtonClick = () => {
@@ -277,7 +276,7 @@ export const PartyOverview = ({
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
               label={m.debtsAndCash}
-              value={formatCurrency(answers.equity?.total)}
+              value={formatCurrency(answers.equityAndLiabilities?.total)}
             />
           </GridColumn>
         </GridRow>
@@ -285,7 +284,7 @@ export const PartyOverview = ({
       <Divider />
       {fileName ? (
         <Fragment>
-          <FileValueLine label={answers.attachment?.file?.[0]?.name} />
+          <FileValueLine label={answers.attachments?.file?.[0]?.name} />
           <Divider />
         </Fragment>
       ) : null}

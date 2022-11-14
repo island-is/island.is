@@ -14,6 +14,7 @@ import { parentalLeaveFormMessages } from '../../lib/messages'
 import {
   getApplicationAnswers,
   getMaxMultipleBirthsDays,
+  getMultipleBirthRequestDays,
 } from '../../lib/parentalLeaveUtils'
 import { maxDaysToGiveOrReceive } from '../../config'
 import { YES, NO, TransferRightsOption } from '../../constants'
@@ -94,11 +95,12 @@ export const TransferRights: FC<FieldBaseProps & CustomField> = ({
     isGivingRights,
     giveDays,
     hasMultipleBirths,
-    multipleBirthsRequestDays,
   } = getApplicationAnswers(application.answers)
 
-  //typeof multipleBirthsRequestDays is string and we need to convert it to number
-  const multipleBirthsRequestDaysNumber = multipleBirthsRequestDays * 1
+  const multipleBirthsRequestDays = getMultipleBirthRequestDays(
+    application.answers,
+  )
+  const maxMultipleBirthsDays = getMaxMultipleBirthsDays(application.answers)
 
   const defaultValue =
     transferRights !== undefined
@@ -141,8 +143,7 @@ export const TransferRights: FC<FieldBaseProps & CustomField> = ({
               ),
               value: TransferRightsOption.REQUEST,
               disabled:
-                hasMultipleBirths === YES &&
-                multipleBirthsRequestDaysNumber === 0,
+                hasMultipleBirths === YES && multipleBirthsRequestDays === 0,
             },
             {
               label: formatMessage(
@@ -151,8 +152,7 @@ export const TransferRights: FC<FieldBaseProps & CustomField> = ({
               value: TransferRightsOption.GIVE,
               disabled:
                 hasMultipleBirths === YES &&
-                multipleBirthsRequestDaysNumber ===
-                  getMaxMultipleBirthsDays(application.answers),
+                multipleBirthsRequestDays === maxMultipleBirthsDays,
             },
           ],
           backgroundColor: 'blue',

@@ -253,13 +253,17 @@ export class Children extends BasicDataProvider {
 
       const transferredDays =
         child.transferredDays === undefined ? 0 : child.transferredDays
+      const multipleBirthsDays =
+        child.multipleBirthsDays === undefined ? 0 : child.multipleBirthsDays
 
       const remainingDays =
         this.remainingDays(
           child.expectedDateOfBirth,
           [],
           parentalLeavesEntitlements,
-        ) + transferredDays
+        ) +
+        transferredDays +
+        multipleBirthsDays
 
       children.push({
         ...child,

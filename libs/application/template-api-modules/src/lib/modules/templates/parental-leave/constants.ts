@@ -12,6 +12,7 @@ export const apiConstants = {
   rights: {
     // When primary or secondary parents are requested extra days from their spouse
     receivingRightsId: 'FSAL-GR',
+    multipleBirthsRightsId: 'ORLOF-FBF',
   },
   attachments: {
     selfEmployed: 'selfEmployed',

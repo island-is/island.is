@@ -2,6 +2,7 @@ global:
   env:
     AUDIT_GROUP_NAME: '/island-is/audit-log'
     AWS_REGION: 'eu-west-1'
+    NO_UPDATE_NOTIFIER: 'true'
     PORT: '3333'
     name: 'staging'
   image:
@@ -20,7 +21,7 @@ judicial-system-api:
     BACKEND_URL: 'http://web-judicial-system-backend'
     CONTENTFUL_ENVIRONMENT: 'test'
     CONTENTFUL_HOST: 'cdn.contentful.com'
-    HIDDEN_FEATURES: 'INDICTMENTS, CASE_FILE_ROUTE'
+    HIDDEN_FEATURES: 'INDICTMENTS'
     NODE_OPTIONS: '--max-old-space-size=208'
     SAML_ENTRY_POINT: 'https://innskraning.island.is/?id=judicial-system.staging'
     SERVERSIDE_FEATURES_ON: ''
@@ -224,6 +225,7 @@ judicial-system-backend:
     name: 'judicial-system-backend'
 judicial-system-message-handler:
   args:
+    - '--no-experimental-fetch'
     - 'main.js'
   command:
     - 'node'
@@ -285,6 +287,7 @@ judicial-system-message-handler:
     name: 'judicial-system-message-handler'
 judicial-system-scheduler:
   args:
+    - '--no-experimental-fetch'
     - 'main.js'
   command:
     - 'node'

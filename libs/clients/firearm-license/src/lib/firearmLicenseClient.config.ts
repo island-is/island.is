@@ -1,5 +1,5 @@
 import { defineConfig } from '@island.is/nest/config'
-import * as z from 'zod'
+import { z } from 'zod'
 import { RLSScope } from '@island.is/auth/scopes'
 
 const schema = z.object({

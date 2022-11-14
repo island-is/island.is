@@ -27,9 +27,9 @@ import {
   StartDateOptions,
   ParentalRelations,
   TransferRightsOption,
-  UnEmployedBenefitTypes,
   PARENTAL_GRANT_STUDENTS,
   PARENTAL_LEAVE,
+  PARENTAL_GRANT,
 } from '../constants'
 import { SchemaFormValues } from '../lib/dataSchema'
 import { PregnancyStatusAndRightsResults } from '../dataProviders/Children/Children'
@@ -188,6 +188,39 @@ export const getTransferredDays = (
   return days
 }
 
+export const getMultipleBirthsDays = (application: Application) => {
+  const selectedChild = getSelectedChild(
+    application.answers,
+    application.externalData,
+  )
+
+  if (!selectedChild) {
+    throw new Error('Missing selected child')
+  }
+
+  if (selectedChild.parentalRelation === ParentalRelations.secondary) {
+    return selectedChild.multipleBirthsDays ?? 0
+  }
+
+  return getMultipleBirthRequestDays(application.answers)
+}
+
+export const getMultipleBirthRequestDays = (
+  answers: Application['answers'],
+) => {
+  const {
+    multipleBirthsRequestDays,
+    otherParent,
+    hasMultipleBirths,
+  } = getApplicationAnswers(answers)
+
+  // if (otherParent === NO && hasMultipleBirths) {
+  //   return getMaxMultipleBirthsDays(application.answers)
+  // }
+
+  return multipleBirthsRequestDays * 1
+}
+
 export const getMaxMultipleBirthsDays = (answers: Application['answers']) => {
   const { multipleBirths } = getApplicationAnswers(answers)
   return (multipleBirths - 1) * multipleBirthsDefaultDays
@@ -221,8 +254,13 @@ export const getAvailableRightsInDays = (application: Application) => {
 
   // Primary parent chooses transferred days so they are persisted into answers
   const transferredDays = getTransferredDays(application, selectedChild)
+  const multipleBirthsRequestDays = getMultipleBirthRequestDays(
+    application.answers,
+  )
 
-  return selectedChild.remainingDays + transferredDays
+  return (
+    selectedChild.remainingDays + multipleBirthsRequestDays + transferredDays
+  )
 }
 
 export const getAvailablePersonalRightsInDays = (application: Application) => {
@@ -238,8 +276,9 @@ export const getAvailablePersonalRightsInDays = (application: Application) => {
   }
 
   const totalTransferredDays = getTransferredDays(application, selectedChild)
+  const multipleBirthsDays = getMultipleBirthsDays(application)
 
-  return totalDaysAvailable - totalTransferredDays
+  return totalDaysAvailable - totalTransferredDays - multipleBirthsDays
 }
 
 export const getAvailablePersonalRightsInMonths = (application: Application) =>
@@ -408,7 +447,7 @@ export function getApplicationExternalData(
   const navId = getValueViaPath(externalData, 'navId', '') as string
 
   let applicationFundId = navId
-  if (applicationFundId === '') {
+  if (!applicationFundId || applicationFundId === '') {
     applicationFundId = getValueViaPath(
       externalData,
       'sendApplication.data.id',
@@ -449,6 +488,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     answers,
     'multipleBirthsRequestDays',
   ) as number | undefined
+
   const multipleBirthsRequestDays = getOrFallback(
     hasMultipleBirths,
     multipleBirthsRequestDaysValue,
@@ -570,6 +610,11 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'employerNationalRegistryId',
   ) as string
 
+  const employerReviewerNationalRegistryId = getValueViaPath(
+    answers,
+    'employerReviewerNationalRegistryId',
+  ) as string
+
   const shareInformationWithOtherParent = getValueViaPath(
     answers,
     'shareInformationWithOtherParent',
@@ -582,24 +627,53 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'transferRights',
   ) as TransferRightsOption
 
-  const isRequestingRights =
+  const isRequestingRightsSecondary =
     transferRights === TransferRightsOption.REQUEST
       ? YES
       : (getValueViaPath(
           answers,
           'requestRights.isRequestingRights',
         ) as YesOrNo)
+  let isRequestingRights = isRequestingRightsSecondary
+
+  /*
+   ** When multiple births is selected and applicant is not using all 'common' rights
+   ** Need this check so we are not returning wrong answer
+   */
+  if (isRequestingRights === YES && hasMultipleBirths === YES) {
+    if (
+      multipleBirthsRequestDays * 1 !==
+      (multipleBirths - 1) * multipleBirthsDefaultDays
+    ) {
+      isRequestingRights = NO
+    }
+  }
 
   const requestValue = getValueViaPath(answers, 'requestRights.requestDays') as
     | number
     | undefined
 
-  const requestDays = getOrFallback(isRequestingRights, requestValue)
+  const requestDays = getOrFallback(
+    isRequestingRights === YES
+      ? isRequestingRights
+      : isRequestingRightsSecondary,
+    requestValue,
+  )
 
-  const isGivingRights =
+  let isGivingRights =
     transferRights === TransferRightsOption.GIVE
       ? YES
       : (getValueViaPath(answers, 'giveRights.isGivingRights') as YesOrNo)
+
+  /*
+   ** When multiple births is selected and applicant is not using all 'common' rights
+   ** Need this check so we are not returning wrong answer
+   */
+  if (isGivingRights === YES && hasMultipleBirths === YES) {
+    if (multipleBirthsRequestDays * 1 !== 0) {
+      isGivingRights = NO
+    }
+  }
 
   const giveValue = getValueViaPath(answers, 'giveRights.giveDays') as
     | number
@@ -624,7 +698,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     applicationType,
     hasMultipleBirths,
     multipleBirths,
-    multipleBirthsRequestDays,
+    multipleBirthsRequestDays: Number(multipleBirthsRequestDays),
     otherParent,
     otherParentRightOfAccess,
     pensionFund,
@@ -648,10 +722,12 @@ export function getApplicationAnswers(answers: Application['answers']) {
     employerEmail,
     employerPhoneNumber,
     employerNationalRegistryId,
+    employerReviewerNationalRegistryId,
     shareInformationWithOtherParent,
     selectedChild,
     transferRights,
     isRequestingRights,
+    isRequestingRightsSecondary,
     requestDays: Number(requestDays),
     isGivingRights,
     giveDays: Number(giveDays),
@@ -671,6 +747,7 @@ export const requiresOtherParentApproval = (
 ) => {
   const applicationAnswers = getApplicationAnswers(answers)
   const selectedChild = getSelectedChild(answers, externalData)
+  const { navId } = getApplicationExternalData(externalData)
 
   const {
     isRequestingRights,
@@ -679,6 +756,11 @@ export const requiresOtherParentApproval = (
 
   const needsApprovalForRequestingRights =
     selectedChild?.parentalRelation === ParentalRelations.primary
+
+  //if an application has already been sent in then we don't need other parent approval as they are only changing period
+  if (navId) {
+    return false
+  }
 
   return (
     (isRequestingRights === YES && needsApprovalForRequestingRights) ||
@@ -938,23 +1020,102 @@ export const removeCountryCode = (application: Application) => {
     : getMobilePhoneNumber(application)
 }
 
-export const showGenericFileUpload = (answers: Application['answers']) => {
-  const {
-    isSelfEmployed,
-    isRecivingUnemploymentBenefits,
-    unemploymentBenefits,
-    applicationType,
-  } = getApplicationAnswers(answers)
-  // we don't want to show generic file upload atm if we are showing another file upload
-  // isSelfEmployed, students, benefits (union & health insurance)
-  if (isSelfEmployed === YES) return false
-  else if (
-    (isRecivingUnemploymentBenefits &&
-      unemploymentBenefits === UnEmployedBenefitTypes.union) ||
-    unemploymentBenefits === UnEmployedBenefitTypes.healthInsurance
-  )
-    return false
-  else if (applicationType === PARENTAL_GRANT_STUDENTS) return false
+// Functions that determine dynamic text changes in forms based on application type
+export const getPeriodSectionTitle = (application: Application) => {
+  const appAnswers = getApplicationAnswers(application.answers)
+  if (
+    appAnswers.applicationType === PARENTAL_GRANT ||
+    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
+  ) {
+    return parentalLeaveFormMessages.shared.periodsGrantSection
+  }
+  return parentalLeaveFormMessages.shared.periodsLeaveSection
+}
 
-  return true
+export const getRightsDescTitle = (application: Application) => {
+  const appAnswers = getApplicationAnswers(application.answers)
+  if (
+    appAnswers.applicationType === PARENTAL_GRANT ||
+    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
+  ) {
+    return parentalLeaveFormMessages.shared.grantRightsDescription
+  }
+  return parentalLeaveFormMessages.shared.rightsDescription
+}
+
+export const getPeriodImageTitle = (application: Application) => {
+  const appAnswers = getApplicationAnswers(application.answers)
+  if (
+    appAnswers.applicationType === PARENTAL_GRANT ||
+    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
+  ) {
+    return parentalLeaveFormMessages.shared.periodsImageGrantTitle
+  }
+  return parentalLeaveFormMessages.shared.periodsImageTitle
+}
+
+export const getFirstPeriodTitle = (application: Application) => {
+  const appAnswers = getApplicationAnswers(application.answers)
+  if (
+    appAnswers.applicationType === PARENTAL_GRANT ||
+    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
+  ) {
+    return parentalLeaveFormMessages.firstPeriodStart.grantTitle
+  }
+  return parentalLeaveFormMessages.firstPeriodStart.title
+}
+
+export const getDurationTitle = (application: Application) => {
+  const appAnswers = getApplicationAnswers(application.answers)
+  if (
+    appAnswers.applicationType === PARENTAL_GRANT ||
+    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
+  ) {
+    return parentalLeaveFormMessages.duration.grantTitle
+  }
+  return parentalLeaveFormMessages.duration.title
+}
+
+export const getRatioTitle = (application: Application) => {
+  const appAnswers = getApplicationAnswers(application.answers)
+  if (
+    appAnswers.applicationType === PARENTAL_GRANT ||
+    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
+  ) {
+    return parentalLeaveFormMessages.ratio.grantTitle
+  }
+  return parentalLeaveFormMessages.ratio.title
+}
+
+export const getLeavePlanTitle = (application: Application) => {
+  const appAnswers = getApplicationAnswers(application.answers)
+  if (
+    appAnswers.applicationType === PARENTAL_GRANT ||
+    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
+  ) {
+    return parentalLeaveFormMessages.leavePlan.grantTitle
+  }
+  return parentalLeaveFormMessages.leavePlan.title
+}
+
+export const getStartDateTitle = (application: Application) => {
+  const appAnswers = getApplicationAnswers(application.answers)
+  if (
+    appAnswers.applicationType === PARENTAL_GRANT ||
+    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
+  ) {
+    return parentalLeaveFormMessages.startDate.grantTitle
+  }
+  return parentalLeaveFormMessages.startDate.title
+}
+
+export const getStartDateDesc = (application: Application) => {
+  const appAnswers = getApplicationAnswers(application.answers)
+  if (
+    appAnswers.applicationType === PARENTAL_GRANT ||
+    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
+  ) {
+    return parentalLeaveFormMessages.startDate.grantDescription
+  }
+  return parentalLeaveFormMessages.startDate.description
 }

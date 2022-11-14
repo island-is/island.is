@@ -8,20 +8,23 @@ import {
   getApplicationAnswers,
   getMaxMultipleBirthsDays,
   getMaxMultipleBirthsMonths,
+  getMultipleBirthRequestDays,
 } from '../../lib/parentalLeaveUtils'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import Slider from '../components/Slider'
 import BoxChart, { BoxChartKey } from '../components/BoxChart'
 import { defaultMonths, daysInMonth } from '../../config'
+import { formatText } from '@island.is/application/core'
+import { NO, TransferRightsOption } from '../../constants'
 
 const RequestMultipleBirthsDaysSlider: FC<FieldBaseProps> = ({
   field,
   application,
 }) => {
-  const { id } = field
+  const { id, description } = field
   const { formatMessage } = useLocale()
   const { register } = useFormContext()
-  const { multipleBirthsRequestDays } = getApplicationAnswers(
+  const multipleBirthsRequestDays = getMultipleBirthRequestDays(
     application.answers,
   )
 
@@ -55,6 +58,7 @@ const RequestMultipleBirthsDaysSlider: FC<FieldBaseProps> = ({
 
   return (
     <>
+      <p>{formatText(description!, application, formatMessage)}</p>
       <Box marginBottom={6} marginTop={5}>
         <Box marginBottom={12}>
           <Slider
@@ -102,6 +106,34 @@ const RequestMultipleBirthsDaysSlider: FC<FieldBaseProps> = ({
         ref={register}
         name={id}
         value={chosenRequestDays.toString()}
+      />
+
+      <input
+        type="hidden"
+        ref={register}
+        name="requestRights.isRequestingRights"
+        value={NO}
+      />
+
+      <input
+        type="hidden"
+        ref={register}
+        name="requestRights.requestDays"
+        value={0}
+      />
+
+      <input
+        type="hidden"
+        ref={register}
+        name="giveRights.isGivingRights"
+        value={NO}
+      />
+
+      <input
+        type="hidden"
+        ref={register}
+        name="giveRights.giveDays"
+        value={0}
       />
     </>
   )
