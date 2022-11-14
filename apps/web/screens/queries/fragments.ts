@@ -54,6 +54,7 @@ export const slices = gql`
     disclaimerLabel
     categoryLabel
     categories
+    inputs
     buttonText
     signupUrl
     image {
@@ -507,6 +508,7 @@ export const slices = gql`
     recipient
     fields {
       title
+      name
       placeholder
       type
       required
@@ -603,6 +605,22 @@ export const slices = gql`
     powerBiEmbedProps
   }
 
+  fragment EmailSignupFields on EmailSignup {
+    __typename
+    id
+    title
+    description
+    formFields {
+      title
+      name
+      placeholder
+      type
+      required
+      options
+    }
+    translations
+  }
+
   fragment BaseSlices on Slice {
     ...TimelineFields
     ...MailingListSignupFields
@@ -638,6 +656,7 @@ export const slices = gql`
     ...LifeEventPageListSliceFields
     ...SidebarCardFields
     ...PowerBiSliceFields
+    ...EmailSignupFields
   }
 
   fragment AllSlices on Slice {
