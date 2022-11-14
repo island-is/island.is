@@ -100,6 +100,9 @@ const PeriodsRepeater: FC<ScreenProps> = ({
       if (new Date(period.firstPeriodStart).getTime() < new Date().getTime()) {
         firstPeriodStart = 'specificDate'
       }
+
+      // API returns multiple rightsCodePeriod in string ('M-L-GR, M-FS')
+      const rightsCodePeriod = period.rightsCodePeriod.split(',')[0]
       const obj = {
         startDate: period.from,
         endDate: period.to,
@@ -107,7 +110,7 @@ const PeriodsRepeater: FC<ScreenProps> = ({
         rawIndex: index,
         firstPeriodStart: firstPeriodStart,
         useLength: NO as YesOrNo,
-        rightCodePeriod: period.rightsCodePeriod.split(',')[0],
+        rightCodePeriod: rightsCodePeriod,
       }
       if (
         period.paid ||
