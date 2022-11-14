@@ -16,12 +16,15 @@ import {
   Link,
   Text,
   Icon,
+  AlertBanner,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { dateFormat } from '@island.is/shared/constants'
 import { LoadModal } from '@island.is/service-portal/core'
 import * as styles from './DocumentLine.css'
 import { gql, useLazyQuery } from '@apollo/client'
+import { useLocale } from '@island.is/localization'
+import { messages as m } from '../../utils/messages'
 
 interface Props {
   documentLine: Document
@@ -39,8 +42,9 @@ const GET_DOCUMENT_BY_ID = gql`
 const DocumentLine: FC<Props> = ({ documentLine, img, documentCategories }) => {
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.sm
+  const { formatMessage } = useLocale()
 
-  const [getDocument, { data: getFileByIdData, loading }] = useLazyQuery(
+  const [getDocument, { data: getFileByIdData, loading, error }] = useLazyQuery(
     GET_DOCUMENT_BY_ID,
     {
       variables: {
@@ -152,6 +156,19 @@ const DocumentLine: FC<Props> = ({ documentLine, img, documentCategories }) => {
     </Text>
   )
 
+  const displayError = () => {
+    return (
+      <Box paddingTop={2}>
+        <AlertBanner
+          variant="error"
+          description={formatMessage(m.documentFetchError, {
+            senderName: documentLine.senderName,
+          })}
+        />
+      </Box>
+    )
+  }
+
   return (
     <>
       {loading && <LoadModal />}
@@ -251,6 +268,7 @@ const DocumentLine: FC<Props> = ({ documentLine, img, documentCategories }) => {
             </GridColumn>
           </GridRow>
         )}
+        {error && displayError()}
       </Box>
     </>
   )
