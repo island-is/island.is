@@ -3,7 +3,6 @@ import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
 import { MessageDescriptor } from 'react-intl'
-import * as Sentry from '@sentry/react'
 
 interface Props {
   name: string | MessageDescriptor
@@ -28,7 +27,7 @@ export class ModuleErrorBoundary extends React.Component<
   }
 
   componentDidCatch(error: Error) {
-    Sentry.captureException(error)
+    console.error(error)
   }
 
   render() {

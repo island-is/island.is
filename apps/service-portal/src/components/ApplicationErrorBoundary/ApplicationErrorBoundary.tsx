@@ -1,5 +1,4 @@
 import React, { PureComponent, FC } from 'react'
-import * as Sentry from '@sentry/react'
 import * as styles from './ApplicationErrorBoundry.css'
 import {
   Box,
@@ -35,7 +34,7 @@ export class ApplicationErrorBoundary extends PureComponent<
   }
 
   componentDidCatch(error: Error) {
-    Sentry.captureException(error)
+    console.error(error)
   }
 
   render() {
