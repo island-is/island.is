@@ -3,7 +3,7 @@ import { Box, Icon, ModalBase, Text } from '@island.is/island-ui/core'
 import * as styles from './Modal.css'
 
 export interface ModalProps {
-  onClose(): void
+  onClose?(): void
   id: string
   label?: string
   title?: string
@@ -22,7 +22,7 @@ export const Modal = ({
   noPaddingBottom,
 }: ModalProps) => {
   const handleOnVisibilityChange = (isVisible: boolean) => {
-    !isVisible && onClose && onClose()
+    !isVisible && onClose?.()
   }
 
   return (

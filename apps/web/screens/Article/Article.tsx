@@ -35,6 +35,8 @@ import {
   ChartsCard,
   OneColumnTextSlice,
   AccordionSlice,
+  TableSlice,
+  EmailSignup,
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from '../queries'
@@ -64,8 +66,6 @@ import { useScrollPosition } from '../../hooks/useScrollPosition'
 import { scrollTo } from '../../hooks/useScrollSpy'
 
 import { ArticleChatPanel } from './components/ArticleChatPanel'
-
-import * as styles from './Article.css'
 
 type Article = GetSingleArticleQuery['getSingleArticle']
 type SubArticle = GetSingleArticleQuery['getSingleArticle']['subArticles'][0]
@@ -573,6 +573,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
                 (subArticle ?? article).body as SliceType[],
                 {
                   renderComponent: {
+                    TableSlice: (slice) => <TableSlice slice={slice} />,
                     Stepper: () => (
                       <Box marginY={3} printHidden className="rs_read">
                         <ProcessEntry
@@ -593,6 +594,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
                       <OneColumnTextSlice slice={slice} />
                     ),
                     AccordionSlice: (slice) => <AccordionSlice slice={slice} />,
+                    EmailSignup: (slice) => <EmailSignup slice={slice} />,
                   },
                 },
                 activeLocale,
