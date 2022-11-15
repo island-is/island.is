@@ -92,7 +92,7 @@ describe('mapCaseStateToTagVariant', () => {
       text: m.tags.active.defaultMessage,
     })
 
-    expect(fn(CaseState.ACCEPTED, false, CaseType.MURDER)).toEqual({
+    expect(fn(CaseState.ACCEPTED, false, CaseType.INDICTMENT)).toEqual({
       color: 'darkerBlue',
       text: m.tags.inactive.defaultMessage,
     })

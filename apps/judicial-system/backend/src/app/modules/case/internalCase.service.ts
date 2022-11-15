@@ -22,6 +22,7 @@ import {
   CaseFileState,
   CaseOrigin,
   CaseState,
+  IndictmentSubType,
   isIndictmentCase,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -87,7 +88,11 @@ const defendantEncryptionProperties: (keyof Defendant)[] = [
   'address',
 ]
 
-const caseFileEncryptionProperties: (keyof CaseFile)[] = ['name', 'key']
+const caseFileEncryptionProperties: (keyof CaseFile)[] = [
+  'name',
+  'key',
+  'userGeneratedFilename',
+]
 
 function collectEncryptionProperties(
   properties: string[],
@@ -415,7 +420,9 @@ export class InternalCaseService {
 
         return this.policeService.updatePoliceCase(
           theCase.id,
-          theCase.type,
+          isIndictmentCase(theCase.type)
+            ? (theCase.indictmentSubType as IndictmentSubType) // We know the sub type is set if the case is an indictment case
+            : theCase.type,
           theCase.state,
           courtRecord,
           theCase.policeCaseNumbers,

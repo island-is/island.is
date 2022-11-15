@@ -9,6 +9,7 @@ import {
   CaseType,
   isRestrictionCase,
   isIndictmentCase,
+  IndictmentSubType,
 } from '@island.is/judicial-system/types'
 
 const getAsDate = (date: Date | string | undefined | null): Date => {
@@ -95,6 +96,33 @@ export const laws = {
 type CaseTypes = { [c in CaseType]: string }
 export const caseTypes: CaseTypes = {
   // Indicitment cases
+  INDICTMENT: 'ákæra',
+  // Restriction cases
+  CUSTODY: 'gæsluvarðhald',
+  TRAVEL_BAN: 'farbann',
+  ADMISSION_TO_FACILITY: 'vistun á viðeigandi stofnun',
+  // Investigation Cases
+  SEARCH_WARRANT: 'húsleit',
+  BANKING_SECRECY_WAIVER: 'rof bankaleyndar',
+  PHONE_TAPPING: 'símhlustun',
+  TELECOMMUNICATIONS: 'upplýsingar um fjarskiptasamskipti',
+  TRACKING_EQUIPMENT: 'eftirfararbúnaður',
+  PSYCHIATRIC_EXAMINATION: 'geðrannsókn',
+  SOUND_RECORDING_EQUIPMENT: 'hljóðupptökubúnaði komið fyrir',
+  AUTOPSY: 'krufning',
+  BODY_SEARCH: 'leit og líkamsrannsókn',
+  INTERNET_USAGE: 'upplýsingar um vefnotkun',
+  RESTRAINING_ORDER: 'nálgunarbann',
+  RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME:
+    'nálgunarbann og brottvísun af heimili',
+  EXPULSION_FROM_HOME: 'brottvísun af heimili',
+  ELECTRONIC_DATA_DISCOVERY_INVESTIGATION: 'rannsókn á rafrænum gögnum',
+  VIDEO_RECORDING_EQUIPMENT: 'myndupptökubúnaði komið fyrir',
+  OTHER: 'annað',
+}
+
+type IndictmentSubTypes = { [c in IndictmentSubType]: string }
+export const indictmentSubTypes: IndictmentSubTypes = {
   ALCOHOL_LAWS: 'áfengislagabrot',
   CHILD_PROTECTION_LAWS: 'barnaverndarlög',
   INDECENT_EXPOSURE: 'blygðunarsemisbrot',
@@ -129,28 +157,6 @@ export const caseTypes: CaseTypes = {
   TRAFFIC_VIOLATION: 'umferðarlagabrot',
   WEPONS_VIOLATION: 'vopnalagabrot',
   THEFT: 'þjófnaður',
-  // Restriction cases
-  CUSTODY: 'gæsluvarðhald',
-  TRAVEL_BAN: 'farbann',
-  ADMISSION_TO_FACILITY: 'vistun á viðeigandi stofnun',
-  // Investigation Cases
-  SEARCH_WARRANT: 'húsleit',
-  BANKING_SECRECY_WAIVER: 'rof bankaleyndar',
-  PHONE_TAPPING: 'símhlustun',
-  TELECOMMUNICATIONS: 'upplýsingar um fjarskiptasamskipti',
-  TRACKING_EQUIPMENT: 'eftirfararbúnaður',
-  PSYCHIATRIC_EXAMINATION: 'geðrannsókn',
-  SOUND_RECORDING_EQUIPMENT: 'hljóðupptökubúnaði komið fyrir',
-  AUTOPSY: 'krufning',
-  BODY_SEARCH: 'leit og líkamsrannsókn',
-  INTERNET_USAGE: 'upplýsingar um vefnotkun',
-  RESTRAINING_ORDER: 'nálgunarbann',
-  RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME:
-    'nálgunarbann og brottvísun af heimili',
-  EXPULSION_FROM_HOME: 'brottvísun af heimili',
-  ELECTRONIC_DATA_DISCOVERY_INVESTIGATION: 'rannsókn á rafrænum gögnum',
-  VIDEO_RECORDING_EQUIPMENT: 'myndupptökubúnaði komið fyrir',
-  OTHER: 'annað',
 }
 
 export const getShortRestrictionByValue = (value: CaseCustodyRestrictions) => {
