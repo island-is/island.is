@@ -28,15 +28,22 @@ const AccessOutgoing = () => {
   const [enableValidityPeriod, setEnableValidityPeriod] = useState(false)
   const defaultDate = add(new Date(), { years: 1 })
 
-  const [validityPeriod, setValidityPeriod] = useState(
-    delegation?.validTo ? new Date(delegation?.validTo) : null,
-  )
+  const delegationValidityPeriod = delegation?.validTo
+    ? new Date(delegation?.validTo)
+    : null
+
+  const [validityPeriod, setValidityPeriod] = useState(delegationValidityPeriod)
 
   const onValidityPeriodCheck = (e: React.ChangeEvent<HTMLInputElement>) => {
     const checked = e.target.checked
 
     setEnableValidityPeriod(checked)
-    setValidityPeriod(checked ? defaultDate : null)
+
+    if (checked) {
+      setValidityPeriod(delegationValidityPeriod ?? defaultDate)
+    } else {
+      setValidityPeriod(null)
+    }
   }
 
   useEffect(() => {

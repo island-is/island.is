@@ -36,7 +36,11 @@ const AccessIncoming = () => {
         )}
       </AccessHeader>
       {delegation && scopeTree ? (
-        <AccessList delegation={delegation} scopeTree={scopeTree} />
+        <AccessList
+          validityPeriod={delegation.validTo}
+          scopes={delegation.scopes}
+          scopeTree={scopeTree}
+        />
       ) : (
         <SkeletonLoader width="100%" height={250} />
       )}

@@ -3,7 +3,7 @@ import { style } from '@vanilla-extract/css'
 
 export const dateContainer = style({
   display: 'flex',
-  alignItems: 'center',
+  alignItems: 'flex-start',
   columnGap: UNIT / 2,
   whiteSpace: 'pre',
 })

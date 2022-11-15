@@ -1,12 +1,11 @@
 import { useLocale } from '@island.is/localization'
 import { Text, Hidden, Box, Divider } from '@island.is/island-ui/core'
 import classNames from 'classnames'
-import format from 'date-fns/format'
-import { DATE_FORMAT } from '../access.utils'
+import { formatDelegationDate } from '../access.utils'
 import * as styles from '../access.css'
 
 type AccessListHeaderProps = {
-  validityPeriod?: string
+  validityPeriod?: Date | null
 }
 
 export const AccessListHeader = ({ validityPeriod }: AccessListHeaderProps) => {
@@ -42,8 +41,7 @@ export const AccessListHeader = ({ validityPeriod }: AccessListHeaderProps) => {
                 id: 'sp.settings-access-control:access-valid-to',
                 defaultMessage: 'Í gildi til',
               })}
-              {validityPeriod &&
-                ` ${format(new Date(validityPeriod), DATE_FORMAT)}`}
+              {validityPeriod && ` ${formatDelegationDate(validityPeriod)}`}
             </Text>
           </Box>
         }

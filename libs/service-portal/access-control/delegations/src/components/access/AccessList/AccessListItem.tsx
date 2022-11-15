@@ -9,8 +9,9 @@ interface AccessListItemProps {
   name: string
   description?: string | null
   validTo?: string
-  validityPeriod?: string
+  validityPeriod?: Date | null
   indent?: boolean
+  titleBold?: boolean
 }
 
 export const AccessListItem = ({
@@ -19,6 +20,7 @@ export const AccessListItem = ({
   validTo,
   validityPeriod,
   indent,
+  titleBold,
 }: AccessListItemProps) => {
   const { lg } = useBreakpoint()
   const { formatMessage } = useLocale()
@@ -41,9 +43,8 @@ export const AccessListItem = ({
         className={styles.headerContainer}
       >
         <Text
-          fontWeight="semiBold"
+          fontWeight={lg || titleBold ? 'semiBold' : 'regular'}
           capitalizeFirstLetter
-          variant={indent ? 'medium' : 'default'}
         >
           {name}
         </Text>

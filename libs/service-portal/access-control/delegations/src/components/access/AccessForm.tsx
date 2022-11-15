@@ -17,7 +17,7 @@ import {
   AuthScopeTreeQuery,
 } from '@island.is/service-portal/graphql'
 import { useAuth } from '@island.is/auth/react'
-import { AccessFormScope } from './access.types'
+import { AccessFormScope, MappedScope } from './access.types'
 import { extendApiScope, formatScopeTreeToScope } from './access.utils'
 import { AccessItem } from './AccessItem/AccessItem'
 import { AccessItemHeader } from './AccessItem/AccessItemHeader'
@@ -62,7 +62,6 @@ export const AccessForm = ({
 
   const methods = useForm<{
     scope: AccessFormScope[]
-    validityPeriod: Date | null
   }>()
   const { handleSubmit, getValues } = methods
 
@@ -111,7 +110,7 @@ export const AccessForm = ({
   })
 
   // Map format and flatten scopes to be used in the confirm modal
-  const scopes = getValues()
+  const scopes: MappedScope[] | undefined = getValues()
     ?.scope?.map((item) =>
       formatScopeTreeToScope({ item, scopeTree, validityPeriod }),
     )
@@ -180,6 +179,7 @@ export const AccessForm = ({
         isVisible={openConfirmModal}
         delegation={delegation}
         scopes={scopes}
+        scopeTree={scopeTree}
         validityPeriod={validityPeriod}
         loading={updateLoading}
         error={updateError}

@@ -26,7 +26,7 @@ export const IntroHeader = ({
 }: Props) => {
   const { formatMessage } = useLocale()
   return (
-    <GridRow marginBottom={6}>
+    <GridRow marginBottom={[0, 0, 6]}>
       <GridColumn span={['8/8', '5/8']} order={1}>
         <Text variant="h3" as="h1">
           {formatMessage(title)}

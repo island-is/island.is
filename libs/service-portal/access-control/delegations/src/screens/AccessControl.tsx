@@ -6,10 +6,11 @@ import {
   m,
   ServicePortalPath,
 } from '@island.is/service-portal/core'
-
+import { useLocale, useNamespaces } from '@island.is/localization'
+import { useAuth } from '@island.is/auth/react'
+import { isDefined } from '@island.is/shared/utils'
 import { DelegationsIncoming } from '../components/delegations/incoming/DelegationsIncoming'
 import { DelegationsOutgoing } from '../components/delegations/outgoing/DelegationsOutgoing'
-import { useLocale, useNamespaces } from '@island.is/localization'
 
 const TAB_DELEGATION_OUTGOING_ID = '0'
 const TAB_DELEGATION_INCOMING_ID = '1'
@@ -18,6 +19,7 @@ const DELEGATIONS_INCOMING_PATH = `${ServicePortalPath.MinarSidurPath}${ServiceP
 const AccessControl = () => {
   useNamespaces(['sp.settings-access-control', 'sp.access-control-delegations'])
   const { formatMessage } = useLocale()
+  const { userInfo } = useAuth()
   const history = useHistory()
   const location = useLocation()
   const isDelegationIncoming = location.pathname === DELEGATIONS_INCOMING_PATH
@@ -34,6 +36,9 @@ const AccessControl = () => {
     }
   }
 
+  // Only show outgoing delegation when user is logged in on behalf of someone else, i.e. some delegation.
+  const onlyOutgoingDelegations = isDefined(userInfo?.profile?.actor)
+
   return (
     <>
       <IntroHeader
@@ -44,30 +49,34 @@ const AccessControl = () => {
             'Hérna kemur listi yfir þau umboð sem þú hefur gefið öðrum. Þú getur eytt umboðum eða bætt við nýjum.',
         })}
       />
-      <Box marginTop={8}>
-        <Tabs
-          onlyRenderSelectedTab
-          selected={
-            isDelegationIncoming
-              ? TAB_DELEGATION_INCOMING_ID
-              : TAB_DELEGATION_OUTGOING_ID
-          }
-          onChange={tabChangeHandler}
-          label={formatMessage(m.chooseDelegation)}
-          tabs={[
-            {
-              id: TAB_DELEGATION_OUTGOING_ID,
-              label: formatMessage(m.accessControlDelegationsOutgoing),
-              content: <DelegationsOutgoing />,
-            },
-            {
-              id: TAB_DELEGATION_INCOMING_ID,
-              label: formatMessage(m.accessControlDelegationsIncoming),
-              content: <DelegationsIncoming />,
-            },
-          ]}
-          contentBackground="white"
-        />
+      <Box marginTop={[0, 0, 8]}>
+        {onlyOutgoingDelegations ? (
+          <DelegationsOutgoing />
+        ) : (
+          <Tabs
+            onlyRenderSelectedTab
+            selected={
+              isDelegationIncoming
+                ? TAB_DELEGATION_INCOMING_ID
+                : TAB_DELEGATION_OUTGOING_ID
+            }
+            onChange={tabChangeHandler}
+            label={formatMessage(m.chooseDelegation)}
+            tabs={[
+              {
+                id: TAB_DELEGATION_OUTGOING_ID,
+                label: formatMessage(m.accessControlDelegationsOutgoing),
+                content: <DelegationsOutgoing />,
+              },
+              {
+                id: TAB_DELEGATION_INCOMING_ID,
+                label: formatMessage(m.accessControlDelegationsIncoming),
+                content: <DelegationsIncoming />,
+              },
+            ]}
+            contentBackground="white"
+          />
+        )}
       </Box>
     </>
   )

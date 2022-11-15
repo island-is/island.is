@@ -1,4 +1,4 @@
-import { AuthApiScopeGroup } from '@island.is/api/schema'
+import format from 'date-fns/format'
 import {
   GROUP,
   Scope,
@@ -11,6 +11,9 @@ import {
 } from './access.types'
 
 export const DATE_FORMAT = 'dd.MM.yyyy'
+
+export const formatDelegationDate = (dt: string | Date) =>
+  format(new Date(dt), DATE_FORMAT)
 
 /**
  * Checks if scope is a scope group type

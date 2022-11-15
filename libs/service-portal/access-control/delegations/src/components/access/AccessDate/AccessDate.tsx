@@ -1,7 +1,6 @@
 import { Hidden, Text, useBreakpoint } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import format from 'date-fns/format'
-import { accessMessages, DATE_FORMAT } from '../access.utils'
+import { accessMessages, formatDelegationDate } from '../access.utils'
 import * as styles from './AccessDate.css'
 
 type AccessDateProps = {
@@ -23,7 +22,7 @@ export const AccessDate = ({ validTo }: AccessDateProps) => {
         variant={lg ? 'default' : 'eyebrow'}
         {...(!lg && { fontWeight: 'semiBold' })}
       >
-        {format(new Date(validTo), DATE_FORMAT)}
+        {formatDelegationDate(validTo)}
       </Text>
     </div>
   )
