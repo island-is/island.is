@@ -1,9 +1,9 @@
-import { useLazyQuery } from '@apollo/client'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
+import { useLazyQuery } from '@apollo/client'
 import { Box, LoadingDots, Stack, Text } from '@island.is/island-ui/core'
+import { useNamespace } from '@island.is/web/hooks'
 import { GET_SINGLE_SHIP } from '../calculators/queries'
-import { useLocalization } from '../../../utils'
 
 import * as styles from './SelectedShip.css'
 
@@ -11,7 +11,7 @@ interface SelectedShipProps {
   namespace?: Record<string, string>
 }
 
-export const SelectedShip = ({ namespace }: SelectedShipProps) => {
+const SelectedShip = ({ namespace }: SelectedShipProps) => {
   const [shipNumber, setShipNumber] = useState<number | null>(null)
   const router = useRouter()
 
@@ -19,7 +19,7 @@ export const SelectedShip = ({ namespace }: SelectedShipProps) => {
   const [getSingleShip, { data, error, loading }] = useLazyQuery(
     GET_SINGLE_SHIP,
   )
-  const n = useLocalization(namespace)
+  const n = useNamespace(namespace)
 
   useEffect(() => {
     if (router.query.nr && !isNaN(Number(router.query.nr))) {
@@ -73,3 +73,5 @@ export const SelectedShip = ({ namespace }: SelectedShipProps) => {
     </Box>
   )
 }
+
+export default SelectedShip

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter } from 'next/router'
-import { useMachine } from '@xstate/react'
 import cn from 'classnames'
+import { useMachine } from '@xstate/react'
 import {
   Box,
   Button,
@@ -12,13 +12,13 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { FiskistofaCatchQuotaCategory as CatchQuotaCategory } from '@island.is/api/schema'
+import { useNamespace } from '@island.is/web/hooks'
 import {
   getYearOptions,
   YearOption,
   numberFormatter,
   isNumberBelowZero,
 } from '../utils'
-import { useLocalization } from '../../../../utils'
 import { machine, Context, Event as EventType } from './machine'
 
 import * as styles from './StraddlingStockCalculator.css'
@@ -54,7 +54,7 @@ const StraddlingStockCalculator = ({
   const [selectedYear, setSelectedYear] = useState<YearOption>(yearOptions[0])
   const [changes, setChanges] = useState<Changes>({})
   const [changeErrors, setChangeErrors] = useState<ChangeErrors>({})
-  const n = useLocalization(namespace)
+  const n = useNamespace(namespace)
   const prevChangesRef = useRef<Changes | null>(null)
 
   const [shipNumber, setShipNumber] = useState<number | null>(null)

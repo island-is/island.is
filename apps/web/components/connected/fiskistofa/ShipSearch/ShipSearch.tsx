@@ -31,7 +31,7 @@ interface ShipSearchProps {
   shipSearchInputLabel?: string
 }
 
-export const ShipSearch = ({
+const ShipSearch = ({
   shipDetailsHref = '/v/maelabord-fiskistofu?selectedTab=skip',
   searchStringIsTooShort = 'Leitarstrengur þarf að vera a.m.k. 2 stafir',
   resultsFound = 'Fjöldi skipa:',
@@ -178,3 +178,5 @@ export const ShipSearch = ({
     </Box>
   )
 }
+
+export default ShipSearch

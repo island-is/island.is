@@ -3,8 +3,3 @@ export { CompanyListConnected } from './lib/skilavottord/CompanyList/CompanyList
 export { GeneralPetitionLists } from './lib/generalPetition/GeneralPetitionLists/GeneralPetitionLists'
 export { RealEstateAgentsList } from './lib/RealEstateAgentsList/RealEstateAgentsList'
 export { LawyersList } from './lib/LawyersList/LawyersList'
-export { ShipSearch } from './lib/fiskistofa/ShipSearch/ShipSearch'
-export { SidebarShipSearchInput } from './lib/fiskistofa/SidebarShipSearchInput/SidebarShipSearchInput'
-export { StraddlingStockCalculator } from './lib/fiskistofa/calculators/StraddlingStockCalculator'
-export { CatchQuotaCalculator } from './lib/fiskistofa/calculators/CatchQuotaCalculator'
-export { SelectedShip } from './lib/fiskistofa/SelectedShip/SelectedShip'

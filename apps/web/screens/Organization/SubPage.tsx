@@ -14,7 +14,6 @@ import {
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   ContentLanguage,
-  PowerBiSlice as PowerBiSliceSchema,
   Query,
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
@@ -35,18 +34,14 @@ import {
   OrganizationWrapper,
   SliceDropdown,
   Form,
-  OneColumnTextSlice,
-  PowerBiSlice,
-  AccordionSlice,
-  TableSlice,
-  EmailSignup,
 } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
-import { richText, SliceType } from '@island.is/island-ui/contentful'
+import { SliceType } from '@island.is/island-ui/contentful'
 import { ParsedUrlQuery } from 'querystring'
 import { useRouter } from 'next/router'
 import { scrollTo } from '@island.is/web/hooks/useScrollSpy'
+import { webRichText } from '@island.is/web/utils/richText'
 import { Locale } from 'locale'
 
 interface SubPageProps {
@@ -176,22 +171,11 @@ const SubPage: Screen<SubPageProps> = ({
                       subpage.links.length ? '7/12' : '12/12',
                     ]}
                   >
-                    {richText(subpage.description as SliceType[], {
+                    {webRichText(subpage.description as SliceType[], {
                       renderComponent: {
                         Form: (slice) => (
                           <Form form={slice} namespace={namespace} />
                         ),
-                        OneColumnText: (slice) => (
-                          <OneColumnTextSlice slice={slice} />
-                        ),
-                        PowerBiSlice: (slice: PowerBiSliceSchema) => (
-                          <PowerBiSlice slice={slice} />
-                        ),
-                        AccordionSlice: (slice) => (
-                          <AccordionSlice slice={slice} />
-                        ),
-                        TableSlice: (slice) => <TableSlice slice={slice} />,
-                        EmailSignup: (slice) => <EmailSignup slice={slice} />,
                       },
                     })}
                   </GridColumn>

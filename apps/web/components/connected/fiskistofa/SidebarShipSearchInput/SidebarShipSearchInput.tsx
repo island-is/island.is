@@ -9,7 +9,7 @@ interface SidebarShipSearchInputProps {
   label?: string
 }
 
-export const SidebarShipSearchInput = ({
+const SidebarShipSearchInput = ({
   shipDetailsHref = '/v/maelabord-fiskistofu',
   shipSearchHref = '/s/fiskistofa/skipaleit',
   placeholder = 'Skipaskrárnúmer eða nafn',
@@ -68,3 +68,5 @@ export const SidebarShipSearchInput = ({
     </Box>
   )
 }
+
+export default SidebarShipSearchInput

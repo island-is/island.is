@@ -10,8 +10,7 @@ import {
   Tabs,
   Text,
 } from '@island.is/island-ui/core'
-import { richText, Slice as SliceType } from '@island.is/island-ui/contentful'
-import { PowerBiSlice } from '../PowerBiSlice'
+import { webRichText } from '@island.is/web/utils/richText'
 
 import * as styles from '@island.is/web/screens/Organization/Organization.css'
 
@@ -80,14 +79,7 @@ export const TabSectionSlice: React.FC<SliceProps> = ({
                     <Text variant="h2" as="h2" marginBottom={3}>
                       {tab.contentTitle}
                     </Text>
-                    {tab.body &&
-                      richText(tab.body as SliceType[], {
-                        renderComponent: {
-                          PowerBiSlice: (slice) => (
-                            <PowerBiSlice slice={slice} />
-                          ),
-                        },
-                      })}
+                    {tab.body && webRichText(tab.body)}
                   </Box>
                 </GridColumn>
               </GridRow>

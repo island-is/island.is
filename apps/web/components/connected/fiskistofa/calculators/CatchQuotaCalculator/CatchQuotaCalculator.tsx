@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useMachine } from '@xstate/react'
 import cn from 'classnames'
@@ -10,8 +11,8 @@ import {
   Tag,
   Text,
 } from '@island.is/island-ui/core'
+import { useNamespace } from '@island.is/web/hooks'
 import { FiskistofaExtendedCatchQuotaCategory as ExtendedCatchQuotaCategory } from '@island.is/api/schema'
-import { useLocalization } from '../../../../utils'
 import {
   formattedNumberStringToNumber,
   generateTimePeriodOptions,
@@ -23,7 +24,6 @@ import {
 import { Context, machine, Event as EventType } from './machine'
 
 import * as styles from './CatchQuotaCalculator.css'
-import { useRouter } from 'next/router'
 
 const QUOTA_CHANGE_DEBOUNCE_TIME = 1000
 
@@ -87,7 +87,7 @@ interface CatchQuotaCalculatorProps {
 
 const CatchQuotaCalculator = ({ namespace }: CatchQuotaCalculatorProps) => {
   const timePeriodOptions = useMemo(() => generateTimePeriodOptions(), [])
-  const n = useLocalization(namespace)
+  const n = useNamespace(namespace)
   const [selectedTimePeriod, setSelectedTimePeriod] = useState(
     timePeriodOptions[0],
   )

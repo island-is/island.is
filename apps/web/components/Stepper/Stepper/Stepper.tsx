@@ -14,7 +14,7 @@ import {
   GridContainer,
 } from '@island.is/island-ui/core'
 import { Webreader } from '@island.is/web/components'
-import { richText, SliceType } from '@island.is/island-ui/contentful'
+import { SliceType } from '@island.is/island-ui/contentful'
 import { useI18n } from '@island.is/web/i18n'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { Stepper as StepperSchema } from '@island.is/web/graphql/schema'
@@ -39,6 +39,7 @@ import {
 } from '../utils'
 
 import * as styles from './Stepper.css'
+import { webRichText } from '@island.is/web/utils/richText'
 
 const ANSWER_DELIMITER = ','
 export const STEPPER_HELPER_ENABLED_KEY = 'show-stepper-config-helper'
@@ -373,7 +374,7 @@ const Stepper = ({
         }
       }}
     >
-      {richText(currentStep.subtitle as SliceType[])}
+      {webRichText(currentStep.subtitle as SliceType[])}
     </Box>
   )
 

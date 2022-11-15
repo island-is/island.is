@@ -29,6 +29,7 @@ import {
   HeadWithSocialSharing,
   LiveChatIncChatPanel,
   Sticky,
+  SidebarShipSearchInput,
 } from '@island.is/web/components'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { useNamespace } from '@island.is/web/hooks'

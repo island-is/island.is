@@ -1,6 +1,6 @@
-import React from 'react'
 import cn from 'classnames'
 import { BLOCKS } from '@contentful/rich-text-types'
+
 import {
   Box,
   GridColumn,
@@ -10,9 +10,10 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { FooterItem } from '@island.is/web/graphql/schema'
-import { richText, SliceType } from '@island.is/island-ui/contentful'
-import { theme } from '@island.is/island-ui/theme'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
+import { theme } from '@island.is/island-ui/theme'
+import { SliceType } from '@island.is/island-ui/contentful'
+import { webRichText } from '@island.is/web/utils/richText'
 
 import * as styles from './FiskistofaFooter.css'
 
@@ -44,7 +45,7 @@ export const FiskistofaFooter = ({ footerItems }: FiskistofaFooterProps) => {
                   <Text fontWeight="semiBold" marginBottom={2}>
                     <Hyphen>{item.title}</Hyphen>
                   </Text>
-                  {richText(item.content as SliceType[], {
+                  {webRichText(item.content as SliceType[], {
                     renderNode: {
                       [BLOCKS.PARAGRAPH]: (_node, children) => (
                         <Text
@@ -65,7 +66,7 @@ export const FiskistofaFooter = ({ footerItems }: FiskistofaFooterProps) => {
                   className={styles.linkContainer}
                   paddingTop={[2, 2, 0]}
                 >
-                  {richText(footerItems[3].content as SliceType[], {
+                  {webRichText(footerItems[3].content as SliceType[], {
                     renderNode: {
                       [BLOCKS.PARAGRAPH]: (_node, children) => (
                         <Text variant={'eyebrow'} fontWeight={'medium'}>

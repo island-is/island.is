@@ -4,11 +4,6 @@ import {
   GeneralPetitionLists,
   RealEstateAgentsList,
   LawyersList,
-  ShipSearch,
-  SidebarShipSearchInput,
-  StraddlingStockCalculator,
-  CatchQuotaCalculator,
-  SelectedShip,
 } from '@island.is/shared/connected'
 import { Image } from '../Image/Image'
 import FaqList from '../FaqList/FaqList'
@@ -22,7 +17,7 @@ import { TeamList } from '../TeamList/TeamList'
 import { ContactUs } from '../ContactUs/ContactUs'
 import { Location } from '../Location/Location'
 
-const renderConnectedComponent = (slice) => {
+export const renderConnectedComponent = (slice) => {
   const data = slice.json
 
   switch (slice.componentType) {
@@ -43,16 +38,6 @@ const renderConnectedComponent = (slice) => {
       return <RealEstateAgentsList slice={slice} />
     case 'Lögmenn/Lawyers':
       return <LawyersList slice={slice} />
-    case 'Fiskistofa/ShipSearch':
-      return <ShipSearch {...data} />
-    case 'Fiskistofa/ShipSearchSidebarInput':
-      return <SidebarShipSearchInput {...data} />
-    case 'Fiskistofa/StraddlingStockCalculator':
-      return <StraddlingStockCalculator namespace={data ?? {}} />
-    case 'Fiskistofa/CatchQuotaCalculator':
-      return <CatchQuotaCalculator namespace={data ?? {}} />
-    case 'Fiskistofa/SelectedShip':
-      return <SelectedShip />
     default:
       break
   }
