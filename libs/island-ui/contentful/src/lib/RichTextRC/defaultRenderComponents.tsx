@@ -41,9 +41,9 @@ const renderConnectedComponent = (slice) => {
     case 'Lögmenn/Lawyers':
       return <LawyersList slice={slice} />
     case 'Fiskistofa/ShipSearch':
-      return <ShipSearch />
+      return <ShipSearch {...data} />
     case 'Fiskistofa/ShipSearchSidebarInput':
-      return <SidebarShipSearchInput />
+      return <SidebarShipSearchInput {...data} />
     default:
       break
   }

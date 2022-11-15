@@ -14,10 +14,14 @@ import { GET_SHIPS_QUERY } from './queries'
 
 interface ShipSearchProps {
   shipDetailsHref?: string
+  searchStringIsTooShort?: string
+  resultsFound?: string
 }
 
 export const ShipSearch = ({
   shipDetailsHref = '/s/fiskistofa/skip',
+  searchStringIsTooShort = 'Leitarstrengur þarf að vera a.m.k. 2 stafir',
+  resultsFound = 'Fjöldi skipa:',
 }: ShipSearchProps) => {
   const [nameInput, setNameInput] = useState('')
   const [nameInputDuringLastSearch, setNameInputDuringLastSearch] = useState('')
@@ -37,19 +41,16 @@ export const ShipSearch = ({
   useEffect(() => {
     if (router?.query?.name) {
       setNameInput(router.query.name as string)
-      setNameInputDuringLastSearch(router.query.name as string)
-      loadShips({
-        variables: { input: { shipName: router.query.name as string } },
-      })
+      handleShipSearch(router.query.name as string)
     }
   }, [router?.query?.name])
 
   const ships = data?.getShips ?? ([] as ShipBasicInfo[])
 
-  const handleShipSearch = () => {
+  const handleShipSearch = (nameInput: string) => {
     const nameInputIsNumber = !isNaN(Number(nameInput)) && nameInput.length > 0
     if (!nameInputIsNumber && nameInput.length < 2) {
-      setInputError('Leitarstrengur þarf að vera a.m.k. 2 stafir')
+      setInputError(searchStringIsTooShort)
       return
     } else {
       setInputError('')
@@ -79,7 +80,7 @@ export const ShipSearch = ({
         errorMessage={inputError}
         onKeyDown={(ev) => {
           if (ev.key === 'Enter') {
-            handleShipSearch()
+            handleShipSearch(nameInput)
           }
         }}
       />
@@ -88,7 +89,7 @@ export const ShipSearch = ({
           disabled={
             nameInput === nameInputDuringLastSearch && nameInput.length > 0
           }
-          onClick={handleShipSearch}
+          onClick={() => handleShipSearch(nameInput)}
         >
           Leita
         </Button>
@@ -116,35 +117,40 @@ export const ShipSearch = ({
       )}
 
       {ships.length > 0 && (
-        <T.Table>
-          <T.Head>
-            <T.Row>
-              <T.HeadData>Skipnr.</T.HeadData>
-              <T.HeadData>Nafn</T.HeadData>
-              <T.HeadData>Útgerðarflokkur</T.HeadData>
-              <T.HeadData>Útgerð</T.HeadData>
-              <T.HeadData>Heimahöfn</T.HeadData>
-            </T.Row>
-          </T.Head>
-          <T.Body>
-            {ships.map((ship) => {
-              const href = getShipDetailsHref(ship.id)
-              return (
-                <T.Row key={ship.id}>
-                  <T.Data>
-                    <a href={href}>{ship.id}</a>
-                  </T.Data>
-                  <T.Data>
-                    <a href={href}>{ship.name}</a>
-                  </T.Data>
-                  <T.Data>{ship.shippingCompany}</T.Data>
-                  <T.Data>{ship.shippingClass}</T.Data>
-                  <T.Data>{ship.homePort}</T.Data>
-                </T.Row>
-              )
-            })}
-          </T.Body>
-        </T.Table>
+        <>
+          <Text color="blue600">
+            {resultsFound} {ships.length}
+          </Text>
+          <T.Table>
+            <T.Head>
+              <T.Row>
+                <T.HeadData>Skipnr.</T.HeadData>
+                <T.HeadData>Nafn</T.HeadData>
+                <T.HeadData>Útgerðarflokkur</T.HeadData>
+                <T.HeadData>Útgerð</T.HeadData>
+                <T.HeadData>Heimahöfn</T.HeadData>
+              </T.Row>
+            </T.Head>
+            <T.Body>
+              {ships.map((ship) => {
+                const href = getShipDetailsHref(ship.id)
+                return (
+                  <T.Row key={ship.id}>
+                    <T.Data>
+                      <a href={href}>{ship.id}</a>
+                    </T.Data>
+                    <T.Data>
+                      <a href={href}>{ship.name}</a>
+                    </T.Data>
+                    <T.Data>{ship.shippingCompany}</T.Data>
+                    <T.Data>{ship.shippingClass}</T.Data>
+                    <T.Data>{ship.homePort}</T.Data>
+                  </T.Row>
+                )
+              })}
+            </T.Body>
+          </T.Table>
+        </>
       )}
     </Box>
   )

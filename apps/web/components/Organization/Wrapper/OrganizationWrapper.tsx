@@ -34,6 +34,7 @@ import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { useNamespace } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import { WatsonChatPanel } from '@island.is/web/components'
+import { SidebarShipSearchInput } from '@island.is/shared/connected'
 
 import { SyslumennHeader, SyslumennFooter } from './Themes/SyslumennTheme'
 import {
@@ -431,6 +432,21 @@ const getActiveNavigationItemTitle = (
   }
 }
 
+const renderConnectedComponent = (slice) => {
+  if (!slice?.componentType) return null
+
+  switch (slice.componentType) {
+    case 'LatestNewsCard':
+      return (
+        <LatestNewsCardConnectedComponent key={slice?.id} {...slice?.json} />
+      )
+    case 'Fiskistofa/ShipSearchSidebarInput':
+      return <SidebarShipSearchInput key={slice?.id} {...slice?.json} />
+    default:
+      return null
+  }
+}
+
 export const OrganizationWrapper: React.FC<WrapperProps> = ({
   pageTitle,
   pageDescription,
@@ -537,17 +553,8 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                         )
                       }
 
-                      if (
-                        card.__typename === 'ConnectedComponent' &&
-                        (card.type === 'LatestNewsCard' ||
-                          card['componentType'] === 'LatestNewsCard')
-                      ) {
-                        return (
-                          <LatestNewsCardConnectedComponent
-                            key={card.id}
-                            {...card.json}
-                          />
-                        )
+                      if (card.__typename === 'ConnectedComponent') {
+                        return renderConnectedComponent(card)
                       }
 
                       return null
