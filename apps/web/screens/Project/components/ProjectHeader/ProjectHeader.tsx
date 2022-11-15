@@ -25,6 +25,8 @@ export const ProjectHeader = ({ projectPage }: ProjectHeaderProps) => {
           headerImageObjectFit="contain"
         />
       )
+    case 'maelabord-fiskistofu':
+      return null
     default:
       return <DefaultProjectHeader projectPage={projectPage} />
   }

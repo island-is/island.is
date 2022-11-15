@@ -30,6 +30,10 @@ export const GET_PROJECT_PAGE_QUERY = gql`
           url
         }
       }
+      backLink {
+        text
+        url
+      }   
       subtitle
       intro
       content {

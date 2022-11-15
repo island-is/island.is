@@ -709,8 +709,15 @@ export const nestedFields = `
   }
   ... on TabSection {
     ...TabSectionFields 
-    body {
-      ...AllSlices
+    tabs {
+      tabTitle
+      contentTitle
+      image {
+        ...ImageFields
+      }
+      body {
+        ...AllSlices
+      }
     }
   }
 `

@@ -12,6 +12,7 @@ import { mapStepper, Stepper } from './stepper.model'
 import { mapImage, Image } from './image.model'
 import { LinkGroup, mapLinkGroup } from './linkGroup.model'
 import { FooterItem, mapFooterItem } from './footerItem.model'
+import { Link, mapLink } from './link.model'
 
 @ObjectType()
 export class ProjectPage {
@@ -71,6 +72,9 @@ export class ProjectPage {
 
   @Field(() => [FooterItem], { nullable: true })
   footerItems?: FooterItem[]
+
+  @Field(() => Link, { nullable: true })
+  backLink?: Link | null
 }
 
 export const mapProjectPage = ({ sys, fields }: IProjectPage): ProjectPage => ({
@@ -103,4 +107,5 @@ export const mapProjectPage = ({ sys, fields }: IProjectPage): ProjectPage => ({
   defaultHeaderBackgroundColor: fields.defaultHeaderBackgroundColor ?? '',
   featuredDescription: fields.featuredDescription ?? '',
   footerItems: fields.footerItems ? fields.footerItems.map(mapFooterItem) : [],
+  backLink: fields.backLink ? mapLink(fields.backLink) : null,
 })
