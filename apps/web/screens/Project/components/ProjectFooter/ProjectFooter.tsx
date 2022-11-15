@@ -7,6 +7,10 @@ const OpinberNyskopunFooter = dynamic(() =>
   ),
 )
 
+const FiskistofaFooter = dynamic(() =>
+  import('@island.is/web/components').then((mod) => mod.FiskistofaFooter),
+)
+
 interface ProjectFooterProps {
   projectPage: ProjectPage
 }
@@ -17,6 +21,8 @@ export const ProjectFooter = ({ projectPage }: ProjectFooterProps) => {
   switch (projectPage.theme) {
     case 'opinbernyskopun':
       return <OpinberNyskopunFooter footerItems={footerItems} />
+    case 'maelabord-fiskistofu':
+      return <FiskistofaFooter footerItems={footerItems} />
     default:
       return null
   }
