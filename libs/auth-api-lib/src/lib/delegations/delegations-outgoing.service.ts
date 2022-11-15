@@ -185,7 +185,9 @@ export class DelegationsOutgoingService {
       createDelegation.scopes,
     )
 
-    const newDelegation = await this.findById(user, delegation.id)
+    const newDelegation = await this.findOneInternal(user, {
+      id: delegation.id,
+    })
 
     if (!newDelegation) {
       throw new InternalServerErrorException(
@@ -294,6 +296,7 @@ export class DelegationsOutgoingService {
   ): Promise<DelegationDTO | null> {
     const delegation = await this.delegationModel.findOne({
       where,
+      useMaster: true,
       include: [
         {
           model: DelegationScope,
