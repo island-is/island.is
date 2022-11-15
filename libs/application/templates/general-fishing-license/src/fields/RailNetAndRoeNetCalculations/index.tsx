@@ -34,10 +34,12 @@ export const RailNetAndRoeNetCalculations: FC<FieldBaseProps> = ({
     <Box marginTop={6}>
       <Box>
         <Text fontWeight="semiBold" marginBottom={2}>
-          Veiðifæri
+          {formatMessage(fishingLicenseFurtherInformation.labels.railAndRoenet)}
         </Text>
         <Text marginBottom={2}>
-          Athugið að samtals teinalengd má ekki vera hærri en 7500 metrar
+          {formatMessage(
+            fishingLicenseFurtherInformation.fieldInformation.railAndRoenet,
+          )}
         </Text>
       </Box>
       <Box display="flex" justifyContent="spaceBetween">

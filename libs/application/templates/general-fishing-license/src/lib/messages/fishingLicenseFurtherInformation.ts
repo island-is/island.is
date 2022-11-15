@@ -40,7 +40,13 @@ export const fishingLicenseFurtherInformation = {
     area: {
       id: 'gfl.application:fishingLicenseFurtherInformation.labels.attachments',
       defaultMessage: 'Veiðisvæði',
-      description: 'Area', // TODO
+      description: 'Area',
+    },
+    railAndRoenet: {
+      id:
+        'gfl.application:fishingLicenseFurtherInformation.labels.railAndRoenet',
+      defaultMessage: 'Veiðifæri',
+      description: 'Railnet and roenet',
     },
     roenet: {
       id: 'gfl.application:fishingLicenseFurtherInformation.labels.roenet',
@@ -72,6 +78,14 @@ export const fishingLicenseFurtherInformation = {
         'gfl.application:fishingLicenseFurtherInformation.fieldInformation.area',
       defaultMessage: '',
       description: '',
+    },
+    railAndRoenet: {
+      id:
+        'gfl.application:fishingLicenseFurtherInformation.fieldInformation.railAndRoenet',
+      defaultMessage:
+        'Athugið að samtals teinalengd má ekki vera hærri en 7500 metrar',
+      description:
+        'Please note that the total railnet length cannot exceed 7500 meters',
     },
   }),
   placeholders: defineMessages({
