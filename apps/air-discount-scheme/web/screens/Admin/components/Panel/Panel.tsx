@@ -107,13 +107,6 @@ function Panel({ flightLegs }: PropTypes) {
                   .-
                 </Typography>
               </Data>
-              <Data alignRight>
-                <Typography color="blue400" variant="h4">
-                  {flightLeg.flight.explicitBy
-                    ? flightLeg.flight.explicitBy
-                    : '---'}
-                </Typography>
-              </Data>
             </Row>
           ))}
         </Body>

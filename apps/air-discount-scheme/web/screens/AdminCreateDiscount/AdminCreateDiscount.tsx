@@ -41,6 +41,7 @@ const AdminCreateDiscount: Screen = () => {
   const [address, setAddress] = useState('')
   const [postalcode, setPostalcode] = useState('')
   const [city, setCity] = useState('')
+  const [comment, setComment] = useState('')
 
   const [discountCode, setDiscountCode] = useState('')
 
@@ -150,6 +151,15 @@ const AdminCreateDiscount: Screen = () => {
                   }}
                 />
 
+                <Input
+                  name="comment"
+                  label="Athugasemd"
+                  required
+                  onChange={(e) => {
+                    setComment(e.target.value)
+                  }}
+                />
+
                 <Button
                   disabled={[
                     nationalId,
@@ -159,6 +169,7 @@ const AdminCreateDiscount: Screen = () => {
                     address,
                     postalcode,
                     city,
+                    comment,
                   ].some((val) => !val.length)}
                   onClick={() => setShowModal(true)}
                 >
@@ -186,6 +197,7 @@ const AdminCreateDiscount: Screen = () => {
                 address,
                 postalcode: parseInt(postalcode, 10),
                 city,
+                comment,
               },
             },
           }).then((data) => {

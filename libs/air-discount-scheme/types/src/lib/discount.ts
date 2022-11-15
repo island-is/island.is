@@ -3,7 +3,6 @@ export type ConnectionDiscountCode = {
   flightId: string
   flightDesc: string
   validUntil: string
-  explicitBy: string
 }
 
 export interface Discount {
@@ -11,5 +10,15 @@ export interface Discount {
   connectionDiscountCodes: ConnectionDiscountCode[]
   nationalId: string
   expiresIn: number
-  explicitBy: string
+}
+
+export interface ExplicitCode {
+  id: string
+  code: string
+  employeeId: string
+  customerId: string
+  flightId?: string
+  comment: string
+  created: Date
+  modified: Date
 }

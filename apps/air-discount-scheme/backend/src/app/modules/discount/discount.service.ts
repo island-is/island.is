@@ -1,7 +1,7 @@
 import { uuid } from 'uuidv4'
 import { Inject, Injectable, CACHE_MANAGER } from '@nestjs/common'
 
-import { Discount } from './discount.model'
+import { Discount, ExplicitCode } from './discount.model'
 import { Flight } from '../flight'
 import {
   CONNECTING_FLIGHT_GRACE_PERIOD,
@@ -9,13 +9,13 @@ import {
 } from '../flight/flight.service'
 import { ConnectionDiscountCode } from '@island.is/air-discount-scheme/types'
 import { User } from '../user/user.model'
+import { InjectModel } from '@nestjs/sequelize'
 
 interface CachedDiscount {
   user: User
   discountCode: string
   connectionDiscountCodes: ConnectionDiscountCode[]
   nationalId: string
-  explicitBy?: string
 }
 
 export const DISCOUNT_CODE_LENGTH = 8
@@ -29,12 +29,17 @@ const CACHE_KEYS = {
     `discount_code_lookup_${discountCode}`,
   connectionDiscountCode: (code: string) => `connection_discount_${code}`,
   flight: (flightId: string) => `discount_flight_lookup_${flightId}`,
+  explicitCode: (discountCode: string) =>
+    `explicit_code_lookup_${discountCode}`,
 }
 
 @Injectable()
 export class DiscountService {
   constructor(
     @Inject(CACHE_MANAGER) private readonly cacheManager: CacheManager,
+
+    @InjectModel(ExplicitCode)
+    private explicitModel: typeof ExplicitCode,
   ) {}
 
   private getRandomRange(min: number, max: number): number {
@@ -78,7 +83,6 @@ export class DiscountService {
     user: User,
     nationalId: string,
     connectableFlights: Flight[],
-    explicitBy = '',
   ): Promise<Discount> {
     const discountCode = this.generateDiscountCode()
     const cacheId = CACHE_KEYS.discount(uuid())
@@ -129,14 +133,11 @@ export class DiscountService {
           cacheId,
         )
 
-        const explicitBy = flight.explicitBy
-
         connectionDiscountCodes.push({
           code: connectionDiscountCode,
           flightId,
           flightDesc,
           validUntil: validUntil.toISOString(),
-          explicitBy,
         })
       }
     }
@@ -154,7 +155,6 @@ export class DiscountService {
       nationalId,
       discountCode,
       connectionDiscountCodes,
-      explicitBy,
     })
     await this.setCache<string>(CACHE_KEYS.discountCode(discountCode), cacheId)
     await this.setCache<string>(CACHE_KEYS.user(nationalId), cacheId)
@@ -165,8 +165,37 @@ export class DiscountService {
       connectionDiscountCodes,
       nationalId,
       ONE_DAY,
-      explicitBy,
     )
+  }
+
+  async createExplicitDiscountCode(
+    user: User,
+    nationalId: string,
+    connectableFlights: Flight[],
+    employeeId: string,
+    comment: string,
+  ): Promise<Discount> {
+    const discount = await this.createDiscountCode(
+      user,
+      nationalId,
+      connectableFlights,
+    )
+
+    // Create record of the explicit code
+    this.explicitModel.create({
+      code: discount.discountCode,
+      customerId: nationalId,
+      employeeId: employeeId,
+      comment,
+    })
+
+    // Flag the discount as explicit in the cache
+    const cacheId = discount.discountCode
+    const cacheKey = CACHE_KEYS.explicitCode(discount.discountCode)
+    await this.setCache<string>(cacheKey, cacheId) // cacheId pointer
+    await this.setCache<string>(cacheId, discount.discountCode) // cache value
+
+    return discount
   }
 
   async getDiscountByNationalId(nationalId: string): Promise<Discount | null> {
@@ -193,7 +222,6 @@ export class DiscountService {
       cacheValue.connectionDiscountCodes ?? [],
       nationalId,
       ttl,
-      cacheValue.explicitBy ?? '',
     )
   }
 
@@ -214,7 +242,6 @@ export class DiscountService {
       cacheValue.connectionDiscountCodes ?? [],
       cacheValue.nationalId,
       ttl,
-      cacheValue.explicitBy ?? '',
     )
   }
 
@@ -300,8 +327,25 @@ export class DiscountService {
       }
     } else {
       const discountCacheKey = CACHE_KEYS.discountCode(discountCode)
+
       const cacheId = await this.cacheManager.get(discountCacheKey)
       await this.cacheManager.del(discountCacheKey)
+
+      const explicitCacheKey = CACHE_KEYS.explicitCode(discountCode)
+      const isExplicit = await this.getCache<string>(explicitCacheKey)
+
+      if (isExplicit) {
+        this.explicitModel.update(
+          {
+            flightId,
+          },
+          {
+            where: {
+              code: discountCode,
+            },
+          },
+        )
+      }
 
       const ttl = await this.cacheManager.ttl(cacheId)
       await this.setCache<string>(CACHE_KEYS.flight(flightId), cacheId, ttl)

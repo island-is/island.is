@@ -113,6 +113,7 @@ export class PrivateDiscountController {
   }
 
   @ApiExcludeEndpoint()
+  @Scopes('@vegagerdin.is/air-discount-scheme-scope')
   @UseGuards(IdsUserGuard)
   @Post('users/createExplicitDiscountCode')
   async createExplicitDiscountCode(
@@ -150,11 +151,12 @@ export class PrivateDiscountController {
 
     const user = new User(nationalRegistryUser, fund)
 
-    const discount = await this.discountService.createDiscountCode(
+    const discount = await this.discountService.createExplicitDiscountCode(
       user,
       body.nationalId,
       unConnectedFlights,
       auth.nationalId, // For tracing who creates explicit codes
+      body.comment,
     )
 
     return discount

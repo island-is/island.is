@@ -41,4 +41,7 @@ export class CreateExplicitDiscountCodeParams {
 
   @IsString()
   readonly city!: string
+
+  @IsString()
+  readonly comment!: string
 }

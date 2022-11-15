@@ -25,4 +25,7 @@ export class CreateExplicitDiscountCodeInput {
 
   @Field((_) => String)
   city: string
+
+  @Field((_) => String)
+  comment: string
 }
