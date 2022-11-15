@@ -113,7 +113,6 @@ export const DelegationsFromMe = () => {
         </div>
       </Box>
       <AccessDeleteModal
-        id={`access-delete-modal-${delegation?.id}`}
         onClose={() => {
           setDelegation(null)
         }}
@@ -125,17 +124,8 @@ export const DelegationsFromMe = () => {
             },
           })
         }}
-        label={formatMessage(m.accessControl)}
-        title={formatMessage({
-          id: 'sp.settings-access-control:access-remove-modal-content',
-          defaultMessage: 'Ertu viss um að þú viljir eyða þessum aðgangi?',
-        })}
         isVisible={isDefined(delegation)}
         delegation={delegation as AuthCustomDelegation}
-        domain={{
-          name: delegation?.domain.displayName,
-          imgSrc: delegation?.domain.organisationLogoUrl,
-        }}
       />
     </>
   )

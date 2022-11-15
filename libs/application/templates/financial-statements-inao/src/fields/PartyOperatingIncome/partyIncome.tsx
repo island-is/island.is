@@ -43,7 +43,8 @@ export const PartyIncome = ({
         data.financialStatementsInaoTaxInfo?.[2]?.value?.toString() ?? '',
       )
     }
-  }, [data, setValue])
+    getSum()
+  }, [data, getSum, setValue])
 
   const onInputChange = debounce((fieldId: string) => {
     getSum()

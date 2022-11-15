@@ -583,6 +583,7 @@ export class CaseService {
           {
             origin: theCase.origin,
             type: theCase.type,
+            indictmentSubType: theCase.indictmentSubType,
             description: theCase.description,
             policeCaseNumbers: theCase.policeCaseNumbers,
             defenderName: theCase.defenderName,
@@ -640,6 +641,7 @@ export class CaseService {
       theCase.type,
       theCase.policeCaseNumbers,
       Boolean(theCase.parentCaseId),
+      theCase.indictmentSubType,
     )
 
     const updatedCase = (await this.update(
