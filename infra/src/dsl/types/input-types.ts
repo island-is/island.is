@@ -1,8 +1,12 @@
 import { FeatureNames } from '../features'
 import { EnvironmentConfig } from './charts'
 import { ServiceBuilder } from '../dsl'
+import { Optional } from './helpers'
 
 export type OpsEnv = 'dev' | 'staging' | 'prod'
+export type OpsEnvWithLocal = OpsEnv | 'local'
+export const localFromDev = (env: OpsEnvWithLocal): OpsEnv =>
+  env === 'local' ? 'dev' : env
 export const MissingSetting = 'Missing setting'
 export type MissingSettingType = typeof MissingSetting
 
@@ -37,9 +41,12 @@ export type HealthProbe = {
 export type Secrets = { [name: string]: string }
 
 export type EnvironmentVariableValue =
-  | {
-      [idx in OpsEnv]: ValueType
-    }
+  | Optional<
+      {
+        [idx in OpsEnvWithLocal]: ValueType
+      },
+      'local'
+    >
   | ValueType
 
 export type EnvironmentVariables = {

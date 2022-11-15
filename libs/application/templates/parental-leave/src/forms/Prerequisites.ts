@@ -267,6 +267,7 @@ export const PrerequisitesForm: Form = buildForm({
               options: [
                 {
                   value: PARENTAL_LEAVE,
+                  dataTestId: 'parental-leave',
                   label:
                     parentalLeaveFormMessages.shared
                       .applicationParentalLeaveTitle,

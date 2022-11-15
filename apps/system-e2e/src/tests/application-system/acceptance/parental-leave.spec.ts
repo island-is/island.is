@@ -24,7 +24,7 @@ const applicationSystemApi: { [env in TestEnvironment]: string } = {
   dev: getEnvironmentBaseUrl(BaseAuthority.dev),
   staging: getEnvironmentBaseUrl(BaseAuthority.staging),
   prod: getEnvironmentBaseUrl(BaseAuthority.prod),
-  local: 'http://localhost:4444',
+  local: 'http://localhost:9456',
 }
 
 test.describe('Parental leave', () => {
@@ -46,7 +46,7 @@ test.describe('Parental leave', () => {
     })
   })
   test.afterAll(async () => {
-    // await context.close()
+    await context.close()
   })
 
   test('should be able to create application', async () => {
@@ -72,6 +72,10 @@ test.describe('Parental leave', () => {
       'radio',
       label(parentalLeaveFormMessages.shared.noOptionLabel),
     ).click()
+
+    await proceed()
+
+    await findByTestId('parental-leave').click()
 
     await proceed()
 
@@ -124,11 +128,11 @@ test.describe('Parental leave', () => {
     ).click()
     await proceed()
 
-    await expect(
-      findByRole('heading', {
-        name: label(parentalLeaveFormMessages.shared.paymentInformationName),
-      }),
-    ).toBeVisible()
+    // await expect(
+    //   findByRole('heading', {
+    //     name: label(parentalLeaveFormMessages.shared.paymentInformationName),
+    //   }),
+    // ).toBeVisible()
 
     const paymentBank = findByRole('textbox', {
       name: label(parentalLeaveFormMessages.shared.paymentInformationBank),
@@ -141,13 +145,27 @@ test.describe('Parental leave', () => {
         parentalLeaveFormMessages.shared.asyncSelectSearchableHint,
       )}`,
     })
-    await pensionFund.press('ArrowDown')
+    await pensionFund.focus()
+    await page.keyboard.press('ArrowDown')
+    await page.keyboard.press('Enter')
 
-    await page.locator('#react-select-payments\\.pensionFund-option-0').click()
+    await findByRole(
+      'region',
+      label(parentalLeaveFormMessages.shared.unionName),
+    )
+      .locator(
+        locatorByRole(
+          'radio',
+          label(parentalLeaveFormMessages.shared.yesOptionLabel),
+        ),
+      )
+      .click()
     await page.locator("[data-testid='use-union']").click()
     const paymentUnion = page.locator("[data-testid='payments-union']")
     await paymentUnion.focus()
-    await paymentUnion.press('ArrowDown')
+    await page.keyboard.type('VR')
+    // await page.pause()
+    await page.keyboard.press('Enter')
     await page.locator('#react-select-payments\\.union-option-0').click()
     await page.locator("[data-testid='use-private-pension-fund']").click()
     const privatePensionFund = page.locator(
@@ -172,25 +190,37 @@ test.describe('Parental leave', () => {
     await page.locator("[data-testid='use-as-much-as-possible']").click()
     await proceed()
 
-    await findByRole('region', {
-      name: label(parentalLeaveFormMessages.personalAllowance.useFromSpouse),
-    })
-      .locator(
-        locatorByRole('radio', {
-          name: label(parentalLeaveFormMessages.shared.noOptionLabel),
-        }),
-      )
-      .click()
+    await expect(
+      findByRole('heading', {
+        name: label(parentalLeaveFormMessages.personalAllowance.useFromSpouse),
+      }),
+    ).toBeVisible()
+
+    await findByRole('radio', {
+      name: label(parentalLeaveFormMessages.shared.noOptionLabel),
+    }).click()
     await proceed()
 
-    await findByRole('region', {
-      name: label(parentalLeaveFormMessages.selfEmployed.title),
+    await expect(
+      findByRole('heading', {
+        name: label(parentalLeaveFormMessages.selfEmployed.title),
+      }),
+    ).toBeVisible()
+    await findByRole('radio', {
+      name: label(parentalLeaveFormMessages.shared.noOptionLabel),
+    }).click()
+    await expect(
+      findByRole('heading', {
+        name: label(
+          parentalLeaveFormMessages.employer
+            .isRecivingUnemploymentBenefitsTitle,
+        ),
+      }),
+    ).toBeVisible()
+    await findByRole('radio', {
+      name: label(parentalLeaveFormMessages.shared.noOptionLabel),
     })
-      .locator(
-        locatorByRole('radio', {
-          name: label(parentalLeaveFormMessages.shared.noOptionLabel),
-        }),
-      )
+      .nth(1)
       .click()
     await proceed()
 
@@ -202,6 +232,13 @@ test.describe('Parental leave', () => {
     await findByRole('textbox', {
       name: label(parentalLeaveFormMessages.employer.email),
     }).type(employer.email)
+    await proceed()
+
+    await expect(
+      findByRole('heading', {
+        name: label(parentalLeaveFormMessages.attachmentScreen.genericTitle),
+      }),
+    ).toBeVisible()
     await proceed()
 
     await expect(
@@ -303,6 +340,8 @@ test.describe('Parental leave', () => {
       await findByRole('button', {
         name: label(coreMessages.buttonApprove),
       }).click()
+    } else {
+      throw new Error('Email not found, test incomplete')
     }
   })
 })

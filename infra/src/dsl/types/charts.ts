@@ -1,5 +1,10 @@
 import { FeatureNames } from '../features'
-import { OpsEnv, ServiceDefinition, ServiceDefinitionCore } from './input-types'
+import {
+  OpsEnv,
+  OpsEnvWithLocal,
+  ServiceDefinition,
+  ServiceDefinitionCore,
+} from './input-types'
 import { ServiceBuilder } from '../dsl'
 
 export interface DeploymentRuntime {
@@ -16,7 +21,7 @@ export interface EnvironmentConfig {
   releaseName: string
   defaultMaxReplicas: number
   defaultMinReplicas: number
-  type: OpsEnv
+  type: OpsEnvWithLocal
   featuresOn: FeatureNames[]
   awsAccountRegion: 'eu-west-1' | 'us-east-1'
   awsAccountId: string

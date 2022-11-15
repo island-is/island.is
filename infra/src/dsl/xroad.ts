@@ -30,7 +30,9 @@ export const Base = new XroadConf({
       prod: 'http://securityserver.island.is',
     },
     XROAD_BASE_PATH_WITH_ENV: {
-      dev: 'http://securityserver.dev01.devland.is/r1/IS-DEV',
+      dev: ref(
+        (h) => `${h.svc('http://securityserver.dev01.devland.is')}/r1/IS-DEV`,
+      ),
       staging: 'http://securityserver.staging01.devland.is/r1/IS-TEST',
       prod: 'http://securityserver.island.is/r1/IS',
     },

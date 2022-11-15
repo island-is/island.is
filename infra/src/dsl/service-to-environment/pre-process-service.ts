@@ -6,6 +6,7 @@ import {
   Features,
   Hash,
   IngressForEnv,
+  localFromDev,
   MissingSetting,
   PostgresInfo,
   PostgresInfoForEnv,
@@ -62,16 +63,17 @@ export const prepareServiceForEnv = (
   const { envs, errors } = getEnvVariables(serviceDef.env, env, serviceDef.name)
   const ingress = Object.entries(serviceDef.ingress).reduce(
     (acc, [name, ingress]) => {
+      const envType = localFromDev(env.type)
       return {
         ...acc,
-        ...(ingress.host[env.type] === MissingSetting
+        ...(ingress.host[envType] === MissingSetting
           ? {}
           : {
               [name]: {
-                host: ingress.host[env.type],
+                host: ingress.host[envType],
                 paths: ingress.paths,
                 public: ingress.public,
-                extraAnnotations: ingress.extraAnnotations?.[env.type],
+                extraAnnotations: ingress.extraAnnotations?.[envType],
               },
             }),
       }
@@ -231,11 +233,24 @@ function getEnvValue(
   env: EnvironmentConfig,
 ): { type: 'error' } | { type: 'success'; value: ValueType } {
   if (value === MissingSetting) return { type: 'error' }
-  if (typeof value === 'object' && value[env.type] === MissingSetting)
+  if (typeof value === 'object' && value[env.type] === MissingSetting) {
     return { type: 'error' }
-  return {
-    type: 'success',
-    value: typeof value === 'object' ? value[env.type] : value,
+  } else {
+    if (
+      typeof value === 'object' &&
+      env.type === 'local' &&
+      typeof value[env.type] === 'undefined'
+    ) {
+      return {
+        type: 'success',
+        value: value.dev,
+      }
+    } else {
+      return {
+        type: 'success',
+        value: typeof value === 'object' ? value[env.type]! : value,
+      }
+    }
   }
 }
 
@@ -244,7 +259,7 @@ function getEnvExtraValues(
   env: EnvironmentConfig,
   extraValues: ExtraValues,
 ): { errors: string[]; envs: Hash } {
-  const extraEnvsForType = extraValues[env.type]
+  const extraEnvsForType = extraValues[localFromDev(env.type)]
   if (extraEnvsForType === MissingSetting) {
     return {
       envs: {},
@@ -264,7 +279,7 @@ function getEnvPostgres(
   const { host, ...rest } = { host: 'default', ...postgres }
   return {
     ...rest,
-    host: postgres.host?.[env.type],
+    host: postgres.host?.[localFromDev(env.type)],
   }
 }
 

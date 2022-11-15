@@ -1,7 +1,8 @@
 import { addXroadMock, resetMocks, wildcard } from '../../../support/wire-mocks'
-import { Response } from '@anev/ts-mountebank'
+import { HttpMethod, Response } from '@anev/ts-mountebank'
 import { EinstaklingsupplysingarToJSON } from '../../../../../../libs/clients/national-registry/v2/gen/fetch'
-import { NationalRegistry } from '../../../../../../infra/src/dsl/xroad'
+import { Labor, NationalRegistry } from '../../../../../../infra/src/dsl/xroad'
+import { PostParentalLeaveResponseToJSON } from '../../../../../../libs/clients/vmst/gen/fetch'
 
 export async function setupXroadMocks() {
   await resetMocks()
@@ -196,6 +197,35 @@ export async function setupXroadMocks() {
         },
       ],
     }),
+  )
+  await addXroadMock(
+    Labor,
+    'XROAD_VMST_API_PATH',
+    '/users/0101303019/parental-leaves/periods/length',
+    new Response().withJSONBody({
+      periodLength: 98,
+    }),
+    'base-path-with-env',
+  )
+  await addXroadMock(
+    Labor,
+    'XROAD_VMST_API_PATH',
+    '/users/0101303019/parental-leaves',
+    [
+      new Response().withJSONBody(
+        PostParentalLeaveResponseToJSON({
+          status: 'TestOK',
+        }),
+      ),
+      new Response().withJSONBody(
+        PostParentalLeaveResponseToJSON({
+          status: 'OK',
+          id: '23234',
+        }),
+      ),
+    ],
+    'base-path-with-env',
+    HttpMethod.POST,
   )
   await wildcard()
 }

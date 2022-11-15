@@ -17,7 +17,7 @@ const defaultMock = (port: number) => {
 }
 
 const mockedServices = {
-  XROAD_BASE_PATH: defaultMock(9029),
+  xroad: defaultMock(9545),
 }
 
 const mb = new Mountebank().withURL(
@@ -36,30 +36,38 @@ export const addStub = async (key: keyof typeof mockedServices, stub: Stub) => {
   await mb.createImposter(mockedServices[key].imposter)
 }
 export const wildcard = async () => {
-  mockedServices.XROAD_BASE_PATH.imposter.withStub(
+  mockedServices.xroad.imposter.withStub(
     new Stub()
-      .withPredicate(new FlexiPredicate().withMethod(HttpMethod.GET))
+      .withPredicate(new FlexiPredicate())
       .withProxy(
         new Proxy('http://host.docker.internal:8081').withMode(
           ProxyMode.ProxyAlways,
         ),
       ),
   )
-  await mb.createImposter(mockedServices['XROAD_BASE_PATH'].imposter)
+  await mb.createImposter(mockedServices.xroad.imposter)
 }
 export const addXroadMock = async (
   xroadConfig: XroadConfig,
   servicePathPrefix: string,
   api: string,
-  stub: Response,
+  stub: Response | Response[],
+  prefixType: 'only-base-path' | 'base-path-with-env' = 'only-base-path',
+  method: HttpMethod = HttpMethod.GET,
 ) => {
   // @ts-ignore
   const path = xroadConfig.getEnv()[servicePathPrefix]['dev'] as string
   const prefix = path.startsWith('r1/') ? '/' : '/r1/'
-  mockedServices.XROAD_BASE_PATH.imposter.withStub(
-    new Stub()
-      .withPredicate(new EqualPredicate().withPath(`${prefix}${path}${api}`))
-      .withResponse(stub),
+  const env = prefixType === 'base-path-with-env' ? 'IS-DEV/GOV/10003' : ''
+  const stubResponses = Array.isArray(stub) ? stub : [stub]
+  const stub1 = new Stub().withPredicate(
+    new EqualPredicate()
+      .withPath(`${prefix}${env}${path}${api}`)
+      .withMethod(method),
   )
-  await mb.createImposter(mockedServices['XROAD_BASE_PATH'].imposter)
+  for (const stub1Element of stubResponses) {
+    stub1.withResponse(stub1Element)
+  }
+  mockedServices.xroad.imposter.withStub(stub1)
+  await mb.createImposter(mockedServices['xroad'].imposter)
 }

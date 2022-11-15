@@ -12,10 +12,12 @@ import { ref } from '../dsl/dsl'
 export const renderLocalServices = async (services: string[]) => {
   const chartName = 'islandis'
   const env = 'dev'
-  let uberChart = new Localhost(Envs[Deployments[chartName][env]])
+  const envConfig = Envs[Deployments[chartName][env]]
+  envConfig.type = 'local'
+  let uberChart = new Localhost(envConfig)
   const habitat = Charts[chartName][env]
   const fullSetOfServices = await withUpstreamDependencies(
-    Envs[Deployments[chartName][env]],
+    envConfig,
     toServices(habitat),
     toServices(habitat.filter((s) => services.includes(s.name()))),
     renderers.localrun,
