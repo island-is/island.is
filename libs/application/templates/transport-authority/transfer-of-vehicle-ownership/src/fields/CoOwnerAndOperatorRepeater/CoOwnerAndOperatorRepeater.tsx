@@ -21,7 +21,7 @@ export const CoOwnerAndOperatorRepeater: FC<FieldBaseProps> = (props) => {
   const { id } = field
 
   const { fields, append, remove } = useFieldArray<CoOwnerAndOperatorField>({
-    name: id,
+    name: 'buyerCoOwnerAndOperator',
   })
 
   const handleAdd = (type: 'operator' | 'coOwner') =>

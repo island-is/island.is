@@ -6,11 +6,21 @@ import { TagVariant } from '@island.is/island-ui/core'
 import { MessageDescriptor } from '@formatjs/intl'
 import { z } from 'zod'
 
+export type ReviewCoOwnerAndOperatorField = {
+  nationalId: string
+  name: string
+  email: string
+  phone: string
+  type: 'operator' | 'coOwner'
+}
+
 export interface ReviewScreenProps {
   setStep?: (s: ReviewState) => void
   setInsurance?: (s: string) => void
   insurance?: string
   reviewerNationalId?: string
+  setCoOwnersAndOperators?: (s: ReviewCoOwnerAndOperatorField[]) => void
+  coOwnersAndOperators?: ReviewCoOwnerAndOperatorField[]
 }
 
 export type ReviewState =

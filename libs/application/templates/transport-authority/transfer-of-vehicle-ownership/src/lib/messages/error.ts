@@ -27,4 +27,9 @@ export const error = defineMessages({
     defaultMessage: 'Ekki tókst að uppfæra umsókn, vinsamlegast reynið aftur',
     description: 'Could not update the application answers',
   },
+  fillInValidInput: {
+    id: 'ta.tvo.application:error.fillInValidInput',
+    defaultMessage: 'Vinsamlegast fylltu inn gilt gildi',
+    description: 'Need to fill in valid input',
+  },
 })

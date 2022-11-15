@@ -26,6 +26,12 @@ export const information = {
         defaultMessage: 'Veldu ökutæki til eigendaskipta',
         description: 'Pick vehicle title',
       },
+      description: {
+        id: 'ta.tvo.application:information.labels.pickVehicle.description',
+        defaultMessage:
+          'Et sed ut est aliquam proin elit sed. Nunc tellus lacus sed eu pulvinar.',
+        description: 'Pick vehicle description',
+      },
       vehicle: {
         id: 'ta.tvo.application:information.labels.pickVehicle.vehicle',
         defaultMessage: 'Ökutæki',
@@ -48,6 +54,12 @@ export const information = {
         id: 'ta.tvo.application:information.labels.vehicle.title',
         defaultMessage: 'Ökutæki',
         description: 'Vehicle title',
+      },
+      description: {
+        id: 'ta.tvo.application:information.labels.vehicle.description',
+        defaultMessage:
+          'Et sed ut est aliquam proin elit sed. Nunc tellus lacus sed eu pulvinar.',
+        description: 'Vehicle description',
       },
       plate: {
         id: 'ta.tvo.application:information.labels.vehicle.plate',
@@ -86,6 +98,12 @@ export const information = {
         defaultMessage: 'Aðaleigandi',
         description: 'Main owner title',
       },
+      description: {
+        id: 'ta.tvo.application:information.labels.seller.description',
+        defaultMessage:
+          'Et sed ut est aliquam proin elit sed. Nunc tellus lacus sed eu pulvinar.',
+        description: 'Seller description',
+      },
       nationalId: {
         id: 'ta.tvo.application:information.labels.seller.nationalId',
         defaultMessage: 'Kennitala seljanda',
@@ -112,6 +130,12 @@ export const information = {
         id: 'ta.tvo.application:information.labels.coOwner.title',
         defaultMessage: 'Meðeigandi',
         description: 'Co-owner title',
+      },
+      description: {
+        id: 'ta.tvo.application:information.labels.coOwner.description',
+        defaultMessage:
+          'Et sed ut est aliquam proin elit sed. Nunc tellus lacus sed eu pulvinar.',
+        description: 'CoOwner description',
       },
       nationalId: {
         id: 'ta.tvo.application:information.labels.coOwner.nationalId',
@@ -150,6 +174,12 @@ export const information = {
         defaultMessage: 'Umráðamaður',
         description: 'Operator title',
       },
+      description: {
+        id: 'ta.tvo.application:information.labels.operator.description',
+        defaultMessage:
+          'Et sed ut est aliquam proin elit sed. Nunc tellus lacus sed eu pulvinar.',
+        description: 'Operator description',
+      },
       nationalId: {
         id: 'ta.tvo.application:information.labels.operator.nationalId',
         defaultMessage: 'Kennitala umráðamanns',
@@ -187,6 +217,12 @@ export const information = {
         defaultMessage: 'Kaupandi',
         description: 'Buyer title',
       },
+      description: {
+        id: 'ta.tvo.application:information.labels.buyer.description',
+        defaultMessage:
+          'Et sed ut est aliquam proin elit sed. Nunc tellus lacus sed eu pulvinar.',
+        description: 'Buyer description',
+      },
       nationalId: {
         id: 'ta.tvo.application:information.labels.buyer.nationalId',
         defaultMessage: 'Kennitala kaupanda',
@@ -206,6 +242,20 @@ export const information = {
         id: 'ta.tvo.application:information.labels.buyer.phone',
         defaultMessage: 'Gsm númer',
         description: 'Buyer phone number label',
+      },
+    }),
+    coOwnersAndOperators: defineMessages({
+      title: {
+        id: 'ta.tvo.application:information.labels.coOwnersAndOperators.title',
+        defaultMessage: 'Meðeigandi / umráðamaður',
+        description: 'Coowners and operators title',
+      },
+      description: {
+        id:
+          'ta.tvo.application:information.labels.coOwnersAndOperators.description',
+        defaultMessage:
+          'Et sed ut est aliquam proin elit sed. Nunc tellus lacus sed eu pulvinar. ',
+        description: 'Coowners and operators description',
       },
     }),
     mainOperator: defineMessages({

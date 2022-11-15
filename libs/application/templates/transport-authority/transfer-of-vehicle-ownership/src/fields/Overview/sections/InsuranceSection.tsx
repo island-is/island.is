@@ -8,11 +8,12 @@ import { overview } from '../../../lib/messages'
 import { ReviewGroup } from '../../ReviewGroup'
 import { ReviewScreenProps } from '../../../types'
 import { getValueViaPath } from '@island.is/application/core'
+import { hasReviewerApproved } from '../../../utils'
 
 export const InsuranceSection: FC<FieldBaseProps & ReviewScreenProps> = ({
   setStep,
   insurance = undefined,
-  reviewerNationalId,
+  reviewerNationalId = '',
   application,
 }) => {
   const { formatMessage } = useLocale()
@@ -22,8 +23,6 @@ export const InsuranceSection: FC<FieldBaseProps & ReviewScreenProps> = ({
     setStep && setStep('insurance')
   }
 
-  if (!reviewerNationalId) return null
-
   const isBuyer =
     (getValueViaPath(answers, 'buyer.nationalId', '') as string) ===
     reviewerNationalId
@@ -31,7 +30,9 @@ export const InsuranceSection: FC<FieldBaseProps & ReviewScreenProps> = ({
   return (
     <ReviewGroup
       editMessage={
-        isBuyer ? formatMessage(overview.labels.addInsuranceButton) : undefined
+        isBuyer && !hasReviewerApproved(reviewerNationalId, answers)
+          ? formatMessage(overview.labels.addInsuranceButton)
+          : undefined
       }
       isLast
       handleClick={onButtonClick}

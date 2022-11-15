@@ -12,7 +12,7 @@ import { CoOwnerAndOperator, ReviewScreenProps } from '../../../types'
 
 export const VehicleSection: FC<FieldBaseProps & ReviewScreenProps> = ({
   application,
-  reviewerNationalId,
+  reviewerNationalId = '',
 }) => {
   const { formatMessage } = useLocale()
   const { answers } = application
@@ -34,8 +34,6 @@ export const VehicleSection: FC<FieldBaseProps & ReviewScreenProps> = ({
       reviewerItems.nationalId === reviewerNationalId &&
       reviewerItems.type === 'operator',
   )
-
-  if (!reviewerNationalId) return null
 
   return (
     <ReviewGroup isLast>

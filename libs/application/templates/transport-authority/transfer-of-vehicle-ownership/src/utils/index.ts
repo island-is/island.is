@@ -6,6 +6,8 @@ export const formatIsk = (value: number): string =>
 
 export { getSelectedVehicle } from './getSelectedVehicle'
 export { getReviewSteps } from './getReviewSteps'
+export { getReviewerInfo } from './getReviewerInfo'
+export { hasReviewerApproved } from './hasReviewerApproved'
 
 export const getChargeItemCodes = (
   answers: TransferOfVehicleOwnership,

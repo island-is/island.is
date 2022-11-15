@@ -9,6 +9,7 @@ import { InputController } from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'
 import * as kennitala from 'kennitala'
 import { information, error } from '../lib/messages'
+import debounce from 'lodash/debounce'
 
 const IdentityQuery = gql`
   query IdentityQuery($input: IdentityInput!) {
@@ -23,6 +24,11 @@ interface Props {
   customId?: string
   customNationalIdLabel?: string
   customNameLabel?: string
+  onNationalIdChange?: (s: string) => void
+  onNameChange?: (s: string) => void
+  nationalIdDefaultValue?: string
+  nameDefaultValue?: string
+  errorMessage?: string
 }
 
 export const NationalIdWithName: FC<Props & FieldBaseProps> = ({
@@ -31,6 +37,11 @@ export const NationalIdWithName: FC<Props & FieldBaseProps> = ({
   customNameLabel = '',
   field,
   application,
+  onNationalIdChange,
+  onNameChange,
+  nationalIdDefaultValue,
+  nameDefaultValue,
+  errorMessage,
 }) => {
   const { id } = field
   const usedId = customId.length > 0 ? customId : id
@@ -39,21 +50,31 @@ export const NationalIdWithName: FC<Props & FieldBaseProps> = ({
   const [nationalIdInput, setNationalIdInput] = useState('')
   const nameField = `${usedId}.name`
   const nationaIdField = `${usedId}.nationalId`
-  const nameFieldErrors = getErrorViaPath(errors, nameField)
-  const nationalIdFieldErrors = getErrorViaPath(errors, nationaIdField)
+  console.log(errorMessage, nameDefaultValue)
+  const nameFieldErrors = errorMessage
+    ? nameDefaultValue?.length === 0
+      ? errorMessage
+      : undefined
+    : getErrorViaPath(errors, nameField)
+  const nationalIdFieldErrors = errorMessage
+    ? nationalIdDefaultValue?.length === 0
+      ? errorMessage
+      : undefined
+    : getErrorViaPath(errors, nationaIdField)
 
-  const defaultNationalId = getValueViaPath(
-    application.answers,
-    `${usedId}.nationalId`,
-    '',
-  )
-  const defaultName = getValueViaPath(application.answers, `${usedId}.name`, '')
+  const defaultNationalId = nationalIdDefaultValue
+    ? nationalIdDefaultValue
+    : getValueViaPath(application.answers, `${usedId}.nationalId`, '')
+  const defaultName = nameDefaultValue
+    ? nameDefaultValue
+    : getValueViaPath(application.answers, `${usedId}.name`, '')
 
   const [
     getIdentity,
     { data, loading: queryLoading, error: queryError },
   ] = useLazyQuery<Query, { input: IdentityInput }>(IdentityQuery, {
     onCompleted: (data) => {
+      onNameChange && onNameChange(data.identity?.name ?? '')
       setValue(nameField, data.identity?.name ?? undefined)
     },
   })
@@ -68,7 +89,7 @@ export const NationalIdWithName: FC<Props & FieldBaseProps> = ({
         },
       })
     }
-  }, [nationalIdInput])
+  }, [nationalIdInput, getIdentity])
 
   return (
     <Box>
@@ -85,9 +106,10 @@ export const NationalIdWithName: FC<Props & FieldBaseProps> = ({
             format="######-####"
             required
             backgroundColor="blue"
-            onChange={(v) =>
+            onChange={debounce((v) => {
               setNationalIdInput(v.target.value.replace(/\W/g, ''))
-            }
+              onNationalIdChange && onNationalIdChange(v.target.value)
+            })}
             loading={queryLoading}
             error={nationalIdFieldErrors}
           />

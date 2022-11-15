@@ -7,11 +7,12 @@ import { useLocale } from '@island.is/localization'
 import { information, overview } from '../../../lib/messages'
 import { ReviewGroup } from '../../ReviewGroup'
 import { ReviewScreenProps } from '../../../types'
+import { hasReviewerApproved } from '../../../utils'
 
 export const BuyerSection: FC<FieldBaseProps & ReviewScreenProps> = ({
   application,
   setStep,
-  reviewerNationalId,
+  reviewerNationalId = '',
 }) => {
   const { formatMessage } = useLocale()
   const { answers } = application
@@ -20,8 +21,6 @@ export const BuyerSection: FC<FieldBaseProps & ReviewScreenProps> = ({
     setStep && setStep('addPeople')
   }
 
-  if (!reviewerNationalId) return null
-
   const isBuyer =
     (getValueViaPath(answers, 'buyer.nationalId', '') as string) ===
     reviewerNationalId
@@ -29,7 +28,7 @@ export const BuyerSection: FC<FieldBaseProps & ReviewScreenProps> = ({
   return (
     <ReviewGroup
       editMessage={
-        isBuyer
+        isBuyer && !hasReviewerApproved(reviewerNationalId, answers)
           ? formatMessage(overview.labels.addCoOwnerAndOperatorButton)
           : undefined
       }
