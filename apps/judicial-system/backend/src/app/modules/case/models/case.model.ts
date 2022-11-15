@@ -24,8 +24,8 @@ import {
   CourtDocument,
   CaseOrigin,
   SubpoenaType,
-  IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
+import type { IndictmentSubtypeMap } from '@island.is/judicial-system/types'
 
 import { CaseFile } from '../../file'
 import { Institution } from '../../institution'

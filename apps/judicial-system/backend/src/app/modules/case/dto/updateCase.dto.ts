@@ -20,8 +20,8 @@ import {
   CourtDocument,
   SubpoenaType,
   CaseType,
-  IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
+import type { IndictmentSubtypeMap } from '@island.is/judicial-system/types'
 
 export class UpdateCaseDto {
   @IsOptional()
