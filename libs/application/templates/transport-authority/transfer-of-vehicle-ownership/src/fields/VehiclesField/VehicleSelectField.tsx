@@ -106,7 +106,7 @@ export const VehicleSelectField: FC<
             label: `${vehicle.make} - ${vehicle.permno}` || '',
           }
         })}
-        placeholder="Veldu ökutæki"
+        placeholder={formatMessage(information.labels.pickVehicle.placeholder)}
         backgroundColor="blue"
       />
       <Box paddingTop={3}>

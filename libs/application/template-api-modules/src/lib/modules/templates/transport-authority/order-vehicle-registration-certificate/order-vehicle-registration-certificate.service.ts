@@ -60,7 +60,7 @@ export class OrderVehicleLicensePlateService {
 
     const answers = application.answers as OrderVehicleRegistrationCertificateAnswers
 
-    this.orderVehicleRegistrationCertificateApi.requestRegistrationCardPrint(
+    await this.orderVehicleRegistrationCertificateApi.requestRegistrationCardPrint(
       auth,
       answers?.vehicle?.plate,
     )

@@ -332,10 +332,7 @@ export class TransferOfVehicleOwnershipService {
       dateOfPurchase: getDateAtNoonFromString(answers?.vehicle?.date),
       saleAmount: Number(answers?.vehicle?.salePrice) || 0,
       // Note: Insurance code 000 is when car is out of commission and is not going to be insured
-      insuranceCompanyCode:
-        answers?.insurance?.value !== '000'
-          ? answers?.insurance?.value
-          : undefined,
+      insuranceCompanyCode: answers?.insurance?.value,
       coOwners: buyerCoOwners?.map((coOwner) => ({
         ssn: coOwner.nationalId,
         email: coOwner.email,

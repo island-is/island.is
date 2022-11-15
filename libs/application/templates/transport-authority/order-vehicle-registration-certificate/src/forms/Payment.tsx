@@ -7,8 +7,12 @@ import {
   buildSubmitField,
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
-import { payment } from '../lib/messages'
-import { m } from '../lib/messagesx'
+import {
+  information,
+  externalData,
+  payment,
+  confirmation,
+} from '../lib/messages'
 
 type CreateChargeData = {
   data: {
@@ -25,7 +29,12 @@ export const Payment: Form = buildForm({
   children: [
     buildSection({
       id: 'externalData',
-      title: m.externalDataSection,
+      title: externalData.dataProvider.sectionTitle,
+      children: [],
+    }),
+    buildSection({
+      id: 'informationSection',
+      title: information.general.sectionTitle,
       children: [],
     }),
     buildSection({
@@ -94,8 +103,25 @@ export const Payment: Form = buildForm({
         buildCustomField({
           id: 'subSectionPaymentPending',
           component: 'PaymentPending',
-          title: m.confirmation,
-          condition: () => {
+          title: payment.general.sectionTitle,
+          condition: (_, externalData) => {
+            //TODOx remove, used to make testing payment easy
+            const url = window.location.href
+            const applicationId = url.substring(
+              url.lastIndexOf('/') + 1,
+              url.lastIndexOf('?'),
+            )
+            const { id: chargeId } = externalData.createCharge.data as {
+              id: string
+            }
+            console.log(
+              "curl -H 'Content-type: application/json' -X POST 'http://localhost:3333/application-payment/" +
+                applicationId +
+                '/' +
+                chargeId +
+                '\' -d \'{"status":"paid"}\'',
+            )
+
             return !!window.document.location.href.match(/\?done$/)
           },
         }),
@@ -103,7 +129,7 @@ export const Payment: Form = buildForm({
     }),
     buildSection({
       id: 'confirmation',
-      title: m.confirmation,
+      title: confirmation.general.sectionTitle,
       children: [],
     }),
   ],

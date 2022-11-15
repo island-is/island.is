@@ -53,7 +53,7 @@ export class VehicleOwnerChangeClient {
         buyerEmail: ownerChange.buyer.email,
         dateOfPurchase: ownerChange.dateOfPurchase,
         saleAmount: ownerChange.saleAmount,
-        insuranceCompanyCode: ownerChange.insuranceCompanyCode || '', //TODOx what should send in if null, Krilli is checking with SGS
+        insuranceCompanyCode: ownerChange.insuranceCompanyCode,
         useGroup: '000',
         operatorEmail: ownerChange.operators?.find((x) => x.isMainOperator)
           ?.email,
