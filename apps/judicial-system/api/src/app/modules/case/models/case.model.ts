@@ -41,7 +41,7 @@ export class Case implements TCase {
   readonly type!: CaseType
 
   @Field(() => GraphQLJSONObject, { nullable: true })
-  readonly indictmentSubTypes?: IndictmentSubtypeMap
+  readonly indictmentSubtypes?: IndictmentSubtypeMap
 
   @Field({ nullable: true })
   readonly description?: string

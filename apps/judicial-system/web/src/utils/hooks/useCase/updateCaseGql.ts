@@ -7,7 +7,7 @@ export const UpdateCaseMutation = gql`
       created
       modified
       type
-      indictmentSubTypes
+      indictmentSubtypes
       description
       state
       policeCaseNumbers

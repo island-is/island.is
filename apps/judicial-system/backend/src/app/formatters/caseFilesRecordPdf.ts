@@ -1,9 +1,8 @@
 import { FormatMessage } from '@island.is/cms-translations'
 import {
   capitalize,
-  indictmentSubTypes,
+  indictmentSubtypes,
   formatDOB,
-  caseTypes,
 } from '@island.is/judicial-system/formatters'
 
 import { caseFilesRecord } from '../messages'
@@ -122,19 +121,19 @@ export const createCaseFilesRecord = async (
     )
   }
 
-  const subTypes =
-    (theCase.indictmentSubTypes &&
-      theCase.indictmentSubTypes[policeCaseNumber]) ??
+  const subtypes =
+    (theCase.indictmentSubtypes &&
+      theCase.indictmentSubtypes[policeCaseNumber]) ??
     []
 
   pdfDocument.addText(formatMessage(caseFilesRecord.accusedOf), textFontSize, {
     bold: true,
     marginTop: 1,
-    newLine: subTypes.length === 0,
+    newLine: subtypes.length === 0,
   })
 
-  for (const subType of subTypes) {
-    pdfDocument.addText(capitalize(indictmentSubTypes[subType]), textFontSize, {
+  for (const subtype of subtypes) {
+    pdfDocument.addText(capitalize(indictmentSubtypes[subtype]), textFontSize, {
       position: { x: defendantIndent },
     })
   }

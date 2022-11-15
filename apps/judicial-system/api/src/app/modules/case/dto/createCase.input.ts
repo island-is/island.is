@@ -17,7 +17,7 @@ export class CreateCaseInput implements CreateCase {
 
   @Allow()
   @Field(() => GraphQLJSONObject, { nullable: true })
-  readonly indictmentSubTypes?: IndictmentSubtypeMap
+  readonly indictmentSubtypes?: IndictmentSubtypeMap
 
   @Allow()
   @Field({ nullable: true })

@@ -27,13 +27,13 @@ import {
   Case,
   Defendant as TDefendant,
   Gender,
-  IndictmentSubType,
+  IndictmentSubtype,
   UpdateDefendant,
 } from '@island.is/judicial-system/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   capitalize,
-  indictmentSubTypes,
+  indictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
 import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
 import { isDefendantStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
@@ -192,10 +192,10 @@ const Defendant: React.FC = () => {
 
   const options = useMemo(
     () =>
-      Object.values(IndictmentSubType)
-        .map((subType) => ({
-          label: capitalize(indictmentSubTypes[subType]),
-          value: subType,
+      Object.values(IndictmentSubtype)
+        .map((subtype) => ({
+          label: capitalize(indictmentSubtypes[subtype]),
+          value: subtype,
         }))
         .sort((a, b) => a.label.localeCompare(b.label)),
     [],
@@ -238,14 +238,14 @@ const Defendant: React.FC = () => {
             label={formatMessage(m.sections.indictmentType.label)}
             placeholder={formatMessage(m.sections.indictmentType.placeholder)}
             onChange={(selectedOption: ValueType<ReactSelectOption>) => {
-              const indictmentSubType = (selectedOption as ReactSelectOption)
-                .value as IndictmentSubType
+              const indictmentSubtype = (selectedOption as ReactSelectOption)
+                .value as IndictmentSubtype
 
               setAndSendCaseToServer(
                 [
                   {
-                    indictmentSubTypes: {
-                      [workingCase.policeCaseNumbers[0]]: [indictmentSubType],
+                    indictmentSubtypes: {
+                      [workingCase.policeCaseNumbers[0]]: [indictmentSubtype],
                     },
                     force: true,
                   },
@@ -255,16 +255,16 @@ const Defendant: React.FC = () => {
               )
             }}
             value={
-              workingCase.indictmentSubTypes &&
-              Object.keys(workingCase.indictmentSubTypes).length > 0
+              workingCase.indictmentSubtypes &&
+              Object.keys(workingCase.indictmentSubtypes).length > 0
                 ? {
                     value:
-                      IndictmentSubType[
-                        Object.entries(workingCase.indictmentSubTypes)[0][1][0]
+                      IndictmentSubtype[
+                        Object.entries(workingCase.indictmentSubtypes)[0][1][0]
                       ],
                     label: capitalize(
-                      indictmentSubTypes[
-                        Object.entries(workingCase.indictmentSubTypes)[0][1][0]
+                      indictmentSubtypes[
+                        Object.entries(workingCase.indictmentSubtypes)[0][1][0]
                       ],
                     ),
                   }

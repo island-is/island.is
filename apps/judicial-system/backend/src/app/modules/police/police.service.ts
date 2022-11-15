@@ -20,7 +20,7 @@ import {
 import {
   CaseState,
   CaseType,
-  IndictmentSubType,
+  IndictmentSubtype,
   User,
 } from '@island.is/judicial-system/types'
 
@@ -207,7 +207,7 @@ export class PoliceService {
 
   async updatePoliceCase(
     caseId: string,
-    caseType: CaseType | IndictmentSubType,
+    caseType: CaseType | IndictmentSubtype,
     caseState: CaseState,
     courtRecordPdf: string,
     policeCaseNumber: string,

@@ -84,13 +84,13 @@ export class Case extends Model {
   type!: CaseType
 
   /**********
-   * The case sub type it type is INDICTMENT - example: MINOR_ASSAULT
+   * The case subtype it type is INDICTMENT - example: MINOR_ASSAULT
    **********/
   @Column({
     type: DataType.JSON,
     allowNull: true,
   })
-  indictmentSubTypes?: IndictmentSubtypeMap
+  indictmentSubtypes?: IndictmentSubtypeMap
 
   /**********
    * A further description of the case type - optional

@@ -14,7 +14,7 @@ import {
   CaseFile,
   CaseFileState,
   CaseFileCategory,
-  IndictmentSubType,
+  IndictmentSubtype,
 } from '@island.is/judicial-system/types'
 
 export enum Operation {
@@ -130,7 +130,7 @@ export const mockAddress = faker.address.streetAddress()
 
 export const mockCase = (
   type: CaseType,
-  indictmentSubType?: IndictmentSubType,
+  indictmentSubtype?: IndictmentSubtype,
 ): Case => {
   const caseId = faker.datatype.uuid()
 
@@ -142,8 +142,8 @@ export const mockCase = (
     state: CaseState.DRAFT,
     origin: CaseOrigin.RVG,
     type,
-    indictmentSubTypes: indictmentSubType
-      ? { [policeCaseNumber]: [indictmentSubType] }
+    indictmentSubtypes: indictmentSubtype
+      ? { [policeCaseNumber]: [indictmentSubtype] }
       : undefined,
     court: makeCourt(),
     policeCaseNumbers: [policeCaseNumber],

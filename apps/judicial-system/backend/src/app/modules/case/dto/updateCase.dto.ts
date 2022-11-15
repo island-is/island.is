@@ -32,7 +32,7 @@ export class UpdateCaseDto {
   @IsOptional()
   @IsObject()
   @ApiPropertyOptional()
-  readonly indictmentSubTypes?: IndictmentSubtypeMap
+  readonly indictmentSubtypes?: IndictmentSubtypeMap
 
   @IsOptional()
   @IsString()

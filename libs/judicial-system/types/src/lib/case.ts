@@ -37,7 +37,7 @@ export enum CaseType {
   VIDEO_RECORDING_EQUIPMENT = 'VIDEO_RECORDING_EQUIPMENT',
 }
 
-export enum IndictmentSubType {
+export enum IndictmentSubtype {
   AGGRAVATED_ASSAULT = 'AGGRAVATED_ASSAULT',
   ALCOHOL_LAWS = 'ALCOHOL_LAWS',
   ASSAULT_LEADING_TO_DEATH = 'ASSAULT_LEADING_TO_DEATH',
@@ -75,7 +75,7 @@ export enum IndictmentSubType {
 }
 
 export interface IndictmentSubtypeMap {
-  [key: string]: IndictmentSubType[]
+  [key: string]: IndictmentSubtype[]
 }
 
 export enum CaseState {
@@ -153,7 +153,7 @@ export interface Case {
   modified: string
   origin: CaseOrigin
   type: CaseType
-  indictmentSubTypes?: IndictmentSubtypeMap
+  indictmentSubtypes?: IndictmentSubtypeMap
   description?: string
   state: CaseState
   policeCaseNumbers: string[]
@@ -237,7 +237,7 @@ export interface Case {
 export type CreateCase = Pick<
   Case,
   | 'type'
-  | 'indictmentSubTypes'
+  | 'indictmentSubtypes'
   | 'description'
   | 'policeCaseNumbers'
   | 'defenderName'
@@ -251,7 +251,7 @@ export type CreateCase = Pick<
 export interface UpdateCase
   extends Pick<
     Case,
-    | 'indictmentSubTypes'
+    | 'indictmentSubtypes'
     | 'description'
     | 'defenderName'
     | 'defenderNationalId'

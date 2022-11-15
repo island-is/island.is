@@ -24,7 +24,7 @@ export class CreateCaseDto {
   @IsOptional()
   @IsObject()
   @ApiPropertyOptional()
-  readonly indictmentSubTypes?: IndictmentSubtypeMap
+  readonly indictmentSubtypes?: IndictmentSubtypeMap
 
   @IsOptional()
   @IsString()

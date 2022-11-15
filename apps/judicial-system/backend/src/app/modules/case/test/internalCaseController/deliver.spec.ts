@@ -6,7 +6,7 @@ import {
   CaseOrigin,
   CaseState,
   CaseType,
-  IndictmentSubType,
+  IndictmentSubtype,
 } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
@@ -196,9 +196,9 @@ describe('InternalCaseController - Deliver', () => {
     })
   })
 
-  describe.each(Object.values(IndictmentSubType))(
+  describe.each(Object.values(IndictmentSubtype))(
     'deliver S case %s',
-    (indictmentSubType) => {
+    (indictmentSubtype) => {
       const caseId = uuid()
       const caseType = CaseType.INDICTMENT
       const caseState = CaseState.ACCEPTED
@@ -220,7 +220,7 @@ describe('InternalCaseController - Deliver', () => {
         id: caseId,
         origin: CaseOrigin.LOKE,
         type: caseType,
-        indictmentSubTypes: { [policeCaseNumber]: [indictmentSubType] },
+        indictmentSubtypes: { [policeCaseNumber]: [indictmentSubtype] },
         state: caseState,
         courtId,
         courtCaseNumber,
@@ -259,7 +259,7 @@ describe('InternalCaseController - Deliver', () => {
         it('should update the police case', async () => {
           expect(mockPoliceService.updatePoliceCase).toHaveBeenCalledWith(
             caseId,
-            indictmentSubType,
+            indictmentSubtype,
             caseState,
             'test court record',
             policeCaseNumber,

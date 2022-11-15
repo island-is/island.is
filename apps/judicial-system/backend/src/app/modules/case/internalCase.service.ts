@@ -22,7 +22,7 @@ import {
   CaseFileState,
   CaseOrigin,
   CaseState,
-  IndictmentSubType,
+  IndictmentSubtype,
   isIndictmentCase,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -421,9 +421,9 @@ export class InternalCaseService {
         const caseType =
           isIndictmentCase(theCase.type) &&
           theCase.policeCaseNumbers.length > 0 &&
-          theCase.indictmentSubTypes &&
-          theCase.indictmentSubTypes[theCase.policeCaseNumbers[0]]
-            ? theCase.indictmentSubTypes[theCase.policeCaseNumbers[0]][0]
+          theCase.indictmentSubtypes &&
+          theCase.indictmentSubtypes[theCase.policeCaseNumbers[0]]
+            ? theCase.indictmentSubtypes[theCase.policeCaseNumbers[0]][0]
             : theCase.type
 
         return this.policeService.updatePoliceCase(

@@ -6,7 +6,7 @@ module.exports = {
       queryInterface
         .addColumn(
           'case',
-          'indictment_sub_types',
+          'indictment_subtypes',
           { type: Sequelize.JSON, allowNull: true },
           { transaction },
         )
@@ -28,7 +28,7 @@ module.exports = {
             await queryInterface.bulkUpdate(
               'case',
               {
-                indictment_sub_types: {
+                indictment_subtypes: {
                   [theCase.police_case_numbers[0]]: [
                     theCase.indictment_sub_type,
                   ],
@@ -102,34 +102,34 @@ module.exports = {
         )
         .then(() =>
           queryInterface.sequelize.query(
-            `SELECT id, indictment_sub_types FROM "case"
-             WHERE type = 'INDICTMENT' AND indictment_sub_types IS NOT NULL`,
+            `SELECT id, indictment_subtypes FROM "case"
+             WHERE type = 'INDICTMENT' AND indictment_subtypes IS NOT NULL`,
             { transaction },
           ),
         )
         .then(async ([cases]) => {
           for (const theCase of cases) {
-            let indictmentSubType = null
+            let indictmentSubtype = null
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             for (const [_, value] of Object.entries(
-              theCase.indictment_sub_types,
+              theCase.indictment_subtypes,
             )) {
               if (value && value.length > 0) {
-                indictmentSubType = value[0]
+                indictmentSubtype = value[0]
                 break
               }
             }
 
             await queryInterface.bulkUpdate(
               'case',
-              { indictment_sub_type: indictmentSubType },
+              { indictment_sub_type: indictmentSubtype },
               { id: [theCase.id] },
               { transaction },
             )
           }
         })
         .then(() =>
-          queryInterface.removeColumn('case', 'indictment_sub_types', {
+          queryInterface.removeColumn('case', 'indictment_subtypes', {
             transaction,
           }),
         ),

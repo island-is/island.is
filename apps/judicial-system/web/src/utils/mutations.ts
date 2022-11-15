@@ -19,7 +19,7 @@ export const CasesQuery = gql`
       created
       modified
       type
-      indictmentSubTypes
+      indictmentSubtypes
       state
       policeCaseNumbers
       defendants {
