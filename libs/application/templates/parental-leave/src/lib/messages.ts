@@ -385,21 +385,21 @@ export const parentalLeaveFormMessages: MessageDir = {
     multipleBirthsDaysTitle: {
       id: 'pl.application:request.multipleBirths.daysTitle',
       defaultMessage: 'Sameiginlegur réttur vegna fjölbura',
-      description: 'Joint entitlement for multiple births ',
+      description: 'Joint entitlement due to multiple births ',
     },
     multipleBirthsDaysDescription: {
       id: 'pl.application:multipleBirths.daysDescription',
       defaultMessage:
         'Fyrir hvert barn sem fæðist bætist við 3 mánaða sameiginlegur réttur foreldra til fæðingarorlofs',
       description:
-        'For each child the parents’ joint entitlement to a maternity/paternity leave is extended by 3 months.',
+        'For each child the parents’ joint entitlement to a parental leave is extended by 3 months.',
     },
     multipleBirthsDaysDescriptionGrant: {
       id: 'pl.application:multipleBirths.daysDescription.grant',
       defaultMessage:
         'Fyrir hvert barn sem fæðist bætist við 3 mánaða sameiginlegur réttur foreldra til fæðingarstyrks',
       description:
-        'For each child the parents’ joint entitlement to a maternity/paternity grant is extended by 3 months.',
+        'For each child the parents’ joint entitlement to a parental grant is extended by 3 months.',
     },
     requestMultipleBirthsDay: {
       id: 'pl.application:request.multipleBirths.day',
@@ -418,7 +418,7 @@ export const parentalLeaveFormMessages: MessageDir = {
     yourMultipleBirthsRightsInMonths: {
       id: 'pl.application:your.multipleBirths.rights.inMonths',
       defaultMessage: '{months} mánuðir – sameiginlegur réttur vegna fjölbura',
-      description: '{months} months – joint entitlement for multiple births',
+      description: '{months} months – joint entitlement due to multiple births',
     },
     requestRightsDaysTitle: {
       id: 'pl.application:request.rights.daysTitle',
