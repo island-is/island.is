@@ -1,9 +1,5 @@
 import { createStore } from '@island.is/shared/mocking'
-import {
-  GenericUserLicense,
-  GetGenericLicenseInput,
-  GetGenericLicensesInput,
-} from '../../types'
+import { GenericUserLicense, GetGenericLicenseInput } from '../../types'
 import { genericUserLicense, genericUserLicenses } from './factories'
 
 export const store = createStore(() => {
@@ -17,7 +13,7 @@ export const store = createStore(() => {
     )
   }
 
-  const getLicenses = (input?: GetGenericLicensesInput) => {
+  const getLicenses = () => {
     if (!licenses.length) {
       licenses = genericUserLicenses(
         ['AdrLicense', 'FirearmLicense', 'DriversLicense', 'MachineLicense'] ??

@@ -31,6 +31,10 @@ The Api and Xroad services need to be running
 - XRoad
   `./scripts/run-xroad-proxy.sh`
 
+### Mocking
+
+Mocks are available if switched on.
+
 ### Adding a new license
 
 1. Generate an external client that fetches the data from a 3rd party
