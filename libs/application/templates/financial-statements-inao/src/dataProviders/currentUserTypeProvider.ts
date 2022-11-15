@@ -47,7 +47,6 @@ export class CurrentUserTypeProvider extends BasicDataProvider {
   onProvideSuccess(
     result: Record<string, unknown>,
   ): SuccessfulDataProviderResult {
-    console.log('onProvideSuccess')
     return { date: new Date(), status: 'success', data: result }
   }
 }

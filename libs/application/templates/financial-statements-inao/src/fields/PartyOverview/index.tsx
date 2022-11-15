@@ -38,7 +38,6 @@ export const PartyOverview = ({
   const { errors, setError, setValue } = useFormContext()
 
   const answers = application.answers as FinancialStatementsInao
-  console.log({ answers })
   const fileName = answers.attachments?.file?.[0]?.name
   const [
     submitApplication,
@@ -176,7 +175,7 @@ export const PartyOverview = ({
           {formatMessage(m.overview)}
         </Text>
       </Box>
-      <Box background="blue100" padding={3}>
+      <Box background="blue100">
         <Controller
           name="applicationApprove"
           defaultValue={approveOverview}

@@ -98,7 +98,6 @@ export class FinancialStatementsInaoTemplateService {
       const clientType = this.financialStatementsClientService.getUserClientType(
         nationalId,
       )
-      console.log({ clientType })
       if (!clientType) {
         throw new Error('Kennitala fannst ekki í lista yfir skilaskylda aðila')
       }
