@@ -121,6 +121,8 @@ export const ABOUTIDS = {
   selectElection: 'election.selectElection',
   electionName: 'election.electionName',
   incomeLimit: 'election.incomeLimit',
+  powerOfAttorneyNationalId: 'about.powerOfAttorneyNationalId',
+  powerOfAttorneyName: 'about.powerOfAttorneyName',
 }
 
 export const OPERATINGCOST = {

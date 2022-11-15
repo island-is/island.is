@@ -166,7 +166,7 @@ export class CaseService {
       { type: MessageType.CASE_COMPLETED, caseId },
       { type: MessageType.DELIVER_COURT_RECORD_TO_COURT, caseId },
       { type: MessageType.DELIVER_SIGNED_RULING_TO_COURT, caseId },
-      { type: MessageType.SEND_RULING_NOTIFICAGTION, caseId },
+      { type: MessageType.SEND_RULING_NOTIFICATION, caseId },
     ])
   }
 
@@ -174,7 +174,7 @@ export class CaseService {
   addCompletedIndictmentCaseMessagesToQueue(theCase: Case): Promise<void> {
     return this.messageService.sendMessagesToQueue([
       { type: MessageType.CASE_COMPLETED, caseId: theCase.id },
-      { type: MessageType.SEND_RULING_NOTIFICAGTION, caseId: theCase.id },
+      { type: MessageType.SEND_RULING_NOTIFICATION, caseId: theCase.id },
     ])
   }
 
@@ -583,6 +583,7 @@ export class CaseService {
           {
             origin: theCase.origin,
             type: theCase.type,
+            indictmentSubType: theCase.indictmentSubType,
             description: theCase.description,
             policeCaseNumbers: theCase.policeCaseNumbers,
             defenderName: theCase.defenderName,
@@ -640,6 +641,7 @@ export class CaseService {
       theCase.type,
       theCase.policeCaseNumbers,
       Boolean(theCase.parentCaseId),
+      theCase.indictmentSubType,
     )
 
     const updatedCase = (await this.update(

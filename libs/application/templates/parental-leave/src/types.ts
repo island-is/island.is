@@ -39,6 +39,7 @@ export interface VMSTPeriod {
   ratio: string
   firstPeriodStart: string
   paid: boolean
+  rightsCodePeriod: string
 }
 
 export interface Period {
@@ -49,6 +50,7 @@ export interface Period {
   useLength?: YesOrNo
   daysToUse?: string
   rawIndex?: number
+  rightCodePeriod?: string
 }
 
 export interface Payment {

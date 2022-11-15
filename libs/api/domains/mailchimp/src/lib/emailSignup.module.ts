@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common'
-import { MailchimpResolver } from './mailchimp.resolver'
+import { EmailSignupResolver } from './emailSignup.resolver'
 import { CmsModule } from '@island.is/cms'
 
 @Module({
   imports: [CmsModule],
-  providers: [MailchimpResolver],
+  providers: [EmailSignupResolver],
 })
 export class MailchimpModule {}

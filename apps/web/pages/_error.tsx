@@ -1,5 +1,4 @@
 import React from 'react'
-import * as Sentry from '@sentry/node'
 import {
   GetUrlQuery,
   QueryGetUrlArgs,
@@ -100,15 +99,7 @@ class ErrorPage extends React.Component<ErrorPageProps> {
     }
 
     if (err) {
-      Sentry.withScope((scope) => {
-        Object.keys(err).forEach((key) => {
-          scope.setExtra(key, err[key])
-        })
-
-        Sentry.captureException(err)
-      })
-
-      await Sentry.flush(2000)
+      console.error(err)
     }
 
     // Set the actual http response code if rendering server-side
@@ -130,11 +121,9 @@ class ErrorPage extends React.Component<ErrorPageProps> {
       // eslint-disable-next-line no-empty
     } catch {}
 
-    Sentry.captureException(
+    console.error(
       new Error(`_error.tsx getInitialProps missing data at path: ${asPath}`),
     )
-
-    await Sentry.flush(2000)
 
     return {
       statusCode,

@@ -21,7 +21,6 @@ import {
 import { errorModal } from '../lib/messages'
 import { NO, YES } from '../shared/constants'
 import { mockData } from './mockData'
-import * as Sentry from '@sentry/react'
 
 interface PaymentPlanPrerequisitesProps {
   conditions: PaymentScheduleConditions
@@ -184,7 +183,7 @@ export class PaymentPlanPrerequisitesProvider extends BasicDataProvider {
 
   handleError(error: Error | unknown) {
     console.error(`Error in Payment Plan Prerequisites Provider:`, error)
-    Sentry.captureException(error)
+
     return Promise.reject('Failed to fetch data')
   }
 }
