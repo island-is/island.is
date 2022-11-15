@@ -5,9 +5,10 @@ import { Injectable } from '@nestjs/common'
 import { CourtClientService } from '@island.is/judicial-system/court-client'
 import {
   CaseType,
+  IndictmentSubType,
   isIndictmentCase,
-  User,
 } from '@island.is/judicial-system/types'
+import type { User } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
 import { EventService } from '../event'
@@ -19,10 +20,14 @@ export enum CourtDocumentFolder {
   COURT_DOCUMENTS = 'Dómar, úrskurðir og Þingbók',
 }
 
-type SubTypes = { [c in CaseType]: string | [string, string] }
+export type SubType = Exclude<CaseType, CaseType.INDICTMENT>
+
+type CourtSubTypes = {
+  [c in SubType | IndictmentSubType]: string | [string, string]
+}
 
 // Maps case types to sub types in the court system
-export const subTypes: SubTypes = {
+export const courtSubTypes: CourtSubTypes = {
   ALCOHOL_LAWS: 'Áfengislagabrot',
   CHILD_PROTECTION_LAWS: 'Barnaverndarlög',
   INDECENT_EXPOSURE: 'Blygðunarsemisbrot',
@@ -43,8 +48,8 @@ export const subTypes: SubTypes = {
   SEXUAL_OFFENSES_OTHER_THAN_RAPE: 'Kynferðisbrot önnur en nauðgun',
   MAJOR_ASSAULT: 'Líkamsárás - meiriháttar',
   MINOR_ASSAULT: 'Líkamsárás - minniháttar',
-  AGGRAVATED_ASSAULT: 'Líkamsáras - sérlega hættuleg',
-  ASSAULT_LEADING_TO_DEATH: 'Líkamsáras sem leiðir til dauða',
+  AGGRAVATED_ASSAULT: 'Líkamsárás - sérlega hættuleg',
+  ASSAULT_LEADING_TO_DEATH: 'Líkamsárás sem leiðir til dauða',
   MURDER: 'Manndráp',
   RAPE: 'Nauðgun',
   UTILITY_THEFT: 'Nytjastuldur',
@@ -172,41 +177,50 @@ export class CourtService {
     type: CaseType,
     policeCaseNumbers: string[],
     isExtension: boolean,
+    indictmentSubType?: IndictmentSubType,
   ): Promise<string> {
-    let subType = subTypes[type]
-    if (Array.isArray(subType)) {
-      subType = subType[isExtension ? 1 : 0]
-    }
+    try {
+      const isIndictment = isIndictmentCase(type)
 
-    const isIndictment = isIndictmentCase(type)
+      if (isIndictment && !indictmentSubType) {
+        throw 'Sub type is required for indictments'
+      }
 
-    return this.courtClientService
-      .createCase(courtId, {
+      // At this point we know that we have a valid sub type
+      const subType = (isIndictment ? indictmentSubType : type) as SubType
+
+      let courtSubType = courtSubTypes[subType]
+
+      if (Array.isArray(courtSubType)) {
+        courtSubType = courtSubType[isExtension ? 1 : 0]
+      }
+
+      return this.courtClientService.createCase(courtId, {
         caseType: isIndictment ? 'S - Ákærumál' : 'R - Rannsóknarmál',
-        subtype: subType as string,
+        subtype: courtSubType as string,
         status: 'Skráð',
         receivalDate: formatISO(nowFactory(), { representation: 'date' }),
         basedOn: isIndictment ? 'Sakamál' : 'Rannsóknarhagsmunir',
         // TODO: pass in all policeCaseNumbers when CourtService supports it
         sourceNumber: policeCaseNumbers[0] ? policeCaseNumbers[0] : '',
       })
-      .catch((reason) => {
-        this.eventService.postErrorEvent(
-          'Failed to create a court case',
-          {
-            caseId,
-            actor: user.name,
-            institution: user.institution?.name,
-            courtId,
-            type,
-            policeCaseNumbers: policeCaseNumbers.join(', '),
-            isExtension,
-          },
-          reason,
-        )
+    } catch (reason) {
+      this.eventService.postErrorEvent(
+        'Failed to create a court case',
+        {
+          caseId,
+          actor: user.name,
+          institution: user.institution?.name,
+          courtId,
+          type,
+          policeCaseNumbers: policeCaseNumbers.join(', '),
+          isExtension,
+        },
+        reason,
+      )
 
-        throw reason
-      })
+      throw reason
+    }
   }
 
   async createEmail(

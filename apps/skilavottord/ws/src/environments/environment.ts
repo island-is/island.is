@@ -1,8 +1,5 @@
 const devConfig = {
   production: false,
-  sentry: {
-    dsn: process.env.SENTRY_DSN,
-  },
   auth: {
     issuer: 'https://identity-server.dev01.devland.is',
     audience: '@urvinnslusjodur.is/skilavottord',
@@ -37,9 +34,6 @@ const devConfig = {
 
 const prodConfig = {
   production: true,
-  sentry: {
-    dsn: process.env.SENTRY_DSN,
-  },
   auth: {
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
     audience: '@urvinnslusjodur.is/skilavottord',
