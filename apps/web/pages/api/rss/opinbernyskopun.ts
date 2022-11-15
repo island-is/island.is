@@ -19,7 +19,7 @@ export default async function handler(req, res) {
   })
 
   const projectSubpage = projectPage.data?.getProjectPage?.projectSubpages?.find(
-    (page) => page?.['id'] === '3j57NCZLSoqxrXdU12eUwz',
+    (page) => page?.slug === 'askoranir-opinberra-adila',
   )
 
   const faqListItems =
