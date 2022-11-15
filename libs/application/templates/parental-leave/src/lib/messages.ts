@@ -385,21 +385,21 @@ export const parentalLeaveFormMessages: MessageDir = {
     multipleBirthsDaysTitle: {
       id: 'pl.application:request.multipleBirths.daysTitle',
       defaultMessage: 'Sameiginlegur réttur vegna fjölbura',
-      description: 'Joint entitlement for multiple births ',
+      description: 'Joint entitlement due to multiple births ',
     },
     multipleBirthsDaysDescription: {
       id: 'pl.application:multipleBirths.daysDescription',
       defaultMessage:
         'Fyrir hvert barn sem fæðist bætist við 3 mánaða sameiginlegur réttur foreldra til fæðingarorlofs',
       description:
-        'For each child the parents’ joint entitlement to a maternity/paternity leave is extended by 3 months.',
+        'For each child the parents’ joint entitlement to a parental leave is extended by 3 months.',
     },
     multipleBirthsDaysDescriptionGrant: {
       id: 'pl.application:multipleBirths.daysDescription.grant',
       defaultMessage:
         'Fyrir hvert barn sem fæðist bætist við 3 mánaða sameiginlegur réttur foreldra til fæðingarstyrks',
       description:
-        'For each child the parents’ joint entitlement to a maternity/paternity grant is extended by 3 months.',
+        'For each child the parents’ joint entitlement to a parental grant is extended by 3 months.',
     },
     requestMultipleBirthsDay: {
       id: 'pl.application:request.multipleBirths.day',
@@ -418,7 +418,7 @@ export const parentalLeaveFormMessages: MessageDir = {
     yourMultipleBirthsRightsInMonths: {
       id: 'pl.application:your.multipleBirths.rights.inMonths',
       defaultMessage: '{months} mánuðir – sameiginlegur réttur vegna fjölbura',
-      description: '{months} months – joint entitlement for multiple births',
+      description: '{months} months – joint entitlement due to multiple births',
     },
     requestRightsDaysTitle: {
       id: 'pl.application:request.rights.daysTitle',
@@ -1530,8 +1530,8 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     rightsMultipleBirths: {
       id: 'pl.application:review.rights.multiple.births',
-      defaultMessage: '{common} sameign mánuður ( need translated)',
-      description: 'Common months ( need translated )',
+      defaultMessage: '{common} sameiginlegir mánuðir',
+      description: 'month from joint entitlement',
     },
     rightsAllowanceRequested: {
       id: 'pl.application:review.rights.allowance.requested',
@@ -2170,31 +2170,28 @@ export const errorMessages = defineMessages({
   missingMultipleBirthsAnswer: {
     id: 'pl.application:errors.missing.multiple.births.answer',
     defaultMessage:
-      'icel-trans: "Verður að velja fjölda barn ef það er fjölburafæðing ( Need translated )!"',
-    description: 'English version ( Need translated )!',
+      'icel-trans: "Þú þarft að velja fjölda barna ef um fjölburafæðingu er að ræða!"',
+    description: 'You must pick number of children if choosing multiple birth!',
   },
   tooFewMultipleBirthsAnswer: {
     id: 'pl.application:errors.too.few.multiple.births.answer',
-    defaultMessage:
-      'icel-trans: "Ekki hægt að skrá minni en 2 börn ( Need translated )!"',
-    description: 'English version ( Need translated )!',
+    defaultMessage: 'icel-trans: "Ekki hægt að skrá minna en tvö börn!"',
+    description: 'Unable to assign fewer than two children!',
   },
   tooManyMultipleBirthsAnswer: {
     id: 'pl.application:errors.too.few.multiple.births.answer',
-    defaultMessage:
-      'icel-trans: "Ekki hægt að skrá fleira en 4 börn ( Need translated )!"',
-    description: 'English version ( Need translated )!',
+    defaultMessage: 'icel-trans: "Ekki hægt að skrá fleiri en fjögur börn!"',
+    description: 'Unable to assign more than four children!',
   },
   notAllowedToGiveRights: {
     id: 'pl.application:errors.not.allowed.to.give.rights',
-    defaultMessage: 'icel-trans: "Ekki hægt að gefa daga ( Need translated )!"',
-    description: 'English version ( Need translated )!',
+    defaultMessage: 'icel-trans: "Ekki hægt að gefa daga!"',
+    description: 'Unable to transfer days!',
   },
   notAllowedToRequestRights: {
     id: 'pl.application:errors.not.allowed.to.request.rights',
-    defaultMessage:
-      'icel-trans: "Ekki hægt að biðja um daga ( Need translated )!"',
-    description: 'English version ( Need translated )!',
+    defaultMessage: 'icel-trans: "Ekki hægt að biðja um daga!"',
+    description: 'Unable to request days!',
   },
 })
 
