@@ -2,7 +2,7 @@ import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Button, Divider, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC, useState } from 'react'
-import { error, information, insurance, review } from '../../lib/messages'
+import { error, information, review } from '../../lib/messages'
 import { ReviewScreenProps } from '../../types'
 import { ReviewCoOwnerAndOperatorRepeaterItem } from './ReviewCoOwnerAndOperatorRepeaterItem'
 import { repeaterButtons } from './ReviewCoOwnerAndOperatorRepeater.css'
@@ -176,7 +176,9 @@ export const ReviewCoOwnerAndOperatorRepeater: FC<
             {formatMessage(review.buttons.back)}
           </Button>
           <Button icon="arrowForward" onClick={onForwardButtonClick}>
-            {formatMessage(insurance.labels.approveButton)}
+            {formatMessage(
+              information.labels.coOwnersAndOperators.approveButton,
+            )}
           </Button>
         </Box>
       </Box>

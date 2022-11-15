@@ -267,6 +267,12 @@ export const information = {
           'Et sed ut est aliquam proin elit sed. Nunc tellus lacus sed eu pulvinar. ',
         description: 'Coowners and operators description',
       },
+      approveButton: {
+        id:
+          'ta.tvo.application:information.labels.coOwnersAndOperators.approveButton',
+        defaultMessage: 'Staðfesta',
+        description: 'Approve button for coOwners and operators',
+      },
     }),
     mainOperator: defineMessages({
       sectionTitle: {
