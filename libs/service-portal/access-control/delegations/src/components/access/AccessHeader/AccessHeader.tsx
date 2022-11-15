@@ -1,8 +1,6 @@
 import React from 'react'
 import {
   Box,
-  GridColumn,
-  GridRow,
   Hidden,
   SkeletonLoader,
   Text,
@@ -28,11 +26,12 @@ export const AccessHeader = ({
   const { md } = useBreakpoint()
 
   return (
-    <GridRow
+    <Box
+      display="flex"
       alignItems={['flexStart', 'flexStart', 'flexStart', 'flexEnd']}
-      className={styles.row}
+      className={styles.container}
     >
-      <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+      <div className={styles.firstColumn}>
         <Box display="flex" flexDirection="column" rowGap={md ? 1 : 2}>
           <Box
             display="flex"
@@ -65,13 +64,8 @@ export const AccessHeader = ({
             })}
           </Text>
         </Box>
-      </GridColumn>
-      <GridColumn
-        span={['12/12', '12/12', '12/12', '7/12', '4/12']}
-        className={styles.rightColumn}
-      >
-        {children}
-      </GridColumn>
-    </GridRow>
+      </div>
+      <div className={styles.secondColumn}>{children}</div>
+    </Box>
   )
 }

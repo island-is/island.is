@@ -3,6 +3,7 @@ import { Box, Text, useBreakpoint } from '@island.is/island-ui/core'
 import { AccessDate } from '../AccessDate/AccessDate'
 import * as commonAccessStyles from '../access.css'
 import * as styles from './AccessListItem.css'
+import { useLocale } from '@island.is/localization'
 
 interface AccessListItemProps {
   name: string
@@ -20,6 +21,8 @@ export const AccessListItem = ({
   indent,
 }: AccessListItemProps) => {
   const { lg } = useBreakpoint()
+  const { formatMessage } = useLocale()
+  const hasDescription = !!description?.trim()
 
   // Indent the hole row for screen size smaller than lg
   // Only indent name field when screen size is lg or larger
@@ -47,7 +50,15 @@ export const AccessListItem = ({
         {/* For smaller devices, i.e. < lg */}
         {!lg && validTo && !validityPeriod && <AccessDate validTo={validTo} />}
       </Box>
-      {description?.trim() && <Text>{description}</Text>}
+      {!lg && hasDescription && (
+        <Text variant="small" fontWeight="semiBold" marginTop={2}>
+          {formatMessage({
+            id: 'sp.access-control-delegations:grant',
+            defaultMessage: 'Heimild',
+          })}
+        </Text>
+      )}
+      {hasDescription && <Text>{description}</Text>}
       {/* For bigger devices, i.e. > lg */}
       {lg && validTo && !validityPeriod && <AccessDate validTo={validTo} />}
     </Box>
