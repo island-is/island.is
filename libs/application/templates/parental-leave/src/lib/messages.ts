@@ -2175,14 +2175,12 @@ export const errorMessages = defineMessages({
   },
   tooFewMultipleBirthsAnswer: {
     id: 'pl.application:errors.too.few.multiple.births.answer',
-    defaultMessage:
-      'icel-trans: "Ekki hægt að skrá minna en tvö börn!"',
+    defaultMessage: 'icel-trans: "Ekki hægt að skrá minna en tvö börn!"',
     description: 'Unable to assign fewer than two children!',
   },
   tooManyMultipleBirthsAnswer: {
     id: 'pl.application:errors.too.few.multiple.births.answer',
-    defaultMessage:
-      'icel-trans: "Ekki hægt að skrá fleiri en fjögur börn!"',
+    defaultMessage: 'icel-trans: "Ekki hægt að skrá fleiri en fjögur börn!"',
     description: 'Unable to assign more than four children!',
   },
   notAllowedToGiveRights: {
@@ -2192,8 +2190,7 @@ export const errorMessages = defineMessages({
   },
   notAllowedToRequestRights: {
     id: 'pl.application:errors.not.allowed.to.request.rights',
-    defaultMessage:
-      'icel-trans: "Ekki hægt að biðja um daga!"',
+    defaultMessage: 'icel-trans: "Ekki hægt að biðja um daga!"',
     description: 'Unable to request days!',
   },
 })
