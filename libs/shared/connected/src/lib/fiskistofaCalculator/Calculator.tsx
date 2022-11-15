@@ -7,7 +7,7 @@ import {
 
 export const Calculator = ({}) => {
   const { data } = useQuery<
-    ShipStatusInformation,
+    { getShipStatusInformation: ShipStatusInformation },
     GetShipStatusInformationInput
   >(GET_SHIP_STATUS_INFORMATION, {
     variables: {
