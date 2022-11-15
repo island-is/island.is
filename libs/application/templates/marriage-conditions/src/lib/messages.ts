@@ -213,9 +213,9 @@ export const m = defineMessages({
     defaultMessage: 'Liggur hjónavígsludagur fyrir?',
     description: '',
   },
-  noCeremonyDate: {
-    id: 'mac.application:noCeremonyDate',
-    defaultMessage: 'Hjónavígsludagurinn liggur ekki fyrir.',
+  ceremonyPeriod: {
+    id: 'mac.application:ceremonyPeriod',
+    defaultMessage: 'Áætlað tímabil hjónavígslu:',
     description: '',
   },
   ceremonyDate: {
@@ -226,6 +226,22 @@ export const m = defineMessages({
   ceremonyDatePlaceholder: {
     id: 'mac.application:ceremonyDatePlaceholder',
     defaultMessage: 'Skráðu inn dag',
+    description: '',
+  },
+  ceremonyPeriodDescription: {
+    id: 'mac.application:ceremonyPeriodDescription',
+    defaultMessage:
+      'Ef áætlaður dagur liggur ekki fyrir, þá þarf samt að velja áætlað tímabil hjónavíglsu.',
+    description: '',
+  },
+  ceremonyPeriodFrom: {
+    id: 'mac.application:ceremonyPeriodFrom',
+    defaultMessage: 'Áætlað tímabil hjónavígslu frá',
+    description: '',
+  },
+  ceremonyPeriodTil: {
+    id: 'mac.application:ceremonyPeriodTil',
+    defaultMessage: 'Áætlað tímabil hjónavígslu til',
     description: '',
   },
   ceremonyPlace: {
@@ -241,6 +257,11 @@ export const m = defineMessages({
   ceremonyAtReligiousLifeViewingSociety: {
     id: 'mac.application:ceremonyAtReligiousLifeViewingSociety',
     defaultMessage: 'Trú- eða lífsskoðunarfélagi',
+    description: '',
+  },
+  ceremonyPlaceNone: {
+    id: 'mac.application:ceremonyPlaceNone',
+    defaultMessage: 'Ekki ákveðið',
     description: '',
   },
   ceremonyChooseDistrict: {
@@ -459,5 +480,10 @@ export const m = defineMessages({
     id: 'mac.application:nameError',
     defaultMessage: 'Tókst ekki að sækja nafn út frá þessari kennitölu.',
     description: '',
+  },
+  tilBeforeFrom: {
+    id: 'mac.application:validationmessages.tilBeforeFrom',
+    defaultMessage: 'Lokadagsetning má ekki vera á undan upphafsdagsetningu',
+    description: 'Error message if date is empty',
   },
 })

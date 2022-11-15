@@ -60,6 +60,7 @@ export const PowerOfAttorneyFields = ({ application }: FieldBaseProps) => {
               name={ABOUTIDS.powerOfAttorneyName}
               label={formatMessage(m.powerOfAttorneyName)}
               loading={loading}
+              readOnly
               backgroundColor="blue"
               error={
                 errors && getErrorViaPath(errors, ABOUTIDS.powerOfAttorneyName)
@@ -76,6 +77,7 @@ export const PowerOfAttorneyFields = ({ application }: FieldBaseProps) => {
               id={ABOUTIDS.powerOfAttorneyNationalId}
               name={ABOUTIDS.powerOfAttorneyNationalId}
               label={formatMessage(m.powerOfAttorneyNationalId)}
+              readOnly
               defaultValue={currentActor}
               format="######-####"
               backgroundColor="blue"

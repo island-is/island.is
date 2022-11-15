@@ -2,7 +2,8 @@ import { getValueViaPath } from '@island.is/application/core'
 import { ExternalData, FormValue } from '@island.is/application/types'
 import subYears from 'date-fns/subYears'
 import getYear from 'date-fns/getYear'
-import { TOTAL, USERTYPE } from '../constants'
+import { TOTAL } from '../constants'
+import { FSIUSERTYPE } from '../../types'
 
 export const getTotal = (values: Record<string, string>, key: string) => {
   if (!values[key]) {
@@ -39,12 +40,12 @@ export const getCurrentUserType = (
   answers: FormValue,
   externalData: ExternalData,
 ) => {
-  const fakeUserType: USERTYPE | undefined = getValueViaPath(
+  const fakeUserType: FSIUSERTYPE | undefined = getValueViaPath(
     answers,
     'fakeData.options',
   )
 
-  const currentUserType: USERTYPE | undefined = getValueViaPath(
+  const currentUserType: FSIUSERTYPE | undefined = getValueViaPath(
     externalData,
     'getUserType.data.value',
   )
