@@ -56,11 +56,13 @@ export const TabSectionSlice: React.FC<SliceProps> = ({
               <GridRow>
                 <GridColumn {...contentColumnProps}>
                   <Box paddingTop={[0, 4, 9]} paddingBottom={[8, 0, 9]}>
-                    <img
-                      src={tab.image.url}
-                      className={styles.tabSectionImg}
-                      alt=""
-                    />
+                    {tab.image?.url && (
+                      <img
+                        src={tab.image.url}
+                        className={styles.tabSectionImg}
+                        alt=""
+                      />
+                    )}
                     <Text variant="h2" as="h2" marginBottom={3}>
                       {tab.contentTitle}
                     </Text>

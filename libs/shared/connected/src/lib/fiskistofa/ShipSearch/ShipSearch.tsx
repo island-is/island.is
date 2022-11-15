@@ -9,6 +9,7 @@ import {
   Table as T,
   Text,
 } from '@island.is/island-ui/core'
+// TODO: fix circular dependency
 import { QueryGetShipsArgs, ShipBasicInfo } from '@island.is/web/graphql/schema'
 import { GET_SHIPS_QUERY } from './queries'
 
