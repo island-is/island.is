@@ -39,7 +39,7 @@ export const queryFishingLicense = gql`
         description
         directions
       }
-      attatchmentInfo
+      attachmentInfo
       areas {
         key
         description

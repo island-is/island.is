@@ -14,5 +14,5 @@ export class FishingLicenseLicense {
   @Field(() => [FishingLicenseListOptions], { nullable: true })
   areas?: FishingLicenseListOptions[] | undefined
   @Field({ nullable: true })
-  attatchmentInfo?: string
+  attachmentInfo?: string
 }

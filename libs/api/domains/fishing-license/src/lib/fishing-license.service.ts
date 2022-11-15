@@ -91,7 +91,7 @@ export class FishingLicenseService {
               description: x.lysing ?? '',
               directions: x.leidbeining ?? '',
             })) ?? [],
-          attatchmentInfo: l.serhaefdarSpurningarGogn?.vidhengiLysing,
+          attachmentInfo: l.serhaefdarSpurningarGogn?.vidhengiLysing,
           areas:
             l.serhaefdarSpurningarGogn?.veidisvaediValmoguleikar?.map((o) => ({
               key: o.lykill,
