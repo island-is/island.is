@@ -95,13 +95,7 @@ export class FinancialStatementsInaoTemplateService {
         'Einstaklingur',
       )
     } else {
-      const clientType = this.financialStatementsClientService.getUserClientType(
-        nationalId,
-      )
-      if (!clientType) {
-        throw new Error('Kennitala fannst ekki í lista yfir skilaskylda aðila')
-      }
-      return clientType
+      return this.financialStatementsClientService.getUserClientType(nationalId)
     }
   }
 

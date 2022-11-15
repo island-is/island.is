@@ -29,19 +29,19 @@ export const AboutOverview = ({
         </GridColumn>
       </GridRow>
       <GridRow>
-        {answers.about.powerOfAttorneyName ? (
-          <GridColumn span={['12/12', '6/12']}>
-            <ValueLine
-              label={m.powerOfAttorneyName}
-              value={answers.about.powerOfAttorneyName}
-            />
-          </GridColumn>
-        ) : null}
         {answers.about.powerOfAttorneyNationalId ? (
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
               label={m.powerOfAttorneyNationalId}
               value={formatNationalId(answers.about.powerOfAttorneyNationalId)}
+            />
+          </GridColumn>
+        ) : null}
+        {answers.about.powerOfAttorneyName ? (
+          <GridColumn span={['12/12', '6/12']}>
+            <ValueLine
+              label={m.powerOfAttorneyName}
+              value={answers.about.powerOfAttorneyName}
             />
           </GridColumn>
         ) : null}
