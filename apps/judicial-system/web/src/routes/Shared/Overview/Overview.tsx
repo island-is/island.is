@@ -55,7 +55,15 @@ const Overview = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
-      <PageHeader title={formatMessage(titles.court.indictments.overview)} />
+      <PageHeader
+        title={
+          completedCaseStates.includes(workingCase.state)
+            ? formatMessage(titles.shared.signedVerdictOverviewV2, {
+                courtCaseNumber: workingCase.courtCaseNumber,
+              })
+            : formatMessage(titles.court.indictments.overview)
+        }
+      />
       <FormContentContainer>
         <PageTitle>{formatMessage(m.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
