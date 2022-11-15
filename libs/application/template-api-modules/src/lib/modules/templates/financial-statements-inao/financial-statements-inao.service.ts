@@ -92,7 +92,6 @@ export class FinancialStatementsInaoTemplateService {
 
   async getUserType({ auth }: TemplateApiModuleActionProps) {
     const { nationalId } = auth
-
     if (kennitala.isPerson(nationalId)) {
       return this.financialStatementsClientService.getClientType(
         'Einstaklingur',
