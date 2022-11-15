@@ -21,8 +21,8 @@ import {
   SubpoenaType,
   IndictmentSubType,
   CaseType,
-  CrimeSceneMap,
 } from '@island.is/judicial-system/types'
+import type { CrimeSceneMap } from '@island.is/judicial-system/types'
 
 export class UpdateCaseDto {
   @IsOptional()
