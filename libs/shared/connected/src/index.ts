@@ -4,3 +4,4 @@ export { GeneralPetitionLists } from './lib/generalPetition/GeneralPetitionLists
 export { RealEstateAgentsList } from './lib/RealEstateAgentsList/RealEstateAgentsList'
 export { LawyersList } from './lib/LawyersList/LawyersList'
 export * from './lib/electronicRegistrationStatistics'
+export { Calculator } from './lib/fiskistofaCalculator'
