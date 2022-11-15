@@ -362,13 +362,15 @@ export class FinancialStatementsInaoClientService {
       ClientTypes.Individual,
     )
 
+    const actor2 = actor ? [actor] : undefined
+
     const body = {
       'star_Election@odata.bind': `/star_elections(${electionId})`,
       star_representativenationalid: actor?.nationalId,
       'star_Client@odata.bind': `/star_clients(${dataverseClientId})`,
       star_novaluestatement: noValueStatement,
       star_financialstatementvalue_belongsto_rel: financialValues,
-      star_statement_contacts: [actor],
+      star_statement_contacts: actor2,
     }
 
     this.logger.debug('BODY =>', body)
