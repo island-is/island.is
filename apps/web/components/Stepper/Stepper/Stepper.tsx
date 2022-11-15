@@ -19,6 +19,7 @@ import { useI18n } from '@island.is/web/i18n'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { Stepper as StepperSchema } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
+import { webRichText } from '@island.is/web/utils/richText'
 
 import {
   renderStepperAndStepConfigErrors,
@@ -39,7 +40,6 @@ import {
 } from '../utils'
 
 import * as styles from './Stepper.css'
-import { webRichText } from '@island.is/web/utils/richText'
 
 const ANSWER_DELIMITER = ','
 export const STEPPER_HELPER_ENABLED_KEY = 'show-stepper-config-helper'
