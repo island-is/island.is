@@ -4,7 +4,7 @@ import { SharedTemplateApiService } from '../../shared'
 import { GeneralFishingLicenseAnswers } from '@island.is/application/templates/general-fishing-license'
 import { getValueViaPath } from '@island.is/application/core'
 import {
-  mapFishingLiscenseToCode,
+  mapFishingLicenseToCode,
   UmsoknirApi,
 } from '@island.is/clients/fishing-license'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -132,7 +132,7 @@ export class GeneralFishingLicenseService {
             utgerdKennitala: applicantNationalId,
             skipaskrarnumer: parseInt(registrationNumber, 10),
             umbedinGildistaka: new Date(date),
-            veidileyfiKodi: mapFishingLiscenseToCode(fishingLicense),
+            veidileyfiKodi: mapFishingLicenseToCode(fishingLicense),
             veidisvaediLykill: area,
             fjoldiNeta: railNet,
             teinalengd: roeNet,

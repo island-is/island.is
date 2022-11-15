@@ -60,9 +60,9 @@ export enum FishingLicenseCodeType {
   unknown = '0',
 }
 
-// Maps lexical liscense name to liscense code
-export const mapFishingLiscenseToCode = (liscense: string) => {
-  switch (liscense) {
+// Maps lexical liscense name to license code
+export const mapFishingLicenseToCode = (license: string) => {
+  switch (license) {
     case 'hookCatchLimit':
       return FishingLicenseCodeType.hookCatchLimit
     case 'fishWithDanishSeine':
