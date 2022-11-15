@@ -1,4 +1,4 @@
-import React, { ReactNode, Fragment } from 'react'
+import { ReactNode, Fragment } from 'react'
 import {
   Document,
   Block,
@@ -12,7 +12,11 @@ import {
   documentToReactComponents,
   RenderMark,
 } from '@contentful/rich-text-react-renderer'
-import { CompanyList, CompanyListConnected } from '@island.is/shared/connected'
+import {
+  CompanyList,
+  CompanyListConnected,
+  ShipSearch,
+} from '@island.is/shared/connected'
 import { Image, ImageProps } from './Image/Image'
 import FaqList, { FaqListProps } from './FaqList/FaqList'
 import { Statistics, StatisticsProps } from './Statistics/Statistics'
@@ -151,10 +155,11 @@ const renderConnectedComponent = (slice) => {
     case 'Skilavottord/CompanyListConnected':
       if (typeof data === 'object') {
         const { graphqlLink } = data
-
         return <CompanyListConnected graphqlLink={graphqlLink} />
       }
       break
+    case 'Fiskistofa/ShipSearch':
+      return <ShipSearch />
     default:
       break
   }
