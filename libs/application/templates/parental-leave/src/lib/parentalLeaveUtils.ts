@@ -191,7 +191,7 @@ export const getAdditionalSingleParentRightsInDays = (
 ) => {
   const { otherParent } = getApplicationAnswers(application.answers)
 
-  return otherParent === SINGLE ? monthsToDays(additionalSingleParentMonths) : 0 // can this be like this?!
+  return otherParent === SINGLE ? monthsToDays(additionalSingleParentMonths) : 0
 }
 
 export const getAvailableRightsInDays = (application: Application) => {

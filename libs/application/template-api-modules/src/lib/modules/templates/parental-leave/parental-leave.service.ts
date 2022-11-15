@@ -522,7 +522,6 @@ export class ParentalLeaveService {
         !isUsingAdditionalRights &&
         !willStartToUseAdditionalSingleParentRightsWithPeriod
       ) {
-        console.log('Grunnrettur')
         // We know its a normal period and it will not exceed personal rights
         periods.push({
           from:

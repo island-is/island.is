@@ -219,8 +219,7 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     singleParentDescription: {
       id: 'pl.application:singleParent.option.description',
-      defaultMessage:
-        'Á við þegar einhleyp móðir gengst undir tæknifrjóvgun',
+      defaultMessage: 'Á við þegar einhleyp móðir gengst undir tæknifrjóvgun',
       description:
         'This applies when a single mother undergoes artificial insemination',
     },
