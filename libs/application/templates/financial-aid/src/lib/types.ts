@@ -31,7 +31,7 @@ export interface ExternalData {
     date: string
     status: StatusProvider
   }
-  veita: {
+  currentApplication: {
     data: CurrentApplication
     date: string
     status: StatusProvider

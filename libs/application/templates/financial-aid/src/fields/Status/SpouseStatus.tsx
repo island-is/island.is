@@ -16,7 +16,7 @@ import * as styles from './Status.css'
 
 const SpouseStatus = ({ application, goToScreen }: FAFieldBaseProps) => {
   const { currentApplication, loading } = useApplication(
-    application.externalData.veita.data.currentApplicationId,
+    application.externalData.currentApplication.data.currentApplicationId,
   )
   const { nationalRegistry } = application.externalData
   const state = currentApplication?.state

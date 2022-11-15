@@ -7,11 +7,9 @@ export { TaxDataFetchProvider } from './TaxDataFetchProvider'
 
 export const CurrentApplicationApi = defineTemplateApi({
   action: ApiActions.CURRENTAPPLICATION,
-  externalDataId: 'veita',
 })
 
 export const CreateApplicationApi = defineTemplateApi({
   action: ApiActions.CREATEAPPLICATION,
-  shouldPersistToExternalData: true,
-  externalDataId: 'veita',
+  externalDataId: CurrentApplicationApi.action,
 })

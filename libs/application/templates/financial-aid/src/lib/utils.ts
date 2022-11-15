@@ -88,7 +88,7 @@ export function hasActiveCurrentApplication(context: ApplicationContext) {
   const { externalData } = context.application
   const dataProvider = getValueViaPath(
     externalData,
-    'veita.data',
+    'currentApplication.data',
   ) as CurrentApplication
   return dataProvider.currentApplicationId != null
 }

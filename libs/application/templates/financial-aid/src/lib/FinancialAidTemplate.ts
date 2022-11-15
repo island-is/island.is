@@ -60,7 +60,11 @@ const FinancialAidTemplate: ApplicationTemplate<
                 ),
               write: {
                 answers: ['approveExternalData'],
-                externalData: ['nationalRegistry', 'veita', 'taxDataFetch'],
+                externalData: [
+                  'nationalRegistry',
+                  CurrentApplicationApi.action,
+                  'taxDataFetch',
+                ],
               },
               delete: true,
               api: [CurrentApplicationApi],

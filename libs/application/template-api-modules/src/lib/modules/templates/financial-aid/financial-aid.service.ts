@@ -58,9 +58,10 @@ export class FinancialAidService extends BaseTemplateApiService {
   }: Props<null>): Promise<CurrentApplication> {
     const { id, answers, externalData } = application
 
-    if (externalData.veita.data.currentApplicationId) {
+    if (externalData.currentApplication.data.currentApplicationId) {
       return {
-        currentApplicationId: externalData.veita.data.currentApplicationId,
+        currentApplicationId:
+          externalData.currentApplication.data.currentApplicationId,
       }
     }
 
