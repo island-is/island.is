@@ -20,7 +20,8 @@ export const confirmation = {
     },
     alertMessageText: {
       id: 'ta.ovrc.application:confirmation.general.alertMessageText',
-      defaultMessage: 'Þú færð skírteinið sent í pósti á skráð lögheimili yðar',
+      defaultMessage:
+        'Skírteinið verður sent í pósti á skráð lögheimili eiganda',
       description: 'Conclusion general alert message text',
     },
     openMySiteLinkText: {

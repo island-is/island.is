@@ -69,13 +69,13 @@ export const externalData = {
   currentVehicles: defineMessages({
     title: {
       id: 'ta.ovrc.application:externalData.currentVehicles.title',
-      defaultMessage: 'Upplýsingar um bifreiðar í þinni eigu og stöðu þeirra',
+      defaultMessage: 'Upplýsingar um bifreiðar í þinni eigu',
       description: 'Your vehicles from the vehicle registry',
     },
     subTitle: {
       id: 'ta.ovrc.application:externalData.currentVehicles.subTitle',
       defaultMessage:
-        'Upplýsingar úr ökutækjaskrá  - Upplýsingar um þínar bifreiðar og stöðu þeirra.',
+        'Upplýsingar úr ökutækjaskrá - Upplýsingar um þínar bifreiðar.',
       description: 'To make stuff easier',
     },
     empty: {
