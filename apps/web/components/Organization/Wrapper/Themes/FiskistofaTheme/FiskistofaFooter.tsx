@@ -40,7 +40,7 @@ export const FiskistofaFooter = ({ footerItems }: FiskistofaFooterProps) => {
             </GridRow>
             <GridRow marginTop={2} className={styles.linkRow}>
               {footerItems.slice(0, 3).map((item, idx) => (
-                <GridColumn span={['10/10', '10/10', '5/10', '2/10']}>
+                <GridColumn key={idx} span={['10/10', '10/10', '5/10', '2/10']}>
                   <Text fontWeight="semiBold" marginBottom={2}>
                     <Hyphen>{item.title}</Hyphen>
                   </Text>

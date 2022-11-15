@@ -23,6 +23,7 @@ import {
   AccordionSlice,
   TableSlice,
   EmailSignup,
+  TabSectionSlice,
 } from '@island.is/web/components'
 import {
   Box,
@@ -185,6 +186,7 @@ const ProjectPage: Screen<PageProps> = ({
               AccordionSlice: (slice) => <AccordionSlice slice={slice} />,
               TableSlice: (slice) => <TableSlice slice={slice} />,
               EmailSignup: (slice) => <EmailSignup slice={slice} />,
+              TabSection: (slice) => <TabSectionSlice slice={slice} />,
             },
           })}
         {!subpage && projectPage.stepper && (

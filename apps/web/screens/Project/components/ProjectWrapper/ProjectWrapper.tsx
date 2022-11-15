@@ -46,11 +46,13 @@ export const ProjectWrapper: React.FC<ProjectWrapperProps> = ({
 
   const aboveChildren = (
     <>
-      <Hidden above="sm">
-        <Box>
-          <Box marginY={2}>{projectPageSidebarNavigationComponent(true)}</Box>
-        </Box>
-      </Hidden>
+      {withSidebar && (
+        <Hidden above="sm">
+          <Box>
+            <Box marginY={2}>{projectPageSidebarNavigationComponent(true)}</Box>
+          </Box>
+        </Hidden>
+      )}
       <Box marginBottom={3}>
         <Breadcrumbs items={breadcrumbItems} />
       </Box>
