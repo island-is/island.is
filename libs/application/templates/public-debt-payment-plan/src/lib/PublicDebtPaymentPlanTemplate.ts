@@ -40,6 +40,7 @@ const PublicDebtPaymentPlanTemplate: ApplicationTemplate<
   name: application.name,
   institution: application.institutionName,
   readyForProduction: true,
+  allowedDelegations: [{ type: 'ProcurationHolder' }],
   translationNamespaces: [
     ApplicationConfigurations.PublicDebtPaymentPlan.translation,
   ],

@@ -99,9 +99,22 @@ export interface NatRegResult extends SuccessfulDataProviderResult {
   }
 }
 
+interface IdsRegResult extends SuccessfulDataProviderResult {
+  data: {
+    name: string
+    nationalId: string
+    address: {
+      streetAddress: string
+      postalCode: string
+      city: string
+    }
+  }
+}
+
 export type PaymentPlanExternalData = {
   paymentPlanPrerequisites?: PrerequisitesResult
   nationalRegistry?: NatRegResult
+  identityRegistry?: IdsRegResult
   userProfile?: UserProfileResult
 }
 

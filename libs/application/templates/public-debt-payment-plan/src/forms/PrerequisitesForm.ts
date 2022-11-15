@@ -66,8 +66,8 @@ export const PrerequisitesForm: Form = buildForm({
           checkboxLabel: externalData.general.checkboxLabel,
           dataProviders: [
             buildDataProviderItem({
-              id: 'nationalRegistry',
-              type: 'NationalRegistryProvider',
+              id: 'identityRegistry',
+              type: 'IdentityProvider',
               title: externalData.labels.nationalRegistryTitle,
               subTitle: externalData.labels.nationalRegistrySubTitle,
             }),
@@ -110,7 +110,7 @@ export const PrerequisitesForm: Form = buildForm({
               defaultValue: (application: Application) => {
                 return (
                   (application.externalData as PaymentPlanExternalData)
-                    ?.nationalRegistry?.data?.fullName ?? ''
+                    ?.identityRegistry?.data?.name ?? ''
                 )
               },
             }),
@@ -123,7 +123,7 @@ export const PrerequisitesForm: Form = buildForm({
               disabled: true,
               defaultValue: (application: Application) =>
                 (application.externalData as PaymentPlanExternalData)
-                  ?.nationalRegistry?.data?.nationalId ?? '',
+                  ?.identityRegistry?.data?.nationalId ?? '',
             }),
             buildTextField({
               id: 'applicant.address',
@@ -133,7 +133,7 @@ export const PrerequisitesForm: Form = buildForm({
               disabled: true,
               defaultValue: (application: Application) =>
                 (application.externalData as PaymentPlanExternalData)
-                  ?.nationalRegistry?.data?.address?.streetAddress ?? '',
+                  ?.identityRegistry?.data?.address?.streetAddress ?? '',
             }),
             buildTextField({
               id: 'applicant.postalCode',
@@ -143,7 +143,7 @@ export const PrerequisitesForm: Form = buildForm({
               disabled: true,
               defaultValue: (application: Application) =>
                 (application.externalData as PaymentPlanExternalData)
-                  ?.nationalRegistry?.data?.address?.postalCode ?? '',
+                  ?.identityRegistry?.data?.address?.postalCode ?? '',
             }),
             buildTextField({
               id: 'applicant.city',
@@ -153,7 +153,7 @@ export const PrerequisitesForm: Form = buildForm({
               disabled: true,
               defaultValue: (application: Application) =>
                 (application.externalData as PaymentPlanExternalData)
-                  ?.nationalRegistry?.data?.address?.city ?? '',
+                  ?.identityRegistry?.data?.address?.city ?? '',
             }),
             buildTextField({
               id: 'applicant.email',
