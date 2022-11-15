@@ -9,7 +9,7 @@ interface PowerBiSliceProps {
 export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
   const getEmbeddedComponent = (embed: Embed) => {
     // Default styles
-    embed.element.style.height = '800px'
+    embed.element.style.height = '600px'
     embed.iframe.style.border = 'none'
 
     // Apply styles to containing element from CMS

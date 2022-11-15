@@ -10,6 +10,7 @@ export const GET_PROJECT_PAGE_QUERY = gql`
       theme
       sidebar
       featuredDescription
+      contentIsFullWidth
       sidebarLinks {
         primaryLink {
           text

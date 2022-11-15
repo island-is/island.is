@@ -75,6 +75,9 @@ export class ProjectPage {
 
   @Field(() => Link, { nullable: true })
   backLink?: Link | null
+
+  @Field(() => Boolean, { nullable: true })
+  contentIsFullWidth?: boolean
 }
 
 export const mapProjectPage = ({ sys, fields }: IProjectPage): ProjectPage => ({
@@ -108,4 +111,5 @@ export const mapProjectPage = ({ sys, fields }: IProjectPage): ProjectPage => ({
   featuredDescription: fields.featuredDescription ?? '',
   footerItems: fields.footerItems ? fields.footerItems.map(mapFooterItem) : [],
   backLink: fields.backLink ? mapLink(fields.backLink) : null,
+  contentIsFullWidth: fields.contentIsFullWidth ?? false,
 })

@@ -123,8 +123,16 @@ export const ProjectWrapper: React.FC<ProjectWrapperProps> = ({
               <GridColumn
                 paddingTop={6}
                 paddingBottom={6}
-                span={['12/12', '12/12', '10/12']}
-                offset={['0', '0', '1/12']}
+                span={[
+                  '12/12',
+                  '12/12',
+                  projectPage.contentIsFullWidth ? '12/12' : '10/12',
+                ]}
+                offset={[
+                  '0',
+                  '0',
+                  projectPage.contentIsFullWidth ? '0' : '1/12',
+                ]}
               >
                 {aboveChildren}
 

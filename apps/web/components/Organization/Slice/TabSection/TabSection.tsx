@@ -53,7 +53,7 @@ export const TabSectionSlice: React.FC<SliceProps> = ({
             content: (
               <GridRow>
                 <GridColumn {...contentColumnProps}>
-                  <Box paddingTop={[0, 4, 9]} paddingBottom={[8, 0, 9]}>
+                  <Box paddingTop={[0, 4, 6]} paddingBottom={[8, 0, 6]}>
                     {tab.image?.url && (
                       <img
                         src={tab.image.url}
