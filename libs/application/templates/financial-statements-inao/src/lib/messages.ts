@@ -201,6 +201,11 @@ export const m = defineMessages({
     defaultMessage: 'Eignir, skuldir og eigið fé',
     description: 'Statement property numbers',
   },
+  debtsAndEquity: {
+    id: 'fsn.application:keyNumbers.debtsAndEquity',
+    defaultMessage: 'Skuldir og eigið fé',
+    description: 'debts and equity',
+  },
   keyNumbersDebt: {
     id: 'fsn.application:keyNumbers.debt',
     defaultMessage: 'Lykiltölur - Eignir, Skuldir og eigið fé',

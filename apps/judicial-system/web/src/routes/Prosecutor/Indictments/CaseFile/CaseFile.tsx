@@ -91,7 +91,7 @@ const CaseFile = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE}/${workingCase.id}`}
-          nextUrl={`${constants.INDICTMENTS_OVERVIEW_ROUTE}/${workingCase.id}`}
+          nextUrl={`${constants.INDICTMENTS_PROCESSING_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoadingWorkingCase}
         />
       </FormContentContainer>

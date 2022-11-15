@@ -7,7 +7,8 @@ import { Ceremony, Individual, PersonalInfo } from '../../types'
 import { format as formatNationalId } from 'kennitala'
 import format from 'date-fns/format'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
-import { States, YES } from '../../lib/constants'
+import { CeremonyPlaces, States, YES } from '../../lib/constants'
+import is from 'date-fns/locale/is'
 
 type InfoProps = {
   side: Individual
@@ -111,7 +112,9 @@ export const ApplicationOverview: FC<FieldBaseProps> = ({ application }) => {
         </Box>
       </Box>
       <Box>
-        <Text variant="h3">{formatMessage(m.ceremony)}</Text>
+        <Text variant="h3" marginBottom={3}>
+          {formatMessage(m.ceremony)}
+        </Text>
         {(answers.ceremony as Ceremony).hasDate === YES ? (
           <Box marginTop={3}>
             <Box display="flex" marginBottom={3}>
@@ -119,25 +122,45 @@ export const ApplicationOverview: FC<FieldBaseProps> = ({ application }) => {
                 <Text variant="h4">{formatMessage(m.ceremonyDate)}</Text>
                 <Text>
                   {format(
-                    new Date((answers.ceremony as Ceremony).date),
-                    'dd/MM/yyyy',
-                  )}
+                    new Date((answers.ceremony as Ceremony).withDate.date),
+                    'dd. MMMM, yyyy',
+                    { locale: is },
+                  ).toLowerCase()}
                 </Text>
               </Box>
             </Box>
             <Box display="flex">
               <Box width="half">
                 <Text variant="h4">{formatMessage(m.ceremonyPlace)}</Text>
-                {(answers.ceremony as Ceremony).ceremonyPlace === 'office' ? (
-                  <Text>{(answers.ceremony as Ceremony).office}</Text>
+                {(answers.ceremony as Ceremony).withDate.ceremonyPlace ===
+                CeremonyPlaces.office ? (
+                  <Text>{(answers.ceremony as Ceremony).withDate.office}</Text>
+                ) : (answers.ceremony as Ceremony).withDate.ceremonyPlace ===
+                  CeremonyPlaces.society ? (
+                  <Text>{(answers.ceremony as Ceremony).withDate.society}</Text>
                 ) : (
-                  <Text>{(answers.ceremony as Ceremony).society}</Text>
+                  <Text>{formatMessage(m.ceremonyPlaceNone)}</Text>
                 )}
               </Box>
             </Box>
           </Box>
         ) : (
-          <Text variant="default">{formatMessage(m.noCeremonyDate)}</Text>
+          <>
+            <Text variant="h4">{formatMessage(m.ceremonyPeriod)}</Text>
+            <Text variant="default">
+              {format(
+                new Date((answers.ceremony as Ceremony).withPeriod.dateFrom),
+                'dd. MMMM, yyyy',
+                { locale: is },
+              ).toLowerCase() +
+                ' - ' +
+                format(
+                  new Date((answers.ceremony as Ceremony).withPeriod.dateTil),
+                  'dd. MMMM, yyyy',
+                  { locale: is },
+                ).toLowerCase()}
+            </Text>
+          </>
         )}
       </Box>
       <Box marginTop={5}>

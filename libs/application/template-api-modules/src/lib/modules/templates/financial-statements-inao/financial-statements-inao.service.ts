@@ -5,6 +5,10 @@ import {
   PersonalElectionFinancialStatementValues,
   PoliticalPartyFinancialStatementValues,
 } from '@island.is/clients/financial-statements-inao'
+import {
+  FSIUSERTYPE,
+  LESS,
+} from '@island.is/application/templates/financial-statements-inao/types'
 import * as kennitala from 'kennitala'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { getValueViaPath } from '@island.is/application/core'
@@ -16,12 +20,9 @@ import {
   mapValuesToPartytype,
   mapValuesToCemeterytype,
 } from './mappers/mapValuesToUsertype'
-import { USERTYPE } from './types'
 import { SharedTemplateApiService } from '../../shared'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-
-const LESS = 'less'
 
 export interface AttachmentData {
   key: string
@@ -90,7 +91,6 @@ export class FinancialStatementsInaoTemplateService {
 
   async getUserType({ auth }: TemplateApiModuleActionProps) {
     const { nationalId } = auth
-
     if (kennitala.isPerson(nationalId)) {
       return this.financialStatementsClientService.getClientType(
         'Einstaklingur',
@@ -106,22 +106,23 @@ export class FinancialStatementsInaoTemplateService {
     const externalData = application.externalData
     const currentUserType = getCurrentUserType(answers, externalData)
 
-    if (currentUserType === USERTYPE.INDIVIDUAL) {
-      const values: PersonalElectionFinancialStatementValues = mapValuesToIndividualtype(
+    if (currentUserType === FSIUSERTYPE.INDIVIDUAL) {
+      const electionIncomeLimit = getValueViaPath(
         answers,
-      )
+        'election.incomeLimit',
+      ) as string
+      const noValueStatement = electionIncomeLimit === LESS ? true : false
+      const values:
+        | PersonalElectionFinancialStatementValues
+        | undefined = noValueStatement
+        ? mapValuesToIndividualtype(answers)
+        : undefined
 
       const electionId = getValueViaPath(
         answers,
         'election.selectElection',
       ) as string
       const clientName = getValueViaPath(answers, 'about.fullName') as string
-      const electionIncomeLimit = getValueViaPath(
-        answers,
-        'election.incomeLimit',
-      ) as string
-
-      const noValueStatement = electionIncomeLimit === LESS ? true : false
 
       const fileName = noValueStatement
         ? undefined
@@ -166,7 +167,7 @@ export class FinancialStatementsInaoTemplateService {
         throw new Error(`Application submission failed`)
       }
       return { success: result.success }
-    } else if (currentUserType === USERTYPE.PARTY) {
+    } else if (currentUserType === FSIUSERTYPE.PARTY) {
       const values: PoliticalPartyFinancialStatementValues = mapValuesToPartytype(
         answers,
       )
@@ -203,7 +204,7 @@ export class FinancialStatementsInaoTemplateService {
         throw new Error(`Application submission failed`)
       }
       return { success: result.success }
-    } else if (currentUserType === USERTYPE.CEMETRY) {
+    } else if (currentUserType === FSIUSERTYPE.CEMETRY) {
       const values: CemeteryFinancialStatementValues = mapValuesToCemeterytype(
         answers,
       )
@@ -244,6 +245,8 @@ export class FinancialStatementsInaoTemplateService {
         throw new Error(`Application submission failed`)
       }
       return { success: result.success }
+    } else {
+      throw new Error(`Application submission failed`)
     }
   }
 }
