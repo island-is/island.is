@@ -42,7 +42,6 @@ export {
   CaseOrigin,
   CaseType,
   IndictmentSubType,
-  CrimeScene,
   CaseState,
   CaseTransition,
   CaseLegalProvisions,
@@ -64,6 +63,7 @@ export {
 export type {
   Case,
   CrimeSceneMap,
+  CrimeScene,
   CreateCase,
   UpdateCase,
   TransitionCase,
