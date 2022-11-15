@@ -4,6 +4,7 @@ import {
   indictmentSubTypes,
   formatDOB,
   caseTypes,
+  formatDate,
 } from '@island.is/judicial-system/formatters'
 
 import { caseFilesRecord } from '../messages'
@@ -28,7 +29,7 @@ export const createCaseFilesRecord = async (
   theCase: Case,
   policeCaseNumber: string,
   caseFiles: (() => Promise<{
-    date: string
+    date: Date
     name: string
     chapter: number
     buffer?: Buffer
@@ -49,7 +50,7 @@ export const createCaseFilesRecord = async (
   const chapters = [0, 1, 2, 3, 4, 5]
   const pageReferences: {
     chapter: number
-    date: string
+    date: Date
     name: string
     pageNumber: number
     pageLink: PageLink
@@ -139,11 +140,31 @@ export const createCaseFilesRecord = async (
         position: { x: defendantIndent },
       },
     )
-    .addText(
-      formatMessage(caseFilesRecord.tableOfContentsHeading),
-      subtitleFontSize,
-      { alignment: Alignment.Center, bold: true, marginTop: 9 },
-    )
+
+  const crimeScene =
+    theCase.crimeScenes && theCase.crimeScenes[policeCaseNumber]
+
+  if (crimeScene && (crimeScene.place || crimeScene.date)) {
+    pdfDocument
+      .addText(formatMessage(caseFilesRecord.crimeScene), textFontSize, {
+        bold: true,
+        marginTop: 1,
+        newLine: false,
+      })
+      .addParagraph(
+        `${crimeScene.place ?? ''}${
+          crimeScene.place && crimeScene.date ? ' - ' : ''
+        }${crimeScene.date ? formatDate(crimeScene.date, 'dd.MM.yyyy') : ''}`,
+        textFontSize,
+        defendantIndent,
+      )
+  }
+
+  pdfDocument.addText(
+    formatMessage(caseFilesRecord.tableOfContentsHeading),
+    subtitleFontSize,
+    { alignment: Alignment.Center, bold: true, marginTop: 9 },
+  )
 
   for (const chapter of chapters) {
     if (chapter === 0) {
@@ -174,7 +195,9 @@ export const createCaseFilesRecord = async (
           newLine: false,
         })
         .addText(
-          `${pageReference.date} - ${pageReference.name}`,
+          `${formatDate(pageReference.date, 'dd.MM.yyyy')} - ${
+            pageReference.name
+          }`,
           textFontSize,
           {
             maxWidth: 400,

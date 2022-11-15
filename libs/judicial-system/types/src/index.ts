@@ -42,6 +42,7 @@ export {
   CaseOrigin,
   CaseType,
   IndictmentSubType,
+  CrimeScene,
   CaseState,
   CaseTransition,
   CaseLegalProvisions,
@@ -62,6 +63,7 @@ export {
 } from './lib/case'
 export type {
   Case,
+  CrimeSceneMap,
   CreateCase,
   UpdateCase,
   TransitionCase,
