@@ -108,6 +108,7 @@ const EmailSignup = ({ slice, marginLeft }: EmailSignupProps) => {
     for (const [fieldName, value] of Object.entries(values)) {
       const field = formFields.find((f) => f.name === fieldName)
       inputFields.push({
+        id: field.id,
         name: fieldName,
         type: field.type,
         value,

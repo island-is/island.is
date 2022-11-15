@@ -84,9 +84,7 @@ const AppealSections: React.FC<Props> = (props) => {
                               )
                             : formatMessage(
                                 m.defendantAnnouncementAutofillAppealV2,
-                                {
-                                  caseType: workingCase.type,
-                                },
+                                { caseType: workingCase.type },
                               ),
                         force: true,
                       },

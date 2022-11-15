@@ -175,6 +175,7 @@ export const slices = gql`
       answer {
         ...BaseSlices
       }
+      publishDate
     }
   }
 
@@ -618,6 +619,7 @@ export const slices = gql`
     title
     description
     formFields {
+      id
       title
       name
       placeholder
@@ -702,6 +704,7 @@ export const nestedAccordionAndFaqListFields = `
       answer {
         ...AllSlices
       }
+      publishDate
     }
   }
 `

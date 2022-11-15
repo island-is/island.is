@@ -14,6 +14,7 @@ import type {
   CourtDocument,
   CaseOrigin,
   SubpoenaType,
+  IndictmentSubType,
 } from '@island.is/judicial-system/types'
 
 import { Defendant } from '../../defendant'
@@ -38,6 +39,9 @@ export class Case implements TCase {
 
   @Field(() => String)
   readonly type!: CaseType
+
+  @Field(() => String, { nullable: true })
+  readonly indictmentSubType?: IndictmentSubType
 
   @Field({ nullable: true })
   readonly description?: string
@@ -270,6 +274,6 @@ export class Case implements TCase {
   @Field(() => String, { nullable: true })
   readonly subpoenaType?: SubpoenaType
 
-  @Field(() => Boolean)
-  readonly defendantWaivesRightToCounsel!: boolean
+  @Field(() => Boolean, { nullable: true })
+  readonly defendantWaivesRightToCounsel?: boolean
 }
