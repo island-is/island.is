@@ -5,8 +5,6 @@ import {
   GeneralPetitionLists,
   RealEstateAgentsList,
   LawyersList,
-  MonthlyStatistics as ElectronicRegistrationsMonthlyStatistics,
-  Calculator as FiskistofaCalculator,
 } from '@island.is/shared/connected'
 import { Image } from '../Image/Image'
 import FaqList from '../FaqList/FaqList'
@@ -42,10 +40,6 @@ const renderConnectedComponent = (slice) => {
       return <RealEstateAgentsList slice={slice} />
     case 'Lögmenn/Lawyers':
       return <LawyersList slice={slice} />
-    case 'ElectronicRegistrations/MonthlyStatistics':
-      return <ElectronicRegistrationsMonthlyStatistics slice={slice} />
-    case 'Fiskistofa/Calculator':
-      return <FiskistofaCalculator />
     default:
       break
   }
