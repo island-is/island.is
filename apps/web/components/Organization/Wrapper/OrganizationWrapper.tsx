@@ -35,7 +35,6 @@ import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { useNamespace } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import { WatsonChatPanel } from '@island.is/web/components'
-import { SidebarShipSearchInput } from '@island.is/shared/connected'
 
 import { SyslumennHeader, SyslumennFooter } from './Themes/SyslumennTheme'
 import {
