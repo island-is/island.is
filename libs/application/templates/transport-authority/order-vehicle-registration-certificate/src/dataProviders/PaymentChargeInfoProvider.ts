@@ -4,12 +4,11 @@ import {
   FailedDataProviderResult,
 } from '@island.is/application/types'
 import { PaymentCatalogProvider } from '@island.is/application/data-providers'
-import { m } from '../lib/messagesx'
 import { ChargeItemCode } from '@island.is/shared/constants'
+import { error } from '../lib/messages'
 
 const CHARGE_ITEM_CODES = [
   ChargeItemCode.TRANSPORT_AUTHORITY_ORDER_VEHICLE_REGISTRATION_CERTIFICATE.toString(),
-  ChargeItemCode.TRANSPORT_AUTHORITY_ORDER_VEHICLE_REGISTRATION_CERTIFICATE_WITH_RUSH_FEE.toString(),
 ]
 const SAMGONGUSTOFA_NATIONAL_ID = '5405131040'
 
@@ -27,7 +26,7 @@ export class PaymentChargeInfoProvider extends PaymentCatalogProvider {
   onProvideError(result: string): FailedDataProviderResult {
     return {
       date: new Date(),
-      reason: m.errorDataProvider,
+      reason: error.errorDataProvider,
       status: 'failure',
       data: result,
     }

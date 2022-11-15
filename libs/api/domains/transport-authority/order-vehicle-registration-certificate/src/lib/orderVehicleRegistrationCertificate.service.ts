@@ -10,6 +10,6 @@ export class OrderVehicleRegistrationCertificateApi {
     user: User,
     permno: string,
   ): Promise<void> {
-    this.vehiclePrintingClient.requestRegistrationCardPrint(user, permno)
+    await this.vehiclePrintingClient.requestRegistrationCardPrint(user, permno)
   }
 }

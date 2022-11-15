@@ -4,19 +4,28 @@ import {
   buildSection,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
-import { m } from '../lib/messagesx'
 import Logo from '../assets/Logo'
-import { payment } from '../lib/messages'
+import {
+  information,
+  externalData,
+  payment,
+  confirmation,
+} from '../lib/messages'
 
-export const Approved: Form = buildForm({
-  id: 'ApprovedApplicationForm',
+export const Confirmation: Form = buildForm({
+  id: 'ConfirmationForm',
   title: '',
   logo: Logo,
   mode: FormModes.APPLYING,
   children: [
     buildSection({
       id: 'externalData',
-      title: m.externalDataSection,
+      title: externalData.dataProvider.sectionTitle,
+      children: [],
+    }),
+    buildSection({
+      id: 'informationSection',
+      title: information.general.sectionTitle,
       children: [],
     }),
     buildSection({
@@ -26,11 +35,11 @@ export const Approved: Form = buildForm({
     }),
     buildSection({
       id: 'confirmation',
-      title: m.confirmation,
+      title: confirmation.general.sectionTitle,
       children: [
         buildCustomField({
-          component: 'ConfirmationField',
-          id: 'confirmationField',
+          component: 'Confirmation',
+          id: 'confirmation',
           title: '',
           description: '',
         }),

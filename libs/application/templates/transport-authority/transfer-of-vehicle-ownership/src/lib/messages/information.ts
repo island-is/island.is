@@ -21,6 +21,11 @@ export const information = {
   }),
   labels: {
     pickVehicle: defineMessages({
+      sectionTitle: {
+        id: 'ta.tvo.application:information.labels.pickVehicle.sectionTitle',
+        defaultMessage: 'Veldu ökutæki',
+        description: 'Pick vehicle section title',
+      },
       title: {
         id: 'ta.tvo.application:information.labels.pickVehicle.title',
         defaultMessage: 'Veldu ökutæki til eigendaskipta',
@@ -30,6 +35,11 @@ export const information = {
         id: 'ta.tvo.application:information.labels.pickVehicle.vehicle',
         defaultMessage: 'Ökutæki',
         description: 'Pick vehicle label',
+      },
+      placeholder: {
+        id: 'ta.ovrc.application:information.labels.pickVehicle.placeholder',
+        defaultMessage: 'Veldu ökutæki',
+        description: 'Pick vehicle placeholder',
       },
       isStolenTag: {
         id: 'ta.tvo.application:information.labels.pickVehicle.isStolenTag',

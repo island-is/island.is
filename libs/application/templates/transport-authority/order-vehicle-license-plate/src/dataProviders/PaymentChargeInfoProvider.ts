@@ -9,6 +9,7 @@ import { ChargeItemCode } from '@island.is/shared/constants'
 
 const CHARGE_ITEM_CODES = [
   ChargeItemCode.TRANSPORT_AUTHORITY_ORDER_VEHICLE_LICENSE_PLATE.toString(),
+  ChargeItemCode.TRANSPORT_AUTHORITY_ORDER_VEHICLE_LICENSE_PLATE_WITH_RUSH_FEE.toString(),
 ]
 const SAMGONGUSTOFA_NATIONAL_ID = '5405131040'
 

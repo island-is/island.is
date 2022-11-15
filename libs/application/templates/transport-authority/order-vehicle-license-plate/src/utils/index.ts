@@ -7,8 +7,13 @@ export const formatIsk = (value: number): string =>
 export const getChargeItemCodes = (
   answers: OrderVehicleLicensePlate,
 ): Array<string> => {
-  // TODOx check stuff about charging license plate
-  return [
-    ChargeItemCode.TRANSPORT_AUTHORITY_ORDER_VEHICLE_LICENSE_PLATE.toString(),
-  ]
+  if (!answers.includeRushFee) {
+    return [
+      ChargeItemCode.TRANSPORT_AUTHORITY_ORDER_VEHICLE_LICENSE_PLATE.toString(),
+    ]
+  } else {
+    return [
+      ChargeItemCode.TRANSPORT_AUTHORITY_ORDER_VEHICLE_LICENSE_PLATE_WITH_RUSH_FEE.toString(),
+    ]
+  }
 }

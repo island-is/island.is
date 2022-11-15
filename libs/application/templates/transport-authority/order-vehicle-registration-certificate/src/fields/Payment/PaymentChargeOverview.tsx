@@ -1,5 +1,5 @@
 import { FieldBaseProps } from '@island.is/application/types'
-import { AlertMessage, Box, Divider, Text } from '@island.is/island-ui/core'
+import { Box, Divider, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC } from 'react'
 import { payment } from '../../lib/messages'
