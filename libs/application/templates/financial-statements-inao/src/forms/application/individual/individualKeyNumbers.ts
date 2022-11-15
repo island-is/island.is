@@ -29,7 +29,7 @@ export const individualKeyNumbersSection = buildSection({
   children: [
     buildSubSection({
       id: 'operatingCost',
-      title: m.expensesIncome,
+      title: m.keyNumbersIncomeAndExpenses,
       children: [
         buildMultiField({
           id: 'operatinCostfields',
@@ -53,7 +53,7 @@ export const individualKeyNumbersSection = buildSection({
       children: [
         buildMultiField({
           id: 'operations.equitiesAndLiabilities',
-          title: m.keyNumbersDebt,
+          title: m.propertiesAndDebts,
           description: m.fillOutAppopriate,
           children: [
             buildCustomField({

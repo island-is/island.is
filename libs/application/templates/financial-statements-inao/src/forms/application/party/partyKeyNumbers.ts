@@ -40,7 +40,7 @@ export const partyKeyNumbersSection = buildSection({
     capitalNumberSection,
     buildSubSection({
       id: 'keyNumbers.equitiesAndLiabilities',
-      title: m.keyNumbersProperty,
+      title: m.propertiesAndDebts,
       children: [
         buildCustomField({
           id: 'equitiesAndLiabilities',
