@@ -1,6 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common'
 import {
   CemeteryFinancialStatementValues,
+  Contact,
+  ContactType,
   FinancialStatementsInaoClientService,
   PersonalElectionFinancialStatementValues,
   PoliticalPartyFinancialStatementValues,
@@ -135,16 +137,38 @@ export class FinancialStatementsInaoTemplateService {
         )}', file: '${fileName}'`,
       )
 
+      const client = {
+        nationalId: nationalId,
+        name: clientName,
+      }
+
+      const actorContact: Contact | undefined = actor
+        ? {
+            nationalId: actor.nationalId,
+            name: 'TODO insert actors name here',
+            contactType: ContactType.Actor,
+          }
+        : undefined
+
       const result: DataResponse = await this.financialStatementsClientService
         .postFinancialStatementForPersonalElection(
-          nationalId,
-          actor?.nationalId,
+          client,
+          actorContact,
           electionId,
           noValueStatement,
-          clientName,
           values,
           fileName,
         )
+
+        // .postFinancialStatementForPersonalElection(
+        //   nationalId,
+        //   actor?.nationalId,
+        //   electionId,
+        //   noValueStatement,
+        //   clientName,
+        //   values,
+        //   fileName,
+        // )
         .then((data) => {
           if (data === true) {
             return { success: true }

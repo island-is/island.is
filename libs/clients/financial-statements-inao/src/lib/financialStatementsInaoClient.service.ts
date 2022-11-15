@@ -9,8 +9,10 @@ import { Inject, Injectable } from '@nestjs/common'
 import { FinancialStatementsInaoClientConfig } from './financialStatementsInao.config'
 import type {
   CemeteryFinancialStatementValues,
+  ClientType,
   Client,
   Config,
+  Contact,
   Election,
   ElectionInfo,
   FinancialType,
@@ -50,14 +52,14 @@ export class FinancialStatementsInaoClientService {
     },
   })
 
-  async getClientTypes(): Promise<Client[] | null> {
+  async getClientTypes(): Promise<ClientType[] | null> {
     const url = `${this.basePath}/GlobalOptionSetDefinitions(Name='star_clienttypechoice')`
     const response = await this.fetch(url)
     const data = await response.json()
 
     if (!data || !data.Options) return null
 
-    const clientTypes: Client[] = data.Options.map((x: any) => {
+    const clientTypes: ClientType[] = data.Options.map((x: any) => {
       return {
         value: x.Value,
         label: x.Label.UserLocalizedLabel.Label,
@@ -67,7 +69,7 @@ export class FinancialStatementsInaoClientService {
     return clientTypes
   }
 
-  async getClientType(typeCode: string): Promise<Client | null> {
+  async getClientType(typeCode: string): Promise<ClientType | null> {
     const clientTypes = await this.getClientTypes()
 
     const found = clientTypes?.filter((x) => x.label === typeCode)
@@ -78,7 +80,7 @@ export class FinancialStatementsInaoClientService {
     return null
   }
 
-  async getUserClientType(nationalId: string): Promise<Client | null> {
+  async getUserClientType(nationalId: string): Promise<ClientType | null> {
     const select = '$select=star_nationalid, star_name, star_type'
     const filter = `$filter=star_nationalid eq '${encodeURIComponent(
       nationalId,
@@ -129,17 +131,15 @@ export class FinancialStatementsInaoClientService {
     return null
   }
 
-  async createClient(
-    nationalId: string,
-    name: string,
-    clientType: ClientTypes,
-  ) {
+  async createClient(client: Client, clientType: ClientTypes) {
     const url = `${this.basePath}/star_clients`
 
     const body = {
-      star_nationalid: nationalId,
+      star_nationalid: client.nationalId,
       star_type: clientType,
-      star_name: name,
+      star_name: client.name,
+      star_phone: client.phone,
+      star_email: client.email,
     }
 
     this.logger.debug('body', body)
@@ -154,16 +154,12 @@ export class FinancialStatementsInaoClientService {
     this.logger.debug('client created')
   }
 
-  async getOrCreateClient(
-    nationald: string,
-    name: string,
-    clientType: ClientTypes,
-  ) {
-    const res = await this.getClientIdByNationalId(nationald)
+  async getOrCreateClient(client: Client, clientType: ClientTypes) {
+    const res = await this.getClientIdByNationalId(client.nationalId)
 
     if (!res) {
-      await this.createClient(nationald, name, clientType)
-      return await this.getClientIdByNationalId(nationald)
+      await this.createClient(client, clientType)
+      return await this.getClientIdByNationalId(client.nationalId)
     }
     return res
   }
@@ -240,15 +236,95 @@ export class FinancialStatementsInaoClientService {
     return financialTypes
   }
 
+  // async postFinancialStatementForPersonalElection(
+  //   clientNationalId: string,
+  //   actorNationalId: string | undefined,
+  //   electionId: string,
+  //   noValueStatement: boolean,
+  //   clientName: string,
+  //   values?: PersonalElectionFinancialStatementValues,
+  //   file?: string,
+  // ): Promise<boolean> {
+  //   const financialValues: LookupType[] = []
+
+  //   if (!noValueStatement && values) {
+  //     const financialTypes = await this.getFinancialTypes()
+
+  //     if (!financialTypes) {
+  //       this.logger.error('Failed to get financial types')
+  //       return false
+  //     }
+
+  //     const list: KeyValue[] = []
+  //     list.push({ key: 100, value: values.contributionsByLegalEntities })
+  //     list.push({ key: 101, value: values.individualContributions })
+  //     list.push({ key: 102, value: values.candidatesOwnContributions })
+  //     list.push({ key: 128, value: values.capitalIncome })
+  //     list.push({ key: 129, value: values.otherIncome })
+  //     list.push({ key: 130, value: values.electionOfficeExpenses })
+  //     list.push({ key: 131, value: values.advertisingAndPromotions })
+  //     list.push({ key: 132, value: values.meetingsAndTravelExpenses })
+  //     list.push({ key: 139, value: values.otherExpenses })
+  //     list.push({ key: 148, value: values.financialExpenses })
+  //     list.push({ key: 150, value: values.fixedAssetsTotal })
+  //     list.push({ key: 160, value: values.currentAssets })
+  //     list.push({ key: 170, value: values.longTermLiabilitiesTotal })
+  //     list.push({ key: 180, value: values.shortTermLiabilitiesTotal })
+  //     list.push({ key: 190, value: values.equityTotal })
+
+  //     list.forEach((x) => {
+  //       financialValues.push(lookup(x.key, x.value, financialTypes))
+  //     })
+  //   }
+
+  //   const client = await this.getOrCreateClient(
+  //     clientNationalId,
+  //     clientName,
+  //     ClientTypes.Individual,
+  //   )
+
+  //   const body = {
+  //     'star_Election@odata.bind': `/star_elections(${electionId})`,
+  //     star_representativenationalid: actorNationalId,
+  //     'star_Client@odata.bind': `/star_clients(${client})`,
+  //     star_novaluestatement: noValueStatement,
+  //     star_financialstatementvalue_belongsto_rel: financialValues,
+  //   }
+
+  //   const financialStatementId = await this.postFinancialStatement(body)
+  //   if (!financialStatementId) {
+  //     throw new Error('FinancialStatementId can not be null')
+  //   }
+
+  //   if (file) {
+  //     const electionInfo = await this.getElectionInfo(electionId)
+
+  //     const fileName = getPersonalElectionFileName(
+  //       clientNationalId,
+  //       electionInfo?.electionType,
+  //       electionInfo?.electionDate,
+  //       noValueStatement,
+  //     )
+
+  //     this.sendFile(financialStatementId, fileName, file)
+  //   }
+
+  //   return true
+  // }
+
   async postFinancialStatementForPersonalElection(
-    clientNationalId: string,
-    actorNationalId: string | undefined,
+    // clientNationalId: string,
+    // actorNationalId: string | undefined,
+    // clientName: string,
+
+    client: Client,
+    actor: Contact | undefined,
     electionId: string,
     noValueStatement: boolean,
-    clientName: string,
     values?: PersonalElectionFinancialStatementValues,
     file?: string,
   ): Promise<boolean> {
+    this.logger.debug('POST_FINANCIAL_STATEMENT_FOR_PERSONAL_ELECTION => START')
     const financialValues: LookupType[] = []
 
     if (!noValueStatement && values) {
@@ -281,30 +357,34 @@ export class FinancialStatementsInaoClientService {
       })
     }
 
-    const client = await this.getOrCreateClient(
-      clientNationalId,
-      clientName,
+    const dataverseClientId = await this.getOrCreateClient(
+      client,
       ClientTypes.Individual,
     )
 
     const body = {
       'star_Election@odata.bind': `/star_elections(${electionId})`,
-      star_representativenationalid: actorNationalId,
-      'star_Client@odata.bind': `/star_clients(${client})`,
+      star_representativenationalid: actor?.nationalId,
+      'star_Client@odata.bind': `/star_clients(${dataverseClientId})`,
       star_novaluestatement: noValueStatement,
       star_financialstatementvalue_belongsto_rel: financialValues,
+      star_statement_contacts: [actor],
     }
+
+    this.logger.debug('BODY =>', body)
 
     const financialStatementId = await this.postFinancialStatement(body)
     if (!financialStatementId) {
       throw new Error('FinancialStatementId can not be null')
     }
 
+    this.logger.debug('FINANCIAL_STATEMENT_ID =>', financialStatementId)
+
     if (file) {
       const electionInfo = await this.getElectionInfo(electionId)
 
       const fileName = getPersonalElectionFileName(
-        clientNationalId,
+        client.nationalId,
         electionInfo?.electionType,
         electionInfo?.electionDate,
         noValueStatement,
