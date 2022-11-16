@@ -134,8 +134,7 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
       toast.error(
         formatMessage({
           id: 'sp.settings-access-control:grant-create-error',
-          defaultMessage:
-            'Eitthvað fór úrskeiðis!\nEkki tókst að búa til aðgang fyrir þennan notanda.',
+          defaultMessage: 'Ekki tókst að búa til aðgang fyrir þennan notanda.',
         }),
       )
     }
@@ -200,7 +199,7 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
                         value: true,
                         message: formatMessage({
                           id: 'sp.settings-access-control:grant-required-ssn',
-                          defaultMessage: 'Skylda er að fylla út kennitölu',
+                          defaultMessage: 'Þú þarft að setja inn kennitölu',
                         }),
                       },
                       validate: {
