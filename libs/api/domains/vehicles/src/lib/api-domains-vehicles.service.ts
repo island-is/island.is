@@ -50,6 +50,7 @@ export class VehiclesService {
   private getPdfWithAuth(auth: Auth) {
     return this.vehiclesPDFApi.withMiddleware(new AuthMiddleware(auth))
   }
+
   async getVehiclesForUser(
     auth: User,
     showDeregistered: boolean,

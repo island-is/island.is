@@ -6,6 +6,7 @@ import { formatDate } from '@island.is/service-portal/core'
 import differenceInMonths from 'date-fns/differenceInMonths'
 import { messages } from '../lib/messages'
 import { ActionCard } from '@island.is/service-portal/core'
+import { translateType } from '../utils/vehicleCardMapper'
 
 interface Props {
   vehicle: VehiclesVehicle
@@ -24,6 +25,7 @@ export const VehicleCard: FC<Props> = ({ vehicle }) => {
 
   return (
     <ActionCard
+      image={{ type: 'component', component: translateType('a3', '87') }}
       heading={heading}
       text={text}
       tag={
@@ -56,6 +58,8 @@ export const VehicleCard: FC<Props> = ({ vehicle }) => {
             )
           : undefined,
       }}
-    />
+    >
+      {translateType('M2', '12')}
+    </ActionCard>
   )
 }

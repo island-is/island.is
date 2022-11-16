@@ -47,8 +47,9 @@ type ActionCardProps = {
     disabled?: boolean
   }
   image?: {
-    type: 'avatar' | 'image' | 'logo'
+    type: 'avatar' | 'image' | 'logo' | 'component'
     url?: string
+    component?: JSX.Element
   }
 }
 
@@ -74,6 +75,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
   secondaryCta,
   tag: _tag,
   image,
+  children,
 }) => {
   const cta = { ...defaultCta, ..._cta }
   const tag = { ...defaultTag, ..._tag }
@@ -104,6 +106,13 @@ export const ActionCard: React.FC<ActionCardProps> = ({
           <Text variant="h3" as="p" color="blue400">
             {getTitleAbbreviation(heading)}
           </Text>
+        </Box>
+      )
+    }
+    if (image.type === 'component') {
+      return (
+        <Box padding={2} marginRight={2} className={styles.logo}>
+          {image.component}
         </Box>
       )
     }
