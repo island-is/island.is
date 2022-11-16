@@ -20,12 +20,13 @@ import { format as formatNationalId } from 'kennitala'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
 import { useSubmitApplication } from '../../hooks/useSubmitApplication'
 import { m } from '../../lib/messages'
-import { FileValueLine, ValueLine } from '../Shared'
+import { AboutOverview, FileValueLine, ValueLine } from '../Shared'
 import {
   columnStyle,
   starterColumnStyle,
 } from '../Shared/styles/overviewStyles.css'
 import BottomBar from '../../components/BottomBar'
+import { CapitalNumberOverview } from '../Shared/CapitalNumberOverview'
 
 export const CemetryOverview = ({
   application,
@@ -60,7 +61,7 @@ export const CemetryOverview = ({
     ) {
       goToScreen && goToScreen('caretakers')
     } else {
-      goToScreen && goToScreen('attachment.file')
+      goToScreen && goToScreen('attachments.file')
     }
   }
 
@@ -77,245 +78,171 @@ export const CemetryOverview = ({
   return (
     <Box marginBottom={2}>
       <Divider />
-      <GridRow>
-        <GridColumn span={['12/12', '6/12']}>
-          <ValueLine
-            label={m.operatingYear}
-            value={
-              answers.conditionalAbout?.operatingYear
-                ? answers.conditionalAbout.operatingYear
-                : '-'
-            }
-          />
-        </GridColumn>
-      </GridRow>
-      <GridRow>
-        <GridColumn span={['12/12', '6/12']}>
-          <ValueLine
-            label={m.nationalId}
-            value={
-              answers.about?.nationalId
-                ? formatNationalId(answers.about.nationalId)
-                : '-'
-            }
-          />
-        </GridColumn>
-        <GridColumn span={['12/12', '6/12']}>
-          <ValueLine label={m.fullName} value={answers.about.fullName} />
-        </GridColumn>
-      </GridRow>
-      <GridRow>
-        {answers.about.powerOfAttorneyName ? (
-          <GridColumn span={['12/12', '6/12']}>
-            <ValueLine
-              label={m.powerOfAttorneyName}
-              value={answers.about.powerOfAttorneyName}
-            />
-          </GridColumn>
-        ) : null}
-        {answers.about.powerOfAttorneyNationalId ? (
-          <GridColumn span={['12/12', '6/12']}>
-            <ValueLine
-              label={m.powerOfAttorneyNationalId}
-              value={formatNationalId(answers.about.powerOfAttorneyNationalId)}
-            />
-          </GridColumn>
-        ) : null}
-      </GridRow>
-
-      <GridRow>
-        <GridColumn span={['12/12', '6/12']}>
-          <ValueLine label={m.email} value={answers.about.email} />
-        </GridColumn>
-        <GridColumn span={['12/12', '6/12']}>
-          <ValueLine
-            label={m.phoneNumber}
-            value={formatPhoneNumber(answers.about.phoneNumber)}
-          />
-        </GridColumn>
-      </GridRow>
-      <Divider />
-      <Box className={starterColumnStyle}>
-        <Text variant="h3" as="h3">
-          {formatMessage(m.keyNumbersIncomeAndExpenses)}
-        </Text>
+      <Box paddingY={3}>
+        <AboutOverview answers={answers} />
       </Box>
-      <GridRow>
-        <GridColumn span={['12/12', '6/12']}>
-          <ValueLine
-            label={m.otherIncome}
-            value={formatCurrency(answers.cemetryIncome?.otherIncome)}
-          />
-          <ValueLine
-            label={m.careIncome}
-            value={formatCurrency(answers.cemetryIncome?.careIncome)}
-          />
-          <ValueLine
-            label={m.grantFromTheCemeteryFund}
-            value={formatCurrency(
-              answers.cemetryIncome?.grantFromTheCemeteryFund,
-            )}
-          />
-          <ValueLine
-            label={m.burialRevenue}
-            value={formatCurrency(answers.cemetryIncome?.burialRevenue)}
-          />
-          <ValueLine
-            label={m.totalIncome}
-            value={formatCurrency(answers.cemetryIncome?.total)}
-          />
-        </GridColumn>
-        <GridColumn span={['12/12', '6/12']}>
-          <ValueLine
-            label={m.chapelExpense}
-            value={formatCurrency(answers.cemetryExpense?.chapelExpense)}
-          />
-          <ValueLine
-            label={m.donationsToOther}
-            value={formatCurrency(answers.cemetryExpense?.donationsToOther)}
-          />
-          <ValueLine
-            label={m.funeralCost}
-            value={formatCurrency(answers.cemetryExpense?.funeralCost)}
-          />
-          <ValueLine
-            label={m.otherOperationCost}
-            value={formatCurrency(answers.cemetryExpense?.otherOperationCost)}
-          />
-          <ValueLine
-            label={m.payroll}
-            value={formatCurrency(answers.cemetryExpense?.payroll)}
-          />
-          <ValueLine
-            label={m.depreciation}
-            value={formatCurrency(answers.cemetryExpense?.depreciation)}
-          />
-          <ValueLine
-            label={m.totalExpenses}
-            value={formatCurrency(answers.cemetryExpense.total)}
-          />
-        </GridColumn>
-      </GridRow>
       <Divider />
-      <Box className={starterColumnStyle}>
-        <Text variant="h3" as="h3">
-          {formatMessage(m.capitalNumbers)}
-        </Text>
-
+      <Box paddingY={3}>
+        <Box className={starterColumnStyle}>
+          <Text variant="h3" as="h3">
+            {formatMessage(m.keyNumbersIncomeAndExpenses)}
+          </Text>
+        </Box>
         <GridRow>
           <GridColumn span={['12/12', '6/12']}>
+            <Box paddingTop={3} paddingBottom={2}>
+              <Text variant="h4" as="h4">
+                {formatMessage(m.income)}
+              </Text>
+            </Box>
             <ValueLine
-              label={m.capitalIncome}
-              value={formatCurrency(answers.capitalNumbers?.capitalIncome)}
+              label={m.careIncome}
+              value={formatCurrency(answers.cemetryIncome?.careIncome)}
+            />
+            <ValueLine
+              label={m.burialRevenue}
+              value={formatCurrency(answers.cemetryIncome?.burialRevenue)}
+            />
+            <ValueLine
+              label={m.grantFromTheCemeteryFund}
+              value={formatCurrency(
+                answers.cemetryIncome?.grantFromTheCemeteryFund,
+              )}
+            />
+            <ValueLine
+              label={m.otherIncome}
+              value={formatCurrency(answers.cemetryIncome?.otherIncome)}
+            />
+            <ValueLine
+              isTotal
+              label={m.totalIncome}
+              value={formatCurrency(answers.cemetryIncome?.total)}
             />
           </GridColumn>
           <GridColumn span={['12/12', '6/12']}>
+            <Box paddingTop={3} paddingBottom={2}>
+              <Text variant="h4" as="h4">
+                {formatMessage(m.expenses)}
+              </Text>
+            </Box>
             <ValueLine
-              label={m.capitalIncome}
-              value={formatCurrency(answers.capitalNumbers?.capitalCost)}
+              label={m.payroll}
+              value={formatCurrency(answers.cemetryExpense?.payroll)}
             />
-          </GridColumn>
-          <GridColumn span={['12/12', '6/12']}>
             <ValueLine
-              label={m.totalCapital}
-              value={formatCurrency(answers.capitalNumbers?.total)}
+              label={m.funeralCost}
+              value={formatCurrency(answers.cemetryExpense?.funeralCost)}
+            />
+            <ValueLine
+              label={m.chapelExpense}
+              value={formatCurrency(answers.cemetryExpense?.chapelExpense)}
+            />
+            <ValueLine
+              label={m.donationsToCemeteryFund}
+              value={formatCurrency(
+                answers.cemetryExpense?.cemeteryFundExpense,
+              )}
+            />
+            <ValueLine
+              label={m.donationsToOther}
+              value={formatCurrency(answers.cemetryExpense?.donationsToOther)}
+            />
+            <ValueLine
+              label={m.otherOperationCost}
+              value={formatCurrency(answers.cemetryExpense?.otherOperationCost)}
+            />
+            <ValueLine
+              label={m.depreciation}
+              value={formatCurrency(answers.cemetryExpense?.depreciation)}
+            />
+            <ValueLine
+              isTotal
+              label={m.totalExpenses}
+              value={formatCurrency(answers.cemetryExpense.total)}
             />
           </GridColumn>
         </GridRow>
-        <Divider />
+      </Box>
+      <Divider />
 
+      <Box paddingY={3}>
+        <CapitalNumberOverview answers={answers} />
+      </Box>
+      <Divider />
+      <Box paddingY={3}>
         <Box className={starterColumnStyle}>
           <Text variant="h3" as="h3">
             {formatMessage(m.keyNumbersDebt)}
           </Text>
-
-          <GridRow>
-            <GridColumn span={['12/12', '6/12']}>
-              <ValueLine
-                label={m.fixedAssetsTotal}
-                value={formatCurrency(answers.cemetryAsset?.fixedAssetsTotal)}
-              />
-            </GridColumn>
-            <GridColumn span={['12/12', '6/12']}>
-              <ValueLine
-                label={m.currentAssets}
-                value={formatCurrency(answers.cemetryAsset?.currentAssets)}
-              />
-            </GridColumn>
-          </GridRow>
-          <GridRow>
-            <GridColumn span={['12/12', '6/12']}>
-              <ValueLine
-                label={m.totalAssets}
-                value={formatCurrency(answers.cemetryAsset.total)}
-              />
-            </GridColumn>
-          </GridRow>
-
-          <GridRow>
-            <GridColumn span={['12/12', '6/12']}>
-              <ValueLine
-                label={m.shortTerm}
-                value={formatCurrency(answers.cemetryLiability?.shortTerm)}
-              />
-            </GridColumn>
-            <GridColumn span={['12/12', '6/12']}>
-              <ValueLine
-                label={m.longTerm}
-                value={formatCurrency(answers.cemetryLiability?.longTerm)}
-              />
-            </GridColumn>
-          </GridRow>
-          <GridRow>
-            <GridColumn span={['12/12', '6/12']}>
-              <ValueLine
-                label={m.totalLiabilities}
-                value={formatCurrency(answers.cemetryLiability?.total)}
-              />
-            </GridColumn>
-          </GridRow>
-          <GridRow>
-            <GridColumn span={['12/12', '6/12']}>
-              <ValueLine
-                label={m.equityAtTheBeginningOfTheYear}
-                value={formatCurrency(
-                  answers.cemetryEquity?.equityAtTheBeginningOfTheYear,
-                )}
-              />
-            </GridColumn>
-            <GridColumn span={['12/12', '6/12']}>
-              <ValueLine
-                label={m.operationResult}
-                value={formatCurrency(answers.cemetryEquity?.operationResult)}
-              />
-            </GridColumn>
-          </GridRow>
         </Box>
         <GridRow>
           <GridColumn span={['12/12', '6/12']}>
+            <Box paddingTop={3} paddingBottom={2}>
+              <Text variant="h4" as="h4">
+                {formatMessage(m.properties)}
+              </Text>
+            </Box>
+            <ValueLine
+              label={m.fixedAssetsTotal}
+              value={formatCurrency(answers.cemetryAsset?.fixedAssetsTotal)}
+            />
+
+            <ValueLine
+              label={m.currentAssets}
+              value={formatCurrency(answers.cemetryAsset?.currentAssets)}
+            />
+            <ValueLine
+              label={m.totalAssets}
+              value={formatCurrency(answers.cemetryAsset.total)}
+            />
+          </GridColumn>
+
+          <GridColumn span={['12/12', '6/12']}>
+            <Box paddingTop={3} paddingBottom={2}>
+              <Text variant="h4" as="h4">
+                {formatMessage(m.debtsAndEquity)}
+              </Text>
+            </Box>
+            <ValueLine
+              label={m.longTerm}
+              value={formatCurrency(answers.cemetryLiability?.longTerm)}
+            />
+            <ValueLine
+              label={m.shortTerm}
+              value={formatCurrency(answers.cemetryLiability?.shortTerm)}
+            />
+            <ValueLine
+              isTotal
+              label={m.totalLiabilities}
+              value={formatCurrency(answers.cemetryLiability?.total)}
+            />
+            <ValueLine
+              label={m.equityAtTheBeginningOfTheYear}
+              value={formatCurrency(
+                answers.cemetryEquity?.equityAtTheBeginningOfTheYear,
+              )}
+            />
             <ValueLine
               label={m.revaluationDueToPriceChanges}
               value={formatCurrency(
                 answers.cemetryEquity?.revaluationDueToPriceChanges,
               )}
             />
-          </GridColumn>
-          <GridColumn span={['12/12', '6/12']}>
             <ValueLine
               label={m.reevaluateOther}
               value={formatCurrency(answers.cemetryEquity?.reevaluateOther)}
             />
-          </GridColumn>
-        </GridRow>
-        <GridRow>
-          <GridColumn span={['12/12', '6/12']}>
             <ValueLine
+              label={m.operationResult}
+              value={formatCurrency(answers.cemetryEquity?.operationResult)}
+            />
+            <ValueLine
+              isTotal
               label={m.totalEquity}
               value={formatCurrency(answers.cemetryEquity?.total)}
             />
-          </GridColumn>
-          <GridColumn span={['12/12', '6/12']}>
             <ValueLine
+              isTotal
               label={m.debtsAndCash}
               value={formatCurrency(answers.equityAndLiabilities?.total)}
             />
@@ -371,7 +298,7 @@ export const CemetryOverview = ({
           {formatMessage(m.overview)}
         </Text>
       </Box>
-      <Box background="blue100" padding={3}>
+      <Box background="blue100">
         <Controller
           name="applicationApprove"
           defaultValue={approveOverview}

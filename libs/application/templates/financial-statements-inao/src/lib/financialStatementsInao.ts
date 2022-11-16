@@ -1,5 +1,4 @@
 import { DefaultStateLifeCycle } from '@island.is/application/core'
-import { FeatureFlagClient } from '@island.is/feature-flags'
 import type { User } from '@island.is/api/domains/national-registry'
 
 import {
@@ -12,16 +11,14 @@ import {
   DefaultEvents,
 } from '@island.is/application/types'
 import { m } from './messages'
-import { Events, States, Roles, ApiActions, USERTYPE } from './constants'
+import { Events, States, Roles, ApiActions } from './constants'
 import { dataSchema } from './utils/dataSchema'
 import { Features } from '@island.is/feature-flags'
-import {
-  FinancialStatementInaoFeatureFlags,
-  getApplicationFeatureFlags,
-} from './utils/getApplicationFeatureFlags'
+
 import { getCurrentUserType } from './utils/helpers'
 
 import { AuthDelegationType } from '../types/schema'
+import { FSIUSERTYPE } from '../types'
 
 const FinancialStatementInaoApplication: ApplicationTemplate<
   ApplicationContext,
@@ -37,7 +34,7 @@ const FinancialStatementInaoApplication: ApplicationTemplate<
       ? (externalData?.nationalRegistry?.data as User)
       : undefined
 
-    if (userType === USERTYPE.INDIVIDUAL) {
+    if (userType === FSIUSERTYPE.INDIVIDUAL) {
       return currentUser
         ? `${m.applicationTitleAlt.defaultMessage} - ${currentUser.name}`
         : m.applicationTitleAlt

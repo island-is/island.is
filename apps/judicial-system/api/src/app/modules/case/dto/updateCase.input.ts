@@ -9,10 +9,11 @@ import type {
   CaseCustodyRestrictions,
   CaseDecision,
   UpdateCase,
-  CaseType,
   SessionArrangements,
   CourtDocument,
   SubpoenaType,
+  IndictmentSubType,
+  CaseType,
 } from '@island.is/judicial-system/types'
 
 @InputType()
@@ -24,6 +25,10 @@ export class UpdateCaseInput implements UpdateCase {
   @Allow()
   @Field(() => String, { nullable: true })
   readonly type?: CaseType
+
+  @Allow()
+  @Field(() => String, { nullable: true })
+  readonly indictmentSubType?: IndictmentSubType
 
   @Allow()
   @Field({ nullable: true })
@@ -243,11 +248,11 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field({ nullable: true })
-  accusedPostponedAppealDate?: string
+  readonly accusedPostponedAppealDate?: string
 
   @Allow()
   @Field({ nullable: true })
-  prosecutorPostponedAppealDate?: string
+  readonly prosecutorPostponedAppealDate?: string
 
   @Allow()
   @Field({ nullable: true })

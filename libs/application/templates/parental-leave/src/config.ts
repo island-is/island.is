@@ -8,6 +8,7 @@ export const minimumPeriodStartBeforeExpectedDateOfBirth = 30 // can start 30 da
 export const minimumRatio = 0.01
 
 export const maxDaysToGiveOrReceive = 45
+export const additionalSingleParentMonths = 6
 export const minMonths =
   (defaultMonths * DAYS_IN_MONTH - maxDaysToGiveOrReceive) / DAYS_IN_MONTH
 export const maxMonths =

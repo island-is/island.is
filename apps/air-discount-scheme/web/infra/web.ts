@@ -29,7 +29,6 @@ export const serviceSetup = (services: {
       DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN',
       IDENTITY_SERVER_SECRET:
         '/k8s/air-discount-scheme/web/IDENTITY_SERVER_SECRET',
-      SENTRY_DSN: '/k8s/air-discount-scheme-api/SENTRY_DSN',
     })
 
     .ingress({

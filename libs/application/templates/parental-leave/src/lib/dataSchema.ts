@@ -11,6 +11,7 @@ import {
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
   PARENTAL_LEAVE,
+  SINGLE,
 } from '../constants'
 import { errorMessages } from './messages'
 
@@ -35,7 +36,6 @@ export const dataSchema = z.object({
   applicationType: z.object({
     option: z.enum([PARENTAL_GRANT, PARENTAL_GRANT_STUDENTS, PARENTAL_LEAVE]),
   }),
-  artificialInseminationQuestion: z.enum([YES, NO]),
   applicant: z.object({
     email: z.string().email(),
     phoneNumber: z.string().refine(
@@ -106,7 +106,7 @@ export const dataSchema = z.object({
   ]),
   otherParentObj: z
     .object({
-      chooseOtherParent: z.enum([SPOUSE, NO, MANUAL]),
+      chooseOtherParent: z.enum([SPOUSE, NO, MANUAL, SINGLE]),
       otherParentName: z.string().optional(),
       otherParentId: z
         .string()
@@ -116,7 +116,7 @@ export const dataSchema = z.object({
         }),
     })
     .optional(),
-  otherParent: z.enum([SPOUSE, NO, MANUAL]).optional(),
+  otherParent: z.enum([SPOUSE, NO, MANUAL, SINGLE]).optional(),
   otherParentName: z.string().optional(),
   otherParentId: z
     .string()

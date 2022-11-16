@@ -7,7 +7,7 @@ import {
   GridRow,
   ResponsiveSpace,
 } from '@island.is/island-ui/core'
-import { RichText } from '@island.is/web/components'
+import { RichText, EmailSignup } from '@island.is/web/components'
 
 const DistrictsSlice = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.DistrictsSlice),
@@ -91,6 +91,7 @@ const fullWidthSlices = [
   'TimelineSlice',
   'LogoListSlice',
   'MailingListSignupSlice',
+  'EmailSignup',
 ]
 
 const renderSlice = (slice, namespace, slug, params) => {
@@ -135,6 +136,8 @@ const renderSlice = (slice, namespace, slug, params) => {
           {...params}
         />
       )
+    case 'EmailSignup':
+      return <EmailSignup slice={slice} marginLeft={[0, 0, 0, 6]} />
     default:
       return <RichText body={[slice]} />
   }

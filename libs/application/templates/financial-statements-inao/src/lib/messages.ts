@@ -201,6 +201,11 @@ export const m = defineMessages({
     defaultMessage: 'Eignir, skuldir og eigið fé',
     description: 'Statement property numbers',
   },
+  debtsAndEquity: {
+    id: 'fsn.application:keyNumbers.debtsAndEquity',
+    defaultMessage: 'Skuldir og eigið fé',
+    description: 'debts and equity',
+  },
   keyNumbersDebt: {
     id: 'fsn.application:keyNumbers.debt',
     defaultMessage: 'Lykiltölur - Eignir, Skuldir og eigið fé',
@@ -301,6 +306,11 @@ export const m = defineMessages({
     defaultMessage: 'Þessi kennitala virðist ekki vera rétt',
     description: 'National id is invalid',
   },
+  errorFetchingName: {
+    id: 'fsn.application:error.errorFetchingName',
+    defaultMessage: 'Tókst ekki að sækja nafn umboðsmanns',
+    description: 'Could not fetch powerofattorney name',
+  },
   errorEmpty: {
     id: 'fsn.application:error.empty',
     defaultMessage: 'Reitur má ekki vera tómur',
@@ -332,6 +342,17 @@ export const m = defineMessages({
     defaultMessage:
       'Umsækjandi má ekki vera skráður sem stjórnarmaður eða skoðunarmaður',
     description: 'error, applicant regsitered as caretaker/boardmember',
+  },
+  errorcaretakerCanNotIncludeActor: {
+    id: 'fsn.application:error.errorcaretakerCanNotIncludeActor',
+    defaultMessage: 'Innskráður aðili má ekki vera skráður sem skoðunarmaður',
+    description: 'error, applicant regsitered as caretaker',
+  },
+  errorBoardmembersCanNotJustIncludeActor: {
+    id: 'fsn.application:error.errorBoardmembersCanNotJustIncludeActor',
+    defaultMessage:
+      'Innskráður aðili má ekki vera skráður einn sem stjórnarmaður',
+    description: 'error, applicant regsitered as caretaker',
   },
   contributionsFromTheTreasury: {
     id: 'fsn.application:income.contributionsFromTheTreasury',
@@ -445,7 +466,7 @@ export const m = defineMessages({
   },
   donationsToCemeteryFund: {
     id: 'fsn.application:income.donationsToCemeteryFund',
-    defaultMessage: 'Styrkur frá kirkjugarðasjóði',
+    defaultMessage: 'Framlög til kirkjugarðasjóðs',
     description: 'donations from cemetry fund',
   },
   cemeteryCaretakers: {
