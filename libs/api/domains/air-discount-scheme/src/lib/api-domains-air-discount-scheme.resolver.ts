@@ -24,7 +24,7 @@ const TWO_HOURS = 7200
 
 @UseGuards(IdsAuthGuard, IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.ads)
-//@Audit({ namespace: '@island.is/air-discount-scheme' })
+@Audit({ namespace: '@island.is/air-discount-scheme' })
 export class AirDiscountSchemeResolver {
   constructor(private airDiscountSchemeService: AirDiscountSchemeService) {}
 
