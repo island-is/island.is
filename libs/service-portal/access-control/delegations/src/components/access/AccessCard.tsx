@@ -85,6 +85,7 @@ export const AccessCard = ({ delegation, onDelete }: AccessCardProps) => {
               <img
                 src={delegation.domain.organisationLogoUrl}
                 width="16"
+                alt=""
                 aria-hidden
               />
             )}
