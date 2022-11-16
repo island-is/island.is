@@ -116,6 +116,7 @@ const SubPage: Screen<SubPageProps> = ({
 
   return (
     <OrganizationWrapper
+      showExternalLinks={true}
       pageTitle={subpage.title}
       organizationPage={organizationPage}
       fullWidthContent={true}
