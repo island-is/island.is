@@ -671,6 +671,12 @@ export const requiresOtherParentApproval = (
   externalData: Application['externalData'],
 ) => {
   const applicationAnswers = getApplicationAnswers(answers)
+  
+  const { otherParent } = applicationAnswers
+  if (otherParent === NO) {
+    return false
+  }
+
   const selectedChild = getSelectedChild(answers, externalData)
   const { navId } = getApplicationExternalData(externalData)
 
