@@ -9,13 +9,18 @@ import {
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
-import { CaseType } from '@island.is/judicial-system/types'
+import { CaseType, IndictmentSubType } from '@island.is/judicial-system/types'
 
 export class CreateCaseDto {
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
   @ApiPropertyOptional({ enum: CaseType })
   readonly type!: CaseType
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ enum: IndictmentSubType })
+  readonly indictmentSubType?: IndictmentSubType
 
   @IsOptional()
   @IsString()

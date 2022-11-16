@@ -27,7 +27,7 @@ export const IntroHeader = ({
   const { formatMessage } = useLocale()
   return (
     <GridRow marginBottom={6}>
-      <GridColumn span={['8/8', '5/8']} order={[2, 1]}>
+      <GridColumn span={['8/8', '5/8']} order={1}>
         <Text variant="h3" as="h1">
           {formatMessage(title)}
         </Text>
@@ -37,15 +37,8 @@ export const IntroHeader = ({
           </Text>
         )}
       </GridColumn>
-      <GridColumn
-        span={['12/12', '12/12', '6/9']}
-        order={[4, 3]}
-        paddingTop={4}
-      >
-        <ModuleAlertBannerSection />
-      </GridColumn>
       {img && (
-        <GridColumn span={['8/8', '3/8']} order={[1, 4]}>
+        <GridColumn span={['8/8', '3/8']} order={2}>
           <Hidden print={hideImgPrint} below="lg">
             <Box textAlign="center" padding={[6, 0]}>
               <img src={img} alt="" />
@@ -53,6 +46,9 @@ export const IntroHeader = ({
           </Hidden>
         </GridColumn>
       )}
+      <GridColumn span={['12/12', '12/12', '6/8']} order={3} paddingTop={4}>
+        <ModuleAlertBannerSection />
+      </GridColumn>
     </GridRow>
   )
 }

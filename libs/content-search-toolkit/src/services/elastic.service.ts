@@ -105,6 +105,30 @@ export class ElasticService {
     await this.bulkRequest(index, requests)
   }
 
+  /**
+   * @param {T} err Error object
+   * @return {boolean} True iff a document was removed
+   * Filter the HUMONGOUS documents in an error object
+   */
+  private filterDoc<T>(o: T, parent?: string): boolean {
+    let deleted = false
+    if (Object.keys(o).length == 0) return false
+    for (const key in o) {
+      const value = o[key]
+      // A document is typically nested in request.params.body
+      if (
+        key == 'doc' ||
+        (key == 'body' && parent == 'params') ||
+        (key == 'body' && typeof value == 'string' && value.match(/^\{?"?doc/))
+      ) {
+        delete o[key]
+        deleted = true
+      }
+      return this.filterDoc(o[key])
+    }
+    return deleted
+  }
+
   async bulkRequest(index: string, requests: Record<string, unknown>[]) {
     try {
       // elasticsearch does not like big requests (above 5mb) so we limit the size to X entries just in case
@@ -120,6 +144,8 @@ export class ElasticService {
 
         // not all errors are thrown log if the response has any errors
         if (response.body.errors) {
+          // Filter HUGE request object
+          this.filterDoc(response)
           logger.error('Failed to import some documents in bulk import', {
             response,
           })
@@ -129,6 +155,8 @@ export class ElasticService {
 
       return true
     } catch (error) {
+      // Filter HUGE request object
+      this.filterDoc(error)
       logger.error('Elasticsearch request failed on bulk import', error)
       throw error
     }
@@ -283,7 +311,7 @@ export class ElasticService {
   }
 
   async search(index: string, query: SearchInput) {
-    const requestBody = searchQuery(query)
+    const requestBody = searchQuery(query, true, true)
 
     return this.findByQuery<
       SearchResponse<
@@ -302,7 +330,6 @@ export class ElasticService {
   ): Promise<AutocompleteTermResponse> {
     const { singleTerm, size } = input
     const requestBody = autocompleteTermQuery({ singleTerm, size })
-
     const data = await this.findByQuery<
       AutocompleteTermResponse,
       typeof requestBody

@@ -71,7 +71,7 @@ export const CourtRecord: React.FC = () => {
 
   const router = useRouter()
   const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
-  const { updateCase, setAndSendToServer } = useCase()
+  const { updateCase, setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
 
   const id = router.query.id
@@ -153,9 +153,7 @@ export const CourtRecord: React.FC = () => {
         autofillSessionBookings.push(
           `\n\n${formatMessage(
             m.sections.sessionBookings.autofillPresentationsV3,
-            {
-              caseType: workingCase.type,
-            },
+            { caseType: workingCase.type },
           )}`,
         )
 
@@ -207,7 +205,7 @@ export const CourtRecord: React.FC = () => {
         }
       }
 
-      setAndSendToServer(
+      setAndSendCaseToServer(
         [
           {
             courtStartDate: workingCase.courtDate,
@@ -239,7 +237,7 @@ export const CourtRecord: React.FC = () => {
       setInitialAutoFillDone(true)
     }
   }, [
-    setAndSendToServer,
+    setAndSendCaseToServer,
     formatMessage,
     initialAutoFillDone,
     isCaseUpToDate,
@@ -280,7 +278,7 @@ export const CourtRecord: React.FC = () => {
                 selectedDate={workingCase.courtStartDate}
                 onChange={(date: Date | undefined, valid: boolean) => {
                   if (date && valid) {
-                    setAndSendToServer(
+                    setAndSendCaseToServer(
                       [
                         {
                           courtStartDate: formatDateForServer(date),
@@ -337,7 +335,7 @@ export const CourtRecord: React.FC = () => {
               text={formatMessage(closedCourt.text)}
               isHidden={workingCase.isClosedCourtHidden}
               onToggleVisibility={(isVisible: boolean) =>
-                setAndSendToServer(
+                setAndSendCaseToServer(
                   [
                     {
                       isClosedCourtHidden: isVisible,
@@ -508,7 +506,7 @@ export const CourtRecord: React.FC = () => {
                   maxDate={new Date()}
                   selectedDate={workingCase.courtEndTime}
                   onChange={(date: Date | undefined, valid: boolean) => {
-                    setAndSendToServer(
+                    setAndSendCaseToServer(
                       [
                         {
                           courtEndTime:

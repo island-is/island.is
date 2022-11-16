@@ -1,5 +1,6 @@
 import React, { ReactNode } from 'react'
 import ReactDOM from 'react-dom'
+import FocusLock from 'react-focus-lock'
 import { motion } from 'framer-motion'
 
 import { Box, Button, Icon, Text } from '@island.is/island-ui/core'
@@ -48,75 +49,77 @@ const Modal: React.FC<ModalProps> = ({
   }
 
   return (
-    <motion.div
-      key="modal"
-      className={styles.container}
-      data-testid="modal"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-    >
+    <FocusLock>
       <motion.div
-        className={styles.modalContainer}
-        initial="closed"
-        animate="open"
-        exit="closed"
-        variants={modalVariants}
+        key="modal"
+        className={styles.container}
+        data-testid="modal"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
       >
-        {onClose && (
-          <Box position="absolute" top={0} right={0}>
-            <button className={styles.closeButton} onClick={onClose}>
-              <Icon icon="close" type="outline" color="blue400" />
-            </button>
-          </Box>
-        )}
-        <Box marginBottom={3}>
-          <Text variant="h1" as="h2">
-            {title}
-          </Text>
-        </Box>
-        {text && (
-          <Box marginBottom={6} className={styles.breakSpaces}>
-            {
-              // Check if text is a string or Element
-              React.isValidElement(text) ? text : <Text>{text}</Text>
-            }
-          </Box>
-        )}
-        {children}
-        <Box display="flex">
-          {secondaryButtonText && (
-            <Box marginRight={3}>
-              <Button
-                data-testid="modalSecondaryButton"
-                variant={invertButtonColors ? undefined : 'ghost'}
-                onClick={onSecondaryButtonClick}
-              >
-                {secondaryButtonText}
-              </Button>
+        <motion.div
+          className={styles.modalContainer}
+          initial="closed"
+          animate="open"
+          exit="closed"
+          variants={modalVariants}
+        >
+          {onClose && (
+            <Box position="absolute" top={0} right={0}>
+              <button className={styles.closeButton} onClick={onClose}>
+                <Icon icon="close" type="outline" color="blue400" />
+              </button>
             </Box>
           )}
-          {primaryButtonText && (
-            <Button
-              data-testid="modalPrimaryButton"
-              variant={invertButtonColors ? 'ghost' : undefined}
-              onClick={onPrimaryButtonClick}
-              loading={isPrimaryButtonLoading}
-              disabled={isPrimaryButtonDisabled}
-            >
-              {primaryButtonText}
-            </Button>
-          )}
-        </Box>
-        {errorMessage && (
-          <Box marginTop={1} data-testid="modalErrorMessage">
-            <Text variant="eyebrow" color="red600">
-              {errorMessage}
+          <Box marginBottom={3}>
+            <Text variant="h1" as="h2">
+              {title}
             </Text>
           </Box>
-        )}
+          {text && (
+            <Box marginBottom={6} className={styles.breakSpaces}>
+              {
+                // Check if text is a string or Element
+                React.isValidElement(text) ? text : <Text>{text}</Text>
+              }
+            </Box>
+          )}
+          {children}
+          <Box display="flex">
+            {secondaryButtonText && (
+              <Box marginRight={3}>
+                <Button
+                  data-testid="modalSecondaryButton"
+                  variant={invertButtonColors ? undefined : 'ghost'}
+                  onClick={onSecondaryButtonClick}
+                >
+                  {secondaryButtonText}
+                </Button>
+              </Box>
+            )}
+            {primaryButtonText && (
+              <Button
+                data-testid="modalPrimaryButton"
+                variant={invertButtonColors ? 'ghost' : undefined}
+                onClick={onPrimaryButtonClick}
+                loading={isPrimaryButtonLoading}
+                disabled={isPrimaryButtonDisabled}
+              >
+                {primaryButtonText}
+              </Button>
+            )}
+          </Box>
+          {errorMessage && (
+            <Box marginTop={1} data-testid="modalErrorMessage">
+              <Text variant="eyebrow" color="red600">
+                {errorMessage}
+              </Text>
+            </Box>
+          )}
+        </motion.div>
       </motion.div>
-    </motion.div>
+    </FocusLock>
   )
 }
 

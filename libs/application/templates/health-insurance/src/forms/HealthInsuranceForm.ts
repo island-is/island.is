@@ -46,6 +46,11 @@ export const HealthInsuranceForm: Form = buildForm({
           id: 'statusAndChildren',
           title: m.statusAndChildren,
           children: [
+            buildCustomField({
+              id: 'citizenship',
+              title: '',
+              component: 'CitizenshipField',
+            }),
             buildRadioField({
               id: 'status.type',
               title: '',
@@ -170,8 +175,8 @@ export const HealthInsuranceForm: Form = buildForm({
                   formerInsurance: { country: string }
                 })?.formerInsurance?.country
                 const citizenship = (answers as {
-                  applicant: { citizenship: string }
-                })?.applicant?.citizenship
+                  citizenship: string
+                })?.citizenship
                 return (
                   !!formerCountry &&
                   requireWaitingPeriod(formerCountry, citizenship)
@@ -207,8 +212,8 @@ export const HealthInsuranceForm: Form = buildForm({
                   formerInsurance: { country: string }
                 })?.formerInsurance?.country
                 const citizenship = (answers as {
-                  applicant: { citizenship: string }
-                })?.applicant?.citizenship
+                  citizenship: string
+                })?.citizenship
                 return !requireWaitingPeriod(formerCountry, citizenship)
               },
             }),
@@ -226,8 +231,8 @@ export const HealthInsuranceForm: Form = buildForm({
                   formerInsurance: { country: string }
                 })?.formerInsurance?.country
                 const citizenship = (answers as {
-                  applicant: { citizenship: string }
-                })?.applicant?.citizenship
+                  citizenship: string
+                }).citizenship
                 return !requireWaitingPeriod(formerCountry, citizenship)
               },
             }),
@@ -243,8 +248,8 @@ export const HealthInsuranceForm: Form = buildForm({
                   formerInsurance: { country: string }
                 })?.formerInsurance?.country
                 const citizenship = (answers as {
-                  applicant: { citizenship: string }
-                })?.applicant?.citizenship
+                  citizenship: string
+                })?.citizenship
                 return !requireWaitingPeriod(formerCountry, citizenship)
               },
             }),
