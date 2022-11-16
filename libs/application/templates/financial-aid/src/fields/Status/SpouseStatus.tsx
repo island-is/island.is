@@ -16,7 +16,7 @@ import * as styles from './Status.css'
 
 const SpouseStatus = ({ application, goToScreen }: FAFieldBaseProps) => {
   const { currentApplication, loading } = useApplication(
-    application.externalData.currentApplication.data.currentApplicationId,
+    application.externalData.currentApplication.data?.currentApplicationId,
   )
   const { municipality } = application.externalData
   const state = currentApplication?.state

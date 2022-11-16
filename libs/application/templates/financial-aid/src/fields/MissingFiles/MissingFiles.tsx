@@ -31,7 +31,7 @@ const MissingFiles = ({
   field,
 }: FAFieldBaseProps) => {
   const { currentApplication, updateApplication, loading } = useApplication(
-    application.externalData.currentApplication.data.currentApplicationId,
+    application.externalData.currentApplication.data?.currentApplicationId,
   )
   const isSpouse = getValueViaPath(field as RecordObject<any>, 'props.isSpouse')
 
@@ -71,9 +71,7 @@ const MissingFiles = ({
       }
 
       try {
-        if (
-          !application.externalData.currentApplication.data.currentApplicationId
-        ) {
+        if (!application.externalData.currentApplication.data) {
           throw new Error()
         }
 

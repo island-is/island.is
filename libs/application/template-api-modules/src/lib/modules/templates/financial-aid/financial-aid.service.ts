@@ -69,7 +69,7 @@ export class FinancialAidService extends BaseTemplateApiService {
   }: Props): Promise<CurrentApplication> {
     const { id, answers, externalData } = application
 
-    if (externalData.currentApplication.data.currentApplicationId) {
+    if (externalData.currentApplication.data) {
       return {
         currentApplicationId:
           externalData.currentApplication.data.currentApplicationId,
@@ -182,13 +182,17 @@ export class FinancialAidService extends BaseTemplateApiService {
       })
   }
 
-  async currentApplication({ auth }: Props): Promise<CurrentApplication> {
+  async currentApplication({
+    auth,
+  }: Props): Promise<CurrentApplication | null> {
     const currentApplicationId = await this.applicationApiWithAuth(auth)
       .applicationControllerGetCurrentApplication()
       .catch(this.handle404)
-    return {
-      currentApplicationId: currentApplicationId || undefined,
-    }
+    return currentApplicationId
+      ? {
+          currentApplicationId: currentApplicationId,
+        }
+      : null
   }
 
   async municipality({

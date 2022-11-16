@@ -44,7 +44,7 @@ export interface ExternalData {
     status: StatusProvider
   }
   currentApplication: {
-    data: CurrentApplication
+    data?: CurrentApplication
     date: string
     status: StatusProvider
   }
@@ -98,7 +98,7 @@ export interface TaxData {
 }
 
 export interface CurrentApplication {
-  currentApplicationId?: string
+  currentApplicationId: string
 }
 
 export interface InputTypes {
