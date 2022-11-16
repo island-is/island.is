@@ -9,7 +9,11 @@ import {
 import type { Auth } from '@island.is/auth-nest-tools'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import { ApplicationState, FileType } from '@island.is/financial-aid/shared/lib'
-import { ApplicationApi } from '@island.is/clients/municipalities-financial-aid'
+import {
+  ApplicationApi,
+  MunicipalityApi,
+  MunicipalityModel,
+} from '@island.is/clients/municipalities-financial-aid'
 import { UploadFile } from '@island.is/island-ui/core'
 
 import { TemplateApiModuleActionProps } from '../../../types'
@@ -23,12 +27,19 @@ type Props<T> = Omit<TemplateApiModuleActionProps<T>, 'application'> & {
 
 @Injectable()
 export class FinancialAidService extends BaseTemplateApiService {
-  constructor(private applicationApi: ApplicationApi) {
+  constructor(
+    private applicationApi: ApplicationApi,
+    private municipalityApi: MunicipalityApi,
+  ) {
     super(ApplicationTypes.FINANCIAL_AID)
   }
 
   private applicationApiWithAuth(auth: Auth) {
     return this.applicationApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  private municipalityApiWithAuth(auth: Auth) {
+    return this.municipalityApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   private formatFiles(files: UploadFile[], type: FileType) {
@@ -47,7 +58,7 @@ export class FinancialAidService extends BaseTemplateApiService {
 
   private handle404(error: FetchError) {
     if (error.status === 404) {
-      return undefined
+      return null
     }
     throw error
   }
@@ -112,8 +123,8 @@ export class FinancialAidService extends BaseTemplateApiService {
       .concat(this.formatFiles(applicantTaxFiles(), FileType.TAXRETURN))
 
     const newApplication = {
-      name: externalData.nationalRegistry.data.applicant.fullName,
-      nationalId: externalData.nationalRegistry.data.applicant.nationalId,
+      name: externalData.nationalRegistry.data.fullName,
+      nationalId: externalData.nationalRegistry.data.nationalId,
       phoneNumber: answers.contactInfo.phone,
       email: answers.contactInfo.email,
       homeCircumstances: answers.homeCircumstances.type,
@@ -133,7 +144,7 @@ export class FinancialAidService extends BaseTemplateApiService {
       state: ApplicationState.NEW,
       files: files,
       spouseNationalId:
-        externalData.nationalRegistry.data.applicant.spouse?.nationalId ||
+        externalData.nationalRegistrySpouse.data?.nationalId ||
         answers.relationshipStatus?.spouseNationalId,
       spouseEmail:
         answers.spouseContactInfo?.email ||
@@ -141,17 +152,14 @@ export class FinancialAidService extends BaseTemplateApiService {
         answers.relationshipStatus?.spouseEmail,
       spousePhoneNumber: answers.spouseContactInfo?.phone,
       spouseName:
-        externalData.nationalRegistry.data.applicant.spouse?.name ||
-        answers.spouseName,
+        externalData.nationalRegistrySpouse.data?.name || answers.spouseName,
       spouseFormComment: answers.spouseFormComment,
       familyStatus: findFamilyStatus(answers, externalData),
-      streetName:
-        externalData.nationalRegistry.data.applicant.address.streetName,
-      postalCode:
-        externalData.nationalRegistry.data.applicant.address.postalCode,
-      city: externalData.nationalRegistry.data.applicant.address.city,
+      streetName: externalData.nationalRegistry.data.address?.streetAddress,
+      postalCode: externalData.nationalRegistry.data.address?.postalCode,
+      city: externalData.nationalRegistry.data.address?.locality,
       municipalityCode:
-        externalData.nationalRegistry.data.applicant.address.municipalityCode,
+        externalData.nationalRegistry.data.address?.municipalityCode,
       directTaxPayments: directTaxPayments(),
       hasFetchedDirectTaxPayment:
         externalData?.taxDataFetch?.data?.municipalitiesDirectTaxPayments
@@ -179,7 +187,22 @@ export class FinancialAidService extends BaseTemplateApiService {
       .applicationControllerGetCurrentApplication()
       .catch(this.handle404)
     return {
-      currentApplicationId,
+      currentApplicationId: currentApplicationId || undefined,
     }
+  }
+
+  async municipality({
+    auth,
+    application,
+  }: Props<null>): Promise<MunicipalityModel | null> {
+    const municiplaityCode =
+      application.externalData.nationalRegistry.data.address?.municipalityCode
+    if (municiplaityCode == null) {
+      return null
+    }
+
+    return await this.municipalityApiWithAuth(auth)
+      .municipalityControllerGetById({ id: municiplaityCode })
+      .catch(this.handle404)
   }
 }

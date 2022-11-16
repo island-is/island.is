@@ -34,9 +34,22 @@ export class MunicipalityService {
 
   async findByMunicipalityId(
     municipalityId: string,
+    isStaff: boolean,
   ): Promise<MunicipalityModel> {
     return this.decryptNavPassword(
       await this.municipalityModel.findOne({
+        attributes: {
+          exclude: isStaff
+            ? []
+            : [
+                'navUrl',
+                'usingNav',
+                'navUsername',
+                'navPassword',
+                'created',
+                'modified',
+              ],
+        },
         where: { municipalityId },
         include: [
           {

@@ -29,9 +29,7 @@ const ApplicantConfirmation = ({ application }: FAFieldBaseProps) => {
       missingIncomeFiles={missingIncomeFiles}
       hasSpouse={applicantHasSpouse}
       spouseEmailSuccess={application.answers.spouseEmailSuccess}
-      municipalityHomepage={
-        externalData?.nationalRegistry?.data?.municipality?.homepage
-      }
+      municipalityHomepage={externalData.municipality.data?.homepage}
     />
   )
 }

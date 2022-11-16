@@ -26,16 +26,14 @@ export const useEmail = (application: FAApplication) => {
           await spouseEmail({
             variables: {
               input: {
-                name: externalData.nationalRegistry.data.applicant.fullName,
+                name: externalData.nationalRegistry.data.fullName,
                 email: answers.contactInfo.email,
-                spouseName:
-                  externalData.nationalRegistry.data.applicant.spouse?.name,
+                spouseName: externalData.nationalRegistrySpouse.data?.name,
                 spouseEmail:
                   answers.spouse?.email ||
                   answers.relationshipStatus?.spouseEmail,
                 municipalityCode:
-                  externalData.nationalRegistry.data.municipality
-                    .municipalityId,
+                  externalData.municipality.data?.municipalityId,
                 created: application.created,
                 applicationSystemId: id,
               },

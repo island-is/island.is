@@ -47,19 +47,16 @@ const SummaryForm = ({
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const aidAmount = useMemo(() => {
-    if (
-      externalData.nationalRegistry?.data?.municipality &&
-      answers.homeCircumstances
-    ) {
+    if (externalData.municipality.data && answers.homeCircumstances) {
       return aidCalculator(
         answers.homeCircumstances.type,
         findFamilyStatus(answers, externalData) ===
           FamilyStatus.NOT_COHABITATION
-          ? externalData.nationalRegistry?.data?.municipality?.individualAid
-          : externalData.nationalRegistry?.data?.municipality?.cohabitationAid,
+          ? externalData.municipality.data.individualAid
+          : externalData.municipality.data.cohabitationAid,
       )
     }
-  }, [externalData.nationalRegistry?.data?.municipality])
+  }, [externalData.municipality.data])
 
   const { sendSpouseEmail } = useEmail(application)
 
@@ -108,9 +105,9 @@ const SummaryForm = ({
       </Box>
 
       <UserInfo
-        name={externalData?.nationalRegistry?.data?.applicant?.fullName}
-        nationalId={externalData?.nationalRegistry?.data?.applicant?.nationalId}
-        address={formatAddress(externalData?.nationalRegistry?.data?.applicant)}
+        name={externalData.nationalRegistry.data.fullName}
+        nationalId={externalData.nationalRegistry.data.nationalId}
+        address={formatAddress(externalData.nationalRegistry.data)}
       />
 
       <FormInfo

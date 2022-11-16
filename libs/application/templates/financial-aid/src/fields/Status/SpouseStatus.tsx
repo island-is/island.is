@@ -18,7 +18,7 @@ const SpouseStatus = ({ application, goToScreen }: FAFieldBaseProps) => {
   const { currentApplication, loading } = useApplication(
     application.externalData.currentApplication.data.currentApplicationId,
   )
-  const { nationalRegistry } = application.externalData
+  const { municipality } = application.externalData
   const state = currentApplication?.state
 
   if (loading) {
@@ -42,10 +42,8 @@ const SpouseStatus = ({ application, goToScreen }: FAFieldBaseProps) => {
       />
 
       <MoreActions
-        municipalityRulesPage={
-          nationalRegistry?.data?.municipality?.rulesHomepage
-        }
-        municipalityEmail={nationalRegistry?.data?.municipality?.email}
+        municipalityRulesPage={municipality.data?.rulesHomepage}
+        municipalityEmail={municipality.data?.email}
       />
     </Box>
   )

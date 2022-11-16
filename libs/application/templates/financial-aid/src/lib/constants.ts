@@ -47,6 +47,7 @@ export enum Routes {
 export enum ApiActions {
   CREATEAPPLICATION = 'createApplication',
   CURRENTAPPLICATION = 'currentApplication',
+  MUNICIPALITY = 'municipality',
 }
 
 export const UPLOAD_ACCEPT = [

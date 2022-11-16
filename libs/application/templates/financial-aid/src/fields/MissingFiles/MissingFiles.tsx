@@ -169,9 +169,7 @@ const MissingFiles = ({
           <DescriptionText
             text={missingFiles.error.message}
             format={{
-              email:
-                application.externalData.nationalRegistry.data.municipality
-                  .email ?? '',
+              email: application.externalData.municipality.data?.email ?? '',
             }}
           />
         </>

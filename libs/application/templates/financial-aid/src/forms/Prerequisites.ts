@@ -12,7 +12,12 @@ import { DataProviderTypes } from '../lib/types'
 
 import * as m from '../lib/messages'
 import { Routes } from '../lib/constants'
-import { CurrentApplicationApi } from '../dataProviders'
+import {
+  CurrentApplicationApi,
+  NationalRegistryUserApi,
+  NationalRegistrySpouseApi,
+  MunicipalityApi,
+} from '../dataProviders'
 
 export const Prerequisites: Form = buildForm({
   id: 'FinancialAidApplication',
@@ -31,15 +36,24 @@ export const Prerequisites: Form = buildForm({
           checkboxLabel: m.externalData.general.checkboxLabel,
           dataProviders: [
             buildDataProviderItem({
-              id: 'nationalRegistry',
-              type: DataProviderTypes.NationalRegistry,
+              provider: NationalRegistryUserApi,
               title: m.externalData.applicant.title,
               subTitle: m.externalData.applicant.subTitle,
             }),
             buildDataProviderItem({
+              provider: NationalRegistrySpouseApi,
+              title: '',
+              subTitle: '',
+            }),
+            buildDataProviderItem({
+              provider: MunicipalityApi,
+              title: '',
+              subTitle: '',
+            }),
+            buildDataProviderItem({
               provider: CurrentApplicationApi,
               title: '',
-              subTitle: undefined,
+              subTitle: '',
             }),
             buildDataProviderItem({
               id: 'taxDataFetch',

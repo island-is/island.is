@@ -1,4 +1,9 @@
-import { Application, FieldBaseProps } from '@island.is/application/types'
+import {
+  Application,
+  FieldBaseProps,
+  NationalRegistryIndividual,
+  NationalRegistrySpouse,
+} from '@island.is/application/types'
 import {
   DirectTaxPayment,
   Municipality,
@@ -24,10 +29,17 @@ export type ErrorSchema = NestedType<answersSchema>
 
 export interface ExternalData {
   nationalRegistry: {
-    data: {
-      applicant: Applicant
-      municipality: Municipality
-    }
+    data: NationalRegistryIndividual
+    date: string
+    status: StatusProvider
+  }
+  nationalRegistrySpouse: {
+    data?: NationalRegistrySpouse
+    date: string
+    status: StatusProvider
+  }
+  municipality: {
+    data?: Municipality
     date: string
     status: StatusProvider
   }
@@ -75,13 +87,6 @@ export type FAFieldBaseProps = Override<
   { application: FAApplication; errors: ErrorSchema }
 >
 
-export interface Applicant {
-  nationalId: string
-  fullName: string
-  address: Address
-  spouse?: Spouse
-}
-
 export interface TaxData {
   municipalitiesPersonalTaxReturn: {
     personalTaxReturn: PersonalTaxReturn | null
@@ -94,19 +99,6 @@ export interface TaxData {
 
 export interface CurrentApplication {
   currentApplicationId?: string
-}
-
-export interface Address {
-  streetName: string
-  postalCode: string
-  city: string
-  municipalityCode: string
-}
-
-export interface Spouse {
-  nationalId: string
-  maritalStatus: string
-  name: string
 }
 
 export interface InputTypes {

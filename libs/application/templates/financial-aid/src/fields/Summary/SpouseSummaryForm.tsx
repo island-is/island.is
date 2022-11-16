@@ -29,7 +29,7 @@ const SpouseSummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const nationalId =
-    externalData?.nationalRegistry?.data?.applicant?.spouse?.nationalId ||
+    externalData.nationalRegistrySpouse.data?.nationalId ||
     answers?.relationshipStatus?.spouseNationalId
 
   const { userInfo } = useAuth()
@@ -46,7 +46,7 @@ const SpouseSummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
       <UserInfo
         name={userInfo?.profile.name}
         nationalId={nationalId}
-        address={formatAddress(externalData?.nationalRegistry?.data?.applicant)}
+        address={formatAddress(externalData.nationalRegistry.data)}
       />
 
       <FormInfo items={spouseFormItems(answers)} goToScreen={goToScreen} />

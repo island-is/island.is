@@ -23,8 +23,8 @@ export const Application: Form = buildForm({
       children: [
         buildSubSection({
           condition: (_, externalData) =>
-            ((externalData as unknown) as ExternalData).nationalRegistry?.data
-              ?.applicant?.spouse != null,
+            ((externalData as unknown) as ExternalData).nationalRegistrySpouse
+              .data != null,
           title: m.inRelationship.general.sectionTitle,
           children: [
             buildCustomField({
@@ -36,8 +36,8 @@ export const Application: Form = buildForm({
         }),
         buildSubSection({
           condition: (_, externalData) =>
-            ((externalData as unknown) as ExternalData).nationalRegistry?.data
-              ?.applicant?.spouse == null,
+            ((externalData as unknown) as ExternalData).nationalRegistrySpouse
+              .data == null,
           title: m.unknownRelationship.general.sectionTitle,
           children: [
             buildCustomField({

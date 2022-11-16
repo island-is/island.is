@@ -20,7 +20,13 @@ import {
   hasSpouseCheck,
 } from './utils'
 import { FAApplication } from '..'
-import { CreateApplicationApi, CurrentApplicationApi } from '../dataProviders'
+import {
+  CreateApplicationApi,
+  CurrentApplicationApi,
+  NationalRegistryUserApi,
+  NationalRegistrySpouseApi,
+  MunicipalityApi,
+} from '../dataProviders'
 
 type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.EDIT }
 
@@ -61,13 +67,22 @@ const FinancialAidTemplate: ApplicationTemplate<
               write: {
                 answers: ['approveExternalData'],
                 externalData: [
-                  'nationalRegistry',
-                  CurrentApplicationApi.action,
+                  NationalRegistryUserApi.externalDataId || '',
+                  NationalRegistryUserApi.actionId,
+                  NationalRegistrySpouseApi.externalDataId || '',
+                  NationalRegistrySpouseApi.actionId,
+                  CurrentApplicationApi.actionId,
+                  MunicipalityApi.actionId,
                   'taxDataFetch',
                 ],
               },
               delete: true,
-              api: [CurrentApplicationApi],
+              api: [
+                CurrentApplicationApi,
+                NationalRegistryUserApi,
+                NationalRegistrySpouseApi,
+                MunicipalityApi,
+              ],
             },
           ],
         },
@@ -263,7 +278,10 @@ const FinancialAidTemplate: ApplicationTemplate<
                   Promise.resolve(module.MuncipalityNotRegistered),
                 ),
               read: {
-                externalData: ['nationalRegistry'],
+                externalData: [
+                  MunicipalityApi.actionId,
+                  NationalRegistryUserApi.externalDataId || '',
+                ],
               },
             },
           ],
@@ -278,9 +296,8 @@ const FinancialAidTemplate: ApplicationTemplate<
           externalData,
           answers,
         } = (context.application as unknown) as FAApplication
-        const { applicant } = externalData.nationalRegistry.data
         const spouse =
-          applicant.spouse?.nationalId ||
+          externalData.nationalRegistrySpouse.data?.nationalId ||
           answers.relationshipStatus.spouseNationalId
 
         if (spouse) {
