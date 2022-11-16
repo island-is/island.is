@@ -7,7 +7,7 @@ import type { ConfigType } from '@island.is/nest/config'
 import { Inject, Injectable } from '@nestjs/common'
 
 import { FinancialStatementsInaoClientConfig } from './financialStatementsInao.config'
-import type {
+import {
   CemeteryFinancialStatementValues,
   ClientType,
   Client,
@@ -20,6 +20,8 @@ import type {
   PersonalElectionFinancialStatementValues,
   PoliticalPartyFinancialStatementValues,
   TaxInfo,
+  ContactType,
+  ContactDto,
 } from './types'
 import { ClientTypes } from './types'
 import {
@@ -142,8 +144,6 @@ export class FinancialStatementsInaoClientService {
       star_email: client.email,
     }
 
-    this.logger.debug('body', body)
-
     await this.fetch(url, {
       method: 'POST',
       body: JSON.stringify(body),
@@ -151,7 +151,6 @@ export class FinancialStatementsInaoClientService {
         'Content-Type': 'application/json',
       },
     })
-    this.logger.debug('client created')
   }
 
   async getOrCreateClient(client: Client, clientType: ClientTypes) {
@@ -236,87 +235,7 @@ export class FinancialStatementsInaoClientService {
     return financialTypes
   }
 
-  // async postFinancialStatementForPersonalElection(
-  //   clientNationalId: string,
-  //   actorNationalId: string | undefined,
-  //   electionId: string,
-  //   noValueStatement: boolean,
-  //   clientName: string,
-  //   values?: PersonalElectionFinancialStatementValues,
-  //   file?: string,
-  // ): Promise<boolean> {
-  //   const financialValues: LookupType[] = []
-
-  //   if (!noValueStatement && values) {
-  //     const financialTypes = await this.getFinancialTypes()
-
-  //     if (!financialTypes) {
-  //       this.logger.error('Failed to get financial types')
-  //       return false
-  //     }
-
-  //     const list: KeyValue[] = []
-  //     list.push({ key: 100, value: values.contributionsByLegalEntities })
-  //     list.push({ key: 101, value: values.individualContributions })
-  //     list.push({ key: 102, value: values.candidatesOwnContributions })
-  //     list.push({ key: 128, value: values.capitalIncome })
-  //     list.push({ key: 129, value: values.otherIncome })
-  //     list.push({ key: 130, value: values.electionOfficeExpenses })
-  //     list.push({ key: 131, value: values.advertisingAndPromotions })
-  //     list.push({ key: 132, value: values.meetingsAndTravelExpenses })
-  //     list.push({ key: 139, value: values.otherExpenses })
-  //     list.push({ key: 148, value: values.financialExpenses })
-  //     list.push({ key: 150, value: values.fixedAssetsTotal })
-  //     list.push({ key: 160, value: values.currentAssets })
-  //     list.push({ key: 170, value: values.longTermLiabilitiesTotal })
-  //     list.push({ key: 180, value: values.shortTermLiabilitiesTotal })
-  //     list.push({ key: 190, value: values.equityTotal })
-
-  //     list.forEach((x) => {
-  //       financialValues.push(lookup(x.key, x.value, financialTypes))
-  //     })
-  //   }
-
-  //   const client = await this.getOrCreateClient(
-  //     clientNationalId,
-  //     clientName,
-  //     ClientTypes.Individual,
-  //   )
-
-  //   const body = {
-  //     'star_Election@odata.bind': `/star_elections(${electionId})`,
-  //     star_representativenationalid: actorNationalId,
-  //     'star_Client@odata.bind': `/star_clients(${client})`,
-  //     star_novaluestatement: noValueStatement,
-  //     star_financialstatementvalue_belongsto_rel: financialValues,
-  //   }
-
-  //   const financialStatementId = await this.postFinancialStatement(body)
-  //   if (!financialStatementId) {
-  //     throw new Error('FinancialStatementId can not be null')
-  //   }
-
-  //   if (file) {
-  //     const electionInfo = await this.getElectionInfo(electionId)
-
-  //     const fileName = getPersonalElectionFileName(
-  //       clientNationalId,
-  //       electionInfo?.electionType,
-  //       electionInfo?.electionDate,
-  //       noValueStatement,
-  //     )
-
-  //     this.sendFile(financialStatementId, fileName, file)
-  //   }
-
-  //   return true
-  // }
-
   async postFinancialStatementForPersonalElection(
-    // clientNationalId: string,
-    // actorNationalId: string | undefined,
-    // clientName: string,
-
     client: Client,
     actor: Contact | undefined,
     electionId: string,
@@ -324,7 +243,6 @@ export class FinancialStatementsInaoClientService {
     values?: PersonalElectionFinancialStatementValues,
     file?: string,
   ): Promise<boolean> {
-    this.logger.debug('POST_FINANCIAL_STATEMENT_FOR_PERSONAL_ELECTION => START')
     const financialValues: LookupType[] = []
 
     if (!noValueStatement && values) {
@@ -362,7 +280,7 @@ export class FinancialStatementsInaoClientService {
       ClientTypes.Individual,
     )
 
-    const actor2 = actor ? [actor] : undefined
+    const actors = actor ? [actor] : undefined
 
     const body = {
       'star_Election@odata.bind': `/star_elections(${electionId})`,
@@ -370,17 +288,14 @@ export class FinancialStatementsInaoClientService {
       'star_Client@odata.bind': `/star_clients(${dataverseClientId})`,
       star_novaluestatement: noValueStatement,
       star_financialstatementvalue_belongsto_rel: financialValues,
-      star_statement_contacts: actor2,
+      star_statement_contacts: actors,
     }
 
-    this.logger.debug('BODY =>', body)
-
     const financialStatementId = await this.postFinancialStatement(body)
+
     if (!financialStatementId) {
       throw new Error('FinancialStatementId can not be null')
     }
-
-    this.logger.debug('FINANCIAL_STATEMENT_ID =>', financialStatementId)
 
     if (file) {
       const electionInfo = await this.getElectionInfo(electionId)
@@ -392,15 +307,18 @@ export class FinancialStatementsInaoClientService {
         noValueStatement,
       )
 
-      this.sendFile(financialStatementId, fileName, file)
+      await this.sendFile(financialStatementId, fileName, file)
     }
 
     return true
   }
 
   async postFinancialStatementForPoliticalParty(
-    nationalId: string,
-    actorNationalId: string | undefined,
+    // nationalId: string,
+    // actorNationalId: string | undefined,
+
+    client: Client,
+    contacts: Contact[],
     year: string,
     comment: string,
     values: PoliticalPartyFinancialStatementValues,
@@ -436,14 +354,19 @@ export class FinancialStatementsInaoClientService {
       financialValues.push(lookup(x.key, x.value, financialTypes))
     })
 
-    const clientId = await this.getClientIdByNationalId(nationalId)
+    const clientId = await this.getClientIdByNationalId(client.nationalId)
+
+    const actor = contacts.find((x) => x.contactType === ContactType.Actor)
+
+    const contactsDto = this.convertContacts(contacts)
 
     const body = {
       star_year: year,
       star_comment: comment,
       'star_Client@odata.bind': `/star_clients(${clientId})`,
-      star_representativenationalid: actorNationalId,
+      star_representativenationalid: actor?.nationalId,
       star_financialstatementvalue_belongsto_rel: financialValues,
+      star_statement_contacts: contactsDto,
     }
 
     const financialStatementId = await this.postFinancialStatement(body)
@@ -453,7 +376,7 @@ export class FinancialStatementsInaoClientService {
     }
 
     if (file) {
-      const fileName = getPoliticalPartyFileName(nationalId, year)
+      const fileName = getPoliticalPartyFileName(client.nationalId, year)
       await this.sendFile(financialStatementId, fileName, file)
     }
 
@@ -461,8 +384,11 @@ export class FinancialStatementsInaoClientService {
   }
 
   async postFinancialStatementForCemetery(
-    clientNationalId: string,
-    actorNationalId: string | undefined,
+    // clientNationalId: string,
+    // actorNationalId: string | undefined,
+
+    client: Client,
+    contacts: Contact[],
     year: string,
     comment: string,
     values: CemeteryFinancialStatementValues,
@@ -502,14 +428,19 @@ export class FinancialStatementsInaoClientService {
       financialValues.push(lookup(x.key, x.value, financialTypes))
     })
 
-    const clientId = await this.getClientIdByNationalId(clientNationalId)
+    const clientId = await this.getClientIdByNationalId(client.nationalId)
+
+    const actor = contacts.find((x) => x.contactType === ContactType.Actor)
+
+    const contactsDto = this.convertContacts(contacts)
 
     const body = {
       star_year: year,
       star_comment: comment,
       'star_Client@odata.bind': `/star_clients(${clientId})`,
-      star_representativenationalid: actorNationalId,
+      star_representativenationalid: actor?.nationalId,
       star_financialstatementvalue_belongsto_rel: financialValues,
+      star_statement_contacts: contactsDto,
     }
 
     const financialStatementId = await this.postFinancialStatement(body)
@@ -519,7 +450,7 @@ export class FinancialStatementsInaoClientService {
     }
 
     if (file) {
-      const fileName = getCemeteryFileName(clientNationalId, year)
+      const fileName = getCemeteryFileName(client.nationalId, year)
       await this.sendFile(financialStatementId, fileName, file)
     }
     return true
@@ -576,6 +507,7 @@ export class FinancialStatementsInaoClientService {
       })
 
       const resJson = await res.json()
+
       const financialStatementId = resJson.star_financialstatementid
 
       return financialStatementId
@@ -594,7 +526,7 @@ export class FinancialStatementsInaoClientService {
 
     try {
       const url = `${this.basePath}/star_financialstatements(${financialStatementId})/star_file`
-      await this.fetch(url, {
+      return await this.fetch(url, {
         method: 'PATCH',
         body: buffer,
         headers: {
@@ -606,5 +538,25 @@ export class FinancialStatementsInaoClientService {
       this.logger.info('file', fileName, fileContent)
       this.logger.error('Failed to upload financial statement file.', error)
     }
+  }
+
+  private convertContacts(contacts: Contact[]) {
+    return contacts.map((x) => {
+      const contactDto: ContactDto = {
+        star_national_id: x.nationalId,
+        star_name: x.name,
+        star_contact_type: x.contactType,
+      }
+
+      if (x.email) {
+        contactDto.star_email = x.email
+      }
+
+      if (x.phone) {
+        contactDto.star_phone = x.phone
+      }
+
+      return contactDto
+    })
   }
 }

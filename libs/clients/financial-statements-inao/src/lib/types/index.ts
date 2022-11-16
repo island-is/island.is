@@ -48,7 +48,7 @@ export enum ContactType {
 
 export type Client = {
   nationalId: string
-  name: string
+  name?: string
   email?: string
   phone?: string
 }
@@ -59,6 +59,14 @@ export type Contact = {
   email?: string
   phone?: string
   contactType: ContactType
+}
+
+export type ContactDto = {
+  star_national_id: string
+  star_contact_type: number
+  star_name: string
+  star_email?: string
+  star_phone?: string
 }
 
 export type PersonalElectionFinancialStatementValues = {
