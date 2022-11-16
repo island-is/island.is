@@ -274,6 +274,7 @@ const useCase = () => {
       transition: CaseTransition,
       setWorkingCase?: React.Dispatch<React.SetStateAction<Case>>,
     ): Promise<boolean> => {
+      console.log('transitionCase', workingCase, transition)
       try {
         const { data } = await transitionCaseMutation({
           variables: {

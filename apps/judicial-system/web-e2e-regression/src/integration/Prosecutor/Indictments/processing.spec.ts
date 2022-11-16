@@ -27,7 +27,7 @@ describe(CREATE_INDICTMENT_ROUTE, () => {
 
     loginAndCreateCase(CaseType.INDICTMENT, ['007-2020-0101']).then((id) => {
       caseId = id
-      cy.visit(`http://localhost:4200/${INDICTMENTS_PROCESSING_ROUTE}/${id}`)
+      cy.visit(`http://localhost:4200${INDICTMENTS_PROCESSING_ROUTE}/${id}`)
     })
   })
 

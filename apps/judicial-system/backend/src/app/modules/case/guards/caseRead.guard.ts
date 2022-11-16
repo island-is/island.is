@@ -26,6 +26,10 @@ export class CaseReadGuard implements CanActivate {
     }
 
     if (isCaseBlockedFromUser(theCase, user, false)) {
+      console.log(
+        '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!',
+        user.id,
+      )
       throw new ForbiddenException(
         `User ${user.id} does not have read access to case ${theCase.id}`,
       )

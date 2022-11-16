@@ -19,7 +19,7 @@ describe(RESTRICTION_CASE_OVERVIEW_ROUTE, () => {
       })
       .then(() => {
         cy.visit(
-          `http://localhost:4200/${RESTRICTION_CASE_OVERVIEW_ROUTE}/${caseId}`,
+          `http://localhost:4200${RESTRICTION_CASE_OVERVIEW_ROUTE}/${caseId}`,
         )
       })
   })

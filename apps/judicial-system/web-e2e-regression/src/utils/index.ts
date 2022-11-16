@@ -1,6 +1,7 @@
 import { ApolloClient, gql, InMemoryCache } from '@apollo/client'
 
 import { CaseTransition, CaseType } from '@island.is/judicial-system/types'
+import { resolve } from 'path'
 
 import { CreateCaseMutation } from '../graphql/schema'
 
@@ -16,7 +17,7 @@ export const loginAndCreateCase = (
   policeCaseNumbers: string[],
 ) => {
   return cy
-    .visit('http://localhost:4200/api/auth/login?nationalId=0000000009')
+    .visit(`http://localhost:4200/api/auth/login?nationalId=0000000009`)
     .then(() =>
       client.mutate<CreateCaseMutation>({
         mutation: gql`
@@ -56,6 +57,27 @@ export const loginAndCreateCase = (
 }
 
 export const transitionCase = (caseId: string, transition: CaseTransition) => {
+  return cy.wrap(
+    client.mutate({
+      mutation: gql`
+        mutation TransitionCaseMutation($input: TransitionCaseInput!) {
+          transitionCase(input: $input) {
+            state
+          }
+        }
+      `,
+      variables: {
+        input: {
+          id: caseId,
+          transition,
+        },
+      },
+      fetchPolicy: 'no-cache',
+    }),
+  )
+}
+
+export const deleteCase = (caseId: string) => {
   client.mutate({
     mutation: gql`
       mutation TransitionCaseMutation($input: TransitionCaseInput!) {
@@ -67,7 +89,7 @@ export const transitionCase = (caseId: string, transition: CaseTransition) => {
     variables: {
       input: {
         id: caseId,
-        transition,
+        transition: CaseTransition.DELETE,
       },
     },
     fetchPolicy: 'no-cache',

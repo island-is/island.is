@@ -19,7 +19,7 @@ describe(RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE, () => {
     loginAndCreateCase(CaseType.CUSTODY, ['007-2020-0101']).then((id) => {
       caseId = id
       cy.visit(
-        `http://localhost:4200/${RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${id}`,
+        `http://localhost:4200${RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${id}`,
       )
     })
   })
