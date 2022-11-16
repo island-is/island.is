@@ -20,6 +20,7 @@ export interface TestCase {
   accessTo?: string[]
   domains: CreateDomain[]
   expected: DomainAssertion[]
+  expectedDomains?: DomainAssertion[]
   direction?: DelegationDirection
 }
 
@@ -189,7 +190,8 @@ export const accessTestCases: Record<string, TestCase> = {
         ],
       },
     ],
-    expected: [
+    expected: [],
+    expectedDomains: [
       {
         name: 'd1',
         scopes: [{ name: 's1' }],
@@ -317,49 +319,6 @@ export const accessTestCases: Record<string, TestCase> = {
       },
     ],
     expected: [],
-  },
-  // Should get list of all domains if not filtered by direction.
-  allDomains: {
-    user: personUser,
-    customScopeRules: [
-      { scopeName: 's2', onlyForDelegationType: ['ProcurationHolder'] },
-    ],
-    delegations: [
-      {
-        domainName: 'd3',
-        fromNationalId: createNationalId('person'),
-        toNationalId: personUser.nationalId,
-        scopes: [{ scopeName: 's3' }],
-      },
-    ],
-    domains: [
-      {
-        name: 'd1',
-        apiScopes: [{ name: 's1', allowExplicitDelegationGrant: true }],
-      },
-      {
-        name: 'd2',
-        apiScopes: [{ name: 's2', allowExplicitDelegationGrant: true }],
-      },
-      {
-        name: 'd3',
-        apiScopes: [{ name: 's3', allowExplicitDelegationGrant: true }],
-      },
-    ],
-    expected: [
-      {
-        name: 'd1',
-        scopes: [{ name: 's1' }],
-      },
-      {
-        name: 'd2',
-        scopes: [{ name: 's2' }],
-      },
-      {
-        name: 'd3',
-        scopes: [{ name: 's3' }],
-      },
-    ],
   },
   // Should get list of domains the user has access to grant outgoing delegations.
   onlyOutgoingDomains: {

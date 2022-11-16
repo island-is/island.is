@@ -74,7 +74,10 @@ export class DelegationsOutgoingService {
               model: ApiScope,
               required: true,
               include: [
-                ...this.delegationResourceService.apiScopeInclude(user),
+                ...this.delegationResourceService.apiScopeInclude(
+                  user,
+                  DelegationDirection.OUTGOING,
+                ),
               ],
             },
           ],
@@ -336,6 +339,7 @@ export class DelegationsOutgoingService {
     const userScopes = await this.delegationResourceService.findScopeNames(
       user,
       delegation.domainName,
+      direction,
     )
     if (!userScopes.length) {
       return null

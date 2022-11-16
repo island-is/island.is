@@ -54,7 +54,7 @@ export class DelegationResourcesService {
           attributes: [],
           required: true,
           duplicating: false,
-          include: [...this.apiScopeInclude(user)],
+          include: [...this.apiScopeInclude(user, direction)],
         },
       ],
     })
@@ -209,11 +209,15 @@ export class DelegationResourcesService {
     return apiScopeFilter
   }
 
-  apiScopeInclude(user: User) {
-    return [
-      this.accessControlInclude(user),
-      ...this.delegationTypeInclude(user),
-    ]
+  apiScopeInclude(user: User, direction?: DelegationDirection) {
+    if (direction === DelegationDirection.OUTGOING) {
+      return [
+        this.accessControlInclude(user),
+        ...this.delegationTypeInclude(user),
+      ]
+    } else {
+      return []
+    }
   }
 
   private async findScopesInternal({
@@ -237,7 +241,7 @@ export class DelegationResourcesService {
         },
         ...this.apiScopeFilter({ user, direction }),
       ),
-      include: [ApiScopeGroup, ...this.apiScopeInclude(user)],
+      include: [ApiScopeGroup, ...this.apiScopeInclude(user, direction)],
       order: [
         ['group_id', 'ASC NULLS FIRST'],
         ['order', 'ASC'],
