@@ -190,11 +190,7 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
                     size="md"
                   />
                 )}
-                <Box
-                  display={name ? 'none' : 'block'}
-                  aria-live="assertive"
-                  marginBottom={[1, 1, 0]}
-                >
+                <Box display={name ? 'none' : 'block'} aria-live="assertive">
                   <InputController
                     control={control}
                     id="toNationalId"
@@ -279,13 +275,8 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
                 )}
               </div>
             </Box>
-            <Box
-              display="flex"
-              flexDirection="column"
-              rowGap={5}
-              marginTop={[9, 9, 5]}
-            >
-              <Text>
+            <Box display="flex" flexDirection="column" rowGap={5} marginTop={5}>
+              <Text variant="small">
                 {formatMessage({
                   id: 'sp.access-control-delegations:next-step-description',
                   defaultMessage:
