@@ -115,7 +115,7 @@ export class ElasticService {
     if (Object.keys(o).length == 0) return false
     for (const key in o) {
       const value = o[key]
-      // Only these huge documents should reach this limit
+      // Only HUMONGOUS documents should reach this limit
       if (typeof value == 'string' && value.length > 10000) {
         delete o[key]
         deleted = true
