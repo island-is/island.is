@@ -9,6 +9,7 @@ import { ValueType } from 'react-select'
 import { Colors, theme } from '@island.is/island-ui/theme'
 import { FocusableBox } from '../FocusableBox/FocusableBox'
 import { useWindowSize } from 'react-use'
+import { isDefined } from '@island.is/shared/utils'
 
 type TabType = {
   /**
@@ -76,6 +77,13 @@ export const Tabs: FC<TabInterface> = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tab.currentId])
+
+  // When onlyRenderSelectedTab is true, then we need to make sure that every tab has an id prop defined
+  if (onlyRenderSelectedTab && !tabs.every(({ id }) => isDefined(id))) {
+    throw new Error(
+      'Every tab must have a unique id when onlyRenderSelectedTab is enabled',
+    )
+  }
 
   return (
     <Box position="relative">
