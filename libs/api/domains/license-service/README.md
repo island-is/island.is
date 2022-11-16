@@ -34,6 +34,7 @@ The Api and Xroad services need to be running
 ### Mocking
 
 Mocks are available if switched on.
+When a new license is added, don't forget to mock it!
 
 ### Adding a new license
 
