@@ -130,6 +130,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       [States.DRAFT]: {
         entry: 'clearAssignees',
         exit: [
+          'clearOtherParentDataIfSelectedNo',
           'setOtherParentIdIfSelectedSpouse',
           'setPrivatePensionValuesIfUsePrivatePensionFundIsNO',
           'setUnionValuesIfUseUnionIsNO',
@@ -958,6 +959,17 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         unset(answers, 'tempPeriods')
 
+        return context
+      }),
+      clearOtherParentDataIfSelectedNo: assign((context) => {
+        const { application } = context
+        const answers = getApplicationAnswers(application.answers)
+        if (answers.otherParent === NO) {
+          set(application.answers, 'otherParentEmail', undefined)
+          set(application.answers, 'otherParentPhoneNumber', '')
+          set(application.answers, 'requestRights.isRequestingRights', NO)
+          set(application.answers, 'requestRights.requestDays', '')
+        }
         return context
       }),
       setOtherParentIdIfSelectedSpouse: assign((context) => {
