@@ -196,9 +196,13 @@ export class DelegationsOutgoingService {
       createDelegation.scopes,
     )
 
-    const newDelegation = await this.findOneInternal(user, {
-      id: delegation.id,
-    })
+    const newDelegation = await this.findOneInternal(
+      user,
+      DelegationDirection.OUTGOING,
+      {
+        id: delegation.id,
+      },
+    )
 
     if (!newDelegation) {
       throw new InternalServerErrorException(
