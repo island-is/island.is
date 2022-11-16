@@ -1,4 +1,4 @@
-import { Application, VehiclesCurrentVehicle } from '../types/schema'
+import { Application, VehiclesCurrentVehicle } from '@island.is/api/schema'
 
 export const getSelectedVehicle = (application: Application) => {
   const currentVehicleList = application.externalData?.currentVehicleList
