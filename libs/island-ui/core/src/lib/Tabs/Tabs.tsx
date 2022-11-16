@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, useEffect, useState } from 'react'
+import React, { FC, ReactNode, useEffect, useMemo, useState } from 'react'
 import cn from 'classnames'
 import { useTabState, Tab, TabList, TabPanel } from 'reakit/Tab'
 import { Box } from '../Box/Box'
@@ -40,6 +40,15 @@ export const Tabs: FC<TabInterface> = ({
   onChange: onChangeHandler,
   onlyRenderSelectedTab,
 }) => {
+  useMemo(() => {
+    // When onlyRenderSelectedTab is true, then we need to make sure that every tab has an id prop defined
+    if (onlyRenderSelectedTab && !tabs.every(({ id }) => isDefined(id))) {
+      throw new Error(
+        'Every tab must have a unique id when onlyRenderSelectedTab is enabled',
+      )
+    }
+  }, [onlyRenderSelectedTab, tabs])
+
   const { loop, wrap, ...tab } = useTabState({
     selectedId: selected,
   })
@@ -77,13 +86,6 @@ export const Tabs: FC<TabInterface> = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tab.currentId])
-
-  // When onlyRenderSelectedTab is true, then we need to make sure that every tab has an id prop defined
-  if (onlyRenderSelectedTab && !tabs.every(({ id }) => isDefined(id))) {
-    throw new Error(
-      'Every tab must have a unique id when onlyRenderSelectedTab is enabled',
-    )
-  }
 
   return (
     <Box position="relative">
