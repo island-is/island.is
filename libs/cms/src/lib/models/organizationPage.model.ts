@@ -48,7 +48,7 @@ export class OrganizationPage {
   @Field(() => LinkGroup, { nullable: true })
   secondaryMenu!: LinkGroup | null
 
-  @Field(() => Organization)
+  @Field(() => Organization, { nullable: true })
   organization!: Organization | null
 
   @Field(() => Image, { nullable: true })

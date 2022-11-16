@@ -1,15 +1,13 @@
 import {
-  buildDescriptionField,
   buildCustomField,
   buildMultiField,
   buildSection,
-  buildSubmitField,
   getValueViaPath,
 } from '@island.is/application/core'
-import { DefaultEvents } from '@island.is/application/types'
-import { GREATER, USERTYPE, LESS, ABOUTIDS } from '../../../lib/constants'
+import { GREATER, ABOUTIDS } from '../../../lib/constants'
 import { m } from '../../../lib/messages'
 import { getCurrentUserType } from '../../../lib/utils/helpers'
+import { FSIUSERTYPE, LESS } from '../../../types'
 
 export const overviewSection = buildSection({
   id: 'overviewSection',
@@ -20,7 +18,9 @@ export const overviewSection = buildSection({
       title: (application) => {
         const answers = application.answers
         const externalData = application.externalData
-        if (getCurrentUserType(answers, externalData) === USERTYPE.INDIVIDUAL) {
+        if (
+          getCurrentUserType(answers, externalData) === FSIUSERTYPE.INDIVIDUAL
+        ) {
           return getValueViaPath(
             application.answers,
             'election.incomeLimit',
@@ -34,7 +34,9 @@ export const overviewSection = buildSection({
       description: (application) => {
         const answers = application.answers
         const externalData = application.externalData
-        if (getCurrentUserType(answers, externalData) === USERTYPE.INDIVIDUAL) {
+        if (
+          getCurrentUserType(answers, externalData) === FSIUSERTYPE.INDIVIDUAL
+        ) {
           return getValueViaPath(
             application.answers,
             'election.incomeLimit',
@@ -54,7 +56,7 @@ export const overviewSection = buildSection({
           title: '',
           condition: (answers, externalData) => {
             const userType = getCurrentUserType(answers, externalData)
-            return userType === USERTYPE.CEMETRY
+            return userType === FSIUSERTYPE.CEMETRY
           },
           doesNotRequireAnswer: true,
           component: 'CemetryOverview',
@@ -64,7 +66,7 @@ export const overviewSection = buildSection({
           title: '',
           condition: (answers, externalData) => {
             const userType = getCurrentUserType(answers, externalData)
-            return userType === USERTYPE.PARTY
+            return userType === FSIUSERTYPE.PARTY
           },
           doesNotRequireAnswer: true,
           component: 'PartyOverview',

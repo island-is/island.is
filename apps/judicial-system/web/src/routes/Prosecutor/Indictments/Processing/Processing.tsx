@@ -41,14 +41,14 @@ const Processing: React.FC = () => {
     isLoadingWorkingCase,
     caseNotFound,
   } = useContext(FormContext)
-  const { setAndSendToServer, transitionCase } = useCase()
+  const { setAndSendCaseToServer, transitionCase } = useCase()
   const { formatMessage } = useIntl()
   const { courts } = useInstitution()
   const router = useRouter()
 
   const handleCourtChange = (court: Institution) => {
     if (workingCase) {
-      setAndSendToServer(
+      setAndSendCaseToServer(
         [
           {
             courtId: court.id,
@@ -108,7 +108,7 @@ const Processing: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${constants.INDICTMENTS_DEFENDANT_ROUTE}/${workingCase.id}`}
+          previousUrl={`${constants.INDICTMENTS_CASE_FILE_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!isProcessingStepValidIndictments(workingCase)}
           onNextButtonClick={handleNextButtonClick}
         />

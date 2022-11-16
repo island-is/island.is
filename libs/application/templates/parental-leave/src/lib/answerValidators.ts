@@ -23,6 +23,7 @@ import {
   NO_UNION,
   PARENTAL_GRANT_STUDENTS,
   PARENTAL_LEAVE,
+  SINGLE,
   UnEmployedBenefitTypes,
   YES,
 } from '../constants'
@@ -56,12 +57,6 @@ export const answerValidators: Record<string, AnswerValidator> = {
       buildValidationError(`${EMPLOYER}.${path}`)(message)
 
     const { isSelfEmployed } = getApplicationAnswers(application.answers)
-    if (obj.isSelfEmployed === '' || !obj.isSelfEmployed) {
-      if (isSelfEmployed) {
-        return undefined
-      }
-      return buildError(coreErrorMessages.defaultError, 'isSelfEmployed')
-    }
 
     // If the new answer is the `isSelfEmployed` step, it means we didn't enter the email address yet
     if (obj.isSelfEmployed) {
@@ -83,6 +78,13 @@ export const answerValidators: Record<string, AnswerValidator> = {
       return buildError(errorMessages.email, 'email')
     }
 
+    if (obj.isSelfEmployed === '' || !obj.isSelfEmployed) {
+      if (isSelfEmployed) {
+        return undefined
+      }
+      return buildError(coreErrorMessages.defaultError, 'isSelfEmployed')
+    }
+
     return undefined
   },
   [FILEUPLOAD]: (newAnswer: unknown, application: Application) => {
@@ -96,6 +98,7 @@ export const answerValidators: Record<string, AnswerValidator> = {
       applicationType,
       isRecivingUnemploymentBenefits,
       unemploymentBenefits,
+      otherParent,
     } = getApplicationAnswers(application.answers)
     if (isSelfEmployed === YES && obj.selfEmployedFile) {
       if (isEmpty((obj as { selfEmployedFile: unknown[] }).selfEmployedFile))
@@ -107,6 +110,13 @@ export const answerValidators: Record<string, AnswerValidator> = {
     if (applicationType === PARENTAL_GRANT_STUDENTS && obj.studentFile) {
       if (isEmpty((obj as { studentFile: unknown[] }).studentFile))
         return buildError(errorMessages.requiredAttachment, 'studentFile')
+      return undefined
+    }
+
+    if (otherParent === SINGLE && obj.singleParent) {
+      if (isEmpty((obj as { singleParent: unknown[] }).singleParent))
+        return buildError(errorMessages.requiredAttachment, 'singleParent')
+
       return undefined
     }
 

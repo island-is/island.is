@@ -4,7 +4,7 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Op } from 'sequelize'
+import { and, Op, WhereOptions } from 'sequelize'
 import { isUuid, uuid } from 'uuidv4'
 
 import { User } from '@island.is/auth-nest-tools'
@@ -20,9 +20,13 @@ import {
 import { DelegationScope } from './models/delegation-scope.model'
 import { Delegation } from './models/delegation.model'
 import { DelegationValidity } from './types/delegationValidity'
-import { validateScopesPeriod } from './utils/scopes'
+import {
+  getScopeValidityWhereClause,
+  validateScopesPeriod,
+} from './utils/scopes'
 import { NamesService } from './names.service'
 import { getDelegationNoActorWhereClause } from './utils/delegations'
+import { DelegationResourcesService } from '../resources/delegation-resources.service'
 
 /**
  * Service class for outgoing delegations.
@@ -34,6 +38,7 @@ export class DelegationsOutgoingService {
     @InjectModel(Delegation)
     private delegationModel: typeof Delegation,
     private delegationScopeService: DelegationScopeService,
+    private delegationResourceService: DelegationResourcesService,
     private namesService: NamesService,
   ) {}
 
@@ -43,38 +48,60 @@ export class DelegationsOutgoingService {
     domainName?: string,
     otherUser?: string,
   ): Promise<DelegationDTO[]> {
+    if (otherUser) {
+      return this.findByOtherUser(user, otherUser, domainName)
+    }
     const delegations = await this.delegationModel.findAll({
-      where: {
-        [Op.and]: [
-          {
-            fromNationalId: user.nationalId,
-          },
-          otherUser ? { toNationalId: otherUser } : {},
-          domainName ? { domainName } : {},
-          getDelegationNoActorWhereClause(user),
-        ],
-      },
+      where: and(
+        {
+          fromNationalId: user.nationalId,
+        },
+        domainName ? { domainName } : {},
+        getDelegationNoActorWhereClause(user),
+        ...this.delegationResourceService.apiScopeFilter(
+          user,
+          'delegationScopes->apiScope',
+        ),
+      ),
       include: [
         {
           model: DelegationScope,
           include: [
             {
+              attributes: ['displayName'],
               model: ApiScope,
-              as: 'apiScope',
-              where: {
-                enabled: true,
-                allowExplicitDelegationGrant: true,
-              },
+              required: true,
+              include: [
+                ...this.delegationResourceService.apiScopeInclude(user),
+              ],
             },
           ],
           required: validity !== DelegationValidity.ALL,
+          where: getScopeValidityWhereClause(validity),
         },
       ],
     })
 
-    // TODO: Validate user scope access to the delegation scopes.
-
     return delegations.map((d) => d.toDTO())
+  }
+
+  async findByOtherUser(
+    user: User,
+    otherUser: string,
+    domainName?: string,
+  ): Promise<DelegationDTO[]> {
+    if (!domainName) {
+      throw new BadRequestException(
+        'Domain name is required when fetching delegation by other user.',
+      )
+    }
+
+    const delegation = await this.findOneInternal(user, {
+      fromNationalId: user.nationalId,
+      toNationalId: otherUser,
+      domainName,
+    })
+    return delegation ? [delegation] : []
   }
 
   async findById(user: User, delegationId: string): Promise<DelegationDTO> {
@@ -82,40 +109,14 @@ export class DelegationsOutgoingService {
       throw new BadRequestException('delegationId must be a valid uuid')
     }
 
-    const delegation = await this.delegationModel.findOne({
-      where: {
-        id: delegationId,
-        [Op.or]: [
-          { fromNationalId: user.nationalId },
-          { toNationalId: user.nationalId },
-        ],
-      },
-      include: [
-        {
-          model: DelegationScope,
-          as: 'delegationScopes',
-          required: false,
-          include: [
-            {
-              model: ApiScope,
-              as: 'apiScope',
-              where: {
-                enabled: true,
-                allowExplicitDelegationGrant: true,
-              },
-            },
-          ],
-        },
-      ],
+    const delegation = await this.findOneInternal(user, {
+      fromNationalId: user.nationalId,
+      id: delegationId,
     })
-
     if (!delegation) {
       throw new NoContentException()
     }
-
-    // TODO: Validate user scope access to the delegation scopes.
-
-    return delegation.toDTO()
+    return delegation
   }
 
   async create(
@@ -134,6 +135,18 @@ export class DelegationsOutgoingService {
     if (!createDelegation.domainName) {
       throw new BadRequestException(
         'Domain name is required to create delegation.',
+      )
+    }
+
+    if (
+      !(await this.delegationResourceService.validateScopeAccess(
+        user,
+        createDelegation.domainName,
+        (createDelegation.scopes ?? []).map((scope) => scope.name),
+      ))
+    ) {
+      throw new BadRequestException(
+        'User does not have access to the requested scopes.',
       )
     }
 
@@ -167,14 +180,14 @@ export class DelegationsOutgoingService {
       })
     }
 
-    // TODO: User authorization on the scopes
-
     await this.delegationScopeService.createOrUpdate(
       delegation.id,
       createDelegation.scopes,
     )
 
-    const newDelegation = await this.findById(user, delegation.id)
+    const newDelegation = await this.findOneInternal(user, {
+      id: delegation.id,
+    })
 
     if (!newDelegation) {
       throw new InternalServerErrorException(
@@ -203,6 +216,21 @@ export class DelegationsOutgoingService {
     })
     if (!currentDelegation) {
       throw new NoContentException()
+    }
+
+    if (
+      !(await this.delegationResourceService.validateScopeAccess(
+        user,
+        currentDelegation.domainName,
+        [
+          ...(patchedDelegation.updateScopes ?? []).map((scope) => scope.name),
+          ...(patchedDelegation.deleteScopes ?? []),
+        ],
+      ))
+    ) {
+      throw new BadRequestException(
+        'User does not have access to the requested scopes.',
+      )
     }
 
     if (!validateScopesPeriod(patchedDelegation.updateScopes)) {
@@ -240,18 +268,67 @@ export class DelegationsOutgoingService {
       return
     }
 
-    // TODO: Scope authorization and delete only scopes the user has access to.
-    await this.delegationScopeService.delete(delegationId)
+    const userScopes = await this.delegationResourceService.findScopes(
+      user,
+      delegation.domainName,
+    )
+    await this.delegationScopeService.delete(
+      delegationId,
+      userScopes.map((scope) => scope.name),
+    )
 
     // If no scopes are left delete the delegation.
-    const scopes = await this.delegationScopeService.findAll(delegationId)
-    if (scopes.length === 0) {
+    const remainingScopes = await this.delegationScopeService.findAll(
+      delegationId,
+    )
+    if (remainingScopes.length === 0) {
       await this.delegationModel.destroy({
         where: {
           id: delegationId,
         },
       })
     }
+  }
+
+  private async findOneInternal(
+    user: User,
+    where: WhereOptions<Delegation>,
+  ): Promise<DelegationDTO | null> {
+    const delegation = await this.delegationModel.findOne({
+      where,
+      useMaster: true,
+      include: [
+        {
+          model: DelegationScope,
+          required: false,
+          include: [
+            {
+              attributes: ['displayName'],
+              model: ApiScope,
+            },
+          ],
+        },
+      ],
+    })
+
+    if (!delegation) {
+      return null
+    }
+
+    // Verify and filter scopes.
+    const userScopes = await this.delegationResourceService.findScopeNames(
+      user,
+      delegation.domainName,
+    )
+    if (!userScopes.length) {
+      return null
+    }
+
+    delegation.delegationScopes = delegation.delegationScopes?.filter((scope) =>
+      userScopes.includes(scope.scopeName),
+    )
+
+    return delegation.toDTO()
   }
 
   private isConnectedToDelegation(user: User, delegation: Delegation): boolean {

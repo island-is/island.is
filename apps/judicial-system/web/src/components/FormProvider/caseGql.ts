@@ -7,6 +7,7 @@ const CaseQuery = gql`
       created
       modified
       type
+      indictmentSubType
       description
       state
       policeCaseNumbers
@@ -18,6 +19,11 @@ const CaseQuery = gql`
         gender
         address
         citizenship
+        defenderName
+        defenderNationalId
+        defenderEmail
+        defenderPhoneNumber
+        defendantWaivesRightToCounsel
       }
       defenderName
       defenderNationalId

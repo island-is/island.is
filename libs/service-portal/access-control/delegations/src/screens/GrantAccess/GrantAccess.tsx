@@ -44,11 +44,7 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
   const [name, setName] = useState('')
   const history = useHistory()
   const { md } = useBreakpoint()
-  const {
-    domainOptions,
-    defaultDomainOption,
-    loading: domainLoading,
-  } = useDomains()
+  const { options, selectedOption, loading: domainLoading } = useDomains(false)
 
   const [
     createAuthDelegation,
@@ -78,9 +74,9 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
   const defaultValues = useMemo(
     () => ({
       toNationalId: '',
-      domainName: defaultDomainOption.value ?? null,
+      domainName: selectedOption?.value ?? null,
     }),
-    [defaultDomainOption.value],
+    [selectedOption?.value],
   )
 
   const methods = useForm({
@@ -91,11 +87,11 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
   useEffect(() => {
     methods.reset(defaultValues)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [defaultDomainOption.value, defaultValues])
+  }, [selectedOption?.value, defaultValues])
 
   const { handleSubmit, control, errors, watch, reset } = methods
   const watchToNationalId = watch('toNationalId')
-  const domainmWatcher = watch('domain')
+  const domainmNameWatcher = watch('domainName')
   const loading = queryLoading || mutationLoading
 
   const requestDelegation = (
@@ -145,9 +141,11 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
     }
   })
 
-  const clearForm = () => {
+  const clearPersonState = () => {
     setName('')
-    reset()
+    reset({
+      toNationalId: '',
+    })
   }
 
   return (
@@ -245,7 +243,7 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
                 ) : name ? (
                   <button
                     disabled={loading}
-                    onClick={clearForm}
+                    onClick={clearPersonState}
                     className={styles.icon}
                   >
                     <Icon icon="close" size="large" color="blue400" />
@@ -265,7 +263,7 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
                       defaultMessage: 'Veldu kerfi',
                     })}
                     error={errors.domainName?.message}
-                    options={domainOptions}
+                    options={options}
                     rules={{
                       required: {
                         value: true,
@@ -295,8 +293,8 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
               </Text>
               <Box marginBottom={7}>
                 <DelegationsFormFooter
-                  disabled={!name || domainmWatcher === null || loading}
-                  loading={loading}
+                  disabled={!name || !domainmNameWatcher}
+                  loading={mutationLoading}
                   onCancel={() =>
                     history.push(ServicePortalPath.AccessControlDelegations)
                   }

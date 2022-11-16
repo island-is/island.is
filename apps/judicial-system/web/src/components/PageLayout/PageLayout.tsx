@@ -125,9 +125,7 @@ const PageLayout: React.FC<PageProps> = ({
                       isIndictmentCase(workingCase?.type)
                         ? sections.indictmentTitle
                         : sections.title,
-                      {
-                        caseType: workingCase?.type,
-                      },
+                      { caseType: workingCase?.type },
                     )}
                     activeSection={activeSection}
                     activeSubSection={activeSubSection}

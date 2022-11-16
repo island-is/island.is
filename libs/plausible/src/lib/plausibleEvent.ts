@@ -1,5 +1,7 @@
 import BaseEvent from './BaseEvent'
 
+export const plausibleOutboundLinkGoal = 'Outbound Link: Click'
+
 // Fix for TypeScript error: Property 'X' does not exist on type 'Window'
 declare global {
   interface Window {
@@ -15,6 +17,7 @@ export const plausibleCustomEvent = (event: BaseEvent) => {
       : event.eventName
     plausible(eventName, {
       props: event.params,
+      ...(event.url && { u: event.url }),
       ...(event.callback && { callback: event.callback }),
     })
   }
@@ -24,6 +27,6 @@ export const plausibleCustomEvent = (event: BaseEvent) => {
 export const plausibleOutboundLinkEvent = () => {
   const plausible = window.plausible
   if (plausible) {
-    plausible('Outbound Link: Click')
+    plausible(plausibleOutboundLinkGoal)
   }
 }

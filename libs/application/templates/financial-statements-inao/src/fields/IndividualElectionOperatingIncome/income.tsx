@@ -41,6 +41,7 @@ export const Income = ({ getSum }: PropTypes): JSX.Element => {
             onInputChange(INDIVIDUALOPERATIONIDS.contributionsByLegalEntities)
           }
           backgroundColor="blue"
+          rightAlign
           currency
         />
       </Box>
@@ -60,6 +61,7 @@ export const Income = ({ getSum }: PropTypes): JSX.Element => {
             onInputChange(INDIVIDUALOPERATIONIDS.individualContributions)
           }
           backgroundColor="blue"
+          rightAlign
           currency
         />
       </Box>
@@ -79,6 +81,7 @@ export const Income = ({ getSum }: PropTypes): JSX.Element => {
             onInputChange(INDIVIDUALOPERATIONIDS.candidatesOwnContributions)
           }
           backgroundColor="blue"
+          rightAlign
           currency
         />
       </Box>
@@ -93,6 +96,7 @@ export const Income = ({ getSum }: PropTypes): JSX.Element => {
           label={formatMessage(m.otherIncome)}
           onChange={() => onInputChange(INDIVIDUALOPERATIONIDS.otherIncome)}
           backgroundColor="blue"
+          rightAlign
           currency
         />
       </Box>

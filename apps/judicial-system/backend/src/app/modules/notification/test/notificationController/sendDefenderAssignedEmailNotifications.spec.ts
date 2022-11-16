@@ -110,7 +110,7 @@ describe('NotificationController - Send defender assigned notifications', () => 
         attachments: undefined,
         subject: 'Héraðsdómur Reykjavíkur - aðgangur að málsgögnum',
         text: expect.anything(), // same as hmtl but stripped hmtl tags
-        html: `Héraðsdómur Reykjavíkur hefur skipað þig verjanda í máli <a href="${mockConfig.clientUrl}${DEFENDER_ROUTE}/${caseId}">S-123/2022</a>. Gögn málsins eru aðgengileg í Réttarvörslugátt með rafrænum skilríkjum.`,
+        html: `Héraðsdómur Reykjavíkur hefur skipað þig verjanda í máli S-123/2022.<br /><br />Gögn málsins eru aðgengileg í <a href="${mockConfig.clientUrl}${DEFENDER_ROUTE}/${caseId}">Réttarvörslugátt</a> með rafrænum skilríkjum.`,
       })
     })
   })
@@ -161,12 +161,12 @@ describe('NotificationController - Send defender assigned notifications', () => 
       expect(mockNotificationModel.create).toHaveBeenCalledWith({
         caseId,
         type: notification.type,
-        recipients: JSON.stringify([
+        recipients: [
           {
             address: theCase.defenderEmail,
             success: true,
           },
-        ]),
+        ],
       })
     })
   })
@@ -220,7 +220,7 @@ describe('NotificationController - Send defender assigned notifications', () => 
         {
           caseId,
           type: notification.type,
-          recipients: theCase.defenderEmail,
+          recipients: [{ address: theCase.defenderEmail, success: true }],
         } as Notification,
       ])
 

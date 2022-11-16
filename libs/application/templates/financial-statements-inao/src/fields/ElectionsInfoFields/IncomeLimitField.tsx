@@ -9,17 +9,19 @@ import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { useLazyQuery } from '@apollo/client'
 import { getFinancialLimit } from '../../graphql'
-import { ABOUTIDS, GREATER, LESS, USERTYPE } from '../../lib/constants'
+import { ABOUTIDS, GREATER } from '../../lib/constants'
+import { FSIUSERTYPE, LESS } from '../../types'
 
 type IncomeLimitProps = {
-  clientType?: USERTYPE
+  clientType?: FSIUSERTYPE
   year?: string
 }
 
 export const IncomeLimitFields = ({ clientType, year }: IncomeLimitProps) => {
   const { formatMessage, formatNumber } = useLocale()
+  const userType = clientType ? clientType.toString() : undefined
   const [getLimit, { data, loading, error }] = useLazyQuery(getFinancialLimit, {
-    variables: { input: { year, clientType } },
+    variables: { input: { year, clientType: userType } },
   })
   useEffect(() => {
     if (year) {
