@@ -31,6 +31,10 @@ import {
   Sticky,
 } from '@island.is/web/components'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
+import { useNamespace } from '@island.is/web/hooks'
+import { useI18n } from '@island.is/web/i18n'
+import { WatsonChatPanel } from '@island.is/web/components'
+
 import { SyslumennHeader, SyslumennFooter } from './Themes/SyslumennTheme'
 import {
   SjukratryggingarHeader,
@@ -38,18 +42,16 @@ import {
 } from './Themes/SjukratryggingarTheme'
 import { DigitalIcelandHeader } from './Themes/DigitalIcelandTheme'
 import { DefaultHeader } from './Themes/DefaultTheme'
-import {
-  UtlendingastofnunFooter,
-  UtlendingastofnunHeader,
-} from './Themes/UtlendingastofnunTheme'
 import MannaudstorgFooter from './Themes/MannaudstorgTheme/MannaudstorgFooter'
-import { useNamespace } from '@island.is/web/hooks'
 import { liveChatIncConfig, watsonConfig } from './config'
-import { WatsonChatPanel } from '@island.is/web/components'
 import LandlaeknirFooter from './Themes/LandlaeknirTheme/LandlaeknirFooter'
 import { HeilbrigdisstofnunNordurlandsHeader } from './Themes/HeilbrigdisstofnunNordurlandsTheme/HeilbrigdisstofnunNordurlandsHeader'
 import { LandlaeknirHeader } from './Themes/LandlaeknirTheme/LandlaeknirHeader'
 import HeilbrigdisstofnunNordurlandsFooter from './Themes/HeilbrigdisstofnunNordurlandsTheme/HeilbrigdisstofnunNordurlandsFooter'
+import {
+  UtlendingastofnunFooter,
+  UtlendingastofnunHeader,
+} from './Themes/UtlendingastofnunTheme'
 import { FiskistofaHeader } from './Themes/FiskistofaTheme/FiskistofaHeader'
 import FiskistofaFooter from './Themes/FiskistofaTheme/FiskistofaFooter'
 import { LandskjorstjornFooter } from './Themes/LandkjorstjornTheme/LandkjorstjornFooter'
@@ -57,7 +59,11 @@ import { LatestNewsCardConnectedComponent } from '../LatestNewsCardConnectedComp
 import { RikislogmadurHeader } from './Themes/RikislogmadurTheme/RikislogmadurHeader'
 import { RikislogmadurFooter } from './Themes/RikislogmadurTheme/RikislogmadurFooter'
 import { LandskjorstjornHeader } from './Themes/LandkjorstjornTheme/LandskjorstjornHeader'
-import { useI18n } from '@island.is/web/i18n'
+import {
+  FjarsyslaRikisinsHeader,
+  FjarsyslaRikisinsFooter,
+} from './Themes/FjarsyslaRikisinsTheme'
+
 import * as styles from './OrganizationWrapper.css'
 
 interface NavigationData {
@@ -92,6 +98,7 @@ export const lightThemes = [
   'landlaeknir',
   'fiskistofa',
   'landing_page',
+  'fjarsysla-rikisins',
 ]
 export const footerEnabled = [
   'syslumenn',
@@ -117,6 +124,9 @@ export const footerEnabled = [
 
   'rikislogmadur',
   'office-of-the-attorney-general-civil-affairs',
+
+  'fjarsysla-rikisins',
+  'the-financial-management-authority',
 ]
 
 export const getThemeConfig = (
@@ -176,6 +186,8 @@ const OrganizationHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
       return <LandskjorstjornHeader organizationPage={organizationPage} />
     case 'landing_page':
       return null
+    case 'fjarsysla-rikisins':
+      return <FjarsyslaRikisinsHeader organizationPage={organizationPage} />
     default:
       return <DefaultHeader organizationPage={organizationPage} />
   }
@@ -311,6 +323,15 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
         />
       )
       break
+    case 'fjarsysla-rikisins':
+    case 'the-financial-management-authority':
+      OrganizationFooterComponent = (
+        <FjarsyslaRikisinsFooter
+          title={organization.title}
+          footerItems={organization.footerItems}
+          logo={organization.logo?.url}
+        />
+      )
   }
 
   return OrganizationFooterComponent
