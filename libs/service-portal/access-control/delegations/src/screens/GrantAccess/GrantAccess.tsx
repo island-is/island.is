@@ -142,9 +142,11 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
     }
   })
 
-  const clearForm = () => {
+  const clearPersonState = () => {
     setName('')
-    reset()
+    reset({
+      toNationalId: '',
+    })
 
     setTimeout(() => {
       if (inputRef.current) {
@@ -249,7 +251,7 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
                 ) : name ? (
                   <button
                     disabled={loading}
-                    onClick={clearForm}
+                    onClick={clearPersonState}
                     className={styles.icon}
                     aria-label={formatMessage(m.clearSelected)}
                   >

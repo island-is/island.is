@@ -685,7 +685,7 @@ describe('Case', () => {
         return request(app.getHttpServer())
           .put(`/api/case/${dbCase.id}`)
           .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${prosecutorAuthCookie}`)
-          .send(data)
+          .send({ ...data, type: undefined })
           .expect(200)
       })
       .then((response) => {
