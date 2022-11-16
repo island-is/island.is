@@ -10,8 +10,12 @@ import {
 import { dataSchema } from './dataSchema'
 import { Roles, States, Events, ApiActions } from './constants'
 import { m } from './messages'
-import { Features } from '@island.is/feature-flags'
+import { FeatureFlagClient, Features } from '@island.is/feature-flags'
 import { AuthDelegationType } from '../types/schema'
+import {
+  getApplicationFeatureFlags,
+  OperatingLicenseFeatureFlags,
+} from './getApplicationFeatureFlags'
 
 const oneDay = 24 * 3600 * 1000
 const thirtyDays = 24 * 3600 * 1000 * 30
@@ -45,10 +49,20 @@ const OperatingLicenseTemplate: ApplicationTemplate<
           roles: [
             {
               id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/draft/index').then((val) =>
-                  Promise.resolve(val.Draft),
-                ),
+              formLoader: async ({ featureFlagClient }) => {
+                const featureFlags = await getApplicationFeatureFlags(
+                  featureFlagClient as FeatureFlagClient,
+                )
+                return import('../forms/draft/index').then((val) =>
+                  Promise.resolve(
+                    val.getApplication({
+                      allowFakeData:
+                        featureFlags[OperatingLicenseFeatureFlags.ALLOW_FAKE],
+                    }),
+                  ),
+                )
+              },
+
               actions: [
                 {
                   event: DefaultEvents.PAYMENT,

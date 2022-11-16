@@ -117,3 +117,6 @@ export const getChargeItemCode = (answers: FormValue) => {
     }
   }
 }
+
+export const allowFakeCondition = (result = YES) => (answers: FormValue) =>
+  getValueViaPath(answers, 'fakeData.useFakeData') === result

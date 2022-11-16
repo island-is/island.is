@@ -51,7 +51,7 @@ export const m = defineMessages({
   },
   dataCollectionUserProfileTitle: {
     id: 'cr.application:dataCollection.userProfileTitle',
-    defaultMessage: 'Skuldastaða hjá ríkissjóði',
+    defaultMessage: 'Netfang og símanúmer úr þínum stillingum',
     description: 'Some description',
   },
   dataCollectionUserProfileSubtitle: {
@@ -62,7 +62,7 @@ export const m = defineMessages({
   },
   dataCollectionDebtStatusTitle: {
     id: 'cr.application:dataCollection.debtStatusTitle',
-    defaultMessage: 'Netfang og símanúmer úr þínum stillingum',
+    defaultMessage: 'Skuldastaða hjá ríkissjóði',
     description: 'Some description',
   },
   dataCollectionDebtStatusSubtitle: {
@@ -70,6 +70,17 @@ export const m = defineMessages({
     defaultMessage:
       'Upplýsingar frá Fjársýslu Ríkisins um skuldastöðu þína hjá ríkissjóði.',
     description: 'Some description',
+  },
+  missingCertificateTitle: {
+    id: 'ndc.application:missingCertificateTitle',
+    defaultMessage: 'Ekki tókst að staðfesta skuldleysi',
+    description: '',
+  },
+  missingCertificateSummary: {
+    id: 'ndc.application:missingCertificateSummary',
+    defaultMessage:
+      'Staðfesting á skuldleysi fékkst ekki úr gagnagrunni Fjársýslu ríkisins',
+    description: '',
   },
   dataCollectionNonBankruptcyDisclosureTitle: {
     id: 'cr.application:dataCollection.nonBankruptcyDisclosureTitle',
