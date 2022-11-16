@@ -13,7 +13,7 @@ export const AccessItemHeader = ({
   const { formatMessage } = useLocale()
 
   return (
-    <Box display={['none', 'block']} aria-hidden>
+    <Box display={['none', 'none', 'block']} aria-hidden>
       <GridRow className={styles.row}>
         <GridColumn
           span={['12/12', '12/12', '3/12']}
