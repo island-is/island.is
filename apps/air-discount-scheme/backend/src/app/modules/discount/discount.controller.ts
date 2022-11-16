@@ -86,7 +86,7 @@ export class PrivateDiscountController {
   async getCurrentDiscountByNationalId(
     @Param() params: GetCurrentDiscountByNationalIdParams,
   ): Promise<Discount | null> {
-    return await this.discountService.getDiscountByNationalId(params.nationalId)
+    return this.discountService.getDiscountByNationalId(params.nationalId)
   }
 
   @Post('users/:nationalId/discounts')
