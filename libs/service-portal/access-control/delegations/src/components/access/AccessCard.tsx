@@ -11,7 +11,6 @@ import {
   Button,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { coreMessages } from '@island.is/application/core'
 import { AuthCustomDelegation } from '@island.is/api/schema'
 import { useMemo } from 'react'
 import { m } from '@island.is/service-portal/core'
@@ -146,7 +145,7 @@ export const AccessCard = ({ delegation, onDelete }: AccessCardProps) => {
                   variant="utility"
                   onClick={() => history.push(href)}
                 >
-                  {formatMessage(coreMessages.buttonEdit)}
+                  {formatMessage(m.buttonEdit)}
                 </Button>
               ) : (
                 <Button
