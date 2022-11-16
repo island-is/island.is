@@ -6,7 +6,6 @@ import {
 } from '@island.is/application/types'
 import { VehiclesCurrentVehicle } from '@island.is/api/schema'
 import { GET_CURRENT_VEHICLES } from '../graphql/queries'
-import * as Sentry from '@sentry/react'
 import { externalData } from '../lib/messages'
 
 export class CurrentVehiclesProvider extends BasicDataProvider {
@@ -43,7 +42,7 @@ export class CurrentVehiclesProvider extends BasicDataProvider {
   }
 
   handleError(error: Error) {
-    Sentry.captureException(error)
+    console.error(error)
     return Promise.reject({ reason: 'Failed to fetch data' })
   }
 

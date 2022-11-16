@@ -5,7 +5,6 @@ import {
   SuccessfulDataProviderResult,
 } from '@island.is/application/types'
 import { GET_ANONYMITY_STATUS } from '../graphql/queries'
-import * as Sentry from '@sentry/react'
 import { AnonymityStatus } from '@island.is/api/schema'
 
 export class AnonymityStatusProvider extends BasicDataProvider {
@@ -29,8 +28,7 @@ export class AnonymityStatusProvider extends BasicDataProvider {
   }
 
   handleError(error: Error) {
-    console.log(error)
-    Sentry.captureException(error)
+    console.error(error)
     return Promise.reject({ reason: 'Failed to fetch data' })
   }
 

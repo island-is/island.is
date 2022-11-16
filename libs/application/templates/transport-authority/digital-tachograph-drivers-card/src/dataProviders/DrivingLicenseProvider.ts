@@ -6,7 +6,6 @@ import {
 } from '@island.is/application/types'
 import { DrivingLicense } from '../types/schema'
 import { GET_DRIVING_LICENSE } from '../graphql/queries'
-import * as Sentry from '@sentry/react'
 import { m } from '../lib/messagesx'
 
 export class DrivingLicenseProvider extends BasicDataProvider {
@@ -49,7 +48,7 @@ export class DrivingLicenseProvider extends BasicDataProvider {
   }
 
   handleError(error: Error) {
-    Sentry.captureException(error)
+    console.error(error)
     return Promise.reject({ reason: 'Failed to fetch data' })
   }
 

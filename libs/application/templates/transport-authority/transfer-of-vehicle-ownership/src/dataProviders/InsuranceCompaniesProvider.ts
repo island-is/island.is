@@ -6,7 +6,6 @@ import {
 } from '@island.is/application/types'
 import { InsuranceCompany } from '@island.is/api/schema'
 import { GET_INSURANCE_COMPANIES } from '../graphql/queries'
-import * as Sentry from '@sentry/react'
 
 export class InsuranceCompaniesProvider extends BasicDataProvider {
   type = 'InsuranceCompaniesProvider'
@@ -31,7 +30,7 @@ export class InsuranceCompaniesProvider extends BasicDataProvider {
   }
 
   handleError(error: Error) {
-    Sentry.captureException(error)
+    console.error(error)
     return Promise.reject({ reason: 'Failed to fetch data' })
   }
 
