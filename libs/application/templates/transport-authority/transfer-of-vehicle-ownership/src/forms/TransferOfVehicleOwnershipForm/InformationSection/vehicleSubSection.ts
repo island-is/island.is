@@ -1,4 +1,4 @@
-import { Application } from '@island.is/api/schema'
+import { Application, VehiclesCurrentVehicle } from '@island.is/api/schema'
 import {
   buildMultiField,
   buildTextField,
@@ -24,7 +24,10 @@ export const vehicleSubSection = buildSubSection({
           width: 'full',
           readOnly: true,
           defaultValue: (application: Application) => {
-            const vehicle = getSelectedVehicle(application)
+            const vehicle = getSelectedVehicle(
+              application.externalData,
+              application.answers,
+            ) as VehiclesCurrentVehicle
             return vehicle.permno
           },
         }),
@@ -35,7 +38,10 @@ export const vehicleSubSection = buildSubSection({
           width: 'full',
           readOnly: true,
           defaultValue: (application: Application) => {
-            const vehicle = getSelectedVehicle(application)
+            const vehicle = getSelectedVehicle(
+              application.externalData,
+              application.answers,
+            ) as VehiclesCurrentVehicle
             return vehicle.make
           },
         }),

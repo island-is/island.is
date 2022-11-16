@@ -1,4 +1,4 @@
-import { Application } from '@island.is/api/schema'
+import { Application, VehiclesCurrentVehicle } from '@island.is/api/schema'
 import {
   buildMultiField,
   buildTextField,
@@ -30,7 +30,10 @@ export const vehicleSubSection = buildSubSection({
           width: 'half',
           readOnly: true,
           defaultValue: (application: Application) => {
-            const vehicle = getSelectedVehicle(application)
+            const vehicle = getSelectedVehicle(
+              application.externalData,
+              application.answers,
+            ) as VehiclesCurrentVehicle
             return vehicle?.permno
           },
         }),
@@ -41,7 +44,10 @@ export const vehicleSubSection = buildSubSection({
           width: 'half',
           readOnly: true,
           defaultValue: (application: Application) => {
-            const vehicle = getSelectedVehicle(application)
+            const vehicle = getSelectedVehicle(
+              application.externalData,
+              application.answers,
+            ) as VehiclesCurrentVehicle
             return vehicle?.make
           },
         }),
@@ -50,10 +56,10 @@ export const vehicleSubSection = buildSubSection({
           title: '',
           component: 'MainOwner',
           condition: (formValue, externalData) => {
-            const vehicle = getSelectedVehicle({
+            const vehicle = getSelectedVehicle(
               externalData,
-              answers: formValue,
-            } as Application)
+              formValue,
+            ) as VehiclesCurrentVehicle
             return vehicle?.role !== 'Eigandi'
           },
         }),
@@ -63,10 +69,10 @@ export const vehicleSubSection = buildSubSection({
           titleVariant: 'h5',
           space: 3,
           condition: (formValue, externalData) => {
-            const vehicle = getSelectedVehicle({
+            const vehicle = getSelectedVehicle(
               externalData,
-              answers: formValue,
-            } as Application)
+              formValue,
+            ) as VehiclesCurrentVehicle
             return vehicle?.role === 'Eigandi'
           },
         }),
@@ -76,10 +82,10 @@ export const vehicleSubSection = buildSubSection({
           titleVariant: 'h5',
           space: 3,
           condition: (formValue, externalData) => {
-            const vehicle = getSelectedVehicle({
+            const vehicle = getSelectedVehicle(
               externalData,
-              answers: formValue,
-            } as Application)
+              formValue,
+            ) as VehiclesCurrentVehicle
             return vehicle?.role !== 'Eigandi'
           },
         }),
