@@ -7,10 +7,10 @@ import type { ConfigType } from '@island.is/nest/config'
 import { Inject, Injectable } from '@nestjs/common'
 
 import { FinancialStatementsInaoClientConfig } from './financialStatementsInao.config'
-import {
+import type {
   CemeteryFinancialStatementValues,
-  ClientType,
   Client,
+  ClientType,
   Config,
   Contact,
   Election,
@@ -20,10 +20,9 @@ import {
   PersonalElectionFinancialStatementValues,
   PoliticalPartyFinancialStatementValues,
   TaxInfo,
-  ContactType,
   ContactDto,
 } from './types'
-import { ClientTypes } from './types'
+import { ClientTypes, ContactType } from './types'
 import {
   getCemeteryFileName,
   getPersonalElectionFileName,
