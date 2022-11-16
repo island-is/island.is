@@ -72,9 +72,7 @@ export const CheckboxFormField: FC<Props> = ({
           defaultValue={
             ((getValueViaPath(application.answers, id) as string[]) ??
               getDefaultValue(field, application)) ||
-            required
-              ? []
-              : undefined
+            (required ? [] : undefined)
           }
           strong={strong}
           error={error}

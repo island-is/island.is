@@ -1,0 +1,27 @@
+{
+  "root": "libs/api/domains/transport-authority/anonymity-in-vehicle-registry",
+  "sourceRoot": "libs/api/domains/transport-authority/anonymity-in-vehicle-registry/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/api/domains/transport-authority/anonymity-in-vehicle-registry/**/*.ts"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": [
+        "coverage/libs/api/domains/transport-authority/anonymity-in-vehicle-registry"
+      ],
+      "options": {
+        "jestConfig": "libs/api/domains/transport-authority/anonymity-in-vehicle-registry/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

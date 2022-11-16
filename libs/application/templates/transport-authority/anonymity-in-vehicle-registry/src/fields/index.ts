@@ -1,1 +1,1 @@
-export { ConfirmationField } from './ConfirmationField'
+export { Confirmation } from './Confirmation'

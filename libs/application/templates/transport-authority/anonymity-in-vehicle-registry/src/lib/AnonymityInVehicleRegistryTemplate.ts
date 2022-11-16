@@ -13,10 +13,10 @@ import {
   pruneAfterDays,
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
-import { m } from './messagesx'
 import { Features } from '@island.is/feature-flags'
 import { ApiActions } from '../shared'
 import { AnonymityInVehicleRegistrySchema } from './dataSchema'
+import { application } from './messages'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -24,8 +24,8 @@ const template: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.ANONYMITY_IN_VEHICLE_REGISTRY,
-  name: m.name,
-  institution: m.institutionName,
+  name: application.name,
+  institution: application.institutionName,
   translationNamespaces: [
     ApplicationConfigurations.AnonymityInVehicleRegistry.translation,
   ],
@@ -39,18 +39,21 @@ const template: ApplicationTemplate<
           name: 'Nafnleynd í ökutækjaskrá',
           actionCard: {
             tag: {
-              label: m.actionCardDraft,
+              label: application.actionCardDraft,
               variant: 'blue',
             },
           },
           progress: 0.25,
           lifecycle: EphemeralStateLifeCycle,
+          onExit: {
+            apiModuleAction: ApiActions.submitApplication,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
               formLoader: () =>
                 import(
-                  '../forms/AnonymityInVehicleRegistryForm'
+                  '../forms/AnonymityInVehicleRegistryForm/index'
                 ).then((module) =>
                   Promise.resolve(module.AnonymityInVehicleRegistryForm),
                 ),
@@ -77,7 +80,7 @@ const template: ApplicationTemplate<
           lifecycle: pruneAfterDays(3 * 30),
           actionCard: {
             tag: {
-              label: m.actionCardDone,
+              label: application.actionCardDone,
               variant: 'blueberry',
             },
           },
@@ -85,8 +88,8 @@ const template: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/Approved').then((val) =>
-                  Promise.resolve(val.Approved),
+                import('../forms/Confirmation').then((val) =>
+                  Promise.resolve(val.Confirmation),
                 ),
               read: 'all',
             },
