@@ -3,6 +3,9 @@ import { HttpMethod, Response } from '@anev/ts-mountebank'
 import { EinstaklingsupplysingarToJSON } from '../../../../../../libs/clients/national-registry/v2/gen/fetch'
 import { Labor, NationalRegistry } from '../../../../../../infra/src/dsl/xroad'
 import { PostParentalLeaveResponseToJSON } from '../../../../../../libs/clients/vmst/gen/fetch'
+import formatISO from 'date-fns/formatISO'
+import addDays from 'date-fns/addDays'
+import addMonths from 'date-fns/addMonths'
 
 export async function setupXroadMocks() {
   await resetMocks()
@@ -226,6 +229,37 @@ export async function setupXroadMocks() {
     ],
     'base-path-with-env',
     HttpMethod.POST,
+  )
+  await addXroadMock(
+    Labor,
+    'XROAD_VMST_API_PATH',
+    '/users/0101303019/parental-leaves',
+    [
+      new Response().withJSONBody({
+        parentalLeaves: [],
+      }),
+    ],
+    'base-path-with-env',
+    HttpMethod.GET,
+  )
+  const babyBDayRandomFactor = Math.ceil(Math.random() * 85)
+
+  await addXroadMock(
+    Labor,
+    'XROAD_VMST_API_PATH',
+    '/users/0101303019/pregnancy-status',
+    [
+      new Response().withJSONBody({
+        hasActivePregnancy: true,
+        expectedDateOfBirth: formatISO(
+          addDays(addMonths(new Date(), 6), babyBDayRandomFactor),
+          {
+            representation: 'date',
+          },
+        ),
+      }),
+    ],
+    'base-path-with-env',
   )
   await wildcard()
 }
