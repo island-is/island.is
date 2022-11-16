@@ -1,12 +1,16 @@
 import {
   CoOwnerAndOperator,
+  ReviewCoOwnerAndOperatorField,
   ReviewSectionProps,
   UserInformation,
 } from '../types'
 import { Application } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
 
-export const getReviewSteps = (application: Application) => {
+export const getReviewSteps = (
+  application: Application,
+  coOwnersAndOperators: ReviewCoOwnerAndOperatorField[],
+) => {
   const vehiclePlate = getValueViaPath(
     application.answers,
     'vehicle.plate',
@@ -25,16 +29,16 @@ export const getReviewSteps = (application: Application) => {
     false,
   ) as boolean
 
-  const buyerCoOwnerAndOperator = getValueViaPath(
+  /* const buyerCoOwnerAndOperator = getValueViaPath(
     application.answers,
     'buyerCoOwnerAndOperator',
     [],
-  ) as CoOwnerAndOperator[]
+  ) as CoOwnerAndOperator[] */
 
-  const buyerCoOwner = buyerCoOwnerAndOperator.filter(
+  const buyerCoOwner = coOwnersAndOperators.filter(
     (reviewer) => reviewer.type === 'coOwner',
   )
-  const buyerOperator = buyerCoOwnerAndOperator.filter(
+  const buyerOperator = coOwnersAndOperators.filter(
     (reviewer) => reviewer.type === 'operator',
   )
 

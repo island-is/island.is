@@ -2,21 +2,15 @@
 import { FieldBaseProps } from '@island.is/application/types'
 import { FC } from 'react'
 import { Text, GridRow, GridColumn, Box } from '@island.is/island-ui/core'
-import { getValueViaPath } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
 import { overview } from '../../../lib/messages'
-import { CoOwnerAndOperator } from '../../../types'
+import { ReviewScreenProps } from '../../../types'
 import { ReviewGroup } from '../../ReviewGroup'
 
-export const CoOwnersSection: FC<FieldBaseProps> = ({ application }) => {
+export const CoOwnersSection: FC<FieldBaseProps & ReviewScreenProps> = ({
+  coOwnersAndOperators = [],
+}) => {
   const { formatMessage } = useLocale()
-  const { answers } = application
-
-  const coOwnersAndOperators = getValueViaPath(
-    answers,
-    'buyerCoOwnerAndOperator',
-    [],
-  ) as CoOwnerAndOperator[]
   const coOwners = coOwnersAndOperators.filter((x) => x.type === 'coOwner')
 
   return coOwners.length > 0 ? (

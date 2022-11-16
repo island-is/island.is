@@ -12,6 +12,7 @@ export type ReviewCoOwnerAndOperatorField = {
   email: string
   phone: string
   type: 'operator' | 'coOwner'
+  approved?: boolean
 }
 
 export interface ReviewScreenProps {

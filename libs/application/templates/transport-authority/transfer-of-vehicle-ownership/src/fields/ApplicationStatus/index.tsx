@@ -12,10 +12,11 @@ export const ApplicationStatus: FC<FieldBaseProps & ReviewScreenProps> = ({
   field,
   setStep,
   reviewerNationalId = '',
+  coOwnersAndOperators,
 }) => {
   const { formatMessage } = useLocale()
 
-  const steps = getReviewSteps(application)
+  const steps = getReviewSteps(application, coOwnersAndOperators || [])
 
   return (
     <Box marginBottom={10}>
