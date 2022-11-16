@@ -2,8 +2,7 @@ import { style } from '@vanilla-extract/css'
 import { themeUtils } from '@island.is/island-ui/theme'
 
 export const headerBg = style({
-  height: 385,
-  paddingTop: 130,
+  height: 255,
   backgroundBlendMode: 'saturation',
   ...themeUtils.responsiveStyle({
     xs: {
@@ -25,7 +24,6 @@ export const headerBg = style({
   }),
 
   backgroundRepeat: 'no-repeat !important',
-
   backgroundSize: '100% 100% 100%',
 })
 
