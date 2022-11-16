@@ -175,6 +175,7 @@ export const slices = gql`
       answer {
         ...BaseSlices
       }
+      publishDate
     }
   }
 
@@ -703,6 +704,7 @@ export const nestedAccordionAndFaqListFields = `
       answer {
         ...AllSlices
       }
+      publishDate
     }
   }
 `

@@ -26,6 +26,7 @@ import {
   calculatePeriodLength,
   PARENTAL_LEAVE,
   PARENTAL_GRANT,
+  SINGLE,
 } from '@island.is/application/templates/parental-leave'
 import { EmailService } from '@island.is/email-service'
 
@@ -250,6 +251,36 @@ describe('ParentalLeaveService', () => {
           approved: false,
           paid: false,
           rightsCodePeriod: apiConstants.rights.receivingRightsId,
+        },
+      ])
+    })
+
+    it('should return 2 periods, one standard and one using single parent right code', async () => {
+      const application = createApplication()
+
+      set(application, 'answers.otherParent', SINGLE)
+
+      const res = await parentalLeaveService.createPeriodsDTO(
+        application,
+        nationalId,
+      )
+
+      expect(res).toEqual([
+        {
+          from: '2021-05-17',
+          to: '2021-11-16',
+          ratio: '100',
+          approved: false,
+          paid: false,
+          rightsCodePeriod: 'M-L-GR',
+        },
+        {
+          from: '2021-11-17',
+          to: '2022-01-01',
+          ratio: '100',
+          approved: false,
+          paid: false,
+          rightsCodePeriod: apiConstants.rights.artificialInseminationRightsId,
         },
       ])
     })
