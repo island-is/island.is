@@ -8,7 +8,7 @@ import {
 
 /**
  * Wrapper hook for fetching delegation by id from url param
- * and fetching delegation scopes.
+ * and fetching delegation scope tree once delegation by id resolves.
  */
 export const useDelegation = () => {
   const { lang } = useLocale()

@@ -104,19 +104,19 @@ export const AccessCard = ({
 
   const renderInfo = (type: AuthDelegationType) => {
     // Default to custom delegation type
-    let text = formatMessage(m.delegationTypeCustom)
+    let text = formatMessage(m.delegationTypeCustomDesc)
 
     switch (type) {
       case AuthDelegationType.LegalGuardian:
-        text = formatMessage(m.delegationTypeLegalGuardian)
+        text = formatMessage(m.delegationTypeLegalGuardianDesc)
         break
 
       case AuthDelegationType.PersonalRepresentative:
-        text = formatMessage(m.delegationTypePersonalRepresentative)
+        text = formatMessage(m.delegationTypePersonalRepresentativeDesc)
         break
 
       case AuthDelegationType.ProcurationHolder:
-        text = formatMessage(m.delegationTypeProcurationHolder)
+        text = formatMessage(m.delegationTypeProcurationHolderDesc)
         break
     }
     return <Tooltip placement="bottom" as="button" text={text} />

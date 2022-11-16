@@ -26,8 +26,6 @@ export const AccessListItem = ({
   const { formatMessage } = useLocale()
   const hasDescription = !!description?.trim()
 
-  // Indent the hole row for screen size smaller than lg
-  // Only indent name field when screen size is lg or larger
   return (
     <Box
       className={classNames(
@@ -36,9 +34,11 @@ export const AccessListItem = ({
           ? commonAccessStyles.gridRowMaxTwoCols
           : commonAccessStyles.gridRowMaxThreeCols,
       )}
+      // Indent the hole row for screen size smaller than lg
       {...(indent && { paddingLeft: [2, 2, 2, 0] })}
     >
       <Box
+        // Only indent name field when screen size is lg or larger
         {...(indent && { paddingLeft: [0, 0, 0, 4] })}
         className={styles.headerContainer}
       >

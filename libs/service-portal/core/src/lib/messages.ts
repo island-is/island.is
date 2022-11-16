@@ -857,4 +857,20 @@ export const m = defineMessages({
     id: 'service.portal:delegation-type-personal-representative',
     defaultMessage: 'Pers. talsmaður',
   },
+  delegationTypeCustomDesc: {
+    id: 'service.portal:delegation-type-custom',
+    defaultMessage: 'Umboð description missing',
+  },
+  delegationTypeLegalGuardianDesc: {
+    id: 'service.portal:delegation-type-legal-guardian',
+    defaultMessage: 'Forsjá description missing',
+  },
+  delegationTypeProcurationHolderDesc: {
+    id: 'service.portal:delegation-type-procuration-holder',
+    defaultMessage: 'Prókúra description missing',
+  },
+  delegationTypePersonalRepresentativeDesc: {
+    id: 'service.portal:delegation-type-personal-representative',
+    defaultMessage: 'Pers. talsmaður description missing',
+  },
 })
