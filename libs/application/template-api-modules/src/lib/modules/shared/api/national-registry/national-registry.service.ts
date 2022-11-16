@@ -5,6 +5,7 @@ import * as kennitala from 'kennitala'
 import {
   ApplicantChildCustodyInformation,
   NationalRegistryIndividual,
+  NationalRegistrySpouse,
 } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
@@ -118,5 +119,21 @@ export class NationalRegistryService extends BaseTemplateApiService {
 
   async getMyRealEstates({ auth }: TemplateApiModuleActionProps) {
     return await this.assetsXRoadService.getRealEstatesWithDetail(auth, '1')
+  }
+
+  async getSpouse({
+    auth,
+  }: TemplateApiModuleActionProps): Promise<NationalRegistrySpouse | null> {
+    const spouse = await this.nationalRegistryApi.getCohabitationInfo(
+      auth.nationalId,
+    )
+
+    return (
+      spouse && {
+        nationalId: spouse.spouseNationalId,
+        name: spouse.spouseName,
+        maritalStatus: spouse.cohabitationCode,
+      }
+    )
   }
 }
