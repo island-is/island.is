@@ -49,18 +49,49 @@ const FinancialStatementInaoApplication: ApplicationTemplate<
   featureFlag: Features.financialStatementInao,
   allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
   stateMachineConfig: {
-    initial: States.DRAFT,
+    initial: States.PREREQUISITES,
     states: {
-      [States.DRAFT]: {
+      [States.PREREQUISITES]: {
         meta: {
-          name: 'Draft',
-          actionCard: {
-            title: m.applicationTitle,
-          },
+          name: 'Prerequisites',
           onEntry: {
             apiModuleAction: ApiActions.getUserType,
             shouldPersistToExternalData: true,
           },
+          progress: 0.1,
+          lifecycle: DefaultStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: async () => {
+                const getForm = await import('../forms/prerequisites').then(
+                  (val) => {
+                    return val.getForm
+                  },
+                )
+
+                return getForm()
+              },
+
+              actions: [
+                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
+              ],
+              write: 'all',
+              delete: true,
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: { target: States.DRAFT },
+        },
+      },
+      [States.DRAFT]: {
+        meta: {
+          name: 'Draft',
+          // onEntry: {
+          //   apiModuleAction: ApiActions.getUserType,
+          //   shouldPersistToExternalData: true,
+          // },
 
           progress: 0.4,
           lifecycle: DefaultStateLifeCycle,
