@@ -499,7 +499,7 @@ export const SignedVerdictOverview: React.FC = () => {
       notFound={caseNotFound}
     >
       <PageHeader
-        title={formatMessage(titles.shared.signedVerdictOverviewV2, {
+        title={formatMessage(titles.shared.closedCaseOverview, {
           courtCaseNumber: workingCase.courtCaseNumber,
         })}
       />

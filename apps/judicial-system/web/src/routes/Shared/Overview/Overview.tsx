@@ -58,7 +58,7 @@ const Overview = () => {
       <PageHeader
         title={
           completedCaseStates.includes(workingCase.state)
-            ? formatMessage(titles.shared.signedVerdictOverviewV2, {
+            ? formatMessage(titles.shared.closedCaseOverview, {
                 courtCaseNumber: workingCase.courtCaseNumber,
               })
             : formatMessage(titles.court.indictments.overview)

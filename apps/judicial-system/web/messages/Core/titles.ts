@@ -257,10 +257,11 @@ export const titles = {
       defaultMessage: 'Yfirlit - Afgreitt mál - Réttarvörslugátt',
       description: 'Notaður sem titill fyrir Yfirlit úrskurðar skjá',
     }),
-    signedVerdictOverviewV2: defineMessage({
-      id: 'judicial.system.core:titles.shared.signed_verdict_overview_v2',
+    closedCaseOverview: defineMessage({
+      id: 'judicial.system.core:titles.shared.closed_case_overview',
       defaultMessage: '{courtCaseNumber} - Réttarvörslugátt',
-      description: 'Notaður sem titill fyrir Yfirlit úrskurðar skjá',
+      description:
+        'Notaður sem titill fyrir skjá sem birtir upplýsingar um lokið mál',
     }),
   },
   admin: {
