@@ -60,19 +60,17 @@ export const Header = ({ position }: Props) => {
         <Box width="full">
           <Box
             display="flex"
-            justifyContent={['spaceBetween', 'spaceBetween', 'flexEnd']}
+            justifyContent="spaceBetween"
             alignItems="center"
             width="full"
             background="white"
             paddingX={[3, 3, 3, 3, 6]}
           >
-            <Hidden above="sm">
-              <Link to={ServicePortalPath.MinarSidurRoot}>
-                <FocusableBox component="div">
-                  <Logo width={40} iconOnly />
-                </FocusableBox>
-              </Link>
-            </Hidden>
+            <Link to={ServicePortalPath.MinarSidurRoot}>
+              <FocusableBox component="div">
+                <Logo width={136} height={22} id="sidebar" />
+              </FocusableBox>
+            </Link>
             <Hidden print>
               <Box
                 display="flex"

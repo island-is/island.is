@@ -120,65 +120,58 @@ export const Dashboard: FC<{}> = () => {
   return (
     <Box>
       <Greeting />
-      <GridContainer className={styles.relative}>
-        <Box className={styles.imageAbsolute}>
-          <img
-            src={`./assets/images/${
-              IS_COMPANY ? 'coffee.svg' : 'dashboard.svg'
-            }`}
-            alt=""
-          />
-        </Box>
-
-        <GridRow data-testid={'service-portal-dashboard'}>
-          {navigation.map((rootItem) => {
-            return rootItem.children?.map(
-              (navRoot, index) =>
-                navRoot.path !== ServicePortalPath.MinarSidurRoot &&
-                !navRoot.navHide && (
-                  <GridColumn
-                    key={formatMessage(navRoot.name) + '-' + index}
-                    span={['12/12', '12/12', '12/12', '6/12', '4/12']}
-                    paddingBottom={3}
-                  >
-                    <Box
-                      onMouseEnter={() => onHover(navRoot.icon?.icon ?? '')}
-                      height="full"
-                      flexGrow={1}
+      <Box background="blue100" paddingTop={6}>
+        <GridContainer>
+          <GridRow data-testid={'service-portal-dashboard'}>
+            {navigation.map((rootItem) => {
+              return rootItem.children?.map(
+                (navRoot, index) =>
+                  navRoot.path !== ServicePortalPath.MinarSidurRoot &&
+                  !navRoot.navHide && (
+                    <GridColumn
+                      key={formatMessage(navRoot.name) + '-' + index}
+                      span={['12/12', '12/12', '12/12', '3/12', '3/12']}
+                      paddingBottom={3}
                     >
-                      {navRoot.path && (
-                        <CategoryCard
-                          autoStack
-                          hyphenate
-                          truncateHeading
-                          component={Link}
-                          to={navRoot.path}
-                          icon={
-                            isMobile && navRoot.icon ? (
-                              <Icon
-                                icon={navRoot.icon.icon}
-                                type="outline"
-                                color="blue400"
-                              />
-                            ) : (
-                              iconTypeToSVG(navRoot.icon?.icon ?? '', '')
-                            )
-                          }
-                          heading={formatMessage(navRoot.name)}
-                          text={
-                            navRoot.description
-                              ? formatMessage(navRoot.description)
-                              : formatMessage(navRoot.name)
-                          }
-                        />
-                      )}
-                    </Box>
-                  </GridColumn>
-                ),
-            )
-          })}
-        </GridRow>
-      </GridContainer>
+                      <Box
+                        onMouseEnter={() => onHover(navRoot.icon?.icon ?? '')}
+                        height="full"
+                        flexGrow={1}
+                      >
+                        {navRoot.path && (
+                          <CategoryCard
+                            autoStack
+                            hyphenate
+                            truncateHeading
+                            component={Link}
+                            to={navRoot.path}
+                            icon={
+                              isMobile && navRoot.icon ? (
+                                <Icon
+                                  icon={navRoot.icon.icon}
+                                  type="outline"
+                                  color="blue400"
+                                />
+                              ) : (
+                                iconTypeToSVG(navRoot.icon?.icon ?? '', '')
+                              )
+                            }
+                            heading={formatMessage(navRoot.name)}
+                            text={
+                              navRoot.description
+                                ? formatMessage(navRoot.description)
+                                : formatMessage(navRoot.name)
+                            }
+                          />
+                        )}
+                      </Box>
+                    </GridColumn>
+                  ),
+              )
+            })}
+          </GridRow>
+        </GridContainer>
+      </Box>
 
       {userInfo !== null && !modulesPending && (
         <WidgetLoader

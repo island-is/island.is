@@ -13,7 +13,7 @@ const Greeting: FC<{}> = () => {
 
   return (
     <GridRow className={styles.greetingContainer} marginTop={4}>
-      <GridColumn span={['12/12', '7/12']}>
+      <GridColumn span="5/12" offset="1/12">
         <Box marginTop={[2, 3, 4]} data-testid="greeting">
           <Text
             variant="eyebrow"
@@ -29,6 +29,11 @@ const Greeting: FC<{}> = () => {
             {userInfo?.profile.name}
           </Text>
           <Text marginBottom={2}>{formatMessage(m.greetingIntro)}</Text>
+        </Box>
+      </GridColumn>
+      <GridColumn span="6/12">
+        <Box display="flex" justifyContent="center">
+          <img src={'./assets/images/company.svg'} alt="" />
         </Box>
       </GridColumn>
     </GridRow>

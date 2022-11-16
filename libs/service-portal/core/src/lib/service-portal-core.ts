@@ -43,6 +43,11 @@ export interface ServicePortalNavigationItem {
    * Description for module
    */
   description?: MessageDescriptor
+  // TODO
+  /** Service provider ....
+   * Sækja í contentful í hverju kalli eða geyma hjá okkur ?? ræða
+   */
+  serviceProvider?: string // einhver týpe eða nafn og id ??
 }
 
 /**

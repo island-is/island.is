@@ -63,23 +63,30 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         icon: {
           icon: 'person',
         },
+        serviceProvider: 'i5go5A4ikV8muPfvr9o2v',
         children: [
           {
             name: m.detailInfo,
             navHide: true,
             path: ServicePortalPath.UserInfo,
+            children: [
+              {
+                // TESTING ONLY
+                name: m.endorsements,
+                path: ServicePortalPath.Petitions,
+              },
+              {
+                name: m.familySpouse,
+                navHide: true,
+                path: ServicePortalPath.Spouse,
+              },
+              {
+                name: m.familyChild,
+                navHide: true,
+                path: ServicePortalPath.Child,
+              },
+            ],
           },
-          {
-            name: m.familySpouse,
-            navHide: true,
-            path: ServicePortalPath.Spouse,
-          },
-          {
-            name: m.familyChild,
-            navHide: true,
-            path: ServicePortalPath.Child,
-          },
-
           {
             // Petitions
             name: m.endorsements,
@@ -254,14 +261,14 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
       // Ökutæki
       {
         name: m.vehicles,
-        path: ServicePortalPath.AssetsMyVehicles,
+        path: ServicePortalPath.AssetsVehicles,
         icon: {
           icon: 'car',
         },
         children: [
           {
             name: m.myVehicles,
-            path: ServicePortalPath.AssetsMyVehicles,
+            path: ServicePortalPath.AssetsVehicles,
             children: [
               {
                 // Path param reference
