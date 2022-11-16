@@ -1,4 +1,4 @@
-// import { Application } from '@island.is/api/schema'
+import { Application } from '@island.is/api/schema'
 import {
   buildMultiField,
   buildTextField,
@@ -6,7 +6,7 @@ import {
   buildSubSection,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
-// import { getSelectedVehicle } from '../../../utils'
+import { getSelectedVehicle } from '../../../utils'
 
 export const vehicleSubSection = buildSubSection({
   id: 'vehicle',
@@ -23,10 +23,10 @@ export const vehicleSubSection = buildSubSection({
           backgroundColor: 'white',
           width: 'full',
           readOnly: true,
-          // defaultValue: (application: Application) => {
-          //   const vehicle = getSelectedVehicle(application)
-          //   return vehicle.permno
-          // },
+          defaultValue: (application: Application) => {
+            const vehicle = getSelectedVehicle(application)
+            return vehicle.permno
+          },
         }),
         buildTextField({
           id: 'vehicle.type',
@@ -34,10 +34,10 @@ export const vehicleSubSection = buildSubSection({
           backgroundColor: 'white',
           width: 'full',
           readOnly: true,
-          // defaultValue: (application: Application) => {
-          //   const vehicle = getSelectedVehicle(application)
-          //   return vehicle.make
-          // },
+          defaultValue: (application: Application) => {
+            const vehicle = getSelectedVehicle(application)
+            return vehicle.make
+          },
         }),
         buildTextField({
           id: 'vehicle.salePrice',
@@ -55,9 +55,9 @@ export const vehicleSubSection = buildSubSection({
             minDate.setDate(minDate.getDate() - 7)
             return minDate
           },
-          // defaultValue: (application: Application) => {
-          //   return new Date().toISOString().substring(0, 10)
-          // },
+          defaultValue: (application: Application) => {
+            return new Date().toISOString().substring(0, 10)
+          },
         }),
       ],
     }),

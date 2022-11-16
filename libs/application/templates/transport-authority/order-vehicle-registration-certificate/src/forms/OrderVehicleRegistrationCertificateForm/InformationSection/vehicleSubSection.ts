@@ -1,4 +1,4 @@
-// import { Application } from '@island.is/api/schema'
+import { Application } from '@island.is/api/schema'
 import {
   buildMultiField,
   buildTextField,
@@ -6,7 +6,7 @@ import {
   buildDescriptionField,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
-// import { getSelectedVehicle } from '../../../utils'
+import { getSelectedVehicle } from '../../../utils'
 
 export const vehicleSubSection = buildSubSection({
   id: 'vehicle',
@@ -28,10 +28,10 @@ export const vehicleSubSection = buildSubSection({
           backgroundColor: 'white',
           width: 'half',
           readOnly: true,
-          // defaultValue: (application: Application) => {
-          //   const vehicle = getSelectedVehicle(application)
-          //   return vehicle?.permno
-          // },
+          defaultValue: (application: Application) => {
+            const vehicle = getSelectedVehicle(application)
+            return vehicle?.permno
+          },
         }),
         buildTextField({
           id: 'vehicle.type',
@@ -39,36 +39,36 @@ export const vehicleSubSection = buildSubSection({
           backgroundColor: 'white',
           width: 'half',
           readOnly: true,
-          // defaultValue: (application: Application) => {
-          //   const vehicle = getSelectedVehicle(application)
-          //   return vehicle?.make
-          // },
+          defaultValue: (application: Application) => {
+            const vehicle = getSelectedVehicle(application)
+            return vehicle?.make
+          },
         }),
         buildDescriptionField({
           id: 'owner.title',
           title: information.labels.owner.title,
           titleVariant: 'h5',
           space: 3,
-          // condition: (formValue, externalData) => {
-          //   const vehicle = getSelectedVehicle({
-          //     externalData,
-          //     answers: formValue,
-          //   } as Application)
-          //   return vehicle?.role === 'Eigandi'
-          // },
+          condition: (formValue, externalData) => {
+            const vehicle = getSelectedVehicle({
+              externalData,
+              answers: formValue,
+            } as Application)
+            return vehicle?.role === 'Eigandi'
+          },
         }),
         buildDescriptionField({
           id: 'coOwner.title',
           title: information.labels.coOwner.title,
           titleVariant: 'h5',
           space: 3,
-          // condition: (formValue, externalData) => {
-          //   const vehicle = getSelectedVehicle({
-          //     externalData,
-          //     answers: formValue,
-          //   } as Application)
-          //   return vehicle?.role !== 'Eigandi'
-          // },
+          condition: (formValue, externalData) => {
+            const vehicle = getSelectedVehicle({
+              externalData,
+              answers: formValue,
+            } as Application)
+            return vehicle?.role !== 'Eigandi'
+          },
         }),
         buildTextField({
           id: 'owner.nationalId',
@@ -77,8 +77,8 @@ export const vehicleSubSection = buildSubSection({
           width: 'half',
           readOnly: true,
           format: '######-####',
-          // defaultValue: (application: Application) =>
-          //   application.externalData?.nationalRegistry?.data?.nationalId,
+          defaultValue: (application: Application) =>
+            application.externalData?.nationalRegistry?.data?.nationalId,
         }),
         buildTextField({
           id: 'owner.name',
@@ -86,8 +86,8 @@ export const vehicleSubSection = buildSubSection({
           backgroundColor: 'white',
           width: 'half',
           readOnly: true,
-          // defaultValue: (application: Application) =>
-          //   application.externalData?.nationalRegistry?.data?.fullName,
+          defaultValue: (application: Application) =>
+            application.externalData?.nationalRegistry?.data?.fullName,
         }),
         buildTextField({
           id: 'owner.email',
@@ -95,8 +95,8 @@ export const vehicleSubSection = buildSubSection({
           width: 'half',
           variant: 'email',
           required: true,
-          // defaultValue: (application: Application) =>
-          //   application.externalData?.userProfile?.data?.email,
+          defaultValue: (application: Application) =>
+            application.externalData?.userProfile?.data?.email,
         }),
         buildTextField({
           id: 'owner.phone',
@@ -104,8 +104,8 @@ export const vehicleSubSection = buildSubSection({
           width: 'half',
           variant: 'tel',
           required: true,
-          // defaultValue: (application: Application) =>
-          //   application.externalData?.userProfile?.data?.phone,
+          defaultValue: (application: Application) =>
+            application.externalData?.userProfile?.data?.phone,
         }),
       ],
     }),
