@@ -15,7 +15,7 @@ import { useFormContext } from 'react-hook-form'
 export const OtherParent: FC<FieldBaseProps> = ({ application, field }) => {
   const { id, title } = field
   const { formatMessage } = useLocale()
-  const { errors, setValue } = useFormContext()
+  const { errors, setValue, reset } = useFormContext()
   return (
     <Box>
       <Text variant="h4" as="h4">
@@ -35,6 +35,12 @@ export const OtherParent: FC<FieldBaseProps> = ({ application, field }) => {
             if (s === SPOUSE || s === NO) {
               setValue('otherParentObj.otherParentName', '')
               setValue('otherParentObj.otherParentId', '')
+              if (s === NO) {
+                setValue('otherParentEmail', undefined)
+                setValue('otherParentPhoneNumber', '')
+                setValue('requestRights.isRequestingRights', NO)
+                setValue('requestRights.requestDays', '')
+              }
             }
           },
         }}
