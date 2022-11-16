@@ -75,7 +75,6 @@ export const ActionCard: React.FC<ActionCardProps> = ({
   secondaryCta,
   tag: _tag,
   image,
-  children,
 }) => {
   const cta = { ...defaultCta, ..._cta }
   const tag = { ...defaultTag, ..._tag }

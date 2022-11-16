@@ -25,7 +25,7 @@ export const VehicleCard: FC<Props> = ({ vehicle }) => {
 
   return (
     <ActionCard
-      image={{ type: 'component', component: translateType('a3', '87') }}
+      image={{ type: 'component', component: translateType('L2e', '22') }}
       heading={heading}
       text={text}
       tag={
@@ -58,8 +58,6 @@ export const VehicleCard: FC<Props> = ({ vehicle }) => {
             )
           : undefined,
       }}
-    >
-      {translateType('M2', '12')}
-    </ActionCard>
+    />
   )
 }

@@ -63,6 +63,7 @@ export class VehiclesService {
         showHistory: showHistory,
       })
       const { data } = res
+
       if (!data) return {}
       return data
     } catch (e) {
