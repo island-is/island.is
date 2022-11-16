@@ -2697,6 +2697,9 @@ export interface IQuestionAndAnswerFields {
 
   /** Answer */
   answer?: Document | undefined
+
+  /** Publish Date */
+  publishDate?: string | undefined
 }
 
 export interface IQuestionAndAnswer extends Entry<IQuestionAndAnswerFields> {

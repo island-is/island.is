@@ -31,6 +31,7 @@ export interface AttachmentData {
 
 export const getCurrentUserType = (answers: any, externalData: any) => {
   const fakeUserType: any = getValueViaPath(answers, 'fakeData.options')
+
   const currentUserType: any = getValueViaPath(
     externalData,
     'getUserType.data.value',
@@ -115,8 +116,8 @@ export class FinancialStatementsInaoTemplateService {
       const values:
         | PersonalElectionFinancialStatementValues
         | undefined = noValueStatement
-        ? mapValuesToIndividualtype(answers)
-        : undefined
+        ? undefined
+        : mapValuesToIndividualtype(answers)
 
       const electionId = getValueViaPath(
         answers,
