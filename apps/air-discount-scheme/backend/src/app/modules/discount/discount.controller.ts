@@ -12,10 +12,8 @@ import {
 import {
   ApiBearerAuth,
   ApiExcludeEndpoint,
-  ApiExtraModels,
   ApiOkResponse,
   ApiTags,
-  getSchemaPath,
 } from '@nestjs/swagger'
 
 import { Discount } from './discount.model'

@@ -4,7 +4,6 @@ import type { User } from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
 import {
   CurrentUser,
-  IdsAuthGuard,
   IdsUserGuard,
   Scopes,
   ScopesGuard,
