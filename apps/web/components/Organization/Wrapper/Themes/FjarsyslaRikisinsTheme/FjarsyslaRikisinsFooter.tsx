@@ -25,10 +25,7 @@ const FjarsyslaRikisinsFooter = ({
   title,
 }: FjarsyslaRikisinsFooterProps) => {
   return (
-    <footer
-      className={styles.container}
-      aria-labelledby="fjarsysla-rikisins-footer"
-    >
+    <footer className={styles.container} aria-labelledby="fjarsyslan-footer">
       <GridContainer>
         <Box className={styles.firstRow}>
           {!!logo && <img width={80} height={80} src={logo} alt="" />}
