@@ -6,7 +6,6 @@ import {
   CaseFileState,
   CaseOrigin,
   CaseState,
-  CaseType,
   indictmentCases,
   investigationCases,
   restrictionCases,
