@@ -68,6 +68,8 @@ export class PublicDiscountController {
 
 @ApiTags('Users')
 @Controller('api/private')
+@Scopes('@vegagerdin.is/air-discount-scheme-scope')
+@UseGuards(IdsUserGuard, ScopesGuard)
 export class PrivateDiscountController {
   constructor(
     private readonly discountService: DiscountService,
@@ -78,8 +80,6 @@ export class PrivateDiscountController {
   ) {}
 
   @Get('users/:nationalId/discounts/current')
-  @UseGuards(IdsUserGuard, ScopesGuard)
-  @Scopes('@vegagerdin.is/air-discount-scheme-scope')
   @ApiOkResponse({ type: Discount })
   @ApiBearerAuth()
   @ApiExcludeEndpoint(!process.env.ADS_PRIVATE_CLIENT)
@@ -89,8 +89,6 @@ export class PrivateDiscountController {
     return await this.discountService.getDiscountByNationalId(params.nationalId)
   }
 
-  @UseGuards(IdsUserGuard, ScopesGuard)
-  @Scopes('@vegagerdin.is/air-discount-scheme-scope')
   @Post('users/:nationalId/discounts')
   @ApiOkResponse({ type: Discount })
   @ApiBearerAuth()
