@@ -93,7 +93,7 @@ const Access = () => {
       >
         <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
           <Box display="flex" flexDirection="column" rowGap={md ? 1 : 2}>
-            <Text variant="h3">
+            <Text variant="h3" as="h1">
               {formatMessage({
                 id: 'sp.access-control-delegations:access-title',
                 defaultMessage: 'Réttindi',

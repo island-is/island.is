@@ -1,5 +1,5 @@
 import { useLocale } from '@island.is/localization'
-import { Text, GridRow, GridColumn, Hidden } from '@island.is/island-ui/core'
+import { Text, GridRow, GridColumn, Box } from '@island.is/island-ui/core'
 
 import * as styles from './AccessItemHeader.css'
 
@@ -13,7 +13,7 @@ export const AccessItemHeader = ({
   const { formatMessage } = useLocale()
 
   return (
-    <Hidden below="md">
+    <Box display={['none', 'block']} aria-hidden>
       <GridRow className={styles.row}>
         <GridColumn
           span={['12/12', '12/12', '3/12']}
@@ -53,6 +53,6 @@ export const AccessItemHeader = ({
           )}
         </GridColumn>
       </GridRow>
-    </Hidden>
+    </Box>
   )
 }

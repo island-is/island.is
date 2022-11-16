@@ -42,6 +42,7 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces(['sp.settings-access-control', 'sp.access-control-delegations'])
   const { formatMessage } = useLocale()
   const [name, setName] = useState('')
+  const inputRef = React.useRef<HTMLInputElement>(null)
   const history = useHistory()
   const { md } = useBreakpoint()
   const { options, selectedOption, loading: domainLoading } = useDomains(false)
@@ -144,6 +145,12 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
   const clearForm = () => {
     setName('')
     reset()
+
+    setTimeout(() => {
+      if (inputRef.current) {
+        inputRef.current.focus()
+      }
+    }, 0)
   }
 
   return (
@@ -196,6 +203,7 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
                     control={control}
                     id="toNationalId"
                     icon={name || queryLoading ? undefined : 'search'}
+                    ref={inputRef}
                     rules={{
                       required: {
                         value: true,
@@ -243,6 +251,7 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
                     disabled={loading}
                     onClick={clearForm}
                     className={styles.icon}
+                    aria-label={formatMessage(m.clearSelected)}
                   >
                     <Icon icon="close" size="large" color="blue400" />
                   </button>
