@@ -104,9 +104,11 @@ const Layout: FC = ({ children }) => {
   const parent = findParent(navigation[0]?.children)
 
   if (parent !== undefined) {
-    parent.children?.map(
-      (item) => item.navHide !== false && subNavItems.push(mapChildren(item)),
-    )
+    parent.children
+      ?.filter((item) => !item.navHide)
+      ?.map((item: ServicePortalNavigationItem) =>
+        subNavItems.push(mapChildren(item)),
+      )
   }
 
   // Todo: Birta líka yfirlitsskjá í efnisyfiliti
