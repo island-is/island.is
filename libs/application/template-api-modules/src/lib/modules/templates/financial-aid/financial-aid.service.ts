@@ -21,7 +21,7 @@ import { BaseTemplateApiService } from '../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
 import { FetchError } from '@island.is/clients/middlewares'
 
-type Props<T> = Omit<TemplateApiModuleActionProps<T>, 'application'> & {
+type Props = Omit<TemplateApiModuleActionProps, 'application'> & {
   application: FAApplication
 }
 
@@ -66,7 +66,7 @@ export class FinancialAidService extends BaseTemplateApiService {
   async createApplication({
     application,
     auth,
-  }: Props<null>): Promise<CurrentApplication> {
+  }: Props): Promise<CurrentApplication> {
     const { id, answers, externalData } = application
 
     if (externalData.currentApplication.data.currentApplicationId) {
@@ -182,7 +182,7 @@ export class FinancialAidService extends BaseTemplateApiService {
       })
   }
 
-  async currentApplication({ auth }: Props<null>): Promise<CurrentApplication> {
+  async currentApplication({ auth }: Props): Promise<CurrentApplication> {
     const currentApplicationId = await this.applicationApiWithAuth(auth)
       .applicationControllerGetCurrentApplication()
       .catch(this.handle404)
@@ -194,7 +194,7 @@ export class FinancialAidService extends BaseTemplateApiService {
   async municipality({
     auth,
     application,
-  }: Props<null>): Promise<MunicipalityModel | null> {
+  }: Props): Promise<MunicipalityModel | null> {
     const municiplaityCode =
       application.externalData.nationalRegistry.data.address?.municipalityCode
     if (municiplaityCode == null) {
