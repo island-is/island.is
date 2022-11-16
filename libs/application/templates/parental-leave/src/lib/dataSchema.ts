@@ -14,6 +14,7 @@ import {
   SINGLE,
 } from '../constants'
 import { errorMessages } from './messages'
+import { isEmpty } from 'lodash'
 
 const PersonalAllowance = z
   .object({
@@ -125,7 +126,7 @@ export const dataSchema = z.object({
       params: errorMessages.otherParentId,
     }),
   otherParentRightOfAccess: z.enum([YES, NO]),
-  otherParentEmail: z.string().email(),
+  otherParentEmail: z.string().email().optional(),
   otherParentPhoneNumber: z
     .string()
     .refine(
