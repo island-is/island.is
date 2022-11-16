@@ -22,7 +22,7 @@ type DiscountWithTUser = Discount & { user: TUser }
 
 const TWO_HOURS = 7200
 
-@UseGuards(IdsAuthGuard, IdsUserGuard, ScopesGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.airDiscountScheme)
 @Audit({ namespace: '@island.is/air-discount-scheme' })
 export class AirDiscountSchemeResolver {
