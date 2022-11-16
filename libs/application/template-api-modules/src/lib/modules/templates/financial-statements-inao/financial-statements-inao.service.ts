@@ -46,6 +46,13 @@ export interface DataResponse {
   success: boolean
   message?: string
 }
+
+interface CemeteryCaretaker {
+  name: string
+  nationalId: string
+  role: string
+}
+
 @Injectable()
 export class FinancialStatementsInaoTemplateService {
   s3: S3
@@ -255,6 +262,10 @@ export class FinancialStatementsInaoTemplateService {
       ) as string
 
       const actorsName = getValueViaPath(answers, 'about.fullName') as string
+      const contactsAnswer = getValueViaPath(
+        answers,
+        'cemetryCaretaker',
+      ) as CemeteryCaretaker[]
 
       const file = getValueViaPath(answers, 'attachments.file')
 
@@ -277,6 +288,18 @@ export class FinancialStatementsInaoTemplateService {
           contactType: ContactType.Actor,
         },
       ]
+
+      contactsAnswer.forEach((x) => {
+        const contact: Contact = {
+          nationalId: x.nationalId,
+          name: x.name,
+          contactType:
+            x.role === 'Stjórnarmaður'
+              ? ContactType.BoardMember
+              : ContactType.Inspector,
+        }
+        contacts.push(contact)
+      })
 
       const result: DataResponse = await this.financialStatementsClientService
         .postFinancialStatementForCemetery(
