@@ -3,10 +3,35 @@ import { GenericLicenseDataField } from '../../../types'
 import { MockProps } from './types'
 import { maybeExpired, generateDataField } from './utils'
 
+const qualifications = [
+  'A',
+  'AM',
+  'A1',
+  'A2',
+  'B',
+  'BE',
+  'Ba',
+  'Bff',
+  'C',
+  'CE',
+  'C1',
+  'C1E',
+  'Ca',
+  'C1A',
+  'D',
+  'DE',
+  'D1',
+  'D1E',
+  'Da',
+  'D1a',
+  'T',
+  'other',
+]
+
 const driversRightsDataField = () =>
   factory<GenericLicenseDataField>({
     type: 'Category',
-    name: faker.random.alpha({ count: 1, upcase: true }),
+    name: faker.random.arrayElement(qualifications),
     fields: [
       {
         type: 'Value',
@@ -21,7 +46,7 @@ const driversRightsDataField = () =>
       {
         type: 'Value',
         label: 'Athugasemd',
-        value: faker.random.words(),
+        value: faker.datatype.boolean() ? faker.random.words() : '',
       },
     ],
   })

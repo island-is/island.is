@@ -8,13 +8,11 @@ const machineRightsDataField = () => {
 
   const canTeach = faker.datatype.boolean()
 
-  if (canTeach || faker.datatype.boolean()) {
-    fields.push({
-      type: 'Value',
-      label: 'Stjórna',
-      value: maybeExpired(),
-    })
-  }
+  fields.push({
+    type: 'Value',
+    label: 'Stjórna',
+    value: maybeExpired(),
+  })
 
   if (canTeach) {
     fields.push({
@@ -26,7 +24,7 @@ const machineRightsDataField = () => {
 
   return factory<GenericLicenseDataField>({
     type: 'Category',
-    name: faker.random.word(),
+    name: faker.random.alpha({ upcase: true }),
     label: faker.random.words(faker.datatype.number(5)),
     description: faker.random.words(faker.datatype.number(5)),
     fields: fields,

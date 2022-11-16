@@ -48,15 +48,10 @@ const firearmPropertyDataField = () =>
 const firearmRightsDataField = () =>
   factory<GenericLicenseDataField>({
     type: 'Category',
-    fields: [
-      {
-        type: 'Category',
-        name: faker.random.alpha({ count: 1, upcase: true }),
-        label: faker.random.word(),
-        description: faker.random.word(),
-        value: '',
-      },
-    ],
+    name: faker.random.alpha({ count: 1, upcase: true }),
+    label: faker.random.word(),
+    description: faker.lorem.paragraph(),
+    value: '',
   })
 
 export const mockFirearmLicense = (
