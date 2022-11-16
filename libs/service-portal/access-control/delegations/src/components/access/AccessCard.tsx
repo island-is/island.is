@@ -1,5 +1,6 @@
 import { useHistory } from 'react-router-dom'
 import format from 'date-fns/format'
+import { VisuallyHidden } from 'reakit/VisuallyHidden'
 
 import {
   Box,
@@ -153,11 +154,20 @@ export const AccessCard = ({
             )}
             {delegation.domain && (
               <Box display="flex" columnGap={1} alignItems="center">
+                <VisuallyHidden>
+                  {formatMessage(
+                    formatMessage({
+                      id: 'sp.access-control-delegations:delegation-in-system',
+                      defaultMessage: 'Umboð í kerfi',
+                    }),
+                  )}
+                </VisuallyHidden>
                 {delegation.domain.organisationLogoUrl && (
                   <img
                     src={delegation.domain.organisationLogoUrl}
-                    alt={`Mynd af ${delegation.domain.displayName}`}
                     width="16"
+                    alt=""
+                    aria-hidden
                   />
                 )}
                 <Text variant="eyebrow" color="purple400">
@@ -166,7 +176,15 @@ export const AccessCard = ({
               </Box>
             )}
           </Box>
-          <Text variant="h3" as="h3" color={isExpired ? 'dark300' : 'dark400'}>
+          <VisuallyHidden>
+            {formatMessage(
+              formatMessage({
+                id: 'sp.access-control-delegations:access-holder',
+                defaultMessage: 'Aðgangshafi',
+              }),
+            )}
+          </VisuallyHidden>
+          <Text variant="h3" as="h2" color={isExpired ? 'dark300' : 'dark400'}>
             {isOutgoing ? delegation?.to?.name : delegation?.from?.name}
           </Text>
         </Stack>
@@ -180,6 +198,10 @@ export const AccessCard = ({
                 icon="time"
                 color={isExpired ? 'dark300' : 'blue400'}
                 type="outline"
+                title={formatMessage({
+                  id: 'sp.access-control-delegations:validity-period',
+                  defaultMessage: 'Gildistími',
+                })}
               />
               <Text variant="small" color={isExpired ? 'dark300' : 'dark400'}>
                 {getRightLabel()}
@@ -191,13 +213,21 @@ export const AccessCard = ({
       <Box marginTop={hasTags && showActions ? 2 : 0}>
         <Box
           display="flex"
-          justifyContent="spaceBetween"
-          alignItems={['flexStart', 'flexEnd']}
+          justifyContent={'spaceBetween'}
+          alignItems={['stretch', 'flexEnd']}
           flexDirection={['column', 'row']}
           width="full"
         >
           {hasTags && (
             <Box width="full">
+              <VisuallyHidden>
+                {formatMessage(
+                  formatMessage({
+                    id: 'sp.access-control-delegations:access-title',
+                    defaultMessage: 'Réttindi',
+                  }),
+                )}
+              </VisuallyHidden>
               <Inline alignY="bottom" space={1}>
                 {tags.map((tag, index) => (
                   <Tag
@@ -216,8 +246,8 @@ export const AccessCard = ({
               display="flex"
               alignItems="center"
               justifyContent={['spaceBetween', 'flexEnd']}
-              width="full"
-              marginTop={[3, 0]}
+              marginTop={[2, 0]}
+              marginLeft={[0, 3]}
             >
               {(isOutgoing ||
                 (!isOutgoing &&
@@ -229,6 +259,7 @@ export const AccessCard = ({
                   size="small"
                   colorScheme="destructive"
                   onClick={() => onDelete(delegation)}
+                  nowrap
                 >
                   {formatMessage(m.buttonDestroy)}
                 </Button>

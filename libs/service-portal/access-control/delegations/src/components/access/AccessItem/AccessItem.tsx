@@ -1,5 +1,6 @@
 import { useCallback, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
+import { VisuallyHidden } from 'reakit/VisuallyHidden'
 import addYears from 'date-fns/addYears'
 import {
   Text,
@@ -37,7 +38,12 @@ export const AccessItem = ({
 }: PropTypes) => {
   const { lang, formatMessage } = useLocale()
   const { setValue, getValues } = useFormContext()
-  const { md, lg } = useBreakpoint()
+  const { md } = useBreakpoint()
+  const grantTranslation = formatMessage({
+    id: 'sp.access-control-delegations:grant',
+    defaultMessage: 'Heimild',
+  })
+
   const [datePickerVisibleGroup, setDatePickerVisibleGroup] = useState<
     boolean[]
   >(apiScopes.map(() => false))
@@ -175,7 +181,17 @@ export const AccessItem = ({
                   defaultValue={existingScope ? [existingScope.name] : []}
                   options={[
                     {
-                      label: item.displayName,
+                      label: (
+                        <>
+                          <VisuallyHidden>
+                            {formatMessage({
+                              id: 'sp.settings-access-control:access-access',
+                              defaultMessage: 'Aðgangur',
+                            })}
+                          </VisuallyHidden>
+                          {item.displayName}
+                        </>
+                      ),
                       value: item.name,
                     },
                   ]}
@@ -189,14 +205,13 @@ export const AccessItem = ({
                     flexDirection="column"
                     className={styles.rowGap}
                   >
-                    {!lg && (
+                    {md && item.description?.trim() ? (
+                      <VisuallyHidden>{grantTranslation}</VisuallyHidden>
+                    ) : !md ? (
                       <Text variant="small" fontWeight="semiBold" marginTop={2}>
-                        {formatMessage({
-                          id: 'sp.access-control-delegations:grant',
-                          defaultMessage: 'Heimild',
-                        })}
+                        {grantTranslation}
                       </Text>
-                    )}
+                    ) : null}
                     <Text fontWeight="light">{item.description}</Text>
                   </Box>
                 </div>

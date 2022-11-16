@@ -39,7 +39,7 @@ export const AccessHeader = ({
             alignItems="center"
             columnGap={1}
           >
-            <Text variant="h3">
+            <Text variant="h3" as="h1">
               {formatMessage({
                 id: 'sp.access-control-delegations:access-title',
                 defaultMessage: 'Réttindi',
