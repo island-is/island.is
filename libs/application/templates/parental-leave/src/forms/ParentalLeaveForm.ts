@@ -367,13 +367,17 @@ export const ParentalLeaveForm: Form = buildForm({
               children: [
                 buildCustomField({
                   component: 'PersonalAllowance',
-                  id: 'usePersonalAllowance',
+                  id: 'personalAllowance.usePersonalAllowance',
                   title: parentalLeaveFormMessages.personalAllowance.useYours,
                 }),
                 buildCustomField({
                   component: 'PersonalUseAsMuchAsPossible',
                   id: 'personalAllowance.useAsMuchAsPossible',
-                  condition: (answers) => answers.usePersonalAllowance === YES,
+                  condition: (answers) =>
+                    (answers as {
+                      personalAllowance: { usePersonalAllowance: string }
+                    })?.personalAllowance?.usePersonalAllowance === YES,
+                  // condition: (answers) => answers.usePersonalAllowance === YES,
                   title:
                     parentalLeaveFormMessages.personalAllowance
                       .useAsMuchAsPossible,
@@ -411,7 +415,7 @@ export const ParentalLeaveForm: Form = buildForm({
               children: [
                 buildCustomField({
                   component: 'PersonalAllowance',
-                  id: 'usePersonalAllowanceFromSpouse',
+                  id: 'personalAllowanceFromSpouse.usePersonalAllowance',
                   title:
                     parentalLeaveFormMessages.personalAllowance.useFromSpouse,
                 }),
@@ -419,8 +423,15 @@ export const ParentalLeaveForm: Form = buildForm({
                   component: 'SpouseUseAsMuchAsPossible',
                   id: 'personalAllowanceFromSpouse.useAsMuchAsPossible',
                   condition: (answers) =>
-                    answers.usePersonalAllowanceFromSpouse === YES &&
-                    allowOtherParent(answers),
+                    (answers as {
+                      personalAllowanceFromSpouse: {
+                        usePersonalAllowance: string
+                      }
+                    })?.personalAllowanceFromSpouse?.usePersonalAllowance ===
+                      YES && allowOtherParent(answers),
+                  // condition: (answers) =>
+                  //   answers.usePersonalAllowanceFromSpouse === YES &&
+                  //   allowOtherParent(answers),
                   title:
                     parentalLeaveFormMessages.personalAllowance
                       .useAsMuchAsPossibleFromSpouse,
