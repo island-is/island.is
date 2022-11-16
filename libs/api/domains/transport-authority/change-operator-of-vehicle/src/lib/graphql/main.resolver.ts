@@ -6,6 +6,4 @@ import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.internal)
 @Resolver()
-export class MainResolver {
-  constructor() {}
-}
+export class MainResolver {}

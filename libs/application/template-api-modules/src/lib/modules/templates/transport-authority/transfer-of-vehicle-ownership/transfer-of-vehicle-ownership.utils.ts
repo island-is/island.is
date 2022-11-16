@@ -67,7 +67,7 @@ export const getRecipients = (
   // Seller's co-owners
   const sellerCoOwners = answers.sellerCoOwner
   if (roles.includes(EmailRole.sellerCoOwner) && sellerCoOwners) {
-    for (var i = 0; i < sellerCoOwners.length; i++) {
+    for (let i = 0; i < sellerCoOwners.length; i++) {
       recipientList.push({
         ssn: sellerCoOwners[i].nationalId,
         name: sellerCoOwners[i].name,
@@ -96,7 +96,7 @@ export const getRecipients = (
     (x) => x.type === 'coOwner',
   )
   if (roles.includes(EmailRole.buyerCoOwner) && buyerCoOwners) {
-    for (var i = 0; i < buyerCoOwners.length; i++) {
+    for (let i = 0; i < buyerCoOwners.length; i++) {
       recipientList.push({
         ssn: buyerCoOwners[i].nationalId,
         name: buyerCoOwners[i].name,
@@ -113,7 +113,7 @@ export const getRecipients = (
     (x) => x.type === 'operator',
   )
   if (roles.includes(EmailRole.buyerOperator) && buyerOperators) {
-    for (var i = 0; i < buyerOperators.length; i++) {
+    for (let i = 0; i < buyerOperators.length; i++) {
       recipientList.push({
         ssn: buyerOperators[i].nationalId,
         name: buyerOperators[i].name,
@@ -147,7 +147,7 @@ export const getRecipientBySsn = (
   // Seller's co-owners
   const sellerCoOwners = answers.sellerCoOwner
   if (sellerCoOwners) {
-    for (var i = 0; i < sellerCoOwners.length; i++) {
+    for (let i = 0; i < sellerCoOwners.length; i++) {
       if (sellerCoOwners[i].nationalId === ssn) {
         return {
           ssn: sellerCoOwners[i].nationalId,
@@ -178,7 +178,7 @@ export const getRecipientBySsn = (
     (x) => x.type === 'coOwner',
   )
   if (buyerCoOwners) {
-    for (var i = 0; i < buyerCoOwners.length; i++) {
+    for (let i = 0; i < buyerCoOwners.length; i++) {
       if (buyerCoOwners[i].nationalId === ssn) {
         return {
           ssn: buyerCoOwners[i].nationalId,
@@ -197,7 +197,7 @@ export const getRecipientBySsn = (
     (x) => x.type === 'operator',
   )
   if (buyerOperators) {
-    for (var i = 0; i < buyerOperators.length; i++) {
+    for (let i = 0; i < buyerOperators.length; i++) {
       if (buyerOperators[i].nationalId === ssn) {
         return {
           ssn: buyerOperators[i].nationalId,
