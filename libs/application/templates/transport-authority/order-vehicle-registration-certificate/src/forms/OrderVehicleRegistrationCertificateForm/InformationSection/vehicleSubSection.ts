@@ -4,6 +4,7 @@ import {
   buildTextField,
   buildSubSection,
   buildDescriptionField,
+  buildCustomField,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
 import { getSelectedVehicle } from '../../../utils'
@@ -42,6 +43,18 @@ export const vehicleSubSection = buildSubSection({
           defaultValue: (application: Application) => {
             const vehicle = getSelectedVehicle(application)
             return vehicle?.make
+          },
+        }),
+        buildCustomField({
+          id: 'mainOwner',
+          title: '',
+          component: 'MainOwner',
+          condition: (formValue, externalData) => {
+            const vehicle = getSelectedVehicle({
+              externalData,
+              answers: formValue,
+            } as Application)
+            return vehicle?.role !== 'Eigandi'
           },
         }),
         buildDescriptionField({

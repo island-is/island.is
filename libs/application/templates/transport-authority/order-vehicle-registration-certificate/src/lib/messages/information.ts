@@ -84,6 +84,16 @@ export const information = {
         defaultMessage: 'Nafn',
         description: 'Owner name label',
       },
+      address: {
+        id: 'ta.ovrc.application:information.labels.owner.address',
+        defaultMessage: 'Lögheimili',
+        description: 'Owner address label',
+      },
+      postalcode: {
+        id: 'ta.ovrc.application:information.labels.owner.postalcode',
+        defaultMessage: 'Póstnúmer',
+        description: 'Owner postalcode label',
+      },
       email: {
         id: 'ta.ovrc.application:information.labels.owner.email',
         defaultMessage: 'Netfang',
@@ -93,6 +103,12 @@ export const information = {
         id: 'ta.ovrc.application:information.labels.owner.phone',
         defaultMessage: 'Gsm númer',
         description: 'Owner phone number label',
+      },
+      alertAddress: {
+        id: 'ta.ovrc.application:information.labels.owner.alertAddress',
+        defaultMessage:
+          'ATH. Skráningarskírteinið verður sent á heimilisfang eiganda {address}',
+        description: 'Owner alert address label',
       },
     }),
     coOwner: defineMessages({
