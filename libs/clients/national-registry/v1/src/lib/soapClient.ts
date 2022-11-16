@@ -22,6 +22,7 @@ export class SoapClient {
           if (client) {
             client.setEndpoint(`${baseUrl}/islws/service.asmx`)
             client.addHttpHeader('Host', host)
+            logger.info(`NationalRegistry soap started : ${baseUrl}`)
             resolve(client)
           } else {
             logger.error('NationalRegistry connection failed : ', error)
