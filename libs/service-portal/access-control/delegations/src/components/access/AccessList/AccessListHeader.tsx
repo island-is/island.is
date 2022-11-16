@@ -1,8 +1,19 @@
 import { useLocale } from '@island.is/localization'
-import { Text, Hidden, Box, Divider } from '@island.is/island-ui/core'
+import {
+  Text,
+  Hidden,
+  Box,
+  Divider,
+  TextProps,
+} from '@island.is/island-ui/core'
 import classNames from 'classnames'
 import { formatDelegationDate } from '../access.utils'
 import * as styles from '../access.css'
+
+const commonTextProps: Partial<TextProps> = {
+  variant: 'medium',
+  fontWeight: 'semiBold',
+}
 
 type AccessListHeaderProps = {
   validityPeriod?: Date | null
@@ -22,13 +33,13 @@ export const AccessListHeader = ({ validityPeriod }: AccessListHeaderProps) => {
         )}
         background="blue100"
       >
-        <Text variant="medium" fontWeight="semiBold">
+        <Text {...commonTextProps}>
           {formatMessage({
             id: 'sp.settings-access-control:access-access',
             defaultMessage: 'Aðgangur',
           })}
         </Text>
-        <Text variant="medium" fontWeight="semiBold">
+        <Text {...commonTextProps}>
           {formatMessage({
             id: 'sp.settings-access-control:access-explanation',
             defaultMessage: 'Útskýring',
@@ -36,7 +47,7 @@ export const AccessListHeader = ({ validityPeriod }: AccessListHeaderProps) => {
         </Text>
         {
           <Box {...(validityPeriod && { textAlign: 'right' })}>
-            <Text variant="medium" fontWeight="semiBold">
+            <Text {...commonTextProps}>
               {formatMessage({
                 id: 'sp.settings-access-control:access-valid-to',
                 defaultMessage: 'Í gildi til',
