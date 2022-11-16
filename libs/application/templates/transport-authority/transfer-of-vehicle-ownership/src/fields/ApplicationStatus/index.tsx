@@ -3,50 +3,17 @@ import { Box, Button, Text, Divider } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC } from 'react'
 import { ReviewScreenProps } from '../../types'
-import { getReviewSteps } from '../../utils'
+import { getReviewSteps, hasReviewerApproved } from '../../utils'
 import { StatusStep } from './StatusStep'
-import { useAuth } from '@island.is/auth/react'
 
 export const ApplicationStatus: FC<FieldBaseProps & ReviewScreenProps> = ({
   goToScreen,
   application,
   field,
   setStep,
+  reviewerNationalId = '',
 }) => {
   const { formatMessage } = useLocale()
-
-  const { userInfo } = useAuth()
-  console.log(userInfo)
-
-  /* const reviewerNationalIdList = [] as string[]
-    const buyerNationalId = getValueViaPath(
-      application.answers,
-      'buyer.nationalId',
-      '',
-    ) as string
-    reviewerNationalIdList.push(buyerNationalId)
-    const sellerCoOwner = getValueViaPath(
-      application.answers,
-      'sellerCoOwner',
-      [],
-    ) as UserInformation[]
-    const buyerCoOwnerAndOperator = getValueViaPath(
-      application.answers,
-      'buyerCoOwnerAndOperator',
-      [],
-    ) as CoOwnerAndOperator[]
-    sellerCoOwner?.map(({ nationalId }) => {
-      reviewerNationalIdList.push(nationalId)
-      return nationalId
-    })
-    buyerCoOwnerAndOperator?.map(({ nationalId }) => {
-      reviewerNationalIdList.push(nationalId)
-      return nationalId
-    }) */
-
-  const changeScreens = (screen: string) => {
-    if (goToScreen) goToScreen(screen)
-  }
 
   const steps = getReviewSteps(application)
 
@@ -77,15 +44,20 @@ export const ApplicationStatus: FC<FieldBaseProps & ReviewScreenProps> = ({
             tagVariant={step.tagVariant}
             visible={step.visible}
             reviewer={step.reviewer}
+            reviewerNationalId={reviewerNationalId}
           />
         ))}
       </Box>
-      <Divider />
-      <Box display="flex" justifyContent="flexEnd" paddingY={5}>
-        <Button onClick={() => setStep && setStep('overview')}>
-          Opna samþykki
-        </Button>
-      </Box>
+      {!hasReviewerApproved(reviewerNationalId, application.answers) && (
+        <>
+          <Divider />
+          <Box display="flex" justifyContent="flexEnd" paddingY={5}>
+            <Button onClick={() => setStep && setStep('overview')}>
+              Opna samþykki
+            </Button>
+          </Box>
+        </>
+      )}
     </Box>
   )
 }

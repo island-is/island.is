@@ -1,19 +1,17 @@
 import { Box, Tag, Text } from '@island.is/island-ui/core'
-import React, { FC } from 'react'
-import { ReviewSectionProps } from '../../../types'
-import { useAuth } from '@island.is/auth/react'
+import { FC } from 'react'
+import { ReviewScreenProps, ReviewSectionProps } from '../../../types'
 
-export const StatusStep: FC<ReviewSectionProps> = ({
+export const StatusStep: FC<ReviewSectionProps & ReviewScreenProps> = ({
   title,
   description,
   tagVariant = 'blue',
   tagText = 'Í bið',
   visible = true,
   reviewer = [],
+  reviewerNationalId = '',
 }) => {
-  const { userInfo } = useAuth()
-  const userNationalId = userInfo?.profile.nationalId || null
-  if (!visible || !userNationalId) return null
+  if (!visible) return null
 
   return (
     <Box
@@ -53,7 +51,9 @@ export const StatusStep: FC<ReviewSectionProps> = ({
                       key={`reviewer-${index}-${reviewerItem.nationalId}`}
                     >
                       {reviewerItem.name}{' '}
-                      {userNationalId === reviewerItem.nationalId ? '(þú)' : ''}
+                      {reviewerNationalId === reviewerItem.nationalId
+                        ? '(þú)'
+                        : ''}
                     </Text>
                   )
                 })}

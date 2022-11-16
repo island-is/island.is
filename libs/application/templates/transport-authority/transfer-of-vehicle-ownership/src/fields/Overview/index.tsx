@@ -1,5 +1,5 @@
 import { FieldBaseProps } from '@island.is/application/types'
-import { FC, useState } from 'react'
+import { FC } from 'react'
 import { Box, Text, Divider, Button } from '@island.is/island-ui/core'
 import { ReviewScreenProps } from '../../types'
 import { useLocale } from '@island.is/localization'
@@ -12,20 +12,15 @@ import {
   OperatorSection,
   InsuranceSection,
 } from './sections'
-import { useAuth } from '@island.is/auth/react'
+import { hasReviewerApproved } from '../../utils'
 
 export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
   setStep,
+  reviewerNationalId = '',
   ...props
 }) => {
   const { application } = props
-  const [shouldReview, setShouldReview] = useState<boolean>(true)
-  console.log(application)
   const { formatMessage } = useLocale()
-  const { answers } = application
-  const { userInfo } = useAuth()
-  const reviewerNationalId = userInfo?.profile.nationalId || null
-  if (!reviewerNationalId) return null
 
   const onBackButtonClick = () => {
     setStep && setStep('states')
@@ -36,6 +31,7 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
   const onApproveButtonClick = () => {
     setStep && setStep('conclusion')
   }
+
   return (
     <Box>
       <Text variant="h1" marginBottom={2}>
@@ -64,15 +60,17 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
           <Button variant="ghost" onClick={onBackButtonClick}>
             {formatMessage(review.buttons.back)}
           </Button>
-          {shouldReview && (
-            <Box display="flex" justifyContent="spaceBetween">
-              <Button
-                icon="close"
-                colorScheme="destructive"
-                onClick={onRejectButtonClick}
-              >
-                {formatMessage(review.buttons.reject)}
-              </Button>
+          {!hasReviewerApproved(reviewerNationalId, application.answers) && (
+            <Box display="flex" justifyContent="flexEnd" flexWrap="wrap">
+              <Box marginLeft={3}>
+                <Button
+                  icon="close"
+                  colorScheme="destructive"
+                  onClick={onRejectButtonClick}
+                >
+                  {formatMessage(review.buttons.reject)}
+                </Button>
+              </Box>
               <Box marginLeft={3}>
                 <Button icon="checkmark" onClick={onApproveButtonClick}>
                   {formatMessage(review.buttons.approve)}
