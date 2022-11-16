@@ -6,10 +6,10 @@ export const maybeExpired = () =>
     ? faker.date.past().toISOString()
     : faker.date.future().toISOString()
 
-// The factory function returns the same faker seeds if supplied.
-// However, if the function the creates the factory is supplied,
-// we get a different seed!
-// This looks dumb tho
+// Specific licenses require custom mocks. The Factory function doesn't seem to like
+// creating an array of genericDataFields so we just make our own loop function >:(
+// The shared factory.list() function keeps returning the same faker values.
+// This one doesn't.
 
 export const generateDataField = (
   factory: () => () => GenericLicenseDataField,
