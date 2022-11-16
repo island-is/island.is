@@ -5,3 +5,9 @@ export enum FSIUSERTYPE {
 }
 
 export const LESS = 'less'
+
+export type BoardMember = {
+  nationalId: string
+  name: string
+  role: string
+}

@@ -41,9 +41,13 @@ export const INDIVIDUAL = 'individual'
 export const PARTY = 'party'
 export const CEMETRY = 'cemetery'
 
-// input ids
+// error helpers
 export const VALIDATOR = 'validator'
+export const APPLICANTASMEMBER = 'applicantasmember'
+export const ACTORASCARETAKER = 'actorascaretaker'
+export const ACTORLONEBOARDMEMBER = 'actorloneboardmember'
 
+// input ids
 export const INDIVIDUALOPERATIONIDS = {
   incomePrefix: 'individualIncome',
   expensePrefix: 'individualExpense',
