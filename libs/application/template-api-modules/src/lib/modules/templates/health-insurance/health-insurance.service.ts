@@ -37,7 +37,7 @@ export class HealthInsuranceService {
 
       logger.info(`Finished send Health Insurance application`)
     } catch (error) {
-      logger.error(`Send health insurance application failed`)
+      logger.error(`Send health insurance application failed`, error)
       throw new Error(`Send health insurance application failed`)
     }
   }
