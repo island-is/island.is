@@ -125,7 +125,7 @@ export const footerEnabled = [
   'rikislogmadur',
   'office-of-the-attorney-general-civil-affairs',
 
-  'fjarsyslan',
+  'fjarsysla-rikisins',
   'the-financial-management-authority',
 ]
 
@@ -323,7 +323,7 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
         />
       )
       break
-    case 'fjarsyslan':
+    case 'fjarsysla-rikisins':
     case 'the-financial-management-authority':
       OrganizationFooterComponent = (
         <FjarsyslaRikisinsFooter
