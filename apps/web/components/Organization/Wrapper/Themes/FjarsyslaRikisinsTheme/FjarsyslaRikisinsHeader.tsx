@@ -58,13 +58,21 @@ const FjarsyslaRikisinsHeader = ({ organizationPage }: HeaderProps) => {
                 linkResolver('organizationpage', [organizationPage.slug]).href
               }
             >
-              <Text
-                variant="h1"
-                as="h1"
-                color={width < theme.breakpoints.md ? 'white' : 'blue600'}
-              >
-                {organizationPage.title}
-              </Text>
+              <Hidden above="sm">
+                <Text
+                  variant="h1"
+                  as="h1"
+                  color={width < theme.breakpoints.md ? 'white' : 'blue600'}
+                >
+                  {organizationPage.title}
+                </Text>
+              </Hidden>
+              <Hidden below="md">
+                <img
+                  src="https://images.ctfassets.net/8k0h54kbe6bj/5aRF31iP8lJr66f9QLwpno/e318d034263a0454d37750e5273d69b8/Group_1169.svg"
+                  alt="Fjársýsla ríkisins"
+                />
+              </Hidden>
             </Link>
           </Box>
         </SidebarLayout>
