@@ -160,8 +160,9 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
           defaultMessage:
             'Hér getur þú gefið öðrum aðgang til að sýsla með þín gögn hjá island.is',
         })}
+        marginBottom={1}
       />
-      <Box className={styles.container}>
+      <div className={styles.container}>
         <FormProvider {...methods}>
           <form onSubmit={onSubmit}>
             <Box display="flex" flexDirection="column" rowGap={[5, 6]}>
@@ -308,7 +309,7 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
             </Box>
           </form>
         </FormProvider>
-      </Box>
+      </div>
     </>
   )
 }

@@ -176,7 +176,6 @@ export const AccessItem = ({
                   <CheckboxController
                     id={`${item.model}.name`}
                     spacing={0}
-                    labelVariant={isFirstItem ? 'default' : 'medium'}
                     defaultValue={existingScope ? [existingScope.name] : []}
                     options={[
                       {
@@ -208,12 +207,7 @@ export const AccessItem = ({
                         })}
                       </Text>
                     )}
-                    <Text
-                      variant={isFirstItem ? 'default' : 'medium'}
-                      fontWeight="light"
-                    >
-                      {item.description}
-                    </Text>
+                    <Text fontWeight="light">{item.description}</Text>
                   </Box>
                 </GridColumn>
               )}
