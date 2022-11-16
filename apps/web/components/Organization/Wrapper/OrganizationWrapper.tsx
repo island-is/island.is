@@ -98,7 +98,7 @@ export const lightThemes = [
   'landlaeknir',
   'fiskistofa',
   'landing_page',
-  'fjarsysla-rikisins',
+  'fjarsyslan',
 ]
 export const footerEnabled = [
   'syslumenn',
@@ -125,7 +125,7 @@ export const footerEnabled = [
   'rikislogmadur',
   'office-of-the-attorney-general-civil-affairs',
 
-  'fjarsysla-rikisins',
+  'fjarsyslan',
   'the-financial-management-authority',
 ]
 
@@ -186,7 +186,7 @@ const OrganizationHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
       return <LandskjorstjornHeader organizationPage={organizationPage} />
     case 'landing_page':
       return null
-    case 'fjarsysla-rikisins':
+    case 'fjarsyslan':
       return <FjarsyslaRikisinsHeader organizationPage={organizationPage} />
     default:
       return <DefaultHeader organizationPage={organizationPage} />
@@ -340,7 +340,7 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
         />
       )
       break
-    case 'fjarsysla-rikisins':
+    case 'fjarsyslan':
     case 'the-financial-management-authority':
       OrganizationFooterComponent = (
         <FjarsyslaRikisinsFooter

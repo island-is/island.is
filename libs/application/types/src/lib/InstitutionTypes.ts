@@ -2,7 +2,7 @@
 export enum InstitutionTypes {
   FISKISTOFA = 'fiskistofa',
   FJARMALA_EFNAHAGSRADUNEYTID = 'fjarmala-og-efnahagsraduneytid',
-  FJARSYSLA_RIKISINS = 'fjarsysla-rikisins',
+  FJARSYSLA_RIKISINS = 'fjarsyslan',
   INNHEIMTUMADUR = 'innheimtumadur',
   PERSONUVERND = 'personuvernd',
   RIKISENDURSKODUN = 'rikisendurskodun',
