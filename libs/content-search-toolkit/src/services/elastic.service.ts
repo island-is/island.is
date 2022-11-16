@@ -107,6 +107,7 @@ export class ElasticService {
 
   /**
    * @param {T} err Error object
+   * @return {boolean} True iff a document was removed
    * Filter the HUMONGOUS documents in an error object
    */
   private filterDoc<T>(o: T): boolean {
