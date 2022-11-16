@@ -1,9 +1,9 @@
 import classNames from 'classnames'
 import { Box, Text, useBreakpoint } from '@island.is/island-ui/core'
 import { AccessDate } from '../AccessDate/AccessDate'
-import * as commonAccessStyles from '../access.css'
 import * as styles from './AccessListItem.css'
 import { useLocale } from '@island.is/localization'
+import * as commonAccessStyles from '../access.css'
 
 interface AccessListItemProps {
   name: string

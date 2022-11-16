@@ -1,11 +1,13 @@
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 import { style } from '@vanilla-extract/css'
 
-export const resetMarginGutter = style({
+export const divider = style({
+  marginLeft: -theme.grid.gutter.desktop,
+  marginRight: -theme.grid.gutter.desktop,
   ...themeUtils.responsiveStyle({
     md: {
-      marginLeft: theme.grid.gutter.desktop / 2,
-      marginRight: theme.grid.gutter.desktop / 2,
+      marginLeft: 0,
+      marginRight: 0,
     },
   }),
 })
@@ -28,8 +30,7 @@ export const gridRow = style({
 export const gridRowMaxThreeCols = style({
   ...themeUtils.responsiveStyle({
     lg: {
-      gridTemplateColumns:
-        'minmax(150px, 30%) minmax(200px, 50%) minmax(100px, 20%)',
+      gridTemplateColumns: 'repeat(1, 1fr) repeat(1, 2fr) repeat(1, 1fr)',
     },
   }),
 })
@@ -37,16 +38,7 @@ export const gridRowMaxThreeCols = style({
 export const gridRowMaxTwoCols = style({
   ...themeUtils.responsiveStyle({
     lg: {
-      gridTemplateColumns: 'minmax(150px, 30%) minmax(200px, 70%)',
-    },
-  }),
-})
-
-export const gridRowValidityPeriod = style({
-  ...themeUtils.responsiveStyle({
-    lg: {
-      gridTemplateColumns:
-        'minmax(150px, 30%) minmax(200px, 45%) minmax(150px, 25%)',
+      gridTemplateColumns: 'repeat(1, 1fr) repeat(1, 2fr)',
     },
   }),
 })

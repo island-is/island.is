@@ -15,6 +15,11 @@ const commonTextProps: Partial<TextProps> = {
   fontWeight: 'semiBold',
 }
 
+const validToTranslation = {
+  id: 'sp.settings-access-control:access-valid-to',
+  defaultMessage: 'Í gildi til',
+}
+
 type AccessListHeaderProps = {
   validityPeriod?: Date | null
 }
@@ -28,7 +33,7 @@ export const AccessListHeader = ({ validityPeriod }: AccessListHeaderProps) => {
         className={classNames(
           styles.gridRow,
           validityPeriod
-            ? styles.gridRowValidityPeriod
+            ? styles.gridRowMaxTwoCols
             : styles.gridRowMaxThreeCols,
         )}
         background="blue100"
@@ -36,26 +41,34 @@ export const AccessListHeader = ({ validityPeriod }: AccessListHeaderProps) => {
         <Text {...commonTextProps}>
           {formatMessage({
             id: 'sp.settings-access-control:access-access',
-            defaultMessage: 'Aðgangur',
+            defaultMessage: 'Flokkur',
           })}
         </Text>
-        <Text {...commonTextProps}>
-          {formatMessage({
-            id: 'sp.settings-access-control:access-explanation',
-            defaultMessage: 'Útskýring',
+        <Box
+          {...(validityPeriod && {
+            display: 'flex',
+            justifyContent: 'spaceBetween',
+            alignItems: 'center',
           })}
-        </Text>
-        {
-          <Box {...(validityPeriod && { textAlign: 'right' })}>
-            <Text {...commonTextProps}>
-              {formatMessage({
-                id: 'sp.settings-access-control:access-valid-to',
-                defaultMessage: 'Í gildi til',
-              })}
-              {validityPeriod && ` ${formatDelegationDate(validityPeriod)}`}
-            </Text>
-          </Box>
-        }
+        >
+          <Text {...commonTextProps}>
+            {formatMessage({
+              id: 'sp.settings-access-control:access-explanation',
+              defaultMessage: 'Heimild',
+            })}
+          </Text>
+          {validityPeriod && (
+            <Box textAlign="right">
+              <Text {...commonTextProps}>
+                {formatMessage(validToTranslation)}
+                {` ${formatDelegationDate(validityPeriod)}`}
+              </Text>
+            </Box>
+          )}
+        </Box>
+        {!validityPeriod && (
+          <Text {...commonTextProps}>{formatMessage(validToTranslation)}</Text>
+        )}
       </Box>
       <Divider />
     </Hidden>

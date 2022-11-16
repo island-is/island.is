@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useParams, useHistory } from 'react-router-dom'
 import { useForm, FormProvider } from 'react-hook-form'
 
-import { Box, toast, AlertBanner } from '@island.is/island-ui/core'
+import { Box, toast, AlertBanner, Divider } from '@island.is/island-ui/core'
 import { AuthCustomDelegation } from '@island.is/api/schema'
 import {
   formatPlausiblePathToParams,
@@ -20,11 +20,11 @@ import { useAuth } from '@island.is/auth/react'
 import { AccessFormScope, MappedScope } from './access.types'
 import { extendApiScope, formatScopeTreeToScope } from './access.utils'
 import { AccessItem } from './AccessItem/AccessItem'
-import { AccessItemHeader } from './AccessItem/AccessItemHeader'
 import { AccessConfirmModal } from './AccessConfirmModal'
 import { isDefined } from '@island.is/shared/utils'
 import * as commonAccessStyles from './access.css'
 import { AccessDeleteModal } from './AccessDeleteModal'
+import { AccessListHeader } from './AccessList/AccessListHeader'
 
 type AccessFormProps = {
   delegation: AuthCustomDelegation
@@ -132,17 +132,18 @@ export const AccessForm = ({
       )}
       <FormProvider {...methods}>
         <form onSubmit={onSubmit}>
-          <Box className={commonAccessStyles.resetMarginGutter}>
-            <AccessItemHeader hideValidityPeriod={!!validityPeriod} />
-            {scopeTree?.map((authScope, index) => (
-              <AccessItem
-                key={index}
-                apiScopes={extendApiScope(authScope, index, scopeTree)}
-                authDelegation={delegation}
-                validityPeriod={validityPeriod}
-              />
-            ))}
-          </Box>
+          <AccessListHeader validityPeriod={validityPeriod} />
+          <div className={commonAccessStyles.divider}>
+            <Divider />
+          </div>
+          {scopeTree?.map((authScope, index) => (
+            <AccessItem
+              key={index}
+              apiScopes={extendApiScope(authScope, index, scopeTree)}
+              authDelegation={delegation}
+              validityPeriod={validityPeriod}
+            />
+          ))}
         </form>
         <Box position="sticky" bottom={0} marginTop={20}>
           <DelegationsFormFooter

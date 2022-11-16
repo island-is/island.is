@@ -3,7 +3,7 @@ import { Box, Divider } from '@island.is/island-ui/core'
 import { AUTH_API_SCOPE_GROUP_TYPE, AuthScopeTree } from '../access.types'
 import { AccessListHeader } from './AccessListHeader'
 import { AccessListItem } from './AccessListItem'
-import * as styles from './AccessList.css'
+import * as commonAccessStyles from '../access.css'
 
 interface AccessListProps {
   validityPeriod?: Date | null
@@ -37,11 +37,11 @@ export const AccessList = ({
               name={scope.name}
               description={scope.description}
             />
-            <div className={styles.divider}>
+            <div className={commonAccessStyles.divider}>
               <Divider />
             </div>
             {renderScopeTree(scope.children, true)}
-            <div className={styles.divider}>
+            <div className={commonAccessStyles.divider}>
               <Divider />
             </div>
           </div>
@@ -61,7 +61,7 @@ export const AccessList = ({
               validTo={delegationScope.validTo}
               validityPeriod={validityPeriod}
             />
-            <div className={styles.divider}>
+            <div className={commonAccessStyles.divider}>
               <Divider />
             </div>
           </div>
@@ -75,7 +75,7 @@ export const AccessList = ({
   return (
     <Box>
       <AccessListHeader validityPeriod={validityPeriod} />
-      <div className={styles.divider}>
+      <div className={commonAccessStyles.divider}>
         <Divider />
       </div>
       {renderScopeTree(scopeTree)}

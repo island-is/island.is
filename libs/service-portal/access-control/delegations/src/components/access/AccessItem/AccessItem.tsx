@@ -4,8 +4,6 @@ import addYears from 'date-fns/addYears'
 import {
   Text,
   Box,
-  GridRow,
-  GridColumn,
   Divider,
   useBreakpoint,
   Button,
@@ -22,6 +20,7 @@ import classNames from 'classnames'
 import { isDefined } from '@island.is/shared/utils'
 import { Scope } from '../access.types'
 import { accessMessages, DATE_FORMAT, isApiScopeGroup } from '../access.utils'
+import * as commonAccessStyles from '../access.css'
 
 const getDefaultDate = () => addYears(new Date(), 1)
 
@@ -38,7 +37,7 @@ export const AccessItem = ({
 }: PropTypes) => {
   const { lang, formatMessage } = useLocale()
   const { setValue, getValues } = useFormContext()
-  const { md } = useBreakpoint()
+  const { md, lg } = useBreakpoint()
   const [datePickerVisibleGroup, setDatePickerVisibleGroup] = useState<
     boolean[]
   >(apiScopes.map(() => false))
@@ -116,7 +115,7 @@ export const AccessItem = ({
   return (
     <>
       {apiScopes.map((item, index) => {
-        const isFirstItem = index === 0
+        const indent = index !== 0
         const defaultDate = getDefaultDate()
         const isGroup = isApiScopeGroup(item)
 
@@ -154,71 +153,62 @@ export const AccessItem = ({
 
         return (
           <div key={index}>
-            <GridRow className={styles.row}>
-              <GridColumn
-                span={['12/12', '12/12', '3/12']}
-                className={styles.item}
+            <Box
+              className={classNames(
+                commonAccessStyles.gridRow,
+                validityPeriod
+                  ? commonAccessStyles.gridRowMaxTwoCols
+                  : commonAccessStyles.gridRowMaxThreeCols,
+              )}
+              // Indent the hole row for screen size smaller than lg
+              {...(indent && { paddingLeft: [2, 2, 2, 0] })}
+            >
+              <Box
+                // Only indent name field when screen size is lg or larger
+                {...(indent && { paddingLeft: [0, 0, 0, 4] })}
+                display="flex"
+                alignItems="flexStart"
               >
-                <Box
-                  paddingLeft={isFirstItem ? 0 : [2, 2, 4]}
-                  display="flex"
-                  alignItems="flexStart"
-                >
-                  <CheckboxController
-                    id={`${item.model}.name`}
-                    spacing={0}
-                    labelVariant={isFirstItem ? 'default' : 'medium'}
-                    defaultValue={existingScope ? [existingScope.name] : []}
-                    options={[
-                      {
-                        label: item.displayName,
-                        value: item.name,
-                      },
-                    ]}
-                    onSelect={(value) => onSelect(item, value, index)}
-                  />
-                </Box>
-              </GridColumn>
+                <CheckboxController
+                  id={`${item.model}.name`}
+                  spacing={0}
+                  defaultValue={existingScope ? [existingScope.name] : []}
+                  options={[
+                    {
+                      label: item.displayName,
+                      value: item.name,
+                    },
+                  ]}
+                  onSelect={(value) => onSelect(item, value, index)}
+                />
+              </Box>
               {((!md && item.description?.trim()) || md) && (
-                <GridColumn
-                  span={['12/12', '12/12', '4/12', '5/12']}
-                  className={styles.item}
-                  paddingTop={[3, 3, 3, 0]}
-                >
+                <div>
                   <Box
-                    paddingLeft={isFirstItem ? 0 : [2, 2, 0]}
                     display="flex"
                     flexDirection="column"
                     className={styles.rowGap}
                   >
-                    {!md && (
-                      <Text variant="small" fontWeight="semiBold">
+                    {!lg && (
+                      <Text variant="small" fontWeight="semiBold" marginTop={2}>
                         {formatMessage({
                           id: 'sp.access-control-delegations:grant',
                           defaultMessage: 'Heimild',
                         })}
                       </Text>
                     )}
-                    <Text
-                      variant={isFirstItem ? 'default' : 'medium'}
-                      fontWeight="light"
-                    >
-                      {item.description}
-                    </Text>
+                    <Text fontWeight="light">{item.description}</Text>
                   </Box>
-                </GridColumn>
+                </div>
               )}
               {!validityPeriod && !isApiScopeGroup(item) && (
-                <GridColumn
-                  span={['12/12', '8/12', '5/12', '4/12']}
-                  paddingTop={[2, 2, 2, 0]}
-                >
+                <Box paddingTop={[2, 2, 2, 0]}>
                   <div
                     className={classNames({
                       [styles.hidden]: !showDatePicker,
                     })}
                   >
-                    <Box paddingLeft={isFirstItem ? 0 : [2, 2, 0]}>
+                    <div>
                       <DatePickerController
                         id={`${item.model}.validTo`}
                         size="sm"
@@ -245,7 +235,7 @@ export const AccessItem = ({
                         onChange={(value) => onChange(item, value, index)}
                         required
                       />
-                    </Box>
+                    </div>
                   </div>
                   {((!showDatePicker && isSelected) ||
                     (!md && isSelected && !showDatePicker)) && (
@@ -280,15 +270,12 @@ export const AccessItem = ({
                       />
                     </Box>
                   )}
-                </GridColumn>
+                </Box>
               )}
-            </GridRow>
-            <Box
-              paddingLeft={isFirstItem ? 0 : [3, 3, 0]}
-              className={styles.dividerContainer}
-            >
-              <Divider />
             </Box>
+            <div className={commonAccessStyles.divider}>
+              <Divider />
+            </div>
           </div>
         )
       })}
