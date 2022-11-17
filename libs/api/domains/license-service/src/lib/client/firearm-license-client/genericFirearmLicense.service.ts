@@ -25,6 +25,7 @@ import {
 import { Locale } from '@island.is/shared/types'
 import compareAsc from 'date-fns/compareAsc'
 import { LicenseData } from './genericFirearmLicense.type'
+import { FetchError } from '@island.is/clients/middlewares'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'firearmlicense-service'
@@ -37,14 +38,46 @@ export class GenericFirearmLicenseService
     private smartApi: SmartSolutionsApi,
   ) {}
 
+  private handleGetLicenseError = (e: Error) => {
+    if (e instanceof FetchError) {
+      const err = e as FetchError
+
+      if ([401, 404].includes(err.status)) {
+        switch (err.status) {
+          case 404:
+            //THIS IS IN ICELANDIC, ALSO BAD HANDLING TODO:
+            this.logger.info(err.body + '', {
+              category: LOG_CATEGORY,
+            })
+            break
+          case 401:
+            this.logger.warning('Missing or invalid national id', {
+              category: LOG_CATEGORY,
+            })
+            break
+          default:
+            break
+        }
+        return null
+      }
+    }
+
+    throw e
+  }
+
   async fetchLicenseData(user: User) {
-    const licenseInfo = await this.firearmApi.getLicenseInfo(user)
+    const licenseInfo = await this.firearmApi
+      .getLicenseInfo(user)
+      .catch(this.handleGetLicenseError)
+
     if (!licenseInfo) return null
 
     const categories = await this.firearmApi.getCategories(user)
     if (!categories) return null
 
-    const properties = await this.firearmApi.getPropertyInfo(user)
+    const properties = await this.firearmApi
+      .getPropertyInfo(user)
+      .catch(this.handleGetLicenseError)
 
     const licenseData: LicenseData = {
       licenseInfo,
