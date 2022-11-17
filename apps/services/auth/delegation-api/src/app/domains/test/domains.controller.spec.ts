@@ -12,7 +12,10 @@ import {
 import { TestEndpointOptions } from '../../../../test/types'
 import { FixtureFactory } from '../../../../test/fixtures/fixture-factory'
 import { accessTestCases } from '../../../../test/access-test-cases'
-import { createCurrentUser } from '@island.is/testing/fixtures'
+import {
+  createCurrentUser,
+  createNationalId,
+} from '@island.is/testing/fixtures'
 import { AuthScope } from '@island.is/auth/scopes'
 import shuffle from 'lodash/shuffle'
 
@@ -22,10 +25,11 @@ describe('DomainsController', () => {
       'with test case: %s',
       (caseName) => {
         const testCase = accessTestCases[caseName]
-        const validDomains = testCase.expected.map((domain) => domain.name)
+        const expectedDomains = testCase.expectedDomains ?? testCase.expected
+        const validDomains = expectedDomains.map((domain) => domain.name)
         const invalidDomains = differenceWith(
           testCase.domains,
-          testCase.expected,
+          expectedDomains,
           (a, b) => a.name === b.name,
         ).map((domain) => domain.name)
         let app: TestApp
@@ -64,16 +68,18 @@ describe('DomainsController', () => {
 
         it('GET /domains returns expected domains', async () => {
           // Arrange
-          const expected = testCase.expected.map(({ name }) => ({
+          const expected = expectedDomains.map(({ name }) => ({
             name,
           }))
 
           // Act
-          const res = await server.get('/v1/domains')
+          const res = await server.get(
+            `/v1/domains?direction=${testCase.direction}`,
+          )
 
           // Assert
           expect(res.status).toEqual(200)
-          expect(res.body).toHaveLength(testCase.expected.length)
+          expect(res.body).toHaveLength(expected.length)
           expect(res.body).toMatchObject(expected)
         })
 
@@ -82,7 +88,7 @@ describe('DomainsController', () => {
             'GET /domains/%s returns expected domains',
             async (domainName) => {
               // Arrange
-              const domain = testCase.expected.find(
+              const domain = expectedDomains.find(
                 (domain) => domain.name === domainName,
               )
               assert(domain)
@@ -101,14 +107,16 @@ describe('DomainsController', () => {
             'GET /domains/%s/scopes returns expected scopes',
             async (domainName) => {
               // Arrange
-              const domain = testCase.expected.find(
+              const domain = expectedDomains.find(
                 (domain) => domain.name === domainName,
               )
               assert(domain)
               const expected = domain.scopes
 
               // Act
-              const res = await server.get(`/v1/domains/${domainName}/scopes`)
+              const res = await server.get(
+                `/v1/domains/${domainName}/scopes?direction=${testCase.direction}`,
+              )
 
               // Assert
               expect(res.status).toEqual(200)
@@ -121,7 +129,7 @@ describe('DomainsController', () => {
             'GET /domains/%s/scope-tree returns expected scopes',
             async (domainName) => {
               // Arrange
-              const domain = testCase.expected.find(
+              const domain = expectedDomains.find(
                 (domain) => domain.name === domainName,
               )
               assert(domain)
@@ -129,7 +137,7 @@ describe('DomainsController', () => {
 
               // Act
               const res = await server.get(
-                `/v1/domains/${domainName}/scope-tree`,
+                `/v1/domains/${domainName}/scope-tree?direction=${testCase.direction}`,
               )
 
               // Assert
@@ -142,22 +150,11 @@ describe('DomainsController', () => {
 
         if (invalidDomains.length) {
           it.each(invalidDomains)(
-            'GET /domains/%s returns no content response',
-            async (domainName) => {
-              // Act
-              const res = await server.get(`/v1/domains/${domainName}`)
-
-              // Assert
-              expect(res.status).toEqual(204)
-            },
-          )
-
-          it.each(invalidDomains)(
             'GET /domains/%s/scope-tree returns no results',
             async (domainName) => {
               // Act
               const res = await server.get(
-                `/v1/domains/${domainName}/scope-tree`,
+                `/v1/domains/${domainName}/scope-tree?direction=${testCase.direction}`,
               )
 
               // Assert
@@ -170,7 +167,9 @@ describe('DomainsController', () => {
             'GET /domains/%s/scopes returns no results',
             async (domainName) => {
               // Act
-              const res = await server.get(`/v1/domains/${domainName}/scopes`)
+              const res = await server.get(
+                `/v1/domains/${domainName}/scopes?direction=${testCase.direction}`,
+              )
 
               // Assert
               expect(res.status).toEqual(200)
@@ -314,6 +313,66 @@ describe('DomainsController', () => {
       // Assert
       expect(res.status).toEqual(200)
       expect(res.body).toMatchObject(expected)
+    })
+
+    it('GET /domains returns list of all domains when no direction', async () => {
+      // Arrange
+      const domains = [
+        {
+          name: 'd1',
+          apiScopes: [{ name: 's1', allowExplicitDelegationGrant: true }],
+        },
+        {
+          name: 'd2',
+          apiScopes: [{ name: 's2', allowExplicitDelegationGrant: true }],
+        },
+        {
+          name: 'd3',
+          apiScopes: [{ name: 's3', allowExplicitDelegationGrant: true }],
+        },
+      ]
+      const expectedDomains = domains.map((domain) => ({ name: domain.name }))
+      const currentUser = createCurrentUser({ scope: [AuthScope.delegations] })
+      const app = await setupWithAuth({
+        user: currentUser,
+        customScopeRules: [
+          { scopeName: 's2', onlyForDelegationType: ['ProcurationHolder'] },
+        ],
+      })
+      const factory = new FixtureFactory(app)
+      await Promise.all(domains.map((domain) => factory.createDomain(domain)))
+      await factory.createCustomDelegation({
+        domainName: 'd3',
+        fromNationalId: createNationalId('person'),
+        toNationalId: currentUser.nationalId,
+        scopes: [{ scopeName: 's3' }],
+      })
+
+      // Act
+      const res = await request(app.getHttpServer()).get(`/v1/domains`)
+
+      // Assert
+      expect(res.status).toEqual(200)
+      expect(res.body).toHaveLength(3)
+      expect(res.body).toMatchObject(expectedDomains)
+    })
+
+    it('GET /domains/:domainName returns no content response for invalid domain', async () => {
+      // Arrange
+      const app = await setupWithAuth({
+        user: createCurrentUser({ scope: [AuthScope.delegations] }),
+      })
+      const factory = new FixtureFactory(app)
+      await factory.createDomain({ name: 'd1' })
+      const invalidDomainName = 'invalid-d1'
+
+      // Act
+      const res = await request(app.getHttpServer()).get(
+        `/v1/domains/${invalidDomainName}`,
+      )
+
+      // Assert
+      expect(res.status).toEqual(204)
     })
   })
 
