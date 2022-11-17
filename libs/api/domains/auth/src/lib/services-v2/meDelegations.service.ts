@@ -36,8 +36,9 @@ export class MeDelegationsServiceV2 implements MeDelegationsServiceInterface {
       user,
     ).meDelegationsControllerFindAll({
       domain: input.domain ?? undefined,
-      direction: MeDelegationsControllerFindAllDirectionEnum.Outgoing,
-      validity: MeDelegationsControllerFindAllValidityEnum.IncludeFuture,
+      direction:
+        input.direction ?? MeDelegationsControllerFindAllDirectionEnum.outgoing,
+      validity: MeDelegationsControllerFindAllValidityEnum.includeFuture,
     })
     return delegations.map(this.includeDomainNameInScopes)
   }
@@ -63,7 +64,7 @@ export class MeDelegationsServiceV2 implements MeDelegationsServiceInterface {
     const delegations = await this.delegationsApiWithAuth(
       user,
     ).meDelegationsControllerFindAll({
-      direction: MeDelegationsControllerFindAllDirectionEnum.Outgoing,
+      direction: MeDelegationsControllerFindAllDirectionEnum.outgoing,
       xQueryOtherUser: toNationalId,
       domain: domain ?? undefined,
     })

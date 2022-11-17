@@ -51,7 +51,7 @@ export const caseFilesRecord = defineMessages({
   chapterName: {
     id: 'judicial.system.backend:case_files_record.chapter',
     defaultMessage:
-      '{chapter, select, 0 {Kæra og fylgiskjöl} 1 {Rannsóknartilvik} 2 {Vitni} 3 {Sakborningur} 4 {Réttarfarsgögn} 5 {Rafræn gögn}}',
+      '{chapter, select, 0 {1. Kæra og fylgiskjöl} 1 {2. Rannsóknartilvik} 2 {3. Vitni} 3 {4. Sakborningur} 4 {5. Réttarfarsgögn} 5 {6. Rafræn gögn}}',
     description: 'Notaður sem kaflaheiti í PDF skjalaskrá',
   },
 })

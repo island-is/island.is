@@ -21,7 +21,7 @@ export class ActorDelegationsService {
     delegationTypes?: DelegationType[],
   ): Promise<MergedDelegationDTO[]> {
     return this.delegationsApiWithAuth(user).actorDelegationsControllerFindAll({
-      direction: ActorDelegationsControllerFindAllDirectionEnum.Incoming,
+      direction: ActorDelegationsControllerFindAllDirectionEnum.incoming,
       delegationTypes,
     })
   }

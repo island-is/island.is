@@ -826,6 +826,11 @@ export const m = defineMessages({
     defaultMessage: 'Hætta við',
     description: 'Cancel',
   },
+  buttonEdit: {
+    id: 'service.portal:button.edit',
+    defaultMessage: 'Breyta',
+    description: 'Edit',
+  },
   buttonDestroy: {
     id: 'service.portal:button.delete',
     defaultMessage: 'Eyða',

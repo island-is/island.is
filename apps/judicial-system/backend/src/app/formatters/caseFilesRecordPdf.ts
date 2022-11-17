@@ -1,9 +1,8 @@
 import { FormatMessage } from '@island.is/cms-translations'
 import {
   capitalize,
-  indictmentSubTypes,
+  indictmentSubtypes,
   formatDOB,
-  caseTypes,
   formatDate,
 } from '@island.is/judicial-system/formatters'
 
@@ -123,41 +122,21 @@ export const createCaseFilesRecord = async (
     )
   }
 
-  pdfDocument
-    .addText(formatMessage(caseFilesRecord.accusedOf), textFontSize, {
-      bold: true,
-      marginTop: 1,
-      newLine: false,
+  const subtypes =
+    (theCase.indictmentSubtypes &&
+      theCase.indictmentSubtypes[policeCaseNumber]) ??
+    []
+
+  pdfDocument.addText(formatMessage(caseFilesRecord.accusedOf), textFontSize, {
+    bold: true,
+    marginTop: 1,
+    newLine: subtypes.length === 0,
+  })
+
+  for (const subtype of subtypes) {
+    pdfDocument.addText(capitalize(indictmentSubtypes[subtype]), textFontSize, {
+      position: { x: defendantIndent },
     })
-    .addText(
-      capitalize(
-        theCase.indictmentSubType
-          ? indictmentSubTypes[theCase.indictmentSubType]
-          : caseTypes[theCase.type],
-      ),
-      textFontSize,
-      {
-        position: { x: defendantIndent },
-      },
-    )
-
-  const crimeScene =
-    theCase.crimeScenes && theCase.crimeScenes[policeCaseNumber]
-
-  if (crimeScene && (crimeScene.place || crimeScene.date)) {
-    pdfDocument
-      .addText(formatMessage(caseFilesRecord.crimeScene), textFontSize, {
-        bold: true,
-        marginTop: 1,
-        newLine: false,
-      })
-      .addParagraph(
-        `${crimeScene.place ?? ''}${
-          crimeScene.place && crimeScene.date ? ' - ' : ''
-        }${crimeScene.date ? formatDate(crimeScene.date, 'dd.MM.yyyy') : ''}`,
-        textFontSize,
-        defendantIndent,
-      )
   }
 
   pdfDocument.addText(

@@ -1,9 +1,9 @@
-import React from 'react'
 import {
   DefaultProjectHeader,
   EntryProjectHeader,
   UkraineProjectHeader,
   ElectionProjectHeader,
+  FiskistofaDashboardHeader,
 } from '@island.is/web/components'
 import { ProjectPage as ProjectPageSchema } from '@island.is/web/graphql/schema'
 
@@ -26,6 +26,8 @@ export const ProjectHeader = ({ projectPage }: ProjectHeaderProps) => {
           headerImageObjectFit="contain"
         />
       )
+    case 'maelabord-fiskistofu':
+      return <FiskistofaDashboardHeader projectPage={projectPage} />
     default:
       return <DefaultProjectHeader projectPage={projectPage} />
   }
