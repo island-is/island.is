@@ -53,6 +53,7 @@ import { mapFrontpage, Frontpage } from './models/frontpage.model'
 import { GetFrontpageInput } from './dto/getFrontpage.input'
 import { OpenDataPage, mapOpenDataPage } from './models/openDataPage.model'
 import { GetOpenDataPageInput } from './dto/getOpenDataPage.input'
+import { GetOrganizationsInput } from './dto/getOrganizations.input'
 import {
   OpenDataSubpage,
   mapOpenDataSubpage,
@@ -77,6 +78,9 @@ import {
 import { GetMailingListSignupSliceInput } from './dto/getMailingListSignupSlice'
 import { Form, mapForm } from './models/form.model'
 import { GetFormInput } from './dto/getForm.input'
+import { GetServicePortalAlertBannersInput } from './dto/getServicePortalAlertBanners.input'
+import { mapImage } from './models/image.model'
+import { EmailSignup, mapEmailSignup } from './models/emailSignup.model'
 
 const errorHandler = (name: string) => {
   return (error: Error) => {
@@ -137,15 +141,23 @@ export class CmsContentfulService {
     }
   }
 
-  async getOrganizations(lang = 'is-IS'): Promise<Organizations> {
+  async getOrganizations(input: GetOrganizationsInput): Promise<Organizations> {
+    const organizationTitles = input?.organizationTitles && {
+      'fields.title[in]': input.organizationTitles.join(','),
+    }
+
     const params = {
       ['content_type']: 'organization',
       include: 10,
       limit: 1000,
+      ...organizationTitles,
     }
 
     const result = await this.contentfulRepository
-      .getLocalizedEntries<types.IOrganizationFields>(lang, params)
+      .getLocalizedEntries<types.IOrganizationFields>(
+        input?.lang ?? 'is-IS',
+        params,
+      )
       .catch(errorHandler('getOrganizations'))
 
     return {
@@ -153,6 +165,36 @@ export class CmsContentfulService {
         .map(mapOrganization)
         .filter((organization) => organization.title && organization.slug),
     }
+  }
+
+  async getOrganizationLogos(
+    organizationTitles: string[],
+  ): Promise<Array<string | null>> {
+    const params = {
+      ['content_type']: 'organization',
+      select: 'fields.logo,fields.title',
+      'fields.title[in]': organizationTitles.join(','),
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IOrganizationFields>(null, params)
+      .catch(errorHandler('getOrganizationsLogo'))
+
+    return organizationTitles.map((title) => {
+      if (!result.items) {
+        return null
+      } else {
+        const organization = result.items.find(
+          (item) => item.fields.title === title,
+        )
+
+        const image = organization?.fields.logo
+          ? mapImage(organization?.fields.logo)
+          : null
+
+        return image?.url ? image.url : null
+      }
+    })
   }
 
   async getAdgerdirTags(lang = 'is-IS'): Promise<AdgerdirTags> {
@@ -567,6 +609,30 @@ export class CmsContentfulService {
     return (result.items as types.IAlertBanner[]).map(mapAlertBanner)[0] ?? null
   }
 
+  async getServicePortalAlertBanners({
+    lang,
+  }: GetServicePortalAlertBannersInput): Promise<AlertBanner[]> {
+    const params = {
+      ['content_type']: 'alertBanner',
+      'fields.servicePortalPaths[exists]': 'true',
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IAlertBannerFields>(lang, params)
+      .catch(errorHandler('getAlertBanner'))
+
+    const items = (result.items as types.IAlertBanner[]).map(mapAlertBanner)
+
+    // Make sure that the global alert banner is first in the list
+    items.sort((a, b) => {
+      if (a.servicePortalPaths?.includes('*')) return -1
+      if (b.servicePortalPaths?.includes('*')) return 1
+      return 0
+    })
+
+    return items
+  }
+
   async getUrl(slug: string, lang: string): Promise<Url | null> {
     const params = {
       ['content_type']: 'url',
@@ -780,6 +846,22 @@ export class CmsContentfulService {
         mapMailingListSignup,
       )[0] ?? null
     )
+  }
+
+  async getEmailSignup({
+    id,
+    lang = 'is',
+  }: GetMailingListSignupSliceInput): Promise<EmailSignup | null> {
+    const params = {
+      ['content_type']: 'emailSignup',
+      'sys.id': id,
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IEmailSignupFields>(lang, params)
+      .catch(errorHandler('getEmailSignup'))
+
+    return (result.items as types.IEmailSignup[]).map(mapEmailSignup)[0] ?? null
   }
 
   async getForm(input: GetFormInput): Promise<Form | null> {

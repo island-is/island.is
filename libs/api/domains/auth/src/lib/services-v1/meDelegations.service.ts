@@ -10,7 +10,7 @@ import {
   MeDelegationsApi,
   MeDelegationsControllerFindAllDirectionEnum,
   MeDelegationsControllerFindAllValidityEnum,
-} from '@island.is/clients/auth-public-api'
+} from '@island.is/clients/auth/public-api'
 
 import {
   CreateDelegationInput,
@@ -22,7 +22,7 @@ import {
 } from '../dto'
 import { DelegationByOtherUserInput } from '../dto/delegationByOtherUser.input'
 import { DelegationScopeInput } from '../dto/delegationScope.input'
-import { MeDelegationsServiceI, DelegationDTO } from '../services/types'
+import { MeDelegationsServiceInterface, DelegationDTO } from '../services/types'
 import { ISLAND_DOMAIN } from './constants'
 
 const ignore404 = (e: Response) => {
@@ -32,7 +32,7 @@ const ignore404 = (e: Response) => {
 }
 
 @Injectable()
-export class MeDelegationsServiceV1 implements MeDelegationsServiceI {
+export class MeDelegationsServiceV1 implements MeDelegationsServiceInterface {
   constructor(private delegationsApi: MeDelegationsApi) {}
 
   private delegationsApiWithAuth(auth: Auth) {
@@ -46,8 +46,8 @@ export class MeDelegationsServiceV1 implements MeDelegationsServiceI {
     this.checkDomain(input.domain)
 
     return this.delegationsApiWithAuth(user).meDelegationsControllerFindAll({
-      direction: MeDelegationsControllerFindAllDirectionEnum.Outgoing,
-      validity: MeDelegationsControllerFindAllValidityEnum.IncludeFuture,
+      direction: MeDelegationsControllerFindAllDirectionEnum.outgoing,
+      validity: MeDelegationsControllerFindAllValidityEnum.includeFuture,
     })
   }
 
@@ -73,7 +73,7 @@ export class MeDelegationsServiceV1 implements MeDelegationsServiceI {
     const delegations = await this.delegationsApiWithAuth(
       user,
     ).meDelegationsControllerFindAll({
-      direction: MeDelegationsControllerFindAllDirectionEnum.Outgoing,
+      direction: MeDelegationsControllerFindAllDirectionEnum.outgoing,
       otherUser: toNationalId,
     })
 
@@ -164,7 +164,7 @@ export class MeDelegationsServiceV1 implements MeDelegationsServiceI {
     })
   }
 
-  private checkDomain(domain?: string) {
+  private checkDomain(domain?: string | null) {
     if ((domain ?? ISLAND_DOMAIN) !== ISLAND_DOMAIN) {
       throw new BadRequestException(`Can only specify ${ISLAND_DOMAIN} domain`)
     }

@@ -185,6 +185,12 @@ export const Properties = new XroadConf({
       staging: 'IS-TEST/GOV/6503760649/SKRA-Protected/Fasteignir-v1',
       prod: 'IS/GOV/6503760649/SKRA-Protected/Fasteignir-v1',
     },
+    XROAD_PROPERTIES_SERVICE_V2_PATH: {
+      dev: 'IS-DEV/GOV/10033/HMS-Protected/Fasteignir-v1',
+      staging: 'IS-TEST/GOV/5812191480/HMS-Protected/Fasteignir-v1',
+      prod:
+        'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/Fasteignir-v1',
+    },
     // Deprecated:
     XROAD_PROPERTIES_API_PATH: '/SKRA-Protected/Fasteignir-v1',
   },

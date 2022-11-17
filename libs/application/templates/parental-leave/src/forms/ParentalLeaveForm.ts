@@ -28,7 +28,6 @@ import {
   allowOtherParent,
   getLastValidPeriodEndDate,
   removeCountryCode,
-  showGenericFileUpload,
   getApplicationExternalData,
   getDurationTitle,
   getFirstPeriodTitle,
@@ -53,15 +52,14 @@ import {
   NO_UNION,
   ParentalRelations,
   PARENTAL_GRANT_STUDENTS,
-  PARENTAL_GRANT,
   PARENTAL_LEAVE,
+  SINGLE,
   StartDateOptions,
   UnEmployedBenefitTypes,
   YES,
 } from '../constants'
 import Logo from '../assets/Logo'
 import {
-  defaultMonths,
   minimumPeriodStartBeforeExpectedDateOfBirth,
   minPeriodDays,
 } from '../config'
@@ -642,12 +640,12 @@ export const ParentalLeaveForm: Form = buildForm({
                 parentalLeaveFormMessages.selfEmployed.attachmentButton,
             }),
             buildFileUploadField({
-              id: 'fileUpload.unionConfirmationFile',
+              id: 'fileUpload.benefitsFile',
               title:
                 parentalLeaveFormMessages.attachmentScreen
                   .unemploymentBenefitsTitle,
               introduction:
-                parentalLeaveFormMessages.attachmentScreen.unionDescription,
+                parentalLeaveFormMessages.attachmentScreen.benefitDescription,
               condition: (answers) => {
                 const isRecivingUnemploymentBenefits =
                   (answers as {
@@ -657,10 +655,16 @@ export const ParentalLeaveForm: Form = buildForm({
                   (answers as {
                     unemploymentBenefits: string
                   })?.unemploymentBenefits === UnEmployedBenefitTypes.union
+                const unemploymentBenefitsFromXjúkratryggingar =
+                  (answers as {
+                    unemploymentBenefits: string
+                  })?.unemploymentBenefits ===
+                  UnEmployedBenefitTypes.healthInsurance
 
                 return (
                   isRecivingUnemploymentBenefits &&
-                  unemploymentBenefitsFromUnion
+                  (unemploymentBenefitsFromUnion ||
+                    unemploymentBenefitsFromXjúkratryggingar)
                 )
               },
               maxSize: FILE_SIZE_LIMIT,
@@ -673,29 +677,18 @@ export const ParentalLeaveForm: Form = buildForm({
                 parentalLeaveFormMessages.selfEmployed.attachmentButton,
             }),
             buildFileUploadField({
-              id: 'fileUpload.healthInsuranceConfirmationFile',
+              id: 'fileUpload.singleParent',
               title:
-                parentalLeaveFormMessages.attachmentScreen
-                  .unemploymentBenefitsTitle,
+                parentalLeaveFormMessages.attachmentScreen.singleParentTitle,
               introduction:
                 parentalLeaveFormMessages.attachmentScreen
-                  .healthInsuranceDescription,
-              condition: (answers) => {
-                const isRecivingUnemploymentBenefits =
-                  (answers as {
-                    isRecivingUnemploymentBenefits: YesOrNo
-                  })?.isRecivingUnemploymentBenefits === YES
-                const unemploymentBenefitsFromXjúkratryggingar =
-                  (answers as {
-                    unemploymentBenefits: string
-                  })?.unemploymentBenefits ===
-                  UnEmployedBenefitTypes.healthInsurance
-
-                return (
-                  isRecivingUnemploymentBenefits &&
-                  unemploymentBenefitsFromXjúkratryggingar
-                )
-              },
+                  .singleParentDescription,
+              condition: (answers) =>
+                (answers as {
+                  otherParentObj: {
+                    chooseOtherParent: string
+                  }
+                })?.otherParentObj?.chooseOtherParent === SINGLE,
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
                 parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
@@ -711,7 +704,6 @@ export const ParentalLeaveForm: Form = buildForm({
               introduction:
                 parentalLeaveFormMessages.attachmentScreen.genericDescription,
               maxSize: FILE_SIZE_LIMIT,
-              condition: (answers) => showGenericFileUpload(answers),
               maxSizeErrorText:
                 parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
               uploadAccept: '.pdf',
@@ -742,29 +734,12 @@ export const ParentalLeaveForm: Form = buildForm({
               title: parentalLeaveFormMessages.shared.theseAreYourRights,
               description: getRightsDescTitle,
               children: [
-                buildCustomField(
-                  {
-                    id: 'rightsIntro',
-                    title: '',
-                    component: 'BoxChart',
-                    doesNotRequireAnswer: true,
-                  },
-                  {
-                    boxes: defaultMonths,
-                    application: {},
-                    calculateBoxStyle: () => 'blue',
-                    keys: [
-                      {
-                        label: () => ({
-                          ...parentalLeaveFormMessages.shared
-                            .yourRightsInMonths,
-                          values: { months: defaultMonths },
-                        }),
-                        bulletStyle: 'blue',
-                      },
-                    ],
-                  },
-                ),
+                buildCustomField({
+                  id: 'rightsIntro',
+                  doesNotRequireAnswer: true,
+                  title: '',
+                  component: 'Rights',
+                }),
               ],
             }),
             buildCustomField({
@@ -1119,7 +1094,7 @@ export const ParentalLeaveForm: Form = buildForm({
                         const {
                           applicationFundId,
                         } = getApplicationExternalData(externalData)
-                        if (applicationFundId === '') {
+                        if (!applicationFundId || applicationFundId === '') {
                           const { periods } = getApplicationAnswers(answers)
                           return (
                             periods.length > 0 &&

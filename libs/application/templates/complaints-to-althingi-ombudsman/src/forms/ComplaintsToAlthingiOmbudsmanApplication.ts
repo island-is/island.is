@@ -19,6 +19,8 @@ import {
   FormModes,
   FormValue,
 } from '@island.is/application/types'
+import { applicantInformationMultiField } from '@island.is/application/ui-forms'
+
 import Logo from '../assets/Logo'
 import {
   complainedFor,
@@ -90,100 +92,7 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
     buildSection({
       id: 'information',
       title: section.information,
-      children: [
-        buildMultiField({
-          id: 'information.aboutTheComplainer',
-          title: information.general.aboutTheComplainerTitle,
-          children: [
-            buildTextField({
-              id: 'information.name',
-              title: information.aboutTheComplainer.name,
-              backgroundColor: 'white',
-              disabled: true,
-              defaultValue: (application: Application) =>
-                (application.externalData?.nationalRegistry?.data as {
-                  fullName?: string
-                })?.fullName || '',
-            }),
-            buildTextField({
-              id: 'information.ssn',
-              title: information.aboutTheComplainer.ssn,
-              format: '######-####',
-              backgroundColor: 'white',
-              disabled: true,
-              width: 'half',
-              defaultValue: (application: Application) =>
-                (application.externalData?.nationalRegistry?.data as {
-                  nationalId?: string
-                })?.nationalId || '',
-            }),
-            buildTextField({
-              id: 'information.address',
-              title: information.aboutTheComplainer.address,
-              backgroundColor: 'white',
-              disabled: true,
-              width: 'half',
-              defaultValue: (application: Application) =>
-                (application.externalData?.nationalRegistry?.data as {
-                  address?: {
-                    streetAddress?: string
-                  }
-                })?.address?.streetAddress || '',
-            }),
-            buildTextField({
-              id: 'information.postcode',
-              title: information.aboutTheComplainer.postcode,
-              backgroundColor: 'white',
-              disabled: true,
-              width: 'half',
-              defaultValue: (application: Application) =>
-                (application.externalData?.nationalRegistry?.data as {
-                  address?: {
-                    postalCode?: string
-                  }
-                })?.address?.postalCode || '',
-            }),
-            buildTextField({
-              id: 'information.city',
-              title: information.aboutTheComplainer.city,
-              backgroundColor: 'white',
-              disabled: true,
-              width: 'half',
-              defaultValue: (application: Application) =>
-                (application.externalData?.nationalRegistry?.data as {
-                  address?: {
-                    city?: string
-                  }
-                })?.address?.city || '',
-            }),
-            buildTextField({
-              id: 'information.email',
-              title: information.aboutTheComplainer.email,
-              backgroundColor: 'blue',
-              required: true,
-              width: 'half',
-              variant: 'email',
-              defaultValue: (application: Application) =>
-                (application.externalData?.userProfile?.data as {
-                  email?: string
-                })?.email,
-            }),
-            buildTextField({
-              id: 'information.phone',
-              title: information.aboutTheComplainer.phone,
-              format: '###-####',
-              backgroundColor: 'blue',
-              required: true,
-              width: 'half',
-              variant: 'tel',
-              defaultValue: (application: Application) =>
-                (application.externalData?.userProfile?.data as {
-                  mobilePhoneNumber?: string
-                })?.mobilePhoneNumber,
-            }),
-          ],
-        }),
-      ],
+      children: [applicantInformationMultiField],
     }),
     buildSection({
       id: 'section.complainedFor',

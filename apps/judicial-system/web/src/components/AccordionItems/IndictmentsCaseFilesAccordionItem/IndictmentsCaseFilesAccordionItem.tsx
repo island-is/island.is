@@ -1,6 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import { uuid } from 'uuidv4'
+import InputMask from 'react-input-mask'
+import isValid from 'date-fns/isValid'
+import parseISO from 'date-fns/parseISO'
 import {
   animate,
   AnimatePresence,
@@ -31,6 +34,9 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 import { indictmentsCaseFilesAccordionItem as m } from './IndictmentsCaseFilesAccordionItem.strings'
 import * as styles from './IndictmentsCaseFilesAccordionItem.css'
 import { UpdateFileMutation } from './UpdateFiles.gql'
+import { useMeasure } from 'react-use'
+
+const DDMMYYYY = 'dd.MM.yyyy'
 
 interface Props {
   policeCaseNumber: string
@@ -43,7 +49,7 @@ interface CaseFileProps {
   caseFile: ReorderableItem
   onReorder: (id?: string) => void
   onOpen: (id: string) => void
-  onRename: (id: string, name: string) => void
+  onRename: (id: string, name?: string, displayDate?: string) => void
   onDelete: (id: string) => void
 }
 
@@ -55,6 +61,7 @@ export interface ReorderableItem {
   chapter?: number
   orderWithinChapter?: number
   userGeneratedFilename?: string
+  displayDate?: string
 }
 
 interface UpdateFilesMutationResponse {
@@ -151,6 +158,7 @@ export const sortedFilesInChapter = (
         created: file.created,
         orderWithinChapter: file.orderWithinChapter,
         userGeneratedFilename: file.userGeneratedFilename,
+        displayDate: file.displayDate,
       }
     })
     .sort((a, b) => {
@@ -185,16 +193,29 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
   const [editedFilename, setEditedFilename] = useState<string | undefined>(
     caseFile.userGeneratedFilename,
   )
+  const [ref, { width }] = useMeasure<HTMLDivElement>()
+
+  const [editedDisplayDate, setEditedDisplayDate] = useState<
+    string | undefined
+  >(formatDate(caseFile.displayDate, DDMMYYYY) ?? undefined)
   const displayName = caseFile.userGeneratedFilename ?? caseFile.displayText
 
   const handleEditFileButtonClick = () => {
     const trimmedFilename = editedFilename?.trim()
+    const trimmedDisplayDate = editedDisplayDate?.trim()
 
-    if (trimmedFilename) {
-      onRename(caseFile.id, trimmedFilename)
+    if (trimmedFilename || trimmedDisplayDate) {
+      onRename(caseFile.id, trimmedFilename, trimmedDisplayDate)
       setIsEditing(false)
+      setEditedDisplayDate(formatDate(caseFile.displayDate, DDMMYYYY) ?? '')
     }
+
+    setIsEditing(false)
   }
+
+  const displayDate = useMemo(() => {
+    return formatDate(caseFile.displayDate ?? caseFile.created, DDMMYYYY)
+  }, [caseFile.displayDate, caseFile.created])
 
   return (
     <Reorder.Item
@@ -253,31 +274,42 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
                   key={`${caseFile.id}-edit`}
                 >
                   <Box display="flex">
-                    <Box flexGrow={1} marginRight={2}>
-                      <Input
-                        name="fileName"
-                        size="xs"
-                        placeholder={formatMessage(m.simpleInputPlaceholder)}
-                        defaultValue={displayName}
-                        onChange={(evt) => setEditedFilename(evt.target.value)}
-                      />
+                    <Box className={styles.editCaseFileInputContainer}>
+                      <Box className={styles.editCaseFileName}>
+                        <Input
+                          name="fileName"
+                          size="xs"
+                          placeholder={formatMessage(m.simpleInputPlaceholder)}
+                          defaultValue={displayName}
+                          onChange={(evt) =>
+                            setEditedFilename(evt.target.value)
+                          }
+                        />
+                      </Box>
+                      <Box className={styles.editCaseFileDisplayDate}>
+                        <InputMask
+                          mask={'99.99.9999'}
+                          maskPlaceholder={null}
+                          value={editedDisplayDate || ''}
+                          onChange={(evt) => {
+                            setEditedDisplayDate(evt.target.value)
+                          }}
+                        >
+                          <Input
+                            name="fileDisplayDate"
+                            size="xs"
+                            placeholder={formatDate(new Date(), DDMMYYYY)}
+                            autoComplete="off"
+                          />
+                        </InputMask>
+                      </Box>
                     </Box>
                     <Box display="flex" alignItems="center">
                       <button
                         onClick={handleEditFileButtonClick}
-                        disabled={
-                          editedFilename === caseFile.userGeneratedFilename
-                        }
                         className={styles.editCaseFileButton}
                       >
-                        <Icon
-                          icon="checkmark"
-                          color={
-                            editedFilename === caseFile.userGeneratedFilename
-                              ? 'dark200'
-                              : 'blue400'
-                          }
-                        />
+                        <Icon icon="checkmark" color="blue400" />
                       </button>
                       <Box marginLeft={1}>
                         <button
@@ -297,6 +329,7 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
                   exit={{ y: -10, opacity: 0 }}
                   transition={{ duration: 0.2 }}
                   key={`${caseFile.id}-view`}
+                  ref={ref}
                   style={{
                     display: 'flex',
                     justifyContent: 'space-between',
@@ -312,16 +345,26 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
                       }
                     }}
                   >
-                    <Text variant="h5">{displayName}</Text>
+                    <Text variant="h5">
+                      <span
+                        style={{
+                          display: 'block',
+                          maxWidth: `${width - 180}px`,
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        {displayName}
+                      </span>
+                    </Text>
                     <Box marginLeft={2}>
                       <Icon icon="open" type="outline" size="small" />
                     </Box>
                   </Box>
                   <Box display="flex" alignItems="center">
                     <Box marginRight={1}>
-                      <Text variant="small">
-                        {formatDate(caseFile.created, 'P')}
-                      </Text>
+                      <Text variant="small">{displayDate}</Text>
                     </Box>
                     <button
                       onClick={() => setIsEditing(true)}
@@ -350,65 +393,71 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
   const { onOpen } = useFileList({ caseId })
   const { remove } = useS3UploadV2(caseId)
 
-  const [reorderableItems, setReorderableItems] = useState<ReorderableItem[]>([
-    ...sortedFilesInChapter(0, caseFiles),
-    {
-      id: uuid(),
-      displayText: formatMessage(m.chapterInvesitgationProcess),
-      chapter: 1,
-      isDivider: false,
-    },
-    ...sortedFilesInChapter(1, caseFiles),
-    {
-      id: uuid(),
-      displayText: formatMessage(m.chapterWitnesses),
-      chapter: 2,
-      isDivider: false,
-    },
-    ...sortedFilesInChapter(2, caseFiles),
-    {
-      id: uuid(),
-      displayText: formatMessage(m.chapterDefendant),
-      chapter: 3,
-      isDivider: false,
-    },
-    ...sortedFilesInChapter(3, caseFiles),
-    {
-      id: uuid(),
-      displayText: formatMessage(m.chapterCaseFiles),
-      chapter: 4,
-      isDivider: false,
-    },
-    ...sortedFilesInChapter(4, caseFiles),
-    {
-      id: uuid(),
-      displayText: formatMessage(m.chapterElectronicDocuments),
-      chapter: 5,
-      isDivider: false,
-    },
-    ...sortedFilesInChapter(5, caseFiles),
-    {
-      id: uuid(),
-      displayText: `${formatMessage(m.unorderedFilesTitle)}|${formatMessage(
-        m.unorderedFilesExplanation,
-      )}`,
-      isDivider: true,
-    },
-    ...caseFiles
-      .filter(
-        (caseFile) =>
-          caseFile.chapter === null || caseFile.chapter === undefined,
-      )
-      .map((caseFile) => {
-        return {
-          id: caseFile.id,
-          created: caseFile.created,
-          displayText: caseFile.name,
-          userGeneratedFilename: caseFile.userGeneratedFilename,
-          isDivider: false,
-        }
-      }),
-  ])
+  const [reorderableItems, setReorderableItems] = useState<ReorderableItem[]>(
+    [],
+  )
+
+  useEffect(() => {
+    setReorderableItems([
+      ...sortedFilesInChapter(0, caseFiles),
+      {
+        id: uuid(),
+        displayText: formatMessage(m.chapterInvesitgationProcess),
+        chapter: 1,
+        isDivider: false,
+      },
+      ...sortedFilesInChapter(1, caseFiles),
+      {
+        id: uuid(),
+        displayText: formatMessage(m.chapterWitnesses),
+        chapter: 2,
+        isDivider: false,
+      },
+      ...sortedFilesInChapter(2, caseFiles),
+      {
+        id: uuid(),
+        displayText: formatMessage(m.chapterDefendant),
+        chapter: 3,
+        isDivider: false,
+      },
+      ...sortedFilesInChapter(3, caseFiles),
+      {
+        id: uuid(),
+        displayText: formatMessage(m.chapterCaseFiles),
+        chapter: 4,
+        isDivider: false,
+      },
+      ...sortedFilesInChapter(4, caseFiles),
+      {
+        id: uuid(),
+        displayText: formatMessage(m.chapterElectronicDocuments),
+        chapter: 5,
+        isDivider: false,
+      },
+      ...sortedFilesInChapter(5, caseFiles),
+      {
+        id: uuid(),
+        displayText: `${formatMessage(m.unorderedFilesTitle)}|${formatMessage(
+          m.unorderedFilesExplanation,
+        )}`,
+        isDivider: true,
+      },
+      ...caseFiles
+        .filter(
+          (caseFile) =>
+            caseFile.chapter === null || caseFile.chapter === undefined,
+        )
+        .map((caseFile) => {
+          return {
+            id: caseFile.id,
+            created: caseFile.created,
+            displayText: caseFile.name,
+            userGeneratedFilename: caseFile.userGeneratedFilename,
+            isDivider: false,
+          }
+        }),
+    ])
+  }, [caseFiles, formatMessage])
 
   const handleReorder = async (fileId?: string) => {
     if (!fileId) {
@@ -420,11 +469,6 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
       reorderableItems,
     )
     const filesBelowInChapter = getFilesBelowInChapter(fileId, reorderableItems)
-
-    // Do not update the order of files if the file is not in a chapter
-    if (chapter === null || orderWithinChapter === null) {
-      return
-    }
 
     const { errors } = await updateFilesMutation({
       variables: {
@@ -440,7 +484,10 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
               return {
                 id: file.id,
                 chapter,
-                orderWithinChapter: orderWithinChapter + index + 1,
+                orderWithinChapter:
+                  orderWithinChapter === null
+                    ? null
+                    : orderWithinChapter + index + 1,
               }
             }),
           ],
@@ -453,7 +500,12 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
     }
   }
 
-  const handleRename = async (fileId: string, newName: string) => {
+  const handleRename = async (
+    fileId: string,
+    newName?: string,
+    newDisplayDate?: string,
+  ) => {
+    let newDate: Date | null = null
     const fileInReorderableItems = reorderableItems.findIndex(
       (item) => item.id === fileId,
     )
@@ -462,11 +514,24 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
       return
     }
 
+    if (newDisplayDate) {
+      const [day, month, year] = newDisplayDate.split('.')
+      newDate = parseISO(`${year}-${month}-${day}`)
+
+      if (!isValid(newDate)) {
+        toast.error(formatMessage(m.invalidDateErrorMessage))
+        return
+      }
+    }
+
     setReorderableItems((prev) => {
       const newReorderableItems = [...prev]
       newReorderableItems[
         fileInReorderableItems
       ].userGeneratedFilename = newName
+      newReorderableItems[fileInReorderableItems].displayDate = newDate
+        ? newDate.toISOString()
+        : newReorderableItems[fileInReorderableItems].displayDate
 
       return newReorderableItems
     })
@@ -479,6 +544,7 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
             {
               id: fileId,
               userGeneratedFilename: newName,
+              ...(newDate && { displayDate: newDate.toISOString() }),
             },
           ],
         },
@@ -545,18 +611,19 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
         })}
       </Reorder.Group>
       <AnimatePresence>
-        {reorderableItems[reorderableItems.length - 1].isDivider && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <AlertMessage
-              type="success"
-              message={formatMessage(m.noCaseFiles)}
-            />
-          </motion.div>
-        )}
+        {reorderableItems.length > 0 &&
+          reorderableItems[reorderableItems.length - 1].isDivider && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              <AlertMessage
+                type="success"
+                message={formatMessage(m.noCaseFiles)}
+              />
+            </motion.div>
+          )}
       </AnimatePresence>
     </AccordionItem>
   )

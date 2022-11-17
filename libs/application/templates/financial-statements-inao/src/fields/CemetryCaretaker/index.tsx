@@ -24,7 +24,15 @@ import {
 import { FinancialStatementsInao } from '../../lib/utils/dataSchema'
 import * as styles from './CemetryCaretaker.css'
 import { IdentityQuery } from '../../graphql'
-import { BOARDMEMEBER, CARETAKER } from '../../lib/constants'
+import {
+  BOARDMEMEBER,
+  CARETAKER,
+  APPLICANTASMEMBER,
+  ACTORASCARETAKER,
+  ACTORLONEBOARDMEMBER,
+} from '../../lib/constants'
+import { BoardMember } from '../../types'
+import { getBoardmembersAndCaretakers } from '../../lib/utils/helpers'
 
 type Props = {
   id: string
@@ -44,7 +52,7 @@ const CareTakerRepeaterItem = ({
   const { formatMessage } = useLocale()
 
   const [nationalIdInput, setNationalIdInput] = useState('')
-  const { setValue } = useFormContext()
+  const { clearErrors, setValue } = useFormContext()
   const fieldIndex = `${id}[${index}]`
   const nameField = `${fieldIndex}.name`
   const nationalIdField = `${fieldIndex}.nationalId`
@@ -60,6 +68,7 @@ const CareTakerRepeaterItem = ({
   })
 
   useEffect(() => {
+    clearErrors()
     if (nationalIdInput.length === 10 && kennitala.isValid(nationalIdInput)) {
       getIdentity({
         variables: {
@@ -69,7 +78,7 @@ const CareTakerRepeaterItem = ({
         },
       })
     }
-  }, [nationalIdInput, getIdentity])
+  }, [nationalIdInput, getIdentity, clearErrors])
 
   return (
     <GridContainer>
@@ -155,9 +164,13 @@ export const CemetryCaretaker: FC<FieldBaseProps<FinancialStatementsInao>> = ({
   application,
   field,
   errors,
+  setBeforeSubmitCallback,
 }) => {
   const { formatMessage } = useLocale()
   const { id } = field
+
+  const { getValues, setError } = useFormContext()
+  const values = getValues()
 
   const { fields, append, remove } = useFieldArray({
     name: `${id}.caretakers`,
@@ -176,6 +189,49 @@ export const CemetryCaretaker: FC<FieldBaseProps<FinancialStatementsInao>> = ({
   useEffect(() => {
     if (fields.length === 0) handleAddCaretaker()
   }, [fields, handleAddCaretaker])
+
+  setBeforeSubmitCallback &&
+    setBeforeSubmitCallback(async () => {
+      const actors = application.applicantActors
+      const currentActor: string = actors[actors.length - 1]
+      const allMembers = values.cemetryCaretaker
+      const { careTakers, boardMembers } = getBoardmembersAndCaretakers(
+        allMembers,
+      )
+      const caretakersIncludeActor =
+        careTakers.filter((careTaker) => careTaker === currentActor).length > 0
+
+      const boardMembersIncludeActor =
+        boardMembers.filter((boardMember) => boardMember === currentActor)
+          .length > 0
+
+      const includesApplicant =
+        allMembers.filter(
+          (member: BoardMember) => member.nationalId === application.applicant,
+        ).length > 0
+
+      if (caretakersIncludeActor) {
+        setError(ACTORASCARETAKER, {
+          type: 'custom',
+          message: formatMessage(m.errorcaretakerCanNotIncludeActor),
+        })
+        return [false, formatMessage(m.errorcaretakerCanNotIncludeActor)]
+      } else if (boardMembersIncludeActor && boardMembers.length <= 1) {
+        setError(ACTORLONEBOARDMEMBER, {
+          type: 'custom',
+          message: formatMessage(m.errorcaretakerCanNotIncludeActor),
+        })
+        return [false, formatMessage(m.errorcaretakerCanNotIncludeActor)]
+      } else if (includesApplicant) {
+        setError(APPLICANTASMEMBER, {
+          type: 'custom',
+          message: formatMessage(m.errormemberCanNotIncludeApplicant),
+        })
+        return [false, formatMessage(m.errormemberCanNotIncludeApplicant)]
+      } else {
+        return [true, null]
+      }
+    })
 
   return (
     <GridContainer>
@@ -211,6 +267,23 @@ export const CemetryCaretaker: FC<FieldBaseProps<FinancialStatementsInao>> = ({
               ? errors.cemetryCaretaker
               : undefined
           }
+        />
+      ) : null}
+      {errors && errors.applicantasmember ? (
+        <InputError
+          errorMessage={formatMessage(m.errormemberCanNotIncludeApplicant)}
+        />
+      ) : null}
+      {errors && errors.actorascaretaker ? (
+        <InputError
+          errorMessage={formatMessage(m.errorcaretakerCanNotIncludeActor)}
+        />
+      ) : null}
+      {errors && errors.actorloneboardmember ? (
+        <InputError
+          errorMessage={formatMessage(
+            m.errorBoardmembersCanNotJustIncludeActor,
+          )}
         />
       ) : null}
     </GridContainer>

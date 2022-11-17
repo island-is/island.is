@@ -7,18 +7,18 @@ import {
 import {
   CEMETRYEQUITIESANDLIABILITIESIDS,
   CEMETRYOPERATIONIDS,
-  USERTYPE,
 } from '../../../lib/constants'
 import { capitalNumberSection } from '../shared/keyNumbers/capitalNumbers'
 import { m } from '../../../lib/messages'
 import { getCurrentUserType } from '../../../lib/utils/helpers'
+import { FSIUSERTYPE } from '../../../types'
 
 export const cemetryKeyNumbersSection = buildSection({
   id: 'cemetryKeyNumbers',
   title: m.keyNumbers,
   condition: (answers, externalData) => {
     const userType = getCurrentUserType(answers, externalData)
-    return userType === USERTYPE.CEMETRY
+    return userType === FSIUSERTYPE.CEMETRY
   },
   children: [
     buildSubSection({

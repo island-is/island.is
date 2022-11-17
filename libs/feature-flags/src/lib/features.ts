@@ -44,11 +44,15 @@ export enum Features {
   servicePortalDocumentProviderModule = 'isServicePortalDocumentProviderModuleEnabled',
   servicePortalIcelandicNamesRegistryModule = 'isServicePortalIcelandicNamesRegistryModuleEnabled',
   servicePortalPetitionsModule = 'isServicePortalPetitionsModuleEnabled',
-
+  servicePortalDrivingLessonsBookModule = 'isServicePortalDrivingLessonsBookModuleEnabled',
+  servicePortalAssetsApiV2Enabled = 'servicePortalAssetsApiV2Enabled',
+  outgoingDelegationsV1 = 'outgoingdelegationsv1',
   outgoingDelegationsV2 = 'outgoingdelegationsv2',
+  incomingDelegationsV2 = 'incomingdelegationsv2',
 }
 
 export enum ServerSideFeature {
   testing = 'do-not-remove-for-testing-only',
   drivingLicense = 'driving-license-use-v1-endpoint-for-v2-comms',
+  delegationApi = 'delegation-api',
 }

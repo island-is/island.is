@@ -76,6 +76,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
                   'approveExternalData',
                   'residenceChangeReason',
                   'approveChildSupportTerms',
+                  'confirmContract',
                 ],
                 externalData: ['userProfile', 'nationalRegistry'],
               },

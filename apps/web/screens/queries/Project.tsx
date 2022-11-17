@@ -68,6 +68,7 @@ export const GET_PROJECT_PAGE_QUERY = gql`
         slug
       }
       projectSubpages {
+        id
         title
         slug
         content {

@@ -19,41 +19,43 @@ import { getCasesQueryFilter, isCaseBlockedFromUser } from './case.filters'
 
 describe('isCaseBlockedFromUser', () => {
   each`
-    state                  | role                   | institutionType
-    ${CaseState.DELETED}   | ${UserRole.PROSECUTOR} | ${InstitutionType.PROSECUTORS_OFFICE}
-    ${CaseState.DELETED}   | ${UserRole.REGISTRAR}  | ${InstitutionType.COURT}
-    ${CaseState.DELETED}   | ${UserRole.JUDGE}      | ${InstitutionType.COURT}
-    ${CaseState.DELETED}   | ${UserRole.REGISTRAR}  | ${InstitutionType.HIGH_COURT}
-    ${CaseState.DELETED}   | ${UserRole.JUDGE}      | ${InstitutionType.HIGH_COURT}
-    ${CaseState.DELETED}   | ${UserRole.STAFF}      | ${InstitutionType.PRISON}
-    ${CaseState.DELETED}   | ${UserRole.STAFF}      | ${InstitutionType.PRISON_ADMIN}
-    ${CaseState.NEW}       | ${UserRole.REGISTRAR}  | ${InstitutionType.COURT}
-    ${CaseState.NEW}       | ${UserRole.JUDGE}      | ${InstitutionType.COURT}
-    ${CaseState.NEW}       | ${UserRole.REGISTRAR}  | ${InstitutionType.HIGH_COURT}
-    ${CaseState.NEW}       | ${UserRole.JUDGE}      | ${InstitutionType.HIGH_COURT}
-    ${CaseState.NEW}       | ${UserRole.STAFF}      | ${InstitutionType.PRISON}
-    ${CaseState.NEW}       | ${UserRole.STAFF}      | ${InstitutionType.PRISON_ADMIN}
-    ${CaseState.DRAFT}     | ${UserRole.REGISTRAR}  | ${InstitutionType.HIGH_COURT}
-    ${CaseState.DRAFT}     | ${UserRole.JUDGE}      | ${InstitutionType.HIGH_COURT}
-    ${CaseState.DRAFT}     | ${UserRole.STAFF}      | ${InstitutionType.PRISON}
-    ${CaseState.DRAFT}     | ${UserRole.STAFF}      | ${InstitutionType.PRISON_ADMIN}
-    ${CaseState.SUBMITTED} | ${UserRole.REGISTRAR}  | ${InstitutionType.HIGH_COURT}
-    ${CaseState.SUBMITTED} | ${UserRole.JUDGE}      | ${InstitutionType.HIGH_COURT}
-    ${CaseState.SUBMITTED} | ${UserRole.STAFF}      | ${InstitutionType.PRISON}
-    ${CaseState.SUBMITTED} | ${UserRole.STAFF}      | ${InstitutionType.PRISON_ADMIN}
-    ${CaseState.RECEIVED}  | ${UserRole.REGISTRAR}  | ${InstitutionType.HIGH_COURT}
-    ${CaseState.RECEIVED}  | ${UserRole.JUDGE}      | ${InstitutionType.HIGH_COURT}
-    ${CaseState.RECEIVED}  | ${UserRole.STAFF}      | ${InstitutionType.PRISON}
-    ${CaseState.RECEIVED}  | ${UserRole.STAFF}      | ${InstitutionType.PRISON_ADMIN}
-    ${CaseState.REJECTED}  | ${UserRole.STAFF}      | ${InstitutionType.PRISON}
-    ${CaseState.REJECTED}  | ${UserRole.STAFF}      | ${InstitutionType.PRISON_ADMIN}
-    ${CaseState.DISMISSED} | ${UserRole.STAFF}      | ${InstitutionType.PRISON}
-    ${CaseState.DISMISSED} | ${UserRole.STAFF}      | ${InstitutionType.PRISON_ADMIN}
+    state                  | role                   | institutionType                       | caseType
+    ${CaseState.DELETED}   | ${UserRole.PROSECUTOR} | ${InstitutionType.PROSECUTORS_OFFICE} | ${CaseType.CUSTODY}
+    ${CaseState.DELETED}   | ${UserRole.REGISTRAR}  | ${InstitutionType.COURT}              | ${CaseType.CUSTODY}
+    ${CaseState.DELETED}   | ${UserRole.JUDGE}      | ${InstitutionType.COURT}              | ${CaseType.CUSTODY}
+    ${CaseState.DELETED}   | ${UserRole.REGISTRAR}  | ${InstitutionType.HIGH_COURT}         | ${CaseType.CUSTODY}
+    ${CaseState.DELETED}   | ${UserRole.JUDGE}      | ${InstitutionType.HIGH_COURT}         | ${CaseType.CUSTODY}
+    ${CaseState.DELETED}   | ${UserRole.STAFF}      | ${InstitutionType.PRISON}             | ${CaseType.CUSTODY}
+    ${CaseState.DELETED}   | ${UserRole.STAFF}      | ${InstitutionType.PRISON_ADMIN}       | ${CaseType.CUSTODY}
+    ${CaseState.NEW}       | ${UserRole.REGISTRAR}  | ${InstitutionType.COURT}              | ${CaseType.CUSTODY}
+    ${CaseState.NEW}       | ${UserRole.JUDGE}      | ${InstitutionType.COURT}              | ${CaseType.CUSTODY}
+    ${CaseState.NEW}       | ${UserRole.REGISTRAR}  | ${InstitutionType.HIGH_COURT}         | ${CaseType.CUSTODY}
+    ${CaseState.NEW}       | ${UserRole.JUDGE}      | ${InstitutionType.HIGH_COURT}         | ${CaseType.CUSTODY}
+    ${CaseState.NEW}       | ${UserRole.STAFF}      | ${InstitutionType.PRISON}             | ${CaseType.CUSTODY}
+    ${CaseState.NEW}       | ${UserRole.STAFF}      | ${InstitutionType.PRISON_ADMIN}       | ${CaseType.CUSTODY}
+    ${CaseState.DRAFT}     | ${UserRole.REGISTRAR}  | ${InstitutionType.HIGH_COURT}         | ${CaseType.CUSTODY}
+    ${CaseState.DRAFT}     | ${UserRole.JUDGE}      | ${InstitutionType.HIGH_COURT}         | ${CaseType.CUSTODY}
+    ${CaseState.DRAFT}     | ${UserRole.STAFF}      | ${InstitutionType.PRISON}             | ${CaseType.CUSTODY}
+    ${CaseState.DRAFT}     | ${UserRole.STAFF}      | ${InstitutionType.PRISON_ADMIN}       | ${CaseType.CUSTODY}
+    ${CaseState.DRAFT}     | ${UserRole.REGISTRAR}  | ${InstitutionType.COURT}              | ${CaseType.INDICTMENT}
+    ${CaseState.DRAFT}     | ${UserRole.JUDGE}      | ${InstitutionType.COURT}              | ${CaseType.INDICTMENT}
+    ${CaseState.SUBMITTED} | ${UserRole.REGISTRAR}  | ${InstitutionType.HIGH_COURT}         | ${CaseType.CUSTODY}
+    ${CaseState.SUBMITTED} | ${UserRole.JUDGE}      | ${InstitutionType.HIGH_COURT}         | ${CaseType.CUSTODY}
+    ${CaseState.SUBMITTED} | ${UserRole.STAFF}      | ${InstitutionType.PRISON}             | ${CaseType.CUSTODY}
+    ${CaseState.SUBMITTED} | ${UserRole.STAFF}      | ${InstitutionType.PRISON_ADMIN}       | ${CaseType.CUSTODY}
+    ${CaseState.RECEIVED}  | ${UserRole.REGISTRAR}  | ${InstitutionType.HIGH_COURT}         | ${CaseType.CUSTODY}
+    ${CaseState.RECEIVED}  | ${UserRole.JUDGE}      | ${InstitutionType.HIGH_COURT}         | ${CaseType.CUSTODY}
+    ${CaseState.RECEIVED}  | ${UserRole.STAFF}      | ${InstitutionType.PRISON}             | ${CaseType.CUSTODY}
+    ${CaseState.RECEIVED}  | ${UserRole.STAFF}      | ${InstitutionType.PRISON_ADMIN}       | ${CaseType.CUSTODY}
+    ${CaseState.REJECTED}  | ${UserRole.STAFF}      | ${InstitutionType.PRISON}             | ${CaseType.CUSTODY}
+    ${CaseState.REJECTED}  | ${UserRole.STAFF}      | ${InstitutionType.PRISON_ADMIN}       | ${CaseType.CUSTODY}
+    ${CaseState.DISMISSED} | ${UserRole.STAFF}      | ${InstitutionType.PRISON}             | ${CaseType.CUSTODY}
+    ${CaseState.DISMISSED} | ${UserRole.STAFF}      | ${InstitutionType.PRISON_ADMIN}       | ${CaseType.CUSTODY}
   `.it(
-    'should block $state case from $role at $institutionType',
-    ({ state, role, institutionType }) => {
+    'should block $state $caseType case from $role at $institutionType',
+    ({ state, role, institutionType, caseType }) => {
       // Arrange
-      const theCase = { state, type: CaseType.CUSTODY } as Case
+      const theCase = { state, type: caseType } as Case
       const user = {
         role,
         institution: { type: institutionType },
@@ -769,6 +771,14 @@ describe('getCasesQueryFilter', () => {
               { court_id: 'Court Id' },
             ],
           },
+          {
+            [Op.not]: {
+              [Op.and]: [
+                { state: CaseState.DRAFT },
+                { [Op.or]: indictmentCases.map((type) => ({ type })) },
+              ],
+            },
+          },
         ],
       })
     })
@@ -805,6 +815,14 @@ describe('getCasesQueryFilter', () => {
               { accused_postponed_appeal_date: { [Op.not]: null } },
               { prosecutor_postponed_appeal_date: { [Op.not]: null } },
             ],
+          },
+          {
+            [Op.not]: {
+              [Op.and]: [
+                { state: CaseState.DRAFT },
+                { [Op.or]: indictmentCases.map((type) => ({ type })) },
+              ],
+            },
           },
         ],
       })

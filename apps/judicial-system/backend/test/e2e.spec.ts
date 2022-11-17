@@ -1,4 +1,3 @@
-import { uuid } from 'uuidv4'
 import { Sequelize } from 'sequelize-typescript'
 import { execSync } from 'child_process'
 import request from 'supertest'
@@ -98,7 +97,7 @@ beforeAll(async () => {
             }),
         })
         .overrideProvider(MessageService)
-        .useValue({ postMessageToQueue: () => uuid() }),
+        .useValue({ sendMessageToQueue: () => undefined }),
   })
 
   sequelize = await app.resolve(getConnectionToken() as Type<Sequelize>)
@@ -686,7 +685,7 @@ describe('Case', () => {
         return request(app.getHttpServer())
           .put(`/api/case/${dbCase.id}`)
           .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${prosecutorAuthCookie}`)
-          .send(data)
+          .send({ ...data, type: undefined })
           .expect(200)
       })
       .then((response) => {
@@ -767,7 +766,6 @@ describe('Case', () => {
         dbCase = caseToCCase(value)
 
         const data = {
-          modified: value.modified.toISOString(),
           transition: CaseTransition.ACCEPT,
         }
 

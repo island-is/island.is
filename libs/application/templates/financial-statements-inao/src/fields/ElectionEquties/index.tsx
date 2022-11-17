@@ -28,27 +28,9 @@ export const ElectionEquities: FC<FieldBaseProps> = ({
   application,
   setBeforeSubmitCallback,
 }): JSX.Element => {
-  const answers = application.answers
-
   const { formatMessage } = useLocale()
 
-  const {
-    errors,
-    clearErrors,
-    getValues,
-    setError,
-    setValue,
-  } = useFormContext()
-
-  const operatingCostTotal = getValueViaPath(
-    answers,
-    OPERATINGCOST.total,
-  ) as string
-
-  useEffect(() => {
-    setValue(EQUITIESANDLIABILITIESIDS.operationResult, operatingCostTotal)
-    setTotalOperatingCost(Number(operatingCostTotal))
-  }, [operatingCostTotal, setValue])
+  const { errors, clearErrors, getValues, setError } = useFormContext()
 
   const [getTotalEquity, totalEquity] = useTotals(
     EQUITIESANDLIABILITIESIDS.equityPrefix,
@@ -60,14 +42,7 @@ export const ElectionEquities: FC<FieldBaseProps> = ({
     EQUITIESANDLIABILITIESIDS.liabilityPrefix,
   )
 
-  const [totalOperatingCost, setTotalOperatingCost] = useState(0)
-  const [equityTotal, setEquityTotal] = useState(0)
   const [equityAndDebts, setEquityAndDebts] = useState(0)
-
-  useEffect(() => {
-    const total = totalEquity
-    setEquityTotal(total)
-  }, [totalEquity, totalOperatingCost])
 
   useEffect(() => {
     const total = totalEquity + totalLiabilities
@@ -108,6 +83,7 @@ export const ElectionEquities: FC<FieldBaseProps> = ({
             <InputController
               id={EQUITIESANDLIABILITIESIDS.fixedAssetsTotal}
               name={EQUITIESANDLIABILITIESIDS.fixedAssetsTotal}
+              rightAlign
               error={
                 errors &&
                 getErrorViaPath(
@@ -132,6 +108,7 @@ export const ElectionEquities: FC<FieldBaseProps> = ({
                 errors &&
                 getErrorViaPath(errors, EQUITIESANDLIABILITIESIDS.currentAssets)
               }
+              rightAlign
               onChange={debounce(() => {
                 getTotalAssets()
                 clearErrors(EQUITIESANDLIABILITIESIDS.currentAssets)
@@ -155,6 +132,7 @@ export const ElectionEquities: FC<FieldBaseProps> = ({
             <InputController
               id={EQUITIESANDLIABILITIESIDS.longTerm}
               name={EQUITIESANDLIABILITIESIDS.longTerm}
+              rightAlign
               onChange={debounce(() => {
                 getTotalLiabilities()
                 clearErrors(EQUITIESANDLIABILITIESIDS.longTerm)
@@ -172,6 +150,7 @@ export const ElectionEquities: FC<FieldBaseProps> = ({
             <InputController
               id={EQUITIESANDLIABILITIESIDS.shortTerm}
               name={EQUITIESANDLIABILITIESIDS.shortTerm}
+              rightAlign
               onChange={debounce(() => {
                 getTotalLiabilities()
                 clearErrors(EQUITIESANDLIABILITIESIDS.shortTerm)
@@ -194,6 +173,7 @@ export const ElectionEquities: FC<FieldBaseProps> = ({
             <InputController
               id={EQUITIESANDLIABILITIESIDS.totalEquity}
               name={EQUITIESANDLIABILITIESIDS.totalEquity}
+              rightAlign
               onChange={debounce(() => {
                 getTotalEquity()
                 clearErrors(EQUITIESANDLIABILITIESIDS.totalEquity)
@@ -207,28 +187,6 @@ export const ElectionEquities: FC<FieldBaseProps> = ({
               currency
             />
           </Box>
-          <Box paddingY={1}>
-            <InputController
-              id={EQUITIESANDLIABILITIESIDS.operationResult}
-              name={EQUITIESANDLIABILITIESIDS.operationResult}
-              readOnly
-              error={
-                errors &&
-                getErrorViaPath(
-                  errors,
-                  EQUITIESANDLIABILITIESIDS.operationResult,
-                )
-              }
-              label={formatMessage(m.operationResult)}
-              backgroundColor="blue"
-              currency
-            />
-          </Box>
-          <Total
-            name={EQUITIESANDLIABILITIESIDS.totalCash}
-            total={equityTotal}
-            label={formatMessage(m.totalEquity)}
-          />
           <Box paddingY={1}>
             <Total
               name={EQUITIESANDLIABILITIESIDS.totalEquityAndLiabilities}

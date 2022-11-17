@@ -200,7 +200,6 @@ export class CaseController {
   ): Promise<Case> {
     this.logger.debug(`Transitioning case ${caseId}`)
 
-    // Use theCase.modified when client is ready to send last modified timestamp with all updates
     const state = transitionCase(transition.transition, theCase.state)
 
     // TODO: UpdateCaseDto does not contain state - create a new type for CaseService.update
@@ -219,7 +218,7 @@ export class CaseController {
     // Indictment cases are not signed
     if (isIndictmentCase(theCase.type) && completedCaseStates.includes(state)) {
       // No need to wait for now, but may consider including this in a transaction with the database update later
-      this.caseService.addCaseCompletedMessageToQueue(caseId)
+      this.caseService.addCompletedIndictmentCaseMessagesToQueue(theCase)
     }
 
     // No need to wait

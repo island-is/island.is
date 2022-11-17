@@ -2,7 +2,6 @@ import React, { FC } from 'react'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
-import * as Sentry from '@sentry/react'
 import { m } from '@island.is/service-portal/core'
 
 interface Props {
@@ -25,7 +24,7 @@ export class WidgetErrorBoundary extends React.Component<Props, StateTypes> {
   }
 
   componentDidCatch(error: Error) {
-    Sentry.captureException(error)
+    console.error(error)
   }
 
   render() {

@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState, useEffect } from 'react'
+import React, { useCallback, useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import { uuid } from 'uuidv4'
@@ -25,13 +25,16 @@ import { Box, Button, Select, Text } from '@island.is/island-ui/core'
 import { ValueType } from 'react-select'
 import {
   Case,
-  CaseType,
   Defendant as TDefendant,
   Gender,
+  IndictmentSubType,
   UpdateDefendant,
 } from '@island.is/judicial-system/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
+import {
+  capitalize,
+  indictmentSubTypes,
+} from '@island.is/judicial-system/formatters'
 import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
 import { isDefendantStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 import * as constants from '@island.is/judicial-system/consts'
@@ -50,56 +53,28 @@ const Defendant: React.FC = () => {
     caseNotFound,
   } = useContext(FormContext)
   const { formatMessage } = useIntl()
-  const { createCase, isCreatingCase, setAndSendToServer } = useCase()
-  const { createDefendant, updateDefendant, deleteDefendant } = useDefendants()
+  const { createCase, isCreatingCase, setAndSendCaseToServer } = useCase()
+  const {
+    createDefendant,
+    updateDefendant,
+    deleteDefendant,
+    updateDefendantState,
+  } = useDefendants()
   const router = useRouter()
-
-  // This state is needed because type is initially set to OHTER on the
-  // workingCase and we need to validate that the user selects an option
-  // from the case type list to allow the user to continue.
-  const [caseType, setCaseType] = useState<CaseType>()
-  useEffect(() => {
-    if (workingCase.id) {
-      setCaseType(workingCase.type)
-    }
-  }, [workingCase.id, workingCase.type])
 
   const { clientPoliceNumbers, setClientPoliceNumbers } = usePoliceCaseNumbers(
     workingCase,
   )
 
-  const updateDefendantState = useCallback(
-    (defendantId: string, update: UpdateDefendant) => {
-      setWorkingCase((theCase: Case) => {
-        if (!theCase.defendants) {
-          return theCase
-        }
-        const indexOfDefendantToUpdate = theCase.defendants.findIndex(
-          (defendant) => defendant.id === defendantId,
-        )
-
-        const newDefendants = [...theCase.defendants]
-
-        newDefendants[indexOfDefendantToUpdate] = {
-          ...newDefendants[indexOfDefendantToUpdate],
-          ...update,
-        }
-
-        return { ...theCase, defendants: newDefendants }
-      })
-    },
-    [setWorkingCase],
-  )
-
   const handleUpdateDefendant = useCallback(
-    async (defendantId: string, updatedDefendant: UpdateDefendant) => {
-      updateDefendantState(defendantId, updatedDefendant)
+    (defendantId: string, updatedDefendant: UpdateDefendant) => {
+      updateDefendantState(defendantId, updatedDefendant, setWorkingCase)
 
       if (workingCase.id) {
         updateDefendant(workingCase.id, defendantId, updatedDefendant)
       }
     },
-    [updateDefendantState, workingCase.id, updateDefendant],
+    [updateDefendantState, setWorkingCase, workingCase.id, updateDefendant],
   )
 
   const handleNextButtonClick = async (theCase: Case) => {
@@ -137,14 +112,16 @@ const Defendant: React.FC = () => {
           }
         })
         router.push(
-          `${constants.INDICTMENTS_PROCESSING_ROUTE}/${createdCase.id}`,
+          `${constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE}/${createdCase.id}`,
         )
       } else {
         // TODO handle error
         return
       }
     } else {
-      router.push(`${constants.INDICTMENTS_PROCESSING_ROUTE}/${theCase.id}`)
+      router.push(
+        `${constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE}/${theCase.id}`,
+      )
     }
   }
 
@@ -215,6 +192,17 @@ const Defendant: React.FC = () => {
     }
   }
 
+  const options = useMemo(
+    () =>
+      Object.values(IndictmentSubType)
+        .map((subType) => ({
+          label: capitalize(indictmentSubTypes[subType]),
+          value: subType,
+        }))
+        .sort((a, b) => a.label.localeCompare(b.label)),
+    [],
+  )
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -248,19 +236,17 @@ const Defendant: React.FC = () => {
           </Box>
           <Select
             name="case-type"
-            options={constants.IndictmentTypes}
+            options={options}
             label={formatMessage(m.sections.indictmentType.label)}
             placeholder={formatMessage(m.sections.indictmentType.placeholder)}
             onChange={(selectedOption: ValueType<ReactSelectOption>) => {
-              const type = (selectedOption as ReactSelectOption)
-                .value as CaseType
+              const indictmentSubType = (selectedOption as ReactSelectOption)
+                .value as IndictmentSubType
 
-              setCaseType(type)
-
-              setAndSendToServer(
+              setAndSendCaseToServer(
                 [
                   {
-                    type,
+                    indictmentSubType,
                     force: true,
                   },
                 ],
@@ -269,10 +255,12 @@ const Defendant: React.FC = () => {
               )
             }}
             value={
-              workingCase.id
+              workingCase.indictmentSubType
                 ? {
-                    value: CaseType[workingCase.type],
-                    label: capitalize(caseTypes[workingCase.type]),
+                    value: IndictmentSubType[workingCase.indictmentSubType],
+                    label: capitalize(
+                      indictmentSubTypes[workingCase.indictmentSubType],
+                    ),
                   }
                 : undefined
             }
@@ -306,6 +294,7 @@ const Defendant: React.FC = () => {
                   <DefendantInfo
                     defendant={defendant}
                     workingCase={workingCase}
+                    setWorkingCase={setWorkingCase}
                     onDelete={
                       workingCase.defendants &&
                       workingCase.defendants.length > 1
@@ -342,11 +331,7 @@ const Defendant: React.FC = () => {
           previousUrl={constants.CASES_ROUTE}
           onNextButtonClick={() => handleNextButtonClick(workingCase)}
           nextIsDisabled={
-            !isDefendantStepValidIndictments(
-              workingCase,
-              caseType,
-              clientPoliceNumbers,
-            )
+            !isDefendantStepValidIndictments(workingCase, clientPoliceNumbers)
           }
           nextIsLoading={isCreatingCase}
           nextButtonText={formatMessage(
