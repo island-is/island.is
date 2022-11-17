@@ -223,6 +223,8 @@
     "reference-next-app": "apps/reference-next-app",
     "regulations": "libs/regulations",
     "residence-history": "libs/residence-history",
+    "samradsgatt": "apps/samradsgatt",
+    "samradsgatt-e2e": "apps/samradsgatt-e2e",
     "service-portal": "apps/service-portal",
     "service-portal-access-control-delegations": "libs/service-portal/access-control/delegations",
     "service-portal-applications": "libs/service-portal/applications",
