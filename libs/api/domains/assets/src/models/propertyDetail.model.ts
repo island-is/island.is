@@ -9,8 +9,8 @@ import { Extensions, Field, ObjectType } from '@nestjs/graphql'
 import { MiddlewareContext } from '@nestjs/graphql'
 
 export const isPropertyOwner = ({ source }: MiddlewareContext) => {
-  const owners: [PropertyOwner] = source.registeredOwners?.registeredOwners
-  if (!owners) return false
+  const owners: PropertyOwner[] =
+    (source as PropertyDetail).registeredOwners?.registeredOwners ?? []
   return owners.some((owner) => owner.ssn == source.nationalId)
 }
 @Extensions({
