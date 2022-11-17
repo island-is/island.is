@@ -126,12 +126,12 @@ export const serviceSetup = (services: {
     })
     .resources({
       limits: {
-        cpu: '400m',
-        memory: '256Mi',
+        cpu: '4',
+        memory: '2Gi',
       },
       requests: {
-        cpu: '100m',
-        memory: '128Mi',
+        cpu: '1',
+        memory: '1Gi',
       },
     })
     .healthPort(5010)
