@@ -104,7 +104,7 @@ export class TransferOfVehicleOwnershipService {
     ])
 
     // 2b. Send email/sms individually to each recipient
-    for (var i = 0; i < recipientList.length; i++) {
+    for (let i = 0; i < recipientList.length; i++) {
       if (recipientList[i].email) {
         await this.sharedTemplateAPIService.sendEmail(
           (props) => generateRequestReviewEmail(props, recipientList[i]),
@@ -154,7 +154,7 @@ export class TransferOfVehicleOwnershipService {
       (x) => x.type === 'coOwner',
     )
     if (buyerCoOwners) {
-      for (var i = 0; i < buyerCoOwners.length; i++) {
+      for (let i = 0; i < buyerCoOwners.length; i++) {
         const oldEntry = oldRecipientList.find((x) => {
           x.role === EmailRole.buyerCoOwner &&
             x.ssn === buyerCoOwners[i].nationalId
@@ -182,7 +182,7 @@ export class TransferOfVehicleOwnershipService {
       (x) => x.type === 'operator',
     )
     if (buyerOperators) {
-      for (var i = 0; i < buyerOperators.length; i++) {
+      for (let i = 0; i < buyerOperators.length; i++) {
         const oldEntry = oldRecipientList.find((x) => {
           x.role === EmailRole.buyerOperator &&
             x.ssn === buyerOperators[i].nationalId
@@ -206,7 +206,7 @@ export class TransferOfVehicleOwnershipService {
     }
 
     // Send email/sms individually to each recipient
-    for (var i = 0; i < newlyAddedRecipientList.length; i++) {
+    for (let i = 0; i < newlyAddedRecipientList.length; i++) {
       if (newlyAddedRecipientList[i].email) {
         await this.sharedTemplateAPIService.sendEmail(
           (props) =>
@@ -239,7 +239,7 @@ export class TransferOfVehicleOwnershipService {
 
     // 2b. Send email/sms individually to each recipient about success of withdrawing application
     const rejectedByRecipient = getRecipientBySsn(answers, auth.nationalId)
-    for (var i = 0; i < recipientList.length; i++) {
+    for (let i = 0; i < recipientList.length; i++) {
       if (recipientList[i].email) {
         await this.sharedTemplateAPIService.sendEmail(
           (props) =>
@@ -353,7 +353,7 @@ export class TransferOfVehicleOwnershipService {
     const recipientList = getRecipients(answers, getAllRoles())
 
     // 2b. Send email/sms individually to each recipient about success of submitting application
-    for (var i = 0; i < recipientList.length; i++) {
+    for (let i = 0; i < recipientList.length; i++) {
       if (recipientList[i].email) {
         await this.sharedTemplateAPIService.sendEmail(
           (props) => generateApplicationSubmittedEmail(props, recipientList[i]),
