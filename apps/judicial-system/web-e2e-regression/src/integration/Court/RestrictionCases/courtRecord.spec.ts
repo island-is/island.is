@@ -1,14 +1,19 @@
+import faker from 'faker'
+
 import {
   RESTRICTION_CASE_COURT_RECORD_ROUTE,
   CASES_ROUTE,
-  RESTRICTION_CASE_RULING_ROUTE,
+  RESTRICTION_CASE_CONFIRMATION_ROUTE,
 } from '@island.is/judicial-system/consts'
-import { CaseTransition, CaseType } from '@island.is/judicial-system/types'
-import faker from 'faker'
+import {
+  CaseDecision,
+  CaseTransition,
+  CaseType,
+} from '@island.is/judicial-system/types'
 
 import { transitionCase, loginAndCreateCase, updateCase } from '../../../utils'
 
-describe(RESTRICTION_CASE_RULING_ROUTE, () => {
+describe(RESTRICTION_CASE_COURT_RECORD_ROUTE, () => {
   let caseId = ''
 
   before(() => {
@@ -27,16 +32,16 @@ describe(RESTRICTION_CASE_RULING_ROUTE, () => {
       })
       .then(() => {
         updateCase(caseId, {
-          introduction: faker.lorem.sentence(),
-          prosecutorDemands: faker.lorem.sentence(),
-          courtCaseFacts: faker.lorem.sentence(),
-          courtLegalArguments: faker.lorem.sentence(),
+          courtDate: '2021-04-29T12:45:00.000Z',
+          courtLocation: faker.lorem.word(),
           conclusion: faker.lorem.sentence(),
+          ruling: faker.lorem.sentence(),
+          decision: CaseDecision.ACCEPTING,
         })
       })
       .then(() =>
         cy.visit(
-          `http://localhost:4200${RESTRICTION_CASE_RULING_ROUTE}/${caseId}`,
+          `http://localhost:4200${RESTRICTION_CASE_COURT_RECORD_ROUTE}/${caseId}`,
         ),
       )
   })
@@ -48,12 +53,16 @@ describe(RESTRICTION_CASE_RULING_ROUTE, () => {
   })
 
   it('should validate the form', () => {
-    cy.get('#case-decision-accepting').check()
+    cy.get('#accused-accept').check()
+    cy.get('#prosecutor-appeal').check()
+
+    cy.get('#courtEndTime').type('2020-10-10').type('{enter}')
+    cy.get('#courtEndTime-time').type('10:10')
 
     cy.getByTestid('continueButton').click()
     cy.url().should(
       'include',
-      `${RESTRICTION_CASE_COURT_RECORD_ROUTE}/${caseId}`,
+      `${RESTRICTION_CASE_CONFIRMATION_ROUTE}/${caseId}`,
     )
   })
 })
