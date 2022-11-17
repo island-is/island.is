@@ -7,7 +7,6 @@ import type { Period } from '@island.is/application/templates/parental-leave'
 import { EmailTemplateGeneratorProps } from '../../../../types'
 import { pathToAsset } from '../parental-leave.utils'
 import { dateFormat } from '@island.is/shared/constants'
-import { isRunningInProduction } from '../constants'
 
 export type EmployerRejectedToEmployerEmail = (
   props: EmailTemplateGeneratorProps,
@@ -18,8 +17,6 @@ export type EmployerRejectedToEmployerEmail = (
 // TODO handle translations
 export const generateApplicationApprovedByEmployerToEmployerEmail: EmployerRejectedToEmployerEmail = (
   props,
-  senderName,
-  senderEmail,
 ): Message => {
   const {
     application,

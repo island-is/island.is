@@ -1,14 +1,9 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React from 'react'
 import capitalize from 'lodash/capitalize'
 import { useRouter } from 'next/router'
 import NextLink from 'next/link'
 import { Screen } from '../types'
-import {
-  Image,
-  richText,
-  Slice as SliceType,
-} from '@island.is/island-ui/contentful'
+import { Image, Slice as SliceType } from '@island.is/island-ui/contentful'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import {
   Box,
@@ -25,7 +20,6 @@ import {
   Button,
   Tag,
   Divider,
-  LinkContext,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
@@ -57,6 +51,7 @@ import { LinkType, useLinkResolver } from '../hooks/useLinkResolver'
 import { FRONTPAGE_NEWS_TAG_ID } from '@island.is/web/constants'
 import { CustomNextError } from '../units/errors'
 import useContentfulId from '../hooks/useContentfulId'
+import { webRichText } from '../utils/richText'
 
 const PERPAGE = 10
 
@@ -234,11 +229,7 @@ const NewsListNew: Screen<NewsListProps> = ({
         </Box>
       )}
       <Box paddingBottom={4} width="full">
-        {richText(newsItem.content as SliceType[], {
-          renderComponent: {
-            TableSlice: (slice) => <TableSlice slice={slice} />,
-          },
-        })}
+        {webRichText(newsItem.content as SliceType[])}
       </Box>
     </>
   )

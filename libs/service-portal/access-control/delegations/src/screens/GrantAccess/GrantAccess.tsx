@@ -42,6 +42,7 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces(['sp.settings-access-control', 'sp.access-control-delegations'])
   const { formatMessage } = useLocale()
   const [name, setName] = useState('')
+  const inputRef = React.useRef<HTMLInputElement>(null)
   const history = useHistory()
   const { md } = useBreakpoint()
   const { options, selectedOption, loading: domainLoading } = useDomains(false)
@@ -134,8 +135,7 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
       toast.error(
         formatMessage({
           id: 'sp.settings-access-control:grant-create-error',
-          defaultMessage:
-            'Eitthvað fór úrskeiðis!\nEkki tókst að búa til aðgang fyrir þennan notanda.',
+          defaultMessage: 'Ekki tókst að búa til aðgang fyrir þennan notanda.',
         }),
       )
     }
@@ -146,6 +146,12 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
     reset({
       toNationalId: '',
     })
+
+    setTimeout(() => {
+      if (inputRef.current) {
+        inputRef.current.focus()
+      }
+    }, 0)
   }
 
   return (
@@ -160,8 +166,9 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
           defaultMessage:
             'Hér getur þú gefið öðrum aðgang til að sýsla með þín gögn hjá island.is',
         })}
+        marginBottom={1}
       />
-      <Box className={styles.container}>
+      <div className={styles.container}>
         <FormProvider {...methods}>
           <form onSubmit={onSubmit}>
             <Box display="flex" flexDirection="column" rowGap={[5, 6]}>
@@ -189,21 +196,18 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
                     size="md"
                   />
                 )}
-                <Box
-                  display={name ? 'none' : 'block'}
-                  aria-live="assertive"
-                  marginBottom={[1, 1, 0]}
-                >
+                <Box display={name ? 'none' : 'block'} aria-live="assertive">
                   <InputController
                     control={control}
                     id="toNationalId"
                     icon={name || queryLoading ? undefined : 'search'}
+                    ref={inputRef}
                     rules={{
                       required: {
                         value: true,
                         message: formatMessage({
                           id: 'sp.settings-access-control:grant-required-ssn',
-                          defaultMessage: 'Skylda er að fylla út kennitölu',
+                          defaultMessage: 'Þú þarft að setja inn kennitölu',
                         }),
                       },
                       validate: {
@@ -224,7 +228,11 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
                     }}
                     type="tel"
                     format="######-####"
-                    label={formatMessage(sharedMessages.nationalId)}
+                    label={formatMessage({
+                      id:
+                        'sp.access-control-delegations:grant-form-access-holder',
+                      defaultMessage: 'Kennitala aðgangshafa',
+                    })}
                     placeholder={'000000-0000'}
                     error={errors.toNationalId?.message}
                     onChange={(value) => {
@@ -245,6 +253,7 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
                     disabled={loading}
                     onClick={clearPersonState}
                     className={styles.icon}
+                    aria-label={formatMessage(m.clearSelected)}
                   >
                     <Icon icon="close" size="large" color="blue400" />
                   </button>
@@ -278,13 +287,8 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
                 )}
               </div>
             </Box>
-            <Box
-              display="flex"
-              flexDirection="column"
-              rowGap={5}
-              marginTop={[9, 9, 5]}
-            >
-              <Text>
+            <Box display="flex" flexDirection="column" rowGap={5} marginTop={5}>
+              <Text variant="small">
                 {formatMessage({
                   id: 'sp.access-control-delegations:next-step-description',
                   defaultMessage:
@@ -308,7 +312,7 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
             </Box>
           </form>
         </FormProvider>
-      </Box>
+      </div>
     </>
   )
 }

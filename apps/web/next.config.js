@@ -29,6 +29,10 @@ module.exports = withNx(
           source: '/rss.xml',
           destination: '/api/rss',
         },
+        {
+          source: '/opinbernyskopun/rss.xml',
+          destination: '/api/rss/opinbernyskopun',
+        },
       ]
     },
     webpack: (config, { isServer }) => {
