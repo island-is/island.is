@@ -111,11 +111,19 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
           }
         }
 
-        if (!isCircular(processedEntry)) {
-          processedEntries.push(processedEntry)
-        } else {
-          logger.warn('Circular reference found in article', {
-            id: entry.sys.id,
+        try {
+          const mappedEntry = mapArticle(processedEntry)
+          if (!isCircular(mappedEntry)) {
+            processedEntries.push(processedEntry)
+          } else {
+            logger.warn('Circular reference found in article', {
+              id: entry.sys.id,
+            })
+          }
+        } catch (error) {
+          logger.warn('Failed to map article', {
+            error: error.message,
+            id: entry?.sys?.id,
           })
         }
       }
@@ -211,7 +219,7 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
         } catch (error) {
           logger.warn('Failed to import article', {
             error: error.message,
-            id: entry.sys.id,
+            id: entry?.sys?.id,
           })
           return false
         }
