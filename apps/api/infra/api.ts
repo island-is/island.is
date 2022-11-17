@@ -20,6 +20,7 @@ import {
   Vehicles,
   AdrAndMachine,
   Firearm,
+  TransportAuthority,
 } from '../../../infra/src/dsl/xroad'
 import { settings } from '../../../infra/src/dsl/settings'
 import { MissingSetting } from '../../../infra/src/dsl/types/input-types'
@@ -230,6 +231,7 @@ export const serviceSetup = (services: {
       MunicipalitiesFinancialAid,
       Vehicles,
       Passports,
+      TransportAuthority,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({
