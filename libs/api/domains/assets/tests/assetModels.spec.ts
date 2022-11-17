@@ -7,13 +7,18 @@ import {
 import { startMocking } from '@island.is/shared/mocking'
 import { AssetsXRoadService } from '../src/lib/api-domains-assets.service'
 import { FasteignirApi } from '@island.is/clients/assets'
-import { PropertyDetail } from '../src'
+import { MiddlewareContext } from '@nestjs/graphql'
+import {
+  PropertyDetail,
+  isPropertyOwner,
+} from '../src/models/propertyDetail.model'
 
-startMocking(requestHandlers)
 describe('Asset Models', () => {
   describe.only('PropertyDetail model', () => {
     it('User should be only see public data if not owner', async () => {
       const property: PropertyDetail = {}
+      const x = jest.mocked<MiddlewareContext>({ source: property }, true)
+      expect(isPropertyOwner(x)).toBeTruthy()
     })
   })
 })
