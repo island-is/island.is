@@ -489,6 +489,7 @@ application-system-api:
     XROAD_VEHICLE_OPERATORS_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Operators-V2'
     XROAD_VEHICLE_OWNER_CHANGE_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Ownerchange-V2'
     XROAD_VEHICLE_PRINTING_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Printing-V1'
+    XROAD_VEHICLES_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Mitt-Svaedi-V1'
     XROAD_VMST_API_PATH: '/VMST-ParentalLeave-Protected/ParentalLeaveApplication-v1'
     XROAD_VMST_MEMBER_CODE: '7005942039'
   grantNamespaces:
