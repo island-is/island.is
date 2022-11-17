@@ -98,7 +98,7 @@ identity-server:
     IdentityServer__EnableFeatureDeploymentWildcards: 'true'
     IdentityServer__KeyManagement__Enabled: 'false'
     IdentityServer__SigningCertificate__Path: '/etc/config/ids-signing.pfx'
-    NODE_OPTIONS: '--max-old-space-size=-46'
+    NODE_OPTIONS: '--max-old-space-size=2000'
     PersistenceSettings__BaseAddress: 'http://web-services-auth-ids-api'
     PersistenceSettings__UserProfileBaseAddress: 'http://web-service-portal-api.service-portal.svc.cluster.local'
     SERVERSIDE_FEATURES_ON: ''
@@ -152,11 +152,11 @@ identity-server:
     min: 2
   resources:
     limits:
-      cpu: '4'
-      memory: '2Gi'
+      cpu: '4000m'
+      memory: '2048Mi'
     requests:
-      cpu: '1'
-      memory: '1Gi'
+      cpu: '1000m'
+      memory: '1024Mi'
   secrets:
     AudkenniSettings__ClientId: '/k8s/identity-server/AudkenniClientId'
     AudkenniSettings__ClientSecret: '/k8s/identity-server/AudkenniClientSecret'
