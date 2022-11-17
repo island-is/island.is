@@ -4,7 +4,7 @@ import {
   buildValidationError,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { Status, FormerInsurance, Applicant } from '../types'
+import { Status, FormerInsurance } from '../types'
 import { NO, YES, StatusTypes } from '../shared'
 import {
   requireConfirmationOfResidency,
@@ -46,11 +46,6 @@ export const answerValidators: Record<string, AnswerValidator> = {
       entitlementReason,
     } = formerInsurance
 
-    const applicant = getValueViaPath(
-      application.answers,
-      'applicant',
-    ) as Applicant
-
     const citizenship = getValueViaPath(
       application.answers,
       'citizenship',
@@ -63,7 +58,7 @@ export const answerValidators: Record<string, AnswerValidator> = {
       return buildError('You must select one of the above', field)
     }
 
-    if (!requireWaitingPeriod(country, applicant?.citizenship)) {
+    if (!requireWaitingPeriod(country, citizenship)) {
       const personalIdField = `${FORMER_INSURANCE}.personalId`
 
       if (personalId) {
@@ -108,7 +103,6 @@ export const answerValidators: Record<string, AnswerValidator> = {
         return buildError('Please fill in a reason', field)
       }
     } else {
-      console.log('Waiting period is required')
       /* User that requires waiting period, should not be allowed to continue */
       const buildError = buildValidationError(`${FORMER_INSURANCE}`)
       return buildError('')
