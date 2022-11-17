@@ -1,6 +1,10 @@
 import { ApolloClient, gql, InMemoryCache } from '@apollo/client'
 
-import { CaseTransition, CaseType } from '@island.is/judicial-system/types'
+import {
+  CaseTransition,
+  CaseType,
+  UpdateCase,
+} from '@island.is/judicial-system/types'
 import { resolve } from 'path'
 
 import { CreateCaseMutation } from '../graphql/schema'
@@ -70,6 +74,27 @@ export const transitionCase = (caseId: string, transition: CaseTransition) => {
         input: {
           id: caseId,
           transition,
+        },
+      },
+      fetchPolicy: 'no-cache',
+    }),
+  )
+}
+
+export const updateCase = (caseId: string, update: UpdateCase) => {
+  return cy.wrap(
+    client.mutate({
+      mutation: gql`
+        mutation UpdateCaseMutation($input: UpdateCaseInput!) {
+          updateCase(input: $input) {
+            id
+          }
+        }
+      `,
+      variables: {
+        input: {
+          id: caseId,
+          ...update,
         },
       },
       fetchPolicy: 'no-cache',
