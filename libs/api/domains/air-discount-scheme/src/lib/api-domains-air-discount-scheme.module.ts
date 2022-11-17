@@ -8,6 +8,6 @@ import { AirDiscountSchemeService } from './api-domains-air-discount-scheme.serv
 @Module({
   providers: [AirDiscountSchemeResolver, AirDiscountSchemeService],
   imports: [AirDiscountSchemeClientModule, AuthModule],
-  exports: [AirDiscountSchemeService],
+  exports: [],
 })
 export class AirDiscountSchemeModule {}
