@@ -29,20 +29,7 @@ export const done: Form = buildForm({
             buildCustomField({
               id: 'signature',
               component: 'Success',
-              title: (application) => {
-                const answers = application.answers
-                const externalData = application.externalData
-                console.log(externalData)
-
-                const email = getValueViaPath(answers, 'about.email')
-                const userType = getValueViaPath(
-                  externalData,
-                  'getUserType.data.value',
-                )
-
-                console.log({ email, userType })
-                return m.applicationAccept
-              },
+              title: m.applicationAccept,
             }),
           ],
         }),
