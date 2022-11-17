@@ -174,6 +174,7 @@ export class FinancialStatementsInaoClientService {
         electionId: x.star_electionid,
         name: x.star_name,
         electionDate: new Date(x.star_electiondate),
+        genitiveName: x.star_genitive_name,
       }
     })
 
