@@ -19,7 +19,7 @@ export const AirDiscountSchemeClientConfig = defineConfig<
       ) ?? ['@vegagerdin.is/air-discount-scheme-scope'],
       timeout: env.optionalJSON('AIR_DISCOUNT_SCHEME_CLIENT_TIMEOUT') ?? 20000,
       basePath: env.required(
-        'AIR_DISCOUNT_SCHEME_API_URL', // TODO: make sure this is set
+        'AIR_DISCOUNT_SCHEME_BACKEND_URL',
         'http://localhost:4248',
       ),
     }
