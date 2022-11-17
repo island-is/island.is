@@ -9,7 +9,7 @@ import {
 import { caseFilesRecord } from '../messages'
 import { Defendant } from '../modules/defendant'
 import { Case } from '../modules/case'
-import { Alignment, PageLink, PdfDocument } from './pdf'
+import { Alignment, LineLink, PageLink, PdfDocument } from './pdf'
 
 export function formatDefendant(defendant: Defendant) {
   const defendantDOB = formatDOB(
@@ -91,7 +91,6 @@ export const createCaseFilesRecord = async (
   }
 
   pdfDocument
-    .addPageNumbers()
     .addPage(0)
     .addText(
       `${theCase.creatingProsecutor?.institution?.name.toUpperCase()}`,
@@ -145,6 +144,13 @@ export const createCaseFilesRecord = async (
       { alignment: Alignment.Center, bold: true, marginTop: 9 },
     )
 
+  const pageCount = pdfDocument.getPageCount()
+  const tableOfContentsLineReferences: {
+    lineLink: LineLink
+    pageNumber: number
+    pageLink: PageLink
+  }[] = []
+
   for (const chapter of chapters) {
     if (chapter === 0) {
       pdfDocument.addText(
@@ -167,23 +173,43 @@ export const createCaseFilesRecord = async (
     for (const pageReference of pageReferences.filter(
       (pageReference) => pageReference.chapter === chapter,
     )) {
-      pdfDocument
-        .addText(`${pageReference.pageNumber}`, textFontSize, {
-          alignment: Alignment.Right,
+      tableOfContentsLineReferences.push({
+        lineLink: pdfDocument
+          .addText('', textFontSize, { newLine: false })
+          .getCurrentLineLink(),
+        pageNumber: pageReference.pageNumber,
+        pageLink: pageReference.pageLink,
+      })
+
+      pdfDocument.addText(
+        `${pageReference.date} - ${pageReference.name}`,
+        textFontSize,
+        {
+          maxWidth: 400,
           pageLink: pageReference.pageLink,
-          newLine: false,
-        })
-        .addText(
-          `${pageReference.date} - ${pageReference.name}`,
-          textFontSize,
-          {
-            maxWidth: 400,
-            pageLink: pageReference.pageLink,
-            position: { x: pageReferenceIndent },
-          },
-        )
+          position: { x: pageReferenceIndent },
+        },
+      )
     }
   }
+
+  const tableOfContentsPageCount = pdfDocument.getPageCount() - pageCount
+
+  for (const lineReference of tableOfContentsLineReferences) {
+    pdfDocument
+      .setCurrentLine(lineReference.lineLink)
+      .addText(
+        `${tableOfContentsPageCount + lineReference.pageNumber + 1}`,
+        textFontSize,
+        {
+          alignment: Alignment.Right,
+          pageLink: lineReference.pageLink,
+          newLine: false,
+        },
+      )
+  }
+
+  pdfDocument.addPageNumbers()
 
   return pdfDocument.getContents()
 }

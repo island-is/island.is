@@ -27,6 +27,7 @@ export class UpdateFileDto {
   @ApiPropertyOptional()
   readonly chapter?: number | null
 
+  @IsOptional()
   @ValidateIf((file) => typeof file.chapter === 'number')
   @IsNumber()
   @Min(0)
