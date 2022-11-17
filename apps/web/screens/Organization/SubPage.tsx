@@ -42,6 +42,7 @@ import { ParsedUrlQuery } from 'querystring'
 import { useRouter } from 'next/router'
 import { scrollTo } from '@island.is/web/hooks/useScrollSpy'
 import { webRichText } from '@island.is/web/utils/richText'
+import { useI18n } from '@island.is/web/i18n'
 import { Locale } from 'locale'
 
 interface SubPageProps {
@@ -86,6 +87,7 @@ const SubPage: Screen<SubPageProps> = ({
   locale,
 }) => {
   const router = useRouter()
+  const { activeLocale } = useI18n()
 
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
@@ -171,13 +173,17 @@ const SubPage: Screen<SubPageProps> = ({
                       subpage.links.length ? '7/12' : '12/12',
                     ]}
                   >
-                    {webRichText(subpage.description as SliceType[], {
-                      renderComponent: {
-                        Form: (slice) => (
-                          <Form form={slice} namespace={namespace} />
-                        ),
+                    {webRichText(
+                      subpage.description as SliceType[],
+                      {
+                        renderComponent: {
+                          Form: (slice) => (
+                            <Form form={slice} namespace={namespace} />
+                          ),
+                        },
                       },
-                    })}
+                      activeLocale,
+                    )}
                   </GridColumn>
                   {subpage.links.length > 0 && (
                     <GridColumn

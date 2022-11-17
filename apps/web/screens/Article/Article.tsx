@@ -563,25 +563,29 @@ const ArticleScreen: Screen<ArticleProps> = ({
         <Box paddingTop={subArticle ? 2 : 4}>
           {!inStepperView && (
             <Box className="rs_read">
-              {webRichText((subArticle ?? article).body as SliceType[], {
-                renderComponent: {
-                  Stepper: () => (
-                    <Box marginY={3} printHidden className="rs_read">
-                      <ProcessEntry
-                        buttonText={n(
-                          article.processEntryButtonText || 'application',
-                          '',
-                        )}
-                        processLink={asPath
-                          .split('?')[0]
-                          .concat('?stepper=true')}
-                        processTitle={article.stepper.title}
-                        newTab={false}
-                      />
-                    </Box>
-                  ),
+              {webRichText(
+                (subArticle ?? article).body as SliceType[],
+                {
+                  renderComponent: {
+                    Stepper: () => (
+                      <Box marginY={3} printHidden className="rs_read">
+                        <ProcessEntry
+                          buttonText={n(
+                            article.processEntryButtonText || 'application',
+                            '',
+                          )}
+                          processLink={asPath
+                            .split('?')[0]
+                            .concat('?stepper=true')}
+                          processTitle={article.stepper.title}
+                          newTab={false}
+                        />
+                      </Box>
+                    ),
+                  },
                 },
-              })}
+                activeLocale,
+              )}
               <AppendedArticleComponents article={article} />
             </Box>
           )}

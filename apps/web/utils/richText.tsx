@@ -24,6 +24,7 @@ import {
   Slice,
   AccordionSlice as AccordionSliceSchema,
 } from '@island.is/web/graphql/schema'
+import { Locale } from '@island.is/shared/types'
 
 const webRenderConnectedComponent = (slice) => {
   const data = slice.json ?? {}
@@ -63,20 +64,25 @@ export const webRichText = (
     renderMark?: Record<string, unknown>
     renderNode?: Record<string, unknown>
   },
+  activeLocale?: Locale,
 ) => {
-  return richText(slices as SliceType[], {
-    renderComponent: {
-      ...defaultRenderComponentObject,
-      ...defaultRenderComponent,
-      ...options?.renderComponent,
+  return richText(
+    slices as SliceType[],
+    {
+      renderComponent: {
+        ...defaultRenderComponentObject,
+        ...defaultRenderComponent,
+        ...options?.renderComponent,
+      },
+      renderMark: {
+        ...defaultRenderMarkObject,
+        ...options?.renderMark,
+      },
+      renderNode: {
+        ...defaultRenderNodeObject,
+        ...options?.renderNode,
+      },
     },
-    renderMark: {
-      ...defaultRenderMarkObject,
-      ...options?.renderMark,
-    },
-    renderNode: {
-      ...defaultRenderNodeObject,
-      ...options?.renderNode,
-    },
-  })
+    activeLocale,
+  )
 }
