@@ -40,6 +40,7 @@ const prosecutorFields: (keyof UpdateCase)[] = [
   'caseModifiedExplanation',
   'isolationToDate',
   'caseResentExplanation',
+  'crimeScenes',
 ]
 
 // Allows prosecutors to update a specific set of fields

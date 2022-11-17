@@ -3,6 +3,7 @@ import {
   capitalize,
   indictmentSubtypes,
   formatDOB,
+  formatDate,
 } from '@island.is/judicial-system/formatters'
 
 import { caseFilesRecord } from '../messages'
@@ -27,7 +28,7 @@ export const createCaseFilesRecord = async (
   theCase: Case,
   policeCaseNumber: string,
   caseFiles: (() => Promise<{
-    date: string
+    date: Date
     name: string
     chapter: number
     buffer?: Buffer
@@ -48,7 +49,7 @@ export const createCaseFilesRecord = async (
   const chapters = [0, 1, 2, 3, 4, 5]
   const pageReferences: {
     chapter: number
-    date: string
+    date: Date
     name: string
     pageNumber: number
     pageLink: PageLink
@@ -173,7 +174,9 @@ export const createCaseFilesRecord = async (
           newLine: false,
         })
         .addText(
-          `${pageReference.date} - ${pageReference.name}`,
+          `${formatDate(pageReference.date, 'dd.MM.yyyy')} - ${
+            pageReference.name
+          }`,
           textFontSize,
           {
             maxWidth: 400,
