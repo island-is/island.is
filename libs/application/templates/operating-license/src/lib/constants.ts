@@ -31,62 +31,143 @@ export const YES = 'yes'
 export const NO = 'no'
 
 export const ResturantTypes: Option[] = [
-  { value: 'A Veitingahús', label: 'Veitingahús' },
-  { value: 'B Skemmtistaður', label: 'Skemmtistaður' },
+  {
+    value: 'A Veitingahús',
+    label: 'Veitingahús',
+    subLabel:
+      'Veitingastaður með fjölbreyttar veitingar í mat og drykk og fulla þjónustu. Í veitingahúsi skal vera starfandi maður með fullnægjandi þekkingu í framreiðslu.',
+  },
+  {
+    value: 'B Skemmtistaður',
+    label: 'Skemmtistaður',
+    subLabel:
+      'Veitingastaður með reglubundna skemmtistarfsemi og fjölbreyttar veitingar í mat og/eða drykk. Hér undir falla einnig staðir þar sem aðaláhersla er lögð á áfengisveitingar, dans gesta, tónlist og langan afgreiðslutíma en engar eða takmarkaðar veitingar í mat.',
+  },
   {
     value: 'C Veitingastofa og greiðasala',
     label: 'Veitingastofa og greiðasala',
+    subLabel:
+      'Veitingastaðir með fábreyttar veitingar í mat og/eða drykk. Á slíkum stöðum er takmarkaðri þjónusta og/eða gestir afgreiða sig sjálfir að hluta eða öllu leyti. Hér undir falla t.d. skyndibitastaðir og einnig söluskálar með aðstöðu til neyslu veitinga.',
   },
   {
     value: 'D Veisluþjónusta og veitingaverslun',
     label: 'Veisluþjónusta og veitingaverslun',
+    subLabel:
+      'Staðir þar sem fram fer sala veitinga sem ekki er til neyslu á staðnum enda er slík sala meginstarfsemi staðarins.',
   },
-  { value: 'E Kaffihús', label: 'Kaffihús' },
-  { value: 'F Krá', label: 'Krá' },
-  { value: 'G Samkomusalir', label: 'Samkomusalir' },
+  {
+    value: 'E Kaffihús',
+    label: 'Kaffihús',
+    subLabel:
+      'Veitingastaður með einfaldar veitingar í mat og/eða drykk þar sem aðaláhersla er lögð á kaffiveitingar. Hér undir falla t.d. bakarí sem hafa aðstöðu til neyslu veitinga á staðnum.',
+  },
+  {
+    value: 'F Krá',
+    label: 'Krá',
+    subLabel:
+      'Veitingastaður með takmarkaða þjónustu og einfaldar eða engar veitingar í mat, þar sem aðaláhersla er lögð á áfengisveitingar og langan afgreiðslutíma.',
+  },
+  {
+    value: 'G Samkomusalir',
+    label: 'Samkomusalir',
+    subLabel:
+      'Staðir sem eru sérstaklega útbúnir og ætlaðir til hvers kyns samkomuhalds og til þess leigðir út í atvinnuskyni til einstaklinga og/eða fyrirtækja, hvort sem er með eða án veitinga í mat og/eða drykk. Félagsheimili, íþróttasalir, flugskýli, vöruskemmur og önnur húsakynni sem að jafnaði eru ekki ætluð til samkomuhalds í atvinnuskyni geta fallið hér undir ef útleiga til skemmtanahalds fer oftar fram en tólf sinnum á ári.',
+  },
 ]
 
 export const HotelTypes: Option[] = [
-  { value: 'A Hótel', label: 'Hótel' },
+  {
+    value: 'A Hótel',
+    label: 'Hótel',
+    subLabel:
+      'Gististaður þar sem gestamóttaka er aðgengileg allan sólarhringinn og veitingar að einhverju tagi framleiddar á staðnum. Fullbúin baðaðstaða skal vera með hverju herbergi.',
+  },
   {
     value: 'B Stærra gistiheimili',
     label: 'Stærra gistiheimili',
+    subLabel:
+      'Gististaður þar sem gestamóttaka er aðgengileg allan sólarhringinn og veitingar að einhverju tagi framleiddar á staðnum. Fullbúin baðaðstaða skal vera með hverju herbergi.',
   },
   {
     value: 'C Minna gistiheimili',
     label: 'Minna gistiheimili',
+    subLabel:
+      'Gististaður með takmarkaða þjónustu þar sem leigð eru út 5 eða færri herbergi eða hefur rými fyrir 10 einstaklinga eða færri. Getur verið gisting á einkaheimili. Ekki er gerð krafa um handlaug í herbergjum. Gestir skulu hafa aðgang að fullbúinni baðaðstöðu.',
   },
-  { value: 'D Gistiskáli', label: 'Gistiskáli' },
+  {
+    value: 'D Gistiskáli',
+    label: 'Gistiskáli',
+    subLabel:
+      'Gisting í herbergjum eða svefnskálum. Hér undir falla farfuglaheimili (hostel).',
+  },
   {
     value: 'E Fjallaskáli',
     label: 'Fjallaskáli',
+    subLabel:
+      'Gisting í herbergjum eða í svefnskálum staðsett utan alfaraleiðar og almenningur hefur aðgang að, svo sem skálar fyrir ferðamenn, veiðiskálar og sæluhús.',
   },
   {
     value: 'F Heimagisting',
     label: 'Heimagisting',
+    subLabel:
+      'Gisting á lögheimili einstaklings eða einni annarri fasteign í hans eigu sem hann hefur persónuleg not af.',
   },
-  { value: 'G Íbúðir', label: 'Íbúðir' },
+  {
+    value: 'G Íbúðir',
+    label: 'Íbúðir',
+    subLabel:
+      'Íbúðarhúsnæði sérstaklega ætlað til útleigu til gesta til skamms tíma, sbr. 2. gr. reglugerðar þessarar og fellur ekki undir húsaleigulög. Hér undir falla starfsmannabústaðir og starfsmannabúðir þegar slíkar byggingar eru ekki leigðar út í tengslum við vinnusamning. Íbúðir félagasamtaka eru undanskildar.',
+  },
   {
     value: 'H Frístundahús',
     label: 'Frístundahús',
+    subLabel:
+      'Hús utan þéttbýlis sem er nýtt til tímabundinnar dvalar. Orlofshús félagasamtaka, svo sem stéttarfélaga og starfsgreinafélaga, eru undanskilin.',
   },
 ]
 
 export enum OPERATION_CATEGORY {
-  ONE = '1',
   TWO = '2',
+  THREE = '3',
+  FOUR = '4',
 }
+
+export const HotelCategories: Option[] = [
+  {
+    value: OPERATION_CATEGORY.TWO,
+    label: m.operationCategoryTwo,
+    subLabel: m.operationCategoryHotelTwo.defaultMessage,
+  },
+  {
+    value: OPERATION_CATEGORY.THREE,
+    label: m.operationCategoryThree,
+    subLabel: m.operationCategoryHotelThree.defaultMessage,
+  },
+  {
+    value: OPERATION_CATEGORY.FOUR,
+    label: m.operationCategoryFour,
+    subLabel: m.operationCategoryHotelFour.defaultMessage,
+  },
+]
+
+export const ResturantCategories: Option[] = [
+  {
+    value: OPERATION_CATEGORY.TWO,
+    label: m.operationCategoryTwo,
+    subLabel: m.operationCategoryResturantTwo.defaultMessage,
+  },
+  {
+    value: OPERATION_CATEGORY.THREE,
+    label: m.operationCategoryThree,
+    subLabel: m.operationCategoryResturantThree.defaultMessage,
+  },
+]
 
 export type Operation = {
   operation: APPLICATION_TYPES
-  hotel: {
-    category: OPERATION_CATEGORY | OPERATION_CATEGORY[] | undefined
-    type: string
-  }
-  resturant: {
-    category: OPERATION_CATEGORY | OPERATION_CATEGORY[] | undefined
-    type: string
-  }
+  category: OPERATION_CATEGORY | OPERATION_CATEGORY[] | undefined
+  type: string
+  willServe?: string
 }
 
 export type OpeningHour = {

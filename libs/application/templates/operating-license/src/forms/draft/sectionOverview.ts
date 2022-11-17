@@ -51,8 +51,8 @@ export const sectionOverview = buildMultiField({
       value: (application: Application) =>
         (application.answers.applicationInfo as Operation).operation ===
         APPLICATION_TYPES.HOTEL
-          ? (application.answers.applicationInfo as Operation).hotel.type
-          : (application.answers.applicationInfo as Operation).resturant.type,
+          ? (application.answers.applicationInfo as Operation).type
+          : (application.answers.applicationInfo as Operation).type,
     }),
     buildDescriptionField({
       id: 'overview.space0',
@@ -63,10 +63,10 @@ export const sectionOverview = buildMultiField({
     buildKeyValueField({
       label: 'Flokkur',
       value: (application: Application) =>
-        (application.answers.applicationInfo as Operation).resturant
-          .category === OPERATION_CATEGORY.ONE
-          ? m.operationCategoryResturantOne
-          : m.operationCategoryResturantTwo,
+        (application.answers.applicationInfo as Operation).category ===
+        OPERATION_CATEGORY.TWO
+          ? m.operationCategoryTwo
+          : m.operationCategoryThree,
       condition: (answers) =>
         (answers.applicationInfo as Operation)?.operation ===
         APPLICATION_TYPES.RESTURANT,
@@ -88,12 +88,11 @@ export const sectionOverview = buildMultiField({
       space: 'gutter',
     }),
     buildKeyValueField({
-      label: m.operationCategoryHotelOne,
+      label: m.operationCategoryTwo,
       width: 'half',
       value: (application: Application) =>
-        (application.answers
-          .applicationInfo as Operation).hotel.category?.includes(
-          OPERATION_CATEGORY.ONE,
+        (application.answers.applicationInfo as Operation).category?.includes(
+          OPERATION_CATEGORY.TWO,
         )
           ? m.yes
           : m.no,
@@ -105,9 +104,8 @@ export const sectionOverview = buildMultiField({
       label: m.operationCategoryHotelTwo,
       width: 'half',
       value: (application: Application) =>
-        (application.answers
-          .applicationInfo as Operation).hotel.category?.includes(
-          OPERATION_CATEGORY.TWO,
+        (application.answers.applicationInfo as Operation).category?.includes(
+          OPERATION_CATEGORY.THREE,
         )
           ? m.yes
           : m.no,

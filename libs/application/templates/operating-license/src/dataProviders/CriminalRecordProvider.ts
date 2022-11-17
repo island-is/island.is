@@ -3,6 +3,7 @@ import {
   Application,
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
+  ProviderErrorReason,
 } from '@island.is/application/types'
 import { info } from 'kennitala'
 import { m } from '../lib/messages'
@@ -24,7 +25,14 @@ export class CriminalRecordProvider extends BasicDataProvider {
     if (useFakeData) {
       return fakeData?.criminalRecord === YES
         ? Promise.resolve({ success: true })
-        : Promise.reject({})
+        : Promise.reject({
+            reason: {
+              title: m.dataCollectionCriminalRecordErrorTitle,
+              summary: m.dataCollectionNonBankruptcyDisclosureErrorSubtitle,
+              hideSubmitError: true,
+            },
+            statusCode: 404,
+          })
     }
 
     const query = `
@@ -44,19 +52,31 @@ export class CriminalRecordProvider extends BasicDataProvider {
       }
 
       if (response.data.criminalRecordValidation !== true) {
-        return Promise.reject({})
+        return Promise.reject({
+          reason: {
+            title: m.dataCollectionCriminalRecordErrorTitle,
+            summary: m.dataCollectionNonBankruptcyDisclosureErrorSubtitle,
+            hideSubmitError: true,
+          },
+          statusCode: 404,
+        })
       }
 
       return Promise.resolve({ success: true })
     })
   }
 
-  onProvideError(errorMessage: MessageDescriptor): FailedDataProviderResult {
+  onProvideError(error: {
+    reason: ProviderErrorReason
+    statusCode?: number
+  }): FailedDataProviderResult {
     return {
       date: new Date(),
-      reason: errorMessage?.id ? errorMessage : m.errorDataProvider,
-      status: 'failure',
       data: {},
+      reason: error?.reason ?? m.errorDataProvider,
+      hideSubmitError: error?.reason?.hideSubmitError,
+      status: 'failure',
+      statusCode: error.statusCode,
     }
   }
 

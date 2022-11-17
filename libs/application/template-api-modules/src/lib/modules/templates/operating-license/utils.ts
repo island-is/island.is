@@ -17,15 +17,11 @@ export const getExtraData = (application: ApplicationWithAttachments) => {
     'payment.data.priceAmount',
   ) as string
   const isHotel = answers.applicationInfo.operation === APPLICATION_TYPES.HOTEL
-  const category = isHotel
-    ? getHotelCategory(answers.applicationInfo.hotel?.category)
-    : answers.applicationInfo.resturant?.category === OPERATION_CATEGORY.ONE
-    ? 'Flokkur II'
-    : 'Flokkur III'
+  const category = getHotelCategory(answers.applicationInfo.category)
 
   const type: { [key: string]: string } = isHotel
-    ? { tegundGististadar: answers.applicationInfo.hotel?.type || '' }
-    : { tegundVeitingastadar: answers.applicationInfo.resturant?.type || '' }
+    ? { tegundGististadar: '' } //answers.applicationInfo.type || '' }
+    : { tegundVeitingastadar: '' } // answers.applicationInfo.type || '' }
 
   const extraData: { [key: string]: string } = {
     kallast: answers.info.operationName,
@@ -65,15 +61,21 @@ export const getExtraData = (application: ApplicationWithAttachments) => {
         }
       : {}),
     rymi: JSON.stringify(
-      answers.properties.map((property: Property) => ({
-        stadur: property.address,
-        fasteignanumer: property.propertyNumber,
-        rymisnumer: property.spaceNumber,
-        hamarksfjoldiGesta: property.customerCount,
-      })),
+      [
+        answers.properties.stay,
+        answers.properties.dining,
+        answers.properties.outside,
+      ].map((selection: Property[]) =>
+        selection.map((property: Property) => ({
+          stadur: property.address,
+          fasteignanumer: property.propertyNumber,
+          rymisnumer: property.spaceNumber,
+          hamarksfjoldiGesta: property.customerCount,
+        })),
+      ),
     ),
-    bradabirgdarleyfi: answers.temporaryLicense.includes(YES) ? 'Já' : 'Nei',
-    skuldastada: answers.debtClaim.includes(YES) ? 'Já' : 'Nei',
+    bradabirgdarleyfi: answers.temporaryLicense?.includes(YES) ? 'Já' : 'Nei',
+    skuldastada: answers.debtClaim?.includes(YES) ? 'Já' : 'Nei',
     annad: answers.otherInfoText || '',
     vskNr: answers.info.vskNr,
     upphaed: charge,
@@ -81,15 +83,16 @@ export const getExtraData = (application: ApplicationWithAttachments) => {
   return extraData
 }
 
-const getHotelCategory = (category?: OPERATION_CATEGORY[]) => {
-  if (!category) {
-    return CATEGORIES.HOTEL
-  } else if (category.includes(OPERATION_CATEGORY.TWO)) {
-    return CATEGORIES.HOTEL_ALCOHOL
-  } else if (category.includes(OPERATION_CATEGORY.ONE)) {
-    return CATEGORIES.HOTEL_FOOD
-  } else {
-    return CATEGORIES.HOTEL
+const getHotelCategory = (category?: OPERATION_CATEGORY) => {
+  switch (category) {
+    case OPERATION_CATEGORY.TWO:
+      return CATEGORIES.HOTEL
+    case OPERATION_CATEGORY.THREE:
+      return CATEGORIES.HOTEL_FOOD
+    case OPERATION_CATEGORY.FOUR:
+      return CATEGORIES.HOTEL_ALCOHOL
+    default:
+      return CATEGORIES.HOTEL
   }
 }
 const getHoursMinutes = (value: string) => {

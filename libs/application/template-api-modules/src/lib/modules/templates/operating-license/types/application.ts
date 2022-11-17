@@ -6,8 +6,9 @@ export type Info = {
 }
 
 export enum OPERATION_CATEGORY {
-  ONE = '1',
   TWO = '2',
+  THREE = '3',
+  FOUR = '4',
 }
 
 export enum APPLICATION_TYPES {

@@ -22,14 +22,19 @@ import { Query, SearchForPropertyInput } from '@island.is/api/schema'
 import { SEARCH_FOR_PROPERTY_QUERY } from '../../graphql'
 import { Property } from '../../lib/constants'
 import * as styles from './PropertyRepeater.css'
+import { formatText } from '@island.is/application/core'
 
-export const PropertyRepeater: FC<FieldBaseProps> = ({ field }) => {
+export const PropertyRepeater: FC<FieldBaseProps> = ({
+  field,
+  application,
+}) => {
   const { formatMessage } = useLocale()
-  const { id } = field
+  const { id, title } = field
   const { fields, append, remove } = useFieldArray<Property>({
     name: `${id}`,
   })
 
+  const repeaterTitle = formatText(title, application, formatMessage)
   const handleAddProperty = () =>
     append({
       propertyNumber: '',
@@ -53,9 +58,10 @@ export const PropertyRepeater: FC<FieldBaseProps> = ({ field }) => {
           index={index}
           remove={remove}
           key={`${id}[${index}]`}
+          title={repeaterTitle}
         />
       ))}
-      <Box marginTop={1}>
+      <Box marginTop={1} marginBottom={1}>
         <Button
           variant="text"
           icon="add"
@@ -63,7 +69,7 @@ export const PropertyRepeater: FC<FieldBaseProps> = ({ field }) => {
           onClick={handleAddProperty}
           size="medium"
         >
-          {formatMessage(m.addProperty)}
+          {formatMessage(m.addProperty)} {repeaterTitle.toLowerCase()}
         </Button>
       </Box>
     </Box>
@@ -76,12 +82,14 @@ const PropertyItem = ({
   remove,
   fieldName,
   error,
+  title,
 }: {
   field: Partial<ArrayField<Property, 'id'>>
   fieldName: string
   index: number
   remove: (index: number) => void
   error?: any
+  title: string
 }) => {
   const fieldIndex = `${fieldName}.${index}`
   const propertyNumberField = `${fieldIndex}.propertyNumber`
@@ -132,7 +140,7 @@ const PropertyItem = ({
     <Box position="relative" marginTop={2}>
       <Controller name={fieldIndex} control={control} />
       <Text variant="h5" as="h5" paddingBottom={2}>
-        Rými {index + 1}
+        {title} {index + 1}
       </Text>
       {index !== 0 && (
         <Box

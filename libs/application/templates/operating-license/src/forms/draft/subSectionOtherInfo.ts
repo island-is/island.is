@@ -19,6 +19,7 @@ export const subSectionOtherInfo = buildSubSection({
         buildCheckboxField({
           id: 'temporaryLicense',
           title: m.temporaryLicenseTitle,
+          description: m.temporaryLicenseDescription,
           options: [{ value: YES, label: m.temporaryLicenseCheck }],
           defaultValue: [NO],
         }),
