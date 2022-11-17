@@ -36,8 +36,8 @@ const SidebarShipSearchInput = ({ namespace }: SidebarShipSearchInputProps) => {
     }
   }
 
-  const label = n('label', '')
-  const placeholder = n('placeholder', '')
+  const label = n('label', 'Skoða skip')
+  const placeholder = n('placeholder', 'Skipaskrárnúmer eða nafn')
 
   return (
     <Box>
