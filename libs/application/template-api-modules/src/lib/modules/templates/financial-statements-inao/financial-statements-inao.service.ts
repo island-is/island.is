@@ -9,6 +9,7 @@ import {
   PoliticalPartyFinancialStatementValues,
 } from '@island.is/clients/financial-statements-inao'
 import {
+  BoardMember,
   FSIUSERTYPE,
   LESS,
 } from '@island.is/application/templates/financial-statements-inao/types'
@@ -45,12 +46,6 @@ export const getCurrentUserType = (answers: any, externalData: any) => {
 export interface DataResponse {
   success: boolean
   message?: string
-}
-
-interface CemeteryCaretaker {
-  name: string
-  nationalId: string
-  role: string
 }
 
 @Injectable()
@@ -265,7 +260,7 @@ export class FinancialStatementsInaoTemplateService {
       const contactsAnswer = getValueViaPath(
         answers,
         'cemetryCaretaker',
-      ) as CemeteryCaretaker[]
+      ) as BoardMember[]
 
       const file = getValueViaPath(answers, 'attachments.file')
 
@@ -289,7 +284,7 @@ export class FinancialStatementsInaoTemplateService {
         },
       ]
 
-      contactsAnswer.forEach((x) => {
+      contactsAnswer.map((x) => {
         const contact: Contact = {
           nationalId: x.nationalId,
           name: x.name,
