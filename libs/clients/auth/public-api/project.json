@@ -23,7 +23,7 @@
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "outputPath": "libs/clients/auth/public-api/gen",
-        "command": "yarn openapi-generator -o libs/clients/auth/public-api/gen/fetch -i apps/services/auth/public-api/src/openapi.yaml"
+        "command": "yarn openapi-generator -o libs/clients/auth/public-api/gen/fetch -i apps/services/auth/public-api/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
       }
     }
   },
