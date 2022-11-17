@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { Box, Icon, ModalBase, Text } from '@island.is/island-ui/core'
 import * as styles from './Modal.css'
 
@@ -21,8 +21,13 @@ export const Modal = ({
   children,
   noPaddingBottom,
 }: ModalProps) => {
+  const headingRef = useRef<HTMLElement>(null)
   const handleOnVisibilityChange = (isVisible: boolean) => {
-    !isVisible && onClose?.()
+    if (isVisible) {
+      headingRef.current?.focus()
+    } else {
+      onClose?.()
+    }
   }
 
   return (
@@ -30,10 +35,10 @@ export const Modal = ({
       baseId={id}
       isVisible={isVisible}
       className={styles.modal}
+      modalLabel={label}
       hideOnClickOutside
       hideOnEsc
       preventBodyScroll
-      removeOnClose
       onVisibilityChange={handleOnVisibilityChange}
     >
       <Box
@@ -47,12 +52,13 @@ export const Modal = ({
         overflow="auto"
         className={styles.modalInner}
       >
-        <Box position="absolute" top={4} right={4}>
-          <button onClick={onClose}>
-            <Icon icon="close" type="outline" />
-          </button>
-        </Box>
-        <Box display="flex" flexDirection="column" rowGap={2}>
+        <Box
+          display="flex"
+          flexDirection="column"
+          rowGap={2}
+          tabIndex={-1}
+          ref={headingRef}
+        >
           {label && (
             <Text variant="small" fontWeight="semiBold">
               {label}
@@ -61,6 +67,11 @@ export const Modal = ({
           {title && <Text variant="h2">{title}</Text>}
         </Box>
         {children}
+        <Box position="absolute" top={4} right={4} aria-hidden>
+          <button onClick={onClose}>
+            <Icon icon="close" type="outline" />
+          </button>
+        </Box>
       </Box>
     </ModalBase>
   )
