@@ -39,7 +39,7 @@ class BaseUser implements TBaseUser {
   @ApiProperty()
   lastName: string
 
-  @ApiProperty({ enum: ['kvk', 'kk', 'hvk'] as ValueOf<TUser['gender']>[] })
+  @ApiProperty({ enum: ['kvk', 'kk', 'x'] as ValueOf<TUser['gender']>[] })
   gender: TUser['gender']
 
   @ApiProperty()

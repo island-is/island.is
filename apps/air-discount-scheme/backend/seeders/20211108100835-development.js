@@ -55,7 +55,7 @@ const getRandomFlight = (nationalId) => {
     booking_date: randomDate,
     user_info: JSON.stringify({
       age: faker.datatype.number(99),
-      gender: faker.datatype.boolean() ? 'kk' : 'kvk',
+      gender: ['kk', 'kvk', 'hvk'][Math.floor(Math.random() * 3)],
       postalCode: '600',
     }),
     connectable: faker.datatype.boolean(),

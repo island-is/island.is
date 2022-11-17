@@ -221,13 +221,13 @@ export class NationalRegistryService {
   ) {}
 
   // Þjóðskrá API gender keys
-  private mapGender(genderId: string): 'kk' | 'kvk' | 'hvk' | 'óvíst' {
+  private mapGender(genderId: string): 'kk' | 'kvk' | 'x' | 'óvíst' {
     if (['1', '3'].includes(genderId)) {
       return 'kk'
     } else if (['2', '4'].includes(genderId)) {
       return 'kvk'
     } else if (['7', '8'].includes(genderId)) {
-      return 'hvk'
+      return 'x'
     }
     return 'óvíst'
   }

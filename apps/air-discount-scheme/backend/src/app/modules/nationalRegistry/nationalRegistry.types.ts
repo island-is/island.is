@@ -2,7 +2,7 @@ export interface NationalRegistryGeneralLookupResponse {
   source: 'Þjóðskrá' | 'Fyrirtækjaskrá'
   ssn: string
   name: string
-  gender: 'kk' | 'kvk' | 'hvk'
+  gender: 'kk' | 'kvk' | 'x'
   address: string
   postalcode: string
   city: string
@@ -34,7 +34,7 @@ export interface NationalRegistryUser {
   firstName: string
   middleName: string
   lastName: string
-  gender: 'kk' | 'kvk' | 'hvk' | 'óvíst'
+  gender: 'kk' | 'kvk' | 'x' | 'óvíst'
   address: string
   postalcode: number
   city: string

@@ -95,8 +95,8 @@ export class GetFlightLegsBody implements FlightLegsInput {
   age?: RangeInput
 
   @IsOptional()
-  @IsEnum(['kk', 'kvk', 'hvk'])
-  gender?: 'kk' | 'kvk' | 'hvk'
+  @IsEnum(['kk', 'kvk', 'x'])
+  gender?: 'kk' | 'kvk' | 'x'
 
   @IsOptional()
   @IsNumber()
