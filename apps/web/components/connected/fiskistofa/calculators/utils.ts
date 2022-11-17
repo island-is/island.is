@@ -2,7 +2,7 @@ export const getCurrentYear = () => {
   const today = new Date()
   let currentYear = today.getFullYear()
 
-  // A new time period starts at 01.09.2022
+  // A new time period starts at the first of september each year
   const newTimePeriodHasStarted = today.getMonth() >= 8
 
   if (newTimePeriodHasStarted) {
