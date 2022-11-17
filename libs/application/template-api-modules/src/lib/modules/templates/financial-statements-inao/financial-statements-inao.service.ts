@@ -1,11 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common'
 import {
   CemeteryFinancialStatementValues,
+  Client,
+  Contact,
+  ContactType,
   FinancialStatementsInaoClientService,
   PersonalElectionFinancialStatementValues,
   PoliticalPartyFinancialStatementValues,
 } from '@island.is/clients/financial-statements-inao'
 import {
+  BoardMember,
   FSIUSERTYPE,
   LESS,
 } from '@island.is/application/templates/financial-statements-inao/types'
@@ -43,6 +47,7 @@ export interface DataResponse {
   success: boolean
   message?: string
 }
+
 @Injectable()
 export class FinancialStatementsInaoTemplateService {
   s3: S3
@@ -124,6 +129,11 @@ export class FinancialStatementsInaoTemplateService {
         'election.selectElection',
       ) as string
       const clientName = getValueViaPath(answers, 'about.fullName') as string
+      const clientPhone = getValueViaPath(
+        answers,
+        'about.phoneNumber',
+      ) as string
+      const clientEmail = getValueViaPath(answers, 'about.email') as string
 
       const fileName = noValueStatement
         ? undefined
@@ -137,13 +147,27 @@ export class FinancialStatementsInaoTemplateService {
         )}', file: '${fileName}'`,
       )
 
+      const client: Client = {
+        nationalId: nationalId,
+        name: clientName,
+        phone: clientPhone,
+        email: clientEmail,
+      }
+
+      const actorContact: Contact | undefined = actor
+        ? {
+            nationalId: actor.nationalId,
+            name: clientName,
+            contactType: ContactType.Actor,
+          }
+        : undefined
+
       const result: DataResponse = await this.financialStatementsClientService
         .postFinancialStatementForPersonalElection(
-          nationalId,
-          actor?.nationalId,
+          client,
+          actorContact,
           electionId,
           noValueStatement,
-          clientName,
           values,
           fileName,
         )
@@ -177,12 +201,30 @@ export class FinancialStatementsInaoTemplateService {
         'conditionalAbout.operatingYear',
       ) as string
 
+      const actorsName = getValueViaPath(answers, 'about.fullName') as string
+
       const fileName = await this.getAttachment({ application, auth })
+
+      const client = {
+        nationalId: nationalId,
+      }
+
+      if (!actor) {
+        return new Error('Enginn umboðsmaður fannst.')
+      }
+
+      const contacts: Contact[] = [
+        {
+          nationalId: actor.nationalId,
+          name: actorsName,
+          contactType: ContactType.Actor,
+        },
+      ]
 
       const result: DataResponse = await this.financialStatementsClientService
         .postFinancialStatementForPoliticalParty(
-          nationalId,
-          actor?.nationalId,
+          client,
+          contacts,
           year,
           '',
           values,
@@ -214,16 +256,50 @@ export class FinancialStatementsInaoTemplateService {
         'conditionalAbout.operatingYear',
       ) as string
 
+      const actorsName = getValueViaPath(answers, 'about.fullName') as string
+      const contactsAnswer = getValueViaPath(
+        answers,
+        'cemetryCaretaker',
+      ) as BoardMember[]
+
       const file = getValueViaPath(answers, 'attachments.file')
 
       const fileName = file
         ? await this.getAttachment({ application, auth })
         : undefined
 
+      const client = {
+        nationalId: nationalId,
+      }
+
+      if (!actor) {
+        return new Error('Enginn umboðsmaður fannst.')
+      }
+
+      const contacts: Contact[] = [
+        {
+          nationalId: actor.nationalId,
+          name: actorsName,
+          contactType: ContactType.Actor,
+        },
+      ]
+
+      contactsAnswer.map((x) => {
+        const contact: Contact = {
+          nationalId: x.nationalId,
+          name: x.name,
+          contactType:
+            x.role === 'Stjórnarmaður'
+              ? ContactType.BoardMember
+              : ContactType.Inspector,
+        }
+        contacts.push(contact)
+      })
+
       const result: DataResponse = await this.financialStatementsClientService
         .postFinancialStatementForCemetery(
-          nationalId,
-          actor?.nationalId,
+          client,
+          contacts,
           year,
           '',
           values,
