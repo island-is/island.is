@@ -41,6 +41,7 @@ export type { User, CreateUser, UpdateUser } from './lib/user'
 export {
   CaseOrigin,
   CaseType,
+  IndictmentSubType,
   CaseState,
   CaseTransition,
   CaseLegalProvisions,

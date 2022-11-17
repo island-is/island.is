@@ -8,6 +8,7 @@ import {
 } from '@island.is/application/templates/family-matters-core/types'
 import { FieldBaseProps } from '@island.is/application/types'
 import { BOARDMEMEBER, CARETAKER } from '../constants'
+import { getBoardmembersAndCaretakers } from './helpers'
 
 const FileSchema = z.object({
   name: z.string(),
@@ -323,12 +324,7 @@ const cemetryCaretaker = z
   )
   .refine(
     (x) => {
-      const careTakers = x
-        .filter((member) => member.role === CARETAKER)
-        .map((member) => member.nationalId)
-      const boardMembers = x
-        .filter((member) => member.role === BOARDMEMEBER)
-        .map((member) => member.nationalId)
+      const { careTakers, boardMembers } = getBoardmembersAndCaretakers(x)
 
       const careTakersUnique = careTakers.filter((member) =>
         boardMembers.includes(member),

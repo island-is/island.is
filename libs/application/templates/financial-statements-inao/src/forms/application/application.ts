@@ -12,7 +12,6 @@ import { clientInfoSection } from './shared/about/clientInfoSection'
 import { m } from '../../lib/messages'
 import { overviewSection } from './shared/overviewSection'
 import { Logo } from '../../components'
-import { USERTYPE, LESS } from '../../lib/constants'
 import { cemetryKeyNumbersSection } from './cemetry/cemetryKeyNumbers'
 import { partyKeyNumbersSection } from './party/partyKeyNumbers'
 import { individualKeyNumbersSection } from './individual/individualKeyNumbers'
@@ -27,6 +26,7 @@ import {
   IndentityApiProvider,
   UserProfileApi,
 } from '../../dataProviders'
+import { FSIUSERTYPE, LESS } from '../../types'
 
 export const getApplication = (allowFakeData = false): Form => {
   return buildForm({
@@ -38,7 +38,7 @@ export const getApplication = (allowFakeData = false): Form => {
     logo: Logo,
     children: [
       buildSection({
-        id: 'conditions',
+        id: 'ExternalDataSection',
         title: m.dataCollectionTitle,
         children: [
           buildExternalDataProvider({
@@ -89,7 +89,7 @@ export const getApplication = (allowFakeData = false): Form => {
                 applicationAnswers.cemetryOperation?.incomeLimit ?? '0'
               const currentAssets =
                 applicationAnswers.cemetryAsset?.fixedAssetsTotal
-              const isCemetry = userType === USERTYPE.CEMETRY
+              const isCemetry = userType === FSIUSERTYPE.CEMETRY
               const totalIncome = isCemetry
                 ? applicationAnswers.operatingCost?.total
                 : '0'

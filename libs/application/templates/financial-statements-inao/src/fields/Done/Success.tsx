@@ -5,8 +5,8 @@ import { CustomField, FieldBaseProps } from '@island.is/application/types'
 import format from 'date-fns/format'
 import { m } from '../../lib/messages'
 import { getCurrentUserType } from '../../lib/utils/helpers'
-import { USERTYPE } from '../../lib/constants'
 import { FinancialStatementsInao } from '../../lib/utils/dataSchema'
+import { FSIUSERTYPE } from '../../types'
 
 interface PropTypes extends FieldBaseProps {
   field: CustomField
@@ -20,7 +20,7 @@ export const Success = ({ application }: PropTypes): JSX.Element => {
 
   const getDescriptionText = () => {
     const currentDate = format(new Date(), "dd.MM.yyyy 'kl.' kk:mm")
-    if (userType === USERTYPE.INDIVIDUAL) {
+    if (userType === FSIUSERTYPE.INDIVIDUAL) {
       return `${formatMessage(m.individualReceivedMsgFirst)} ${
         applicationAnswers.election.electionName
       }

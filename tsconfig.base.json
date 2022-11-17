@@ -234,6 +234,9 @@
       "@island.is/application/templates/financial-statements-inao": [
         "libs/application/templates/financial-statements-inao/src/index.ts"
       ],
+      "@island.is/application/templates/financial-statements-inao/types": [
+        "libs/application/templates/financial-statements-inao/src/types.ts"
+      ],
       "@island.is/application/templates/funding-government-projects": [
         "libs/application/templates/funding-government-projects/src/index.ts"
       ],
@@ -340,6 +343,7 @@
         "libs/clients/adr-and-machine-license/src/index.ts"
       ],
       "@island.is/clients/assets": ["libs/clients/assets/src/index.ts"],
+      "@island.is/clients/assets-v2": ["libs/clients/assets-v2/src/index.ts"],
       "@island.is/clients/auth/delegation-api": [
         "libs/clients/auth/delegation-api/src/index.ts"
       ],

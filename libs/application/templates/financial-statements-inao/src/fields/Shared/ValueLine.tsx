@@ -5,17 +5,27 @@ import { MessageDescriptor } from 'react-intl'
 interface ValueLineProps {
   label: string | MessageDescriptor
   value?: string | MessageDescriptor
+  isTotal?: boolean
 }
 
-export const ValueLine: FC<ValueLineProps> = ({ label, value = '-' }) => {
+export const ValueLine: FC<ValueLineProps> = ({
+  label,
+  value = '-',
+  isTotal = false,
+}) => {
   const { formatMessage } = useLocale()
 
   return (
-    <Box paddingY={2}>
-      <Text variant="h4" as="h4">
+    <Box paddingY={1}>
+      <Text variant="medium" fontWeight="semiBold" as="label">
         {formatMessage(label)}
       </Text>
-      <Text variant="default" as="p">
+
+      <Text
+        variant="default"
+        as="p"
+        fontWeight={isTotal ? 'semiBold' : 'regular'}
+      >
         {value}
       </Text>
     </Box>

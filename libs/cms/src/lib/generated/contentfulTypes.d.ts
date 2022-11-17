@@ -16,11 +16,11 @@ export interface IAccordionSliceFields {
   /** Has Border Above */
   hasBorderAbove?: boolean | undefined
 
-  /** Title Heading Level */
-  titleHeadingLevel?: 'h2' | 'h3' | 'h4' | undefined
-
   /** Show Title */
   showTitle?: boolean | undefined
+
+  /** Title Heading Level */
+  titleHeadingLevel?: 'h2' | 'h3' | 'h4' | 'h5' | undefined
 }
 
 /** A slice with accordions */
@@ -59,17 +59,7 @@ export interface IAlertBannerFields {
   linkTitle?: string | undefined
 
   /** Link */
-  link?:
-    | IAboutSubPage
-    | IArticle
-    | IArticleCategory
-    | ISubArticle
-    | ILifeEventPage
-    | ILinkUrl
-    | INews
-    | IVidspyrnaFrontpage
-    | IVidspyrnaPage
-    | undefined
+  link?: ILinkUrl | undefined
 
   /** Is dismissable */
   isDismissable: boolean
@@ -80,6 +70,7 @@ export interface IAlertBannerFields {
   /** Service Portal Paths */
   servicePortalPaths?:
     | (
+        | '*'
         | 'postholf'
         | 'umsoknir'
         | 'min-gogn'
@@ -90,7 +81,6 @@ export interface IAlertBannerFields {
         | 'fjarmal'
         | 'okutaeki'
         | 'stillingar'
-        | '*'
       )[]
     | undefined
 }
@@ -514,6 +504,43 @@ export interface IDistricts extends Entry<IDistrictsFields> {
   }
 }
 
+export interface IEmailSignupFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Description */
+  description?: string | undefined
+
+  /** Form Fields */
+  formFields?: IFormField[] | undefined
+
+  /** Signup Type */
+  signupType?: 'mailchimp' | 'zenter' | undefined
+
+  /** Configuration */
+  configuration?: Record<string, any> | undefined
+
+  /** Translations */
+  translations?: Record<string, any> | undefined
+}
+
+export interface IEmailSignup extends Entry<IEmailSignupFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'emailSignup'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IEmbeddedVideoFields {
   /** Title */
   title: string
@@ -837,11 +864,21 @@ export interface IFormFieldFields {
   /** Title */
   title: string
 
+  /** Name */
+  name?: string | undefined
+
   /** Placeholder */
   placeholder?: string | undefined
 
   /** Type */
-  type: 'input' | 'text' | 'dropdown' | 'radio' | 'acceptTerms'
+  type:
+    | 'input'
+    | 'text'
+    | 'dropdown'
+    | 'radio'
+    | 'acceptTerms'
+    | 'email'
+    | 'checkboxes'
 
   /** Required */
   required?: boolean | undefined
@@ -1619,6 +1656,9 @@ export interface IMailingListSignupFields {
   /** Category Label */
   categoryLabel?: string | undefined
 
+  /** Inputs */
+  inputs?: Record<string, any> | undefined
+
   /** Categories */
   categories?: Record<string, any> | undefined
 
@@ -1824,14 +1864,17 @@ export interface INamespace extends Entry<INamespaceFields> {
 }
 
 export interface INewsFields {
+  /** Tilkynning */
+  tilkynning?: string | undefined
+
   /** Content status */
-  contentStatus: 'Undefined' | 'Needs work' | 'In review' | 'Done'
+  contentStatus?: 'Undefined' | 'Needs work' | 'In review' | 'Done' | undefined
 
   /** Title */
   title: string
 
   /** Subtitle */
-  subtitle: string
+  subtitle?: string | undefined
 
   /** Slug */
   slug: string
@@ -2274,6 +2317,7 @@ export interface IOrganizationSubpageFields {
         | IContactUs
         | IDistricts
         | IMailingListSignup
+        | IEmailSignup
         | IEventSlice
         | IFeaturedArticles
         | ILatestNewsSlice
@@ -2440,12 +2484,13 @@ export interface IPowerBiSlice extends Entry<IPowerBiSliceFields> {
 export interface IProcessEntryFields {
   /** Type */
   type:
-    | 'Digital'
-    | 'Not digital'
     | 'Digital w/login'
-    | 'Not digital w/login'
     | 'No type'
     | 'Application system'
+    | 'Leyfisveitingagatt'
+    | 'Drop and sign'
+    | 'Paper'
+
   /** Process title */
   processTitle: string
 
@@ -2493,6 +2538,7 @@ export interface IProjectPageFields {
     | 'election'
     | 'ukraine'
     | 'opinbernyskopun'
+    | 'maelabord-fiskistofu'
 
   /** Sidebar */
   sidebar: boolean
@@ -2564,6 +2610,15 @@ export interface IProjectPageFields {
 
   /** Footer Items */
   footerItems?: IFooterItem[] | undefined
+
+  /** Back Link */
+  backLink?: ILink | undefined
+
+  /** Content Is Full Width */
+  contentIsFullWidth?: boolean | undefined
+
+  /** Namespace */
+  namespace?: IUiConfiguration | undefined
 }
 
 export interface IProjectPage extends Entry<IProjectPageFields> {
@@ -2642,6 +2697,9 @@ export interface IQuestionAndAnswerFields {
 
   /** Answer */
   answer?: Document | undefined
+
+  /** Publish Date */
+  publishDate?: string | undefined
 }
 
 export interface IQuestionAndAnswer extends Entry<IQuestionAndAnswerFields> {
@@ -2775,7 +2833,9 @@ export interface ISliceConnectedComponentFields {
     | 'Fiskistofa/ShipSearchSidebarInput'
     | 'Fasteignasalar/RealEstateAgents'
     | 'Lögmenn/Lawyers'
-    | 'ElectronicRegistrations/MonthlyStatistics'
+    | 'Fiskistofa/CatchQuotaCalculator'
+    | 'Fiskistofa/StraddlingStockCalculator'
+    | 'Fiskistofa/SelectedShip'
     | undefined
 
   /** Localized JSON */
@@ -3240,6 +3300,31 @@ export interface ITabContent extends Entry<ITabContentFields> {
     contentType: {
       sys: {
         id: 'tabContent'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface ITableSliceFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Table Content */
+  tableContent?: Document | undefined
+}
+
+export interface ITableSlice extends Entry<ITableSliceFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'tableSlice'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -3823,6 +3908,7 @@ export type CONTENT_TYPE =
   | 'cardSection'
   | 'contactUs'
   | 'districts'
+  | 'emailSignup'
   | 'embeddedVideo'
   | 'enhancedAsset'
   | 'errorPage'
@@ -3893,6 +3979,7 @@ export type CONTENT_TYPE =
   | 'supportQNA'
   | 'supportSubCategory'
   | 'tabContent'
+  | 'tableSlice'
   | 'tabSection'
   | 'teamList'
   | 'teamMember'

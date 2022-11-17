@@ -5,6 +5,7 @@ import { NationalRegistryService } from './national-registry.service'
 import { AssetsModule } from '@island.is/api/domains/assets'
 import { ConfigModule } from '@nestjs/config'
 import { AssetsClientConfig } from '@island.is/clients/assets'
+import { AssetsV2ClientConfig } from '@island.is/clients/assets-v2'
 
 export class NationalRegistryModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
@@ -15,7 +16,7 @@ export class NationalRegistryModule {
         AssetsModule,
         ConfigModule.forRoot({
           isGlobal: true,
-          load: [AssetsClientConfig],
+          load: [AssetsClientConfig, AssetsV2ClientConfig],
         }),
       ],
       providers: [NationalRegistryService],
