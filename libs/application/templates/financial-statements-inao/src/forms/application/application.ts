@@ -35,7 +35,27 @@ export const getApplication = (allowFakeData = false): Form => {
       buildSection({
         id: 'ExternalDataSection',
         title: m.dataCollectionTitle,
-        children: [],
+        children: [
+          buildExternalDataProvider({
+            id: 'approveExternalData',
+            title: m.dataCollectionTitle,
+            checkboxLabel: m.dataCollectionCheckboxLabel,
+            dataProviders: [
+              buildDataProviderItem({
+                id: 'nationalRegistry',
+                type: 'IdentityProvider',
+                title: m.dataCollectionNationalRegistryTitle,
+                subTitle: m.dataCollectionNationalRegistrySubtitle,
+              }),
+              buildDataProviderItem({
+                id: 'userProfile',
+                type: 'UserProfileProvider',
+                title: m.dataCollectionUserProfileTitle,
+                subTitle: m.dataCollectionUserProfileSubtitle,
+              }),
+            ],
+          }),
+        ],
       }),
       clientInfoSection,
       electionInfoSection,
