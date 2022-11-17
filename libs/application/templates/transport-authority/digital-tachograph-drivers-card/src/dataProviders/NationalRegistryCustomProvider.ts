@@ -6,7 +6,7 @@ import {
   StaticText,
 } from '@island.is/application/types'
 import { GET_BIRTHPLACE_AND_DOMICILE } from '../graphql/queries'
-import { m } from '../lib/messagesx'
+import { externalData } from '../lib/messages'
 
 export class NationalRegistryCustomProvider extends BasicDataProvider {
   type = 'NationalRegistryCustomProvider'
@@ -34,8 +34,7 @@ export class NationalRegistryCustomProvider extends BasicDataProvider {
         const domicileCode = nationalRegistryUserData?.address?.code
         if (!domicileCode || domicileCode.substring(0, 2) === '99') {
           return Promise.reject({
-            reason:
-              m.nationalRegistryDomicileProviderErrorMissing.defaultMessage,
+            reason: externalData.nationalRegistryCustom.missing.defaultMessage,
           })
         }
 

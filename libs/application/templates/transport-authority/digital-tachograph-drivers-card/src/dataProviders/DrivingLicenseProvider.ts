@@ -6,7 +6,7 @@ import {
 } from '@island.is/application/types'
 import { DrivingLicense } from '../types/schema'
 import { GET_DRIVING_LICENSE } from '../graphql/queries'
-import { m } from '../lib/messagesx'
+import { externalData } from '../lib/messages'
 
 export class DrivingLicenseProvider extends BasicDataProvider {
   type = 'DrivingLicenseProvider'
@@ -35,7 +35,7 @@ export class DrivingLicenseProvider extends BasicDataProvider {
           !licenseCategories.some((x) => validCategories.includes(x))
         ) {
           return Promise.reject({
-            reason: m.drivingLicenseProviderErrorMissing.defaultMessage,
+            reason: externalData.drivingLicense.missing.defaultMessage,
           })
         }
 

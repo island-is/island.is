@@ -21,7 +21,7 @@ type CreateChargeData = {
 }
 
 export const Payment: Form = buildForm({
-  id: 'TransferOfVehicleOwnershipPaymentForm',
+  id: 'PaymentForm',
   title: '',
   mode: FormModes.APPLYING,
   renderLastScreenButton: false,

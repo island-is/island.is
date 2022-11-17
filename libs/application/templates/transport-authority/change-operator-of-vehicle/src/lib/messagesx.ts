@@ -73,7 +73,7 @@ export const m = defineMessages({
     description: 'confirmation',
   },
   confirm: {
-    id: 'cr.application:confirm',
+    id: 'ta.cov.application:confirm',
     defaultMessage: 'Staðfesta',
     description: 'confirm',
   },
@@ -94,13 +94,13 @@ export const m = defineMessages({
     description: '',
   },
   actionCardPayment: {
-    id: 'cr.application:actionCardPayment',
+    id: 'ta.cov.application:actionCardPayment',
     defaultMessage: 'Greiðslu vantar',
     description:
       'Description of application state/status when payment is pending',
   },
   errorDataProvider: {
-    id: 'cr.application:error.dataProvider',
+    id: 'ta.cov.application:error.dataProvider',
     defaultMessage: 'Reyndu aftur síðar',
     description: 'Unhandled error in data provider',
   },

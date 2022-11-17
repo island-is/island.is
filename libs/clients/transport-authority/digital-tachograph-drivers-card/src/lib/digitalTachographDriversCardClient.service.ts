@@ -114,7 +114,6 @@ export class DigitalTachographDriversCardClient {
   ): Promise<DriverCardApplicationResponse | null> {
     // TODOx disabled untill this API goes on xroad
     throw Error('Not implemented')
-    return null
 
     const result = await this.driversCardApiWithAuth(auth).postDrivercards({
       driverCardApplicationRequest: {
@@ -162,6 +161,13 @@ export class DigitalTachographDriversCardClient {
   public async getPhotoAndSignature(
     auth: User,
   ): Promise<PhotoAndSignatureResponse> {
+    // TODOx disabled untill this API goes on xroad
+    return {
+      ssn: undefined,
+      photo: undefined,
+      signature: undefined,
+    }
+
     const result = await this.individualApiWithAuth(
       auth,
     ).getIndividualPersidnoPhotoandsignature({

@@ -6,7 +6,7 @@ import {
   StaticText,
 } from '@island.is/application/types'
 import { GET_QUALITY_PHOTO_AND_SIGNATURE } from '../graphql/queries'
-import { m } from '../lib/messagesx'
+import { externalData } from '../lib/messages'
 
 export class QualityPhotoAndSignatureProvider extends BasicDataProvider {
   type = 'QualityPhotoAndSignatureProvider'
@@ -38,7 +38,8 @@ export class QualityPhotoAndSignatureProvider extends BasicDataProvider {
           !photoAndSignatureData?.hasSignature
         ) {
           return Promise.reject({
-            reason: m.drivingLicenseProviderErrorMissing.defaultMessage,
+            reason:
+              externalData.qualityPhotoAndSignature.missing.defaultMessage,
           })
         }
 
