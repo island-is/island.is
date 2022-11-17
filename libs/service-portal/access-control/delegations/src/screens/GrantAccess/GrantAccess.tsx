@@ -232,7 +232,11 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
                     }}
                     type="tel"
                     format="######-####"
-                    label={formatMessage(sharedMessages.nationalId)}
+                    label={formatMessage({
+                      id:
+                        'sp.access-control-delegations:grant-form-access-holder',
+                      defaultMessage: 'Kennitala aðgangshafa',
+                    })}
                     placeholder={'000000-0000'}
                     error={errors.toNationalId?.message}
                     onChange={(value) => {
