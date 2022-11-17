@@ -1,0 +1,27 @@
+{
+  "root": "libs/api/domains/electronic-registration-statistics",
+  "sourceRoot": "libs/api/domains/electronic-registration-statistics/src",
+  "projectType": "library",
+  "architect": {
+    "lint": {
+      "builder": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/api/domains/electronic-registration-statistics/**/*.ts"
+        ]
+      }
+    },
+    "test": {
+      "builder": "@nrwl/jest:jest",
+      "outputs": [
+        "coverage/libs/api/domains/electronic-registration-statistics"
+      ],
+      "options": {
+        "jestConfig": "libs/api/domains/electronic-registration-statistics/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

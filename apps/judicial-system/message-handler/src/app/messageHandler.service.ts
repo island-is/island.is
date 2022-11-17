@@ -61,7 +61,7 @@ export class MessageHandlerService implements OnModuleDestroy {
           'deliverSignedRulingToCourt',
         )
         break
-      case MessageType.SEND_RULING_NOTIFICAGTION:
+      case MessageType.SEND_RULING_NOTIFICATION:
         handled = await this.rulingNotificationService.sendRulingNotification(
           message.caseId,
         )

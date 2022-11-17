@@ -34,13 +34,8 @@ import {
   toast,
   UploadFile,
 } from '@island.is/island-ui/core'
-import {
-  CaseFile,
-  CaseFileCategory,
-  Feature,
-} from '@island.is/judicial-system/types'
+import { CaseFile, CaseFileCategory } from '@island.is/judicial-system/types'
 import { useS3UploadV2 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { policeCaseFiles as m } from './PoliceCaseFilesRoute.strings'
@@ -233,7 +228,6 @@ const PoliceCaseFilesRoute = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
     FormContext,
   )
-  const { features } = useContext(FeatureContext)
 
   const [allUploaded, setAllUploaded] = useState<allUploadedState>(
     workingCase.policeCaseNumbers.reduce(
@@ -275,7 +269,7 @@ const PoliceCaseFilesRoute = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${constants.INDICTMENTS_CASE_FILES_ROUTE}/${workingCase.id}`}
+          previousUrl={`${constants.INDICTMENTS_DEFENDANT_ROUTE}/${workingCase.id}`}
           nextUrl={`${constants.INDICTMENTS_CASE_FILE_ROUTE}/${workingCase.id}`}
           nextIsDisabled={Object.values(allUploaded).some((v) => v)}
           nextIsLoading={isLoadingWorkingCase}

@@ -47,7 +47,11 @@ import {
   QueryGetSingleNewsArgs,
   GenericTag,
 } from '../graphql/schema'
-import { NewsCard, HeadWithSocialSharing } from '@island.is/web/components'
+import {
+  NewsCard,
+  HeadWithSocialSharing,
+  TableSlice,
+} from '@island.is/web/components'
 import { useNamespace } from '@island.is/web/hooks'
 import { LinkType, useLinkResolver } from '../hooks/useLinkResolver'
 import { FRONTPAGE_NEWS_TAG_ID } from '@island.is/web/constants'
@@ -230,7 +234,11 @@ const NewsListNew: Screen<NewsListProps> = ({
         </Box>
       )}
       <Box paddingBottom={4} width="full">
-        {richText(newsItem.content as SliceType[])}
+        {richText(newsItem.content as SliceType[], {
+          renderComponent: {
+            TableSlice: (slice) => <TableSlice slice={slice} />,
+          },
+        })}
       </Box>
     </>
   )

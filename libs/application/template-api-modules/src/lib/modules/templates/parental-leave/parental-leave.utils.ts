@@ -176,8 +176,16 @@ export const getRightsCode = (application: Application): string => {
   }
 
   const answers = getApplicationAnswers(application.answers)
-  const isSelfEmployed = answers.isSelfEmployed === YES
 
+  /*
+   ** If we got RightCodePeriod from VMST then use it ( only basic/grunnrétt )
+   */
+  const rightCodePeriod = answers.periods[0]?.rightCodePeriod
+  if (rightCodePeriod) {
+    return rightCodePeriod
+  }
+
+  const isSelfEmployed = answers.isSelfEmployed === YES
   const isUnemployed = answers.applicationType === PARENTAL_GRANT
   const isStudent = answers.applicationType === PARENTAL_GRANT_STUDENTS
 

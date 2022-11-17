@@ -8,6 +8,7 @@ export enum ApiScope {
   financeSalary = '@island.is/finance/salary',
   financeSchedule = '@island.is/finance/schedule:read',
   internal = '@island.is/internal',
+  internalProcuring = '@island.is/internal:procuring',
   meDetails = '@island.is/me:details',
   licenses = '@island.is/licenses',
   licensesVerify = '@island.is/licenses:verify',

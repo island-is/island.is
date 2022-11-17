@@ -491,9 +491,7 @@ export function formatCourtRevokedSmsNotification(
 
   const courtRevokedText = formatMessage(
     notifications.courtRevoked.caseTypeRevoked,
-    {
-      caseType: type,
-    },
+    { caseType: type },
   )
 
   return [courtRevokedText, prosecutorText, courtDateText]
@@ -654,15 +652,17 @@ export function formatCourtUploadRulingTitle(
 export function formatDefenderAssignedEmailNotification(
   formatMessage: FormatMessage,
   theCase: Case,
-  overviewUrl: string,
+  overviewUrl?: string,
 ): SubjectAndBody {
   const subject = formatMessage(notifications.defenderAssignedEmail.subject, {
     court: capitalize(theCase.court?.name ?? ''),
   })
 
-  const body = formatMessage(notifications.defenderAssignedEmail.body, {
+  const body = formatMessage(notifications.defenderAssignedEmail.bodyV2, {
+    defenderHasAccessToRVG: Boolean(overviewUrl),
     courtCaseNumber: capitalize(theCase.courtCaseNumber ?? ''),
     court: theCase.court?.name ?? '',
+    courtName: theCase.court?.name.replace('dómur', 'dómi') ?? '',
     linkStart: `<a href="${overviewUrl}">`,
     linkEnd: '</a>',
   })

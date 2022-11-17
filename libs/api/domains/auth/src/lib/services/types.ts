@@ -7,7 +7,6 @@ import {
   PatchDelegationInput,
   UpdateDelegationInput,
 } from '../dto'
-import { DelegationByOtherUserInput } from '../dto/delegationByOtherUser.input'
 import { ApiScope } from '../models'
 import { ScopeTreeNode } from '../models/scopeTreeNode.model'
 import { ApiScopesInput } from '../dto/apiScopes.input'
@@ -54,6 +53,7 @@ export interface DelegationScopeDTO {
   displayName: string
   validFrom: Date
   validTo?: Date | null
+  domainName?: string | null
 }
 
 export interface DelegationDTO {
@@ -63,16 +63,26 @@ export interface DelegationDTO {
   toNationalId: string
   toName?: string | null
   validTo?: Date | null
+  domainName?: string | null
   type: DelegationType
   provider: DelegationProvider
   scopes?: Array<DelegationScopeDTO>
 }
 
+export interface MergedDelegationDTO {
+  fromNationalId: string
+  fromName?: string | null
+  toNationalId: string
+  toName?: string | null
+  validTo?: Date | null
+  types: DelegationType[]
+}
+
 export enum DelegationProvider {
-  Thjodskra = 'thjodskra',
-  Fyrirtaekjaskra = 'fyrirtaekjaskra',
-  Talsmannagrunnur = 'talsmannagrunnur',
-  Delegationdb = 'delegationdb',
+  thjodskra = 'thjodskra',
+  fyrirtaekjaskra = 'fyrirtaekjaskra',
+  talsmannagrunnur = 'talsmannagrunnur',
+  delegationdb = 'delegationdb',
 }
 
 export enum DelegationType {

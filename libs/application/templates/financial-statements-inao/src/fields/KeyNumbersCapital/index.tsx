@@ -50,6 +50,7 @@ export const KeyNumbersCapital = () => {
               }, INPUTCHANGEINTERVAL)}
               label={formatMessage(m.capitalIncome)}
               backgroundColor="blue"
+              rightAlign
               currency
             />
           </Box>
@@ -68,6 +69,7 @@ export const KeyNumbersCapital = () => {
                 errors && getErrorViaPath(errors, CAPITALNUMBERS.capitalCost)
               }
               backgroundColor="blue"
+              rightAlign
               currency
             />
           </Box>

@@ -11,168 +11,174 @@ import {
 } from '../../../../test/setup'
 import { TestEndpointOptions } from '../../../../test/types'
 import { FixtureFactory } from '../../../../test/fixtures/fixture-factory'
-import { testCases } from './test-cases'
-import { createCurrentUser } from '@island.is/testing/fixtures'
+import { accessTestCases } from '../../../../test/access-test-cases'
+import {
+  createCurrentUser,
+  createNationalId,
+} from '@island.is/testing/fixtures'
 import { AuthScope } from '@island.is/auth/scopes'
 import shuffle from 'lodash/shuffle'
 
 describe('DomainsController', () => {
   describe('withAuth', () => {
-    describe.each(Object.keys(testCases))('with test case: %s', (caseName) => {
-      const testCase = testCases[caseName]
-      const validDomains = testCase.expected.map((domain) => domain.name)
-      const invalidDomains = differenceWith(
-        testCase.domains,
-        testCase.expected,
-        (a, b) => a.name === b.name,
-      ).map((domain) => domain.name)
-      let app: TestApp
-      let server: request.SuperTest<request.Test>
+    describe.each(Object.keys(accessTestCases))(
+      'with test case: %s',
+      (caseName) => {
+        const testCase = accessTestCases[caseName]
+        const expectedDomains = testCase.expectedDomains ?? testCase.expected
+        const validDomains = expectedDomains.map((domain) => domain.name)
+        const invalidDomains = differenceWith(
+          testCase.domains,
+          expectedDomains,
+          (a, b) => a.name === b.name,
+        ).map((domain) => domain.name)
+        let app: TestApp
+        let server: request.SuperTest<request.Test>
 
-      beforeAll(async () => {
-        // Arrange
-        app = await setupWithAuth({
-          user: testCase.user,
-          customScopeRules: testCase.customScopeRules,
+        beforeAll(async () => {
+          // Arrange
+          app = await setupWithAuth({
+            user: testCase.user,
+            customScopeRules: testCase.customScopeRules,
+          })
+          server = request(app.getHttpServer())
+
+          const factory = new FixtureFactory(app)
+          await Promise.all(
+            testCase.domains.map((domain) => factory.createDomain(domain)),
+          )
+          await Promise.all(
+            (testCase.accessTo ?? []).map((scope) =>
+              factory.createApiScopeUserAccess({
+                nationalId: testCase.user.nationalId,
+                scope,
+              }),
+            ),
+          )
+          await Promise.all(
+            (testCase.delegations ?? []).map((delegation) =>
+              factory.createCustomDelegation({
+                fromNationalId: testCase.user.nationalId,
+                toNationalId: testCase.user.actor?.nationalId,
+                ...delegation,
+              }),
+            ),
+          )
         })
-        server = request(app.getHttpServer())
 
-        const factory = new FixtureFactory(app)
-        await Promise.all(
-          testCase.domains.map((domain) => factory.createDomain(domain)),
-        )
-        await Promise.all(
-          (testCase.accessTo ?? []).map((scope) =>
-            factory.createApiScopeUserAccess({
-              nationalId: testCase.user.nationalId,
-              scope,
-            }),
-          ),
-        )
-        await Promise.all(
-          (testCase.delegations ?? []).map((delegation) =>
-            factory.createCustomDelegation({
-              fromNationalId: testCase.user.nationalId,
-              toNationalId: testCase.user.actor?.nationalId,
-              ...delegation,
-            }),
-          ),
-        )
-      })
+        it('GET /domains returns expected domains', async () => {
+          // Arrange
+          const expected = expectedDomains.map(({ name }) => ({
+            name,
+          }))
 
-      it('GET /domains returns expected domains', async () => {
-        // Arrange
-        const expected = testCase.expected.map(({ name }) => ({
-          name,
-        }))
+          // Act
+          const res = await server.get(
+            `/v1/domains?direction=${testCase.direction}`,
+          )
 
-        // Act
-        const res = await server.get('/v1/domains')
+          // Assert
+          expect(res.status).toEqual(200)
+          expect(res.body).toHaveLength(expected.length)
+          expect(res.body).toMatchObject(expected)
+        })
 
-        // Assert
-        expect(res.status).toEqual(200)
-        expect(res.body).toHaveLength(testCase.expected.length)
-        expect(res.body).toMatchObject(expected)
-      })
+        if (validDomains.length) {
+          it.each(validDomains)(
+            'GET /domains/%s returns expected domains',
+            async (domainName) => {
+              // Arrange
+              const domain = expectedDomains.find(
+                (domain) => domain.name === domainName,
+              )
+              assert(domain)
+              const expected = { name: domain.name }
 
-      if (validDomains.length) {
-        it.each(validDomains)(
-          'GET /domains/%s returns expected domains',
-          async (domainName) => {
-            // Arrange
-            const domain = testCase.expected.find(
-              (domain) => domain.name === domainName,
-            )
-            assert(domain)
-            const expected = { name: domain.name }
+              // Act
+              const res = await server.get(`/v1/domains/${domainName}`)
 
-            // Act
-            const res = await server.get(`/v1/domains/${domainName}`)
+              // Assert
+              expect(res.status).toEqual(200)
+              expect(res.body).toMatchObject(expected)
+            },
+          )
 
-            // Assert
-            expect(res.status).toEqual(200)
-            expect(res.body).toMatchObject(expected)
-          },
-        )
+          it.each(validDomains)(
+            'GET /domains/%s/scopes returns expected scopes',
+            async (domainName) => {
+              // Arrange
+              const domain = expectedDomains.find(
+                (domain) => domain.name === domainName,
+              )
+              assert(domain)
+              const expected = domain.scopes
 
-        it.each(validDomains)(
-          'GET /domains/%s/scopes returns expected scopes',
-          async (domainName) => {
-            // Arrange
-            const domain = testCase.expected.find(
-              (domain) => domain.name === domainName,
-            )
-            assert(domain)
-            const expected = domain.scopes
+              // Act
+              const res = await server.get(
+                `/v1/domains/${domainName}/scopes?direction=${testCase.direction}`,
+              )
 
-            // Act
-            const res = await server.get(`/v1/domains/${domainName}/scopes`)
+              // Assert
+              expect(res.status).toEqual(200)
+              expect(res.body).toHaveLength(expected.length)
+              expect(res.body).toMatchObject(expected)
+            },
+          )
 
-            // Assert
-            expect(res.status).toEqual(200)
-            expect(res.body).toHaveLength(expected.length)
-            expect(res.body).toMatchObject(expected)
-          },
-        )
+          it.each(validDomains)(
+            'GET /domains/%s/scope-tree returns expected scopes',
+            async (domainName) => {
+              // Arrange
+              const domain = expectedDomains.find(
+                (domain) => domain.name === domainName,
+              )
+              assert(domain)
+              const expected = domain.scopes
 
-        it.each(validDomains)(
-          'GET /domains/%s/scope-tree returns expected scopes',
-          async (domainName) => {
-            // Arrange
-            const domain = testCase.expected.find(
-              (domain) => domain.name === domainName,
-            )
-            assert(domain)
-            const expected = domain.scopes
+              // Act
+              const res = await server.get(
+                `/v1/domains/${domainName}/scope-tree?direction=${testCase.direction}`,
+              )
 
-            // Act
-            const res = await server.get(`/v1/domains/${domainName}/scope-tree`)
+              // Assert
+              expect(res.status).toEqual(200)
+              expect(res.body).toHaveLength(expected.length)
+              expect(res.body).toMatchObject(expected)
+            },
+          )
+        }
 
-            // Assert
-            expect(res.status).toEqual(200)
-            expect(res.body).toHaveLength(expected.length)
-            expect(res.body).toMatchObject(expected)
-          },
-        )
-      }
+        if (invalidDomains.length) {
+          it.each(invalidDomains)(
+            'GET /domains/%s/scope-tree returns no results',
+            async (domainName) => {
+              // Act
+              const res = await server.get(
+                `/v1/domains/${domainName}/scope-tree?direction=${testCase.direction}`,
+              )
 
-      if (invalidDomains.length) {
-        it.each(invalidDomains)(
-          'GET /domains/%s returns no content response',
-          async (domainName) => {
-            // Act
-            const res = await server.get(`/v1/domains/${domainName}`)
+              // Assert
+              expect(res.status).toEqual(200)
+              expect(res.body).toHaveLength(0)
+            },
+          )
 
-            // Assert
-            expect(res.status).toEqual(204)
-          },
-        )
+          it.each(invalidDomains)(
+            'GET /domains/%s/scopes returns no results',
+            async (domainName) => {
+              // Act
+              const res = await server.get(
+                `/v1/domains/${domainName}/scopes?direction=${testCase.direction}`,
+              )
 
-        it.each(invalidDomains)(
-          'GET /domains/%s/scope-tree returns no results',
-          async (domainName) => {
-            // Act
-            const res = await server.get(`/v1/domains/${domainName}/scope-tree`)
-
-            // Assert
-            expect(res.status).toEqual(200)
-            expect(res.body).toHaveLength(0)
-          },
-        )
-
-        it.each(invalidDomains)(
-          'GET /domains/%s/scopes returns no results',
-          async (domainName) => {
-            // Act
-            const res = await server.get(`/v1/domains/${domainName}/scopes`)
-
-            // Assert
-            expect(res.status).toEqual(200)
-            expect(res.body).toHaveLength(0)
-          },
-        )
-      }
-    })
+              // Assert
+              expect(res.status).toEqual(200)
+              expect(res.body).toHaveLength(0)
+            },
+          )
+        }
+      },
+    )
 
     describe('with translations', () => {
       let app: TestApp
@@ -307,6 +313,66 @@ describe('DomainsController', () => {
       // Assert
       expect(res.status).toEqual(200)
       expect(res.body).toMatchObject(expected)
+    })
+
+    it('GET /domains returns list of all domains when no direction', async () => {
+      // Arrange
+      const domains = [
+        {
+          name: 'd1',
+          apiScopes: [{ name: 's1', allowExplicitDelegationGrant: true }],
+        },
+        {
+          name: 'd2',
+          apiScopes: [{ name: 's2', allowExplicitDelegationGrant: true }],
+        },
+        {
+          name: 'd3',
+          apiScopes: [{ name: 's3', allowExplicitDelegationGrant: true }],
+        },
+      ]
+      const expectedDomains = domains.map((domain) => ({ name: domain.name }))
+      const currentUser = createCurrentUser({ scope: [AuthScope.delegations] })
+      const app = await setupWithAuth({
+        user: currentUser,
+        customScopeRules: [
+          { scopeName: 's2', onlyForDelegationType: ['ProcurationHolder'] },
+        ],
+      })
+      const factory = new FixtureFactory(app)
+      await Promise.all(domains.map((domain) => factory.createDomain(domain)))
+      await factory.createCustomDelegation({
+        domainName: 'd3',
+        fromNationalId: createNationalId('person'),
+        toNationalId: currentUser.nationalId,
+        scopes: [{ scopeName: 's3' }],
+      })
+
+      // Act
+      const res = await request(app.getHttpServer()).get(`/v1/domains`)
+
+      // Assert
+      expect(res.status).toEqual(200)
+      expect(res.body).toHaveLength(3)
+      expect(res.body).toMatchObject(expectedDomains)
+    })
+
+    it('GET /domains/:domainName returns no content response for invalid domain', async () => {
+      // Arrange
+      const app = await setupWithAuth({
+        user: createCurrentUser({ scope: [AuthScope.delegations] }),
+      })
+      const factory = new FixtureFactory(app)
+      await factory.createDomain({ name: 'd1' })
+      const invalidDomainName = 'invalid-d1'
+
+      // Act
+      const res = await request(app.getHttpServer()).get(
+        `/v1/domains/${invalidDomainName}`,
+      )
+
+      // Assert
+      expect(res.status).toEqual(204)
     })
   })
 

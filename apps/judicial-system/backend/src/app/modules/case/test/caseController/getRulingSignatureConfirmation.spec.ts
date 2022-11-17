@@ -110,7 +110,7 @@ describe('CaseController - Get ruling signature confirmation', () => {
         { type: MessageType.CASE_COMPLETED, caseId },
         { type: MessageType.DELIVER_COURT_RECORD_TO_COURT, caseId },
         { type: MessageType.DELIVER_SIGNED_RULING_TO_COURT, caseId },
-        { type: MessageType.SEND_RULING_NOTIFICAGTION, caseId },
+        { type: MessageType.SEND_RULING_NOTIFICATION, caseId },
       ])
     })
   })

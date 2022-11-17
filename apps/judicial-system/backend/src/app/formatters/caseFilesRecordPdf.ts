@@ -1,8 +1,9 @@
 import { FormatMessage } from '@island.is/cms-translations'
 import {
   capitalize,
-  caseTypes,
+  indictmentSubTypes,
   formatDOB,
+  caseTypes,
 } from '@island.is/judicial-system/formatters'
 
 import { caseFilesRecord } from '../messages'
@@ -76,6 +77,7 @@ export const createCaseFilesRecord = async (
         .addText(name, subtitleFontSize, {
           alignment: Alignment.Center,
           bold: true,
+          maxWidth: 500,
         })
     }
 
@@ -126,9 +128,17 @@ export const createCaseFilesRecord = async (
       marginTop: 1,
       newLine: false,
     })
-    .addText(capitalize(caseTypes[theCase.type]), textFontSize, {
-      position: { x: defendantIndent },
-    })
+    .addText(
+      capitalize(
+        theCase.indictmentSubType
+          ? indictmentSubTypes[theCase.indictmentSubType]
+          : caseTypes[theCase.type],
+      ),
+      textFontSize,
+      {
+        position: { x: defendantIndent },
+      },
+    )
     .addText(
       formatMessage(caseFilesRecord.tableOfContentsHeading),
       subtitleFontSize,
@@ -167,6 +177,7 @@ export const createCaseFilesRecord = async (
           `${pageReference.date} - ${pageReference.name}`,
           textFontSize,
           {
+            maxWidth: 400,
             pageLink: pageReference.pageLink,
             position: { x: pageReferenceIndent },
           },
