@@ -14,12 +14,14 @@ export const apiConstants = {
     receivingRightsId: 'FSAL-GR',
     multipleBirthsOrlofRightsId: 'ORLOF-FBF',
     multipleBirthsGrantRightsId: 'ST-FBF',
+    artificialInseminationRightsId: 'EITTFOR',
   },
   attachments: {
     selfEmployed: 'selfEmployed',
     student: 'Student',
     unEmploymentBenefits: 'UnemploymentBenefits',
     other: 'Other',
+    artificialInsemination: 'ArtificialInsemination',
   },
 }
 

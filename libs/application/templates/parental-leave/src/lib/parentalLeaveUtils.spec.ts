@@ -11,7 +11,7 @@ import {
   FormValue,
 } from '@island.is/application/types'
 
-import { NO, MANUAL, ParentalRelations, YES } from '../constants'
+import { NO, MANUAL, ParentalRelations, YES, SINGLE } from '../constants'
 import { ChildInformation } from '../dataProviders/Children/types'
 import {
   formatIsk,
@@ -26,7 +26,6 @@ import {
   getOtherParentName,
   removeCountryCode,
   getSpouse,
-  getOtherParentOptions,
   isEligibleForParentalLeave,
   getPeriodIndex,
   getApplicationExternalData,
@@ -39,6 +38,8 @@ import {
   getAvailablePersonalRightsInDays,
   getAvailableRightsInDays,
   getAvailablePersonalRightsInMonths,
+  getAdditionalSingleParentRightsInDays,
+  getAvailablePersonalRightsSingleParentInMonths,
 } from './parentalLeaveUtils'
 import { PersonInformation } from '../types'
 
@@ -857,6 +858,55 @@ describe('getAvailableRightsInMonths', () => {
   })
 })
 
+describe('Single Parent', () => {
+  it('getAdditionalSingleParentRightsInDays - should return 0 additional days when not single parent', () => {
+    const application = buildApplication()
+
+    const res = getAdditionalSingleParentRightsInDays(application)
+
+    expect(res).toBe(0)
+  })
+
+  it('getAdditionalSingleParentRightsInDays - should return 180 days for additional right for single parent', () => {
+    const application = buildApplication()
+    set(application, 'answers.otherParent', SINGLE)
+
+    const res = getAdditionalSingleParentRightsInDays(application)
+
+    expect(res).toBe(180)
+  })
+
+  it('getAvailablePersonalRightsSingleParentInMonths - should return 12 months for single parents', () => {
+    const application = buildApplication({
+      answers: {
+        selectedChild: 0,
+        otherParent: SINGLE,
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 180,
+                parentalRelation: ParentalRelations.primary,
+                expectedDateOfBirth: '2021-05-17',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = getAvailablePersonalRightsSingleParentInMonths(application)
+
+    expect(res).toBe(12)
+  })
+})
+
 describe('getSpouse', () => {
   it('should return null with no spouse', () => {
     const application = buildApplication()
@@ -881,33 +931,6 @@ describe('getSpouse', () => {
       name: 'my spouse',
       nationalId: 'spouse national ID',
     })
-  })
-})
-
-describe('getOtherParentOptions', () => {
-  it('should return default options for the other parent', () => {
-    const application = buildApplication()
-    expect(getOtherParentOptions(application)).toEqual([
-      {
-        dataTestId: 'no-other-parent',
-        label: {
-          defaultMessage: 'Ég vil ekki staðfesta hitt foreldrið að svo stöddu',
-          description:
-            'I do not want to confirm the other parent at this time.',
-          id: 'pl.application:otherParent.none',
-        },
-        value: 'no',
-      },
-      {
-        dataTestId: 'other-parent',
-        label: {
-          defaultMessage: 'Hitt foreldrið er:',
-          description: 'The other parent is:',
-          id: 'pl.application:otherParent.option',
-        },
-        value: 'manual',
-      },
-    ])
   })
 })
 

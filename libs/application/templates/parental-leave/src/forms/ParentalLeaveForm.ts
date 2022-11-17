@@ -55,13 +55,13 @@ import {
   ParentalRelations,
   PARENTAL_GRANT_STUDENTS,
   PARENTAL_LEAVE,
+  SINGLE,
   StartDateOptions,
   UnEmployedBenefitTypes,
   YES,
 } from '../constants'
 import Logo from '../assets/Logo'
 import {
-  defaultMonths,
   minimumPeriodStartBeforeExpectedDateOfBirth,
   minPeriodDays,
 } from '../config'
@@ -679,6 +679,28 @@ export const ParentalLeaveForm: Form = buildForm({
                 parentalLeaveFormMessages.selfEmployed.attachmentButton,
             }),
             buildFileUploadField({
+              id: 'fileUpload.singleParent',
+              title:
+                parentalLeaveFormMessages.attachmentScreen.singleParentTitle,
+              introduction:
+                parentalLeaveFormMessages.attachmentScreen
+                  .singleParentDescription,
+              condition: (answers) =>
+                (answers as {
+                  otherParentObj: {
+                    chooseOtherParent: string
+                  }
+                })?.otherParentObj?.chooseOtherParent === SINGLE,
+              maxSize: FILE_SIZE_LIMIT,
+              maxSizeErrorText:
+                parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
+              uploadAccept: '.pdf',
+              uploadHeader: '',
+              uploadDescription: '',
+              uploadButtonLabel:
+                parentalLeaveFormMessages.selfEmployed.attachmentButton,
+            }),
+            buildFileUploadField({
               id: 'fileUpload.file',
               title: parentalLeaveFormMessages.attachmentScreen.genericTitle,
               introduction:
@@ -714,29 +736,12 @@ export const ParentalLeaveForm: Form = buildForm({
               title: parentalLeaveFormMessages.shared.theseAreYourRights,
               description: getRightsDescTitle,
               children: [
-                buildCustomField(
-                  {
-                    id: 'rightsIntro',
-                    title: '',
-                    component: 'BoxChart',
-                    doesNotRequireAnswer: true,
-                  },
-                  {
-                    boxes: defaultMonths,
-                    application: {},
-                    calculateBoxStyle: () => 'blue',
-                    keys: [
-                      {
-                        label: () => ({
-                          ...parentalLeaveFormMessages.shared
-                            .yourRightsInMonths,
-                          values: { months: defaultMonths },
-                        }),
-                        bulletStyle: 'blue',
-                      },
-                    ],
-                  },
-                ),
+                buildCustomField({
+                  id: 'rightsIntro',
+                  doesNotRequireAnswer: true,
+                  title: '',
+                  component: 'Rights',
+                }),
               ],
             }),
             buildCustomField({

@@ -12,6 +12,7 @@ export { default as RequestMultipleBirthsDaysSlider } from './Rights/RequestMult
 export { default as GiveRights } from './Rights/GiveRights'
 export { default as GiveDaysSlider } from './Rights/GiveDaysSlider'
 export { default as ReviewRights } from './Rights/ReviewRights'
+export { default as Rights } from './Rights/Rights'
 export { Review } from './Review/Review'
 export { default as EditPeriodsReview } from './EditPeriodsReview'
 export { default as InReviewSteps } from './InReviewSteps'

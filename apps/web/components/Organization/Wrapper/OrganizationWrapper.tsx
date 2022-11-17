@@ -202,18 +202,35 @@ export const OrganizationExternalLinks: React.FC<ExternalLinksProps> = ({
         marginBottom={4}
       >
         <Inline space={2}>
-          {organizationPage.externalLinks.map((link, index) => (
-            <Link href={link.url} key={'organization-external-link-' + index}>
-              <Button
-                colorScheme="light"
-                icon="open"
-                iconType="outline"
-                size="small"
-              >
-                {link.text}
-              </Button>
-            </Link>
-          ))}
+          {organizationPage.externalLinks.map((link, index) => {
+            // Sjukratryggingar's external links have custom styled buttons
+            const isSjukratryggingar =
+              organizationPage.slug === 'sjukratryggingar' ||
+              organizationPage.slug === 'icelandic-health-insurance'
+
+            let variant = undefined
+            if (
+              isSjukratryggingar &&
+              organizationPage.externalLinks.length === 2
+            ) {
+              variant = index === 0 ? 'primary' : 'ghost'
+            }
+
+            return (
+              <Link href={link.url} key={'organization-external-link-' + index}>
+                <Button
+                  variant={variant}
+                  icon={isSjukratryggingar ? 'lockClosed' : 'open'}
+                  iconType="outline"
+                  size="medium"
+                >
+                  <Box paddingY={2} paddingLeft={2}>
+                    {link.text}
+                  </Box>
+                </Button>
+              </Link>
+            )
+          })}
         </Inline>
       </Box>
     )
@@ -587,6 +604,11 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                   span={fullWidthContent ? ['9/9', '9/9', '7/9'] : '9/9'}
                   offset={fullWidthContent ? ['0', '0', '1/9'] : '0'}
                 >
+                  {showExternalLinks && (
+                    <OrganizationExternalLinks
+                      organizationPage={organizationPage}
+                    />
+                  )}
                   {breadcrumbItems && (
                     <Breadcrumbs
                       items={breadcrumbItems ?? []}
@@ -597,11 +619,6 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                           link
                         )
                       }}
-                    />
-                  )}
-                  {showExternalLinks && (
-                    <OrganizationExternalLinks
-                      organizationPage={organizationPage}
                     />
                   )}
                   {pageDescription && (

@@ -178,9 +178,9 @@ export const parentalLeaveFormMessages: MessageDir = {
     otherParentDescription: {
       id: 'pl.application:otherParent.description',
       defaultMessage:
-        'Skráður maki í þjóðskrá er sjálfgefinn. Þú getur skráð hitt foreldrið eða haldið áfram án skráningar.',
+        'Skráður maki í þjóðskrá er sjálfgefinn. Þú getur valið að skráð hitt foreldri, hvort þú sért einstætt foreldri eða haldið áfram án skráningar.',
       description:
-        'Your spouse according to National Registry records is filled in by default. You can register the other parent or continue without registration.',
+        'Your spouse according to National Registry records is filled in by default. You can choose to register the other parent, whether you are a single parent or continue without registration.',
     },
     otherParentTitle: {
       id: 'pl.application:otherParent.title',
@@ -211,6 +211,17 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:otherParent.option',
       defaultMessage: 'Hitt foreldrið er:',
       description: 'The other parent is:',
+    },
+    singleParentOption: {
+      id: 'pl.application:singleParent.option',
+      defaultMessage: 'Einstætt foreldri',
+      description: 'Single parent',
+    },
+    singleParentDescription: {
+      id: 'pl.application:singleParent.option.description',
+      defaultMessage: 'Á við þegar einhleyp móðir gengst undir tæknifrjóvgun',
+      description:
+        'This applies when a single mother undergoes artificial insemination',
     },
     otherParentSpouse: {
       id: 'pl.application:otherParent.spouse',
@@ -356,6 +367,20 @@ export const parentalLeaveFormMessages: MessageDir = {
       description:
         'Parental grant allowance is a total of 12 months which is divided equally between two parents. However, you can move up to 45 days from one parent to another. ATTN if you are entitled to increased rights of parental grant you will have to contact Parental Leave Fund and they will add extra months to the grant after submission.',
     },
+    singleParentRightsDescription: {
+      id: 'pl.application:single.parent.rights.description',
+      defaultMessage:
+        'Fæðingarorlofsréttur fyrir einhleypt foreldri eru 12 mánuðir. ATH Ef þú átt aukinn rétt þarf að biðja Fæðingarorlofssjóð að bæta aukamánuðum við orlofið eftir á.',
+      description:
+        'The right to parental leave is 12 months for single parent. ATTN if you are entitled to increased rights of parental leave you will have to contact Parental Leave Fund and they will add extra months to the leave after submission.',
+    },
+    singleParentGrantRightsDescription: {
+      id: 'pl.application:single.parent.grant.rights.description',
+      defaultMessage:
+        'Fæðingarstyrksréttur fyrir einhleypt foreldri eru 12 mánuðir. ATH Ef þú átt aukinn rétt þarf að biðja Fæðingarorlofssjóð að bæta aukamánuðum við styrkinn eftir á.',
+      description:
+        'The right to parental leave is 12 months for single parent. ATTN if you are entitled to increased rights of parental grant you will have to contact Parental Leave Fund and they will add extra months to the grant after submission.',
+    },
     requestRightsName: {
       id: 'pl.application:request.rights.name',
       defaultMessage:
@@ -385,21 +410,21 @@ export const parentalLeaveFormMessages: MessageDir = {
     multipleBirthsDaysTitle: {
       id: 'pl.application:request.multipleBirths.daysTitle',
       defaultMessage: 'Sameiginlegur réttur vegna fjölbura',
-      description: 'Joint entitlement for multiple births ',
+      description: 'Joint entitlement due to multiple births ',
     },
     multipleBirthsDaysDescription: {
       id: 'pl.application:multipleBirths.daysDescription',
       defaultMessage:
         'Fyrir hvert barn sem fæðist bætist við 3 mánaða sameiginlegur réttur foreldra til fæðingarorlofs',
       description:
-        'For each child the parents’ joint entitlement to a maternity/paternity leave is extended by 3 months.',
+        'For each child the parents’ joint entitlement to a parental leave is extended by 3 months.',
     },
     multipleBirthsDaysDescriptionGrant: {
       id: 'pl.application:multipleBirths.daysDescription.grant',
       defaultMessage:
         'Fyrir hvert barn sem fæðist bætist við 3 mánaða sameiginlegur réttur foreldra til fæðingarstyrks',
       description:
-        'For each child the parents’ joint entitlement to a maternity/paternity grant is extended by 3 months.',
+        'For each child the parents’ joint entitlement to a parental grant is extended by 3 months.',
     },
     requestMultipleBirthsDay: {
       id: 'pl.application:request.multipleBirths.day',
@@ -418,7 +443,7 @@ export const parentalLeaveFormMessages: MessageDir = {
     yourMultipleBirthsRightsInMonths: {
       id: 'pl.application:your.multipleBirths.rights.inMonths',
       defaultMessage: '{months} mánuðir – sameiginlegur réttur vegna fjölbura',
-      description: '{months} months – joint entitlement for multiple births',
+      description: '{months} months – joint entitlement due to multiple births',
     },
     requestRightsDaysTitle: {
       id: 'pl.application:request.rights.daysTitle',
@@ -1530,8 +1555,8 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     rightsMultipleBirths: {
       id: 'pl.application:review.rights.multiple.births',
-      defaultMessage: '{common} sameign mánuður ( need translated)',
-      description: 'Common months ( need translated )',
+      defaultMessage: '{common} sameiginlegir mánuðir',
+      description: 'month from joint entitlement',
     },
     rightsAllowanceRequested: {
       id: 'pl.application:review.rights.allowance.requested',
@@ -1756,6 +1781,16 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:attachmentscreen.benefitDescription',
       defaultMessage: `Þeir sem þiggja dagpeninga/veikindarétt frá stéttarfélagi eða skjúkradagpeninga frá Sjúkratryggingum Íslands þurfa að skila inn skjali því til staðfestingar. Athugaðu að skjalið þarf að vera á .pdf formi`,
       description: `Those who receive unemployment benefits/sick leave allowance from the Union or sick leave allowance from Sjúkratryggingar Íslands must submit a document to confirm this. Note that the document needs to be on .pdf format`,
+    },
+    singleParentTitle: {
+      id: 'pl.application:attachmentscreen.singleParent',
+      defaultMessage: `Staðfesting vegna einstæðra foreldra`,
+      description: `Confirmation for single parent`,
+    },
+    singleParentDescription: {
+      id: 'pl.application:attachmentscreen.singleParentDescription',
+      defaultMessage: `Þeir sem hafa farið í tæknifrjóvgun þurfa að skila inn skjali því til staðfestingar frá Livio. Athugaðu að skjalið þarf að vera á .pdf formi`,
+      description: `Those who have undergone artificial insemination must submit a document to confirm this from Livio. Note that the document needs to be on .pdf format`,
     },
     fatherWithoutMotherTitle: {
       id: 'pl.application:attachmentscreen.fatherWithoutMotherTitle',
@@ -2170,31 +2205,28 @@ export const errorMessages = defineMessages({
   missingMultipleBirthsAnswer: {
     id: 'pl.application:errors.missing.multiple.births.answer',
     defaultMessage:
-      'icel-trans: "Verður að velja fjölda barn ef það er fjölburafæðing ( Need translated )!"',
-    description: 'English version ( Need translated )!',
+      'icel-trans: "Þú þarft að velja fjölda barna ef um fjölburafæðingu er að ræða!"',
+    description: 'You must pick number of children if choosing multiple birth!',
   },
   tooFewMultipleBirthsAnswer: {
     id: 'pl.application:errors.too.few.multiple.births.answer',
-    defaultMessage:
-      'icel-trans: "Ekki hægt að skrá minni en 2 börn ( Need translated )!"',
-    description: 'English version ( Need translated )!',
+    defaultMessage: 'icel-trans: "Ekki hægt að skrá minna en tvö börn!"',
+    description: 'Unable to assign fewer than two children!',
   },
   tooManyMultipleBirthsAnswer: {
     id: 'pl.application:errors.too.few.multiple.births.answer',
-    defaultMessage:
-      'icel-trans: "Ekki hægt að skrá fleira en 4 börn ( Need translated )!"',
-    description: 'English version ( Need translated )!',
+    defaultMessage: 'icel-trans: "Ekki hægt að skrá fleiri en fjögur börn!"',
+    description: 'Unable to assign more than four children!',
   },
   notAllowedToGiveRights: {
     id: 'pl.application:errors.not.allowed.to.give.rights',
-    defaultMessage: 'icel-trans: "Ekki hægt að gefa daga ( Need translated )!"',
-    description: 'English version ( Need translated )!',
+    defaultMessage: 'icel-trans: "Ekki hægt að gefa daga!"',
+    description: 'Unable to transfer days!',
   },
   notAllowedToRequestRights: {
     id: 'pl.application:errors.not.allowed.to.request.rights',
-    defaultMessage:
-      'icel-trans: "Ekki hægt að biðja um daga ( Need translated )!"',
-    description: 'English version ( Need translated )!',
+    defaultMessage: 'icel-trans: "Ekki hægt að biðja um daga!"',
+    description: 'Unable to request days!',
   },
 })
 

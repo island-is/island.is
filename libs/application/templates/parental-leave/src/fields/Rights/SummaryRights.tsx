@@ -8,11 +8,12 @@ import { Box, Text } from '@island.is/island-ui/core'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import {
   getAvailablePersonalRightsInMonths,
+  getAvailablePersonalRightsSingleParentInMonths,
   getAvailableRightsInMonths,
   getMultipleBirthsDays,
 } from '../../lib/parentalLeaveUtils'
 import { daysToMonths } from '../../lib/directorateOfLabour.utils'
-import { YES } from '../../constants'
+import { SINGLE, YES } from '../../constants'
 import { useApplicationAnswers } from '../../hooks/useApplicationAnswers'
 
 interface SummaryRightsProps {
@@ -29,8 +30,12 @@ export const SummaryRights = ({ application }: SummaryRightsProps) => {
     requestDays,
     isGivingRights,
     giveDays,
+    otherParent,
   } = useApplicationAnswers(application)
-  const personalMonths = getAvailablePersonalRightsInMonths(application)
+  const personalMonths =
+    otherParent !== SINGLE
+      ? getAvailablePersonalRightsInMonths(application)
+      : getAvailablePersonalRightsSingleParentInMonths(application)
   const total = round(getAvailableRightsInMonths(application))
   const requested = daysToMonths(requestDays)
   const given = daysToMonths(Math.abs(giveDays))
