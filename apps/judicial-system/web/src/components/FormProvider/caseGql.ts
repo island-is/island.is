@@ -7,7 +7,7 @@ const CaseQuery = gql`
       created
       modified
       type
-      indictmentSubType
+      indictmentSubtypes
       description
       state
       policeCaseNumbers

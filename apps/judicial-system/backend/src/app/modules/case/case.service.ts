@@ -26,6 +26,7 @@ import {
   CaseFileState,
   CaseOrigin,
   CaseState,
+  isIndictmentCase,
 } from '@island.is/judicial-system/types'
 import type { User as TUser } from '@island.is/judicial-system/types'
 
@@ -155,7 +156,15 @@ export class CaseService {
     transaction?: Transaction,
   ): Promise<string> {
     const theCase = await (transaction
-      ? this.caseModel.create({ ...caseToCreate }, { transaction })
+      ? this.caseModel.create(
+          {
+            ...caseToCreate,
+            state: isIndictmentCase(caseToCreate.type)
+              ? CaseState.DRAFT
+              : undefined,
+          },
+          { transaction },
+        )
       : this.caseModel.create({ ...caseToCreate }))
 
     return theCase.id
@@ -232,6 +241,7 @@ export class CaseService {
   }
 
   async create(caseToCreate: CreateCaseDto, prosecutor: TUser): Promise<Case> {
+    this.logger.debug('Creating case', { caseToCreate })
     return this.sequelize
       .transaction(async (transaction) => {
         const caseId = await this.createCase(
@@ -583,7 +593,7 @@ export class CaseService {
           {
             origin: theCase.origin,
             type: theCase.type,
-            indictmentSubType: theCase.indictmentSubType,
+            indictmentSubtypes: theCase.indictmentSubtypes,
             description: theCase.description,
             policeCaseNumbers: theCase.policeCaseNumbers,
             defenderName: theCase.defenderName,
@@ -641,7 +651,7 @@ export class CaseService {
       theCase.type,
       theCase.policeCaseNumbers,
       Boolean(theCase.parentCaseId),
-      theCase.indictmentSubType,
+      theCase.indictmentSubtypes,
     )
 
     const updatedCase = (await this.update(

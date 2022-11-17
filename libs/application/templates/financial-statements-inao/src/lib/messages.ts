@@ -343,6 +343,17 @@ export const m = defineMessages({
       'Umsækjandi má ekki vera skráður sem stjórnarmaður eða skoðunarmaður',
     description: 'error, applicant regsitered as caretaker/boardmember',
   },
+  errorcaretakerCanNotIncludeActor: {
+    id: 'fsn.application:error.errorcaretakerCanNotIncludeActor',
+    defaultMessage: 'Innskráður aðili má ekki vera skráður sem skoðunarmaður',
+    description: 'error, applicant regsitered as caretaker',
+  },
+  errorBoardmembersCanNotJustIncludeActor: {
+    id: 'fsn.application:error.errorBoardmembersCanNotJustIncludeActor',
+    defaultMessage:
+      'Innskráður aðili má ekki vera skráður einn sem stjórnarmaður',
+    description: 'error, applicant regsitered as caretaker',
+  },
   contributionsFromTheTreasury: {
     id: 'fsn.application:income.contributionsFromTheTreasury',
     defaultMessage: 'Framlög úr ríkissjóði',

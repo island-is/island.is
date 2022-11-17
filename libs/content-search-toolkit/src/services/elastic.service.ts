@@ -110,17 +110,13 @@ export class ElasticService {
    * @return {boolean} True iff a document was removed
    * Filter the HUMONGOUS documents in an error object
    */
-  private filterDoc<T>(o: T, parent?: string): boolean {
+  private filterDoc<T>(o: T): boolean {
     let deleted = false
     if (Object.keys(o).length == 0) return false
     for (const key in o) {
       const value = o[key]
-      // A document is typically nested in request.params.body
-      if (
-        key == 'doc' ||
-        (key == 'body' && parent == 'params') ||
-        (key == 'body' && typeof value == 'string' && value.match(/^\{?"?doc/))
-      ) {
+      // Only HUMONGOUS documents should reach this limit
+      if (typeof value == 'string' && value.length > 10000) {
         delete o[key]
         deleted = true
       }

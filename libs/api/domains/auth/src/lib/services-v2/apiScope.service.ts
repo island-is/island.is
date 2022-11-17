@@ -1,7 +1,10 @@
 import { BadRequestException, Injectable } from '@nestjs/common'
 
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import { DomainsApi } from '@island.is/clients/auth/delegation-api'
+import {
+  DomainsApi,
+  DomainsControllerFindScopesDirectionEnum,
+} from '@island.is/clients/auth/delegation-api'
 import { ApiScope } from '../models/apiScope.model'
 import { ScopeTreeNode } from '../models/scopeTreeNode.model'
 import { ApiScopeServiceInterface } from '../services/types'
@@ -21,6 +24,8 @@ export class ApiScopeServiceV2 implements ApiScopeServiceInterface {
     return this.domainsApiWithAuth(user).domainsControllerFindScopes({
       domainName: input.domain,
       lang: input.lang,
+      // If we fix our openApi generation to support enumName to alias the enum type we can fix this.
+      direction: (input.direction as unknown) as DomainsControllerFindScopesDirectionEnum,
     })
   }
 
@@ -33,6 +38,7 @@ export class ApiScopeServiceV2 implements ApiScopeServiceInterface {
     return this.domainsApiWithAuth(user).domainsControllerFindScopeTree({
       domainName: input.domain,
       lang: input.lang,
+      direction: input.direction,
     })
   }
 
