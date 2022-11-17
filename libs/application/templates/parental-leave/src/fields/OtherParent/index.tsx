@@ -39,7 +39,9 @@ export const OtherParent: FC<FieldBaseProps> = ({ application, field }) => {
                 setValue('otherParentEmail', undefined)
                 setValue('otherParentPhoneNumber', '')
                 setValue('requestRights.isRequestingRights', NO)
-                setValue('requestRights.requestDays', '')
+                setValue('requestRights.requestDays', '0')
+                setValue('giveRights.giveDays', '0')
+                setValue('giveRights.isGivingRights', NO)
               }
             }
           },
