@@ -42,6 +42,7 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces(['sp.settings-access-control', 'sp.access-control-delegations'])
   const { formatMessage } = useLocale()
   const [name, setName] = useState('')
+  const inputRef = React.useRef<HTMLInputElement>(null)
   const history = useHistory()
   const { md } = useBreakpoint()
   const { options, selectedOption, loading: domainLoading } = useDomains(false)
@@ -141,9 +142,17 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
     }
   })
 
-  const clearForm = () => {
+  const clearPersonState = () => {
     setName('')
-    reset()
+    reset({
+      toNationalId: '',
+    })
+
+    setTimeout(() => {
+      if (inputRef.current) {
+        inputRef.current.focus()
+      }
+    }, 0)
   }
 
   return (
@@ -196,6 +205,7 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
                     control={control}
                     id="toNationalId"
                     icon={name || queryLoading ? undefined : 'search'}
+                    ref={inputRef}
                     rules={{
                       required: {
                         value: true,
@@ -222,7 +232,11 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
                     }}
                     type="tel"
                     format="######-####"
-                    label={formatMessage(sharedMessages.nationalId)}
+                    label={formatMessage({
+                      id:
+                        'sp.access-control-delegations:grant-form-access-holder',
+                      defaultMessage: 'Kennitala aðgangshafa',
+                    })}
                     placeholder={'000000-0000'}
                     error={errors.toNationalId?.message}
                     onChange={(value) => {
@@ -241,8 +255,9 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
                 ) : name ? (
                   <button
                     disabled={loading}
-                    onClick={clearForm}
+                    onClick={clearPersonState}
                     className={styles.icon}
+                    aria-label={formatMessage(m.clearSelected)}
                   >
                     <Icon icon="close" size="large" color="blue400" />
                   </button>

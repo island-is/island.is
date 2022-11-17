@@ -1,10 +1,8 @@
 import get from 'lodash/get'
 
 import { Message } from '@island.is/email-service'
-
 import { EmailTemplateGeneratorProps } from '../../../../types'
 import { pathToAsset } from '../parental-leave.utils'
-import { isRunningInProduction } from '../constants'
 
 export type ApplicationApprovedByEmployerEmail = (
   props: EmailTemplateGeneratorProps,
@@ -15,8 +13,6 @@ export type ApplicationApprovedByEmployerEmail = (
 // TODO handle translations
 export const generateApplicationApprovedByEmployerEmail: ApplicationApprovedByEmployerEmail = (
   props,
-  senderName,
-  senderEmail,
 ): Message => {
   const {
     application,
