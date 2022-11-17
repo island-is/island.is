@@ -25,10 +25,11 @@ export const DelegationsHeader = ({
   const { formatMessage } = useLocale()
   const history = useHistory()
   const {
-    domainOptions,
-    defaultDomainOption,
+    options,
+    selectedOption,
     loading,
-    domainName,
+    updateDomain,
+    name: domainName,
   } = useDomains()
 
   const onClickHandler = () => {
@@ -63,12 +64,14 @@ export const DelegationsHeader = ({
               id: 'sp.access-control-delegations:no-option',
               defaultMessage: 'Enginn valmöguleiki',
             })}
-            options={domainOptions}
-            value={defaultDomainOption}
+            options={options}
+            value={selectedOption}
+            defaultValue={selectedOption}
             onChange={(option) => {
               const opt = option as DomainOption
 
               if (opt) {
+                updateDomain(opt)
                 onDomainChange(opt)
               }
             }}

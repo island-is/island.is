@@ -58,14 +58,14 @@ const Overview = () => {
     isCaseUpToDate,
   } = useContext(FormContext)
   const { formatMessage } = useIntl()
-  const { setAndSendToServer } = useCase()
+  const { setAndSendCaseToServer } = useCase()
   const { user } = useContext(UserContext)
   const { uploadState } = useCourtUpload(workingCase, setWorkingCase)
   const [isDraftingConclusion, setIsDraftingConclusion] = useState<boolean>()
 
   useEffect(() => {
     if (isCaseUpToDate) {
-      setAndSendToServer(
+      setAndSendCaseToServer(
         [
           {
             ruling: !workingCase.parentCase
@@ -82,7 +82,7 @@ const Overview = () => {
       )
     }
   }, [
-    setAndSendToServer,
+    setAndSendCaseToServer,
     formatMessage,
     isCaseUpToDate,
     setWorkingCase,

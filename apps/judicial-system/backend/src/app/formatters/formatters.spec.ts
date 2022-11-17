@@ -606,9 +606,9 @@ describe('formatProsecutorReceivedByCourtSmsNotification', () => {
     )
   })
 
-  test('should format received by court notification for an indictment of type MURDER', () => {
+  test('should format received by court notification for an indictment', () => {
     // Arranged
-    const type = CaseType.MURDER
+    const type = CaseType.INDICTMENT
     const court = 'Héraðsdómur Reykjavíkur'
     const courtCaseNumber = 'R-898/2021'
 
@@ -844,7 +844,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
 
   test('should format court date notification for indictments', () => {
     // Arrange
-    const type = CaseType.MURDER
+    const type = CaseType.INDICTMENT
     const courtCaseNumber = 'S-898/2021'
     const court = 'Héraðsdómur Reykjavíkur'
     const courtDate = new Date('2021-12-24T10:00')

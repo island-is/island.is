@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 import { ApiScope, AuthScope } from '@island.is/auth/scopes'
 import { defineConfig } from '@island.is/nest/config'
-import { DelegationType } from './dto/delegation.dto'
+import { DelegationType } from './types/delegationType'
 
 const customScopeRuleSchema = z.array(
   z.object({
@@ -11,7 +11,6 @@ const customScopeRuleSchema = z.array(
     // This property adds extra conditions to custom delegation grants. It is an array of
     // delegation types which can grant the scope to other users.
     //
-    // * Self: Normal "person" users can grant this scope to other users on their behalf.
     // * ProcurationHolder: "Company owners" can grant this scope to other users on behalf of their company.
     // * LegalGuardian: "Parents" can grant this scope to other users on behalf of their child.
     // * Custom: Custom delegatee can grant this scope to other users on behalf of the original delegator.
@@ -22,7 +21,7 @@ const customScopeRuleSchema = z.array(
       z
         .string()
         .refine((val) =>
-          ['Self', ...Object.values(DelegationType)].includes(val),
+          Object.values(DelegationType).includes(val as DelegationType),
         ),
     ),
   }),

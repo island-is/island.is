@@ -18,7 +18,7 @@ import { Config } from './models/config.model'
 import { TaxInfo } from './models/taxInfo.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(ApiScope.internal)
+@Scopes(ApiScope.internal, ApiScope.internalProcuring)
 @Resolver()
 export class FinancialStatementsInaoResolver {
   constructor(

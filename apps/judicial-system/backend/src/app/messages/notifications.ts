@@ -535,10 +535,18 @@ export const notifications = {
       description:
         'Fyrirsögn í pósti til verjanda þegar hann er skráður á mál.',
     },
+    // TODO: REMOVE body
     body: {
       id: 'judicial.system.backend:notifications.defender_assigned_email.body',
       defaultMessage:
         '{court} hefur skipað þig verjanda í máli {linkStart}{courtCaseNumber}{linkEnd}. Gögn málsins eru aðgengileg í Réttarvörslugátt með rafrænum skilríkjum.',
+      description: 'Texti í pósti til verjanda þegar hann er skráður á mál.',
+    },
+    bodyV2: {
+      id:
+        'judicial.system.backend:notifications.defender_assigned_email.body_v2',
+      defaultMessage:
+        '{court} hefur skipað þig verjanda í máli {courtCaseNumber}.<br /><br />{defenderHasAccessToRVG, select, true {Gögn málsins eru aðgengileg í {linkStart}Réttarvörslugátt{linkEnd} með rafrænum skilríkjum} other {Þú getur nálgast gögn málsins hjá {courtName} ef þau hafa ekki þegar verið afhent}}.',
       description: 'Texti í pósti til verjanda þegar hann er skráður á mál.',
     },
   }),

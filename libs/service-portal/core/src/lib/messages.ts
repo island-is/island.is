@@ -539,10 +539,6 @@ export const m = defineMessages({
     id: 'service.portal:accessControl',
     defaultMessage: 'Aðgangsstýring',
   },
-  accessControlV2: {
-    id: 'service.portal:accessControlV2',
-    defaultMessage: 'Aðgangsstýring V2',
-  },
   accessControlDelegations: {
     id: 'service.portal:delegations',
     defaultMessage: 'Umboð',
@@ -829,6 +825,11 @@ export const m = defineMessages({
     id: 'service.portal:button.cancel',
     defaultMessage: 'Hætta við',
     description: 'Cancel',
+  },
+  buttonEdit: {
+    id: 'service.portal:button.edit',
+    defaultMessage: 'Breyta',
+    description: 'Edit',
   },
   buttonDestroy: {
     id: 'service.portal:button.delete',

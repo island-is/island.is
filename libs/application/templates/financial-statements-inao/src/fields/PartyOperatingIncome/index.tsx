@@ -1,5 +1,6 @@
 import React from 'react'
 import { useFormContext } from 'react-hook-form'
+import { useQuery } from '@apollo/client'
 import {
   GridColumn,
   GridContainer,
@@ -14,8 +15,21 @@ import { PartyIncome } from './partyIncome'
 import { PartyExpenses } from './partyExpenses'
 import { OPERATINGCOST, PARTYOPERATIONIDS } from '../../lib/constants'
 import { useTotals } from '../../hooks'
+import { TaxInfoQuery } from '../../graphql'
+import { getValueViaPath } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 
-export const PartyOperatingIncome = () => {
+export const PartyOperatingIncome = ({ application }: FieldBaseProps) => {
+  const { answers } = application
+  const operatingYear = getValueViaPath(
+    answers,
+    'conditionalAbout.operatingYear',
+  )
+
+  const { data, loading } = useQuery(TaxInfoQuery, {
+    variables: { year: operatingYear },
+  })
+
   const { errors } = useFormContext()
 
   const [getTotalIncome, totalIncome] = useTotals(
@@ -33,7 +47,12 @@ export const PartyOperatingIncome = () => {
           <Text paddingY={1} as="h2" variant="h4">
             {formatMessage(m.income)}
           </Text>
-          <PartyIncome getSum={getTotalIncome} errors={errors} />
+          <PartyIncome
+            data={data}
+            loading={loading}
+            getSum={getTotalIncome}
+            errors={errors}
+          />
           <Total
             name={PARTYOPERATIONIDS.totalIncome}
             total={totalIncome}
@@ -49,16 +68,6 @@ export const PartyOperatingIncome = () => {
             name={PARTYOPERATIONIDS.totalExpense}
             total={totalExpense}
             label={formatMessage(m.totalExpenses)}
-          />
-        </GridColumn>
-      </GridRow>
-      <GridRow align="flexEnd">
-        <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
-          <Total
-            name={OPERATINGCOST.total}
-            label={formatMessage(m.operatingCost)}
-            title={formatMessage(m.operatingCost)}
-            total={totalIncome - totalExpense}
           />
         </GridColumn>
       </GridRow>

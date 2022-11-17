@@ -2,12 +2,18 @@ import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common'
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 
 import {
-  ApiScope,
   ApiScopeTreeDTO,
+  DelegationDirection,
   DelegationResourcesService,
   DomainDTO,
 } from '@island.is/auth-api-lib'
-import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import {
+  CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+  User,
+} from '@island.is/auth-nest-tools'
 import { AuthScope } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
 import {
@@ -34,6 +40,15 @@ const lang: DocumentationQueryOptions = {
   type: 'string',
 }
 
+const direction: DocumentationQueryOptions = {
+  description:
+    'The direction of the delegations to apply on domain filtering. Default returns all domains.',
+  required: false,
+  schema: {
+    enum: [DelegationDirection.OUTGOING],
+  },
+}
+
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @FeatureFlag(Features.outgoingDelegationsV2)
 @Scopes(AuthScope.delegations)
@@ -53,6 +68,7 @@ export class DomainsController {
     request: {
       query: {
         lang,
+        direction,
       },
     },
     response: { status: 200, type: [DomainDTO] },
@@ -60,8 +76,12 @@ export class DomainsController {
   @Audit<DomainDTO[]>({
     resources: (domains) => domains.map((domain) => domain.name),
   })
-  findAll(@Query('lang') language?: string): Promise<DomainDTO[]> {
-    return this.resourceService.findAllDomains(language)
+  findAll(
+    @CurrentUser() user: User,
+    @Query('lang') language?: string,
+    @Query('direction') direction?: DelegationDirection,
+  ): Promise<DomainDTO[]> {
+    return this.resourceService.findAllDomains(user, language, direction)
   }
 
   @Get(':domainName')
@@ -85,10 +105,11 @@ export class DomainsController {
     resources: (domain) => domain.name,
   })
   findOne(
+    @CurrentUser() user: User,
     @Param('domainName') domainName: string,
     @Query('lang') language?: string,
   ): Promise<DomainDTO> {
-    return this.resourceService.findOneDomain(domainName, language)
+    return this.resourceService.findOneDomain(user, domainName, language)
   }
 
   @Get(':domainName/scope-tree')
@@ -100,6 +121,7 @@ export class DomainsController {
       },
       query: {
         lang,
+        direction,
       },
     },
     response: { status: 200, type: [ApiScopeTreeDTO] },
@@ -108,29 +130,44 @@ export class DomainsController {
     resources: (scopeTree) => scopeTree.map((node) => node.name),
   })
   findScopeTree(
+    @CurrentUser() user: User,
     @Param('domainName') domainName: string,
     @Query('lang') language?: string,
+    @Query('direction') direction?: DelegationDirection,
   ): Promise<ApiScopeTreeDTO[]> {
-    return this.resourceService.findScopeTree(domainName, language)
+    return this.resourceService.findScopeTree(
+      user,
+      domainName,
+      language,
+      direction,
+    )
   }
 
   @Get(':domainName/scopes')
   @Documentation({
-    description: 'Returns the list of scopes for the given domain.',
+    description: 'Returns a list of scopes for the given domain.',
     request: {
       params: {
         domainName,
       },
       query: {
         lang,
+        direction,
       },
     },
-    response: { status: 200, type: [ApiScope] },
+    response: { status: 200, type: [ApiScopeTreeDTO] },
   })
   async findScopes(
+    @CurrentUser() user: User,
     @Param('domainName') domainName: string,
     @Query('lang') language?: string,
-  ): Promise<ApiScope[]> {
-    return this.resourceService.findScopes(domainName, language)
+    @Query('direction') direction?: DelegationDirection,
+  ): Promise<ApiScopeTreeDTO[]> {
+    return this.resourceService.findScopes(
+      user,
+      domainName,
+      language,
+      direction,
+    )
   }
 }

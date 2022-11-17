@@ -31,10 +31,12 @@ export const GetApplicationInformation = gql`
   query GetApplicationInformation(
     $applicationId: String!
     $nationalId: String!
+    $shouldNotCall: Boolean!
   ) {
     getApplicationInformation(
       applicationId: $applicationId
       nationalId: $nationalId
+      shouldNotCall: $shouldNotCall
     ) {
       periods {
         from
@@ -42,6 +44,7 @@ export const GetApplicationInformation = gql`
         ratio
         paid
         firstPeriodStart
+        rightsCodePeriod
       }
     }
   }
