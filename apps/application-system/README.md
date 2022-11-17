@@ -10,6 +10,8 @@ or
 yarn dev/init application-system-form
 ```
 
+depending on whether you're working on the API or an application form.
+
 To start the app:
 
 ```bash
@@ -17,6 +19,8 @@ yarn dev application-system-api
 or
 yarn dev application-system-form
 ```
+
+depending on whether you're working on the API or an application form.
 
 These commands are just shorthands for the setup described below.
 
