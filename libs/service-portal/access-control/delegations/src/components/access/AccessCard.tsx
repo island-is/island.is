@@ -68,6 +68,7 @@ export const AccessCard = ({ delegation, onDelete }: AccessCardProps) => {
       paddingX={[2, 3, 4]}
       border={isExpired ? 'disabled' : 'standard'}
       borderRadius="large"
+      data-testid="access-card"
     >
       <Box display="flex" justifyContent="spaceBetween" alignItems="flexStart">
         <Stack space="smallGutter">
