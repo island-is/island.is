@@ -474,6 +474,9 @@ export class InternalCaseService {
         .create(
           {
             ...caseToCreate,
+            state: isIndictmentCase(caseToCreate.type)
+              ? CaseState.DRAFT
+              : undefined,
             origin: CaseOrigin.LOKE,
             creatingProsecutorId: prosecutorId,
             prosecutorId,

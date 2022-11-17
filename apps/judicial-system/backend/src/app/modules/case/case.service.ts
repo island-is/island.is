@@ -26,6 +26,7 @@ import {
   CaseFileState,
   CaseOrigin,
   CaseState,
+  isIndictmentCase,
 } from '@island.is/judicial-system/types'
 import type { User as TUser } from '@island.is/judicial-system/types'
 
@@ -155,7 +156,15 @@ export class CaseService {
     transaction?: Transaction,
   ): Promise<string> {
     const theCase = await (transaction
-      ? this.caseModel.create({ ...caseToCreate }, { transaction })
+      ? this.caseModel.create(
+          {
+            ...caseToCreate,
+            state: isIndictmentCase(caseToCreate.type)
+              ? CaseState.DRAFT
+              : undefined,
+          },
+          { transaction },
+        )
       : this.caseModel.create({ ...caseToCreate }))
 
     return theCase.id
