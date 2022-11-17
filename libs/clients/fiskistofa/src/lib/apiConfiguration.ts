@@ -10,17 +10,15 @@ export const ApiConfiguration = {
       fetchApi: createEnhancedFetch({
         name: 'clients-fiskistofa',
         ...clientConfig.fetch,
-        autoAuth: clientConfig.isConfigured
-          ? {
-              clientId: clientConfig.accessTokenServiceClientId,
-              clientSecret: clientConfig.accessTokenServiceClientSecret,
-              scope: clientConfig.scope,
-              issuer: clientConfig.accessTokenServiceAudience,
-              tokenEndpoint: clientConfig.accessTokenServiceUrl,
-              mode: 'token',
-              audience: clientConfig.accessTokenServiceAudience,
-            }
-          : undefined,
+        autoAuth: {
+          clientId: clientConfig.accessTokenServiceClientId,
+          clientSecret: clientConfig.accessTokenServiceClientSecret,
+          scope: clientConfig.scope,
+          issuer: clientConfig.accessTokenServiceAudience,
+          tokenEndpoint: clientConfig.accessTokenServiceUrl,
+          mode: 'token',
+          audience: clientConfig.accessTokenServiceAudience,
+        },
       }),
       basePath: clientConfig.url,
       headers: {

@@ -26,17 +26,17 @@ import {
 } from '@island.is/web/graphql/schema'
 
 const webRenderConnectedComponent = (slice) => {
-  const data = slice.json
+  const data = slice.json ?? {}
 
   switch (slice.componentType) {
     case 'Fiskistofa/ShipSearch':
-      return <ShipSearch {...data} />
+      return <ShipSearch namespace={data} />
     case 'Fiskistofa/ShipSearchSidebarInput':
-      return <SidebarShipSearchInput {...data} />
+      return <SidebarShipSearchInput namespace={data} />
     case 'Fiskistofa/StraddlingStockCalculator':
-      return <StraddlingStockCalculator namespace={data ?? {}} />
+      return <StraddlingStockCalculator namespace={data} />
     case 'Fiskistofa/CatchQuotaCalculator':
-      return <CatchQuotaCalculator namespace={data ?? {}} />
+      return <CatchQuotaCalculator namespace={data} />
     case 'Fiskistofa/SelectedShip':
       return <SelectedShip />
     default:

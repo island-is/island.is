@@ -61,7 +61,7 @@ const SelectedShip = ({ namespace }: SelectedShipProps) => {
             {ship?.name}
           </Text>
         ) : (
-          <Text>{n('', 'Ekki tókst að sækja skip')}</Text>
+          <Text>{n('shipCouldNotBeFetched', 'Ekki tókst að sækja skip')}</Text>
         )}
 
         <Box className={styles.shipNumber}>

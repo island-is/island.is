@@ -15,36 +15,28 @@ import {
   FiskistofaShipBasicInfoResponse,
 } from '@island.is/api/schema'
 import { GET_SHIPS_QUERY } from './queries'
+import { useNamespace } from '@island.is/web/hooks'
 
 interface ShipSearchProps {
-  shipDetailsHref?: string
-  searchStringIsTooShort?: string
-  resultsFound?: string
-  search?: string
-  noResultsFound?: string
-  errorOccuredWhileFetchingShips?: string
-  shipNumber?: string
-  shipName?: string
-  operator?: string
-  typeOfVessel?: string
-  homePort?: string
-  shipSearchInputLabel?: string
+  namespace: {
+    shipDetailsHref?: string
+    searchStringIsTooShort?: string
+    resultsFound?: string
+    search?: string
+    noResultsFound?: string
+    errorOccuredWhileFetchingShips?: string
+    shipNumber?: string
+    shipName?: string
+    operator?: string
+    typeOfVessel?: string
+    homePort?: string
+    shipSearchInputLabel?: string
+  }
 }
 
-const ShipSearch = ({
-  shipDetailsHref = '/v/maelabord-fiskistofu?selectedTab=skip',
-  searchStringIsTooShort = 'Leitarstrengur þarf að vera a.m.k. 2 stafir',
-  resultsFound = 'Fjöldi skipa:',
-  search = 'Leita',
-  noResultsFound = ' Engar niðurstöður fundust',
-  errorOccuredWhileFetchingShips = 'Villa kom upp við að leita eftir skipi',
-  shipNumber = 'Skipnr.',
-  shipName = 'Nafn',
-  operator = 'Útgerð',
-  typeOfVessel = 'Útgerðarflokkur',
-  homePort = 'Heimahöfn',
-  shipSearchInputLabel = 'Skipaskrárnúmer eða nafn skips',
-}: ShipSearchProps) => {
+const ShipSearch = ({ namespace }: ShipSearchProps) => {
+  const n = useNamespace(namespace)
+
   const [nameInput, setNameInput] = useState('')
   const [nameInputDuringLastSearch, setNameInputDuringLastSearch] = useState('')
 
@@ -52,7 +44,10 @@ const ShipSearch = ({
   const router = useRouter()
 
   const getShipDetailsHref = (id: number) => {
-    return `${shipDetailsHref}&nr=${id}`
+    return `${n(
+      'shipDetailsHref',
+      '/v/maelabord-fiskistofu?selectedTab=skip',
+    )}&nr=${id}`
   }
 
   const [loadShips, { data, error, loading, called }] = useLazyQuery<
@@ -73,7 +68,12 @@ const ShipSearch = ({
   const handleShipSearch = (nameInput: string) => {
     const nameInputIsNumber = !isNaN(Number(nameInput)) && nameInput.length > 0
     if (!nameInputIsNumber && nameInput.length < 2) {
-      setInputError(searchStringIsTooShort)
+      setInputError(
+        n(
+          'searchStringIsTooShort',
+          'Leitarstrengur þarf að vera a.m.k. 2 stafir',
+        ),
+      )
       return
     } else {
       setInputError('')
@@ -96,7 +96,7 @@ const ShipSearch = ({
     <Box>
       <Input
         name="ship-search"
-        label={shipSearchInputLabel}
+        label={n('shipSearchInputLabel', 'Skipaskrárnúmer eða nafn skips')}
         value={nameInput}
         onChange={(ev) => setNameInput(ev.target.value)}
         hasError={inputError.length > 0}
@@ -114,7 +114,7 @@ const ShipSearch = ({
           }
           onClick={() => handleShipSearch(nameInput)}
         >
-          {search}
+          {n('search', 'Leita')}
         </Button>
       </Box>
 
@@ -129,29 +129,34 @@ const ShipSearch = ({
       </Box>
       {ships.length === 0 && called && !loading && !error && (
         <Box display="flex" justifyContent="center">
-          <Text>{noResultsFound}</Text>
+          <Text>{n('noResultsFound', 'Engar niðurstöður fundust')}</Text>
         </Box>
       )}
 
       {error && (
         <Box display="flex" justifyContent="center">
-          <Text>{errorOccuredWhileFetchingShips}</Text>
+          <Text>
+            {n(
+              'errorOccuredWhileFetchingShips',
+              'Villa kom upp við að leita eftir skipi',
+            )}
+          </Text>
         </Box>
       )}
 
       {ships.length > 0 && (
         <>
           <Text color="blue600">
-            {resultsFound} {ships.length}
+            {n('resultsFound', 'Fjöldi skipa:')} {ships.length}
           </Text>
           <T.Table>
             <T.Head>
               <T.Row>
-                <T.HeadData>{shipNumber}</T.HeadData>
-                <T.HeadData>{shipName}</T.HeadData>
-                <T.HeadData>{typeOfVessel}</T.HeadData>
-                <T.HeadData>{operator}</T.HeadData>
-                <T.HeadData>{homePort}</T.HeadData>
+                <T.HeadData>{n('shipNumber', 'Skipnr.')}</T.HeadData>
+                <T.HeadData>{n('shipName', 'Nafn')}</T.HeadData>
+                <T.HeadData>{n('typeOfVessel', 'Útgerðarflokkur')}</T.HeadData>
+                <T.HeadData>{n('operator', 'Útgerð')}</T.HeadData>
+                <T.HeadData>{n('homePort', 'Heimahöfn')}</T.HeadData>
               </T.Row>
             </T.Head>
             <T.Body>

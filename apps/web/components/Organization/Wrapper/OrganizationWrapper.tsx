@@ -443,7 +443,9 @@ const renderConnectedComponent = (slice) => {
         <LatestNewsCardConnectedComponent key={slice?.id} {...slice?.json} />
       )
     case 'Fiskistofa/ShipSearchSidebarInput':
-      return <SidebarShipSearchInput key={slice?.id} {...slice?.json} />
+      return (
+        <SidebarShipSearchInput key={slice?.id} namespace={slice?.json ?? {}} />
+      )
     default:
       return null
   }

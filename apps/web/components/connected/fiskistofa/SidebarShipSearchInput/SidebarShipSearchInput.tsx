@@ -1,20 +1,19 @@
 import { useState } from 'react'
 import { useRouter } from 'next/router'
 import { AsyncSearchInput, Box, Text } from '@island.is/island-ui/core'
+import { useNamespace } from '@island.is/web/hooks'
 
 interface SidebarShipSearchInputProps {
-  shipDetailsHref?: string
-  shipSearchHref?: string
-  placeholder?: string
-  label?: string
+  namespace: {
+    shipDetailsHref?: string
+    shipSearchHref?: string
+    placeholder?: string
+    label?: string
+  }
 }
 
-const SidebarShipSearchInput = ({
-  shipDetailsHref = '/v/maelabord-fiskistofu',
-  shipSearchHref = '/s/fiskistofa/skipaleit',
-  placeholder = 'Skipaskrárnúmer eða nafn',
-  label = 'Skoða skip',
-}: SidebarShipSearchInputProps) => {
+const SidebarShipSearchInput = ({ namespace }: SidebarShipSearchInputProps) => {
+  const n = useNamespace(namespace)
   const [searchValue, setSearchValue] = useState('')
   const router = useRouter()
   const [hasFocus, setHasFocus] = useState(false)
@@ -24,18 +23,21 @@ const SidebarShipSearchInput = ({
       !isNaN(Number(searchValue)) && searchValue.length > 0
     if (searchValueIsNumber) {
       router.push({
-        pathname: shipDetailsHref,
+        pathname: n('shipDetailsHref', '/v/maelabord-fiskistofu'),
         query: { nr: Number(searchValue), selectedTab: 'skip' },
       })
     } else {
       router.push({
-        pathname: shipSearchHref,
+        pathname: n('shipSearchHref', '/s/fiskistofa/skipaleit'),
         query: {
           name: searchValue,
         },
       })
     }
   }
+
+  const label = n('label', '')
+  const placeholder = n('placeholder', '')
 
   return (
     <Box>
