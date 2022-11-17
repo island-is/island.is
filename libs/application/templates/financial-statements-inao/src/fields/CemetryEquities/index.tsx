@@ -228,6 +228,7 @@ export const CemetryEquities: FC<FieldBaseProps> = ({
               }
               label={formatMessage(m.equityAtTheBeginningOfTheYear)}
               backgroundColor="blue"
+              rightAlign
               currency
             />
           </Box>

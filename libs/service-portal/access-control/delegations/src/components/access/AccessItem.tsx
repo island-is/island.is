@@ -22,6 +22,7 @@ import { Scope } from './access.types'
 import classNames from 'classnames'
 import { isDefined } from '@island.is/shared/utils'
 import { isApiScopeGroup } from './access.utils'
+import { VisuallyHidden } from 'reakit/VisuallyHidden'
 
 export const DATE_FORMAT = 'dd.MM.yyyy'
 
@@ -48,6 +49,11 @@ export const AccessItem = ({
   const { lang, formatMessage } = useLocale()
   const { setValue, getValues } = useFormContext()
   const { md } = useBreakpoint()
+  const grantTranslation = formatMessage({
+    id: 'sp.access-control-delegations:grant',
+    defaultMessage: 'Heimild',
+  })
+
   const [datePickerVisibleGroup, setDatePickerVisibleGroup] = useState<
     boolean[]
   >(apiScopes.map(() => false))
@@ -176,11 +182,20 @@ export const AccessItem = ({
                   <CheckboxController
                     id={`${item.model}.name`}
                     spacing={0}
-                    labelVariant={isFirstItem ? 'default' : 'medium'}
                     defaultValue={existingScope ? [existingScope.name] : []}
                     options={[
                       {
-                        label: item.displayName,
+                        label: (
+                          <>
+                            <VisuallyHidden>
+                              {formatMessage({
+                                id: 'sp.settings-access-control:access-access',
+                                defaultMessage: 'Aðgangur',
+                              })}
+                            </VisuallyHidden>
+                            {item.displayName}
+                          </>
+                        ),
                         value: item.name,
                       },
                     ]}
@@ -200,20 +215,14 @@ export const AccessItem = ({
                     flexDirection="column"
                     className={styles.rowGap}
                   >
-                    {!md && (
+                    {md && item.description?.trim() ? (
+                      <VisuallyHidden>{grantTranslation}</VisuallyHidden>
+                    ) : !md ? (
                       <Text variant="small" fontWeight="semiBold">
-                        {formatMessage({
-                          id: 'sp.access-control-delegations:grant',
-                          defaultMessage: 'Heimild',
-                        })}
+                        {grantTranslation}
                       </Text>
-                    )}
-                    <Text
-                      variant={isFirstItem ? 'default' : 'medium'}
-                      fontWeight="light"
-                    >
-                      {item.description}
-                    </Text>
+                    ) : null}
+                    <Text fontWeight="light">{item.description}</Text>
                   </Box>
                 </GridColumn>
               )}

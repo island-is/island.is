@@ -59,7 +59,10 @@ import { LatestNewsCardConnectedComponent } from '../LatestNewsCardConnectedComp
 import { RikislogmadurHeader } from './Themes/RikislogmadurTheme/RikislogmadurHeader'
 import { RikislogmadurFooter } from './Themes/RikislogmadurTheme/RikislogmadurFooter'
 import { LandskjorstjornHeader } from './Themes/LandkjorstjornTheme/LandskjorstjornHeader'
-import FjarsyslaRikisinsFooter from './Themes/FjarsyslaRikisinsTheme/FjarsyslaRikisinsFooter'
+import {
+  FjarsyslaRikisinsHeader,
+  FjarsyslaRikisinsFooter,
+} from './Themes/FjarsyslaRikisinsTheme'
 
 import * as styles from './OrganizationWrapper.css'
 
@@ -95,6 +98,7 @@ export const lightThemes = [
   'landlaeknir',
   'fiskistofa',
   'landing_page',
+  'fjarsysla-rikisins',
 ]
 export const footerEnabled = [
   'syslumenn',
@@ -121,7 +125,7 @@ export const footerEnabled = [
   'rikislogmadur',
   'office-of-the-attorney-general-civil-affairs',
 
-  'fjarsysla-rikisins',
+  'fjarsyslan',
   'the-financial-management-authority',
 ]
 
@@ -182,6 +186,8 @@ const OrganizationHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
       return <LandskjorstjornHeader organizationPage={organizationPage} />
     case 'landing_page':
       return null
+    case 'fjarsysla-rikisins':
+      return <FjarsyslaRikisinsHeader organizationPage={organizationPage} />
     default:
       return <DefaultHeader organizationPage={organizationPage} />
   }
@@ -338,7 +344,6 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
     case 'the-financial-management-authority':
       OrganizationFooterComponent = (
         <FjarsyslaRikisinsFooter
-          title={organization.title}
           footerItems={organization.footerItems}
           logo={organization.logo?.url}
         />
