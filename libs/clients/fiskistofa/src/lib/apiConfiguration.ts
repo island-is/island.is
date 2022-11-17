@@ -1,10 +1,11 @@
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
-import { ConfigType } from '@island.is/nest/config'
+import { ConfigType, LazyDuringDevScope } from '@island.is/nest/config'
 import { Configuration } from '../../gen/fetch'
 import { FiskistofaClientConfig } from './fiskistofaClient.config'
 
 export const ApiConfiguration = {
   provide: 'FiskistofaClientAPiConfiguration',
+  scope: LazyDuringDevScope,
   useFactory: (clientConfig: ConfigType<typeof FiskistofaClientConfig>) =>
     new Configuration({
       fetchApi: createEnhancedFetch({
