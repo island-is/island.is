@@ -5,7 +5,7 @@ import {
 import { AuthScope } from '@island.is/auth/scopes'
 import { User } from '@island.is/auth-nest-tools'
 import { ConfigType } from '@island.is/nest/config'
-import { DelegationConfig } from '@island.is/auth-api-lib'
+import { DelegationConfig, DelegationDirection } from '@island.is/auth-api-lib'
 import { CreateCustomDelegation, CreateDomain } from './fixtures/types'
 
 export interface DomainAssertion {
@@ -20,12 +20,20 @@ export interface TestCase {
   accessTo?: string[]
   domains: CreateDomain[]
   expected: DomainAssertion[]
+  expectedDomains?: DomainAssertion[]
+  direction?: DelegationDirection
 }
+
+const personUser = createCurrentUser({
+  nationalIdType: 'person',
+  scope: [AuthScope.delegations],
+})
 
 export const accessTestCases: Record<string, TestCase> = {
   // Normal user should be able to grant delegations for scopes allowing explicit delegation grants.
   happyCase: {
-    user: createCurrentUser({ scope: [AuthScope.delegations] }),
+    direction: DelegationDirection.OUTGOING,
+    user: personUser,
     domains: [
       {
         name: 'd1',
@@ -50,7 +58,8 @@ export const accessTestCases: Record<string, TestCase> = {
   },
   // Should not see scopes unless they allow explicit delegation grants.
   noExplicitDelegationGrant: {
-    user: createCurrentUser({ scope: [AuthScope.delegations] }),
+    direction: DelegationDirection.OUTGOING,
+    user: personUser,
     domains: [
       {
         name: 'd1',
@@ -66,6 +75,7 @@ export const accessTestCases: Record<string, TestCase> = {
   },
   // Procuring holder should only see scopes they have access to.
   procuringHolderScopes: {
+    direction: DelegationDirection.OUTGOING,
     user: createCurrentUser({
       nationalIdType: 'company',
       delegationType: 'ProcurationHolder',
@@ -106,6 +116,7 @@ export const accessTestCases: Record<string, TestCase> = {
   },
   // Can grant forward custom delegations which you have.
   customDelegationScopes: {
+    direction: DelegationDirection.OUTGOING,
     user: createCurrentUser({
       nationalIdType: 'company',
       delegationType: 'Custom',
@@ -180,9 +191,16 @@ export const accessTestCases: Record<string, TestCase> = {
       },
     ],
     expected: [],
+    expectedDomains: [
+      {
+        name: 'd1',
+        scopes: [{ name: 's1' }],
+      },
+    ],
   },
   // Company actor should not see access controlled scopes except as procuration holder or custom delegation.
   accessControlledCompanyScopes: {
+    direction: DelegationDirection.OUTGOING,
     user: createCurrentUser({
       nationalIdType: 'company',
       scope: [AuthScope.delegations],
@@ -227,6 +245,7 @@ export const accessTestCases: Record<string, TestCase> = {
   },
   // Should see scopes configured for specific types of delegation.
   customScopeRulesIncluded: {
+    direction: DelegationDirection.OUTGOING,
     user: createCurrentUser({
       nationalIdType: 'company',
       scope: [AuthScope.delegations],
@@ -269,9 +288,8 @@ export const accessTestCases: Record<string, TestCase> = {
   },
   // Should not see scopes configured for other types of delegation.
   customScopeRulesExcluded: {
-    user: createCurrentUser({
-      scope: [AuthScope.delegations],
-    }),
+    direction: DelegationDirection.OUTGOING,
+    user: personUser,
     customScopeRules: [
       { scopeName: 's1', onlyForDelegationType: ['ProcurationHolder'] },
       { scopeName: 's2', onlyForDelegationType: ['Custom'] },
@@ -301,5 +319,38 @@ export const accessTestCases: Record<string, TestCase> = {
       },
     ],
     expected: [],
+  },
+  // Should get list of domains the user has access to grant outgoing delegations.
+  onlyOutgoingDomains: {
+    direction: DelegationDirection.OUTGOING,
+    user: personUser,
+    delegations: [
+      // Incoming delegation on a company scope, domain should not be listed in outgoing domains.
+      {
+        domainName: 'd2',
+        fromNationalId: createNationalId('company'),
+        toNationalId: personUser.nationalId,
+        scopes: [{ scopeName: 's2' }],
+      },
+    ],
+    customScopeRules: [
+      { scopeName: 's2', onlyForDelegationType: ['ProcurationHolder'] },
+    ],
+    domains: [
+      {
+        name: 'd1',
+        apiScopes: [{ name: 's1', allowExplicitDelegationGrant: true }],
+      },
+      {
+        name: 'd2',
+        apiScopes: [{ name: 's2', allowExplicitDelegationGrant: true }],
+      },
+    ],
+    expected: [
+      {
+        name: 'd1',
+        scopes: [{ name: 's1' }],
+      },
+    ],
   },
 }

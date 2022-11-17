@@ -54,6 +54,7 @@ export const slices = gql`
     disclaimerLabel
     categoryLabel
     categories
+    inputs
     buttonText
     signupUrl
     image {
@@ -174,6 +175,7 @@ export const slices = gql`
       answer {
         ...BaseSlices
       }
+      publishDate
     }
   }
 
@@ -507,6 +509,7 @@ export const slices = gql`
     recipient
     fields {
       title
+      name
       placeholder
       type
       required
@@ -603,6 +606,30 @@ export const slices = gql`
     powerBiEmbedProps
   }
 
+  fragment TableSliceFields on TableSlice {
+    __typename
+    id
+    title
+    tableContent
+  }
+
+  fragment EmailSignupFields on EmailSignup {
+    __typename
+    id
+    title
+    description
+    formFields {
+      id
+      title
+      name
+      placeholder
+      type
+      required
+      options
+    }
+    translations
+  }
+
   fragment BaseSlices on Slice {
     ...TimelineFields
     ...MailingListSignupFields
@@ -638,6 +665,8 @@ export const slices = gql`
     ...LifeEventPageListSliceFields
     ...SidebarCardFields
     ...PowerBiSliceFields
+    ...TableSliceFields
+    ...EmailSignupFields
   }
 
   fragment AllSlices on Slice {
@@ -675,6 +704,7 @@ export const nestedAccordionAndFaqListFields = `
       answer {
         ...AllSlices
       }
+      publishDate
     }
   }
 `
