@@ -78,7 +78,7 @@ const Access = () => {
     return <NotFound />
   }
 
-  const labelHeaderText = `${authDelegation?.to?.name} • ${authDelegation?.domain.displayName}`
+  const labelHeaderText = `${authDelegation?.to?.name} | ${authDelegation?.domain.displayName}`
 
   return (
     <Box
