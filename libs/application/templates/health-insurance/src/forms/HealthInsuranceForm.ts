@@ -141,6 +141,7 @@ export const HealthInsuranceForm: Form = buildForm({
               title: '',
               description: m.statusDescription,
               width: 'half',
+              required: true,
               largeButtons: true,
               options: [
                 {
@@ -192,6 +193,7 @@ export const HealthInsuranceForm: Form = buildForm({
               description: m.childrenDescription,
               width: 'half',
               largeButtons: true,
+              required: true,
               options: [
                 { label: m.noOptionLabel, value: NO },
                 { label: m.yesOptionLabel, value: YES },
@@ -220,6 +222,7 @@ export const HealthInsuranceForm: Form = buildForm({
               title: '',
               description: m.formerInsuranceRegistration,
               largeButtons: true,
+              required: true,
               options: [
                 { label: m.formerInsuranceNoOption, value: NO },
                 { label: m.yesOptionLabel, value: YES },
@@ -230,6 +233,7 @@ export const HealthInsuranceForm: Form = buildForm({
               title: m.formerInsuranceCountry,
               description: m.formerInsuranceDetails,
               placeholder: m.formerInsuranceCountryPlaceholder,
+              required: true,
               backgroundColor: 'blue',
               options: Countries.map(({ name, alpha2Code: countryCode }) => {
                 const option = { name, countryCode }
@@ -244,12 +248,14 @@ export const HealthInsuranceForm: Form = buildForm({
               title: m.formerPersonalId,
               width: 'half',
               backgroundColor: 'blue',
+              required: true,
             }),
             buildTextField({
               id: 'formerInsurance.institution',
               title: m.formerInsuranceInstitution,
               width: 'half',
               backgroundColor: 'blue',
+              required: true,
             }),
             buildCustomField({
               id: 'waitingPeriodInfo',

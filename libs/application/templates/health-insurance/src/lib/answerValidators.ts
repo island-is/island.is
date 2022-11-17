@@ -58,13 +58,6 @@ export const answerValidators: Record<string, AnswerValidator> = {
       return buildError('You must select one of the above', field)
     }
 
-    /* Check that country is not empty */
-    if (!country) {
-      const field = `${FORMER_INSURANCE}.country`
-      const buildError = buildValidationError(field)
-      return buildError('Please select a country', field)
-    }
-
     if (!requireWaitingPeriod(country, applicant?.citizenship)) {
       const personalIdField = `${FORMER_INSURANCE}.personalId`
 
@@ -110,6 +103,7 @@ export const answerValidators: Record<string, AnswerValidator> = {
         return buildError('Please fill in a reason', field)
       }
     } else {
+      console.log('Waiting period is required')
       /* User that requires waiting period, should not be allowed to continue */
       const buildError = buildValidationError(`${FORMER_INSURANCE}`)
       return buildError('')
