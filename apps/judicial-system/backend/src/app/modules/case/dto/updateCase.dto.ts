@@ -19,9 +19,9 @@ import {
   SessionArrangements,
   CourtDocument,
   SubpoenaType,
-  IndictmentSubType,
   CaseType,
 } from '@island.is/judicial-system/types'
+import type { IndictmentSubtypeMap } from '@island.is/judicial-system/types'
 
 export class UpdateCaseDto {
   @IsOptional()
@@ -30,9 +30,9 @@ export class UpdateCaseDto {
   readonly type?: CaseType
 
   @IsOptional()
-  @IsString()
-  @ApiPropertyOptional({ enum: IndictmentSubType })
-  readonly indictmentSubType?: IndictmentSubType
+  @IsObject()
+  @ApiPropertyOptional()
+  readonly indictmentSubtypes?: IndictmentSubtypeMap
 
   @IsOptional()
   @IsString()

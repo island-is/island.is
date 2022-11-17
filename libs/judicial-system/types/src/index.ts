@@ -41,7 +41,7 @@ export type { User, CreateUser, UpdateUser } from './lib/user'
 export {
   CaseOrigin,
   CaseType,
-  IndictmentSubType,
+  IndictmentSubtype,
   CaseState,
   CaseTransition,
   CaseLegalProvisions,
@@ -62,6 +62,7 @@ export {
 } from './lib/case'
 export type {
   Case,
+  IndictmentSubtypeMap,
   CreateCase,
   UpdateCase,
   TransitionCase,

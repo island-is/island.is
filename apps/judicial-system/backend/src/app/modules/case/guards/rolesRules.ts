@@ -7,7 +7,7 @@ import {
 
 const prosecutorFields: (keyof UpdateCase)[] = [
   'type',
-  'indictmentSubType',
+  'indictmentSubtypes',
   'description',
   'policeCaseNumbers',
   'defenderName',
