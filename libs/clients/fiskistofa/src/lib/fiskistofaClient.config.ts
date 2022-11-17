@@ -18,7 +18,7 @@ export const FiskistofaClientConfig = defineConfig({
   schema,
   load(env) {
     return {
-      scope: env.optionalJSON('FISKISTOFA_ACCESS_TOKEN_SERVICE_SCOPE') ?? [
+      scope: env.optionalJSON('FISKISTOFA_API_ACCESS_TOKEN_SERVICE_SCOPE') ?? [
         'read:skip',
         'read:stodtoflur',
         'read:stadaSkips',
@@ -28,16 +28,16 @@ export const FiskistofaClientConfig = defineConfig({
         timeout: env.optionalJSON('FISKISTOFA_API_TIMEOUT') ?? 20000,
       },
       accessTokenServiceClientSecret: env.required(
-        'FISKISTOFA_ACCESS_TOKEN_SERVICE_CLIENT_SECRET',
+        'FISKISTOFA_API_ACCESS_TOKEN_SERVICE_CLIENT_SECRET',
       ),
       accessTokenServiceUrl: env.required(
-        'FISKISTOFA_ACCESS_TOKEN_SERVICE_URL',
+        'FISKISTOFA_API_ACCESS_TOKEN_SERVICE_URL',
       ),
       accessTokenServiceClientId: env.required(
-        'FISKISTOFA_ACCESS_TOKEN_SERVICE_CLIENT_ID',
+        'FISKISTOFA_API_ACCESS_TOKEN_SERVICE_CLIENT_ID',
       ),
       accessTokenServiceAudience: env.required(
-        'FISKISTOFA_ACCESS_TOKEN_SERVICE_AUDIENCE',
+        'FISKISTOFA_API_ACCESS_TOKEN_SERVICE_AUDIENCE',
       ),
     }
   },
