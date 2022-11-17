@@ -56,6 +56,23 @@ export const PowerOfAttorneyFields = ({ application }: FieldBaseProps) => {
         <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
           <Box paddingTop={2}>
             <InputController
+              id={ABOUTIDS.powerOfAttorneyNationalId}
+              name={ABOUTIDS.powerOfAttorneyNationalId}
+              label={formatMessage(m.powerOfAttorneyNationalId)}
+              readOnly
+              defaultValue={currentActor}
+              format="######-####"
+              backgroundColor="blue"
+              error={
+                errors &&
+                getErrorViaPath(errors, ABOUTIDS.powerOfAttorneyNationalId)
+              }
+            />
+          </Box>
+        </GridColumn>
+        <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+          <Box paddingTop={2}>
+            <InputController
               id={ABOUTIDS.powerOfAttorneyName}
               name={ABOUTIDS.powerOfAttorneyName}
               label={formatMessage(m.powerOfAttorneyName)}
@@ -69,23 +86,6 @@ export const PowerOfAttorneyFields = ({ application }: FieldBaseProps) => {
             {queryError ? (
               <InputError errorMessage={formatMessage(m.errorFetchingName)} />
             ) : null}
-          </Box>
-        </GridColumn>
-        <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
-          <Box paddingTop={2}>
-            <InputController
-              id={ABOUTIDS.powerOfAttorneyNationalId}
-              name={ABOUTIDS.powerOfAttorneyNationalId}
-              label={formatMessage(m.powerOfAttorneyNationalId)}
-              readOnly
-              defaultValue={currentActor}
-              format="######-####"
-              backgroundColor="blue"
-              error={
-                errors &&
-                getErrorViaPath(errors, ABOUTIDS.powerOfAttorneyNationalId)
-              }
-            />
           </Box>
         </GridColumn>
       </GridRow>

@@ -52,6 +52,7 @@ export const CemetryExpenses = ({
           onChange={() => onInputChange(CEMETRYOPERATIONIDS.payroll)}
           error={errors && getErrorViaPath(errors, CEMETRYOPERATIONIDS.payroll)}
           backgroundColor="blue"
+          rightAlign
           currency
         />
       </Box>
@@ -65,6 +66,7 @@ export const CemetryExpenses = ({
             errors && getErrorViaPath(errors, CEMETRYOPERATIONIDS.funeralCost)
           }
           backgroundColor="blue"
+          rightAlign
           currency
         />
       </Box>
@@ -78,6 +80,7 @@ export const CemetryExpenses = ({
             errors && getErrorViaPath(errors, CEMETRYOPERATIONIDS.chapelExpense)
           }
           backgroundColor="blue"
+          rightAlign
           currency
         />
       </Box>
@@ -95,6 +98,7 @@ export const CemetryExpenses = ({
             getErrorViaPath(errors, CEMETRYOPERATIONIDS.donationsToCemeteryFund)
           }
           backgroundColor="blue"
+          rightAlign
           currency
         />
       </Box>
@@ -109,6 +113,7 @@ export const CemetryExpenses = ({
             getErrorViaPath(errors, CEMETRYOPERATIONIDS.donationsToOther)
           }
           backgroundColor="blue"
+          rightAlign
           currency
         />
       </Box>
@@ -123,6 +128,7 @@ export const CemetryExpenses = ({
             getErrorViaPath(errors, CEMETRYOPERATIONIDS.otherOperationCost)
           }
           backgroundColor="blue"
+          rightAlign
           currency
         />
       </Box>
@@ -136,6 +142,7 @@ export const CemetryExpenses = ({
             errors && getErrorViaPath(errors, CEMETRYOPERATIONIDS.depreciation)
           }
           backgroundColor="blue"
+          rightAlign
           currency
         />
       </Box>

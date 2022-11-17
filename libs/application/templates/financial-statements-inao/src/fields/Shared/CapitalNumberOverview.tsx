@@ -19,21 +19,21 @@ export const CapitalNumberOverview = ({
     <Fragment>
       <Box className={starterColumnStyle}>
         <Text variant="h3" as="h3">
-          {formatMessage(m.capitalNumbers)}
+          {formatMessage(m.capitalNumbersSectionTitle)}
         </Text>
       </Box>
       <GridRow>
         <GridColumn span={['12/12', '6/12']}>
           <ValueLine
             label={m.capitalIncome}
-            value={answers.capitalNumbers.capitalIncome}
+            value={formatCurrency(answers.capitalNumbers.capitalIncome)}
           />
         </GridColumn>
         {answers.capitalNumbers?.capitalCost ? (
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
               label={m.capitalCost}
-              value={formatPhoneNumber(answers.capitalNumbers.capitalCost)}
+              value={formatCurrency(answers.capitalNumbers.capitalCost)}
             />
           </GridColumn>
         ) : null}
