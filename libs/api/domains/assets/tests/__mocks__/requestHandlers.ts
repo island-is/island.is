@@ -26,29 +26,26 @@ const url = (path: string) => {
 }
 
 export class MockAssetsXRoadService {
-  //constructor() 
+  //constructor()
 }
 
 export const requestHandlers = [
-  rest.get(
-    url(`${XROAD_BASE_PATH}/fasteignir`),
-    (_req, res, ctx) => {
-      return res(ctx.status(200), ctx.json({
+  rest.get(url(`${XROAD_BASE_PATH}/fasteignir`), (_req, res, ctx) => {
+    return res(
+      ctx.status(200),
+      ctx.json({
+        propertyNumber: MOCK_ASSET_ID,
+        defaultAddress: {
+          displayShort: 'shortname',
+          display: 'longname',
           propertyNumber: MOCK_ASSET_ID,
-          defaultAddress: {
-            displayShort:
-              'shortname',
-            display: 'longname',
-            propertyNumber:
-              MOCK_ASSET_ID,
-            municipality:
-              'municipality',
-            postNumber: 101,
-          },
-          registeredOwners: {
-            registeredOwners: [MOCK_USER],
-          },
-        })
-    )}
-  )
+          municipality: 'municipality',
+          postNumber: 101,
+        },
+        registeredOwners: {
+          registeredOwners: [MOCK_USER],
+        },
+      }),
+    )
+  }),
 ]
