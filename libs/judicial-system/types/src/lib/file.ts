@@ -63,10 +63,25 @@ export interface CaseFile {
   key?: string
   size: number
   category?: CaseFileCategory
+  policeCaseNumber?: string
+  userGeneratedFilename?: string
+  chapter?: number
+  orderWithinChapter?: number
+  displayDate?: string
 }
 
 export interface CreateFile {
   type: string
+  category?: CaseFileCategory
   key: string
   size: number
+  policeCaseNumber?: string
+}
+
+export interface UpdateFile {
+  id: string
+  userGeneratedFilename?: string | null
+  chapter?: number | null
+  orderWithinChapter?: number | null
+  displayDate?: string | null
 }

@@ -12,9 +12,8 @@ import {
   PkPassServiceVerifyDriversLicenseResponse,
   PkPassVerifyResult,
 } from './pkpass.type'
-
-import { DriversLicenseConfig } from '../../licenseService.module'
-
+import { GenericDrivingLicenseConfig } from './genericDrivingLicense.config'
+import { ConfigType } from '@island.is/nest/config'
 /** Set TTL to less than given expiry from service */
 const DEFAULT_CACHE_TOKEN_EXPIRY_DELTA_IN_MS = 2000
 
@@ -40,7 +39,7 @@ function strToPositiveNum(s: string): number | undefined {
 /**
  * Client for PkPass generation and verification via SmartSolution API.
  *
- * TODO: Move this to an actual client.
+ * TODO: Move this to an actual client. This will be done in drivers license V2 which is coming up soon.
  */
 export class PkPassClient {
   private readonly pkpassApiKey: string
@@ -51,7 +50,7 @@ export class PkPassClient {
   private readonly pkpassAuthRetries: number
 
   constructor(
-    private config: DriversLicenseConfig,
+    private config: ConfigType<typeof GenericDrivingLicenseConfig>,
     private logger: Logger,
     private cacheManager?: CacheManager | null,
   ) {

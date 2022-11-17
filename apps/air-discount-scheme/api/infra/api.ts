@@ -8,7 +8,12 @@ export const serviceSetup = (services: {
     .serviceAccount()
     .env({
       AUTH_AUDIENCE: {
-        dev: 'loftbru.dev01.devland.is',
+        dev: ref(
+          (ctx) =>
+            `${
+              ctx.featureDeploymentName ? `${ctx.featureDeploymentName}-` : ''
+            }loftbru.dev01.devland.is`,
+        ),
         staging: 'loftbru.staging01.devland.is',
         prod: 'loftbru.island.is',
       },

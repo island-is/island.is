@@ -135,13 +135,21 @@ export const application: Form = buildForm({
       id: 'serviceSection',
       title: m.service.sectionLabel,
       children: [
-        buildCustomField({
+        buildMultiField({
           id: 'constraints',
-          title: '',
-          component: 'Constraints',
+          title: m.service.sectionTitle,
+          description: m.service.sectionDescription,
+          children: [
+            buildCustomField({
+              id: 'constraints',
+              title: '',
+              component: 'Constraints',
+            }),
+          ],
         }),
       ],
     }),
+
     buildSection({
       id: 'applicationReviewSection',
       title: m.review.sectionLabel,

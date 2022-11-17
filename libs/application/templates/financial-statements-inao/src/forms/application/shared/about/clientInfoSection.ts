@@ -8,8 +8,9 @@ import { Application } from '@island.is/application/types'
 import type { User } from '@island.is/api/domains/national-registry'
 import { UserProfile } from '../../../../types/schema'
 import { m } from '../../../../lib/messages'
-import { ABOUTIDS, USERTYPE } from '../../../../lib/constants'
+import { ABOUTIDS } from '../../../../lib/constants'
 import { getCurrentUserType } from '../../../../lib/utils/helpers'
+import { FSIUSERTYPE } from '../../../../types'
 
 export const clientInfoSection = buildSection({
   id: 'info',
@@ -26,7 +27,9 @@ export const clientInfoSection = buildSection({
           title: '',
           condition: (answers, externalData) => {
             const userType = getCurrentUserType(answers, externalData)
-            return userType === USERTYPE.CEMETRY || userType === USERTYPE.PARTY
+            return (
+              userType === FSIUSERTYPE.CEMETRY || userType === FSIUSERTYPE.PARTY
+            )
           },
           component: 'OperatingYear',
         }),
@@ -36,11 +39,12 @@ export const clientInfoSection = buildSection({
             const answers = application.answers
             const externalData = application.externalData
             const userType = getCurrentUserType(answers, externalData)
-            return userType === USERTYPE.INDIVIDUAL
+            return userType === FSIUSERTYPE.INDIVIDUAL
               ? m.candidateNationalId
               : m.clientNationalId
           },
           width: 'half',
+          readOnly: true,
           format: '######-####',
           defaultValue: (application: Application) => application.applicant,
         }),
@@ -50,28 +54,29 @@ export const clientInfoSection = buildSection({
             const answers = application.answers
             const externalData = application.externalData
             const userType = getCurrentUserType(answers, externalData)
-            return userType === USERTYPE.INDIVIDUAL
+            return userType === FSIUSERTYPE.INDIVIDUAL
               ? m.candidateFullName
               : m.clientName
           },
           width: 'half',
+          readOnly: true,
           defaultValue: (application: Application) => {
             const nationalRegistry = application.externalData.nationalRegistry
               .data as User
-            return nationalRegistry.fullName
+            return nationalRegistry.name
           },
         }),
-        buildTextField({
-          id: 'about.powerOfAttorneyNationalId',
-          title: m.powerOfAttorneyNationalId,
-          format: '######-####',
-          width: 'half',
+        buildCustomField({
+          id: 'powerOfAttorney',
+          title: '',
+          description: '',
+          component: 'PowerOfAttorneyFields',
+          childInputIds: [
+            ABOUTIDS.powerOfAttorneyNationalId,
+            ABOUTIDS.powerOfAttorneyName,
+          ],
         }),
-        buildTextField({
-          id: 'about.powerOfAttorneyName',
-          title: m.powerOfAttorneyName,
-          width: 'half',
-        }),
+
         buildTextField({
           id: 'about.email',
           title: m.email,

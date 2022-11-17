@@ -3,7 +3,8 @@ import fetch from 'node-fetch'
 import { Inject, Injectable } from '@nestjs/common'
 
 import type { ConfigType } from '@island.is/nest/config'
-import { logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 
 import { appModuleConfig } from './app.config'
 
@@ -12,12 +13,15 @@ export class ProsecutorDocumentsDeliveryService {
   constructor(
     @Inject(appModuleConfig.KEY)
     private readonly config: ConfigType<typeof appModuleConfig>,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  async deliverProsecutorDocuments(caseId: string): Promise<void> {
-    logger.debug(`Delivering prosecutor documents for case ${caseId} to court`)
+  async deliverProsecutorDocuments(caseId: string): Promise<boolean> {
+    this.logger.debug(
+      `Delivering prosecutor documents for case ${caseId} to court`,
+    )
 
-    return fetch(
+    await fetch(
       `${this.config.backendUrl}/api/internal/case/${caseId}/deliverProsecutorDocuments`,
       {
         method: 'POST',
@@ -31,12 +35,12 @@ export class ProsecutorDocumentsDeliveryService {
         const response = await res.json()
 
         if (res.ok) {
-          logger.debug(
+          this.logger.debug(
             `Delivered prosecutor documents for case ${caseId} to court`,
           )
 
           if (!response.requestDeliveredToCourt) {
-            logger.error(
+            this.logger.error(
               `Failed to deliver the request for case ${caseId} to court`,
             )
           }
@@ -44,20 +48,17 @@ export class ProsecutorDocumentsDeliveryService {
           return
         }
 
-        logger.error(
-          `Failed to deliver prosecutor documents for case ${caseId} to court`,
-          {
-            response,
-          },
-        )
+        throw response
       })
       .catch((reason) => {
-        logger.error(
+        this.logger.error(
           `Failed to deliver prosecutor documents for case ${caseId} to court`,
           {
             reason,
           },
         )
       })
+
+    return true
   }
 }

@@ -7,17 +7,11 @@ import {
   IsDateString,
   ValidateNested,
 } from 'class-validator'
+import { DelegationType } from '../types/delegationType'
 import {
   DelegationScopeDTO,
   UpdateDelegationScopeDTO,
 } from './delegation-scope.dto'
-
-export enum DelegationType {
-  LegalGuardian = 'LegalGuardian',
-  ProcurationHolder = 'ProcurationHolder',
-  PersonalRepresentative = 'PersonalRepresentative',
-  Custom = 'Custom',
-}
 
 export enum DelegationProvider {
   NationalRegistry = 'thjodskra',
@@ -28,7 +22,7 @@ export enum DelegationProvider {
 
 export class DelegationDTO {
   @IsString()
-  @ApiPropertyOptional({ nullable: true })
+  @ApiPropertyOptional({ nullable: true, type: String })
   id?: string | null
 
   @IsString()
@@ -44,12 +38,12 @@ export class DelegationDTO {
   toNationalId!: string
 
   @IsString()
-  @ApiPropertyOptional({ nullable: true })
+  @ApiPropertyOptional({ nullable: true, type: String })
   toName?: string | null
 
   @IsOptional()
   @IsDateString()
-  @ApiPropertyOptional({ nullable: true })
+  @ApiPropertyOptional({ nullable: true, type: Date })
   validTo?: Date | null
 
   @ApiProperty({ enum: DelegationType, enumName: 'DelegationType' })
@@ -62,6 +56,10 @@ export class DelegationDTO {
   @ApiPropertyOptional({ type: [DelegationScopeDTO] })
   @IsArray()
   scopes?: DelegationScopeDTO[]
+
+  @IsString()
+  @ApiPropertyOptional({ type: String, nullable: true })
+  domainName?: string | null
 }
 
 export class UpdateDelegationDTO {
@@ -73,12 +71,42 @@ export class UpdateDelegationDTO {
   scopes?: UpdateDelegationScopeDTO[]
 }
 
+export class PatchDelegationDTO {
+  @ApiPropertyOptional({
+    description: 'List of scopes to be added or updated for a delegation.',
+    type: [UpdateDelegationScopeDTO],
+  })
+  @Type(() => UpdateDelegationScopeDTO)
+  @ValidateNested({ each: true })
+  @IsOptional()
+  @IsArray()
+  updateScopes?: UpdateDelegationScopeDTO[]
+
+  @ApiPropertyOptional({
+    description: 'List of scopes to be removed from a delegation.',
+  })
+  @IsOptional()
+  @IsArray()
+  deleteScopes?: string[]
+}
+
 export class CreateDelegationDTO {
   @IsString()
-  @ApiProperty()
+  @ApiProperty({
+    description: 'National ID of the user receiving the delegation.',
+  })
   toNationalId!: string
 
-  @ApiPropertyOptional({ type: [UpdateDelegationScopeDTO] })
+  @ApiPropertyOptional({
+    description: 'Name identifying the domain the delegation is given in.',
+  })
+  @IsOptional()
+  domainName?: string
+
+  @ApiPropertyOptional({
+    description: 'List of scopes the delegation authorizes.',
+    type: [UpdateDelegationScopeDTO],
+  })
   @Type(() => UpdateDelegationScopeDTO)
   @ValidateNested({ each: true })
   @IsOptional()

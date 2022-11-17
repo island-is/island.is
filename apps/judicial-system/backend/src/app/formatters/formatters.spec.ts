@@ -606,9 +606,9 @@ describe('formatProsecutorReceivedByCourtSmsNotification', () => {
     )
   })
 
-  test('should format received by court notification for an indictment of type MURDER', () => {
+  test('should format received by court notification for an indictment', () => {
     // Arranged
-    const type = CaseType.MURDER
+    const type = CaseType.INDICTMENT
     const court = 'Héraðsdómur Reykjavíkur'
     const courtCaseNumber = 'R-898/2021'
 
@@ -844,7 +844,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
 
   test('should format court date notification for indictments', () => {
     // Arrange
-    const type = CaseType.MURDER
+    const type = CaseType.INDICTMENT
     const courtCaseNumber = 'S-898/2021'
     const court = 'Héraðsdómur Reykjavíkur'
     const courtDate = new Date('2021-12-24T10:00')
@@ -1020,6 +1020,42 @@ describe('formatPrisonCourtDateEmailNotification', () => {
     const accusedGender = Gender.MALE
     const requestedValidToDate = new Date('2030-08-12T08:25')
     const isolation = false
+    const defenderName = 'Vala Verja'
+    const isExtension = false
+    const sessionArrangements = SessionArrangements.ALL_PRESENT_SPOKESPERSON
+
+    // Act
+    const res = formatPrisonCourtDateEmailNotification(
+      formatMessage,
+      caseType,
+      prosecutorOffice,
+      court,
+      courtDate,
+      accusedName,
+      accusedGender,
+      requestedValidToDate,
+      isolation,
+      defenderName,
+      isExtension,
+      sessionArrangements,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Lögreglustjórinn á höfuðborgarsvæðinu hefur sent kröfu um gæsluvarðhald til Héraðsdóms Austurlands og verður málið tekið fyrir fimmtudaginn 4. febrúar 2021, kl. 02:02.<br /><br />Nafn sakbornings: Maggi Murder.<br /><br />Kyn sakbornings: Karl.<br /><br />Krafist er gæsluvarðhalds til mánudagsins 12. ágúst 2030, kl. 08:25.<br /><br />Ekki er farið fram á einangrun.<br /><br />Talsmaður sakbornings: Vala Verja.',
+    )
+  })
+
+  test('should format court date notification with undefined isolation', () => {
+    // Arrange
+    const caseType = CaseType.CUSTODY
+    const prosecutorOffice = 'Lögreglustjórinn á höfuðborgarsvæðinu'
+    const court = 'Héraðsdómur Austurlands'
+    const courtDate = new Date('2021-02-04T02:02')
+    const accusedName = 'Maggi Murder'
+    const accusedGender = Gender.MALE
+    const requestedValidToDate = new Date('2030-08-12T08:25')
+    const isolation = undefined
     const defenderName = 'Vala Verja'
     const isExtension = false
     const sessionArrangements = SessionArrangements.ALL_PRESENT_SPOKESPERSON
@@ -1952,48 +1988,28 @@ describe('formatPrisonAdministrationRulingNotification', () => {
 })
 
 describe('formatDefenderResubmittedToCourtEmailNotification', () => {
-  const formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
-    .formatMessage
+  let formatMessage: FormatMessage
 
-  const fn = (
-    caseType: CaseType,
-    policeCaseNumbers: string[],
-    overviewUrl: string,
-    courtName?: string,
-  ) =>
-    formatDefenderResubmittedToCourtEmailNotification(
-      formatMessage,
-      caseType,
-      policeCaseNumbers,
-      overviewUrl,
-      courtName,
-    )
-
-  it('should format email', () => {
-    const caseType = CaseType.CUSTODY
-    const policeCaseNumbers = ['007-2022-06546']
-    const overviewUrl = 'https://rettarvorslugatt.island.is/overviewUrl'
-    const courtName = 'Héraðsdómur Reykjavíkur'
-
-    const result = fn(caseType, policeCaseNumbers, overviewUrl, courtName)
-
-    expect(result.body).toEqual(
-      'Sækjandi í máli 007-2022-06546 hjá Héraðsdómi Reykjavíkur hefur sent kröfuna aftur á dóminn. <a href="https://rettarvorslugatt.island.is/overviewUrl">Uppfærð útgáfa er aðgengileg í Réttarvörslugátt.</a>',
-    )
-    expect(result.subject).toEqual('Krafa um gæsluvarðhald send aftur')
+  beforeAll(() => {
+    formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
+      .formatMessage
   })
 
-  it('should format email with multiple policeCaseNumbers', () => {
-    const caseType = CaseType.CUSTODY
-    const policeCaseNumbers = ['007-2022-06546', '007-2022-06547']
+  it('should format email', () => {
     const overviewUrl = 'https://rettarvorslugatt.island.is/overviewUrl'
-    const courtName = 'Héraðsdómur Reykjavíkur'
+    const court = 'Héraðsdómur Reykjavíkur'
+    const courtCaseNumber = 'R-2022/999'
 
-    const result = fn(caseType, policeCaseNumbers, overviewUrl, courtName)
+    const result = formatDefenderResubmittedToCourtEmailNotification(
+      formatMessage,
+      overviewUrl,
+      court,
+      courtCaseNumber,
+    )
 
     expect(result.body).toEqual(
-      'Sækjandi í málum: 007-2022-06546, 007-2022-06547 hjá Héraðsdómi Reykjavíkur hefur sent kröfuna aftur á dóminn. <a href="https://rettarvorslugatt.island.is/overviewUrl">Uppfærð útgáfa er aðgengileg í Réttarvörslugátt.</a>',
+      'Sækjandi í máli R-2022/999 hjá Héraðsdómi Reykjavíkur hefur breytt kröfunni og sent hana aftur á dóminn.<br /><br />Þú getur nálgast gögn málsins í <a href="https://rettarvorslugatt.island.is/overviewUrl">Réttarvörslugátt</a> með rafrænum skilríkjum.',
     )
-    expect(result.subject).toEqual('Krafa um gæsluvarðhald send aftur')
+    expect(result.subject).toEqual('Gögn í máli R-2022/999')
   })
 })

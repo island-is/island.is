@@ -1,3 +1,8 @@
+import type {
+  CreationOptional,
+  InferAttributes,
+  InferCreationAttributes,
+} from 'sequelize'
 import {
   Column,
   CreatedAt,
@@ -17,14 +22,17 @@ import { Domain } from './domain.model'
 @Table({
   tableName: 'api_scope_group',
 })
-export class ApiScopeGroup extends Model {
+export class ApiScopeGroup extends Model<
+  InferAttributes<ApiScopeGroup>,
+  InferCreationAttributes<ApiScopeGroup>
+> {
   @PrimaryKey
   @Column({
     type: DataType.UUID,
     allowNull: false,
   })
-  @ApiProperty()
-  id!: string
+  @ApiProperty({ type: String })
+  id!: CreationOptional<string>
 
   @Column({
     type: DataType.STRING,
@@ -54,6 +62,21 @@ export class ApiScopeGroup extends Model {
   description!: string
 
   @Column({
+    type: DataType.NUMBER,
+    allowNull: false,
+    defaultValue: 0,
+    validate: {
+      min: 0,
+      max: 999,
+    },
+  })
+  @ApiProperty({
+    type: Number,
+    example: 0,
+  })
+  order!: CreationOptional<number>
+
+  @Column({
     type: DataType.STRING,
     allowNull: false,
   })
@@ -64,8 +87,8 @@ export class ApiScopeGroup extends Model {
   domainName!: string
 
   @CreatedAt
-  @ApiProperty()
-  readonly created!: Date
+  @ApiProperty({ type: Date })
+  readonly created!: CreationOptional<Date>
 
   @UpdatedAt
   @ApiProperty()

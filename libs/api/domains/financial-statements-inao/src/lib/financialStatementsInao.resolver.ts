@@ -1,5 +1,5 @@
 import { UseGuards } from '@nestjs/common'
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
+import { Args, Query, Resolver } from '@nestjs/graphql'
 
 import { ApiScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
@@ -14,13 +14,11 @@ import { FinancialStatementsInaoService } from './financialStatementsInao.servic
 import { Election } from './models/election.model'
 import { ClientType } from './models/clientType.model'
 import { InaoClientFinancialLimitInput } from './dto/clientFinancialLimit.input'
-import { InaoPersonalElectionFinancialStatementInput } from './dto/personalElectionFinancialStatement.input'
-import { InaoCemeteryFinancialStatementInput } from './dto/cemeteryFinancialStatement.input'
-import { InaoPoliticalPartyFinancialStatementInput } from './dto/politicalPartyFinancialStatement.input'
 import { Config } from './models/config.model'
+import { TaxInfo } from './models/taxInfo.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(ApiScope.internal)
+@Scopes(ApiScope.internal, ApiScope.internalProcuring)
 @Resolver()
 export class FinancialStatementsInaoResolver {
   constructor(
@@ -59,39 +57,14 @@ export class FinancialStatementsInaoResolver {
     return this.financialStatementsService.getConfig()
   }
 
-  @Mutation(() => Boolean)
-  async financialStatementsInaoSubmitPersonalElectionFinancialStatement(
+  @Query(() => [TaxInfo])
+  async financialStatementsInaoTaxInfo(
     @CurrentUser() user: User,
-    @Args('input') input: InaoPersonalElectionFinancialStatementInput,
+    @Args('year') year: string,
   ) {
-    return this.financialStatementsService.submitPersonalElectionFinancialStatement(
+    return this.financialStatementsService.getTaxInformation(
       user.nationalId,
-      user.actor?.nationalId,
-      input,
-    )
-  }
-
-  @Mutation(() => Boolean)
-  async financialStatementsInaoSubmitPoliticalPartyFinancialStatement(
-    @CurrentUser() user: User,
-    @Args('input') input: InaoPoliticalPartyFinancialStatementInput,
-  ) {
-    return this.financialStatementsService.submitPoliticalPartyFinancialStatement(
-      user.nationalId,
-      user.actor?.nationalId,
-      input,
-    )
-  }
-
-  @Mutation(() => Boolean)
-  async financialStatementsInaoSubmitCemeteryFinancialStatement(
-    @CurrentUser() user: User,
-    @Args('input') input: InaoCemeteryFinancialStatementInput,
-  ) {
-    return this.financialStatementsService.submitCemeteryFinancialStatement(
-      user.nationalId,
-      user.actor?.nationalId,
-      input,
+      year,
     )
   }
 }

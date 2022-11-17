@@ -1,6 +1,5 @@
 import {
   DefaultStateLifeCycle,
-  DEPRECATED_DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
   getValueViaPath,
 } from '@island.is/application/core'
@@ -14,13 +13,11 @@ import {
   Application,
   DefaultEvents,
 } from '@island.is/application/types'
-import * as z from 'zod'
-import * as kennitala from 'kennitala'
-import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { Features } from '@island.is/feature-flags'
 import { ApiActions } from '../shared'
 import { m } from './messages'
 import { assign } from 'xstate'
+import { ExampleSchema } from './dataSchema'
 
 const States = {
   prerequisites: 'prerequisites',
@@ -42,45 +39,6 @@ enum Roles {
   APPLICANT = 'applicant',
   ASSIGNEE = 'assignee',
 }
-const ExampleSchema = z.object({
-  approveExternalData: z.boolean().refine((v) => v),
-  person: z.object({
-    name: z.string().nonempty().max(256),
-    age: z.string().refine((x) => {
-      const asNumber = parseInt(x)
-      if (isNaN(asNumber)) {
-        return false
-      }
-      return asNumber > 15
-    }),
-    nationalId: z
-      .string()
-      /**
-       * We are depending on this template for the e2e tests on the application-system-api.
-       * Because we are not allowing committing valid kennitala, I reversed the condition
-       * to check for invalid kenitala so it passes the test.
-       */
-      .refine((n) => n && !kennitala.isValid(n), {
-        params: m.dataSchemeNationalId,
-      }),
-    phoneNumber: z.string().refine(
-      (p) => {
-        const phoneNumber = parsePhoneNumberFromString(p, 'IS')
-        return phoneNumber && phoneNumber.isValid()
-      },
-      { params: m.dataSchemePhoneNumber },
-    ),
-    email: z.string().email(),
-  }),
-  careerHistory: z.enum(['yes', 'no']).optional(),
-  careerHistoryCompanies: z
-    .array(
-      // TODO checkbox answers are [undefined, 'aranja', undefined] and we need to do something about it...
-      z.union([z.enum(['government', 'aranja', 'advania']), z.undefined()]),
-    )
-    .nonempty(),
-  dreamJob: z.string().optional(),
-})
 
 const determineMessageFromApplicationAnswers = (application: Application) => {
   const careerHistory = getValueViaPath(
@@ -175,7 +133,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
         meta: {
           name: 'Waiting to assign',
           progress: 0.75,
-          lifecycle: DEPRECATED_DefaultStateLifeCycle,
+          lifecycle: DefaultStateLifeCycle,
           onEntry: {
             apiModuleAction: ApiActions.createApplication,
           },
@@ -187,6 +145,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
                   Promise.resolve(val.PendingReview),
                 ),
               read: 'all',
+              write: 'all',
             },
             {
               id: Roles.ASSIGNEE,
@@ -208,7 +167,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
         meta: {
           name: 'In Review',
           progress: 0.75,
-          lifecycle: DEPRECATED_DefaultStateLifeCycle,
+          lifecycle: DefaultStateLifeCycle,
           onExit: {
             apiModuleAction: ApiActions.completeApplication,
           },
@@ -223,7 +182,9 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
                 { event: 'APPROVE', name: 'Samþykkja', type: 'primary' },
                 { event: 'REJECT', name: 'Hafna', type: 'reject' },
               ],
-              write: { answers: ['careerHistoryCompanies'] },
+              write: {
+                answers: ['careerHistoryDetails', 'approvedByReviewer'],
+              },
               read: 'all',
               shouldBeListedForRole: false,
             },
@@ -246,7 +207,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
         meta: {
           name: 'Approved',
           progress: 1,
-          lifecycle: EphemeralStateLifeCycle,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -263,7 +224,8 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
       [States.rejected]: {
         meta: {
           name: 'Rejected',
-          lifecycle: EphemeralStateLifeCycle,
+          progress: 1,
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -274,6 +236,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
             },
           ],
         },
+        type: 'final' as const,
       },
     },
   },

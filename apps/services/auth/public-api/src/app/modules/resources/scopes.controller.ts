@@ -8,6 +8,7 @@ import {
 import { Controller, Get, Query, UseGuards } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import type { User } from '@island.is/auth-nest-tools'
+import { AuthScope } from '@island.is/auth/scopes'
 import { Documentation } from '@island.is/nest/swagger'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -16,7 +17,7 @@ import { Documentation } from '@island.is/nest/swagger'
 export class ScopesController {
   constructor(private readonly resourcesService: ResourcesService) {}
 
-  @Scopes('@island.is/auth/delegations:read')
+  @Scopes(AuthScope.delegations)
   @Get()
   @Documentation({
     isAuthorized: true,

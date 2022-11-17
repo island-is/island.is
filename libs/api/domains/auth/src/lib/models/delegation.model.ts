@@ -9,7 +9,7 @@ import {
 import {
   DelegationProvider,
   DelegationType,
-} from '@island.is/clients/auth-public-api'
+} from '@island.is/clients/auth/public-api'
 import { Identity } from '@island.is/api/domains/identity'
 
 import { DelegationScope } from './delegationScope.model'
@@ -78,4 +78,13 @@ export class CustomDelegation extends Delegation {
 
   @Field(() => [DelegationScope])
   scopes!: DelegationScope[]
+
+  // Internal attributes, used in field resolvers.
+  domainName?: string
+}
+
+@ObjectType('AuthMergedDelegation')
+export class MergedDelegation {
+  @Field(() => [DelegationType])
+  types!: DelegationType[]
 }

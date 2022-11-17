@@ -54,6 +54,7 @@ export const slices = gql`
     disclaimerLabel
     categoryLabel
     categories
+    inputs
     buttonText
     signupUrl
     image {
@@ -174,6 +175,7 @@ export const slices = gql`
       answer {
         ...BaseSlices
       }
+      publishDate
     }
   }
 
@@ -182,6 +184,7 @@ export const slices = gql`
     id
     title
     json
+    configJson
     componentType: type
   }
 
@@ -347,6 +350,7 @@ export const slices = gql`
     }
     automaticallyFetchArticles
     sortBy
+    hasBorderAbove
     articles {
       id
       slug
@@ -422,6 +426,7 @@ export const slices = gql`
     content {
       ...HtmlFields
       ...AssetFields
+      ...ImageFields
     }
     dividerOnTop
     showTitle
@@ -432,12 +437,16 @@ export const slices = gql`
     id
     title
     type
+    hasBorderAbove
+    showTitle
+    titleHeadingLevel
     accordionItems {
       id
       title
       content {
         ...HtmlFields
         ...AssetFields
+        ...ImageFields
       }
       link {
         url
@@ -500,6 +509,7 @@ export const slices = gql`
     recipient
     fields {
       title
+      name
       placeholder
       type
       required
@@ -589,6 +599,37 @@ export const slices = gql`
     }
   }
 
+  fragment PowerBiSliceFields on PowerBiSlice {
+    __typename
+    id
+    title
+    powerBiEmbedProps
+  }
+
+  fragment TableSliceFields on TableSlice {
+    __typename
+    id
+    title
+    tableContent
+  }
+
+  fragment EmailSignupFields on EmailSignup {
+    __typename
+    id
+    title
+    description
+    formFields {
+      id
+      title
+      name
+      placeholder
+      type
+      required
+      options
+    }
+    translations
+  }
+
   fragment BaseSlices on Slice {
     ...TimelineFields
     ...MailingListSignupFields
@@ -623,6 +664,9 @@ export const slices = gql`
     ...GraphCardFields
     ...LifeEventPageListSliceFields
     ...SidebarCardFields
+    ...PowerBiSliceFields
+    ...TableSliceFields
+    ...EmailSignupFields
   }
 
   fragment AllSlices on Slice {
@@ -636,6 +680,31 @@ export const nestedOneColumnTextFields = gql`
     ...OneColumnTextFields
     content {
       ...AllSlices
+    }
+  }
+`
+
+export const nestedAccordionAndFaqListFields = `
+  ... on AccordionSlice {
+    ...AccordionSliceFields
+    accordionItems {
+      ... on OneColumnText {
+        ...OneColumnTextFields
+        content {
+          ...AllSlices
+        }
+      }
+    }
+  }
+  ... on FaqList {
+    ...FaqListFields
+    questions {
+      id
+      question
+      answer {
+        ...AllSlices
+      }
+      publishDate
     }
   }
 `

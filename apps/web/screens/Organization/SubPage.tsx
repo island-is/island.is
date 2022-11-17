@@ -14,6 +14,7 @@ import {
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   ContentLanguage,
+  PowerBiSlice as PowerBiSliceSchema,
   Query,
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
@@ -35,6 +36,10 @@ import {
   SliceDropdown,
   Form,
   OneColumnTextSlice,
+  PowerBiSlice,
+  AccordionSlice,
+  TableSlice,
+  EmailSignup,
 } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
@@ -111,6 +116,7 @@ const SubPage: Screen<SubPageProps> = ({
 
   return (
     <OrganizationWrapper
+      showExternalLinks={true}
       pageTitle={subpage.title}
       organizationPage={organizationPage}
       fullWidthContent={true}
@@ -178,6 +184,14 @@ const SubPage: Screen<SubPageProps> = ({
                         OneColumnText: (slice) => (
                           <OneColumnTextSlice slice={slice} />
                         ),
+                        PowerBiSlice: (slice: PowerBiSliceSchema) => (
+                          <PowerBiSlice slice={slice} />
+                        ),
+                        AccordionSlice: (slice) => (
+                          <AccordionSlice slice={slice} />
+                        ),
+                        TableSlice: (slice) => <TableSlice slice={slice} />,
+                        EmailSignup: (slice) => <EmailSignup slice={slice} />,
                       },
                     })}
                   </GridColumn>
@@ -237,7 +251,6 @@ const renderSlices = (
               slice={slice}
               namespace={namespace}
               slug={slug}
-              renderedOnOrganizationSubpage={true}
               marginBottom={index === slices.length - 1 ? 5 : 0}
               params={{
                 renderLifeEventPagesAsProfileCards: true,
@@ -245,6 +258,8 @@ const renderSlices = (
                   organizationPage.theme === 'digital_iceland'
                     ? digitalIcelandDetailPageLinkType
                     : undefined,
+                latestNewsSliceBackground: 'white',
+                forceTitleSectionHorizontalPadding: 'true',
               }}
               fullWidth={true}
             />
@@ -257,9 +272,12 @@ const renderSlices = (
             slice={slice}
             namespace={namespace}
             slug={slug}
-            renderedOnOrganizationSubpage={true}
             marginBottom={index === slices.length - 1 ? 5 : 0}
-            params={{ renderLifeEventPagesAsProfileCards: true }}
+            params={{
+              renderLifeEventPagesAsProfileCards: true,
+              latestNewsSliceBackground: 'white',
+              forceTitleSectionHorizontalPadding: 'true',
+            }}
           />
         )
       })

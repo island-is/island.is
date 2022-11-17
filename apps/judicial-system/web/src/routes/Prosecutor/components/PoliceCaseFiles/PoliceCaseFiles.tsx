@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/client'
-import { AnimatePresence, AnimateSharedLayout, motion } from 'framer-motion'
+import { AnimatePresence, LayoutGroup, motion } from 'framer-motion'
 import cn from 'classnames'
 
 import { PoliceCaseFilesQuery } from '@island.is/judicial-system-web/graphql'
@@ -103,9 +103,11 @@ interface Props {
   setPoliceCaseFileList: React.Dispatch<
     React.SetStateAction<PoliceCaseFileCheck[]>
   >
+  policeCaseNumber?: string
 }
 
 const PoliceCaseFiles: React.FC<Props> = ({
+  policeCaseNumber,
   isUploading,
   setIsUploading,
   policeCaseFileList,
@@ -151,7 +153,8 @@ const PoliceCaseFiles: React.FC<Props> = ({
         files: policeData ? policeData.policeCaseFiles : [],
         isLoading: false,
         hasError: true,
-        errorCode: policeDataError?.graphQLErrors[0].extensions?.code,
+        errorCode: policeDataError?.graphQLErrors[0]?.extensions
+          ?.code as string,
       })
     }
   }, [
@@ -253,12 +256,12 @@ const PoliceCaseFiles: React.FC<Props> = ({
   return (
     <>
       <SectionHeading
-        title={formatMessage(m.heading)}
+        title={formatMessage(m.heading, { policeCaseNumber })}
         description={formatMessage(m.introduction)}
       />
       <Box marginBottom={5}>
         {workingCase.origin === CaseOrigin.LOKE && (
-          <AnimateSharedLayout>
+          <LayoutGroup>
             <motion.div layout className={styles.policeCaseFilesContainer}>
               <motion.ul layout>
                 <motion.li
@@ -330,7 +333,7 @@ const PoliceCaseFiles: React.FC<Props> = ({
                 {formatMessage(m.uploadButtonLabel)}
               </Button>
             </motion.div>
-          </AnimateSharedLayout>
+          </LayoutGroup>
         )}
         {workingCase.origin !== CaseOrigin.LOKE && (
           <AlertMessage

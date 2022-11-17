@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react'
+import React, { Fragment, useEffect } from 'react'
 import { useLocale } from '@island.is/localization'
 import { Box } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
@@ -8,14 +8,34 @@ import debounce from 'lodash/debounce'
 import { useFormContext } from 'react-hook-form'
 import { m } from '../../lib/messages'
 import { INPUTCHANGEINTERVAL, CEMETRYOPERATIONIDS } from '../../lib/constants'
+import { FinancialStatementsInaoTaxInfo } from '@island.is/api/schema'
 interface PropTypes {
+  data?: {
+    financialStatementsInaoTaxInfo: FinancialStatementsInaoTaxInfo[]
+  } | null
+  loading: boolean
   getSum: () => void
   errors: RecordObject<unknown> | undefined
 }
 
-export const CemetryExpenses = ({ errors, getSum }: PropTypes): JSX.Element => {
+export const CemetryExpenses = ({
+  data,
+  loading,
+  errors,
+  getSum,
+}: PropTypes): JSX.Element => {
   const { formatMessage } = useLocale()
-  const { clearErrors } = useFormContext()
+  const { clearErrors, setValue } = useFormContext()
+
+  useEffect(() => {
+    if (data?.financialStatementsInaoTaxInfo) {
+      setValue(
+        CEMETRYOPERATIONIDS.donationsToCemeteryFund,
+        data.financialStatementsInaoTaxInfo?.[3]?.value?.toString() ?? '',
+      )
+    }
+    getSum()
+  }, [data, getSum, setValue])
 
   const onInputChange = debounce((fieldId: string) => {
     getSum()
@@ -32,6 +52,7 @@ export const CemetryExpenses = ({ errors, getSum }: PropTypes): JSX.Element => {
           onChange={() => onInputChange(CEMETRYOPERATIONIDS.payroll)}
           error={errors && getErrorViaPath(errors, CEMETRYOPERATIONIDS.payroll)}
           backgroundColor="blue"
+          rightAlign
           currency
         />
       </Box>
@@ -45,6 +66,7 @@ export const CemetryExpenses = ({ errors, getSum }: PropTypes): JSX.Element => {
             errors && getErrorViaPath(errors, CEMETRYOPERATIONIDS.funeralCost)
           }
           backgroundColor="blue"
+          rightAlign
           currency
         />
       </Box>
@@ -58,22 +80,25 @@ export const CemetryExpenses = ({ errors, getSum }: PropTypes): JSX.Element => {
             errors && getErrorViaPath(errors, CEMETRYOPERATIONIDS.chapelExpense)
           }
           backgroundColor="blue"
+          rightAlign
           currency
         />
       </Box>
       <Box paddingY={1}>
         <InputController
-          id={CEMETRYOPERATIONIDS.cemeteryFundExpense}
-          name={CEMETRYOPERATIONIDS.cemeteryFundExpense}
-          label={formatMessage(m.cemeteryFundExpense)}
+          id={CEMETRYOPERATIONIDS.donationsToCemeteryFund}
+          name={CEMETRYOPERATIONIDS.donationsToCemeteryFund}
+          label={formatMessage(m.donationsToCemeteryFund)}
+          loading={loading}
           onChange={() =>
-            onInputChange(CEMETRYOPERATIONIDS.cemeteryFundExpense)
+            onInputChange(CEMETRYOPERATIONIDS.donationsToCemeteryFund)
           }
           error={
             errors &&
-            getErrorViaPath(errors, CEMETRYOPERATIONIDS.cemeteryFundExpense)
+            getErrorViaPath(errors, CEMETRYOPERATIONIDS.donationsToCemeteryFund)
           }
           backgroundColor="blue"
+          rightAlign
           currency
         />
       </Box>
@@ -88,6 +113,7 @@ export const CemetryExpenses = ({ errors, getSum }: PropTypes): JSX.Element => {
             getErrorViaPath(errors, CEMETRYOPERATIONIDS.donationsToOther)
           }
           backgroundColor="blue"
+          rightAlign
           currency
         />
       </Box>
@@ -102,20 +128,21 @@ export const CemetryExpenses = ({ errors, getSum }: PropTypes): JSX.Element => {
             getErrorViaPath(errors, CEMETRYOPERATIONIDS.otherOperationCost)
           }
           backgroundColor="blue"
+          rightAlign
           currency
         />
       </Box>
       <Box paddingY={1}>
         <InputController
-          id={CEMETRYOPERATIONIDS.writtenOffExpense}
-          name={CEMETRYOPERATIONIDS.writtenOffExpense}
-          label={formatMessage(m.writtenOffExpense)}
-          onChange={() => onInputChange(CEMETRYOPERATIONIDS.writtenOffExpense)}
+          id={CEMETRYOPERATIONIDS.depreciation}
+          name={CEMETRYOPERATIONIDS.depreciation}
+          label={formatMessage(m.depreciation)}
+          onChange={() => onInputChange(CEMETRYOPERATIONIDS.depreciation)}
           error={
-            errors &&
-            getErrorViaPath(errors, CEMETRYOPERATIONIDS.writtenOffExpense)
+            errors && getErrorViaPath(errors, CEMETRYOPERATIONIDS.depreciation)
           }
           backgroundColor="blue"
+          rightAlign
           currency
         />
       </Box>

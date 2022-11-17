@@ -3,8 +3,11 @@ import { complaint, info } from '../../lib/messages'
 import { DataProtectionComplaint } from '../../lib/dataSchema'
 import { SectionHeading, ValueLine, ValueList } from './Shared'
 import { ComplaineeTable } from '../ComplaineeRepeater/ComplaineeTable'
-import { useLocale } from '@island.is/localization'
-import { subjectOfComplaintValueLabelMapper } from '../../shared'
+import { FormatMessage, useLocale } from '@island.is/localization'
+import {
+  SubjectOfComplaint,
+  subjectOfComplaintValueLabelMapper,
+} from '../../shared'
 
 export const Applicant: FC<{ answers: DataProtectionComplaint }> = ({
   answers,
@@ -105,6 +108,38 @@ export const Complainees: FC<{ answers: DataProtectionComplaint }> = ({
   </>
 )
 
+const GenerateComplaintList = (
+  answers: DataProtectionComplaint,
+  formatMessage: FormatMessage,
+) => {
+  if (
+    answers.subjectOfComplaint.values === undefined ||
+    answers.subjectOfComplaint?.values?.length === 0
+  ) {
+    return []
+  }
+  const complaintData = []
+  // Render it in the same order as shown on the application it self
+  for (const [key] of Object.entries(subjectOfComplaintValueLabelMapper)) {
+    // Check if the option was selected by the user
+    const selected = answers.subjectOfComplaint.values.find((x) => x === key)
+    if (!selected) continue
+
+    complaintData.push(
+      `${formatMessage(
+        subjectOfComplaintValueLabelMapper[
+          key as keyof typeof subjectOfComplaintValueLabelMapper
+        ],
+      )}${
+        key === SubjectOfComplaint.OTHER
+          ? `: ${answers.subjectOfComplaint.somethingElse}`
+          : ''
+      }`,
+    )
+  }
+  return complaintData
+}
+
 export const Complaint: FC<{ answers: DataProtectionComplaint }> = ({
   answers,
 }) => {
@@ -116,18 +151,7 @@ export const Complaint: FC<{ answers: DataProtectionComplaint }> = ({
       answers.subjectOfComplaint.values.length > 0 ? (
         <ValueList
           label={complaint.general.subjectOfComplaintPageTitle}
-          list={answers.subjectOfComplaint.values?.map(
-            (x) =>
-              `${formatMessage(
-                subjectOfComplaintValueLabelMapper[
-                  x as keyof typeof subjectOfComplaintValueLabelMapper
-                ],
-              )}${
-                x === 'other'
-                  ? `: ${answers.subjectOfComplaint.somethingElse}`
-                  : ''
-              }`,
-          )}
+          list={GenerateComplaintList(answers, formatMessage)}
         />
       ) : null}
       <ValueLine

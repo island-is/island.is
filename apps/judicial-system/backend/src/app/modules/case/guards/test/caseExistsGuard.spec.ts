@@ -7,7 +7,7 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 
-import { CaseState } from '@island.is/judicial-system/types'
+import { CaseFileState, CaseState } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../../test/createTestingCaseModule'
 import { Defendant } from '../../../defendant'
@@ -92,7 +92,14 @@ describe('Case Exists Guard', () => {
           },
           { model: Case, as: 'parentCase' },
           { model: Case, as: 'childCase' },
-          { model: CaseFile, as: 'caseFiles' },
+          {
+            model: CaseFile,
+            as: 'caseFiles',
+            required: false,
+            where: {
+              state: { [Op.not]: CaseFileState.DELETED },
+            },
+          },
         ],
         order: [[{ model: Defendant, as: 'defendants' }, 'created', 'ASC']],
         where: {

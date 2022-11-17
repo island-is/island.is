@@ -3,12 +3,14 @@ import { defineConfig } from '@island.is/nest/config'
 export const messageModuleConfig = defineConfig({
   name: 'MessageModule',
   load: (env) => ({
+    production: env.optional('NODE_ENV') === 'production',
     queueName: env.required('SQS_QUEUE_NAME', 'message-queue'),
-    deadLetterQueueName: env.required(
-      'SQS_DEAD_LETTER_QUEUE_NAME',
-      'dead-letter-queue',
-    ),
     endpoint: env.optional('SQS_ENDPOINT', 'http://localhost:4566'),
     region: env.optional('SQS_REGION', 'eu-west-1'),
+    maxNumberOfMessages: env.optionalJSON('SQS_MAX_NUMBER_OF_MESSAGES') ?? 1,
+    waitTimeSeconds: env.optionalJSON('SQS_WAIT_TIME_SECONDS') ?? 10,
+    maxNumberOfRetries: env.optionalJSON('SQS_MAX_NUMBER_OF_RETRIES', 1) ?? 12,
+    minRetryIntervalSeconds:
+      env.optionalJSON('SQS_MIN_RETRY_INTERVAL_SECONDS', 10) ?? 60,
   }),
 })

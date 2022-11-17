@@ -19,7 +19,11 @@ import {
   processing as m,
 } from '@island.is/judicial-system-web/messages'
 import { Box, Text } from '@island.is/island-ui/core'
-import { CaseTransition, Institution } from '@island.is/judicial-system/types'
+import {
+  CaseState,
+  CaseTransition,
+  Institution,
+} from '@island.is/judicial-system/types'
 import {
   useCase,
   useInstitution,
@@ -37,14 +41,14 @@ const Processing: React.FC = () => {
     isLoadingWorkingCase,
     caseNotFound,
   } = useContext(FormContext)
-  const { setAndSendToServer, transitionCase } = useCase()
+  const { setAndSendCaseToServer, transitionCase } = useCase()
   const { formatMessage } = useIntl()
   const { courts } = useInstitution()
   const router = useRouter()
 
   const handleCourtChange = (court: Institution) => {
     if (workingCase) {
-      setAndSendToServer(
+      setAndSendCaseToServer(
         [
           {
             courtId: court.id,
@@ -62,7 +66,9 @@ const Processing: React.FC = () => {
   }
 
   const handleNextButtonClick = async () => {
-    await transitionCase(workingCase, CaseTransition.OPEN, setWorkingCase)
+    if (workingCase.state === CaseState.NEW) {
+      await transitionCase(workingCase, CaseTransition.OPEN, setWorkingCase)
+    }
 
     router.push(`${constants.INDICTMENTS_CASE_FILES_ROUTE}/${workingCase.id}`)
   }
@@ -102,7 +108,7 @@ const Processing: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${constants.INDICTMENTS_DEFENDANT_ROUTE}/${workingCase.id}`}
+          previousUrl={`${constants.INDICTMENTS_CASE_FILE_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!isProcessingStepValidIndictments(workingCase)}
           onNextButtonClick={handleNextButtonClick}
         />

@@ -7,29 +7,32 @@ import {
   Resolver,
 } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
-import * as kennitala from 'kennitala'
 
 import type { User } from '@island.is/auth-nest-tools'
 import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
+import { Identity, IdentityService } from '@island.is/api/domains/identity'
 import {
-  Identity,
-  IdentityService,
-  IdentityType,
-} from '@island.is/api/domains/identity'
-import type { DelegationDTO } from '@island.is/clients/auth-public-api'
+  FeatureFlag,
+  FeatureFlagGuard,
+  Features,
+} from '@island.is/nest/feature-flags'
 
 import {
   CreateDelegationInput,
   DelegationInput,
+  DelegationsInput,
   DeleteDelegationInput,
+  PatchDelegationInput,
   UpdateDelegationInput,
 } from '../dto'
 import { Delegation } from '../models'
-import { MeDelegationsService } from '../meDelegations.service'
-import { ActorDelegationsService } from '../actorDelegations.service'
+import { ActorDelegationsService } from '../services/actorDelegations.service'
 import { ActorDelegationInput } from '../dto/actorDelegation.input'
+import { MeDelegationsService } from '../services/meDelegations.service'
+import type { DelegationDTO, MergedDelegationDTO } from '../services/types'
+import { MergedDelegation } from '../models/delegation.model'
 
-@UseGuards(IdsUserGuard)
+@UseGuards(IdsUserGuard, FeatureFlagGuard)
 @Resolver(() => Delegation)
 export class DelegationResolver {
   constructor(
@@ -38,12 +41,12 @@ export class DelegationResolver {
     private identityService: IdentityService,
   ) {}
 
-  @Query(() => [Delegation], { name: 'authActorDelegations' })
+  @Query(() => [MergedDelegation], { name: 'authActorDelegations' })
   getActorDelegations(
     @CurrentUser() user: User,
     @Args('input', { type: () => ActorDelegationInput, nullable: true })
     input?: ActorDelegationInput,
-  ): Promise<DelegationDTO[]> {
+  ): Promise<MergedDelegationDTO[]> {
     return this.actorDelegationsService.getActorDelegations(
       user,
       input?.delegationTypes,
@@ -51,8 +54,12 @@ export class DelegationResolver {
   }
 
   @Query(() => [Delegation], { name: 'authDelegations' })
-  getDelegations(@CurrentUser() user: User): Promise<DelegationDTO[]> {
-    return this.meDelegationsService.getDelegations(user)
+  getDelegations(
+    @CurrentUser() user: User,
+    @Args('input', { type: () => DelegationsInput, nullable: true })
+    input: DelegationsInput = {},
+  ): Promise<DelegationDTO[]> {
+    return this.meDelegationsService.getDelegations(user, input)
   }
 
   @Query(() => Delegation, { name: 'authDelegation', nullable: true })
@@ -64,34 +71,35 @@ export class DelegationResolver {
   }
 
   @Mutation(() => Delegation, { name: 'createAuthDelegation' })
-  async createDelegation(
+  createDelegation(
     @CurrentUser() user: User,
     @Args('input', { type: () => CreateDelegationInput })
     input: CreateDelegationInput,
   ): Promise<DelegationDTO | null> {
-    let delegation = await this.meDelegationsService.getDelegationByOtherUser(
-      user,
-      input,
-    )
-    if (!delegation) {
-      delegation = await this.meDelegationsService.createDelegation(user, input)
-    } else if (input.scopes && delegation.id) {
-      delegation = await this.meDelegationsService.updateDelegation(user, {
-        delegationId: delegation.id,
-        scopes: input.scopes,
-      })
-    }
-
-    return delegation
+    return this.meDelegationsService.createOrUpdateDelegation(user, input)
   }
 
-  @Mutation(() => Delegation, { name: 'updateAuthDelegation' })
+  @Mutation(() => Delegation, {
+    name: 'updateAuthDelegation',
+    deprecationReason:
+      'Use patchAuthDelegation instead for increased consistency.',
+  })
   updateDelegation(
     @CurrentUser() user: User,
     @Args('input', { type: () => UpdateDelegationInput })
     input: UpdateDelegationInput,
   ): Promise<DelegationDTO> {
     return this.meDelegationsService.updateDelegation(user, input)
+  }
+
+  @FeatureFlag(Features.outgoingDelegationsV2)
+  @Mutation(() => Delegation, { name: 'patchAuthDelegation' })
+  patchDelegation(
+    @CurrentUser() user: User,
+    @Args('input', { type: () => PatchDelegationInput })
+    input: PatchDelegationInput,
+  ): Promise<DelegationDTO> {
+    return this.meDelegationsService.patchDelegation(user, input)
   }
 
   @Mutation(() => Boolean, { name: 'deleteAuthDelegation' })
@@ -104,10 +112,7 @@ export class DelegationResolver {
   }
 
   @ResolveField('to', () => Identity, { nullable: true })
-  async resolveTo(
-    @Parent() delegation: DelegationDTO,
-    @CurrentUser() user: User,
-  ): Promise<Identity> {
+  async resolveTo(@Parent() delegation: DelegationDTO): Promise<Identity> {
     return this.identityService.getIdentityWithFallback(
       delegation.toNationalId,
       {
@@ -117,10 +122,7 @@ export class DelegationResolver {
   }
 
   @ResolveField('from', () => Identity)
-  async resolveFrom(
-    @Parent() delegation: DelegationDTO,
-    @CurrentUser() user: User,
-  ): Promise<Identity> {
+  async resolveFrom(@Parent() delegation: DelegationDTO): Promise<Identity> {
     return this.identityService.getIdentityWithFallback(
       delegation.fromNationalId,
       {

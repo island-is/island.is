@@ -200,15 +200,14 @@ export const isDefendantStepValidForSidebarIC = (workingCase: Case) => {
 
 export const isDefendantStepValidIndictments = (
   workingCase: Case,
-  caseType: CaseType | undefined,
   policeCaseNumbers: string[],
 ) => {
   const result =
     policeCaseNumbers.length > 0 &&
-    workingCase.type === caseType &&
     !someDefendantIsInvalid(workingCase) &&
     validate([
       [workingCase.type, ['empty']],
+      [workingCase.indictmentSubType, ['empty']],
       ...policeCaseNumbers.map(
         (n): ValidateItem => [n, ['empty', 'police-casenumber-format']],
       ),
@@ -222,11 +221,7 @@ export const isDefendantStepValidForSidebarIndictments = (
 ) => {
   return (
     workingCase.id &&
-    isDefendantStepValidIndictments(
-      workingCase,
-      workingCase.type,
-      workingCase.policeCaseNumbers,
-    )
+    isDefendantStepValidIndictments(workingCase, workingCase.policeCaseNumbers)
   )
 }
 
@@ -392,17 +387,20 @@ export const isSubpoenaStepValid = (workingCase: Case, courtDate?: string) => {
   )
 }
 
-export const isprosecutorAndDefenderStepValid = (workingCase: Case) => {
-  return (
-    workingCase.prosecutor &&
-    (workingCase.defendantWaivesRightToCounsel ||
-      validate([
-        [workingCase.defenderNationalId, ['empty']],
-        [workingCase.defenderName, ['empty']],
-        [workingCase.defenderEmail, ['email-format']],
-        [workingCase.defenderPhoneNumber, ['phonenumber']],
-      ]).isValid)
-  )
+export const isProsecutorAndDefenderStepValid = (workingCase: Case) => {
+  const defendantsAreValid = () =>
+    workingCase.defendants?.every((defendant) => {
+      return (
+        defendant.defendantWaivesRightToCounsel ||
+        validate([
+          [defendant.defenderName, ['empty']],
+          [defendant.defenderEmail, ['email-format']],
+          [defendant.defenderPhoneNumber, ['phonenumber']],
+        ]).isValid
+      )
+    })
+
+  return workingCase.prosecutor && defendantsAreValid()
 }
 
 export const isAdminUserFormValid = (user: User) => {

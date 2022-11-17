@@ -5,7 +5,7 @@ import type { User } from '@island.is/auth-nest-tools'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'
-import { Op, WhereOptions } from 'sequelize'
+import { literal, Op, WhereOptions } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 
 import { DelegationConfig } from '../delegations/DelegationConfig'
@@ -31,7 +31,7 @@ import { uuid } from 'uuidv4'
 import { Domain } from './models/domain.model'
 import { PagedRowsDto } from '../core/types/paged-rows.dto'
 import { DomainDTO } from './dto/domain.dto'
-import { TranslationService } from '../translation/translation.service'
+import { ResourceTranslationService } from './resource-translation.service'
 
 @Injectable()
 export class ResourcesService {
@@ -45,7 +45,7 @@ export class ResourcesService {
     @InjectModel(ApiResource)
     private apiResourceModel: typeof ApiResource,
     @InjectModel(ApiScopeGroup)
-    private apiScopeGroup: typeof ApiScopeGroup,
+    private apiScopeGroupModel: typeof ApiScopeGroup,
     @InjectModel(ApiResourceScope)
     private apiResourceScopeModel: typeof ApiResourceScope,
     @InjectModel(IdentityResourceUserClaim)
@@ -62,7 +62,7 @@ export class ResourcesService {
     private delegationConfig: ConfigType<typeof DelegationConfig>,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-    private translationService: TranslationService,
+    private resourceTranslationService: ResourceTranslationService,
   ) {}
 
   /** Get's all identity resources and total count of rows */
@@ -417,11 +417,19 @@ export class ResourcesService {
         },
         allowExplicitDelegationGrant: true,
       },
+      order: [
+        // Sort results by ApiScopeGroup and ApiScope order.
+        // This raw SQL literal depends on internal Sequelize join naming.
+        // It is regression tested in services-auth-public-api/.../scopes.controller.spec.ts
+        literal(
+          'COALESCE("group"."order", "ApiScope"."order") * 1000 + "ApiScope"."order"',
+        ),
+      ],
       include: [ApiScopeGroup],
     })
 
     if (language) {
-      await this.translateApiScopes(scopes, language)
+      await this.resourceTranslationService.translateApiScopes(scopes, language)
     }
     return scopes
   }
@@ -561,6 +569,8 @@ export class ResourcesService {
   async createApiScope(apiScope: ApiScopesDTO): Promise<ApiScope> {
     this.logger.debug('Creating a new api scope')
 
+    await this.assertSameAsGroup(apiScope)
+
     return await this.apiScopeModel.create({ ...apiScope })
   }
 
@@ -574,6 +584,8 @@ export class ResourcesService {
     if (!name) {
       throw new BadRequestException('Name must be provided')
     }
+
+    await this.assertSameAsGroup(apiScope)
 
     await this.apiScopeModel.update({ ...apiScope }, { where: { name: name } })
 
@@ -871,7 +883,7 @@ export class ResourcesService {
   /** Creates a new Api Scope Group */
   async createApiScopeGroup(group: ApiScopeGroupDTO): Promise<ApiScopeGroup> {
     const id = uuid()
-    return this.apiScopeGroup.create({ id: id, ...group })
+    return this.apiScopeGroupModel.create({ id: id, ...group })
   }
 
   /** Updates an existing ApiScopeGroup */
@@ -879,7 +891,9 @@ export class ResourcesService {
     group: ApiScopeGroupDTO,
     id: string,
   ): Promise<[number, ApiScopeGroup[]]> {
-    return this.apiScopeGroup.update(
+    await this.assertSameAsScopes(id, group)
+
+    return this.apiScopeGroupModel.update(
       { ...group },
       { where: { id: id }, returning: true },
     )
@@ -887,12 +901,12 @@ export class ResourcesService {
 
   /** Delete ApiScopeGroup */
   async deleteApiScopeGroup(id: string): Promise<number> {
-    return this.apiScopeGroup.destroy({ where: { id: id } })
+    return this.apiScopeGroupModel.destroy({ where: { id: id } })
   }
 
   /** Returns all ApiScopeGroups */
   async findAllApiScopeGroups(): Promise<ApiScopeGroup[]> {
-    return this.apiScopeGroup.findAll({
+    return this.apiScopeGroupModel.findAll({
       include: [ApiScope],
     })
   }
@@ -911,7 +925,7 @@ export class ResourcesService {
     if (!searchString || searchString.length === 0) {
       searchString = '%'
     }
-    return this.apiScopeGroup.findAndCountAll({
+    return this.apiScopeGroupModel.findAndCountAll({
       limit: count,
       offset: offset,
       where: { name: { [Op.iLike]: `%${searchString}%` } },
@@ -922,7 +936,7 @@ export class ResourcesService {
 
   /** Finds Api SCope Group by Id */
   async findApiScopeGroupByPk(id: string): Promise<ApiScopeGroup | null> {
-    return this.apiScopeGroup.findByPk(id, { include: [ApiScope] })
+    return this.apiScopeGroupModel.findByPk(id, { include: [ApiScope] })
   }
   // #endregion ApiScopeGroup
 
@@ -958,7 +972,6 @@ export class ResourcesService {
           offset: offset,
           where: { name: { [Op.iLike]: `%${searchString}%` } },
           order: [['name', 'asc']],
-          include: [ApiScopeGroup],
         })
       }
     }
@@ -993,48 +1006,25 @@ export class ResourcesService {
 
   // #endregion Domain
 
-  private async translateApiScopes(
-    scopes: Array<ApiScope>,
-    language: string,
-  ): Promise<Array<ApiScope>> {
-    const translationMap = await this.translationService.findTranslationMap(
-      'apiscope',
-      scopes.map((scope) => scope.name),
-      language,
-    )
+  private async assertSameAsGroup(apiScope: ApiScopesDTO) {
+    if (apiScope.groupId) {
+      const scopeGroup = await this.apiScopeGroupModel.findByPk(
+        apiScope.groupId,
+      )
 
-    const groups: ApiScopeGroup[] = []
-    for (const scope of scopes) {
-      scope.displayName =
-        translationMap.get(scope.name)?.get('displayName') ?? scope.displayName
-      scope.description =
-        translationMap.get(scope.name)?.get('description') ?? scope.description
-
-      if (scope.group) {
-        groups.push(scope.group)
+      if (apiScope && apiScope.domainName !== scopeGroup?.domainName) {
+        throw new BadRequestException('Scope domain must match group domain.')
       }
     }
-
-    await this.translateApiScopeGroups(groups, language)
-    return scopes
   }
 
-  private async translateApiScopeGroups(
-    groups: Array<ApiScopeGroup>,
-    language: string,
-  ): Promise<Array<ApiScopeGroup>> {
-    const translationMap = await this.translationService.findTranslationMap(
-      'apiscopegroup',
-      groups.map((group) => group.id),
-      language,
-    )
+  private async assertSameAsScopes(id: string, group: ApiScopeGroupDTO) {
+    const apiScope = await this.apiScopeModel.findOne({
+      where: { groupId: id },
+    })
 
-    for (const group of groups) {
-      group.displayName =
-        translationMap.get(group.id)?.get('displayName') ?? group.displayName
-      group.description =
-        translationMap.get(group.id)?.get('description') ?? group.description
+    if (apiScope && apiScope.domainName !== group.domainName) {
+      throw new BadRequestException('Group domain must match scopes domain.')
     }
-    return groups
   }
 }

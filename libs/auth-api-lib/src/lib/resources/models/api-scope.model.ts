@@ -16,13 +16,16 @@ import { ApiScopeGroup } from './api-scope-group.model'
 import { ApiScopesDTO } from '../dto/api-scopes.dto'
 import { DelegationScope } from '../../delegations/models/delegation-scope.model'
 import { PersonalRepresentativeScopePermission } from '../../personal-representative/models/personal-representative-scope-permission.model'
-import { Optional } from 'sequelize/types'
+import { Optional } from 'sequelize'
+import { Domain } from './domain.model'
+import { ApiScopeUserAccess } from './api-scope-user-access.model'
 
 interface ModelAttributes {
   name: string
   enabled: boolean
   displayName: string
   description: string
+  domainName: string
   groupId?: string | null
   showInDiscoveryDocument: boolean
   grantToLegalGuardians: boolean
@@ -33,6 +36,7 @@ interface ModelAttributes {
   alsoForDelegatedUser: boolean
   isAccessControlled?: boolean
   userClaims?: ApiScopeUserClaim[]
+  order: number
   required: boolean
   emphasize: boolean
   archived?: Date | null
@@ -53,6 +57,7 @@ type CreationAttributes = Optional<
   | 'allowExplicitDelegationGrant'
   | 'automaticDelegationGrant'
   | 'alsoForDelegatedUser'
+  | 'order'
   | 'required'
   | 'emphasize'
   | 'created'
@@ -93,6 +98,28 @@ export class ApiScope extends Model<ModelAttributes, CreationAttributes> {
   })
   @ApiProperty()
   description!: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  @ApiProperty({ example: '@island.is' })
+  @ForeignKey(() => Domain)
+  domainName!: string
+
+  @Column({
+    type: DataType.NUMBER,
+    allowNull: false,
+    defaultValue: 0,
+    validate: {
+      min: 0,
+      max: 999,
+    },
+  })
+  @ApiProperty({
+    example: 0,
+  })
+  order!: number
 
   @Column({
     type: DataType.UUID,
@@ -161,6 +188,7 @@ export class ApiScope extends Model<ModelAttributes, CreationAttributes> {
   @Column({
     type: DataType.BOOLEAN,
     allowNull: true,
+    defaultValue: false,
   })
   @ApiPropertyOptional({ nullable: true })
   isAccessControlled?: boolean | null
@@ -212,12 +240,16 @@ export class ApiScope extends Model<ModelAttributes, CreationAttributes> {
   @HasMany(() => PersonalRepresentativeScopePermission)
   personalRepresentativeScopePermissions?: PersonalRepresentativeScopePermission[]
 
+  @HasMany(() => ApiScopeUserAccess)
+  apiScopeUserAccesses?: ApiScopeUserAccess[]
+
   toDTO(): ApiScopesDTO {
     return {
       name: this.name,
       enabled: this.enabled,
       displayName: this.displayName,
       description: this.description,
+      order: this.order,
       showInDiscoveryDocument: this.showInDiscoveryDocument,
       grantToLegalGuardians: this.grantToLegalGuardians,
       grantToProcuringHolders: this.grantToProcuringHolders,
@@ -227,6 +259,7 @@ export class ApiScope extends Model<ModelAttributes, CreationAttributes> {
       alsoForDelegatedUser: this.alsoForDelegatedUser,
       required: this.required,
       emphasize: this.emphasize,
+      domainName: this.domainName,
     }
   }
 }

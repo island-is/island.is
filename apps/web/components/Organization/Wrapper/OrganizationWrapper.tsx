@@ -31,6 +31,10 @@ import {
   Sticky,
 } from '@island.is/web/components'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
+import { useNamespace } from '@island.is/web/hooks'
+import { useI18n } from '@island.is/web/i18n'
+import { WatsonChatPanel } from '@island.is/web/components'
+
 import { SyslumennHeader, SyslumennFooter } from './Themes/SyslumennTheme'
 import {
   SjukratryggingarHeader,
@@ -38,18 +42,16 @@ import {
 } from './Themes/SjukratryggingarTheme'
 import { DigitalIcelandHeader } from './Themes/DigitalIcelandTheme'
 import { DefaultHeader } from './Themes/DefaultTheme'
-import {
-  UtlendingastofnunFooter,
-  UtlendingastofnunHeader,
-} from './Themes/UtlendingastofnunTheme'
 import MannaudstorgFooter from './Themes/MannaudstorgTheme/MannaudstorgFooter'
-import { useNamespace } from '@island.is/web/hooks'
 import { liveChatIncConfig, watsonConfig } from './config'
-import { WatsonChatPanel } from '@island.is/web/components'
 import LandlaeknirFooter from './Themes/LandlaeknirTheme/LandlaeknirFooter'
 import { HeilbrigdisstofnunNordurlandsHeader } from './Themes/HeilbrigdisstofnunNordurlandsTheme/HeilbrigdisstofnunNordurlandsHeader'
 import { LandlaeknirHeader } from './Themes/LandlaeknirTheme/LandlaeknirHeader'
 import HeilbrigdisstofnunNordurlandsFooter from './Themes/HeilbrigdisstofnunNordurlandsTheme/HeilbrigdisstofnunNordurlandsFooter'
+import {
+  UtlendingastofnunFooter,
+  UtlendingastofnunHeader,
+} from './Themes/UtlendingastofnunTheme'
 import { FiskistofaHeader } from './Themes/FiskistofaTheme/FiskistofaHeader'
 import FiskistofaFooter from './Themes/FiskistofaTheme/FiskistofaFooter'
 import { LandskjorstjornFooter } from './Themes/LandkjorstjornTheme/LandkjorstjornFooter'
@@ -57,6 +59,11 @@ import { LatestNewsCardConnectedComponent } from '../LatestNewsCardConnectedComp
 import { RikislogmadurHeader } from './Themes/RikislogmadurTheme/RikislogmadurHeader'
 import { RikislogmadurFooter } from './Themes/RikislogmadurTheme/RikislogmadurFooter'
 import { LandskjorstjornHeader } from './Themes/LandkjorstjornTheme/LandskjorstjornHeader'
+import {
+  FjarsyslaRikisinsHeader,
+  FjarsyslaRikisinsFooter,
+} from './Themes/FjarsyslaRikisinsTheme'
+
 import * as styles from './OrganizationWrapper.css'
 
 interface NavigationData {
@@ -90,6 +97,8 @@ export const lightThemes = [
   'default',
   'landlaeknir',
   'fiskistofa',
+  'landing_page',
+  'fjarsysla-rikisins',
 ]
 export const footerEnabled = [
   'syslumenn',
@@ -115,6 +124,9 @@ export const footerEnabled = [
 
   'rikislogmadur',
   'office-of-the-attorney-general-civil-affairs',
+
+  'fjarsyslan',
+  'the-financial-management-authority',
 ]
 
 export const getThemeConfig = (
@@ -172,6 +184,10 @@ const OrganizationHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
       return <RikislogmadurHeader organizationPage={organizationPage} />
     case 'landskjorstjorn':
       return <LandskjorstjornHeader organizationPage={organizationPage} />
+    case 'landing_page':
+      return null
+    case 'fjarsysla-rikisins':
+      return <FjarsyslaRikisinsHeader organizationPage={organizationPage} />
     default:
       return <DefaultHeader organizationPage={organizationPage} />
   }
@@ -192,18 +208,35 @@ export const OrganizationExternalLinks: React.FC<ExternalLinksProps> = ({
         marginBottom={4}
       >
         <Inline space={2}>
-          {organizationPage.externalLinks.map((link, index) => (
-            <Link href={link.url} key={'organization-external-link-' + index}>
-              <Button
-                colorScheme="light"
-                icon="open"
-                iconType="outline"
-                size="small"
-              >
-                {link.text}
-              </Button>
-            </Link>
-          ))}
+          {organizationPage.externalLinks.map((link, index) => {
+            // Sjukratryggingar's external links have custom styled buttons
+            const isSjukratryggingar =
+              organizationPage.slug === 'sjukratryggingar' ||
+              organizationPage.slug === 'icelandic-health-insurance'
+
+            let variant = undefined
+            if (
+              isSjukratryggingar &&
+              organizationPage.externalLinks.length === 2
+            ) {
+              variant = index === 0 ? 'primary' : 'ghost'
+            }
+
+            return (
+              <Link href={link.url} key={'organization-external-link-' + index}>
+                <Button
+                  variant={variant}
+                  icon={isSjukratryggingar ? 'lockClosed' : 'open'}
+                  iconType="outline"
+                  size="medium"
+                >
+                  <Box paddingY={2} paddingLeft={2}>
+                    {link.text}
+                  </Box>
+                </Button>
+              </Link>
+            )
+          })}
         </Inline>
       </Box>
     )
@@ -224,7 +257,11 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
     ? organizations[0]
     : organizations.find((x) => footerEnabled.includes(x.slug))
 
-  const n = useNamespace(organization?.namespace ?? {})
+  const namespace = useMemo(
+    () => JSON.parse(organization?.namespace?.fields ?? '{}'),
+    [],
+  )
+  const n = useNamespace(namespace)
 
   let OrganizationFooterComponent = null
 
@@ -303,6 +340,14 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
         />
       )
       break
+    case 'fjarsysla-rikisins':
+    case 'the-financial-management-authority':
+      OrganizationFooterComponent = (
+        <FjarsyslaRikisinsFooter
+          footerItems={organization.footerItems}
+          logo={organization.logo?.url}
+        />
+      )
   }
 
   return OrganizationFooterComponent
@@ -314,6 +359,8 @@ export const OrganizationChatPanel = ({
   organizationIds: string[]
   pushUp?: boolean
 }) => {
+  const { activeLocale } = useI18n()
+
   const organizationIdWithLiveChat = organizationIds.find((id) => {
     return id in liveChatIncConfig
   })
@@ -327,11 +374,15 @@ export const OrganizationChatPanel = ({
   }
 
   const organizationIdWithWatson = organizationIds.find((id) => {
-    return id in watsonConfig
+    return id in watsonConfig[activeLocale]
   })
 
   if (organizationIdWithWatson) {
-    return <WatsonChatPanel {...watsonConfig[organizationIdWithWatson]} />
+    return (
+      <WatsonChatPanel
+        {...watsonConfig[activeLocale][organizationIdWithWatson]}
+      />
+    )
   }
 
   return null
@@ -558,6 +609,11 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                   span={fullWidthContent ? ['9/9', '9/9', '7/9'] : '9/9'}
                   offset={fullWidthContent ? ['0', '0', '1/9'] : '0'}
                 >
+                  {showExternalLinks && (
+                    <OrganizationExternalLinks
+                      organizationPage={organizationPage}
+                    />
+                  )}
                   {breadcrumbItems && (
                     <Breadcrumbs
                       items={breadcrumbItems ?? []}
@@ -568,11 +624,6 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                           link
                         )
                       }}
-                    />
-                  )}
-                  {showExternalLinks && (
-                    <OrganizationExternalLinks
-                      organizationPage={organizationPage}
                     />
                   )}
                   {pageDescription && (
@@ -590,7 +641,6 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
           </Box>
         </SidebarLayout>
       )}
-      {!!mainContent && children}
       {minimal && (
         <GridContainer>
           <GridRow>
@@ -599,11 +649,12 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
               span={['12/12', '12/12', '10/12']}
               offset={['0', '0', '1/12']}
             >
-              {children}
+              {mainContent}
             </GridColumn>
           </GridRow>
         </GridContainer>
       )}
+      {!!mainContent && children}
       {!minimal && (
         <OrganizationFooter
           organizations={[organizationPage.organization]}

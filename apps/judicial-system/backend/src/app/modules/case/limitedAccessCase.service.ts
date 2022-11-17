@@ -16,12 +16,13 @@ import { User } from '../user'
 import { Case } from './models/case.model'
 import { CaseFile } from '../file'
 
-const attributes: (keyof Case)[] = [
+export const attributes: (keyof Case)[] = [
   'id',
   'created',
   'modified',
   'origin',
   'type',
+  'indictmentSubType',
   'state',
   'policeCaseNumbers',
   'defenderName',
@@ -91,6 +92,7 @@ export class LimitedAccessCaseService {
         {
           model: CaseFile,
           as: 'caseFiles',
+          required: false,
           where: {
             state: { [Op.not]: CaseFileState.DELETED },
             category: { [Op.not]: null },

@@ -23,7 +23,7 @@ export const StepThree: React.FC = () => {
     isLoadingWorkingCase,
     caseNotFound,
   } = useContext(FormContext)
-  const { setAndSendToServer } = useCase()
+  const { setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
 
   useEffect(() => {
@@ -35,7 +35,7 @@ export const StepThree: React.FC = () => {
       ) > -1 &&
       workingCase.defendants
     ) {
-      setAndSendToServer(
+      setAndSendCaseToServer(
         [
           {
             requestedOtherRestrictions: formatMessage(
@@ -49,7 +49,7 @@ export const StepThree: React.FC = () => {
         setWorkingCase,
       )
     }
-  }, [setAndSendToServer, formatMessage, setWorkingCase, workingCase])
+  }, [setAndSendCaseToServer, formatMessage, setWorkingCase, workingCase])
 
   return (
     <PageLayout

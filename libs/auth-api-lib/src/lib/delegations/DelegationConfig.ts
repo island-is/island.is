@@ -1,8 +1,8 @@
-import * as z from 'zod'
+import { z } from 'zod'
 
 import { ApiScope, AuthScope } from '@island.is/auth/scopes'
 import { defineConfig } from '@island.is/nest/config'
-import { DelegationType } from './dto/delegation.dto'
+import { DelegationType } from './types/delegationType'
 
 const customScopeRuleSchema = z.array(
   z.object({
@@ -11,7 +11,6 @@ const customScopeRuleSchema = z.array(
     // This property adds extra conditions to custom delegation grants. It is an array of
     // delegation types which can grant the scope to other users.
     //
-    // * Self: Normal "person" users can grant this scope to other users on their behalf.
     // * ProcurationHolder: "Company owners" can grant this scope to other users on behalf of their company.
     // * LegalGuardian: "Parents" can grant this scope to other users on behalf of their child.
     // * Custom: Custom delegatee can grant this scope to other users on behalf of the original delegator.
@@ -22,7 +21,7 @@ const customScopeRuleSchema = z.array(
       z
         .string()
         .refine((val) =>
-          ['Self', ...Object.values(DelegationType)].includes(val),
+          Object.values(DelegationType).includes(val as DelegationType),
         ),
     ),
   }),
@@ -33,6 +32,7 @@ const schema = z.object({
   // users in custom delegations.
   customScopeRules: customScopeRuleSchema,
   userInfoUrl: z.string(),
+  defaultValidityPeriodInDays: z.number().min(1),
 })
 
 export const DelegationConfig = defineConfig<z.infer<typeof schema>>({
@@ -41,16 +41,16 @@ export const DelegationConfig = defineConfig<z.infer<typeof schema>>({
   load: (env) => ({
     customScopeRules: env.optionalJSON('DELEGATION_CUSTOM_SCOPE_RULES') ?? [
       {
-        scopeName: AuthScope.writeDelegations,
+        scopeName: AuthScope.delegations,
         onlyForDelegationType: ['ProcurationHolder'],
       },
       {
         scopeName: ApiScope.financeSalary,
-        onlyForDelegationType: ['ProcurationHolder'],
+        onlyForDelegationType: ['ProcurationHolder', 'Custom'],
       },
       {
         scopeName: ApiScope.company,
-        onlyForDelegationType: ['ProcurationHolder'],
+        onlyForDelegationType: ['ProcurationHolder', 'Custom'],
       },
     ],
     userInfoUrl:
@@ -58,5 +58,7 @@ export const DelegationConfig = defineConfig<z.infer<typeof schema>>({
         'IDENTITY_SERVER_ISSUER_URL',
         'https://identity-server.dev01.devland.is',
       ) + '/connect/userinfo',
+    defaultValidityPeriodInDays:
+      env.optionalJSON('DELEGATION_DEFAULT_VALID_PERIOD_IN_DAYS') ?? 365,
   }),
 })

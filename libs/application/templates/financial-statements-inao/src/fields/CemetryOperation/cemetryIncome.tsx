@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react'
+import React, { Fragment, useEffect } from 'react'
 import { Box } from '@island.is/island-ui/core'
 import { RecordObject } from '@island.is/application/types'
 import debounce from 'lodash/debounce'
@@ -8,15 +8,43 @@ import { useFormContext } from 'react-hook-form'
 import { getErrorViaPath } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { CEMETRYOPERATIONIDS, INPUTCHANGEINTERVAL } from '../../lib/constants'
+import { FinancialStatementsInaoTaxInfo } from '@island.is/api/schema'
 
 interface PropTypes {
+  data?: {
+    financialStatementsInaoTaxInfo: FinancialStatementsInaoTaxInfo[]
+  } | null
+  loading: boolean
   getSum: () => void
   errors: RecordObject<unknown> | undefined
 }
 
-export const CemetryIncome = ({ errors, getSum }: PropTypes): JSX.Element => {
+export const CemetryIncome = ({
+  data,
+  loading,
+  errors,
+  getSum,
+}: PropTypes): JSX.Element => {
   const { formatMessage } = useLocale()
-  const { clearErrors } = useFormContext()
+  const { clearErrors, setValue } = useFormContext()
+
+  useEffect(() => {
+    if (data?.financialStatementsInaoTaxInfo) {
+      setValue(
+        CEMETRYOPERATIONIDS.careIncome,
+        data.financialStatementsInaoTaxInfo?.[0]?.value?.toString() ?? '',
+      )
+      setValue(
+        CEMETRYOPERATIONIDS.burialRevenue,
+        data.financialStatementsInaoTaxInfo?.[1]?.value?.toString() ?? '',
+      )
+      setValue(
+        CEMETRYOPERATIONIDS.grantFromTheCemeteryFund,
+        data.financialStatementsInaoTaxInfo?.[2]?.value?.toString() ?? '',
+      )
+      getSum()
+    }
+  }, [data, getSum, setValue])
 
   const onInputChange = debounce((fieldId: string) => {
     getSum()
@@ -27,43 +55,52 @@ export const CemetryIncome = ({ errors, getSum }: PropTypes): JSX.Element => {
     <Fragment>
       <Box paddingY={1}>
         <InputController
-          id={CEMETRYOPERATIONIDS.caretaking}
-          name={CEMETRYOPERATIONIDS.caretaking}
-          label={formatMessage(m.caretaking)}
-          onChange={() => onInputChange(CEMETRYOPERATIONIDS.caretaking)}
+          id={CEMETRYOPERATIONIDS.careIncome}
+          loading={loading}
+          name={CEMETRYOPERATIONIDS.careIncome}
+          label={formatMessage(m.careIncome)}
+          onChange={() => onInputChange(CEMETRYOPERATIONIDS.careIncome)}
           backgroundColor="blue"
           currency
+          rightAlign
           error={
-            errors && getErrorViaPath(errors, CEMETRYOPERATIONIDS.caretaking)
+            errors && getErrorViaPath(errors, CEMETRYOPERATIONIDS.careIncome)
           }
         />
       </Box>
       <Box paddingY={1}>
         <InputController
-          id={CEMETRYOPERATIONIDS.graveIncome}
-          name={CEMETRYOPERATIONIDS.graveIncome}
-          label={formatMessage(m.graveIncome)}
-          onChange={() => onInputChange(CEMETRYOPERATIONIDS.graveIncome)}
+          id={CEMETRYOPERATIONIDS.burialRevenue}
+          loading={loading}
+          name={CEMETRYOPERATIONIDS.burialRevenue}
+          label={formatMessage(m.burialRevenue)}
+          onChange={() => onInputChange(CEMETRYOPERATIONIDS.burialRevenue)}
           backgroundColor="blue"
           currency
+          rightAlign
           error={
-            errors && getErrorViaPath(errors, CEMETRYOPERATIONIDS.graveIncome)
+            errors && getErrorViaPath(errors, CEMETRYOPERATIONIDS.burialRevenue)
           }
         />
       </Box>
       <Box paddingY={1}>
         <InputController
-          id={CEMETRYOPERATIONIDS.cemetryFundDonations}
-          name={CEMETRYOPERATIONIDS.cemetryFundDonations}
-          label={formatMessage(m.cemetryFundDonations)}
+          id={CEMETRYOPERATIONIDS.grantFromTheCemeteryFund}
+          loading={loading}
+          name={CEMETRYOPERATIONIDS.grantFromTheCemeteryFund}
+          label={formatMessage(m.grantFromTheCemeteryFund)}
           onChange={() =>
-            onInputChange(CEMETRYOPERATIONIDS.cemetryFundDonations)
+            onInputChange(CEMETRYOPERATIONIDS.grantFromTheCemeteryFund)
           }
           backgroundColor="blue"
           currency
+          rightAlign
           error={
             errors &&
-            getErrorViaPath(errors, CEMETRYOPERATIONIDS.cemetryFundDonations)
+            getErrorViaPath(
+              errors,
+              CEMETRYOPERATIONIDS.grantFromTheCemeteryFund,
+            )
           }
         />
       </Box>
@@ -75,6 +112,7 @@ export const CemetryIncome = ({ errors, getSum }: PropTypes): JSX.Element => {
           onChange={() => onInputChange(CEMETRYOPERATIONIDS.otherIncome)}
           backgroundColor="blue"
           currency
+          rightAlign
           error={
             errors && getErrorViaPath(errors, CEMETRYOPERATIONIDS.otherIncome)
           }

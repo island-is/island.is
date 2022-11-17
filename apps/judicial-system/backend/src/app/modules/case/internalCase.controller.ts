@@ -19,16 +19,17 @@ import { CurrentCase } from './guards/case.decorator'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { Case } from './models/case.model'
 import { ArchiveResponse } from './models/archive.response'
-import { DeliverResponse } from './models/deliver.response'
+import { DeliverCompletedCaseResponse } from './models/deliverCompletedCase.response'
 import { DeliverProsecutorDocumentsResponse } from './models/deliverProsecutorDocuments.response'
-import { CaseService } from './case.service'
+import { DeliverResponse } from './models/deliver.response'
+import { InternalCaseService } from './internalCase.service'
 
 @Controller('api/internal')
 @ApiTags('internal cases')
 @UseGuards(TokenGuard)
 export class InternalCaseController {
   constructor(
-    private readonly caseService: CaseService,
+    private readonly internalCaseService: InternalCaseService,
     private readonly eventService: EventService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
@@ -38,7 +39,7 @@ export class InternalCaseController {
   async create(@Body() caseToCreate: InternalCreateCaseDto): Promise<Case> {
     this.logger.debug('Creating a new case')
 
-    const createdCase = await this.caseService.internalCreate(caseToCreate)
+    const createdCase = await this.internalCaseService.create(caseToCreate)
 
     this.eventService.postEvent(CaseEvent.CREATE_XRD, createdCase as Case)
 
@@ -53,22 +54,22 @@ export class InternalCaseController {
   archive(): Promise<ArchiveResponse> {
     this.logger.debug('Archiving a case')
 
-    return this.caseService.archive()
+    return this.internalCaseService.archive()
   }
 
   @UseGuards(CaseExistsGuard, CaseCompletedGuard)
   @Post('case/:caseId/deliver')
   @ApiOkResponse({
-    type: DeliverResponse,
+    type: DeliverCompletedCaseResponse,
     description: 'Delivers a completed case to court and police',
   })
   deliver(
     @Param('caseId') caseId: string,
     @CurrentCase() theCase: Case,
-  ): Promise<DeliverResponse> {
+  ): Promise<DeliverCompletedCaseResponse> {
     this.logger.debug(`Delivering case ${caseId} to court and police`)
 
-    return this.caseService.deliver(theCase)
+    return this.internalCaseService.deliver(theCase)
   }
 
   @UseGuards(CaseExistsGuard)
@@ -85,6 +86,36 @@ export class InternalCaseController {
       `Delivering prosecutor documents for case ${caseId} to court`,
     )
 
-    return this.caseService.deliverProsecutorDocuments(theCase)
+    return this.internalCaseService.deliverProsecutorDocuments(theCase)
+  }
+
+  @UseGuards(CaseExistsGuard, CaseCompletedGuard)
+  @Post('case/:caseId/deliverCourtRecordToCourt')
+  @ApiOkResponse({
+    type: DeliverResponse,
+    description: 'Delivers a court record to court',
+  })
+  deliverCourtRecordToCourt(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(`Delivering the court record for case ${caseId} to court`)
+
+    return this.internalCaseService.deliverCourtRecordToCourt(theCase)
+  }
+
+  @UseGuards(CaseExistsGuard, CaseCompletedGuard)
+  @Post('case/:caseId/deliverSignedRulingToCourt')
+  @ApiOkResponse({
+    type: DeliverResponse,
+    description: 'Delivers a court record to court',
+  })
+  deliverSignedRulingToCourt(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(`Delivering the court record for case ${caseId} to court`)
+
+    return this.internalCaseService.deliverSignedRulingToCourt(theCase)
   }
 }

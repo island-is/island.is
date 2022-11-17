@@ -2,8 +2,11 @@ import { uuid } from 'uuidv4'
 import { Op } from 'sequelize'
 
 import {
+  CaseFileState,
   CaseState,
   CaseType,
+  IndictmentSubType,
+  isIndictmentCase,
   User as TUser,
 } from '@island.is/judicial-system/types'
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
@@ -14,8 +17,8 @@ import { CourtService } from '../../../court'
 import { Defendant } from '../../../defendant'
 import { User } from '../../../user'
 import { Institution } from '../../../institution'
-import { Case } from '../../models/case.model'
 import { CaseFile } from '../../../file'
+import { Case } from '../../models/case.model'
 
 interface Then {
   result: Case
@@ -67,6 +70,9 @@ describe('CaseController - Create court case', () => {
     const user = { id: uuid() } as TUser
     const caseId = uuid()
     const type = randomEnum(CaseType)
+    const indictmentSubType = isIndictmentCase(type)
+      ? randomEnum(IndictmentSubType)
+      : undefined
     const policeCaseNumbers = [uuid()]
     const courtId = uuid()
     const theCase = { id: caseId, type, policeCaseNumbers, courtId } as Case
@@ -83,6 +89,7 @@ describe('CaseController - Create court case', () => {
         type,
         policeCaseNumbers,
         false,
+        indictmentSubType,
       )
     })
   })
@@ -153,7 +160,14 @@ describe('CaseController - Create court case', () => {
           },
           { model: Case, as: 'parentCase' },
           { model: Case, as: 'childCase' },
-          { model: CaseFile, as: 'caseFiles' },
+          {
+            model: CaseFile,
+            as: 'caseFiles',
+            required: false,
+            where: {
+              state: { [Op.not]: CaseFileState.DELETED },
+            },
+          },
         ],
         order: [[{ model: Defendant, as: 'defendants' }, 'created', 'ASC']],
         where: {
@@ -186,7 +200,7 @@ describe('CaseController - Create court case', () => {
     })
 
     it('should post to queue', () => {
-      expect(mockMessageService.postMessageToQueue).toHaveBeenCalledWith({
+      expect(mockMessageService.sendMessageToQueue).toHaveBeenCalledWith({
         type: MessageType.CASE_CONNECTED_TO_COURT_CASE,
         caseId,
       })

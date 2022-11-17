@@ -1,9 +1,4 @@
-import {
-  CaseAppealDecision,
-  CaseType,
-  Gender,
-  SessionArrangements,
-} from '@island.is/judicial-system/types'
+import { CaseAppealDecision, Gender } from '@island.is/judicial-system/types'
 
 import * as Constants from '@island.is/judicial-system/consts'
 
@@ -11,12 +6,12 @@ import {
   formatDate,
   capitalize,
   formatGender,
+  formatAppeal,
   formatNationalId,
   formatDOB,
   formatPhoneNumber,
   displayFirstPlusRemaining,
-  formatProsecutorAppeal,
-  formatDefendantAppeal,
+  splitStringByComma,
 } from './formatters'
 
 describe('formatDate', () => {
@@ -129,234 +124,45 @@ describe('formatGender', () => {
   })
 })
 
-describe('formatProsecutorAppeal', () => {
+describe('formatAppeal', () => {
   test('should format appeal', () => {
     // Arrange
     const appealDecision = CaseAppealDecision.APPEAL
+    const stakeholder = 'Aðili'
 
     // Act
-    const res = formatProsecutorAppeal(appealDecision)
+    const res = formatAppeal(appealDecision, stakeholder)
 
     // Assert
     expect(res).toBe(
-      'Sækjandi lýsir því yfir að hann kæri úrskurðinn til Landsréttar. Sækjandi kærir úrskurðinn í því skyni að úrskurðurinn verði felldur úr gildi og krafa hans verði tekin til greina.',
+      'Aðili lýsir því yfir að hann kæri úrskurðinn til Landsréttar.',
     )
   })
 
   test('should format acceptance', () => {
     // Arrange
     const appealDecision = CaseAppealDecision.ACCEPT
+    const stakeholder = 'Aðili'
 
     // Act
-    const res = formatProsecutorAppeal(appealDecision)
+    const res = formatAppeal(appealDecision, stakeholder)
 
     // Assert
-    expect(res).toBe('Sækjandi unir úrskurðinum.')
+    expect(res).toBe('Aðili unir úrskurðinum.')
   })
 
   test('should format postponement', () => {
     // Arrange
     const appealDecision = CaseAppealDecision.POSTPONE
+    const stakeholder = 'Aðilar'
 
     // Act
-    const res = formatProsecutorAppeal(appealDecision)
+    const res = formatAppeal(appealDecision, stakeholder)
 
     // Assert
     expect(res).toBe(
-      'Sækjandi lýsir því yfir að hann taki sér lögbundinn kærufrest.',
+      'Aðilar lýsa því yfir að þeir taki sér lögbundinn kærufrest.',
     )
-  })
-})
-
-describe('formatDefendantAppeal', () => {
-  describe('Appeal decision is APPEAL', () => {
-    test('should format correctly when there is a single defendant in a custody case', () => {
-      // Arrange
-      const multipleDefendants = false
-      const appealDecision = CaseAppealDecision.APPEAL
-      const caseType = CaseType.CUSTODY
-      const sessionArrangements = SessionArrangements.ALL_PRESENT
-
-      // Act
-      const res = formatDefendantAppeal(
-        multipleDefendants,
-        appealDecision,
-        caseType,
-        sessionArrangements,
-      )
-
-      // Assert
-      expect(res).toBe(
-        'Varnaraðili kærir úrskurðinn í því skyni að úrskurðurinn verði felldur úr gildi, en til vara að gæsluvarðhaldi verði markaður skemmri tími/ honum verði gert að sæta farbanni í stað gæsluvarðahalds.',
-      )
-    })
-
-    test('should format correctly when there are multiple defendants in a custody case', () => {
-      // Arrange
-      const multipleDefendants = true
-      const appealDecision = CaseAppealDecision.APPEAL
-      const caseType = CaseType.CUSTODY
-      const sessionArrangements = SessionArrangements.ALL_PRESENT
-
-      // Act
-      const res = formatDefendantAppeal(
-        multipleDefendants,
-        appealDecision,
-        caseType,
-        sessionArrangements,
-      )
-
-      // Assert
-      expect(res).toBe(
-        'Varnaraðilar kæra úrskurðinn í því skyni að úrskurðurinn verði felldur úr gildi, en til vara að gæsluvarðhaldi verði markaður skemmri tími/ þeim verði gert að sæta farbanni í stað gæsluvarðahalds.',
-      )
-    })
-
-    test('should format correctly when there is a single defendant in a case that is not a custody case', () => {
-      // Arrange
-      const multipleDefendants = false
-      const appealDecision = CaseAppealDecision.APPEAL
-      const caseType = CaseType.SEARCH_WARRANT
-      const sessionArrangements = SessionArrangements.ALL_PRESENT
-
-      // Act
-      const res = formatDefendantAppeal(
-        multipleDefendants,
-        appealDecision,
-        caseType,
-        sessionArrangements,
-      )
-
-      // Assert
-      expect(res).toBe(
-        'Varnaraðili kærir úrskurðinn í því skyni að úrskurðurinn verði felldur úr gildi.',
-      )
-    })
-
-    test('should format correctly when there are multiple defendants in a case that is not a custody case', () => {
-      // Arrange
-      const multipleDefendants = true
-      const appealDecision = CaseAppealDecision.APPEAL
-      const caseType = CaseType.SEARCH_WARRANT
-      const sessionArrangements = SessionArrangements.ALL_PRESENT
-
-      // Act
-      const res = formatDefendantAppeal(
-        multipleDefendants,
-        appealDecision,
-        caseType,
-        sessionArrangements,
-      )
-
-      // Assert
-      expect(res).toBe(
-        'Varnaraðilar kæra úrskurðinn í því skyni að úrskurðurinn verði felldur úr gildi.',
-      )
-    })
-
-    test('should format correctly when a spokesperson appeals on behalf of the defendants', () => {
-      // Arrange
-      const multipleDefendants = true
-      const appealDecision = CaseAppealDecision.APPEAL
-      const caseType = CaseType.SEARCH_WARRANT
-      const sessionArrangements = SessionArrangements.ALL_PRESENT_SPOKESPERSON
-
-      // Act
-      const res = formatDefendantAppeal(
-        multipleDefendants,
-        appealDecision,
-        caseType,
-        sessionArrangements,
-      )
-
-      // Assert
-      expect(res).toBe(
-        'Talsmaður varnaraðila kærir úrskurðinn í því skyni að úrskurðurinn verði felldur úr gildi.',
-      )
-    })
-  })
-  describe('Appeal decision is ACCEPT', () => {
-    test('should format correctly when there is a single defendant', () => {
-      // Arrange
-      const multipleDefendants = false
-      const appealDecision = CaseAppealDecision.ACCEPT
-      const caseType = CaseType.SEARCH_WARRANT
-      const sessionArrangements = SessionArrangements.ALL_PRESENT_SPOKESPERSON
-
-      // Act
-      const res = formatDefendantAppeal(
-        multipleDefendants,
-        appealDecision,
-        caseType,
-        sessionArrangements,
-      )
-
-      // Assert
-      expect(res).toBe('Varnaraðili unir úrskurðinum.')
-    })
-
-    test('should format correctly when there are multiple defendants', () => {
-      // Arrange
-      const multipleDefendants = true
-      const appealDecision = CaseAppealDecision.ACCEPT
-      const caseType = CaseType.SEARCH_WARRANT
-      const sessionArrangements = SessionArrangements.ALL_PRESENT_SPOKESPERSON
-
-      // Act
-      const res = formatDefendantAppeal(
-        multipleDefendants,
-        appealDecision,
-        caseType,
-        sessionArrangements,
-      )
-
-      // Assert
-      expect(res).toBe('Varnaraðilar una úrskurðinum.')
-    })
-  })
-
-  describe('Appeal decision is POSTPONE', () => {
-    test('should format correctly when there is a single defendant', () => {
-      // Arrange
-      const multipleDefendants = false
-      const appealDecision = CaseAppealDecision.POSTPONE
-      const caseType = CaseType.SEARCH_WARRANT
-      const sessionArrangements = SessionArrangements.ALL_PRESENT_SPOKESPERSON
-
-      // Act
-      const res = formatDefendantAppeal(
-        multipleDefendants,
-        appealDecision,
-        caseType,
-        sessionArrangements,
-      )
-
-      // Assert
-      expect(res).toBe(
-        'Varnaraðili lýsir því yfir að hann taki sér lögbundinn kærufrest.',
-      )
-    })
-
-    test('should format correctly when there are multiple defendants', () => {
-      // Arrange
-      const multipleDefendants = true
-      const appealDecision = CaseAppealDecision.POSTPONE
-      const caseType = CaseType.SEARCH_WARRANT
-      const sessionArrangements = SessionArrangements.ALL_PRESENT_SPOKESPERSON
-
-      // Act
-      const res = formatDefendantAppeal(
-        multipleDefendants,
-        appealDecision,
-        caseType,
-        sessionArrangements,
-      )
-
-      // Assert
-      expect(res).toBe(
-        'Varnaraðilar lýsa því yfir að þeir taki sér lögbundinn kærufrest.',
-      )
-    })
   })
 })
 
@@ -462,4 +268,29 @@ describe('displayFirstPlusRemaining', () => {
       'apple +2',
     )
   })
+})
+
+describe('splitStringByComma', () => {
+  test('should handle "apple" as input', () => {
+    expect(splitStringByComma('apple')).toEqual(['apple'])
+  })
+
+  test.each(['apple, pear', 'apple pear', 'apple,pear'])(
+    'should handle "%s" as input',
+    (input) => {
+      const result = splitStringByComma(input)
+
+      expect(result).toHaveLength(2)
+      expect(result).toEqual(['apple', 'pear'])
+    },
+  )
+  test.each(['apple, pear, orange', 'apple pear orange'])(
+    'should handle %s as input',
+    (input) => {
+      const result = splitStringByComma(input)
+
+      expect(result).toHaveLength(3)
+      expect(result).toEqual(['apple', 'pear', 'orange'])
+    },
+  )
 })

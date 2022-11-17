@@ -200,7 +200,6 @@ export class CaseController {
   ): Promise<Case> {
     this.logger.debug(`Transitioning case ${caseId}`)
 
-    // Use theCase.modified when client is ready to send last modified timestamp with all updates
     const state = transitionCase(transition.transition, theCase.state)
 
     // TODO: UpdateCaseDto does not contain state - create a new type for CaseService.update
@@ -219,7 +218,7 @@ export class CaseController {
     // Indictment cases are not signed
     if (isIndictmentCase(theCase.type) && completedCaseStates.includes(state)) {
       // No need to wait for now, but may consider including this in a transaction with the database update later
-      this.caseService.addCaseCompletedMessageToQueue(caseId)
+      this.caseService.addCompletedIndictmentCaseMessagesToQueue(theCase)
     }
 
     // No need to wait
@@ -273,6 +272,37 @@ export class CaseController {
     )
 
     const pdf = await this.caseService.getRequestPdf(theCase)
+
+    res.end(pdf)
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseReadGuard)
+  @RolesRules(prosecutorRule, judgeRule, registrarRule)
+  @Get('case/:caseId/caseFiles/:policeCaseNumber')
+  @ApiOkResponse({
+    content: { 'application/pdf': {} },
+    description: 'Gets the case files for an existing case as a pdf document',
+  })
+  async getCaseFilesPdf(
+    @Param('caseId') caseId: string,
+    @Param('policeCaseNumber') policeCaseNumber: string,
+    @CurrentCase() theCase: Case,
+    @Res() res: Response,
+  ): Promise<void> {
+    this.logger.debug(
+      `Getting the case files for case ${caseId} as a pdf document`,
+    )
+
+    if (!theCase.policeCaseNumbers.includes(policeCaseNumber)) {
+      throw new BadRequestException(
+        `Case ${caseId} does not include police case number ${policeCaseNumber}`,
+      )
+    }
+
+    const pdf = await this.caseService.getCaseFilesPdf(
+      theCase,
+      policeCaseNumber,
+    )
 
     res.end(pdf)
   }

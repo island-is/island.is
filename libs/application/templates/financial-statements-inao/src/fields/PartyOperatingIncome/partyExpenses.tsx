@@ -33,6 +33,7 @@ export const PartyExpenses = ({ errors, getSum }: PropTypes): JSX.Element => {
           error={
             errors && getErrorViaPath(errors, PARTYOPERATIONIDS.electionOffice)
           }
+          rightAlign
           backgroundColor="blue"
           currency
         />
@@ -41,9 +42,10 @@ export const PartyExpenses = ({ errors, getSum }: PropTypes): JSX.Element => {
         <InputController
           id={PARTYOPERATIONIDS.otherCost}
           name={PARTYOPERATIONIDS.otherCost}
-          label={formatMessage(m.otherCost)}
+          label={formatMessage(m.otherOperationalCost)}
           onChange={() => onInputChange(PARTYOPERATIONIDS.otherCost)}
           error={errors && getErrorViaPath(errors, PARTYOPERATIONIDS.otherCost)}
+          rightAlign
           backgroundColor="blue"
           currency
         />

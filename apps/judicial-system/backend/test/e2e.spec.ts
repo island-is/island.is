@@ -1,4 +1,3 @@
-import { uuid } from 'uuidv4'
 import { Sequelize } from 'sequelize-typescript'
 import { execSync } from 'child_process'
 import request from 'supertest'
@@ -9,7 +8,6 @@ import { INestApplication, Type } from '@nestjs/common'
 
 import { testServer } from '@island.is/infra-nest-server'
 import { IntlService } from '@island.is/cms-translations'
-import { getQueueServiceToken } from '@island.is/message-queue'
 import {
   CaseState,
   CaseTransition,
@@ -36,10 +34,8 @@ import { AppModule } from '../src/app/app.module'
 import { Institution } from '../src/app/modules/institution'
 import { User } from '../src/app/modules/user'
 import { Case } from '../src/app/modules/case'
-import {
-  Notification,
-  SendNotificationResponse,
-} from '../src/app/modules/notification'
+import { Notification } from '../src/app/modules/notification'
+import { MessageService } from '@island.is/judicial-system/message'
 
 interface CUser extends TUser {
   institutionId: string
@@ -100,8 +96,8 @@ beforeAll(async () => {
               },
             }),
         })
-        .overrideProvider(getQueueServiceToken('message-queue'))
-        .useValue({ add: () => uuid() }),
+        .overrideProvider(MessageService)
+        .useValue({ sendMessageToQueue: () => undefined }),
   })
 
   sequelize = await app.resolve(getConnectionToken() as Type<Sequelize>)
@@ -484,14 +480,10 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
 }
 
 function getCase(id: string): PromiseLike<Case> {
-  return Case.findOne({
-    where: { id },
+  return Case.findByPk(id, {
     rejectOnEmpty: true,
     include: [
-      {
-        model: Institution,
-        as: 'court',
-      },
+      { model: Institution, as: 'court' },
       {
         model: User,
         as: 'prosecutor',
@@ -520,7 +512,7 @@ describe('Institution', () => {
       .send()
       .expect(200)
       .then((response) => {
-        expect(response.body.length).toBe(16)
+        expect(response.body.length).toBe(18)
       })
   })
 })
@@ -563,7 +555,7 @@ describe('User', () => {
         })
 
         // Check the data in the database
-        return User.findOne({ where: { id: apiUser.id } })
+        return User.findByPk(apiUser.id)
       })
       .then((value) => {
         expectUsersToMatch(userToCUser(value?.toJSON() as User), apiUser)
@@ -693,7 +685,7 @@ describe('Case', () => {
         return request(app.getHttpServer())
           .put(`/api/case/${dbCase.id}`)
           .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${prosecutorAuthCookie}`)
-          .send(data)
+          .send({ ...data, type: undefined })
           .expect(200)
       })
       .then((response) => {
@@ -774,7 +766,6 @@ describe('Case', () => {
         dbCase = caseToCCase(value)
 
         const data = {
-          modified: value.modified.toISOString(),
           transition: CaseTransition.ACCEPT,
         }
 
@@ -843,56 +834,6 @@ function dbNotificationToNotification(dbNotification: Notification) {
 }
 
 describe('Notification', () => {
-  it('POST /api/case/:id/notification should send a notification', async () => {
-    let dbCase: Case
-    let apiSendNotificationResponse: SendNotificationResponse
-
-    await Case.create({
-      origin: CaseOrigin.RVG,
-      type: CaseType.CUSTODY,
-      policeCaseNumbers: ['Case Number'],
-    })
-      .then((value) => {
-        dbCase = value
-
-        return request(app.getHttpServer())
-          .post(`/api/case/${dbCase.id}/notification`)
-          .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${prosecutorAuthCookie}`)
-          .send({ type: NotificationType.HEADS_UP })
-          .expect(201)
-      })
-      .then((response) => {
-        apiSendNotificationResponse = response.body
-
-        // Check the response
-        expect(apiSendNotificationResponse.notificationSent).toBe(true)
-        expect(apiSendNotificationResponse.notification?.id).toBeTruthy()
-        expect(apiSendNotificationResponse.notification?.created).toBeTruthy()
-        expect(apiSendNotificationResponse.notification?.caseId).toBe(dbCase.id)
-        expect(apiSendNotificationResponse.notification?.type).toBe(
-          NotificationType.HEADS_UP,
-        )
-        expect(apiSendNotificationResponse.notification?.recipients).toBe(
-          `[{"success":true}]`,
-        )
-
-        // Check the data in the database
-        return Notification.findOne({
-          where: { id: response.body.notification.id },
-        })
-      })
-      .then((value) => {
-        expect(value?.id).toBe(apiSendNotificationResponse.notification?.id)
-        expect(value?.created.toISOString()).toBe(
-          apiSendNotificationResponse.notification?.created,
-        )
-        expect(value?.type).toBe(apiSendNotificationResponse.notification?.type)
-        expect(value?.recipients).toBe(
-          apiSendNotificationResponse.notification?.recipients,
-        )
-      })
-  })
-
   it('GET /api/case/:id/notifications should get all notifications by case id', async () => {
     let dbCase: Case
     let dbNotification: Notification
