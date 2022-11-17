@@ -2,7 +2,7 @@
 
 ## Quickstart
 
-Ensure docker is running, then run the following to for the first time:
+Ensure docker is running, then run the following when running for the first time:
 
 ```bash
 yarn dev/init web
