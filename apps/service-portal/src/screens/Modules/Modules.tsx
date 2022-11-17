@@ -57,20 +57,24 @@ const RouteLoader: FC<{
           path={route.path}
           exact
           key={Array.isArray(route.path) ? route.path[0] : route.path}
-          component={AccessDenied}
-        />
+        >
+          <AccessDenied userInfo={userInfo} client={client} />
+        </Route>
       ) : (
         <Route
           path={route.path}
           exact
           key={Array.isArray(route.path) ? route.path[0] : route.path}
-          render={() => (
-            <RouteComponent route={route} userInfo={userInfo} client={client} />
-          )}
-        />
+        >
+          <RouteComponent route={route} userInfo={userInfo} client={client} />
+        </Route>
       ),
     )}
-    {routes.length > 0 && <Route component={NotFound} />}
+    {routes.length > 0 && (
+      <Route>
+        <NotFound />
+      </Route>
+    )}
   </Switch>
 ))
 
