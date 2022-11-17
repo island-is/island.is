@@ -46,7 +46,7 @@ export const renderConnectedComponent = (slice) => {
 }
 
 // TODO: add types
-export const defaultRenderComponent = {
+export const defaultRenderComponentObject = {
   ConnectedComponent: (slice) => renderConnectedComponent(slice),
   FaqList: (slice) => <FaqList {...slice} />,
   Statistics: (slice) => <Statistics {...slice} />,
