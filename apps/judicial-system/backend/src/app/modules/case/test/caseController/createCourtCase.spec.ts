@@ -5,7 +5,7 @@ import {
   CaseFileState,
   CaseState,
   CaseType,
-  IndictmentSubType,
+  IndictmentSubtype,
   isIndictmentCase,
   User as TUser,
 } from '@island.is/judicial-system/types'
@@ -70,12 +70,22 @@ describe('CaseController - Create court case', () => {
     const user = { id: uuid() } as TUser
     const caseId = uuid()
     const type = randomEnum(CaseType)
-    const indictmentSubType = isIndictmentCase(type)
-      ? randomEnum(IndictmentSubType)
+    const policeCaseNumber = uuid()
+    const indictmentSubtype = isIndictmentCase(type)
+      ? randomEnum(IndictmentSubtype)
       : undefined
-    const policeCaseNumbers = [uuid()]
+    const indictmentSubtypes = isIndictmentCase(type)
+      ? { [policeCaseNumber]: [indictmentSubtype] }
+      : undefined
+    const policeCaseNumbers = [policeCaseNumber]
     const courtId = uuid()
-    const theCase = { id: caseId, type, policeCaseNumbers, courtId } as Case
+    const theCase = {
+      id: caseId,
+      type,
+      policeCaseNumbers,
+      indictmentSubtypes,
+      courtId,
+    } as Case
 
     beforeEach(async () => {
       await givenWhenThen(caseId, user, theCase)
@@ -89,7 +99,7 @@ describe('CaseController - Create court case', () => {
         type,
         policeCaseNumbers,
         false,
-        indictmentSubType,
+        indictmentSubtypes,
       )
     })
   })

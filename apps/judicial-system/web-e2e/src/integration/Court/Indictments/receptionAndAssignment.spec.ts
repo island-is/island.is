@@ -1,7 +1,7 @@
 import {
   CaseState,
   CaseType,
-  IndictmentSubType,
+  IndictmentSubtype,
   UserRole,
 } from '@island.is/judicial-system/types'
 import {
@@ -22,7 +22,7 @@ describe(`${INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}/:id`, () => {
   beforeEach(() => {
     const caseData = mockCase(
       CaseType.INDICTMENT,
-      IndictmentSubType.MAJOR_ASSAULT,
+      IndictmentSubtype.MAJOR_ASSAULT,
     )
 
     const caseDataAddition = {
