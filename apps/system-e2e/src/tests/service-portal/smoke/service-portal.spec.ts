@@ -7,61 +7,35 @@ test.use({ baseURL: urls.islandisBaseUrl })
 
 test.describe('Service portal', () => {
   let context: BrowserContext
-
   test.beforeAll(async ({ browser }) => {
     context = await session({
       browser: browser,
-      storageState: 'service-portal-faereyjar.json',
+      storageState: 'service-portal-afrika.json',
       homeUrl: `${urls.islandisBaseUrl}/minarsidur`,
-      phoneNumber: '0102399',
+      phoneNumber: '0103019',
       idsLoginOn: true,
     })
   })
-
   test.afterAll(async () => {
     await context.close()
   })
-
   test('should have clickable navigation bar', async () => {
     const page = await context.newPage()
     const { findByRole } = helpers(page)
     await page.goto('/minarsidur')
     await expect(findByRole('link', 'Pósthólf')).toBeVisible()
   })
-
-  test('should have user Gervimaður Færeyjar logged in', async () => {
+  test('should have user Gervimaður Afríka logged in', async () => {
     const page = await context.newPage()
     const { findByRole } = helpers(page)
     await page.goto('/minarsidur')
-    await expect(findByRole('heading', 'Gervimaður Færeyjar')).toBeVisible()
+    await expect(findByRole('heading', 'Gervimaður Afríka')).toBeVisible()
   })
-
   test('should have Pósthólf', async () => {
     const page = await context.newPage()
     const { findByRole } = helpers(page)
     await page.goto('/minarsidur')
     await findByRole('link', 'Pósthólf').click()
     await expect(page.locator('text=Hér getur þú fundið skjöl')).toBeVisible()
-  })
-
-  test('can sign in as company', async () => {
-    // Arrange
-    const page = await context.newPage()
-    const { findByRole } = helpers(page)
-    await page.goto('/minarsidur')
-
-    // Act
-    await page.locator('data-testid=user-menu >> visible=true').click()
-    await page.locator('role=button[name="Skipta um notanda"]').click()
-    const firstCompany = page.locator('role=button[name*="Prókúra"]').first()
-    await expect(firstCompany).toBeVisible()
-    const companyName = await firstCompany
-      .locator('.identity-card--name')
-      .textContent()
-    expect(companyName).toBeTruthy()
-    await firstCompany.click()
-
-    // Assert
-    await expect(findByRole('heading', companyName ?? '')).toBeVisible()
   })
 })
