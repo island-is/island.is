@@ -14,6 +14,7 @@ interface InstitutionPanelProps {
   institution: string
   locale: HyphenProps['locale']
   linkHref: string
+  imgContainerDisplay?: BoxProps['display']
 }
 
 export const InstitutionPanel = ({
@@ -22,6 +23,7 @@ export const InstitutionPanel = ({
   institution,
   locale,
   linkHref,
+  imgContainerDisplay,
 }: InstitutionPanelProps) => {
   return (
     <a
@@ -37,7 +39,11 @@ export const InstitutionPanel = ({
         display="flex"
         alignItems="center"
       >
-        <Box display="flex" style={{ flex: '0 0 64px' }} marginRight={3}>
+        <Box
+          display={imgContainerDisplay}
+          style={{ flex: '0 0 64px' }}
+          marginRight={3}
+        >
           <Box
             component="img"
             alt=""

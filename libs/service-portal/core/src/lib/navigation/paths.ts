@@ -104,7 +104,11 @@ export enum ServicePortalPath {
 
   // Licenses service
   LicensesRoot = '/skirteini',
-  LicensesDetail = '/skirteini/:provider/:type',
+  // Pattern should be : /skirteini/provider/licensetype
+  DrivingLicensesDetail = '/skirteini/rikislogreglustjori/okurettindi',
+  ADRLicensesDetail = '/skirteini/umhverfisstofnun/adrrettindi',
+  FirearmLicensesDetail = '/skirteini/rikislogreglustjori/skotvopnaleyfi',
+  MachineLicensesDetail = '/skirteini/vinnueftirlitid/vinnuvelarettindi',
 
   // DocumentProvider
   // Temporary change to the value of DocumentProviderRoot; skjalaveita -> skjalaveitur. In the first

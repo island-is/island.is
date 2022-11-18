@@ -20,12 +20,7 @@ import {
 } from '@island.is/service-portal/graphql'
 import { Query } from '@island.is/api/schema'
 import { Box } from '@island.is/island-ui/core'
-import { ServicePortalPath } from '@island.is/service-portal/core'
-import {
-  getPathFromProviderId,
-  getPathFromType,
-  getTitleAndLogo,
-} from '../../utils/dataMapper'
+import { getPathFromType, getTitleAndLogo } from '../../utils/dataMapper'
 
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 import { FeatureFlagClient } from '@island.is/feature-flags'
@@ -177,10 +172,7 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
                   )}
                   cta={{
                     label: formatMessage(m.seeDetails),
-                    url: ServicePortalPath.LicensesDetail.replace(
-                      ':provider',
-                      getPathFromProviderId(license.license.provider.id),
-                    ).replace(':type', getPathFromType(license.license.type)),
+                    url: getPathFromType(license.license.type),
                     variant: 'text',
                   }}
                   tag={

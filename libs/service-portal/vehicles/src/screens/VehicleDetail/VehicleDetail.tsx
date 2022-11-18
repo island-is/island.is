@@ -226,7 +226,7 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
     <>
       <Box marginBottom={6}>
         <GridRow>
-          <GridColumn span={['12/12', '12/12', '6/8', '6/8']}>
+          <GridColumn span={['9/9', '9/9', '6/8', '6/8']}>
             <Stack space={2}>
               <Text variant="h3" as="h1">
                 {loading ? (
@@ -252,7 +252,7 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
         </GridRow>
         {!loading && downloadServiceURL && (
           <GridRow marginTop={6}>
-            <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+            <GridColumn span={['9/9', '9/9', '9/9', '6/9']}>
               <Box display="flex" justifyContent="flexStart" printHidden>
                 <Box paddingRight={2}>
                   <Button

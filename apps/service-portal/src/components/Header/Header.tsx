@@ -68,7 +68,12 @@ export const Header = ({ position }: Props) => {
           >
             <Link to={ServicePortalPath.MinarSidurRoot}>
               <FocusableBox component="div">
-                <Logo width={136} height={22} id="sidebar" />
+                <Hidden above="sm">
+                  <Logo width={24} height={22} iconOnly id="header-mobile" />
+                </Hidden>
+                <Hidden below="md">
+                  <Logo width={136} height={22} id="header" />
+                </Hidden>
               </FocusableBox>
             </Link>
             <Hidden print>

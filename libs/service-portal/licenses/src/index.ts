@@ -23,8 +23,26 @@ export const licensesModule: ServicePortalModule = {
         lazy(() => import('./screens/LicensesOverview/LicensesOverview')),
     },
     {
-      name: 'Skírteini',
-      path: ServicePortalPath.LicensesDetail,
+      name: 'Ökuréttindi',
+      path: ServicePortalPath.DrivingLicensesDetail,
+      enabled: userInfo.scopes.includes(ApiScope.licenses),
+      render: () => lazy(() => import('./screens/LicenseDetail/LicenseDetail')),
+    },
+    {
+      name: 'ADR réttindi',
+      path: ServicePortalPath.ADRLicensesDetail,
+      enabled: userInfo.scopes.includes(ApiScope.licenses),
+      render: () => lazy(() => import('./screens/LicenseDetail/LicenseDetail')),
+    },
+    {
+      name: 'Vinnuvélaréttindi',
+      path: ServicePortalPath.MachineLicensesDetail,
+      enabled: userInfo.scopes.includes(ApiScope.licenses),
+      render: () => lazy(() => import('./screens/LicenseDetail/LicenseDetail')),
+    },
+    {
+      name: 'Skotvopnaleyfi',
+      path: ServicePortalPath.FirearmLicensesDetail,
       enabled: userInfo.scopes.includes(ApiScope.licenses),
       render: () => lazy(() => import('./screens/LicenseDetail/LicenseDetail')),
     },

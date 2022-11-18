@@ -169,7 +169,7 @@ export const VehiclesHistory: ServicePortalModuleComponent = () => {
       <Stack space={2}>
         {!loading && !error && vehicles.length > 0 && (
           <GridRow>
-            <GridColumn span={['1/1', '8/12', '8/12', '3/12']}>
+            <GridColumn span={['1/1', '8/9', '8/9', '3/9']}>
               <DatePicker
                 backgroundColor="blue"
                 handleChange={(d: Date) => setFromDate(d)}
@@ -183,8 +183,7 @@ export const VehiclesHistory: ServicePortalModuleComponent = () => {
               />
             </GridColumn>
             <GridColumn
-              span={['1/1', '8/12', '8/12', '3/12']}
-              offset={['0', '0', '0', '1/12', '0']}
+              span={['1/1', '8/9', '8/9', '3/9']}
               paddingTop={[2, 2, 2, 0, 0]}
             >
               <DatePicker
@@ -200,8 +199,8 @@ export const VehiclesHistory: ServicePortalModuleComponent = () => {
               />
             </GridColumn>
             <GridColumn
-              span={['1/1', '8/12', '8/12', '3/12']}
-              offset={['0', '0', '0', '1/12', '0']}
+              span={['1/1', '8/9', '8/9', '3/9']}
+              offset={['0', '0', '0', '0', '0']}
               paddingBottom={[2, 2, 2, 0, 0]}
             >
               <Box

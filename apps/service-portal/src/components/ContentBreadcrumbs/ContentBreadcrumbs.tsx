@@ -5,6 +5,9 @@ import { Link, match, matchPath, useLocation } from 'react-router-dom'
 import {
   Box,
   BreadcrumbsDeprecated as Breadcrumbs,
+  Hidden,
+  Tag,
+  TagProps,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { ServicePortalNavigationItem } from '@island.is/service-portal/core'
@@ -37,7 +40,9 @@ const parseNavItemName = (
  * and select the deepest path with an exact path
  * match as the Breadcrumbs to render.
  */
-const ContentBreadcrumbs: FC = () => {
+const ContentBreadcrumbs: FC<{
+  tag?: TagProps
+}> = ({ tag }) => {
   const navigation = useNavigation()
   const location = useLocation()
   const { formatMessage } = useLocale()
@@ -82,16 +87,39 @@ const ContentBreadcrumbs: FC = () => {
   if (items.length < 2) return null
 
   return (
-    <Box paddingTop={0} paddingBottom={[2, 3]}>
-      <Breadcrumbs color="blue400" separatorColor="blue400">
-        {items.map((item, index) =>
-          item.path !== undefined ? (
-            <Link key={index} to={item.path}>
-              {formatMessage(item.name)}
-            </Link>
-          ) : null,
-        )}
-      </Breadcrumbs>
+    <Box
+      display="flex"
+      flexDirection="row"
+      justifyContent="spaceBetween"
+      alignItems="center"
+      paddingBottom={[2, 3]}
+    >
+      <Box paddingTop={0}>
+        <Breadcrumbs color="blue400" separatorColor="blue400">
+          {items.map((item, index) =>
+            item.path !== undefined ? (
+              <Link key={index} to={item.path}>
+                {formatMessage(item.name)}
+              </Link>
+            ) : null,
+          )}
+        </Breadcrumbs>
+      </Box>
+      {tag && (
+        <Hidden above="sm">
+          <Box paddingLeft={2}>
+            <a href={tag.href} target="_blank" rel="noreferrer noopener">
+              <Tag
+                variant={tag.variant}
+                active={tag.active}
+                disabled={!tag.active}
+              >
+                {tag.children}
+              </Tag>
+            </a>
+          </Box>
+        </Hidden>
+      )}
     </Box>
   )
 }

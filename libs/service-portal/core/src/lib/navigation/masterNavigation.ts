@@ -4,7 +4,7 @@ import { ServicePortalPath } from './paths'
 
 export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
   {
-    name: m.overview,
+    name: m.frontpage,
     systemRoute: true,
     path: ServicePortalPath.MinarSidurRoot,
     icon: {
@@ -55,7 +55,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         },
         description: m.companyDescription,
       },
-
       // Min Gogn
       {
         name: m.userInfo,
@@ -64,17 +63,13 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           icon: 'person',
         },
         serviceProvider: 'i5go5A4ikV8muPfvr9o2v',
+        description: m.userInfoDescription,
         children: [
           {
             name: m.detailInfo,
-            navHide: true,
+            navHide: false,
             path: ServicePortalPath.UserInfo,
             children: [
-              {
-                // TESTING ONLY
-                name: m.endorsements,
-                path: ServicePortalPath.Petitions,
-              },
               {
                 name: m.familySpouse,
                 navHide: true,
@@ -98,7 +93,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             path: ServicePortalPath.PetitionsAdminView,
           },
         ],
-        description: m.userInfoDescription,
       },
       // Mín skírteini
       {
@@ -111,8 +105,23 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         children: [
           {
             navHide: true,
-            name: m.detailInfo,
-            path: ServicePortalPath.LicensesDetail,
+            name: m.drivingLicense,
+            path: ServicePortalPath.DrivingLicensesDetail,
+          },
+          {
+            navHide: true,
+            name: m.firearmLicense,
+            path: ServicePortalPath.FirearmLicensesDetail,
+          },
+          {
+            navHide: true,
+            name: m.adrLicense,
+            path: ServicePortalPath.ADRLicensesDetail,
+          },
+          {
+            navHide: true,
+            name: m.machineLicense,
+            path: ServicePortalPath.MachineLicensesDetail,
           },
         ],
         description: m.licensesDescription,
@@ -148,6 +157,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           icon: 'school',
         },
         description: m.educationDescription,
+        serviceProvider: '6JoPZKqmUVnRAVrj0vadTy',
       },
       {
         name: m.documentProvider,
@@ -155,45 +165,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         icon: {
           icon: 'receipt',
         },
-        // The first release will only contain "Skjalaveitur" and only for the project owners.
-        // Therefore 'children' are temporarily disabled to enhance the UX of the owners.
-        // children: [
-        //   {
-        //     name: defineMessage({
-        //       id: 'service.portal:document-provider-document-providers',
-        //       defaultMessage: 'Skjalaveitendur',
-        //     }),
-        //     path: ServicePortalPath.DocumentProviderDocumentProviders,
-        //   },
-        //   {
-        //     name: defineMessage({
-        //       id: 'service.portal:document-provider-my-categories',
-        //       defaultMessage: 'Mínar flokkar',
-        //     }),
-        //     path: ServicePortalPath.DocumentProviderMyCategories,
-        //   },
-        //   {
-        //     name: defineMessage({
-        //       id: 'service.portal:document-provider-settings',
-        //       defaultMessage: 'Stillingar',
-        //     }),
-        //     path: ServicePortalPath.DocumentProviderSettingsRoot,
-        //   },
-        //   {
-        //     name: defineMessage({
-        //       id: 'service.portal:document-provider-technical-info',
-        //       defaultMessage: 'Tæknilegar upplýsingar',
-        //     }),
-        //     path: ServicePortalPath.DocumentProviderTechnicalInfo,
-        //   },
-        //   {
-        //     name: defineMessage({
-        //       id: 'service.portal:document-provider-statistics',
-        //       defaultMessage: 'Tölfræði',
-        //     }),
-        //     path: ServicePortalPath.DocumentProviderStatistics,
-        //   },
-        // ],
+        serviceProvider: '6JoPZKqmUVnRAVrj0vadTy',
       },
 
       // Mannanafnaskrá
@@ -212,6 +184,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         icon: {
           icon: 'home',
         },
+        serviceProvider: '53jrbgxPKpbNtordSfEZUK',
         children: [
           {
             name: 'id',
@@ -226,6 +199,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
       {
         name: m.finance,
         path: ServicePortalPath.FinanceRoot,
+        serviceProvider: '6AoSHJJRDHQFfLiwBZvZi2',
         children: [
           {
             name: m.financeStatus,
@@ -265,35 +239,38 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         icon: {
           icon: 'car',
         },
+        serviceProvider: '6IZT17s7stKJAmtPutjpD7',
+        description: m.vehiclesDescription,
         children: [
           {
             name: m.myVehicles,
             path: ServicePortalPath.AssetsVehicles,
-            children: [
-              {
-                // Path param reference
-                name: 'id',
-                navHide: true,
-                path: ServicePortalPath.AssetsVehiclesDetail,
-              },
-            ],
+            serviceProvider: '6IZT17s7stKJAmtPutjpD7',
+          },
+          {
+            // Path param reference
+            name: 'id',
+            navHide: true,
+            path: ServicePortalPath.AssetsVehiclesDetail,
+            serviceProvider: '6IZT17s7stKJAmtPutjpD7',
           },
           {
             name: m.vehiclesLookup,
             path: ServicePortalPath.AssetsVehiclesLookup,
+            serviceProvider: '6IZT17s7stKJAmtPutjpD7',
           },
           {
             name: m.vehiclesDrivingLessons,
             path: ServicePortalPath.AssetsVehiclesDrivingLessons,
+            serviceProvider: '6IZT17s7stKJAmtPutjpD7',
           },
           {
             name: m.vehiclesHistory,
             path: ServicePortalPath.AssetsVehiclesHistory,
+            serviceProvider: '6IZT17s7stKJAmtPutjpD7',
           },
         ],
-        description: m.vehiclesDescription,
       },
-
       // Stillingar - hidden from nav
       {
         name: m.settings,

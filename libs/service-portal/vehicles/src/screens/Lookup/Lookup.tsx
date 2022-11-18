@@ -232,13 +232,13 @@ export const Lookup: ServicePortalModuleComponent = () => {
       </Box>
       <GridRow marginTop={2}>
         {limitExceeded && !noSearchData && (
-          <GridColumn span={['12/12', '12/12', '12/12']}>
+          <GridColumn span={['9/9', '9/9', '9/9']}>
             <Text marginBottom={4}>
               {formatMessage(messages.searchLimitExceeded)}
             </Text>
           </GridColumn>
         )}
-        <GridColumn span={['12/12', '12/12', '12/12']}>
+        <GridColumn span={['9/9', '9/9', '9/9']}>
           <Box
             display="flex"
             flexDirection={['column', 'row']}

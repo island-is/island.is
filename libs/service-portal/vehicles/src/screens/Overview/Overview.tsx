@@ -217,7 +217,7 @@ export const VehiclesOverview: ServicePortalModuleComponent = ({
       <Stack space={2}>
         {!loading && !error && vehicles.length > 4 && (
           <GridRow>
-            <GridColumn span={['12/12', '12/12', '5/12', '4/12', '3/12']}>
+            <GridColumn span={['9/9', '9/9', '5/9', '4/9', '3/9']}>
               <Box marginBottom={1}>
                 <Input
                   icon="search"
@@ -235,7 +235,7 @@ export const VehiclesOverview: ServicePortalModuleComponent = ({
         )}
         {hasActiveFilters() && (
           <GridRow>
-            <GridColumn span={['12/12', '12/12']}>
+            <GridColumn span={['9/9', '9/9']}>
               <Box>
                 <Box
                   display="flex"

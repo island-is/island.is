@@ -512,11 +512,15 @@ export const m = defineMessages({
   },
   adrLicense: {
     id: 'service.portal:adr-license',
-    defaultMessage: 'Ökuréttindi',
+    defaultMessage: 'ADR réttindi',
   },
   machineLicense: {
     id: 'service.portal:machine-license',
     defaultMessage: 'Vinnuvélaréttindi',
+  },
+  firearmLicense: {
+    id: 'service.portal:firearm-license',
+    defaultMessage: 'Skotvopnaleyfi',
   },
   notFound: {
     id: 'service.portal:not-found',
@@ -835,5 +839,20 @@ export const m = defineMessages({
     id: 'service.portal:button.renew',
     defaultMessage: 'Endurnýja',
     description: 'Renew',
+  },
+  frontpage: {
+    id: 'service.portal:frontpage',
+    defaultMessage: 'Forsíða',
+    description: 'Frontpage',
+  },
+  serviceProvider: {
+    id: 'service.portal:service-provider',
+    defaultMessage: 'Þjónustuaðili',
+    description: 'Service provider',
+  },
+  tableOfContents: {
+    id: 'service.portal:table-of-contents',
+    defaultMessage: 'Efnisyfirlit',
+    description: 'Table of contents',
   },
 })

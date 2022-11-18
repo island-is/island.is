@@ -492,7 +492,6 @@ export const messages = defineMessages({
     id: 'sp.vehicles:my-cars-files-csv',
     defaultMessage: 'Sækja CSV',
   },
-
   myCarsFilesExcel: {
     id: 'sp.vehicles:my-cars-files-excel',
     defaultMessage: 'Sækja Excel',

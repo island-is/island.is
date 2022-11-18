@@ -1,3 +1,4 @@
+import { ServicePortalPath } from '@island.is/service-portal/core'
 import { m } from '../lib/messages'
 
 interface Category {
@@ -440,16 +441,6 @@ enum LicenseType {
   MachineLicense = 'MachineLicense',
   FirearmLicense = 'FirearmLicense',
 }
-enum LicenseProviderId {
-  NationalPoliceCommissioner = 'NationalPoliceCommissioner',
-  EnvironmentAgency = 'EnvironmentAgency',
-  AdministrationOfOccupationalSafetyAndHealth = 'AdministrationOfOccupationalSafetyAndHealth',
-}
-enum LicenseProviderPath {
-  vinnueftirlitid = 'vinnueftirlitid',
-  umhverfisstofnun = 'umhverfisstofnun',
-  rikislogreglustjori = 'rikislogreglustjori',
-}
 
 export const getLicenseDetailHeading = (type: string) => {
   switch (type) {
@@ -517,16 +508,16 @@ enum LicenseTypePath {
 export const getPathFromType = (type: string) => {
   switch (type) {
     case LicenseType.AdrLicense:
-      return LicenseTypePath.adrrettindi
+      return ServicePortalPath.ADRLicensesDetail
       break
     case LicenseType.DriversLicense:
-      return LicenseTypePath.okurettindi
+      return ServicePortalPath.DrivingLicensesDetail
       break
     case LicenseType.FirearmLicense:
-      return LicenseTypePath.skotvopnaleyfi
+      return ServicePortalPath.FirearmLicensesDetail
       break
     case LicenseType.MachineLicense:
-      return LicenseTypePath.vinnuvelarettindi
+      return ServicePortalPath.MachineLicensesDetail
       break
     default:
       return ''
@@ -550,23 +541,6 @@ export const getTypeFromPath = (path: string) => {
       break
     default:
       return undefined
-      break
-  }
-}
-
-export const getPathFromProviderId = (id: string) => {
-  switch (id) {
-    case LicenseProviderId.AdministrationOfOccupationalSafetyAndHealth:
-      return LicenseProviderPath.vinnueftirlitid
-      break
-    case LicenseProviderId.EnvironmentAgency:
-      return LicenseProviderPath.umhverfisstofnun
-      break
-    case LicenseProviderId.NationalPoliceCommissioner:
-      return LicenseProviderPath.rikislogreglustjori
-      break
-    default:
-      return ''
       break
   }
 }
