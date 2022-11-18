@@ -18,6 +18,7 @@ import {
   getAvailableRightsInDays,
   getAvailablePersonalRightsInDays,
   YES,
+  NO,
   StartDateOptions,
   UnEmployedBenefitTypes,
   PARENTAL_LEAVE,
@@ -61,6 +62,19 @@ interface VMSTError {
   status: number
   traceId: string
   errors: Record<string, string[]>
+}
+
+type YesOrNo = typeof NO | typeof YES
+
+interface AnswerPeriod {
+  startDate: string
+  endDate: string
+  ratio: string
+  firstPeriodStart?: string
+  useLength?: YesOrNo
+  daysToUse?: string
+  rawIndex?: number
+  rightCodePeriod?: string
 }
 
 export const APPLICATION_ATTACHMENT_BUCKET = 'APPLICATION_ATTACHMENT_BUCKET'
@@ -436,6 +450,45 @@ export class ParentalLeaveService {
     return attachments
   }
 
+  async getCalculatedPeriod(
+    nationalRegistryId: string,
+    startDate: Date,
+    startDateString: string | undefined,
+    periodLength: number,
+    period: AnswerPeriod,
+    rightsCodePeriod: string,
+  ): Promise<Period> {
+    const isUsingNumberOfDays = period.daysToUse !== undefined
+    const getPeriodEndDate = await this.parentalLeaveApi.parentalLeaveGetPeriodEndDate(
+      {
+        nationalRegistryId,
+        startDate: startDate,
+        length: String(periodLength),
+        percentage: period.ratio,
+      },
+    )
+
+    if (getPeriodEndDate.periodEndDate === undefined) {
+      throw new Error(
+        `Could not calculate end date of period starting ${period.startDate} and using ${periodLength} days of rights`,
+      )
+    }
+
+    // Add the period rights
+    return {
+      from: startDateString ?? format(startDate, df),
+      to: format(getPeriodEndDate.periodEndDate, df),
+      ratio: getRatio(
+        period.ratio,
+        periodLength.toString(),
+        isUsingNumberOfDays,
+      ),
+      approved: false,
+      paid: false,
+      rightsCodePeriod: rightsCodePeriod,
+    }
+  }
+
   async createPeriodsDTO(
     application: Application,
     nationalRegistryId: string,
@@ -460,15 +513,18 @@ export class ParentalLeaveService {
       application,
     )
     const maximumMultipleBirthsDaysToSpend = getMultipleBirthsDays(application)
+    const maximumAdditionalSingleParentDaysToSpend = getAdditionalSingleParentRightsInDays(
+      application,
+    )
     const maximumDaysBeforeUsingTransferRights =
       maximumPersonalDaysToSpend + maximumMultipleBirthsDaysToSpend
+    const maximumSingleParentDaysBeforeUsingMultipleBirthsRights =
+      maximumPersonalDaysToSpend + maximumAdditionalSingleParentDaysToSpend
+
     const mulitpleBirthsRights =
       applicationType === PARENTAL_LEAVE
         ? apiConstants.rights.multipleBirthsOrlofRightsId
         : apiConstants.rights.multipleBirthsGrantRightsId
-    const maximumAdditionalSingleParentDaysToSpend = getAdditionalSingleParentRightsInDays(
-      application,
-    )
 
     const isActualDateOfBirth =
       firstPeriodStart === StartDateOptions.ACTUAL_DATE_OF_BIRTH
@@ -515,13 +571,19 @@ export class ParentalLeaveService {
       }
 
       const isUsingAdditionalRights =
-      numberOfDaysAlreadySpent >=
-      maximumDaysToSpend - maximumAdditionalSingleParentDaysToSpend
+        numberOfDaysAlreadySpent >=
+        maximumDaysToSpend - maximumAdditionalSingleParentDaysToSpend
       const willStartToUseAdditionalSingleParentRightsWithPeriod =
-      numberOfDaysSpentAfterPeriod >
-      maximumDaysToSpend - maximumAdditionalSingleParentDaysToSpend
+        numberOfDaysSpentAfterPeriod >
+        maximumDaysToSpend - maximumAdditionalSingleParentDaysToSpend
+      const isSingleParentUsingMultipleBirthsRights =
+        numberOfDaysAlreadySpent >=
+        maximumSingleParentDaysBeforeUsingMultipleBirthsRights
+      const isSingleParentUsingPersonalRights =
+        numberOfDaysAlreadySpent < maximumPersonalDaysToSpend
+
       const isUsingMultipleBirthsRights =
-      numberOfDaysAlreadySpent >= maximumPersonalDaysToSpend
+        numberOfDaysAlreadySpent >= maximumPersonalDaysToSpend
       const willStartToUseMultipleBirthsRightsWithPeriod =
         numberOfDaysSpentAfterPeriod > maximumPersonalDaysToSpend
       const isUsingTransferredRights =
@@ -532,8 +594,9 @@ export class ParentalLeaveService {
       /*
         ** Priority rights:
         ** 1. personal rights
-        ** 2. common rights ( from multiple births)
-        ** 3. transfer rights ( from other parent)
+        ** 2. single parent rights
+        ** 3. common rights ( from multiple births)
+        ** 4. transfer rights ( from other parent)
         We have to finished first one before go to next and so on
         */
       if (
@@ -564,15 +627,10 @@ export class ParentalLeaveService {
         })
       } else if (otherParent === SINGLE) {
         // single parent
-        if (isUsingAdditionalRights) {
-          // We know all of the period will be using additional single parent rights
+        if (isSingleParentUsingMultipleBirthsRights) {
+          // Only using multiple births right
           periods.push({
-            from:
-              isFirstPeriod && isActualDateOfBirth && useLength === YES
-                ? apiConstants.actualDateOfBirthMonths
-                : isFirstPeriod && isActualDateOfBirth
-                ? apiConstants.actualDateOfBirth
-                : period.startDate,
+            from: period.startDate,
             to: period.endDate,
             ratio: getRatio(
               period.ratio,
@@ -581,91 +639,241 @@ export class ParentalLeaveService {
             ),
             approved: false,
             paid: false,
-            rightsCodePeriod:
-              apiConstants.rights.artificialInseminationRightsId,
+            rightsCodePeriod: mulitpleBirthsRights,
           })
         } else {
-          // If we reach here, we have a period that will have to be split into
-          // two, a part of it will be using personal rights and the other part
-          // will be using additional single parent rights
-          const daysLeftOfPersonalRights =
-            maximumPersonalDaysToSpend - numberOfDaysAlreadySpent
+          /*
+           ** If we reach here, we have a period that will have:
+           ** 1: Personal rights and additional rights
+           ** 2: Personal, additional and multiplebirths rights
+           ** 3: Additional rights and multipleBirths rights
+           ** 4: Addtitonal rights
+           */
+          if (maximumMultipleBirthsDaysToSpend == 0) {
+            if (isSingleParentUsingPersonalRights) {
+              // 1. Personal rights and additional rights
+              // Personal rights
+              const daysLeftOfPersonalRights =
+                maximumPersonalDaysToSpend - numberOfDaysAlreadySpent
+              const fromDate =
+                isFirstPeriod && isActualDateOfBirth && useLength === YES
+                  ? apiConstants.actualDateOfBirthMonths
+                  : isFirstPeriod && isActualDateOfBirth
+                  ? apiConstants.actualDateOfBirth
+                  : period.startDate
 
-          const getNormalPeriodEndDate = await this.parentalLeaveApi.parentalLeaveGetPeriodEndDate(
-            {
-              nationalRegistryId,
-              startDate,
-              length: String(daysLeftOfPersonalRights),
-              percentage: period.ratio,
-            },
-          )
+              const personalPeriod = await this.getCalculatedPeriod(
+                nationalRegistryId,
+                startDate,
+                fromDate,
+                daysLeftOfPersonalRights,
+                period,
+                getRightsCode(application),
+              )
 
-          if (getNormalPeriodEndDate.periodEndDate === undefined) {
-            throw new Error(
-              `Could not calculate end date of period starting ${period.startDate} and using ${daysLeftOfPersonalRights} days of rights`,
-            )
+              periods.push(personalPeriod)
+
+              // Additional rights
+              const additionalSingleParentPeriodStartDate = addDays(
+                new Date(personalPeriod.to),
+                1,
+              )
+              const lengthOfPeriodUsingAdditionalSingleParentDays =
+                periodLength - daysLeftOfPersonalRights
+
+              const additionalPeriod = await this.getCalculatedPeriod(
+                nationalRegistryId,
+                additionalSingleParentPeriodStartDate,
+                undefined,
+                lengthOfPeriodUsingAdditionalSingleParentDays,
+                period,
+                apiConstants.rights.artificialInseminationRightsId,
+              )
+
+              periods.push(additionalPeriod)
+            } else {
+              // 4. Additional rights
+              periods.push({
+                from: period.startDate,
+                to: period.endDate,
+                ratio: getRatio(
+                  period.ratio,
+                  periodLength.toString(),
+                  isUsingNumberOfDays,
+                ),
+                approved: false,
+                paid: false,
+                rightsCodePeriod:
+                  apiConstants.rights.artificialInseminationRightsId,
+              })
+            }
+          } else {
+            if (isSingleParentUsingPersonalRights) {
+              // 2. Personal, additional and multipleBirths rights
+              // Personal rights
+              const daysLeftOfPersonalRights =
+                maximumPersonalDaysToSpend - numberOfDaysAlreadySpent
+              const fromDate =
+                isFirstPeriod && isActualDateOfBirth && useLength === YES
+                  ? apiConstants.actualDateOfBirthMonths
+                  : isFirstPeriod && isActualDateOfBirth
+                  ? apiConstants.actualDateOfBirth
+                  : period.startDate
+
+              const personalPeriod = await this.getCalculatedPeriod(
+                nationalRegistryId,
+                startDate,
+                fromDate,
+                daysLeftOfPersonalRights,
+                period,
+                getRightsCode(application),
+              )
+
+              periods.push(personalPeriod)
+
+              // Additional rights
+              const additionalSingleParentPeriodStartDate = addDays(
+                new Date(personalPeriod.to),
+                1,
+              )
+
+              const additionalPeriod = await this.getCalculatedPeriod(
+                nationalRegistryId,
+                additionalSingleParentPeriodStartDate,
+                undefined,
+                maximumAdditionalSingleParentDaysToSpend,
+                period,
+                apiConstants.rights.artificialInseminationRightsId,
+              )
+
+              periods.push(additionalPeriod)
+
+              // Common rights
+              const commonPeriodStartDate = addDays(
+                new Date(additionalPeriod.to),
+                1,
+              )
+              const lengthOfPeriodUsingCommonDays =
+                periodLength -
+                daysLeftOfPersonalRights -
+                maximumAdditionalSingleParentDaysToSpend
+              const commonPeriod = await this.getCalculatedPeriod(
+                nationalRegistryId,
+                commonPeriodStartDate,
+                undefined,
+                lengthOfPeriodUsingCommonDays,
+                period,
+                mulitpleBirthsRights,
+              )
+
+              periods.push(commonPeriod)
+            } else {
+              // 3. Additional rights and multipleBirths rights
+              // Additional rights
+              const lengthOfPeriodUsingAdditionalSingleParentDays =
+                maximumPersonalDaysToSpend +
+                maximumAdditionalSingleParentDaysToSpend -
+                numberOfDaysAlreadySpent
+
+              const additionalPeriod = await this.getCalculatedPeriod(
+                nationalRegistryId,
+                startDate,
+                undefined,
+                lengthOfPeriodUsingAdditionalSingleParentDays,
+                period,
+                apiConstants.rights.artificialInseminationRightsId,
+              )
+
+              periods.push(additionalPeriod)
+
+              // Common rights
+              const commonPeriodStartDate = addDays(
+                new Date(additionalPeriod.to),
+                1,
+              )
+              const lengthOfPeriodUsingCommonDays =
+                periodLength - lengthOfPeriodUsingAdditionalSingleParentDays
+              const commonPeriod = await this.getCalculatedPeriod(
+                nationalRegistryId,
+                commonPeriodStartDate,
+                undefined,
+                lengthOfPeriodUsingCommonDays,
+                period,
+                mulitpleBirthsRights,
+              )
+
+              periods.push(commonPeriod)
+            }
           }
 
-          // Add the period using personal rights
-          periods.push({
-            from:
-              isFirstPeriod && isActualDateOfBirth && useLength === YES
-                ? apiConstants.actualDateOfBirthMonths
-                : isFirstPeriod && isActualDateOfBirth
-                ? apiConstants.actualDateOfBirth
-                : period.startDate,
-            to: format(getNormalPeriodEndDate.periodEndDate, df),
-            ratio: getRatio(
-              period.ratio,
-              daysLeftOfPersonalRights.toString(),
-              isUsingNumberOfDays,
-            ),
-            approved: false,
-            paid: false,
-            rightsCodePeriod: getRightsCode(application),
-          })
+          // // const getNormalPeriodEndDate = await this.parentalLeaveApi.parentalLeaveGetPeriodEndDate(
+          // //   {
+          // //     nationalRegistryId,
+          // //     startDate,
+          // //     length: String(daysLeftOfPersonalRights),
+          // //     percentage: period.ratio,
+          // //   },
+          // // )
 
-          const additionalSingleParentPeriodStartDate = addDays(
-            getNormalPeriodEndDate.periodEndDate,
-            1,
-          )
-          const lengthOfPeriodUsingAdditionalSingleParentDays =
-            periodLength - daysLeftOfPersonalRights
+          // // if (getNormalPeriodEndDate.periodEndDate === undefined) {
+          // //   throw new Error(
+          // //     `Could not calculate end date of period starting ${period.startDate} and using ${daysLeftOfPersonalRights} days of rights`,
+          // //   )
+          // // }
 
-          const getAdditionalSingleParentPeriodEndDate = await this.parentalLeaveApi.parentalLeaveGetPeriodEndDate(
-            {
-              nationalRegistryId,
-              startDate: additionalSingleParentPeriodStartDate,
-              length: String(lengthOfPeriodUsingAdditionalSingleParentDays),
-              percentage: period.ratio,
-            },
-          )
+          // // // Add the period using personal rights
+          // // periods.push({
+          // //   from:
+          // //     isFirstPeriod && isActualDateOfBirth && useLength === YES
+          // //       ? apiConstants.actualDateOfBirthMonths
+          // //       : isFirstPeriod && isActualDateOfBirth
+          // //       ? apiConstants.actualDateOfBirth
+          // //       : period.startDate,
+          // //   to: format(getNormalPeriodEndDate.periodEndDate, df),
+          // //   ratio: getRatio(
+          // //     period.ratio,
+          // //     daysLeftOfPersonalRights.toString(),
+          // //     isUsingNumberOfDays,
+          // //   ),
+          // //   approved: false,
+          // //   paid: false,
+          // //   rightsCodePeriod: getRightsCode(application),
+          // // })
 
-          if (
-            getAdditionalSingleParentPeriodEndDate.periodEndDate === undefined
-          ) {
-            throw new Error(
-              `Could not calculate end date of period starting ${period.startDate} and using ${lengthOfPeriodUsingAdditionalSingleParentDays} days of rights`,
-            )
-          }
+          // // const getAdditionalSingleParentPeriodEndDate = await this.parentalLeaveApi.parentalLeaveGetPeriodEndDate(
+          // //   {
+          // //     nationalRegistryId,
+          // //     startDate: additionalSingleParentPeriodStartDate,
+          // //     length: String(lengthOfPeriodUsingAdditionalSingleParentDays),
+          // //     percentage: period.ratio,
+          // //   },
+          // // )
 
-          // Add the period using additional single parent rights
-          periods.push({
-            from: format(additionalSingleParentPeriodStartDate, df),
-            to: format(
-              getAdditionalSingleParentPeriodEndDate.periodEndDate,
-              df,
-            ),
-            ratio: getRatio(
-              period.ratio,
-              lengthOfPeriodUsingAdditionalSingleParentDays.toString(),
-              isUsingNumberOfDays,
-            ),
-            approved: false,
-            paid: false,
-            rightsCodePeriod:
-              apiConstants.rights.artificialInseminationRightsId,
-          })
+          // // if (
+          // //   getAdditionalSingleParentPeriodEndDate.periodEndDate === undefined
+          // // ) {
+          // //   throw new Error(
+          // //     `Could not calculate end date of period starting ${period.startDate} and using ${lengthOfPeriodUsingAdditionalSingleParentDays} days of rights`,
+          // //   )
+          // // }
+
+          // // // Add the period using additional single parent rights
+          // // periods.push({
+          // //   from: format(additionalSingleParentPeriodStartDate, df),
+          // //   to: format(
+          // //     getAdditionalSingleParentPeriodEndDate.periodEndDate,
+          // //     df,
+          // //   ),
+          // //   ratio: getRatio(
+          // //     period.ratio,
+          // //     lengthOfPeriodUsingAdditionalSingleParentDays.toString(),
+          // //     isUsingNumberOfDays,
+          // //   ),
+          // //   approved: false,
+          // //   paid: false,
+          // //   rightsCodePeriod:
+          // //     apiConstants.rights.artificialInseminationRightsId,
+          // // })
         }
       } else {
         // other parent
@@ -693,263 +901,338 @@ export class ParentalLeaveService {
            ** 2. Period includes common rights and transfer rights
            ** 3. Period includes personal rights, common rights and transfer rights
            */
-  
+
           // 1. Period includes personal and transfer rights
           if (maximumMultipleBirthsDaysToSpend === 0) {
             const daysLeftOfPersonalRights =
               maximumPersonalDaysToSpend - numberOfDaysAlreadySpent
-  
-            const getNormalPeriodEndDate = await this.parentalLeaveApi.parentalLeaveGetPeriodEndDate(
-              {
-                nationalRegistryId,
-                startDate,
-                length: String(daysLeftOfPersonalRights),
-                percentage: period.ratio,
-              },
+            const personalPeriod = await this.getCalculatedPeriod(
+              nationalRegistryId,
+              startDate,
+              undefined,
+              daysLeftOfPersonalRights,
+              period,
+              getRightsCode(application),
             )
-  
-            if (getNormalPeriodEndDate.periodEndDate === undefined) {
-              throw new Error(
-                `Could not calculate end date of period starting ${period.startDate} and using ${daysLeftOfPersonalRights} days of rights`,
-              )
-            }
-  
-            // Add the period using personal rights
-            periods.push({
-              from:
-                isFirstPeriod && isActualDateOfBirth && useLength === YES
-                  ? apiConstants.actualDateOfBirthMonths
-                  : isFirstPeriod && isActualDateOfBirth
-                  ? apiConstants.actualDateOfBirth
-                  : period.startDate,
-              to: format(getNormalPeriodEndDate.periodEndDate, df),
-              ratio: getRatio(
-                period.ratio,
-                daysLeftOfPersonalRights.toString(),
-                isUsingNumberOfDays,
-              ),
-              approved: false,
-              paid: false,
-              rightsCodePeriod: getRightsCode(application),
-            })
-  
+
+            periods.push(personalPeriod)
+
+            // const getNormalPeriodEndDate = await this.parentalLeaveApi.parentalLeaveGetPeriodEndDate(
+            //   {
+            //     nationalRegistryId,
+            //     startDate,
+            //     length: String(daysLeftOfPersonalRights),
+            //     percentage: period.ratio,
+            //   },
+            // )
+
+            // if (getNormalPeriodEndDate.periodEndDate === undefined) {
+            //   throw new Error(
+            //     `Could not calculate end date of period starting ${period.startDate} and using ${daysLeftOfPersonalRights} days of rights`,
+            //   )
+            // }
+
+            // // Add the period using personal rights
+            // periods.push({
+            //   from:
+            //     isFirstPeriod && isActualDateOfBirth && useLength === YES
+            //       ? apiConstants.actualDateOfBirthMonths
+            //       : isFirstPeriod && isActualDateOfBirth
+            //       ? apiConstants.actualDateOfBirth
+            //       : period.startDate,
+            //   to: format(getNormalPeriodEndDate.periodEndDate, df),
+            //   ratio: getRatio(
+            //     period.ratio,
+            //     daysLeftOfPersonalRights.toString(),
+            //     isUsingNumberOfDays,
+            //   ),
+            //   approved: false,
+            //   paid: false,
+            //   rightsCodePeriod: getRightsCode(application),
+            // })
+
             const transferredPeriodStartDate = addDays(
-              getNormalPeriodEndDate.periodEndDate,
+              new Date(personalPeriod.to),
               1,
             )
             const lengthOfPeriodUsingTransferredDays =
               periodLength - daysLeftOfPersonalRights
-  
-            const getTransferredPeriodEndDate = await this.parentalLeaveApi.parentalLeaveGetPeriodEndDate(
-              {
-                nationalRegistryId,
-                startDate: transferredPeriodStartDate,
-                length: String(lengthOfPeriodUsingTransferredDays),
-                percentage: period.ratio,
-              },
+            const transferredPeriod = await this.getCalculatedPeriod(
+              nationalRegistryId,
+              transferredPeriodStartDate,
+              undefined,
+              lengthOfPeriodUsingTransferredDays,
+              period,
+              apiConstants.rights.receivingRightsId,
             )
-  
-            if (getTransferredPeriodEndDate.periodEndDate === undefined) {
-              throw new Error(
-                `Could not calculate end date of period starting ${period.startDate} and using ${lengthOfPeriodUsingTransferredDays} days of rights`,
-              )
-            }
-  
-            // Add the period using transferred rights
-            periods.push({
-              from: format(transferredPeriodStartDate, df),
-              to: format(getTransferredPeriodEndDate.periodEndDate, df),
-              ratio: getRatio(
-                period.ratio,
-                lengthOfPeriodUsingTransferredDays.toString(),
-                isUsingNumberOfDays,
-              ),
-              approved: false,
-              paid: false,
-              rightsCodePeriod: apiConstants.rights.receivingRightsId,
-            })
+
+            periods.push(transferredPeriod)
+
+            // const getTransferredPeriodEndDate = await this.parentalLeaveApi.parentalLeaveGetPeriodEndDate(
+            //   {
+            //     nationalRegistryId,
+            //     startDate: transferredPeriodStartDate,
+            //     length: String(lengthOfPeriodUsingTransferredDays),
+            //     percentage: period.ratio,
+            //   },
+            // )
+
+            // if (getTransferredPeriodEndDate.periodEndDate === undefined) {
+            //   throw new Error(
+            //     `Could not calculate end date of period starting ${period.startDate} and using ${lengthOfPeriodUsingTransferredDays} days of rights`,
+            //   )
+            // }
+
+            // // Add the period using transferred rights
+            // periods.push({
+            //   from: format(transferredPeriodStartDate, df),
+            //   to: format(getTransferredPeriodEndDate.periodEndDate, df),
+            //   ratio: getRatio(
+            //     period.ratio,
+            //     lengthOfPeriodUsingTransferredDays.toString(),
+            //     isUsingNumberOfDays,
+            //   ),
+            //   approved: false,
+            //   paid: false,
+            //   rightsCodePeriod: apiConstants.rights.receivingRightsId,
+            // })
           }
           // 2. Period includes common and transfer rights
           else if (maximumPersonalDaysToSpend < numberOfDaysAlreadySpent) {
             const daysLeftOfCommonRights =
               maximumDaysBeforeUsingTransferRights - numberOfDaysAlreadySpent
-  
-            const getCommonPeriodEndDate = await this.parentalLeaveApi.parentalLeaveGetPeriodEndDate(
-              {
-                nationalRegistryId,
-                startDate,
-                length: String(daysLeftOfCommonRights),
-                percentage: period.ratio,
-              },
+            const commonPeriod = await this.getCalculatedPeriod(
+              nationalRegistryId,
+              startDate,
+              undefined,
+              daysLeftOfCommonRights,
+              period,
+              mulitpleBirthsRights,
             )
-  
-            if (getCommonPeriodEndDate.periodEndDate === undefined) {
-              throw new Error(
-                `Could not calculate end date of period starting ${period.startDate} and using ${daysLeftOfCommonRights} days of rights`,
-              )
-            }
-  
-            // Add the period using common rights
-            periods.push({
-              from: period.startDate,
-              to: format(getCommonPeriodEndDate.periodEndDate, df),
-              ratio: getRatio(
-                period.ratio,
-                daysLeftOfCommonRights.toString(),
-                isUsingNumberOfDays,
-              ),
-              approved: false,
-              paid: false,
-              rightsCodePeriod: mulitpleBirthsRights,
-            })
-  
+
+            periods.push(commonPeriod)
+
+            // const getCommonPeriodEndDate = await this.parentalLeaveApi.parentalLeaveGetPeriodEndDate(
+            //   {
+            //     nationalRegistryId,
+            //     startDate,
+            //     length: String(daysLeftOfCommonRights),
+            //     percentage: period.ratio,
+            //   },
+            // )
+
+            // if (getCommonPeriodEndDate.periodEndDate === undefined) {
+            //   throw new Error(
+            //     `Could not calculate end date of period starting ${period.startDate} and using ${daysLeftOfCommonRights} days of rights`,
+            //   )
+            // }
+
+            // // Add the period using common rights
+            // periods.push({
+            //   from: period.startDate,
+            //   to: format(getCommonPeriodEndDate.periodEndDate, df),
+            //   ratio: getRatio(
+            //     period.ratio,
+            //     daysLeftOfCommonRights.toString(),
+            //     isUsingNumberOfDays,
+            //   ),
+            //   approved: false,
+            //   paid: false,
+            //   rightsCodePeriod: mulitpleBirthsRights,
+            // })
+
             const transferredPeriodStartDate = addDays(
-              getCommonPeriodEndDate.periodEndDate,
+              new Date(commonPeriod.to),
               1,
             )
             const lengthOfPeriodUsingTransferredDays =
               periodLength - daysLeftOfCommonRights
-  
-            const getTransferredPeriodEndDate = await this.parentalLeaveApi.parentalLeaveGetPeriodEndDate(
-              {
-                nationalRegistryId,
-                startDate: transferredPeriodStartDate,
-                length: String(lengthOfPeriodUsingTransferredDays),
-                percentage: period.ratio,
-              },
+            const transferredPeriod = await this.getCalculatedPeriod(
+              nationalRegistryId,
+              transferredPeriodStartDate,
+              undefined,
+              lengthOfPeriodUsingTransferredDays,
+              period,
+              apiConstants.rights.receivingRightsId,
             )
-  
-            if (getTransferredPeriodEndDate.periodEndDate === undefined) {
-              throw new Error(
-                `Could not calculate end date of period starting ${period.startDate} and using ${lengthOfPeriodUsingTransferredDays} days of rights`,
-              )
-            }
-  
-            // Add the period using transferred rights
-            periods.push({
-              from: format(transferredPeriodStartDate, df),
-              to: format(getTransferredPeriodEndDate.periodEndDate, df),
-              ratio: getRatio(
-                period.ratio,
-                lengthOfPeriodUsingTransferredDays.toString(),
-                isUsingNumberOfDays,
-              ),
-              approved: false,
-              paid: false,
-              rightsCodePeriod: apiConstants.rights.receivingRightsId,
-            })
+
+            periods.push(transferredPeriod)
+
+            // const getTransferredPeriodEndDate = await this.parentalLeaveApi.parentalLeaveGetPeriodEndDate(
+            //   {
+            //     nationalRegistryId,
+            //     startDate: transferredPeriodStartDate,
+            //     length: String(lengthOfPeriodUsingTransferredDays),
+            //     percentage: period.ratio,
+            //   },
+            // )
+
+            // if (getTransferredPeriodEndDate.periodEndDate === undefined) {
+            //   throw new Error(
+            //     `Could not calculate end date of period starting ${period.startDate} and using ${lengthOfPeriodUsingTransferredDays} days of rights`,
+            //   )
+            // }
+
+            // // Add the period using transferred rights
+            // periods.push({
+            //   from: format(transferredPeriodStartDate, df),
+            //   to: format(getTransferredPeriodEndDate.periodEndDate, df),
+            //   ratio: getRatio(
+            //     period.ratio,
+            //     lengthOfPeriodUsingTransferredDays.toString(),
+            //     isUsingNumberOfDays,
+            //   ),
+            //   approved: false,
+            //   paid: false,
+            //   rightsCodePeriod: apiConstants.rights.receivingRightsId,
+            // })
           }
           // 3. Period includes personal, common and transfer rights
           else {
             const daysLeftOfPersonalRights =
               maximumPersonalDaysToSpend - numberOfDaysAlreadySpent
-  
-            const getNormalPeriodEndDate = await this.parentalLeaveApi.parentalLeaveGetPeriodEndDate(
-              {
-                nationalRegistryId,
-                startDate,
-                length: String(daysLeftOfPersonalRights),
-                percentage: period.ratio,
-              },
+            const fromDate =
+              isFirstPeriod && isActualDateOfBirth && useLength === YES
+                ? apiConstants.actualDateOfBirthMonths
+                : isFirstPeriod && isActualDateOfBirth
+                ? apiConstants.actualDateOfBirth
+                : period.startDate
+            const personalPeriod = await this.getCalculatedPeriod(
+              nationalRegistryId,
+              startDate,
+              fromDate,
+              daysLeftOfPersonalRights,
+              period,
+              getRightsCode(application),
             )
-  
-            if (getNormalPeriodEndDate.periodEndDate === undefined) {
-              throw new Error(
-                `Could not calculate end date of period starting ${period.startDate} and using ${daysLeftOfPersonalRights} days of rights`,
-              )
-            }
-  
-            // Add the period using personal rights
-            periods.push({
-              from:
-                isFirstPeriod && isActualDateOfBirth && useLength === YES
-                  ? apiConstants.actualDateOfBirthMonths
-                  : isFirstPeriod && isActualDateOfBirth
-                  ? apiConstants.actualDateOfBirth
-                  : period.startDate,
-              to: format(getNormalPeriodEndDate.periodEndDate, df),
-              ratio: getRatio(
-                period.ratio,
-                daysLeftOfPersonalRights.toString(),
-                isUsingNumberOfDays,
-              ),
-              approved: false,
-              paid: false,
-              rightsCodePeriod: getRightsCode(application),
-            })
-  
+
+            periods.push(personalPeriod)
+
+            // const getNormalPeriodEndDate = await this.parentalLeaveApi.parentalLeaveGetPeriodEndDate(
+            //   {
+            //     nationalRegistryId,
+            //     startDate,
+            //     length: String(daysLeftOfPersonalRights),
+            //     percentage: period.ratio,
+            //   },
+            // )
+
+            // if (getNormalPeriodEndDate.periodEndDate === undefined) {
+            //   throw new Error(
+            //     `Could not calculate end date of period starting ${period.startDate} and using ${daysLeftOfPersonalRights} days of rights`,
+            //   )
+            // }
+
+            // // Add the period using personal rights
+            // periods.push({
+            //   from:
+            //     isFirstPeriod && isActualDateOfBirth && useLength === YES
+            //       ? apiConstants.actualDateOfBirthMonths
+            //       : isFirstPeriod && isActualDateOfBirth
+            //       ? apiConstants.actualDateOfBirth
+            //       : period.startDate,
+            //   to: format(getNormalPeriodEndDate.periodEndDate, df),
+            //   ratio: getRatio(
+            //     period.ratio,
+            //     daysLeftOfPersonalRights.toString(),
+            //     isUsingNumberOfDays,
+            //   ),
+            //   approved: false,
+            //   paid: false,
+            //   rightsCodePeriod: getRightsCode(application),
+            // })
+
             const commonPeriodStartDate = addDays(
-              getNormalPeriodEndDate.periodEndDate,
+              new Date(personalPeriod.to),
               1,
             )
-            const lengthOfPeriodUsingCommonDays = maximumMultipleBirthsDaysToSpend
-  
-            const getCommonPeriodEndDate = await this.parentalLeaveApi.parentalLeaveGetPeriodEndDate(
-              {
-                nationalRegistryId,
-                startDate: commonPeriodStartDate,
-                length: String(lengthOfPeriodUsingCommonDays),
-                percentage: period.ratio,
-              },
+            const commonPeriod = await this.getCalculatedPeriod(
+              nationalRegistryId,
+              commonPeriodStartDate,
+              undefined,
+              maximumMultipleBirthsDaysToSpend,
+              period,
+              mulitpleBirthsRights,
             )
-  
-            if (getCommonPeriodEndDate.periodEndDate === undefined) {
-              throw new Error(
-                `Could not calculate end date of period starting ${period.startDate} and using ${lengthOfPeriodUsingCommonDays} days of rights`,
-              )
-            }
-  
-            // Add the period using common rights
-            periods.push({
-              from: format(commonPeriodStartDate, df),
-              to: format(getCommonPeriodEndDate.periodEndDate, df),
-              ratio: getRatio(
-                period.ratio,
-                lengthOfPeriodUsingCommonDays.toString(),
-                isUsingNumberOfDays,
-              ),
-              approved: false,
-              paid: false,
-              rightsCodePeriod: mulitpleBirthsRights,
-            })
-  
+
+            periods.push(commonPeriod)
+
+            // const getCommonPeriodEndDate = await this.parentalLeaveApi.parentalLeaveGetPeriodEndDate(
+            //   {
+            //     nationalRegistryId,
+            //     startDate: commonPeriodStartDate,
+            //     length: String(lengthOfPeriodUsingCommonDays),
+            //     percentage: period.ratio,
+            //   },
+            // )
+
+            // if (getCommonPeriodEndDate.periodEndDate === undefined) {
+            //   throw new Error(
+            //     `Could not calculate end date of period starting ${period.startDate} and using ${lengthOfPeriodUsingCommonDays} days of rights`,
+            //   )
+            // }
+
+            // // Add the period using common rights
+            // periods.push({
+            //   from: format(commonPeriodStartDate, df),
+            //   to: format(getCommonPeriodEndDate.periodEndDate, df),
+            //   ratio: getRatio(
+            //     period.ratio,
+            //     lengthOfPeriodUsingCommonDays.toString(),
+            //     isUsingNumberOfDays,
+            //   ),
+            //   approved: false,
+            //   paid: false,
+            //   rightsCodePeriod: mulitpleBirthsRights,
+            // })
+
             const transferredPeriodStartDate = addDays(
-              getCommonPeriodEndDate.periodEndDate,
+              new Date(commonPeriod.to),
               1,
             )
             const lengthOfPeriodUsingTransferredDays =
               periodLength -
               daysLeftOfPersonalRights -
               maximumMultipleBirthsDaysToSpend
-  
-            const getTransferredPeriodEndDate = await this.parentalLeaveApi.parentalLeaveGetPeriodEndDate(
-              {
-                nationalRegistryId,
-                startDate: transferredPeriodStartDate,
-                length: String(lengthOfPeriodUsingTransferredDays),
-                percentage: period.ratio,
-              },
+            const transferredPeriod = await this.getCalculatedPeriod(
+              nationalRegistryId,
+              transferredPeriodStartDate,
+              undefined,
+              lengthOfPeriodUsingTransferredDays,
+              period,
+              apiConstants.rights.receivingRightsId,
             )
-  
-            if (getTransferredPeriodEndDate.periodEndDate === undefined) {
-              throw new Error(
-                `Could not calculate end date of period starting ${period.startDate} and using ${lengthOfPeriodUsingTransferredDays} days of rights`,
-              )
-            }
-  
-            // Add the period using transferred rights
-            periods.push({
-              from: format(transferredPeriodStartDate, df),
-              to: format(getTransferredPeriodEndDate.periodEndDate, df),
-              ratio: getRatio(
-                period.ratio,
-                lengthOfPeriodUsingTransferredDays.toString(),
-                isUsingNumberOfDays,
-              ),
-              approved: false,
-              paid: false,
-              rightsCodePeriod: apiConstants.rights.receivingRightsId,
-            })
+
+            periods.push(transferredPeriod)
+
+            // const getTransferredPeriodEndDate = await this.parentalLeaveApi.parentalLeaveGetPeriodEndDate(
+            //   {
+            //     nationalRegistryId,
+            //     startDate: transferredPeriodStartDate,
+            //     length: String(lengthOfPeriodUsingTransferredDays),
+            //     percentage: period.ratio,
+            //   },
+            // )
+
+            // if (getTransferredPeriodEndDate.periodEndDate === undefined) {
+            //   throw new Error(
+            //     `Could not calculate end date of period starting ${period.startDate} and using ${lengthOfPeriodUsingTransferredDays} days of rights`,
+            //   )
+            // }
+
+            // // Add the period using transferred rights
+            // periods.push({
+            //   from: format(transferredPeriodStartDate, df),
+            //   to: format(getTransferredPeriodEndDate.periodEndDate, df),
+            //   ratio: getRatio(
+            //     period.ratio,
+            //     lengthOfPeriodUsingTransferredDays.toString(),
+            //     isUsingNumberOfDays,
+            //   ),
+            //   approved: false,
+            //   paid: false,
+            //   rightsCodePeriod: apiConstants.rights.receivingRightsId,
+            // })
           }
         } else if (isUsingMultipleBirthsRights) {
           // Applicant used upp his/her basic rights and started to use 'common' rights
@@ -970,76 +1253,99 @@ export class ParentalLeaveService {
           // If we reach here then there is personal rights mix with common rights
           const daysLeftOfPersonalRights =
             maximumPersonalDaysToSpend - numberOfDaysAlreadySpent
-  
-          const getNormalPeriodEndDate = await this.parentalLeaveApi.parentalLeaveGetPeriodEndDate(
-            {
-              nationalRegistryId,
-              startDate,
-              length: String(daysLeftOfPersonalRights),
-              percentage: period.ratio,
-            },
+          const fromDate =
+            isFirstPeriod && isActualDateOfBirth && useLength === YES
+              ? apiConstants.actualDateOfBirthMonths
+              : isFirstPeriod && isActualDateOfBirth
+              ? apiConstants.actualDateOfBirth
+              : period.startDate
+          const personalPeriod = await this.getCalculatedPeriod(
+            nationalRegistryId,
+            startDate,
+            fromDate,
+            daysLeftOfPersonalRights,
+            period,
+            getRightsCode(application),
           )
-  
-          if (getNormalPeriodEndDate.periodEndDate === undefined) {
-            throw new Error(
-              `Could not calculate end date of period starting ${period.startDate} and using ${daysLeftOfPersonalRights} days of rights`,
-            )
-          }
-  
-          // Add the period using personal rights
-          periods.push({
-            from:
-              isFirstPeriod && isActualDateOfBirth && useLength === YES
-                ? apiConstants.actualDateOfBirthMonths
-                : isFirstPeriod && isActualDateOfBirth
-                ? apiConstants.actualDateOfBirth
-                : period.startDate,
-            to: format(getNormalPeriodEndDate.periodEndDate, df),
-            ratio: getRatio(
-              period.ratio,
-              daysLeftOfPersonalRights.toString(),
-              isUsingNumberOfDays,
-            ),
-            approved: false,
-            paid: false,
-            rightsCodePeriod: getRightsCode(application),
-          })
-  
-          const commonPeriodStartDate = addDays(
-            getNormalPeriodEndDate.periodEndDate,
-            1,
-          )
+
+          periods.push(personalPeriod)
+
+          // const getNormalPeriodEndDate = await this.parentalLeaveApi.parentalLeaveGetPeriodEndDate(
+          //   {
+          //     nationalRegistryId,
+          //     startDate,
+          //     length: String(daysLeftOfPersonalRights),
+          //     percentage: period.ratio,
+          //   },
+          // )
+
+          // if (getNormalPeriodEndDate.periodEndDate === undefined) {
+          //   throw new Error(
+          //     `Could not calculate end date of period starting ${period.startDate} and using ${daysLeftOfPersonalRights} days of rights`,
+          //   )
+          // }
+
+          // // Add the period using personal rights
+          // periods.push({
+          //   from:
+          //     isFirstPeriod && isActualDateOfBirth && useLength === YES
+          //       ? apiConstants.actualDateOfBirthMonths
+          //       : isFirstPeriod && isActualDateOfBirth
+          //       ? apiConstants.actualDateOfBirth
+          //       : period.startDate,
+          //   to: format(getNormalPeriodEndDate.periodEndDate, df),
+          //   ratio: getRatio(
+          //     period.ratio,
+          //     daysLeftOfPersonalRights.toString(),
+          //     isUsingNumberOfDays,
+          //   ),
+          //   approved: false,
+          //   paid: false,
+          //   rightsCodePeriod: getRightsCode(application),
+          // })
+
+          const commonPeriodStartDate = addDays(new Date(personalPeriod.to), 1)
           const lengthOfPeriodUsingCommonDays =
             periodLength - daysLeftOfPersonalRights
-  
-          const getCommonPeriodEndDate = await this.parentalLeaveApi.parentalLeaveGetPeriodEndDate(
-            {
-              nationalRegistryId,
-              startDate: commonPeriodStartDate,
-              length: String(lengthOfPeriodUsingCommonDays),
-              percentage: period.ratio,
-            },
+          const commonPeriod = await this.getCalculatedPeriod(
+            nationalRegistryId,
+            commonPeriodStartDate,
+            undefined,
+            lengthOfPeriodUsingCommonDays,
+            period,
+            mulitpleBirthsRights,
           )
-  
-          if (getCommonPeriodEndDate.periodEndDate === undefined) {
-            throw new Error(
-              `Could not calculate end date of period starting ${period.startDate} and using ${lengthOfPeriodUsingCommonDays} days of rights`,
-            )
-          }
-  
-          // Add the period using common rights
-          periods.push({
-            from: format(commonPeriodStartDate, df),
-            to: format(getCommonPeriodEndDate.periodEndDate, df),
-            ratio: getRatio(
-              period.ratio,
-              lengthOfPeriodUsingCommonDays.toString(),
-              isUsingNumberOfDays,
-            ),
-            approved: false,
-            paid: false,
-            rightsCodePeriod: mulitpleBirthsRights,
-          })
+
+          periods.push(commonPeriod)
+
+          // const getCommonPeriodEndDate = await this.parentalLeaveApi.parentalLeaveGetPeriodEndDate(
+          //   {
+          //     nationalRegistryId,
+          //     startDate: commonPeriodStartDate,
+          //     length: String(lengthOfPeriodUsingCommonDays),
+          //     percentage: period.ratio,
+          //   },
+          // )
+
+          // if (getCommonPeriodEndDate.periodEndDate === undefined) {
+          //   throw new Error(
+          //     `Could not calculate end date of period starting ${period.startDate} and using ${lengthOfPeriodUsingCommonDays} days of rights`,
+          //   )
+          // }
+
+          // // Add the period using common rights
+          // periods.push({
+          //   from: format(commonPeriodStartDate, df),
+          //   to: format(getCommonPeriodEndDate.periodEndDate, df),
+          //   ratio: getRatio(
+          //     period.ratio,
+          //     lengthOfPeriodUsingCommonDays.toString(),
+          //     isUsingNumberOfDays,
+          //   ),
+          //   approved: false,
+          //   paid: false,
+          //   rightsCodePeriod: mulitpleBirthsRights,
+          // })
         }
       }
 

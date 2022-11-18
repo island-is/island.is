@@ -46,10 +46,12 @@ import {
 import { YesOrNo, Period, PersonInformation } from '../types'
 import { FormatMessage } from '@island.is/localization'
 import { currentDateStartTime } from './parentalLeaveTemplateUtils'
-import { additionalSingleParentMonths, 
+import {
+  additionalSingleParentMonths,
   daysInMonth,
   defaultMonths,
-  multipleBirthsDefaultDays, } from '../config'
+  multipleBirthsDefaultDays,
+} from '../config'
 
 export function getExpectedDateOfBirth(
   application: Application,
@@ -215,11 +217,11 @@ export const getMultipleBirthRequestDays = (
     hasMultipleBirths,
   } = getApplicationAnswers(answers)
 
-  // if (otherParent === NO && hasMultipleBirths) {
-  //   return getMaxMultipleBirthsDays(application.answers)
-  // }
+  if (otherParent === SINGLE && hasMultipleBirths) {
+    return getMaxMultipleBirthsDays(answers)
+  }
 
-  return multipleBirthsRequestDays * 1
+  return multipleBirthsRequestDays
 }
 
 export const getMaxMultipleBirthsDays = (answers: Application['answers']) => {
@@ -269,12 +271,15 @@ export const getAvailableRightsInDays = (application: Application) => {
   const multipleBirthsRequestDays = getMultipleBirthRequestDays(
     application.answers,
   )
-  const  additionalSingleParentDays = getAdditionalSingleParentRightsInDays(
+  const additionalSingleParentDays = getAdditionalSingleParentRightsInDays(
     application,
   )
 
   return (
-    selectedChild.remainingDays + additionalSingleParentDays + transferredDays + multipleBirthsRequestDays
+    selectedChild.remainingDays +
+    additionalSingleParentDays +
+    transferredDays +
+    multipleBirthsRequestDays
   )
 }
 
@@ -296,7 +301,12 @@ export const getAvailablePersonalRightsInDays = (application: Application) => {
     application,
   )
 
-  return totalDaysAvailable - additionalSingleParentDays - totalTransferredDays - multipleBirthsDays
+  return (
+    totalDaysAvailable -
+    additionalSingleParentDays -
+    totalTransferredDays -
+    multipleBirthsDays
+  )
 }
 
 export const getAvailablePersonalRightsSingleParentInMonths = (
