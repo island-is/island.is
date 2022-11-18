@@ -180,7 +180,7 @@ export class FileController {
     @Param('caseId') caseId: string,
     @Body() updateFiles: UpdateFilesDto,
   ): Promise<CaseFile[]> {
-    this.logger.debug(`Updating files of case ${caseId}`)
+    this.logger.debug(`Updating files of case ${caseId}`, { updateFiles })
 
     return this.fileService.updateFiles(caseId, updateFiles.files)
   }
