@@ -8,7 +8,6 @@ import {
   StaticText,
 } from '@island.is/application/types'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
-import * as Sentry from '@sentry/react'
 
 import type {
   ChildInformation,
@@ -29,7 +28,10 @@ import {
 
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { calculateRemainingNumberOfDays } from '../../lib/directorateOfLabour.utils'
-import { getSelectedChild } from '../../lib/parentalLeaveUtils'
+import {
+  getApplicationExternalData,
+  getSelectedChild,
+} from '../../lib/parentalLeaveUtils'
 import { YesOrNo } from '../../types'
 
 export interface PregnancyStatusAndRightsResults {
@@ -82,7 +84,7 @@ export class Children extends BasicDataProvider {
         const response = await res.json()
 
         if (response.errors) {
-          Sentry.captureException(response.errors)
+          console.error(response.errors)
           return Promise.reject(
             'Response.errors queryParentalLeavesAndPregnancyStatus',
           )
@@ -91,7 +93,7 @@ export class Children extends BasicDataProvider {
         return Promise.resolve(response.data)
       })
       .catch((error) => {
-        Sentry.captureException(error)
+        console.error(error)
         return Promise.reject(
           'Catch error queryParentalLeavesAndPregnancyStatus',
         )
@@ -108,7 +110,7 @@ export class Children extends BasicDataProvider {
         const response = await res.json()
 
         if (response.errors) {
-          Sentry.captureException(response.errors)
+          console.error(response.errors)
           return Promise.reject(
             'Response.errors queryParentalLeavesEntitlements',
           )
@@ -117,7 +119,7 @@ export class Children extends BasicDataProvider {
         return Promise.resolve(response.data.getParentalLeavesEntitlements)
       })
       .catch((error) => {
-        Sentry.captureException(error)
+        console.error(error)
         return Promise.reject('Catch error queryParentalLeavesEntitlements')
       })
   }
@@ -149,6 +151,9 @@ export class Children extends BasicDataProvider {
     const applicationsWhereOtherParentHasApplied = getAppsWhereOtherParentHasApplied.filter(
       (application) => {
         const { state } = application
+        const { applicationFundId } = getApplicationExternalData(
+          application.externalData,
+        )
 
         const isInProgress =
           state === States.PREREQUISITES ||
@@ -159,7 +164,7 @@ export class Children extends BasicDataProvider {
           state === States.EMPLOYER_APPROVAL ||
           state === States.EMPLOYER_ACTION
 
-        if (isInProgress) {
+        if (isInProgress && applicationFundId === '') {
           // The application of the primary parent has to be completed
           return false
         }

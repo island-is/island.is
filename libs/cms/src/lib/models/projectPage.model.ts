@@ -11,6 +11,9 @@ import { mapProjectSubpage, ProjectSubpage } from './projectSubpage.model'
 import { mapStepper, Stepper } from './stepper.model'
 import { mapImage, Image } from './image.model'
 import { LinkGroup, mapLinkGroup } from './linkGroup.model'
+import { FooterItem, mapFooterItem } from './footerItem.model'
+import { Link, mapLink } from './link.model'
+import { mapNamespace, Namespace } from './namespace.model'
 
 @ObjectType()
 export class ProjectPage {
@@ -67,6 +70,18 @@ export class ProjectPage {
 
   @Field()
   featuredDescription!: string
+
+  @Field(() => [FooterItem], { nullable: true })
+  footerItems?: FooterItem[]
+
+  @Field(() => Link, { nullable: true })
+  backLink?: Link | null
+
+  @Field(() => Boolean, { nullable: true })
+  contentIsFullWidth?: boolean
+
+  @Field(() => Namespace, { nullable: true })
+  namespace?: Namespace | null
 }
 
 export const mapProjectPage = ({ sys, fields }: IProjectPage): ProjectPage => ({
@@ -98,4 +113,8 @@ export const mapProjectPage = ({ sys, fields }: IProjectPage): ProjectPage => ({
     : null,
   defaultHeaderBackgroundColor: fields.defaultHeaderBackgroundColor ?? '',
   featuredDescription: fields.featuredDescription ?? '',
+  footerItems: fields.footerItems ? fields.footerItems.map(mapFooterItem) : [],
+  backLink: fields.backLink ? mapLink(fields.backLink) : null,
+  contentIsFullWidth: fields.contentIsFullWidth ?? false,
+  namespace: fields.namespace ? mapNamespace(fields.namespace) : null,
 })

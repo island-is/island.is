@@ -16,6 +16,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
   EmptyState,
+  ErrorScreen,
   formSubmit,
   IntroHeader,
   m,
@@ -155,15 +156,23 @@ export const VehiclesOverview: ServicePortalModuleComponent = ({
     isFlagEnabled()
   }, [])
 
+  if (error && !loading) {
+    return (
+      <ErrorScreen
+        figure="./assets/images/hourglass.svg"
+        tagVariant="red"
+        tag={formatMessage(m.errorTitle)}
+        title={formatMessage(m.somethingWrong)}
+        children={formatMessage(m.errorFetchModule, {
+          module: formatMessage(m.vehicles).toLowerCase(),
+        })}
+      />
+    )
+  }
   return (
     <>
       <IntroHeader title={messages.title} intro={messages.intro} />
 
-      {error && (
-        <Box>
-          <EmptyState description={m.errorFetch} />
-        </Box>
-      )}
       {!loading && !error && vehicles.length === 0 && (
         <Box marginTop={8}>
           <EmptyState />
@@ -187,7 +196,7 @@ export const VehiclesOverview: ServicePortalModuleComponent = ({
               />
             </Box>
           )}
-          <Box>
+          <Box marginRight={2}>
             <a
               href="/app/skilavottord/my-cars"
               target="_blank"
@@ -200,6 +209,22 @@ export const VehiclesOverview: ServicePortalModuleComponent = ({
                 iconType="outline"
               >
                 {formatMessage(messages.recycleCar)}
+              </Button>
+            </a>
+          </Box>
+          <Box>
+            <a
+              href="/beidni-um-nafnleynd-i-okutaekjaskra"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button
+                variant="utility"
+                size="small"
+                icon="eyeOff"
+                iconType="outline"
+              >
+                {formatMessage(messages.vehicleNameSecret)}
               </Button>
             </a>
           </Box>

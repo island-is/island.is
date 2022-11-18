@@ -11,6 +11,7 @@ import { NationalRegistryFamilyMemberInfo } from '../models/nationalRegistryFami
 import { NationalRegistryXRoadChildGuardianship } from '../models/nationalRegistryChildGuardianship.model'
 import { NationalRegistryBirthplace } from '../models/nationalRegistryBirthplace.model'
 import { NationalRegistryCitizenship } from '../models/nationalRegistryCitizenship.model'
+import { NationalRegistryReligion } from '../models/nationalRegistryReligion.model'
 
 @Injectable()
 export class NationalRegistryXRoadService {
@@ -215,5 +216,10 @@ export class NationalRegistryXRoadService {
         name: citizenship.countryName,
       }
     )
+  }
+
+  async getReligions(): Promise<NationalRegistryReligion[] | null> {
+    const religions = await this.nationalRegistryApi.getReligionCodes()
+    return religions
   }
 }

@@ -1,5 +1,6 @@
 import React, { FC, useEffect, useState } from 'react'
 import {
+  formatPlausiblePathToParams,
   ServicePortalNavigationItem,
   ServicePortalPath,
 } from '@island.is/service-portal/core'
@@ -13,6 +14,8 @@ import { servicePortalOutboundLink } from '@island.is/plausible'
 import { useStore } from '../../store/stateProvider'
 import SubNav from './NavItem/SubNav'
 import * as styles from './Sidebar.css'
+import cn from 'classnames'
+
 interface Props {
   nav: ServicePortalNavigationItem
   badge?: boolean
@@ -43,7 +46,8 @@ const ModuleNavigation: FC<Props> = ({ nav, onItemClick, badge }) => {
   const handleRootItemClick = (external?: boolean) => {
     if (nav.path === undefined) handleExpand()
     if (onItemClick) onItemClick()
-    if (external) servicePortalOutboundLink()
+    if (external)
+      servicePortalOutboundLink(formatPlausiblePathToParams(nav.path || ''))
   }
 
   useEffect(() => {
@@ -51,7 +55,13 @@ const ModuleNavigation: FC<Props> = ({ nav, onItemClick, badge }) => {
   }, [isModuleActive, setExpand])
 
   return (
-    <Box position="relative" className={styles.itemWrapper}>
+    <Box
+      position="relative"
+      className={cn(
+        styles.itemWrapper,
+        isModuleActive && styles.itemWrapperActive,
+      )}
+    >
       {/* {navArray && nav.enabled !== false && collapsed && (
         <SubNavModal>
           <SubNav

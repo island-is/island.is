@@ -5,41 +5,68 @@ import { Injectable } from '@nestjs/common'
 import { CourtClientService } from '@island.is/judicial-system/court-client'
 import {
   CaseType,
+  IndictmentSubtype,
+  IndictmentSubtypeMap,
   isIndictmentCase,
-  User,
 } from '@island.is/judicial-system/types'
+import type { User } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
 import { EventService } from '../event'
 
-type SubTypes = { [c in CaseType]: string | [string, string] }
-//
-// Maps case types to sub types in the court system
-export const subTypes: SubTypes = {
+export enum CourtDocumentFolder {
+  REQUEST_DOCUMENTS = 'Krafa og greinargerð',
+  INDICTMENT_DOCUMENTS = 'Ákæra og greinargerð',
+  CASE_DOCUMENTS = 'Gögn málsins',
+  COURT_DOCUMENTS = 'Dómar, úrskurðir og Þingbók',
+}
+
+export type Subtype = Exclude<CaseType, CaseType.INDICTMENT> | IndictmentSubtype
+
+type CourtSubtypes = {
+  [c in Subtype]: string | [string, string]
+}
+
+// Maps case types to subtypes in the court system
+export const courtSubtypes: CourtSubtypes = {
+  ALCOHOL_LAWS: 'Áfengislagabrot',
   CHILD_PROTECTION_LAWS: 'Barnaverndarlög',
+  INDECENT_EXPOSURE: 'Blygðunarsemisbrot',
+  LEGAL_ENFORCEMENT_LAWS: 'Brot gegn lögreglulögum',
+  POLICE_REGULATIONS: 'Brot gegn lögreglusamþykkt',
+  INTIMATE_RELATIONS: 'Brot í nánu sambandi',
+  PUBLIC_SERVICE_VIOLATION: 'Brot í opinberu starfi',
   PROPERTY_DAMAGE: 'Eignaspjöll',
   NARCOTICS_OFFENSE: 'Fíkniefnalagabrot',
   EMBEZZLEMENT: 'Fjárdráttur',
   FRAUD: 'Fjársvik',
+  LOOTING: 'Gripdeild',
+  OTHER_CRIMINAL_OFFENSES: 'Hegningarlagabrot önnur',
   DOMESTIC_VIOLENCE: 'Heimilisofbeldi',
-  ASSAULT_LEADING_TO_DEATH: 'Líkamsáras sem leiðir til dauða',
+  THREAT: 'Hótun',
+  BREAKING_AND_ENTERING: 'Húsbrot',
+  COVER_UP: 'Hylming',
+  SEXUAL_OFFENSES_OTHER_THAN_RAPE: 'Kynferðisbrot önnur en nauðgun',
+  MAJOR_ASSAULT: 'Líkamsárás - meiriháttar',
+  MINOR_ASSAULT: 'Líkamsárás - minniháttar',
+  AGGRAVATED_ASSAULT: 'Líkamsárás - sérlega hættuleg',
+  ASSAULT_LEADING_TO_DEATH: 'Líkamsárás sem leiðir til dauða',
   MURDER: 'Manndráp',
-  MAJOR_ASSAULT: 'Meiriháttar líkamsárás',
-  MINOR_ASSAULT: 'Minniháttar líkamsárás',
   RAPE: 'Nauðgun',
   UTILITY_THEFT: 'Nytjastuldur',
-  AGGRAVATED_ASSAULT: 'Sérlega hættuleg líkamsáras',
+  MONEY_LAUNDERING: 'Peningaþvætti',
+  OTHER_OFFENSES: 'Sérrefsilagabrot önnur',
+  NAVAL_LAW_VIOLATION: 'Siglingalagabrot',
   TAX_VIOLATION: 'Skattalagabrot',
   ATTEMPTED_MURDER: 'Tilraun til manndráps',
+  CUSTOMS_VIOLATION: 'Tollalagabrot',
   TRAFFIC_VIOLATION: 'Umferðarlagabrot',
+  WEPONS_VIOLATION: 'Vopnalagabrot',
   THEFT: 'Þjófnaður',
-  OTHER_CRIMINAL_OFFENSES: 'Önnur hegningarlagabrot',
-  SEXUAL_OFFENSES_OTHER_THAN_RAPE: 'Önnur kynferðisbrot en nauðgun',
-  OTHER_OFFENSES: 'Önnur sérrefsilagabrot',
   // 'Afhending gagna',
   // 'Afturköllun á skipun verjanda',
   OTHER: 'Annað',
-  TRACKING_EQUIPMENT: 'Eftirfarabúnaður',
+  TRACKING_EQUIPMENT: 'Eftirfararbúnaður',
   TRAVEL_BAN: ['Farbann', 'Framlenging farbanns'],
   // 'Framlenging frests',
   // 'Framsalsmál',
@@ -55,6 +82,7 @@ export const subTypes: SubTypes = {
   BODY_SEARCH: 'Leit og líkamsrannsókn',
   // 'Lögmæti rannsóknarathafna',
   RESTRAINING_ORDER: 'Nálgunarbann',
+  RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME: 'Nálgunarbann', // this mapping to Nálgunarbann is indented
   EXPULSION_FROM_HOME: 'Nálgunarbann og brottvísun af heimili',
   // 'Réttarstaða afplánunarfanga',
   // 'Réttarstaða gæsluvarðhaldsfanga',
@@ -80,18 +108,6 @@ export class CourtService {
     private readonly eventService: EventService,
   ) {}
 
-  private uploadStream(
-    courtId: string,
-    fileName: string,
-    contentType: string,
-    content: Buffer,
-  ): Promise<string> {
-    return this.courtClientService.uploadStream(courtId ?? '', {
-      value: content,
-      options: { filename: fileName, contentType },
-    })
-  }
-
   private mask(value: string): string {
     const valueIsFileName = value.split('.').pop() !== value
     const fileNameEnding = valueIsFileName ? value.split('.').pop() : ''
@@ -109,149 +125,66 @@ export class CourtService {
     }`
   }
 
-  async createRequest(
-    user: User,
-    caseId: string,
-    courtId: string,
-    courtCaseNumber: string,
-    fileName: string,
-    content: Buffer,
-  ): Promise<string> {
-    return this.uploadStream(
-      courtId,
-      `${fileName}.pdf`,
-      'application/pdf',
-      content,
-    )
-      .then((streamId) =>
-        this.courtClientService.createDocument(courtId, {
-          caseNumber: courtCaseNumber,
-          subject: fileName,
-          fileName: `${fileName}.pdf`,
-          streamID: streamId,
-          caseFolder: 'Krafa og greinargerð',
-        }),
-      )
-      .catch((reason) => {
-        this.eventService.postErrorEvent(
-          'Failed to create a court request',
-          {
-            caseId,
-            actor: user.name,
-            institution: user.institution?.name,
-            courtId,
-            courtCaseNumber,
-          },
-          reason,
-        )
+  private getCourtSubtype(
+    type: CaseType,
+    isExtension: boolean,
+    policeCaseNumbers: string[],
+    indictmentSubtypes?: IndictmentSubtypeMap,
+  ): string {
+    let subtype: Subtype
 
-        throw reason
-      })
-  }
+    if (type === CaseType.INDICTMENT) {
+      if (
+        policeCaseNumbers.length === 0 ||
+        !indictmentSubtypes ||
+        !indictmentSubtypes[policeCaseNumbers[0]] ||
+        indictmentSubtypes[policeCaseNumbers[0]].length === 0
+      ) {
+        throw 'Subtype is required for indictments'
+      }
+      // Use the first indictment subtype of the first police case number
+      subtype = indictmentSubtypes[policeCaseNumbers[0]][0]
+    } else {
+      subtype = type
+    }
 
-  async createCourtRecord(
-    caseId: string,
-    courtId: string,
-    courtCaseNumber: string,
-    fileName: string,
-    content: Buffer,
-  ): Promise<string> {
-    return this.uploadStream(
-      courtId,
-      `${fileName}.pdf`,
-      'application/pdf',
-      content,
-    )
-      .then((streamId) =>
-        this.courtClientService.createThingbok(courtId, {
-          caseNumber: courtCaseNumber,
-          subject: fileName,
-          fileName: `${fileName}.pdf`,
-          streamID: streamId,
-        }),
-      )
-      .catch((reason) => {
-        this.eventService.postErrorEvent(
-          'Failed to create a court record',
-          {
-            caseId,
-            actor: 'RVG',
-            institution: 'RVG',
-            courtId,
-            courtCaseNumber,
-            fileName: this.mask(fileName),
-          },
-          reason,
-        )
+    let courtSubtype = courtSubtypes[subtype]
 
-        throw reason
-      })
-  }
+    if (Array.isArray(courtSubtype)) {
+      courtSubtype = courtSubtype[isExtension ? 1 : 0]
+    }
 
-  async createRuling(
-    caseId: string,
-    courtId: string,
-    courtCaseNumber: string,
-    fileName: string,
-    content: Buffer,
-    user?: User,
-  ): Promise<string> {
-    return this.uploadStream(
-      courtId,
-      `${fileName}.pdf`,
-      'application/pdf',
-      content,
-    )
-      .then((streamId) =>
-        this.courtClientService.createDocument(courtId ?? '', {
-          caseNumber: courtCaseNumber,
-          subject: fileName,
-          fileName: `${fileName}.pdf`,
-          streamID: streamId,
-          caseFolder: 'Dómar, úrskurðir og Þingbók',
-        }),
-      )
-      .catch((reason) => {
-        this.eventService.postErrorEvent(
-          'Failed to create a court ruling',
-          {
-            caseId,
-            actor: user?.name ?? 'RVG',
-            institution: user?.institution?.name ?? 'RVG',
-            courtId,
-            courtCaseNumber,
-            fileName: this.mask(fileName),
-          },
-          reason,
-        )
-
-        throw reason
-      })
+    return courtSubtype
   }
 
   async createDocument(
     caseId: string,
-    courtId: string,
-    courtCaseNumber: string,
+    courtId = '',
+    courtCaseNumber = '',
+    caseFolder: CourtDocumentFolder,
     subject: string,
     fileName: string,
     fileType: string,
     content: Buffer,
     user?: User,
   ): Promise<string> {
-    return this.uploadStream(courtId, fileName, fileType, content)
+    return this.courtClientService
+      .uploadStream(courtId, {
+        value: content,
+        options: { filename: fileName, contentType: fileType },
+      })
       .then((streamId) =>
         this.courtClientService.createDocument(courtId, {
           caseNumber: courtCaseNumber,
           subject,
           fileName,
           streamID: streamId,
-          caseFolder: 'Gögn málsins',
+          caseFolder,
         }),
       )
       .catch((reason) => {
         this.eventService.postErrorEvent(
-          'Failed to create a court document',
+          'Failed to create a document at court',
           {
             caseId,
             actor: user?.name ?? 'RVG',
@@ -261,6 +194,7 @@ export class CourtService {
             subject: this.mask(subject),
             fileName: this.mask(fileName),
             fileType,
+            caseFolder,
           },
           reason,
         )
@@ -272,45 +206,48 @@ export class CourtService {
   async createCourtCase(
     user: User,
     caseId: string,
-    courtId: string,
+    courtId = '',
     type: CaseType,
     policeCaseNumbers: string[],
     isExtension: boolean,
+    indictmentSubtypes?: IndictmentSubtypeMap,
   ): Promise<string> {
-    let subType = subTypes[type]
-    if (Array.isArray(subType)) {
-      subType = subType[isExtension ? 1 : 0]
-    }
+    try {
+      const courtSubtype = this.getCourtSubtype(
+        type,
+        isExtension,
+        policeCaseNumbers,
+        indictmentSubtypes,
+      )
 
-    const isIndictment = isIndictmentCase(type)
+      const isIndictment = isIndictmentCase(type)
 
-    return this.courtClientService
-      .createCase(courtId, {
+      return this.courtClientService.createCase(courtId, {
         caseType: isIndictment ? 'S - Ákærumál' : 'R - Rannsóknarmál',
-        subtype: subType as string,
+        subtype: courtSubtype as string,
         status: 'Skráð',
         receivalDate: formatISO(nowFactory(), { representation: 'date' }),
         basedOn: isIndictment ? 'Sakamál' : 'Rannsóknarhagsmunir',
         // TODO: pass in all policeCaseNumbers when CourtService supports it
         sourceNumber: policeCaseNumbers[0] ? policeCaseNumbers[0] : '',
       })
-      .catch((reason) => {
-        this.eventService.postErrorEvent(
-          'Failed to create a court case',
-          {
-            caseId,
-            actor: user.name,
-            institution: user.institution?.name,
-            courtId,
-            type,
-            policeCaseNumbers: policeCaseNumbers.join(', '),
-            isExtension,
-          },
-          reason,
-        )
+    } catch (reason) {
+      this.eventService.postErrorEvent(
+        'Failed to create a court case',
+        {
+          caseId,
+          actor: user.name,
+          institution: user.institution?.name,
+          courtId,
+          type,
+          policeCaseNumbers: policeCaseNumbers.join(', '),
+          isExtension,
+        },
+        reason,
+      )
 
-        throw reason
-      })
+      throw reason
+    }
   }
 
   async createEmail(

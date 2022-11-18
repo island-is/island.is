@@ -1,9 +1,9 @@
 import { service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
 
-export const serviceSetup = (): ServiceBuilder<'services-personal-representative-public'> => {
-  return service('services-personal-representative-public')
+export const serviceSetup = (): ServiceBuilder<'services-auth-personal-representative-public'> => {
+  return service('services-auth-personal-representative-public')
     .namespace('personal-representative')
-    .image('services-personal-representative-public')
+    .image('services-auth-personal-representative-public')
     .postgres({
       username: 'servicesauth',
       name: 'servicesauth',

@@ -1,7 +1,7 @@
 import { uuid } from 'uuidv4'
 import fetch from 'node-fetch'
 
-import { CaseFileState } from '@island.is/judicial-system/types'
+import type { Logger } from '@island.is/logging'
 
 import { appModuleConfig } from '../app.config'
 import { CaseDeliveryService } from '../caseDelivery.service'
@@ -12,23 +12,24 @@ jest.mock('node-fetch')
 describe('CaseDeliveryService - Deliver case', () => {
   const config = appModuleConfig()
   const caseId = uuid()
-  const caseFileId1 = uuid()
-  const caseFileId2 = uuid()
+  let result: boolean
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     const mockFetch = (fetch as unknown) as jest.Mock
     mockFetch.mockResolvedValueOnce(
       Promise.resolve({
         ok: true,
-        json: () => [
-          { id: caseFileId1, state: CaseFileState.STORED_IN_RVG },
-          { id: caseFileId2, state: CaseFileState.STORED_IN_COURT },
-        ],
+        json: jest.fn().mockResolvedValueOnce({
+          caseFilesDeliveredToCourt: true,
+          caseDeliveredToPolice: true,
+        }),
       }),
     )
 
-    const caseDeliveryService = new CaseDeliveryService(config)
-    await caseDeliveryService.deliverCase(caseId)
+    const caseDeliveryService = new CaseDeliveryService(config, ({
+      debug: jest.fn(),
+    } as unknown) as Logger)
+    result = await caseDeliveryService.deliverCase(caseId)
   })
 
   it('should deliver a case', () => {
@@ -42,5 +43,6 @@ describe('CaseDeliveryService - Deliver case', () => {
         },
       },
     )
+    expect(result).toBe(true)
   })
 })

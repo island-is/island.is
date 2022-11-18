@@ -37,4 +37,19 @@ export class CaseFile implements TCaseFile {
 
   @Field()
   readonly size!: number
+
+  @Field({ nullable: true })
+  readonly policeCaseNumber?: string
+
+  @Field({ nullable: true })
+  readonly userGeneratedFilename?: string
+
+  @Field({ nullable: true })
+  readonly chapter?: number
+
+  @Field({ nullable: true })
+  readonly orderWithinChapter?: number
+
+  @Field({ nullable: true })
+  readonly displayDate?: string
 }

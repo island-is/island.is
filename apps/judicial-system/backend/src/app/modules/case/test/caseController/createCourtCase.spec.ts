@@ -2,10 +2,14 @@ import { uuid } from 'uuidv4'
 import { Op } from 'sequelize'
 
 import {
+  CaseFileState,
   CaseState,
   CaseType,
+  IndictmentSubtype,
+  isIndictmentCase,
   User as TUser,
 } from '@island.is/judicial-system/types'
+import { MessageService, MessageType } from '@island.is/judicial-system/message'
 
 import { randomEnum } from '../../../../test'
 import { createTestingCaseModule } from '../createTestingCaseModule'
@@ -13,6 +17,7 @@ import { CourtService } from '../../../court'
 import { Defendant } from '../../../defendant'
 import { User } from '../../../user'
 import { Institution } from '../../../institution'
+import { CaseFile } from '../../../file'
 import { Case } from '../../models/case.model'
 
 interface Then {
@@ -27,16 +32,20 @@ type GivenWhenThen = (
 ) => Promise<Then>
 
 describe('CaseController - Create court case', () => {
+  let mockMessageService: MessageService
   let mockCourtService: CourtService
   let mockCaseModel: typeof Case
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
     const {
+      messageService,
       courtService,
       caseModel,
       caseController,
     } = await createTestingCaseModule()
+
+    mockMessageService = messageService
     mockCourtService = courtService
     mockCaseModel = caseModel
 
@@ -61,9 +70,22 @@ describe('CaseController - Create court case', () => {
     const user = { id: uuid() } as TUser
     const caseId = uuid()
     const type = randomEnum(CaseType)
-    const policeCaseNumbers = [uuid()]
+    const policeCaseNumber = uuid()
+    const indictmentSubtype = isIndictmentCase(type)
+      ? randomEnum(IndictmentSubtype)
+      : undefined
+    const indictmentSubtypes = isIndictmentCase(type)
+      ? { [policeCaseNumber]: [indictmentSubtype] }
+      : undefined
+    const policeCaseNumbers = [policeCaseNumber]
     const courtId = uuid()
-    const theCase = { id: caseId, type, policeCaseNumbers, courtId } as Case
+    const theCase = {
+      id: caseId,
+      type,
+      policeCaseNumbers,
+      indictmentSubtypes,
+      courtId,
+    } as Case
 
     beforeEach(async () => {
       await givenWhenThen(caseId, user, theCase)
@@ -77,6 +99,7 @@ describe('CaseController - Create court case', () => {
         type,
         policeCaseNumbers,
         false,
+        indictmentSubtypes,
       )
     })
   })
@@ -147,6 +170,14 @@ describe('CaseController - Create court case', () => {
           },
           { model: Case, as: 'parentCase' },
           { model: Case, as: 'childCase' },
+          {
+            model: CaseFile,
+            as: 'caseFiles',
+            required: false,
+            where: {
+              state: { [Op.not]: CaseFileState.DELETED },
+            },
+          },
         ],
         order: [[{ model: Defendant, as: 'defendants' }, 'created', 'ASC']],
         where: {
@@ -162,7 +193,7 @@ describe('CaseController - Create court case', () => {
     const user = {} as TUser
     const caseId = uuid()
     const theCase = { id: caseId } as Case
-    const returnedCase = {} as Case
+    const returnedCase = { id: caseId } as Case
     let then: Then
 
     beforeEach(async () => {
@@ -176,6 +207,13 @@ describe('CaseController - Create court case', () => {
 
     it('should return the case', () => {
       expect(then.result).toBe(returnedCase)
+    })
+
+    it('should post to queue', () => {
+      expect(mockMessageService.sendMessageToQueue).toHaveBeenCalledWith({
+        type: MessageType.CASE_CONNECTED_TO_COURT_CASE,
+        caseId,
+      })
     })
   })
 

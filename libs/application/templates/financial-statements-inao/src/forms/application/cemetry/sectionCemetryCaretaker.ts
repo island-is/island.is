@@ -3,31 +3,31 @@ import {
   buildSection,
   buildMultiField,
 } from '@island.is/application/core'
-import {
-  CARETAKERLIMIT,
-  CEMETRYCARETAKER,
-  USERTYPE,
-} from '../../../lib/constants'
+import { CEMETRYCARETAKER } from '../../../lib/constants'
 import { m } from '../../../lib/messages'
 import { FinancialStatementsInao } from '../../../lib/utils/dataSchema'
 import {
   currencyStringToNumber,
   getCurrentUserType,
 } from '../../../lib/utils/helpers'
+import { FSIUSERTYPE } from '../../../types'
 
 export const sectionCemetryCaretaker = buildSection({
   id: 'cemetryCaretaker',
   title: m.cemeteryCaretakers,
   condition: (answers, externalData) => {
     const userType = getCurrentUserType(answers, externalData)
-    if (userType !== USERTYPE.CEMETRY) {
+    if (userType !== FSIUSERTYPE.CEMETRY) {
       return false
     }
     const applicationAnswers = answers as FinancialStatementsInao
-    const currentAssets = applicationAnswers.cemetryAsset?.current
-    const totalIncome = applicationAnswers.operatingCost?.total
+    const careTakerLimit =
+      applicationAnswers.cemetryOperation?.incomeLimit ?? '0'
+    const currentAssets = applicationAnswers.cemetryAsset?.fixedAssetsTotal
+    const totalIncome = applicationAnswers.cemetryIncome?.total
     const longTermDebt = applicationAnswers.cemetryLiability?.longTerm
-    const isUnderLimit = currencyStringToNumber(totalIncome) < CARETAKERLIMIT
+    const isUnderLimit =
+      currencyStringToNumber(totalIncome) <= Number(careTakerLimit)
     return isUnderLimit && currentAssets === '0' && longTermDebt === '0'
   },
   children: [

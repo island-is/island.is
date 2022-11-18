@@ -1,5 +1,10 @@
 // TODO: Add tests
-import { Case, CaseType, User } from '@island.is/judicial-system/types'
+import {
+  Case,
+  CaseType,
+  isIndictmentCase,
+  User,
+} from '@island.is/judicial-system/types'
 
 import { isBusiness } from './stepHelper'
 
@@ -12,7 +17,8 @@ export type Validation =
   | 'email-format'
   | 'phonenumber'
   | 'date-format'
-  | 'court-case-number'
+  | 'R-case-number'
+  | 'S-case-number'
 
 type ValidateItem = 'valid' | [string | undefined, Validation[]]
 type IsValid = { isValid: boolean; errorMessage: string }
@@ -63,10 +69,16 @@ const getRegexByValidation = (validation: Validation) => {
         errorMessage: '',
       }
     }
-    case 'court-case-number': {
+    case 'R-case-number': {
       return {
         regex: new RegExp(/^R-[0-9]{1,5}\/[0-9]{4}$/),
         errorMessage: `Dæmi: R-1234/${new Date().getFullYear()}`,
+      }
+    }
+    case 'S-case-number': {
+      return {
+        regex: new RegExp(/^S-[0-9]{1,5}\/[0-9]{4}$/),
+        errorMessage: `Dæmi: S-1234/${new Date().getFullYear()}`,
       }
     }
   }
@@ -188,15 +200,16 @@ export const isDefendantStepValidForSidebarIC = (workingCase: Case) => {
 
 export const isDefendantStepValidIndictments = (
   workingCase: Case,
-  caseType: CaseType | undefined,
   policeCaseNumbers: string[],
 ) => {
   const result =
     policeCaseNumbers.length > 0 &&
-    workingCase.type === caseType &&
+    workingCase.indictmentSubtypes &&
+    Object.entries(workingCase.indictmentSubtypes).length > 0 &&
     !someDefendantIsInvalid(workingCase) &&
     validate([
       [workingCase.type, ['empty']],
+      [Object.entries(workingCase.indictmentSubtypes)[0][1][0], ['empty']],
       ...policeCaseNumbers.map(
         (n): ValidateItem => [n, ['empty', 'police-casenumber-format']],
       ),
@@ -210,11 +223,7 @@ export const isDefendantStepValidForSidebarIndictments = (
 ) => {
   return (
     workingCase.id &&
-    isDefendantStepValidIndictments(
-      workingCase,
-      workingCase.type,
-      workingCase.policeCaseNumbers,
-    )
+    isDefendantStepValidIndictments(workingCase, workingCase.policeCaseNumbers)
   )
 }
 
@@ -280,8 +289,17 @@ export const isPoliceReportStepValidIC = (workingCase: Case) => {
 export const isReceptionAndAssignmentStepValid = (workingCase: Case) => {
   return (
     workingCase.judge &&
-    validate([[workingCase.courtCaseNumber, ['empty', 'court-case-number']]])
-      .isValid
+    validate([
+      [
+        workingCase.courtCaseNumber,
+        [
+          'empty',
+          isIndictmentCase(workingCase.type)
+            ? 'S-case-number'
+            : 'R-case-number',
+        ],
+      ],
+    ]).isValid
   )
 }
 
@@ -369,6 +387,22 @@ export const isSubpoenaStepValid = (workingCase: Case, courtDate?: string) => {
     workingCase.subpoenaType &&
     validate([[date, ['empty', 'date-format']]]).isValid
   )
+}
+
+export const isProsecutorAndDefenderStepValid = (workingCase: Case) => {
+  const defendantsAreValid = () =>
+    workingCase.defendants?.every((defendant) => {
+      return (
+        defendant.defendantWaivesRightToCounsel ||
+        validate([
+          [defendant.defenderName, ['empty']],
+          [defendant.defenderEmail, ['email-format']],
+          [defendant.defenderPhoneNumber, ['phonenumber']],
+        ]).isValid
+      )
+    })
+
+  return workingCase.prosecutor && defendantsAreValid()
 }
 
 export const isAdminUserFormValid = (user: User) => {

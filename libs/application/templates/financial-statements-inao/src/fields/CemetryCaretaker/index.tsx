@@ -1,5 +1,8 @@
-import React, { FC, useEffect } from 'react'
-import { useFieldArray } from 'react-hook-form'
+import React, { FC, useState, useEffect, useCallback } from 'react'
+import { useFieldArray, useFormContext } from 'react-hook-form'
+import { IdentityInput, Query } from '@island.is/api/schema'
+import * as kennitala from 'kennitala'
+
 import { RecordObject } from '@island.is/application/types'
 import {
   Box,
@@ -7,9 +10,11 @@ import {
   GridColumn,
   GridRow,
   GridContainer,
+  InputError,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
+import { useLazyQuery } from '@apollo/client'
 import { getValueViaPath, getErrorViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import {
@@ -18,6 +23,16 @@ import {
 } from '@island.is/shared/form-fields'
 import { FinancialStatementsInao } from '../../lib/utils/dataSchema'
 import * as styles from './CemetryCaretaker.css'
+import { IdentityQuery } from '../../graphql'
+import {
+  BOARDMEMEBER,
+  CARETAKER,
+  APPLICANTASMEMBER,
+  ACTORASCARETAKER,
+  ACTORLONEBOARDMEMBER,
+} from '../../lib/constants'
+import { BoardMember } from '../../types'
+import { getBoardmembersAndCaretakers } from '../../lib/utils/helpers'
 
 type Props = {
   id: string
@@ -36,10 +51,34 @@ const CareTakerRepeaterItem = ({
 }: Props) => {
   const { formatMessage } = useLocale()
 
+  const [nationalIdInput, setNationalIdInput] = useState('')
+  const { clearErrors, setValue } = useFormContext()
   const fieldIndex = `${id}[${index}]`
   const nameField = `${fieldIndex}.name`
   const nationalIdField = `${fieldIndex}.nationalId`
   const roleField = `${fieldIndex}.role`
+
+  const [getIdentity, { loading, error: queryError }] = useLazyQuery<
+    Query,
+    { input: IdentityInput }
+  >(IdentityQuery, {
+    onCompleted: (data) => {
+      setValue(nameField, data.identity?.name ?? '')
+    },
+  })
+
+  useEffect(() => {
+    clearErrors()
+    if (nationalIdInput.length === 10 && kennitala.isValid(nationalIdInput)) {
+      getIdentity({
+        variables: {
+          input: {
+            nationalId: nationalIdInput,
+          },
+        },
+      })
+    }
+  }, [nationalIdInput, getIdentity, clearErrors])
 
   return (
     <GridContainer>
@@ -47,11 +86,18 @@ const CareTakerRepeaterItem = ({
         <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
           <Box position="relative" paddingTop={3} paddingRight={1}>
             <InputController
-              id={nameField}
-              name={nameField}
-              label={formatMessage(m.fullName)}
+              id={nationalIdField}
+              name={nationalIdField}
+              label={formatMessage(m.nationalId)}
               backgroundColor="blue"
-              error={errors && getErrorViaPath(errors, nameField)}
+              format="######-####"
+              onChange={(v) =>
+                setNationalIdInput(v.target.value.replace(/\W/g, ''))
+              }
+              error={errors && getErrorViaPath(errors, nationalIdField)}
+              defaultValue={
+                getValueViaPath(answers, nationalIdField, '') as string
+              }
             />
           </Box>
         </GridColumn>
@@ -71,14 +117,16 @@ const CareTakerRepeaterItem = ({
               </Box>
             )}
             <InputController
-              id={nationalIdField}
-              name={nationalIdField}
-              label={formatMessage(m.nationalId)}
-              format="######-####"
+              id={nameField}
+              name={nameField}
+              label={formatMessage(m.fullName)}
               backgroundColor="blue"
-              error={errors && getErrorViaPath(errors, nationalIdField)}
-              defaultValue={
-                getValueViaPath(answers, nationalIdField, '') as string
+              loading={loading}
+              readOnly
+              error={
+                queryError
+                  ? formatMessage(m.errorNationalIdIncorrect)
+                  : undefined
               }
             />
           </Box>
@@ -97,11 +145,11 @@ const CareTakerRepeaterItem = ({
               options={[
                 {
                   label: formatMessage(m.cemeteryInspector),
-                  value: 'Skoðunarmaður',
+                  value: CARETAKER,
                 },
                 {
                   label: formatMessage(m.cemeteryBoardMember),
-                  value: 'Stjórnarmaður',
+                  value: BOARDMEMEBER,
                 },
               ]}
             />
@@ -116,26 +164,74 @@ export const CemetryCaretaker: FC<FieldBaseProps<FinancialStatementsInao>> = ({
   application,
   field,
   errors,
+  setBeforeSubmitCallback,
 }) => {
   const { formatMessage } = useLocale()
   const { id } = field
+
+  const { getValues, setError } = useFormContext()
+  const values = getValues()
 
   const { fields, append, remove } = useFieldArray({
     name: `${id}.caretakers`,
   })
 
-  const handleAddCaretaker = () =>
+  const handleAddCaretaker = useCallback(() => {
     append({
       nationalId: '',
       name: '',
       role: '',
     })
+  }, [append])
 
   const handleRemoveCaretaker = (index: number) => remove(index)
 
   useEffect(() => {
     if (fields.length === 0) handleAddCaretaker()
   }, [fields, handleAddCaretaker])
+
+  setBeforeSubmitCallback &&
+    setBeforeSubmitCallback(async () => {
+      const actors = application.applicantActors
+      const currentActor: string = actors[actors.length - 1]
+      const allMembers = values.cemetryCaretaker
+      const { careTakers, boardMembers } = getBoardmembersAndCaretakers(
+        allMembers,
+      )
+      const caretakersIncludeActor =
+        careTakers.filter((careTaker) => careTaker === currentActor).length > 0
+
+      const boardMembersIncludeActor =
+        boardMembers.filter((boardMember) => boardMember === currentActor)
+          .length > 0
+
+      const includesApplicant =
+        allMembers.filter(
+          (member: BoardMember) => member.nationalId === application.applicant,
+        ).length > 0
+
+      if (caretakersIncludeActor) {
+        setError(ACTORASCARETAKER, {
+          type: 'custom',
+          message: formatMessage(m.errorcaretakerCanNotIncludeActor),
+        })
+        return [false, formatMessage(m.errorcaretakerCanNotIncludeActor)]
+      } else if (boardMembersIncludeActor && boardMembers.length <= 1) {
+        setError(ACTORLONEBOARDMEMBER, {
+          type: 'custom',
+          message: formatMessage(m.errorcaretakerCanNotIncludeActor),
+        })
+        return [false, formatMessage(m.errorcaretakerCanNotIncludeActor)]
+      } else if (includesApplicant) {
+        setError(APPLICANTASMEMBER, {
+          type: 'custom',
+          message: formatMessage(m.errormemberCanNotIncludeApplicant),
+        })
+        return [false, formatMessage(m.errormemberCanNotIncludeApplicant)]
+      } else {
+        return [true, null]
+      }
+    })
 
   return (
     <GridContainer>
@@ -164,6 +260,32 @@ export const CemetryCaretaker: FC<FieldBaseProps<FinancialStatementsInao>> = ({
           </Button>
         </Box>
       </GridRow>
+      {errors && errors.cemetryCaretaker ? (
+        <InputError
+          errorMessage={
+            typeof errors.cemetryCaretaker === 'string'
+              ? errors.cemetryCaretaker
+              : undefined
+          }
+        />
+      ) : null}
+      {errors && errors.applicantasmember ? (
+        <InputError
+          errorMessage={formatMessage(m.errormemberCanNotIncludeApplicant)}
+        />
+      ) : null}
+      {errors && errors.actorascaretaker ? (
+        <InputError
+          errorMessage={formatMessage(m.errorcaretakerCanNotIncludeActor)}
+        />
+      ) : null}
+      {errors && errors.actorloneboardmember ? (
+        <InputError
+          errorMessage={formatMessage(
+            m.errorBoardmembersCanNotJustIncludeActor,
+          )}
+        />
+      ) : null}
     </GridContainer>
   )
 }

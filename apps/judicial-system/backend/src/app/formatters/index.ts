@@ -1,4 +1,3 @@
-export { getCasefilesPdfAsString } from './casefilesPdf'
 export {
   getCourtRecordPdfAsBuffer,
   getCourtRecordPdfAsString,
@@ -25,8 +24,9 @@ export {
   formatRulingModifiedHistory,
   formatDefenderCourtDateLinkEmailNotification,
   formatDefenderResubmittedToCourtEmailNotification,
+  formatDefenderAssignedEmailNotification,
   stripHtmlTags,
 } from './formatters'
 export { getRequestPdfAsBuffer, getRequestPdfAsString } from './requestPdf'
 export { getRulingPdfAsBuffer, getRulingPdfAsString } from './rulingPdf'
-export { writeFile } from './writeFile'
+export { createCaseFilesRecord } from './caseFilesRecordPdf'

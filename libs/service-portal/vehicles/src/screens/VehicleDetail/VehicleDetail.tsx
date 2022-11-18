@@ -21,11 +21,13 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   amountFormat,
+  ErrorScreen,
   formSubmit,
   NotFound,
   ServicePortalModuleComponent,
   TableGrid,
   UserInfoLine,
+  m,
 } from '@island.is/service-portal/core'
 
 import OwnersTable from '../../components/DetailTable/OwnersTable'
@@ -41,9 +43,8 @@ import {
   technicalInfoArray,
 } from '../../utils/createUnits'
 import { displayWithUnit } from '../../utils/displayWithUnit'
-import { FeatureFlagClient } from '@island.is/feature-flags'
-import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 import AxleTable from '../../components/DetailTable/AxleTable'
+import Dropdown from '../../components/Dropdown/Dropdown'
 
 export const GET_USERS_VEHICLE_DETAIL = gql`
   query GetUsersVehiclesDetail($input: GetVehicleDetailInput!) {
@@ -175,23 +176,6 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
     },
   })
 
-  /**
-   * The PDF functionality module is feature flagged
-   * Please remove all code when fully released.
-   */
-  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
-  const [modalFlagEnabled, setModalFlagEnabled] = useState<boolean>(false)
-  useEffect(() => {
-    const isFlagEnabled = async () => {
-      const ffEnabled = await featureFlagClient.getValue(
-        `isServicePortalVehiclesPdfEnabled`,
-        false,
-      )
-      setModalFlagEnabled(ffEnabled as boolean)
-    }
-    isFlagEnabled()
-  }, [])
-
   const {
     mainInfo,
     basicInfo,
@@ -209,7 +193,20 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
   const color = registrationInfo?.color ? `- ${registrationInfo.color}` : ''
   const noInfo = data?.vehiclesDetail === null
 
-  if ((error || noInfo) && !loading) {
+  if (error && !loading) {
+    return (
+      <ErrorScreen
+        figure="./assets/images/hourglass.svg"
+        tagVariant="red"
+        tag={formatMessage(m.errorTitle)}
+        title={formatMessage(m.somethingWrong)}
+        children={formatMessage(m.errorFetchModule, {
+          module: formatMessage(m.vehicles).toLowerCase(),
+        })}
+      />
+    )
+  }
+  if (noInfo && !loading) {
     return <NotFound title={formatMessage(messages.notFound)} />
   }
 
@@ -223,6 +220,7 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
     registrationInfo && registrationInfoArray(registrationInfo, formatMessage)
   const technicalArr =
     technicalInfo && technicalInfoArray(technicalInfo, formatMessage)
+
   return (
     <>
       <Box marginBottom={6}>
@@ -251,15 +249,15 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
             ) : null}
           </GridColumn>
         </GridRow>
-        {modalFlagEnabled && !loading && downloadServiceURL && (
+        {!loading && downloadServiceURL && (
           <GridRow marginTop={6}>
-            <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+            <GridColumn span="12/12">
               <Box display="flex" justifyContent="flexStart" printHidden>
                 <Box paddingRight={2}>
                   <Button
                     colorScheme="default"
                     icon="receipt"
-                    iconType="filled"
+                    iconType="outline"
                     size="default"
                     type="button"
                     variant="utility"
@@ -267,6 +265,42 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
                   >
                     {formatMessage(messages.vehicleHistoryReport)}
                   </Button>
+                </Box>
+                <Box paddingRight={2}>
+                  <a href="" target="_blank" rel="noopener noreferrer">
+                    <Button
+                      colorScheme="default"
+                      icon="open"
+                      iconType="outline"
+                      size="default"
+                      type="button"
+                      variant="utility"
+                    >
+                      {formatMessage(messages.changeOfOwnership)}
+                    </Button>
+                  </a>
+                </Box>
+                <Box paddingRight={2}>
+                  <Dropdown
+                    dropdownItems={[
+                      {
+                        title: formatMessage(messages.orderRegistrationNumber),
+                        href: '/pontun-skraningarmerkja',
+                      },
+                      {
+                        title: formatMessage(messages.orderRegistrationLicense),
+                        href: '',
+                      },
+                      {
+                        title: formatMessage(messages.addCoOwner),
+                        href: '/skraning-medeiganda-okutaekis',
+                      },
+                      {
+                        title: formatMessage(messages.addOperator),
+                        href: '/skraning-a-umradamanni-okutaekis',
+                      },
+                    ]}
+                  />
                 </Box>
               </Box>
             </GridColumn>
@@ -277,6 +311,11 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
         <UserInfoLine
           label={formatMessage(messages.numberPlate)}
           content={mainInfo?.regno ?? ''}
+          editLink={{
+            title: messages.orderRegistrationNumber,
+            url: '',
+            external: true,
+          }}
           loading={loading}
         />
         <Divider />

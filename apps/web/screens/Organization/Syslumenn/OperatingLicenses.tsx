@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useEffect, useState, useRef, useReducer } from 'react'
+import { useEffect, useState, useRef, useReducer } from 'react'
 import { useApolloClient } from '@apollo/client/react'
 import {
   AlertMessage,
@@ -30,12 +30,16 @@ import {
 import { Screen } from '../../../types'
 import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import { OrganizationWrapper } from '@island.is/web/components'
+import {
+  OrganizationWrapper,
+  OperatingLicensesCsvExport,
+} from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { useRouter } from 'next/router'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
-import { richText, SliceType } from '@island.is/island-ui/contentful'
+import { SliceType } from '@island.is/island-ui/contentful'
+import { webRichText } from '@island.is/web/utils/richText'
 
 const DEBOUNCE_TIMER = 400
 const PAGE_SIZE = 10
@@ -341,7 +345,7 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
           {subpage.title}
         </Text>
       </Box>
-      {richText(subpage.description as SliceType[])}
+      {webRichText(subpage.description as SliceType[])}
       <Box marginBottom={3}>
         <Input
           name="operatingLicenseSearchInput"
@@ -352,6 +356,9 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
           iconType="outline"
           onChange={(event) => onSearch(event.target.value)}
         />
+        <Box textAlign="right" marginRight={1} marginTop={1}>
+          <OperatingLicensesCsvExport namespace={namespace} />
+        </Box>
         <Box
           paddingTop={1}
           textAlign="center"

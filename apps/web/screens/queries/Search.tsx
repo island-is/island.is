@@ -233,6 +233,7 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
             width
             height
           }
+          pageType
         }
 
         ... on News {
@@ -284,7 +285,21 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
             }
           }
         }
-
+        ... on OrganizationPage {
+          id
+          title
+          slug
+          singleOrganization: organization {
+            logo {
+              id
+              url
+              title
+              contentType
+              width
+              height
+            }
+          }
+        }
         ... on ProjectPage {
           id
           title

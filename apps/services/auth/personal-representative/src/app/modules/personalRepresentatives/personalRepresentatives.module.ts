@@ -1,22 +1,10 @@
-import {
-  PersonalRepresentative,
-  PersonalRepresentativeRight,
-  PersonalRepresentativeRightType,
-  PersonalRepresentativeService,
-} from '@island.is/auth-api-lib/personal-representative'
+import { PersonalRepresentativeModule } from '@island.is/auth-api-lib'
 import { Module } from '@nestjs/common'
-import { SequelizeModule } from '@nestjs/sequelize'
 import { PersonalRepresentativesController } from './personalRepresentatives.controller'
 
 @Module({
-  imports: [
-    SequelizeModule.forFeature([
-      PersonalRepresentativeRightType,
-      PersonalRepresentativeRight,
-      PersonalRepresentative,
-    ]),
-  ],
+  imports: [PersonalRepresentativeModule],
   controllers: [PersonalRepresentativesController],
-  providers: [PersonalRepresentativeService],
+  providers: [],
 })
 export class PersonalRepresentativesModule {}

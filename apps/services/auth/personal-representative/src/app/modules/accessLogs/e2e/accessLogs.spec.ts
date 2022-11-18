@@ -4,13 +4,12 @@ import {
   setupWithoutScope,
 } from '../../../../../test/setup'
 import { TestEndpointOptions } from '../../../../../test/types'
-import { getRequestMethod } from '../../../../../test/testHelpers'
 import request from 'supertest'
-import { TestApp } from '@island.is/testing/nest'
+import { TestApp, getRequestMethod } from '@island.is/testing/nest'
 import {
   PersonalRepresentativeAccess,
   PersonalRepresentativeAccessDTO,
-} from '@island.is/auth-api-lib/personal-representative'
+} from '@island.is/auth-api-lib'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 import { AuthScope } from '@island.is/auth/scopes'
 

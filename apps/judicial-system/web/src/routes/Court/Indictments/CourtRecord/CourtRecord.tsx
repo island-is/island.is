@@ -76,7 +76,7 @@ const CourtRecord: React.FC = () => {
     >
       <PageHeader title={formatMessage(titles.court.indictments.courtRecord)} />
       <FormContentContainer>
-        <PageTitle title={formatMessage(m.title)} />
+        <PageTitle>{formatMessage(m.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={5}>
           <AlertMessage
@@ -117,7 +117,7 @@ const CourtRecord: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${constants.CASES_ROUTE}`} // TODO: Add previous url when it is ready
+          previousUrl={`${constants.INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE}/${workingCase.id}`}
           onNextButtonClick={handleNextButtonClick}
           nextIsDisabled={!allFilesUploaded}
           nextIsLoading={isLoadingWorkingCase}

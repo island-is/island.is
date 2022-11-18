@@ -1,78 +1,98 @@
 import {
   FirearmProperty,
   FirearmPropertyList,
-  LicenseData,
   LicenseInfo,
 } from '@island.is/clients/firearm-license'
+import isAfter from 'date-fns/isAfter'
 import format from 'date-fns/format'
 import { format as formatSsn } from 'kennitala'
 import {
   GenericLicenseDataField,
   GenericLicenseDataFieldType,
+  GenericLicenseLabels,
   GenericUserLicensePayload,
 } from '../../licenceService.type'
+import { Locale } from '@island.is/shared/types'
+import { getLabel } from '../../utils/translations'
+import { LicenseData } from './genericFirearmLicense.type'
 
 const formatDateString = (dateTime: string) =>
   dateTime ? format(new Date(dateTime), 'dd.MM.yyyy') : ''
 
 export const parseFirearmLicensePayload = (
   licenseData: LicenseData,
+  locale: Locale = 'is',
+  labels: GenericLicenseLabels,
 ): GenericUserLicensePayload | null => {
   const { licenseInfo, properties, categories } = licenseData
 
+  const expired = licenseInfo?.expirationDate
+    ? !isAfter(new Date(licenseInfo.expirationDate), new Date())
+    : null
   if (!licenseInfo) return null
 
+  const label = labels.labels
   const data: Array<GenericLicenseDataField> = [
+    licenseInfo.licenseNumber && {
+      name: getLabel('basicInfoLicense', locale, label),
+      type: GenericLicenseDataFieldType.Value,
+      label: getLabel('licenseNumber', locale, label),
+      value: licenseInfo.licenseNumber,
+    },
     licenseInfo.name && {
       type: GenericLicenseDataFieldType.Value,
-      label: 'Nafn einstaklings',
+      label: getLabel('fullName', locale, label),
       value: licenseInfo.name,
-    },
-    licenseInfo.ssn && {
-      type: GenericLicenseDataFieldType.Value,
-      label: 'Kennitala',
-      value: licenseInfo.ssn,
-    },
-    licenseInfo.expirationDate && {
-      type: GenericLicenseDataFieldType.Value,
-      label: 'Gildistími',
-      value: formatDateString(licenseInfo.expirationDate) ?? '',
     },
     licenseInfo.issueDate && {
       type: GenericLicenseDataFieldType.Value,
-      label: 'Útgáfudagur',
-      value: formatDateString(licenseInfo.issueDate) ?? '',
+      label: getLabel('publishedDate', locale, label),
+      value: licenseInfo.issueDate ?? '',
     },
-    licenseInfo.licenseNumber && {
+    licenseInfo.expirationDate && {
       type: GenericLicenseDataFieldType.Value,
-      label: 'Númer skírteinis',
-      value: licenseInfo.licenseNumber,
+      label: getLabel('validTo', locale, label),
+      value: licenseInfo.expirationDate ?? '',
     },
     licenseInfo.collectorLicenseExpirationDate && {
       type: GenericLicenseDataFieldType.Value,
-      label: 'Gildistími safnaraskírteinis',
-      value: formatDateString(licenseInfo.collectorLicenseExpirationDate) ?? '',
+      label: getLabel('collectorLicenseValidTo', locale, label),
+      value: licenseInfo.collectorLicenseExpirationDate ?? '',
     },
-    licenseInfo.address && {
-      type: GenericLicenseDataFieldType.Value,
-      label: 'Heimilisfang',
-      value: licenseInfo.address,
-    },
+
     licenseInfo.qualifications && {
       type: GenericLicenseDataFieldType.Group,
-      label: 'Réttindaflokkar',
+      label: getLabel('classesOfRights', locale, label),
       fields: licenseInfo.qualifications.split('').map((qualification) => ({
         type: GenericLicenseDataFieldType.Category,
         name: qualification,
-        label: categories?.[`Flokkur ${qualification}`] ?? '',
+        label:
+          categories?.[
+            `${getLabel('category', locale, label)} ${qualification}`
+          ] ?? '',
+        description:
+          categories?.[
+            `${getLabel('category', locale, label)} ${qualification}`
+          ] ?? '',
       })),
     },
     properties && {
       type: GenericLicenseDataFieldType.Group,
-      label: 'Skotvopn í eigu leyfishafa',
+      hideFromServicePortal: true,
+      label: getLabel('firearmProperties', locale, label),
       fields: (properties.properties ?? []).map((property) => ({
         type: GenericLicenseDataFieldType.Category,
-        fields: parseProperties(property)?.filter(
+        fields: parseProperties(labels, property, locale)?.filter(
+          (Boolean as unknown) as ExcludesFalse,
+        ),
+      })),
+    },
+    properties && {
+      type: GenericLicenseDataFieldType.Table,
+      label: getLabel('firearmProperties', locale, label),
+      fields: (properties.properties ?? []).map((property) => ({
+        type: GenericLicenseDataFieldType.Category,
+        fields: parseProperties(labels, property, locale)?.filter(
           (Boolean as unknown) as ExcludesFalse,
         ),
       })),
@@ -82,41 +102,64 @@ export const parseFirearmLicensePayload = (
   return {
     data,
     rawData: JSON.stringify(licenseData),
+    metadata: {
+      licenseNumber: licenseData.licenseInfo?.licenseNumber?.toString() ?? '',
+      expired,
+      links: [
+        {
+          label: getLabel('renewFirearmLicense', locale, label),
+          value: 'https://island.is/skotvopnaleyfi',
+        },
+      ],
+    },
   }
 }
 
 type ExcludesFalse = <T>(x: T | null | undefined | false | '') => x is T
 
 const parseProperties = (
+  labels: GenericLicenseLabels,
   property?: FirearmProperty,
+  locale: Locale = 'is',
 ): Array<GenericLicenseDataField> | null => {
   if (!property) return null
+  const label = labels.labels
 
   const mappedProperty = [
     {
       type: GenericLicenseDataFieldType.Value,
-      label: 'Staða skotvopns',
+      label: getLabel('firearmStatus', locale, label),
       value: property.category ?? '',
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: 'Tegund',
+      label: getLabel('type', locale, label),
       value: property.typeOfFirearm ?? '',
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: 'Heiti',
+      label: getLabel('name', locale, label),
       value: property.name ?? '',
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: 'Númer',
+      label: getLabel('number', locale, label),
       value: property.serialNumber ?? '',
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: 'Hlaupvídd',
+      label: getLabel('countryNumber', locale, label),
+      value: property.landsnumer ?? '',
+    },
+    {
+      type: GenericLicenseDataFieldType.Value,
+      label: getLabel('caliber', locale, label),
       value: property.caliber ?? '',
+    },
+    {
+      type: GenericLicenseDataFieldType.Value,
+      label: getLabel('limitation', locale, label),
+      value: property.limitation ?? '',
     },
   ]
   return mappedProperty

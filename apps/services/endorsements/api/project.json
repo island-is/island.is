@@ -76,6 +76,7 @@
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "commands": [
+          "yarn get-secrets services-endorsements-api",
           "yarn nx run services-endorsements-api:dev-services $NX_OPTIONS",
           "echo \"Waiting for databases to start...\" && sleep 2",
           "yarn nx run services-endorsements-api:migrate $NX_OPTIONS"
@@ -87,9 +88,9 @@
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "commands": [
-          "kubectl -n socat port-forward svc/socat-xroad 8081:80 &",
-          "kubectl port-forward svc/socat-soffia 8443:443 -n socat &",
-          "yarn start services-endorsements-api $NX_OPTIONS &"
+          "./scripts/run-xroad-proxy.sh",
+          "./scripts/run-soffia-proxy.sh",
+          "yarn start services-endorsements-api $NX_OPTIONS"
         ],
         "parallel": true
       }

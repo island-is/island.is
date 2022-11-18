@@ -14,7 +14,11 @@ export enum Roles {
 
 export enum ApiActions {
   getUserType = 'getUserType',
+  submitApplication = 'submitApplication',
 }
+
+export const CARETAKER = 'Skoðunarmaður'
+export const BOARDMEMEBER = 'Stjórnarmaður'
 
 export const YES = 'yes'
 export const NO = 'no'
@@ -22,26 +26,34 @@ export const GREATER = 'greater'
 export const LESS = 'less'
 export const TOTAL = 'total'
 export const ELECTIONLIMIT = 550000
-export const CARETAKERLIMIT = 300000
 export const INPUTCHANGEINTERVAL = 300
+export const UPDATE_ELECTION_ACTION = 'updateCurrentElection'
 
 export enum USERTYPE {
-  INDIVIDUAL = '150000000',
-  PARTY = '150000001',
-  CEMETRY = '150000002',
+  INDIVIDUAL = 150000000,
+  PARTY = 150000001,
+  CEMETRY = 150000002,
 }
+
+export const BACKYEARSLIMITFALLBACK = '1'
 
 export const INDIVIDUAL = 'individual'
 export const PARTY = 'party'
 export const CEMETRY = 'cemetery'
 
+// error helpers
+export const VALIDATOR = 'validator'
+export const APPLICANTASMEMBER = 'applicantasmember'
+export const ACTORASCARETAKER = 'actorascaretaker'
+export const ACTORLONEBOARDMEMBER = 'actorloneboardmember'
+
 // input ids
 export const INDIVIDUALOPERATIONIDS = {
   incomePrefix: 'individualIncome',
   expensePrefix: 'individualExpense',
-  corporateDonations: 'individualIncome.corporateDonations',
-  individualDonations: 'individualIncome.individualDonations',
-  personalDonations: 'individualIncome.personalDonations',
+  contributionsByLegalEntities: 'individualIncome.contributionsByLegalEntities',
+  individualContributions: 'individualIncome.individualContributions',
+  candidatesOwnContributions: 'individualIncome.candidatesOwnContributions',
   otherIncome: 'individualIncome.otherIncome',
   capitalIncome: 'individualIncome.capitalIncome',
   electionOffice: 'individualExpense.electionOffice',
@@ -56,11 +68,12 @@ export const INDIVIDUALOPERATIONIDS = {
 export const PARTYOPERATIONIDS = {
   incomePrefix: 'partyIncome',
   expensePrefix: 'partyExpense',
-  publicDonations: 'partyIncome.publicDonations',
-  partyDonations: 'partyIncome.partyDonations',
-  municipalityDonations: 'partyIncome.municipalityDonations',
-  corporateDonations: 'partyIncome.corporateDonations',
-  individualDonations: 'partyIncome.individualDonations',
+  contributionsFromTheTreasury: 'partyIncome.contributionsFromTheTreasury',
+  parliamentaryPartySupport: 'partyIncome.parliamentaryPartySupport',
+  municipalContributions: 'partyIncome.municipalContributions',
+  contributionsFromLegalEntities: 'partyIncome.contributionsFromLegalEntities',
+  contributionsFromIndividuals: 'partyIncome.contributionsFromIndividuals',
+  generalMembershipFees: 'partyIncome.generalMembershipFees',
   capitalIncome: 'partyIncome.capitalIncome',
   otherIncome: 'partyIncome.otherIncome',
   totalIncome: 'partyIncome.total',
@@ -73,10 +86,11 @@ export const PARTYOPERATIONIDS = {
 export const CEMETRYOPERATIONIDS = {
   prefixIncome: 'cemetryIncome',
   prefixExpense: 'cemetryExpense',
+  incomeLimit: 'cemetryOperation.incomeLimit',
   applicationType: 'cemetryIncome.applicationType',
-  caretaking: 'cemetryIncome.caretaking',
-  graveIncome: 'cemetryIncome.graveIncome',
-  cemetryFundDonations: 'cemetryIncome.cemetryFundDonations',
+  careIncome: 'cemetryIncome.careIncome',
+  burialRevenue: 'cemetryIncome.burialRevenue',
+  grantFromTheCemeteryFund: 'cemetryIncome.grantFromTheCemeteryFund',
   capitalIncome: 'cemetryIncome.capitalIncome',
   otherIncome: 'cemetryIncome.otherIncome',
   totalIncome: 'cemetryIncome.total',
@@ -85,10 +99,10 @@ export const CEMETRYOPERATIONIDS = {
   payroll: 'cemetryExpense.payroll',
   funeralCost: 'cemetryExpense.funeralCost',
   chapelExpense: 'cemetryExpense.chapelExpense',
-  cemeteryFundExpense: 'cemetryExpense.cemeteryFundExpense',
+  donationsToCemeteryFund: 'cemetryExpense.cemeteryFundExpense',
   donationsToOther: 'cemetryExpense.donationsToOther',
   otherOperationCost: 'cemetryExpense.otherOperationCost',
-  writtenOffExpense: 'cemetryExpense.writtenOffExpense',
+  depreciation: 'cemetryExpense.depreciation',
 }
 
 export const CAPITALNUMBERS = {
@@ -108,6 +122,11 @@ export const CEMETRYCARETAKER = {
 export const ABOUTIDS = {
   operatingYear: 'conditionalAbout.operatingYear',
   applicationType: 'conditionalAbout.applicationType',
+  selectElection: 'election.selectElection',
+  electionName: 'election.electionName',
+  incomeLimit: 'election.incomeLimit',
+  powerOfAttorneyNationalId: 'about.powerOfAttorneyNationalId',
+  powerOfAttorneyName: 'about.powerOfAttorneyName',
 }
 
 export const OPERATINGCOST = {
@@ -116,32 +135,35 @@ export const OPERATINGCOST = {
 
 export const EQUITIESANDLIABILITIESIDS = {
   assetPrefix: 'asset',
-  tangible: 'asset.tangible',
-  current: 'asset.current',
+  currentAssets: 'asset.currentAssets',
+  fixedAssetsTotal: 'asset.fixedAssetsTotal',
   assetTotal: 'asset.total',
   liabilityPrefix: 'liability',
   longTerm: 'liability.longTerm',
   shortTerm: 'liability.shortTerm',
   asset: 'liability.asset',
   totalLiability: 'liability.total',
+  operationResult: 'equity.operationResult',
   equityPrefix: 'equity',
   totalEquity: 'equity.totalEquity',
   totalCash: 'equity.total',
+  totalEquityAndLiabilities: 'equityAndLiabilities.total',
 }
 
 export const CEMETRYEQUITIESANDLIABILITIESIDS = {
   assetPrefix: 'cemetryAsset',
   liabilityPrefix: 'cemetryLiability',
   equityPrefix: 'cemetryEquity',
-  tangible: 'cemetryAsset.tangible',
-  current: 'cemetryAsset.current',
+  currentAssets: 'cemetryAsset.currentAssets',
+  fixedAssetsTotal: 'cemetryAsset.fixedAssetsTotal',
   assetTotal: 'cemetryAsset.total',
   longTerm: 'cemetryLiability.longTerm',
   shortTerm: 'cemetryLiability.shortTerm',
   liabilityTotal: 'cemetryLiability.total',
-  newYearEquity: 'cemetryEquity.newYearEquity',
-  reevaluatePrice: 'cemetryEquity.reevaluatePrice',
+  equityAtTheBeginningOfTheYear: 'cemetryEquity.equityAtTheBeginningOfTheYear',
+  revaluationDueToPriceChanges: 'cemetryEquity.revaluationDueToPriceChanges',
   reevaluateOther: 'cemetryEquity.reevaluateOther',
   operationResult: 'cemetryEquity.operationResult',
   equityTotal: 'cemetryEquity.total',
+  totalEquityAndLiabilities: 'equityAndLiabilities.total',
 }

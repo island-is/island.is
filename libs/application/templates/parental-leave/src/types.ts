@@ -18,6 +18,15 @@ export interface PersonInformation {
 
 export type YesOrNo = typeof NO | typeof YES
 
+export interface VMSTPeriod {
+  from: string
+  to: string
+  ratio: string
+  firstPeriodStart: string
+  paid: boolean
+  rightsCodePeriod: string
+}
+
 export interface Period {
   startDate: string
   endDate: string
@@ -26,6 +35,7 @@ export interface Period {
   useLength?: YesOrNo
   daysToUse?: string
   rawIndex?: number
+  rightCodePeriod?: string
 }
 
 export interface Payment {

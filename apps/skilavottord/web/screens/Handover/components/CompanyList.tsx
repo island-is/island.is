@@ -53,7 +53,7 @@ const CompanyList = () => {
             },
             {
               text: `${partner.website}`,
-              href: partner.website,
+              href: partner.website as string | undefined,
             },
           ]}
         />

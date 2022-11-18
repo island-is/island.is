@@ -8,17 +8,14 @@ import {
   useMutation,
   useQuery,
 } from '@apollo/client'
-import { IntlShape, useIntl } from 'react-intl'
+import { useIntl } from 'react-intl'
 
-import { CaseType, isInvestigationCase } from '@island.is/judicial-system/types'
+import { CaseType } from '@island.is/judicial-system/types'
 import { Box, Text, toast } from '@island.is/island-ui/core'
-import {
-  icConfirmation,
-  rcConfirmation,
-  errors as errorMessages,
-} from '@island.is/judicial-system-web/messages'
+import { errors as errorMessages } from '@island.is/judicial-system-web/messages'
 import type { Case } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
+
 import { RulingSignatureConfirmationQuery } from '../../utils/mutations'
 import { Modal } from '..'
 import MarkdownWrapper from '../MarkdownWrapper/MarkdownWrapper'
@@ -27,19 +24,19 @@ import {
   RulingSignatureConfirmationQueryQuery,
 } from '../../graphql/schema'
 import RequestRulingSignatureMutation from './requestRulingSignatureGql'
+import { signingModal as m } from './SigningModal.strings'
 
 const ControlCode: React.FC<{ controlCode?: string }> = ({ controlCode }) => {
+  const { formatMessage } = useIntl()
+
   return (
     <>
       <Box marginBottom={2}>
         <Text variant="h2" color="blue400">
-          {`Öryggistala: ${controlCode}`}
+          {formatMessage(m.controlCode, { controlCode })}
         </Text>
       </Box>
-      <Text>
-        Þetta er ekki pin-númerið. Staðfestu aðeins innskráningu ef sama
-        öryggistala birtist í símanum þínum.
-      </Text>
+      <Text>{formatMessage(m.controlCodeExplanation)}</Text>
     </>
   )
 }
@@ -109,19 +106,6 @@ export const getSigningProgress = (
   return 'error'
 }
 
-export const getSuccessText = (
-  formatMessage: IntlShape['formatMessage'],
-  caseType: CaseType,
-) => {
-  return isInvestigationCase(caseType)
-    ? formatMessage(icConfirmation.modal.text)
-    : formatMessage(rcConfirmation.modal.rulingNotification.textV2, {
-        summarySentToPrison:
-          caseType === CaseType.CUSTODY ||
-          caseType === CaseType.ADMISSION_TO_FACILITY,
-      })
-}
-
 export const SigningModal: React.FC<SigningModalProps> = ({
   workingCase,
   requestRulingSignature,
@@ -155,12 +139,12 @@ export const SigningModal: React.FC<SigningModalProps> = ({
     <Modal
       title={
         signingProgress === 'inProgress'
-          ? 'Rafræn undirritun'
+          ? formatMessage(m.inProgressTitle)
           : signingProgress === 'success'
-          ? 'Úrskurður hefur verið staðfestur og undirritaður'
+          ? formatMessage(m.successTitle)
           : signingProgress === 'canceled'
-          ? 'Notandi hætti við undirritun'
-          : 'Undirritun tókst ekki'
+          ? formatMessage(m.canceledTitle)
+          : formatMessage(m.errorTitle)
       }
       text={
         signingProgress === 'inProgress' ? (
@@ -169,10 +153,14 @@ export const SigningModal: React.FC<SigningModalProps> = ({
           />
         ) : signingProgress === 'success' ? (
           <MarkdownWrapper
-            markdown={getSuccessText(formatMessage, workingCase.type)}
+            markdown={formatMessage(m.successText, {
+              summarySentToPrison:
+                workingCase.type === CaseType.CUSTODY ||
+                workingCase.type === CaseType.ADMISSION_TO_FACILITY,
+            })}
           />
         ) : (
-          'Vinsamlegast reynið aftur svo hægt sé að senda úrskurðinn með undirritun.'
+          formatMessage(m.errorText)
         )
       }
       primaryButtonText={
@@ -180,14 +168,14 @@ export const SigningModal: React.FC<SigningModalProps> = ({
           ? ''
           : signingProgress === 'success'
           ? ''
-          : 'Undirrita seinna'
+          : formatMessage(m.primaryButtonErrorText)
       }
       secondaryButtonText={
         signingProgress === 'inProgress'
           ? undefined
           : signingProgress === 'success'
-          ? 'Loka glugga'
-          : 'Reyna aftur'
+          ? formatMessage(m.secondaryButtonSuccessText)
+          : formatMessage(m.secondaryButtonErrorText)
       }
       onPrimaryButtonClick={() => {
         if (navigateOnClose) {

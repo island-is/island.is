@@ -1,12 +1,14 @@
-import React, { FC, useEffect, useState } from 'react'
-import { defineMessage, FormattedMessage } from 'react-intl'
-
+import React, { FC } from 'react'
+import { defineMessage } from 'react-intl'
+import { ApolloError } from '@apollo/client/errors'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
-  NationalRegistryChild,
-  NationalRegistryXRoadChildGuardianship,
-} from '@island.is/api/schema'
-import * as styles from './ChildView.css'
-
+  formatNationalId,
+  NotFound,
+  UserInfoLine,
+  m,
+  IntroHeader,
+} from '@island.is/service-portal/core'
 import {
   Box,
   Button,
@@ -18,19 +20,13 @@ import {
   Stack,
 } from '@island.is/island-ui/core'
 import {
-  formatNationalId,
-  NotFound,
-  UserInfoLine,
-  m,
-  IntroHeader,
-} from '@island.is/service-portal/core'
-import { useFeatureFlagClient } from '@island.is/react/feature-flags'
-import { FeatureFlagClient } from '@island.is/feature-flags'
+  NationalRegistryChild,
+  NationalRegistryXRoadChildGuardianship,
+} from '@island.is/api/schema'
 
-import { useLocale, useNamespaces } from '@island.is/localization'
 import { TwoColumnUserInfoLine } from '../TwoColumnUserInfoLine/TwoColumnUserInfoLine'
 import ChildRegistrationModal from '../../screens/FamilyMember/ChildRegistrationModal'
-import { ApolloError } from '@apollo/client/errors'
+import * as styles from './ChildView.css'
 
 const dataNotFoundMessage = defineMessage({
   id: 'sp.family:data-not-found',
@@ -79,32 +75,6 @@ const ChildView: FC<Props> = ({
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
 
-  const livingArrangment = (
-    livingArrangementParents: Array<string> | undefined,
-    parent: string | undefined,
-  ) => {
-    return getLivesWithParent(livingArrangementParents, parent)
-      ? formatMessage(m.yes)
-      : formatMessage(m.no)
-  }
-
-  /**
-   * The ChildRegistration module is feature flagged
-   * Please remove all code when fully released.
-   */
-  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
-  const [modalFlagEnabled, setModalFlagEnabled] = useState<boolean>(false)
-  useEffect(() => {
-    const isFlagEnabled = async () => {
-      const ffEnabled = await featureFlagClient.getValue(
-        `servicePortalChildrenFamilyNotification`,
-        false,
-      )
-      setModalFlagEnabled(ffEnabled as boolean)
-    }
-    isFlagEnabled()
-  }, [])
-
   if (!nationalId || error || (!loading && !person))
     return (
       <NotFound
@@ -147,7 +117,7 @@ const ChildView: FC<Props> = ({
               flexDirection={['column', 'row']}
             >
               <Inline space={2}>
-                {!loading && !isChild && !modalFlagEnabled && (
+                {!loading && !isChild && (
                   <>
                     <ChildRegistrationModal
                       data={{

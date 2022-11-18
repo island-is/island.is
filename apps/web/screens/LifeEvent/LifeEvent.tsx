@@ -3,7 +3,7 @@ import { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
 import slugify from '@sindresorhus/slugify'
 import NextLink from 'next/link'
-import { richText, Slice as SliceType } from '@island.is/island-ui/contentful'
+import { Slice as SliceType } from '@island.is/island-ui/contentful'
 import {
   GridRow,
   GridColumn,
@@ -37,6 +37,7 @@ import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { useRouter } from 'next/router'
 import { Locale } from 'locale'
 import { useLocalLinkTypeResolver } from '@island.is/web/hooks/useLocalLinkTypeResolver'
+import { webRichText } from '@island.is/web/utils/richText'
 
 interface LifeEventProps {
   lifeEvent: GetLifeEventQuery['getLifeEventPage']
@@ -98,10 +99,10 @@ export const LifeEvent: Screen<LifeEventProps> = ({
       <HeadWithSocialSharing
         title={`${title} | Ísland.is`}
         description={intro}
-        imageUrl={image.url}
-        imageContentType={image.contentType}
-        imageWidth={image.width.toString()}
-        imageHeight={image.height.toString()}
+        imageUrl={image?.url}
+        imageContentType={image?.contentType}
+        imageWidth={image?.width?.toString()}
+        imageHeight={image?.height?.toString()}
       />
 
       <GridContainer id="main-content">
@@ -112,12 +113,14 @@ export const LifeEvent: Screen<LifeEventProps> = ({
             width="full"
             printHidden
           >
-            <BackgroundImage
-              ratio="12:4"
-              background="transparent"
-              boxProps={{ background: 'white' }}
-              image={image}
-            />
+            {image && (
+              <BackgroundImage
+                ratio="12:4"
+                background="transparent"
+                boxProps={{ background: 'white' }}
+                image={image}
+              />
+            )}
           </Box>
         </GridRow>
         <GridRow>
@@ -160,7 +163,7 @@ export const LifeEvent: Screen<LifeEventProps> = ({
                   />
                 </Box>
                 <Box paddingTop={[3, 3, 4]}>
-                  {richText(content as SliceType[])}
+                  {webRichText(content as SliceType[])}
                 </Box>
               </GridColumn>
             </GridRow>

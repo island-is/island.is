@@ -12,6 +12,7 @@ import type {
   CreatePresignedPost,
   DeleteFileResponse,
   CaseFile,
+  UpdateFile,
   PresignedPost,
   RequestSignatureResponse,
   SignatureConfirmationResponse,
@@ -36,6 +37,7 @@ import type {
 } from '@island.is/judicial-system/types'
 
 import { environment } from '../../environments'
+import { UpdateFilesResponse } from '../modules/file/models/updateFiles.response'
 
 @Injectable()
 export class BackendApi extends DataSource<{ req: Request }> {
@@ -89,6 +91,14 @@ export class BackendApi extends DataSource<{ req: Request }> {
   private delete<TResult>(route: string): Promise<TResult> {
     return this.callBackend<TResult>(route, {
       method: 'DELETE',
+      headers: this.headers,
+    })
+  }
+
+  private patch<TBody, TResult>(route: string, body: TBody): Promise<TResult> {
+    return this.callBackend<TResult>(route, {
+      method: 'PATCH',
+      body: JSON.stringify(body),
       headers: this.headers,
     })
   }
@@ -206,6 +216,17 @@ export class BackendApi extends DataSource<{ req: Request }> {
     id: string,
   ): Promise<UploadFileToCourtResponse> {
     return this.post(`case/${caseId}/file/${id}/court`)
+  }
+
+  async updateFiles(
+    caseId: string,
+    updates: UpdateFile[],
+  ): Promise<UpdateFilesResponse> {
+    const caseFiles: CaseFile[] = await this.patch<
+      { files: UpdateFile[] },
+      CaseFile[]
+    >(`case/${caseId}/files`, { files: updates })
+    return { caseFiles }
   }
 
   getPoliceCaseFiles(caseId: string): Promise<PoliceCaseFile[]> {

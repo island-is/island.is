@@ -12,32 +12,30 @@ import { clientInfoSection } from './shared/about/clientInfoSection'
 import { m } from '../../lib/messages'
 import { overviewSection } from './shared/overviewSection'
 import { Logo } from '../../components'
-import { CARETAKERLIMIT, USERTYPE, LESS } from '../../lib/constants'
 import { cemetryKeyNumbersSection } from './cemetry/cemetryKeyNumbers'
 import { partyKeyNumbersSection } from './party/partyKeyNumbers'
 import { individualKeyNumbersSection } from './individual/individualKeyNumbers'
 import { electionInfoSection } from './shared/electionInfo/electionInfo'
 import { sectionCemetryCaretaker } from './cemetry/sectionCemetryCaretaker'
-import { fakeDataSection } from '../prerequisites/fakeDataSection'
 import {
   currencyStringToNumber,
   getCurrentUserType,
 } from '../../lib/utils/helpers'
+import { FSIUSERTYPE, LESS } from '../../types'
 
 export const getApplication = (allowFakeData = false): Form => {
   return buildForm({
     id: 'FinancialStatementsInao',
     title: '',
-    renderLastScreenButton: true,
-    renderLastScreenBackButton: true,
+    renderLastScreenButton: false,
+    renderLastScreenBackButton: false,
     mode: FormModes.APPLYING,
     logo: Logo,
     children: [
       buildSection({
-        id: 'conditions',
+        id: 'ExternalDataSection',
         title: m.dataCollectionTitle,
         children: [
-          ...(allowFakeData ? [fakeDataSection] : []),
           buildExternalDataProvider({
             id: 'approveExternalData',
             title: m.dataCollectionTitle,
@@ -45,7 +43,7 @@ export const getApplication = (allowFakeData = false): Form => {
             dataProviders: [
               buildDataProviderItem({
                 id: 'nationalRegistry',
-                type: 'NationalRegistryProvider',
+                type: 'IdentityProvider',
                 title: m.dataCollectionNationalRegistryTitle,
                 subTitle: m.dataCollectionNationalRegistrySubtitle,
               }),
@@ -54,12 +52,6 @@ export const getApplication = (allowFakeData = false): Form => {
                 type: 'UserProfileProvider',
                 title: m.dataCollectionUserProfileTitle,
                 subTitle: m.dataCollectionUserProfileSubtitle,
-              }),
-              buildDataProviderItem({
-                id: 'currentUserType',
-                type: 'CurrentUserTypeProvider',
-                title: '',
-                subTitle: '',
               }),
             ],
           }),
@@ -80,19 +72,22 @@ export const getApplication = (allowFakeData = false): Form => {
         },
         children: [
           buildFileUploadField({
-            id: 'attachment.file',
+            id: 'attachments.file',
             title: m.upload,
             condition: (answers, externalData) => {
               const userType = getCurrentUserType(answers, externalData)
               const applicationAnswers = answers as FinancialStatementsInao
-              const currentAssets = applicationAnswers.cemetryAsset?.current
-              const isCemetry = userType === USERTYPE.CEMETRY
+              const careTakerLimit =
+                applicationAnswers.cemetryOperation?.incomeLimit ?? '0'
+              const currentAssets =
+                applicationAnswers.cemetryAsset?.fixedAssetsTotal
+              const isCemetry = userType === FSIUSERTYPE.CEMETRY
               const totalIncome = isCemetry
                 ? applicationAnswers.operatingCost?.total
                 : '0'
               const longTermDebt = applicationAnswers.cemetryLiability?.longTerm
               const isUnderLimit =
-                currencyStringToNumber(totalIncome) < CARETAKERLIMIT
+                currencyStringToNumber(totalIncome) < careTakerLimit
 
               if (
                 isCemetry &&
@@ -112,7 +107,6 @@ export const getApplication = (allowFakeData = false): Form => {
             uploadButtonLabel: m.uploadButtonLabel,
             uploadMultiple: false,
             forImageUpload: false,
-            doesNotRequireAnswer: true,
           }),
         ],
       }),

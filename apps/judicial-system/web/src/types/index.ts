@@ -33,19 +33,19 @@ export enum RestrictionCaseCourtSubsections {
 
 export enum IndictmentsProsecutorSubsections {
   DEFENDANT = 0,
-  PROCESSING = 1,
-  CASE_FILES = 2,
-  OVERVIEW = 3,
+  POLICE_CASE_FILES = 1,
+  CASE_FILE = 2,
+  PROCESSING = 3,
+  CASE_FILES = 4,
+  OVERVIEW = 5,
 }
 
 export enum IndictmentsCourtSubsections {
   JUDGE_OVERVIEW = 0,
   RECEPTION_AND_ASSIGNMENT = 1,
   SUBPEONA = 2,
-  HEARING_ARRANGEMENTS = 3,
-  RULING = 4,
-  COURT_RECORD = 5,
-  CONFIRMATION = 6,
+  PROSECUTOR_AND_DEFENDER = 3,
+  COURT_RECORD = 4,
 }
 
 export type ReactSelectOption = {

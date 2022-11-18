@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common'
 import { AuthMiddleware, User, Auth } from '@island.is/auth-nest-tools'
 import { FetchError } from '@island.is/clients/middlewares'
 
-import { ApiResponse, EinstaklingarApi } from '../../gen/fetch'
+import { ApiResponse, EinstaklingarApi, LyklarApi } from '../../gen/fetch'
 import { formatIndividualDto, IndividualDto } from './types/individual.dto'
 import {
   CohabitationDto,
@@ -16,6 +16,7 @@ import {
 import { FamilyDto, formatFamilyDto } from './types/family.dto'
 import { BirthplaceDto, formatBirthplaceDto } from './types/birthplace.dto'
 import { CitizenshipDto, formatCitizenshipDto } from './types/citizenship.dto'
+import { formatReligionDto, ReligionDto } from './types/religion.dto'
 
 const MODERN_IGNORED_STATUS = 204
 
@@ -31,7 +32,10 @@ const LEGACY_IGNORED_STATUSES = [
 
 @Injectable()
 export class NationalRegistryClientService {
-  constructor(private individualApi: EinstaklingarApi) {}
+  constructor(
+    private individualApi: EinstaklingarApi,
+    private keysApi: LyklarApi,
+  ) {}
 
   async getIndividual(nationalId: string): Promise<IndividualDto | null> {
     const individual = await this.handleModernMissingData(
@@ -136,6 +140,11 @@ export class NationalRegistryClientService {
     return formatCitizenshipDto(citizenship)
   }
 
+  async getReligionCodes(): Promise<ReligionDto[] | null> {
+    const codes = await this.keysApi.lyklarGetTrufelog()
+    return formatReligionDto(codes)
+  }
+
   private async handleLegacyMissingData<T>(
     promise: Promise<ApiResponse<T>>,
   ): Promise<T | null> {
@@ -171,6 +180,7 @@ export class NationalRegistryClientService {
   withManualAuth(auth: Auth): NationalRegistryClientService {
     return new NationalRegistryClientService(
       this.individualApi.withMiddleware(new AuthMiddleware(auth)),
+      this.keysApi.withMiddleware(new AuthMiddleware(auth)),
     )
   }
 }

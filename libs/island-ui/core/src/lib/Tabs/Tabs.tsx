@@ -1,14 +1,16 @@
 import React, { FC, ReactNode, useEffect, useState } from 'react'
 import cn from 'classnames'
+import { useWindowSize } from 'react-use'
 import { useTabState, Tab, TabList, TabPanel } from 'reakit/Tab'
+import { ValueType } from 'react-select'
+
+import { Colors, theme } from '@island.is/island-ui/theme'
 import { Box } from '../Box/Box'
 import { Select, Option } from '../Select/Select'
+import { FocusableBox } from '../FocusableBox/FocusableBox'
+import { isDefined } from '@island.is/shared/utils'
 
 import * as styles from './Tabs.css'
-import { ValueType } from 'react-select'
-import { Colors, theme } from '@island.is/island-ui/theme'
-import { FocusableBox } from '../FocusableBox/FocusableBox'
-import { useWindowSize } from 'react-use'
 
 type TabType = {
   label: string
@@ -22,6 +24,7 @@ interface TabInterface {
   tabs: TabType[]
   contentBackground?: Colors
   size?: 'xs' | 'sm' | 'md'
+  onChange?(id: string): void
 }
 
 export const Tabs: FC<TabInterface> = ({
@@ -30,10 +33,13 @@ export const Tabs: FC<TabInterface> = ({
   tabs,
   contentBackground = 'purple100',
   size = 'md',
+  onChange: onChangeHandler,
 }) => {
   const { loop, wrap, ...tab } = useTabState({
     selectedId: selected,
   })
+
+  const [prevCurrentId, setPrevCurrentId] = useState(tab.currentId)
 
   const selectOptions = tabs.map(({ label, disabled }, index) => {
     return {
@@ -43,7 +49,7 @@ export const Tabs: FC<TabInterface> = ({
     }
   })
 
-  const onChange = (option: ValueType<Option>) => {
+  const onSelect = (option: ValueType<Option>) => {
     const tabOption = option as Option
     tab.setCurrentId(tabOption?.value as string)
     tab.move(tabOption?.value as string)
@@ -59,6 +65,11 @@ export const Tabs: FC<TabInterface> = ({
     setIsMobile(false)
   }, [width])
 
+  if (isDefined(tab?.currentId) && prevCurrentId !== tab.currentId) {
+    onChangeHandler?.(tab?.currentId)
+    setPrevCurrentId(tab.currentId)
+  }
+
   return (
     <Box position="relative">
       <Box background={contentBackground} className={styles.bg} />
@@ -69,7 +80,7 @@ export const Tabs: FC<TabInterface> = ({
               size={size}
               name={label}
               label={label}
-              onChange={onChange}
+              onChange={onSelect}
               options={selectOptions}
               defaultValue={selectOptions[parseInt(selected)]}
               isSearchable={false}

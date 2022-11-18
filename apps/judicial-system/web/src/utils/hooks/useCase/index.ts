@@ -188,6 +188,7 @@ const useCase = () => {
             variables: {
               input: {
                 type: theCase.type,
+                indictmentSubtypes: theCase.indictmentSubtypes,
                 description: theCase.description,
                 policeCaseNumbers: theCase.policeCaseNumbers,
                 defenderName: theCase.defenderName,
@@ -278,7 +279,6 @@ const useCase = () => {
           variables: {
             input: {
               id: workingCase.id,
-              modified: workingCase.modified,
               transition,
             },
           },
@@ -359,7 +359,7 @@ const useCase = () => {
     [extendCaseMutation, formatMessage],
   )
 
-  const setAndSendToServer = async (
+  const setAndSendCaseToServer = async (
     updates: autofillEntry[],
     workingCase: Case,
     setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
@@ -406,7 +406,7 @@ const useCase = () => {
     isRequestingCourtRecordSignature,
     extendCase,
     isExtendingCase,
-    setAndSendToServer,
+    setAndSendCaseToServer,
   }
 }
 

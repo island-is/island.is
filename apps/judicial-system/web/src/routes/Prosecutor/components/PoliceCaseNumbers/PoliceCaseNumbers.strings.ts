@@ -1,6 +1,5 @@
 import { defineMessages } from 'react-intl'
 
-// Strings for the lokeCaseNumber component
 export const policeCaseNumber = defineMessages({
   heading: {
     id: 'judicial.system.core:police_case_number.heading',

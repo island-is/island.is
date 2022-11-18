@@ -11,6 +11,7 @@ import {
   formatDOB,
   formatPhoneNumber,
   displayFirstPlusRemaining,
+  splitStringByComma,
 } from './formatters'
 
 describe('formatDate', () => {
@@ -267,4 +268,29 @@ describe('displayFirstPlusRemaining', () => {
       'apple +2',
     )
   })
+})
+
+describe('splitStringByComma', () => {
+  test('should handle "apple" as input', () => {
+    expect(splitStringByComma('apple')).toEqual(['apple'])
+  })
+
+  test.each(['apple, pear', 'apple pear', 'apple,pear'])(
+    'should handle "%s" as input',
+    (input) => {
+      const result = splitStringByComma(input)
+
+      expect(result).toHaveLength(2)
+      expect(result).toEqual(['apple', 'pear'])
+    },
+  )
+  test.each(['apple, pear, orange', 'apple pear orange'])(
+    'should handle %s as input',
+    (input) => {
+      const result = splitStringByComma(input)
+
+      expect(result).toHaveLength(3)
+      expect(result).toEqual(['apple', 'pear', 'orange'])
+    },
+  )
 })

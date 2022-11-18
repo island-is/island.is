@@ -1,5 +1,5 @@
 import gql from 'graphql-tag'
-import { slices } from './fragments'
+import { slices, nestedFields } from './fragments'
 
 export const GET_ORGANIZATIONS_QUERY = gql`
   query GetOrganizations($input: GetOrganizationsInput!) {
@@ -111,6 +111,9 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
         logo {
           url
         }
+        namespace {
+          fields
+        }
         footerItems {
           title
           content {
@@ -170,6 +173,7 @@ export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
       slug
       description {
         ...AllSlices
+        ${nestedFields}
       }
       links {
         text
@@ -177,6 +181,7 @@ export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
       }
       slices {
         ...AllSlices
+        ${nestedFields}
       }
       showTableOfContents
       sliceCustomRenderer
@@ -254,6 +259,7 @@ export const GET_SYSLUMENN_AUCTIONS_QUERY = gql`
       auctionTime
       petitioners
       respondent
+      publishText
       auctionTakesPlaceAt
     }
   }
@@ -300,9 +306,17 @@ export const GET_OPERATING_LICENSES_QUERY = gql`
   }
 `
 
-export const MAILING_LIST_SIGNUP_MUTATION = gql`
-  mutation MailchimpSubscribe($input: MailchimpSubscribeInput!) {
-    mailchimpSubscribe(input: $input) {
+export const GET_OPERATING_LICENSES_CSV_QUERY = gql`
+  query GetOperatingLicensesCSV {
+    getOperatingLicensesCSV {
+      value
+    }
+  }
+`
+
+export const EMAIL_SIGNUP_MUTATION = gql`
+  mutation EmailSignupSubscription($input: EmailSignupInput!) {
+    emailSignupSubscription(input: $input) {
       subscribed
     }
   }

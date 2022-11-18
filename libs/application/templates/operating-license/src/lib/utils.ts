@@ -34,15 +34,6 @@ export const validateApplicationInfoCategory = ({
   }
 }
 
-export const hasYes = (answer: any) => {
-  if (Array.isArray(answer)) {
-    return answer.includes(YES)
-  }
-  if (answer instanceof Object) {
-    return Object.values(answer).includes(YES)
-  }
-  return answer === YES
-}
 const getHoursMinutes = (value: string) => {
   return {
     hours: parseInt(value.slice(0, 2)),
@@ -67,7 +58,7 @@ export const get24HFormatTime = (value: string) => {
   }
   const { hours, minutes } = getHoursMinutes(value)
 
-  return `${hours}:${minutes}`
+  return `${hours}:${minutes > 10 ? minutes : '0' + minutes}`
 }
 
 const vskNrRegex = /([0-9]){6}/
@@ -125,18 +116,4 @@ export const getChargeItemCode = (answers: FormValue) => {
       return 'AY121'
     }
   }
-}
-
-const getMobilePhoneNumber = (application: Application) => {
-  return (application.externalData.userProfile?.data as {
-    mobilePhoneNumber?: string
-  })?.mobilePhoneNumber
-}
-
-export const removeCountryCode = (application: Application) => {
-  return getMobilePhoneNumber(application)?.startsWith('+354')
-    ? getMobilePhoneNumber(application)?.slice(4)
-    : getMobilePhoneNumber(application)?.startsWith('00354')
-    ? getMobilePhoneNumber(application)?.slice(5)
-    : getMobilePhoneNumber(application)
 }

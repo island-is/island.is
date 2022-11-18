@@ -1,5 +1,5 @@
 import { BLOCKS } from '@contentful/rich-text-types'
-import { SliceType, richText } from '@island.is/island-ui/contentful'
+import { SliceType } from '@island.is/island-ui/contentful'
 import {
   Box,
   GridColumn,
@@ -7,9 +7,11 @@ import {
   GridRow,
   Hidden,
   Hyphen,
+  Link,
   Text,
 } from '@island.is/island-ui/core'
 import { FooterItem } from '@island.is/web/graphql/schema'
+import { webRichText } from '@island.is/web/utils/richText'
 
 import * as styles from './LandskjorstjornFooter.css'
 
@@ -41,7 +43,7 @@ export const LandskjorstjornFooter = ({
                 <Text variant="h2" color="white">
                   <Hyphen>{footerItems[0].title}</Hyphen>
                 </Text>
-                {richText(footerItems[0].content as SliceType[], {
+                {webRichText(footerItems[0].content as SliceType[], {
                   renderNode: {
                     [BLOCKS.PARAGRAPH]: (_node, children) => (
                       <Text
@@ -70,10 +72,20 @@ export const LandskjorstjornFooter = ({
           {footerItems.slice(1).map((item, index) => (
             <GridColumn key={index}>
               <Box marginLeft={index === 0 ? [2, 0] : 2} marginRight={8}>
-                <Text fontWeight="semiBold" color="white" marginBottom={2}>
-                  {item.title}
-                </Text>
-                {richText(item.content as SliceType[], {
+                <Box marginBottom={2}>
+                  {item.link?.url ? (
+                    <Link href={item.link.url} color="white">
+                      <Text fontWeight="semiBold" color="white">
+                        <Hyphen>{item.title}</Hyphen>
+                      </Text>
+                    </Link>
+                  ) : (
+                    <Text fontWeight="semiBold" color="white">
+                      <Hyphen>{item.title}</Hyphen>
+                    </Text>
+                  )}
+                </Box>
+                {webRichText(item.content as SliceType[], {
                   renderNode: {
                     [BLOCKS.PARAGRAPH]: (_node, children) => (
                       <Text color="white" variant="medium" marginBottom={2}>
