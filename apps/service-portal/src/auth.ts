@@ -47,7 +47,6 @@ if (userMocked) {
       DocumentsScope.main,
       EndorsementsScope.main,
       EndorsementsScope.admin,
-      ApiScope.airDiscountScheme,
       ApiScope.assets,
       ApiScope.education,
       ApiScope.educationLicense,

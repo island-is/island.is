@@ -22,7 +22,7 @@ type DiscountWithTUser = Discount & { user: TUser }
 const TWO_HOURS = 7200
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(ApiScope.airDiscountScheme)
+@Scopes(ApiScope.internal)
 @Audit({ namespace: '@island.is/air-discount-scheme' })
 export class AirDiscountSchemeResolver {
   constructor(private airDiscountSchemeService: AirDiscountSchemeService) {}
@@ -30,6 +30,7 @@ export class AirDiscountSchemeResolver {
   @Query(() => [Discount], { nullable: true })
   @Audit()
   async getDiscount(@CurrentUser() user: User) {
+    console.log('Yuppeeee')
     const relations: TUser[] = (await this.airDiscountSchemeService.getUserRelations(
       user,
     )) as TUser[]
