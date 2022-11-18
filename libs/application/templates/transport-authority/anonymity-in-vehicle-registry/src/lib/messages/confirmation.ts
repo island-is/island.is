@@ -16,12 +16,12 @@ export const confirmation = {
       id: 'ta.avr.application:confirmation.general.alertMessageTitle',
       defaultMessage:
         'Beiðni þín um nafnleynd í ökutækjaskrá hefur verið móttekin',
-      description: 'Conclusion general alert message title',
+      description: 'Confirmation general alert message title',
     },
     openMySiteLinkText: {
       id: 'ta.avr.application:confirmation.general.openMySiteLinkText',
       defaultMessage: 'Mínar síður',
-      description: 'Conclusion general open my site link text',
+      description: 'Confirmation general open my site link text',
     },
   }),
 }

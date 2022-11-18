@@ -6,7 +6,8 @@ import {
 import { Form, FormModes } from '@island.is/application/types'
 import Logo from '../assets/Logo'
 import {
-  information,
+  cardType,
+  applicant,
   externalData,
   payment,
   confirmation,
@@ -24,8 +25,13 @@ export const Confirmation: Form = buildForm({
       children: [],
     }),
     buildSection({
-      id: 'informationSection',
-      title: information.general.sectionTitle,
+      id: 'cardTypeSection',
+      title: cardType.general.sectionTitle,
+      children: [],
+    }),
+    buildSection({
+      id: 'applicantSection',
+      title: applicant.general.sectionTitle,
       children: [],
     }),
     buildSection({

@@ -68,35 +68,60 @@ export const externalData = {
   }),
   drivingLicense: defineMessages({
     title: {
-      id: 'ta.dtdc.application:externalData.drivingLicense.subTitle',
+      id: 'ta.dtdc.application:externalData.drivingLicense.title',
       defaultMessage: 'Upplýsingar úr ökuskírteinaskrá',
       description: 'Information from driving license registry',
     },
     subTitle: {
       id: 'ta.dtdc.application:externalData.drivingLicense.subTitle',
-      defaultMessage: 'Sóttar eru almennar upplýsingar um núverandi réttindi.',
+      defaultMessage: 'Mynd, undirskrift og réttindi',
       description: 'General information about current licenses.',
     },
     missing: {
       id: 'ta.dtdc.application:externalData.drivingLicense.missing',
       defaultMessage:
-        'Þú ert ekki með nauðsynleg réttindi til að sækja um blabla',
-      description: 'You do not have enough permission to apply blabla',
-    },
-  }),
-  nationalRegistryCustom: defineMessages({
-    missing: {
-      id: 'ta.dtdc.application:externalData.nationalRegistryCustom.missing',
-      defaultMessage: 'Þú ert ekki með lögheimili á Íslandi blabla',
-      description: 'You do not have a domicile in Iceland blabla',
+        'Þú ert ekki með nauðsynleg ökuréttindi til að sækja um ökuritakort',
+      description:
+        'You do not have enough driving permission to apply for a drivers card',
     },
   }),
   qualityPhotoAndSignature: defineMessages({
     missing: {
       id: 'ta.dtdc.application:externalData.qualityPhotoAndSignature.missing',
-      defaultMessage:
-        'Þú ert ekki með nauðsynleg réttindi til að sækja um blabla',
-      description: 'You do not have enough permission to apply blabla',
+      defaultMessage: 'Ekki fannst mynd og undirskrift úr ökuskírteinaskrá',
+      description:
+        'Did not find photo and signature in driving license registry',
+    },
+  }),
+  newestDriversCard: defineMessages({
+    title: {
+      id: 'ta.dtdc.application:externalData.newestDriversCard.title',
+      defaultMessage: 'Upplýsingar úr ökutækjaskrá',
+      description: 'Information from the vehicle registry',
+    },
+    subTitle: {
+      id: 'ta.dtdc.application:externalData.newestDriversCard.subTitle',
+      defaultMessage: 'Fyrir íslensk útgefin ökumannskort',
+      description: 'For drivers cards published in Iceland',
+    },
+  }),
+  tachonetDriversCard: defineMessages({
+    title: {
+      id: 'ta.dtdc.application:externalData.tachonetDriversCard.title',
+      defaultMessage: 'Upplýsingar úr Tacho net ',
+      description: 'Information from the vehicle registry',
+    },
+    subTitle: {
+      id: 'ta.dtdc.application:externalData.tachonetDriversCard.subTitle',
+      defaultMessage: 'Fyrir erlend útgefin ökumannskort',
+      description: 'For drivers cards published in Iceland',
+    },
+  }),
+  nationalRegistryCustom: defineMessages({
+    missing: {
+      id: 'ta.dtdc.application:externalData.nationalRegistryCustom.missing',
+      defaultMessage: 'Þú ert ekki með lögheimili á Íslandi',
+      description: 'You do not have a domicile in Iceland',
     },
   }),
 }

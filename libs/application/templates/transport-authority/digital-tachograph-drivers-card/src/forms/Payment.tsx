@@ -8,7 +8,8 @@ import {
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import {
-  information,
+  cardType,
+  applicant,
   externalData,
   payment,
   confirmation,
@@ -33,8 +34,13 @@ export const Payment: Form = buildForm({
       children: [],
     }),
     buildSection({
-      id: 'informationSection',
-      title: information.general.sectionTitle,
+      id: 'cardTypeSection',
+      title: cardType.general.sectionTitle,
+      children: [],
+    }),
+    buildSection({
+      id: 'applicantSection',
+      title: applicant.general.sectionTitle,
       children: [],
     }),
     buildSection({

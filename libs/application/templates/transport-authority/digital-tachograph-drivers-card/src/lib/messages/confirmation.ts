@@ -14,18 +14,18 @@ export const confirmation = {
     },
     alertMessageTitle: {
       id: 'ta.dtdc.application:confirmation.general.alertMessageTitle',
-      defaultMessage: 'Umsókn móttekin',
-      description: 'Conclusion general alert message title',
+      defaultMessage: 'Umsókn um ökuritakort hefur verið móttekin!',
+      description: 'Confirmation general alert message title',
     },
     alertMessageText: {
       id: 'ta.dtdc.application:confirmation.general.alertMessageText',
-      defaultMessage: 'Umsókn hefur verið móttekin',
-      description: 'Conclusion general alert message text',
+      defaultMessage: 'Ökumannskortið verður sent á lögheimili yðar',
+      description: 'Confirmation general alert message text',
     },
     openMySiteLinkText: {
       id: 'ta.dtdc.application:confirmation.general.openMySiteLinkText',
       defaultMessage: 'Mínar síður',
-      description: 'Conclusion general open my site link text',
+      description: 'Confirmation general open my site link text',
     },
   }),
 }

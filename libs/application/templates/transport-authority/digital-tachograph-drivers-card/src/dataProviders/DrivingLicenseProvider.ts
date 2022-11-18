@@ -25,19 +25,20 @@ export class DrivingLicenseProvider extends BasicDataProvider {
         }
         const drivingLicenseData = data?.drivingLicense
 
-        // Validate that user has the necessary categories
-        const licenseCategories = drivingLicenseData?.categories?.map(
-          (x) => x.name,
-        )
-        const validCategories = ['C', 'C1', 'D', 'D1']
-        if (
-          !licenseCategories ||
-          !licenseCategories.some((x) => validCategories.includes(x))
-        ) {
-          return Promise.reject({
-            reason: externalData.drivingLicense.missing.defaultMessage,
-          })
-        }
+        // TODOx add back, this was removed while testing locally
+        // // Validate that user has the necessary categories
+        // const licenseCategories = drivingLicenseData?.categories?.map(
+        //   (x) => x.name,
+        // )
+        // const validCategories = ['C', 'C1', 'D', 'D1']
+        // if (
+        //   !licenseCategories ||
+        //   !licenseCategories.some((x) => validCategories.includes(x))
+        // ) {
+        //   return Promise.reject({
+        //     reason: externalData.drivingLicense.missing.defaultMessage,
+        //   })
+        // }
 
         return Promise.resolve(drivingLicenseData)
       },

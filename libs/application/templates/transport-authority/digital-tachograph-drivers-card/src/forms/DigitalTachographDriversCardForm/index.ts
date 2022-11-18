@@ -1,7 +1,8 @@
 import { buildForm, buildSection } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { confirmation } from '../../lib/messages'
-import { informationSection } from './InformationSection'
+import { cardTypeSection } from './CardTypeSection'
+import { applicantSection } from './ApplicantSection'
 import { paymentSection } from './paymentSection'
 import { prerequisitesSection } from './prerequisitesSection'
 
@@ -13,7 +14,8 @@ export const DigitalTachographDriversCardForm: Form = buildForm({
   renderLastScreenBackButton: true,
   children: [
     prerequisitesSection,
-    informationSection,
+    cardTypeSection,
+    applicantSection,
     paymentSection,
     buildSection({
       id: 'confirmation',

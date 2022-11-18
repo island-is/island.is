@@ -16,18 +16,18 @@ export const confirmation = {
       id: 'ta.ovrc.application:confirmation.general.alertMessageTitle',
       defaultMessage:
         'Pöntun þín á skráningarskírteini fyrir {permno} hefur verið staðfest',
-      description: 'Conclusion general alert message title',
+      description: 'Confirmation general alert message title',
     },
     alertMessageText: {
       id: 'ta.ovrc.application:confirmation.general.alertMessageText',
       defaultMessage:
         'Skírteinið verður sent í pósti á skráð lögheimili eiganda',
-      description: 'Conclusion general alert message text',
+      description: 'Confirmation general alert message text',
     },
     openMySiteLinkText: {
       id: 'ta.ovrc.application:confirmation.general.openMySiteLinkText',
       defaultMessage: 'Mínar síður',
-      description: 'Conclusion general open my site link text',
+      description: 'Confirmation general open my site link text',
     },
   }),
 }

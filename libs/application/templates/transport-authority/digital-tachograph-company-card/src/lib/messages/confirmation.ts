@@ -15,17 +15,17 @@ export const confirmation = {
     alertMessageTitle: {
       id: 'ta.dtcc.application:confirmation.general.alertMessageTitle',
       defaultMessage: 'Umsókn móttekin',
-      description: 'Conclusion general alert message title',
+      description: 'Confirmation general alert message title',
     },
     alertMessageText: {
       id: 'ta.dtcc.application:confirmation.general.alertMessageText',
       defaultMessage: 'Umsókn hefur verið móttekin',
-      description: 'Conclusion general alert message text',
+      description: 'Confirmation general alert message text',
     },
     openMySiteLinkText: {
       id: 'ta.dtcc.application:confirmation.general.openMySiteLinkText',
       defaultMessage: 'Mínar síður',
-      description: 'Conclusion general open my site link text',
+      description: 'Confirmation general open my site link text',
     },
   }),
 }

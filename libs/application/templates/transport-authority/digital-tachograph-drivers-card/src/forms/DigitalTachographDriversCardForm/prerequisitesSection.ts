@@ -28,11 +28,6 @@ export const prerequisitesSection = buildSection({
           subTitle: externalData.userProfile.subTitle,
         }),
         buildDataProviderItem({
-          id: 'payment',
-          type: 'PaymentChargeInfoProvider',
-          title: '',
-        }),
-        buildDataProviderItem({
           id: 'drivingLicense',
           type: 'DrivingLicenseProvider',
           title: externalData.drivingLicense.title,
@@ -46,11 +41,23 @@ export const prerequisitesSection = buildSection({
         buildDataProviderItem({
           id: 'newestDriversCard',
           type: 'NewestDriversCardProvider',
-          title: '',
+          title: externalData.newestDriversCard.title,
+          subTitle: externalData.newestDriversCard.subTitle,
+        }),
+        buildDataProviderItem({
+          id: 'tachonetDriversCard',
+          type: '', // Note: will leave empty since we need more information from user before getting data from TachoNet
+          title: externalData.tachonetDriversCard.title,
+          subTitle: externalData.tachonetDriversCard.subTitle,
         }),
         buildDataProviderItem({
           id: 'nationalRegistryCustom',
           type: 'NationalRegistryCustomProvider',
+          title: '',
+        }),
+        buildDataProviderItem({
+          id: 'payment',
+          type: 'PaymentChargeInfoProvider',
           title: '',
         }),
       ],
