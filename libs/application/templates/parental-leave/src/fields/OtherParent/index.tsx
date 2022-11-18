@@ -9,7 +9,7 @@ import { useLocale } from '@island.is/localization'
 import { Box, Text } from '@island.is/island-ui/core'
 import { RadioFormField } from '@island.is/application/ui-fields'
 import { getOtherParentOptions } from '../../lib/parentalLeaveUtils'
-import { SPOUSE, NO, SINGLE } from '../../constants'
+import { SPOUSE, NO } from '../../constants'
 import { useFormContext } from 'react-hook-form'
 
 export const OtherParent: FC<FieldBaseProps> = ({ application, field }) => {
@@ -32,7 +32,7 @@ export const OtherParent: FC<FieldBaseProps> = ({ application, field }) => {
           options: (application) =>
             getOtherParentOptions(application, formatMessage),
           onSelect: (s: string) => {
-            if (s === SPOUSE || s === NO || s === SINGLE) {
+            if (s === SPOUSE || s === NO) {
               setValue('otherParentObj.otherParentName', '')
               setValue('otherParentObj.otherParentId', '')
             }
