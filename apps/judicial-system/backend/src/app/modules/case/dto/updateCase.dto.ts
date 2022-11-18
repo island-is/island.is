@@ -21,7 +21,10 @@ import {
   SubpoenaType,
   CaseType,
 } from '@island.is/judicial-system/types'
-import type { IndictmentSubtypeMap } from '@island.is/judicial-system/types'
+import type {
+  IndictmentSubtypeMap,
+  CrimeSceneMap,
+} from '@island.is/judicial-system/types'
 
 export class UpdateCaseDto {
   @IsOptional()
@@ -355,4 +358,9 @@ export class UpdateCaseDto {
   @IsBoolean()
   @ApiPropertyOptional()
   readonly defendantWaivesRightToCounsel?: boolean
+
+  @IsOptional()
+  @IsObject()
+  @ApiPropertyOptional()
+  readonly crimeScenes?: CrimeSceneMap
 }

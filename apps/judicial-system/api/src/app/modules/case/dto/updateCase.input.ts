@@ -14,6 +14,7 @@ import type {
   SubpoenaType,
   CaseType,
   IndictmentSubtypeMap,
+  CrimeSceneMap,
 } from '@island.is/judicial-system/types'
 
 @InputType()
@@ -285,4 +286,8 @@ export class UpdateCaseInput implements UpdateCase {
   @Allow()
   @Field({ nullable: true })
   readonly defendantWaivesRightToCounsel?: boolean
+
+  @Allow()
+  @Field(() => GraphQLJSONObject, { nullable: true })
+  readonly crimeScenes?: CrimeSceneMap
 }

@@ -15,6 +15,7 @@ import type {
   CaseOrigin,
   SubpoenaType,
   IndictmentSubtypeMap,
+  CrimeSceneMap,
 } from '@island.is/judicial-system/types'
 
 import { Defendant } from '../../defendant'
@@ -276,4 +277,7 @@ export class Case implements TCase {
 
   @Field(() => Boolean, { nullable: true })
   readonly defendantWaivesRightToCounsel?: boolean
+
+  @Field(() => GraphQLJSONObject, { nullable: true })
+  readonly crimeScenes?: CrimeSceneMap
 }

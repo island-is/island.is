@@ -25,7 +25,10 @@ import {
   CaseOrigin,
   SubpoenaType,
 } from '@island.is/judicial-system/types'
-import type { IndictmentSubtypeMap } from '@island.is/judicial-system/types'
+import type {
+  IndictmentSubtypeMap,
+  CrimeSceneMap,
+} from '@island.is/judicial-system/types'
 
 import { CaseFile } from '../../file'
 import { Institution } from '../../institution'
@@ -896,7 +899,7 @@ export class Case extends Model {
   isArchived?: boolean
 
   /**********
-   * The date and time of when when the defender in a case opened the case
+   * The date and time of when the defender in a case opened the case
    **********/
   @Column({
     type: DataType.DATE,
@@ -916,6 +919,9 @@ export class Case extends Model {
   @ApiProperty({ enum: SubpoenaType })
   subpoenaType?: SubpoenaType
 
+  /**********
+   * Indicates whether the defendant waives her right to counsel
+   **********/
   @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
@@ -923,4 +929,14 @@ export class Case extends Model {
   })
   @ApiProperty()
   defendantWaivesRightToCounsel!: boolean
+
+  /**********
+   * The crime scenes of the case
+   **********/
+  @Column({
+    type: DataType.JSON,
+    allowNull: true,
+  })
+  @ApiProperty()
+  crimeScenes?: CrimeSceneMap
 }

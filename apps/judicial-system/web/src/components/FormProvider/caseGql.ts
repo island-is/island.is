@@ -168,6 +168,7 @@ const CaseQuery = gql`
       seenByDefender
       subpoenaType
       defendantWaivesRightToCounsel
+      crimeScenes
     }
   }
 `

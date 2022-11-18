@@ -73,9 +73,17 @@ export enum IndictmentSubtype {
   UTILITY_THEFT = 'UTILITY_THEFT',
   WEPONS_VIOLATION = 'WEPONS_VIOLATION',
 }
-
 export interface IndictmentSubtypeMap {
   [key: string]: IndictmentSubtype[]
+}
+
+export interface CrimeScene {
+  place?: string
+  date?: Date
+}
+
+export interface CrimeSceneMap {
+  [key: string]: CrimeScene
 }
 
 export enum CaseState {
@@ -232,6 +240,7 @@ export interface Case {
   seenByDefender?: string
   subpoenaType?: SubpoenaType
   defendantWaivesRightToCounsel?: boolean
+  crimeScenes?: CrimeSceneMap
 }
 
 export type CreateCase = Pick<
@@ -310,6 +319,7 @@ export interface UpdateCase
     | 'seenByDefender'
     | 'subpoenaType'
     | 'defendantWaivesRightToCounsel'
+    | 'crimeScenes'
   > {
   type?: CaseType
   policeCaseNumbers?: string[]

@@ -27,6 +27,11 @@ export const caseFilesRecord = defineMessages({
     defaultMessage: 'Sakarefni:',
     description: 'Notaður fyrir titil á sakarefni í PDF skjalaskrá',
   },
+  crimeScene: {
+    id: 'judicial.system.backend:case_files_record.crime_scene',
+    defaultMessage: 'Vettvangur/tími:',
+    description: 'Notaður fyrir titil á vettvangi/tíma í PDF skjalaskrá',
+  },
   tableOfContentsHeading: {
     id: 'judicial.system.backend:case_files_record.table_of_contents_heading',
     defaultMessage: 'Rannsóknargögn',

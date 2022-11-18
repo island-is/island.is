@@ -20,7 +20,6 @@ import {
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
-import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   CaseFileCategory,
   CaseFileState,
@@ -351,10 +350,7 @@ export class CaseService {
 
         return {
           chapter: caseFile.chapter as number,
-          date: formatDate(
-            caseFile.displayDate ?? caseFile.created,
-            'dd.MM.yyyy',
-          ) as string,
+          date: caseFile.displayDate ?? caseFile.created,
           name: caseFile.userGeneratedFilename ?? caseFile.name,
           buffer: buffer ?? undefined,
         }
