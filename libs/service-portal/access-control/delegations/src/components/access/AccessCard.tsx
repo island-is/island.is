@@ -14,7 +14,6 @@ import {
   Tooltip,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { coreMessages } from '@island.is/application/core'
 import { AuthCustomDelegation } from '@island.is/api/schema'
 import { AuthDelegationType } from '@island.is/service-portal/graphql'
 import { useMemo } from 'react'
@@ -281,7 +280,7 @@ export const AccessCard = ({
                     variant="utility"
                     onClick={() => history.push(href)}
                   >
-                    {formatMessage(coreMessages.buttonEdit)}
+                    {formatMessage(m.buttonEdit)}
                   </Button>
                 ) : (
                   <Button

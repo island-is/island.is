@@ -1,15 +1,16 @@
 import React, { FC, ReactNode, useEffect, useMemo, useState } from 'react'
 import cn from 'classnames'
+import { useWindowSize } from 'react-use'
 import { useTabState, Tab, TabList, TabPanel } from 'reakit/Tab'
+import { ValueType } from 'react-select'
+
+import { Colors, theme } from '@island.is/island-ui/theme'
 import { Box } from '../Box/Box'
 import { Select, Option } from '../Select/Select'
+import { FocusableBox } from '../FocusableBox/FocusableBox'
+import { isDefined } from '@island.is/shared/utils'
 
 import * as styles from './Tabs.css'
-import { ValueType } from 'react-select'
-import { Colors, theme } from '@island.is/island-ui/theme'
-import { FocusableBox } from '../FocusableBox/FocusableBox'
-import { useWindowSize } from 'react-use'
-import { isDefined } from '@island.is/shared/utils'
 
 type TabType = {
   /**
@@ -63,7 +64,7 @@ export const Tabs: FC<TabInterface> = ({
     }
   })
 
-  const onChange = (option: ValueType<Option>) => {
+  const onSelect = (option: ValueType<Option>) => {
     const tabOption = option as Option
     tab.setCurrentId(tabOption?.value as string)
     tab.move(tabOption?.value as string)
@@ -97,7 +98,7 @@ export const Tabs: FC<TabInterface> = ({
               size={size}
               name={label}
               label={label}
-              onChange={onChange}
+              onChange={onSelect}
               options={selectOptions}
               defaultValue={selectOptions[parseInt(selected)]}
               isSearchable={false}

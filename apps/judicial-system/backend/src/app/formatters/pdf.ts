@@ -105,8 +105,8 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
     fontSize: number,
     x: number,
     y?: number,
-    spaceAbove?: number,
-    spaceBelow?: number,
+    spaceAbove = 0,
+    spaceBelow = spacing.line,
     pageLink?: PageLink,
     newLine = true,
   ) => {
@@ -115,13 +115,13 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
     if (y !== undefined) {
       currentYPosition = y
     } else if (
-      currentYPosition + (spaceAbove ?? 0) * spacing.line + fontSize >
+      currentYPosition + spaceAbove * spacing.line + fontSize >
       page.getHeight() - margins.bottom
     ) {
       pdfDocument.addPage(currentPage + 1)
       page = rawDocument.getPage(currentPage)
     } else {
-      currentYPosition += (spaceAbove ?? 0) * spacing.line
+      currentYPosition += spaceAbove * spacing.line
     }
 
     drawTextAbsolute(
@@ -135,7 +135,7 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
     )
 
     if (newLine) {
-      currentYPosition += fontSize + (spaceBelow ?? spacing.line)
+      currentYPosition += fontSize + spaceBelow
     }
   }
 

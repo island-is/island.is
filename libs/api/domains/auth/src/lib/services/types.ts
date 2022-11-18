@@ -79,10 +79,10 @@ export interface MergedDelegationDTO {
 }
 
 export enum DelegationProvider {
-  Thjodskra = 'thjodskra',
-  Fyrirtaekjaskra = 'fyrirtaekjaskra',
-  Talsmannagrunnur = 'talsmannagrunnur',
-  Delegationdb = 'delegationdb',
+  thjodskra = 'thjodskra',
+  fyrirtaekjaskra = 'fyrirtaekjaskra',
+  talsmannagrunnur = 'talsmannagrunnur',
+  delegationdb = 'delegationdb',
 }
 
 export enum DelegationType {

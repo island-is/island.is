@@ -3,6 +3,7 @@ import { MessageDescriptor } from 'react-intl'
 
 import {
   Box,
+  BoxProps,
   GridColumn,
   GridRow,
   Hidden,
@@ -16,6 +17,7 @@ interface Props {
   intro?: MessageDescriptor | string
   img?: string
   hideImgPrint?: boolean
+  marginBottom?: BoxProps['marginBottom']
 }
 
 export const IntroHeader = ({
@@ -23,10 +25,11 @@ export const IntroHeader = ({
   intro,
   img,
   hideImgPrint = false,
+  marginBottom = 6,
 }: Props) => {
   const { formatMessage } = useLocale()
   return (
-    <GridRow marginBottom={[0, 0, 6]}>
+    <GridRow marginBottom={marginBottom}>
       <GridColumn span={['8/8', '5/8']} order={1}>
         <Text variant="h3" as="h1">
           {formatMessage(title)}
