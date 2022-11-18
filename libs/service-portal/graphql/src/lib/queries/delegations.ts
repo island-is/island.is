@@ -32,40 +32,14 @@ export const AUTH_DELEGATIONS_QUERY = gql`
         nationalId
         name
       }
+      from {
+        nationalId
+        name
+      }
       ... on AuthCustomDelegation {
         ...AuthCustomDelegationFragment
       }
     }
   }
   ${authCustomDelegationFragment}
-`
-
-// Delegations Incoming
-// TODO use real delegation incoming query when ready in Graphql
-export const AUTH_DELEGATIONS_INCOMING_QUERY = gql`
-  query AuthDelegationsIncoming($input: AuthDelegationsInput!) {
-    authDelegations(input: $input) {
-      id
-      type
-      from {
-        nationalId
-        name
-      }
-      ... on AuthCustomDelegation {
-        validTo
-        scopes {
-          id
-          name
-          validTo
-          displayName
-        }
-        domain {
-          name
-          displayName
-          organisationLogoKey
-          organisationLogoUrl
-        }
-      }
-    }
-  }
 `

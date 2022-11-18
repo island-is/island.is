@@ -10,7 +10,10 @@ import { isDefined } from '@island.is/shared/utils'
 import { AuthCustomDelegation } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
-import { useAuthDelegationsQuery } from '@island.is/service-portal/graphql'
+import {
+  AuthDelegationDirection,
+  useAuthDelegationsQuery,
+} from '@island.is/service-portal/graphql'
 import { AccessCard } from '../../access/AccessCard'
 import { AccessDeleteModal } from '../../access/AccessDeleteModal'
 import { DelegationsEmptyState } from '../DelegationsEmptyState'
@@ -30,6 +33,7 @@ export const DelegationsOutgoing = () => {
     variables: {
       input: {
         domain: domainName,
+        direction: AuthDelegationDirection.Outgoing,
       },
       lang,
     },

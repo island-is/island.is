@@ -123,9 +123,7 @@ export const AccessCard = ({
   }
 
   const showActions =
-    isOutgoing ||
-    delegation.type === AuthDelegationType.Custom ||
-    delegation.type === AuthDelegationType.ProcurationHolder
+    isOutgoing || delegation.type === AuthDelegationType.Custom
 
   return (
     <Box

@@ -9,7 +9,11 @@ import sortBy from 'lodash/sortBy'
 import { AuthCustomDelegation } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
-import { useAuthDelegationsIncomingQuery } from '@island.is/service-portal/graphql'
+import {
+  AuthDelegationDirection,
+  AuthDelegationType,
+  useAuthDelegationsQuery,
+} from '@island.is/service-portal/graphql'
 import { AccessDeleteModal } from '../../access/AccessDeleteModal'
 import { AccessCard } from '../../access/AccessCard'
 import { DelegationsEmptyState } from '../DelegationsEmptyState'
@@ -20,13 +24,12 @@ export const DelegationsIncoming = () => {
     null,
   )
 
-  const { data, loading, refetch, error } = useAuthDelegationsIncomingQuery({
+  const { data, loading, refetch, error } = useAuthDelegationsQuery({
     variables: {
       input: {
-        domain: null,
+        direction: AuthDelegationDirection.Incoming,
       },
-      // TODO enable when backend is ready
-      //lang,
+      lang,
     },
     // Make sure that loading state is shown when refetching
     notifyOnNetworkStatusChange: true,
@@ -38,7 +41,7 @@ export const DelegationsIncoming = () => {
     () =>
       sortBy(
         data?.authDelegations as AuthCustomDelegation[],
-        (d) => d.to?.name,
+        (d) => d.from?.name,
       ) ?? [],
     [data?.authDelegations],
   )
@@ -61,7 +64,11 @@ export const DelegationsIncoming = () => {
               (delegation) =>
                 delegation.from && (
                   <AccessCard
-                    key={delegation.id}
+                    key={
+                      delegation.type === AuthDelegationType.Custom
+                        ? delegation.id
+                        : `${delegation.type}-${delegation.from.nationalId}`
+                    }
                     delegation={delegation}
                     onDelete={(delegation) => {
                       setDelegation(delegation)
@@ -81,7 +88,7 @@ export const DelegationsIncoming = () => {
           setDelegation(null)
           refetch({
             input: {
-              domain: null,
+              direction: AuthDelegationDirection.Incoming,
             },
           })
         }}
