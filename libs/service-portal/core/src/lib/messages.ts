@@ -817,7 +817,6 @@ export const m = defineMessages({
     id: 'service.portal:clear-selected',
     defaultMessage: 'Hreinsa val',
   },
-<<<<<<< HEAD
   yes: {
     id: 'service.portal:yes',
     defaultMessage: 'Já',
@@ -825,7 +824,7 @@ export const m = defineMessages({
   no: {
     id: 'service.portal:no',
     defaultMessage: 'Nei',
-=======
+  },
   errorTitle: {
     id: 'service.portal:error-screen-title',
     defaultMessage: 'Villa',
@@ -849,6 +848,5 @@ export const m = defineMessages({
     id: 'service.portal:button.renew',
     defaultMessage: 'Endurnýja',
     description: 'Renew',
->>>>>>> main
   },
 })

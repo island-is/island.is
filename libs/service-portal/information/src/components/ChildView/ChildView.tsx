@@ -75,6 +75,15 @@ const ChildView: FC<Props> = ({
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
 
+  const livingArrangment = (
+    livingArrangementParents: Array<string> | undefined,
+    parent: string | undefined,
+  ) => {
+    return getLivesWithParent(livingArrangementParents, parent)
+      ? formatMessage(m.yes)
+      : formatMessage(m.no)
+  }
+
   if (!nationalId || error || (!loading && !person))
     return (
       <NotFound
