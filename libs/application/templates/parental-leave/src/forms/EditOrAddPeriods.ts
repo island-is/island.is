@@ -83,7 +83,8 @@ export const EditOrAddPeriods: Form = buildForm({
 
                     return (
                       firstPeriodRequestingSpecificStartDate ||
-                      periods.length !== 0
+                      periods.length !== 0 ||
+                      !!currentPeriod?.firstPeriodStart
                     )
                   },
                   minDate: (application: Application) => {
@@ -144,8 +145,9 @@ export const EditOrAddPeriods: Form = buildForm({
                   id: 'endDate',
                   condition: (answers) => {
                     const { rawPeriods } = getApplicationAnswers(answers)
+                    const period = rawPeriods[rawPeriods.length - 1]
 
-                    return rawPeriods[rawPeriods.length - 1]?.useLength === YES
+                    return period?.useLength === YES && !!period?.startDate
                   },
                   title: parentalLeaveFormMessages.duration.title,
                   component: 'Duration',
@@ -157,8 +159,9 @@ export const EditOrAddPeriods: Form = buildForm({
                     component: 'PeriodEndDate',
                     condition: (answers) => {
                       const { rawPeriods } = getApplicationAnswers(answers)
+                      const period = rawPeriods[rawPeriods.length - 1]
 
-                      return rawPeriods[rawPeriods.length - 1]?.useLength === NO
+                      return period?.useLength === NO && !!period?.startDate
                     },
                   },
                   {
@@ -188,6 +191,12 @@ export const EditOrAddPeriods: Form = buildForm({
                   title: parentalLeaveFormMessages.ratio.title,
                   description: parentalLeaveFormMessages.ratio.description,
                   component: 'PeriodPercentage',
+                  condition: (answers) => {
+                    const { rawPeriods } = getApplicationAnswers(answers)
+                    const period = rawPeriods[rawPeriods.length - 1]
+
+                    return !!period?.startDate && !!period?.endDate
+                  },
                 }),
               ],
             }),
