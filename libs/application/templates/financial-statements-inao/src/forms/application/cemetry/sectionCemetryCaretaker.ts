@@ -3,20 +3,21 @@ import {
   buildSection,
   buildMultiField,
 } from '@island.is/application/core'
-import { CEMETRYCARETAKER, USERTYPE } from '../../../lib/constants'
+import { CEMETRYCARETAKER } from '../../../lib/constants'
 import { m } from '../../../lib/messages'
 import { FinancialStatementsInao } from '../../../lib/utils/dataSchema'
 import {
   currencyStringToNumber,
   getCurrentUserType,
 } from '../../../lib/utils/helpers'
+import { FSIUSERTYPE } from '../../../types'
 
 export const sectionCemetryCaretaker = buildSection({
   id: 'cemetryCaretaker',
   title: m.cemeteryCaretakers,
   condition: (answers, externalData) => {
     const userType = getCurrentUserType(answers, externalData)
-    if (userType !== USERTYPE.CEMETRY) {
+    if (userType !== FSIUSERTYPE.CEMETRY) {
       return false
     }
     const applicationAnswers = answers as FinancialStatementsInao

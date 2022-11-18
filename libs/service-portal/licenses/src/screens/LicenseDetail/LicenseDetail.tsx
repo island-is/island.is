@@ -289,8 +289,9 @@ const DataFields = ({
                 {field.fields && field.fields.length > pageSize && (
                   <Box marginY={3}>
                     <Pagination
+                      totalItems={field.fields.length}
+                      itemsPerPage={pageSize}
                       page={page}
-                      totalPages={Math.ceil(field.fields.length / pageSize)}
                       renderLink={(page, className, children) => (
                         <Box
                           cursor="pointer"

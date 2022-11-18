@@ -6,6 +6,7 @@ import {
   CaseOrigin,
   CaseState,
   CaseType,
+  IndictmentSubtype,
 } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
@@ -146,7 +147,7 @@ describe('InternalCaseController - Deliver', () => {
       const caseId = uuid()
       const caseType = CaseType.CUSTODY
       const caseState = CaseState.ACCEPTED
-      const policeCaseNumbers = [uuid()]
+      const policeCaseNumber = uuid()
       const defendantNationalId = uuid()
       const caseConclusion = 'test conclusion'
       const theCase = {
@@ -154,7 +155,7 @@ describe('InternalCaseController - Deliver', () => {
         origin: CaseOrigin.LOKE,
         type: caseType,
         state: caseState,
-        policeCaseNumbers,
+        policeCaseNumbers: [policeCaseNumber],
         defendants: [{ nationalId: defendantNationalId }],
         conclusion: caseConclusion,
       } as Case
@@ -183,7 +184,7 @@ describe('InternalCaseController - Deliver', () => {
           caseType,
           caseState,
           pdf,
-          policeCaseNumbers,
+          policeCaseNumber,
           [defendantNationalId],
           caseConclusion,
         )
@@ -195,78 +196,82 @@ describe('InternalCaseController - Deliver', () => {
     })
   })
 
-  describe('deliver S case', () => {
-    const caseId = uuid()
-    const caseType = CaseType.THEFT
-    const caseState = CaseState.ACCEPTED
-    const policeCaseNumbers = [uuid()]
-    const defendantNationalId = uuid()
-    const courtId = uuid()
-    const courtCaseNumber = uuid()
-    const caseConclusion = 'test conclusion'
-    const ruling = {
-      category: CaseFileCategory.RULING,
-    } as CaseFile
-    const courtRecordKey = uuid()
-    const courtRecord = {
-      category: CaseFileCategory.COURT_RECORD,
-      key: courtRecordKey,
-    } as CaseFile
-    const courtRecordPdf = Buffer.from('test court record')
-    const theCase = {
-      id: caseId,
-      origin: CaseOrigin.LOKE,
-      type: caseType,
-      state: caseState,
-      courtId,
-      courtCaseNumber,
-      policeCaseNumbers,
-      defendants: [{ nationalId: defendantNationalId }],
-      conclusion: caseConclusion,
-      caseFiles: [ruling, courtRecord],
-    } as Case
-    let then: Then
+  describe.each(Object.values(IndictmentSubtype))(
+    'deliver S case %s',
+    (indictmentSubtype) => {
+      const caseId = uuid()
+      const caseType = CaseType.INDICTMENT
+      const caseState = CaseState.ACCEPTED
+      const policeCaseNumber = uuid()
+      const defendantNationalId = uuid()
+      const courtId = uuid()
+      const courtCaseNumber = uuid()
+      const caseConclusion = 'test conclusion'
+      const ruling = {
+        category: CaseFileCategory.RULING,
+      } as CaseFile
+      const courtRecordKey = uuid()
+      const courtRecord = {
+        category: CaseFileCategory.COURT_RECORD,
+        key: courtRecordKey,
+      } as CaseFile
+      const courtRecordPdf = Buffer.from('test court record')
+      const theCase = {
+        id: caseId,
+        origin: CaseOrigin.LOKE,
+        type: caseType,
+        indictmentSubtypes: { [policeCaseNumber]: [indictmentSubtype] },
+        state: caseState,
+        courtId,
+        courtCaseNumber,
+        policeCaseNumbers: [policeCaseNumber],
+        defendants: [{ nationalId: defendantNationalId }],
+        conclusion: caseConclusion,
+        caseFiles: [ruling, courtRecord],
+      } as Case
+      let then: Then
 
-    beforeEach(async () => {
-      const mockGetObject = mockAwsS3Service.getObject as jest.Mock
-      mockGetObject.mockResolvedValueOnce(courtRecordPdf)
-      const mockUploadCaseFileToCourt = mockFileService.uploadCaseFileToCourt as jest.Mock
-      mockUploadCaseFileToCourt.mockResolvedValue({ success: true })
-      const mockUpdatePoliceCase = mockPoliceService.updatePoliceCase as jest.Mock
-      mockUpdatePoliceCase.mockResolvedValueOnce(true)
+      beforeEach(async () => {
+        const mockGetObject = mockAwsS3Service.getObject as jest.Mock
+        mockGetObject.mockResolvedValueOnce(courtRecordPdf)
+        const mockUploadCaseFileToCourt = mockFileService.uploadCaseFileToCourt as jest.Mock
+        mockUploadCaseFileToCourt.mockResolvedValue({ success: true })
+        const mockUpdatePoliceCase = mockPoliceService.updatePoliceCase as jest.Mock
+        mockUpdatePoliceCase.mockResolvedValueOnce(true)
 
-      then = await givenWhenThen(caseId, theCase)
-    })
-
-    describe('no case files delivered but returns true', () => {
-      it('should return a success response', async () => {
-        expect(then.result.caseFilesDeliveredToCourt).toEqual(true)
-      })
-    })
-
-    describe('deliver case to police', () => {
-      it('should get the court record from S3', async () => {
-        expect(mockAwsS3Service.getObject).toHaveBeenNthCalledWith(
-          1,
-          courtRecordKey,
-        )
+        then = await givenWhenThen(caseId, theCase)
       })
 
-      it('should update the plice case', async () => {
-        expect(mockPoliceService.updatePoliceCase).toHaveBeenCalledWith(
-          caseId,
-          caseType,
-          caseState,
-          'test court record',
-          policeCaseNumbers,
-          [defendantNationalId],
-          caseConclusion,
-        )
+      describe('no case files delivered but returns true', () => {
+        it('should return a success response', async () => {
+          expect(then.result.caseFilesDeliveredToCourt).toEqual(true)
+        })
       })
 
-      it('should return a success response', async () => {
-        expect(then.result.caseDeliveredToPolice).toEqual(true)
+      describe('deliver case to police', () => {
+        it('should get the court record from S3', async () => {
+          expect(mockAwsS3Service.getObject).toHaveBeenNthCalledWith(
+            1,
+            courtRecordKey,
+          )
+        })
+
+        it('should update the police case', async () => {
+          expect(mockPoliceService.updatePoliceCase).toHaveBeenCalledWith(
+            caseId,
+            indictmentSubtype,
+            caseState,
+            'test court record',
+            policeCaseNumber,
+            [defendantNationalId],
+            caseConclusion,
+          )
+        })
+
+        it('should return a success response', async () => {
+          expect(then.result.caseDeliveredToPolice).toEqual(true)
+        })
       })
-    })
-  })
+    },
+  )
 })

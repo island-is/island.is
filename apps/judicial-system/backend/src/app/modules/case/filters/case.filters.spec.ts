@@ -37,8 +37,8 @@ describe('isCaseBlockedFromUser', () => {
     ${CaseState.DRAFT}     | ${UserRole.JUDGE}      | ${InstitutionType.HIGH_COURT}         | ${CaseType.CUSTODY}
     ${CaseState.DRAFT}     | ${UserRole.STAFF}      | ${InstitutionType.PRISON}             | ${CaseType.CUSTODY}
     ${CaseState.DRAFT}     | ${UserRole.STAFF}      | ${InstitutionType.PRISON_ADMIN}       | ${CaseType.CUSTODY}
-    ${CaseState.DRAFT}     | ${UserRole.REGISTRAR}  | ${InstitutionType.COURT}              | ${CaseType.THEFT}
-    ${CaseState.DRAFT}     | ${UserRole.JUDGE}      | ${InstitutionType.COURT}              | ${CaseType.THEFT}
+    ${CaseState.DRAFT}     | ${UserRole.REGISTRAR}  | ${InstitutionType.COURT}              | ${CaseType.INDICTMENT}
+    ${CaseState.DRAFT}     | ${UserRole.JUDGE}      | ${InstitutionType.COURT}              | ${CaseType.INDICTMENT}
     ${CaseState.SUBMITTED} | ${UserRole.REGISTRAR}  | ${InstitutionType.HIGH_COURT}         | ${CaseType.CUSTODY}
     ${CaseState.SUBMITTED} | ${UserRole.JUDGE}      | ${InstitutionType.HIGH_COURT}         | ${CaseType.CUSTODY}
     ${CaseState.SUBMITTED} | ${UserRole.STAFF}      | ${InstitutionType.PRISON}             | ${CaseType.CUSTODY}

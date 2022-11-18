@@ -1,10 +1,18 @@
 import { Inject, Injectable } from '@nestjs/common'
 import {
   CemeteryFinancialStatementValues,
+  Client,
+  Contact,
+  ContactType,
   FinancialStatementsInaoClientService,
   PersonalElectionFinancialStatementValues,
   PoliticalPartyFinancialStatementValues,
 } from '@island.is/clients/financial-statements-inao'
+import {
+  BoardMember,
+  FSIUSERTYPE,
+  LESS,
+} from '@island.is/application/templates/financial-statements-inao/types'
 import * as kennitala from 'kennitala'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { getValueViaPath } from '@island.is/application/core'
@@ -16,12 +24,9 @@ import {
   mapValuesToPartytype,
   mapValuesToCemeterytype,
 } from './mappers/mapValuesToUsertype'
-import { USERTYPE } from './types'
 import { SharedTemplateApiService } from '../../shared'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-
-const LESS = 'less'
 
 export interface AttachmentData {
   key: string
@@ -30,6 +35,7 @@ export interface AttachmentData {
 
 export const getCurrentUserType = (answers: any, externalData: any) => {
   const fakeUserType: any = getValueViaPath(answers, 'fakeData.options')
+
   const currentUserType: any = getValueViaPath(
     externalData,
     'getUserType.data.value',
@@ -41,6 +47,7 @@ export interface DataResponse {
   success: boolean
   message?: string
 }
+
 @Injectable()
 export class FinancialStatementsInaoTemplateService {
   s3: S3
@@ -90,7 +97,6 @@ export class FinancialStatementsInaoTemplateService {
 
   async getUserType({ auth }: TemplateApiModuleActionProps) {
     const { nationalId } = auth
-
     if (kennitala.isPerson(nationalId)) {
       return this.financialStatementsClientService.getClientType(
         'Einstaklingur',
@@ -106,22 +112,28 @@ export class FinancialStatementsInaoTemplateService {
     const externalData = application.externalData
     const currentUserType = getCurrentUserType(answers, externalData)
 
-    if (currentUserType === USERTYPE.INDIVIDUAL) {
-      const values: PersonalElectionFinancialStatementValues = mapValuesToIndividualtype(
+    if (currentUserType === FSIUSERTYPE.INDIVIDUAL) {
+      const electionIncomeLimit = getValueViaPath(
         answers,
-      )
+        'election.incomeLimit',
+      ) as string
+      const noValueStatement = electionIncomeLimit === LESS ? true : false
+      const values:
+        | PersonalElectionFinancialStatementValues
+        | undefined = noValueStatement
+        ? undefined
+        : mapValuesToIndividualtype(answers)
 
       const electionId = getValueViaPath(
         answers,
         'election.selectElection',
       ) as string
       const clientName = getValueViaPath(answers, 'about.fullName') as string
-      const electionIncomeLimit = getValueViaPath(
+      const clientPhone = getValueViaPath(
         answers,
-        'election.incomeLimit',
+        'about.phoneNumber',
       ) as string
-
-      const noValueStatement = electionIncomeLimit === LESS ? true : false
+      const clientEmail = getValueViaPath(answers, 'about.email') as string
 
       const fileName = noValueStatement
         ? undefined
@@ -135,13 +147,27 @@ export class FinancialStatementsInaoTemplateService {
         )}', file: '${fileName}'`,
       )
 
+      const client: Client = {
+        nationalId: nationalId,
+        name: clientName,
+        phone: clientPhone,
+        email: clientEmail,
+      }
+
+      const actorContact: Contact | undefined = actor
+        ? {
+            nationalId: actor.nationalId,
+            name: clientName,
+            contactType: ContactType.Actor,
+          }
+        : undefined
+
       const result: DataResponse = await this.financialStatementsClientService
         .postFinancialStatementForPersonalElection(
-          nationalId,
-          actor?.nationalId,
+          client,
+          actorContact,
           electionId,
           noValueStatement,
-          clientName,
           values,
           fileName,
         )
@@ -166,7 +192,7 @@ export class FinancialStatementsInaoTemplateService {
         throw new Error(`Application submission failed`)
       }
       return { success: result.success }
-    } else if (currentUserType === USERTYPE.PARTY) {
+    } else if (currentUserType === FSIUSERTYPE.PARTY) {
       const values: PoliticalPartyFinancialStatementValues = mapValuesToPartytype(
         answers,
       )
@@ -175,12 +201,30 @@ export class FinancialStatementsInaoTemplateService {
         'conditionalAbout.operatingYear',
       ) as string
 
+      const actorsName = getValueViaPath(answers, 'about.fullName') as string
+
       const fileName = await this.getAttachment({ application, auth })
+
+      const client = {
+        nationalId: nationalId,
+      }
+
+      if (!actor) {
+        return new Error('Enginn umboðsmaður fannst.')
+      }
+
+      const contacts: Contact[] = [
+        {
+          nationalId: actor.nationalId,
+          name: actorsName,
+          contactType: ContactType.Actor,
+        },
+      ]
 
       const result: DataResponse = await this.financialStatementsClientService
         .postFinancialStatementForPoliticalParty(
-          nationalId,
-          actor?.nationalId,
+          client,
+          contacts,
           year,
           '',
           values,
@@ -203,7 +247,7 @@ export class FinancialStatementsInaoTemplateService {
         throw new Error(`Application submission failed`)
       }
       return { success: result.success }
-    } else if (currentUserType === USERTYPE.CEMETRY) {
+    } else if (currentUserType === FSIUSERTYPE.CEMETRY) {
       const values: CemeteryFinancialStatementValues = mapValuesToCemeterytype(
         answers,
       )
@@ -212,16 +256,50 @@ export class FinancialStatementsInaoTemplateService {
         'conditionalAbout.operatingYear',
       ) as string
 
+      const actorsName = getValueViaPath(answers, 'about.fullName') as string
+      const contactsAnswer = getValueViaPath(
+        answers,
+        'cemetryCaretaker',
+      ) as BoardMember[]
+
       const file = getValueViaPath(answers, 'attachments.file')
 
       const fileName = file
         ? await this.getAttachment({ application, auth })
         : undefined
 
+      const client = {
+        nationalId: nationalId,
+      }
+
+      if (!actor) {
+        return new Error('Enginn umboðsmaður fannst.')
+      }
+
+      const contacts: Contact[] = [
+        {
+          nationalId: actor.nationalId,
+          name: actorsName,
+          contactType: ContactType.Actor,
+        },
+      ]
+
+      contactsAnswer.map((x) => {
+        const contact: Contact = {
+          nationalId: x.nationalId,
+          name: x.name,
+          contactType:
+            x.role === 'Stjórnarmaður'
+              ? ContactType.BoardMember
+              : ContactType.Inspector,
+        }
+        contacts.push(contact)
+      })
+
       const result: DataResponse = await this.financialStatementsClientService
         .postFinancialStatementForCemetery(
-          nationalId,
-          actor?.nationalId,
+          client,
+          contacts,
           year,
           '',
           values,
@@ -244,6 +322,8 @@ export class FinancialStatementsInaoTemplateService {
         throw new Error(`Application submission failed`)
       }
       return { success: result.success }
+    } else {
+      throw new Error(`Application submission failed`)
     }
   }
 }

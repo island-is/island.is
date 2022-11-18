@@ -43,9 +43,8 @@ import {
   technicalInfoArray,
 } from '../../utils/createUnits'
 import { displayWithUnit } from '../../utils/displayWithUnit'
-import { FeatureFlagClient } from '@island.is/feature-flags'
-import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 import AxleTable from '../../components/DetailTable/AxleTable'
+import Dropdown from '../../components/Dropdown/Dropdown'
 
 export const GET_USERS_VEHICLE_DETAIL = gql`
   query GetUsersVehiclesDetail($input: GetVehicleDetailInput!) {
@@ -252,13 +251,13 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
         </GridRow>
         {!loading && downloadServiceURL && (
           <GridRow marginTop={6}>
-            <GridColumn span={['9/9', '9/9', '9/9', '6/9']}>
+            <GridColumn span="9/9">
               <Box display="flex" justifyContent="flexStart" printHidden>
                 <Box paddingRight={2}>
                   <Button
                     colorScheme="default"
                     icon="receipt"
-                    iconType="filled"
+                    iconType="outline"
                     size="default"
                     type="button"
                     variant="utility"
@@ -266,6 +265,42 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
                   >
                     {formatMessage(messages.vehicleHistoryReport)}
                   </Button>
+                </Box>
+                <Box paddingRight={2}>
+                  <a href="" target="_blank" rel="noopener noreferrer">
+                    <Button
+                      colorScheme="default"
+                      icon="open"
+                      iconType="outline"
+                      size="default"
+                      type="button"
+                      variant="utility"
+                    >
+                      {formatMessage(messages.changeOfOwnership)}
+                    </Button>
+                  </a>
+                </Box>
+                <Box paddingRight={2}>
+                  <Dropdown
+                    dropdownItems={[
+                      {
+                        title: formatMessage(messages.orderRegistrationNumber),
+                        href: '/pontun-skraningarmerkja',
+                      },
+                      {
+                        title: formatMessage(messages.orderRegistrationLicense),
+                        href: '',
+                      },
+                      {
+                        title: formatMessage(messages.addCoOwner),
+                        href: '/skraning-medeiganda-okutaekis',
+                      },
+                      {
+                        title: formatMessage(messages.addOperator),
+                        href: '/skraning-a-umradamanni-okutaekis',
+                      },
+                    ]}
+                  />
                 </Box>
               </Box>
             </GridColumn>
@@ -276,6 +311,11 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
         <UserInfoLine
           label={formatMessage(messages.numberPlate)}
           content={mainInfo?.regno ?? ''}
+          editLink={{
+            title: messages.orderRegistrationNumber,
+            url: '',
+            external: true,
+          }}
           loading={loading}
         />
         <Divider />

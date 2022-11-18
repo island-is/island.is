@@ -196,7 +196,7 @@ export const VehiclesOverview: ServicePortalModuleComponent = ({
               />
             </Box>
           )}
-          <Box>
+          <Box marginRight={2}>
             <a
               href="/app/skilavottord/my-cars"
               target="_blank"
@@ -209,6 +209,22 @@ export const VehiclesOverview: ServicePortalModuleComponent = ({
                 iconType="outline"
               >
                 {formatMessage(messages.recycleCar)}
+              </Button>
+            </a>
+          </Box>
+          <Box>
+            <a
+              href="/beidni-um-nafnleynd-i-okutaekjaskra"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button
+                variant="utility"
+                size="small"
+                icon="eyeOff"
+                iconType="outline"
+              >
+                {formatMessage(messages.vehicleNameSecret)}
               </Button>
             </a>
           </Box>
