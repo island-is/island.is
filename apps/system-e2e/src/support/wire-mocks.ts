@@ -10,6 +10,7 @@ import {
   Stub,
 } from '@anev/ts-mountebank'
 import { XroadConfig } from '../../../../infra/src/dsl/types/input-types'
+import { getEnvVariables } from '../../../../infra/src/dsl/service-to-environment/pre-process-service'
 
 const defaultMock = (port: number) => {
   const imposter = new Imposter().withPort(port).withRecordRequests(true)
@@ -51,23 +52,27 @@ export const addXroadMock = async (
   xroadConfig: XroadConfig,
   servicePathPrefix: string,
   api: string,
-  stub: Response | Response[],
+  response: Response | Response[],
   prefixType: 'only-base-path' | 'base-path-with-env' = 'only-base-path',
   method: HttpMethod = HttpMethod.GET,
 ) => {
-  // @ts-ignore
-  const path = xroadConfig.getEnv()[servicePathPrefix]['dev'] as string
+  const { envs } = getEnvVariables(xroadConfig.getEnv(), 'xroadConfig', 'dev')
+  const servicePathPrefixValue = envs[servicePathPrefix]
+  const path =
+    typeof servicePathPrefixValue === 'string'
+      ? servicePathPrefixValue
+      : 'this should never happen url'
   const prefix = path.startsWith('r1/') ? '/' : '/r1/'
   const env = prefixType === 'base-path-with-env' ? 'IS-DEV/GOV/10003' : ''
-  const stubResponses = Array.isArray(stub) ? stub : [stub]
-  const stub1 = new Stub().withPredicate(
+  const stubResponses = Array.isArray(response) ? response : [response]
+  const stub = new Stub().withPredicate(
     new EqualPredicate()
       .withPath(`${prefix}${env}${path}${api}`)
       .withMethod(method),
   )
-  for (const stub1Element of stubResponses) {
-    stub1.withResponse(stub1Element)
+  for (const response of stubResponses) {
+    stub.withResponse(response)
   }
-  mockedServices.xroad.imposter.withStub(stub1)
-  await mb.createImposter(mockedServices['xroad'].imposter)
+  mockedServices.xroad.imposter.withStub(stub)
+  await mb.createImposter(mockedServices.xroad.imposter)
 }

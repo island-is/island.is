@@ -8,6 +8,7 @@ import {
   IngressForEnv,
   localFromDev,
   MissingSetting,
+  OpsEnvWithLocal,
   PostgresInfo,
   PostgresInfoForEnv,
   ServiceDefinition,
@@ -60,7 +61,11 @@ export const prepareServiceForEnv = (
     )
   }
 
-  const { envs, errors } = getEnvVariables(serviceDef.env, env, serviceDef.name)
+  const { envs, errors } = getEnvVariables(
+    serviceDef.env,
+    serviceDef.name,
+    env.type,
+  )
   const ingress = Object.entries(serviceDef.ingress).reduce(
     (acc, [name, ingress]) => {
       const envType = localFromDev(env.type)
@@ -136,8 +141,8 @@ export const prepareServiceForEnv = (
     serviceDef.xroadConfig.forEach((conf) => {
       const { envs, errors } = getEnvVariables(
         conf.getEnv(),
-        env,
         serviceDef.name,
+        env.type,
       )
       addToErrors(errors)
       mergeObjects(result.env, envs)
@@ -161,8 +166,8 @@ export const prepareServiceForEnv = (
       if (typeof serviceDef.initContainers.envs !== 'undefined') {
         const { envs, errors } = getEnvVariables(
           serviceDef.initContainers.envs,
-          env,
           `${serviceDef.name}-initContainers`,
+          env.type,
         )
         addToErrors(errors)
         mergeObjects(result.initContainers.envs, envs)
@@ -200,17 +205,17 @@ export const prepareServiceForEnv = (
 
 export function getEnvVariables(
   envs: EnvironmentVariables,
-  env: EnvironmentConfig,
   serviceName: string,
+  envType: OpsEnvWithLocal,
 ) {
   return Object.entries(envs).reduce(
     (acc, [name, value]) => {
-      const r = getEnvValue(value, env)
+      const r = getEnvValue(value, envType)
       switch (r.type) {
         case 'error':
           return {
             errors: acc.errors.concat([
-              `Missing settings for service ${serviceName} in env ${env.type}. Keys of missing settings: ${name}`,
+              `Missing settings for service ${serviceName} in env ${envType}. Keys of missing settings: ${name}`,
             ]),
             envs: acc.envs,
           }
@@ -230,16 +235,16 @@ export function getEnvVariables(
 
 function getEnvValue(
   value: EnvironmentVariableValue,
-  env: EnvironmentConfig,
+  envType: OpsEnvWithLocal,
 ): { type: 'error' } | { type: 'success'; value: ValueType } {
   if (value === MissingSetting) return { type: 'error' }
-  if (typeof value === 'object' && value[env.type] === MissingSetting) {
+  if (typeof value === 'object' && value[envType] === MissingSetting) {
     return { type: 'error' }
   } else {
     if (
       typeof value === 'object' &&
-      env.type === 'local' &&
-      typeof value[env.type] === 'undefined'
+      envType === 'local' &&
+      typeof value[envType] === 'undefined'
     ) {
       return {
         type: 'success',
@@ -248,7 +253,7 @@ function getEnvValue(
     } else {
       return {
         type: 'success',
-        value: typeof value === 'object' ? value[env.type]! : value,
+        value: typeof value === 'object' ? value[envType]! : value,
       }
     }
   }
@@ -295,7 +300,7 @@ function addFeaturesConfig(
     Feature,
   ][]
   const featureEnvs = activeFeatures.map(([name, v]) => {
-    const { envs, errors } = getEnvVariables(v.env, env, serviceName)
+    const { envs, errors } = getEnvVariables(v.env, serviceName, env.type)
     return {
       name,
       envs,
