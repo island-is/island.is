@@ -9,7 +9,7 @@ import {
   CaseType,
   isRestrictionCase,
   isIndictmentCase,
-  IndictmentSubType,
+  IndictmentSubtype,
 } from '@island.is/judicial-system/types'
 
 const getAsDate = (date: Date | string | undefined | null): Date => {
@@ -121,8 +121,8 @@ export const caseTypes: CaseTypes = {
   OTHER: 'annað',
 }
 
-type IndictmentSubTypes = { [c in IndictmentSubType]: string }
-export const indictmentSubTypes: IndictmentSubTypes = {
+type IndictmentSubtypes = { [c in IndictmentSubtype]: string }
+export const indictmentSubtypes: IndictmentSubtypes = {
   ALCOHOL_LAWS: 'áfengislagabrot',
   CHILD_PROTECTION_LAWS: 'barnaverndarlög',
   INDECENT_EXPOSURE: 'blygðunarsemisbrot',
