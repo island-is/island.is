@@ -2,7 +2,13 @@ import React, { useState } from 'react'
 import { useParams, useHistory } from 'react-router-dom'
 import { useForm, FormProvider } from 'react-hook-form'
 
-import { Box, toast, AlertBanner, Divider } from '@island.is/island-ui/core'
+import {
+  Box,
+  toast,
+  AlertBanner,
+  Divider,
+  useBreakpoint,
+} from '@island.is/island-ui/core'
 import { AuthCustomDelegation } from '@island.is/api/schema'
 import {
   formatPlausiblePathToParams,
@@ -22,9 +28,10 @@ import { extendApiScope, formatScopeTreeToScope } from './access.utils'
 import { AccessItem } from './AccessItem/AccessItem'
 import { AccessConfirmModal } from './AccessConfirmModal'
 import { isDefined } from '@island.is/shared/utils'
-import * as commonAccessStyles from './access.css'
 import { AccessDeleteModal } from './AccessDeleteModal'
 import { AccessListHeader } from './AccessList/AccessListHeader'
+import classNames from 'classnames'
+import * as commonAccessStyles from './access.css'
 
 type AccessFormProps = {
   delegation: AuthCustomDelegation
@@ -43,6 +50,7 @@ export const AccessForm = ({
   }>()
   const history = useHistory()
   const { userInfo } = useAuth()
+  const { lg } = useBreakpoint()
 
   const [openConfirmModal, setOpenConfirmModal] = useState(false)
   const [openDeleteModal, setOpenDeleteModal] = useState(false)
@@ -62,6 +70,7 @@ export const AccessForm = ({
 
   const methods = useForm<{
     scope: AccessFormScope[]
+    validityPeriod: Date | null
   }>()
   const { handleSubmit, getValues } = methods
 
@@ -132,18 +141,27 @@ export const AccessForm = ({
       )}
       <FormProvider {...methods}>
         <form onSubmit={onSubmit}>
-          <AccessListHeader validityPeriod={validityPeriod} />
-          <div className={commonAccessStyles.divider}>
-            <Divider />
+          <div
+            className={classNames(
+              commonAccessStyles.grid,
+              validityPeriod
+                ? commonAccessStyles.gridRowMaxTwoCols
+                : commonAccessStyles.gridRowMaxThreeCols,
+            )}
+          >
+            {lg && <AccessListHeader validityPeriod={validityPeriod} />}
+            <Box className={commonAccessStyles.divider}>
+              <Divider />
+            </Box>
+            {scopeTree?.map((authScope, index) => (
+              <AccessItem
+                key={index}
+                apiScopes={extendApiScope(authScope, index, scopeTree)}
+                authDelegation={delegation}
+                validityPeriod={validityPeriod}
+              />
+            ))}
           </div>
-          {scopeTree?.map((authScope, index) => (
-            <AccessItem
-              key={index}
-              apiScopes={extendApiScope(authScope, index, scopeTree)}
-              authDelegation={delegation}
-              validityPeriod={validityPeriod}
-            />
-          ))}
         </form>
         <Box position="sticky" bottom={0} marginTop={20}>
           <DelegationsFormFooter

@@ -1,9 +1,9 @@
 import classNames from 'classnames'
 import { Box, Text, useBreakpoint } from '@island.is/island-ui/core'
 import { AccessDate } from '../AccessDate/AccessDate'
-import * as styles from './AccessListItem.css'
 import { useLocale } from '@island.is/localization'
 import * as commonAccessStyles from '../access.css'
+import * as styles from './AccessListItem.css'
 
 interface AccessListItemProps {
   name: string
@@ -27,20 +27,13 @@ export const AccessListItem = ({
   const hasDescription = !!description?.trim()
 
   return (
-    <Box
-      className={classNames(
-        commonAccessStyles.gridRow,
-        validityPeriod
-          ? commonAccessStyles.gridRowMaxTwoCols
-          : commonAccessStyles.gridRowMaxThreeCols,
-      )}
-      // Indent the hole row for screen size smaller than lg
-      {...(indent && { paddingLeft: [2, 2, 2, 0] })}
-    >
+    <>
       <Box
-        // Only indent name field when screen size is lg or larger
-        {...(indent && { paddingLeft: [0, 0, 0, 4] })}
-        className={styles.headerContainer}
+        paddingLeft={indent ? [2, 2, 2, 4] : [0, 0, 0, 2]}
+        className={classNames(
+          commonAccessStyles.gridItem,
+          styles.headerContainer,
+        )}
       >
         <Text
           fontWeight={lg || titleBold ? 'semiBold' : 'regular'}
@@ -51,17 +44,36 @@ export const AccessListItem = ({
         {/* For smaller devices, i.e. < lg */}
         {!lg && validTo && !validityPeriod && <AccessDate validTo={validTo} />}
       </Box>
-      {!lg && hasDescription && (
-        <Text variant="small" fontWeight="semiBold" marginTop={2}>
-          {formatMessage({
-            id: 'sp.access-control-delegations:grant',
-            defaultMessage: 'Heimild',
-          })}
-        </Text>
-      )}
-      {hasDescription && <Text>{description}</Text>}
+      {hasDescription && !lg ? (
+        <Box
+          {...(indent && { paddingLeft: [2, 2, 2, 0] })}
+          className={classNames(commonAccessStyles.gridItem)}
+        >
+          <Text variant="small" fontWeight="semiBold">
+            {formatMessage({
+              id: 'sp.access-control-delegations:grant',
+              defaultMessage: 'Heimild',
+            })}
+          </Text>
+          <Text>{description}</Text>
+        </Box>
+      ) : hasDescription ? (
+        <Box
+          {...(indent && { paddingLeft: [2, 2, 2, 0] })}
+          className={classNames(commonAccessStyles.gridItem)}
+        >
+          <Text>{description}</Text>
+        </Box>
+      ) : null}
       {/* For bigger devices, i.e. > lg */}
-      {lg && validTo && !validityPeriod && <AccessDate validTo={validTo} />}
-    </Box>
+      {lg && validTo && !validityPeriod ? (
+        <Box
+          {...(indent && { paddingLeft: [2, 2, 2, 0] })}
+          className={classNames(commonAccessStyles.gridItem)}
+        >
+          <AccessDate validTo={validTo} />
+        </Box>
+      ) : null}
+    </>
   )
 }

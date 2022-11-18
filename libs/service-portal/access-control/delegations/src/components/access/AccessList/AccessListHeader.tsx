@@ -1,18 +1,15 @@
 import { useLocale } from '@island.is/localization'
-import {
-  Text,
-  Hidden,
-  Box,
-  Divider,
-  TextProps,
-} from '@island.is/island-ui/core'
-import classNames from 'classnames'
+import { Text, Box, TextProps, BoxProps } from '@island.is/island-ui/core'
 import { formatDelegationDate } from '../access.utils'
-import * as styles from '../access.css'
 
 const commonTextProps: Partial<TextProps> = {
   variant: 'medium',
   fontWeight: 'semiBold',
+}
+
+const commonItemProps: Partial<BoxProps> = {
+  background: 'blue100',
+  paddingY: 2,
 }
 
 const validToTranslation = {
@@ -28,49 +25,42 @@ export const AccessListHeader = ({ validityPeriod }: AccessListHeaderProps) => {
   const { formatMessage } = useLocale()
 
   return (
-    <Hidden below="lg">
-      <Box
-        className={classNames(
-          styles.gridRow,
-          validityPeriod
-            ? styles.gridRowMaxTwoCols
-            : styles.gridRowMaxThreeCols,
-        )}
-        background="blue100"
-      >
+    <>
+      <Box {...commonItemProps} paddingLeft={2}>
         <Text {...commonTextProps}>
           {formatMessage({
             id: 'sp.settings-access-control:access-access',
             defaultMessage: 'Flokkur',
           })}
         </Text>
-        <Box
-          {...(validityPeriod && {
-            display: 'flex',
-            justifyContent: 'spaceBetween',
-            alignItems: 'center',
+      </Box>
+      <Box
+        display="flex"
+        justifyContent="spaceBetween"
+        alignItems="center"
+        {...commonItemProps}
+        {...(validityPeriod && { paddingRight: 2 })}
+      >
+        <Text {...commonTextProps}>
+          {formatMessage({
+            id: 'sp.settings-access-control:access-explanation',
+            defaultMessage: 'Heimild',
           })}
-        >
-          <Text {...commonTextProps}>
-            {formatMessage({
-              id: 'sp.settings-access-control:access-explanation',
-              defaultMessage: 'Heimild',
-            })}
-          </Text>
-          {validityPeriod && (
-            <Box textAlign="right">
-              <Text {...commonTextProps}>
-                {formatMessage(validToTranslation)}
-                {` ${formatDelegationDate(validityPeriod)}`}
-              </Text>
-            </Box>
-          )}
-        </Box>
-        {!validityPeriod && (
-          <Text {...commonTextProps}>{formatMessage(validToTranslation)}</Text>
+        </Text>
+        {validityPeriod && (
+          <Box textAlign="right">
+            <Text {...commonTextProps}>
+              {formatMessage(validToTranslation)}
+              {` ${formatDelegationDate(validityPeriod)}`}
+            </Text>
+          </Box>
         )}
       </Box>
-      <Divider />
-    </Hidden>
+      {!validityPeriod && (
+        <Box {...commonItemProps} paddingRight={2}>
+          <Text {...commonTextProps}>{formatMessage(validToTranslation)}</Text>
+        </Box>
+      )}
+    </>
   )
 }

@@ -48,8 +48,9 @@ const AccessControl = () => {
           defaultMessage:
             'Hérna kemur listi yfir þau umboð sem þú hefur gefið öðrum. Þú getur eytt umboðum eða bætt við nýjum.',
         })}
+        marginBottom={0}
       />
-      <Box marginTop={[0, 0, 8]}>
+      <Box marginTop={[0, 0, 5]}>
         {onlyOutgoingDelegations ? (
           <DelegationsOutgoing />
         ) : (

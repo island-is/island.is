@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { Fragment, useCallback, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { VisuallyHidden } from 'reakit/VisuallyHidden'
 import addYears from 'date-fns/addYears'
@@ -17,10 +17,10 @@ import {
 import { useLocale } from '@island.is/localization'
 import * as styles from './AccessItem.css'
 import format from 'date-fns/format'
-import classNames from 'classnames'
 import { isDefined } from '@island.is/shared/utils'
 import { Scope } from '../access.types'
 import { accessMessages, DATE_FORMAT, isApiScopeGroup } from '../access.utils'
+import classNames from 'classnames'
 import * as commonAccessStyles from '../access.css'
 
 const getDefaultDate = () => addYears(new Date(), 1)
@@ -38,7 +38,7 @@ export const AccessItem = ({
 }: PropTypes) => {
   const { lang, formatMessage } = useLocale()
   const { setValue, getValues } = useFormContext()
-  const { md } = useBreakpoint()
+  const { md, lg } = useBreakpoint()
   const grantTranslation = formatMessage({
     id: 'sp.access-control-delegations:grant',
     defaultMessage: 'Heimild',
@@ -158,140 +158,129 @@ export const AccessItem = ({
           (isSelected && stateDateIsActive) || (!hasExisting && isSelected)
 
         return (
-          <div key={index}>
+          <Fragment key={index}>
             <Box
-              className={classNames(
-                commonAccessStyles.gridRow,
-                validityPeriod
-                  ? commonAccessStyles.gridRowMaxTwoCols
-                  : commonAccessStyles.gridRowMaxThreeCols,
-              )}
-              // Indent the hole row for screen size smaller than lg
-              {...(indent && { paddingLeft: [2, 2, 2, 0] })}
+              paddingLeft={indent ? [2, 2, 2, 4] : [0, 0, 0, 2]}
+              display="flex"
+              alignItems="flexStart"
+              className={commonAccessStyles.gridItem}
             >
+              <CheckboxController
+                id={`${item.model}.name`}
+                spacing={0}
+                defaultValue={existingScope ? [existingScope.name] : []}
+                options={[
+                  {
+                    label: (
+                      <>
+                        <VisuallyHidden>
+                          {formatMessage({
+                            id: 'sp.settings-access-control:access-access',
+                            defaultMessage: 'Aðgangur',
+                          })}
+                        </VisuallyHidden>
+                        {item.displayName}
+                      </>
+                    ),
+                    value: item.name,
+                  },
+                ]}
+                onSelect={(value) => onSelect(item, value, index)}
+              />
+            </Box>
+            {((!lg && item.description?.trim()) || lg) && (
               <Box
-                // Only indent name field when screen size is lg or larger
-                {...(indent && { paddingLeft: [0, 0, 0, 4] })}
                 display="flex"
-                alignItems="flexStart"
+                flexDirection="column"
+                className={classNames(
+                  commonAccessStyles.gridItem,
+                  styles.rowGap,
+                )}
+                {...(indent && { paddingLeft: [2, 2, 2, 0] })}
               >
-                <CheckboxController
-                  id={`${item.model}.name`}
-                  spacing={0}
-                  defaultValue={existingScope ? [existingScope.name] : []}
-                  options={[
-                    {
-                      label: (
-                        <>
-                          <VisuallyHidden>
-                            {formatMessage({
-                              id: 'sp.settings-access-control:access-access',
-                              defaultMessage: 'Aðgangur',
-                            })}
-                          </VisuallyHidden>
-                          {item.displayName}
-                        </>
-                      ),
-                      value: item.name,
-                    },
-                  ]}
-                  onSelect={(value) => onSelect(item, value, index)}
-                />
+                {lg && item.description?.trim() ? (
+                  <VisuallyHidden>{grantTranslation}</VisuallyHidden>
+                ) : !lg ? (
+                  <Text variant="small" fontWeight="semiBold">
+                    {grantTranslation}
+                  </Text>
+                ) : null}
+                <Text fontWeight="light">{item.description}</Text>
               </Box>
-              {((!md && item.description?.trim()) || md) && (
-                <div>
+            )}
+            {!validityPeriod && !isApiScopeGroup(item) && (
+              <>
+                <Box
+                  {...(indent && { paddingLeft: [2, 2, 2, 0] })}
+                  className={classNames(
+                    showDatePicker
+                      ? [commonAccessStyles.gridItem, styles.dateContainer]
+                      : styles.hidden,
+                  )}
+                >
+                  <DatePickerController
+                    id={`${item.model}.validTo`}
+                    size="sm"
+                    label={formatMessage(accessMessages.dateValidTo)}
+                    backgroundColor="blue"
+                    minDate={new Date()}
+                    defaultValue={
+                      validityPeriod
+                        ? validityPeriod
+                        : existingScope?.name && existingScope?.validTo
+                        ? existingScope.validTo
+                        : format(defaultDate, 'yyyy-MM-dd')
+                    }
+                    locale={lang}
+                    placeholder={undefined}
+                    onChange={(value) => onChange(item, value, index)}
+                    required
+                  />
+                </Box>
+                {((!showDatePicker && isSelected) ||
+                  (!md && isSelected && !showDatePicker)) && (
                   <Box
                     display="flex"
-                    flexDirection="column"
-                    className={styles.rowGap}
+                    alignItems="center"
+                    columnGap={3}
+                    {...(indent && { paddingLeft: [2, 2, 2, 0] })}
+                    className={classNames(
+                      commonAccessStyles.gridItem,
+                      styles.dateContainer,
+                      styles.rowGap,
+                    )}
                   >
-                    {md && item.description?.trim() ? (
-                      <VisuallyHidden>{grantTranslation}</VisuallyHidden>
-                    ) : !md ? (
-                      <Text variant="small" fontWeight="semiBold" marginTop={2}>
-                        {grantTranslation}
-                      </Text>
-                    ) : null}
-                    <Text fontWeight="light">{item.description}</Text>
-                  </Box>
-                </div>
-              )}
-              {!validityPeriod && !isApiScopeGroup(item) && (
-                <Box paddingTop={[2, 2, 2, 0]}>
-                  <div
-                    className={classNames({
-                      [styles.hidden]: !showDatePicker,
-                    })}
-                  >
-                    <div>
-                      <DatePickerController
-                        id={`${item.model}.validTo`}
-                        size="sm"
-                        label={
-                          !md
-                            ? formatMessage(accessMessages.dateValidTo)
-                            : formatMessage({
-                                id:
-                                  'sp.settings-access-control:access-item-datepicker-label',
-                                defaultMessage: 'Dagsetning til',
-                              })
-                        }
-                        backgroundColor="blue"
-                        minDate={new Date()}
-                        defaultValue={
-                          validityPeriod
-                            ? validityPeriod
-                            : existingScope?.name && existingScope?.validTo
-                            ? existingScope.validTo
-                            : format(defaultDate, 'yyyy-MM-dd')
-                        }
-                        locale={lang}
-                        placeholder={undefined}
-                        onChange={(value) => onChange(item, value, index)}
-                        required
-                      />
-                    </div>
-                  </div>
-                  {((!showDatePicker && isSelected) ||
-                    (!md && isSelected && !showDatePicker)) && (
                     <Box
                       display="flex"
-                      alignItems="center"
-                      columnGap={3}
+                      flexDirection="column"
                       className={styles.rowGap}
                     >
-                      <Box
-                        display="flex"
-                        flexDirection="column"
-                        className={styles.rowGap}
-                      >
-                        {!md && (
-                          <Text variant="small" fontWeight="semiBold">
-                            {formatMessage(accessMessages.dateValidTo)}
-                          </Text>
-                        )}
-                        <Box display="flex" className={styles.rowGap}>
-                          <Text variant={md ? 'medium' : 'small'}>
-                            {formattedDate}
-                          </Text>
-                        </Box>
+                      {!md && (
+                        <Text variant="small" fontWeight="semiBold">
+                          {formatMessage(accessMessages.dateValidTo)}
+                        </Text>
+                      )}
+                      <Box display="flex" className={styles.rowGap}>
+                        <Text variant={md ? 'medium' : 'small'}>
+                          {formattedDate}
+                        </Text>
                       </Box>
-                      <Button
-                        colorScheme="light"
-                        circle
-                        size="small"
-                        icon="pencil"
-                        onClick={() => onEditDateHandler(index)}
-                      />
                     </Box>
-                  )}
-                </Box>
-              )}
-            </Box>
+                    <Button
+                      colorScheme="light"
+                      circle
+                      size="small"
+                      icon="pencil"
+                      onClick={() => onEditDateHandler(index)}
+                    />
+                  </Box>
+                )}
+              </>
+            )}
             <div className={commonAccessStyles.divider}>
               <Divider />
             </div>
-          </div>
+          </Fragment>
         )
       })}
     </>

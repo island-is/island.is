@@ -1,9 +1,11 @@
 import { AuthApiScope, AuthDelegationScope } from '@island.is/api/schema'
-import { Box, Divider } from '@island.is/island-ui/core'
+import { Box, Divider, useBreakpoint } from '@island.is/island-ui/core'
 import { AUTH_API_SCOPE_GROUP_TYPE, AuthScopeTree } from '../access.types'
 import { AccessListHeader } from './AccessListHeader'
 import { AccessListItem } from './AccessListItem'
 import * as commonAccessStyles from '../access.css'
+import { Fragment } from 'react'
+import classNames from 'classnames'
 
 interface AccessListProps {
   validityPeriod?: Date | null
@@ -16,6 +18,8 @@ export const AccessList = ({
   scopeTree,
   validityPeriod,
 }: AccessListProps) => {
+  const { lg } = useBreakpoint()
+
   const getDelegationScopeByName = (scopeName: string) =>
     scopes.find(({ name }) => name === scopeName)
 
@@ -31,7 +35,7 @@ export const AccessList = ({
         )
       ) {
         return (
-          <div key={scope.name}>
+          <Fragment key={scope.name}>
             <AccessListItem
               key={scope.name}
               name={scope.name}
@@ -44,7 +48,7 @@ export const AccessList = ({
             <div className={commonAccessStyles.divider}>
               <Divider />
             </div>
-          </div>
+          </Fragment>
         )
       }
 
@@ -52,7 +56,7 @@ export const AccessList = ({
 
       if (delegationScope) {
         return (
-          <div key={scope.name}>
+          <Fragment key={scope.name}>
             <AccessListItem
               key={scope.name}
               indent={indent}
@@ -64,7 +68,7 @@ export const AccessList = ({
             <div className={commonAccessStyles.divider}>
               <Divider />
             </div>
-          </div>
+          </Fragment>
         )
       }
 
@@ -73,12 +77,19 @@ export const AccessList = ({
   }
 
   return (
-    <Box>
-      <AccessListHeader validityPeriod={validityPeriod} />
-      <div className={commonAccessStyles.divider}>
+    <div
+      className={classNames(
+        commonAccessStyles.grid,
+        validityPeriod
+          ? commonAccessStyles.gridRowMaxTwoCols
+          : commonAccessStyles.gridRowMaxThreeCols,
+      )}
+    >
+      {lg && <AccessListHeader validityPeriod={validityPeriod} />}
+      <Box className={commonAccessStyles.divider}>
         <Divider />
-      </div>
+      </Box>
       {renderScopeTree(scopeTree)}
-    </Box>
+    </div>
   )
 }

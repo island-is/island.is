@@ -23,15 +23,13 @@ export const rowGap = style({
   rowGap: theme.spacing[1] / 2,
 })
 
-export const dividerContainer = style({
+// We are using grid in the dateContainer parent with rowGap 24px.
+// This is used in mobile to align the date with the rest of the content.
+export const dateContainer = style({
+  marginTop: -theme.spacing[1],
   ...themeUtils.responsiveStyle({
-    xs: {
-      marginLeft: -theme.grid.gutter.desktop,
-      marginRight: -theme.grid.gutter.desktop,
-    },
     md: {
-      marginLeft: -theme.grid.gutter.desktop / 2,
-      marginRight: -theme.grid.gutter.desktop / 2,
+      marginTop: 0,
     },
   }),
 })

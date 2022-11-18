@@ -2,6 +2,7 @@ import { theme, themeUtils } from '@island.is/island-ui/theme'
 import { style } from '@vanilla-extract/css'
 
 export const divider = style({
+  gridColumn: '1 / -1',
   marginLeft: -theme.grid.gutter.desktop,
   marginRight: -theme.grid.gutter.desktop,
   ...themeUtils.responsiveStyle({
@@ -12,17 +13,28 @@ export const divider = style({
   }),
 })
 
-export const gridRow = style({
+export const grid = style({
   display: 'grid',
-  gridTemplateRows: '1fr',
+  gridTemplateColumns: '1fr',
   gridColumnGap: theme.spacing[1],
-  gridRowGap: theme.spacing[1] / 2,
-  paddingTop: theme.spacing[2],
-  paddingBottom: theme.spacing[2],
+  gridRowGap: theme.spacing[3],
   ...themeUtils.responsiveStyle({
     lg: {
-      gridTemplateAreas: '1fr 1fr 1fr',
-      padding: theme.spacing[2],
+      gridRowGap: 'initial',
+      gridColumnGap: 'initial',
+    },
+  }),
+})
+
+export const gridItem = style({
+  paddingTop: 0,
+  paddingBottom: 0,
+  paddingRight: 0,
+  ...themeUtils.responsiveStyle({
+    lg: {
+      paddingTop: theme.spacing[2],
+      paddingBottom: theme.spacing[2],
+      paddingRight: theme.spacing[2],
     },
   }),
 })
@@ -30,7 +42,7 @@ export const gridRow = style({
 export const gridRowMaxThreeCols = style({
   ...themeUtils.responsiveStyle({
     lg: {
-      gridTemplateColumns: 'repeat(1, 1fr) repeat(1, 2fr) repeat(1, 1fr)',
+      gridTemplateColumns: '1fr 2fr 1fr',
     },
   }),
 })
@@ -38,7 +50,7 @@ export const gridRowMaxThreeCols = style({
 export const gridRowMaxTwoCols = style({
   ...themeUtils.responsiveStyle({
     lg: {
-      gridTemplateColumns: 'repeat(1, 1fr) repeat(1, 2fr)',
+      gridTemplateColumns: '1fr 2fr',
     },
   }),
 })
