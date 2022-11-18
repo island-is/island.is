@@ -295,7 +295,7 @@ export class FinancialStatementsInaoClientService {
       star_phone: digitalSignee.phone,
     }
 
-    this.logger.debug('FinancialStatement request body', body)
+    this.logger.info('FinancialStatement request body', body)
 
     const financialStatementId = await this.postFinancialStatement(body)
 
@@ -378,7 +378,7 @@ export class FinancialStatementsInaoClientService {
       star_phone: digitalSignee.phone,
     }
 
-    this.logger.debug('FinancialStatement request body', body)
+    this.logger.info('FinancialStatement request body', body)
 
     const financialStatementId = await this.postFinancialStatement(body)
 
@@ -457,7 +457,7 @@ export class FinancialStatementsInaoClientService {
       star_phone: digitalSignee.phone,
     }
 
-    this.logger.debug('FinancialStatement request body', body)
+    this.logger.info('FinancialStatement request body', body)
 
     const financialStatementId = await this.postFinancialStatement(body)
 
