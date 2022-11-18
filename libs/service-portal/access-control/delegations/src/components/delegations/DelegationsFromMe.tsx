@@ -16,6 +16,7 @@ import { isDefined } from '@island.is/shared/utils'
 import { useAuthDelegationsQuery } from '@island.is/service-portal/graphql'
 import { DomainOption, useDomains } from '../../hooks/useDomains'
 import { ALL_DOMAINS } from '../../constants/domain'
+import sortBy from 'lodash/sortBy'
 
 export const DelegationsFromMe = () => {
   const { formatMessage, lang = 'is' } = useLocale()
@@ -39,7 +40,11 @@ export const DelegationsFromMe = () => {
   })
 
   const delegations = useMemo(
-    () => (data?.authDelegations as AuthCustomDelegation[]) ?? [],
+    () =>
+      sortBy(
+        data?.authDelegations as AuthCustomDelegation[],
+        (d) => d.to?.name,
+      ) ?? [],
     [data?.authDelegations],
   )
 
@@ -62,8 +67,8 @@ export const DelegationsFromMe = () => {
 
     return delegations.filter((delegation) => {
       const searchValueLower = searchValue.toLowerCase()
-      const name = delegation?.to?.name.toLowerCase()
-      const nationalId = delegation?.to?.nationalId.toLowerCase()
+      const name = delegation.to?.name.toLowerCase()
+      const nationalId = delegation.to?.nationalId.toLowerCase()
 
       return (
         name?.includes(searchValueLower) || nationalId?.includes(searchValue)
@@ -108,7 +113,6 @@ export const DelegationsFromMe = () => {
         </div>
       </Box>
       <AccessDeleteModal
-        id={`access-delete-modal-${delegation?.id}`}
         onClose={() => {
           setDelegation(null)
         }}
@@ -120,17 +124,8 @@ export const DelegationsFromMe = () => {
             },
           })
         }}
-        label={formatMessage(m.accessControl)}
-        title={formatMessage({
-          id: 'sp.settings-access-control:access-remove-modal-content',
-          defaultMessage: 'Ertu viss um að þú viljir eyða þessum aðgangi?',
-        })}
         isVisible={isDefined(delegation)}
         delegation={delegation as AuthCustomDelegation}
-        domain={{
-          name: delegation?.domain.displayName,
-          imgSrc: delegation?.domain.organisationLogoUrl,
-        }}
       />
     </>
   )

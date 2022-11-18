@@ -38,10 +38,7 @@ interface Props {
   defendant: Defendant
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
-  onChange: (
-    defendantId: string,
-    updatedDefendant: UpdateDefendant,
-  ) => Promise<void>
+  onChange: (defendantId: string, updatedDefendant: UpdateDefendant) => void
   updateDefendantState: (
     defendantId: string,
     update: UpdateDefendant,

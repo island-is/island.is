@@ -9,7 +9,6 @@ const { DuplicatesPlugin } = require('inspectpack/plugin')
 const graphqlPath = '/api/graphql'
 const {
   API_URL = 'http://localhost:4444',
-  SENTRY_DSN,
   DISABLE_API_CATALOGUE,
   DD_RUM_APPLICATION_ID,
   DD_RUM_CLIENT_TOKEN,
@@ -30,13 +29,13 @@ module.exports = withNx(
           source: '/rss.xml',
           destination: '/api/rss',
         },
+        {
+          source: '/opinbernyskopun/rss.xml',
+          destination: '/api/rss/opinbernyskopun',
+        },
       ]
     },
     webpack: (config, { isServer }) => {
-      if (!isServer) {
-        config.resolve.alias['@sentry/node'] = '@sentry/browser'
-      }
-
       if (process.env.ANALYZE === 'true' && !isServer) {
         config.plugins.push(
           new DuplicatesPlugin({
@@ -96,7 +95,6 @@ module.exports = withNx(
       // Will be available on both server and client
       graphqlUrl: '',
       graphqlEndpoint: graphqlPath,
-      SENTRY_DSN,
       disableApiCatalog: DISABLE_API_CATALOGUE,
       ddRumApplicationId: DD_RUM_APPLICATION_ID,
       ddRumClientToken: DD_RUM_CLIENT_TOKEN,

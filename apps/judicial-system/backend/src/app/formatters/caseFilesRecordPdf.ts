@@ -1,8 +1,9 @@
 import { FormatMessage } from '@island.is/cms-translations'
 import {
   capitalize,
-  caseTypes,
+  indictmentSubtypes,
   formatDOB,
+  formatDate,
 } from '@island.is/judicial-system/formatters'
 
 import { caseFilesRecord } from '../messages'
@@ -27,7 +28,7 @@ export const createCaseFilesRecord = async (
   theCase: Case,
   policeCaseNumber: string,
   caseFiles: (() => Promise<{
-    date: string
+    date: Date
     name: string
     chapter: number
     buffer?: Buffer
@@ -48,7 +49,7 @@ export const createCaseFilesRecord = async (
   const chapters = [0, 1, 2, 3, 4, 5]
   const pageReferences: {
     chapter: number
-    date: string
+    date: Date
     name: string
     pageNumber: number
     pageLink: PageLink
@@ -121,20 +122,28 @@ export const createCaseFilesRecord = async (
     )
   }
 
-  pdfDocument
-    .addText(formatMessage(caseFilesRecord.accusedOf), textFontSize, {
-      bold: true,
-      marginTop: 1,
-      newLine: false,
-    })
-    .addText(capitalize(caseTypes[theCase.type]), textFontSize, {
+  const subtypes =
+    (theCase.indictmentSubtypes &&
+      theCase.indictmentSubtypes[policeCaseNumber]) ??
+    []
+
+  pdfDocument.addText(formatMessage(caseFilesRecord.accusedOf), textFontSize, {
+    bold: true,
+    marginTop: 1,
+    newLine: subtypes.length === 0,
+  })
+
+  for (const subtype of subtypes) {
+    pdfDocument.addText(capitalize(indictmentSubtypes[subtype]), textFontSize, {
       position: { x: defendantIndent },
     })
-    .addText(
-      formatMessage(caseFilesRecord.tableOfContentsHeading),
-      subtitleFontSize,
-      { alignment: Alignment.Center, bold: true, marginTop: 9 },
-    )
+  }
+
+  pdfDocument.addText(
+    formatMessage(caseFilesRecord.tableOfContentsHeading),
+    subtitleFontSize,
+    { alignment: Alignment.Center, bold: true, marginTop: 9 },
+  )
 
   for (const chapter of chapters) {
     if (chapter === 0) {
@@ -165,7 +174,9 @@ export const createCaseFilesRecord = async (
           newLine: false,
         })
         .addText(
-          `${pageReference.date} - ${pageReference.name}`,
+          `${formatDate(pageReference.date, 'dd.MM.yyyy')} - ${
+            pageReference.name
+          }`,
           textFontSize,
           {
             maxWidth: 400,

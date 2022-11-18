@@ -17,57 +17,68 @@ export const isApiScopeGroup = (scope: Scope): scope is ScopeGroup =>
   scope.__typename === AUTH_API_SCOPE_GROUP_TYPE
 
 /**
- * Flattens out scope group into a list of scopes and extends each scope with model property for form state
- * @param apiScopeGroup Scope group to flatten
- * @param startIndex Index to create unique key for form
+ * Gets scopeTree current model index based on order in list and take into account if scope bares children.
+ * This makes sure the model indexes will all be unique and in sequential order, i.e. 0,1,2,3,4,5,6,7,8,9,...
  */
-export const flattenAndExtendApiScopeGroup = (
-  apiScopeGroup: AuthApiScopeGroup,
-  startIndex: number,
-): Scope[] => [
-  // Scope parent of the children
-  {
-    ...apiScopeGroup,
-    model: `${GROUP}.${startIndex}`,
-  },
-  // Scope children
-  ...(apiScopeGroup.children?.map((scope, childIndex) => ({
-    ...scope,
-    model: `${SCOPE}.${startIndex + childIndex}`,
-  })) || []),
-]
+const getScopeTreeCurrentModelIndex = (
+  authScopes: AuthScopeTree,
+  authScopesEndIndex: number,
+) => {
+  let index = 0
+
+  for (let i = 0; i < authScopesEndIndex; i++) {
+    const scope = authScopes[i]
+
+    // If scope has children, add the number of children to the index
+    if (scope.__typename === AUTH_API_SCOPE_GROUP_TYPE) {
+      index += scope.children ? scope.children.length - 1 : 0
+    }
+
+    index++
+  }
+
+  return index
+}
 
 /**
  * Extends scope with model property for form state
- * @param apiScope current scope
+ * @param scope current scope
  * @param index current scope index in list
- * @param authScopes list of scopes
+ * @param scopes list of scopes
  */
 export const extendApiScope = (
-  apiScope: AuthScopeTree[0],
+  scope: AuthScopeTree[0],
   index: number,
-  authScopes: AuthScopeTree,
-): Scope => {
-  const previousScope = authScopes[index - 1]
-  let modelIndex = index
+  scopes: AuthScopeTree,
+): Scope[] => {
+  const currentModelIndex = getScopeTreeCurrentModelIndex(scopes, index)
 
-  if (
-    previousScope &&
-    previousScope.__typename === AUTH_API_SCOPE_GROUP_TYPE &&
-    previousScope.children?.[0]
-  ) {
-    modelIndex = previousScope.children.length - 1 + index
+  if (scope.__typename === AUTH_API_SCOPE_GROUP_TYPE) {
+    return [
+      // Scope parent of the children
+      {
+        ...scope,
+        model: `${GROUP}.${currentModelIndex}`,
+      },
+      // Scope children
+      ...(scope.children?.map((s, childIndex) => ({
+        ...s,
+        model: `${SCOPE}.${currentModelIndex + childIndex}`,
+      })) || []),
+    ]
   }
 
-  return {
-    ...apiScope,
-    model: `${SCOPE}.${modelIndex}`,
-  }
+  return [
+    {
+      ...scope,
+      model: `${SCOPE}.${currentModelIndex}`,
+    },
+  ]
 }
 
 type MapScopeTreeToScope = {
   item: AccessFormScope
-  authScopeTree?: AuthScopeTree
+  scopeTree?: AuthScopeTree
   validityPeriod: Date | null
 }
 
@@ -76,10 +87,10 @@ type MapScopeTreeToScope = {
  */
 export const formatScopeTreeToScope = ({
   item,
-  authScopeTree,
+  scopeTree,
   validityPeriod,
 }: MapScopeTreeToScope): MappedScope | null => {
-  const flattenScopes = authScopeTree
+  const flattenScopes = scopeTree
     ?.map((apiScope) => {
       if (apiScope.__typename === AUTH_API_SCOPE_GROUP_TYPE) {
         return [apiScope, ...(apiScope?.children || [])]

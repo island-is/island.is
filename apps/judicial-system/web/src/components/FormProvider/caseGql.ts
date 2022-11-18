@@ -7,6 +7,7 @@ const CaseQuery = gql`
       created
       modified
       type
+      indictmentSubtypes
       description
       state
       policeCaseNumbers
@@ -167,6 +168,7 @@ const CaseQuery = gql`
       seenByDefender
       subpoenaType
       defendantWaivesRightToCounsel
+      crimeScenes
     }
   }
 `

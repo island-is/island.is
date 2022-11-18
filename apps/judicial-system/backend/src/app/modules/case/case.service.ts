@@ -20,12 +20,12 @@ import {
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
-import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   CaseFileCategory,
   CaseFileState,
   CaseOrigin,
   CaseState,
+  isIndictmentCase,
 } from '@island.is/judicial-system/types'
 import type { User as TUser } from '@island.is/judicial-system/types'
 
@@ -155,7 +155,15 @@ export class CaseService {
     transaction?: Transaction,
   ): Promise<string> {
     const theCase = await (transaction
-      ? this.caseModel.create({ ...caseToCreate }, { transaction })
+      ? this.caseModel.create(
+          {
+            ...caseToCreate,
+            state: isIndictmentCase(caseToCreate.type)
+              ? CaseState.DRAFT
+              : undefined,
+          },
+          { transaction },
+        )
       : this.caseModel.create({ ...caseToCreate }))
 
     return theCase.id
@@ -166,7 +174,7 @@ export class CaseService {
       { type: MessageType.CASE_COMPLETED, caseId },
       { type: MessageType.DELIVER_COURT_RECORD_TO_COURT, caseId },
       { type: MessageType.DELIVER_SIGNED_RULING_TO_COURT, caseId },
-      { type: MessageType.SEND_RULING_NOTIFICAGTION, caseId },
+      { type: MessageType.SEND_RULING_NOTIFICATION, caseId },
     ])
   }
 
@@ -174,7 +182,7 @@ export class CaseService {
   addCompletedIndictmentCaseMessagesToQueue(theCase: Case): Promise<void> {
     return this.messageService.sendMessagesToQueue([
       { type: MessageType.CASE_COMPLETED, caseId: theCase.id },
-      { type: MessageType.SEND_RULING_NOTIFICAGTION, caseId: theCase.id },
+      { type: MessageType.SEND_RULING_NOTIFICATION, caseId: theCase.id },
     ])
   }
 
@@ -232,6 +240,7 @@ export class CaseService {
   }
 
   async create(caseToCreate: CreateCaseDto, prosecutor: TUser): Promise<Case> {
+    this.logger.debug('Creating case', { caseToCreate })
     return this.sequelize
       .transaction(async (transaction) => {
         const caseId = await this.createCase(
@@ -341,10 +350,7 @@ export class CaseService {
 
         return {
           chapter: caseFile.chapter as number,
-          date: formatDate(
-            caseFile.displayDate ?? caseFile.created,
-            'dd.MM.yyyy',
-          ) as string,
+          date: caseFile.displayDate ?? caseFile.created,
           name: caseFile.userGeneratedFilename ?? caseFile.name,
           buffer: buffer ?? undefined,
         }
@@ -583,6 +589,7 @@ export class CaseService {
           {
             origin: theCase.origin,
             type: theCase.type,
+            indictmentSubtypes: theCase.indictmentSubtypes,
             description: theCase.description,
             policeCaseNumbers: theCase.policeCaseNumbers,
             defenderName: theCase.defenderName,
@@ -640,6 +647,7 @@ export class CaseService {
       theCase.type,
       theCase.policeCaseNumbers,
       Boolean(theCase.parentCaseId),
+      theCase.indictmentSubtypes,
     )
 
     const updatedCase = (await this.update(

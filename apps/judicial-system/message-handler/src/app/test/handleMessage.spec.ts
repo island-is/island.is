@@ -169,7 +169,7 @@ describe('MessageHandlerService - Handle message', () => {
       )
 
       then = await givenWhenThen({
-        type: MessageType.SEND_RULING_NOTIFICAGTION,
+        type: MessageType.SEND_RULING_NOTIFICATION,
         caseId,
       })
     })

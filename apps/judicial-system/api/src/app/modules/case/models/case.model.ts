@@ -14,6 +14,8 @@ import type {
   CourtDocument,
   CaseOrigin,
   SubpoenaType,
+  IndictmentSubtypeMap,
+  CrimeSceneMap,
 } from '@island.is/judicial-system/types'
 
 import { Defendant } from '../../defendant'
@@ -38,6 +40,9 @@ export class Case implements TCase {
 
   @Field(() => String)
   readonly type!: CaseType
+
+  @Field(() => GraphQLJSONObject, { nullable: true })
+  readonly indictmentSubtypes?: IndictmentSubtypeMap
 
   @Field({ nullable: true })
   readonly description?: string
@@ -270,6 +275,9 @@ export class Case implements TCase {
   @Field(() => String, { nullable: true })
   readonly subpoenaType?: SubpoenaType
 
-  @Field(() => Boolean)
-  readonly defendantWaivesRightToCounsel!: boolean
+  @Field(() => Boolean, { nullable: true })
+  readonly defendantWaivesRightToCounsel?: boolean
+
+  @Field(() => GraphQLJSONObject, { nullable: true })
+  readonly crimeScenes?: CrimeSceneMap
 }

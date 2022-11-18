@@ -1,11 +1,9 @@
-import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import {
   Case,
   CaseState,
-  Feature,
   Gender,
   InstitutionType,
   isInvestigationCase,
@@ -19,7 +17,6 @@ import {
   INVESTIGATION_CASE_MODIFY_RULING_ROUTE,
   RESTRICTION_CASE_MODIFY_RULING_ROUTE,
 } from '@island.is/judicial-system/consts'
-import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import * as constants from '@island.is/judicial-system/consts'
 
 import {
@@ -55,7 +52,6 @@ interface Section {
 
 const useSections = () => {
   const { formatMessage } = useIntl()
-  const { features } = useContext(FeatureContext)
   const router = useRouter()
 
   const findLastValidStep = (section: Section) => {
@@ -267,30 +263,6 @@ const useSections = () => {
               type: 'SUB_SECTION',
               name: capitalize(
                 formatMessage(
-                  sections.indictmentCaseProsecutorSection.processing,
-                ),
-              ),
-              href: isDefendantStepValidForSidebarIndictments(workingCase)
-                ? `${constants.INDICTMENTS_PROCESSING_ROUTE}/${id}`
-                : undefined,
-            },
-            {
-              type: 'SUB_SECTION',
-              name: capitalize(
-                formatMessage(
-                  sections.indictmentCaseProsecutorSection.caseFiles,
-                ),
-              ),
-              href:
-                isDefendantStepValidForSidebarIndictments(workingCase) &&
-                isProcessingStepValidIndictments(workingCase)
-                  ? `${constants.INDICTMENTS_CASE_FILES_ROUTE}/${id}`
-                  : undefined,
-            },
-            {
-              type: 'SUB_SECTION',
-              name: capitalize(
-                formatMessage(
                   sections.indictmentCaseProsecutorSection.policeCaseFiles,
                 ),
               ),
@@ -311,6 +283,30 @@ const useSections = () => {
                 isDefendantStepValidForSidebarIndictments(workingCase) &&
                 isProcessingStepValidIndictments(workingCase)
                   ? `${constants.INDICTMENTS_CASE_FILE_ROUTE}/${id}`
+                  : undefined,
+            },
+            {
+              type: 'SUB_SECTION',
+              name: capitalize(
+                formatMessage(
+                  sections.indictmentCaseProsecutorSection.processing,
+                ),
+              ),
+              href: isDefendantStepValidForSidebarIndictments(workingCase)
+                ? `${constants.INDICTMENTS_PROCESSING_ROUTE}/${id}`
+                : undefined,
+            },
+            {
+              type: 'SUB_SECTION',
+              name: capitalize(
+                formatMessage(
+                  sections.indictmentCaseProsecutorSection.caseFiles,
+                ),
+              ),
+              href:
+                isDefendantStepValidForSidebarIndictments(workingCase) &&
+                isProcessingStepValidIndictments(workingCase)
+                  ? `${constants.INDICTMENTS_CASE_FILES_ROUTE}/${id}`
                   : undefined,
             },
             {

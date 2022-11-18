@@ -100,7 +100,7 @@ describe('CaseController - Transition', () => {
 
           then = await givenWhenThen(caseId, theCase, {
             transition,
-          } as TransitionCaseDto)
+          })
         })
 
         it('should transition the case', () => {
