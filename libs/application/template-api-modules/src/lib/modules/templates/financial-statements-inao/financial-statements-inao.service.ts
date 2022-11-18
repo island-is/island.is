@@ -139,7 +139,7 @@ export class FinancialStatementsInaoTemplateService {
         ? undefined
         : await this.getAttachment({ application, auth })
 
-      this.logger.debug(
+      this.logger.info(
         `PostFinancialStatementForPersonalElection => clientNationalId: '${nationalId}', actorNationalId: '${
           actor?.nationalId
         }', electionId: '${electionId}', noValueStatement: '${noValueStatement}', clientName: '${clientName}', values: '${JSON.stringify(
