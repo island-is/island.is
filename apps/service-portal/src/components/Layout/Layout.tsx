@@ -28,7 +28,11 @@ import { useMeasure } from 'react-use'
 const Layout: FC = ({ children }) => {
   useRoutes()
   useModules()
-  useNamespaces(['service.portal', 'global'])
+  const { loadingMessages } = useNamespaces([
+    'service.portal',
+    'global',
+    'sp.documents',
+  ])
   const { pathname } = useLocation()
   useScrollTopOnUpdate([pathname])
   const [{ mobileMenuState, sidebarState }] = useStore()
@@ -74,7 +78,7 @@ const Layout: FC = ({ children }) => {
                 <Hidden print>
                   <ContentBreadcrumbs />
                 </Hidden>
-                <div>{children}</div>
+                {loadingMessages ? <div /> : <div>{children}</div>}
               </GridColumn>
             </GridRow>
           </GridContainer>
