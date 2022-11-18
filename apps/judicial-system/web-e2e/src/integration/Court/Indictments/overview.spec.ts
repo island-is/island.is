@@ -3,7 +3,7 @@ import {
   CaseFileCategory,
   CaseState,
   CaseType,
-  IndictmentSubType,
+  IndictmentSubtype,
   UserRole,
 } from '@island.is/judicial-system/types'
 import {
@@ -21,7 +21,7 @@ import {
 describe(`${INDICTMENTS_COURT_OVERVIEW_ROUTE}/:id`, () => {
   const caseData = mockCase(
     CaseType.INDICTMENT,
-    IndictmentSubType.TAX_VIOLATION,
+    IndictmentSubtype.TAX_VIOLATION,
   )
   const prosecutor = makeProsecutor('Assigned Prosecutor')
   const creatingProsecutor = makeProsecutor('Creating Prosecutor')

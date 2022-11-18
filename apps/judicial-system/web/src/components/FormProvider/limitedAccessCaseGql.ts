@@ -7,7 +7,7 @@ const LimitedAccessCaseQuery = gql`
       created
       origin
       type
-      indictmentSubType
+      indictmentSubtypes
       state
       policeCaseNumbers
       caseFiles {

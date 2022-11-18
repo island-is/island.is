@@ -2,7 +2,8 @@ import cn from 'classnames'
 import { INLINES } from '@contentful/rich-text-types'
 import { Box, GridContainer, Link, Text } from '@island.is/island-ui/core'
 import { FooterItem } from '@island.is/web/graphql/schema'
-import { richText, SliceType } from '@island.is/island-ui/contentful'
+import { SliceType } from '@island.is/island-ui/contentful'
+import { webRichText } from '@island.is/web/utils/richText'
 
 import * as styles from './LandingPageFooter.css'
 
@@ -30,7 +31,7 @@ const LandingPageFooter: React.FC<LandingPageFooterProps> = ({
                 key={`${item.id}-${index}`}
               >
                 {item.content?.length &&
-                  richText(item.content as SliceType[], {
+                  webRichText(item.content as SliceType[], {
                     renderNode: {
                       [INLINES.HYPERLINK]: (node, children) => (
                         <Link
