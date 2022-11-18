@@ -21,6 +21,7 @@ export class UpdateFileDto {
   @ApiPropertyOptional()
   readonly userGeneratedFilename?: string | null
 
+  @IsOptional()
   @ValidateIf((file) => typeof file.orderWithinChapter === 'number')
   @IsNumber()
   @Min(0)
