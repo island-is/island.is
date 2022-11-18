@@ -41,7 +41,7 @@ const Sidemenu = ({ position }: Props): ReactElement | null => {
 
   return (
     <Box
-      position="absolute"
+      position="fixed"
       background="blue100"
       className={styles.wrapper}
       ref={ref}
