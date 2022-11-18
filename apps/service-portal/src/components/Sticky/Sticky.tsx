@@ -9,7 +9,7 @@ interface Props {
 export const Sticky: FC<Props> = ({
   children,
   constantSticky = false,
-  top = SERVICE_PORTAL_HEADER_HEIGHT_LG + theme.spacing[8],
+  top = SERVICE_PORTAL_HEADER_HEIGHT_LG + theme.spacing[7],
 }) => {
   const ref = useRef<HTMLDivElement | null>(null)
   const [usesSticky, setUsesSticky] = useState<boolean>(constantSticky)
