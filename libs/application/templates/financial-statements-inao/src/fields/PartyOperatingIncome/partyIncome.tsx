@@ -43,7 +43,8 @@ export const PartyIncome = ({
         data.financialStatementsInaoTaxInfo?.[2]?.value?.toString() ?? '',
       )
     }
-  }, [data, setValue])
+    getSum()
+  }, [data, getSum, setValue])
 
   const onInputChange = debounce((fieldId: string) => {
     getSum()
@@ -60,6 +61,7 @@ export const PartyIncome = ({
           onChange={() =>
             onInputChange(PARTYOPERATIONIDS.contributionsFromTheTreasury)
           }
+          rightAlign
           backgroundColor="blue"
           loading={loading}
           currency
@@ -82,6 +84,7 @@ export const PartyIncome = ({
           }
           loading={loading}
           backgroundColor="blue"
+          rightAlign
           currency
           error={
             errors &&
@@ -99,6 +102,7 @@ export const PartyIncome = ({
           }
           loading={loading}
           backgroundColor="blue"
+          rightAlign
           currency
           error={
             errors &&
@@ -111,6 +115,7 @@ export const PartyIncome = ({
           id={PARTYOPERATIONIDS.contributionsFromLegalEntities}
           name={PARTYOPERATIONIDS.contributionsFromLegalEntities}
           label={formatMessage(m.contributionsFromLegalEntities)}
+          rightAlign
           onChange={() =>
             onInputChange(PARTYOPERATIONIDS.contributionsFromLegalEntities)
           }
@@ -130,6 +135,7 @@ export const PartyIncome = ({
           id={PARTYOPERATIONIDS.contributionsFromIndividuals}
           name={PARTYOPERATIONIDS.contributionsFromIndividuals}
           label={formatMessage(m.contributionsFromIndividuals)}
+          rightAlign
           onChange={() =>
             onInputChange(PARTYOPERATIONIDS.contributionsFromIndividuals)
           }
@@ -152,6 +158,7 @@ export const PartyIncome = ({
           onChange={() =>
             onInputChange(PARTYOPERATIONIDS.generalMembershipFees)
           }
+          rightAlign
           backgroundColor="blue"
           currency
           error={
@@ -166,6 +173,7 @@ export const PartyIncome = ({
           name={PARTYOPERATIONIDS.otherIncome}
           label={formatMessage(m.otherIncome)}
           onChange={() => onInputChange(PARTYOPERATIONIDS.otherIncome)}
+          rightAlign
           backgroundColor="blue"
           currency
           error={

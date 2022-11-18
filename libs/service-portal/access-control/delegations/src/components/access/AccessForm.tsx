@@ -12,8 +12,8 @@ import {
 } from '@island.is/island-ui/core'
 import { AuthCustomDelegation } from '@island.is/api/schema'
 import {
+  formatPlausiblePathToParams,
   m as coreMessages,
-  m,
   ServicePortalPath,
 } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
@@ -22,22 +22,17 @@ import { servicePortalSaveAccessControl } from '@island.is/plausible'
 import {
   useUpdateAuthDelegationMutation,
   useAuthScopeTreeQuery,
+  AuthDomainDirection,
 } from '@island.is/service-portal/graphql'
-import {
-  AccessFormScope,
-  AuthScopeTree,
-  AUTH_API_SCOPE_GROUP_TYPE,
-} from './access.types'
-import {
-  flattenAndExtendApiScopeGroup,
-  extendApiScope,
-  formatScopeTreeToScope,
-} from './access.utils'
+import { AccessFormScope } from './access.types'
+import { extendApiScope, formatScopeTreeToScope } from './access.utils'
 import { AccessItem } from './AccessItem'
 import { AccessConfirmModal } from '../../components/access/AccessConfirmModal'
 import { AccessItemHeader } from '../../components/access/AccessItemHeader'
 import { isDefined } from '@island.is/shared/utils'
 import * as commonAccessStyles from './access.css'
+import { AccessDeleteModal } from './AccessDeleteModal'
+import { useAuth } from '@island.is/auth/react'
 
 type AccessFormProps = {
   delegation: AuthCustomDelegation
@@ -45,12 +40,15 @@ type AccessFormProps = {
 }
 
 export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
-  const [openConfirmModal, setOpenConfirmModal] = useState(false)
   const { formatMessage, lang } = useLocale()
   const { delegationId } = useParams<{
     delegationId: string
   }>()
   const history = useHistory()
+  const { userInfo } = useAuth()
+
+  const [openConfirmModal, setOpenConfirmModal] = useState(false)
+  const [openDeleteModal, setOpenDeleteModal] = useState(false)
   const [formError, setFormError] = useState(false)
   const [updateError, setUpdateError] = useState(false)
 
@@ -73,6 +71,7 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
       input: {
         domain: delegation.domain.name,
         lang,
+        direction: AuthDomainDirection.Outgoing,
       },
     },
   })
@@ -119,7 +118,9 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
       if (data && !errors && !err) {
         history.push(ServicePortalPath.AccessControlDelegations)
         servicePortalSaveAccessControl(
-          ServicePortalPath.AccessControlDelegationsGrant,
+          formatPlausiblePathToParams(
+            ServicePortalPath.AccessControlDelegationsGrant,
+          ),
         )
       }
     } catch (error) {
@@ -133,26 +134,6 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
       formatScopeTreeToScope({ item, scopeTree, validityPeriod }),
     )
     .filter(isDefined)
-
-  const renderAccessItem = (
-    authScope: AuthScopeTree[0],
-    index: number,
-    authScopes: AuthScopeTree,
-  ) => {
-    const apiScopes =
-      authScope.__typename === AUTH_API_SCOPE_GROUP_TYPE
-        ? flattenAndExtendApiScopeGroup(authScope, index)
-        : [extendApiScope(authScope, index, authScopes)]
-
-    return (
-      <AccessItem
-        key={index}
-        apiScopes={apiScopes}
-        authDelegation={delegation}
-        validityPeriod={validityPeriod}
-      />
-    )
-  }
 
   return (
     <>
@@ -180,7 +161,14 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
                 </Stack>
               </Box>
             ) : (
-              scopeTree?.map(renderAccessItem)
+              scopeTree?.map((authScope, index) => (
+                <AccessItem
+                  key={index}
+                  apiScopes={extendApiScope(authScope, index, scopeTree)}
+                  authDelegation={delegation}
+                  validityPeriod={validityPeriod}
+                />
+              ))
             )}
           </Box>
         </form>
@@ -189,7 +177,16 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
             onCancel={() =>
               history.push(ServicePortalPath.AccessControlDelegations)
             }
-            onConfirm={() => setOpenConfirmModal(true)}
+            onConfirm={() => {
+              if (
+                (scopes && scopes.length > 0) ||
+                (delegation.scopes && delegation.scopes.length > 0)
+              ) {
+                setOpenConfirmModal(true)
+              } else {
+                setOpenDeleteModal(true)
+              }
+            }}
             confirmLabel={formatMessage({
               id: 'sp.settings-access-control:empty-new-access',
               defaultMessage: 'Veita aðgang',
@@ -202,27 +199,29 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
         </Box>
       </FormProvider>
       <AccessConfirmModal
-        id={`access-confirm-modal-${delegation?.id}`}
         onClose={() => {
           setUpdateError(false)
           setOpenConfirmModal(false)
         }}
         onConfirm={() => onSubmit()}
-        label={formatMessage(m.accessControl)}
-        title={formatMessage({
-          id: 'sp.settings-access-control:access-confirm-modal-title',
-          defaultMessage: 'Þú ert að veita aðgang',
-        })}
         isVisible={openConfirmModal}
         delegation={delegation}
-        domain={{
-          name: delegation.domain.displayName,
-          imgSrc: delegation.domain.organisationLogoUrl,
-        }}
         scopes={scopes}
         validityPeriod={validityPeriod}
         loading={updateLoading}
         error={updateError}
+      />
+      <AccessDeleteModal
+        onDelete={() => {
+          history.push(
+            delegation.to?.nationalId === userInfo?.profile.nationalId
+              ? ServicePortalPath.AccessControlDelegationsToMe
+              : ServicePortalPath.AccessControlDelegations,
+          )
+        }}
+        onClose={() => setOpenDeleteModal(false)}
+        isVisible={openDeleteModal}
+        delegation={delegation as AuthCustomDelegation}
       />
     </>
   )
