@@ -864,18 +864,18 @@ export const m = defineMessages({
   },
   delegationTypeCustomDesc: {
     id: 'service.portal:delegation-type-custom',
-    defaultMessage: 'Umboð description missing',
+    defaultMessage: 'Umboð sem eru veitt í aðgangstýringarkerfi Ísland.is',
   },
   delegationTypeLegalGuardianDesc: {
     id: 'service.portal:delegation-type-legal-guardian',
-    defaultMessage: 'Forsjá description missing',
+    defaultMessage: 'Eru sótt úr forsjárskrá Þjóðskrár',
   },
   delegationTypeProcurationHolderDesc: {
     id: 'service.portal:delegation-type-procuration-holder',
-    defaultMessage: 'Prókúra description missing',
+    defaultMessage: 'Eru sótt úr fyrirtækjaskrá Skattsins',
   },
   delegationTypePersonalRepresentativeDesc: {
     id: 'service.portal:delegation-type-personal-representative',
-    defaultMessage: 'Pers. talsmaður description missing',
+    defaultMessage: 'Samningar frá Réttindagæslu fatlaðra',
   },
 })
