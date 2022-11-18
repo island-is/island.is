@@ -42,9 +42,7 @@ export const UserMenu = ({
 
   return (
     <Box display="flex" position="relative" height="full">
-      <Hidden below="md">
-        <UserLanguageSwitcher user={user} />
-      </Hidden>
+      <UserLanguageSwitcher user={user} />
       <UserButton user={user} onClick={handleClick} small={small} />
       <UserDropdown
         user={user}

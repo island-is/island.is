@@ -60,7 +60,7 @@ export const UserLanguageSwitcher = ({
       />
     </Box>
   ) : (
-    <Box marginX={1}>
+    <Box marginX={2}>
       <Button
         variant="utility"
         onClick={handleLanguageChange}

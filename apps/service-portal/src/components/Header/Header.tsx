@@ -81,15 +81,32 @@ export const Header = ({ position }: Props) => {
                 display="flex"
                 alignItems="center"
                 flexWrap="nowrap"
-                marginLeft={1}
+                marginLeft={2}
               >
+                <Link to={ServicePortalPath.ElectronicDocumentsRoot}>
+                  <Button
+                    variant="utility"
+                    size="small"
+                    icon="mail"
+                    iconType="outline"
+                  >
+                    {formatMessage(m.documents)}
+                  </Button>
+                </Link>
+
                 <UserMenu
                   fullscreen
                   setUserMenuOpen={setUserMenuOpen}
                   userMenuOpen={userMenuOpen}
                 />
-
-                {userMenuOpen && (
+                <Box marginLeft={2}>
+                  <Button
+                    variant="utility"
+                    icon="menu"
+                    onClick={handleMobileMenuTriggerClick}
+                  ></Button>
+                </Box>
+                {/* {userMenuOpen && (
                   <Hidden above="md">
                     <Box display="flex" flexDirection="row" alignItems="center">
                       {user && <UserLanguageSwitcher user={user} />}
@@ -105,9 +122,7 @@ export const Header = ({ position }: Props) => {
                           variant="utility"
                           icon="menu"
                           onClick={handleMobileMenuTriggerClick}
-                        >
-                          {formatMessage(m.menu)}
-                        </Button>
+                        ></Button>
                       </Box>
                     ) : (
                       <Box
@@ -120,7 +135,7 @@ export const Header = ({ position }: Props) => {
                       </Box>
                     )}
                   </Hidden>
-                )}
+                )} */}
               </Box>
             </Hidden>
           </Box>

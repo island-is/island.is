@@ -35,7 +35,8 @@ export const InstitutionPanel = ({
       <Box
         background="purple100"
         borderRadius="large"
-        padding={[3, 3, 4]}
+        padding={2}
+        paddingLeft={1}
         display="flex"
         alignItems="center"
       >

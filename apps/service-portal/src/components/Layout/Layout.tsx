@@ -34,6 +34,9 @@ import SidebarLayout from './SidebarLayout'
 import Sticky from '../Sticky/Sticky'
 import { theme } from '@island.is/island-ui/theme'
 import { Link as ReactLink } from 'react-router-dom'
+import Sidemenu from '../Sidemenu/Sidemenu'
+import { useStore } from '../../store/stateProvider'
+import * as styles from './Layout.css'
 
 const Layout: FC = ({ children }) => {
   useRoutes()
@@ -52,6 +55,7 @@ const Layout: FC = ({ children }) => {
   const { width } = useWindowSize()
   const isTablet = width <= theme.breakpoints.lg
   const subNavItems: NavigationItem[] = []
+  const [{ mobileMenuState }] = useStore()
 
   const findParent = (navigation?: ServicePortalNavigationItem[]) => {
     // finnur active parent flokk
@@ -138,31 +142,62 @@ const Layout: FC = ({ children }) => {
 
   return (
     <>
-      <AuthOverlay />
-      <ToastContainer useKeyframeStyles={false} />
-      {globalBanners.length > 0 && (
-        <GlobalAlertBannerSection ref={ref} banners={globalBanners} />
-      )}
-      <Header position={height ? height : 0} />
-      {!isDashboard && (
-        <SidebarLayout
-          isSticky={false}
-          sidebarContent={
-            <Sticky>
-              <Box>
-                <GoBack />
-                <Box marginBottom={3}>
-                  <InstitutionPanel
-                    institution={org?.title ?? ''}
-                    institutionTitle={formatMessage(m.serviceProvider)}
-                    locale="is"
-                    linkHref={org?.link ?? ''}
-                    img={org?.logo?.url ?? ''}
-                    imgContainerDisplay={['block', 'block', 'none', 'block']}
-                  />
+      <div className={mobileMenuState === 'open' ? styles.overlay : undefined}>
+        <AuthOverlay />
+        <ToastContainer useKeyframeStyles={false} />
+        {globalBanners.length > 0 && (
+          <GlobalAlertBannerSection ref={ref} banners={globalBanners} />
+        )}
+        <Header position={height ? height : 0} />
+        {!isDashboard && (
+          <SidebarLayout
+            isSticky={false}
+            sidebarContent={
+              <Sticky>
+                <Box style={{ marginTop: height }}>
+                  {/* <GoBack /> */}
+                  <Box marginBottom={3}>
+                    <InstitutionPanel
+                      institution={org?.title ?? ''}
+                      institutionTitle={formatMessage(m.serviceProvider)}
+                      locale="is"
+                      linkHref={org?.link ?? ''}
+                      img={org?.logo?.url ?? ''}
+                      imgContainerDisplay={['block', 'block', 'none', 'block']}
+                    />
+                  </Box>
+                  {subNavItems.length > 0 && (
+                    <Box background="blue100">
+                      <Navigation
+                        renderLink={(link, item) => {
+                          return item?.href ? (
+                            <ReactLink to={item?.href}>{link}</ReactLink>
+                          ) : (
+                            link
+                          )
+                        }}
+                        baseId={'service-portal-navigation'}
+                        title={formatMessage(m.tableOfContents)}
+                        items={subNavItems}
+                      />
+                    </Box>
+                  )}
                 </Box>
-                {subNavItems.length > 0 && (
-                  <Box background="blue100">
+              </Sticky>
+            }
+          >
+            <Box as="main" component="main" style={{ marginTop: height }}>
+              <ContentBreadcrumbs
+                tag={{
+                  variant: 'purple',
+                  href: org?.link ?? '',
+                  children: org?.title ?? '',
+                  active: org?.link ? true : false,
+                }}
+              />
+              {subNavItems.length > 0 && (
+                <Hidden above="sm">
+                  <Box paddingBottom={3}>
                     <Navigation
                       renderLink={(link, item) => {
                         return item?.href ? (
@@ -171,58 +206,31 @@ const Layout: FC = ({ children }) => {
                           link
                         )
                       }}
-                      baseId={'service-portal-navigation'}
-                      title={formatMessage(m.tableOfContents)}
+                      baseId={'service-portal-mobile-navigation'}
+                      title={
+                        parent?.name
+                          ? formatMessage(parent?.name)
+                          : formatMessage(m.tableOfContents)
+                      }
                       items={subNavItems}
+                      isMenuDialog={true}
                     />
                   </Box>
-                )}
-              </Box>
-            </Sticky>
-          }
-        >
+                </Hidden>
+              )}
+              {children}
+            </Box>
+          </SidebarLayout>
+        )}
+        {isDashboard && (
           <Box as="main" component="main" style={{ marginTop: height }}>
-            <ContentBreadcrumbs
-              tag={{
-                variant: 'purple',
-                href: org?.link ?? '',
-                children: org?.title ?? '',
-                active: org?.link ? true : false,
-              }}
-            />
-            {subNavItems.length > 0 && (
-              <Hidden above="sm">
-                <Box paddingBottom={3}>
-                  <Navigation
-                    renderLink={(link, item) => {
-                      return item?.href ? (
-                        <ReactLink to={item?.href}>{link}</ReactLink>
-                      ) : (
-                        link
-                      )
-                    }}
-                    baseId={'service-portal-mobile-navigation'}
-                    title={
-                      parent?.name
-                        ? formatMessage(parent?.name)
-                        : formatMessage(m.tableOfContents)
-                    }
-                    items={subNavItems}
-                    isMenuDialog={true}
-                  />
-                </Box>
-              </Hidden>
-            )}
+            <ContentBreadcrumbs />
             {children}
           </Box>
-        </SidebarLayout>
-      )}
-      {isDashboard && (
-        <Box as="main" component="main" style={{ marginTop: height }}>
-          <ContentBreadcrumbs />
-          {children}
-        </Box>
-      )}
+        )}
+      </div>
+
+      <Sidemenu position={height} />
     </>
   )
 }
