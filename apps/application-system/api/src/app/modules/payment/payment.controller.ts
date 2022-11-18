@@ -62,8 +62,8 @@ export class PaymentController {
     @Param('applicationId', new ParseUUIDPipe()) applicationId: string,
     @Body() payload: CreateChargeInput,
   ): Promise<CreatePaymentResponseDto> {
-    const chargeItem = await this.paymentService.findChargeItem(
-      payload.chargeItemCode,
+    const chargeItems = await this.paymentService.findChargeItems(
+      payload.chargeItemCodes,
     )
 
     const paymentDto: Pick<
@@ -72,13 +72,18 @@ export class PaymentController {
     > = {
       application_id: applicationId,
       fulfilled: false,
-      amount: chargeItem.priceAmount,
+      amount: chargeItems.reduce(
+        (sum, item) => sum + (item?.priceAmount || 0),
+        0,
+      ),
       definition: {
-        chargeItemName: chargeItem.chargeItemName,
-        chargeItemCode: chargeItem.chargeItemCode,
-        performingOrganiationID: chargeItem.performingOrgID,
-        chargeType: chargeItem.chargeType,
-        amount: chargeItem.priceAmount,
+        performingOrganizationID: chargeItems[0].performingOrgID,
+        chargeType: chargeItems[0].chargeType,
+        charges: chargeItems.map((chargeItem) => ({
+          chargeItemName: chargeItem.chargeItemName,
+          chargeItemCode: chargeItem.chargeItemCode,
+          amount: chargeItem.priceAmount,
+        })),
       },
       expires_at: new Date(),
     }

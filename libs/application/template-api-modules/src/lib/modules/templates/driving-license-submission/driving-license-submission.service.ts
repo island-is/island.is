@@ -42,7 +42,7 @@ export class DrivingLicenseSubmissionService {
     const response = await this.sharedTemplateAPIService.createCharge(
       auth.authorization,
       id,
-      chargeItemCode,
+      [chargeItemCode],
     )
 
     // last chance to validate before the user receives a dummy

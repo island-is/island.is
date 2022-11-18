@@ -12,20 +12,22 @@ export const PaymentChargeOverview: FC<FieldBaseProps> = ({ application }) => {
   const chargeItemCodes = getChargeItemCodes(
     application.answers as OrderVehicleLicensePlate,
   )
-
   const { externalData } = application
-  const items = externalData?.payment?.data as [
+  const allItems = externalData?.payment?.data as [
     {
       priceAmount: number
       chargeItemName: string
       chargeItemCode: string
     },
   ]
-  const item = items.filter(({ chargeItemCode }) =>
+  const items = allItems.filter(({ chargeItemCode }) =>
     chargeItemCodes.includes(chargeItemCode),
-  )[0]
+  )
 
-  const price = item?.priceAmount || 0
+  const totalPrice = items.reduce(
+    (sum, item) => sum + (item?.priceAmount || 0),
+    0,
+  )
 
   return (
     <Box>
@@ -33,10 +35,12 @@ export const PaymentChargeOverview: FC<FieldBaseProps> = ({ application }) => {
         <Text variant="h5">
           {formatMessage(payment.paymentChargeOverview.forPayment)}
         </Text>
-        <Box paddingTop={1} display="flex" justifyContent="spaceBetween">
-          <Text>{item?.chargeItemName}</Text>
-          <Text>{formatIsk(price)}</Text>
-        </Box>
+        {items.map((item) => (
+          <Box paddingTop={1} display="flex" justifyContent="spaceBetween">
+            <Text>{item?.chargeItemName}</Text>
+            <Text>{formatIsk(item?.priceAmount || 0)}</Text>
+          </Box>
+        ))}
       </Box>
       <Box paddingY={3}>
         <Divider />
@@ -46,7 +50,7 @@ export const PaymentChargeOverview: FC<FieldBaseProps> = ({ application }) => {
           {formatMessage(payment.paymentChargeOverview.total)}
         </Text>
         <Text color="blue400" variant="h3">
-          {formatIsk(price)}
+          {formatIsk(totalPrice)}
         </Text>
       </Box>
     </Box>

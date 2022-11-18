@@ -24,7 +24,7 @@ export class OrderVehicleLicensePlateService {
       const result = this.sharedTemplateAPIService.createCharge(
         auth.authorization,
         application.id,
-        chargeItemCodes[0],
+        chargeItemCodes,
       )
       return result
     } catch (exeption) {

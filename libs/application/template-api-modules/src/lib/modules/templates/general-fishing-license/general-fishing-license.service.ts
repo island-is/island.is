@@ -34,7 +34,7 @@ export class GeneralFishingLicenseService {
     const response = await this.sharedTemplateAPIService.createCharge(
       auth.authorization,
       application.id,
-      chargeItemCode,
+      [chargeItemCode],
     )
 
     if (!response?.paymentUrl) {

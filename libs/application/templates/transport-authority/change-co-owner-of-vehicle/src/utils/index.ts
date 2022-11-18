@@ -10,19 +10,19 @@ export const getChargeItemCodes = (
   const coOwnerWasAdded = !!answers.coOwners.find((x) => x.wasAdded)
   const coOwnerWasRemoved = !!answers.coOwners.find((x) => x.wasRemoved)
 
-  if (coOwnerWasAdded && coOwnerWasRemoved) {
-    return [
-      ChargeItemCode.TRANSPORT_AUTHORITY_CHANGE_CO_OWNER_OF_VEHICLE_ADD_AND_REMOVE.toString(),
-    ]
-  } else if (coOwnerWasAdded) {
-    return [
+  const result = []
+
+  if (coOwnerWasAdded) {
+    result.push(
       ChargeItemCode.TRANSPORT_AUTHORITY_CHANGE_CO_OWNER_OF_VEHICLE_ADD.toString(),
-    ]
-  } else if (coOwnerWasRemoved) {
-    return [
-      ChargeItemCode.TRANSPORT_AUTHORITY_CHANGE_CO_OWNER_OF_VEHICLE_REMOVE.toString(),
-    ]
-  } else {
-    return []
+    )
   }
+
+  if (coOwnerWasRemoved) {
+    result.push(
+      ChargeItemCode.TRANSPORT_AUTHORITY_CHANGE_CO_OWNER_OF_VEHICLE_REMOVE.toString(),
+    )
+  }
+
+  return result
 }

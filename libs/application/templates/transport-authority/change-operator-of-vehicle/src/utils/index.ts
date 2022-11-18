@@ -10,19 +10,19 @@ export const getChargeItemCodes = (
   const operatorWasAdded = !!answers.operators.find((x) => x.wasAdded)
   const operatorWasRemoved = !!answers.operators.find((x) => x.wasRemoved)
 
-  if (operatorWasAdded && operatorWasRemoved) {
-    return [
-      ChargeItemCode.TRANSPORT_AUTHORITY_CHANGE_OPERATOR_OF_VEHICLE_ADD_AND_REMOVE.toString(),
-    ]
-  } else if (operatorWasAdded) {
-    return [
+  const result = []
+
+  if (operatorWasAdded) {
+    result.push(
       ChargeItemCode.TRANSPORT_AUTHORITY_CHANGE_OPERATOR_OF_VEHICLE_ADD.toString(),
-    ]
-  } else if (operatorWasRemoved) {
-    return [
-      ChargeItemCode.TRANSPORT_AUTHORITY_CHANGE_OPERATOR_OF_VEHICLE_REMOVE.toString(),
-    ]
-  } else {
-    return []
+    )
   }
+
+  if (operatorWasRemoved) {
+    result.push(
+      ChargeItemCode.TRANSPORT_AUTHORITY_CHANGE_OPERATOR_OF_VEHICLE_REMOVE.toString(),
+    )
+  }
+
+  return result
 }

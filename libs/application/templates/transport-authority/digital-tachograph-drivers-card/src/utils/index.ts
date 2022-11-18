@@ -7,13 +7,17 @@ export const formatIsk = (value: number): string =>
 export const getChargeItemCodes = (
   answers: DigitalTachographDriversCard,
 ): Array<string> => {
+  const result = []
+
   if (!answers.deliveryMethodIsSend) {
-    return [
+    result.push(
       ChargeItemCode.TRANSPORT_AUTHORITY_DIGITAL_TACHOGRAPH_DRIVERS_CARD.toString(),
-    ]
+    )
   } else {
-    return [
+    result.push(
       ChargeItemCode.TRANSPORT_AUTHORITY_DIGITAL_TACHOGRAPH_DRIVERS_CARD_WITH_SHIPPING.toString(),
-    ]
+    )
   }
+
+  return result
 }

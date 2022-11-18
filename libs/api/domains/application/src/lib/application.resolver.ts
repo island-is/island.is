@@ -73,7 +73,7 @@ export class ApplicationResolver {
     return this.applicationService.createCharge(
       input.applicationId,
       user,
-      input.chargeItemCode,
+      input.chargeItemCodes,
     )
   }
 

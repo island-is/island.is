@@ -14,5 +14,6 @@ export const getChargeItemCodes = (
 ): Array<string> => {
   return [
     ChargeItemCode.TRANSPORT_AUTHORITY_TRANSFER_OF_VEHICLE_OWNERSHIP.toString(),
+    ChargeItemCode.TRANSPORT_AUTHORITY_TRAFFIC_SAFETY_FEE.toString(), // TODOx á þetta alltaf að vera með eigendaskipti?
   ]
 }
