@@ -6,15 +6,14 @@ import {
   getRoleNameById,
   getAllRoles,
   getRecipients,
-  getApplicationPruneDateStr,
 } from '../transfer-of-vehicle-ownership.utils'
 
-export type NotifyPrePruneSms = (
+export type ApplicationPruneSms = (
   application: Application,
   recipient: EmailRecipient,
 ) => SmsMessage
 
-export const generateNotifyPrePruneSms: NotifyPrePruneSms = (
+export const generateApplicationPruneSms: ApplicationPruneSms = (
   application,
   recipient,
 ) => {
@@ -27,7 +26,6 @@ export const generateNotifyPrePruneSms: NotifyPrePruneSms = (
   if (!recipient.phone) throw new Error('Recipient phone was undefined')
   if (!permno) throw new Error('Permno was undefined')
 
-  const pruneDateStr = getApplicationPruneDateStr(application.created)
   const notApprovedByListStr = notApprovedByList
     .map(
       (notApprovedBy) =>
@@ -40,10 +38,8 @@ export const generateNotifyPrePruneSms: NotifyPrePruneSms = (
   return {
     phoneNumber: recipient.phone || '',
     message:
-      `Ertu nokkuð að gleyma þér? ` +
-      `Á morgun ${pruneDateStr} mun beiðni um eigendaskipti fyrir ökutækið ${permno} falla niður þar sem eftirfarandi aðilar hafa ekki samþykkt: ` +
+      `Beiðni um eigendaskipti á ökutækinu ${permno} hefur verið afturkölluð þar sem eftirfarandi aðilar staðfestu ekki: ` +
       `${notApprovedByListStr}. ` +
-      '. ' +
-      `Hægt er að samþykkja beiðnina á island.is/umsoknir.`,
+      `Nánari upplýsingar á island.is/umsoknir.`,
   }
 }

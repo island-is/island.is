@@ -4,17 +4,16 @@ import { EmailTemplateGeneratorProps } from '../../../../../types'
 import { EmailRecipient } from '../types'
 import {
   getRoleNameById,
-  getApplicationPruneDateStr,
   getRecipients,
   getAllRoles,
 } from '../transfer-of-vehicle-ownership.utils'
 
-export type NotifyPrePruneEmail = (
+export type ApplicationPruneEmail = (
   props: EmailTemplateGeneratorProps,
   recipient: EmailRecipient,
 ) => Message
 
-export const generateNotifyPrePruneEmail: NotifyPrePruneEmail = (
+export const generateApplicationPruneEmail: ApplicationPruneEmail = (
   props,
   recipient,
 ): Message => {
@@ -31,8 +30,7 @@ export const generateNotifyPrePruneEmail: NotifyPrePruneEmail = (
   if (!recipient.email) throw new Error('Recipient email was undefined')
   if (!permno) throw new Error('Permno was undefined')
 
-  const subject = 'Tilkynning um eigendaskipti - Ertu nokkuð að gleyma þér?'
-  const pruneDateStr = getApplicationPruneDateStr(application.created)
+  const subject = 'Tilkynning um eigendaskipti - umsókn fallin á tíma'
   const notApprovedByListStr = notApprovedByList
     .map(
       (notApprovedBy) =>
@@ -57,10 +55,11 @@ export const generateNotifyPrePruneEmail: NotifyPrePruneEmail = (
           context: {
             copy:
               `<p>Góðan dag,</p><br/>` +
-              `<p>Ert þú nokkuð að gleyma þér?</p>` +
-              `<p>Á morgun ${pruneDateStr} mun beiðni um eigendaskipti fyrir ökutækið ${permno} falla niður þar sem eftirfarandi aðilar hafa ekki samþykkt:</p>` +
+              `<p>Beiðni um eigendaskipti á ökutækinu ${permno} hefur verið felld niður þar sem eftirfarandi aðilar staðfestu ekki innan tímafrests:</p>` +
               `<ul>${notApprovedByListStr}.</ul>` +
-              `<p>Hægt er að samþykkja beiðnina á island.is/umsoknir.</p>`,
+              `<p>Til þess að skrá eigendaskiptin rafrænt verður að byrja ferlið upp á nýtt á umsóknarvef island.is: island.is/umsoknir, ásamt því að allir aðilar þurfa að staðfesta rafrænt innan gefins tímafrests.</p>` +
+              `<p>Þessi tilkynning á aðeins við um rafræna umsókn af umsóknarvef island.is en ekki um eigendaskipti sem skilað hefur verið inn til Samgöngustofu á pappír.</p>` +
+              `<p>Vinsamlegast hafið samband við Þjónustuver Samgöngustofu (afgreidsla@samgongustofa.is) ef nánari upplýsinga er þörf.</p>`,
           },
         },
       ],
