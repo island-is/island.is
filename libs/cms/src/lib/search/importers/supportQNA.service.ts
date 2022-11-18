@@ -36,7 +36,7 @@ export class SupportQNASyncService implements CmsSyncProvider<ISupportQna> {
               processedEntries.push(entry)
             } else {
               logger.warn('Circular reference found in supportQNA', {
-                id: entry.sys.id,
+                id: entry?.sys?.id,
               })
             }
           } catch (error) {
