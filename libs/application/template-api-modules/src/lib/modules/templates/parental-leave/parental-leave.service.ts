@@ -53,6 +53,7 @@ import {
 import { apiConstants } from './constants'
 import { ConfigService } from '@nestjs/config'
 import { getConfigValue } from '../../shared/shared.utils'
+import AmazonS3Uri from 'amazon-s3-uri'
 
 interface VMSTError {
   type: string
@@ -60,6 +61,11 @@ interface VMSTError {
   status: number
   traceId: string
   errors: Record<string, string[]>
+}
+
+export interface AttachmentData {
+  key: string
+  name: string
 }
 
 export const APPLICATION_ATTACHMENT_BUCKET = 'APPLICATION_ATTACHMENT_BUCKET'
@@ -187,23 +193,76 @@ export class ParentalLeaveService {
     }
   }
 
-  async getSelfEmployedPdf(application: Application, index = 0) {
+  async getPdf(application: Application, index = 0) {
     try {
-      let filename = getValueViaPath(
+      const { studentFiles } = getApplicationAnswers(application.answers)
+      console.log('STU FILES: ', studentFiles)
+      const filename = studentFiles + `[${index}].key`
+
+      console.log('STUDENT FILENAME: ', filename)
+
+      // const Key = `${application.id}/${filename}`
+      // const file = await this.s3
+      //   .getObject({ Bucket: this.attachmentBucket, Key })
+      //   .promise()
+      // const fileContent = file.Body as Buffer
+
+      // if (!fileContent) {
+      //   throw new Error('File content was undefined')
+      // }
+
+      // return fileContent.toString('base64')
+    } catch (e) {
+      this.logger.error('Cannot get student attachment', { e })
+      throw new Error('Failed to get the student attachment')
+    }
+  }
+
+  async getSelfEmployedPdf(application: Application, index = 0) {
+    // try {
+    //   console.log('ANSWERS: ', application.answers)
+    //   let filename = getValueViaPath(
+    //     application.answers,
+    //     `employer.selfEmployed.file[${index}].key`,
+    //   )
+
+    //   if (!filename) {
+    //     filename = getValueViaPath(
+    //       application.answers,
+    //       `fileUpload.selfEmployedFile[${index}].key`,
+    //     )
+    //   }
+    //   console.log('FILENAME: ', filename)
+    //   const Key = `${application.id}/${filename}`
+    //   const file = await this.s3
+    //     .getObject({ Bucket: this.attachmentBucket, Key })
+    //     .promise()
+    //   const fileContent = file.Body as Buffer
+
+    //   if (!fileContent) {
+    //     throw new Error('File content was undefined')
+    //   }
+
+    //   return fileContent.toString('base64')
+    // } catch (e) {
+    //   this.logger.error('Cannot get self employed attachment', { e })
+    //   throw new Error('Failed to get the self employed attachment')
+    // }
+    try {
+      const filename: AttachmentData[] | undefined  = getValueViaPath(
         application.answers,
-        `employer.selfEmployed.file[${index}].key`,
-      )
+        `fileUpload.selfEmployedFile`,
+      ) as Array<{ key: string; name: string }>
 
-      if (!filename) {
-        filename = getValueViaPath(
-          application.answers,
-          `fileUpload.selfEmployedFile[${index}].key`,
-        )
-      }
+      const attachmentKey = `${filename}[${index}].key`
 
-      const Key = `${application.id}/${filename}`
+      console.log('ATTACH KEY: ', attachmentKey)
+      
+      const { bucket, key } = AmazonS3Uri(attachmentKey)
+      const uploadBucket = bucket
+
       const file = await this.s3
-        .getObject({ Bucket: this.attachmentBucket, Key })
+        .getObject({ Bucket: uploadBucket, Key: key })
         .promise()
       const fileContent = file.Body as Buffer
 
@@ -213,8 +272,8 @@ export class ParentalLeaveService {
 
       return fileContent.toString('base64')
     } catch (e) {
-      this.logger.error('Cannot get self employed attachment', { e })
-      throw new Error('Failed to get the self employed attachment')
+      this.logger.error('Cannot get attachment', { e })
+      throw new Error('Failed to get the attachment')
     }
   }
 
@@ -268,14 +327,18 @@ export class ParentalLeaveService {
 
   async getSingleParentPdf(application: Application, index = 0) {
     try {
-      const filename = getValueViaPath(
+      const filename: AttachmentData[] | undefined  = getValueViaPath(
         application.answers,
-        `fileUpload.singleParent[${index}].key`,
-      )
+        `fileUpload.singleParent`,
+      ) as Array<{ key: string; name: string }>
 
-      const Key = `${application.id}/${filename}`
+      const attachmentKey = `${filename}[${index}].key`
+      console.log('ATTACH KEY: ', attachmentKey)
+      const { bucket, key } = AmazonS3Uri(attachmentKey)
+      const uploadBucket = bucket
+
       const file = await this.s3
-        .getObject({ Bucket: this.attachmentBucket, Key })
+        .getObject({ Bucket: uploadBucket, Key: key })
         .promise()
       const fileContent = file.Body as Buffer
 
@@ -285,8 +348,8 @@ export class ParentalLeaveService {
 
       return fileContent.toString('base64')
     } catch (e) {
-      this.logger.error('Cannot get single parent attachment', { e })
-      throw new Error('Failed to get the single parent attachment')
+      this.logger.error('Cannot get attachment', { e })
+      throw new Error('Failed to get the attachment')
     }
   }
 
@@ -314,6 +377,28 @@ export class ParentalLeaveService {
     }
   }
 
+  // private async getFileContentBase64(fileName: string): Promise<string | undefined> {
+  //   const { bucket, key } = AmazonS3Uri(fileName)
+  //   const uploadBucket = bucket
+
+  //   try {
+  //     // const Key = `${application.id}/${filename}`
+  //     const file = await this.s3
+  //       .getObject({ Bucket: uploadBucket, Key: key })
+  //       .promise()
+  //     const fileContent = file.Body as Buffer
+
+  //     if (!fileContent) {
+  //       throw new Error('File content was undefined')
+  //     }
+
+  //     return fileContent.toString('base64')
+  //   } catch (e) {
+  //     this.logger.error('Cannot get attachment', { e })
+  //     throw new Error('Failed to get the attachment')
+  //   }
+  // }
+
   async getAttachments(application: Application): Promise<Attachment[]> {
     const attachments: Attachment[] = []
     const {
@@ -331,6 +416,7 @@ export class ParentalLeaveService {
       if (selfEmployedPdfs?.length) {
         for (let i = 0; i <= selfEmployedPdfs.length - 1; i++) {
           const pdf = await this.getSelfEmployedPdf(application, i)
+          //const p = this.getPdf(application, i)
 
           attachments.push({
             attachmentType: apiConstants.attachments.selfEmployed,
@@ -839,14 +925,16 @@ export class ParentalLeaveService {
         true,
       )
 
+      console.log('PDTO: ', parentalLeaveDTO)
+      throw new Error('hehe')
       // call SetParentalLeave API with testData: TRUE as this is a dummy request
       // for validation purposes
-      await this.parentalLeaveApi.parentalLeaveSetParentalLeave({
-        nationalRegistryId,
-        parentalLeave: parentalLeaveDTO,
-      })
+      // await this.parentalLeaveApi.parentalLeaveSetParentalLeave({
+      //   nationalRegistryId,
+      //   parentalLeave: parentalLeaveDTO,
+      // })
 
-      return
+      // return
     } catch (e) {
       this.logger.error('Failed to validate the parental leave application', e)
       throw this.parseErrors(e as VMSTError)

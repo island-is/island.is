@@ -580,6 +580,8 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   const selectedChild = getValueViaPath(answers, 'selectedChild') as string
 
+  const studentFiles = getValueViaPath(answers, 'fileUpload.studentFile', []) as string[]
+
   const transferRights = getValueViaPath(
     answers,
     'transferRights',
@@ -651,6 +653,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     employerReviewerNationalRegistryId,
     shareInformationWithOtherParent,
     selectedChild,
+    studentFiles,
     transferRights,
     isRequestingRights,
     requestDays: Number(requestDays),
