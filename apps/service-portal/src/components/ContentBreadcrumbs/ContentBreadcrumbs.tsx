@@ -107,7 +107,7 @@ const ContentBreadcrumbs: FC<{
       </Box>
       {tag && (
         <Hidden above="sm">
-          <Box paddingLeft={2}>
+          <Box paddingLeft={[1, 1, 2]}>
             <a href={tag.href} target="_blank" rel="noreferrer noopener">
               <Tag
                 variant={tag.variant}

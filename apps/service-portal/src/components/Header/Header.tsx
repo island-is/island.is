@@ -33,26 +33,6 @@ export const Header = ({ position }: Props) => {
       payload: mobileMenuState === 'open' ? 'closed' : 'open',
     })
 
-  const closeButton = (userMenu: boolean) => {
-    return (
-      <FocusableBox
-        display="flex"
-        alignItems="center"
-        component="button"
-        onClick={
-          userMenu
-            ? () => setUserMenuOpen(false)
-            : () => handleMobileMenuTriggerClick()
-        }
-        padding={1}
-        borderRadius="circle"
-        background="blue100"
-        className={styles.closeButton}
-      >
-        <Icon icon="close" color="blue400" />
-      </FocusableBox>
-    )
-  }
   return (
     <div className={styles.placeholder}>
       {/*  Inline style to dynamicly change position of header because of alert banners */}
@@ -81,7 +61,7 @@ export const Header = ({ position }: Props) => {
                 display="flex"
                 alignItems="center"
                 flexWrap="nowrap"
-                marginLeft={2}
+                marginLeft={[1, 1, 2]}
               >
                 <Link to={ServicePortalPath.ElectronicDocumentsRoot}>
                   <Button
@@ -99,7 +79,7 @@ export const Header = ({ position }: Props) => {
                   setUserMenuOpen={setUserMenuOpen}
                   userMenuOpen={userMenuOpen}
                 />
-                <Box marginLeft={2}>
+                <Box marginLeft={[1, 1, 2]}>
                   <Button
                     variant="utility"
                     icon="menu"
