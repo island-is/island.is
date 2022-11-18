@@ -5,14 +5,20 @@ import {
   CurrentApplication,
   FAApplication,
   findFamilyStatus,
+  TaxData,
 } from '@island.is/application/templates/financial-aid'
 import type { Auth } from '@island.is/auth-nest-tools'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
-import { ApplicationState, FileType } from '@island.is/financial-aid/shared/lib'
+import {
+  ApplicationState,
+  FileType,
+  UserType,
+} from '@island.is/financial-aid/shared/lib'
 import {
   ApplicationApi,
   MunicipalityApi,
   MunicipalityModel,
+  PersonalTaxReturnApi,
 } from '@island.is/clients/municipalities-financial-aid'
 import { UploadFile } from '@island.is/island-ui/core'
 
@@ -30,6 +36,7 @@ export class FinancialAidService extends BaseTemplateApiService {
   constructor(
     private applicationApi: ApplicationApi,
     private municipalityApi: MunicipalityApi,
+    private personalTaxReturnApi: PersonalTaxReturnApi,
   ) {
     super(ApplicationTypes.FINANCIAL_AID)
   }
@@ -40,6 +47,10 @@ export class FinancialAidService extends BaseTemplateApiService {
 
   private municipalityApiWithAuth(auth: Auth) {
     return this.municipalityApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  personalTaxReturnApiWithAuth(auth: Auth) {
+    return this.personalTaxReturnApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   private formatFiles(files: UploadFile[], type: FileType) {
@@ -91,26 +102,32 @@ export class FinancialAidService extends BaseTemplateApiService {
 
     const applicantTaxFiles = () => {
       if (
-        externalData?.taxDataFetch?.data?.municipalitiesPersonalTaxReturn
+        externalData?.taxData?.data?.municipalitiesPersonalTaxReturn
           ?.personalTaxReturn == null
       ) {
         return []
       }
       return [
-        externalData?.taxDataFetch?.data?.municipalitiesPersonalTaxReturn
+        externalData?.taxData?.data?.municipalitiesPersonalTaxReturn
           ?.personalTaxReturn,
       ]
     }
 
     const directTaxPayments = () => {
       if (externalData?.taxDataFetchSpouse?.data) {
-        return externalData?.taxDataFetch?.data?.municipalitiesDirectTaxPayments?.directTaxPayments.concat(
+        return externalData?.taxData?.data?.municipalitiesDirectTaxPayments?.directTaxPayments.concat(
           externalData?.taxDataFetchSpouse?.data.municipalitiesDirectTaxPayments
             ?.directTaxPayments,
         )
       }
-      return externalData?.taxDataFetch?.data?.municipalitiesDirectTaxPayments
-        ?.directTaxPayments
+      return externalData?.taxData?.data?.municipalitiesDirectTaxPayments?.directTaxPayments.map(
+        (d) => {
+          d.userType = application.assignees.includes(auth.nationalId)
+            ? UserType.SPOUSE
+            : UserType.APPLICANT
+          return d
+        },
+      )
     }
 
     const files = this.formatFiles(answers.taxReturnFiles, FileType.TAXRETURN)
@@ -162,8 +179,7 @@ export class FinancialAidService extends BaseTemplateApiService {
         externalData.nationalRegistry.data.address?.municipalityCode,
       directTaxPayments: directTaxPayments(),
       hasFetchedDirectTaxPayment:
-        externalData?.taxDataFetch?.data?.municipalitiesDirectTaxPayments
-          ?.success,
+        externalData?.taxData?.data?.municipalitiesDirectTaxPayments?.success,
       spouseHasFetchedDirectTaxPayment:
         externalData?.taxDataFetchSpouse?.data?.municipalitiesDirectTaxPayments
           ?.success,
@@ -208,5 +224,21 @@ export class FinancialAidService extends BaseTemplateApiService {
     return await this.municipalityApiWithAuth(auth)
       .municipalityControllerGetById({ id: municiplaityCode })
       .catch(this.handle404)
+  }
+
+  async taxData({ auth, application }: Props): Promise<TaxData> {
+    const personalTaxReturn = await this.personalTaxReturnApiWithAuth(
+      auth,
+    ).personalTaxReturnControllerMunicipalitiesPersonalTaxReturn({
+      id: application.id,
+    })
+    const directTaxPayments = await this.personalTaxReturnApiWithAuth(
+      auth,
+    ).personalTaxReturnControllerMunicipalitiesDirectTaxPayments()
+
+    return {
+      municipalitiesPersonalTaxReturn: personalTaxReturn as TaxData['municipalitiesPersonalTaxReturn'],
+      municipalitiesDirectTaxPayments: directTaxPayments as TaxData['municipalitiesDirectTaxPayments'],
+    }
   }
 }

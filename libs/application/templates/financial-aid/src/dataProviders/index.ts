@@ -1,8 +1,6 @@
 import { defineTemplateApi } from '@island.is/application/types'
 import { ApiActions } from '../lib/constants'
 
-export { TaxDataFetchProvider } from './TaxDataFetchProvider'
-
 export {
   NationalRegistryUserApi,
   NationalRegistrySpouseApi,
@@ -21,3 +19,11 @@ export const MunicipalityApi = defineTemplateApi({
   action: ApiActions.MUNICIPALITY,
   order: 1, // Make this action run after the national registry actions to have access to the municipality code
 })
+
+export const TaxDataApi = defineTemplateApi({
+  action: ApiActions.TAXDATA,
+})
+
+// export const TaxDataSpouseApi = TaxDataApi.configure({
+//   externalDataId: 'spouseTaxData',
+// })

@@ -48,7 +48,7 @@ export interface ExternalData {
     date: string
     status: StatusProvider
   }
-  taxDataFetch: {
+  taxData: {
     data: TaxData
     date: string
     status: StatusProvider

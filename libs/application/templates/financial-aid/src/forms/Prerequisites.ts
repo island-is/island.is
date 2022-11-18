@@ -17,6 +17,7 @@ import {
   NationalRegistryUserApi,
   NationalRegistrySpouseApi,
   MunicipalityApi,
+  TaxDataApi,
 } from '../dataProviders'
 
 export const Prerequisites: Form = buildForm({
@@ -56,8 +57,7 @@ export const Prerequisites: Form = buildForm({
               subTitle: '',
             }),
             buildDataProviderItem({
-              id: 'taxDataFetch',
-              type: DataProviderTypes.TaxDataFetch,
+              provider: TaxDataApi,
               title: m.externalData.taxData.title,
               subTitle: m.externalData.taxData.dataInfo,
             }),

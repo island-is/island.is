@@ -118,11 +118,10 @@ const SummaryForm = ({
       <DirectTaxPaymentCell
         setIsModalOpen={setIsModalOpen}
         hasFetchedPayments={
-          externalData?.taxDataFetch?.data?.municipalitiesDirectTaxPayments
-            ?.success
+          externalData?.taxData?.data?.municipalitiesDirectTaxPayments?.success
         }
         directTaxPayments={
-          externalData?.taxDataFetch?.data?.municipalitiesDirectTaxPayments
+          externalData?.taxData?.data?.municipalitiesDirectTaxPayments
             ?.directTaxPayments
         }
       />
@@ -142,7 +141,7 @@ const SummaryForm = ({
         }
         goToScreen={goToScreen}
         personalTaxReturn={
-          externalData.taxDataFetch?.data?.municipalitiesPersonalTaxReturn
+          externalData.taxData?.data?.municipalitiesPersonalTaxReturn
             ?.personalTaxReturn
         }
         taxFiles={answers.taxReturnFiles ?? []}
@@ -157,7 +156,7 @@ const SummaryForm = ({
 
       <DirectTaxPaymentsModal
         items={
-          externalData?.taxDataFetch?.data?.municipalitiesDirectTaxPayments
+          externalData?.taxData?.data?.municipalitiesDirectTaxPayments
             ?.directTaxPayments
         }
         dateDataWasFetched={externalData?.nationalRegistry?.date}

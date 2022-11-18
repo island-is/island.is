@@ -48,6 +48,7 @@ export enum ApiActions {
   CREATEAPPLICATION = 'createApplication',
   CURRENTAPPLICATION = 'currentApplication',
   MUNICIPALITY = 'municipality',
+  TAXDATA = 'taxData',
 }
 
 export const UPLOAD_ACCEPT = [

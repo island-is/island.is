@@ -26,6 +26,7 @@ import {
   NationalRegistryUserApi,
   NationalRegistrySpouseApi,
   MunicipalityApi,
+  TaxDataApi,
 } from '../dataProviders'
 
 type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.EDIT }
@@ -73,7 +74,7 @@ const FinancialAidTemplate: ApplicationTemplate<
                   NationalRegistrySpouseApi.actionId,
                   CurrentApplicationApi.actionId,
                   MunicipalityApi.actionId,
-                  'taxDataFetch',
+                  TaxDataApi.actionId,
                 ],
               },
               delete: true,
@@ -82,6 +83,7 @@ const FinancialAidTemplate: ApplicationTemplate<
                 NationalRegistryUserApi,
                 NationalRegistrySpouseApi,
                 MunicipalityApi,
+                TaxDataApi,
               ],
             },
           ],
@@ -120,6 +122,7 @@ const FinancialAidTemplate: ApplicationTemplate<
               delete: true,
               write: {
                 answers: [
+                  'approveExternalData',
                   'spouse',
                   'relationshipStatus',
                   'homeCircumstances',
