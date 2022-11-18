@@ -27,10 +27,10 @@ describe('Local setup', () => {
     A: 'B',
     B: ref((ctx) => `${ctx.svc('https://www.visir.is')}/f/frettir`),
   })
-  let serviceDef: ReturnType<typeof getLocalSetup>
+  let serviceDef: Awaited<ReturnType<typeof getLocalSetup>>
   beforeEach(async () => {
     const uberChart = new Localhost(Staging)
-    serviceDef = getLocalSetup(
+    serviceDef = await getLocalSetup(
       uberChart,
       await renderer(
         uberChart,
