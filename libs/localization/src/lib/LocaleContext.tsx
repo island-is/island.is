@@ -160,7 +160,6 @@ export const LocaleProvider = ({
     }
   }
 
-  console.log('messagesDict', messagesDict)
   return (
     <LocaleContext.Provider
       value={{
