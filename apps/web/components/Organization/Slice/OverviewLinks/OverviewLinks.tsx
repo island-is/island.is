@@ -11,8 +11,9 @@ import {
   BoxProps,
 } from '@island.is/island-ui/core'
 import { OverviewLinks } from '@island.is/web/graphql/schema'
-import { Image, richText, SliceType } from '@island.is/island-ui/contentful'
+import { Image, SliceType } from '@island.is/island-ui/contentful'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { webRichText } from '@island.is/web/utils/richText'
 
 interface SliceProps {
   slice: OverviewLinks
@@ -85,7 +86,7 @@ export const OverviewLinksSlice: React.FC<SliceProps> = ({ slice }) => {
                           </Text>
                           {Boolean(intro) && (
                             <Box marginBottom={4}>
-                              {richText(
+                              {webRichText(
                                 [
                                   {
                                     __typename: 'Html',

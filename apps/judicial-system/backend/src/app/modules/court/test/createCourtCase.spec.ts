@@ -5,14 +5,16 @@ import each from 'jest-each'
 import { CourtClientService } from '@island.is/judicial-system/court-client'
 import {
   CaseType,
-  indictmentCases,
+  IndictmentSubtype,
+  IndictmentSubtypeMap,
   investigationCases,
+  isIndictmentCase,
   User,
 } from '@island.is/judicial-system/types'
 
 import { randomBoolean, randomDate, randomEnum } from '../../../test'
 import { nowFactory } from '../../../factories'
-import { subTypes } from '../court.service'
+import { courtSubtypes, Subtype } from '../court.service'
 import { createTestingCourtModule } from './createTestingCourtModule'
 
 jest.mock('../../../factories')
@@ -29,6 +31,7 @@ type GivenWhenThen = (
   type: CaseType,
   policeCaseNumbers: string[],
   isExtension: boolean,
+  indictmentSubtypes?: IndictmentSubtypeMap,
 ) => Promise<Then>
 
 describe('CourtService - Create court case', () => {
@@ -54,6 +57,7 @@ describe('CourtService - Create court case', () => {
       type: CaseType,
       policeCaseNumbers: string[],
       isExtension: boolean,
+      indictmentSubtypes?: IndictmentSubtypeMap,
     ) => {
       const then = {} as Then
 
@@ -65,6 +69,7 @@ describe('CourtService - Create court case', () => {
           type,
           policeCaseNumbers,
           isExtension,
+          indictmentSubtypes,
         )
       } catch (error) {
         then.error = error as Error
@@ -99,7 +104,7 @@ describe('CourtService - Create court case', () => {
           courtId,
           {
             caseType: 'R - Rannsóknarmál',
-            subtype: subTypes[type as CaseType],
+            subtype: courtSubtypes[type as Subtype],
             status: 'Skráð',
             receivalDate: formatISO(date, { representation: 'date' }),
             basedOn: 'Rannsóknarhagsmunir',
@@ -110,13 +115,16 @@ describe('CourtService - Create court case', () => {
     },
   )
 
-  describe.each(indictmentCases)(
+  describe.each(Object.values(IndictmentSubtype))(
     'indictment court case created for %s',
-    (type) => {
+    (indictmentSubtype) => {
       const user = {} as User
       const caseId = uuid()
+      const type = CaseType.INDICTMENT
       const courtId = uuid()
-      const policeCaseNumbers = [uuid()]
+      const policeCaseNumber = uuid()
+      const indictmentSubtypes = { [policeCaseNumber]: [indictmentSubtype] }
+      const policeCaseNumbers = [policeCaseNumber]
       const isExtension = false
 
       beforeEach(async () => {
@@ -127,6 +135,7 @@ describe('CourtService - Create court case', () => {
           type,
           policeCaseNumbers,
           isExtension,
+          indictmentSubtypes,
         )
       })
 
@@ -135,7 +144,7 @@ describe('CourtService - Create court case', () => {
           courtId,
           {
             caseType: 'S - Ákærumál',
-            subtype: subTypes[type as CaseType],
+            subtype: courtSubtypes[indictmentSubtype],
             status: 'Skráð',
             receivalDate: formatISO(date, { representation: 'date' }),
             basedOn: 'Sakamál',
@@ -171,7 +180,7 @@ describe('CourtService - Create court case', () => {
     it('should create a court case', () => {
       expect(mockCourtClientService.createCase).toHaveBeenCalledWith(courtId, {
         caseType: 'R - Rannsóknarmál',
-        subtype: subTypes[type as CaseType][0],
+        subtype: courtSubtypes[type as Subtype][0],
         status: 'Skráð',
         receivalDate: formatISO(date, { representation: 'date' }),
         basedOn: 'Rannsóknarhagsmunir',
@@ -205,7 +214,7 @@ describe('CourtService - Create court case', () => {
     it('should create a court case', () => {
       expect(mockCourtClientService.createCase).toHaveBeenCalledWith(courtId, {
         caseType: 'R - Rannsóknarmál',
-        subtype: subTypes[type as CaseType][1],
+        subtype: courtSubtypes[type as Subtype][1],
         status: 'Skráð',
         receivalDate: formatISO(date, { representation: 'date' }),
         basedOn: 'Rannsóknarhagsmunir',
@@ -219,7 +228,14 @@ describe('CourtService - Create court case', () => {
     const caseId = uuid()
     const courtId = uuid()
     const type = randomEnum(CaseType)
-    const policeCaseNumbers = [uuid()]
+    const indictmentSubtype = isIndictmentCase(type)
+      ? randomEnum(IndictmentSubtype)
+      : undefined
+    const policeCaseNumber = uuid()
+    const indictmentSubtypes = indictmentSubtype
+      ? { [policeCaseNumber]: [indictmentSubtype] }
+      : undefined
+    const policeCaseNumbers = [policeCaseNumber]
     const courtCaseNumber = uuid()
     const isExtension = randomBoolean()
     let then: Then
@@ -235,6 +251,7 @@ describe('CourtService - Create court case', () => {
         type,
         policeCaseNumbers,
         isExtension,
+        indictmentSubtypes,
       )
     })
 
