@@ -24,6 +24,7 @@ export const TaxDataApi = defineTemplateApi({
   action: ApiActions.TAXDATA,
 })
 
-// export const TaxDataSpouseApi = TaxDataApi.configure({
-//   externalDataId: 'spouseTaxData',
-// })
+export const TaxDataSpouseApi = defineTemplateApi({
+  action: ApiActions.TAXDATA,
+  externalDataId: 'taxDataSpouse',
+})

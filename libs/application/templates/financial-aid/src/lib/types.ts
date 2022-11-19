@@ -53,7 +53,7 @@ export interface ExternalData {
     date: string
     status: StatusProvider
   }
-  taxDataFetchSpouse?: {
+  taxDataSpouse?: {
     data: TaxData
     date: string
     status: StatusProvider

@@ -89,13 +89,13 @@ export class FinancialAidService extends BaseTemplateApiService {
 
     const spouseTaxFiles = () => {
       if (
-        externalData?.taxDataFetchSpouse?.data?.municipalitiesPersonalTaxReturn
+        externalData?.taxDataSpouse?.data?.municipalitiesPersonalTaxReturn
           ?.personalTaxReturn == null
       ) {
         return []
       }
       return [
-        externalData?.taxDataFetchSpouse?.data?.municipalitiesPersonalTaxReturn
+        externalData?.taxDataSpouse?.data?.municipalitiesPersonalTaxReturn
           ?.personalTaxReturn,
       ]
     }
@@ -114,9 +114,9 @@ export class FinancialAidService extends BaseTemplateApiService {
     }
 
     const directTaxPayments = () => {
-      if (externalData?.taxDataFetchSpouse?.data) {
+      if (externalData?.taxDataSpouse?.data) {
         return externalData?.taxData?.data?.municipalitiesDirectTaxPayments?.directTaxPayments.concat(
-          externalData?.taxDataFetchSpouse?.data.municipalitiesDirectTaxPayments
+          externalData?.taxDataSpouse?.data.municipalitiesDirectTaxPayments
             ?.directTaxPayments,
         )
       }
@@ -181,7 +181,7 @@ export class FinancialAidService extends BaseTemplateApiService {
       hasFetchedDirectTaxPayment:
         externalData?.taxData?.data?.municipalitiesDirectTaxPayments?.success,
       spouseHasFetchedDirectTaxPayment:
-        externalData?.taxDataFetchSpouse?.data?.municipalitiesDirectTaxPayments
+        externalData?.taxDataSpouse?.data?.municipalitiesDirectTaxPayments
           ?.success,
       applicationSystemId: id,
     }

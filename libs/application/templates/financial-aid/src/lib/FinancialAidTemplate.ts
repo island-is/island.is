@@ -27,6 +27,7 @@ import {
   NationalRegistrySpouseApi,
   MunicipalityApi,
   TaxDataApi,
+  TaxDataSpouseApi,
 } from '../dataProviders'
 
 type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.EDIT }
@@ -167,10 +168,8 @@ const FinancialAidTemplate: ApplicationTemplate<
                   Promise.resolve(module.PrerequisitesSpouse),
                 ),
               read: 'all',
-              write: {
-                answers: ['approveExternalDataSpouse'],
-                externalData: ['taxDataFetchSpouse', 'veita'],
-              },
+              write: 'all',
+              api: [CurrentApplicationApi, TaxDataSpouseApi],
             },
             {
               id: Roles.APPLICANT,
@@ -208,16 +207,7 @@ const FinancialAidTemplate: ApplicationTemplate<
                   Promise.resolve(module.Spouse),
                 ),
               read: 'all',
-              write: {
-                answers: [
-                  'spouseIncome',
-                  'spouseIncomeFiles',
-                  'spouseTaxReturnFiles',
-                  'spouseContactInfo',
-                  'spouseFormComment',
-                  'spouseName',
-                ],
-              },
+              write: 'all',
             },
             {
               id: Roles.APPLICANT,

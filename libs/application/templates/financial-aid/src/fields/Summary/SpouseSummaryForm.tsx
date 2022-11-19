@@ -21,12 +21,14 @@ import {
   DirectTaxPaymentCell,
 } from './index'
 import withLogo from '../Logo/Logo'
+import { useFormContext } from 'react-hook-form'
 
 const SpouseSummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
   const { id, answers, externalData } = application
   const summaryCommentType = SummaryCommentType.SPOUSEFORMCOMMENT
 
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const { setValue } = useFormContext()
 
   const nationalId =
     externalData.nationalRegistrySpouse.data?.nationalId ||
@@ -34,7 +36,7 @@ const SpouseSummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
 
   const { userInfo } = useAuth()
   useEffect(() => {
-    application.answers.spouseName = userInfo?.profile.name
+    setValue('spouseName', userInfo?.profile.name)
   }, [])
 
   return (
@@ -51,16 +53,16 @@ const SpouseSummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
 
       <FormInfo items={spouseFormItems(answers)} goToScreen={goToScreen} />
 
-      {externalData?.taxDataFetchSpouse && (
+      {externalData?.taxDataSpouse && (
         <DirectTaxPaymentCell
           setIsModalOpen={setIsModalOpen}
           hasFetchedPayments={
-            externalData?.taxDataFetchSpouse?.data
-              ?.municipalitiesDirectTaxPayments?.success
+            externalData?.taxDataSpouse?.data?.municipalitiesDirectTaxPayments
+              ?.success
           }
           directTaxPayments={
-            externalData?.taxDataFetchSpouse?.data
-              ?.municipalitiesDirectTaxPayments?.directTaxPayments
+            externalData?.taxDataSpouse?.data?.municipalitiesDirectTaxPayments
+              ?.directTaxPayments
           }
         />
       )}
@@ -80,8 +82,8 @@ const SpouseSummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
         }
         goToScreen={goToScreen}
         personalTaxReturn={
-          externalData?.taxDataFetchSpouse?.data
-            ?.municipalitiesPersonalTaxReturn?.personalTaxReturn
+          externalData?.taxDataSpouse?.data?.municipalitiesPersonalTaxReturn
+            ?.personalTaxReturn
         }
         taxFiles={answers.spouseTaxReturnFiles ?? []}
         incomeFiles={answers.spouseIncomeFiles ?? []}
@@ -93,12 +95,12 @@ const SpouseSummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
         comment={answers?.spouseFormComment}
       />
 
-      {externalData?.taxDataFetchSpouse?.data?.municipalitiesDirectTaxPayments
+      {externalData?.taxDataSpouse?.data?.municipalitiesDirectTaxPayments
         ?.directTaxPayments && (
         <DirectTaxPaymentsModal
           items={
-            externalData?.taxDataFetchSpouse?.data
-              ?.municipalitiesDirectTaxPayments?.directTaxPayments
+            externalData?.taxDataSpouse?.data?.municipalitiesDirectTaxPayments
+              ?.directTaxPayments
           }
           dateDataWasFetched={externalData?.nationalRegistry?.date}
           isVisible={isModalOpen}
