@@ -26,13 +26,12 @@ const OVERRIDE_ENVIRONMENT_NAMES: Record<string, string> = {
 }
 
 export const renderServiceEnvVars = async (service: string) => {
-  const uberChart = new Kubernetes(Envs.dev01)
   const services = await Promise.all(
     Object.values(Charts).map(
       async (chart) =>
         (
           await renderHelmServiceFile(
-            uberChart.env,
+            Envs.dev01,
             chart.dev,
             chart.dev,
             'no-mocks',

@@ -5,15 +5,15 @@ import {
 import { resolveDbHost } from './map-to-helm-values'
 import { FeatureKubeJob } from '../types/output-types'
 import { resolveWithMaxLength } from './serialization-helpers'
-import { DeploymentRuntime } from '../types/charts'
+import { DeploymentRuntime, EnvironmentConfig } from '../types/charts'
 import { ServiceBuilder } from '../dsl'
 
 export const generateJobsForFeature = async (
-  uberChart: DeploymentRuntime,
   image: string,
   services: ServiceDefinitionForEnv[],
+  env: EnvironmentConfig,
 ): Promise<FeatureKubeJob> => {
-  const feature = uberChart.env.feature
+  const feature = env.feature
   if (typeof feature === 'undefined') {
     throw new Error('Feature jobs with a feature name not defined')
   }
@@ -26,7 +26,7 @@ export const generateJobsForFeature = async (
       [service.postgres, service.initContainers?.postgres]
         .filter((id) => id)
         .map((info) => {
-          const host = resolveDbHost(uberChart, service, info?.host)
+          const host = resolveDbHost(service, env, info?.host)
           return {
             command: ['/app/create-db.sh'],
             image,

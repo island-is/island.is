@@ -41,6 +41,7 @@ describe('X-road support', () => {
       renderers.helm,
       sut.serviceDef,
       new Kubernetes(Dev),
+      Dev,
     )) as SerializeSuccess<ServiceHelm>
   })
 

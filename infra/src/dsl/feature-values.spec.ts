@@ -51,17 +51,16 @@ describe('Feature-deployment support', () => {
         },
       })
       .postgres()
-    const chart = new Kubernetes(Dev)
 
     const services1 = await getFeatureAffectedServices(
-      chart,
       [apiService, dependencyA, dependencyB],
       [dependencyA, dependencyC],
       [dependencyC],
+      Dev,
     )
     const chart1 = new Kubernetes(Dev)
-    const services = await renderer(chart1, services1, renderers.helm)
-    values = helmValueFile(chart1, services, 'no-mocks')
+    const services = await renderer(chart1, services1, renderers.helm, Dev)
+    values = helmValueFile(chart1, services, 'no-mocks', Dev)
   })
 
   it('dynamic service name generation', () => {

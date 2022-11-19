@@ -1,12 +1,14 @@
 import { Kubernetes } from '../kubernetes-runtime'
 import { HelmValueFile, ServiceHelm, Services } from '../types/output-types'
 import { renderers } from '../upstream-dependencies'
+import { EnvironmentConfig } from '../types/charts'
 
 export type Mocks = 'with-mocks' | 'no-mocks'
 export const helmValueFile = (
   runtime: Kubernetes,
   services: Services<ServiceHelm>,
   withMocks: Mocks,
+  env: EnvironmentConfig,
 ): HelmValueFile => {
   const outputFormat = renderers.helm
   const helmServices: Services<ServiceHelm> = Object.entries(services).reduce(
@@ -18,13 +20,14 @@ export const helmValueFile = (
         [name]: Object.assign({}, service, extras),
       }
     },
-    runtime.env.global,
+    env.global,
   )
   const mocks: Services<ServiceHelm> =
     withMocks === 'with-mocks' && Object.keys(runtime.mocks).length > 0
       ? {
           'mock-server': outputFormat.serviceMockDef({
-            uberChart: runtime,
+            runtime: runtime,
+            env,
           }),
         }
       : {}

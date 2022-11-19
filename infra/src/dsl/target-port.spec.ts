@@ -25,6 +25,7 @@ describe('Basic serialization', () => {
       renderers.helm,
       sut.serviceDef,
       new Kubernetes(Staging),
+      Staging,
     )) as SerializeSuccess<ServiceHelm>
     expect(result.serviceDef[0].service).toEqual({
       targetPort: 4200,

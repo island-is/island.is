@@ -58,6 +58,7 @@ describe('Init-container definitions', () => {
       renderers.helm,
       sut.serviceDef,
       new Kubernetes(Staging),
+      Staging,
     )) as SerializeSuccess<ServiceHelm>
     expect(result.serviceDef[0].initContainer).toEqual({
       containers: [
@@ -106,6 +107,7 @@ describe('Init-container definitions', () => {
       renderers.helm,
       sut.serviceDef,
       new Kubernetes(Staging),
+      Staging,
     )) as SerializeErrors
     expect(result.errors).toEqual([
       'No containers to run defined in initContainers',

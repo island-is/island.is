@@ -8,9 +8,6 @@ import {
 import { ServiceBuilder } from '../dsl'
 
 export interface DeploymentRuntime {
-  env: EnvironmentConfig
-  deps: { [name: string]: Set<string> }
-
   ref(from: ServiceDefinitionCore, to: ServiceDefinition | string): string
 }
 

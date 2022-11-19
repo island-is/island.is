@@ -9,7 +9,7 @@ export const renderLocalServices = async (services: string[]) => {
   const env = 'dev'
   const envConfig = Envs[Deployments[chartName][env]]
   envConfig.type = 'local'
-  let uberChart = new Localhost(envConfig)
+  let uberChart = new Localhost()
   const habitat = Charts[chartName][env]
   return await localrun(
     envConfig,

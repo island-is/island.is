@@ -3,11 +3,6 @@ import { DeploymentRuntime, EnvironmentConfig } from './types/charts'
 import { getMockName, hostPortNumber } from './mocks/mocks-support'
 
 export class Localhost implements DeploymentRuntime {
-  env: EnvironmentConfig // TODO: get rid of this?
-  constructor(env: EnvironmentConfig) {
-    this.env = env
-  }
-
   deps: { [name: string]: Set<string> } = {}
   ports: { [name: string]: number } = {}
   mocks: { [name: string]: string } = {}

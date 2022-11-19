@@ -6,7 +6,6 @@ import {
   Resources,
   ServiceDefinition,
   ServiceDefinitionForEnv,
-  ValueSource,
 } from '../types/input-types'
 import {
   ContainerRunHelm,
@@ -23,7 +22,6 @@ import {
   postgresIdentifier,
   resolveWithMaxLength,
   serializeEnvironmentVariables,
-  serializeValueSource,
 } from './serialization-helpers'
 
 /**
@@ -34,6 +32,7 @@ import {
 const serializeService: SerializeMethod<ServiceHelm> = async (
   service: ServiceDefinitionForEnv,
   deployment: DeploymentRuntime,
+  env1: EnvironmentConfig,
 ) => {
   const { addToErrors, mergeObjects, getErrors } = checksAndValidations(
     service.name,
@@ -56,7 +55,7 @@ const serializeService: SerializeMethod<ServiceHelm> = async (
       }`,
     },
     env: {
-      SERVERSIDE_FEATURES_ON: deployment.env.featuresOn.join(','),
+      SERVERSIDE_FEATURES_ON: env1.featuresOn.join(','),
       NODE_OPTIONS: `--max-old-space-size=${
         parseInt(serviceDef.resources.limits.memory, 10) - 48
       }`,
@@ -98,9 +97,9 @@ const serializeService: SerializeMethod<ServiceHelm> = async (
     }
   } else {
     result.replicaCount = {
-      min: deployment.env.defaultMinReplicas,
-      max: deployment.env.defaultMaxReplicas,
-      default: deployment.env.defaultMinReplicas,
+      min: env1.defaultMinReplicas,
+      max: env1.defaultMaxReplicas,
+      default: env1.defaultMinReplicas,
     }
   }
 
@@ -132,6 +131,7 @@ const serializeService: SerializeMethod<ServiceHelm> = async (
       service,
       deployment,
       serviceDef.env,
+      env1,
     )
     mergeObjects(result.env, envs)
   }
@@ -158,7 +158,7 @@ const serializeService: SerializeMethod<ServiceHelm> = async (
       create: true,
       name: serviceAccountName,
       annotations: {
-        'eks.amazonaws.com/role-arn': `arn:aws:iam::${deployment.env.awsAccountId}:role/${serviceAccountName}`,
+        'eks.amazonaws.com/role-arn': `arn:aws:iam::${env1.awsAccountId}:role/${serviceAccountName}`,
       },
     }
   }
@@ -171,7 +171,7 @@ const serializeService: SerializeMethod<ServiceHelm> = async (
           serviceDef.initContainers.containers,
         ),
         env: {
-          SERVERSIDE_FEATURES_ON: deployment.env.featuresOn.join(','),
+          SERVERSIDE_FEATURES_ON: env1.featuresOn.join(','),
         },
         secrets: {},
       }
@@ -180,6 +180,7 @@ const serializeService: SerializeMethod<ServiceHelm> = async (
           service,
           deployment,
           serviceDef.initContainers.envs,
+          env1,
         )
         mergeObjects(result.initContainer.env, envs)
       }
@@ -190,6 +191,7 @@ const serializeService: SerializeMethod<ServiceHelm> = async (
         const { env, secrets, errors } = serializePostgres(
           serviceDef,
           deployment,
+          env1,
           service,
           serviceDef.initContainers.postgres,
         )
@@ -207,11 +209,7 @@ const serializeService: SerializeMethod<ServiceHelm> = async (
   if (Object.keys(serviceDef.ingress).length > 0) {
     result.ingress = Object.entries(serviceDef.ingress).reduce(
       (acc, [ingressName, ingressConf]) => {
-        const ingress = serializeIngress(
-          serviceDef,
-          ingressConf,
-          deployment.env,
-        )
+        const ingress = serializeIngress(serviceDef, ingressConf, env1)
         return {
           ...acc,
           [`${ingressName}-alb`]: ingress,
@@ -225,6 +223,7 @@ const serializeService: SerializeMethod<ServiceHelm> = async (
     const { env, secrets, errors } = serializePostgres(
       serviceDef,
       deployment,
+      env1,
       service,
       serviceDef.postgres,
     )
@@ -248,17 +247,16 @@ const serializeService: SerializeMethod<ServiceHelm> = async (
 }
 
 export const resolveDbHost = (
-  deployment: DeploymentRuntime,
   service: ServiceDefinitionForEnv,
-  host?: ValueSource,
+  env: EnvironmentConfig,
+  host?: string,
 ) => {
   if (host) {
-    const resolved = serializeValueSource(host, deployment, service)
-    return { writer: resolved.value, reader: resolved.value }
+    return { writer: host, reader: host }
   } else {
     return {
-      writer: deployment.env.auroraHost,
-      reader: deployment.env.auroraReplica ?? deployment.env.auroraHost,
+      writer: env.auroraHost,
+      reader: env.auroraReplica ?? env.auroraHost,
     }
   }
 }
@@ -283,6 +281,7 @@ const getPostgresInfoForFeature = (feature: string, postgres: PostgresInfo) => {
 function serializePostgres(
   serviceDef: ServiceDefinitionForEnv,
   deployment: DeploymentRuntime,
+  envConf: EnvironmentConfig,
   service: ServiceDefinitionForEnv,
   postgres: PostgresInfoForEnv,
 ) {
@@ -292,7 +291,7 @@ function serializePostgres(
   env['DB_USER'] = postgres.username ?? postgresIdentifier(serviceDef.name)
   env['DB_NAME'] = postgres.name ?? postgresIdentifier(serviceDef.name)
   try {
-    const { reader, writer } = resolveDbHost(deployment, service, postgres.host)
+    const { reader, writer } = resolveDbHost(service, envConf, postgres.host)
     env['DB_HOST'] = writer
     env['DB_REPLICAS_HOST'] = reader
   } catch (e) {
@@ -410,12 +409,15 @@ const hostFullName = (host: string, env: EnvironmentConfig) => {
 const internalHostFullName = (host: string, env: EnvironmentConfig) =>
   host.indexOf('.') < 0 ? `${host}.internal.${env.domain}` : host
 
-const serviceMockDef = (options: { uberChart: DeploymentRuntime }) => {
+const serviceMockDef = (options: {
+  runtime: DeploymentRuntime
+  env: EnvironmentConfig
+}) => {
   const result: ServiceHelm = {
     enabled: true,
     grantNamespaces: [],
     grantNamespacesEnabled: false,
-    namespace: getFeatureDeploymentNamespace(options.uberChart.env),
+    namespace: getFeatureDeploymentNamespace(options.env),
     image: {
       repository: `bbyars/mountebank`,
     },
@@ -485,9 +487,10 @@ export const HelmOutput: OutputFormat<ServiceHelm> = {
   serializeService(
     service: ServiceDefinitionForEnv,
     deployment: DeploymentRuntime,
+    env: EnvironmentConfig,
     featureDeployment?: string,
   ): Promise<SerializeSuccess<ServiceHelm> | SerializeErrors> {
-    return serializeService(service, deployment, featureDeployment)
+    return serializeService(service, deployment, env)
   },
 
   serviceMockDef(options): ServiceHelm {

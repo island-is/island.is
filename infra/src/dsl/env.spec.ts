@@ -34,6 +34,7 @@ describe('Env variable', () => {
       renderers.helm,
       sut.serviceDef,
       new Kubernetes(Staging),
+      Staging,
     )) as SerializeErrors
   })
   it('missing variables cause errors', () => {
@@ -54,6 +55,7 @@ describe('Env variable', () => {
       renderers.helm,
       sut.serviceDef,
       new Kubernetes(Staging),
+      Staging,
     )) as SerializeErrors
 
     expect(serviceDef.errors).toStrictEqual([
@@ -75,6 +77,7 @@ describe('Env variable', () => {
       renderers.helm,
       sut.serviceDef,
       new Kubernetes(Staging),
+      Staging,
     )) as SerializeErrors
 
     expect(serviceDef.errors).toStrictEqual([
@@ -107,6 +110,7 @@ describe('Env variable', () => {
       renderers.helm,
       sut.serviceDef,
       new Kubernetes(Staging),
+      Staging,
     )) as SerializeSuccess<ServiceHelm>
 
     expect(serviceDef.serviceDef[0].env.A).toEqual(JSON.stringify(value))

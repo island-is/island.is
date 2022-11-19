@@ -9,11 +9,6 @@ import { toServices } from './exports/to-services'
 const MAX_LEVEL_DEPENDENCIES = 20
 
 class DownstreamDependencyTracer implements DeploymentRuntime {
-  env: EnvironmentConfig // TODO: get rid of this?
-  constructor(env: EnvironmentConfig) {
-    this.env = env
-  }
-
   deps: { [name: string]: Set<string> } = {}
 
   ref(from: ServiceDefinitionCore, to: ServiceDefinition | string) {
@@ -28,11 +23,11 @@ class DownstreamDependencyTracer implements DeploymentRuntime {
 }
 
 const findDownstreamDependencies = (
-  uberChart: DownstreamDependencyTracer,
+  runtime: DownstreamDependencyTracer,
   svc: ServiceDefinition | string,
   level: number = 0,
 ): string[] => {
-  const deps = uberChart.deps[typeof svc === 'string' ? svc : svc.name]
+  const deps = runtime.deps[typeof svc === 'string' ? svc : svc.name]
   if (level > MAX_LEVEL_DEPENDENCIES)
     throw new Error(
       `Too deep level of dependencies - ${MAX_LEVEL_DEPENDENCIES}. Some kind of circular dependency or you fellas have gone off the deep end ;)`,
@@ -42,7 +37,7 @@ const findDownstreamDependencies = (
     const serviceDependencies = currentDeps
     return serviceDependencies
       .map((dependency) =>
-        findDownstreamDependencies(uberChart, dependency, level + 1),
+        findDownstreamDependencies(runtime, dependency, level + 1),
       )
       .flatMap((x) => x)
       .concat(serviceDependencies)
@@ -56,22 +51,9 @@ export const getWithDownstreamServices = async (
   habitat: ServiceBuilder<any>[],
   services: ServiceBuilder<any>[],
 ): Promise<ServiceBuilder<any>[]> => {
-  const dummyEnv: EnvironmentConfig = {
-    auroraHost: '',
-    awsAccountId: '',
-    awsAccountRegion: 'eu-west-1',
-    defaultMaxReplicas: 0,
-    defaultMinReplicas: 0,
-    domain: '',
-    featuresOn: [],
-    global: {},
-    releaseName: '',
-    feature: env.feature,
-    type: 'dev',
-  }
-  const dependencyTracer = new DownstreamDependencyTracer(dummyEnv)
+  const dependencyTracer = new DownstreamDependencyTracer()
   const localHabitat = cloneDeep(habitat)
-  await renderer(dependencyTracer, localHabitat, renderers.helm) // doing this so we find out the dependencies
+  await renderer(dependencyTracer, localHabitat, renderers.helm, env) // doing this so we find out the dependencies
   const downstreamServices = services
     .map((s) => findDownstreamDependencies(dependencyTracer, s.serviceDef))
     .flatMap((x) => x)

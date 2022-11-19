@@ -35,6 +35,7 @@ describe('Ingress definitions', () => {
       renderers.helm,
       sut.serviceDef,
       new Kubernetes(Staging),
+      Staging,
     )) as SerializeSuccess<ServiceHelm>
 
     expect(result.serviceDef[0].ingress).toEqual({
@@ -69,6 +70,7 @@ describe('Ingress definitions', () => {
       renderers.helm,
       sut.serviceDef,
       new Kubernetes(Staging),
+      Staging,
     )) as SerializeSuccess<ServiceHelm>
 
     expect(result.serviceDef[0].ingress).toEqual({
@@ -104,6 +106,7 @@ describe('Ingress definitions', () => {
       renderers.helm,
       sut.serviceDef,
       new Kubernetes(Staging),
+      Staging,
     )) as SerializeSuccess<ServiceHelm>
 
     expect(result.serviceDef[0].ingress).toEqual({
@@ -127,6 +130,7 @@ describe('Ingress definitions', () => {
       renderers.helm,
       sut.serviceDef,
       new Kubernetes(Staging),
+      Staging,
     )) as SerializeSuccess<ServiceHelm>
 
     expect(result.serviceDef[0].ingress).toEqual({

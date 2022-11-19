@@ -11,7 +11,7 @@ import { renderer } from '../processing/service-sets'
 export async function localrun(
   envConfig: EnvironmentConfig,
   habitat: ServiceBuilder<any>[],
-  uberChart: Localhost,
+  runtime: Localhost,
   services: ServiceBuilder<any>[],
 ) {
   const fullSetOfServices = await withUpstreamDependencies(
@@ -23,7 +23,7 @@ export async function localrun(
   hacks(fullSetOfServices, habitat)
 
   return getLocalSetup(
-    uberChart,
-    await renderer(uberChart, fullSetOfServices, renderers.localrun),
+    runtime,
+    await renderer(runtime, fullSetOfServices, renderers.localrun, envConfig),
   )
 }

@@ -26,6 +26,7 @@ describe('Healthchecks definitions', () => {
         renderers.helm,
         sut.serviceDef,
         new Kubernetes(Staging),
+        Staging,
       )) as SerializeSuccess<ServiceHelm>
       expect(result.serviceDef[0].healthCheck).toEqual({
         liveness: {
@@ -46,6 +47,7 @@ describe('Healthchecks definitions', () => {
         renderers.helm,
         sut.serviceDef,
         new Kubernetes(Staging),
+        Staging,
       )) as SerializeSuccess<ServiceHelm>
       expect(result.serviceDef[0].healthCheck).toEqual({
         liveness: {

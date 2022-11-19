@@ -29,6 +29,7 @@ const serializeService = async (
   service: ServiceDefinitionForEnv,
   deployment: DeploymentRuntime,
   withSecrets: boolean,
+  env1: EnvironmentConfig,
 ): Promise<SerializeSuccess<LocalrunService> | SerializeErrors> => {
   const { addToErrors, mergeObjects, getErrors } = checksAndValidations(
     service.name,
@@ -36,7 +37,7 @@ const serializeService = async (
   const serviceDef = service
   const result: LocalrunService = {
     env: {
-      SERVERSIDE_FEATURES_ON: deployment.env.featuresOn.join(','),
+      SERVERSIDE_FEATURES_ON: env1.featuresOn.join(','),
       NODE_OPTIONS: `--max-old-space-size=${
         parseInt(serviceDef.resources.limits.memory, 10) - 48
       }`,
@@ -61,6 +62,7 @@ const serializeService = async (
       service,
       deployment,
       serviceDef.env,
+      env1,
     )
     mergeObjects(result.env, envs)
   }
@@ -78,7 +80,7 @@ const serializeService = async (
         ...acc,
         [initContainer.name!]: {
           env: {
-            SERVERSIDE_FEATURES_ON: deployment.env.featuresOn.join(','),
+            SERVERSIDE_FEATURES_ON: env1.featuresOn.join(','),
           },
         },
       }),
@@ -91,6 +93,7 @@ const serializeService = async (
           service,
           deployment,
           serviceDef.initContainers.envs,
+          env1,
         )
         Object.values(initContainers).forEach((initContainer) =>
           mergeObjects(initContainer.env, envs),
@@ -200,12 +203,14 @@ export const LocalrunOutput = (options: { secrets: SecretOptions }) =>
     serializeService(
       service: ServiceDefinitionForEnv,
       deployment: DeploymentRuntime,
+      env: EnvironmentConfig,
       featureDeployment,
     ) {
       return serializeService(
         service,
         deployment,
         options.secrets === SecretOptions.withSecrets,
+        env,
       )
     },
 

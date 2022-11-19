@@ -65,15 +65,16 @@ const writeToOutput = async (data: string, output?: string) => {
 const parseArguments = (argv: Arguments) => {
   const feature = argv.feature
   const images = argv.images.split(',') // Docker images that have changed
-  const env = 'dev'
+  const envName = 'dev'
   const chart = argv.chart as ChartName
 
-  const ch = new Kubernetes({
-    ...Envs[Deployments[chart][env]],
+  const env = {
+    ...Envs[Deployments[chart][envName]],
     feature: feature,
-  })
+  }
+  const ch = new Kubernetes(env)
 
-  const habitat = charts[chart][env]
+  const habitat = charts[chart][envName]
 
   const affectedServices = habitat
     .concat(FeatureDeploymentServices)
@@ -82,7 +83,7 @@ const parseArguments = (argv: Arguments) => {
         (images.length === 1 && images[0] === '*') ||
         images?.includes(h.serviceDef.image ?? h.serviceDef.name),
     )
-  return { ch, habitat, affectedServices }
+  return { ch, habitat, affectedServices, env }
 }
 
 const buildIngressComment = (data: ServiceHelm[]): string =>
@@ -109,16 +110,16 @@ yargs(process.argv.slice(2))
     'get helm values file',
     () => {},
     async (argv: Arguments) => {
-      const { ch, habitat, affectedServices } = parseArguments(argv)
+      const { habitat, affectedServices, env } = parseArguments(argv)
       const featureYaml = await getFeatureAffectedServices(
-        ch,
         habitat,
         affectedServices.slice(),
         ExcludedFeatureDeploymentServices,
+        env,
       )
       await writeToOutput(
         await renderHelmValueFileContent(
-          ch.env,
+          env,
           habitat,
           featureYaml,
           'with-mocks',
@@ -132,16 +133,16 @@ yargs(process.argv.slice(2))
     'get helm values file',
     () => {},
     async (argv: Arguments) => {
-      const { ch, habitat, affectedServices } = parseArguments(argv)
+      const { habitat, affectedServices, env } = parseArguments(argv)
       const featureYaml = await getFeatureAffectedServices(
-        ch,
         habitat,
         affectedServices.slice(),
         ExcludedFeatureDeploymentServices,
+        env,
       )
       await writeToOutput(
         buildComment(
-          (await renderHelmServices(ch.env, habitat, featureYaml)).services,
+          (await renderHelmServices(env, habitat, featureYaml)).services,
         ),
         argv.output,
       )
@@ -158,9 +159,9 @@ yargs(process.argv.slice(2))
       })
     },
     async (argv: Arguments) => {
-      const { ch, habitat, affectedServices } = parseArguments(argv)
+      const { habitat, affectedServices, env } = parseArguments(argv)
       const featureYaml = await renderHelmJobForFeature(
-        ch,
+        env,
         habitat,
         argv.jobImage!,
         affectedServices,

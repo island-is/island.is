@@ -78,11 +78,16 @@ describe('Server-side toggles', () => {
         ...Staging,
         featuresOn: [FeatureNames.testing],
       }),
+      {
+        ...Staging,
+        featuresOn: [FeatureNames.testing],
+      },
     )) as SerializeSuccess<ServiceHelm>
     stagingNoFeatures = (await rendererForOne(
       renderers.helm,
       sut.serviceDef,
       new Kubernetes(Staging),
+      Staging,
     )) as SerializeSuccess<ServiceHelm>
   })
   it('env variables present when feature toggled', () => {
@@ -152,11 +157,16 @@ describe('Server-side toggles', () => {
           ...Prod,
           featuresOn: [FeatureNames.testing],
         }),
+        {
+          ...Prod,
+          featuresOn: [FeatureNames.testing],
+        },
       )) as SerializeErrors
       prodNoFeature = (await rendererForOne(
         renderers.helm,
         sut.serviceDef,
         new Kubernetes(Prod),
+        Prod,
       )) as SerializeSuccess<ServiceHelm>
     })
     it('should result in serialization errors when feature is turned on', () => {
@@ -210,11 +220,16 @@ describe('Server-side toggles', () => {
           ...Prod,
           featuresOn: [FeatureNames.testing],
         }),
+        {
+          ...Prod,
+          featuresOn: [FeatureNames.testing],
+        },
       )) as SerializeErrors
       prodNoFeature = (await rendererForOne(
         renderers.helm,
         sut.serviceDef,
         new Kubernetes(Prod),
+        Prod,
       )) as SerializeSuccess<ServiceHelm>
     })
     it('should result in serialization errors when feature is turned on', () => {

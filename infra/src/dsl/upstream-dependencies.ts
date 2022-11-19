@@ -38,7 +38,7 @@ export const renderers = {
 }
 
 const findUpstreamDependencies = (
-  uberChart: UpstreamDependencyTracer,
+  runtime: UpstreamDependencyTracer,
   svc: ServiceBuilder<any> | string,
   level: number = 0,
 ): string[] => {
@@ -47,12 +47,12 @@ const findUpstreamDependencies = (
       `Too deep level of dependencies - ${MAX_LEVEL_DEPENDENCIES}. Some kind of circular dependency or you fellas have gone off the deep end ;)`,
     )
   const upstreams = Array.from(
-    uberChart.deps[typeof svc === 'string' ? svc : svc.serviceDef.name] ??
+    runtime.deps[typeof svc === 'string' ? svc : svc.serviceDef.name] ??
       new Set<string>(),
   )
   return upstreams
     .map((dependency) =>
-      findUpstreamDependencies(uberChart, dependency, level + 1),
+      findUpstreamDependencies(runtime, dependency, level + 1),
     )
     .flatMap((x) => x)
     .concat(upstreams)
@@ -79,7 +79,7 @@ export const withUpstreamDependencies = async <T extends ServiceOutputType>(
   }
   const dependencyTracer = new UpstreamDependencyTracer(dummyEnv)
   const localHabitat = cloneDeep(habitat)
-  await renderer(dependencyTracer, localHabitat, serializer) // doing this so we find out the dependencies
+  await renderer(dependencyTracer, localHabitat, serializer, env) // doing this so we find out the dependencies
   const downstreamServices = services
     .map((s) => findUpstreamDependencies(dependencyTracer, s))
     .flatMap((x) => x)

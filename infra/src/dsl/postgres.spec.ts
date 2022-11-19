@@ -31,6 +31,7 @@ describe('Postgres', () => {
         renderers.helm,
         sut.serviceDef,
         new Kubernetes(Staging),
+        Staging,
       )) as SerializeSuccess<ServiceHelm>
     })
     it('fixing user and name to comply with postgres identifier allowed character set', () => {
@@ -55,6 +56,7 @@ describe('Postgres', () => {
         renderers.helm,
         sut.serviceDef,
         new Kubernetes(Staging),
+        Staging,
       )) as SerializeErrors
     })
     it('Env and secret variables already defined', () => {

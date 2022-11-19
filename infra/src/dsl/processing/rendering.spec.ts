@@ -24,17 +24,17 @@ const Staging: EnvironmentConfig = {
 }
 
 describe.only('ServiceDefinition to Env', () => {
-  let uberChart: Localhost
+  let runtime: Localhost
   const currentOutput = LocalrunOutput({ secrets: SecretOptions.noSecrets })
   beforeEach(async () => {
-    uberChart = new Localhost(Staging)
+    runtime = new Localhost()
   })
   it('should render errors on missing env vars', () => {
     const sut = service('api').env({
       A: 'B',
       B: MissingSetting,
     })
-    const serviceDef = renderer(uberChart, [sut], currentOutput)
+    const serviceDef = renderer(runtime, [sut], currentOutput, Staging)
     expect(serviceDef).rejects.toThrow(
       'Missing settings for service api in env staging. Keys of missing settings: B',
     )
@@ -44,7 +44,7 @@ describe.only('ServiceDefinition to Env', () => {
       A: 'B',
       B: ref((ctx) => `${ctx.svc('https://www.visir.is')}/f/frettir`),
     })
-    const serviceDef = await renderer(uberChart, [sut], currentOutput)
+    const serviceDef = await renderer(runtime, [sut], currentOutput, Staging)
     expect(serviceDef['api'].env['B']).toBe('http://localhost:9453/f/frettir')
   })
 })

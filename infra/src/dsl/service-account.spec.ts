@@ -26,6 +26,7 @@ describe('Service account', () => {
       renderers.helm,
       sut.serviceDef,
       new Kubernetes(Staging),
+      Staging,
     )) as SerializeSuccess<ServiceHelm>
   })
   it('service account name', () => {

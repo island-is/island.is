@@ -3,9 +3,11 @@ import { DeploymentRuntime, EnvironmentConfig } from './types/charts'
 import { getMockName, hostPortNumber } from './mocks/mocks-support'
 
 export class Kubernetes implements DeploymentRuntime {
-  env: EnvironmentConfig // TODO: get rid of this?
+  releaseName: string
+  feature?: string
   constructor(env: EnvironmentConfig) {
-    this.env = env
+    this.releaseName = env.releaseName
+    this.feature = env.feature
   }
 
   deps: { [name: string]: Set<string> } = {}
@@ -16,13 +18,11 @@ export class Kubernetes implements DeploymentRuntime {
     if (typeof to === 'object') {
       const dependecies = this.deps[to.name] ?? new Set<string>()
       this.deps[to.name] = dependecies.add(from.name)
-      const serviceReference =
-        from.namespace === to.namespace
-          ? `${this.env.releaseName}-${to.name}`
-          : `${this.env.releaseName}-${to.name}.${to.namespace}.svc.cluster.local`
-      return serviceReference
+      return from.namespace === to.namespace
+        ? `${this.releaseName}-${to.name}`
+        : `${this.releaseName}-${to.name}.${to.namespace}.svc.cluster.local`
     } else {
-      if (this.env.feature) {
+      if (this.feature) {
         const { name, host } = getMockName(to)
         this.ports[name] = this.ports[name] ?? hostPortNumber(host)
         this.mocks[name] = host

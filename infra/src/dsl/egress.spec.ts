@@ -28,19 +28,21 @@ describe('Egress', () => {
   const sut = service('api').env({
     A: ref((h) => h.svc('http://visir.is')),
   })
-  const uberChart = new Kubernetes(Staging)
+  const runtime = new Kubernetes(Staging)
   let serviceDef: SerializeSuccess<ServiceHelm>
   let render: HelmValueFile
   beforeEach(async () => {
     serviceDef = (await rendererForOne(
       renderers.helm,
       sut.serviceDef,
-      uberChart,
+      runtime,
+      Staging,
     )) as SerializeSuccess<ServiceHelm>
     render = helmValueFile(
-      uberChart,
+      runtime,
       { a: serviceDef.serviceDef[0] },
       'with-mocks',
+      Staging,
     )
   })
 

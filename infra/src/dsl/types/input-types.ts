@@ -19,14 +19,14 @@ export type AccessModes = 'ReadWrite' | 'ReadOnly'
 
 export type PostgresInfo = {
   host?: {
-    [idx in OpsEnv]: ValueType
+    [idx in OpsEnv]: string
   }
   name?: string
   username?: string
   passwordSecret?: string
 }
 export type PostgresInfoForEnv = {
-  host?: ValueSource
+  host?: string
   name?: string
   username?: string
   passwordSecret?: string

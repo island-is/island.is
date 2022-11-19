@@ -44,7 +44,7 @@ const mapServiceToNXname = async (serviceName: string) => {
 }
 
 export const getLocalSetup = async (
-  uberChart: Localhost,
+  runtime: Localhost,
   services: Services<LocalrunService>,
 ): Promise<LocalrunValueFile> => {
   const dockerComposeServices: Services<LocalrunService> = await Object.entries(
@@ -53,56 +53,57 @@ export const getLocalSetup = async (
     return {
       ...(await acc),
       [name]: ` ${
-        uberChart.ports[name] ? `PORT=${uberChart.ports[name]} ` : ''
+        runtime.ports[name] ? `PORT=${runtime.ports[name]} ` : ''
       } PROD_MODE=true ${Object.entries(service.env)
         .filter(([name, val]) => !EXCLUDED_ENVIRONMENT_NAMES.includes(name))
         .map(([key, value]) => `${key}="${value}"`)
         .join(' ')} yarn start ${await mapServiceToNXname(name)}`,
     }
   }, Promise.resolve({}))
-  const mocks: Services<LocalrunService> = Object.entries(
-    uberChart.mocks,
-  ).reduce((acc, [name, target]) => {
-    if (name.startsWith('mock-')) {
+  const mocks: Services<LocalrunService> = Object.entries(runtime.mocks).reduce(
+    (acc, [name, target]) => {
+      if (name.startsWith('mock-')) {
+        return {
+          ...acc,
+          [name]: {
+            'proxy-port': runtime.ports[name],
+            'mountebank-imposter-config': JSON.stringify({
+              protocol: 'http',
+              name: name,
+              port: runtime.ports[name],
+              stubs: [
+                {
+                  predicates: [{ equals: {} }],
+                  responses: [
+                    {
+                      proxy: {
+                        to: target,
+                        mode: 'proxyAlways',
+                        predicateGenerators: [
+                          {
+                            matches: {
+                              method: true,
+                              path: true,
+                              query: true,
+                              body: true,
+                            },
+                          },
+                        ],
+                      },
+                    },
+                  ],
+                },
+              ],
+            }),
+          },
+        }
+      }
       return {
         ...acc,
-        [name]: {
-          'proxy-port': uberChart.ports[name],
-          'mountebank-imposter-config': JSON.stringify({
-            protocol: 'http',
-            name: name,
-            port: uberChart.ports[name],
-            stubs: [
-              {
-                predicates: [{ equals: {} }],
-                responses: [
-                  {
-                    proxy: {
-                      to: target,
-                      mode: 'proxyAlways',
-                      predicateGenerators: [
-                        {
-                          matches: {
-                            method: true,
-                            path: true,
-                            query: true,
-                            body: true,
-                          },
-                        },
-                      ],
-                    },
-                  },
-                ],
-              },
-            ],
-          }),
-        },
       }
-    }
-    return {
-      ...acc,
-    }
-  }, {})
+    },
+    {},
+  )
 
   return {
     services: { ...dockerComposeServices },

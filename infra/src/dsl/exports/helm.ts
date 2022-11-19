@@ -1,11 +1,10 @@
-import { ServiceDefinition } from '../types/input-types'
 import { Kubernetes } from '../kubernetes-runtime'
 import { dumpServiceHelm } from '../file-formats/yaml'
 import {
   Mocks,
   helmValueFile,
 } from '../value-files-generators/render-helm-value-file'
-import { DeploymentRuntime, EnvironmentConfig } from '../types/charts'
+import { EnvironmentConfig } from '../types/charts'
 import { renderers } from '../upstream-dependencies'
 import { prepareServices, renderer } from '../processing/service-sets'
 import { generateJobsForFeature } from '../output-generators/feature-jobs'
@@ -35,7 +34,7 @@ export const renderHelmServiceFile = async (
     habitat,
     services,
   )
-  return helmValueFile(runtime, renderedServices, withMocks)
+  return helmValueFile(runtime, renderedServices, withMocks, env)
 }
 export const renderHelmServices = async (
   env: EnvironmentConfig,
@@ -45,17 +44,17 @@ export const renderHelmServices = async (
   let runtime = new Kubernetes(env)
   hacks(services, habitat)
   return {
-    services: await renderer(runtime, services, renderers.helm),
+    services: await renderer(runtime, services, renderers.helm, env),
     runtime: runtime,
   }
 }
 
 export const renderHelmJobForFeature = async (
-  env: DeploymentRuntime,
+  env: EnvironmentConfig,
   habitat: ServiceBuilder<any>[],
   image: string,
   services: ServiceBuilder<any>[],
 ) => {
   const result = prepareServices(services, env, renderers.helm)
-  return generateJobsForFeature(env, image, result)
+  return generateJobsForFeature(image, result, env)
 }

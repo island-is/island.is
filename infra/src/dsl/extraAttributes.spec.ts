@@ -37,6 +37,7 @@ describe('Extra attributes', () => {
       renderers.helm,
       sut.serviceDef,
       new Kubernetes(Staging),
+      Staging,
     )) as SerializeSuccess<ServiceHelm>
     expect(serviceDef.serviceDef[0].extra).toEqual({
       API: 'api',
@@ -53,6 +54,7 @@ describe('Extra attributes', () => {
       renderers.helm,
       sut.serviceDef,
       new Kubernetes(Staging),
+      Staging,
     )) as SerializeErrors
     expect(serviceDef.errors).toEqual([
       'Missing extra setting for service api in env staging',

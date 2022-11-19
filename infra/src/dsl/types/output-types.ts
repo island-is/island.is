@@ -167,7 +167,8 @@ export type ServiceOutputType = ServiceHelm | LocalrunService
 
 export type SerializeMethod<T extends ServiceOutputType> = (
   service: ServiceDefinitionForEnv,
-  uberChart: DeploymentRuntime,
+  runtime: DeploymentRuntime,
+  env: EnvironmentConfig,
   featureDeployment?: string,
 ) => Promise<SerializeSuccess<T> | SerializeErrors>
 
@@ -187,11 +188,15 @@ export type LocalrunValueFile = {
 export interface OutputFormat<T extends ServiceOutputType> {
   serializeService(
     service: ServiceDefinitionForEnv,
-    uberChart: DeploymentRuntime,
+    runtime: DeploymentRuntime,
+    env: EnvironmentConfig,
     featureDeployment?: string,
   ): Promise<SerializeSuccess<T> | SerializeErrors>
 
-  serviceMockDef(options: { uberChart: DeploymentRuntime }): T
+  serviceMockDef(options: {
+    runtime: DeploymentRuntime
+    env: EnvironmentConfig
+  }): T
 
   featureDeployment(service: ServiceDefinition, env: EnvironmentConfig): void
 }

@@ -3,7 +3,6 @@ import { EnvironmentConfig } from '../types/charts'
 import { renderer } from '../processing/service-sets'
 import { getLocalSetup } from './get-local-setup'
 import { Localhost } from '../localhost-runtime'
-import { toServices } from '../exports/to-services'
 import {
   LocalrunOutput,
   SecretOptions,
@@ -29,13 +28,14 @@ describe('Local setup', () => {
   })
   let serviceDef: Awaited<ReturnType<typeof getLocalSetup>>
   beforeEach(async () => {
-    const uberChart = new Localhost(Staging)
+    const runtime = new Localhost()
     serviceDef = await getLocalSetup(
-      uberChart,
+      runtime,
       await renderer(
-        uberChart,
+        runtime,
         [sut],
         LocalrunOutput({ secrets: SecretOptions.noSecrets }),
+        Staging,
       ),
     )
   })

@@ -51,6 +51,7 @@ describe('Basic serialization', () => {
       renderers.helm,
       sut.serviceDef,
       new Kubernetes(Staging),
+      Staging,
     )) as SerializeSuccess<ServiceHelm>
   })
 
@@ -152,6 +153,7 @@ describe('Env definition defaults', () => {
       renderers.helm,
       sut.serviceDef,
       new Kubernetes(Staging),
+      Staging,
     )) as SerializeSuccess<ServiceHelm>
   })
   it('replica max count', () => {
