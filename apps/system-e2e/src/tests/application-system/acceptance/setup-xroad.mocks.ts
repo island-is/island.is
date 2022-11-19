@@ -9,11 +9,11 @@ import addMonths from 'date-fns/addMonths'
 
 export async function setupXroadMocks() {
   await resetMocks()
-  await addXroadMock(
-    NationalRegistry,
-    'XROAD_NATIONAL_REGISTRY_SERVICE_PATH',
-    '/api/v1/einstaklingar/0101303019',
-    new Response().withJSONBody(
+  await addXroadMock({
+    config: NationalRegistry,
+    prefix: 'XROAD_NATIONAL_REGISTRY_SERVICE_PATH',
+    path: '/api/v1/einstaklingar/0101303019',
+    response: new Response().withJSONBody(
       EinstaklingsupplysingarToJSON({
         kennitala: '0101303019',
         nafn: 'Gervimaður Afríka',
@@ -38,12 +38,12 @@ export async function setupXroadMocks() {
         },
       }),
     ),
-  )
-  await addXroadMock(
-    NationalRegistry,
-    'XROAD_NATIONAL_REGISTRY_SERVICE_PATH',
-    '/api/v1/einstaklingar/1111111119',
-    new Response().withJSONBody(
+  })
+  await addXroadMock({
+    config: NationalRegistry,
+    prefix: 'XROAD_NATIONAL_REGISTRY_SERVICE_PATH',
+    path: '/api/v1/einstaklingar/1111111119',
+    response: new Response().withJSONBody(
       EinstaklingsupplysingarToJSON({
         kennitala: '1111111119',
         nafn: 'Stubbur Maack',
@@ -68,12 +68,12 @@ export async function setupXroadMocks() {
         },
       }),
     ),
-  )
-  await addXroadMock(
-    NationalRegistry,
-    'XROAD_NATIONAL_REGISTRY_SERVICE_PATH',
-    '/api/v1/einstaklingar/0101307789',
-    new Response().withJSONBody(
+  })
+  await addXroadMock({
+    config: NationalRegistry,
+    prefix: 'XROAD_NATIONAL_REGISTRY_SERVICE_PATH',
+    path: '/api/v1/einstaklingar/0101307789',
+    response: new Response().withJSONBody(
       EinstaklingsupplysingarToJSON({
         kennitala: '0101307789',
         nafn: 'Gervimaður útlönd',
@@ -98,35 +98,35 @@ export async function setupXroadMocks() {
         },
       }),
     ),
-  )
-  await addXroadMock(
-    NationalRegistry,
-    'XROAD_NATIONAL_REGISTRY_SERVICE_PATH',
-    '/api/v1/einstaklingar/0101303019/forsja',
-    new Response().withJSONBody(['1111111119']),
-  )
-  await addXroadMock(
-    NationalRegistry,
-    'XROAD_NATIONAL_REGISTRY_SERVICE_PATH',
-    '/api/v1/einstaklingar/0101303019/forsja/1111111119',
-    new Response().withJSONBody(['0101307789']),
-  )
-  await addXroadMock(
-    NationalRegistry,
-    'XROAD_NATIONAL_REGISTRY_SERVICE_PATH',
-    '/api/v1/einstaklingar/0101303019/hjuskapur',
-    new Response().withJSONBody({
+  })
+  await addXroadMock({
+    config: NationalRegistry,
+    prefix: 'XROAD_NATIONAL_REGISTRY_SERVICE_PATH',
+    path: '/api/v1/einstaklingar/0101303019/forsja',
+    response: new Response().withJSONBody(['1111111119']),
+  })
+  await addXroadMock({
+    config: NationalRegistry,
+    prefix: 'XROAD_NATIONAL_REGISTRY_SERVICE_PATH',
+    path: '/api/v1/einstaklingar/0101303019/forsja/1111111119',
+    response: new Response().withJSONBody(['0101307789']),
+  })
+  await addXroadMock({
+    config: NationalRegistry,
+    prefix: 'XROAD_NATIONAL_REGISTRY_SERVICE_PATH',
+    path: '/api/v1/einstaklingar/0101303019/hjuskapur',
+    response: new Response().withJSONBody({
       kennitalaMaka: '0101307789',
       nafnMaka: 'Gervimaður útlönd',
       hjuskaparkodi: '3',
       breytt: '2021-05-26T22:23:40.513',
     }),
-  )
-  await addXroadMock(
-    NationalRegistry,
-    'XROAD_NATIONAL_REGISTRY_SERVICE_PATH',
-    '/api/v1/einstaklingar/0101303019/fjolskyldumedlimir',
-    new Response().withJSONBody({
+  })
+  await addXroadMock({
+    config: NationalRegistry,
+    prefix: 'XROAD_NATIONAL_REGISTRY_SERVICE_PATH',
+    path: '/api/v1/einstaklingar/0101303019/fjolskyldumedlimir',
+    response: new Response().withJSONBody({
       fjolskyldunumer: '0101303019',
       einstaklingar: [
         {
@@ -200,21 +200,21 @@ export async function setupXroadMocks() {
         },
       ],
     }),
-  )
-  await addXroadMock(
-    Labor,
-    'XROAD_VMST_API_PATH',
-    '/users/0101303019/parental-leaves/periods/length',
-    new Response().withJSONBody({
+  })
+  await addXroadMock({
+    config: Labor,
+    prefix: 'XROAD_VMST_API_PATH',
+    path: '/users/0101303019/parental-leaves/periods/length',
+    response: new Response().withJSONBody({
       periodLength: 98,
     }),
-    'base-path-with-env',
-  )
-  await addXroadMock(
-    Labor,
-    'XROAD_VMST_API_PATH',
-    '/users/0101303019/parental-leaves',
-    [
+    conf: 'base-path-with-env',
+  })
+  await addXroadMock({
+    config: Labor,
+    prefix: 'XROAD_VMST_API_PATH',
+    path: '/users/0101303019/parental-leaves',
+    response: [
       new Response().withJSONBody(
         PostParentalLeaveResponseToJSON({
           status: 'TestOK',
@@ -227,28 +227,28 @@ export async function setupXroadMocks() {
         }),
       ),
     ],
-    'base-path-with-env',
-    HttpMethod.POST,
-  )
-  await addXroadMock(
-    Labor,
-    'XROAD_VMST_API_PATH',
-    '/users/0101303019/parental-leaves',
-    [
+    conf: 'base-path-with-env',
+    method: HttpMethod.POST,
+  })
+  await addXroadMock({
+    config: Labor,
+    prefix: 'XROAD_VMST_API_PATH',
+    path: '/users/0101303019/parental-leaves',
+    response: [
       new Response().withJSONBody({
         parentalLeaves: [],
       }),
     ],
-    'base-path-with-env',
-    HttpMethod.GET,
-  )
+    conf: 'base-path-with-env',
+    method: HttpMethod.GET,
+  })
   const babyBDayRandomFactor = Math.ceil(Math.random() * 85)
 
-  await addXroadMock(
-    Labor,
-    'XROAD_VMST_API_PATH',
-    '/users/0101303019/pregnancy-status',
-    [
+  await addXroadMock({
+    config: Labor,
+    prefix: 'XROAD_VMST_API_PATH',
+    path: '/users/0101303019/pregnancy-status',
+    response: [
       new Response().withJSONBody({
         hasActivePregnancy: true,
         expectedDateOfBirth: formatISO(
@@ -259,7 +259,7 @@ export async function setupXroadMocks() {
         ),
       }),
     ],
-    'base-path-with-env',
-  )
+    conf: 'base-path-with-env',
+  })
   await wildcard()
 }

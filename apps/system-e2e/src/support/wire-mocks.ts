@@ -48,15 +48,22 @@ export const wildcard = async () => {
   )
   await mb.createImposter(mockedServices.xroad.imposter)
 }
-export const addXroadMock = async (
-  xroadConfig: XroadConfig,
-  servicePathPrefix: string,
-  api: string,
-  response: Response | Response[],
-  prefixType: 'only-base-path' | 'base-path-with-env' = 'only-base-path',
-  method: HttpMethod = HttpMethod.GET,
-) => {
-  const { envs } = getEnvVariables(xroadConfig.getEnv(), 'xroadConfig', 'dev')
+export const addXroadMock = async ({
+  config,
+  prefix: servicePathPrefix,
+  path: api,
+  response,
+  conf: prefixType = 'only-base-path',
+  method = HttpMethod.GET,
+}: {
+  config: XroadConfig
+  prefix: string
+  path: string
+  response: Response | Response[]
+  conf?: 'only-base-path' | 'base-path-with-env'
+  method?: HttpMethod
+}) => {
+  const { envs } = getEnvVariables(config.getEnv(), 'xroadConfig', 'dev')
   const servicePathPrefixValue = envs[servicePathPrefix]
   const path =
     typeof servicePathPrefixValue === 'string'
