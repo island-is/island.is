@@ -9,8 +9,9 @@ import {
   Response,
   Stub,
 } from '@anev/ts-mountebank'
-import { XroadConfig } from '../../../../infra/src/dsl/types/input-types'
+import { XroadConf, XRoadEnvs } from '../../../../infra/src/dsl/xroad'
 import { getEnvVariables } from '../../../../infra/src/dsl/service-to-environment/pre-process-service'
+import { XRoadMemberClass } from '@island.is/shared/utils/server'
 
 const defaultMock = (port: number) => {
   const imposter = new Imposter().withPort(port).withRecordRequests(true)
@@ -48,29 +49,44 @@ export const wildcard = async () => {
   )
   await mb.createImposter(mockedServices.xroad.imposter)
 }
-export const addXroadMock = async (options: {
-  config: XroadConfig
-  prefix: string
-  path: string
-  response: Response | Response[]
-  conf?: 'only-base-path' | 'base-path-with-env'
-  method?: HttpMethod
-}) => {
-  const prefixType =
-    options.conf === undefined ? 'only-base-path' : options.conf
+export const addXroadMock = async <Conf>(
+  options:
+    | {
+        config: XroadConf<Conf>
+        orgType?: XRoadMemberClass
+        serviceMemberCode: XRoadEnvs<Conf>
+        prefix: XRoadEnvs<Conf>
+        path: string
+        response: Response | Response[]
+        conf: 'base-path-with-env'
+        method?: HttpMethod
+      }
+    | {
+        config: XroadConf<Conf>
+        prefix: XRoadEnvs<Conf>
+        response: Response | Response[]
+        path: string
+        conf: 'only-base-path'
+        method?: HttpMethod
+      },
+) => {
   const method = options.method === undefined ? HttpMethod.GET : options.method
   const { envs } = getEnvVariables(
     options.config.getEnv(),
     'xroadConfig',
     'dev',
   )
-  const servicePathPrefixValue = envs[options.prefix]
+
+  const servicePathPrefixValue = envs[options.prefix as string]
   const path =
     typeof servicePathPrefixValue === 'string'
       ? servicePathPrefixValue
       : 'this should never happen url'
   const prefix = path.startsWith('r1/') ? '/' : '/r1/'
-  const env = prefixType === 'base-path-with-env' ? 'IS-DEV/GOV/10003' : ''
+  const env =
+    options.conf === 'base-path-with-env'
+      ? `IS-DEV/${options.orgType ?? 'GOV'}/${options.serviceMemberCode}`
+      : ''
   const stubResponses = Array.isArray(options.response)
     ? options.response
     : [options.response]

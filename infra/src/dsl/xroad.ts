@@ -6,10 +6,10 @@ type XroadSectionConfig = {
   env?: EnvironmentVariables
 }
 
-export class XroadConf implements XroadConfig {
+export class XroadConf<I extends XroadSectionConfig> implements XroadConfig {
   config: XroadSectionConfig
 
-  constructor(config: XroadSectionConfig) {
+  constructor(config: I) {
     this.config = config
   }
 
@@ -21,6 +21,9 @@ export class XroadConf implements XroadConfig {
     return this.config.secrets || {}
   }
 }
+export type XRoadEnvs<
+  T extends XroadSectionConfig
+> = T extends XroadSectionConfig ? keyof T['env'] : never
 
 export const Base = new XroadConf({
   env: {

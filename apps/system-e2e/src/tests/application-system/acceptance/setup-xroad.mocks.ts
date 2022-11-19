@@ -13,6 +13,7 @@ export async function setupXroadMocks() {
     config: NationalRegistry,
     prefix: 'XROAD_NATIONAL_REGISTRY_SERVICE_PATH',
     path: '/api/v1/einstaklingar/0101303019',
+    conf: 'only-base-path',
     response: new Response().withJSONBody(
       EinstaklingsupplysingarToJSON({
         kennitala: '0101303019',
@@ -43,6 +44,7 @@ export async function setupXroadMocks() {
     config: NationalRegistry,
     prefix: 'XROAD_NATIONAL_REGISTRY_SERVICE_PATH',
     path: '/api/v1/einstaklingar/1111111119',
+    conf: 'only-base-path',
     response: new Response().withJSONBody(
       EinstaklingsupplysingarToJSON({
         kennitala: '1111111119',
@@ -73,6 +75,7 @@ export async function setupXroadMocks() {
     config: NationalRegistry,
     prefix: 'XROAD_NATIONAL_REGISTRY_SERVICE_PATH',
     path: '/api/v1/einstaklingar/0101307789',
+    conf: 'only-base-path',
     response: new Response().withJSONBody(
       EinstaklingsupplysingarToJSON({
         kennitala: '0101307789',
@@ -103,18 +106,21 @@ export async function setupXroadMocks() {
     config: NationalRegistry,
     prefix: 'XROAD_NATIONAL_REGISTRY_SERVICE_PATH',
     path: '/api/v1/einstaklingar/0101303019/forsja',
+    conf: 'only-base-path',
     response: new Response().withJSONBody(['1111111119']),
   })
   await addXroadMock({
     config: NationalRegistry,
     prefix: 'XROAD_NATIONAL_REGISTRY_SERVICE_PATH',
     path: '/api/v1/einstaklingar/0101303019/forsja/1111111119',
+    conf: 'only-base-path',
     response: new Response().withJSONBody(['0101307789']),
   })
   await addXroadMock({
     config: NationalRegistry,
     prefix: 'XROAD_NATIONAL_REGISTRY_SERVICE_PATH',
     path: '/api/v1/einstaklingar/0101303019/hjuskapur',
+    conf: 'only-base-path',
     response: new Response().withJSONBody({
       kennitalaMaka: '0101307789',
       nafnMaka: 'Gervimaður útlönd',
@@ -126,6 +132,7 @@ export async function setupXroadMocks() {
     config: NationalRegistry,
     prefix: 'XROAD_NATIONAL_REGISTRY_SERVICE_PATH',
     path: '/api/v1/einstaklingar/0101303019/fjolskyldumedlimir',
+    conf: 'only-base-path',
     response: new Response().withJSONBody({
       fjolskyldunumer: '0101303019',
       einstaklingar: [
@@ -209,10 +216,12 @@ export async function setupXroadMocks() {
       periodLength: 98,
     }),
     conf: 'base-path-with-env',
+    serviceMemberCode: 'XROAD_VMST_MEMBER_CODE',
   })
   await addXroadMock({
     config: Labor,
     prefix: 'XROAD_VMST_API_PATH',
+    serviceMemberCode: 'XROAD_VMST_MEMBER_CODE',
     path: '/users/0101303019/parental-leaves',
     response: [
       new Response().withJSONBody(
@@ -233,6 +242,7 @@ export async function setupXroadMocks() {
   await addXroadMock({
     config: Labor,
     prefix: 'XROAD_VMST_API_PATH',
+    serviceMemberCode: 'XROAD_VMST_MEMBER_CODE',
     path: '/users/0101303019/parental-leaves',
     response: [
       new Response().withJSONBody({
@@ -247,6 +257,7 @@ export async function setupXroadMocks() {
   await addXroadMock({
     config: Labor,
     prefix: 'XROAD_VMST_API_PATH',
+    serviceMemberCode: 'XROAD_VMST_MEMBER_CODE',
     path: '/users/0101303019/pregnancy-status',
     response: [
       new Response().withJSONBody({
