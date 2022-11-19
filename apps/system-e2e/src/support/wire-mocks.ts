@@ -48,14 +48,7 @@ export const wildcard = async () => {
   )
   await mb.createImposter(mockedServices.xroad.imposter)
 }
-export const addXroadMock = async ({
-  config,
-  prefix: servicePathPrefix,
-  path: api,
-  response,
-  conf: prefixType = 'only-base-path',
-  method = HttpMethod.GET,
-}: {
+export const addXroadMock = async (options: {
   config: XroadConfig
   prefix: string
   path: string
@@ -63,18 +56,27 @@ export const addXroadMock = async ({
   conf?: 'only-base-path' | 'base-path-with-env'
   method?: HttpMethod
 }) => {
-  const { envs } = getEnvVariables(config.getEnv(), 'xroadConfig', 'dev')
-  const servicePathPrefixValue = envs[servicePathPrefix]
+  const prefixType =
+    options.conf === undefined ? 'only-base-path' : options.conf
+  const method = options.method === undefined ? HttpMethod.GET : options.method
+  const { envs } = getEnvVariables(
+    options.config.getEnv(),
+    'xroadConfig',
+    'dev',
+  )
+  const servicePathPrefixValue = envs[options.prefix]
   const path =
     typeof servicePathPrefixValue === 'string'
       ? servicePathPrefixValue
       : 'this should never happen url'
   const prefix = path.startsWith('r1/') ? '/' : '/r1/'
   const env = prefixType === 'base-path-with-env' ? 'IS-DEV/GOV/10003' : ''
-  const stubResponses = Array.isArray(response) ? response : [response]
+  const stubResponses = Array.isArray(options.response)
+    ? options.response
+    : [options.response]
   const stub = new Stub().withPredicate(
     new EqualPredicate()
-      .withPath(`${prefix}${env}${path}${api}`)
+      .withPath(`${prefix}${env}${path}${options.path}`)
       .withMethod(method),
   )
   for (const response of stubResponses) {
