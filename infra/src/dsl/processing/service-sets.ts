@@ -9,9 +9,10 @@ import {
   ServiceDefinitionForEnv,
 } from '../types/input-types'
 import { prepareServiceForEnv } from '../service-to-environment/pre-process-service'
+import { ServiceBuilder } from '../dsl'
 
 export function prepareServices<T extends ServiceOutputType>(
-  services: ServiceDefinition[] | ServiceDefinition,
+  services: ServiceBuilder<any>[] | ServiceBuilder<any>,
   runtime: DeploymentRuntime,
   renderer: OutputFormat<T>,
 ) {
@@ -19,12 +20,12 @@ export function prepareServices<T extends ServiceOutputType>(
 
   if (runtime.env.feature) {
     for (const service of servicesToProcess) {
-      renderer.featureDeployment(service, runtime.env)
+      renderer.featureDeployment(service.serviceDef, runtime.env)
     }
   }
 
   const preparedServices = servicesToProcess.map((service) => {
-    const serviceForEnv = prepareServiceForEnv(service, runtime.env)
+    const serviceForEnv = prepareServiceForEnv(service.serviceDef, runtime.env)
     switch (serviceForEnv.type) {
       case 'error':
         throw new Error(serviceForEnv.errors.join('\n'))
@@ -37,7 +38,7 @@ export function prepareServices<T extends ServiceOutputType>(
 
 export const renderer = async <T extends ServiceOutputType>(
   runtime: DeploymentRuntime,
-  services: ServiceDefinition[] | ServiceDefinition,
+  services: ServiceBuilder<any>[] | ServiceBuilder<any>,
   renderer: OutputFormat<T>,
 ) => {
   const preparedServices = prepareServices(services, runtime, renderer)

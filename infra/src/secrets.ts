@@ -9,7 +9,7 @@ import {
   Deployments,
   OpsEnvNames,
 } from './uber-charts/all-charts'
-import { renderHelmServices } from './dsl/exports/exports'
+import { renderHelmServices } from './dsl/exports/helm'
 import { toServices } from './dsl/exports/to-services'
 
 const { hideBin } = require('yargs/helpers')
@@ -49,7 +49,8 @@ yargs(hideBin(process.argv))
                 (
                   await renderHelmServices(
                     Envs[Deployments[chartName][p.env as OpsEnv]],
-                    toServices(services),
+                    Charts[chartName][p.env as OpsEnv],
+                    services,
                   )
                 ).services,
               )

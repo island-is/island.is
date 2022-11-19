@@ -8,6 +8,7 @@ import {
 import cloneDeep from 'lodash/cloneDeep'
 import { renderer } from './processing/service-sets'
 import { OutputFormat, ServiceOutputType } from './types/output-types'
+import { ServiceBuilder } from './dsl'
 
 const MAX_LEVEL_DEPENDENCIES = 20
 
@@ -38,7 +39,7 @@ export const renderers = {
 
 const findUpstreamDependencies = (
   uberChart: UpstreamDependencyTracer,
-  svc: ServiceDefinition | string,
+  svc: ServiceBuilder<any> | string,
   level: number = 0,
 ): string[] => {
   if (level > MAX_LEVEL_DEPENDENCIES)
@@ -46,7 +47,7 @@ const findUpstreamDependencies = (
       `Too deep level of dependencies - ${MAX_LEVEL_DEPENDENCIES}. Some kind of circular dependency or you fellas have gone off the deep end ;)`,
     )
   const upstreams = Array.from(
-    uberChart.deps[typeof svc === 'string' ? svc : svc.name] ??
+    uberChart.deps[typeof svc === 'string' ? svc : svc.serviceDef.name] ??
       new Set<string>(),
   )
   return upstreams
@@ -59,10 +60,10 @@ const findUpstreamDependencies = (
 
 export const withUpstreamDependencies = async <T extends ServiceOutputType>(
   env: EnvironmentConfig,
-  habitat: ServiceDefinition[],
-  services: ServiceDefinition[],
+  habitat: ServiceBuilder<any>[],
+  services: ServiceBuilder<any>[],
   serializer: OutputFormat<T>,
-): Promise<ServiceDefinition[]> => {
+): Promise<ServiceBuilder<any>[]> => {
   const dummyEnv: EnvironmentConfig = {
     auroraHost: '',
     awsAccountId: '',
@@ -84,7 +85,7 @@ export const withUpstreamDependencies = async <T extends ServiceOutputType>(
     .flatMap((x) => x)
 
   const hacks = services
-    .map((s) => s.name)
+    .map((s) => s.serviceDef.name)
     .concat(downstreamServices)
     .includes('application-system-api')
     ? findUpstreamDependencies(dependencyTracer, 'api').concat(['api'])
@@ -94,10 +95,13 @@ export const withUpstreamDependencies = async <T extends ServiceOutputType>(
     .concat(
       downstreamServices
         .concat(hacks)
-        .map((dep) => habitat.find((s) => s.name === dep)!),
+        .map((dep) => habitat.find((s) => s.serviceDef.name === dep)!),
     )
     .reduce(
-      (acc: ServiceDefinition[], cur: ServiceDefinition): ServiceDefinition[] =>
+      (
+        acc: ServiceBuilder<any>[],
+        cur: ServiceBuilder<any>,
+      ): ServiceBuilder<any>[] =>
         acc.indexOf(cur) === -1 ? acc.concat([cur]) : acc,
       [],
     )

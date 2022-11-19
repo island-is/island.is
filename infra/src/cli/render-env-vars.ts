@@ -1,7 +1,7 @@
 import { Kubernetes } from '../dsl/kubernetes-runtime'
 import { Envs } from '../environments'
 import { Charts } from '../uber-charts/all-charts'
-import { renderHelmServiceFile } from '../dsl/exports/exports'
+import { renderHelmServiceFile } from '../dsl/exports/helm'
 import { toServices } from '../dsl/exports/to-services'
 
 export const EXCLUDED_ENVIRONMENT_NAMES = [
@@ -33,7 +33,8 @@ export const renderServiceEnvVars = async (service: string) => {
         (
           await renderHelmServiceFile(
             uberChart.env,
-            toServices(chart.dev),
+            chart.dev,
+            chart.dev,
             'no-mocks',
           )
         ).services,

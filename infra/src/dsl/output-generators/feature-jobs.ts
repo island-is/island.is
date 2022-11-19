@@ -6,10 +6,10 @@ import { resolveDbHost } from './map-to-helm-values'
 import { FeatureKubeJob } from '../types/output-types'
 import { resolveWithMaxLength } from './serialization-helpers'
 import { DeploymentRuntime } from '../types/charts'
+import { ServiceBuilder } from '../dsl'
 
 export const generateJobsForFeature = async (
   uberChart: DeploymentRuntime,
-  habitat: ServiceDefinition[],
   image: string,
   services: ServiceDefinitionForEnv[],
 ): Promise<FeatureKubeJob> => {

@@ -3,8 +3,8 @@ import { HelmValueFile, ServiceHelm, Services } from '../types/output-types'
 import { renderers } from '../upstream-dependencies'
 
 export type Mocks = 'with-mocks' | 'no-mocks'
-export const renderHelmValueFile = (
-  uberChart: Kubernetes,
+export const helmValueFile = (
+  runtime: Kubernetes,
   services: Services<ServiceHelm>,
   withMocks: Mocks,
 ): HelmValueFile => {
@@ -18,13 +18,13 @@ export const renderHelmValueFile = (
         [name]: Object.assign({}, service, extras),
       }
     },
-    uberChart.env.global,
+    runtime.env.global,
   )
   const mocks: Services<ServiceHelm> =
-    withMocks === 'with-mocks' && Object.keys(uberChart.mocks).length > 0
+    withMocks === 'with-mocks' && Object.keys(runtime.mocks).length > 0
       ? {
           'mock-server': outputFormat.serviceMockDef({
-            uberChart,
+            uberChart: runtime,
           }),
         }
       : {}

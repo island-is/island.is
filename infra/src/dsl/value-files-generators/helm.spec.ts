@@ -1,7 +1,6 @@
 import { ref, service } from '../dsl'
 import { EnvironmentConfig } from '../types/charts'
-import { toServices } from '../exports/to-services'
-import { renderHelmServiceFile } from '../exports/exports'
+import { renderHelmServiceFile } from '../exports/helm'
 
 const Staging: EnvironmentConfig = {
   auroraHost: 'a',
@@ -26,7 +25,8 @@ describe('Local setup', () => {
   beforeEach(async () => {
     serviceDef = await renderHelmServiceFile(
       Staging,
-      toServices([sut]),
+      [sut],
+      [sut],
       'with-mocks',
     )
   })

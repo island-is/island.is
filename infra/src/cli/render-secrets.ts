@@ -1,9 +1,9 @@
 import { Kubernetes } from '../dsl/kubernetes-runtime'
 import { Envs } from '../environments'
 import { Charts } from '../uber-charts/all-charts'
-import { renderHelmServices } from '../dsl/exports/exports'
+import { renderHelmServices } from '../dsl/exports/helm'
 import { toServices } from '../dsl/exports/to-services'
-import { getParams } from '../dsl/adapters/get-params'
+import { getSsmParams } from '../dsl/adapters/get-ssm-params'
 
 const EXCLUDED_ENVIRONMENT_NAMES = [
   'DB_PASSWORD',
@@ -34,7 +34,7 @@ export const renderSecrets = async (service: string) => {
   const services = await Promise.all(
     Object.values(Charts).map(
       async (chart) =>
-        (await renderHelmServices(uberChart.env, toServices(chart.dev)))
+        (await renderHelmServices(uberChart.env, chart.dev, chart.dev))
           .services,
     ),
   )
@@ -61,7 +61,9 @@ export const renderSecrets = async (service: string) => {
       return request
     })
 
-  const values = await getParams(secretRequests.map(([_, ssmName]) => ssmName))
+  const values = await getSsmParams(
+    secretRequests.map(([_, ssmName]) => ssmName),
+  )
 
   secretRequests.forEach(([envName, ssmName]) => {
     const escapedValue = values[ssmName]

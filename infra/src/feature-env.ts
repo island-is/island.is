@@ -17,7 +17,7 @@ import {
   renderHelmJobForFeature,
   renderHelmServices,
   renderHelmValueFileContent,
-} from './dsl/exports/exports'
+} from './dsl/exports/helm'
 import { toServices } from './dsl/exports/to-services'
 
 type ChartName = 'islandis' | 'identity-server'
@@ -112,12 +112,17 @@ yargs(process.argv.slice(2))
       const { ch, habitat, affectedServices } = parseArguments(argv)
       const featureYaml = await getFeatureAffectedServices(
         ch,
-        toServices(habitat),
-        toServices(affectedServices.slice()),
-        toServices(ExcludedFeatureDeploymentServices),
+        habitat,
+        affectedServices.slice(),
+        ExcludedFeatureDeploymentServices,
       )
       await writeToOutput(
-        await renderHelmValueFileContent(ch.env, featureYaml, 'with-mocks'),
+        await renderHelmValueFileContent(
+          ch.env,
+          habitat,
+          featureYaml,
+          'with-mocks',
+        ),
         argv.output,
       )
     },
@@ -130,12 +135,14 @@ yargs(process.argv.slice(2))
       const { ch, habitat, affectedServices } = parseArguments(argv)
       const featureYaml = await getFeatureAffectedServices(
         ch,
-        toServices(habitat),
-        toServices(affectedServices.slice()),
-        toServices(ExcludedFeatureDeploymentServices),
+        habitat,
+        affectedServices.slice(),
+        ExcludedFeatureDeploymentServices,
       )
       await writeToOutput(
-        buildComment((await renderHelmServices(ch.env, featureYaml)).services),
+        buildComment(
+          (await renderHelmServices(ch.env, habitat, featureYaml)).services,
+        ),
         argv.output,
       )
     },
@@ -154,9 +161,9 @@ yargs(process.argv.slice(2))
       const { ch, habitat, affectedServices } = parseArguments(argv)
       const featureYaml = await renderHelmJobForFeature(
         ch,
-        toServices(habitat),
+        habitat,
         argv.jobImage!,
-        toServices(affectedServices),
+        affectedServices,
       )
       await writeToOutput(dumpJobYaml(featureYaml), argv.output)
     },

@@ -7,7 +7,7 @@ import {
 } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
 import { renderers } from './upstream-dependencies'
-import { renderHelmValueFile } from './value-files-generators/render-helm-value-file'
+import { helmValueFile } from './value-files-generators/render-helm-value-file'
 import { rendererForOne } from './processing/service-sets'
 
 const Staging: EnvironmentConfig = {
@@ -37,7 +37,7 @@ describe('Egress', () => {
       sut.serviceDef,
       uberChart,
     )) as SerializeSuccess<ServiceHelm>
-    render = renderHelmValueFile(
+    render = helmValueFile(
       uberChart,
       { a: serviceDef.serviceDef[0] },
       'with-mocks',

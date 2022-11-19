@@ -34,7 +34,7 @@ describe('Local setup', () => {
       uberChart,
       await renderer(
         uberChart,
-        toServices([sut]),
+        [sut],
         LocalrunOutput({ secrets: SecretOptions.noSecrets }),
       ),
     )

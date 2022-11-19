@@ -3,7 +3,7 @@ import { Kubernetes } from './kubernetes-runtime'
 import { EnvironmentConfig } from './types/charts'
 import { getFeatureAffectedServices } from './feature-deployments'
 import { HelmValueFile } from './types/output-types'
-import { renderHelmValueFile } from './value-files-generators/render-helm-value-file'
+import { helmValueFile } from './value-files-generators/render-helm-value-file'
 import { renderers } from './upstream-dependencies'
 import { renderer } from './processing/service-sets'
 
@@ -55,13 +55,13 @@ describe('Feature-deployment support', () => {
 
     const services1 = await getFeatureAffectedServices(
       chart,
-      [apiService.serviceDef, dependencyA.serviceDef, dependencyB.serviceDef],
-      [dependencyA.serviceDef, dependencyC.serviceDef],
-      [dependencyC.serviceDef],
+      [apiService, dependencyA, dependencyB],
+      [dependencyA, dependencyC],
+      [dependencyC],
     )
     const chart1 = new Kubernetes(Dev)
     const services = await renderer(chart1, services1, renderers.helm)
-    values = renderHelmValueFile(chart1, services, 'no-mocks')
+    values = helmValueFile(chart1, services, 'no-mocks')
   })
 
   it('dynamic service name generation', () => {

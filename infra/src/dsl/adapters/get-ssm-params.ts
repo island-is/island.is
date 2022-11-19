@@ -5,7 +5,7 @@ const API_INITIALIZATION_OPTIONS = {
   maxAttempts: 10,
 }
 const client = new SSM(API_INITIALIZATION_OPTIONS)
-export const getParams = async (
+export const getSsmParams = async (
   ssmNames: string[],
 ): Promise<{ [name: string]: string }> => {
   const chunks = ssmNames.reduce((all: string[][], one: string, i: number) => {

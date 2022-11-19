@@ -7,7 +7,7 @@ import {
   Charts,
   Deployments,
 } from '../uber-charts/all-charts'
-import { renderHelmServices } from '../dsl/exports/exports'
+import { renderHelmServices } from '../dsl/exports/helm'
 import { toServices } from '../dsl/exports/to-services'
 
 const renderUrlsForService = ({ ingress = {} }: ServiceHelm) => {
@@ -29,7 +29,8 @@ const renderUrlsForChart = async (
   const services = (
     await renderHelmServices(
       Envs[Deployments[chartName][environment]],
-      toServices(Charts[chartName][environment]),
+      Charts[chartName][environment],
+      Charts[chartName][environment],
     )
   ).services
 

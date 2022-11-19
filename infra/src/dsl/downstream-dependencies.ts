@@ -3,6 +3,8 @@ import { DeploymentRuntime, EnvironmentConfig } from './types/charts'
 import cloneDeep from 'lodash/cloneDeep'
 import { renderer } from './processing/service-sets'
 import { renderers } from './upstream-dependencies'
+import { ServiceBuilder } from './dsl'
+import { toServices } from './exports/to-services'
 
 const MAX_LEVEL_DEPENDENCIES = 20
 
@@ -28,7 +30,6 @@ class DownstreamDependencyTracer implements DeploymentRuntime {
 const findDownstreamDependencies = (
   uberChart: DownstreamDependencyTracer,
   svc: ServiceDefinition | string,
-  habitat: ServiceDefinition[],
   level: number = 0,
 ): string[] => {
   const deps = uberChart.deps[typeof svc === 'string' ? svc : svc.name]
@@ -36,17 +37,12 @@ const findDownstreamDependencies = (
     throw new Error(
       `Too deep level of dependencies - ${MAX_LEVEL_DEPENDENCIES}. Some kind of circular dependency or you fellas have gone off the deep end ;)`,
     )
-  // const mocks = Object.entries(uberChart.deps)
-  //   .filter(([s, entry]) => s.startsWith('http'))
-  //   .filter(([s, entry]) => entry.has(svc))
-  //   .map(([s, entry]) => svcs.find((ss) => ss.serviceDef.name === s)!)
   const currentDeps = Array.from(deps ?? new Set<string>())
-  // .concat(Array.from(mocks))
   if (currentDeps) {
     const serviceDependencies = currentDeps
     return serviceDependencies
       .map((dependency) =>
-        findDownstreamDependencies(uberChart, dependency, habitat, level + 1),
+        findDownstreamDependencies(uberChart, dependency, level + 1),
       )
       .flatMap((x) => x)
       .concat(serviceDependencies)
@@ -57,9 +53,9 @@ const findDownstreamDependencies = (
 
 export const getWithDownstreamServices = async (
   env: EnvironmentConfig,
-  habitat: ServiceDefinition[],
-  services: ServiceDefinition[],
-): Promise<ServiceDefinition[]> => {
+  habitat: ServiceBuilder<any>[],
+  services: ServiceBuilder<any>[],
+): Promise<ServiceBuilder<any>[]> => {
   const dummyEnv: EnvironmentConfig = {
     auroraHost: '',
     awsAccountId: '',
@@ -77,14 +73,19 @@ export const getWithDownstreamServices = async (
   const localHabitat = cloneDeep(habitat)
   await renderer(dependencyTracer, localHabitat, renderers.helm) // doing this so we find out the dependencies
   const downstreamServices = services
-    .map((s) => findDownstreamDependencies(dependencyTracer, s, localHabitat))
+    .map((s) => findDownstreamDependencies(dependencyTracer, s.serviceDef))
     .flatMap((x) => x)
   return services
     .concat(
-      downstreamServices.map((dep) => habitat.find((s) => s.name === dep)!),
+      downstreamServices.map(
+        (dep) => habitat.find((s) => s.serviceDef.name === dep)!,
+      ),
     )
     .reduce(
-      (acc: ServiceDefinition[], cur: ServiceDefinition): ServiceDefinition[] =>
+      (
+        acc: ServiceBuilder<any>[],
+        cur: ServiceBuilder<any>,
+      ): ServiceBuilder<any>[] =>
         acc.indexOf(cur) === -1 ? acc.concat([cur]) : acc,
       [],
     )

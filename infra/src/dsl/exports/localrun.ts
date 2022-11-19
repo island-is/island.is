@@ -1,0 +1,29 @@
+import { EnvironmentConfig } from '../types/charts'
+import { ServiceBuilder } from '../dsl'
+import { Localhost } from '../localhost-runtime'
+import { ServiceDefinition } from '../types/input-types'
+import { renderers, withUpstreamDependencies } from '../upstream-dependencies'
+import { toServices } from './to-services'
+import { hacks } from './hacks'
+import { getLocalSetup } from '../value-files-generators/get-local-setup'
+import { renderer } from '../processing/service-sets'
+
+export async function localrun(
+  envConfig: EnvironmentConfig,
+  habitat: ServiceBuilder<any>[],
+  uberChart: Localhost,
+  services: ServiceBuilder<any>[],
+) {
+  const fullSetOfServices = await withUpstreamDependencies(
+    envConfig,
+    habitat,
+    services,
+    renderers.localrun,
+  )
+  hacks(fullSetOfServices, habitat)
+
+  return getLocalSetup(
+    uberChart,
+    await renderer(uberChart, fullSetOfServices, renderers.localrun),
+  )
+}

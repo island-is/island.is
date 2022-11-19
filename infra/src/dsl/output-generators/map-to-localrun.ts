@@ -17,7 +17,7 @@ import {
   postgresIdentifier,
   serializeEnvironmentVariables,
 } from './serialization-helpers'
-import { getParams } from '../adapters/get-params'
+import { getSsmParams } from '../adapters/get-ssm-params'
 
 /**
  * Transforms our definition of a service to a Helm values object
@@ -177,7 +177,7 @@ const retrieveSecrets: RetrieveSecrets = async (
   secrets: Secrets,
 ): Promise<ContainerEnvironmentVariables> => {
   const secretPaths = Object.entries(secrets).map((entry) => entry[1])
-  const secretValues = await getParams(secretPaths)
+  const secretValues = await getSsmParams(secretPaths)
   return Object.entries(secrets)
     .map((entry) => [entry[0], secretValues[entry[1]]])
     .reduce(

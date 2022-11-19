@@ -34,7 +34,7 @@ describe.only('ServiceDefinition to Env', () => {
       A: 'B',
       B: MissingSetting,
     })
-    const serviceDef = renderer(uberChart, toServices([sut]), currentOutput)
+    const serviceDef = renderer(uberChart, [sut], currentOutput)
     expect(serviceDef).rejects.toThrow(
       'Missing settings for service api in env staging. Keys of missing settings: B',
     )
@@ -44,11 +44,7 @@ describe.only('ServiceDefinition to Env', () => {
       A: 'B',
       B: ref((ctx) => `${ctx.svc('https://www.visir.is')}/f/frettir`),
     })
-    const serviceDef = await renderer(
-      uberChart,
-      toServices([sut]),
-      currentOutput,
-    )
+    const serviceDef = await renderer(uberChart, [sut], currentOutput)
     expect(serviceDef['api'].env['B']).toBe('http://localhost:9453/f/frettir')
   })
 })
