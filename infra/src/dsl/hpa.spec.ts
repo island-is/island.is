@@ -1,9 +1,9 @@
 import { service } from './dsl'
 import { Kubernetes } from './kubernetes-runtime'
-import { SerializeSuccess, ServiceHelm } from './types/output-types'
+import { SerializeSuccess, HelmService } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
 import { renderers } from './upstream-dependencies'
-import { rendererForOne } from './processing/service-sets'
+import { generateOutputOne } from './processing/rendering-pipeline'
 
 const Staging: EnvironmentConfig = {
   auroraHost: 'a',
@@ -21,12 +21,12 @@ const Staging: EnvironmentConfig = {
 describe('HPA definitions', () => {
   it('Support classic replicaCount definition', async () => {
     const sut = service('api')
-    const result = (await rendererForOne({
+    const result = (await generateOutputOne({
       outputFormat: renderers.helm,
       service: sut,
       runtime: new Kubernetes(Staging),
       env: Staging,
-    })) as SerializeSuccess<ServiceHelm>
+    })) as SerializeSuccess<HelmService>
 
     expect(result.serviceDef[0].replicaCount).toEqual({
       min: 2,
@@ -50,12 +50,12 @@ describe('HPA definitions', () => {
       default: 2,
       scalingMagicNumber: 5,
     })
-    const result = (await rendererForOne({
+    const result = (await generateOutputOne({
       outputFormat: renderers.helm,
       service: sut,
       runtime: new Kubernetes(Staging),
       env: Staging,
-    })) as SerializeSuccess<ServiceHelm>
+    })) as SerializeSuccess<HelmService>
 
     expect(result.serviceDef[0].replicaCount).toEqual({
       min: 1,

@@ -1,8 +1,8 @@
 import { ServiceDefinition, ServiceDefinitionCore } from './types/input-types'
-import { DeploymentRuntime, EnvironmentConfig } from './types/charts'
+import { ReferenceResolver, EnvironmentConfig } from './types/charts'
 import { getMockName, hostPortNumber } from './mocks/mocks-support'
 
-export class Kubernetes implements DeploymentRuntime {
+export class Kubernetes implements ReferenceResolver {
   releaseName: string
   feature?: string
   deps: { [name: string]: Set<string> } = {}

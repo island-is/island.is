@@ -3,13 +3,13 @@ import { Kubernetes } from './kubernetes-runtime'
 import {
   SerializeErrors,
   SerializeSuccess,
-  ServiceHelm,
+  HelmService,
 } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
 import { MissingSetting } from './types/input-types'
 import { FeatureNames } from './features'
 import { renderers } from './upstream-dependencies'
-import { rendererForOne } from './processing/service-sets'
+import { generateOutputOne } from './processing/rendering-pipeline'
 
 const Staging: EnvironmentConfig = {
   auroraHost: 'a',
@@ -68,27 +68,25 @@ describe('Server-side toggles', () => {
         },
       },
     })
-  let stagingWithFeatures: SerializeSuccess<ServiceHelm>
-  let stagingNoFeatures: SerializeSuccess<ServiceHelm>
+  let stagingWithFeatures: SerializeSuccess<HelmService>
+  let stagingNoFeatures: SerializeSuccess<HelmService>
   beforeEach(async () => {
-    stagingWithFeatures = (await rendererForOne({
+    const envWithFeature = {
+      ...Staging,
+      featuresOn: [FeatureNames.testing],
+    }
+    stagingWithFeatures = (await generateOutputOne({
       outputFormat: renderers.helm,
       service: sut,
-      runtime: new Kubernetes({
-        ...Staging,
-        featuresOn: [FeatureNames.testing],
-      }),
-      env: {
-        ...Staging,
-        featuresOn: [FeatureNames.testing],
-      },
-    })) as SerializeSuccess<ServiceHelm>
-    stagingNoFeatures = (await rendererForOne({
+      runtime: new Kubernetes(envWithFeature),
+      env: envWithFeature,
+    })) as SerializeSuccess<HelmService>
+    stagingNoFeatures = (await generateOutputOne({
       outputFormat: renderers.helm,
       service: sut,
       runtime: new Kubernetes(Staging),
       env: Staging,
-    })) as SerializeSuccess<ServiceHelm>
+    })) as SerializeSuccess<HelmService>
   })
   it('env variables present when feature toggled', () => {
     expect(stagingWithFeatures.serviceDef[0].env!['A']).toBe('B')
@@ -148,26 +146,24 @@ describe('Server-side toggles', () => {
 
   describe('Missing envs variables for the target environment', () => {
     let prod: SerializeErrors
-    let prodNoFeature: SerializeSuccess<ServiceHelm>
+    let prodNoFeature: SerializeSuccess<HelmService>
     beforeEach(async () => {
-      prod = (await rendererForOne({
+      const prodWithFeatureOn = {
+        ...Prod,
+        featuresOn: [FeatureNames.testing],
+      }
+      prod = (await generateOutputOne({
         outputFormat: renderers.helm,
         service: sut,
-        runtime: new Kubernetes({
-          ...Prod,
-          featuresOn: [FeatureNames.testing],
-        }),
-        env: {
-          ...Prod,
-          featuresOn: [FeatureNames.testing],
-        },
+        runtime: new Kubernetes(prodWithFeatureOn),
+        env: prodWithFeatureOn,
       })) as SerializeErrors
-      prodNoFeature = (await rendererForOne({
+      prodNoFeature = (await generateOutputOne({
         outputFormat: renderers.helm,
         service: sut,
         runtime: new Kubernetes(Prod),
         env: Prod,
-      })) as SerializeSuccess<ServiceHelm>
+      })) as SerializeSuccess<HelmService>
     })
     it('should result in serialization errors when feature is turned on', () => {
       expect(prod.errors).toStrictEqual([
@@ -211,26 +207,24 @@ describe('Server-side toggles', () => {
         },
       })
     let prod: SerializeErrors
-    let prodNoFeature: SerializeSuccess<ServiceHelm>
+    let prodNoFeature: SerializeSuccess<HelmService>
     beforeEach(async () => {
-      prod = (await rendererForOne({
+      const prodWithFeatureOn = {
+        ...Prod,
+        featuresOn: [FeatureNames.testing],
+      }
+      prod = (await generateOutputOne({
         outputFormat: renderers.helm,
         service: sut,
-        runtime: new Kubernetes({
-          ...Prod,
-          featuresOn: [FeatureNames.testing],
-        }),
-        env: {
-          ...Prod,
-          featuresOn: [FeatureNames.testing],
-        },
+        runtime: new Kubernetes(prodWithFeatureOn),
+        env: prodWithFeatureOn,
       })) as SerializeErrors
-      prodNoFeature = (await rendererForOne({
+      prodNoFeature = (await generateOutputOne({
         outputFormat: renderers.helm,
         service: sut,
         runtime: new Kubernetes(Prod),
         env: Prod,
-      })) as SerializeSuccess<ServiceHelm>
+      })) as SerializeSuccess<HelmService>
     })
     it('should result in serialization errors when feature is turned on', () => {
       expect(prod.errors).toStrictEqual([

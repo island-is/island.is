@@ -3,11 +3,11 @@ import { Kubernetes } from './kubernetes-runtime'
 import {
   SerializeErrors,
   SerializeSuccess,
-  ServiceHelm,
+  HelmService,
 } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
 import { renderers } from './upstream-dependencies'
-import { rendererForOne } from './processing/service-sets'
+import { generateOutputOne } from './processing/rendering-pipeline'
 
 const Staging: EnvironmentConfig = {
   auroraHost: 'a',
@@ -54,12 +54,12 @@ describe('Init-container definitions', () => {
       },
       postgres: {},
     })
-    const result = (await rendererForOne({
+    const result = (await generateOutputOne({
       outputFormat: renderers.helm,
       service: sut,
       runtime: new Kubernetes(Staging),
       env: Staging,
-    })) as SerializeSuccess<ServiceHelm>
+    })) as SerializeSuccess<HelmService>
     expect(result.serviceDef[0].initContainer).toEqual({
       containers: [
         {
@@ -103,7 +103,7 @@ describe('Init-container definitions', () => {
     const sut = service('api').initContainer({
       containers: [],
     })
-    const result = (await rendererForOne({
+    const result = (await generateOutputOne({
       outputFormat: renderers.helm,
       service: sut,
       runtime: new Kubernetes(Staging),

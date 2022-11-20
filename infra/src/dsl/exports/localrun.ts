@@ -4,7 +4,7 @@ import { Localhost } from '../localhost-runtime'
 import { renderers, withUpstreamDependencies } from '../upstream-dependencies'
 import { hacks } from './hacks'
 import { getLocalrunValueFile } from '../value-files-generators/local-setup'
-import { renderer } from '../processing/service-sets'
+import { generateOutput } from '../processing/rendering-pipeline'
 
 export async function localrun(
   envConfig: EnvironmentConfig,
@@ -22,7 +22,7 @@ export async function localrun(
 
   return getLocalrunValueFile(
     runtime,
-    await renderer({
+    await generateOutput({
       runtime: runtime,
       services: fullSetOfServices,
       outputFormat: renderers.localrun,

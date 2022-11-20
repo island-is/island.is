@@ -1,9 +1,9 @@
 import { service } from './dsl'
 import { Kubernetes } from './kubernetes-runtime'
-import { SerializeSuccess, ServiceHelm } from './types/output-types'
+import { SerializeSuccess, HelmService } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
 import { renderers } from './upstream-dependencies'
-import { rendererForOne } from './processing/service-sets'
+import { generateOutputOne } from './processing/rendering-pipeline'
 
 const Staging: EnvironmentConfig = {
   auroraHost: 'a',
@@ -22,12 +22,12 @@ describe('Healthchecks definitions', () => {
   describe('Liveness', () => {
     it('defined with path only', async () => {
       const sut = service('api').liveness('/ready').healthPort(5000)
-      const result = (await rendererForOne({
+      const result = (await generateOutputOne({
         outputFormat: renderers.helm,
         service: sut,
         runtime: new Kubernetes(Staging),
         env: Staging,
-      })) as SerializeSuccess<ServiceHelm>
+      })) as SerializeSuccess<HelmService>
       expect(result.serviceDef[0].healthCheck).toEqual({
         liveness: {
           path: '/ready',
@@ -43,12 +43,12 @@ describe('Healthchecks definitions', () => {
         path: '/ready',
         initialDelaySeconds: 10,
       })
-      const result = (await rendererForOne({
+      const result = (await generateOutputOne({
         outputFormat: renderers.helm,
         service: sut,
         runtime: new Kubernetes(Staging),
         env: Staging,
-      })) as SerializeSuccess<ServiceHelm>
+      })) as SerializeSuccess<HelmService>
       expect(result.serviceDef[0].healthCheck).toEqual({
         liveness: {
           path: '/ready',

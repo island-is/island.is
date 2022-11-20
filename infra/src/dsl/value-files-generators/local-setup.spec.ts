@@ -1,6 +1,6 @@
 import { ref, service } from '../dsl'
 import { EnvironmentConfig } from '../types/charts'
-import { renderer } from '../processing/service-sets'
+import { generateOutput } from '../processing/rendering-pipeline'
 import { getLocalrunValueFile } from './local-setup'
 import { Localhost } from '../localhost-runtime'
 import {
@@ -31,7 +31,7 @@ describe('Local setup', () => {
     const runtime = new Localhost()
     serviceDef = await getLocalrunValueFile(
       runtime,
-      await renderer({
+      await generateOutput({
         runtime: runtime,
         services: [sut],
         outputFormat: LocalrunOutput({ secrets: SecretOptions.noSecrets }),

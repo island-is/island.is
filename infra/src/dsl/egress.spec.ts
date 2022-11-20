@@ -3,12 +3,12 @@ import { Kubernetes } from './kubernetes-runtime'
 import {
   HelmValueFile,
   SerializeSuccess,
-  ServiceHelm,
+  HelmService,
 } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
 import { renderers } from './upstream-dependencies'
 import { getHelmValueFile } from './value-files-generators/helm-value-file'
-import { rendererForOne } from './processing/service-sets'
+import { generateOutputOne } from './processing/rendering-pipeline'
 
 const Staging: EnvironmentConfig = {
   auroraHost: 'a',
@@ -29,15 +29,15 @@ describe('Egress', () => {
     A: ref((h) => h.svc('http://visir.is')),
   })
   const runtime = new Kubernetes(Staging)
-  let serviceDef: SerializeSuccess<ServiceHelm>
+  let serviceDef: SerializeSuccess<HelmService>
   let render: HelmValueFile
   beforeEach(async () => {
-    serviceDef = (await rendererForOne({
+    serviceDef = (await generateOutputOne({
       outputFormat: renderers.helm,
       service: sut,
       runtime: runtime,
       env: Staging,
-    })) as SerializeSuccess<ServiceHelm>
+    })) as SerializeSuccess<HelmService>
     render = getHelmValueFile(
       runtime,
       { a: serviceDef.serviceDef[0] },
@@ -46,13 +46,13 @@ describe('Egress', () => {
     )
   })
 
-  it('missing variables cause errors', () => {
+  it('Variable has address of the mock', () => {
     expect(serviceDef.serviceDef[0].env['A']).toBe(
       'http://web-mock-server:9209',
     )
   })
 
-  it('should render two services - one extra for the mock', () => {
+  it('should render an extra for the mock', () => {
     expect(render.services['mock-server'].command?.[0]).toMatch('mb')
   })
 })

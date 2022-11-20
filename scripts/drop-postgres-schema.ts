@@ -1,9 +1,11 @@
 import yargs from 'yargs'
-import { Charts } from '../infra/src/uber-charts/all-charts'
+import { Charts, Deployments } from '../infra/src/uber-charts/all-charts'
 import { Client } from 'pg'
 import { SSM } from 'aws-sdk'
 import { branchNameToFeatureName } from './_common'
-import { featureSpecificServiceDef } from '../infra/src/dsl/feature-deployments'
+import { prepareServicesForEnv } from '../infra/src/dsl/processing/rendering-pipeline'
+import { Envs } from '../infra/src/environments'
+import { renderers } from '../infra/src/dsl/upstream-dependencies'
 
 const argv = yargs(process.argv.slice(2))
   .options({
@@ -30,8 +32,8 @@ void (async function () {
   const featureName = branchNameToFeatureName(argv.argv['feature-branch-name'])
   const serviceName = argv.argv['service-name']
   const chart = argv.argv.chart as keyof typeof Charts
-
-  const habitat = Charts[chart].dev
+  const env = 'dev' as const
+  const habitat = Charts[chart][env]
   const target = habitat.filter(
     (service) => service.serviceDef.name === serviceName,
   )
@@ -39,22 +41,22 @@ void (async function () {
     throw Error(`Service with name ${serviceName} not found in chart ${chart}`)
   }
 
-  featureSpecificServiceDef(target)
-  renderer.helm.featureDeployment(target[0])
-  const targetService = target[0]
-  targetService.serviceDef.postgres
+  const out = prepareServicesForEnv({
+    env: { ...Envs[Deployments[chart][env]], feature: featureName },
+    outputFormat: renderers.helm,
+    services: target[0],
+  })
+  const targetService = out[0]
 
   const ssmClient = new SSM({
     apiVersion: '2014-11-06',
     region: 'eu-west-1',
   })
-  if (targetService.serviceDef.postgres) {
-    console.log(
-      `Retrieving secret ${targetService.serviceDef.postgres.passwordSecret}`,
-    )
+  if (targetService.postgres) {
+    console.log(`Retrieving secret ${targetService.postgres.passwordSecret}`)
     const password = await ssmClient
       .getParameter({
-        Name: targetService.serviceDef.postgres.passwordSecret!,
+        Name: targetService.postgres.passwordSecret!,
         WithDecryption: true,
       })
       .promise()
@@ -64,16 +66,16 @@ void (async function () {
       })
     if (password.Parameter?.Value) {
       const client = new Client({
-        user: targetService.serviceDef.postgres.username,
+        user: targetService.postgres.username,
         host: 'localhost',
-        database: targetService.serviceDef.postgres.name,
+        database: targetService.postgres.name,
         password: password.Parameter!.Value,
       })
       await client.connect()
       console.log(`Connected to database`)
       await client.query(
         // Query to drop all tables taken from here - https://tableplus.com/blog/2018/04/postgresql-how-to-drop-all-tables.html
-        `drop owned by ${targetService.serviceDef.postgres.username}`,
+        `drop owned by ${targetService.postgres.username}`,
       )
       console.log(`Done`)
       await client.end()

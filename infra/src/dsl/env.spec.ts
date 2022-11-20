@@ -4,11 +4,11 @@ import { MissingSetting } from './types/input-types'
 import {
   SerializeErrors,
   SerializeSuccess,
-  ServiceHelm,
+  HelmService,
 } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
 import { renderers } from './upstream-dependencies'
-import { rendererForOne } from './processing/service-sets'
+import { generateOutputOne } from './processing/rendering-pipeline'
 
 const Staging: EnvironmentConfig = {
   auroraHost: 'a',
@@ -30,7 +30,7 @@ describe('Env variable', () => {
   })
   let serviceDef: SerializeErrors
   beforeEach(async () => {
-    serviceDef = (await rendererForOne({
+    serviceDef = (await generateOutputOne({
       outputFormat: renderers.helm,
       service: sut,
       runtime: new Kubernetes(Staging),
@@ -51,7 +51,7 @@ describe('Env variable', () => {
       .secrets({
         A: 'somesecret',
       })
-    const serviceDef = (await rendererForOne({
+    const serviceDef = (await generateOutputOne({
       outputFormat: renderers.helm,
       service: sut,
       runtime: new Kubernetes(Staging),
@@ -73,7 +73,7 @@ describe('Env variable', () => {
       },
       containers: [{ command: 'go' }],
     })
-    const serviceDef = (await rendererForOne({
+    const serviceDef = (await generateOutputOne({
       outputFormat: renderers.helm,
       service: sut,
       runtime: new Kubernetes(Staging),
@@ -106,12 +106,12 @@ describe('Env variable', () => {
     const sut = service('api').env({
       A: json(value),
     })
-    const serviceDef = (await rendererForOne({
+    const serviceDef = (await generateOutputOne({
       outputFormat: renderers.helm,
       service: sut,
       runtime: new Kubernetes(Staging),
       env: Staging,
-    })) as SerializeSuccess<ServiceHelm>
+    })) as SerializeSuccess<HelmService>
 
     expect(serviceDef.serviceDef[0].env.A).toEqual(JSON.stringify(value))
   })

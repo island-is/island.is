@@ -6,7 +6,10 @@ import {
 } from '../value-files-generators/helm-value-file'
 import { EnvironmentConfig } from '../types/charts'
 import { renderers } from '../upstream-dependencies'
-import { prepareServicesForEnv, renderer } from '../processing/service-sets'
+import {
+  prepareServicesForEnv,
+  generateOutput,
+} from '../processing/rendering-pipeline'
 import { generateJobsForFeature } from '../output-generators/feature-jobs'
 import { ServiceBuilder } from '../dsl'
 import { hacks } from './hacks'
@@ -44,7 +47,7 @@ export const renderHelmServices = async (
   let runtime = new Kubernetes(env)
   hacks(services, habitat)
   return {
-    services: await renderer({
+    services: await generateOutput({
       runtime: runtime,
       services: services,
       outputFormat: renderers.helm,

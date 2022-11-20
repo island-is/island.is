@@ -5,7 +5,7 @@ import { getFeatureAffectedServices } from './feature-deployments'
 import { HelmValueFile } from './types/output-types'
 import { getHelmValueFile } from './value-files-generators/helm-value-file'
 import { renderers } from './upstream-dependencies'
-import { renderer } from './processing/service-sets'
+import { generateOutput } from './processing/rendering-pipeline'
 
 const Dev: EnvironmentConfig = {
   auroraHost: 'a',
@@ -59,7 +59,7 @@ describe('Feature-deployment support', () => {
       Dev,
     )
     const chart1 = new Kubernetes(Dev)
-    const services = await renderer({
+    const services = await generateOutput({
       runtime: chart1,
       services: services1,
       outputFormat: renderers.helm,

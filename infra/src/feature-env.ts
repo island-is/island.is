@@ -9,7 +9,7 @@ import {
 } from './uber-charts/islandis'
 import { Services as IDSServices } from './uber-charts/identity-server'
 import { EnvironmentServices } from './dsl/types/charts'
-import { ServiceHelm, Services } from './dsl/types/output-types'
+import { HelmService, Services } from './dsl/types/output-types'
 import { Deployments } from './uber-charts/all-charts'
 import { getFeatureAffectedServices } from './dsl/feature-deployments'
 import { dumpJobYaml } from './dsl/file-formats/yaml'
@@ -85,7 +85,7 @@ const parseArguments = (argv: Arguments) => {
   return { ch, habitat, affectedServices, env }
 }
 
-const buildIngressComment = (data: ServiceHelm[]): string =>
+const buildIngressComment = (data: HelmService[]): string =>
   data
     .filter((obj) => obj.ingress)
     .map(({ ingress }) => Object.values(ingress!))
@@ -97,7 +97,7 @@ const buildIngressComment = (data: ServiceHelm[]): string =>
     .sort()
     .join('\n')
 
-const buildComment = (data: Services<ServiceHelm>): string => {
+const buildComment = (data: Services<HelmService>): string => {
   return `Feature deployment successful! Access your feature here:\n\n${buildIngressComment(
     Object.values(data),
   )}`

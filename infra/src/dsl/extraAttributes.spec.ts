@@ -4,11 +4,11 @@ import { MissingSetting } from './types/input-types'
 import {
   SerializeErrors,
   SerializeSuccess,
-  ServiceHelm,
+  HelmService,
 } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
 import { renderers } from './upstream-dependencies'
-import { rendererForOne } from './processing/service-sets'
+import { generateOutputOne } from './processing/rendering-pipeline'
 
 const Staging: EnvironmentConfig = {
   auroraHost: 'a',
@@ -33,12 +33,12 @@ describe('Extra attributes', () => {
       dev: MissingSetting,
       prod: MissingSetting,
     })
-    const serviceDef = (await rendererForOne({
+    const serviceDef = (await generateOutputOne({
       outputFormat: renderers.helm,
       service: sut,
       runtime: new Kubernetes(Staging),
       env: Staging,
-    })) as SerializeSuccess<ServiceHelm>
+    })) as SerializeSuccess<HelmService>
     expect(serviceDef.serviceDef[0].extra).toEqual({
       API: 'api',
       KEY: { SUBKEY: 'value' },
@@ -50,7 +50,7 @@ describe('Extra attributes', () => {
       dev: MissingSetting,
       prod: MissingSetting,
     })
-    const serviceDef = (await rendererForOne({
+    const serviceDef = (await generateOutputOne({
       outputFormat: renderers.helm,
       service: sut,
       runtime: new Kubernetes(Staging),

@@ -1,9 +1,9 @@
 import { service, ServiceBuilder } from './dsl'
 import { Kubernetes } from './kubernetes-runtime'
-import { SerializeSuccess, ServiceHelm } from './types/output-types'
+import { SerializeSuccess, HelmService } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
 import { renderers } from './upstream-dependencies'
-import { rendererForOne } from './processing/service-sets'
+import { generateOutputOne } from './processing/rendering-pipeline'
 
 const Staging: EnvironmentConfig = {
   auroraHost: 'a',
@@ -33,14 +33,14 @@ describe('Volume Support', () => {
     },
   )
 
-  let stagingWithVolumes: SerializeSuccess<ServiceHelm>
+  let stagingWithVolumes: SerializeSuccess<HelmService>
   beforeEach(async () => {
-    stagingWithVolumes = (await rendererForOne({
+    stagingWithVolumes = (await generateOutputOne({
       outputFormat: renderers.helm,
       service: sut,
       runtime: new Kubernetes(Staging),
       env: Staging,
-    })) as SerializeSuccess<ServiceHelm>
+    })) as SerializeSuccess<HelmService>
   })
   it('Support multi volume definitions', () => {
     expect(stagingWithVolumes.serviceDef[0].pvcs![0]).toEqual({
@@ -64,12 +64,12 @@ describe('Volume Support', () => {
       accessModes: 'ReadOnly',
       mountPath: '/storage_one',
     })
-    const stagingWithDefaultVolume = (await rendererForOne({
+    const stagingWithDefaultVolume = (await generateOutputOne({
       outputFormat: renderers.helm,
       service: sut,
       runtime: new Kubernetes(Staging),
       env: Staging,
-    })) as SerializeSuccess<ServiceHelm>
+    })) as SerializeSuccess<HelmService>
     expect(stagingWithDefaultVolume.serviceDef[0].pvcs![0]).toEqual({
       name: 'api',
       size: '1Gi',

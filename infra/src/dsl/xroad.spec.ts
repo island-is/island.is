@@ -1,10 +1,10 @@
 import { service } from './dsl'
 import { Kubernetes } from './kubernetes-runtime'
-import { SerializeSuccess, ServiceHelm } from './types/output-types'
+import { SerializeSuccess, HelmService } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
 import { XroadConf } from './xroad'
 import { renderers } from './upstream-dependencies'
-import { rendererForOne } from './processing/service-sets'
+import { generateOutputOne } from './processing/rendering-pipeline'
 
 const Dev: EnvironmentConfig = {
   auroraHost: 'a',
@@ -35,14 +35,14 @@ describe('X-road support', () => {
       },
     }),
   )
-  let svc: SerializeSuccess<ServiceHelm>
+  let svc: SerializeSuccess<HelmService>
   beforeEach(async () => {
-    svc = (await rendererForOne({
+    svc = (await generateOutputOne({
       outputFormat: renderers.helm,
       service: sut,
       runtime: new Kubernetes(Dev),
       env: Dev,
-    })) as SerializeSuccess<ServiceHelm>
+    })) as SerializeSuccess<HelmService>
   })
 
   it('contains all xroad environment variables', () => {

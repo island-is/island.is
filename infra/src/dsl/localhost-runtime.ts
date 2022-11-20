@@ -1,8 +1,8 @@
 import { ServiceDefinition, ServiceDefinitionCore } from './types/input-types'
-import { DeploymentRuntime } from './types/charts'
+import { ReferenceResolver } from './types/charts'
 import { getMockName, hostPortNumber } from './mocks/mocks-support'
 
-export class Localhost implements DeploymentRuntime {
+export class Localhost implements ReferenceResolver {
   deps: { [name: string]: Set<string> } = {}
   ports: { [name: string]: number } = {}
   mocks: { [name: string]: string } = {}

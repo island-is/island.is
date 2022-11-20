@@ -1,5 +1,5 @@
 import { OpsEnv } from '../dsl/types/input-types'
-import { ServiceHelm } from '../dsl/types/output-types'
+import { HelmService } from '../dsl/types/output-types'
 import { Envs } from '../environments'
 import {
   ChartName,
@@ -9,7 +9,7 @@ import {
 } from '../uber-charts/all-charts'
 import { renderHelmServices } from '../dsl/exports/helm'
 
-const renderUrlsForService = ({ ingress = {} }: ServiceHelm) => {
+const renderUrlsForService = ({ ingress = {} }: HelmService) => {
   const urls: string[] = []
   Object.keys(ingress).forEach((ingressName) => {
     ingress[ingressName].hosts.forEach((host) => {

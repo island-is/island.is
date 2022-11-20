@@ -1,6 +1,6 @@
 import { ref, service } from '../dsl'
 import { Localhost } from '../localhost-runtime'
-import { renderer } from './service-sets'
+import { generateOutput } from './rendering-pipeline'
 import { EnvironmentConfig } from '../types/charts'
 import { MissingSetting } from '../types/input-types'
 import {
@@ -32,7 +32,7 @@ describe.only('ServiceDefinition to Env', () => {
       A: 'B',
       B: MissingSetting,
     })
-    const serviceDef = renderer({
+    const serviceDef = generateOutput({
       runtime: runtime,
       services: [sut],
       outputFormat: currentOutput,
@@ -47,7 +47,7 @@ describe.only('ServiceDefinition to Env', () => {
       A: 'B',
       B: ref((ctx) => `${ctx.svc('https://www.visir.is')}/f/frettir`),
     })
-    const serviceDef = await renderer({
+    const serviceDef = await generateOutput({
       runtime: runtime,
       services: [sut],
       outputFormat: currentOutput,

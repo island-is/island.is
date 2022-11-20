@@ -11,7 +11,7 @@ import {
   SerializeErrors,
   SerializeSuccess,
 } from '../types/output-types'
-import { DeploymentRuntime, EnvironmentConfig } from '../types/charts'
+import { ReferenceResolver, EnvironmentConfig } from '../types/charts'
 import { checksAndValidations } from './errors'
 import {
   postgresIdentifier,
@@ -20,14 +20,14 @@ import {
 import { getSsmParams } from '../adapters/get-ssm-params'
 
 /**
- * Transforms our definition of a service to a Helm values object
+ * Transforms our definition of a service to a definition for a local running serivce
  * @param service Our service definition
  * @param deployment Uber chart in a specific environment the service will be part of
  * @param withSecrets Should secrets be retrieved from AWS Parameter store or not (useful for tests)
  */
 const serializeService = async (
   service: ServiceDefinitionForEnv,
-  deployment: DeploymentRuntime,
+  deployment: ReferenceResolver,
   withSecrets: boolean,
   env1: EnvironmentConfig,
 ): Promise<SerializeSuccess<LocalrunService> | SerializeErrors> => {
@@ -105,7 +105,6 @@ const serializeService = async (
       if (serviceDef.initContainers.postgres) {
         const { env, secrets, errors } = serializePostgres(
           serviceDef,
-          deployment,
           serviceDef.initContainers.postgres,
         )
 
@@ -125,7 +124,6 @@ const serializeService = async (
   if (serviceDef.postgres) {
     const { env, secrets, errors } = serializePostgres(
       serviceDef,
-      deployment,
       serviceDef.postgres,
     )
 
@@ -140,10 +138,7 @@ const serializeService = async (
     : { type: 'error', errors: allErrors }
 }
 
-const resolveDbHost = (
-  postgres: PostgresInfoForEnv,
-  deployment: DeploymentRuntime,
-) => {
+const resolveDbHost = () => {
   return {
     writer: 'db',
     reader: 'db',
@@ -152,7 +147,6 @@ const resolveDbHost = (
 
 function serializePostgres(
   serviceDef: ServiceDefinitionForEnv,
-  deployment: DeploymentRuntime,
   postgres: PostgresInfoForEnv,
 ) {
   const env: { [name: string]: string } = {}
@@ -161,7 +155,7 @@ function serializePostgres(
   env['DB_USER'] = 'testdb'
   env['DB_NAME'] = postgres.name ?? postgresIdentifier(serviceDef.name)
   try {
-    const { reader, writer } = resolveDbHost(postgres, deployment)
+    const { reader, writer } = resolveDbHost()
     env['DB_HOST'] = writer
     env['DB_REPLICAS_HOST'] = reader
   } catch (e) {
@@ -202,7 +196,7 @@ export const LocalrunOutput = (options: { secrets: SecretOptions }) =>
     ): void {},
     serializeService(
       service: ServiceDefinitionForEnv,
-      deployment: DeploymentRuntime,
+      deployment: ReferenceResolver,
       env: EnvironmentConfig,
       featureDeployment,
     ) {

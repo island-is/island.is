@@ -14,9 +14,9 @@ import {
   SerializeErrors,
   SerializeMethod,
   SerializeSuccess,
-  ServiceHelm,
+  HelmService,
 } from '../types/output-types'
-import { DeploymentRuntime, EnvironmentConfig } from '../types/charts'
+import { ReferenceResolver, EnvironmentConfig } from '../types/charts'
 import { checksAndValidations } from './errors'
 import {
   postgresIdentifier,
@@ -29,9 +29,9 @@ import {
  * @param service Our service definition
  * @param deployment Uber chart in a specific environment the service will be part of
  */
-const serializeService: SerializeMethod<ServiceHelm> = async (
+const serializeService: SerializeMethod<HelmService> = async (
   service: ServiceDefinitionForEnv,
-  deployment: DeploymentRuntime,
+  deployment: ReferenceResolver,
   env1: EnvironmentConfig,
 ) => {
   const { addToErrors, mergeObjects, getErrors } = checksAndValidations(
@@ -44,7 +44,7 @@ const serializeService: SerializeMethod<ServiceHelm> = async (
     namespace,
     securityContext,
   } = serviceDef
-  const result: ServiceHelm = {
+  const result: HelmService = {
     enabled: true,
     grantNamespaces: grantNamespaces,
     grantNamespacesEnabled: grantNamespacesEnabled,
@@ -280,7 +280,7 @@ const getPostgresInfoForFeature = (feature: string, postgres: PostgresInfo) => {
 
 function serializePostgres(
   serviceDef: ServiceDefinitionForEnv,
-  deployment: DeploymentRuntime,
+  deployment: ReferenceResolver,
   envConf: EnvironmentConfig,
   service: ServiceDefinitionForEnv,
   postgres: PostgresInfoForEnv,
@@ -410,10 +410,10 @@ const internalHostFullName = (host: string, env: EnvironmentConfig) =>
   host.indexOf('.') < 0 ? `${host}.internal.${env.domain}` : host
 
 const serviceMockDef = (options: {
-  runtime: DeploymentRuntime
+  runtime: ReferenceResolver
   env: EnvironmentConfig
 }) => {
-  const result: ServiceHelm = {
+  const result: HelmService = {
     enabled: true,
     grantNamespaces: [],
     grantNamespacesEnabled: false,
@@ -458,7 +458,7 @@ function getFeatureDeploymentNamespace(env: EnvironmentConfig) {
   return `feature-${env.feature}`
 }
 
-export const HelmOutput: OutputFormat<ServiceHelm> = {
+export const HelmOutput: OutputFormat<HelmService> = {
   featureDeployment(s: ServiceDefinition, env): void {
     Object.entries(s.ingress).forEach(([name, ingress]) => {
       if (!Array.isArray(ingress.host.dev)) {
@@ -486,14 +486,14 @@ export const HelmOutput: OutputFormat<ServiceHelm> = {
   },
   serializeService(
     service: ServiceDefinitionForEnv,
-    deployment: DeploymentRuntime,
+    deployment: ReferenceResolver,
     env: EnvironmentConfig,
     featureDeployment?: string,
-  ): Promise<SerializeSuccess<ServiceHelm> | SerializeErrors> {
+  ): Promise<SerializeSuccess<HelmService> | SerializeErrors> {
     return serializeService(service, deployment, env)
   },
 
-  serviceMockDef(options): ServiceHelm {
+  serviceMockDef(options): HelmService {
     return serviceMockDef(options)
   },
 }

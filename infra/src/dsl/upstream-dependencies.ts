@@ -1,24 +1,19 @@
 import { ServiceDefinition, ServiceDefinitionCore } from './types/input-types'
 import { HelmOutput } from './output-generators/map-to-helm-values'
-import { DeploymentRuntime, EnvironmentConfig } from './types/charts'
+import { ReferenceResolver, EnvironmentConfig } from './types/charts'
 import {
   LocalrunOutput,
   SecretOptions,
 } from './output-generators/map-to-localrun'
 import cloneDeep from 'lodash/cloneDeep'
-import { renderer } from './processing/service-sets'
+import { generateOutput } from './processing/rendering-pipeline'
 import { OutputFormat, ServiceOutputType } from './types/output-types'
 import { ServiceBuilder } from './dsl'
 
 const MAX_LEVEL_DEPENDENCIES = 20
 
-class UpstreamDependencyTracer implements DeploymentRuntime {
-  env: EnvironmentConfig // TODO: get rid of this?
+class UpstreamDependencyTracer implements ReferenceResolver {
   deps: { [name: string]: Set<string> } = {}
-
-  constructor(env: EnvironmentConfig) {
-    this.env = env
-  }
 
   ref(from: ServiceDefinitionCore, to: ServiceDefinition | string) {
     const dependecies = this.deps[from.name] ?? new Set<string>()
@@ -64,22 +59,9 @@ export const withUpstreamDependencies = async <T extends ServiceOutputType>(
   services: ServiceBuilder<any>[],
   serializer: OutputFormat<T>,
 ): Promise<ServiceBuilder<any>[]> => {
-  const dummyEnv: EnvironmentConfig = {
-    auroraHost: '',
-    awsAccountId: '',
-    awsAccountRegion: 'eu-west-1',
-    defaultMaxReplicas: 0,
-    defaultMinReplicas: 0,
-    domain: '',
-    featuresOn: [],
-    global: {},
-    releaseName: '',
-    feature: env.feature,
-    type: 'dev',
-  }
-  const dependencyTracer = new UpstreamDependencyTracer(dummyEnv)
+  const dependencyTracer = new UpstreamDependencyTracer()
   const localHabitat = cloneDeep(habitat)
-  await renderer({
+  await generateOutput({
     runtime: dependencyTracer,
     services: localHabitat,
     outputFormat: serializer,

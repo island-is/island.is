@@ -1,5 +1,5 @@
 import { Hash, ServiceDefinition, ServiceDefinitionForEnv } from './input-types'
-import { DeploymentRuntime, EnvironmentConfig } from './charts'
+import { ReferenceResolver, EnvironmentConfig } from './charts'
 
 // Output types
 export type ContainerRunHelm = {
@@ -32,7 +32,7 @@ export type OutputPersistentVolumeClaim = {
 export type ContainerEnvironmentVariables = { [name: string]: string }
 export type ContainerSecrets = { [name: string]: string }
 
-export interface ServiceHelm {
+export interface HelmService {
   replicaCount?: {
     min: number
     max: number
@@ -162,11 +162,11 @@ export type SerializeErrors = {
   errors: string[]
 }
 
-export type ServiceOutputType = ServiceHelm | LocalrunService
+export type ServiceOutputType = HelmService | LocalrunService
 
 export type SerializeMethod<T extends ServiceOutputType> = (
   service: ServiceDefinitionForEnv,
-  runtime: DeploymentRuntime,
+  runtime: ReferenceResolver,
   env: EnvironmentConfig,
   featureDeployment?: string,
 ) => Promise<SerializeSuccess<T> | SerializeErrors>
@@ -177,7 +177,7 @@ export type Services<T extends ServiceOutputType> = {
 
 export type HelmValueFile = {
   namespaces: string[]
-  services: Services<ServiceHelm>
+  services: Services<HelmService>
 }
 export type LocalrunValueFile = {
   services: Services<LocalrunService>
@@ -187,13 +187,13 @@ export type LocalrunValueFile = {
 export interface OutputFormat<T extends ServiceOutputType> {
   serializeService(
     service: ServiceDefinitionForEnv,
-    runtime: DeploymentRuntime,
+    runtime: ReferenceResolver,
     env: EnvironmentConfig,
     featureDeployment?: string,
   ): Promise<SerializeSuccess<T> | SerializeErrors>
 
   serviceMockDef(options: {
-    runtime: DeploymentRuntime
+    runtime: ReferenceResolver
     env: EnvironmentConfig
   }): T
 

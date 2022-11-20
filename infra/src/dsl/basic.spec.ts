@@ -1,9 +1,9 @@
 import { service } from './dsl'
 import { Kubernetes } from './kubernetes-runtime'
-import { SerializeSuccess, ServiceHelm } from './types/output-types'
+import { SerializeSuccess, HelmService } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
 import { renderers } from './upstream-dependencies'
-import { rendererForOne } from './processing/service-sets'
+import { generateOutputOne } from './processing/rendering-pipeline'
 
 const Staging: EnvironmentConfig = {
   auroraHost: 'a',
@@ -45,14 +45,14 @@ describe('Basic serialization', () => {
       },
     })
     .postgres()
-  let result: SerializeSuccess<ServiceHelm>
+  let result: SerializeSuccess<HelmService>
   beforeEach(async () => {
-    result = (await rendererForOne({
+    result = (await generateOutputOne({
       outputFormat: renderers.helm,
       service: sut,
       runtime: new Kubernetes(Staging),
       env: Staging,
-    })) as SerializeSuccess<ServiceHelm>
+    })) as SerializeSuccess<HelmService>
   })
 
   it('basic props', () => {
@@ -147,14 +147,14 @@ describe('Basic serialization', () => {
 
 describe('Env definition defaults', () => {
   const sut = service('api').namespace('islandis').image('test')
-  let result: SerializeSuccess<ServiceHelm>
+  let result: SerializeSuccess<HelmService>
   beforeEach(async () => {
-    result = (await rendererForOne({
+    result = (await generateOutputOne({
       outputFormat: renderers.helm,
       service: sut,
       runtime: new Kubernetes(Staging),
       env: Staging,
-    })) as SerializeSuccess<ServiceHelm>
+    })) as SerializeSuccess<HelmService>
   })
   it('replica max count', () => {
     expect(result.serviceDef[0].replicaCount).toStrictEqual({

@@ -5,7 +5,7 @@ import {
   ServiceOutputType,
   Services,
 } from '../types/output-types'
-import { DeploymentRuntime, EnvironmentConfig } from '../types/charts'
+import { ReferenceResolver, EnvironmentConfig } from '../types/charts'
 import { prepareServiceForEnv } from '../service-to-environment/pre-process-service'
 import { ServiceBuilder } from '../dsl'
 
@@ -36,11 +36,11 @@ export function prepareServicesForEnv<T extends ServiceOutputType>(options: {
 }
 
 /**
- * This is an important function. It converts a list of ServiceBuilders to a hash of output-format-specific definitions.
+ * This is an important function. It converts a list of ServiceBuilders to a hash of output-format-specific definitions. It is practically the rendering pipeline for the DSL definitions
  * @param options
  */
-export const renderer = async <T extends ServiceOutputType>(options: {
-  runtime: DeploymentRuntime
+export const generateOutput = async <T extends ServiceOutputType>(options: {
+  runtime: ReferenceResolver
   services: ServiceBuilder<any>[] | ServiceBuilder<any>
   outputFormat: OutputFormat<T>
   env: EnvironmentConfig
@@ -76,10 +76,10 @@ export const renderer = async <T extends ServiceOutputType>(options: {
  * This is the same as `renderer` function but for a single service. Used in tests for the most part.
  * @param options
  */
-export const rendererForOne = async <T extends ServiceOutputType>(options: {
+export const generateOutputOne = async <T extends ServiceOutputType>(options: {
   outputFormat: OutputFormat<T>
   service: ServiceBuilder<any>
-  runtime: DeploymentRuntime
+  runtime: ReferenceResolver
   env: EnvironmentConfig
 }): Promise<SerializeSuccess<T> | SerializeErrors> => {
   const outputFormat = options.outputFormat
@@ -87,7 +87,7 @@ export const rendererForOne = async <T extends ServiceOutputType>(options: {
   const runtime = options.runtime
   const env = options.env
   try {
-    const result = await renderer({
+    const result = await generateOutput({
       runtime: runtime,
       services: service,
       outputFormat: outputFormat,

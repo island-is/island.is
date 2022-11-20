@@ -3,11 +3,11 @@ import { Kubernetes } from './kubernetes-runtime'
 import {
   SerializeErrors,
   SerializeSuccess,
-  ServiceHelm,
+  HelmService,
 } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
 import { renderers } from './upstream-dependencies'
-import { rendererForOne } from './processing/service-sets'
+import { generateOutputOne } from './processing/rendering-pipeline'
 
 const Staging: EnvironmentConfig = {
   auroraHost: 'a',
@@ -25,14 +25,14 @@ const Staging: EnvironmentConfig = {
 describe('Postgres', () => {
   describe('identifier fixes', () => {
     const sut = service('service-portal-api').postgres()
-    let result: SerializeSuccess<ServiceHelm>
+    let result: SerializeSuccess<HelmService>
     beforeEach(async () => {
-      result = (await rendererForOne({
+      result = (await generateOutputOne({
         outputFormat: renderers.helm,
         service: sut,
         runtime: new Kubernetes(Staging),
         env: Staging,
-      })) as SerializeSuccess<ServiceHelm>
+      })) as SerializeSuccess<HelmService>
     })
     it('fixing user and name to comply with postgres identifier allowed character set', () => {
       expect(result.serviceDef[0].env).toEqual({
@@ -52,7 +52,7 @@ describe('Postgres', () => {
       .env({ DB_USER: 'aaa', DB_HOST: 'a', DB_NAME: '' })
     let result: SerializeErrors
     beforeEach(async () => {
-      result = (await rendererForOne({
+      result = (await generateOutputOne({
         outputFormat: renderers.helm,
         service: sut,
         runtime: new Kubernetes(Staging),

@@ -1,13 +1,13 @@
 import { ServiceDefinition, ServiceDefinitionCore } from './types/input-types'
-import { DeploymentRuntime, EnvironmentConfig } from './types/charts'
+import { ReferenceResolver, EnvironmentConfig } from './types/charts'
 import cloneDeep from 'lodash/cloneDeep'
-import { renderer } from './processing/service-sets'
+import { generateOutput } from './processing/rendering-pipeline'
 import { renderers } from './upstream-dependencies'
 import { ServiceBuilder } from './dsl'
 
 const MAX_LEVEL_DEPENDENCIES = 20
 
-class DownstreamDependencyTracer implements DeploymentRuntime {
+class DownstreamDependencyTracer implements ReferenceResolver {
   deps: { [name: string]: Set<string> } = {}
 
   ref(from: ServiceDefinitionCore, to: ServiceDefinition | string) {
@@ -52,7 +52,7 @@ export const getWithDownstreamServices = async (
 ): Promise<ServiceBuilder<any>[]> => {
   const dependencyTracer = new DownstreamDependencyTracer()
   const localHabitat = cloneDeep(habitat)
-  await renderer({
+  await generateOutput({
     runtime: dependencyTracer,
     services: localHabitat,
     outputFormat: renderers.helm,

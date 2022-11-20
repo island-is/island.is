@@ -7,7 +7,7 @@ import {
 } from './input-types'
 import { ServiceBuilder } from '../dsl'
 
-export interface DeploymentRuntime {
+export interface ReferenceResolver {
   ref(from: ServiceDefinitionCore, to: ServiceDefinition | string): string
 }
 
