@@ -1,8 +1,6 @@
 import { ref, service } from '../dsl'
 import { Localhost } from '../localhost-runtime'
 import { renderer } from './service-sets'
-import { toServices } from '../exports/to-services'
-import { renderers } from '../upstream-dependencies'
 import { EnvironmentConfig } from '../types/charts'
 import { MissingSetting } from '../types/input-types'
 import {

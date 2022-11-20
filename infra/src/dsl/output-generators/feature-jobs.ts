@@ -1,12 +1,8 @@
-import {
-  ServiceDefinition,
-  ServiceDefinitionForEnv,
-} from '../types/input-types'
+import { ServiceDefinitionForEnv } from '../types/input-types'
 import { resolveDbHost } from './map-to-helm-values'
 import { FeatureKubeJob } from '../types/output-types'
 import { resolveWithMaxLength } from './serialization-helpers'
-import { DeploymentRuntime, EnvironmentConfig } from '../types/charts'
-import { ServiceBuilder } from '../dsl'
+import { EnvironmentConfig } from '../types/charts'
 
 export const generateJobsForFeature = async (
   image: string,

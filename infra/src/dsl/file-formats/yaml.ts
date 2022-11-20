@@ -1,11 +1,9 @@
 import { dump, load } from 'js-yaml'
 import {
-  LocalrunValueFile,
   FeatureKubeJob,
   HelmValueFile,
-  ServiceHelm,
+  LocalrunValueFile,
 } from '../types/output-types'
-import { Kubernetes } from '../kubernetes-runtime'
 import { Localhost } from '../localhost-runtime'
 import { EnvironmentConfig } from '../types/charts'
 

@@ -21,6 +21,7 @@ export class XroadConf<I extends XroadSectionConfig> implements XroadConfig {
     return this.config.secrets || {}
   }
 }
+
 export type XRoadEnvs<
   T extends XroadSectionConfig
 > = T extends XroadSectionConfig ? keyof T['env'] : never

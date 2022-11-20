@@ -18,7 +18,6 @@ import {
   renderHelmServices,
   renderHelmValueFileContent,
 } from './dsl/exports/helm'
-import { toServices } from './dsl/exports/to-services'
 
 type ChartName = 'islandis' | 'identity-server'
 

@@ -1,8 +1,6 @@
-import { Kubernetes } from '../dsl/kubernetes-runtime'
 import { Envs } from '../environments'
 import { Charts } from '../uber-charts/all-charts'
 import { renderHelmServiceFile } from '../dsl/exports/helm'
-import { toServices } from '../dsl/exports/to-services'
 
 export const EXCLUDED_ENVIRONMENT_NAMES = [
   'DB_PASSWORD',

@@ -189,10 +189,9 @@ export type InitContainersForEnv = {
 
 export interface Context {
   featureDeploymentName?: string
+  env: EnvironmentConfig
 
   svc(dep: ServiceBuilder<any> | string): string
-
-  env: EnvironmentConfig
 }
 
 export type ExtraValuesForEnv = Hash

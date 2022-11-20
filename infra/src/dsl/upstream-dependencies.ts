@@ -14,11 +14,11 @@ const MAX_LEVEL_DEPENDENCIES = 20
 
 class UpstreamDependencyTracer implements DeploymentRuntime {
   env: EnvironmentConfig // TODO: get rid of this?
+  deps: { [name: string]: Set<string> } = {}
+
   constructor(env: EnvironmentConfig) {
     this.env = env
   }
-
-  deps: { [name: string]: Set<string> } = {}
 
   ref(from: ServiceDefinitionCore, to: ServiceDefinition | string) {
     const dependecies = this.deps[from.name] ?? new Set<string>()

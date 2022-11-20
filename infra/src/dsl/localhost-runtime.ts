@@ -1,5 +1,5 @@
 import { ServiceDefinition, ServiceDefinitionCore } from './types/input-types'
-import { DeploymentRuntime, EnvironmentConfig } from './types/charts'
+import { DeploymentRuntime } from './types/charts'
 import { getMockName, hostPortNumber } from './mocks/mocks-support'
 
 export class Localhost implements DeploymentRuntime {

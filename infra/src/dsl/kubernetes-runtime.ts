@@ -5,14 +5,14 @@ import { getMockName, hostPortNumber } from './mocks/mocks-support'
 export class Kubernetes implements DeploymentRuntime {
   releaseName: string
   feature?: string
+  deps: { [name: string]: Set<string> } = {}
+  ports: { [name: string]: number } = {}
+  mocks: { [name: string]: string } = {}
+
   constructor(env: EnvironmentConfig) {
     this.releaseName = env.releaseName
     this.feature = env.feature
   }
-
-  deps: { [name: string]: Set<string> } = {}
-  ports: { [name: string]: number } = {}
-  mocks: { [name: string]: string } = {}
 
   ref(from: ServiceDefinitionCore, to: ServiceDefinition | string) {
     if (typeof to === 'object') {

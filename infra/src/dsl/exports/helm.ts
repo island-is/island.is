@@ -1,8 +1,8 @@
 import { Kubernetes } from '../kubernetes-runtime'
 import { dumpServiceHelm } from '../file-formats/yaml'
 import {
-  Mocks,
   helmValueFile,
+  Mocks,
 } from '../value-files-generators/render-helm-value-file'
 import { EnvironmentConfig } from '../types/charts'
 import { renderers } from '../upstream-dependencies'

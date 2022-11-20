@@ -1,5 +1,3 @@
-import { ServiceDefinition } from './types/input-types'
-import { Kubernetes } from './kubernetes-runtime'
 import { getWithDownstreamServices } from './downstream-dependencies'
 import { ServiceBuilder } from './dsl'
 import { EnvironmentConfig } from './types/charts'

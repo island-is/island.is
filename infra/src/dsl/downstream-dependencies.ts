@@ -4,7 +4,6 @@ import cloneDeep from 'lodash/cloneDeep'
 import { renderer } from './processing/service-sets'
 import { renderers } from './upstream-dependencies'
 import { ServiceBuilder } from './dsl'
-import { toServices } from './exports/to-services'
 
 const MAX_LEVEL_DEPENDENCIES = 20
 

@@ -8,7 +8,6 @@ import {
   Deployments,
 } from '../uber-charts/all-charts'
 import { renderHelmServices } from '../dsl/exports/helm'
-import { toServices } from '../dsl/exports/to-services'
 
 const renderUrlsForService = ({ ingress = {} }: ServiceHelm) => {
   const urls: string[] = []

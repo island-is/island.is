@@ -20,45 +20,7 @@ import {
 type Optional<T, L extends keyof T> = Omit<T, L> & Partial<Pick<T, L>>
 
 export class ServiceBuilder<ServiceType> {
-  extraAttributes(attr: ExtraValues) {
-    this.serviceDef.extraAttributes = attr
-    return this
-  }
-
   serviceDef: ServiceDefinition
-
-  liveness(path: string | Partial<HealthProbe>) {
-    if (typeof path === 'string') {
-      this.serviceDef.liveness.path = path
-    } else {
-      this.serviceDef.liveness = { ...this.serviceDef.liveness, ...path }
-    }
-    return this
-  }
-
-  readiness(path: string | Partial<HealthProbe>) {
-    if (typeof path === 'string') {
-      this.serviceDef.readiness.path = path
-    } else {
-      this.serviceDef.readiness = { ...this.serviceDef.readiness, ...path }
-    }
-    return this
-  }
-
-  healthPort(port: number) {
-    this.serviceDef.healthPort = port
-    return this
-  }
-
-  targetPort(port: number) {
-    this.serviceDef.port = port
-    return this
-  }
-
-  features(features: Partial<Features>) {
-    this.serviceDef.features = features
-    return this
-  }
 
   constructor(name: string) {
     this.serviceDef = {
@@ -93,6 +55,44 @@ export class ServiceBuilder<ServiceType> {
     }
   }
 
+  extraAttributes(attr: ExtraValues) {
+    this.serviceDef.extraAttributes = attr
+    return this
+  }
+
+  liveness(path: string | Partial<HealthProbe>) {
+    if (typeof path === 'string') {
+      this.serviceDef.liveness.path = path
+    } else {
+      this.serviceDef.liveness = { ...this.serviceDef.liveness, ...path }
+    }
+    return this
+  }
+
+  readiness(path: string | Partial<HealthProbe>) {
+    if (typeof path === 'string') {
+      this.serviceDef.readiness.path = path
+    } else {
+      this.serviceDef.readiness = { ...this.serviceDef.readiness, ...path }
+    }
+    return this
+  }
+
+  healthPort(port: number) {
+    this.serviceDef.healthPort = port
+    return this
+  }
+
+  targetPort(port: number) {
+    this.serviceDef.port = port
+    return this
+  }
+
+  features(features: Partial<Features>) {
+    this.serviceDef.features = features
+    return this
+  }
+
   /**
    * Sets the namespace for your service. Default value is `islandis` (optional). It sets the [namespace](https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/) for all resources.
    * @param name Namespace name
@@ -123,17 +123,6 @@ export class ServiceBuilder<ServiceType> {
 
   name() {
     return this.serviceDef.name
-  }
-
-  private assertUnset<T>(current: T, envs: T) {
-    const intersection = Object.keys({
-      ...current,
-    }).filter({}.hasOwnProperty.bind(envs))
-    if (intersection.length) {
-      throw new Error(
-        `Trying to set same environment variable multiple times: ${intersection}`,
-      )
-    }
   }
 
   /**
@@ -232,16 +221,6 @@ export class ServiceBuilder<ServiceType> {
     return this
   }
 
-  private withDefaults = (pi: PostgresInfo): PostgresInfo => {
-    return {
-      host: pi.host,
-      username: pi.username ?? postgresIdentifier(this.serviceDef.name),
-      passwordSecret:
-        pi.passwordSecret ?? `/k8s/${this.serviceDef.name}/DB_PASSWORD`,
-      name: pi.name ?? postgresIdentifier(this.serviceDef.name),
-    }
-  }
-
   postgres(postgres?: PostgresInfo) {
     this.serviceDef.postgres = this.withDefaults(postgres ?? {})
     return this
@@ -271,6 +250,27 @@ export class ServiceBuilder<ServiceType> {
     this.serviceDef.accountName = name ?? this.serviceDef.name
     this.serviceDef.serviceAccountEnabled = true
     return this
+  }
+
+  private assertUnset<T>(current: T, envs: T) {
+    const intersection = Object.keys({
+      ...current,
+    }).filter({}.hasOwnProperty.bind(envs))
+    if (intersection.length) {
+      throw new Error(
+        `Trying to set same environment variable multiple times: ${intersection}`,
+      )
+    }
+  }
+
+  private withDefaults = (pi: PostgresInfo): PostgresInfo => {
+    return {
+      host: pi.host,
+      username: pi.username ?? postgresIdentifier(this.serviceDef.name),
+      passwordSecret:
+        pi.passwordSecret ?? `/k8s/${this.serviceDef.name}/DB_PASSWORD`,
+      name: pi.name ?? postgresIdentifier(this.serviceDef.name),
+    }
   }
 }
 

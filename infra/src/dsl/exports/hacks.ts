@@ -1,4 +1,3 @@
-import { ServiceDefinition } from '../types/input-types'
 import { ref, ServiceBuilder } from '../dsl'
 import { GRAPHQL_API_URL_ENV_VAR_NAME } from '../../../../apps/application-system/api/infra/application-system-api'
 
