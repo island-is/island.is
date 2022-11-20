@@ -52,7 +52,12 @@ export const getWithDownstreamServices = async (
 ): Promise<ServiceBuilder<any>[]> => {
   const dependencyTracer = new DownstreamDependencyTracer()
   const localHabitat = cloneDeep(habitat)
-  await renderer(dependencyTracer, localHabitat, renderers.helm, env) // doing this so we find out the dependencies
+  await renderer({
+    runtime: dependencyTracer,
+    services: localHabitat,
+    outputFormat: renderers.helm,
+    env: env,
+  }) // doing this so we find out the dependencies
   const downstreamServices = services
     .map((s) => findDownstreamDependencies(dependencyTracer, s.serviceDef))
     .flatMap((x) => x)

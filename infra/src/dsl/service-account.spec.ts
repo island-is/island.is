@@ -22,12 +22,12 @@ describe('Service account', () => {
   const sut = service('api').namespace('islandis').serviceAccount('demo')
   let result: SerializeSuccess<ServiceHelm>
   beforeEach(async () => {
-    result = (await rendererForOne(
-      renderers.helm,
-      sut.serviceDef,
-      new Kubernetes(Staging),
-      Staging,
-    )) as SerializeSuccess<ServiceHelm>
+    result = (await rendererForOne({
+      outputFormat: renderers.helm,
+      service: sut,
+      runtime: new Kubernetes(Staging),
+      env: Staging,
+    })) as SerializeSuccess<ServiceHelm>
   })
   it('service account name', () => {
     expect(result.serviceDef[0].serviceAccount).toEqual({

@@ -162,7 +162,6 @@ export type SerializeErrors = {
   errors: string[]
 }
 
-export type Output = 'helm' | 'docker-compose'
 export type ServiceOutputType = ServiceHelm | LocalrunService
 
 export type SerializeMethod<T extends ServiceOutputType> = (

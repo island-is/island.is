@@ -43,7 +43,7 @@ const mapServiceToNXname = async (serviceName: string) => {
   return nxName.length === 1 ? nxName[0] : serviceName
 }
 
-export const getLocalSetup = async (
+export const getLocalrunValueFile = async (
   runtime: Localhost,
   services: Services<LocalrunService>,
 ): Promise<LocalrunValueFile> => {

@@ -3,7 +3,7 @@ import { ServiceBuilder } from '../dsl'
 import { Localhost } from '../localhost-runtime'
 import { renderers, withUpstreamDependencies } from '../upstream-dependencies'
 import { hacks } from './hacks'
-import { getLocalSetup } from '../value-files-generators/get-local-setup'
+import { getLocalrunValueFile } from '../value-files-generators/local-setup'
 import { renderer } from '../processing/service-sets'
 
 export async function localrun(
@@ -20,8 +20,13 @@ export async function localrun(
   )
   hacks(fullSetOfServices, habitat)
 
-  return getLocalSetup(
+  return getLocalrunValueFile(
     runtime,
-    await renderer(runtime, fullSetOfServices, renderers.localrun, envConfig),
+    await renderer({
+      runtime: runtime,
+      services: fullSetOfServices,
+      outputFormat: renderers.localrun,
+      env: envConfig,
+    }),
   )
 }

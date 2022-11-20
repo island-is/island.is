@@ -21,12 +21,12 @@ const Staging: EnvironmentConfig = {
 describe('Basic serialization', () => {
   it('service account', async () => {
     const sut = service('api').targetPort(4200)
-    const result = (await rendererForOne(
-      renderers.helm,
-      sut.serviceDef,
-      new Kubernetes(Staging),
-      Staging,
-    )) as SerializeSuccess<ServiceHelm>
+    const result = (await rendererForOne({
+      outputFormat: renderers.helm,
+      service: sut,
+      runtime: new Kubernetes(Staging),
+      env: Staging,
+    })) as SerializeSuccess<ServiceHelm>
     expect(result.serviceDef[0].service).toEqual({
       targetPort: 4200,
     })

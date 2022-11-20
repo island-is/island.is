@@ -31,12 +31,12 @@ describe('Ingress definitions', () => {
         paths: ['/'],
       },
     })
-    const result = (await rendererForOne(
-      renderers.helm,
-      sut.serviceDef,
-      new Kubernetes(Staging),
-      Staging,
-    )) as SerializeSuccess<ServiceHelm>
+    const result = (await rendererForOne({
+      outputFormat: renderers.helm,
+      service: sut,
+      runtime: new Kubernetes(Staging),
+      env: Staging,
+    })) as SerializeSuccess<ServiceHelm>
 
     expect(result.serviceDef[0].ingress).toEqual({
       'primary-alb': {
@@ -66,12 +66,12 @@ describe('Ingress definitions', () => {
         },
       },
     })
-    const result = (await rendererForOne(
-      renderers.helm,
-      sut.serviceDef,
-      new Kubernetes(Staging),
-      Staging,
-    )) as SerializeSuccess<ServiceHelm>
+    const result = (await rendererForOne({
+      outputFormat: renderers.helm,
+      service: sut,
+      runtime: new Kubernetes(Staging),
+      env: Staging,
+    })) as SerializeSuccess<ServiceHelm>
 
     expect(result.serviceDef[0].ingress).toEqual({
       'primary-alb': {
@@ -102,12 +102,12 @@ describe('Ingress definitions', () => {
         paths: ['/api'],
       },
     })
-    const result = (await rendererForOne(
-      renderers.helm,
-      sut.serviceDef,
-      new Kubernetes(Staging),
-      Staging,
-    )) as SerializeSuccess<ServiceHelm>
+    const result = (await rendererForOne({
+      outputFormat: renderers.helm,
+      service: sut,
+      runtime: new Kubernetes(Staging),
+      env: Staging,
+    })) as SerializeSuccess<ServiceHelm>
 
     expect(result.serviceDef[0].ingress).toEqual({
       'primary-alb': {
@@ -126,12 +126,12 @@ describe('Ingress definitions', () => {
         paths: ['/api'],
       },
     })
-    const result = (await rendererForOne(
-      renderers.helm,
-      sut.serviceDef,
-      new Kubernetes(Staging),
-      Staging,
-    )) as SerializeSuccess<ServiceHelm>
+    const result = (await rendererForOne({
+      outputFormat: renderers.helm,
+      service: sut,
+      runtime: new Kubernetes(Staging),
+      env: Staging,
+    })) as SerializeSuccess<ServiceHelm>
 
     expect(result.serviceDef[0].ingress).toEqual({
       'primary-alb': {

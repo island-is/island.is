@@ -22,12 +22,12 @@ describe('Healthchecks definitions', () => {
   describe('Liveness', () => {
     it('defined with path only', async () => {
       const sut = service('api').liveness('/ready').healthPort(5000)
-      const result = (await rendererForOne(
-        renderers.helm,
-        sut.serviceDef,
-        new Kubernetes(Staging),
-        Staging,
-      )) as SerializeSuccess<ServiceHelm>
+      const result = (await rendererForOne({
+        outputFormat: renderers.helm,
+        service: sut,
+        runtime: new Kubernetes(Staging),
+        env: Staging,
+      })) as SerializeSuccess<ServiceHelm>
       expect(result.serviceDef[0].healthCheck).toEqual({
         liveness: {
           path: '/ready',
@@ -43,12 +43,12 @@ describe('Healthchecks definitions', () => {
         path: '/ready',
         initialDelaySeconds: 10,
       })
-      const result = (await rendererForOne(
-        renderers.helm,
-        sut.serviceDef,
-        new Kubernetes(Staging),
-        Staging,
-      )) as SerializeSuccess<ServiceHelm>
+      const result = (await rendererForOne({
+        outputFormat: renderers.helm,
+        service: sut,
+        runtime: new Kubernetes(Staging),
+        env: Staging,
+      })) as SerializeSuccess<ServiceHelm>
       expect(result.serviceDef[0].healthCheck).toEqual({
         liveness: {
           path: '/ready',

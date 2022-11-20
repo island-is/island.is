@@ -33,12 +33,12 @@ describe('Extra attributes', () => {
       dev: MissingSetting,
       prod: MissingSetting,
     })
-    const serviceDef = (await rendererForOne(
-      renderers.helm,
-      sut.serviceDef,
-      new Kubernetes(Staging),
-      Staging,
-    )) as SerializeSuccess<ServiceHelm>
+    const serviceDef = (await rendererForOne({
+      outputFormat: renderers.helm,
+      service: sut,
+      runtime: new Kubernetes(Staging),
+      env: Staging,
+    })) as SerializeSuccess<ServiceHelm>
     expect(serviceDef.serviceDef[0].extra).toEqual({
       API: 'api',
       KEY: { SUBKEY: 'value' },
@@ -50,12 +50,12 @@ describe('Extra attributes', () => {
       dev: MissingSetting,
       prod: MissingSetting,
     })
-    const serviceDef = (await rendererForOne(
-      renderers.helm,
-      sut.serviceDef,
-      new Kubernetes(Staging),
-      Staging,
-    )) as SerializeErrors
+    const serviceDef = (await rendererForOne({
+      outputFormat: renderers.helm,
+      service: sut,
+      runtime: new Kubernetes(Staging),
+      env: Staging,
+    })) as SerializeErrors
     expect(serviceDef.errors).toEqual([
       'Missing extra setting for service api in env staging',
     ])

@@ -30,12 +30,12 @@ describe('Env variable', () => {
   })
   let serviceDef: SerializeErrors
   beforeEach(async () => {
-    serviceDef = (await rendererForOne(
-      renderers.helm,
-      sut.serviceDef,
-      new Kubernetes(Staging),
-      Staging,
-    )) as SerializeErrors
+    serviceDef = (await rendererForOne({
+      outputFormat: renderers.helm,
+      service: sut,
+      runtime: new Kubernetes(Staging),
+      env: Staging,
+    })) as SerializeErrors
   })
   it('missing variables cause errors', () => {
     expect(serviceDef.errors).toEqual([
@@ -51,12 +51,12 @@ describe('Env variable', () => {
       .secrets({
         A: 'somesecret',
       })
-    const serviceDef = (await rendererForOne(
-      renderers.helm,
-      sut.serviceDef,
-      new Kubernetes(Staging),
-      Staging,
-    )) as SerializeErrors
+    const serviceDef = (await rendererForOne({
+      outputFormat: renderers.helm,
+      service: sut,
+      runtime: new Kubernetes(Staging),
+      env: Staging,
+    })) as SerializeErrors
 
     expect(serviceDef.errors).toStrictEqual([
       'Collisions in api for environment or secrets for key A',
@@ -73,12 +73,12 @@ describe('Env variable', () => {
       },
       containers: [{ command: 'go' }],
     })
-    const serviceDef = (await rendererForOne(
-      renderers.helm,
-      sut.serviceDef,
-      new Kubernetes(Staging),
-      Staging,
-    )) as SerializeErrors
+    const serviceDef = (await rendererForOne({
+      outputFormat: renderers.helm,
+      service: sut,
+      runtime: new Kubernetes(Staging),
+      env: Staging,
+    })) as SerializeErrors
 
     expect(serviceDef.errors).toStrictEqual([
       'Collisions in api for environment or secrets for key A',
@@ -106,12 +106,12 @@ describe('Env variable', () => {
     const sut = service('api').env({
       A: json(value),
     })
-    const serviceDef = (await rendererForOne(
-      renderers.helm,
-      sut.serviceDef,
-      new Kubernetes(Staging),
-      Staging,
-    )) as SerializeSuccess<ServiceHelm>
+    const serviceDef = (await rendererForOne({
+      outputFormat: renderers.helm,
+      service: sut,
+      runtime: new Kubernetes(Staging),
+      env: Staging,
+    })) as SerializeSuccess<ServiceHelm>
 
     expect(serviceDef.serviceDef[0].env.A).toEqual(JSON.stringify(value))
   })

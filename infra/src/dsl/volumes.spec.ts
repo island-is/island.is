@@ -35,12 +35,12 @@ describe('Volume Support', () => {
 
   let stagingWithVolumes: SerializeSuccess<ServiceHelm>
   beforeEach(async () => {
-    stagingWithVolumes = (await rendererForOne(
-      renderers.helm,
-      sut.serviceDef,
-      new Kubernetes(Staging),
-      Staging,
-    )) as SerializeSuccess<ServiceHelm>
+    stagingWithVolumes = (await rendererForOne({
+      outputFormat: renderers.helm,
+      service: sut,
+      runtime: new Kubernetes(Staging),
+      env: Staging,
+    })) as SerializeSuccess<ServiceHelm>
   })
   it('Support multi volume definitions', () => {
     expect(stagingWithVolumes.serviceDef[0].pvcs![0]).toEqual({
@@ -64,12 +64,12 @@ describe('Volume Support', () => {
       accessModes: 'ReadOnly',
       mountPath: '/storage_one',
     })
-    const stagingWithDefaultVolume = (await rendererForOne(
-      renderers.helm,
-      sut.serviceDef,
-      new Kubernetes(Staging),
-      Staging,
-    )) as SerializeSuccess<ServiceHelm>
+    const stagingWithDefaultVolume = (await rendererForOne({
+      outputFormat: renderers.helm,
+      service: sut,
+      runtime: new Kubernetes(Staging),
+      env: Staging,
+    })) as SerializeSuccess<ServiceHelm>
     expect(stagingWithDefaultVolume.serviceDef[0].pvcs![0]).toEqual({
       name: 'api',
       size: '1Gi',

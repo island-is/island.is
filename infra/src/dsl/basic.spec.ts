@@ -47,12 +47,12 @@ describe('Basic serialization', () => {
     .postgres()
   let result: SerializeSuccess<ServiceHelm>
   beforeEach(async () => {
-    result = (await rendererForOne(
-      renderers.helm,
-      sut.serviceDef,
-      new Kubernetes(Staging),
-      Staging,
-    )) as SerializeSuccess<ServiceHelm>
+    result = (await rendererForOne({
+      outputFormat: renderers.helm,
+      service: sut,
+      runtime: new Kubernetes(Staging),
+      env: Staging,
+    })) as SerializeSuccess<ServiceHelm>
   })
 
   it('basic props', () => {
@@ -149,12 +149,12 @@ describe('Env definition defaults', () => {
   const sut = service('api').namespace('islandis').image('test')
   let result: SerializeSuccess<ServiceHelm>
   beforeEach(async () => {
-    result = (await rendererForOne(
-      renderers.helm,
-      sut.serviceDef,
-      new Kubernetes(Staging),
-      Staging,
-    )) as SerializeSuccess<ServiceHelm>
+    result = (await rendererForOne({
+      outputFormat: renderers.helm,
+      service: sut,
+      runtime: new Kubernetes(Staging),
+      env: Staging,
+    })) as SerializeSuccess<ServiceHelm>
   })
   it('replica max count', () => {
     expect(result.serviceDef[0].replicaCount).toStrictEqual({

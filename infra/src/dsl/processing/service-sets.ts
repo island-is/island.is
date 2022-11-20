@@ -1,28 +1,31 @@
 import {
   OutputFormat,
+  SerializeErrors,
+  SerializeSuccess,
   ServiceOutputType,
   Services,
 } from '../types/output-types'
 import { DeploymentRuntime, EnvironmentConfig } from '../types/charts'
-import { ServiceDefinition } from '../types/input-types'
 import { prepareServiceForEnv } from '../service-to-environment/pre-process-service'
 import { ServiceBuilder } from '../dsl'
 
-export function prepareServices<T extends ServiceOutputType>(
-  services: ServiceBuilder<any>[] | ServiceBuilder<any>,
-  env: EnvironmentConfig,
-  renderer: OutputFormat<T>,
-) {
-  const servicesToProcess = Array.isArray(services) ? services : [services]
+export function prepareServicesForEnv<T extends ServiceOutputType>(options: {
+  services: ServiceBuilder<any>[] | ServiceBuilder<any>
+  env: EnvironmentConfig
+  outputFormat: OutputFormat<T>
+}) {
+  const servicesToProcess = Array.isArray(options.services)
+    ? options.services
+    : [options.services]
 
-  if (env.feature) {
+  if (options.env.feature) {
     for (const service of servicesToProcess) {
-      renderer.featureDeployment(service.serviceDef, env)
+      options.outputFormat.featureDeployment(service.serviceDef, options.env)
     }
   }
 
   return servicesToProcess.map((service) => {
-    const serviceForEnv = prepareServiceForEnv(service.serviceDef, env)
+    const serviceForEnv = prepareServiceForEnv(service.serviceDef, options.env)
     switch (serviceForEnv.type) {
       case 'error':
         throw new Error(serviceForEnv.errors.join('\n'))
@@ -32,17 +35,34 @@ export function prepareServices<T extends ServiceOutputType>(
   })
 }
 
-export const renderer = async <T extends ServiceOutputType>(
-  runtime: DeploymentRuntime,
-  services: ServiceBuilder<any>[] | ServiceBuilder<any>,
-  renderer: OutputFormat<T>,
-  env: EnvironmentConfig,
-) => {
-  const preparedServices = prepareServices(services, env, renderer)
+/**
+ * This is an important function. It converts a list of ServiceBuilders to a hash of output-format-specific definitions.
+ * @param options
+ */
+export const renderer = async <T extends ServiceOutputType>(options: {
+  runtime: DeploymentRuntime
+  services: ServiceBuilder<any>[] | ServiceBuilder<any>
+  outputFormat: OutputFormat<T>
+  env: EnvironmentConfig
+}) => {
+  const runtime = options.runtime
+  const services = options.services
+  const outputFormat = options.outputFormat
+  const env = options.env
+  const preparedServices = prepareServicesForEnv({
+    services: services,
+    env: env,
+    outputFormat: outputFormat,
+  })
 
   return preparedServices.reduce(async (acc, s) => {
     const accVal = await acc
-    const values = await renderer.serializeService(s, runtime, env, env.feature)
+    const values = await outputFormat.serializeService(
+      s,
+      runtime,
+      env,
+      env.feature,
+    )
     switch (values.type) {
       case 'error':
         throw new Error(values.errors.join('\n'))
@@ -51,25 +71,30 @@ export const renderer = async <T extends ServiceOutputType>(
     }
   }, Promise.resolve({} as Services<T>))
 }
-export const rendererForOne = async <T extends ServiceOutputType>(
-  renderer: OutputFormat<T>,
-  service: ServiceDefinition,
-  runtime: DeploymentRuntime,
-  env: EnvironmentConfig,
-) => {
-  if (env.feature) {
-    renderer.featureDeployment(service, env)
-  }
-  const serviceForEnv = prepareServiceForEnv(service, env)
-  switch (serviceForEnv.type) {
-    case 'error':
-      return serviceForEnv
-    case 'success':
-      return renderer.serializeService(
-        serviceForEnv.serviceDef,
-        runtime,
-        env,
-        env.feature,
-      )
+
+/**
+ * This is the same as `renderer` function but for a single service. Used in tests for the most part.
+ * @param options
+ */
+export const rendererForOne = async <T extends ServiceOutputType>(options: {
+  outputFormat: OutputFormat<T>
+  service: ServiceBuilder<any>
+  runtime: DeploymentRuntime
+  env: EnvironmentConfig
+}): Promise<SerializeSuccess<T> | SerializeErrors> => {
+  const outputFormat = options.outputFormat
+  const service = options.service
+  const runtime = options.runtime
+  const env = options.env
+  try {
+    const result = await renderer({
+      runtime: runtime,
+      services: service,
+      outputFormat: outputFormat,
+      env: env,
+    })
+    return { type: 'success', serviceDef: [Object.values(result)[0]!] }
+  } catch (e: any) {
+    return { type: 'error', errors: e.message.split('\n') }
   }
 }

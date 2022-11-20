@@ -54,12 +54,12 @@ describe('Init-container definitions', () => {
       },
       postgres: {},
     })
-    const result = (await rendererForOne(
-      renderers.helm,
-      sut.serviceDef,
-      new Kubernetes(Staging),
-      Staging,
-    )) as SerializeSuccess<ServiceHelm>
+    const result = (await rendererForOne({
+      outputFormat: renderers.helm,
+      service: sut,
+      runtime: new Kubernetes(Staging),
+      env: Staging,
+    })) as SerializeSuccess<ServiceHelm>
     expect(result.serviceDef[0].initContainer).toEqual({
       containers: [
         {
@@ -103,12 +103,12 @@ describe('Init-container definitions', () => {
     const sut = service('api').initContainer({
       containers: [],
     })
-    const result = (await rendererForOne(
-      renderers.helm,
-      sut.serviceDef,
-      new Kubernetes(Staging),
-      Staging,
-    )) as SerializeErrors
+    const result = (await rendererForOne({
+      outputFormat: renderers.helm,
+      service: sut,
+      runtime: new Kubernetes(Staging),
+      env: Staging,
+    })) as SerializeErrors
     expect(result.errors).toEqual([
       'No containers to run defined in initContainers',
     ])

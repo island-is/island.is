@@ -4,7 +4,7 @@ import { renderers } from '../upstream-dependencies'
 import { EnvironmentConfig } from '../types/charts'
 
 export type Mocks = 'with-mocks' | 'no-mocks'
-export const helmValueFile = (
+export const getHelmValueFile = (
   runtime: Kubernetes,
   services: Services<ServiceHelm>,
   withMocks: Mocks,

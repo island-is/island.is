@@ -79,7 +79,12 @@ export const withUpstreamDependencies = async <T extends ServiceOutputType>(
   }
   const dependencyTracer = new UpstreamDependencyTracer(dummyEnv)
   const localHabitat = cloneDeep(habitat)
-  await renderer(dependencyTracer, localHabitat, serializer, env) // doing this so we find out the dependencies
+  await renderer({
+    runtime: dependencyTracer,
+    services: localHabitat,
+    outputFormat: serializer,
+    env: env,
+  }) // doing this so we find out the dependencies
   const downstreamServices = services
     .map((s) => findUpstreamDependencies(dependencyTracer, s))
     .flatMap((x) => x)

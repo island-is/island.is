@@ -37,12 +37,12 @@ describe('X-road support', () => {
   )
   let svc: SerializeSuccess<ServiceHelm>
   beforeEach(async () => {
-    svc = (await rendererForOne(
-      renderers.helm,
-      sut.serviceDef,
-      new Kubernetes(Dev),
-      Dev,
-    )) as SerializeSuccess<ServiceHelm>
+    svc = (await rendererForOne({
+      outputFormat: renderers.helm,
+      service: sut,
+      runtime: new Kubernetes(Dev),
+      env: Dev,
+    })) as SerializeSuccess<ServiceHelm>
   })
 
   it('contains all xroad environment variables', () => {

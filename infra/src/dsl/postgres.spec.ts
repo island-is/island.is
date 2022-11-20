@@ -27,12 +27,12 @@ describe('Postgres', () => {
     const sut = service('service-portal-api').postgres()
     let result: SerializeSuccess<ServiceHelm>
     beforeEach(async () => {
-      result = (await rendererForOne(
-        renderers.helm,
-        sut.serviceDef,
-        new Kubernetes(Staging),
-        Staging,
-      )) as SerializeSuccess<ServiceHelm>
+      result = (await rendererForOne({
+        outputFormat: renderers.helm,
+        service: sut,
+        runtime: new Kubernetes(Staging),
+        env: Staging,
+      })) as SerializeSuccess<ServiceHelm>
     })
     it('fixing user and name to comply with postgres identifier allowed character set', () => {
       expect(result.serviceDef[0].env).toEqual({
@@ -52,12 +52,12 @@ describe('Postgres', () => {
       .env({ DB_USER: 'aaa', DB_HOST: 'a', DB_NAME: '' })
     let result: SerializeErrors
     beforeEach(async () => {
-      result = (await rendererForOne(
-        renderers.helm,
-        sut.serviceDef,
-        new Kubernetes(Staging),
-        Staging,
-      )) as SerializeErrors
+      result = (await rendererForOne({
+        outputFormat: renderers.helm,
+        service: sut,
+        runtime: new Kubernetes(Staging),
+        env: Staging,
+      })) as SerializeErrors
     })
     it('Env and secret variables already defined', () => {
       expect(result.errors).toEqual([

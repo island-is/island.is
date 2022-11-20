@@ -32,7 +32,12 @@ describe.only('ServiceDefinition to Env', () => {
       A: 'B',
       B: MissingSetting,
     })
-    const serviceDef = renderer(runtime, [sut], currentOutput, Staging)
+    const serviceDef = renderer({
+      runtime: runtime,
+      services: [sut],
+      outputFormat: currentOutput,
+      env: Staging,
+    })
     expect(serviceDef).rejects.toThrow(
       'Missing settings for service api in env staging. Keys of missing settings: B',
     )
@@ -42,7 +47,12 @@ describe.only('ServiceDefinition to Env', () => {
       A: 'B',
       B: ref((ctx) => `${ctx.svc('https://www.visir.is')}/f/frettir`),
     })
-    const serviceDef = await renderer(runtime, [sut], currentOutput, Staging)
+    const serviceDef = await renderer({
+      runtime: runtime,
+      services: [sut],
+      outputFormat: currentOutput,
+      env: Staging,
+    })
     expect(serviceDef['api'].env['B']).toBe('http://localhost:9453/f/frettir')
   })
 })

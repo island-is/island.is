@@ -1,7 +1,7 @@
 import { ref, service } from '../dsl'
 import { EnvironmentConfig } from '../types/charts'
 import { renderer } from '../processing/service-sets'
-import { getLocalSetup } from './get-local-setup'
+import { getLocalrunValueFile } from './local-setup'
 import { Localhost } from '../localhost-runtime'
 import {
   LocalrunOutput,
@@ -26,17 +26,17 @@ describe('Local setup', () => {
     A: 'B',
     B: ref((ctx) => `${ctx.svc('https://www.visir.is')}/f/frettir`),
   })
-  let serviceDef: Awaited<ReturnType<typeof getLocalSetup>>
+  let serviceDef: Awaited<ReturnType<typeof getLocalrunValueFile>>
   beforeEach(async () => {
     const runtime = new Localhost()
-    serviceDef = await getLocalSetup(
+    serviceDef = await getLocalrunValueFile(
       runtime,
-      await renderer(
-        runtime,
-        [sut],
-        LocalrunOutput({ secrets: SecretOptions.noSecrets }),
-        Staging,
-      ),
+      await renderer({
+        runtime: runtime,
+        services: [sut],
+        outputFormat: LocalrunOutput({ secrets: SecretOptions.noSecrets }),
+        env: Staging,
+      }),
     )
   })
 

@@ -7,7 +7,7 @@ import {
 } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
 import { renderers } from './upstream-dependencies'
-import { helmValueFile } from './value-files-generators/render-helm-value-file'
+import { getHelmValueFile } from './value-files-generators/helm-value-file'
 import { rendererForOne } from './processing/service-sets'
 
 const Staging: EnvironmentConfig = {
@@ -32,13 +32,13 @@ describe('Egress', () => {
   let serviceDef: SerializeSuccess<ServiceHelm>
   let render: HelmValueFile
   beforeEach(async () => {
-    serviceDef = (await rendererForOne(
-      renderers.helm,
-      sut.serviceDef,
-      runtime,
-      Staging,
-    )) as SerializeSuccess<ServiceHelm>
-    render = helmValueFile(
+    serviceDef = (await rendererForOne({
+      outputFormat: renderers.helm,
+      service: sut,
+      runtime: runtime,
+      env: Staging,
+    })) as SerializeSuccess<ServiceHelm>
+    render = getHelmValueFile(
       runtime,
       { a: serviceDef.serviceDef[0] },
       'with-mocks',
