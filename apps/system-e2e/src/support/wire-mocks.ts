@@ -56,17 +56,17 @@ export const addXroadMock = async <Conf>(
         orgType?: XRoadMemberClass
         serviceMemberCode: XRoadEnvs<Conf>
         prefix: XRoadEnvs<Conf>
-        path: string
+        apiPath: string
         response: Response | Response[]
-        conf: 'base-path-with-env'
+        prefixType: 'base-path-with-env'
         method?: HttpMethod
       }
     | {
         config: XroadConf<Conf>
         prefix: XRoadEnvs<Conf>
         response: Response | Response[]
-        path: string
-        conf: 'only-base-path'
+        apiPath: string
+        prefixType: 'only-base-path'
         method?: HttpMethod
       },
 ) => {
@@ -84,7 +84,7 @@ export const addXroadMock = async <Conf>(
       : 'this should never happen url'
   const prefix = path.startsWith('r1/') ? '/' : '/r1/'
   const env =
-    options.conf === 'base-path-with-env'
+    options.prefixType === 'base-path-with-env'
       ? `IS-DEV/${options.orgType ?? 'GOV'}/${options.serviceMemberCode}`
       : ''
   const stubResponses = Array.isArray(options.response)
@@ -92,7 +92,7 @@ export const addXroadMock = async <Conf>(
     : [options.response]
   const stub = new Stub().withPredicate(
     new EqualPredicate()
-      .withPath(`${prefix}${env}${path}${options.path}`)
+      .withPath(`${prefix}${env}${path}${options.apiPath}`)
       .withMethod(method),
   )
   for (const response of stubResponses) {
