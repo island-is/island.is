@@ -18,7 +18,7 @@ import { Discount } from '../models/discount.model'
 export class AirDiscountSchemeResolver {
   constructor(private airDiscountSchemeService: AirDiscountSchemeService) {}
 
-  @Query(() => [Discount], { nullable: true })
+  @Query(() => [Discount])
   async getDiscount(@CurrentUser() user: User) {
     return this.airDiscountSchemeService.getCurrentDiscounts(user)
   }

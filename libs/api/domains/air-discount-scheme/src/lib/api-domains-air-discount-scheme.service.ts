@@ -6,7 +6,6 @@ import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { Auth, User } from '@island.is/auth-nest-tools'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { Discount } from '@island.is/air-discount-scheme/types'
 import {
   Discount as TDiscount,
   User as TUser,
@@ -101,7 +100,7 @@ export class AirDiscountSchemeService {
   private async createDiscount(
     auth: User,
     nationalId: string,
-  ): Promise<Discount | null> {
+  ): Promise<TDiscount | null> {
     try {
       const createDiscountResponse = await this.getADSWithAuth(
         auth,
