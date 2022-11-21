@@ -84,51 +84,47 @@ export class AirDiscountSchemeService {
     auth: User,
     nationalId: string,
   ): Promise<unknown | null> {
-    try {
-      const discountResponse = await this.getADSWithAuth(
-        auth,
-      ).privateDiscountControllerGetCurrentDiscountByNationalId({
+    const discountResponse = await this.getADSWithAuth(auth)
+      .privateDiscountControllerGetCurrentDiscountByNationalId({
         nationalId,
       })
+      .catch((e) => {
+        this.handleJSONError(e)
+      })
 
-      return discountResponse
-    } catch (e) {
-      this.handleJSONError(e)
-    }
+    return discountResponse
   }
 
   private async createDiscount(
     auth: User,
     nationalId: string,
   ): Promise<TDiscount | null> {
-    try {
-      const createDiscountResponse = await this.getADSWithAuth(
-        auth,
-      ).privateDiscountControllerCreateDiscountCode({
+    const createDiscountResponse = await this.getADSWithAuth(auth)
+      .privateDiscountControllerCreateDiscountCode({
         nationalId,
       })
-      return createDiscountResponse
-    } catch (e) {
-      this.handle4xx(e)
-      return null
-    }
+      .catch((e) => {
+        this.handle4xx(e)
+        return null
+      })
+    return createDiscountResponse
   }
 
   private async getUserRelations(auth: User): Promise<TUser[] | null> {
-    try {
-      let getRelationsResponse = await this.getADSWithAuth(
-        auth,
-      ).privateUserControllerGetUserRelations({ nationalId: auth.nationalId })
+    let getRelationsResponse = await this.getADSWithAuth(auth)
+      .privateUserControllerGetUserRelations({ nationalId: auth.nationalId })
+      .catch((e) => {
+        this.handle4xx(e)
+      })
 
-      // Should not generate discountcodes for users who do not meet requirements
-      getRelationsResponse = getRelationsResponse.filter(
-        (user) => user.fund.credit === user.fund.total - user.fund.used,
-      )
-
-      return getRelationsResponse
-    } catch (e) {
-      this.handle4xx(e)
+    if (!getRelationsResponse) {
       return null
     }
+
+    // Should not generate discountcodes for users who do not meet requirements
+    getRelationsResponse = getRelationsResponse.filter(
+      (user) => user.fund.credit === user.fund.total - user.fund.used,
+    )
+    return getRelationsResponse
   }
 }
