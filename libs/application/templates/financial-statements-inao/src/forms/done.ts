@@ -3,6 +3,7 @@ import {
   buildSection,
   buildMultiField,
   buildCustomField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
@@ -22,6 +23,11 @@ export const done: Form = buildForm({
           children: [
             buildCustomField({
               id: 'overview',
+              component: 'Success',
+              title: m.applicationAccept,
+            }),
+            buildCustomField({
+              id: 'signature',
               component: 'Success',
               title: m.applicationAccept,
             }),

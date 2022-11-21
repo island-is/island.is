@@ -176,4 +176,5 @@ export const ExcludedFeatureDeploymentServices = [
   userNotificationService,
   userNotificationWorkerService,
   contentfulEntryTagger,
+  searchIndexer,
 ]
