@@ -41,7 +41,7 @@ const DefaultData: Record<ApplicationStatus, DefaultStateData> = {
       variant: 'red',
     },
     cta: {
-      label: coreMessages.cardButtonInProgress,
+      label: coreMessages.cardButtonRejected,
     },
   },
   [ApplicationStatus.COMPLETED]: {
@@ -77,7 +77,7 @@ const DefaultData: Record<ApplicationStatus, DefaultStateData> = {
       variant: 'blue',
     },
     cta: {
-      label: coreMessages.cardButtonInDraft,
+      label: coreMessages.cardButtonDraft,
     },
   },
   [ApplicationStatus.APPROVED]: {
@@ -89,7 +89,7 @@ const DefaultData: Record<ApplicationStatus, DefaultStateData> = {
       variant: 'mint',
     },
     cta: {
-      label: coreMessages.cardButtonInDraft,
+      label: coreMessages.cardButtonApproved,
     },
   },
   [ApplicationStatus.NOT_STARTED]: {

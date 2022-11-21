@@ -41,10 +41,20 @@ export const coreMessages = defineMessages({
     defaultMessage: 'Opna umsókn',
     description: 'Button label when application is in progress',
   },
-  cardButtonInDraft: {
-    id: 'application.system:card.button.inDraft',
+  cardButtonDraft: {
+    id: 'application.system:card.button.Draft',
     defaultMessage: 'Opna umsókn',
     description: 'Button label when application is in draft',
+  },
+  cardButtonRejected: {
+    id: 'application.system:card.button.Rejected',
+    defaultMessage: 'Skoða yfirlit',
+    description: 'Button label when application is rejected',
+  },
+  cardButtonApproved: {
+    id: 'application.system:card.button.Approved',
+    defaultMessage: 'Skoða yfirlit',
+    description: 'Button label when application is approved',
   },
   cardButtonNotStarted: {
     id: 'application:card.button.notStarted',
