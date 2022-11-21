@@ -617,10 +617,10 @@ application-system-api:
     name: 'application-system-api'
 application-system-api-worker:
   args:
+    - '--tls-min-v1.0'
     - 'main.js'
     - '--job'
     - 'worker'
-    - '--tls-min-v1.0'
   command:
     - 'node'
   enabled: true
