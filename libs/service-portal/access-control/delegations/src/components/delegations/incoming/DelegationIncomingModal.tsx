@@ -36,10 +36,10 @@ export const DelegationIncomingModal = ({
 
   const { authScopeTree } = scopeTreeData || {}
 
-  const toName = delegation?.to?.name
-  const toNationalId = delegation?.to?.nationalId
-  const fromName = userInfo?.profile.name
-  const fromNationalId = userInfo?.profile.nationalId
+  const fromName = delegation?.from?.name
+  const fromNationalId = delegation?.from?.nationalId
+  const toName = userInfo?.profile.name
+  const toNationalId = userInfo?.profile.nationalId
 
   return (
     <Modal
