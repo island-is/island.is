@@ -696,6 +696,11 @@ export const m = defineMessages({
     defaultMessage: 'Ársreikningur mótekinn',
     description: 'financial statement received',
   },
+  infoReceived: {
+    id: 'fsn.application:infoReceived',
+    defaultMessage: 'Uppgjör móttekið',
+    description: 'election info received',
+  },
   dataCollectionCheckboxLabel: {
     id: 'fsn.application:dataCollectionCheckboxLabel',
     defaultMessage:
