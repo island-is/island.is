@@ -44,7 +44,7 @@ export const AccessList = ({
               description={scope.description}
             />
             <div className={commonAccessStyles.divider}>
-              <Divider />
+              <Divider weight="faded" />
             </div>
             {renderScopeTree(scope.children, true)}
             <div className={commonAccessStyles.divider}>
@@ -68,7 +68,7 @@ export const AccessList = ({
               validityPeriod={validityPeriod}
             />
             <div className={commonAccessStyles.divider}>
-              <Divider />
+              <Divider {...(indent && { weight: 'faded' })} />
             </div>
           </Fragment>
         )

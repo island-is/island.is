@@ -4,7 +4,6 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { useHistory } from 'react-router-dom'
 import { defineMessage } from 'react-intl'
 import * as kennitala from 'kennitala'
-import { sharedMessages } from '@island.is/shared/translations'
 
 import {
   Box,

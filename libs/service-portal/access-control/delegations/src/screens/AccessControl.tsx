@@ -1,5 +1,6 @@
 import { useHistory } from 'react-router-dom'
 import { useLocation } from 'react-use'
+import * as kennitala from 'kennitala'
 import { Box, Tabs } from '@island.is/island-ui/core'
 import {
   IntroHeader,
@@ -30,6 +31,10 @@ const AccessControl = () => {
   const location = useLocation()
   const isDelegationIncoming = location.pathname === DELEGATIONS_INCOMING_PATH
 
+  const isCompany = userInfo
+    ? kennitala.isCompany(userInfo.profile.nationalId)
+    : false
+
   const tabChangeHandler = (id: string) => {
     const url =
       id === TAB_DELEGATION_INCOMING_ID
@@ -44,16 +49,23 @@ const AccessControl = () => {
 
   // Only show outgoing delegation when user is logged in on behalf of someone else, i.e. some delegation.
   const onlyOutgoingDelegations = isDefined(userInfo?.profile?.actor)
-
   return (
     <>
       <IntroHeader
-        title={formatMessage(m.accessControlDelegations)}
-        intro={formatMessage({
-          id: 'sp.access-control-delegations:header-intro',
-          defaultMessage:
-            'Hérna kemur listi yfir þau umboð sem þú hefur gefið öðrum. Þú getur eytt umboðum eða bætt við nýjum.',
-        })}
+        title={formatMessage(m.accessControl)}
+        intro={formatMessage(
+          isCompany
+            ? {
+                id: 'sp.access-control-delegations:header-intro-company',
+                defaultMessage:
+                  'Hérna kemur listi yfir þau umboð sem þú hefur gefið öðrum. Þú getur eytt umboðum eða bætt við nýjum.',
+              }
+            : {
+                id: 'sp.access-control-delegations:header-intro-individual',
+                defaultMessage:
+                  'Hérna getur þú veitt öðrum umboð og skoðað umboð sem aðrir hafa veitt þér. Þú getur eytt umboðum eða bætt við nýjum.',
+              },
+        )}
         marginBottom={0}
       />
       <Box marginTop={[0, 0, 5]}>

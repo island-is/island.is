@@ -56,7 +56,7 @@ export const AccessHeader = ({
           </Hidden>
         </Box>
         {delegation ? (
-          <Text variant="eyebrow">{`${delegation?.to?.name} • ${delegation?.domain.displayName}`}</Text>
+          <Text variant="eyebrow">{`${delegation?.to?.name} | ${delegation?.domain.displayName}`}</Text>
         ) : (
           <SkeletonLoader width="60%" height={21} />
         )}
