@@ -67,14 +67,8 @@ export class ApplicationTemplateHelper<
     if (applicationTemplateState.meta?.status) {
       return applicationTemplateState.meta.status as ApplicationStatus
     } else {
-      if (applicationTemplateState.type === 'final') {
-        if (state === FinalStates.REJECTED) {
-          return ApplicationStatus.REJECTED
-        }
-        return ApplicationStatus.COMPLETED
-      }
+      return ApplicationStatus.DRAFT
     }
-    return ApplicationStatus.DRAFT
   }
 
   getApplicationActionCardMeta(
