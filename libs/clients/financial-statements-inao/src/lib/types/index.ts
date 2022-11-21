@@ -7,6 +7,7 @@ export type Election = {
   electionId: string
   name: string
   electionDate: Date
+  genitiveName?: string
 }
 
 export type ElectionInfo = {
@@ -67,6 +68,11 @@ export type ContactDto = {
   star_name: string
   star_email?: string
   star_phone?: string
+}
+
+export type DigitalSignee = {
+  phone: string
+  email: string
 }
 
 export type PersonalElectionFinancialStatementValues = {

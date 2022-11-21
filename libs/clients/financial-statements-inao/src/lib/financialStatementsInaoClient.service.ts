@@ -21,6 +21,7 @@ import type {
   PoliticalPartyFinancialStatementValues,
   TaxInfo,
   ContactDto,
+  DigitalSignee,
 } from './types'
 import { ClientTypes, ContactType } from './types'
 import {
@@ -174,6 +175,7 @@ export class FinancialStatementsInaoClientService {
         electionId: x.star_electionid,
         name: x.star_name,
         electionDate: new Date(x.star_electiondate),
+        genitiveName: x.star_genitive_name,
       }
     })
 
@@ -237,6 +239,7 @@ export class FinancialStatementsInaoClientService {
   async postFinancialStatementForPersonalElection(
     client: Client,
     actor: Contact | undefined,
+    digitalSignee: DigitalSignee,
     electionId: string,
     noValueStatement: boolean,
     values?: PersonalElectionFinancialStatementValues,
@@ -288,7 +291,11 @@ export class FinancialStatementsInaoClientService {
       star_novaluestatement: noValueStatement,
       star_financialstatementvalue_belongsto_rel: financialValues,
       star_statement_contacts: actors,
+      star_email: digitalSignee.email,
+      star_phone: digitalSignee.phone,
     }
+
+    this.logger.info('FinancialStatement request body', body)
 
     const financialStatementId = await this.postFinancialStatement(body)
 
@@ -318,6 +325,7 @@ export class FinancialStatementsInaoClientService {
 
     client: Client,
     contacts: Contact[],
+    digitalSignee: DigitalSignee,
     year: string,
     comment: string,
     values: PoliticalPartyFinancialStatementValues,
@@ -366,7 +374,11 @@ export class FinancialStatementsInaoClientService {
       star_representativenationalid: actor?.nationalId,
       star_financialstatementvalue_belongsto_rel: financialValues,
       star_statement_contacts: contactsDto,
+      star_email: digitalSignee.email,
+      star_phone: digitalSignee.phone,
     }
+
+    this.logger.info('FinancialStatement request body', body)
 
     const financialStatementId = await this.postFinancialStatement(body)
 
@@ -388,6 +400,7 @@ export class FinancialStatementsInaoClientService {
 
     client: Client,
     contacts: Contact[],
+    digitalSignee: DigitalSignee,
     year: string,
     comment: string,
     values: CemeteryFinancialStatementValues,
@@ -440,7 +453,11 @@ export class FinancialStatementsInaoClientService {
       star_representativenationalid: actor?.nationalId,
       star_financialstatementvalue_belongsto_rel: financialValues,
       star_statement_contacts: contactsDto,
+      star_email: digitalSignee.email,
+      star_phone: digitalSignee.phone,
     }
+
+    this.logger.info('FinancialStatement request body', body)
 
     const financialStatementId = await this.postFinancialStatement(body)
 
