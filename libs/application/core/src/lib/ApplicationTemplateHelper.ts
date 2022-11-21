@@ -22,10 +22,6 @@ import {
   RoleInState,
 } from '@island.is/application/types'
 
-enum FinalStates {
-  REJECTED = 'rejected',
-}
-
 export class ApplicationTemplateHelper<
   TContext extends ApplicationContext,
   TStateSchema extends ApplicationStateSchema<TEvents>,
