@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom'
 import { Box, Button, Input } from '@island.is/island-ui/core'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
-import { useDomains, DomainOption } from '../../../hooks/useDomains'
+import { DomainOption } from '../../../hooks/useDomains'
 import { DelegationsDomainSelect } from '../DelegationsDomainSelect'
 import * as styles from './DelegationsOutgoingHeader.css'
 
@@ -19,23 +19,6 @@ export const DelegationsOutgoingHeader = ({
 }: DelegationsOutgoingHeaderProps) => {
   const { formatMessage } = useLocale()
   const history = useHistory()
-  const { name: domainName } = useDomains()
-
-  const onClickHandler = () => {
-    const query = new URLSearchParams()
-
-    if (domainName) {
-      query.append('domain', domainName)
-    }
-
-    const queryString = query.toString()
-
-    const url = `${ServicePortalPath.AccessControlDelegationsGrant}${
-      queryString ? `?${queryString}` : ''
-    }`
-
-    history.push(url)
-  }
 
   return (
     <Box className={styles.container}>
@@ -57,7 +40,13 @@ export const DelegationsOutgoingHeader = ({
         />
       </Box>
       <Box className={styles.buttonContainer}>
-        <Button onClick={onClickHandler} size="small" fluid>
+        <Button
+          onClick={() =>
+            history.push(ServicePortalPath.AccessControlDelegationsGrant)
+          }
+          size="small"
+          fluid
+        >
           {formatMessage({
             id: 'sp.access-control-delegations:new-delegation',
             defaultMessage: 'Nýtt umboð',

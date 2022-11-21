@@ -22,7 +22,7 @@ export type DomainOption = {
  *
  * The priority is the following:
  * 1. If there is a domain in query string and no session storage, use the query string
- * 2. If there is a domain in query string and session storage, use the session storage.
+ * 2. If there is a domain in query string and session storage, use the query string.
  * 3  If there is no domain in query string and session storage, use session storage.
  * 4. If there is no domain in query string and no session storage, use the default domain, i.e. ISLAND_DOMAIN.
  *
@@ -80,10 +80,19 @@ export const useDomains = (includeDefaultOption = true) => {
     sessionStore.setItem('domain', name)
 
     const query = new URLSearchParams(location.search)
+    const currentDomain = query.get('domain')
 
-    if (query.get('domain')) {
+    if (currentDomain && currentDomain !== displayNameQueryParam) {
       query.set('domain', name)
       history.push(`${location.pathname}?${query.toString()}`)
+    }
+  }
+
+  const updateDomainByName = (name: string) => {
+    const option = getOptionByName(name)
+
+    if (option) {
+      updateDomain(option)
     }
   }
 
@@ -91,14 +100,16 @@ export const useDomains = (includeDefaultOption = true) => {
     if (data?.authDomains) {
       const sessionDomainName = sessionStore.getItem('domain')
 
-      if (sessionDomainName) {
+      // Priority
+      // 1. Query string
+      // 2. Session storage
+      // 3. Default domain
+      if (displayNameQueryParam) {
+        updateDomainByName(displayNameQueryParam ?? ISLAND_DOMAIN)
+      } else if (sessionDomainName) {
         setDomainName(sessionDomainName)
       } else {
-        const option = getOptionByName(displayNameQueryParam ?? ISLAND_DOMAIN)
-
-        if (option) {
-          updateDomain(option)
-        }
+        updateDomainByName(ISLAND_DOMAIN)
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
