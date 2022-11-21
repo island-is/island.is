@@ -26,11 +26,6 @@ export const done: Form = buildForm({
               component: 'Success',
               title: m.applicationAccept,
             }),
-            buildCustomField({
-              id: 'signature',
-              component: 'Success',
-              title: m.applicationAccept,
-            }),
           ],
         }),
       ],
