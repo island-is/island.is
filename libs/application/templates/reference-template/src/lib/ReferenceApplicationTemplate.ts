@@ -222,7 +222,6 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
       },
       [States.rejected]: {
         meta: {
@@ -240,7 +239,6 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
       },
     },
   },

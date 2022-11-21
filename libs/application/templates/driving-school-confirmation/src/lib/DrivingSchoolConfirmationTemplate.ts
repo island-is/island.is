@@ -85,7 +85,6 @@ const DrivingSchoolConfirmationTemplate: ApplicationTemplate<
             },
           ],
         },
-        type: 'final',
       },
     },
   },

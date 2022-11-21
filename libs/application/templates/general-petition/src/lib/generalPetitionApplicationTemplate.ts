@@ -88,7 +88,6 @@ const GeneralPetitionApplicationTemplate: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
       },
     },
   },

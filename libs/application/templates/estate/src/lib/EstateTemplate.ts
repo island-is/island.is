@@ -152,7 +152,6 @@ const EstateTemplate: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
       },
     },
   },

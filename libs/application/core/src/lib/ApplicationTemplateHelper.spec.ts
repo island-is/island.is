@@ -121,7 +121,6 @@ const createTestApplicationTemplate = (): ApplicationTemplate<
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
         },
-        type: 'final' as const,
       },
       rejected: {
         meta: {

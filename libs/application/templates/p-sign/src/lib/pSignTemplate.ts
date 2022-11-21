@@ -104,7 +104,6 @@ const PSignTemplate: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
       },
     },
   },

@@ -176,7 +176,6 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
       },
       [States.DECLINED]: {
         meta: {
@@ -194,7 +193,6 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
       },
     },
   },

@@ -92,7 +92,6 @@ const template: ApplicationTemplate<
             apiModuleAction: TEMPLATE_API_ACTIONS.sendApplication,
           },
         },
-        type: 'final' as const,
       },
     },
   },

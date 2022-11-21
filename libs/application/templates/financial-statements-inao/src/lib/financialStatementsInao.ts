@@ -99,7 +99,6 @@ const FinancialStatementInaoApplication: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
       },
     },
   },

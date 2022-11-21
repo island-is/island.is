@@ -119,7 +119,6 @@ const OperatingLicenseTemplate: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
       },
     },
   },

@@ -623,7 +623,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
       },
       // Edit Flow States
       [States.EDIT_OR_ADD_PERIODS]: {

@@ -133,12 +133,11 @@ const AnnouncementOfDeathTemplate: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
       },
       [States.DELEGATED]: {
         meta: {
           name: 'Delegated',
-          status: 'inprogress',
+          status: 'completed',
           progress: 1,
           lifecycle: DayLifeCycle,
           onEntry: {
@@ -155,7 +154,6 @@ const AnnouncementOfDeathTemplate: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
       },
     },
   },

@@ -192,7 +192,6 @@ const MarriageConditionsTemplate: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
       },
     },
   },

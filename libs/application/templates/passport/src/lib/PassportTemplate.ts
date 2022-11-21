@@ -194,7 +194,6 @@ const PassportTemplate: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
       },
     },
   },

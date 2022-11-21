@@ -119,7 +119,6 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
       },
       [States.DECLINED]: {
         meta: {
@@ -136,7 +135,6 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
       },
     },
   },

@@ -289,7 +289,6 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
       },
     },
   },
