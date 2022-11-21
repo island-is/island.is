@@ -1,14 +1,25 @@
 <!-- gitbook-ignore -->
 
-# Air Discount Scheme api
+# Air Discount Scheme Api
 
 This service utilizes the AirDiscountSchemeApi
 
 # How to use
 
-Start the api
-`yarn start api`
+Initialize the project with:
+`yarn nx run api-domains-air-discount-scheme:dev/init`
 
-# API Domains Air Discount Scheme
+Start the project in development mode with:
+`yarn nx run api-domains-air-discount-scheme:dev`
 
-This library was generated with [Nx](https://nx.dev).
+X-road needs to be running
+
+```bash
+./scripts/run-xroad-proxy.sh
+```
+
+or
+
+```bash
+kubectl -n socat port-forward svc/socat-xroad 8081:80
+```

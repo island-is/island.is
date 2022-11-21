@@ -114,6 +114,7 @@ export class AirDiscountSchemeService {
     let getRelationsResponse = await this.getADSWithAuth(auth)
       .privateUserControllerGetUserRelations({ nationalId: auth.nationalId })
       .catch((e) => {
+        console.log('Handling?')
         this.handle4xx(e)
       })
 
