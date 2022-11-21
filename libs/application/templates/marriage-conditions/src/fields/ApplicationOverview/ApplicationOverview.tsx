@@ -155,7 +155,7 @@ export const ApplicationOverview: FC<FieldBaseProps> = ({ application }) => {
               ).toLowerCase() +
                 ' - ' +
                 format(
-                  new Date((answers.ceremony as Ceremony).period.dateTil),
+                  new Date((answers.ceremony as Ceremony).period.dateTo),
                   'dd. MMMM, yyyy',
                   { locale: is },
                 ).toLowerCase()}

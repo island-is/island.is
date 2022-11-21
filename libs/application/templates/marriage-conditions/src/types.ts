@@ -32,7 +32,7 @@ export type Ceremony = {
   date: string
   period: {
     dateFrom: string
-    dateTil: string
+    dateTo: string
   }
   place: {
     ceremonyPlace: string

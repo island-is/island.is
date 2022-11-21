@@ -276,7 +276,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                       getValueViaPath(answers, 'ceremony.hasDate') === NO,
                   }),
                   buildDateField({
-                    id: 'ceremony.period.dateTil',
+                    id: 'ceremony.period.dateTo',
                     title: m.ceremonyPeriodTil,
                     placeholder: m.ceremonyDatePlaceholder,
                     width: 'half',

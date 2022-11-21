@@ -44,16 +44,14 @@ export const dataSchema = z.object({
       period: z
         .object({
           dateFrom: z.string().optional(),
-          dateTil: z.string().optional(),
+          dateTo: z.string().optional(),
         })
         .refine(
-          ({ dateFrom, dateTil }) =>
-            dateFrom && dateTil
-              ? new Date(dateFrom) <= new Date(dateTil)
-              : true,
+          ({ dateFrom, dateTo }) =>
+            dateFrom && dateTo ? new Date(dateFrom) <= new Date(dateTo) : true,
           {
             message: m.tilBeforeFrom.defaultMessage,
-            path: ['dateTil'],
+            path: ['dateTo'],
           },
         ),
       place: z.object({
@@ -67,7 +65,7 @@ export const dataSchema = z.object({
       ({ hasDate, period, date }) =>
         hasDate === YES
           ? (!!period?.dateFrom || !period?.dateFrom) &&
-            (!!period?.dateTil || !period?.dateTil) &&
+            (!!period?.dateTo || !period?.dateTo) &&
             !!date
           : true,
       {
@@ -78,7 +76,7 @@ export const dataSchema = z.object({
     .refine(
       ({ hasDate, period, date }) =>
         hasDate === NO
-          ? (!!date || !date) && !!period?.dateFrom && !!period.dateTil
+          ? (!!date || !date) && !!period?.dateFrom && !!period.dateTo
           : true,
       {
         message: coreErrorMessages.defaultError.defaultMessage,
@@ -88,11 +86,11 @@ export const dataSchema = z.object({
     .refine(
       ({ hasDate, period, date }) =>
         hasDate === NO
-          ? (!!date || !date) && !!period?.dateFrom && !!period.dateTil
+          ? (!!date || !date) && !!period?.dateFrom && !!period.dateTo
           : true,
       {
         message: coreErrorMessages.defaultError.defaultMessage,
-        path: ['period', 'dateTil'],
+        path: ['period', 'dateTo'],
       },
     )
     .refine(({ hasDate }) => !!hasDate, {
