@@ -122,6 +122,7 @@ export const AccessItem = ({
     <>
       {apiScopes.map((item, index) => {
         const indent = index !== 0
+        const isLast = index === apiScopes.length - 1
         const defaultDate = getDefaultDate()
         const isGroup = isApiScopeGroup(item)
 
@@ -156,6 +157,7 @@ export const AccessItem = ({
         const stateDateIsActive = datePickerVisibleGroup[index]
         const showDatePicker =
           (isSelected && stateDateIsActive) || (!hasExisting && isSelected)
+        const fadeDivider = (indent && !isLast) || isGroup
 
         return (
           <Fragment key={index}>
@@ -278,7 +280,7 @@ export const AccessItem = ({
               </>
             )}
             <div className={commonAccessStyles.divider}>
-              <Divider />
+              <Divider {...(fadeDivider && { weight: 'faded' })} />
             </div>
           </Fragment>
         )
