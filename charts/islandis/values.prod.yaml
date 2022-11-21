@@ -620,6 +620,7 @@ application-system-api-worker:
     - 'main.js'
     - '--job'
     - 'worker'
+    - '--tls-min-v1.0'
   command:
     - 'node'
   enabled: true
