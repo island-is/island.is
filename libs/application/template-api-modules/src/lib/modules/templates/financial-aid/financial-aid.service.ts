@@ -53,20 +53,6 @@ export class FinancialAidService extends BaseTemplateApiService {
     return this.personalTaxReturnApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  private formatFiles(files: UploadFile[], type: FileType) {
-    if (!files || files.length <= 0) {
-      return []
-    }
-    return files.map((f) => {
-      return {
-        name: f.name ?? '',
-        key: f.key ?? '',
-        size: f.size ?? 0,
-        type: type,
-      }
-    })
-  }
-
   private handle404(error: FetchError) {
     if (error.status === 404) {
       return null
@@ -85,6 +71,20 @@ export class FinancialAidService extends BaseTemplateApiService {
         currentApplicationId:
           externalData.currentApplication.data.currentApplicationId,
       }
+    }
+
+    const formatFiles = (files: UploadFile[], type: FileType) => {
+      if (!files || files.length <= 0) {
+        return []
+      }
+      return files.map((f) => {
+        return {
+          name: f.name ?? '',
+          key: f.key ?? '',
+          size: f.size ?? 0,
+          type: type,
+        }
+      })
     }
 
     const spouseTaxFiles = () => {
@@ -130,14 +130,12 @@ export class FinancialAidService extends BaseTemplateApiService {
       )
     }
 
-    const files = this.formatFiles(answers.taxReturnFiles, FileType.TAXRETURN)
-      .concat(this.formatFiles(answers.incomeFiles, FileType.INCOME))
-      .concat(this.formatFiles(answers.spouseIncomeFiles, FileType.SPOUSEFILES))
-      .concat(
-        this.formatFiles(answers.spouseTaxReturnFiles, FileType.SPOUSEFILES),
-      )
-      .concat(this.formatFiles(spouseTaxFiles(), FileType.SPOUSEFILES))
-      .concat(this.formatFiles(applicantTaxFiles(), FileType.TAXRETURN))
+    const files = formatFiles(answers.taxReturnFiles, FileType.TAXRETURN)
+      .concat(formatFiles(answers.incomeFiles, FileType.INCOME))
+      .concat(formatFiles(answers.spouseIncomeFiles, FileType.SPOUSEFILES))
+      .concat(formatFiles(answers.spouseTaxReturnFiles, FileType.SPOUSEFILES))
+      .concat(formatFiles(spouseTaxFiles(), FileType.SPOUSEFILES))
+      .concat(formatFiles(applicantTaxFiles(), FileType.TAXRETURN))
 
     const newApplication = {
       name: externalData.nationalRegistry.data.fullName,
@@ -247,7 +245,6 @@ export class FinancialAidService extends BaseTemplateApiService {
     application,
   }: Props): Promise<{ success: boolean }> {
     const { answers, externalData } = application
-
     try {
       return await this.applicationApiWithAuth(
         auth,

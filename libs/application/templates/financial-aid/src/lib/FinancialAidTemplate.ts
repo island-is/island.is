@@ -255,12 +255,7 @@ const FinancialAidTemplate: ApplicationTemplate<
                 import('../forms/MuncipalityNotRegistered').then((module) =>
                   Promise.resolve(module.MuncipalityNotRegistered),
                 ),
-              read: {
-                externalData: [
-                  MunicipalityApi.actionId,
-                  NationalRegistryUserApi.externalDataId || '',
-                ],
-              },
+              read: 'all',
             },
           ],
         },
