@@ -65,7 +65,6 @@ export const Insurance: FC<FieldBaseProps & ReviewScreenProps> = ({
           input: {
             id: application.id,
             answers: {
-              ...application.answers,
               insurance: {
                 value: selectedValue.value,
                 name: selectedValue.label,

@@ -7,5 +7,5 @@ export const hasReviewerApproved = (
 ) => {
   const reviewer = getReviewerInfo(reviewerNationalId, answers)
 
-  return reviewer?.approved || false
+  return reviewer ? reviewer.approved || false : true
 }

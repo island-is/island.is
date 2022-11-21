@@ -7,6 +7,11 @@ export const review = {
       defaultMessage: 'Yfirlit eigendaskipta',
       description: 'Title of overview screen',
     },
+    sectionTitle: {
+      id: 'ta.tvo.application:review.general.sectionTitle',
+      defaultMessage: 'Til samþykktar',
+      description: 'Title of overview screen',
+    },
     description: {
       id: 'ta.tvo.application:review.general.description',
       defaultMessage:

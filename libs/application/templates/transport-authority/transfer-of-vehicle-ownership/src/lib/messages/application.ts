@@ -23,10 +23,16 @@ export const application = defineMessages({
     description:
       'Description of application state/status when payment is pending',
   },
+  actionCardRejected: {
+    id: 'ta.tvo.application:actionCardRejected',
+    defaultMessage: 'Hafnað',
+    description:
+      'Description of application state/status when application is rejected',
+  },
   actionCardDone: {
     id: 'ta.tvo.application:actionCardDone',
     defaultMessage: 'Afgreidd',
     description:
-      'Description of application state/status when application is processed',
+      'Description of application state/status when application is done',
   },
 })

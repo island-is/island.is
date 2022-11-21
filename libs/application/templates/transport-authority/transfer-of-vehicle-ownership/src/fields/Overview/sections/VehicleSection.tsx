@@ -28,6 +28,7 @@ export const VehicleSection: FC<FieldBaseProps & ReviewScreenProps> = ({
   const buyerCoOwnerAndOperator = getValueViaPath(
     answers,
     'buyerCoOwnerAndOperator',
+    [],
   ) as CoOwnerAndOperator[]
   const isOperator = buyerCoOwnerAndOperator.find(
     (reviewerItems) =>
