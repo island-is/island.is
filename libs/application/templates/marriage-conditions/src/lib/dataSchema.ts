@@ -48,7 +48,7 @@ export const dataSchema = z.object({
         })
         .refine(
           ({ dateFrom, dateTo }) =>
-            dateFrom && dateTo ? new Date(dateFrom) <= new Date(dateTo) : true,
+            dateFrom && dateTo ? dateFrom <= dateTo : true,
           {
             message: m.tilBeforeFrom.defaultMessage,
             path: ['dateTo'],
