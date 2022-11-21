@@ -91,8 +91,22 @@ export const useDomains = (includeDefaultOption = true) => {
   const updateDomainByName = (name: string) => {
     const option = getOptionByName(name)
 
+    // Priority
+    // 1. Option is found by name
+    // 2. Option is not found by name, try to find ISLAND_DOMAIN
+    // 3. ISLAND_DOMAIN option is not found, select the first option in the list
     if (option) {
       updateDomain(option)
+    } else {
+      const islandDomainOption = getOptionByName(ISLAND_DOMAIN)
+
+      // Default to ISLAND_DOMAIN if the domain is not found
+      if (islandDomainOption) {
+        updateDomain(islandDomainOption)
+      } else {
+        // Default to the first option in the list
+        updateDomain(options[0])
+      }
     }
   }
 
@@ -107,7 +121,7 @@ export const useDomains = (includeDefaultOption = true) => {
       if (displayNameQueryParam) {
         updateDomainByName(displayNameQueryParam ?? ISLAND_DOMAIN)
       } else if (sessionDomainName) {
-        setDomainName(sessionDomainName)
+        updateDomainByName(sessionDomainName)
       } else {
         updateDomainByName(ISLAND_DOMAIN)
       }
