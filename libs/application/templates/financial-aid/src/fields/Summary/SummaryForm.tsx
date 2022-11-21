@@ -32,10 +32,7 @@ import { DirectTaxPaymentsModal } from '..'
 import { findFamilyStatus } from '../../lib/utils'
 import withLogo from '../Logo/Logo'
 
-const SummaryForm = ({
-  application,
-  goToScreen,
-}: FAFieldBaseProps) => {
+const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
   const { lang } = useLocale()
 
