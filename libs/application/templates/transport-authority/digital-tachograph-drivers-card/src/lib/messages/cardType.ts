@@ -13,7 +13,7 @@ export const cardType = {
       description: 'Title of card type page',
     },
     description: {
-      id: 'ta.dtdc.application:cardType.general.pageTitle',
+      id: 'ta.dtdc.application:cardType.general.description',
       defaultMessage:
         'Et sed ut est aliquam proin elit sed. Nunc tellus lacus sed eu pulvinar. ',
       description: 'Description of card type page',
@@ -57,6 +57,59 @@ export const cardType = {
           'ta.dtdc.application:cardType.labels.newestCard.countryOfIssueIceland',
         defaultMessage: 'Ísland',
         description: 'Newest card country of issue iceland',
+      },
+    }),
+    cardType: defineMessages({
+      subtitle: {
+        id: 'ta.dtdc.application:cardType.labels.cardType.subtitle',
+        defaultMessage: 'Merkið við eftir því sem við á',
+        description: 'Card type subtitle',
+      },
+      firstEditionOptionTitle: {
+        id:
+          'ta.dtdc.application:cardType.labels.cardType.firstEditionOptionTitle',
+        defaultMessage: 'Frumútgáfa',
+        description: 'Card type first edition option title',
+      },
+      firstEditionOptionSubTitle: {
+        id:
+          'ta.dtdc.application:cardType.labels.cardType.firstEditionOptionSubTitle',
+        defaultMessage:
+          '(á einnig við þegar gefið er út kort í stað erlends korts)',
+        description: 'Card type first edition option sub title',
+      },
+      reissueOptionTitle: {
+        id: 'ta.dtdc.application:cardType.labels.cardType.reissueOptionTitle',
+        defaultMessage: 'Endurútgáfa',
+        description: 'Card type reissue option title',
+      },
+      reissueOptionSubTitle: {
+        id:
+          'ta.dtdc.application:cardType.labels.cardType.reissueOptionSubTitle',
+        defaultMessage: '(Kortið hefur týnst, eyðilagst eða verið stolið)',
+        description: 'Card type reissue option sub title',
+      },
+      renewalOptionTitle: {
+        id: 'ta.dtdc.application:cardType.labels.cardType.renewalOptionTitle',
+        defaultMessage: 'Endurnýjun',
+        description: 'Card type renewal option title',
+      },
+      renewalOptionSubTitle: {
+        id:
+          'ta.dtdc.application:cardType.labels.cardType.renewalOptionSubTitle',
+        defaultMessage: '(Gildistími korts rennur út)',
+        description: 'Card type renewal option title',
+      },
+      reprintOptionTitle: {
+        id: 'ta.dtdc.application:cardType.labels.cardType.reprintOptionTitle',
+        defaultMessage: 'Endurrit',
+        description: 'Card type reprint option title',
+      },
+      reprintOptionSubTitle: {
+        id:
+          'ta.dtdc.application:cardType.labels.cardType.reprintOptionSubTitle',
+        defaultMessage: '(T.d. vegna nafnabreytingar)',
+        description: 'Card type reprint option sub title',
       },
     }),
   },

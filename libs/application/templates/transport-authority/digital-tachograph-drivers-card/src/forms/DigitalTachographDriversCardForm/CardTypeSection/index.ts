@@ -1,10 +1,20 @@
-import { buildSection, buildTextField } from '@island.is/application/core'
+import {
+  buildRadioField,
+  buildSection,
+  buildTextField,
+} from '@island.is/application/core'
 import { cardType } from '../../../lib/messages'
 import {
   buildDescriptionField,
   buildMultiField,
 } from '@island.is/application/core'
 import { Application } from '../../../types/schema'
+import format from 'date-fns/format'
+import {
+  newestCardExists,
+  newestCardExpiresInMonths,
+  newestCardIsExpired,
+} from '../../../utils'
 
 export const cardTypeSection = buildSection({
   id: 'cardTypeSection',
@@ -19,6 +29,7 @@ export const cardTypeSection = buildSection({
           id: 'newestCard.subtitle',
           title: cardType.labels.newestCard.subtitle,
           titleVariant: 'h5',
+          condition: (_, externalData) => newestCardExists(externalData),
         }),
         buildTextField({
           id: 'newestCard.applicationCreatedAt',
@@ -26,9 +37,15 @@ export const cardTypeSection = buildSection({
           backgroundColor: 'white',
           width: 'half',
           readOnly: true,
-          defaultValue: (application: Application) =>
-            application.externalData?.newestDriversCard?.data
-              ?.applicationCreatedAt,
+          condition: (_, externalData) => newestCardExists(externalData),
+          defaultValue: (application: Application) => {
+            return format(
+              new Date(
+                application.externalData?.newestDriversCard?.data?.applicationCreatedAt,
+              ),
+              'dd/MM/yyyy',
+            )
+          },
         }),
         buildTextField({
           id: 'newestCard.cardNumber',
@@ -36,6 +53,7 @@ export const cardTypeSection = buildSection({
           backgroundColor: 'white',
           width: 'half',
           readOnly: true,
+          condition: (_, externalData) => newestCardExists(externalData),
           defaultValue: (application: Application) =>
             application.externalData?.newestDriversCard?.data?.cardNumber,
         }),
@@ -45,8 +63,15 @@ export const cardTypeSection = buildSection({
           backgroundColor: 'white',
           width: 'half',
           readOnly: true,
-          defaultValue: (application: Application) =>
-            application.externalData?.newestDriversCard?.data?.cardValidFrom,
+          condition: (_, externalData) => newestCardExists(externalData),
+          defaultValue: (application: Application) => {
+            return format(
+              new Date(
+                application.externalData?.newestDriversCard?.data?.cardValidFrom,
+              ),
+              'dd/MM/yyyy',
+            )
+          },
         }),
         buildTextField({
           id: 'newestCard.cardValidTo',
@@ -54,8 +79,15 @@ export const cardTypeSection = buildSection({
           backgroundColor: 'white',
           width: 'half',
           readOnly: true,
-          defaultValue: (application: Application) =>
-            application.externalData?.newestDriversCard?.data?.cardValidTo,
+          condition: (_, externalData) => newestCardExists(externalData),
+          defaultValue: (application: Application) => {
+            return format(
+              new Date(
+                application.externalData?.newestDriversCard?.data?.cardValidTo,
+              ),
+              'dd/MM/yyyy',
+            )
+          },
         }),
         buildTextField({
           id: 'newestCard.countryOfIssue',
@@ -63,7 +95,101 @@ export const cardTypeSection = buildSection({
           backgroundColor: 'white',
           width: 'half',
           readOnly: true,
-          defaultValue: cardType.labels.newestCard.countryOfIssueIceland,
+          condition: (_, externalData) => newestCardExists(externalData),
+          defaultValue:
+            cardType.labels.newestCard.countryOfIssueIceland.defaultMessage,
+        }),
+        buildDescriptionField({
+          id: 'cardType.subtitle',
+          title: cardType.labels.cardType.subtitle,
+          titleVariant: 'h5',
+          space: 3,
+        }),
+        buildRadioField({
+          title: '',
+          id: 'cardType',
+          condition: (_, externalData) => !newestCardExists(externalData),
+          options: [
+            {
+              value: 'firstEdition',
+              label: cardType.labels.cardType.firstEditionOptionTitle,
+              subLabel:
+                cardType.labels.cardType.firstEditionOptionSubTitle
+                  .defaultMessage,
+            },
+          ],
+          width: 'half',
+          largeButtons: true,
+        }),
+        buildRadioField({
+          title: '',
+          id: 'cardType',
+          condition: (_, externalData) =>
+            newestCardExists(externalData) && newestCardIsExpired(externalData),
+          options: [
+            {
+              value: 'reissue',
+              label: cardType.labels.cardType.reissueOptionTitle,
+              subLabel:
+                cardType.labels.cardType.reissueOptionSubTitle.defaultMessage,
+            },
+          ],
+          width: 'half',
+          largeButtons: true,
+        }),
+        buildRadioField({
+          title: '',
+          id: 'cardType',
+          condition: (_, externalData) =>
+            newestCardExists(externalData) &&
+            !newestCardIsExpired(externalData) &&
+            newestCardExpiresInMonths(externalData) < 3,
+          options: [
+            {
+              value: 'reissue',
+              label: cardType.labels.cardType.reissueOptionTitle,
+              subLabel:
+                cardType.labels.cardType.reissueOptionSubTitle.defaultMessage,
+            },
+            {
+              value: 'renewal',
+              label: cardType.labels.cardType.renewalOptionTitle,
+              subLabel:
+                cardType.labels.cardType.renewalOptionSubTitle.defaultMessage,
+            },
+            {
+              value: 'reprint',
+              label: cardType.labels.cardType.reprintOptionTitle,
+              subLabel:
+                cardType.labels.cardType.reprintOptionSubTitle.defaultMessage,
+            },
+          ],
+          width: 'half',
+          largeButtons: true,
+        }),
+        buildRadioField({
+          title: '',
+          id: 'cardType',
+          condition: (_, externalData) =>
+            newestCardExists(externalData) &&
+            !newestCardIsExpired(externalData) &&
+            newestCardExpiresInMonths(externalData) >= 3,
+          options: [
+            {
+              value: 'reissue',
+              label: cardType.labels.cardType.reissueOptionTitle,
+              subLabel:
+                cardType.labels.cardType.reissueOptionSubTitle.defaultMessage,
+            },
+            {
+              value: 'reprint',
+              label: cardType.labels.cardType.reprintOptionTitle,
+              subLabel:
+                cardType.labels.cardType.reprintOptionSubTitle.defaultMessage,
+            },
+          ],
+          width: 'half',
+          largeButtons: true,
         }),
       ],
     }),
