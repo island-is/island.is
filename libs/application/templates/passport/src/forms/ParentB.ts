@@ -20,7 +20,7 @@ import { childsOverview } from './overviewSection/childsOverview'
 export const ParentB: Form = buildForm({
   id: 'PassportApplicationParentB',
   title: m.formName,
-  mode: FormModes.DRAFT,
+  mode: FormModes.IN_PROGRESS,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
   children: [

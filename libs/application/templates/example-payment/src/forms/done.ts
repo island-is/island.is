@@ -9,7 +9,7 @@ import * as m from '../lib/messages'
 export const done: Form = buildForm({
   id: 'ExamplePaymentDoneForm',
   title: 'Umsókn móttekin',
-  mode: FormModes.DRAFT,
+  mode: FormModes.COMPLETED,
   children: [
     buildSection({
       id: 'externalData',

@@ -5,7 +5,7 @@ import { m } from '../lib/messages'
 export const done: Form = buildForm({
   id: 'done',
   title: 'Umsókn móttekin',
-  mode: FormModes.DRAFT,
+  mode: FormModes.COMPLETED,
   children: [
     buildCustomField({
       id: 'overview',

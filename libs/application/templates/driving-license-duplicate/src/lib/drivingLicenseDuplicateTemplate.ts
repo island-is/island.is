@@ -40,6 +40,7 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
       [States.DRAFT]: {
         meta: {
           name: 'Draft',
+          status: 'draft',
           actionCard: {
             title: m.applicationTitle,
           },
@@ -72,6 +73,7 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
       [States.PAYMENT]: {
         meta: {
           name: 'Payment state',
+          status: 'inprogress',
           actionCard: {
             description: m.payment,
           },
@@ -101,6 +103,7 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
       [States.DONE]: {
         meta: {
           name: 'Done',
+          status: 'completed',
           progress: 1,
           lifecycle: pruneAfter(thirtyDays),
           onEntry: {
@@ -121,6 +124,7 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
       [States.DECLINED]: {
         meta: {
           name: 'Declined',
+          status: 'rejected',
           progress: 1,
           lifecycle: pruneAfter(thirtyDays),
           roles: [

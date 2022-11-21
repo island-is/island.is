@@ -15,7 +15,7 @@ import { deceasedInfoFields } from '../sharedSections/deceasedInfoFields'
 export const form: Form = buildForm({
   id: 'officialExchange',
   title: '',
-  mode: FormModes.DRAFT,
+  mode: FormModes.IN_PROGRESS,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
   children: [

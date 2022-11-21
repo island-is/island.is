@@ -9,7 +9,7 @@ import { m } from '../lib/messages'
 export const done: Form = buildForm({
   id: 'MarriageConditionsApplicationComplete',
   title: '',
-  mode: FormModes.DRAFT,
+  mode: FormModes.COMPLETED,
   renderLastScreenButton: true,
   children: [
     buildMultiField({

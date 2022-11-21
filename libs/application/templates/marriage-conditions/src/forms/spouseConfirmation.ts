@@ -32,7 +32,7 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
   buildForm({
     id: 'spouseConfirmation',
     title: '',
-    mode: FormModes.DRAFT,
+    mode: FormModes.IN_PROGRESS,
     renderLastScreenButton: true,
     renderLastScreenBackButton: true,
     children: [

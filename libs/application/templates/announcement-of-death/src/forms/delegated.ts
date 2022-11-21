@@ -10,7 +10,7 @@ import { m } from '../lib/messages'
 export const delegated: Form = buildForm({
   id: 'delegated',
   title: '',
-  mode: FormModes.DRAFT,
+  mode: FormModes.IN_PROGRESS,
   logo: CoatOfArms,
   children: [
     buildMultiField({

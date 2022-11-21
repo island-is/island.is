@@ -9,7 +9,7 @@ import { application, conclusion, section } from '../lib/messages'
 export const PaymentPlanSubmittedForm: Form = buildForm({
   id: 'PaymentPlanSubmittedForm',
   title: application.name,
-  mode: FormModes.IN_PROGRESS,
+  mode: FormModes.COMPLETED,
   children: [
     buildSection({
       id: 'confirmation',

@@ -91,7 +91,7 @@ export interface ApplicationStateMeta<T extends EventObject = AnyEventObject> {
   /**
    * Represents the current status of the application in the state, defaults to draft
    */
-  status?: 'approved' | 'rejected' | 'draft' | 'completed' | 'inprogress'
+  status: 'approved' | 'rejected' | 'draft' | 'completed' | 'inprogress'
   roles?: RoleInState<T>[]
   onExit?: ApplicationTemplateAPIAction
   onEntry?: ApplicationTemplateAPIAction

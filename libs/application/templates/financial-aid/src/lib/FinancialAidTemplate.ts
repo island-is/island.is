@@ -51,6 +51,7 @@ const FinancialAidTemplate: ApplicationTemplate<
       [ApplicationStates.PREREQUISITES]: {
         meta: {
           name: application.name.defaultMessage,
+          status: 'draft',
           lifecycle: {
             shouldBeListed: false,
             shouldBePruned: true,
@@ -90,6 +91,7 @@ const FinancialAidTemplate: ApplicationTemplate<
       [ApplicationStates.DRAFT]: {
         meta: {
           name: application.name.defaultMessage,
+          status: 'draft',
           lifecycle: oneMonthLifeCycle,
           actionCard: {
             description: stateDescriptions.draft,
@@ -137,6 +139,7 @@ const FinancialAidTemplate: ApplicationTemplate<
         entry: 'assignToSpouse',
         meta: {
           name: application.name.defaultMessage,
+          status: 'inprogress',
           lifecycle: oneMonthLifeCycle,
           actionCard: {
             description: stateDescriptions.spouse,
@@ -178,6 +181,7 @@ const FinancialAidTemplate: ApplicationTemplate<
       [ApplicationStates.SPOUSE]: {
         meta: {
           name: application.name.defaultMessage,
+          status: 'inprogress',
           lifecycle: oneMonthLifeCycle,
           actionCard: {
             description: stateDescriptions.spouse,
@@ -219,6 +223,7 @@ const FinancialAidTemplate: ApplicationTemplate<
       [ApplicationStates.SUBMITTED]: {
         meta: {
           name: application.name.defaultMessage,
+          status: 'completed',
           lifecycle: oneMonthLifeCycle,
           actionCard: {
             description: stateDescriptions.submitted,
@@ -254,6 +259,7 @@ const FinancialAidTemplate: ApplicationTemplate<
       [ApplicationStates.MUNCIPALITYNOTREGISTERED]: {
         meta: {
           name: application.name.defaultMessage,
+          status: 'rejected',
           lifecycle: {
             shouldBeListed: false,
             shouldBePruned: true,

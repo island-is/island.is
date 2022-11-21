@@ -11,7 +11,7 @@ export const Approved: Form = buildForm({
   id: 'ApprovedApplicationForm',
   title: '',
   logo: Logo,
-  mode: FormModes.DRAFT,
+  mode: FormModes.APPROVED,
   children: [
     buildSection({
       id: 'externalData',

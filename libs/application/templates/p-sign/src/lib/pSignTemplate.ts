@@ -30,6 +30,7 @@ const PSignTemplate: ApplicationTemplate<
       [States.DRAFT]: {
         meta: {
           name: 'Draft',
+          status: 'draft',
           actionCard: {
             title: m.applicationTitle,
           },
@@ -86,6 +87,7 @@ const PSignTemplate: ApplicationTemplate<
       [States.DONE]: {
         meta: {
           name: 'Done',
+          status: 'completed',
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
 

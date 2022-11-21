@@ -11,7 +11,7 @@ export const HealthInsuranceConfirmation: Form = buildForm({
   id: 'HealthInsuranceConfirmation',
   title: m.formTitle,
   logo: Logo,
-  mode: FormModes.DRAFT,
+  mode: FormModes.COMPLETED,
   children: [
     buildSection({
       id: 'confirmation',
