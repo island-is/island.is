@@ -54,6 +54,18 @@ class MockPaymentService {
     }
   }
 
+  async findChargeItems() {
+    return [
+      {
+        performingOrgID: faker.datatype.number(),
+        chargeType: faker.random.word(),
+        chargeItemCode: TARGET_CHARGE_ITEM_CODE,
+        chargeItemName: faker.random.word(),
+        priceAmount: faker.datatype.number(),
+      },
+    ]
+  }
+
   async createCharge() {
     return {
       user4: 'amazing-user4-code-for-url',
