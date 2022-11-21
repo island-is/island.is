@@ -1,11 +1,9 @@
-import React from 'react'
 import {
   CompanyList,
   CompanyListConnected,
   GeneralPetitionLists,
   RealEstateAgentsList,
   LawyersList,
-  MonthlyStatistics as ElectronicRegistrationsMonthlyStatistics,
 } from '@island.is/shared/connected'
 import { Image } from '../Image/Image'
 import FaqList from '../FaqList/FaqList'
@@ -19,7 +17,7 @@ import { TeamList } from '../TeamList/TeamList'
 import { ContactUs } from '../ContactUs/ContactUs'
 import { Location } from '../Location/Location'
 
-const renderConnectedComponent = (slice) => {
+export const renderConnectedComponent = (slice) => {
   const data = slice.json
 
   switch (slice.componentType) {
@@ -33,7 +31,6 @@ const renderConnectedComponent = (slice) => {
     case 'Skilavottord/CompanyListConnected':
       if (typeof data === 'object') {
         const { graphqlLink } = data
-
         return <CompanyListConnected graphqlLink={graphqlLink} />
       }
       break
@@ -41,8 +38,6 @@ const renderConnectedComponent = (slice) => {
       return <RealEstateAgentsList slice={slice} />
     case 'Lögmenn/Lawyers':
       return <LawyersList slice={slice} />
-    case 'ElectronicRegistrations/MonthlyStatistics':
-      return <ElectronicRegistrationsMonthlyStatistics slice={slice} />
     default:
       break
   }
@@ -51,7 +46,7 @@ const renderConnectedComponent = (slice) => {
 }
 
 // TODO: add types
-export const defaultRenderComponent = {
+export const defaultRenderComponentObject = {
   ConnectedComponent: (slice) => renderConnectedComponent(slice),
   FaqList: (slice) => <FaqList {...slice} />,
   Statistics: (slice) => <Statistics {...slice} />,

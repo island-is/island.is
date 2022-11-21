@@ -70,6 +70,11 @@ export type ContactDto = {
   star_phone?: string
 }
 
+export type DigitalSignee = {
+  phone: string
+  email: string
+}
+
 export type PersonalElectionFinancialStatementValues = {
   contributionsByLegalEntities: number // 100 Framlög lögaðila
   individualContributions: number // 101 Framlög einstaklinga

@@ -68,6 +68,8 @@ export interface AutoAuthOptions {
    * Optional configuration for token request URL. Used when the token endpoint doesn't follow the '{issuer}/connect/token' pattern.
    */
   tokenEndpoint?: string
+
+  audience?: string
 }
 
 export interface AuthMiddlewareOptions {
@@ -184,6 +186,7 @@ export const withAutoAuth = ({
       client_id: options.clientId,
       client_secret: options.clientSecret,
       scope: options.scope.join(' '),
+      ...(options.audience && { audience: options.audience }),
     })
 
     if (auth && isTokenExchange) {

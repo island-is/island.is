@@ -29,6 +29,7 @@ import {
   HeadWithSocialSharing,
   LiveChatIncChatPanel,
   Sticky,
+  SidebarShipSearchInput,
 } from '@island.is/web/components'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { useNamespace } from '@island.is/web/hooks'
@@ -160,7 +161,9 @@ export const getThemeConfig = (
     : { themeConfig: { footerVersion } }
 }
 
-const OrganizationHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
+export const OrganizationHeader: React.FC<HeaderProps> = ({
+  organizationPage,
+}) => {
   switch (organizationPage.theme) {
     case 'syslumenn':
       return <SyslumennHeader organizationPage={organizationPage} />
@@ -436,6 +439,23 @@ const getActiveNavigationItemTitle = (
   }
 }
 
+const renderConnectedComponent = (slice) => {
+  if (!slice?.componentType) return null
+
+  switch (slice.componentType) {
+    case 'LatestNewsCard':
+      return (
+        <LatestNewsCardConnectedComponent key={slice?.id} {...slice?.json} />
+      )
+    case 'Fiskistofa/ShipSearchSidebarInput':
+      return (
+        <SidebarShipSearchInput key={slice?.id} namespace={slice?.json ?? {}} />
+      )
+    default:
+      return null
+  }
+}
+
 export const OrganizationWrapper: React.FC<WrapperProps> = ({
   pageTitle,
   pageDescription,
@@ -542,17 +562,8 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                         )
                       }
 
-                      if (
-                        card.__typename === 'ConnectedComponent' &&
-                        (card.type === 'LatestNewsCard' ||
-                          card['componentType'] === 'LatestNewsCard')
-                      ) {
-                        return (
-                          <LatestNewsCardConnectedComponent
-                            key={card.id}
-                            {...card.json}
-                          />
-                        )
+                      if (card.__typename === 'ConnectedComponent') {
+                        return renderConnectedComponent(card)
                       }
 
                       return null

@@ -4,6 +4,7 @@ import {
   Client,
   Contact,
   ContactType,
+  DigitalSignee,
   FinancialStatementsInaoClientService,
   PersonalElectionFinancialStatementValues,
   PoliticalPartyFinancialStatementValues,
@@ -140,7 +141,7 @@ export class FinancialStatementsInaoTemplateService extends BaseTemplateApiServi
         ? undefined
         : await this.getAttachment(application)
 
-      this.logger.debug(
+      this.logger.info(
         `PostFinancialStatementForPersonalElection => clientNationalId: '${nationalId}', actorNationalId: '${
           actor?.nationalId
         }', electionId: '${electionId}', noValueStatement: '${noValueStatement}', clientName: '${clientName}', values: '${JSON.stringify(
@@ -163,10 +164,16 @@ export class FinancialStatementsInaoTemplateService extends BaseTemplateApiServi
           }
         : undefined
 
+      const digitalSignee: DigitalSignee = {
+        email: clientEmail,
+        phone: clientPhone,
+      }
+
       const result: DataResponse = await this.financialStatementsClientService
         .postFinancialStatementForPersonalElection(
           client,
           actorContact,
+          digitalSignee,
           electionId,
           noValueStatement,
           values,
@@ -203,6 +210,11 @@ export class FinancialStatementsInaoTemplateService extends BaseTemplateApiServi
       ) as string
 
       const actorsName = getValueViaPath(answers, 'about.fullName') as string
+      const clientPhone = getValueViaPath(
+        answers,
+        'about.phoneNumber',
+      ) as string
+      const clientEmail = getValueViaPath(answers, 'about.email') as string
 
       const fileName = await this.getAttachment(application)
 
@@ -222,10 +234,16 @@ export class FinancialStatementsInaoTemplateService extends BaseTemplateApiServi
         },
       ]
 
+      const digitalSignee: DigitalSignee = {
+        email: clientEmail,
+        phone: clientPhone,
+      }
+
       const result: DataResponse = await this.financialStatementsClientService
         .postFinancialStatementForPoliticalParty(
           client,
           contacts,
+          digitalSignee,
           year,
           '',
           values,
@@ -263,6 +281,12 @@ export class FinancialStatementsInaoTemplateService extends BaseTemplateApiServi
         'cemetryCaretaker',
       ) as BoardMember[]
 
+      const clientPhone = getValueViaPath(
+        answers,
+        'about.phoneNumber',
+      ) as string
+      const clientEmail = getValueViaPath(answers, 'about.email') as string
+
       const file = getValueViaPath(answers, 'attachments.file')
 
       const fileName = file ? await this.getAttachment(application) : undefined
@@ -283,22 +307,30 @@ export class FinancialStatementsInaoTemplateService extends BaseTemplateApiServi
         },
       ]
 
-      contactsAnswer.map((x) => {
-        const contact: Contact = {
-          nationalId: x.nationalId,
-          name: x.name,
-          contactType:
-            x.role === 'Stjórnarmaður'
-              ? ContactType.BoardMember
-              : ContactType.Inspector,
-        }
-        contacts.push(contact)
-      })
+      if (contactsAnswer) {
+        contactsAnswer.map((x) => {
+          const contact: Contact = {
+            nationalId: x.nationalId,
+            name: x.name,
+            contactType:
+              x.role === 'Stjórnarmaður'
+                ? ContactType.BoardMember
+                : ContactType.Inspector,
+          }
+          contacts.push(contact)
+        })
+      }
+
+      const digitalSignee: DigitalSignee = {
+        email: clientEmail,
+        phone: clientPhone,
+      }
 
       const result: DataResponse = await this.financialStatementsClientService
         .postFinancialStatementForCemetery(
           client,
           contacts,
+          digitalSignee,
           year,
           '',
           values,

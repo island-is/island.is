@@ -102,6 +102,8 @@
 - [Application System](apps/application-system/README.md)
 - [Financial Aid System for Samband Sveitarfélaga](apps/financial-aid/README.md)
 - [Judicial System](apps/judicial-system/README.md)
+- [User Portals](apps/portals/README.md)
+  - [Admin Portal](apps/portals/admin/README.md)
 - [Reference Backend](apps/reference-backend/README.md)
 - [Reference Next App](apps/reference-next-app/README.md)
 - [Service Portal](apps/service-portal/README.md)
