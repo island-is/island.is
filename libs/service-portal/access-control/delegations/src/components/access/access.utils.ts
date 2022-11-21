@@ -10,6 +10,7 @@ import {
   MappedScope,
 } from './access.types'
 
+export const ROW_LOADING_HEIGHT = 56
 export const DATE_FORMAT = 'dd.MM.yyyy'
 
 export const formatDelegationDate = (dt: string | Date) =>

@@ -25,12 +25,14 @@ const isDateExpired = (date: string) => new Date(date) < new Date()
 interface AccessCardProps {
   delegation: AuthCustomDelegation
   onDelete(delegation: AuthCustomDelegation): void
+  onView?(delegation: AuthCustomDelegation): void
   variant?: 'outgoing' | 'incoming'
 }
 
 export const AccessCard = ({
   delegation,
   onDelete,
+  onView,
   variant = 'outgoing',
 }: AccessCardProps) => {
   const { formatMessage } = useLocale()
@@ -44,9 +46,7 @@ export const AccessCard = ({
   )
   const hasTags = tags.length > 0
   const isOutgoing = variant === 'outgoing'
-  const href = isOutgoing
-    ? `${ServicePortalPath.AccessControlDelegations}/${delegation.id}`
-    : `${ServicePortalPath.AccessControlDelegationsIncoming}/${delegation.id}`
+  const href = `${ServicePortalPath.AccessControlDelegations}/${delegation.id}`
 
   const isExpired = useMemo(() => {
     if (delegation.validTo) {
@@ -133,11 +133,7 @@ export const AccessCard = ({
       border={isExpired ? 'disabled' : 'standard'}
       borderRadius="large"
     >
-      <Box
-        display="flex"
-        justifyContent="spaceBetween"
-        alignItems={isOutgoing ? 'flexStart' : 'center'}
-      >
+      <Box display="flex" justifyContent="spaceBetween" alignItems="flexStart">
         <Stack space="smallGutter">
           <Box display="flex" columnGap={2} alignItems="center">
             {!isOutgoing && (
@@ -263,11 +259,11 @@ export const AccessCard = ({
                 </Button>
               )}
               <Box marginLeft={3}>
-                {!isOutgoing ? (
+                {!isOutgoing && onView ? (
                   <Button
                     size="small"
                     variant="utility"
-                    onClick={() => history.push(href)}
+                    onClick={() => onView(delegation)}
                   >
                     {formatMessage(m.view)}
                   </Button>

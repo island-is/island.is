@@ -113,6 +113,7 @@ export const DelegationsOutgoing = () => {
                       onDelete={(delegation) => {
                         setDelegation(delegation)
                       }}
+                      variant="outgoing"
                     />
                   ),
               )}

@@ -17,12 +17,18 @@ import {
 import { AccessDeleteModal } from '../../access/AccessDeleteModal'
 import { AccessCard } from '../../access/AccessCard'
 import { DelegationsEmptyState } from '../DelegationsEmptyState'
+import { DelegationIncomingModal } from './DelegationIncomingModal'
 
 export const DelegationsIncoming = () => {
   const { formatMessage, lang = 'is' } = useLocale()
-  const [delegation, setDelegation] = useState<AuthCustomDelegation | null>(
-    null,
-  )
+  const [
+    delegationView,
+    setDelegationView,
+  ] = useState<AuthCustomDelegation | null>(null)
+  const [
+    delegationDelete,
+    setDelegationDelete,
+  ] = useState<AuthCustomDelegation | null>(null)
 
   const { data, loading, refetch, error } = useAuthDelegationsQuery({
     variables: {
@@ -70,7 +76,10 @@ export const DelegationsIncoming = () => {
                   }
                   delegation={delegation}
                   onDelete={(delegation) => {
-                    setDelegation(delegation)
+                    setDelegationDelete(delegation)
+                  }}
+                  onView={(delegation) => {
+                    setDelegationView(delegation)
                   }}
                   variant="incoming"
                 />
@@ -80,18 +89,23 @@ export const DelegationsIncoming = () => {
       )}
       <AccessDeleteModal
         onClose={() => {
-          setDelegation(null)
+          setDelegationDelete(null)
         }}
         onDelete={() => {
-          setDelegation(null)
+          setDelegationDelete(null)
           refetch({
             input: {
               direction: AuthDelegationDirection.Incoming,
             },
           })
         }}
-        isVisible={!!delegation}
-        delegation={delegation as AuthCustomDelegation}
+        isVisible={!!delegationDelete}
+        delegation={delegationDelete as AuthCustomDelegation}
+      />
+      <DelegationIncomingModal
+        onClose={() => setDelegationView(null)}
+        isVisible={!!delegationView}
+        delegation={delegationView as AuthCustomDelegation}
       />
     </Box>
   )

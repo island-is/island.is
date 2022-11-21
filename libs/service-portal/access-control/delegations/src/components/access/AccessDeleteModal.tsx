@@ -19,8 +19,7 @@ import { Modal, ModalProps } from '../Modal/Modal'
 import { m } from '@island.is/service-portal/core'
 import { IdentityCard } from '../IdentityCard/IdentityCard'
 import { AccessList } from '../access/AccessList/AccessList'
-
-const ROW_LOADING_HEIGHT = 56
+import { ROW_LOADING_HEIGHT } from './access.utils'
 
 type AccessDeleteModalProps = Pick<ModalProps, 'onClose' | 'isVisible'> & {
   delegation: AuthCustomDelegation
