@@ -7,15 +7,17 @@
 set -e
 
 work_dir="${1:-/usr/share/nginx/html}"
-file="$work_dir/index.html"
+file="$work_dir/index.html.src"
+file_out="$work_dir/index.html"
 
 placeholder="<!-- environment placeholder -->"
 
 function extract_environment() {
   env_prefix="SI_PUBLIC_"
   environment="{}"
-  mapfile -t env_names < <(grep -ohr "$env_prefix\w*" "$work_dir/" | sort | uniq)
+  IFS=$'\n' read -r -d '' -a env_names < <(grep -ohr "$env_prefix\w*" "$work_dir/" | sort | uniq)
   env_names+=("APP_VERSION")
+  env_names+=("PROD_MODE")
 
   for env_name in "${env_names[@]}"; do
     env_value=${!env_name}
@@ -40,7 +42,7 @@ function insert_environment() {
   escaped_environment=$(echo "$environment" | sed -e 's/[\/&]/\\&/g')
   script="$script_start $escaped_environment $script_end"
 
-  sed -i "s/$placeholder/$script/g" "$file"
+  cat "$file" | sed "s/$placeholder/$script/g" > "$file_out"
 }
 
 function main() {
@@ -49,7 +51,7 @@ function main() {
     environment=$(extract_environment)
 
     environment_length=$(echo "$environment" | jq length)
-    echo "Inserting environment with $environment_length keys to $file"
+    echo "Inserting environment with $environment_length keys to $file_out"
     insert_environment "$environment"
   else
     echo "File $file does not have env placeholder $placeholder"

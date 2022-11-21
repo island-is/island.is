@@ -2,7 +2,7 @@ import { getStaticEnv } from '@island.is/shared/utils'
 
 const devConfig = {
   production: false,
-  baseApiUrl: 'http://localhost:9456',
+  baseApiUrl: 'http://localhost:4444',
   identityServer: {
     authority: 'https://identity-server.dev01.devland.is',
   },
@@ -15,7 +15,7 @@ const devConfig = {
 
 const prodConfig = {
   production: true,
-  baseApiUrl: window.location.origin,
+  baseApiUrl: getStaticEnv('SI_PUBLIC_GRAPHQL_PATH') ?? window.location.origin,
   identityServer: {
     authority: getStaticEnv('SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL'),
   },
@@ -26,7 +26,7 @@ const prodConfig = {
   APP_VERSION: getStaticEnv('APP_VERSION'),
 }
 
-export default process.env.PROD_MODE === 'true' ||
+export default getStaticEnv('PROD_MODE') === 'true' ||
 process.env.NODE_ENV === 'production'
   ? prodConfig
   : devConfig

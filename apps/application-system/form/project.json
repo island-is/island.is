@@ -28,6 +28,7 @@
           "optimization": false,
           "outputHashing": "all",
           "sourceMap": false,
+          "index": "apps/application-system/form/src/index.html.src",
           "extractCss": true,
           "namedChunks": false,
           "extractLicenses": true,
@@ -43,7 +44,16 @@
       },
       "outputs": ["{options.outputPath}"]
     },
-    "serve": {
+    "serve" : {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "bash -c 'scripts/dockerfile-assets/bash/extract-environment.sh apps/application-system/form/src'",
+          "yarn nx run application-system-form:serveReal"
+        ]
+      }
+    },
+    "serveReal": {
       "executor": "@nrwl/web:dev-server",
       "options": {
         "port": 4242,

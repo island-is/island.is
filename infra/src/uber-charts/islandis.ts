@@ -49,7 +49,6 @@ const appSystemApi = appSystemApiSetup({
   servicesEndorsementApi: endorsement,
 })
 const appSystemApiWorker = appSystemApiWorkerSetup()
-const appSystemForm = appSystemFormSetup({})
 
 const servicePortalApi = servicePortalApiSetup()
 const servicePortal = servicePortalSetup({})
@@ -61,6 +60,7 @@ const api = apiSetup({
   icelandicNameRegistryBackend: nameRegistryBackend,
   servicesEndorsementApi: endorsement,
 })
+const appSystemForm = appSystemFormSetup({ api: api })
 const web = webSetup({ api: api })
 const searchIndexer = searchIndexerSetup()
 const contentfulEntryTagger = contentfulEntryTaggerSetup()
