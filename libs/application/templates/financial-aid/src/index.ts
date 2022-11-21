@@ -10,6 +10,8 @@ export * from './lib/types'
 
 export * from './lib/utils'
 
+export * as messages from './lib/messages'
+
 export * from './dataProviders'
 
 export default FinancialAidTemplate

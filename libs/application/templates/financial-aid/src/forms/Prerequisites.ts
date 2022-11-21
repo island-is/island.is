@@ -8,7 +8,6 @@ import {
   buildSubmitField,
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
-import { DataProviderTypes } from '../lib/types'
 
 import * as m from '../lib/messages'
 import { Routes } from '../lib/constants'

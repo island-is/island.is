@@ -26,6 +26,8 @@ import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
 import { FetchError } from '@island.is/clients/middlewares'
+import { messages } from '@island.is/application/templates/financial-aid'
+import { TemplateApiError } from '@island.is/nest/problem'
 
 type Props = Omit<TemplateApiModuleActionProps, 'application'> & {
   application: FAApplication
@@ -57,7 +59,13 @@ export class FinancialAidService extends BaseTemplateApiService {
     if (error.status === 404) {
       return null
     }
-    throw error
+    throw new TemplateApiError(
+      {
+        title: messages.serviceErrors.veita.title,
+        summary: messages.serviceErrors.veita.summary,
+      },
+      500,
+    )
   }
 
   async createApplication({
@@ -191,8 +199,14 @@ export class FinancialAidService extends BaseTemplateApiService {
       .then((res) => {
         return { currentApplicationId: res.id }
       })
-      .catch((error) => {
-        throw error
+      .catch(() => {
+        throw new TemplateApiError(
+          {
+            title: messages.serviceErrors.createApplication.title,
+            summary: messages.serviceErrors.createApplication.summary,
+          },
+          500,
+        )
       })
   }
 
@@ -225,18 +239,28 @@ export class FinancialAidService extends BaseTemplateApiService {
   }
 
   async taxData({ auth, application }: Props): Promise<TaxData> {
-    const personalTaxReturn = await this.personalTaxReturnApiWithAuth(
-      auth,
-    ).personalTaxReturnControllerMunicipalitiesPersonalTaxReturn({
-      id: application.id,
-    })
-    const directTaxPayments = await this.personalTaxReturnApiWithAuth(
-      auth,
-    ).personalTaxReturnControllerMunicipalitiesDirectTaxPayments()
+    try {
+      const personalTaxReturn = await this.personalTaxReturnApiWithAuth(
+        auth,
+      ).personalTaxReturnControllerMunicipalitiesPersonalTaxReturn({
+        id: application.id,
+      })
+      const directTaxPayments = await this.personalTaxReturnApiWithAuth(
+        auth,
+      ).personalTaxReturnControllerMunicipalitiesDirectTaxPayments()
 
-    return {
-      municipalitiesPersonalTaxReturn: personalTaxReturn as TaxData['municipalitiesPersonalTaxReturn'],
-      municipalitiesDirectTaxPayments: directTaxPayments as TaxData['municipalitiesDirectTaxPayments'],
+      return {
+        municipalitiesPersonalTaxReturn: personalTaxReturn as TaxData['municipalitiesPersonalTaxReturn'],
+        municipalitiesDirectTaxPayments: directTaxPayments as TaxData['municipalitiesDirectTaxPayments'],
+      }
+    } catch {
+      throw new TemplateApiError(
+        {
+          title: messages.serviceErrors.tax.title,
+          summary: messages.serviceErrors.tax.summary,
+        },
+        500,
+      )
     }
   }
 
