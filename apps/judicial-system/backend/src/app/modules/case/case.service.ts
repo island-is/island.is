@@ -589,7 +589,6 @@ export class CaseService {
           {
             origin: theCase.origin,
             type: theCase.type,
-            indictmentSubtypes: theCase.indictmentSubtypes,
             description: theCase.description,
             policeCaseNumbers: theCase.policeCaseNumbers,
             defenderName: theCase.defenderName,
