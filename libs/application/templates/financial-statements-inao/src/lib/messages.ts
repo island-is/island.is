@@ -156,6 +156,11 @@ export const m = defineMessages({
       'Það staðfestist hér með að heildartekjur eða -kostnaður vegna framboðsins voru ekki umfram þau fjárhæðarmörk sem tilgreind eru í 3. mgr. 10. gr. laga nr. 162/2006, um starfsemi stjórnmálasamtaka, og er framboðið því undanþegið uppgjörsskyldu.',
     description: 'statement',
   },
+  SignatureMessage: {
+    id: 'fsn.application:SignatureMessage',
+    defaultMessage: 'Rafræn undirritun verður send á netfangið',
+    description: 'signature message',
+  },
   nationalId: {
     id: 'fsn.application:nationalId',
     defaultMessage: 'Kennitala',
@@ -690,6 +695,11 @@ export const m = defineMessages({
     id: 'fsn.application:received',
     defaultMessage: 'Ársreikningur mótekinn',
     description: 'financial statement received',
+  },
+  infoReceived: {
+    id: 'fsn.application:infoReceived',
+    defaultMessage: 'Uppgjör móttekið',
+    description: 'election info received',
   },
   dataCollectionCheckboxLabel: {
     id: 'fsn.application:dataCollectionCheckboxLabel',
