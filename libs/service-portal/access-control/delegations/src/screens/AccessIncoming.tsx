@@ -5,13 +5,20 @@ import { IdentityCard } from '../components/IdentityCard/IdentityCard'
 import { useDelegation } from '../hooks/useDelegation'
 import { AccessHeader } from '../components/access/AccessHeader/AccessHeader'
 import { AccessList } from '../components/access/AccessList/AccessList'
+import { Features, useFeatureFlag } from '@island.is/react/feature-flags'
 
 const AccessIncoming = () => {
   useNamespaces(['sp.settings-access-control', 'sp.access-control-delegations'])
+  // TODO: Remove feature flag when incoming delegations are ready
+  const incomingFeatureFlag = useFeatureFlag(
+    Features.incomingDelegationsV2,
+    false,
+  )
+
   const { formatMessage } = useLocale()
   const { delegation, delegationLoading, scopeTree } = useDelegation()
 
-  if (!delegationLoading && !delegation) {
+  if ((!delegationLoading && !delegation) || !incomingFeatureFlag.value) {
     return <NotFound />
   }
 

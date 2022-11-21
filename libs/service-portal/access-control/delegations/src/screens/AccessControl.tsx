@@ -11,6 +11,7 @@ import { useAuth } from '@island.is/auth/react'
 import { isDefined } from '@island.is/shared/utils'
 import { DelegationsIncoming } from '../components/delegations/incoming/DelegationsIncoming'
 import { DelegationsOutgoing } from '../components/delegations/outgoing/DelegationsOutgoing'
+import { Features, useFeatureFlag } from '@island.is/react/feature-flags'
 
 const TAB_DELEGATION_OUTGOING_ID = '0'
 const TAB_DELEGATION_INCOMING_ID = '1'
@@ -18,6 +19,11 @@ const DELEGATIONS_INCOMING_PATH = `${ServicePortalPath.MinarSidurPath}${ServiceP
 
 const AccessControl = () => {
   useNamespaces(['sp.settings-access-control', 'sp.access-control-delegations'])
+  // TODO: Remove feature flag when incoming delegations are ready
+  const incomingFeatureFlag = useFeatureFlag(
+    Features.incomingDelegationsV2,
+    false,
+  )
   const { formatMessage } = useLocale()
   const { userInfo } = useAuth()
   const history = useHistory()
@@ -51,7 +57,7 @@ const AccessControl = () => {
         marginBottom={0}
       />
       <Box marginTop={[0, 0, 5]}>
-        {onlyOutgoingDelegations ? (
+        {onlyOutgoingDelegations || !incomingFeatureFlag.value ? (
           <DelegationsOutgoing />
         ) : (
           <Tabs
