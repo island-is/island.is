@@ -23,8 +23,8 @@ import {
   indictmentCases,
   investigationCases,
   restrictionCases,
-  User,
 } from '@island.is/judicial-system/types'
+import type { User } from '@island.is/judicial-system/types'
 
 import { judgeRule, prosecutorRule, registrarRule } from '../../guards'
 import {

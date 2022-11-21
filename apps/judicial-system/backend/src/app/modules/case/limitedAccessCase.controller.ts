@@ -24,8 +24,8 @@ import {
 import {
   investigationCases,
   restrictionCases,
-  User as TUser,
 } from '@island.is/judicial-system/types'
+import type { User as TUser } from '@island.is/judicial-system/types'
 
 import { defenderRule } from '../../guards'
 import { User } from '../user'
