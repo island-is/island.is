@@ -22,12 +22,6 @@ export const prerequisitesSection = buildSection({
           subTitle: externalData.nationalRegistry.subTitle,
         }),
         buildDataProviderItem({
-          id: 'userProfile',
-          type: 'UserProfileProvider',
-          title: externalData.userProfile.title,
-          subTitle: externalData.userProfile.subTitle,
-        }),
-        buildDataProviderItem({
           id: 'currentVehicleList',
           type: 'CurrentVehiclesProvider',
           title: externalData.currentVehicles.title,

@@ -90,6 +90,15 @@ export const vehicleSubSection = buildSubSection({
           },
         }),
         buildTextField({
+          id: 'owner.name',
+          title: information.labels.owner.name,
+          backgroundColor: 'white',
+          width: 'half',
+          readOnly: true,
+          defaultValue: (application: Application) =>
+            application.externalData?.nationalRegistry?.data?.fullName,
+        }),
+        buildTextField({
           id: 'owner.nationalId',
           title: information.labels.owner.nationalId,
           backgroundColor: 'white',
@@ -100,31 +109,38 @@ export const vehicleSubSection = buildSubSection({
             application.externalData?.nationalRegistry?.data?.nationalId,
         }),
         buildTextField({
-          id: 'owner.name',
-          title: information.labels.owner.name,
+          id: 'owner.address',
+          title: information.labels.owner.address,
           backgroundColor: 'white',
           width: 'half',
           readOnly: true,
+          condition: (formValue, externalData) => {
+            const vehicle = getSelectedVehicle(
+              externalData,
+              formValue,
+            ) as VehiclesCurrentVehicle
+            return vehicle?.role === 'Eigandi'
+          },
           defaultValue: (application: Application) =>
-            application.externalData?.nationalRegistry?.data?.fullName,
+            application.externalData?.nationalRegistry?.data?.address
+              ?.streetAddress,
         }),
         buildTextField({
-          id: 'owner.email',
-          title: information.labels.owner.email,
+          id: 'owner.postalCode',
+          title: information.labels.owner.postalcode,
+          backgroundColor: 'white',
           width: 'half',
-          variant: 'email',
-          required: true,
+          readOnly: true,
+          condition: (formValue, externalData) => {
+            const vehicle = getSelectedVehicle(
+              externalData,
+              formValue,
+            ) as VehiclesCurrentVehicle
+            return vehicle?.role === 'Eigandi'
+          },
           defaultValue: (application: Application) =>
-            application.externalData?.userProfile?.data?.email,
-        }),
-        buildTextField({
-          id: 'owner.phone',
-          title: information.labels.owner.phone,
-          width: 'half',
-          variant: 'tel',
-          required: true,
-          defaultValue: (application: Application) =>
-            application.externalData?.userProfile?.data?.phone,
+            application.externalData?.nationalRegistry?.data?.address
+              ?.postalCode,
         }),
       ],
     }),

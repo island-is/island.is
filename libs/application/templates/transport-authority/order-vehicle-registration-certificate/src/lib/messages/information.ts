@@ -94,16 +94,6 @@ export const information = {
         defaultMessage: 'Póstnúmer',
         description: 'Owner postalcode label',
       },
-      email: {
-        id: 'ta.ovrc.application:information.labels.owner.email',
-        defaultMessage: 'Netfang',
-        description: 'Owner email label',
-      },
-      phone: {
-        id: 'ta.ovrc.application:information.labels.owner.phone',
-        defaultMessage: 'Gsm númer',
-        description: 'Owner phone number label',
-      },
       alertAddress: {
         id: 'ta.ovrc.application:information.labels.owner.alertAddress',
         defaultMessage:
