@@ -4,7 +4,6 @@ import { AuthScopeTreeQuery } from '@island.is/service-portal/graphql'
 export const GROUP = 'group'
 export const SCOPE = 'scope'
 export const AUTH_API_SCOPE_GROUP_TYPE = 'AuthApiScopeGroup'
-export const AUTH_API_SCOPE_TYPE = 'AuthApiScope'
 
 type ScopeCustomFields = {
   model: string

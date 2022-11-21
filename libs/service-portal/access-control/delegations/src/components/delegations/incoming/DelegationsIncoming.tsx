@@ -48,38 +48,36 @@ export const DelegationsIncoming = () => {
 
   return (
     <Box display="flex" flexDirection="column" rowGap={4} marginTop={[1, 1, 8]}>
-      <div>
-        {loading ? (
-          <SkeletonLoader width="100%" height={191} />
-        ) : error ? (
-          <AlertBanner
-            description={formatMessage(m.errorFetch)}
-            variant="error"
-          />
-        ) : delegations.length === 0 ? (
-          <DelegationsEmptyState />
-        ) : (
-          <Stack space={3}>
-            {delegations.map(
-              (delegation) =>
-                delegation.from && (
-                  <AccessCard
-                    key={
-                      delegation.type === AuthDelegationType.Custom
-                        ? delegation.id
-                        : `${delegation.type}-${delegation.from.nationalId}`
-                    }
-                    delegation={delegation}
-                    onDelete={(delegation) => {
-                      setDelegation(delegation)
-                    }}
-                    variant="incoming"
-                  />
-                ),
-            )}
-          </Stack>
-        )}
-      </div>
+      {loading ? (
+        <SkeletonLoader width="100%" height={191} />
+      ) : error ? (
+        <AlertBanner
+          description={formatMessage(m.errorFetch)}
+          variant="error"
+        />
+      ) : delegations.length === 0 ? (
+        <DelegationsEmptyState />
+      ) : (
+        <Stack space={3}>
+          {delegations.map(
+            (delegation) =>
+              delegation.from && (
+                <AccessCard
+                  key={
+                    delegation.type === AuthDelegationType.Custom
+                      ? delegation.id
+                      : `${delegation.type}-${delegation.from.nationalId}`
+                  }
+                  delegation={delegation}
+                  onDelete={(delegation) => {
+                    setDelegation(delegation)
+                  }}
+                  variant="incoming"
+                />
+              ),
+          )}
+        </Stack>
+      )}
       <AccessDeleteModal
         onClose={() => {
           setDelegation(null)

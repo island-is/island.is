@@ -27,9 +27,6 @@ export const grid = style({
 })
 
 export const gridItem = style({
-  paddingTop: 0,
-  paddingBottom: 0,
-  paddingRight: 0,
   ...themeUtils.responsiveStyle({
     lg: {
       paddingTop: theme.spacing[2],

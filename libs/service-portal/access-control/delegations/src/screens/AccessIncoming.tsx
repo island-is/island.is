@@ -19,7 +19,7 @@ const AccessIncoming = () => {
     <Box
       marginTop={[3, 3, 3, 4]}
       display="flex"
-      rowGap={5}
+      rowGap={[4, 4, 4, 5]}
       flexDirection="column"
     >
       <AccessHeader delegation={delegation} showValidityPeriodMobile>

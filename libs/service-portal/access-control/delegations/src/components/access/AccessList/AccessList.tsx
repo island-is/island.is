@@ -29,7 +29,9 @@ export const AccessList = ({
   ) => {
     return scopeTree.map((scope) => {
       if (
+        // Check if scope is a group
         scope.__typename === AUTH_API_SCOPE_GROUP_TYPE &&
+        // Make sure the group children exist in the delegation scopes
         scope.children?.some((childScope) =>
           getDelegationScopeByName(childScope.name),
         )

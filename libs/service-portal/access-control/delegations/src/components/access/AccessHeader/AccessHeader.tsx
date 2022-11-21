@@ -31,40 +31,43 @@ export const AccessHeader = ({
       alignItems={['flexStart', 'flexStart', 'flexStart', 'flexEnd']}
       className={styles.container}
     >
-      <div className={styles.firstColumn}>
-        <Box display="flex" flexDirection="column" rowGap={md ? 1 : 2}>
-          <Box
-            display="flex"
-            justifyContent="spaceBetween"
-            alignItems="center"
-            columnGap={1}
-          >
-            <Text variant="h3" as="h1">
-              {formatMessage({
-                id: 'sp.access-control-delegations:access-title',
-                defaultMessage: 'Réttindi',
-              })}
-            </Text>
-            <Hidden above="md">
-              {showValidityPeriodMobile && delegation?.validTo && (
-                <AccessDate validTo={delegation.validTo} />
-              )}
-            </Hidden>
-          </Box>
-          {delegation ? (
-            <Text variant="eyebrow">{`${delegation?.to?.name} • ${delegation?.domain.displayName}`}</Text>
-          ) : (
-            <SkeletonLoader width="60%" height={21} />
-          )}
-          <Text variant="default">
+      <Box
+        display="flex"
+        flexDirection="column"
+        rowGap={md ? 1 : 2}
+        className={styles.firstColumn}
+      >
+        <Box
+          display="flex"
+          justifyContent="spaceBetween"
+          alignItems="center"
+          columnGap={1}
+        >
+          <Text variant="h3" as="h1">
             {formatMessage({
-              id: 'sp.settings-access-control:access-intro',
-              defaultMessage:
-                'Reyndu að lágmarka þau réttindi sem þú vilt veita viðkomandi eins mikið og mögulegt er.',
+              id: 'sp.access-control-delegations:access-title',
+              defaultMessage: 'Réttindi',
             })}
           </Text>
+          <Hidden above="md">
+            {showValidityPeriodMobile && delegation?.validTo && (
+              <AccessDate validTo={delegation.validTo} />
+            )}
+          </Hidden>
         </Box>
-      </div>
+        {delegation ? (
+          <Text variant="eyebrow">{`${delegation?.to?.name} • ${delegation?.domain.displayName}`}</Text>
+        ) : (
+          <SkeletonLoader width="60%" height={21} />
+        )}
+        <Text variant="default">
+          {formatMessage({
+            id: 'sp.settings-access-control:access-intro',
+            defaultMessage:
+              'Reyndu að lágmarka þau réttindi sem þú vilt veita viðkomandi eins mikið og mögulegt er.',
+          })}
+        </Text>
+      </Box>
       <div className={styles.secondColumn}>{children}</div>
     </Box>
   )
