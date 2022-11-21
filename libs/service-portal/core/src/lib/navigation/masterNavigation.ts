@@ -361,15 +361,11 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             name: m.accessControlDelegationsIncoming,
             path: ServicePortalPath.AccessControlDelegationsIncoming,
             navHide: true,
+            breadcrumbHide: true,
           },
           {
             name: m.accessControlAccess,
             path: ServicePortalPath.AccessControlDelegationAccess,
-            navHide: true,
-          },
-          {
-            name: m.accessControlAccess,
-            path: ServicePortalPath.AccessControlDelegationsIncomingAccess,
             navHide: true,
           },
         ],

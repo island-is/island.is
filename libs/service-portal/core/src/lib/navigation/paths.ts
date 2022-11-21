@@ -28,7 +28,6 @@ export enum ServicePortalPath {
   AccessControlDelegationAccess = '/adgangsstyring/umbod/:delegationId',
   // Access Control - Incoming delegations, i.e. to me
   AccessControlDelegationsIncoming = '/adgangsstyring/umbod-til-min',
-  AccessControlDelegationsIncomingAccess = '/adgangsstyring/umbod-til-min/:delegationId',
 
   SettingsPersonalInformation = '/stillingar/minar-stillingar',
   SettingsPersonalInformationEditPhoneNumber = '/stillingar/minar-stillingar/breyta-simanumeri',
