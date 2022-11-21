@@ -12,12 +12,6 @@ import {
 import { UploadFile } from '@island.is/island-ui/core'
 import { answersSchema } from './dataSchema'
 
-export enum DataProviderTypes {
-  NationalRegistry = 'NationalRegistryProvider',
-  Veita = 'VeitaProvider',
-  TaxDataFetch = 'TaxDataFetchProvider',
-}
-
 export enum ApproveOptions {
   Yes = 'Yes',
   No = 'No',
