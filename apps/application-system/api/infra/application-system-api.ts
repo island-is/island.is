@@ -94,7 +94,7 @@ export const workerSetup = (): ServiceBuilder<'application-system-api-worker'> =
       DOKOBIT_ACCESS_TOKEN: '/k8s/application-system/api/DOKOBIT_ACCESS_TOKEN',
       DOKOBIT_URL: '/k8s/application-system-api/DOKOBIT_URL',
     })
-    .args('main.js', '--job', 'worker', '--tls-min-v1.0')
+    .args('--tls-min-v1.0', 'main.js', '--job', 'worker')
     .command('node')
     .extraAttributes({
       dev: { schedule: '*/30 * * * *' },
