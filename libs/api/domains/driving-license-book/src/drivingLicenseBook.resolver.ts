@@ -1,5 +1,5 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
-import { UseGuards } from '@nestjs/common'
+import { NotFoundException, UseGuards, UseInterceptors } from '@nestjs/common'
 import {
   CurrentUser,
   IdsUserGuard,
@@ -27,16 +27,21 @@ import { DrivingSchoolType } from './models/drivingLicenseBookSchoolType.respons
 import { DrivingSchoolEmployeeGuard } from './guards/drivingSchoolEmployee.guard'
 import { DrivingInstructorOrEmployeeGuard } from './guards/drivingInstructorOrEmployee.guard'
 import { ApiScope } from '@island.is/auth/scopes'
+import { StudentIdInterceptor } from './interceptors/studentId.interceptor'
+import { Audit } from '@island.is/nest/audit'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
+@Audit({ namespace: '@island.is/api/driving-license-book' })
 export class DrivingLicenseBookResolver {
   constructor(
     private readonly drivingLicenseBookService: DrivingLicenseBookService,
   ) {}
 
   @UseGuards(DrivingInstructorOrEmployeeGuard)
+  @UseInterceptors(StudentIdInterceptor)
   @Query(() => [DrivingLicenseBookStudent])
+  @Audit()
   drivingLicenseBookFindStudent(
     @Args('input') input: DrivingLicenseBookStudentsInput,
   ) {
@@ -44,13 +49,17 @@ export class DrivingLicenseBookResolver {
   }
 
   @UseGuards(DrivingInstructorGuard)
+  @UseInterceptors(StudentIdInterceptor)
   @Query(() => [DrivingLicenseBookStudentForTeacher])
+  @Audit()
   drivingLicenseBookStudentsForTeacher(@CurrentUser() user: User) {
     return this.drivingLicenseBookService.getStudentsForTeacher(user)
   }
 
   @UseGuards(DrivingInstructorOrEmployeeGuard)
   @Query(() => DrivingLicenseBookStudentOverview)
+  @UseInterceptors(StudentIdInterceptor)
+  @Audit()
   drivingLicenseBookStudent(
     @Args('input') input: DrivingLicenseBookStudentInput,
   ) {
@@ -59,6 +68,7 @@ export class DrivingLicenseBookResolver {
 
   @Scopes(ApiScope.vehicles)
   @Query(() => DrivingLicenseBookStudentOverview, { nullable: true })
+  @Audit()
   drivingLicenseBookUserBook(@CurrentUser() user: User) {
     return (
       this.drivingLicenseBookService.getMostRecentStudentBook({
@@ -69,6 +79,7 @@ export class DrivingLicenseBookResolver {
 
   @UseGuards(DrivingInstructorGuard)
   @Query(() => [PracticalDrivingLesson])
+  @Audit()
   drivingLicenseBookPracticalDrivingLessons(
     @Args('input') input: PracticalDrivingLessonsInput,
   ) {
@@ -77,6 +88,7 @@ export class DrivingLicenseBookResolver {
 
   @UseGuards(DrivingInstructorGuard)
   @Mutation(() => PracticalDrivingLesson)
+  @Audit()
   drivingLicenseBookCreatePracticalDrivingLesson(
     @Args('input') input: CreatePracticalDrivingLessonInput,
     @CurrentUser() user: User,
@@ -89,6 +101,7 @@ export class DrivingLicenseBookResolver {
 
   @UseGuards(DrivingInstructorGuard)
   @Mutation(() => DrivingLicenseBookSuccess)
+  @Audit()
   drivingLicenseBookUpdatePracticalDrivingLesson(
     @Args('input') input: UpdatePracticalDrivingLessonInput,
     @CurrentUser() user: User,
@@ -101,6 +114,7 @@ export class DrivingLicenseBookResolver {
 
   @UseGuards(DrivingInstructorGuard)
   @Mutation(() => DrivingLicenseBookSuccess)
+  @Audit()
   drivingLicenseBookDeletePracticalDrivingLesson(
     @Args('input') input: DeletePracticalDrivingLessonInput,
     @CurrentUser() user: User,
@@ -112,17 +126,20 @@ export class DrivingLicenseBookResolver {
   }
   @UseGuards(DrivingSchoolEmployeeGuard)
   @Query(() => DrivingLicenseBookSchool)
+  @Audit()
   drivingLicenseBookSchoolForEmployee(@CurrentUser() user: User) {
     return this.drivingLicenseBookService.getSchoolForSchoolStaff(user)
   }
 
   @Query(() => [DrivingSchoolType])
+  @Audit()
   drivingLicenseBookSchoolTypes() {
     return this.drivingLicenseBookService.getSchoolTypes()
   }
 
   @UseGuards(DrivingSchoolEmployeeGuard)
   @Mutation(() => DrivingLicenceTestResultId)
+  @Audit()
   drivingLicenseBookCreateDrivingSchoolTestResult(
     @Args('input') input: CreateDrivingSchoolTestResultInput,
   ) {
