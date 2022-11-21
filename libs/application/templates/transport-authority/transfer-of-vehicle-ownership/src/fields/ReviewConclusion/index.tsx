@@ -14,17 +14,13 @@ import { conclusion } from '../../lib/messages'
 import { ReviewScreenProps } from '../../types'
 
 export const ReviewConclusion: FC<FieldBaseProps & ReviewScreenProps> = ({
-  application,
+  refetch,
   setStep,
 }) => {
   const { formatMessage } = useLocale()
 
-  const onBackButtonClick = () => {
-    setStep && setStep('overview')
-  }
-
   const onForwardButtonClick = () => {
-    setStep && setStep('states')
+    refetch?.()
   }
 
   return (
@@ -55,9 +51,6 @@ export const ReviewConclusion: FC<FieldBaseProps & ReviewScreenProps> = ({
       </Box>
       <Divider />
       <Box display="flex" justifyContent="spaceBetween" paddingY={5}>
-        <Button variant="ghost" onClick={onBackButtonClick}>
-          Til baka
-        </Button>
         <Button icon="arrowForward" onClick={onForwardButtonClick}>
           Skoða stöðu
         </Button>

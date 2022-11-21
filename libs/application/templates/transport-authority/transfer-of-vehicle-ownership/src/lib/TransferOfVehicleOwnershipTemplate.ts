@@ -77,7 +77,7 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: { target: States.PAYMENT },
+          [DefaultEvents.SUBMIT]: { target: States.REVIEW },
         },
       },
       [States.PAYMENT]: {
@@ -144,13 +144,6 @@ const template: ApplicationTemplate<
                 import('../forms/Review').then((module) =>
                   Promise.resolve(module.ReviewForm),
                 ),
-              actions: [
-                {
-                  event: DefaultEvents.SUBMIT,
-                  name: 'Staðfesta',
-                  type: 'primary',
-                },
-              ],
               write: {
                 answers: [],
               },
@@ -163,17 +156,18 @@ const template: ApplicationTemplate<
                 import('../forms/Review').then((module) =>
                   Promise.resolve(module.ReviewForm),
                 ),
-              actions: [
-                {
-                  event: DefaultEvents.SUBMIT,
-                  name: 'Staðfesta',
-                  type: 'primary',
-                },
-              ],
               write: {
-                answers: ['buyerCoOwnerAndOperator', 'insurance'],
+                answers: ['buyerCoOwnerAndOperator', 'insurance', 'buyer'],
               },
               read: 'all',
+              actions: [
+                {
+                  event: DefaultEvents.APPROVE,
+                  name: 'Approve',
+                  type: 'primary',
+                },
+                { event: DefaultEvents.REJECT, name: 'Reject', type: 'reject' },
+              ],
             },
             {
               id: Roles.REVIEWER,
@@ -181,50 +175,60 @@ const template: ApplicationTemplate<
                 import('../forms/Review').then((module) =>
                   Promise.resolve(module.ReviewForm),
                 ),
-              actions: [
-                {
-                  event: DefaultEvents.SUBMIT,
-                  name: 'Staðfesta',
-                  type: 'primary',
-                },
-              ],
               write: {
-                answers: [],
+                answers: ['sellerCoOwner', 'buyerCoOwnerAndOperator'],
               },
               read: 'all',
             },
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: { target: States.REVIEW },
+          [DefaultEvents.APPROVE]: { target: States.REVIEW },
+          [DefaultEvents.REJECT]: { target: States.REJECTED },
         },
       },
-      // [States.REJECTED]: {
-      //   meta: {
-      //     name: 'Rejected',
-      //     progress: 1,
-      //     lifecycle: pruneAfterDays(3 * 30),
-      //     onEntry: {
-      //       apiModuleAction: ApiActions.rejectApplication,
-      //     },
-      //     actionCard: {
-      //       tag: {
-      //         label: application.actionCardRejected,
-      //         variant: 'blueberry',
-      //       },
-      //     },
-      //     roles: [
-      //       {
-      //         id: Roles.APPLICANT,
-      //         formLoader: () =>
-      //           import('../forms/Rejected').then((val) =>
-      //             Promise.resolve(val.Approved),
-      //           ),
-      //         read: 'all',
-      //       },
-      //     ],
-      //   },
-      // },
+      [States.REJECTED]: {
+        meta: {
+          name: 'Rejected',
+          progress: 1,
+          lifecycle: pruneAfterDays(30),
+          /* onEntry: {
+            apiModuleAction: ApiActions.rejectApplication,
+          }, */
+          actionCard: {
+            tag: {
+              label: application.actionCardRejected,
+              variant: 'blueberry',
+            },
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/Rejected').then((val) =>
+                  Promise.resolve(val.Rejected),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.BUYER,
+              formLoader: () =>
+                import('../forms/Rejected').then((module) =>
+                  Promise.resolve(module.Rejected),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.REVIEWER,
+              formLoader: () =>
+                import('../forms/Rejected').then((module) =>
+                  Promise.resolve(module.Rejected),
+                ),
+              read: 'all',
+            },
+          ],
+        },
+      },
       [States.COMPLETED]: {
         meta: {
           name: 'Completed',

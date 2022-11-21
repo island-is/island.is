@@ -46,4 +46,26 @@ export const overview = {
       description: 'Add insurance company button',
     },
   }),
+  confirmationModal: defineMessages({
+    title: {
+      id: 'ta.tvo.application:overview.confirmationModal.title',
+      defaultMessage: 'Hafna tilkynningu',
+      description: 'Confirmation modal reject title',
+    },
+    text: {
+      id: 'ta.tvo.application:overview.confirmationModal.text',
+      defaultMessage: 'Þú ert að fara að hafna tilkynningu.',
+      description: 'Confirmation modal reject text',
+    },
+    buttonText: {
+      id: 'ta.tvo.application:overview.confirmationModal.buttonText',
+      defaultMessage: 'Hafna tilkynningu',
+      description: 'Confirmation modal reject button',
+    },
+    cancelButton: {
+      id: 'ta.tvo.application:overview.confirmationModal.cancelButton',
+      defaultMessage: 'Hætta við',
+      description: 'Confirmation modal cancel button',
+    },
+  }),
 }
