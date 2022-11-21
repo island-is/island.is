@@ -261,7 +261,6 @@ export class ApplicationController {
         templateTypeToIsReady[application.typeId] = false
       }
     }
-    console.log(filteredApplications)
     return filteredApplications
   }
 
