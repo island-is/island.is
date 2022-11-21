@@ -1,4 +1,4 @@
-export type Client = {
+export type ClientType = {
   label: string
   value: string
 }
@@ -7,6 +7,7 @@ export type Election = {
   electionId: string
   name: string
   electionDate: Date
+  genitiveName?: string
 }
 
 export type ElectionInfo = {
@@ -38,6 +39,40 @@ export enum ClientTypes {
   Individual = 150000000,
   PoliticalParty = 150000001,
   Cemetery = 150000002,
+}
+
+export enum ContactType {
+  Actor = 0,
+  BoardMember = 1,
+  Inspector = 2,
+}
+
+export type Client = {
+  nationalId: string
+  name?: string
+  email?: string
+  phone?: string
+}
+
+export type Contact = {
+  nationalId: string
+  name: string
+  email?: string
+  phone?: string
+  contactType: ContactType
+}
+
+export type ContactDto = {
+  star_national_id: string
+  star_contact_type: number
+  star_name: string
+  star_email?: string
+  star_phone?: string
+}
+
+export type DigitalSignee = {
+  phone: string
+  email: string
 }
 
 export type PersonalElectionFinancialStatementValues = {

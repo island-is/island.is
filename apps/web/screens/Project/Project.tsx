@@ -19,10 +19,7 @@ import {
   Stepper,
   stepperUtils,
   Form,
-  PowerBiSlice,
-  AccordionSlice,
-  TableSlice,
-  EmailSignup,
+  TabSectionSlice,
 } from '@island.is/web/components'
 import {
   Box,
@@ -30,13 +27,14 @@ import {
   TableOfContents,
   Text,
 } from '@island.is/island-ui/core'
-import { richText, SliceType } from '@island.is/island-ui/contentful'
+import { SliceType } from '@island.is/island-ui/contentful'
 import { useRouter } from 'next/router'
 import slugify from '@sindresorhus/slugify'
 import { getThemeConfig } from './utils'
 import { ProjectWrapper } from './components/ProjectWrapper'
 import { Locale } from 'locale'
 import { ProjectFooter } from './components/ProjectFooter'
+import { webRichText } from '@island.is/web/utils/richText'
 
 interface PageProps {
   projectPage: Query['getProjectPage']
@@ -138,13 +136,9 @@ const ProjectPage: Screen<PageProps> = ({
               {subpage.title}
             </Text>
             {subpage.content &&
-              richText(subpage.content as SliceType[], {
+              webRichText(subpage.content as SliceType[], {
                 renderComponent: {
                   Form: (slice) => <Form form={slice} namespace={namespace} />,
-                  PowerBiSlice: (slice) => <PowerBiSlice slice={slice} />,
-                  AccordionSlice: (slice) => <AccordionSlice slice={slice} />,
-                  TableSlice: (slice) => <TableSlice slice={slice} />,
-                  EmailSignup: (slice) => <EmailSignup slice={slice} />,
                 },
               })}
           </Box>
@@ -178,13 +172,15 @@ const ProjectPage: Screen<PageProps> = ({
           </Text>
         )}
         {content &&
-          richText(content, {
+          webRichText(content, {
             renderComponent: {
               Form: (slice) => <Form form={slice} namespace={namespace} />,
-              PowerBiSlice: (slice) => <PowerBiSlice slice={slice} />,
-              AccordionSlice: (slice) => <AccordionSlice slice={slice} />,
-              TableSlice: (slice) => <TableSlice slice={slice} />,
-              EmailSignup: (slice) => <EmailSignup slice={slice} />,
+              TabSection: (slice) => (
+                <TabSectionSlice
+                  slice={slice}
+                  contentColumnProps={{ span: '1/1' }}
+                />
+              ),
             },
           })}
         {!subpage && projectPage.stepper && (

@@ -33,7 +33,7 @@ export const getApplication = (allowFakeData = false): Form => {
     logo: Logo,
     children: [
       buildSection({
-        id: 'conditions',
+        id: 'ExternalDataSection',
         title: m.dataCollectionTitle,
         children: [
           buildExternalDataProvider({
@@ -52,12 +52,6 @@ export const getApplication = (allowFakeData = false): Form => {
                 type: 'UserProfileProvider',
                 title: m.dataCollectionUserProfileTitle,
                 subTitle: m.dataCollectionUserProfileSubtitle,
-              }),
-              buildDataProviderItem({
-                id: 'currentUserType',
-                type: 'CurrentUserTypeProvider',
-                title: '',
-                subTitle: '',
               }),
             ],
           }),

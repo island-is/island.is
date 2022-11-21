@@ -6,7 +6,7 @@ import {
   CaseOrigin,
   CaseState,
   CaseType,
-  IndictmentSubType,
+  IndictmentSubtype,
 } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
@@ -147,7 +147,7 @@ describe('InternalCaseController - Deliver', () => {
       const caseId = uuid()
       const caseType = CaseType.CUSTODY
       const caseState = CaseState.ACCEPTED
-      const policeCaseNumbers = [uuid()]
+      const policeCaseNumber = uuid()
       const defendantNationalId = uuid()
       const caseConclusion = 'test conclusion'
       const theCase = {
@@ -155,7 +155,7 @@ describe('InternalCaseController - Deliver', () => {
         origin: CaseOrigin.LOKE,
         type: caseType,
         state: caseState,
-        policeCaseNumbers,
+        policeCaseNumbers: [policeCaseNumber],
         defendants: [{ nationalId: defendantNationalId }],
         conclusion: caseConclusion,
       } as Case
@@ -184,7 +184,7 @@ describe('InternalCaseController - Deliver', () => {
           caseType,
           caseState,
           pdf,
-          policeCaseNumbers,
+          policeCaseNumber,
           [defendantNationalId],
           caseConclusion,
         )
@@ -196,13 +196,13 @@ describe('InternalCaseController - Deliver', () => {
     })
   })
 
-  describe.each(Object.values(IndictmentSubType))(
+  describe.each(Object.values(IndictmentSubtype))(
     'deliver S case %s',
-    (indictmentSubType) => {
+    (indictmentSubtype) => {
       const caseId = uuid()
       const caseType = CaseType.INDICTMENT
       const caseState = CaseState.ACCEPTED
-      const policeCaseNumbers = [uuid()]
+      const policeCaseNumber = uuid()
       const defendantNationalId = uuid()
       const courtId = uuid()
       const courtCaseNumber = uuid()
@@ -220,11 +220,11 @@ describe('InternalCaseController - Deliver', () => {
         id: caseId,
         origin: CaseOrigin.LOKE,
         type: caseType,
-        indictmentSubType,
+        indictmentSubtypes: { [policeCaseNumber]: [indictmentSubtype] },
         state: caseState,
         courtId,
         courtCaseNumber,
-        policeCaseNumbers,
+        policeCaseNumbers: [policeCaseNumber],
         defendants: [{ nationalId: defendantNationalId }],
         conclusion: caseConclusion,
         caseFiles: [ruling, courtRecord],
@@ -259,10 +259,10 @@ describe('InternalCaseController - Deliver', () => {
         it('should update the police case', async () => {
           expect(mockPoliceService.updatePoliceCase).toHaveBeenCalledWith(
             caseId,
-            indictmentSubType,
+            indictmentSubtype,
             caseState,
             'test court record',
-            policeCaseNumbers,
+            policeCaseNumber,
             [defendantNationalId],
             caseConclusion,
           )

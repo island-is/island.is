@@ -1,6 +1,6 @@
 import React, { Fragment, useState } from 'react'
 import { DefaultEvents, FieldBaseProps } from '@island.is/application/types'
-import { getErrorViaPath } from '@island.is/application/core'
+import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
 
 import {
   AlertBanner,
@@ -49,11 +49,12 @@ export const CemetryOverview = ({
   const answers = application.answers as FinancialStatementsInao
   const fileName = answers.attachments?.file?.[0]?.name
   const careTakerLimit = answers.cemetryOperation.incomeLimit ?? '0'
+  const cemeteryIncome = currencyStringToNumber(answers.cemetryIncome?.total)
+  const currentAssets = answers.cemetryAsset?.currentAssets
+  const longTermDebt = answers.cemetryLiability?.longTerm
+  const email = getValueViaPath(answers, 'about.email')
 
   const onBackButtonClick = () => {
-    const cemeteryIncome = currencyStringToNumber(answers.cemetryIncome?.total)
-    const currentAssets = answers.cemetryAsset?.currentAssets
-    const longTermDebt = answers.cemetryLiability?.longTerm
     if (
       cemeteryIncome < Number(careTakerLimit) &&
       currentAssets === '0' &&
@@ -298,6 +299,13 @@ export const CemetryOverview = ({
           {formatMessage(m.overview)}
         </Text>
       </Box>
+      {cemeteryIncome < Number(careTakerLimit) &&
+      currentAssets === '0' &&
+      longTermDebt === '0' ? (
+        <Box paddingY={2}>
+          <Text>{`${formatMessage(m.SignatureMessage)} ${email}`}</Text>
+        </Box>
+      ) : null}
       <Box background="blue100">
         <Controller
           name="applicationApprove"
