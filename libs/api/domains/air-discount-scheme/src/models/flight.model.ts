@@ -18,18 +18,18 @@ export class UserInfo implements TUserInfo {
 
 @ObjectType()
 export class Flight {
-  @Field((_1) => ID)
+  @Field((_) => ID)
   id!: string
 
   @Field()
   bookingDate!: string
 
-  @Field((_1) => [FlightLeg])
+  @Field((_) => [FlightLeg])
   flightLegs!: FlightLeg[]
 
-  @Field((_1) => User)
+  @Field((_) => User)
   user!: User
 
-  @Field((_1) => UserInfo)
+  @Field((_) => UserInfo)
   userInfo!: UserInfo
 }

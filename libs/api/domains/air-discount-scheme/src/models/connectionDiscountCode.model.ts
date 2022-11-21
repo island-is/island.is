@@ -2,7 +2,7 @@ import { Field, ID, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
 export class ConnectionDiscountCode {
-  @Field((_1) => ID)
+  @Field((_) => ID)
   code!: string
 
   @Field()

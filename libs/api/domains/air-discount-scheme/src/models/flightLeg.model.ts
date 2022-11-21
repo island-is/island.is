@@ -4,7 +4,7 @@ import { Flight } from './flight.model'
 
 @ObjectType()
 export class FlightLeg {
-  @Field((_1) => ID)
+  @Field((_) => ID)
   id!: string
 
   @Field()
@@ -25,6 +25,6 @@ export class FlightLeg {
   @Field()
   discountPrice!: number
 
-  @Field((_1) => Flight)
+  @Field((_) => Flight)
   flight!: Flight
 }

@@ -6,7 +6,7 @@ import { Role } from '@island.is/air-discount-scheme/types'
 
 @ObjectType()
 export class User {
-  @Field((_1) => ID)
+  @Field((_) => ID)
   nationalId!: string
 
   @Field()
