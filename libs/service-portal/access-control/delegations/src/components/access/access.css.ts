@@ -39,7 +39,7 @@ export const gridItem = style({
   }),
 })
 
-export const gridRowMaxThreeCols = style({
+export const gridThreeCols = style({
   ...themeUtils.responsiveStyle({
     lg: {
       gridTemplateColumns: '1fr 2fr 1fr',
@@ -47,7 +47,7 @@ export const gridRowMaxThreeCols = style({
   }),
 })
 
-export const gridRowMaxTwoCols = style({
+export const gridTwoCols = style({
   ...themeUtils.responsiveStyle({
     lg: {
       gridTemplateColumns: '1fr 2fr',

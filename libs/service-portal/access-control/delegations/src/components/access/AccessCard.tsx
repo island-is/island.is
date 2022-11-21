@@ -119,6 +119,7 @@ export const AccessCard = ({
         text = formatMessage(m.delegationTypeProcurationHolderDesc)
         break
     }
+
     return <Tooltip placement="bottom" as="button" text={text} />
   }
 

@@ -81,8 +81,8 @@ export const AccessList = ({
       className={classNames(
         commonAccessStyles.grid,
         validityPeriod
-          ? commonAccessStyles.gridRowMaxTwoCols
-          : commonAccessStyles.gridRowMaxThreeCols,
+          ? commonAccessStyles.gridTwoCols
+          : commonAccessStyles.gridThreeCols,
       )}
     >
       {lg && <AccessListHeader validityPeriod={validityPeriod} />}

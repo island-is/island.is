@@ -100,7 +100,7 @@ export const AccessDeleteModal = ({
       {...rest}
     >
       <Box
-        marginTop={[2, 2, 8]}
+        marginTop={[4, 4, 8]}
         display="flex"
         flexDirection="column"
         rowGap={3}

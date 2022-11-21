@@ -5,12 +5,12 @@ const gap = theme.spacing[6]
 
 export const container = style({
   display: 'grid',
-  gridTemplateColumns: 'repeat(1, minmax(0, 1fr))',
+  gridTemplateColumns: '1fr',
   rowGap: gap,
   columnGap: gap,
   ...themeUtils.responsiveStyle({
     lg: {
-      gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+      gridTemplateColumns: '1fr 1fr',
     },
     xl: {
       gridTemplateColumns: '2fr 1fr',
