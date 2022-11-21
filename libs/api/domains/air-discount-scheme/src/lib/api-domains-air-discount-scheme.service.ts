@@ -1,16 +1,20 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { ApolloError } from 'apollo-server-express'
 import { FetchError } from '@island.is/clients/middlewares'
-import {
-  UsersApi as AirDiscountSchemeApi,
-  User as TUser,
-} from '@island.is/clients/air-discount-scheme'
+import { UsersApi as AirDiscountSchemeApi } from '@island.is/clients/air-discount-scheme'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { Auth, User } from '@island.is/auth-nest-tools'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Discount } from '@island.is/air-discount-scheme/types'
+import {
+  Discount as TDiscount,
+  User as TUser,
+} from '@island.is/air-discount-scheme/types'
+import { Discount as DiscountModel } from '../models/discount.model'
+type DiscountWithTUser = DiscountModel & { user: TUser }
 
+const TWO_HOURS = 7200
 @Injectable()
 export class AirDiscountSchemeService {
   constructor(
@@ -49,7 +53,38 @@ export class AirDiscountSchemeService {
     )
   }
 
-  async getDiscount(auth: User, nationalId: string): Promise<unknown | null> {
+  async getCurrentDiscounts(auth: User) {
+    const relations: TUser[] = (await this.getUserRelations(auth)) as TUser[]
+
+    const discounts: DiscountWithTUser[] = []
+    for (const relation of relations) {
+      let discount: TDiscount = (await this.getDiscount(
+        auth,
+        relation.nationalId,
+      )) as TDiscount
+      if (!discount || discount.expiresIn <= TWO_HOURS) {
+        const createdDiscount = await this.createDiscount(
+          auth,
+          relation.nationalId,
+        )
+
+        if (createdDiscount) {
+          discount = createdDiscount
+        }
+      }
+      discounts.push({
+        ...discount,
+        user: { ...relation, name: relation.firstName },
+      })
+    }
+
+    return discounts
+  }
+
+  private async getDiscount(
+    auth: User,
+    nationalId: string,
+  ): Promise<unknown | null> {
     try {
       const discountResponse = await this.getADSWithAuth(
         auth,
@@ -63,7 +98,7 @@ export class AirDiscountSchemeService {
     }
   }
 
-  async createDiscount(
+  private async createDiscount(
     auth: User,
     nationalId: string,
   ): Promise<Discount | null> {
@@ -80,7 +115,7 @@ export class AirDiscountSchemeService {
     }
   }
 
-  async getUserRelations(auth: User): Promise<TUser[] | null> {
+  private async getUserRelations(auth: User): Promise<TUser[] | null> {
     try {
       let getRelationsResponse = await this.getADSWithAuth(
         auth,
