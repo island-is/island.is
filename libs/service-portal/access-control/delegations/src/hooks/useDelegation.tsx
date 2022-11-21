@@ -2,6 +2,7 @@ import { useParams } from 'react-router-dom'
 import { AuthCustomDelegation } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
 import {
+  AuthDomainDirection,
   useAuthDelegationQuery,
   useAuthScopeTreeLazyQuery,
 } from '@island.is/service-portal/graphql'
@@ -10,7 +11,7 @@ import {
  * Wrapper hook for fetching delegation by id from url param
  * and fetching delegation scope tree once delegation by id resolves.
  */
-export const useDelegation = () => {
+export const useDelegation = (direction?: AuthDomainDirection) => {
   const { lang } = useLocale()
   const { delegationId } = useParams<{
     delegationId: string
@@ -40,6 +41,7 @@ export const useDelegation = () => {
             input: {
               domain: delegation?.domain.name,
               lang,
+              ...(direction && { direction }),
             },
           },
         })
