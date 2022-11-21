@@ -5,7 +5,7 @@ import { m } from '../lib/messages'
 export const done: Form = buildForm({
   id: 'done',
   title: m.confirmationComplete,
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   children: [
     buildCustomField({
       id: 'schoolConfirmed',

@@ -14,7 +14,7 @@ import { Routes } from '../lib/constants'
 export const Spouse: Form = buildForm({
   id: 'FinancialAidApplication',
   title: m.application.name,
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   children: [
     buildSection({
       id: Routes.SPOUSEINCOME,

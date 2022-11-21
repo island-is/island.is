@@ -12,7 +12,7 @@ function rejectedForm(id: string): Form {
     id: id,
     title: m.application.name,
     logo: Logo,
-    mode: FormModes.APPLYING,
+    mode: FormModes.DRAFT,
     children: [
       buildSection({
         id: id,

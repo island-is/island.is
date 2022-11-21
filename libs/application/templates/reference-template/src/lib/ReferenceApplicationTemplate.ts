@@ -167,6 +167,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
         meta: {
           name: 'In Review',
           progress: 0.75,
+          status: 'inprogress',
           lifecycle: DefaultStateLifeCycle,
           onExit: {
             apiModuleAction: ApiActions.completeApplication,
@@ -182,9 +183,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
                 { event: 'APPROVE', name: 'Samþykkja', type: 'primary' },
                 { event: 'REJECT', name: 'Hafna', type: 'reject' },
               ],
-              write: {
-                answers: ['careerHistoryDetails', 'approvedByReviewer'],
-              },
+              write: 'all',
               read: 'all',
               shouldBeListedForRole: false,
             },
@@ -207,6 +206,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
         meta: {
           name: 'Approved',
           progress: 1,
+          status: 'approved',
           lifecycle: DefaultStateLifeCycle,
           roles: [
             {
@@ -225,6 +225,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
         meta: {
           name: 'Rejected',
           progress: 1,
+          status: 'rejected',
           lifecycle: DefaultStateLifeCycle,
           roles: [
             {

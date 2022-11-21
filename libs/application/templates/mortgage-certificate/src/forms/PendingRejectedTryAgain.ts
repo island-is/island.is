@@ -12,7 +12,7 @@ import { m } from '../lib/messages'
 export const PendingRejectedTryAgain: Form = buildForm({
   id: 'PendingForm',
   title: 'Pending',
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   children: [
     buildSection({

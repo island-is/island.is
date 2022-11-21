@@ -9,7 +9,7 @@ import { m } from '../lib/messages'
 export const payment: Form = buildForm({
   id: 'PassportApplicationPaymentForm',
   title: '',
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   renderLastScreenButton: false,
   children: [
     buildSection({

@@ -16,7 +16,7 @@ export const ParentBForm: Form = buildForm({
   id: 'ParentBForm',
   title: m.application.name,
   logo: Logo,
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   children: [
     buildSection({
       id: 'parentBIntro',

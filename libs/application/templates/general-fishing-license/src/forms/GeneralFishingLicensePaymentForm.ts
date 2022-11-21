@@ -17,7 +17,7 @@ import {
 export const GeneralFishingLicensePaymentForm: Form = buildForm({
   id: 'GeneralFishingLicensePaymentForm',
   title: '',
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   renderLastScreenButton: false,
   children: [
     buildSection({

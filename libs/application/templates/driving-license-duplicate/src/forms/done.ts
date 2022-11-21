@@ -11,7 +11,7 @@ import { m } from '../lib/messages'
 export const done: Form = buildForm({
   id: 'DrivingLicenseDuplicateApplicationComplete',
   title: 'Umsókn staðfest',
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   children: [
     buildMultiField({
       id: 'done',

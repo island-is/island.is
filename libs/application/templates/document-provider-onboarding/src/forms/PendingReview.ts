@@ -6,7 +6,7 @@ import { m } from './messages'
 export const PendingReview: Form = buildForm({
   id: ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING,
   title: m.pendingReviewthankYouScreenTitle,
-  mode: FormModes.PENDING,
+  mode: FormModes.IN_PROGRESS,
   children: [
     buildCustomField({
       id: 'pendingReviewThankYouScreen',

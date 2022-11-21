@@ -61,16 +61,20 @@ export class ApplicationTemplateHelper<
 
   getApplicationStatus(): ApplicationStatus {
     const { state } = this.application
-
-    if (this.template.stateMachineConfig.states[state].type === 'final') {
-      if (state === FinalStates.REJECTED) {
-        return ApplicationStatus.REJECTED
+    const applicationTemplateState = this.template.stateMachineConfig.states[
+      state
+    ]
+    if (applicationTemplateState.meta?.status) {
+      return applicationTemplateState.meta.status as ApplicationStatus
+    } else {
+      if (applicationTemplateState.type === 'final') {
+        if (state === FinalStates.REJECTED) {
+          return ApplicationStatus.REJECTED
+        }
+        return ApplicationStatus.COMPLETED
       }
-
-      return ApplicationStatus.COMPLETED
     }
-
-    return ApplicationStatus.IN_PROGRESS
+    return ApplicationStatus.DRAFT
   }
 
   getApplicationActionCardMeta(

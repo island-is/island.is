@@ -11,7 +11,7 @@ import { m } from '../lib/messages'
 export const PaymentInfo: Form = buildForm({
   id: 'PaymentInfo',
   title: '',
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   children: [
     buildSection({

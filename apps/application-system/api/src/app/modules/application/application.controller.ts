@@ -245,23 +245,23 @@ export class ApplicationController {
       templates[application.typeId] = applicationTemplate
 
       if (
-        (await this.validationService.isTemplateReady(
-          user,
-          applicationTemplate,
-        )) &&
-        this.applicationAccessService.shouldShowApplicationOnOverview(
-          application as BaseApplication,
-          user,
-          applicationTemplate,
-        )
+        await this.validationService.isTemplateReady(user, applicationTemplate)
       ) {
         templateTypeToIsReady[application.typeId] = true
-        filteredApplications.push(application)
+        if (
+          this.applicationAccessService.shouldShowApplicationOnOverview(
+            application as BaseApplication,
+            user,
+            applicationTemplate,
+          )
+        ) {
+          filteredApplications.push(application)
+        }
       } else {
         templateTypeToIsReady[application.typeId] = false
       }
     }
-
+    console.log(filteredApplications)
     return filteredApplications
   }
 
