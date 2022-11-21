@@ -267,7 +267,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                       getValueViaPath(answers, 'ceremony.hasDate') === NO,
                   }),
                   buildDateField({
-                    id: 'ceremony.withPeriod.dateFrom',
+                    id: 'ceremony.period.dateFrom',
                     title: m.ceremonyPeriodFrom,
                     placeholder: m.ceremonyDatePlaceholder,
                     width: 'half',
@@ -276,7 +276,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                       getValueViaPath(answers, 'ceremony.hasDate') === NO,
                   }),
                   buildDateField({
-                    id: 'ceremony.withPeriod.dateTil',
+                    id: 'ceremony.period.dateTil',
                     title: m.ceremonyPeriodTil,
                     placeholder: m.ceremonyDatePlaceholder,
                     width: 'half',
@@ -285,10 +285,11 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                       getValueViaPath(answers, 'ceremony.hasDate') === NO,
                   }),
                   buildDateField({
-                    id: 'ceremony.withDate.date',
+                    id: 'ceremony.date',
                     title: m.ceremonyDate,
                     placeholder: m.ceremonyDatePlaceholder,
                     width: 'half',
+                    minDate: new Date(),
                     condition: (answers) =>
                       getValueViaPath(answers, 'ceremony.hasDate') === YES,
                   }),
@@ -296,11 +297,9 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     id: 'space',
                     space: 'containerGutter',
                     title: '',
-                    condition: (answers) =>
-                      getValueViaPath(answers, 'ceremony.hasDate') === YES,
                   }),
                   buildRadioField({
-                    id: 'ceremony.withDate.ceremonyPlace',
+                    id: 'ceremony.place.ceremonyPlace',
                     title: m.ceremonyPlace,
                     options: [
                       {
@@ -318,11 +317,9 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     ],
                     largeButtons: false,
                     width: 'full',
-                    condition: (answers) =>
-                      getValueViaPath(answers, 'ceremony.hasDate') === YES,
                   }),
                   buildSelectField({
-                    id: 'ceremony.withDate.office',
+                    id: 'ceremony.place.office',
                     title: m.ceremonyAtDistrictsOffice,
                     placeholder: m.ceremonyChooseDistrict,
                     options: ({
@@ -341,12 +338,12 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     condition: (answers) =>
                       getValueViaPath(
                         answers,
-                        'ceremony.withDate.ceremonyPlace',
+                        'ceremony.place.ceremonyPlace',
                       ) === CeremonyPlaces.office &&
-                      getValueViaPath(answers, 'ceremony.hasDate') === YES,
+                      !!getValueViaPath(answers, 'ceremony.hasDate'),
                   }),
                   buildSelectField({
-                    id: 'ceremony.withDate.society',
+                    id: 'ceremony.place.society',
                     title: m.ceremonyAtReligiousLifeViewingSociety,
                     placeholder: m.ceremonyChooseSociety,
                     options: ({
@@ -362,9 +359,9 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     condition: (answers) =>
                       getValueViaPath(
                         answers,
-                        'ceremony.withDate.ceremonyPlace',
+                        'ceremony.place.ceremonyPlace',
                       ) === CeremonyPlaces.society &&
-                      getValueViaPath(answers, 'ceremony.hasDate') === YES,
+                      !!getValueViaPath(answers, 'ceremony.hasDate'),
                   }),
                 ],
               }),

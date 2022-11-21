@@ -92,16 +92,16 @@ export class MarriageConditionsSubmissionService {
       type: person.type,
     }))
     const ceremonyPlace: string =
-      ceremony.withDate?.ceremonyPlace === 'office' && ceremony.withDate?.office
-        ? ceremony.withDate?.office
-        : ceremony.withDate?.society
-        ? ceremony.withDate?.society
+      ceremony.place?.ceremonyPlace === 'office' && ceremony.place?.office
+        ? ceremony.place?.office
+        : ceremony.place?.society
+        ? ceremony.place?.society
         : ''
 
     const extraData: { [key: string]: string } = {
       vigsluDagur:
-        ceremony.withDate?.date ||
-        ceremony.withPeriod?.dateFrom + ' - ' + ceremony.withPeriod?.dateTil ||
+        ceremony.date ||
+        ceremony.period?.dateFrom + ' - ' + ceremony.period?.dateTil ||
         '',
       vigsluStadur: ceremonyPlace,
       umsaekjandiRikisfang: personalInfo.citizenship,
