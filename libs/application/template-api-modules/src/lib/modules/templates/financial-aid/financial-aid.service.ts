@@ -241,4 +241,38 @@ export class FinancialAidService extends BaseTemplateApiService {
       municipalitiesDirectTaxPayments: directTaxPayments as TaxData['municipalitiesDirectTaxPayments'],
     }
   }
+
+  async sendSpouseEmail({
+    auth,
+    application,
+  }: Props): Promise<{ success: boolean }> {
+    const { answers, externalData } = application
+
+    try {
+      return await this.applicationApiWithAuth(
+        auth,
+      ).applicationControllerSendSpouseEmail({
+        spouseEmailDto: {
+          name: externalData.nationalRegistry.data.fullName,
+          email: answers.contactInfo.email,
+          spouseName:
+            externalData.nationalRegistrySpouse.data?.name ||
+            answers.spouseName ||
+            '',
+          spouseEmail:
+            answers.spouse.email ||
+            answers.relationshipStatus.spouseEmail ||
+            '',
+          municipalityCode:
+            externalData.municipality.data?.municipalityId || '',
+          created: application.created,
+          applicationSystemId: application.id,
+        },
+      })
+    } catch {
+      return {
+        success: false,
+      }
+    }
+  }
 }

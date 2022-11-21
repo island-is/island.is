@@ -39,7 +39,9 @@ const ApplicantStatus = ({ application, goToScreen }: FAFieldBaseProps) => {
       <Header state={state} />
 
       {isWaitingForSpouse && (
-        <SpouseAlert showCopyUrl={!application.answers.spouseEmailSuccess} />
+        <SpouseAlert
+          showCopyUrl={!application.externalData.sendSpouseEmail?.data.success}
+        />
       )}
 
       {state === ApplicationState.APPROVED && (

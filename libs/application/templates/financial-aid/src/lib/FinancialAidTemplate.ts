@@ -28,6 +28,7 @@ import {
   MunicipalityApi,
   TaxDataApi,
   TaxDataSpouseApi,
+  SendSpouseEmailApi,
 } from '../dataProviders'
 
 type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.EDIT }
@@ -160,6 +161,7 @@ const FinancialAidTemplate: ApplicationTemplate<
           actionCard: {
             description: stateDescriptions.spouse,
           },
+          onEntry: SendSpouseEmailApi,
           roles: [
             {
               id: Roles.SPOUSE,

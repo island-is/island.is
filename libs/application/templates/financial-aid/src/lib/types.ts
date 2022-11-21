@@ -58,6 +58,13 @@ export interface ExternalData {
     date: string
     status: StatusProvider
   }
+  sendSpouseEmail?: {
+    data: {
+      success: boolean
+    }
+    date: string
+    status: StatusProvider
+  }
 }
 
 export type NestedType<T> = {
@@ -71,7 +78,6 @@ export interface OverrideAnswerSchema extends answersSchema {
   taxReturnFiles: UploadFile[]
   spouseIncomeFiles: UploadFile[]
   spouseTaxReturnFiles: UploadFile[]
-  spouseEmailSuccess: boolean
 }
 
 export type FAApplication = Override<

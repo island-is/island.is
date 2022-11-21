@@ -28,3 +28,7 @@ export const TaxDataSpouseApi = defineTemplateApi({
   action: ApiActions.TAXDATA,
   externalDataId: 'taxDataSpouse',
 })
+
+export const SendSpouseEmailApi = defineTemplateApi({
+  action: ApiActions.SENDSPOUSEEMAIL,
+})

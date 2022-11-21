@@ -49,6 +49,7 @@ export enum ApiActions {
   CURRENTAPPLICATION = 'currentApplication',
   MUNICIPALITY = 'municipality',
   TAXDATA = 'taxData',
+  SENDSPOUSEEMAIL = 'sendSpouseEmail',
 }
 
 export const UPLOAD_ACCEPT = [

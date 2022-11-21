@@ -29,14 +29,12 @@ import {
 } from './index'
 
 import { DirectTaxPaymentsModal } from '..'
-import { findFamilyStatus, hasSpouse } from '../../lib/utils'
-import { useEmail } from '../../lib/hooks/useEmail'
+import { findFamilyStatus } from '../../lib/utils'
 import withLogo from '../Logo/Logo'
 
 const SummaryForm = ({
   application,
   goToScreen,
-  setBeforeSubmitCallback,
 }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
   const { lang } = useLocale()
@@ -57,17 +55,6 @@ const SummaryForm = ({
       )
     }
   }, [externalData.municipality.data])
-
-  const { sendSpouseEmail } = useEmail(application)
-
-  if (hasSpouse(answers, externalData)) {
-    setBeforeSubmitCallback &&
-      setBeforeSubmitCallback(async () => {
-        const response = await sendSpouseEmail()
-        application.answers.spouseEmailSuccess = response
-        return [true, null]
-      })
-  }
 
   return (
     <>
