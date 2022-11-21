@@ -618,6 +618,7 @@ application-system-api:
 application-system-api-worker:
   args:
     - '--tls-min-v1.0'
+    - '--no-experimental-fetch'
     - 'main.js'
     - '--job'
     - 'worker'
