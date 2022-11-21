@@ -105,23 +105,6 @@ export const Payment: Form = buildForm({
           component: 'PaymentPending',
           title: payment.general.sectionTitle,
           condition: (_, externalData) => {
-            //TODOx remove, used to make testing payment easy
-            const url = window.location.href
-            const applicationId = url.substring(
-              url.lastIndexOf('/') + 1,
-              url.lastIndexOf('?'),
-            )
-            const { id: chargeId } = externalData.createCharge.data as {
-              id: string
-            }
-            console.log(
-              "curl -H 'Content-type: application/json' -X POST 'http://localhost:3333/application-payment/" +
-                applicationId +
-                '/' +
-                chargeId +
-                '\' -d \'{"status":"paid"}\'',
-            )
-
             return !!window.document.location.href.match(/\?done$/)
           },
         }),
