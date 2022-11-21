@@ -440,6 +440,12 @@ api:
     create: true
     name: 'api'
 application-system-api:
+  args:
+    - '--tls-min-v1.0'
+    - '--no-experimental-fetch'
+    - 'main.js'
+  command:
+    - 'node'
   enabled: true
   env:
     APPLICATION_ATTACHMENT_BUCKET: 'island-is-dev-storage-application-system'
@@ -625,12 +631,9 @@ application-system-api:
     name: 'application-system-api'
 application-system-api-worker:
   args:
-    - '--tls-min-v1.0'
     - 'main.js'
     - '--job'
     - 'worker'
-  command:
-    - 'node'
   enabled: true
   env:
     APPLICATION_ATTACHMENT_BUCKET: 'island-is-dev-storage-application-system'

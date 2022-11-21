@@ -94,8 +94,8 @@ export const workerSetup = (): ServiceBuilder<'application-system-api-worker'> =
       DOKOBIT_ACCESS_TOKEN: '/k8s/application-system/api/DOKOBIT_ACCESS_TOKEN',
       DOKOBIT_URL: '/k8s/application-system-api/DOKOBIT_URL',
     })
-    .args('--tls-min-v1.0', 'main.js', '--job', 'worker')
-    .command('node')
+    .args('main.js', '--job', 'worker')
+
     .extraAttributes({
       dev: { schedule: '*/30 * * * *' },
       staging: { schedule: '*/30 * * * *' },
@@ -109,6 +109,8 @@ export const serviceSetup = (services: {
   service('application-system-api')
     .namespace(namespace)
     .serviceAccount(serviceAccount)
+    .command('node')
+    .args('--tls-min-v1.0', '--no-experimental-fetch', 'main.js')
     .env({
       EMAIL_REGION: 'eu-west-1',
       IDENTITY_SERVER_ISSUER_URL: {
