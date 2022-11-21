@@ -12,7 +12,7 @@ export const CurrentApplicationApi = defineTemplateApi({
 
 export const CreateApplicationApi = defineTemplateApi({
   action: ApiActions.CREATEAPPLICATION,
-  externalDataId: CurrentApplicationApi.action,
+  externalDataId: CurrentApplicationApi.externalDataId,
 })
 
 export const MunicipalityApi = defineTemplateApi({
