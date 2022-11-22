@@ -626,6 +626,8 @@ application-system-api-worker:
     - 'main.js'
     - '--job'
     - 'worker'
+  command:
+    - 'node'
   enabled: true
   env:
     APPLICATION_ATTACHMENT_BUCKET: 'island-is-prod-storage-application-system'
