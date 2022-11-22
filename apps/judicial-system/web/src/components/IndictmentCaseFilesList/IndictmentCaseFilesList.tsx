@@ -1,10 +1,12 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
 import {
   Case,
   CaseFile,
   CaseFileCategory,
+  completedCaseStates,
+  isCourtRole,
 } from '@island.is/judicial-system/types'
 import { Box, Text } from '@island.is/island-ui/core'
 
@@ -12,7 +14,10 @@ import PdfButton from '../PdfButton/PdfButton'
 import { caseFiles } from '../../routes/Prosecutor/Indictments/CaseFiles/CaseFiles.strings'
 import { indictmentCaseFilesList as strings } from './IndictmentCaseFilesList.strings'
 import { useFileList } from '../../utils/hooks'
+import { UserContext } from '../UserProvider/UserProvider'
+import SectionHeading from '../SectionHeading/SectionHeading'
 import * as styles from './IndictmentCaseFilesList.css'
+import { courtRecord } from '../../routes/Court/Indictments/CourtRecord/CourtRecord.strings'
 
 interface Props {
   workingCase: Case
@@ -22,6 +27,7 @@ const IndictmentCaseFilesList: React.FC<Props> = (props) => {
   const { workingCase } = props
   const { formatMessage } = useIntl()
   const { onOpen } = useFileList({ caseId: workingCase.id })
+  const { user } = useContext(UserContext)
 
   const cf = workingCase.caseFiles
 
@@ -46,6 +52,10 @@ const IndictmentCaseFilesList: React.FC<Props> = (props) => {
       file.category === CaseFileCategory.CASE_FILE &&
       !Boolean(file.policeCaseNumber),
   )
+  const rulings = cf.filter((file) => file.category === CaseFileCategory.RULING)
+  const courtRecords = cf.filter(
+    (file) => file.category === CaseFileCategory.COURT_RECORD,
+  )
 
   const renderFiles = (caseFiles: CaseFile[]) => {
     return caseFiles.map((file) => (
@@ -62,9 +72,10 @@ const IndictmentCaseFilesList: React.FC<Props> = (props) => {
 
   return (
     <Box marginBottom={10}>
+      <SectionHeading title={formatMessage(strings.title)} />
       {coverLetters && coverLetters.length > 0 && (
         <Box marginBottom={5}>
-          <Text variant="h3" marginBottom={1}>
+          <Text variant="h4" as="h4" marginBottom={1}>
             {formatMessage(caseFiles.sections.coverLetter)}
           </Text>
           {renderFiles(coverLetters)}
@@ -72,7 +83,7 @@ const IndictmentCaseFilesList: React.FC<Props> = (props) => {
       )}
       {indictments && indictments.length > 0 && (
         <Box marginBottom={5}>
-          <Text variant="h3" marginBottom={1}>
+          <Text variant="h4" as="h4" marginBottom={1}>
             {formatMessage(caseFiles.sections.indictment)}
           </Text>
           {renderFiles(indictments)}
@@ -80,7 +91,7 @@ const IndictmentCaseFilesList: React.FC<Props> = (props) => {
       )}
       {criminalRecords && criminalRecords.length > 0 && (
         <Box marginBottom={5}>
-          <Text variant="h3" marginBottom={1}>
+          <Text variant="h4" as="h4" marginBottom={1}>
             {formatMessage(caseFiles.sections.criminalRecord)}
           </Text>
           {renderFiles(criminalRecords)}
@@ -88,7 +99,7 @@ const IndictmentCaseFilesList: React.FC<Props> = (props) => {
       )}
       {costBreakdowns && costBreakdowns.length > 0 && (
         <Box marginBottom={5}>
-          <Text variant="h3" marginBottom={1}>
+          <Text variant="h4" as="h4" marginBottom={1}>
             {formatMessage(caseFiles.sections.costBreakdown)}
           </Text>
           {renderFiles(costBreakdowns)}
@@ -96,32 +107,55 @@ const IndictmentCaseFilesList: React.FC<Props> = (props) => {
       )}
       {others && others.length > 0 && (
         <Box marginBottom={5}>
-          <Text variant="h3" marginBottom={1}>
+          <Text variant="h4" as="h4" marginBottom={1}>
             {formatMessage(caseFiles.sections.otherDocuments)}
           </Text>
           {renderFiles(others)}
         </Box>
       )}
-      <Text variant="h3" marginBottom={1}>
-        {formatMessage(strings.caseFileTitle)}
-      </Text>
-      {workingCase.policeCaseNumbers.map((policeCaseNumber, index) => (
-        <Box
-          marginBottom={2}
-          key={`${policeCaseNumber}-${index}`}
-          className={styles.caseFileContainer}
-        >
-          <PdfButton
-            caseId={workingCase.id}
-            title={formatMessage(strings.caseFileButtonText, {
-              policeCaseNumber,
-            })}
-            pdfType="caseFiles"
-            policeCaseNumber={policeCaseNumber}
-            renderAs="row"
-          />
-        </Box>
-      ))}
+      <Box marginBottom={5}>
+        <Text variant="h4" as="h4" marginBottom={1}>
+          {formatMessage(strings.caseFileTitle)}
+        </Text>
+        {workingCase.policeCaseNumbers.map((policeCaseNumber, index) => (
+          <Box
+            marginBottom={2}
+            key={`${policeCaseNumber}-${index}`}
+            className={styles.caseFileContainer}
+          >
+            <PdfButton
+              caseId={workingCase.id}
+              title={formatMessage(strings.caseFileButtonText, {
+                policeCaseNumber,
+              })}
+              pdfType="caseFiles"
+              policeCaseNumber={policeCaseNumber}
+              renderAs="row"
+            />
+          </Box>
+        ))}
+      </Box>
+      {(user && isCourtRole(user.role)) ||
+      completedCaseStates.includes(workingCase.state) ? (
+        <>
+          {courtRecords && courtRecords.length > 0 && (
+            <Box marginBottom={5}>
+              <Text variant="h4" as="h4" marginBottom={1}>
+                {formatMessage(courtRecord.courtRecordTitle)}
+              </Text>
+              {renderFiles(courtRecords)}
+            </Box>
+          )}
+          {rulings && rulings.length > 0 && (
+            <Box marginBottom={5}>
+              <Text variant="h4" as="h4" marginBottom={1}>
+                {formatMessage(courtRecord.rulingTitle)}
+              </Text>
+              {renderFiles(rulings)}
+            </Box>
+          )}
+        </>
+      ) : null}
     </Box>
   )
 }
