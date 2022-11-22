@@ -1,6 +1,6 @@
 import { AuthCustomDelegation } from '@island.is/api/schema'
 import { useAuth } from '@island.is/auth/react'
-import { Box, SkeletonLoader, Text } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import { m } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 import { formatNationalId } from '@island.is/service-portal/core'
@@ -8,7 +8,7 @@ import { Modal, ModalProps } from '../../Modal/Modal'
 import { AccessList } from '../../access/AccessList/AccessList'
 import { IdentityCard } from '../../IdentityCard/IdentityCard'
 import { useAuthScopeTreeQuery } from '@island.is/service-portal/graphql'
-import { ROW_LOADING_HEIGHT } from '../../access/access.utils'
+import { AccessListLoading } from '../../access/AccessList/AccessListLoading'
 
 type DelegationIncomingModalProps = Pick<
   ModalProps,
@@ -110,13 +110,7 @@ export const DelegationIncomingModal = ({
             />
           </Box>
         ) : (
-          <SkeletonLoader
-            height={
-              // HEADER + ROWS
-              ROW_LOADING_HEIGHT +
-              (ROW_LOADING_HEIGHT * delegation?.scopes?.length ?? 0)
-            }
-          />
+          <AccessListLoading rows={delegation?.scopes?.length ?? 0} />
         )}
       </Box>
     </Modal>

@@ -29,7 +29,6 @@ export const DelegationsIncoming = () => {
     delegationDelete,
     setDelegationDelete,
   ] = useState<AuthCustomDelegation | null>(null)
-
   const { data, loading, refetch, error } = useAuthDelegationsQuery({
     variables: {
       input: {

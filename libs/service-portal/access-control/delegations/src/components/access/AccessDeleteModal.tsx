@@ -1,12 +1,6 @@
 import { AuthCustomDelegation } from '@island.is/api/schema'
 import { useAuth } from '@island.is/auth/react'
-import {
-  AlertMessage,
-  Box,
-  SkeletonLoader,
-  toast,
-  Text,
-} from '@island.is/island-ui/core'
+import { AlertMessage, Box, toast, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { formatNationalId } from '@island.is/service-portal/core'
 import {
@@ -19,7 +13,7 @@ import { Modal, ModalProps } from '../Modal/Modal'
 import { m } from '@island.is/service-portal/core'
 import { IdentityCard } from '../IdentityCard/IdentityCard'
 import { AccessList } from '../access/AccessList/AccessList'
-import { ROW_LOADING_HEIGHT } from './access.utils'
+import { AccessListLoading } from './AccessList/AccessListLoading'
 
 type AccessDeleteModalProps = Pick<ModalProps, 'onClose' | 'isVisible'> & {
   delegation: AuthCustomDelegation
@@ -174,13 +168,7 @@ export const AccessDeleteModal = ({
               />
             </Box>
           ) : (
-            <SkeletonLoader
-              height={
-                // HEADER + ROWS
-                ROW_LOADING_HEIGHT +
-                (ROW_LOADING_HEIGHT * delegation?.scopes?.length ?? 0)
-              }
-            />
+            <AccessListLoading rows={delegation?.scopes?.length ?? 0} />
           )}
         </Box>
       </Box>
