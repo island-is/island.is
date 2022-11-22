@@ -83,7 +83,7 @@ export const getApplication = (allowFakeData = false): Form => {
                 applicationAnswers.cemetryAsset?.fixedAssetsTotal
               const isCemetry = userType === FSIUSERTYPE.CEMETRY
               const totalIncome = isCemetry
-                ? applicationAnswers.operatingCost?.total
+                ? applicationAnswers.cemetryIncome?.total
                 : '0'
               const longTermDebt = applicationAnswers.cemetryLiability?.longTerm
               const isUnderLimit =
