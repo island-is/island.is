@@ -20,6 +20,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         },
         subscribesTo: 'documents',
         description: m.documentsDescription,
+        keyItem: true,
       },
 
       // Umsoknir
@@ -29,6 +30,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         icon: {
           icon: 'fileTrayFull',
         },
+        keyItem: true,
         children: [
           {
             name: m.inProgressApplications,
@@ -55,6 +57,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         },
         description: m.companyDescription,
       },
+
       // Min Gogn
       {
         name: m.userInfo,
@@ -94,6 +97,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           },
         ],
       },
+
       // Mín skírteini
       {
         name: m.licenses,
@@ -126,6 +130,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         ],
         description: m.licensesDescription,
       },
+
       // Starfsleyfi
       {
         name: m.educationLicense,
@@ -135,6 +140,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         },
         description: m.educationLicenseDescription,
       },
+
       // Mín réttindi
       {
         name: m.delegation,
@@ -149,6 +155,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           },
         ],
       },
+
       // Menntun
       {
         name: m.education,
@@ -271,6 +278,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           },
         ],
       },
+
       // Stillingar - hidden from nav
       {
         name: m.settings,
@@ -324,6 +332,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
       {
         name: m.accessControl,
         path: ServicePortalPath.AccessControlDelegations,
+        keyItem: true,
         icon: {
           icon: 'people',
         },

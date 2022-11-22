@@ -8,7 +8,6 @@ import {
   Hidden,
 } from '@island.is/island-ui/core'
 import ContentBreadcrumbs from '../../components/ContentBreadcrumbs/ContentBreadcrumbs'
-import GoBack from '../../components/GoBack/GoBack'
 import AuthOverlay from '../Loaders/AuthOverlay/AuthOverlay'
 import useRoutes from '../../hooks/useRoutes/useRoutes'
 import { useModules } from '../../hooks/useModules/useModules'
@@ -92,19 +91,12 @@ const Layout: FC = ({ children }) => {
   const parent = findParent(navigation[0]?.children)
 
   if (parent !== undefined) {
-    // subNavItems.push({
-    //   title: formatMessage(parent.name),
-    //   href: parent.path,
-    //   active: pathname === parent.path,
-    // })
     parent.children
       ?.filter((item) => !item.navHide)
       ?.map((item: ServicePortalNavigationItem) =>
         subNavItems.push(mapChildren(item)),
       )
   }
-
-  // Todo: Birta líka yfirlitsskjá í efnisyfiliti
 
   useEffect(() => {
     if (

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Box, Hidden } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import { useAuth } from '@island.is/auth/react'
 import { UserButton } from './UserButton'
 import { UserDropdown } from './UserDropdown'
@@ -42,7 +42,7 @@ export const UserMenu = ({
 
   return (
     <Box display="flex" position="relative" height="full">
-      <UserLanguageSwitcher user={user} />
+      {/* <UserLanguageSwitcher user={user} /> */}
       <UserButton user={user} onClick={handleClick} small={small} />
       <UserDropdown
         user={user}

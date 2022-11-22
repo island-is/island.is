@@ -44,10 +44,12 @@ export interface ServicePortalNavigationItem {
    */
   description?: MessageDescriptor
   // TODO
-  /** Service provider ....
-   * Sækja í contentful í hverju kalli eða geyma hjá okkur ?? ræða
+  /** Service provider listed - ID from contentful
    */
   serviceProvider?: string // einhver týpe eða nafn og id ??
+
+  /** Key items */
+  keyItem?: boolean
 }
 
 /**

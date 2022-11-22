@@ -25,9 +25,7 @@ export const wrapper = style({
   right: 0,
 })
 
-export const navItems = style({
-  paddingTop: 140,
-})
+export const navItems = style({})
 export const link = style({
   display: 'block',
   height: '100%',
@@ -37,11 +35,6 @@ export const link = style({
 export const closeButton = style({
   justifyContent: 'center',
   alignItems: 'center',
-
-  position: 'absolute',
-  top: spacing[4],
-  right: spacing[6],
-  zIndex: 20,
 
   width: 40,
   height: 40,
@@ -54,11 +47,20 @@ export const closeButton = style({
   transition: 'background-color 250ms, border-color 250ms',
 
   ':hover': {
-    backgroundColor: theme.color.dark100,
+    backgroundColor: theme.color.blue200,
   },
 
   ':focus': {
     outline: 'none',
     borderColor: theme.color.mint200,
   },
+})
+
+export const keyItems = style({
+  maxHeight: 219,
+  flexGrow: 1,
+})
+
+export const categories = style({
+  flexGrow: 2,
 })

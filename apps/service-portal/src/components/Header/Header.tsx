@@ -5,11 +5,9 @@ import {
   Button,
   Logo,
   FocusableBox,
-  Icon,
 } from '@island.is/island-ui/core'
 import * as styles from './Header.css'
 import { ServicePortalPath } from '@island.is/service-portal/core'
-import { UserLanguageSwitcher } from '@island.is/shared/components'
 import { useLocale } from '@island.is/localization'
 import { UserMenu } from '@island.is/shared/components'
 import { useStore } from '../../store/stateProvider'
@@ -44,7 +42,7 @@ export const Header = ({ position }: Props) => {
             alignItems="center"
             width="full"
             background="white"
-            paddingX={[3, 3, 3, 3, 6]}
+            paddingX={3}
           >
             <Link to={ServicePortalPath.MinarSidurRoot}>
               <FocusableBox component="div">
@@ -63,17 +61,18 @@ export const Header = ({ position }: Props) => {
                 flexWrap="nowrap"
                 marginLeft={[1, 1, 2]}
               >
-                <Link to={ServicePortalPath.ElectronicDocumentsRoot}>
-                  <Button
-                    variant="utility"
-                    size="small"
-                    icon="mail"
-                    iconType="outline"
-                  >
-                    {formatMessage(m.documents)}
-                  </Button>
-                </Link>
-
+                <Box marginRight={[1, 1, 2]}>
+                  <Link to={ServicePortalPath.ElectronicDocumentsRoot}>
+                    <Button
+                      variant="utility"
+                      size="small"
+                      icon="mail"
+                      iconType="outline"
+                    >
+                      {formatMessage(m.documents)}
+                    </Button>
+                  </Link>
+                </Box>
                 <UserMenu
                   fullscreen
                   setUserMenuOpen={setUserMenuOpen}
@@ -86,36 +85,6 @@ export const Header = ({ position }: Props) => {
                     onClick={handleMobileMenuTriggerClick}
                   ></Button>
                 </Box>
-                {/* {userMenuOpen && (
-                  <Hidden above="md">
-                    <Box display="flex" flexDirection="row" alignItems="center">
-                      {user && <UserLanguageSwitcher user={user} />}
-                      {closeButton(true)}
-                    </Box>
-                  </Hidden>
-                )}
-                {!userMenuOpen && (
-                  <Hidden above="sm">
-                    {mobileMenuState === 'closed' ? (
-                      <Box marginLeft={[1, 2]}>
-                        <Button
-                          variant="utility"
-                          icon="menu"
-                          onClick={handleMobileMenuTriggerClick}
-                        ></Button>
-                      </Box>
-                    ) : (
-                      <Box
-                        display="flex"
-                        flexDirection="row"
-                        alignItems="center"
-                      >
-                        {user && <UserLanguageSwitcher user={user} />}
-                        {closeButton(false)}
-                      </Box>
-                    )}
-                  </Hidden>
-                )} */}
               </Box>
             </Hidden>
           </Box>

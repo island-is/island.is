@@ -17,6 +17,7 @@ import {
   ServicePortalModule,
   ServicePortalPath,
   ServicePortalWidget,
+  m,
 } from '@island.is/service-portal/core'
 import { User } from '@island.is/shared/types'
 import Greeting from '../../components/Greeting/Greeting'
@@ -25,7 +26,6 @@ import { useStore } from '../../store/stateProvider'
 import { WidgetErrorBoundary } from './WidgetError/WidgetError'
 import WidgetLoading from './WidgetLoading/WidgetLoading'
 import useNavigation from '../../hooks/useNavigation/useNavigation'
-import * as styles from './Dashboard.css'
 import { iconIdMapper, iconTypeToSVG } from '../../utils/Icons/idMapper'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
@@ -105,7 +105,6 @@ export const Dashboard: FC<{}> = () => {
   const { formatMessage } = useLocale()
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
-  const IS_COMPANY = userInfo?.profile?.subjectType === 'legalEntity'
 
   useEffect(() => {
     PlausiblePageviewDetail(ServicePortalPath.MinarSidurRoot)
@@ -116,59 +115,80 @@ export const Dashboard: FC<{}> = () => {
       id && document.getElementById(iconIdMapper(id))
     a && a.dispatchEvent(new Event('click'))
   }
+  const displayCards = (keyItem: boolean) => {
+    // eslint-disable-next-line no-lone-blocks
+    {
+      return navigation.map((rootItem) => {
+        return rootItem.children
+          ?.filter((item) => (keyItem ? item.keyItem : !item.keyItem))
+          .map(
+            (navRoot, index) =>
+              navRoot.path !== ServicePortalPath.MinarSidurRoot &&
+              !navRoot.navHide && (
+                <GridColumn
+                  key={formatMessage(navRoot.name) + '-' + index}
+                  offset={index % 3 === 0 ? ['0', '0', '0', '1/12'] : '0'}
+                  span={['12/12', '12/12', '12/12', '3/12', '3/12']}
+                  paddingBottom={3}
+                >
+                  <Box
+                    onMouseEnter={() => onHover(navRoot.icon?.icon ?? '')}
+                    height="full"
+                    flexGrow={1}
+                  >
+                    {navRoot.path && (
+                      <CategoryCard
+                        autoStack
+                        hyphenate
+                        truncateHeading
+                        component={Link}
+                        to={navRoot.path}
+                        icon={
+                          isMobile && navRoot.icon ? (
+                            <Icon
+                              icon={navRoot.icon.icon}
+                              type="outline"
+                              color="blue400"
+                            />
+                          ) : (
+                            iconTypeToSVG(navRoot.icon?.icon ?? '', '')
+                          )
+                        }
+                        heading={formatMessage(navRoot.name)}
+                        text={
+                          navRoot.description
+                            ? formatMessage(navRoot.description)
+                            : formatMessage(navRoot.name)
+                        }
+                      />
+                    )}
+                  </Box>
+                </GridColumn>
+              ),
+          )
+      })
+    }
+  }
 
   return (
     <Box>
       <Greeting />
+      <Box paddingTop={[3, 3, 3, 6]} marginBottom={3}>
+        <GridContainer>
+          <GridRow>{displayCards(true)}</GridRow>
+        </GridContainer>
+      </Box>
       <Box background="blue100" paddingTop={6}>
         <GridContainer>
+          <GridRow>
+            <GridColumn offset={['0', '0', '0', '1/12']}>
+              <Text variant="h3" paddingBottom={3}>
+                {formatMessage(m.myCategories)}
+              </Text>
+            </GridColumn>
+          </GridRow>
           <GridRow data-testid={'service-portal-dashboard'}>
-            {navigation.map((rootItem) => {
-              return rootItem.children?.map(
-                (navRoot, index) =>
-                  navRoot.path !== ServicePortalPath.MinarSidurRoot &&
-                  !navRoot.navHide && (
-                    <GridColumn
-                      key={formatMessage(navRoot.name) + '-' + index}
-                      span={['12/12', '12/12', '12/12', '3/12', '3/12']}
-                      paddingBottom={3}
-                    >
-                      <Box
-                        onMouseEnter={() => onHover(navRoot.icon?.icon ?? '')}
-                        height="full"
-                        flexGrow={1}
-                      >
-                        {navRoot.path && (
-                          <CategoryCard
-                            autoStack
-                            hyphenate
-                            truncateHeading
-                            component={Link}
-                            to={navRoot.path}
-                            icon={
-                              isMobile && navRoot.icon ? (
-                                <Icon
-                                  icon={navRoot.icon.icon}
-                                  type="outline"
-                                  color="blue400"
-                                />
-                              ) : (
-                                iconTypeToSVG(navRoot.icon?.icon ?? '', '')
-                              )
-                            }
-                            heading={formatMessage(navRoot.name)}
-                            text={
-                              navRoot.description
-                                ? formatMessage(navRoot.description)
-                                : formatMessage(navRoot.name)
-                            }
-                          />
-                        )}
-                      </Box>
-                    </GridColumn>
-                  ),
-              )
-            })}
+            {displayCards(false)}
           </GridRow>
         </GridContainer>
       </Box>

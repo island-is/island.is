@@ -1,5 +1,12 @@
 import React, { FC } from 'react'
-import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  GridColumn,
+  GridContainer,
+  GridRow,
+  Hidden,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useAuth } from '@island.is/auth/react'
 import { m } from '@island.is/service-portal/core'
@@ -12,31 +19,39 @@ const Greeting: FC<{}> = () => {
   const isEveningGreeting = currentHour > 17 || currentHour < 4
 
   return (
-    <GridRow className={styles.greetingContainer} marginTop={4}>
-      <GridColumn span="5/12" offset="1/12">
-        <Box marginTop={[2, 3, 4]} data-testid="greeting">
-          <Text
-            variant="eyebrow"
-            marginBottom={2}
-            fontWeight="semiBold"
-            color="purple400"
+    <GridContainer>
+      <GridRow className={styles.greetingContainer} marginTop={4}>
+        <GridColumn span="5/12" offset={['0', '0', '0', '1/12']}>
+          <Box
+            marginTop={[2, 3, 4]}
+            paddingLeft={[2, 2, 2, 0]}
+            data-testid="greeting"
           >
-            {isEveningGreeting
-              ? formatMessage(m.eveningGreeting)
-              : formatMessage(m.dayGreeting)}
-          </Text>
-          <Text variant="h2" as="h1" marginBottom={1}>
-            {userInfo?.profile.name}
-          </Text>
-          <Text marginBottom={2}>{formatMessage(m.greetingIntro)}</Text>
-        </Box>
-      </GridColumn>
-      <GridColumn span="6/12">
-        <Box display="flex" justifyContent="center">
-          <img src={'./assets/images/company.svg'} alt="" />
-        </Box>
-      </GridColumn>
-    </GridRow>
+            <Text
+              variant="eyebrow"
+              marginBottom={2}
+              fontWeight="semiBold"
+              color="purple400"
+            >
+              {isEveningGreeting
+                ? formatMessage(m.eveningGreeting)
+                : formatMessage(m.dayGreeting)}
+            </Text>
+            <Text variant="h2" as="h1" marginBottom={1}>
+              {userInfo?.profile.name}
+            </Text>
+            <Text marginBottom={2}>{formatMessage(m.greetingIntro)}</Text>
+          </Box>
+        </GridColumn>
+        <GridColumn span={'6/12'}>
+          <Hidden below="md">
+            <Box display="flex" justifyContent="center">
+              <img src={'./assets/images/company.svg'} alt="" />
+            </Box>
+          </Hidden>
+        </GridColumn>
+      </GridRow>
+    </GridContainer>
   )
 }
 

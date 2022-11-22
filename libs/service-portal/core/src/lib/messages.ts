@@ -860,4 +860,9 @@ export const m = defineMessages({
     defaultMessage: 'Efnisyfirlit',
     description: 'Table of contents',
   },
+  myCategories: {
+    id: 'service.portal:my-categories',
+    defaultMessage: 'Mínir flokkar',
+    description: 'My categories',
+  },
 })
