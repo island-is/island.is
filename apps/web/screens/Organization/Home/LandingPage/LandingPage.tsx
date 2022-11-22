@@ -83,7 +83,7 @@ const LandingPage = ({ organization, namespace }: LandingPageProps) => {
   return (
     <>
       <HeadWithSocialSharing
-        title={`${organization.title} | Ísland.is`}
+        title={organization.title}
         description={organization.description}
       />
       <Box marginBottom={5}>
