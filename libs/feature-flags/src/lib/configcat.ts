@@ -47,4 +47,10 @@ export class Client implements FeatureFlagClient {
       user ? { identifier: user.id, custom: user.attributes } : undefined,
     )
   }
+
+  async getAllValues(user: FeatureFlagUser) {
+    return await this.configcat.getAllValuesAsync(
+      user ? { identifier: user.id, custom: user.attributes } : undefined,
+    )
+  }
 }

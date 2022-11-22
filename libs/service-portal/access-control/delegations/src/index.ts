@@ -30,7 +30,8 @@ export const delegationsModule: ServicePortalModule = {
       },
       {
         ...accessControlCommonFields,
-        path: ServicePortalPath.AccessControlDelegationsToMe,
+        featureFlag: Features.incomingDelegationsV2,
+        path: ServicePortalPath.AccessControlDelegationsIncoming,
       },
       {
         name: m.accessControlGrant,

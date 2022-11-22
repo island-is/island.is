@@ -8,6 +8,7 @@ import { useAuth } from '@island.is/auth/react'
 
 const FeatureFlagContext = createContext<FeatureFlagClient>({
   getValue: (_, defaultValue) => Promise.resolve(defaultValue),
+  getAllValues: () => Promise.resolve([]),
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   dispose() {},
 })
@@ -48,6 +49,9 @@ export const FeatureFlagProvider: FC<FeatureFlagContextProviderProps> = ({
       ) {
         return featureFlagClient.getValue(key, defaultValue, user)
       },
+      getAllValues(user: FeatureFlagUser | undefined = defaultUser) {
+        return featureFlagClient.getAllValues(user)
+      },
       dispose: () => featureFlagClient.dispose(),
     }
   }, [featureFlagClient, userInfo, userProp])
@@ -79,6 +83,9 @@ export const MockedFeatureFlagProvider: FC<MockedFeatureFlagProviderProps> = ({
     return {
       getValue: async (key, defaultValue) => {
         return cleanFlags[key] ?? defaultValue
+      },
+      getAllValues: async () => {
+        return []
       },
       // eslint-disable-next-line @typescript-eslint/no-empty-function
       dispose() {},

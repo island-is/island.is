@@ -102,6 +102,11 @@ export type ServicePortalRoute = {
   key?: string
 
   /**
+   * If this is set, the route is only enabled if the feature flag is true for the authenticated user.
+   */
+  featureFlag?: Features
+
+  /**
    * The render value of this component
    */
   render?: (props: ServicePortalModuleProps) => ServicePortalModuleRenderValue
