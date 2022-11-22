@@ -57,7 +57,6 @@
     "application-graphql": "libs/application/graphql",
     "application-system-api": "apps/application-system/api",
     "application-system-form": "apps/application-system/form",
-    "application-system-form-e2e": "apps/application-system/form-e2e",
     "application-template-api-modules": "libs/application/template-api-modules",
     "application-template-loader": "libs/application/template-loader",
     "application-templates-accident-notification": "libs/application/templates/accident-notification",
