@@ -9,7 +9,7 @@ When testing an app/project you need to first start the app, then test it with P
 ## ⚡ TL;DR
 
 - Start the application: `yarn dev/init <app> && yarn dev <app>`
-- Test the app: `yarn playwright menu --e2e --project <path/to/your/app>`
+- Test the app: `yarn playwright system-e2e/.*/<name-of-your-app>`
 
 ## 👨‍🍳 Prepare the app
 
@@ -19,22 +19,33 @@ For local development and testing start your app. Generally, first-time setup an
 2. `yarn dev/init <app>`
 3. `yarn dev <app>`
 
+{% hint style="example" %}
+1. `yarn get-secrets application-system-form`
+2. `yarn dev/init application-system-form`
+3. `yarn dev application-system-form`
+{% endhint %}
+
 However, not all projects support this, or are incomplete in this setup. If this fails, find its `README.md` and follow the instructions given there. If that fails, reach out to the QA team and we’ll remedy the documentation and improve the initial setup.
 
 ## 🤖 Start Playwright
 
-First time you run Playwright, you'll need to set up its runtime environment with `yarn playwright install`. Then, Playwright can be started in several ways:
+First time you run Playwright, you'll need to set up its runtime environment with `yarn playwright install`. Then, you can list tests with the `--list` flag or run tests in various ways:
 
-- Using our local script: `./scripts/local-e2e.sh --help`
-- Using playwright directly: `yarn playwright test --project <path/to/your/app>`
+- Using playwright directly: `yarn playwright test <name-of-your-app>/.*/<smoke|acceptance>`
+- Specific test file: `yarn playwright test <path/to/your/test/file>`
+- Using a pattern (regex): `yarn playwright test <pattern>`
 
-{% hint style="info" %}
-Add `export TEST_ENVIRONMENT=dev` before any command to test against the live [dev-web](https://beta.dev01.devland.is/). Valid values are `local` (default), `dev`, `staging`, and `prod` to test the respective environment.
+{% hint style="example" %}
+- smoke: `yarn playwright test application-system-form/smoke`
+- acceptance: `yarn playwright test service-portal/acceptance`
+- both: `yarn playwright test system-e2e/.*/web`
+- pattern `yarn playwright test 'system-e2e/.*/s?port?'`
 {% endhint %}
 
 {% hint style="info" %}
-You can append to the `test` command the path/name of your test case `yarn playwright test <path/to/spec/file>` to only test a specific spec.
+Add `export TEST_ENVIRONMENT=dev` before any command to test against the live [dev-web](https://beta.dev01.devland.is/). Note that you'll need Cognito username/password credentials for this. Valid values are `local` (default), `dev`, `staging`, and `prod` to test the respective environment.
 {% endhint %}
+
 
 # ✍️ Writing tests
 
@@ -83,6 +94,8 @@ Copy to `apps/system-e2e/src/fixtures/<your-app>/users.json` and modify:
   },
 ]
 ```
+
+Or you could try out `yarn playwright generate island.is`... We haven't QA'd it yet 🥰
 
 ## 🤔 What to test
 
