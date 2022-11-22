@@ -22,7 +22,6 @@ import {
   useUpdateAuthDelegationMutation,
   AuthScopeTreeQuery,
 } from '@island.is/service-portal/graphql'
-import { useAuth } from '@island.is/auth/react'
 import { AccessFormScope, MappedScope } from './access.types'
 import { extendApiScope, formatScopeTreeToScope } from './access.utils'
 import { AccessItem } from './AccessItem/AccessItem'
@@ -49,9 +48,7 @@ export const AccessForm = ({
     delegationId: string
   }>()
   const history = useHistory()
-  const { userInfo } = useAuth()
   const { lg } = useBreakpoint()
-
   const [openConfirmModal, setOpenConfirmModal] = useState(false)
   const [openDeleteModal, setOpenDeleteModal] = useState(false)
   const [formError, setFormError] = useState(false)
@@ -169,10 +166,9 @@ export const AccessForm = ({
               history.push(ServicePortalPath.AccessControlDelegations)
             }
             onConfirm={() => {
-              if (
-                (scopes && scopes.length > 0) ||
-                (delegation.scopes && delegation.scopes.length > 0)
-              ) {
+              // Only open confirm modal if there are scopes
+              // else open delete modal
+              if (scopes && scopes.length > 0) {
                 setOpenConfirmModal(true)
               } else {
                 setOpenDeleteModal(true)
@@ -204,13 +200,9 @@ export const AccessForm = ({
         error={updateError}
       />
       <AccessDeleteModal
-        onDelete={() => {
-          history.push(
-            delegation.to?.nationalId === userInfo?.profile.nationalId
-              ? ServicePortalPath.AccessControlDelegationsIncoming
-              : ServicePortalPath.AccessControlDelegations,
-          )
-        }}
+        onDelete={() =>
+          history.push(ServicePortalPath.AccessControlDelegations)
+        }
         onClose={() => setOpenDeleteModal(false)}
         isVisible={openDeleteModal}
         delegation={delegation as AuthCustomDelegation}

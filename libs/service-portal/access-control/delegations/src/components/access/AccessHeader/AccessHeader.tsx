@@ -29,7 +29,9 @@ export const AccessHeader = ({
     <Box
       display="flex"
       alignItems={['flexStart', 'flexStart', 'flexStart', 'flexEnd']}
-      className={styles.container}
+      flexDirection={['columnReverse', 'columnReverse', 'columnReverse', 'row']}
+      rowGap={6}
+      columnGap={6}
     >
       <Box
         display="flex"

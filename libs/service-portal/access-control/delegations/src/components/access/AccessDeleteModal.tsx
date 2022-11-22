@@ -4,10 +4,10 @@ import { AlertMessage, Box, toast, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { formatNationalId } from '@island.is/service-portal/core'
 import {
-  useAuthScopeTreeQuery,
+  useAuthScopeTreeLazyQuery,
   useDeleteAuthDelegationMutation,
 } from '@island.is/service-portal/graphql'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { DelegationsFormFooter } from '../delegations/DelegationsFormFooter'
 import { Modal, ModalProps } from '../Modal/Modal'
 import { m } from '@island.is/service-portal/core'
@@ -16,7 +16,7 @@ import { AccessList } from '../access/AccessList/AccessList'
 import { AccessListLoading } from './AccessList/AccessListLoading'
 
 type AccessDeleteModalProps = Pick<ModalProps, 'onClose' | 'isVisible'> & {
-  delegation: AuthCustomDelegation
+  delegation?: AuthCustomDelegation
   onDelete(): void
 }
 
@@ -30,23 +30,29 @@ export const AccessDeleteModal = ({
   const { userInfo } = useAuth()
   const [error, setError] = useState(false)
   const [deleteAuthDelegation, { loading }] = useDeleteAuthDelegationMutation()
+  const [
+    getAuthScopeTree,
+    { data: scopeTreeData, loading: scopeTreeLoading },
+  ] = useAuthScopeTreeLazyQuery()
 
-  const {
-    data: scopeTreeData,
-    loading: scopeTreeLoading,
-  } = useAuthScopeTreeQuery({
-    variables: {
-      input: {
-        domain: delegation?.domain.name,
-        lang,
-      },
-    },
-  })
+  useEffect(() => {
+    if (delegation) {
+      getAuthScopeTree({
+        variables: {
+          input: {
+            domain: delegation.domain.name,
+            lang,
+          },
+        },
+      })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [delegation])
 
   const { authScopeTree } = scopeTreeData || {}
 
   const onDeleteHandler = async () => {
-    if (!delegation.id) return
+    if (!delegation?.id) return
 
     try {
       const { errors } = await deleteAuthDelegation({
@@ -159,7 +165,7 @@ export const AccessDeleteModal = ({
               })}
             </Text>
           </Box>
-          {!scopeTreeLoading && authScopeTree ? (
+          {!scopeTreeLoading && authScopeTree && delegation ? (
             <Box marginBottom={[1, 1, 12]}>
               <AccessList
                 validityPeriod={delegation.validTo}

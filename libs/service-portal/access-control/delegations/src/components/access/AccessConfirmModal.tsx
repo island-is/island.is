@@ -3,7 +3,10 @@ import { AuthCustomDelegation } from '@island.is/api/schema'
 import { useAuth } from '@island.is/auth/react'
 import { AlertBanner, Box, Text } from '@island.is/island-ui/core'
 import { m } from '@island.is/service-portal/core'
-import { AuthScopeTreeQuery } from '@island.is/service-portal/graphql'
+import {
+  AuthDelegationScope,
+  AuthScopeTreeQuery,
+} from '@island.is/service-portal/graphql'
 import { useLocale } from '@island.is/localization'
 import { formatNationalId } from '@island.is/service-portal/core'
 import { useState } from 'react'
@@ -11,11 +14,10 @@ import { DelegationsFormFooter } from '../delegations/DelegationsFormFooter'
 import { Modal, ModalProps } from '../Modal/Modal'
 import { AccessList } from './AccessList/AccessList'
 import { IdentityCard } from '../IdentityCard/IdentityCard'
-import type { MappedScope } from './access.types'
 
 type AccessConfirmModalProps = Pick<ModalProps, 'onClose' | 'isVisible'> & {
   delegation: AuthCustomDelegation
-  scopes?: MappedScope[]
+  scopes?: Pick<AuthDelegationScope, 'name' | 'validTo' | 'displayName'>[]
   scopeTree: AuthScopeTreeQuery['authScopeTree']
   validityPeriod?: Date | null
   loading: boolean
@@ -135,11 +137,7 @@ export const AccessConfirmModal = ({
           <Box marginBottom={[0, 0, 12]}>
             <AccessList
               validityPeriod={validityPeriod}
-              scopes={scopes.map(({ name, displayName, validTo }) => ({
-                name,
-                displayName,
-                validTo,
-              }))}
+              scopes={scopes}
               scopeTree={scopeTree}
             />
           </Box>

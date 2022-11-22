@@ -1,37 +1,27 @@
-import { theme, themeUtils } from '@island.is/island-ui/theme'
+import { themeUtils } from '@island.is/island-ui/theme'
 import { style } from '@vanilla-extract/css'
 
-const gap = theme.spacing[6]
-
-export const container = style({
-  display: 'grid',
-  gridTemplateColumns: '1fr',
-  rowGap: gap,
-  columnGap: gap,
+export const firstColumn = style({
+  width: '100%',
+  flex: 1,
   ...themeUtils.responsiveStyle({
     lg: {
-      gridTemplateColumns: '1fr 1fr',
+      flex: 1,
     },
     xl: {
-      gridTemplateColumns: '2fr 1fr',
-    },
-  }),
-})
-
-export const firstColumn = style({
-  gridRow: 2,
-  ...themeUtils.responsiveStyle({
-    lg: {
-      gridRow: 1,
+      flex: 2,
     },
   }),
 })
 
 export const secondColumn = style({
-  gridRow: 1,
+  width: '100%',
   ...themeUtils.responsiveStyle({
     lg: {
-      gridRow: 1,
+      flex: 1,
+    },
+    xl: {
+      flex: 1,
     },
   }),
 })

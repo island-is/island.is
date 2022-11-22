@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, useEffect, useMemo, useState } from 'react'
+import React, { FC, ReactNode, useEffect, useState } from 'react'
 import cn from 'classnames'
 import { useWindowSize } from 'react-use'
 import { useTabState, Tab, TabList, TabPanel } from 'reakit/Tab'
@@ -41,14 +41,12 @@ export const Tabs: FC<TabInterface> = ({
   onChange: onChangeHandler,
   onlyRenderSelectedTab,
 }) => {
-  useMemo(() => {
-    // When onlyRenderSelectedTab is true, then we need to make sure that every tab has an id prop defined
-    if (onlyRenderSelectedTab && !tabs.every(({ id }) => isDefined(id))) {
-      throw new Error(
-        'Every tab must have a unique id when onlyRenderSelectedTab is enabled',
-      )
-    }
-  }, [onlyRenderSelectedTab, tabs])
+  // When onlyRenderSelectedTab is true, then we need to make sure that every tab has an id prop defined
+  if (onlyRenderSelectedTab && !tabs.every(({ id }) => isDefined(id))) {
+    throw new Error(
+      'Every tab must have a unique id when onlyRenderSelectedTab is enabled',
+    )
+  }
 
   const { loop, wrap, ...tab } = useTabState({
     selectedId: selected,
@@ -111,17 +109,19 @@ export const Tabs: FC<TabInterface> = ({
           wrap={wrap}
           aria-label={label}
         >
-          {tabs.map(({ label, disabled }, index) => (
+          {tabs.map(({ label, disabled, id }, index) => (
             <FocusableBox
               {...tab}
               component={Tab}
               key={index}
               disabled={disabled}
-              id={`${index}`}
+              id={id ?? `${index}`}
               justifyContent="center"
               aria-label={label}
               className={cn(styles.tab, {
-                [styles.tabSelected]: index.toString() === tab.selectedId,
+                [styles.tabSelected]: id
+                  ? id === tab.selectedId
+                  : index.toString() === tab.selectedId,
                 [styles.tabDisabled]: disabled,
               })}
             >

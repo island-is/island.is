@@ -84,7 +84,7 @@ export const useDomains = (includeDefaultOption = true) => {
 
     if (currentDomain && currentDomain !== displayNameQueryParam) {
       query.set('domain', name)
-      history.push(`${location.pathname}?${query.toString()}`)
+      history.replace(`${location.pathname}?${query.toString()}`)
     }
   }
 
@@ -119,7 +119,7 @@ export const useDomains = (includeDefaultOption = true) => {
       // 2. Session storage
       // 3. Default domain
       if (displayNameQueryParam) {
-        updateDomainByName(displayNameQueryParam ?? ISLAND_DOMAIN)
+        updateDomainByName(displayNameQueryParam)
       } else if (sessionDomainName) {
         updateDomainByName(sessionDomainName)
       } else {

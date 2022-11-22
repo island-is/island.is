@@ -7,14 +7,15 @@ import { formatNationalId } from '@island.is/service-portal/core'
 import { Modal, ModalProps } from '../../Modal/Modal'
 import { AccessList } from '../../access/AccessList/AccessList'
 import { IdentityCard } from '../../IdentityCard/IdentityCard'
-import { useAuthScopeTreeQuery } from '@island.is/service-portal/graphql'
+import { useAuthScopeTreeLazyQuery } from '@island.is/service-portal/graphql'
 import { AccessListLoading } from '../../access/AccessList/AccessListLoading'
+import { useEffect } from 'react'
 
 type DelegationIncomingModalProps = Pick<
   ModalProps,
   'onClose' | 'isVisible'
 > & {
-  delegation: AuthCustomDelegation
+  delegation?: AuthCustomDelegation
 }
 
 export const DelegationIncomingModal = ({
@@ -24,18 +25,26 @@ export const DelegationIncomingModal = ({
 }: DelegationIncomingModalProps) => {
   const { formatMessage, lang } = useLocale()
   const { userInfo } = useAuth()
+  const [
+    getAuthScopeTree,
+    { data: scopeTreeData, loading },
+  ] = useAuthScopeTreeLazyQuery()
 
-  const { data: scopeTreeData, loading } = useAuthScopeTreeQuery({
-    variables: {
-      input: {
-        domain: delegation?.domain.name,
-        lang,
-      },
-    },
-  })
+  useEffect(() => {
+    if (delegation) {
+      getAuthScopeTree({
+        variables: {
+          input: {
+            domain: delegation.domain.name,
+            lang,
+          },
+        },
+      })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [delegation])
 
   const { authScopeTree } = scopeTreeData || {}
-
   const fromName = delegation?.from?.name
   const fromNationalId = delegation?.from?.nationalId
   const toName = userInfo?.profile.name
@@ -101,7 +110,7 @@ export const DelegationIncomingModal = ({
             })}
           </Text>
         </Box>
-        {!loading && authScopeTree ? (
+        {!loading && authScopeTree && delegation ? (
           <Box marginBottom={[0, 0, 12]}>
             <AccessList
               validityPeriod={delegation.validTo}

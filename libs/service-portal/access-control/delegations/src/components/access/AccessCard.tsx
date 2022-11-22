@@ -1,6 +1,7 @@
 import { useHistory } from 'react-router-dom'
 import format from 'date-fns/format'
 import { VisuallyHidden } from 'reakit/VisuallyHidden'
+import * as kennitala from 'kennitala'
 
 import {
   Box,
@@ -17,8 +18,12 @@ import { useLocale } from '@island.is/localization'
 import { AuthCustomDelegation } from '@island.is/api/schema'
 import { AuthDelegationType } from '@island.is/service-portal/graphql'
 import { useMemo } from 'react'
-import { m, ServicePortalPath } from '@island.is/service-portal/core'
+import {
+  ServicePortalPath,
+  m as coreMessages,
+} from '@island.is/service-portal/core'
 import sortBy from 'lodash/sortBy'
+import { m } from '../../lib/messages'
 
 const isDateExpired = (date: string) => new Date(date) < new Date()
 
@@ -74,7 +79,7 @@ export const AccessCard = ({
 
   const renderDelegationTypeLabel = (type: AuthDelegationType) => {
     // Default to custom delegation type
-    let label = formatMessage(m.delegationTypeCustom)
+    let label = ''
     let icon: IconType = 'people'
 
     switch (type) {
@@ -90,6 +95,13 @@ export const AccessCard = ({
         label = formatMessage(m.delegationTypeProcurationHolder)
         icon = 'business'
         break
+
+      default:
+        label = formatMessage(m.delegationTypeCustom)
+
+        if (kennitala.isCompany(delegation.from.nationalId)) {
+          icon = 'business'
+        }
     }
 
     return (
@@ -126,6 +138,9 @@ export const AccessCard = ({
   const showActions =
     isOutgoing || delegation.type === AuthDelegationType.Custom
 
+  const canDelete =
+    isOutgoing || (!isOutgoing && delegation.type === AuthDelegationType.Custom)
+
   return (
     <Box
       paddingY={[2, 3, 4]}
@@ -149,12 +164,10 @@ export const AccessCard = ({
             {delegation.domain && (
               <Box display="flex" columnGap={1} alignItems="center">
                 <VisuallyHidden>
-                  {formatMessage(
-                    formatMessage({
-                      id: 'sp.access-control-delegations:delegation-in-system',
-                      defaultMessage: 'Umboð í kerfi',
-                    }),
-                  )}
+                  {formatMessage({
+                    id: 'sp.access-control-delegations:delegation-in-system',
+                    defaultMessage: 'Umboð í kerfi',
+                  })}
                 </VisuallyHidden>
                 {delegation.domain.organisationLogoUrl && (
                   <img
@@ -171,12 +184,10 @@ export const AccessCard = ({
             )}
           </Box>
           <VisuallyHidden>
-            {formatMessage(
-              formatMessage({
-                id: 'sp.access-control-delegations:access-holder',
-                defaultMessage: 'Aðgangshafi',
-              }),
-            )}
+            {formatMessage({
+              id: 'sp.access-control-delegations:access-holder',
+              defaultMessage: 'Aðgangshafi',
+            })}
           </VisuallyHidden>
           <Text variant="h3" as="h2" color={isExpired ? 'dark300' : 'dark400'}>
             {isOutgoing ? delegation?.to?.name : delegation?.from?.name}
@@ -215,12 +226,10 @@ export const AccessCard = ({
           {hasTags && (
             <Box width="full">
               <VisuallyHidden>
-                {formatMessage(
-                  formatMessage({
-                    id: 'sp.access-control-delegations:access-title',
-                    defaultMessage: 'Réttindi',
-                  }),
-                )}
+                {formatMessage({
+                  id: 'sp.access-control-delegations:access-title',
+                  defaultMessage: 'Réttindi',
+                })}
               </VisuallyHidden>
               <Inline alignY="bottom" space={1}>
                 {tags.map((tag, index) => (
@@ -243,9 +252,7 @@ export const AccessCard = ({
               marginTop={[2, 0]}
               marginLeft={[0, 3]}
             >
-              {(isOutgoing ||
-                (!isOutgoing &&
-                  delegation.type === AuthDelegationType.Custom)) && (
+              {canDelete && (
                 <Button
                   variant="text"
                   icon="trash"
@@ -255,7 +262,7 @@ export const AccessCard = ({
                   onClick={() => onDelete(delegation)}
                   nowrap
                 >
-                  {formatMessage(m.buttonDestroy)}
+                  {formatMessage(coreMessages.buttonDestroy)}
                 </Button>
               )}
               <Box marginLeft={3}>
@@ -265,7 +272,7 @@ export const AccessCard = ({
                     variant="utility"
                     onClick={() => onView(delegation)}
                   >
-                    {formatMessage(m.view)}
+                    {formatMessage(coreMessages.view)}
                   </Button>
                 ) : !isExpired ? (
                   <Button
@@ -275,7 +282,7 @@ export const AccessCard = ({
                     variant="utility"
                     onClick={() => history.push(href)}
                   >
-                    {formatMessage(m.buttonEdit)}
+                    {formatMessage(coreMessages.buttonEdit)}
                   </Button>
                 ) : (
                   <Button
@@ -285,7 +292,7 @@ export const AccessCard = ({
                     variant="utility"
                     onClick={() => history.push(href)}
                   >
-                    {formatMessage(m.buttonRenew)}
+                    {formatMessage(coreMessages.buttonRenew)}
                   </Button>
                 )}
               </Box>

@@ -1,10 +1,9 @@
 import { useHistory } from 'react-router-dom'
 import { useLocation } from 'react-use'
-import * as kennitala from 'kennitala'
 import { Box, Tabs } from '@island.is/island-ui/core'
 import {
   IntroHeader,
-  m,
+  m as coreMessages,
   ServicePortalPath,
 } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
@@ -13,9 +12,10 @@ import { isDefined } from '@island.is/shared/utils'
 import { DelegationsIncoming } from '../components/delegations/incoming/DelegationsIncoming'
 import { DelegationsOutgoing } from '../components/delegations/outgoing/DelegationsOutgoing'
 import { Features, useFeatureFlag } from '@island.is/react/feature-flags'
+import { m } from '../lib/messages'
 
-const TAB_DELEGATION_OUTGOING_ID = '0'
-const TAB_DELEGATION_INCOMING_ID = '1'
+const TAB_DELEGATION_OUTGOING_ID = 'outgoing'
+const TAB_DELEGATION_INCOMING_ID = 'incoming'
 const DELEGATIONS_INCOMING_PATH = `${ServicePortalPath.MinarSidurPath}${ServicePortalPath.AccessControlDelegationsIncoming}`
 
 const AccessControl = () => {
@@ -31,10 +31,6 @@ const AccessControl = () => {
   const location = useLocation()
   const isDelegationIncoming = location.pathname === DELEGATIONS_INCOMING_PATH
 
-  const isCompany = userInfo
-    ? kennitala.isCompany(userInfo.profile.nationalId)
-    : false
-
   const tabChangeHandler = (id: string) => {
     const url =
       id === TAB_DELEGATION_INCOMING_ID
@@ -49,12 +45,13 @@ const AccessControl = () => {
 
   // Only show outgoing delegation when user is logged in on behalf of someone else, i.e. some delegation.
   const onlyOutgoingDelegations = isDefined(userInfo?.profile?.actor)
+
   return (
     <>
       <IntroHeader
-        title={formatMessage(m.accessControl)}
+        title={formatMessage(coreMessages.accessControl)}
         intro={formatMessage(
-          isCompany
+          onlyOutgoingDelegations
             ? {
                 id: 'sp.access-control-delegations:header-intro-company',
                 defaultMessage:
@@ -84,12 +81,16 @@ const AccessControl = () => {
             tabs={[
               {
                 id: TAB_DELEGATION_OUTGOING_ID,
-                label: formatMessage(m.accessControlDelegationsOutgoing),
+                label: formatMessage(
+                  coreMessages.accessControlDelegationsOutgoing,
+                ),
                 content: <DelegationsOutgoing />,
               },
               {
                 id: TAB_DELEGATION_INCOMING_ID,
-                label: formatMessage(m.accessControlDelegationsIncoming),
+                label: formatMessage(
+                  coreMessages.accessControlDelegationsIncoming,
+                ),
                 content: <DelegationsIncoming />,
               },
             ]}
