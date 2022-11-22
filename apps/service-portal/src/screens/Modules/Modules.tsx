@@ -63,9 +63,6 @@ const RouteLoader: FC<{
   const hasFeatureFlags = routesWithFeatureFlags.length > 0
 
   useEffect(() => {
-    featureFlagClient.getAllValues().then()
-
-    // declare the data fetching function
     const fetchFlags = async () => {
       const flags = await featureFlagClient.getAllValues()
 
