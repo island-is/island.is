@@ -48,6 +48,7 @@ const WITH_SEARCH = [
 ]
 
 const parseOrganizationLinkHref = (organization: Query['getOrganization']) => {
+  if (!organization?.link) return ''
   let link = organization.link
   if (link.includes('://')) {
     link = link.split('://')[1]
@@ -79,10 +80,12 @@ const OrganizationHomePage: Screen<HomeProps> = ({
     })) ?? []
 
   const parsedLinkHref = parseOrganizationLinkHref(organization)
-  const linkTitle = `${n(
-    'landingPageTitleCardHeading',
-    'Opinber vefur stofnunar er',
-  )} ${parsedLinkHref}`
+  const linkTitle = parsedLinkHref
+    ? `${n(
+        'landingPageTitleCardHeading',
+        'Opinber vefur stofnunar er',
+      )} ${parsedLinkHref}`
+    : ''
 
   const organizationNamespace = useMemo(() => {
     return JSON.parse(organization?.namespace?.fields || '{}')
@@ -140,7 +143,7 @@ const OrganizationHomePage: Screen<HomeProps> = ({
               <Box marginBottom={8}>
                 <IconTitleCard
                   heading={linkTitle}
-                  href={organization.link}
+                  href={organization?.link}
                   imgSrc={o(
                     'landingPageTitleCardImageSrc',
                     'https://images.ctfassets.net/8k0h54kbe6bj/dMv61A2SII5Y6AACjOzFo/63d1627ccf2113ae137c401725b1b35b/T__lva_og_kaffibolli.svg',
@@ -148,13 +151,13 @@ const OrganizationHomePage: Screen<HomeProps> = ({
                   alt={o('landingPageTitleCardImageAlt', '')}
                 />
               </Box>
-              {organization.description && (
+              {organization?.description && (
                 <Box
                   paddingY={4}
                   borderTopWidth="standard"
                   borderColor="standard"
                 >
-                  <Text variant="default">{organization.description}</Text>
+                  <Text variant="default">{organization?.description}</Text>
                 </Box>
               )}
             </GridContainer>
@@ -240,7 +243,7 @@ const Home: Screen<HomeProps> = ({
   namespace,
 }) => {
   const isLandingPage =
-    !organizationPage && !!organization && organization.hasALandingPage
+    !organizationPage && !!organization && organization?.hasALandingPage
   if (isLandingPage)
     return <LandingPage namespace={namespace} organization={organization} />
   return (
