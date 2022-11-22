@@ -81,7 +81,11 @@ const ViewStudent = ({
   const [dateError, setDateError] = useState(false)
   const [student, setStudent] = useState<
     undefined | DrivingLicenseBookStudentOverview
-  >(studentDataResponse ? studentDataResponse.drivingLicenseBookStudent : {})
+  >(
+    studentDataResponse
+      ? studentDataResponse.drivingLicenseBookStudentForTeacher
+      : {},
+  )
 
   const userNationalId = (application.externalData.nationalRegistry?.data as {
     nationalId?: string
@@ -92,7 +96,9 @@ const ViewStudent = ({
 
   useEffect(() => {
     setStudent(
-      studentDataResponse ? studentDataResponse.drivingLicenseBookStudent : {},
+      studentDataResponse
+        ? studentDataResponse.drivingLicenseBookStudentForTeacher
+        : {},
     )
   }, [studentDataResponse])
 
