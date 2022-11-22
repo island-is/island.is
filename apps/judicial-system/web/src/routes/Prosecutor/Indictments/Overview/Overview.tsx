@@ -21,10 +21,10 @@ import { titles } from '@island.is/judicial-system-web/messages'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { CaseState, CaseTransition } from '@island.is/judicial-system/types'
+import IndictmentCaseFilesList from '@island.is/judicial-system-web/src/components/IndictmentCaseFilesList/IndictmentCaseFilesList'
 import * as constants from '@island.is/judicial-system/consts'
 
 import * as strings from './Overview.strings'
-import IndictmentCaseFilesList from '@island.is/judicial-system-web/src/components/IndictmentCaseFilesList/IndictmentCaseFilesList'
 
 const Overview: React.FC = () => {
   const {
