@@ -42825,6 +42825,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"web@workspace:apps/web":
+  version: 0.0.0-use.local
+  resolution: "web@workspace:apps/web"
+  dependencies:
+    "@nrwl/eslint-plugin-nx": 13.10.5
+    eslint-plugin-local-rules: 1.0.1
+  languageName: unknown
+  linkType: soft
+
 "webcrypto-core@npm:^1.7.4":
   version: 1.7.5
   resolution: "webcrypto-core@npm:1.7.5"

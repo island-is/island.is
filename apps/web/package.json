@@ -1,0 +1,15 @@
+{
+  "name": "web",
+  "packageManager": "yarn@3.2.3",
+  "engines": {
+    "npm": "please-use-yarn",
+    "node": "18.8.0",
+    "yarn": "3.2"
+  },
+  "devDependencies": {
+    "@nrwl/eslint-plugin-nx": "13.10.5"
+  },
+  "dependencies": {
+    "eslint-plugin-local-rules": "1.0.1"
+  }
+}

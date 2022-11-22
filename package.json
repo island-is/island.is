@@ -461,6 +461,9 @@
     "url-parse": "1.5.2",
     "path-parse": "1.0.7"
   },
+  "workspaces": [
+    "apps/web"
+  ],
   "volta": {
     "node": "18.8.0"
   },
