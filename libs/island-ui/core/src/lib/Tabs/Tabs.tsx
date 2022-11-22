@@ -1,5 +1,6 @@
 import React, { FC, ReactNode, useEffect, useState } from 'react'
 import cn from 'classnames'
+import isNumber from 'lodash/isNumber'
 import { useWindowSize } from 'react-use'
 import { useTabState, Tab, TabList, TabPanel } from 'reakit/Tab'
 import { ValueType } from 'react-select'
@@ -54,11 +55,11 @@ export const Tabs: FC<TabInterface> = ({
 
   const [prevCurrentId, setPrevCurrentId] = useState(tab.currentId)
 
-  const selectOptions = tabs.map(({ label, disabled }, index) => {
+  const selectOptions = tabs.map(({ label, disabled, id }, index) => {
     return {
       label,
       disabled: disabled,
-      value: index.toString(),
+      value: id ?? index.toString(),
     }
   })
 
@@ -98,7 +99,11 @@ export const Tabs: FC<TabInterface> = ({
               label={label}
               onChange={onSelect}
               options={selectOptions}
-              defaultValue={selectOptions[parseInt(selected)]}
+              defaultValue={
+                isNumber(selected)
+                  ? selectOptions[parseInt(selected)]
+                  : selectOptions.find((opt) => opt.value === selected)
+              }
               isSearchable={false}
             />
           </div>

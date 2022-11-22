@@ -46,8 +46,7 @@ export const AccessDeleteModal = ({
         },
       })
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [delegation])
+  }, [delegation, getAuthScopeTree, lang])
 
   const { authScopeTree } = scopeTreeData || {}
 

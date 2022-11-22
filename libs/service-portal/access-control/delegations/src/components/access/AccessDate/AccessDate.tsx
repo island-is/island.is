@@ -1,5 +1,5 @@
 import { VisuallyHidden } from 'reakit/VisuallyHidden'
-import { Hidden, Text, useBreakpoint } from '@island.is/island-ui/core'
+import { Text, useBreakpoint } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { accessMessages, formatDelegationDate } from '../access.utils'
 import * as styles from './AccessDate.css'
@@ -14,14 +14,15 @@ export const AccessDate = ({ validTo }: AccessDateProps) => {
 
   return (
     <div className={styles.dateContainer}>
-      <Hidden above="sm">
+      {!lg ? (
         <Text variant="eyebrow" fontWeight="semiBold">
           {formatMessage(accessMessages.dateValidTo)}
         </Text>
-      </Hidden>
-      <VisuallyHidden>
-        {formatMessage(accessMessages.dateValidTo)}
-      </VisuallyHidden>
+      ) : (
+        <VisuallyHidden>
+          {formatMessage(accessMessages.dateValidTo)}
+        </VisuallyHidden>
+      )}
       <Text
         variant={lg ? 'default' : 'eyebrow'}
         {...(!lg && { fontWeight: 'semiBold' })}
