@@ -44,7 +44,7 @@
       },
       "outputs": ["{options.outputPath}"]
     },
-    "serve" : {
+    "serve": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "commands": [
