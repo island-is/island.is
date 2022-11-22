@@ -13,8 +13,8 @@ import {
   GenericUserLicensePayload,
 } from '../../licenceService.type'
 import { Locale } from '@island.is/shared/types'
-import { i18n } from '../../utils/translations'
-import { LicenseData } from './firearmLicense.type'
+import { getLabel } from '../../utils/translations'
+import { LicenseData } from './genericFirearmLicense.type'
 
 const formatDateString = (dateTime: string) =>
   dateTime ? format(new Date(dateTime), 'dd.MM.yyyy') : ''
@@ -34,60 +34,52 @@ export const parseFirearmLicensePayload = (
   const label = labels.labels
   const data: Array<GenericLicenseDataField> = [
     licenseInfo.licenseNumber && {
-      name: 'Grunnupplýsingar skotvopnaleyfis',
+      name: getLabel('basicInfoLicense', locale, label),
       type: GenericLicenseDataFieldType.Value,
-      label: label ? label['licenseNumber'] : i18n.licenseNumber[locale],
+      label: getLabel('licenseNumber', locale, label),
       value: licenseInfo.licenseNumber,
     },
     licenseInfo.name && {
       type: GenericLicenseDataFieldType.Value,
-      label: label ? label['fullName'] : i18n.fullName[locale],
+      label: getLabel('fullName', locale, label),
       value: licenseInfo.name,
     },
     licenseInfo.issueDate && {
       type: GenericLicenseDataFieldType.Value,
-      label: label ? label['publishedDate'] : i18n.publishedDate[locale],
+      label: getLabel('publishedDate', locale, label),
       value: licenseInfo.issueDate ?? '',
     },
     licenseInfo.expirationDate && {
       type: GenericLicenseDataFieldType.Value,
-      label: label ? label['validTo'] : i18n.validTo[locale],
+      label: getLabel('validTo', locale, label),
       value: licenseInfo.expirationDate ?? '',
     },
     licenseInfo.collectorLicenseExpirationDate && {
       type: GenericLicenseDataFieldType.Value,
-      label: label
-        ? label['collectorLicenseValidTo']
-        : i18n.collectorLicenseValidTo[locale],
+      label: getLabel('collectorLicenseValidTo', locale, label),
       value: licenseInfo.collectorLicenseExpirationDate ?? '',
     },
 
     licenseInfo.qualifications && {
       type: GenericLicenseDataFieldType.Group,
-      label: label ? label['classesOfRights'] : i18n.classesOfRights[locale],
+      label: getLabel('classesOfRights', locale, label),
       fields: licenseInfo.qualifications.split('').map((qualification) => ({
         type: GenericLicenseDataFieldType.Category,
         name: qualification,
         label:
           categories?.[
-            `${
-              label ? label['category'] : i18n.category[locale]
-            } ${qualification}`
+            `${getLabel('category', locale, label)} ${qualification}`
           ] ?? '',
         description:
           categories?.[
-            `${
-              label ? label['category'] : i18n.category[locale]
-            } ${qualification}`
+            `${getLabel('category', locale, label)} ${qualification}`
           ] ?? '',
       })),
     },
     properties && {
       type: GenericLicenseDataFieldType.Group,
       hideFromServicePortal: true,
-      label: label
-        ? label['firearmProperties']
-        : i18n.firearmProperties[locale],
+      label: getLabel('firearmProperties', locale, label),
       fields: (properties.properties ?? []).map((property) => ({
         type: GenericLicenseDataFieldType.Category,
         fields: parseProperties(labels, property, locale)?.filter(
@@ -97,9 +89,7 @@ export const parseFirearmLicensePayload = (
     },
     properties && {
       type: GenericLicenseDataFieldType.Table,
-      label: label
-        ? label['firearmProperties']
-        : i18n.firearmProperties[locale],
+      label: getLabel('firearmProperties', locale, label),
       fields: (properties.properties ?? []).map((property) => ({
         type: GenericLicenseDataFieldType.Category,
         fields: parseProperties(labels, property, locale)?.filter(
@@ -118,9 +108,7 @@ export const parseFirearmLicensePayload = (
       expireDate: licenseData.licenseInfo?.expirationDate ?? undefined,
       links: [
         {
-          label: label
-            ? label['renewFirearmLicense']
-            : i18n.renewFirearmLicense[locale],
+          label: getLabel('renewFirearmLicense', locale, label),
           value: 'https://island.is/skotvopnaleyfi',
         },
       ],
@@ -137,40 +125,41 @@ const parseProperties = (
 ): Array<GenericLicenseDataField> | null => {
   if (!property) return null
   const label = labels.labels
+
   const mappedProperty = [
     {
       type: GenericLicenseDataFieldType.Value,
-      label: label ? label['firearmStatus'] : i18n.firearmStatus[locale],
+      label: getLabel('firearmStatus', locale, label),
       value: property.category ?? '',
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: label ? label['type'] : i18n.type[locale],
+      label: getLabel('type', locale, label),
       value: property.typeOfFirearm ?? '',
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: label ? label['name'] : i18n.name[locale],
+      label: getLabel('name', locale, label),
       value: property.name ?? '',
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: label ? label['number'] : i18n.number[locale],
+      label: getLabel('number', locale, label),
       value: property.serialNumber ?? '',
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: label ? label['countryNumber'] : i18n.countryNumber[locale],
+      label: getLabel('countryNumber', locale, label),
       value: property.landsnumer ?? '',
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: label ? label['caliber'] : i18n.caliber[locale],
+      label: getLabel('caliber', locale, label),
       value: property.caliber ?? '',
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: label ? label['limitation'] : i18n.limitation[locale],
+      label: getLabel('limitation', locale, label),
       value: property.limitation ?? '',
     },
   ]

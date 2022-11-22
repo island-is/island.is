@@ -14,7 +14,7 @@ import {
 } from '../../../utils'
 
 describe('Signed verdict overview - Prosecutor - Restriction cases', () => {
-  const caseFile = makeCaseFile('caseId', 'caseFileName')
+  const caseFile = makeCaseFile({ name: 'caseFileName' })
   beforeEach(() => {
     const caseData = mockCase(CaseType.CUSTODY)
     const prosecutor = makeProsecutor()

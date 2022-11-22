@@ -7,7 +7,8 @@ import { Ceremony, Individual, PersonalInfo } from '../../types'
 import { format as formatNationalId } from 'kennitala'
 import format from 'date-fns/format'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
-import { States } from '../../lib/constants'
+import { CeremonyPlaces, States, YES } from '../../lib/constants'
+import is from 'date-fns/locale/is'
 
 type InfoProps = {
   side: Individual
@@ -97,23 +98,11 @@ export const ApplicationOverview: FC<FieldBaseProps> = ({ application }) => {
             <Box width="half">
               <Text variant="h4">{formatMessage(m.maritalStatus)}</Text>
               <Text>
-                {(answers.personalInfo as PersonalInfo).maritalStatus}
+                {application.state === States.SPOUSE_CONFIRM
+                  ? (answers.spousePersonalInfo as PersonalInfo).maritalStatus
+                  : (answers.personalInfo as PersonalInfo).maritalStatus}
               </Text>
             </Box>
-            {answers.maritalStatus === 'DIVORCED' ||
-              ((answers.fakeData as PersonalInfo).maritalStatus === '6' && (
-                <Box width="half">
-                  <Text variant="h4">
-                    {formatMessage(m.previousMarriageTermination)}
-                  </Text>
-                  <Text>
-                    {
-                      (answers.personalInfo as PersonalInfo)
-                        .previousMarriageTermination
-                    }
-                  </Text>
-                </Box>
-              ))}
           </Box>
         </Box>
       </Box>
@@ -126,29 +115,53 @@ export const ApplicationOverview: FC<FieldBaseProps> = ({ application }) => {
         <Text variant="h3" marginBottom={3}>
           {formatMessage(m.ceremony)}
         </Text>
-        <Box>
-          <Box display="flex" marginBottom={3}>
-            <Box width="half">
-              <Text variant="h4">{formatMessage(m.ceremonyDate)}</Text>
-              <Text>
-                {format(
-                  new Date((answers.ceremony as Ceremony).date),
-                  'dd/MM/yyyy',
+        {(answers.ceremony as Ceremony).hasDate === YES ? (
+          <Box marginTop={3}>
+            <Box display="flex" marginBottom={3}>
+              <Box width="half">
+                <Text variant="h4">{formatMessage(m.ceremonyDate)}</Text>
+                <Text>
+                  {format(
+                    new Date((answers.ceremony as Ceremony).date),
+                    'dd. MMMM, yyyy',
+                    { locale: is },
+                  ).toLowerCase()}
+                </Text>
+              </Box>
+            </Box>
+            <Box display="flex">
+              <Box width="half">
+                <Text variant="h4">{formatMessage(m.ceremonyPlace)}</Text>
+                {(answers.ceremony as Ceremony).place.ceremonyPlace ===
+                CeremonyPlaces.office ? (
+                  <Text>{(answers.ceremony as Ceremony).place.office}</Text>
+                ) : (answers.ceremony as Ceremony).place.ceremonyPlace ===
+                  CeremonyPlaces.society ? (
+                  <Text>{(answers.ceremony as Ceremony).place.society}</Text>
+                ) : (
+                  <Text>{formatMessage(m.ceremonyPlaceNone)}</Text>
                 )}
-              </Text>
+              </Box>
             </Box>
           </Box>
-          <Box display="flex">
-            <Box width="half">
-              <Text variant="h4">{formatMessage(m.ceremonyPlace)}</Text>
-              {(answers.ceremony as Ceremony).ceremonyPlace === 'office' ? (
-                <Text>{(answers.ceremony as Ceremony).office}</Text>
-              ) : (
-                <Text>{(answers.ceremony as Ceremony).society}</Text>
-              )}
-            </Box>
-          </Box>
-        </Box>
+        ) : (
+          <>
+            <Text variant="h4">{formatMessage(m.ceremonyPeriod)}</Text>
+            <Text variant="default">
+              {format(
+                new Date((answers.ceremony as Ceremony).period.dateFrom),
+                'dd. MMMM, yyyy',
+                { locale: is },
+              ).toLowerCase() +
+                ' - ' +
+                format(
+                  new Date((answers.ceremony as Ceremony).period.dateTo),
+                  'dd. MMMM, yyyy',
+                  { locale: is },
+                ).toLowerCase()}
+            </Text>
+          </>
+        )}
       </Box>
       <Box marginTop={5}>
         <Box paddingBottom={4}>

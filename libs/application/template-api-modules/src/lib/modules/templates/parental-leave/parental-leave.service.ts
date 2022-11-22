@@ -19,6 +19,11 @@ import {
   getAvailablePersonalRightsInDays,
   YES,
   StartDateOptions,
+  UnEmployedBenefitTypes,
+  PARENTAL_LEAVE,
+  PARENTAL_GRANT_STUDENTS,
+  SINGLE,
+  getAdditionalSingleParentRightsInDays,
 } from '@island.is/application/templates/parental-leave'
 
 import { SharedTemplateApiService } from '../../shared'
@@ -43,6 +48,7 @@ import {
 import {
   transformApplicationToParentalLeaveDTO,
   getRatio,
+  getRightsCode,
 } from './parental-leave.utils'
 import { apiConstants } from './constants'
 import { ConfigService } from '@nestjs/config'
@@ -212,30 +218,77 @@ export class ParentalLeaveService {
     }
   }
 
-  // add when we add student confirmation
-  // async getStudentPdf(application: Application) {
-  //   try {
-  //     const filename = getValueViaPath(
-  //       application.answers,
-  //       'fileUpload.studentFile[0].key',
-  //     )
+  async getStudentPdf(application: Application, index = 0) {
+    try {
+      const filename = getValueViaPath(
+        application.answers,
+        `fileUpload.studentFile[${index}].key`,
+      )
 
-  //     const Key = `${application.id}/${filename}`
-  //     const file = await this.s3
-  //       .getObject({ Bucket: this.attachmentBucket, Key })
-  //       .promise()
-  //     const fileContent = file.Body as Buffer
+      const Key = `${application.id}/${filename}`
+      const file = await this.s3
+        .getObject({ Bucket: this.attachmentBucket, Key })
+        .promise()
+      const fileContent = file.Body as Buffer
 
-  //     if (!fileContent) {
-  //       throw new Error('File content was undefined')
-  //     }
+      if (!fileContent) {
+        throw new Error('File content was undefined')
+      }
 
-  //     return fileContent.toString('base64')
-  //   } catch (e) {
-  //     this.logger.error('Cannot get student attachment', { e })
-  //     throw new Error('Failed to get the student attachment')
-  //   }
-  // }
+      return fileContent.toString('base64')
+    } catch (e) {
+      this.logger.error('Cannot get student attachment', { e })
+      throw new Error('Failed to get the student attachment')
+    }
+  }
+
+  async getBenefitsPdf(application: Application, index = 0) {
+    try {
+      const filename = getValueViaPath(
+        application.answers,
+        `fileUpload.benefitsFile[${index}].key`,
+      )
+
+      const Key = `${application.id}/${filename}`
+      const file = await this.s3
+        .getObject({ Bucket: this.attachmentBucket, Key })
+        .promise()
+      const fileContent = file.Body as Buffer
+
+      if (!fileContent) {
+        throw new Error('File content was undefined')
+      }
+
+      return fileContent.toString('base64')
+    } catch (e) {
+      this.logger.error('Cannot get benefits attachment', { e })
+      throw new Error('Failed to get the benefits attachment')
+    }
+  }
+
+  async getSingleParentPdf(application: Application, index = 0) {
+    try {
+      const filename = getValueViaPath(
+        application.answers,
+        `fileUpload.singleParent[${index}].key`,
+      )
+
+      const Key = `${application.id}/${filename}`
+      const file = await this.s3
+        .getObject({ Bucket: this.attachmentBucket, Key })
+        .promise()
+      const fileContent = file.Body as Buffer
+
+      if (!fileContent) {
+        throw new Error('File content was undefined')
+      }
+
+      return fileContent.toString('base64')
+    } catch (e) {
+      this.logger.error('Cannot get single parent attachment', { e })
+      throw new Error('Failed to get the single parent attachment')
+    }
+  }
 
   async getGenericPdf(application: Application, index = 0) {
     try {
@@ -263,9 +316,13 @@ export class ParentalLeaveService {
 
   async getAttachments(application: Application): Promise<Attachment[]> {
     const attachments: Attachment[] = []
-    const { isSelfEmployed } = getApplicationAnswers(application.answers)
+    const {
+      isSelfEmployed,
+      applicationType,
+      otherParent,
+    } = getApplicationAnswers(application.answers)
 
-    if (isSelfEmployed === YES) {
+    if (isSelfEmployed === YES && applicationType === PARENTAL_LEAVE) {
       const selfEmployedPdfs = (await getValueViaPath(
         application.answers,
         'fileUpload.selfEmployedFile',
@@ -297,6 +354,66 @@ export class ParentalLeaveService {
           }
         }
       }
+    } else if (applicationType === PARENTAL_GRANT_STUDENTS) {
+      const stuydentPdfs = (await getValueViaPath(
+        application.answers,
+        'fileUpload.studentFile',
+      )) as unknown[]
+
+      if (stuydentPdfs?.length) {
+        for (let i = 0; i <= stuydentPdfs.length - 1; i++) {
+          const pdf = await this.getStudentPdf(application, i)
+
+          attachments.push({
+            attachmentType: apiConstants.attachments.student,
+            attachmentBytes: pdf,
+          })
+        }
+      }
+    }
+
+    if (otherParent === SINGLE) {
+      const singleParentPdfs = (await getValueViaPath(
+        application.answers,
+        'fileUpload.singleParent',
+      )) as unknown[]
+
+      if (singleParentPdfs?.length) {
+        for (let i = 0; i <= singleParentPdfs.length - 1; i++) {
+          const pdf = await this.getSingleParentPdf(application, i)
+
+          attachments.push({
+            attachmentType: apiConstants.attachments.artificialInsemination,
+            attachmentBytes: pdf,
+          })
+        }
+      }
+    }
+
+    const {
+      isRecivingUnemploymentBenefits,
+      unemploymentBenefits,
+    } = getApplicationAnswers(application.answers)
+    if (
+      isRecivingUnemploymentBenefits === YES &&
+      (unemploymentBenefits === UnEmployedBenefitTypes.union ||
+        unemploymentBenefits == UnEmployedBenefitTypes.healthInsurance)
+    ) {
+      const benefitsPdfs = (await getValueViaPath(
+        application.answers,
+        'fileUpload.benefitsFile',
+      )) as unknown[]
+
+      if (benefitsPdfs?.length) {
+        for (let i = 0; i <= benefitsPdfs.length - 1; i++) {
+          const pdf = await this.getBenefitsPdf(application, i)
+
+          attachments.push({
+            attachmentType: apiConstants.attachments.unEmploymentBenefits,
+            attachmentBytes: pdf,
+          })
+        }
+      }
     }
 
     const genericPdfs = (await getValueViaPath(
@@ -309,7 +426,6 @@ export class ParentalLeaveService {
         const pdf = await this.getGenericPdf(application, i)
 
         attachments.push({
-          // needs to add other types
           attachmentType: apiConstants.attachments.other,
           attachmentBytes: pdf,
         })
@@ -326,6 +442,7 @@ export class ParentalLeaveService {
     const {
       periods: originalPeriods,
       firstPeriodStart,
+      otherParent,
     } = getApplicationAnswers(application.answers)
 
     const answers = cloneDeep(originalPeriods).sort((a, b) => {
@@ -340,6 +457,10 @@ export class ParentalLeaveService {
     const maximumPersonalDaysToSpend = getAvailablePersonalRightsInDays(
       application,
     )
+    const maximumAdditionalSingleParentDaysToSpend = getAdditionalSingleParentRightsInDays(
+      application,
+    )
+
     const isActualDateOfBirth =
       firstPeriodStart === StartDateOptions.ACTUAL_DATE_OF_BIRTH
     let numberOfDaysAlreadySpent = 0
@@ -355,6 +476,7 @@ export class ParentalLeaveService {
 
       const startDate = new Date(period.startDate)
       const endDate = new Date(period.endDate)
+      const useLength = period.useLength
 
       let periodLength = 0
 
@@ -383,18 +505,29 @@ export class ParentalLeaveService {
         )
       }
 
+      const isUsingAdditionalRights =
+        numberOfDaysAlreadySpent >=
+        maximumDaysToSpend - maximumAdditionalSingleParentDaysToSpend
+      const willStartToUseAdditionalSingleParentRightsWithPeriod =
+        numberOfDaysSpentAfterPeriod >
+        maximumDaysToSpend - maximumAdditionalSingleParentDaysToSpend
       const isUsingTransferredRights =
         numberOfDaysAlreadySpent >= maximumPersonalDaysToSpend
       const willStartToUseTransferredRightsWithPeriod =
         numberOfDaysSpentAfterPeriod > maximumPersonalDaysToSpend
+
       if (
         !isUsingTransferredRights &&
-        !willStartToUseTransferredRightsWithPeriod
+        !willStartToUseTransferredRightsWithPeriod &&
+        !isUsingAdditionalRights &&
+        !willStartToUseAdditionalSingleParentRightsWithPeriod
       ) {
         // We know its a normal period and it will not exceed personal rights
         periods.push({
           from:
-            isFirstPeriod && isActualDateOfBirth
+            isFirstPeriod && isActualDateOfBirth && useLength === YES
+              ? apiConstants.actualDateOfBirthMonths
+              : isFirstPeriod && isActualDateOfBirth
               ? apiConstants.actualDateOfBirth
               : period.startDate,
           to: period.endDate,
@@ -405,99 +538,211 @@ export class ParentalLeaveService {
           ),
           approved: false,
           paid: false,
-          rightsCodePeriod: null,
+          rightsCodePeriod: getRightsCode(application),
         })
-      } else if (isUsingTransferredRights) {
-        // We know all of the period will be using transferred rights
-        periods.push({
-          from:
-            isFirstPeriod && isActualDateOfBirth
-              ? apiConstants.actualDateOfBirth
-              : period.startDate,
-          to: period.endDate,
-          ratio: getRatio(
-            period.ratio,
-            periodLength.toString(),
-            isUsingNumberOfDays,
-          ),
-          approved: false,
-          paid: false,
-          rightsCodePeriod: apiConstants.rights.receivingRightsId,
-        })
+      } else if (otherParent === SINGLE) {
+        // single parent
+        if (isUsingAdditionalRights) {
+          // We know all of the period will be using additional single parent rights
+          periods.push({
+            from:
+              isFirstPeriod && isActualDateOfBirth && useLength === YES
+                ? apiConstants.actualDateOfBirthMonths
+                : isFirstPeriod && isActualDateOfBirth
+                ? apiConstants.actualDateOfBirth
+                : period.startDate,
+            to: period.endDate,
+            ratio: getRatio(
+              period.ratio,
+              periodLength.toString(),
+              isUsingNumberOfDays,
+            ),
+            approved: false,
+            paid: false,
+            rightsCodePeriod:
+              apiConstants.rights.artificialInseminationRightsId,
+          })
+        } else {
+          // If we reach here, we have a period that will have to be split into
+          // two, a part of it will be using personal rights and the other part
+          // will be using additional single parent rights
+          const daysLeftOfPersonalRights =
+            maximumPersonalDaysToSpend - numberOfDaysAlreadySpent
+
+          const getNormalPeriodEndDate = await this.parentalLeaveApi.parentalLeaveGetPeriodEndDate(
+            {
+              nationalRegistryId,
+              startDate,
+              length: String(daysLeftOfPersonalRights),
+              percentage: period.ratio,
+            },
+          )
+
+          if (getNormalPeriodEndDate.periodEndDate === undefined) {
+            throw new Error(
+              `Could not calculate end date of period starting ${period.startDate} and using ${daysLeftOfPersonalRights} days of rights`,
+            )
+          }
+
+          // Add the period using personal rights
+          periods.push({
+            from:
+              isFirstPeriod && isActualDateOfBirth && useLength === YES
+                ? apiConstants.actualDateOfBirthMonths
+                : isFirstPeriod && isActualDateOfBirth
+                ? apiConstants.actualDateOfBirth
+                : period.startDate,
+            to: format(getNormalPeriodEndDate.periodEndDate, df),
+            ratio: getRatio(
+              period.ratio,
+              daysLeftOfPersonalRights.toString(),
+              isUsingNumberOfDays,
+            ),
+            approved: false,
+            paid: false,
+            rightsCodePeriod: getRightsCode(application),
+          })
+
+          const additionalSingleParentPeriodStartDate = addDays(
+            getNormalPeriodEndDate.periodEndDate,
+            1,
+          )
+          const lengthOfPeriodUsingAdditionalSingleParentDays =
+            periodLength - daysLeftOfPersonalRights
+
+          const getAdditionalSingleParentPeriodEndDate = await this.parentalLeaveApi.parentalLeaveGetPeriodEndDate(
+            {
+              nationalRegistryId,
+              startDate: additionalSingleParentPeriodStartDate,
+              length: String(lengthOfPeriodUsingAdditionalSingleParentDays),
+              percentage: period.ratio,
+            },
+          )
+
+          if (
+            getAdditionalSingleParentPeriodEndDate.periodEndDate === undefined
+          ) {
+            throw new Error(
+              `Could not calculate end date of period starting ${period.startDate} and using ${lengthOfPeriodUsingAdditionalSingleParentDays} days of rights`,
+            )
+          }
+
+          // Add the period using additional single parent rights
+          periods.push({
+            from: format(additionalSingleParentPeriodStartDate, df),
+            to: format(
+              getAdditionalSingleParentPeriodEndDate.periodEndDate,
+              df,
+            ),
+            ratio: getRatio(
+              period.ratio,
+              lengthOfPeriodUsingAdditionalSingleParentDays.toString(),
+              isUsingNumberOfDays,
+            ),
+            approved: false,
+            paid: false,
+            rightsCodePeriod:
+              apiConstants.rights.artificialInseminationRightsId,
+          })
+        }
       } else {
-        // If we reach here, we have a period that will have to be split into
-        // two, a part of it will be using personal rights and the other part
-        // will be using transferred rights
-        const daysLeftOfPersonalRights =
-          maximumPersonalDaysToSpend - numberOfDaysAlreadySpent
+        // other parent
+        if (isUsingTransferredRights) {
+          // We know all of the period will be using transferred rights
+          periods.push({
+            from:
+              isFirstPeriod && isActualDateOfBirth && useLength === YES
+                ? apiConstants.actualDateOfBirthMonths
+                : isFirstPeriod && isActualDateOfBirth
+                ? apiConstants.actualDateOfBirth
+                : period.startDate,
+            to: period.endDate,
+            ratio: getRatio(
+              period.ratio,
+              periodLength.toString(),
+              isUsingNumberOfDays,
+            ),
+            approved: false,
+            paid: false,
+            rightsCodePeriod: apiConstants.rights.receivingRightsId,
+          })
+        } else {
+          // If we reach here, we have a period that will have to be split into
+          // two, a part of it will be using personal rights and the other part
+          // will be using transferred rights
+          const daysLeftOfPersonalRights =
+            maximumPersonalDaysToSpend - numberOfDaysAlreadySpent
 
-        const getNormalPeriodEndDate = await this.parentalLeaveApi.parentalLeaveGetPeriodEndDate(
-          {
-            nationalRegistryId,
-            startDate,
-            length: String(daysLeftOfPersonalRights),
-            percentage: period.ratio,
-          },
-        )
-
-        if (getNormalPeriodEndDate.periodEndDate === undefined) {
-          throw new Error(
-            `Could not calculate end date of period starting ${period.startDate} and using ${daysLeftOfPersonalRights} days of rights`,
+          const getNormalPeriodEndDate = await this.parentalLeaveApi.parentalLeaveGetPeriodEndDate(
+            {
+              nationalRegistryId,
+              startDate,
+              length: String(daysLeftOfPersonalRights),
+              percentage: period.ratio,
+            },
           )
-        }
 
-        // Add the period using personal rights
-        periods.push({
-          from:
-            isFirstPeriod && isActualDateOfBirth
-              ? apiConstants.actualDateOfBirth
-              : period.startDate,
-          to: format(getNormalPeriodEndDate.periodEndDate, df),
-          ratio: getRatio(
-            period.ratio,
-            daysLeftOfPersonalRights.toString(),
-            isUsingNumberOfDays,
-          ),
-          approved: false,
-          paid: false,
-          rightsCodePeriod: null,
-        })
+          if (getNormalPeriodEndDate.periodEndDate === undefined) {
+            throw new Error(
+              `Could not calculate end date of period starting ${period.startDate} and using ${daysLeftOfPersonalRights} days of rights`,
+            )
+          }
 
-        const transferredPeriodStartDate = addDays(
-          getNormalPeriodEndDate.periodEndDate,
-          1,
-        )
-        const lengthOfPeriodUsingTransferredDays =
-          periodLength - daysLeftOfPersonalRights
+          // Add the period using personal rights
+          periods.push({
+            from:
+              isFirstPeriod && isActualDateOfBirth && useLength === YES
+                ? apiConstants.actualDateOfBirthMonths
+                : isFirstPeriod && isActualDateOfBirth
+                ? apiConstants.actualDateOfBirth
+                : period.startDate,
+            to: format(getNormalPeriodEndDate.periodEndDate, df),
+            ratio: getRatio(
+              period.ratio,
+              daysLeftOfPersonalRights.toString(),
+              isUsingNumberOfDays,
+            ),
+            approved: false,
+            paid: false,
+            rightsCodePeriod: getRightsCode(application),
+          })
 
-        const getTransferredPeriodEndDate = await this.parentalLeaveApi.parentalLeaveGetPeriodEndDate(
-          {
-            nationalRegistryId,
-            startDate: transferredPeriodStartDate,
-            length: String(lengthOfPeriodUsingTransferredDays),
-            percentage: period.ratio,
-          },
-        )
-
-        if (getTransferredPeriodEndDate.periodEndDate === undefined) {
-          throw new Error(
-            `Could not calculate end date of period starting ${period.startDate} and using ${lengthOfPeriodUsingTransferredDays} days of rights`,
+          const transferredPeriodStartDate = addDays(
+            getNormalPeriodEndDate.periodEndDate,
+            1,
           )
-        }
+          const lengthOfPeriodUsingTransferredDays =
+            periodLength - daysLeftOfPersonalRights
 
-        // Add the period using transferred rights
-        periods.push({
-          from: format(transferredPeriodStartDate, df),
-          to: format(getTransferredPeriodEndDate.periodEndDate, df),
-          ratio: getRatio(
-            period.ratio,
-            lengthOfPeriodUsingTransferredDays.toString(),
-            isUsingNumberOfDays,
-          ),
-          approved: false,
-          paid: false,
-          rightsCodePeriod: apiConstants.rights.receivingRightsId,
-        })
+          const getTransferredPeriodEndDate = await this.parentalLeaveApi.parentalLeaveGetPeriodEndDate(
+            {
+              nationalRegistryId,
+              startDate: transferredPeriodStartDate,
+              length: String(lengthOfPeriodUsingTransferredDays),
+              percentage: period.ratio,
+            },
+          )
+
+          if (getTransferredPeriodEndDate.periodEndDate === undefined) {
+            throw new Error(
+              `Could not calculate end date of period starting ${period.startDate} and using ${lengthOfPeriodUsingTransferredDays} days of rights`,
+            )
+          }
+
+          // Add the period using transferred rights
+          periods.push({
+            from: format(transferredPeriodStartDate, df),
+            to: format(getTransferredPeriodEndDate.periodEndDate, df),
+            ratio: getRatio(
+              period.ratio,
+              lengthOfPeriodUsingTransferredDays.toString(),
+              isUsingNumberOfDays,
+            ),
+            approved: false,
+            paid: false,
+            rightsCodePeriod: apiConstants.rights.receivingRightsId,
+          })
+        }
       }
 
       // Add each period to the total number of days spent when an iteration is finished
@@ -508,7 +753,11 @@ export class ParentalLeaveService {
   }
 
   async sendApplication({ application }: TemplateApiModuleActionProps) {
-    const { isSelfEmployed } = getApplicationAnswers(application.answers)
+    const {
+      isSelfEmployed,
+      isRecivingUnemploymentBenefits,
+      applicationType,
+    } = getApplicationAnswers(application.answers)
     const nationalRegistryId = application.applicant
     const attachments = await this.getAttachments(application)
 
@@ -541,9 +790,12 @@ export class ParentalLeaveService {
       // There has been case when island.is got Access Denied from AWS when sending out emails
       // This try/catch keeps application in correct state
       try {
-        const selfEmployed = isSelfEmployed === YES
+        const selfEmployed =
+          applicationType === PARENTAL_LEAVE ? isSelfEmployed === YES : true
+        const recivingUnemploymentBenefits =
+          isRecivingUnemploymentBenefits === YES
 
-        if (!selfEmployed) {
+        if (!selfEmployed && !recivingUnemploymentBenefits) {
           // Only needs to send an email if being approved by employer
           // Self employed applicant was aware of the approval
           await this.sharedTemplateAPIService.sendEmail(
@@ -574,7 +826,6 @@ export class ParentalLeaveService {
   async validateApplication({ application }: TemplateApiModuleActionProps) {
     const nationalRegistryId = application.applicant
     const attachments = await this.getAttachments(application)
-
     try {
       const periods = await this.createPeriodsDTO(
         application,

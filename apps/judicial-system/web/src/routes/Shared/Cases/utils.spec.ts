@@ -4,6 +4,7 @@ import {
   CaseDecision,
   CaseState,
   CaseType,
+  indictmentCases,
 } from '@island.is/judicial-system/types'
 
 import { mapCaseStateToTagVariant, displayCaseType } from './utils'
@@ -22,29 +23,7 @@ describe('displayCaseType', () => {
     ).toBe('Farbann')
   })
 
-  it.each`
-    caseType
-    ${CaseType.CHILD_PROTECTION_LAWS}
-    ${CaseType.PROPERTY_DAMAGE}
-    ${CaseType.NARCOTICS_OFFENSE}
-    ${CaseType.EMBEZZLEMENT}
-    ${CaseType.FRAUD}
-    ${CaseType.DOMESTIC_VIOLENCE}
-    ${CaseType.ASSAULT_LEADING_TO_DEATH}
-    ${CaseType.MURDER}
-    ${CaseType.MAJOR_ASSAULT}
-    ${CaseType.MINOR_ASSAULT}
-    ${CaseType.RAPE}
-    ${CaseType.UTILITY_THEFT}
-    ${CaseType.AGGRAVATED_ASSAULT}
-    ${CaseType.TAX_VIOLATION}
-    ${CaseType.ATTEMPTED_MURDER}
-    ${CaseType.TRAFFIC_VIOLATION}
-    ${CaseType.THEFT}
-    ${CaseType.OTHER_CRIMINAL_OFFENSES}
-    ${CaseType.SEXUAL_OFFENSES_OTHER_THAN_RAPE}
-    ${CaseType.OTHER_OFFENSES}
-  `('should display indictment case: $caseType', ({ caseType }) => {
+  it.each(indictmentCases)('should display indictment case: %s', (caseType) => {
     expect(fn(caseType)).toEqual('Ákæra')
   })
 })
@@ -113,7 +92,7 @@ describe('mapCaseStateToTagVariant', () => {
       text: m.tags.active.defaultMessage,
     })
 
-    expect(fn(CaseState.ACCEPTED, false, CaseType.MURDER)).toEqual({
+    expect(fn(CaseState.ACCEPTED, false, CaseType.INDICTMENT)).toEqual({
       color: 'darkerBlue',
       text: m.tags.inactive.defaultMessage,
     })

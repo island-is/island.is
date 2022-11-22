@@ -18,7 +18,11 @@ import {
   getApplicationAnswers,
 } from '../../lib/parentalLeaveUtils'
 import { parentalLeaveFormMessages } from '../../lib/messages'
-import { StartDateOptions } from '../../constants'
+import {
+  PARENTAL_GRANT,
+  PARENTAL_GRANT_STUDENTS,
+  StartDateOptions,
+} from '../../constants'
 
 type ValidAnswers = StartDateOptions | undefined
 
@@ -30,7 +34,9 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
   const { register, unregister, setValue } = useFormContext()
   const { formatMessage } = useLocale()
   const expectedDateOfBirth = getExpectedDateOfBirth(application)
-  const { rawPeriods } = getApplicationAnswers(application.answers)
+  const { rawPeriods, applicationType } = getApplicationAnswers(
+    application.answers,
+  )
   const currentIndex = extractRepeaterIndexFromField(field)
   const currentPeriod = rawPeriods[currentIndex]
 
@@ -45,6 +51,10 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
   const onSelect = (answer: string) => {
     setStatefulAnswer(answer as ValidAnswers)
   }
+
+  const isGrant =
+    applicationType === PARENTAL_GRANT ||
+    applicationType === PARENTAL_GRANT_STUDENTS
 
   const renderHiddenStartDateInput =
     statefulAnswer === StartDateOptions.ESTIMATED_DATE_OF_BIRTH ||
@@ -63,7 +73,9 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
     <Box marginY={3} key={field.id}>
       <FieldDescription
         description={formatMessage(
-          parentalLeaveFormMessages.firstPeriodStart.description,
+          isGrant
+            ? parentalLeaveFormMessages.firstPeriodStart.grantDescription
+            : parentalLeaveFormMessages.firstPeriodStart.description,
         )}
       />
       <Box paddingTop={3} marginBottom={3}>
@@ -71,7 +83,9 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
           id={field.id}
           error={error}
           defaultValue={
-            statefulAnswer !== undefined ? [statefulAnswer] : NO_ANSWER
+            statefulAnswer !== undefined
+              ? [statefulAnswer]
+              : StartDateOptions.SPECIFIC_DATE
           }
           options={[
             {
@@ -81,7 +95,7 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
               ),
               value: StartDateOptions.ESTIMATED_DATE_OF_BIRTH,
               disabled: expectedDateOfBirth
-                ? new Date(expectedDateOfBirth) < new Date()
+                ? new Date(expectedDateOfBirth).getTime() < new Date().getTime()
                 : false,
             },
             {
@@ -90,7 +104,7 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
               ),
               value: StartDateOptions.ACTUAL_DATE_OF_BIRTH,
               disabled: expectedDateOfBirth
-                ? new Date(expectedDateOfBirth) < new Date()
+                ? new Date(expectedDateOfBirth).getTime() < new Date().getTime()
                 : false,
             },
             {

@@ -1,0 +1,28 @@
+{
+  "root": "libs/clients/assets-v2",
+  "sourceRoot": "libs/clients/assets-v2/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["libs/clients/assets-v2/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/clients/assets-v2"],
+      "options": {
+        "jestConfig": "libs/clients/assets-v2/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "schemas/external-openapi-generator": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "yarn openapi-generator -o libs/clients/assets-v2/gen/fetch -i libs/clients/assets-v2/src/clientConfig.json"
+      }
+    }
+  },
+  "tags": []
+}

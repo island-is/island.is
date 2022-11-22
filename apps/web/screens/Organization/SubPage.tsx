@@ -14,7 +14,6 @@ import {
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   ContentLanguage,
-  PowerBiSlice as PowerBiSliceSchema,
   Query,
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
@@ -35,15 +34,15 @@ import {
   OrganizationWrapper,
   SliceDropdown,
   Form,
-  OneColumnTextSlice,
-  PowerBiSlice,
 } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
-import { richText, SliceType } from '@island.is/island-ui/contentful'
+import { SliceType } from '@island.is/island-ui/contentful'
 import { ParsedUrlQuery } from 'querystring'
 import { useRouter } from 'next/router'
 import { scrollTo } from '@island.is/web/hooks/useScrollSpy'
+import { webRichText } from '@island.is/web/utils/richText'
+import { useI18n } from '@island.is/web/i18n'
 import { Locale } from 'locale'
 
 interface SubPageProps {
@@ -88,6 +87,7 @@ const SubPage: Screen<SubPageProps> = ({
   locale,
 }) => {
   const router = useRouter()
+  const { activeLocale } = useI18n()
 
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
@@ -113,6 +113,7 @@ const SubPage: Screen<SubPageProps> = ({
 
   return (
     <OrganizationWrapper
+      showExternalLinks={true}
       pageTitle={subpage.title}
       organizationPage={organizationPage}
       fullWidthContent={true}
@@ -172,19 +173,17 @@ const SubPage: Screen<SubPageProps> = ({
                       subpage.links.length ? '7/12' : '12/12',
                     ]}
                   >
-                    {richText(subpage.description as SliceType[], {
-                      renderComponent: {
-                        Form: (slice) => (
-                          <Form form={slice} namespace={namespace} />
-                        ),
-                        OneColumnText: (slice) => (
-                          <OneColumnTextSlice slice={slice} />
-                        ),
-                        PowerBiSlice: (slice: PowerBiSliceSchema) => (
-                          <PowerBiSlice slice={slice} />
-                        ),
+                    {webRichText(
+                      subpage.description as SliceType[],
+                      {
+                        renderComponent: {
+                          Form: (slice) => (
+                            <Form form={slice} namespace={namespace} />
+                          ),
+                        },
                       },
-                    })}
+                      activeLocale,
+                    )}
                   </GridColumn>
                   {subpage.links.length > 0 && (
                     <GridColumn
@@ -242,7 +241,6 @@ const renderSlices = (
               slice={slice}
               namespace={namespace}
               slug={slug}
-              renderedOnOrganizationSubpage={true}
               marginBottom={index === slices.length - 1 ? 5 : 0}
               params={{
                 renderLifeEventPagesAsProfileCards: true,
@@ -250,6 +248,8 @@ const renderSlices = (
                   organizationPage.theme === 'digital_iceland'
                     ? digitalIcelandDetailPageLinkType
                     : undefined,
+                latestNewsSliceBackground: 'white',
+                forceTitleSectionHorizontalPadding: 'true',
               }}
               fullWidth={true}
             />
@@ -262,9 +262,12 @@ const renderSlices = (
             slice={slice}
             namespace={namespace}
             slug={slug}
-            renderedOnOrganizationSubpage={true}
             marginBottom={index === slices.length - 1 ? 5 : 0}
-            params={{ renderLifeEventPagesAsProfileCards: true }}
+            params={{
+              renderLifeEventPagesAsProfileCards: true,
+              latestNewsSliceBackground: 'white',
+              forceTitleSectionHorizontalPadding: 'true',
+            }}
           />
         )
       })

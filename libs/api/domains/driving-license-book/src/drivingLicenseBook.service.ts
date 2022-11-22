@@ -1,9 +1,4 @@
-import {
-  Inject,
-  Injectable,
-  NotFoundException,
-  ForbiddenException,
-} from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { DrivingLicenseBookClientApiFactory } from '@island.is/clients/driving-license-book'
@@ -15,7 +10,6 @@ import { UpdatePracticalDrivingLessonInput } from './dto/updatePracticalDrivingL
 import { DeletePracticalDrivingLessonInput } from './dto/deletePracticalDrivingLesson.input'
 import { PracticalDrivingLessonsInput } from './dto/getPracticalDrivingLessons.input'
 import {
-  LICENSE_CATEGORY,
   DrivingLicenseBookStudentForTeacher,
   DrivingLicenseBookStudent,
   PracticalDrivingLesson,
@@ -40,62 +34,22 @@ export class DrivingLicenseBookService {
   async createPracticalDrivingLesson(
     input: CreatePracticalDrivingLessonInput,
     user: User,
-  ): Promise<PracticalDrivingLesson | null> {
-    const api = await this.apiWithAuth()
-    const { data } = await api.apiTeacherCreatePracticalDrivingLessonPost({
-      practicalDrivingLessonCreateRequestBody: {
-        ...input,
-        teacherSsn: user.nationalId,
-      },
-    })
-    if (data && data.id) {
-      return {
-        bookId: '',
-        id: data.id,
-        studentNationalId: '',
-        studentName: '',
-        licenseCategory: '',
-        teacherNationalId: '',
-        teacherName: '',
-        minutes: -1,
-        createdOn: '',
-        comments: '',
-      }
-    }
-    return null
+  ): Promise<Partial<Pick<PracticalDrivingLesson, 'id'>> | null> {
+    this.logger.debug(`driving-license-book: Create practical driving lesson`)
+    return await this.drivingLicenseBookClientApiFactory.createPracticalDrivingLesson(
+      input,
+      user,
+    )
   }
 
   async updatePracticalDrivingLesson(
-    {
-      bookId,
-      id,
-      minutes,
-      createdOn,
-      comments,
-    }: UpdatePracticalDrivingLessonInput,
+    input: UpdatePracticalDrivingLessonInput,
     user: User,
   ): Promise<{ success: boolean }> {
-    const api = await this.apiWithAuth()
-    const lesson: PracticalDrivingLesson[] = await this.getPracticalDrivingLessons(
-      { bookId, id },
-    )
-    if (lesson[0].teacherNationalId === user.nationalId) {
-      try {
-        await api.apiTeacherUpdatePracticalDrivingLessonIdPut({
-          id: id,
-          practicalDrivingLessonUpdateRequestBody: {
-            minutes: minutes,
-            createdOn: createdOn,
-            comments: comments,
-          },
-        })
-        return { success: true }
-      } catch (e) {
-        return { success: false }
-      }
-    }
-    throw new ForbiddenException(
-      `User ${user.nationalId} can not update practical driving lesson ${id}`,
+    this.logger.debug(`driving-license-book: Update practical driving lesson`)
+    return await this.drivingLicenseBookClientApiFactory.updatePracticalDrivingLesson(
+      input,
+      user,
     )
   }
 
@@ -103,277 +57,91 @@ export class DrivingLicenseBookService {
     { bookId, id, reason }: DeletePracticalDrivingLessonInput,
     user: User,
   ) {
-    const api = await this.apiWithAuth()
-    const lesson: PracticalDrivingLesson[] = await this.getPracticalDrivingLessons(
-      { bookId, id },
-    )
-    if (lesson[0].teacherNationalId === user.nationalId) {
-      try {
-        await api.apiTeacherDeletePracticalDrivingLessonIdDelete({ id, reason })
-        return { success: true }
-      } catch (e) {
-        return { success: false }
-      }
-    }
-    throw new ForbiddenException(
-      `User ${user.nationalId} can not delete practical driving lesson ${id}`,
-    )
-  }
-
-  async findStudent(
-    input: DrivingLicenseBookStudentsInput,
-  ): Promise<DrivingLicenseBookStudent[]> {
-    const api = await this.apiWithAuth()
-    const { data } = await api.apiStudentGetStudentListGet(input)
-    if (!data) {
-      throw new NotFoundException(`Student not found drivingLicenseBook`)
-    }
-    return data
-      .filter((student) => !!student && !!student.ssn && !!student.id)
-      .map((student) => ({
-        id: student.id ?? '',
-        nationalId: student.ssn ?? '',
-        name: student.name ?? '',
-        zipCode: student.zipCode ?? -1,
-        address: student.address ?? '',
-        email: student.email ?? '',
-        primaryPhoneNumber: student.primaryPhoneNumber ?? '',
-        secondaryPhoneNumber: student.secondaryPhoneNumber ?? '',
-        active: student.active ?? false,
-        bookLicenseCategories: student.bookLicenseCategories ?? [''],
-      }))
-  }
-
-  async getStudentsForTeacher(
-    user: User,
-  ): Promise<DrivingLicenseBookStudentForTeacher[]> {
-    const api = await this.apiWithAuth()
-    const {
-      data,
-    } = await api.apiTeacherGetStudentOverviewForTeacherTeacherSsnGet({
-      teacherSsn: user.nationalId,
-    })
-    if (!data) {
-      throw new NotFoundException(
-        `Students for teacher with nationalId ${user.nationalId} not found`,
-      )
-    }
-    // Remove nullish students, then map the students' fields to sane non-nullish values.
-    // Note that id and nationalId are never missing in practice.
-    return data
-      .filter((student) => !!student && !!student.ssn && !!student.studentId)
-      .map((student) => ({
-        id: student.studentId ?? '-1',
-        nationalId: student.ssn ?? '',
-        name: student.name ?? '',
-        totalLessonCount: student.totalLessonCount ?? -1,
-      }))
-  }
-
-  async getStudent({
-    nationalId,
-  }: DrivingLicenseBookStudentInput): Promise<DrivingLicenseBookStudentOverview> {
-    const api = await this.apiWithAuth()
-    const { data } = await api.apiStudentGetStudentOverviewSsnGet({
-      ssn: nationalId,
-    })
-    if (data?.books && data?.ssn) {
-      const activeBook = await this.getActiveBookId(data?.ssn)
-      const book = data.books.filter((b) => b.id === activeBook && !!b.id)[0]
-      return {
-        nationalId: data.ssn,
-        id: data.id ?? '',
-        name: data.name ?? '',
-        zipCode: data.zipCode ?? -1,
-        address: data.address ?? '',
-        email: data.email ?? '',
-        primaryPhoneNumber: data.primaryPhoneNumber ?? '',
-        secondaryPhoneNumber: data.secondaryPhoneNumber ?? '',
-        active: data.active ?? false,
-        bookLicenseCategories: data.bookLicenseCategories ?? [],
-        book: {
-          id: book.id ?? '',
-          teacherNationalId: book.teacherSsn ?? '',
-          licenseCategory: book.licenseCategory ?? '',
-          createdOn: book.createdOn ?? '',
-          teacherName: book.teacherName ?? '',
-          schoolNationalId: book.schoolSsn ?? '',
-          schoolName: book.schoolName ?? '',
-          isDigital: book.isDigital ?? false,
-          totalLessonTime: book.totalLessonTime ?? -1,
-          totalLessonCount: book.totalLessonCount ?? -1,
-          drivingSchoolExams: !book.drivingSchoolExams
-            ? []
-            : book.drivingSchoolExams.map((exam) => ({
-                id: book.id ?? '',
-                examDate: exam.examDate ?? '',
-                schoolNationalId: exam.schoolSsn ?? '',
-                schoolName: exam.schoolName ?? '',
-                schoolEmployeeNationalId: exam.schoolEmployeeSsn ?? '',
-                schoolEmployeeName: exam.schoolEmployeeName ?? '',
-                schoolTypeId: exam.schoolTypeId ?? -1,
-                schoolTypeName: exam.schoolTypeName ?? '',
-                schoolTypeCode: exam.schoolTypeCode ?? '',
-                comments: exam.comments ?? '',
-              })),
-          testResults: !book.testResults
-            ? []
-            : book.testResults.map((testResult) => ({
-                id: testResult.id ?? '',
-                examDate: testResult.examDate ?? '',
-                score: testResult.score ?? -1,
-                scorePart1: testResult.scorePart1 ?? -1,
-                scorePart2: testResult.scorePart2 ?? -1,
-                hasPassed: testResult.hasPassed ?? false,
-                testCenterNationalId: testResult.testCenterSsn ?? '',
-                testCenterName: testResult.testCenterName ?? '',
-                testExaminerNationalId: testResult.testExaminerSsn ?? '',
-                testExaminerName: testResult.testExaminerName ?? '',
-                testTypeId: testResult.testTypeId ?? -1,
-                testTypeName: testResult.testTypeName ?? '',
-                testTypeCode: testResult.testTypeCode ?? '',
-                comments: testResult.comments ?? '',
-              })),
-          teachersAndLessons: !book.teachersAndLessons
-            ? []
-            : book.teachersAndLessons.map((lesson) => ({
-                id: lesson.id ?? '',
-                registerDate: lesson.registerDate ?? '',
-                lessonTime: lesson.lessonTime ?? -1,
-                teacherNationalId: lesson.teacherSsn ?? '',
-                teacherName: lesson.teacherName ?? '',
-                comments: lesson.comments ?? '',
-              })),
-        },
-      }
-    }
-
-    throw new NotFoundException(
-      `Student for nationalId ${nationalId} not found`,
+    this.logger.debug(`driving-license-book: Delete practical driving lesson`)
+    return await this.drivingLicenseBookClientApiFactory.deletePracticalDrivingLesson(
+      { bookId, id, reason },
+      user,
     )
   }
 
   async getPracticalDrivingLessons(
     input: PracticalDrivingLessonsInput,
   ): Promise<PracticalDrivingLesson[]> {
-    const api = await this.apiWithAuth()
-    const { data } = await api.apiTeacherGetPracticalDrivingLessonsBookIdGet(
+    this.logger.debug(`driving-license-book: Get practical driving lessons`)
+    return await this.drivingLicenseBookClientApiFactory.getPracticalDrivingLessons(
       input,
     )
-    if (!data) {
-      throw new NotFoundException(
-        `Practical driving lesson for id ${input.id} not found`,
-      )
-    }
-    return data
-      .filter(
-        (practical) => !!practical && !!practical.bookId && !!practical.id,
-      )
-      .map((practical) => ({
-        bookId: practical.bookId ?? '',
-        id: practical.id ?? '',
-        studentNationalId: practical.studentSsn ?? '',
-        studentName: practical.studentName ?? '',
-        licenseCategory: practical.licenseCategory ?? '',
-        teacherNationalId: practical.teacherSsn ?? '',
-        teacherName: practical.teacherName ?? '',
-        minutes: practical.minutes ?? -1,
-        createdOn: practical.createdOn ?? '',
-        comments: practical.comments ?? '',
-      }))
   }
 
-  private async getActiveBookId(nationalId: string): Promise<string | null> {
-    const api = await this.apiWithAuth()
-    const { data } = await api.apiStudentGetStudentActiveBookIdSsnGet({
-      ssn: nationalId,
-      licenseCategory: LICENSE_CATEGORY,
+  async findStudent(
+    input: DrivingLicenseBookStudentsInput,
+  ): Promise<DrivingLicenseBookStudent[]> {
+    this.logger.debug(
+      `driving-license-book: Finding student with key ${input.key}`,
+    )
+    return await this.drivingLicenseBookClientApiFactory.findStudent(input)
+  }
+
+  async getStudent({
+    nationalId,
+  }: DrivingLicenseBookStudentInput): Promise<DrivingLicenseBookStudentOverview> {
+    this.logger.debug(`driving-license-book: Get student with id ${nationalId}`)
+    return await this.drivingLicenseBookClientApiFactory.getStudent({
+      nationalId,
     })
-    return data?.bookId || null
+  }
+
+  async getStudentsForTeacher(
+    user: User,
+  ): Promise<DrivingLicenseBookStudentForTeacher[]> {
+    this.logger.debug(
+      `driving-license-book: Getting student for teacher ${user}`,
+    )
+    return await this.drivingLicenseBookClientApiFactory.getStudentsForTeacher(
+      user,
+    )
+  }
+
+  async getMostRecentStudentBook({
+    nationalId,
+  }: DrivingLicenseBookStudentInput): Promise<DrivingLicenseBookStudentOverview | null> {
+    this.logger.debug(`driving-license-book: Get most recent student book`)
+    return await this.drivingLicenseBookClientApiFactory.getMostRecentStudentBook(
+      {
+        nationalId,
+      },
+    )
   }
 
   async getSchoolForSchoolStaff(user: User): Promise<Organization> {
-    const api = await this.apiWithAuth()
-    const employee = await api.apiSchoolGetSchoolForSchoolStaffUserSsnGet({
-      userSsn: user.nationalId,
-    })
-    if (!employee) {
-      throw new NotFoundException(
-        `School for user ${user.nationalId} not found`,
-      )
-    }
-    const { data } = await api.apiSchoolGetSchoolTypesGet({
-      licenseCategory: 'B',
-    })
-
-    const allowedSchoolTypes = data
-      ?.filter(
-        (type) =>
-          type?.schoolTypeCode &&
-          employee.allowedDrivingSchoolTypes?.includes(type?.schoolTypeCode),
-      )
-      .map(
-        (type) =>
-          ({
-            schoolTypeId: type.schoolTypeId ?? -1,
-            schoolTypeName: type.schoolTypeName ?? '',
-            schoolTypeCode: type.schoolTypeCode ?? '',
-            licenseCategory: type.licenseCategory ?? '',
-          } as SchoolType),
-      )
-
-    return {
-      nationalId: employee.ssn ?? '',
-      name: employee.name ?? '',
-      address: employee.address ?? '',
-      zipCode: employee.zipCode ?? '',
-      phoneNumber: employee.phoneNumber ?? '',
-      email: employee.email ?? '',
-      website: employee.website ?? '',
-      allowedDrivingSchoolTypes: allowedSchoolTypes ?? [],
-    }
+    this.logger.debug(
+      `driving-license-book: Get available driving schools for staff`,
+    )
+    return await this.drivingLicenseBookClientApiFactory.getSchoolForSchoolStaff(
+      user,
+    )
   }
 
   async isSchoolStaff(user: User): Promise<boolean> {
-    const api = await this.apiWithAuth()
-    const employee = await api.apiSchoolGetSchoolForSchoolStaffUserSsnGet({
-      userSsn: user.nationalId,
-    })
-    if (!employee) {
-      return false
-    }
-    return true
+    this.logger.debug(
+      `driving-license-book: Confirm user is staff at driving school`,
+    )
+    return await this.drivingLicenseBookClientApiFactory.isSchoolStaff(user)
   }
 
   async createDrivingSchoolTestResult(
     input: CreateDrivingSchoolTestResultInput,
   ): Promise<{ id: string } | null> {
-    const api = await this.apiWithAuth()
-    const { data } = await api.apiSchoolCreateSchoolTestResultPost({
-      schoolTestResultCreateRequestBody: {
-        bookId: input.bookId,
-        schoolTypeId: input.schoolTypeId,
-        schoolSsn: input.schoolNationalId,
-        schoolEmployeeSsn: input.schoolEmployeeNationalId,
-        createdOn: input.createdOn,
-        comments: input.comments,
-      },
-    })
-    return data?.id ? { id: data.id } : null
+    this.logger.debug(
+      `driving-license-book: Create test result for driving school`,
+    )
+    return await this.drivingLicenseBookClientApiFactory.createDrivingSchoolTestResult(
+      input,
+    )
   }
 
   async getSchoolTypes(): Promise<SchoolType[] | null> {
-    const api = await this.apiWithAuth()
-    const { data } = await api.apiSchoolGetSchoolTypesGet({
-      licenseCategory: 'B',
-    })
-    return (
-      data?.map((type) => ({
-        schoolTypeId: type.schoolTypeId ?? -1,
-        schoolTypeName: type.schoolTypeName ?? '',
-        schoolTypeCode: type.schoolTypeCode ?? '',
-        licenseCategory: type.licenseCategory ?? '',
-      })) || null
-    )
+    this.logger.debug(`driving-license-book: Get types for driving schools`)
+    return await this.drivingLicenseBookClientApiFactory.getSchoolTypes()
   }
 }

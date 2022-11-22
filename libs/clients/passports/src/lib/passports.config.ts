@@ -1,6 +1,6 @@
 import { defineConfig } from '@island.is/nest/config'
 import { NationalRegistryScope } from '@island.is/auth/scopes'
-import * as z from 'zod'
+import { z } from 'zod'
 
 const schema = z.object({
   xRoadServicePath: z.string(),

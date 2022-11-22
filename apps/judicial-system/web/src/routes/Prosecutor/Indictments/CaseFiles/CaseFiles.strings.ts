@@ -37,15 +37,10 @@ export const caseFiles = {
       defaultMessage: 'Sakarkostnaður',
       description: 'Titill á sakarkostnaður hluta á dómskjalaskjá í ákærum.',
     }),
-    caseFileContents: defineMessage({
-      id: 'judicial.system.indictments:case_files.sections.case_file_contents',
-      defaultMessage: 'Skjalaskrá',
-      description: 'Titill á skjalaskrá hluta á dómskjalaskjá í ákærum.',
-    }),
-    caseFile: defineMessage({
-      id: 'judicial.system.indictments:case_files.sections.case_file',
-      defaultMessage: 'Málsgögn',
-      description: 'Titill á málsgögn hluta á dómskjalaskjá í ákærum.',
+    otherDocuments: defineMessage({
+      id: 'judicial.system.indictments:case_files.sections.other_documents',
+      defaultMessage: 'Önnur gögn',
+      description: 'Titill á önnur gögn hluta á dómskjalaskjá í ákærum.',
     }),
   },
 }

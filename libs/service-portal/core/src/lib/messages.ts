@@ -222,6 +222,10 @@ export const m = defineMessages({
     id: 'service.portal:vehicles-lookup',
     defaultMessage: 'Uppfletting í ökutækjaskrá',
   },
+  vehiclesDrivingLessons: {
+    id: 'service.portal:vehicles-driving-lessons',
+    defaultMessage: 'Ökunám',
+  },
   yourVehicles: {
     id: 'service.portal:your-vehicles',
     defaultMessage: 'Þín ökutæki',
@@ -535,6 +539,18 @@ export const m = defineMessages({
     id: 'service.portal:accessControl',
     defaultMessage: 'Aðgangsstýring',
   },
+  accessControlDelegations: {
+    id: 'service.portal:delegations',
+    defaultMessage: 'Umboð',
+  },
+  accessControlDelegationsToMe: {
+    id: 'service.portal:to-me',
+    defaultMessage: 'Umboð til mín',
+  },
+  accessControlDelegationsFromMe: {
+    id: 'service.portal:from-me',
+    defaultMessage: 'Umboð frá mér',
+  },
   accessControlDescription: {
     id: 'service.portal:accessControl-description',
     defaultMessage: 'Umboðsveiting og yfirlit yfir umboð sem þú hefur gefið',
@@ -808,5 +824,25 @@ export const m = defineMessages({
   errorTitle: {
     id: 'service.portal:error-screen-title',
     defaultMessage: 'Villa',
+  },
+  buttonCancel: {
+    id: 'service.portal:button.cancel',
+    defaultMessage: 'Hætta við',
+    description: 'Cancel',
+  },
+  buttonEdit: {
+    id: 'service.portal:button.edit',
+    defaultMessage: 'Breyta',
+    description: 'Edit',
+  },
+  buttonDestroy: {
+    id: 'service.portal:button.delete',
+    defaultMessage: 'Eyða',
+    description: 'Delete',
+  },
+  buttonRenew: {
+    id: 'service.portal:button.renew',
+    defaultMessage: 'Endurnýja',
+    description: 'Renew',
   },
 })

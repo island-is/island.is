@@ -19,14 +19,7 @@ const delegation1_applications_read = {
   valid_from: new Date(),
 }
 
-const delegation1_profile = {
-  id: uuid(),
-  delegation_id: delegation1.id,
-  identity_resource_name: 'profile',
-  valid_from: new Date(),
-}
-
-const delegation_scopes = [delegation1_applications_read, delegation1_profile]
+const delegation_scopes = [delegation1_applications_read]
 
 module.exports = {
   up: async (queryInterface) => {

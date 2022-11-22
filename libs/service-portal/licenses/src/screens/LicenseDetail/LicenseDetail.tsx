@@ -9,7 +9,6 @@ import {
   GridRow,
   Stack,
   Text,
-  AlertBanner,
   Button,
   Icon,
   Table as T,
@@ -19,6 +18,8 @@ import {
   ServicePortalModuleComponent,
   UserInfoLine,
   CardLoader,
+  ErrorScreen,
+  m as coreMessages,
 } from '@island.is/service-portal/core'
 import ExpandableLine from './ExpandableLine'
 import { m } from '../../lib/messages'
@@ -32,7 +33,7 @@ import {
   getLicenseDetailHeading,
   getTypeFromPath,
 } from '../../utils/dataMapper'
-import { isExpired, toDate } from '../../utils/dateUtils'
+import { isExpired } from '../../utils/dateUtils'
 import isValid from 'date-fns/isValid'
 
 const dataFragment = gql`
@@ -105,6 +106,7 @@ const checkLicenseExpired = (date?: string) => {
 
   return isExpired(new Date(), new Date(date))
 }
+
 const DataFields = ({
   fields,
   licenseType,
@@ -287,8 +289,9 @@ const DataFields = ({
                 {field.fields && field.fields.length > pageSize && (
                   <Box marginY={3}>
                     <Pagination
+                      totalItems={field.fields.length}
+                      itemsPerPage={pageSize}
                       page={page}
-                      totalPages={Math.round(field.fields.length / pageSize)}
                       renderLink={(page, className, children) => (
                         <Box
                           cursor="pointer"
@@ -337,12 +340,15 @@ const LicenseDetail: ServicePortalModuleComponent = () => {
 
   if (error && !queryLoading) {
     return (
-      <Box>
-        <AlertBanner
-          description={formatMessage(m.errorFetchingDrivingLicense)}
-          variant="error"
-        />
-      </Box>
+      <ErrorScreen
+        figure="./assets/images/hourglass.svg"
+        tagVariant="red"
+        tag={formatMessage(coreMessages.errorTitle)}
+        title={formatMessage(coreMessages.somethingWrong)}
+        children={formatMessage(coreMessages.errorFetchModule, {
+          module: formatMessage(coreMessages.licenses).toLowerCase(),
+        })}
+      />
     )
   }
 

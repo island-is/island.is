@@ -7,6 +7,7 @@ export const UpdateCaseMutation = gql`
       created
       modified
       type
+      indictmentSubtypes
       description
       state
       policeCaseNumbers
@@ -18,6 +19,10 @@ export const UpdateCaseMutation = gql`
         gender
         address
         citizenship
+        defenderName
+        defenderNationalId
+        defenderEmail
+        defenderPhoneNumber
       }
       defenderName
       defenderNationalId
@@ -155,6 +160,7 @@ export const UpdateCaseMutation = gql`
       seenByDefender
       subpoenaType
       defendantWaivesRightToCounsel
+      crimeScenes
     }
   }
 `

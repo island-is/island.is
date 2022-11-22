@@ -6,7 +6,7 @@ import {
 } from '../../licenceService.type'
 import isAfter from 'date-fns/isAfter'
 import { Locale } from '@island.is/shared/types'
-import { i18n } from '../../utils/translations'
+import { getLabel } from '../../utils/translations'
 
 type ExcludesFalse = <T>(x: T | null | undefined | false | '') => x is T
 
@@ -26,41 +26,42 @@ export const parseDrivingLicensePayload = (
     : null
 
   const label = labels?.labels
+
   // Parse license data into the fields as they're displayed on the physical drivers license
   // see: https://www.samgongustofa.is/umferd/nam-og-rettindi/skirteini-og-rettindi/okurettindi-og-skirteini/
   const data = [
     // We don't get the name split into two from the API, combine
     {
-      name: 'Grunnupplýsingar ökuskírteinis',
+      name: getLabel('basicInfoLicense', locale, label),
       type: GenericLicenseDataFieldType.Value,
-      label: label ? label['licenseNumber'] : i18n.licenseNumber[locale],
+      label: getLabel('licenseNumber', locale, label),
       value: (license?.id ?? '').toString(),
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: label ? label['fullName'] : i18n.fullName[locale],
+      label: getLabel('fullName', locale, label),
       value: license.nafn,
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: label ? label['publisher'] : i18n.publisher[locale],
+      label: getLabel('publisher', locale, label),
       value: license.nafnUtgafustadur,
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: label ? label['publishedDate'] : i18n.publishedDate[locale],
+      label: getLabel('publishedDate', locale, label),
       value: license.utgafuDagsetning
         ? new Date(license.utgafuDagsetning).toISOString()
         : '',
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: label ? label['validTo'] : i18n.validTo[locale],
+      label: getLabel('validTo', locale, label),
       value: license.gildirTil ? new Date(license.gildirTil).toISOString() : '',
     },
     {
       type: GenericLicenseDataFieldType.Group,
-      label: label ? label['classesOfRights'] : i18n.classesOfRights[locale],
+      label: getLabel('classesOfRights', locale, label),
       fields: (license.rettindi ?? []).map((field) => ({
         type: GenericLicenseDataFieldType.Category,
         name: (field.nr ?? '').trim(),
@@ -68,21 +69,21 @@ export const parseDrivingLicensePayload = (
         fields: [
           {
             type: GenericLicenseDataFieldType.Value,
-            label: label ? label['expiryDate'] : i18n.expiryDate[locale],
+            label: getLabel('expiryDate', locale, label),
             value: field.gildirTil
               ? new Date(field.gildirTil).toISOString()
               : '',
           },
           {
             type: GenericLicenseDataFieldType.Value,
-            label: label ? label['publishedDate'] : i18n.publishedDate[locale],
+            label: getLabel('publishedDate', locale, label),
             value: field.utgafuDags
               ? new Date(field.utgafuDags).toISOString()
               : '',
           },
           field.aths && {
             type: GenericLicenseDataFieldType.Value,
-            label: label ? label['comment'] : i18n.comment[locale],
+            label: getLabel('comment', locale, label),
             value: field.aths,
           },
         ].filter((Boolean as unknown) as ExcludesFalse),
@@ -99,9 +100,7 @@ export const parseDrivingLicensePayload = (
       expireDate: license.gildirTil ?? undefined,
       links: [
         {
-          label: label
-            ? label['renewDrivingLicense']
-            : i18n.renewDrivingLicense[locale],
+          label: getLabel('renewDrivingLicense', locale, label),
           value: 'https://island.is/endurnyjun-okuskirteina',
         },
       ],

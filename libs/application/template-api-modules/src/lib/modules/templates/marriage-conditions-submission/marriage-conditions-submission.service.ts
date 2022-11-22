@@ -21,7 +21,7 @@ export class MarriageConditionsSubmissionService {
   ) {}
 
   async createCharge({
-    application: { id, answers },
+    application: { id },
     auth,
   }: TemplateApiModuleActionProps) {
     const response = await this.sharedTemplateAPIService.createCharge(
@@ -56,7 +56,7 @@ export class MarriageConditionsSubmissionService {
     )
   }
 
-  async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
+  async submitApplication({ application }: TemplateApiModuleActionProps) {
     const {
       applicant,
       spouse,
@@ -91,24 +91,23 @@ export class MarriageConditionsSubmissionService {
       signed: true,
       type: person.type,
     }))
-    const ceramonyPlace: string =
-      ceremony.ceremonyPlace === 'office' && ceremony.office
-        ? ceremony.office
-        : ceremony.society
-        ? ceremony.society
+    const ceremonyPlace: string =
+      ceremony.place?.ceremonyPlace === 'office' && ceremony.place?.office
+        ? ceremony.place?.office
+        : ceremony.place?.society
+        ? ceremony.place?.society
         : ''
 
     const extraData: { [key: string]: string } = {
-      vigsluDagur: ceremony.date,
-      vigsluStadur: ceramonyPlace,
+      vigsluDagur:
+        ceremony.date ||
+        ceremony.period?.dateFrom + ' - ' + ceremony.period?.dateTo ||
+        '',
+      vigsluStadur: ceremonyPlace,
       umsaekjandiRikisfang: personalInfo.citizenship,
       umsaekjandiHjuskaparstada: personalInfo.maritalStatus,
-      umsaekjandiLoksFyrriHjuskapar:
-        personalInfo.previousMarriageTermination || '',
       makiRikisfang: spousePersonalInfo.citizenship,
       makiHjuskaparstada: spousePersonalInfo.maritalStatus,
-      makiLoksFyrriHjuskapar:
-        spousePersonalInfo.previousMarriageTermination || '',
     }
     const uploadDataName = 'hjonavigsla1.0'
     const uploadDataId = 'hjonavigsla1.0'

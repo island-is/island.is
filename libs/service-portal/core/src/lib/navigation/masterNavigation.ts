@@ -281,6 +281,10 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             path: ServicePortalPath.AssetsVehiclesLookup,
           },
           {
+            name: m.vehiclesDrivingLessons,
+            path: ServicePortalPath.AssetsVehiclesDrivingLessons,
+          },
+          {
             name: m.vehiclesHistory,
             path: ServicePortalPath.AssetsVehiclesHistory,
           },
@@ -336,6 +340,39 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           icon: 'lockClosed',
         },
         description: m.accessControlDescription,
+      },
+      // Aðgangsstýring umboð
+      {
+        name: m.accessControl,
+        path: ServicePortalPath.AccessControlDelegations,
+        icon: {
+          icon: 'people',
+        },
+        description: m.accessControlDescription,
+        children: [
+          {
+            name: m.accessControlDelegations,
+            path: ServicePortalPath.AccessControlDelegations,
+            navHide: true,
+            children: [
+              {
+                name: m.accessControlGrant,
+                path: ServicePortalPath.AccessControlDelegationsGrant,
+                navHide: true,
+              },
+            ],
+          },
+          {
+            name: m.accessControlDelegationsToMe,
+            path: ServicePortalPath.AccessControlDelegationsToMe,
+            navHide: true,
+          },
+          {
+            name: m.accessControlAccess,
+            path: ServicePortalPath.AccessControlDelegationAccess,
+            navHide: true,
+          },
+        ],
       },
     ],
   },

@@ -11,7 +11,6 @@ import { USER_PROFILE } from '@island.is/service-portal/graphql'
 import { showModal } from '../src/utils/showModal'
 
 import { lazy } from 'react'
-import * as Sentry from '@sentry/react'
 
 export const personalInformationModule: ServicePortalModule = {
   name: 'Persónuupplýsingar',
@@ -54,7 +53,6 @@ export const personalInformationModule: ServicePortalModule = {
       const showTheModal = showModal(res.data?.getUserProfile)
 
       if (
-        // true
         process.env.NODE_ENV !== 'development' &&
         userInfo.scopes.includes(UserProfileScope.write) &&
         showTheModal
@@ -66,7 +64,7 @@ export const personalInformationModule: ServicePortalModule = {
             ),
         })
     } catch (error) {
-      Sentry.captureException(error)
+      console.error(error)
     }
 
     return routes

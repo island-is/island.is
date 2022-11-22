@@ -28,6 +28,7 @@ import {
   PassportService,
   OperatingLicenseService,
   FinancialStatementsInaoTemplateService,
+  EstateTemplateService,
   DrivingLicenseDuplicateService,
   AnonymityInVehicleRegistryService,
   ChangeCoOwnerOfVehicleService,
@@ -85,6 +86,7 @@ export class TemplateAPIService {
     private readonly passportService: PassportService,
     private readonly operatingLicenseService: OperatingLicenseService,
     private readonly financialStatementsInaoService: FinancialStatementsInaoTemplateService,
+    private readonly estateTemplateService: EstateTemplateService,
     private readonly drivingLicenseDuplicateService: DrivingLicenseDuplicateService,
     private readonly anonymityInVehicleRegistryService: AnonymityInVehicleRegistryService,
     private readonly changeCoOwnerOfVehicleService: ChangeCoOwnerOfVehicleService,
@@ -125,6 +127,7 @@ export class TemplateAPIService {
       | PassportService
       | OperatingLicenseService
       | FinancialStatementsInaoTemplateService
+      | EstateTemplateService
       | DrivingLicenseDuplicateService
       | AnonymityInVehicleRegistryService
       | ChangeCoOwnerOfVehicleService
@@ -211,6 +214,11 @@ export class TemplateAPIService {
       case ApplicationTypes.DRIVING_LICENSE:
         return this.tryRunningActionOnService(
           this.drivingLicenseSubmissionService,
+          action,
+        )
+      case ApplicationTypes.ESTATE:
+        return this.tryRunningActionOnService(
+          this.estateTemplateService,
           action,
         )
       case ApplicationTypes.ACCIDENT_NOTIFICATION:

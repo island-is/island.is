@@ -144,7 +144,7 @@ export type GenericLicenseCached = {
   payload?: GenericUserLicensePayload
 }
 
-type LicenseLabelsObject = {
+export type LicenseLabelsObject = {
   [x: string]: string
 }
 export type GenericLicenseLabels = {
@@ -183,6 +183,12 @@ export type PkPassVerificationError = {
    * data is used to pass along the error from originator, e.g. SmartSolution
    */
   data?: string
+}
+
+export type PassTemplateIds = {
+  firearmLicense: string
+  adrLicense: string
+  machineLicense: string
 }
 
 export type PkPassVerificationData = {
@@ -247,5 +253,3 @@ export interface GenericLicenseClient<LicenseType> {
 export const GENERIC_LICENSE_FACTORY = 'generic_license_factory'
 
 export const CONFIG_PROVIDER = 'config_provider'
-
-export const CONFIG_PROVIDER_V2 = 'config_provider_v2'

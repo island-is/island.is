@@ -1,8 +1,10 @@
 export const apiConstants = {
   actualDateOfBirth: 'date_of_birth',
+  actualDateOfBirthMonths: 'date_of_birth_months',
   pensionFunds: {
     // Id used when applicant does not wish to pay into a private pension fund
     noPrivatePensionFundId: 'X000',
+    noPensionFundId: 'L000',
   },
   unions: {
     noUnion: 'F000',
@@ -10,11 +12,14 @@ export const apiConstants = {
   rights: {
     // When primary or secondary parents are requested extra days from their spouse
     receivingRightsId: 'FSAL-GR',
+    artificialInseminationRightsId: 'EITTFOR',
   },
   attachments: {
     selfEmployed: 'selfEmployed',
     student: 'Student',
-    other: 'other',
+    unEmploymentBenefits: 'UnemploymentBenefits',
+    other: 'Other',
+    artificialInsemination: 'ArtificialInsemination',
   },
 }
 

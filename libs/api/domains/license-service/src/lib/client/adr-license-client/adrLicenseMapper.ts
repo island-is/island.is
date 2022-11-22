@@ -13,7 +13,7 @@ import {
   FlattenedAdrRightsDto,
 } from './genericAdrLicense.type'
 import { Locale } from '@island.is/shared/types'
-import { i18n } from '../../utils/translations'
+import { getLabel } from '../../utils/translations'
 
 const parseAdrLicenseResponse = (license: AdrDto) => {
   const { adrRettindi, ...rest } = license
@@ -51,26 +51,27 @@ export const parseAdrLicensePayload = (
   const parsedResponse = parseAdrLicenseResponse(license)
 
   const label = labels?.labels
+
   const data: Array<GenericLicenseDataField> = [
     {
-      name: 'Grunnupplýsingar ADR skírteinis',
+      name: getLabel('basicInfoLicense', locale, label),
       type: GenericLicenseDataFieldType.Value,
-      label: label ? label['licenseNumber'] : i18n.licenseNumber[locale],
+      label: getLabel('licenseNumber', locale, label),
       value: parsedResponse.skirteinisNumer?.toString(),
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: label ? label['fullName'] : i18n.fullName[locale],
+      label: getLabel('fullName', locale, label),
       value: parsedResponse.fulltNafn ?? '',
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: label ? label['publisher'] : i18n.publisher[locale],
+      label: getLabel('publisher', locale, label),
       value: 'Vinnueftirlitið',
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: label ? label['validTo'] : i18n.validTo[locale],
+      label: getLabel('validTo', locale, label),
       value: parsedResponse.gildirTil ?? '',
     },
   ]
@@ -79,14 +80,14 @@ export const parseAdrLicensePayload = (
     (field) => field.grunn,
   )
   const tankar = parseRights(
-    label ? label['tanks'] : i18n.tanks[locale],
+    getLabel('tanks', locale, label) ?? '',
     adrRights.filter((field) => field.tankar),
   )
 
   if (tankar) data.push(tankar)
 
   const grunn = parseRights(
-    label ? label['otherThanTanks'] : i18n.otherThanTanks[locale],
+    getLabel('otherThanTanks', locale, label) ?? '',
     adrRights,
   )
   if (grunn) data.push(grunn)
