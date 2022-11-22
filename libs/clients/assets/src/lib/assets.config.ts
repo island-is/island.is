@@ -8,8 +8,8 @@ const schema = z.object({
   tokenExchangeScope: z.array(z.string()),
 })
 
-export const AssetsV2ClientConfig = defineConfig<z.infer<typeof schema>>({
-  name: 'AssetsV2Client',
+export const AssetsClientConfig = defineConfig<z.infer<typeof schema>>({
+  name: 'AssetsClient',
   schema,
   load(env) {
     return {

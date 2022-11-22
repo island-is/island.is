@@ -1,4 +1,4 @@
-import { Pagination } from '@island.is/clients/assets-v2'
+import { Pagination } from '@island.is/clients/assets'
 
 export interface DefaultAddress {
   displayShort?: string | null

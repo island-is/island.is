@@ -10,20 +10,20 @@ import {
 } from '@island.is/nest/config'
 
 import { Configuration, FasteignirApi } from '../../gen/fetch'
-import { AssetsV2ClientConfig } from './assetsV2.config'
+import { AssetsClientConfig } from './assets.config'
 
-export const PropertiesV2ApiProvider: Provider<FasteignirApi> = {
+export const PropertiesApiProvider: Provider<FasteignirApi> = {
   provide: FasteignirApi,
   scope: LazyDuringDevScope,
   useFactory: (
     xroadConfig: ConfigType<typeof XRoadConfig>,
-    config: ConfigType<typeof AssetsV2ClientConfig>,
+    config: ConfigType<typeof AssetsClientConfig>,
     idsClientConfig: ConfigType<typeof IdsClientConfig>,
   ) =>
     new FasteignirApi(
       new Configuration({
         fetchApi: createEnhancedFetch({
-          name: 'clients-assets-v2',
+          name: 'clients-assets',
           timeout: config.fetchTimeout,
           autoAuth: idsClientConfig.isConfigured
             ? {
@@ -51,5 +51,5 @@ export const PropertiesV2ApiProvider: Provider<FasteignirApi> = {
         },
       }),
     ),
-  inject: [XRoadConfig.KEY, AssetsV2ClientConfig.KEY, IdsClientConfig.KEY],
+  inject: [XRoadConfig.KEY, AssetsClientConfig.KEY, IdsClientConfig.KEY],
 }

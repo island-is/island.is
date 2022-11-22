@@ -1,4 +1,4 @@
-import { Pagination } from '@island.is/clients/assets-v2'
+import { Pagination } from '@island.is/clients/assets'
 import { PropertySingleDTO } from './AssetSingle.type'
 
 export interface AssetsMultiDetail {

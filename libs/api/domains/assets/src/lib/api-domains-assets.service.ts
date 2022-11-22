@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { ApolloError } from 'apollo-server-express'
-import { FasteignirApi as FasteignirApiV2 } from '@island.is/clients/assets-v2'
+import { FasteignirApi } from '@island.is/clients/assets'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
 import type { Logger } from '@island.is/logging'
@@ -23,7 +23,7 @@ export class AssetsXRoadService {
   constructor(
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-    private fasteignirApiV2: FasteignirApiV2,
+    private fasteignirApi: FasteignirApi,
   ) {}
 
   handleError(error: any, detail?: string): ApolloError | null {
@@ -42,7 +42,7 @@ export class AssetsXRoadService {
   }
 
   private getRealEstatesWithAuth(auth: User) {
-    return this.fasteignirApiV2.withMiddleware(
+    return this.fasteignirApi.withMiddleware(
       new AuthMiddleware(auth, { forwardUserInfo: true }),
     )
   }
