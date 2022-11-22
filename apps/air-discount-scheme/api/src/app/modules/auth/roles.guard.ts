@@ -21,7 +21,6 @@ export class RolesGuard implements CanActivate {
     }
     const user = getUserFromContext(context)
     user.role = getRole({ name: user.name, nationalId: user.nationalId })
-
     // Deny if no user
     if (!user) {
       throw new UnauthorizedException()
