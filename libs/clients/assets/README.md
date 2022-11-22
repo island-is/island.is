@@ -1,6 +1,6 @@
 <!-- gitbook-navigation: "Assets" -->
 
-# Assets Client V2
+# Assets Client
 
 This library was generated with [Nx](https://nx.dev).
 
