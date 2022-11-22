@@ -1,4 +1,5 @@
 //todo
+import { indictmentCases } from '@island.is/judicial-system/types'
 import { CanActivate } from '@nestjs/common'
 
 import {
@@ -6,6 +7,7 @@ import {
   CaseNotCompletedGuard,
   CaseWriteGuard,
 } from '../../../case'
+import { CaseTypeGuard } from '../../../case/guards/caseType.guard'
 import { FileController } from '../../file.controller'
 
 describe('FileController - Upload case file to court guards', () => {
@@ -19,8 +21,8 @@ describe('FileController - Upload case file to court guards', () => {
     )
   })
 
-  it('should have three guards', () => {
-    expect(guards).toHaveLength(3)
+  it('should have four guards', () => {
+    expect(guards).toHaveLength(4)
   })
 
   describe('CaseExistsGuard', () => {
@@ -35,14 +37,29 @@ describe('FileController - Upload case file to court guards', () => {
     })
   })
 
+  describe('CaseTypeGuerd', () => {
+    let guard: CanActivate
+
+    beforeEach(() => {
+      guard = guards[1]
+    })
+
+    it('should have CaseTypeGuard as quard 2', () => {
+      expect(guard).toBeInstanceOf(CaseTypeGuard)
+      expect(guard).toEqual({
+        allowedCaseTypes: [...indictmentCases],
+      })
+    })
+  })
+
   describe('CaseWriteGuard', () => {
     let guard: CanActivate
 
     beforeEach(() => {
-      guard = new guards[1]()
+      guard = new guards[2]()
     })
 
-    it('should have CaseWriteGuard as quard 2', () => {
+    it('should have CaseWriteGuard as quard 3', () => {
       expect(guard).toBeInstanceOf(CaseWriteGuard)
     })
   })
@@ -51,10 +68,10 @@ describe('FileController - Upload case file to court guards', () => {
     let guard: CanActivate
 
     beforeEach(() => {
-      guard = new guards[2]()
+      guard = new guards[3]()
     })
 
-    it('should have CaseNotCompletedGuard as quard 3', () => {
+    it('should have CaseNotCompletedGuard as quard 4', () => {
       expect(guard).toBeInstanceOf(CaseNotCompletedGuard)
     })
   })

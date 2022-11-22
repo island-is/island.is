@@ -156,6 +156,11 @@ export const m = defineMessages({
       'Það staðfestist hér með að heildartekjur eða -kostnaður vegna framboðsins voru ekki umfram þau fjárhæðarmörk sem tilgreind eru í 3. mgr. 10. gr. laga nr. 162/2006, um starfsemi stjórnmálasamtaka, og er framboðið því undanþegið uppgjörsskyldu.',
     description: 'statement',
   },
+  SignatureMessage: {
+    id: 'fsn.application:SignatureMessage',
+    defaultMessage: 'Rafræn undirritun verður send á netfangið',
+    description: 'signature message',
+  },
   nationalId: {
     id: 'fsn.application:nationalId',
     defaultMessage: 'Kennitala',
@@ -691,6 +696,11 @@ export const m = defineMessages({
     defaultMessage: 'Ársreikningur mótekinn',
     description: 'financial statement received',
   },
+  infoReceived: {
+    id: 'fsn.application:infoReceived',
+    defaultMessage: 'Uppgjör móttekið',
+    description: 'election info received',
+  },
   dataCollectionCheckboxLabel: {
     id: 'fsn.application:dataCollectionCheckboxLabel',
     defaultMessage:
@@ -822,6 +832,12 @@ export const m = defineMessages({
     id: 'fsn.application:equityValidatorError',
     defaultMessage: 'Skuldir og eigið fé þarf að vera jafnt og eignir samtals',
     description: 'Equity + debts shout equal assets',
+  },
+  wrongDelegation: {
+    id: 'fsn.application:wrongDelegation',
+    defaultMessage:
+      'Eingöngu er hægt að skila fyrir hönd Kirkjugarða eða Stjórnmálasamtaka',
+    description: 'Logged in user with incorrect delegation type',
   },
   submitErrorMessage: {
     id: 'fsn.application:submitErrorMessage',
