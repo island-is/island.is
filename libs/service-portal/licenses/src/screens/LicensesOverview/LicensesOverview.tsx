@@ -22,7 +22,6 @@ import {
 } from '@island.is/service-portal/graphql'
 import { Query } from '@island.is/api/schema'
 import { Box } from '@island.is/island-ui/core'
-import { ServicePortalPath } from '@island.is/service-portal/core'
 import {
   getPathFromProviderId,
   getPathFromType,
