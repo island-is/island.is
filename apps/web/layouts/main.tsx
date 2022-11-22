@@ -633,12 +633,12 @@ export const withMainLayout = <T,>(
 
     const organizationAlertBannerContent: GetAlertBannerQuery['getAlertBanner'] =
       'organizationPage' in componentProps
-        ? componentProps['organizationPage']['alertBanner']
+        ? componentProps['organizationPage']?.['alertBanner']
         : undefined
 
     const articleAlertBannerContent: GetAlertBannerQuery['getAlertBanner'] =
       'article' in componentProps
-        ? componentProps['article']['alertBanner']
+        ? componentProps['article']?.['alertBanner']
         : undefined
 
     const customAlertBanners =
