@@ -85,11 +85,11 @@ export function findFamilyStatus(
 
 export function hasActiveCurrentApplication(context: ApplicationContext) {
   const { externalData } = context.application
-  const dataProvider = getValueViaPath(
+  const currentApplication = getValueViaPath(
     externalData,
     'currentApplication.data',
   ) as CurrentApplication
-  return dataProvider != null
+  return currentApplication != null
 }
 
 export const hasFiles = (

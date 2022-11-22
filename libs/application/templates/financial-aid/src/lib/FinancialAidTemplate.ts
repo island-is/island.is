@@ -67,18 +67,7 @@ const FinancialAidTemplate: ApplicationTemplate<
                 import('../forms/Prerequisites').then((module) =>
                   Promise.resolve(module.Prerequisites),
                 ),
-              write: {
-                answers: ['approveExternalData'],
-                externalData: [
-                  NationalRegistryUserApi.externalDataId || '',
-                  NationalRegistryUserApi.actionId,
-                  NationalRegistrySpouseApi.externalDataId || '',
-                  NationalRegistrySpouseApi.actionId,
-                  CurrentApplicationApi.actionId,
-                  MunicipalityApi.actionId,
-                  TaxDataApi.actionId,
-                ],
-              },
+              write: 'all',
               delete: true,
               api: [
                 CurrentApplicationApi,
