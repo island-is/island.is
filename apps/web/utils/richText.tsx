@@ -12,6 +12,7 @@ import {
   AccordionSlice,
   CatchQuotaCalculator,
   ChartsCard,
+  EmailSignup,
   OneColumnTextSlice,
   PowerBiSlice,
   SelectedShip,
@@ -55,6 +56,7 @@ const defaultRenderComponent = {
   ConnectedComponent: (slice) => webRenderConnectedComponent(slice),
   GraphCard: (chart) => <ChartsCard chart={chart} />,
   OneColumnText: (slice) => <OneColumnTextSlice slice={slice} />,
+  EmailSignup: (slice) => <EmailSignup slice={slice} />,
 }
 
 export const webRichText = (

@@ -20,6 +20,7 @@ export const ElectionStatement = ({
   const { formatMessage } = useLocale()
   const { errors } = useFormContext()
   const answers = application.answers as FinancialStatementsInao
+  const email = getValueViaPath(answers, 'about.email')
 
   const [submitApplication] = useSubmitApplication({
     application,
@@ -59,6 +60,9 @@ export const ElectionStatement = ({
       </Box>
       <Box paddingY={2}>
         <Text>{formatMessage(m.electionStatementLaw)}</Text>
+      </Box>
+      <Box paddingY={2}>
+        <Text>{`${formatMessage(m.SignatureMessage)} ${email}`}</Text>
       </Box>
       {errors && getErrorViaPath(errors, 'applicationApprove') ? (
         <InputError errorMessage={formatMessage(m.errorApproval)} />
