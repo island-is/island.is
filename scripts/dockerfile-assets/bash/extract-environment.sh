@@ -7,7 +7,7 @@
 set -e
 
 work_dir="${1:-/usr/share/nginx/html}"
-file="$work_dir/index.html.src"
+file="$work_dir/index.src.html"
 file_out="$work_dir/index.html"
 
 placeholder="<!-- environment placeholder -->"

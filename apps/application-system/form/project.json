@@ -9,7 +9,7 @@
       "options": {
         "baseHref": "/umsoknir/",
         "outputPath": "dist/apps/application-system/form",
-        "index": "apps/application-system/form/src/index.html",
+        "index": "apps/application-system/form/src/index.src.html",
         "main": "apps/application-system/form/src/main.tsx",
         "polyfills": "apps/application-system/form/src/polyfills.ts",
         "tsConfig": "apps/application-system/form/tsconfig.app.json",
@@ -28,7 +28,6 @@
           "optimization": false,
           "outputHashing": "all",
           "sourceMap": false,
-          "index": "apps/application-system/form/src/index.html.src",
           "extractCss": true,
           "namedChunks": false,
           "extractLicenses": true,
