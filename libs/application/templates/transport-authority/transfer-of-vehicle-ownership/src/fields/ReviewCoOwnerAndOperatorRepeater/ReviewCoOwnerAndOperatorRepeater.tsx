@@ -75,9 +75,9 @@ export const ReviewCoOwnerAndOperatorRepeater: FC<
     if (tempCoOwnersAndOperators && setCoOwnersAndOperators) {
       const notValid = tempCoOwnersAndOperators.find((field) => {
         if (
-          field.email.length === 0 &&
-          field.name.length === 0 &&
-          field.nationalId.length === 0 &&
+          field.email.length === 0 ||
+          field.name.length === 0 ||
+          field.nationalId.length === 0 ||
           field.phone.length === 0
         ) {
           return true

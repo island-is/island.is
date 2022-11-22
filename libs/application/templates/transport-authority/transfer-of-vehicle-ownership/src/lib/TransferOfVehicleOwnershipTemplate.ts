@@ -18,14 +18,13 @@ import { CoOwnerAndOperator, UserInformation } from '../types'
 import { assign } from 'xstate'
 import set from 'lodash/set'
 
-const pruneInDaysAtMidnight = (application: Application, days: number) => {
+const pruneInDaysATen = (application: Application, days: number) => {
   const date = new Date(application.created)
   date.setDate(date.getDate() + days)
-  // const utcDate = new Date(date.toUTCString()) // In case user is not on GMT
-  const midnightDate = new Date(date.toUTCString())
-  midnightDate.setHours(23, 59, 59)
-  // const timeToPrune = midnightDate.getTime() - utcDate.getTime()
-  return midnightDate // Time left of the day + 6 more days
+  const pruneDate = new Date(date.toUTCString())
+  pruneDate.setHours(10, 0, 0)
+  console.log(pruneDate)
+  return pruneDate // Time left of the day + 6 more days
 }
 
 const template: ApplicationTemplate<
@@ -89,7 +88,7 @@ const template: ApplicationTemplate<
               variant: 'red',
             },
           },
-          progress: 0.8,
+          progress: 0.4,
           lifecycle: pruneAfterDays(1 / 24),
           onEntry: {
             apiModuleAction: ApiActions.createCharge,
@@ -116,7 +115,6 @@ const template: ApplicationTemplate<
         },
       },
       [States.REVIEW]: {
-        // TODO
         entry: 'assignUsers',
         meta: {
           name: 'Tilkynning um eigendaskipti að ökutæki',
@@ -126,12 +124,12 @@ const template: ApplicationTemplate<
               variant: 'blue',
             },
           },
-          progress: 0.25,
+          progress: 0.65,
           lifecycle: {
             shouldBeListed: true,
             shouldBePruned: true,
             whenToPrune: (application: Application) =>
-              pruneInDaysAtMidnight(application, 3),
+              pruneInDaysATen(application, 8),
           },
           onEntry: {
             apiModuleAction: ApiActions.addReview,
@@ -185,13 +183,14 @@ const template: ApplicationTemplate<
         on: {
           [DefaultEvents.APPROVE]: { target: States.REVIEW },
           [DefaultEvents.REJECT]: { target: States.REJECTED },
+          [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
         },
       },
       [States.REJECTED]: {
         meta: {
           name: 'Rejected',
           progress: 1,
-          lifecycle: pruneAfterDays(30),
+          lifecycle: pruneAfterDays(3 * 30),
           /* onEntry: {
             apiModuleAction: ApiActions.rejectApplication,
           }, */

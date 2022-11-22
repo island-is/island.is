@@ -108,7 +108,8 @@ export const NationalIdWithName: FC<Props & FieldBaseProps> = ({
             backgroundColor="blue"
             onChange={debounce((v) => {
               setNationalIdInput(v.target.value.replace(/\W/g, ''))
-              onNationalIdChange && onNationalIdChange(v.target.value)
+              onNationalIdChange &&
+                onNationalIdChange(v.target.value.replace(/\W/g, ''))
             })}
             loading={queryLoading}
             error={nationalIdFieldErrors}

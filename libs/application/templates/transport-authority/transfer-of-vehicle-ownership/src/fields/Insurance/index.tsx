@@ -40,11 +40,6 @@ export const Insurance: FC<FieldBaseProps & ReviewScreenProps> = ({
     'insuranceCompanyList.data',
     [],
   ) as InsuranceCompany[]
-  const isOutOfCommission = getValueViaPath(
-    application.answers,
-    'vehicle.isOutOfCommission',
-    false,
-  ) as boolean
 
   const onChange = (option: Option) => {
     setErrorMessage(undefined)
@@ -93,13 +88,6 @@ export const Insurance: FC<FieldBaseProps & ReviewScreenProps> = ({
         label: insurance.name || '',
       }
     })
-
-    if (isOutOfCommission) {
-      options.push({
-        value: '000',
-        label: formatMessage(insurance.labels.outOfCommission),
-      })
-    }
 
     return options
   }

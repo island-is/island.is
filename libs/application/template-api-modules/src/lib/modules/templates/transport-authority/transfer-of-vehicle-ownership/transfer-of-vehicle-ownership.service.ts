@@ -309,14 +309,41 @@ export class TransferOfVehicleOwnershipService {
     const buyerOperators = answers.buyerCoOwnerAndOperator?.filter(
       (x) => x.type === 'operator',
     )
-
+    console.log('FIRST CHECKPOINT')
     // Note: Need to be sure that the user that created the application is the seller when submitting application to SGS
     if (answers?.seller?.nationalId !== application.applicant) {
       throw new Error(
         'Aðeins sá sem skráði umsókn má vera skráður sem seljandi.',
       )
     }
-
+    console.log('SECOND CHECKPOINT', {
+      permno: answers?.vehicle?.plate,
+      seller: {
+        ssn: answers?.seller?.nationalId,
+        email: answers?.seller?.email,
+      },
+      buyer: {
+        ssn: answers?.buyer?.nationalId,
+        email: answers?.buyer?.email,
+      },
+      // Note: API throws error if timestamp is 00:00:00, so we will use noon
+      dateOfPurchase: getDateAtNoonFromString(answers?.vehicle?.date),
+      saleAmount: Number(answers?.vehicle?.salePrice) || 0,
+      // Note: Insurance code 000 is when car is out of commission and is not going to be insured
+      insuranceCompanyCode: answers?.insurance?.value,
+      coOwners: buyerCoOwners?.map((coOwner) => ({
+        ssn: coOwner.nationalId,
+        email: coOwner.email,
+      })),
+      operators: buyerOperators?.map((operator) => ({
+        ssn: operator.nationalId,
+        email: operator.email,
+        isMainOperator:
+          buyerOperators.length > 1
+            ? operator.nationalId === answers.buyerMainOperator?.nationalId
+            : true,
+      })),
+    })
     // 1. Submit the application
     await this.transferOfVehicleOwnershipApi.saveOwnerChange(auth, {
       permno: answers?.vehicle?.plate,
@@ -346,12 +373,12 @@ export class TransferOfVehicleOwnershipService {
             : true,
       })),
     })
-
+    console.log('THIRD CHECKPOINT')
     // 2. Notify everyone in the process that the application has successfully been submitted
 
     // 2a. Get list of users that need to be notified
     const recipientList = getRecipients(answers, getAllRoles())
-
+    console.log('FOURTH CHECKPOINT')
     // 2b. Send email/sms individually to each recipient about success of submitting application
     for (let i = 0; i < recipientList.length; i++) {
       if (recipientList[i].email) {

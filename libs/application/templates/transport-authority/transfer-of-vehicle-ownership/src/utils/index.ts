@@ -9,6 +9,7 @@ export { getReviewSteps } from './getReviewSteps'
 export { getReviewerInfo } from './getReviewerInfo'
 export { hasReviewerApproved } from './hasReviewerApproved'
 export { getApproveAnswers } from './getApproveAnswers'
+export { isLastReviewer } from './isLastReviewer'
 
 export const getChargeItemCodes = (
   answers: TransferOfVehicleOwnership,

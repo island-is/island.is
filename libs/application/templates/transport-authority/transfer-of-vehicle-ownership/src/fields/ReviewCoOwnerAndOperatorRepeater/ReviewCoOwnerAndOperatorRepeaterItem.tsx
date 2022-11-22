@@ -37,6 +37,7 @@ export const ReviewCoOwnerAndOperatorRepeaterItem: FC<
   errorMessage,
   ...props
 }) => {
+  console.log(repeaterField)
   const [email, setEmail] = useState<string>(repeaterField.email || '')
   const [phone, setPhone] = useState<string>(repeaterField.phone || '')
   const [nationalId, setNationalId] = useState<string>(
@@ -44,12 +45,14 @@ export const ReviewCoOwnerAndOperatorRepeaterItem: FC<
   )
   const [name, setName] = useState<string>(repeaterField.name || '')
 
-  const { register } = useFormContext()
+  const { setValue, register } = useFormContext()
   const { formatMessage } = useLocale()
   const fieldIndex = `${id}[${index}]`
   const userMessageId = repeaterField.type ?? 'coOwner'
   const emailField = `${fieldIndex}.email`
   const phoneField = `${fieldIndex}.phone`
+  const nationalIdField = `${fieldIndex}.nationalId`
+  const nameField = `${fieldIndex}.name`
   const typeField = `${fieldIndex}.type`
 
   useEffect(() => {
@@ -63,8 +66,13 @@ export const ReviewCoOwnerAndOperatorRepeaterItem: FC<
         name,
         type: userMessageId,
       }
+      console.log(itemValue)
       temp[index] = itemValue
       setCoOwnersAndOperators(temp)
+      setValue(nationalIdField, nationalId)
+      setValue(nameField, name)
+      setValue(emailField, email)
+      setValue(phoneField, phone)
     }
   }, [email, phone, nationalId, name, userMessageId])
 
