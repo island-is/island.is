@@ -2,6 +2,8 @@ import { TransferOfVehicleOwnershipAnswers } from '@island.is/application/templa
 import { Message } from '@island.is/email-service'
 import { EmailTemplateGeneratorProps } from '../../../../../types'
 import { EmailRecipient } from '../types'
+import { pathToAsset } from '../transfer-of-vehicle-ownership.utils'
+import { ApplicationConfigurations } from '@island.is/application/types'
 
 export type ApplicationSubmittedEmail = (
   props: EmailTemplateGeneratorProps,
@@ -14,7 +16,7 @@ export const generateApplicationSubmittedEmail: ApplicationSubmittedEmail = (
 ): Message => {
   const {
     application,
-    options: { email },
+    options: { email, clientLocationOrigin },
   } = props
   const answers = application.answers as TransferOfVehicleOwnershipAnswers
   const permno = answers?.vehicle?.plate
@@ -35,12 +37,37 @@ export const generateApplicationSubmittedEmail: ApplicationSubmittedEmail = (
       title: subject,
       body: [
         {
+          component: 'Image',
+          context: {
+            src: pathToAsset('logo.jpg'),
+            alt: 'Ísland.is logo',
+          },
+        },
+        {
+          component: 'Image',
+          context: {
+            src: pathToAsset('computerIllustration.jpg'),
+            alt: 'Kaffi við skjá myndskreyting',
+          },
+        },
+        {
+          component: 'Heading',
+          context: { copy: subject },
+        },
+        {
           component: 'Copy',
           context: {
             copy:
-              `<p>Góðan dag,</p><br/>` +
-              `<p>Eigendaskipti fyrir ökutækið ${permno} hafa verið skráð.</p>` +
-              `<p>Allir aðilar samþykktu inn á island.is/umsoknir og búið er að greiða fyrir tilkynninguna.</p>`,
+              `<span>Góðan dag,</span><br/><br/>` +
+              `<span>Eigendaskipti fyrir ökutækið ${permno} hafa verið skráð.</span><br/>` +
+              `<span>Allir aðilar samþykktu inn á island.is/umsoknir og búið er að greiða fyrir tilkynninguna.</span>`,
+          },
+        },
+        {
+          component: 'Button',
+          context: {
+            copy: 'Skoða umsókn',
+            href: `${clientLocationOrigin}/${ApplicationConfigurations.DigitalTachographDriversCard.slug}/${application.id}`,
           },
         },
       ],

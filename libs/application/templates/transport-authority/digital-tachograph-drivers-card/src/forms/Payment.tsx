@@ -7,8 +7,13 @@ import {
   buildSubmitField,
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
-import { payment } from '../lib/messages'
-import { m } from '../lib/messagesx'
+import {
+  cardType,
+  applicant,
+  externalData,
+  payment,
+  confirmation,
+} from '../lib/messages'
 
 type CreateChargeData = {
   data: {
@@ -17,7 +22,7 @@ type CreateChargeData = {
 }
 
 export const Payment: Form = buildForm({
-  id: 'TransferOfVehicleOwnershipPaymentForm',
+  id: 'PaymentForm',
   title: '',
   mode: FormModes.APPLYING,
   renderLastScreenButton: false,
@@ -25,7 +30,17 @@ export const Payment: Form = buildForm({
   children: [
     buildSection({
       id: 'externalData',
-      title: m.externalDataSection,
+      title: externalData.dataProvider.sectionTitle,
+      children: [],
+    }),
+    buildSection({
+      id: 'cardTypeSection',
+      title: cardType.general.sectionTitle,
+      children: [],
+    }),
+    buildSection({
+      id: 'applicantSection',
+      title: applicant.general.sectionTitle,
       children: [],
     }),
     buildSection({
@@ -94,8 +109,8 @@ export const Payment: Form = buildForm({
         buildCustomField({
           id: 'subSectionPaymentPending',
           component: 'PaymentPending',
-          title: m.confirmation,
-          condition: () => {
+          title: payment.general.sectionTitle,
+          condition: (_, externalData) => {
             return !!window.document.location.href.match(/\?done$/)
           },
         }),
@@ -103,7 +118,7 @@ export const Payment: Form = buildForm({
     }),
     buildSection({
       id: 'confirmation',
-      title: m.confirmation,
+      title: confirmation.general.sectionTitle,
       children: [],
     }),
   ],

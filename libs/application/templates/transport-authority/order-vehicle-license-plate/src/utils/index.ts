@@ -7,13 +7,16 @@ export const formatIsk = (value: number): string =>
 export const getChargeItemCodes = (
   answers: OrderVehicleLicensePlate,
 ): Array<string> => {
-  if (!answers.includeRushFee) {
-    return [
-      ChargeItemCode.TRANSPORT_AUTHORITY_ORDER_VEHICLE_LICENSE_PLATE.toString(),
-    ]
-  } else {
-    return [
-      ChargeItemCode.TRANSPORT_AUTHORITY_ORDER_VEHICLE_LICENSE_PLATE_WITH_RUSH_FEE.toString(),
-    ]
+  const result = [
+    ChargeItemCode.TRANSPORT_AUTHORITY_ORDER_VEHICLE_LICENSE_PLATE.toString(),
+    ChargeItemCode.TRANSPORT_AUTHORITY_ORDER_VEHICLE_LICENSE_PLATE_SGS.toString(),
+  ]
+
+  if (answers.includeRushFee) {
+    result.push(
+      ChargeItemCode.TRANSPORT_AUTHORITY_ORDER_VEHICLE_LICENSE_PLATE_RUSH_FEE.toString(),
+    )
   }
+
+  return result
 }

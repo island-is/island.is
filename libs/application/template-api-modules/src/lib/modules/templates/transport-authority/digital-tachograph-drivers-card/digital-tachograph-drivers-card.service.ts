@@ -7,6 +7,7 @@ import {
   getChargeItemCodes,
 } from '@island.is/application/templates/transport-authority/digital-tachograph-drivers-card'
 import { NationalRegistry, QualityPhoto, QualitySignature } from './types'
+import { YES } from '@island.is/application/core'
 
 @Injectable()
 export class DigitalTachographDriversCardService {
@@ -24,7 +25,7 @@ export class DigitalTachographDriversCardService {
       const result = this.sharedTemplateAPIService.createCharge(
         auth.authorization,
         application.id,
-        chargeItemCodes[0],
+        chargeItemCodes,
       )
       return result
     } catch (exeption) {
@@ -78,7 +79,7 @@ export class DigitalTachographDriversCardService {
       birthPlace: answers.birthPlace,
       emailAddress: answers.email,
       phoneNumber: answers.phone,
-      deliveryMethodIsSend: answers.deliveryMethodIsSend,
+      deliveryMethodIsSend: answers.deliveryMethodIsSend === YES,
       paymentReceivedAt: new Date(createChargeDate),
       photo: qualityPhotoData?.dataUri,
       signature: qualitySignatureData?.dataUri,

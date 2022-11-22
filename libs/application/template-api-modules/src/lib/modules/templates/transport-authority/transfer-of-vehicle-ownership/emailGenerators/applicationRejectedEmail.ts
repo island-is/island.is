@@ -3,6 +3,8 @@ import { Message } from '@island.is/email-service'
 import { EmailTemplateGeneratorProps } from '../../../../../types'
 import { EmailRecipient } from '../types'
 import { getRoleNameById } from '../transfer-of-vehicle-ownership.utils'
+import { pathToAsset } from '../transfer-of-vehicle-ownership.utils'
+import { ApplicationConfigurations } from '@island.is/application/types'
 
 export type ApplicationRejectedEmail = (
   props: EmailTemplateGeneratorProps,
@@ -17,7 +19,7 @@ export const generateApplicationRejectedEmail: ApplicationRejectedEmail = (
 ): Message => {
   const {
     application,
-    options: { email },
+    options: { email, clientLocationOrigin },
   } = props
   const answers = application.answers as TransferOfVehicleOwnershipAnswers
   const permno = answers?.vehicle?.plate
@@ -42,15 +44,40 @@ export const generateApplicationRejectedEmail: ApplicationRejectedEmail = (
       title: subject,
       body: [
         {
+          component: 'Image',
+          context: {
+            src: pathToAsset('logo.jpg'),
+            alt: 'Ísland.is logo',
+          },
+        },
+        {
+          component: 'Image',
+          context: {
+            src: pathToAsset('computerIllustration.jpg'),
+            alt: 'Kaffi við skjá myndskreyting',
+          },
+        },
+        {
+          component: 'Heading',
+          context: { copy: subject },
+        },
+        {
           component: 'Copy',
           context: {
             copy:
-              `<p>Góðan dag,</p><br/>` +
-              `<p>Beiðni um eigendaskipti á ökutækinu ${permno} hefur verið afturkölluð þar sem eftirfarandi aðilar staðfestu ekki:</p>` +
+              `<span>Góðan dag,</span><br/><br/>` +
+              `<span>Beiðni um eigendaskipti á ökutækinu ${permno} hefur verið afturkölluð þar sem eftirfarandi aðilar staðfestu ekki:</span><br/>` +
               `<ul><li><p>${rejectedByStr}</p></li></ul>` +
-              `<p>Til þess að skrá eigendaskiptin rafrænt verður að byrja ferlið að upp á nýtt á umsóknarvef island.is: island.is/umsoknir, ásamt því að allir aðilar þurfa að staðfesta rafrænt innan gefins tímafrests.</p>` +
-              `<p>Þessi tilkynning á aðeins við um rafræna umsókn af umsóknarvef island.is en ekki um eigendaskipti sem skilað hefur verið inn til Samgöngustofu á pappír.</p>` +
-              `<p>Vinsamlegast hafið samband við Þjónustuver Samgöngustofu (afgreidsla@samgongustofa.is) ef nánari upplýsinga er þörf.</p>`,
+              `<span>Til þess að skrá eigendaskiptin rafrænt verður að byrja ferlið að upp á nýtt á umsóknarvef island.is: island.is/umsoknir, ásamt því að allir aðilar þurfa að staðfesta rafrænt innan gefins tímafrests.</span><br/>` +
+              `<span>Þessi tilkynning á aðeins við um rafræna umsókn af umsóknarvef island.is en ekki um eigendaskipti sem skilað hefur verið inn til Samgöngustofu á pappír.</span><br/>` +
+              `<span>Vinsamlegast hafið samband við Þjónustuver Samgöngustofu (afgreidsla@samgongustofa.is) ef nánari upplýsinga er þörf.</span>`,
+          },
+        },
+        {
+          component: 'Button',
+          context: {
+            copy: 'Skoða umsókn',
+            href: `${clientLocationOrigin}/${ApplicationConfigurations.DigitalTachographDriversCard.slug}/${application.id}`,
           },
         },
       ],

@@ -1,6 +1,8 @@
-import { IsString } from 'class-validator'
+import { ArrayNotEmpty, IsArray, IsString } from 'class-validator'
 
 export class CreateChargeInput {
-  @IsString()
-  readonly chargeItemCode!: string
+  @IsArray()
+  @ArrayNotEmpty()
+  @IsString({ each: true })
+  readonly chargeItemCodes!: string[]
 }

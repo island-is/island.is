@@ -69,21 +69,21 @@ export const MainOwner: FC<FieldBaseProps> = ({ application, field }) => {
 
           <Box marginTop={2}>
             <GridRow>
-              <GridColumn span={['1/1', '1/2']}>
-                <InputController
-                  id="nationalId"
-                  name="nationalId"
-                  defaultValue={owner.nationalId || ''}
-                  label={formatMessage(information.labels.owner.nationalId)}
-                  readOnly
-                />
-              </GridColumn>
               <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
                 <InputController
                   id="name"
                   name="name"
                   defaultValue={owner.owner || ''}
                   label={formatMessage(information.labels.owner.name)}
+                  readOnly
+                />
+              </GridColumn>
+              <GridColumn span={['1/1', '1/2']}>
+                <InputController
+                  id="nationalId"
+                  name="nationalId"
+                  defaultValue={owner.nationalId || ''}
+                  label={formatMessage(information.labels.owner.nationalId)}
                   readOnly
                 />
               </GridColumn>

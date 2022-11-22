@@ -3,6 +3,8 @@ import { Message } from '@island.is/email-service'
 import { EmailTemplateGeneratorProps } from '../../../../../types'
 import { EmailRecipient } from '../types'
 import { getApplicationPruneDateStr } from '../transfer-of-vehicle-ownership.utils'
+import { pathToAsset } from '../transfer-of-vehicle-ownership.utils'
+import { ApplicationConfigurations } from '@island.is/application/types'
 
 export type RequestReviewEmail = (
   props: EmailTemplateGeneratorProps,
@@ -15,7 +17,7 @@ export const generateRequestReviewEmail: RequestReviewEmail = (
 ): Message => {
   const {
     application,
-    options: { email },
+    options: { email, clientLocationOrigin },
   } = props
   const answers = application.answers as TransferOfVehicleOwnershipAnswers
   const permno = answers?.vehicle?.plate
@@ -37,14 +39,39 @@ export const generateRequestReviewEmail: RequestReviewEmail = (
       title: subject,
       body: [
         {
+          component: 'Image',
+          context: {
+            src: pathToAsset('logo.jpg'),
+            alt: 'Ísland.is logo',
+          },
+        },
+        {
+          component: 'Image',
+          context: {
+            src: pathToAsset('computerIllustration.jpg'),
+            alt: 'Kaffi við skjá myndskreyting',
+          },
+        },
+        {
+          component: 'Heading',
+          context: { copy: subject },
+        },
+        {
           component: 'Copy',
           context: {
             copy:
-              `<p>Góðan dag,</p><br/>` +
-              `<p>Þín bíður ósamþykkt beiðni um eigendaskipti fyrir ökutækið ${permno} á island.is.</p>` +
-              `<p>Til þess að samþykkja beiðnina skráir þú þig inn á island.is/umsóknir.</p>` +
-              `<p>Þú hefur 7 daga til þess að samþykkja beiðnina.</p>` +
-              `<p>Ef eigendaskiptin hafa ekki verið samþykkt fyrir ${pruneDateStr} munu þau falla niður.</p>`,
+              `<span>Góðan dag,</span><br/><br/>` +
+              `<span>Þín bíður ósamþykkt beiðni um eigendaskipti fyrir ökutækið ${permno} á island.is.</span><br/>` +
+              `<span>Þú hefur 7 daga til þess að samþykkja beiðnina.</span><br/>` +
+              `<span>Ef eigendaskiptin hafa ekki verið samþykkt fyrir ${pruneDateStr} munu þau falla niður.</span><br/>` +
+              `<span>Hægt er að fara yfir beiðnina á island.is eða með því að smella á hlekkinn hér fyrir neðan.</span><br/>`,
+          },
+        },
+        {
+          component: 'Button',
+          context: {
+            copy: 'Skoða umsókn',
+            href: `${clientLocationOrigin}/${ApplicationConfigurations.DigitalTachographDriversCard.slug}/${application.id}`,
           },
         },
       ],

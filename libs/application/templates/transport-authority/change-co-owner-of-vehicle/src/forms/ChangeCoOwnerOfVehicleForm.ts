@@ -40,15 +40,15 @@ export const ChangeCoOwnerOfVehicleForm: Form = buildForm({
               subTitle: m.userProfileInformationSubTitle,
             }),
             buildDataProviderItem({
+              id: 'payment',
+              type: 'PaymentChargeInfoProvider',
+              title: '',
+            }),
+            buildDataProviderItem({
               id: 'currentVehicleList',
               type: 'CurrentVehiclesProvider',
               title: externalData.currentVehicles.title,
               subTitle: externalData.currentVehicles.subTitle,
-            }),
-            buildDataProviderItem({
-              id: 'payment',
-              type: 'PaymentChargeInfoProvider',
-              title: '',
             }),
           ],
         }),

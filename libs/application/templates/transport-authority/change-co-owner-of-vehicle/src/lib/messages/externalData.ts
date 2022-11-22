@@ -3,50 +3,50 @@ import { defineMessages } from 'react-intl'
 export const externalData = {
   dataProvider: defineMessages({
     sectionTitle: {
-      id: 'ta.tvo.application:externalData.dataProvider.sectionTitle',
+      id: 'ta.ccov.application:externalData.dataProvider.sectionTitle',
       defaultMessage: 'Gagnaöflun',
       description: 'Title of external data section',
     },
     pageTitle: {
-      id: 'ta.tvo.application:externalData.dataProvider.pageTitle',
+      id: 'ta.ccov.application:externalData.dataProvider.pageTitle',
       defaultMessage: 'Tilkynning um eigendaskipti að ökutæki',
       description: `Application's name`,
     },
     subTitle: {
-      id: 'ta.tvo.application:externalData.dataProvider.subTitle',
+      id: 'ta.ccov.application:externalData.dataProvider.subTitle',
       defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt',
       description: 'he following data will be retrieved electronically',
     },
     checkboxLabel: {
-      id: 'ta.tvo.application:externalData.dataProvider.checkboxLabel',
+      id: 'ta.ccov.application:externalData.dataProvider.checkboxLabel',
       defaultMessage: 'Ég skil að ofangreindra upplýsinga verður aflað',
       description: 'I understand',
     },
     getDataSuccess: {
-      id: 'ta.tvo.application:externalData.dataProvider.getDataSuccess',
+      id: 'ta.ccov.application:externalData.dataProvider.getDataSuccess',
       defaultMessage: 'Tókst að sækja gögn',
       description: 'Was able to get data',
     },
     getDataSuccessDescription: {
       id:
-        'ta.tvo.application:externalData.dataProvider.getDataSuccessDescription',
+        'ta.ccov.application:externalData.dataProvider.getDataSuccessDescription',
       defaultMessage: 'Með gagnaöflun tókst að sækja eftirfarandi gögn:',
       description: 'Was able to get data description',
     },
     submitButton: {
-      id: 'ta.tvo.application:externalData.dataProvider.submitButton',
+      id: 'ta.ccov.application:externalData.dataProvider.submitButton',
       defaultMessage: 'Hefja umsókn',
       description: 'Continue to application',
     },
   }),
   nationalRegistry: defineMessages({
     title: {
-      id: 'ta.tvo.application:externalData.nationalRegistry.title',
+      id: 'ta.ccov.application:externalData.nationalRegistry.title',
       defaultMessage: 'Persónuupplýsingar úr Þjóðskrá',
       description: 'Personal information from the National Registry',
     },
     subTitle: {
-      id: 'ta.tvo.application:externalData.nationalRegistry.subTitle',
+      id: 'ta.ccov.application:externalData.nationalRegistry.subTitle',
       defaultMessage:
         'Til þess að auðvelda fyrir sækjum við persónuupplýsingar úr Þjóðskrá til þess að fylla út umsóknina',
       description:
@@ -55,12 +55,12 @@ export const externalData = {
   }),
   userProfile: defineMessages({
     title: {
-      id: 'ta.tvo.application:externalData.userProfile.title',
+      id: 'ta.ccov.application:externalData.userProfile.title',
       defaultMessage: 'Netfang og símanúmer úr þínum stillingum',
       description: 'Your user profile information',
     },
     subTitle: {
-      id: 'ta.tvo.application:externalData.userProfile.subTitle',
+      id: 'ta.ccov.application:externalData.userProfile.subTitle',
       defaultMessage:
         'Til þess að auðvelda umsóknarferlið er gott að hafa fyllt út netfang og símanúmer á mínum síðum',
       description:
@@ -69,17 +69,17 @@ export const externalData = {
   }),
   currentVehicles: defineMessages({
     title: {
-      id: 'ta.tvo.application:externalData.currentVehicles.title',
+      id: 'ta.ccov.application:externalData.currentVehicles.title',
       defaultMessage: 'Þín ökutæki úr ökutækjaskrá',
       description: 'Your vehicles from the vehicle registry',
     },
     subTitle: {
-      id: 'ta.tvo.application:externalData.currentVehicles.subTitle',
+      id: 'ta.ccov.application:externalData.currentVehicles.subTitle',
       defaultMessage: 'Til þess að einfalda val á ökutæki',
       description: 'To make stuff easier',
     },
     empty: {
-      id: 'ta.tvo.application:externalData.currentVehicles.empty',
+      id: 'ta.ccov.application:externalData.currentVehicles.empty',
       defaultMessage: 'Þú átt engin ökutæki þar sem þú ert aðaleigandi',
       description: 'You do not have any vehicles where you are the main owner',
     },

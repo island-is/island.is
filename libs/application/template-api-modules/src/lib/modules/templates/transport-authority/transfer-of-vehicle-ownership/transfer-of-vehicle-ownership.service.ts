@@ -54,7 +54,7 @@ export class TransferOfVehicleOwnershipService {
       const result = this.sharedTemplateAPIService.createCharge(
         auth.authorization,
         application.id,
-        chargeItemCodes[0],
+        chargeItemCodes,
       )
       return result
     } catch (exeption) {
@@ -302,49 +302,48 @@ export class TransferOfVehicleOwnershipService {
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<void> {
+    // 1. Validate payment
+
+    // 1a. Make sure a paymentUrl was created
+    const { paymentUrl } = application.externalData.createCharge.data as {
+      paymentUrl: string
+    }
+    if (!paymentUrl) {
+      throw new Error(
+        'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
+      )
+    }
+
+    // 1b. Make sure payment is fulfilled (has been paid)
+    const payment:
+      | { fulfilled: boolean }
+      | undefined = await this.sharedTemplateAPIService.getPaymentStatus(
+      auth.authorization,
+      application.id,
+    )
+    if (!payment?.fulfilled) {
+      throw new Error(
+        'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
+      )
+    }
+
+    // 2. Submit the application
+
     const answers = application.answers as TransferOfVehicleOwnershipAnswers
-    const buyerCoOwners = answers.buyerCoOwnerAndOperator?.filter(
-      (x) => x.type === 'coOwner',
-    )
-    const buyerOperators = answers.buyerCoOwnerAndOperator?.filter(
-      (x) => x.type === 'operator',
-    )
-    console.log('FIRST CHECKPOINT')
     // Note: Need to be sure that the user that created the application is the seller when submitting application to SGS
     if (answers?.seller?.nationalId !== application.applicant) {
       throw new Error(
         'Aðeins sá sem skráði umsókn má vera skráður sem seljandi.',
       )
     }
-    console.log('SECOND CHECKPOINT', {
-      permno: answers?.vehicle?.plate,
-      seller: {
-        ssn: answers?.seller?.nationalId,
-        email: answers?.seller?.email,
-      },
-      buyer: {
-        ssn: answers?.buyer?.nationalId,
-        email: answers?.buyer?.email,
-      },
-      // Note: API throws error if timestamp is 00:00:00, so we will use noon
-      dateOfPurchase: getDateAtNoonFromString(answers?.vehicle?.date),
-      saleAmount: Number(answers?.vehicle?.salePrice) || 0,
-      // Note: Insurance code 000 is when car is out of commission and is not going to be insured
-      insuranceCompanyCode: answers?.insurance?.value,
-      coOwners: buyerCoOwners?.map((coOwner) => ({
-        ssn: coOwner.nationalId,
-        email: coOwner.email,
-      })),
-      operators: buyerOperators?.map((operator) => ({
-        ssn: operator.nationalId,
-        email: operator.email,
-        isMainOperator:
-          buyerOperators.length > 1
-            ? operator.nationalId === answers.buyerMainOperator?.nationalId
-            : true,
-      })),
-    })
-    // 1. Submit the application
+
+    const buyerCoOwners = answers.buyerCoOwnerAndOperator?.filter(
+      (x) => x.type === 'coOwner',
+    )
+    const buyerOperators = answers.buyerCoOwnerAndOperator?.filter(
+      (x) => x.type === 'operator',
+    )
+
     await this.transferOfVehicleOwnershipApi.saveOwnerChange(auth, {
       permno: answers?.vehicle?.plate,
       seller: {
@@ -373,13 +372,13 @@ export class TransferOfVehicleOwnershipService {
             : true,
       })),
     })
-    console.log('THIRD CHECKPOINT')
-    // 2. Notify everyone in the process that the application has successfully been submitted
 
-    // 2a. Get list of users that need to be notified
+    // 3. Notify everyone in the process that the application has successfully been submitted
+
+    // 3a. Get list of users that need to be notified
     const recipientList = getRecipients(answers, getAllRoles())
-    console.log('FOURTH CHECKPOINT')
-    // 2b. Send email/sms individually to each recipient about success of submitting application
+
+    // 3b. Send email/sms individually to each recipient about success of submitting application
     for (let i = 0; i < recipientList.length; i++) {
       if (recipientList[i].email) {
         await this.sharedTemplateAPIService.sendEmail(

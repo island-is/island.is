@@ -9,6 +9,7 @@ import { error } from '../lib/messages'
 
 const CHARGE_ITEM_CODES = [
   ChargeItemCode.TRANSPORT_AUTHORITY_TRANSFER_OF_VEHICLE_OWNERSHIP.toString(),
+  ChargeItemCode.TRANSPORT_AUTHORITY_TRAFFIC_SAFETY_FEE.toString(),
 ]
 const SAMGONGUSTOFA_NATIONAL_ID = '5405131040'
 

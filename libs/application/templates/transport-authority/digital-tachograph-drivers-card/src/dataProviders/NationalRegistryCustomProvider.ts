@@ -6,7 +6,7 @@ import {
   StaticText,
 } from '@island.is/application/types'
 import { GET_BIRTHPLACE_AND_DOMICILE } from '../graphql/queries'
-import { m } from '../lib/messagesx'
+import { externalData } from '../lib/messages'
 
 export class NationalRegistryCustomProvider extends BasicDataProvider {
   type = 'NationalRegistryCustomProvider'
@@ -30,14 +30,14 @@ export class NationalRegistryCustomProvider extends BasicDataProvider {
         }
         const nationalRegistryUserData = data?.nationalRegistryUser
 
-        // Make sure user has domicile country as Iceland
-        const domicileCode = nationalRegistryUserData?.address?.code
-        if (!domicileCode || domicileCode.substring(0, 2) === '99') {
-          return Promise.reject({
-            reason:
-              m.nationalRegistryDomicileProviderErrorMissing.defaultMessage,
-          })
-        }
+        // TODOx add back, this was removed while testing locally
+        // // Make sure user has domicile country as Iceland
+        // const domicileCode = nationalRegistryUserData?.address?.code
+        // if (!domicileCode || domicileCode.substring(0, 2) === '99') {
+        //   return Promise.reject({
+        //     reason: externalData.nationalRegistryCustom.missing.defaultMessage,
+        //   })
+        // }
 
         return Promise.resolve(nationalRegistryUserData)
       },

@@ -29,23 +29,6 @@ export const PrerequisitesForm: Form = buildForm({
           checkboxLabel: externalData.dataProvider.checkboxLabel,
           dataProviders: [
             buildDataProviderItem({
-              id: 'currentVehicleList',
-              type: 'CurrentVehiclesProvider',
-              title: externalData.currentVehicles.title,
-              subTitle: externalData.currentVehicles.subTitle,
-            }),
-            buildDataProviderItem({
-              id: 'insuranceCompanyList',
-              type: 'InsuranceCompaniesProvider',
-              title: '',
-            }),
-            buildDataProviderItem({
-              id: 'payment',
-              type: 'PaymentChargeInfoProvider',
-              title: externalData.payment.title,
-              subTitle: externalData.payment.subTitle,
-            }),
-            buildDataProviderItem({
               id: 'nationalRegistry',
               type: 'NationalRegistryProvider',
               title: externalData.nationalRegistry.title,
@@ -56,6 +39,23 @@ export const PrerequisitesForm: Form = buildForm({
               type: 'UserProfileProvider',
               title: externalData.userProfile.title,
               subTitle: externalData.userProfile.subTitle,
+            }),
+            buildDataProviderItem({
+              id: 'payment',
+              type: 'PaymentChargeInfoProvider',
+              title: externalData.payment.title,
+              subTitle: externalData.payment.subTitle,
+            }),
+            buildDataProviderItem({
+              id: 'currentVehicleList',
+              type: 'CurrentVehiclesProvider',
+              title: externalData.currentVehicles.title,
+              subTitle: externalData.currentVehicles.subTitle,
+            }),
+            buildDataProviderItem({
+              id: 'insuranceCompanyList',
+              type: 'InsuranceCompaniesProvider',
+              title: '',
             }),
           ],
         }),

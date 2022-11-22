@@ -1,5 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql'
-import { IsString } from 'class-validator'
+import { ArrayNotEmpty, IsArray, IsString } from 'class-validator'
 
 @InputType()
 export class ApplicationPaymentChargeInput {
@@ -7,9 +7,8 @@ export class ApplicationPaymentChargeInput {
   @IsString()
   applicationId!: string
 
-  @Field()
-  @IsString()
-  chargeItemCode!: string
+  @Field(() => [String], { nullable: false })
+  chargeItemCodes!: string[]
 
   // TODO: charge parameters for other types of payments
 }

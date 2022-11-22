@@ -1,4 +1,6 @@
-export { ConfirmationField } from './ConfirmationField'
 export { PaymentChargeOverview } from './Payment/PaymentChargeOverview'
 export { PaymentPending } from './Payment/PaymentPending'
 export { PaymentUrlNotFound } from './Payment/PaymentUrlNotFound'
+export { QualityPhoto } from './QualityPhoto'
+export { QualitySignature } from './QualitySignature'
+export { Confirmation } from './Confirmation'

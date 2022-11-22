@@ -13,7 +13,7 @@ import {
   pruneAfterDays,
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
-import { m } from './messagesx'
+import { application } from './messages'
 import { Features } from '@island.is/feature-flags'
 import { ApiActions } from '../shared'
 import { DigitalTachographCompanyCardSchema } from './dataSchema'
@@ -24,8 +24,8 @@ const template: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.DIGITAL_TACHOGRAPH_COMPANY_CARD,
-  name: m.name,
-  institution: m.institutionName,
+  name: application.name,
+  institution: application.institutionName,
   translationNamespaces: [
     ApplicationConfigurations.DigitalTachographCompanyCard.translation,
   ],
@@ -39,7 +39,7 @@ const template: ApplicationTemplate<
           name: 'Fyrirtækjakort',
           actionCard: {
             tag: {
-              label: m.actionCardDraft,
+              label: application.actionCardDraft,
               variant: 'blue',
             },
           },
@@ -50,7 +50,7 @@ const template: ApplicationTemplate<
               id: Roles.APPLICANT,
               formLoader: () =>
                 import(
-                  '../forms/DigitalTachographCompanyCardForm'
+                  '../forms/DigitalTachographCompanyCardForm/index'
                 ).then((module) =>
                   Promise.resolve(module.DigitalTachographCompanyCardForm),
                 ),
@@ -75,7 +75,7 @@ const template: ApplicationTemplate<
           name: 'Greiðsla',
           actionCard: {
             tag: {
-              label: m.actionCardPayment,
+              label: application.actionCardPayment,
               variant: 'red',
             },
           },
@@ -112,7 +112,7 @@ const template: ApplicationTemplate<
           lifecycle: pruneAfterDays(3 * 30),
           actionCard: {
             tag: {
-              label: m.actionCardDone,
+              label: application.actionCardDone,
               variant: 'blueberry',
             },
           },
@@ -120,8 +120,8 @@ const template: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/Approved').then((val) =>
-                  Promise.resolve(val.Approved),
+                import('../forms/Confirmation').then((val) =>
+                  Promise.resolve(val.Confirmation),
                 ),
               read: 'all',
             },

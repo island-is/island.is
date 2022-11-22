@@ -20,14 +20,14 @@ export class ChangeOperatorOfVehicleService {
         application.answers as ChangeOperatorOfVehicleAnswers,
       )
 
-      if (chargeItemCodes[0]) {
+      if (chargeItemCodes?.length <= 0) {
         throw new Error('Það var hvorki bætt við né eytt umráðamann')
       }
 
       const result = this.sharedTemplateAPIService.createCharge(
         auth.authorization,
         application.id,
-        chargeItemCodes[0],
+        chargeItemCodes,
       )
       return result
     } catch (exeption) {

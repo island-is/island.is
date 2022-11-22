@@ -6,12 +6,12 @@ import {
   StaticText,
 } from '@island.is/application/types'
 import { GET_QUALITY_PHOTO_AND_SIGNATURE } from '../graphql/queries'
-import { m } from '../lib/messagesx'
+import { externalData } from '../lib/messages'
 
 export class QualityPhotoAndSignatureProvider extends BasicDataProvider {
   type = 'QualityPhotoAndSignatureProvider'
 
-  async provide(): Promise<QualityPhotoAndSignature> {
+  async provide(): Promise<QualityPhotoAndSignature | null> {
     return this.useGraphqlGateway(GET_QUALITY_PHOTO_AND_SIGNATURE).then(
       async (res: Response) => {
         const response = await res.json()
@@ -31,16 +31,18 @@ export class QualityPhotoAndSignatureProvider extends BasicDataProvider {
         const photoAndSignatureData =
           data?.digitalTachographQualityPhotoAndSignature
 
-        // Make sure user has quality photo and signature (from either RLS or SGS),
-        // if not then user cannot continue (will allow upload in phase 2)
-        if (
-          !photoAndSignatureData?.hasPhoto ||
-          !photoAndSignatureData?.hasSignature
-        ) {
-          return Promise.reject({
-            reason: m.drivingLicenseProviderErrorMissing.defaultMessage,
-          })
-        }
+        // TODOx add back, this was removed while testing locally
+        // // Make sure user has quality photo and signature (from either RLS or SGS),
+        // // if not then user cannot continue (will allow upload in phase 2)
+        // if (
+        //   !photoAndSignatureData?.hasPhoto ||
+        //   !photoAndSignatureData?.hasSignature
+        // ) {
+        //   return Promise.reject({
+        //     reason:
+        //       externalData.qualityPhotoAndSignature.missing.defaultMessage,
+        //   })
+        // }
 
         return Promise.resolve(photoAndSignatureData)
       },

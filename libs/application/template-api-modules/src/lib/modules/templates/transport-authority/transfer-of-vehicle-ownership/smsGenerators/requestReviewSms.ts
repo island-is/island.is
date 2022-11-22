@@ -24,7 +24,7 @@ export const generateRequestReviewSms: RequestReviewSms = (
   return {
     phoneNumber: recipient.phone || '',
     message:
-      `Þín bíður ósamþykkt beiðni um eigendaskipti fyrir ökutækið ${permno} inn á island.is/umsóknir. ` +
+      `Þín bíður ósamþykkt beiðni um eigendaskipti fyrir ökutækið ${permno} inn á island.is/umsoknir. ` +
       `Til þess að eigendaskiptin verði skráð þarftu að samþykkja beiðnina fyrir ${pruneDateStr}.`,
   }
 }

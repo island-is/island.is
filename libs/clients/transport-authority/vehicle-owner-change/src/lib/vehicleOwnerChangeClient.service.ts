@@ -42,32 +42,30 @@ export class VehicleOwnerChangeClient {
     auth: User,
     ownerChange: OwnerChange,
   ): Promise<void> {
-    const temp = {
-      permno: ownerChange.permno,
-      sellerPersonIdNumber: ownerChange.seller.ssn,
-      sellerEmail: ownerChange.seller.email,
-      buyerPersonIdNumber: ownerChange.buyer.ssn,
-      buyerEmail: ownerChange.buyer.email,
-      dateOfPurchase: ownerChange.dateOfPurchase,
-      saleAmount: ownerChange.saleAmount,
-      insuranceCompanyCode: ownerChange.insuranceCompanyCode,
-      useGroup: '000',
-      operatorEmail: ownerChange.operators?.find((x) => x.isMainOperator)
-        ?.email,
-      operators: ownerChange.operators?.map((operator) => ({
-        personIdNumber: operator.ssn,
-        mainOperator: operator.isMainOperator ? 1 : 0,
-      })),
-      coOwners: ownerChange.coOwners?.map((coOwner) => ({
-        personIdNumber: coOwner.ssn,
-      })),
-      reportingPersonIdNumber: auth.nationalId,
-    }
-    console.log(temp)
-    const result = await this.ownerchangeApiWithAuth(auth).rootPost({
+    await this.ownerchangeApiWithAuth(auth).rootPost({
       apiVersion: '2.0',
       apiVersion2: '2.0',
-      postOwnerChange: temp,
+      postOwnerChange: {
+        permno: ownerChange.permno,
+        sellerPersonIdNumber: ownerChange.seller.ssn,
+        sellerEmail: ownerChange.seller.email,
+        buyerPersonIdNumber: ownerChange.buyer.ssn,
+        buyerEmail: ownerChange.buyer.email,
+        dateOfPurchase: ownerChange.dateOfPurchase,
+        saleAmount: ownerChange.saleAmount,
+        insuranceCompanyCode: ownerChange.insuranceCompanyCode,
+        useGroup: '000',
+        operatorEmail: ownerChange.operators?.find((x) => x.isMainOperator)
+          ?.email,
+        operators: ownerChange.operators?.map((operator) => ({
+          personIdNumber: operator.ssn,
+          mainOperator: operator.isMainOperator ? 1 : 0,
+        })),
+        coOwners: ownerChange.coOwners?.map((coOwner) => ({
+          personIdNumber: coOwner.ssn,
+        })),
+        reportingPersonIdNumber: auth.nationalId,
+      },
     })
   }
 }

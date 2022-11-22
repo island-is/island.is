@@ -16,6 +16,12 @@ export const prerequisitesSection = buildSection({
       checkboxLabel: externalData.dataProvider.checkboxLabel,
       dataProviders: [
         buildDataProviderItem({
+          id: 'nationalRegistry',
+          type: 'NationalRegistryProvider',
+          title: externalData.nationalRegistry.title,
+          subTitle: externalData.nationalRegistry.subTitle,
+        }),
+        buildDataProviderItem({
           id: 'currentVehicleList',
           type: 'CurrentVehiclesProvider',
           title: externalData.currentVehicles.title,
@@ -25,18 +31,6 @@ export const prerequisitesSection = buildSection({
           id: 'payment',
           type: 'PaymentChargeInfoProvider',
           title: '',
-        }),
-        buildDataProviderItem({
-          id: 'nationalRegistry',
-          type: 'NationalRegistryProvider',
-          title: externalData.nationalRegistry.title,
-          subTitle: externalData.nationalRegistry.subTitle,
-        }),
-        buildDataProviderItem({
-          id: 'userProfile',
-          type: 'UserProfileProvider',
-          title: externalData.userProfile.title,
-          subTitle: externalData.userProfile.subTitle,
         }),
       ],
     }),
