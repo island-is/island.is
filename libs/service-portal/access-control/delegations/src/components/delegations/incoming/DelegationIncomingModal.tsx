@@ -56,9 +56,13 @@ export const DelegationIncomingModal = ({
       title={formatMessage(m.accessControlAccess)}
       {...rest}
       onClose={onClose}
-      noPaddingBottom
     >
-      <Box marginY={[4, 4, 8]} display="flex" flexDirection="column" rowGap={3}>
+      <Box
+        marginTop={[4, 4, 8]}
+        display="flex"
+        flexDirection="column"
+        rowGap={3}
+      >
         <Box
           width="full"
           display="flex"
@@ -110,13 +114,11 @@ export const DelegationIncomingModal = ({
           </Text>
         </Box>
         {!loading && authScopeTree && delegation ? (
-          <Box marginBottom={[0, 0, 12]}>
-            <AccessList
-              validityPeriod={delegation.validTo}
-              scopes={delegation.scopes}
-              scopeTree={authScopeTree}
-            />
-          </Box>
+          <AccessList
+            validityPeriod={delegation.validTo}
+            scopes={delegation.scopes}
+            scopeTree={authScopeTree}
+          />
         ) : (
           <AccessListLoading rows={delegation?.scopes?.length ?? 0} />
         )}
