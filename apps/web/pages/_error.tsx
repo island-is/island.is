@@ -118,12 +118,12 @@ class ErrorPage extends React.Component<ErrorPageProps> {
         locale,
         statusCode,
       })
-      // eslint-disable-next-line no-empty
-    } catch {}
+    } catch {
+      console.error(
+        new Error(`_error.tsx getInitialProps missing data at path: ${asPath}`),
+      )
+    }
 
-    console.error(
-      new Error(`_error.tsx getInitialProps missing data at path: ${asPath}`),
-    )
 
     return {
       statusCode,
