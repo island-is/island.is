@@ -28,14 +28,13 @@ import {
 } from '@island.is/web/graphql/schema'
 
 import { Screen } from '../../../types'
-import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_PAGE_QUERY } from '../../queries'
+import {
+  GET_NAMESPACE_QUERY,
+  GET_ORGANIZATION_PAGE_QUERY,
+  GET_ORGANIZATION_QUERY,
+} from '../../queries'
 import { getCustomAlertBanners } from './utils'
-import { LandingPageFooter } from './LandingPageFooter'
-
-interface HomeProps {
-  organizationPage: Query['getOrganizationPage']
-  namespace: Query['getNamespace']
-}
+import { LandingPage, LandingPageFooter } from './LandingPage'
 
 const WITH_SEARCH = [
   'syslumenn',
@@ -48,19 +47,28 @@ const WITH_SEARCH = [
   'directorate-of-immigration',
 ]
 
-const Home: Screen<HomeProps> = ({ organizationPage, namespace }) => {
+const parseOrganizationLinkHref = (organization: Query['getOrganization']) => {
+  let link = organization.link
+  if (link.includes('://')) {
+    link = link.split('://')[1]
+  }
+  if (link[link.length - 1] === '/') {
+    link = link.slice(0, link.length - 1)
+  }
+  return link
+}
+
+const OrganizationHomePage: Screen<HomeProps> = ({
+  organizationPage,
+  organization,
+  namespace,
+}) => {
   const n = useNamespace(namespace)
-  useContentfulId(organizationPage.id)
-
-  const organizationNamespace = useMemo(() => {
-    return JSON.parse(organizationPage?.organization?.namespace?.fields ?? '{}')
-  }, [organizationPage?.organization?.namespace?.fields])
-  const o = useNamespace(organizationNamespace)
-
+  useContentfulId(organizationPage?.id)
   const { linkResolver } = useLinkResolver()
 
-  const navList: NavigationItem[] = organizationPage.menuLinks.map(
-    ({ primaryLink, childrenLinks }) => ({
+  const navList: NavigationItem[] =
+    organizationPage?.menuLinks?.map(({ primaryLink, childrenLinks }) => ({
       title: primaryLink.text,
       href: primaryLink.url,
       active: false,
@@ -68,8 +76,19 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace }) => {
         title: text,
         href: url,
       })),
-    }),
-  )
+    })) ?? []
+
+  const parsedLinkHref = parseOrganizationLinkHref(organization)
+  const linkTitle = `${n(
+    'landingPageTitleCardHeading',
+    'Opinber vefur stofnunar er',
+  )} ${parsedLinkHref}`
+
+  const organizationNamespace = useMemo(() => {
+    return JSON.parse(organization?.namespace?.fields || '{}')
+  }, [organization?.namespace?.fields])
+
+  const o = useNamespace(organizationNamespace)
 
   return (
     <OrganizationWrapper
@@ -120,8 +139,8 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace }) => {
 
               <Box marginBottom={8}>
                 <IconTitleCard
-                  heading={o('landingPageTitleCardHeading', '')}
-                  href={o('landingPageTitleCardHref', '')}
+                  heading={linkTitle}
+                  href={organization.link}
                   imgSrc={o(
                     'landingPageTitleCardImageSrc',
                     'https://images.ctfassets.net/8k0h54kbe6bj/dMv61A2SII5Y6AACjOzFo/63d1627ccf2113ae137c401725b1b35b/T__lva_og_kaffibolli.svg',
@@ -129,9 +148,18 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace }) => {
                   alt={o('landingPageTitleCardImageAlt', '')}
                 />
               </Box>
+              {organization.description && (
+                <Box
+                  paddingY={4}
+                  borderTopWidth="standard"
+                  borderColor="standard"
+                >
+                  <Text variant="default">{organization.description}</Text>
+                </Box>
+              )}
             </GridContainer>
           )}
-          {organizationPage.slices.map((slice, index) => {
+          {organizationPage?.slices?.map((slice, index) => {
             const digitalIcelandDetailPageLinkType: LinkType =
               'digitalicelandservicesdetailpage'
             return (
@@ -200,16 +228,52 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace }) => {
   )
 }
 
+interface HomeProps {
+  organizationPage?: Query['getOrganizationPage']
+  organization?: Query['getOrganization']
+  namespace: Query['getNamespace']
+}
+
+const Home: Screen<HomeProps> = ({
+  organizationPage,
+  organization,
+  namespace,
+}) => {
+  const isLandingPage =
+    !organizationPage && !!organization && organization.hasALandingPage
+  if (isLandingPage)
+    return <LandingPage namespace={namespace} organization={organization} />
+  return (
+    <OrganizationHomePage
+      namespace={namespace}
+      organizationPage={organizationPage}
+      organization={organization}
+    />
+  )
+}
+
 Home.getInitialProps = async ({ apolloClient, locale, query }) => {
   const [
     {
       data: { getOrganizationPage },
+    },
+    {
+      data: { getOrganization },
     },
     namespace,
     customAlertBanners,
   ] = await Promise.all([
     apolloClient.query<Query, QueryGetOrganizationPageArgs>({
       query: GET_ORGANIZATION_PAGE_QUERY,
+      variables: {
+        input: {
+          slug: query.slug as string,
+          lang: locale as ContentLanguage,
+        },
+      },
+    }),
+    apolloClient.query<Query, QueryGetOrganizationPageArgs>({
+      query: GET_ORGANIZATION_QUERY,
       variables: {
         input: {
           slug: query.slug as string,
@@ -235,16 +299,20 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
     getCustomAlertBanners(query, apolloClient, locale),
   ])
 
-  if (!getOrganizationPage) {
-    throw new CustomNextError(404, 'Organization not found')
+  if (!getOrganizationPage && !getOrganization?.hasALandingPage) {
+    throw new CustomNextError(404, 'Organization page not found')
   }
 
   return {
     organizationPage: getOrganizationPage,
+    organization: getOrganization,
     namespace,
     showSearchInHeader: false,
     customAlertBanners,
-    ...getThemeConfig(getOrganizationPage.theme, getOrganizationPage.slug),
+    ...getThemeConfig(
+      getOrganizationPage?.theme ?? 'landing_page',
+      getOrganizationPage?.slug ?? getOrganization?.slug,
+    ),
   }
 }
 
