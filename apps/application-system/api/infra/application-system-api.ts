@@ -95,7 +95,7 @@ export const workerSetup = (): ServiceBuilder<'application-system-api-worker'> =
       DOKOBIT_URL: '/k8s/application-system-api/DOKOBIT_URL',
     })
     .args('main.js', '--job', 'worker')
-
+    .command('node')
     .extraAttributes({
       dev: { schedule: '*/30 * * * *' },
       staging: { schedule: '*/30 * * * *' },
