@@ -6,7 +6,6 @@
     "air-discount-scheme-consts": "libs/air-discount-scheme/consts",
     "air-discount-scheme-types": "libs/air-discount-scheme/types",
     "air-discount-scheme-web": "apps/air-discount-scheme/web",
-    "air-discount-scheme-web-e2e": "apps/air-discount-scheme/web-e2e",
     "api": "apps/api",
     "api-catalogue-consts": "libs/api-catalogue/consts",
     "api-catalogue-elastic": "libs/api-catalogue/elastic",
@@ -106,7 +105,6 @@
     "application-ui-forms": "libs/application/ui-forms",
     "application-ui-shell": "libs/application/ui-shell",
     "auth-admin-web": "apps/auth-admin-web",
-    "auth-admin-web-e2e": "apps/auth-admin-web-e2e",
     "auth-api-lib": "libs/auth-api-lib",
     "auth-nest-tools": "libs/auth-nest-tools",
     "auth-react": "libs/auth/react",
@@ -283,7 +281,6 @@
     "testing-fixtures": "libs/testing/fixtures",
     "testing-nest": "libs/testing/nest",
     "user-monitoring": "libs/user-monitoring",
-    "web": "apps/web",
-    "web-e2e": "apps/web-e2e"
+    "web": "apps/web"
   }
 }
