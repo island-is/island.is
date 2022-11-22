@@ -14,6 +14,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { IdentityDocumentModel } from './models/identityDocumentModel.model'
 
 export type ExpiryStatus = 'EXPIRED' | 'LOST'
+const LOG_CATEGORY = 'passport-service'
 
 @Injectable()
 export class PassportService {
@@ -23,13 +24,12 @@ export class PassportService {
     private passportsApi: IdentityDocumentApi,
   ) {}
 
-  handleError(error: any): any {
-    this.logger.error(error)
-
-    throw new ApolloError(
-      'Failed to resolve request',
-      error?.message ?? error?.response?.message,
-    )
+  handleError(error: any, detail?: string): ApolloError | null {
+    this.logger.error(detail || 'Domain passport error', {
+      error: JSON.stringify(error),
+      category: LOG_CATEGORY,
+    })
+    throw new ApolloError('Failed to resolve request', error.status)
   }
 
   private handle4xx(error: FetchError) {
