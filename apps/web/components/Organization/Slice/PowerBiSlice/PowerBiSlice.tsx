@@ -1,12 +1,21 @@
 import { PowerBIEmbed } from 'powerbi-client-react'
 import { Embed } from 'powerbi-client'
 import { PowerBiSlice as PowerBiSliceSchema } from '@island.is/web/graphql/schema'
+import { useQuery } from '@apollo/client'
+import { POWERBI_EMBED_TOKEN_QUERY } from '@island.is/web/screens/queries/PowerBi'
+import { inspect } from 'util'
 
 interface PowerBiSliceProps {
   slice: PowerBiSliceSchema
 }
 
 export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
+  const response = useQuery(POWERBI_EMBED_TOKEN_QUERY, {
+    variables: { input: { something: 'some-token' } },
+  })
+
+  console.log(response?.data)
+
   const getEmbeddedComponent = (embed: Embed) => {
     // Default styles
     embed.element.style.height = '600px'
