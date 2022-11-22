@@ -51,15 +51,15 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
 
   return (
     <Box>
-      {fields.map((field, index) => {
+      {fields.map((repeaterField, index) => {
         const fieldIndex = `${id}[${index}]`
 
         return (
           <Box
             position="relative"
-            key={field.id}
+            key={repeaterField.id}
             marginTop={2}
-            hidden={field.initial || field?.dummy}
+            hidden={repeaterField.initial || repeaterField?.dummy}
           >
             {index > 0 && (
               <>
@@ -89,7 +89,7 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
                     <InputController
                       id={`${fieldIndex}.${field.id}`}
                       name={`${fieldIndex}.${field.id}`}
-                      defaultValue=""
+                      defaultValue={repeaterField[field.id] || ''}
                       format={field.format}
                       label={field.title}
                       placeholder={field.placeholder}
