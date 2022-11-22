@@ -1,4 +1,4 @@
-import { Logger } from '@island.is/logging'
+import { Logger, logger as islandis_logger } from '@island.is/logging'
 // eslint-disable-next-line no-restricted-imports
 import { pick } from 'lodash'
 
@@ -18,7 +18,7 @@ export function withErrorLog({
   logger,
 }: ErrorLogOptions): MiddlewareAPI {
   return (request) => {
-    logger.debug(
+    islandis_logger.debug(
       `Extended fetch request. ${JSON.stringify(
         pick(request, [
           'url',
@@ -34,7 +34,7 @@ export function withErrorLog({
     )
     return fetch(request)
       .then((r) => {
-        logger.debug(
+        islandis_logger.debug(
           `Extended fetch response. ${JSON.stringify(
             pick(r, ['status', 'statusText', 'body', 'headers', 'url']),
           )}`,
