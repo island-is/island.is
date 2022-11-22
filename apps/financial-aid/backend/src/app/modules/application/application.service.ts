@@ -278,15 +278,11 @@ export class ApplicationService {
     application: CreateApplicationDto,
     user: User,
   ): Promise<ApplicationModel> {
-    //When there is mismatch in DB between AS and financial-aid-backend
-    if (!application.applicationSystemId) {
-      const hasAppliedForPeriod = await this.getCurrentApplicationId(
-        user.nationalId,
-      )
-
-      if (hasAppliedForPeriod) {
-        throw new ForbiddenException('User or spouse has applied for period')
-      }
+    const hasAppliedForPeriod = await this.getCurrentApplicationId(
+      user.nationalId,
+    )
+    if (hasAppliedForPeriod) {
+      throw new ForbiddenException('User or spouse has applied for period')
     }
 
     const appModel = await this.applicationModel.create({

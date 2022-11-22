@@ -71,7 +71,10 @@ const MissingFiles = ({
       }
 
       try {
-        if (!application.externalData.currentApplication.data) {
+        if (
+          !application.externalData.currentApplication.data
+            ?.currentApplicationId
+        ) {
           throw new Error()
         }
 

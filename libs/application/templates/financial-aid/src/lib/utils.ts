@@ -89,7 +89,7 @@ export function hasActiveCurrentApplication(context: ApplicationContext) {
     externalData,
     'currentApplication.data',
   ) as CurrentApplication
-  return currentApplication != null
+  return currentApplication?.currentApplicationId != null
 }
 
 export const hasFiles = (

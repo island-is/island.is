@@ -74,7 +74,7 @@ export class FinancialAidService extends BaseTemplateApiService {
   }: Props): Promise<CurrentApplication> {
     const { id, answers, externalData } = application
 
-    if (externalData.currentApplication.data) {
+    if (externalData.currentApplication.data?.currentApplicationId) {
       return {
         currentApplicationId:
           externalData.currentApplication.data.currentApplicationId,
@@ -281,7 +281,7 @@ export class FinancialAidService extends BaseTemplateApiService {
             answers.spouseName ||
             '',
           spouseEmail:
-            answers.spouse.email ||
+            answers.spouse?.email ||
             answers.relationshipStatus.spouseEmail ||
             '',
           municipalityCode:

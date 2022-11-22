@@ -214,6 +214,7 @@ const FinancialAidTemplate: ApplicationTemplate<
                   Promise.resolve(module.ApplicantSubmitted),
                 ),
               read: 'all',
+              write: 'all',
             },
             {
               id: Roles.SPOUSE,
@@ -222,6 +223,7 @@ const FinancialAidTemplate: ApplicationTemplate<
                   Promise.resolve(module.SpouseSubmitted),
                 ),
               read: 'all',
+              write: 'all',
             },
           ],
         },
