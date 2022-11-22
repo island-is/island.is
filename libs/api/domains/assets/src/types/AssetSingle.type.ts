@@ -1,4 +1,4 @@
-import { Pagination } from '@island.is/clients/assets'
+import { Pagination } from '@island.is/clients/assets-v2'
 import { DefaultAddress } from './Assets.type'
 
 export interface Appraisal {

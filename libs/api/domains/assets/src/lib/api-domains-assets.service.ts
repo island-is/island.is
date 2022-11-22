@@ -1,9 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { ApolloError } from 'apollo-server-express'
-import { FetchError } from '@island.is/clients/middlewares'
-import { FasteignirApi } from '@island.is/clients/assets'
 import { FasteignirApi as FasteignirApiV2 } from '@island.is/clients/assets-v2'
-import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
 import type { Logger } from '@island.is/logging'
@@ -26,9 +23,7 @@ export class AssetsXRoadService {
   constructor(
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-    private fasteignirApi: FasteignirApi,
     private fasteignirApiV2: FasteignirApiV2,
-    private featureFlagService: FeatureFlagService,
   ) {}
 
   handleError(error: any, detail?: string): ApolloError | null {
@@ -46,20 +41,10 @@ export class AssetsXRoadService {
     return this.handleError(error, detail)
   }
 
-  private async service(user: User): Promise<FasteignirApi | FasteignirApiV2> {
-    const isAssetsV2enabled = await this.featureFlagService.getValue(
-      Features.servicePortalAssetsApiV2Enabled,
-      false,
-      user,
+  private getRealEstatesWithAuth(auth: User) {
+    return this.fasteignirApiV2.withMiddleware(
+      new AuthMiddleware(auth, { forwardUserInfo: true }),
     )
-
-    return isAssetsV2enabled
-      ? this.fasteignirApiV2.withMiddleware(
-          new AuthMiddleware(user, { forwardUserInfo: true }),
-        )
-      : this.fasteignirApi.withMiddleware(
-          new AuthMiddleware(user, { forwardUserInfo: true }),
-        )
   }
 
   async getRealEstates(
@@ -67,8 +52,9 @@ export class AssetsXRoadService {
     cursor?: string | null,
   ): Promise<PropertiesDTO | null> {
     try {
-      const assetService = await this.service(auth)
-      const fasteignirResponse = await assetService.fasteignirGetFasteignir({
+      const fasteignirResponse = await this.getRealEstatesWithAuth(
+        auth,
+      ).fasteignirGetFasteignir({
         kennitala: auth.nationalId,
         cursor: cursor,
       })
@@ -101,8 +87,9 @@ export class AssetsXRoadService {
     auth: User,
   ): Promise<PropertySingleDTO | null> {
     try {
-      const assetService = await this.service(auth)
-      const singleFasteignResponse = await assetService.fasteignirGetFasteign({
+      const singleFasteignResponse = await this.getRealEstatesWithAuth(
+        auth,
+      ).fasteignirGetFasteign({
         fasteignanumer: getAssetString(assetId),
       })
 
@@ -229,14 +216,13 @@ export class AssetsXRoadService {
     limit?: number | null,
   ): Promise<RegisteredOwnerWrapper | null> {
     try {
-      const assetService = await this.service(auth)
-      const singleFasteignResponse = await assetService.fasteignirGetFasteignEigendur(
-        {
-          fasteignanumer: getAssetString(assetId),
-          cursor: cursor,
-          limit: limit,
-        },
-      )
+      const singleFasteignResponse = await this.getRealEstatesWithAuth(
+        auth,
+      ).fasteignirGetFasteignEigendur({
+        fasteignanumer: getAssetString(assetId),
+        cursor: cursor,
+        limit: limit,
+      })
 
       if (singleFasteignResponse) {
         return {
@@ -266,14 +252,13 @@ export class AssetsXRoadService {
     limit?: number | null,
   ): Promise<UnitsOfUseWrapper | null> {
     try {
-      const assetService = await this.service(auth)
-      const unitsOfUseResponse = await assetService.fasteignirGetFasteignNotkunareiningar(
-        {
-          fasteignanumer: getAssetString(assetId),
-          cursor: cursor,
-          limit: limit,
-        },
-      )
+      const unitsOfUseResponse = await this.getRealEstatesWithAuth(
+        auth,
+      ).fasteignirGetFasteignNotkunareiningar({
+        fasteignanumer: getAssetString(assetId),
+        cursor: cursor,
+        limit: limit,
+      })
 
       if (unitsOfUseResponse) {
         return {
