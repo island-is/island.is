@@ -61,6 +61,11 @@
             "glob": "*",
             "input": "libs/application/template-api-modules/src/lib/modules/templates/marriage-conditions-submission/emailGenerators/assets",
             "output": "./marriage-conditions-assets"
+          },
+          {
+            "glob": "*",
+            "input": "libs/application/template-api-modules/src/lib/modules/templates/transport-authority/transfer-of-vehicle-ownership/emailGenerators/assets",
+            "output": "./transport-authority-transfer-of-vehicle-ownership-assets"
           }
         ],
         "webpackConfig": "apps/application-system/api/webpack.config.js",

@@ -7,6 +7,8 @@ import {
   getRecipients,
   getAllRoles,
 } from '../transfer-of-vehicle-ownership.utils'
+import { pathToAsset } from '../transfer-of-vehicle-ownership.utils'
+import { ApplicationConfigurations } from '@island.is/application/types'
 
 export type ApplicationPruneEmail = (
   props: EmailTemplateGeneratorProps,
@@ -19,7 +21,7 @@ export const generateApplicationPruneEmail: ApplicationPruneEmail = (
 ): Message => {
   const {
     application,
-    options: { email },
+    options: { email, clientLocationOrigin },
   } = props
   const answers = application.answers as TransferOfVehicleOwnershipAnswers
   const permno = answers?.vehicle?.plate
@@ -30,7 +32,7 @@ export const generateApplicationPruneEmail: ApplicationPruneEmail = (
   if (!recipient.email) throw new Error('Recipient email was undefined')
   if (!permno) throw new Error('Permno was undefined')
 
-  const subject = 'Tilkynning um eigendaskipti - umsókn fallin á tíma'
+  const subject = 'Tilkynning um eigendaskipti - Umsókn fallin á tíma'
   const notApprovedByListStr = notApprovedByList
     .map(
       (notApprovedBy) =>
@@ -51,15 +53,40 @@ export const generateApplicationPruneEmail: ApplicationPruneEmail = (
       title: subject,
       body: [
         {
+          component: 'Image',
+          context: {
+            src: pathToAsset('logo.jpg'),
+            alt: 'Ísland.is logo',
+          },
+        },
+        {
+          component: 'Image',
+          context: {
+            src: pathToAsset('computerIllustration.jpg'),
+            alt: 'Kaffi við skjá myndskreyting',
+          },
+        },
+        {
+          component: 'Heading',
+          context: { copy: subject },
+        },
+        {
           component: 'Copy',
           context: {
             copy:
-              `<p>Góðan dag,</p><br/>` +
-              `<p>Beiðni um eigendaskipti á ökutækinu ${permno} hefur verið felld niður þar sem eftirfarandi aðilar staðfestu ekki innan tímafrests:</p>` +
+              `<span>Góðan dag,</span><br/><br/>` +
+              `<span>Beiðni um eigendaskipti á ökutækinu ${permno} hefur verið felld niður þar sem eftirfarandi aðilar staðfestu ekki innan tímafrests:</span><br/>` +
               `<ul>${notApprovedByListStr}.</ul>` +
-              `<p>Til þess að skrá eigendaskiptin rafrænt verður að byrja ferlið upp á nýtt á umsóknarvef island.is: island.is/umsoknir, ásamt því að allir aðilar þurfa að staðfesta rafrænt innan gefins tímafrests.</p>` +
-              `<p>Þessi tilkynning á aðeins við um rafræna umsókn af umsóknarvef island.is en ekki um eigendaskipti sem skilað hefur verið inn til Samgöngustofu á pappír.</p>` +
-              `<p>Vinsamlegast hafið samband við Þjónustuver Samgöngustofu (afgreidsla@samgongustofa.is) ef nánari upplýsinga er þörf.</p>`,
+              `<span>Til þess að skrá eigendaskiptin rafrænt verður að byrja ferlið upp á nýtt á umsóknarvef island.is: island.is/umsoknir, ásamt því að allir aðilar þurfa að staðfesta rafrænt innan gefins tímafrests.</span><br/>` +
+              `<span>Þessi tilkynning á aðeins við um rafræna umsókn af umsóknarvef island.is en ekki um eigendaskipti sem skilað hefur verið inn til Samgöngustofu á pappír.</span><br/>` +
+              `<span>Vinsamlegast hafið samband við Þjónustuver Samgöngustofu (afgreidsla@samgongustofa.is) ef nánari upplýsinga er þörf.</span>`,
+          },
+        },
+        {
+          component: 'Button',
+          context: {
+            copy: 'Skoða umsókn',
+            href: `${clientLocationOrigin}/${ApplicationConfigurations.DigitalTachographDriversCard.slug}/${application.id}`,
           },
         },
       ],
