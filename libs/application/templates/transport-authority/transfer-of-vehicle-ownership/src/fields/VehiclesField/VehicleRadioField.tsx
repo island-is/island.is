@@ -50,7 +50,6 @@ export const VehicleRadioField: FC<
   )
 
   const onRadioControllerSelect = (s: string) => {
-    console.log(s)
     const currentVehicle = currentVehicleList[parseInt(s, 10)]
     setPlate(currentVehicle.permno || '')
   }

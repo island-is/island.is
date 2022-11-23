@@ -37,7 +37,6 @@ export const ReviewCoOwnerAndOperatorRepeaterItem: FC<
   errorMessage,
   ...props
 }) => {
-  console.log(repeaterField)
   const [email, setEmail] = useState<string>(repeaterField.email || '')
   const [phone, setPhone] = useState<string>(repeaterField.phone || '')
   const [nationalId, setNationalId] = useState<string>(
@@ -56,7 +55,6 @@ export const ReviewCoOwnerAndOperatorRepeaterItem: FC<
   const typeField = `${fieldIndex}.type`
 
   useEffect(() => {
-    console.log(coOwnersAndOperators)
     if (setCoOwnersAndOperators && coOwnersAndOperators && index > -1) {
       const temp = [...coOwnersAndOperators]
       const itemValue = {
@@ -66,7 +64,6 @@ export const ReviewCoOwnerAndOperatorRepeaterItem: FC<
         name,
         type: userMessageId,
       }
-      console.log(itemValue)
       temp[index] = itemValue
       setCoOwnersAndOperators(temp)
       setValue(nationalIdField, nationalId)

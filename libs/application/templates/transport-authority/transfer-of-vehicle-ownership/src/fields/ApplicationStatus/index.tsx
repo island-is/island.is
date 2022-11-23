@@ -15,7 +15,6 @@ export const ApplicationStatus: FC<FieldBaseProps & ReviewScreenProps> = ({
   coOwnersAndOperators,
 }) => {
   const { formatMessage } = useLocale()
-  console.log(application)
 
   const steps = getReviewSteps(application, coOwnersAndOperators || [])
 

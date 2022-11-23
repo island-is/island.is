@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { Box, GridRow, GridColumn } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
@@ -8,7 +8,7 @@ import { IdentityInput, Query } from '@island.is/api/schema'
 import { InputController } from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'
 import * as kennitala from 'kennitala'
-import { information, error } from '../lib/messages'
+import { information, error } from '../../lib/messages'
 import debounce from 'lodash/debounce'
 
 const IdentityQuery = gql`
@@ -50,7 +50,6 @@ export const NationalIdWithName: FC<Props & FieldBaseProps> = ({
   const [nationalIdInput, setNationalIdInput] = useState('')
   const nameField = `${usedId}.name`
   const nationaIdField = `${usedId}.nationalId`
-  console.log(errorMessage, nameDefaultValue)
   const nameFieldErrors = errorMessage
     ? nameDefaultValue?.length === 0
       ? errorMessage

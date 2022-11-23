@@ -1,4 +1,3 @@
-import { formatText } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import {
   Box,
@@ -7,9 +6,9 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import React, { FC } from 'react'
-import { Jobs } from '../assets/Jobs'
-import { conclusion } from '../lib/messages'
+import { FC } from 'react'
+import { Jobs } from '../../assets/Jobs'
+import { conclusion } from '../../lib/messages'
 import { CopyLink } from '@island.is/application/ui-components'
 
 export const Conclusion: FC<FieldBaseProps> = ({ application }) => {

@@ -23,7 +23,6 @@ const pruneInDaysATen = (application: Application, days: number) => {
   date.setDate(date.getDate() + days)
   const pruneDate = new Date(date.toUTCString())
   pruneDate.setHours(10, 0, 0)
-  console.log(pruneDate)
   return pruneDate // Time left of the day + 6 more days
 }
 
@@ -319,9 +318,6 @@ const template: ApplicationTemplate<
     if (id === application.applicant) {
       return Roles.APPLICANT
     }
-    console.log(application.answers)
-    console.log(id, buyerNationalId)
-    console.log(reviewerNationalIdList)
     if (id === buyerNationalId && application.assignees.includes(id)) {
       return Roles.BUYER
     }
@@ -366,7 +362,7 @@ const getNationalIdListOfReviewers = (application: Application) => {
     })
     return reviewerNationalIdList
   } catch (error) {
-    console.log(error)
+    console.error(error)
     return []
   }
 }
