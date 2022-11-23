@@ -52,6 +52,10 @@ export class TemplateApiActionRunner {
   ): Promise<ApplicationWithAttachments> {
     this.application = application
     this.auth = auth
+    this.newExternalData = {}
+    this.oldExternalData = application.externalData
+    this.formatMessage = formatMessage
+    this.currentUserLocale = currentUserLocale
 
     islandis_logger.debug(
       `TemplateApi: Running actions for application id . ${application.id}`,
@@ -70,16 +74,11 @@ export class TemplateApiActionRunner {
         this.oldExternalData,
       )}`,
     )
-
     islandis_logger.debug(
       `TemplateApi: Setting old external data . ${JSON.stringify(
         application.externalData,
       )}`,
     )
-
-    this.oldExternalData = application.externalData
-    this.formatMessage = formatMessage
-    this.currentUserLocale = currentUserLocale
     const groupedActions = this.groupByOrder(this.sortActions(actions))
 
     islandis_logger.debug(
