@@ -20,7 +20,7 @@ import {
   SkeletonLoader,
   Stack,
 } from '@island.is/island-ui/core'
-import { useLocale, useNamespaces } from '@island.is/localization'
+import { useLocale, withClientLocale } from '@island.is/localization'
 import {
   DynamicWrapper,
   IntroHeader,
@@ -45,7 +45,6 @@ import {
 const defaultCalState = { top: false, lower: false }
 
 const FinanceTransactions: ServicePortalModuleComponent = () => {
-  useNamespaces('sp.finance-transactions')
   const { formatMessage } = useLocale()
   const [openCal, setOpenCal] = useState<{ top: boolean; lower: boolean }>(
     defaultCalState,
@@ -315,4 +314,4 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
   )
 }
 
-export default FinanceTransactions
+export default withClientLocale('sp.finance-transactions')(FinanceTransactions)

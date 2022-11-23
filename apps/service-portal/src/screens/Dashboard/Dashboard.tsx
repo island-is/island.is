@@ -11,7 +11,7 @@ import {
   Icon,
   Text,
 } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
+import { useLocale, withClientLocale } from '@island.is/localization'
 import {
   PlausiblePageviewDetail,
   ServicePortalModule,
@@ -191,4 +191,4 @@ export const Dashboard: FC<{}> = () => {
   )
 }
 
-export default Dashboard
+export default withClientLocale()(Dashboard)

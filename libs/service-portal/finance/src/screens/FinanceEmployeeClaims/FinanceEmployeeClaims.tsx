@@ -1,12 +1,11 @@
 import React, { FC } from 'react'
 
-import { useLocale, useNamespaces } from '@island.is/localization'
+import { useLocale, withClientLocale } from '@island.is/localization'
 import { m, DynamicWrapper } from '@island.is/service-portal/core'
 
 import DocumentScreen from '../../components/DocumentScreen/DocumentScreen'
 
 const EmployeeClaims: FC = () => {
-  useNamespaces('sp.employee-claims')
   const { formatMessage } = useLocale()
 
   return (
@@ -25,4 +24,4 @@ const EmployeeClaims: FC = () => {
   )
 }
 
-export default EmployeeClaims
+export default withClientLocale('sp.employee-claims')(EmployeeClaims)

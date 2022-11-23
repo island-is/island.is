@@ -13,7 +13,7 @@ import {
   Input,
   Text,
 } from '@island.is/island-ui/core'
-import { useLocale, useNamespaces } from '@island.is/localization'
+import { useLocale, withClientLocale } from '@island.is/localization'
 import {
   IntroHeader,
   m,
@@ -64,7 +64,6 @@ export const GET_VEHICLES_SEARCH = gql`
 `
 
 export const Lookup: ServicePortalModuleComponent = () => {
-  useNamespaces('sp.vehicles')
   const { formatMessage } = useLocale()
   const [termsAccepted, setTermsAccepted] = useState(false)
   const [expanded, setExpanded] = useState(!termsAccepted)
@@ -367,4 +366,4 @@ export const Lookup: ServicePortalModuleComponent = () => {
   )
 }
 
-export default Lookup
+export default withClientLocale('sp.vehicles')(Lookup)

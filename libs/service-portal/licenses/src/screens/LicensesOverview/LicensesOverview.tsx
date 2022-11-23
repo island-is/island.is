@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { defineMessage } from 'react-intl'
-import { useLocale, useNamespaces } from '@island.is/localization'
+import { useLocale, withClientLocale } from '@island.is/localization'
 import {
   ErrorScreen,
   IntroHeader,
@@ -85,7 +85,6 @@ const GenericLicensesQuery = gql`
 `
 
 export const LicensesOverview: ServicePortalModuleComponent = () => {
-  useNamespaces('sp.license')
   const { formatMessage } = useLocale()
   const { data: userProfile } = useUserProfile()
   const locale = (userProfile?.locale as Locale) ?? 'is'
@@ -212,4 +211,4 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
   )
 }
 
-export default LicensesOverview
+export default withClientLocale('sp.license')(LicensesOverview)

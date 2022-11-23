@@ -12,7 +12,7 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { useLocale, useNamespaces } from '@island.is/localization'
+import { useLocale, withClientLocale } from '@island.is/localization'
 import {
   CardLoader,
   EmptyState,
@@ -106,7 +106,6 @@ const getFilteredVehicles = (
 export const VehiclesOverview: ServicePortalModuleComponent = ({
   userInfo,
 }) => {
-  useNamespaces('sp.vehicles')
   const { formatMessage, lang } = useLocale()
   const [page, setPage] = useState(1)
   const [searchInteractionEventSent, setSearchInteractionEventSent] = useState(
@@ -270,4 +269,4 @@ export const VehiclesOverview: ServicePortalModuleComponent = ({
     </>
   )
 }
-export default VehiclesOverview
+export default withClientLocale('sp.vehicles')(VehiclesOverview)

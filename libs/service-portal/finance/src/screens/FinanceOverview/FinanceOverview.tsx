@@ -4,12 +4,10 @@ import {
   ServicePortalPath,
   ServicePortalModuleComponent,
 } from '@island.is/service-portal/core'
-import { useNamespaces } from '@island.is/localization'
+import { withClientLocale } from '@island.is/localization'
 
 export const FinanceOverview: ServicePortalModuleComponent = () => {
-  useNamespaces('sp.finance')
-
   return <Redirect to={ServicePortalPath.FinanceStatus} />
 }
 
-export default FinanceOverview
+export default withClientLocale('sp.finance')(FinanceOverview)

@@ -8,7 +8,7 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { useLocale, useNamespaces } from '@island.is/localization'
+import { useLocale, withClientLocale } from '@island.is/localization'
 import {
   ErrorScreen,
   ServicePortalModuleComponent,
@@ -80,7 +80,6 @@ export const GET_STUDENT_BOOK = gql`
 `
 
 const DrivingLessonsBook: ServicePortalModuleComponent = () => {
-  useNamespaces('sp.vehicles')
   const { formatMessage } = useLocale()
 
   const { data, loading, error } = useQuery<Query>(GET_STUDENT_BOOK)
@@ -207,4 +206,4 @@ const DrivingLessonsBook: ServicePortalModuleComponent = () => {
   )
 }
 
-export default DrivingLessonsBook
+export default withClientLocale('sp.vehicles')(DrivingLessonsBook)

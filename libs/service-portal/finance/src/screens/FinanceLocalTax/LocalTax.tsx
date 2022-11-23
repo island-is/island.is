@@ -1,12 +1,11 @@
 import React, { FC } from 'react'
 
-import { useLocale, useNamespaces } from '@island.is/localization'
+import { useLocale, withClientLocale } from '@island.is/localization'
 import { m, DynamicWrapper } from '@island.is/service-portal/core'
 
 import DocumentScreen from '../../components/DocumentScreen/DocumentScreen'
 
 const LocalTax: FC = () => {
-  useNamespaces('sp.local-tax')
   const { formatMessage } = useLocale()
 
   return (
@@ -25,4 +24,4 @@ const LocalTax: FC = () => {
   )
 }
 
-export default LocalTax
+export default withClientLocale('sp.local-tax')(LocalTax)

@@ -11,7 +11,7 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { useLocale, useNamespaces } from '@island.is/localization'
+import { useLocale, withClientLocale } from '@island.is/localization'
 import {
   ErrorScreen,
   IntroHeader,
@@ -48,7 +48,6 @@ export const GET_FINANCE_PAYMENT_SCHEDULES = gql`
 `
 
 const FinanceSchedule: ServicePortalModuleComponent = ({ userInfo }) => {
-  useNamespaces('sp.finance-schedule')
   const { formatMessage } = useLocale()
 
   const isDelegation = checkDelegation(userInfo)
@@ -167,4 +166,4 @@ const FinanceSchedule: ServicePortalModuleComponent = ({ userInfo }) => {
   )
 }
 
-export default FinanceSchedule
+export default withClientLocale('sp.finance-schedule')(FinanceSchedule)

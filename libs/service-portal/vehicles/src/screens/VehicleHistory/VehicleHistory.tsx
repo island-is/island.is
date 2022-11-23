@@ -14,7 +14,7 @@ import {
   Tabs,
   Text,
 } from '@island.is/island-ui/core'
-import { useLocale, useNamespaces } from '@island.is/localization'
+import { useLocale, withClientLocale } from '@island.is/localization'
 import {
   EmptyState,
   ErrorScreen,
@@ -99,7 +99,6 @@ const getFilteredVehicles = (
 }
 
 export const VehiclesHistory: ServicePortalModuleComponent = () => {
-  useNamespaces('sp.vehicles')
   const { formatMessage } = useLocale()
 
   const [checkbox, setCheckbox] = useState(false)
@@ -255,4 +254,4 @@ export const VehiclesHistory: ServicePortalModuleComponent = () => {
   )
 }
 
-export default VehiclesHistory
+export default withClientLocale('sp.vehicles')(VehiclesHistory)

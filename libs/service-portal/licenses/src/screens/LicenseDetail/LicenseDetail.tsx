@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useUserProfile } from '@island.is/service-portal/graphql'
 
-import { useLocale, useNamespaces } from '@island.is/localization'
+import { useLocale, withClientLocale } from '@island.is/localization'
 import {
   Box,
   Divider,
@@ -313,7 +313,6 @@ const DataFields = ({
 }
 
 const LicenseDetail: ServicePortalModuleComponent = () => {
-  useNamespaces('sp.license')
   const { formatMessage } = useLocale()
   const { data: userProfile } = useUserProfile()
   const locale = userProfile?.locale ?? 'is'
@@ -418,4 +417,4 @@ const LicenseDetail: ServicePortalModuleComponent = () => {
   )
 }
 
-export default LicenseDetail
+export default withClientLocale('sp.license')(LicenseDetail)

@@ -1,5 +1,4 @@
 import React from 'react'
-import { defineMessage } from 'react-intl'
 import { gql, useQuery } from '@apollo/client'
 import {
   pagingFragment,
@@ -7,7 +6,7 @@ import {
 } from '@island.is/service-portal/graphql'
 import { Query } from '@island.is/api/schema'
 import { Box, Button, GridColumn, GridRow } from '@island.is/island-ui/core'
-import { useLocale, useNamespaces } from '@island.is/localization'
+import { useLocale, withClientLocale } from '@island.is/localization'
 import {
   EmptyState,
   ErrorScreen,
@@ -39,7 +38,6 @@ const GetRealEstateQuery = gql`
 `
 
 export const AssetsOverview: ServicePortalModuleComponent = () => {
-  useNamespaces('sp.assets')
   const { formatMessage } = useLocale()
 
   const { loading, error, data, fetchMore } = useQuery<Query>(
@@ -154,4 +152,4 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
   )
 }
 
-export default AssetsOverview
+export default withClientLocale('sp.assets')(AssetsOverview)

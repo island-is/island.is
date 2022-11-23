@@ -1,12 +1,11 @@
 import React, { FC } from 'react'
 
-import { useLocale, useNamespaces } from '@island.is/localization'
+import { useLocale, withClientLocale } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
 
 import DocumentScreen from '../../components/DocumentScreen/DocumentScreen'
 
 const FinanceBills: FC = () => {
-  useNamespaces('sp.finance-bills')
   const { formatMessage } = useLocale()
   return (
     <DocumentScreen
@@ -21,4 +20,4 @@ const FinanceBills: FC = () => {
   )
 }
 
-export default FinanceBills
+export default withClientLocale('sp.finance-bills')(FinanceBills)

@@ -9,7 +9,7 @@ import {
 import { defineMessage } from 'react-intl'
 import { useQuery, useLazyQuery, gql } from '@apollo/client'
 import { Query, PropertyOwner } from '@island.is/api/schema'
-import { useNamespaces, useLocale } from '@island.is/localization'
+import { useLocale, withClientLocale } from '@island.is/localization'
 import { Box } from '@island.is/island-ui/core'
 import {
   ServicePortalModuleComponent,
@@ -86,7 +86,6 @@ export const GET_SINGLE_PROPERTY_QUERY = gql`
 `
 
 export const AssetsOverview: ServicePortalModuleComponent = () => {
-  useNamespaces('sp.assets')
   const { formatMessage } = useLocale()
   const { id }: { id: string | undefined } = useParams()
 
@@ -253,4 +252,4 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
   )
 }
 
-export default AssetsOverview
+export default withClientLocale('sp.assets')(AssetsOverview)

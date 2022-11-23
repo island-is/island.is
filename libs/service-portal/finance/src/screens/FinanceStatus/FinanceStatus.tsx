@@ -15,7 +15,7 @@ import {
   Stack,
   Table as T,
 } from '@island.is/island-ui/core'
-import { useLocale, useNamespaces } from '@island.is/localization'
+import { useLocale, withClientLocale } from '@island.is/localization'
 import {
   amountFormat,
   ErrorScreen,
@@ -55,7 +55,6 @@ const GetDebtStatusQuery = gql`
 `
 
 const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
-  useNamespaces('sp.finance-status')
   const { formatMessage } = useLocale()
 
   const isDelegation = userInfo && checkDelegation(userInfo)
@@ -270,4 +269,4 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
   )
 }
 
-export default FinanceStatus
+export default withClientLocale('sp.finance-status')(FinanceStatus)

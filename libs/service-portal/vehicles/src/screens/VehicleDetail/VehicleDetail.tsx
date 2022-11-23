@@ -18,7 +18,7 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { useLocale, useNamespaces } from '@island.is/localization'
+import { useLocale, withClientLocale } from '@island.is/localization'
 import {
   amountFormat,
   ErrorScreen,
@@ -163,7 +163,6 @@ export const GET_USERS_VEHICLE_DETAIL = gql`
 `
 
 const VehicleDetail: ServicePortalModuleComponent = () => {
-  useNamespaces('sp.vehicles')
   const { formatMessage } = useLocale()
   const { id }: { id: string | undefined } = useParams()
 
@@ -454,4 +453,4 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
   )
 }
 
-export default VehicleDetail
+export default withClientLocale('sp.vehicles')(VehicleDetail)
