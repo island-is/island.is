@@ -79,6 +79,7 @@ import { FirearmLicenseClientConfig } from '@island.is/clients/firearm-license'
 import { PassportsClientConfig } from '@island.is/clients/passports'
 import { FileStorageConfig } from '@island.is/file-storage'
 import { AuthDelegationApiClientConfig } from '@island.is/clients/auth/delegation-api'
+import { FinancialStatementsInaoClientConfig } from '@island.is/clients/financial-statements-inao'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -271,6 +272,7 @@ const autoSchemaFile = environment.production
         MunicipalitiesFinancialAidConfig,
         CompanyRegistryConfig,
         FishingLicenseClientConfig,
+        FinancialStatementsInaoClientConfig,
         DrivingLicenseBookClientConfig,
         DrivingLicenseApiConfig,
         PassportsClientConfig,
