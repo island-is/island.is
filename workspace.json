@@ -6,7 +6,6 @@
     "air-discount-scheme-consts": "libs/air-discount-scheme/consts",
     "air-discount-scheme-types": "libs/air-discount-scheme/types",
     "air-discount-scheme-web": "apps/air-discount-scheme/web",
-    "air-discount-scheme-web-e2e": "apps/air-discount-scheme/web-e2e",
     "api": "apps/api",
     "api-catalogue-consts": "libs/api-catalogue/consts",
     "api-catalogue-elastic": "libs/api-catalogue/elastic",
@@ -57,7 +56,6 @@
     "application-graphql": "libs/application/graphql",
     "application-system-api": "apps/application-system/api",
     "application-system-form": "apps/application-system/form",
-    "application-system-form-e2e": "apps/application-system/form-e2e",
     "application-template-api-modules": "libs/application/template-api-modules",
     "application-template-loader": "libs/application/template-loader",
     "application-templates-accident-notification": "libs/application/templates/accident-notification",
@@ -107,7 +105,6 @@
     "application-ui-forms": "libs/application/ui-forms",
     "application-ui-shell": "libs/application/ui-shell",
     "auth-admin-web": "apps/auth-admin-web",
-    "auth-admin-web-e2e": "apps/auth-admin-web-e2e",
     "auth-api-lib": "libs/auth-api-lib",
     "auth-nest-tools": "libs/auth-nest-tools",
     "auth-react": "libs/auth/react",
@@ -234,7 +231,6 @@
     "service-portal-core": "libs/service-portal/core",
     "service-portal-document-provider": "libs/service-portal/document-provider",
     "service-portal-documents": "libs/service-portal/documents",
-    "service-portal-e2e": "apps/service-portal-e2e",
     "service-portal-education": "libs/service-portal/education",
     "service-portal-education-career": "libs/service-portal/education-career",
     "service-portal-education-degree": "libs/service-portal/education-degree",
@@ -279,14 +275,12 @@
     "skilavottord-consts": "libs/skilavottord/consts",
     "skilavottord-types": "libs/skilavottord/types",
     "skilavottord-web": "apps/skilavottord/web",
-    "skilavottord-web-e2e": "apps/skilavottord/web-e2e",
     "skilavottord-ws": "apps/skilavottord/ws",
     "system-e2e": "apps/system-e2e",
     "testing-containers": "libs/testing/containers",
     "testing-fixtures": "libs/testing/fixtures",
     "testing-nest": "libs/testing/nest",
     "user-monitoring": "libs/user-monitoring",
-    "web": "apps/web",
-    "web-e2e": "apps/web-e2e"
+    "web": "apps/web"
   }
 }
