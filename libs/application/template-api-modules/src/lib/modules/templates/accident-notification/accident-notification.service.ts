@@ -29,11 +29,13 @@ import {
   getApplicationAttachmentStatus,
 } from './attachments/attachment.utils'
 import { AccidentNotificationAttachment } from './types/attachments'
+import { BaseTemplateApiService } from '../../base-template-api.service'
+import { ApplicationTypes } from '@island.is/application/types'
 
 const SIX_MONTHS_IN_SECONDS_EXPIRES = 6 * 30 * 24 * 60 * 60
 
 @Injectable()
-export class AccidentNotificationService {
+export class AccidentNotificationService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     @Inject(ACCIDENT_NOTIFICATION_CONFIG)
@@ -41,7 +43,9 @@ export class AccidentNotificationService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly attachmentProvider: AccidentNotificationAttachmentProvider,
     private readonly documentApi: DocumentApi,
-  ) {}
+  ) {
+    super(ApplicationTypes.ACCIDENT_NOTIFICATION)
+  }
 
   async submitApplication({ application }: TemplateApiModuleActionProps) {
     try {

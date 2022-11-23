@@ -46,26 +46,19 @@ export class HealthInsuranceService extends BaseTemplateApiService {
   async sendApplyHealthInsuranceApplication({
     application,
   }: TemplateApiModuleActionProps) {
-    try {
-      logger.info(
-        `Start send Health Insurance application for ${application.id}`,
-      )
+    logger.info(`Start send Health Insurance application for ${application.id}`)
 
-      const inputs = transformApplicationToHealthInsuranceDTO(application)
-      const xml = await insuranceToXML(
-        inputs.vistaskjal,
-        inputs.attachmentNames,
-        this.bucketService,
-      )
+    const inputs = transformApplicationToHealthInsuranceDTO(application)
+    const xml = await insuranceToXML(
+      inputs.vistaskjal,
+      inputs.attachmentNames,
+      this.bucketService,
+    )
 
-      await this.documentApi.documentPost({
-        document: { doc: xml, documentType: 570 },
-      })
+    await this.documentApi.documentPost({
+      document: { doc: xml, documentType: 570 },
+    })
 
-      logger.info(`Finished send Health Insurance application`)
-    } catch (error) {
-      logger.error(`Send health insurance application failed`)
-      throw new Error(`Send health insurance application failed`)
-    }
+    logger.info(`Finished send Health Insurance application`)
   }
 }

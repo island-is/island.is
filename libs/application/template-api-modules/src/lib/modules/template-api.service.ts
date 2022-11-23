@@ -55,6 +55,13 @@ export class TemplateAPIService {
     }
   }
 
+  /**
+   * Catches all errors and returns them as Template Api Error to display on the client
+   * If error is 500 or unexpected it logs the actual error and returns as a default TemplateApiErrorProblem
+   * @param action
+   * @param error
+   * @returns TemplateApiError
+   */
   handleError(action: ApplicationApiAction, error: Error): TemplateApiError {
     const problemError: TemplateApiError =
       'problem' in error
@@ -62,7 +69,6 @@ export class TemplateAPIService {
         : new TemplateApiError(coreErrorMessages.defaultTemplateApiError, 500)
 
     if (problemError?.problem?.status && problemError?.problem?.status >= 500) {
-      console.log(error)
       this.logger.error(`PerformAction error`, {
         ...error,
         stack: error?.stack,
