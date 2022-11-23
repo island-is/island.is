@@ -12,12 +12,12 @@ import {
   LoadingDots,
   Select,
 } from '@island.is/island-ui/core'
+import { useNamespace } from '@island.is/web/hooks'
 
 import { GET_BROKEN_DOWN_ELECTRONIC_REGISTRATION_STATISTICS_QUERY } from '../queries'
 import { CustomTooltip } from './CustomTooltip'
 import { extractRegistrationTypesFromData } from './utils'
 import { CustomLegend } from './CustomLegend'
-import { useLocalization } from '../../../utils'
 
 import * as styles from './MonthlyStatistics.css'
 
@@ -35,7 +35,7 @@ export const MonthlyStatistics = ({ slice }: MonthlyStatisticsProps) => {
     setSelectedRegistrationTypeOption,
   ] = useState({ label: 'Allt', value: 'Allt' })
 
-  const n = useLocalization(slice?.json ?? {})
+  const n = useNamespace(slice?.json ?? {})
 
   const currentYear = new Date().getFullYear()
 
