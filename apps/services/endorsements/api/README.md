@@ -9,7 +9,7 @@ This service manages endorsement lists within island.is.
 Simply run these two commands:
 
 ```
-yarn dev/init services-user-profile
+yarn dev-init services-user-profile
 yarn dev services-user-profile
 ```
 
@@ -31,7 +31,7 @@ To run the API locally make sure you:
 ### Initialize the application
 
 ```bash
-yarn dev/init services-endorsements-api
+yarn dev-init services-endorsements-api
 ```
 
 ## Run locally
@@ -57,7 +57,7 @@ http://localhost:4246/
 After making changes to the module code, re-initalize app to autogenerate code for swagger, openapi, fetch client etc.
 
 ```bash
-yarn dev/init services-endorsements-api
+yarn dev-init services-endorsements-api
 ```
 
 ## Run tests

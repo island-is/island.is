@@ -8,7 +8,7 @@ When testing an app/project you need to first start the app, then test it with P
 
 ## ⚡ TL;DR
 
-- Start the application: `yarn dev/init <app> && yarn dev <app>`
+- Start the application: `yarn dev-init <app> && yarn dev <app>`
 - Test the app: `yarn playwright system-e2e/.*/<name-of-your-app>`
 
 ## 👨‍🍳 Prepare the app
@@ -16,12 +16,12 @@ When testing an app/project you need to first start the app, then test it with P
 For local development and testing start your app. Generally, first-time setup and running is simply:
 
 1. `yarn get-secrets <app>`
-2. `yarn dev/init <app>`
+2. `yarn dev-init <app>`
 3. `yarn dev <app>`
 
 {% hint style="example" %}
 1. `yarn get-secrets application-system-form`
-2. `yarn dev/init application-system-form`
+2. `yarn dev-init application-system-form`
 3. `yarn dev application-system-form`
 {% endhint %}
 

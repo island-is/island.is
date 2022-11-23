@@ -9,7 +9,7 @@ This application allows individuals to create general petitions
 To setup the docker environment run (this only needs to be run once):
 
 ```bash
-yarn nx run application-templates-general-petition:dev/init
+yarn nx run application-templates-general-petition:dev-init
 ```
 
 To start all required services:

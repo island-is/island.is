@@ -20,7 +20,7 @@
     "lint": "nx workspace-lint && nx lint",
     "dev-services": "nx dev-services",
     "dev": "nx dev",
-    "dev/init": "nx dev/init",
+    "dev-init": "nx dev-init",
     "analyze": "cross-env ANALYZE=true nx build",
     "e2e": "nx e2e",
     "e2e-ci": "node ./scripts/e2e-ci.js",

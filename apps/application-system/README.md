@@ -9,7 +9,7 @@ This project forms the base for all business applications belonging to island.is
 Ensure docker is running, then run the following to set up:
 
 ```bash
-yarn nx run application-system-api:dev/init
+yarn nx run application-system-api:dev-init
 ```
 
 This command runs all _initial setup_ in the sections [API](#API) and [Form](#Form) below.
