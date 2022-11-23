@@ -242,6 +242,20 @@ export const getMaxMultipleBirthsAndDefaultMonths = (
   const multipleBirthsDaysInMonths = getMaxMultipleBirthsInMonths(answers)
   return defaultMonths + multipleBirthsDaysInMonths
 }
+
+export const getMaxMultipleBirthsAndSingleParenttMonths = (
+  application: Application,
+) => {
+  const multipleBirthsDaysInMonths = getMaxMultipleBirthsInMonths(
+    application.answers,
+  )
+  const singleParentDaysInMonths = getAvailablePersonalRightsSingleParentInMonths(
+    application,
+  )
+
+  return singleParentDaysInMonths + multipleBirthsDaysInMonths
+}
+
 export const getAdditionalSingleParentRightsInDays = (
   application: Application,
 ) => {
@@ -1079,20 +1093,31 @@ export const getPeriodSectionTitle = (application: Application) => {
 }
 
 export const getRightsDescTitle = (application: Application) => {
-  const { applicationType, otherParent } = getApplicationAnswers(
-    application.answers,
-  )
+  const {
+    applicationType,
+    otherParent,
+    hasMultipleBirths,
+  } = getApplicationAnswers(application.answers)
 
   if (
     applicationType === PARENTAL_GRANT ||
     applicationType === PARENTAL_GRANT_STUDENTS
   ) {
-    return otherParent === SINGLE
+    return otherParent === SINGLE && hasMultipleBirths === YES
+      ? parentalLeaveFormMessages.shared
+          .singleParentGrantMultipleRightsDescription
+      : hasMultipleBirths === YES
+      ? parentalLeaveFormMessages.shared.grantMultipleRightsDescription
+      : otherParent === SINGLE
       ? parentalLeaveFormMessages.shared.singleParentGrantRightsDescription
       : parentalLeaveFormMessages.shared.grantRightsDescription
   }
 
-  return otherParent === SINGLE
+  return otherParent === SINGLE && hasMultipleBirths === YES
+    ? parentalLeaveFormMessages.shared.singleParentMultipleRightsDescription
+    : hasMultipleBirths === YES
+    ? parentalLeaveFormMessages.shared.multipleRightsDescription
+    : otherParent === SINGLE
     ? parentalLeaveFormMessages.shared.singleParentRightsDescription
     : parentalLeaveFormMessages.shared.rightsDescription
 }

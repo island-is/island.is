@@ -1,37 +1,77 @@
 import React, { FC } from 'react'
 
 import BoxChart, { BoxChartKey } from '../components/BoxChart'
-import { getApplicationAnswers } from '../../lib/parentalLeaveUtils'
+import {
+  getApplicationAnswers,
+  getMaxMultipleBirthsAndSingleParenttMonths,
+  getMaxMultipleBirthsInMonths,
+} from '../../lib/parentalLeaveUtils'
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
 import { defaultMonths, additionalSingleParentMonths } from '../../config'
 import { parentalLeaveFormMessages } from '../../lib/messages'
-import { SINGLE } from '../../constants'
+import { SINGLE, YES } from '../../constants'
 
 const GiveDaysSlider: FC<FieldBaseProps> = ({ application }) => {
-  const { otherParent } = getApplicationAnswers(application.answers)
+  const { otherParent, hasMultipleBirths } = getApplicationAnswers(
+    application.answers,
+  )
   const getDefaultMonths =
     otherParent === SINGLE
       ? additionalSingleParentMonths + defaultMonths
       : defaultMonths
 
-  const boxChartKeys: BoxChartKey[] = [
-    {
-      label: () => ({
-        ...parentalLeaveFormMessages.shared.yourRightsInMonths,
-        values: { months: getDefaultMonths },
-      }),
-      bulletStyle: 'blue',
-    },
-  ]
+  const getMultipleBirthMonths = getMaxMultipleBirthsInMonths(
+    application.answers,
+  )
+  const totalMonths = getMaxMultipleBirthsAndSingleParenttMonths(application)
+  console.log('TOTAL MONTHS: ', totalMonths)
+
+  const boxChartKeys: BoxChartKey[] =
+    hasMultipleBirths === YES
+      ? [
+          {
+            label: () => ({
+              ...parentalLeaveFormMessages.shared.yourRightsInMonths,
+              values: { months: getDefaultMonths },
+            }),
+            bulletStyle: 'blue',
+          },
+
+          {
+            label: () =>
+              otherParent === SINGLE
+                ? {
+                    ...parentalLeaveFormMessages.shared
+                      .yourSingleParentMultipleBirthsRightsInMonths,
+                    values: { months: getMultipleBirthMonths },
+                  }
+                : {
+                    ...parentalLeaveFormMessages.shared
+                      .yourMultipleBirthsRightsInMonths,
+                    values: { months: getMultipleBirthMonths },
+                  },
+            bulletStyle: 'purple',
+          },
+        ]
+      : [
+          {
+            label: () => ({
+              ...parentalLeaveFormMessages.shared.yourRightsInMonths,
+              values: { months: getDefaultMonths },
+            }),
+            bulletStyle: 'blue',
+          },
+        ]
 
   return (
     <Box marginBottom={6} marginTop={3}>
       <BoxChart
         application={application}
-        boxes={getDefaultMonths}
-        calculateBoxStyle={() => {
-          return 'blue'
+        boxes={Math.ceil(totalMonths)}
+        calculateBoxStyle={(i) => {
+          if (i < getDefaultMonths) return 'blue'
+          else return 'purple'
         }}
         keys={boxChartKeys as BoxChartKey[]}
       />
