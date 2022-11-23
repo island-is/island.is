@@ -17,9 +17,9 @@ import { TeamListProps } from '../TeamList/TeamList'
 import { ContactUsProps } from '../ContactUs/ContactUs'
 import { LocationProps } from '../Location/Location'
 import { TellUsAStoryFormProps } from '../TellUsAStoryForm/TellUsAStoryForm'
-import { defaultRenderNode } from './defaultRenderNode'
-import { defaultRenderMark } from './defaultRenderMark'
-import { defaultRenderComponent } from './defaultRenderComponents'
+import { defaultRenderNodeObject } from './defaultRenderNode'
+import { defaultRenderMarkObject } from './defaultRenderMark'
+import { defaultRenderComponentObject } from './defaultRenderComponents'
 import { Box } from '@island.is/island-ui/core'
 
 type HtmlSlice = { __typename: 'Html'; id: string; document: Document }
@@ -100,7 +100,7 @@ type RichText = (
         renderNode: Options['renderNode']
         renderMark: Options['renderMark']
         renderComponent: {
-          [slice in keyof typeof defaultRenderComponent]: (
+          [slice in keyof typeof defaultRenderComponentObject]: (
             SliceType,
           ) => ReactNode
         }
@@ -120,11 +120,11 @@ export const richText: RichText = (
         return [...children, index > 0 && <br key={index} />, textSegment]
       }, [])
     },
-    renderNode: { ...defaultRenderNode, ...opt.renderNode },
-    renderMark: { ...defaultRenderMark, ...opt.renderMark },
+    renderNode: { ...defaultRenderNodeObject, ...opt.renderNode },
+    renderMark: { ...defaultRenderMarkObject, ...opt.renderMark },
   }
   const renderComponent = {
-    ...defaultRenderComponent,
+    ...defaultRenderComponentObject,
     ...opt.renderComponent,
     locale,
   }

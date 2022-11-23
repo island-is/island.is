@@ -107,7 +107,6 @@ export const CemetryIncome = ({
       <Box paddingY={1}>
         <InputController
           id={CEMETRYOPERATIONIDS.otherIncome}
-          loading={loading}
           name={CEMETRYOPERATIONIDS.otherIncome}
           label={formatMessage(m.otherIncome)}
           onChange={() => onInputChange(CEMETRYOPERATIONIDS.otherIncome)}

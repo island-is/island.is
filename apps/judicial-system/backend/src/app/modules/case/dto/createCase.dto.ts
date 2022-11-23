@@ -5,11 +5,13 @@ import {
   IsBoolean,
   IsArray,
   ArrayMinSize,
+  IsObject,
 } from 'class-validator'
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
-import { CaseType, IndictmentSubType } from '@island.is/judicial-system/types'
+import { CaseType } from '@island.is/judicial-system/types'
+import type { IndictmentSubtypeMap } from '@island.is/judicial-system/types'
 
 export class CreateCaseDto {
   @IsNotEmpty()
@@ -18,9 +20,9 @@ export class CreateCaseDto {
   readonly type!: CaseType
 
   @IsOptional()
-  @IsString()
-  @ApiPropertyOptional({ enum: IndictmentSubType })
-  readonly indictmentSubType?: IndictmentSubType
+  @IsObject()
+  @ApiPropertyOptional()
+  readonly indictmentSubtypes?: IndictmentSubtypeMap
 
   @IsOptional()
   @IsString()

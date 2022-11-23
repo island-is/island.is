@@ -251,10 +251,17 @@ export const titles = {
       defaultMessage: 'Öll mál - Réttarvörslugátt',
       description: 'Notaður sem titill fyrir öll mál skjá',
     }),
+    // TODO: Remove signedVerdictOverview
     signedVerdictOverview: defineMessage({
       id: 'judicial.system.core:titles.shared.signed_verdict_overview',
       defaultMessage: 'Yfirlit - Afgreitt mál - Réttarvörslugátt',
       description: 'Notaður sem titill fyrir Yfirlit úrskurðar skjá',
+    }),
+    closedCaseOverview: defineMessage({
+      id: 'judicial.system.core:titles.shared.closed_case_overview',
+      defaultMessage: '{courtCaseNumber} - Réttarvörslugátt',
+      description:
+        'Notaður sem titill fyrir skjá sem birtir upplýsingar um lokið mál',
     }),
   },
   admin: {

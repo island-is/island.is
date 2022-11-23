@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useLocale } from '@island.is/localization'
-import { useAuthDomainsQuery } from '@island.is/service-portal/graphql'
+import {
+  AuthDomainDirection,
+  useAuthDomainsQuery,
+} from '@island.is/service-portal/graphql'
 import { ALL_DOMAINS, ISLAND_DOMAIN } from '../constants/domain'
 import { useQueryParam } from '@island.is/service-portal/core'
 import { useLocation, useHistory } from 'react-router-dom'
@@ -45,6 +48,7 @@ export const useDomains = (includeDefaultOption = true) => {
     variables: {
       input: {
         lang,
+        direction: AuthDomainDirection.Outgoing,
       },
     },
   })
