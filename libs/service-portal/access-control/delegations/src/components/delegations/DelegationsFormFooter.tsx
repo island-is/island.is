@@ -19,7 +19,7 @@ type DelegationsFormFooterProps = {
   buttonSize?: ButtonProps['size']
   confirmIcon?: IconType
   confirmButtonColorScheme?: 'destructive' | 'default'
-  showDivider?: boolean
+  showShadow?: boolean
   containerPaddingBottom?: ResponsiveSpace
 }
 
@@ -30,20 +30,18 @@ export const DelegationsFormFooter = ({
   buttonSize = 'medium',
   confirmIcon,
   confirmButtonColorScheme = 'default',
-  showDivider = true,
+  showShadow = true,
   containerPaddingBottom = 6,
   ...rest
 }: DelegationsFormFooterProps) => {
   const { formatMessage } = useLocale()
 
   return (
-    <Box position="relative">
-      {showDivider && (
-        <div className={styles.dividerContainer}>
-          <Divider />
-        </div>
-      )}
-      <div className={styles.shadow} />
+    <Box position="relative" className={styles.container}>
+      {showShadow && <div className={styles.shadow} />}
+      <div className={styles.dividerContainer}>
+        <Divider />
+      </div>
       <Box
         display="flex"
         alignItems="center"
@@ -51,7 +49,6 @@ export const DelegationsFormFooter = ({
         width="full"
         paddingTop={4}
         paddingBottom={containerPaddingBottom}
-        className={styles.container}
       >
         <Button size={buttonSize} variant="ghost" onClick={onCancel}>
           {formatMessage(m.buttonCancel)}

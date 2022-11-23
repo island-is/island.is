@@ -3,13 +3,27 @@ import { style } from '@vanilla-extract/css'
 
 export const container = style({
   background: theme.color.white,
+  ...themeUtils.responsiveStyle({
+    xs: {
+      marginLeft: -theme.grid.gutter.desktop,
+      marginRight: -theme.grid.gutter.desktop,
+      paddingLeft: theme.grid.gutter.desktop,
+      paddingRight: theme.grid.gutter.desktop,
+    },
+    md: {
+      marginLeft: 'initial',
+      marginRight: 'initial',
+      paddingLeft: 'initial',
+      paddingRight: 'initial',
+    },
+  }),
 })
 
 export const shadow = style({
   backgroundImage: `linear-gradient(to bottom, rgba(0, 97, 255, 0.16), rgba(255,255,255, 0.05))`,
-  top: '-15px',
-  left: '3%',
-  right: '3%',
+  top: '-20px',
+  left: 0,
+  right: 0,
   position: 'absolute',
   height: '100px',
   borderRadius: '50%',

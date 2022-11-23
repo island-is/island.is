@@ -1,7 +1,7 @@
 import { isDefined } from '@island.is/shared/utils'
 import { AuthCustomDelegation } from '@island.is/api/schema'
 import { useAuth } from '@island.is/auth/react'
-import { AlertBanner, Box } from '@island.is/island-ui/core'
+import { AlertBanner, Box, useBreakpoint } from '@island.is/island-ui/core'
 import { m } from '@island.is/service-portal/core'
 import {
   AuthDelegationScope,
@@ -38,6 +38,7 @@ export const AccessConfirmModal = ({
 }: AccessConfirmModalProps) => {
   const { formatMessage } = useLocale()
   const { userInfo } = useAuth()
+  const { md } = useBreakpoint()
   const [error, setError] = useState(formError ?? false)
 
   const onConfirmHandler = async () => {
@@ -128,11 +129,12 @@ export const AccessConfirmModal = ({
         delegation={delegation}
         scopes={scopes}
         scopeTree={scopeTree}
-        listMarginBottom={[1, 1, 10]}
+        listMarginBottom={[0, 0, 10]}
       />
       <Box position="sticky" bottom={0}>
         <DelegationsFormFooter
           loading={loading}
+          showShadow={md}
           onCancel={onClose}
           onConfirm={onConfirmHandler}
           confirmLabel={formatMessage(m.codeConfirmation)}

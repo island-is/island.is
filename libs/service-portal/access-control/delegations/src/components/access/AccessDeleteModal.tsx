@@ -1,6 +1,11 @@
 import { AuthCustomDelegation } from '@island.is/api/schema'
 import { useAuth } from '@island.is/auth/react'
-import { AlertMessage, Box, toast } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  toast,
+  useBreakpoint,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { formatNationalId } from '@island.is/service-portal/core'
 import {
@@ -27,6 +32,7 @@ export const AccessDeleteModal = ({
 }: AccessDeleteModalProps) => {
   const { formatMessage, lang } = useLocale()
   const { userInfo } = useAuth()
+  const { md } = useBreakpoint()
   const [error, setError] = useState(false)
   const [deleteAuthDelegation, { loading }] = useDeleteAuthDelegationMutation()
   const [
@@ -159,13 +165,13 @@ export const AccessDeleteModal = ({
           scopes={delegation?.scopes}
           scopeTree={authScopeTree}
           loading={scopeTreeLoading}
-          listMarginBottom={[1, 1, 10]}
+          listMarginBottom={[0, 0, 10]}
         />
       </Box>
       <Box position="sticky" bottom={0}>
         <DelegationsFormFooter
           loading={loading}
-          showDivider={false}
+          showShadow={md}
           confirmButtonColorScheme="destructive"
           onCancel={onClose}
           onConfirm={onDeleteHandler}
