@@ -22,8 +22,8 @@ import {
   IdsUserGuard,
   Scopes,
   ScopesGuard,
-  User,
 } from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
 import { StaffGuard } from '../../guards/staff.guard'
 import { StaffRolesRules } from '../../decorators/staffRole.decorator'
 import {
