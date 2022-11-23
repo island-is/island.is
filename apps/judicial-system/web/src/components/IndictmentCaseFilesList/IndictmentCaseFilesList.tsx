@@ -77,8 +77,7 @@ const IndictmentCaseFilesList: React.FC<Props> = (props) => {
   )
   const others = cf.filter(
     (file) =>
-      file.category === CaseFileCategory.CASE_FILE &&
-      !Boolean(file.policeCaseNumber),
+      file.category === CaseFileCategory.CASE_FILE && !file.policeCaseNumber,
   )
   const rulings = cf.filter((file) => file.category === CaseFileCategory.RULING)
   const courtRecords = cf.filter(
