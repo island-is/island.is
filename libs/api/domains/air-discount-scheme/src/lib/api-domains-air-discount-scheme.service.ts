@@ -92,6 +92,7 @@ export class AirDiscountSchemeService {
       })
       .catch((e) => {
         this.handleJSONError(e)
+        return null
       })
 
     return discountResponse
