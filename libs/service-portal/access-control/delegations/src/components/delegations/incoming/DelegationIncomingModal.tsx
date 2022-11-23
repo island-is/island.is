@@ -105,6 +105,7 @@ export const DelegationIncomingModal = ({
       </Box>
       <AccessListContainer
         delegation={delegation}
+        scopes={delegation?.scopes}
         scopeTree={authScopeTree}
         loading={scopeTreeLoading}
       />

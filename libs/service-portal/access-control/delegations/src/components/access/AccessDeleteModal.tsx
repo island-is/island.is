@@ -156,6 +156,7 @@ export const AccessDeleteModal = ({
         )}
         <AccessListContainer
           delegation={delegation}
+          scopes={delegation?.scopes}
           scopeTree={authScopeTree}
           loading={scopeTreeLoading}
         />

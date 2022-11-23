@@ -7,6 +7,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { AuthDelegationScope } from '@island.is/service-portal/graphql'
 
 import { AccessDate } from '../AccessDate/AccessDate'
 import { AccessList } from './AccessList'
@@ -16,6 +17,7 @@ import { AuthScopeTree } from '../access.types'
 type AccessListContainerProps = {
   delegation?: AuthCustomDelegation
   scopeTree?: AuthScopeTree
+  scopes?: Pick<AuthDelegationScope, 'name' | 'validTo' | 'displayName'>[]
   loading?: boolean
   listMarginBottom?: ResponsiveProp<Space | 'auto'>
 }
@@ -23,10 +25,12 @@ type AccessListContainerProps = {
 export const AccessListContainer = ({
   delegation,
   scopeTree,
+  scopes,
   loading = false,
   listMarginBottom,
 }: AccessListContainerProps) => {
   const { formatMessage } = useLocale()
+  const showAccessList = !loading && scopeTree && scopes && delegation
 
   return (
     <Box display="flex" flexDirection="column" rowGap={3} marginTop={6}>
@@ -41,17 +45,17 @@ export const AccessListContainer = ({
           {delegation?.validTo && <AccessDate validTo={delegation.validTo} />}
         </Hidden>
       </Box>
-      {!loading && scopeTree && delegation ? (
-        <Box marginBottom={listMarginBottom ?? [1, 1, 1]}>
+      <Box marginBottom={listMarginBottom ?? [1, 1, 1]}>
+        {showAccessList ? (
           <AccessList
             validityPeriod={delegation.validTo}
-            scopes={delegation.scopes}
+            scopes={scopes}
             scopeTree={scopeTree}
           />
-        </Box>
-      ) : (
-        <AccessListLoading rows={delegation?.scopes?.length ?? 0} />
-      )}
+        ) : (
+          <AccessListLoading rows={delegation?.scopes?.length ?? 0} />
+        )}
+      </Box>
     </Box>
   )
 }

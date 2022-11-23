@@ -126,6 +126,7 @@ export const AccessConfirmModal = ({
       </Box>
       <AccessListContainer
         delegation={delegation}
+        scopes={scopes}
         scopeTree={scopeTree}
         listMarginBottom={[1, 1, 8]}
       />
