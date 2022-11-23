@@ -24,8 +24,8 @@ export const isCompanyDelegation = (user: User) => {
  * @returns boolean
  */
 export const isPersonDelegation = (user: User) => {
-  const isCompany = isCompanyDelegation(user)
+  const isPerson = user?.profile?.subjectType === 'person'
   const isDelegation = checkDelegation(user)
-  const personDelegation = isDelegation && !isCompany
+  const personDelegation = isDelegation && isPerson
   return personDelegation
 }
