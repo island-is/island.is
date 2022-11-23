@@ -191,9 +191,9 @@ const template: ApplicationTemplate<
           name: 'Rejected',
           progress: 1,
           lifecycle: pruneAfterDays(3 * 30),
-          /* onEntry: {
+          onEntry: {
             apiModuleAction: ApiActions.rejectApplication,
-          }, */
+          },
           actionCard: {
             tag: {
               label: application.actionCardRejected,
