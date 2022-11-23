@@ -148,7 +148,7 @@
           "yarn nx schemas/build-openapi application-system-api",
           "yarn nx schemas/openapi-generator api-domains-application",
           "yarn nx schemas/build-graphql-schema api",
-          "yarn dev/init services-user-profile"
+          "yarn nx run services-user-profile:dev/init"
         ],
         "parallel": false
       }
@@ -158,7 +158,7 @@
       "options": {
         "commands": [
           "yarn start api",
-          "yarn dev services-user-profile",
+          "yarn nx run services-user-profile:dev",
           "yarn start application-system-api",
           "yarn start application-system-form",
           "scripts/run-soffia-proxy.sh",
