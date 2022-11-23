@@ -52,7 +52,7 @@ export class AirDiscountSchemeService {
     )
   }
 
-  async getCurrentDiscounts(auth: User) {
+  async getCurrentDiscounts(auth: User): Promise<DiscountWithTUser[]> {
     const relations: TUser[] = (await this.getUserRelations(auth)) as TUser[]
 
     const discounts: DiscountWithTUser[] = []
@@ -69,6 +69,8 @@ export class AirDiscountSchemeService {
 
         if (createdDiscount) {
           discount = createdDiscount
+        } else {
+          continue
         }
       }
       discounts.push({
@@ -83,7 +85,7 @@ export class AirDiscountSchemeService {
   private async getDiscount(
     auth: User,
     nationalId: string,
-  ): Promise<unknown | null> {
+  ): Promise<TDiscount | void> {
     const discountResponse = await this.getADSWithAuth(auth)
       .privateDiscountControllerGetCurrentDiscountByNationalId({
         nationalId,
@@ -110,16 +112,15 @@ export class AirDiscountSchemeService {
     return createDiscountResponse
   }
 
-  private async getUserRelations(auth: User): Promise<TUser[] | null> {
+  private async getUserRelations(auth: User): Promise<TUser[]> {
     let getRelationsResponse = await this.getADSWithAuth(auth)
       .privateUserControllerGetUserRelations({ nationalId: auth.nationalId })
       .catch((e) => {
-        console.log('Handling?')
         this.handle4xx(e)
       })
 
     if (!getRelationsResponse) {
-      return null
+      return []
     }
 
     // Should not generate discountcodes for users who do not meet requirements
