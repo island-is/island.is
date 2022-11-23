@@ -27,14 +27,13 @@ const MissingInfoRemarks: FC<ReviewFieldProps> = ({
   return (
     <Input
       id={`missingInfo[${index}].remarks`}
-      name={`missingInfo[${index}].remarks`}
+      {...register(`missingInfo[${index}].remarks`)}
       label={formatText(m.additionalRemarks, application, formatMessage)}
       placeholder={formatText(
         m.additionalRemarksPlaceholder,
         application,
         formatMessage,
       )}
-      ref={register}
       backgroundColor={'blue'}
       disabled={!isEditable}
       textarea

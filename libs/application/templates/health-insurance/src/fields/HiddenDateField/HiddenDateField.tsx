@@ -23,9 +23,8 @@ const HiddenDateField: FC<FieldBaseProps> = ({ application }) => {
     <Box hidden>
       <Input
         id={`missingInfo[${index}].date`}
-        name={`missingInfo[${index}].date`}
+        {...register(`missingInfo[${index}].date`)}
         defaultValue={`${new Date()}`}
-        ref={register}
       />
     </Box>
   )

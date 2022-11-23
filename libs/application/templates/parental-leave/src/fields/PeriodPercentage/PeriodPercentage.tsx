@@ -182,8 +182,7 @@ export const PeriodPercentage: FC<PeriodPercentageField> = ({
       {currentPeriod.firstPeriodStart === undefined && (
         <input
           type="hidden"
-          ref={register}
-          name={`periods[${currentIndex}].firstPeriodStart`}
+          {...register(`periods[${currentIndex}].firstPeriodStart`)}
           value={StartDateOptions.SPECIFIC_DATE}
         />
       )}
@@ -191,8 +190,7 @@ export const PeriodPercentage: FC<PeriodPercentageField> = ({
       {isUsingAllRemainingDays && (
         <input
           type="hidden"
-          ref={register}
-          name={`periods[${currentIndex}].daysToUse`}
+          {...register(`periods[${currentIndex}].daysToUse`)}
           value={remainingRights}
         />
       )}

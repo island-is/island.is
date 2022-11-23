@@ -119,9 +119,10 @@ const ApiScopePersonalRepresentativePermissionsForm = (props: Props) => {
                   <select
                     id="permissionType"
                     className="personal-representative-permissions-form__select"
-                    name="permissionType"
+                    {...register('permissionType', {
+                      required: 'Permission type is required',
+                    })}
                     title={localization.fields['permissionType'].helpText}
-                    ref={register({ required: 'Permission type is required' })}
                   >
                     {permissionTypes &&
                       permissionTypes.map((option) => {

@@ -99,13 +99,12 @@ const UsersList: React.FC = () => {
                   <input
                     id="search"
                     type="text"
-                    name="id"
-                    defaultValue={''}
-                    className="users__search__input"
-                    ref={register({
+                    {...register('id', {
                       required: true,
                       validate: ValidationUtils.validateIdentifier,
                     })}
+                    defaultValue={''}
+                    className="users__search__input"
                     placeholder={localization.search.placeholder}
                   />
                   <HelpBox helpText={localization.search.helpText} />

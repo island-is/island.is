@@ -126,9 +126,8 @@ const TestEndPoint: FC<FieldBaseProps> = ({ application }) => {
                   formatMessage,
                 )}
                 disabled={loading}
-                name={'endPointObject.endPoint'}
+                {...register('endPointObject.endPoint')}
                 id={'endPointObject.endPoint'}
-                ref={register}
                 defaultValue=""
                 placeholder={formatText(
                   m.testEndpointPlaceholder,
@@ -167,8 +166,7 @@ const TestEndPoint: FC<FieldBaseProps> = ({ application }) => {
         <input
           type="hidden"
           value={endpointExists}
-          ref={register({ required: true })}
-          name={'endPointObject.endPointExists'}
+          {...register('endPointObject.endPointExists', { required: true })}
         />
         {errors['endPointObject.endPointExists'] && (
           <Box color="red600" paddingY={2} display="flex">

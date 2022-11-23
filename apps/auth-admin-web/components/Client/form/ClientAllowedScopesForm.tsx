@@ -117,8 +117,7 @@ const ClientAllowedScopesForm: React.FC<Props> = (props: Props) => {
                   <select
                     id="scopeName"
                     className="client-allowed-scopes__select"
-                    name="scopeName"
-                    ref={register({
+                    {...register('scopeName', {
                       required: true,
                     })}
                     onChange={(e) => setSelectedItem(e.target.value)}

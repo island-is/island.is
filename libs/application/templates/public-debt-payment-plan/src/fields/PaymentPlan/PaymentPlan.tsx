@@ -224,20 +224,17 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
       <input
         type="hidden"
         value={payment.type}
-        ref={register({ required: true })}
-        name={`${entry}.id`}
+        {...register(`${entry}.id`, { required: true })}
       />
       <input
         type="hidden"
         value={payment.totalAmount}
-        ref={register({ required: true })}
-        name={`${entry}.totalAmount`}
+        {...register(`${entry}.totalAmount`, { required: true })}
       />
       <input
         type="hidden"
         value={JSON.stringify(distributionData?.payments || '')}
-        ref={register({ required: true })}
-        name={`${entry}.distribution`}
+        {...register(`${entry}.distribution`, { required: true })}
       />
       <Text marginBottom={5}>
         {formatMessage(paymentPlan.general.paymentPlanDescription)}

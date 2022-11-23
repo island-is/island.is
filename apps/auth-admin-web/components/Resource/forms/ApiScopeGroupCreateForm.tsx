@@ -91,8 +91,7 @@ const ApiScopeGroupCreateForm: React.FC<Props> = (props: Props) => {
                     {localization.fields['domainName'].label}
                   </label>
                   <select
-                    name="domainName"
-                    ref={register({
+                    {...register('domainName', {
                       required: true,
                     })}
                     defaultValue={props.apiScopeGroup.domainName}
@@ -134,8 +133,7 @@ const ApiScopeGroupCreateForm: React.FC<Props> = (props: Props) => {
                   </label>
                   <input
                     type="text"
-                    name="name"
-                    ref={register({
+                    {...register('name', {
                       required: true,
                       validate: ValidationUtils.validateIdentifier,
                     })}
@@ -161,8 +159,7 @@ const ApiScopeGroupCreateForm: React.FC<Props> = (props: Props) => {
                   </label>
                   <input
                     type="text"
-                    name="displayName"
-                    ref={register({
+                    {...register('displayName', {
                       required: true,
                       validate: ValidationUtils.validateDescription,
                     })}
@@ -196,8 +193,7 @@ const ApiScopeGroupCreateForm: React.FC<Props> = (props: Props) => {
                   </label>
                   <input
                     type="text"
-                    name="description"
-                    ref={register({
+                    {...register('description', {
                       required: true,
                       validate: ValidationUtils.validateDescription,
                     })}
@@ -227,9 +223,8 @@ const ApiScopeGroupCreateForm: React.FC<Props> = (props: Props) => {
                     {localization.fields['order'].label}
                   </label>
                   <input
-                    ref={register({ required: true, min: 0, max: 999 })}
                     id="order"
-                    name="order"
+                    {...register('order', { required: true, min: 0, max: 999 })}
                     type="number"
                     className="api-scope-form__input"
                     title={localization.fields['order'].helpText}

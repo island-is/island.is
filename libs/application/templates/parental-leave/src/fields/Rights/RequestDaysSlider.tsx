@@ -94,14 +94,12 @@ const RequestDaysSlider: FC<FieldBaseProps> = ({ field, application }) => {
 
       <input
         type="hidden"
-        ref={register}
-        name={id}
+        {...register(id)}
         value={chosenRequestDays.toString()}
       />
       <input
         type="hidden"
-        name="requestRights.isRequestingRights"
-        ref={register}
+        {...register('requestRights.isRequestingRights')}
         value={YES}
       />
     </>

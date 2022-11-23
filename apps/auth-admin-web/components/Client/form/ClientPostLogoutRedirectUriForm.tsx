@@ -108,8 +108,7 @@ const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
                     <input
                       id="redirectUri"
                       type="text"
-                      name="redirectUri"
-                      ref={register({
+                      {...register('redirectUri', {
                         required: true,
                         validate: ValidationUtils.validateUrl,
                       })}

@@ -97,14 +97,12 @@ const GiveDaysSlider: FC<FieldBaseProps> = ({ field, application }) => {
       </Box>
       <input
         type="hidden"
-        name={id}
-        ref={register}
+        {...register(id)}
         value={chosenGiveDays.toString()}
       />
       <input
         type="hidden"
-        name="giveRights.isGivingRights"
-        ref={register}
+        {...register('giveRights.isGivingRights')}
         value={YES}
       />
     </>

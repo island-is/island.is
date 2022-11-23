@@ -97,8 +97,7 @@ const GrantTypeCreateForm: React.FC<Props> = (props: Props) => {
                   <input
                     type="text"
                     id="grantType.name"
-                    name="grantType.name"
-                    ref={register({
+                    {...register('grantType.name', {
                       required: true,
                       validate: isEditing
                         ? () => {
@@ -142,11 +141,10 @@ const GrantTypeCreateForm: React.FC<Props> = (props: Props) => {
                   <input
                     id="grantType.description"
                     type="text"
-                    ref={register({
+                    {...register('grantType.description', {
                       required: true,
                       validate: ValidationUtils.validateDescription,
                     })}
-                    name="grantType.description"
                     defaultValue={grantType.description ?? ''}
                     className="grant-type-create-form__input"
                     title={localization.fields['description'].helpText}

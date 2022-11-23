@@ -117,9 +117,8 @@ const ProdEndPoint: FC<FieldBaseProps> = ({ application }) => {
                   application,
                   formatMessage,
                 )}
-                name={'productionEndPointObject.prodEndPoint'}
+                {...register('productionEndPointObject.prodEndPoint')}
                 id={'productionEndPointObject.prodEndPoint'}
-                ref={register}
                 defaultValue=""
                 placeholder={formatText(
                   m.prodEndpointPlaceholder,
@@ -160,8 +159,9 @@ const ProdEndPoint: FC<FieldBaseProps> = ({ application }) => {
         <input
           type="hidden"
           value={prodEndPointExists}
-          ref={register({ required: true })}
-          name={'productionEndPointObject.prodEndPointExists'}
+          {...register('productionEndPointObject.prodEndPointExists', {
+            required: true,
+          })}
         />
 
         {errors['productionEndPointObject.prodEndPointExists'] && (

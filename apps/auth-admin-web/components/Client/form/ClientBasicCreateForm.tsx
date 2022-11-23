@@ -199,8 +199,7 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                     </label>
                     <select
                       id="clientType"
-                      name="client.clientType"
-                      ref={register({ required: true })}
+                      {...register('client.clientType', { required: true })}
                       title={localization.fields['clientType'].helpText}
                       onChange={(e) => setClientType(e.target.value)}
                       onFocus={() => setShowClientTypeInfo(true)}
@@ -290,8 +289,7 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                     <input
                       id="nationalId"
                       type="text"
-                      name="client.nationalId"
-                      ref={register({
+                      {...register('client.nationalId', {
                         required: true,
                         maxLength: 10,
                         minLength: 10,
@@ -325,11 +323,10 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                     <input
                       id="contactEmail"
                       type="text"
-                      ref={register({
+                      {...register('client.contactEmail', {
                         required: true,
                         validate: ValidationUtils.validateEmail,
                       })}
-                      name="client.contactEmail"
                       defaultValue={client.contactEmail ?? ''}
                       className="client-basic__input"
                       title={localization.fields['contactEmail'].helpText}
@@ -354,8 +351,7 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                     <input
                       id="clientId"
                       type="text"
-                      name="client.clientId"
-                      ref={register({
+                      {...register('client.clientId', {
                         required: true,
                         validate: isEditing
                           ? () => {
@@ -406,12 +402,11 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                       </label>
                       <input
                         id="baseUrl"
-                        name="baseUrl"
-                        type="text"
-                        ref={register({
+                        {...register('baseUrl', {
                           required: baseUrlRequired,
                           validate: ValidationUtils.validateBaseUrl,
                         })}
+                        type="text"
                         defaultValue={client.clientUri ?? ''}
                         className="client-basic__input"
                         placeholder={localization.fields['baseUrl'].placeholder}

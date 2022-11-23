@@ -80,59 +80,54 @@ export const ContactUs: FC<ContactUsProps> = ({
                 {isNotSent && (
                   <Stack space={3}>
                     <Input
-                      name="name"
+                      {...register('name', {
+                        required: required,
+                      })}
                       label={labelName}
                       placeholder={labelName}
                       required
                       errorMessage={errors.name?.message}
-                      ref={register({
-                        required: required,
-                      })}
                     />
                     <Input
-                      name="phone"
-                      label={labelPhone}
-                      placeholder="000 0000"
-                      errorMessage={errors.phone?.message}
-                      ref={register({
+                      {...register('phone', {
                         pattern: {
                           value: /^\d{3}[\d- ]*$/,
                           message: invalidPhone,
                         },
                       })}
+                      label={labelPhone}
+                      placeholder="000 0000"
+                      errorMessage={errors.phone?.message}
                     />
                     <Input
-                      name="email"
-                      label={labelEmail}
-                      placeholder={labelEmail}
-                      required
-                      errorMessage={errors.email?.message}
-                      ref={register({
+                      {...register('email', {
                         required: required,
                         pattern: {
                           value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
                           message: invalidEmail,
                         },
                       })}
+                      label={labelEmail}
+                      placeholder={labelEmail}
+                      required
+                      errorMessage={errors.email?.message}
                     />
                     <Input
-                      name="subject"
+                      {...register('subject', {})}
                       label={labelSubject}
                       placeholder={labelSubject}
                       errorMessage={errors.subject?.message}
-                      ref={register({})}
                     />
                     <Input
-                      name="message"
+                      {...register('message', {
+                        required: required,
+                      })}
                       label={labelMessage}
                       placeholder={labelMessage}
                       required
                       errorMessage={errors.message?.message}
                       textarea
                       rows={6}
-                      ref={register({
-                        required: required,
-                      })}
                     />
                   </Stack>
                 )}

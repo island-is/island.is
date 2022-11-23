@@ -30,7 +30,7 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
           <GridColumn span="1/1">
             <Input
               id="helpDesk.email"
-              name="helpDesk.email"
+              {...register('helpDesk.email')}
               label={formatText(m.helpDeskEmail, application, formatMessage)}
               defaultValue={getValue('helpDesk.email')}
               placeholder={formatText(
@@ -38,13 +38,12 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
                 application,
                 formatMessage,
               )}
-              ref={register}
             />
           </GridColumn>
           <GridColumn span="1/1" paddingTop={3}>
             <Input
               id="helpDesk.phoneNumber"
-              name="helpDesk.phoneNumber"
+              {...register('helpDesk.phoneNumber')}
               label={formatText(
                 m.helpDeskPhoneNumber,
                 application,
@@ -56,7 +55,6 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
                 application,
                 formatMessage,
               )}
-              ref={register}
             />
           </GridColumn>
         </GridRow>

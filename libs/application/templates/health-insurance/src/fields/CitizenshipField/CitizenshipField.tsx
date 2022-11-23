@@ -26,10 +26,9 @@ const CitizenshipField: FC<FieldBaseProps> = ({ field, application }) => {
     <Box hidden>
       <Input
         id={id}
-        name={id}
+        {...register(id)}
         value={countryData}
         onChange={() => register}
-        ref={register}
       />
     </Box>
   )

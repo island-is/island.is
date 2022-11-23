@@ -152,9 +152,8 @@ export const FishingLicense: FC<FieldBaseProps> = ({
         )}
         <input
           type="hidden"
-          ref={register({ required: true })}
           id={`${field.id}.chargeType`}
-          name={`${field.id}.chargeType`}
+          {...register(`${field.id}.chargeType`, { required: true })}
           value={chargeType}
         />
       </Box>

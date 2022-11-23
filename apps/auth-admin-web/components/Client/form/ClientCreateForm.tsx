@@ -249,8 +249,7 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                     </label>
                     <select
                       id="client.clientType"
-                      name="client.clientType"
-                      ref={register({ required: true })}
+                      {...register('client.clientType', { required: true })}
                       title={localization.fields['clientType'].helpText}
                       onChange={(e) => setClientType(e.target.value)}
                       onFocus={() => setShowClientTypeInfo(true)}
@@ -340,8 +339,7 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                     <input
                       id="nationalId"
                       type="text"
-                      name="client.nationalId"
-                      ref={register({
+                      {...register('client.nationalId', {
                         required: true,
                         maxLength: 10,
                         minLength: 10,
@@ -372,11 +370,10 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                     <input
                       id="contactEmail"
                       type="text"
-                      ref={register({
+                      {...register('client.contactEmail', {
                         required: true,
                         validate: ValidationUtils.validateEmail,
                       })}
-                      name="client.contactEmail"
                       defaultValue={client.contactEmail ?? ''}
                       className="client__input"
                       title={localization.fields['contactEmail'].helpText}
@@ -401,8 +398,7 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                     <input
                       id="clientId"
                       type="text"
-                      name="client.clientId"
-                      ref={register({
+                      {...register('client.clientId', {
                         required: true,
                         validate: isEditing
                           ? () => {
@@ -453,10 +449,9 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                     </label>
                     <input
                       type="text"
-                      ref={register({
+                      {...register('client.description', {
                         validate: ValidationUtils.validateDescription,
                       })}
-                      name="client.description"
                       defaultValue={client.description ?? ''}
                       className="client__input"
                       title={localization.fields['description'].helpText}
@@ -484,12 +479,11 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       <input
                         id="baseUrl"
                         readOnly={isEditing && !baseUrlRequired}
-                        name="baseUrl"
-                        type="text"
-                        ref={register({
+                        {...register('baseUrl', {
                           required: baseUrlRequired,
                           validate: ValidationUtils.validateBaseUrl,
                         })}
+                        type="text"
                         defaultValue={client.clientUri ?? ''}
                         className="client__input"
                         placeholder={localization.fields['baseUrl'].placeholder}
@@ -531,8 +525,7 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                     <input
                       id="clientName"
                       type="text"
-                      name="client.clientName"
-                      ref={register({
+                      {...register('client.clientName', {
                         validate: ValidationUtils.validateDescription,
                       })}
                       defaultValue={client.clientName ?? ''}
@@ -565,8 +558,9 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                     </label>
                     <input
                       id="clientUri"
-                      name="client.clientUri"
-                      ref={register({ validate: ValidationUtils.validateUrl })}
+                      {...register('client.clientUri', {
+                        validate: ValidationUtils.validateUrl,
+                      })}
                       type="text"
                       defaultValue={client.clientUri ?? ''}
                       className="client__input"
@@ -591,10 +585,9 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                     <input
                       id="enabled"
                       type="checkbox"
-                      name="client.enabled"
+                      {...register('client.enabled')}
                       className="client__checkbox"
                       defaultChecked={client.enabled}
-                      ref={register}
                       title={localization.fields['enabled'].helpText}
                     ></input>
                     <HelpBox
@@ -611,8 +604,7 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       type="checkbox"
                       defaultChecked={client.requireConsent}
                       className="client__input"
-                      name="client.requireConsent"
-                      ref={register}
+                      {...register('client.requireConsent')}
                       title={localization.fields['requireConsent'].helpText}
                     />
                     <HelpBox
@@ -653,10 +645,9 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                         <input
                           id="supportsCustomDelegation"
                           type="checkbox"
-                          name="client.supportsCustomDelegation"
+                          {...register('client.supportsCustomDelegation')}
                           defaultChecked={client.supportsCustomDelegation}
                           className="client__input"
-                          ref={register}
                           title={
                             localization.fields['supportsCustomDelegation']
                               .helpText
@@ -680,10 +671,9 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                         <input
                           id="supportsLegalGuardians"
                           type="checkbox"
-                          name="client.supportsLegalGuardians"
+                          {...register('client.supportsLegalGuardians')}
                           defaultChecked={client.supportsLegalGuardians}
                           className="client__input"
-                          ref={register}
                           title={
                             localization.fields['supportsLegalGuardians']
                               .helpText
@@ -711,12 +701,13 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                         <input
                           id="supportsPersonalRepresentatives"
                           type="checkbox"
-                          name="client.supportsPersonalRepresentatives"
+                          {...register(
+                            'client.supportsPersonalRepresentatives',
+                          )}
                           defaultChecked={
                             client.supportsPersonalRepresentatives
                           }
                           className="client__input"
-                          ref={register}
                           title={
                             localization.fields[
                               'supportsPersonalRepresentatives'
@@ -745,10 +736,9 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                         <input
                           id="supportsProcuringHolders"
                           type="checkbox"
-                          name="client.supportsProcuringHolders"
+                          {...register('client.supportsProcuringHolders')}
                           defaultChecked={client.supportsProcuringHolders}
                           className="client__input"
-                          ref={register}
                           title={
                             localization.fields['supportsProcuringHolders']
                               .helpText
@@ -772,10 +762,9 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                         <input
                           id="promptDelegations"
                           type="checkbox"
-                          name="client.promptDelegations"
+                          {...register('client.promptDelegations')}
                           defaultChecked={client.promptDelegations}
                           className="client__input"
-                          ref={register}
                           title={
                             localization.fields['promptDelegations'].helpText
                           }
@@ -794,7 +783,10 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       </label>
                       <input
                         type="text"
-                        name="client.frontChannelLogoutUri"
+                        {...register('client.frontChannelLogoutUri', {
+                          required: false,
+                          validate: ValidationUtils.validateUrl,
+                        })}
                         defaultValue={client.frontChannelLogoutUri ?? ''}
                         className="client__input"
                         placeholder={
@@ -804,10 +796,6 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                         title={
                           localization.fields['frontChannelLogoutUri'].helpText
                         }
-                        ref={register({
-                          required: false,
-                          validate: ValidationUtils.validateUrl,
-                        })}
                       />
                       <HelpBox
                         helpText={
@@ -835,8 +823,7 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                         type="text"
                         defaultValue={client.pairWiseSubjectSalt ?? ''}
                         className="client__input"
-                        name="client.pairWiseSubjectSalt"
-                        ref={register}
+                        {...register('client.pairWiseSubjectSalt')}
                         title={
                           localization.fields['pairWiseSubjectSalt'].helpText
                         }
@@ -855,9 +842,8 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       <input
                         type="text"
                         defaultValue={client.userCodeType ?? ''}
-                        name="client.userCodeType"
+                        {...register('client.userCodeType')}
                         className="client__input"
-                        ref={register}
                         title={localization.fields['userCodeType'].helpText}
                       />
                       <HelpBox
@@ -870,9 +856,10 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                         {localization.fields['accessTokenType'].label}
                       </label>
                       <select
-                        name="client.accessTokenType"
+                        {...register('client.accessTokenType', {
+                          required: true,
+                        })}
                         className="client__select"
-                        ref={register({ required: true })}
                         title={localization.fields['accessTokenType'].helpText}
                       >
                         <option
@@ -910,9 +897,11 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       </label>
 
                       <input
-                        ref={register({ required: true, min: 0 })}
                         type="number"
-                        name="client.accessTokenLifetime"
+                        {...register('client.accessTokenLifetime', {
+                          required: true,
+                          min: 0,
+                        })}
                         defaultValue={client.accessTokenLifetime}
                         className="client__input"
                         title={
@@ -940,9 +929,11 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       </label>
                       <input
                         type="number"
-                        name="client.authorizationCodeLifetime"
+                        {...register('client.authorizationCodeLifetime', {
+                          required: true,
+                          min: 0,
+                        })}
                         defaultValue={client.authorizationCodeLifetime}
-                        ref={register({ required: true, min: 0 })}
                         className="client__input"
                         title={
                           localization.fields['authorizationCodeLifetime']
@@ -971,10 +962,9 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       </label>
                       <input
                         type="number"
-                        name="client.consentLifetime"
+                        {...register('client.consentLifetime', { min: 0 })}
                         defaultValue={client.consentLifetime ?? ''}
                         className="client__input"
-                        ref={register({ min: 0 })}
                         title={localization.fields['consentLifetime'].helpText}
                       />
                       <HelpBox
@@ -997,8 +987,10 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       </label>
                       <input
                         type="number"
-                        ref={register({ required: true, min: 0 })}
-                        name="client.deviceCodeLifetime"
+                        {...register('client.deviceCodeLifetime', {
+                          required: true,
+                          min: 0,
+                        })}
                         defaultValue={client.deviceCodeLifetime}
                         className="client__input"
                         title={
@@ -1030,9 +1022,8 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       <input
                         type="number"
                         defaultValue={client.userSsoLifetime ?? ''}
-                        name="client.userSsoLifetime"
+                        {...register('client.userSsoLifetime', { min: 0 })}
                         className="client__input"
-                        ref={register({ min: 0 })}
                         title={localization.fields['userSsoLifetime'].helpText}
                       />
                       <HelpBox
@@ -1055,9 +1046,10 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                         {localization.fields['refreshTokenUsage'].label}
                       </label>
                       <select
-                        name="client.refreshTokenUsage"
+                        {...register('client.refreshTokenUsage', {
+                          required: true,
+                        })}
                         className="client__select"
-                        ref={register({ required: true })}
                         title={
                           localization.fields['refreshTokenUsage'].helpText
                         }
@@ -1087,9 +1079,10 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                         {localization.fields['refreshTokenExpiration'].label}
                       </label>
                       <select
-                        name="client.refreshTokenExpiration"
+                        {...register('client.refreshTokenExpiration', {
+                          required: true,
+                        })}
                         className="client__select"
-                        ref={register({ required: true })}
                         title={
                           localization.fields['refreshTokenExpiration'].helpText
                         }
@@ -1124,9 +1117,10 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       <input
                         type="number"
                         defaultValue={client.slidingRefreshTokenLifetime}
-                        name="client.slidingRefreshTokenLifetime"
+                        {...register('client.slidingRefreshTokenLifetime', {
+                          min: 0,
+                        })}
                         className="client__input"
-                        ref={register({ min: 0 })}
                         title={
                           localization.fields['slidingRefreshTokenLifetime']
                             .helpText
@@ -1162,8 +1156,10 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       </label>
                       <input
                         type="number"
-                        ref={register({ required: true, min: 0 })}
-                        name="client.absoluteRefreshTokenLifetime"
+                        {...register('client.absoluteRefreshTokenLifetime', {
+                          required: true,
+                          min: 0,
+                        })}
                         defaultValue={client.absoluteRefreshTokenLifetime}
                         className="client__input"
                         title={
@@ -1198,9 +1194,11 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       </label>
                       <input
                         type="number"
-                        name="client.identityTokenLifetime"
+                        {...register('client.identityTokenLifetime', {
+                          required: true,
+                          min: 0,
+                        })}
                         defaultValue={client.identityTokenLifetime}
-                        ref={register({ required: true, min: 0 })}
                         className="client__input"
                         title={
                           localization.fields['identityTokenLifetime'].helpText
@@ -1231,9 +1229,11 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                         {localization.fields['protocolType'].label}
                       </label>
                       <input
-                        ref={register({ required: true, min: 0 })}
                         type="text"
-                        name="client.protocolType"
+                        {...register('client.protocolType', {
+                          required: true,
+                          min: 0,
+                        })}
                         defaultValue={
                           client.protocolType ? client.protocolType : 'oidc'
                         }
@@ -1261,9 +1261,8 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                         {localization.fields['clientClaimsPrefix'].label}
                       </label>
                       <input
-                        ref={register}
                         type="text"
-                        name="client.clientClaimsPrefix"
+                        {...register('client.clientClaimsPrefix')}
                         defaultValue={
                           client.clientClaimsPrefix
                             ? client.clientClaimsPrefix
@@ -1302,10 +1301,9 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       </label>
                       <input
                         type="checkbox"
-                        name="client.allowAccessTokenViaBrowser"
+                        {...register('client.allowAccessTokenViaBrowser')}
                         defaultChecked={client.allowAccessTokenViaBrowser}
                         className="client__input"
-                        ref={register}
                         title={
                           localization.fields['allowAccessTokenViaBrowser']
                             .helpText
@@ -1323,11 +1321,10 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                         {localization.fields['allowOfflineAccess'].label}
                       </label>
                       <input
-                        name="client.allowOfflineAccess"
+                        {...register('client.allowOfflineAccess')}
                         type="checkbox"
                         defaultChecked={client.allowOfflineAccess}
                         className="client__input"
-                        ref={register}
                         title={
                           localization.fields['allowOfflineAccess'].helpText
                         }
@@ -1343,11 +1340,10 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                         {localization.fields['allowPlainTextPkce'].label}
                       </label>
                       <input
-                        name="client.allowPlainTextPkce"
+                        {...register('client.allowPlainTextPkce')}
                         type="checkbox"
                         defaultChecked={client.allowPlainTextPkce}
                         className="client__input"
-                        ref={register}
                         title={
                           localization.fields['allowPlainTextPkce'].helpText
                         }
@@ -1363,11 +1359,10 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                         {localization.fields['allowRememberConsent'].label}
                       </label>
                       <input
-                        name="client.allowRememberConsent"
+                        {...register('client.allowRememberConsent')}
                         type="checkbox"
                         defaultChecked={client.allowRememberConsent}
                         className="client__input"
-                        ref={register}
                         title={
                           localization.fields['allowRememberConsent'].helpText
                         }
@@ -1388,10 +1383,9 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       </label>
                       <input
                         type="checkbox"
-                        name="client.alwaysIncludeUserClaimsInIdToken"
+                        {...register('client.alwaysIncludeUserClaimsInIdToken')}
                         defaultChecked={client.alwaysIncludeUserClaimsInIdToken}
                         className="client__input"
-                        ref={register}
                         title={
                           localization.fields[
                             'alwaysIncludeUserClaimsInIdToken'
@@ -1412,10 +1406,9 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       </label>
                       <input
                         type="checkbox"
-                        name="client.alwaysSendClientClaims"
+                        {...register('client.alwaysSendClientClaims')}
                         defaultChecked={client.alwaysSendClientClaims}
                         className="client__input"
-                        ref={register}
                         title={
                           localization.fields['alwaysSendClientClaims'].helpText
                         }
@@ -1437,10 +1430,9 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       </label>
                       <input
                         type="checkbox"
-                        name="client.backChannelLogoutSessionRequired"
+                        {...register('client.backChannelLogoutSessionRequired')}
                         defaultChecked={client.backChannelLogoutSessionRequired}
                         className="client__input"
-                        ref={register}
                         title={
                           localization.fields[
                             'backChannelLogoutSessionRequired'
@@ -1464,8 +1456,7 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                         type="checkbox"
                         defaultChecked={client.enableLocalLogin}
                         className="client__input"
-                        name="client.enableLocalLogin"
-                        ref={register}
+                        {...register('client.enableLocalLogin')}
                         title={localization.fields['enableLocalLogin'].helpText}
                       />
                       <HelpBox
@@ -1485,12 +1476,13 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       </label>
                       <input
                         type="checkbox"
-                        name="client.frontChannelLogoutSessionRequired"
+                        {...register(
+                          'client.frontChannelLogoutSessionRequired',
+                        )}
                         defaultChecked={
                           client.frontChannelLogoutSessionRequired
                         }
                         className="client__input"
-                        ref={register}
                         title={
                           localization.fields[
                             'frontChannelLogoutSessionRequired'
@@ -1514,8 +1506,7 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                         type="checkbox"
                         defaultChecked={client.includeJwtId}
                         className="client__input"
-                        name="client.includeJwtId"
-                        ref={register}
+                        {...register('client.includeJwtId')}
                         title={localization.fields['includeJwtId'].helpText}
                       />
                       <HelpBox
@@ -1531,8 +1522,7 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                         type="checkbox"
                         defaultChecked={client.requireClientSecret}
                         className="client__input"
-                        name="client.requireClientSecret"
-                        ref={register}
+                        {...register('client.requireClientSecret')}
                         title={
                           localization.fields['requireClientSecret'].helpText
                         }
@@ -1551,9 +1541,8 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       <input
                         type="checkbox"
                         defaultChecked={client.requirePkce}
-                        name="client.requirePkce"
+                        {...register('client.requirePkce')}
                         className="client__input"
-                        ref={register}
                         title={localization.fields['requirePkce'].helpText}
                       />
                       <HelpBox
@@ -1572,9 +1561,8 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       <input
                         type="checkbox"
                         defaultChecked={client.updateAccessTokenClaimsOnRefresh}
-                        name="client.updateAccessTokenClaimsOnRefresh"
+                        {...register('client.updateAccessTokenClaimsOnRefresh')}
                         className="client__input"
-                        ref={register}
                         title={
                           localization.fields[
                             'updateAccessTokenClaimsOnRefresh'

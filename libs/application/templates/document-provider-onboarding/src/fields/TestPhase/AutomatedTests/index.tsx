@@ -104,12 +104,11 @@ const AutomatedTests: FC<FieldBaseProps> = ({ application }) => {
                   application,
                   formatMessage,
                 )}
-                name="nationalId"
-                id="nationalId"
-                ref={register({
+                {...register('nationalId', {
                   required: true,
                   pattern: /([0-9]){6}-?([0-9]){4}/,
                 })}
+                id="nationalId"
                 required
                 defaultValue=""
                 placeholder={formatText(
@@ -133,14 +132,13 @@ const AutomatedTests: FC<FieldBaseProps> = ({ application }) => {
                   application,
                   formatMessage,
                 )}
-                name="docId"
+                {...register('docId', { required: true })}
                 required
                 placeholder={formatText(
                   m.automatedTestsDocIdPlaceholder,
                   application,
                   formatMessage,
                 )}
-                ref={register({ required: true })}
                 hasError={errors.docId !== undefined}
                 errorMessage={formatText(
                   m.automatedTestsDocIdErrorMessage,

@@ -146,29 +146,25 @@ export const TransferRights: FC<FieldBaseProps & CustomField> = ({
       />
       <input
         type="hidden"
-        ref={register}
-        name="requestRights.isRequestingRights"
+        {...register('requestRights.isRequestingRights')}
         value={hiddenValues.isRequestingRights}
       />
 
       <input
         type="hidden"
-        ref={register}
-        name="requestRights.requestDays"
+        {...register('requestRights.requestDays')}
         value={hiddenValues.requestDays}
       />
 
       <input
         type="hidden"
-        ref={register}
-        name="giveRights.isGivingRights"
+        {...register('giveRights.isGivingRights')}
         value={hiddenValues.isGivingRights}
       />
 
       <input
         type="hidden"
-        ref={register}
-        name="giveRights.giveDays"
+        {...register('giveRights.giveDays')}
         value={hiddenValues.giveDays}
       />
     </>

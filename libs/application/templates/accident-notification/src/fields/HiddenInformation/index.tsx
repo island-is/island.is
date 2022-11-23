@@ -28,14 +28,12 @@ export const HiddenInformation: FC<FieldBaseProps & HiddenInformationProps> = ({
       <input
         type="hidden"
         value={answers.applicant.name}
-        ref={register({ required: true })}
-        name={`${id}.name`}
+        {...register(`${id}.name`, { required: true })}
       />
       <input
         type="hidden"
         value={answers.applicant.email}
-        ref={register({ required: true })}
-        name={`${id}.email`}
+        {...register(`${id}.email`, { required: true })}
       />
     </>
   )

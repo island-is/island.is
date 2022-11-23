@@ -186,8 +186,7 @@ export const ShipSelection: FC<FieldBaseProps> = ({
       <input
         type="hidden"
         value={registrationNumber}
-        ref={register({ required: true })}
-        name={`${field.id}.registrationNumber`}
+        {...register(`${field.id}.registrationNumber`, { required: true })}
       />
       <ShipSelectionAlertModal
         visibility={visibility}

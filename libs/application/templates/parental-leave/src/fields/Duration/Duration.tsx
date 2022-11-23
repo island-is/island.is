@@ -194,10 +194,9 @@ export const Duration: FC<FieldBaseProps> = ({
 
       <input
         readOnly
-        ref={register}
         type="hidden"
         value={chosenEndDate}
-        name={`periods[${currentIndex}].endDate`}
+        {...register(`periods[${currentIndex}].endDate`)}
       />
     </Box>
   )

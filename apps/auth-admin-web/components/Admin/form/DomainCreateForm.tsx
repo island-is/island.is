@@ -79,8 +79,7 @@ const DomainCreateForm: React.FC<Props> = (props: Props) => {
                   <input
                     id="nationalId"
                     type="text"
-                    name="domain.nationalId"
-                    ref={register({
+                    {...register('domain.nationalId', {
                       required: true,
                       maxLength: 10,
                       minLength: 10,
@@ -110,7 +109,7 @@ const DomainCreateForm: React.FC<Props> = (props: Props) => {
                   <input
                     id="name"
                     type="text"
-                    ref={register({
+                    {...register('domain.name', {
                       required: true,
                       validate: isEditing
                         ? () => {
@@ -118,7 +117,6 @@ const DomainCreateForm: React.FC<Props> = (props: Props) => {
                           }
                         : ValidationUtils.validateDomain,
                     })}
-                    name="domain.name"
                     readOnly={isEditing}
                     defaultValue={props.domain.name}
                     className="domain-create-form__input"
@@ -144,11 +142,10 @@ const DomainCreateForm: React.FC<Props> = (props: Props) => {
                   <input
                     id="description"
                     type="text"
-                    ref={register({
+                    {...register('domain.description', {
                       required: true,
                       validate: ValidationUtils.validateDescription,
                     })}
-                    name="domain.description"
                     defaultValue={props.domain.description}
                     className="domain-create-form__input"
                     title={localization.fields['description'].helpText}
@@ -181,11 +178,10 @@ const DomainCreateForm: React.FC<Props> = (props: Props) => {
                   <input
                     id="displayName"
                     type="text"
-                    ref={register({
+                    {...register('domain.displayName', {
                       required: true,
                       validate: ValidationUtils.validateDescription,
                     })}
-                    name="domain.displayName"
                     defaultValue={props.domain.displayName}
                     className="domain-create-form__input"
                     title={localization.fields['displayName'].helpText}
@@ -218,11 +214,10 @@ const DomainCreateForm: React.FC<Props> = (props: Props) => {
                   <input
                     id="organisationLogoKey"
                     type="text"
-                    ref={register({
+                    {...register('domain.organisationLogoKey', {
                       required: true,
                       validate: ValidationUtils.validateDescription,
                     })}
-                    name="domain.organisationLogoKey"
                     defaultValue={props.domain.organisationLogoKey}
                     className="domain-create-form__input"
                     title={localization.fields['organisationLogoKey'].helpText}

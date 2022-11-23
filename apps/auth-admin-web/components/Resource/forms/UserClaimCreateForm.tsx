@@ -77,15 +77,14 @@ const UserClaimCreateForm: React.FC<Props> = (props: Props) => {
                   <input
                     id="claimName"
                     type="text"
-                    name="claimName"
+                    {...register('claimName', {
+                      required: true,
+                      validate: ValidationUtils.validateIdentifier,
+                    })}
                     className="user-claim-create-form__input"
                     placeholder={localization.fields['claimName'].placeholder}
                     title={localization.fields['claimName'].helpText}
                     onChange={(e) => checkAvailability(e.target.value)}
-                    ref={register({
-                      required: true,
-                      validate: ValidationUtils.validateIdentifier,
-                    })}
                   />
                   <div
                     className={`user-claim-create-form__container__field__available ${

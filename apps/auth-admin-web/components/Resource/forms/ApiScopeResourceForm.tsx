@@ -105,9 +105,8 @@ const ApiScopeResourceForm: React.FC<Props> = (props) => {
                   <select
                     id="apiResourceName"
                     className="api-resource-scope-form__select"
-                    name="apiResourceName"
+                    {...register('apiResourceName')}
                     title={localization.fields['apiResourceName'].helpText}
-                    ref={register()}
                     onChange={(e) => setSelectedItem(e.target.value)}
                   >
                     <option value={'null'} selected={activeResource === 'null'}>

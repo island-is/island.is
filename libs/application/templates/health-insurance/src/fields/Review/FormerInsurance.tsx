@@ -92,13 +92,12 @@ const FormerInsurance: FC<ReviewFieldProps> = ({
             <GridColumn span="12/12">
               <Input
                 id="formerInsurance.country"
-                name="formerInsurance.country"
+                {...register('formerInsurance.country')}
                 label={formatText(
                   m.formerInsuranceCountry,
                   application,
                   formatMessage,
                 )}
-                ref={register}
                 disabled={!isEditable}
                 backgroundColor="white"
                 value={extractKeyFromStringObject(
@@ -112,13 +111,12 @@ const FormerInsurance: FC<ReviewFieldProps> = ({
             <GridColumn span={['12/12', '6/12']}>
               <Input
                 id="formerInsurance.personalId"
-                name="formerInsurance.personalId"
+                {...register('formerInsurance.personalId')}
                 label={formatText(
                   m.formerPersonalId,
                   application,
                   formatMessage,
                 )}
-                ref={register}
                 disabled={!isEditable}
                 backgroundColor="blue"
                 defaultValue={defaultValues.personalId}
@@ -128,13 +126,12 @@ const FormerInsurance: FC<ReviewFieldProps> = ({
               <Box marginTop={[2, 0]}>
                 <Input
                   id="formerInsurance.institution"
-                  name="formerInsurance.institution"
+                  {...register('formerInsurance.institution')}
                   label={formatText(
                     m.formerInsuranceInstitution,
                     application,
                     formatMessage,
                   )}
-                  ref={register}
                   disabled={!isEditable}
                   backgroundColor="blue"
                   defaultValue={defaultValues?.institution}
@@ -213,7 +210,7 @@ const FormerInsurance: FC<ReviewFieldProps> = ({
           <Box marginBottom={[2, 2, 4]}>
             <Input
               id="formerInsurance.entitlementReason"
-              name="formerInsurance.entitlementReason"
+              {...register('formerInsurance.entitlementReason')}
               label={formatText(
                 m.formerInsuranceAdditionalInformation,
                 application,
@@ -224,7 +221,6 @@ const FormerInsurance: FC<ReviewFieldProps> = ({
                 application,
                 formatMessage,
               )}
-              ref={register}
               disabled={!isEditable}
               backgroundColor="blue"
               textarea={true}

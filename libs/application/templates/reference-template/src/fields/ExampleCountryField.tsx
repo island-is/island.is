@@ -113,9 +113,8 @@ const ExampleCountryField: FC<Props> = ({ error, field, application }) => {
       </Text>
       <Input
         id={'person.name'}
-        name={'person.name'}
+        {...register('person.name')}
         label={'Name again'}
-        ref={register}
       />
       <Text>
         {' '}
@@ -123,7 +122,7 @@ const ExampleCountryField: FC<Props> = ({ error, field, application }) => {
         elements
       </Text>
       <Button onClick={() => setAge(age + 1)}>+++Increment age+++ {age}</Button>
-      <input type="hidden" value={age} ref={register} name={'person.age'} />
+      <input type="hidden" value={age} {...register('person.age')} />
     </>
   )
 }

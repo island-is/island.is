@@ -105,7 +105,8 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     {localization.fields['name'].label}
                   </label>
                   <input
-                    ref={register({
+                    id="name"
+                    {...register('name', {
                       required: true,
                       validate: isEditing
                         ? () => {
@@ -113,8 +114,6 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                           }
                         : ValidationUtils.validateIdentityResourceName,
                     })}
-                    id="name"
-                    name="name"
                     type="text"
                     className="identity-resource-form__input"
                     defaultValue={props.identityResource.name}
@@ -157,12 +156,11 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     {localization.fields['displayName'].label}
                   </label>
                   <input
-                    ref={register({
+                    id="displayName"
+                    {...register('displayName', {
                       required: true,
                       validate: ValidationUtils.validateDescription,
                     })}
-                    id="displayName"
-                    name="displayName"
                     type="text"
                     className="identity-resource-form__input"
                     defaultValue={props.identityResource.displayName}
@@ -193,12 +191,11 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     {localization.fields['description'].label}
                   </label>
                   <input
-                    ref={register({
+                    id="description"
+                    {...register('description', {
                       required: false,
                       validate: ValidationUtils.validateDescription,
                     })}
-                    id="description"
-                    name="description"
                     type="text"
                     defaultValue={props.identityResource.description}
                     className="identity-resource-form__input"
@@ -230,9 +227,8 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     {localization.fields['enabled'].label}
                   </label>
                   <input
-                    ref={register}
                     id="enabled"
-                    name="enabled"
+                    {...register('enabled')}
                     type="checkbox"
                     defaultChecked={props.identityResource.enabled}
                     className="identity-resource-form__checkbox"
@@ -249,9 +245,8 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     {localization.fields['showInDiscoveryDocument'].label}
                   </label>
                   <input
-                    ref={register}
                     id="showInDiscoveryDocument"
-                    name="showInDiscoveryDocument"
+                    {...register('showInDiscoveryDocument')}
                     type="checkbox"
                     defaultChecked={
                       props.identityResource.showInDiscoveryDocument
@@ -276,9 +271,8 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     {localization.fields['emphasize'].label}
                   </label>
                   <input
-                    ref={register}
                     id="emphasize"
-                    name="emphasize"
+                    {...register('emphasize')}
                     defaultChecked={props.identityResource.emphasize}
                     type="checkbox"
                     className="identity-resource-form__checkbox"
@@ -297,9 +291,8 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     {localization.fields['required'].label}
                   </label>
                   <input
-                    ref={register}
                     id="required"
-                    name="required"
+                    {...register('required')}
                     defaultChecked={props.identityResource.required}
                     type="checkbox"
                     className="identity-resource-form__checkbox"
@@ -321,9 +314,8 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                       {localization.fields['automaticDelegationGrant'].label}
                     </label>
                     <input
-                      ref={register}
                       id="automaticDelegationGrant"
-                      name="automaticDelegationGrant"
+                      {...register('automaticDelegationGrant')}
                       type="checkbox"
                       defaultChecked={
                         props.identityResource.automaticDelegationGrant

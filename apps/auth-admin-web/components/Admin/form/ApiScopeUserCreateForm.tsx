@@ -126,8 +126,7 @@ const ApiScopeUserCreateForm: React.FC<Props> = (props: Props) => {
                   <input
                     id="nationalId"
                     type="text"
-                    name="apiScopeUser.nationalId"
-                    ref={register({
+                    {...register('apiScopeUser.nationalId', {
                       required: true,
                       maxLength: 10,
                       minLength: 10,
@@ -161,11 +160,10 @@ const ApiScopeUserCreateForm: React.FC<Props> = (props: Props) => {
                   <input
                     id="email"
                     type="text"
-                    ref={register({
+                    {...register('apiScopeUser.email', {
                       required: true,
                       validate: ValidationUtils.validateEmail,
                     })}
-                    name="apiScopeUser.email"
                     defaultValue={user.email ?? ''}
                     className="api-scope-user-create-form__input"
                     title={localization.fields['email'].helpText}
@@ -199,10 +197,11 @@ const ApiScopeUserCreateForm: React.FC<Props> = (props: Props) => {
                         <input
                           id={scope.name}
                           type="checkbox"
-                          name={`apiScopeUser.userAccess[${scope.name}]`}
+                          {...register(
+                            `apiScopeUser.userAccess[${scope.name}]`,
+                          )}
                           className="api-scope-user-create-form__checkbox"
                           checked={checked}
-                          ref={register}
                           title={scope.name}
                           onChange={(e) =>
                             handleScopeChange(scope.name, e.target.checked)

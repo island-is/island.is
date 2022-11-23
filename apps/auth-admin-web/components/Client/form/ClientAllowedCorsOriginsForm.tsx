@@ -110,8 +110,7 @@ const ClientAllowedCorsOriginsForm: React.FC<Props> = (props: Props) => {
                     <input
                       id="origin"
                       type="text"
-                      name="origin"
-                      ref={register({
+                      {...register('origin', {
                         required: true,
                         validate: ValidationUtils.validateCorsOrigin,
                       })}
