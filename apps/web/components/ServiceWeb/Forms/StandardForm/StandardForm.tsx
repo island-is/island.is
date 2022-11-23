@@ -3,7 +3,7 @@ import { useLazyQuery } from '@apollo/client'
 import {
   useForm,
   Controller,
-  ValidationRules,
+  ValidationRule,
   useFormContext,
   FormProvider,
 } from 'react-hook-form'
@@ -719,7 +719,7 @@ export const StandardForm = ({
                           value: true,
                           message: fn('nafn', 'requiredMessage', 'Nafn vantar'),
                         },
-                      } as ValidationRules
+                      } as ValidationRule
                     }
                     render={({ onChange, onBlur, value, name }) => (
                       <Input

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import cn from 'classnames'
 import { gql, useMutation, useLazyQuery } from '@apollo/client'
-import { useForm, Controller, ValidationRules } from 'react-hook-form'
+import { useForm, Controller, ValidationRule } from 'react-hook-form'
 import { useHistory } from 'react-router-dom'
 import { defineMessage } from 'react-intl'
 import * as kennitala from 'kennitala'
@@ -226,7 +226,7 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
                           }
                         },
                       },
-                    } as ValidationRules
+                    } as ValidationRule
                   }
                   type="tel"
                   format="######-####"

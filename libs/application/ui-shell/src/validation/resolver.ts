@@ -38,7 +38,7 @@ export const resolver: Resolver = ({ formValue, context, formatMessage }) => {
      * which doesn't follow the ResolverError type:
      *
      * export declare type FieldError = {
-     *   type: LiteralUnion<keyof ValidationRules, string>;
+     *   type: LiteralUnion<keyof ValidationRule, string>;
      *   ref?: Ref;
      *   types?: MultipleFieldErrors;
      *   message?: Message;

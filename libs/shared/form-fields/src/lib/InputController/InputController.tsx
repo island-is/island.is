@@ -5,7 +5,7 @@ import {
   InputBackgroundColor,
   InputProps,
 } from '@island.is/island-ui/core'
-import { Controller, Control, ValidationRules } from 'react-hook-form'
+import { Controller, Control, ValidationRule } from 'react-hook-form'
 import NumberFormat, { FormatInputValueFunction } from 'react-number-format'
 import { TestSupport } from '@island.is/island-ui/utils'
 
@@ -15,7 +15,7 @@ interface Props {
   disabled?: boolean
   control?: Control
   icon?: React.ComponentProps<typeof Icon>['icon']
-  rules?: ValidationRules
+  rules?: ValidationRule
   error?: string
   id: string
   label?: string
