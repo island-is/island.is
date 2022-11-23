@@ -313,7 +313,7 @@ export class ApplicationController {
       applicantActors: user.actor ? [user.actor.nationalId] : [],
       attachments: {},
       state: initialState,
-      status: ApplicationStatus.IN_PROGRESS,
+      status: ApplicationStatus.DRAFT,
       typeId: application.typeId,
     }
 
