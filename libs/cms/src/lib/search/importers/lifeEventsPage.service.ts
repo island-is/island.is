@@ -49,6 +49,7 @@ export class LifeEventsPageSyncService
         } catch (error) {
           logger.warn('Failed to import life event page', {
             error: error.message,
+            id: entry?.sys?.id,
           })
           return false
         }
