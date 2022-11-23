@@ -15,6 +15,7 @@ import {
   isTranslationObject,
 } from '@island.is/application/core'
 import type { Locale } from '@island.is/shared/types'
+import { Logger, logger as islandis_logger } from '@island.is/logging'
 
 @Injectable()
 export class TemplateApiActionRunner {
@@ -51,10 +52,26 @@ export class TemplateApiActionRunner {
   ): Promise<ApplicationWithAttachments> {
     this.application = application
     this.auth = auth
+
+    islandis_logger.debug(
+      `TemplateApi: Running actions for application id . ${application.id}`,
+    )
+
+    islandis_logger.debug(
+      `TemplateApi: Setting old external data . ${JSON.stringify(
+        application.externalData,
+      )}`,
+    )
+
     this.oldExternalData = application.externalData
     this.formatMessage = formatMessage
     this.currentUserLocale = currentUserLocale
     const groupedActions = this.groupByOrder(this.sortActions(actions))
+
+    islandis_logger.debug(
+      `TemplateApi: Actions to run . ${JSON.stringify(groupedActions)}`,
+    )
+
     await this.runActions(groupedActions)
 
     await this.persistExternalData(actions)
@@ -110,7 +127,9 @@ export class TemplateApiActionRunner {
 
   async callAction(api: TemplateApi) {
     const { actionId, action, externalDataId, params } = api
-
+    islandis_logger.debug(
+      `TemplateApi: Calling action with api : ${JSON.stringify(api)}`,
+    )
     const actionResult = await this.templateAPIService.performAction({
       templateId: this.application.typeId,
       actionId,
@@ -192,6 +211,22 @@ export class TemplateApiActionRunner {
         delete this.newExternalData[api.externalDataId || api.action]
       }
     })
+
+    islandis_logger.debug(
+      `TemplateApi: Persisting data using Template apis : ${JSON.stringify(
+        api,
+      )}`,
+    )
+    islandis_logger.debug(
+      `TemplateApi: Persisting old external data : ${JSON.stringify(
+        this.oldExternalData,
+      )}`,
+    )
+    islandis_logger.debug(
+      `TemplateApi: Persisting new external data : ${JSON.stringify(
+        this.newExternalData,
+      )}`,
+    )
 
     await this.applicationService.updateExternalData(
       this.application.id,

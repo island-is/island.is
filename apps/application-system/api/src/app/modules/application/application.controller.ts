@@ -99,6 +99,8 @@ import { PaymentService } from '../payment/payment.service'
 import { ApplicationChargeService } from './charge/application-charge.service'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+
+import { logger as islandis_logger } from '@island.is/logging'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { BypassDelegation } from './guards/bypass-delegation.decorator'
 
@@ -560,6 +562,16 @@ export class ApplicationController {
     @CurrentUser() user: User,
     @CurrentLocale() locale: Locale,
   ): Promise<ApplicationResponseDto> {
+    islandis_logger.debug(
+      `TemplateApi: Updating external data for application Id : ${id}`,
+    )
+
+    islandis_logger.debug(
+      `TemplateApi: Request externalDataDto :  . ${JSON.stringify(
+        externalDataDto,
+      )}`,
+    )
+
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
       user,
@@ -610,6 +622,10 @@ export class ApplicationController {
       }
     }
 
+    islandis_logger.debug(
+      `TemplateApi: found template apis . ${JSON.stringify(templateApis)}`,
+    )
+
     const updatedApplication = await this.templateApiActionRunner.run(
       existingApplication as BaseApplication,
       templateApis,
@@ -630,6 +646,10 @@ export class ApplicationController {
       resources: existingApplication.id,
       meta: { providers: externalDataDto },
     })
+
+    islandis_logger.debug(
+      `TemplateApi: Finished updating external data for application Id : ${id}`,
+    )
 
     return updatedApplication
   }
