@@ -113,7 +113,7 @@ export class AirDiscountSchemeService {
   }
 
   private async getUserRelations(auth: User): Promise<TUser[]> {
-    let getRelationsResponse = await this.getADSWithAuth(auth)
+    const getRelationsResponse = await this.getADSWithAuth(auth)
       .privateUserControllerGetUserRelations({ nationalId: auth.nationalId })
       .catch((e) => {
         this.handle4xx(e)
