@@ -2,7 +2,7 @@ import React from 'react'
 import { getLivesWithParent } from './ChildView'
 
 describe('getLivesWithParents', () => {
-  it('should return true, unmatching parents', () => {
+  it('should return false, unmatching parents', () => {
     const parents = ['1111111111']
     const parent = '0000000000'
 
