@@ -44,6 +44,7 @@ export const serviceSetup = (): ServiceBuilder<'air-discount-scheme-backend'> =>
         prod: 'https://innskra.island.is',
       },
       IDENTITY_SERVER_CLIENT_ID: '@vegagerdin.is/clients/air-discount-scheme',
+      NO_UPDATE_NOTIFIER: 'true',
     })
     .postgres(postgresInfo)
     .initContainer({

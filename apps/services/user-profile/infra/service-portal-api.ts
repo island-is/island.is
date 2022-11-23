@@ -17,6 +17,7 @@ export const serviceSetup = (): ServiceBuilder<'service-portal-api'> =>
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
+      NO_UPDATE_NOTIFIER: 'true',
     })
     .secrets({
       NOVA_URL: '/k8s/service-portal-api/NOVA_URL',

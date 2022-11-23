@@ -208,6 +208,7 @@ export const serviceSetup = (services: {
       ENDORSEMENTS_API_BASE_PATH: ref(
         (h) => `http://${h.svc(services.servicesEndorsementApi)}`,
       ),
+      NO_UPDATE_NOTIFIER: 'true',
     })
     .xroad(
       Base,

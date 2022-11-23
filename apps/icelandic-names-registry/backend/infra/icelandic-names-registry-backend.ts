@@ -33,6 +33,7 @@ export const serviceSetup = (): ServiceBuilder<'icelandic-names-registry-backend
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
+      NO_UPDATE_NOTIFIER: 'true',
     })
     .grantNamespaces('islandis')
     .liveness('/liveness')

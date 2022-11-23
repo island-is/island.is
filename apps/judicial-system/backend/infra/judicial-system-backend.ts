@@ -43,6 +43,7 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
         staging: 'COURT,POLICE_DOCUMENT,POLICE_CASE',
         prod: 'POLICE_CASE',
       },
+      NO_UPDATE_NOTIFIER: 'true',
     })
     .xroad(Base, JudicialSystem)
     .secrets({

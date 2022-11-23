@@ -114,6 +114,7 @@ judicial-system-backend:
     DOKOBIT_URL: 'https://ws.dokobit.com'
     EMAIL_REGION: 'eu-west-1'
     NODE_OPTIONS: '--max-old-space-size=464'
+    NO_UPDATE_NOTIFIER: 'true'
     S3_BUCKET: 'island-is-prod-upload-judicial-system'
     S3_REGION: 'eu-west-1'
     S3_TIME_TO_LIVE_GET: '5'

@@ -150,6 +150,7 @@ export const serviceSetup = (services: {
         staging: 'https://api-staging.thinglysing.is/business/tolfraedi',
         prod: 'https://api.thinglysing.is/business/tolfraedi',
       },
+      NO_UPDATE_NOTIFIER: 'true',
     })
 
     .secrets({
