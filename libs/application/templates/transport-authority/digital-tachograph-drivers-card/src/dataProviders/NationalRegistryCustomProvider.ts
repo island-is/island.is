@@ -30,14 +30,13 @@ export class NationalRegistryCustomProvider extends BasicDataProvider {
         }
         const nationalRegistryUserData = data?.nationalRegistryUser
 
-        // TODOx add back, this was removed while testing locally
-        // // Make sure user has domicile country as Iceland
-        // const domicileCode = nationalRegistryUserData?.address?.code
-        // if (!domicileCode || domicileCode.substring(0, 2) === '99') {
-        //   return Promise.reject({
-        //     reason: externalData.nationalRegistryCustom.missing.defaultMessage,
-        //   })
-        // }
+        // Make sure user has domicile country as Iceland
+        const domicileCode = nationalRegistryUserData?.address?.code
+        if (!domicileCode || domicileCode.substring(0, 2) === '99') {
+          return Promise.reject({
+            reason: externalData.nationalRegistryCustom.missing.defaultMessage,
+          })
+        }
 
         return Promise.resolve(nationalRegistryUserData)
       },

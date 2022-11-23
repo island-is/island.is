@@ -17,7 +17,7 @@ export class DigitalTachographWorkshopCardService {
       const result = this.sharedTemplateAPIService.createCharge(
         auth.authorization,
         id,
-        [ChargeItemCode.TRANSPORT_AUTHORITY_XXX],
+        [ChargeItemCode.TRANSPORT_AUTHORITY_DIGITAL_TACHOGRAPH_WORKSHOP_CARD],
       )
       return result
     } catch (exeption) {

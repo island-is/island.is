@@ -43,7 +43,7 @@ export const cardTypeSection = buildSection({
               new Date(
                 application.externalData?.newestDriversCard?.data?.applicationCreatedAt,
               ),
-              'dd/MM/yyyy',
+              'dd.MM.yyyy',
             )
           },
         }),
@@ -69,7 +69,7 @@ export const cardTypeSection = buildSection({
               new Date(
                 application.externalData?.newestDriversCard?.data?.cardValidFrom,
               ),
-              'dd/MM/yyyy',
+              'dd.MM.yyyy',
             )
           },
         }),
@@ -85,7 +85,7 @@ export const cardTypeSection = buildSection({
               new Date(
                 application.externalData?.newestDriversCard?.data?.cardValidTo,
               ),
-              'dd/MM/yyyy',
+              'dd.MM.yyyy',
             )
           },
         }),

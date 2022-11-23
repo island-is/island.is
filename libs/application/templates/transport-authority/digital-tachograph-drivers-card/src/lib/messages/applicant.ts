@@ -117,11 +117,11 @@ export const applicant = {
           'Et sed ut est aliquam proin elit sed. Nunc tellus lacus sed eu pulvinar.',
         description: 'Card delivery description',
       },
-      chooseDeliverySubtitle: {
+      pickDeliveryMethodLabel: {
         id:
-          'ta.dtdc.application:applicant.labels.cardDelivery.chooseDeliverySubtitle',
+          'ta.dtdc.application:applicant.labels.cardDelivery.pickDeliveryMethodLabel',
         defaultMessage: 'Hvernig viltu fá kortið afhent?',
-        description: 'Choose delivery sub title',
+        description: 'Pick delivery method label',
       },
       legalDomicileOptionTitle: {
         id:
@@ -138,7 +138,7 @@ export const applicant = {
       chooseDeliveryNoteTitle: {
         id:
           'ta.dtdc.application:applicant.labels.cardDelivery.chooseDeliveryNoteTitle',
-        defaultMessage: 'Athugið!',
+        defaultMessage: 'Athugið! ',
         description: 'Choose delivery note title',
       },
       chooseDeliveryNoteText: {
@@ -147,6 +147,13 @@ export const applicant = {
         defaultMessage:
           'Ökuritakort má einungis afhenda til umsækjanda. Umsækjandi getur veitt öðrum heimild til að sækja kort og skal þá framvísa fullgildu umboði þess efnis.',
         description: 'Choose delivery note text',
+      },
+      errorTachoNetMessage: {
+        id:
+          'ta.dtdc.application:applicant.labels.cardDelivery.errorTachoNetMessage',
+        defaultMessage:
+          'Það kom upp villa við að sækja gögn úr Tacho net, reyndu aftur síðar.',
+        description: 'Error tacho net message',
       },
     }),
   },

@@ -1,6 +1,7 @@
 export const GET_DRIVING_LICENSE = `
   query LicenseQuery {
     drivingLicense {
+      id
       categories {
         name
       }
@@ -43,10 +44,10 @@ export const GET_NEWEST_DRIVERS_CARD = `
   }
 `
 
-// export const CHECK_TACHO_NET_EXISTS = `
-//   query TachoNetExistsQuery($input: CheckTachoNetInput!) {
-//     digitalTachographTachoNetExists(input: $input) {
-//       exists
-//     }
-//   }
-// `
+export const CHECK_TACHO_NET_EXISTS = `
+  query TachoNetExistsQuery($input: CheckTachoNetInput!) {
+    digitalTachographTachoNetExists(input: $input) {
+      exists
+    }
+  }
+`

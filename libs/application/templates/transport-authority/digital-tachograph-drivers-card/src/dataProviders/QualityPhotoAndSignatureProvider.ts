@@ -31,18 +31,17 @@ export class QualityPhotoAndSignatureProvider extends BasicDataProvider {
         const photoAndSignatureData =
           data?.digitalTachographQualityPhotoAndSignature
 
-        // TODOx add back, this was removed while testing locally
-        // // Make sure user has quality photo and signature (from either RLS or SGS),
-        // // if not then user cannot continue (will allow upload in phase 2)
-        // if (
-        //   !photoAndSignatureData?.hasPhoto ||
-        //   !photoAndSignatureData?.hasSignature
-        // ) {
-        //   return Promise.reject({
-        //     reason:
-        //       externalData.qualityPhotoAndSignature.missing.defaultMessage,
-        //   })
-        // }
+        // Make sure user has quality photo and signature (from either RLS or SGS),
+        // if not then user cannot continue (will allow upload in phase 2)
+        if (
+          !photoAndSignatureData?.hasPhoto ||
+          !photoAndSignatureData?.hasSignature
+        ) {
+          return Promise.reject({
+            reason:
+              externalData.qualityPhotoAndSignature.missing.defaultMessage,
+          })
+        }
 
         return Promise.resolve(photoAndSignatureData)
       },
