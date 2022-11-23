@@ -22,6 +22,9 @@ export const serviceSetup = (): ServiceBuilder<'icelandic-names-registry-backend
         },
       ],
       postgres: postgresInfo,
+      envs: {
+        NO_UPDATE_NOTIFIER: 'true',
+      }
     })
     .secrets({
       ALLOWED_NATIONAL_IDS:

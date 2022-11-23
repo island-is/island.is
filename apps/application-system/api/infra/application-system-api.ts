@@ -258,6 +258,9 @@ export const serviceSetup = (services: {
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
       postgres: postgresInfo,
+      envs: {
+        NO_UPDATE_NOTIFIER: 'true',
+      }
     })
     .postgres(postgresInfo)
     .liveness('/liveness')

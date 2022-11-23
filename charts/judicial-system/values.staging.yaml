@@ -173,6 +173,7 @@ judicial-system-backend:
       DB_NAME: 'judicial_system'
       DB_REPLICAS_HOST: 'postgres-applications.internal'
       DB_USER: 'judicial_system'
+      NO_UPDATE_NOTIFIER: 'true'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
       DB_PASS: '/k8s/judicial-system/DB_PASSWORD'

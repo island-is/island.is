@@ -50,6 +50,9 @@ export const serviceSetup = (): ServiceBuilder<'air-discount-scheme-backend'> =>
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
       postgres: postgresInfo,
+      envs: {
+        NO_UPDATE_NOTIFIER: 'true',
+      }
     })
     .ingress({
       primary: {
