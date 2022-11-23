@@ -22,6 +22,7 @@ import {
   IdsUserGuard,
   Scopes,
   ScopesGuard,
+  User,
 } from '@island.is/auth-nest-tools'
 import { StaffGuard } from '../../guards/staff.guard'
 import { StaffRolesRules } from '../../decorators/staffRole.decorator'
@@ -52,12 +53,19 @@ export class MunicipalityController {
     type: MunicipalityModel,
     description: 'Gets municipality by id',
   })
-  async getById(@Param('id') id: string): Promise<MunicipalityModel> {
+  async getById(
+    @Param('id') id: string,
+    @CurrentUser() user: User,
+  ): Promise<MunicipalityModel> {
     this.logger.debug('Municipality controller: Getting municipality by id')
 
     let municipality
     try {
-      municipality = await this.municipalityService.findByMunicipalityId(id)
+      municipality = user.scope.includes(
+        MunicipalitiesFinancialAidScope.employee,
+      )
+        ? await this.municipalityService.findByMunicipalityIdWithNav(id)
+        : await this.municipalityService.findByMunicipalityId(id)
     } catch (e) {
       this.logger.error(
         'Municipality controller: Failed getting municipality by id',

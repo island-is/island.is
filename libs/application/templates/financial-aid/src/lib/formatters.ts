@@ -12,13 +12,9 @@ import format from 'date-fns/format'
 
 import * as m from './messages'
 import { Routes } from './constants'
-import {
-  Applicant,
-  ApproveOptions,
-  ExternalData,
-  OverrideAnswerSchema,
-} from './types'
+import { ApproveOptions, ExternalData, OverrideAnswerSchema } from './types'
 import { findFamilyStatus } from './utils'
+import { NationalRegistryIndividual } from '@island.is/application/types'
 
 export const getMessageHomeCircumstances: KeyMapping<
   HomeCircumstances,
@@ -70,9 +66,9 @@ export const getMessageApproveOptionsForIncome: KeyMapping<
   No: m.incomeForm.summary.no,
 }
 
-export const formatAddress = (applicant?: Applicant) =>
-  applicant
-    ? `${applicant.address.streetName}, ${applicant.address.postalCode} ${applicant.address.city}`
+export const formatAddress = (applicant?: NationalRegistryIndividual) =>
+  applicant?.address
+    ? `${applicant.address.streetAddress}, ${applicant.address.postalCode} ${applicant.address.locality}`
     : undefined
 
 export const formatBankInfo = (bankInfo: {

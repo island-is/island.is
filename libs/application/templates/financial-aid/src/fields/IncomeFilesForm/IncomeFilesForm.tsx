@@ -14,8 +14,7 @@ const IncomeFilesForm = ({ field, application }: FAFieldBaseProps) => {
     <>
       <Text marginTop={2} marginBottom={[3, 3, 5]}>
         {formatMessage(
-          externalData?.taxDataFetch?.data?.municipalitiesDirectTaxPayments
-            ?.success
+          externalData?.taxData?.data?.municipalitiesDirectTaxPayments?.success
             ? incomeFilesForm.general.descriptionTaxSuccess
             : incomeFilesForm.general.description,
         )}
