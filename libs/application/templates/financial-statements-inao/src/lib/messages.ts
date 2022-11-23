@@ -833,6 +833,12 @@ export const m = defineMessages({
     defaultMessage: 'Skuldir og eigið fé þarf að vera jafnt og eignir samtals',
     description: 'Equity + debts shout equal assets',
   },
+  wrongDelegation: {
+    id: 'fsn.application:wrongDelegation',
+    defaultMessage:
+      'Eingöngu er hægt að skila fyrir hönd Kirkjugarða eða Stjórnmálasamtaka',
+    description: 'Logged in user with incorrect delegation type',
+  },
   submitErrorMessage: {
     id: 'fsn.application:submitErrorMessage',
     defaultMessage:
