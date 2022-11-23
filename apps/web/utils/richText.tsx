@@ -26,6 +26,7 @@ import {
   AccordionSlice as AccordionSliceSchema,
 } from '@island.is/web/graphql/schema'
 import { Locale } from '@island.is/shared/types'
+import { MonthlyStatistics } from '../components/connected/electronicRegistrationStatistics'
 
 const webRenderConnectedComponent = (slice) => {
   const data = slice.json ?? {}
@@ -41,6 +42,8 @@ const webRenderConnectedComponent = (slice) => {
       return <CatchQuotaCalculator namespace={data} />
     case 'Fiskistofa/SelectedShip':
       return <SelectedShip />
+    case 'ElectronicRegistrations/MonthlyStatistics':
+      return <MonthlyStatistics slice={slice} />
     default:
       break
   }
