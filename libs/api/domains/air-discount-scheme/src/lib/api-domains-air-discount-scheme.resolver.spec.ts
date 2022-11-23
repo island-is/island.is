@@ -7,9 +7,7 @@ import {
   Discount as TDiscount,
   User as TUser,
 } from '@island.is/air-discount-scheme/types'
-import { Discount as DiscountModel } from '../models/discount.model'
 import { ApiScope } from '@island.is/auth/scopes'
-type DiscountWithTUser = DiscountModel & { user: TUser }
 
 describe('ApiDomains: AirDiscountSchemeResolver', () => {
   let resolver: AirDiscountSchemeResolver
