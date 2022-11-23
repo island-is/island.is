@@ -334,7 +334,6 @@ export class ApplicationService {
     try {
       const municipality = await this.municipalityService.findByMunicipalityId(
         application.municipalityCode,
-        false,
       )
       const isApplicationSystem = application.applicationSystemId != null
 
@@ -392,7 +391,6 @@ export class ApplicationService {
     try {
       const municipality = await this.municipalityService.findByMunicipalityId(
         data.municipalityCode,
-        false,
       )
 
       const applicantEmailData = getApplicantEmailDataFromEventType(
@@ -528,9 +526,8 @@ export class ApplicationService {
   async sendToNav(applicationId: string, amount: CreateAmountDto) {
     try {
       const application = await this.findById(applicationId, true)
-      const municipality = await this.municipalityService.findByMunicipalityId(
+      const municipality = await this.municipalityService.findByMunicipalityIdWithNav(
         application.municipalityCode,
-        true,
       )
 
       if (!municipality.usingNav) {
@@ -670,7 +667,6 @@ export class ApplicationService {
       try {
         const municipality = await this.municipalityService.findByMunicipalityId(
           updatedApplication.municipalityCode,
-          false,
         )
         const isApplicationSystem =
           updatedApplication.applicationSystemId != null

@@ -61,10 +61,11 @@ export class MunicipalityController {
 
     let municipality
     try {
-      municipality = await this.municipalityService.findByMunicipalityId(
-        id,
-        user.scope.includes(MunicipalitiesFinancialAidScope.employee),
+      municipality = user.scope.includes(
+        MunicipalitiesFinancialAidScope.employee,
       )
+        ? await this.municipalityService.findByMunicipalityIdWithNav(id)
+        : await this.municipalityService.findByMunicipalityId(id)
     } catch (e) {
       this.logger.error(
         'Municipality controller: Failed getting municipality by id',
