@@ -79,7 +79,7 @@ export const getApplication = (allowFakeData = false): Form => {
               const applicationAnswers = answers as FinancialStatementsInao
               const careTakerLimit =
                 applicationAnswers.cemetryOperation?.incomeLimit ?? '0'
-              const currentAssets =
+              const fixedAssetsTotal =
                 applicationAnswers.cemetryAsset?.fixedAssetsTotal
               const isCemetry = userType === FSIUSERTYPE.CEMETRY
               const totalIncome = isCemetry
@@ -88,11 +88,10 @@ export const getApplication = (allowFakeData = false): Form => {
               const longTermDebt = applicationAnswers.cemetryLiability?.longTerm
               const isUnderLimit =
                 currencyStringToNumber(totalIncome) < careTakerLimit
-
               if (
                 isCemetry &&
                 isUnderLimit &&
-                currentAssets === '0' &&
+                fixedAssetsTotal === '0' &&
                 longTermDebt === '0'
               ) {
                 return false

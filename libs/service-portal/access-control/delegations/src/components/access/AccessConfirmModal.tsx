@@ -60,7 +60,7 @@ export const AccessConfirmModal = ({
 
   return (
     <Modal
-      id={`access-confirm-modal-${delegation?.id}`}
+      id={`access-confirm-modal`}
       label={formatMessage(m.accessControl)}
       title={formatMessage({
         id: 'sp.settings-access-control:access-confirm-modal-title',

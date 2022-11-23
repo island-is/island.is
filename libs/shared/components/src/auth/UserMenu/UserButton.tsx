@@ -32,6 +32,7 @@ export const UserButton = ({ onClick, user, small }: UserButtonProps) => {
               username={profile.name}
               onClick={onClick}
               aria-label={formatMessage(userMessages.userButtonAria)}
+              dataTestid="user-menu"
             />
           </Box>
         ) : (
@@ -42,6 +43,7 @@ export const UserButton = ({ onClick, user, small }: UserButtonProps) => {
             icon="person"
             iconType="outline"
             aria-label={formatMessage(userMessages.userButtonAria)}
+            data-testid="user-menu"
           >
             <div className={styles.resetButtonPadding}>
               {
@@ -60,6 +62,7 @@ export const UserButton = ({ onClick, user, small }: UserButtonProps) => {
           onClick={onClick}
           icon="chevronDown"
           aria-label={formatMessage(userMessages.userButtonAria)}
+          data-testid="user-menu"
         >
           <div className={styles.resetButtonPadding}>
             {isDelegation ? (

@@ -86,7 +86,7 @@ export const AccessDeleteModal = ({
 
   return (
     <Modal
-      id={`access-delete-modal-${delegation?.id}`}
+      id={`access-delete-modal`}
       label={formatMessage(m.accessControl)}
       title={formatMessage({
         id: 'sp.settings-access-control:access-remove-modal-content',
