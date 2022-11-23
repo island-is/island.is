@@ -19,7 +19,7 @@
         "passWithNoTests": true
       }
     },
-    "dev/init": {
+    "dev-init": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "commands": [
