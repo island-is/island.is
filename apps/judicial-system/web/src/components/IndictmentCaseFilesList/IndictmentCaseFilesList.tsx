@@ -23,6 +23,34 @@ interface Props {
   workingCase: Case
 }
 
+interface RenderFilesProps {
+  caseFiles: CaseFile[]
+  onOpenFile: (fileId: string) => void
+}
+
+const RenderFiles: React.FC<Props & RenderFilesProps> = (props) => {
+  const { caseFiles, onOpenFile, workingCase } = props
+
+  return (
+    <>
+      {caseFiles.map((file) => (
+        <Box
+          key={file.id}
+          marginBottom={2}
+          className={styles.caseFileContainer}
+        >
+          <PdfButton
+            caseId={workingCase.id}
+            title={file.name}
+            renderAs="row"
+            handleClick={() => onOpenFile(file.id)}
+          />
+        </Box>
+      ))}
+    </>
+  )
+}
+
 const IndictmentCaseFilesList: React.FC<Props> = (props) => {
   const { workingCase } = props
   const { formatMessage } = useIntl()
@@ -57,19 +85,6 @@ const IndictmentCaseFilesList: React.FC<Props> = (props) => {
     (file) => file.category === CaseFileCategory.COURT_RECORD,
   )
 
-  const renderFiles = (caseFiles: CaseFile[]) => {
-    return caseFiles.map((file) => (
-      <Box key={file.id} marginBottom={2} className={styles.caseFileContainer}>
-        <PdfButton
-          caseId={workingCase.id}
-          title={file.name}
-          renderAs="row"
-          handleClick={() => onOpen(file.id)}
-        />
-      </Box>
-    ))
-  }
-
   return (
     <Box marginBottom={10}>
       <SectionHeading title={formatMessage(strings.title)} />
@@ -78,7 +93,11 @@ const IndictmentCaseFilesList: React.FC<Props> = (props) => {
           <Text variant="h4" as="h4" marginBottom={1}>
             {formatMessage(caseFiles.sections.coverLetter)}
           </Text>
-          {renderFiles(coverLetters)}
+          <RenderFiles
+            caseFiles={coverLetters}
+            onOpenFile={onOpen}
+            workingCase={workingCase}
+          />
         </Box>
       )}
       {indictments && indictments.length > 0 && (
@@ -86,7 +105,11 @@ const IndictmentCaseFilesList: React.FC<Props> = (props) => {
           <Text variant="h4" as="h4" marginBottom={1}>
             {formatMessage(caseFiles.sections.indictment)}
           </Text>
-          {renderFiles(indictments)}
+          <RenderFiles
+            caseFiles={indictments}
+            onOpenFile={onOpen}
+            workingCase={workingCase}
+          />
         </Box>
       )}
       {criminalRecords && criminalRecords.length > 0 && (
@@ -94,7 +117,11 @@ const IndictmentCaseFilesList: React.FC<Props> = (props) => {
           <Text variant="h4" as="h4" marginBottom={1}>
             {formatMessage(caseFiles.sections.criminalRecord)}
           </Text>
-          {renderFiles(criminalRecords)}
+          <RenderFiles
+            caseFiles={criminalRecords}
+            onOpenFile={onOpen}
+            workingCase={workingCase}
+          />
         </Box>
       )}
       {costBreakdowns && costBreakdowns.length > 0 && (
@@ -102,7 +129,11 @@ const IndictmentCaseFilesList: React.FC<Props> = (props) => {
           <Text variant="h4" as="h4" marginBottom={1}>
             {formatMessage(caseFiles.sections.costBreakdown)}
           </Text>
-          {renderFiles(costBreakdowns)}
+          <RenderFiles
+            caseFiles={costBreakdowns}
+            onOpenFile={onOpen}
+            workingCase={workingCase}
+          />
         </Box>
       )}
       {others && others.length > 0 && (
@@ -110,7 +141,11 @@ const IndictmentCaseFilesList: React.FC<Props> = (props) => {
           <Text variant="h4" as="h4" marginBottom={1}>
             {formatMessage(caseFiles.sections.otherDocuments)}
           </Text>
-          {renderFiles(others)}
+          <RenderFiles
+            caseFiles={others}
+            onOpenFile={onOpen}
+            workingCase={workingCase}
+          />
         </Box>
       )}
       <Box marginBottom={5}>
@@ -143,7 +178,11 @@ const IndictmentCaseFilesList: React.FC<Props> = (props) => {
               <Text variant="h4" as="h4" marginBottom={1}>
                 {formatMessage(courtRecord.courtRecordTitle)}
               </Text>
-              {renderFiles(courtRecords)}
+              <RenderFiles
+                caseFiles={courtRecords}
+                onOpenFile={onOpen}
+                workingCase={workingCase}
+              />
             </Box>
           )}
           {rulings && rulings.length > 0 && (
@@ -151,7 +190,11 @@ const IndictmentCaseFilesList: React.FC<Props> = (props) => {
               <Text variant="h4" as="h4" marginBottom={1}>
                 {formatMessage(courtRecord.rulingTitle)}
               </Text>
-              {renderFiles(rulings)}
+              <RenderFiles
+                caseFiles={rulings}
+                onOpenFile={onOpen}
+                workingCase={workingCase}
+              />
             </Box>
           )}
         </>
