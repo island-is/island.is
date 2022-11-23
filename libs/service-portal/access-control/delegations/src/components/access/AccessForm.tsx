@@ -22,6 +22,7 @@ import { servicePortalSaveAccessControl } from '@island.is/plausible'
 import {
   useUpdateAuthDelegationMutation,
   useAuthScopeTreeQuery,
+  AuthDomainDirection,
 } from '@island.is/service-portal/graphql'
 import { AccessFormScope } from './access.types'
 import { extendApiScope, formatScopeTreeToScope } from './access.utils'
@@ -70,6 +71,7 @@ export const AccessForm = ({ delegation, validityPeriod }: AccessFormProps) => {
       input: {
         domain: delegation.domain.name,
         lang,
+        direction: AuthDomainDirection.Outgoing,
       },
     },
   })

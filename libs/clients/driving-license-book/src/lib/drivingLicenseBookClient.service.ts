@@ -34,10 +34,15 @@ import {
   schoolForSchoolStaffMapper,
   schoolTypeMapper,
 } from '../utils/mappers'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+
+const LOGTAG = '[driving-license-book-client]'
 
 @Injectable()
 export class DrivingLicenseBookClientApiFactory {
   constructor(
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
     @Inject(DrivingLicenseBookClientConfig.KEY)
     private clientConfig: ConfigType<typeof DrivingLicenseBookClientConfig>,
     @Inject(XRoadConfig.KEY)
@@ -148,16 +153,22 @@ export class DrivingLicenseBookClientApiFactory {
   async findStudent(
     input: DrivingLicenseBookStudentsInput,
   ): Promise<DrivingLicenseBookStudent[]> {
-    const api = await this.create()
-    const { data } = await api.apiStudentGetStudentListGet(input)
-    if (!data) {
+    try {
+      const api = await this.create()
+      const { data } = await api.apiStudentGetStudentListGet(input)
+      if (!data) {
+        this.logger.error(`${LOGTAG} Error fetching find student`)
+        throw new NotFoundException(`Student not found drivingLicenseBook`)
+      }
+      return data
+        .filter((student) => !!student && !!student.ssn && !!student.id)
+        .map((student) => {
+          return getStudentMapper(student)
+        })
+    } catch (e) {
+      this.logger.error(`${LOGTAG} Error fetching find student`, e)
       throw new NotFoundException(`Student not found drivingLicenseBook`)
     }
-    return data
-      .filter((student) => !!student && !!student.ssn && !!student.id)
-      .map((student) => {
-        return getStudentMapper(student)
-      })
   }
 
   async getStudentsForTeacher(
@@ -170,6 +181,7 @@ export class DrivingLicenseBookClientApiFactory {
       teacherSsn: user.nationalId,
     })
     if (!data) {
+      this.logger.error(`${LOGTAG} Error fetching students for teacher`)
       throw new NotFoundException(
         `Students for teacher with nationalId ${user.nationalId} not found`,
       )
@@ -190,15 +202,19 @@ export class DrivingLicenseBookClientApiFactory {
     const { data } = await api.apiStudentGetStudentOverviewSsnGet({
       ssn: nationalId,
     })
-    if (data?.books && data?.ssn) {
-      const activeBook = await this.getActiveBookId(data?.ssn)
-      const book = data.books.filter((b) => b.id === activeBook && !!b.id)[0]
-      return getStudentAndBookMapper(data, book)
-    }
+    const activeBook = await this.getActiveBookId(nationalId)
 
-    throw new NotFoundException(
-      `Student for nationalId ${nationalId} not found`,
-    )
+    const book = data?.books?.filter((b) => b.id === activeBook && !!b.id)[0]
+
+    if (!book) {
+      this.logger.error(
+        `${LOGTAG} Error fetching student, student has no active book`,
+      )
+      throw new NotFoundException(
+        `driving-license-book-client: Student has no active book`,
+      )
+    }
+    return getStudentAndBookMapper(data, book)
   }
 
   async getMostRecentStudentBook({

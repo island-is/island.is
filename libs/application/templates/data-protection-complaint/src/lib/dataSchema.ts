@@ -93,7 +93,9 @@ export const DataProtectionComplaintSchema = z.object({
       params: error.nationalId,
     }),
     address: z.string().refine((x) => !!x, { params: error.required }),
-    postalCode: z.string().refine((x) => !!x, { params: error.required }),
+    postalCode: z
+      .string()
+      .refine((x) => +x >= 100 && +x <= 999, { params: error.required }),
     city: z.string().refine((x) => !!x, { params: error.required }),
     email: optionalEmail,
     phoneNumber: z.string().optional(),
@@ -137,7 +139,7 @@ export const DataProtectionComplaintSchema = z.object({
   complaint: z.object({
     description: z
       .string()
-      .nonempty()
+      .min(1)
       .refine((x) => !!x, { params: error.required })
       .refine((x) => x?.split(' ').filter((item) => item).length <= 500, {
         params: error.wordCountReached,

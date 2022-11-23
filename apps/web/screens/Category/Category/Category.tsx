@@ -184,16 +184,21 @@ const Category: Screen<CategoryProps> = ({
     }
   }, [])
 
-  const sidebarCategoryLinks = categories.map(
-    ({ __typename: typename, title, slug }) => {
+  const sidebarCategoryLinks = categories
+    .filter(
+      (item) =>
+        category.id === item.id ||
+        (item?.slug !== 'thjonusta-island-is' &&
+          item?.slug !== 'services-on-island-is'),
+    )
+    .map(({ __typename: typename, title, slug }) => {
       return {
         title,
         typename,
         active: slug === Router.query.slug,
         slug: [slug],
       }
-    },
-  )
+    })
 
   const groupArticlesBySubgroup = (articles: Articles, groupSlug?: string) => {
     const bySubgroup = articles.reduce((result, item) => {
