@@ -20,7 +20,7 @@ import {
 import {
   CaseState,
   CaseType,
-  IndictmentSubType,
+  IndictmentSubtype,
   User,
 } from '@island.is/judicial-system/types'
 
@@ -207,10 +207,10 @@ export class PoliceService {
 
   async updatePoliceCase(
     caseId: string,
-    caseType: CaseType | IndictmentSubType,
+    caseType: CaseType | IndictmentSubtype,
     caseState: CaseState,
     courtRecordPdf: string,
-    policeCaseNumbers: string[],
+    policeCaseNumber: string,
     defendantNationalIds?: string[],
     caseConclusion?: string,
   ): Promise<boolean> {
@@ -226,7 +226,7 @@ export class PoliceService {
         agent: this.agent,
         body: JSON.stringify({
           rvMal_ID: caseId,
-          caseNumber: policeCaseNumbers[0] ? policeCaseNumbers[0] : '',
+          caseNumber: policeCaseNumber,
           ssn:
             defendantNationalIds && defendantNationalIds[0]
               ? defendantNationalIds[0]
@@ -256,7 +256,7 @@ export class PoliceService {
             caseId,
             caseType,
             caseState,
-            policeCaseNumbers: policeCaseNumbers.join(', '),
+            policeCaseNumber,
           },
           reason,
         )

@@ -1,5 +1,5 @@
 import { BLOCKS } from '@contentful/rich-text-types'
-import { SliceType, richText } from '@island.is/island-ui/contentful'
+import { SliceType } from '@island.is/island-ui/contentful'
 import {
   Box,
   GridColumn,
@@ -11,6 +11,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { FooterItem } from '@island.is/web/graphql/schema'
+import { webRichText } from '@island.is/web/utils/richText'
 
 import * as styles from './LandskjorstjornFooter.css'
 
@@ -42,7 +43,7 @@ export const LandskjorstjornFooter = ({
                 <Text variant="h2" color="white">
                   <Hyphen>{footerItems[0].title}</Hyphen>
                 </Text>
-                {richText(footerItems[0].content as SliceType[], {
+                {webRichText(footerItems[0].content as SliceType[], {
                   renderNode: {
                     [BLOCKS.PARAGRAPH]: (_node, children) => (
                       <Text
@@ -84,7 +85,7 @@ export const LandskjorstjornFooter = ({
                     </Text>
                   )}
                 </Box>
-                {richText(item.content as SliceType[], {
+                {webRichText(item.content as SliceType[], {
                   renderNode: {
                     [BLOCKS.PARAGRAPH]: (_node, children) => (
                       <Text color="white" variant="medium" marginBottom={2}>
