@@ -48,13 +48,6 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
   const onRejectButtonClick = () => {
     setRejectModalVisibility(true)
   }
-  console.log(
-    isLastReviewer(
-      reviewerNationalId,
-      application.answers,
-      coOwnersAndOperators,
-    ),
-  )
   const onApproveButtonClick = async () => {
     if (
       (getValueViaPath(
@@ -151,6 +144,7 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
         setVisibility={setRejectModalVisibility}
         application={application}
         refetch={refetch}
+        reviewerNationalId={reviewerNationalId}
       />
     </>
   )

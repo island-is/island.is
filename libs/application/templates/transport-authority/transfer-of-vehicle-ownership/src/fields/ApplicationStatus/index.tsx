@@ -24,7 +24,8 @@ export const ApplicationStatus: FC<FieldBaseProps & ReviewScreenProps> = ({
       <Text variant="h1" marginBottom={2}>
         Staða tilkynningar
       </Text>
-      <Box marginTop={4} display="flex" justifyContent="flexEnd">
+      <Text>Hér að neðan kemur fram hvað gerist næst</Text>
+      <Box marginTop={2} display="flex" justifyContent="flexEnd">
         <Button
           colorScheme="default"
           iconType="filled"

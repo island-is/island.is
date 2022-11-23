@@ -6,18 +6,21 @@ import { useLocale } from '@island.is/localization'
 import { FC } from 'react'
 import { overview } from '../../../lib/messages'
 import * as styles from './RejectConfirmationModal.css'
+import { getRejecter } from '../../../utils'
 
 type RejectConfirmationModalProps = {
   visibility: boolean
   setVisibility: (visibility: boolean) => void
   application: Application
   refetch?: () => void
+  reviewerNationalId?: string
 }
 
 export const RejectConfirmationModal: FC<RejectConfirmationModalProps> = ({
   visibility,
   setVisibility,
   application,
+  reviewerNationalId = '',
   refetch,
 }) => {
   const { formatMessage } = useLocale()
@@ -37,6 +40,9 @@ export const RejectConfirmationModal: FC<RejectConfirmationModalProps> = ({
         input: {
           id: application.id,
           event: DefaultEvents.REJECT,
+          answers: {
+            rejecter: getRejecter(reviewerNationalId, application.answers),
+          },
         },
       },
     })

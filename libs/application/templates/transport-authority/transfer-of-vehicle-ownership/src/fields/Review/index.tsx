@@ -57,6 +57,7 @@ export const Review: FC<FieldBaseProps> = (props) => {
           <ReviewConclusion
             setStep={setStep}
             reviewerNationalId={reviewerNationalId}
+            coOwnersAndOperators={coOwnersAndOperators}
             {...props}
           />
         )

@@ -155,17 +155,14 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.ReviewForm),
                 ),
               write: {
-                answers: ['buyerCoOwnerAndOperator', 'insurance', 'buyer'],
+                answers: [
+                  'buyerCoOwnerAndOperator',
+                  'insurance',
+                  'buyer',
+                  'rejecter',
+                ],
               },
               read: 'all',
-              actions: [
-                {
-                  event: DefaultEvents.APPROVE,
-                  name: 'Approve',
-                  type: 'primary',
-                },
-                { event: DefaultEvents.REJECT, name: 'Reject', type: 'reject' },
-              ],
             },
             {
               id: Roles.REVIEWER,
@@ -174,7 +171,11 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.ReviewForm),
                 ),
               write: {
-                answers: ['sellerCoOwner', 'buyerCoOwnerAndOperator'],
+                answers: [
+                  'sellerCoOwner',
+                  'buyerCoOwnerAndOperator',
+                  'rejecter',
+                ],
               },
               read: 'all',
             },
@@ -233,9 +234,9 @@ const template: ApplicationTemplate<
           name: 'Completed',
           progress: 1,
           lifecycle: pruneAfterDays(3 * 30),
-          onEntry: {
+          /* onEntry: {
             apiModuleAction: ApiActions.submitApplication,
-          },
+          }, */
           actionCard: {
             tag: {
               label: application.actionCardDone,
@@ -246,8 +247,25 @@ const template: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/Approved').then((val) =>
-                  Promise.resolve(val.Approved),
+                import('../forms/Approved').then((module) =>
+                  Promise.resolve(module.Approved),
+                ),
+              read: 'all',
+              delete: true,
+            },
+            {
+              id: Roles.BUYER,
+              formLoader: () =>
+                import('../forms/Approved').then((module) =>
+                  Promise.resolve(module.Approved),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.REVIEWER,
+              formLoader: () =>
+                import('../forms/Approved').then((module) =>
+                  Promise.resolve(module.Approved),
                 ),
               read: 'all',
             },

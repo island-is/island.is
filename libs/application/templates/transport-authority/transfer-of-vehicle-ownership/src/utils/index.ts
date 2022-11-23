@@ -10,6 +10,7 @@ export { getReviewerInfo } from './getReviewerInfo'
 export { hasReviewerApproved } from './hasReviewerApproved'
 export { getApproveAnswers } from './getApproveAnswers'
 export { isLastReviewer } from './isLastReviewer'
+export { getRejecter } from './getRejecter'
 
 export const getChargeItemCodes = (
   answers: TransferOfVehicleOwnership,

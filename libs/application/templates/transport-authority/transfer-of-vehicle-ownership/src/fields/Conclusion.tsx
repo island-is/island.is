@@ -10,6 +10,7 @@ import { useLocale } from '@island.is/localization'
 import React, { FC } from 'react'
 import { Jobs } from '../assets/Jobs'
 import { conclusion } from '../lib/messages'
+import { CopyLink } from '@island.is/application/ui-components'
 
 export const Conclusion: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
@@ -19,16 +20,28 @@ export const Conclusion: FC<FieldBaseProps> = ({ application }) => {
       <Box marginBottom={5}>
         <AlertMessage
           type="success"
-          title={formatMessage(conclusion.seller.alertMessage)}
+          title={formatMessage(conclusion.default.alertMessage)}
         />
       </Box>
 
       <AccordionCard
         id="conclustion-card"
-        label={formatMessage(conclusion.seller.accordionTitle)}
+        label={formatMessage(conclusion.default.accordionTitle)}
       >
-        <Text>{formatMessage(conclusion.seller.accordionText)}</Text>
+        <Text>{formatMessage(conclusion.default.accordionText)}</Text>
       </AccordionCard>
+      <Box marginTop={3}>
+        <Text variant="h4">{formatMessage(conclusion.default.shareLink)}</Text>
+        <Box marginTop={2}>
+          <CopyLink
+            linkUrl={
+              `${document.location.origin}/umsoknir/eigendaskipti-okutaekis/` +
+              application.id
+            }
+            buttonTitle={formatMessage(conclusion.default.copyLink)}
+          />
+        </Box>
+      </Box>
       <Box
         marginTop={[5, 5, 5]}
         marginBottom={[5, 8]}
