@@ -5,7 +5,6 @@ import {
   CaseType,
   UpdateCase,
 } from '@island.is/judicial-system/types'
-import { resolve } from 'path'
 
 import { CreateCaseMutation } from '../graphql/schema'
 

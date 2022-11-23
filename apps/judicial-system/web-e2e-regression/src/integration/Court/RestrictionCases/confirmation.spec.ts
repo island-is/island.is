@@ -1,6 +1,5 @@
 import {
   RESTRICTION_CASE_CONFIRMATION_ROUTE,
-  CASES_ROUTE,
   SIGNED_VERDICT_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
