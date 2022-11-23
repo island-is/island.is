@@ -124,9 +124,8 @@ export class AirDiscountSchemeService {
     }
 
     // Should not generate discountcodes for users who do not meet requirements
-    getRelationsResponse = getRelationsResponse.filter(
-      (user) => user.fund.credit === user.fund.total - user.fund.used,
+    return getRelationsResponse.filter(
+      ({fund: {credit, used, total}} = user) => credit <= total - used,
     )
-    return getRelationsResponse
   }
 }
