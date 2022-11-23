@@ -20,10 +20,11 @@ For local development and testing start your app. Generally, first-time setup an
 3. `yarn dev <app>`
 
 {% hint style="example" %}
+
 1. `yarn get-secrets application-system-form`
 2. `yarn dev-init application-system-form`
 3. `yarn dev application-system-form`
-{% endhint %}
+   {% endhint %}
 
 However, not all projects support this, or are incomplete in this setup. If this fails, find its `README.md` and follow the instructions given there. If that fails, reach out to the QA team and we’ll remedy the documentation and improve the initial setup.
 
@@ -36,16 +37,16 @@ First time you run Playwright, you'll need to set up its runtime environment wit
 - Using a pattern (regex): `yarn playwright test <pattern>`
 
 {% hint style="example" %}
+
 - smoke: `yarn playwright test application-system-form/smoke`
 - acceptance: `yarn playwright test service-portal/acceptance`
 - both: `yarn playwright test system-e2e/.*/web`
 - pattern `yarn playwright test 'system-e2e/.*/s?port?'`
-{% endhint %}
+  {% endhint %}
 
 {% hint style="info" %}
 Add `export TEST_ENVIRONMENT=dev` before any command to test against the live [dev-web](https://beta.dev01.devland.is/). Note that you'll need Cognito username/password credentials for this. Valid values are `local` (default), `dev`, `staging`, and `prod` to test the respective environment.
 {% endhint %}
-
 
 # ✍️ Writing tests
 
