@@ -128,7 +128,7 @@ export const AccessConfirmModal = ({
         delegation={delegation}
         scopes={scopes}
         scopeTree={scopeTree}
-        listMarginBottom={[1, 1, 8]}
+        listMarginBottom={[1, 1, 10]}
       />
       <Box position="sticky" bottom={0}>
         <DelegationsFormFooter

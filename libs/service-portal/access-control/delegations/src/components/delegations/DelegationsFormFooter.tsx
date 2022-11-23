@@ -37,12 +37,13 @@ export const DelegationsFormFooter = ({
   const { formatMessage } = useLocale()
 
   return (
-    <>
+    <Box position="relative">
       {showDivider && (
         <div className={styles.dividerContainer}>
           <Divider />
         </div>
       )}
+      <div className={styles.shadow} />
       <Box
         display="flex"
         alignItems="center"
@@ -67,6 +68,6 @@ export const DelegationsFormFooter = ({
           {confirmLabel}
         </Button>
       </Box>
-    </>
+    </Box>
   )
 }

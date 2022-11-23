@@ -45,7 +45,7 @@ export const AccessListContainer = ({
           {delegation?.validTo && <AccessDate validTo={delegation.validTo} />}
         </Hidden>
       </Box>
-      <Box marginBottom={listMarginBottom ?? [1, 1, 1]}>
+      <Box marginBottom={listMarginBottom ?? 1}>
         {showAccessList ? (
           <AccessList
             validityPeriod={delegation.validTo}

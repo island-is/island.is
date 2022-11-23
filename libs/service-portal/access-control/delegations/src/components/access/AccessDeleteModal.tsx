@@ -159,6 +159,7 @@ export const AccessDeleteModal = ({
           scopes={delegation?.scopes}
           scopeTree={authScopeTree}
           loading={scopeTreeLoading}
+          listMarginBottom={[1, 1, 10]}
         />
       </Box>
       <Box position="sticky" bottom={0}>
