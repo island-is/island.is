@@ -109,7 +109,7 @@ You should therefore aim to write test for:
 
 ## 🏗️ Test structure
 
-Test cases are written spec files somewhere. Tests that do not modify anything (e.g. _create_ an application, _change_ the user’s name, etc.), and verify basic functionality are called **smoke tests**. Tests that are more detailed and/or make any changes at all, are called **acceptance tests**. Test cases are put into folders by what app they are testing, smoke/acceptance test, and each file tests some aspect of an app. Here is an example of the folder layout for testing the search engine and front-page of the `web` project:
+Test cases are written spec files. Tests that do not modify anything (e.g. _create_ an application, _change_ the user’s name, etc.), and verify basic functionality are called **smoke tests**. Tests that are more detailed and/or make any changes at all, are called **acceptance tests**. Test cases are put into folders by what app they are testing, smoke/acceptance test, and each file tests some aspect of an app. Here is an example of the folder layout for testing the search engine and front-page of the `web` project (within the system-e2e app):
 
 ```bash
 web/                      (app name)
@@ -147,7 +147,7 @@ test.describe('Overview part of banking app', () => {
 })
 ```
 
-Each test case (`test`) should test a specific scenario from end-to-end. Let’s take the operating licence application as an example. To test various routes/cases your test cases might include:
+Each test case (`test`) should test a specific scenario from end-to-end. If your test is getting long and complicated consider breaking it up within a `test` with `test.step`; each step will run in succession, while still . Let’s take the operating licence application as an example. To test various routes/cases your test cases might include:
 
 - Hotel permit with food, but no alcohol
 - Hotel permit with food and alcohol
@@ -156,11 +156,11 @@ Each test case (`test`) should test a specific scenario from end-to-end. Let’s
 
 ## 🧰 Using fixtures
 
-Fixtures are objects to use instead of real data when mocking something. You can use a fixture user to standardize between test cases in a spec. You can also define fixtures for static responses to use in `page.route` for more control over how you want the server to respond.
+Fixtures are objects to use instead of real data when mocking something. You can use a fixture user to standardize between test cases in a spec. You can also define fixtures for static responses to use in `page.route` for more control over how you want the server to respond. Full docs at [Playwright.dev](https://playwright.dev/docs/test-fixtures).
 
-Fixtures are located in `src/fixtures/<your-app>/<object-type>.json`. Currently, fixtures and `page.route`s are only relevant in the front-end app. Getting the back-end to use specific fixtures is a Work in Progress.
+Fixtures are located in `src/fixtures/<your-app>.ts`. Currently, fixtures and `page.route`s are only relevant in the front-end app. Getting the back-end to use specific fixtures is a Work in Progress (see [PR](https://github.com/island-is/island.is/pull/8862)).
 
-Fixtures can be any JSON object (in `.json` files) or a typed TypeScript object (in `.ts` files). If writing a typed object, place new types in `lib/types.ts`.
+Fixtures can be any JSON object (in `.json` files) or – preferably – a typed TypeScript object (in `.ts` files).
 
 ## ☕ Mocking server-responses
 
@@ -191,7 +191,7 @@ Check out the [official playwright documentation](https://playwright.dev/docs/ap
 
 Some apps, like service-portal and application-system-form, load their components _very_ asynchronously. This can be an issue when targeting some elements, but they do not appear on the first page load, but instead load after the basic page has loaded.
 
-In such cases you can wait for the elements to exist with `page.waitFor*`:
+In such cases you can wait for the elements to exist with `page.waitFor*` ([docs](https://playwright.dev/docs/api/class-page#page-wait-for-event)):
 
 ```jsx
 // Wait for there to be at least 3 checkboxes
