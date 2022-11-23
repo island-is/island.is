@@ -9,8 +9,14 @@
       "email": "skra@skra.is"
     },
     "version": "v1.0.2",
-    "x-category": ["open", "official", "financial"],
-    "x-pricing": ["free"],
+    "x-category": [
+      "open",
+      "official",
+      "financial"
+    ],
+    "x-pricing": [
+      "free"
+    ],
     "x-links": {
       "documentation": null,
       "responsibleParty": null,
@@ -26,7 +32,9 @@
   "paths": {
     "/v1/statistics/broken-down-registration-statistics": {
       "get": {
-        "tags": ["Statistics"],
+        "tags": [
+          "Statistics"
+        ],
         "summary": "Gets information regarding statistics of electronic vs. paper registrations broken down by months and document type.",
         "operationId": "FaSundurlidadaThinglysingarTolfraediAsync",
         "parameters": [
@@ -178,7 +186,9 @@
     },
     "/v1/statistics/total-electronic-registration-action-requests": {
       "get": {
-        "tags": ["Statistics"],
+        "tags": [
+          "Statistics"
+        ],
         "summary": "Gets information regarding statistics of electronic registrations.",
         "description": "The API returns the total number of electronic registrations as well as giving a breakdown on\r\nthe number of registrations that were accepted, partly registered, had errors or were sent into manual processing.",
         "operationId": "FaFjoldaRafraennaThinglysingaBeidnaAsync",
@@ -298,7 +308,9 @@
     },
     "/v1/test/liveness": {
       "get": {
-        "tags": ["Test"],
+        "tags": [
+          "Test"
+        ],
         "summary": "Returns the string \"OK\" if the Web API is up and running or an error if it is not.",
         "operationId": "LivenessAsync",
         "responses": {
