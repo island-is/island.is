@@ -1,4 +1,6 @@
-# api-domains-powerbi
+<!-- gitbook-ignore -->
+
+# API Domains Powerbi
 
 This library was generated with [Nx](https://nx.dev).
 
