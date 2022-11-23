@@ -40,6 +40,7 @@ const InfoCardActiveIndictment: React.FC = () => {
         },
         {
           title: formatMessage(m.offence),
+          // TODO: Display all offences per police case number
           value: capitalize(
             workingCase.indictmentSubtypes &&
               Object.entries(workingCase.indictmentSubtypes).length > 0

@@ -465,7 +465,7 @@ const Defendant: React.FC = () => {
         <FormFooter
           previousUrl={constants.CASES_ROUTE}
           onNextButtonClick={() => handleNextButtonClick(workingCase)}
-          nextIsDisabled={!isDefendantStepValidIndictments(workingCase, [])}
+          nextIsDisabled={!isDefendantStepValidIndictments(workingCase)}
           nextIsLoading={isCreatingCase}
           nextButtonText={formatMessage(
             workingCase.id === '' ? core.createCase : core.continue,
