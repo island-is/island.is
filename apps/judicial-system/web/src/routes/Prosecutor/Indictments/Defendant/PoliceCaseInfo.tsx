@@ -1,4 +1,4 @@
-import React, { useContext, useMemo } from 'react'
+import React, { useContext, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { ValueType } from 'react-select'
 import InputMask from 'react-input-mask'
@@ -24,7 +24,7 @@ import { policeCaseInfo } from './PoliceCaseInfo.strings'
 
 interface Props {
   index: number
-  policeCaseNumber: string
+  policeCaseNumbers: string[]
   subtypes?: IndictmentSubtype[]
   crimeScene?: CrimeScene
   setPoliceCase: (
@@ -49,7 +49,7 @@ interface Props {
 export const PoliceCaseInfo: React.FC<Props> = (props) => {
   const {
     index,
-    policeCaseNumber,
+    policeCaseNumbers,
     subtypes,
     crimeScene,
     setPoliceCase,
@@ -61,10 +61,13 @@ export const PoliceCaseInfo: React.FC<Props> = (props) => {
 
   const { user } = useContext(UserContext)
 
+  const [policeCaseNumberInmput, setPoliceCaseNumberInput] = useState(
+    policeCaseNumbers[index],
+  )
   const [
     policeCaseNumberErrorMessage,
     setPoliceCaseNumberErrorMessage,
-  ] = React.useState<string>('')
+  ] = useState<string>('')
 
   const options = useMemo(
     () =>
@@ -96,17 +99,29 @@ export const PoliceCaseInfo: React.FC<Props> = (props) => {
         <InputMask
           mask={'999-9999-9999999'}
           maskPlaceholder={null}
-          value={policeCaseNumber}
+          value={policeCaseNumberInmput}
           onChange={(event) => {
-            removeErrorMessageIfValid(
-              ['empty', 'police-casenumber-format'],
-              event.target.value,
-              policeCaseNumberErrorMessage,
-              setPoliceCaseNumberErrorMessage,
-            )
-            setPoliceCase(index, {
-              policeCaseNumber: event.target.value,
-            })
+            if (
+              policeCaseNumbers.some(
+                (policeCaseNumber, idx) =>
+                  idx !== index && policeCaseNumber === event.target.value,
+              )
+            ) {
+              setPoliceCaseNumberErrorMessage(
+                formatMessage(policeCaseInfo.policeCaseNumberExists),
+              )
+            } else {
+              removeErrorMessageIfValid(
+                ['empty', 'police-casenumber-format'],
+                event.target.value,
+                policeCaseNumberErrorMessage,
+                setPoliceCaseNumberErrorMessage,
+              )
+              setPoliceCase(index, {
+                policeCaseNumber: event.target.value,
+              })
+            }
+            setPoliceCaseNumberInput(event.target.value)
           }}
           onBlur={(event) => {
             validateAndSetErrorMessage(

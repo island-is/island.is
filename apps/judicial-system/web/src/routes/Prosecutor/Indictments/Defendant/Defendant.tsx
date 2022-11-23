@@ -373,7 +373,7 @@ const Defendant: React.FC = () => {
                 <Box component="section" marginBottom={3}>
                   <PoliceCaseInfo
                     index={index}
-                    policeCaseNumber={workingCase.policeCaseNumbers[index]}
+                    policeCaseNumbers={workingCase.policeCaseNumbers}
                     subtypes={
                       workingCase.indictmentSubtypes &&
                       workingCase.indictmentSubtypes[
