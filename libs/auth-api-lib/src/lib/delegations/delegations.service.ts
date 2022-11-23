@@ -24,6 +24,7 @@ import { RskProcuringClient } from '@island.is/clients/rsk/procuring'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
+import { NoContentException } from '@island.is/nest/problem'
 import { isDefined } from '@island.is/shared/utils'
 
 import { ClientAllowedScope } from '../clients/models/client-allowed-scope.model'
@@ -53,6 +54,7 @@ import {
   validateScopesPeriod,
 } from './utils/scopes'
 import { DelegationType } from './types/delegationType'
+import { DelegationResourcesService } from '../resources/delegation-resources.service'
 
 export const UNKNOWN_NAME = 'Óþekkt nafn'
 
@@ -85,7 +87,80 @@ export class DelegationsService {
     private resourcesService: ResourcesService,
     private namesService: NamesService,
     private readonly auditService: AuditService,
+    private readonly delegationResourcesService: DelegationResourcesService,
   ) {}
+
+  /**
+   * Finds a single delegation related to the user, either as a outgoing or incoming.
+   * @param user Authenticated user object.
+   * @param delegationId Id of the delegation to find.
+   */
+  async findById(user: User, delegationId: string): Promise<DelegationDTO> {
+    if (!isUuid(delegationId)) {
+      throw new BadRequestException('delegationId must be a valid uuid')
+    }
+
+    const delegation = await this.delegationModel.findOne({
+      where: {
+        id: delegationId,
+        [Op.or]: [
+          { fromNationalId: user.nationalId },
+          { toNationalId: user.nationalId },
+        ],
+      },
+      include: [
+        {
+          model: DelegationScope,
+          required: false,
+          include: [
+            {
+              model: ApiScope,
+              attributes: ['displayName'],
+            },
+          ],
+        },
+      ],
+    })
+
+    const filteredDelegation = await this.filterDelegation(user, delegation)
+
+    if (!filteredDelegation) {
+      throw new NoContentException()
+    }
+
+    return filteredDelegation.toDTO()
+  }
+
+  private async filterDelegation(
+    user: User,
+    delegation: Delegation | null,
+  ): Promise<Delegation | null> {
+    let direction: DelegationDirection
+
+    if (delegation?.fromNationalId === user.nationalId) {
+      direction = DelegationDirection.OUTGOING
+    } else if (delegation?.toNationalId === user.nationalId) {
+      direction = DelegationDirection.INCOMING
+    } else {
+      return null
+    }
+
+    const allowedScopes = await this.delegationResourcesService.findScopeNames(
+      user,
+      delegation.domainName,
+      direction,
+    )
+    // If the user doesn't have any allowed scope in the delegation domain we return null
+    if (!allowedScopes.length) {
+      return null
+    }
+
+    delegation.delegationScopes = delegation.delegationScopes?.filter((scope) =>
+      allowedScopes.includes(scope.scopeName),
+    )
+
+    return delegation
+  }
 
   /**
    * Deprecated: Use DelegationsOutgoingService instead for outgoing delegations.
@@ -198,7 +273,7 @@ export class DelegationsService {
     )
     await this.delegationScopeService.createOrUpdate(delegationId, input.scopes)
 
-    return this.findById(user, delegationId)
+    return this.findByIdOutgoing(user, delegationId)
   }
 
   /**
@@ -249,10 +324,13 @@ export class DelegationsService {
 
   /**
    * Finds a single delegation for a user.
-   * @param nationalId Id of the user to find the delegation from.
+   * @param user User related to the delegation either giving or receiving.
    * @param id Id of the delegation to find.
    */
-  async findById(user: User, id: string): Promise<DelegationDTO | null> {
+  async findByIdOutgoing(
+    user: User,
+    id: string,
+  ): Promise<DelegationDTO | null> {
     if (!isUuid(id)) {
       throw new BadRequestException('delegationId must be a valid uuid')
     }
