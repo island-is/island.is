@@ -13,7 +13,7 @@ export const serviceSetup = (): ServiceBuilder<'services-documents'> =>
       postgres: postgresInfo,
       envs: {
         NO_UPDATE_NOTIFIER: 'true',
-      }
+      },
     })
     .env({
       IDENTITY_SERVER_ISSUER_URL: {

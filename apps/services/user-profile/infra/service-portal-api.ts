@@ -33,7 +33,7 @@ export const serviceSetup = (): ServiceBuilder<'service-portal-api'> =>
       postgres: { passwordSecret: '/k8s/service-portal/api/DB_PASSWORD' },
       envs: {
         NO_UPDATE_NOTIFIER: 'true',
-      }
+      },
     })
     .liveness('/liveness')
     .readiness('/readiness')

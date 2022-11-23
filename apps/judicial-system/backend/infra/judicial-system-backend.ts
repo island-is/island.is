@@ -71,7 +71,7 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
       postgres: postgresInfo,
       envs: {
         NO_UPDATE_NOTIFIER: 'true',
-      }
+      },
     })
     .liveness('/liveness')
     .readiness('/liveness')

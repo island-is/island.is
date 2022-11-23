@@ -14,7 +14,7 @@ export const serviceSetup = (): ServiceBuilder<'skilavottord-ws'> =>
       postgres: postgresInfo,
       envs: {
         NO_UPDATE_NOTIFIER: 'true',
-      }
+      },
     })
     .secrets({
       SAMGONGUSTOFA_SOAP_URL: '/k8s/skilavottord-ws/SAMGONGUSTOFA_SOAP_URL',

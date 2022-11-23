@@ -26,7 +26,7 @@ export const serviceSetup = (_services: {}): ServiceBuilder<'endorsement-system-
       postgres: postgresInfo,
       envs: {
         NO_UPDATE_NOTIFIER: 'true',
-      }
+      },
     })
     .env({
       EMAIL_REGION: 'eu-west-1',

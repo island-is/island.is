@@ -260,7 +260,7 @@ export const serviceSetup = (services: {
       postgres: postgresInfo,
       envs: {
         NO_UPDATE_NOTIFIER: 'true',
-      }
+      },
     })
     .postgres(postgresInfo)
     .liveness('/liveness')

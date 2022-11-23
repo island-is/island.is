@@ -52,7 +52,7 @@ export const serviceSetup = (): ServiceBuilder<'air-discount-scheme-backend'> =>
       postgres: postgresInfo,
       envs: {
         NO_UPDATE_NOTIFIER: 'true',
-      }
+      },
     })
     .ingress({
       primary: {
