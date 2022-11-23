@@ -29,6 +29,7 @@ import DropdownExport from '../../components/DropdownExport/DropdownExport'
 import { exportVehicleOwnedDocument } from '../../utils/vehicleOwnedMapper'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
+import { SAMGONGUSTOFA_LINK } from '../../utils/constants'
 
 export const GET_USERS_VEHICLES = gql`
   query GetUsersVehicles {
@@ -214,7 +215,7 @@ export const VehiclesOverview: ServicePortalModuleComponent = ({
           </Box>
           <Box>
             <a
-              href="/beidni-um-nafnleynd-i-okutaekjaskra"
+              href={SAMGONGUSTOFA_LINK}
               target="_blank"
               rel="noopener noreferrer"
             >

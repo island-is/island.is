@@ -83,7 +83,9 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
           id={field.id}
           error={error}
           defaultValue={
-            statefulAnswer !== undefined ? [statefulAnswer] : NO_ANSWER
+            statefulAnswer !== undefined
+              ? [statefulAnswer]
+              : StartDateOptions.SPECIFIC_DATE
           }
           options={[
             {
