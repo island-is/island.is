@@ -1,7 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql'
 
 @InputType('NationalRegistryXRoadChildGuardianshipInput')
-export class GetChildGuardianshipInput {
+export class ChildGuardianshipInput {
   @Field()
   childNationalId!: string
 }

@@ -1,7 +1,7 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 
-@ObjectType()
-export class NationalRegistryXRoadChildGuardianship {
+@ObjectType('NationalRegistryXRoadChildGuardianship')
+export class ChildGuardianship {
   @Field(() => ID)
   childNationalId!: string
 

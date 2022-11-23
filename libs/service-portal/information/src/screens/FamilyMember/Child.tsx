@@ -7,7 +7,7 @@ import ChildView from '../../components/ChildView/ChildView'
 
 const ChildGuardianshipQuery = gql`
   query NationalRegistryChildrenGuardianshipQuery(
-    $input: GetChildGuardianshipInput!
+    $input: NationalRegistryXRoadChildGuardianshipInput!
   ) {
     nationalRegistryUserV2ChildGuardianship(input: $input) {
       legalDomicileParent

@@ -8,7 +8,7 @@ import { NationalRegistryPerson } from '../models/nationalRegistryPerson.model'
 import { NationalRegistryResidence } from '../models/nationalRegistryResidence.model'
 import { NationalRegistrySpouse } from '../models/nationalRegistrySpouse.model'
 import { NationalRegistryFamilyMemberInfo } from '../models/nationalRegistryFamilyMember.model'
-import { NationalRegistryXRoadChildGuardianship } from '../models/nationalRegistryChildGuardianship.model'
+import { ChildGuardianship } from '../models/nationalRegistryChildGuardianship.model'
 import { NationalRegistryBirthplace } from '../models/nationalRegistryBirthplace.model'
 import { NationalRegistryCitizenship } from '../models/nationalRegistryCitizenship.model'
 import { NationalRegistryReligion } from '../models/nationalRegistryReligion.model'
@@ -42,10 +42,10 @@ export class NationalRegistryXRoadService {
     }))
   }
 
-  async getNationalRegistryChildGuardianship(
+  async getChildGuardianship(
     user: User,
     childNationalId: string,
-  ): Promise<NationalRegistryXRoadChildGuardianship | null> {
+  ): Promise<ChildGuardianship | null> {
     const childrenNationalIds = await this.nationalRegistryApi.getCustodyChildren(
       user,
     )
