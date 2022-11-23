@@ -285,9 +285,7 @@ export class DelegationsService {
       ],
     })
 
-    // TODO: Remove this check when we have removed meDelegations from public-api
-    // FindById is used to find both incoming and outgoing, we only force the access check on outgoing.
-    if (delegation && delegation.fromNationalId === user.nationalId) {
+    if (delegation) {
       delegation.delegationScopes = delegation.delegationScopes?.filter((s) =>
         this.checkIfOutgoingScopeAllowed(s, user),
       )

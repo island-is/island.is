@@ -5,6 +5,7 @@ import {
   Delete,
   Get,
   Headers,
+  Inject,
   Param,
   Patch,
   Post,
@@ -17,18 +18,16 @@ import {
   CreateDelegationDTO,
   DelegationDirection,
   DelegationDTO,
-  DelegationsIncomingService,
-  DelegationsOutgoingService,
-  DelegationsService,
   DelegationValidity,
+  DelegationsOutgoingService,
   PatchDelegationDTO,
+  DelegationsIncomingService,
 } from '@island.is/auth-api-lib'
 import {
   CurrentUser,
   IdsUserGuard,
   Scopes,
   ScopesGuard,
-  User,
 } from '@island.is/auth-nest-tools'
 import { AuthScope } from '@island.is/auth/scopes'
 import { Audit, AuditService } from '@island.is/nest/audit'
@@ -37,10 +36,12 @@ import {
   FeatureFlagGuard,
   FeatureFlagService,
   Features,
+  FEATURE_FLAG_CLIENT,
 } from '@island.is/nest/feature-flags'
 import { Documentation } from '@island.is/nest/swagger'
 import type { DocumentationParamOptions } from '@island.is/nest/swagger'
 import { isDefined } from '@island.is/shared/utils'
+import { User } from '@island.is/auth-nest-tools'
 
 const namespace = '@island.is/auth/delegation-api/me/delegations'
 
@@ -63,7 +64,6 @@ const delegationId: DocumentationParamOptions = {
 @Audit({ namespace })
 export class MeDelegationsController {
   constructor(
-    private readonly delegationsService: DelegationsService,
     private readonly delegationsOutgoingService: DelegationsOutgoingService,
     private readonly delegationsIncomingService: DelegationsIncomingService,
     private readonly featureFlagService: FeatureFlagService,
@@ -180,8 +180,8 @@ export class MeDelegationsController {
   findOne(
     @CurrentUser() user: User,
     @Param('delegationId') delegationId: string,
-  ): Promise<DelegationDTO | null> {
-    return this.delegationsService.findById(user, delegationId)
+  ): Promise<DelegationDTO> {
+    return this.delegationsOutgoingService.findById(user, delegationId)
   }
 
   @Post()
