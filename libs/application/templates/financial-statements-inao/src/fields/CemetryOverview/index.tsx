@@ -17,7 +17,6 @@ import { useLocale } from '@island.is/localization'
 import { currencyStringToNumber, formatCurrency } from '../../lib/utils/helpers'
 import { FinancialStatementsInao } from '../../lib/utils/dataSchema'
 import { format as formatNationalId } from 'kennitala'
-import { formatPhoneNumber } from '@island.is/application/ui-components'
 import { useSubmitApplication } from '../../hooks/useSubmitApplication'
 import { m } from '../../lib/messages'
 import { AboutOverview, FileValueLine, ValueLine } from '../Shared'
@@ -50,14 +49,14 @@ export const CemetryOverview = ({
   const fileName = answers.attachments?.file?.[0]?.name
   const careTakerLimit = answers.cemetryOperation.incomeLimit ?? '0'
   const cemeteryIncome = currencyStringToNumber(answers.cemetryIncome?.total)
-  const currentAssets = answers.cemetryAsset?.currentAssets
+  const fixedAssetsTotal = answers.cemetryAsset?.fixedAssetsTotal
   const longTermDebt = answers.cemetryLiability?.longTerm
   const email = getValueViaPath(answers, 'about.email')
 
   const onBackButtonClick = () => {
     if (
       cemeteryIncome < Number(careTakerLimit) &&
-      currentAssets === '0' &&
+      fixedAssetsTotal === '0' &&
       longTermDebt === '0'
     ) {
       goToScreen && goToScreen('caretakers')
@@ -299,13 +298,7 @@ export const CemetryOverview = ({
           {formatMessage(m.overview)}
         </Text>
       </Box>
-      {cemeteryIncome < Number(careTakerLimit) &&
-      currentAssets === '0' &&
-      longTermDebt === '0' ? (
-        <Box paddingY={2}>
-          <Text>{`${formatMessage(m.SignatureMessage)} ${email}`}</Text>
-        </Box>
-      ) : null}
+
       <Box background="blue100">
         <Controller
           name="applicationApprove"
@@ -329,6 +322,17 @@ export const CemetryOverview = ({
           }}
         />
       </Box>
+      {cemeteryIncome < Number(careTakerLimit) &&
+      fixedAssetsTotal === '0' &&
+      longTermDebt === '0' ? (
+        <Box paddingTop={4}>
+          <AlertBanner
+            title={`${formatMessage(m.SignatureTitle)}`}
+            description={`${formatMessage(m.SignatureMessage)} ${email}`}
+            variant="info"
+          />
+        </Box>
+      ) : null}
       {errors && getErrorViaPath(errors, 'applicationApprove') ? (
         <InputError errorMessage={formatMessage(m.errorApproval)} />
       ) : null}
