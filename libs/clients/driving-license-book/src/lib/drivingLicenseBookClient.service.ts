@@ -202,31 +202,19 @@ export class DrivingLicenseBookClientApiFactory {
     const { data } = await api.apiStudentGetStudentOverviewSsnGet({
       ssn: nationalId,
     })
-    if (!data?.books?.length) {
+    const activeBook = await this.getActiveBookId(nationalId)
+
+    const book = data?.books?.filter((b) => b.id === activeBook && !!b.id)[0]
+
+    if (!book) {
       this.logger.error(
-        `${LOGTAG} Error fetching student, student has no books`,
+        `${LOGTAG} Error fetching student, student has no active book`,
       )
       throw new NotFoundException(
-        `driving-license-book-client: Student has empty book list`,
+        `driving-license-book-client: Student has no active book`,
       )
     }
-    if (data?.books?.length && data?.ssn) {
-      const activeBook = await this.getActiveBookId(data?.ssn)
-      if (!activeBook) {
-        this.logger.error(
-          `${LOGTAG} Error fetching student, student has no active book`,
-        )
-        throw new NotFoundException(
-          `driving-license-book-client: Student has no active book`,
-        )
-      }
-      const book = data.books.filter((b) => b.id === activeBook && !!b.id)[0]
-      return getStudentAndBookMapper(data, book)
-    }
-    this.logger.error(`${LOGTAG} Error fetching student, student has no books`)
-    throw new NotFoundException(
-      `driving-license-book-client: Student not found`,
-    )
+    return getStudentAndBookMapper(data, book)
   }
 
   async getMostRecentStudentBook({

@@ -231,7 +231,18 @@ const OrganizationPage: Screen<OrganizationProps> = ({
 
             <GridRow>
               {visibleItems.map(
-                ({ title, description, tag, link, logo }, index) => {
+                (
+                  {
+                    title,
+                    description,
+                    tag,
+                    link,
+                    logo,
+                    hasALandingPage,
+                    slug,
+                  },
+                  index,
+                ) => {
                   const tags =
                     tag &&
                     tag.map((x) => ({
@@ -246,7 +257,11 @@ const OrganizationPage: Screen<OrganizationProps> = ({
                       paddingBottom={verticalSpacing}
                     >
                       <CategoryCard
-                        href={link}
+                        href={
+                          hasALandingPage
+                            ? linkResolver('organizationpage', [slug]).href
+                            : link
+                        }
                         key={index}
                         text={description}
                         heading={title}
