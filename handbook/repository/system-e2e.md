@@ -148,7 +148,7 @@ test.describe('Overview part of banking app', () => {
 })
 ```
 
-Each test case (`test`) should test a specific scenario from end-to-end. If your test is getting long and complicated consider breaking it up within a `test` with `test.step`; each step will run in succession, while still . Let’s take the operating licence application as an example. To test various routes/cases your test cases might include:
+Each test case (`test`) should test a specific scenario from end-to-end. If your test is getting long and complicated consider breaking it up within a `test` with `test.step`; each step will run in succession and the failure/success report is easier to read. Let’s take the operating licence application as an example; test various routes/cases:
 
 - Hotel permit with food, but no alcohol
 - Hotel permit with food and alcohol
