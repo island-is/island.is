@@ -604,8 +604,8 @@
       "@island.is/service-portal/settings/personal-information": [
         "libs/service-portal/settings/personal-information/src/index.ts"
       ],
-      "@island.is/service-portal/vehicles": [
-        "libs/service-portal/vehicles/src/index.ts"
+      "@island.is/service-portal/transports": [
+        "libs/service-portal/transports/src/index.ts"
       ],
       "@island.is/services/auth/testing": [
         "libs/services/auth/testing/src/index.ts"

@@ -105,7 +105,6 @@ export const Dashboard: FC<{}> = () => {
   const { formatMessage } = useLocale()
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
-
   useEffect(() => {
     PlausiblePageviewDetail(ServicePortalPath.MinarSidurRoot)
   }, [location])

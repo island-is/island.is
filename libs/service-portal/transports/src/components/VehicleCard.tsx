@@ -50,7 +50,7 @@ export const VehicleCard: FC<Props> = ({ vehicle }) => {
         }),
         variant: 'text',
         url: vehicle.permno
-          ? ServicePortalPath.AssetsVehiclesDetail.replace(
+          ? ServicePortalPath.TransportVehiclesDetail.replace(
               ':id',
               vehicle.permno,
             )

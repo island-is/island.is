@@ -82,7 +82,7 @@ export const useDynamicRoutes = () => {
     }
 
     if (drivingLessonsFlagEnabled && licenseBookData?.book?.id) {
-      dynamicPathArray.push(ServicePortalPath.AssetsVehiclesDrivingLessons)
+      dynamicPathArray.push(ServicePortalPath.TransportVehiclesDrivingLessons)
     }
     setActiveDynamicRoutes(uniq([...activeDynamicRoutes, ...dynamicPathArray]))
   }, [data, licenseBook])

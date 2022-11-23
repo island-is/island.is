@@ -60,30 +60,55 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
 
       // Min Gogn
       {
-        name: m.userInfo,
+        name: m.myInfo,
         path: ServicePortalPath.MyInfoRoot,
         icon: {
           icon: 'person',
         },
         serviceProvider: 'i5go5A4ikV8muPfvr9o2v',
-        description: m.userInfoDescription,
+        description: m.info,
         children: [
           {
-            name: m.detailInfo,
-            navHide: false,
-            path: ServicePortalPath.UserInfo,
+            name: m.userInfo,
+            path: ServicePortalPath.MyInfoRoot,
             children: [
               {
-                name: m.familySpouse,
+                name: m.detailInfo,
                 navHide: true,
-                path: ServicePortalPath.Spouse,
-              },
-              {
-                name: m.familyChild,
-                navHide: true,
-                path: ServicePortalPath.Child,
+                path: ServicePortalPath.UserInfo,
+                children: [
+                  {
+                    name: m.familySpouse,
+                    navHide: true,
+                    path: ServicePortalPath.Spouse,
+                  },
+                  {
+                    name: m.familyChild,
+                    navHide: true,
+                    path: ServicePortalPath.Child,
+                  },
+                ],
               },
             ],
+          },
+          // Starfsleyfi
+          {
+            name: m.educationLicense,
+            path: ServicePortalPath.EducationLicense,
+            icon: {
+              icon: 'receipt',
+            },
+            description: m.educationLicenseDescription,
+          },
+          // Menntun
+          {
+            name: m.education,
+            path: ServicePortalPath.EducationRoot,
+            icon: {
+              icon: 'school',
+            },
+            description: m.educationDescription,
+            serviceProvider: '6JoPZKqmUVnRAVrj0vadTy',
           },
           {
             // Petitions
@@ -131,16 +156,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         description: m.licensesDescription,
       },
 
-      // Starfsleyfi
-      {
-        name: m.educationLicense,
-        path: ServicePortalPath.EducationLicense,
-        icon: {
-          icon: 'receipt',
-        },
-        description: m.educationLicenseDescription,
-      },
-
       // Mín réttindi
       {
         name: m.delegation,
@@ -156,16 +171,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         ],
       },
 
-      // Menntun
-      {
-        name: m.education,
-        path: ServicePortalPath.EducationRoot,
-        icon: {
-          icon: 'school',
-        },
-        description: m.educationDescription,
-        serviceProvider: '6JoPZKqmUVnRAVrj0vadTy',
-      },
       {
         name: m.documentProvider,
         path: ServicePortalPath.DocumentProviderRoot,
@@ -239,46 +244,66 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         description: m.financeDescription,
       },
 
-      // Ökutæki
+      // Samgöngur
       {
-        name: m.vehicles,
-        path: ServicePortalPath.AssetsVehicles,
+        name: m.transports,
+        path: ServicePortalPath.TransportRoot,
+        description: m.transports,
         icon: {
           icon: 'car',
         },
-        serviceProvider: '6IZT17s7stKJAmtPutjpD7',
-        description: m.vehiclesDescription,
         children: [
+          // Ökutæki
           {
-            name: m.myVehicles,
-            path: ServicePortalPath.AssetsVehicles,
+            name: m.vehicles,
+            path: ServicePortalPath.TransportVehicles,
+            icon: {
+              icon: 'car',
+            },
             serviceProvider: '6IZT17s7stKJAmtPutjpD7',
+            description: m.vehiclesDescription,
+            children: [
+              {
+                name: m.myVehicles,
+                path: ServicePortalPath.TransportMyVehicles,
+                serviceProvider: '6IZT17s7stKJAmtPutjpD7',
+              },
+              {
+                // Path param reference
+                name: 'id',
+                navHide: true,
+                path: ServicePortalPath.TransportVehiclesDetail,
+                serviceProvider: '6IZT17s7stKJAmtPutjpD7',
+              },
+              {
+                name: m.vehiclesLookup,
+                path: ServicePortalPath.TransportVehiclesLookup,
+                serviceProvider: '6IZT17s7stKJAmtPutjpD7',
+              },
+              {
+                name: m.vehiclesDrivingLessons,
+                path: ServicePortalPath.TransportVehiclesDrivingLessons,
+                serviceProvider: '6IZT17s7stKJAmtPutjpD7',
+              },
+              {
+                name: m.vehiclesHistory,
+                path: ServicePortalPath.TransportVehiclesHistory,
+                serviceProvider: '6IZT17s7stKJAmtPutjpD7',
+              },
+            ],
           },
-          {
-            // Path param reference
-            name: 'id',
-            navHide: true,
-            path: ServicePortalPath.AssetsVehiclesDetail,
-            serviceProvider: '6IZT17s7stKJAmtPutjpD7',
-          },
-          {
-            name: m.vehiclesLookup,
-            path: ServicePortalPath.AssetsVehiclesLookup,
-            serviceProvider: '6IZT17s7stKJAmtPutjpD7',
-          },
-          {
-            name: m.vehiclesDrivingLessons,
-            path: ServicePortalPath.AssetsVehiclesDrivingLessons,
-            serviceProvider: '6IZT17s7stKJAmtPutjpD7',
-          },
-          {
-            name: m.vehiclesHistory,
-            path: ServicePortalPath.AssetsVehiclesHistory,
-            serviceProvider: '6IZT17s7stKJAmtPutjpD7',
-          },
+          // {
+          //   name: 'Loftbrú', // TESTING ONLY
+          //   path: ServicePortalPath.TransportLowerAirfare,
+          // },
         ],
       },
 
+      // // Heilsa
+      // {
+      //   name: 'Heilsa',
+      //   path: ServicePortalPath.HealthRoot,
+      // },
       // Stillingar - hidden from nav
       {
         name: m.settings,

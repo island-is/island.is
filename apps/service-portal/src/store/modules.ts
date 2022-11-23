@@ -14,7 +14,7 @@ import { educationCareerModule } from '@island.is/service-portal/education-caree
 import { educationStudentAssessmentModule } from '@island.is/service-portal/education-student-assessment'
 import { applicationsModule } from '@island.is/service-portal/applications'
 import { licensesModule } from '@island.is/service-portal/licenses'
-import { vehiclesModule } from '@island.is/service-portal/vehicles'
+import { transportsModule } from '@island.is/service-portal/transports'
 import { delegationsModule } from '@island.is/service-portal/access-control/delegations'
 
 /**
@@ -43,7 +43,7 @@ export type ModuleKeys =
   | 'applications'
   | 'licenses'
   | 'petitions'
-  | 'vehicles'
+  | 'transports'
   | 'delegations'
 
 export const companyModules: ModuleKeys[] = [
@@ -52,7 +52,7 @@ export const companyModules: ModuleKeys[] = [
   'assets',
   'finance',
   'information',
-  'vehicles',
+  'transports',
   'personalInformation',
   'accessControl',
   'delegations',
@@ -76,6 +76,6 @@ export const modules: Record<ModuleKeys, ServicePortalModule> = {
   applications: applicationsModule,
   accessControl: accessControlModule,
   licenses: licensesModule,
-  vehicles: vehiclesModule,
+  transports: transportsModule,
   delegations: delegationsModule,
 }

@@ -865,4 +865,9 @@ export const m = defineMessages({
     defaultMessage: 'Mínir flokkar',
     description: 'My categories',
   },
+  transports: {
+    id: 'service.portal:transports',
+    defaultMessage: 'Samgöngur',
+    description: 'Transports',
+  },
 })

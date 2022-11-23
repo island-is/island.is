@@ -1,0 +1,25 @@
+{
+  "root": "libs/service-portal/transports",
+  "sourceRoot": "libs/service-portal/transports/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/service-portal/transports/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/service-portal/transports"],
+      "options": {
+        "jestConfig": "libs/service-portal/transports/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  }
+}

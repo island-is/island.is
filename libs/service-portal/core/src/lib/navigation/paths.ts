@@ -39,18 +39,27 @@ export enum ServicePortalPath {
 
   // Family
   Child = '/min-gogn/barn/:nationalId',
-  FamilyMember = '/min-gogn/:nationalId',
+  FamilyMember = '/min-gogn/fjolskylda/:nationalId',
   Spouse = '/min-gogn/maki/:nationalId',
   MyInfoRoot = '/min-gogn',
   UserInfo = '/min-gogn/minar-upplysingar',
   Endorsements = '/min-gogn/medmaeli',
+  // Education License
+  EducationLicense = '/min-gogn/leyfisbref',
+  // Education
+  EducationRoot = '/min-gogn/menntun',
+  EducationDegree = '/min-gogn/menntun/profgradur',
+  EducationCareer = '/min-gogn/menntun/namsferill',
+  EducationStudentAssessment = '/min-gogn/menntun/namsferill/:familyIndex/samraemd-prof',
+  EducationExternal = 'https://minarsidur.island.is/minar-sidur/menntun/namsferill/',
+
   Company = '/fyrirtaeki',
 
   // General Petitions
-  Petitions = '/medmaeli',
-  PetitionsAdminView = '/medmaeli-admin',
-  PetitionList = '/medmaeli/:listId',
-  PetitionListAdmin = '/medmaeli-admin/:listId',
+  Petitions = '/min-gogn/medmaeli',
+  PetitionsAdminView = '/min-gogn/medmaeli-admin',
+  PetitionList = '/min-gogn/medmaeli/:listId',
+  PetitionListAdmin = '/min-gogn/medmaeli-admin/:listId',
 
   RealEstateExternal = 'https://minarsidur.island.is/minar-sidur/min-gogn/fasteignir',
 
@@ -72,25 +81,19 @@ export enum ServicePortalPath {
   // Heilsa
   HealthRoot = '/heilsa',
 
-  // Education
-  EducationRoot = '/menntun',
-  EducationDegree = '/menntun/profgradur',
-  EducationCareer = '/menntun/namsferill',
-  EducationStudentAssessment = '/menntun/namsferill/:familyIndex/samraemd-prof',
-  EducationExternal = 'https://minarsidur.island.is/minar-sidur/menntun/namsferill/',
-
-  // Education License
-  EducationLicense = '/leyfisbref',
+  // Transports
+  TransportRoot = '/samgongur',
+  TransportVehicles = '/samgongur/okutaeki',
+  TransportMyVehicles = '/samgongur/okutaeki/min-okutaeki',
+  TransportVehiclesDetail = '/samgongur/okutaeki/min-okutaeki/:id',
+  TransportVehiclesLookup = '/samgongur/okutaeki/leit',
+  TransportVehiclesHistory = '/samgongur/okutaeki/okutaekjaferill',
+  TransportVehiclesDrivingLessons = '/samgongur/okutaeki/okunam',
+  TransportLowerAirfare = '/samgongur/loftbru',
 
   // Assets
   AssetsRoot = '/fasteignir',
   AssetsRealEstateDetail = '/fasteignir/:id',
-  AssetsVehicles = '/okutaeki',
-  AssetsMyVehicles = '/okutaeki/min-okutaeki',
-  AssetsVehiclesDetail = '/okutaeki/min-okutaeki/:id',
-  AssetsVehiclesLookup = '/okutaeki/leit',
-  AssetsVehiclesHistory = '/okutaeki/okutaekjaferill',
-  AssetsVehiclesDrivingLessons = '/okutaeki/okunam',
 
   // Messages
   MessagesRoot = '/skilabod',

@@ -25,13 +25,12 @@ import {
   Organization,
   useAlertBanners,
 } from '@island.is/service-portal/graphql'
-import { useMeasure, useWindowSize } from 'react-use'
+import { useMeasure } from 'react-use'
 import InstitutionPanel from '../InstitutionPanel/InstitutionPanel'
 import useNavigation from '../../hooks/useNavigation/useNavigation'
 import { useQuery } from '@apollo/client'
 import SidebarLayout from './SidebarLayout'
 import Sticky from '../Sticky/Sticky'
-import { theme } from '@island.is/island-ui/theme'
 import { Link as ReactLink } from 'react-router-dom'
 import Sidemenu from '../Sidemenu/Sidemenu'
 import { useStore } from '../../store/stateProvider'
@@ -51,8 +50,6 @@ const Layout: FC = ({ children }) => {
   const globalBanners = banners.filter((banner) =>
     banner.servicePortalPaths?.includes('*'),
   )
-  const { width } = useWindowSize()
-  const isTablet = width <= theme.breakpoints.lg
   const subNavItems: NavigationItem[] = []
   const [{ mobileMenuState }] = useStore()
 
@@ -171,6 +168,7 @@ const Layout: FC = ({ children }) => {
                         baseId={'service-portal-navigation'}
                         title={formatMessage(m.tableOfContents)}
                         items={subNavItems}
+                        expand
                       />
                     </Box>
                   )}
