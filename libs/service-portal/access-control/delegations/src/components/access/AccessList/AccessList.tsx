@@ -27,7 +27,9 @@ export const AccessList = ({
     scopeTree: AuthScopeTree | AuthApiScope[],
     indent?: boolean,
   ) => {
-    return scopeTree.map((scope) => {
+    return scopeTree.map((scope, scopeIndex) => {
+      const isLast = scopeIndex === scopeTree.length - 1
+
       if (
         // Check if scope is a group
         scope.__typename === AUTH_API_SCOPE_GROUP_TYPE &&
@@ -67,9 +69,11 @@ export const AccessList = ({
               validTo={delegationScope.validTo}
               validityPeriod={validityPeriod}
             />
-            <div className={commonAccessStyles.divider}>
-              <Divider {...(indent && { weight: 'faded' })} />
-            </div>
+            {!isLast && (
+              <div className={commonAccessStyles.divider}>
+                <Divider {...(indent && { weight: 'faded' })} />
+              </div>
+            )}
           </Fragment>
         )
       }
