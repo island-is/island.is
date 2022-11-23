@@ -25,9 +25,16 @@ describe('ApiDomains: AirDiscountSchemeResolver', () => {
     scope: [ApiScope.internal],
   })
 
-  const fabDiscount = (nationalId: string): TDiscount => ({
+  const fabGetDiscount = (nationalId: string): TDiscount => ({
     connectionDiscountCodes: [],
-    discountCode: 'ABCDEFGH',
+    discountCode: 'GETDISCO',
+    expiresIn: 86400,
+    nationalId,
+  })
+
+  const fabCreateDiscount = (nationalId: string): TDiscount => ({
+    connectionDiscountCodes: [],
+    discountCode: 'CREATEDC',
     expiresIn: 86400,
     nationalId,
   })
@@ -67,7 +74,7 @@ describe('ApiDomains: AirDiscountSchemeResolver', () => {
             getDiscount: jest.fn(
               (user: User, nationalId: string): TDiscount | void => {
                 if (idsForGetDiscount.includes(nationalId)) {
-                  return fabDiscount(nationalId)
+                  return fabGetDiscount(nationalId)
                 }
                 return undefined
               },
@@ -75,7 +82,7 @@ describe('ApiDomains: AirDiscountSchemeResolver', () => {
             createDiscount: jest.fn(
               (user: User, nationalId: string): TDiscount | null => {
                 if (idsForCreateDiscount.includes(nationalId)) {
-                  return fabDiscount(nationalId)
+                  return fabCreateDiscount(nationalId)
                 }
                 return null
               },
@@ -99,21 +106,45 @@ describe('ApiDomains: AirDiscountSchemeResolver', () => {
     expect(resolver).toBeDefined()
   })
 
-  describe('ineligible users', () => {
-    it('A user who is not eligible and does not have any eligible wards, should not get any discounts', async () => {
-      const user = fabAuthUser('1010302719')
+  describe('Eligible users', () => {
+    it('A user with an active discount gets their discount back', async () => {
+      const user = fabAuthUser('1010303019')
       const discountsWithUser = await resolver.getDiscount(user)
-      expect(discountsWithUser).toHaveLength(0)
+      const expectedDiscount = fabGetDiscount(user.nationalId)
+
+      expect(discountsWithUser).toHaveLength(1)
+      const discountWithUser = discountsWithUser.pop()
+
+      expect(discountWithUser).toEqual(
+        expect.objectContaining(expectedDiscount),
+      )
     })
 
-    it("A user who is not eligible, but has eligible wards, should get their wards' discounts and nothing else", async () => {
-      const knownWards = ['2222222229', '3333333339']
-      const expectedDiscounts = knownWards.map((ward) => fabDiscount(ward))
+    it('A user without an active discount, but is eligible, should have a discount created', async () => {
+      const user = fabAuthUser('1010302399')
+      const discountsWithUser = await resolver.getDiscount(user)
+      const expectedDiscount = fabCreateDiscount(user.nationalId)
 
-      const user = fabAuthUser('1010302989')
+      expect(discountsWithUser).toHaveLength(1)
+      const discountWithUser = discountsWithUser.pop()
+
+      expect(discountWithUser).toEqual(
+        expect.objectContaining(expectedDiscount),
+      )
+    })
+
+    it("An eligible user with eligible wards should get their own discount and their wards'", async () => {
+      const user = fabAuthUser('1010307789')
+      const knownWards = ['2222222229', '3333333339']
+      const expectedDiscounts = [
+        fabGetDiscount(user.nationalId),
+        fabGetDiscount(knownWards[0]),
+        fabCreateDiscount(knownWards[1]),
+      ]
+
       const discountsWithUser = await resolver.getDiscount(user)
 
-      expect(discountsWithUser).toHaveLength(2)
+      expect(discountsWithUser).toHaveLength(3)
 
       // https://jestjs.io/docs/expect#expectarraycontainingarray
       // https://jestjs.io/docs/expect#expectobjectcontainingobject
@@ -129,15 +160,37 @@ describe('ApiDomains: AirDiscountSchemeResolver', () => {
       const nationalIds = discountsWithUser.map(
         (discountWithuser) => discountWithuser.user.nationalId,
       )
-      expect(nationalIds).toEqual(knownWards)
+      expect(nationalIds).toEqual([user.nationalId, ...knownWards])
     })
   })
-  describe('Eligible users', () => {
-    it('A user with an active discount gets a discount back', async () => {
-      const user = fabAuthUser('1010303019')
+
+  describe('Ineligible users', () => {
+    it('A user who is not eligible and does not have any eligible wards, should not get any discounts', async () => {
+      const user = fabAuthUser('1010302719')
+      const discountsWithUser = await resolver.getDiscount(user)
+      expect(discountsWithUser).toHaveLength(0)
+    })
+
+    it("A user who is not eligible, but has eligible wards, should get their wards' discounts and nothing else", async () => {
+      const knownWards = ['2222222229', '3333333339']
+      const expectedDiscounts = [
+        fabGetDiscount(knownWards[0]),
+        fabCreateDiscount(knownWards[1]),
+      ]
+
+      const user = fabAuthUser('1010302989')
       const discountsWithUser = await resolver.getDiscount(user)
 
-      expect(discountsWithUser).toHaveLength(1)
+      expect(discountsWithUser).toHaveLength(2)
+
+      expect(discountsWithUser).toEqual(
+        expect.arrayContaining(expectedDiscounts.map(expect.objectContaining)),
+      )
+
+      const nationalIds = discountsWithUser.map(
+        (discountWithuser) => discountWithuser.user.nationalId,
+      )
+      expect(nationalIds).toEqual(knownWards)
     })
   })
 })
