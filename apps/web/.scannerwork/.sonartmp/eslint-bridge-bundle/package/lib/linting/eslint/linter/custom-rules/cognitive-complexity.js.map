@@ -1,0 +1,1 @@
+{"version":3,"file":"cognitive-complexity.js","sourceRoot":"","sources":["../../../../../src/linting/eslint/linter/custom-rules/cognitive-complexity.ts"],"names":[],"mappings":";AAAA;;;;;;;;;;;;;;;;;;GAkBG;;;AAEH,iEAAoE;AAGpE;;;;GAIG;AACU,QAAA,IAAI,GAAe;IAC9B,MAAM,EAAE,+BAA+B;IACvC,UAAU,EAAE,6BAAkB,CAAC,sBAAsB,CAAC;IACtD,UAAU,EAAE,CAAC,QAAQ,CAAC;CACvB,CAAC"}

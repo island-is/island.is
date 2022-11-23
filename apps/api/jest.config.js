@@ -4,4 +4,5 @@ module.exports = {
   globals: { 'ts-jest': { tsconfig: '<rootDir>/tsconfig.spec.json' } },
   displayName: 'api',
   testEnvironment: 'node',
+  coverageReporters: ['json', ['lcov', {'projectRoot': "/"}]],
 }

@@ -1,0 +1,7 @@
+organization=island-is
+projectKey=island-is_monorepo_api
+serverUrl=https://sonarcloud.io
+serverVersion=8.0.0.33236
+dashboardUrl=https://sonarcloud.io/dashboard?id=island-is_monorepo_api
+ceTaskId=AYPGz5H2SjTfpbupU7f5
+ceTaskUrl=https://sonarcloud.io/api/ce/task?id=AYPGz5H2SjTfpbupU7f5

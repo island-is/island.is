@@ -11,7 +11,7 @@ module.exports = {
   },
   resolver: customResolver,
   moduleFileExtensions: ['ts', 'js', 'html'],
-  coverageReporters: ['json', 'lcov'],
+  coverageReporters: ['json', ['lcov', {'projectRoot': __dirname}]],
   collectCoverageFrom: [
     '**/*.{js,jsx,ts,tsx}',
     '!**/*.css.*',
