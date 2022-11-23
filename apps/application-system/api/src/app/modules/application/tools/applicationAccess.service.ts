@@ -31,7 +31,16 @@ export class ApplicationAccessService {
 
     if (!existingApplication) {
       // Throws bad subject error if user is actor on application
-      await this.isUserActorOnApplication(id, user)
+      const actorNationalId = user.actor
+        ? user.actor.nationalId
+        : user.nationalId
+      const actorApplication = await this.applicationService.findByApplicantActor(
+        id,
+        actorNationalId,
+      )
+      if (actorApplication) {
+        throw new BadSubject([{ nationalId: actorApplication.applicant }])
+      }
 
       // Check if user has role in current state in application that allows access
       const existingApplicationById = await this.applicationService.findOneById(
@@ -53,18 +62,6 @@ export class ApplicationAccessService {
     }
 
     return existingApplication as BaseApplication
-  }
-
-  async isUserActorOnApplication(id: string, user: User) {
-    const actorNationalId = user.actor ? user.actor.nationalId : user.nationalId
-    const actorApplication = await this.applicationService.findByApplicantActor(
-      id,
-      actorNationalId,
-    )
-
-    if (actorApplication) {
-      throw new BadSubject([{ nationalId: actorApplication.applicant }])
-    }
   }
 
   async getRoleinState(
