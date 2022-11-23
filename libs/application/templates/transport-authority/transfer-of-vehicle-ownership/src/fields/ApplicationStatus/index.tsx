@@ -7,9 +7,7 @@ import { getReviewSteps, hasReviewerApproved } from '../../utils'
 import { StatusStep } from './StatusStep'
 
 export const ApplicationStatus: FC<FieldBaseProps & ReviewScreenProps> = ({
-  goToScreen,
   application,
-  field,
   setStep,
   reviewerNationalId = '',
   coOwnersAndOperators,
