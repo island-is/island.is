@@ -11,7 +11,7 @@ export const dividerContainer = style({
       marginLeft: -theme.grid.gutter.desktop,
       marginRight: -theme.grid.gutter.desktop,
     },
-    sm: {
+    md: {
       marginLeft: 0,
       marginRight: 0,
     },

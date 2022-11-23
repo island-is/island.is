@@ -1,15 +1,14 @@
 import { AuthCustomDelegation } from '@island.is/api/schema'
 import { useAuth } from '@island.is/auth/react'
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import { m } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 import { formatNationalId } from '@island.is/service-portal/core'
 import { Modal, ModalProps } from '../../Modal/Modal'
-import { AccessList } from '../../access/AccessList/AccessList'
 import { IdentityCard } from '../../IdentityCard/IdentityCard'
 import { useAuthScopeTreeLazyQuery } from '@island.is/service-portal/graphql'
-import { AccessListLoading } from '../../access/AccessList/AccessListLoading'
 import { useEffect } from 'react'
+import { AccessListContainer } from '../../access/AccessList/AccessListContainer'
 
 type DelegationIncomingModalProps = Pick<
   ModalProps,
@@ -27,7 +26,7 @@ export const DelegationIncomingModal = ({
   const { userInfo } = useAuth()
   const [
     getAuthScopeTree,
-    { data: scopeTreeData, loading },
+    { data: scopeTreeData, loading: scopeTreeLoading },
   ] = useAuthScopeTreeLazyQuery()
 
   useEffect(() => {
@@ -104,25 +103,11 @@ export const DelegationIncomingModal = ({
           />
         )}
       </Box>
-      <Box display="flex" flexDirection="column" rowGap={3} marginTop={6}>
-        <Box display="flex" alignItems="center" justifyContent="spaceBetween">
-          <Text variant="h4" as="h4">
-            {formatMessage({
-              id: 'sp.access-control-delegations:access-title',
-              defaultMessage: 'Réttindi',
-            })}
-          </Text>
-        </Box>
-        {!loading && authScopeTree && delegation ? (
-          <AccessList
-            validityPeriod={delegation.validTo}
-            scopes={delegation.scopes}
-            scopeTree={authScopeTree}
-          />
-        ) : (
-          <AccessListLoading rows={delegation?.scopes?.length ?? 0} />
-        )}
-      </Box>
+      <AccessListContainer
+        delegation={delegation}
+        scopeTree={authScopeTree}
+        loading={scopeTreeLoading}
+      />
     </Modal>
   )
 }

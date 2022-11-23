@@ -1,7 +1,7 @@
 import { isDefined } from '@island.is/shared/utils'
 import { AuthCustomDelegation } from '@island.is/api/schema'
 import { useAuth } from '@island.is/auth/react'
-import { AlertBanner, Box, Text } from '@island.is/island-ui/core'
+import { AlertBanner, Box } from '@island.is/island-ui/core'
 import { m } from '@island.is/service-portal/core'
 import {
   AuthDelegationScope,
@@ -12,8 +12,8 @@ import { formatNationalId } from '@island.is/service-portal/core'
 import { useState } from 'react'
 import { DelegationsFormFooter } from '../delegations/DelegationsFormFooter'
 import { Modal, ModalProps } from '../Modal/Modal'
-import { AccessList } from './AccessList/AccessList'
 import { IdentityCard } from '../IdentityCard/IdentityCard'
+import { AccessListContainer } from './AccessList/AccessListContainer'
 
 type AccessConfirmModalProps = Pick<ModalProps, 'onClose' | 'isVisible'> & {
   delegation: AuthCustomDelegation
@@ -124,25 +124,11 @@ export const AccessConfirmModal = ({
           />
         )}
       </Box>
-      <Box display="flex" flexDirection="column" rowGap={3} marginTop={6}>
-        <Box display="flex" alignItems="center" justifyContent="spaceBetween">
-          <Text variant="h4" as="h4">
-            {formatMessage({
-              id: 'sp.access-control-delegations:access-title',
-              defaultMessage: 'Réttindi',
-            })}
-          </Text>
-        </Box>
-        {scopes && (
-          <Box marginBottom={[0, 0, 12]}>
-            <AccessList
-              validityPeriod={validityPeriod}
-              scopes={scopes}
-              scopeTree={scopeTree}
-            />
-          </Box>
-        )}
-      </Box>
+      <AccessListContainer
+        delegation={delegation}
+        scopeTree={scopeTree}
+        listMarginBottom={[1, 1, 8]}
+      />
       <Box position="sticky" bottom={0}>
         <DelegationsFormFooter
           loading={loading}

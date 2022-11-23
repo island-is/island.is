@@ -1,6 +1,6 @@
 import { AuthCustomDelegation } from '@island.is/api/schema'
 import { useAuth } from '@island.is/auth/react'
-import { AlertMessage, Box, toast, Text } from '@island.is/island-ui/core'
+import { AlertMessage, Box, toast } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { formatNationalId } from '@island.is/service-portal/core'
 import {
@@ -12,8 +12,7 @@ import { DelegationsFormFooter } from '../delegations/DelegationsFormFooter'
 import { Modal, ModalProps } from '../Modal/Modal'
 import { m } from '@island.is/service-portal/core'
 import { IdentityCard } from '../IdentityCard/IdentityCard'
-import { AccessList } from '../access/AccessList/AccessList'
-import { AccessListLoading } from './AccessList/AccessListLoading'
+import { AccessListContainer } from './AccessList/AccessListContainer'
 
 type AccessDeleteModalProps = Pick<ModalProps, 'onClose' | 'isVisible'> & {
   delegation?: AuthCustomDelegation
@@ -155,27 +154,11 @@ export const AccessDeleteModal = ({
             imgSrc={delegation.domain.organisationLogoUrl}
           />
         )}
-        <Box display="flex" flexDirection="column" rowGap={3} marginTop={6}>
-          <Box display="flex" alignItems="center" justifyContent="spaceBetween">
-            <Text variant="h4" as="h4">
-              {formatMessage({
-                id: 'sp.access-control-delegations:access-title',
-                defaultMessage: 'Réttindi',
-              })}
-            </Text>
-          </Box>
-          {!scopeTreeLoading && authScopeTree && delegation ? (
-            <Box marginBottom={[1, 1, 12]}>
-              <AccessList
-                validityPeriod={delegation.validTo}
-                scopes={delegation.scopes}
-                scopeTree={authScopeTree}
-              />
-            </Box>
-          ) : (
-            <AccessListLoading rows={delegation?.scopes?.length ?? 0} />
-          )}
-        </Box>
+        <AccessListContainer
+          delegation={delegation}
+          scopeTree={authScopeTree}
+          loading={scopeTreeLoading}
+        />
       </Box>
       <Box position="sticky" bottom={0}>
         <DelegationsFormFooter
