@@ -217,7 +217,7 @@ export const getMultipleBirthRequestDays = (
     hasMultipleBirths,
   } = getApplicationAnswers(answers)
 
-  if (otherParent === SINGLE && hasMultipleBirths) {
+  if (otherParent === SINGLE && hasMultipleBirths === YES) {
     return getMaxMultipleBirthsDays(answers)
   }
 

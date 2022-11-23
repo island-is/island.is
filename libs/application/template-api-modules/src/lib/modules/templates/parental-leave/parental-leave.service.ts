@@ -649,7 +649,7 @@ export class ParentalLeaveService {
            ** 3: Additional rights and multipleBirths rights
            ** 4: Addtitonal rights
            */
-          if (maximumMultipleBirthsDaysToSpend == 0) {
+          if (maximumMultipleBirthsDaysToSpend === 0) {
             if (isSingleParentUsingPersonalRights) {
               // 1. Personal rights and additional rights
               // Personal rights
