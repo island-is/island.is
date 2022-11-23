@@ -25,7 +25,6 @@ const GiveDaysSlider: FC<FieldBaseProps> = ({ application }) => {
     application.answers,
   )
   const totalMonths = getMaxMultipleBirthsAndSingleParenttMonths(application)
-  console.log('TOTAL MONTHS: ', totalMonths)
 
   const boxChartKeys: BoxChartKey[] =
     hasMultipleBirths === YES
