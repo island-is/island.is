@@ -1,25 +1,22 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-@ObjectType('MunicipalitiesFinancialAidDirectTaxPaymentModel')
+@ObjectType()
 export class DirectTaxPaymentModel {
-  @Field()
-  readonly totalSalary!: number
-
-  @Field()
-  readonly payerNationalId!: string
-
-  @Field()
-  readonly personalAllowance!: number
-
-  @Field()
-  readonly withheldAtSource!: number
-
-  @Field()
-  readonly month!: number
-
-  @Field()
-  readonly year!: number
+  @Field(() => Number)
+  totalSalary!: number
 
   @Field(() => String)
-  readonly userType!: string
+  payerNationalId!: string
+
+  @Field(() => Number)
+  personalAllowance!: number
+
+  @Field(() => Number)
+  withheldAtSource!: number
+
+  @Field(() => Number)
+  month!: number
+
+  @Field(() => Number)
+  year!: number
 }

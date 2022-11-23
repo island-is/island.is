@@ -54,7 +54,7 @@ export const ApplicationMutation = gql`
   }
 `
 
-const useApplication = (id: string) => {
+const useApplication = (id?: string) => {
   const { data, loading } = useQuery<{
     municipalitiesFinancialAidApplication: Application
   }>(ApplicationQuery, {

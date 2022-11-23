@@ -8,10 +8,10 @@ import {
   buildSubmitField,
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
-import { DataProviderTypes } from '../lib/types'
 
 import * as m from '../lib/messages'
 import { Routes } from '../lib/constants'
+import { CurrentApplicationApi, TaxDataSpouseApi } from '../dataProviders'
 
 export const PrerequisitesSpouse: Form = buildForm({
   id: 'FinancialAidApplication',
@@ -30,16 +30,14 @@ export const PrerequisitesSpouse: Form = buildForm({
           checkboxLabel: m.externalData.general.checkboxLabel,
           dataProviders: [
             buildDataProviderItem({
-              id: 'taxDataFetchSpouse',
-              type: DataProviderTypes.TaxDataFetch,
+              provider: TaxDataSpouseApi,
               title: m.externalData.taxData.title,
               subTitle: m.externalData.taxData.dataInfo,
             }),
             buildDataProviderItem({
-              id: 'veita',
-              type: DataProviderTypes.Veita,
+              provider: CurrentApplicationApi,
               title: '',
-              subTitle: undefined,
+              subTitle: '',
             }),
             buildDataProviderItem({
               id: 'moreTaxInfo',

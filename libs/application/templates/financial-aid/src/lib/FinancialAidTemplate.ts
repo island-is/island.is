@@ -6,18 +6,11 @@ import {
   ApplicationStateSchema,
   DefaultEvents,
   Application,
-  defineTemplateApi,
 } from '@island.is/application/types'
 
 import { assign } from 'xstate'
 
-import {
-  Roles,
-  ApplicationStates,
-  ONE_DAY,
-  ONE_MONTH,
-  ApiActions,
-} from './constants'
+import { Roles, ApplicationStates, ONE_DAY, ONE_MONTH } from './constants'
 
 import { application, stateDescriptions } from './messages'
 import { dataSchema } from './dataSchema'
@@ -27,6 +20,16 @@ import {
   hasSpouseCheck,
 } from './utils'
 import { FAApplication } from '..'
+import {
+  CreateApplicationApi,
+  CurrentApplicationApi,
+  NationalRegistryUserApi,
+  NationalRegistrySpouseApi,
+  MunicipalityApi,
+  TaxDataApi,
+  TaxDataSpouseApi,
+  SendSpouseEmailApi,
+} from '../dataProviders'
 
 type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.EDIT }
 
@@ -64,11 +67,15 @@ const FinancialAidTemplate: ApplicationTemplate<
                 import('../forms/Prerequisites').then((module) =>
                   Promise.resolve(module.Prerequisites),
                 ),
-              write: {
-                answers: ['approveExternalData'],
-                externalData: ['nationalRegistry', 'veita', 'taxDataFetch'],
-              },
+              write: 'all',
               delete: true,
+              api: [
+                CurrentApplicationApi,
+                NationalRegistryUserApi,
+                NationalRegistrySpouseApi,
+                MunicipalityApi,
+                TaxDataApi,
+              ],
             },
           ],
         },
@@ -103,24 +110,8 @@ const FinancialAidTemplate: ApplicationTemplate<
                   Promise.resolve(module.Application),
                 ),
               read: 'all',
+              write: 'all',
               delete: true,
-              write: {
-                answers: [
-                  'spouse',
-                  'relationshipStatus',
-                  'homeCircumstances',
-                  'student',
-                  'employment',
-                  'income',
-                  'incomeFiles',
-                  'taxReturnFiles',
-                  'personalTaxCredit',
-                  'bankInfo',
-                  'contactInfo',
-                  'formComment',
-                  'spouseEmailSuccess',
-                ],
-              },
             },
           ],
         },
@@ -142,6 +133,7 @@ const FinancialAidTemplate: ApplicationTemplate<
           actionCard: {
             description: stateDescriptions.spouse,
           },
+          onEntry: SendSpouseEmailApi,
           roles: [
             {
               id: Roles.SPOUSE,
@@ -150,10 +142,8 @@ const FinancialAidTemplate: ApplicationTemplate<
                   Promise.resolve(module.PrerequisitesSpouse),
                 ),
               read: 'all',
-              write: {
-                answers: ['approveExternalDataSpouse'],
-                externalData: ['taxDataFetchSpouse', 'veita'],
-              },
+              write: 'all',
+              api: [CurrentApplicationApi, TaxDataSpouseApi],
             },
             {
               id: Roles.APPLICANT,
@@ -191,16 +181,7 @@ const FinancialAidTemplate: ApplicationTemplate<
                   Promise.resolve(module.Spouse),
                 ),
               read: 'all',
-              write: {
-                answers: [
-                  'spouseIncome',
-                  'spouseIncomeFiles',
-                  'spouseTaxReturnFiles',
-                  'spouseContactInfo',
-                  'spouseFormComment',
-                  'spouseName',
-                ],
-              },
+              write: 'all',
             },
             {
               id: Roles.APPLICANT,
@@ -224,11 +205,7 @@ const FinancialAidTemplate: ApplicationTemplate<
           actionCard: {
             description: stateDescriptions.submitted,
           },
-          onEntry: defineTemplateApi({
-            action: ApiActions.CREATEAPPLICATION,
-            shouldPersistToExternalData: true,
-            externalDataId: 'veita',
-          }),
+          onEntry: CreateApplicationApi,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -237,6 +214,7 @@ const FinancialAidTemplate: ApplicationTemplate<
                   Promise.resolve(module.ApplicantSubmitted),
                 ),
               read: 'all',
+              write: 'all',
             },
             {
               id: Roles.SPOUSE,
@@ -245,6 +223,7 @@ const FinancialAidTemplate: ApplicationTemplate<
                   Promise.resolve(module.SpouseSubmitted),
                 ),
               read: 'all',
+              write: 'all',
             },
           ],
         },
@@ -267,9 +246,7 @@ const FinancialAidTemplate: ApplicationTemplate<
                 import('../forms/MuncipalityNotRegistered').then((module) =>
                   Promise.resolve(module.MuncipalityNotRegistered),
                 ),
-              read: {
-                externalData: ['nationalRegistry'],
-              },
+              read: 'all',
             },
           ],
         },
@@ -283,9 +260,8 @@ const FinancialAidTemplate: ApplicationTemplate<
           externalData,
           answers,
         } = (context.application as unknown) as FAApplication
-        const { applicant } = externalData.nationalRegistry.data
         const spouse =
-          applicant.spouse?.nationalId ||
+          externalData.nationalRegistrySpouse.data?.nationalId ||
           answers.relationshipStatus.spouseNationalId
 
         if (spouse) {

@@ -31,7 +31,7 @@ const MissingFiles = ({
   field,
 }: FAFieldBaseProps) => {
   const { currentApplication, updateApplication, loading } = useApplication(
-    application.externalData.veita.data.currentApplicationId,
+    application.externalData.currentApplication.data?.currentApplicationId,
   )
   const isSpouse = getValueViaPath(field as RecordObject<any>, 'props.isSpouse')
 
@@ -71,8 +71,15 @@ const MissingFiles = ({
       }
 
       try {
+        if (
+          !application.externalData.currentApplication.data
+            ?.currentApplicationId
+        ) {
+          throw new Error()
+        }
+
         const uploadedFiles = await uploadFiles(
-          application.externalData.veita.data.currentApplicationId,
+          application.externalData.currentApplication.data.currentApplicationId,
           FileType.OTHER,
           files,
         )
@@ -163,9 +170,7 @@ const MissingFiles = ({
           <DescriptionText
             text={missingFiles.error.message}
             format={{
-              email:
-                application.externalData.nationalRegistry.data.municipality
-                  .email ?? '',
+              email: application.externalData.municipality.data?.email ?? '',
             }}
           />
         </>

@@ -13,17 +13,20 @@ describe('Formatters test', () => {
       const applicant = {
         nationalId: '',
         fullName: '',
+        genderCode: '',
+        citizenship: null,
+        age: 0,
         address: {
-          streetName: 'Flatahraun 10',
+          streetAddress: 'Flatahraun 10',
           postalCode: '220',
-          city: 'Hafnafjordur',
+          locality: 'Hafnafjordur',
           municipalityCode: '1400',
         },
       }
 
       const validApplicant = formatAddress(applicant)
       expect(validApplicant).toEqual(
-        `${applicant.address.streetName}, ${applicant.address.postalCode} ${applicant.address.city}`,
+        `${applicant.address.streetAddress}, ${applicant.address.postalCode} ${applicant.address.locality}`,
       )
     })
   })
