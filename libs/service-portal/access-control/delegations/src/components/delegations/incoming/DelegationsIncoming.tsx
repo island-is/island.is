@@ -12,7 +12,7 @@ import { m } from '@island.is/service-portal/core'
 import {
   AuthDelegationDirection,
   AuthDelegationType,
-  useAuthDelegationsQuery,
+  useAuthDelegationsIncomingQuery,
 } from '@island.is/service-portal/graphql'
 import { AccessDeleteModal } from '../../access/AccessDeleteModal'
 import { AccessCard } from '../../access/AccessCard'
@@ -29,7 +29,7 @@ export const DelegationsIncoming = () => {
     delegationDelete,
     setDelegationDelete,
   ] = useState<AuthCustomDelegation | null>(null)
-  const { data, loading, refetch, error } = useAuthDelegationsQuery({
+  const { data, loading, refetch, error } = useAuthDelegationsIncomingQuery({
     variables: {
       input: {
         direction: AuthDelegationDirection.Incoming,

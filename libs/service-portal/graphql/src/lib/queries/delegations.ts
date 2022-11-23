@@ -23,8 +23,8 @@ export const AUTH_DELEGATION_QUERY = gql`
 `
 
 // Delegations outgoing
-export const AUTH_DELEGATIONS_QUERY = gql`
-  query AuthDelegations($input: AuthDelegationsInput!, $lang: String) {
+export const AUTH_DELEGATIONS_OUTGOING_QUERY = gql`
+  query AuthDelegationsOutgoing($input: AuthDelegationsInput!, $lang: String) {
     authDelegations(input: $input) {
       id
       type
@@ -32,6 +32,20 @@ export const AUTH_DELEGATIONS_QUERY = gql`
         nationalId
         name
       }
+      ... on AuthCustomDelegation {
+        ...AuthCustomDelegationFragment
+      }
+    }
+  }
+  ${authCustomDelegationFragment}
+`
+
+// Delegations outgoing
+export const AUTH_DELEGATIONS_INCOMING_QUERY = gql`
+  query AuthDelegationsIncoming($input: AuthDelegationsInput!, $lang: String) {
+    authDelegations(input: $input) {
+      id
+      type
       from {
         nationalId
         name

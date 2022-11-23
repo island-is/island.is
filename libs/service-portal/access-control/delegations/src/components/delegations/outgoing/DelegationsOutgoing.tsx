@@ -12,7 +12,7 @@ import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
 import {
   AuthDelegationDirection,
-  useAuthDelegationsQuery,
+  useAuthDelegationsOutgoingQuery,
 } from '@island.is/service-portal/graphql'
 import { AccessCard } from '../../access/AccessCard'
 import { AccessDeleteModal } from '../../access/AccessDeleteModal'
@@ -29,7 +29,7 @@ export const DelegationsOutgoing = () => {
   )
   const { name: domainName } = useDomains()
 
-  const { data, loading, refetch, error } = useAuthDelegationsQuery({
+  const { data, loading, refetch, error } = useAuthDelegationsOutgoingQuery({
     variables: {
       input: {
         domain: domainName,
