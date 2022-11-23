@@ -21,8 +21,7 @@ export const ElectionStatement = ({
   const { errors } = useFormContext()
   const answers = application.answers as FinancialStatementsInao
   const email = getValueViaPath(answers, 'about.email')
-
-  const [submitApplication] = useSubmitApplication({
+  const [submitApplication, { loading }] = useSubmitApplication({
     application,
     refetch,
     event: DefaultEvents.SUBMIT,
@@ -72,6 +71,7 @@ export const ElectionStatement = ({
         <InputError errorMessage={formatMessage(m.errorApproval)} />
       ) : null}
       <BottomBar
+        loading={loading}
         onSendButtonClick={onSendButtonClick}
         onBackButtonClick={onBackButtonClick}
       />
