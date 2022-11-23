@@ -20,7 +20,6 @@ export const RealEstateRepeater: FC<FieldBaseProps<Answers>> = ({
   field,
   errors,
 }) => {
-  console.log(application.answers)
   const error = (errors as any)?.estate?.assets
   const { id } = field
   const { formatMessage } = useLocale()
@@ -54,7 +53,6 @@ export const RealEstateRepeater: FC<FieldBaseProps<Answers>> = ({
     <Box marginTop={2}>
       <GridRow>
         {fields.reduce((acc, asset, index) => {
-          console.log(asset)
           if (!asset.initial) {
             return acc
           }
