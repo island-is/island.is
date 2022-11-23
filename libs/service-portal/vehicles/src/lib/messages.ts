@@ -586,4 +586,28 @@ export const messages = defineMessages({
     id: 'sp.vehicles:vehicle-driving-lessons-comments',
     defaultMessage: 'Athugasemdir',
   },
+  changeOfOwnership: {
+    id: 'sp.vehicles:change-of-ownership',
+    defaultMessage: 'Tilkynna eigendaskipti',
+  },
+  more: {
+    id: 'sp.vehicles:more',
+    defaultMessage: 'Meira',
+  },
+  orderRegistrationNumber: {
+    id: 'sp.vehicles:order-registration-number',
+    defaultMessage: 'Panta skráningarmerki',
+  },
+  orderRegistrationLicense: {
+    id: 'sp.vehicles:orderRegistrationLicense',
+    defaultMessage: 'Panta skráningarskírteini',
+  },
+  addCoOwner: {
+    id: 'sp.vehicles:add-co-owner',
+    defaultMessage: 'Bæta við meðeigenda',
+  },
+  addOperator: {
+    id: 'sp.vehicles:add-operator',
+    defaultMessage: 'Bæta við umráðamanni',
+  },
 })

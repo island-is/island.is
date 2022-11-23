@@ -18,6 +18,11 @@ export const review = {
         'Vinsamlegast farðu yfir gögnin hér að neðan til að staðfesta að réttar upplýsingar hafi verið gefnar upp.',
       description: 'Description of overview screen',
     },
+    approvedSectionTitle: {
+      id: 'ta.tvo.application:review.general.approvedSectionTitle',
+      defaultMessage: 'Yfirlit',
+      description: 'Approved section title of overview screen',
+    },
   }),
   buttons: defineMessages({
     back: {

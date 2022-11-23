@@ -7,15 +7,12 @@ import { getReviewSteps, hasReviewerApproved } from '../../utils'
 import { StatusStep } from './StatusStep'
 
 export const ApplicationStatus: FC<FieldBaseProps & ReviewScreenProps> = ({
-  goToScreen,
   application,
-  field,
   setStep,
   reviewerNationalId = '',
   coOwnersAndOperators,
 }) => {
   const { formatMessage } = useLocale()
-  console.log(application)
 
   const steps = getReviewSteps(application, coOwnersAndOperators || [])
 
@@ -24,7 +21,8 @@ export const ApplicationStatus: FC<FieldBaseProps & ReviewScreenProps> = ({
       <Text variant="h1" marginBottom={2}>
         Staða tilkynningar
       </Text>
-      <Box marginTop={4} display="flex" justifyContent="flexEnd">
+      <Text>Hér að neðan kemur fram hvað gerist næst</Text>
+      <Box marginTop={2} display="flex" justifyContent="flexEnd">
         <Button
           colorScheme="default"
           iconType="filled"

@@ -1,6 +1,7 @@
 import {
   UserInformationSchema,
   CoOwnerAndOperatorSchema,
+  RejecterSchema,
 } from '../lib/dataSchema'
 import { TagVariant } from '@island.is/island-ui/core'
 import { MessageDescriptor } from '@formatjs/intl'
@@ -33,6 +34,7 @@ export type ReviewState =
 
 export type UserInformation = z.TypeOf<typeof UserInformationSchema>
 export type CoOwnerAndOperator = z.TypeOf<typeof CoOwnerAndOperatorSchema>
+export type Rejecter = z.TypeOf<typeof RejecterSchema>
 
 // Review
 

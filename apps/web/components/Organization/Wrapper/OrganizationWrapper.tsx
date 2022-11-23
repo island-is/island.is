@@ -29,6 +29,7 @@ import {
   HeadWithSocialSharing,
   LiveChatIncChatPanel,
   Sticky,
+  SidebarShipSearchInput,
 } from '@island.is/web/components'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { useNamespace } from '@island.is/web/hooks'
@@ -59,7 +60,10 @@ import { LatestNewsCardConnectedComponent } from '../LatestNewsCardConnectedComp
 import { RikislogmadurHeader } from './Themes/RikislogmadurTheme/RikislogmadurHeader'
 import { RikislogmadurFooter } from './Themes/RikislogmadurTheme/RikislogmadurFooter'
 import { LandskjorstjornHeader } from './Themes/LandkjorstjornTheme/LandskjorstjornHeader'
-import FjarsyslaRikisinsFooter from './Themes/FjarsyslaRikisinsTheme/FjarsyslaRikisinsFooter'
+import {
+  FjarsyslaRikisinsHeader,
+  FjarsyslaRikisinsFooter,
+} from './Themes/FjarsyslaRikisinsTheme'
 
 import * as styles from './OrganizationWrapper.css'
 
@@ -95,6 +99,7 @@ export const lightThemes = [
   'landlaeknir',
   'fiskistofa',
   'landing_page',
+  'fjarsysla-rikisins',
 ]
 export const footerEnabled = [
   'syslumenn',
@@ -121,7 +126,7 @@ export const footerEnabled = [
   'rikislogmadur',
   'office-of-the-attorney-general-civil-affairs',
 
-  'fjarsysla-rikisins',
+  'fjarsyslan',
   'the-financial-management-authority',
 ]
 
@@ -156,7 +161,9 @@ export const getThemeConfig = (
     : { themeConfig: { footerVersion } }
 }
 
-const OrganizationHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
+export const OrganizationHeader: React.FC<HeaderProps> = ({
+  organizationPage,
+}) => {
   switch (organizationPage.theme) {
     case 'syslumenn':
       return <SyslumennHeader organizationPage={organizationPage} />
@@ -182,6 +189,8 @@ const OrganizationHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
       return <LandskjorstjornHeader organizationPage={organizationPage} />
     case 'landing_page':
       return null
+    case 'fjarsysla-rikisins':
+      return <FjarsyslaRikisinsHeader organizationPage={organizationPage} />
     default:
       return <DefaultHeader organizationPage={organizationPage} />
   }
@@ -338,7 +347,6 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
     case 'the-financial-management-authority':
       OrganizationFooterComponent = (
         <FjarsyslaRikisinsFooter
-          title={organization.title}
           footerItems={organization.footerItems}
           logo={organization.logo?.url}
         />
@@ -428,6 +436,23 @@ const getActiveNavigationItemTitle = (
         return childItem.title
       }
     }
+  }
+}
+
+const renderConnectedComponent = (slice) => {
+  if (!slice?.componentType) return null
+
+  switch (slice.componentType) {
+    case 'LatestNewsCard':
+      return (
+        <LatestNewsCardConnectedComponent key={slice?.id} {...slice?.json} />
+      )
+    case 'Fiskistofa/ShipSearchSidebarInput':
+      return (
+        <SidebarShipSearchInput key={slice?.id} namespace={slice?.json ?? {}} />
+      )
+    default:
+      return null
   }
 }
 
@@ -537,17 +562,8 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                         )
                       }
 
-                      if (
-                        card.__typename === 'ConnectedComponent' &&
-                        (card.type === 'LatestNewsCard' ||
-                          card['componentType'] === 'LatestNewsCard')
-                      ) {
-                        return (
-                          <LatestNewsCardConnectedComponent
-                            key={card.id}
-                            {...card.json}
-                          />
-                        )
+                      if (card.__typename === 'ConnectedComponent') {
+                        return renderConnectedComponent(card)
                       }
 
                       return null

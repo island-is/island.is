@@ -147,9 +147,9 @@ export const serviceSetup = (services: {
       FINANCIAL_STATEMENTS_INAO_TOKEN_ENDPOINT:
         'https://login.microsoftonline.com/05a20268-aaea-4bb5-bb78-960b0462185e/oauth2/v2.0/token',
       ELECTRONIC_REGISTRATION_STATISTICS_API_URL: {
-        dev: 'https://gw-api-staging.skra.is/business/tolfraedi',
-        staging: 'https://gw-api-staging.skra.is/business/tolfraedi',
-        prod: 'https://gw-api.skra.is/business/tolfraedi',
+        dev: 'https://api-staging.thinglysing.is/business/tolfraedi',
+        staging: 'https://api-staging.thinglysing.is/business/tolfraedi',
+        prod: 'https://api.thinglysing.is/business/tolfraedi',
       },
     })
 
@@ -209,6 +209,15 @@ export const serviceSetup = (services: {
         '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET',
       FISKISTOFA_ZENTER_EMAIL: '/k8s/api/FISKISTOFA_ZENTER_EMAIL',
       FISKISTOFA_ZENTER_PASSWORD: '/k8s/api/FISKISTOFA_ZENTER_PASSWORD',
+      FISKISTOFA_API_URL: '/k8s/api/FISKISTOFA_API_URL',
+      FISKISTOFA_API_ACCESS_TOKEN_SERVICE_CLIENT_SECRET:
+        '/k8s/api/FISKISTOFA_API_ACCESS_TOKEN_SERVICE_CLIENT_SECRET',
+      FISKISTOFA_API_ACCESS_TOKEN_SERVICE_URL:
+        '/k8s/api/FISKISTOFA_API_ACCESS_TOKEN_SERVICE_URL',
+      FISKISTOFA_API_ACCESS_TOKEN_SERVICE_CLIENT_ID:
+        '/k8s/api/FISKISTOFA_API_ACCESS_TOKEN_SERVICE_CLIENT_ID',
+      FISKISTOFA_API_ACCESS_TOKEN_SERVICE_AUDIENCE:
+        '/k8s/api/FISKISTOFA_API_ACCESS_TOKEN_SERVICE_AUDIENCE',
     })
     .xroad(
       AdrAndMachine,

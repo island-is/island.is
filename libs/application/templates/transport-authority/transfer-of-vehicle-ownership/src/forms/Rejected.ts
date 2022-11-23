@@ -42,15 +42,15 @@ export const Rejected: Form = buildForm({
     }),
     buildSection({
       id: 'conclusion',
-      title: conclusion.general.sectionTitle,
+      title: conclusion.general.rejectedTitle,
       children: [
         buildMultiField({
           id: 'conclusion.multifield',
-          title: conclusion.general.title,
+          title: conclusion.general.rejectedTitle,
           children: [
             buildCustomField({
-              component: 'Conclusion',
-              id: 'Conclusion',
+              component: 'RejectedConclusion',
+              id: 'RejectedConclusion',
               title: '',
               description: '',
             }),

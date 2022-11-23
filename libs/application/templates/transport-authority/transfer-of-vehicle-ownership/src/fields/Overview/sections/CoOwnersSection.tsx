@@ -11,7 +11,6 @@ export const CoOwnersSection: FC<FieldBaseProps & ReviewScreenProps> = ({
   coOwnersAndOperators = [],
 }) => {
   const { formatMessage } = useLocale()
-  console.log(coOwnersAndOperators)
   const coOwners = coOwnersAndOperators.filter((x) => x.type === 'coOwner')
 
   return coOwners.length > 0 ? (
