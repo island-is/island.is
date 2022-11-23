@@ -57,8 +57,7 @@
     "mimic-response",
     "to-readable-stream",
     "url-parse-lax",
-    "safer-buffer",
-    "normalize-url"
+    "safer-buffer"
   ],
   "keepNames": true
 }

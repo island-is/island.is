@@ -110,7 +110,7 @@ export const serviceSetup = (services: {
     .namespace(namespace)
     .serviceAccount(serviceAccount)
     .command('node')
-    .args('--tls-min-v1.0', '--no-experimental-fetch', 'main.js')
+    .args('main.js')
     .env({
       EMAIL_REGION: 'eu-west-1',
       IDENTITY_SERVER_ISSUER_URL: {
