@@ -28,7 +28,7 @@ export const AccessList = ({
     indent?: boolean,
   ) => {
     return scopeTree.map((scope, scopeIndex) => {
-      const isLast = scopeIndex === scopeTree.length - 1
+      const isLastChild = scopeIndex === scopeTree.length - 1 && indent
 
       if (
         // Check if scope is a group
@@ -69,7 +69,7 @@ export const AccessList = ({
               validTo={delegationScope.validTo}
               validityPeriod={validityPeriod}
             />
-            {!isLast && (
+            {!isLastChild && (
               <div className={commonAccessStyles.divider}>
                 <Divider {...(indent && { weight: 'faded' })} />
               </div>
