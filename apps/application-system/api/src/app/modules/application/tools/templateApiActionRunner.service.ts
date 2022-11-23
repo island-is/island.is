@@ -58,6 +58,20 @@ export class TemplateApiActionRunner {
     )
 
     islandis_logger.debug(
+      `TemplateApi: this.application. ${JSON.stringify(this.application)}`,
+    )
+    islandis_logger.debug(
+      `TemplateApi: this.newExternalData ${JSON.stringify(
+        this.newExternalData,
+      )}`,
+    )
+    islandis_logger.debug(
+      `TemplateApi: this.oldExternalData ${JSON.stringify(
+        this.oldExternalData,
+      )}`,
+    )
+
+    islandis_logger.debug(
       `TemplateApi: Setting old external data . ${JSON.stringify(
         application.externalData,
       )}`,
@@ -191,13 +205,29 @@ export class TemplateApiActionRunner {
     action: string,
     externalDataId?: string,
   ): Promise<void> {
+    islandis_logger.debug(
+      `TemplateApi: updateExternalData : ${JSON.stringify({
+        actionResult,
+        action,
+        externalDataId,
+      })}`,
+    )
     const newExternalDataEntry = this.buildExternalData(
       actionResult,
       action,
       externalDataId,
     )
+    islandis_logger.debug(
+      `TemplateApi: newExternalDataEntry : ${JSON.stringify(
+        newExternalDataEntry,
+      )}`,
+    )
     this.newExternalData = { ...this.newExternalData, ...newExternalDataEntry }
-
+    islandis_logger.debug(
+      `TemplateApi: this.newExternalData : ${JSON.stringify(
+        this.newExternalData,
+      )}`,
+    )
     this.application.externalData = {
       ...this.application.externalData,
       ...newExternalDataEntry,
