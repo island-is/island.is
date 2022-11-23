@@ -14,6 +14,7 @@ import {
   PageTitle,
   PdfButton,
   SectionHeading,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
   IndictmentsCourtSubsections,
@@ -30,7 +31,6 @@ import {
 import * as constants from '@island.is/judicial-system/consts'
 
 import { overview as m } from './Overview.strings'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 
 const Overview = () => {
   const router = useRouter()
