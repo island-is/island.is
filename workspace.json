@@ -114,7 +114,6 @@
     "clients-adr-and-machine-license": "libs/clients/adr-and-machine-license",
     "clients-air-discount-scheme": "libs/clients/air-discount-scheme",
     "clients-assets": "libs/clients/assets",
-    "clients-assets-v2": "libs/clients/assets-v2",
     "clients-auth-delegation-api": "libs/clients/auth/delegation-api",
     "clients-auth-public-api": "libs/clients/auth/public-api",
     "clients-charge-fjs-v2": "libs/clients/charge-fjs-v2",

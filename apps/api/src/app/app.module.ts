@@ -51,7 +51,6 @@ import {
 } from '@island.is/api/domains/license-service'
 import { PaymentScheduleModule } from '@island.is/api/domains/payment-schedule'
 import { AssetsClientConfig } from '@island.is/clients/assets'
-import { AssetsV2ClientConfig } from '@island.is/clients/assets-v2'
 import { AuthPublicApiClientConfig } from '@island.is/clients/auth/public-api'
 import { FinanceClientConfig } from '@island.is/clients/finance'
 import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
@@ -256,8 +255,6 @@ const autoSchemaFile = environment.production
       load: [
         AdrAndMachineLicenseClientConfig,
         AssetsClientConfig,
-        AirDiscountSchemeClientConfig,
-        AssetsV2ClientConfig,
         FirearmLicenseClientConfig,
         GenericFirearmLicenseConfig,
         GenericMachineLicenseConfig,

@@ -162,7 +162,6 @@
   - [ADR and Machine License](libs/clients/adr-and-machine-license/README.md)
   - [Air Discount Scheme](libs/clients/air-discount-scheme/README.md)
   - [Assets](libs/clients/assets/README.md)
-  - [Assets V2](libs/clients/assets-v2/README.md)
   - [Auth](libs/clients/auth/README.md)
     - [Delegation API](libs/clients/auth/delegation-api/README.md)
     - [Public API](libs/clients/auth/public-api/README.md)
