@@ -156,6 +156,17 @@ export const m = defineMessages({
       'Það staðfestist hér með að heildartekjur eða -kostnaður vegna framboðsins voru ekki umfram þau fjárhæðarmörk sem tilgreind eru í 3. mgr. 10. gr. laga nr. 162/2006, um starfsemi stjórnmálasamtaka, og er framboðið því undanþegið uppgjörsskyldu.',
     description: 'statement',
   },
+  SignatureTitle: {
+    id: 'fsn.application:SignatureTitle',
+    defaultMessage: 'Rafræn undirritun',
+    description: 'Signature alert title',
+  },
+  SignatureMessage: {
+    id: 'fsn.application:SignatureMessage',
+    defaultMessage:
+      'Eftir að þú hefur sent inn umsókn mun rafræn undirritun verða send á netfangið',
+    description: 'Signature alert message',
+  },
   nationalId: {
     id: 'fsn.application:nationalId',
     defaultMessage: 'Kennitala',
@@ -200,6 +211,11 @@ export const m = defineMessages({
     id: 'fsn.application:keyNumbers.properties',
     defaultMessage: 'Eignir, skuldir og eigið fé',
     description: 'Statement property numbers',
+  },
+  debtsAndEquity: {
+    id: 'fsn.application:keyNumbers.debtsAndEquity',
+    defaultMessage: 'Skuldir og eigið fé',
+    description: 'debts and equity',
   },
   keyNumbersDebt: {
     id: 'fsn.application:keyNumbers.debt',
@@ -337,6 +353,17 @@ export const m = defineMessages({
     defaultMessage:
       'Umsækjandi má ekki vera skráður sem stjórnarmaður eða skoðunarmaður',
     description: 'error, applicant regsitered as caretaker/boardmember',
+  },
+  errorcaretakerCanNotIncludeActor: {
+    id: 'fsn.application:error.errorcaretakerCanNotIncludeActor',
+    defaultMessage: 'Innskráður aðili má ekki vera skráður sem skoðunarmaður',
+    description: 'error, applicant regsitered as caretaker',
+  },
+  errorBoardmembersCanNotJustIncludeActor: {
+    id: 'fsn.application:error.errorBoardmembersCanNotJustIncludeActor',
+    defaultMessage:
+      'Innskráður aðili má ekki vera skráður einn sem stjórnarmaður',
+    description: 'error, applicant regsitered as caretaker',
   },
   contributionsFromTheTreasury: {
     id: 'fsn.application:income.contributionsFromTheTreasury',
@@ -675,6 +702,11 @@ export const m = defineMessages({
     defaultMessage: 'Ársreikningur mótekinn',
     description: 'financial statement received',
   },
+  infoReceived: {
+    id: 'fsn.application:infoReceived',
+    defaultMessage: 'Uppgjör móttekið',
+    description: 'election info received',
+  },
   dataCollectionCheckboxLabel: {
     id: 'fsn.application:dataCollectionCheckboxLabel',
     defaultMessage:
@@ -806,6 +838,12 @@ export const m = defineMessages({
     id: 'fsn.application:equityValidatorError',
     defaultMessage: 'Skuldir og eigið fé þarf að vera jafnt og eignir samtals',
     description: 'Equity + debts shout equal assets',
+  },
+  wrongDelegation: {
+    id: 'fsn.application:wrongDelegation',
+    defaultMessage:
+      'Eingöngu er hægt að skila fyrir hönd Kirkjugarða eða Stjórnmálasamtaka',
+    description: 'Logged in user with incorrect delegation type',
   },
   submitErrorMessage: {
     id: 'fsn.application:submitErrorMessage',

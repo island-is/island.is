@@ -31,11 +31,13 @@ describe('emailSignupResolver', () => {
           name: 'EMAIL',
           type: 'email',
           value: 'test@example.com',
+          id: '1',
         },
         {
           name: 'NAME',
           type: 'input',
           value: 'Tester',
+          id: '2',
         },
       ],
     }
@@ -48,7 +50,6 @@ describe('emailSignupResolver', () => {
         )
 
       jest.spyOn(axios, 'get').mockImplementation((url) => {
-        console.log('URL', url)
         if (
           url ===
           'https://example.com/signup?EMAIL=test@example.com&NAME=Tester'

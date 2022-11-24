@@ -12,7 +12,6 @@ import { clientInfoSection } from './shared/about/clientInfoSection'
 import { m } from '../../lib/messages'
 import { overviewSection } from './shared/overviewSection'
 import { Logo } from '../../components'
-import { USERTYPE, LESS } from '../../lib/constants'
 import { cemetryKeyNumbersSection } from './cemetry/cemetryKeyNumbers'
 import { partyKeyNumbersSection } from './party/partyKeyNumbers'
 import { individualKeyNumbersSection } from './individual/individualKeyNumbers'
@@ -22,6 +21,7 @@ import {
   currencyStringToNumber,
   getCurrentUserType,
 } from '../../lib/utils/helpers'
+import { FSIUSERTYPE, LESS } from '../../types'
 
 export const getApplication = (allowFakeData = false): Form => {
   return buildForm({
@@ -33,7 +33,7 @@ export const getApplication = (allowFakeData = false): Form => {
     logo: Logo,
     children: [
       buildSection({
-        id: 'conditions',
+        id: 'ExternalDataSection',
         title: m.dataCollectionTitle,
         children: [
           buildExternalDataProvider({
@@ -52,12 +52,6 @@ export const getApplication = (allowFakeData = false): Form => {
                 type: 'UserProfileProvider',
                 title: m.dataCollectionUserProfileTitle,
                 subTitle: m.dataCollectionUserProfileSubtitle,
-              }),
-              buildDataProviderItem({
-                id: 'currentUserType',
-                type: 'CurrentUserTypeProvider',
-                title: '',
-                subTitle: '',
               }),
             ],
           }),
@@ -85,20 +79,19 @@ export const getApplication = (allowFakeData = false): Form => {
               const applicationAnswers = answers as FinancialStatementsInao
               const careTakerLimit =
                 applicationAnswers.cemetryOperation?.incomeLimit ?? '0'
-              const currentAssets =
+              const fixedAssetsTotal =
                 applicationAnswers.cemetryAsset?.fixedAssetsTotal
-              const isCemetry = userType === USERTYPE.CEMETRY
+              const isCemetry = userType === FSIUSERTYPE.CEMETRY
               const totalIncome = isCemetry
-                ? applicationAnswers.operatingCost?.total
+                ? applicationAnswers.cemetryIncome?.total
                 : '0'
               const longTermDebt = applicationAnswers.cemetryLiability?.longTerm
               const isUnderLimit =
                 currencyStringToNumber(totalIncome) < careTakerLimit
-
               if (
                 isCemetry &&
                 isUnderLimit &&
-                currentAssets === '0' &&
+                fixedAssetsTotal === '0' &&
                 longTermDebt === '0'
               ) {
                 return false

@@ -406,13 +406,13 @@ export class NotificationService {
   private async sendReadyForCourtEmailNotificationToProsecutor(
     theCase: Case,
   ): Promise<Recipient> {
-    const { type, court, policeCaseNumbers } = theCase
+    const { id, type, court, policeCaseNumbers, prosecutor } = theCase
 
     const overviewUrl = `${
-      isRestrictionCase(theCase.type)
+      isRestrictionCase(type)
         ? `${this.config.clientUrl}${RESTRICTION_CASE_OVERVIEW_ROUTE}`
         : `${this.config.clientUrl}${INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE}`
-    }/${theCase.id}`
+    }/${id}`
 
     const { subject, body } = formatProsecutorReadyForCourtEmailNotification(
       this.formatMessage,
@@ -422,12 +422,7 @@ export class NotificationService {
       overviewUrl,
     )
 
-    return this.sendEmail(
-      subject,
-      body,
-      theCase.prosecutor?.name,
-      theCase.prosecutor?.email,
-    )
+    return this.sendEmail(subject, body, prosecutor?.name, prosecutor?.email)
   }
 
   private async defenderCourtDateNotificationSent(theCase: Case) {
@@ -622,9 +617,7 @@ export class NotificationService {
   ): Promise<Recipient> {
     const subject = this.formatMessage(
       notifications.prisonCourtDateEmail.subject,
-      {
-        caseType: theCase.type,
-      },
+      { caseType: theCase.type },
     )
     // Assume there is at most one defendant
     const html = formatPrisonCourtDateEmailNotification(
@@ -858,9 +851,7 @@ export class NotificationService {
   ): Promise<Recipient> {
     const subject = this.formatMessage(
       notifications.prisonRulingEmail.subject,
-      {
-        caseType: theCase.type,
-      },
+      { caseType: theCase.type },
     )
     const html = formatPrisonRulingEmailNotification(
       this.formatMessage,
@@ -1119,9 +1110,7 @@ export class NotificationService {
   ): Promise<Recipient> {
     const subject = this.formatMessage(
       notifications.prisonRevokedEmail.subject,
-      {
-        caseType: theCase.type,
-      },
+      { caseType: theCase.type },
     )
     // Assume there is at most one defendant
     const html = formatPrisonRevokedEmailNotification(
@@ -1150,9 +1139,7 @@ export class NotificationService {
   ): Promise<Recipient> {
     const subject = this.formatMessage(
       notifications.defenderRevokedEmail.subject,
-      {
-        caseType: theCase.type,
-      },
+      { caseType: theCase.type },
     )
 
     // Assume there is at most one defendant
@@ -1220,18 +1207,19 @@ export class NotificationService {
     }
 
     const recipients = await Promise.all(promises)
-    if (recipients.length > 0) {
-      return this.recordNotification(
-        theCase.id,
-        NotificationType.REVOKED,
-        recipients,
-      )
+
+    if (recipients.length === 0) {
+      return { notificationSent: false }
     }
 
-    return { notificationSent: false }
+    return this.recordNotification(
+      theCase.id,
+      NotificationType.REVOKED,
+      recipients,
+    )
   }
 
-  // DEFENDER_ASSIGNED notifications
+  /* DEFENDER_ASSIGNED notifications */
 
   private async shouldSendDefenderAssignedNotification(
     theCase: Case,

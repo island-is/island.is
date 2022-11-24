@@ -485,7 +485,7 @@ describe('getRightsCode', () => {
 
     expect(result).toBe(expected)
   })
-  // HERNA
+
   it('should return F-FL-FS for parent with no custody (grant)', () => {
     const primaryParentNationalRegistryId = '1111111119'
     const spouseNationalRegistryId = '1111111118'

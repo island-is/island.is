@@ -1,0 +1,20 @@
+{
+  "kennitala": "012345-6789",
+  "fulltNafn": "Test maður",
+  "skirteinisNumer": "00001",
+  "faedingardagur": "1930-01-01T00:00:00",
+  "rikisfang": "IS",
+  "gildirTil": "2050-01-01T00:00:00",
+  "adrRettindi": [
+    {
+      "flokkur": "1",
+      "grunn": false,
+      "tankar": false
+    },
+    {
+      "flokkur": "4., 4.1, 4.2",
+      "grunn": true,
+      "tankar": false
+    }
+  ]
+}
