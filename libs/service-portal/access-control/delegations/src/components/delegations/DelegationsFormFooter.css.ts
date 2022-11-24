@@ -2,7 +2,33 @@ import { themeUtils, theme } from '@island.is/island-ui/theme'
 import { style } from '@vanilla-extract/css'
 
 export const container = style({
-  background: 'rgba(255,255,255,0.7)',
+  background: theme.color.white,
+  ...themeUtils.responsiveStyle({
+    xs: {
+      marginLeft: -theme.grid.gutter.desktop,
+      marginRight: -theme.grid.gutter.desktop,
+      paddingLeft: theme.grid.gutter.desktop,
+      paddingRight: theme.grid.gutter.desktop,
+    },
+    md: {
+      marginLeft: 'initial',
+      marginRight: 'initial',
+      paddingLeft: 'initial',
+      paddingRight: 'initial',
+    },
+  }),
+})
+
+export const shadow = style({
+  backgroundImage: `linear-gradient(to bottom, rgba(0, 97, 255, 0.16), rgba(255,255,255, 0.05))`,
+  top: '-20px',
+  left: 0,
+  right: 0,
+  position: 'absolute',
+  height: '100px',
+  borderRadius: '50%',
+  filter: 'blur(10px)',
+  zIndex: -1,
 })
 
 export const dividerContainer = style({
@@ -11,7 +37,7 @@ export const dividerContainer = style({
       marginLeft: -theme.grid.gutter.desktop,
       marginRight: -theme.grid.gutter.desktop,
     },
-    sm: {
+    md: {
       marginLeft: 0,
       marginRight: 0,
     },
