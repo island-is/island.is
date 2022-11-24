@@ -124,6 +124,7 @@ export const ABOUTIDS = {
   applicationType: 'conditionalAbout.applicationType',
   selectElection: 'election.selectElection',
   electionName: 'election.electionName',
+  genitiveName: 'election.genitiveName',
   incomeLimit: 'election.incomeLimit',
   powerOfAttorneyNationalId: 'about.powerOfAttorneyNationalId',
   powerOfAttorneyName: 'about.powerOfAttorneyName',
