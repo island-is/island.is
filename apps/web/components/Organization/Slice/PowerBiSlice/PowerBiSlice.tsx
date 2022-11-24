@@ -1,20 +1,69 @@
+import { useEffect, useState } from 'react'
 import { PowerBIEmbed } from 'powerbi-client-react'
-import { Embed } from 'powerbi-client'
-import { PowerBiSlice as PowerBiSliceSchema } from '@island.is/web/graphql/schema'
-import { useQuery } from '@apollo/client'
+import { Embed, models } from 'powerbi-client'
+import { useApolloClient } from '@apollo/client'
+import {
+  PowerBiEmbedTokenQuery,
+  PowerBiEmbedTokenQueryVariables,
+  PowerBiSlice as PowerBiSliceSchema,
+} from '@island.is/web/graphql/schema'
 import { POWERBI_EMBED_TOKEN_QUERY } from '@island.is/web/screens/queries/PowerBi'
-import { inspect } from 'util'
 
 interface PowerBiSliceProps {
   slice: PowerBiSliceSchema
 }
 
 export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
-  const response = useQuery(POWERBI_EMBED_TOKEN_QUERY, {
-    variables: { input: { something: 'some-token' } },
-  })
+  const [embedPropsFromServer, setEmbedPropsFromServer] = useState<{
+    accessToken: string
+    embedUrl: string
+    tokenType: models.TokenType
+  } | null>(null)
+  const [shouldRender, setShouldRender] = useState(false)
 
-  console.log(response?.data)
+  const apolloClient = useApolloClient()
+
+  useEffect(() => {
+    const sliceNeedsEmbedParams =
+      !!slice.owner && !!slice.reportId && !!slice.workspaceId
+
+    if (!sliceNeedsEmbedParams) {
+      setShouldRender(true)
+      return
+    }
+
+    const getEmbedParams = async () => {
+      setShouldRender(false)
+      const response = await apolloClient.query<
+        PowerBiEmbedTokenQuery,
+        PowerBiEmbedTokenQueryVariables
+      >({
+        query: POWERBI_EMBED_TOKEN_QUERY,
+        variables: {
+          input: {
+            reportId: slice.reportId,
+            owner: slice.owner,
+            workspaceId: slice.workspaceId,
+          },
+        },
+      })
+      if (
+        response?.data?.powerbiEmbedToken?.token &&
+        response?.data?.powerbiEmbedToken?.embedUrl
+      ) {
+        setEmbedPropsFromServer({
+          accessToken: response.data.powerbiEmbedToken.token,
+          embedUrl: response.data.powerbiEmbedToken.embedUrl,
+          tokenType: models.TokenType.Embed,
+        })
+        setShouldRender(true)
+      } else {
+        // TODO: Show an error
+      }
+    }
+
+    getEmbedParams()
+  }, [apolloClient, slice.owner, slice.reportId, slice.workspaceId])
 
   const getEmbeddedComponent = (embed: Embed) => {
     // Default styles
@@ -44,10 +93,17 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
     }
   }
 
+  if (!shouldRender) return null
+
   const embedProps = slice?.powerBiEmbedProps?.embedProps ?? {}
+
   return (
     <PowerBIEmbed
-      embedConfig={{ type: 'report', ...embedProps }}
+      embedConfig={{
+        type: 'report',
+        ...embedProps,
+        ...embedPropsFromServer,
+      }}
       getEmbeddedComponent={getEmbeddedComponent}
     />
   )

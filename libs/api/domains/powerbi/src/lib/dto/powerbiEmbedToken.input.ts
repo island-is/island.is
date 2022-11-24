@@ -3,5 +3,11 @@ import { Field, InputType } from '@nestjs/graphql'
 @InputType()
 export class PowerBiEmbedTokenInput {
   @Field()
-  something!: string
+  workspaceId!: string
+
+  @Field()
+  reportId!: string
+
+  @Field()
+  owner!: 'Fiskistofa'
 }

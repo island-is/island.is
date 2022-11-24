@@ -2464,6 +2464,15 @@ export interface IPowerBiSliceFields {
 
   /** Config */
   config: Record<string, any>
+
+  /** Workspace ID */
+  workSpaceId?: string | undefined
+
+  /** Report ID */
+  reportId?: string | undefined
+
+  /** Owner */
+  owner?: 'Fiskistofa' | undefined
 }
 
 /** A Slice that embeds a Power BI report */
@@ -2494,6 +2503,7 @@ export interface IProcessEntryFields {
     | 'Leyfisveitingagatt'
     | 'Drop and sign'
     | 'Paper'
+    | 'Ísland.is mínar síður'
 
   /** Process title */
   processTitle: string
