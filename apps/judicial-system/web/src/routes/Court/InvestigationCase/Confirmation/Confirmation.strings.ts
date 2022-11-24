@@ -2,7 +2,7 @@ import { defineMessages } from 'react-intl'
 
 export const confirmation = defineMessages({
   title: {
-    id: 'judicial.system.court:confirmation.title',
+    id: 'judicial.system.core:confirmation.title',
     defaultMessage: 'Samantekt',
     description: 'Notaður sem titill á úrskurðar skrefi í rannsóknarheimildum.',
   },
