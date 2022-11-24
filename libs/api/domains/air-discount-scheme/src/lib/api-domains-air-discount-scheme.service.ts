@@ -53,30 +53,33 @@ export class AirDiscountSchemeService {
   }
 
   async getCurrentDiscounts(auth: User): Promise<DiscountWithTUser[]> {
-    const relations: TUser[] = (await this.getUserRelations(auth)) as TUser[]
+    const relations: TUser[] = await this.getUserRelations(auth)
 
     const discounts: DiscountWithTUser[] = []
     for (const relation of relations) {
-      let discount: TDiscount = (await this.getDiscount(
+      const discount: TDiscount = (await this.getDiscount(
         auth,
         relation.nationalId,
       )) as TDiscount
-      if (!discount || discount.expiresIn <= TWO_HOURS) {
+      const isValid = discount && discount.expiresIn > TWO_HOURS
+      if (isValid) {
+        discounts.push({
+          ...discount,
+          user: { ...relation, name: relation.firstName },
+        })
+      } else {
         const createdDiscount = await this.createDiscount(
           auth,
           relation.nationalId,
         )
 
         if (createdDiscount) {
-          discount = createdDiscount
-        } else {
-          continue
+          discounts.push({
+            ...createdDiscount,
+            user: { ...relation, name: relation.firstName },
+          })
         }
       }
-      discounts.push({
-        ...discount,
-        user: { ...relation, name: relation.firstName },
-      })
     }
 
     return discounts
@@ -85,7 +88,7 @@ export class AirDiscountSchemeService {
   private async getDiscount(
     auth: User,
     nationalId: string,
-  ): Promise<TDiscount | void> {
+  ): Promise<TDiscount | null> {
     const discountResponse = await this.getADSWithAuth(auth)
       .privateDiscountControllerGetCurrentDiscountByNationalId({
         nationalId,
@@ -126,7 +129,7 @@ export class AirDiscountSchemeService {
 
     // Should not generate discountcodes for users who do not meet requirements
     return getRelationsResponse.filter(
-      ({fund: {credit, used, total}} = user) => credit <= total - used,
+      ({ fund: { credit, used, total } }) => credit <= total - used,
     )
   }
 }
