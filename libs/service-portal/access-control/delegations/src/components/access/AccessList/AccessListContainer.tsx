@@ -13,6 +13,7 @@ import { AccessDate } from '../AccessDate/AccessDate'
 import { AccessList } from './AccessList'
 import { AccessListLoading } from './AccessListLoading'
 import { AuthScopeTree } from '../access.types'
+import { forwardRef, Ref } from 'react'
 
 type AccessListContainerProps = {
   delegation?: AuthCustomDelegation
@@ -22,40 +23,51 @@ type AccessListContainerProps = {
   listMarginBottom?: ResponsiveProp<Space | 'auto'>
 }
 
-export const AccessListContainer = ({
-  delegation,
-  scopeTree,
-  scopes,
-  loading = false,
-  listMarginBottom,
-}: AccessListContainerProps) => {
-  const { formatMessage } = useLocale()
-  const showAccessList = !loading && scopeTree && scopes && delegation
+export const AccessListContainer = forwardRef(
+  (
+    {
+      delegation,
+      scopeTree,
+      scopes,
+      loading = false,
+      listMarginBottom,
+    }: AccessListContainerProps,
+    ref?: Ref<HTMLDivElement>,
+  ) => {
+    const { formatMessage } = useLocale()
+    const showAccessList = !loading && scopeTree && scopes && delegation
 
-  return (
-    <Box display="flex" flexDirection="column" rowGap={3} marginTop={6}>
-      <Box display="flex" alignItems="center" justifyContent="spaceBetween">
-        <Text variant="h4" as="h4">
-          {formatMessage({
-            id: 'sp.access-control-delegations:access-title',
-            defaultMessage: 'Réttindi',
-          })}
-        </Text>
-        <Hidden above="md">
-          {delegation?.validTo && <AccessDate validTo={delegation.validTo} />}
-        </Hidden>
+    return (
+      <Box
+        display="flex"
+        flexDirection="column"
+        rowGap={3}
+        marginTop={6}
+        ref={ref}
+      >
+        <Box display="flex" alignItems="center" justifyContent="spaceBetween">
+          <Text variant="h4" as="h4">
+            {formatMessage({
+              id: 'sp.access-control-delegations:access-title',
+              defaultMessage: 'Réttindi',
+            })}
+          </Text>
+          <Hidden above="md">
+            {delegation?.validTo && <AccessDate validTo={delegation.validTo} />}
+          </Hidden>
+        </Box>
+        <Box marginBottom={listMarginBottom ?? 1}>
+          {showAccessList ? (
+            <AccessList
+              validityPeriod={delegation.validTo}
+              scopes={scopes}
+              scopeTree={scopeTree}
+            />
+          ) : (
+            <AccessListLoading rows={delegation?.scopes?.length ?? 0} />
+          )}
+        </Box>
       </Box>
-      <Box marginBottom={listMarginBottom ?? 1}>
-        {showAccessList ? (
-          <AccessList
-            validityPeriod={delegation.validTo}
-            scopes={scopes}
-            scopeTree={scopeTree}
-          />
-        ) : (
-          <AccessListLoading rows={delegation?.scopes?.length ?? 0} />
-        )}
-      </Box>
-    </Box>
-  )
-}
+    )
+  },
+)

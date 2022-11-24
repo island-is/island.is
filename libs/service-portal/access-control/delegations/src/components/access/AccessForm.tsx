@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { useParams, useHistory } from 'react-router-dom'
 import { useForm, FormProvider } from 'react-hook-form'
 
@@ -31,6 +31,7 @@ import { AccessDeleteModal } from './AccessDeleteModal'
 import { AccessListHeader } from './AccessList/AccessListHeader'
 import classNames from 'classnames'
 import * as commonAccessStyles from './access.css'
+import { useInViewport } from '../../hooks/useInViewport'
 
 type AccessFormProps = {
   delegation: AuthCustomDelegation
@@ -43,6 +44,8 @@ export const AccessForm = ({
   scopeTree,
   validityPeriod,
 }: AccessFormProps) => {
+  const accessRightsContainerRef = useRef<HTMLDivElement | null>(null)
+  const { isVisible } = useInViewport(accessRightsContainerRef)
   const { formatMessage } = useLocale()
   const { delegationId } = useParams<{
     delegationId: string
@@ -53,7 +56,7 @@ export const AccessForm = ({
   const [openDeleteModal, setOpenDeleteModal] = useState(false)
   const [formError, setFormError] = useState(false)
   const [updateError, setUpdateError] = useState(false)
-
+  console.log(isVisible)
   const onError = () => {
     toast.error(formatMessage(coreMessages.somethingWrong))
   }
@@ -139,6 +142,7 @@ export const AccessForm = ({
       <FormProvider {...methods}>
         <form onSubmit={onSubmit}>
           <div
+            ref={accessRightsContainerRef}
             className={classNames(
               commonAccessStyles.grid,
               validityPeriod

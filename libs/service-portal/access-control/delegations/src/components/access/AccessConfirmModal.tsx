@@ -9,11 +9,12 @@ import {
 } from '@island.is/service-portal/graphql'
 import { useLocale } from '@island.is/localization'
 import { formatNationalId } from '@island.is/service-portal/core'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { DelegationsFormFooter } from '../delegations/DelegationsFormFooter'
 import { Modal, ModalProps } from '../Modal/Modal'
 import { IdentityCard } from '../IdentityCard/IdentityCard'
 import { AccessListContainer } from './AccessList/AccessListContainer'
+import { useInViewport } from '../../hooks/useInViewport'
 
 type AccessConfirmModalProps = Pick<ModalProps, 'onClose' | 'isVisible'> & {
   delegation: AuthCustomDelegation
@@ -36,6 +37,8 @@ export const AccessConfirmModal = ({
   error: formError,
   ...rest
 }: AccessConfirmModalProps) => {
+  const accessListContainerRef = useRef<HTMLDivElement | null>(null)
+  const { isVisible } = useInViewport(accessListContainerRef)
   const { formatMessage } = useLocale()
   const { userInfo } = useAuth()
   const { md } = useBreakpoint()
@@ -130,6 +133,7 @@ export const AccessConfirmModal = ({
         scopes={scopes}
         scopeTree={scopeTree}
         listMarginBottom={[0, 0, 10]}
+        ref={accessListContainerRef}
       />
       <Box position="sticky" bottom={0}>
         <DelegationsFormFooter
