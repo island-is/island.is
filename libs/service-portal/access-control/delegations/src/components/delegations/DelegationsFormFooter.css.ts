@@ -22,13 +22,19 @@ export const container = style({
 export const shadow = style({
   backgroundColor: 'rgba(0, 97, 255, 0.16)',
   top: '-20px',
-  left: 10,
-  right: 10,
+  left: 0,
+  right: 0,
   position: 'absolute',
   height: '100px',
   borderRadius: '50%',
   filter: 'blur(10px)',
   zIndex: -1,
+  ...themeUtils.responsiveStyle({
+    md: {
+      left: 20,
+      right: 20,
+    },
+  }),
 })
 
 export const dividerContainer = style({
