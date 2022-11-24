@@ -22,10 +22,15 @@ export const VehicleCard: FC<Props> = ({ vehicle }) => {
   const heading = vehicle.type + ' ' + year
   const plate = vehicle.regno || vehicle.permno || ''
   const text = vehicle.color ? vehicle.color + ' - ' + plate : plate
+  const colorCode = vehicle.colorCode ?? '999' // 999 is default if no value is set
+  const vehicleCode = vehicle.vehGroup?.split('(')[1].split(')')[0] ?? 'AA' // type from vehgroup = "Vörubifreið II (N3)" = N3 otherwise AA is default
 
   return (
     <ActionCard
-      image={{ type: 'component', component: translateType('L2e', '22') }}
+      image={{
+        type: 'component',
+        component: translateType(vehicleCode, colorCode),
+      }}
       heading={heading}
       text={text}
       tag={

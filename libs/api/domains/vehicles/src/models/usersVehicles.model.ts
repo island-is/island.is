@@ -31,6 +31,9 @@ export class VehiclesVehicle {
   @Field({ nullable: true })
   color?: string
 
+  @Field({ nullable: true, defaultValue: null })
+  colorCode?: string
+
   @Field({ nullable: true })
   firstRegDate?: Date
 

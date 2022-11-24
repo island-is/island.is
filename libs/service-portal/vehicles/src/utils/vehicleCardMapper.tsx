@@ -131,7 +131,7 @@ export const translateType = (type: string, color: string) => {
     case 'L2e':
       return <SvgLetthjol color={translateColor(color)} />
     default:
-      return <SvgFolksbill color={'#EE82EE'} />
+      return <SvgFolksbill color={translateColor(color)} />
   }
 }
 

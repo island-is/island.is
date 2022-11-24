@@ -43,7 +43,7 @@
               "application/pdf": {
                 "schema": {
                   "type": "string",
-                  "format": "binary"
+                  "format": "byte"
                 }
               }
             }
@@ -81,7 +81,7 @@
               "application/pdf": {
                 "schema": {
                   "type": "string",
-                  "format": "binary"
+                  "format": "byte"
                 }
               }
             }
@@ -2326,6 +2326,10 @@
             "nullable": true
           },
           "color": {
+            "type": "string",
+            "nullable": true
+          },
+          "colorCode": {
             "type": "string",
             "nullable": true
           },

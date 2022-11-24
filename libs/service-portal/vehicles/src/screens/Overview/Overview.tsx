@@ -45,6 +45,7 @@ export const GET_USERS_VEHICLES = gql`
         vin
         type
         color
+        colorCode
         firstRegDate
         modelYear
         productYear
