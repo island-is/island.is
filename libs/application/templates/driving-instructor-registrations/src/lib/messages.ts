@@ -219,6 +219,16 @@ export const m = defineMessages({
     defaultMessage: 'Slá inn mínútur',
     description: 'Input field label',
   },
+  errorOnGettingStudentTitle: {
+    id: 'dir.application:errorOnGettingStudentTitle',
+    defaultMessage: 'Ökunemi fannst ekki eða er ekki með virka ökunámsbók.',
+    description: 'Error on input minutes',
+  },
+  errorOnGettingStudentSubtitle: {
+    id: 'dir.application:errorOnGettingStudentSubtitle',
+    defaultMessage: 'Vinsamlega hafðu samband við næsta sýslumannsembætti',
+    description: 'Error on input minutes',
+  },
   errorOnInputMinutes: {
     id: 'dir.application:errorOnInputMinutes',
     defaultMessage: 'Max mínútufjöldi er 1000',

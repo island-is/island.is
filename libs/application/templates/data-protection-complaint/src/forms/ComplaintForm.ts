@@ -86,6 +86,7 @@ export const ComplaintForm: Form = buildForm({
                   title: '',
                   options: [noOption, yesOption],
                   largeButtons: true,
+                  required: true,
                   width: 'half',
                 }),
                 buildCustomField(
@@ -125,6 +126,7 @@ export const ComplaintForm: Form = buildForm({
                   title: '',
                   options: [noOption, yesOption],
                   largeButtons: true,
+                  required: true,
                   width: 'half',
                 }),
                 buildCustomField(
@@ -171,6 +173,7 @@ export const ComplaintForm: Form = buildForm({
                   title: '',
                   options: [noOption, yesOption],
                   largeButtons: true,
+                  required: true,
                   width: 'half',
                 }),
                 buildCustomField(
@@ -215,6 +218,7 @@ export const ComplaintForm: Form = buildForm({
                   title: '',
                   options: [noOption, yesOption],
                   largeButtons: true,
+                  required: true,
                   width: 'half',
                 }),
                 buildCustomField(
@@ -283,6 +287,7 @@ export const ComplaintForm: Form = buildForm({
                     },
                   ],
                   largeButtons: true,
+                  required: true,
                   width: 'half',
                 }),
                 buildCustomField({

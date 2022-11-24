@@ -27,6 +27,7 @@ const checkIfNegative = (inputNumber: string) => {
 const election = z.object({
   selectElection: z.string().optional(),
   electionName: z.string().optional(),
+  genitiveName: z.string().optional(),
   incomeLimit: z.string().refine((x) => !!x, { params: m.required }),
 })
 
@@ -49,6 +50,10 @@ const about = z.object({
   powerOfAttorneyName: z.string().optional(),
   phoneNumber: z.string().refine(
     (p) => {
+      // ignore validation on dev to test with Gervimenn
+      if (process.env.NODE_ENV === 'development') {
+        return true
+      }
       const phoneNumber = parsePhoneNumberFromString(p, 'IS')
       return phoneNumber && phoneNumber.isValid()
     },

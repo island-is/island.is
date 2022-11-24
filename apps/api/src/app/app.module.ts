@@ -50,7 +50,6 @@ import {
 } from '@island.is/api/domains/license-service'
 import { PaymentScheduleModule } from '@island.is/api/domains/payment-schedule'
 import { AssetsClientConfig } from '@island.is/clients/assets'
-import { AssetsV2ClientConfig } from '@island.is/clients/assets-v2'
 import { AuthPublicApiClientConfig } from '@island.is/clients/auth/public-api'
 import { FinanceClientConfig } from '@island.is/clients/finance'
 import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
@@ -80,6 +79,7 @@ import { FirearmLicenseClientConfig } from '@island.is/clients/firearm-license'
 import { PassportsClientConfig } from '@island.is/clients/passports'
 import { FileStorageConfig } from '@island.is/file-storage'
 import { AuthDelegationApiClientConfig } from '@island.is/clients/auth/delegation-api'
+import { FinancialStatementsInaoClientConfig } from '@island.is/clients/financial-statements-inao'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -252,7 +252,6 @@ const autoSchemaFile = environment.production
       load: [
         AdrAndMachineLicenseClientConfig,
         AssetsClientConfig,
-        AssetsV2ClientConfig,
         FirearmLicenseClientConfig,
         GenericFirearmLicenseConfig,
         GenericMachineLicenseConfig,
@@ -273,6 +272,7 @@ const autoSchemaFile = environment.production
         MunicipalitiesFinancialAidConfig,
         CompanyRegistryConfig,
         FishingLicenseClientConfig,
+        FinancialStatementsInaoClientConfig,
         DrivingLicenseBookClientConfig,
         DrivingLicenseApiConfig,
         PassportsClientConfig,

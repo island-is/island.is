@@ -1,27 +1,26 @@
-import { User } from '@island.is/auth-nest-tools'
 import { Inject, Injectable, Logger } from '@nestjs/common'
-import { ConfigType } from '@nestjs/config'
 import { InjectModel } from '@nestjs/sequelize'
-import uniqBy from 'lodash/uniqBy'
-import { ClientAllowedScope } from '../clients/models/client-allowed-scope.model'
-import { ApiScope } from '../resources/models/api-scope.model'
-import { DelegationConfig } from './DelegationConfig'
-import { DelegationDTO } from './dto/delegation.dto'
-import { MergedDelegationDTO } from './dto/merged-delegation.dto'
-import { DelegationScope } from './models/delegation-scope.model'
-import { Delegation } from './models/delegation.model'
-import { DelegationValidity } from './types/delegationValidity'
-import { getScopeValidityWhereClause } from './utils/scopes'
 import * as kennitala from 'kennitala'
+import uniqBy from 'lodash/uniqBy'
+
+import { User } from '@island.is/auth-nest-tools'
 import {
   IndividualDto,
   NationalRegistryClientService,
 } from '@island.is/clients/national-registry-v2'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { isDefined } from '@island.is/shared/utils'
-import { partitionWithIndex } from './utils/partitionWithIndex'
 import { AuditService } from '@island.is/nest/audit'
-import { DelegationsOutgoingService } from './delegations-outgoing.service'
+import { isDefined } from '@island.is/shared/utils'
+
+import { ClientAllowedScope } from '../clients/models/client-allowed-scope.model'
+import { ApiScope } from '../resources/models/api-scope.model'
+import { DelegationDTO } from './dto/delegation.dto'
+import { MergedDelegationDTO } from './dto/merged-delegation.dto'
+import { DelegationScope } from './models/delegation-scope.model'
+import { Delegation } from './models/delegation.model'
+import { DelegationValidity } from './types/delegationValidity'
+import { partitionWithIndex } from './utils/partitionWithIndex'
+import { getScopeValidityWhereClause } from './utils/scopes'
 
 export const UNKNOWN_NAME = 'Óþekkt nafn'
 
@@ -36,13 +35,10 @@ export class DelegationsIncomingCustomService {
     private delegationModel: typeof Delegation,
     @InjectModel(ClientAllowedScope)
     private clientAllowedScopeModel: typeof ClientAllowedScope,
-    @Inject(DelegationConfig.KEY)
-    private delegationConfig: ConfigType<typeof DelegationConfig>,
     private nationalRegistryClient: NationalRegistryClientService,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private auditService: AuditService,
-    private delegationsOutgoingService: DelegationsOutgoingService,
   ) {}
 
   async findAllValidIncoming(
