@@ -30,8 +30,7 @@ export const VehicleRadioField: FC<
   const { register } = useFormContext()
 
   const [plate, setPlate] = useState<string>(
-    (getValueViaPath(application.answers, 'pickVehicle.plate', '') as string) ||
-      '',
+    getValueViaPath(application.answers, 'pickVehicle.plate', '') as string,
   )
 
   const { data, loading } = useQuery(

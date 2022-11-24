@@ -11,7 +11,8 @@ export const getChargeItemCodes = (
 ): Array<string> => {
   const result = []
 
-  const deliveryMethodIsSend = answers.deliveryMethodIsSend === YES
+  const deliveryMethodIsSend =
+    answers.cardDelivery?.deliveryMethodIsSend === YES
 
   if (!deliveryMethodIsSend) {
     result.push(

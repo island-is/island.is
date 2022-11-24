@@ -107,7 +107,7 @@ export const cardTypeSection = buildSection({
         }),
         buildRadioField({
           title: '',
-          id: 'cardType',
+          id: 'cardTypeSelection.cardType',
           condition: (_, externalData) => !newestCardExists(externalData),
           options: [
             {
@@ -123,7 +123,7 @@ export const cardTypeSection = buildSection({
         }),
         buildRadioField({
           title: '',
-          id: 'cardType',
+          id: 'cardTypeSelection.cardType',
           condition: (_, externalData) =>
             newestCardExists(externalData) && newestCardIsExpired(externalData),
           options: [
@@ -139,7 +139,7 @@ export const cardTypeSection = buildSection({
         }),
         buildRadioField({
           title: '',
-          id: 'cardType',
+          id: 'cardTypeSelection.cardType',
           condition: (_, externalData) =>
             newestCardExists(externalData) &&
             !newestCardIsExpired(externalData) &&
@@ -169,7 +169,7 @@ export const cardTypeSection = buildSection({
         }),
         buildRadioField({
           title: '',
-          id: 'cardType',
+          id: 'cardTypeSelection.cardType',
           condition: (_, externalData) =>
             newestCardExists(externalData) &&
             !newestCardIsExpired(externalData) &&

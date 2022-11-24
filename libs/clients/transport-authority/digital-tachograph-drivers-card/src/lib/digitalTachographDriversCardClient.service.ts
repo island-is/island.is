@@ -81,7 +81,7 @@ export class DigitalTachographDriversCardClient {
     const validFrom = new Date()
     validFrom.setFullYear(validFrom.getFullYear() - 1)
     const validTo = new Date()
-    validTo.setFullYear(validTo.getFullYear() + 1)
+    validTo.setMonth(validTo.getMonth() + 2)
     return {
       ssn: auth.nationalId,
       applicationCreatedAt: validFrom,

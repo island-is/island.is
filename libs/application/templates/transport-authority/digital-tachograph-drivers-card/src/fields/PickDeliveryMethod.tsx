@@ -1,12 +1,17 @@
 import { FieldBaseProps } from '@island.is/application/types'
 import { AlertMessage, Box, SkeletonLoader } from '@island.is/island-ui/core'
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { useLocale } from '@island.is/localization'
 import { useFormContext } from 'react-hook-form'
 import { RadioController } from '@island.is/shared/form-fields'
-import { gql, useQuery } from '@apollo/client'
+import { gql, useLazyQuery, useQuery } from '@apollo/client'
 import { CHECK_TACHO_NET_EXISTS } from '../graphql/queries'
-import { getValueViaPath, YES, NO } from '@island.is/application/core'
+import {
+  getValueViaPath,
+  YES,
+  NO,
+  getErrorViaPath,
+} from '@island.is/application/core'
 import { applicant } from '../lib/messages'
 import { info } from 'kennitala'
 
@@ -14,86 +19,108 @@ export const PickDeliveryMethod: FC<FieldBaseProps> = (props) => {
   const { formatMessage } = useLocale()
   const { register } = useFormContext()
   const { application, errors } = props
+  const { control, setValue } = useFormContext()
 
   const [deliveryMethodIsSend, setDeliveryMethodIsSend] = useState<string>(
-    (getValueViaPath(
+    getValueViaPath(
       application.answers,
-      'deliveryMethodIsSend',
+      'cardDelivery.deliveryMethodIsSend',
       NO,
-    ) as string) || NO,
+    ) as string,
   )
 
-  const fullNameParts = (
-    (getValueViaPath(
-      application.externalData,
-      'nationalRegistry.data.fullName',
-      '',
-    ) as string) || ''
-  ).split(' ')
-  const firstName = fullNameParts[0]
-  const lastName =
-    fullNameParts.length > 1
-      ? fullNameParts[fullNameParts.length - 1]
-      : undefined
-
-  const { birthday } = info(application.applicant)
-
-  const birthPlace =
-    (getValueViaPath(
-      application.externalData,
-      'nationalRegistryCustom.data.birthPlace',
-      '',
-    ) as string) || ''
-
-  const drivingLicenceNumber =
-    (getValueViaPath(
-      application.externalData,
-      'drivingLicense.data.id',
-      '',
-    ) as string) || ''
-
-  const drivingLicenceIssuingCountry = 'TODOx'
-
-  const { data, loading, error } = useQuery(
-    gql`
-      ${CHECK_TACHO_NET_EXISTS}
-    `,
-    {
-      variables: {
-        input: {
-          firstName: firstName,
-          lastName: lastName,
-          birthDate: birthday,
-          birthPlace: birthPlace,
-          drivingLicenceNumber: drivingLicenceNumber,
-          drivingLicenceIssuingCountry: drivingLicenceIssuingCountry,
-        },
-      },
-    },
+  const [cardExistsInTachoNet, setCardExistsInTachoNet] = useState<
+    boolean | undefined
+  >(
+    getValueViaPath(
+      application.answers,
+      'cardDelivery.cardExistsInTachoNet',
+      undefined,
+    ) as boolean | undefined,
   )
 
   const onRadioControllerSelect = (value: string) => {
     setDeliveryMethodIsSend(value)
   }
 
-  const cardType =
-    (getValueViaPath(application.answers, 'cardType', '') as string) || ''
-  const existsInTachoNet = data?.exists || false
-  const allowYesOption =
-    cardType !== 'reissue' && cardType !== 'reprint' && !existsInTachoNet
+  // Get values necessary to check TachoNet
+  const fullNameParts = (getValueViaPath(
+    application.externalData,
+    'nationalRegistry.data.fullName',
+    '',
+  ) as string).split(' ')
+  const firstName = fullNameParts[0]
+  const lastName =
+    fullNameParts.length > 1
+      ? fullNameParts[fullNameParts.length - 1]
+      : undefined
+  const { birthday } = info(application.applicant)
+  const birthPlace = getValueViaPath(
+    application.externalData,
+    'nationalRegistryCustom.data.birthPlace',
+    '',
+  ) as string
+  const drivingLicenceNumber = getValueViaPath(
+    application.externalData,
+    'drivingLicense.data.id',
+    '',
+  ) as string
+  const drivingLicenceIssuingCountry = 'Iceland' //TODOx get driving license issuing country
+
+  const cardType = getValueViaPath(
+    application.answers,
+    'cardTypeSelection.cardType',
+    '',
+  ) as string
+  const cardTypeAllowYes = cardType !== 'reissue' && cardType !== 'reprint'
+
+  const [checkTachoNet, { loading, error }] = useLazyQuery(
+    gql`
+      ${CHECK_TACHO_NET_EXISTS}
+    `,
+    {
+      onCompleted: (data) => {
+        setCardExistsInTachoNet(data?.exists || false)
+        setValue('cardDelivery.cardExistsInTachoNet', data?.exists || false)
+      },
+    },
+  )
+
+  useEffect(() => {
+    if (cardTypeAllowYes && cardExistsInTachoNet === undefined) {
+      checkTachoNet({
+        variables: {
+          input: {
+            firstName: firstName,
+            lastName: lastName,
+            birthDate: birthday,
+            birthPlace: birthPlace,
+            drivingLicenceNumber: drivingLicenceNumber,
+            drivingLicenceIssuingCountry: drivingLicenceIssuingCountry,
+          },
+        },
+      })
+    }
+  }, [cardTypeAllowYes])
 
   return (
     <Box paddingTop={2}>
       {!loading && !error ? (
         <>
           <RadioController
-            id="pickVehicle.vehicle"
+            id="cardDelivery.deliveryMethodIsSend"
             largeButtons
-            split="1/2"
+            split={
+              cardTypeAllowYes && cardExistsInTachoNet === false ? '1/2' : '1/1'
+            }
             backgroundColor="blue"
             onSelect={onRadioControllerSelect}
+            error={
+              errors &&
+              getErrorViaPath(errors, 'cardDelivery.deliveryMethodIsSend')
+            }
             options={
-              allowYesOption
+              cardTypeAllowYes && cardExistsInTachoNet === false
                 ? [
                     {
                       value: YES,
@@ -150,9 +177,9 @@ export const PickDeliveryMethod: FC<FieldBaseProps> = (props) => {
       )}
       <input
         type="hidden"
-        value={deliveryMethodIsSend}
+        value={!loading && !error ? 'forward' : ''}
         ref={register({ required: true })}
-        name="deliveryMethodIsSend"
+        name="cardDelivery.canGoForward"
       />
     </Box>
   )
