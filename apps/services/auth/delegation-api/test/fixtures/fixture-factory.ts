@@ -126,6 +126,7 @@ export class FixtureFactory {
     fromNationalId,
     toNationalId,
     domainName,
+    fromName,
     scopes = [],
   }: CreateCustomDelegation): Promise<Delegation> {
     const delegation = await this.get(Delegation).create({
@@ -133,7 +134,7 @@ export class FixtureFactory {
       fromNationalId: fromNationalId ?? createNationalId(),
       toNationalId: toNationalId ?? createNationalId('person'),
       domainName,
-      fromDisplayName: faker.name.findName(),
+      fromDisplayName: fromName ?? faker.name.findName(),
       toName: faker.name.findName(),
     })
 
@@ -148,6 +149,12 @@ export class FixtureFactory {
         }),
       ),
     )
+
+    delegation.delegationScopes = await this.get(DelegationScope).findAll({
+      where: { delegationId: delegation.id },
+      include: [ApiScope],
+    })
+
     return delegation
   }
 
