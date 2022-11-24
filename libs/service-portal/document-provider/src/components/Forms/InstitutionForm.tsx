@@ -51,7 +51,7 @@ export const InstitutionForm: FC<Props> = ({ organisation }) => {
             },
           }}
           defaultValue={organisation?.name || ''}
-          render={({ onChange, value, name }) => (
+          render={({ field: { onChange, value, name } }) => (
             <Input
               size="xs"
               name={name}
@@ -82,7 +82,7 @@ export const InstitutionForm: FC<Props> = ({ organisation }) => {
               ),
             },
           }}
-          render={({ onChange, value, name }) => (
+          render={({ field: { onChange, value, name } }) => (
             <Input
               size="xs"
               name={name}
@@ -107,7 +107,7 @@ export const InstitutionForm: FC<Props> = ({ organisation }) => {
               ),
             },
           }}
-          render={({ onChange, value, name }) => (
+          render={({ field: { onChange, value, name } }) => (
             <Input
               size="xs"
               name={name}
@@ -138,7 +138,7 @@ export const InstitutionForm: FC<Props> = ({ organisation }) => {
               ),
             },
           }}
-          render={({ onChange, value, name }) => (
+          render={({ field: { onChange, value, name } }) => (
             <Input
               size="xs"
               name={name}
@@ -169,7 +169,7 @@ export const InstitutionForm: FC<Props> = ({ organisation }) => {
               ),
             },
           }}
-          render={({ onChange, value, name }) => (
+          render={({ field: { onChange, value, name } }) => (
             <Input
               size="xs"
               name={name}

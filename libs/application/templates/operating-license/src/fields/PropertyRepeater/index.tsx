@@ -130,7 +130,11 @@ const PropertyItem = ({
 
   return (
     <Box position="relative" marginTop={2}>
-      <Controller name={fieldIndex} control={control} />
+      <Controller
+        name={fieldIndex}
+        control={control}
+        render={() => <input type="hidden" />}
+      />
       <Text variant="h5" as="h5" paddingBottom={2}>
         Rými {index + 1}
       </Text>

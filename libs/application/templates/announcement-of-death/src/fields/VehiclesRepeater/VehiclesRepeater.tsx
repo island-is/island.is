@@ -106,11 +106,13 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
               name={initialField}
               control={control}
               defaultValue={field.initial || false}
+              render={() => <input type="hidden" />}
             />
             <Controller
               name={dummyField}
               control={control}
               defaultValue={field.dummy || false}
+              render={() => <input type="hidden" />}
             />
 
             <Box position="absolute" className={styles.removeFieldButton}>

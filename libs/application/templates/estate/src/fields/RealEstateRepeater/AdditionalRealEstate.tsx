@@ -88,16 +88,19 @@ export const AdditionalRealEstate = ({
         name={initialField}
         control={control}
         defaultValue={field.initial || false}
+        render={() => <input type="hidden" />}
       />
       <Controller
         name={enabledField}
         control={control}
         defaultValue={field.enabled || false}
+        render={() => <input type="hidden" />}
       />
       <Controller
         name={dummyField}
         control={control}
         defaultValue={field.dummy || false}
+        render={() => <input type="hidden" />}
       />
       <Text variant="h4">
         {formatMessage(m.realEstateRepeaterHeader) + ' ' + (index + 1)}

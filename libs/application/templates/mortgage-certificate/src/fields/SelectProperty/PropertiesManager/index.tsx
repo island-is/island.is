@@ -60,7 +60,7 @@ export const PropertiesManager: FC<FieldBaseProps> = ({
     <Controller
       name="selectProperty.propertyNumber"
       defaultValue={selectedPropertyNumber || defaultProperty?.propertyNumber}
-      render={({ value, onChange }) => {
+      render={({ fields: { value, onChange } }) => {
         return (
           <>
             <RegisteredProperties

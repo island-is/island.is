@@ -143,7 +143,7 @@ export const AccessControlModal: FC<AccessControlModalProps> = ({
                 message: t.modal.inputs.role.rules?.required,
               },
             }}
-            render={({ onChange, value, name }) => {
+            render={({ field: { onChange, value, name } }) => {
               return (
                 <Select
                   required
@@ -174,7 +174,7 @@ export const AccessControlModal: FC<AccessControlModalProps> = ({
                   }
                 : {}
             }
-            render={({ onChange, value, name }) => {
+            render={({ field: { onChange, value, name } }) => {
               return (
                 <Select
                   name={name}

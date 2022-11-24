@@ -108,16 +108,19 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
               name={initialField}
               control={control}
               defaultValue={field.initial || false}
+              render={() => <input type="hidden" />}
             />
             <Controller
               name={enabledField}
               control={control}
               defaultValue={field.enabled || false}
+              render={() => <input type="hidden" />}
             />
             <Controller
               name={dummyField}
               control={control}
               defaultValue={field.dummy || false}
+              render={() => <input type="hidden" />}
             />
             <Text variant="h4">
               {formatMessage(m.vehiclesTitle) + ' ' + (index + 1)}

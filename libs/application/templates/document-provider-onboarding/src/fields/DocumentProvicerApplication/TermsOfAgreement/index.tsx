@@ -53,7 +53,7 @@ const TermsOfAgreement: FC<FieldBaseProps> = ({ application }) => {
           name="termsOfAgreement.userTerms"
           defaultValue={currentUserTerms}
           rules={{ required: true }}
-          render={({ value, onChange }) => {
+          render={({ field: { value, onChange } }) => {
             return (
               <Checkbox
                 onChange={(e) => {

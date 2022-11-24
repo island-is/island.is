@@ -50,7 +50,7 @@ export const DocumentProviderInput: FC<Props> = ({
           name={name}
           defaultValue={defaultValue}
           rules={rules}
-          render={({ onChange, value, name }) => (
+          render={({ field: { onChange, value, name } }) => (
             <Input
               name={name}
               value={value}

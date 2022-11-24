@@ -150,7 +150,7 @@ export const Duration: FC<FieldBaseProps> = ({
           <Controller
             defaultValue={chosenEndDate}
             name={id}
-            render={({ onChange }) => (
+            render={({ fields: { onChange } }) => (
               <Slider
                 min={usageMinMonths}
                 max={usageMaxMonths}

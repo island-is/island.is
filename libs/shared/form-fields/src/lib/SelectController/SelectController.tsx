@@ -41,7 +41,7 @@ export const SelectController: FC<Props & TestSupport> = ({
       {...(defaultValue !== undefined && { defaultValue })}
       name={name}
       rules={rules}
-      render={({ onChange, value }) => (
+      render={({ field: { onChange, value } }) => (
         <Select
           required={required}
           backgroundColor={backgroundColor}

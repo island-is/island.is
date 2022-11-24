@@ -665,7 +665,6 @@ export const StandardForm = ({
                   >
                     <Controller
                       control={control}
-                      id="rikisadili"
                       name="rikisadili"
                       defaultValue=""
                       rules={{
@@ -678,7 +677,7 @@ export const StandardForm = ({
                           ),
                         },
                       }}
-                      render={({ onChange }) => (
+                      render={({ field: { onChange } }) => (
                         <Select
                           backgroundColor="blue"
                           icon="chevronDown"
@@ -721,7 +720,7 @@ export const StandardForm = ({
                         },
                       } as ValidationRule
                     }
-                    render={({ onChange, onBlur, value, name }) => (
+                    render={({ field: { onChange, onBlur, value, name } }) => (
                       <Input
                         backgroundColor="blue"
                         name={name}
@@ -741,7 +740,6 @@ export const StandardForm = ({
                     <GridColumn paddingBottom={3} span="12/12">
                       <Controller
                         control={useFormMethods.control}
-                        id="email"
                         name="email"
                         defaultValue=""
                         rules={{
@@ -762,7 +760,9 @@ export const StandardForm = ({
                             ),
                           },
                         }}
-                        render={({ onChange, onBlur, value, name }) => (
+                        render={({
+                          field: { onChange, onBlur, value, name },
+                        }) => (
                           <Input
                             backgroundColor="blue"
                             name={name}
@@ -783,7 +783,6 @@ export const StandardForm = ({
                     <GridColumn span="12/12" paddingTop={5}>
                       <Controller
                         control={control}
-                        id="erindi"
                         name="erindi"
                         defaultValue=""
                         rules={{
@@ -796,7 +795,9 @@ export const StandardForm = ({
                             ),
                           },
                         }}
-                        render={({ onChange, onBlur, value, name }) => (
+                        render={({
+                          field: { onChange, onBlur, value, name },
+                        }) => (
                           <Input
                             backgroundColor="blue"
                             name={name}
@@ -821,14 +822,14 @@ export const StandardForm = ({
                         defaultValue={false}
                         control={control}
                         rules={{ required: true }}
-                        render={(props) => (
+                        render={({ field: { onChange, value } }) => (
                           <Checkbox
                             label={n(
                               'serviceWebFormStorageAllowedCheckboxText',
                               'Ég gef leyfi fyrir því að erindi mitt sé vistað í póstumsjónarkerfi',
                             )}
-                            checked={props.value}
-                            onChange={(e) => props.onChange(e.target.checked)}
+                            checked={value}
+                            onChange={(e) => onChange(e.target.checked)}
                             hasError={errors.storageAllowed}
                           />
                         )}
@@ -843,7 +844,6 @@ export const StandardForm = ({
                       {institutionSlug === 'syslumenn' && (
                         <Controller
                           control={control}
-                          id="syslumadur"
                           name="syslumadur"
                           defaultValue=""
                           rules={{
@@ -856,7 +856,7 @@ export const StandardForm = ({
                               ),
                             },
                           }}
-                          render={({ onChange }) => (
+                          render={({ field: { onChange } }) => (
                             <Select
                               backgroundColor="blue"
                               icon="chevronDown"

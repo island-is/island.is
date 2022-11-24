@@ -82,7 +82,7 @@ const Select: FC = () => {
             },
           }}
           defaultValue=""
-          render={({ onChange, value, name }) => (
+          render={({ field: { onChange, value, name } }) => (
             <Input
               label={t.input!.label}
               placeholder={t.input!.placeholder}

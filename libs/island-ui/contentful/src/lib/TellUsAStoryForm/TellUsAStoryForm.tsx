@@ -223,7 +223,7 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
                     defaultValue={''}
                     control={control}
                     rules={{ required: true }}
-                    render={({ onChange }) => (
+                    render={({ fields: { onChange } }) => (
                       <Select
                         name="organization"
                         label={organizationLabel}
@@ -252,7 +252,7 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
                     defaultValue={false}
                     control={control}
                     rules={{ required: true }}
-                    render={({ onChange, value }) => (
+                    render={({ field: { onChange, value } }) => (
                       <DatePicker
                         label={dateOfStoryLabel}
                         placeholderText={dateOfStoryPlaceholder}
@@ -390,12 +390,12 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
                 defaultValue={false}
                 control={control}
                 rules={{ required: false }}
-                render={(props) => (
+                render={({ fields: { onChange, value } }) => (
                   <Checkbox
                     label={publicationAllowedLabel}
-                    checked={props.value}
+                    checked={value}
                     disabled={state === 'submitting'}
-                    onChange={(e) => props.onChange(e.target.checked)}
+                    onChange={(e) => onChange(e.target.checked)}
                   />
                 )}
               />

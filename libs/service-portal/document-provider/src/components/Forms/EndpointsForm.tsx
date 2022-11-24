@@ -43,7 +43,7 @@ export const EndpointsForm: FC<Props> = ({ onSubmit }) => {
             },
           }}
           defaultValue=""
-          render={({ onChange, value, name }) => (
+          render={({ field: { onChange, value, name } }) => (
             <Input
               size="xs"
               name={name}

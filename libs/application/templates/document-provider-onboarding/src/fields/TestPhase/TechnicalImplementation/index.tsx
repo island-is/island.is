@@ -53,7 +53,7 @@ const TestPhaseInfoScreen: FC<FieldBaseProps> = ({ application }) => {
           name="technicalAnswer"
           defaultValue={currentAnswer}
           rules={{ required: true }}
-          render={({ value, onChange }) => {
+          render={({ field: { value, onChange } }) => {
             return (
               <Checkbox
                 onChange={(e) => {

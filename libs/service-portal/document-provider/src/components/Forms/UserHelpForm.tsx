@@ -42,7 +42,7 @@ export const UserHelpForm: FC<Props> = ({ helpDesk, organisationId }) => {
               ),
             },
           }}
-          render={({ onChange, name, value }) => (
+          render={({ field: { onChange, name, value } }) => (
             <Input
               size="xs"
               label={formatMessage(m.SettingsEditUserHelpContactEmail)}
@@ -73,7 +73,7 @@ export const UserHelpForm: FC<Props> = ({ helpDesk, organisationId }) => {
               ),
             },
           }}
-          render={({ onChange, name, value }) => (
+          render={({ field: { onChange, name, value } }) => (
             <Input
               size="xs"
               label={formatMessage(m.SettingsEditUserHelpContactTel)}

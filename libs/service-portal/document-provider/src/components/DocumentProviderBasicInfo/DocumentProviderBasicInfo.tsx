@@ -85,7 +85,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                     ),
                   },
                 }}
-                render={({ onChange, value, name }) => (
+                render={({ field: { onChange, value, name } }) => (
                   <Input
                     size="xs"
                     name={name}
@@ -121,7 +121,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   ),
                 },
               }}
-              render={({ onChange, value, name }) => (
+              render={({ field: { onChange, value, name } }) => (
                 <Input
                   size="xs"
                   name={name}
@@ -156,7 +156,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   ),
                 },
               }}
-              render={({ onChange, value, name }) => (
+              render={({ field: { onChange, value, name } }) => (
                 <Input
                   size="xs"
                   name={name}
@@ -203,7 +203,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   ),
                 },
               }}
-              render={({ onChange, value, name }) => (
+              render={({ field: { onChange, value, name } }) => (
                 <Input
                   size="xs"
                   name={name}
@@ -234,7 +234,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   ),
                 },
               }}
-              render={({ onChange, value, name }) => (
+              render={({ field: { onChange, value, name } }) => (
                 <Input
                   size="xs"
                   name={name}
@@ -261,7 +261,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   message: formatMessage(m.DashBoardDescription),
                 },
               }}
-              render={({ onChange, value, name }) => (
+              render={({ field: { onChange, value, name } }) => (
                 <Input
                   size="xs"
                   name={name}
@@ -295,7 +295,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   ),
                 },
               }}
-              render={({ onChange, value, name }) => (
+              render={({ field: { onChange, value, name } }) => (
                 <Input
                   size="xs"
                   name={name}
@@ -330,7 +330,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   ),
                 },
               }}
-              render={({ onChange, value, name }) => (
+              render={({ field: { onChange, value, name } }) => (
                 <Input
                   size="xs"
                   name={name}
@@ -379,7 +379,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   ),
                 },
               }}
-              render={({ onChange, value, name }) => (
+              render={({ field: { onChange, value, name } }) => (
                 <Input
                   size="xs"
                   name={name}
@@ -419,7 +419,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   ),
                 },
               }}
-              render={({ onChange, value, name }) => (
+              render={({ field: { onChange, value, name } }) => (
                 <Input
                   size="xs"
                   name={name}
@@ -456,7 +456,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   ),
                 },
               }}
-              render={({ onChange, value, name }) => (
+              render={({ field: { onChange, value, name } }) => (
                 <Input
                   size="xs"
                   name={name}
@@ -505,7 +505,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   ),
                 },
               }}
-              render={({ onChange, value, name }) => (
+              render={({ field: { onChange, value, name } }) => (
                 <Input
                   size="xs"
                   name={name}
@@ -547,7 +547,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   ),
                 },
               }}
-              render={({ onChange, value, name }) => (
+              render={({ field: { onChange, value, name } }) => (
                 <Input
                   size="xs"
                   name={name}
@@ -596,7 +596,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   ),
                 },
               }}
-              render={({ onChange, value, name }) => (
+              render={({ field: { onChange, value, name } }) => (
                 <Input
                   size="xs"
                   name={name}

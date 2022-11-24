@@ -71,7 +71,7 @@ export const Nudge: FC<Props> = ({ refuseMail }) => {
               name="refuseMail"
               control={control}
               defaultValue={refuseMail}
-              render={({ onChange, value }) => (
+              render={({ field: { onChange, value } }) => (
                 <Checkbox
                   name="refuseMail"
                   onChange={(e) => {

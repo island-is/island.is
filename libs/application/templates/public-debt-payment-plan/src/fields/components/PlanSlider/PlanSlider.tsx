@@ -52,7 +52,7 @@ export const PlanSlider = ({
         <Controller
           defaultValue={stateValue}
           name={id}
-          render={({ onChange, value }) => (
+          render={({ field: { onChange, value } }) => (
             <Slider
               label={label}
               min={minValue / multiplier}

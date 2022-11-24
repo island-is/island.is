@@ -304,7 +304,7 @@ export const CemetryOverview = ({
           name="applicationApprove"
           defaultValue={approveOverview}
           rules={{ required: true }}
-          render={({ value, onChange }) => {
+          render={({ fields: { value, onChange } }) => {
             return (
               <Checkbox
                 onChange={(e) => {

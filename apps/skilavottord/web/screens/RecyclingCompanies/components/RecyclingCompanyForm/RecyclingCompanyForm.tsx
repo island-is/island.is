@@ -253,7 +253,7 @@ const RecyclingCompanyForm: FC<RecyclingCompanyForm> = ({
               <Controller
                 name="active"
                 control={control}
-                render={({ onChange, value, name }) => {
+                render={({ field: { onChange, value, name } }) => {
                   return (
                     <Checkbox
                       large

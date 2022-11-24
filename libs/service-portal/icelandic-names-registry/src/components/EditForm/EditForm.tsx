@@ -136,7 +136,7 @@ const EditForm: React.FC<PropTypes> = ({
                 <Controller
                   name="icelandicName"
                   control={control}
-                  render={({ onChange, value, name }) => {
+                  render={({ field: { onChange, value, name } }) => {
                     return (
                       <Input
                         name={name}
@@ -162,7 +162,7 @@ const EditForm: React.FC<PropTypes> = ({
               >
                 <Controller
                   name="type"
-                  render={({ onChange, value, name }) => {
+                  render={({ field: { onChange, value, name } }) => {
                     return (
                       <Select
                         name={name}
@@ -192,7 +192,7 @@ const EditForm: React.FC<PropTypes> = ({
               >
                 <Controller
                   name="status"
-                  render={({ onChange, value, name }) => {
+                  render={({ field: { onChange, value, name } }) => {
                     return (
                       <Select
                         name={name}
@@ -222,7 +222,7 @@ const EditForm: React.FC<PropTypes> = ({
               <GridColumn span="12/12" paddingBottom={spacing}>
                 <Controller
                   name="description"
-                  render={({ onChange, value, name }) => {
+                  render={({ field: { onChange, value, name } }) => {
                     return (
                       <Input
                         name={name}
@@ -244,7 +244,7 @@ const EditForm: React.FC<PropTypes> = ({
               <GridColumn span="12/12" paddingBottom={spacing}>
                 <Controller
                   name="url"
-                  render={({ onChange, value, name }) => {
+                  render={({ field: { onChange, value, name } }) => {
                     return (
                       <Input
                         name={name}
@@ -265,7 +265,7 @@ const EditForm: React.FC<PropTypes> = ({
               <GridColumn span="6/12" paddingBottom={spacing}>
                 <Controller
                   name="verdict"
-                  render={({ onChange, value, name }) => {
+                  render={({ field: { onChange, value, name } }) => {
                     return (
                       <Input
                         name={name}
@@ -289,7 +289,7 @@ const EditForm: React.FC<PropTypes> = ({
                 <Controller
                   name="visible"
                   control={control}
-                  render={({ onChange, value }) => {
+                  render={({ field: { onChange, value } }) => {
                     return (
                       <Checkbox
                         name="visible"

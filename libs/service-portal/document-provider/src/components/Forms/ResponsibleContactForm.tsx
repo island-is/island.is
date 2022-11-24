@@ -47,7 +47,7 @@ export const ResponsibleContactForm: FC<Props> = ({
               ),
             },
           }}
-          render={({ onChange, name, value }) => (
+          render={({ field: { onChange, name, value } }) => (
             <Input
               size="xs"
               name={name}
@@ -78,7 +78,7 @@ export const ResponsibleContactForm: FC<Props> = ({
               ),
             },
           }}
-          render={({ onChange, name, value }) => (
+          render={({ field: { onChange, name, value } }) => (
             <Input
               size="xs"
               name={name}
@@ -109,7 +109,7 @@ export const ResponsibleContactForm: FC<Props> = ({
               ),
             },
           }}
-          render={({ onChange, name, value }) => (
+          render={({ field: { onChange, name, value } }) => (
             <Input
               size="xs"
               name={name}
