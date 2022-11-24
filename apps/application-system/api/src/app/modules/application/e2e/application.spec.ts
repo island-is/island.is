@@ -494,12 +494,12 @@ describe('Application system API', () => {
     const failedResponse = await server
       .put(`/applications/${response.body.id}/externalData`)
       .send({
-        dataProviders: [{ id: 'test', type: 'ExampleSucceeds' }],
+        dataProviders: [{ actionId: 'test' }],
       })
       .expect(400)
 
     expect(failedResponse.body.detail).toBe(
-      'Current user is not permitted to update external data in this state: inReview',
+      `Current user is not permitted to update external data in this state with actionId: test`,
     )
   })
 

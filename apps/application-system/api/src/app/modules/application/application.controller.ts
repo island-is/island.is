@@ -600,8 +600,7 @@ export class ApplicationController {
         templateApis.push(found)
       } else {
         throw new BadRequestException(
-          'Data provider not found with action ' +
-            externalDataDto.dataProviders[i].actionId,
+          `Current user is not permitted to update external data in this state with actionId: ${externalDataDto.dataProviders[i].actionId}`,
         )
       }
     }
