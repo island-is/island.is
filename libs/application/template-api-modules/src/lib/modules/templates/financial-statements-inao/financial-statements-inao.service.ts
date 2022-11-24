@@ -179,29 +179,37 @@ export class FinancialStatementsInaoTemplateService {
         file: fileName,
       }
 
-      const result: DataResponse = await this.financialStatementsClientService
-        .postFinancialStatementForPersonalElection(input)
-        .then((data) => {
-          if (data === true) {
-            return { success: true }
-          } else {
-            return { success: false }
-          }
-        })
-        .catch((e) => {
-          this.logger.error(
-            'Failed to post financial statement for personal election',
-            e,
-          )
-          return {
-            success: false,
-            errorMessage: e.message,
-          }
-        })
-      if (!result.success) {
-        throw new Error(`Application submission failed`)
+      try {
+        const result: DataResponse = await this.financialStatementsClientService
+          .postFinancialStatementForPersonalElection(input)
+          .then((data) => {
+            if (data === true) {
+              return { success: true }
+            } else {
+              return { success: false }
+            }
+          })
+          .catch((e) => {
+            this.logger.error(
+              'Failed to post financial statement for personal election',
+              e,
+            )
+            return {
+              success: false,
+              errorMessage: e.message,
+            }
+          })
+        if (!result.success) {
+          throw new Error(`Application submission failed`)
+        }
+        return { success: result.success }
+      } catch (e) {
+        this.logger.error(
+          'Failed to run postFinancialStatementForPersonalElection',
+          e,
+        )
+        return { success: false }
       }
-      return { success: result.success }
     } else if (currentUserType === FSIUSERTYPE.PARTY) {
       const values: PoliticalPartyFinancialStatementValues = mapValuesToPartytype(
         answers,
