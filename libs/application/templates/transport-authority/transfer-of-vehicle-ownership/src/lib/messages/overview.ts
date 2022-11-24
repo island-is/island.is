@@ -45,6 +45,16 @@ export const overview = {
       defaultMessage: 'Skrá tryggingafélag',
       description: 'Add insurance company button',
     },
+    salePrice: {
+      id: 'ta.tvo.application:overview.labels.salePrice',
+      defaultMessage: 'Söluverð:',
+      description: 'Saleprice label',
+    },
+    agreementDate: {
+      id: 'ta.tvo.application:overview.labels.agreementDate',
+      defaultMessage: 'Dagsetning samnings:',
+      description: 'Agreement date label',
+    },
   }),
   confirmationModal: defineMessages({
     title: {

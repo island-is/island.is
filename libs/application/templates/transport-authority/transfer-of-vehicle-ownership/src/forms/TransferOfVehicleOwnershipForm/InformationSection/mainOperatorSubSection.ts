@@ -4,8 +4,8 @@ import {
   buildSubSection,
   getValueViaPath,
 } from '@island.is/application/core'
-import { CoOwnerAndOperatorField } from '../../../fields/CoOwnerAndOperatorRepeater/CoOwnerAndOperatorRepeater'
 import { information } from '../../../lib/messages'
+import { ReviewCoOwnerAndOperatorField } from '../../../types'
 
 export const mainOperatorSubSection = buildSubSection({
   id: 'buyerMainOperator',
@@ -15,7 +15,7 @@ export const mainOperatorSubSection = buildSubSection({
       formValue,
       'buyerCoOwnerAndOperator',
       [],
-    ) as CoOwnerAndOperatorField[]
+    ) as ReviewCoOwnerAndOperatorField[]
     return (
       coOwnerAndOperator.filter((field) => field.type === 'operator').length > 1
     )
@@ -34,7 +34,7 @@ export const mainOperatorSubSection = buildSubSection({
               application.answers,
               'buyerCoOwnerAndOperator',
               [],
-            ) as CoOwnerAndOperatorField[]
+            ) as ReviewCoOwnerAndOperatorField[]
             const operators = coOwnerAndOperator.filter(
               (field) => field.type === 'operator',
             )

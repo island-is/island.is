@@ -15,7 +15,7 @@ export const vehicleSubSection = buildSubSection({
     buildMultiField({
       id: 'vehicleMultiField',
       title: information.labels.vehicle.title,
-      description: information.general.description,
+      description: information.labels.vehicle.description,
       children: [
         buildTextField({
           id: 'vehicle.plate',
@@ -61,9 +61,7 @@ export const vehicleSubSection = buildSubSection({
             minDate.setDate(minDate.getDate() - 7)
             return minDate
           },
-          defaultValue: (application: Application) => {
-            return new Date().toISOString().substring(0, 10)
-          },
+          defaultValue: new Date().toISOString().substring(0, 10),
         }),
       ],
     }),

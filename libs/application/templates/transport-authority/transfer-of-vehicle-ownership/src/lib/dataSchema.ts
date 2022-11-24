@@ -1,17 +1,17 @@
 import { z } from 'zod'
 
 export const UserInformationSchema = z.object({
-  nationalId: z.string(),
-  name: z.string(),
-  email: z.string(),
+  nationalId: z.string().min(1),
+  name: z.string().min(1),
+  email: z.string().min(1),
   phone: z.string().optional(),
   approved: z.boolean().optional(),
 })
 
 export const CoOwnerAndOperatorSchema = z.object({
-  nationalId: z.string(),
-  name: z.string(),
-  email: z.string(),
+  nationalId: z.string().min(1),
+  name: z.string().min(1),
+  email: z.string().min(1),
   phone: z.string().optional(),
   approved: z.boolean().optional(),
   type: z.enum(['operator', 'coOwner']),
@@ -29,12 +29,13 @@ export const TransferOfVehicleOwnershipSchema = z.object({
   pickVehicle: z.object({
     vehicle: z.string().optional(),
     plate: z.string().min(1),
+    color: z.string().optional(),
   }),
   vehicle: z.object({
-    plate: z.string(),
-    type: z.string(),
-    salePrice: z.string(),
-    date: z.string(),
+    plate: z.string().min(1),
+    type: z.string().min(1),
+    salePrice: z.string().optional(),
+    date: z.string().min(1),
     isOutOfCommission: z.boolean().optional(),
   }),
   seller: UserInformationSchema,

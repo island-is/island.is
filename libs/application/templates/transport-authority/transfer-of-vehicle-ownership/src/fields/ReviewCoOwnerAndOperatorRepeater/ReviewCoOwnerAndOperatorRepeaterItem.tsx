@@ -5,11 +5,11 @@ import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
 import { FC, useEffect, useState } from 'react'
 import { ArrayField } from 'react-hook-form'
-import { ReviewCoOwnerAndOperatorField } from './ReviewCoOwnerAndOperatorRepeater'
 import { useFormContext } from 'react-hook-form'
 import { NationalIdWithName } from '../NationalIdWithName'
 import { information } from '../../lib/messages'
 import debounce from 'lodash/debounce'
+import { ReviewCoOwnerAndOperatorField } from '../../types'
 
 const DEBOUNCE_INTERVAL = 300
 

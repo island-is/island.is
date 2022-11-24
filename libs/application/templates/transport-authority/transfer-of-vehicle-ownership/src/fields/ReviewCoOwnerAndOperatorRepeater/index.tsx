@@ -3,19 +3,11 @@ import { Box, Button, Divider, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC, useState } from 'react'
 import { error, information, review } from '../../lib/messages'
-import { ReviewScreenProps } from '../../types'
+import { ReviewCoOwnerAndOperatorField, ReviewScreenProps } from '../../types'
 import { ReviewCoOwnerAndOperatorRepeaterItem } from './ReviewCoOwnerAndOperatorRepeaterItem'
 import { repeaterButtons } from './ReviewCoOwnerAndOperatorRepeater.css'
 import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
-
-export type ReviewCoOwnerAndOperatorField = {
-  nationalId: string
-  name: string
-  email: string
-  phone: string
-  type: 'operator' | 'coOwner'
-}
 
 export const ReviewCoOwnerAndOperatorRepeater: FC<
   FieldBaseProps & ReviewScreenProps

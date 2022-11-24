@@ -10,15 +10,7 @@ import { useFormContext } from 'react-hook-form'
 import * as kennitala from 'kennitala'
 import { information, error } from '../../lib/messages'
 import debounce from 'lodash/debounce'
-
-const IdentityQuery = gql`
-  query IdentityQuery($input: IdentityInput!) {
-    identity(input: $input) {
-      name
-      nationalId
-    }
-  }
-`
+import { IDENTITY_QUERY } from '../../graphql/queries'
 
 interface Props {
   customId?: string
@@ -71,12 +63,17 @@ export const NationalIdWithName: FC<Props & FieldBaseProps> = ({
   const [
     getIdentity,
     { data, loading: queryLoading, error: queryError },
-  ] = useLazyQuery<Query, { input: IdentityInput }>(IdentityQuery, {
-    onCompleted: (data) => {
-      onNameChange && onNameChange(data.identity?.name ?? '')
-      setValue(nameField, data.identity?.name ?? undefined)
+  ] = useLazyQuery<Query, { input: IdentityInput }>(
+    gql`
+      ${IDENTITY_QUERY}
+    `,
+    {
+      onCompleted: (data) => {
+        onNameChange && onNameChange(data.identity?.name ?? '')
+        setValue(nameField, data.identity?.name ?? undefined)
+      },
     },
-  })
+  )
 
   useEffect(() => {
     if (nationalIdInput.length === 10 && kennitala.isValid(nationalIdInput)) {

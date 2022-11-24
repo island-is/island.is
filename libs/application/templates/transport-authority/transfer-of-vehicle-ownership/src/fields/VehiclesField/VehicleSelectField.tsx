@@ -52,6 +52,11 @@ export const VehicleSelectField: FC<
     (getValueViaPath(application.answers, 'pickVehicle.plate', '') as string) ||
       '',
   )
+  const [color, setColor] = useState<string | undefined>(
+    getValueViaPath(application.answers, 'pickVehicle.color', undefined) as
+      | string
+      | undefined,
+  )
 
   const getVehicleDetails = useLazyVehicleDetails()
 
@@ -77,6 +82,7 @@ export const VehicleSelectField: FC<
               ? ''
               : currentVehicle.permno || '',
           )
+          setColor(currentVehicle.color || undefined)
           setIsLoading(false)
         })
         .catch((error) => console.error(error))
@@ -166,6 +172,12 @@ export const VehicleSelectField: FC<
         value={plate}
         ref={register({ required: true })}
         name="pickVehicle.plate"
+      />
+      <input
+        type="hidden"
+        value={color}
+        ref={register({ required: true })}
+        name="pickVehicle.color"
       />
     </Box>
   )

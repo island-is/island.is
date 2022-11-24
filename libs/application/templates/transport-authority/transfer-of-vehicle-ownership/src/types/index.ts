@@ -37,7 +37,6 @@ export type CoOwnerAndOperator = z.TypeOf<typeof CoOwnerAndOperatorSchema>
 export type Rejecter = z.TypeOf<typeof RejecterSchema>
 
 // Review
-
 interface ReviewerProps {
   nationalId: string
   name: string
@@ -45,10 +44,11 @@ interface ReviewerProps {
 }
 
 export interface ReviewSectionProps {
-  title: string
-  description: string
+  title: MessageDescriptor | string
+  description: MessageDescriptor | string
   visible?: boolean
   tagText: MessageDescriptor | string
   tagVariant: TagVariant
   reviewer?: ReviewerProps[]
+  messageValue?: string
 }

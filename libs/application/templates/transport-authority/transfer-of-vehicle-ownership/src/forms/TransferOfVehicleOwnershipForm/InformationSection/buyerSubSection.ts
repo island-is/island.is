@@ -13,7 +13,7 @@ export const buyerSubSection = buildSubSection({
     buildMultiField({
       id: 'buyerMultiField',
       title: information.labels.buyer.title,
-      description: information.general.description,
+      description: information.labels.buyer.description,
       children: [
         buildCustomField({
           id: 'buyer',

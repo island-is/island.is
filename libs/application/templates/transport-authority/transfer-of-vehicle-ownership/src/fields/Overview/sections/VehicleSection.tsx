@@ -6,7 +6,7 @@ import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
 import parseISO from 'date-fns/parseISO'
 import { useLocale } from '@island.is/localization'
-import { information } from '../../../lib/messages'
+import { information, overview } from '../../../lib/messages'
 import { ReviewGroup } from '../../ReviewGroup'
 import { CoOwnerAndOperator, ReviewScreenProps } from '../../../types'
 
@@ -24,6 +24,10 @@ export const VehicleSection: FC<FieldBaseProps & ReviewScreenProps> = ({
       locale: is,
     },
   )
+  const carColor = getValueViaPath(answers, 'pickVehicle.color', undefined) as
+    | string
+    | undefined
+  const carPlate = getValueViaPath(answers, 'vehicle.plate', '') as string
   const salePrice = getValueViaPath(answers, 'vehicle.salePrice', '') as string
   const buyerCoOwnerAndOperator = getValueViaPath(
     answers,
@@ -47,23 +51,21 @@ export const VehicleSection: FC<FieldBaseProps & ReviewScreenProps> = ({
         <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
           <Text>{getValueViaPath(answers, 'vehicle.type', '') as string}</Text>
           <Text>
-            {
-              /* TODO: Add color too */ getValueViaPath(
-                answers,
-                'vehicle.plate',
-                '',
-              ) as string
-            }
+            {carColor ? `${carColor} - ` : ''}
+            {carPlate}
           </Text>
         </GridColumn>
         <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
           {!isOperator && salePrice.length > 0 && (
             <Text>
-              Söluverð:{' '}
-              {getValueViaPath(answers, 'vehicle.salePrice', '') as string} kr.
+              {`${formatMessage(overview.labels.salePrice)} ${
+                getValueViaPath(answers, 'vehicle.salePrice', '') as string
+              } kr.`}
             </Text>
           )}
-          <Text>Dagsetning samnings: {dateOfContract}</Text>
+          <Text>{`${formatMessage(
+            overview.labels.agreementDate,
+          )} ${dateOfContract}`}</Text>
         </GridColumn>
       </GridRow>
     </ReviewGroup>

@@ -2,7 +2,6 @@ import {
   buildForm,
   buildSection,
   buildCustomField,
-  buildMultiField,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { information, externalData, payment, review } from '../lib/messages'
@@ -39,23 +38,5 @@ export const ReviewForm: Form = buildForm({
         }),
       ],
     }),
-    /* buildSection({
-      id: 'conclusion',
-      title: conclusion.general.sectionTitle,
-      children: [
-        buildMultiField({
-          id: 'conclusion.multifield',
-          title: conclusion.general.title,
-          children: [
-            buildCustomField({
-              component: 'Conclusion',
-              id: 'Conclusion',
-              title: '',
-              description: '',
-            }),
-          ],
-        }),
-      ],
-    }), */
   ],
 })
