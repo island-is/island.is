@@ -20,7 +20,7 @@ export const container = style({
 })
 
 export const shadow = style({
-  backgroundImage: `linear-gradient(to bottom, rgba(0, 97, 255, 0.16), rgba(255,255,255, 0.05))`,
+  backgroundColor: 'rgba(0, 97, 255, 0.16)',
   top: '-20px',
   left: 0,
   right: 0,
@@ -29,6 +29,12 @@ export const shadow = style({
   borderRadius: '50%',
   filter: 'blur(10px)',
   zIndex: -1,
+  ...themeUtils.responsiveStyle({
+    md: {
+      left: 20,
+      right: 20,
+    },
+  }),
 })
 
 export const dividerContainer = style({
