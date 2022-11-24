@@ -100,7 +100,6 @@ const Defendant: React.FC = () => {
     setWorkingCase,
     isLoadingWorkingCase,
     caseNotFound,
-    isCaseUpToDate,
   } = useContext(FormContext)
   const { formatMessage } = useIntl()
   const { createCase, isCreatingCase, updateCase } = useCase()
@@ -116,7 +115,7 @@ const Defendant: React.FC = () => {
 
   useEffect(() => {
     setPoliceCases(getPoliceCases(workingCase))
-  }, [isCaseUpToDate, workingCase])
+  }, [workingCase])
 
   const handleCreatePoliceCase = async () => {
     const [
