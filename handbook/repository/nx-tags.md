@@ -14,15 +14,15 @@ These are the most common tags, which should be applied to most of our shared li
 
 Here are the generic tags ordered from the most generic to more focused.
 
-| Tag          | Description                                   | Can depend on                      | Can be depended on by              |
-| ------------ | --------------------------------------------- | ---------------------------------- | ---------------------------------- |
-| `js`         | Basic JS library.                             | `js`                               | Any project                        |
-| `node`       | NodeJS server-side library.                   | `js`, `node`                       | Any server-side projects.          |
-| `web`        | JS library designed for running in a browser. | `js`, `web`                        | Any browser-based project.         |
-| `react`      | React library.                                | `js`, `web`, `react`               | Any react project.                 |
-| `nest`       | NestJS library.                               | `js`, `node`, `nest`               | NestJS projects.                   |
-| `react-next` | NextJS library.                               | `js`, `web`, `react`, `react-next` | NextJS projects.                   |
-| `react-spa`  | React library using react-router.             | `js`, `web`, `react`, `react-spa`  | React projects using react-router. |
+| Tag          | Description                              | Can depend on                      | Can be depended on by              |
+|--------------|------------------------------------------|------------------------------------| ---------------------------------- |
+| `js`         | Basic JS library.                        | `js`                               | Any project                        |
+| `node`       | NodeJS server-side library.              | `js`, `node`                       | Any server-side projects.          |
+| `dom`        | JS library designed to run in a browser. | `js`, `dom`                        | Any browser-based project.         |
+| `react`      | React library.                           | `js`, `dom`, `react`               | Any react project.                 |
+| `nest`       | NestJS library.                          | `js`, `node`, `nest`               | NestJS projects.                   |
+| `react-next` | NextJS library.                          | `js`, `dom`, `react`, `react-next` | NextJS projects.                   |
+| `react-spa`  | React library using react-router.        | `js`, `dom`, `react`, `react-spa`  | React projects using react-router. |
 
 ### Application tags
 
@@ -30,11 +30,11 @@ Simple applications can be tagged with the generic tags above, but applications 
 
 It can be just one tag which is applied to both the application project and all of the associated library projects. Or there can be multiple application tags with different rules to segments the library projects.
 
-| Tag               | Description             | Can depend on                                        | Can be depended on by          |
-| ----------------- | ----------------------- | ---------------------------------------------------- | ------------------------------ |
-| `api`             | API domain project.     | `js`, `web`, `react`, `react-spa`, `api`             | Other API projects.            |
-| `portals-mypages` | Service portal project. | `js`, `web`, `react`, `react-spa`, `portals-mypages` | Other service portal projects. |
-| `portals-admin`   | Admin portal project.   | `js`, `web`, `react`, `react-spa`, `portals-admin`   | Other admin portal projects.   |
+| Tag               | Description             | Can depend on                                       | Can be depended on by          |
+| ----------------- | ----------------------- |-----------------------------------------------------| ------------------------------ |
+| `api`             | API domain project.     | `js`, `dom`, `react`, `react-spa`, `api`             | Other API projects.            |
+| `portals-mypages` | Service portal project. | `js`, `dom`, `react`, `react-spa`, `portals-mypages` | Other service portal projects. |
+| `portals-admin`   | Admin portal project.   | `js`, `dom`, `react`, `react-spa`, `portals-admin`   | Other admin portal projects.   |
 
 ## Tag prefixes
 

@@ -28,5 +28,5 @@
       }
     }
   },
-  "tags": ["lib:web"]
+  "tags": ["lib:dom"]
 }
