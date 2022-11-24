@@ -22,6 +22,7 @@ interface Props {
   locked?: boolean
   backgroundColor?: 'blue' | 'white'
   size?: 'sm' | 'md'
+  ignoreTime?: boolean
   onChange: (date: Date | undefined, valid: boolean) => void
 }
 
@@ -40,6 +41,7 @@ const DateTime: React.FC<Props> = (props) => {
     locked = false,
     backgroundColor = 'white',
     size = 'md',
+    ignoreTime = false,
     onChange,
   } = props
 
@@ -57,7 +59,7 @@ const DateTime: React.FC<Props> = (props) => {
 
   const [currentDate, setCurrentDate] = useState(date(selectedDate))
   const [currentTime, setCurrentTime] = useState(
-    getTimeFromDate(date(selectedDate)),
+    ignoreTime ? '00:00' : getTimeFromDate(date(selectedDate)),
   )
 
   const [datepickerErrorMessage, setDatepickerErrorMessage] = useState<string>()
@@ -67,8 +69,11 @@ const DateTime: React.FC<Props> = (props) => {
     const time = getTimeFromDate(date(selectedDate))
 
     setCurrentDate(date(selectedDate))
-    setCurrentTime(time)
-  }, [selectedDate])
+
+    if (!ignoreTime) {
+      setCurrentTime(time)
+    }
+  }, [ignoreTime, selectedDate])
 
   const isValidDateTime = (
     date: Date | undefined,
@@ -159,7 +164,10 @@ const DateTime: React.FC<Props> = (props) => {
 
   const renderDateTime = () => {
     return (
-      <div data-testid="date-time" className={styles.dateTimeContainer}>
+      <div
+        data-testid="date-time"
+        className={ignoreTime ? undefined : styles.dateTimeContainer}
+      >
         <DatePicker
           id={name}
           label={datepickerLabel}
@@ -177,27 +185,29 @@ const DateTime: React.FC<Props> = (props) => {
           backgroundColor={backgroundColor}
           size={size}
         />
-        <TimeInputField
-          disabled={disabled || locked || currentDate === undefined}
-          onChange={onTimeChange}
-          onBlur={onTimeBlur}
-          value={currentTime}
-        >
-          <Input
-            data-testid={`${name}-time`}
-            name={`${name}-time`}
-            label={timeLabel}
-            placeholder="Veldu tíma"
-            errorMessage={timeErrorMessage}
-            hasError={timeErrorMessage !== undefined}
-            icon={locked ? 'lockClosed' : undefined}
-            iconType="outline"
-            required={required}
-            backgroundColor={backgroundColor}
-            size={size}
-            autoComplete="off"
-          />
-        </TimeInputField>
+        {!ignoreTime && (
+          <TimeInputField
+            disabled={disabled || locked || currentDate === undefined}
+            onChange={onTimeChange}
+            onBlur={onTimeBlur}
+            value={currentTime}
+          >
+            <Input
+              data-testid={`${name}-time`}
+              name={`${name}-time`}
+              label={timeLabel}
+              placeholder="Veldu tíma"
+              errorMessage={timeErrorMessage}
+              hasError={timeErrorMessage !== undefined}
+              icon={locked ? 'lockClosed' : undefined}
+              iconType="outline"
+              required={required}
+              backgroundColor={backgroundColor}
+              size={size}
+              autoComplete="off"
+            />
+          </TimeInputField>
+        )}
       </div>
     )
   }
