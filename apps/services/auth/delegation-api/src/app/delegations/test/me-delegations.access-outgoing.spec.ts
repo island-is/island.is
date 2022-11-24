@@ -1,3 +1,4 @@
+import { getModelToken } from '@nestjs/sequelize'
 import assert from 'assert'
 import addYears from 'date-fns/addYears'
 import startOfDay from 'date-fns/startOfDay'
@@ -18,16 +19,15 @@ import { isDefined } from '@island.is/shared/utils'
 import { createNationalId } from '@island.is/testing/fixtures'
 import { TestApp } from '@island.is/testing/nest'
 
+import { accessOutgoingTestCases } from '../../../../test/access-outgoing-test-cases'
 import { FixtureFactory } from '../../../../test/fixtures/fixture-factory'
 import { setupWithAuth } from '../../../../test/setup'
-import { accessTestCases } from '../../../../test/access-test-cases'
 import { partitionDomainsByScopeAccess } from './utils'
-import { getModelToken } from '@nestjs/sequelize'
 
-describe.each(Object.keys(accessTestCases))(
-  'MeDelegationsController Access with test case: %s',
+describe.each(Object.keys(accessOutgoingTestCases))(
+  'MeDelegationsController Outgoing Access with test case: %s',
   (caseName) => {
-    const testCase = accessTestCases[caseName]
+    const testCase = accessOutgoingTestCases[caseName]
     const invalidDomains = differenceWith(
       testCase.domains,
       testCase.expected,
@@ -324,7 +324,7 @@ describe.each(Object.keys(accessTestCases))(
 
     if (
       inaccessible.length > 0 &&
-      testCase !== accessTestCases.noExplicitDelegationGrant
+      testCase !== accessOutgoingTestCases.noExplicitDelegationGrant
     ) {
       it.each(inaccessible)(
         "PATCH /v1/me/delegations/:id fails updating scopes you don't have access to in $name",
