@@ -1,5 +1,10 @@
 import { FieldBaseProps } from '@island.is/application/types'
-import { AlertMessage, Box, SkeletonLoader } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Button,
+  SkeletonLoader,
+} from '@island.is/island-ui/core'
 import { FC, useEffect, useState } from 'react'
 import { useLocale } from '@island.is/localization'
 import { useFormContext } from 'react-hook-form'
@@ -43,30 +48,6 @@ export const PickDeliveryMethod: FC<FieldBaseProps> = (props) => {
     setDeliveryMethodIsSend(value)
   }
 
-  // Get values necessary to check TachoNet
-  const fullNameParts = (getValueViaPath(
-    application.externalData,
-    'nationalRegistry.data.fullName',
-    '',
-  ) as string).split(' ')
-  const firstName = fullNameParts[0]
-  const lastName =
-    fullNameParts.length > 1
-      ? fullNameParts[fullNameParts.length - 1]
-      : undefined
-  const { birthday } = info(application.applicant)
-  const birthPlace = getValueViaPath(
-    application.externalData,
-    'nationalRegistryCustom.data.birthPlace',
-    '',
-  ) as string
-  const drivingLicenceNumber = getValueViaPath(
-    application.externalData,
-    'drivingLicense.data.id',
-    '',
-  ) as string
-  const drivingLicenceIssuingCountry = 'Iceland' //TODOx get driving license issuing country
-
   const cardType = getValueViaPath(
     application.answers,
     'cardTypeSelection.cardType',
@@ -86,20 +67,47 @@ export const PickDeliveryMethod: FC<FieldBaseProps> = (props) => {
     },
   )
 
+  const refetchTachoNet = () => {
+    const fullNameParts = (getValueViaPath(
+      application.externalData,
+      'nationalRegistry.data.fullName',
+      '',
+    ) as string).split(' ')
+    const firstName = fullNameParts[0]
+    const lastName =
+      fullNameParts.length > 1
+        ? fullNameParts[fullNameParts.length - 1]
+        : undefined
+    const { birthday } = info(application.applicant)
+    const birthPlace = getValueViaPath(
+      application.externalData,
+      'nationalRegistryCustom.data.birthPlace',
+      '',
+    ) as string
+    const drivingLicenceNumber = getValueViaPath(
+      application.externalData,
+      'drivingLicense.data.id',
+      '',
+    ) as string
+    const drivingLicenceIssuingCountry = 'Iceland' //TODOx get driving license issuing country
+
+    checkTachoNet({
+      variables: {
+        input: {
+          firstName: firstName,
+          lastName: lastName,
+          birthDate: birthday,
+          birthPlace: birthPlace,
+          drivingLicenceNumber: drivingLicenceNumber,
+          drivingLicenceIssuingCountry: drivingLicenceIssuingCountry,
+        },
+      },
+    })
+  }
+
   useEffect(() => {
     if (cardTypeAllowYes && cardExistsInTachoNet === undefined) {
-      checkTachoNet({
-        variables: {
-          input: {
-            firstName: firstName,
-            lastName: lastName,
-            birthDate: birthday,
-            birthPlace: birthPlace,
-            drivingLicenceNumber: drivingLicenceNumber,
-            drivingLicenceIssuingCountry: drivingLicenceIssuingCountry,
-          },
-        },
-      })
+      refetchTachoNet()
     }
   }, [cardTypeAllowYes])
 
@@ -161,12 +169,21 @@ export const PickDeliveryMethod: FC<FieldBaseProps> = (props) => {
           </p>
         </>
       ) : error ? (
-        <AlertMessage
-          type="error"
-          message={formatMessage(
-            applicant.labels.cardDelivery.errorTachoNetMessage,
-          )}
-        />
+        <>
+          <AlertMessage
+            type="error"
+            message={formatMessage(
+              applicant.labels.cardDelivery.errorTachoNetMessage,
+            )}
+          />
+          <Box paddingTop={3}>
+            <Button onClick={() => refetchTachoNet?.()}>
+              {formatMessage(
+                applicant.labels.cardDelivery.retryTachoNetButtonCaption,
+              )}
+            </Button>
+          </Box>
+        </>
       ) : (
         <SkeletonLoader
           height={100}
