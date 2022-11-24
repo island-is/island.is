@@ -123,6 +123,7 @@ export const CemetryEquities: FC<FieldBaseProps> = ({
               }, INPUTCHANGEINTERVAL)}
               label={formatMessage(m.fixedAssetsTotal)}
               backgroundColor="blue"
+              rightAlign
               currency
             />
           </Box>
@@ -143,6 +144,7 @@ export const CemetryEquities: FC<FieldBaseProps> = ({
                 )
               }
               backgroundColor="blue"
+              rightAlign
               currency
             />
           </Box>
@@ -173,6 +175,7 @@ export const CemetryEquities: FC<FieldBaseProps> = ({
               }
               label={formatMessage(m.longTerm)}
               backgroundColor="blue"
+              rightAlign
               currency
             />
           </Box>
@@ -193,6 +196,7 @@ export const CemetryEquities: FC<FieldBaseProps> = ({
               }
               label={formatMessage(m.shortTerm)}
               backgroundColor="blue"
+              rightAlign
               currency
             />
           </Box>
@@ -224,6 +228,7 @@ export const CemetryEquities: FC<FieldBaseProps> = ({
               }
               label={formatMessage(m.equityAtTheBeginningOfTheYear)}
               backgroundColor="blue"
+              rightAlign
               currency
             />
           </Box>
@@ -248,6 +253,7 @@ export const CemetryEquities: FC<FieldBaseProps> = ({
               }
               label={formatMessage(m.revaluationDueToPriceChanges)}
               backgroundColor="blue"
+              rightAlign
               currency
             />
           </Box>
@@ -268,6 +274,7 @@ export const CemetryEquities: FC<FieldBaseProps> = ({
               }
               label={formatMessage(m.reevaluateOther)}
               backgroundColor="blue"
+              rightAlign
               currency
             />
           </Box>
@@ -285,6 +292,7 @@ export const CemetryEquities: FC<FieldBaseProps> = ({
               }
               label={formatMessage(m.operationResult)}
               backgroundColor="blue"
+              rightAlign
               currency
             />
           </Box>

@@ -17,7 +17,12 @@ import {
   createXRoadAPIPath,
   XRoadMemberClass,
 } from '@island.is/shared/utils/server'
-import { CaseState, CaseType, User } from '@island.is/judicial-system/types'
+import {
+  CaseState,
+  CaseType,
+  IndictmentSubtype,
+  User,
+} from '@island.is/judicial-system/types'
 
 import { EventService } from '../event'
 import { AwsS3Service } from '../aws-s3'
@@ -202,10 +207,10 @@ export class PoliceService {
 
   async updatePoliceCase(
     caseId: string,
-    caseType: CaseType,
+    caseType: CaseType | IndictmentSubtype,
     caseState: CaseState,
     courtRecordPdf: string,
-    policeCaseNumbers: string[],
+    policeCaseNumber: string,
     defendantNationalIds?: string[],
     caseConclusion?: string,
   ): Promise<boolean> {
@@ -221,7 +226,7 @@ export class PoliceService {
         agent: this.agent,
         body: JSON.stringify({
           rvMal_ID: caseId,
-          caseNumber: policeCaseNumbers[0] ? policeCaseNumbers[0] : '',
+          caseNumber: policeCaseNumber,
           ssn:
             defendantNationalIds && defendantNationalIds[0]
               ? defendantNationalIds[0]
@@ -251,7 +256,7 @@ export class PoliceService {
             caseId,
             caseType,
             caseState,
-            policeCaseNumbers: policeCaseNumbers.join(', '),
+            policeCaseNumber,
           },
           reason,
         )

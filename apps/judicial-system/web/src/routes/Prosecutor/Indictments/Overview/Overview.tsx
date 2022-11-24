@@ -10,7 +10,6 @@ import {
   InfoCardActiveIndictment,
   Modal,
   PageLayout,
-  PdfButton,
   ProsecutorCaseInfo,
 } from '@island.is/judicial-system-web/src/components'
 import {
@@ -20,15 +19,12 @@ import {
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { titles } from '@island.is/judicial-system-web/messages'
 import { Box, Text } from '@island.is/island-ui/core'
-import {
-  useCase,
-  useFileList,
-} from '@island.is/judicial-system-web/src/utils/hooks'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { CaseState, CaseTransition } from '@island.is/judicial-system/types'
+import IndictmentCaseFilesList from '@island.is/judicial-system-web/src/components/IndictmentCaseFilesList/IndictmentCaseFilesList'
 import * as constants from '@island.is/judicial-system/consts'
 
 import * as strings from './Overview.strings'
-import * as styles from './Overview.css'
 
 const Overview: React.FC = () => {
   const {
@@ -42,11 +38,13 @@ const Overview: React.FC = () => {
   )
   const { formatMessage } = useIntl()
   const router = useRouter()
-  const { onOpen } = useFileList({ caseId: workingCase.id })
   const { transitionCase } = useCase()
 
   const isNewIndictment =
     workingCase.state === CaseState.NEW || workingCase.state === CaseState.DRAFT
+
+  const caseHasBeenSentToCourt =
+    workingCase.state !== CaseState.NEW && workingCase.state !== CaseState.DRAFT
 
   const handleNextButtonClick = async () => {
     if (isNewIndictment) {
@@ -55,9 +53,6 @@ const Overview: React.FC = () => {
 
     setModal('caseSubmittedModal')
   }
-
-  const caseHasBeenSentToCourt =
-    workingCase.state !== CaseState.NEW && workingCase.state !== CaseState.DRAFT
 
   return (
     <PageLayout
@@ -86,34 +81,14 @@ const Overview: React.FC = () => {
         <Box component="section" marginBottom={5}>
           <InfoCardActiveIndictment />
         </Box>
-        {workingCase.caseFiles && (
-          <Box component="section" marginBottom={10}>
-            <Box marginBottom={2}>
-              <Text as="h3" variant="h3">
-                {formatMessage(strings.overview.caseFilesHeading)}
-              </Text>
-            </Box>
-            {workingCase.caseFiles.map((caseFile, index) => {
-              return (
-                <Box key={index} className={styles.caseFileContainer}>
-                  <PdfButton
-                    renderAs="row"
-                    caseId={workingCase.id}
-                    title={caseFile.name}
-                    handleClick={() => onOpen(caseFile.id)}
-                  />
-                </Box>
-              )
-            })}
-          </Box>
-        )}
+        <IndictmentCaseFilesList workingCase={workingCase} />
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={
             caseHasBeenSentToCourt
               ? constants.CASES_ROUTE
-              : `${constants.INDICTMENTS_CASE_FILE_ROUTE}/${workingCase.id}`
+              : `${constants.INDICTMENTS_CASE_FILES_ROUTE}/${workingCase.id}`
           }
           nextButtonText={formatMessage(strings.overview.nextButtonText, {
             isNewIndictment,

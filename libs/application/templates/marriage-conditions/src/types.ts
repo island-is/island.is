@@ -30,9 +30,15 @@ export type PersonalInfo = {
 export type Ceremony = {
   hasDate: string
   date: string
-  ceremonyPlace: string
-  office: string
-  society: string
+  period: {
+    dateFrom: string
+    dateTo: string
+  }
+  place: {
+    ceremonyPlace: string
+    office: string
+    society: string
+  }
 }
 
 export type MarriageConditionsAnswers = z.infer<typeof dataSchema>

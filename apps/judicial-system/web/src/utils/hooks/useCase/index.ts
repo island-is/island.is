@@ -188,6 +188,7 @@ const useCase = () => {
             variables: {
               input: {
                 type: theCase.type,
+                indictmentSubtypes: theCase.indictmentSubtypes,
                 description: theCase.description,
                 policeCaseNumbers: theCase.policeCaseNumbers,
                 defenderName: theCase.defenderName,
@@ -278,7 +279,6 @@ const useCase = () => {
           variables: {
             input: {
               id: workingCase.id,
-              modified: workingCase.modified,
               transition,
             },
           },

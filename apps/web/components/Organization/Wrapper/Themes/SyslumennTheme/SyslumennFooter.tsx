@@ -13,9 +13,10 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks'
-import { richText, SliceType } from '@island.is/island-ui/contentful'
+import { SliceType } from '@island.is/island-ui/contentful'
 import { GlobalContext } from '@island.is/web/context'
 import { BLOCKS } from '@contentful/rich-text-types'
+import { webRichText } from '@island.is/web/utils/richText'
 
 import * as styles from './SyslumennFooter.css'
 
@@ -55,7 +56,7 @@ export const SyslumennFooter: React.FC<FooterProps> = ({
             </Text>
           )}
         </Box>
-        {richText(
+        {webRichText(
           (isServiceWeb ? item.serviceWebContent : item.content) as SliceType[],
           {
             renderNode: {

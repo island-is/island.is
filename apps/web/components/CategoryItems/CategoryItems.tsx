@@ -31,18 +31,22 @@ export const CategoryItems = ({
         paddingBottom={3}
         insideGridContainer
       >
-        {items.map(
-          ({ title, description, slug, __typename: typename }, index) => (
+        {items
+          .filter(
+            (item) =>
+              item.slug !== 'thjonusta-island-is' &&
+              item.slug !== 'services-on-island-is',
+          )
+          .map(({ title, description, slug, __typename: typename }, index) => (
             <CategoryCard
               key={index}
               heading={title}
-              headingAs="h4"
+              headingAs="h3"
               headingVariant="h4"
               text={description}
               href={linkResolver(typename as LinkType, [slug]).href}
             />
-          ),
-        )}
+          ))}
       </GridItems>
     </>
   )

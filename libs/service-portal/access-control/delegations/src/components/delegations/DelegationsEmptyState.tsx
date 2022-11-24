@@ -12,6 +12,7 @@ export const DelegationsEmptyState = () => {
       alignItems="center"
       flexDirection="column"
       rowGap={[6, 10]}
+      data-testid={'delegations-empty-state'}
     >
       <Text>
         {formatMessage({

@@ -30,6 +30,8 @@ import { SyslumennClientConfig } from '@island.is/clients/syslumenn'
 import { SyslumennModule } from '@island.is/api/domains/syslumenn'
 import { ElectronicRegistrationsClientConfig } from '@island.is/clients/electronic-registration-statistics'
 import { ElectronicRegistrationsModule } from '@island.is/api/domains/electronic-registration-statistics'
+import { FiskistofaClientConfig } from '@island.is/clients/fiskistofa'
+import { FiskistofaModule } from '@island.is/api/domains/fiskistofa'
 import { CompanyRegistryModule } from '@island.is/api/domains/company-registry'
 import { IcelandicNamesModule } from '@island.is/api/domains/icelandic-names-registry'
 import { RegulationsModule } from '@island.is/api/domains/regulations'
@@ -49,6 +51,7 @@ import {
 } from '@island.is/api/domains/license-service'
 import { PaymentScheduleModule } from '@island.is/api/domains/payment-schedule'
 import { AssetsClientConfig } from '@island.is/clients/assets'
+import { AssetsV2ClientConfig } from '@island.is/clients/assets-v2'
 import { AuthPublicApiClientConfig } from '@island.is/clients/auth/public-api'
 import { FinanceClientConfig } from '@island.is/clients/finance'
 import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
@@ -79,6 +82,7 @@ import { DisabilityLicenseClientConfig } from '@island.is/clients/disability-lic
 import { PassportsClientConfig } from '@island.is/clients/passports'
 import { FileStorageConfig } from '@island.is/file-storage'
 import { AuthDelegationApiClientConfig } from '@island.is/clients/auth/delegation-api'
+import { FinancialStatementsInaoClientConfig } from '@island.is/clients/financial-statements-inao'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -202,6 +206,7 @@ const autoSchemaFile = environment.production
     AuthModule.register(environment.auth as AuthConfig),
     SyslumennModule,
     ElectronicRegistrationsModule,
+    FiskistofaModule,
     CompanyRegistryModule,
     IcelandicNamesModule.register({
       backendUrl: environment.icelandicNamesRegistry.backendUrl!,
@@ -250,6 +255,7 @@ const autoSchemaFile = environment.production
       load: [
         AdrAndMachineLicenseClientConfig,
         AssetsClientConfig,
+        AssetsV2ClientConfig,
         FirearmLicenseClientConfig,
         DisabilityLicenseClientConfig,
         GenericFirearmLicenseConfig,
@@ -272,10 +278,12 @@ const autoSchemaFile = environment.production
         MunicipalitiesFinancialAidConfig,
         CompanyRegistryConfig,
         FishingLicenseClientConfig,
+        FinancialStatementsInaoClientConfig,
         DrivingLicenseBookClientConfig,
         DrivingLicenseApiConfig,
         PassportsClientConfig,
         FileStorageConfig,
+        FiskistofaClientConfig,
       ],
     }),
   ],
