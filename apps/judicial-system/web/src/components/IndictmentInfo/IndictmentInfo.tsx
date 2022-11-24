@@ -12,6 +12,7 @@ import {
   capitalize,
   formatDate,
   indictmentSubtypes,
+  readableIndictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
 
 interface Props {
@@ -34,9 +35,9 @@ const IndictmentInfo: React.FC<Props> = (props) => {
         <Text variant="small">
           {formatMessage(strings.subtypes, {
             subtypes: capitalize(
-              subtypes[policeCaseNumber]
-                ?.map((subtype) => indictmentSubtypes[subtype])
-                .join(', ') || '-',
+              readableIndictmentSubtypes([policeCaseNumber], subtypes).join(
+                ', ',
+              ) || '-',
             ),
           })}
         </Text>
