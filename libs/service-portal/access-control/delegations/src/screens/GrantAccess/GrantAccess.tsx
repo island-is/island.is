@@ -1,10 +1,9 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import cn from 'classnames'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useHistory } from 'react-router-dom'
 import { defineMessage } from 'react-intl'
 import * as kennitala from 'kennitala'
-import { sharedMessages } from '@island.is/shared/translations'
 
 import {
   Box,
@@ -72,27 +71,21 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
 
   const { identity } = data || {}
 
-  const defaultValues = useMemo(
-    () => ({
-      toNationalId: '',
-      domainName: selectedOption?.value ?? null,
-    }),
-    [selectedOption?.value],
-  )
-
   const methods = useForm({
     mode: 'onChange',
-    defaultValues,
+    defaultValues: {
+      toNationalId: '',
+      domainName: selectedOption?.value ?? null,
+    },
   })
+  const { handleSubmit, control, errors, watch, reset } = methods
 
   useEffect(() => {
-    methods.reset(defaultValues)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedOption?.value, defaultValues])
+    reset({ domainName: selectedOption?.value ?? null })
+  }, [selectedOption?.value, reset])
 
-  const { handleSubmit, control, errors, watch, reset } = methods
   const watchToNationalId = watch('toNationalId')
-  const domainmNameWatcher = watch('domainName')
+  const domainNameWatcher = watch('domainName')
   const loading = queryLoading || mutationLoading
 
   const requestDelegation = (
@@ -174,8 +167,8 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
             <Box display="flex" flexDirection="column" rowGap={[5, 6]}>
               <IdentityCard
                 label={formatMessage({
-                  id: 'sp.access-control-delegations:signed-in-user',
-                  defaultMessage: 'Innskráður notandi',
+                  id: 'sp.access-control-delegations:delegation-to',
+                  defaultMessage: 'Aðgangsveitandi',
                 })}
                 title={userInfo.profile.name}
                 description={formatNationalId(userInfo.profile.nationalId)}
@@ -297,7 +290,7 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
               </Text>
               <Box marginBottom={7}>
                 <DelegationsFormFooter
-                  disabled={!name || !domainmNameWatcher}
+                  disabled={!name || !domainNameWatcher}
                   loading={mutationLoading}
                   onCancel={() =>
                     history.push(ServicePortalPath.AccessControlDelegations)

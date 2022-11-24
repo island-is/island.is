@@ -50,9 +50,13 @@ export class DataProtectionComplaintService {
 
       if (!complaintPdf?.content) throw new Error('No pdf content')
 
+      const now = new Date()
+      const nowString = now.toISOString().replace(/:/g, '-')
+      const complaintPdfFileName = `kvörtun-${nowString}.pdf`
+
       const key = await this.sharedService.addAttachment(
         application,
-        'kvörtun.pdf',
+        complaintPdfFileName,
         complaintPdf.fileBuffer,
         {
           ContentType: 'application/pdf',

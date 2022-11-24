@@ -7,6 +7,7 @@ import {
   DigitalSignee,
   FinancialStatementsInaoClientService,
   PersonalElectionFinancialStatementValues,
+  PersonalElectionSubmitInput,
   PoliticalPartyFinancialStatementValues,
 } from '@island.is/clients/financial-statements-inao'
 import {
@@ -145,7 +146,7 @@ export class FinancialStatementsInaoTemplateService {
           actor?.nationalId
         }', electionId: '${electionId}', noValueStatement: '${noValueStatement}', clientName: '${clientName}', values: '${JSON.stringify(
           values,
-        )}', file: '${fileName}'`,
+        )}', file length: '${fileName?.length}'`,
       )
 
       const client: Client = {
@@ -168,16 +169,29 @@ export class FinancialStatementsInaoTemplateService {
         phone: clientPhone,
       }
 
+      const input: PersonalElectionSubmitInput = {
+        client: client,
+        actor: actorContact,
+        digitalSignee: digitalSignee,
+        electionId: electionId,
+        noValueStatement: noValueStatement,
+        values: values,
+        file: fileName,
+      }
+
+      this.logger.info(`PostFinancialStatementForPersonalElection input`, input)
+      this.logger.info(
+        `PostFinancialStatementForPersonalElection file type ${typeof fileName}`,
+      )
+
+      this.logger.info(
+        `PostFinancialStatementForPersonalElection method type, ${typeof this
+          .financialStatementsClientService
+          .postFinancialStatementForPersonalElection}`,
+      )
+
       const result: DataResponse = await this.financialStatementsClientService
-        .postFinancialStatementForPersonalElection(
-          client,
-          actorContact,
-          digitalSignee,
-          electionId,
-          noValueStatement,
-          values,
-          fileName,
-        )
+        .postFinancialStatementForPersonalElection(input)
         .then((data) => {
           if (data === true) {
             return { success: true }
