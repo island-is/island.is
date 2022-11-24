@@ -18,7 +18,7 @@ export const userInformationSubSection = buildSubSection({
       description: applicant.labels.userInformation.description,
       children: [
         buildTextField({
-          id: 'name',
+          id: 'applicant.name',
           title: applicant.labels.userInformation.name,
           backgroundColor: 'white',
           width: 'half',
@@ -27,7 +27,7 @@ export const userInformationSubSection = buildSubSection({
             application.externalData?.nationalRegistry?.data?.fullName,
         }),
         buildTextField({
-          id: 'nationalId',
+          id: 'applicant.nationalId',
           title: applicant.labels.userInformation.nationalId,
           backgroundColor: 'white',
           width: 'half',
@@ -37,7 +37,7 @@ export const userInformationSubSection = buildSubSection({
             application.externalData?.nationalRegistry?.data?.nationalId,
         }),
         buildTextField({
-          id: 'address',
+          id: 'applicant.address',
           title: applicant.labels.userInformation.address,
           backgroundColor: 'white',
           width: 'full',
@@ -47,7 +47,7 @@ export const userInformationSubSection = buildSubSection({
               ?.streetAddress,
         }),
         buildTextField({
-          id: 'postalCode',
+          id: 'applicant.postalCode',
           title: applicant.labels.userInformation.postalcode,
           backgroundColor: 'white',
           width: 'half',
@@ -57,7 +57,7 @@ export const userInformationSubSection = buildSubSection({
               ?.postalCode,
         }),
         buildTextField({
-          id: 'city',
+          id: 'applicant.city',
           title: applicant.labels.userInformation.city,
           backgroundColor: 'white',
           width: 'half',
@@ -66,7 +66,7 @@ export const userInformationSubSection = buildSubSection({
             application.externalData?.nationalRegistry?.data?.address?.city,
         }),
         buildTextField({
-          id: 'birthPlace',
+          id: 'applicant.birthPlace',
           title: applicant.labels.userInformation.birthPlace,
           backgroundColor: 'white',
           width: 'half',
@@ -75,7 +75,7 @@ export const userInformationSubSection = buildSubSection({
             application.externalData?.nationalRegistryCustom?.data?.birthPlace,
         }),
         buildTextField({
-          id: 'birthCountry',
+          id: 'applicant.birthCountry',
           title: applicant.labels.userInformation.birthCountry,
           backgroundColor: 'white',
           width: 'half',
@@ -90,7 +90,7 @@ export const userInformationSubSection = buildSubSection({
           titleVariant: 'h5',
         }),
         buildTextField({
-          id: 'email',
+          id: 'applicant.email',
           title: applicant.labels.userInformation.email,
           width: 'half',
           variant: 'email',
@@ -99,7 +99,7 @@ export const userInformationSubSection = buildSubSection({
             application.externalData?.userProfile?.data?.email,
         }),
         buildTextField({
-          id: 'phone',
+          id: 'applicant.phone',
           title: applicant.labels.userInformation.phone,
           width: 'half',
           variant: 'tel',

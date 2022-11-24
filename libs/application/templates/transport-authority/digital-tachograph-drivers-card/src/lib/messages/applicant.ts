@@ -155,6 +155,12 @@ export const applicant = {
           'Það kom upp villa við að sækja gögn úr Tacho net, reyndu aftur síðar.',
         description: 'Error tacho net message',
       },
+      retryTachoNetButtonCaption: {
+        id:
+          'ta.dtdc.application:applicant.labels.cardDelivery.retryTachoNetButtonCaption',
+        defaultMessage: 'Reyna aftur',
+        description: 'Retry tacho net button caption',
+      },
     }),
   },
 }

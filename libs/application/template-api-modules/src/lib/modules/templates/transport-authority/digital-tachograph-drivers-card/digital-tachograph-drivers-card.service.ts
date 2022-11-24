@@ -6,7 +6,13 @@ import {
   DigitalTachographDriversCardAnswers,
   getChargeItemCodes,
 } from '@island.is/application/templates/transport-authority/digital-tachograph-drivers-card'
-import { NationalRegistry, QualityPhoto, QualitySignature } from './types'
+import {
+  DrivingLicense,
+  NationalRegistry,
+  NationalRegistryCustom,
+  QualityPhoto,
+  QualitySignature,
+} from './types'
 import { YES } from '@island.is/application/core'
 
 @Injectable()
@@ -62,6 +68,10 @@ export class DigitalTachographDriversCardService {
     const answers = application.answers as DigitalTachographDriversCardAnswers
     const nationalRegistryData = application.externalData.nationalRegistry
       ?.data as NationalRegistry
+    const nationalRegistryCustomData = application.externalData
+      .nationalRegistryCustom?.data as NationalRegistryCustom
+    const drivingLicenseData = application.externalData.drivingLicense
+      ?.data as DrivingLicense
     const createChargeDate = application.externalData.createCharge?.date
     const qualityPhotoData = application.externalData.qualityPhoto
       ?.data as QualityPhoto
@@ -75,11 +85,11 @@ export class DigitalTachographDriversCardService {
       address: nationalRegistryData?.address?.streetAddress,
       postalCode: nationalRegistryData?.address?.postalCode,
       place: nationalRegistryData?.address?.city,
-      birthCountry: answers.birthCountry,
-      birthPlace: answers.birthPlace,
-      emailAddress: answers.email,
-      phoneNumber: answers.phone,
-      deliveryMethodIsSend: answers.deliveryMethodIsSend === YES,
+      birthCountry: drivingLicenseData?.birthCountry,
+      birthPlace: nationalRegistryCustomData?.birthPlace,
+      emailAddress: answers.applicant.email,
+      phoneNumber: answers.applicant.phone,
+      deliveryMethodIsSend: answers.cardDelivery.deliveryMethodIsSend === YES,
       paymentReceivedAt: new Date(createChargeDate),
       photo: qualityPhotoData?.dataUri,
       signature: qualitySignatureData?.dataUri,

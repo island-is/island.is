@@ -10,6 +10,14 @@ export interface NationalRegistry {
   address: Address
 }
 
+export interface NationalRegistryCustom {
+  birthPlace: string
+}
+
+export interface DrivingLicense {
+  birthCountry: string
+}
+
 export interface QualityPhoto {
   dataUri: string
 }

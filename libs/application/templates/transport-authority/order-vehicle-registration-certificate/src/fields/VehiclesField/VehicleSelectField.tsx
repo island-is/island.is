@@ -40,8 +40,7 @@ export const VehicleSelectField: FC<
       : null,
   )
   const [plate, setPlate] = useState<string>(
-    (getValueViaPath(application.answers, 'pickVehicle.plate', '') as string) ||
-      '',
+    getValueViaPath(application.answers, 'pickVehicle.plate', '') as string,
   )
 
   const onChange = (option: Option) => {
