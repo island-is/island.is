@@ -7,6 +7,7 @@ import {
   DigitalSignee,
   FinancialStatementsInaoClientService,
   PersonalElectionFinancialStatementValues,
+  PersonalElectionSubmitInput,
   PoliticalPartyFinancialStatementValues,
 } from '@island.is/clients/financial-statements-inao'
 import {
@@ -145,7 +146,7 @@ export class FinancialStatementsInaoTemplateService {
           actor?.nationalId
         }', electionId: '${electionId}', noValueStatement: '${noValueStatement}', clientName: '${clientName}', values: '${JSON.stringify(
           values,
-        )}', file: '${fileName}'`,
+        )}', file length: '${fileName?.length}'`,
       )
 
       const client: Client = {
@@ -168,37 +169,47 @@ export class FinancialStatementsInaoTemplateService {
         phone: clientPhone,
       }
 
-      const result: DataResponse = await this.financialStatementsClientService
-        .postFinancialStatementForPersonalElection(
-          client,
-          actorContact,
-          digitalSignee,
-          electionId,
-          noValueStatement,
-          values,
-          fileName,
-        )
-        .then((data) => {
-          if (data === true) {
-            return { success: true }
-          } else {
-            return { success: false }
-          }
-        })
-        .catch((e) => {
-          this.logger.error(
-            'Failed to post financial statement for personal election',
-            e,
-          )
-          return {
-            success: false,
-            errorMessage: e.message,
-          }
-        })
-      if (!result.success) {
-        throw new Error(`Application submission failed`)
+      const input: PersonalElectionSubmitInput = {
+        client: client,
+        actor: actorContact,
+        digitalSignee: digitalSignee,
+        electionId: electionId,
+        noValueStatement: noValueStatement,
+        values: values,
+        file: fileName,
       }
-      return { success: result.success }
+
+      try {
+        const result: DataResponse = await this.financialStatementsClientService
+          .postFinancialStatementForPersonalElection(input)
+          .then((data) => {
+            if (data === true) {
+              return { success: true }
+            } else {
+              return { success: false }
+            }
+          })
+          .catch((e) => {
+            this.logger.error(
+              'Failed to post financial statement for personal election',
+              e,
+            )
+            return {
+              success: false,
+              errorMessage: e.message,
+            }
+          })
+        if (!result.success) {
+          throw new Error(`Application submission failed`)
+        }
+        return { success: result.success }
+      } catch (e) {
+        this.logger.error(
+          'Failed to run postFinancialStatementForPersonalElection',
+          e,
+        )
+        return { success: false }
+      }
     } else if (currentUserType === FSIUSERTYPE.PARTY) {
       const values: PoliticalPartyFinancialStatementValues = mapValuesToPartytype(
         answers,

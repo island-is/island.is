@@ -1,26 +1,32 @@
 # Application System
 
+## Quickstart
+
+Ensure docker is running, then run the following when running for the first time:
+
+```bash
+yarn dev/init application-system-api
+or
+yarn dev/init application-system-form
+```
+
+depending on whether you're working on the API or an application form.
+
+To start the app:
+
+```bash
+yarn dev application-system-api
+or
+yarn dev application-system-form
+```
+
+depending on whether you're working on the API or an application form.
+
+These commands are just shorthands for the setup described below.
+
 ## About
 
 This project forms the base for all business applications belonging to island.is.
-
-## Quickstart
-
-Ensure docker is running, then run the following to set up:
-
-```bash
-yarn nx run application-system-api:dev/init
-```
-
-This command runs all _initial setup_ in the sections [API](#API) and [Form](#Form) below.
-
-Then whenever you want to work on the application-system run this command:
-
-```bash
-yarn nx run application-system-api:dev
-```
-
-This command runs all _running locally_ in the sections [API](#API), [Form](#Form) and [graphql](#graphql) below, as well as starting x-road and soffia proxies.
 
 ## URLs
 
