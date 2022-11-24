@@ -37,12 +37,9 @@ export class ReferenceTemplateService extends BaseTemplateApiService {
   }
 
   async getAnotherReferenceData({ application }: TemplateApiModuleActionProps) {
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-
     return {
       anotherData: {
-        stuff: 'same',
-        notAString: 666,
+        stuff: 'someDataString',
       },
     }
   }

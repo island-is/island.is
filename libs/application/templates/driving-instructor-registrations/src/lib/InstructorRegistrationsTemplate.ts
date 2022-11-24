@@ -64,7 +64,10 @@ const InstructorRegistrationsTemplate: ApplicationTemplate<
               delete: true,
               write: {
                 answers: ['approveExternalData'],
-                externalData: ['teachingRights', 'nationalRegistry'],
+                externalData: [
+                  HasTeachingRightsApi.externalDataId,
+                  NationalRegistryUserApi.externalDataId,
+                ],
               },
             },
           ],

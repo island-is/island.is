@@ -6,7 +6,7 @@ export class TemplateApi<TParams = unknown> {
   // If response/error should be written to application.externalData, defaults to true
   shouldPersistToExternalData?: boolean
   // Id inside application.externalData, value of apiModuleAction is used by default
-  externalDataId?: string
+  private _externalDataId?: string
   // Should the state transition be blocked if this action errors out
   // defaults to true
   throwOnError?: boolean
@@ -27,7 +27,7 @@ export class TemplateApi<TParams = unknown> {
 
     this.action = action
     this.actionId = namespace ? `${namespace}.${action}` : action
-    this.externalDataId = externalDataId
+    this._externalDataId = externalDataId
 
     this.order = order ? order : 0
     this.params = params
@@ -39,6 +39,10 @@ export class TemplateApi<TParams = unknown> {
     throwOnError !== undefined
       ? (this.throwOnError = throwOnError)
       : (this.throwOnError = true)
+  }
+
+  public get externalDataId() {
+    return this._externalDataId ? this._externalDataId : this.action
   }
 
   configure(config: ConfigureTemplateApi<TParams>) {
@@ -57,7 +61,7 @@ export class TemplateApi<TParams = unknown> {
       }
     }
 
-    if (externalDataId) this.externalDataId = externalDataId
+    if (externalDataId) this._externalDataId = externalDataId
     if (order) this.order = order
     if (shouldPersistToExternalData !== undefined)
       this.shouldPersistToExternalData = shouldPersistToExternalData
@@ -67,7 +71,8 @@ export class TemplateApi<TParams = unknown> {
 }
 
 interface DefineTemplateApi<TParams = unknown>
-  extends Omit<TemplateApi, 'configure' | 'actionId'> {
+  extends Omit<TemplateApi, 'configure' | 'actionId' | 'externalDataId'> {
+  externalDataId?: string
   namespace?: string
   params?: TParams
 }
@@ -75,8 +80,9 @@ interface DefineTemplateApi<TParams = unknown>
 interface ConfigureTemplateApi<TParams = unknown>
   extends Pick<
     TemplateApi,
-    'shouldPersistToExternalData' | 'order' | 'throwOnError' | 'externalDataId'
+    'shouldPersistToExternalData' | 'order' | 'throwOnError'
   > {
+  externalDataId?: string
   params?: Partial<TParams>
 }
 

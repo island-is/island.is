@@ -85,9 +85,9 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
                   'confirmContract',
                 ],
                 externalData: [
-                  'UserProfile.userProfile',
-                  'NationalRegistry.nationalRegistry',
-                  'NationalRegistry.childrenCustodyInformation',
+                  NationalRegistryUserApi.externalDataId,
+                  ChildrenCustodyInformationApi.externalDataId,
+                  UserProfileApi.externalDataId,
                 ],
               },
               api: [

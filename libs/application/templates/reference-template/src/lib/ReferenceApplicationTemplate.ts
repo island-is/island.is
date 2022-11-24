@@ -22,7 +22,7 @@ import { Features } from '@island.is/feature-flags'
 import { m } from './messages'
 import { assign } from 'xstate'
 import { ApiActions } from '../shared'
-import { ReferenceDataApi } from '../dataProviders'
+import { ReferenceDataApi, EphemiralApi } from '../dataProviders'
 import { ExampleSchema } from './dataSchema'
 
 const States = {
@@ -120,6 +120,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
                     },
                   },
                 }),
+                EphemiralApi,
               ],
               delete: true,
             },

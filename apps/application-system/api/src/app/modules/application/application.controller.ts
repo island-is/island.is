@@ -562,25 +562,9 @@ export class ApplicationController {
     @CurrentUser() user: User,
     @CurrentLocale() locale: Locale,
   ): Promise<ApplicationResponseDto> {
-    islandis_logger.debug(
-      `TemplateApi: Updating external data for application Id : ${id}`,
-    )
-
-    islandis_logger.debug(
-      `TemplateApi: Request externalDataDto :  . ${JSON.stringify(
-        externalDataDto,
-      )}`,
-    )
-
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
       user,
-    )
-
-    await this.validationService.validateIncomingExternalDataProviders(
-      existingApplication as BaseApplication,
-      externalDataDto,
-      user.nationalId,
     )
 
     const templateId = existingApplication.typeId as ApplicationTypes
@@ -622,8 +606,10 @@ export class ApplicationController {
       }
     }
 
-    islandis_logger.debug(
-      `TemplateApi: found template apis . ${JSON.stringify(templateApis)}`,
+    await this.validationService.validateIncomingExternalDataProviders(
+      existingApplication as BaseApplication,
+      templateApis,
+      user.nationalId,
     )
 
     const updatedApplication = await this.templateApiActionRunner.run(
@@ -646,10 +632,6 @@ export class ApplicationController {
       resources: existingApplication.id,
       meta: { providers: externalDataDto },
     })
-
-    islandis_logger.debug(
-      `TemplateApi: Finished updating external data for application Id : ${id}`,
-    )
 
     return updatedApplication
   }

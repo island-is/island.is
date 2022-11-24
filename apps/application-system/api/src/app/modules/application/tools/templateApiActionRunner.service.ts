@@ -57,33 +57,7 @@ export class TemplateApiActionRunner {
     this.formatMessage = formatMessage
     this.currentUserLocale = currentUserLocale
 
-    islandis_logger.debug(
-      `TemplateApi: Running actions for application id . ${application.id}`,
-    )
-
-    islandis_logger.debug(
-      `TemplateApi: this.application. ${JSON.stringify(this.application)}`,
-    )
-    islandis_logger.debug(
-      `TemplateApi: this.newExternalData ${JSON.stringify(
-        this.newExternalData,
-      )}`,
-    )
-    islandis_logger.debug(
-      `TemplateApi: this.oldExternalData ${JSON.stringify(
-        this.oldExternalData,
-      )}`,
-    )
-    islandis_logger.debug(
-      `TemplateApi: Setting old external data . ${JSON.stringify(
-        application.externalData,
-      )}`,
-    )
     const groupedActions = this.groupByOrder(this.sortActions(actions))
-
-    islandis_logger.debug(
-      `TemplateApi: Actions to run . ${JSON.stringify(groupedActions)}`,
-    )
 
     await this.runActions(groupedActions)
 
@@ -140,9 +114,7 @@ export class TemplateApiActionRunner {
 
   async callAction(api: TemplateApi) {
     const { actionId, action, externalDataId, params } = api
-    islandis_logger.debug(
-      `TemplateApi: Calling action with api : ${JSON.stringify(api)}`,
-    )
+
     const actionResult = await this.templateAPIService.performAction({
       templateId: this.application.typeId,
       actionId,
@@ -204,29 +176,14 @@ export class TemplateApiActionRunner {
     action: string,
     externalDataId?: string,
   ): Promise<void> {
-    islandis_logger.debug(
-      `TemplateApi: updateExternalData : ${JSON.stringify({
-        actionResult,
-        action,
-        externalDataId,
-      })}`,
-    )
     const newExternalDataEntry = this.buildExternalData(
       actionResult,
       action,
       externalDataId,
     )
-    islandis_logger.debug(
-      `TemplateApi: newExternalDataEntry : ${JSON.stringify(
-        newExternalDataEntry,
-      )}`,
-    )
+
     this.newExternalData = { ...this.newExternalData, ...newExternalDataEntry }
-    islandis_logger.debug(
-      `TemplateApi: this.newExternalData : ${JSON.stringify(
-        this.newExternalData,
-      )}`,
-    )
+
     this.application.externalData = {
       ...this.application.externalData,
       ...newExternalDataEntry,
@@ -240,22 +197,6 @@ export class TemplateApiActionRunner {
         delete this.newExternalData[api.externalDataId || api.action]
       }
     })
-
-    islandis_logger.debug(
-      `TemplateApi: Persisting data using Template apis : ${JSON.stringify(
-        api,
-      )}`,
-    )
-    islandis_logger.debug(
-      `TemplateApi: Persisting old external data : ${JSON.stringify(
-        this.oldExternalData,
-      )}`,
-    )
-    islandis_logger.debug(
-      `TemplateApi: Persisting new external data : ${JSON.stringify(
-        this.newExternalData,
-      )}`,
-    )
 
     await this.applicationService.updateExternalData(
       this.application.id,

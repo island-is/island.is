@@ -4,7 +4,11 @@ import {
   ApplicationTemplateHelper,
   validateAnswers,
 } from '@island.is/application/core'
-import { Application, FormValue } from '@island.is/application/types'
+import {
+  Application,
+  FormValue,
+  TemplateApi,
+} from '@island.is/application/types'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import {
   BadRequestException,
@@ -14,7 +18,6 @@ import {
 import { Unwrap } from '@island.is/shared/types'
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 import { environment } from '../../../../environments'
-import { PopulateExternalDataDto } from '../dto/populateExternalData.dto'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { User } from '@island.is/auth-nest-tools'
@@ -203,11 +206,10 @@ export class ApplicationValidationService {
 
   async validateIncomingExternalDataProviders(
     application: Application,
-    providerDto: PopulateExternalDataDto,
+    templateApis: TemplateApi[],
     nationalId: string,
   ): Promise<void> {
-    const { dataProviders } = providerDto
-    if (!dataProviders.length) {
+    if (!templateApis) {
       return
     }
     const template = await getApplicationTemplateByTypeId(application.typeId)
@@ -236,9 +238,9 @@ export class ApplicationValidationService {
 
     const illegalDataProviders: string[] = []
 
-    dataProviders.forEach(({ actionId }) => {
-      if (permittedDataProviders.indexOf(actionId) === -1) {
-        illegalDataProviders.push(actionId)
+    templateApis.forEach(({ externalDataId }) => {
+      if (permittedDataProviders.indexOf(externalDataId) === -1) {
+        illegalDataProviders.push(externalDataId)
       }
     })
     if (illegalDataProviders.length > 0) {

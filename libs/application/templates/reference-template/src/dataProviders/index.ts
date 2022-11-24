@@ -16,6 +16,11 @@ export const runsFirst = defineTemplateApi({
   order: 1, // runs first
 })
 
+export const EphemiralApi = defineTemplateApi({
+  action: 'getAnotherReferenceData',
+  shouldPersistToExternalData: false,
+})
+
 export interface MyParameterType {
   id: number
 }
