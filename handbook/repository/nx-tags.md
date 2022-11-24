@@ -28,7 +28,7 @@ Here are the generic tags ordered from the most generic to more focused.
 
 Simple applications can be tagged with the generic tags above, but applications which are split up into multiple library projects should define their own tags, extending one of the generic tags.
 
-It can be just one tag which is applied to both the application project and all of the associated library projects. Or there can be multiple application tags with different rules to segments the library projects.
+It can be just one tag which is applied to both the application project and all of the associated library projects. Or there can be multiple application tags with different rules to segment the library projects.
 
 | Tag               | Description             | Can depend on                                        | Can be depended on by          |
 | ----------------- | ----------------------- | ---------------------------------------------------- | ------------------------------ |
@@ -55,25 +55,25 @@ First step: Open `apps/x/project.json` and add the following tag:
 
 ```json
 {
-  "tags": ["scope:next"]
+  "tags": ["scope:react-next"]
 }
 ```
 
 This marks the project as a NextJS project, and tells ESLint to verify its imports. At this point ESLint would complain that project X can't import libraries Y and Z.
 
 {% hint style="info" %}
-You should not list "lib:next" in projects under the "app" folder since they should never be depended on by other projects.
+You should not list "lib:react-next" in projects under the "app" folder since they should never be depended on by other projects.
 {% endhint %}
 
 Next, open `libs/y/project.json` and add the following tags:
 
 ```json
 {
-  "tags": ["scope:next", "lib:next"]
+  "tags": ["scope:react-next", "lib:react-next"]
 }
 ```
 
-The `lib:next` tag allows the library to be imported by other projects with the "scope:next" tag (fixing one of the ESLint errors in project X). Again, adding `scope:next` configures ESLint to also verify the imports of library Y. It might find some boundary errors which you should fix.
+The `lib:react-next` tag allows the library to be imported by other projects with the "scope:react-next" tag (fixing one of the ESLint errors in project X). Again, adding `scope:react-next` configures ESLint to also verify the imports of library Y. It might find some boundary errors which you should fix.
 
 Finally, open `libs/z/project.json` and add the following tag:
 

@@ -31,7 +31,7 @@
                   "lib:portals-mypages",
                   "lib:react-spa",
                   "lib:react",
-                  "lib:web",
+                  "lib:dom",
                   "lib:js"
                 ]
               },
@@ -41,7 +41,7 @@
                   "lib:portals-admin",
                   "lib:react-spa",
                   "lib:react",
-                  "lib:web",
+                  "lib:dom",
                   "lib:js"
                 ]
               },
@@ -50,7 +50,7 @@
                 "onlyDependOnLibsWithTags": [
                   "lib:react-spa",
                   "lib:react",
-                  "lib:web",
+                  "lib:dom",
                   "lib:js"
                 ]
               },
@@ -59,17 +59,17 @@
                 "onlyDependOnLibsWithTags": [
                   "lib:react-next",
                   "lib:react",
-                  "lib:web",
+                  "lib:dom",
                   "lib:js"
                 ]
               },
               {
                 "sourceTag": "scope:react",
-                "onlyDependOnLibsWithTags": ["lib:react", "lib:web", "lib:js"]
+                "onlyDependOnLibsWithTags": ["lib:react", "lib:dom", "lib:js"]
               },
               {
-                "sourceTag": "scope:web",
-                "onlyDependOnLibsWithTags": ["lib:web", "lib:js"]
+                "sourceTag": "scope:dom",
+                "onlyDependOnLibsWithTags": ["lib:dom", "lib:js"]
               },
               {
                 "sourceTag": "scope:nest",
