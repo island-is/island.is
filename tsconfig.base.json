@@ -346,7 +346,6 @@
         "libs/clients/adr-and-machine-license/src/index.ts"
       ],
       "@island.is/clients/assets": ["libs/clients/assets/src/index.ts"],
-      "@island.is/clients/assets-v2": ["libs/clients/assets-v2/src/index.ts"],
       "@island.is/clients/auth/delegation-api": [
         "libs/clients/auth/delegation-api/src/index.ts"
       ],
