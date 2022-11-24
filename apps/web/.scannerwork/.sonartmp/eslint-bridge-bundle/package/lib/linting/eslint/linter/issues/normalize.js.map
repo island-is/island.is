@@ -1,1 +1,0 @@
-{"version":3,"file":"normalize.js","sourceRoot":"","sources":["../../../../../src/linting/eslint/linter/issues/normalize.ts"],"names":[],"mappings":";AAAA;;;;;;;;;;;;;;;;;;GAkBG;;;AAIH;;;;;;;;GAQG;AACH,SAAgB,iBAAiB,CAAC,KAAY;IAC5C,KAAK,CAAC,MAAM,IAAI,CAAC,CAAC;IAClB,IAAI,KAAK,CAAC,SAAS,EAAE;QACnB,KAAK,CAAC,SAAS,IAAI,CAAC,CAAC;KACtB;IACD,OAAO,KAAK,CAAC;AACf,CAAC;AAND,8CAMC"}

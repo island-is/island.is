@@ -1,1 +1,0 @@
-{"version":3,"file":"nosonar.js","sourceRoot":"","sources":["../../../../../../src/linting/eslint/linter/visitors/metrics/nosonar.ts"],"names":[],"mappings":";AAAA;;;;;;;;;;;;;;;;;;GAkBG;;;AAGH,yCAA8C;AAE9C;;;;;;;;;GASG;AACH,SAAgB,gBAAgB,CAAC,UAAsB;IACrD,OAAO;QACL,YAAY,EAAE,IAAA,2BAAgB,EAAC,UAAU,EAAE,KAAK,CAAC,CAAC,YAAY;KAC/D,CAAC;AACJ,CAAC;AAJD,4CAIC"}
