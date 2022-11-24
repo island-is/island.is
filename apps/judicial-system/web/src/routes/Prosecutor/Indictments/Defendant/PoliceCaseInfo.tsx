@@ -61,7 +61,7 @@ export const PoliceCaseInfo: React.FC<Props> = (props) => {
 
   const { user } = useContext(UserContext)
 
-  const [policeCaseNumberInmput, setPoliceCaseNumberInput] = useState(
+  const [policeCaseNumberInput, setPoliceCaseNumberInput] = useState(
     policeCaseNumbers[index],
   )
   const [
@@ -99,7 +99,7 @@ export const PoliceCaseInfo: React.FC<Props> = (props) => {
         <InputMask
           mask={'999-9999-9999999'}
           maskPlaceholder={null}
-          value={policeCaseNumberInmput}
+          value={policeCaseNumberInput}
           onChange={(event) => {
             if (
               policeCaseNumbers.some(
