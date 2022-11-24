@@ -8,8 +8,10 @@ info:
     name: Tryggingastofnun
     email: helpdesk@tr.is
 servers:
-  - url: https://xroad-dev.xxxxx.is/r1/IS-DEV/GOV/10008/TR-Protected/oryrki-v1
+  - url: https://xroad-dev.tr.is/r1/IS-DEV/GOV/10008/TR-Protected/oryrki-v1
     description: Optional server description, XROAD-DEV
+  - url: https://xroad.tr.is/r1/IS-DEV/GOV/10008/TR-Protected/oryrki-v1
+    description: Optional server description, XROAD-PROD
   - url: https://test-oryrki-rest.tr.is/api/v1/oryrki
     description: test server innanhús hjá TR
 paths:
@@ -79,16 +81,23 @@ components:
       properties:
         nafn:
           type: string
-          example: nafn greiðsluþega
+          description: nafn greiðluþega
         kennitala:
           type: string
           minLength: 12
           maxLength: 12
           pattern: '^\d{12}$'
+          description: kennitala greiðsluþega
           example: 0101302479
         gildir_til:
           type: string
           format: date
+          description: Gildistími örorkumats eða, ef um ótímabundið mat er að ræða, hvenær öryrki fer yfir á ellilífeyri
           example: 2023-10-07 (yyyy-mm-dd)
+        rennur_ut:
+          type: string
+          format: date-time
+          description: Dagsetning og tími þegar skilríki á að verða óvirkt í veski. Á miðnætti að morgni dags, daginn eftir "gildir_til"
+          example: 2024-10-08T00:00:00Z
 security:
   - bearerAuth: []

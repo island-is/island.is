@@ -55,6 +55,7 @@ const formatDateString = (dateTime: Date) => {
 }
 
 // TODO FORMAT CORRECTLY
+// TODO what to do about "rennurUt" field?
 export const createPkPassDataInput = (license: OrorkuSkirteini) => {
   if (!license) return null
 

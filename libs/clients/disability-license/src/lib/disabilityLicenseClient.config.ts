@@ -18,7 +18,7 @@ export const DisabilityLicenseClientConfig = defineConfig<
     return {
       xRoadServicePath: env.required(
         'XROAD_DISABILTITY_LICENSE_PATH',
-        'IS-DEV/GOV/10008/TR-Protected/oryrki-v1/',
+        'IS-DEV/GOV/10008/TR-Protected/oryrki-v1',
       ),
       fetch: {
         timeout: 30000,
