@@ -20,10 +20,10 @@ export const container = style({
 })
 
 export const shadow = style({
-  backgroundImage: `linear-gradient(to bottom, rgba(0, 97, 255, 0.16), rgba(255,255,255, 0.05))`,
+  backgroundColor: 'rgba(0, 97, 255, 0.16)',
   top: '-20px',
-  left: 0,
-  right: 0,
+  left: 10,
+  right: 10,
   position: 'absolute',
   height: '100px',
   borderRadius: '50%',
