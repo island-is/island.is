@@ -1,6 +1,8 @@
+import faker from 'faker'
+
 import {
-  CREATE_INDICTMENT_ROUTE,
-  INDICTMENTS_POLICE_CASE_FILES_ROUTE,
+  CREATE_RESTRICTION_CASE_ROUTE,
+  RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE,
 } from '@island.is/judicial-system/consts'
 import { CaseTransition } from '@island.is/judicial-system/types'
 
@@ -26,8 +28,8 @@ describe('Create indictment', () => {
 
   it('should be able to create a case', () => {
     cy.getByTestid('createCaseDropdown').click()
-    cy.get(`a[href="${CREATE_INDICTMENT_ROUTE}"]`).click()
-    cy.url().should('contain', CREATE_INDICTMENT_ROUTE)
+    cy.get(`a[href="${CREATE_RESTRICTION_CASE_ROUTE}"]`).click()
+    cy.url().should('contain', CREATE_RESTRICTION_CASE_ROUTE)
 
     cy.get('#policeCaseNumbers').type('0')
     cy.getByTestid('multipleValueListContainer').within(() =>
@@ -50,16 +52,13 @@ describe('Create indictment', () => {
     cy.getByTestid('inputErrorMessage').should('not.exist')
     cy.getByTestid('continueButton').should('be.disabled')
 
-    // Case type
-    cy.getByTestid('select-case-type').click()
-    cy.get('[id="react-select-case-type-option-1"]').click()
-    cy.getByTestid('continueButton').should('not.be.disabled')
+    cy.getByTestid('leadInvestigator').type(faker.name.firstName())
 
     cy.getByTestid('continueButton').click()
-    cy.url().should('contain', INDICTMENTS_POLICE_CASE_FILES_ROUTE)
+    cy.url().should('contain', RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE)
 
     cy.window().then((win) => {
-      caseId = win.location.pathname.split('/')[4]
+      caseId = win.location.pathname.split('/')[3]
     })
   })
 })
