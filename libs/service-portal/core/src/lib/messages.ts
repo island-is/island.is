@@ -547,13 +547,13 @@ export const m = defineMessages({
     id: 'service.portal:delegations',
     defaultMessage: 'Umboð',
   },
-  accessControlDelegationsToMe: {
+  accessControlDelegationsIncoming: {
     id: 'service.portal:to-me',
-    defaultMessage: 'Umboð til mín',
+    defaultMessage: 'Til mín',
   },
-  accessControlDelegationsFromMe: {
+  accessControlDelegationsOutgoing: {
     id: 'service.portal:from-me',
-    defaultMessage: 'Umboð frá mér',
+    defaultMessage: 'Frá mér',
   },
   accessControlDescription: {
     id: 'service.portal:accessControl-description',

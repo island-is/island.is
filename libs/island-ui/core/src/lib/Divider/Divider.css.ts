@@ -7,6 +7,7 @@ export const base = style({
 
 export const weight = styleVariants({
   regular: { background: theme.border.color.standard },
+  faded: { background: theme.border.color.blue100 },
   strong: { background: theme.border.color.focus },
   alternate: { background: theme.color.purple200 },
   purple400: { background: theme.color.purple400 },
