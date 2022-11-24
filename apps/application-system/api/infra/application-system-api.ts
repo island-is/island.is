@@ -12,6 +12,7 @@ import {
   FishingLicense,
   MunicipalitiesFinancialAid,
   ChargeFjsV2,
+  VehicleServiceFjsV1,
   TransportAuthority,
 } from '../../../../infra/src/dsl/xroad'
 import {
@@ -224,6 +225,7 @@ export const serviceSetup = (services: {
       FishingLicense,
       MunicipalitiesFinancialAid,
       ChargeFjsV2,
+      VehicleServiceFjsV1,
       TransportAuthority,
     )
     .secrets({
