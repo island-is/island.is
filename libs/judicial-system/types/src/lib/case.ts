@@ -255,6 +255,7 @@ export type CreateCase = Pick<
   | 'defenderPhoneNumber'
   | 'sendRequestToDefender'
   | 'leadInvestigator'
+  | 'crimeScenes'
 >
 
 export interface UpdateCase

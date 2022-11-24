@@ -197,6 +197,7 @@ const useCase = () => {
                 defenderPhoneNumber: theCase.defenderPhoneNumber,
                 sendRequestToDefender: theCase.sendRequestToDefender,
                 leadInvestigator: theCase.leadInvestigator,
+                crimeScenes: theCase.crimeScenes,
               },
             },
           })
