@@ -24,7 +24,7 @@ import {
   DocumentType,
   Query,
 } from '@island.is/api/schema'
-import { useLocale, useNamespaces } from '@island.is/localization'
+import { useLocale, withClientLocale } from '@island.is/localization'
 import { documentsSearchDocumentsInitialized } from '@island.is/plausible'
 import { useLocation } from 'react-router-dom'
 import { GET_ORGANIZATIONS_QUERY } from '@island.is/service-portal/graphql'
@@ -76,8 +76,6 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   userInfo,
   client,
 }) => {
-  useNamespaces('sp.documents')
-
   const { formatMessage } = useLocale()
   const [page, setPage] = useState(1)
   const [isEmpty, setEmpty] = useState(false)
@@ -396,4 +394,4 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   )
 }
 
-export default ServicePortalDocuments
+export default withClientLocale('sp.documents')(ServicePortalDocuments)

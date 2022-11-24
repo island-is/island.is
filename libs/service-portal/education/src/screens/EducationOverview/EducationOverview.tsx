@@ -5,11 +5,9 @@ import {
   ServicePortalPath,
 } from '@island.is/service-portal/core'
 import { defineMessage } from 'react-intl'
-import { useNamespaces } from '@island.is/localization'
+import { withClientLocale } from '@island.is/localization'
 
 export const EducationOverview: ServicePortalModuleComponent = () => {
-  useNamespaces('sp.education')
-
   return (
     <NavigationOverviewScreen
       title={defineMessage({
@@ -64,4 +62,4 @@ export const EducationOverview: ServicePortalModuleComponent = () => {
   )
 }
 
-export default EducationOverview
+export default withClientLocale('sp.education')(EducationOverview)

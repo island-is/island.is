@@ -191,4 +191,4 @@ export const Dashboard: FC<{}> = () => {
   )
 }
 
-export default withClientLocale()(Dashboard)
+export default withClientLocale('service.portal')(Dashboard)

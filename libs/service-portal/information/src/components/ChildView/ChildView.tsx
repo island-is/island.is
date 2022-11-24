@@ -15,7 +15,7 @@ import {
   LoadingDots,
   Stack,
 } from '@island.is/island-ui/core'
-import { useLocale, useNamespaces } from '@island.is/localization'
+import { useLocale, withClientLocale } from '@island.is/localization'
 import {
   formatNationalId,
   IntroHeader,
@@ -58,7 +58,6 @@ const ChildView: FC<Props> = ({
   userNationalId,
   userName,
 }) => {
-  useNamespaces('sp.family')
   const { formatMessage } = useLocale()
 
   if (!nationalId || error || (!loading && !person))
@@ -352,4 +351,4 @@ const ChildView: FC<Props> = ({
     </Box>
   )
 }
-export default ChildView
+export default withClientLocale('sp.family')(ChildView)

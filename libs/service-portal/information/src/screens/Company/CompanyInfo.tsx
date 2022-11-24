@@ -4,7 +4,7 @@ import { defineMessage } from 'react-intl'
 
 import { gql } from '@apollo/client'
 import { Divider, Stack } from '@island.is/island-ui/core'
-import { useLocale, useNamespaces } from '@island.is/localization'
+import { useLocale, withClientLocale } from '@island.is/localization'
 import {
   EmptyState,
   formatNationalId,
@@ -41,7 +41,6 @@ const dataNotFoundMessage = defineMessage({
 })
 
 const CompanyInfo: ServicePortalModuleComponent = ({ userInfo }) => {
-  useNamespaces('sp.company')
   const { formatMessage } = useLocale()
 
   const { data, loading, error } = useCompanyRegistry({
@@ -149,4 +148,4 @@ const CompanyInfo: ServicePortalModuleComponent = ({ userInfo }) => {
   )
 }
 
-export default CompanyInfo
+export default withClientLocale('sp.company')(CompanyInfo)

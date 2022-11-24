@@ -3,7 +3,7 @@ import React from 'react'
 import { useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
 import { Stack } from '@island.is/island-ui/core'
-import { useNamespaces } from '@island.is/localization'
+import { withClientLocale } from '@island.is/localization'
 import {
   CardLoader,
   EmptyState,
@@ -18,8 +18,6 @@ import { NATIONAL_REGISTRY_CHILDREN } from '../../lib/queries/getNationalChildre
 import { NATIONAL_REGISTRY_USER } from '../../lib/queries/getNationalRegistryUser'
 
 const UserInfoOverview: ServicePortalModuleComponent = ({ userInfo }) => {
-  useNamespaces('sp.family')
-
   // Current User
   const { data, loading, error, called } = useQuery<Query>(
     NATIONAL_REGISTRY_USER,
@@ -71,4 +69,4 @@ const UserInfoOverview: ServicePortalModuleComponent = ({ userInfo }) => {
     </>
   )
 }
-export default UserInfoOverview
+export default withClientLocale('sp.family')(UserInfoOverview)

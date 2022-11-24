@@ -28,7 +28,7 @@ import { useMeasure } from 'react-use'
 const Layout: FC = ({ children }) => {
   useRoutes()
   useModules()
-  useNamespaces(['service.portal', 'global', 'sp.documents'])
+  useNamespaces(['service.portal', 'global'])
   const { pathname } = useLocation()
   useScrollTopOnUpdate([pathname])
   const [{ mobileMenuState, sidebarState }] = useStore()

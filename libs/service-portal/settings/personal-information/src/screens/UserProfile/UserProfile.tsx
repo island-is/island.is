@@ -4,7 +4,7 @@ import { m } from '@island.is/service-portal/core'
 import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
 import ProfileForm from '../../components/Forms/ProfileForm/ProfileForm'
 import { useUserProfile } from '@island.is/service-portal/graphql'
-import { useLocale } from '@island.is/localization'
+import { useLocale, withClientLocale } from '@island.is/localization'
 
 const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
   const { data } = useUserProfile()
@@ -19,4 +19,4 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
   )
 }
 
-export default UserProfile
+export default withClientLocale('sp.settings')(UserProfile)

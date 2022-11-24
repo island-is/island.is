@@ -12,7 +12,7 @@ import {
   GridRow,
   GridColumn,
 } from '@island.is/island-ui/core'
-import { useLocale, useNamespaces } from '@island.is/localization'
+import { useLocale, withClientLocale } from '@island.is/localization'
 import { ServicePortalPath, m } from '@island.is/service-portal/core'
 
 type Data = {
@@ -47,7 +47,6 @@ const data: Data[] = [
 
 function Eligibility(): JSX.Element {
   const { formatMessage } = useLocale()
-  useNamespaces('sp.eligibility')
 
   return (
     <Box marginBottom={[6, 6, 10]}>
@@ -119,4 +118,4 @@ function Eligibility(): JSX.Element {
   )
 }
 
-export default Eligibility
+export default withClientLocale('sp.eligibility')(Eligibility)

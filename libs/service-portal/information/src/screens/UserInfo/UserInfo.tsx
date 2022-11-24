@@ -5,7 +5,7 @@ import { checkDelegation } from '@island.is/shared/utils'
 import { useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
 import { Box, Divider, Stack } from '@island.is/island-ui/core'
-import { useLocale, useNamespaces } from '@island.is/localization'
+import { useLocale, withClientLocale } from '@island.is/localization'
 import {
   formatNationalId,
   IntroHeader,
@@ -33,7 +33,6 @@ const changeInNationalReg = defineMessage({
 })
 
 const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
-  useNamespaces('sp.family')
   const { formatMessage } = useLocale()
   const { data, loading, error } = useQuery<Query>(NATIONAL_REGISTRY_USER)
   const { nationalRegistryUser } = data || {}
@@ -230,4 +229,4 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
   )
 }
 
-export default SubjectInfo
+export default withClientLocale('sp.family')(SubjectInfo)

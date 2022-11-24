@@ -14,7 +14,7 @@ import {
   Option,
 } from '@island.is/island-ui/core'
 import { useApplications } from '@island.is/service-portal/graphql'
-import { useLocale, useNamespaces } from '@island.is/localization'
+import { useLocale, withClientLocale } from '@island.is/localization'
 import { useLocation } from 'react-router-dom'
 import { useGetOrganizationsQuery } from '../../../graphql/src/schema'
 import { m } from '../lib/messages'
@@ -38,9 +38,6 @@ const defaultFilterValues: FilterValues = {
 }
 
 const Overview: ServicePortalModuleComponent = () => {
-  useNamespaces('sp.applications')
-  useNamespaces('application.system')
-
   const { formatMessage } = useLocale()
   const { data: applications, loading, error, refetch } = useApplications()
   const location = useLocation()
@@ -216,4 +213,6 @@ const Overview: ServicePortalModuleComponent = () => {
   )
 }
 
-export default Overview
+export default withClientLocale(['sp.applications', 'application.system'])(
+  Overview,
+)
