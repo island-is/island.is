@@ -26,12 +26,11 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
   const {
     register,
     handleSubmit,
-    errors,
     formState,
     setValue,
     clearErrors,
   } = useForm<FormOutput>()
-  const { isSubmitting } = formState
+  const { isSubmitting, errors } = formState
   const [show, setShow] = useState(false)
   const [available, setAvailable] = useState<boolean>(false)
   const [clientIdLength, setClientIdLength] = useState<number>(0)

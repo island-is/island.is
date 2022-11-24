@@ -22,13 +22,8 @@ interface Props {
 }
 
 const ClientSecretForm: React.FC<Props> = (props: Props) => {
-  const {
-    register,
-    handleSubmit,
-    errors,
-    formState,
-  } = useForm<ClientSecretDTO>()
-  const { isSubmitting } = formState
+  const { register, handleSubmit, formState } = useForm<ClientSecretDTO>()
+  const { isSubmitting, errors } = formState
   const defaultSecretLength = 25
   const [defaultSecret, setDefaultSecret] = useState<string>('')
   const [confirmModalIsOpen, setConfirmModalIsOpen] = useState(false)

@@ -19,13 +19,8 @@ interface Props {
 }
 
 const ClientAllowedScopesForm: React.FC<Props> = (props: Props) => {
-  const {
-    register,
-    handleSubmit,
-    errors,
-    formState,
-  } = useForm<ClientAllowedScopeDTO>()
-  const { isSubmitting } = formState
+  const { register, handleSubmit, formState } = useForm<ClientAllowedScopeDTO>()
+  const { isSubmitting, errors } = formState
   const [scopes, setScopes] = useState<ApiScope[]>([])
   const [selectedScope, setSelectedScope] = useState<ApiScope>(new ApiScope())
   const [scopeForDelete, setScopeForDelete] = useState<string>('')

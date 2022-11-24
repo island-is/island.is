@@ -21,8 +21,8 @@ interface FormOutput {
 }
 
 const TranslationCreateForm: React.FC<Props> = (props: Props) => {
-  const { register, handleSubmit, errors, formState } = useForm<FormOutput>()
-  const { isSubmitting } = formState
+  const { register, handleSubmit, formState } = useForm<FormOutput>()
+  const { isSubmitting, errors } = formState
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const translation = props.translation
   const [languages, setLanguages] = useState<Language[]>([])

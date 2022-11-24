@@ -20,13 +20,8 @@ interface Props {
 }
 
 const ClientRedirectUriForm: React.FC<Props> = (props: Props) => {
-  const {
-    register,
-    handleSubmit,
-    errors,
-    formState,
-  } = useForm<ClientRedirectUriDTO>()
-  const { isSubmitting } = formState
+  const { register, handleSubmit, formState } = useForm<ClientRedirectUriDTO>()
+  const { isSubmitting, errors } = formState
   const [defaultUrl, setDefaultUrl] = useState(
     !props.uris || props.uris.length === 0 ? props.defaultUrl : '',
   )

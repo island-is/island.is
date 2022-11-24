@@ -19,13 +19,8 @@ interface Props {
 }
 
 const ClientClaimForm: React.FC<Props> = (props: Props) => {
-  const {
-    register,
-    handleSubmit,
-    errors,
-    formState,
-  } = useForm<ClientClaimDTO>()
-  const { isSubmitting } = formState
+  const { register, handleSubmit, errors } = useForm<ClientClaimDTO>()
+  const { isSubmitting, errors } = formState
   const [modalIsOpen, setIsOpen] = useState(false)
   const [localization] = useState<FormControl>(
     LocalizationUtils.getFormControl('ClientClaimForm'),

@@ -22,8 +22,8 @@ interface FormOutput {
 }
 
 const ApiScopeUserCreateForm: React.FC<Props> = (props: Props) => {
-  const { register, handleSubmit, errors, formState } = useForm<FormOutput>()
-  const { isSubmitting } = formState
+  const { register, handleSubmit, formState } = useForm<FormOutput>()
+  const { isSubmitting, errors } = formState
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const [localization] = useState<FormControl>(
     LocalizationUtils.getFormControl('ApiScopeUserCreateForm'),

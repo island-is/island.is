@@ -22,10 +22,10 @@ const ApiScopeGroupCreateForm: React.FC<Props> = (props: Props) => {
   const {
     register,
     handleSubmit,
-    errors,
     formState,
     reset,
   } = useForm<ApiScopeGroupDTO>()
+  const { errors } = formState
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const [localization] = useState<FormControl>(
     LocalizationUtils.getFormControl('ApiScopeGroupCreateForm'),

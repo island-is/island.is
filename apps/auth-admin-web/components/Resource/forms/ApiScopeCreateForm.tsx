@@ -24,8 +24,8 @@ interface FormOutput {
 }
 
 const ApiScopeCreateForm: React.FC<Props> = (props) => {
-  const { register, handleSubmit, errors, formState } = useForm<FormOutput>()
-  const { isSubmitting } = formState
+  const { register, handleSubmit, formState } = useForm<FormOutput>()
+  const { isSubmitting, errors } = formState
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const [available, setAvailable] = useState<boolean>(false)
   const [groups, setGroups] = useState<ApiScopeGroup[]>([])

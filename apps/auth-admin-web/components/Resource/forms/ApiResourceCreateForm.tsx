@@ -17,13 +17,8 @@ interface Props {
 }
 
 const ApiResourceCreateForm: React.FC<Props> = (props) => {
-  const {
-    register,
-    handleSubmit,
-    errors,
-    formState,
-  } = useForm<ApiResourcesDTO>()
-  const { isSubmitting } = formState
+  const { register, handleSubmit, formState } = useForm<ApiResourcesDTO>()
+  const { isSubmitting, errors } = formState
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const [available, setAvailable] = useState<boolean>(false)
   const [nameLength, setNameLength] = useState(0)

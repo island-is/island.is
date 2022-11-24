@@ -29,9 +29,10 @@ const Select: FC = () => {
     },
   } = useI18n()
   const router = useRouter()
-  const { handleSubmit, control, formState, errors } = useForm({
+  const { handleSubmit, control, formState } = useForm({
     mode: 'onChange',
   })
+  const { errors } = formState
 
   const handleContinue = (formData: FormData) => {
     const registrationNumber = formData.registrationNumber

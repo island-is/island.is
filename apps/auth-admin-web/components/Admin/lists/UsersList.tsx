@@ -25,8 +25,8 @@ const UsersList: React.FC = () => {
   const [id, setId] = useState<string>('')
   const [claimShow, setClaimShow] = useState<ClaimShow[]>([])
   const [showNotFound, setShowNotFound] = useState<boolean>(false)
-  const { handleSubmit, register, errors, formState } = useForm()
-  const { isSubmitting } = formState
+  const { handleSubmit, register, formState } = useForm()
+  const { isSubmitting, errors } = formState
   const [localization] = useState<ListControl>(
     LocalizationUtils.getListControl('UsersList'),
   )
