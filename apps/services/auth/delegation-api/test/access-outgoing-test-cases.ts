@@ -1,4 +1,5 @@
 import { AuthScope } from '@island.is/auth/scopes'
+import { AuthDelegationType } from '@island.is/shared/types'
 import {
   createCurrentUser,
   createNationalId,
