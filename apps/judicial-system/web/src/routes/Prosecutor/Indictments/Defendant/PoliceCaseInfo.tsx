@@ -193,6 +193,7 @@ export const PoliceCaseInfo: React.FC<Props> = (props) => {
       <DateTime
         name="arrestDate"
         maxDate={new Date()}
+        blueBox={false}
         selectedDate={crimeScene?.date}
         onChange={(date, valid) => {
           if (date && valid)
