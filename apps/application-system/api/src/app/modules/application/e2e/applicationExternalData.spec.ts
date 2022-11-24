@@ -94,7 +94,7 @@ describe('Application External Data ', () => {
       })
       .expect(400)
     expect(response.body.detail).toBe(
-      'Data provider not found with action actionId',
+      'Current user is not permitted to update external data in this state with actionId: actionId',
     )
   })
 

@@ -184,11 +184,11 @@ const MarriageConditionsTemplate: ApplicationTemplate<
               label: m.actionCardDoneTag,
             },
           },
-          onEntry: {
-            apiModuleAction: ApiActions.submitApplication,
+          onEntry: defineTemplateApi({
+            action: ApiActions.submitApplication,
             shouldPersistToExternalData: true,
             throwOnError: true,
-          },
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
