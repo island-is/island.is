@@ -1,7 +1,4 @@
 import { useContext, useEffect } from 'react'
-import { NextComponentType } from 'next'
-import gql from 'graphql-tag'
-
 import { LocaleContext } from './LocaleContext'
 
 export const withClientLocale = (namespaces: string | string[] = 'global') => (
