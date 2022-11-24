@@ -15,7 +15,7 @@ These are the most common tags, which should be applied to most of our shared li
 Here are the generic tags ordered from the most generic to more focused.
 
 | Tag          | Description                              | Can depend on                      | Can be depended on by              |
-|--------------|------------------------------------------|------------------------------------| ---------------------------------- |
+| ------------ | ---------------------------------------- | ---------------------------------- | ---------------------------------- |
 | `js`         | Basic JS library.                        | `js`                               | Any project                        |
 | `node`       | NodeJS server-side library.              | `js`, `node`                       | Any server-side projects.          |
 | `dom`        | JS library designed to run in a browser. | `js`, `dom`                        | Any browser-based project.         |
@@ -30,9 +30,9 @@ Simple applications can be tagged with the generic tags above, but applications 
 
 It can be just one tag which is applied to both the application project and all of the associated library projects. Or there can be multiple application tags with different rules to segments the library projects.
 
-| Tag               | Description             | Can depend on                                       | Can be depended on by          |
-| ----------------- | ----------------------- |-----------------------------------------------------| ------------------------------ |
-| `api`             | API domain project.     | `js`, `dom`, `react`, `react-spa`, `api`             | Other API projects.            |
+| Tag               | Description             | Can depend on                                        | Can be depended on by          |
+| ----------------- | ----------------------- | ---------------------------------------------------- | ------------------------------ |
+| `api`             | API domain project.     | `js`, `node`, `nest`, `api`                          | Other API projects.            |
 | `portals-mypages` | Service portal project. | `js`, `dom`, `react`, `react-spa`, `portals-mypages` | Other service portal projects. |
 | `portals-admin`   | Admin portal project.   | `js`, `dom`, `react`, `react-spa`, `portals-admin`   | Other admin portal projects.   |
 
