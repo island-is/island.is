@@ -8,7 +8,7 @@ import {
   Button,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import React, { FC } from 'react'
+import { FC } from 'react'
 import { Jobs } from '../../assets/Jobs'
 import { conclusion } from '../../lib/messages'
 import { ReviewScreenProps } from '../../types'

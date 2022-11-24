@@ -1,25 +1,20 @@
 import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
-import {
-  Application,
-  FieldBaseProps,
-  FormValue,
-  RecordObject,
-} from '@island.is/application/types'
-import { Box, Stack, Text, Button } from '@island.is/island-ui/core'
+import { FieldBaseProps } from '@island.is/application/types'
+import { Box, Text, Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
 import { FC } from 'react'
 import { ArrayField } from 'react-hook-form'
-import { CoOwnerAndOperatorField } from './CoOwnerAndOperatorRepeater'
 import { useFormContext } from 'react-hook-form'
 import { NationalIdWithName } from '../NationalIdWithName'
 import { information } from '../../lib/messages'
+import { ReviewCoOwnerAndOperatorField } from '../../types'
 
 interface Props {
   id: string
   index: number
   rowLocation: number
-  repeaterField: Partial<ArrayField<CoOwnerAndOperatorField, 'id'>>
+  repeaterField: Partial<ArrayField<ReviewCoOwnerAndOperatorField, 'id'>>
   handleRemove: (index: number) => void
 }
 

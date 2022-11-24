@@ -1,11 +1,11 @@
 import {
-  CoOwnerAndOperator,
   ReviewCoOwnerAndOperatorField,
   ReviewSectionProps,
   UserInformation,
 } from '../types'
 import { Application } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
+import { review } from '../lib/messages'
 
 export const getReviewSteps = (
   application: Application,
@@ -29,12 +29,6 @@ export const getReviewSteps = (
     false,
   ) as boolean
 
-  /* const buyerCoOwnerAndOperator = getValueViaPath(
-    application.answers,
-    'buyerCoOwnerAndOperator',
-    [],
-  ) as CoOwnerAndOperator[] */
-
   const buyerCoOwner = coOwnersAndOperators.filter(
     (reviewer) => reviewer.type === 'coOwner',
   )
@@ -43,38 +37,37 @@ export const getReviewSteps = (
   )
 
   const sellerCoOwnerApproved = sellerCoOwner.find(
-    (coOwner) => !coOwner.approved,
+    (coOwner) => coOwner.approved,
   )
-  const buyerCoOwnerApproved = buyerCoOwner.find((coOwner) => !coOwner.approved)
+  const buyerCoOwnerApproved = buyerCoOwner.find((coOwner) => coOwner.approved)
   const buyerOperatorApproved = buyerOperator.find(
-    (operator) => !operator.approved,
+    (operator) => operator.approved,
   )
-
-  // TODO: Check if use plural wording
-  // TODO: Add to messages
 
   const steps = [
     // Transfer of vehicle: Always approved
     {
-      tagText: 'Móttekin',
+      tagText: review.step.tagText.received,
       tagVariant: 'mint',
-      title: `Skráning eigendaskipta á ökutæki ${vehiclePlate}`,
-      description: 'Tilkynning um eigendaskiptu hefur borist til Samgöngustofu',
+      title: review.step.title.transferOfVehicle,
+      description: review.step.description.transferOfVehicle,
+      messageValue: vehiclePlate,
     },
     // Payment: Always approved
     {
-      tagText: 'Móttekin',
+      tagText: review.step.tagText.received,
       tagVariant: 'mint',
-      title: 'Greiðsla móttekin',
-      description: 'Greitt hefur verið fyrir eigendaskiptin af seljanda',
+      title: review.step.title.payment,
+      description: review.step.description.payment,
     },
     // Sellers coowner
     {
-      tagText: sellerCoOwnerApproved ? 'Samþykki í bið' : 'Móttekin',
-      tagVariant: sellerCoOwnerApproved ? 'purple' : 'mint',
-      title: 'Samþykki meðeiganda seljanda',
-      description:
-        'Beðið er eftir að meðeigandi/ur seljanda staðfesti eigendaskiptin.',
+      tagText: sellerCoOwnerApproved
+        ? review.step.tagText.received
+        : review.step.tagText.pendingApproval,
+      tagVariant: sellerCoOwnerApproved ? 'mint' : 'purple',
+      title: review.step.title.sellerCoOwner,
+      description: review.step.description.sellerCoOwner,
       visible: sellerCoOwner.length > 0,
       reviewer: sellerCoOwner.map((reviewer) => {
         return {
@@ -86,18 +79,21 @@ export const getReviewSteps = (
     },
     // Buyer
     {
-      tagText: buyerApproved ? 'Móttekin' : 'Samþykki í bið',
+      tagText: buyerApproved
+        ? review.step.tagText.received
+        : review.step.tagText.pendingApproval,
       tagVariant: buyerApproved ? 'mint' : 'purple',
-      title: 'Samþykki kaupanda',
-      description: 'Beðið er eftir að nýr eigandi staðfesti eigendaskiptin.',
+      title: review.step.title.buyer,
+      description: review.step.description.buyer,
     },
     // Buyers coowner
     {
-      tagText: buyerCoOwnerApproved ? 'Samþykki í bið' : 'Móttekin',
-      tagVariant: buyerCoOwnerApproved ? 'purple' : 'mint',
-      title: 'Samþykki meðeiganda kaupanda',
-      description:
-        'Beðið er eftir að meðeigandi/ur kaupanda staðfesti eigendaskiptin.',
+      tagText: buyerCoOwnerApproved
+        ? review.step.tagText.received
+        : review.step.tagText.pendingApproval,
+      tagVariant: buyerCoOwnerApproved ? 'mint' : 'purple',
+      title: review.step.title.buyerCoOwner,
+      description: review.step.description.buyerCoOwner,
       visible: buyerCoOwner.length > 0,
       reviewer: buyerCoOwner.map((reviewer) => {
         return {
@@ -109,11 +105,12 @@ export const getReviewSteps = (
     },
     // Buyers operators
     {
-      tagText: buyerOperatorApproved ? 'Samþykki í bið' : 'Móttekin',
-      tagVariant: buyerOperatorApproved ? 'purple' : 'mint',
-      title: 'Samþykki umráðarmanns kaupanda',
-      description:
-        'Beðið er eftir að umráðamaður/menn kaupanda staðfesti eigendaskiptin.',
+      tagText: buyerOperatorApproved
+        ? review.step.tagText.received
+        : review.step.tagText.pendingApproval,
+      tagVariant: buyerOperatorApproved ? 'mint' : 'purple',
+      title: review.step.title.buyerOperator,
+      description: review.step.description.buyerOperator,
       visible: buyerOperator.length > 0,
       reviewer: buyerOperator.map((reviewer) => {
         return {

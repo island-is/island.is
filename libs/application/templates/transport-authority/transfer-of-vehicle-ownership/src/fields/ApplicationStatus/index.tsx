@@ -2,6 +2,7 @@ import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Button, Text, Divider } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC } from 'react'
+import { review } from '../../lib/messages'
 import { ReviewScreenProps } from '../../types'
 import { getReviewSteps, hasReviewerApproved } from '../../utils'
 import { StatusStep } from './StatusStep'
@@ -19,9 +20,9 @@ export const ApplicationStatus: FC<FieldBaseProps & ReviewScreenProps> = ({
   return (
     <Box marginBottom={10}>
       <Text variant="h1" marginBottom={2}>
-        Staða tilkynningar
+        {formatMessage(review.status.title)}
       </Text>
-      <Text>Hér að neðan kemur fram hvað gerist næst</Text>
+      <Text>{formatMessage(review.status.description)}</Text>
       <Box marginTop={2} display="flex" justifyContent="flexEnd">
         <Button
           colorScheme="default"
@@ -31,7 +32,7 @@ export const ApplicationStatus: FC<FieldBaseProps & ReviewScreenProps> = ({
           variant="text"
           onClick={() => setStep && setStep('overview')}
         >
-          Skoða yfirlit
+          {formatMessage(review.status.viewOverview)}
         </Button>
       </Box>
       <Box marginTop={4} marginBottom={8}>
@@ -45,6 +46,7 @@ export const ApplicationStatus: FC<FieldBaseProps & ReviewScreenProps> = ({
             visible={step.visible}
             reviewer={step.reviewer}
             reviewerNationalId={reviewerNationalId}
+            messageValue={step.messageValue}
           />
         ))}
       </Box>
@@ -53,7 +55,7 @@ export const ApplicationStatus: FC<FieldBaseProps & ReviewScreenProps> = ({
           <Divider />
           <Box display="flex" justifyContent="flexEnd" paddingY={5}>
             <Button onClick={() => setStep && setStep('overview')}>
-              Opna samþykki
+              {formatMessage(review.status.openAgreement)}
             </Button>
           </Box>
         </>

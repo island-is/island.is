@@ -4,23 +4,18 @@ import { useLocale } from '@island.is/localization'
 import { FC } from 'react'
 import { useFieldArray } from 'react-hook-form'
 import { information } from '../../lib/messages'
+import { ReviewCoOwnerAndOperatorField } from '../../types'
 import { repeaterButtons } from './CoOwnerAndOperatorRepeater.css'
 import { CoOwnerAndOperatorRepeaterItem } from './CoOwnerAndOperatorRepeaterItem'
 
-export type CoOwnerAndOperatorField = {
-  nationalId: string
-  name: string
-  email: string
-  phone: string
-  type: 'operator' | 'coOwner'
-}
-
 export const CoOwnerAndOperatorRepeater: FC<FieldBaseProps> = (props) => {
-  const { field } = props
   const { formatMessage } = useLocale()
-  const { id } = field
 
-  const { fields, append, remove } = useFieldArray<CoOwnerAndOperatorField>({
+  const {
+    fields,
+    append,
+    remove,
+  } = useFieldArray<ReviewCoOwnerAndOperatorField>({
     name: 'buyerCoOwnerAndOperator',
   })
 

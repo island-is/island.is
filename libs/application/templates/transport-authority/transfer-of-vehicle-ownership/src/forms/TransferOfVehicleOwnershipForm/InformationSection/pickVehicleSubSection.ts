@@ -12,7 +12,7 @@ export const pickVehicleSubSection = buildSubSection({
     buildMultiField({
       id: 'pickVehicleMultiField',
       title: information.labels.pickVehicle.title,
-      description: information.general.description,
+      description: information.labels.pickVehicle.description,
       children: [
         buildCustomField({
           id: 'pickVehicle',

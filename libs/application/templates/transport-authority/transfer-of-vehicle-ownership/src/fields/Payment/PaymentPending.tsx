@@ -27,7 +27,12 @@ interface PaymentStatus {
   fulfilled: boolean
 }
 
-export const PaymentPending: FC<Props> = ({ error, application, refetch }) => {
+export const PaymentPending: FC<Props> = ({
+  error,
+  application,
+  refetch,
+  goToScreen,
+}) => {
   const applicationId = application.id
   const { formatMessage } = useLocale()
   const [continuePolling, setContinuePolling] = useState(true)
@@ -68,9 +73,8 @@ export const PaymentPending: FC<Props> = ({ error, application, refetch }) => {
     })
       .then(({ data, errors } = {}) => {
         if (data && !errors?.length) {
-          // Takes them to the next state (which loads the relevant form)
-
-          refetch?.()
+          // Takes them to the next screen
+          goToScreen && goToScreen('conclusion')
         } else {
           return Promise.reject()
         }
@@ -82,7 +86,6 @@ export const PaymentPending: FC<Props> = ({ error, application, refetch }) => {
     paymentStatus.fulfilled,
     applicationId,
     application.answers,
-    refetch,
     submitApplication,
   ])
 

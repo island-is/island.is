@@ -1,5 +1,7 @@
 import { Box, Tag, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import { FC } from 'react'
+import { review } from '../../../lib/messages'
 import { ReviewScreenProps, ReviewSectionProps } from '../../../types'
 
 export const StatusStep: FC<ReviewSectionProps & ReviewScreenProps> = ({
@@ -10,7 +12,9 @@ export const StatusStep: FC<ReviewSectionProps & ReviewScreenProps> = ({
   visible = true,
   reviewer = [],
   reviewerNationalId = '',
+  messageValue = '',
 }) => {
+  const { formatMessage } = useLocale()
   if (!visible) return null
 
   return (
@@ -20,13 +24,16 @@ export const StatusStep: FC<ReviewSectionProps & ReviewScreenProps> = ({
       borderRadius="large"
       marginBottom={2}
     >
-      {/* Contents */}
       <Box padding={4}>
         <Box marginTop={[1, 0, 0]} paddingRight={[0, 1, 1]}>
           <Box display="flex" justifyContent="spaceBetween">
-            <Text variant="h3">{title}</Text>
+            <Text variant="h3">
+              {formatMessage(title, {
+                variable: messageValue,
+              })}
+            </Text>
             <Tag variant={tagVariant} disabled>
-              {tagText}
+              {formatMessage(tagText)}
             </Tag>
           </Box>
           <Box
@@ -36,7 +43,7 @@ export const StatusStep: FC<ReviewSectionProps & ReviewScreenProps> = ({
             flexWrap={['wrap', 'nowrap']}
           >
             <Text marginTop={1} variant="default">
-              {description}
+              {formatMessage(description)}
             </Text>
           </Box>
           {reviewer.length > 0 &&
@@ -52,7 +59,7 @@ export const StatusStep: FC<ReviewSectionProps & ReviewScreenProps> = ({
                     >
                       {reviewerItem.name}{' '}
                       {reviewerNationalId === reviewerItem.nationalId
-                        ? '(þú)'
+                        ? `(${formatMessage(review.status.youLabel)})`
                         : ''}
                     </Text>
                   )

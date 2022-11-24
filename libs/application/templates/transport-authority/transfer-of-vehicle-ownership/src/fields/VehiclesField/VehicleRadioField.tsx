@@ -32,6 +32,11 @@ export const VehicleRadioField: FC<
   const [plate, setPlate] = useState<string>(
     getValueViaPath(application.answers, 'pickVehicle.plate', '') as string,
   )
+  const [color, setColor] = useState<string | undefined>(
+    getValueViaPath(application.answers, 'pickVehicle.color', undefined) as
+      | string
+      | undefined,
+  )
 
   const { data, loading } = useQuery(
     gql`
@@ -51,6 +56,7 @@ export const VehicleRadioField: FC<
   const onRadioControllerSelect = (s: string) => {
     const currentVehicle = currentVehicleList[parseInt(s, 10)]
     setPlate(currentVehicle.permno || '')
+    setColor(currentVehicle.color || undefined)
   }
 
   const vehicleOptions = (vehicles: VehiclesCurrentVehicleWithFees[]) => {
@@ -119,6 +125,12 @@ export const VehicleRadioField: FC<
         value={plate}
         ref={register({ required: true })}
         name="pickVehicle.plate"
+      />
+      <input
+        type="hidden"
+        value={color}
+        ref={register({ required: true })}
+        name="pickVehicle.color"
       />
     </div>
   )
