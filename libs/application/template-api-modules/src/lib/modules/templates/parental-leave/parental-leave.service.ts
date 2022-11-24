@@ -610,6 +610,7 @@ export class ParentalLeaveService {
         !isUsingAdditionalRights &&
         !willSingleParentStartToUseAdditionalRightsWithPeriod
       ) {
+        console.log('---- personal')
         // We know its a normal period and it will not exceed personal rights
         periods.push({
           from:
@@ -920,8 +921,9 @@ export class ParentalLeaveService {
           // // })
         }
       } else {
-        // other parent
+        // with other parent
         if (isUsingTransferredRights) {
+          console.log('---- WOP transferred')
           // We know all of the period will be using transferred rights
           periods.push({
             from: period.startDate,
@@ -948,6 +950,7 @@ export class ParentalLeaveService {
 
           // 1. Period includes personal and transfer rights
           if (maximumMultipleBirthsDaysToSpend === 0) {
+            console.log('---- WOP personal + transferred')
             const daysLeftOfPersonalRights =
               maximumPersonalDaysToSpend - numberOfDaysAlreadySpent
             const personalPeriod = await this.getCalculatedPeriod(
@@ -1043,6 +1046,7 @@ export class ParentalLeaveService {
           }
           // 2. Period includes common and transfer rights
           else if (maximumPersonalDaysToSpend < numberOfDaysAlreadySpent) {
+            console.log('---- WOP common + transferred')
             const daysLeftOfCommonRights =
               maximumDaysBeforeUsingTransferRights - numberOfDaysAlreadySpent
             const commonPeriod = await this.getCalculatedPeriod(
@@ -1133,6 +1137,7 @@ export class ParentalLeaveService {
           }
           // 3. Period includes personal, common and transfer rights
           else {
+            console.log('---- WOP personal, common, transferred')
             const daysLeftOfPersonalRights =
               maximumPersonalDaysToSpend - numberOfDaysAlreadySpent
             const fromDate =
@@ -1279,6 +1284,7 @@ export class ParentalLeaveService {
             // })
           }
         } else if (isUsingMultipleBirthsRights) {
+          console.log('---- WOP common')
           // Applicant used upp his/her basic rights and started to use 'common' rights
           // and has not reach transfer rights
           periods.push({
@@ -1294,6 +1300,7 @@ export class ParentalLeaveService {
             rightsCodePeriod: mulitpleBirthsRights,
           })
         } else {
+          console.log('---- WOP personal + common')
           // If we reach here then there is personal rights mix with common rights
           const daysLeftOfPersonalRights =
             maximumPersonalDaysToSpend - numberOfDaysAlreadySpent
