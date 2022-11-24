@@ -11,7 +11,6 @@ import { indictmentInfo as strings } from './IndictmentInfo.strings'
 import {
   capitalize,
   formatDate,
-  indictmentSubtypes,
   readableIndictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
 
