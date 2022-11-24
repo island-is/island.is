@@ -31,7 +31,7 @@ export const DelegationsFormFooter = ({
   confirmIcon,
   confirmButtonColorScheme = 'default',
   showShadow = true,
-  containerPaddingBottom = 6,
+  containerPaddingBottom = 4,
   ...rest
 }: DelegationsFormFooterProps) => {
   const { formatMessage } = useLocale()
