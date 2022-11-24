@@ -57,7 +57,7 @@ export const VehicleRadioField: FC<
     const options = [] as Option[]
 
     for (const [index, vehicle] of vehicles.entries()) {
-      const disabled = !!vehicle.isStolen || !!vehicle.fees?.hasEncumbrances
+      const disabled = !!vehicle.isStolen || !vehicle.isDebtLess
       options.push({
         value: `${index}`,
         label: (
@@ -76,11 +76,11 @@ export const VehicleRadioField: FC<
                   {formatMessage(information.labels.pickVehicle.isStolenTag)}
                 </Tag>
               )}
-              {vehicle.fees?.hasEncumbrances && (
+              {!vehicle.isDebtLess && (
                 <Box paddingLeft={2}>
                   <Tag variant="red">
                     {formatMessage(
-                      information.labels.pickVehicle.hasEncumbrancesTag,
+                      information.labels.pickVehicle.isNotDebtLessTag,
                     )}
                   </Tag>
                 </Box>

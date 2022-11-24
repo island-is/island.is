@@ -52,11 +52,11 @@ export const information = {
         defaultMessage: 'Bifreið stolin',
         description: 'Pick vehicle is stolen tag',
       },
-      hasEncumbrancesTag: {
+      isNotDebtLessTag: {
         id:
-          'ta.tvo.application:information.labels.pickVehicle.hasEncumbrancesTag',
+          'ta.tvo.application:information.labels.pickVehicle.isNotDebtLessTag',
         defaultMessage: 'Ógreidd bifreiðagjöld',
-        description: 'Pick vehicle has encumbrances tag',
+        description: 'Pick vehicle is not debt less tag',
       },
     }),
     vehicle: defineMessages({

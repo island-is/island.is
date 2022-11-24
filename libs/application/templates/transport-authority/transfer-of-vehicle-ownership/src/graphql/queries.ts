@@ -18,9 +18,7 @@ export const GET_CURRENT_VEHICLES_WITH_FEES = `
       color
       role
       isStolen
-      fees {
-        hasEncumbrances
-      }
+      isDebtLess
     }
   } 
 `
@@ -28,9 +26,7 @@ export const GET_CURRENT_VEHICLES_WITH_FEES = `
 export const GET_VEHICLE_FEES_BY_PERMNO = `
   query GetVehicleFeesByPermno($permno: String!) {
     vehicleFeesByPermno(permno: $permno) {
-      fees {
-        hasEncumbrances
-      }
+      isDebtLess
     }
   } 
 `
