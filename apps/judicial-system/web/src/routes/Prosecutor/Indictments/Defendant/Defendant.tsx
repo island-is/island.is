@@ -123,7 +123,10 @@ const Defendant: React.FC = () => {
       policeCaseNumbers,
       indictmentSubtypes,
       crimeScenes,
-    ] = getPoliceCasesForUpdate([...policeCases, { number: '' }])
+    ] = getPoliceCasesForUpdate([
+      ...getPoliceCases(workingCase),
+      { number: '' },
+    ])
 
     setWorkingCase((theCase) => ({
       ...theCase,
@@ -153,7 +156,7 @@ const Defendant: React.FC = () => {
       policeCaseNumbers,
       indictmentSubtypes,
       crimeScenes,
-    ] = getPoliceCasesForUpdate(policeCases, index, update)
+    ] = getPoliceCasesForUpdate(getPoliceCases(workingCase), index, update)
 
     setWorkingCase((theCase) => ({
       ...theCase,
@@ -164,6 +167,7 @@ const Defendant: React.FC = () => {
   }
 
   const handleDeletePoliceCase = (index: number) => {
+    const policeCases = getPoliceCases(workingCase)
     const [
       policeCaseNumbers,
       indictmentSubtypes,
@@ -200,7 +204,7 @@ const Defendant: React.FC = () => {
       policeCaseNumbers,
       indictmentSubtypes,
       crimeScenes,
-    ] = getPoliceCasesForUpdate(policeCases, index, update)
+    ] = getPoliceCasesForUpdate(getPoliceCases(workingCase), index, update)
 
     if (index !== undefined && update) {
       setWorkingCase((theCase) => ({
