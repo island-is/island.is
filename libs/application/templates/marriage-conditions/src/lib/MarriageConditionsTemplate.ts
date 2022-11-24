@@ -122,11 +122,6 @@ const MarriageConditionsTemplate: ApplicationTemplate<
           onEntry: {
             apiModuleAction: ApiActions.assignSpouse,
           },
-          onExit: {
-            apiModuleAction: ApiActions.submitApplication,
-            shouldPersistToExternalData: true,
-            throwOnError: true,
-          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -171,6 +166,11 @@ const MarriageConditionsTemplate: ApplicationTemplate<
             tag: {
               label: m.actionCardDoneTag,
             },
+          },
+          onEntry: {
+            apiModuleAction: ApiActions.submitApplication,
+            shouldPersistToExternalData: true,
+            throwOnError: true,
           },
           roles: [
             {
