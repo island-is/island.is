@@ -160,6 +160,8 @@ export const Overview = ({
         </Box>
         <AssetDebtEquityOverview answers={answers} />
       </Box>
+      <Divider />
+
       <Box paddingY={3}>
         {fileName ? (
           <Fragment>
@@ -168,8 +170,6 @@ export const Overview = ({
           </Fragment>
         ) : null}
       </Box>
-
-      <Divider />
 
       <Box paddingY={3}>
         <Text variant="h3" as="h3">

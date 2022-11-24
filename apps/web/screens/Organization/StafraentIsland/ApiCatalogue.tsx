@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   ArrowLink,
   Box,
@@ -33,7 +33,7 @@ import {
   ServiceList,
 } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
-import { richText, SliceType } from '@island.is/island-ui/contentful'
+import { SliceType } from '@island.is/island-ui/contentful'
 import { useNamespace } from '@island.is/web/hooks'
 import {
   GetApiCatalogueInput,
@@ -51,6 +51,7 @@ import { INLINES } from '@contentful/rich-text-types'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import { webRichText } from '@island.is/web/utils/richText'
 
 const LIMIT = 20
 
@@ -248,7 +249,7 @@ const ApiCatalogue: Screen<HomestayProps> = ({
             {subpage.title}
           </Text>
         </Box>
-        {richText(subpage.description as SliceType[], {
+        {webRichText(subpage.description as SliceType[], {
           renderNode: {
             [INLINES.HYPERLINK]: (node, children) => (
               <ArrowLink href={node.data.uri}>{children}</ArrowLink>

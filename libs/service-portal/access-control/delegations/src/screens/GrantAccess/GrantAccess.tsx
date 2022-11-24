@@ -1,10 +1,9 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import cn from 'classnames'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useHistory } from 'react-router-dom'
 import { defineMessage } from 'react-intl'
 import * as kennitala from 'kennitala'
-import { sharedMessages } from '@island.is/shared/translations'
 
 import {
   Box,
@@ -72,27 +71,21 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
 
   const { identity } = data || {}
 
-  const defaultValues = useMemo(
-    () => ({
-      toNationalId: '',
-      domainName: selectedOption?.value ?? null,
-    }),
-    [selectedOption?.value],
-  )
-
   const methods = useForm({
     mode: 'onChange',
-    defaultValues,
+    defaultValues: {
+      toNationalId: '',
+      domainName: selectedOption?.value ?? null,
+    },
   })
+  const { handleSubmit, control, errors, watch, reset } = methods
 
   useEffect(() => {
-    methods.reset(defaultValues)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedOption?.value, defaultValues])
+    reset({ domainName: selectedOption?.value ?? null })
+  }, [selectedOption?.value, reset])
 
-  const { handleSubmit, control, errors, watch, reset } = methods
   const watchToNationalId = watch('toNationalId')
-  const domainmNameWatcher = watch('domainName')
+  const domainNameWatcher = watch('domainName')
   const loading = queryLoading || mutationLoading
 
   const requestDelegation = (
@@ -135,8 +128,7 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
       toast.error(
         formatMessage({
           id: 'sp.settings-access-control:grant-create-error',
-          defaultMessage:
-            'Eitthvað fór úrskeiðis!\nEkki tókst að búa til aðgang fyrir þennan notanda.',
+          defaultMessage: 'Ekki tókst að búa til aðgang fyrir þennan notanda.',
         }),
       )
     }
@@ -167,8 +159,9 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
           defaultMessage:
             'Hér getur þú gefið öðrum aðgang til að sýsla með þín gögn hjá island.is',
         })}
+        marginBottom={1}
       />
-      <Box className={styles.container}>
+      <div className={styles.container}>
         <FormProvider {...methods}>
           <form onSubmit={onSubmit}>
             <Box display="flex" flexDirection="column" rowGap={[5, 6]}>
@@ -196,11 +189,7 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
                     size="md"
                   />
                 )}
-                <Box
-                  display={name ? 'none' : 'block'}
-                  aria-live="assertive"
-                  marginBottom={[1, 1, 0]}
-                >
+                <Box display={name ? 'none' : 'block'} aria-live="assertive">
                   <InputController
                     control={control}
                     id="toNationalId"
@@ -211,7 +200,7 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
                         value: true,
                         message: formatMessage({
                           id: 'sp.settings-access-control:grant-required-ssn',
-                          defaultMessage: 'Skylda er að fylla út kennitölu',
+                          defaultMessage: 'Þú þarft að setja inn kennitölu',
                         }),
                       },
                       validate: {
@@ -291,13 +280,8 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
                 )}
               </div>
             </Box>
-            <Box
-              display="flex"
-              flexDirection="column"
-              rowGap={5}
-              marginTop={[9, 9, 5]}
-            >
-              <Text>
+            <Box display="flex" flexDirection="column" rowGap={5} marginTop={5}>
+              <Text variant="small">
                 {formatMessage({
                   id: 'sp.access-control-delegations:next-step-description',
                   defaultMessage:
@@ -306,7 +290,7 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
               </Text>
               <Box marginBottom={7}>
                 <DelegationsFormFooter
-                  disabled={!name || !domainmNameWatcher}
+                  disabled={!name || !domainNameWatcher}
                   loading={mutationLoading}
                   onCancel={() =>
                     history.push(ServicePortalPath.AccessControlDelegations)
@@ -321,7 +305,7 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
             </Box>
           </form>
         </FormProvider>
-      </Box>
+      </div>
     </>
   )
 }

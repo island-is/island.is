@@ -2156,6 +2156,9 @@ export interface IOrganizationFields {
 
   /** Shows up on the organizations page */
   showsUpOnTheOrganizationsPage?: boolean | undefined
+
+  /** Has A Landing Page */
+  hasALandingPage?: boolean | undefined
 }
 
 export interface IOrganization extends Entry<IOrganizationFields> {
@@ -2201,6 +2204,7 @@ export interface IOrganizationPageFields {
     | 'rikislogmadur'
     | 'landskjorstjorn'
     | 'landing_page'
+    | 'fjarsysla-rikisins'
 
   /** Slices */
   slices?:

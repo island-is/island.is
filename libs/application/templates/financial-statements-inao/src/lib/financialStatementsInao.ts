@@ -54,9 +54,6 @@ const FinancialStatementInaoApplication: ApplicationTemplate<
       [States.DRAFT]: {
         meta: {
           name: 'Draft',
-          actionCard: {
-            title: m.applicationTitle,
-          },
           onEntry: {
             apiModuleAction: ApiActions.getUserType,
             shouldPersistToExternalData: true,
