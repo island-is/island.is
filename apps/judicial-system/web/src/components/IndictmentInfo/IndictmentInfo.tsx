@@ -29,27 +29,35 @@ const IndictmentInfo: React.FC<Props> = (props) => {
     return null
   }
 
+  const readableSubtypes = capitalize(
+    readableIndictmentSubtypes([policeCaseNumber], subtypes).join(', '),
+  )
+  const place = crimeScenes[policeCaseNumber]?.place
+  const date = crimeScenes[policeCaseNumber]?.date
+
   return (
     <>
       <Box>
+        {readableSubtypes && (
+          <Text variant="small">
+            {formatMessage(strings.subtypes, {
+              subtypes: readableSubtypes,
+            })}
+          </Text>
+        )}
+      </Box>
+      {(place || date) && (
         <Text variant="small">
-          {formatMessage(strings.subtypes, {
-            subtypes: capitalize(
-              readableIndictmentSubtypes([policeCaseNumber], subtypes).join(
-                ', ',
-              ) || '-',
-            ),
+          {formatMessage(strings.dateAndPlace, {
+            dateAndPlace:
+              place && date
+                ? `${place} - ${formatDate(date, 'PPP')}`
+                : place
+                ? `${place}`
+                : `${formatDate(date, 'PPP')}`,
           })}
         </Text>
-      </Box>
-      <Text variant="small">
-        {formatMessage(strings.dateAndPlace, {
-          place: crimeScenes[policeCaseNumber]?.place || '-',
-          date: crimeScenes[policeCaseNumber]?.date
-            ? formatDate(crimeScenes[policeCaseNumber]?.date, 'PPPP')
-            : '-',
-        })}
-      </Text>
+      )}
     </>
   )
 }

@@ -218,16 +218,19 @@ const PoliceUploadListMemo: React.FC<{
       <Box paddingBottom={4}>
         {policeCaseNumbers.map((policeCaseNumber, index) => (
           <Box key={index} marginBottom={6}>
-            <IndictmentInfo
-              policeCaseNumber={policeCaseNumber}
-              subtypes={subtypes}
-              crimeScenes={crimeScenes}
-            />
             <SectionHeading
               title={formatMessage(m.policeCaseNumberSectionHeading, {
                 policeCaseNumber,
               })}
+              marginBottom={2}
             />
+            <Box marginBottom={3}>
+              <IndictmentInfo
+                policeCaseNumber={policeCaseNumber}
+                subtypes={subtypes}
+                crimeScenes={crimeScenes}
+              />
+            </Box>
             <UploadFilesToPoliceCase
               caseId={caseId}
               caseFiles={

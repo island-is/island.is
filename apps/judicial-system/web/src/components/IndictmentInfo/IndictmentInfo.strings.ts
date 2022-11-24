@@ -8,7 +8,7 @@ export const indictmentInfo = defineMessages({
   },
   dateAndPlace: {
     id: 'judicial.system.core:indictment_info.subtype',
-    defaultMessage: 'Vettvangur og tími: {place} - {date}',
+    defaultMessage: 'Vettvangur og tími: {dateAndPlace}',
     description: 'Notaður sem texti fyrir vettvang og tíma ákæru.',
   },
 })
