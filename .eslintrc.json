@@ -15,6 +15,46 @@
               {
                 "sourceTag": "*",
                 "onlyDependOnLibsWithTags": ["*"]
+              },
+              {
+                "sourceTag": "scope:api",
+                "onlyDependOnLibsWithTags": ["lib:api", "lib:nest", "lib:node", "lib:js"]
+              },
+              {
+                "sourceTag": "scope:portals-mypages",
+                "onlyDependOnLibsWithTags": ["lib:portals-mypages", "lib:react-spa", "lib:react", "lib:web", "lib:js"]
+              },
+              {
+                "sourceTag": "scope:portals-admin",
+                "onlyDependOnLibsWithTags": ["lib:portals-admin", "lib:react-spa", "lib:react", "lib:web", "lib:js"]
+              },
+              {
+                "sourceTag": "scope:react-spa",
+                "onlyDependOnLibsWithTags": ["lib:react-spa", "lib:react", "lib:web", "lib:js"]
+              },
+              {
+                "sourceTag": "scope:react-next",
+                "onlyDependOnLibsWithTags": ["lib:react-next", "lib:react", "lib:web", "lib:js"]
+              },
+              {
+                "sourceTag": "scope:react",
+                "onlyDependOnLibsWithTags": ["lib:react", "lib:web", "lib:js"]
+              },
+              {
+                "sourceTag": "scope:web",
+                "onlyDependOnLibsWithTags": ["lib:web", "lib:js"]
+              },
+              {
+                "sourceTag": "scope:nest",
+                "onlyDependOnLibsWithTags": ["lib:nest", "lib:node", "lib:js"]
+              },
+              {
+                "sourceTag": "scope:node",
+                "onlyDependOnLibsWithTags": ["lib:node", "lib:js"]
+              },
+              {
+                "sourceTag": "scope:js",
+                "onlyDependOnLibsWithTags": ["lib:js"]
               }
             ]
           }
