@@ -17,10 +17,11 @@ import type {
   ElectionInfo,
   FinancialType,
   KeyValue,
-  PersonalElectionFinancialStatementValues,
   PoliticalPartyFinancialStatementValues,
   TaxInfo,
   ContactDto,
+  DigitalSignee,
+  PersonalElectionSubmitInput,
 } from './types'
 import { ClientTypes, ContactType } from './types'
 import {
@@ -236,16 +237,11 @@ export class FinancialStatementsInaoClientService {
   }
 
   async postFinancialStatementForPersonalElection(
-    client: Client,
-    actor: Contact | undefined,
-    electionId: string,
-    noValueStatement: boolean,
-    values?: PersonalElectionFinancialStatementValues,
-    file?: string,
+    input: PersonalElectionSubmitInput,
   ): Promise<boolean> {
     const financialValues: LookupType[] = []
 
-    if (!noValueStatement && values) {
+    if (!input.noValueStatement && input.values) {
       const financialTypes = await this.getFinancialTypes()
 
       if (!financialTypes) {
@@ -254,21 +250,21 @@ export class FinancialStatementsInaoClientService {
       }
 
       const list: KeyValue[] = []
-      list.push({ key: 100, value: values.contributionsByLegalEntities })
-      list.push({ key: 101, value: values.individualContributions })
-      list.push({ key: 102, value: values.candidatesOwnContributions })
-      list.push({ key: 128, value: values.capitalIncome })
-      list.push({ key: 129, value: values.otherIncome })
-      list.push({ key: 130, value: values.electionOfficeExpenses })
-      list.push({ key: 131, value: values.advertisingAndPromotions })
-      list.push({ key: 132, value: values.meetingsAndTravelExpenses })
-      list.push({ key: 139, value: values.otherExpenses })
-      list.push({ key: 148, value: values.financialExpenses })
-      list.push({ key: 150, value: values.fixedAssetsTotal })
-      list.push({ key: 160, value: values.currentAssets })
-      list.push({ key: 170, value: values.longTermLiabilitiesTotal })
-      list.push({ key: 180, value: values.shortTermLiabilitiesTotal })
-      list.push({ key: 190, value: values.equityTotal })
+      list.push({ key: 100, value: input.values.contributionsByLegalEntities })
+      list.push({ key: 101, value: input.values.individualContributions })
+      list.push({ key: 102, value: input.values.candidatesOwnContributions })
+      list.push({ key: 128, value: input.values.capitalIncome })
+      list.push({ key: 129, value: input.values.otherIncome })
+      list.push({ key: 130, value: input.values.electionOfficeExpenses })
+      list.push({ key: 131, value: input.values.advertisingAndPromotions })
+      list.push({ key: 132, value: input.values.meetingsAndTravelExpenses })
+      list.push({ key: 139, value: input.values.otherExpenses })
+      list.push({ key: 148, value: input.values.financialExpenses })
+      list.push({ key: 150, value: input.values.fixedAssetsTotal })
+      list.push({ key: 160, value: input.values.currentAssets })
+      list.push({ key: 170, value: input.values.longTermLiabilitiesTotal })
+      list.push({ key: 180, value: input.values.shortTermLiabilitiesTotal })
+      list.push({ key: 190, value: input.values.equityTotal })
 
       list.forEach((x) => {
         financialValues.push(lookup(x.key, x.value, financialTypes))
@@ -276,20 +272,24 @@ export class FinancialStatementsInaoClientService {
     }
 
     const dataverseClientId = await this.getOrCreateClient(
-      client,
+      input.client,
       ClientTypes.Individual,
     )
 
-    const actors = actor ? [actor] : undefined
+    const actors = input.actor ? [input.actor] : undefined
 
     const body = {
-      'star_Election@odata.bind': `/star_elections(${electionId})`,
-      star_representativenationalid: actor?.nationalId,
+      'star_Election@odata.bind': `/star_elections(${input.electionId})`,
+      star_representativenationalid: input.actor?.nationalId,
       'star_Client@odata.bind': `/star_clients(${dataverseClientId})`,
-      star_novaluestatement: noValueStatement,
+      star_novaluestatement: input.noValueStatement,
       star_financialstatementvalue_belongsto_rel: financialValues,
       star_statement_contacts: actors,
+      star_email: input.digitalSignee.email,
+      star_phone: input.digitalSignee.phone,
     }
+
+    this.logger.info('FinancialStatement request body', body)
 
     const financialStatementId = await this.postFinancialStatement(body)
 
@@ -297,17 +297,17 @@ export class FinancialStatementsInaoClientService {
       throw new Error('FinancialStatementId can not be null')
     }
 
-    if (file) {
-      const electionInfo = await this.getElectionInfo(electionId)
+    if (input.file) {
+      const electionInfo = await this.getElectionInfo(input.electionId)
 
       const fileName = getPersonalElectionFileName(
-        client.nationalId,
+        input.client.nationalId,
         electionInfo?.electionType,
         electionInfo?.electionDate,
-        noValueStatement,
+        input.noValueStatement,
       )
 
-      await this.sendFile(financialStatementId, fileName, file)
+      await this.sendFile(financialStatementId, fileName, input.file)
     }
 
     return true
@@ -319,6 +319,7 @@ export class FinancialStatementsInaoClientService {
 
     client: Client,
     contacts: Contact[],
+    digitalSignee: DigitalSignee,
     year: string,
     comment: string,
     values: PoliticalPartyFinancialStatementValues,
@@ -367,7 +368,11 @@ export class FinancialStatementsInaoClientService {
       star_representativenationalid: actor?.nationalId,
       star_financialstatementvalue_belongsto_rel: financialValues,
       star_statement_contacts: contactsDto,
+      star_email: digitalSignee.email,
+      star_phone: digitalSignee.phone,
     }
+
+    this.logger.info('FinancialStatement request body', body)
 
     const financialStatementId = await this.postFinancialStatement(body)
 
@@ -389,6 +394,7 @@ export class FinancialStatementsInaoClientService {
 
     client: Client,
     contacts: Contact[],
+    digitalSignee: DigitalSignee,
     year: string,
     comment: string,
     values: CemeteryFinancialStatementValues,
@@ -441,7 +447,11 @@ export class FinancialStatementsInaoClientService {
       star_representativenationalid: actor?.nationalId,
       star_financialstatementvalue_belongsto_rel: financialValues,
       star_statement_contacts: contactsDto,
+      star_email: digitalSignee.email,
+      star_phone: digitalSignee.phone,
     }
+
+    this.logger.info('FinancialStatement request body', body)
 
     const financialStatementId = await this.postFinancialStatement(body)
 

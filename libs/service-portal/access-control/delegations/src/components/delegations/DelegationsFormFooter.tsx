@@ -60,6 +60,7 @@ export const DelegationsFormFooter = ({
           type={onConfirm ? 'button' : 'submit'}
           variant="primary"
           colorScheme={confirmButtonColorScheme}
+          data-testid="proceed"
           {...(confirmIcon && { icon: confirmIcon })}
           {...(onConfirm && { onClick: onConfirm })}
           {...rest}

@@ -57,7 +57,7 @@ export class EmailSignupResolver {
     )
 
     return axios
-      .get(populatedUrl)
+      .get(encodeURI(populatedUrl))
       .then((response) => {
         return {
           subscribed: response?.data?.result === 'error' ? false : true,
