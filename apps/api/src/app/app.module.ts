@@ -254,6 +254,7 @@ const autoSchemaFile = environment.production
       isGlobal: true,
       load: [
         AdrAndMachineLicenseClientConfig,
+        AirDiscountSchemeClientConfig,
         AssetsClientConfig,
         FirearmLicenseClientConfig,
         GenericFirearmLicenseConfig,
