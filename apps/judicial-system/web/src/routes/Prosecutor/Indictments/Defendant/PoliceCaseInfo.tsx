@@ -3,7 +3,14 @@ import { useIntl } from 'react-intl'
 import { ValueType } from 'react-select'
 import InputMask from 'react-input-mask'
 
-import { Box, Button, Input, Select } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  Icon,
+  Input,
+  Select,
+  Tag,
+} from '@island.is/island-ui/core'
 import { CrimeScene, IndictmentSubtype } from '@island.is/judicial-system/types'
 import {
   capitalize,
@@ -75,9 +82,10 @@ export const PoliceCaseInfo: React.FC<Props> = (props) => {
         .map((subtype) => ({
           label: capitalize(indictmentSubtypes[subtype]),
           value: subtype,
+          disabled: subtypes?.includes(subtype),
         }))
         .sort((a, b) => a.label.localeCompare(b.label)),
-    [],
+    [subtypes],
   )
 
   return (
@@ -159,7 +167,7 @@ export const PoliceCaseInfo: React.FC<Props> = (props) => {
             const indictmentSubtype = (selectedOption as ReactSelectOption)
               .value as IndictmentSubtype
             updatePoliceCases(index, {
-              subtypes: [indictmentSubtype],
+              subtypes: [...(subtypes || []), indictmentSubtype],
             })
           }}
           value={
@@ -173,6 +181,35 @@ export const PoliceCaseInfo: React.FC<Props> = (props) => {
           required
         />
       </Box>
+      {subtypes && (
+        <Box marginBottom={2}>
+          {subtypes.map((subtype, i) => (
+            <Box
+              key={`${policeCaseNumbers[index]}-${subtype}`}
+              component="span"
+              marginBottom={1}
+              marginLeft={i === 0 ? 0 : 1}
+            >
+              <Tag
+                variant="darkerBlue"
+                onClick={() => {
+                  updatePoliceCases(index, {
+                    subtypes: subtypes.filter((s) => s !== subtype),
+                  })
+                }}
+                aria-label={formatMessage(policeCaseInfo.removeSubtype, {
+                  subtype: indictmentSubtypes[subtypes[0]],
+                })}
+              >
+                <Box display="flex" alignItems="center">
+                  {capitalize(indictmentSubtypes[subtype])}
+                  <Icon icon="close" size="small" />
+                </Box>
+              </Tag>
+            </Box>
+          ))}
+        </Box>
+      )}
       <Box marginBottom={2}>
         <Input
           name="policeCasePlace"

@@ -52,8 +52,9 @@ const getPoliceCases: (theCase: Case) => PoliceCase[] = (theCase: Case) =>
           theCase.indictmentSubtypes &&
           theCase.indictmentSubtypes[policeCaseNumber],
         place:
-          theCase.crimeScenes && theCase.crimeScenes[policeCaseNumber].place,
-        date: theCase.crimeScenes && theCase.crimeScenes[policeCaseNumber].date,
+          theCase.crimeScenes && theCase.crimeScenes[policeCaseNumber]?.place,
+        date:
+          theCase.crimeScenes && theCase.crimeScenes[policeCaseNumber]?.date,
       }))
     : [{ number: '' }]
 

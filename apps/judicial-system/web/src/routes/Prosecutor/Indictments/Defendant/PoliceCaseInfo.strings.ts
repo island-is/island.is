@@ -48,4 +48,10 @@ export const policeCaseInfo = defineMessages({
     description:
       'Notaður sem texti á "Eyða" hnappinn í LÖKE máli á ákærða skrefi í ákærum.',
   },
+  removeSubtype: {
+    id: 'judicial.system.core:police_case_info.remove_subtype',
+    defaultMessage: 'Eyða undirtegund ákæru {subtype}',
+    description:
+      'Notaður sem aria label á takkana fyrir undirtegund ákæru á ákærða skrefi í ákærum.',
+  },
 })
