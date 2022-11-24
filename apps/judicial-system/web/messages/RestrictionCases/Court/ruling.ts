@@ -204,14 +204,6 @@ export const rcRuling = {
         description:
           'Notaður sem titill fyrir "Takmarkanir á gæslu" hlutann á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
-      // TODO: Remove isolation
-      isolation: {
-        id:
-          'judicial.system.restriction_cases:ruling.custody_restrictions.isolation',
-        defaultMessage: '{genderedAccused} skal sæta einangrun',
-        description:
-          'Notaður sem texti sem segir til um einangrun á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
-      },
       isolationV1: {
         id:
           'judicial.system.restriction_cases:ruling.custody_restrictions.isolation_v1',

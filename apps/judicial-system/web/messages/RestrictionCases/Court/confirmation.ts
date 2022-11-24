@@ -1,3 +1,4 @@
+// TODO: Delete this file
 import { defineMessages } from 'react-intl'
 
 export const rcConfirmation = {
