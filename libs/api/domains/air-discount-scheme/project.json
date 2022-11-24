@@ -36,7 +36,9 @@
       "options": {
         "commands": [
           "yarn start api",
-          "yarn start air-discount-scheme-backend"
+          "yarn start air-discount-scheme-backend",
+          "scripts/run-soffia-proxy.sh",
+          "scripts/run-xroad-proxy.sh"
         ],
         "parallel": true
       }
