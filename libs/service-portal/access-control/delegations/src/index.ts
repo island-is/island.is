@@ -20,7 +20,7 @@ export const delegationsModule: ServicePortalModule = {
       path: ServicePortalPath.AccessControlDelegations,
       navHide: !hasAccess,
       enabled: hasAccess,
-      render: () => lazy(() => import('./screens/AccessControl/AccessControl')),
+      render: () => lazy(() => import('./screens/AccessControl')),
     }
 
     const routes: ServicePortalRoute[] = [
@@ -30,7 +30,7 @@ export const delegationsModule: ServicePortalModule = {
       },
       {
         ...accessControlCommonFields,
-        path: ServicePortalPath.AccessControlDelegationsToMe,
+        path: ServicePortalPath.AccessControlDelegationsIncoming,
       },
       {
         name: m.accessControlGrant,
@@ -40,7 +40,7 @@ export const delegationsModule: ServicePortalModule = {
       {
         name: m.accessControlAccess,
         path: ServicePortalPath.AccessControlDelegationAccess,
-        render: () => lazy(() => import('./screens/Access/Access')),
+        render: () => lazy(() => import('./screens/AccessOutgoing')),
       },
     ]
 

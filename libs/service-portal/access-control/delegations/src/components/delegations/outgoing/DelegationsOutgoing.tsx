@@ -1,24 +1,27 @@
 import { useMemo, useState } from 'react'
+import sortBy from 'lodash/sortBy'
 import {
   SkeletonLoader,
   Stack,
   AlertBanner,
   Box,
 } from '@island.is/island-ui/core'
+import { isDefined } from '@island.is/shared/utils'
 import { AuthCustomDelegation } from '@island.is/api/schema'
-import { DelegationsHeader } from './DelegationsHeader'
-import { DelegationsEmptyState } from './DelegationsEmptyState'
 import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
-import { AccessDeleteModal } from '../access/AccessDeleteModal'
-import { AccessCard } from '../access/AccessCard'
-import { isDefined } from '@island.is/shared/utils'
-import { useAuthDelegationsQuery } from '@island.is/service-portal/graphql'
-import { DomainOption, useDomains } from '../../hooks/useDomains'
-import { ALL_DOMAINS } from '../../constants/domain'
-import sortBy from 'lodash/sortBy'
+import {
+  AuthDelegationDirection,
+  useAuthDelegationsOutgoingQuery,
+} from '@island.is/service-portal/graphql'
+import { AccessCard } from '../../access/AccessCard'
+import { AccessDeleteModal } from '../../access/AccessDeleteModal'
+import { DelegationsEmptyState } from '../DelegationsEmptyState'
+import { DelegationsOutgoingHeader } from './DelegationsOutgoingHeader'
+import { DomainOption, useDomains } from '../../../hooks/useDomains'
+import { ALL_DOMAINS } from '../../../constants/domain'
 
-export const DelegationsFromMe = () => {
+export const DelegationsOutgoing = () => {
   const { formatMessage, lang = 'is' } = useLocale()
   const [searchValue, setSearchValue] = useState('')
   const [delegation, setDelegation] = useState<AuthCustomDelegation | null>(
@@ -26,10 +29,11 @@ export const DelegationsFromMe = () => {
   )
   const { name: domainName } = useDomains()
 
-  const { data, loading, refetch, error } = useAuthDelegationsQuery({
+  const { data, loading, refetch, error } = useAuthDelegationsOutgoingQuery({
     variables: {
       input: {
         domain: domainName,
+        direction: AuthDelegationDirection.Outgoing,
       },
       lang,
     },
@@ -52,7 +56,6 @@ export const DelegationsFromMe = () => {
     // Select components only supports string or number values, there for we use
     // the const ALL_DOMAINS as a value for the all domains option.
     // The service takes null as a value for all domains.
-
     refetch({
       input: {
         domain: option.value === ALL_DOMAINS ? null : option.value,
@@ -78,8 +81,13 @@ export const DelegationsFromMe = () => {
 
   return (
     <>
-      <Box display="flex" flexDirection="column" rowGap={4}>
-        <DelegationsHeader
+      <Box
+        display="flex"
+        flexDirection="column"
+        rowGap={4}
+        marginTop={[1, 1, 8]}
+      >
+        <DelegationsOutgoingHeader
           domainName={domainName}
           onDomainChange={onDomainChange}
           onSearchChange={setSearchValue}
@@ -105,6 +113,7 @@ export const DelegationsFromMe = () => {
                       onDelete={(delegation) => {
                         setDelegation(delegation)
                       }}
+                      variant="outgoing"
                     />
                   ),
               )}
