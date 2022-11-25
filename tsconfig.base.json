@@ -42,6 +42,9 @@
       "@island.is/api-catalogue/types": [
         "libs/api-catalogue/types/src/index.ts"
       ],
+      "@island.is/api/domains/air-discount-scheme": [
+        "libs/api/domains/air-discount-scheme/src/index.ts"
+      ],
       "@island.is/api/domains/api-catalogue": [
         "libs/api/domains/api-catalogue/src/index.ts"
       ],
@@ -344,6 +347,9 @@
       "@island.is/cache": ["libs/cache/src/index.ts"],
       "@island.is/clients/adr-and-machine-license": [
         "libs/clients/adr-and-machine-license/src/index.ts"
+      ],
+      "@island.is/clients/air-discount-scheme": [
+        "libs/clients/air-discount-scheme/src/index.ts"
       ],
       "@island.is/clients/assets": ["libs/clients/assets/src/index.ts"],
       "@island.is/clients/auth/delegation-api": [
