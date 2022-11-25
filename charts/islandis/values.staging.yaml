@@ -248,6 +248,8 @@ api:
     - 'node'
   enabled: true
   env:
+    AIR_DISCOUNT_SCHEME_BACKEND_URL: 'http://web-air-discount-scheme-backend.air-discount-scheme.svc.cluster.local'
+    AIR_DISCOUNT_SCHEME_CLIENT_TIMEOUT: '20000'
     APPLICATION_SYSTEM_API_URL: 'http://web-application-system-api.application-system.svc.cluster.local'
     AUTH_DELEGATION_API_URL: 'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local'
     AUTH_PUBLIC_API_URL: 'https://identity-server.staging01.devland.is/api'
@@ -257,7 +259,7 @@ api:
     CONTENTFUL_HOST: 'cdn.contentful.com'
     DOWNLOAD_SERVICE_BASE_PATH: 'https://api.staging01.devland.is'
     ELASTIC_NODE: 'https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com/'
-    ELECTRONIC_REGISTRATION_STATISTICS_API_URL: 'https://gw-api-staging.skra.is/business/tolfraedi'
+    ELECTRONIC_REGISTRATION_STATISTICS_API_URL: 'https://api-staging.thinglysing.is/business/tolfraedi'
     ENDORSEMENT_SYSTEM_BASE_API_URL: 'http://web-endorsement-system-api.endorsement-system.svc.cluster.local'
     FILE_DOWNLOAD_BUCKET: 'island-is-staging-download-cache-api'
     FILE_STORAGE_UPLOAD_BUCKET: 'island-is-staging-upload-api'
@@ -303,8 +305,6 @@ api:
     XROAD_PAYMENT_ADDITION_CALLBACK_URL: '/'
     XROAD_PAYMENT_BASE_CALLBACK_URL: 'XROAD:'
     XROAD_PAYMENT_PROVIDER_ID: 'IS-TEST/GOV/10021/FJS-DEV-Public'
-    XROAD_PROPERTIES_API_PATH: '/SKRA-Protected/Fasteignir-v1'
-    XROAD_PROPERTIES_SERVICE_PATH: 'IS-TEST/GOV/6503760649/SKRA-Protected/Fasteignir-v1'
     XROAD_PROPERTIES_SERVICE_V2_PATH: 'IS-TEST/GOV/5812191480/HMS-Protected/Fasteignir-v1'
     XROAD_PROPERTIES_TIMEOUT: '20000'
     XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1'

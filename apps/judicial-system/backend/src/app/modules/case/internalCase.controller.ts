@@ -11,10 +11,15 @@ import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { TokenGuard } from '@island.is/judicial-system/auth'
+import {
+  investigationCases,
+  restrictionCases,
+} from '@island.is/judicial-system/types'
 
 import { CaseEvent, EventService } from '../event'
 import { CaseExistsGuard } from './guards/caseExists.guard'
 import { CaseCompletedGuard } from './guards/caseCompleted.guard'
+import { CaseTypeGuard } from './guards/caseType.guard'
 import { CurrentCase } from './guards/case.decorator'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { Case } from './models/case.model'
@@ -89,7 +94,11 @@ export class InternalCaseController {
     return this.internalCaseService.deliverProsecutorDocuments(theCase)
   }
 
-  @UseGuards(CaseExistsGuard, CaseCompletedGuard)
+  @UseGuards(
+    CaseExistsGuard,
+    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    CaseCompletedGuard,
+  )
   @Post('case/:caseId/deliverCourtRecordToCourt')
   @ApiOkResponse({
     type: DeliverResponse,
@@ -104,7 +113,11 @@ export class InternalCaseController {
     return this.internalCaseService.deliverCourtRecordToCourt(theCase)
   }
 
-  @UseGuards(CaseExistsGuard, CaseCompletedGuard)
+  @UseGuards(
+    CaseExistsGuard,
+    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    CaseCompletedGuard,
+  )
   @Post('case/:caseId/deliverSignedRulingToCourt')
   @ApiOkResponse({
     type: DeliverResponse,
