@@ -22,7 +22,7 @@ interface Props {
   locked?: boolean
   backgroundColor?: 'blue' | 'white'
   size?: 'sm' | 'md'
-  ignoreTime?: boolean
+  dateOnly?: boolean
   onChange: (date: Date | undefined, valid: boolean) => void
 }
 
@@ -41,7 +41,7 @@ const DateTime: React.FC<Props> = (props) => {
     locked = false,
     backgroundColor = 'white',
     size = 'md',
-    ignoreTime = false,
+    dateOnly = false,
     onChange,
   } = props
 
@@ -59,7 +59,7 @@ const DateTime: React.FC<Props> = (props) => {
 
   const [currentDate, setCurrentDate] = useState(date(selectedDate))
   const [currentTime, setCurrentTime] = useState(
-    ignoreTime ? '00:00' : getTimeFromDate(date(selectedDate)),
+    dateOnly ? '00:00' : getTimeFromDate(date(selectedDate)),
   )
 
   const [datepickerErrorMessage, setDatepickerErrorMessage] = useState<string>()
@@ -70,10 +70,10 @@ const DateTime: React.FC<Props> = (props) => {
 
     setCurrentDate(date(selectedDate))
 
-    if (!ignoreTime) {
+    if (!dateOnly) {
       setCurrentTime(time)
     }
-  }, [ignoreTime, selectedDate])
+  }, [dateOnly, selectedDate])
 
   const isValidDateTime = (
     date: Date | undefined,
@@ -166,7 +166,7 @@ const DateTime: React.FC<Props> = (props) => {
     return (
       <div
         data-testid="date-time"
-        className={ignoreTime ? undefined : styles.dateTimeContainer}
+        className={dateOnly ? undefined : styles.dateTimeContainer}
       >
         <DatePicker
           id={name}
@@ -185,7 +185,7 @@ const DateTime: React.FC<Props> = (props) => {
           backgroundColor={backgroundColor}
           size={size}
         />
-        {!ignoreTime && (
+        {!dateOnly && (
           <TimeInputField
             disabled={disabled || locked || currentDate === undefined}
             onChange={onTimeChange}

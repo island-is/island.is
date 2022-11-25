@@ -232,7 +232,7 @@ export const PoliceCaseInfo: React.FC<Props> = (props) => {
         maxDate={new Date()}
         blueBox={false}
         selectedDate={crimeScene?.date}
-        ignoreTime={true}
+        dateOnly={true}
         onChange={(date, valid) => {
           if (date && valid)
             updatePoliceCases(index, {
