@@ -90,6 +90,7 @@
 - [External Contributions](handbook/repository/external-contribute.md)
 - [Generating a New Project](handbook/repository/generate.md)
 - [GitBook Contributions](handbook/repository/gitbook-contribute.md)
+- [Defining Monorepo Boundaries With Tags](handbook/repository/nx-tags.md)
 - [OpenAPI](handbook/repository/openapi.md)
 - [Auto Generated Schemas](handbook/repository/schemas.md)
 - [Testing](handbook/repository/system-e2e.md)
