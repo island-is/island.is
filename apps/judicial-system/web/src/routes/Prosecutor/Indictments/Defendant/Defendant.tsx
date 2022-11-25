@@ -102,7 +102,7 @@ const Defendant: React.FC = () => {
     caseNotFound,
   } = useContext(FormContext)
   const { formatMessage } = useIntl()
-  const { createCase, isCreatingCase, updateCase } = useCase()
+  const { createCase, isCreatingCase, setAndSendCaseToServer } = useCase()
   const {
     createDefendant,
     updateDefendant,
@@ -127,20 +127,18 @@ const Defendant: React.FC = () => {
       { number: '' },
     ])
 
-    setWorkingCase((theCase) => ({
-      ...theCase,
-      policeCaseNumbers,
-      indictmentSubtypes,
-      crimeScenes,
-    }))
-
-    if (workingCase.id) {
-      updateCase(workingCase.id, {
-        policeCaseNumbers,
-        indictmentSubtypes,
-        crimeScenes,
-      })
-    }
+    setAndSendCaseToServer(
+      [
+        {
+          policeCaseNumbers,
+          indictmentSubtypes,
+          crimeScenes,
+          force: true,
+        },
+      ],
+      workingCase,
+      setWorkingCase,
+    )
   }
 
   const handleSetPoliceCase = (
@@ -175,20 +173,18 @@ const Defendant: React.FC = () => {
       policeCases.slice(0, index).concat(policeCases.slice(index + 1)),
     )
 
-    setWorkingCase((theCase) => ({
-      ...theCase,
-      policeCaseNumbers,
-      indictmentSubtypes,
-      crimeScenes,
-    }))
-
-    if (workingCase.id) {
-      updateCase(workingCase.id, {
-        policeCaseNumbers,
-        indictmentSubtypes,
-        crimeScenes,
-      })
-    }
+    setAndSendCaseToServer(
+      [
+        {
+          policeCaseNumbers,
+          indictmentSubtypes,
+          crimeScenes,
+          force: true,
+        },
+      ],
+      workingCase,
+      setWorkingCase,
+    )
   }
 
   const handleUpdatePoliceCases = (
@@ -205,22 +201,18 @@ const Defendant: React.FC = () => {
       crimeScenes,
     ] = getPoliceCasesForUpdate(getPoliceCases(workingCase), index, update)
 
-    if (index !== undefined && update) {
-      setWorkingCase((theCase) => ({
-        ...theCase,
-        policeCaseNumbers,
-        indictmentSubtypes,
-        crimeScenes,
-      }))
-    }
-
-    if (workingCase.id) {
-      updateCase(workingCase.id, {
-        policeCaseNumbers,
-        indictmentSubtypes,
-        crimeScenes,
-      })
-    }
+    setAndSendCaseToServer(
+      [
+        {
+          policeCaseNumbers,
+          indictmentSubtypes,
+          crimeScenes,
+          force: true,
+        },
+      ],
+      workingCase,
+      setWorkingCase,
+    )
   }
 
   const handleUpdateDefendant = useCallback(
