@@ -43,6 +43,7 @@ describe(`${RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/:id`, () => {
         })
       }
     })
+
     //
     // case number validation
     cy.getByTestid('courtCaseNumber').click().blur()

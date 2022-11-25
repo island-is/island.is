@@ -37,7 +37,10 @@ export class MenuSyncService implements CmsSyncProvider<IMenu> {
             dateUpdated: new Date().getTime().toString(),
           }
         } catch (error) {
-          logger.warn('Failed to import menu', { error: error.message })
+          logger.warn('Failed to import menu', {
+            error: error.message,
+            id: entry?.sys?.id,
+          })
           return false
         }
       })

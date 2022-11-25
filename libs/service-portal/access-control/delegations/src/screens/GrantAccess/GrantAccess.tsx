@@ -167,8 +167,8 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
             <Box display="flex" flexDirection="column" rowGap={[5, 6]}>
               <IdentityCard
                 label={formatMessage({
-                  id: 'sp.access-control-delegations:signed-in-user',
-                  defaultMessage: 'Innskráður notandi',
+                  id: 'sp.access-control-delegations:delegation-to',
+                  defaultMessage: 'Aðgangsveitandi',
                 })}
                 title={userInfo.profile.name}
                 description={formatNationalId(userInfo.profile.nationalId)}
@@ -295,6 +295,7 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
                   onCancel={() =>
                     history.push(ServicePortalPath.AccessControlDelegations)
                   }
+                  showShadow={false}
                   confirmLabel={formatMessage({
                     id: 'sp.access-control-delegations:choose-access-rights',
                     defaultMessage: 'Velja réttindi',

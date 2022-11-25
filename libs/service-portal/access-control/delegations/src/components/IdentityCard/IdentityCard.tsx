@@ -6,6 +6,7 @@ type IdentityCardProps = {
   label?: string
   color?: 'blue' | 'purple'
   imgSrc?: string | null
+  size?: 'small' | 'default'
 }
 
 export const IdentityCard = ({
@@ -14,6 +15,7 @@ export const IdentityCard = ({
   label,
   color,
   imgSrc,
+  size = 'default',
 }: IdentityCardProps) => {
   const renderContent = () => {
     return (
@@ -26,13 +28,15 @@ export const IdentityCard = ({
         {label && (
           <Text
             color={color ? `${color}400` : 'dark400'}
-            variant="small"
+            variant="eyebrow"
             fontWeight="semiBold"
           >
             {label}
           </Text>
         )}
-        <Text variant="h3">{title}</Text>
+        <Text as="h3" variant={size === 'default' ? 'h3' : 'h5'}>
+          {title}
+        </Text>
         {description && <Text>{description}</Text>}
       </Box>
     )
