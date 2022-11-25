@@ -224,6 +224,7 @@
     "residence-history": "libs/residence-history",
     "service-portal": "apps/service-portal",
     "service-portal-access-control-delegations": "libs/service-portal/access-control/delegations",
+    "service-portal-air-discount": "libs/service-portal/air-discount",
     "service-portal-applications": "libs/service-portal/applications",
     "service-portal-assets": "libs/service-portal/assets",
     "service-portal-constants": "libs/service-portal/constants",

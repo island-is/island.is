@@ -232,6 +232,7 @@
 - [Regulations](libs/regulations/README.md)
 - [Residence History](libs/residence-history/README.md)
 - [Service Portal](libs/service-portal/README.md)
+  - [Service Portal Air Discount](libs/service-portal/air-discount/README.md)
   - [Core](libs/service-portal/core/README.md)
     - [Services Auth Testing](libs/services/auth/testing/README.md)
 - [Shared](libs/shared/README.md)

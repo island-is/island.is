@@ -1,0 +1,25 @@
+{
+  "root": "libs/service-portal/air-discount",
+  "sourceRoot": "libs/service-portal/air-discount/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/service-portal/air-discount/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/service-portal/air-discount"],
+      "options": {
+        "jestConfig": "libs/service-portal/air-discount/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  }
+}

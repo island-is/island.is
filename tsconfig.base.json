@@ -534,6 +534,9 @@
       "@island.is/service-portal/access-control/delegations": [
         "libs/service-portal/access-control/delegations/src/index.ts"
       ],
+      "@island.is/service-portal/air-discount": [
+        "libs/service-portal/air-discount/src/index.ts"
+      ],
       "@island.is/service-portal/applications": [
         "libs/service-portal/applications/src/index.ts"
       ],
