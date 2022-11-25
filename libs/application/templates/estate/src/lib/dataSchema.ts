@@ -16,6 +16,7 @@ const asset = z
     initial: z.boolean(),
     enabled: z.boolean(),
     dummy: z.boolean().optional(),
+    share: z.number().optional(),
   })
   .array()
   .optional()
