@@ -56,7 +56,7 @@ const MultipleValueList: React.FC<MultipleValueListProps> = ({
   }
 
   return (
-    <BlueBox>
+    <BlueBox dataTestId="multipleValueListContainer">
       <div className={styles.addCourtDocumentContainer}>
         {inputMask ? (
           <InputMask
