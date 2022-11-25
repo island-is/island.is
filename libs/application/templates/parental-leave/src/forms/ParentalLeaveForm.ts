@@ -759,7 +759,7 @@ export const ParentalLeaveForm: Form = buildForm({
               condition: (answers, externalData) => {
                 const canTransferRights =
                   getSelectedChild(answers, externalData)?.parentalRelation ===
-                    ParentalRelations.primary && allowOtherParent(answers)
+                  ParentalRelations.primary
                 const { hasMultipleBirths } = getApplicationAnswers(answers)
 
                 return canTransferRights && hasMultipleBirths === YES

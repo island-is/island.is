@@ -324,17 +324,13 @@ describe('ParentalLeaveService', () => {
       const application = createApplication()
 
       const firstPeriod = get(application.answers, 'periods[0]') as object
-      set(
-        firstPeriod,
-        'endDate',
-        '2022-07-09',
-      )
+      set(firstPeriod, 'endDate', '2022-07-09')
       set(application.answers, 'otherParent', SINGLE)
       set(application.answers, 'applicationType.option', PARENTAL_LEAVE)
       set(application.answers, 'multipleBirths.hasMultipleBirths', YES)
       set(application.answers, 'multipleBirths.multipleBirths', 2)
       set(application.answers, 'multipleBirthsRequestDays', 90)
-      
+
       const res = await parentalLeaveService.createPeriodsDTO(
         application,
         nationalId,
@@ -372,16 +368,12 @@ describe('ParentalLeaveService', () => {
       const application = createApplication()
 
       const firstPeriod = get(application.answers, 'periods[0]') as object
-      set(
-        firstPeriod,
-        'endDate',
-        '2022-04-01',
-      )
+      set(firstPeriod, 'endDate', '2022-04-01')
       set(application.answers, 'applicationType.option', PARENTAL_GRANT)
       set(application.answers, 'multipleBirths.hasMultipleBirths', YES)
-      set(application.answers, 'multipleBirths.multipleBirths',2)
+      set(application.answers, 'multipleBirths.multipleBirths', 2)
       set(application.answers, 'multipleBirthsRequestDays', 90)
-      
+
       const res = await parentalLeaveService.createPeriodsDTO(
         application,
         nationalId,
