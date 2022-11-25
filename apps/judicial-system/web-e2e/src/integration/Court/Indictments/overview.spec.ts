@@ -37,6 +37,9 @@ describe(`${INDICTMENTS_COURT_OVERVIEW_ROUTE}/:id`, () => {
         makeCaseFile({ category: CaseFileCategory.COURT_RECORD }),
         makeCaseFile({ category: CaseFileCategory.RULING }),
       ],
+      indictmentSubtypes: {
+        '007-2022-01': [IndictmentSubtype.TAX_VIOLATION],
+      },
       policeCaseNumbers: ['007-2022-01', '007-2022-02'],
     }
 
