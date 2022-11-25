@@ -46,9 +46,7 @@
   "components": {
     "schemas": {
       "vehiclesDebtLessResult_DT": {
-        "required": [
-          "debtLess"
-        ],
+        "required": ["debtLess"],
         "type": "object",
         "properties": {
           "debtLess": {
@@ -57,10 +55,7 @@
         }
       },
       "vehicleDebtLesscarNumber_GET_response": {
-        "required": [
-          "debtLessResult",
-          "error"
-        ],
+        "required": ["debtLessResult", "error"],
         "type": "object",
         "properties": {
           "error": {
@@ -72,11 +67,7 @@
         }
       },
       "ProblemDetails_DT": {
-        "required": [
-          "detail",
-          "status",
-          "title"
-        ],
+        "required": ["detail", "status", "title"],
         "type": "object",
         "properties": {
           "type": {
@@ -108,10 +99,7 @@
         }
       },
       "errors": {
-        "required": [
-          "detail",
-          "title"
-        ],
+        "required": ["detail", "title"],
         "type": "object",
         "properties": {
           "type": {
