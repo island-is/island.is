@@ -168,9 +168,6 @@ export const basicVehicleInformationMapper = (
         }
       }) || undefined,
     isStolen: data.stolens ? data.stolens.length > 0 : false,
-    fees: {
-      hasEncumbrances: data.fees?.hasEncumbrances === 1,
-    },
     isOutOfCommission: data.vehiclestatus === 'Úr umferð',
   }
 

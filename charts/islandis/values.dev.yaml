@@ -502,6 +502,7 @@ application-system-api:
     XROAD_VEHICLE_OPERATORS_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Operators-V2'
     XROAD_VEHICLE_OWNER_CHANGE_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Ownerchange-V2'
     XROAD_VEHICLE_PRINTING_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Printing-V1'
+    XROAD_VEHICLE_SERVICE_FJS_V1_PATH: 'IS-DEV/GOV/10021/FJS-Public/VehicleServiceFJS_v1'
     XROAD_VMST_API_PATH: '/VMST-ParentalLeave-Protected/ParentalLeaveApplication-v1'
     XROAD_VMST_MEMBER_CODE: '10003'
   grantNamespaces:

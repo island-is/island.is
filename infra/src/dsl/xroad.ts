@@ -403,6 +403,16 @@ export const ChargeFjsV2 = new XroadConf({
   },
 })
 
+export const VehicleServiceFjsV1 = new XroadConf({
+  env: {
+    XROAD_VEHICLE_SERVICE_FJS_V1_PATH: {
+      dev: 'IS-DEV/GOV/10021/FJS-Public/VehicleServiceFJS_v1',
+      staging: 'IS-DEV/GOV/10021/FJS-Public/VehicleServiceFJS_v1',
+      prod: 'IS/GOV/5402697509/FJS-Public/VehicleServiceFJS_v1',
+    },
+  },
+})
+
 export const TransportAuthority = new XroadConf({
   env: {
     XROAD_VEHICLE_CODETABLES_PATH: {

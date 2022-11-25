@@ -276,12 +276,6 @@ export class VehiclesOperator {
 }
 
 @ObjectType()
-export class VehiclesFees {
-  @Field(() => Boolean, { nullable: true })
-  hasEncumbrances?: boolean
-}
-
-@ObjectType()
 export class VehiclesDetail {
   @Field(() => VehiclesMainInfo, { nullable: true })
   mainInfo?: VehiclesMainInfo
@@ -316,8 +310,8 @@ export class VehiclesDetail {
   @Field(() => Boolean, { nullable: true })
   isStolen?: boolean
 
-  @Field(() => VehiclesFees, { nullable: true })
-  fees?: VehiclesFees
+  @Field(() => Boolean, { nullable: true })
+  isDebtLess?: boolean
 
   @Field(() => Boolean, { nullable: true })
   isOutOfCommission?: boolean

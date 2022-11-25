@@ -42,9 +42,7 @@ export const VehicleSelectField: FC<
           color: currentVehicle?.color || '',
           role: currentVehicle?.role,
           isStolen: currentVehicle?.isStolen,
-          fees: {
-            hasEncumbrances: false,
-          },
+          isDebtLess: true,
         }
       : null,
   )
@@ -73,11 +71,11 @@ export const VehicleSelectField: FC<
             color: currentVehicle?.color || '',
             role: currentVehicle?.role,
             isStolen: currentVehicle?.isStolen,
-            fees: response?.vehicleFeesByPermno?.fees,
+            isDebtLess: response?.vehicleFeesByPermno?.isDebtLess,
           })
           setPlate(
             !!currentVehicle?.isStolen ||
-              !!response?.vehicleFeesByPermno?.fees?.hasEncumbrances
+              !response?.vehicleFeesByPermno?.isDebtLess
               ? ''
               : currentVehicle.permno || '',
           )
@@ -122,8 +120,7 @@ export const VehicleSelectField: FC<
             {selectedVehicle && (
               <CategoryCard
                 colorScheme={
-                  !!selectedVehicle.isStolen ||
-                  selectedVehicle.fees?.hasEncumbrances
+                  !!selectedVehicle.isStolen || !selectedVehicle.isDebtLess
                     ? 'red'
                     : 'blue'
                 }
@@ -131,7 +128,7 @@ export const VehicleSelectField: FC<
                 text={`${selectedVehicle.color} - ${selectedVehicle.permno}`}
                 tags={
                   selectedVehicle.isStolen
-                    ? selectedVehicle.fees?.hasEncumbrances
+                    ? !selectedVehicle.isDebtLess
                       ? [
                           {
                             label: formatMessage(
@@ -140,7 +137,7 @@ export const VehicleSelectField: FC<
                           },
                           {
                             label: formatMessage(
-                              information.labels.pickVehicle.hasEncumbrancesTag,
+                              information.labels.pickVehicle.isNotDebtLessTag,
                             ),
                           },
                         ]
@@ -151,11 +148,11 @@ export const VehicleSelectField: FC<
                             ),
                           },
                         ]
-                    : selectedVehicle.fees?.hasEncumbrances
+                    : !selectedVehicle.isDebtLess
                     ? [
                         {
                           label: formatMessage(
-                            information.labels.pickVehicle.hasEncumbrancesTag,
+                            information.labels.pickVehicle.isNotDebtLessTag,
                           ),
                         },
                       ]
