@@ -68,7 +68,7 @@ export const PoliceCaseInfo: React.FC<Props> = (props) => {
 
   const { user } = useContext(UserContext)
 
-  const [policeCaseNumberInput, setPoliceCaseNumberInput] = useState(
+  const [policeCaseNumberInput, setPoliceCaseNumberInput] = useState<string>(
     policeCaseNumbers[index],
   )
   const [
@@ -193,25 +193,19 @@ export const PoliceCaseInfo: React.FC<Props> = (props) => {
               subtypes: [...(subtypes || []), indictmentSubtype],
             })
           }}
-          value={
-            subtypes && subtypes.length > 0
-              ? {
-                  value: subtypes[0],
-                  label: capitalize(indictmentSubtypes[subtypes[0]]),
-                }
-              : null
-          }
+          value={null}
           required
         />
       </Box>
       {subtypes && (
         <Box marginBottom={2}>
-          {subtypes.map((subtype, i) => (
+          {subtypes.map((subtype) => (
             <Box
+              display="inlineBlock"
               key={`${policeCaseNumbers[index]}-${subtype}`}
               component="span"
               marginBottom={1}
-              marginLeft={i === 0 ? 0 : 1}
+              marginRight={1}
             >
               <Tag
                 variant="darkerBlue"
