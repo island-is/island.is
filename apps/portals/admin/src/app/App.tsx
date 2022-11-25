@@ -10,6 +10,7 @@ import { FeatureFlagProvider } from '@island.is/react/feature-flags'
 import { UserProfileLocale } from '@island.is/shared/components'
 
 import environment from '../environments/environment'
+import Layout from '../components/Layout/Layout'
 
 export function App() {
   return (
@@ -20,7 +21,9 @@ export function App() {
           <Authenticator>
             <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
               <UserProfileLocale />
-              <h1>Hello world</h1>
+              <Layout>
+                <h1>Hello world</h1>
+              </Layout>
             </FeatureFlagProvider>
           </Authenticator>
         </Router>
