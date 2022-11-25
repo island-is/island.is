@@ -18,8 +18,9 @@ import {
 } from './types/input-types'
 
 type Optional<T, L extends keyof T> = Omit<T, L> & Partial<Pick<T, L>>
+type Extend<Base, E> = Base & E extends never ? Base | E : never
 
-export class ServiceBuilder<ServiceType> {
+export class ServiceBuilder<ServiceType, T = never> {
   serviceDef: ServiceDefinition
 
   constructor(name: string) {
@@ -131,10 +132,13 @@ export class ServiceBuilder<ServiceType> {
    * @param key name of env variable
    * @param value value of env variable. A single string sets the same value across all environment. A dictionary with keys the environments sets an individual value for each one
    */
-  env(envs: EnvironmentVariables) {
+  env<Envs extends EnvironmentVariables>(envs: Envs) {
     this.assertUnset(this.serviceDef.env, envs)
     this.serviceDef.env = { ...this.serviceDef.env, ...envs }
-    return this
+    return (this as unknown) as ServiceBuilder<
+      ServiceType,
+      Extend<T, keyof Envs>
+    >
   }
 
   /**
@@ -195,10 +199,13 @@ export class ServiceBuilder<ServiceType> {
    * To provision secrets in the Parameter Store, you need to get in touch with the DevOps team.
    * @param secrets Maps of secret names and their corresponding paths
    */
-  secrets(secrets: Secrets) {
+  secrets<Secs extends Secrets>(secrets: Secs) {
     this.assertUnset(this.serviceDef.secrets, secrets)
     this.serviceDef.secrets = { ...this.serviceDef.secrets, ...secrets }
-    return this
+    return (this as unknown) as ServiceBuilder<
+      ServiceType,
+      Extend<T, keyof Secs>
+    >
   }
 
   command(cmd: string) {

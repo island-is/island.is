@@ -2,7 +2,7 @@ import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
 export const serviceSetup = (services: {
   adsBackend: ServiceBuilder<'air-discount-scheme-backend'>
-}): ServiceBuilder<'air-discount-scheme-api'> => {
+}) => {
   return service('air-discount-scheme-api')
     .namespace('air-discount-scheme')
     .serviceAccount()

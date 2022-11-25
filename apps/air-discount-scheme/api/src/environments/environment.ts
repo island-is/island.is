@@ -1,3 +1,6 @@
+import { serviceSetup as adsApiSetup } from '../../infra/api'
+import { getConfig } from '../../../../../infra/src/dsl/types/helpers'
+
 const isProd = process.env.NODE_ENV === 'production'
 
 if (isProd) {
@@ -24,22 +27,24 @@ const devConfig = {
   backendUrl: 'http://localhost:4248',
 }
 
+const config = getConfig(adsApiSetup)
+
 const prodConfig = {
   production: true,
   accessGroups: {
-    developers: process.env.DEVELOPERS,
-    admins: process.env.ADMINS,
+    developers: config.env('DEVELOPERS'),
+    admins: config.env('ADMINS'),
   },
   identityServerAuth: {
-    issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
+    issuer: config.env('IDENTITY_SERVER_ISSUER_URL'),
     audience: '@vegagerdin.is',
   },
   auth: {
-    audience: process.env.AUTH_AUDIENCE,
-    jwtSecret: process.env.AUTH_JWT_SECRET,
+    audience: config.env('AUTH_AUDIENCE'),
+    jwtSecret: config.env('AUTH_JWT_SECRET'),
   },
   idsTokenCookieName: '__Secure-next-auth.session-token',
-  backendUrl: process.env.BACKEND_URL ?? 'http://localhost:4248',
+  backendUrl: config.env('BACKEND_URL') ?? 'http://localhost:4248',
 }
 
 export default isProd ? prodConfig : devConfig
