@@ -228,10 +228,10 @@ const useCase = () => {
           })
 
           if (data?.createCourtCase?.courtCaseNumber && !errors) {
-            setWorkingCase({
-              ...workingCase,
+            setWorkingCase((theCase) => ({
+              ...theCase,
               courtCaseNumber: data.createCourtCase.courtCaseNumber,
-            })
+            }))
 
             setCourtCaseNumberErrorMessage('')
 
@@ -375,7 +375,7 @@ const useCase = () => {
 
       // The case has not been created
       if (!workingCase.id) {
-        setWorkingCase({ ...workingCase, ...updatesToCase })
+        setWorkingCase((theCase) => ({ ...theCase, ...updatesToCase }))
         return
       }
 
@@ -385,7 +385,7 @@ const useCase = () => {
         throw new Error()
       }
 
-      setWorkingCase({ ...workingCase, ...newWorkingCase })
+      setWorkingCase((theCase) => ({ ...theCase, ...newWorkingCase }))
     } catch (error) {
       toast.error(formatMessage(errors.updateCase))
     }
