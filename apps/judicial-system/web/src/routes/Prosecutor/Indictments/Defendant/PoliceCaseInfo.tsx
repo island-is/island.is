@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useState } from 'react'
+import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { ValueType } from 'react-select'
 import InputMask from 'react-input-mask'
@@ -68,13 +68,34 @@ export const PoliceCaseInfo: React.FC<Props> = (props) => {
 
   const { user } = useContext(UserContext)
 
-  const [policeCaseNumberInmput, setPoliceCaseNumberInput] = useState(
+  const [policeCaseNumberInput, setPoliceCaseNumberInput] = useState(
     policeCaseNumbers[index],
   )
   const [
     policeCaseNumberErrorMessage,
     setPoliceCaseNumberErrorMessage,
   ] = useState<string>('')
+
+  useEffect(() => {
+    if (policeCaseNumberInput !== policeCaseNumbers[index]) {
+      if (
+        !policeCaseNumbers.some(
+          (policeCaseNumber, idx) =>
+            idx !== index && policeCaseNumber === policeCaseNumberInput,
+        )
+      ) {
+        setPoliceCaseNumberErrorMessage('')
+        validateAndSetErrorMessage(
+          ['empty', 'police-casenumber-format'],
+          policeCaseNumberInput,
+          setPoliceCaseNumberErrorMessage,
+        )
+        updatePoliceCases(index, {
+          policeCaseNumber: policeCaseNumberInput,
+        })
+      }
+    }
+  }, [index, policeCaseNumberInput, policeCaseNumbers, updatePoliceCases])
 
   const options = useMemo(
     () =>
@@ -107,18 +128,14 @@ export const PoliceCaseInfo: React.FC<Props> = (props) => {
         <InputMask
           mask={'999-9999-9999999'}
           maskPlaceholder={null}
-          value={policeCaseNumberInmput}
+          value={policeCaseNumberInput}
           onChange={(event) => {
             if (
-              policeCaseNumbers.some(
+              !policeCaseNumbers.some(
                 (policeCaseNumber, idx) =>
                   idx !== index && policeCaseNumber === event.target.value,
               )
             ) {
-              setPoliceCaseNumberErrorMessage(
-                formatMessage(policeCaseInfo.policeCaseNumberExists),
-              )
-            } else {
               removeErrorMessageIfValid(
                 ['empty', 'police-casenumber-format'],
                 event.target.value,
@@ -132,12 +149,18 @@ export const PoliceCaseInfo: React.FC<Props> = (props) => {
             setPoliceCaseNumberInput(event.target.value)
           }}
           onBlur={(event) => {
-            validateAndSetErrorMessage(
-              ['empty', 'police-casenumber-format'],
-              event.target.value,
-              setPoliceCaseNumberErrorMessage,
-            )
-            updatePoliceCases()
+            if (policeCaseNumberInput !== policeCaseNumbers[index]) {
+              setPoliceCaseNumberErrorMessage(
+                formatMessage(policeCaseInfo.policeCaseNumberExists),
+              )
+            } else {
+              validateAndSetErrorMessage(
+                ['empty', 'police-casenumber-format'],
+                event.target.value,
+                setPoliceCaseNumberErrorMessage,
+              )
+              updatePoliceCases()
+            }
           }}
         >
           <Input
