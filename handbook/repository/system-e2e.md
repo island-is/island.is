@@ -9,7 +9,7 @@ When testing an app/project you need to first start the app, then test it with P
 ## ⚡ TL;DR
 
 - Start the application: `yarn dev-init <app> && yarn dev <app>`
-- Test the app: `yarn playwright system-e2e/.*/<name-of-your-app>`
+- Test the app: `yarn playwright test 'system-e2e/.*/<name-of-your-app>'`
 
 ## 👨‍🍳 Prepare the app
 
@@ -32,7 +32,7 @@ However, not all projects support this, or are incomplete in this setup. If this
 
 First time you run Playwright, you'll need to set up its runtime environment with `yarn playwright install`. Then, you can list tests with the `--list` flag or run tests in various ways:
 
-- Using playwright directly: `yarn playwright test <name-of-your-app>/.*/<smoke|acceptance>`
+- Using playwright directly: `yarn playwright test '<name-of-your-app>/.*/<smoke|acceptance>'`
 - Specific test file: `yarn playwright test <path/to/your/test/file>`
 - Using a pattern (regex): `yarn playwright test <pattern>`
 
@@ -40,63 +40,19 @@ First time you run Playwright, you'll need to set up its runtime environment wit
 
 - smoke: `yarn playwright test application-system-form/smoke`
 - acceptance: `yarn playwright test service-portal/acceptance`
-- both: `yarn playwright test system-e2e/.*/web`
+- both: `yarn playwright test 'system-e2e/.*/web'`
 - pattern `yarn playwright test 'system-e2e/.*/s?port?'`
   {% endhint %}
 
 {% hint style="info" %}
-Add `export TEST_ENVIRONMENT=dev` before any command to test against the live [dev-web](https://beta.dev01.devland.is/). Note that you'll need Cognito username/password credentials for this. Valid values are `local` (default), `dev`, `staging`, and `prod` to test the respective environment.
+Run `export TEST_ENVIRONMENT=dev` before any command to test against the live [dev web](https://beta.dev01.devland.is/). Note that you'll need Cognito username/password credentials for this (ask devops for access). Valid values are `local` (default), `dev`, `staging`, and `prod` to test the respective environment.
 {% endhint %}
 
 # ✍️ Writing tests
 
 ## ⚡ TL;DR
 
-Copy to `apps/system-e2e/src/integration/<your-app>/acceptance/<thing-you-are-testing>.spec.ts` and modify:
-
-```jsx
-import { getFakeUser } from '../../../support/utils'
-import fakeUsers from '../../../fixtures/service-portal/users.json'
-import { Timeout } from '../../../lib/types'
-import { test, expect, type, Page } from '@playwright/test'
-
-test.describe('Thing you are testing', ({ page }) => {
-  const fakeUser = getFakeUser(fakeUsers, 'Gervimaður Fornlönd')
-  test.beforeEach(() => {
-    await idsLogin({ phoneNumber: fakeUser.phoneNumber })
-    await page.goto('/your/app-slug')
-    wait(Timeout.short)
-  })
-
-  test('specific scenario describing what is tested', ({ page }) => {
-		await page.locator('button[role="start"]').click()
-    await expect(page).toHaveUrl('/my-redirect')
-    page.locator('input[name="allergies"]').fill('tree nuts, crowds')
-    page.locator('input[type="checkbox"]')
-			.filter({ has: page.locator('my-attribute') })
-			.evaluateAll((box) => {
-				expect(box).toHaveAttribute('checked', 'true')
-			})
-		expect(page.locator('my-popup')).toContainText('Success')
-		await page.waitForSelector(page.locator(':nth-match(item, 3)'))
-  })
-})
-```
-
-Copy to `apps/system-e2e/src/fixtures/<your-app>/users.json` and modify:
-
-```jsx
-;[
-  {
-    name: 'Gervimaður Fornlönd',
-    phoneNumber: '0109999',
-    nationalId: '0101309999',
-    role: 'user',
-  },
-]
-```
-
-Or you could try out `yarn playwright generate island.is`... We haven't QA'd it yet 🥰
+Run `yarn playwright codegen <url-to-your-app> --output <path/to/your/app/spec.ts>` and modify the output. The selectors need special attention; they should be transformed to use roles or `data-testid` attributes for stability (see below on how to).
 
 ## 🤔 What to test
 
@@ -112,7 +68,7 @@ You should therefore aim to write test for:
 
 Test cases are written spec files. Tests that do not modify anything (e.g. _create_ an application, _change_ the user’s name, etc.), and verify basic functionality are called **smoke tests**. Tests that are more detailed and/or make any changes at all, are called **acceptance tests**. Test cases are put into folders by what app they are testing, smoke/acceptance test, and each file tests some aspect of an app. Here is an example of the folder layout for testing the search engine and front-page of the `web` project (within the system-e2e app):
 
-```bash
+```shell
 web/                      (app name)
 ├── smoke/                (test type)
 │   └── home-page.spec.ts (feature name, kebab-case)
@@ -130,6 +86,13 @@ test.describe('Overview part of banking app', () => {
     // Create/clear database
     // Seed database
   })
+
+  /* NOTE: there is no guarantee this will run */
+  test.afterAll(() => {
+    // Tear down database
+    // Log out
+  })
+
   test.beforeEach(() => {
     // Log in
     // Basic state reset, e.g. clear inbox
@@ -138,12 +101,6 @@ test.describe('Overview part of banking app', () => {
   test('should get paid', () => {
     // Make user get money using page.selector, page.click, etc.
     // Verify money is present
-  })
-
-  /** NOTE: there is no guarantee this will run */
-  test.afterAll(() => {
-    // Tear down database
-    // Log out
   })
 })
 ```
