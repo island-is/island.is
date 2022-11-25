@@ -10,9 +10,9 @@ export const GET_CURRENT_VEHICLES = `
   } 
 `
 
-export const GET_CURRENT_VEHICLES_WITH_FEES = `
-  query GetCurrentVehiclesWithFees($input: GetCurrentVehiclesInput!) {
-    currentVehiclesWithFees(input: $input) {
+export const GET_CURRENT_VEHICLES_WITH_DEBT_STATUS = `
+  query GetCurrentVehiclesWithDebtStatus($input: GetCurrentVehiclesInput!) {
+    currentVehiclesWithDebtStatus(input: $input) {
       permno
       make
       color
@@ -23,9 +23,9 @@ export const GET_CURRENT_VEHICLES_WITH_FEES = `
   } 
 `
 
-export const GET_VEHICLE_FEES_BY_PERMNO = `
-  query GetVehicleFeesByPermno($permno: String!) {
-    vehicleFeesByPermno(permno: $permno) {
+export const GET_VEHICLE_DEBT_STATUS_BY_PERMNO = `
+  query GetVehicleDebtStatusByPermno($permno: String!) {
+    vehicleDebtStatusByPermno(permno: $permno) {
       isDebtLess
     }
   } 

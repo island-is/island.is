@@ -16,9 +16,10 @@ import { VehiclesDetail } from '../models/getVehicleDetail.model'
 import { VehiclesVehicleSearch } from '../models/getVehicleSearch.model'
 import {
   VehicleFeesByPermno,
-  VehicleFeesByPermno2,
+  VehicleDebtStatusByPermno,
   VehiclesCurrentVehicle,
   VehiclesCurrentVehicleWithFees,
+  VehiclesCurrentVehicleWithDebtStatus,
 } from '../models/getCurrentVehicles.model'
 import { GetVehicleSearchInput } from '../dto/getVehicleSearchInput'
 import { GetCurrentVehiclesInput } from '../dto/getCurrentVehiclesInput'
@@ -124,6 +125,7 @@ export class VehiclesResolver {
     }))
   }
 
+  //TODOx remove
   @Scopes(ApiScope.internal)
   @Query(() => [VehiclesCurrentVehicleWithFees], {
     name: 'currentVehiclesWithFees',
@@ -148,6 +150,30 @@ export class VehiclesResolver {
   }
 
   @Scopes(ApiScope.internal)
+  @Query(() => [VehiclesCurrentVehicleWithDebtStatus], {
+    name: 'currentVehiclesWithDebtStatus',
+    nullable: true,
+  })
+  @Audit()
+  async getCurrentVehiclesWithDebtStatus(
+    @Args('input') input: GetCurrentVehiclesInput,
+    @CurrentUser() user: User,
+  ) {
+    return await Promise.all(
+      (await this.getCurrentVehicles(input, user)).map(
+        async (vehicle: VehiclesCurrentVehicleWithDebtStatus) => {
+          const debtStatus = await this.vehicleServiceFjsV1ClientService.getVehicleDebtStatus(
+            vehicle.permno || '',
+          )
+          vehicle.isDebtLess = debtStatus.isDebtLess
+          return vehicle
+        },
+      ),
+    )
+  }
+
+  //TODOx remove
+  @Scopes(ApiScope.internal)
   @Query(() => VehicleFeesByPermno, {
     name: 'vehicleFeesByPermno',
     nullable: true,
@@ -163,12 +189,12 @@ export class VehiclesResolver {
   }
 
   @Scopes(ApiScope.internal)
-  @Query(() => VehicleFeesByPermno2, {
-    name: 'vehicleFeesByPermno2',
+  @Query(() => VehicleDebtStatusByPermno, {
+    name: 'vehicleDebtStatusByPermno',
     nullable: true,
   })
   @Audit()
-  async getVehicleFeesByPermno2(
+  async getVehicleDebtStatusByPermno(
     @Args('permno', { type: () => String }) permno: string,
   ) {
     const debtStatus = await this.vehicleServiceFjsV1ClientService.getVehicleDebtStatus(

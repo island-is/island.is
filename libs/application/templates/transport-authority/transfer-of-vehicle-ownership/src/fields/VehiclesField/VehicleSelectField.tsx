@@ -5,7 +5,7 @@ import { Box, CategoryCard, SkeletonLoader } from '@island.is/island-ui/core'
 import {
   VehiclesCurrentVehicle,
   GetVehicleDetailInput,
-  VehiclesCurrentVehicleWithFees,
+  VehiclesCurrentVehicleWithDebtStatus,
 } from '@island.is/api/schema'
 import { information } from '../../lib/messages'
 import { SelectController } from '@island.is/shared/form-fields'
@@ -34,7 +34,7 @@ export const VehicleSelectField: FC<
   const [
     selectedVehicle,
     setSelectedVehicle,
-  ] = useState<VehiclesCurrentVehicleWithFees | null>(
+  ] = useState<VehiclesCurrentVehicleWithDebtStatus | null>(
     currentVehicle && currentVehicle.permno
       ? {
           permno: currentVehicle.permno,
@@ -71,11 +71,11 @@ export const VehicleSelectField: FC<
             color: currentVehicle?.color || '',
             role: currentVehicle?.role,
             isStolen: currentVehicle?.isStolen,
-            isDebtLess: response?.vehicleFeesByPermno?.isDebtLess,
+            isDebtLess: response?.vehicleDebtStatusByPermno?.isDebtLess,
           })
           setPlate(
             !!currentVehicle?.isStolen ||
-              !response?.vehicleFeesByPermno?.isDebtLess
+              !response?.vehicleDebtStatusByPermno?.isDebtLess
               ? ''
               : currentVehicle.permno || '',
           )

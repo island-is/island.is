@@ -3,12 +3,12 @@ import { useLocale } from '@island.is/localization'
 import { FC, useState } from 'react'
 import {
   VehiclesCurrentVehicle,
-  VehiclesCurrentVehicleWithFees,
+  VehiclesCurrentVehicleWithDebtStatus,
 } from '@island.is/api/schema'
 import { information } from '../../lib/messages'
 import { RadioController } from '@island.is/shared/form-fields'
 import { gql, useQuery } from '@apollo/client'
-import { GET_CURRENT_VEHICLES_WITH_FEES } from '../../graphql/queries'
+import { GET_CURRENT_VEHICLES_WITH_DEBT_STATUS } from '../../graphql/queries'
 import { useFormContext } from 'react-hook-form'
 import { getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
@@ -40,7 +40,7 @@ export const VehicleRadioField: FC<
 
   const { data, loading } = useQuery(
     gql`
-      ${GET_CURRENT_VEHICLES_WITH_FEES}
+      ${GET_CURRENT_VEHICLES_WITH_DEBT_STATUS}
     `,
     {
       variables: {
@@ -59,7 +59,7 @@ export const VehicleRadioField: FC<
     setColor(currentVehicle.color || undefined)
   }
 
-  const vehicleOptions = (vehicles: VehiclesCurrentVehicleWithFees[]) => {
+  const vehicleOptions = (vehicles: VehiclesCurrentVehicleWithDebtStatus[]) => {
     const options = [] as Option[]
 
     for (const [index, vehicle] of vehicles.entries()) {
@@ -116,7 +116,7 @@ export const VehicleRadioField: FC<
           backgroundColor="blue"
           onSelect={onRadioControllerSelect}
           options={vehicleOptions(
-            data.currentVehiclesWithFees as VehiclesCurrentVehicleWithFees[],
+            data.currentVehiclesWithDebtStatus as VehiclesCurrentVehicleWithDebtStatus[],
           )}
         />
       )}

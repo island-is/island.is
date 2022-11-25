@@ -1,19 +1,19 @@
 import { gql } from '@apollo/client'
-import { VehicleFeesByPermno } from '@island.is/api/schema'
-import { GET_VEHICLE_FEES_BY_PERMNO } from '../graphql/queries'
+import { VehicleDebtStatusByPermno } from '@island.is/api/schema'
+import { GET_VEHICLE_DEBT_STATUS_BY_PERMNO } from '../graphql/queries'
 import { useLazyQuery } from './useLazyQuery'
 
 export const useLazyVehicleDetails = () => {
   return useLazyQuery<
     {
-      vehicleFeesByPermno: VehicleFeesByPermno
+      vehicleDebtStatusByPermno: VehicleDebtStatusByPermno
     },
     {
       permno: string
     }
   >(
     gql`
-      ${GET_VEHICLE_FEES_BY_PERMNO}
+      ${GET_VEHICLE_DEBT_STATUS_BY_PERMNO}
     `,
   )
 }
