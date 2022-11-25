@@ -7,11 +7,11 @@ type Envs<
 > = ReturnType<T> extends ServiceBuilder<any, infer Envs> ? Envs : never
 
 export const getConfig = <T extends (...arg: any) => any>(
-  serviceBuilder: T,
+  _serviceBuilder: T,
 ) => {
   return {
-    env: (p: Envs<T>) => {
-      return process.env[(p as unknown) as string]
+    env: (envVarName: Envs<T>) => {
+      return process.env[(envVarName as unknown) as string]
     },
   }
 }

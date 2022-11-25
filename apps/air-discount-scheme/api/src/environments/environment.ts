@@ -1,4 +1,4 @@
-import { serviceSetup as adsApiSetup } from '../../infra/api'
+import { serviceSetup } from '../../infra/api'
 import { getConfig } from '../../../../../infra/src/dsl/types/helpers'
 
 const isProd = process.env.NODE_ENV === 'production'
@@ -27,7 +27,7 @@ const devConfig = {
   backendUrl: 'http://localhost:4248',
 }
 
-const config = getConfig(adsApiSetup)
+const config = getConfig(serviceSetup)
 
 const prodConfig = {
   production: true,
