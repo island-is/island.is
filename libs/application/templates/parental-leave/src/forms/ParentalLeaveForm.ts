@@ -760,9 +760,16 @@ export const ParentalLeaveForm: Form = buildForm({
                 const canTransferRights =
                   getSelectedChild(answers, externalData)?.parentalRelation ===
                   ParentalRelations.primary
-                const { hasMultipleBirths } = getApplicationAnswers(answers)
+                const {
+                  hasMultipleBirths,
+                  otherParent,
+                } = getApplicationAnswers(answers)
 
-                return canTransferRights && hasMultipleBirths === YES
+                return (
+                  canTransferRights &&
+                  hasMultipleBirths === YES &&
+                  otherParent !== SINGLE
+                )
               },
               component: 'RequestMultipleBirthsDaysSlider',
             }),
