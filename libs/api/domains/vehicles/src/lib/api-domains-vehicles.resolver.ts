@@ -16,6 +16,7 @@ import { VehiclesDetail } from '../models/getVehicleDetail.model'
 import { VehiclesVehicleSearch } from '../models/getVehicleSearch.model'
 import {
   VehicleFeesByPermno,
+  VehicleFeesByPermno2,
   VehiclesCurrentVehicle,
   VehiclesCurrentVehicleWithFees,
 } from '../models/getCurrentVehicles.model'
@@ -153,6 +154,21 @@ export class VehiclesResolver {
   })
   @Audit()
   async getVehicleFeesByPermno(
+    @Args('permno', { type: () => String }) permno: string,
+  ) {
+    const debtStatus = await this.vehicleServiceFjsV1ClientService.getVehicleDebtStatus(
+      permno,
+    )
+    return { isDebtLess: debtStatus.isDebtLess }
+  }
+
+  @Scopes(ApiScope.internal)
+  @Query(() => VehicleFeesByPermno2, {
+    name: 'vehicleFeesByPermno2',
+    nullable: true,
+  })
+  @Audit()
+  async getVehicleFeesByPermno2(
     @Args('permno', { type: () => String }) permno: string,
   ) {
     const debtStatus = await this.vehicleServiceFjsV1ClientService.getVehicleDebtStatus(

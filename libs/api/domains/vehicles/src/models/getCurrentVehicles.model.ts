@@ -29,3 +29,9 @@ export class VehicleFeesByPermno {
   @Field(() => Boolean, { nullable: true })
   isDebtLess?: boolean
 }
+
+@ObjectType()
+export class VehicleFeesByPermno2 {
+  @Field(() => Boolean, { nullable: true })
+  isDebtLess?: boolean
+}
