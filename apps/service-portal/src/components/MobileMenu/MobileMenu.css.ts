@@ -1,8 +1,5 @@
 import { theme } from '@island.is/island-ui/theme'
-import {
-  SERVICE_PORTAL_HEADER_HEIGHT_SM,
-  zIndex,
-} from '@island.is/service-portal/constants'
+import { zIndex } from '@island.is/service-portal/constants'
 import { keyframes, style } from '@vanilla-extract/css'
 
 const wrapperAnimation = keyframes({
@@ -17,9 +14,7 @@ const wrapperAnimation = keyframes({
 })
 
 export const wrapper = style({
-  top: SERVICE_PORTAL_HEADER_HEIGHT_SM,
   zIndex: zIndex.mobileMenu,
-  maxHeight: `calc(100vh - ${SERVICE_PORTAL_HEADER_HEIGHT_SM}px)`,
   overflowY: 'auto',
   animation: `${wrapperAnimation} ease-in 200ms forwards`,
 })
