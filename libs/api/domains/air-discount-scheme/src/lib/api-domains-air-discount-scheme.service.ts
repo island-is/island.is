@@ -67,18 +67,19 @@ export class AirDiscountSchemeService {
           ...discount,
           user: { ...relation, name: relation.firstName },
         })
-      } else {
-        const createdDiscount = await this.createDiscount(
-          auth,
-          relation.nationalId,
-        )
+        continue
+      }
 
-        if (createdDiscount) {
-          discounts.push({
-            ...createdDiscount,
-            user: { ...relation, name: relation.firstName },
-          })
-        }
+      const createdDiscount = await this.createDiscount(
+        auth,
+        relation.nationalId,
+      )
+
+      if (createdDiscount) {
+        discounts.push({
+          ...createdDiscount,
+          user: { ...relation, name: relation.firstName },
+        })
       }
     }
 
