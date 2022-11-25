@@ -165,7 +165,7 @@ export const m = defineMessages({
   // Estate members, assets, vehicles
   estateMembersTitle: {
     id: 'es.application:estateMembersTitle',
-    defaultMessage: 'Erfingjar og erfðaskrá',
+    defaultMessage: 'Erfingjar',
     description: '',
   },
   estateMembersSubtitle: {
@@ -470,7 +470,7 @@ export const m = defineMessages({
   },
   overviewSubtitleWithNoProperty: {
     id: 'es.application:overviewSubtitle',
-    defaultMessage: 'Þú hefur lýst yfir eignarleysi dánarbús.',
+    defaultMessage: 'Þú hefur lýst yfir eignaleysi dánarbús.',
     description: '',
   },
   overviewSubtitleOfficialEstate: {
