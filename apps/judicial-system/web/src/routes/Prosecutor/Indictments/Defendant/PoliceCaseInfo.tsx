@@ -164,6 +164,7 @@ export const PoliceCaseInfo: React.FC<Props> = (props) => {
           }}
         >
           <Input
+            data-testid={`policeCaseNumber${index}`}
             name="policeCaseNumber"
             autoComplete="off"
             label={formatMessage(policeCaseInfo.policeCaseNumberLabel)}
