@@ -7,23 +7,19 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { ApplicationChargeService } from '../charge/application-charge.service'
 import { FileService } from '@island.is/application/api/files'
-import { ApplicationTypes } from '@island.is/application/types'
-import { TransferOfVehicleOwnershipStates } from '@island.is/application/templates/transport-authority/transfer-of-vehicle-ownership'
-import { getChargeId } from '@island.is/clients/charge-fjs-v2'
+
 export interface ApplicationPruning {
   pruned: boolean
   application: Pick<
     Application,
-    'id' | 'attachments' | 'answers' | 'externalData' | 'typeId' | 'state'
+    'id' | 'attachments' | 'answers' | 'externalData'
   >
   failedAttachments: object
   failedExternalData: object
 }
-
 @Injectable()
 export class ApplicationLifeCycleService {
   private processingApplications: ApplicationPruning[] = []
-
   constructor(
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
@@ -33,7 +29,6 @@ export class ApplicationLifeCycleService {
   ) {
     this.logger = logger.child({ context: 'ApplicationLifeCycleService' })
   }
-
   public async run() {
     this.logger.info(`Starting application pruning...`)
     await this.fetchApplicationsToBePruned()
@@ -43,19 +38,16 @@ export class ApplicationLifeCycleService {
     this.reportResults()
     this.logger.info(`Application pruning done.`)
   }
-
   public getProcessingApplications() {
     return this.processingApplications
   }
-
   private async fetchApplicationsToBePruned() {
     const applications = (await this.applicationService.findAllDueToBePruned()) as Pick<
       Application,
-      'id' | 'attachments' | 'answers' | 'externalData' | 'typeId' | 'state'
+      'id' | 'attachments' | 'answers' | 'externalData'
     >[]
 
     this.logger.info(`Found ${applications.length} applications to be pruned.`)
-
     this.processingApplications = applications.map((application) => {
       return {
         pruned: true,
@@ -65,7 +57,6 @@ export class ApplicationLifeCycleService {
       }
     })
   }
-
   private async pruneAttachments() {
     for (const prune of this.processingApplications) {
       const result = await this.fileService.deleteAttachmentsForApplication(
@@ -80,23 +71,14 @@ export class ApplicationLifeCycleService {
       }
     }
   }
-
   private async pruneApplicationCharge() {
     for (const prune of this.processingApplications) {
       try {
-        // delete charge in FJS (charge has not been paid)
         await this.applicationChargeService.deleteCharge(prune.application)
-
-        // revert charge in FJS (charge has been paid), if applies
-        if (
-          prune.application.typeId ===
-            ApplicationTypes.TRANSFER_OF_VEHICLE_OWNERSHIP &&
-          prune.application.state === TransferOfVehicleOwnershipStates.REVIEW
-        ) {
-          await this.applicationChargeService.revertCharge(prune.application)
-        }
       } catch (error) {
-        const chargeId = getChargeId(prune.application)
+        const chargeId = this.applicationChargeService.getChargeId(
+          prune.application,
+        )
         if (chargeId) {
           prune.failedExternalData = {
             createCharge: {
@@ -109,13 +91,12 @@ export class ApplicationLifeCycleService {
 
         prune.pruned = false
         this.logger.error(
-          `Application charge prune error on application id ${prune.application.id}`,
+          `Application charge prune error on id ${prune.application.id}`,
           error,
         )
       }
     }
   }
-
   private async pruneApplicationData() {
     for (const prune of this.processingApplications) {
       try {
@@ -128,7 +109,6 @@ export class ApplicationLifeCycleService {
             pruned: prune.pruned,
           },
         )
-
         prune.application = updatedApplication
       } catch (error) {
         prune.pruned = false
@@ -139,16 +119,13 @@ export class ApplicationLifeCycleService {
       }
     }
   }
-
   private reportResults() {
     const failed = this.processingApplications.filter(
       (application) => !application.pruned,
     )
-
     const success = this.processingApplications.filter(
       (application) => application.pruned,
     )
-
     this.logger.info(`Successful: ${success.length}, Failed: ${failed.length}`)
   }
 }
