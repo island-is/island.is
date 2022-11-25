@@ -89,7 +89,7 @@ export const PickDeliveryMethod: FC<FieldBaseProps> = (props) => {
       'drivingLicense.data.id',
       '',
     ) as string
-    const drivingLicenceIssuingCountry = 'Iceland' //TODOx get driving license issuing country
+    const drivingLicenceIssuingCountry = 'Ísland' // Note: For now we are only looking at Icelandic drivers license
 
     checkTachoNet({
       variables: {

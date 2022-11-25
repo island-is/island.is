@@ -26,6 +26,8 @@ export class DrivingLicenseProvider extends BasicDataProvider {
         const drivingLicenseData = data?.drivingLicense
 
         // Validate that user has the necessary categories
+        // Note: This also validates that the user has an Icelandic drivers license
+        // (we will use "Ísland" as drivingLicenceIssuingCountry when checking in TachoNet)
         const licenseCategories = drivingLicenseData?.categories?.map(
           (x) => x.name,
         )

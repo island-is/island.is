@@ -15,10 +15,8 @@ import { GetVehicleDetailInput } from '../dto/getVehicleDetailInput'
 import { VehiclesDetail } from '../models/getVehicleDetail.model'
 import { VehiclesVehicleSearch } from '../models/getVehicleSearch.model'
 import {
-  VehicleFeesByPermno,
   VehicleDebtStatusByPermno,
   VehiclesCurrentVehicle,
-  VehiclesCurrentVehicleWithFees,
   VehiclesCurrentVehicleWithDebtStatus,
 } from '../models/getCurrentVehicles.model'
 import { GetVehicleSearchInput } from '../dto/getVehicleSearchInput'
@@ -125,30 +123,6 @@ export class VehiclesResolver {
     }))
   }
 
-  //TODOx remove
-  @Scopes(ApiScope.internal)
-  @Query(() => [VehiclesCurrentVehicleWithFees], {
-    name: 'currentVehiclesWithFees',
-    nullable: true,
-  })
-  @Audit()
-  async getCurrentVehiclesWithFees(
-    @Args('input') input: GetCurrentVehiclesInput,
-    @CurrentUser() user: User,
-  ) {
-    return await Promise.all(
-      (await this.getCurrentVehicles(input, user)).map(
-        async (vehicle: VehiclesCurrentVehicleWithFees) => {
-          const debtStatus = await this.vehicleServiceFjsV1ClientService.getVehicleDebtStatus(
-            vehicle.permno || '',
-          )
-          vehicle.isDebtLess = debtStatus.isDebtLess
-          return vehicle
-        },
-      ),
-    )
-  }
-
   @Scopes(ApiScope.internal)
   @Query(() => [VehiclesCurrentVehicleWithDebtStatus], {
     name: 'currentVehiclesWithDebtStatus',
@@ -170,22 +144,6 @@ export class VehiclesResolver {
         },
       ),
     )
-  }
-
-  //TODOx remove
-  @Scopes(ApiScope.internal)
-  @Query(() => VehicleFeesByPermno, {
-    name: 'vehicleFeesByPermno',
-    nullable: true,
-  })
-  @Audit()
-  async getVehicleFeesByPermno(
-    @Args('permno', { type: () => String }) permno: string,
-  ) {
-    const debtStatus = await this.vehicleServiceFjsV1ClientService.getVehicleDebtStatus(
-      permno,
-    )
-    return { isDebtLess: debtStatus.isDebtLess }
   }
 
   @Scopes(ApiScope.internal)

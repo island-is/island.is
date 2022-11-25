@@ -1,6 +1,5 @@
 export { JuristictionProvider } from './providers/JuristictionProvider'
 export { HasQualityPhotoProvider } from './providers/HasQualityPhotoProvider'
-export { HasQualitySignatureProvider } from './providers/HasQualitySignatureProvider'
 export { ExampleFails } from './providers/ExampleFails'
 export { ExampleSucceeds } from './providers/ExampleSucceeds'
 export { NationalRegistryProvider } from './providers/NationalRegistryProvider'

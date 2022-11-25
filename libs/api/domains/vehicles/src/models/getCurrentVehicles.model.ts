@@ -18,22 +18,8 @@ export class VehiclesCurrentVehicle {
   isStolen?: boolean
 }
 
-//TODOx remove
-@ObjectType()
-export class VehiclesCurrentVehicleWithFees extends VehiclesCurrentVehicle {
-  @Field(() => Boolean, { nullable: true })
-  isDebtLess?: boolean
-}
-
 @ObjectType()
 export class VehiclesCurrentVehicleWithDebtStatus extends VehiclesCurrentVehicle {
-  @Field(() => Boolean, { nullable: true })
-  isDebtLess?: boolean
-}
-
-//TODOx remove
-@ObjectType()
-export class VehicleFeesByPermno {
   @Field(() => Boolean, { nullable: true })
   isDebtLess?: boolean
 }
