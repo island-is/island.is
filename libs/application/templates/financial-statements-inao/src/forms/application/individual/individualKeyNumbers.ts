@@ -8,11 +8,11 @@ import {
 import {
   EQUITIESANDLIABILITIESIDS,
   GREATER,
-  USERTYPE,
   INDIVIDUALOPERATIONIDS,
 } from '../../../lib/constants'
 import { m } from '../../../lib/messages'
 import { getCurrentUserType } from '../../../lib/utils/helpers'
+import { FSIUSERTYPE } from '../../../types'
 import { capitalNumberSection } from '../shared/keyNumbers/capitalNumbers'
 
 export const individualKeyNumbersSection = buildSection({
@@ -22,7 +22,7 @@ export const individualKeyNumbersSection = buildSection({
     const greaterThanLimit =
       getValueViaPath(answers, 'election.incomeLimit') === GREATER
     const isIndividual =
-      getCurrentUserType(answers, externalData) === USERTYPE.INDIVIDUAL
+      getCurrentUserType(answers, externalData) === FSIUSERTYPE.INDIVIDUAL
 
     return greaterThanLimit && isIndividual
   },
@@ -33,7 +33,7 @@ export const individualKeyNumbersSection = buildSection({
       children: [
         buildMultiField({
           id: 'operatinCostfields',
-          title: m.expensesIncome,
+          title: m.keyNumbersIncomeAndExpenses,
           description: m.fillOutAppopriate,
           children: [
             buildCustomField({
@@ -49,7 +49,7 @@ export const individualKeyNumbersSection = buildSection({
     capitalNumberSection,
     buildSubSection({
       id: 'keyNumbers.equitiesAndLiabilities',
-      title: m.keyNumbersDebt,
+      title: m.propertiesAndDebts,
       children: [
         buildMultiField({
           id: 'operations.equitiesAndLiabilities',

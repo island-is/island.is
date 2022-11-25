@@ -1,6 +1,8 @@
 import React, { FC } from 'react'
 import { TextProps, Link } from '@island.is/island-ui/core'
 
+import * as styles from './Hyperlink.css'
+
 interface HyperlinkProps {
   href?: string
   slug?: string
@@ -14,6 +16,7 @@ export const Hyperlink: FC<HyperlinkProps> = ({ href, children }) => (
     color="blue400"
     underline="small"
     underlineVisibility="always"
+    className={styles.link}
   >
     {children}
   </Link>

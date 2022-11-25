@@ -1,5 +1,5 @@
 import gql from 'graphql-tag'
-import { slices, nestedAccordionAndFaqListFields } from './fragments'
+import { slices, nestedFields } from './fragments'
 
 export const GET_ORGANIZATIONS_QUERY = gql`
   query GetOrganizations($input: GetOrganizationsInput!) {
@@ -10,6 +10,7 @@ export const GET_ORGANIZATIONS_QUERY = gql`
         title
         description
         showsUpOnTheOrganizationsPage
+        hasALandingPage
         logo {
           title
           url
@@ -32,6 +33,7 @@ export const GET_ORGANIZATION_QUERY = gql`
       email
       phone
       title
+      hasALandingPage
       logo {
         title
         url
@@ -173,7 +175,7 @@ export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
       slug
       description {
         ...AllSlices
-        ${nestedAccordionAndFaqListFields}
+        ${nestedFields}
       }
       links {
         text
@@ -181,7 +183,7 @@ export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
       }
       slices {
         ...AllSlices
-        ${nestedAccordionAndFaqListFields}
+        ${nestedFields}
       }
       showTableOfContents
       sliceCustomRenderer
@@ -314,9 +316,9 @@ export const GET_OPERATING_LICENSES_CSV_QUERY = gql`
   }
 `
 
-export const MAILING_LIST_SIGNUP_MUTATION = gql`
-  mutation MailchimpSubscribe($input: MailchimpSubscribeInput!) {
-    mailchimpSubscribe(input: $input) {
+export const EMAIL_SIGNUP_MUTATION = gql`
+  mutation EmailSignupSubscription($input: EmailSignupInput!) {
+    emailSignupSubscription(input: $input) {
       subscribed
     }
   }

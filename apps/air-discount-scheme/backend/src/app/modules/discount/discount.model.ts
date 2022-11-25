@@ -18,6 +18,8 @@ import {
 import { Optional } from 'sequelize/types'
 import { Flight } from '../flight'
 
+import { ConnectionDiscountCode as GQLConnectionDiscountCode } from './connectionDiscountCode.model'
+
 export class Discount implements TDiscount {
   constructor(
     user: User,
@@ -38,8 +40,9 @@ export class Discount implements TDiscount {
   @ApiProperty()
   discountCode: string
 
-  @ApiProperty()
+  @ApiProperty({ type: [GQLConnectionDiscountCode] })
   connectionDiscountCodes: ConnectionDiscountCode[]
+
   @ApiProperty()
   nationalId: string
 

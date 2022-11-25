@@ -3,6 +3,7 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import * as kennitala from 'kennitala'
 import { YES, NO } from './constants'
 import { coreErrorMessages } from '@island.is/application/core/messages'
+import { m } from './messages'
 
 const emailRegex = /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
 const isValidEmail = (value: string) => emailRegex.test(value)
@@ -38,34 +39,68 @@ export const dataSchema = z.object({
   spousePersonalInfo: personalInfo,
   ceremony: z
     .object({
-      hasDate: z.string().refine((v) => v),
+      hasDate: z.string(),
       date: z.string(),
-      ceremonyPlace: z.string(),
-      office: z.string().optional(),
-      society: z.string().optional(),
+      period: z
+        .object({
+          dateFrom: z.string().optional(),
+          dateTo: z.string().optional(),
+        })
+        .refine(
+          ({ dateFrom, dateTo }) =>
+            dateFrom && dateTo ? dateFrom <= dateTo : true,
+          {
+            message: m.tilBeforeFrom.defaultMessage,
+            path: ['dateTo'],
+          },
+        ),
+      place: z.object({
+        ceremonyPlace: z.string().optional(),
+        office: z.string().optional(),
+        society: z.string().optional(),
+      }),
     })
     .partial()
-    .refine(({ hasDate }) => !!hasDate, {
-      message: coreErrorMessages.defaultError.defaultMessage,
-      path: ['hasDate'],
-    })
     .refine(
-      ({ hasDate, ceremonyPlace }) =>
-        (hasDate === YES && !!ceremonyPlace) || hasDate === NO || !hasDate,
-      {
-        message: coreErrorMessages.defaultError.defaultMessage,
-        path: ['ceremonyPlace'],
-      },
-    )
-    .refine(
-      ({ hasDate, date }) =>
-        (hasDate === YES && !!date) || hasDate === NO || !hasDate,
+      ({ hasDate, period, date }) =>
+        hasDate === YES
+          ? (!!period?.dateFrom || !period?.dateFrom) &&
+            (!!period?.dateTo || !period?.dateTo) &&
+            !!date
+          : true,
       {
         message: coreErrorMessages.defaultError.defaultMessage,
         path: ['date'],
       },
-    ),
-
+    )
+    .refine(
+      ({ hasDate, period, date }) =>
+        hasDate === NO
+          ? (!!date || !date) && !!period?.dateFrom && !!period.dateTo
+          : true,
+      {
+        message: coreErrorMessages.defaultError.defaultMessage,
+        path: ['period', 'dateFrom'],
+      },
+    )
+    .refine(
+      ({ hasDate, period, date }) =>
+        hasDate === NO
+          ? (!!date || !date) && !!period?.dateFrom && !!period.dateTo
+          : true,
+      {
+        message: coreErrorMessages.defaultError.defaultMessage,
+        path: ['period', 'dateTo'],
+      },
+    )
+    .refine(({ hasDate }) => !!hasDate, {
+      message: coreErrorMessages.defaultError.defaultMessage,
+      path: ['hasDate'],
+    })
+    .refine(({ place }) => !!place?.ceremonyPlace, {
+      message: coreErrorMessages.defaultError.defaultMessage,
+      path: ['place', 'ceremonyPlace'],
+    }),
   //spouse's part of the application
   spouseApprove: z.array(z.enum([YES, NO])).nonempty(),
   spouseApproveExternalData: z.boolean().refine((v) => v),

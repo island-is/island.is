@@ -16,10 +16,14 @@ import {
   CaseCustodyRestrictions,
   CaseAppealDecision,
   CaseDecision,
-  CaseType,
   SessionArrangements,
   CourtDocument,
   SubpoenaType,
+  CaseType,
+} from '@island.is/judicial-system/types'
+import type {
+  IndictmentSubtypeMap,
+  CrimeSceneMap,
 } from '@island.is/judicial-system/types'
 
 export class UpdateCaseDto {
@@ -27,6 +31,11 @@ export class UpdateCaseDto {
   @IsString()
   @ApiPropertyOptional({ enum: CaseType })
   readonly type?: CaseType
+
+  @IsOptional()
+  @IsObject()
+  @ApiPropertyOptional()
+  readonly indictmentSubtypes?: IndictmentSubtypeMap
 
   @IsOptional()
   @IsString()
@@ -349,4 +358,9 @@ export class UpdateCaseDto {
   @IsBoolean()
   @ApiPropertyOptional()
   readonly defendantWaivesRightToCounsel?: boolean
+
+  @IsOptional()
+  @IsObject()
+  @ApiPropertyOptional()
+  readonly crimeScenes?: CrimeSceneMap
 }

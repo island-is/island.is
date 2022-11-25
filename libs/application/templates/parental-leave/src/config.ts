@@ -2,6 +2,7 @@ import { DAYS_IN_MONTH } from './lib/directorateOfLabour.utils'
 
 export const maxDaysToGiveOrReceive = 45
 export const defaultMonths = 6
+export const additionalSingleParentMonths = 6
 export const minMonths =
   (defaultMonths * DAYS_IN_MONTH - maxDaysToGiveOrReceive) / DAYS_IN_MONTH
 export const maxMonths =

@@ -23,6 +23,7 @@ import {
   NO_UNION,
   PARENTAL_GRANT_STUDENTS,
   PARENTAL_LEAVE,
+  SINGLE,
   UnEmployedBenefitTypes,
   YES,
 } from '../constants'
@@ -97,6 +98,7 @@ export const answerValidators: Record<string, AnswerValidator> = {
       applicationType,
       isRecivingUnemploymentBenefits,
       unemploymentBenefits,
+      otherParent,
     } = getApplicationAnswers(application.answers)
     if (isSelfEmployed === YES && obj.selfEmployedFile) {
       if (isEmpty((obj as { selfEmployedFile: unknown[] }).selfEmployedFile))
@@ -108,6 +110,13 @@ export const answerValidators: Record<string, AnswerValidator> = {
     if (applicationType === PARENTAL_GRANT_STUDENTS && obj.studentFile) {
       if (isEmpty((obj as { studentFile: unknown[] }).studentFile))
         return buildError(errorMessages.requiredAttachment, 'studentFile')
+      return undefined
+    }
+
+    if (otherParent === SINGLE && obj.singleParent) {
+      if (isEmpty((obj as { singleParent: unknown[] }).singleParent))
+        return buildError(errorMessages.requiredAttachment, 'singleParent')
+
       return undefined
     }
 
@@ -236,11 +245,11 @@ export const answerValidators: Record<string, AnswerValidator> = {
     // If added new a period, sometime the old periods in newAnswer are 'null'
     // If that happen, take the periods in application and use them
     const filterPeriods = periods?.filter(
-      (period) => period?.startDate || period?.firstPeriodStart,
+      (period) => !!period?.startDate || !!period?.firstPeriodStart,
     )
     if (filterPeriods?.length !== periods?.length) {
       periods = getValueViaPath(application.answers, 'periods')
-      periods = periods?.filter((period) => period?.startDate)
+      periods = periods?.filter((period) => !!period?.startDate)
     }
     if (!isArray(periods)) {
       return {

@@ -13,7 +13,7 @@ import {
 } from '../../../utils'
 
 describe(`${INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE}/:id`, () => {
-  const caseData = mockCase(CaseType.MURDER)
+  const caseData = mockCase(CaseType.INDICTMENT)
   const defendant1 = makeDefendant(caseData.id)
   const defendant2 = makeDefendant(caseData.id)
 

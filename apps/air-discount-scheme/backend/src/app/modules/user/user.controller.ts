@@ -5,7 +5,12 @@ import {
   UseGuards,
   BadRequestException,
 } from '@nestjs/common'
-import { ApiExcludeEndpoint } from '@nestjs/swagger'
+import {
+  ApiBearerAuth,
+  ApiExcludeEndpoint,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger'
 
 import { GetUserRelationsParams } from './dto'
 import { UserService } from './user.service'
@@ -21,11 +26,14 @@ import type { User as AuthUser } from '@island.is/auth-nest-tools'
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes('@vegagerdin.is/air-discount-scheme-scope')
 @Controller('api/private')
+@ApiTags('Users')
+@ApiBearerAuth()
 export class PrivateUserController {
   constructor(private readonly userService: UserService) {}
 
   @Get('users/:nationalId/relations')
-  @ApiExcludeEndpoint()
+  @ApiExcludeEndpoint(!process.env.ADS_PRIVATE_CLIENT)
+  @ApiOkResponse({ type: [User] })
   async getUserRelations(
     @Param() params: GetUserRelationsParams,
     @CurrentUser() authUser: AuthUser,

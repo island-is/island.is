@@ -42,6 +42,9 @@
       "@island.is/api-catalogue/types": [
         "libs/api-catalogue/types/src/index.ts"
       ],
+      "@island.is/api/domains/air-discount-scheme": [
+        "libs/api/domains/air-discount-scheme/src/index.ts"
+      ],
       "@island.is/api/domains/api-catalogue": [
         "libs/api/domains/api-catalogue/src/index.ts"
       ],
@@ -97,6 +100,9 @@
       ],
       "@island.is/api/domains/fishing-license": [
         "libs/api/domains/fishing-license/src/index.ts"
+      ],
+      "@island.is/api/domains/fiskistofa": [
+        "libs/api/domains/fiskistofa/src/index.ts"
       ],
       "@island.is/api/domains/health-insurance": [
         "libs/api/domains/health-insurance/src/index.ts"
@@ -234,6 +240,9 @@
       "@island.is/application/templates/financial-statements-inao": [
         "libs/application/templates/financial-statements-inao/src/index.ts"
       ],
+      "@island.is/application/templates/financial-statements-inao/types": [
+        "libs/application/templates/financial-statements-inao/src/types.ts"
+      ],
       "@island.is/application/templates/funding-government-projects": [
         "libs/application/templates/funding-government-projects/src/index.ts"
       ],
@@ -339,6 +348,9 @@
       "@island.is/clients/adr-and-machine-license": [
         "libs/clients/adr-and-machine-license/src/index.ts"
       ],
+      "@island.is/clients/air-discount-scheme": [
+        "libs/clients/air-discount-scheme/src/index.ts"
+      ],
       "@island.is/clients/assets": ["libs/clients/assets/src/index.ts"],
       "@island.is/clients/auth/delegation-api": [
         "libs/clients/auth/delegation-api/src/index.ts"
@@ -378,6 +390,7 @@
       "@island.is/clients/fishing-license": [
         "libs/clients/fishing-license/src/index.ts"
       ],
+      "@island.is/clients/fiskistofa": ["libs/clients/fiskistofa/src/index.ts"],
       "@island.is/clients/health-insurance-v2": [
         "libs/clients/health-insurance-v2/src/index.ts"
       ],

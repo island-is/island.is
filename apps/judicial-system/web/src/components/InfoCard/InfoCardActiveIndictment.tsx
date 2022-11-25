@@ -5,6 +5,7 @@ import {
   capitalize,
   caseTypes,
   formatDate,
+  readableIndictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
 import { Text } from '@island.is/island-ui/core'
 import { core } from '@island.is/judicial-system-web/messages'
@@ -12,6 +13,7 @@ import { core } from '@island.is/judicial-system-web/messages'
 import InfoCard from './InfoCard'
 import { infoCardActiveIndictment as m } from './InfoCard.strings'
 import { FormContext } from '../FormProvider/FormProvider'
+import { isIndictmentCase } from '@island.is/judicial-system/types'
 
 const InfoCardActiveIndictment: React.FC = () => {
   const { workingCase } = useContext(FormContext)
@@ -39,7 +41,18 @@ const InfoCardActiveIndictment: React.FC = () => {
         },
         {
           title: formatMessage(m.offence),
-          value: capitalize(caseTypes[workingCase.type]),
+          value: isIndictmentCase(workingCase.type) ? (
+            <>
+              {readableIndictmentSubtypes(
+                workingCase.policeCaseNumbers,
+                workingCase.indictmentSubtypes,
+              ).map((subtype) => (
+                <Text>{capitalize(subtype)}</Text>
+              ))}
+            </>
+          ) : (
+            caseTypes[workingCase.type]
+          ),
         },
       ]}
       defendants={

@@ -67,7 +67,10 @@ export class PublicDiscountController {
   }
 }
 
+@ApiTags('Users')
 @Controller('api/private')
+@Scopes('@vegagerdin.is/air-discount-scheme-scope')
+@UseGuards(IdsUserGuard, ScopesGuard)
 export class PrivateDiscountController {
   constructor(
     private readonly discountService: DiscountService,
@@ -78,17 +81,19 @@ export class PrivateDiscountController {
   ) {}
 
   @Get('users/:nationalId/discounts/current')
-  @ApiExcludeEndpoint()
-  getCurrentDiscountByNationalId(
+  @ApiOkResponse({ type: Discount })
+  @ApiBearerAuth()
+  @ApiExcludeEndpoint(!process.env.ADS_PRIVATE_CLIENT)
+  async getCurrentDiscountByNationalId(
     @Param() params: GetCurrentDiscountByNationalIdParams,
   ): Promise<Discount | null> {
     return this.discountService.getDiscountByNationalId(params.nationalId)
   }
 
-  @UseGuards(IdsUserGuard, ScopesGuard)
-  @Scopes('@vegagerdin.is/air-discount-scheme-scope')
   @Post('users/:nationalId/discounts')
-  @ApiExcludeEndpoint()
+  @ApiOkResponse({ type: Discount })
+  @ApiBearerAuth()
+  @ApiExcludeEndpoint(!process.env.ADS_PRIVATE_CLIENT)
   async createDiscountCode(
     @Param() params: CreateDiscountCodeParams,
     @CurrentUser() auth: AuthUser,

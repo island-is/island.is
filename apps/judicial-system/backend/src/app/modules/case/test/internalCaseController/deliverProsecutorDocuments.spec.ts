@@ -110,7 +110,7 @@ describe('InternalCaseController - Deliver prosecutor documents', () => {
     const caseFile = { category: CaseFileCategory.CASE_FILE } as CaseFile
     const theCase = {
       id: caseId,
-      type: CaseType.MAJOR_ASSAULT,
+      type: CaseType.INDICTMENT,
       courtId,
       courtCaseNumber,
       caseFiles: [

@@ -120,6 +120,7 @@
 /libs/clients/regulations/                                                                          @island-is/hugsmidjan
 /libs/clients/vehicles/                                                                             @island-is/hugsmidjan
 /libs/clients/passports/                                                                            @island-is/hugsmidjan
+/libs/clients/assets/                                                                               @island-is/hugsmidjan
 /libs/api/domains/regulations/                                                                      @island-is/hugsmidjan
 /libs/regulations/                                                                                  @island-is/hugsmidjan
 
@@ -174,6 +175,8 @@
 /libs/api/domains/mailchimp/                                                                        @island-is/stefna
 /libs/api/domains/electronic-registration-statistics/                                               @island-is/stefna
 /libs/clients/electronic-registration-statistics/                                                   @island-is/stefna
+/libs/api/domains/fiskistofa/                                                                       @island-is/stefna
+/libs/clients/fiskistofa/                                                                           @island-is/stefna
 /libs/clients/syslumenn/                                                                            @island-is/stefna @island-is/juni
 /libs/shared/connected/                                                                             @island-is/stefna
 
@@ -191,7 +194,6 @@
 /apps/services/auth/public-api/                                                                     @island-is/fuglar @island-is/aranja
 /apps/services/auth/delegation-api/                                                                 @island-is/fuglar @island-is/aranja
 /apps/auth-admin-web/                                                                               @island-is/fuglar @island-is/aranja
-/apps/auth-admin-web-e2e/                                                                           @island-is/fuglar @island-is/aranja
 /libs/auth-api-lib/                                                                                 @island-is/fuglar @island-is/aranja
 /libs/auth-nest-tools/                                                                              @island-is/fuglar @island-is/aranja
 

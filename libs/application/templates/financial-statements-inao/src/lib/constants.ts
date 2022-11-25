@@ -41,9 +41,13 @@ export const INDIVIDUAL = 'individual'
 export const PARTY = 'party'
 export const CEMETRY = 'cemetery'
 
-// input ids
+// error helpers
 export const VALIDATOR = 'validator'
+export const APPLICANTASMEMBER = 'applicantasmember'
+export const ACTORASCARETAKER = 'actorascaretaker'
+export const ACTORLONEBOARDMEMBER = 'actorloneboardmember'
 
+// input ids
 export const INDIVIDUALOPERATIONIDS = {
   incomePrefix: 'individualIncome',
   expensePrefix: 'individualExpense',
@@ -120,6 +124,7 @@ export const ABOUTIDS = {
   applicationType: 'conditionalAbout.applicationType',
   selectElection: 'election.selectElection',
   electionName: 'election.electionName',
+  genitiveName: 'election.genitiveName',
   incomeLimit: 'election.incomeLimit',
   powerOfAttorneyNationalId: 'about.powerOfAttorneyNationalId',
   powerOfAttorneyName: 'about.powerOfAttorneyName',
