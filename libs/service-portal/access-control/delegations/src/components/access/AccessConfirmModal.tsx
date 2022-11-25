@@ -129,6 +129,7 @@ export const AccessConfirmModal = ({
         delegation={delegation}
         scopes={scopes}
         scopeTree={scopeTree}
+        validityPeriod={validityPeriod}
         listMarginBottom={[0, 0, 10]}
       />
       <Box position="sticky" bottom={0}>
