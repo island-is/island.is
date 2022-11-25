@@ -161,6 +161,7 @@
 - [Auth Nest Tools](libs/auth-nest-tools/README.md)
 - [Clients](libs/clients/README.md)
   - [ADR and Machine License](libs/clients/adr-and-machine-license/README.md)
+  - [Air Discount Scheme](libs/clients/air-discount-scheme/README.md)
   - [Assets](libs/clients/assets/README.md)
   - [Auth](libs/clients/auth/README.md)
     - [Delegation API](libs/clients/auth/delegation-api/README.md)
