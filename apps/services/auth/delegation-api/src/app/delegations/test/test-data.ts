@@ -8,7 +8,7 @@ import {
   CreateDomain,
 } from '../../../../test/fixtures/types'
 import addDays from 'date-fns/addDays'
-import { AuthDelegationType } from 'delegation'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 // TODO: Refactor to use satisfied operator in TypeScript 4.9
 const createDomain = (domain: CreateDomain): CreateDomain => domain

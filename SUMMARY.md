@@ -255,6 +255,7 @@
 
 - [Problems](handbook/reference/problems/README.md)
   - [403 Bad Subject](handbook/reference/problems/bad-subject.md)
+  - [400 500 Template API Error](handbook/reference/problems/template-api-error.md)
   - [400 Validation Failed](handbook/reference/problems/validation-failed.md)
 
 ## Misc

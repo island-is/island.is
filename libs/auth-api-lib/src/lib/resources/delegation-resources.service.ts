@@ -21,7 +21,7 @@ import { ApiScope } from './models/api-scope.model'
 import { Domain } from './models/domain.model'
 import { ResourceTranslationService } from './resource-translation.service'
 import { col } from './utils/col'
-import { AuthDelegationType } from 'delegation'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 type DelegationConfigType = ConfigType<typeof DelegationConfig>
 type ScopeRule = DelegationConfigType['customScopeRules'] extends Array<

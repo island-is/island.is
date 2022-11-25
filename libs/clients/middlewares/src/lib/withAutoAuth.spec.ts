@@ -8,7 +8,7 @@ import {
   fakeAuthResponse,
   setupTestEnv,
 } from '../../test/setup'
-import { AuthDelegationType } from 'delegation'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 const testUrl = 'http://localhost/test'
 const issuerUrl = 'http://localhost/issuer'

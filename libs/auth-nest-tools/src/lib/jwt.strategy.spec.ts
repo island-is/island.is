@@ -1,7 +1,7 @@
 import { JwtStrategy } from './jwt.strategy'
 import { Request } from 'express'
 import { JwtPayload } from './jwt.payload'
-import { AuthDelegationType } from 'delegation'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 describe('JwtStrategy#validate', () => {
   let jwtStrategy: JwtStrategy
