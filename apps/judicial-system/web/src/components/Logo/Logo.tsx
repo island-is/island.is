@@ -18,7 +18,14 @@ const Logo: React.FC<Props> = ({ defaultInstitution = '' }) => {
   const institutionNameArr = institutionName.split(' ')
   const institutionNameFirstHalf = institutionNameArr.slice(
     0,
-    institutionNameArr.length - 1,
+    institutionNameArr.length < 4
+      ? institutionNameArr.length - 1
+      : institutionNameArr.length - 2,
+  )
+  const institutionNameSecondHalf = institutionNameArr.slice(
+    institutionNameArr.length < 4
+      ? institutionNameArr.length - 1
+      : institutionNameArr.length - 2,
   )
   const institutionType = user?.institution?.type
   const isPolice =
@@ -32,8 +39,8 @@ const Logo: React.FC<Props> = ({ defaultInstitution = '' }) => {
         {isPolice ? <PoliceStar /> : <LandWightsLogo />}
       </Box>
       <p className={styles.logoText}>
-        <span>{institutionNameFirstHalf.toString().replace(',', ' ')}</span>
-        <span>{institutionNameArr[institutionNameArr.length - 1]}</span>
+        <span>{institutionNameFirstHalf.join(' ')}</span>
+        <span>{institutionNameSecondHalf.join(' ')}</span>
       </p>
     </div>
   )
