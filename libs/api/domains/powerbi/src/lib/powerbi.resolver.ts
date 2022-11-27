@@ -29,7 +29,7 @@ export class PowerBiResolver {
         }
         break
       default: {
-        this.logger.info(
+        this.logger.warn(
           'User requested embed token without providing an owner',
         )
         return null
