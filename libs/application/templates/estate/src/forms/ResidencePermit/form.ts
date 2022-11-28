@@ -156,7 +156,6 @@ export const form: Form = buildForm({
                       {
                         title: m.bankAccount.defaultMessage,
                         id: 'accountNumber',
-                        //placeholder: m.bankAccountPlaceholder.defaultMessage,
                         format: '#### - ## - ######',
                       },
                       {
@@ -259,6 +258,7 @@ export const form: Form = buildForm({
                         title: m.stocksValue.defaultMessage,
                         id: 'value',
                         color: 'white',
+                        readOnly: true,
                       },
                     ],
                     repeaterButtonText: m.stocksRepeaterButton.defaultMessage,

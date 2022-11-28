@@ -95,6 +95,7 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
                       placeholder={field.placeholder}
                       backgroundColor={field.color ? field.color : 'blue'}
                       currency={field.currency}
+                      readOnly={field.readOnly}
                     />
                   </GridColumn>
                 )

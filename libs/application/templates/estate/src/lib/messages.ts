@@ -362,7 +362,7 @@ export const m = defineMessages({
   },
   stocksRepeaterButton: {
     id: 'es.application:stocksRepeaterButton',
-    defaultMessage: 'Verðmæti á dánardegi',
+    defaultMessage: 'Bæta við hlutabréfum',
     description: '',
   },
 
