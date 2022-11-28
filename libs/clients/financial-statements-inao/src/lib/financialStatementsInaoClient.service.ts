@@ -1,8 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-  createEnhancedFetch,
-  EnhancedFetchAPI,
-} from '@island.is/clients/middlewares'
+import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'
@@ -36,29 +33,26 @@ import { lookup, LookupType } from './utils/lookup'
 
 @Injectable()
 export class FinancialStatementsInaoClientService {
-  private basePath = ''
-  private fetch: EnhancedFetchAPI
-
   constructor(
     @Inject(FinancialStatementsInaoClientConfig.KEY)
     private config: ConfigType<typeof FinancialStatementsInaoClientConfig>,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-  ) {
-    this.basePath = this.config.basePath
+  ) {}
 
-    this.fetch = createEnhancedFetch({
-      name: 'financialStatementsInao-odata',
-      autoAuth: {
-        issuer: this.config.issuer,
-        clientId: this.config.clientId,
-        clientSecret: this.config.clientSecret,
-        scope: [this.config.scope],
-        mode: 'token',
-        tokenEndpoint: this.config.tokenEndpoint,
-      },
-    })
-  }
+  basePath = this.config.basePath
+
+  fetch = createEnhancedFetch({
+    name: 'financialStatementsInao-odata',
+    autoAuth: {
+      issuer: this.config.issuer,
+      clientId: this.config.clientId,
+      clientSecret: this.config.clientSecret,
+      scope: [this.config.scope],
+      mode: 'token',
+      tokenEndpoint: this.config.tokenEndpoint,
+    },
+  })
 
   async getClientTypes(): Promise<ClientType[] | null> {
     const url = `${this.basePath}/GlobalOptionSetDefinitions(Name='star_clienttypechoice')`
@@ -246,7 +240,7 @@ export class FinancialStatementsInaoClientService {
     input: PersonalElectionSubmitInput,
   ): Promise<boolean> {
     const financialValues: LookupType[] = []
-    this.logger.info('Should this be here?')
+
     if (!input.noValueStatement && input.values) {
       const financialTypes = await this.getFinancialTypes()
 
