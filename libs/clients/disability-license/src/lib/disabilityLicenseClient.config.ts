@@ -22,7 +22,7 @@ export const DisabilityLicenseClientConfig = defineConfig<
       ),
       fetch: {
         timeout: 30000,
-        scope: [],
+        scope: ['@tr.is/oryrki:read'],
       },
     }
   },
