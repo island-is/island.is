@@ -42,7 +42,6 @@ import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { trackSearchQuery } from '@island.is/plausible'
 
-
 const DEBOUNCE_TIMER = 150
 const STACK_WIDTH = 400
 
