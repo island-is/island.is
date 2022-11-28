@@ -868,12 +868,67 @@ describe('Single Parent', () => {
   })
 
   it('getAdditionalSingleParentRightsInDays - should return 180 days for additional right for single parent', () => {
-    const application = buildApplication()
-    set(application, 'answers.otherParent', SINGLE)
+    const application = buildApplication({
+      answers: {
+        selectedChild: 0,
+        otherParent: SINGLE,
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 180,
+                parentalRelation: ParentalRelations.primary,
+                expectedDateOfBirth: '2021-05-17',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
 
     const res = getAdditionalSingleParentRightsInDays(application)
 
     expect(res).toBe(180)
+  })
+
+  it('getAdditionalSingleParentRightsInDays - should return 450 for single parent personal right', () => {
+    const application = buildApplication({
+      answers: {
+        selectedChild: 0,
+        otherParent: SINGLE,
+        multipleBirths: {
+          multipleBirths: 2,
+          hasMultipleBirths: YES,
+        },
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 180,
+                parentalRelation: ParentalRelations.primary,
+                expectedDateOfBirth: '2021-05-17',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = getAvailableRightsInDays(application)
+
+    expect(res).toBe(450)
   })
 
   it('getAvailablePersonalRightsSingleParentInMonths - should return 12 months for single parents', () => {
