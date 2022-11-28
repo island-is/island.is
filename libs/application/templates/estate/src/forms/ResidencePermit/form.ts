@@ -249,12 +249,12 @@ export const form: Form = buildForm({
                       {
                         title: m.stocksFaceValue.defaultMessage,
                         id: 'faceValue',
-                        type: 'number'
+                        type: 'number',
                       },
                       {
                         title: m.stocksRateOfChange.defaultMessage,
                         id: 'rateOfExchange',
-                        type: 'number'
+                        type: 'number',
                       },
                       {
                         title: m.stocksValue.defaultMessage,
