@@ -30,12 +30,14 @@ export const LandskjorstjornFooter = ({
       <GridContainer>
         <GridRow>
           <GridColumn>
-            <img
-              width={100}
-              height={78}
-              src="https://images.ctfassets.net/8k0h54kbe6bj/60DIqBGQ8ejcpEak0bSrak/9481d5d92bcf9b2ea5f2efe3fee952f7/Landskjorstjorn-logo-hvitt.svg"
-              alt=""
-            />
+            <Box marginLeft={5}>
+              <img
+                width={80}
+                height={78}
+                src="https://images.ctfassets.net/8k0h54kbe6bj/60DIqBGQ8ejcpEak0bSrak/9481d5d92bcf9b2ea5f2efe3fee952f7/Landskjorstjorn-logo-hvitt.svg"
+                alt=""
+              />
+            </Box>
           </GridColumn>
           {footerItems[0] && (
             <GridColumn>
