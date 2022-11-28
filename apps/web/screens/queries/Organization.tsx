@@ -10,6 +10,7 @@ export const GET_ORGANIZATIONS_QUERY = gql`
         title
         description
         showsUpOnTheOrganizationsPage
+        hasALandingPage
         logo {
           title
           url
@@ -32,6 +33,7 @@ export const GET_ORGANIZATION_QUERY = gql`
       email
       phone
       title
+      hasALandingPage
       logo {
         title
         url

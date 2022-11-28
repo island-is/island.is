@@ -75,6 +75,16 @@ export type DigitalSignee = {
   email: string
 }
 
+export interface PersonalElectionSubmitInput {
+  client: Client
+  actor: Contact | undefined
+  digitalSignee: DigitalSignee
+  electionId: string
+  noValueStatement: boolean
+  values?: PersonalElectionFinancialStatementValues
+  file?: string
+}
+
 export type PersonalElectionFinancialStatementValues = {
   contributionsByLegalEntities: number // 100 Framlög lögaðila
   individualContributions: number // 101 Framlög einstaklinga
