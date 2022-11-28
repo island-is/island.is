@@ -57,9 +57,7 @@ const SelectedShip = ({ namespace }: SelectedShipProps) => {
     <Box className={styles.container}>
       <Stack space={1}>
         {ship?.name ? (
-          <Text variant="h2" as="h4">
-            {ship?.name}
-          </Text>
+          <Text variant="h2">{ship?.name}</Text>
         ) : (
           <Text>{n('shipCouldNotBeFetched', 'Ekki tókst að sækja skip')}</Text>
         )}

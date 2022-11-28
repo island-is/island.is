@@ -67,6 +67,7 @@ import { MunicipalitiesFinancialAidModule } from '@island.is/api/domains/municip
 import { MunicipalitiesFinancialAidConfig } from '@island.is/clients/municipalities-financial-aid'
 import { MortgageCertificateModule } from '@island.is/api/domains/mortgage-certificate'
 import { PowerBiModule } from '@island.is/api/domains/powerbi'
+import { PowerBiConfig } from '@island.is/api/domains/powerbi'
 
 import { maskOutFieldsMiddleware } from './graphql.middleware'
 import { FishingLicenseModule } from '@island.is/api/domains/fishing-license'
@@ -280,6 +281,7 @@ const autoSchemaFile = environment.production
         PassportsClientConfig,
         FileStorageConfig,
         FiskistofaClientConfig,
+        PowerBiConfig,
       ],
     }),
   ],
