@@ -20,7 +20,10 @@ export const licenseHasFileUploadField = (
 export const licenseHasAreaSelection = (
   license: FishingLicenseEnum | string,
 ) => {
-  return license === FishingLicenseEnum.GREYSLEPP
+  return (
+    license === FishingLicenseEnum.GREYSLEPP ||
+    license === FishingLicenseEnum.COSTALFISHERIES
+  )
 }
 
 // Determines whether fishing license has field to input number of roe nets (fjöldi hrognkelsaneta)
