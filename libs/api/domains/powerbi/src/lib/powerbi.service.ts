@@ -1,12 +1,20 @@
 import { Configuration, ConfidentialClientApplication } from '@azure/msal-node'
 import { ConfigType } from '@island.is/nest/config'
+import {
+  createEnhancedFetch,
+  EnhancedFetchAPI,
+} from '@island.is/clients/middlewares'
 import { PowerBiConfig } from './powerbi.config'
 
 type Owner = 'Fiskistofa'
 const BASE_URL = 'https://api.powerbi.com/v1.0/myorg'
 
 export class PowerBiService {
-  constructor(private config: ConfigType<typeof PowerBiConfig>) {}
+  private fetch: EnhancedFetchAPI
+
+  constructor(private config: ConfigType<typeof PowerBiConfig>) {
+    this.fetch = createEnhancedFetch({ name: 'PowerBiService' })
+  }
 
   async getAccessToken(owner: Owner) {
     let clientId = ''
@@ -44,7 +52,7 @@ export class PowerBiService {
   async getReport(workspaceId: string, reportId: string, accessToken: string) {
     const url = `${BASE_URL}/groups/${workspaceId}/reports/${reportId}`
 
-    const response = await fetch(url, {
+    const response = await this.fetch(url, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -74,7 +82,7 @@ export class PowerBiService {
     const embedTokenApiUrl = `${BASE_URL}/GenerateToken`
 
     // Generate Embed token for single report, workspace, and multiple datasets. Refer to: https://aka.ms/MultiResourceEmbedToken
-    const response = await fetch(embedTokenApiUrl, {
+    const response = await this.fetch(embedTokenApiUrl, {
       method: 'POST',
       body: JSON.stringify(formData),
       headers: {
