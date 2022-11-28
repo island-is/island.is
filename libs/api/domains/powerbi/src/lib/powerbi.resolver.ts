@@ -7,6 +7,7 @@ import { PowerBiEmbedTokenInput } from './dto/powerbiEmbedToken.input'
 import { PowerBiEmbedTokenResponse } from './models/powerbiEmbedTokenResponse'
 
 type Owner = 'Fiskistofa'
+const BASE_URL = 'https://api.powerbi.com/v1.0/myorg'
 
 @Resolver()
 export class PowerBiResolver {
@@ -30,7 +31,7 @@ export class PowerBiResolver {
         break
       default: {
         this.logger.warn(
-          'User requested embed token without providing an owner',
+          'User requested Power Bi embed token without providing an owner',
         )
         return null
       }
@@ -54,7 +55,10 @@ export class PowerBiResolver {
       )
       return tokenResponse?.accessToken
     } catch (err) {
-      this.logger.error('Error occurred when trying to fetch accessToken', err)
+      this.logger.error(
+        'Error occurred when trying to fetch Power Bi accessToken',
+        err,
+      )
       return null
     }
   }
@@ -64,7 +68,7 @@ export class PowerBiResolver {
     reportId: string,
     accessToken: string,
   ) {
-    const url = `https://api.powerbi.com/v1.0/myorg/groups/${workspaceId}/reports/${reportId}`
+    const url = `${BASE_URL}/groups/${workspaceId}/reports/${reportId}`
     try {
       const response = await fetch(url, {
         method: 'GET',
@@ -74,13 +78,13 @@ export class PowerBiResolver {
         },
       })
       if (!response.ok) {
-        this.logger.error('Report response was not 2xx')
+        this.logger.error('Power Bi report response was not 2xx')
         return null
       }
       const report = await response.json()
       return report
     } catch (err) {
-      this.logger.error(`Error occurred when trying to fetch report`, {
+      this.logger.error(`Error occurred when trying to fetch Power Bi report`, {
         workspaceId,
         reportId,
         err,
@@ -105,7 +109,7 @@ export class PowerBiResolver {
       targetWorkspaces: [{ id: targetWorkspaceId }],
     }
 
-    const embedTokenApiUrl = 'https://api.powerbi.com/v1.0/myorg/GenerateToken'
+    const embedTokenApiUrl = `${BASE_URL}/GenerateToken`
 
     try {
       // Generate Embed token for single report, workspace, and multiple datasets. Refer to: https://aka.ms/MultiResourceEmbedToken
@@ -119,13 +123,16 @@ export class PowerBiResolver {
       })
 
       if (!response.ok) {
-        this.logger.error('Embed token response was not 2xx')
+        this.logger.error('Power Bi Embed token response was not 2xx')
         return null
       }
       const data = await response.json()
       return data?.token
     } catch (err) {
-      this.logger.error('Error occurred while fetching embed token', err)
+      this.logger.error(
+        'Error occurred while fetching Power Bi embed token',
+        err,
+      )
       return null
     }
   }
