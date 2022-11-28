@@ -20,7 +20,7 @@ export const AreaWithDateSelection: FC<FieldBaseProps> = ({
   application,
   errors,
 }) => {
-  const { setValue, getValues } = useFormContext()
+  const { setValue } = useFormContext()
   const { formatMessage, lang } = useLocale()
 
   const [selectedArea, setSelectedArea] = useState<string | number>('')
@@ -61,7 +61,11 @@ export const AreaWithDateSelection: FC<FieldBaseProps> = ({
 
   // Initialize areas selection dropdown based on selected license
   useEffect(() => {
-    const areas: FishingLicenseListOptions[] = getValues(AREAS_FIELD_ID)
+    const areas = getValueViaPath(
+      application.answers,
+      AREAS_FIELD_ID,
+      [],
+    ) as FishingLicenseListOptions[]
     setLicenseAreas(areas)
     const initialArea = getValueViaPath(
       application.answers,
