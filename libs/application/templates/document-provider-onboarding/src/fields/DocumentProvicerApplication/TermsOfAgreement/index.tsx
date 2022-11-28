@@ -18,7 +18,8 @@ const TermsOfAgreement: FC<FieldBaseProps> = ({ application }) => {
     false,
   ) as boolean
 
-  const { setValue, errors, getValues } = useFormContext()
+  const { setValue, formState, getValues } = useFormContext()
+  const { errors } = formState
 
   return (
     <Box>
