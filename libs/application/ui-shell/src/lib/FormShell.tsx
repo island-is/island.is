@@ -73,16 +73,7 @@ export const FormShell: FC<{
   }, [setInfo, application])
 
   return (
-    <Box
-      className={cn(styles.root, {
-        [styles.rootApplying]: mode === FormModes.DRAFT,
-        [styles.rootApproved]: mode === FormModes.APPROVED,
-        [styles.rootApproved]: mode === FormModes.COMPLETED,
-        [styles.rootPending]: mode === FormModes.IN_PROGRESS,
-        [styles.rootReviewing]: mode === FormModes.IN_PROGRESS,
-        [styles.rootRejected]: mode === FormModes.REJECTED,
-      })}
-    >
+    <Box className={styles.root}>
       <Box
         paddingTop={[0, 4]}
         paddingBottom={[0, 5]}
