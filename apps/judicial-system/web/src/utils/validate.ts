@@ -204,10 +204,12 @@ export const isDefendantStepValidIndictments = (
 ) => {
   const result =
     policeCaseNumbers.length > 0 &&
+    workingCase.indictmentSubtypes &&
+    Object.entries(workingCase.indictmentSubtypes).length > 0 &&
     !someDefendantIsInvalid(workingCase) &&
     validate([
       [workingCase.type, ['empty']],
-      [workingCase.indictmentSubType, ['empty']],
+      [Object.entries(workingCase.indictmentSubtypes)[0][1][0], ['empty']],
       ...policeCaseNumbers.map(
         (n): ValidateItem => [n, ['empty', 'police-casenumber-format']],
       ),

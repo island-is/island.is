@@ -345,19 +345,19 @@ export class PrivateFlightController {
   constructor(private readonly flightService: FlightService) {}
 
   @Get('flights')
-  @ApiExcludeEndpoint()
+  @ApiExcludeEndpoint(!process.env.ADS_PRIVATE_CLIENT)
   get(): Promise<Flight[]> {
     return this.flightService.findAll()
   }
 
   @Post('flightLegs')
-  @ApiExcludeEndpoint()
+  @ApiExcludeEndpoint(!process.env.ADS_PRIVATE_CLIENT)
   getFlightLegs(@Body() body: GetFlightLegsBody | {}): Promise<FlightLeg[]> {
     return this.flightService.findAllLegsByFilter(body)
   }
 
   @Post('flightLegs/confirmInvoice')
-  @ApiExcludeEndpoint()
+  @ApiExcludeEndpoint(!process.env.ADS_PRIVATE_CLIENT)
   async confirmInvoice(
     @Body() body: ConfirmInvoiceBody | {},
   ): Promise<FlightLeg[]> {
@@ -367,7 +367,7 @@ export class PrivateFlightController {
   }
 
   @Get('users/:nationalId/flights')
-  @ApiExcludeEndpoint()
+  @ApiExcludeEndpoint(!process.env.ADS_PRIVATE_CLIENT)
   getUserFlights(@Param() params: GetUserFlightsParams): Promise<Flight[]> {
     return this.flightService.findThisYearsFlightsByNationalId(
       params.nationalId,

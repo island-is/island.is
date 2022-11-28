@@ -18,11 +18,7 @@
       ["featureRequest", "https://www.samgongustofa.is/"]
     ]
   },
-  "servers": [
-    {
-      "url": "/DLB"
-    }
-  ],
+  "servers": [{ "url": "/DLB" }],
   "paths": {
     "/api/Authentication/Authenticate": {
       "post": {
@@ -32,19 +28,13 @@
           "description": "username and password for user",
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AuthenticateModel"
-              }
+              "schema": { "$ref": "#/components/schemas/AuthenticateModel" }
             },
             "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AuthenticateModel"
-              }
+              "schema": { "$ref": "#/components/schemas/AuthenticateModel" }
             },
             "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/AuthenticateModel"
-              }
+              "schema": { "$ref": "#/components/schemas/AuthenticateModel" }
             }
           }
         },
@@ -81,9 +71,7 @@
             "name": "licenseCategory",
             "in": "query",
             "description": "Type of driving license",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -101,9 +89,7 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -111,9 +97,7 @@
             "description": "Forbidden",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -121,15 +105,11 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Server Error"
-          }
+          "500": { "description": "Server Error" }
         }
       }
     },
@@ -143,17 +123,13 @@
             "in": "path",
             "description": "Unique id for digital driving license book",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "id",
             "in": "query",
             "description": "Unique id for test result",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -171,9 +147,7 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -181,9 +155,7 @@
             "description": "Forbidden",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -191,15 +163,11 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Server Error"
-          }
+          "500": { "description": "Server Error" }
         }
       }
     },
@@ -242,9 +210,7 @@
             "description": "Bad Request",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -252,9 +218,7 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -262,15 +226,11 @@
             "description": "Forbidden",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Server Error"
-          }
+          "500": { "description": "Server Error" }
         }
       }
     },
@@ -284,9 +244,7 @@
             "in": "path",
             "description": "Unique id for test result",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "requestBody": {
@@ -310,19 +268,13 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "Success"
-          },
-          "204": {
-            "description": "Success"
-          },
+          "200": { "description": "Success" },
+          "204": { "description": "Success" },
           "400": {
             "description": "Bad Request",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -330,9 +282,7 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -340,9 +290,7 @@
             "description": "Forbidden",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -350,15 +298,11 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Server Error"
-          }
+          "500": { "description": "Server Error" }
         }
       }
     },
@@ -372,33 +316,23 @@
             "in": "path",
             "description": "Unique id for test result",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "reason",
             "in": "query",
             "description": "Reason for deleting",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
-          "200": {
-            "description": "Success"
-          },
-          "204": {
-            "description": "Success"
-          },
+          "200": { "description": "Success" },
+          "204": { "description": "Success" },
           "401": {
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -406,15 +340,11 @@
             "description": "Forbidden",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Server Error"
-          }
+          "500": { "description": "Server Error" }
         }
       }
     },
@@ -428,9 +358,7 @@
             "in": "path",
             "description": "",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -438,22 +366,16 @@
             "description": "Success",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Organization"
-                }
+                "schema": { "$ref": "#/components/schemas/Organization" }
               }
             }
           },
-          "204": {
-            "description": "Success"
-          },
+          "204": { "description": "Success" },
           "401": {
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -461,15 +383,11 @@
             "description": "Forbidden",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Server Error"
-          }
+          "500": { "description": "Server Error" }
         }
       }
     },
@@ -482,34 +400,25 @@
             "name": "key",
             "in": "query",
             "description": "Wild card search parameter, can either be part of students social security number or name",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "licenseCategory",
             "in": "query",
             "description": "Type of driving license",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "cursor",
             "in": "query",
             "description": "Position to start from (if applicable), else empty",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "limit",
             "in": "query",
             "description": "Max records to return from results",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
+            "schema": { "type": "integer", "format": "int32" }
           }
         ],
         "responses": {
@@ -527,9 +436,7 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -537,9 +444,7 @@
             "description": "Forbidden",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -547,15 +452,11 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Server Error"
-          }
+          "500": { "description": "Server Error" }
         }
       }
     },
@@ -598,9 +499,7 @@
             "description": "Bad Request",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -608,9 +507,7 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -618,15 +515,11 @@
             "description": "Forbidden",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Server Error"
-          }
+          "500": { "description": "Server Error" }
         }
       }
     },
@@ -640,18 +533,14 @@
             "in": "path",
             "description": "Social security number for student",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "licenseCategory",
             "in": "query",
             "description": "Type of driving license",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -669,9 +558,7 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -679,9 +566,7 @@
             "description": "Forbidden",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -689,15 +574,11 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Server Error"
-          }
+          "500": { "description": "Server Error" }
         }
       }
     },
@@ -711,18 +592,13 @@
             "in": "path",
             "description": "Social security number for student",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "showInactiveBooks",
             "in": "query",
             "description": "If true, show digital books which are inactive",
-            "schema": {
-              "type": "boolean",
-              "default": false
-            }
+            "schema": { "type": "boolean", "default": false }
           }
         ],
         "responses": {
@@ -740,9 +616,7 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -750,9 +624,7 @@
             "description": "Forbidden",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -760,15 +632,11 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Server Error"
-          }
+          "500": { "description": "Server Error" }
         }
       }
     },
@@ -782,9 +650,7 @@
             "in": "path",
             "description": "Social security number for student",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -802,9 +668,7 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -812,9 +676,7 @@
             "description": "Forbidden",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -822,15 +684,11 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Server Error"
-          }
+          "500": { "description": "Server Error" }
         }
       }
     },
@@ -844,9 +702,7 @@
             "in": "path",
             "description": "Unique id for digital driving license book",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -864,9 +720,7 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -874,9 +728,7 @@
             "description": "Forbidden",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -884,15 +736,11 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Server Error"
-          }
+          "500": { "description": "Server Error" }
         }
       }
     },
@@ -906,9 +754,7 @@
             "in": "path",
             "description": "Unique id for book",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "requestBody": {
@@ -932,19 +778,13 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "Success"
-          },
-          "204": {
-            "description": "Success"
-          },
+          "200": { "description": "Success" },
+          "204": { "description": "Success" },
           "400": {
             "description": "Bad Request",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -952,9 +792,7 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -962,9 +800,7 @@
             "description": "Forbidden",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -972,15 +808,11 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Server Error"
-          }
+          "500": { "description": "Server Error" }
         }
       }
     },
@@ -994,33 +826,23 @@
             "in": "path",
             "description": "Unique id for book",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "reason",
             "in": "query",
             "description": "Reason for deleting",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
-          "200": {
-            "description": "Success"
-          },
-          "204": {
-            "description": "Success"
-          },
+          "200": { "description": "Success" },
+          "204": { "description": "Success" },
           "401": {
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -1028,15 +850,11 @@
             "description": "Forbidden",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Server Error"
-          }
+          "500": { "description": "Server Error" }
         }
       }
     },
@@ -1050,17 +868,13 @@
             "in": "path",
             "description": "Unique id for digital driving license book",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "id",
             "in": "query",
             "description": "Unique id for practical lesson",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -1078,9 +892,7 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -1088,9 +900,7 @@
             "description": "Forbidden",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -1098,57 +908,39 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Server Error"
-          }
+          "500": { "description": "Server Error" }
         }
       }
     },
     "/api/Teacher/GetStudentOverviewForTeacher/{teacherSsn}": {
       "get": {
         "tags": ["DrivingLicenseBook"],
-        "summary": "Fetches an overview of all students assigned to teacher.",
         "parameters": [
           {
             "name": "teacherSsn",
             "in": "path",
-            "description": "SSN of teacher",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "licenseCategory",
             "in": "query",
-            "description": "Type of driving license",
-            "schema": {
-              "type": "string",
-              "default": "B"
-            }
+            "schema": { "type": "string", "default": "B" }
           },
-          {
-            "name": "cursor",
-            "in": "query",
-            "description": "Position to start from (if applicable), else empty",
-            "schema": {
-              "type": "string"
-            }
-          },
+          { "name": "cursor", "in": "query", "schema": { "type": "string" } },
           {
             "name": "limit",
             "in": "query",
-            "description": "Max records to return from results",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "showExpired",
+            "in": "query",
+            "schema": { "type": "boolean", "default": true }
           }
         ],
         "responses": {
@@ -1166,9 +958,7 @@
             "description": "Bad Request",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -1176,9 +966,7 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -1186,57 +974,39 @@
             "description": "Forbidden",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Server Error"
-          }
+          "500": { "description": "Server Error" }
         }
       }
     },
     "/api/Teacher/GetStudentsForTeacher/{teacherSsn}": {
       "get": {
         "tags": ["DrivingLicenseBook"],
-        "summary": "Fetches list of all students assigned to teacher",
         "parameters": [
           {
             "name": "teacherSsn",
             "in": "path",
-            "description": "SSN of teacher",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "licenseCategory",
             "in": "query",
-            "description": "Type of driving license",
-            "schema": {
-              "type": "string",
-              "default": "B"
-            }
+            "schema": { "type": "string", "default": "B" }
           },
-          {
-            "name": "cursor",
-            "in": "query",
-            "description": "Position to start from (if applicable), else empty",
-            "schema": {
-              "type": "string"
-            }
-          },
+          { "name": "cursor", "in": "query", "schema": { "type": "string" } },
           {
             "name": "limit",
             "in": "query",
-            "description": "Max records to return from results",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "showExpired",
+            "in": "query",
+            "schema": { "type": "boolean", "default": true }
           }
         ],
         "responses": {
@@ -1254,9 +1024,7 @@
             "description": "Bad Request",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -1264,9 +1032,7 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -1274,15 +1040,11 @@
             "description": "Forbidden",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Server Error"
-          }
+          "500": { "description": "Server Error" }
         }
       }
     },
@@ -1325,9 +1087,7 @@
             "description": "Bad Request",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -1335,9 +1095,7 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -1345,15 +1103,11 @@
             "description": "Forbidden",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Server Error"
-          }
+          "500": { "description": "Server Error" }
         }
       }
     },
@@ -1367,9 +1121,7 @@
             "in": "path",
             "description": "Unique id for practical lesson",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "requestBody": {
@@ -1393,19 +1145,13 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "Success"
-          },
-          "204": {
-            "description": "Success"
-          },
+          "200": { "description": "Success" },
+          "204": { "description": "Success" },
           "400": {
             "description": "Bad Request",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -1413,9 +1159,7 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -1423,9 +1167,7 @@
             "description": "Forbidden",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -1433,15 +1175,11 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Server Error"
-          }
+          "500": { "description": "Server Error" }
         }
       }
     },
@@ -1455,33 +1193,23 @@
             "in": "path",
             "description": "Unique id for practical lesson",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "reason",
             "in": "query",
             "description": "Reason for deleting",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
-          "200": {
-            "description": "Success"
-          },
-          "204": {
-            "description": "Success"
-          },
+          "200": { "description": "Success" },
+          "204": { "description": "Success" },
           "401": {
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -1489,15 +1217,11 @@
             "description": "Forbidden",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Server Error"
-          }
+          "500": { "description": "Server Error" }
         }
       }
     },
@@ -1510,9 +1234,7 @@
             "name": "licenseCategory",
             "in": "query",
             "description": "Type of driving license",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -1530,9 +1252,7 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -1540,9 +1260,7 @@
             "description": "Forbidden",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -1550,15 +1268,11 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Server Error"
-          }
+          "500": { "description": "Server Error" }
         }
       }
     },
@@ -1571,34 +1285,25 @@
             "name": "bookId",
             "in": "query",
             "description": "Unique id for digital driving license book (bookId or teacherSsn is required)",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "teacherSsn",
             "in": "query",
             "description": "Driving instructors social security number (bookId or teacherSsn is required)",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "exemptionTypeId",
             "in": "query",
             "description": "Type of exemption",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
+            "schema": { "type": "integer", "format": "int32" }
           },
           {
             "name": "id",
             "in": "query",
             "description": "Unique id for record",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -1616,9 +1321,7 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -1626,9 +1329,7 @@
             "description": "Forbidden",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -1636,15 +1337,11 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Server Error"
-          }
+          "500": { "description": "Server Error" }
         }
       }
     },
@@ -1687,9 +1384,7 @@
             "description": "Bad Request",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -1697,9 +1392,7 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -1707,15 +1400,11 @@
             "description": "Forbidden",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Server Error"
-          }
+          "500": { "description": "Server Error" }
         }
       }
     },
@@ -1729,9 +1418,7 @@
             "in": "path",
             "description": "Unique id for application",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "requestBody": {
@@ -1755,19 +1442,13 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "Success"
-          },
-          "204": {
-            "description": "Success"
-          },
+          "200": { "description": "Success" },
+          "204": { "description": "Success" },
           "400": {
             "description": "Bad Request",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -1775,9 +1456,7 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -1785,9 +1464,7 @@
             "description": "Forbidden",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -1795,15 +1472,11 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Server Error"
-          }
+          "500": { "description": "Server Error" }
         }
       }
     },
@@ -1817,33 +1490,23 @@
             "in": "path",
             "description": "Unique id for application",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "reason",
             "in": "query",
             "description": "Reason for delete",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
-          "200": {
-            "description": "Success"
-          },
-          "204": {
-            "description": "Success"
-          },
+          "200": { "description": "Success" },
+          "204": { "description": "Success" },
           "401": {
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -1851,15 +1514,11 @@
             "description": "Forbidden",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Server Error"
-          }
+          "500": { "description": "Server Error" }
         }
       }
     },
@@ -1872,9 +1531,7 @@
             "name": "licenseCategory",
             "in": "query",
             "description": "Type of driving license",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -1882,9 +1539,7 @@
             "description": "Success",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TestTypeGetResponse"
-                }
+                "schema": { "$ref": "#/components/schemas/TestTypeGetResponse" }
               }
             }
           },
@@ -1892,9 +1547,7 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -1902,9 +1555,7 @@
             "description": "Forbidden",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -1912,15 +1563,11 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Server Error"
-          }
+          "500": { "description": "Server Error" }
         }
       }
     },
@@ -1934,28 +1581,21 @@
             "in": "path",
             "description": "Social security number for student",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "licenseCategory",
             "in": "query",
             "description": "Type of driving license",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "testTypeId",
             "in": "query",
             "description": "Type of test",
             "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
+            "schema": { "type": "integer", "format": "int32" }
           }
         ],
         "responses": {
@@ -1973,9 +1613,7 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -1983,9 +1621,7 @@
             "description": "Forbidden",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -1993,15 +1629,11 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Server Error"
-          }
+          "500": { "description": "Server Error" }
         }
       }
     },
@@ -2015,26 +1647,19 @@
             "in": "path",
             "description": "Unique id for digital driving license book",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "testTypeId",
             "in": "query",
             "description": "Type of test",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
+            "schema": { "type": "integer", "format": "int32" }
           },
           {
             "name": "id",
             "in": "query",
             "description": "Unique id for test result",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -2052,9 +1677,7 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -2062,9 +1685,7 @@
             "description": "Forbidden",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -2072,15 +1693,11 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Server Error"
-          }
+          "500": { "description": "Server Error" }
         }
       }
     },
@@ -2123,9 +1740,7 @@
             "description": "Bad Request",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -2133,9 +1748,7 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -2143,15 +1756,11 @@
             "description": "Forbidden",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Server Error"
-          }
+          "500": { "description": "Server Error" }
         }
       }
     },
@@ -2165,9 +1774,7 @@
             "in": "path",
             "description": "Unique id for test result",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "requestBody": {
@@ -2191,19 +1798,13 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "Success"
-          },
-          "204": {
-            "description": "Success"
-          },
+          "200": { "description": "Success" },
+          "204": { "description": "Success" },
           "400": {
             "description": "Bad Request",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -2211,9 +1812,7 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -2221,9 +1820,7 @@
             "description": "Forbidden",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -2231,15 +1828,11 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Server Error"
-          }
+          "500": { "description": "Server Error" }
         }
       }
     },
@@ -2253,33 +1846,23 @@
             "in": "path",
             "description": "Unique id for test result",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "reason",
             "in": "query",
             "description": "Reason for delete",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
-          "200": {
-            "description": "Success"
-          },
-          "204": {
-            "description": "Success"
-          },
+          "200": { "description": "Success" },
+          "204": { "description": "Success" },
           "401": {
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -2287,15 +1870,11 @@
             "description": "Forbidden",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Server Error"
-          }
+          "500": { "description": "Server Error" }
         }
       }
     },
@@ -2308,28 +1887,19 @@
             "name": "dateFrom",
             "in": "query",
             "description": "If not supplied, today is used",
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
+            "schema": { "type": "string", "format": "date-time" }
           },
           {
             "name": "dateTo",
             "in": "query",
             "description": "If not supplied, today is used",
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
+            "schema": { "type": "string", "format": "date-time" }
           },
           {
             "name": "licenseCategory",
             "in": "query",
             "description": "Category B is default",
-            "schema": {
-              "type": "string",
-              "default": "B"
-            }
+            "schema": { "type": "string", "default": "B" }
           }
         ],
         "responses": {
@@ -2343,19 +1913,13 @@
               }
             }
           },
-          "200": {
-            "description": "Success"
-          },
-          "204": {
-            "description": "Success"
-          },
+          "200": { "description": "Success" },
+          "204": { "description": "Success" },
           "401": {
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -2363,15 +1927,11 @@
             "description": "Forbidden",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Server Error"
-          }
+          "500": { "description": "Server Error" }
         }
       }
     },
@@ -2384,18 +1944,13 @@
             "name": "ssn",
             "in": "query",
             "description": "Social security number of student",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "licenseCategory",
             "in": "query",
             "description": "License category",
-            "schema": {
-              "type": "string",
-              "default": "B"
-            }
+            "schema": { "type": "string", "default": "B" }
           }
         ],
         "responses": {
@@ -2409,16 +1964,12 @@
               }
             }
           },
-          "204": {
-            "description": "Success"
-          },
+          "204": { "description": "Success" },
           "401": {
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -2426,15 +1977,11 @@
             "description": "Forbidden",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Server Error"
-          }
+          "500": { "description": "Server Error" }
         }
       }
     },
@@ -2447,56 +1994,40 @@
             "name": "ssn",
             "in": "query",
             "description": "Social security number",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "drivingLicenseNumber",
             "in": "query",
             "description": "Driving license number",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
+            "schema": { "type": "integer", "format": "int32" }
           },
           {
             "name": "date",
             "in": "query",
             "description": "Date of passed test",
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
+            "schema": { "type": "string", "format": "date-time" }
           },
           {
             "name": "drivingSchoolThreeExemption",
             "in": "query",
             "description": "If true, has exemption from driving school three",
-            "schema": {
-              "type": "boolean"
-            }
+            "schema": { "type": "boolean" }
           },
           {
             "name": "onlyAutomaticAuto",
             "in": "query",
             "description": "If true, was performed on a car using a automatic transmission",
-            "schema": {
-              "type": "boolean"
-            }
+            "schema": { "type": "boolean" }
           }
         ],
         "responses": {
-          "200": {
-            "description": "Success"
-          },
+          "200": { "description": "Success" },
           "400": {
             "description": "Bad Request",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -2504,9 +2035,7 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -2514,15 +2043,11 @@
             "description": "Forbidden",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Server Error"
-          }
+          "500": { "description": "Server Error" }
         }
       }
     }
@@ -2588,15 +2113,10 @@
           },
           "bookLicenseCategories": {
             "type": "array",
-            "items": {
-              "type": "string"
-            },
+            "items": { "type": "string" },
             "nullable": true
           },
-          "applicationTime": {
-            "type": "string",
-            "format": "date-time"
-          }
+          "applicationTime": { "type": "string", "format": "date-time" }
         },
         "additionalProperties": false,
         "description": ""
@@ -2647,23 +2167,14 @@
         "required": ["password", "username"],
         "type": "object",
         "properties": {
-          "username": {
-            "type": "string"
-          },
-          "password": {
-            "type": "string"
-          }
+          "username": { "type": "string" },
+          "password": { "type": "string" }
         },
         "additionalProperties": false
       },
       "AuthenticateResponse": {
         "type": "object",
-        "properties": {
-          "token": {
-            "type": "string",
-            "nullable": true
-          }
-        },
+        "properties": { "token": { "type": "string", "nullable": true } },
         "additionalProperties": false
       },
       "BookOverview": {
@@ -2742,17 +2253,13 @@
           },
           "teachersAndLessons": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Lesson"
-            },
+            "items": { "$ref": "#/components/schemas/Lesson" },
             "description": "List af all practical lessons with instructor",
             "nullable": true
           },
           "drivingSchoolExams": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/DrivingSchoolExam"
-            },
+            "items": { "$ref": "#/components/schemas/DrivingSchoolExam" },
             "description": "List of all driving school tests, grouped by school",
             "nullable": true
           },
@@ -2882,6 +2389,11 @@
             "description": "License number",
             "format": "int32",
             "nullable": true
+          },
+          "licenseOrdered": {
+            "type": "string",
+            "description": "Whether driving license has been ordered from RLS",
+            "nullable": true
           }
         },
         "additionalProperties": false,
@@ -2893,8 +2405,7 @@
           "drivingLicenseNumber",
           "isDigital",
           "licenseCategory",
-          "studentSsn",
-          "teacherSsn"
+          "studentSsn"
         ],
         "type": "object",
         "properties": {
@@ -2921,6 +2432,7 @@
           "teacherSsn": {
             "type": "string",
             "description": "Driving instructor social security number",
+            "nullable": true,
             "example": "0000000000"
           },
           "schoolSsn": {
@@ -2982,9 +2494,7 @@
       "DigitalBookGetResponse": {
         "type": "object",
         "properties": {
-          "data": {
-            "$ref": "#/components/schemas/DigitalBook"
-          }
+          "data": { "$ref": "#/components/schemas/DigitalBook" }
         },
         "additionalProperties": false,
         "description": ""
@@ -2994,9 +2504,7 @@
         "properties": {
           "data": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/DigitalBook"
-            },
+            "items": { "$ref": "#/components/schemas/DigitalBook" },
             "description": "",
             "nullable": true
           }
@@ -3005,12 +2513,7 @@
         "description": ""
       },
       "DigitalBookUpdateRequestBody": {
-        "required": [
-          "createdOn",
-          "studentEmail",
-          "studentPrimaryPhoneNumber",
-          "teacherSsn"
-        ],
+        "required": ["createdOn", "teacherSsn"],
         "type": "object",
         "properties": {
           "createdOn": {
@@ -3032,11 +2535,13 @@
           "studentEmail": {
             "type": "string",
             "description": "Student email",
+            "nullable": true,
             "example": "nafn@postur.is"
           },
           "studentPrimaryPhoneNumber": {
             "type": "string",
             "description": "Student primary phone number",
+            "nullable": true,
             "example": "8888888"
           },
           "studentSecondaryPhoneNumber": {
@@ -3338,42 +2843,24 @@
         ],
         "type": "object",
         "properties": {
-          "bookId": {
-            "type": "string"
-          },
-          "teacherSsn": {
-            "type": "string"
-          },
-          "reasonForApplication": {
-            "type": "string"
-          },
-          "createdOn": {
-            "type": "string"
-          },
-          "exemptionTypeId": {
-            "type": "integer",
-            "format": "int32"
-          }
+          "bookId": { "type": "string" },
+          "teacherSsn": { "type": "string" },
+          "reasonForApplication": { "type": "string" },
+          "createdOn": { "type": "string" },
+          "exemptionTypeId": { "type": "integer", "format": "int32" }
         },
         "additionalProperties": false
       },
       "ExemptionCreateResponse": {
         "type": "object",
         "properties": {
-          "data": {
-            "$ref": "#/components/schemas/ExemptionCreateResponseData"
-          }
+          "data": { "$ref": "#/components/schemas/ExemptionCreateResponseData" }
         },
         "additionalProperties": false
       },
       "ExemptionCreateResponseData": {
         "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "nullable": true
-          }
-        },
+        "properties": { "id": { "type": "string", "nullable": true } },
         "additionalProperties": false
       },
       "ExemptionGetResponse": {
@@ -3381,15 +2868,10 @@
         "properties": {
           "data": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Exemption"
-            },
+            "items": { "$ref": "#/components/schemas/Exemption" },
             "nullable": true
           },
-          "nextCursor": {
-            "type": "string",
-            "nullable": true
-          }
+          "nextCursor": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
@@ -3429,9 +2911,7 @@
         "properties": {
           "data": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ExemptionType"
-            },
+            "items": { "$ref": "#/components/schemas/ExemptionType" },
             "description": "",
             "nullable": true
           }
@@ -3460,31 +2940,20 @@
       "GetStudentLicenseNumberResponse": {
         "type": "object",
         "properties": {
-          "personId": {
-            "type": "string",
-            "nullable": true
-          },
+          "personId": { "type": "string", "nullable": true },
           "licenseid": {
             "type": "integer",
-            "format": "int32"
-          },
-          "categoriesOnLicense": {
-            "type": "string",
+            "format": "int32",
             "nullable": true
           },
+          "categoriesOnLicense": { "type": "string", "nullable": true },
           "temporaryLicense": {
             "type": "integer",
             "format": "int32",
             "nullable": true
           },
-          "result": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "errorCode": {
-            "type": "string",
-            "nullable": true
-          }
+          "result": { "type": "integer", "format": "int32", "nullable": true },
+          "errorCode": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
@@ -3493,9 +2962,7 @@
         "properties": {
           "data": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/StudentShortOverview"
-            },
+            "items": { "$ref": "#/components/schemas/StudentShortOverview" },
             "description": "",
             "nullable": true
           },
@@ -3513,9 +2980,7 @@
         "properties": {
           "data": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/DigitalBook"
-            },
+            "items": { "$ref": "#/components/schemas/DigitalBook" },
             "description": "",
             "nullable": true
           },
@@ -3574,9 +3039,7 @@
         "properties": {
           "data": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Application"
-            },
+            "items": { "$ref": "#/components/schemas/Application" },
             "nullable": true
           }
         },
@@ -3622,9 +3085,7 @@
           },
           "allowedDrivingSchoolTypes": {
             "type": "array",
-            "items": {
-              "type": "string"
-            },
+            "items": { "type": "string" },
             "description": "Driving school types this organization is allowed to register",
             "nullable": true
           }
@@ -3761,9 +3222,7 @@
         "properties": {
           "data": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/PracticalDrivingLesson"
-            },
+            "items": { "$ref": "#/components/schemas/PracticalDrivingLesson" },
             "description": "",
             "nullable": true
           }
@@ -3799,27 +3258,11 @@
       "ProblemDetails": {
         "type": "object",
         "properties": {
-          "type": {
-            "type": "string",
-            "nullable": true
-          },
-          "title": {
-            "type": "string",
-            "nullable": true
-          },
-          "status": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "detail": {
-            "type": "string",
-            "nullable": true
-          },
-          "instance": {
-            "type": "string",
-            "nullable": true
-          }
+          "type": { "type": "string", "nullable": true },
+          "title": { "type": "string", "nullable": true },
+          "status": { "type": "integer", "format": "int32", "nullable": true },
+          "detail": { "type": "string", "nullable": true },
+          "instance": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
@@ -3988,9 +3431,7 @@
         "properties": {
           "data": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/SchoolTestResult"
-            },
+            "items": { "$ref": "#/components/schemas/SchoolTestResult" },
             "description": "",
             "nullable": true
           }
@@ -4053,9 +3494,7 @@
         "properties": {
           "data": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/SchoolTestResultType"
-            },
+            "items": { "$ref": "#/components/schemas/SchoolTestResultType" },
             "description": "",
             "nullable": true
           }
@@ -4091,9 +3530,7 @@
         "properties": {
           "data": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ActorStudent"
-            },
+            "items": { "$ref": "#/components/schemas/ActorStudent" },
             "description": "",
             "nullable": true
           },
@@ -4166,20 +3603,13 @@
           },
           "bookLicenseCategories": {
             "type": "array",
-            "items": {
-              "type": "string"
-            },
+            "items": { "type": "string" },
             "nullable": true
           },
-          "applicationTime": {
-            "type": "string",
-            "format": "date-time"
-          },
+          "applicationTime": { "type": "string", "format": "date-time" },
           "books": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/BookOverview"
-            },
+            "items": { "$ref": "#/components/schemas/BookOverview" },
             "description": "List of student's driving license books",
             "nullable": true
           }
@@ -4190,9 +3620,7 @@
       "StudentOverviewGetResponse": {
         "type": "object",
         "properties": {
-          "data": {
-            "$ref": "#/components/schemas/StudentOverView"
-          }
+          "data": { "$ref": "#/components/schemas/StudentOverView" }
         },
         "additionalProperties": false,
         "description": ""
@@ -4200,22 +3628,10 @@
       "StudentShortOverview": {
         "type": "object",
         "properties": {
-          "studentId": {
-            "type": "string",
-            "nullable": true
-          },
-          "ssn": {
-            "type": "string",
-            "nullable": true
-          },
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "totalLessonCount": {
-            "type": "integer",
-            "format": "int32"
-          }
+          "studentId": { "type": "string", "nullable": true },
+          "ssn": { "type": "string", "nullable": true },
+          "name": { "type": "string", "nullable": true },
+          "totalLessonCount": { "type": "integer", "format": "int32" }
         },
         "additionalProperties": false
       },
@@ -4246,9 +3662,7 @@
       "TestExamRightsGetResponse": {
         "type": "object",
         "properties": {
-          "data": {
-            "$ref": "#/components/schemas/TestExamRights"
-          }
+          "data": { "$ref": "#/components/schemas/TestExamRights" }
         },
         "additionalProperties": false,
         "description": ""
@@ -4470,9 +3884,7 @@
         "properties": {
           "data": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/TestResult"
-            },
+            "items": { "$ref": "#/components/schemas/TestResult" },
             "description": "",
             "nullable": true
           }
@@ -4560,9 +3972,7 @@
         "properties": {
           "data": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/TestResultType"
-            },
+            "items": { "$ref": "#/components/schemas/TestResultType" },
             "description": "",
             "nullable": true
           }
@@ -4580,9 +3990,5 @@
       }
     }
   },
-  "security": [
-    {
-      "Bearer": []
-    }
-  ]
+  "security": [{ "Bearer": [] }]
 }

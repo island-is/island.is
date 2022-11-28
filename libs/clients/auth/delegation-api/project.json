@@ -21,7 +21,7 @@
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "outputPath": "libs/clients/auth/delegation-api/gen",
-        "command": "yarn openapi-generator -o libs/clients/auth/delegation-api/gen/fetch -i apps/services/auth/delegation-api/src/openapi.yaml"
+        "command": "yarn openapi-generator -o libs/clients/auth/delegation-api/gen/fetch -i apps/services/auth/delegation-api/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
       }
     }
   },

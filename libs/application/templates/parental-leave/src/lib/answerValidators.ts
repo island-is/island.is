@@ -338,11 +338,11 @@ export const answerValidators: Record<string, AnswerValidator> = {
     // If added new a period, sometime the old periods in newAnswer are 'null'
     // If that happen, take the periods in application and use them
     const filterPeriods = periods?.filter(
-      (period) => period?.startDate || period?.firstPeriodStart,
+      (period) => !!period?.startDate || !!period?.firstPeriodStart,
     )
     if (filterPeriods?.length !== periods?.length) {
       periods = getValueViaPath(application.answers, 'periods')
-      periods = periods?.filter((period) => period?.startDate)
+      periods = periods?.filter((period) => !!period?.startDate)
     }
     if (!isArray(periods)) {
       return {

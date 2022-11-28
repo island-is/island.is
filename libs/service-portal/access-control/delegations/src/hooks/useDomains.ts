@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useLocale } from '@island.is/localization'
-import { useAuthDomainsQuery } from '@island.is/service-portal/graphql'
+import {
+  AuthDomainDirection,
+  useAuthDomainsQuery,
+} from '@island.is/service-portal/graphql'
 import { ALL_DOMAINS, ISLAND_DOMAIN } from '../constants/domain'
 import { useQueryParam } from '@island.is/service-portal/core'
 import { useLocation, useHistory } from 'react-router-dom'
@@ -19,7 +22,7 @@ export type DomainOption = {
  *
  * The priority is the following:
  * 1. If there is a domain in query string and no session storage, use the query string
- * 2. If there is a domain in query string and session storage, use the session storage.
+ * 2. If there is a domain in query string and session storage, use the query string.
  * 3  If there is no domain in query string and session storage, use session storage.
  * 4. If there is no domain in query string and no session storage, use the default domain, i.e. ISLAND_DOMAIN.
  *
@@ -45,6 +48,7 @@ export const useDomains = (includeDefaultOption = true) => {
     variables: {
       input: {
         lang,
+        direction: AuthDomainDirection.Outgoing,
       },
     },
   })
@@ -76,10 +80,33 @@ export const useDomains = (includeDefaultOption = true) => {
     sessionStore.setItem('domain', name)
 
     const query = new URLSearchParams(location.search)
+    const currentDomain = query.get('domain')
 
-    if (query.get('domain')) {
+    if (currentDomain && currentDomain !== displayNameQueryParam) {
       query.set('domain', name)
-      history.push(`${location.pathname}?${query.toString()}`)
+      history.replace(`${location.pathname}?${query.toString()}`)
+    }
+  }
+
+  const updateDomainByName = (name: string) => {
+    const option = getOptionByName(name)
+
+    // Priority
+    // 1. Option is found by name
+    // 2. Option is not found by name, try to find ISLAND_DOMAIN
+    // 3. ISLAND_DOMAIN option is not found, select the first option in the list
+    if (option) {
+      updateDomain(option)
+    } else {
+      const islandDomainOption = getOptionByName(ISLAND_DOMAIN)
+
+      // Default to ISLAND_DOMAIN if the domain is not found
+      if (islandDomainOption) {
+        updateDomain(islandDomainOption)
+      } else {
+        // Default to the first option in the list
+        updateDomain(options[0])
+      }
     }
   }
 
@@ -87,14 +114,16 @@ export const useDomains = (includeDefaultOption = true) => {
     if (data?.authDomains) {
       const sessionDomainName = sessionStore.getItem('domain')
 
-      if (sessionDomainName) {
-        setDomainName(sessionDomainName)
+      // Priority
+      // 1. Query string
+      // 2. Session storage
+      // 3. Default domain
+      if (displayNameQueryParam) {
+        updateDomainByName(displayNameQueryParam)
+      } else if (sessionDomainName) {
+        updateDomainByName(sessionDomainName)
       } else {
-        const option = getOptionByName(displayNameQueryParam ?? ISLAND_DOMAIN)
-
-        if (option) {
-          updateDomain(option)
-        }
+        updateDomainByName(ISLAND_DOMAIN)
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
