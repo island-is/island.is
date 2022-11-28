@@ -16,8 +16,10 @@ import { useLocale } from '@island.is/localization'
 import { useFormContext } from 'react-hook-form'
 import { FishingLicenseEnum } from '../../types'
 import {
+  AREAS_FIELD_ID,
   AREA_FIELD_ID,
   ATTACHMENTS_FIELD_ID,
+  ATTACHMENT_INFO_FIELD_ID,
   RAILNET_FIELD_ID,
   ROENET_FIELD_ID,
 } from '../../utils/fields'
@@ -35,7 +37,6 @@ export const FishingLicense: FC<FieldBaseProps> = ({
     '',
   ) as string
   const [chargeType, setChargeType] = useState<string>(selectedChargeType || '')
-  const [areas, setAreas] = useState<FishingLicenseListOptions[]>([])
   const ships = getValueViaPath(
     application.externalData,
     'directoryOfFisheries.data.ships',
@@ -58,20 +59,26 @@ export const FishingLicense: FC<FieldBaseProps> = ({
 
   const ship = ships[parseInt(shipIndex)]
 
+  // Updates areas for answer object for current license
   const handleAreaChange = (areas: FishingLicenseListOptions[]) => {
-    console.log(areas)
-    console.log(`${field.id}.areas`)
-    setValue(`${field.id}.areas`, areas)
-    setAreas(areas || [])
+    setValue(AREAS_FIELD_ID, areas)
   }
 
-  const initializeAreas = (licenseCode: string) => {
+  // Updates attachment info for answer object for current license
+  const handleAttatchmentInfoChange = (info: string) => {
+    setValue(ATTACHMENT_INFO_FIELD_ID, info)
+  }
+
+  // setup extra fields, i.e. areas and attachment info for application
+  // based on selected application for current license
+  const initializeExtraFields = (licenseCode: string) => {
     const selectedLicense = data?.fishingLicenses?.find(
       ({ fishingLicenseInfo }: FishingLicenseSchema) =>
         fishingLicenseInfo.code === licenseCode,
     ) as FishingLicenseSchema
     if (selectedLicense) {
       handleAreaChange(selectedLicense.areas || [])
+      handleAttatchmentInfoChange(selectedLicense.attachmentInfo || '')
     }
   }
 
@@ -84,6 +91,7 @@ export const FishingLicense: FC<FieldBaseProps> = ({
     if (selectedLicense) {
       setChargeType(selectedLicense.fishingLicenseInfo.chargeType)
       handleAreaChange(selectedLicense.areas || [])
+      handleAttatchmentInfoChange(selectedLicense.attachmentInfo || '')
     }
   }
 
@@ -93,7 +101,7 @@ export const FishingLicense: FC<FieldBaseProps> = ({
     if (selectedChargeType === FishingLicenseEnum.UNKNOWN) {
       setValue(`${field.id}.license`, null)
     }
-    initializeAreas(selectedChargeType)
+    initializeExtraFields(selectedChargeType)
   }, [])
 
   // Reinitialize license type when user changes charge type

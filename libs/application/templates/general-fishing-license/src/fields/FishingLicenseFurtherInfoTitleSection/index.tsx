@@ -55,14 +55,14 @@ export const FishingLicenseFurtherInfoTitleSection: FC<FieldBaseProps> = ({
       setValue(RAILNET_FIELD_ID, undefined)
       setValue(ROENET_FIELD_ID, undefined)
     }
-    // Setting attachment to undefined if charge type should not provide attatchments
+    // Setting attachment to undefined if charge type should not provide attachments
     if (
       !licenseHasFileUploadField(selectedChargeType) &&
       getValues(ATTACHMENTS_FIELD_ID) !== undefined
     ) {
       setValue(ATTACHMENTS_FIELD_ID, undefined)
     }
-    // If attatchments should be with current charge type, initialize as empty array
+    // If attachments should be with current charge type, initialize as empty array
     if (licenseHasFileUploadField(selectedChargeType)) {
       setValue(ATTACHMENTS_FIELD_ID, [])
     }
