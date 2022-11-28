@@ -10,7 +10,7 @@ import { m } from '../lib/messages'
 export const PendingRejected: Form = buildForm({
   id: 'PendingForm',
   title: 'Pending',
-  mode: FormModes.REJECTED,
+  mode: FormModes.IN_PROGRESS,
   children: [
     buildSection({
       id: 'externalData',

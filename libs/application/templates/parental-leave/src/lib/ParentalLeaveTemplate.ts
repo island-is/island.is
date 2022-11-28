@@ -571,7 +571,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         entry: 'assignToVMST',
         meta: {
           name: States.APPROVED,
-          status: 'approved',
+          status: 'inprogress',
           actionCard: {
             description: statesMessages.approvedDescription,
           },
