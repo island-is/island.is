@@ -98,7 +98,11 @@
     "dev": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
-        "commands": ["./scripts/run-es-proxy.sh", "yarn nx run api:dev", "yarn start web"],
+        "commands": [
+          "./scripts/run-es-proxy.sh",
+          "yarn nx run api:dev",
+          "yarn start web"
+        ],
         "parallel": true
       }
     },
