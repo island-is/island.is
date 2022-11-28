@@ -40,7 +40,8 @@ import {
 import * as styles from './SearchInput.css'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { TestSupport } from '@island.is/island-ui/utils'
-import { trackSearchQuery } from '../../../../libs/plausible/src/lib/webEvents'
+import { trackSearchQuery } from '@island.is/plausible'
+
 
 const DEBOUNCE_TIMER = 150
 const STACK_WIDTH = 400
@@ -455,9 +456,6 @@ const Results = ({
                   onClick={(e) => {
                     onClick(e)
                     onRouting()
-                    alert(search.term)
-                    alert(suggestion)
-                    console.log(e)
                   }}
                 >
                   <Text color={i === highlightedIndex ? 'blue400' : 'dark400'}>

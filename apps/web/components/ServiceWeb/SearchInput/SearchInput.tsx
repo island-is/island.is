@@ -22,7 +22,7 @@ import {
 } from '@island.is/web/graphql/schema'
 import { getSlugPart } from '@island.is/web/screens/ServiceWeb/utils'
 import { useI18n } from '@island.is/web/i18n'
-import { trackSearchQuery } from '../../../../../libs/plausible/src/lib/webEvents'
+import { trackSearchQuery } from '@island.is/plausible'
 
 interface SearchInputProps {
   title?: string
