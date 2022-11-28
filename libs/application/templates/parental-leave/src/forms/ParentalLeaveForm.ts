@@ -1,4 +1,5 @@
 import addDays from 'date-fns/addDays'
+import addMonths from 'date-fns/addMonths'
 
 import {
   buildAsyncSelectField,
@@ -982,7 +983,7 @@ export const ParentalLeaveForm: Form = buildForm({
                       expectedDateOfBirth &&
                       new Date(expectedDateOfBirth).getTime() > today.getTime()
                     ) {
-                      const leastStartDate = addDays(
+                      const leastStartDate = addMonths(
                         new Date(expectedDateOfBirth),
                         -minimumPeriodStartBeforeExpectedDateOfBirth,
                       )

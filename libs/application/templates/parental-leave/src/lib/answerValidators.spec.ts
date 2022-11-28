@@ -5,6 +5,7 @@ import {
   ApplicationTypes,
 } from '@island.is/application/types'
 import addDays from 'date-fns/addDays'
+import addMonths from 'date-fns/addMonths'
 import format from 'date-fns/format'
 
 import { minimumPeriodStartBeforeExpectedDateOfBirth } from '../config'
@@ -404,7 +405,7 @@ describe('when constructing a new period', () => {
   })
 
   it('should not be allowed to pass in a start date before dob but not further back than minimum', () => {
-    const minimumDate = addDays(
+    const minimumDate = addMonths(
       DEFAULT_DOB_DATE,
       -minimumPeriodStartBeforeExpectedDateOfBirth,
     )
