@@ -30,13 +30,14 @@ class MyDocument extends Document<Props> {
         <Head>
           {Boolean(domain) && (
             <script
+              async
               defer
               data-domain={domain}
               src="https://plausible.io/js/plausible.js"
             ></script>
           )}
-          {/* <script defer data-domain="localhost:4200" src="https://plausible.io/js/plausible.js"></script>
-          <script defer data-domain="localhost:4200" src="https://plausible.io/js/script.local.js"></script> */}
+          {/* <script async defer data-domain="localhost:4200" src="https://plausible.io/js/plausible.js"></script> */}
+          {/* <script defer data-domain="localhost:4200" src="https://plausible.io/js/script.local.js"></script> */}
         </Head>
         <body>
           <Main />
