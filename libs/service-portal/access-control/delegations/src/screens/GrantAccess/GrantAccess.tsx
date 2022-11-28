@@ -34,7 +34,7 @@ import {
   useCreateAuthDelegationMutation,
   useIdentityLazyQuery,
 } from '@island.is/service-portal/graphql'
-import { useDomains } from '../../hooks/useDomains'
+import { DomainOption, useDomains } from '../../hooks/useDomains'
 import { ALL_DOMAINS } from '../../constants/domain'
 
 const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
@@ -44,7 +44,12 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
   const inputRef = React.useRef<HTMLInputElement>(null)
   const history = useHistory()
   const { md } = useBreakpoint()
-  const { options, selectedOption, loading: domainLoading } = useDomains(false)
+  const {
+    options,
+    selectedOption,
+    loading: domainLoading,
+    updateDomain,
+  } = useDomains(false)
 
   const [
     createAuthDelegation,
@@ -167,8 +172,8 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
             <Box display="flex" flexDirection="column" rowGap={[5, 6]}>
               <IdentityCard
                 label={formatMessage({
-                  id: 'sp.access-control-delegations:signed-in-user',
-                  defaultMessage: 'Innskráður notandi',
+                  id: 'sp.access-control-delegations:delegation-to',
+                  defaultMessage: 'Aðgangsveitandi',
                 })}
                 title={userInfo.profile.name}
                 description={formatNationalId(userInfo.profile.nationalId)}
@@ -266,6 +271,13 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
                     })}
                     error={errors.domainName?.message}
                     options={options}
+                    onSelect={(option) => {
+                      const opt = option as DomainOption
+
+                      if (opt) {
+                        updateDomain(opt)
+                      }
+                    }}
                     rules={{
                       required: {
                         value: true,
@@ -295,6 +307,7 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
                   onCancel={() =>
                     history.push(ServicePortalPath.AccessControlDelegations)
                   }
+                  showShadow={false}
                   confirmLabel={formatMessage({
                     id: 'sp.access-control-delegations:choose-access-rights',
                     defaultMessage: 'Velja réttindi',

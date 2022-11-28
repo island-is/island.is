@@ -48,6 +48,7 @@ export class ArticleCategorySyncService
         } catch (error) {
           logger.warn('Failed to import article category', {
             error: error.message,
+            id: entry?.sys?.id,
           })
           return false
         }
