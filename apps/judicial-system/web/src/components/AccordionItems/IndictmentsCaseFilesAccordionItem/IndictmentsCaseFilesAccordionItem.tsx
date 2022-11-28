@@ -40,6 +40,8 @@ import * as styles from './IndictmentsCaseFilesAccordionItem.css'
 import { UpdateFileMutation } from './UpdateFiles.gql'
 import { useMeasure } from 'react-use'
 import IndictmentInfo from '../../IndictmentInfo/IndictmentInfo'
+import Modal from '../../Modal/Modal'
+import { core, errors } from '@island.is/judicial-system-web/messages'
 
 const DDMMYYYY = 'dd.MM.yyyy'
 
@@ -404,7 +406,7 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
     UpdateFileMutation,
   )
 
-  const { onOpen } = useFileList({ caseId })
+  const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({ caseId })
   const { remove } = useS3UploadV2(caseId)
 
   const [reorderableItems, setReorderableItems] = useState<ReorderableItem[]>(
@@ -583,70 +585,82 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
   }
 
   return (
-    <AccordionItem
-      id="IndictmentsCaseFilesAccordionItem"
-      label={formatMessage(m.title, {
-        policeCaseNumber,
-      })}
-      labelVariant="h3"
-      startExpanded={shouldStartExpanded}
-    >
-      <Box marginBottom={3}>
-        <IndictmentInfo
-          policeCaseNumber={policeCaseNumber}
-          subtypes={subtypes}
-          crimeScenes={crimeScenes}
-        />
-      </Box>
-      <Box marginBottom={3}>
-        <Text>{formatMessage(m.explanation)}</Text>
-      </Box>
-      {/* 
+    <>
+      <AccordionItem
+        id="IndictmentsCaseFilesAccordionItem"
+        label={formatMessage(m.title, {
+          policeCaseNumber,
+        })}
+        labelVariant="h3"
+        startExpanded={shouldStartExpanded}
+      >
+        <Box marginBottom={3}>
+          <IndictmentInfo
+            policeCaseNumber={policeCaseNumber}
+            subtypes={subtypes}
+            crimeScenes={crimeScenes}
+          />
+        </Box>
+        <Box marginBottom={3}>
+          <Text>{formatMessage(m.explanation)}</Text>
+        </Box>
+        {/* 
       Render the first chapter here, outside the reorder group because 
       you should not be able to put a file above the first chapter.
        */}
-      <Box marginBottom={2}>
-        {renderChapter(
-          0,
-          formatMessage(m.chapterIndictmentAndAccompanyingDocuments),
-        )}
-      </Box>
-      <Reorder.Group
-        axis="y"
-        values={reorderableItems}
-        onReorder={setReorderableItems}
-        className={styles.reorderGroup}
-      >
-        {reorderableItems.map((item) => {
-          return (
-            <Box key={item.id} marginBottom={2}>
-              <CaseFile
-                caseFile={item}
-                onReorder={handleReorder}
-                onOpen={onOpen}
-                onRename={handleRename}
-                onDelete={handleDelete}
-              />
-            </Box>
-          )
-        })}
-      </Reorder.Group>
-      <AnimatePresence>
-        {reorderableItems.length > 0 &&
-          reorderableItems[reorderableItems.length - 1].isDivider && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              <AlertMessage
-                type="success"
-                message={formatMessage(m.noCaseFiles)}
-              />
-            </motion.div>
+        <Box marginBottom={2}>
+          {renderChapter(
+            0,
+            formatMessage(m.chapterIndictmentAndAccompanyingDocuments),
           )}
+        </Box>
+        <Reorder.Group
+          axis="y"
+          values={reorderableItems}
+          onReorder={setReorderableItems}
+          className={styles.reorderGroup}
+        >
+          {reorderableItems.map((item) => {
+            return (
+              <Box key={item.id} marginBottom={2}>
+                <CaseFile
+                  caseFile={item}
+                  onReorder={handleReorder}
+                  onOpen={onOpen}
+                  onRename={handleRename}
+                  onDelete={handleDelete}
+                />
+              </Box>
+            )
+          })}
+        </Reorder.Group>
+        <AnimatePresence>
+          {reorderableItems.length > 0 &&
+            reorderableItems[reorderableItems.length - 1].isDivider && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                <AlertMessage
+                  type="success"
+                  message={formatMessage(m.noCaseFiles)}
+                />
+              </motion.div>
+            )}
+        </AnimatePresence>
+      </AccordionItem>
+      <AnimatePresence>
+        {fileNotFound && (
+          <Modal
+            title={formatMessage(errors.fileNotFoundModalTitle)}
+            onClose={() => dismissFileNotFound()}
+            onPrimaryButtonClick={() => dismissFileNotFound()}
+            primaryButtonText={formatMessage(core.closeModal)}
+          />
+        )}
       </AnimatePresence>
-    </AccordionItem>
+    </>
   )
 }
 
