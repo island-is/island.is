@@ -20,12 +20,18 @@ export const prosecutorAndDefender = defineMessages({
     defaultMessage: 'Skipaður verjandi',
     description: 'Notaður sem texti fyrir val á skipaðan verjanda í ákærum.',
   },
-
   defendantWaivesRightToCounsel: {
     id:
       'judicial.system.core:court_indictments.prosecutor_and_defender.defendant_waives_right_to_counsel',
     defaultMessage: '{accused} óskar ekki eftir að sér sé skipaður verjandi',
     description:
       'Notaður sem texti fyrir takka þegar ákærðu óska ekki eftir verjanda í dómaraflæði í ákærum. ',
+  },
+  nextButtonText: {
+    id:
+      'judicial.system.core:court_indictments.prosecutor_and_defender.next_button_text',
+    defaultMessage: 'Senda tilkynningar',
+    description:
+      'Notaður sem texti á áfram takka á málflytjendurskjá í dómaraflæði í ákærum.',
   },
 })
