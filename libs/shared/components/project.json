@@ -25,5 +25,5 @@
       }
     }
   },
-  "tags": []
+  "tags": ["scope:react-spa", "lib:react-spa"]
 }

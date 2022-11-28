@@ -27,7 +27,6 @@ import { VehicleMiniDto } from '@island.is/clients/vehicles'
 import { VehicleServiceFjsV1ClientService } from '@island.is/clients/vehicle-service-fjs-v1'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(ApiScope.vehicles)
 @Resolver()
 @Audit({ namespace: '@island.is/api/vehicles' })
 export class VehiclesResolver {
@@ -40,6 +39,7 @@ export class VehiclesResolver {
     private readonly vehicleServiceFjsV1ClientService: VehicleServiceFjsV1ClientService,
   ) {}
 
+  @Scopes(ApiScope.vehicles)
   @Query(() => VehiclesList, { name: 'vehiclesList', nullable: true })
   @Audit()
   async getVehicleList(@CurrentUser() user: User) {
@@ -53,6 +53,7 @@ export class VehiclesResolver {
     return { ...data, downloadServiceURL }
   }
 
+  @Scopes(ApiScope.vehicles)
   @Query(() => VehiclesHistory, { name: 'vehiclesHistoryList', nullable: true })
   @Audit()
   async getVehicleHistory(@CurrentUser() user: User) {
@@ -76,6 +77,7 @@ export class VehiclesResolver {
     return { ...data, downloadServiceURL }
   }
 
+  @Scopes(ApiScope.internal, ApiScope.internalProcuring)
   @Query(() => Number, {
     name: 'vehiclesSearchLimit',
     nullable: true,
@@ -85,6 +87,7 @@ export class VehiclesResolver {
     return await this.vehiclesService.getSearchLimit(user)
   }
 
+  @Scopes(ApiScope.internal, ApiScope.internalProcuring)
   @Query(() => VehiclesVehicleSearch, {
     name: 'vehiclesSearch',
     nullable: true,

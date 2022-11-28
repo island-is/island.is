@@ -1,33 +1,25 @@
+import { isDefined } from '@island.is/shared/utils'
 import { AuthCustomDelegation } from '@island.is/api/schema'
 import { useAuth } from '@island.is/auth/react'
-import {
-  AlertBanner,
-  Box,
-  GridRow,
-  GridColumn,
-  Text,
-  useBreakpoint,
-  Divider,
-} from '@island.is/island-ui/core'
+import { AlertBanner, Box, useBreakpoint } from '@island.is/island-ui/core'
 import { m } from '@island.is/service-portal/core'
+import {
+  AuthDelegationScope,
+  AuthScopeTreeQuery,
+} from '@island.is/service-portal/graphql'
 import { useLocale } from '@island.is/localization'
 import { formatNationalId } from '@island.is/service-portal/core'
 import { useState } from 'react'
-import format from 'date-fns/format'
-import { DATE_FORMAT } from './AccessItem'
-import { AccessItemHeader } from './AccessItemHeader'
 import { DelegationsFormFooter } from '../delegations/DelegationsFormFooter'
 import { Modal, ModalProps } from '../Modal/Modal'
 import { IdentityCard } from '../IdentityCard/IdentityCard'
-import type { MappedScope } from './access.types'
-import * as accessItemStyles from './AccessItem.css'
-import * as commonAccessStyles from './access.css'
-import { isDefined } from '@island.is/shared/utils'
+import { AccessListContainer } from './AccessList/AccessListContainer'
 
 type AccessConfirmModalProps = Pick<ModalProps, 'onClose' | 'isVisible'> & {
   delegation: AuthCustomDelegation
-  scopes?: MappedScope[]
-  validityPeriod: Date | null
+  scopes?: Pick<AuthDelegationScope, 'name' | 'validTo' | 'displayName'>[]
+  scopeTree: AuthScopeTreeQuery['authScopeTree']
+  validityPeriod?: Date | null
   loading: boolean
   error?: boolean
   onConfirm(): Promise<void>
@@ -35,6 +27,7 @@ type AccessConfirmModalProps = Pick<ModalProps, 'onClose' | 'isVisible'> & {
 
 export const AccessConfirmModal = ({
   delegation,
+  scopeTree,
   onClose,
   onConfirm,
   scopes,
@@ -45,8 +38,8 @@ export const AccessConfirmModal = ({
 }: AccessConfirmModalProps) => {
   const { formatMessage } = useLocale()
   const { userInfo } = useAuth()
-  const [error, setError] = useState(formError ?? false)
   const { md } = useBreakpoint()
+  const [error, setError] = useState(formError ?? false)
 
   const onConfirmHandler = async () => {
     if (!delegation.id || !scopes) {
@@ -132,95 +125,17 @@ export const AccessConfirmModal = ({
           />
         )}
       </Box>
-      <Box display="flex" flexDirection="column" rowGap={3} marginTop={6}>
-        <Box display="flex" alignItems="center" justifyContent="spaceBetween">
-          <Text variant="h4" as="h4">
-            {formatMessage({
-              id: 'sp.access-control-delegations:access-title',
-              defaultMessage: 'Réttindi',
-            })}
-          </Text>
-          {validityPeriod && (
-            <Box display="flex" flexDirection="column" alignItems="flexEnd">
-              <Text variant="small">
-                {formatMessage({
-                  id:
-                    'sp.settings-access-control:access-item-datepicker-label-mobile',
-                  defaultMessage: 'Í gildi til',
-                })}
-              </Text>
-              <Text fontWeight="semiBold">
-                {format(validityPeriod, DATE_FORMAT)}
-              </Text>
-            </Box>
-          )}
-        </Box>
-        <Box
-          marginBottom={[0, 0, 12]}
-          className={commonAccessStyles.resetMarginGutter}
-        >
-          <AccessItemHeader hideValidityPeriod={!!validityPeriod} />
-          <Box className={accessItemStyles.dividerContainer}>
-            <Divider />
-          </Box>
-          {scopes?.map(
-            (scope, index) =>
-              scope?.displayName && (
-                <div key={index}>
-                  <GridRow className={accessItemStyles.row} key={index}>
-                    <GridColumn
-                      span={['12/12', '12/12', '3/12']}
-                      className={accessItemStyles.item}
-                    >
-                      <Text fontWeight="light">{scope?.displayName}</Text>
-                    </GridColumn>
-                    {((!md && scope?.description?.trim()) || md) && (
-                      <GridColumn
-                        span={['12/12', '12/12', '4/12', '5/12']}
-                        className={accessItemStyles.item}
-                        paddingTop={[3, 3, 3, 0]}
-                      >
-                        <Box
-                          display="flex"
-                          flexDirection="column"
-                          className={accessItemStyles.rowGap}
-                        >
-                          {!md && (
-                            <Text variant="small" fontWeight="semiBold">
-                              {formatMessage({
-                                id: 'sp.access-control-delegations:grant',
-                                defaultMessage: 'Heimild',
-                              })}
-                            </Text>
-                          )}
-                          <Text variant="small" fontWeight="light">
-                            {scope?.description}
-                          </Text>
-                        </Box>
-                      </GridColumn>
-                    )}
-                    {!validityPeriod && scope?.validTo && (
-                      <GridColumn
-                        span={['12/12', '8/12', '5/12', '4/12']}
-                        paddingTop={[2, 2, 2, 0]}
-                      >
-                        <Text variant="small">
-                          {format(new Date(scope?.validTo), DATE_FORMAT)}
-                        </Text>
-                      </GridColumn>
-                    )}
-                  </GridRow>
-                  <Box className={accessItemStyles.dividerContainer}>
-                    <Divider />
-                  </Box>
-                </div>
-              ),
-          )}
-        </Box>
-      </Box>
+      <AccessListContainer
+        delegation={delegation}
+        scopes={scopes}
+        scopeTree={scopeTree}
+        validityPeriod={validityPeriod}
+        listMarginBottom={[0, 0, 10]}
+      />
       <Box position="sticky" bottom={0}>
         <DelegationsFormFooter
           loading={loading}
+          showShadow={md}
           onCancel={onClose}
           onConfirm={onConfirmHandler}
           confirmLabel={formatMessage(m.codeConfirmation)}
