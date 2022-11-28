@@ -86,6 +86,7 @@ const Admin: Screen = () => {
     postalCode: filters.postalCode
       ? parseInt(filters.postalCode.toString())
       : undefined,
+    isExplicit: Boolean(filters.isExplicit?.length),
   }
   const [confirmInvoice, { loading: confirmInvoiceLoading }] = useMutation(
     ConfirmInvoiceMutation,

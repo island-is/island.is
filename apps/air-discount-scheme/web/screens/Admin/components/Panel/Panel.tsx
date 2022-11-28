@@ -41,7 +41,6 @@ function Panel({ flightLegs }: PropTypes) {
             <HeadData>Staða</HeadData>
             <HeadData alignRight>Verð (kr.)</HeadData>
             <HeadData alignRight>Afsláttur (kr.)</HeadData>
-            <HeadData>Handvirkur</HeadData>
           </Row>
         </Head>
         <Body>

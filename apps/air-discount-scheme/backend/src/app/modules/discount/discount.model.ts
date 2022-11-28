@@ -7,6 +7,7 @@ import {
 } from '@island.is/air-discount-scheme/types'
 import { User } from '../user/user.model'
 import {
+  BelongsTo,
   Column,
   CreatedAt,
   DataType,
@@ -16,7 +17,7 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { Optional } from 'sequelize/types'
-import { Flight } from '../flight'
+import { Flight } from '../flight/flight.model'
 
 import { ConnectionDiscountCode as GQLConnectionDiscountCode } from './connectionDiscountCode.model'
 
@@ -71,6 +72,9 @@ export class ExplicitCode
     allowNull: true,
   })
   flightId?: string
+
+  @BelongsTo(() => Flight)
+  flight: any
 
   @Column({
     type: DataType.STRING,

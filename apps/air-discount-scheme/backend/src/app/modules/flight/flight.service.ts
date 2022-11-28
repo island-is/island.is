@@ -13,6 +13,7 @@ import { FlightLegSummary } from './flight.types'
 import { Flight, FlightLeg, financialStateMachine } from './flight.model'
 import { CreateFlightBody, GetFlightLegsBody } from './dto'
 import { NationalRegistryUser } from '../nationalRegistry'
+import { ExplicitCode } from '../discount/discount.model'
 
 export const ADS_POSTAL_CODES = {
   Reykhólahreppur: 380,
@@ -49,6 +50,8 @@ export class FlightService {
     private flightModel: typeof Flight,
     @InjectModel(FlightLeg)
     private flightLegModel: typeof FlightLeg,
+    @InjectModel(ExplicitCode)
+    private explicitModel: typeof ExplicitCode,
   ) {}
 
   isADSPostalCode(postalcode: number): boolean {
@@ -283,6 +286,16 @@ export class FlightService {
                 : {}),
             },
           ),
+          ...(body.isExplicit
+            ? {
+                include: [
+                  {
+                    model: this.explicitModel,
+                    required: true,
+                  },
+                ],
+              }
+            : {}),
         },
       ],
     })

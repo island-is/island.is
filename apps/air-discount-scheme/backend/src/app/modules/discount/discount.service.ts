@@ -2,7 +2,7 @@ import { uuid } from 'uuidv4'
 import { Inject, Injectable, CACHE_MANAGER } from '@nestjs/common'
 
 import { Discount, ExplicitCode } from './discount.model'
-import { Flight } from '../flight'
+import { Flight } from '../flight/flight.model'
 import {
   CONNECTING_FLIGHT_GRACE_PERIOD,
   REYKJAVIK_FLIGHT_CODES,
