@@ -21,9 +21,29 @@ import {
 import { defineMessage } from 'react-intl'
 import { formatDate } from '../../utils/dateUtils'
 import { m } from '../../lib/messages'
-import { usePassport } from '@island.is/service-portal/graphql'
+import {
+  IdentityDocumentModelChild,
+  useChildrenPassport,
+  usePassport,
+} from '@island.is/service-portal/graphql'
 import * as styles from './PassportDetail.css'
 import { Gender, GenderType } from '../../types/passport.type'
+
+const getCurrentPassport = (
+  id: string | undefined,
+  data?: IdentityDocumentModelChild[] | null,
+) => {
+  let pass = null
+
+  if (!data) return pass
+
+  for (const passport of data) {
+    pass = passport?.passports?.find((x) => x.numberWithType === id)
+    if (pass) break
+  }
+
+  return pass
+}
 
 const NotifyLostLink = (text: string) => (
   <Link href="https://www.skra.is/umsoknir/eydublod-umsoknir-og-vottord/stok-vara/?productid=7a8b6878-757d-11e9-9452-005056851dd2">
@@ -38,6 +58,11 @@ const PassportDetail: ServicePortalModuleComponent = () => {
   const { formatMessage } = useLocale()
   const { id }: { id: string | undefined } = useParams()
   const { data: passportData, loading, error } = usePassport()
+  const {
+    data: childPassportData,
+    loading: childLoading,
+    error: childError,
+  } = useChildrenPassport()
 
   const passportGender: Gender = {
     F: formatMessage(m.female),
@@ -45,7 +70,10 @@ const PassportDetail: ServicePortalModuleComponent = () => {
     X: formatMessage(m.otherGender),
   }
 
-  const data = passportData?.find((x) => x.numberWithType === id) || null
+  const data =
+    passportData?.find((x) => x.numberWithType === id) ||
+    getCurrentPassport(id, childPassportData) ||
+    null
 
   const licenseExpired = data?.expiryStatus === 'EXPIRED'
   const licenseLost = data?.expiryStatus === 'LOST'
@@ -205,15 +233,6 @@ const PassportDetail: ServicePortalModuleComponent = () => {
           <UserInfoLine
             label={formatMessage(m.passportGender)}
             content={passportGender[data.sex as GenderType] || data.sex || ''}
-            loading={loading}
-            paddingBottom={1}
-            labelColumnSpan={['1/1', '6/12']}
-            valueColumnSpan={['1/1', '6/12']}
-          />
-          <Divider />
-          <UserInfoLine
-            label={formatMessage(m.issuedBy)}
-            content="Þjóðskrá" // Can there be some other issuer?
             loading={loading}
             paddingBottom={1}
             labelColumnSpan={['1/1', '6/12']}
