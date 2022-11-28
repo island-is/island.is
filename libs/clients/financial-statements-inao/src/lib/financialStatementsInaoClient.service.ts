@@ -1,5 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { createEnhancedFetch } from '@island.is/clients/middlewares'
+import {
+  createEnhancedFetch,
+  EnhancedFetchAPI,
+} from '@island.is/clients/middlewares'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'
@@ -33,26 +36,29 @@ import { lookup, LookupType } from './utils/lookup'
 
 @Injectable()
 export class FinancialStatementsInaoClientService {
+  private basePath = ''
+  private fetch: EnhancedFetchAPI
+
   constructor(
     @Inject(FinancialStatementsInaoClientConfig.KEY)
     private config: ConfigType<typeof FinancialStatementsInaoClientConfig>,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-  ) {}
+  ) {
+    this.basePath = this.config.basePath
 
-  basePath = this.config.basePath
-
-  fetch = createEnhancedFetch({
-    name: 'financialStatementsInao-odata',
-    autoAuth: {
-      issuer: this.config.issuer,
-      clientId: this.config.clientId,
-      clientSecret: this.config.clientSecret,
-      scope: [this.config.scope],
-      mode: 'token',
-      tokenEndpoint: this.config.tokenEndpoint,
-    },
-  })
+    this.fetch = createEnhancedFetch({
+      name: 'financialStatementsInao-odata',
+      autoAuth: {
+        issuer: this.config.issuer,
+        clientId: this.config.clientId,
+        clientSecret: this.config.clientSecret,
+        scope: [this.config.scope],
+        mode: 'token',
+        tokenEndpoint: this.config.tokenEndpoint,
+      },
+    })
+  }
 
   async getClientTypes(): Promise<ClientType[] | null> {
     const url = `${this.basePath}/GlobalOptionSetDefinitions(Name='star_clienttypechoice')`
@@ -171,7 +177,7 @@ export class FinancialStatementsInaoClientService {
     if (!data || !data.value) return null
 
     const elections: Election[] = data.value.map((x: any) => {
-      return <Election>{
+      return {
         electionId: x.star_electionid,
         name: x.star_name,
         electionDate: new Date(x.star_electiondate),
@@ -227,7 +233,7 @@ export class FinancialStatementsInaoClientService {
     if (!data || !data.value) return null
 
     const financialTypes: FinancialType[] = data.value.map((x: any) => {
-      return <FinancialType>{
+      return {
         numericValue: x.star_numeric,
         financialTypeId: x.star_financialtypeid,
       }
@@ -240,7 +246,7 @@ export class FinancialStatementsInaoClientService {
     input: PersonalElectionSubmitInput,
   ): Promise<boolean> {
     const financialValues: LookupType[] = []
-
+    this.logger.info('Should this be here?')
     if (!input.noValueStatement && input.values) {
       const financialTypes = await this.getFinancialTypes()
 
@@ -475,7 +481,7 @@ export class FinancialStatementsInaoClientService {
     if (!data || !data.value) return []
 
     const config: Config[] = data.value.map((x: any) => {
-      return <Config>{
+      return {
         key: x.star_key,
         value: x.star_value,
       }
@@ -495,7 +501,7 @@ export class FinancialStatementsInaoClientService {
     if (!data || !data.value) return []
 
     const taxInfo: TaxInfo[] = data.value.map((x: any) => {
-      return <TaxInfo>{
+      return {
         key: x.star_FinancialType.star_numeric,
         value: x.star_value,
       }
