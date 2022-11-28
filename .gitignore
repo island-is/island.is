@@ -88,3 +88,4 @@ fragmentTypes.json
 
 # Gitbook/Honkit
 _book
+.vscode/settings.json
