@@ -11,7 +11,7 @@ export const AttachmentsTitleSection: FC<FieldBaseProps> = () => {
   const description = getValues(ATTACHMENT_INFO_FIELD_ID)
   const { formatMessage } = useLocale()
   return (
-    <Box marginTop={4} marginBottom={4}>
+    <Box marginTop={4} marginBottom={2}>
       <Box marginBottom={2}>
         <Text variant="h5">
           {formatMessage(fishingLicenseFurtherInformation.labels.attachments)}
