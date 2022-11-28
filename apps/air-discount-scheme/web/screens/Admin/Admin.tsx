@@ -182,6 +182,15 @@ const Admin: Screen = () => {
                   </Box>
                 </Button>
               </Box>
+              <Box paddingTop={3}>
+                <Button
+                  width="fluid"
+                  variant="redGhost"
+                  onClick={() => window.open('/admin/discount', '_blank')}
+                >
+                  Handvirkir kóðar
+                </Button>
+              </Box>
             </Box>
           </Stack>
         </GridColumn>
