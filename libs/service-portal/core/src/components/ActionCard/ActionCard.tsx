@@ -20,6 +20,7 @@ type ActionCardProps = {
   date?: string
   heading?: string
   text?: string
+  secondaryText?: string
   eyebrow?: string
   loading?: boolean
   backgroundColor?: 'white' | 'blue' | 'red'
@@ -37,6 +38,7 @@ type ActionCardProps = {
     icon?: IconMapIcon
     onClick?: () => void
     disabled?: boolean
+    centered?: boolean
   }
   secondaryCta?: {
     label: string
@@ -45,6 +47,7 @@ type ActionCardProps = {
     icon?: IconMapIcon
     onClick?: () => void
     disabled?: boolean
+    centered?: boolean
   }
   image?: {
     type: 'avatar' | 'image' | 'logo'
@@ -67,6 +70,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
   date,
   heading,
   text,
+  secondaryText,
   eyebrow,
   loading,
   backgroundColor = 'white',
@@ -288,6 +292,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
       {renderDate()}
       <Box
         alignItems={['flexStart', 'center']}
+        justifyContent="center"
         display="flex"
         flexDirection={['column', 'row']}
       >
@@ -318,8 +323,15 @@ export const ActionCard: React.FC<ActionCardProps> = ({
               </Hidden>
             </Box>
           )}
-
           {text && <Text paddingTop={heading ? 1 : 0}>{text}</Text>}
+        </Box>
+        <Box
+          display="flex"
+          flexDirection="row"
+          justifyContent="spaceBetween"
+          alignItems="center"
+        >
+          {secondaryText && <Text>{secondaryText}</Text>}
         </Box>
 
         <Box
@@ -329,7 +341,9 @@ export const ActionCard: React.FC<ActionCardProps> = ({
           flexShrink={0}
           marginTop={[1, 0]}
           marginLeft={[0, 'auto']}
-          className={tag?.label ? styles.tag : styles.button}
+          className={
+            tag?.label ? styles.tag : cta.centered ? undefined : styles.button
+          }
         >
           <Hidden below="sm">{!date && !eyebrow && renderTag()}</Hidden>
           {renderDefault()}

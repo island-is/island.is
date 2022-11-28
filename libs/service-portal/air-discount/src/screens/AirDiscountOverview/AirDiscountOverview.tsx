@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { defineMessage } from 'react-intl'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
@@ -12,8 +12,13 @@ import {
 } from '@island.is/service-portal/core'
 import { gql, useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
-import { Box, Stack } from '@island.is/island-ui/core'
-import { ServicePortalPath } from '@island.is/service-portal/core'
+import {
+  AlertMessage,
+  Box,
+  Stack,
+  Text,
+  toast,
+} from '@island.is/island-ui/core'
 import { messages as m } from '../../lib/messages'
 import copyToClipboard from 'copy-to-clipboard'
 
@@ -40,14 +45,18 @@ const AirDiscountQuery = gql`
     }
   }
 `
+
+type CopiedCode = {
+  code: string
+  copied: boolean
+}
+
 export const AirDiscountOverview: ServicePortalModuleComponent = () => {
   useNamespaces('sp.air-discount')
   const { formatMessage } = useLocale()
-
   const { data, loading, error } = useQuery<Query>(AirDiscountQuery)
-
+  const [copiedCodes, setCopiedCodes] = useState<CopiedCode[]>([])
   const airDiscounts = data?.getDiscount
-  console.log(airDiscounts)
 
   if (error && !loading) {
     return (
@@ -63,6 +72,13 @@ export const AirDiscountOverview: ServicePortalModuleComponent = () => {
     )
   }
 
+  const copy = (code: string) => {
+    copyToClipboard(code)
+    const newCode: CopiedCode = { code: code, copied: true }
+    setCopiedCodes([...copiedCodes, newCode])
+    toast.success(formatMessage(m.codeCopiedSuccess))
+  }
+
   return (
     <>
       <Box marginBottom={[3, 4, 5]}>
@@ -70,26 +86,45 @@ export const AirDiscountOverview: ServicePortalModuleComponent = () => {
           title={defineMessage(m.introTitle)}
           intro={defineMessage(m.introDescription)}
         />
+        <Text variant="small" paddingBottom={2}>
+          {formatMessage(m.discountText)}
+        </Text>
+        <AlertMessage
+          type="warning"
+          title={formatMessage(m.attention)}
+          message={formatMessage(m.codeRenewalText)}
+        />
       </Box>
       {loading && <CardLoader />}
       {data && (
         <Box marginBottom={3}>
+          <Text variant="eyebrow" paddingBottom={1}>
+            {formatMessage(m.myRights)}
+          </Text>
           <Stack space={2}>
             {airDiscounts?.map((item) => {
-              const disabled = item.user.fund?.credit === 0
+              const message = [
+                formatMessage(m.remainingAirfares),
+                item.user.fund?.credit,
+                formatMessage(m.of),
+                item.user.fund?.total,
+              ]
+                .filter((x) => x !== null)
+                .join(' ')
+              const isCopied = copiedCodes.find(
+                (x) => x.code === item.discountCode,
+              )?.copied
               return (
                 <ActionCard
                   heading={item.user.name}
-                  text={
-                    formatMessage(m.remainingAirfares) +
-                    item.user.fund?.credit +
-                    formatMessage(m.of) +
-                    item.user.fund?.total
-                  }
+                  text={message}
+                  secondaryText={item.discountCode}
                   cta={{
                     label: formatMessage(m.copyCode),
-                    onClick: () => copyToClipboard(item.discountCode),
-                    disabled,
+                    onClick: () => copy(item.discountCode),
+                    disabled: item.user.fund?.credit === 0,
+                    centered: true,
+                    icon: isCopied ? 'checkmark' : 'copy',
                   }}
                 />
               )
