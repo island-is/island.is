@@ -1,11 +1,11 @@
 import { useHistory } from 'react-router-dom'
 
 import { Box, Button, Input } from '@island.is/island-ui/core'
-import { ServicePortalPath } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 import { DomainOption } from '../../../hooks/useDomains'
 import { DelegationsDomainSelect } from '../DelegationsDomainSelect'
 import * as styles from './DelegationsOutgoingHeader.css'
+import { AccessControlDelegationPaths } from '../../../lib/paths'
 
 interface DelegationsOutgoingHeaderProps {
   domainName?: string | null
@@ -42,7 +42,9 @@ export const DelegationsOutgoingHeader = ({
       <Box className={styles.buttonContainer}>
         <Button
           onClick={() =>
-            history.push(ServicePortalPath.AccessControlDelegationsGrant)
+            history.push(
+              AccessControlDelegationPaths.AccessControlDelegationsGrant,
+            )
           }
           size="small"
           fluid

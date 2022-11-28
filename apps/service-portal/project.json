@@ -18,7 +18,9 @@
           "apps/service-portal/src/mockServiceWorker.js",
           "apps/service-portal/src/assets"
         ],
-        "styles": ["apps/service-portal/src/styles.css"],
+        "styles": [
+          "apps/service-portal/src/styles.css"
+        ],
         "scripts": [],
         "webpackConfig": "apps/service-portal/webpack.config.js",
         "maxWorkers": 2
@@ -41,7 +43,9 @@
           ]
         }
       },
-      "outputs": ["{options.outputPath}"]
+      "outputs": [
+        "{options.outputPath}"
+      ]
     },
     "serve": {
       "executor": "@nrwl/web:dev-server",
@@ -57,7 +61,9 @@
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "options": {
-        "lintFilePatterns": ["apps/service-portal/**/*.{ts,tsx,js,jsx}"]
+        "lintFilePatterns": [
+          "apps/service-portal/**/*.{ts,tsx,js,jsx}"
+        ]
       }
     },
     "test": {
@@ -66,7 +72,9 @@
         "jestConfig": "apps/service-portal/jest.config.js",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/apps/service-portal"]
+      "outputs": [
+        "coverage/apps/service-portal"
+      ]
     },
     "extract-strings": {
       "executor": "@nrwl/workspace:run-commands",

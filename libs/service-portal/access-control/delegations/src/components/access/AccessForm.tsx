@@ -13,7 +13,6 @@ import { AuthCustomDelegation } from '@island.is/api/schema'
 import {
   formatPlausiblePathToParams,
   m as coreMessages,
-  ServicePortalPath,
 } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 import { DelegationsFormFooter } from '../delegations/DelegationsFormFooter'
@@ -31,6 +30,7 @@ import { AccessDeleteModal } from './AccessDeleteModal'
 import { AccessListHeader } from './AccessList/AccessListHeader'
 import classNames from 'classnames'
 import * as commonAccessStyles from './access.css'
+import { AccessControlDelegationPaths } from '../../lib/paths'
 
 type AccessFormProps = {
   delegation: AuthCustomDelegation
@@ -103,10 +103,10 @@ export const AccessForm = ({
       })
 
       if (data && !errors && !err) {
-        history.push(ServicePortalPath.AccessControlDelegations)
+        history.push(AccessControlDelegationPaths.AccessControlDelegations)
         servicePortalSaveAccessControl(
           formatPlausiblePathToParams(
-            ServicePortalPath.AccessControlDelegationsGrant,
+            AccessControlDelegationPaths.AccessControlDelegationsGrant,
           ),
         )
       }
@@ -163,7 +163,9 @@ export const AccessForm = ({
         <Box position="sticky" bottom={0} marginTop={20}>
           <DelegationsFormFooter
             onCancel={() =>
-              history.push(ServicePortalPath.AccessControlDelegations)
+              history.push(
+                AccessControlDelegationPaths.AccessControlDelegations,
+              )
             }
             onConfirm={() => {
               // Only open confirm modal if there are scopes
@@ -201,7 +203,7 @@ export const AccessForm = ({
       />
       <AccessDeleteModal
         onDelete={() =>
-          history.push(ServicePortalPath.AccessControlDelegations)
+          history.push(AccessControlDelegationPaths.AccessControlDelegations)
         }
         onClose={() => setOpenDeleteModal(false)}
         isVisible={openDeleteModal}

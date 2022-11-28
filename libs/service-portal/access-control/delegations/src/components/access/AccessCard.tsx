@@ -18,12 +18,10 @@ import { useLocale } from '@island.is/localization'
 import { AuthCustomDelegation } from '@island.is/api/schema'
 import { AuthDelegationType } from '@island.is/service-portal/graphql'
 import { useMemo } from 'react'
-import {
-  ServicePortalPath,
-  m as coreMessages,
-} from '@island.is/service-portal/core'
+import { m as coreMessages } from '@island.is/service-portal/core'
 import sortBy from 'lodash/sortBy'
 import { m } from '../../lib/messages'
+import { AccessControlDelegationPaths } from '../../lib/paths'
 
 const isDateExpired = (date: string) => new Date(date) < new Date()
 
@@ -51,7 +49,7 @@ export const AccessCard = ({
   )
   const hasTags = tags.length > 0
   const isOutgoing = variant === 'outgoing'
-  const href = `${ServicePortalPath.AccessControlDelegations}/${delegation.id}`
+  const href = `${AccessControlDelegationPaths.AccessControlDelegations}/${delegation.id}`
 
   const isExpired = useMemo(() => {
     if (delegation.validTo) {

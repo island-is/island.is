@@ -1,0 +1,31 @@
+{
+  "root": "libs/portals/core",
+  "sourceRoot": "libs/portals/core/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": [
+        "{options.outputFile}"
+      ],
+      "options": {
+        "lintFilePatterns": [
+          "libs/portals/core/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": [
+        "coverage/libs/portals/core"
+      ],
+      "options": {
+        "jestConfig": "libs/portals/core/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": [
+    "lib:react"
+  ]
+}

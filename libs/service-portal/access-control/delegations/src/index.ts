@@ -2,14 +2,11 @@ import { AuthScope } from '@island.is/auth/scopes'
 import { lazy } from 'react'
 import { Features } from '@island.is/feature-flags'
 
-import {
-  ServicePortalModule,
-  ServicePortalPath,
-  ServicePortalRoute,
-  m,
-} from '@island.is/service-portal/core'
+import { m } from '@island.is/service-portal/core'
+import { PortalModule, PortalRoute } from '@island.is/portals/core'
+import { AccessControlDelegationPaths } from './lib/paths'
 
-export const delegationsModule: ServicePortalModule = {
+export const delegationsModule: PortalModule = {
   name: 'Aðgangsstýring',
   featureFlag: Features.outgoingDelegationsV2,
   widgets: () => [],
@@ -17,29 +14,29 @@ export const delegationsModule: ServicePortalModule = {
     const hasAccess = userInfo.scopes.includes(AuthScope.delegations)
     const accessControlCommonFields = {
       name: m.accessControlDelegations,
-      path: ServicePortalPath.AccessControlDelegations,
+      path: AccessControlDelegationPaths.AccessControlDelegations,
       navHide: !hasAccess,
       enabled: hasAccess,
       render: () => lazy(() => import('./screens/AccessControl')),
     }
 
-    const routes: ServicePortalRoute[] = [
+    const routes: PortalRoute[] = [
       {
         ...accessControlCommonFields,
-        path: ServicePortalPath.AccessControlDelegations,
+        path: AccessControlDelegationPaths.AccessControlDelegations,
       },
       {
         ...accessControlCommonFields,
-        path: ServicePortalPath.AccessControlDelegationsIncoming,
+        path: AccessControlDelegationPaths.AccessControlDelegationsIncoming,
       },
       {
         name: m.accessControlGrant,
-        path: ServicePortalPath.AccessControlDelegationsGrant,
+        path: AccessControlDelegationPaths.AccessControlDelegationsGrant,
         render: () => lazy(() => import('./screens/GrantAccess/GrantAccess')),
       },
       {
         name: m.accessControlAccess,
-        path: ServicePortalPath.AccessControlDelegationAccess,
+        path: AccessControlDelegationPaths.AccessControlDelegationAccess,
         render: () => lazy(() => import('./screens/AccessOutgoing')),
       },
     ]

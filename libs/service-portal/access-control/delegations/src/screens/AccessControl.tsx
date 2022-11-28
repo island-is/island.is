@@ -1,11 +1,7 @@
 import { useHistory } from 'react-router-dom'
 import { useLocation } from 'react-use'
 import { Box, Tabs } from '@island.is/island-ui/core'
-import {
-  IntroHeader,
-  m as coreMessages,
-  ServicePortalPath,
-} from '@island.is/service-portal/core'
+import { IntroHeader, m as coreMessages } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { useAuth } from '@island.is/auth/react'
 import { isDefined } from '@island.is/shared/utils'
@@ -13,10 +9,10 @@ import { DelegationsIncoming } from '../components/delegations/incoming/Delegati
 import { DelegationsOutgoing } from '../components/delegations/outgoing/DelegationsOutgoing'
 import { Features, useFeatureFlag } from '@island.is/react/feature-flags'
 import { m } from '../lib/messages'
+import { AccessControlDelegationPaths } from '../lib/paths'
 
 const TAB_DELEGATION_OUTGOING_ID = 'outgoing'
 const TAB_DELEGATION_INCOMING_ID = 'incoming'
-const DELEGATIONS_INCOMING_PATH = `${ServicePortalPath.MinarSidurPath}${ServicePortalPath.AccessControlDelegationsIncoming}`
 
 const AccessControl = () => {
   useNamespaces(['sp.settings-access-control', 'sp.access-control-delegations'])
@@ -29,13 +25,17 @@ const AccessControl = () => {
   const { userInfo } = useAuth()
   const history = useHistory()
   const location = useLocation()
+  const firstPath = location?.pathname?.split('/')[1]
+  const DELEGATIONS_INCOMING_PATH = `/${firstPath ?? ''}${
+    AccessControlDelegationPaths.AccessControlDelegationsIncoming
+  }`
   const isDelegationIncoming = location.pathname === DELEGATIONS_INCOMING_PATH
 
   const tabChangeHandler = (id: string) => {
     const url =
       id === TAB_DELEGATION_INCOMING_ID
-        ? ServicePortalPath.AccessControlDelegationsIncoming
-        : ServicePortalPath.AccessControlDelegations
+        ? AccessControlDelegationPaths.AccessControlDelegationsIncoming
+        : AccessControlDelegationPaths.AccessControlDelegations
 
     // Make sure not to add to history stack the same route twice in a row
     if (url !== location.pathname) {

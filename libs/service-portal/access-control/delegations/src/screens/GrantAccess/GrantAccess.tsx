@@ -20,7 +20,6 @@ import {
 } from '@island.is/shared/form-fields'
 import {
   IntroHeader,
-  ServicePortalPath,
   ServicePortalModuleComponent,
   formatNationalId,
   m,
@@ -36,6 +35,7 @@ import {
 } from '@island.is/service-portal/graphql'
 import { useDomains } from '../../hooks/useDomains'
 import { ALL_DOMAINS } from '../../constants/domain'
+import { AccessControlDelegationPaths } from '../../lib/paths'
 
 const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces(['sp.settings-access-control', 'sp.access-control-delegations'])
@@ -121,7 +121,7 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
       })
       if (data) {
         history.push(
-          `${ServicePortalPath.AccessControlDelegations}/${data.createAuthDelegation.id}`,
+          `${AccessControlDelegationPaths.AccessControlDelegations}/${data.createAuthDelegation.id}`,
         )
       }
     } catch (error) {
@@ -293,7 +293,9 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
                   disabled={!name || !domainNameWatcher}
                   loading={mutationLoading}
                   onCancel={() =>
-                    history.push(ServicePortalPath.AccessControlDelegations)
+                    history.push(
+                      AccessControlDelegationPaths.AccessControlDelegations,
+                    )
                   }
                   showShadow={false}
                   confirmLabel={formatMessage({
