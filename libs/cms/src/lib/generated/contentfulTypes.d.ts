@@ -2552,7 +2552,7 @@ export interface IProjectPageFields {
     | 'election'
     | 'ukraine'
     | 'opinbernyskopun'
-    | 'maelabord-fiskistofu'
+    | 'gagnasidur-fiskistofu'
 
   /** Sidebar */
   sidebar: boolean
