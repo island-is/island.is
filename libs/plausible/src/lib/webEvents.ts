@@ -24,7 +24,7 @@ export const trackSearchQuery = (query: string, source: string) => {
     featureName: 'web',
     params: {
       // lowercase to count "Query String" and "query string" as the same thing
-      query: query.trim().toLowerCase(), 
+      query: query.trim().toLowerCase(),
       source,
     },
   }

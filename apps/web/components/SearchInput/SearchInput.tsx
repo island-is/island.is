@@ -53,8 +53,6 @@ type SearchState = {
   isLoading: boolean
 }
 
-
-
 const isEmpty = ({ results, suggestions }: SearchState): boolean =>
   suggestions?.length === 0 && (results?.total ?? 0) === 0
 
@@ -460,7 +458,6 @@ const Results = ({
                     alert(search.term)
                     alert(suggestion)
                     console.log(e)
-                    
                   }}
                 >
                   <Text color={i === highlightedIndex ? 'blue400' : 'dark400'}>
@@ -502,7 +499,7 @@ const Results = ({
                       onClick={(e) => {
                         onClick(e)
                         onRouting()
-                        trackSearchQuery(search.term,"Web Autocomplete")
+                        trackSearchQuery(search.term, 'Web Autocomplete')
                       }}
                       color="blue400"
                       underline="normal"
