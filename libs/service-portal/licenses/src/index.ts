@@ -19,8 +19,7 @@ export const licensesModule: ServicePortalModule = {
       }),
       path: ServicePortalPath.LicensesRoot,
       enabled: userInfo.scopes.includes(ApiScope.licenses),
-      render: () =>
-        lazy(() => import('./screens/LicensesOverview/LicensesOverview')),
+      render: () => lazy(() => import('./screens/LicensesOverview')),
     },
     {
       name: 'Skírteini',

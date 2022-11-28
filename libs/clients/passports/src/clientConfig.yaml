@@ -25,13 +25,6 @@ paths:
       tags:
         - IdentityDocument
       operationId: IdentityDocument_GetIdentityDocument
-      parameters:
-        - name: personId
-          in: query
-          schema:
-            type: string
-            nullable: true
-          x-position: 1
       responses:
         '200':
           description: ''
@@ -48,13 +41,6 @@ paths:
       tags:
         - IdentityDocument
       operationId: IdentityDocument_GetChildrenIdentityDocument
-      parameters:
-        - name: personId
-          in: query
-          schema:
-            type: string
-            nullable: true
-          x-position: 1
       responses:
         '200':
           description: ''

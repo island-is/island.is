@@ -1,44 +1,44 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-type Gender = 'F' | 'M' | 'X'
+export type Gender = 'F' | 'M' | 'X'
 
 @ObjectType()
 export class IdentityDocumentModel {
-  @Field(() => String)
-  number!: string
+  @Field(() => String, { nullable: true })
+  number?: string | null
 
-  @Field(() => String)
-  type!: string
+  @Field(() => String, { nullable: true })
+  type?: string | null
 
-  @Field(() => String)
-  verboseType!: string
+  @Field(() => String, { nullable: true })
+  verboseType?: string | null
 
-  @Field(() => String)
-  subType!: string
+  @Field(() => String, { nullable: true })
+  subType?: string | null
 
-  @Field(() => String)
-  status!: string
+  @Field(() => String, { nullable: true })
+  status?: string | null
 
-  @Field(() => Date)
-  issuingDate!: Date
+  @Field(() => Date, { nullable: true })
+  issuingDate?: Date | null
 
-  @Field(() => Date)
-  expirationDate!: Date
+  @Field(() => Date, { nullable: true })
+  expirationDate?: Date | null
 
-  @Field(() => String)
-  displayFirstName?: string
+  @Field(() => String, { nullable: true })
+  displayFirstName?: string | null
 
-  @Field(() => String)
-  displayLastName?: string
+  @Field(() => String, { nullable: true })
+  displayLastName?: string | null
 
-  @Field(() => String)
-  mrzFirstName?: string
+  @Field(() => String, { nullable: true })
+  mrzFirstName?: string | null
 
-  @Field(() => String)
-  mrzLastName?: string
+  @Field(() => String, { nullable: true })
+  mrzLastName?: string | null
 
-  @Field()
-  sex?: Gender
+  @Field(() => String, { nullable: true })
+  sex?: Gender | null
 
   @Field(() => String, { nullable: true })
   numberWithType?: string

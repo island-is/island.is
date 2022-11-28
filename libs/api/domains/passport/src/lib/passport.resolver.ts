@@ -12,6 +12,7 @@ import {
 import { Audit } from '@island.is/nest/audit'
 import { PassportService } from './passport.service'
 import { IdentityDocumentModel } from './models/identityDocumentModel.model'
+import { IdentityDocumentModelChild } from './models/identityDocumentModelChild.model'
 
 @UseGuards(IdsAuthGuard, IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.internal)
@@ -24,6 +25,13 @@ export class PassportResolver {
   @Audit()
   async getIdentityDocument(@CurrentUser() user: User) {
     const res = await this.passportService.getIdentityDocument(user)
+    return res
+  }
+
+  @Query(() => [IdentityDocumentModelChild], { nullable: true })
+  @Audit()
+  async getIdentityDocumentChildren(@CurrentUser() user: User) {
+    const res = await this.passportService.getIdentityDocumentChildren(user)
     return res
   }
 }

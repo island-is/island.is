@@ -1,11 +1,6 @@
-import React, { useEffect, useState } from 'react'
-import { defineMessage } from 'react-intl'
+import React, { FC } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
-  ErrorScreen,
-  IntroHeader,
-  ServicePortalModuleComponent,
-  m as coreMessage,
   ActionCard,
   EmptyState,
   CardLoader,
@@ -13,14 +8,11 @@ import {
   formatDate,
 } from '@island.is/service-portal/core'
 import { m } from '../../lib/messages'
-import { gql, useQuery } from '@apollo/client'
-import { Locale } from '@island.is/shared/types'
+import { GenericLicenseType } from '@island.is/service-portal/graphql'
 import {
-  GenericLicenseType,
-  GenericUserLicenseFetchStatus,
-  useUserProfile,
-} from '@island.is/service-portal/graphql'
-import { Query } from '@island.is/api/schema'
+  GenericUserLicense,
+  IdentityDocumentModel,
+} from '@island.is/api/schema'
 import { Box } from '@island.is/island-ui/core'
 import {
   getPathFromProviderId,
@@ -28,125 +20,31 @@ import {
   getTitleAndLogo,
 } from '../../utils/dataMapper'
 
-import { useFeatureFlagClient } from '@island.is/react/feature-flags'
-import { FeatureFlagClient } from '@island.is/feature-flags'
-import { usePassport } from '@island.is/service-portal/graphql'
 import LicenseCards from '../../components/LicenseCards/LicenseCards'
 import { getExpiresIn } from '../../utils/dateUtils'
-const dataFragment = gql`
-  fragment genericLicenseDataFieldFragment on GenericLicenseDataField {
-    type
-    name
-    label
-    value
-    fields {
-      type
-      name
-      label
-      value
-      fields {
-        type
-        name
-        label
-        value
-      }
-    }
-  }
-`
 
-const GenericLicensesQuery = gql`
-  query GenericLicensesQuery($input: GetGenericLicensesInput, $locale: String) {
-    genericLicenses(input: $input, locale: $locale) {
-      nationalId
-      license {
-        type
-        provider {
-          id
-        }
-        pkpass
-        pkpassVerify
-        timeout
-        status
-        pkpassStatus
-      }
-      fetch {
-        status
-        updated
-      }
-      payload {
-        data {
-          ...genericLicenseDataFieldFragment
-        }
-        rawData
-        metadata {
-          licenseNumber
-          expired
-          expireDate
-        }
-      }
-    }
-  }
-  ${dataFragment}
-`
+interface Props {
+  isLoading: boolean
+  hasData: boolean
+  hasError: boolean
+  isGenericLicenseEmpty: boolean
+  passportData?: IdentityDocumentModel[] | null
+  genericLicenses?: GenericUserLicense[]
+  hasTab?: boolean
+}
 
-export const LicensesOverview: ServicePortalModuleComponent = () => {
+export const UserLicenses: FC<Props> = ({
+  isLoading,
+  hasData,
+  hasError,
+  isGenericLicenseEmpty,
+  passportData,
+  genericLicenses,
+  hasTab,
+}) => {
   useNamespaces('sp.license')
   const { formatMessage } = useLocale()
-  const { data: userProfile } = useUserProfile()
-  const locale = (userProfile?.locale as Locale) ?? 'is'
   const currentDate = new Date()
-  /**
-   * Get all licenses is feature flagged
-   * If off, all licenses fetched, if on only drivers license is fetched
-   * Please remove all code when fully released.
-   */
-  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
-  const [licenseTypes, setLicenseTypes] = useState<Array<GenericLicenseType>>([
-    GenericLicenseType.DriversLicense,
-  ])
-  useEffect(() => {
-    const isFlagEnabled = async () => {
-      const ffEnabled = await featureFlagClient.getValue(
-        `servicePortalFetchAllLicenses`,
-        false,
-      )
-      if (ffEnabled) {
-        setLicenseTypes([
-          GenericLicenseType.DriversLicense,
-          GenericLicenseType.AdrLicense,
-          GenericLicenseType.MachineLicense,
-          GenericLicenseType.FirearmLicense,
-        ])
-      }
-    }
-    isFlagEnabled()
-  }, [])
-
-  const { data, loading, error } = useQuery<Query>(GenericLicensesQuery, {
-    variables: {
-      locale,
-      input: {
-        includedTypes: licenseTypes,
-      },
-    },
-  })
-  const { genericLicenses = [] } = data ?? {}
-  const {
-    data: passportData,
-    loading: passportLoading,
-    error: passportError,
-  } = usePassport()
-
-  const isLoading = loading || passportLoading
-  const isGenericLicenseEmpty = genericLicenses.every(
-    (item) => item.payload === null,
-  )
-  const hasData = !!(!isGenericLicenseEmpty || passportData)
-
-  const isError = genericLicenses?.every(
-    (item) => item.fetch.status === GenericUserLicenseFetchStatus.Error,
-  )
-  const hasError = (error || isError) && passportError
 
   const getLabel = (
     type: GenericLicenseType | 'Passport',
@@ -180,33 +78,14 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
     return formatMessage(m.isValid)
   }
 
-  if (hasError && !loading) {
-    return (
-      <ErrorScreen
-        figure="./assets/images/hourglass.svg"
-        tagVariant="red"
-        tag={formatMessage(coreMessage.errorTitle)}
-        title={formatMessage(coreMessage.somethingWrong)}
-        children={formatMessage(coreMessage.errorFetchModule, {
-          module: formatMessage(coreMessage.licenses).toLowerCase(),
-        })}
-      />
-    )
-  }
   return (
-    <>
-      <Box marginBottom={[3, 4, 5]}>
-        <IntroHeader
-          title={defineMessage(m.title)}
-          intro={defineMessage(m.intro)}
-        />
-      </Box>
+    <Box marginTop={6}>
       {isLoading && (
         <Box marginBottom={1}>
           <CardLoader />
         </Box>
       )}
-      {data &&
+      {genericLicenses &&
         !isGenericLicenseEmpty &&
         genericLicenses
           .filter((license) => license.license.status === 'HasLicense')
@@ -274,8 +153,8 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
           <EmptyState />
         </Box>
       )}
-    </>
+    </Box>
   )
 }
 
-export default LicensesOverview
+export default UserLicenses

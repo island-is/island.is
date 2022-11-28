@@ -6,9 +6,10 @@ import { IdentityDocumentModel } from '@island.is/api/schema'
 
 interface Props {
   passportData?: IdentityDocumentModel[]
+  name?: string
 }
 
-const LicenseCards: FC<Props> = ({ passportData }) => {
+const LicenseCards: FC<Props> = ({ passportData, name }) => {
   useNamespaces('sp.license')
   return (
     <GridRow>
@@ -20,7 +21,7 @@ const LicenseCards: FC<Props> = ({ passportData }) => {
               id={item.numberWithType}
               expireDate={item.expirationDate}
               isInvalid={item.status === 'INVALID'}
-              name={item.verboseType}
+              name={name || item.verboseType}
             />
           ))}
         </Stack>

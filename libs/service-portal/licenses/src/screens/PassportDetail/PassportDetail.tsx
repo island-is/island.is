@@ -33,7 +33,7 @@ const NotifyLostLink = (text: string) => (
   </Link>
 )
 
-const PassportDetail: ServicePortalModuleComponent = ({ userInfo }) => {
+const PassportDetail: ServicePortalModuleComponent = () => {
   useNamespaces('sp.license')
   const { formatMessage } = useLocale()
   const { id }: { id: string | undefined } = useParams()

@@ -13,7 +13,7 @@ export const PassportLicense = ({
 }: {
   expireDate: Date
   id?: string | null
-  name?: string
+  name?: string | null
   isInvalid?: boolean
 }) => {
   useNamespaces('sp.license')
