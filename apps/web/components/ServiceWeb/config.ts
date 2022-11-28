@@ -36,7 +36,6 @@ export const watsonConfig: Record<
   Record<string, WatsonChatPanelProps>
 > = {
   is: {
-    // Stafrænt Ísland organization
     [Organization.DIGITAL_ICELAND]: {
       integrationID: 'b1a80e76-da12-4333-8872-936b08246eaa',
       region: 'eu-gb',
@@ -55,7 +54,6 @@ export const watsonConfig: Record<
     },
   },
   en: {
-    // Stafrænt Ísland organization
     [Organization.DIGITAL_ICELAND]: {
       integrationID: '2e32cba8-7379-44e9-b03e-af1ccdbe5982',
       region: 'eu-gb',
