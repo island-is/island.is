@@ -321,7 +321,6 @@ export class TransferOfVehicleOwnershipService {
       // Note: API throws error if timestamp is 00:00:00, so we will use noon
       dateOfPurchase: getDateAtNoonFromString(answers?.vehicle?.date),
       saleAmount: Number(answers?.vehicle?.salePrice) || 0,
-      // Note: Insurance code 000 is when car is out of commission and is not going to be insured
       insuranceCompanyCode: answers?.insurance?.value,
       coOwners: buyerCoOwners?.map((coOwner) => ({
         ssn: coOwner.nationalId,
