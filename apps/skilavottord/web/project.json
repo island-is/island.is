@@ -81,6 +81,20 @@
         "cwd": "apps/skilavottord/web/i18n/locales"
       }
     },
+    "dev-init": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": ["yarn get-secrets skilavottord skilavottord-web", "yarn nx run skilavottord-ws:dev-init"],
+        "parallel": false
+      }
+    },
+    "dev": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": ["yarn start skilavottord-web", "yarn nx run skilavottord-ws:dev"],
+        "parallel": true
+      }
+    },
     "docker-next": {}
   },
   "tags": []
