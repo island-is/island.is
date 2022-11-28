@@ -43,8 +43,8 @@ import {
   SignedDocument,
   useRequestRulingSignature,
   SigningModal,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import {
   useCase,
   useInstitution,
