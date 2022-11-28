@@ -1,5 +1,21 @@
 # API
 
+## Quickstart
+
+Ensure docker is running, then run the following when running for the first time:
+
+```bash
+yarn dev/init api
+```
+
+To start the app:
+
+```bash
+yarn dev api
+```
+
+These commands are just shorthands for the setup described below.
+
 ## About
 
 This project forms the basis of a unified API for products belonging to island.is.

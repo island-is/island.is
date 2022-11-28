@@ -56,6 +56,32 @@ export class NationalRegistryClientService {
     return response || []
   }
 
+  async getChildResidenceParent(
+    parentUser: User,
+    childId: string,
+  ): Promise<string[]> {
+    const response = await this.handleLegacyMissingData(
+      this.individualApi
+        .withMiddleware(new AuthMiddleware(parentUser))
+        .einstaklingarGetBusetuForeldriRaw({ barn: childId }),
+    )
+
+    return response || []
+  }
+
+  async getChildDomicileParent(
+    parentUser: User,
+    childId: string,
+  ): Promise<string[]> {
+    const response = await this.handleLegacyMissingData(
+      this.individualApi
+        .withMiddleware(new AuthMiddleware(parentUser))
+        .einstaklingarGetLogheimilisForeldriRaw({ barn: childId }),
+    )
+
+    return response || []
+  }
+
   async getOtherCustodyParents(
     parentUser: User,
     childId: string,
