@@ -23,7 +23,8 @@ export const defendant = defineMessages({
   defendantsHeading: {
     id: 'judicial.system.core:indictments_defendant.defendants_heading',
     defaultMessage: 'Ákærði',
-    description: 'Notaður',
+    description:
+      'Notaður sem titill fyrir "ákærði" hlutann á ákærða skrefi í ákærum.',
   },
   addDefendantButtonText: {
     id: 'judicial.system.core:indictments_defendant.add_defendant_button_text',
