@@ -40,6 +40,7 @@ import {
 import * as styles from './SearchInput.css'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { TestSupport } from '@island.is/island-ui/utils'
+import { trackSearchQuery } from '../../../../libs/plausible/src/lib/webEvents'
 
 const DEBOUNCE_TIMER = 150
 const STACK_WIDTH = 400
@@ -51,6 +52,8 @@ type SearchState = {
   prefix: string
   isLoading: boolean
 }
+
+
 
 const isEmpty = ({ results, suggestions }: SearchState): boolean =>
   suggestions?.length === 0 && (results?.total ?? 0) === 0
@@ -454,6 +457,10 @@ const Results = ({
                   onClick={(e) => {
                     onClick(e)
                     onRouting()
+                    alert(search.term)
+                    alert(suggestion)
+                    console.log(e)
+                    
                   }}
                 >
                   <Text color={i === highlightedIndex ? 'blue400' : 'dark400'}>
@@ -495,6 +502,7 @@ const Results = ({
                       onClick={(e) => {
                         onClick(e)
                         onRouting()
+                        trackSearchQuery(search.term,"Web Autocomplete")
                       }}
                       color="blue400"
                       underline="normal"

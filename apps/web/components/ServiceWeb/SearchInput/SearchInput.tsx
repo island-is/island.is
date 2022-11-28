@@ -22,6 +22,7 @@ import {
 } from '@island.is/web/graphql/schema'
 import { getSlugPart } from '@island.is/web/screens/ServiceWeb/utils'
 import { useI18n } from '@island.is/web/i18n'
+import { trackSearchQuery } from '../../../../../libs/plausible/src/lib/webEvents'
 
 interface SearchInputProps {
   title?: string
@@ -131,6 +132,7 @@ export const SearchInput = ({
     const categorySlug = category?.slug ?? ''
 
     if (organizationSlug && categorySlug) {
+      trackSearchQuery(searchTerms,"Service Web Autocomplete")
       Router.push(
         linkResolver('supportqna', [organizationSlug, categorySlug, slug]).href,
       )
@@ -210,9 +212,11 @@ export const SearchInput = ({
           return value
         })
       }}
+      
       closeMenuOnSubmit
       onSubmit={(value, selectedOption) => {
         setOptions([])
+        
 
         if (selectedOption && activeItem) {
           return onSelect(activeItem)

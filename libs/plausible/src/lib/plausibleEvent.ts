@@ -10,7 +10,8 @@ declare global {
 }
 
 export const plausibleCustomEvent = (event: BaseEvent) => {
-  const plausible = window.plausible
+  if (typeof window !== "undefined"){
+  const plausible = window && window.plausible
   if (plausible) {
     const eventName = event.featureName
       ? `${event.featureName} ${event.eventName}`
@@ -21,6 +22,7 @@ export const plausibleCustomEvent = (event: BaseEvent) => {
       ...(event.callback && { callback: event.callback }),
     })
   }
+}
 }
 
 // Special case for outbound links see: https://docs.plausible.io/outbound-link-click-tracking/

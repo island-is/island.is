@@ -67,6 +67,7 @@ import {
 } from '../queries'
 
 import { FilterMenu, CategoriesProps, FilterLabels } from './FilterMenu'
+import { trackSearchQuery } from '../../../../libs/plausible/src/lib/webEvents'
 
 const PERPAGE = 10
 
