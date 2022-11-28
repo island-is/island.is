@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
@@ -9,51 +9,31 @@ import {
 } from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'
 import { fishingLicenseFurtherInformation } from '../../lib/messages'
-import { AREA_FIELD_ID, DATE_FIELD_ID } from '../../utils/fields'
-
-const MOCKSELECTOPTIONS = [
-  {
-    key: 'A',
-    dateRestriction: {
-      dateFrom: '2022-10-20T00:00:00.000Z',
-      dateTo: '2022-11-30T00:00:00.000Z',
-    },
-    description: 'Veiðisvæði A 20.10 - 30.11',
-    disabled: false,
-    invalidOption: false,
-  },
-  {
-    key: 'B',
-    dateRestriction: {
-      dateFrom: '2022-11-20T00:00:00.000Z',
-      dateTo: '2022-12-30T00:00:00.000Z',
-    },
-    description: 'Veiðisvæði B 20.11 - 30.12',
-    disabled: false,
-    invalidOption: false,
-  },
-]
+import {
+  AREAS_FIELD_ID,
+  AREA_FIELD_ID,
+  DATE_FIELD_ID,
+} from '../../utils/fields'
+import { FishingLicenseListOptions } from '../../types/schema'
 
 export const AreaWithDateSelection: FC<FieldBaseProps> = ({
   application,
   errors,
 }) => {
-  const { setValue } = useFormContext()
+  const { setValue, getValues } = useFormContext()
   const { formatMessage, lang } = useLocale()
-  const initialArea = getValueViaPath(
-    application.answers,
-    `fishingLicenseFurtherInformation.area`,
-    '',
-  ) as string
-  const [selectedArea, setSelectedArea] = useState<string | number>(
-    initialArea || '',
+
+  const [selectedArea, setSelectedArea] = useState<string | number>('')
+  const [licenseAreas, setLicenseAreas] = useState<FishingLicenseListOptions[]>(
+    [],
   )
 
   // Constructs the lower limit for date picker
   // Depending on which select option is currently selected
   const getMinDate = () => {
-    const minDate = MOCKSELECTOPTIONS.find((o) => o.key === selectedArea)
-      ?.dateRestriction.dateFrom
+    const minDate =
+      licenseAreas?.find((o) => o.key === selectedArea)?.dateRestriction
+        ?.dateFrom || null
     if (minDate) {
       return new Date(minDate)
     }
@@ -63,8 +43,9 @@ export const AreaWithDateSelection: FC<FieldBaseProps> = ({
   // Constructs the upper limit for date picker
   // Depending on which select option is currently selected
   const getMaxDate = () => {
-    const maxDate = MOCKSELECTOPTIONS.find((o) => o.key === selectedArea)
-      ?.dateRestriction.dateTo
+    const maxDate =
+      licenseAreas?.find((o) => o.key === selectedArea)?.dateRestriction
+        ?.dateTo || null
     if (maxDate) {
       return new Date(maxDate)
     }
@@ -77,6 +58,22 @@ export const AreaWithDateSelection: FC<FieldBaseProps> = ({
     setSelectedArea(o.value)
     setValue(DATE_FIELD_ID, null)
   }
+
+  // Initialize areas selection dropdown based on selected license
+  useEffect(() => {
+    const areas: FishingLicenseListOptions[] = getValues(AREAS_FIELD_ID)
+    setLicenseAreas(areas)
+    const initialArea = getValueViaPath(
+      application.answers,
+      `fishingLicenseFurtherInformation.area`,
+      '',
+    ) as string
+    if (areas?.find((a) => a.key === initialArea)) {
+      setSelectedArea(initialArea)
+    } else {
+      setValue(AREA_FIELD_ID, [])
+    }
+  }, [])
 
   return (
     <Box>
@@ -93,10 +90,13 @@ export const AreaWithDateSelection: FC<FieldBaseProps> = ({
           required
           error={errors && getErrorViaPath(errors, AREA_FIELD_ID)}
           defaultValue={''}
-          options={MOCKSELECTOPTIONS.map((o) => ({
-            label: o.description,
-            value: o.key,
-          }))}
+          options={licenseAreas?.map(
+            (o) =>
+              ({
+                label: o.description,
+                value: o.key,
+              } || []),
+          )}
         />
       </Box>
       <Box marginTop={3}>

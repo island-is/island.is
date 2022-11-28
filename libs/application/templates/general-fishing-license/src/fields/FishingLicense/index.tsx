@@ -5,6 +5,7 @@ import React, { FC, useEffect, useState } from 'react'
 import { FishingLicenseAlertMessage, ShipInformation } from '../components'
 import {
   FishingLicenseLicense as FishingLicenseSchema,
+  FishingLicenseListOptions,
   FishingLicenseShip as Ship,
 } from '@island.is/api/schema'
 import { useQuery } from '@apollo/client'
@@ -34,6 +35,7 @@ export const FishingLicense: FC<FieldBaseProps> = ({
     '',
   ) as string
   const [chargeType, setChargeType] = useState<string>(selectedChargeType || '')
+  const [areas, setAreas] = useState<FishingLicenseListOptions[]>([])
   const ships = getValueViaPath(
     application.externalData,
     'directoryOfFisheries.data.ships',
@@ -56,14 +58,33 @@ export const FishingLicense: FC<FieldBaseProps> = ({
 
   const ship = ships[parseInt(shipIndex)]
 
+  const handleAreaChange = (areas: FishingLicenseListOptions[]) => {
+    console.log(areas)
+    console.log(`${field.id}.areas`)
+    setValue(`${field.id}.areas`, areas)
+    setAreas(areas || [])
+  }
+
+  const initializeAreas = (licenseCode: string) => {
+    const selectedLicense = data?.fishingLicenses?.find(
+      ({ fishingLicenseInfo }: FishingLicenseSchema) =>
+        fishingLicenseInfo.code === licenseCode,
+    ) as FishingLicenseSchema
+    if (selectedLicense) {
+      handleAreaChange(selectedLicense.areas || [])
+    }
+  }
+
   const handleOnSelect = (value: string) => {
     const selectedLicense = data?.fishingLicenses?.find(
       ({ fishingLicenseInfo }: FishingLicenseSchema) =>
         fishingLicenseInfo.code === value,
     ) as FishingLicenseSchema
 
-    if (selectedLicense)
+    if (selectedLicense) {
       setChargeType(selectedLicense.fishingLicenseInfo.chargeType)
+      handleAreaChange(selectedLicense.areas || [])
+    }
   }
 
   // If charge type is set to unknown initially the front-end signals error
@@ -72,6 +93,7 @@ export const FishingLicense: FC<FieldBaseProps> = ({
     if (selectedChargeType === FishingLicenseEnum.UNKNOWN) {
       setValue(`${field.id}.license`, null)
     }
+    initializeAreas(selectedChargeType)
   }, [])
 
   // Reinitialize license type when user changes charge type
