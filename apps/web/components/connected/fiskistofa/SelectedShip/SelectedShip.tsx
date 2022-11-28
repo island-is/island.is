@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import { useLazyQuery } from '@apollo/client'
 import { Box, LoadingDots, Stack, Text } from '@island.is/island-ui/core'
 import { useNamespace } from '@island.is/web/hooks'
-import { GET_SINGLE_SHIP } from '../calculators/queries'
+import { GET_SINGLE_SHIP } from '@island.is/web/screens/queries/Fiskistofa'
 
 import * as styles from './SelectedShip.css'
 

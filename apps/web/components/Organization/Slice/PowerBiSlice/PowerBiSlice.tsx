@@ -1,13 +1,39 @@
 import { useEffect, useState } from 'react'
-import { PowerBIEmbed } from 'powerbi-client-react'
-import { Embed, models } from 'powerbi-client'
+import { EventHandler, PowerBIEmbed } from 'powerbi-client-react'
+import { Embed, models, Report, VisualDescriptor } from 'powerbi-client'
 import { useApolloClient } from '@apollo/client'
+import { useRouter } from 'next/router'
 import {
   PowerBiEmbedTokenQuery,
   PowerBiEmbedTokenQueryVariables,
   PowerBiSlice as PowerBiSliceSchema,
 } from '@island.is/web/graphql/schema'
 import { POWERBI_EMBED_TOKEN_QUERY } from '@island.is/web/screens/queries/PowerBi'
+import { Box } from '@island.is/island-ui/core'
+import { GET_SINGLE_SHIP } from '@island.is/web/screens/queries/Fiskistofa'
+
+import * as styles from './PowerBiSlice.css'
+
+type EventType =
+  | 'loaded'
+  | 'saved'
+  | 'rendered'
+  | 'saveAsTriggered'
+  | 'error'
+  | 'dataSelected'
+  | 'buttonClicked'
+  | 'info'
+  | 'filtersApplied'
+  | 'pageChanged'
+  | 'commandTriggered'
+  | 'swipeStart'
+  | 'swipeEnd'
+  | 'bookmarkApplied'
+  | 'dataHyperlinkClicked'
+  | 'visualRendered'
+  | 'visualClicked'
+  | 'selectionChanged'
+  | 'renderingStarted'
 
 interface PowerBiSliceProps {
   slice: PowerBiSliceSchema
@@ -20,6 +46,76 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
     tokenType: models.TokenType
   } | null>(null)
   const [shouldRender, setShouldRender] = useState(false)
+  const router = useRouter()
+  const [embeddedReport, setEmbeddedReport] = useState<Report | null>(null)
+
+  const eventHandlers = new Map<EventType, EventHandler>([
+    [
+      'loaded',
+      async (event) => {
+        const report = event.target?.['powerBiEmbed'] as Report
+
+        if (!report) {
+          return
+        }
+
+        const activePage = await report.getActivePage()
+        const slicers = await activePage.getSlicers()
+
+        for (const visual of slicers) {
+          if (visual.type !== 'slicer') continue
+          const slicer = visual as VisualDescriptor
+          if (slicer.name in router.query) {
+            const newSlicerState = JSON.parse(
+              router.query[slicer.name] as string,
+            )
+            await slicer.setSlicerState(newSlicerState)
+          }
+        }
+      },
+    ],
+    [
+      'dataSelected',
+      async (event) => {
+        const visualName = event.detail?.visual?.name as string
+        const report: Report =
+          event.target?.['powerBiEmbed'] ?? event.detail?.report
+
+        if (!report || !visualName) {
+          return
+        }
+
+        const activePage = await report.getActivePage()
+        const visual = await activePage.getVisualByName(visualName)
+        const slicerState = await visual.getSlicerState()
+        const baseRouterPath = router.asPath.split('?')[0].split('#')[0]
+
+        const query = { ...router.query }
+        query[visualName] = JSON.stringify(slicerState)
+
+        // Change the ship number query param if this report is owned by Fiskistofa
+        if (
+          slice?.owner === 'Fiskistofa' &&
+          slicerState.filters?.[0]?.target?.['column'] === 'Skip nafn og númer'
+        ) {
+          const value: string = slicerState.filters?.[0]?.['values']?.[0] ?? ''
+          const firstParenthesis = value.indexOf('(')
+          const lastParenthesis = value.indexOf(')')
+          const nr = value?.slice(firstParenthesis + 1, lastParenthesis)
+          if (nr) query['nr'] = nr
+        }
+
+        router.push(
+          {
+            pathname: baseRouterPath,
+            query,
+          },
+          undefined,
+          { shallow: true },
+        )
+      },
+    ],
+  ])
 
   const apolloClient = useApolloClient()
 
@@ -32,7 +128,7 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
       return
     }
 
-    const getEmbedParams = async () => {
+    const getEmbedPropsFromServer = async () => {
       setShouldRender(false)
       const response = await apolloClient.query<
         PowerBiEmbedTokenQuery,
@@ -62,8 +158,61 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
       }
     }
 
-    getEmbedParams()
-  }, [apolloClient, slice.owner, slice.reportId, slice.workspaceId])
+    getEmbedPropsFromServer()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [slice.owner, slice.reportId, slice.workspaceId])
+
+  useEffect(() => {
+    if (!embeddedReport || !router?.query?.nr || slice?.owner !== 'Fiskistofa')
+      return
+    const nr = Number(router.query.nr)
+    embeddedReport.getActivePage().then((page) => {
+      page.getSlicers().then((slicers) => {
+        for (const visual of slicers) {
+          if (visual.type !== 'slicer') continue
+          const slicer = visual as VisualDescriptor
+          slicer.getSlicerState().then((slicerState) => {
+            if (
+              slicerState.filters?.[0]?.target?.['column'] ===
+              'Skip nafn og númer'
+            ) {
+              apolloClient
+                .query({
+                  query: GET_SINGLE_SHIP,
+                  variables: {
+                    input: {
+                      shipNumber: nr,
+                    },
+                  },
+                })
+                .then((response) => {
+                  const ship =
+                    response?.data?.fiskistofaGetSingleShip
+                      ?.fiskistofaSingleShip
+                  if (ship?.name) {
+                    let name = ship.name as string
+                    const nameSplit = name.split(' ')
+                    name = `${nameSplit
+                      .slice(0, nameSplit.length - 1)
+                      .join(' ')}-${nameSplit[nameSplit.length - 1]} (${nr})`
+                    slicer.setSlicerState({
+                      ...slicerState,
+                      filters: [
+                        {
+                          ...slicerState.filters?.[0],
+                          values: [name],
+                        },
+                      ],
+                    })
+                  }
+                })
+            }
+          })
+        }
+      })
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router.query?.nr])
 
   const getEmbeddedComponent = (embed: Embed) => {
     // Default styles
@@ -91,9 +240,10 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
         }
       }
     }
+    setEmbeddedReport(embed as Report)
   }
 
-  if (!shouldRender) return null
+  if (!shouldRender) return <Box className={styles.blankContainer} />
 
   const embedProps = slice?.powerBiEmbedProps?.embedProps ?? {}
 
@@ -105,6 +255,7 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
         ...embedPropsFromServer,
       }}
       getEmbeddedComponent={getEmbeddedComponent}
+      eventHandlers={eventHandlers}
     />
   )
 }
