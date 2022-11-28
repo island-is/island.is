@@ -33,12 +33,13 @@ export const subSectionPropertyRepeater = buildSubSection({
           title: m.diningTitle,
           component: 'PropertyRepeater',
           condition: (answers) => {
-            const { operation, category } = answers.applicationInfo as Operation
-
             return (
-              operation === APPLICATION_TYPES.RESTURANT ||
-              (operation === APPLICATION_TYPES.HOTEL &&
-                category !== OPERATION_CATEGORY.TWO)
+              (answers.applicationInfo as Operation)?.operation ===
+                APPLICATION_TYPES.RESTURANT ||
+              ((answers.applicationInfo as Operation)?.operation ===
+                APPLICATION_TYPES.HOTEL &&
+                (answers.applicationInfo as Operation)?.category !==
+                  OPERATION_CATEGORY.TWO)
             )
           },
         }),
@@ -47,8 +48,11 @@ export const subSectionPropertyRepeater = buildSubSection({
           title: m.outsideTitle,
           component: 'PropertyRepeater',
           condition: (answers) => {
-            const { willServe } = answers.applicationInfo as Operation
-            return willServe?.includes(YES) || false
+            return (
+              (answers.applicationInfo as Operation)?.willServe?.includes(
+                YES,
+              ) || false
+            )
           },
         }),
       ],

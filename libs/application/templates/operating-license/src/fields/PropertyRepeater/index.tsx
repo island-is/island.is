@@ -18,8 +18,8 @@ import {
   useWatch,
 } from 'react-hook-form'
 import { useLazyQuery } from '@apollo/client'
-import { Query, SearchForPropertyInput } from '@island.is/api/schema'
-import { SEARCH_FOR_PROPERTY_QUERY } from '../../graphql'
+import { Query } from '@island.is/api/schema'
+import { GET_REAL_ESTATE_ADDRESS } from '../../graphql'
 import { Property } from '../../lib/constants'
 import * as styles from './PropertyRepeater.css'
 import { formatText } from '@island.is/application/core'
@@ -108,17 +108,11 @@ const PropertyItem = ({
   const [
     getProperty,
     { loading: _queryLoading, error: _queryError },
-  ] = useLazyQuery<Query, { input: SearchForPropertyInput }>(
-    SEARCH_FOR_PROPERTY_QUERY,
-    {
-      onCompleted: (data) => {
-        setValue(
-          addressField,
-          data.searchForProperty?.defaultAddress?.display ?? '',
-        )
-      },
+  ] = useLazyQuery<Query, { input: string }>(GET_REAL_ESTATE_ADDRESS, {
+    onCompleted: (data) => {
+      setValue(addressField, data.getRealEstateAddress[0].name ?? '')
     },
-  )
+  })
 
   useEffect(() => {
     // According to Skra.is:
@@ -128,9 +122,7 @@ const PropertyItem = ({
     if (/F\d{7}$/.test(propertyNumberInput.trim().toUpperCase())) {
       getProperty({
         variables: {
-          input: {
-            propertyNumber: propertyNumberInput,
-          },
+          input: propertyNumberInput,
         },
       })
     }

@@ -79,7 +79,7 @@ export const displayOpeningHours = (answers: any) => {
     (answers.applicationInfo as Operation)?.operation ===
       APPLICATION_TYPES.RESTURANT ||
     (answers.applicationInfo as Operation)?.category?.includes(
-      OPERATION_CATEGORY.TWO,
+      OPERATION_CATEGORY.FOUR,
     ) ||
     false
   )

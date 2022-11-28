@@ -41,6 +41,12 @@ import {
 } from './syslumennClient.types'
 const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 
+export const cleanPropertyNumber = (propertyNumber: string): string => {
+  return propertyNumber[0] == 'F'
+    ? propertyNumber.substring(1, propertyNumber.length)
+    : propertyNumber
+}
+
 export const mapDistrictCommissionersAgenciesResponse = (
   response: EmbaettiOgStarfsstodvar,
 ): DistrictCommissionerAgencies => {

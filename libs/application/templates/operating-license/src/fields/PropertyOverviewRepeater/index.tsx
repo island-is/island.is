@@ -1,24 +1,34 @@
 import React, { FC } from 'react'
-import { FieldBaseProps } from '@island.is/application/types'
+import { CustomField, FieldBaseProps } from '@island.is/application/types'
 import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { ArrayField } from 'react-hook-form'
 import { Property } from '../../lib/constants'
-import { getValueViaPath } from '@island.is/application/core'
+import { formatText, getValueViaPath } from '@island.is/application/core'
 
-export const PropertyOverviewRepeater: FC<FieldBaseProps> = ({
+interface PropTypes extends FieldBaseProps {
+  field: CustomField
+}
+
+export const PropertyOverviewRepeater: FC<PropTypes> = ({
+  field,
   application,
 }) => {
-  const fields = getValueViaPath(
-    application.answers,
-    'properties',
-  ) as Property[]
+  const { formatMessage } = useLocale()
+  const { title } = field
+  const { id } = field.props as { id: string }
+  const fields = getValueViaPath(application.answers, id) as Property[]
 
   return (
     <Box>
       {fields.map((item, index) => (
-        <PropertyItem field={item} index={index} key={item.propertyNumber} />
+        <PropertyItem
+          field={item}
+          index={index}
+          key={item.propertyNumber}
+          title={formatText(title, application, formatMessage)}
+        />
       ))}
     </Box>
   )
@@ -27,16 +37,18 @@ export const PropertyOverviewRepeater: FC<FieldBaseProps> = ({
 const PropertyItem = ({
   field,
   index,
+  title,
 }: {
   field: Partial<ArrayField<Property, 'id'>>
   index: number
+  title: string
 }) => {
   const { formatMessage } = useLocale()
 
   return (
     <Box position="relative" marginTop={2}>
       <Text variant="h4" as="h4" paddingBottom={2}>
-        {`${formatMessage(m.space)} ${index + 1}`}
+        {`${title} ${index + 1}`}
       </Text>
       <GridRow>
         <GridColumn span={['1/1', '1/2']} paddingBottom={2}>

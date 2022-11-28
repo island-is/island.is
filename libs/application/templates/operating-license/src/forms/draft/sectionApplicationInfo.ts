@@ -15,6 +15,7 @@ import {
   OPERATION_CATEGORY,
   HotelCategories,
 } from '../../lib/constants'
+import { Option } from '@island.is/application/types'
 
 export const applicationInfo = buildMultiField({
   id: 'applicationInfo',
@@ -53,11 +54,21 @@ export const applicationInfo = buildMultiField({
     buildRadioField({
       id: 'applicationInfo.typeHotel',
       title: m.operationTypeHotelTitle,
-      options: HotelTypes,
+      options: ({ answers }) =>
+        HotelTypes.map((option) => {
+          return {
+            ...(option as Option),
+            disabled: !option.disabledFor
+              ? false
+              : option.disabledFor ===
+                (answers.applicationInfo as Operation)?.category,
+          }
+        }),
       backgroundColor: 'blue',
       condition: (answers) =>
         (answers.applicationInfo as Operation)?.operation ===
-        APPLICATION_TYPES.HOTEL,
+          APPLICATION_TYPES.HOTEL &&
+        !!(answers.applicationInfo as Operation)?.category,
     }),
     buildCheckboxField({
       id: 'applicationInfo.typeResturant',

@@ -82,12 +82,6 @@ export const subSectionOpeningHours = buildSubSection({
           description: '',
           space: 'gutter',
         }),
-        // buildCheckboxField({
-        //   id: 'openingHours.willServe',
-        //   title: m.openingHoursOutside,
-        //   options: [{ value: YES, label: m.openingHoursOutsideCheck }],
-        //   defaultValue: [NO],
-        // }),
         buildDescriptionField({
           id: 'outside.servingHours',
           title: m.openingHoursOutsideTitle,

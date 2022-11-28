@@ -374,7 +374,7 @@ export const m = defineMessages({
   },
   temporaryLicenseTitle: {
     id: 'ol.application:otherInfo.temporaryLicenseTitle',
-    defaultMessage: 'Bráðabirgðarleyfi',
+    defaultMessage: 'Bráðabirgðaleyfi',
     description: 'Some description',
   },
   temporaryLicenseDescription: {
@@ -477,7 +477,7 @@ export const m = defineMessages({
   },
   temporaryLicense: {
     id: 'ol.application:overview.temporaryLicense',
-    defaultMessage: 'Óskað eftir bráðabirgðarleyfi',
+    defaultMessage: 'Óskað eftir bráðabirgðaleyfi',
     description: 'Some description',
   },
   other: {

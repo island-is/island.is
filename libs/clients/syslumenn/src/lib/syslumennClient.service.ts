@@ -32,6 +32,7 @@ import {
   mapEstateInfo,
   mapRealEstateAgent,
   mapLawyer,
+  cleanPropertyNumber,
 } from './syslumennClient.utils'
 import { Injectable, Inject } from '@nestjs/common'
 import {
@@ -273,7 +274,7 @@ export class SyslumennService {
       .vedbokavottordRegluverkiPost({
         skilabod: {
           audkenni: id,
-          fastanumer: assetId,
+          fastanumer: cleanPropertyNumber(assetId),
           tegundAndlags: assetType as number,
         },
       })
@@ -303,10 +304,7 @@ export class SyslumennService {
     const res = await api.vedbokarvottordPost({
       skilabod: {
         audkenni: id,
-        fastanumer:
-          propertyNumber[0] == 'F'
-            ? propertyNumber.substring(1, propertyNumber.length)
-            : propertyNumber,
+        fastanumer: cleanPropertyNumber(propertyNumber),
         tegundAndlags: TegundAndlags.NUMBER_0, // 0 = Real estate
       },
     })
@@ -356,16 +354,14 @@ export class SyslumennService {
     const res = await api.vedbokavottordRegluverkiPost({
       skilabod: {
         audkenni: id,
-        fastanumer:
-          propertyNumber[0] == 'F'
-            ? propertyNumber.substring(1, propertyNumber.length)
-            : propertyNumber,
+        fastanumer: cleanPropertyNumber(propertyNumber),
         tegundAndlags: TegundAndlags.NUMBER_0, // 0 = Real estate
       },
     })
-
     if (res.length > 0) {
-      return {
+      console.log(res)
+
+      const ret = {
         propertyNumber: propertyNumber,
         defaultAddress: {
           display: res[0].heiti,
@@ -378,6 +374,8 @@ export class SyslumennService {
           ],
         },
       }
+      console.log(ret)
+      return ret
     } else {
       throw new Error()
     }

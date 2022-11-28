@@ -1,4 +1,4 @@
-import { DefaultEvents, Option } from '@island.is/application/types'
+import { Condition, DefaultEvents, Option } from '@island.is/application/types'
 
 import { attachmentNames, m } from './messages'
 
@@ -30,7 +30,17 @@ export enum APPLICATION_TYPES {
 export const YES = 'yes'
 export const NO = 'no'
 
-export const ResturantTypes: Option[] = [
+export enum OPERATION_CATEGORY {
+  TWO = '2',
+  THREE = '3',
+  FOUR = '4',
+}
+
+export interface TypeOption extends Option {
+  disabledFor?: OPERATION_CATEGORY
+}
+
+export const ResturantTypes: TypeOption[] = [
   {
     value: 'A Veitingahús',
     label: 'Veitingahús',
@@ -75,18 +85,19 @@ export const ResturantTypes: Option[] = [
   },
 ]
 
-export const HotelTypes: Option[] = [
+export const HotelTypes: TypeOption[] = [
   {
     value: 'A Hótel',
     label: 'Hótel',
     subLabel:
       'Gististaður þar sem gestamóttaka er aðgengileg allan sólarhringinn og veitingar að einhverju tagi framleiddar á staðnum. Fullbúin baðaðstaða skal vera með hverju herbergi.',
+    disabledFor: OPERATION_CATEGORY.TWO,
   },
   {
     value: 'B Stærra gistiheimili',
     label: 'Stærra gistiheimili',
     subLabel:
-      'Gististaður þar sem gestamóttaka er aðgengileg allan sólarhringinn og veitingar að einhverju tagi framleiddar á staðnum. Fullbúin baðaðstaða skal vera með hverju herbergi.',
+      'Gististaður með takmarkaða þjónustu þar sem leigð eru út 6 herbergi eða fleiri eða rými fyrir fleiri en 10 einstaklinga. Handlaug skal vera í hverju herbergi og salerni nærliggjandi en gestir þurfa einnig að hafa aðgang að fullbúinni baðaðstöðu.',
   },
   {
     value: 'C Minna gistiheimili',
@@ -126,12 +137,6 @@ export const HotelTypes: Option[] = [
   },
 ]
 
-export enum OPERATION_CATEGORY {
-  TWO = '2',
-  THREE = '3',
-  FOUR = '4',
-}
-
 export const HotelCategories: Option[] = [
   {
     value: OPERATION_CATEGORY.TWO,
@@ -166,7 +171,8 @@ export const ResturantCategories: Option[] = [
 export type Operation = {
   operation: APPLICATION_TYPES
   category: OPERATION_CATEGORY | OPERATION_CATEGORY[] | undefined
-  type: string
+  typeHotel?: string
+  typeResturant?: string[]
   willServe?: string
 }
 
