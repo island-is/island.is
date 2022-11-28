@@ -16,6 +16,7 @@ import { applicationsModule } from '@island.is/service-portal/applications'
 import { licensesModule } from '@island.is/service-portal/licenses'
 import { vehiclesModule } from '@island.is/service-portal/vehicles'
 import { delegationsModule } from '@island.is/service-portal/access-control/delegations'
+import { airDiscountModule } from '@island.is/service-portal/air-discount'
 
 /**
  * NOTE:
@@ -45,6 +46,7 @@ export type ModuleKeys =
   | 'petitions'
   | 'vehicles'
   | 'delegations'
+  | 'airDiscountModule'
 
 export const companyModules: ModuleKeys[] = [
   'documents',
@@ -78,4 +80,5 @@ export const modules: Record<ModuleKeys, ServicePortalModule> = {
   licenses: licensesModule,
   vehicles: vehiclesModule,
   delegations: delegationsModule,
+  airDiscountModule: airDiscountModule,
 }

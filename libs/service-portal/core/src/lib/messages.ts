@@ -841,4 +841,9 @@ export const m = defineMessages({
     defaultMessage: 'Endurnýja',
     description: 'Renew',
   },
+  airDiscount: {
+    id: 'service.portal:air-discount',
+    defaultMessage: 'Loftbrú',
+    description: 'Airfare discount',
+  },
 })
