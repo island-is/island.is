@@ -110,7 +110,8 @@
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "commands": [
-          "true || yarn get-secrets skilavottord skilavottord-ws",
+          "yarn get-secrets skilavottord skilavottord-ws",
+          "echo 'export NEXTAUTH_URL=http://localhost:4200/app/skilavottord/api/auth' >> .env.secret",
           "yarn nx run skilavottord-ws:migrate/undo",
           "yarn nx run skilavottord-ws:migrate",
           "yarn nx run skilavottord-ws:seed"
