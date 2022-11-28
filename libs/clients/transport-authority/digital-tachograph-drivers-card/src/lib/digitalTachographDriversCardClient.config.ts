@@ -25,7 +25,7 @@ export const DigitalTachographDriversCardClientConfig = defineConfig<
       //TODOx add to infra\src\dsl\xroad.ts and charts\islandis\values.dev.yaml
       // xroadPath: env.required(
       //   'XROAD_DIGITAL_TACHOGRAPH_DRIVERS_CARD_PATH',
-      //   'IS-DEV/GOV/10017/Samgongustofa-Protected/TODOX',
+      //   'IS-DEV/GOV/10017/Samgongustofa-Protected/<service_code>',
       // ),
       scope: [VehiclesScope.vehicle],
     }
