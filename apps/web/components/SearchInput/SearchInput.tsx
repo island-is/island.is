@@ -496,7 +496,7 @@ const Results = ({
                       onClick={(e) => {
                         onClick(e)
                         onRouting()
-                        // trackSearchQuery(search.term, 'Web Autocomplete')
+                        trackSearchQuery(search.term, 'Web Autocomplete')
                       }}
                       color="blue400"
                       underline="normal"
