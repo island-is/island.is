@@ -67,7 +67,7 @@ export const fishingLicenseFurtherInfoSection = buildSection({
         }),
         // Select fishing area field is visible for a subset of licenses
         buildDescriptionField({
-          id: 'areaSelectionTitle',
+          id: 'fishingLicenseFurtherInformation.areaSectionTitle',
           space: 6,
           title: fishingLicenseFurtherInformation.labels.area,
           titleVariant: 'h5',
@@ -85,7 +85,7 @@ export const fishingLicenseFurtherInfoSection = buildSection({
         // area selection because in that case, min and max dates depend
         // on the area selected
         buildDescriptionField({
-          id: 'dateTitle',
+          id: 'fishingLicenseFurtherInformation.dateTitle',
           space: 6,
           title: fishingLicenseFurtherInformation.labels.date,
           titleVariant: 'h5',
