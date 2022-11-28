@@ -101,7 +101,7 @@ test.describe('Service portal, in access control', () => {
       await page.locator('data-testid=user-menu >> visible=true').click()
       await page.locator('role=button[name="Skipta um notanda"]').click()
       await page.locator('role=button[name*="Gervimaður Færeyjar"]').click()
-      await page.waitForURL(homeUrl, {
+      await page.waitForURL(new RegExp(homeUrl), {
         waitUntil: 'domcontentloaded',
       })
 

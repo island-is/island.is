@@ -10,7 +10,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
-import * as styles from './Parents.css'
+import * as styles from './TwoColumnUserInfoLine.css'
 import { Maybe } from '@island.is/service-portal/graphql'
 
 interface Props {
@@ -19,18 +19,18 @@ interface Props {
   renderContent?: () => JSX.Element
   loading?: boolean
   title?: string
-  parent1?: Maybe<string>
-  parent2?: Maybe<string>
+  firstValue?: Maybe<string>
+  secondValue?: Maybe<string>
   tooltip?: string
   className?: string
 }
 
-export const Parents: FC<Props> = ({
+export const TwoColumnUserInfoLine: FC<Props> = ({
   label,
   loading,
   title,
-  parent1,
-  parent2,
+  firstValue,
+  secondValue,
   tooltip,
   className,
 }) => {
@@ -75,7 +75,7 @@ export const Parents: FC<Props> = ({
             {loading ? (
               <LoadingDots />
             ) : (
-              <Text variant="default">{parent1}</Text>
+              <Text variant="default">{firstValue}</Text>
             )}
           </Box>
         </GridColumn>
@@ -91,7 +91,7 @@ export const Parents: FC<Props> = ({
             {loading ? (
               <LoadingDots />
             ) : (
-              <Text variant="default">{parent2}</Text>
+              <Text variant="default">{secondValue}</Text>
             )}
           </Box>
         </GridColumn>
