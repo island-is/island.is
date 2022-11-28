@@ -233,9 +233,9 @@ const template: ApplicationTemplate<
           name: 'Completed',
           progress: 1,
           lifecycle: pruneAfterDays(3 * 30),
-          /* onEntry: {
+          onEntry: {
             apiModuleAction: ApiActions.submitApplication,
-          }, */
+          },
           actionCard: {
             tag: {
               label: application.actionCardDone,
