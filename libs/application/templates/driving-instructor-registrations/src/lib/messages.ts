@@ -221,7 +221,7 @@ export const m = defineMessages({
   },
   errorOnGettingStudentTitle: {
     id: 'dir.application:errorOnGettingStudentTitle',
-    defaultMessage: 'Eitthvað fór úrskeiðis við að sækja ökunema',
+    defaultMessage: 'Ökunemi fannst ekki eða er ekki með virka ökunámsbók.',
     description: 'Error on input minutes',
   },
   errorOnGettingStudentSubtitle: {

@@ -543,13 +543,13 @@ export const m = defineMessages({
     id: 'service.portal:delegations',
     defaultMessage: 'Umboð',
   },
-  accessControlDelegationsToMe: {
+  accessControlDelegationsIncoming: {
     id: 'service.portal:to-me',
-    defaultMessage: 'Umboð til mín',
+    defaultMessage: 'Til mín',
   },
-  accessControlDelegationsFromMe: {
+  accessControlDelegationsOutgoing: {
     id: 'service.portal:from-me',
-    defaultMessage: 'Umboð frá mér',
+    defaultMessage: 'Frá mér',
   },
   accessControlDescription: {
     id: 'service.portal:accessControl-description',
@@ -820,6 +820,14 @@ export const m = defineMessages({
   passport: {
     id: 'service.portal:passport',
     defaultMessage: 'Vegabréf',
+  },
+  yes: {
+    id: 'service.portal:yes',
+    defaultMessage: 'Já',
+  },
+  no: {
+    id: 'service.portal:no',
+    defaultMessage: 'Nei',
   },
   errorTitle: {
     id: 'service.portal:error-screen-title',

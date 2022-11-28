@@ -12,6 +12,7 @@ interface UserAvatarProps {
   isDelegation?: boolean
   ariaLabel?: string
   color?: 'purple' | 'blue' | 'darkBlue' | 'darkPurple'
+  dataTestid?: string
 }
 
 const getInitials = (username?: string) => {
@@ -36,6 +37,7 @@ export const UserAvatar = ({
   size = 'default',
   ariaLabel,
   color = 'blue',
+  dataTestid,
 }: UserAvatarProps) => (
   <FocusableBox
     component={onClick ? 'button' : 'div'}
@@ -51,6 +53,7 @@ export const UserAvatar = ({
     ]}
     onClick={onClick}
     aria-label={ariaLabel}
+    data-testid={dataTestid}
   >
     <p
       className={cn(

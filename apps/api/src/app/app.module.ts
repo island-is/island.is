@@ -39,6 +39,7 @@ import { FinanceModule } from '@island.is/api/domains/finance'
 import { VehiclesModule } from '@island.is/api/domains/vehicles'
 import { AssetsModule } from '@island.is/api/domains/assets'
 import { PassportModule } from '@island.is/api/domains/passport'
+import { AirDiscountSchemeModule } from '@island.is/api/domains/air-discount-scheme'
 import { EndorsementSystemModule } from '@island.is/api/domains/endorsement-system'
 import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
 import { ApiDomainsPaymentModule } from '@island.is/api/domains/payment'
@@ -51,7 +52,6 @@ import {
 } from '@island.is/api/domains/license-service'
 import { PaymentScheduleModule } from '@island.is/api/domains/payment-schedule'
 import { AssetsClientConfig } from '@island.is/clients/assets'
-import { AssetsV2ClientConfig } from '@island.is/clients/assets-v2'
 import { AuthPublicApiClientConfig } from '@island.is/clients/auth/public-api'
 import { FinanceClientConfig } from '@island.is/clients/finance'
 import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
@@ -81,6 +81,8 @@ import { FirearmLicenseClientConfig } from '@island.is/clients/firearm-license'
 import { PassportsClientConfig } from '@island.is/clients/passports'
 import { FileStorageConfig } from '@island.is/file-storage'
 import { AuthDelegationApiClientConfig } from '@island.is/clients/auth/delegation-api'
+import { AirDiscountSchemeClientConfig } from '@island.is/clients/air-discount-scheme'
+import { FinancialStatementsInaoClientConfig } from '@island.is/clients/financial-statements-inao'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -220,6 +222,7 @@ const autoSchemaFile = environment.production
     VehiclesModule,
     AssetsModule,
     PassportModule,
+    AirDiscountSchemeModule,
     NationalRegistryXRoadModule,
     ApiDomainsPaymentModule.register({
       xRoadProviderId: environment.paymentDomain.xRoadProviderId!,
@@ -253,8 +256,8 @@ const autoSchemaFile = environment.production
       isGlobal: true,
       load: [
         AdrAndMachineLicenseClientConfig,
+        AirDiscountSchemeClientConfig,
         AssetsClientConfig,
-        AssetsV2ClientConfig,
         FirearmLicenseClientConfig,
         GenericFirearmLicenseConfig,
         GenericMachineLicenseConfig,
@@ -275,6 +278,7 @@ const autoSchemaFile = environment.production
         MunicipalitiesFinancialAidConfig,
         CompanyRegistryConfig,
         FishingLicenseClientConfig,
+        FinancialStatementsInaoClientConfig,
         DrivingLicenseBookClientConfig,
         DrivingLicenseApiConfig,
         PassportsClientConfig,
