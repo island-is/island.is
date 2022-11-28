@@ -164,6 +164,9 @@
       "@island.is/api/domains/transport-authority/digital-tachograph": [
         "libs/api/domains/transport-authority/digital-tachograph/src/index.ts"
       ],
+      "@island.is/api/domains/transport-authority/order-vehicle-license-plate": [
+        "libs/api/domains/transport-authority/order-vehicle-license-plate/src/index.ts"
+      ],
       "@island.is/api/domains/transport-authority/order-vehicle-registration-certificate": [
         "libs/api/domains/transport-authority/order-vehicle-registration-certificate/src/index.ts"
       ],
@@ -453,11 +456,17 @@
       "@island.is/clients/transport-authority/vehicle-codetables": [
         "libs/clients/transport-authority/vehicle-codetables/src/index.ts"
       ],
+      "@island.is/clients/transport-authority/vehicle-infolocks": [
+        "libs/clients/transport-authority/vehicle-infolocks/src/index.ts"
+      ],
       "@island.is/clients/transport-authority/vehicle-operators": [
         "libs/clients/transport-authority/vehicle-operators/src/index.ts"
       ],
       "@island.is/clients/transport-authority/vehicle-owner-change": [
         "libs/clients/transport-authority/vehicle-owner-change/src/index.ts"
+      ],
+      "@island.is/clients/transport-authority/vehicle-plate-ordering": [
+        "libs/clients/transport-authority/vehicle-plate-ordering/src/index.ts"
       ],
       "@island.is/clients/transport-authority/vehicle-printing": [
         "libs/clients/transport-authority/vehicle-printing/src/index.ts"
