@@ -35,8 +35,7 @@ import type { User as AuthUser } from '@island.is/auth-nest-tools'
 import { UserService } from '../user/user.service'
 import { AuthGuard } from '../common'
 import { GetUserByDiscountCodeParams } from '../user/dto'
-import { AirlineUser, User } from '../user/user.model'
-import { NationalRegistryUser } from '../nationalRegistry'
+import { AirlineUser } from '../user/user.model'
 
 @ApiTags('Users')
 @Controller('api/public')
@@ -125,44 +124,22 @@ export class PrivateDiscountController {
     @Body() body: CreateExplicitDiscountCodeParams,
     @CurrentUser() auth: AuthUser,
   ): Promise<Discount> {
-    const nationalRegistryUser: NationalRegistryUser = {
-      ...body,
-      middleName: body.middleName ?? '',
-    }
-
-    const {
-      used,
-      unused,
-      total,
-    } = await this.flightService.countThisYearsFlightLegsByNationalId(
-      body.nationalId,
-    )
-
-    if (!this.flightService.isADSPostalCode(body.postalcode)) {
-      throw new Error(
-        `EXPLICIT CODE CREATION: postal code ${body.postalcode} is not ADS postal code`,
-      )
-    }
-
-    const fund = {
-      credit: unused,
-      used,
-      total,
-    }
-
     const unConnectedFlights = await this.flightService.findThisYearsConnectableFlightsByNationalId(
       body.nationalId,
     )
 
-    const user = new User(nationalRegistryUser, fund)
-
     const discount = await this.discountService.createExplicitDiscountCode(
-      user,
+      auth,
       body.nationalId,
-      unConnectedFlights,
-      auth.nationalId, // For tracing who creates explicit codes
+      body.postalcode,
+      auth.nationalId,
       body.comment,
+      unConnectedFlights,
     )
+
+    if (!discount) {
+      throw new Error(`Could not create explicit discount`)
+    }
 
     return discount
   }

@@ -10,6 +10,8 @@ import {
 import { ConnectionDiscountCode } from '@island.is/air-discount-scheme/types'
 import { User } from '../user/user.model'
 import { InjectModel } from '@nestjs/sequelize'
+import { UserService } from '../user/user.service'
+import type { User as AuthUser } from '@island.is/auth-nest-tools'
 
 interface CachedDiscount {
   user: User
@@ -40,6 +42,8 @@ export class DiscountService {
 
     @InjectModel(ExplicitCode)
     private explicitModel: typeof ExplicitCode,
+
+    private readonly userService: UserService,
   ) {}
 
   private getRandomRange(min: number, max: number): number {
@@ -169,16 +173,28 @@ export class DiscountService {
   }
 
   async createExplicitDiscountCode(
-    user: User,
+    auth: AuthUser,
     nationalId: string,
-    connectableFlights: Flight[],
+    postalCode: number,
     employeeId: string,
     comment: string,
-  ): Promise<Discount> {
-    const discount = await this.createDiscountCode(
-      user,
+    unConnectedFlights: Flight[],
+  ): Promise<Discount | null> {
+    const user = await this.userService.getUserInfoByNationalId(
       nationalId,
-      connectableFlights,
+      auth,
+    )
+    if (!user) {
+      return null
+    }
+
+    const discount = await this.createDiscountCode(
+      {
+        ...user,
+        postalcode: postalCode,
+      },
+      nationalId,
+      unConnectedFlights,
     )
 
     // Create record of the explicit code

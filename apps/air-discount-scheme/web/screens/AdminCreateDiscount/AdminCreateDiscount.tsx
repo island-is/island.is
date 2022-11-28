@@ -10,7 +10,6 @@ import {
   GridContainer,
   ButtonDeprecated as Button,
   Input,
-  Select,
   Stack,
 } from '@island.is/island-ui/core'
 import { Screen } from '../../types'
@@ -34,13 +33,7 @@ const AdminCreateDiscount: Screen = () => {
   ] = useMutation(CreateExplicitDiscountCodeMutation)
 
   const [nationalId, setNationalId] = useState('')
-  const [firstName, setFirstName] = useState('')
-  const [middleName, setMiddleName] = useState('')
-  const [lastName, setLastName] = useState('')
-  const [gender, setGender] = useState('')
-  const [address, setAddress] = useState('')
   const [postalcode, setPostalcode] = useState('')
-  const [city, setCity] = useState('')
   const [comment, setComment] = useState('')
 
   const [discountCode, setDiscountCode] = useState('')
@@ -76,78 +69,12 @@ const AdminCreateDiscount: Screen = () => {
                 />
 
                 <Input
-                  name="firstname"
-                  label="Fornafn"
-                  required
-                  onChange={(e) => {
-                    setFirstName(e.target.value)
-                  }}
-                />
-                <Input
-                  name="middlename"
-                  label="Millinafn"
-                  onChange={(e) => {
-                    setMiddleName(e.target.value)
-                  }}
-                />
-
-                <Input
-                  name="lastname"
-                  label="Eftirnafn"
-                  required
-                  onChange={(e) => {
-                    setLastName(e.target.value)
-                  }}
-                />
-
-                <Select
-                  name="gender"
-                  label="Kyn"
-                  options={[
-                    {
-                      label: 'Karlkyn',
-                      value: 'kk',
-                    },
-                    {
-                      label: 'Kvenkyn',
-                      value: 'kvk',
-                    },
-                    {
-                      label: 'Kynsegin',
-                      value: 'hvk',
-                    },
-                  ]}
-                  required
-                  onChange={(e: { value: string; label: string }) => {
-                    setGender(e.value)
-                  }}
-                />
-
-                <Input
-                  name="address"
-                  label="Heimilisfang"
-                  required
-                  onChange={(e) => {
-                    setAddress(e.target.value)
-                  }}
-                />
-
-                <Input
                   name="postalcode"
                   label="Póstnúmer"
                   type="number"
                   required
                   onChange={(e) => {
                     setPostalcode(e.target.value)
-                  }}
-                />
-
-                <Input
-                  name="city"
-                  label="Bæjarfélag"
-                  required
-                  onChange={(e) => {
-                    setCity(e.target.value)
                   }}
                 />
 
@@ -161,16 +88,9 @@ const AdminCreateDiscount: Screen = () => {
                 />
 
                 <Button
-                  disabled={[
-                    nationalId,
-                    firstName,
-                    lastName,
-                    gender,
-                    address,
-                    postalcode,
-                    city,
-                    comment,
-                  ].some((val) => !val.length)}
+                  disabled={[nationalId, postalcode, comment].some(
+                    (val) => !val.length,
+                  )}
                   onClick={() => setShowModal(true)}
                 >
                   Búa til kóða
@@ -190,13 +110,7 @@ const AdminCreateDiscount: Screen = () => {
             variables: {
               input: {
                 nationalId,
-                firstName,
-                middleName,
-                lastName,
-                gender,
-                address,
                 postalcode: parseInt(postalcode, 10),
-                city,
                 comment,
               },
             },
