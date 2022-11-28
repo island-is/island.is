@@ -69,9 +69,8 @@ export const fishingLicenseFurtherInformation = {
     attachments: {
       id:
         'gfl.application:fishingLicenseFurtherInformation.fieldInformation.attachments',
-      defaultMessage:
-        'Vinsamlegast settu hér inn leyfi frá ferðamálastofu- ferðaskipuleggjendaleyfi',
-      description: 'Please add a valid government-issued license as attachment', // TODO
+      defaultMessage: 'Vinsamlegast settu inn nauðsynleg fylgiskjöl',
+      description: 'Please add a valid attachment',
     },
     area: {
       id:

@@ -99,14 +99,16 @@ export const fishingLicenseFurtherInfoSection = buildSection({
           placeholder: fishingLicenseFurtherInformation.placeholders.date,
           condition: (formValue) => !hasAreaSelection(formValue),
         }),
-        // File upload field is visible for a subset of licenses
-        buildDescriptionField({
-          id: 'attachmentsTitle',
-          space: 6,
-          titleVariant: 'h5',
-          title: fishingLicenseFurtherInformation.labels.attachments,
+        // Custom field to replace file upload section title
+        // It needs to be custom because description message is dynamic
+        // depending on which license user is currenty applying for
+        buildCustomField({
+          id: 'fishingLicenseFurtherInformation.customAttachmentsTitle',
+          title: '',
+          doesNotRequireAnswer: true,
           description:
             fishingLicenseFurtherInformation.fieldInformation.attachments,
+          component: 'AttachmentsTitleSection',
           condition: hasFileUpload,
         }),
         buildFileUploadField({
