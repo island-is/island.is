@@ -76,9 +76,9 @@ const AppealSection: React.FC<Props> = (props) => {
                 signedVerdictOverview.sections.appeal.defendantAppealed,
                 {
                   courtEndTime: `${formatDate(
-                    workingCase.rulingDate,
+                    workingCase.courtEndTime,
                     'PP',
-                  )} kl. ${formatDate(workingCase.rulingDate, 'p')}`,
+                  )} kl. ${formatDate(workingCase.courtEndTime, 'p')}`,
                 },
               )}
               fluid
