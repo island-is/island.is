@@ -379,7 +379,6 @@ export const ParentalLeaveForm: Form = buildForm({
                     (answers as {
                       personalAllowance: { usePersonalAllowance: string }
                     })?.personalAllowance?.usePersonalAllowance === YES,
-                  // condition: (answers) => answers.usePersonalAllowance === YES,
                   title:
                     parentalLeaveFormMessages.personalAllowance
                       .useAsMuchAsPossible,
@@ -431,9 +430,6 @@ export const ParentalLeaveForm: Form = buildForm({
                       }
                     })?.personalAllowanceFromSpouse?.usePersonalAllowance ===
                       YES && allowOtherParent(answers),
-                  // condition: (answers) =>
-                  //   answers.usePersonalAllowanceFromSpouse === YES &&
-                  //   allowOtherParent(answers),
                   title:
                     parentalLeaveFormMessages.personalAllowance
                       .useAsMuchAsPossibleFromSpouse,
