@@ -33,19 +33,21 @@ However, not all projects support this, or are incomplete in this setup. If this
 First time you run Playwright, you'll need to set up its runtime environment with `yarn playwright install`. Then, you can list tests with the `--list` flag or run tests in various ways:
 
 - Using playwright directly: `yarn playwright test '<name-of-your-app>/.*/<smoke|acceptance>'`
-- Specific test file: `yarn playwright test <path/to/your/test/file>`
-- Using a pattern (regex): `yarn playwright test <pattern>`
+- Specific test file: `yarn playwright test '<path/to/your/test/file>'`
+- Using a pattern (regex): `yarn playwright test '<pattern>'`
 
 {% hint style="example" %}
 
-- smoke: `yarn playwright test application-system-form/smoke`
-- acceptance: `yarn playwright test service-portal/acceptance`
+- smoke: `yarn playwright test 'application-system-form/smoke'`
+- acceptance: `yarn playwright test 'service-portal/acceptance'`
 - both: `yarn playwright test 'system-e2e/.*/web'`
 - pattern `yarn playwright test 'system-e2e/.*/s?port?'`
-  {% endhint %}
+
+Note that you the pattern is a RegEx string in quotes.
+{% endhint %}
 
 {% hint style="info" %}
-Run `export TEST_ENVIRONMENT=dev` before any command to test against the live [dev web](https://beta.dev01.devland.is/). Note that you'll need Cognito username/password credentials for this (ask devops for access). Valid values are `local` (default), `dev`, `staging`, and `prod` to test the respective environment.
+Run `export TEST_ENVIRONMENT=dev` before any command to test against the live [dev web](https://beta.dev01.devland.is/). Note that you'll need Cognito username/password credentials for this (ask DevOps for access). Valid values are `local` (default), `dev`, `staging`, and `prod` to test the respective environment.
 {% endhint %}
 
 # ✍️ Writing tests
